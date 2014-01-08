@@ -58,8 +58,11 @@ module app.wizard {
                 if (page.hasConfig()) {
                     config = page.getConfig();
                 }
+
                 var regionResolver = new api.content.page.region.RegionResolver(config);
-                var regions = regionResolver.resolve();
+                var regions: api.content.page.region.PageRegions = regionResolver.resolve();
+                var headerRegion = regions.getRegion("myMainRegion");
+                console.log("header region", headerRegion);
                 //var region = regions.getByName();
                 //region.getPart(id);
                 // TODO: live edit render request to server
