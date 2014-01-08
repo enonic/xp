@@ -10,3 +10,4 @@
 ///<reference path='SelectedOptionsCtrl.ts' />
 ///<reference path='SelectedOptionsViewListener.ts' />
 ///<reference path='RichComboBox.ts' />
+///<reference path='RichSelectedOptionView.ts' />
