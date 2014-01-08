@@ -5,7 +5,10 @@ module api.content {
 
         constructor(multiple:boolean = true)
         {
-            super(new api.form.inputtype.content.ContentSummaryLoader(), new RootContentSelectedOptionsView());
+            var builder:api.ui.combobox.RichComboBoxBuilder<api.content.ContentSummary> = new api.ui.combobox.RichComboBoxBuilder<api.content.ContentSummary>();
+            builder.setComboBoxName("contentSelector" ).setLoader(new api.form.inputtype.content.ContentSummaryLoader() ).
+                setSelectedOptionsView(new ContentSelectedOptionsView());
+            super(builder);
             this.multipleSelection = multiple;
         }
 
@@ -41,15 +44,15 @@ module api.content {
         }
     }
 
-    export class RootContentSelectedOptionsView extends api.ui.combobox.SelectedOptionsView<api.content.ContentSummary> {
+    export class ContentSelectedOptionsView extends api.ui.combobox.SelectedOptionsView<api.content.ContentSummary> {
 
         createSelectedOption(option:api.ui.combobox.Option<api.content.ContentSummary>, index:number):api.ui.combobox.SelectedOption<api.content.ContentSummary> {
-            var optionView = new RootContentSelectedOptionView( option );
+            var optionView = new ContentSelectedOptionView( option );
             return new api.ui.combobox.SelectedOption<api.content.ContentSummary>( optionView, option, index);
         }
     }
 
-    export class RootContentSelectedOptionView extends api.ui.combobox.RichSelectedOptionView<api.content.ContentSummary> {
+    export class ContentSelectedOptionView extends api.ui.combobox.RichSelectedOptionView<api.content.ContentSummary> {
 
 
         constructor(option:api.ui.combobox.Option<api.content.ContentSummary>) {

@@ -8,27 +8,27 @@ module api.ui.combobox {
         selectedOptionsView:any;
         comboBox:api.ui.combobox.ComboBox<T>;
 
-        constructor(loader:api.rest.Loader, selectedOptionsView:SelectedOptionsView<T>)
+        constructor(builder:RichComboBoxBuilder<T>)
         {
-            this.loader = loader;
+            this.loader = builder.loader;
 
             this.comboBoxView = new api.dom.DivEl();
 
-            this.selectedOptionsView = selectedOptionsView;
+            this.selectedOptionsView = builder.selectedOptionsView;
             this.selectedOptionsView.hide();
 
-            this.comboBox = this.createComboBox();
+            this.comboBox = this.createComboBox(builder.comboBoxName);
 
             super(this.comboBox, this.selectedOptionsView);
-            this.addClass('item-selector');
+            this.addClass('rich-combobox');
         }
 
 
-        private createComboBox():api.ui.combobox.ComboBox<T> {
+        private createComboBox(name:string):api.ui.combobox.ComboBox<T> {
 
             var comboBoxConfig = this.createConfig();
 
-            var comboBox = new api.ui.combobox.ComboBox("itemSelector", comboBoxConfig);
+            var comboBox = new api.ui.combobox.ComboBox(name, comboBoxConfig);
 
             comboBox.addSelectedOptionRemovedListener(()=> {
                 console.log("On selected option removed");
@@ -84,63 +84,34 @@ module api.ui.combobox {
         }
     }
 
-    export class RichSelectedOptionView<T extends api.item.BaseItem> extends api.ui.combobox.SelectedOptionView<T> {
+    export class RichComboBoxBuilder<T extends api.item.BaseItem> {
 
-        private content:T;
+        comboBoxName:string;
 
-        constructor(option:api.ui.combobox.Option<T>) {
-            this.content = option.displayValue;
-            super(option);
+        loader:api.rest.Loader;
+
+        selectedOptionsView:SelectedOptionsView<T>
+
+
+        setComboBoxName(comboBoxName:string):RichComboBoxBuilder<T> {
+            this.comboBoxName = comboBoxName;
+            return this;
         }
 
-        resolveIconUrl(content:T):string
-        {
-            return "";
+        setLoader(loader:api.rest.Loader):RichComboBoxBuilder<T> {
+            this.loader = loader;
+            return this;
         }
 
-        resolveTitle(content:T):string
-        {
-            return "";
+        setSelectedOptionsView(selectedOptionsView:SelectedOptionsView<T>):RichComboBoxBuilder<T> {
+            this.selectedOptionsView = selectedOptionsView;
+            return this;
         }
 
-        resolveSubTitle(content:T):string
-        {
-            return "";
-        }
-
-        layout() {
-
-            var image = new api.dom.ImgEl();
-            image.getEl().setSrc(this.resolveIconUrl(this.content));
-            image.getEl().setHeight("48px");
-            image.getEl().setWidth("48px");
-
-            var container = new api.dom.DivEl(null, "container");
-
-            var title = new api.dom.DivEl(null, "title");
-            title.getEl().setInnerHtml(this.resolveTitle(this.content));
-
-            var subtitle = new api.dom.DivEl(null, "subtitle");
-            subtitle.getEl().setInnerHtml(api.util.limitString(this.resolveSubTitle(this.content), 16));
-
-            container.appendChild(title);
-            container.appendChild(subtitle);
-
-
-            var removeButton = new api.dom.AEl(null, "remove");
-            removeButton.getEl().addEventListener('click', (event:Event) => {
-                this.notifySelectedOptionToBeRemoved();
-
-                event.stopPropagation();
-                event.preventDefault();
-                return false;
-            });
-
-
-            this.appendChild(image);
-            this.appendChild(container);
-            this.appendChild(removeButton);
-
+        build():RichComboBox<T> {
+            return new RichComboBox(this);
         }
     }
+
+
 }

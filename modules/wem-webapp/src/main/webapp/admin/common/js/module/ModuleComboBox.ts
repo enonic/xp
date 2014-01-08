@@ -4,7 +4,9 @@ module api.module {
     {
         constructor()
         {
-            super(new api.module.ModuleLoader(), new ModuleSelectedOptionsView());
+            var builder:api.ui.combobox.RichComboBoxBuilder<api.module.ModuleSummary> = new api.ui.combobox.RichComboBoxBuilder<api.module.ModuleSummary>();
+            builder.setComboBoxName("moduleSelector" ).setLoader(new api.module.ModuleLoader() ).setSelectedOptionsView(new ModuleSelectedOptionsView());
+            super(builder);
 
         }
 
