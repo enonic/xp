@@ -82,7 +82,7 @@ public class SitesInitializer
             config( createPageDescriptorForm() ).
             build();
 
-        this.demoModule = createDemoModule( pageDescriptor );
+        this.demoModule = createDemoModule();
         createPageDescriptor( pageDescriptor );
         mainPageTemplate = createPageTemplate( this.demoModule, pageDescriptor.getKey() );
         this.siteTemplate = createSiteTemplate( BLUMAN_SITE_TEMPLATE_KEY, ModuleKeys.from( this.demoModule.getKey() ), mainPageTemplate );
@@ -167,7 +167,7 @@ public class SitesInitializer
         return client.execute( createSiteTemplate );
     }
 
-    private Module createDemoModule( final PageDescriptor pageDescriptor )
+    private Module createDemoModule()
     {
         final CreateModule createModule = Commands.module().create().
             name( DEMO_MODULE_KEY.getName().toString() ).

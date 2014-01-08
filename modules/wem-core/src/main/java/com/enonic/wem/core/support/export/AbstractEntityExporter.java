@@ -99,7 +99,7 @@ public abstract class AbstractEntityExporter<I, O>
     {
         if ( !Files.isDirectory( rootPath ) )
         {
-            Files.createDirectory( rootPath );
+            Files.createDirectories( rootPath );
         }
 
         return rootPath;

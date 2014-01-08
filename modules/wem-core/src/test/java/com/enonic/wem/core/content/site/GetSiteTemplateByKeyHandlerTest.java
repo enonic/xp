@@ -184,7 +184,7 @@ public class GetSiteTemplateByKeyHandlerTest
             description( "A social intranet for the Enterprise" ).
             vendor( newVendor().name( "Enonic" ).url( "https://www.enonic.com" ).build() ).
             modules( ModuleKeys.from( "com.enonic.intranet-1.0.0", "com.company.sampleModule-1.1.0", "com.company.theme.someTheme-1.4.1",
-                                      "com.enonic.resolvers-1.0.0" ) ).
+                                      "com.enonic.resolvers-1.0.0", "mymodule-1.0.0" ) ).
             contentTypeFilter( contentTypeFilter ).
             rootContentType( ContentTypeName.from( "com.enonic.intranet" ) ).
             addTemplate( partTemplate ).
