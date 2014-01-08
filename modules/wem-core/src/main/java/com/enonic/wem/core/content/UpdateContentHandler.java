@@ -1,18 +1,22 @@
 package com.enonic.wem.core.content;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.jcr.Session;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.io.InputSupplier;
 
 import com.enonic.wem.api.Client;
+import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.GetContentById;
 import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.ValidateContentData;
@@ -21,13 +25,16 @@ import com.enonic.wem.api.command.entity.UpdateNode;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.attachment.Attachment;
+import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyVisitor;
 import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodeEditor;
 import com.enonic.wem.api.entity.NodePath;
+import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.command.CommandContext;
@@ -39,12 +46,11 @@ import com.enonic.wem.core.relationship.RelationshipService;
 import com.enonic.wem.core.relationship.SyncRelationshipsCommand;
 
 import static com.enonic.wem.api.content.Content.newContent;
+import static com.enonic.wem.api.content.attachment.Attachment.newAttachment;
 
 public class UpdateContentHandler
     extends CommandHandler<UpdateContent>
 {
-    private static final int THUMBNAIL_SIZE = 512;
-
     private static final String THUMBNAIL_MIME_TYPE = "image/png";
 
     private RelationshipService relationshipService;
@@ -53,65 +59,56 @@ public class UpdateContentHandler
 
     private final static Logger LOG = LoggerFactory.getLogger( UpdateContentHandler.class );
 
-
     @Override
     public void handle()
         throws Exception
     {
-        command.setResult( updateContentAsNode() );
-    }
-
-    private Content updateContentAsNode()
-    {
-        ContentNodeTranslator translator = new ContentNodeTranslator( this.context.getClient() );
+        final ContentNodeTranslator translator = new ContentNodeTranslator( this.context.getClient() );
 
         final GetContentById getContentByIdCommand = new GetContentById( command.getContentId() );
-        final Content persistedContent = new GetContentByIdService( this.context, getContentByIdCommand ).execute();
+        final Content contentBeforeChange = new GetContentByIdService( this.context, getContentByIdCommand ).execute();
 
-        Content.EditBuilder editBuilder = command.getEditor().edit( persistedContent );
+        final Content.EditBuilder editBuilder = command.getEditor().edit( contentBeforeChange );
 
         if ( !editBuilder.isChanges() )
         {
-            return persistedContent;
+            command.setResult( contentBeforeChange );
+            return;
         }
 
-        final Content tempEditedContent = editBuilder.build();
+        Content editedContent = editBuilder.build();
 
         // TODO: Fix this
-        //validateEditedContent( persistedContent, tempEditedContent );
+        //validateEditedContent( contentBeforeChange, editedContent );
 
-        final Content editedContent = newContent( tempEditedContent ).
-            modifiedTime( DateTime.now() ).
+        editedContent = newContent( editedContent ).
             modifier( command.getModifier() ).build();
 
-        // TODO: Rewrite to use service instead?
-        final NodeEditor nodeEditor = translator.toNodeEditor( editedContent, this.command );
-        final UpdateNode updateNodeCommand = translator.toUpdateNodeCommand( persistedContent.getId(), nodeEditor );
+        Attachments attachments = command.getAttachments();
+        final Attachment thumbnailAttachment = resolveThumbnailAttachment( command, editedContent );
+        if ( thumbnailAttachment != null )
+        {
+            attachments = attachments.add( thumbnailAttachment );
+        }
+        final UpdateNode updateNodeCommand = translator.toUpdateNodeCommand( editedContent, attachments );
 
         final UpdateNodeHandler updateNodeHandler = UpdateNodeHandler.create().
             context( this.context ).
             command( updateNodeCommand ).
             indexService( this.indexService ).
             build();
-        try
-        {
-            updateNodeHandler.handle();
+        updateNodeHandler.handle();
 
-            final Node editedNode = updateNodeCommand.getResult().getPersistedNode();
-            final Content editedNodeAsContent = translator.fromNode( editedNode );
+        final Node editedNode = updateNodeCommand.getResult().getPersistedNode();
+        final Content persistedContent = translator.fromNode( editedNode );
 
-            deleteRemovedEmbeddedContentAsNode( persistedContent, editedNodeAsContent );
+        deleteRemovedEmbeddedContent( contentBeforeChange, persistedContent );
 
-            return editedNodeAsContent;
-        }
-        catch ( Exception e )
-        {
-            throw new RuntimeException( "Failed to update content as node", e );
-        }
+        command.setResult( persistedContent );
     }
 
-    private void deleteRemovedEmbeddedContentAsNode( final Content persistedContent, final Content editedContent )
-        throws Exception
+    private void deleteRemovedEmbeddedContent( final Content persistedContent, final Content editedContent )
+    throws Exception
     {
         final Map<ContentId, Content> embeddedContentsBeforeEdit = resolveEmbeddedContent( persistedContent.getContentData() );
 
@@ -157,12 +154,8 @@ public class UpdateContentHandler
         }
     }
 
-
     private ImmutableMap<ContentId, Content> resolveEmbeddedContent( final ContentData contentData )
     {
-
-        final Session session = this.context.getJcrSession();
-
         final ImmutableMap.Builder<ContentId, Content> embeddedContent = new ImmutableMap.Builder<>();
         new PropertyVisitor()
         {
@@ -186,7 +179,6 @@ public class UpdateContentHandler
         return embeddedContent.build();
     }
 
-    //TODO: Rewrite after mocing attachment
     private void validateContentData( final CommandContext context, final Content modifiedContent )
     {
         final ValidateContentData validateContentData = Commands.content().validate();
@@ -205,29 +197,55 @@ public class UpdateContentHandler
         }
     }
 
-    /*private void addThumbnail( final Client client, final ContentId contentId, final Attachment attachment )
-        throws Exception
+    private Attachment resolveThumbnailAttachment( final UpdateContent command, final Content content )
     {
-        final Blob thumbnailBlob = createImageThumbnail( attachment.getBlobKey(), THUMBNAIL_SIZE );
-        final Attachment thumbnailAttachment = newAttachment( attachment ).
+        final ContentType contentType = getContentType( content.getType() );
+        if ( contentType.getSuperType() == null )
+        {
+            return null;
+        }
+
+        if ( contentType.getSuperType().isMedia() )
+        {
+            Attachment mediaAttachment = command.getAttachment( content.getName().toString() );
+            if ( mediaAttachment == null )
+            {
+                mediaAttachment = command.getAttachments().first();
+            }
+            if ( mediaAttachment != null )
+            {
+                return createThumbnailAttachment( mediaAttachment );
+            }
+        }
+        return null;
+    }
+
+    private Attachment createThumbnailAttachment( final Attachment attachment )
+    {
+        final Blob originalImage = context.getClient().execute( Commands.blob().get( attachment.getBlobKey() ) );
+        final InputSupplier<ByteArrayInputStream> inputSupplier = ImageThumbnailResolver.resolve( originalImage );
+        final Blob thumbnailBlob;
+        try
+        {
+            thumbnailBlob = context.getClient().execute( Commands.blob().create( inputSupplier.getInput() ) );
+        }
+        catch ( IOException e )
+        {
+            throw new RuntimeException( "Failed to create blob for thumbnail attachment: " + e.getMessage() );
+        }
+
+        return newAttachment( attachment ).
             blobKey( thumbnailBlob.getKey() ).
             name( CreateContent.THUMBNAIL_NAME ).
             mimeType( THUMBNAIL_MIME_TYPE ).
+            size( thumbnailBlob.getLength() ).
             build();
-        client.execute( Commands.attachment().create().contentId( contentId ).attachment( thumbnailAttachment ) );
-    }*/
+    }
 
-    /*public Blob createImageThumbnail( final BlobKey originalImageBlobKey, final int size )
-        throws Exception
+    private ContentType getContentType( final ContentTypeName contentTypeName )
     {
-        final Blob originalImage = context.getClient().execute( Commands.blob().get( originalImageBlobKey ) );
-        final BufferedImage image = ImageIO.read( originalImage.getStream() );
-        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        final BufferedImage scaledImage = new ScaleMaxFilter( size ).filter( image );
-        ImageIO.write( scaledImage, "png", outputStream );
-        CreateBlob createBlob = Commands.blob().create( ByteStreams.newInputStreamSupplier( outputStream.toByteArray() ).getInput() );
-        return context.getClient().execute( createBlob );
-    }*/
+        return context.getClient().execute( Commands.contentType().get().byName().contentTypeName( contentTypeName ) );
+    }
 
     @Inject
     public void setRelationshipService( final RelationshipService relationshipService )

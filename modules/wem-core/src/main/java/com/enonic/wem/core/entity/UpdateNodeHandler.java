@@ -46,20 +46,20 @@ public class UpdateNodeHandler
 
         final NodeJcrDao nodeJcrDao = new NodeJcrDao( session );
 
-        final Node persisted = nodeJcrDao.getNodeById( command.getNode() );
+        final Node beforeChange = nodeJcrDao.getNodeById( command.getId() );
 
-        final Node.EditBuilder editBuilder = command.getEditor().edit( persisted );
+        final Node.EditBuilder editBuilder = command.getEditor().edit( beforeChange );
         if ( !editBuilder.isChanges() )
         {
-            command.setResult( new UpdateNodeResult( persisted ) );
+            command.setResult( new UpdateNodeResult( beforeChange ) );
             return;
         }
 
         final Node edited = editBuilder.build();
-        persisted.checkIllegalEdit( edited );
+        beforeChange.checkIllegalEdit( edited );
 
         final UpdateNodeArgs updateNodeArgs = newUpdateItemArgs().
-            nodeToUpdate( command.getNode() ).
+            nodeToUpdate( command.getId() ).
             name( edited.name() ).
             rootDataSet( edited.data() ).
             attachments( edited.attachments() ).

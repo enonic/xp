@@ -10,13 +10,13 @@ import com.enonic.wem.api.entity.NodeEditor;
 public class UpdateNode
     extends Command<UpdateNodeResult>
 {
-    private EntityId node;
+    private EntityId id;
 
     private NodeEditor editor;
 
-    public UpdateNode item( final EntityId value )
+    public UpdateNode id( final EntityId value )
     {
-        this.node = value;
+        this.id = value;
         return this;
     }
 
@@ -29,13 +29,13 @@ public class UpdateNode
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.node, "item cannot be null" );
+        Preconditions.checkNotNull( this.id, "id cannot be null" );
         Preconditions.checkNotNull( this.editor, "editor cannot be null" );
     }
 
-    public EntityId getNode()
+    public EntityId getId()
     {
-        return node;
+        return id;
     }
 
     public NodeEditor getEditor()

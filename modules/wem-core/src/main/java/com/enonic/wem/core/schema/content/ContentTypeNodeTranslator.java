@@ -102,7 +102,7 @@ public class ContentTypeNodeTranslator
     UpdateNode toUpdateNodeCommand( final SchemaId id, final NodeEditor editor )
     {
         return Commands.node().update().
-            item( EntityId.from( id ) ).
+            id( EntityId.from( id ) ).
             editor( editor );
     }
 

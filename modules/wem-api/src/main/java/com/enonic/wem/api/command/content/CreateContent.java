@@ -1,7 +1,6 @@
 package com.enonic.wem.api.command.content;
 
 
-import java.util.Collection;
 import java.util.Map;
 
 import com.google.common.base.Preconditions;
@@ -14,6 +13,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.attachment.Attachment;
+import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -175,9 +175,9 @@ public final class CreateContent
         return embed;
     }
 
-    public Collection<Attachment> getAttachments()
+    public Attachments getAttachments()
     {
-        return attachments.values();
+        return Attachments.from( attachments.values() );
     }
 
     public Attachment getAttachment( final String attachmentName )

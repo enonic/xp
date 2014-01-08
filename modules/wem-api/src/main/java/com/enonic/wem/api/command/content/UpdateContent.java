@@ -1,18 +1,18 @@
 package com.enonic.wem.api.command.content;
 
 
-import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.attachment.Attachment;
+import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.editor.ContentEditor;
 
 public final class UpdateContent
@@ -24,7 +24,7 @@ public final class UpdateContent
 
     private ContentId contentId;
 
-    private Map<String, Attachment> attachments = Maps.newHashMap();
+    private Map<String, Attachment> attachments = new LinkedHashMap<>();
 
     public ContentEditor getEditor()
     {
@@ -75,9 +75,9 @@ public final class UpdateContent
         return attachments( Iterables.toArray( attachments, Attachment.class ) );
     }
 
-    public Collection<Attachment> getAttachments()
+    public Attachments getAttachments()
     {
-        return attachments.values();
+        return Attachments.from( attachments.values() );
     }
 
     public Attachment getAttachment( final String attachmentName )

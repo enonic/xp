@@ -1,14 +1,12 @@
 package com.enonic.wem.core.content;
 
-import java.util.Collection;
-
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.entity.Attachments;
 
 public class ContentAttachmentNodeTranslator
 {
 
-    public Attachments toNodeAttachments( final Collection<Attachment> contentAttachments )
+    public Attachments toNodeAttachments( final com.enonic.wem.api.content.attachment.Attachments contentAttachments )
     {
         if ( contentAttachments == null )
         {
