@@ -8,7 +8,7 @@ import com.google.common.collect.Sets;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.facet.Facets;
 
-public class ContentIndexQueryResult
+public class ContentQueryResult
 {
     private final int totalSize;
 
@@ -16,7 +16,7 @@ public class ContentIndexQueryResult
 
     private Facets facets;
 
-    public ContentIndexQueryResult( final int totalSize )
+    public ContentQueryResult( final int totalSize )
     {
         this.totalSize = totalSize;
     }

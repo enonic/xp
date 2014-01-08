@@ -2,7 +2,6 @@ package com.enonic.wem.admin.rest.resource.content;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -24,9 +23,9 @@ import com.enonic.wem.admin.json.content.ContentJson;
 import com.enonic.wem.admin.json.content.ContentListJson;
 import com.enonic.wem.admin.json.content.ContentSummaryJson;
 import com.enonic.wem.admin.json.content.ContentSummaryListJson;
+import com.enonic.wem.admin.json.content.attachment.AttachmentJson;
 import com.enonic.wem.admin.json.data.DataJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
-import com.enonic.wem.admin.json.content.attachment.AttachmentJson;
 import com.enonic.wem.admin.rest.resource.content.json.ContentFindParams;
 import com.enonic.wem.admin.rest.resource.content.json.ContentNameJson;
 import com.enonic.wem.admin.rest.resource.content.json.CreateContentJson;
@@ -57,10 +56,9 @@ import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditor;
-import com.enonic.wem.api.content.query.ContentIndexQuery;
-import com.enonic.wem.api.content.query.ContentIndexQueryResult;
+import com.enonic.wem.api.content.query.ContentQuery;
+import com.enonic.wem.api.content.query.ContentQueryResult;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
-import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 import static com.enonic.wem.api.content.Content.editContent;
 
@@ -229,22 +227,25 @@ public class ContentResource
     public AbstractContentListJson find( final ContentFindParams params )
     {
 
-        final ContentIndexQuery contentIndexQuery = new ContentIndexQuery();
-        contentIndexQuery.setFullTextSearchString( params.getFulltext() );
-        contentIndexQuery.setIncludeFacets( params.isIncludeFacets() );
-        contentIndexQuery.setContentTypeNames( ContentTypeNames.from( params.getContentTypes() ) );
+        // final ContentIndexQuery contentIndexQuery = new ContentIndexQuery();
+        // contentIndexQuery.setFullTextSearchString( params.getFulltext() );
+        // contentIndexQuery.setIncludeFacets( params.isIncludeFacets() );
+        // contentIndexQuery.setContentTypeNames( ContentTypeNames.from( params.getContentTypes() ) );
+
+        final ContentQuery.Builder contentQueryBuilder = ContentQuery.newContentQuery();
 
         if ( params.getCount() >= 0 )
         {
-            contentIndexQuery.setSize( params.getCount() );
+            contentQueryBuilder.size( params.getCount() );
         }
 
-        Set<ContentFindParams.Range> ranges = params.getRanges();
+      /*  Set<ContentFindParams.Range> ranges = params.getRanges();
         if ( ranges != null && ranges.size() > 0 )
+
         {
             for ( ContentFindParams.Range range : ranges )
             {
-                contentIndexQuery.addRange( range.getLower(), range.getUpper() );
+                contentQuery.addRange( range.getLower(), range.getUpper() );
             }
         }
 
@@ -253,23 +254,65 @@ public class ContentResource
             contentIndexQuery.setFacets( params.getFacets() );
         }
 
-        final FindContent findContent = Commands.content().find().query( contentIndexQuery );
-        final ContentIndexQueryResult contentIndexQueryResult = this.client.execute( findContent );
+        */
 
-        final GetContentByIds getContents = Commands.content().get().byIds( ContentIds.from( contentIndexQueryResult.getContentIds() ) );
+        final FindContent findContent = Commands.content().find().query( contentQueryBuilder.build() );
+        final ContentQueryResult contentQueryResult = this.client.execute( findContent );
+
+        final GetContentByIds getContents = Commands.content().get().byIds( ContentIds.from( contentQueryResult.getContentIds() ) );
         final Contents contents = this.client.execute( getContents );
 
         if ( EXPAND_FULL.equalsIgnoreCase( params.getExpand() ) )
         {
-            return new FacetedContentListJson( contents, params.isIncludeFacets() ? contentIndexQueryResult.getFacets() : null );
+            return new FacetedContentListJson( contents, params.isIncludeFacets() ? contentQueryResult.getFacets() : null );
         }
         else if ( EXPAND_SUMMARY.equalsIgnoreCase( params.getExpand() ) )
         {
-            return new FacetedContentSummaryListJson( contents, params.isIncludeFacets() ? contentIndexQueryResult.getFacets() : null );
+            return new FacetedContentSummaryListJson( contents, params.isIncludeFacets() ? contentQueryResult.getFacets() : null );
         }
         else
         {
-            return new FacetedContentIdListJson( contents, params.isIncludeFacets() ? contentIndexQueryResult.getFacets() : null );
+            return new FacetedContentIdListJson( contents, params.isIncludeFacets() ? contentQueryResult.getFacets() : null );
+        }
+    }
+
+    @POST
+    @Path("query")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public AbstractContentListJson query( final ContentFindParams params )
+    {
+
+        final ContentQuery.Builder contentQueryBuilder = ContentQuery.newContentQuery();
+
+        if ( params.getCount() >= 0 )
+        {
+            contentQueryBuilder.size( params.getCount() );
+        }
+
+        /*
+        if ( params.isIncludeFacets() )
+        {
+            contentIndexQuery.setFacets( params.getFacets() );
+        }
+        */
+
+        final FindContent findContent = Commands.content().find().query( contentQueryBuilder.build() );
+        final ContentQueryResult contentQueryResult = this.client.execute( findContent );
+
+        final GetContentByIds getContents = Commands.content().get().byIds( ContentIds.from( contentQueryResult.getContentIds() ) );
+        final Contents contents = this.client.execute( getContents );
+
+        if ( EXPAND_FULL.equalsIgnoreCase( params.getExpand() ) )
+        {
+            return new FacetedContentListJson( contents, params.isIncludeFacets() ? contentQueryResult.getFacets() : null );
+        }
+        else if ( EXPAND_SUMMARY.equalsIgnoreCase( params.getExpand() ) )
+        {
+            return new FacetedContentSummaryListJson( contents, params.isIncludeFacets() ? contentQueryResult.getFacets() : null );
+        }
+        else
+        {
+            return new FacetedContentIdListJson( contents, params.isIncludeFacets() ? contentQueryResult.getFacets() : null );
         }
     }
 

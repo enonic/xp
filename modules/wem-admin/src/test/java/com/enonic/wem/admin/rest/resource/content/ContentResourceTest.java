@@ -42,7 +42,7 @@ import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageTemplateKey;
-import com.enonic.wem.api.content.query.ContentIndexQueryResult;
+import com.enonic.wem.api.content.query.ContentQueryResult;
 import com.enonic.wem.api.content.site.ModuleConfig;
 import com.enonic.wem.api.content.site.ModuleConfigs;
 import com.enonic.wem.api.content.site.Site;
@@ -767,9 +767,9 @@ public class ContentResourceTest
             build();
     }
 
-    private ContentIndexQueryResult createContentIndexQueryResult( Contents contents, boolean includeFacets )
+    private ContentQueryResult createContentIndexQueryResult( Contents contents, boolean includeFacets )
     {
-        ContentIndexQueryResult result = new ContentIndexQueryResult( contents.getSize() );
+        ContentQueryResult result = new ContentQueryResult( contents.getSize() );
         for ( Content content : contents )
         {
             result.addContentHit( content.getId(), 1f );
