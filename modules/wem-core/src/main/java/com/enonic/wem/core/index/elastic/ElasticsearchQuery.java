@@ -226,7 +226,7 @@ public class ElasticsearchQuery
 
         public Builder size( final int size )
         {
-            this.size( size );
+            this.size = size;
             return this;
         }
 
