@@ -25,6 +25,8 @@ public class EntityQueryTranslator
             filter( filterBuilderFactory.create( entityQuery.getFilters() ) ).
             addFacets( facetBuilderFactory.create( entityQuery.getFacetQueries() ) ).
             sortBuilders( sortBuilderFactory.create( entityQuery.getOrderBys() ) ).
+            from( entityQuery.getFrom() ).
+            size( entityQuery.getSize() ).
             build();
 
         return elasticsearchQuery;

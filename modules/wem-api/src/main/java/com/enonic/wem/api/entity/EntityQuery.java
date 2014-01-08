@@ -23,6 +23,10 @@ public class EntityQuery
 
     private final ImmutableList<OrderExpr> orderBys;
 
+    private final int from;
+
+    private final int size;
+
     public EntityQuery( final Builder builder )
     {
         this.query = builder.query;
@@ -30,6 +34,8 @@ public class EntityQuery
         this.queryFilters = ImmutableSet.copyOf( builder.queryFilters );
         this.facetQueries = ImmutableSet.copyOf( builder.facetQueries );
         this.orderBys = query != null ? ImmutableList.copyOf( query.getOrderList() ) : ImmutableList.<OrderExpr>of();
+        this.size = builder.size;
+        this.from = builder.from;
     }
 
     public static Builder newQuery()
@@ -64,6 +70,16 @@ public class EntityQuery
         return orderBys;
     }
 
+    public int getFrom()
+    {
+        return from;
+    }
+
+    public int getSize()
+    {
+        return size;
+    }
+
     public static class Builder<T>
     {
         private QueryExpr query;
@@ -73,6 +89,10 @@ public class EntityQuery
         private Set<Filter> queryFilters = Sets.newHashSet();
 
         private Set<FacetQuery> facetQueries = Sets.newHashSet();
+
+        private int from = 0;
+
+        private int size = 10;
 
         public Builder query( final QueryExpr query )
         {
@@ -95,6 +115,18 @@ public class EntityQuery
         public Builder addFacet( final FacetQuery facetQuery )
         {
             this.facetQueries.add( facetQuery );
+            return this;
+        }
+
+        public Builder from( final int from )
+        {
+            this.from = from;
+            return this;
+        }
+
+        public Builder size( final int size )
+        {
+            this.size = size;
             return this;
         }
 
