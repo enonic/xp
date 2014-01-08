@@ -10,8 +10,6 @@ import com.enonic.wem.api.rendering.Component;
 public abstract class PageComponent<TEMPLATE_KEY extends TemplateKey>
     implements Component
 {
-    private String id;
-
     private final TEMPLATE_KEY template;
 
     protected PageComponent( final Properties<TEMPLATE_KEY> properties )
