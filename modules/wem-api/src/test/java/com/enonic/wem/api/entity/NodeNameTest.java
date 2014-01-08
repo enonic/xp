@@ -38,9 +38,9 @@ public class NodeNameTest
 
     @Test(expected = IllegalArgumentException.class)
     public void testUnderscoreOnlyNotAllowed()
-         throws Exception
+        throws Exception
     {
-         NodeName.from( "_" );
+        NodeName.from( "_" );
     }
 
     @Test
@@ -48,6 +48,13 @@ public class NodeNameTest
         throws Exception
     {
         NodeName.from( "_mystuff" );
+    }
+
+    @Test
+    public void start_with_number()
+        throws Exception
+    {
+        NodeName.from( "1myname" );
     }
 
     @Test
