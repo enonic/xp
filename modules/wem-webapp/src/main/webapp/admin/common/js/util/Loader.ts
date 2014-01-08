@@ -1,4 +1,4 @@
-module api.rest {
+module api.util {
 
     export interface Loader extends api.event.Observable {
 

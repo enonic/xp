@@ -1,10 +1,10 @@
 module api.module {
 
-    export class ModuleLoader implements api.rest.Loader
+    export class ModuleLoader implements api.util.Loader
     {
         private findModuleRequest:ModuleResourceRequest<ModuleListResult>;
 
-        private loaderHelper:api.rest.LoaderHelper;
+        private loaderHelper:api.util.LoaderHelper;
 
         private isLoading:boolean;
 
@@ -16,7 +16,7 @@ module api.module {
         constructor(delay:number = 500, findModuleRequest:ModuleResourceRequest<ModuleListResult> = new ListModuleRequest()) {
             this.isLoading = false;
             this.findModuleRequest = findModuleRequest;
-            this.loaderHelper = new api.rest.LoaderHelper(this.doRequest, this, delay);
+            this.loaderHelper = new api.util.LoaderHelper(this.doRequest, this, delay);
         }
 
         search(searchString:string) {

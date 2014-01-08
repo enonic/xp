@@ -7,3 +7,5 @@
 ///<reference path='CookieHelper.ts'/>
 ///<reference path='ClassHelper.ts'/>
 ///<reference path='DateHelper.ts' />
+///<reference path='Loader.ts' />
+///<reference path='LoaderHelper.ts' />

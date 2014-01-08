@@ -1,4 +1,4 @@
-module api.rest {
+module api.util {
 
     export class LoaderHelper {
 

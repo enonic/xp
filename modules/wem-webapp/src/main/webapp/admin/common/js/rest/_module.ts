@@ -5,5 +5,3 @@
 ///<reference path='RequestError.ts' />
 ///<reference path='ResourceRequest.ts' />
 ///<reference path='Expand.ts' />
-///<reference path='LoaderHelper.ts' />
-///<reference path='Loader.ts' />

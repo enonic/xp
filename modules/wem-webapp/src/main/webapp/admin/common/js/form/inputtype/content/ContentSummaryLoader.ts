@@ -1,6 +1,6 @@
 module api.form.inputtype.content {
 
-    export class ContentSummaryLoader implements api.rest.Loader {
+    export class ContentSummaryLoader implements api.util.Loader {
 
         private findContentRequest:api.content.FindContentRequest<api.content.json.ContentSummaryJson>;
 
@@ -10,12 +10,12 @@ module api.form.inputtype.content {
 
         private listeners:ContentSummaryLoaderListener[] = [];
 
-        private loaderHelper:api.rest.LoaderHelper;
+        private loaderHelper:api.util.LoaderHelper;
 
         constructor(delay:number = 500) {
             this.isLoading = false;
             this.findContentRequest = new api.content.FindContentRequest().setExpand("summary").setCount(100);
-            this.loaderHelper = new api.rest.LoaderHelper(this.doRequest, this, delay);
+            this.loaderHelper = new api.util.LoaderHelper(this.doRequest, this, delay);
         }
 
         setCount(count:number) {

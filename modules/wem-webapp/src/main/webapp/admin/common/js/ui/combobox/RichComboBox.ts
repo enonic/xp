@@ -2,7 +2,8 @@ module api.ui.combobox {
 
     export class RichComboBox<T extends api.item.BaseItem> extends api.ui.form.CompositeFormInputEl {
 
-        loader:api.rest.Loader;
+        loader:api.util.Loader;
+        te
         comboBoxView:api.dom.DivEl;
 
         selectedOptionsView:any;
@@ -88,7 +89,7 @@ module api.ui.combobox {
 
         comboBoxName:string;
 
-        loader:api.rest.Loader;
+        loader:api.util.Loader;
 
         selectedOptionsView:SelectedOptionsView<T>
 
@@ -98,7 +99,7 @@ module api.ui.combobox {
             return this;
         }
 
-        setLoader(loader:api.rest.Loader):RichComboBoxBuilder<T> {
+        setLoader(loader:api.util.Loader):RichComboBoxBuilder<T> {
             this.loader = loader;
             return this;
         }
