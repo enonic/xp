@@ -12,7 +12,7 @@ module app.wizard {
         constructor(tabId:api.app.AppBarTabId )
         {
             this.wizardHeader = new api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder().build();
-            var actions = new SiteTemplateWizardActions(this);
+            var actions = new app.wizard.action.SiteTemplateWizardActions(this);
 
             var iconUrl = SiteTemplateWizardPanel.DEFAULT_SITE_TEMPLATE_ICON_URL;
             this.formIcon = new api.app.wizard.FormIcon(iconUrl, "Click to upload icon",
