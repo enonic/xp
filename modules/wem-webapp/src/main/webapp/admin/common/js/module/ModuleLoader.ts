@@ -2,7 +2,7 @@ module api.module {
 
     export class ModuleLoader implements api.util.Loader
     {
-        private findModuleRequest:ModuleResourceRequest<ModuleListResult>;
+        private findModuleRequest:ListModuleRequest;
 
         private loaderHelper:api.util.LoaderHelper;
 
@@ -13,9 +13,9 @@ module api.module {
 
         private listeners:ModuleLoaderListener[] = [];
 
-        constructor(delay:number = 500, findModuleRequest:ModuleResourceRequest<ModuleListResult> = new ListModuleRequest()) {
+        constructor(delay:number = 500) {
             this.isLoading = false;
-            this.findModuleRequest = findModuleRequest;
+            this.findModuleRequest = new ListModuleRequest();
             this.loaderHelper = new api.util.LoaderHelper(this.doRequest, this, delay);
         }
 
@@ -32,12 +32,11 @@ module api.module {
             this.isLoading = true;
             this.notifyLoading();
 
-            this.findModuleRequest.send()
-                .done((jsonResponse:api.rest.JsonResponse<api.module.ModuleListResult>) => {
-                          var result = jsonResponse.getResult();
+            this.findModuleRequest.sendAndParse()
+                .done((modules:api.module.ModuleSummary[]) => {
 
                           this.isLoading = false;
-                          this.notifyLoaded(api.module.ModuleSummary.fromJsonArray(result.modules));
+                          this.notifyLoaded(modules);
                           if (this.preservedSearchString) {
                               this.search(this.preservedSearchString);
                               this.preservedSearchString = null;

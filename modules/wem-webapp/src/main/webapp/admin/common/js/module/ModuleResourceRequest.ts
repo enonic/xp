@@ -12,5 +12,9 @@ module api.module {
         getResourcePath():api.rest.Path {
             return this.resourcePath;
         }
+
+        fromJsonToModule(json:api.module.json.ModuleJson):Module {
+            return new Module(json);
+        }
     }
 }

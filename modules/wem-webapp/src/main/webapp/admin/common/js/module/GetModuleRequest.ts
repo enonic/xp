@@ -19,5 +19,22 @@ module api.module {
         getRequestPath():api.rest.Path {
             return api.rest.Path.fromParent(super.getResourcePath());
         }
+
+        sendAndParse(): JQueryPromise<api.module.Module> {
+
+            var deferred = jQuery.Deferred<api.module.Module>();
+
+            this.send().done((response: api.rest.JsonResponse<api.module.json.ModuleJson>) => {
+                if (response.getJson().error) {
+                    deferred.fail(response.getJson().error);
+                } else {
+                    deferred.resolve(this.fromJsonToModule(response.getResult()));
+                }
+            }).fail((response: api.rest.RequestError) => {
+                        deferred.reject(null);
+                    });
+
+            return deferred;
+        }
     }
 }
