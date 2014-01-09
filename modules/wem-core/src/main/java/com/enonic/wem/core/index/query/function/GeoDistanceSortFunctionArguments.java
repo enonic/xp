@@ -79,7 +79,7 @@ public class GeoDistanceSortFunctionArguments
     }
 
     @Override
-    String getFunctionName()
+    public String getFunctionName()
     {
         return "geoDistance";
     }
