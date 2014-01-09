@@ -2,7 +2,7 @@ module api.schema.content {
 
     export class ContentTypeSummaryLoader implements api.rest.Loader {
 
-        private findContentTypesRequest:FindSchemaRequest;
+        private findContentTypesRequest:GetAllContentTypesRequest;
 
         private isLoading:boolean;
 
@@ -14,7 +14,7 @@ module api.schema.content {
 
         constructor(delay:number = 500) {
             this.isLoading = false;
-            this.findContentTypesRequest = new FindSchemaRequest().setTypes(["content_type"]);
+            this.findContentTypesRequest = new GetAllContentTypesRequest();
             this.loaderHelper = new api.rest.LoaderHelper(this.doRequest, this, delay);
         }
 
