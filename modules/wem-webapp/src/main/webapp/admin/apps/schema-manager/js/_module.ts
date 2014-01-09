@@ -5,7 +5,6 @@
 
 ///<reference path='app/_module.ts' />
 ///<reference path='app/browse/_module.ts' />
-///<reference path='app/browse/filter/_module.ts' />
 ///<reference path='app/browse/grid/_module.ts' />
 ///<reference path='app/remove/_module.ts' />
 ///<reference path='app/create/_module.ts' />
