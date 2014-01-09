@@ -24,7 +24,8 @@ class ContentQueryEntityQueryTranslatorTest
         EntityQuery entityQuery = translator.translate( contentQuery );
 
         then:
-        entityQuery.queryFilters == null || entityQuery.queryFilters.isEmpty()
+        entityQuery.queryFilters.size() == 1;
+
     }
 
 
@@ -43,9 +44,12 @@ class ContentQueryEntityQueryTranslatorTest
 
         then:
         entityQuery.queryFilters != null
-        entityQuery.queryFilters.size() == 1;
-        Filter filter = entityQuery.queryFilters.getAt( 0 );
-        filter instanceof ValueFilter
+        entityQuery.queryFilters.size() == 2;
+
+        for ( Filter filter : entityQuery.queryFilters )
+        {
+            filter instanceof ValueFilter
+        }
     }
 
 }
