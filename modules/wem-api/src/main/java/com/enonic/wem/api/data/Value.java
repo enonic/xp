@@ -226,7 +226,7 @@ public abstract class Value<T>
         throws InconvertibleValueException
     {
         final java.lang.Boolean converted = JavaTypeConverter.Boolean.GET.convertFrom( object );
-        if (object != null && converted == null)
+        if ( object != null && converted == null )
         {
             throw new InconvertibleValueException( object, JavaTypeConverter.Boolean.GET );
         }
@@ -411,6 +411,11 @@ public abstract class Value<T>
         public String( final java.lang.String value )
         {
             super( ValueTypes.STRING, value );
+        }
+
+        public String( final int value )
+        {
+            super( ValueTypes.STRING, java.lang.String.valueOf( value ) );
         }
     }
 
