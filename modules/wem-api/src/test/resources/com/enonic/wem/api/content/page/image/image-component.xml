@@ -6,6 +6,7 @@
       <label>Column width</label>
       <immutable>false</immutable>
       <indexed>false</indexed>
+      <occurrences minimum="0" maximum="0"/>
     </input>
   </config>
 </image-component>

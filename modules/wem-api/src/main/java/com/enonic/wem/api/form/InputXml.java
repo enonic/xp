@@ -29,6 +29,7 @@ public final class InputXml
     @XmlElement(name = "custom-text", required = false)
     private String customText;
 
+    @XmlElement(name = "occurrences")
     private OccurrencesXml occurrences = new OccurrencesXml();
 
     @XmlElement(name = "help-text", required = false)
