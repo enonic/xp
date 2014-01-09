@@ -343,14 +343,14 @@ module app.wizard {
 
             var deferred = Q.defer<api.content.Content>();
 
-            var updateRequest = new api.content.UpdateContentRequest(this.getPersistedItem().getId()).
+            var updateContentRequest = new api.content.UpdateContentRequest(this.getPersistedItem().getId()).
                 setContentName(this.resolveContentNameForUpdateReuest()).
                 setContentType(this.contentType.getContentTypeName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
                 setForm(this.contentWizardStepForm.getForm()).
                 setContentData(this.contentWizardStepForm.getContentData());
 
-            updateRequest.addAttachments(this.contentWizardStepForm.getFormView().getAttachments());
+            updateContentRequest.addAttachments(this.contentWizardStepForm.getFormView().getAttachments());
 
             if (this.iconUploadItem) {
                 var attachment = new api.content.attachment.AttachmentBuilder().
@@ -359,14 +359,12 @@ module app.wizard {
                     setMimeType(this.iconUploadItem.getMimeType()).
                     setSize(this.iconUploadItem.getSize()).
                     build();
-                updateRequest.addAttachment(attachment);
+                updateContentRequest.addAttachment(attachment);
             }
 
-            updateRequest.
+            updateContentRequest.
                 sendAndParse().
                 done((updatedContent: api.content.Content) => {
-
-                    new api.content.ContentUpdatedEvent(updatedContent).fire();
 
                     if (this.siteWizardStepForm != null) {
                         new api.content.site.UpdateSiteRequest(updatedContent.getId())
@@ -374,14 +372,18 @@ module app.wizard {
                             .setModuleConfigs(this.siteWizardStepForm.getModuleConfigs())
                             .sendAndParse().done((updatedSite: api.content.Content) => {
 
+                                new api.content.ContentUpdatedEvent(updatedContent).fire();
                                 api.notify.showFeedback('Content was updated!');
 
-                                deferred.resolve(updatedContent);
+                                deferred.resolve(updatedSite);
 
                             });
                     }
                     else {
+
+                        new api.content.ContentUpdatedEvent(updatedContent).fire();
                         api.notify.showFeedback('Content was updated!');
+
                         deferred.resolve(updatedContent);
                     }
                 });
