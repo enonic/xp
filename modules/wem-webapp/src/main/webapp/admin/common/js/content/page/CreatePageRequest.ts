@@ -3,8 +3,10 @@ module api.content.page {
     export class CreatePageRequest extends PageResourceRequest<api.content.json.ContentJson> {
 
         private contentId: api.content.ContentId;
+
         private pageTemplateKey: api.content.page.PageTemplateKey;
-        private config: api.data.Data[];
+
+        private config: api.data.RootDataSet;
 
         constructor(contentId: api.content.ContentId) {
             super();
@@ -26,7 +28,7 @@ module api.content.page {
             return {
                 contentId: this.contentId.toString(),
                 pageTemplateKey: this.pageTemplateKey.toString(),
-                config: this.config
+                config: this.config.toJson()
             };
         }
 

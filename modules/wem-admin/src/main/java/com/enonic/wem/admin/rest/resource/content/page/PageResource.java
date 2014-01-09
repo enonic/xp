@@ -19,6 +19,7 @@ public class PageResource
 {
     @POST
     @Path("create")
+    @Consumes(MediaType.APPLICATION_JSON)
     public ContentJson create( final CreatePageJson params )
     {
         final CreatePage command = params.getCreatePage();

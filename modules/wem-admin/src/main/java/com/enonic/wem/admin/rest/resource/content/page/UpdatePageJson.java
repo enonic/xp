@@ -13,6 +13,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageEditor;
 import com.enonic.wem.api.content.page.PageTemplateKey;
+import com.enonic.wem.api.content.page.region.PageRegions;
 import com.enonic.wem.api.data.RootDataSet;
 
 import static com.enonic.wem.api.content.page.Page.editPage;
@@ -22,8 +23,7 @@ public class UpdatePageJson
     private final UpdatePage updatePage;
 
     @JsonCreator
-    public UpdatePageJson( @JsonProperty("contentId") final String contentId,
-                           @JsonProperty("pageTemplateKey") final String pageTemplateKey,
+    public UpdatePageJson( @JsonProperty("contentId") final String contentId, @JsonProperty("pageTemplateKey") final String pageTemplateKey,
                            @JsonProperty("config") final List<DataJson> config )
     {
         this.updatePage = new UpdatePage().
@@ -35,6 +35,7 @@ public class UpdatePageJson
                 {
                     return editPage( toBeEdited ).
                         template( PageTemplateKey.from( pageTemplateKey ) ).
+                        regions( PageRegions.newPageRegions().build() ).
                         config( parseData( config ) );
                 }
             } );

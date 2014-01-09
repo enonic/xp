@@ -40,25 +40,37 @@ module app.wizard.page {
             });
         }
 
-        layoutExisting(pageTemplates: api.content.page.PageTemplateSummary[], selectedPageTemplate: api.content.page.PageTemplate) {
+        layoutExisting(siteTemplateKey: api.content.site.template.SiteTemplateKey,
+                       selectedPageTemplate: api.content.page.PageTemplate): Q.Promise<void> {
 
-            var optionToSelect: api.ui.combobox.Option<api.content.page.PageTemplateSummary> = null;
-            pageTemplates.forEach((pageTemplate: api.content.page.PageTemplateSummary) => {
+            var deferred = Q.defer<void>();
 
-                var option: api.ui.combobox.Option<api.content.page.PageTemplateSummary> = {
-                    value: pageTemplate.getKey().toString(),
-                    displayValue: pageTemplate
-                };
-                if (pageTemplate.getKey().toString() == selectedPageTemplate.getKey().toString()) {
-                    optionToSelect = option;
-                }
-                this.pageTemplateComboBox.addOption(option);
+            new api.content.page.GetPageTemplatesRequest(siteTemplateKey).
+                sendAndParse().
+                done((pageTemplates: api.content.page.PageTemplateSummary[]) => {
+
+                    var optionToSelect: api.ui.combobox.Option<api.content.page.PageTemplateSummary> = null;
+                    pageTemplates.forEach((pageTemplate: api.content.page.PageTemplateSummary) => {
+
+                        var option: api.ui.combobox.Option<api.content.page.PageTemplateSummary> = {
+                            value: pageTemplate.getKey().toString(),
+                            displayValue: pageTemplate
+                        };
+                        if (pageTemplate.getKey().toString() == selectedPageTemplate.getKey().toString()) {
+                            optionToSelect = option;
+                        }
+                        this.pageTemplateComboBox.addOption(option);
 
 
-            });
-            if (optionToSelect != null) {
-                this.pageTemplateComboBox.selectOption(optionToSelect);
-            }
+                    });
+                    if (optionToSelect != null) {
+                        this.pageTemplateComboBox.selectOption(optionToSelect);
+                    }
+
+                    deferred.resolve(null);
+                });
+
+            return deferred.promise;
         }
 
         private optionFormatter(row: number, cell: number, pageTemplateSummary: api.content.page.PageTemplateSummary, columnDef: any,
@@ -97,6 +109,10 @@ module app.wizard.page {
             this.pageTemplateChangedListeners = this.pageTemplateChangedListeners.filter(function (curr) {
                 return curr != listener;
             });
+        }
+
+        public getPageTemplateKey(): api.content.page.PageTemplateKey {
+            return this.pageTemplateComboBox.getSelectedData()[0].displayValue.getKey();
         }
     }
 }

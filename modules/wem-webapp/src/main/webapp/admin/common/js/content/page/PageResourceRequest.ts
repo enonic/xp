@@ -12,5 +12,9 @@ module api.content.page {
         getResourcePath():api.rest.Path {
             return this.resourcePath;
         }
+
+        fromJsonToContent(json:api.content.json.ContentJson):api.content.Content {
+            return new api.content.Content(json);
+        }
     }
 }

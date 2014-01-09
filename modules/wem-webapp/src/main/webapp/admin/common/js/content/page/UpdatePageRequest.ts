@@ -3,8 +3,10 @@ module api.content.page {
     export class UpdatePageRequest extends PageResourceRequest<api.content.json.ContentJson> {
 
         private contentId: api.content.ContentId;
+
         private pageTemplateKey: api.content.page.PageTemplateKey;
-        private config: api.data.Data[];
+
+        private config: api.data.RootDataSet;
 
         constructor(contentId: api.content.ContentId) {
             super();
@@ -17,7 +19,7 @@ module api.content.page {
             return this;
         }
 
-        setConfig(config: api.data.Data[]): UpdatePageRequest {
+        setConfig(config: api.data.RootDataSet): UpdatePageRequest {
             this.config = config;
             return this;
         }
@@ -26,12 +28,30 @@ module api.content.page {
             return {
                 contentId: this.contentId.toString(),
                 pageTemplateKey: this.pageTemplateKey.toString(),
-                config: this.config
+                config: this.config.toJson()
             };
         }
 
         getRequestPath(): api.rest.Path {
             return api.rest.Path.fromParent(super.getResourcePath(), "update");
+        }
+
+        sendAndParse(): JQueryPromise<api.content.Content> {
+
+            var deferred = jQuery.Deferred<api.content.Content>();
+
+            this.send().
+                done((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
+                var content = null;
+                if( !response.isBlank() ) {
+                    content = this.fromJsonToContent(response.getResult());
+                }
+                deferred.resolve(content);
+            }).fail((response: api.rest.RequestError) => {
+                    deferred.reject(null);
+                });
+
+            return deferred;
         }
     }
 }

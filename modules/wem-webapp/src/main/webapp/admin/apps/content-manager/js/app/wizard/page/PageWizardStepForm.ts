@@ -72,7 +72,7 @@ module app.wizard.page {
 
             var page: api.content.page.Page = content.getPage();
 
-            if( !content.isPage() ) {
+            if (!content.isPage()) {
                 deferred.resolve(null);
                 return deferred.promise;
             }
@@ -81,20 +81,22 @@ module app.wizard.page {
                 sendAndParse().
                 done((pageTemplate: api.content.page.PageTemplate) => {
 
-                    new api.content.page.GetPageTemplatesRequest(this.siteContent.getSite().getTemplateKey()).
-                        sendAndParse().
-                        done((pageTemplates: api.content.page.PageTemplateSummary[]) => {
-
-                            this.pageTemplateForm.layoutExisting(pageTemplates, pageTemplate);
-
-                            // ensure given pageTemplate is selected in  pageTemplateComboBox
-                            // ensure Form from selected pageTemplate descriptor is displayed below combobox
+                    this.pageTemplateForm.layoutExisting(this.siteContent.getSite().getTemplateKey(), pageTemplate).
+                        done(()=> {
 
                             deferred.resolve(pageTemplate);
                         });
                 });
 
             return deferred.promise;
+        }
+
+        public getPageTemplateKey(): api.content.page.PageTemplateKey {
+            return this.pageTemplateForm.getPageTemplateKey();
+        }
+
+        public getConfig() : api.data.RootDataSet {
+            return this.formView.getContentData();
         }
 
     }

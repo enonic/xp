@@ -86,11 +86,14 @@ module app.wizard {
                 this.siteWizardStepForm = null;
             }
             this.contentWizardStepForm = new ContentWizardStepForm();
-            var pageWizardStepFormConfig: page.PageWizardStepFormConfig = {
-                parentContent: this.parentContent,
-                siteContent: this.siteContent
-            };
-            this.pageWizardStepForm = new page.PageWizardStepForm(pageWizardStepFormConfig);
+
+            if (this.siteContent) {
+                var pageWizardStepFormConfig: page.PageWizardStepFormConfig = {
+                    parentContent: this.parentContent,
+                    siteContent: this.siteContent
+                };
+                this.pageWizardStepForm = new page.PageWizardStepForm(pageWizardStepFormConfig);
+            }
 
             app.wizard.event.ShowContentLiveEvent.on((event) => {
                 this.toggleFormPanel(false);
@@ -151,7 +154,7 @@ module app.wizard {
 
             steps.push(new api.app.wizard.WizardStep(this.contentType.getDisplayName(), this.contentWizardStepForm));
 
-            if (this.siteContent) {
+            if (this.pageWizardStepForm) {
                 steps.push(new api.app.wizard.WizardStep("Page", this.pageWizardStepForm));
             }
 
@@ -220,13 +223,19 @@ module app.wizard {
 
                     this.doRenderExistingSite(persistedContent, formContext)
                         .then(() => {
-                            this.doRenderExistingPage(persistedContent, formContext).
-                                then((pageTemplate: api.content.page.PageTemplate) => {
-                                    this.doRenderLivePanel(persistedContent, pageTemplate).
-                                        done(() => {
-                                            deferred.resolve(null);
-                                        });
-                                });
+
+                            if (this.pageWizardStepForm) {
+                                this.doRenderExistingPage(persistedContent, formContext).
+                                    then((pageTemplate: api.content.page.PageTemplate) => {
+                                        this.doRenderLivePanel(persistedContent, pageTemplate).
+                                            done(() => {
+                                                deferred.resolve(null);
+                                            });
+                                    });
+                            }
+                            else {
+                                deferred.resolve(null);
+                            }
                         });
                 });
 
@@ -367,16 +376,31 @@ module app.wizard {
                 done((updatedContent: api.content.Content) => {
 
                     if (this.siteWizardStepForm != null) {
-                        new api.content.site.UpdateSiteRequest(updatedContent.getId())
-                            .setSiteTemplateKey(this.siteWizardStepForm.getTemplateKey())
-                            .setModuleConfigs(this.siteWizardStepForm.getModuleConfigs())
-                            .sendAndParse().done((updatedSite: api.content.Content) => {
+                        new api.content.site.UpdateSiteRequest(updatedContent.getId()).
+                            setSiteTemplateKey(this.siteWizardStepForm.getTemplateKey()).
+                            setModuleConfigs(this.siteWizardStepForm.getModuleConfigs()).
+                            sendAndParse().
+                            done((updatedSite: api.content.Content) => {
 
-                                new api.content.ContentUpdatedEvent(updatedContent).fire();
-                                api.notify.showFeedback('Content was updated!');
+                                if (this.pageWizardStepForm != null) {
+                                    new api.content.page.UpdatePageRequest(updatedContent.getContentId()).
+                                        setPageTemplateKey(this.pageWizardStepForm.getPageTemplateKey()).
+                                        setConfig(this.pageWizardStepForm.getConfig()).
+                                        sendAndParse().
+                                        done((updatedPage: api.content.Content) => {
 
-                                deferred.resolve(updatedSite);
+                                            new api.content.ContentUpdatedEvent(updatedContent).fire();
+                                            api.notify.showFeedback('Content was updated!');
 
+                                            deferred.resolve(updatedPage);
+                                        });
+                                }
+                                else {
+                                    new api.content.ContentUpdatedEvent(updatedContent).fire();
+                                    api.notify.showFeedback('Content was updated!');
+
+                                    deferred.resolve(updatedSite);
+                                }
                             });
                     }
                     else {
