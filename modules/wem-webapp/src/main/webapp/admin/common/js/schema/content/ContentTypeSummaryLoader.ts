@@ -1,6 +1,6 @@
 module api.schema.content {
 
-    export class ContentTypeSummaryLoader implements api.rest.Loader {
+    export class ContentTypeSummaryLoader implements api.util.Loader {
 
         private findContentTypesRequest:GetAllContentTypesRequest;
 
@@ -10,12 +10,12 @@ module api.schema.content {
 
         private listeners:ContentTypeSummaryLoaderListener[] = [];
 
-        private loaderHelper:api.rest.LoaderHelper;
+        private loaderHelper:api.util.LoaderHelper;
 
         constructor(delay:number = 500) {
             this.isLoading = false;
             this.findContentTypesRequest = new GetAllContentTypesRequest();
-            this.loaderHelper = new api.rest.LoaderHelper(this.doRequest, this, delay);
+            this.loaderHelper = new api.util.LoaderHelper(this.doRequest, this, delay);
         }
 
 
