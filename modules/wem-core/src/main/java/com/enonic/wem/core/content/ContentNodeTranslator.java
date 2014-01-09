@@ -204,9 +204,13 @@ public class ContentNodeTranslator
         final DataSet formItemsAsDataSet = node.dataSet( FORMITEMS_FULL_PATH );
         final FormItems formItems = SERIALIZER_FOR_FORM_ITEM_TO_DATA.deserializeFormItems( formItemsAsDataSet );
 
+        final NodePath parentNodePath = node.path().getParentPath();
+        final NodePath parentContentPathAsNodePath = parentNodePath.removeFromBeginning( CONTENTS_ROOT_PATH );
+        final ContentPath parentContentPath = ContentPath.from( parentContentPathAsNodePath.toString() );
+
         final Content.Builder builder = Content.newContent().
             id( ContentId.from( node.id() ) ).
-            parentPath( ContentPath.from( node.path().getParentPath().removeFromBeginning( CONTENTS_ROOT_PATH ).toString() ) ).
+            parentPath( parentContentPath ).
             name( node.name().toString() ).
             form( Form.newForm().addFormItems( formItems ).build() ).
             createdTime( node.getCreatedTime() ).
