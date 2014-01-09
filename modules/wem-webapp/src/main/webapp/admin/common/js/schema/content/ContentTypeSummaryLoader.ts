@@ -6,42 +6,39 @@ module api.schema.content {
 
         private isLoading:boolean;
 
-        private preservedSearchString:string;
+        private contentTypes:ContentTypeSummary[];
 
         private listeners:ContentTypeSummaryLoaderListener[] = [];
 
-        private loaderHelper:api.util.LoaderHelper;
-
-        constructor(delay:number = 500) {
+        constructor() {
             this.isLoading = false;
             this.findContentTypesRequest = new GetAllContentTypesRequest();
-            this.loaderHelper = new api.util.LoaderHelper(this.doRequest, this, delay);
+            this.doRequest();
         }
 
 
         search(searchString:string) {
-            if (this.isLoading) {
-                this.preservedSearchString = searchString;
-                return;
-            }
 
-            this.loaderHelper.search(searchString);
+            if (this.contentTypes) {
+                var filtered = this.contentTypes.filter((contentType:ContentTypeSummary) => {
+                   return contentType.getContentTypeName().toString().indexOf(searchString.toLowerCase()) != -1;
+                });
+                this.notifyLoaded(filtered);
+            }
         }
 
-        private doRequest(searchString:string) {
+
+
+        private doRequest() {
             this.isLoading = true;
             this.notifyLoading();
 
             this.findContentTypesRequest.send()
                 .done((jsonResponse:api.rest.JsonResponse<api.schema.content.json.ContentTypeSummaryListJson>) => {
                 var result = jsonResponse.getResult();
-
+                this.contentTypes = api.schema.content.ContentTypeSummary.fromJsonArray(result.contentTypes);
                 this.isLoading = false;
-                this.notifyLoaded(api.schema.content.ContentTypeSummary.fromJsonArray(result.contentTypes));
-                if (this.preservedSearchString) {
-                    this.search(this.preservedSearchString);
-                    this.preservedSearchString = null;
-                }
+                this.notifyLoaded(this.contentTypes);
             });
         }
 
@@ -64,7 +61,6 @@ module api.schema.content {
         }
 
         private notifyLoaded(contentTypeSummary:api.schema.content.ContentTypeSummary[]) {
-            console.log("summary:", contentTypeSummary);
             this.listeners.forEach((listener:ContentTypeSummaryLoaderListener) => {
                 if (listener.onLoaded) {
                     listener.onLoaded(contentTypeSummary);

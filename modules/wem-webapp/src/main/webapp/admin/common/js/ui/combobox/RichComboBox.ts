@@ -32,7 +32,7 @@ module api.ui.combobox {
             var comboBox = new api.ui.combobox.ComboBox(name, comboBoxConfig);
 
             comboBox.addSelectedOptionRemovedListener(()=> {
-                console.log("On selected option removed");
+                this.loader.search("");
             });
             comboBox.addListener({
                 onInputValueChanged: (oldValue, newValue, grid) => {
