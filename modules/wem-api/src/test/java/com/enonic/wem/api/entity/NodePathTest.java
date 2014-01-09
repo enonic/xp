@@ -115,10 +115,16 @@ public class NodePathTest
     @Test
     public void removeFromBeginning()
     {
-        NodePath nodePath = new NodePath( "/one/two/three/four" );
-        NodePath removedFrom = nodePath.removeFromBeginning( new NodePath( "/one/two" ) );
-        assertEquals( "/three/four", removedFrom.toString() );
+        assertEquals( "/three/four", new NodePath( "/one/two/three/four" ).removeFromBeginning( new NodePath( "/one/two" ) ).toString() );
+        assertEquals( "/three", new NodePath( "/one/two/three" ).removeFromBeginning( new NodePath( "/one/two" ) ).toString() );
+        assertEquals( "/", new NodePath( "/one/two" ).removeFromBeginning( new NodePath( "/one/two" ) ).toString() );
+        assertEquals( "/", new NodePath( "/one" ).removeFromBeginning( new NodePath( "/one" ) ).toString() );
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void removeFromBeginning_throws_IllegalStateException()
+    {
+        assertEquals( "/", new NodePath( "/" ).removeFromBeginning( new NodePath( "/one" ) ).toString() );
+    }
 
 }

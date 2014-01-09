@@ -65,9 +65,9 @@ public abstract class BasePath2<PATH extends BasePath2, ELEMENT extends BasePath
         return this.trailingDivider;
     }
 
-    public BasePath2<PATH,ELEMENT,BUILDER> trimTrailingDivider()
+    public BasePath2<PATH, ELEMENT, BUILDER> trimTrailingDivider()
     {
-        return newBuilder( (PATH)this ).trailingDivider( false ).build();
+        return newBuilder( (PATH) this ).trailingDivider( false ).build();
     }
 
     public int elementCount()
@@ -119,6 +119,9 @@ public abstract class BasePath2<PATH extends BasePath2, ELEMENT extends BasePath
 
     public <T extends BasePath2> T removeFromBeginning( final T path )
     {
+        Preconditions.checkState( this.elementCount() >= path.elementCount(),
+                                  "No point in trying to remove [" + path.toString() + "] from [" + this.toString() + "]" );
+
         if ( path.elementCount() == 0 )
         {
             //noinspection unchecked
@@ -237,9 +240,9 @@ public abstract class BasePath2<PATH extends BasePath2, ELEMENT extends BasePath
         }
     }
 
-    protected abstract Builder<BUILDER,PATH> newBuilder();
+    protected abstract Builder<BUILDER, PATH> newBuilder();
 
-    protected abstract Builder<BUILDER,PATH> newBuilder( PATH source );
+    protected abstract Builder<BUILDER, PATH> newBuilder( PATH source );
 
     public static abstract class Builder<B extends Builder, P extends BasePath2>
     {
