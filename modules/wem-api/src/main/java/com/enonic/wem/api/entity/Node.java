@@ -105,6 +105,11 @@ public final class Node
         IllegalEdit.check( "modifier", this.modifier(), to.modifier(), Node.class );
     }
 
+    public String toString()
+    {
+        return this.path.toString();
+    }
+
     public static Builder newNode()
     {
         return new Builder();
