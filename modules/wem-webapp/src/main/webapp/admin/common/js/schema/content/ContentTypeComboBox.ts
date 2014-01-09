@@ -5,7 +5,7 @@ module api.schema.content {
 
         constructor(multiple:boolean = true)
         {
-            super(new ContentTypeSummaryLoader(), new RootContentSelectedOptionsView());
+            super(new api.ui.combobox.RichComboBoxBuilder<ContentTypeSummary>().setLoader(new ContentTypeSummaryLoader()).setSelectedOptionsView(new RootContentSelectedOptionsView()));
             this.multipleSelection = multiple;
         }
 
@@ -37,6 +37,7 @@ module api.schema.content {
         createConfig():api.ui.combobox.ComboBoxConfig<ContentTypeSummary> {
             var config:api.ui.combobox.ComboBoxConfig<ContentTypeSummary> = super.createConfig();
             config.maximumOccurrences = this.multipleSelection ? 0 : 1;
+
             return config;
         }
     }
