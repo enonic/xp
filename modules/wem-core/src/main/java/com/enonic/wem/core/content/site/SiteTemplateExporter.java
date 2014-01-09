@@ -94,6 +94,10 @@ public final class SiteTemplateExporter
         {
             for ( final Path templateDir : ds )
             {
+                if ( !Files.isDirectory( templateDir ) || IGNORE_FILES.contains( getFileName( templateDir ) ) )
+                {
+                    continue;
+                }
                 try (final DirectoryStream<Path> templateFileDs = Files.newDirectoryStream( templateDir, TEMPLATE_FILE_PATTERN ))
                 {
                     for ( final Path templateFile : templateFileDs )

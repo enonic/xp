@@ -35,7 +35,7 @@ public abstract class AbstractEntityExporter<I, O>
     implements EntityExporter<I, O>
 {
 
-    private final static ImmutableSet<String> IGNORE_FILES = ImmutableSet.of( "__MACOSX", ".DS_Store" );
+    protected final static ImmutableSet<String> IGNORE_FILES = ImmutableSet.of( "__MACOSX", ".DS_Store" );
 
     private final static Map<String, String> ZIP_FS_ENV = ImmutableMap.of( "create", "true" );
 
@@ -204,7 +204,7 @@ public abstract class AbstractEntityExporter<I, O>
         }
     }
 
-    private String getFileName( final Path path )
+    protected String getFileName( final Path path )
     {
         return stripEnd( path.getFileName().toString(), path.getFileSystem().getSeparator() );
     }
