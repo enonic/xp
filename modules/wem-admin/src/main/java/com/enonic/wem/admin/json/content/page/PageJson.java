@@ -3,6 +3,8 @@ package com.enonic.wem.admin.json.content.page;
 
 import java.util.List;
 
+import com.enonic.wem.admin.json.content.page.region.PageRegionsJson;
+import com.enonic.wem.admin.json.content.page.region.RegionJson;
 import com.enonic.wem.admin.json.data.DataJson;
 import com.enonic.wem.admin.json.data.RootDataSetJson;
 import com.enonic.wem.api.content.page.Page;
@@ -11,17 +13,25 @@ public final class PageJson
 {
     private final Page page;
 
+    private final PageRegionsJson regionsJson;
+
     private final RootDataSetJson configJson;
 
     public PageJson( final Page page )
     {
         this.page = page;
-        this.configJson = new RootDataSetJson( page.getConfig() );
+        this.regionsJson = new PageRegionsJson( page.getRegions() );
+        this.configJson = page.hasConfig() ? new RootDataSetJson( page.getConfig() ) : null;
     }
 
     public String getTemplate()
     {
         return page.getTemplate().toString();
+    }
+
+    public List<RegionJson> getRegions()
+    {
+        return regionsJson.getRegions();
     }
 
     public List<DataJson> getConfig()

@@ -4,6 +4,8 @@ module api.content.page.json{
 
         descriptor:PageDescriptorJson;
 
+        regions: api.content.page.region.json.RegionJson[];
+
         config: api.data.json.DataTypeWrapperJson[];
 
         canRender: string[];

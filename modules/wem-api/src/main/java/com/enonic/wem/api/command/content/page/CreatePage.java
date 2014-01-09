@@ -5,6 +5,7 @@ import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.PageTemplateKey;
+import com.enonic.wem.api.content.page.region.PageRegions;
 import com.enonic.wem.api.data.RootDataSet;
 
 public class CreatePage
@@ -13,6 +14,8 @@ public class CreatePage
     private ContentId content;
 
     private PageTemplateKey pageTemplate;
+
+    private PageRegions regions;
 
     private RootDataSet config;
 
@@ -25,6 +28,12 @@ public class CreatePage
     public CreatePage pageTemplate( PageTemplateKey value )
     {
         this.pageTemplate = value;
+        return this;
+    }
+
+    public CreatePage regions( PageRegions value )
+    {
+        this.regions = value;
         return this;
     }
 
@@ -47,6 +56,11 @@ public class CreatePage
     public PageTemplateKey getPageTemplate()
     {
         return pageTemplate;
+    }
+
+    public PageRegions getRegions()
+    {
+        return regions;
     }
 
     public RootDataSet getConfig()

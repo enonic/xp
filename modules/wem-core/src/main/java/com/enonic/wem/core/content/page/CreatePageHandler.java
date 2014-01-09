@@ -21,6 +21,7 @@ public class CreatePageHandler
         final Page page = newPage().
             template( command.getPageTemplate() ).
             config( command.getConfig() ).
+            regions( command.getRegions() ).
             build();
 
         final UpdateContent updateContent = Commands.content().update().

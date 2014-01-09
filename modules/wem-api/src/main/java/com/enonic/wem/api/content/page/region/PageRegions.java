@@ -7,9 +7,11 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableMap;
 
+import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyVisitor;
 import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItemPath;
@@ -19,7 +21,7 @@ import com.enonic.wem.api.form.inputtype.InputTypes;
 public class PageRegions
     implements Iterable<Region>
 {
-    private ImmutableMap<String, Region> regionByName;
+    private final ImmutableMap<String, Region> regionByName;
 
     private PageRegions( final Builder builder )
     {
@@ -37,6 +39,19 @@ public class PageRegions
         return this.regionByName.values().iterator();
     }
 
+    public void toData( final DataSet regionsDataSet )
+    {
+        for ( Region region : regionByName.values() )
+        {
+            regionsDataSet.addProperty( region.getName(), new Value.Data( region.toData() ) );
+        }
+    }
+
+    public static Builder newPageRegions()
+    {
+        return new Builder();
+    }
+
     public static class Builder
     {
         private ImmutableMap.Builder<String, Region> regions = new ImmutableMap.Builder<>();
@@ -51,6 +66,16 @@ public class PageRegions
         {
             return new PageRegions( this );
         }
+    }
+
+    public static PageRegions from( final DataSet data )
+    {
+        Builder builder = new Builder();
+        for ( Property regionProperty : data.getProperties() )
+        {
+            builder.add( Region.newRegion( regionProperty.getData() ).build() );
+        }
+        return builder.build();
     }
 
     public static PageRegions resolve( final RootDataSet data, final Form form )

@@ -4,7 +4,7 @@ module app.wizard.page {
 
         private pageTemplateComboBox: api.ui.combobox.ComboBox<api.content.page.PageTemplateSummary>;
 
-        private pageTemplateChangedListeners:{(changedTo:api.content.page.PageTemplateSummary): void;}[] = [];
+        private pageTemplateChangedListeners: {(changedTo: api.content.page.PageTemplateSummary): void;}[] = [];
 
         constructor() {
             super("PageTemplateSelectorForm");
@@ -28,9 +28,9 @@ module app.wizard.page {
             fieldSet.add(new api.ui.form.FormItem("Selected", compositeFormInputEl));
             this.fieldset(fieldSet);
 
-            this.pageTemplateComboBox.addListener( <api.ui.combobox.ComboBoxListener<api.content.page.PageTemplateSummary>>{
+            this.pageTemplateComboBox.addListener(<api.ui.combobox.ComboBoxListener<api.content.page.PageTemplateSummary>>{
                 onInputValueChanged: () => null,
-                onOptionSelected: (option:api.ui.combobox.Option<api.content.page.PageTemplateSummary>) => {
+                onOptionSelected: (option: api.ui.combobox.Option<api.content.page.PageTemplateSummary>) => {
 
                     this.notifyPageTemplateChanged(option.displayValue);
                 }
@@ -56,7 +56,9 @@ module app.wizard.page {
 
 
             });
-            this.pageTemplateComboBox.selectOption(optionToSelect);
+            if (optionToSelect != null) {
+                this.pageTemplateComboBox.selectOption(optionToSelect);
+            }
         }
 
         private optionFormatter(row: number, cell: number, pageTemplateSummary: api.content.page.PageTemplateSummary, columnDef: any,
@@ -81,17 +83,17 @@ module app.wizard.page {
             return summaryEl.toString();
         }
 
-        private notifyPageTemplateChanged(changedTo:api.content.page.PageTemplateSummary) {
-            this.pageTemplateChangedListeners.forEach( (listener) => {
+        private notifyPageTemplateChanged(changedTo: api.content.page.PageTemplateSummary) {
+            this.pageTemplateChangedListeners.forEach((listener) => {
                 listener(changedTo);
             });
         }
 
-        addPageTemplateChangedListener(listener:{(changedTo:api.content.page.PageTemplateSummary): void;}) {
+        addPageTemplateChangedListener(listener: {(changedTo: api.content.page.PageTemplateSummary): void;}) {
             this.pageTemplateChangedListeners.push(listener);
         }
 
-        removePageTemplateChangedListener(listener:{(changedTo:api.content.page.PageTemplateSummary): void;}) {
+        removePageTemplateChangedListener(listener: {(changedTo: api.content.page.PageTemplateSummary): void;}) {
             this.pageTemplateChangedListeners = this.pageTemplateChangedListeners.filter(function (curr) {
                 return curr != listener;
             });

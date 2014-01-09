@@ -1,6 +1,7 @@
 package com.enonic.wem.api.content.page.region;
 
 
+import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.image.ImageComponent;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.part.PartComponent;
@@ -12,7 +13,7 @@ import static com.enonic.wem.api.content.page.part.PartComponent.newPartComponen
 
 class RegionPlaceableComponentFactory
 {
-    static RegionPlaceableComponent create( final DataSet dataSet )
+    static PageComponent create( final DataSet dataSet )
     {
         final String classSimpleName = dataSet.getName();
         if ( LayoutComponent.class.getSimpleName().equals( classSimpleName ) )

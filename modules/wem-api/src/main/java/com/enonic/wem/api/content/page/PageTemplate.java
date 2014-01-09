@@ -1,6 +1,7 @@
 package com.enonic.wem.api.content.page;
 
 
+import com.enonic.wem.api.content.page.region.PageRegions;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.support.Changes;
@@ -11,23 +12,32 @@ import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 public final class PageTemplate
     extends Template<PageTemplateName, PageTemplateKey, PageDescriptorKey>
 {
+    private final PageRegions regions;
+
     private final ContentTypeNames canRender;
 
     private PageTemplate( final Builder builder )
     {
         super( builder );
         this.canRender = builder.canRender != null ? builder.canRender : ContentTypeNames.empty();
+        this.regions = builder.regions;
     }
 
     private PageTemplate( final PageTemplateProperties properties )
     {
         super( properties );
         this.canRender = properties.canRender != null ? properties.canRender : ContentTypeNames.empty();
+        this.regions = properties.regions;
     }
 
     public ContentTypeNames getCanRender()
     {
         return canRender;
+    }
+
+    public PageRegions getRegions()
+    {
+        return regions;
     }
 
     public static PageTemplate.Builder newPageTemplate()
@@ -40,6 +50,8 @@ public final class PageTemplate
     {
         private ContentTypeNames canRender;
 
+        private PageRegions regions;
+
         private Builder()
         {
         }
@@ -47,6 +59,12 @@ public final class PageTemplate
         public Builder canRender( final ContentTypeNames canRender )
         {
             this.canRender = canRender;
+            return this;
+        }
+
+        public Builder regions( final PageRegions value )
+        {
+            this.regions = value;
             return this;
         }
 
@@ -59,7 +77,9 @@ public final class PageTemplate
     public static class PageTemplateProperties
         extends TemplateProperties
     {
-        private ContentTypeNames canRender;
+        ContentTypeNames canRender;
+
+        PageRegions regions;
 
     }
 
@@ -72,7 +92,6 @@ public final class PageTemplate
         extends PageTemplateProperties
         implements EditBuilder<PageTemplate>
     {
-        private ContentTypeNames canRender;
 
         private final PageTemplate original;
 
@@ -108,6 +127,13 @@ public final class PageTemplate
         {
             changes.recordChange( newPossibleChange( "canRender" ).from( this.original.getCanRender() ).to( value ).build() );
             this.canRender = value;
+            return this;
+        }
+
+        public PageTemplateEditBuilder regions( final PageRegions value )
+        {
+            changes.recordChange( newPossibleChange( "regions" ).from( this.original.getRegions() ).to( value ).build() );
+            this.regions = value;
             return this;
         }
 

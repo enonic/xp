@@ -2,6 +2,9 @@ package com.enonic.wem.api.content.page;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.content.page.part.PartComponent;
+import com.enonic.wem.api.content.page.region.PageRegions;
+import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.module.ModuleKey;
@@ -11,6 +14,7 @@ import com.enonic.wem.xml.BaseXmlSerializerTest;
 import com.enonic.wem.xml.XmlSerializers;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 public class PageTemplateXmlTest
@@ -20,18 +24,29 @@ public class PageTemplateXmlTest
     public void testFrom()
         throws Exception
     {
-        RootDataSet myRegion = new RootDataSet();
-        myRegion.setProperty( "region", new Value.String( "dummy" ) );
+        RootDataSet partInHeaderConfig = new RootDataSet();
+        partInHeaderConfig.setProperty( "width", new Value.Long( 500 ) );
+        partInHeaderConfig.setProperty( "caption", new Value.String( "So sweet!" ) );
+
+        Region region = Region.newRegion().
+            name( "my-region" ).
+            add( PartComponent.newPartComponent().
+                name( "PartInHeader" ).
+                template( "BluemanIntra-1.0.0|demo-1.0.0|my-part-template" ).
+                config( partInHeaderConfig ).
+                build() ).
+            build();
+        PageRegions regions = PageRegions.newPageRegions().add( region ).build();
 
         RootDataSet pageTemplateConfig = new RootDataSet();
         pageTemplateConfig.addProperty( "pause", new Value.Long( 10000 ) );
         pageTemplateConfig.addProperty( "thing.first", new Value.String( "one" ) );
         pageTemplateConfig.addProperty( "thing.second", new Value.String( "two" ) );
-        pageTemplateConfig.addProperty( "myRegion", new Value.Data( myRegion ) );
 
         PageTemplate pageTemplate = PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|main-page" ) ).
             displayName( "Main page template" ).
+            regions( regions ).
             config( pageTemplateConfig ).
             canRender( ContentTypeNames.from( "com.enonic.sometype", "some.other.type" ) ).
             descriptor( PageDescriptorKey.from( ModuleKey.from( "mainmodule-1.0.0" ), new ComponentDescriptorName( "landing-page" ) ) ).
@@ -60,13 +75,31 @@ public class PageTemplateXmlTest
         assertTrue( pageTemplate.getCanRender().contains( ContentTypeName.from( "com.enonic.sometype" ) ) );
         assertTrue( pageTemplate.getCanRender().contains( ContentTypeName.from( "some.other.type" ) ) );
 
+        // verify: config
         RootDataSet config = pageTemplate.getConfig();
         assertEquals( 10000L, config.getProperty( "pause" ).getLong().longValue() );
         assertEquals( "one", config.getProperty( "thing.first" ).getString() );
         assertEquals( "two", config.getProperty( "thing.second" ).getString() );
 
-        RootDataSet myRegion = config.getProperty( "myRegion" ).getData();
-        assertEquals( "dummy", myRegion.getProperty( "region" ).getString() );
+        // verify: regions
+        PageRegions regions = pageTemplate.getRegions();
+        Region region = regions.getRegion( "my-region" );
+        assertNotNull( region );
+        assertEquals( "my-region", region.getName() );
 
+        // verify: components in region
+        assertEquals( 1, region.getComponents().size() );
+
+        // verify: part component
+        PageComponent component = region.getComponents().iterator().next();
+        assertTrue( component instanceof PartComponent );
+        PartComponent partComponent = (PartComponent) component;
+        assertEquals( "PartInHeader", partComponent.getName().toString() );
+        assertEquals( "BluemanIntra-1.0.0|demo-1.0.0|my-part-template", partComponent.getTemplate().toString() );
+
+        // verify: component config
+        RootDataSet partComponentConfig = partComponent.getConfig();
+        assertEquals( new Long( 500 ), partComponentConfig.getProperty( "width" ).getLong() );
+        assertEquals( "So sweet!", partComponentConfig.getProperty( "caption" ).getString() );
     }
 }

@@ -36,6 +36,12 @@ public class CreatePageDescriptor
         return this;
     }
 
+    public CreatePageDescriptor name( final String name )
+    {
+        this.name = new ComponentDescriptorName( name );
+        return this;
+    }
+
     public CreatePageDescriptor displayName( final String displayName )
     {
         this.displayName = displayName;

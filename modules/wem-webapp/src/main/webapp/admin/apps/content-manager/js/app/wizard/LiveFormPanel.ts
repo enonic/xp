@@ -54,14 +54,13 @@ module app.wizard {
 
             if (content.isPage() && pageTemplate != null) {
                 var page = content.getPage();
-                var config = pageTemplate.getConfig();
-                if (page.hasConfig()) {
-                    config = page.getConfig();
+
+                var regions = pageTemplate.getRegions();
+                if (page.hasRegions()) {
+                    regions = page.getRegions();
                 }
 
-                var regionResolver = new api.content.page.region.RegionResolver(config);
-                var regions: api.content.page.region.PageRegions = regionResolver.resolve();
-                var headerRegion = regions.getRegion("myMainRegion");
+                var headerRegion = regions.getRegion("main");
                 console.log("header region", headerRegion);
                 //var region = regions.getByName();
                 //region.getPart(id);

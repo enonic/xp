@@ -1,35 +1,51 @@
-module api.content.page.part{
+module api.content.page.part {
 
     export class PartComponent extends api.content.page.PageComponent<PartTemplateKey> {
 
-        private config:api.data.RootDataSet;
+        private name: api.content.page.ComponentName;
 
-        constructor(builder:PartComponentBuilder) {
+        private config: api.data.RootDataSet;
+
+        constructor(builder: PartComponentBuilder) {
             super(builder);
+            this.name = builder.name;
             this.config = builder.config;
         }
 
-        getConfig():api.data.RootDataSet {
+        getName(): api.content.page.ComponentName {
+            return this.name;
+        }
+
+        getConfig(): api.data.RootDataSet {
             return this.config;
         }
     }
 
-    export class PartComponentBuilder extends api.content.page.ComponentBuilder<PartTemplateKey>{
+    export class PartComponentBuilder extends api.content.page.ComponentBuilder<PartTemplateKey> {
 
-        config:api.data.RootDataSet;
+        name: api.content.page.ComponentName;
 
-        public fromDataSet(dataSet:api.data.DataSet):PartComponentBuilder {
-            this.setTemplate( PartTemplateKey.fromString(dataSet.getProperty("template").getString()) );
-            this.config = dataSet.getProperty("config").getValue().asRootDataSet();
+        config: api.data.RootDataSet;
+
+        public fromJson(json: json.PartComponentJson): PartComponentBuilder {
+
+            this.setTemplate(PartTemplateKey.fromString(json.template));
+            this.setName(new api.content.page.ComponentName(json.name));
+            this.setConfig(api.data.DataFactory.createRootDataSet(json.config));
             return this;
         }
 
-        public setConfig(value:api.data.RootDataSet):PartComponentBuilder {
+        public setName(value: api.content.page.ComponentName): PartComponentBuilder {
+            this.name = value;
+            return this;
+        }
+
+        public setConfig(value: api.data.RootDataSet): PartComponentBuilder {
             this.config = value;
             return this;
         }
 
-        public build():PartComponent {
+        public build(): PartComponent {
             return new PartComponent(this);
         }
     }

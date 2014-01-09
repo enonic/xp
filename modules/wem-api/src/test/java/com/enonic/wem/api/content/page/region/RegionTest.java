@@ -25,6 +25,7 @@ public class RegionTest
         Region region = newRegion().
             name( "myRegion" ).
             add( newImageComponent().
+                name( "MyImage" ).
                 image( ContentId.from( "123" ) ).
                 template( ImageTemplateKey.from( "mysitetemplate-1.0.0|mymodule-1.0.0|mypagetemplate" ) ).
                 config( imageComponentConfig ).

@@ -5,11 +5,9 @@ import javax.inject.Inject;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
-import com.enonic.wem.api.command.content.page.CreatePage;
 import com.enonic.wem.api.command.content.page.CreatePageDescriptor;
-import com.enonic.wem.api.command.content.site.CreateSite;
-import com.enonic.wem.api.command.content.site.CreateSiteTemplate;
 import com.enonic.wem.api.command.module.CreateModule;
+import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
@@ -20,6 +18,10 @@ import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateName;
 import com.enonic.wem.api.content.page.image.ImageTemplateKey;
+import com.enonic.wem.api.content.page.image.ImageTemplateName;
+import com.enonic.wem.api.content.page.part.PartTemplateKey;
+import com.enonic.wem.api.content.page.part.PartTemplateName;
+import com.enonic.wem.api.content.page.region.PageRegions;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.site.ModuleConfig;
 import com.enonic.wem.api.content.site.ModuleConfigs;
@@ -41,10 +43,9 @@ import com.enonic.wem.core.support.BaseInitializer;
 
 import static com.enonic.wem.api.command.Commands.page;
 import static com.enonic.wem.api.command.Commands.site;
-import static com.enonic.wem.api.content.page.PageDescriptor.newPageDescriptor;
 import static com.enonic.wem.api.content.page.PageTemplate.newPageTemplate;
 import static com.enonic.wem.api.content.page.image.ImageComponent.newImageComponent;
-import static com.enonic.wem.api.content.page.region.Region.newRegion;
+import static com.enonic.wem.api.content.page.part.PartComponent.newPartComponent;
 import static com.enonic.wem.api.content.site.Vendor.newVendor;
 import static com.enonic.wem.api.form.Input.newInput;
 
@@ -58,11 +59,23 @@ public class SitesInitializer
 
     private final static SiteTemplateKey BLUMAN_SITE_TEMPLATE_KEY = SiteTemplateKey.from( "Blueman-1.0.0" );
 
+    private final static SiteTemplateKey BLUMAN_INTRA_SITE_TEMPLATE_KEY = SiteTemplateKey.from( "BluemanIntra-1.0.0" );
+
     private Module demoModule;
 
-    private SiteTemplate siteTemplate;
+    private PageDescriptor landingPageDescriptor;
 
-    private PageTemplate mainPageTemplate;
+    private PageTemplate mainPageLandingPageTemplate;
+
+    private PageTemplate departmentPageLandingPageTemplate;
+
+    private SiteTemplate bluManTrampolinerSiteTemplate;
+
+    private SiteTemplate bluManIntranettSiteTemplate;
+
+    private Content bluManTrampolineSite;
+
+    private Content bluManIntranetSite;
 
     protected SitesInitializer()
     {
@@ -73,104 +86,16 @@ public class SitesInitializer
     public void initialize()
         throws Exception
     {
-        final String pageDescriptorName = "main-page";
+        initializeModules();
 
-        final PageDescriptor pageDescriptor = newPageDescriptor().
-            name( pageDescriptorName ).
-            key( PageDescriptorKey.from( DEMO_MODULE_KEY, new ComponentDescriptorName( pageDescriptorName ) ) ).
-            displayName( "Landing page" ).
-            config( createPageDescriptorForm() ).
-            build();
+        initializeDescriptors();
 
-        this.demoModule = createDemoModule();
-        createPageDescriptor( pageDescriptor );
-        mainPageTemplate = createPageTemplate( pageDescriptor.getKey() );
-        this.siteTemplate = createSiteTemplate( BLUMAN_SITE_TEMPLATE_KEY, ModuleKeys.from( this.demoModule.getKey() ), mainPageTemplate );
+        initializeSiteTemplates();
 
-        createSite( "bluman-trampoliner", "Bluman Trampoliner" );
-        createSite( "bluman-intranett", "Bluman Intranett" );
+        initializeSites();
     }
 
-
-    private void createSite( final String name, final String displayName )
-    {
-        final ContentId content = createSiteContent( name, displayName );
-
-        final ModuleConfig moduleConfig = ModuleConfig.newModuleConfig().
-            module( this.demoModule.getModuleKey() ).
-            config( createDemoModuleData( "First", "Second" ) ).build();
-
-        final CreateSite createSite = site().create().
-            content( content ).
-            template( this.siteTemplate.getKey() ).
-            moduleConfigs( ModuleConfigs.from( moduleConfig ) );
-        client.execute( createSite );
-
-        final CreatePage createPage = page().create().
-            content( content ).
-            pageTemplate( this.mainPageTemplate.getKey() ).
-            config( createPageTemplateConfig( "red", createRegion( "myMainRegion" ), createRegion( "myHeaderRegion" ),
-                                              createRegion( "myFooterRegion" ) ) );
-        client.execute( createPage );
-    }
-
-    private PageDescriptor createPageDescriptor( final PageDescriptor pageDescriptor )
-    {
-        final CreatePageDescriptor createPageDescriptor = page().descriptor().page().create().
-            displayName( pageDescriptor.getDisplayName() ).
-            name( pageDescriptor.getName() ).
-            key( pageDescriptor.getKey() ).
-            config( pageDescriptor.getConfigForm() );
-        return client.execute( createPageDescriptor );
-    }
-
-    private PageTemplate createPageTemplate( final PageDescriptorKey pageDescriptorKey )
-    {
-        return newPageTemplate().
-            key( PageTemplateKey.from( BLUMAN_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, new PageTemplateName( "mainpage" ) ) ).
-            displayName( "Main Page" ).
-            config( createPageTemplateConfig( "blue", createRegion( "myMainRegion" ), createRegion( "myHeaderRegion" ),
-                                              createRegion( "myFooterRegion" ) ) ).
-            descriptor( pageDescriptorKey ).
-            build();
-    }
-
-    private RootDataSet createPageTemplateConfig( final String backgroundColor, final Region main, final Region header,
-                                                  final Region footer )
-    {
-        RootDataSet data = new RootDataSet();
-        data.setProperty( "background-color", new Value.String( backgroundColor ) );
-        data.setProperty( "main", new Value.Data( main.toData() ) );
-        data.setProperty( "header", new Value.Data( header.toData() ) );
-        data.setProperty( "footer", new Value.Data( footer.toData() ) );
-        return data;
-    }
-
-    private SiteTemplate createSiteTemplate( final SiteTemplateKey siteTemplateKey, final ModuleKeys moduleKeys,
-                                             final PageTemplate pageTemplate )
-    {
-        final CreateSiteTemplate createSiteTemplate = site().template().create().
-            siteTemplateKey( siteTemplateKey ).
-            displayName( "Blueman Site Template" ).
-            vendor( newVendor().name( "Enonic AS" ).url( "http://www.enonic.com" ).build() ).
-            modules( moduleKeys ).
-            description( "Demo site template" ).
-            url( "http://enonic.net" ).
-            rootContentType( ContentTypeName.page() ).
-            addTemplate( pageTemplate );
-
-        try
-        {
-            client.execute( Commands.site().template().delete( siteTemplateKey ) );
-        }
-        catch ( NoSiteTemplateExistsException e )
-        {
-            // IGNORE IF NOT FOUND
-        }
-        return client.execute( createSiteTemplate );
-    }
-
-    private Module createDemoModule()
+    private void initializeModules()
     {
         final CreateModule createModule = Commands.module().create().
             name( DEMO_MODULE_KEY.getName().toString() ).
@@ -194,12 +119,147 @@ public class SitesInitializer
         {
             // IGNORE IF NOT FOUND
         }
-        final Module module = client.execute( createModule );
 
-        return module;
+        this.demoModule = client.execute( createModule );
     }
 
-    private Form createPageDescriptorForm()
+    private void initializeDescriptors()
+    {
+        final CreatePageDescriptor createPageDescriptor = page().descriptor().page().create().
+            displayName( "Landing page" ).
+            name( "landing-page" ).
+            key( PageDescriptorKey.from( DEMO_MODULE_KEY, new ComponentDescriptorName( "landing-page" ) ) ).
+            config( createLandingPageDescriptorForm() );
+
+        landingPageDescriptor = client.execute( createPageDescriptor );
+
+    }
+
+    private void initializeSiteTemplates()
+    {
+        final PageRegions.Builder mainPageRegions = PageRegions.newPageRegions();
+        createDefaultPageRegions( mainPageRegions, BLUMAN_SITE_TEMPLATE_KEY );
+        mainPageLandingPageTemplate = newPageTemplate().
+            key( PageTemplateKey.from( BLUMAN_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, new PageTemplateName( "main-page" ) ) ).
+            displayName( "Main Page" ).
+            regions( mainPageRegions.build() ).
+            config( createPageTemplateConfig( "blue" ) ).
+            descriptor( landingPageDescriptor.getKey() ).
+            build();
+
+        final PageRegions.Builder departmentPageRegions = PageRegions.newPageRegions();
+        createDefaultPageRegions( departmentPageRegions, BLUMAN_INTRA_SITE_TEMPLATE_KEY );
+        departmentPageLandingPageTemplate = newPageTemplate().
+            key( PageTemplateKey.from( BLUMAN_INTRA_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, new PageTemplateName( "department-page" ) ) ).
+            displayName( "Department Page" ).
+            regions( departmentPageRegions.build() ).
+            config( createPageTemplateConfig( "red" ) ).
+            descriptor( landingPageDescriptor.getKey() ).
+            build();
+
+        try
+        {
+            client.execute( Commands.site().template().delete( BLUMAN_SITE_TEMPLATE_KEY ) );
+        }
+        catch ( NoSiteTemplateExistsException e )
+        {
+            // IGNORE IF NOT FOUND
+        }
+
+        try
+        {
+            client.execute( Commands.site().template().delete( BLUMAN_INTRA_SITE_TEMPLATE_KEY ) );
+        }
+        catch ( NoSiteTemplateExistsException e )
+        {
+            // IGNORE IF NOT FOUND
+        }
+
+        bluManTrampolinerSiteTemplate = client.execute( site().template().create().
+            siteTemplateKey( BLUMAN_SITE_TEMPLATE_KEY ).
+            displayName( "Blueman Site Template" ).
+            vendor( newVendor().name( "Enonic AS" ).url( "http://www.enonic.com" ).build() ).
+            modules( ModuleKeys.from( demoModule.getKey() ) ).
+            description( "Demo site template for portals" ).
+            url( "http://enonic.net" ).
+            rootContentType( ContentTypeName.page() ).
+            addTemplate( mainPageLandingPageTemplate ) );
+
+        bluManIntranettSiteTemplate = client.execute( site().template().create().
+            siteTemplateKey( BLUMAN_INTRA_SITE_TEMPLATE_KEY ).
+            displayName( "Blueman Intranet Site Template" ).
+            vendor( newVendor().name( "Enonic AS" ).url( "http://www.enonic.com" ).build() ).
+            modules( ModuleKeys.from( demoModule.getKey() ) ).
+            description( "Demo site template for intranets" ).
+            url( "http://enonic.net" ).
+            rootContentType( ContentTypeName.page() ).
+            addTemplate( departmentPageLandingPageTemplate ) );
+    }
+
+    private void initializeSites()
+    {
+        bluManTrampolineSite = createSiteContent( "bluman-trampoliner", "Bluman Trampoliner" );
+
+        bluManTrampolineSite = client.execute( site().create().
+            content( bluManTrampolineSite.getId() ).
+            template( this.bluManTrampolinerSiteTemplate.getKey() ).
+            moduleConfigs( ModuleConfigs.from( ModuleConfig.newModuleConfig().
+                module( this.demoModule.getModuleKey() ).
+                config( createDemoModuleData( "First", "Second" ) ).build() ) ) );
+
+        PageRegions.Builder pageRegions = PageRegions.newPageRegions();
+        createDefaultPageRegions( pageRegions, BLUMAN_SITE_TEMPLATE_KEY );
+
+        bluManTrampolineSite = client.execute( page().create().
+            content( bluManTrampolineSite.getId() ).
+            pageTemplate( this.mainPageLandingPageTemplate.getKey() ).
+            regions( pageRegions.build() ).
+            config( createPageTemplateConfig( "blue" ) ) );
+
+
+
+        bluManIntranetSite = createSiteContent( "bluman-intranett", "Bluman Intranett" );
+
+        bluManIntranetSite = client.execute( site().create().
+            content( bluManIntranetSite.getId() ).
+            template( this.bluManIntranettSiteTemplate.getKey() ).
+            moduleConfigs( ModuleConfigs.from( ModuleConfig.newModuleConfig().
+                module( this.demoModule.getModuleKey() ).
+                config( createDemoModuleData( "Uno", "Secondo" ) ).build() ) ) );
+
+        pageRegions = PageRegions.newPageRegions();
+        createDefaultPageRegions( pageRegions, BLUMAN_INTRA_SITE_TEMPLATE_KEY );
+        bluManIntranetSite = client.execute( page().create().
+            content( bluManIntranetSite.getId() ).
+            pageTemplate( this.departmentPageLandingPageTemplate.getKey() ).
+            regions( pageRegions.build() ).
+            config( createPageTemplateConfig( "red" ) ) );
+    }
+
+    private RootDataSet createMyImageTemplateConfig( long width, String caption )
+    {
+        RootDataSet config = new RootDataSet();
+        config.setProperty( "width", new Value.Long( width ) );
+        config.setProperty( "caption", new Value.String( caption ) );
+        return config;
+    }
+
+
+    private RootDataSet createMyPartTemplateConfig( String text )
+    {
+        RootDataSet config = new RootDataSet();
+        config.setProperty( "text", new Value.String( text ) );
+        return config;
+    }
+
+    private RootDataSet createPageTemplateConfig( final String backgroundColor )
+    {
+        RootDataSet data = new RootDataSet();
+        data.setProperty( "background-color", new Value.String( backgroundColor ) );
+        return data;
+    }
+
+    private Form createLandingPageDescriptorForm()
     {
 
         return Form.newForm().
@@ -212,21 +272,48 @@ public class SitesInitializer
             build();
     }
 
-    private Region createRegion( final String name )
+    private void createDefaultPageRegions( final PageRegions.Builder pageRegions, final SiteTemplateKey siteTemplateKey )
     {
-        RootDataSet imageComponentConfig = new RootDataSet();
-        imageComponentConfig.setProperty( "width", new Value.Long( 300 ) );
-        imageComponentConfig.setProperty( "caption", new Value.String( "My photo" ) );
-
-        return newRegion().
-            name( name ).
-            add( newImageComponent().
-                image( ContentId.from( "123" ) ).
-                template( ImageTemplateKey.from( "mysitetemplate-1.0.0|mymodule-1.0.0|mypagetemplate" ) ).
-                config( imageComponentConfig ).
+        Region myHeaderRegion = Region.newRegion().
+            name( "header" ).
+            add( newPartComponent().
+                name( "PartInHeader" ).
+                template( PartTemplateKey.from( siteTemplateKey, DEMO_MODULE_KEY, new PartTemplateName( "my-part-template" ) ) ).
+                config( createMyImageTemplateConfig( 500, "So sweet!" ) ).
                 build() ).
             build();
+
+        Region myMainRegion = Region.newRegion().
+            name( "main" ).
+            add( newImageComponent().
+                name( "FancyImage" ).
+                image( ContentId.from( "123" ) ).
+                template( ImageTemplateKey.from( siteTemplateKey, DEMO_MODULE_KEY, new ImageTemplateName( "my-image-template" ) ) ).
+                config( createMyImageTemplateConfig( 500, "So nice!" ) ).
+                build() ).
+            add( newPartComponent().
+                name( "PartInMain" ).
+                template( PartTemplateKey.from( siteTemplateKey, DEMO_MODULE_KEY, new PartTemplateName( "my-part-template" ) ) ).
+                config( createMyPartTemplateConfig( "Take a part!" ) ).
+                build() ).
+            build();
+
+        Region myFooterRegion = Region.newRegion().
+            name( "footer" ).
+            add( newPartComponent().
+                name( "PartInFooter" ).
+                template( PartTemplateKey.from( siteTemplateKey, DEMO_MODULE_KEY, new PartTemplateName( "my-part-template" ) ) ).
+                config( createMyPartTemplateConfig( "Footer" ) ).
+                build() ).
+            build();
+
+        pageRegions.
+            add( myHeaderRegion ).
+            add( myMainRegion ).
+            add( myFooterRegion ).
+            build();
     }
+
 
     private RootDataSet createDemoModuleData( final String a, final String b )
     {
@@ -246,7 +333,7 @@ public class SitesInitializer
             build();
     }
 
-    private ContentId createSiteContent( final String name, final String displayName )
+    private Content createSiteContent( final String name, final String displayName )
     {
         final CreateContent createContent = Commands.content().create().
             name( name ).
@@ -255,7 +342,7 @@ public class SitesInitializer
             contentType( ContentTypeName.page() ).
             form( Form.newForm().build() ).
             contentData( new ContentData() );
-        return client.execute( createContent ).getId();
+        return client.execute( createContent );
     }
 
     @Inject

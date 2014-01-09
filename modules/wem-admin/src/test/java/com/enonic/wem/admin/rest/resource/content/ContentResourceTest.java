@@ -42,6 +42,10 @@ import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageTemplateKey;
+import com.enonic.wem.api.content.page.part.PartComponent;
+import com.enonic.wem.api.content.page.part.PartTemplateKey;
+import com.enonic.wem.api.content.page.region.PageRegions;
+import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.query.ContentQueryResult;
 import com.enonic.wem.api.content.site.ModuleConfig;
 import com.enonic.wem.api.content.site.ModuleConfigs;
@@ -234,11 +238,31 @@ public class ContentResourceTest
     public void get_page_content_by_id()
         throws Exception
     {
-        final RootDataSet pageConfig = new RootDataSet();
+        RootDataSet componentConfig = new RootDataSet();
+        componentConfig.setProperty( "my-prop", new Value.String( "value" ) );
+
+        PartComponent component = PartComponent.newPartComponent().
+            name( "my-component" ).
+            template( PartTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|partTemplateName" ) ).
+            config( componentConfig ).
+            build();
+
+        Region region = Region.newRegion().
+            name( "my-region" ).
+            add( component ).
+            build();
+
+        PageRegions regions = PageRegions.newPageRegions().
+            add( region ).
+            build();
+
+        RootDataSet pageConfig = new RootDataSet();
         pageConfig.setProperty( "background-color", new Value.String( "blue" ) );
         Page page = Page.newPage().
             template( PageTemplateKey.from( "mysitetemplate-1.0.0|mymodule-1.0.0|mypagetemplate" ) ).
-            config( pageConfig ).build();
+            regions( regions ).
+            config( pageConfig ).
+            build();
 
         Content content = createContent( "aaa", "my_a_content", "my_type" );
         content = newContent( content ).page( page ).build();

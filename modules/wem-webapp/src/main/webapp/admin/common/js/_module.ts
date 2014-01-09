@@ -94,6 +94,7 @@
 ///<reference path='content/page/layout/json/_module.ts' />
 ///<reference path='content/page/part/json/_module.ts' />
 ///<reference path='content/page/part/_module.ts' />
+///<reference path='content/page/region/json/_module.ts' />
 ///<reference path='content/page/region/_module.ts' />
 
 

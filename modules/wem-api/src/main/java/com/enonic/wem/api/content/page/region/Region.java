@@ -1,8 +1,10 @@
 package com.enonic.wem.api.content.page.region;
 
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
@@ -11,10 +13,11 @@ public class Region
 {
     private final String name;
 
-    private final ImmutableList<RegionPlaceableComponent> components;
+    private final ImmutableList<PageComponent> components;
 
     public Region( final Builder builder )
     {
+        Preconditions.checkNotNull( builder.name, "name cannot be null" );
         this.name = builder.name;
         this.components = builder.components.build();
     }
@@ -24,7 +27,7 @@ public class Region
         return name;
     }
 
-    public ImmutableList<RegionPlaceableComponent> getComponents()
+    public ImmutableList<PageComponent> getComponents()
     {
         return components;
     }
@@ -33,7 +36,7 @@ public class Region
     {
         final RootDataSet data = new RootDataSet();
         data.setProperty( "name", new Value.String( getName() ) );
-        for ( final RegionPlaceableComponent component : getComponents() )
+        for ( final PageComponent component : getComponents() )
         {
             final DataSet componentAsDataSet = component.toDataSet();
             data.add( componentAsDataSet );
@@ -66,7 +69,7 @@ public class Region
     {
         private String name;
 
-        private ImmutableList.Builder<RegionPlaceableComponent> components = new ImmutableList.Builder<>();
+        private ImmutableList.Builder<PageComponent> components = new ImmutableList.Builder<>();
 
         public Builder()
         {
@@ -76,7 +79,7 @@ public class Region
         public Builder( final Region source )
         {
             this.name = source.name;
-            for ( RegionPlaceableComponent component : source.components )
+            for ( PageComponent component : source.components )
             {
                 this.components.add( component );
             }
@@ -88,7 +91,7 @@ public class Region
             return this;
         }
 
-        public Builder add( final RegionPlaceableComponent component )
+        public Builder add( final PageComponent component )
         {
             this.components.add( component );
             return this;

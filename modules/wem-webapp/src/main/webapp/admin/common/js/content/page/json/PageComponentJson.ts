@@ -1,8 +1,9 @@
-module api.content.page.json{
+module api.content.page.json {
 
-    export interface PageComponentJson{
+    export interface PageComponentJson {
 
-        componentType:string;
+        type:string;
 
+        template:string;
     }
 }

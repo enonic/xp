@@ -26,14 +26,13 @@ module api.content.page.region {
 
         pageComponents: api.content.page.PageComponent<api.content.page.TemplateKey>[] = [];
 
-        public fromRootDataSet(data: api.data.RootDataSet): RegionBuilder {
+        public setName(value: string): RegionBuilder {
+            this.name = value;
+            return this;
+        }
 
-            this.name = data.getProperty("name").getString();
-
-            data.getDataSets().forEach((dataSet: api.data.DataSet) => {
-                var component = RegionPlaceableComponentFactory.create(dataSet);
-                this.pageComponents.push(component);
-            });
+        public addComponent(value: api.content.page.PageComponent<api.content.page.TemplateKey>): RegionBuilder {
+            this.pageComponents.push(value);
             return this;
         }
 

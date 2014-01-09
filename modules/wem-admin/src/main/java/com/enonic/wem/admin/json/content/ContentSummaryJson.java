@@ -3,7 +3,6 @@ package com.enonic.wem.admin.json.content;
 import org.joda.time.DateTime;
 
 import com.enonic.wem.admin.json.ChangeTraceableJson;
-import com.enonic.wem.admin.json.DateTimeFormatter;
 import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.admin.rest.resource.content.ContentImageIconUrlResolver;
 import com.enonic.wem.api.content.Content;

@@ -327,6 +327,23 @@ public class DataSet
         return data.toProperty();
     }
 
+    /**
+     * Returns a ImmutableList of found Property-s.
+     */
+    public ImmutableList<Property> getProperties()
+    {
+        final ImmutableList.Builder<Property> list = new ImmutableList.Builder<Property>();
+
+        for ( Data data : this.dataById.values() )
+        {
+            if ( data.isProperty() )
+            {
+                list.add( data.toProperty() );
+            }
+        }
+        return list.build();
+    }
+
     final Value getValue( final DataPath path )
     {
         final Data data = getData( path );

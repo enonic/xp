@@ -24,6 +24,24 @@ module api.content.page.region {
 
         regions: Region[] = [];
 
+        fromJson(regionsJson: json.RegionJson[]): PageRegionsBuilder {
+
+            regionsJson.forEach((regionJson: json.RegionJson) => {
+
+                var regionBuilder = new RegionBuilder().
+                    setName(regionJson.name);
+
+                regionJson.components.forEach((componentJson: api.content.page.json.PageComponentJson) => {
+                    var pageComponent = api.content.page.PageComponentFactory.createFromJson(componentJson);
+                    regionBuilder.addComponent(pageComponent);
+                });
+
+
+                this.addRegion(regionBuilder.build());
+            });
+            return this;
+        }
+
         addRegion(value: Region): PageRegionsBuilder {
             this.regions.push(value);
             return this;

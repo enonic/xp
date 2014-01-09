@@ -2,3 +2,4 @@
 ///<reference path='PartTemplateSummaryJson.ts' />
 ///<reference path='PartTemplateSummaryListJson.ts' />
 ///<reference path='PartTemplateJson.ts' />
+///<reference path='PartComponentJson.ts' />

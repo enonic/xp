@@ -1,6 +1,7 @@
 package com.enonic.wem.api.content.page;
 
 
+import com.enonic.wem.api.content.page.region.PageRegions;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.support.Changes;
 import com.enonic.wem.api.support.EditBuilder;
@@ -10,12 +11,25 @@ import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 public final class Page
     extends PageComponent<PageTemplateKey>
 {
+    private final PageRegions regions;
+
     private final RootDataSet config;
 
     private Page( final PageProperties properties )
     {
         super( properties );
         this.config = properties.config;
+        this.regions = properties.regions;
+    }
+
+    public boolean hasRegions()
+    {
+        return regions != null;
+    }
+
+    public PageRegions getRegions()
+    {
+        return regions;
     }
 
     public boolean hasConfig()
@@ -36,6 +50,8 @@ public final class Page
     static class PageProperties
         extends Properties<PageTemplateKey>
     {
+        PageRegions regions;
+
         RootDataSet config;
 
         PageProperties()
@@ -76,6 +92,13 @@ public final class Page
             return this;
         }
 
+        public PageEditBuilder regions( final PageRegions value )
+        {
+            changes.recordChange( newPossibleChange( "regions" ).from( this.original.getRegions() ).to( value ).build() );
+            this.regions = value;
+            return this;
+        }
+
         public PageEditBuilder config( RootDataSet value )
         {
             changes.recordChange( newPossibleChange( "config" ).from( original.getConfig() ).to( value ).build() );
@@ -109,15 +132,21 @@ public final class Page
             this.config = RootDataSet.newDataSet().build().toRootDataSet();
         }
 
-        public Builder config( final RootDataSet config )
+        public Builder regions( final PageRegions value )
         {
-            this.config = config;
+            this.regions = value;
             return this;
         }
 
         public Builder template( final PageTemplateKey value )
         {
             this.template = value;
+            return this;
+        }
+
+        public Builder config( final RootDataSet config )
+        {
+            this.config = config;
             return this;
         }
 
