@@ -22,18 +22,6 @@ module app.browse {
             this.setActiveList(api.app.browse.grid.TreeGridPanel.TREE);
             this.setKeyField("key");
 
-            app.browse.filter.SchemaBrowseSearchEvent.on((event) => {
-                // TODO: use schemas from event when filter is implemented
-                // this.loadData(event.getJsonModels())
-
-                this.refresh();
-            });
-
-            app.browse.filter.SchemaBrowseResetEvent.on((event) => {
-                this.removeAll();
-                this.refresh();
-            });
-
             this.addListener({
                 onItemDoubleClicked: (event:api.app.browse.grid.TreeItemDoubleClickedEvent) => {
                     new app.browse.EditSchemaEvent([<any>event.clickedModel]).fire();

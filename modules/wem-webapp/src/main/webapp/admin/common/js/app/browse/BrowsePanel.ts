@@ -10,7 +10,7 @@ module api.app.browse{
 
         browseItemPanel:BrowseItemPanel<M>;
 
-        filterPanel:api.app.browse.filter.BrowseFilterPanel;
+        filterPanel?:api.app.browse.filter.BrowseFilterPanel;
     }
 
     export class BrowsePanel<M> extends api.ui.Panel implements api.ui.ActionContainer {

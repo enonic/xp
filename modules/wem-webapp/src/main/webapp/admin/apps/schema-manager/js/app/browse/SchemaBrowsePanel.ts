@@ -24,13 +24,11 @@ module app.browse {
                 this.browseActions.REINDEX_SCHEMA,
                 this.browseActions.EXPORT_SCHEMA]});
 
-            var filterPanel = new app.browse.filter.SchemaBrowseFilterPanel();
 
             super({
                 browseToolbar: this.toolbar,
                 treeGridPanel: treeGridPanel,
-                browseItemPanel: browseItemPanel,
-                filterPanel: filterPanel
+                browseItemPanel: browseItemPanel
             });
 
             api.schema.SchemaDeletedEvent.on((event) => {
