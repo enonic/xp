@@ -60,6 +60,10 @@ public class EntityPropertyIndexConfigJson
             builder.addPropertyIndexConfig( path, propertyIndexConfigJson.toPropertyIndexConfig() );
         }
 
+        builder.collection( this.getCollection() );
+
+        builder.analyzer( this.getAnalyzer() );
+
         return builder.build();
     }
 

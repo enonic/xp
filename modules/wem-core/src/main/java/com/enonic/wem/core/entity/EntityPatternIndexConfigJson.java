@@ -33,7 +33,6 @@ public class EntityPatternIndexConfigJson
                                          @JsonProperty("collection") final String collection, //
                                          @JsonProperty("configs") final Set<PathIndexConfigJson> configs,  //
                                          @JsonProperty("defaultConfig") final PropertyIndexConfigJson defaultConfig )
-
     {
         super( analyzer, collection );
         this.configs = configs;
@@ -66,6 +65,10 @@ public class EntityPatternIndexConfigJson
         }
 
         builder.defaultConfig( this.defaultConfig.toPropertyIndexConfig() );
+
+        builder.collection( this.getCollection() );
+
+        builder.analyzer( this.getAnalyzer() );
 
         return builder.build();
     }
