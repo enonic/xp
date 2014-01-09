@@ -1,54 +1,5 @@
 module app.wizard {
 
-    export class ContentWizardPanelParams {
-
-        createSite: boolean = false;
-
-        tabId: api.app.AppBarTabId;
-
-        contentType: api.schema.content.ContentType;
-
-        parentContent: api.content.Content;
-
-        persistedContent: api.content.Content;
-
-        site: api.content.Content;
-
-        siteTemplate: api.content.site.template.SiteTemplate;
-
-        setAppBarTabId(value: api.app.AppBarTabId): ContentWizardPanelParams {
-            this.tabId = value;
-            return this;
-        }
-
-        setContentType(value: api.schema.content.ContentType): ContentWizardPanelParams {
-            this.contentType = value;
-            return this;
-        }
-
-        setParentContent(value: api.content.Content): ContentWizardPanelParams {
-            this.parentContent = value;
-            return this;
-        }
-
-        setPersistedContent(value: api.content.Content): ContentWizardPanelParams {
-            this.persistedContent = value;
-            return this;
-        }
-
-        setSite(value: api.content.Content): ContentWizardPanelParams {
-            this.site = value;
-            return this;
-        }
-
-        setCreateSite(value: api.content.site.template.SiteTemplate): ContentWizardPanelParams {
-            this.siteTemplate = value;
-            this.createSite = this.siteTemplate != null;
-            return this;
-        }
-
-    }
-
     export class ContentWizardPanel extends api.app.wizard.WizardPanel<api.content.Content> {
 
         private parentContent: api.content.Content;
@@ -154,6 +105,7 @@ module app.wizard {
                 this.displayNameScriptExecutor.setScript(this.contentType.getContentDisplayNameScript());
             }
 
+
             super({
                 tabId: params.tabId,
                 persistedItem: params.persistedContent,
@@ -189,15 +141,20 @@ module app.wizard {
             this.startRememberFocus();
         }
 
-        createSteps(content: api.content.Content): api.app.wizard.WizardStep[] {
+        private createSteps(content: api.content.Content): api.app.wizard.WizardStep[] {
 
             var steps: api.app.wizard.WizardStep[] = [];
 
             if (this.siteWizardStepForm != null) {
                 steps.push(new api.app.wizard.WizardStep("Site", this.siteWizardStepForm));
             }
+
             steps.push(new api.app.wizard.WizardStep(this.contentType.getDisplayName(), this.contentWizardStepForm));
-            steps.push(new api.app.wizard.WizardStep("Page", this.pageWizardStepForm));
+
+            if (this.siteContent) {
+                steps.push(new api.app.wizard.WizardStep("Page", this.pageWizardStepForm));
+            }
+
             return steps;
         }
 
