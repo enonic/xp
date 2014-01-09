@@ -76,7 +76,7 @@ module api.ui.combobox {
                 fullWidthRows: true,
                 forceFitColumns: true,
                 rowHeight: this.rowHeight,
-                dataIdProperty: "value"
+                dataIdProperty: config.dataIdProperty ? config.dataIdProperty : "value"
             };
 
             this.dropdownData = new api.ui.grid.DataView<Option<T>>();
@@ -151,8 +151,8 @@ module api.ui.combobox {
             this.dropdown.hide();
         }
 
-        setOptions(options:Option<T>[]) {
-            this.dropdownData.setItems(options);
+        setOptions(options:Option<T>[], optionIdProperty?:string) {
+            this.dropdownData.setItems(options, optionIdProperty);
             if (this.dropdown.isVisible() || this.emptyDropdown.isVisible()) {
                 this.showDropdown();
             }

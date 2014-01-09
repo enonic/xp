@@ -1,39 +1,39 @@
-module api.content.page{
+module api.content.page {
 
     export class Page extends PageComponent<PageTemplateKey> {
 
-        private config:api.data.RootDataSet;
+        private config: api.data.RootDataSet;
 
-        constructor(builder:PageBuilder) {
+        constructor(builder: PageBuilder) {
             super(builder);
             this.config = builder.config;
         }
 
-        hasConfig():boolean {
+        hasConfig(): boolean {
             return this.config != null;
         }
 
-        getConfig():api.data.RootDataSet {
+        getConfig(): api.data.RootDataSet {
             return this.config;
         }
     }
 
-    export class PageBuilder extends ComponentBuilder<PageTemplateKey>{
+    export class PageBuilder extends ComponentBuilder<PageTemplateKey> {
 
-        config:api.data.RootDataSet;
+        config: api.data.RootDataSet;
 
-        public fromJson(json:api.content.page.json.PageJson):PageBuilder {
+        public fromJson(json: api.content.page.json.PageJson): PageBuilder {
             this.setTemplate(PageTemplateKey.fromString(json.template));
             this.setConfig(api.data.DataFactory.createRootDataSet(json.config));
             return this;
         }
 
-        public setConfig(value:api.data.RootDataSet):PageBuilder {
+        public setConfig(value: api.data.RootDataSet): PageBuilder {
             this.config = value;
             return this;
         }
 
-        public build():Page {
+        public build(): Page {
             return new Page(this);
         }
     }

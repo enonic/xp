@@ -26,6 +26,11 @@ public class PageRegions
         this.regionByName = builder.regions.build();
     }
 
+    public Region getRegion( final String name )
+    {
+        return this.regionByName.get( name );
+    }
+
     @Override
     public Iterator<Region> iterator()
     {

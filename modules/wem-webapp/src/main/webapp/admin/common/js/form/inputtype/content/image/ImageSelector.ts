@@ -62,7 +62,7 @@ module api.form.inputtype.content.image {
             this.uploadDialog.addListener({
                 onImageUploaded: (uploadItem: api.ui.UploadItem) => {
 
-                    this.createTemporaryImageContent(uploadItem);
+                    this.createEmbeddedImageContent(uploadItem);
                 }
             });
         }
@@ -245,7 +245,7 @@ module api.form.inputtype.content.image {
 
         }
 
-        private createTemporaryImageContent(uploadItem: api.ui.UploadItem) {
+        private createEmbeddedImageContent(uploadItem: api.ui.UploadItem) {
 
             var attachmentName = new api.content.attachment.AttachmentName(uploadItem.getName());
             var attachment = new api.content.attachment.AttachmentBuilder().

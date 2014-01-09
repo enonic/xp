@@ -5,7 +5,7 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.entity.EntityQuery;
+import com.enonic.wem.api.entity.query.EntityQuery;
 import com.enonic.wem.api.query.facet.FacetQuery;
 import com.enonic.wem.api.query.filter.Filter;
 import com.enonic.wem.api.query.parser.QueryParser;

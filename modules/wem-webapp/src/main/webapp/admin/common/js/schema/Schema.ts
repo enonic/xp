@@ -33,7 +33,7 @@ module api.schema {
         }
 
         constructor(json:api.schema.SchemaJson) {
-            super(json);
+            super(json, "key");
             this.key = json.key;
             this.name = json.name;
             this.displayName = json.displayName;

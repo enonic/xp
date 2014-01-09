@@ -11,6 +11,13 @@ module api.content.page.region {
             this.pageComponents = builder.pageComponents;
         }
 
+        getName(): string {
+            return this.name;
+        }
+
+        getComponents(): api.content.page.PageComponent<api.content.page.TemplateKey>[] {
+            return this.pageComponents;
+        }
     }
 
     export class RegionBuilder {

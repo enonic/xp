@@ -2,7 +2,6 @@ package com.enonic.wem.admin.rest.resource.content;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -15,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.collect.Lists;
 import com.sun.jersey.api.NotFoundException;
 
 import com.enonic.wem.admin.json.content.AbstractContentListJson;
@@ -24,11 +24,12 @@ import com.enonic.wem.admin.json.content.ContentJson;
 import com.enonic.wem.admin.json.content.ContentListJson;
 import com.enonic.wem.admin.json.content.ContentSummaryJson;
 import com.enonic.wem.admin.json.content.ContentSummaryListJson;
+import com.enonic.wem.admin.json.content.attachment.AttachmentJson;
 import com.enonic.wem.admin.json.data.DataJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
-import com.enonic.wem.admin.json.content.attachment.AttachmentJson;
 import com.enonic.wem.admin.rest.resource.content.json.ContentFindParams;
 import com.enonic.wem.admin.rest.resource.content.json.ContentNameJson;
+import com.enonic.wem.admin.rest.resource.content.json.ContentQueryJson;
 import com.enonic.wem.admin.rest.resource.content.json.CreateContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentParams;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentResultJson;
@@ -57,10 +58,13 @@ import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditor;
-import com.enonic.wem.api.content.query.ContentIndexQuery;
-import com.enonic.wem.api.content.query.ContentIndexQueryResult;
+import com.enonic.wem.api.content.query.ContentQuery;
+import com.enonic.wem.api.content.query.ContentQueryResult;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
-import com.enonic.wem.api.schema.content.ContentTypeNames;
+import com.enonic.wem.api.query.expr.DynamicConstraintExpr;
+import com.enonic.wem.api.query.expr.FunctionExpr;
+import com.enonic.wem.api.query.expr.QueryExpr;
+import com.enonic.wem.api.query.expr.ValueExpr;
 
 import static com.enonic.wem.api.content.Content.editContent;
 
@@ -223,38 +227,21 @@ public class ContentResource
 
     }
 
+
     @POST
     @Path("find")
     @Consumes(MediaType.APPLICATION_JSON)
     public AbstractContentListJson find( final ContentFindParams params )
     {
 
-        final ContentIndexQuery contentIndexQuery = new ContentIndexQuery();
-        contentIndexQuery.setFullTextSearchString( params.getFulltext() );
-        contentIndexQuery.setIncludeFacets( params.isIncludeFacets() );
-        contentIndexQuery.setContentTypeNames( ContentTypeNames.from( params.getContentTypes() ) );
+        final ContentQuery.Builder contentQueryBuilder = ContentQuery.newContentQuery().size( params.getCount() );
 
-        if ( params.getCount() >= 0 )
-        {
-            contentIndexQuery.setSize( params.getCount() );
-        }
+        final QueryExpr fulltextQuery = _temp_buildFulltextFunctionExpression( params );
 
-        Set<ContentFindParams.Range> ranges = params.getRanges();
-        if ( ranges != null && ranges.size() > 0 )
-        {
-            for ( ContentFindParams.Range range : ranges )
-            {
-                contentIndexQuery.addRange( range.getLower(), range.getUpper() );
-            }
-        }
+        contentQueryBuilder.queryExpr( fulltextQuery );
 
-        if ( params.isIncludeFacets() )
-        {
-            contentIndexQuery.setFacets( params.getFacets() );
-        }
-
-        final FindContent findContent = Commands.content().find().query( contentIndexQuery );
-        final ContentIndexQueryResult contentIndexQueryResult = this.client.execute( findContent );
+        final FindContent findContent = Commands.content().find().query( contentQueryBuilder.build() );
+        final ContentQueryResult contentIndexQueryResult = this.client.execute( findContent );
 
         final GetContentByIds getContents = Commands.content().get().byIds( ContentIds.from( contentIndexQueryResult.getContentIds() ) );
         final Contents contents = this.client.execute( getContents );
@@ -271,6 +258,47 @@ public class ContentResource
         {
             return new FacetedContentIdListJson( contents, params.isIncludeFacets() ? contentIndexQueryResult.getFacets() : null );
         }
+    }
+
+    private QueryExpr _temp_buildFulltextFunctionExpression( final ContentFindParams params )
+    {
+        final List<ValueExpr> valueExprs = Lists.newArrayList();
+        valueExprs.add( ValueExpr.string( "displayname" ) );
+        valueExprs.add( ValueExpr.string( params.getFulltext() ) );
+        valueExprs.add( ValueExpr.string( "OR" ) );
+
+        final FunctionExpr functionExpr = new FunctionExpr( "fulltext", valueExprs );
+
+        final DynamicConstraintExpr fulltextSearch = new DynamicConstraintExpr( functionExpr );
+
+        return new QueryExpr( fulltextSearch, null );
+    }
+
+    @POST
+    @Path("query")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public AbstractContentListJson query( final ContentQueryJson contentQueryJson )
+    {
+        final FindContent findContent = Commands.content().find().query( contentQueryJson.getContentQuery() );
+        final ContentQueryResult contentQueryResult = this.client.execute( findContent );
+
+        final GetContentByIds getContents = Commands.content().get().byIds( ContentIds.from( contentQueryResult.getContentIds() ) );
+        final Contents contents = this.client.execute( getContents );
+
+        if ( EXPAND_FULL.equalsIgnoreCase( contentQueryJson.getExpand() ) )
+        {
+            //    return new FacetedContentListJson( contents, params.isIncludeFacets() ? contentQueryResult.getFacets() : null );
+        }
+        else if ( EXPAND_SUMMARY.equalsIgnoreCase( contentQueryJson.getExpand() ) )
+        {
+            //    return new FacetedContentSummaryListJson( contents, params.isIncludeFacets() ? contentQueryResult.getFacets() : null );
+        }
+        else
+        {
+            //    return new FacetedContentIdListJson( contents, params.isIncludeFacets() ? contentQueryResult.getFacets() : null );
+        }
+
+        return new FacetedContentIdListJson( contents, null );
     }
 
     @GET

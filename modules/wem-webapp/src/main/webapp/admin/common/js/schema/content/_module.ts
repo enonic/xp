@@ -2,6 +2,9 @@
 ///<reference path='ContentTypeSummary.ts' />
 ///<reference path='ContentType.ts' />
 ///<reference path='ContentTypeIconUrlResolver.ts' />
+///<reference path='ContentTypeComboBox.ts' />
+///<reference path='ContentTypeSummaryLoader.ts' />
+///<reference path='ContentTypeSummaryLoaderListener.ts' />
 
 ///<reference path='ContentTypeResourceRequest.ts' />
 ///<reference path='GetAllContentTypesRequest.ts' />

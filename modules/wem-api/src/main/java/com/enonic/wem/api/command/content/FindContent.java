@@ -1,29 +1,30 @@
 package com.enonic.wem.api.command.content;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.query.ContentIndexQuery;
-import com.enonic.wem.api.content.query.ContentIndexQueryResult;
+import com.enonic.wem.api.content.query.ContentQuery;
+import com.enonic.wem.api.content.query.ContentQueryResult;
 
 public class FindContent
-    extends Command<ContentIndexQueryResult>
+    extends Command<ContentQueryResult>
 {
-    private ContentIndexQuery contentIndexQuery;
-
+    private ContentQuery contentQuery;
 
     @Override
     public void validate()
     {
-
+        Preconditions.checkNotNull( contentQuery );
     }
 
-    public FindContent query( final ContentIndexQuery contentIndexQuery )
+    public FindContent query( final ContentQuery ContentQuery )
     {
-        this.contentIndexQuery = contentIndexQuery;
+        this.contentQuery = ContentQuery;
         return this;
     }
 
-    public ContentIndexQuery getContentIndexQuery()
+    public ContentQuery getContentQuery()
     {
-        return contentIndexQuery;
+        return contentQuery;
     }
 }

@@ -69,6 +69,12 @@ class NodeJcrMapper
 
         final String rootDataSetAsJsonString = rootDataSetJsonSerializer.toString( updateNodeArgs.rootDataSet() );
         jcrNode.setProperty( ROOT_DATA_SET, rootDataSetAsJsonString );
+
+        if ( updateNodeArgs.entityIndexConfig() != null )
+        {
+            indexConfigJcrMapper.toJcr( updateNodeArgs.entityIndexConfig(), jcrNode );
+        }
+
         attachmentsJcrMapper.synchronizeJcr( updateNodeArgs.attachments(), jcrNode );
     }
 

@@ -1,6 +1,6 @@
 package com.enonic.wem.core.index.query;
 
-import com.enonic.wem.api.entity.EntityQuery;
+import com.enonic.wem.api.entity.query.EntityQuery;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.elastic.ElasticsearchQuery;
@@ -25,6 +25,8 @@ public class EntityQueryTranslator
             filter( filterBuilderFactory.create( entityQuery.getFilters() ) ).
             addFacets( facetBuilderFactory.create( entityQuery.getFacetQueries() ) ).
             sortBuilders( sortBuilderFactory.create( entityQuery.getOrderBys() ) ).
+            from( entityQuery.getFrom() ).
+            size( entityQuery.getSize() ).
             build();
 
         return elasticsearchQuery;

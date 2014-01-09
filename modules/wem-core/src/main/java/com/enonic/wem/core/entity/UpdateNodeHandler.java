@@ -63,14 +63,15 @@ public class UpdateNodeHandler
             name( edited.name() ).
             rootDataSet( edited.data() ).
             attachments( edited.attachments() ).
+
             build();
 
-        final Node persistedNode = nodeJcrDao.updateNode( updateNodeArgs );
+        final Node updatedNode = nodeJcrDao.updateNode( updateNodeArgs );
         session.save();
 
-        indexService.indexNode( persistedNode );
+        indexService.indexNode( updatedNode );
 
-        command.setResult( new UpdateNodeResult( persistedNode ) );
+        command.setResult( new UpdateNodeResult( updatedNode ) );
     }
 
     public static Builder create()

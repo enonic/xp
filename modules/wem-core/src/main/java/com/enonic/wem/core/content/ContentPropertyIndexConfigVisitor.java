@@ -23,12 +23,10 @@ public class ContentPropertyIndexConfigVisitor
         enabled( true ).
         build();
 
-
     public ContentPropertyIndexConfigVisitor( final EntityIndexConfig.Builder builder )
     {
         this.builder = builder;
     }
-
 
     @Override
     public void visit( final Property property )

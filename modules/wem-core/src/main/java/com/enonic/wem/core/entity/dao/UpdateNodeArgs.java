@@ -5,6 +5,7 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.entity.Attachments;
 import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.EntityIndexConfig;
 import com.enonic.wem.api.entity.NodeName;
 
 public class UpdateNodeArgs
@@ -19,6 +20,8 @@ public class UpdateNodeArgs
 
     private final Attachments attachments;
 
+    private final EntityIndexConfig entityIndexConfig;
+
     UpdateNodeArgs( Builder builder )
     {
         this.updater = builder.updater;
@@ -26,6 +29,7 @@ public class UpdateNodeArgs
         this.name = builder.name;
         this.rootDataSet = builder.rootDataSet;
         this.attachments = builder.attachments != null ? builder.attachments : Attachments.empty();
+        this.entityIndexConfig = builder.entityIndexConfig;
     }
 
     UserKey updater()
@@ -53,6 +57,11 @@ public class UpdateNodeArgs
         return attachments;
     }
 
+    EntityIndexConfig entityIndexConfig()
+    {
+        return entityIndexConfig;
+    }
+
     public static Builder newUpdateItemArgs()
     {
         return new Builder();
@@ -69,6 +78,8 @@ public class UpdateNodeArgs
         private RootDataSet rootDataSet;
 
         private Attachments attachments;
+
+        private EntityIndexConfig entityIndexConfig;
 
         public Builder updater( UserKey value )
         {
@@ -97,6 +108,12 @@ public class UpdateNodeArgs
         public Builder attachments( Attachments value )
         {
             this.attachments = value;
+            return this;
+        }
+
+        public Builder entityIndexConfig( final EntityIndexConfig entityIndexConfig )
+        {
+            this.entityIndexConfig = entityIndexConfig;
             return this;
         }
 

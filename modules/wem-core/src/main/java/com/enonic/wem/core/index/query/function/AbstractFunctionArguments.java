@@ -10,7 +10,7 @@ public abstract class AbstractFunctionArguments
 
     abstract int getMaxArguments();
 
-    abstract String getFunctionName();
+    public abstract String getFunctionName();
 
     protected void verifyNumberOfArguments( final List<ValueExpr> arguments )
     {

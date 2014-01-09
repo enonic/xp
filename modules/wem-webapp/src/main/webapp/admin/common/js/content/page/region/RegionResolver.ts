@@ -16,18 +16,20 @@ module api.content.page.region {
             this.regionProperties.push(property);
         }
 
-        resolve(): Region[] {
+        resolve(): PageRegions {
 
             this.traverse(this.data.getDataArray());
-            var regions: Region[] = [];
+
+            var regions = new PageRegionsBuilder();
+
             this.regionProperties.forEach((property: api.data.Property) => {
 
                 var value: api.data.RootDataSet = property.getValue().asRootDataSet();
                 var region: Region = new RegionBuilder().fromRootDataSet(value).build();
-                regions.push(region);
+                regions.addRegion(region);
             });
 
-            return regions;
+            return regions.build();
         }
     }
 
