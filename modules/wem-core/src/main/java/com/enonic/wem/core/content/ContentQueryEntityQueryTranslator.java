@@ -7,6 +7,7 @@ import com.enonic.wem.api.query.filter.Filter;
 import com.enonic.wem.api.query.filter.GenericValueFilter;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
+import com.enonic.wem.core.index.IndexConstants;
 
 public class ContentQueryEntityQueryTranslator
 {
@@ -31,7 +32,17 @@ public class ContentQueryEntityQueryTranslator
             entityQueryBuilder.addQueryFilter( contentTypeFilterBuilder.build() );
         }
 
+        addCollectionFilter( entityQueryBuilder );
+
         return entityQueryBuilder.build();
+    }
+
+    private void addCollectionFilter( final EntityQuery.Builder entityQueryBuilder )
+    {
+        entityQueryBuilder.addQueryFilter( Filter.newValueQueryFilter().
+            fieldName( IndexConstants.COLLECTION_FIELD ).
+            add( new Value.String( IndexConstants.CONTENT_COLLECTION_NAME ) ).
+            build() );
     }
 
 

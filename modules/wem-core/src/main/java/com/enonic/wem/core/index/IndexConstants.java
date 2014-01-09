@@ -8,5 +8,8 @@ public class IndexConstants
 
     public final static String DEFAULT_COLLECTION = "default";
 
+    public static final String CONTENT_COLLECTION_NAME = "content";
+
+
 }
 
