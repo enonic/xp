@@ -34,23 +34,23 @@ module api.ui.combobox {
                 console.log("On selected option removed");
             });
             comboBox.addListener({
-                                     onInputValueChanged: (oldValue, newValue, grid) => {
-                                         this.loader.search(newValue);
-                                     },
-                                     onOptionSelected: (item:api.ui.combobox.Option<T>) => {
-                                         this.selectedOptionsView.show();
-                                     }
-                                 });
+                onInputValueChanged: (oldValue, newValue, grid) => {
+                    this.loader.search(newValue);
+                },
+                onOptionSelected: (item:api.ui.combobox.Option<T>) => {
+                    this.selectedOptionsView.show();
+                }
+            });
 
             this.loader.addListener({
-                                         onLoading: () => {
-                                             comboBox.setLabel("Searching...");
-                                         },
-                                         onLoaded: (modules:T[]) => {
-                                             var options = this.createOptions(modules);
-                                             comboBox.setOptions(options);
-                                         }
-                                     });
+                onLoading: () => {
+                    comboBox.setLabel("Searching...");
+                },
+                onLoaded: (modules:T[]) => {
+                    var options = this.createOptions(modules);
+                    comboBox.setOptions(options);
+                }
+            });
 
             this.loader.search("");
 
@@ -61,9 +61,9 @@ module api.ui.combobox {
             var options = [];
             contents.forEach((moduleInst:T) => {
                 options.push({
-                                 value: moduleInst.getId(),
-                                 displayValue: moduleInst
-                             });
+                    value: moduleInst.getId(),
+                    displayValue: moduleInst
+                });
             });
             return options;
         }

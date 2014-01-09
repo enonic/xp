@@ -12,6 +12,10 @@ module api.form.inputtype.content.image {
 
         private removeButtonClickedListeners:{(): void;}[] = [];
 
+        private editButton:api.ui.Button;
+
+        private editButtonClickedListeners:{(): void;}[] = [];
+
         constructor() {
             super("ImageSelectorDialog", "dialog");
 
@@ -23,8 +27,13 @@ module api.form.inputtype.content.image {
 
             var buttonsBar = new api.dom.DivEl().addClass("buttons-bar");
 
-            var editButton = new api.ui.Button("Edit").addClass("edit");
-            buttonsBar.appendChild(editButton);
+            this.editButton = new api.ui.Button("Edit");
+            this.editButton.addClass("edit");
+            buttonsBar.appendChild(this.editButton);
+            this.editButton.getEl().addEventListener("click", (event) => {
+                this.notifyEditButtonClicked();
+            });
+
 
             this.removeButton = new api.ui.Button("Remove");
             this.removeButton.addClass("remove");
@@ -54,8 +63,18 @@ module api.form.inputtype.content.image {
             });
         }
 
+        private notifyEditButtonClicked() {
+            this.editButtonClickedListeners.forEach( (listener) => {
+                listener();
+            });
+        }
+
         addSelectedOptionRemovedListener(listener:{(): void;}) {
             this.removeButtonClickedListeners.push(listener);
+        }
+
+        addSelectedOptionEditListener(listener:{(): void;}) {
+            this.editButtonClickedListeners.push(listener);
         }
     }
 

@@ -16,6 +16,8 @@ module api.ui.combobox {
 
         hideComboBoxWhenMaxReached?:boolean;
 
+        dataIdProperty?:string;
+
     }
 
 }

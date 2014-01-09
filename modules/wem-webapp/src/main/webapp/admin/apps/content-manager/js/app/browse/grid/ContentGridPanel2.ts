@@ -58,10 +58,15 @@ module app.browse.grid {
             this.grid.resizeCanvas();
         }
 
+        onElementShown() {
+            this.grid.resizeCanvas();
+        }
+
         private initData(contents:api.content.ContentSummary[]) {
 
             //console.log("initData", contents);
-            this.gridData.setItems(contents, "id")
+            this.gridData.setItems(contents, "id");
+            console.log(contents);
         }
     }
 }
