@@ -25,7 +25,7 @@ public class NodeBuilderTest
     public void build_given_index_config()
     {
         final Node myNode = Node.newNode().
-            entityIndexConfig( EntityIndexConfig.newEntityIndexConfig().
+            entityIndexConfig( EntityPropertyIndexConfig.newEntityIndexConfig().
                 analyzer( "myAnalyzer" ).
                 build() ).
             build();

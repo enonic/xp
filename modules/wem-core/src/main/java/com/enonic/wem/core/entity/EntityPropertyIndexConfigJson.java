@@ -9,31 +9,30 @@ import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.entity.EntityIndexConfig;
+import com.enonic.wem.api.entity.EntityPropertyIndexConfig;
 import com.enonic.wem.api.entity.PropertyIndexConfig;
+import com.enonic.wem.core.entity.relationship.EntityIndexConfigJson;
 
-public class EntityIndexConfigJson
+public class EntityPropertyIndexConfigJson
+    extends EntityIndexConfigJson
 {
-    private final String analyzer;
-
-    private final String collection;
 
     private final Map<String, PropertyIndexConfigJson> propertyIndexConfigs;
 
-    public EntityIndexConfigJson( final EntityIndexConfig entityIndexConfig )
+    public EntityPropertyIndexConfigJson( final EntityPropertyIndexConfig entityIndexConfig )
     {
-        this.analyzer = entityIndexConfig.getAnalyzer();
+        super( entityIndexConfig.getAnalyzer(), entityIndexConfig.getCollection() );
         this.propertyIndexConfigs = translateMap( entityIndexConfig.getPropertyIndexConfigs() );
-        this.collection = entityIndexConfig.getCollection();
     }
 
     @SuppressWarnings("UnusedDeclaration")
     @JsonCreator
-    public EntityIndexConfigJson( @JsonProperty("analyzer") final String analyzer, @JsonProperty("collection") final String collection,
-                                  @JsonProperty("propertyIndexConfigs") final Map<String, PropertyIndexConfigJson> propertyIndexConfigs )
+    public EntityPropertyIndexConfigJson( @JsonProperty("analyzer") final String analyzer,
+                                          @JsonProperty("collection") final String collection, @JsonProperty(
+        "propertyIndexConfigs") final Map<String, PropertyIndexConfigJson> propertyIndexConfigs )
     {
-        this.analyzer = analyzer;
+        super( analyzer, collection );
         this.propertyIndexConfigs = propertyIndexConfigs;
-        this.collection = collection;
     }
 
     private Map<String, PropertyIndexConfigJson> translateMap( final Map<DataPath, PropertyIndexConfig> propertyIndexConfigs )
@@ -50,34 +49,18 @@ public class EntityIndexConfigJson
 
     public EntityIndexConfig toEntityIndexConfig()
     {
-        final EntityIndexConfig.Builder builder = EntityIndexConfig.newEntityIndexConfig().
-            analyzer( this.analyzer ).
-            collection( this.collection );
+        final EntityPropertyIndexConfig.Builder builder = EntityPropertyIndexConfig.newEntityIndexConfig().
+            analyzer( this.getAnalyzer() ).
+            collection( this.getCollection() );
 
         for ( final String path : this.propertyIndexConfigs.keySet() )
         {
             final PropertyIndexConfigJson propertyIndexConfigJson = propertyIndexConfigs.get( path );
 
-            builder.addPropertyIndexConfig( path, PropertyIndexConfig.newPropertyIndexConfig().
-                tokenizedEnabled( propertyIndexConfigJson.getTokenizedEnabled() ).
-                fulltextEnabled( propertyIndexConfigJson.getFulltextEnabled() ).
-                enabled( propertyIndexConfigJson.getEnabled() ).
-                build() );
+            builder.addPropertyIndexConfig( path, propertyIndexConfigJson.toPropertyIndexConfig() );
         }
 
         return builder.build();
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public String getAnalyzer()
-    {
-        return analyzer;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public String getCollection()
-    {
-        return collection;
     }
 
     @SuppressWarnings("UnusedDeclaration")

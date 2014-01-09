@@ -11,7 +11,7 @@ import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.EntityIndexConfig;
+import com.enonic.wem.api.entity.EntityPropertyIndexConfig;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeEditor;
 import com.enonic.wem.api.entity.NodeName;
@@ -64,7 +64,7 @@ public class ContentTypeNodeTranslator
     private CreateNode createNode( final CreateContentType command, final NodePath parentItemPath )
     {
         final RootDataSet rootDataSet = propertiesToRootDataSet( command );
-        final EntityIndexConfig entityIndexConfig = ContentTypeEntityIndexConfigFactory.create( rootDataSet );
+        final EntityPropertyIndexConfig entityIndexConfig = ContentTypeEntityIndexConfigFactory.create( rootDataSet );
 
         return Commands.node().create().
             name( command.getName().toString() ).

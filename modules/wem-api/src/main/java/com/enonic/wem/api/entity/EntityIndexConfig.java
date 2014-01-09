@@ -1,37 +1,17 @@
 package com.enonic.wem.api.entity;
 
-import java.util.Map;
-import java.util.Objects;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-
 import com.enonic.wem.api.data.DataPath;
-import com.enonic.wem.api.data.Property;
 
-public class EntityIndexConfig
+public abstract class EntityIndexConfig
 {
     private final String analyzer;
 
-    private final ImmutableMap<DataPath, PropertyIndexConfig> propertyIndexConfigs;
-
     private final String collection;
 
-    public static Builder newEntityIndexConfig()
+    EntityIndexConfig( final String analyzer, final String collection )
     {
-        return new Builder();
-    }
-
-    private EntityIndexConfig( final Builder builder )
-    {
-        this.analyzer = builder.analyzer;
-        this.propertyIndexConfigs = ImmutableMap.copyOf( builder.propertyIndexConfigs );
-        this.collection = builder.collection;
-    }
-
-    public String getCollection()
-    {
-        return collection;
+        this.analyzer = analyzer;
+        this.collection = collection;
     }
 
     public String getAnalyzer()
@@ -39,76 +19,39 @@ public class EntityIndexConfig
         return analyzer;
     }
 
-    public PropertyIndexConfig getPropertyIndexConfig( final DataPath dataPath )
+    public String getCollection()
     {
-        return propertyIndexConfigs.get( dataPath );
+        return collection;
     }
 
-    public Map<DataPath, PropertyIndexConfig> getPropertyIndexConfigs()
+
+    public static EntityPatternIndexConfig.Builder newPatternIndexConfig()
     {
-        return propertyIndexConfigs;
+        return new EntityPatternIndexConfig.Builder();
     }
 
-    @Override
-    public boolean equals( final Object o )
+
+    public abstract PropertyIndexConfig getPropertyIndexConfig( final DataPath dataPath );
+
+
+    static class Builder<T extends Builder>
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
+        String analyzer;
 
-        final EntityIndexConfig that = (EntityIndexConfig) o;
-        return Objects.equals( this.analyzer, that.analyzer ) && Objects.equals( this.propertyIndexConfigs, that.propertyIndexConfigs );
-    }
+        String collection;
 
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( this.analyzer, this.propertyIndexConfigs );
-    }
-
-    public static class Builder
-    {
-        private String analyzer;
-
-        private String collection;
-
-        private final Map<DataPath, PropertyIndexConfig> propertyIndexConfigs = Maps.newHashMap();
-
-        public Builder analyzer( final String analyzer )
+        public T analyzer( final String analyzer )
         {
             this.analyzer = analyzer;
-            return this;
+            return (T) this;
         }
 
-        public Builder addPropertyIndexConfig( final Property property, final PropertyIndexConfig propertyIndexConfig )
-        {
-            propertyIndexConfigs.put( property.getBasePath(), propertyIndexConfig );
-            return this;
-        }
-
-        public Builder addPropertyIndexConfig( final String path, final PropertyIndexConfig propertyIndexConfig )
-        {
-            propertyIndexConfigs.put( DataPath.from( path ), propertyIndexConfig );
-            return this;
-        }
-
-        public Builder collection( final String collection )
+        public T collection( final String collection )
         {
             this.collection = collection;
-            return this;
-        }
-
-        public EntityIndexConfig build()
-        {
-            return new EntityIndexConfig( this );
+            return (T) this;
         }
 
     }
-
 
 }

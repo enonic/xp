@@ -48,7 +48,7 @@ public class Entity
         }
         else
         {
-            this.entityIndexConfig = EntityIndexConfig.newEntityIndexConfig().build();
+            this.entityIndexConfig = EntityPropertyIndexConfig.newEntityIndexConfig().build();
         }
 
     }

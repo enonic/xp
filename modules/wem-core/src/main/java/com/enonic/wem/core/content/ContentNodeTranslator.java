@@ -86,7 +86,7 @@ public class ContentNodeTranslator
     public CreateNode toCreateNode( final CreateContent command )
     {
         final RootDataSet rootDataSet = toRootDataSet( command );
-        final EntityIndexConfig entityIndexConfig = ContentEntityIndexConfigFactory.create( rootDataSet );
+        final EntityIndexConfig entityIndexConfig = ContentEntityIndexConfigFactory.create();
 
         Attachments attachments = command.getAttachments();
         final Attachment thumbnail = resolveThumbnailAttachment( command );
@@ -246,7 +246,7 @@ public class ContentNodeTranslator
     {
         final RootDataSet rootDataSet = propertiesToRootDataSet( content );
 
-        final EntityIndexConfig entityIndexConfig = ContentEntityIndexConfigFactory.create( rootDataSet );
+        final EntityIndexConfig entityIndexConfig = ContentEntityIndexConfigFactory.create();
 
         return new NodeEditor()
         {

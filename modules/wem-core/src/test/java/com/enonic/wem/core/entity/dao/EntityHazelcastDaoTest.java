@@ -19,7 +19,7 @@ import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.Entity;
 import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.EntityIndexConfig;
+import com.enonic.wem.api.entity.EntityPropertyIndexConfig;
 import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
 
 import static junit.framework.Assert.assertEquals;
@@ -76,7 +76,7 @@ public class EntityHazelcastDaoTest
 
         EntityDao.CreateEntityArgs args = new EntityDao.CreateEntityArgs.Builder().
             data( data ).
-            entityIndexConfig( EntityIndexConfig.newEntityIndexConfig().build() ).
+            entityIndexConfig( EntityPropertyIndexConfig.newEntityIndexConfig().build() ).
             build();
 
         // exercise
@@ -98,7 +98,7 @@ public class EntityHazelcastDaoTest
 
         EntityDao.CreateEntityArgs args = new EntityDao.CreateEntityArgs.Builder().
             data( data ).
-            entityIndexConfig( EntityIndexConfig.newEntityIndexConfig().build() ).
+            entityIndexConfig( EntityPropertyIndexConfig.newEntityIndexConfig().build() ).
             build();
 
         EntityId id = dao.create( args ).id();
@@ -121,7 +121,7 @@ public class EntityHazelcastDaoTest
 
         EntityDao.CreateEntityArgs args = new EntityDao.CreateEntityArgs.Builder().
             data( data ).
-            entityIndexConfig( EntityIndexConfig.newEntityIndexConfig().build() ).
+            entityIndexConfig( EntityPropertyIndexConfig.newEntityIndexConfig().build() ).
             build();
 
         EntityId id = dao.create( args ).id();

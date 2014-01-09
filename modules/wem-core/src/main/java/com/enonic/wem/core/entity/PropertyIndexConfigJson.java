@@ -1,6 +1,7 @@
 package com.enonic.wem.core.entity;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.api.entity.PropertyIndexConfig;
@@ -30,6 +31,18 @@ public class PropertyIndexConfigJson
         this.fulltextEnabled = fulltextEnabled;
         this.tokenizedEnabled = tokenizedEnabled;
     }
+
+    @JsonIgnore
+    public PropertyIndexConfig toPropertyIndexConfig()
+    {
+        return PropertyIndexConfig.
+            newPropertyIndexConfig().
+            enabled( this.enabled ).
+            fulltextEnabled( this.fulltextEnabled ).
+            tokenizedEnabled( this.tokenizedEnabled ).
+            build();
+    }
+
 
     @SuppressWarnings("UnusedDeclaration")
     public Boolean getEnabled()

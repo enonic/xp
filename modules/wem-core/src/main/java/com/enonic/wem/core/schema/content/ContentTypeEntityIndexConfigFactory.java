@@ -3,7 +3,7 @@ package com.enonic.wem.core.schema.content;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyVisitor;
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.entity.EntityIndexConfig;
+import com.enonic.wem.api.entity.EntityPropertyIndexConfig;
 import com.enonic.wem.api.entity.PropertyIndexConfig;
 
 public class ContentTypeEntityIndexConfigFactory
@@ -16,9 +16,9 @@ public class ContentTypeEntityIndexConfigFactory
 
     public static final String CONTENT_TYPE_COLLECTION_NAME = "content-type";
 
-    public static EntityIndexConfig create( final RootDataSet rootDataSet )
+    public static EntityPropertyIndexConfig create( final RootDataSet rootDataSet )
     {
-        final EntityIndexConfig.Builder builder = EntityIndexConfig.newEntityIndexConfig();
+        final EntityPropertyIndexConfig.Builder builder = EntityPropertyIndexConfig.newEntityIndexConfig();
 
         builder.collection( CONTENT_TYPE_COLLECTION_NAME );
 

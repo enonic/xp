@@ -16,7 +16,7 @@ public class EntityIndexConfigTest
     public void analyzer()
         throws Exception
     {
-        final EntityIndexConfig indexConfig = EntityIndexConfig.newEntityIndexConfig().analyzer( "myAnalyzer" ).build();
+        final EntityPropertyIndexConfig indexConfig = EntityPropertyIndexConfig.newEntityIndexConfig().analyzer( "myAnalyzer" ).build();
         assertEquals( "myAnalyzer", indexConfig.getAnalyzer() );
     }
 
@@ -29,8 +29,8 @@ public class EntityIndexConfigTest
 
         final Property myProperty = new Property( "test", new Value.String( "testValue" ) );
 
-        final EntityIndexConfig indexConfig =
-            EntityIndexConfig.newEntityIndexConfig().addPropertyIndexConfig( myProperty, propertyIndexConfig ).build();
+        final EntityPropertyIndexConfig indexConfig =
+            EntityPropertyIndexConfig.newEntityIndexConfig().addPropertyIndexConfig( myProperty, propertyIndexConfig ).build();
 
         final Map<DataPath, PropertyIndexConfig> propertyIndexConfigs = indexConfig.getPropertyIndexConfigs();
 
@@ -46,8 +46,8 @@ public class EntityIndexConfigTest
         final PropertyIndexConfig propertyIndexConfig =
             PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).tokenizedEnabled( true ).fulltextEnabled( true ).build();
 
-        final EntityIndexConfig indexConfig =
-            EntityIndexConfig.newEntityIndexConfig().addPropertyIndexConfig( "test/path", propertyIndexConfig ).build();
+        final EntityPropertyIndexConfig indexConfig =
+            EntityPropertyIndexConfig.newEntityIndexConfig().addPropertyIndexConfig( "test/path", propertyIndexConfig ).build();
 
         final Map<DataPath, PropertyIndexConfig> propertyIndexConfigs = indexConfig.getPropertyIndexConfigs();
 
@@ -72,7 +72,7 @@ public class EntityIndexConfigTest
         final PropertyIndexConfig propertyIndexConfig4 =
             PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).tokenizedEnabled( true ).fulltextEnabled( true ).build();
 
-        final EntityIndexConfig indexConfig = EntityIndexConfig.newEntityIndexConfig().
+        final EntityPropertyIndexConfig indexConfig = EntityPropertyIndexConfig.newEntityIndexConfig().
             addPropertyIndexConfig( "test", propertyIndexConfig1 ).
             addPropertyIndexConfig( "test/path", propertyIndexConfig2 ).
             addPropertyIndexConfig( "test/path/child", propertyIndexConfig3 ).
@@ -91,7 +91,7 @@ public class EntityIndexConfigTest
         Property myArray1 = new Property.String( "myArray", "1" );
         Property myArray2 = new Property.String( "myArray", "2" );
 
-        final EntityIndexConfig indexConfig = EntityIndexConfig.
+        final EntityPropertyIndexConfig indexConfig = EntityPropertyIndexConfig.
             newEntityIndexConfig().
             addPropertyIndexConfig( myArray1, PropertyIndexConfig.INDEXNON_PROPERTY_CONFIG ).
             addPropertyIndexConfig( myArray2, PropertyIndexConfig.INDEXALL_PROPERTY_CONFIG ).

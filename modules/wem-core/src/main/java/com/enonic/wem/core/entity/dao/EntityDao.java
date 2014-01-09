@@ -4,7 +4,7 @@ package com.enonic.wem.core.entity.dao;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.entity.Entity;
 import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.EntityIndexConfig;
+import com.enonic.wem.api.entity.EntityPropertyIndexConfig;
 
 public interface EntityDao
 {
@@ -20,7 +20,7 @@ public interface EntityDao
     {
         final RootDataSet data;
 
-        final EntityIndexConfig entityIndexConfig;
+        final EntityPropertyIndexConfig entityIndexConfig;
 
         CreateEntityArgs( Builder builder )
         {
@@ -32,7 +32,7 @@ public interface EntityDao
         {
             RootDataSet data;
 
-            EntityIndexConfig entityIndexConfig;
+            EntityPropertyIndexConfig entityIndexConfig;
 
             public Builder data( RootDataSet data )
             {
@@ -40,7 +40,7 @@ public interface EntityDao
                 return this;
             }
 
-            public Builder entityIndexConfig( EntityIndexConfig entityIndexConfig )
+            public Builder entityIndexConfig( EntityPropertyIndexConfig entityIndexConfig )
             {
                 this.entityIndexConfig = entityIndexConfig;
                 return this;
@@ -59,7 +59,7 @@ public interface EntityDao
 
         final RootDataSet data;
 
-        final EntityIndexConfig entityIndexConfig;
+        final EntityPropertyIndexConfig entityIndexConfig;
 
         UpdateEntityArgs( Builder builder )
         {
@@ -74,7 +74,7 @@ public interface EntityDao
 
             RootDataSet data;
 
-            EntityIndexConfig entityIndexConfig;
+            EntityPropertyIndexConfig entityIndexConfig;
 
             public Builder entityToUpdate( EntityId value )
             {
@@ -88,7 +88,7 @@ public interface EntityDao
                 return this;
             }
 
-            public Builder entityIndexConfig( EntityIndexConfig entityIndexConfig )
+            public Builder entityIndexConfig( EntityPropertyIndexConfig entityIndexConfig )
             {
                 this.entityIndexConfig = entityIndexConfig;
                 return this;

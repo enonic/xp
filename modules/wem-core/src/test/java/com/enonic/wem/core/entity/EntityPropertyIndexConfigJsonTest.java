@@ -2,17 +2,17 @@ package com.enonic.wem.core.entity;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.entity.EntityIndexConfig;
+import com.enonic.wem.api.entity.EntityPropertyIndexConfig;
 import com.enonic.wem.api.entity.PropertyIndexConfig;
 import com.enonic.wem.api.support.JsonTestHelper;
 
 import static junit.framework.Assert.assertEquals;
 
-public class EntityIndexConfigJsonTest
+public class EntityPropertyIndexConfigJsonTest
 {
     private JsonTestHelper jsonTestHelper;
 
-    public EntityIndexConfigJsonTest()
+    public EntityPropertyIndexConfigJsonTest()
     {
         jsonTestHelper = new JsonTestHelper( this, true );
     }
@@ -21,7 +21,7 @@ public class EntityIndexConfigJsonTest
     public void deserialize_serialization_of_EntityIndexConfig_no_analyzer()
         throws Exception
     {
-        EntityIndexConfig entityIndexConfig = EntityIndexConfig.newEntityIndexConfig().
+        EntityPropertyIndexConfig entityIndexConfig = EntityPropertyIndexConfig.newEntityIndexConfig().
             addPropertyIndexConfig( "test", PropertyIndexConfig.newPropertyIndexConfig().
                 enabled( true ).
                 fulltextEnabled( true ).
@@ -34,15 +34,16 @@ public class EntityIndexConfigJsonTest
                 build() ).
             build();
 
-        EntityIndexConfigJson entityIndexConfigJson = new EntityIndexConfigJson( entityIndexConfig );
+        EntityPropertyIndexConfigJson entityPropertyIndexConfigJson = new EntityPropertyIndexConfigJson( entityIndexConfig );
 
         // serialize from object
-        String expectedSerialization = jsonTestHelper.objectToString( entityIndexConfigJson );
+        String expectedSerialization = jsonTestHelper.objectToString( entityPropertyIndexConfigJson );
 
         System.out.println( expectedSerialization );
 
         // de-serialize
-        EntityIndexConfigJson parsedData = jsonTestHelper.objectMapper().readValue( expectedSerialization, EntityIndexConfigJson.class );
+        EntityPropertyIndexConfigJson parsedData =
+            jsonTestHelper.objectMapper().readValue( expectedSerialization, EntityPropertyIndexConfigJson.class );
 
         // serialize from json
         String serializationOfDeSerialization = jsonTestHelper.objectToString( parsedData );
@@ -54,7 +55,7 @@ public class EntityIndexConfigJsonTest
     public void deserialize_serialization_of_EntityIndexConfig()
         throws Exception
     {
-        EntityIndexConfig entityIndexConfig = EntityIndexConfig.newEntityIndexConfig().
+        EntityPropertyIndexConfig entityIndexConfig = EntityPropertyIndexConfig.newEntityIndexConfig().
             analyzer( "myAnalyzer" ).
             collection( "myCollection" ).
             addPropertyIndexConfig( "test", PropertyIndexConfig.newPropertyIndexConfig().
@@ -69,13 +70,14 @@ public class EntityIndexConfigJsonTest
                 build() ).
             build();
 
-        EntityIndexConfigJson entityIndexConfigJson = new EntityIndexConfigJson( entityIndexConfig );
+        EntityPropertyIndexConfigJson entityPropertyIndexConfigJson = new EntityPropertyIndexConfigJson( entityIndexConfig );
 
         // serialize from object
-        String expectedSerialization = jsonTestHelper.objectToString( entityIndexConfigJson );
+        String expectedSerialization = jsonTestHelper.objectToString( entityPropertyIndexConfigJson );
 
         // de-serialize
-        EntityIndexConfigJson parsedData = jsonTestHelper.objectMapper().readValue( expectedSerialization, EntityIndexConfigJson.class );
+        EntityPropertyIndexConfigJson parsedData =
+            jsonTestHelper.objectMapper().readValue( expectedSerialization, EntityPropertyIndexConfigJson.class );
 
         // serialize from json
         String serializationOfDeSerialization = jsonTestHelper.objectToString( parsedData );

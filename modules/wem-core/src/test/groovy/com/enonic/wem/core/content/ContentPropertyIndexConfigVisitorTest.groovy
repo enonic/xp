@@ -4,7 +4,7 @@ import com.enonic.wem.api.content.data.ContentData
 import com.enonic.wem.api.data.DataPath
 import com.enonic.wem.api.data.Property
 import com.enonic.wem.api.data.Value
-import com.enonic.wem.api.entity.EntityIndexConfig
+import com.enonic.wem.api.entity.EntityPropertyIndexConfig
 import com.enonic.wem.api.entity.PropertyIndexConfig
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -17,7 +17,7 @@ class ContentPropertyIndexConfigVisitorTest
     def "create for #path"()
     {
         given:
-        def EntityIndexConfig.Builder builder = EntityIndexConfig.newEntityIndexConfig();
+        def EntityPropertyIndexConfig.Builder builder = EntityPropertyIndexConfig.newEntityIndexConfig();
         def ContentPropertyIndexConfigVisitor visitor = new ContentPropertyIndexConfigVisitor( builder );
         def ContentData contentData = new ContentData();
 

@@ -12,7 +12,7 @@ import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.EntityIndexConfig;
+import com.enonic.wem.api.entity.EntityPropertyIndexConfig;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeEditor;
 import com.enonic.wem.api.entity.NodeName;
@@ -40,7 +40,7 @@ class MixinNodeTranslator
         final NodePath parentItemPath = NodePath.newPath( "/mixins" ).build();
 
         final RootDataSet rootDataSet = toRootDataSet( createMixin );
-        final EntityIndexConfig indexConfig = MixinEntityIndexConfigFactory.create( rootDataSet );
+        final EntityPropertyIndexConfig indexConfig = MixinEntityIndexConfigFactory.create( rootDataSet );
 
         return Commands.node().create().
             name( createMixin.getName().toString() ).

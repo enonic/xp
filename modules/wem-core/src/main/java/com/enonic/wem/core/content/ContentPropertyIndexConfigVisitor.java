@@ -3,13 +3,13 @@ package com.enonic.wem.core.content;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyVisitor;
-import com.enonic.wem.api.entity.EntityIndexConfig;
+import com.enonic.wem.api.entity.EntityPropertyIndexConfig;
 import com.enonic.wem.api.entity.PropertyIndexConfig;
 
 public class ContentPropertyIndexConfigVisitor
     extends PropertyVisitor
 {
-    private final EntityIndexConfig.Builder builder;
+    private final EntityPropertyIndexConfig.Builder builder;
 
     public static final PropertyIndexConfig CONTENT_DEFAULT_INDEX_CONFIG = PropertyIndexConfig.newPropertyIndexConfig().
         tokenizedEnabled( false ).
@@ -23,7 +23,7 @@ public class ContentPropertyIndexConfigVisitor
         enabled( true ).
         build();
 
-    public ContentPropertyIndexConfigVisitor( final EntityIndexConfig.Builder builder )
+    public ContentPropertyIndexConfigVisitor( final EntityPropertyIndexConfig.Builder builder )
     {
         this.builder = builder;
     }
