@@ -1,7 +1,7 @@
 package com.enonic.wem.core.index.query.function
 
 import com.enonic.wem.api.query.expr.ValueExpr
-import org.elasticsearch.index.query.MatchQueryBuilder
+import org.elasticsearch.index.query.QueryStringQueryBuilder
 import spock.lang.Specification
 
 class FulltextFunctionArgumentsTest
@@ -10,7 +10,7 @@ class FulltextFunctionArgumentsTest
     def "fulltext 3 arguments"()
     {
         given:
-        def arguments = [ValueExpr.string( "myField" ), ValueExpr.string( "SearchString" ), ValueExpr.string( "or" )]
+        def arguments = [ValueExpr.string( "myField" ), ValueExpr.string( "SearchString" ), ValueExpr.string( "and" )]
 
         when:
         FulltextFunctionArguments functionArguments = new FulltextFunctionArguments( arguments );
@@ -18,7 +18,7 @@ class FulltextFunctionArgumentsTest
         then:
         functionArguments.getFieldName() == "myField"
         functionArguments.getSearchString() == "SearchString"
-        functionArguments.getOperator() == MatchQueryBuilder.Operator.OR
+        functionArguments.getOperator() == QueryStringQueryBuilder.Operator.AND
     }
 
     def "fulltext 2 arguments"()
@@ -32,7 +32,7 @@ class FulltextFunctionArgumentsTest
         then:
         functionArguments.getFieldName() == "myField"
         functionArguments.getSearchString() == "SearchString"
-        functionArguments.getOperator() == MatchQueryBuilder.Operator.AND
+        functionArguments.getOperator() == QueryStringQueryBuilder.Operator.OR
     }
 
 
@@ -61,6 +61,6 @@ class FulltextFunctionArgumentsTest
         then:
         def exception = thrown( FunctionQueryBuilderException )
         exception.message == 'Illegal argument \'DUMMY\' in function \'fulltext\', positon 3'
-        exception.getCause().message == "No enum constant org.elasticsearch.index.query.MatchQueryBuilder.Operator.DUMMY"
+        exception.getCause().message == "No enum constant org.elasticsearch.index.query.QueryStringQueryBuilder.Operator.DUMMY"
     }
 }

@@ -1,8 +1,8 @@
 {
-    "match": {
-        "myfield._analyzed": {
-            "query": "mysearchphrase",
-            "operator": "OR"
-        }
+    "query_string": {
+        "query": "my search phrase",
+        "default_field": "myfield._analyzed",
+        "default_operator": "or",
+        "analyze_wildcard": true
     }
 }
