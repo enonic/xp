@@ -3,7 +3,6 @@ module api.ui.combobox {
     export class RichComboBox<T extends api.item.BaseItem> extends api.ui.form.CompositeFormInputEl {
 
         loader:api.util.Loader;
-        te
         comboBoxView:api.dom.DivEl;
 
         selectedOptionsView:any;
