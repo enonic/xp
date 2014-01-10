@@ -10,6 +10,7 @@ import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutTemplate;
 import com.enonic.wem.api.content.page.layout.LayoutTemplateKey;
+import com.enonic.wem.api.content.page.layout.LayoutTemplateName;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartTemplate;
 import com.enonic.wem.api.content.page.part.PartTemplateKey;
@@ -17,7 +18,6 @@ import com.enonic.wem.api.content.page.part.PartTemplateName;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.module.ModuleKeys;
-import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
@@ -94,7 +94,7 @@ public class SiteTemplateTest
             key( SiteTemplateKey.from( "Intranet-1.0.0" ) ).
             displayName( "Enonic Intranet" ).
             description( "A social intranet for the Enterprise" ).
-            addTemplate( ResourcePath.from( "components/pages/" ), pageTemplate ).
+            addTemplate( pageTemplate ).
             addTemplate( partTemplate ).
             addTemplate( layoutTemplate ).
             build();
@@ -104,9 +104,11 @@ public class SiteTemplateTest
         assertEquals( new SiteTemplateVersion( "1.0.0" ), siteTemplate.getVersion() );
         assertEquals( "Enonic Intranet", siteTemplate.getDisplayName() );
         assertEquals( "A social intranet for the Enterprise", siteTemplate.getDescription() );
-        assertEquals( "[components/pages/main-page, components/news-part, components/my-layout]",
-                      Iterators.toString( siteTemplate.resourcePaths().iterator() ) );
-        assertEquals( layoutTemplate, siteTemplate.getTemplate( ResourcePath.from( "components/my-layout" ) ) );
+        assertEquals( "[main-page, news-part, my-layout]", Iterators.toString( siteTemplate.names().iterator() ) );
+        assertEquals( 3, Iterators.size( siteTemplate.iterator() ) );
+        assertEquals( layoutTemplate, siteTemplate.getLayoutTemplates().first() );
+        assertEquals( layoutTemplate, siteTemplate.getTemplate( new LayoutTemplateName( "my-layout" ) ) );
+        assertEquals( partTemplate, siteTemplate.getPartTemplates().first() );
         assertEquals( partTemplate, siteTemplate.getPartTemplates().getTemplate( new PartTemplateName( "news-part" ) ) );
     }
 }

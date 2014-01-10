@@ -1,5 +1,7 @@
 package com.enonic.wem.api.content.page;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ResourcePath;
 
@@ -21,6 +23,8 @@ public abstract class Template<NAME extends TemplateName, KEY extends TemplateKe
 
     protected Template( final TemplateProperties properties )
     {
+        Preconditions.checkArgument( properties.name != null || ( properties.key != null && properties.key.getTemplateName() != null ),
+                                     "name cannot be null" );
         this.parentPath = properties.parentPath;
         this.key = (KEY) properties.key;
         this.name = this.key != null ? this.key.getTemplateName() : (NAME) properties.name;
