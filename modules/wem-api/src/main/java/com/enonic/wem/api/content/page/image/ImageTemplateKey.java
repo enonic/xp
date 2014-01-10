@@ -15,7 +15,7 @@ public class ImageTemplateKey
 {
     private ImageTemplateKey( final SiteTemplateKey siteTemplateKey, final ModuleKey moduleKey, final ImageTemplateName templateName )
     {
-        super( siteTemplateKey, moduleKey, templateName );
+        super( siteTemplateKey, moduleKey, templateName, TemplateType.IMAGE );
     }
 
     public static ImageTemplateKey from( final SiteTemplateKey siteTemplateKey, final ModuleKey moduleKey,

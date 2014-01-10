@@ -4,6 +4,7 @@ import javax.inject.Singleton;
 
 import com.sun.jersey.api.core.ResourceConfig;
 
+import com.enonic.wem.portal.content.ComponentResource;
 import com.enonic.wem.portal.content.ContentResource;
 import com.enonic.wem.portal.exception.mapper.DefaultExceptionMapper;
 import com.enonic.wem.portal.exception.mapper.EvaluationExceptionMapper;
@@ -24,6 +25,7 @@ public final class PortalServlet
     {
         setFeature( ResourceConfig.FEATURE_DISABLE_WADL, true );
         addClass( ContentResource.class );
+        addClass( ComponentResource.class );
         addClass( PublicResource.class );
         addClass( ImageResource.class );
         addClass( ServicesResource.class );

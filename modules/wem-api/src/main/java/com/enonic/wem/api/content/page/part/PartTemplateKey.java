@@ -15,7 +15,7 @@ public class PartTemplateKey
 {
     private PartTemplateKey( final SiteTemplateKey siteTemplateKey, final ModuleKey moduleKey, final PartTemplateName templateName )
     {
-        super( siteTemplateKey, moduleKey, templateName );
+        super( siteTemplateKey, moduleKey, templateName, TemplateType.PART );
     }
 
     public static PartTemplateKey from( final SiteTemplateKey siteTemplateKey, final ModuleKey moduleKey,

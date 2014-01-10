@@ -14,7 +14,7 @@ public final class PageTemplateKey
 {
     private PageTemplateKey( final SiteTemplateKey siteTemplateKey, final ModuleKey moduleKey, final PageTemplateName templateName )
     {
-        super( siteTemplateKey, moduleKey, templateName );
+        super( siteTemplateKey, moduleKey, templateName , TemplateType.PAGE);
     }
 
     public static PageTemplateKey from( final SiteTemplateKey siteTemplateKey, final ModuleKey moduleKey,

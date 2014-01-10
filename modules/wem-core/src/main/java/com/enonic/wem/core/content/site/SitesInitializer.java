@@ -6,6 +6,7 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.page.CreatePageDescriptor;
+import com.enonic.wem.api.command.content.page.part.CreatePartDescriptor;
 import com.enonic.wem.api.command.module.CreateModule;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -19,6 +20,9 @@ import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateName;
 import com.enonic.wem.api.content.page.image.ImageTemplateKey;
 import com.enonic.wem.api.content.page.image.ImageTemplateName;
+import com.enonic.wem.api.content.page.part.PartDescriptor;
+import com.enonic.wem.api.content.page.part.PartDescriptorKey;
+import com.enonic.wem.api.content.page.part.PartTemplate;
 import com.enonic.wem.api.content.page.part.PartTemplateKey;
 import com.enonic.wem.api.content.page.part.PartTemplateName;
 import com.enonic.wem.api.content.page.region.PageRegions;
@@ -46,6 +50,7 @@ import static com.enonic.wem.api.command.Commands.site;
 import static com.enonic.wem.api.content.page.PageTemplate.newPageTemplate;
 import static com.enonic.wem.api.content.page.image.ImageComponent.newImageComponent;
 import static com.enonic.wem.api.content.page.part.PartComponent.newPartComponent;
+import static com.enonic.wem.api.content.page.part.PartTemplate.newPartTemplate;
 import static com.enonic.wem.api.content.site.Vendor.newVendor;
 import static com.enonic.wem.api.form.Input.newInput;
 
@@ -61,13 +66,19 @@ public class SitesInitializer
 
     private final static SiteTemplateKey BLUMAN_INTRA_SITE_TEMPLATE_KEY = SiteTemplateKey.from( "BluemanIntra-1.0.0" );
 
+    public static final PartTemplateName MY_PART_TEMPLATE_NAME = new PartTemplateName( "my-part-template" );
+
     private Module demoModule;
 
     private PageDescriptor landingPageDescriptor;
 
+    private PartDescriptor myPartDescriptor;
+
     private PageTemplate mainPageLandingPageTemplate;
 
     private PageTemplate departmentPageLandingPageTemplate;
+
+    private PartTemplate myPartTemplate;
 
     private SiteTemplate bluManTrampolinerSiteTemplate;
 
@@ -133,10 +144,22 @@ public class SitesInitializer
 
         landingPageDescriptor = client.execute( createPageDescriptor );
 
+        final ComponentDescriptorName partName = new ComponentDescriptorName( "mypart" );
+        final CreatePartDescriptor createPartDescriptor = page().descriptor().part().create().
+            name( partName ).
+            key( PartDescriptorKey.from( DEMO_MODULE_KEY, partName ) ).
+            displayName( "My part" );
+        myPartDescriptor = client.execute( createPartDescriptor );
     }
 
     private void initializeSiteTemplates()
     {
+        myPartTemplate = newPartTemplate().
+            key( PartTemplateKey.from( BLUMAN_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, MY_PART_TEMPLATE_NAME ) ).
+            displayName( "My Part" ).
+            descriptor( myPartDescriptor.getKey() ).
+            build();
+
         final PageRegions.Builder mainPageRegions = PageRegions.newPageRegions();
         createDefaultPageRegions( mainPageRegions, BLUMAN_SITE_TEMPLATE_KEY );
         mainPageLandingPageTemplate = newPageTemplate().
@@ -183,7 +206,8 @@ public class SitesInitializer
             description( "Demo site template for portals" ).
             url( "http://enonic.net" ).
             rootContentType( ContentTypeName.page() ).
-            addTemplate( mainPageLandingPageTemplate ) );
+            addTemplate( mainPageLandingPageTemplate ).
+            addTemplate( myPartTemplate ) );
 
         bluManIntranettSiteTemplate = client.execute( site().template().create().
             siteTemplateKey( BLUMAN_INTRA_SITE_TEMPLATE_KEY ).
@@ -215,8 +239,6 @@ public class SitesInitializer
             pageTemplate( this.mainPageLandingPageTemplate.getKey() ).
             regions( pageRegions.build() ).
             config( createPageTemplateConfig( "blue" ) ) );
-
-
 
         bluManIntranetSite = createSiteContent( "bluman-intranett", "Bluman Intranett" );
 
@@ -278,7 +300,7 @@ public class SitesInitializer
             name( "header" ).
             add( newPartComponent().
                 name( "PartInHeader" ).
-                template( PartTemplateKey.from( siteTemplateKey, DEMO_MODULE_KEY, new PartTemplateName( "my-part-template" ) ) ).
+                template( PartTemplateKey.from( siteTemplateKey, DEMO_MODULE_KEY, MY_PART_TEMPLATE_NAME ) ).
                 config( createMyImageTemplateConfig( 500, "So sweet!" ) ).
                 build() ).
             build();
@@ -293,7 +315,7 @@ public class SitesInitializer
                 build() ).
             add( newPartComponent().
                 name( "PartInMain" ).
-                template( PartTemplateKey.from( siteTemplateKey, DEMO_MODULE_KEY, new PartTemplateName( "my-part-template" ) ) ).
+                template( PartTemplateKey.from( siteTemplateKey, DEMO_MODULE_KEY, MY_PART_TEMPLATE_NAME ) ).
                 config( createMyPartTemplateConfig( "Take a part!" ) ).
                 build() ).
             build();
@@ -302,7 +324,7 @@ public class SitesInitializer
             name( "footer" ).
             add( newPartComponent().
                 name( "PartInFooter" ).
-                template( PartTemplateKey.from( siteTemplateKey, DEMO_MODULE_KEY, new PartTemplateName( "my-part-template" ) ) ).
+                template( PartTemplateKey.from( siteTemplateKey, DEMO_MODULE_KEY, MY_PART_TEMPLATE_NAME ) ).
                 config( createMyPartTemplateConfig( "Footer" ) ).
                 build() ).
             build();

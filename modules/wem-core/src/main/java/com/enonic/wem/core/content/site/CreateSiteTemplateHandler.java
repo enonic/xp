@@ -2,14 +2,13 @@ package com.enonic.wem.core.content.site;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
+import java.util.List;
 
 import javax.inject.Inject;
 
 import com.enonic.wem.api.command.content.site.CreateSiteTemplate;
 import com.enonic.wem.api.content.page.Template;
 import com.enonic.wem.api.content.site.SiteTemplate;
-import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.config.SystemConfig;
 
@@ -33,12 +32,11 @@ public class CreateSiteTemplateHandler
             description( command.getDescription() ).
             rootContentType( command.getRootContentType() ).
             contentTypeFilter( command.getContentTypeFilter() );
-        final Map<ResourcePath, Template> templatesByPath = command.getTemplates();
-        for ( ResourcePath path : templatesByPath.keySet() )
+        final List<Template> templates = command.getTemplates();
+        for ( Template template : templates )
         {
-            builder.addTemplate( path, templatesByPath.get( path ) );
+            builder.addTemplate( template );
         }
-
         final SiteTemplate siteTemplate = builder.build();
 
         final Path templatesPath = systemConfig.getTemplatesDir().toPath();

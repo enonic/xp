@@ -1,8 +1,9 @@
 package com.enonic.wem.api.command.content.site;
 
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.Template;
@@ -11,7 +12,6 @@ import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.Vendor;
 import com.enonic.wem.api.module.ModuleKeys;
-import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public class CreateSiteTemplate
@@ -33,21 +33,22 @@ public class CreateSiteTemplate
 
     private ContentTypeName rootContentType;
 
-    private Map<ResourcePath, Template> templates = new HashMap<>();
+    private List<Template> templates = Lists.newArrayList();
 
-    public static CreateSiteTemplate fromSiteTemplate(SiteTemplate siteTemplate)
+    public static CreateSiteTemplate fromSiteTemplate( SiteTemplate siteTemplate )
     {
         CreateSiteTemplate createSiteTemplate = new CreateSiteTemplate();
         createSiteTemplate.siteTemplateKey( siteTemplate.getKey() );
         createSiteTemplate.displayName( siteTemplate.getDisplayName() );
         createSiteTemplate.description( siteTemplate.getDescription() );
-        createSiteTemplate.url(siteTemplate.getUrl());
-        createSiteTemplate.vendor(siteTemplate.getVendor());
-        createSiteTemplate.modules(siteTemplate.getModules());
+        createSiteTemplate.url( siteTemplate.getUrl() );
+        createSiteTemplate.vendor( siteTemplate.getVendor() );
+        createSiteTemplate.modules( siteTemplate.getModules() );
         createSiteTemplate.contentTypeFilter( siteTemplate.getContentTypeFilter() );
-        createSiteTemplate.rootContentType(siteTemplate.getRootContentType());
-        for (ResourcePath resourcePath : siteTemplate.resourcePaths() ) {
-            createSiteTemplate.addTemplate( resourcePath, siteTemplate.getTemplate( resourcePath ) );
+        createSiteTemplate.rootContentType( siteTemplate.getRootContentType() );
+        for ( Template template : siteTemplate )
+        {
+            createSiteTemplate.addTemplate( template );
         }
         return createSiteTemplate;
     }
@@ -100,15 +101,9 @@ public class CreateSiteTemplate
         return this;
     }
 
-    public CreateSiteTemplate addTemplate( final ResourcePath resourcePath, final Template template )
-    {
-        this.templates.put( resourcePath, template );
-        return this;
-    }
-
     public CreateSiteTemplate addTemplate( final Template template )
     {
-        this.templates.put( SiteTemplate.DEFAULT_TEMPLATES_PATH, template );
+        this.templates.add( template );
         return this;
     }
 
@@ -152,7 +147,7 @@ public class CreateSiteTemplate
         return rootContentType;
     }
 
-    public Map<ResourcePath, Template> getTemplates()
+    public List<Template> getTemplates()
     {
         return templates;
     }

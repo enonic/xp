@@ -21,7 +21,6 @@ import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.Vendor;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
-import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.config.SystemConfig;
 
@@ -80,7 +79,7 @@ public class CreateSiteTemplateHandlerTest
         templateBuilder.descriptor( PartDescriptorKey.from( "resource-1.0.0:part-descr" ) );
         PartTemplate template = templateBuilder.build();
 
-        command.addTemplate( ResourcePath.from( "path" ), template );
+        command.addTemplate(  template );
 
         final ContentTypeFilter contentTypeFilter = newContentFilter().
             allowContentType( "article" ).
@@ -106,7 +105,7 @@ public class CreateSiteTemplateHandlerTest
         assertEquals( ContentTypeName.from( "document" ), siteTemplate.getRootContentType() );
         assertEquals( ContentTypeName.from( "article" ), siteTemplate.getContentTypeFilter().iterator().next() );
 
-        final Template resTempl = siteTemplate.getTemplate( ResourcePath.from( "path/template-name" ) );
+        final Template resTempl = siteTemplate.iterator().next();
         assertEquals( new PartTemplateName( "template-name" ), resTempl.getName() );
     }
 }

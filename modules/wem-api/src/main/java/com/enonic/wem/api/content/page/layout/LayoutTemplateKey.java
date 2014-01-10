@@ -15,7 +15,7 @@ public class LayoutTemplateKey
 {
     private LayoutTemplateKey( final SiteTemplateKey siteTemplateKey, final ModuleKey moduleKey, final LayoutTemplateName templateName )
     {
-        super( siteTemplateKey, moduleKey, templateName );
+        super( siteTemplateKey, moduleKey, templateName , TemplateType.LAYOUT);
     }
 
     public static LayoutTemplateKey from( final SiteTemplateKey siteTemplateKey, final ModuleKey moduleKey,

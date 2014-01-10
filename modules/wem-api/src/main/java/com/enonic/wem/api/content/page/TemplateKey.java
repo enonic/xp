@@ -8,6 +8,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public abstract class TemplateKey<NAME extends TemplateName>
 {
+    public enum TemplateType
+    {
+        IMAGE,
+        LAYOUT,
+        PAGE,
+        PART
+    }
+
     protected static final String SEPARATOR = "|";
 
     private final NAME name;
@@ -18,7 +26,9 @@ public abstract class TemplateKey<NAME extends TemplateName>
 
     private final String refString;
 
-    protected TemplateKey( final SiteTemplateKey siteTemplate, final ModuleKey module, final NAME name )
+    private final TemplateType templateType;
+
+    protected TemplateKey( final SiteTemplateKey siteTemplate, final ModuleKey module, final NAME name, final TemplateType templateType )
     {
         checkNotNull( name, "Template name cannot be null" );
         checkNotNull( siteTemplate, "SiteTemplate name cannot be null" );
@@ -26,6 +36,7 @@ public abstract class TemplateKey<NAME extends TemplateName>
         this.name = name;
         this.siteTemplate = siteTemplate;
         this.module = module;
+        this.templateType = templateType;
         this.refString = siteTemplate.toString() + SEPARATOR + module.toString() + SEPARATOR + name.toString();
     }
 
@@ -42,6 +53,11 @@ public abstract class TemplateKey<NAME extends TemplateName>
     public ModuleKey getModuleKey()
     {
         return module;
+    }
+
+    public TemplateType getTemplateType()
+    {
+        return templateType;
     }
 
     @Override
