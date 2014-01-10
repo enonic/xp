@@ -2,6 +2,8 @@
 // require ExtJs as long as it is used for implementation
 ///<reference path='lib/ExtJs.d.ts' />
 
+///<reference path='Name.ts' />
+
 ///<reference path='plugin/_module.ts' />
 ///<reference path='plugin/fileupload/_module.ts' />
 
