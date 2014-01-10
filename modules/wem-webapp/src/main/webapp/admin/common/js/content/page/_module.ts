@@ -19,6 +19,9 @@
 ///<reference path='PageTemplateKey.ts' />
 ///<reference path='PageTemplateSummary.ts' />
 ///<reference path='PageTemplate.ts' />
+///<reference path='PageTemplateComboBox.ts' />
+///<reference path='PageTemplateSummaryLoader.ts' />
+///<reference path='PageTemplateSummaryLoaderListener.ts' />
 ///<reference path='PageTemplateResourceRequest.ts' />
 ///<reference path='GetPageTemplateByKeyRequest.ts' />
 ///<reference path="GetPageTemplatesRequest.ts"/>

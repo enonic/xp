@@ -1,25 +1,45 @@
 module api.ui.combobox {
 
-    export class RichComboBox<T extends api.item.BaseItem> extends api.ui.form.CompositeFormInputEl {
+    export class RichComboBox<T> extends api.ui.form.CompositeFormInputEl {
 
         loader:api.util.Loader;
+
         comboBoxView:api.dom.DivEl;
 
         selectedOptionsView:any;
+
         comboBox:api.ui.combobox.ComboBox<T>;
+
+        identifierMethod:string;
+
+        private loadingListeners:{():void;}[];
+
+        private loadedListeners:{(modules:T[]):void;}[];
+
+        private inputValueChangedListeners:{(oldValue: string, newValue: string, grid: api.ui.grid.Grid<Option<T>>):void;}[];
+
+        private optionSelectedListeners:{(item:api.ui.combobox.Option<T>):void;}[];
 
         constructor(builder:RichComboBoxBuilder<T>)
         {
-            this.loader = builder.loader;
+            if (builder.loader) {
+                this.setLoader(builder.loader);
+            }
+
+            this.identifierMethod = builder.identifierMethod;
 
             this.comboBoxView = new api.dom.DivEl();
-
             this.selectedOptionsView = builder.selectedOptionsView;
             this.selectedOptionsView.hide();
-
             this.comboBox = this.createComboBox(builder.comboBoxName);
 
             super(this.comboBox, this.selectedOptionsView);
+
+            this.loadedListeners = [];
+            this.loadingListeners = [];
+            this.inputValueChangedListeners = [];
+            this.optionSelectedListeners = [];
+
             this.addClass('rich-combobox');
         }
 
@@ -28,40 +48,44 @@ module api.ui.combobox {
 
             var comboBoxConfig = this.createConfig();
 
-            var comboBox = new api.ui.combobox.ComboBox(name, comboBoxConfig);
+            return new api.ui.combobox.ComboBox(name, comboBoxConfig);
+        }
 
-            comboBox.addSelectedOptionRemovedListener(()=> {
+        private setupLoader() {
+            this.comboBox.addSelectedOptionRemovedListener(()=> {
                 this.loader.search("");
             });
-            comboBox.addListener({
+            this.comboBox.addListener({
                 onInputValueChanged: (oldValue, newValue, grid) => {
                     this.loader.search(newValue);
+                    this.notifyInputValueChanged(oldValue, newValue, grid);
                 },
                 onOptionSelected: (item:api.ui.combobox.Option<T>) => {
                     this.selectedOptionsView.show();
+                    this.notifyOptionSelected(item);
                 }
             });
 
             this.loader.addListener({
                 onLoading: () => {
-                    comboBox.setLabel("Searching...");
+                    this.comboBox.setLabel("Searching...");
+                    this.notifyLoading();
                 },
                 onLoaded: (modules:T[]) => {
                     var options = this.createOptions(modules);
-                    comboBox.setOptions(options);
+                    this.comboBox.setOptions(options);
+                    this.notifyLoaded(modules);
                 }
             });
 
             this.loader.search("");
-
-            return comboBox;
         }
 
         private createOptions(contents:T[]):api.ui.combobox.Option<T>[] {
             var options = [];
             contents.forEach((moduleInst:T) => {
                 options.push({
-                    value: moduleInst.getId(),
+                    value: moduleInst[this.identifierMethod](),
                     displayValue: moduleInst
                 });
             });
@@ -82,19 +106,75 @@ module api.ui.combobox {
                 hideComboBoxWhenMaxReached: true
             };
         }
+
+        setLoader(loader:api.util.Loader) {
+            this.loader = loader;
+            this.setupLoader();
+        }
+
+        addSelectedOptionRemovedListener(listener:{(option: SelectedOption<T>):void;}) {
+            this.comboBox.addSelectedOptionRemovedListener(listener);
+        }
+
+        addInputValueChangedListener(listener:{(oldValue: string, newValue: string, grid: api.ui.grid.Grid<Option<T>>): void;}) {
+            this.inputValueChangedListeners.push(listener);
+        }
+
+        addOptionSelectedListener(listener:{(item:api.ui.combobox.Option<T>): void;}) {
+            this.optionSelectedListeners.push(listener);
+        }
+
+        addLoadingListener(listener:{(): void;}) {
+            this.loadingListeners.push(listener);
+        }
+
+        addLoadedListener(listener:{(modules:T[]): void;}) {
+            this.loadedListeners.push(listener);
+        }
+
+        private notifyInputValueChanged(oldValue: string, newValue: string, grid: api.ui.grid.Grid<Option<T>>) {
+            this.inputValueChangedListeners.forEach( (listener) => {
+                listener(oldValue, newValue, grid);
+            });
+        }
+
+        private notifyOptionSelected(item:api.ui.combobox.Option<T>) {
+            this.optionSelectedListeners.forEach( (listener) => {
+                listener(item);
+            });
+        }
+
+        private notifyLoading() {
+            this.loadingListeners.forEach( (listener) => {
+                listener();
+            });
+        }
+
+        private notifyLoaded(modules:T[]) {
+            this.loadedListeners.forEach( (listener) => {
+                listener(modules);
+            });
+        }
     }
 
-    export class RichComboBoxBuilder<T extends api.item.BaseItem> {
+    export class RichComboBoxBuilder<T> {
 
         comboBoxName:string;
 
         loader:api.util.Loader;
 
-        selectedOptionsView:SelectedOptionsView<T>
+        selectedOptionsView:SelectedOptionsView<T>;
+
+        identifierMethod:string = "getId";
 
 
         setComboBoxName(comboBoxName:string):RichComboBoxBuilder<T> {
             this.comboBoxName = comboBoxName;
+            return this;
+        }
+
+        setIdentifierMethod(identifierMethod:string):RichComboBoxBuilder<T> {
+            this.identifierMethod = identifierMethod;
             return this;
         }
 

@@ -5,7 +5,7 @@ module api.schema.content {
 
         constructor(multiple:boolean = true)
         {
-            super(new api.ui.combobox.RichComboBoxBuilder<ContentTypeSummary>().setLoader(new ContentTypeSummaryLoader()).setSelectedOptionsView(new RootContentSelectedOptionsView()));
+            super(new api.ui.combobox.RichComboBoxBuilder<ContentTypeSummary>().setLoader(new ContentTypeSummaryLoader()).setSelectedOptionsView(new RootContentTypeSelectedOptionsView()));
             this.multipleSelection = multiple;
         }
 
@@ -42,7 +42,7 @@ module api.schema.content {
         }
     }
 
-    export class RootContentSelectedOptionsView extends api.ui.combobox.SelectedOptionsView<ContentTypeSummary> {
+    export class RootContentTypeSelectedOptionsView extends api.ui.combobox.SelectedOptionsView<ContentTypeSummary> {
 
         createSelectedOption(option:api.ui.combobox.Option<ContentTypeSummary>, index:number):ui.combobox.SelectedOption<ContentTypeSummary> {
             var optionView = new RootContentSelectedOptionView( option );

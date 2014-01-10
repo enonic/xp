@@ -27,8 +27,6 @@ module api.schema.content {
             }
         }
 
-
-
         private doRequest() {
             this.isLoading = true;
             this.notifyLoading();
@@ -36,7 +34,7 @@ module api.schema.content {
             this.findContentTypesRequest.send()
                 .done((jsonResponse:api.rest.JsonResponse<api.schema.content.json.ContentTypeSummaryListJson>) => {
                 var result = jsonResponse.getResult();
-                this.contentTypes = api.schema.content.ContentTypeSummary.fromJsonArray(result.contentTypes);
+                this.contentTypes = ContentTypeSummary.fromJsonArray(result.contentTypes);
                 this.isLoading = false;
                 this.notifyLoaded(this.contentTypes);
             });

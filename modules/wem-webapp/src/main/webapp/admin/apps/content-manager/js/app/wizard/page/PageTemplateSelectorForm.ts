@@ -2,7 +2,7 @@ module app.wizard.page {
 
     export class PageTemplateSelectorForm extends api.ui.form.Form {
 
-        private pageTemplateComboBox: api.ui.combobox.ComboBox<api.content.page.PageTemplateSummary>;
+        private pageTemplateComboBox: api.content.page.PageTemplateComboBox;
 
         private pageTemplateChangedListeners: {(changedTo: api.content.page.PageTemplateSummary): void;}[] = [];
 
@@ -10,31 +10,18 @@ module app.wizard.page {
             super("PageTemplateSelectorForm");
             this.addClass("page-template-selector-form");
 
-            var selectedOptionsView = new PageTemplateSelectedOptionsView();
-
-            var pageTemplateComboBoxConfig = <api.ui.combobox.ComboBoxConfig<api.content.page.PageTemplateSummary>> {
-                maximumOccurrences: 1,
-                selectedOptionsView: selectedOptionsView,
-                hideComboBoxWhenMaxReached: true,
-                optionFormatter: this.optionFormatter
-            };
-
-            this.pageTemplateComboBox =
-            new api.ui.combobox.ComboBox<api.content.page.PageTemplateSummary>("template", pageTemplateComboBoxConfig);
-
-            var compositeFormInputEl = new api.ui.form.CompositeFormInputEl(this.pageTemplateComboBox, selectedOptionsView);
+            this.pageTemplateComboBox =new api.content.page.PageTemplateComboBox();
 
             var fieldSet = new api.ui.form.Fieldset(this, "Page Template");
-            fieldSet.add(new api.ui.form.FormItem("Selected", compositeFormInputEl));
+            fieldSet.add(new api.ui.form.FormItem("Selected", this.pageTemplateComboBox));
             this.fieldset(fieldSet);
 
-            this.pageTemplateComboBox.addListener(<api.ui.combobox.ComboBoxListener<api.content.page.PageTemplateSummary>>{
-                onInputValueChanged: () => null,
-                onOptionSelected: (option: api.ui.combobox.Option<api.content.page.PageTemplateSummary>) => {
 
-                    this.notifyPageTemplateChanged(option.displayValue);
-                }
+            this.pageTemplateComboBox.addOptionSelectedListener((option: api.ui.combobox.Option<api.content.page.PageTemplateSummary>) => {
+                this.notifyPageTemplateChanged(option.displayValue);
             });
+
+
             this.pageTemplateComboBox.addSelectedOptionRemovedListener(() => {
                 this.notifyPageTemplateChanged(null);
             });
@@ -42,57 +29,20 @@ module app.wizard.page {
 
         layoutExisting(siteTemplateKey: api.content.site.template.SiteTemplateKey,
                        selectedPageTemplate: api.content.page.PageTemplate): Q.Promise<void> {
-
             var deferred = Q.defer<void>();
 
-            new api.content.page.GetPageTemplatesRequest(siteTemplateKey).
-                sendAndParse().
-                done((pageTemplates: api.content.page.PageTemplateSummary[]) => {
-
-                    var optionToSelect: api.ui.combobox.Option<api.content.page.PageTemplateSummary> = null;
-                    pageTemplates.forEach((pageTemplate: api.content.page.PageTemplateSummary) => {
-
-                        var option: api.ui.combobox.Option<api.content.page.PageTemplateSummary> = {
-                            value: pageTemplate.getKey().toString(),
-                            displayValue: pageTemplate
-                        };
-                        if (pageTemplate.getKey().toString() == selectedPageTemplate.getKey().toString()) {
-                            optionToSelect = option;
+            this.pageTemplateComboBox.setSiteTemplateKey(siteTemplateKey);
+            this.pageTemplateComboBox.addLoadedListener((pageTemplates:api.content.page.PageTemplateSummary[]) => {
+                    pageTemplates.forEach((template:api.content.page.PageTemplateSummary) => {
+                        if (template.getKey() == selectedPageTemplate.getKey()) {
+                            this.pageTemplateComboBox.setTemplate(template);
                         }
-                        this.pageTemplateComboBox.addOption(option);
-
-
                     });
-                    if (optionToSelect != null) {
-                        this.pageTemplateComboBox.selectOption(optionToSelect);
-                    }
-
                     deferred.resolve(null);
-                });
+                }
+            );
 
             return deferred.promise;
-        }
-
-        private optionFormatter(row: number, cell: number, pageTemplateSummary: api.content.page.PageTemplateSummary, columnDef: any,
-                                dataContext: api.ui.combobox.Option<api.content.page.PageTemplateSummary>): string {
-
-            var summaryEl = new api.dom.DivEl();
-            summaryEl.setClass("page-template-summary");
-
-            var displayName = new api.dom.DivEl();
-            displayName.setClass("display-name");
-            displayName.getEl().setAttribute("title", pageTemplateSummary.getDisplayName());
-            displayName.getEl().setInnerHtml(pageTemplateSummary.getDisplayName());
-
-            var path = new api.dom.DivEl();
-            path.setClass("name");
-            path.getEl().setAttribute("title", pageTemplateSummary.getName().toString());
-            path.getEl().setInnerHtml(pageTemplateSummary.getName().toString());
-
-            summaryEl.appendChild(displayName);
-            summaryEl.appendChild(path);
-
-            return summaryEl.toString();
         }
 
         private notifyPageTemplateChanged(changedTo: api.content.page.PageTemplateSummary) {
