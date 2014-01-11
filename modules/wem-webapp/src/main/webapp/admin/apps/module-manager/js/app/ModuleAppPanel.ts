@@ -29,10 +29,6 @@ module app {
                 if (modules.length > 0) {
                     api.notify.showFeedback('Module \'' + modules.map((modl:api.module.Module) => {console.log(modl); return modl.getDisplayName()} ).join(', ') + '\' was installed');
                 }
-                var errors = resp.getErrors();
-                if (errors.length > 0) {
-                    api.notify.showError('Import errors: [' + errors.join('], [') + ']');
-                }
                 new api.module.ModuleImportedEvent().fire();
                 dialog.close();
             });
