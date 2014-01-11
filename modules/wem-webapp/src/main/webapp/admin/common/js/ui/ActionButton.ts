@@ -5,8 +5,8 @@ module api.ui{
         private action:Action;
         private tooltip:Tooltip;
 
-        constructor(idPrefix:string, action:Action, showTooltip:boolean = true) {
-            super(idPrefix);
+        constructor(generateId:boolean, action:Action, showTooltip:boolean = true) {
+            super(generateId);
 
             this.action = action;
 

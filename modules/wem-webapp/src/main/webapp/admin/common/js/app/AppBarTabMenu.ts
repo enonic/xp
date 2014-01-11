@@ -4,9 +4,8 @@ module api.app{
 
         private appBarTabMenuButton:AppBarTabMenuButton;
 
-        constructor(idPrefix?:string) {
-            super(idPrefix || "AppBarTabMenu");
-            this.getEl().addClass("appbar-tabmenu");
+        constructor(generateId?:boolean) {
+            super(generateId, "appbar-tabmenu");
         }
 
         showMenu() {

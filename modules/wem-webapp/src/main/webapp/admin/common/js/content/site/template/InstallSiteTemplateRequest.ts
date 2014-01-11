@@ -19,7 +19,7 @@ module api.content.site.template {
                 this.triggerElement = triggerEl;
                 this.isExternalTriggerElement = true;
             } else {
-                this.triggerElement = new api.dom.ButtonEl("trigger-el");
+                this.triggerElement = new api.dom.ButtonEl(true);
                 this.triggerElement.hide();
                 api.dom.Body.get().appendChild(this.triggerElement);
             }

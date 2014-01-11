@@ -2,8 +2,8 @@ module api.dom {
 
     export class PEl extends Element {
 
-        constructor(idPrefix?:string, className?:string) {
-            super("p", idPrefix, className);
+        constructor(generateId?:boolean, className?:string) {
+            super(new ElementProperties().setTagName("p").setGenerateId(generateId).setClassName(className));
         }
     }
 }

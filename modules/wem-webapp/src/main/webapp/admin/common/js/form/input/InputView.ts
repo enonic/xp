@@ -13,7 +13,7 @@ module api.form.input {
         private addButton: api.ui.Button;
 
         constructor(context: api.form.FormContext, input: api.form.Input, properties?: api.data.Property[]) {
-            super("InputView", "input-view", context, input);
+            super(true, "input-view", context, input);
             this.input = input;
             this.properties = properties;
 

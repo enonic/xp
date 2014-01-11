@@ -11,8 +11,7 @@ module api.form {
         private formItemViews: FormItemView[] = [];
 
         constructor(context: FormContext, form: Form, contentData?: api.data.RootDataSet) {
-            super("FormView");
-            this.setClass("form-view");
+            super(true, "form-view");
             this.context = context;
             this.form = form;
             this.rootDataSet = contentData;

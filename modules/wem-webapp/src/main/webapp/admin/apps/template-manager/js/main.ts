@@ -8,7 +8,7 @@ module components {
 }
 
 window.onload = () => {
-    var appBar = new api.app.AppBar("Template Manager", new api.app.AppBarTabMenu("TemplateAppBarTabMenu"));
+    var appBar = new api.app.AppBar("Template Manager", new api.app.AppBarTabMenu(true));
     var appPanel = new app.TemplateAppPanel(appBar);
 
     api.dom.Body.get().appendChild(appBar);

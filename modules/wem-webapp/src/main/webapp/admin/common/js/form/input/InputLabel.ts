@@ -5,7 +5,7 @@ module api.form.input {
         private input:api.form.Input;
 
         constructor(input:api.form.Input) {
-            super("InputLabel", "input-label");
+            super(true, "input-label");
 
             this.input = input;
 

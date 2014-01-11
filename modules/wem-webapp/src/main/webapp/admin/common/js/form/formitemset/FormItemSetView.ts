@@ -17,7 +17,7 @@ module api.form.formitemset {
         private collapseButton: api.ui.Button;
 
         constructor(context: api.form.FormContext, formItemSet: api.form.FormItemSet, dataSets?: api.data.DataSet[]) {
-            super("FormItemSetView", "form-item-set-view", context, formItemSet);
+            super(true, "form-item-set-view", context, formItemSet);
 
             this.formItemSet = formItemSet;
             this.dataSets = dataSets != null ? dataSets : [];

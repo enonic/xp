@@ -6,8 +6,8 @@ module api.form.inputtype.support {
 
         private inputOccurrences: InputOccurrences;
 
-        constructor(idPrefix: string) {
-            super(idPrefix, "input-type-view");
+        constructor(generateId: boolean, className?: string) {
+            super(generateId, "input-type-view" + ( className ? " " + className : ""));
             jQuery(this.getHTMLElement()).sortable({
                 axis: "y",
                 containment: 'parent',
@@ -21,7 +21,7 @@ module api.form.inputtype.support {
                         occurrence.setIndex(index);
                     });
 
-                    this.inputOccurrences.sortOccurrences((a:InputOccurrence, b:InputOccurrence) => {
+                    this.inputOccurrences.sortOccurrences((a: InputOccurrence, b: InputOccurrence) => {
                         return a.getIndex() - b.getIndex();
                     });
                 }
@@ -33,7 +33,7 @@ module api.form.inputtype.support {
             var childCount = this.getHTMLElement().children.length;
             var occurrenceOrderAccordingToDOM: InputOccurrence[] = [];
             for (var i = 0; i < childCount; i++) {
-                var child:Element = this.getHTMLElement().children[i];
+                var child: Element = this.getHTMLElement().children[i];
                 occurrenceOrderAccordingToDOM[i] = this.inputOccurrences.getOccurrences().filter((occ: InputOccurrence) => {
                     return occ.getDataId().toString() == child.getAttribute('data-dataid');
                 })[0];

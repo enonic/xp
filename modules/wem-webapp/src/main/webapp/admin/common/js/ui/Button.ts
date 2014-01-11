@@ -5,11 +5,11 @@ module api.ui{
         private labelEl:api.dom.SpanEl;
 
         constructor(label:string) {
-            super("Button");
+            super(true);
 
             this.setEnabled(true);
 
-            this.labelEl = new api.dom.SpanEl(null, "label");
+            this.labelEl = new api.dom.SpanEl(false, "label");
             this.labelEl.getEl().setInnerHtml(label);
             this.appendChild(this.labelEl);
         }

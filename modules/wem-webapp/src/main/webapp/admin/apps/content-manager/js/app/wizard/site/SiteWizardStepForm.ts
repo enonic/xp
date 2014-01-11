@@ -13,7 +13,7 @@ module app.wizard.site {
         private templateViewCtr: api.dom.DivEl;
 
         constructor() {
-            super("SiteWizardStepForm");
+            super(true);
 
             this.templateViewCtr = new api.dom.DivEl();
             this.appendChild(this.templateViewCtr);

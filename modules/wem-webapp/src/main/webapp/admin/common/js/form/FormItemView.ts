@@ -6,8 +6,8 @@ module api.form {
 
         private formItem:FormItem;
 
-        constructor(idPrefix:string, className:string, context:api.form.FormContext, formItem:FormItem) {
-            super(idPrefix, className);
+        constructor(generateId:boolean, className:string, context:api.form.FormContext, formItem:FormItem) {
+            super(generateId, className);
             this.context = context;
             this.formItem = formItem;
         }

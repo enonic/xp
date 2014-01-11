@@ -6,11 +6,10 @@ module api.ui.form {
 
         private inputs:api.dom.FormInputEl[];
 
-        constructor(idPrefix?:string) {
-            super(idPrefix);
+        constructor(generateId?:boolean, className?: string) {
+            super(generateId, className);
             this.inputs = [];
-            this.formEl = new api.dom.FormEl();
-            this.formEl.getEl().addClass("form");
+            this.formEl = new api.dom.FormEl(false, "form");
 
             this.appendChild(this.formEl);
         }

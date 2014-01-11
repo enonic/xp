@@ -8,18 +8,18 @@ module api.ui.tab {
 
         private listeners: api.ui.DeckPanelNavigatorListener[] = [];
 
-        constructor(idPrefix?:string, className?:string) {
-            super(idPrefix || "TabBar", className || "tab-bar");
+        constructor(generateId?: boolean, className?: string) {
+            super(generateId, "tab-bar" + (className ? " " + className : ""));
         }
 
-        addNavigationItem(tab:TabBarItem) {
+        addNavigationItem(tab: TabBarItem) {
             var newLength = this.tabs.push(tab);
             tab.setIndex(newLength - 1);
 
             this.appendChild(tab);
 
             tab.addListener({
-                onSelected: (tab:TabBarItem) => {
+                onSelected: (tab: TabBarItem) => {
                     this.selectNavigationItem(tab.getIndex());
                 }
             });
@@ -27,25 +27,25 @@ module api.ui.tab {
             this.notifyTabAddedListeners(tab);
         }
 
-        removeNavigationItem(tab:TabBarItem) {
+        removeNavigationItem(tab: TabBarItem) {
             var tabIndex = tab.getIndex();
 
             this.tabs.splice(tabIndex, 1);
 
             // update indexes for tabs that have been after the removed tab
-            for ( var i = tabIndex; i < this.tabs.length; i++) {
+            for (var i = tabIndex; i < this.tabs.length; i++) {
                 this.tabs[i].setIndex(i);
             }
 
-            if ( this.isEmpty() ) {
+            if (this.isEmpty()) {
                 // if there are no tabs than set selected index to negative value
                 this.selectedIndex = -1;
             }
-            else if ( (this.getSize() - 1) < this.selectedIndex ) {
+            else if ((this.getSize() - 1) < this.selectedIndex) {
                 // if selected index is more than tabs amount set last index as selected
                 this.selectedIndex = this.getSize() - 1;
             }
-            else if ( tabIndex < this.selectedIndex ) {
+            else if (tabIndex < this.selectedIndex) {
                 // if removed tab was before selected tab than decrement selected index
                 this.selectedIndex--;
             }
@@ -53,8 +53,8 @@ module api.ui.tab {
             tab.remove();
         }
 
-        selectNavigationItem(index:number) {
-            if ( index < 0 || index >= this.getSize() || this.selectedIndex == index ) {
+        selectNavigationItem(index: number) {
+            if (index < 0 || index >= this.getSize() || this.selectedIndex == index) {
                 return;
             }
 
@@ -74,50 +74,50 @@ module api.ui.tab {
             this.selectedIndex = -1;
         }
 
-        getNavigationItem(index:number):TabBarItem {
+        getNavigationItem(index: number): TabBarItem {
             return this.tabs[index];
         }
 
-        getSelectedNavigationItem():TabBarItem {
+        getSelectedNavigationItem(): TabBarItem {
             return this.tabs[this.selectedIndex];
         }
 
-        getSelectedIndex():number {
+        getSelectedIndex(): number {
             return this.selectedIndex;
         }
 
-        getSize():number {
+        getSize(): number {
             return this.tabs.length;
         }
 
-        isEmpty():boolean {
+        isEmpty(): boolean {
             return this.tabs.length === 0;
         }
 
-        getNavigationItems():TabBarItem[] {
+        getNavigationItems(): TabBarItem[] {
             return this.tabs;
         }
 
-        addListener(listener:api.ui.DeckPanelNavigatorListener) {
+        addListener(listener: api.ui.DeckPanelNavigatorListener) {
             this.listeners.push(listener);
         }
 
-        removeListener(listener:api.ui.DeckPanelNavigatorListener) {
+        removeListener(listener: api.ui.DeckPanelNavigatorListener) {
             this.listeners = this.listeners.filter((elem) => {
                 return elem != listener;
             });
         }
 
-        private notifyTabAddedListeners(tab:TabBarItem) {
-            this.listeners.forEach((listener:api.ui.DeckPanelNavigatorListener) => {
+        private notifyTabAddedListeners(tab: TabBarItem) {
+            this.listeners.forEach((listener: api.ui.DeckPanelNavigatorListener) => {
                 if (listener.onNavigationItemAdded) {
                     listener.onNavigationItemAdded(tab);
                 }
             });
         }
 
-        private notifyTabShownListeners(tab:TabBarItem) {
-            this.listeners.forEach((listener:api.ui.DeckPanelNavigatorListener) => {
+        private notifyTabShownListeners(tab: TabBarItem) {
+            this.listeners.forEach((listener: api.ui.DeckPanelNavigatorListener) => {
                 if (listener.onNavigationItemSelected) {
                     listener.onNavigationItemSelected(tab);
                 }

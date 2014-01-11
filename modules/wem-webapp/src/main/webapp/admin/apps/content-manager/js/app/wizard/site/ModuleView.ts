@@ -9,7 +9,7 @@ module app.wizard.site {
         private formView: api.form.FormView;
 
         constructor(context: api.form.FormContext, theModule: api.module.Module, moduleConfig?: api.content.site.ModuleConfig) {
-            super("ModuleView", "module-view");
+            super(true, "module-view");
             this.siteModule = theModule;
             this.moduleConfig = moduleConfig;
 

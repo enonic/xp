@@ -2,8 +2,8 @@ module api.dom {
 
     export class FormEl extends Element {
 
-        constructor(idPrefix?:string, className?:string) {
-            super("form", idPrefix, className);
+        constructor(generateId?:boolean, className?:string) {
+            super(new ElementProperties().setTagName("form").setGenerateId(generateId).setClassName(className));
         }
     }
 }

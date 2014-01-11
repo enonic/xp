@@ -22,7 +22,7 @@ module api.form.formitemset {
 
         constructor(context: api.form.FormContext, formItemSetOccurrence:FormItemSetOccurrence, formItemSet:api.form.FormItemSet,
                     dataSet:api.data.DataSet) {
-            super("FormItemSetOccurrenceView", "form-item-set-occurrence-view", formItemSetOccurrence);
+            super(true, "form-item-set-occurrence-view", formItemSetOccurrence);
             this.context = context;
             this.formItemSetOccurrence = formItemSetOccurrence;
             this.formItemSet = formItemSet;

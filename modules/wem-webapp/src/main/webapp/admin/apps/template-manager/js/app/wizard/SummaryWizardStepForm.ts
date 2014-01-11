@@ -6,7 +6,7 @@ module app.wizard
 
         constructor()
         {
-            super( 'summary-step' );
+            super(true);
         }
 
     }

@@ -22,8 +22,8 @@ module api.ui {
 
         private listeners:TextInputListener[] = [];
 
-        constructor(idPrefix?:string, className?:string, size?:string) {
-            super(idPrefix, className);
+        constructor(generateId?:boolean, className?:string, size?:string) {
+            super(generateId, className);
 
             this.getEl().setAttribute('type', 'text');
             if (size) {
@@ -52,12 +52,12 @@ module api.ui {
             });
         }
 
-        static large(idPrefix?:string, className?:string):TextInput {
-            return new TextInput(idPrefix, className, TextInput.LARGE);
+        static large(generateId?:boolean, className?:string):TextInput {
+            return new TextInput(generateId, className, TextInput.LARGE);
         }
 
-        static middle(idPrefix?:string, className?:string):TextInput {
-            return new TextInput(idPrefix, className, TextInput.MIDDLE);
+        static middle(generateId?:boolean, className?:string):TextInput {
+            return new TextInput(generateId, className, TextInput.MIDDLE);
         }
 
         setValue(value:string):TextInput {

@@ -1,12 +1,12 @@
 module app.contextwindow {
-    export class EmulatorPanel extends api.ui.Panel {
-        private dataView:api.ui.grid.DataView<any>;
-        private grid:EmulatorGrid;
-        private contextWindow:ContextWindow;
 
-        constructor(contextWindow:ContextWindow) {
-            super("EmulatorPanel");
-            this.addClass("emulator-panel");
+    export class EmulatorPanel extends api.ui.Panel {
+        private dataView: api.ui.grid.DataView<any>;
+        private grid: EmulatorGrid;
+        private contextWindow: ContextWindow;
+
+        constructor(contextWindow: ContextWindow) {
+            super(true, "emulator-panel");
 
             this.contextWindow = contextWindow;
 
@@ -21,7 +21,7 @@ module app.contextwindow {
             this.getData();
 
             // Using jQuery since grid.setOnClick fires event twice, bug in slickgrid
-            jQuery(this.getHTMLElement()).on("click", ".grid-row", (event:JQueryEventObject) => {
+            jQuery(this.getHTMLElement()).on("click", ".grid-row", (event: JQueryEventObject) => {
                 var width = jQuery(event.currentTarget).children('div').data("width");
                 var height = jQuery(event.currentTarget).children('div').data("height");
                 var type = jQuery(event.currentTarget).children('div').data("device.type");
@@ -29,7 +29,7 @@ module app.contextwindow {
                 this.contextWindow.getLiveEditEl().getEl().setHeight(height);
             });
 
-            jQuery(this.getHTMLElement()).on("click", ".rotate", (event:JQueryEventObject) => {
+            jQuery(this.getHTMLElement()).on("click", ".rotate", (event: JQueryEventObject) => {
                 event.stopPropagation();
                 var width = this.contextWindow.getLiveEditEl().getEl().getWidth();
                 var height = this.contextWindow.getLiveEditEl().getEl().getHeight();
@@ -39,10 +39,10 @@ module app.contextwindow {
             });
         }
 
-        private getData():void {
+        private getData(): void {
             jQuery.ajax({
                 url: api.util.getAdminUri("apps/content-manager/js/data/context-window/devices.json"),
-                success: (data:any, textStatus:string, jqXHR:JQueryXHR) => {
+                success: (data: any, textStatus: string, jqXHR: JQueryXHR) => {
                     this.dataView.setItems(EmulatorGrid.toSlickData(data));
                 }
             });

@@ -4,8 +4,8 @@ module api.dom {
 
         private loaded: boolean = false;
 
-        constructor(idPrefix?: string, className?: string, el?: ElementHelper) {
-            super("iframe", idPrefix, className, el);
+        constructor(generateId?: boolean, className?: string, elHelper?: ElementHelper) {
+            super(new ElementProperties().setTagName("iframe").setGenerateId(generateId).setClassName(className).setHelper(elHelper));
             this.getHTMLElement().onload = (event) => {
                 this.loaded = true;
             }

@@ -11,8 +11,7 @@ module api.app.view {
         private listeners:ItemViewPanelListener<M>[] = [];
 
         constructor(toolbar:api.ui.toolbar.Toolbar, panel:api.ui.Panel) {
-            super("ItemViewPanel");
-            this.getEl().addClass("item-view-panel");
+            super(true, "item-view-panel");
             this.toolbar = toolbar;
             this.panel = panel;
             this.appendChild(this.toolbar);

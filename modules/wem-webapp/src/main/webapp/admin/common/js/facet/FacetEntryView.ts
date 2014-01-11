@@ -7,7 +7,7 @@ module api.facet {
         private selectionChangedListeners:Function[] = [];
 
         constructor(parentFacetView:FacetView) {
-            super('FacetEntryView', 'facet-entry-view');
+            super(true, 'facet-entry-view');
             this.parentFacetView = parentFacetView;
         }
 

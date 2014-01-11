@@ -3,7 +3,7 @@ declare var Admin;
 declare var CONFIG;
 
 window.onload = () => {
-    var appBar = new api.app.AppBar("Module Manager", new api.app.AppBarTabMenu("ModuleAppBarTabMenu"));
+    var appBar = new api.app.AppBar("Module Manager", new api.app.AppBarTabMenu(true));
     var appPanel = new app.ModuleAppPanel(appBar);
 
     api.dom.Body.get().appendChild(appBar);

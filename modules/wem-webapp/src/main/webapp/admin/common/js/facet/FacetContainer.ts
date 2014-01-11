@@ -7,7 +7,7 @@ module api.facet {
         private firstSelectedGroupView:FacetGroupView;
 
         constructor() {
-            super("FacetContainer");
+            super(true);
         }
 
         addFacetGroupView(facetGroupView:FacetGroupView) {

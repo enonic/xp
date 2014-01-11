@@ -5,7 +5,7 @@ module api.app.browse.grid2 {
         private nameFormatter: (row: number, cell: number, value: any, columnDef: any, dataContext: Slick.SlickData) => string;
 
         constructor() {
-            super("GridPanel2");
+            super(true);
             this.addClass("grid-panel2");
 
             this.nameFormatter = (row: number, cell: number, value: any, columnDef: any, item: api.content.ContentSummary) => {

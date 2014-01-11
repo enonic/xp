@@ -1,38 +1,88 @@
 module api.dom {
 
+    export class ElementProperties {
+
+        private tagName: string;
+        private generateId: boolean;
+        private className: string;
+        private helper: ElementHelper;
+
+        constructor() {
+        }
+
+        setTagName(name: string): ElementProperties {
+            this.tagName = name;
+            return this;
+        }
+
+        setGenerateId(flag: boolean): ElementProperties {
+            this.generateId = flag;
+            return this;
+        }
+
+        setClassName(name: string): ElementProperties {
+            this.className = name;
+            return this;
+        }
+
+        setHelper(helper: ElementHelper): ElementProperties {
+            this.helper = helper;
+            return this;
+        }
+
+        getTagName(): string {
+            return this.tagName;
+        }
+
+        isGenerateId(): boolean {
+            return this.generateId;
+        }
+
+        getClassName(): string {
+            return this.className;
+        }
+
+        getHelper(): ElementHelper {
+            return this.helper;
+        }
+    }
+
     export class Element {
 
-        private static constructorCounter:number = 0;
+        private static constructorCounter: number = 0;
 
-        private el:ElementHelper;
+        private el: ElementHelper;
 
-        private id:string;
+        private id: string;
 
-        private parent:Element;
+        private parent: Element;
 
-        private children:Element[];
+        private children: Element[];
 
-        private rendered:boolean;
+        private rendered: boolean;
 
-        constructor(elementName:string, idPrefix?:string, className?:string, elHelper?:ElementHelper) {
+        constructor(properties: ElementProperties) {
             this.rendered = false;
-            if (elHelper == null) {
-                this.el = ElementHelper.fromName(elementName);
+            if (properties.getHelper()) {
+                this.el = properties.getHelper();
+            } else if(properties.getTagName()) {
+                this.el = ElementHelper.fromName(properties.getTagName());
             } else {
-                this.el = elHelper;
+                throw new Error("Either tag name or helper should be present");
             }
-            if (idPrefix != null) {
-                this.id = idPrefix + '-' + (++Element.constructorCounter);
+
+            if (properties.isGenerateId()) {
+                this.id = api.util.getModuleName(this) + "." + api.util.getClassName(this) + '-' + (++Element.constructorCounter);
                 this.el.setId(this.id);
             }
-            if (className != null) {
-                this.el.setClass(className);
+            if (properties.getClassName()) {
+                this.el.setClass(properties.getClassName());
             }
             this.children = [];
         }
 
-        static fromHtmlElement(element:HTMLElement):Element {
-            return new Element(null, null, null, new ElementHelper(element));
+        static fromHtmlElement(element: HTMLElement): Element {
+            return new Element(new ElementProperties().setHelper(new ElementHelper(element)));
         }
 
         init() {
@@ -59,11 +109,11 @@ module api.dom {
 
         }
 
-        isRendered():boolean {
+        isRendered(): boolean {
             return this.rendered;
         }
 
-        className(value:string):Element {
+        className(value: string): Element {
             this.getHTMLElement().className = value;
             return this;
         }
@@ -90,7 +140,7 @@ module api.dom {
             jQuery(this.el.getHTMLElement()).hide();
         }
 
-        setVisible(value:boolean) {
+        setVisible(value: boolean) {
             if (value) {
                 this.show();
             }
@@ -110,78 +160,79 @@ module api.dom {
             this.el.setInnerHtml("");
         }
 
-        setClass(className:string):api.dom.Element {
+        setClass(className: string): api.dom.Element {
             this.el.setClass(className);
             return this;
         }
 
-        addClass(className:string):api.dom.Element {
+        addClass(className: string): api.dom.Element {
             this.el.addClass(className);
             return this;
         }
 
-        hasClass(className:string):boolean {
+        hasClass(className: string): boolean {
             return this.el.hasClass(className);
         }
 
-        removeClass(className:string):api.dom.Element {
+        removeClass(className: string): api.dom.Element {
             this.el.removeClass(className);
             return this;
         }
 
-        removeAllClasses(exceptions:string = ""):api.dom.Element {
+        removeAllClasses(exceptions: string = ""): api.dom.Element {
             this.el.getHTMLElement().className = exceptions;
             return this;
         }
 
-        getId():string {
+        getId(): string {
             return this.id;
         }
 
-        getEl():ElementHelper {
+        getEl(): ElementHelper {
             return this.el;
         }
 
-        giveFocus() : boolean  {
-            if( !this.isVisible() ) {
+        giveFocus(): boolean {
+            if (!this.isVisible()) {
                 return false;
             }
-            if( this.el.isDisabled() ) {
+            if (this.el.isDisabled()) {
                 return false;
             }
             this.el.focuse();
-            var gotFocus:boolean = document.activeElement == this.el.getHTMLElement();
-            if( !gotFocus )  {
-                console.log("Element.giveFocus(): Failed to give focus to Element: class = " + api.util.getClassName(this) + ", id = " + this.getId());
+            var gotFocus: boolean = document.activeElement == this.el.getHTMLElement();
+            if (!gotFocus) {
+                console.log("Element.giveFocus(): Failed to give focus to Element: class = " + api.util.getClassName(this) + ", id = " +
+                            this.getId());
             }
             return gotFocus;
         }
 
-        getHTMLElement():HTMLElement {
+        getHTMLElement(): HTMLElement {
             return this.el.getHTMLElement();
         }
 
-        onElementAddedToParent(parent:Element) {
+        onElementAddedToParent(parent: Element) {
             // To be overridden by inheritors interested in when it's shown
         }
 
-        private broadcastElementAddedToParent(child:Element) {
+        private broadcastElementAddedToParent(child: Element) {
             child.onElementAddedToParent(this);
         }
 
-        appendChild<T extends api.dom.Element>(child:T) {
+        appendChild<T extends api.dom.Element>(child: T) {
             this.el.appendChild(child.getEl().getHTMLElement());
             this.insert(child, this, this.children.length);
 
             this.broadcastElementAddedToParent(child);
         }
 
-        prependChild(child:api.dom.Element) {
+        prependChild(child: api.dom.Element) {
             this.el.getHTMLElement().insertBefore(child.getHTMLElement(), this.el.getHTMLElement().firstChild);
             this.insert(child, this, 0);
         }
 
-        removeChild(child:api.dom.Element) {
+        removeChild(child: api.dom.Element) {
             if (this.getHTMLElement().contains(child.getHTMLElement())) {
                 this.getHTMLElement().removeChild(child.getHTMLElement());
                 this.children = this.children.filter((element) => {
@@ -190,21 +241,21 @@ module api.dom {
             }
         }
 
-        insertAfterEl(existingEl:Element) {
+        insertAfterEl(existingEl: Element) {
             this.el.insertAfterEl(existingEl);
             var parent = existingEl.getParent();
             var index = parent.getChildren().indexOf(existingEl) + 1;
             this.insert(this, parent, index);
         }
 
-        insertBeforeEl(existingEl:Element) {
+        insertBeforeEl(existingEl: Element) {
             this.el.insertBeforeEl(existingEl);
             var parent = existingEl.getParent();
             var index = parent.getChildren().indexOf(existingEl);
             this.insert(this, parent, index);
         }
 
-        private insert(child:Element, parent:Element, index:number) {
+        private insert(child: Element, parent: Element, index: number) {
             child.setParent(parent);
             parent.getChildren().splice(index, 0, child);
             if (parent.isRendered()) {
@@ -220,23 +271,23 @@ module api.dom {
             this.children = [];
         }
 
-        private setParent(parent:Element) {
+        private setParent(parent: Element) {
             this.parent = parent;
         }
 
-        getParent():Element {
+        getParent(): Element {
             return this.parent;
         }
 
-        getChildren():Element[] {
+        getChildren(): Element[] {
             return this.children;
         }
 
-        getLastChild():Element {
+        getLastChild(): Element {
             return this.children[this.children.length - 1];
         }
 
-        getFirstChild():Element {
+        getFirstChild(): Element {
             return this.children[0];
         }
 
@@ -258,29 +309,29 @@ module api.dom {
             }
         }
 
-        toString():string {
-            return jQuery('<div>').append( jQuery(this.getHTMLElement()).clone() ).html();
+        toString(): string {
+            return jQuery('<div>').append(jQuery(this.getHTMLElement()).clone()).html();
         }
 
-        onMouseEnter(handler:(e:MouseEvent)=>any) {
+        onMouseEnter(handler: (e: MouseEvent)=>any) {
             this.mouseEnterLeave(this.getHTMLElement(), 'mouseenter', handler);
         }
 
-        onMouseLeave(handler:(e:MouseEvent)=>any) {
+        onMouseLeave(handler: (e: MouseEvent)=>any) {
             this.mouseEnterLeave(this.getHTMLElement(), 'mouseleave', handler);
         }
 
-        setBackgroundImgUrl(backgroundImgUrl:string) {
+        setBackgroundImgUrl(backgroundImgUrl: string) {
             this.getHTMLElement().style.backgroundImage = "url('" + backgroundImgUrl + "')";
         }
 
-        private mouseEnterLeave(elem:HTMLElement, type:string, handler:(e:MouseEvent)=>any) {
+        private mouseEnterLeave(elem: HTMLElement, type: string, handler: (e: MouseEvent)=>any) {
             var mouseEnter = type === 'mouseenter',
                 ie = mouseEnter ? 'fromElement' : 'toElement',
-                mouseEventHandler = (e:any) => { //Had use any since window.event isn't of type MouseEvent and caused compiler to bug
+                mouseEventHandler = (e: any) => { //Had use any since window.event isn't of type MouseEvent and caused compiler to bug
                     e = e || window.event;
-                    var target:HTMLElement = <HTMLElement> (e.target || e.srcElement),
-                        related:HTMLElement = <HTMLElement> (e.relatedTarget || e[ie]);
+                    var target: HTMLElement = <HTMLElement> (e.target || e.srcElement),
+                        related: HTMLElement = <HTMLElement> (e.relatedTarget || e[ie]);
                     if ((elem === target || this.contains(elem, target)) && !this.contains(elem, related)) {
                         handler(e);
                     }
@@ -291,9 +342,9 @@ module api.dom {
             return mouseEventHandler;
         }
 
-        private contains(container:HTMLElement, maybe:HTMLElement) {
+        private contains(container: HTMLElement, maybe: HTMLElement) {
             return container.contains ? container.contains(maybe) :
-                !!(container.compareDocumentPosition(maybe) & 16);
+                   !!(container.compareDocumentPosition(maybe) & 16);
         }
 
     }

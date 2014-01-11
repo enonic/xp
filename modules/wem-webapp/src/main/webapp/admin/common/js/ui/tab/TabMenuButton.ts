@@ -4,8 +4,8 @@ module api.ui.tab {
 
         private labelEl:api.dom.SpanEl;
 
-        constructor(idPrefix?:string) {
-            super(idPrefix || "TabMenuButton", "tab-menu-button");
+        constructor(generateId?:boolean) {
+            super(generateId, "tab-menu-button");
 
             this.labelEl = new api.dom.SpanEl(null, 'label');
             this.appendChild(this.labelEl);

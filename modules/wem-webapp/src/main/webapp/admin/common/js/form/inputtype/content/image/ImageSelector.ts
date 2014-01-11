@@ -28,7 +28,7 @@ module api.form.inputtype.content.image {
         private uploadDialog: UploadDialog;
 
         constructor(config: api.form.inputtype.InputTypeViewConfig<ImageSelectorConfig>) {
-            super("ImageSelector", "image-selector");
+            super(true, "image-selector");
 
             this.config = config;
             this.contentSummaryLoader = new api.form.inputtype.content.ContentSummaryLoader();

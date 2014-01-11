@@ -5,21 +5,21 @@ module api.ui {
      */
     export class DeckPanel extends Panel implements api.event.Observable {
 
-        private panels:Panel[] = [];
+        private panels: Panel[] = [];
 
-        private panelShown:Panel = null;
+        private panelShown: Panel = null;
 
-        private listeners:DeckPanelListener[] = [];
+        private listeners: DeckPanelListener[] = [];
 
-        constructor(idPrefix?:string) {
-            super(idPrefix || "DeckPanel");
+        constructor(generateId?: boolean, className?: string) {
+            super(generateId, "deck-panel" + (className ? " " + className : ""));
         }
 
-        isEmpty():boolean {
+        isEmpty(): boolean {
             return this.panels.length == 0;
         }
 
-        getSize():number {
+        getSize(): number {
             return this.panels.length;
         }
 
@@ -28,30 +28,30 @@ module api.ui {
          * @param panel
          * @returns {number} The index for the added Panel.
          */
-        addPanel<T extends api.ui.Panel>(panel:T):number {
+        addPanel<T extends api.ui.Panel>(panel: T): number {
             panel.hide();
             panel.setDoOffset(false);
             this.appendChild(panel);
             return this.panels.push(panel) - 1;
         }
 
-        getPanel(index:number) {
+        getPanel(index: number) {
             return this.panels[index];
         }
 
-        getLastPanel():Panel {
+        getLastPanel(): Panel {
             return this.getPanel(this.getSize() - 1) || null;
         }
 
-        getPanelShown():Panel {
+        getPanelShown(): Panel {
             return this.panelShown;
         }
 
-        getPanelShownIndex():number {
+        getPanelShownIndex(): number {
             return this.getPanelIndex(this.panelShown);
         }
 
-        getPanelIndex<T extends api.ui.Panel>(panel:T):number {
+        getPanelIndex<T extends api.ui.Panel>(panel: T): number {
             var size = this.getSize();
             for (var i = 0; i < size; i++) {
                 if (this.panels[i] === panel) {
@@ -65,7 +65,7 @@ module api.ui {
          * Removes panel specified by given index. Method canRemovePanel will be called to know if specified panel is allowed to be removed.
          * @returns {Panel} the removed panel. Null if not was not removable.
          */
-        removePanelByIndex(index:number, checkCanRemovePanel:boolean = true):Panel {
+        removePanelByIndex(index: number, checkCanRemovePanel: boolean = true): Panel {
             var panelToRemove = this.getPanel(index);
             return this.removePanel(panelToRemove, checkCanRemovePanel) ? panelToRemove : null;
         }
@@ -74,9 +74,9 @@ module api.ui {
          * Removes given panel. Method canRemovePanel will be called to know if specified panel is allowed to be removed.
          * @returns {number} the index of the removed panel. -1 if it was not removable.
          */
-        removePanel(panelToRemove:Panel, checkCanRemovePanel:boolean = true):number {
+        removePanel(panelToRemove: Panel, checkCanRemovePanel: boolean = true): number {
 
-            var index:number = this.getPanelIndex(panelToRemove);
+            var index: number = this.getPanelIndex(panelToRemove);
 
             if (index < 0) {
                 return -1;
@@ -103,11 +103,11 @@ module api.ui {
         /*
          * Override this method to decide whether given panel at given index can be removed or not. Default is true.
          */
-        canRemovePanel(panel:Panel):boolean {
+        canRemovePanel(panel: Panel): boolean {
             return true;
         }
 
-        showPanel(index:number) {
+        showPanel(index: number) {
             var previousPanel = this.getPanelShown();
             var panelToShow = this.getPanel(index);
 
@@ -124,24 +124,24 @@ module api.ui {
             this.notifyPanelShown(panelToShow, this.getPanelIndex(panelToShow), previousPanel);
         }
 
-        addListener(listener:DeckPanelListener) {
+        addListener(listener: DeckPanelListener) {
             this.listeners.push(listener);
         }
 
-        removeListener(listener:DeckPanelListener) {
+        removeListener(listener: DeckPanelListener) {
             this.listeners = this.listeners.filter(function (curr) {
                 return curr != listener;
             });
         }
 
-        private notifyPanelShown(panel:Panel, panelIndex:number, previousPanel:Panel) {
-            this.listeners.forEach((listener:DeckPanelListener) => {
+        private notifyPanelShown(panel: Panel, panelIndex: number, previousPanel: Panel) {
+            this.listeners.forEach((listener: DeckPanelListener) => {
                 if (listener.onPanelShown) {
                     listener.onPanelShown(<PanelShownEvent>{
-                            panel: panel,
-                            index: panelIndex,
-                            previousPanel: previousPanel
-                        });
+                        panel: panel,
+                        index: panelIndex,
+                        previousPanel: previousPanel
+                    });
                 }
             });
         }

@@ -22,7 +22,7 @@ module api.app.view {
         private actionMenu:api.ui.menu.ActionMenu;
 
         constructor(itemStatisticsPanelParams:ItemStatisticsPanelParams) {
-            super("ItemStatisticsPanel");
+            super(true);
             this.getEl().addClass("item-statistics-panel");
 
             this.actionMenu = itemStatisticsPanelParams.actionMenu;
@@ -48,7 +48,7 @@ module api.app.view {
         }
 
         private addCanvas() {
-            var canvasEl = this.canvas = new api.dom.DivEl("canvas", "canvas");
+            var canvasEl = this.canvas = new api.dom.DivEl(true, "canvas");
             this.appendChild(canvasEl);
         }
 
@@ -87,11 +87,11 @@ module api.app.view {
         private subtitleEl = new api.dom.H4El();
 
         constructor(actionMenu:api.ui.menu.ActionMenu) {
-            super("header", "header");
+            super(true, "header");
 
             this.appendChild(this.iconContainerEl);
 
-            var hgroupEl = new api.dom.Element("hgroup");
+            var hgroupEl = new api.dom.Element(new api.dom.ElementProperties().setTagName("hgroup"));
             hgroupEl.appendChild(this.headerTextEl);
             hgroupEl.appendChild(this.subtitleEl);
             this.appendChild(hgroupEl);
@@ -103,7 +103,7 @@ module api.app.view {
             this.browseItem = item;
 
             var icon:HTMLImageElement = api.util.ImageLoader.get(this.browseItem.getIconUrl() + "?size=64", 64, 64);
-            var iconEl = new api.dom.Element("img", null, null, new api.dom.ImgHelper(icon));
+            var iconEl = new api.dom.Element(new api.dom.ElementProperties().setTagName("img").setHelper(new api.dom.ImgHelper(icon)));
             this.iconContainerEl.removeChildren();
             this.iconContainerEl.appendChild(iconEl);
 
@@ -120,7 +120,7 @@ module api.app.view {
 
         constructor(name:string) {
             this.name = name;
-            this.content = new api.dom.DivEl("test-content");
+            this.content = new api.dom.DivEl(true);
             this.content.getEl().setInnerHtml(this.name);
         }
     }
@@ -130,11 +130,11 @@ module api.app.view {
         private tabs:api.dom.LiEl[] = [];
 
         constructor() {
-            super("tab-list", "tab-list");
+            super(true, "tab-list");
         }
 
         addTab(tab, clickCallback:(DetailPanelTab) => void) {
-            var tabEl = new api.dom.LiEl("tab");
+            var tabEl = new api.dom.LiEl(true);
             this.tabs.push(tabEl);
             tabEl.getEl().setInnerHtml(tab.name);
             tabEl.getEl().addEventListener("click", (event) => {

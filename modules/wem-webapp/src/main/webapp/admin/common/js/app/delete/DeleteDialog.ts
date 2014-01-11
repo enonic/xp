@@ -77,7 +77,7 @@ module api.app.remove{
 
     export class DeleteDialogItemList extends api.dom.DivEl {
         constructor() {
-            super("DeleteDialogItemList");
+            super(true);
             this.getEl().addClass("item-list");
         }
 
@@ -88,7 +88,7 @@ module api.app.remove{
 
     class DeleteDialogItemComponent extends api.dom.DivEl {
         constructor(deleteItem:DeleteItem) {
-            super("DeleteDialogItem");
+            super(true);
             this.getEl().addClass("item");
 
             var icon = new api.dom.ImgEl(deleteItem.getIconUrl());

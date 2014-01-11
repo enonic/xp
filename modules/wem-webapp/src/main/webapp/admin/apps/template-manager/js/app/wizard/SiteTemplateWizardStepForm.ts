@@ -10,8 +10,8 @@ module app.wizard
 
         constructor()
         {
-            super( "site-template-wizard-step" );
-            this.descriptionField = api.ui.TextInput.large("description" ).setName("description");
+            super(true);
+            this.descriptionField = api.ui.TextInput.large(true).setName("description");
             this.moduleComboBox = new api.module.ModuleComboBox();
             this.rootContentTypeComboBox = new api.schema.content.ContentTypeComboBox(false);
 

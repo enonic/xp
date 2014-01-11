@@ -7,7 +7,7 @@ module api.app.browse {
         private selectionItems:SelectionItem<M>[] = [];
 
         constructor() {
-            super("ItemsSelectionPanel");
+            super(true);
             this.getEl().setInnerHtml("Nothing selected");
         }
 
@@ -103,7 +103,7 @@ module api.app.browse {
         private browseItem:api.app.browse.BrowseItem<M>;
 
         constructor(browseItem:BrowseItem<M>, removeCallback?:() => void) {
-            super("SelectionItem", "browse-selection-item");
+            super(true, "browse-selection-item");
             this.browseItem = browseItem;
             this.setIcon(this.browseItem.getIconUrl(), 32);
             this.setData(this.browseItem.getDisplayName(), this.browseItem.getPath());

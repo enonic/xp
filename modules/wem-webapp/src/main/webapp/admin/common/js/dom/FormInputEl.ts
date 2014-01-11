@@ -1,8 +1,8 @@
 module api.dom {
     export class FormInputEl extends Element {
 
-        constructor(elementName:string, idPrefix?:string, className?:string, elHelper?:ElementHelper) {
-            super(elementName, idPrefix, className, elHelper);
+        constructor(tagName:string, generateId?:boolean, className?:string, elHelper?:ElementHelper) {
+            super(new ElementProperties().setTagName(tagName).setGenerateId(generateId).setClassName(className).setHelper(elHelper));
         }
 
         getValue():string {

@@ -7,8 +7,8 @@ module api.ui.list {
 
         private items: T[] = [];
 
-        constructor(idPrefix: string, className?: string, title?: string) {
-            super(idPrefix, className);
+        constructor(generateId: boolean, className?: string, title?: string) {
+            super(generateId, className);
 
             this.setTitle(title);
 

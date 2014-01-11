@@ -17,8 +17,7 @@ module api.form.inputtype.singleselector {
         private config:SingleSelectorConfig;
 
         constructor(config:api.form.inputtype.InputTypeViewConfig<SingleSelectorConfig>) {
-            super("SingleSelector");
-            this.addClass("single-selector");
+            super(true, "single-selector");
             this.config = config.inputConfig;
         }
 

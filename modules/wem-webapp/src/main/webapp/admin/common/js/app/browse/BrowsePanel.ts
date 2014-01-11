@@ -38,7 +38,7 @@ module api.app.browse{
         private refreshNeeded:boolean = false;
 
         constructor(params:BrowsePanelParams<M>) {
-            super("BrowsePanel");
+            super(true);
 
             this.browseToolbar = params.browseToolbar;
             this.treeGridPanel = params.treeGridPanel;
@@ -56,7 +56,7 @@ module api.app.browse{
 
             this.gridContainer = new api.app.browse.GridContainer(this.treeGridPanel);
 
-            this.gridAndToolbarContainer = new api.ui.Panel("GridAndToolbar");
+            this.gridAndToolbarContainer = new api.ui.Panel(true);
             this.gridAndToolbarContainer.appendChild(this.browseToolbar);
             this.gridAndToolbarContainer.appendChild(this.gridContainer);
 

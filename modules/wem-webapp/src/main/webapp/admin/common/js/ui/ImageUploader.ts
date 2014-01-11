@@ -32,7 +32,7 @@ module api.ui {
         private listeners:ImageUploaderListener[] = [];
 
         constructor(name:string, uploadUrl:string, config:ImageUploaderConfig = {}) {
-            super("div", "ImageUploader", "image-uploader");
+            super("div", true, "image-uploader");
             this.name = name;
             this.uploadUrl = uploadUrl;
             this.multiSelection = (config.multiSelection == undefined) ? false : config.multiSelection;
@@ -47,7 +47,7 @@ module api.ui {
                 this.appendChild(this.input);
             }
 
-            this.dropzone = new api.dom.DivEl("DropZone", "dropzone");
+            this.dropzone = new api.dom.DivEl(true, "dropzone");
             this.refreshDropzoneLabel();
             this.appendChild(this.dropzone);
 

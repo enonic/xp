@@ -9,7 +9,7 @@ module api.dom {
         }
 
         constructor() {
-            super(null, null, null, new ElementHelper(document.body));
+            super(new ElementProperties().setHelper(new ElementHelper(document.body)));
 
             this.init();
         }

@@ -12,9 +12,9 @@ module api.ui{
         }
 
         constructor() {
-            super("BodyMask");
+            super(true);
             this.getEl().setDisplay("none");
-            this.getEl().addClass("body-mask")
+            this.getEl().addClass("body-mask");
             this.getEl().setZindex(30000);
 
             api.dom.Body.get().appendChild(this);

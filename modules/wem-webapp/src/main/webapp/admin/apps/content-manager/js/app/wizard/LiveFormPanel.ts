@@ -8,8 +8,7 @@ module app.wizard {
         private site: api.content.Content;
 
         constructor(site: api.content.Content, url: string = api.util.getUri("portal/edit/bluman-intranett")) {
-            super("LiveFormPanel");
-            this.addClass("live-form-panel");
+            super(true, "live-form-panel");
             this.url = url;
             this.site = site;
         }

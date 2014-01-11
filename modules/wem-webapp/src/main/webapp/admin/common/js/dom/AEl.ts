@@ -2,8 +2,8 @@ module api.dom {
 
     export class AEl extends Element {
 
-        constructor(idPrefix?:string, className?:string) {
-            super("a", idPrefix, className);
+        constructor(generateId?: boolean, className?: string) {
+            super(new ElementProperties().setTagName("a").setGenerateId(generateId).setClassName(className));
         }
 
         public setText(value: string) {
@@ -14,7 +14,7 @@ module api.dom {
             this.getEl().setAttribute('href', value);
         }
 
-        setClickListener(f:(event) => void) {
+        setClickListener(f: (event) => void) {
             this.getEl().addEventListener("click", f);
         }
     }

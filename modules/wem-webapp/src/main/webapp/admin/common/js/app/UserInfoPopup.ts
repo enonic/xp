@@ -5,7 +5,7 @@ module api.app {
         private isShown:boolean = false;
 
         constructor() {
-            super('UserInfoPopup', 'user-info-popup');
+            super(true, 'user-info-popup');
 
             this.createContent();
             this.render();

@@ -2,8 +2,8 @@ module api.dom {
 
     export class LegendEl extends Element {
 
-        constructor(legend:string, idPrefix?:string, className?:string) {
-            super('legend', idPrefix, className);
+        constructor(legend:string, generateId?:boolean, className?:string) {
+            super(new ElementProperties().setTagName("legend").setGenerateId(generateId).setClassName(className));
             this.getEl().setInnerHtml(legend);
         }
     }

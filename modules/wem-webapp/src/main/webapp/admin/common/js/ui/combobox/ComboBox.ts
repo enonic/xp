@@ -35,7 +35,7 @@ module api.ui.combobox {
         private listeners:ComboBoxListener<T>[] = [];
 
         constructor(name:string, config:ComboBoxConfig<T>) {
-            super("div", "ComboBox", "combobox");
+            super("div", true, "combobox");
             this.getEl().setAttribute("name", name);
 
             this.hideComboBoxWhenMaxReached = config.hideComboBoxWhenMaxReached;

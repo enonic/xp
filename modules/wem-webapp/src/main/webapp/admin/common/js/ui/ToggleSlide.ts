@@ -24,7 +24,7 @@ module api.ui{
         private slideRight:api.util.Animation;
 
         constructor(actions:ToggleSlideActions, initOn:boolean) {
-            super('ToogleSlide', 'toggle-slide');
+            super(true, 'toggle-slide');
 
             this.actions = actions;
 

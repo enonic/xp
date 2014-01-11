@@ -2,8 +2,8 @@ module api.ui {
 
     export class PasswordInput extends api.dom.InputEl {
 
-        constructor(idPrefix?:string, className?:string) {
-            super(idPrefix, className);
+        constructor(generateId?:boolean, className?:string) {
+            super(generateId, className);
 
             this.getEl().setAttribute('type', 'password');
         }

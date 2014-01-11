@@ -7,9 +7,8 @@ module app.contextwindow {
         private grid:ComponentGrid;
         private contextWindow:ContextWindow;
 
-        constructor(contextWindow:ContextWindow, idPrefix:string = "SelectPanel") {
-            super(idPrefix);
-            this.addClass("select-panel");
+        constructor(contextWindow:ContextWindow) {
+            super(true, "select-panel");
             this.contextWindow = contextWindow;
 
             this.dataView = new api.ui.grid.DataView<ComponentData>();

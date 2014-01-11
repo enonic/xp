@@ -9,8 +9,8 @@ module api.ui {
 
         private listeners:CheckboxInputListener[] = [];
 
-        constructor(idPrefix?:string, className?:string) {
-            super(idPrefix, className);
+        constructor(generateId?:boolean, className?:string) {
+            super(generateId, className);
 
             this.getEl().setAttribute('type', 'checkbox');
 

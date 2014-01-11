@@ -23,8 +23,7 @@ module app.contextwindow.image {
         private liveEditIndex:number = 1;
 
         constructor(contextWindow:ContextWindow) {
-            super("ImageSelectPanel");
-            this.addClass("select-panel");
+            super(true, "select-panel");
             var comboBoxWrapper = new api.dom.DivEl();
             this.contextWindow = contextWindow;
 
@@ -43,7 +42,7 @@ module app.contextwindow.image {
 
             this.recentPanel = new RecentPanel();
 
-            this.templatePanel = new api.ui.Panel("TemplatePanel", "template-panel");
+            this.templatePanel = new api.ui.Panel(true, "template-panel");
             this.templatePanel.getEl().setInnerHtml("Template goes here");
 
             this.deck.addPanel(this.recentPanel);

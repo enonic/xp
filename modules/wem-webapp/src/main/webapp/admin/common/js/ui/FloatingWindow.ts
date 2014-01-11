@@ -12,8 +12,7 @@ module api.ui {
         private options:FloatingWindowOptions;
 
         constructor(options:FloatingWindowOptions) {
-            super("FloatingWindow");
-            this.addClass("floating-window");
+            super(true, "floating-window");
             this.options = options;
             if (options) {
                 if (options.draggable) {

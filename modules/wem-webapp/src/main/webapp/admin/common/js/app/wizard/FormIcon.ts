@@ -25,12 +25,12 @@ module api.app.wizard {
          * @param uploadUrl url to upload new icon to
          */
         constructor(public iconUrl:string, public iconTitle:string, public uploadUrl?:string) {
-            super("FormIcon", "form-icon");
+            super(true, "form-icon");
             var el = this.getEl();
 
             this.tooltip = new api.ui.Tooltip(this, iconTitle, 0, 0);
 
-            var img = this.img = new api.dom.ImgEl(this.iconUrl, "FormIcon");
+            var img = this.img = new api.dom.ImgEl(this.iconUrl, true);
             img.getEl().addEventListener("load", () => {
                 if (img.isVisible()) {
                     this.tooltip.showFor(10000);

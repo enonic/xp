@@ -7,7 +7,7 @@ module api.ui.combobox {
         private selectedOptionToBeRemovedListeners:{(toBeRemoved:SelectedOptionView<T>): void;}[] = [];
 
         constructor(option:Option<T>) {
-            super("ComboBoxSelectedOptionView", "selected-option");
+            super(true, "selected-option");
             this.option = option;
             this.layout();
         }
@@ -17,8 +17,8 @@ module api.ui.combobox {
         }
 
         layout() {
-            var removeButtonEl = new api.dom.AEl(null, "remove");
-            var optionValueEl = new api.dom.DivEl(null, 'option-value');
+            var removeButtonEl = new api.dom.AEl(false, "remove");
+            var optionValueEl = new api.dom.DivEl(false, 'option-value');
             optionValueEl.getEl().setInnerHtml(this.option.displayValue.toString());
 
             removeButtonEl.getEl().addEventListener('click', (event:Event) => {

@@ -2,8 +2,8 @@ module api.dom {
 
     export class H6El extends Element {
 
-        constructor(idPrefix?:string, className?:string) {
-            super("h6", idPrefix, className);
+        constructor(generateId?:boolean, className?:string) {
+            super(new ElementProperties().setTagName("h6").setGenerateId(generateId).setClassName(className));
         }
     }
 }

@@ -7,15 +7,15 @@ module app.wizard.site {
         private siteTemplate: api.content.site.template.SiteTemplate;
 
         constructor(template: api.content.site.template.SiteTemplate, contentType: api.schema.content.ContentType) {
-            super("TemplateView", "input-view template-view");
+            super(true, "input-view template-view");
             this.contentType = contentType;
             this.siteTemplate = template;
 
-            var label = new api.dom.DivEl("TemplateLabel", "input-label");
+            var label = new api.dom.DivEl(true, "input-label");
             label.getEl().setInnerHtml("Site Template");
             this.appendChild(label);
 
-            var input = new api.dom.DivEl("TemplateInput", "input-type-view");
+            var input = new api.dom.DivEl(true, "input-type-view");
             this.appendChild(input);
 
             var imgEl = new api.dom.ImgEl(this.contentType.getIconUrl());

@@ -9,9 +9,9 @@ module app.imp {
         private progress:api.ui.ProgressBar;
 
         constructor() {
-            super("div", "TemplateUploader", "image-uploader");
+            super(new api.dom.ElementProperties().setTagName("div").setGenerateId(true).setClassName("image-uploader"));
 
-            this.dropzone = new api.dom.DivEl("DropZone", "dropzone");
+            this.dropzone = new api.dom.DivEl(true, "dropzone");
             this.dropzone.getEl().setInnerHtml("Drop files here or click to select");
             this.appendChild(this.dropzone);
 

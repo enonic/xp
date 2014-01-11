@@ -5,7 +5,7 @@ module api.app.browse {
         private grid:api.app.browse.grid.TreeGridPanel;
 
         constructor(grid:api.app.browse.grid.TreeGridPanel) {
-            super("GridContainer");
+            super(true);
             this.setScrollY();
             this.addClass("grid-container");
             this.grid = grid;

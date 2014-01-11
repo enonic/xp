@@ -22,7 +22,7 @@ module api.ui.tab {
         private listeners: TabMenuItemListener[] = [];
 
         constructor(label:string, options?:TabMenuItemOptions) {
-            super("TabMenuItem", "tab-menu-item");
+            super(true, "tab-menu-item");
             if (!options) {
                 options = {};
             }

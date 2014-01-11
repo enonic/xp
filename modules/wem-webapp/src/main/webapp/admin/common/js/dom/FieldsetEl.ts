@@ -2,8 +2,8 @@ module api.dom {
 
     export class FieldsetEl extends Element {
 
-        constructor(idPrefix?:string, className?:string) {
-            super('fieldset', idPrefix, className);
+        constructor(generateId?:boolean, className?:string) {
+            super(new ElementProperties().setTagName("fieldset").setGenerateId(generateId).setClassName(className));
         }
     }
 }

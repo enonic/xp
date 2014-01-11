@@ -1,13 +1,13 @@
 module app.create {
 
-    export class TemplatesList extends api.ui.list.ListView<api.content.site.template.SiteTemplateSummary> implements api.event.Observable {
+    export class SiteTemplatesList extends api.ui.list.ListView<api.content.site.template.SiteTemplateSummary> implements api.event.Observable {
 
         private listeners: SiteTemplatesListListener[] = [];
 
         private contentTypes: ContentTypes;
 
         constructor(className?: string, title?: string) {
-            super("TemplatesList", className, title);
+            super(true, className, title);
         }
 
         addListener(listener: SiteTemplatesListListener) {

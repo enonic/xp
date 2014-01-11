@@ -19,7 +19,7 @@ module app.wizard.page {
         private formView: api.form.FormView;
 
         constructor(config: PageWizardStepFormConfig) {
-            super("PageWizardStepForm");
+            super(true);
             this.parentContent = config.parentContent;
             this.siteContent = config.siteContent;
 

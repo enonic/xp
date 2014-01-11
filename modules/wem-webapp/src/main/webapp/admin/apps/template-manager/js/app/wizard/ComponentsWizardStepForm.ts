@@ -1,12 +1,9 @@
-module app.wizard
-{
+module app.wizard {
 
-    export class ComponentsWizardStepForm extends api.app.wizard.WizardStepForm
-    {
+    export class ComponentsWizardStepForm extends api.app.wizard.WizardStepForm {
 
-        constructor()
-        {
-            super( "components-step" );
+        constructor() {
+            super(true);
         }
 
     }

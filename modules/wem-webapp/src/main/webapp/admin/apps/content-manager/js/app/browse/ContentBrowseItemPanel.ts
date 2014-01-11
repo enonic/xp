@@ -45,8 +45,7 @@ module app.browse {
         private frame:api.dom.IFrameEl;
 
         constructor() {
-            super("ItemPreviewPanel");
-            this.addClass("item-preview-panel");
+            super(true, "item-preview-panel");
             this.frame = new api.dom.IFrameEl();
             this.appendChild(this.frame);
         }

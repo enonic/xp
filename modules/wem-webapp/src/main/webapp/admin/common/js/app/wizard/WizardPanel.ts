@@ -59,7 +59,7 @@ module api.app.wizard {
         private stepNavigatorAndToolbarContainer: api.dom.DivEl;
 
         constructor(params: WizardPanelParams, callback: Function) {
-            super("WizardPanel");
+            super(true);
 
             console.log("WizardPanel.constructor started");
 
@@ -71,9 +71,9 @@ module api.app.wizard {
             this.actions = params.actions;
 
             this.getEl().addClass("wizard-panel");
-            this.backPanel = new api.ui.DeckPanel("WizardBackPanel");
+            this.backPanel = new api.ui.DeckPanel(true);
             this.backPanel.addClass("wizard-back-panel");
-            this.formPanel = new api.ui.Panel("FormPanel");
+            this.formPanel = new api.ui.Panel(true);
             this.formPanel.addClass("form-panel");
 
             this.backPanel.addPanel(this.formPanel);
@@ -89,7 +89,7 @@ module api.app.wizard {
 
             aboveStepPanels.appendChild(this.header);
 
-            this.stepNavigatorAndToolbarContainer = new api.dom.DivEl("WizardStepNavigatorAndToolbar", "wizard-step-navigator-and-toolbar");
+            this.stepNavigatorAndToolbarContainer = new api.dom.DivEl(true, "wizard-step-navigator-and-toolbar");
             this.stepNavigator = new WizardStepNavigator();
             if (this.stepToolbar) {
                 this.stepNavigatorAndToolbarContainer.appendChild(this.stepToolbar);

@@ -9,7 +9,7 @@ module api.ui.toolbar {
         private actions:api.ui.Action[] = [];
 
         constructor() {
-            super("Toolbar", "toolbar");
+            super(true, "toolbar");
         }
 
         afterRender() {
@@ -67,7 +67,7 @@ module api.ui.toolbar {
     export class ToolbarButton extends api.ui.ActionButton {
 
         constructor(action:api.ui.Action) {
-            super("ToolbarButton", action, true);
+            super(true, action, true);
         }
 
         setFloatRight(value:boolean) {

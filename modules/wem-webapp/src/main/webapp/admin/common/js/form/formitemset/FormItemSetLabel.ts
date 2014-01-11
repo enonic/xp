@@ -5,7 +5,7 @@ module api.form.formitemset {
         private formItemSet:api.form.FormItemSet;
 
         constructor(formItemSet:api.form.FormItemSet) {
-            super("FormItemSetLabel", "form-item-set-label");
+            super(true, "form-item-set-label");
 
             this.formItemSet = formItemSet;
 

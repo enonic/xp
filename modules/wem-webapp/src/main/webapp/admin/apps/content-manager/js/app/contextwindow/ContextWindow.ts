@@ -159,11 +159,8 @@ module app.contextwindow {
         private minimized:boolean;
 
         constructor(minimize:()=>void, maximize:()=>void, minimized:boolean = false) {
-            super("Minimizer");
+            super(true, "minimizer live-edit-font-icon-minimize");
             this.minimized = minimized;
-            this.addClass("live-edit-font-icon-minimize");
-            this.addClass("minimizer");
-
 
             this.getEl().addEventListener("click", (event) => {
                 if (this.minimized) {

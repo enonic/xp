@@ -3,7 +3,7 @@ module api.form.inputtype.text {
     export class Region extends api.form.inputtype.support.BaseInputTypeView {
 
         constructor() {
-            super("Region");
+            super(true);
         }
 
         createInputOccurrenceElement(index:number, property:api.data.Property):api.dom.Element {

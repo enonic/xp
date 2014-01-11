@@ -3,7 +3,7 @@ module app.wizard {
     export class MixinForm extends api.ui.form.Form {
 
         constructor() {
-            super("MixinForm");
+            super(true);
 
             var fieldset = new api.ui.form.Fieldset(this,"Config");
             this.fieldset(fieldset);

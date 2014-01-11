@@ -5,8 +5,8 @@ module api.ui {
         private attendant: api.dom.Element;
         private clone: api.dom.Element;
 
-        constructor(idPrefix?:string, className?:string, size:string = TextInput.MIDDLE) {
-            super(idPrefix, className, size);
+        constructor(generateId?:boolean, className?:string, size:string = TextInput.MIDDLE) {
+            super(generateId, className, size);
 
             this.addClass('autosize');
 
@@ -33,12 +33,12 @@ module api.ui {
             });
         }
 
-        static large(idPrefix?:string, className?:string):AutosizeTextInput {
-            return new AutosizeTextInput(idPrefix, className, TextInput.LARGE);
+        static large(generateId?:boolean, className?:string):AutosizeTextInput {
+            return new AutosizeTextInput(generateId, className, TextInput.LARGE);
         }
 
-        static middle(idPrefix?:string, className?:string):AutosizeTextInput {
-            return new AutosizeTextInput(idPrefix, className, TextInput.MIDDLE);
+        static middle(generateId?:boolean, className?:string):AutosizeTextInput {
+            return new AutosizeTextInput(generateId, className, TextInput.MIDDLE);
         }
 
         afterRender() {

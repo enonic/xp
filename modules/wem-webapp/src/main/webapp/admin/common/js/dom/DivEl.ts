@@ -2,8 +2,8 @@ module api.dom {
 
     export class DivEl extends Element {
 
-        constructor(idPrefix?:string, className?:string) {
-            super("div", idPrefix, className);
+        constructor(generateId?:boolean, className?:string) {
+            super(new ElementProperties().setTagName("div").setGenerateId(generateId).setClassName(className));
         }
     }
 }

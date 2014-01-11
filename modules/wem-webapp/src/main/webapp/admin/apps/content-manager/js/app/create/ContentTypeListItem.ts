@@ -9,7 +9,7 @@ module app.create {
         private iconUrl: string;
 
         constructor(item: api.schema.content.ContentTypeSummary, siteRoot?: boolean, markRoot?: boolean) {
-            super("ContentTypeListItem", "content-type-list-item");
+            super(true, "content-type-list-item");
 
             this.contentType = item;
             this.siteRoot = siteRoot || false;

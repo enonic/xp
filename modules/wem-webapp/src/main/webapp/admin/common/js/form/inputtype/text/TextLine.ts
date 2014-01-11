@@ -3,12 +3,12 @@ module api.form.inputtype.text {
     export class TextLine extends api.form.inputtype.support.BaseInputTypeView {
 
         constructor() {
-            super("TextLine");
+            super(true);
         }
 
         createInputOccurrenceElement(index:number, property:api.data.Property):api.dom.Element {
 
-            var inputEl = api.ui.TextInput.middle(this.getInput().getName() + "-" + index);
+            var inputEl = api.ui.TextInput.middle(true);
             inputEl.setName(this.getInput().getName());
             if (property != null) {
                 inputEl.setValue(property.getString());

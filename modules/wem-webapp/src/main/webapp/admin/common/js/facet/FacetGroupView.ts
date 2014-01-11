@@ -15,7 +15,7 @@ module api.facet {
         private handleFacetFilter:(facet:Facet) => boolean;
 
         constructor(name:string, displayName:string, facets?:Facet[], handleFacetFilter?:(facet:Facet) => boolean) {
-            super('FacetGroupView', "facet-group-view");
+            super(true, "facet-group-view");
 
             this.name = name;
             this.displayName = displayName;

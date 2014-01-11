@@ -13,7 +13,7 @@ module api.form.inputtype.support {
         private dragControl:api.dom.DivEl;
 
         constructor(inputOccurrence:InputOccurrence, inputElement:api.dom.Element) {
-            super("InputOccurrenceView", "input-occurrence-view", inputOccurrence);
+            super(true, "input-occurrence-view", inputOccurrence);
 
             this.dragControl = new api.dom.DivEl();
 

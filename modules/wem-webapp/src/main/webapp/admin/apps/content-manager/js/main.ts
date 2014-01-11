@@ -10,7 +10,7 @@ module components {
 }
 
 window.onload = () => {
-    var appBar = new api.app.AppBar("Content Manager", new api.app.AppBarTabMenu("ContentAppBarTabMenu"));
+    var appBar = new api.app.AppBar("Content Manager", new api.app.AppBarTabMenu(true));
     var appPanel = new app.ContentAppPanel(appBar);
 
     api.dom.Body.get().appendChild(appBar);

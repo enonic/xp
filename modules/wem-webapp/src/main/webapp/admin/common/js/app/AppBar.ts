@@ -19,7 +19,7 @@ module api.app {
         private userInfoPopup:UserInfoPopup;
 
         constructor(appName, tabMenu:AppBarTabMenu, actions?:AppBarActionsConfig) {
-            super('AppBar', 'appbar');
+            super(true, 'appbar');
 
             this.appName = appName;
             this.tabMenu = tabMenu;
@@ -71,7 +71,7 @@ module api.app {
     export class LauncherButton extends api.dom.ButtonEl {
 
         constructor(action:api.ui.Action) {
-            super('LauncherButton', 'launcher-button');
+            super(true, 'launcher-button');
 
             this.getEl().addEventListener('click', (event:Event) => {
                 action.execute();
@@ -83,7 +83,7 @@ module api.app {
     export class Separator extends api.dom.SpanEl {
 
         constructor() {
-            super('AppBarSeparator', 'appbar-separator');
+            super(true, 'appbar-separator');
         }
 
     }
@@ -91,7 +91,7 @@ module api.app {
     export class HomeButton extends api.dom.ButtonEl {
 
         constructor(text:string, action:api.ui.Action) {
-            super('HomeButton', 'home-button');
+            super(true, 'home-button');
 
             this.getEl().setInnerHtml(text);
 
@@ -105,7 +105,7 @@ module api.app {
     export class UserButton extends api.dom.ButtonEl {
 
         constructor() {
-            super('UserButton', 'user-button');
+            super(true, 'user-button');
 
             var photoUrl = api.util.getAdminUri('common/images/tsi-profil.jpg');
             this.setIcon(photoUrl);

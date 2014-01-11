@@ -7,7 +7,7 @@ module api.form.layout {
         private formItemViews:api.form.FormItemView[] = [];
 
          constructor(context:api.form.FormContext, fieldSet:api.form.FieldSet, dataSet?:api.data.DataSet) {
-            super(context, fieldSet, "FieldSetView", "field-set-view");
+            super(context, fieldSet, true, "field-set-view");
 
             this.fieldSet = fieldSet;
             this.doLayout(dataSet);

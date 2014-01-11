@@ -6,7 +6,7 @@ module app.create {
 
         private recentList: RecentContentTypesList;
         private contentList: ContentTypesList;
-        private templatesList: TemplatesList;
+        private templatesList: SiteTemplatesList;
 
         private deckPanel: api.ui.NavigatedDeckPanel;
         private templatesTab: api.ui.tab.TabBarItem;
@@ -35,7 +35,6 @@ module app.create {
 
             var tabBar = new api.ui.tab.TabBar();
             this.deckPanel = new api.ui.NavigatedDeckPanel(tabBar);
-            this.deckPanel.setClass("deck-panel");
             this.deckPanel.addListener({
                 onPanelShown: (event: api.ui.PanelShownEvent) => {
                     var value = this.input.getValue();
@@ -55,7 +54,7 @@ module app.create {
             this.deckPanel.addNavigablePanelToBack(this.contentTab, this.contentList);
 
             this.templatesTab = new api.ui.tab.TabBarItem("Sites (0)");
-            this.templatesList = new app.create.TemplatesList("site-template-list");
+            this.templatesList = new app.create.SiteTemplatesList("site-template-list");
             this.templatesList.addListener({
                 onSelected: (item: SiteTemplateListItem) => {
                     this.closeAndFireEventFromSiteTemplate(item);
@@ -70,7 +69,7 @@ module app.create {
 
             this.recentList = new RecentContentTypesList("content-type-list");
 
-            var dropZone = new api.dom.DivEl("DropZone", "drop-zone");
+            var dropZone = new api.dom.DivEl(true, "drop-zone");
             rightColumn.appendChild(dropZone);
 
             this.recentList.addListener({

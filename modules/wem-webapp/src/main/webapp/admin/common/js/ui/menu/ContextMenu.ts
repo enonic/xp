@@ -4,7 +4,7 @@ module api.ui.menu{
         private menuItems:MenuItem[] = [];
 
         constructor(...actions:api.ui.Action[]) {
-            super("ContextMenu", "context-menu");
+            super(true, "context-menu");
 
             this.hide();
 

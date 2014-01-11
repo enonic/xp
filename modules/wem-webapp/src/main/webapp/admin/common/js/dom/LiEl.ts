@@ -2,8 +2,8 @@ module api.dom {
 
     export class LiEl extends Element {
 
-        constructor(idPrefix?:string, className?:string) {
-            super("li", idPrefix, className);
+        constructor(generateId?:boolean, className?:string) {
+            super(new ElementProperties().setTagName("li").setGenerateId(generateId).setClassName(className));
         }
     }
 }

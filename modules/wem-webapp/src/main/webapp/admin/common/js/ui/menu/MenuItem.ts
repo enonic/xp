@@ -5,7 +5,7 @@ module api.ui.menu {
         private action:api.ui.Action;
 
         constructor(action:api.ui.Action) {
-            super("menu-item");
+            super(false, "menu-item");
             this.action = action;
             this.getEl().setInnerHtml(this.action.getLabel());
             this.getEl().addEventListener("click", () => {
