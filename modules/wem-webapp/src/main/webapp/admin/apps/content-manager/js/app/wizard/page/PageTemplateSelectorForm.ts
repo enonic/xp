@@ -33,7 +33,7 @@ module app.wizard.page {
             this.pageTemplateComboBox.setSiteTemplateKey(siteTemplateKey);
             this.pageTemplateComboBox.addLoadedListener((pageTemplates:api.content.page.PageTemplateSummary[]) => {
                     pageTemplates.forEach((template:api.content.page.PageTemplateSummary) => {
-                        if (template.getKey() == selectedPageTemplate.getKey()) {
+                        if (template.getKey().toString() == selectedPageTemplate.getKey().toString()) {
                             this.pageTemplateComboBox.setTemplate(template);
                         }
                     });
