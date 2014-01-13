@@ -4,8 +4,6 @@ module api.app.wizard {
 
         private nameEl:api.ui.TextInput;
 
-        private nameTooltip:api.ui.Tooltip;
-
         constructor() {
             super();
 
@@ -17,7 +15,6 @@ module api.app.wizard {
             });
             this.appendChild(this.nameEl);
 
-            this.nameTooltip = new api.ui.Tooltip(this.nameEl, "Name", 1000, 1000, api.ui.Tooltip.TRIGGER_FOCUS, api.ui.Tooltip.SIDE_RIGHT);
         }
 
         getName():string {

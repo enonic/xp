@@ -14,7 +14,6 @@ module api.app.wizard {
         private uploader;
         private img:api.dom.ImgEl;
         private progress:api.ui.ProgressBar;
-        private tooltip:api.ui.Tooltip;
 
         private listeners:FormIconListener[] = [];
 
@@ -28,14 +27,8 @@ module api.app.wizard {
             super(true, "form-icon");
             var el = this.getEl();
 
-            this.tooltip = new api.ui.Tooltip(this, iconTitle, 0, 0);
-
             var img = this.img = new api.dom.ImgEl(this.iconUrl, true);
-            img.getEl().addEventListener("load", () => {
-                if (img.isVisible()) {
-                    this.tooltip.showFor(10000);
-                }
-            });
+
             el.appendChild(img.getHTMLElement());
 
             if (this.uploadUrl) {

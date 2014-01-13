@@ -31,10 +31,6 @@ module api.app.wizard {
 
         private autoGenerateName: boolean = false;
 
-        private nameTooltip: api.ui.Tooltip;
-
-        private displayNameTooltip: api.ui.Tooltip;
-
         constructor(builder: WizardHeaderWithDisplayNameAndNameBuilder) {
             super();
             this.displayNameGenerator = builder.displayNameGenerator;
@@ -85,9 +81,6 @@ module api.app.wizard {
                 this.autoGenerateName = currentName == generatedName;
             });
 
-            this.nameTooltip = new api.ui.Tooltip(this.nameEl, "Name", 1000, 1000, api.ui.Tooltip.TRIGGER_FOCUS, api.ui.Tooltip.SIDE_RIGHT);
-            this.displayNameTooltip =
-            new api.ui.Tooltip(this.displayNameEl, "Display name", 1000, 1000, api.ui.Tooltip.TRIGGER_FOCUS, api.ui.Tooltip.SIDE_RIGHT);
         }
 
         initNames(displayName: string, name: string, forceDisplayNameProgrammaticallySet: boolean) {
