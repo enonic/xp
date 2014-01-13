@@ -12,6 +12,7 @@
 ///<reference path='Template.ts' />
 
 ///<reference path='ComponentName.ts' />
+///<reference path='ComponentPath.ts' />
 ///<reference path='PageComponent.ts' />
 ///<reference path='PageComponentFactory.ts' />
 
