@@ -16,7 +16,7 @@ public class EntityPatternIndexConfig
 
     private EntityPatternIndexConfig( final Builder builder )
     {
-        super( builder.analyzer, builder.collection );
+        super( builder );
         this.pathIndexConfigs = ImmutableSortedSet.copyOf( builder.configs );
         this.defaultConfig = builder.defaultConfig;
     }

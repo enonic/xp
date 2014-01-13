@@ -10,6 +10,7 @@ public class IndexConstants
 
     public static final String CONTENT_COLLECTION_NAME = "content";
 
+    public static final String ALL_TEXT_FIELD_NAME = "_all_text";
 
 }
 

@@ -19,19 +19,21 @@ public class EntityPropertyIndexConfigJson
 
     private final Map<String, PropertyIndexConfigJson> propertyIndexConfigs;
 
-    public EntityPropertyIndexConfigJson( final EntityPropertyIndexConfig entityIndexConfig )
+    public EntityPropertyIndexConfigJson( final EntityPropertyIndexConfig indexConfig )
     {
-        super( entityIndexConfig.getAnalyzer(), entityIndexConfig.getCollection() );
-        this.propertyIndexConfigs = translateMap( entityIndexConfig.getPropertyIndexConfigs() );
+        super( indexConfig.getAnalyzer(), indexConfig.getCollection(), indexConfig.isDecideFulltextByValueType() );
+        this.propertyIndexConfigs = translateMap( indexConfig.getPropertyIndexConfigs() );
     }
 
     @SuppressWarnings("UnusedDeclaration")
     @JsonCreator
     public EntityPropertyIndexConfigJson( @JsonProperty("analyzer") final String analyzer,
-                                          @JsonProperty("collection") final String collection, @JsonProperty(
-        "propertyIndexConfigs") final Map<String, PropertyIndexConfigJson> propertyIndexConfigs )
+                                          @JsonProperty("collection") final String collection, //
+                                          @JsonProperty("decideFulltextByValueType") final boolean decideFulltextByValueType, //
+                                          @JsonProperty(
+                                              "propertyIndexConfigs") final Map<String, PropertyIndexConfigJson> propertyIndexConfigs )
     {
-        super( analyzer, collection );
+        super( analyzer, collection, decideFulltextByValueType );
         this.propertyIndexConfigs = propertyIndexConfigs;
     }
 
@@ -63,6 +65,8 @@ public class EntityPropertyIndexConfigJson
         builder.collection( this.getCollection() );
 
         builder.analyzer( this.getAnalyzer() );
+
+        builder.decideFulltextByValueType( this.isDecideFulltextByValueType() );
 
         return builder.build();
     }

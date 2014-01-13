@@ -76,61 +76,62 @@ public class NodeIndexDocumentFactory
             analyzer( entityIndexConfig.getAnalyzer() ).
             collection( entityIndexConfig.getCollection() );
 
-        addNodeMetaData( node, builder );
-        addNodeProperties( node, builder );
+        final IndexDocumentItemFactory indexDocumentItemFactory = new IndexDocumentItemFactory( true );
+
+        addNodeMetaData( node, builder, indexDocumentItemFactory );
+        addNodeProperties( node, builder, indexDocumentItemFactory );
 
         return builder.build();
     }
 
-    private void addNodeMetaData( final Node node, final IndexDocument.Builder builder )
+    private void addNodeMetaData( final Node node, final IndexDocument.Builder builder, final IndexDocumentItemFactory factory )
     {
+
         if ( node.name() != null )
         {
-            builder.addEntries(
-                IndexDocumentItemFactory.create( NAME_PROPERTY, new Value.String( node.name().toString() ), namePropertyIndexConfig ) );
+            final Value.String nameValue = new Value.String( node.name().toString() );
+            builder.addEntries( factory.create( NAME_PROPERTY, nameValue, namePropertyIndexConfig ) );
         }
 
         if ( node.getCreatedTime() != null )
         {
-            builder.addEntries( IndexDocumentItemFactory.create( CREATED_TIME_PROPERTY, new Value.DateTime( node.getCreatedTime() ),
-                                                                 metadataPropertyIndexConfig ) );
+            builder.addEntries(
+                factory.create( CREATED_TIME_PROPERTY, new Value.DateTime( node.getCreatedTime() ), metadataPropertyIndexConfig ) );
         }
 
         if ( node.path() != null )
         {
-            builder.addEntries( IndexDocumentItemFactory.create( PATH_PROPERTY_PATH, new Value.String( node.path().toString() ),
-                                                                 metadataPropertyIndexConfig ) );
+            builder.addEntries(
+                factory.create( PATH_PROPERTY_PATH, new Value.String( node.path().toString() ), metadataPropertyIndexConfig ) );
         }
 
         if ( node.parent() != null )
         {
-            builder.addEntries( IndexDocumentItemFactory.create( PARENT_PROPERTY_PATH, new Value.String( node.parent().toString() ),
-                                                                 metadataPropertyIndexConfig ) );
+            builder.addEntries(
+                factory.create( PARENT_PROPERTY_PATH, new Value.String( node.parent().toString() ), metadataPropertyIndexConfig ) );
         }
 
         if ( node.getCreator() != null )
         {
-            builder.addEntries(
-                IndexDocumentItemFactory.create( CREATOR_PROPERTY_PATH, new Value.String( node.getCreator().getQualifiedName() ),
-                                                 metadataPropertyIndexConfig ) );
+            builder.addEntries( factory.create( CREATOR_PROPERTY_PATH, new Value.String( node.getCreator().getQualifiedName() ),
+                                                metadataPropertyIndexConfig ) );
         }
 
         if ( node.getModifiedTime() != null )
         {
-            builder.addEntries( IndexDocumentItemFactory.create( MODIFIED_TIME_PROPERTY_PATH, new Value.DateTime( node.getModifiedTime() ),
-                                                                 metadataPropertyIndexConfig ) );
+            builder.addEntries(
+                factory.create( MODIFIED_TIME_PROPERTY_PATH, new Value.DateTime( node.getModifiedTime() ), metadataPropertyIndexConfig ) );
         }
 
         if ( node.getModifier() != null )
         {
-            builder.addEntries(
-                IndexDocumentItemFactory.create( MODIFIER_PROPERTY_PATH, new Value.String( node.getModifier().getQualifiedName() ),
-                                                 metadataPropertyIndexConfig ) );
+            builder.addEntries( factory.create( MODIFIER_PROPERTY_PATH, new Value.String( node.getModifier().getQualifiedName() ),
+                                                metadataPropertyIndexConfig ) );
         }
 
     }
 
-    private void addNodeProperties( final Node node, final IndexDocument.Builder builder )
+    private void addNodeProperties( final Node node, final IndexDocument.Builder builder, final IndexDocumentItemFactory factory )
     {
         PropertyVisitor visitor = new PropertyVisitor()
         {
@@ -146,7 +147,7 @@ public class NodeIndexDocumentFactory
                         propertyIndexConfig = defaultPropertyIndexConfig;
                     }
 
-                    builder.addEntries( IndexDocumentItemFactory.create( property, propertyIndexConfig ) );
+                    builder.addEntries( factory.create( property, propertyIndexConfig ) );
                 }
             }
         };

@@ -23,7 +23,7 @@
                 "tokenizer": "keyword",
                 "filter": ["lowercase", "asciifolding"]
             },
-            "fulltext_index": {
+            "tokenized": {
                 "type": "custom",
                 "filter": [
                     "standard",

@@ -23,7 +23,9 @@ public class IndexDocumentItemFactoryTest
         PropertyIndexConfig propertyIndexConfig =
             PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).tokenizedEnabled( false ).build();
 
-        final Set<AbstractIndexDocumentItem> indexDocumentItems = IndexDocumentItemFactory.create( property, propertyIndexConfig );
+        final IndexDocumentItemFactory factory = new IndexDocumentItemFactory( false );
+
+        final Set<AbstractIndexDocumentItem> indexDocumentItems = factory.create( property, propertyIndexConfig );
 
         // Should yield number, string, orderby
         assertEquals( 3, indexDocumentItems.size() );
@@ -38,7 +40,9 @@ public class IndexDocumentItemFactoryTest
         PropertyIndexConfig propertyIndexConfig =
             PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).tokenizedEnabled( false ).build();
 
-        final Set<AbstractIndexDocumentItem> indexDocumentItems = IndexDocumentItemFactory.create( property, propertyIndexConfig );
+        final IndexDocumentItemFactory factory = new IndexDocumentItemFactory( false );
+
+        final Set<AbstractIndexDocumentItem> indexDocumentItems = factory.create( property, propertyIndexConfig );
 
         // Should yield number, string, orderby
         assertEquals( 3, indexDocumentItems.size() );
@@ -50,10 +54,12 @@ public class IndexDocumentItemFactoryTest
     {
         Property property = new Property.Date( "myDateField", DateTime.now().toDateMidnight() );
 
+        final IndexDocumentItemFactory factory = new IndexDocumentItemFactory( false );
+
         PropertyIndexConfig propertyIndexConfig =
             PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).tokenizedEnabled( false ).build();
 
-        final Set<AbstractIndexDocumentItem> indexDocumentItems = IndexDocumentItemFactory.create( property, propertyIndexConfig );
+        final Set<AbstractIndexDocumentItem> indexDocumentItems = factory.create( property, propertyIndexConfig );
 
         // Should yield date, string, orderby
         assertEquals( 3, indexDocumentItems.size() );
@@ -69,10 +75,27 @@ public class IndexDocumentItemFactoryTest
         PropertyIndexConfig propertyIndexConfig =
             PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).tokenizedEnabled( false ).build();
 
-        final Set<AbstractIndexDocumentItem> indexDocumentItems = IndexDocumentItemFactory.create( property, propertyIndexConfig );
+        final IndexDocumentItemFactory factory = new IndexDocumentItemFactory( false );
+
+        final Set<AbstractIndexDocumentItem> indexDocumentItems = factory.create( property, propertyIndexConfig );
 
         // Should yield string, geo-point, orderby
         assertEquals( 3, indexDocumentItems.size() );
     }
 
+    @Test
+    public void fulltext_by_type()
+        throws Exception
+    {
+        Property property = new Property( "myStringProp", new Value.String( "myStringValue" ) );
+
+        PropertyIndexConfig propertyIndexConfig =
+            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).tokenizedEnabled( false ).build();
+
+        // When not by type, no analyzed or tokenized
+        assertEquals( 4, new IndexDocumentItemFactory( false ).create( property, propertyIndexConfig ).size() );
+
+        // When by type, should yield string, fulltext, tokenized, orderby, all analyzed, all tokenized
+        assertEquals( 6, new IndexDocumentItemFactory( true ).create( property, propertyIndexConfig ).size() );
+    }
 }

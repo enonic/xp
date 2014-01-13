@@ -8,10 +8,13 @@ public abstract class EntityIndexConfig
 
     private final String collection;
 
-    EntityIndexConfig( final String analyzer, final String collection )
+    private final boolean decideFulltextByValueType;
+
+    EntityIndexConfig( final Builder builder )
     {
-        this.analyzer = analyzer;
-        this.collection = collection;
+        this.analyzer = builder.analyzer;
+        this.collection = builder.collection;
+        this.decideFulltextByValueType = builder.decideFulltextByValueType;
     }
 
     public String getAnalyzer()
@@ -24,6 +27,10 @@ public abstract class EntityIndexConfig
         return collection;
     }
 
+    public boolean isDecideFulltextByValueType()
+    {
+        return decideFulltextByValueType;
+    }
 
     public static EntityPatternIndexConfig.Builder newPatternIndexConfig()
     {
@@ -40,6 +47,8 @@ public abstract class EntityIndexConfig
 
         String collection;
 
+        boolean decideFulltextByValueType = false;
+
         public T analyzer( final String analyzer )
         {
             this.analyzer = analyzer;
@@ -49,6 +58,12 @@ public abstract class EntityIndexConfig
         public T collection( final String collection )
         {
             this.collection = collection;
+            return (T) this;
+        }
+
+        public T decideFulltextByValueType( final boolean value )
+        {
+            this.decideFulltextByValueType = value;
             return (T) this;
         }
 

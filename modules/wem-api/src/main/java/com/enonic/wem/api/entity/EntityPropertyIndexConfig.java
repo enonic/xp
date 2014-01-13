@@ -21,7 +21,7 @@ public class EntityPropertyIndexConfig
 
     private EntityPropertyIndexConfig( final Builder builder )
     {
-        super( builder.analyzer, builder.collection );
+        super( builder );
         this.propertyIndexConfigs = ImmutableMap.copyOf( builder.propertyIndexConfigs );
     }
 

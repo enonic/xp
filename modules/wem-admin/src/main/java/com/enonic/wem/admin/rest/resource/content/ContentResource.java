@@ -263,7 +263,7 @@ public class ContentResource
     private QueryExpr _temp_buildFulltextFunctionExpression( final ContentFindParams params )
     {
         final List<ValueExpr> valueExprs = Lists.newArrayList();
-        valueExprs.add( ValueExpr.string( "displayname" ) );
+        valueExprs.add( ValueExpr.string( "_all_text" ) );
         valueExprs.add( ValueExpr.string( params.getFulltext() ) );
         valueExprs.add( ValueExpr.string( "OR" ) );
 

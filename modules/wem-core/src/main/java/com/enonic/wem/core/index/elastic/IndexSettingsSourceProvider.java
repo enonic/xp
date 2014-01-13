@@ -17,7 +17,7 @@ public class IndexSettingsSourceProvider
     private final static String PREFIX = "META-INF/index/settings/";
 
     private final static String[] SETTING_FILES = { //
-        PREFIX + "wem-analyzer-settings.json" //
+        PREFIX + "nodb-analyzer-settings.json" //
     };
 
     public List<String> getSources()

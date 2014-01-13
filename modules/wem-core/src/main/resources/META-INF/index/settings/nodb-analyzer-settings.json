@@ -7,7 +7,12 @@
                 "min_gram": 2,
                 "type": "edgeNGram",
                 "side": "front"
+            },
+            "norwegian_stemmer": {
+                "type": "stemmer",
+                "name": "minimal_norwegian"
             }
+
         },
         "analyzer": {
             "default_index": {
@@ -23,13 +28,24 @@
                 "tokenizer": "keyword",
                 "filter": ["lowercase", "asciifolding"]
             },
-            "fulltext_index": {
+            "tokenized": {
                 "type": "custom",
                 "filter": [
                     "standard",
                     "lowercase",
                     "asciifolding",
                     "fulltext_ngrams"
+                ],
+                "type": "custom",
+                "tokenizer": "standard"
+            },
+            "norwegian_fulltext": {
+                "type": "custom",
+                "filter": [
+                    "standard",
+                    "lowercase",
+                    "asciifolding",
+                    "norwegian_stemmer"
                 ],
                 "type": "custom",
                 "tokenizer": "standard"

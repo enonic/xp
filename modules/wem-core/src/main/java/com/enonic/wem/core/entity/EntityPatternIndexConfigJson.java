@@ -20,11 +20,11 @@ public class EntityPatternIndexConfigJson
 
     private PropertyIndexConfigJson defaultConfig;
 
-    public EntityPatternIndexConfigJson( final EntityPatternIndexConfig entityPatternIndexConfig )
+    public EntityPatternIndexConfigJson( final EntityPatternIndexConfig indexConfig )
     {
-        super( entityPatternIndexConfig.getAnalyzer(), entityPatternIndexConfig.getCollection() );
-        this.configs = translateToJson( entityPatternIndexConfig.getPathIndexConfigs() );
-        this.defaultConfig = new PropertyIndexConfigJson( entityPatternIndexConfig.getDefaultConfig() );
+        super( indexConfig.getAnalyzer(), indexConfig.getCollection(), indexConfig.isDecideFulltextByValueType() );
+        this.configs = translateToJson( indexConfig.getPathIndexConfigs() );
+        this.defaultConfig = new PropertyIndexConfigJson( indexConfig.getDefaultConfig() );
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -32,9 +32,10 @@ public class EntityPatternIndexConfigJson
     public EntityPatternIndexConfigJson( @JsonProperty("analyzer") final String analyzer,
                                          @JsonProperty("collection") final String collection, //
                                          @JsonProperty("configs") final Set<PathIndexConfigJson> configs,  //
+                                         @JsonProperty("decideFulltextByValueType") final boolean decideFulltextByValueType, //
                                          @JsonProperty("defaultConfig") final PropertyIndexConfigJson defaultConfig )
     {
-        super( analyzer, collection );
+        super( analyzer, collection, decideFulltextByValueType );
         this.configs = configs;
         this.defaultConfig = defaultConfig;
     }
@@ -69,6 +70,8 @@ public class EntityPatternIndexConfigJson
         builder.collection( this.getCollection() );
 
         builder.analyzer( this.getAnalyzer() );
+
+        builder.decideFulltextByValueType( this.isDecideFulltextByValueType() );
 
         return builder.build();
     }

@@ -18,10 +18,13 @@ public abstract class EntityIndexConfigJson
 
     private final String collection;
 
-    public EntityIndexConfigJson( final String analyzer, final String collection )
+    private final boolean decideFulltextByValueType;
+
+    public EntityIndexConfigJson( final String analyzer, final String collection, final boolean decideFulltextByValueType )
     {
         this.analyzer = analyzer;
         this.collection = collection;
+        this.decideFulltextByValueType = decideFulltextByValueType;
     }
 
 
@@ -39,4 +42,8 @@ public abstract class EntityIndexConfigJson
         return collection;
     }
 
+    public boolean isDecideFulltextByValueType()
+    {
+        return decideFulltextByValueType;
+    }
 }

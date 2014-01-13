@@ -22,7 +22,6 @@
                         "type": "string",
                         "store": "no",
                         "index": "analyzed",
-                        "analyzer": "english",
                         "include_in_all": false
                     }
                 }
@@ -34,7 +33,7 @@
                         "type": "string",
                         "store": "no",
                         "index": "analyzed",
-                        "analyzer": "fulltext_index",
+                        "analyzer": "tokenized",
                         "include_in_all": false
                     }
                 }
