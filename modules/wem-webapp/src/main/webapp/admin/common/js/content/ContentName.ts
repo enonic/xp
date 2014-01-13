@@ -32,7 +32,7 @@ module api.content {
         public static ensureValidName(possibleInvalidName:string) {
             api.util.assert( possibleInvalidName != null, "name cannot be null" );
 
-            return new ContentName(possibleInvalidName.toLowerCase());
+            return ContentName.fromString(possibleInvalidName.toLowerCase());
         }
     }
 }
