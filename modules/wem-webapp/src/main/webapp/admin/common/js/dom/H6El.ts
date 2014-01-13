@@ -5,5 +5,9 @@ module api.dom {
         constructor(generateId?:boolean, className?:string) {
             super(new ElementProperties().setTagName("h6").setGenerateId(generateId).setClassName(className));
         }
+
+        setText(value: string) {
+            this.getEl().setInnerHtml(value)
+        }
     }
 }
