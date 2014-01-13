@@ -8,6 +8,7 @@
     "hasChildren" : false,
     "iconUrl" : "http://localhost/admin/rest/content/image/aaa",
     "id" : "aaa",
+    "isDraft" : false,
     "isPage" : false,
     "isRoot" : true,
     "isSite" : false,
@@ -26,6 +27,7 @@
     "hasChildren" : false,
     "iconUrl" : "http://localhost/admin/rest/content/image/bbb",
     "id" : "bbb",
+    "isDraft" : false,
     "isPage" : false,
     "isRoot" : true,
     "isSite" : false,
@@ -82,3 +84,4 @@
     "name" : "< 1 day"
   } ]
 }
+

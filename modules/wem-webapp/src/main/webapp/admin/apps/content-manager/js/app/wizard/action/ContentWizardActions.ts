@@ -12,12 +12,12 @@ module app.wizard.action {
 
         private publish:api.ui.Action;
 
-        constructor(wizardPanel:api.app.wizard.WizardPanel<api.content.Content>) {
+        constructor(wizardPanel:app.wizard.ContentWizardPanel) {
             this.save = new api.app.wizard.SaveAction(wizardPanel);
             this.duplicate = new DuplicateContentAction();
             this.delete = new DeleteContentAction(wizardPanel);
             this.close = new api.app.wizard.CloseAction(wizardPanel);
-            this.publish = new PublishAction();
+            this.publish = new PublishAction(wizardPanel);
         }
 
         enableActionsForNew() {

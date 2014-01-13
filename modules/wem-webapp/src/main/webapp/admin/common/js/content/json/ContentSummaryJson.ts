@@ -24,5 +24,7 @@ module api.content.json{
 
         isPage:boolean;
 
+        draft:boolean;
+
     }
 }

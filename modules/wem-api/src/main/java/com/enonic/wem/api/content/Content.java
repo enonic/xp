@@ -343,6 +343,11 @@ public final class Content
             return this;
         }
 
+        public EditBuilder draft( boolean draft) {
+            this.draft = draft;
+            return this;
+        }
+
         public EditBuilder form( final Form form )
         {
             changes.recordChange( newPossibleChange( "form" ).from( this.original.getForm() ).to( form ).build() );

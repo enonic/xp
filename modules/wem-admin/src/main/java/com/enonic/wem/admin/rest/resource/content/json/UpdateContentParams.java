@@ -26,6 +26,18 @@ public class UpdateContentParams
 
     private List<AttachmentJson> attachments;
 
+    private String draft;
+
+    public boolean isDraft()
+    {
+        return Boolean.parseBoolean( draft );
+    }
+
+    public void setDraft( final String draft )
+    {
+        this.draft = draft;
+    }
+
     public ContentId getContentId()
     {
         return contentId;

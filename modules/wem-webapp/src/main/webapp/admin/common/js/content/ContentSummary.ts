@@ -26,6 +26,8 @@ module api.content{
 
         private page:boolean;
 
+        private draft:boolean;
+
         static fromJsonArray(jsonArray:api.content.json.ContentSummaryJson[]):ContentSummary[] {
             var array:ContentSummary[] = [];
             jsonArray.forEach((json:api.content.json.ContentSummaryJson) => {
@@ -48,6 +50,7 @@ module api.content{
             this.owner = json.owner;
             this.site = json.isSite;
             this.page = json.isPage;
+            this.draft = json.draft;
         }
 
         getContentId():ContentId {
@@ -102,5 +105,8 @@ module api.content{
             return this.page;
         }
 
+        isDraft():boolean {
+            return this.draft;
+        }
     }
 }

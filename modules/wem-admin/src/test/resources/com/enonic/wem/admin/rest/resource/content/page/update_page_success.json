@@ -1,35 +1,35 @@
 {
-    "createdTime": null,
-    "creator": "user:system:admin",
-    "data": [ ],
-    "deletable": true,
-    "displayName": "My Content",
-    "editable": true,
-    "form": null,
-    "hasChildren": false,
-    "iconUrl": "http://localhost/admin/rest/content/image/content-id",
-    "id": "content-id",
-    "isPage": true,
-    "isRoot": true,
-    "isSite": false,
-    "modifiedTime": null,
-    "modifier": "user:system:admin",
-    "name": "content-name",
-    "owner": "user:myStore:me",
-    "page": {
-        "config": [
-            {
-                "Property": {
-                    "name": "property1",
-                    "type": "String",
-                    "value": "value1"
-                }
-            }
-        ],
-        "regions": null,
-        "template": "template-1.0.0|mymodule-1.0.0|my-page"
-    },
-    "path": "/content-name",
-    "site": null,
-    "type": "content-type"
+  "createdTime" : null,
+  "creator" : "user:system:admin",
+  "data" : [ ],
+  "deletable" : true,
+  "displayName" : "My Content",
+  "editable" : true,
+  "form" : null,
+  "hasChildren" : false,
+  "iconUrl" : "http://localhost/admin/rest/content/image/content-id",
+  "id" : "content-id",
+  "isDraft" : false,
+  "isPage" : true,
+  "isRoot" : true,
+  "isSite" : false,
+  "modifiedTime" : null,
+  "modifier" : "user:system:admin",
+  "name" : "content-name",
+  "owner" : "user:myStore:me",
+  "page" : {
+    "config" : [ {
+      "Property" : {
+        "name" : "property1",
+        "type" : "String",
+        "value" : "value1"
+      }
+    } ],
+    "regions" : null,
+    "template" : "template-1.0.0|mymodule-1.0.0|my-page"
+  },
+  "path" : "/content-name",
+  "site" : null,
+  "type" : "content-type"
 }
+

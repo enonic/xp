@@ -9,6 +9,7 @@
   "hasChildren" : false,
   "iconUrl" : "http://localhost/admin/rest/content/image/content-id",
   "id" : "content-id",
+  "isDraft" : false,
   "isPage" : false,
   "isRoot" : true,
   "isSite" : true,
@@ -33,3 +34,4 @@
   },
   "type" : "content-type"
 }
+
