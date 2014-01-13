@@ -8,6 +8,7 @@ module LiveEdit.component {
     export class Selection {
 
         public static select(component:LiveEdit.component.Component, event?:JQueryEventObject):void {
+            console.log(component);
 
             this.setSelectionAttributeOnElement(component.getElement());
 
@@ -18,8 +19,14 @@ module LiveEdit.component {
                     y: event.pageY
                 };
             }
+            if (component.componentType.getType() == Type.PAGE) {
+                $(window).trigger('selectPage.liveEdit', [component, mouseClickPagePosition]);
+            } else if (component.getComponentType().getType() == Type.REGION) {
+                $(window).trigger('selectRegion.liveEdit', [component, component.getName(), mouseClickPagePosition]);
+            } else {
+                $(window).trigger('selectComponent.liveEdit', [component, component.getName(), mouseClickPagePosition]);
+            }
 
-            $(window).trigger('selectComponent.liveEdit', [component, mouseClickPagePosition]);
         }
 
         public static deselect():void {

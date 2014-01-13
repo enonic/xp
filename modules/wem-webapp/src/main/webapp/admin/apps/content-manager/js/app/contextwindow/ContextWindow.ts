@@ -59,6 +59,16 @@ module app.contextwindow {
                 this.selectedComponent = event.getComponent();
             });
 
+            PageSelectEvent.on((event) => {
+                this.selectPanel(this.inspectorPanel);
+                this.selectedComponent = event.getPage();
+            });
+
+            RegionSelectEvent.on((event) => {
+                this.selectPanel(this.inspectorPanel);
+                this.selectedComponent = event.getRegion();
+            });
+
             ComponentDeselectEvent.on((event) => {
                 this.selectPanel(this.componentTypesPanel);
             });
@@ -94,8 +104,20 @@ module app.contextwindow {
 
         private liveEditListen() {
             this.getLiveEditJQuery()(this.getLiveEditWindow()).on('selectComponent.liveEdit',
+                (event, component?, name?, mouseClickPagePosition?) => {
+                    new ComponentSelectEvent(<Component>component, name).fire();
+                    this.selectedComponent = component;
+                });
+
+            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('selectPage.liveEdit',
                 (event, component?, mouseClickPagePosition?) => {
-                    new ComponentSelectEvent(<Component>component).fire();
+                    new PageSelectEvent(<Component>component).fire();
+                    this.selectedComponent = component;
+                });
+
+            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('selectRegion.liveEdit',
+                (event, component?, name?, mouseClickPagePosition?) => {
+                    new RegionSelectEvent(<Component>component, name).fire();
                     this.selectedComponent = component;
                 });
 

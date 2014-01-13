@@ -26,6 +26,14 @@ module app.contextwindow {
                 }
             });
 
+            RegionSelectEvent.on((event) => {
+                event.getRegion().isEmpty() ? this.showPanel(this.getPanelIndex(this.selectPanel)) : this.showPanel(this.getPanelIndex(this.detailPanel));
+            });
+
+            PageSelectEvent.on((event) => {
+                event.getPage().isEmpty() ? this.showPanel(this.getPanelIndex(this.selectPanel)) : this.showPanel(this.getPanelIndex(this.detailPanel));
+            });
+
         }
     }
 }

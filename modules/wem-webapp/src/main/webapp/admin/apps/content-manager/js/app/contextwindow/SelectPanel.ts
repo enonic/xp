@@ -28,6 +28,14 @@ module app.contextwindow {
                 this.getData(event.getComponent().componentType.type);
             });
 
+            PageSelectEvent.on((event) => {
+                this.getData(event.getPage().componentType.type);
+            });
+
+            RegionSelectEvent.on((event) => {
+                this.getData(event.getRegion().componentType.type);
+            });
+
             // Using jQuery since grid.setOnClick fires event twice, bug in slickgrid
             jQuery(this.getHTMLElement()).on("click", ".grid-row", (event:JQueryEventObject) => {
                 var key = jQuery(event.currentTarget).children('div').data("live-edit-key");

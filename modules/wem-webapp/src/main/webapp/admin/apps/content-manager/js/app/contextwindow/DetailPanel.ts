@@ -16,6 +16,16 @@ module app.contextwindow {
                 this.setType(event.getComponent().componentType.typeName);
                 this.setIcon(event.getComponent().componentType.iconCls);
             });
+            RegionSelectEvent.on((event) => {
+                this.setName(event.getRegion().name);
+                this.setType(event.getRegion().componentType.typeName);
+                this.setIcon(event.getRegion().componentType.iconCls);
+            });
+            PageSelectEvent.on((event) => {
+                this.setName(event.getPage().name);
+                this.setType(event.getPage().componentType.typeName);
+                this.setIcon(event.getPage().componentType.iconCls);
+            });
 
             ComponentDeselectEvent.on((event) => {
                 this.setEmpty();
