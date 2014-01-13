@@ -10,19 +10,15 @@ module app.remove {
             this.setDeleteAction(new ModuleDeleteDialogAction());
 
             this.getDeleteAction().addExecutionListener(() => {
-                var deleteRequest = new api.module.DeleteModuleRequest(this.moduleToDelete.getModuleKey().toString());
-                deleteRequest.send().done((resp:api.rest.JsonResponse<any>) => {
-                    var respJson = resp.getJson();
-                    if (respJson.error) {
-                        api.notify.showError('The Module was not deleted: ' + respJson.error.message);
-                    } else {
-                        api.notify.showFeedback('Module \'' + respJson + '\' was deleted');
-                        new api.module.ModuleDeletedEvent(api.module.ModuleKey.fromString(respJson)).fire();
-                    }
-                    this.close();
-                }).fail(() => {
-                    this.close();
-                })
+                new api.module.DeleteModuleRequest(this.moduleToDelete.getModuleKey().toString()).sendAndParse()
+                    .done((module:api.module.Module) => {
+                        api.notify.showFeedback('Module \'' + module.getDisplayName() + '\' was deleted');
+                        new api.module.ModuleDeletedEvent(module.getModuleKey()).fire();
+                    }).fail(() => {
+                        api.notify.showError('Error while deleting module.');
+                    }).always(() => {
+                        this.close();
+                    });
             });
         }
 
