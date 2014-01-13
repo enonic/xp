@@ -10,5 +10,6 @@ public interface JsController
 
     public JsController context( JsContext context );
 
-    public Response execute();
+    public Response execute()
+        throws Exception;
 }

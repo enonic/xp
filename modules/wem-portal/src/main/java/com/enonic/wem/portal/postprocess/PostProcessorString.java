@@ -25,7 +25,6 @@ public final class PostProcessorString
             }
             final String expr = result.substring( exprStart + 2, exprEnd );
             final String evaluated = expressionExecutor.evaluateExpression( expr );
-            expressionCounter++;
             result.replace( exprStart, exprEnd + 1, evaluated );
 
             pos = exprStart + evaluated.length() + 1;

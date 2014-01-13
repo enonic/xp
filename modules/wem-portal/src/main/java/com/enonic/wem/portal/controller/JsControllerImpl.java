@@ -11,6 +11,7 @@ import com.google.common.collect.Sets;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.portal.exception.PortalWebException;
+import com.enonic.wem.portal.postprocess.PostProcessor;
 import com.enonic.wem.portal.script.loader.ScriptSource;
 import com.enonic.wem.portal.script.runner.ScriptRunner;
 
@@ -24,6 +25,8 @@ final class JsControllerImpl
     private ModuleResourceKey scriptDir;
 
     private JsContext context;
+
+    private PostProcessor postProcessor;
 
     public JsControllerImpl( final ScriptRunner runner )
     {
@@ -42,6 +45,12 @@ final class JsControllerImpl
     {
         this.context = context;
         this.runner.property( "portal", this.context );
+        return this;
+    }
+
+    JsController postProcessor( final PostProcessor postProcessor )
+    {
+        this.postProcessor = postProcessor;
         return this;
     }
 
@@ -74,6 +83,7 @@ final class JsControllerImpl
 
     @Override
     public Response execute()
+        throws Exception
     {
         final String method = this.context.getRequest().getMethod();
         final ScriptSource script = findScript( method );
@@ -91,10 +101,15 @@ final class JsControllerImpl
     }
 
     private Response doExecute( final ScriptSource script )
+        throws Exception
     {
         this.runner.source( script );
         this.runner.execute();
-        return new JsHttpResponseSerializer( this.context.getResponse() ).serialize();
+
+        final JsHttpResponse response = this.context.getResponse();
+        postProcessor.processResponse( response );
+
+        return new JsHttpResponseSerializer( response ).serialize();
     }
 
     private Response executeOptions()

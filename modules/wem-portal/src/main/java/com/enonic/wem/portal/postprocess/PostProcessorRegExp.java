@@ -20,7 +20,6 @@ public final class PostProcessorRegExp
         {
             final String expr = matchPattern.group( 1 );
             final String evaluated = expressionExecutor.evaluateExpression( expr );
-            expressionCounter++;
             matchPattern.appendReplacement( sb, evaluated );
         }
         matchPattern.appendTail( sb );

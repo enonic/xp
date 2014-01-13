@@ -43,23 +43,27 @@ public final class ServicesResource
 
     @GET
     public Response handleGet()
+        throws Exception
     {
         return doHandle();
     }
 
     @POST
     public Response handlePost()
+        throws Exception
     {
         return doHandle();
     }
 
     @OPTIONS
     public Response handleOptions()
+        throws Exception
     {
         return doHandle();
     }
 
     private Response doHandle()
+        throws Exception
     {
         final ModuleKey moduleKey = resolveModule( this.contentPath, this.moduleName );
         final JsContext context = new JsContext();

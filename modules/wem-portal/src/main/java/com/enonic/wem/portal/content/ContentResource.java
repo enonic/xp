@@ -49,23 +49,27 @@ public final class ContentResource
 
     @GET
     public Response handleGet()
+        throws Exception
     {
         return doHandle();
     }
 
     @POST
     public Response handlePost()
+        throws Exception
     {
         return doHandle();
     }
 
     @OPTIONS
     public Response handleOptions()
+        throws Exception
     {
         return doHandle();
     }
 
     private Response doHandle()
+        throws Exception
     {
         final ContentPath path = ContentPath.from( this.contentPath );
         final Content content = getContent( path );

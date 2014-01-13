@@ -26,6 +26,7 @@ abstract class BaseComponentRenderer
     protected JsControllerFactory controllerFactory;
 
     public Response render( final Renderable renderable, final JsContext context )
+        throws Exception
     {
         final PageComponent pageComponent = (PageComponent) renderable;
         final TemplateKey componentTemplateKey = pageComponent.getTemplate();

@@ -30,8 +30,6 @@ public class PostProcessorTest
         postProcessor.processResponse( response );
         timer.stop();
         System.out.println( "Processing time for " + postProcessor.getClass().getSimpleName() + " : " + timer.toString() );
-        System.out.println( INPUT.length() + " characters, " + postProcessor.getExpressionCounter() + " expressions evaluated with " +
-                                postProcessor.expressionExecutor.getClass().getSimpleName() );
 //        assertEquals( INPUT, response.getBody() );
     }
 
@@ -49,8 +47,6 @@ public class PostProcessorTest
         postProcessor.processResponse( response );
         timer.stop();
         System.out.println( "Processing time for " + postProcessor.getClass().getSimpleName() + " : " + timer.toString() );
-        System.out.println( INPUT.length() + " characters, " + postProcessor.getExpressionCounter() + " expressions evaluated with " +
-                                postProcessor.expressionExecutor.getClass().getSimpleName() );
 //        assertEquals( INPUT, response.getBody() );
     }
 
@@ -68,8 +64,6 @@ public class PostProcessorTest
         postProcessor.processResponse( response );
         timer.stop();
         System.out.println( "Processing time for " + postProcessor.getClass().getSimpleName() + "(NOT cached) : " + timer.toString() );
-        System.out.println( INPUT.length() + " characters, " + postProcessor.getExpressionCounter() + " expressions evaluated with " +
-                                postProcessor.expressionExecutor.getClass().getSimpleName() );
 //        assertEquals( INPUT, response.getBody() );
     }
 
@@ -87,8 +81,6 @@ public class PostProcessorTest
         postProcessor.processResponse( response );
         timer.stop();
         System.out.println( "Processing time for " + postProcessor.getClass().getSimpleName() + "(CACHED) : " + timer.toString() );
-        System.out.println( INPUT.length() + " characters, " + postProcessor.getExpressionCounter() + " expressions evaluated with " +
-                                postProcessor.expressionExecutor.getClass().getSimpleName() );
 //        assertEquals( INPUT, response.getBody() );
     }
 

@@ -8,8 +8,6 @@ import com.enonic.wem.portal.controller.JsHttpResponse;
 abstract class BasePostProcessor
     implements PostProcessor
 {
-    protected int expressionCounter; // for testing
-
     @Inject
     protected ExpressionExecutor expressionExecutor;
 
@@ -17,12 +15,15 @@ abstract class BasePostProcessor
     public void processResponse( final JsHttpResponse response )
         throws Exception
     {
+        if ( !response.isPostProcess() )
+        {
+            return;
+        }
         if ( !( response.getBody() instanceof String ) )
         {
             return;
         }
         final String responseBody = (String) response.getBody();
-        expressionCounter = 0;
         final String processedResponse = processStringResponse( responseBody );
         response.setBody( processedResponse );
     }
@@ -30,8 +31,8 @@ abstract class BasePostProcessor
     protected abstract String processStringResponse( final String responseBody )
         throws Exception;
 
-    protected int getExpressionCounter()
+    public void setExpressionExecutor( final ExpressionExecutor expressionExecutor )
     {
-        return expressionCounter;
+        this.expressionExecutor = expressionExecutor;
     }
 }

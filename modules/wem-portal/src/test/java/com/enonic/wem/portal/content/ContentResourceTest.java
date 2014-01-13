@@ -15,6 +15,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Throwables;
 import com.google.common.io.Resources;
 import com.sun.jersey.api.core.HttpContext;
 import com.sun.jersey.api.core.HttpRequestContext;
@@ -44,6 +45,10 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.portal.controller.JsControllerFactoryImpl;
 import com.enonic.wem.portal.controller.JsHttpRequest;
+import com.enonic.wem.portal.postprocess.JavaElExpressionExecutor;
+import com.enonic.wem.portal.postprocess.PostProcessor;
+import com.enonic.wem.portal.postprocess.PostProcessorFactory;
+import com.enonic.wem.portal.postprocess.PostProcessorString;
 import com.enonic.wem.portal.script.compiler.ScriptCacheImpl;
 import com.enonic.wem.portal.script.compiler.ScriptCompilerImpl;
 import com.enonic.wem.portal.script.lib.ContextScriptBean;
@@ -137,12 +142,31 @@ public class ContentResourceTest
             }
         };
 
+        final PostProcessorFactory postProcessorFactory = new PostProcessorFactory()
+        {
+            @Override
+            public PostProcessor newPostProcessor()
+            {
+                final PostProcessorString postProcessor = new PostProcessorString();
+                try
+                {
+                    postProcessor.setExpressionExecutor( new JavaElExpressionExecutor( false ) );
+                }
+                catch ( Exception e )
+                {
+                    throw Throwables.propagate( e );
+                }
+                return postProcessor;
+            }
+        };
+
         final GlobalScriptBean globalScriptBean = new GlobalScriptBean();
 
         globalScriptBean.setSystem( new SystemScriptBean() );
         scriptRunnerFactory.setGlobalScriptBean( globalScriptBean );
         scriptRunnerFactory.setContextServiceBeans( mock( Provider.class ) );
         jsControllerFactory.setScriptRunnerFactory( scriptRunnerFactory );
+        jsControllerFactory.setPostProcessorFactory( postProcessorFactory );
         contentResource.controllerFactory = jsControllerFactory;
 
         when( contentResource.httpContext.getRequest() ).thenReturn( requestContext );
