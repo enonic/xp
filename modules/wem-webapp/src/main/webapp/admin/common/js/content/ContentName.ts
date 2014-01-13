@@ -1,22 +1,15 @@
 module api.content {
 
-    export class ContentName {
+    export class ContentName extends api.Name{
 
         public static UNNAMED_PREFIX: string = "__unnamed__";
 
-        private value: string;
-
         constructor(name: string) {
-            api.util.assert( name != null, "name cannot be null" );
-            this.value = name;
+            super(name);
         }
 
         isUnnamed(): boolean {
             return false;
-        }
-
-        toString(): string {
-            return this.value;
         }
 
         toUnnamed():ContentUnnamed {
@@ -34,6 +27,12 @@ module api.content {
             else {
                 return new ContentName(str);
             }
+        }
+
+        public static ensureValidName(possibleInvalidName:string) {
+            api.util.assert( possibleInvalidName != null, "name cannot be null" );
+
+            return ContentName.fromString(possibleInvalidName.toLowerCase());
         }
     }
 }
