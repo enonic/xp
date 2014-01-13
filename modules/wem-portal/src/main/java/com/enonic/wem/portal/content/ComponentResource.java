@@ -76,20 +76,29 @@ public final class ComponentResource
         final Content content = getContent( path );
         final Page page = getPage( content );
 
-        // create context
-        final JsContext context = new JsContext();
-        context.setContent( content );
-        final JsHttpRequest request = new JsHttpRequest( this.httpContext.getRequest() );
-        request.setMode( this.mode );
-        context.setRequest( request );
-        final PortalUrlScriptBean portalUrlScriptBean = new PortalUrlScriptBean();
-        portalUrlScriptBean.setContentPath( path.toString() );
-        context.setPortalUrlScriptBean( portalUrlScriptBean );
-
         final PageComponent component = resolveComponent( new ComponentName( this.componentName ), page );
 
         final Renderer renderer = rendererFactory.getRenderer( component );
+
+        final JsContext context = createContext( content, component );
         return renderer.render( component, context );
+    }
+
+    private JsContext createContext( final Content content, final PageComponent component )
+    {
+        final JsContext context = new JsContext();
+        context.setContent( content );
+        context.setComponent( component );
+
+        final JsHttpRequest request = new JsHttpRequest( this.httpContext.getRequest() );
+        request.setMode( this.mode );
+        context.setRequest( request );
+
+        final PortalUrlScriptBean portalUrlScriptBean = new PortalUrlScriptBean();
+        portalUrlScriptBean.setContentPath( content.getPath().toString() );
+        context.setPortalUrlScriptBean( portalUrlScriptBean );
+
+        return context;
     }
 
     private PageComponent resolveComponent( final ComponentName componentName, final Page page )

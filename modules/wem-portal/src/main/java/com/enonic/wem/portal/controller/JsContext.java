@@ -1,6 +1,7 @@
 package com.enonic.wem.portal.controller;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.portal.script.lib.PortalUrlScriptBean;
 
 public final class JsContext
@@ -12,6 +13,8 @@ public final class JsContext
     private Content content;
 
     private PortalUrlScriptBean portalUrlScriptBean;
+
+    private PageComponent component;
 
     public JsContext()
     {
@@ -56,5 +59,15 @@ public final class JsContext
     public void setPortalUrlScriptBean( final PortalUrlScriptBean portalUrlScriptBean )
     {
         this.portalUrlScriptBean = portalUrlScriptBean;
+    }
+
+    public PageComponent getComponent()
+    {
+        return component;
+    }
+
+    public void setComponent( final PageComponent component )
+    {
+        this.component = component;
     }
 }

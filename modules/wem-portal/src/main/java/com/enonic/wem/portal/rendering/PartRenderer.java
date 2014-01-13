@@ -29,9 +29,8 @@ public final class PartRenderer
     }
 
     @Override
-    protected Descriptor getComponentDescriptor( final Template template )
+    protected Descriptor getComponentDescriptor( final DescriptorKey descriptorKey )
     {
-        final DescriptorKey descriptorKey = template.getDescriptor();
         return this.client.execute( page().descriptor().part().getByKey( (PartDescriptorKey) descriptorKey ) );
     }
 }

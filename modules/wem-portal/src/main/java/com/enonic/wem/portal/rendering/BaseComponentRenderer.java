@@ -6,6 +6,7 @@ import javax.ws.rs.core.Response;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.content.page.Descriptor;
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.Template;
 import com.enonic.wem.api.content.page.TemplateKey;
@@ -29,7 +30,11 @@ abstract class BaseComponentRenderer
         final PageComponent pageComponent = (PageComponent) renderable;
         final TemplateKey componentTemplateKey = pageComponent.getTemplate();
         final Template componentTemplate = getComponentTemplate( componentTemplateKey );
-        final Descriptor componentDescriptor = getComponentDescriptor( componentTemplate );
+        final Descriptor componentDescriptor = getComponentDescriptor( componentTemplate.getDescriptor() );
+        if ( componentDescriptor == null )
+        {
+            throw new RenderException( "Component descriptor [{0}] not found.", componentTemplate.getDescriptor() );
+        }
 
         // find component controller path
         final ModuleResourceKey jsModuleResource = componentDescriptor.getComponentPath();
@@ -45,6 +50,6 @@ abstract class BaseComponentRenderer
 
     protected abstract Template getComponentTemplate( final TemplateKey componentTemplateKey );
 
-    protected abstract Descriptor getComponentDescriptor( final Template template );
+    protected abstract Descriptor getComponentDescriptor( final DescriptorKey descriptorKey );
 
 }
