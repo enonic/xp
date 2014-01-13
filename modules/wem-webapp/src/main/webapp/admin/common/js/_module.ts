@@ -52,6 +52,7 @@
 ///<reference path='icon/_module.ts' />
 
 ///<reference path='facet/_module.ts' />
+///<reference path='query/expr/_module.ts' />
 
 ///<reference path='data/json/_module.ts' />
 ///<reference path='data/_module.ts' />
