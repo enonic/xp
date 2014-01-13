@@ -33,8 +33,9 @@ module api.content.page {
 
             var path = new api.dom.DivEl();
             path.setClass("name");
-            path.getEl().setAttribute("title", pageTemplateSummary.getName().toString());
-            path.getEl().setInnerHtml(pageTemplateSummary.getName().toString());
+            path.getEl().setAttribute("title", pageTemplateSummary.getDescriptorKey().toString());
+            path.getEl().setInnerHtml(pageTemplateSummary.getDescriptorKey().toString());
+
 
             summaryEl.appendChild(displayName);
             summaryEl.appendChild(path);
@@ -90,8 +91,8 @@ module api.content.page {
 
             var path = new api.dom.DivEl();
             path.addClass("name");
-            path.getEl().setAttribute("title", this.pageTemplate.getName().toString());
-            path.getEl().setInnerHtml(this.pageTemplate.getName().toString());
+            path.getEl().setAttribute("title", this.pageTemplate.getDescriptorKey().toString());
+            path.getEl().setInnerHtml(this.pageTemplate.getDescriptorKey().toString());
 
             pageTemplateSummaryEl.appendChild(displayNameEl);
             pageTemplateSummaryEl.appendChild(path);
