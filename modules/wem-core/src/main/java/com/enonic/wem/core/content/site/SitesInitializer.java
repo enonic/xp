@@ -5,7 +5,6 @@ import javax.inject.Inject;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
-import com.enonic.wem.api.command.content.page.CreatePageDescriptor;
 import com.enonic.wem.api.command.content.page.part.CreatePartDescriptor;
 import com.enonic.wem.api.command.module.CreateModule;
 import com.enonic.wem.api.content.Content;
@@ -20,6 +19,7 @@ import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateName;
 import com.enonic.wem.api.content.page.image.ImageTemplateKey;
 import com.enonic.wem.api.content.page.image.ImageTemplateName;
+import com.enonic.wem.api.content.page.part.PartComponent;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartTemplate;
@@ -58,15 +58,28 @@ import static com.enonic.wem.api.form.Input.newInput;
 public class SitesInitializer
     extends BaseInitializer
 {
+
     private Client client;
 
     private final static ModuleKey DEMO_MODULE_KEY = ModuleKey.from( "demo-1.0.0" );
+
+    private static final ComponentDescriptorName LANDING_PAGE_DESCRIPTOR_NAME = new ComponentDescriptorName( "landing-page" );
+
+    private static final ComponentDescriptorName PRODUCT_GRID_DESCRIPTOR_NAME = new ComponentDescriptorName( "product-grid" );
 
     private final static SiteTemplateKey BLUMAN_SITE_TEMPLATE_KEY = SiteTemplateKey.from( "Blueman-1.0.0" );
 
     private final static SiteTemplateKey BLUMAN_INTRA_SITE_TEMPLATE_KEY = SiteTemplateKey.from( "BluemanIntra-1.0.0" );
 
-    public static final PartTemplateName MY_PART_TEMPLATE_NAME = new PartTemplateName( "my-part-template" );
+    private static final PageTemplateName MAIN_PAGE_PAGE_TEMPLATE_NAME = new PageTemplateName( "main-page" );
+
+    private static final PageTemplateName PRODUCT_GRID_PAGE_TEMPLATE_NAME = new PageTemplateName( "product-grid" );
+
+    private static final PageTemplateName DEPARTMENT_PAGE_PAGE_TEMPLATE_NAME = new PageTemplateName( "department-page" );
+
+    private static final PartTemplateName MY_PART_TEMPLATE_NAME = new PartTemplateName( "my-part-template" );
+
+    private static final ImageTemplateName MY_IMAGE_TEMPLATE_NAME = new ImageTemplateName( "my-image-template" );
 
     private Module demoModule;
 
@@ -74,7 +87,11 @@ public class SitesInitializer
 
     private PartDescriptor myPartDescriptor;
 
+    private PageDescriptor productGridPageDescriptor;
+
     private PageTemplate mainPageLandingPageTemplate;
+
+    private PageTemplate productGridPageTemplate;
 
     private PageTemplate departmentPageLandingPageTemplate;
 
@@ -136,13 +153,17 @@ public class SitesInitializer
 
     private void initializeDescriptors()
     {
-        final CreatePageDescriptor createPageDescriptor = page().descriptor().page().create().
+        landingPageDescriptor = client.execute( page().descriptor().page().create().
             displayName( "Landing page" ).
             name( "landing-page" ).
-            key( PageDescriptorKey.from( DEMO_MODULE_KEY, new ComponentDescriptorName( "landing-page" ) ) ).
-            config( createLandingPageDescriptorForm() );
+            key( PageDescriptorKey.from( DEMO_MODULE_KEY, LANDING_PAGE_DESCRIPTOR_NAME ) ).
+            config( createLandingPageDescriptorForm() ) );
 
-        landingPageDescriptor = client.execute( createPageDescriptor );
+        productGridPageDescriptor = client.execute( page().descriptor().page().create().
+            displayName( "Product grid" ).
+            name( "product-grid" ).
+            key( PageDescriptorKey.from( DEMO_MODULE_KEY, PRODUCT_GRID_DESCRIPTOR_NAME ) ).
+            config( createProductGridPageDescriptorForm() ) );
 
         final ComponentDescriptorName partName = new ComponentDescriptorName( "mypart" );
         final CreatePartDescriptor createPartDescriptor = page().descriptor().part().create().
@@ -160,23 +181,43 @@ public class SitesInitializer
             descriptor( myPartDescriptor.getKey() ).
             build();
 
+        // Main Page
         final PageRegions.Builder mainPageRegions = PageRegions.newPageRegions();
         createDefaultPageRegions( mainPageRegions, BLUMAN_SITE_TEMPLATE_KEY );
         mainPageLandingPageTemplate = newPageTemplate().
-            key( PageTemplateKey.from( BLUMAN_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, new PageTemplateName( "main-page" ) ) ).
+            key( PageTemplateKey.from( BLUMAN_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, MAIN_PAGE_PAGE_TEMPLATE_NAME ) ).
             displayName( "Main Page" ).
             regions( mainPageRegions.build() ).
-            config( createPageTemplateConfig( "blue" ) ).
+            config( createLandingPagePageTemplateConfig( "blue" ) ).
             descriptor( landingPageDescriptor.getKey() ).
             build();
 
+        // Product grid
+        final PageRegions.Builder productGridRegions = PageRegions.newPageRegions().
+            add( Region.newRegion().
+                name( "main" ).
+                add( PartComponent.newPartComponent().
+                    name( "MyComponent" ).
+                    template(
+                        PartTemplateKey.from( BLUMAN_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, new PartTemplateName( "my-part-template" ) ) ).
+                    build() ).
+                build() );
+        productGridPageTemplate = newPageTemplate().
+            key( PageTemplateKey.from( BLUMAN_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, PRODUCT_GRID_PAGE_TEMPLATE_NAME ) ).
+            displayName( "Product grid" ).
+            regions( productGridRegions.build() ).
+            config( createProductPageTemplateConfig( 10, 10 ) ).
+            descriptor( productGridPageDescriptor.getKey() ).
+            build();
+
+        // Department Page
         final PageRegions.Builder departmentPageRegions = PageRegions.newPageRegions();
         createDefaultPageRegions( departmentPageRegions, BLUMAN_INTRA_SITE_TEMPLATE_KEY );
         departmentPageLandingPageTemplate = newPageTemplate().
-            key( PageTemplateKey.from( BLUMAN_INTRA_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, new PageTemplateName( "department-page" ) ) ).
+            key( PageTemplateKey.from( BLUMAN_INTRA_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, DEPARTMENT_PAGE_PAGE_TEMPLATE_NAME ) ).
             displayName( "Department Page" ).
             regions( departmentPageRegions.build() ).
-            config( createPageTemplateConfig( "red" ) ).
+            config( createLandingPagePageTemplateConfig( "red" ) ).
             descriptor( landingPageDescriptor.getKey() ).
             build();
 
@@ -207,6 +248,7 @@ public class SitesInitializer
             url( "http://enonic.net" ).
             rootContentType( ContentTypeName.page() ).
             addTemplate( mainPageLandingPageTemplate ).
+            addTemplate( productGridPageTemplate ).
             addTemplate( myPartTemplate ) );
 
         bluManIntranettSiteTemplate = client.execute( site().template().create().
@@ -238,7 +280,7 @@ public class SitesInitializer
             content( bluManTrampolineSite.getId() ).
             pageTemplate( this.mainPageLandingPageTemplate.getKey() ).
             regions( pageRegions.build() ).
-            config( createPageTemplateConfig( "blue" ) ) );
+            config( createLandingPagePageTemplateConfig( "blue" ) ) );
 
         bluManIntranetSite = createSiteContent( "bluman-intranett", "Bluman Intranett" );
 
@@ -255,7 +297,7 @@ public class SitesInitializer
             content( bluManIntranetSite.getId() ).
             pageTemplate( this.departmentPageLandingPageTemplate.getKey() ).
             regions( pageRegions.build() ).
-            config( createPageTemplateConfig( "red" ) ) );
+            config( createLandingPagePageTemplateConfig( "red" ) ) );
     }
 
     private RootDataSet createMyImageTemplateConfig( long width, String caption )
@@ -274,7 +316,7 @@ public class SitesInitializer
         return config;
     }
 
-    private RootDataSet createPageTemplateConfig( final String backgroundColor )
+    private RootDataSet createLandingPagePageTemplateConfig( final String backgroundColor )
     {
         RootDataSet data = new RootDataSet();
         data.setProperty( "background-color", new Value.String( backgroundColor ) );
@@ -294,6 +336,32 @@ public class SitesInitializer
             build();
     }
 
+    private RootDataSet createProductPageTemplateConfig( final int rows, final int columns )
+    {
+        RootDataSet data = new RootDataSet();
+        data.setProperty( "rows", new Value.String( rows ) );
+        data.setProperty( "columns", new Value.String( columns ) );
+        return data;
+    }
+
+    private Form createProductGridPageDescriptorForm()
+    {
+        return Form.newForm().
+            addFormItem( newInput().
+                name( "rows" ).label( "Rows" ).
+                maximumOccurrences( 1 ).minimumOccurrences( 1 ).
+                inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( newInput().
+                name( "columns" ).label( "Columns" ).
+                maximumOccurrences( 1 ).minimumOccurrences( 1 ).
+                inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( newInput().
+                name( "main" ).label( "Main region" ).
+                maximumOccurrences( 1 ).minimumOccurrences( 1 ).
+                inputType( InputTypes.REGION ).build() ).
+            build();
+    }
+
     private void createDefaultPageRegions( final PageRegions.Builder pageRegions, final SiteTemplateKey siteTemplateKey )
     {
         Region myHeaderRegion = Region.newRegion().
@@ -310,7 +378,7 @@ public class SitesInitializer
             add( newImageComponent().
                 name( "FancyImage" ).
                 image( ContentId.from( "123" ) ).
-                template( ImageTemplateKey.from( siteTemplateKey, DEMO_MODULE_KEY, new ImageTemplateName( "my-image-template" ) ) ).
+                template( ImageTemplateKey.from( siteTemplateKey, DEMO_MODULE_KEY, MY_IMAGE_TEMPLATE_NAME ) ).
                 config( createMyImageTemplateConfig( 500, "So nice!" ) ).
                 build() ).
             add( newPartComponent().
