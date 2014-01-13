@@ -65,14 +65,14 @@ module api.dom {
             this.rendered = false;
             if (properties.getHelper()) {
                 this.el = properties.getHelper();
-            } else if(properties.getTagName()) {
+            } else if (properties.getTagName()) {
                 this.el = ElementHelper.fromName(properties.getTagName());
             } else {
                 throw new Error("Either tag name or helper should be present");
             }
 
             if (properties.isGenerateId()) {
-                this.id = api.util.getModuleName(this) + "." + api.util.getClassName(this) + '-' + (++Element.constructorCounter);
+                this.id = api.util.getFullName(this) + '-' + (++Element.constructorCounter);
                 this.el.setId(this.id);
             }
             if (properties.getClassName()) {
