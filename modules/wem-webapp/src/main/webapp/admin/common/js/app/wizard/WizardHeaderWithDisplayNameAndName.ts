@@ -152,7 +152,7 @@ module api.app.wizard {
         }
 
         private generateName(value: string): string {
-            return api.content.ContentName.ensureValidName(value);
+            return api.Name.ensureValidName(value);
         }
 
     }

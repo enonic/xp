@@ -4,6 +4,8 @@ module api {
 
         private static NAME_REG_EXP = new RegExp("^[_a-z0-9]([a-z0-9_\\-\\.])*$");
 
+        public static FORBIDDEN_CHARS: RegExp = /[^a-z0-9\-]+/ig;
+
         private value:string;
 
         constructor(name:string) {
@@ -24,6 +26,16 @@ module api {
 
         toString():string {
             return this.value;
+        }
+
+        public static ensureValidName(possibleInvalidName:string):string {
+            if (!possibleInvalidName) {
+                return "";
+            }
+
+            var generated = possibleInvalidName.replace(/[\s+\.\/]/ig, '-').replace(/-{2,}/g, '-').replace(/^-|-$/g, '').toLowerCase();
+            return (generated || '').replace(Name.FORBIDDEN_CHARS, '');
+
         }
     }
 }
