@@ -4,6 +4,8 @@ module api.content {
 
         public static UNNAMED_PREFIX: string = "__unnamed__";
 
+        public static FORBIDDEN_CHARS: RegExp = /[^a-z0-9\-]+/ig;
+
         constructor(name: string) {
             super(name);
         }
@@ -20,19 +22,23 @@ module api.content {
         public static fromString(str: string) {
 
             api.util.assert( str != null, "name cannot be null" );
-
-            if (str.indexOf(ContentName.UNNAMED_PREFIX) == 0) {
-                return new ContentUnnamed(str);
+            var validStr = ContentName.ensureValidName(str);
+            if (validStr.indexOf(ContentName.UNNAMED_PREFIX) == 0) {
+                return new ContentUnnamed(validStr);
             }
             else {
-                return new ContentName(str);
+                return new ContentName(validStr);
             }
         }
 
-        public static ensureValidName(possibleInvalidName:string) {
-            api.util.assert( possibleInvalidName != null, "name cannot be null" );
+        public static ensureValidName(possibleInvalidName:string):string {
+            if (!possibleInvalidName) {
+                return "";
+            }
 
-            return ContentName.fromString(possibleInvalidName.toLowerCase());
+            var generated = possibleInvalidName.replace(/[\s+\.\/]/ig, '-').replace(/-{2,}/g, '-').replace(/^-|-$/g, '').toLowerCase();
+            return (generated || '').replace(ContentName.FORBIDDEN_CHARS, '');
+
         }
     }
 }
