@@ -18,6 +18,21 @@ module api.content.page.region {
         getRegion(name: string): Region {
             return this.regionByName[name];
         }
+
+
+        getComponent(name: api.content.page.ComponentName) {
+
+            for (var key in this.regionByName) {
+                var region: Region = this.regionByName[key];
+
+                var component = region.getComponent(name);
+                if( component != null ) {
+                    return component;
+                }
+            }
+
+            return null;
+        }
     }
 
     export class PageRegionsBuilder {

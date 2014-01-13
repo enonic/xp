@@ -60,9 +60,12 @@ module app.wizard {
                 }
 
                 var headerRegion = regions.getRegion("main");
-                console.log("header region", headerRegion);
-                //var region = regions.getByName();
-                //region.getPart(id);
+                console.log("headerRegion", headerRegion);
+
+                var fancyImageComponent = regions.getComponent(new api.content.page.ComponentName("FancyImage"));
+                console.log("fancyImageComponent", fancyImageComponent);
+
+
                 // TODO: live edit render request to server
             }
         }
