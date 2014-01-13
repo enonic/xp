@@ -353,6 +353,7 @@ module app.wizard {
             var deferred = Q.defer<api.content.Content>();
 
             var updateContentRequest = new api.content.UpdateContentRequest(this.getPersistedItem().getId()).
+                setDraft(this.persistAsDraft ).
                 setContentName(this.resolveContentNameForUpdateReuest()).
                 setContentType(this.contentType.getContentTypeName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
@@ -452,6 +453,10 @@ module app.wizard {
 
         getContentType(): api.schema.content.ContentType {
             return this.contentType;
+        }
+
+        setPersistAsDraft(draft:boolean) {
+            this.persistAsDraft = draft;
         }
     }
 

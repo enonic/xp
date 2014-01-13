@@ -38,6 +38,7 @@
   "hasChildren" : false,
   "iconUrl" : "http://localhost/admin/rest/content/image/aaa",
   "id" : "aaa",
+  "isDraft" : false,
   "isPage" : false,
   "isRoot" : true,
   "isSite" : false,
@@ -50,3 +51,4 @@
   "site" : null,
   "type" : "my_type"
 }
+

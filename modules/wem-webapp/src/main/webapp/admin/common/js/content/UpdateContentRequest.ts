@@ -14,11 +14,14 @@ module api.content {
 
         private displayName:string;
 
+        private draft:boolean;
+
         private attachments:api.content.attachment.Attachment[] = [];
 
         constructor(id:string) {
             super();
             this.id = id;
+            this.draft = false;
             this.setMethod("POST");
         }
 
@@ -52,6 +55,11 @@ module api.content {
             return this;
         }
 
+        setDraft(draft:boolean):UpdateContentRequest {
+            this.draft = draft;
+            return this;
+        }
+
 
         addAttachment(attachment:api.content.attachment.Attachment):UpdateContentRequest {
             this.attachments.push( attachment );
@@ -66,6 +74,7 @@ module api.content {
         getParams():Object {
             return {
                 contentId: this.id,
+                draft: this.draft,
                 contentName: this.name.isUnnamed() ? this.name.toUnnamed().toStringIncludingHidden() : this.name.toString(),
                 contentType: this.contentType.toString(),
                 form: this.form.toJson(),

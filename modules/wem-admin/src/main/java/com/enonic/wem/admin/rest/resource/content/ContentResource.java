@@ -396,6 +396,7 @@ public class ContentResource
                     return editContent( toBeEdited ).
                         form( params.getForm().getForm() ).
                         contentData( contentData ).
+                        draft( params.isDraft() ).
                         displayName( params.getDisplayName() );
                 }
             } );

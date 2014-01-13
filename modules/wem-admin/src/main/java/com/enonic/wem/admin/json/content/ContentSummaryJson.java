@@ -24,6 +24,7 @@ public class ContentSummaryJson
 
     private final boolean isPage;
 
+
     public ContentSummaryJson( Content content )
     {
         super( content.getId() );
@@ -93,6 +94,10 @@ public class ContentSummaryJson
     public boolean getHasChildren()
     {
         return content.hasChildren();
+    }
+
+    public boolean getIsDraft() {
+        return content.isDraft();
     }
 
     public boolean getIsSite()
