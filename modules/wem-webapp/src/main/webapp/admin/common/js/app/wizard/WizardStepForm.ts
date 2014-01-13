@@ -4,6 +4,7 @@ module api.app.wizard {
 
         constructor(generateId?:boolean, className?:string) {
             super(generateId, className);
+            this.addClass("wizard-step-form");
         }
     }
 }
