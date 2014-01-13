@@ -1,15 +1,25 @@
 module api.content.page {
 
-    export class Page extends PageComponent<PageTemplateKey> {
+    export class Page {
+
+        private template: PageTemplateKey;
 
         private regions: region.PageRegions;
 
         private config: api.data.RootDataSet;
 
         constructor(builder: PageBuilder) {
-            super(builder);
+            this.template = builder.template;
             this.regions = builder.regions;
             this.config = builder.config;
+        }
+
+        getTemplate(): PageTemplateKey {
+            return this.template;
+        }
+
+        setTemplate(template: PageTemplateKey) {
+            this.template = template;
         }
 
         hasRegions(): boolean {
@@ -29,7 +39,9 @@ module api.content.page {
         }
     }
 
-    export class PageBuilder extends ComponentBuilder<PageTemplateKey> {
+    export class PageBuilder {
+
+        template: PageTemplateKey;
 
         regions: region.PageRegions;
 
@@ -39,6 +51,11 @@ module api.content.page {
             this.setTemplate(PageTemplateKey.fromString(json.template));
             this.setRegions(new region.PageRegionsBuilder().fromJson(json.regions).build());
             this.setConfig(api.data.DataFactory.createRootDataSet(json.config));
+            return this;
+        }
+
+        public setTemplate(value: PageTemplateKey): PageBuilder {
+            this.template = value;
             return this;
         }
 

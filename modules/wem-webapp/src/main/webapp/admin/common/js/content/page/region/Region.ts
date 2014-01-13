@@ -35,6 +35,21 @@ module api.content.page.region {
             return this.name;
         }
 
+        countNumberOfDuplicates(name: api.content.page.ComponentName): number {
+
+            var count = 0;
+            this.pageComponents.forEach((component: api.content.page.PageComponent<api.content.page.TemplateKey>)=> {
+                if( component.getName().isDuplicateOf(name) ) {
+                    count++;
+                }
+            });
+            return count;
+        }
+
+        hasComponentWithName(name: api.content.page.ComponentName) {
+            return this.componentByName[name.toString()] != undefined;
+        }
+
         getComponents(): api.content.page.PageComponent<api.content.page.TemplateKey>[] {
             return this.pageComponents;
         }
@@ -42,24 +57,27 @@ module api.content.page.region {
         getImageComponent(name: api.content.page.ComponentName): api.content.page.image.ImageComponent {
             var c = this.getComponent(name);
 
-            var message = "Expected component [" + name.toString() + "] to be an api.content.page.image.ImageComponent: " + api.util.getClassName(c);
-            api.util.assert(c instanceof api.content.page.image.ImageComponent,message);
+            var message = "Expected component [" + name.toString() + "] to be an api.content.page.image.ImageComponent: " +
+                          api.util.getClassName(c);
+            api.util.assert(c instanceof api.content.page.image.ImageComponent, message);
             return <api.content.page.image.ImageComponent>c;
         }
 
         getLayoutComponent(name: api.content.page.ComponentName): api.content.page.layout.LayoutComponent {
             var c = this.getComponent(name);
 
-            var message = "Expected component [" + name.toString() + "] to be a api.content.page.layout.LayoutComponent: " + api.util.getClassName(c);
-            api.util.assert(c instanceof api.content.page.layout.LayoutComponent,message);
+            var message = "Expected component [" + name.toString() + "] to be a api.content.page.layout.LayoutComponent: " +
+                          api.util.getClassName(c);
+            api.util.assert(c instanceof api.content.page.layout.LayoutComponent, message);
             return <api.content.page.layout.LayoutComponent>c;
         }
 
         getPartComponent(name: api.content.page.ComponentName): api.content.page.part.PartComponent {
             var c = this.getComponent(name);
 
-            var message = "Expected component [" + name.toString() + "] to be a api.content.page.part.PartComponent: " + api.util.getClassName(c);
-            api.util.assert(c instanceof api.content.page.part.PartComponent,message);
+            var message = "Expected component [" + name.toString() + "] to be a api.content.page.part.PartComponent: " +
+                          api.util.getClassName(c);
+            api.util.assert(c instanceof api.content.page.part.PartComponent, message);
             return <api.content.page.part.PartComponent>c;
         }
 

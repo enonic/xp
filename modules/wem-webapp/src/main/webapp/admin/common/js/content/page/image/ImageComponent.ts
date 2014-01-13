@@ -2,8 +2,6 @@ module api.content.page.image {
 
     export class ImageComponent extends api.content.page.PageComponent<ImageTemplateKey> {
 
-        private name: api.content.page.ComponentName;
-
         private config: api.data.RootDataSet;
 
         private imageContent: api.content.ContentId;
@@ -11,15 +9,11 @@ module api.content.page.image {
         constructor(builder?: ImageComponentBuilder) {
             super(builder);
             if (builder) {
-                this.name = builder.name;
                 this.config = builder.config;
                 this.imageContent = builder.imageContent;
             }
         }
 
-        getName(): api.content.page.ComponentName {
-            return this.name;
-        }
 
         getConfig(): api.data.RootDataSet {
             return this.config;
@@ -40,8 +34,6 @@ module api.content.page.image {
 
     export class ImageComponentBuilder extends api.content.page.ComponentBuilder<ImageTemplateKey> {
 
-        name: api.content.page.ComponentName;
-
         config: api.data.RootDataSet;
 
         imageContent: api.content.ContentId;
@@ -53,11 +45,6 @@ module api.content.page.image {
             if (json.image) {
                 this.setImageContent(new api.content.ContentId(json.image));
             }
-            return this;
-        }
-
-        public setName(value: api.content.page.ComponentName): ImageComponentBuilder {
-            this.name = value;
             return this;
         }
 

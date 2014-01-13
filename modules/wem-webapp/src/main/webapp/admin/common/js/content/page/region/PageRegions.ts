@@ -15,6 +15,38 @@ module api.content.page.region {
             });
         }
 
+        ensureUniqueComponentNameFromTemplate(templateName: api.content.page.TemplateName): api.content.page.ComponentName {
+
+            var wantedName = new api.content.page.ComponentName(templateName.toString());
+            return this.ensureUniqueComponentName(wantedName);
+        }
+
+        ensureUniqueComponentName(wantedName: api.content.page.ComponentName): api.content.page.ComponentName {
+
+            var region: Region;
+            var duplicates = false;
+            for (var key in this.regionByName) {
+                region = this.regionByName[key];
+
+                if (region.countNumberOfDuplicates(wantedName) > 0) {
+                    duplicates = true;
+                    break;
+                }
+            }
+
+            if (!duplicates) {
+                return wantedName;
+            }
+
+            var instanceCount = 0;
+            for (key in this.regionByName) {
+                region = this.regionByName[key];
+                instanceCount += region.countNumberOfDuplicates(wantedName);
+            }
+
+            return wantedName.createDuplicate(instanceCount);
+        }
+
         getRegion(name: string): Region {
             return this.regionByName[name];
         }
@@ -26,7 +58,7 @@ module api.content.page.region {
                 var region: Region = this.regionByName[key];
 
                 var component = region.getComponent(name);
-                if( component != null ) {
+                if (component != null) {
                     return component;
                 }
             }
