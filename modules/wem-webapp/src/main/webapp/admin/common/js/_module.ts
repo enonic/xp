@@ -89,6 +89,7 @@
 ///<reference path='content/site/template/json/_module.ts' />
 ///<reference path='content/json/_module.ts' />
 ///<reference path='content/_module.ts' />
+///<reference path='content/query/_module.ts' />
 ///<reference path='content/page/json/_module.ts' />
 ///<reference path='content/page/_module.ts' />
 ///<reference path='content/page/image/_module.ts' />
