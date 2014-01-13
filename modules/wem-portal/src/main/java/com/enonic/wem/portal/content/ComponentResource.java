@@ -25,7 +25,8 @@ import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsHttpRequest;
 import com.enonic.wem.portal.exception.PortalWebException;
-import com.enonic.wem.portal.rendering.PageComponentRenderer;
+import com.enonic.wem.portal.rendering.Renderer;
+import com.enonic.wem.portal.rendering.RendererFactory;
 import com.enonic.wem.portal.script.lib.PortalUrlScriptBean;
 
 import static com.enonic.wem.api.command.Commands.content;
@@ -45,11 +46,11 @@ public final class ComponentResource
     @Inject
     protected Client client;
 
+    @Inject
+    protected RendererFactory rendererFactory;
+
     @Context
     protected HttpContext httpContext;
-
-    @Inject
-    protected PageComponentRenderer renderer;
 
     @GET
     public Response handleGet()
@@ -85,8 +86,9 @@ public final class ComponentResource
         portalUrlScriptBean.setContentPath( path.toString() );
         context.setPortalUrlScriptBean( portalUrlScriptBean );
 
-        // resolve component
         final PageComponent component = resolveComponent( new ComponentName( this.componentName ), page );
+
+        final Renderer renderer = rendererFactory.getRenderer( component );
         return renderer.render( component, context );
     }
 
