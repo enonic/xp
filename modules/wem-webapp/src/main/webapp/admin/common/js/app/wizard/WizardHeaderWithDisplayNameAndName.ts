@@ -152,16 +152,7 @@ module api.app.wizard {
         }
 
         private generateName(value: string): string {
-            if (!value) {
-                return "";
-            }
-
-            var generated = value.replace(/[\s+\.\/]/ig, '-').replace(/-{2,}/g, '-').replace(/^-|-$/g, '').toLowerCase();
-            return this.removeForbiddenChars(generated);
-        }
-
-        private removeForbiddenChars(rawValue: string): string {
-            return this.forbiddenChars ? (rawValue || '').replace(this.forbiddenChars, '') : rawValue;
+            return api.content.ContentName.ensureValidName(value);
         }
 
     }
