@@ -47,10 +47,10 @@
     </div>
 </div>
 
-<div id="main" data-live-edit-type="region" data-live-edit-key="80" data-live-edit-name="Main">
+<div id="main" data-live-edit-type="region" data-live-edit-key="80" data-live-edit-name="Main" data-live-edit-region="main">
 <!-- Product show -->
 <!--<%@ include file="../../admin/live-edit/data/mock-component-10029.html" %>-->
-<div class="row-fluid" data-live-edit-type="part" data-live-edit-key="10029" data-live-edit-name="Trampoline - Show Variants">
+<div class="row-fluid" data-live-edit-type="part" data-live-edit-key="10029" data-live-edit-name="Trampoline - Show Variants" data-live-edit-component="PartComponent:main/Show-Trampoline">
     <div class="span8">
         <img id="bounce-image" src="{{resourcesPath}}/demo/img/Prod_stor_studsmattor_Elite_rod.jpg" alt="">
     </div>
@@ -98,11 +98,11 @@
     </div>
 </div>
 <!-- end include -->
-<div class="row-fluid" data-live-edit-type="layout" data-live-edit-key="010101" data-live-edit-name="Layout 70-30">
+<div class="row-fluid" data-live-edit-type="layout" data-live-edit-key="010101" data-live-edit-name="Layout 70-30" data-live-edit-component="LayoutComponent:main/Layout-70-30">
 
-<div class="span8" data-live-edit-type="region">
+<div class="span8" data-live-edit-type="region" data-live-edit-region="left">
     <!-- Description -->
-    <div data-live-edit-type="part" data-live-edit-key="10028" data-live-edit-name="Trampoline - Show Description">
+    <div data-live-edit-type="part" data-live-edit-key="10028" data-live-edit-name="Trampoline - Show Description" data-live-edit-component="PartComponent:main/Layout-70-30/left/Trampoline-Description">
         <h3>Beskrivelse</h3>
         <h4>Jumping Jack - Big Bounce</h4>
 
@@ -131,8 +131,7 @@
     </div>
 
     <!-- Gallery -->
-    <div id="myCarousel" class="carousel slide" data-live-edit-type="part" data-live-edit-key="10030"
-         data-live-edit-name="Trampoline - Image Gallery">
+    <div id="myCarousel" class="carousel slide" data-live-edit-type="part" data-live-edit-key="10030" data-live-edit-name="Trampoline - Image Gallery" data-live-edit-component="PartComponent:main/Layout-70-30/left/Image-Gallery">
         <div class="carousel-inner">
             <div class="item active">
                 <img src="{{resourcesPath}}/demo/img/Elite_01.jpg" alt="">
@@ -161,7 +160,7 @@
 
 
     <!-- Comments -->
-    <div data-live-edit-type="part" data-live-edit-key="10026" data-live-edit-name="Trampoline - Comments">
+    <div data-live-edit-type="part" data-live-edit-key="10026" data-live-edit-name="Trampoline - Comments" data-live-edit-component="PartComponent:main/Layout-70-30/left/Show-Trampoline">
         <h3>Kommentarer</h3>
 
         <div class="media">
@@ -258,9 +257,9 @@
     </div>
 
 </div>
-<div class="span4" data-live-edit-type="region">
+<div class="span4" data-live-edit-type="region" data-live-edit-region="right">
     <!-- Accessories -->
-    <div data-live-edit-type="part" data-live-edit-key="10025" data-live-edit-name="Trampoline - Show Accessories">
+    <div data-live-edit-type="part" data-live-edit-key="10025" data-live-edit-name="Trampoline - Show Accessories" data-live-edit-component="PartComponent:main/Layout-70-30/left/Show-Accessories">
         <h3>Tilbehør</h3>
 
         <div class="media" data-live-edit-type="content" data-live-edit-name="Accessories - Ladder">
