@@ -1,6 +1,7 @@
 package com.enonic.wem.api.content.query;
 
 import com.enonic.wem.api.query.expr.QueryExpr;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 public class ContentQuery
@@ -64,6 +65,13 @@ public class ContentQuery
             this.queryExpr = queryExpr;
             return this;
         }
+
+        public Builder addContentTypeName( final ContentTypeName contentTypeName )
+        {
+            this.contentTypeNames.add( contentTypeName );
+            return this;
+        }
+
 
         public Builder contentTypeNames( final ContentTypeNames contentTypeNamesFilter )
         {
