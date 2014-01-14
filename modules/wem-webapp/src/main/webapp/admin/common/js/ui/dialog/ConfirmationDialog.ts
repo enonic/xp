@@ -2,14 +2,14 @@ module api.ui.dialog {
 
     export class ConfirmationDialog extends ModalDialog {
 
-        private static instance:ConfirmationDialog = new ConfirmationDialog();
+        private static instance: ConfirmationDialog;
 
-        private questionEl:api.dom.DivEl;
+        private questionEl: api.dom.DivEl;
         private yesCallback: () => void;
         private noCallback: () => void;
 
-        private yesAction:api.ui.Action;
-        private noAction:api.ui.Action;
+        private yesAction: api.ui.Action;
+        private noAction: api.ui.Action;
 
         constructor() {
             super({
@@ -24,7 +24,7 @@ module api.ui.dialog {
             this.appendChildToContentPanel(this.questionEl);
 
             this.noAction = new api.ui.Action("No", "esc");
-            this.noAction.addExecutionListener((action:api.ui.Action) => {
+            this.noAction.addExecutionListener((action: api.ui.Action) => {
                 this.close();
                 if (this.noCallback) {
                     this.noCallback();
@@ -33,7 +33,7 @@ module api.ui.dialog {
             this.addAction(this.noAction);
 
             this.yesAction = new api.ui.Action("Yes", "enter");
-            this.yesAction.addExecutionListener((action:api.ui.Action) => {
+            this.yesAction.addExecutionListener((action: api.ui.Action) => {
                 this.close();
                 if (this.yesCallback) {
                     this.yesCallback();
@@ -44,21 +44,24 @@ module api.ui.dialog {
             api.dom.Body.get().appendChild(this);
         }
 
-        static get():ConfirmationDialog {
+        static get(): ConfirmationDialog {
+            if (!ConfirmationDialog.instance) {
+                ConfirmationDialog.instance = new ConfirmationDialog();
+            }
             return ConfirmationDialog.instance;
         }
 
-        setQuestion(question:string):ConfirmationDialog {
+        setQuestion(question: string): ConfirmationDialog {
             this.questionEl.getEl().setInnerHtml(question);
             return this;
         }
 
-        setYesCallback(callback:()=>void):ConfirmationDialog {
+        setYesCallback(callback: ()=>void): ConfirmationDialog {
             this.yesCallback = callback;
             return this;
         }
 
-        setNoCallback(callback:() => void):ConfirmationDialog {
+        setNoCallback(callback: () => void): ConfirmationDialog {
             this.noCallback = callback;
             return this;
         }

@@ -49,8 +49,6 @@ module api.dom {
 
     export class Element {
 
-        private static constructorCounter: number = 0;
-
         private el: ElementHelper;
 
         private id: string;
@@ -71,9 +69,11 @@ module api.dom {
                 throw new Error("Either tag name or helper should be present");
             }
 
-            if (properties.isGenerateId()) {
-                this.id = api.util.getFullName(this) + '-' + (++Element.constructorCounter);
-                this.el.setId(this.id);
+            var moduleName = api.util.getModuleName(this);
+            if (properties.isGenerateId() || (properties.isGenerateId() == undefined && moduleName != "api.dom")) {
+                var id = ElementManager.registerElement(this);
+                this.id = id;
+                this.el.setId(id);
             }
             if (properties.getClassName()) {
                 this.el.setClass(properties.getClassName());

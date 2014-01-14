@@ -1,6 +1,7 @@
 ///<reference path='ElementHelper.ts' />
 ///<reference path='ImgElHelper.ts' />
 ///<reference path='Element.ts' />
+///<reference path='ElementManager.ts' />
 ///<reference path='AEl.ts' />
 ///<reference path='Body.ts' />
 ///<reference path='DivEl.ts' />
