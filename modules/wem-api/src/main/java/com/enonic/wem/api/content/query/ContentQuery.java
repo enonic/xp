@@ -19,7 +19,7 @@ public class ContentQuery
     public ContentQuery( final Builder builder )
     {
         this.queryExpr = builder.queryExpr;
-        this.contentTypeNames = builder.contentTypeNames;
+        this.contentTypeNames = builder.contentTypeNamesBuilder.build();
         this.from = builder.from;
         this.size = builder.size;
     }
@@ -53,7 +53,7 @@ public class ContentQuery
     {
         private QueryExpr queryExpr;
 
-        private ContentTypeNames contentTypeNames;
+        private ContentTypeNames.Builder contentTypeNamesBuilder = new ContentTypeNames.Builder();
 
         private int from = 0;
 
@@ -68,14 +68,14 @@ public class ContentQuery
 
         public Builder addContentTypeName( final ContentTypeName contentTypeName )
         {
-            this.contentTypeNames.add( contentTypeName );
+            this.contentTypeNamesBuilder.add( contentTypeName );
             return this;
         }
 
 
-        public Builder contentTypeNames( final ContentTypeNames contentTypeNamesFilter )
+        public Builder addContentTypeNames( final ContentTypeNames contentTypeNames )
         {
-            this.contentTypeNames = contentTypeNamesFilter;
+            this.contentTypeNamesBuilder.addAll( contentTypeNames );
             return this;
         }
 

@@ -28,7 +28,7 @@ public class ContentQueryJson
             from( from ).
             size( size ).
             queryExpr( QueryParser.parse( queryExprString ) ).
-            contentTypeNames( ContentTypeNames.from( contentTypeNameString ) ).
+            addContentTypeNames( ContentTypeNames.from( contentTypeNameString ) ).
             build();
 
         this.expand = expand != null ? expand : "none";
