@@ -191,6 +191,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             this.removePaddingFromLayoutComponent();
 
             LiveEdit.component.Selection.select(LiveEdit.component.Component.fromElement(emptyComponent));
+            LiveEdit.component.Selection.handleSelect(emptyComponent.getHTMLElement());
         }
     }
 

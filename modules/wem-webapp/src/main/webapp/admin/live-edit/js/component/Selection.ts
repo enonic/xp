@@ -5,10 +5,12 @@ module LiveEdit.component {
 
     export var ATTRIBUTE_NAME:string = 'data-live-edit-selected';
 
+
     export class Selection {
+        static COMPONENT_ATTR:string = "data-live-edit-component";
+        static REGION_ATTR:string = "data-live-edit-region";
 
         public static select(component:LiveEdit.component.Component, event?:JQueryEventObject):void {
-            console.log(component);
 
             this.setSelectionAttributeOnElement(component.getElement());
 
@@ -19,14 +21,29 @@ module LiveEdit.component {
                     y: event.pageY
                 };
             }
-            if (component.componentType.getType() == Type.PAGE) {
-                $(window).trigger('selectPage.liveEdit', [component, mouseClickPagePosition]);
-            } else if (component.getComponentType().getType() == Type.REGION) {
-                $(window).trigger('selectRegion.liveEdit', [component, component.getName(), mouseClickPagePosition]);
-            } else {
-                $(window).trigger('selectComponent.liveEdit', [component, component.getName(), mouseClickPagePosition]);
-            }
 
+            $(window).trigger('selectComponent.liveEdit', [component, mouseClickPagePosition]);
+        }
+
+        public static handleSelect(element:HTMLElement) {
+            if (Selection.getType(element) == "page") {
+                $(window).trigger('pageSelect.liveEdit');
+            } else if (Selection.getType(element) == "region") {
+                $(window).trigger('regionSelect.liveEdit', element.getAttribute(Selection.REGION_ATTR));
+            } else if (Selection.getType(element) == "component") {
+                $(window).trigger('componentSelect.liveEdit', element.getAttribute(Selection.COMPONENT_ATTR));
+            }
+        }
+
+        public static getType(element:HTMLElement):string {
+            if (element.hasAttribute(Selection.COMPONENT_ATTR)) {
+                return "component";
+            } else if (element.hasAttribute(Selection.REGION_ATTR)) {
+                return "region";
+            } else if (element.tagName == "body") {
+                return "page";
+            }
+            return null;
         }
 
         public static deselect():void {
@@ -43,7 +60,7 @@ module LiveEdit.component {
             try {
                 return new LiveEdit.component.Component($('[' + ATTRIBUTE_NAME + ']'));
 
-            } catch(ex) {
+            } catch (ex) {
                 return null;
             }
         }

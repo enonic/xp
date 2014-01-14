@@ -16,7 +16,7 @@ module app.contextwindow {
             this.addPanel(this.selectPanel);
             this.addPanel(this.imageSelectPanel);
 
-            ComponentSelectEvent.on((event) => {
+            SelectComponentEvent.on((event) => {
                 switch (event.getComponent().componentType.typeName) {
                     case 'image':
                         this.showPanel(this.getPanelIndex(this.imageSelectPanel))
@@ -25,15 +25,6 @@ module app.contextwindow {
                         event.getComponent().isEmpty() ? this.showPanel(this.getPanelIndex(this.selectPanel)) : this.showPanel(this.getPanelIndex(this.detailPanel));
                 }
             });
-
-            RegionSelectEvent.on((event) => {
-                event.getRegion().isEmpty() ? this.showPanel(this.getPanelIndex(this.selectPanel)) : this.showPanel(this.getPanelIndex(this.detailPanel));
-            });
-
-            PageSelectEvent.on((event) => {
-                event.getPage().isEmpty() ? this.showPanel(this.getPanelIndex(this.selectPanel)) : this.showPanel(this.getPanelIndex(this.detailPanel));
-            });
-
         }
     }
 }

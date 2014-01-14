@@ -57,7 +57,7 @@ module app.contextwindow.image {
             this.appendChild(comboBoxWrapper);
             this.appendChild(this.deck);
 
-            ComponentSelectEvent.on((event) => {
+            SelectComponentEvent.on((event) => {
                 //TODO: set image here
                 if (!event.getComponent().isEmpty()) {
                     this.image = new api.content.page.image.ImageComponent();

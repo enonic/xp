@@ -44,7 +44,7 @@ module app.contextwindow {
             this.emulatorPanel = new EmulatorPanel(this);
 
             this.addItem("Insert", this.componentTypesPanel);
-            this.addItem("Inspect", this.inspectorPanel);
+            this.addItem("Settings", this.inspectorPanel);
             this.addItem("Emulator", this.emulatorPanel);
 
             this.minimizer = new Minimizer(()=> {
@@ -54,19 +54,9 @@ module app.contextwindow {
             });
             this.getNavigator().appendChild(this.minimizer);
 
-            ComponentSelectEvent.on((event) => {
+            SelectComponentEvent.on((event) => {
                 this.selectPanel(this.inspectorPanel);
                 this.selectedComponent = event.getComponent();
-            });
-
-            PageSelectEvent.on((event) => {
-                this.selectPanel(this.inspectorPanel);
-                this.selectedComponent = event.getPage();
-            });
-
-            RegionSelectEvent.on((event) => {
-                this.selectPanel(this.inspectorPanel);
-                this.selectedComponent = event.getRegion();
             });
 
             ComponentDeselectEvent.on((event) => {
@@ -104,21 +94,24 @@ module app.contextwindow {
 
         private liveEditListen() {
             this.getLiveEditJQuery()(this.getLiveEditWindow()).on('selectComponent.liveEdit',
-                (event, component?, name?, mouseClickPagePosition?) => {
-                    new ComponentSelectEvent(<Component>component, name).fire();
-                    this.selectedComponent = component;
-                });
-
-            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('selectPage.liveEdit',
                 (event, component?, mouseClickPagePosition?) => {
-                    new PageSelectEvent(<Component>component).fire();
+                    new SelectComponentEvent(<Component>component).fire();
                     this.selectedComponent = component;
                 });
 
-            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('selectRegion.liveEdit',
-                (event, component?, name?, mouseClickPagePosition?) => {
-                    new RegionSelectEvent(<Component>component, name).fire();
-                    this.selectedComponent = component;
+            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('componentSelect.liveEdit',
+                (event, name?) => {
+                    new ComponentSelectEvent(name).fire();
+                });
+
+            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('pageSelect.liveEdit',
+                (event) => {
+                    new PageSelectEvent().fire();
+                });
+
+            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('regionSelect.liveEdit',
+                (event, name?) => {
+                    new RegionSelectEvent(name).fire();
                 });
 
             this.getLiveEditJQuery()(this.getLiveEditWindow()).on('deselectComponent.liveEdit', (event) => {

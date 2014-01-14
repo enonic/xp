@@ -28,6 +28,7 @@ module LiveEdit.ui {
                 if (wasSelectedOnDragStart) {
                     var component = new LiveEdit.component.Component(ui.item);
                     LiveEdit.component.Selection.select(component);
+                    LiveEdit.component.Selection.handleSelect(component.getElement()[0]);
                 }
             });
         }

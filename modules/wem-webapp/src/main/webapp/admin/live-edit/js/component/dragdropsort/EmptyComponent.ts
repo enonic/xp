@@ -54,6 +54,7 @@ module LiveEdit.component.dragdropsort {
                 //$(window).trigger('sortableUpdate.liveEdit');
 
                 LiveEdit.component.Selection.select(LiveEdit.component.Component.fromElement(emptyComponent));
+                LiveEdit.component.Selection.handleSelect(emptyComponent.getHTMLElement());
                 return emptyComponent;
             }
             return null;
@@ -96,6 +97,7 @@ module LiveEdit.component.dragdropsort {
             emptyComponentEl.replaceWith(responseHtml);
             var component = new LiveEdit.component.Component(responseHtml)
             LiveEdit.component.Selection.select(component);
+            LiveEdit.component.Selection.handleSelect(component.getElement()[0]);
 
             $(window).trigger('sortableUpdate.liveEdit');
 

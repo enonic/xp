@@ -1,16 +1,27 @@
 module app.contextwindow {
-    export class ComponentSelectEvent extends api.event.Event {
+    export class SelectComponentEvent extends api.event.Event {
         private component:Component;
-        private componentPath:string;
 
-        constructor(component:Component, name:string) {
+        constructor(component:Component) {
             this.component = component;
-            this.componentPath = name;
-            super('componentSelect');
+            super('selectComponent');
         }
 
         getComponent():Component {
             return this.component;
+        }
+
+        static on(handler:(event:SelectComponentEvent) => void) {
+            api.event.onEvent('selectComponent', handler);
+        }
+    }
+
+    export class ComponentSelectEvent extends api.event.Event {
+        private componentPath:string;
+
+        constructor(name:string) {
+            this.componentPath = name;
+            super('componentSelect');
         }
 
         getComponentPath():string {
@@ -23,17 +34,11 @@ module app.contextwindow {
     }
 
     export class RegionSelectEvent extends api.event.Event {
-        private component:Component;
         private regionName:string;
 
-        constructor(component:Component, name:string) {
-            this.component = component;
+        constructor(name:string) {
             this.regionName = name;
             super('regionSelect');
-        }
-
-        getRegion():Component {
-            return this.component;
         }
 
         getName():string {
@@ -46,15 +51,9 @@ module app.contextwindow {
     }
 
     export class PageSelectEvent extends api.event.Event {
-        private component:Component;
 
-        constructor(component:Component) {
-            this.component = component;
+        constructor() {
             super('pageSelect');
-        }
-
-        getPage():Component {
-            return this.component;
         }
 
         static on(handler:(event:PageSelectEvent) => void) {

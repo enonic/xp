@@ -26,6 +26,7 @@ module LiveEdit.ui.contextmenu.menuitem {
                 parentComponent.setSelectedAsParent(true);
                 LiveEdit.component.Selection.deselect();
                 LiveEdit.component.Selection.select(parentComponent);
+                LiveEdit.component.Selection.handleSelect(parentComponent.getElement()[0]);
 
                 this.scrollComponentIntoView(parentComponent);
             }
