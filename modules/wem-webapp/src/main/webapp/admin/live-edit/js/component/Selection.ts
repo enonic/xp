@@ -15,7 +15,7 @@ module LiveEdit.component {
             this.setSelectionAttributeOnElement(component.getElement());
 
             var mouseClickPagePosition:any = null;
-            if (event) {
+            if (event && !component.isEmpty()) {
                 mouseClickPagePosition = {
                     x: event.pageX,
                     y: event.pageY
