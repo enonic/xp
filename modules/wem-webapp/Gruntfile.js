@@ -1,65 +1,26 @@
 module.exports = function (grunt) {
 
-    grunt.loadTasks('grunt');
+    // Add grunt plugins
+    grunt.loadNpmTasks('grunt-ts');
+    grunt.loadNpmTasks('grunt-directives');
+    grunt.loadNpmTasks('grunt-contrib-less');
+    grunt.loadNpmTasks('grunt-contrib-watch');
 
-    grunt.initConfig({
+    // Load grunt task configuration from grunt/*
+    require('load-grunt-config')(grunt);
 
-        module: {
-            common: {
-                module: 'admin/common',
-                options: {
-                    sourcemap: true,
-                    declaration: true
-                }
-            },
-            content_manager: {
-                module: 'admin/apps/content-manager',
-                options: {
-                    sourcemap: true
-                }
-            },
-            schema_manager: {
-                module: 'admin/apps/schema-manager',
-                options: {
-                    sourcemap: true
-                }
-            },
-            module_manager: {
-                module: 'admin/apps/module-manager',
-                options: {
-                    sourcemap: true
-                }
-            },
-            template_manager: {
-                module: 'admin/apps/template-manager',
-                options: {
-                    sourcemap: true
-                }
-            },
-            app_launcher: {
-                module: 'admin/apps/app-launcher',
-                options: {
-                    sourcemap: true
-                }
-            },
-            live_edit: {
-                module: 'admin/live-edit',
-                options: {
-                    sourcemap: true
-                }
-            }
-        }
-    });
-
-    /**
-     * Alias tasks
-     */
+    // Register aliases
     grunt.registerTask('default', 'all');
-    grunt.registerTask('all', ['module']);
-    grunt.registerTask('cm', ['module:content_manager']);
-    grunt.registerTask('sc', ['module:schema_manager']);
-    grunt.registerTask('md', ['module:module_manager']);
-    grunt.registerTask('tm', ['module:template_manager']);
-    grunt.registerTask('al', ['module:app_launcher']);
-    grunt.registerTask('le', ['module:live_edit']);
+
+    grunt.registerTask('all', ['less', 'ts', 'directives']);
+    grunt.registerTask('all_no_ts', ['less', 'directives']);
+
+    grunt.registerTask('common', ['all_no_ts', 'ts:common']);
+    grunt.registerTask('cm', ['all_no_ts', 'ts:content_manager']);
+    grunt.registerTask('sc', ['all_no_ts', 'ts:schema_manager']);
+    grunt.registerTask('md', ['all_no_ts', 'ts:module_manager']);
+    grunt.registerTask('tm', ['all_no_ts', 'ts:template_manager']);
+    grunt.registerTask('al', ['all_no_ts', 'ts:app_launcher']);
+    grunt.registerTask('le', ['all_no_ts', 'ts:live_edit']);
+
 };
