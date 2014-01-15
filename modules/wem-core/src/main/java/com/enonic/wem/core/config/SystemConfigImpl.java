@@ -28,7 +28,7 @@ final class SystemConfigImpl
     @Override
     public File getBlobStoreDir()
     {
-        return new File( getHomeDir(), "blob-store" );
+        return getSharedDir().resolve( "blobs" ).toFile();
     }
 
     @Override
