@@ -60,7 +60,7 @@ final class JsHttpResponseSerializer
         return value.toString();
     }
 
-    private Object convertToJson( final Object value )
+    private String convertToJson( final Object value )
     {
         return new Gson().toJson( value );
     }

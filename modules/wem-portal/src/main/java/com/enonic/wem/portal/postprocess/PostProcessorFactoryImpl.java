@@ -1,10 +1,15 @@
 package com.enonic.wem.portal.postprocess;
 
-import com.google.common.base.Throwables;
+import javax.inject.Inject;
+
+import com.enonic.wem.portal.rendering.RendererFactory;
 
 public final class PostProcessorFactoryImpl
     implements PostProcessorFactory
 {
+    @Inject
+    protected RendererFactory rendererFactory;
+
     public PostProcessorFactoryImpl()
     {
     }
@@ -12,15 +17,8 @@ public final class PostProcessorFactoryImpl
     @Override
     public PostProcessor newPostProcessor()
     {
-        final PostProcessorString postProcessor = new PostProcessorString();
-        try
-        {
-            postProcessor.expressionExecutor = new JavaElExpressionExecutor( false );
-            return postProcessor;
-        }
-        catch ( Exception e )
-        {
-            throw Throwables.propagate( e );
-        }
+        final PostProcessorImpl postProcessor = new PostProcessorImpl();
+        postProcessor.setRendererFactory( this.rendererFactory );
+        return postProcessor;
     }
 }

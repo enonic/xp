@@ -2,6 +2,7 @@ package com.enonic.wem.portal.postprocess;
 
 import com.google.inject.Inject;
 
+import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsHttpResponse;
 
 
@@ -12,9 +13,10 @@ abstract class BasePostProcessor
     protected ExpressionExecutor expressionExecutor;
 
     @Override
-    public void processResponse( final JsHttpResponse response )
+    public void processResponse( final JsContext context )
         throws Exception
     {
+        final JsHttpResponse response = context.getResponse();
         if ( !response.isPostProcess() )
         {
             return;

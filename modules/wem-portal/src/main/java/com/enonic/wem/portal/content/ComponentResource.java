@@ -92,7 +92,6 @@ public final class ComponentResource
     {
         final JsContext context = new JsContext();
         context.setContent( content );
-        context.setComponent( component );
 
         final JsHttpRequest request = new JsHttpRequest( this.httpContext.getRequest() );
         request.setMode( this.mode );

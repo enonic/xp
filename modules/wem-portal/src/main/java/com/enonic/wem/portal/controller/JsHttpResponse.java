@@ -17,7 +17,7 @@ public final class JsHttpResponse
 
     private final Map<String, String> headers;
 
-    private boolean postProcess = false;
+    private boolean postProcess = true;
 
     public JsHttpResponse()
     {

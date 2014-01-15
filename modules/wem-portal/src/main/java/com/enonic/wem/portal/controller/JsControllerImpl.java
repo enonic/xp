@@ -106,9 +106,9 @@ final class JsControllerImpl
         this.runner.source( script );
         this.runner.execute();
 
-        final JsHttpResponse response = this.context.getResponse();
-        postProcessor.processResponse( response );
+        postProcessor.processResponse( this.context );
 
+        final JsHttpResponse response = this.context.getResponse();
         return new JsHttpResponseSerializer( response ).serialize();
     }
 

@@ -46,7 +46,16 @@ abstract class BaseComponentRenderer
         controller.context( context );
 
         // render
-        return controller.execute();
+        final PageComponent previousComponent = context.getComponent();
+        try
+        {
+            context.setComponent( pageComponent );
+            return controller.execute();
+        }
+        finally
+        {
+            context.setComponent( previousComponent );
+        }
     }
 
     protected abstract Template getComponentTemplate( final TemplateKey componentTemplateKey );
