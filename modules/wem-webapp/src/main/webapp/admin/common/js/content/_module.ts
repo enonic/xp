@@ -24,3 +24,5 @@
 ///<reference path='ContentUpdatedEvent.ts' />
 ///<reference path='ContentDeletedEvent.ts' />
 ///<reference path='ContentComboBox.ts' />
+///<reference path='ContentQueryResult.ts' />
+///<reference path='ContentQueryRequest.ts' />
