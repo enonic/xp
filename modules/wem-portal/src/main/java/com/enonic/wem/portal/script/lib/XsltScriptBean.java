@@ -4,6 +4,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Source;
@@ -32,7 +33,7 @@ public final class XsltScriptBean
         this.documentBuilderFactory = DocumentBuilderFactory.newInstance();
     }
 
-    public String render( final String name, final Object inputDoc )
+    public String render( final String name, final Object inputDoc, final Map<Object, Object> params )
         throws Exception
     {
         final ContextScriptBean service = ContextScriptBean.get();
@@ -46,7 +47,7 @@ public final class XsltScriptBean
         final Source xsltSource = toSource( path );
         final Source xmlSource = toSource( inputDoc );
 
-        return render( xsltSource, xmlSource );
+        return render( xsltSource, xmlSource, params );
     }
 
     private Source toSource( final Object obj )
@@ -75,15 +76,31 @@ public final class XsltScriptBean
         return new StreamSource( path.toFile() );
     }
 
-    private String render( final Source xslt, final Source xml )
+    private String render( final Source xslt, final Source xml, final Map<Object, Object> params )
         throws Exception
     {
         final StringWriter writer = new StringWriter();
         final StreamResult result = new StreamResult( writer );
 
         final Transformer transformer = this.transformerFactory.newTransformer( xslt );
-        transformer.transform( xml, result );
 
+        for ( final Map.Entry<Object, Object> param : params.entrySet() )
+        {
+            transformer.setParameter( param.getKey().toString(), convertParam( param.getValue() ) );
+        }
+
+        transformer.transform( xml, result );
         return writer.getBuffer().toString();
+    }
+
+    private Object convertParam( final Object value )
+        throws Exception
+    {
+        if ( value instanceof XMLObject )
+        {
+            return toSource( (XMLObject) value );
+        }
+
+        return value;
     }
 }
