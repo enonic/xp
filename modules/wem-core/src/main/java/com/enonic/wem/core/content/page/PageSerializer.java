@@ -26,7 +26,10 @@ public class PageSerializer
         dataSet.addProperty( PAGE_TEMPLATE, new Value.String( page.getTemplate().toString() ) );
 
         final DataSet regionsDataSet = new DataSet( PAGE_REGIONS );
-        page.getRegions().toData( regionsDataSet );
+        if ( page.getRegions() != null )
+        {
+            page.getRegions().toData( regionsDataSet );
+        }
         dataSet.add( regionsDataSet );
 
         dataSet.add( page.getConfig().toDataSet( PAGE_CONFIG ) );

@@ -9,7 +9,7 @@ module app.wizard.page {
         constructor() {
             super(true, "page-template-selector-form");
 
-            this.pageTemplateComboBox =new api.content.page.PageTemplateComboBox();
+            this.pageTemplateComboBox = new api.content.page.PageTemplateComboBox();
 
             var fieldSet = new api.ui.form.Fieldset(this, "Page Template");
             fieldSet.add(new api.ui.form.FormItem("Selected", this.pageTemplateComboBox));
@@ -27,19 +27,25 @@ module app.wizard.page {
         }
 
         layoutExisting(siteTemplateKey: api.content.site.template.SiteTemplateKey,
-                       selectedPageTemplate: api.content.page.PageTemplate): Q.Promise<void> {
+                       selectedPageTemplate: api.content.page.PageTemplateKey): Q.Promise<void> {
             var deferred = Q.defer<void>();
 
             this.pageTemplateComboBox.setSiteTemplateKey(siteTemplateKey);
-            this.pageTemplateComboBox.addLoadedListener((pageTemplates:api.content.page.PageTemplateSummary[]) => {
-                    pageTemplates.forEach((template:api.content.page.PageTemplateSummary) => {
-                        if (template.getKey().toString() == selectedPageTemplate.getKey().toString()) {
-                            this.pageTemplateComboBox.setTemplate(template);
-                        }
-                    });
-                    deferred.resolve(null);
-                }
-            );
+            if (selectedPageTemplate != null) {
+
+                this.pageTemplateComboBox.addLoadedListener((pageTemplates: api.content.page.PageTemplateSummary[]) => {
+                        pageTemplates.forEach((template: api.content.page.PageTemplateSummary) => {
+                            if (template.getKey().toString() == selectedPageTemplate.toString()) {
+                                this.pageTemplateComboBox.setTemplate(template);
+                            }
+                        });
+                        deferred.resolve(null);
+                    }
+                );
+            }
+            else {
+                deferred.resolve(null);
+            }
 
             return deferred.promise;
         }
@@ -61,7 +67,13 @@ module app.wizard.page {
         }
 
         public getPageTemplateKey(): api.content.page.PageTemplateKey {
-            return this.pageTemplateComboBox.getSelectedData()[0].displayValue.getKey();
+
+            var selectedOptions = this.pageTemplateComboBox.getSelectedData();
+            if (selectedOptions.length == 0) {
+                return null;
+            }
+
+            return selectedOptions[0].displayValue.getKey();
         }
     }
 }

@@ -12,10 +12,11 @@ module api.app {
             super(true, "name-and-icon-view");
 
             this.iconEl = new api.dom.ImgEl();
-            this.iconEl.setClass("icon")
+            this.iconEl.setClass("icon");
             this.appendChild(this.iconEl);
 
             var namesContainer = new api.dom.DivEl(false);
+            namesContainer.addClass("names-container");
             this.appendChild(namesContainer);
 
             this.mainNameEl = new api.dom.H6El(false, "main-name");
@@ -28,18 +29,35 @@ module api.app {
         setMainName(value: string): NameAndIconView {
 
             this.mainNameEl.setText(value);
+            this.mainNameEl.getEl().setAttribute("title", value);
             return this;
         }
 
         setSubName(value: string): NameAndIconView {
 
             this.subNameEl.setText(value);
+            this.subNameEl.getEl().setAttribute("title", value);
             return this;
         }
 
         setIconUrl(value: string): NameAndIconView {
 
             this.iconEl.setSrc(value);
+            return this;
+        }
+
+        small() : NameAndIconView {
+            this.addClass("small");
+            return this;
+        }
+
+        medium() : NameAndIconView {
+            this.addClass("medium");
+            return this;
+        }
+
+        large() : NameAndIconView {
+            this.addClass("large");
             return this;
         }
 

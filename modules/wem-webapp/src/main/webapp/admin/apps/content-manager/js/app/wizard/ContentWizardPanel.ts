@@ -87,10 +87,9 @@ module app.wizard {
             }
             this.contentWizardStepForm = new ContentWizardStepForm();
 
-            if (this.siteContent) {
+            if (this.siteContent || this.createSite) {
                 var pageWizardStepFormConfig: page.PageWizardStepFormConfig = {
-                    parentContent: this.parentContent,
-                    siteContent: this.siteContent
+                    parentContent: this.parentContent
                 };
                 this.pageWizardStepForm = new page.PageWizardStepForm(pageWizardStepFormConfig);
             }
@@ -225,12 +224,20 @@ module app.wizard {
                         .then(() => {
 
                             if (this.pageWizardStepForm) {
-                                this.doRenderExistingPage(persistedContent, formContext).
-                                    then((pageTemplate: api.content.page.PageTemplate) => {
-                                        this.doRenderLivePanel(persistedContent, pageTemplate).
-                                            done(() => {
-                                                deferred.resolve(null);
-                                            });
+                                this.doRenderExistingPage(persistedContent, this.siteContent, formContext).
+                                    then(() => {
+
+                                        var pageTemplate = this.pageWizardStepForm.getPageTemplate();
+
+                                        if (pageTemplate != null) {
+                                            this.doRenderLivePanel(persistedContent, pageTemplate).
+                                                done(() => {
+                                                    deferred.resolve(null);
+                                                });
+                                        }
+                                        else {
+                                            deferred.resolve(null);
+                                        }
                                     });
                             }
                             else {
@@ -259,9 +266,10 @@ module app.wizard {
             var deferred = Q.defer<void>();
 
             if (this.siteWizardStepForm != null && content.getSite()) {
-                this.siteWizardStepForm.renderExisting(formContext, content.getSite(), this.contentType, () => {
-                    deferred.resolve(null);
-                });
+                this.siteWizardStepForm.renderExisting(formContext, content.getSite(), this.contentType).
+                    done(() => {
+                        deferred.resolve(null);
+                    });
             }
             else {
                 deferred.resolve(null);
@@ -270,14 +278,14 @@ module app.wizard {
             return deferred.promise;
         }
 
-        private doRenderExistingPage(content: api.content.Content,
-                                     formContext: api.form.FormContext): Q.Promise<api.content.page.PageTemplate> {
+        private doRenderExistingPage(content: api.content.Content, siteContent: api.content.Content,
+                                     formContext: api.form.FormContext): Q.Promise<void> {
 
-            var deferred = Q.defer<api.content.page.PageTemplate>();
+            var deferred = Q.defer<void>();
 
-            this.pageWizardStepForm.renderExisting(content).
-                then((pageTemplate: api.content.page.PageTemplate) => {
-                    deferred.resolve(pageTemplate);
+            this.pageWizardStepForm.layout(content, siteContent).
+                done(() => {
+                    deferred.resolve(null);
                 });
 
 
@@ -299,6 +307,33 @@ module app.wizard {
 
             var deferred = Q.defer<api.content.Content>();
 
+            new PersistNewContentRoutine(this).
+                setCreateContentRequestProducer(this.produceCreateContentRequest).
+                setCreateSiteRequestProducer(this.produceCreateSiteRequest).
+                setCreatePageRequestProducer(this.produceCreatePageRequest).
+                execute().
+                done((content: api.content.Content) => {
+
+                    deferred.resolve(content);
+
+                });
+
+            return deferred.promise;
+        }
+
+        postPersistNewItem(persistedContent: api.content.Content): Q.Promise<void> {
+            var deferred = Q.defer<void>();
+
+            if (persistedContent.isSite()) {
+                this.siteContent = persistedContent;
+            }
+
+            deferred.resolve(null);
+            return deferred.promise;
+        }
+
+        private produceCreateContentRequest(): api.content.CreateContentRequest {
+
             var contentData = new api.content.ContentData();
 
             var parentPath = this.parentContent != null ? this.parentContent.getPath() : api.content.ContentPath.ROOT;
@@ -312,39 +347,53 @@ module app.wizard {
                 setForm(this.contentType.getForm()).
                 setContentData(contentData);
 
-            createRequest.sendAndParse().
-                done((createdContent: api.content.Content) => {
+            return createRequest;
+        }
 
-                    this.getTabId().changeToEditMode(createdContent.getId());
+        private produceCreateSiteRequest(content: api.content.Content): api.content.site.CreateSiteRequest {
 
-                    if (this.createSite) {
+            if (this.siteTemplate == null) {
+                return null;
+            }
 
-                        var moduleConfigs: api.content.site.ModuleConfig[] = [];
-                        this.siteTemplate.getModules().forEach((moduleKey: api.module.ModuleKey) => {
-                            var moduleConfig = new api.content.site.ModuleConfigBuilder().
-                                setModuleKey(moduleKey).
-                                setConfig(new api.data.RootDataSet()).
-                                build();
-                            moduleConfigs.push(moduleConfig);
-                        });
-                        new api.content.site.CreateSiteRequest(createdContent.getId())
-                            .setSiteTemplateKey(this.siteTemplate.getKey())
-                            .setModuleConfigs(moduleConfigs)
-                            .sendAndParse().
-                            done((updatedContent: api.content.Content) => {
+            var moduleConfigs: api.content.site.ModuleConfig[] = [];
+            this.siteTemplate.getModules().forEach((moduleKey: api.module.ModuleKey) => {
+                var moduleConfig = new api.content.site.ModuleConfigBuilder().
+                    setModuleKey(moduleKey).
+                    setConfig(new api.data.RootDataSet()).
+                    build();
+                moduleConfigs.push(moduleConfig);
+            });
 
-                                new api.content.ContentCreatedEvent(updatedContent).fire();
+            return new api.content.site.CreateSiteRequest(content.getId())
+                .setSiteTemplateKey(this.siteTemplate.getKey())
+                .setModuleConfigs(moduleConfigs);
 
-                                deferred.resolve(updatedContent);
-                            });
-                    }
-                    else {
-                        new api.content.ContentCreatedEvent(createdContent).fire();
-                        deferred.resolve(createdContent);
-                    }
-                });
+        }
 
-            return deferred.promise;
+        private produceCreatePageRequest(content: api.content.Content): api.content.page.CreatePageRequest {
+
+            if (!this.pageWizardStepForm) {
+                return null;
+            }
+
+            if (this.pageWizardStepForm.getPageTemplate() == null) {
+                return null;
+            }
+
+            var createRequest = new api.content.page.CreatePageRequest(content.getContentId())
+                .setPageTemplateKey(this.pageWizardStepForm.getPageTemplate().getKey());
+
+            var config = this.pageWizardStepForm.getConfig();
+            if (config != null) {
+                createRequest.setConfig(config);
+            }
+            else {
+                createRequest.setConfig(new api.data.RootDataSet() );
+            }
+
+
+            return createRequest;
         }
 
         updatePersistedItem(): Q.Promise<api.content.Content> {
@@ -352,8 +401,28 @@ module app.wizard {
 
             var deferred = Q.defer<api.content.Content>();
 
+
+            new UpdatePersistedContentRoutine(this).
+                setUpdateContentRequestProducer(this.produceUpdateContentRequest).
+                setUpdateSiteRequestProducer(this.produceUpdateSiteRequest).
+                setCreatePageRequestProducer(this.produceCreatePageRequest).
+                setUpdatePageRequestProducer(this.produceUpdatePageRequest).
+                execute().
+                done((content: api.content.Content) => {
+
+                    new api.content.ContentUpdatedEvent(content).fire();
+                    api.notify.showFeedback('Content was updated!');
+
+                    deferred.resolve(content);
+                });
+
+            return deferred.promise;
+        }
+
+        private produceUpdateContentRequest(content: api.content.Content): api.content.UpdateContentRequest {
+
             var updateContentRequest = new api.content.UpdateContentRequest(this.getPersistedItem().getId()).
-                setDraft(this.persistAsDraft ).
+                setDraft(this.persistAsDraft).
                 setContentName(this.resolveContentNameForUpdateReuest()).
                 setContentType(this.contentType.getContentTypeName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
@@ -372,48 +441,33 @@ module app.wizard {
                 updateContentRequest.addAttachment(attachment);
             }
 
-            updateContentRequest.
-                sendAndParse().
-                done((updatedContent: api.content.Content) => {
+            return updateContentRequest;
+        }
 
-                    if (this.siteWizardStepForm != null) {
-                        new api.content.site.UpdateSiteRequest(updatedContent.getId()).
-                            setSiteTemplateKey(this.siteWizardStepForm.getTemplateKey()).
-                            setModuleConfigs(this.siteWizardStepForm.getModuleConfigs()).
-                            sendAndParse().
-                            done((updatedSite: api.content.Content) => {
+        private produceUpdateSiteRequest(content: api.content.Content): api.content.site.UpdateSiteRequest {
 
-                                if (this.pageWizardStepForm != null) {
-                                    new api.content.page.UpdatePageRequest(updatedContent.getContentId()).
-                                        setPageTemplateKey(this.pageWizardStepForm.getPageTemplateKey()).
-                                        setConfig(this.pageWizardStepForm.getConfig()).
-                                        sendAndParse().
-                                        done((updatedPage: api.content.Content) => {
+            if (this.siteWizardStepForm == null) {
+                return null;
+            }
 
-                                            new api.content.ContentUpdatedEvent(updatedContent).fire();
-                                            api.notify.showFeedback('Content was updated!');
+            return new api.content.site.UpdateSiteRequest(content.getId()).
+                setSiteTemplateKey(this.siteWizardStepForm.getTemplateKey()).
+                setModuleConfigs(this.siteWizardStepForm.getModuleConfigs());
+        }
 
-                                            deferred.resolve(updatedPage);
-                                        });
-                                }
-                                else {
-                                    new api.content.ContentUpdatedEvent(updatedContent).fire();
-                                    api.notify.showFeedback('Content was updated!');
+        private produceUpdatePageRequest(content: api.content.Content): api.content.page.UpdatePageRequest {
 
-                                    deferred.resolve(updatedSite);
-                                }
-                            });
-                    }
-                    else {
+            if (!this.pageWizardStepForm) {
+                return null;
+            }
 
-                        new api.content.ContentUpdatedEvent(updatedContent).fire();
-                        api.notify.showFeedback('Content was updated!');
+            if (this.pageWizardStepForm.getPageTemplate() == null) {
+                return null;
+            }
 
-                        deferred.resolve(updatedContent);
-                    }
-                });
-
-            return deferred.promise;
+            return new api.content.page.UpdatePageRequest(content.getContentId()).
+                setPageTemplateKey(this.pageWizardStepForm.getPageTemplate().getKey()).
+                setConfig(this.pageWizardStepForm.getConfig());
         }
 
         hasUnsavedChanges(): boolean {
@@ -455,7 +509,7 @@ module app.wizard {
             return this.contentType;
         }
 
-        setPersistAsDraft(draft:boolean) {
+        setPersistAsDraft(draft: boolean) {
             this.persistAsDraft = draft;
         }
     }

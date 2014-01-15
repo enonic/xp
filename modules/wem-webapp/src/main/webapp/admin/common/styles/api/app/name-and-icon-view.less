@@ -1,22 +1,45 @@
 .name-and-icon-view {
 
-  margin: 0 0 0 42px;
+  // default
+  .name-and-icon-view-styles(48px);
 
-  .main-name {
-
-    font-size: 14px;
-    line-height: 16px;
-
-    .ellipsis();
-
-    height: 1.14em;
+  &.small {
+    .name-and-icon-view-styles(32px);
+  }
+  &.medium {
+    .name-and-icon-view-styles(48px);
+  }
+  &.large {
+    .name-and-icon-view-styles(64px);
   }
 
-  .sub-name {
+  .name-and-icon-view-styles(@size) {
+    margin: 0 0 0 42px;
 
-    color: @admin-light-gray-font;
+    .icon {
+      height: @size;
+      width: @size;
+      margin-right:10px;
+      float: left;
+    }
 
-    font-size: 12px;
-    .ellipsis();
+    .names-container {
+      padding: 5px;
+    }
+
+    .main-name {
+      font-size: 14px;
+      line-height: 16px;
+
+      .ellipsis();
+
+      height: 1.14em;
+    }
+
+    .sub-name {
+      color: @admin-light-gray-font;
+      font-size: 12px;
+      .ellipsis();
+    }
   }
 }

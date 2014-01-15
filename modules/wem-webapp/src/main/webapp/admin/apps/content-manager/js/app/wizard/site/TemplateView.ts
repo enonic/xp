@@ -6,27 +6,30 @@ module app.wizard.site {
 
         private siteTemplate: api.content.site.template.SiteTemplate;
 
-        constructor(template: api.content.site.template.SiteTemplate, contentType: api.schema.content.ContentType) {
-            super(true, "input-view template-view");
-            this.contentType = contentType;
-            this.siteTemplate = template;
+        private nameAndIconView: api.app.NameAndIconView;
 
-            var label = new api.dom.DivEl(true, "input-label");
+        constructor() {
+            super(true, "template-view");
+
+            var label = new api.dom.DivEl(false, "input-label");
             label.getEl().setInnerHtml("Site Template");
             this.appendChild(label);
 
-            var input = new api.dom.DivEl(true, "input-type-view");
+            var input = new api.dom.DivEl(false, "input-type-view");
             this.appendChild(input);
 
-            var imgEl = new api.dom.ImgEl(this.contentType.getIconUrl());
-            input.appendChild(imgEl);
+            this.nameAndIconView = new api.app.NameAndIconView().medium();
+            input.appendChild(this.nameAndIconView);
+        }
 
-            var h4 = new api.dom.H4El();
-            var p = new api.dom.PEl();
-            h4.getEl().setInnerHtml(template.getDisplayName());
-            p.getEl().setInnerHtml(template.getDescription());
-            input.appendChild(h4);
-            input.appendChild(p);
+        setValue(siteTemplate: api.content.site.template.SiteTemplate, contentType: api.schema.content.ContentType) {
+            this.siteTemplate = siteTemplate;
+            this.contentType = contentType;
+
+            this.nameAndIconView.
+                setMainName(siteTemplate.getDisplayName()).
+                setSubName(siteTemplate.getDescription()).
+                setIconUrl(this.contentType.getIconUrl());
         }
 
         getSiteTemplateKey(): api.content.site.template.SiteTemplateKey {

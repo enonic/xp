@@ -8,24 +8,31 @@ module app.wizard.site {
 
         private moduleConfigsByKey: api.content.site.ModuleConfig[];
 
-        private moduleViewsCtr: api.dom.DivEl;
+        private templateView: TemplateView;
 
-        private templateViewCtr: api.dom.DivEl;
+        private moduleViewsContainer: api.dom.DivEl;
+
+        private moduleViews: ModuleView[] = [];
 
         constructor() {
             super(true);
+            this.addClass("site-wizard-step-form");
 
-            this.templateViewCtr = new api.dom.DivEl();
-            this.appendChild(this.templateViewCtr);
-            this.moduleViewsCtr = new api.dom.DivEl();
-            this.appendChild(this.moduleViewsCtr);
+            this.templateView = new TemplateView();
+            this.appendChild(this.templateView);
+            this.moduleViewsContainer = new api.dom.DivEl();
+            this.appendChild(this.moduleViewsContainer);
         }
 
         public renderNew() {
             //TODO
         }
 
-        public renderExisting(context: api.form.FormContext, site: api.content.site.Site, contentType: api.schema.content.ContentType, callback:Function) {
+        public renderExisting(context: api.form.FormContext, site: api.content.site.Site,
+                              contentType: api.schema.content.ContentType): Q.Promise<void> {
+
+            var deferred = Q.defer<void>();
+
             this.formContext = context;
             this.contentType = contentType;
 
@@ -35,23 +42,31 @@ module app.wizard.site {
                 this.moduleConfigsByKey[moduleConfigs[i].getModuleKey().toString()] = moduleConfigs[i];
             }
 
-            this.loadModules(site, (modules: api.module.Module[]) => {
-                this.layoutModules(modules);
+            new api.content.site.template.GetSiteTemplateRequest(site.getTemplateKey()).
+                sendAndParse().
+                done((siteTemplate: api.content.site.template.SiteTemplate) => {
 
-                this.loadSiteTemplate(site, (template: api.content.site.template.SiteTemplate) => {
-                    this.layoutSiteTemplate(template);
-                    callback();
+                    this.templateView.setValue(siteTemplate, this.contentType);
+
+                    this.loadModules(site, (modules: api.module.Module[]) => {
+
+                        this.removeExistingModuleViews();
+                        this.layoutModules(modules);
+
+                        deferred.resolve(null);
+                    });
                 });
-            });
+
+            return deferred.promise;
         }
 
         public getTemplateKey(): api.content.site.template.SiteTemplateKey {
-            return (<TemplateView>this.templateViewCtr.getFirstChild()).getSiteTemplateKey();
+            return this.templateView.getSiteTemplateKey();
         }
 
         public getModuleConfigs(): api.content.site.ModuleConfig[] {
             var moduleConfigs: api.content.site.ModuleConfig[] = [];
-            var moduleViews = this.moduleViewsCtr.getChildren();
+            var moduleViews = this.moduleViewsContainer.getChildren();
             for (var i = 0; i < moduleViews.length; i++) {
                 moduleConfigs.push((<ModuleView>moduleViews[i]).getModuleConfig());
             }
@@ -78,26 +93,22 @@ module app.wizard.site {
         }
 
         private layoutModules(modules: api.module.Module[]) {
-            this.moduleViewsCtr.removeChildren();
+
             modules.forEach((theModule: api.module.Module) => {
+
                 var moduleView = new ModuleView(this.formContext, theModule,
                     this.moduleConfigsByKey[theModule.getModuleKey().toString()]);
-                this.moduleViewsCtr.appendChild(moduleView)
+
+                this.moduleViewsContainer.appendChild(moduleView)
+                this.moduleViews.push(moduleView);
             });
         }
 
-        private loadSiteTemplate(site: api.content.site.Site, callback: (siteTemplate: api.content.site.template.SiteTemplate) => void) {
-            new api.content.site.template.GetSiteTemplateRequest(site.getTemplateKey()).send()
-                .done((templateResponse: api.rest.JsonResponse<api.content.site.template.json.SiteTemplateJson>) => {
-                    var template = new api.content.site.template.SiteTemplate(templateResponse.getResult());
-                    callback(template);
-                }
-            );
-        }
-
-        private layoutSiteTemplate(template: api.content.site.template.SiteTemplate) {
-            this.templateViewCtr.removeChildren();
-            this.templateViewCtr.appendChild(new TemplateView(template, this.contentType))
+        private removeExistingModuleViews() {
+            this.moduleViews.forEach((moduleView: ModuleView) => {
+                moduleView.remove();
+            });
+            this.moduleViews = [];
         }
 
     }

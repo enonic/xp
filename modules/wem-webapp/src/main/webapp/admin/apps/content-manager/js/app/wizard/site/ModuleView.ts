@@ -13,9 +13,9 @@ module app.wizard.site {
             this.siteModule = theModule;
             this.moduleConfig = moduleConfig;
 
-            var h4 = new api.dom.H4El();
-            h4.getEl().setInnerHtml(theModule.getDisplayName());
-            this.appendChild(h4);
+            var headerEl = new api.dom.H3El();
+            headerEl.setText(theModule.getDisplayName());
+            this.appendChild(headerEl);
 
             this.formView = new api.form.FormView(context, theModule.getForm(), moduleConfig ? moduleConfig.getConfig() : undefined);
             this.appendChild(this.formView);

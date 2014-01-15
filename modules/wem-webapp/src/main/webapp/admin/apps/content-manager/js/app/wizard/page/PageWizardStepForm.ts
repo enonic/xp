@@ -4,31 +4,69 @@ module app.wizard.page {
 
         parentContent: api.content.Content;
 
-        siteContent: api.content.Content;
-
     }
 
     export class PageWizardStepForm extends api.app.wizard.WizardStepForm {
 
         private parentContent: api.content.Content;
 
-        private siteContent: api.content.Content;
+        private pageTemplateSelectorForm: PageTemplateSelectorForm;
 
-        private pageTemplateForm: PageTemplateSelectorForm;
+        private selectedPageTemplate: api.content.page.PageTemplate;
 
         private formView: api.form.FormView;
 
+        private configFormWrapper: api.dom.DivEl;
+
         constructor(config: PageWizardStepFormConfig) {
             super(true);
+            this.addClass("page-wizard-step-form");
             this.parentContent = config.parentContent;
-            this.siteContent = config.siteContent;
 
-            this.pageTemplateForm = new PageTemplateSelectorForm();
-            this.pageTemplateForm.addPageTemplateChangedListener((changedTo: api.content.page.PageTemplateSummary) => {
+            this.pageTemplateSelectorForm = new PageTemplateSelectorForm();
+            this.pageTemplateSelectorForm.addPageTemplateChangedListener((changedTo: api.content.page.PageTemplateSummary) => {
                 this.handlePageTemplateChanged(changedTo);
             });
 
-            this.appendChild(this.pageTemplateForm);
+            this.appendChild(this.pageTemplateSelectorForm);
+
+            var configHeader = new api.dom.H3El();
+            configHeader.setText("Config");
+            this.appendChild(configHeader);
+
+            this.configFormWrapper = new api.dom.DivEl();
+            this.appendChild(this.configFormWrapper);
+        }
+
+        layout(content: api.content.Content, siteContent: api.content.Content): Q.Promise<void> {
+
+            var deferred = Q.defer<void>();
+
+            var page: api.content.page.Page = content.getPage();
+
+            if (page != null && page.getTemplate() != null) {
+
+                new api.content.page.GetPageTemplateByKeyRequest(page.getTemplate()).
+                    sendAndParse().
+                    done((pageTemplate: api.content.page.PageTemplate) => {
+
+                        this.pageTemplateSelectorForm.layoutExisting(siteContent.getSite().getTemplateKey(), page.getTemplate()).
+                            done(()=> {
+
+                                deferred.resolve(null);
+                            });
+                    });
+            }
+            else {
+
+                this.pageTemplateSelectorForm.layoutExisting(siteContent.getSite().getTemplateKey(), null).
+                    done(()=> {
+
+                        deferred.resolve(null);
+                    });
+            }
+
+            return deferred.promise;
         }
 
         private handlePageTemplateChanged(changedTo: api.content.page.PageTemplateSummary) {
@@ -45,6 +83,8 @@ module app.wizard.page {
                     sendAndParse().
                     done((pageTemplate: api.content.page.PageTemplate) => {
 
+                        this.selectedPageTemplate = pageTemplate;
+
                         this.layoutPageTemplateForm(pageTemplate);
                     });
             }
@@ -57,45 +97,17 @@ module app.wizard.page {
             var form = pageTemplate.getDescriptor().getForm();
             var config = pageTemplate.getConfig();
             this.formView = new api.form.FormView(formContext, form, config);
-            this.appendChild(this.formView);
+            this.configFormWrapper.appendChild(this.formView);
         }
 
-        renderNew() {
-
-            // request all page templates in existing in SiteTemplate of siteContent
-            // add page templates to pageTemplateComboBox
+        public getPageTemplate(): api.content.page.PageTemplate {
+            return this.selectedPageTemplate;
         }
 
-        renderExisting(content: api.content.Content): Q.Promise<api.content.page.PageTemplate> {
-
-            var deferred = Q.defer<api.content.page.PageTemplate>();
-
-            var page: api.content.page.Page = content.getPage();
-
-            if (!content.isPage()) {
-                deferred.resolve(null);
-                return deferred.promise;
+        public getConfig(): api.data.RootDataSet {
+            if (this.formView == null) {
+                return new api.data.RootDataSet();
             }
-
-            new api.content.page.GetPageTemplateByKeyRequest(page.getTemplate()).
-                sendAndParse().
-                done((pageTemplate: api.content.page.PageTemplate) => {
-
-                    this.pageTemplateForm.layoutExisting(this.siteContent.getSite().getTemplateKey(), pageTemplate).
-                        done(()=> {
-
-                            deferred.resolve(pageTemplate);
-                        });
-                });
-
-            return deferred.promise;
-        }
-
-        public getPageTemplateKey(): api.content.page.PageTemplateKey {
-            return this.pageTemplateForm.getPageTemplateKey();
-        }
-
-        public getConfig() : api.data.RootDataSet {
             return this.formView.getContentData();
         }
 
