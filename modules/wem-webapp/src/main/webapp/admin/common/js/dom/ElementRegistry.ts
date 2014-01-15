@@ -1,6 +1,6 @@
 module api.dom {
 
-    export class ElementManager {
+    export class ElementRegistry {
 
         private static counters: number[] = [];
 
@@ -12,30 +12,30 @@ module api.dom {
 
             if (!id) {
                 id = fullName = api.util.getFullName(el);
-                var count = ElementManager.counters[fullName];
-                if (count >= 0) {
-                    id += '-' + (++count);
-                }
             } else {
                 fullName = id;
             }
+            var count = ElementRegistry.counters[fullName];
+            if (count >= 0) {
+                id += '-' + (++count);
+            }
 
-            ElementManager.counters[fullName] = count || 0;
-            ElementManager.elements[fullName] = el;
+            ElementRegistry.counters[fullName] = count || 0;
+            ElementRegistry.elements[fullName] = el;
 
             return id;
         }
 
         public static unregisterElement(el: Element) {
-            var index = ElementManager.elements.indexOf(el);
+            var index = ElementRegistry.elements.indexOf(el);
             if (index > -1) {
-                ElementManager.elements.splice(index, 1);
-                ElementManager.counters.splice(index, 1);
+                ElementRegistry.elements.splice(index, 1);
+                ElementRegistry.counters.splice(index, 1);
             }
         }
 
         public static getElementById(id: string): Element {
-            return ElementManager.elements[id];
+            return ElementRegistry.elements[id];
         }
 
     }

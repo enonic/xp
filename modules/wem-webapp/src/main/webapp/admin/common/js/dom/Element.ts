@@ -71,7 +71,7 @@ module api.dom {
 
             var moduleName = api.util.getModuleName(this);
             if (properties.isGenerateId() || (properties.isGenerateId() == undefined && moduleName != "api.dom")) {
-                var id = ElementManager.registerElement(this);
+                var id = ElementRegistry.registerElement(this);
                 this.id = id;
                 this.el.setId(id);
             }
