@@ -333,10 +333,16 @@ module api.app.wizard {
             else {
                 this.persistNewItem().
                     done((persistedItem: T)=> {
-                        this.setPersistedItem(persistedItem).
-                            done(() => {
-                                deferred.resolve(persistedItem);
-                            });
+
+                        this.postPersistNewItem(persistedItem).
+                            done(()=> {
+
+                            this.setPersistedItem(persistedItem).
+                                done(() => {
+                                    deferred.resolve(persistedItem);
+                                });
+                        });
+
                     });
             }
 
@@ -350,6 +356,14 @@ module api.app.wizard {
          */
         persistNewItem(): Q.Promise<T> {
             throw new Error("Must be overriden by inheritor");
+        }
+
+        postPersistNewItem(persistedItem: T): Q.Promise<void> {
+            // To be overridden by inheritors - if extra work is needed at end of persistNewItem
+            var deferred = Q.defer<void>();
+
+            deferred.resolve(null);
+            return deferred.promise;
         }
 
         /*
