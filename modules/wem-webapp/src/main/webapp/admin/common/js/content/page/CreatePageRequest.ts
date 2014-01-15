@@ -19,7 +19,7 @@ module api.content.page {
             return this;
         }
 
-        setConfig(config: api.data.Data[]): CreatePageRequest {
+        setConfig(config: api.data.RootDataSet): CreatePageRequest {
             this.config = config;
             return this;
         }
@@ -34,6 +34,24 @@ module api.content.page {
 
         getRequestPath(): api.rest.Path {
             return api.rest.Path.fromParent(super.getResourcePath(), "create");
+        }
+
+        sendAndParse(): JQueryPromise<api.content.Content> {
+
+            var deferred = jQuery.Deferred<api.content.Content>();
+
+            this.send().
+                done((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
+                    var content = null;
+                    if( !response.isBlank() ) {
+                        content = this.fromJsonToContent(response.getResult());
+                    }
+                    deferred.resolve(content);
+                }).fail((response: api.rest.RequestError) => {
+                    deferred.reject(null);
+                });
+
+            return deferred;
         }
     }
 }
