@@ -27,5 +27,9 @@ public interface SystemConfig
 
     public String getMigrateJdbcPassword();
 
+    public Path getSharedDir();
+
+    public Path getSharedConfigDir();
+
     public ConfigProperties getRawConfig();
 }

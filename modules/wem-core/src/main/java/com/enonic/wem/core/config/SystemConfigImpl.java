@@ -37,16 +37,17 @@ final class SystemConfigImpl
         return new File( getHomeDir(), "config" );
     }
 
+
     @Override
     public Path getModulesDir()
     {
-        return getConfigDir().toPath().resolve( "modules" );
+        return getSharedConfigDir().resolve( "modules" );
     }
 
     @Override
     public File getTemplatesDir()
     {
-        return new File( getConfigDir(), "templates" );
+        return getSharedConfigDir().resolve( "templates" ).toFile();
     }
 
     @Override
@@ -77,6 +78,18 @@ final class SystemConfigImpl
     public String getMigrateJdbcPassword()
     {
         return this.config.getProperty( "cms.migrate.jdbc.password" );
+    }
+
+    @Override
+    public Path getSharedDir()
+    {
+        return getHomeDir().toPath().resolve( "shared" );
+    }
+
+    @Override
+    public Path getSharedConfigDir()
+    {
+        return getSharedDir().resolve( "config" );
     }
 
     @Override
