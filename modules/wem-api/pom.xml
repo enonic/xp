@@ -135,12 +135,6 @@
                 <link>http://docs.guava-libraries.googlecode.com/git/javadoc/</link>
               </links>
               <additionalJOption>-J-Xmx1024m</additionalJOption>
-	          <doclet>org.asciidoctor.Asciidoclet</doclet>
-	          <docletArtifact>
-	             <groupId>org.asciidoctor</groupId>
-	             <artifactId>asciidoclet</artifactId>
-	             <version>0.1.3</version>
-	          </docletArtifact>
             </configuration>
             <executions>
               <execution>
