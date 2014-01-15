@@ -6,7 +6,6 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.RhinoException;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.ScriptableObject;
 
 import com.google.common.collect.Maps;
 
@@ -28,8 +27,6 @@ public final class ScriptRunnerImpl
     private final Map<String, Object> objects;
 
     private ScriptSource source;
-
-    protected ScriptableObject rootScope;
 
     protected ContextScriptBean contextServiceBean;
 
@@ -106,7 +103,7 @@ public final class ScriptRunnerImpl
     private void initializeScope()
     {
         final Context context = Context.getCurrentContext();
-        this.scope = context.initStandardObjects( this.rootScope );
+        this.scope = context.initStandardObjects();
     }
 
     private EvaluationException createError( final RhinoException cause )
@@ -116,7 +113,7 @@ public final class ScriptRunnerImpl
         return new EvaluationException( source, cause );
     }
 
-    public void setScriptLoader(final ScriptLoader scriptLoader)
+    public void setScriptLoader( final ScriptLoader scriptLoader )
     {
         this.scriptLoader = scriptLoader;
     }

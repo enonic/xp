@@ -128,9 +128,9 @@
     <#list source.lines as item>
         <#assign num = item_index + source.fromLine>
         <#if num == source.line>
-            <pre class="error"><span class="line">${num}</span><span class="code">${item}</span></pre>
+            <pre class="error"><span class="line">${num}</span><span class="code">${item?html}</span></pre>
         <#else>
-            <pre><span class="line">${num}</span><span class="code">${item}</span></pre>
+            <pre><span class="line">${num}</span><span class="code">${item?html}</span></pre>
         </#if>
     </#list>
 </div>

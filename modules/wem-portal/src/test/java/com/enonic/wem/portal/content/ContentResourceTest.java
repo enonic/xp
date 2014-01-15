@@ -52,7 +52,6 @@ import com.enonic.wem.portal.postprocess.PostProcessorString;
 import com.enonic.wem.portal.script.compiler.ScriptCacheImpl;
 import com.enonic.wem.portal.script.compiler.ScriptCompilerImpl;
 import com.enonic.wem.portal.script.lib.ContextScriptBean;
-import com.enonic.wem.portal.script.lib.GlobalScriptBean;
 import com.enonic.wem.portal.script.lib.SystemScriptBean;
 import com.enonic.wem.portal.script.loader.ScriptLoader;
 import com.enonic.wem.portal.script.loader.ScriptSourceImpl;
@@ -160,10 +159,8 @@ public class ContentResourceTest
             }
         };
 
-        final GlobalScriptBean globalScriptBean = new GlobalScriptBean();
-
-        globalScriptBean.setSystem( new SystemScriptBean() );
-        scriptRunnerFactory.setGlobalScriptBean( globalScriptBean );
+        final SystemScriptBean systemScriptBean = new SystemScriptBean();
+        scriptRunnerFactory.setSystemScriptBean( systemScriptBean );
         scriptRunnerFactory.setContextServiceBeans( mock( Provider.class ) );
         jsControllerFactory.setScriptRunnerFactory( scriptRunnerFactory );
         jsControllerFactory.setPostProcessorFactory( postProcessorFactory );

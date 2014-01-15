@@ -9,8 +9,16 @@ public final class SystemScriptBean
     @Inject
     protected MustacheScriptBean mustache;
 
+    @Inject
+    protected XsltScriptBean xslt;
+
     public MustacheScriptBean getMustache()
     {
         return this.mustache;
+    }
+
+    public XsltScriptBean getXslt()
+    {
+        return this.xslt;
     }
 }
