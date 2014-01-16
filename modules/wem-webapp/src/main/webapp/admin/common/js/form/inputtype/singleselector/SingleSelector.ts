@@ -115,8 +115,11 @@ module api.form.inputtype.singleselector {
         }
 
         valueBreaksRequiredContract(value:api.data.Value):boolean {
-            // TODO:
-            return false;
+            if (api.util.isStringBlank(value.asString())) {
+                return true;
+            } else {
+                return false;
+            }
         }
 
         private comboboxFilter(item:api.ui.combobox.Option<string>, args) {

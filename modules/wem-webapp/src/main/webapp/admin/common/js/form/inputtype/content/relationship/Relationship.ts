@@ -152,8 +152,11 @@ module api.form.inputtype.content.relationship {
         }
 
         valueBreaksRequiredContract(value: api.data.Value): boolean {
-            // TODO:
-            return false;
+            if (api.content.ContentId.isValidContentId(value.asString())) {
+                return false;
+            } else {
+                return true;
+            }
         }
 
         private updateInputIcon(relationshipType: api.schema.relationshiptype.RelationshipType) {
