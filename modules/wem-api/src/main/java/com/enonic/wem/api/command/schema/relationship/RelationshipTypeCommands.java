@@ -1,5 +1,7 @@
 package com.enonic.wem.api.command.schema.relationship;
 
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
+
 public final class RelationshipTypeCommands
 {
     public RelationshipTypesExists exists()
@@ -10,6 +12,11 @@ public final class RelationshipTypeCommands
     public GetRelationshipTypes get()
     {
         return new GetRelationshipTypes();
+    }
+
+    public GetRelationshipType byName( final RelationshipTypeName name )
+    {
+        return new GetRelationshipType().name( name );
     }
 
     public CreateRelationshipType create()

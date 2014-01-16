@@ -24,7 +24,6 @@ import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 
 import static com.enonic.wem.api.command.Commands.contentType;
 import static com.enonic.wem.api.command.Commands.mixin;
@@ -151,8 +150,7 @@ public final class SchemaImageResource
 
     private Icon findRelationshipTypeIcon( final RelationshipTypeName relationshipTypeName )
     {
-        final RelationshipTypeNames relationshipTypeNames = RelationshipTypeNames.from( relationshipTypeName );
-        RelationshipType relationshipType = client.execute( relationshipType().get().names( relationshipTypeNames ) ).first();
+        final RelationshipType relationshipType = client.execute( relationshipType().byName( relationshipTypeName ) );
         return relationshipType == null ? null : relationshipType.getIcon();
     }
 

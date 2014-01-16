@@ -16,7 +16,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.relationship.CreateRelationshipType;
 import com.enonic.wem.api.command.schema.relationship.DeleteRelationshipType;
 import com.enonic.wem.api.command.schema.relationship.DeleteRelationshipTypeResult;
-import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypes;
+import com.enonic.wem.api.command.schema.relationship.GetRelationshipType;
 import com.enonic.wem.api.command.schema.relationship.RelationshipTypesExists;
 import com.enonic.wem.api.command.schema.relationship.RelationshipTypesExistsResult;
 import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipType;
@@ -64,9 +64,8 @@ public class RelationshipTypeResourceTest
             name( "the_relationship_type" ).
             build();
 
-        final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
-        final RelationshipTypeNames names = RelationshipTypeNames.from( RelationshipTypeName.from( "the_relationship_type" ) );
-        Mockito.when( client.execute( Commands.relationshipType().get().names( names ) ) ).thenReturn( relationshipTypes );
+        final RelationshipTypeName name = RelationshipTypeName.from( "the_relationship_type" );
+        Mockito.when( client.execute( Commands.relationshipType().byName( name ) ) ).thenReturn( relationshipType );
 
         String response = resource().path( "schema/relationship" ).queryParam( "name", "the_relationship_type" ).get( String.class );
 
@@ -82,9 +81,8 @@ public class RelationshipTypeResourceTest
             name( "the_relationship_type" ).
             build();
 
-        final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
-        final RelationshipTypeNames names = RelationshipTypeNames.from( RelationshipTypeName.from( "the_relationship_type" ) );
-        Mockito.when( client.execute( Commands.relationshipType().get().names( names ) ) ).thenReturn( relationshipTypes );
+        final RelationshipTypeName name = RelationshipTypeName.from( "the_relationship_type" );
+        Mockito.when( client.execute( Commands.relationshipType().byName( name ) ) ).thenReturn( relationshipType );
 
         String response = resource().path( "schema/relationship/config" ).queryParam( "name", "the_relationship_type" ).get( String.class );
 
@@ -97,7 +95,7 @@ public class RelationshipTypeResourceTest
     {
         try
         {
-            Mockito.when( client.execute( Mockito.any( GetRelationshipTypes.class ) ) ).thenReturn( RelationshipTypes.empty() );
+            Mockito.when( client.execute( Mockito.any( GetRelationshipType.class ) ) ).thenReturn( null );
 
             resource().path( "schema/relationship" ).queryParam( "name", "relationship_type" ).get( String.class );
         }
