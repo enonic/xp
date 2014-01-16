@@ -20,7 +20,6 @@ import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.relationship.CreateRelationshipType;
 import com.enonic.wem.api.command.schema.relationship.DeleteRelationshipType;
-import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypes;
 import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
@@ -71,9 +70,7 @@ public class RelationshipTypeResource
 
     public RelationshipType fetchRelationshipType( final RelationshipTypeName name )
     {
-        final GetRelationshipTypes command = Commands.relationshipType().get().names( RelationshipTypeNames.from( name ) );
-        final RelationshipTypes relationshipTypes = client.execute( command );
-        return relationshipTypes.isEmpty() ? null : relationshipTypes.first();
+        return client.execute( Commands.relationshipType().get().byName( name ) );
     }
 
     @GET

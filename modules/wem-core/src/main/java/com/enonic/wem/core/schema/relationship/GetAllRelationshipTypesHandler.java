@@ -3,16 +3,15 @@ package com.enonic.wem.core.schema.relationship;
 import javax.inject.Inject;
 import javax.jcr.Session;
 
-import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypes;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
+import com.enonic.wem.api.command.schema.relationship.GetAllRelationshipTypes;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeNotFoundException;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;
 
 
-public final class GetRelationshipTypesHandler
-    extends CommandHandler<GetRelationshipTypes>
+public final class GetAllRelationshipTypesHandler
+    extends CommandHandler<GetAllRelationshipTypes>
 {
     private RelationshipTypeDao relationshipTypeDao;
 
@@ -21,12 +20,11 @@ public final class GetRelationshipTypesHandler
         throws Exception
     {
         final Session session = context.getJcrSession();
-        final RelationshipTypeNames selectors = command.getNames();
-        final RelationshipTypes relationshipTypes = relationshipTypeDao.select( selectors, session );
+        final RelationshipTypes relationshipTypes = relationshipTypeDao.selectAll( session );
 
         if ( relationshipTypes == null )
         {
-            throw new RelationshipTypeNotFoundException( selectors );
+            throw new RelationshipTypeNotFoundException();
         }
 
         command.setResult( relationshipTypes );

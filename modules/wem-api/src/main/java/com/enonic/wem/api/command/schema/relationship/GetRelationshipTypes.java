@@ -12,8 +12,6 @@ public final class GetRelationshipTypes
 {
     private RelationshipTypeNames names;
 
-    private boolean all = false;
-
     public RelationshipTypeNames getNames()
     {
         return this.names;
@@ -22,17 +20,6 @@ public final class GetRelationshipTypes
     public GetRelationshipTypes names( final RelationshipTypeNames names )
     {
         this.names = names;
-        return this;
-    }
-
-    public boolean isGetAll()
-    {
-        return all;
-    }
-
-    public GetRelationshipTypes all()
-    {
-        all = true;
         return this;
     }
 
@@ -50,27 +37,19 @@ public final class GetRelationshipTypes
         }
 
         final GetRelationshipTypes that = (GetRelationshipTypes) o;
-        return Objects.equal( this.names, that.names ) && ( this.all == that.all );
+
+        return Objects.equal( this.names, that.names );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.names, this.all );
+        return Objects.hashCode( this.names );
     }
 
     @Override
     public void validate()
     {
-        if ( all )
-        {
-            Preconditions.checkArgument( this.names == null,
-                                         "all cannot be true at the same time as names are specified" );
-        }
-        else
-        {
-            Preconditions.checkNotNull( this.names, "names cannot be null" );
-        }
+        Preconditions.checkNotNull( this.names, "names cannot be null" );
     }
-
 }
