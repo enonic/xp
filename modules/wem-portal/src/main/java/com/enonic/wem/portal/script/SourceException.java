@@ -1,22 +1,179 @@
 package com.enonic.wem.portal.script;
 
+import java.nio.file.Path;
+import java.text.MessageFormat;
+import java.util.List;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+
 import com.enonic.wem.api.module.ModuleResourceKey;
 
 public final class SourceException
     extends RuntimeException
 {
-    public String getTag()
+    private final String tag;
+
+    private final String message;
+
+    private final ModuleResourceKey resource;
+
+    private final Path path;
+
+    private final int lineNumber;
+
+    private final ImmutableList<String> callStack;
+
+    private SourceException( final Builder builder )
     {
-        return null;
+        if ( builder.cause != null )
+        {
+            initCause( builder.cause );
+        }
+
+        this.tag = builder.tag;
+        this.message = builder.message;
+        this.resource = builder.resource;
+        this.path = builder.path;
+        this.lineNumber = builder.lineNumber;
+        this.callStack = ImmutableList.copyOf( builder.callStack );
+    }
+
+    public final String getTag()
+    {
+        return this.tag;
+    }
+
+    @Override
+    public String getMessage()
+    {
+        return this.message;
     }
 
     public ModuleResourceKey getResource()
     {
-        return null;
+        return this.resource;
+    }
+
+    public Path getPath()
+    {
+        return this.path;
     }
 
     public int getLineNumber()
     {
-        return -1;
+        return this.lineNumber;
+    }
+
+    public List<String> getCallStack()
+    {
+        return this.callStack;
+    }
+
+    public List<SourceException> getChildren()
+    {
+        final List<SourceException> list = Lists.newArrayList();
+        findChildren( list, getCause() );
+        return list;
+    }
+
+    private void findChildren( final List<SourceException> list, final Throwable cause )
+    {
+        if ( cause == null )
+        {
+            return;
+        }
+
+        if ( cause instanceof SourceException )
+        {
+            list.add( (SourceException) cause );
+        }
+
+        findChildren( list, cause.getCause() );
+    }
+
+    public static class Builder
+    {
+        private String tag;
+
+        private String message;
+
+        private Throwable cause;
+
+        private Path path;
+
+        private ModuleResourceKey resource;
+
+        private int lineNumber;
+
+        private final List<String> callStack;
+
+        private Builder()
+        {
+            this.callStack = Lists.newArrayList();
+            this.lineNumber = -1;
+        }
+
+        public Builder tag( final String tag )
+        {
+            this.tag = tag;
+            return this;
+        }
+
+        public Builder cause( final Throwable cause )
+        {
+            this.cause = cause;
+            return this;
+        }
+
+        public Builder message( final String message, final Object... args )
+        {
+            this.message = MessageFormat.format( message, args );
+            return this;
+        }
+
+        public Builder path( final Path path )
+        {
+            this.path = path;
+            return this;
+        }
+
+        public Builder resource( final ModuleResourceKey resource )
+        {
+            this.resource = resource;
+            return this;
+        }
+
+        public Builder lineNumber( final int lineNumber )
+        {
+            this.lineNumber = lineNumber;
+            return this;
+        }
+
+        public Builder callLine( final String name, final int lineNumber )
+        {
+            this.callStack.add( MessageFormat.format( "{0} at line {1}", name, lineNumber ) );
+            return this;
+        }
+
+        public SourceException build()
+        {
+            if ( this.message == null )
+            {
+                this.message = this.cause != null ? this.cause.getMessage() : null;
+            }
+
+            if ( this.message == null )
+            {
+                this.message = "Empty message in exception";
+            }
+
+            return new SourceException( this );
+        }
+    }
+
+    public static Builder newBuilder()
+    {
+        return new Builder();
     }
 }

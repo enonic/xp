@@ -7,14 +7,14 @@ import javax.ws.rs.ext.Provider;
 import com.google.common.base.Throwables;
 
 import com.enonic.wem.portal.exception.renderer.ExceptionRenderer;
-import com.enonic.wem.portal.script.EvaluationException;
+import com.enonic.wem.portal.script.SourceException;
 
 @Provider
-public final class EvaluationExceptionMapper
-    implements ExceptionMapper<EvaluationException>
+public final class SourceExceptionMapper
+    implements ExceptionMapper<SourceException>
 {
     @Override
-    public Response toResponse( final EvaluationException e )
+    public Response toResponse( final SourceException e )
     {
         final ExceptionRenderer renderer = new ExceptionRenderer();
         renderer.status( Response.Status.INTERNAL_SERVER_ERROR );

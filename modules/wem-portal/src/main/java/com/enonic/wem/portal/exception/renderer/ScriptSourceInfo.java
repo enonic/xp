@@ -3,27 +3,28 @@ package com.enonic.wem.portal.exception.renderer;
 import java.io.IOException;
 import java.util.List;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Function;
-import com.google.common.base.Splitter;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+import com.google.common.io.Files;
 
-import com.enonic.wem.portal.script.EvaluationException;
+import com.enonic.wem.portal.script.SourceException;
 
 public final class ScriptSourceInfo
 {
     private final static int NUM_DELTA_LINES = 3;
 
-    private final EvaluationException error;
+    private final SourceException error;
 
-    public ScriptSourceInfo( final EvaluationException error )
+    public ScriptSourceInfo( final SourceException error )
     {
         this.error = error;
     }
 
     public String getName()
     {
-        return this.error.getSource().getName();
+        return this.error.getResource().toString();
     }
 
     public int getLine()
@@ -45,10 +46,9 @@ public final class ScriptSourceInfo
     }
 
     private List<String> getAllLines()
+        throws IOException
     {
-        final String str = this.error.getSource().getScriptAsString();
-        final Iterable<String> allLines = Splitter.onPattern( "\r?\n" ).split( str );
-        return Lists.newArrayList( allLines );
+        return Files.readLines( this.error.getPath().toFile(), Charsets.UTF_8 );
     }
 
     private List<String> sliceLines( final List<String> all )
@@ -58,9 +58,9 @@ public final class ScriptSourceInfo
         return all.subList( firstLine, lastLine );
     }
 
-    public List<String> getScriptStack()
+    public List<String> getCallStack()
     {
-        return this.error.getScriptStack();
+        return this.error.getCallStack();
     }
 
     private final class TabToSpaces

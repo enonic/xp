@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -23,13 +24,10 @@ import net.sf.saxon.TransformerFactoryImpl;
 
 public final class XsltScriptBean
 {
-    private final TransformerFactory transformerFactory;
-
     private final DocumentBuilderFactory documentBuilderFactory;
 
     public XsltScriptBean()
     {
-        this.transformerFactory = new TransformerFactoryImpl();
         this.documentBuilderFactory = DocumentBuilderFactory.newInstance();
     }
 
@@ -79,18 +77,29 @@ public final class XsltScriptBean
     private String render( final Source xslt, final Source xml, final Map<Object, Object> params )
         throws Exception
     {
-        final StringWriter writer = new StringWriter();
-        final StreamResult result = new StreamResult( writer );
+        final XsltErrorListener listener = new XsltErrorListener();
 
-        final Transformer transformer = this.transformerFactory.newTransformer( xslt );
-
-        for ( final Map.Entry<Object, Object> param : params.entrySet() )
+        try
         {
-            transformer.setParameter( param.getKey().toString(), convertParam( param.getValue() ) );
-        }
+            final StringWriter writer = new StringWriter();
+            final StreamResult result = new StreamResult( writer );
 
-        transformer.transform( xml, result );
-        return writer.getBuffer().toString();
+            final TransformerFactory transformerFactory = new TransformerFactoryImpl();
+            transformerFactory.setErrorListener( listener );
+            final Transformer transformer = transformerFactory.newTransformer( xslt );
+
+            for ( final Map.Entry<Object, Object> param : params.entrySet() )
+            {
+                transformer.setParameter( param.getKey().toString(), convertParam( param.getValue() ) );
+            }
+
+            transformer.transform( xml, result );
+            return writer.getBuffer().toString();
+        }
+        catch ( final TransformerException e )
+        {
+            throw createError( e, listener );
+        }
     }
 
     private Object convertParam( final Object value )
@@ -102,5 +111,19 @@ public final class XsltScriptBean
         }
 
         return value;
+    }
+
+    private Exception createError( final TransformerException e, final XsltErrorListener otherErrors )
+    {
+        final StringBuilder str = new StringBuilder( e.getMessage() );
+
+        int num = 1;
+        for ( final TransformerException entry : otherErrors )
+        {
+            str.append( "\n" );
+            str.append( "  " ).append( num++ ).append( ") " ).append( entry.getMessage() );
+        }
+
+        return new TransformerException( str.toString(), e );
     }
 }

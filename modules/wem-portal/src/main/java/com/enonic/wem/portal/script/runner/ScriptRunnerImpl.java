@@ -5,11 +5,12 @@ import java.util.Map;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.RhinoException;
 import org.mozilla.javascript.Script;
+import org.mozilla.javascript.ScriptStackElement;
 import org.mozilla.javascript.Scriptable;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.portal.script.EvaluationException;
+import com.enonic.wem.portal.script.SourceException;
 import com.enonic.wem.portal.script.compiler.ScriptCompiler;
 import com.enonic.wem.portal.script.lib.ContextScriptBean;
 import com.enonic.wem.portal.script.loader.ScriptLoader;
@@ -106,11 +107,25 @@ public final class ScriptRunnerImpl
         this.scope = context.initStandardObjects();
     }
 
-    private EvaluationException createError( final RhinoException cause )
+    private SourceException createError( final RhinoException cause )
     {
         final String name = cause.sourceName();
         final ScriptSource source = this.scriptLoader.load( name );
-        return new EvaluationException( source, cause );
+
+        final SourceException.Builder builder = SourceException.newBuilder();
+        builder.tag( "script" );
+        builder.cause( cause );
+        builder.lineNumber( cause.lineNumber() );
+        builder.resource( source.getResource() );
+        builder.path( source.getPath() );
+        builder.message( cause.details() );
+
+        for ( final ScriptStackElement elem : cause.getScriptStack() )
+        {
+            builder.callLine( elem.fileName, elem.lineNumber );
+        }
+
+        return builder.build();
     }
 
     public void setScriptLoader( final ScriptLoader scriptLoader )

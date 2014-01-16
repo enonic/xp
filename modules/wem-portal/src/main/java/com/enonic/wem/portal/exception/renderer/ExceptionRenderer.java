@@ -3,7 +3,7 @@ package com.enonic.wem.portal.exception.renderer;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.enonic.wem.portal.script.EvaluationException;
+import com.enonic.wem.portal.script.SourceException;
 import com.enonic.wem.web.mvc.FreeMarkerView;
 
 public final class ExceptionRenderer
@@ -42,7 +42,7 @@ public final class ExceptionRenderer
         return this;
     }
 
-    public ExceptionRenderer sourceError( final EvaluationException error )
+    public ExceptionRenderer sourceError( final SourceException error )
     {
         final ScriptSourceInfo info = new ScriptSourceInfo( error );
         this.view.put( "source", info );

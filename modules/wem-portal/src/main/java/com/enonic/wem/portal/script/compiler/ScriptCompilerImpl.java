@@ -3,10 +3,8 @@ package com.enonic.wem.portal.script.compiler;
 import javax.inject.Inject;
 
 import org.mozilla.javascript.Context;
-import org.mozilla.javascript.RhinoException;
 import org.mozilla.javascript.Script;
 
-import com.enonic.wem.portal.script.EvaluationException;
 import com.enonic.wem.portal.script.loader.ScriptSource;
 
 public final class ScriptCompilerImpl
@@ -37,13 +35,6 @@ public final class ScriptCompilerImpl
 
     private Script doCompile( final Context context, final ScriptSource source )
     {
-        try
-        {
-            return context.compileString( source.getScriptAsString(), source.getName(), 1, null );
-        }
-        catch ( final RhinoException e )
-        {
-            throw new EvaluationException( source, e );
-        }
+        return context.compileString( source.getScriptAsString(), source.getName(), 1, null );
     }
 }

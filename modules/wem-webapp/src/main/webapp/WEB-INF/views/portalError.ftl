@@ -29,13 +29,9 @@
             text-shadow: 1px 1px 1px rgba(255, 255, 255, .3);
             font-size: 14px;
             border-bottom: 1px solid #BA7A7A;
+            white-space: pre;
         }
 
-        p#detail.pre {
-            white-space: pre;
-            font-size: 13px;
-            overflow: auto;
-        }
 
         p#detail input {
             background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#AE1113), to(#A31012));
@@ -135,15 +131,17 @@
     </#list>
 </div>
 
-<h2>
-    Here is the script calling stack:
-</h2>
+    <#if source.callStack?has_content>
+    <h2>
+        Here is the script calling stack:
+    </h2>
 
-<div>
-    <#list source.scriptStack as item>
-        <pre><span class="line">${item_index + 1}</span><span class="code"> ${item}</span></pre>
-    </#list>
-</div>
+    <div>
+        <#list source.callStack as item>
+            <pre><span class="line">${item_index + 1}</span><span class="code"> ${item}</span></pre>
+        </#list>
+    </div>
+    </#if>
 </#if>
 
 <#if exception??>
