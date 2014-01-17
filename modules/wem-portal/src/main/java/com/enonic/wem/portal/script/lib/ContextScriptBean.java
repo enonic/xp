@@ -32,6 +32,11 @@ public final class ContextScriptBean
         this.module = module;
     }
 
+    public Path getModulePath()
+    {
+        return this.pathResolver.resolveModulePath( this.module );
+    }
+
     public Path resolveFile( final String name )
     {
         final ModuleResourceKey key = new ModuleResourceKey( this.module, ResourcePath.from( name ) );

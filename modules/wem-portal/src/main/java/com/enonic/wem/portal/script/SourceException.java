@@ -12,8 +12,6 @@ import com.enonic.wem.api.module.ModuleResourceKey;
 public final class SourceException
     extends RuntimeException
 {
-    private final String tag;
-
     private final String message;
 
     private final ModuleResourceKey resource;
@@ -31,17 +29,11 @@ public final class SourceException
             initCause( builder.cause );
         }
 
-        this.tag = builder.tag;
         this.message = builder.message;
         this.resource = builder.resource;
         this.path = builder.path;
         this.lineNumber = builder.lineNumber;
         this.callStack = ImmutableList.copyOf( builder.callStack );
-    }
-
-    public final String getTag()
-    {
-        return this.tag;
     }
 
     @Override
@@ -70,32 +62,28 @@ public final class SourceException
         return this.callStack;
     }
 
-    public List<SourceException> getChildren()
+    public SourceException getInnerSourceError()
     {
-        final List<SourceException> list = Lists.newArrayList();
-        findChildren( list, getCause() );
-        return list;
+        return getInnerSourceError( getCause() );
     }
 
-    private void findChildren( final List<SourceException> list, final Throwable cause )
+    private SourceException getInnerSourceError( final Throwable cause )
     {
         if ( cause == null )
         {
-            return;
+            return this;
         }
 
         if ( cause instanceof SourceException )
         {
-            list.add( (SourceException) cause );
+            return (SourceException) cause;
         }
 
-        findChildren( list, cause.getCause() );
+        return getInnerSourceError( cause.getCause() );
     }
 
     public static class Builder
     {
-        private String tag;
-
         private String message;
 
         private Throwable cause;
@@ -112,12 +100,6 @@ public final class SourceException
         {
             this.callStack = Lists.newArrayList();
             this.lineNumber = -1;
-        }
-
-        public Builder tag( final String tag )
-        {
-            this.tag = tag;
-            return this;
         }
 
         public Builder cause( final Throwable cause )

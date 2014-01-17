@@ -4,13 +4,14 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Source;
+import javax.xml.transform.SourceLocator;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -21,6 +22,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import net.sf.saxon.TransformerFactoryImpl;
+
+import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.module.ResourcePath;
+import com.enonic.wem.portal.script.SourceException;
 
 public final class XsltScriptBean
 {
@@ -84,7 +89,9 @@ public final class XsltScriptBean
             final StringWriter writer = new StringWriter();
             final StreamResult result = new StreamResult( writer );
 
-            final TransformerFactory transformerFactory = new TransformerFactoryImpl();
+            final TransformerFactoryImpl transformerFactory = new TransformerFactoryImpl();
+            transformerFactory.getConfiguration().setLineNumbering( true );
+
             transformerFactory.setErrorListener( listener );
             final Transformer transformer = transformerFactory.newTransformer( xslt );
 
@@ -124,6 +131,47 @@ public final class XsltScriptBean
             str.append( "  " ).append( num++ ).append( ") " ).append( entry.getMessage() );
         }
 
-        return new TransformerException( str.toString(), e );
+        final SourceLocator locator = findLocation( e, otherErrors );
+
+        final SourceException.Builder error = SourceException.newBuilder();
+        error.cause( e );
+        error.message( str.toString() );
+        error.lineNumber( locator.getLineNumber() );
+
+        final String path = locator.getSystemId().substring( "file:".length() );
+        final Path pathObject = Paths.get( path );
+        error.path( pathObject );
+        error.resource( findResourceKey( pathObject ) );
+
+        return error.build();
+    }
+
+    private SourceLocator findLocation( final TransformerException e, final XsltErrorListener otherErrors )
+    {
+        if ( e.getLocator() != null )
+        {
+            return e.getLocator();
+        }
+
+        for ( final TransformerException error : otherErrors )
+        {
+            if ( error.getLocator() != null )
+            {
+                return error.getLocator();
+            }
+        }
+
+        return null;
+    }
+
+    private ModuleResourceKey findResourceKey( final Path path )
+    {
+        final ContextScriptBean service = ContextScriptBean.get();
+
+        final Path filePath = path.toAbsolutePath();
+        final Path modulePath = service.getModulePath().toAbsolutePath();
+
+        final String name = filePath.toString().substring( modulePath.toString().length() + 1 );
+        return new ModuleResourceKey( service.getModule(), ResourcePath.from( name ) );
     }
 }

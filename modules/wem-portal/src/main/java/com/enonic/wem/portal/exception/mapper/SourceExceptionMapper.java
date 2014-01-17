@@ -20,7 +20,7 @@ public final class SourceExceptionMapper
         renderer.status( Response.Status.INTERNAL_SERVER_ERROR );
         renderer.description( e.getMessage() );
         renderer.title( "Script evaluation error" );
-        renderer.sourceError( e );
+        renderer.sourceError( e.getInnerSourceError() );
         renderer.exception( Throwables.getRootCause( e ) );
         return renderer.render();
     }

@@ -113,7 +113,6 @@ public final class ScriptRunnerImpl
         final ScriptSource source = this.scriptLoader.load( name );
 
         final SourceException.Builder builder = SourceException.newBuilder();
-        builder.tag( "script" );
         builder.cause( cause );
         builder.lineNumber( cause.lineNumber() );
         builder.resource( source.getResource() );
