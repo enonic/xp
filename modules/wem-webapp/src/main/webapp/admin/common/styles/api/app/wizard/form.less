@@ -1,44 +1,68 @@
 .form {
-  width:720px;
-  margin-top:20px;
+  width: 720px;
+  margin-top: 20px;
 
-  .form-item {
+  .form-input {
     //overflow:hidden;
     .clearfix();
+
+    .error {
+      display: none;
+      float: right;
+      color: @admin-input-red;
+      font-size: 12px;
+      margin-left: 10px;
+    }
+
+    &.invalid {
+
+      .error {
+        display: block;
+      }
+
+      select, input {
+        .input-error();
+      }
+      textarea {
+        .input-error();
+      }
+
+    }
+
     * {
       vertical-align: top;
     }
   }
 
   .CodeMirror {
-    float:left;
+    float: left;
   }
 
   fieldset {
     legend {
-      width:100%;
-      margin-bottom:10px;
-      padding-bottom:2px;
-      border-bottom:1px solid @admin-medium-gray-border;
+      width: 100%;
+      margin-bottom: 10px;
+      padding-bottom: 2px;
+      border-bottom: 1px solid @admin-medium-gray-border;
     }
     label {
-      font-size:12px;
-      width:100px;
-      margin-right:10px;
-      display:block;
-      float:left;
+      font-size: 12px;
+      width: 100px;
+      margin-right: 10px;
+      display: block;
+      float: left;
     }
 
     select, input {
-      width:400px;
+      width: 400px;
       .input-glow();
     }
 
     textarea {
       .input-glow();
       &.large {
-        width:550px;
-        height:350px;
+        width: 550px;
+        height: 350px;
       }
     }
   }

@@ -1,22 +1,52 @@
 module api.ui.form {
     export class Fieldset extends api.dom.FieldsetEl {
 
-        private legend:api.dom.LegendEl;
+        private legend: api.dom.LegendEl;
 
-        private form:Form;
+        private items: api.ui.form.FormItem[] = [];
 
-        constructor(form:Form, legend?:string) {
+        constructor(legend?: string) {
             super();
             if (legend) {
                 this.legend = new api.dom.LegendEl(legend);
                 this.appendChild(this.legend);
             }
-            this.form = form;
         }
 
-        add(formItem:FormItem) {
-            formItem.appendTo(this);
-            this.form.registerInput(formItem.getItem());
+        add(formItem: FormItem) {
+            this.items.push(formItem);
+            this.appendChild(formItem);
+        }
+
+        validate(markInvalid?: boolean): string[] {
+            var errors: string[] = [];
+            this.items.forEach((item: api.ui.form.FormItem) => {
+                var itemError = item.validate(markInvalid);
+                if (itemError) {
+                    errors.push(itemError);
+                }
+            });
+            return errors;
+        }
+
+        setFieldsetData(data: any) {
+            var input, inputValue;
+            this.items.forEach((item: api.ui.form.FormItem) => {
+                input = item.getInput();
+                inputValue = data[input.getName()];
+                if (inputValue) {
+                    input.setValue(inputValue);
+                }
+            });
+        }
+
+        getFieldsetData(): any {
+            var input, data = {};
+            this.items.forEach((item: api.ui.form.FormItem) => {
+                input = item.getInput();
+                data[input.getName()] = input.getValue();
+            });
+            return data;
         }
     }
 }

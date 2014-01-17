@@ -19,6 +19,7 @@
 ///<reference path='ButtonEl.ts' />
 ///<reference path='PEl.ts' />
 ///<reference path='FormInputEl.ts' />
+///<reference path='CompositeFormInputEl.ts' />
 ///<reference path='InputEl.ts' />
 ///<reference path='LabelEl.ts' />
 ///<reference path='SelectEl.ts' />

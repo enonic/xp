@@ -11,9 +11,9 @@ module app.wizard.page {
 
             this.pageTemplateComboBox = new api.content.page.PageTemplateComboBox();
 
-            var fieldSet = new api.ui.form.Fieldset(this, "Page Template");
+            var fieldSet = new api.ui.form.Fieldset("Page Template");
             fieldSet.add(new api.ui.form.FormItem("Selected", this.pageTemplateComboBox));
-            this.fieldset(fieldSet);
+            this.add(fieldSet);
 
 
             this.pageTemplateComboBox.addOptionSelectedListener((option: api.ui.combobox.Option<api.content.page.PageTemplateSummary>) => {

@@ -1,6 +1,6 @@
 module app.wizard.action {
 
-    export class SiteTemplateWizardActions implements api.app.wizard.WizardActions<any> {
+    export class SiteTemplateWizardActions implements api.app.wizard.WizardActions<api.content.site.template.SiteTemplate> {
 
         private save:api.ui.Action;
 
@@ -12,7 +12,7 @@ module app.wizard.action {
 
         private move:api.ui.Action;
 
-        constructor(wizardPanel:api.app.wizard.WizardPanel<api.content.Content>) {
+        constructor(wizardPanel:api.app.wizard.WizardPanel<api.content.site.template.SiteTemplate>) {
             this.save = new api.app.wizard.SaveAction(wizardPanel);
             this.duplicate = new DuplicateSiteTemplateAction();
             this.delete = new DeleteSiteTemplateAction(wizardPanel);

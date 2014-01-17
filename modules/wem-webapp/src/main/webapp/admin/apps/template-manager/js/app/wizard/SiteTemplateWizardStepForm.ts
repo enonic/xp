@@ -1,35 +1,31 @@
-module app.wizard
-{
+module app.wizard {
 
-    export class SiteTemplateWizardStepForm extends api.app.wizard.WizardStepForm
-    {
+    export class SiteTemplateWizardStepForm extends api.app.wizard.WizardStepForm {
 
-        private descriptionField:api.ui.TextInput;
-        private moduleComboBox:api.module.ModuleComboBox;
-        private rootContentTypeComboBox:api.schema.content.ContentTypeComboBox;
+        private descriptionField: api.ui.TextInput;
+        private moduleComboBox: api.module.ModuleComboBox;
+        private rootContentTypeComboBox: api.schema.content.ContentTypeComboBox;
 
-        constructor()
-        {
+        constructor() {
             super(true);
             this.descriptionField = api.ui.TextInput.large(true).setName("description");
             this.moduleComboBox = new api.module.ModuleComboBox();
             this.rootContentTypeComboBox = new api.schema.content.ContentTypeComboBox(false);
-
-            this.registerInput(this.descriptionField);
-            this.registerInput(this.moduleComboBox);
-            this.registerInput(this.rootContentTypeComboBox);
         }
 
-        renderNew()
-        {
-            var fieldSet = new api.ui.form.Fieldset(this, "Site Template");
+        renderNew() {
+            var fieldSet = new api.ui.form.Fieldset("Site Template");
             fieldSet.add(new api.ui.form.FormItem("Description", this.descriptionField));
-            fieldSet.add(new api.ui.form.FormItem("Modules", this.moduleComboBox));
-            fieldSet.add(new api.ui.form.FormItem("Root Content Type", this.rootContentTypeComboBox));
+            fieldSet.add(new api.ui.form.FormItem("Modules", this.moduleComboBox).setValidator(this.notEmptyValidator));
+            fieldSet.add(new api.ui.form.FormItem("Root Content Type", this.rootContentTypeComboBox).setValidator(this.notEmptyValidator));
+
+            this.add(fieldSet);
+        }
 
 
-            this.fieldset(fieldSet);
-
+        notEmptyValidator(input: api.dom.FormInputEl): string {
+            var value = input.getValue();
+            return !value || value.length == 0 ? "Required field" : undefined;
         }
 
     }

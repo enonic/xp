@@ -22,10 +22,6 @@ module api.ui.combobox {
 
         constructor(builder:RichComboBoxBuilder<T>)
         {
-            if (builder.loader) {
-                this.setLoader(builder.loader);
-            }
-
             this.identifierMethod = builder.identifierMethod;
 
             this.comboBoxView = new api.dom.DivEl();
@@ -34,6 +30,10 @@ module api.ui.combobox {
             this.comboBox = this.createComboBox(builder.comboBoxName);
 
             super(this.comboBox, this.selectedOptionsView);
+
+            if (builder.loader) {
+                this.setLoader(builder.loader);
+            }
 
             this.loadedListeners = [];
             this.loadingListeners = [];
