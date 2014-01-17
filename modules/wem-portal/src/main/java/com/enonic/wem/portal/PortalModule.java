@@ -5,6 +5,7 @@ import com.google.inject.AbstractModule;
 import com.enonic.wem.portal.postprocess.PostProcessModule;
 import com.enonic.wem.portal.rendering.RenderingModule;
 import com.enonic.wem.portal.script.ScriptModule;
+import com.enonic.wem.portal.xslt.saxon.SaxonXsltModule;
 import com.enonic.wem.web.WebInitializerBinder;
 
 public final class PortalModule
@@ -16,6 +17,7 @@ public final class PortalModule
         install( new ScriptModule() );
         install( new PostProcessModule() );
         install( new RenderingModule() );
+        install( new SaxonXsltModule() );
         WebInitializerBinder.from( binder() ).add( PortalWebInitializer.class );
     }
 }

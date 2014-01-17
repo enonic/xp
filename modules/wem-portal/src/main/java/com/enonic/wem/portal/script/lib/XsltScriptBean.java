@@ -1,19 +1,17 @@
 package com.enonic.wem.portal.script.lib;
 
 import java.io.StringReader;
-import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.SourceLocator;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.mozilla.javascript.xml.XMLObject;
@@ -21,14 +19,20 @@ import org.mozilla.javascript.xmlimpl.XMLLibImpl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import net.sf.saxon.TransformerFactoryImpl;
+import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.portal.script.SourceException;
+import com.enonic.wem.portal.xslt.XsltProcessor;
+import com.enonic.wem.portal.xslt.XsltProcessorException;
+import com.enonic.wem.portal.xslt.XsltProcessorSpec;
 
 public final class XsltScriptBean
 {
+    @Inject
+    protected XsltProcessor processor;
+
     private final DocumentBuilderFactory documentBuilderFactory;
 
     public XsltScriptBean()
@@ -36,8 +40,7 @@ public final class XsltScriptBean
         this.documentBuilderFactory = DocumentBuilderFactory.newInstance();
     }
 
-    public String render( final String name, final Object inputDoc, final Map<Object, Object> params )
-        throws Exception
+    public String render( final String name, final Object inputDoc, final Map<String, Object> params )
     {
         final ContextScriptBean service = ContextScriptBean.get();
         final Path path = service.resolveFile( name );
@@ -47,14 +50,14 @@ public final class XsltScriptBean
             throw new IllegalArgumentException( "Could not find XSLT view [" + path.toString() + "]" );
         }
 
-        final Source xsltSource = toSource( path );
-        final Source xmlSource = toSource( inputDoc );
-
-        return render( xsltSource, xmlSource, params );
+        final XsltProcessorSpec spec = new XsltProcessorSpec();
+        spec.xsl( toSource( path ) );
+        spec.source( toSource( inputDoc ) );
+        spec.parameters( convertParams( params ) );
+        return render( spec );
     }
 
     private Source toSource( final Object obj )
-        throws Exception
     {
         if ( obj instanceof XMLObject )
         {
@@ -66,12 +69,18 @@ public final class XsltScriptBean
     }
 
     private Source toSource( final XMLObject xml )
-        throws Exception
     {
-        final Node node = XMLLibImpl.toDomNode( xml );
-        final Document doc = this.documentBuilderFactory.newDocumentBuilder().newDocument();
-        doc.appendChild( doc.importNode( node, true ) );
-        return new DOMSource( doc );
+        try
+        {
+            final Node node = XMLLibImpl.toDomNode( xml );
+            final Document doc = this.documentBuilderFactory.newDocumentBuilder().newDocument();
+            doc.appendChild( doc.importNode( node, true ) );
+            return new DOMSource( doc );
+        }
+        catch ( final Exception e )
+        {
+            throw new RuntimeException( e );
+        }
     }
 
     private Source toSource( final Path path )
@@ -79,38 +88,19 @@ public final class XsltScriptBean
         return new StreamSource( path.toFile() );
     }
 
-    private String render( final Source xslt, final Source xml, final Map<Object, Object> params )
-        throws Exception
+    private String render( final XsltProcessorSpec spec )
     {
-        final XsltErrorListener listener = new XsltErrorListener();
-
         try
         {
-            final StringWriter writer = new StringWriter();
-            final StreamResult result = new StreamResult( writer );
-
-            final TransformerFactoryImpl transformerFactory = new TransformerFactoryImpl();
-            transformerFactory.getConfiguration().setLineNumbering( true );
-
-            transformerFactory.setErrorListener( listener );
-            final Transformer transformer = transformerFactory.newTransformer( xslt );
-
-            for ( final Map.Entry<Object, Object> param : params.entrySet() )
-            {
-                transformer.setParameter( param.getKey().toString(), convertParam( param.getValue() ) );
-            }
-
-            transformer.transform( xml, result );
-            return writer.getBuffer().toString();
+            return this.processor.process( spec );
         }
-        catch ( final TransformerException e )
+        catch ( final XsltProcessorException e )
         {
-            throw createError( e, listener );
+            throw createError( e );
         }
     }
 
     private Object convertParam( final Object value )
-        throws Exception
     {
         if ( value instanceof XMLObject )
         {
@@ -120,22 +110,25 @@ public final class XsltScriptBean
         return value;
     }
 
-    private Exception createError( final TransformerException e, final XsltErrorListener otherErrors )
+    private Map<String, Object> convertParams( final Map<String, Object> map )
     {
-        final StringBuilder str = new StringBuilder( e.getMessage() );
-
-        int num = 1;
-        for ( final TransformerException entry : otherErrors )
+        return Maps.transformEntries( map, new Maps.EntryTransformer<String, Object, Object>()
         {
-            str.append( "\n" );
-            str.append( "  " ).append( num++ ).append( ") " ).append( entry.getMessage() );
-        }
+            @Override
+            public Object transformEntry( final String name, final Object value )
+            {
+                return convertParam( value );
+            }
+        } );
+    }
 
-        final SourceLocator locator = findLocation( e, otherErrors );
+    private SourceException createError( final XsltProcessorException e )
+    {
+        final SourceLocator locator = findLocation( e );
 
         final SourceException.Builder error = SourceException.newBuilder();
         error.cause( e );
-        error.message( str.toString() );
+        error.message( e.getMessage() );
         error.lineNumber( locator.getLineNumber() );
 
         final String path = locator.getSystemId().substring( "file:".length() );
@@ -146,18 +139,13 @@ public final class XsltScriptBean
         return error.build();
     }
 
-    private SourceLocator findLocation( final TransformerException e, final XsltErrorListener otherErrors )
+    private SourceLocator findLocation( final XsltProcessorException e )
     {
-        if ( e.getLocator() != null )
+        for ( final TransformerException entry : e.getErrors() )
         {
-            return e.getLocator();
-        }
-
-        for ( final TransformerException error : otherErrors )
-        {
-            if ( error.getLocator() != null )
+            if ( entry.getLocator() != null )
             {
-                return error.getLocator();
+                return entry.getLocator();
             }
         }
 
