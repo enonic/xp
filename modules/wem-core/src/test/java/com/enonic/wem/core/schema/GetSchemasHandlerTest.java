@@ -9,7 +9,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.SchemaTypes;
 import com.enonic.wem.api.command.schema.content.GetAllContentTypes;
 import com.enonic.wem.api.command.schema.mixin.GetMixins;
-import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypes;
+import com.enonic.wem.api.command.schema.relationship.GetAllRelationshipTypes;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentType;
@@ -76,7 +76,7 @@ public class GetSchemasHandlerTest
             addAllowedToType( ContentTypeName.from( "person" ) ).
             build();
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
-        Mockito.when( client.execute( Mockito.isA( GetRelationshipTypes.class ) ) ).thenReturn( relationshipTypes );
+        Mockito.when( client.execute( Mockito.isA( GetAllRelationshipTypes.class ) ) ).thenReturn( relationshipTypes );
 
         // exercise
         final SchemaTypes command = Commands.schema().get();
