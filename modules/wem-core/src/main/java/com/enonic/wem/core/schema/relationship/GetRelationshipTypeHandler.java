@@ -1,10 +1,8 @@
 package com.enonic.wem.core.schema.relationship;
 
 import javax.inject.Inject;
-import javax.jcr.Session;
 
 import com.enonic.wem.api.command.schema.relationship.GetRelationshipType;
-import com.enonic.wem.api.entity.NoEntityFoundException;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeNotFoundException;
@@ -21,15 +19,9 @@ public final class GetRelationshipTypeHandler
     public void handle()
         throws Exception
     {
-        try
-        {
-            final Session session = context.getJcrSession();
-            final RelationshipTypeName selector = command.getName();
-            final RelationshipType relationshipType = relationshipTypeDao.select( selector, session );
-
-            command.setResult( relationshipType );
-        }
-        catch ( NoEntityFoundException e )
+        final RelationshipTypeName selector = command.getName();
+        final RelationshipType relationshipType = relationshipTypeDao.select( selector, context.getJcrSession() );
+        if ( relationshipType == null )
         {
             if ( command.isNotFoundAsException() )
             {
@@ -39,7 +31,10 @@ public final class GetRelationshipTypeHandler
             {
                 command.setResult( null );
             }
+
         }
+
+        command.setResult( relationshipType );
     }
 
     @Inject
