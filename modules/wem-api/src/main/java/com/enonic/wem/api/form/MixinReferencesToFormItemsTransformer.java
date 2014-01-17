@@ -54,8 +54,15 @@ public class MixinReferencesToFormItemsTransformer
             }
             else if ( formItem instanceof FormItemSet )
             {
-                final FormItemSet.Builder forItemSetBuilder = FormItemSet.newFormItemSet().name( formItem.getName() );
-                forItemSetBuilder.addFormItems( transform( (FormItemSet) formItem ) );
+                FormItemSet formItemSet = (FormItemSet) formItem;
+                final FormItemSet.Builder forItemSetBuilder = FormItemSet.newFormItemSet()
+                    .name( formItemSet.getName() )
+                    .label( formItemSet.getLabel() )
+                    .occurrences( formItemSet.getOccurrences() )
+                    .customText( formItemSet.getCustomText() )
+                    .helpText( formItemSet.getHelpText() )
+                    .immutable( formItemSet.isImmutable() );
+                forItemSetBuilder.addFormItems( transform( formItemSet) );
                 formItems.add( forItemSetBuilder.build() );
             }
             else
