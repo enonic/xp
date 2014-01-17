@@ -7,11 +7,6 @@ public final class RelationshipTypeCommands
         return new RelationshipTypesExists();
     }
 
-    public GetRelationshipTypes get()
-    {
-        return new GetRelationshipTypes();
-    }
-
     public CreateRelationshipType create()
     {
         return new CreateRelationshipType();
@@ -25,5 +20,10 @@ public final class RelationshipTypeCommands
     public DeleteRelationshipType delete()
     {
         return new DeleteRelationshipType();
+    }
+
+    public RelationshipTypeGetCommands get()
+    {
+        return new RelationshipTypeGetCommands();
     }
 }
