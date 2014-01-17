@@ -9,11 +9,6 @@ import com.enonic.wem.api.NotFoundException;
 public final class RelationshipTypeNotFoundException
     extends NotFoundException
 {
-    public RelationshipTypeNotFoundException()
-    {
-        super( "No RelationshipTypes were found" );
-    }
-
     public RelationshipTypeNotFoundException( final RelationshipTypeName name )
     {
         super( "RelationshipType [{0}] was not found", name );
