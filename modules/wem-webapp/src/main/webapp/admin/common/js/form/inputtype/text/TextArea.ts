@@ -32,8 +32,11 @@ module api.form.inputtype.text {
         }
 
         valueBreaksRequiredContract(value:api.data.Value):boolean {
-            // TODO:
-            return false;
+            if (api.util.isStringBlank(value.asString())) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
