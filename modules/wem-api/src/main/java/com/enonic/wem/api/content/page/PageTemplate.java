@@ -1,7 +1,6 @@
 package com.enonic.wem.api.content.page;
 
 
-import com.enonic.wem.api.content.page.region.PageRegions;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.support.Changes;

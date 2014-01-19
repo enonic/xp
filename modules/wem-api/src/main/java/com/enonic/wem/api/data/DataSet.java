@@ -55,6 +55,7 @@ public class DataSet
      */
     public final void add( final Data data )
     {
+        Preconditions.checkNotNull( data, "data to add not given" );
         doAdd( data );
     }
 
@@ -127,6 +128,11 @@ public class DataSet
     public final Property[] setProperty( final String path, final Value... values )
     {
         return setProperty( DataPath.from( path ), values );
+    }
+
+    public final Property setProperty( final DataId dataId, final Value value )
+    {
+        return doSetProperty( dataId, value );
     }
 
     public final Property[] setProperty( final DataPath path, final Value... values )
@@ -299,14 +305,39 @@ public class DataSet
         return this.dataById.containsKey( dataId );
     }
 
+    /**
+     * Returns a ImmutableList of the Data-s in this DataSet.
+     */
+    public ImmutableList<Data> datas()
+    {
+        final ImmutableList.Builder<Data> list = new ImmutableList.Builder<>();
+
+        for ( Data data : this.dataById.values() )
+        {
+            list.add( data );
+        }
+        return list.build();
+    }
+
     public final Property getProperty( final String path )
     {
         return getProperty( DataPath.from( path ) );
     }
 
+    public final Property getProperty( final DataId dataId )
+    {
+        final Data data = doGetData( dataId );
+        if ( data == null )
+        {
+            return null;
+        }
+        Preconditions.checkArgument( data.isProperty(), "Data [%s] is not a Property: %s", dataId, data.getClass().getSimpleName() );
+        return data.toProperty();
+    }
+
     public final Property getProperty( final DataPath path )
     {
-        Data data = getData( path );
+        final Data data = getData( path );
         if ( data == null )
         {
             return null;
@@ -377,6 +408,17 @@ public class DataSet
             return null;
         }
         Preconditions.checkArgument( data.isDataSet(), "Data at path[%s] is not a DataSet: %s", path, data.getClass().getSimpleName() );
+        return data.toDataSet();
+    }
+
+    public final DataSet getDataSet( final DataId dataId )
+    {
+        final Data data = doGetData( dataId );
+        if ( data == null )
+        {
+            return null;
+        }
+        Preconditions.checkArgument( data.isProperty(), "Data [%s] is not a DataSet: %s", dataId, data.getClass().getSimpleName() );
         return data.toDataSet();
     }
 

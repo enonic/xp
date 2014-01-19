@@ -3,7 +3,6 @@ package com.enonic.wem.api.content.page;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.page.part.PartComponent;
-import com.enonic.wem.api.content.page.region.PageRegions;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
@@ -88,7 +87,7 @@ public class PageTemplateXmlTest
         assertEquals( "my-region", region.getName() );
 
         // verify: components in region
-        assertEquals( 1, region.getComponents().size() );
+        assertEquals( 1, region.numberOfComponents() );
 
         // verify: part component
         PageComponent component = region.getComponents().iterator().next();

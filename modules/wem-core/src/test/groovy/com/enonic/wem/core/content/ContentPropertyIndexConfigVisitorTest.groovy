@@ -34,13 +34,11 @@ class ContentPropertyIndexConfigVisitorTest
         where:
         path                                                         | enabled | fulltext | tokenized
         "rootProperty"                                               | true    | false    | false
-        ContentNodeTranslator.DISPLAY_NAME_PATH                      | true    | true     | true
+        ContentDataSerializer.DISPLAY_NAME                           | true    | true     | true
         "somePath.displayName"                                       | true    | false    | false
-        ContentNodeTranslator.CONTENT_DATA_PATH + "." + "someName"   | true    | true     | true
-        ContentNodeTranslator.FORM_PATH + "." + "displayName"        | false   | false    | false
-        ContentNodeTranslator.PAGE_CONFIG_PATH + "." + "displayName" | false   | false    | false
+        ContentDataSerializer.CONTENT_DATA + "." + "someName"        | true    | true     | true
+        ContentDataSerializer.FORM + "." + "displayName"             | false   | false    | false
+        ContentDataSerializer.PAGE + "." + "displayName"             | false   | false    | false
 
     }
-
-
 }

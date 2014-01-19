@@ -5,11 +5,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.api.content.page.PageComponent;
-import com.enonic.wem.api.data.DataSet;
-import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.Value;
 
-public class Region
+public final class Region
 {
     private final String name;
 
@@ -27,21 +24,14 @@ public class Region
         return name;
     }
 
+    public int numberOfComponents()
+    {
+        return this.components.size();
+    }
+
     public ImmutableList<PageComponent> getComponents()
     {
         return components;
-    }
-
-    public RootDataSet toData()
-    {
-        final RootDataSet data = new RootDataSet();
-        data.setProperty( "name", new Value.String( getName() ) );
-        for ( final PageComponent component : getComponents() )
-        {
-            final DataSet componentAsDataSet = component.toDataSet();
-            data.add( componentAsDataSet );
-        }
-        return data;
     }
 
     public static Builder newRegion()
@@ -52,17 +42,6 @@ public class Region
     public static Builder newRegion( final Region source )
     {
         return new Builder( source );
-    }
-
-    public static Builder newRegion( final RootDataSet regionAsData )
-    {
-        final Builder builder = new Builder();
-        builder.name( regionAsData.getProperty( "name" ).getString() );
-        for ( final DataSet componentAsDataSet : regionAsData.getDataSets() )
-        {
-            builder.add( RegionPlaceableComponentFactory.create( componentAsDataSet ) );
-        }
-        return builder;
     }
 
     public static class Builder

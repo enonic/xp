@@ -14,7 +14,6 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeName;
-import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
@@ -27,7 +26,7 @@ import static com.enonic.wem.core.schema.content.ContentTypeNodeTranslator.BUILT
 import static com.enonic.wem.core.schema.content.ContentTypeNodeTranslator.CONTENT_DISPLAY_NAME_SCRIPT_PROPERTY;
 import static com.enonic.wem.core.schema.content.ContentTypeNodeTranslator.DISPLAY_NAME_PROPERTY;
 import static com.enonic.wem.core.schema.content.ContentTypeNodeTranslator.FINAL_PROPERTY;
-import static com.enonic.wem.core.schema.content.ContentTypeNodeTranslator.FORMITEMS_FULL_PATH;
+import static com.enonic.wem.core.schema.content.ContentTypeNodeTranslator.FORM_PATH;
 import static com.enonic.wem.core.schema.content.ContentTypeNodeTranslator.SUPER_TYPE_PROPERTY;
 import static org.junit.Assert.*;
 
@@ -45,9 +44,7 @@ public class ContentTypeNodeTranslatorTest
             displayName( myDisplayNameValue ).
             form( Form.newForm().build() );
 
-        final CreateNode createNode = translator.toCreateNodeCommand( command );
-
-        final String displayNamePropertyName = "displayName";
+        translator.toCreateNodeCommand( command );
     }
 
     @Test
@@ -110,7 +107,7 @@ public class ContentTypeNodeTranslatorTest
 
         final CreateNode createNode = translator.toCreateNodeCommand( command );
 
-        final DataSet formItems = createNode.getData().getDataSet( FORMITEMS_FULL_PATH );
+        final DataSet formItems = createNode.getData().getDataSet( FORM_PATH );
         assertNotNull( formItems );
 
         final Data input = formItems.getDataSet( "Input", 0 );
@@ -121,7 +118,6 @@ public class ContentTypeNodeTranslatorTest
     public void fromNode_nodeProperties()
         throws Exception
     {
-        final NodePath parentPath = NodePath.newPath( "my/test/parent" ).build();
         Node node = Node.newNode().
             id( EntityId.from( "1" ) ).
             name( NodeName.from( "my-name" ) ).
@@ -130,8 +126,7 @@ public class ContentTypeNodeTranslatorTest
         final ContentType contentType = translator.fromNode( node );
 
         assertEquals( new SchemaId( "1" ), contentType.getId() );
-        assertEquals( ContentTypesInitializer.UNSTRUCTURED.getName().toString(),
-                      contentType.getSuperType().getContentTypeName() );
+        assertEquals( ContentTypesInitializer.UNSTRUCTURED.getName().toString(), contentType.getSuperType().getContentTypeName() );
     }
 
 
@@ -149,7 +144,6 @@ public class ContentTypeNodeTranslatorTest
         rootDataSet.addProperty( DataPath.from( CONTENT_DISPLAY_NAME_SCRIPT_PROPERTY ), new Value.String( "myDisplayNameScript" ) );
         rootDataSet.addProperty( DataPath.from( SUPER_TYPE_PROPERTY ), new Value.String( "my-super-type" ) );
 
-        final NodePath parentPath = NodePath.newPath( "my/test/parent" ).build();
         Node node = Node.newNode().
             id( EntityId.from( "1" ) ).
             name( NodeName.from( "my-name" ) ).

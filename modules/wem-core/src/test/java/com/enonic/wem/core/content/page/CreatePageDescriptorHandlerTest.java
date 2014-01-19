@@ -15,6 +15,7 @@ import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 
+import static com.enonic.wem.api.content.page.region.RegionDescriptors.newRegionDescriptors;
 import static com.enonic.wem.api.form.Input.newInput;
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.isA;
@@ -49,6 +50,7 @@ public class CreatePageDescriptorHandlerTest
         final CreatePageDescriptor command = new CreatePageDescriptor().
             key( key ).
             name( descriptorName ).
+            regions( newRegionDescriptors().build() ).
             displayName( "Landing page" ).
             config( pageForm );
 

@@ -14,6 +14,7 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
+import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateName;
@@ -25,9 +26,7 @@ import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartTemplate;
 import com.enonic.wem.api.content.page.part.PartTemplateKey;
 import com.enonic.wem.api.content.page.part.PartTemplateName;
-import com.enonic.wem.api.content.page.region.PageRegions;
 import com.enonic.wem.api.content.page.region.Region;
-import com.enonic.wem.api.content.site.ModuleConfig;
 import com.enonic.wem.api.content.site.ModuleConfigs;
 import com.enonic.wem.api.content.site.NoSiteTemplateExistsException;
 import com.enonic.wem.api.content.site.SiteTemplate;
@@ -47,11 +46,17 @@ import com.enonic.wem.core.support.BaseInitializer;
 
 import static com.enonic.wem.api.command.Commands.page;
 import static com.enonic.wem.api.command.Commands.site;
+import static com.enonic.wem.api.content.page.PageRegions.newPageRegions;
 import static com.enonic.wem.api.content.page.PageTemplate.newPageTemplate;
 import static com.enonic.wem.api.content.page.image.ImageComponent.newImageComponent;
 import static com.enonic.wem.api.content.page.part.PartComponent.newPartComponent;
 import static com.enonic.wem.api.content.page.part.PartTemplate.newPartTemplate;
+import static com.enonic.wem.api.content.page.region.Region.newRegion;
+import static com.enonic.wem.api.content.page.region.RegionDescriptor.newRegionDescriptor;
+import static com.enonic.wem.api.content.page.region.RegionDescriptors.newRegionDescriptors;
+import static com.enonic.wem.api.content.site.ModuleConfig.newModuleConfig;
 import static com.enonic.wem.api.content.site.Vendor.newVendor;
+import static com.enonic.wem.api.form.Form.newForm;
 import static com.enonic.wem.api.form.Input.newInput;
 
 
@@ -157,19 +162,39 @@ public class SitesInitializer
             displayName( "Landing page" ).
             name( "landing-page" ).
             key( PageDescriptorKey.from( DEMO_MODULE_KEY, LANDING_PAGE_DESCRIPTOR_NAME ) ).
-            config( createLandingPageDescriptorForm() ) );
+            regions( newRegionDescriptors().
+                add( newRegionDescriptor().name( "header" ).build() ).
+                add( newRegionDescriptor().name( "main" ).build() ).
+                add( newRegionDescriptor().name( "footer" ).build() ).
+                build() ).
+            config( newForm().
+                addFormItem( newInput().name( "background-color" ).label( "Background color" ).inputType( InputTypes.TEXT_LINE ).build() ).
+                build() ) );
 
         productGridPageDescriptor = client.execute( page().descriptor().page().create().
             displayName( "Product grid" ).
             name( "product-grid" ).
             key( PageDescriptorKey.from( DEMO_MODULE_KEY, PRODUCT_GRID_DESCRIPTOR_NAME ) ).
-            config( createProductGridPageDescriptorForm() ) );
+            regions( newRegionDescriptors().
+                add( newRegionDescriptor().name( "main" ).build() ).
+                build() ).
+            config( newForm().
+                addFormItem( newInput().
+                    name( "rows" ).label( "Rows" ).
+                    maximumOccurrences( 1 ).minimumOccurrences( 1 ).
+                    inputType( InputTypes.TEXT_LINE ).build() ).
+                addFormItem( newInput().
+                    name( "columns" ).label( "Columns" ).
+                    maximumOccurrences( 1 ).minimumOccurrences( 1 ).
+                    inputType( InputTypes.TEXT_LINE ).build() ).
+                build() ) );
 
         final ComponentDescriptorName partName = new ComponentDescriptorName( "mypart" );
         final CreatePartDescriptor createPartDescriptor = page().descriptor().part().create().
             name( partName ).
             key( PartDescriptorKey.from( DEMO_MODULE_KEY, partName ) ).
-            displayName( "My part" );
+            displayName( "My part" ).
+            config( Form.newForm().build() );
         myPartDescriptor = client.execute( createPartDescriptor );
     }
 
@@ -182,7 +207,7 @@ public class SitesInitializer
             build();
 
         // Main Page
-        final PageRegions.Builder mainPageRegions = PageRegions.newPageRegions();
+        final PageRegions.Builder mainPageRegions = newPageRegions();
         createDefaultPageRegions( mainPageRegions, BLUMAN_SITE_TEMPLATE_KEY );
         mainPageLandingPageTemplate = newPageTemplate().
             key( PageTemplateKey.from( BLUMAN_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, MAIN_PAGE_PAGE_TEMPLATE_NAME ) ).
@@ -193,8 +218,9 @@ public class SitesInitializer
             build();
 
         // Product grid
-        final PageRegions.Builder productGridRegions = PageRegions.newPageRegions().
-            add( Region.newRegion().
+        final PageRegions.Builder productGridRegions;
+        productGridRegions = newPageRegions().
+            add( newRegion().
                 name( "main" ).
                 add( PartComponent.newPartComponent().
                     name( "MyComponent" ).
@@ -211,7 +237,7 @@ public class SitesInitializer
             build();
 
         // Department Page
-        final PageRegions.Builder departmentPageRegions = PageRegions.newPageRegions();
+        final PageRegions.Builder departmentPageRegions = newPageRegions();
         createDefaultPageRegions( departmentPageRegions, BLUMAN_INTRA_SITE_TEMPLATE_KEY );
         departmentPageLandingPageTemplate = newPageTemplate().
             key( PageTemplateKey.from( BLUMAN_INTRA_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, DEPARTMENT_PAGE_PAGE_TEMPLATE_NAME ) ).
@@ -269,11 +295,11 @@ public class SitesInitializer
         bluManTrampolineSite = client.execute( site().create().
             content( bluManTrampolineSite.getId() ).
             template( this.bluManTrampolinerSiteTemplate.getKey() ).
-            moduleConfigs( ModuleConfigs.from( ModuleConfig.newModuleConfig().
+            moduleConfigs( ModuleConfigs.from( newModuleConfig().
                 module( this.demoModule.getModuleKey() ).
                 config( createDemoModuleData( "First", "Second" ) ).build() ) ) );
 
-        PageRegions.Builder pageRegions = PageRegions.newPageRegions();
+        PageRegions.Builder pageRegions = newPageRegions();
         createDefaultPageRegions( pageRegions, BLUMAN_SITE_TEMPLATE_KEY );
 
         bluManTrampolineSite = client.execute( page().create().
@@ -287,11 +313,11 @@ public class SitesInitializer
         bluManIntranetSite = client.execute( site().create().
             content( bluManIntranetSite.getId() ).
             template( this.bluManIntranettSiteTemplate.getKey() ).
-            moduleConfigs( ModuleConfigs.from( ModuleConfig.newModuleConfig().
+            moduleConfigs( ModuleConfigs.from( newModuleConfig().
                 module( this.demoModule.getModuleKey() ).
                 config( createDemoModuleData( "Uno", "Secondo" ) ).build() ) ) );
 
-        pageRegions = PageRegions.newPageRegions();
+        pageRegions = newPageRegions();
         createDefaultPageRegions( pageRegions, BLUMAN_INTRA_SITE_TEMPLATE_KEY );
         bluManIntranetSite = client.execute( page().create().
             content( bluManIntranetSite.getId() ).
@@ -323,19 +349,6 @@ public class SitesInitializer
         return data;
     }
 
-    private Form createLandingPageDescriptorForm()
-    {
-
-        return Form.newForm().
-            addFormItem( newInput().name( "background-color" ).label( "Background color" ).inputType( InputTypes.TEXT_LINE ).build() ).
-            addFormItem( newInput().name( "main" ).label( "Main region" ).maximumOccurrences( 1 ).inputType( InputTypes.REGION ).build() ).
-            addFormItem(
-                newInput().name( "header" ).label( "Header region" ).maximumOccurrences( 1 ).inputType( InputTypes.REGION ).build() ).
-            addFormItem(
-                newInput().name( "footer" ).label( "Footer region" ).maximumOccurrences( 1 ).inputType( InputTypes.REGION ).build() ).
-            build();
-    }
-
     private RootDataSet createProductPageTemplateConfig( final int rows, final int columns )
     {
         RootDataSet data = new RootDataSet();
@@ -344,27 +357,9 @@ public class SitesInitializer
         return data;
     }
 
-    private Form createProductGridPageDescriptorForm()
-    {
-        return Form.newForm().
-            addFormItem( newInput().
-                name( "rows" ).label( "Rows" ).
-                maximumOccurrences( 1 ).minimumOccurrences( 1 ).
-                inputType( InputTypes.TEXT_LINE ).build() ).
-            addFormItem( newInput().
-                name( "columns" ).label( "Columns" ).
-                maximumOccurrences( 1 ).minimumOccurrences( 1 ).
-                inputType( InputTypes.TEXT_LINE ).build() ).
-            addFormItem( newInput().
-                name( "main" ).label( "Main region" ).
-                maximumOccurrences( 1 ).minimumOccurrences( 1 ).
-                inputType( InputTypes.REGION ).build() ).
-            build();
-    }
-
     private void createDefaultPageRegions( final PageRegions.Builder pageRegions, final SiteTemplateKey siteTemplateKey )
     {
-        Region myHeaderRegion = Region.newRegion().
+        Region myHeaderRegion = newRegion().
             name( "header" ).
             add( newPartComponent().
                 name( "PartInHeader" ).
@@ -373,7 +368,7 @@ public class SitesInitializer
                 build() ).
             build();
 
-        Region myMainRegion = Region.newRegion().
+        Region myMainRegion = newRegion().
             name( "main" ).
             add( newImageComponent().
                 name( "FancyImage" ).
@@ -388,7 +383,7 @@ public class SitesInitializer
                 build() ).
             build();
 
-        Region myFooterRegion = Region.newRegion().
+        Region myFooterRegion = newRegion().
             name( "footer" ).
             add( newPartComponent().
                 name( "PartInFooter" ).
@@ -415,7 +410,7 @@ public class SitesInitializer
 
     private Form createDemoModuleForm()
     {
-        return Form.newForm().
+        return newForm().
             addFormItem(
                 newInput().name( "my-config-a" ).label( "My config A" ).maximumOccurrences( 1 ).inputType( InputTypes.TEXT_LINE ).build() ).
             addFormItem(
@@ -430,7 +425,7 @@ public class SitesInitializer
             parent( ContentPath.ROOT ).
             displayName( displayName ).
             contentType( ContentTypeName.page() ).
-            form( Form.newForm().build() ).
+            form( newForm().build() ).
             contentData( new ContentData() );
         return client.execute( createContent );
     }

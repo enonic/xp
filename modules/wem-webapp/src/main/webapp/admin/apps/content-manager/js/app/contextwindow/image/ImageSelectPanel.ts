@@ -212,7 +212,7 @@ module app.contextwindow.image {
         }
 
         private refreshUI() {
-            new api.content.GetContentByIdRequest(this.image.getImageContentId())
+            new api.content.GetContentByIdRequest(this.image.getImage())
                 .send()
                 .done((jsonResponse:api.rest.JsonResponse<api.content.json.ContentSummaryJson>) => {
                     this.setSelectedContent(new api.content.ContentSummary(jsonResponse.getResult()))

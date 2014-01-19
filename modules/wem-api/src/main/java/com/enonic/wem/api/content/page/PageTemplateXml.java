@@ -7,14 +7,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.enonic.wem.api.content.page.region.PageRegions;
 import com.enonic.wem.api.content.page.region.Region;
-import com.enonic.wem.api.data.DataSet;
-import com.enonic.wem.api.data.DataSetXml;
-import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.content.page.region.RegionXml;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.xml.template.AbstractTemplateXml;
+
+import static com.enonic.wem.api.content.page.PageRegions.newPageRegions;
 
 @XmlRootElement(name = "page-template")
 public final class PageTemplateXml
@@ -26,7 +25,7 @@ public final class PageTemplateXml
 
     @XmlElement(name = "region")
     @XmlElementWrapper(name = "regions")
-    private List<DataSetXml> regions = new ArrayList<>();
+    private List<RegionXml> regions = new ArrayList<>();
 
     @Override
     public void from( final PageTemplate template )
@@ -41,9 +40,8 @@ public final class PageTemplateXml
         {
             for ( Region region : template.getRegions() )
             {
-                final DataSet regionAsDataSet = region.toData().toDataSet( region.getName() );
-                final DataSetXml regionAsXml = new DataSetXml();
-                regionAsXml.from( regionAsDataSet );
+                final RegionXml regionAsXml = new RegionXml();
+                regionAsXml.from( region );
                 this.regions.add( regionAsXml );
             }
         }
@@ -56,13 +54,12 @@ public final class PageTemplateXml
         builder.canRender( ContentTypeNames.from( this.canRender ) );
         builder.name( new PageTemplateName( getName() ) );
 
-        PageRegions.Builder regionsBuilder = PageRegions.newPageRegions();
-        for ( DataSetXml regionAsXml : this.regions )
+        final PageRegions.Builder regionsBuilder = newPageRegions();
+        for ( RegionXml regionAsXml : this.regions )
         {
-            final RootDataSet regionAsData = new RootDataSet();
-            regionAsXml.to( regionAsData );
-            final Region region = Region.newRegion( regionAsData ).build();
-            regionsBuilder.add( region );
+            final Region.Builder regionBuilder = Region.newRegion();
+            regionAsXml.to( regionBuilder );
+            regionsBuilder.add( regionBuilder.build() );
         }
         builder.regions( regionsBuilder.build() );
     }

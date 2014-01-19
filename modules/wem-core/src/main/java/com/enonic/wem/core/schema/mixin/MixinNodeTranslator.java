@@ -22,14 +22,14 @@ import com.enonic.wem.api.form.FormItems;
 import com.enonic.wem.api.schema.SchemaId;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.Mixins;
+import com.enonic.wem.core.form.FormItemsDataSerializer;
 import com.enonic.wem.core.icon.IconDataSerializer;
-import com.enonic.wem.core.support.SerializerForFormItemToData;
 
 import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
 
 class MixinNodeTranslator
 {
-    private static final SerializerForFormItemToData SERIALIZER_FOR_FORM_ITEM_TO_DATA = new SerializerForFormItemToData();
+    private static final FormItemsDataSerializer FORM_ITEMS_SERIALIZER = new FormItemsDataSerializer();
 
     public static final String DISPLAY_NAME_PROPERTY = "displayName";
 
@@ -56,7 +56,7 @@ class MixinNodeTranslator
         IconDataSerializer.nullableToData( createMixin.getIcon(), ICON_DATA_SET, rootDataSet );
 
         final DataSet formItems = new DataSet( "formItems" );
-        for ( Data data : SERIALIZER_FOR_FORM_ITEM_TO_DATA.serializeFormItems( createMixin.getFormItems() ) )
+        for ( Data data : FORM_ITEMS_SERIALIZER.toData( createMixin.getFormItems() ) )
         {
             formItems.add( data );
         }
@@ -78,7 +78,7 @@ class MixinNodeTranslator
         rootDataSet.setProperty( "displayName", new Value.String( mixin.getDisplayName() ) );
         IconDataSerializer.nullableToData( mixin.getIcon(), ICON_DATA_SET, rootDataSet );
         final DataSet formItemsAsDataSet = new DataSet( "formItems" );
-        final List<Data> dataList = SERIALIZER_FOR_FORM_ITEM_TO_DATA.serializeFormItems( mixin.getFormItems() );
+        final List<Data> dataList = FORM_ITEMS_SERIALIZER.toData( mixin.getFormItems() );
         for ( final Data data : dataList )
         {
             formItemsAsDataSet.add( data );
@@ -110,7 +110,7 @@ class MixinNodeTranslator
     Mixin fromNode( final Node node )
     {
         final DataSet formItemsAsDataSet = node.dataSet( "formItems" );
-        final FormItems formItems = SERIALIZER_FOR_FORM_ITEM_TO_DATA.deserializeFormItems( formItemsAsDataSet );
+        final FormItems formItems = FORM_ITEMS_SERIALIZER.fromData( formItemsAsDataSet.datas() );
 
         return newMixin().
             id( new SchemaId( node.id().toString() ) ).

@@ -26,6 +26,7 @@ public class ComponentsTest
         Page page = newPage().
             template( PageTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|pageTemplateName" ) ).
             config( pageConfig ).
+            regions( PageRegions.newPageRegions().build() ).
             build();
 
         assertEquals( "pageTemplateName", page.getTemplate().getTemplateName().toString() );
@@ -40,10 +41,12 @@ public class ComponentsTest
         partConfig.addProperty( "width", new Value.Long( 150 ) );
 
         PartComponent partComponent = newPartComponent().
+            name( "my-part" ).
             template( PartTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|partTemplateName" ) ).
             config( partConfig ).
             build();
 
+        assertEquals( "my-part", partComponent.getName().toString() );
         assertEquals( "partTemplateName", partComponent.getTemplate().getTemplateName().toString() );
         assertEquals( "mainmodule-1.0.0", partComponent.getTemplate().getModuleKey().toString() );
         assertEquals( "sitetemplate-1.0.0", partComponent.getTemplate().getSiteTemplateKey().toString() );
@@ -56,10 +59,12 @@ public class ComponentsTest
         layoutConfig.addProperty( "columns", new Value.Long( 2 ) );
 
         LayoutComponent layoutComponent = newLayoutComponent().
+            name( "my-template" ).
             template( LayoutTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|layoutTemplateName" ) ).
             config( layoutConfig ).
             build();
 
+        assertEquals( "my-template", layoutComponent.getName().toString() );
         assertEquals( "layoutTemplateName", layoutComponent.getTemplate().getTemplateName().toString() );
         assertEquals( "mainmodule-1.0.0", layoutComponent.getTemplate().getModuleKey().toString() );
         assertEquals( "sitetemplate-1.0.0", layoutComponent.getTemplate().getSiteTemplateKey().toString() );

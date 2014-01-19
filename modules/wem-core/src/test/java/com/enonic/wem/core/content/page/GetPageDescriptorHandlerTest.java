@@ -62,7 +62,7 @@ public class GetPageDescriptorHandlerTest
         resourceFile.deleteOnExit();
         // 4. Write into file.
         final BufferedWriter out = new BufferedWriter( new FileWriter( resourceFile ) );
-        final String xml = readFromFile( "page-component.xml" );
+        final String xml = readFromFile( "page-descriptor.xml" );
 
         out.write( xml );
         out.close();
@@ -87,7 +87,7 @@ public class GetPageDescriptorHandlerTest
         final ModuleKey module = ModuleKey.from( "mainmodule-1.0.0" );
         final PageDescriptorKey key = PageDescriptorKey.from( module, new ComponentDescriptorName( "landing-page" ) );
 
-        final String xml = readFromFile( "page-component.xml" );
+        final String xml = readFromFile( "page-descriptor.xml" );
         final PageDescriptor.Builder builder = PageDescriptor.newPageDescriptor();
 
         XmlSerializers.pageDescriptor().parse( xml ).to( builder );

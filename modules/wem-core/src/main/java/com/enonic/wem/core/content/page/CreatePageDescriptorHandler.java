@@ -17,6 +17,7 @@ public class CreatePageDescriptorHandler
     {
         final PageDescriptor pageDescriptor = newPageDescriptor().
             config( command.getConfig() ).
+            regions( command.getRegions() ).
             displayName( command.getDisplayName() ).
             name( command.getName() ).
             key( command.getKey() ).

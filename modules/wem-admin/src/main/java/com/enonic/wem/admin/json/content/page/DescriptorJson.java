@@ -12,13 +12,18 @@ public abstract class DescriptorJson
 {
     private final Descriptor descriptor;
 
-    private final FormJson configFormJson;
+    private final FormJson configJson;
 
     public DescriptorJson( final Descriptor descriptor )
     {
         Preconditions.checkNotNull( descriptor );
         this.descriptor = descriptor;
-        this.configFormJson = new FormJson( descriptor.getConfigForm() );
+        this.configJson = new FormJson( descriptor.getConfigForm() );
+    }
+
+    public String getKey()
+    {
+        return descriptor.getKey().toString();
     }
 
     public String getName()
@@ -31,9 +36,9 @@ public abstract class DescriptorJson
         return descriptor.getDisplayName();
     }
 
-    public FormJson getConfigForm()
+    public FormJson getConfig()
     {
-        return configFormJson;
+        return configJson;
     }
 
 }

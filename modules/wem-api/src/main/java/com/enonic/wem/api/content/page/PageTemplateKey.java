@@ -14,7 +14,7 @@ public final class PageTemplateKey
 {
     private PageTemplateKey( final SiteTemplateKey siteTemplateKey, final ModuleKey moduleKey, final PageTemplateName templateName )
     {
-        super( siteTemplateKey, moduleKey, templateName , TemplateType.PAGE);
+        super( siteTemplateKey, moduleKey, templateName, TemplateType.PAGE );
     }
 
     public static PageTemplateKey from( final SiteTemplateKey siteTemplateKey, final ModuleKey moduleKey,
@@ -25,6 +25,7 @@ public final class PageTemplateKey
 
     public static PageTemplateKey from( final String templateKey )
     {
+        Preconditions.checkNotNull( templateKey, "templateKey cannot be null" );
         final String[] templateKeyParts = toArray( on( SEPARATOR ).split( templateKey ).iterator(), String.class );
         Preconditions.checkArgument( templateKeyParts.length == 3, "Invalid PageTemplateKey" );
 

@@ -1,44 +1,27 @@
 package com.enonic.wem.api.content.page.layout;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
-import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.Value;
 
 public final class LayoutComponent
     extends PageComponent<LayoutTemplateKey>
     implements RegionPlaceableComponent
 {
-    private ComponentName name;
-
-    private final RootDataSet config;
+    private LayoutRegions regions;
 
     public LayoutComponent( final Builder builder )
     {
         super( builder );
-        this.name = builder.name;
-        this.config = builder.config;
+        this.regions = builder.regions;
     }
 
-    public ComponentName getName()
+    public LayoutRegions getRegions()
     {
-        return name;
-    }
-
-    public RootDataSet getConfig()
-    {
-        return config;
-    }
-
-    @Override
-    public DataSet toDataSet()
-    {
-        final DataSet componentDataSet = super.toDataSet();
-        componentDataSet.setProperty( "name", new Value.String( this.name.toString() ) );
-        componentDataSet.setProperty( "config", new Value.Data( this.config ) );
-        return componentDataSet;
+        return regions;
     }
 
     public static Builder newLayoutComponent()
@@ -49,22 +32,11 @@ public final class LayoutComponent
     public static class Builder
         extends PageComponent.Builder<LayoutTemplateKey>
     {
-        private ComponentName name;
-
-        private RootDataSet config;
+        private LayoutRegions regions;
 
         private Builder()
         {
-            this.config = RootDataSet.newDataSet().build().toRootDataSet();
-        }
 
-        public Builder from( final DataSet dataSet )
-        {
-            final Builder builder = new Builder();
-            builder.name( new ComponentName( dataSet.getProperty( "name" ).getString() ) );
-            builder.template( LayoutTemplateKey.from( dataSet.getProperty( "template" ).getString() ) );
-            builder.config( dataSet.getProperty( "config" ).getData() );
-            return builder;
         }
 
         public Builder name( ComponentName value )
@@ -75,7 +47,7 @@ public final class LayoutComponent
 
         public Builder name( String value )
         {
-            this.name = new ComponentName(value);
+            this.name = new ComponentName( value );
             return this;
         }
 
@@ -90,6 +62,13 @@ public final class LayoutComponent
             this.config = config;
             return this;
         }
+
+        public Builder regions( final LayoutRegions value )
+        {
+            this.regions = value;
+            return this;
+        }
+
 
         public LayoutComponent build()
         {

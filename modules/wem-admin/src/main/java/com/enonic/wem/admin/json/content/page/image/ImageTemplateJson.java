@@ -14,6 +14,8 @@ public class ImageTemplateJson
 
     private final ImageDescriptorJson descriptorJson;
 
+    private final ImageTemplate imageTemplate;
+
     public ImageTemplateJson( final ImageTemplate template )
     {
         this( template, null );
@@ -22,6 +24,7 @@ public class ImageTemplateJson
     public ImageTemplateJson( final ImageTemplate template, final ImageDescriptorJson descriptorJson )
     {
         super( template );
+        this.imageTemplate = template;
         this.configJson = new RootDataSetJson( imageTemplate.getConfig() );
         this.descriptorJson = descriptorJson;
     }
@@ -29,6 +32,11 @@ public class ImageTemplateJson
     public List<DataJson> getConfig()
     {
         return configJson.getSet();
+    }
+
+    public String getImage()
+    {
+        return imageTemplate.getImage() != null ? imageTemplate.getImage().toString() : null;
     }
 
     public ImageDescriptorJson getDescriptor()

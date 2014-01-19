@@ -1,38 +1,46 @@
-module api.content.page{
+module api.content.page {
 
-    export class Descriptor{
+    export class Descriptor {
 
-        private name:DescriptorName;
+        private key:string;
 
-        private displayName:string;
+        private name: DescriptorName;
 
-        private form:api.form.Form;
+        private displayName: string;
 
-        constructor(builder:DescriptorBuilder) {
+        private config: api.form.Form;
+
+        constructor(builder: DescriptorBuilder) {
             this.name = builder.name;
             this.displayName = builder.displayName;
-            this.form = builder.form;
+            this.config = builder.config;
         }
 
-        getName():DescriptorName {
+        getKey(): string {
+            return this.key;
+        }
+
+        getName(): DescriptorName {
             return this.name;
         }
 
-        getDisplayName():string {
+        getDisplayName(): string {
             return this.displayName;
         }
 
-        getForm():api.form.Form {
-            return this.form;
+        getConfig(): api.form.Form {
+            return this.config;
         }
     }
 
     export class DescriptorBuilder {
 
-        name:DescriptorName;
+        key: string;
 
-        displayName:string;
+        name: DescriptorName;
 
-        form:api.form.Form;
+        displayName: string;
+
+        config: api.form.Form;
     }
 }

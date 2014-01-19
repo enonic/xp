@@ -1,6 +1,8 @@
 package com.enonic.wem.api.content.page.layout;
 
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.content.page.Template;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.support.Changes;
@@ -11,14 +13,24 @@ import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 public class LayoutTemplate
     extends Template<LayoutTemplateName, LayoutTemplateKey, LayoutDescriptorKey>
 {
+    private final LayoutRegions regions;
+
     private LayoutTemplate( final Builder builder )
     {
         super( builder );
+        Preconditions.checkNotNull( builder.regions, "regions cannot be null" );
+        this.regions = builder.regions;
     }
 
     private LayoutTemplate( final LayoutTemplateProperties properties )
     {
         super( properties );
+        this.regions = properties.regions;
+    }
+
+    public LayoutRegions getRegions()
+    {
+        return regions;
     }
 
     public static LayoutTemplate.Builder newLayoutTemplate()
@@ -29,8 +41,16 @@ public class LayoutTemplate
     public static class Builder
         extends BaseTemplateBuilder<Builder, LayoutTemplate, LayoutTemplateName, LayoutTemplateKey, LayoutDescriptorKey>
     {
+        private LayoutRegions regions;
+
         private Builder()
         {
+        }
+
+        public Builder regions( final LayoutRegions regions )
+        {
+            this.regions = regions;
+            return this;
         }
 
         public LayoutTemplate build()
@@ -42,7 +62,7 @@ public class LayoutTemplate
     public static class LayoutTemplateProperties
         extends TemplateProperties
     {
-
+        LayoutRegions regions;
     }
 
     public static LayoutTemplateEditBuilder editLayoutTemplate( final LayoutTemplate toBeEdited )
@@ -81,6 +101,13 @@ public class LayoutTemplate
         {
             changes.recordChange( newPossibleChange( "config" ).from( this.original.getConfig() ).to( value ).build() );
             this.config = value;
+            return this;
+        }
+
+        public LayoutTemplateEditBuilder regions( final LayoutRegions value )
+        {
+            changes.recordChange( newPossibleChange( "regions" ).from( this.original.getRegions() ).to( value ).build() );
+            this.regions = value;
             return this;
         }
 

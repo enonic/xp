@@ -7,14 +7,15 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.enonic.wem.admin.json.content.page.region.PageRegionsJson;
+import com.enonic.wem.admin.json.content.page.region.RegionJson;
 import com.enonic.wem.admin.json.data.DataJson;
+import com.enonic.wem.admin.json.data.RootDataSetJson;
 import com.enonic.wem.api.command.content.page.UpdatePage;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageEditor;
 import com.enonic.wem.api.content.page.PageTemplateKey;
-import com.enonic.wem.api.content.page.region.PageRegions;
-import com.enonic.wem.api.data.RootDataSet;
 
 import static com.enonic.wem.api.content.page.Page.editPage;
 
@@ -23,8 +24,8 @@ public class UpdatePageJson
     private final UpdatePage updatePage;
 
     @JsonCreator
-    public UpdatePageJson( @JsonProperty("contentId") final String contentId, @JsonProperty("pageTemplateKey") final String pageTemplateKey,
-                           @JsonProperty("config") final List<DataJson> config )
+    public UpdatePageJson( @JsonProperty("contentId") final String contentId, @JsonProperty("template") final String pageTemplateKey,
+                           @JsonProperty("config") final List<DataJson> config, final @JsonProperty("regions") List<RegionJson> regions )
     {
         this.updatePage = new UpdatePage().
             content( ContentId.from( contentId ) ).
@@ -35,8 +36,8 @@ public class UpdatePageJson
                 {
                     return editPage( toBeEdited ).
                         template( PageTemplateKey.from( pageTemplateKey ) ).
-                        regions( PageRegions.newPageRegions().build() ).
-                        config( parseData( config ) );
+                        regions( regions != null ? new PageRegionsJson( regions ).getPageRegions() : null ).
+                        config( config != null ? new RootDataSetJson( config ).getRootDataSet() : null );
                 }
             } );
     }
@@ -45,15 +46,5 @@ public class UpdatePageJson
     public UpdatePage getUpdatePage()
     {
         return updatePage;
-    }
-
-    private static RootDataSet parseData( final List<DataJson> dataJsonList )
-    {
-        final RootDataSet data = new RootDataSet();
-        for ( DataJson dataJson : dataJsonList )
-        {
-            data.add( dataJson.getData() );
-        }
-        return data;
     }
 }

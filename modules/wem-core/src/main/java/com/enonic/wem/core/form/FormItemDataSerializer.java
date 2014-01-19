@@ -1,8 +1,6 @@
-package com.enonic.wem.core.support;
+package com.enonic.wem.core.form;
 
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
@@ -16,13 +14,13 @@ import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItemSet;
-import com.enonic.wem.api.form.FormItems;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.Layout;
 import com.enonic.wem.api.form.MixinReference;
 import com.enonic.wem.api.form.Occurrences;
 import com.enonic.wem.api.form.inputtype.InputType;
 import com.enonic.wem.api.form.inputtype.InputTypeConfig;
+import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;
 import com.enonic.wem.core.form.inputtype.InputTypeResolver;
 
 import static com.enonic.wem.api.data.DataSet.newDataSet;
@@ -30,21 +28,20 @@ import static com.enonic.wem.api.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.form.Input.newInput;
 
-public class SerializerForFormItemToData
+public class FormItemDataSerializer
+    extends AbstractDataSetSerializer<FormItem, FormItem>
 {
-
-    public List<Data> serializeFormItems( FormItems formItems )
+    public DataSet toData( final FormItem formItem )
     {
-        List<Data> data = new ArrayList<>();
-        for ( FormItem formItem : formItems )
-        {
-            data.add( serializeFormItem( formItem ) );
-        }
-
-        return data;
+        return serializeFormItem( formItem );
     }
 
-    public Data serializeFormItem( FormItem formItem )
+    public FormItem fromData( final DataSet dataSet )
+    {
+        return deserializeFormItem( dataSet );
+    }
+
+    private DataSet serializeFormItem( FormItem formItem )
     {
 
         if ( formItem instanceof Input )
@@ -62,9 +59,11 @@ public class SerializerForFormItemToData
         else if ( formItem instanceof Layout )
         {
             return serializeLayout( (Layout) formItem );
-
         }
-        throw new UnsupportedOperationException();
+        else
+        {
+            throw new UnsupportedOperationException( "FormItem not serializable: " + formItem.getClass().getSimpleName() );
+        }
     }
 
     private DataSet serializeInput( final Input input )
@@ -193,44 +192,31 @@ public class SerializerForFormItemToData
         return dataSet;
     }
 
-    public FormItems deserializeFormItems( final Iterable<Data> formItemsAsData )
+    private FormItem deserializeFormItem( final DataSet formItemAsData )
     {
-        FormItems formItems = new FormItems();
-        if ( formItemsAsData != null )
-        {
-            for ( final Data formItemAsData : formItemsAsData )
-            {
-                formItems.add( deserializeFormItem( formItemAsData ) );
-            }
-        }
-        return formItems;
-    }
+        final DataSet formItemAsDataSet = formItemAsData.toDataSet();
+        final String formItemType = formItemAsDataSet.getName();
 
-    private FormItem deserializeFormItem( final Data formItemAsData )
-    {
-        if ( formItemAsData.isDataSet() )
+        if ( "Input".equals( formItemType ) )
         {
-            final DataSet formItemAsDataSet = formItemAsData.toDataSet();
-            final String formItemType = formItemAsDataSet.getName();
-
-            if ( "Input".equals( formItemType ) )
-            {
-                return deserializeInput( formItemAsDataSet );
-            }
-            else if ( "FormItemSet".equals( formItemType ) )
-            {
-                return deserializeFormItemSet( formItemAsDataSet );
-            }
-            else if ( "Layout".equals( formItemType ) )
-            {
-                return deserializeLayout( formItemAsDataSet );
-            }
-            else if ( "MixinReference".equals( formItemType ) )
-            {
-                return deserializeMixinReference( formItemAsDataSet );
-            }
+            return deserializeInput( formItemAsDataSet );
         }
-        return null;
+        else if ( "FormItemSet".equals( formItemType ) )
+        {
+            return deserializeFormItemSet( formItemAsDataSet );
+        }
+        else if ( "Layout".equals( formItemType ) )
+        {
+            return deserializeLayout( formItemAsDataSet );
+        }
+        else if ( "MixinReference".equals( formItemType ) )
+        {
+            return deserializeMixinReference( formItemAsDataSet );
+        }
+        else
+        {
+            throw new UnsupportedOperationException( "FormItem not serializable: " + formItemType );
+        }
     }
 
     private Input deserializeInput( final DataSet inputAsDataSet )
@@ -335,7 +321,7 @@ public class SerializerForFormItemToData
         final DataSet itemsDataSet = formItemAsDataSet.getDataSet( "items" );
         for ( final Data data : itemsDataSet )
         {
-            builder.addFormItem( deserializeFormItem( data ) );
+            builder.addFormItem( deserializeFormItem( data.toDataSet() ) );
         }
 
         return builder.build();
@@ -361,7 +347,7 @@ public class SerializerForFormItemToData
         final DataSet itemsDataSet = fieldSetAsDataSet.getDataSet( "items" );
         for ( final Data data : itemsDataSet )
         {
-            builder.addFormItem( deserializeFormItem( data ) );
+            builder.addFormItem( deserializeFormItem( data.toDataSet() ) );
         }
 
         return builder.build();

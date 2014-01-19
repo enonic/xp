@@ -22,6 +22,8 @@ import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
+import static com.enonic.wem.api.content.page.PageRegions.newPageRegions;
+
 public class PageResourceTest
     extends AbstractResourceTest
 {
@@ -98,6 +100,7 @@ public class PageResourceTest
         Page page = Page.newPage().
             template( PageTemplateKey.from( "template-1.0.0|mymodule-1.0.0|my-page" ) ).
             config( rootDataSet ).
+            regions( newPageRegions().build() ).
             build();
 
         return Content.newContent().

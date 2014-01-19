@@ -20,7 +20,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.part.PartTemplateKey;
-import com.enonic.wem.api.content.page.region.PageRegions;
+import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
@@ -33,7 +33,7 @@ import com.enonic.wem.portal.rendering.Renderer;
 import com.enonic.wem.portal.rendering.RendererFactory;
 
 import static com.enonic.wem.api.content.page.part.PartComponent.newPartComponent;
-import static com.enonic.wem.api.content.page.region.PageRegions.newPageRegions;
+import static com.enonic.wem.api.content.page.PageRegions.newPageRegions;
 import static com.enonic.wem.api.content.page.region.Region.newRegion;
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.any;

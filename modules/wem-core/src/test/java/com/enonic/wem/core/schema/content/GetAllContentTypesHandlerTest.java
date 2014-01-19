@@ -24,7 +24,7 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
-import com.enonic.wem.core.support.SerializerForFormItemToData;
+import com.enonic.wem.core.form.FormItemsDataSerializer;
 
 import static com.enonic.wem.api.form.Form.newForm;
 import static com.enonic.wem.api.form.Input.newInput;
@@ -37,7 +37,7 @@ public class GetAllContentTypesHandlerTest
 {
     private GetAllContentTypesHandler handler;
 
-    private static final SerializerForFormItemToData SERIALIZER_FOR_FORM_ITEM_TO_DATA = new SerializerForFormItemToData();
+    private static final FormItemsDataSerializer SERIALIZER_FOR_FORM_ITEM_TO_DATA = new FormItemsDataSerializer();
 
     @Before
     public void setUp()
@@ -135,7 +135,7 @@ public class GetAllContentTypesHandlerTest
         final DataSet formItems = new DataSet( "formItems" );
         formAsDataSet.add( formItems );
 
-        for ( Data data : SERIALIZER_FOR_FORM_ITEM_TO_DATA.serializeFormItems( form.getFormItems() ) )
+        for ( Data data : SERIALIZER_FOR_FORM_ITEM_TO_DATA.toData( form.getFormItems() ) )
         {
             formItems.add( data );
         }

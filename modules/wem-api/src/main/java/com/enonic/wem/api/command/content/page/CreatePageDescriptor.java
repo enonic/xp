@@ -7,6 +7,7 @@ import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
+import com.enonic.wem.api.content.page.region.RegionDescriptors;
 import com.enonic.wem.api.form.Form;
 
 public class CreatePageDescriptor
@@ -19,6 +20,8 @@ public class CreatePageDescriptor
     private String displayName;
 
     private Form config;
+
+    private RegionDescriptors regions;
 
     public CreatePageDescriptor()
     {
@@ -54,6 +57,12 @@ public class CreatePageDescriptor
         return this;
     }
 
+    public CreatePageDescriptor regions( final RegionDescriptors value )
+    {
+        this.regions = value;
+        return this;
+    }
+
     public PageDescriptorKey getKey()
     {
         return key;
@@ -74,11 +83,18 @@ public class CreatePageDescriptor
         return config;
     }
 
+    public RegionDescriptors getRegions()
+    {
+        return regions;
+    }
+
     @Override
     public void validate()
     {
         Preconditions.checkNotNull( key, "key is required" );
         Preconditions.checkNotNull( name, "name is required" );
         Preconditions.checkNotNull( displayName, "displayName is required" );
+        Preconditions.checkNotNull( regions, "regions are required" );
+        Preconditions.checkNotNull( config, "config is required" );
     }
 }

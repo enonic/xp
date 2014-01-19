@@ -35,7 +35,7 @@ public class ContentPropertyIndexConfigVisitor
 
         if ( basePath.getParent().equals( DataPath.ROOT ) )
         {
-            if ( ContentNodeTranslator.DISPLAY_NAME_PATH.equals( property.getName() ) )
+            if ( ContentDataSerializer.DISPLAY_NAME.equals( property.getName() ) )
             {
                 builder.addPropertyIndexConfig( property, PropertyIndexConfig.INDEXALL_PROPERTY_CONFIG );
             }
@@ -44,7 +44,7 @@ public class ContentPropertyIndexConfigVisitor
                 builder.addPropertyIndexConfig( property, CONTENT_ROOT_DEFAULT_INDEX_CONFIG );
             }
         }
-        else if ( isChildOf( basePath, ContentNodeTranslator.CONTENT_DATA_PATH ) )
+        else if ( isChildOf( basePath, ContentDataSerializer.CONTENT_DATA ) )
         {
             builder.addPropertyIndexConfig( property, PropertyIndexConfig.newPropertyIndexConfig().
                 enabled( true ).
@@ -60,7 +60,7 @@ public class ContentPropertyIndexConfigVisitor
                 fulltextEnabled( false ).
                 build() );
         }
-        else if ( isChildOf( basePath, ContentNodeTranslator.PAGE_CONFIG_PATH ) )
+        else if ( isChildOf( basePath, ContentDataSerializer.PAGE ) )
         {
             builder.addPropertyIndexConfig( property, PropertyIndexConfig.newPropertyIndexConfig().
                 enabled( false ).

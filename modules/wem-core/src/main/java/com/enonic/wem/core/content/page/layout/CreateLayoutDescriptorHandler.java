@@ -18,6 +18,7 @@ public class CreateLayoutDescriptorHandler
     {
         final LayoutDescriptor layoutDescriptor = newLayoutDescriptor().
             config( command.getConfig() ).
+            regions( command.getRegions() ).
             displayName( command.getDisplayName() ).
             name( command.getName() ).
             key( command.getKey() ).

@@ -7,6 +7,7 @@ import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
+import com.enonic.wem.api.content.page.region.RegionDescriptors;
 import com.enonic.wem.api.form.Form;
 
 public class CreateLayoutDescriptor
@@ -19,6 +20,8 @@ public class CreateLayoutDescriptor
     private String displayName;
 
     private Form config;
+
+    private RegionDescriptors regions;
 
     public CreateLayoutDescriptor()
     {
@@ -48,6 +51,12 @@ public class CreateLayoutDescriptor
         return this;
     }
 
+    public CreateLayoutDescriptor regions( final RegionDescriptors value )
+    {
+        this.regions = value;
+        return this;
+    }
+
     public LayoutDescriptorKey getKey()
     {
         return key;
@@ -68,11 +77,18 @@ public class CreateLayoutDescriptor
         return config;
     }
 
+    public RegionDescriptors getRegions()
+    {
+        return regions;
+    }
+
     @Override
     public void validate()
     {
         Preconditions.checkNotNull( key, "key is required" );
         Preconditions.checkNotNull( name, "name is required" );
         Preconditions.checkNotNull( displayName, "displayName is required" );
+        Preconditions.checkNotNull( config, "config cannot be null" );
+        Preconditions.checkNotNull( regions, "regions cannot be null" );
     }
 }

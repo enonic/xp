@@ -14,6 +14,7 @@ import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
+import static com.enonic.wem.api.content.page.layout.LayoutRegions.newLayoutRegions;
 import static org.junit.Assert.*;
 
 public class TemplatesTest
@@ -64,6 +65,7 @@ public class TemplatesTest
             displayName( "Layout template" ).
             config( layoutTemplateConfig ).
             descriptor( LayoutDescriptorKey.from( ModuleKey.from( "mainmodule-1.0.0" ), new ComponentDescriptorName( "some-layout" ) ) ).
+            regions( newLayoutRegions().build() ).
             build();
 
         assertEquals( "my-layout", layoutTemplate.getName().toString() );

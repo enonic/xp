@@ -25,7 +25,7 @@
         "value" : "value1"
       }
     } ],
-    "regions" : null,
+    "regions" : [],
     "template" : "template-1.0.0|mymodule-1.0.0|my-page"
   },
   "path" : "/content-name",

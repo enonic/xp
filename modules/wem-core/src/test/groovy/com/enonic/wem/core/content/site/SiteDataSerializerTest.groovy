@@ -11,15 +11,13 @@ import spock.lang.Specification
 
 import static com.enonic.wem.api.content.site.ModuleConfig.newModuleConfig
 
-class SiteSerializerTest
+class SiteDataSerializerTest
         extends Specification
 {
-
-
     def "Site -> toData -> toSite -> Site2 should be equal"()
     {
         given:
-        SiteSerializer siteSerializer = new SiteSerializer();
+        SiteDataSerializer siteSerializer = new SiteDataSerializer( "mySiteDataSet" );
 
         Site site =
                 Site.newSite().template( SiteTemplateKey.from( new SiteTemplateName( "unchanged" ), new SiteTemplateVersion( "1.0.0" ) ) ).
@@ -30,8 +28,8 @@ class SiteSerializerTest
                         build();
 
         when:
-        DataSet siteAsData = siteSerializer.toData( site, "mySiteDataSet" );
-        Site newSite = siteSerializer.toSite( siteAsData );
+        DataSet siteAsData = siteSerializer.toData( site );
+        Site newSite = siteSerializer.fromData( siteAsData );
 
         then:
         newSite.equals( site );

@@ -47,6 +47,15 @@ module api.content.page.region {
             return wantedName.createDuplicate(instanceCount);
         }
 
+        getRegions(): Region[] {
+            var regions = [];
+            for (var i in this.regionByName) {
+                var region = this.regionByName[i];
+                regions.push(region);
+            }
+            return regions;
+        }
+
         getRegion(name: string): Region {
             return this.regionByName[name];
         }
@@ -64,6 +73,15 @@ module api.content.page.region {
             }
 
             return null;
+        }
+
+        public toJson(): json.RegionJson[] {
+
+            var regionJsons: json.RegionJson[] = [];
+            this.getRegions().forEach((region: Region) => {
+                regionJsons.push(region.toJson());
+            });
+            return regionJsons;
         }
     }
 

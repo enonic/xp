@@ -21,6 +21,7 @@ import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
+import static com.enonic.wem.api.content.page.layout.LayoutRegions.newLayoutRegions;
 import static com.enonic.wem.api.content.site.ContentTypeFilter.newContentFilter;
 import static com.enonic.wem.api.content.site.Vendor.newVendor;
 import static org.junit.Assert.*;
@@ -77,6 +78,7 @@ public class SiteTemplateTest
             displayName( "Layout template" ).
             config( layoutTemplateConfig ).
             descriptor( LayoutDescriptorKey.from( "mainmodule-1.0.0:some-layout" ) ).
+            regions( newLayoutRegions().build() ).
             build();
 
         final RootDataSet pageTemplateConfig = new RootDataSet();

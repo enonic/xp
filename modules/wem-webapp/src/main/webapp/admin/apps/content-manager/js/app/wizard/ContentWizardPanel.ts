@@ -385,13 +385,8 @@ module app.wizard {
                 .setPageTemplateKey(this.pageWizardStepForm.getPageTemplate().getKey());
 
             var config = this.pageWizardStepForm.getConfig();
-            if (config != null) {
-                createRequest.setConfig(config);
-            }
-            else {
-                createRequest.setConfig(new api.data.RootDataSet() );
-            }
-
+            createRequest.setConfig(config);
+            createRequest.setRegions(null);
 
             return createRequest;
         }

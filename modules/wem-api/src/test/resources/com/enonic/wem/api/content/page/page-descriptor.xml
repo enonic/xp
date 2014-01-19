@@ -38,4 +38,9 @@
       <immutable>false</immutable>
     </form-item-set>
   </config>
+  <regions>
+    <region name="header"/>
+    <region name="main"/>
+    <region name="footer"/>
+  </regions>
 </page-component>

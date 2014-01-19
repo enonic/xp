@@ -1,13 +1,9 @@
 package com.enonic.wem.core.schema.content;
 
-import java.util.List;
-
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.entity.CreateNode;
 import com.enonic.wem.api.command.entity.UpdateNode;
 import com.enonic.wem.api.command.schema.content.CreateContentType;
-import com.enonic.wem.api.data.Data;
-import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.EntityId;
@@ -17,20 +13,20 @@ import com.enonic.wem.api.entity.NodeEditor;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
-import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.form.FormItems;
 import com.enonic.wem.api.schema.SchemaId;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
+import com.enonic.wem.core.form.FormDataSerializer;
 import com.enonic.wem.core.icon.IconDataSerializer;
-import com.enonic.wem.core.support.SerializerForFormItemToData;
 
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 
 public class ContentTypeNodeTranslator
 {
-    private static final SerializerForFormItemToData SERIALIZER_FOR_FORM_ITEM_TO_DATA = new SerializerForFormItemToData();
+    public static final String FORM_PATH = "form";
+
+    private static final FormDataSerializer FORM_SERIALIZER = new FormDataSerializer( FORM_PATH );
 
     public static final String DISPLAY_NAME_PROPERTY = "displayName";
 
@@ -47,12 +43,6 @@ public class ContentTypeNodeTranslator
     public static final String ABSTRACT_PROPERTY = "abstract";
 
     public static final String FINAL_PROPERTY = "final";
-
-    public static final String FORM_PATH = "form";
-
-    public static final String FORMITEMS_DATA_PATH = "formItems";
-
-    public static final String FORMITEMS_FULL_PATH = "form.formItems";
 
     public CreateNode toCreateNodeCommand( final CreateContentType command )
     {
@@ -75,29 +65,20 @@ public class ContentTypeNodeTranslator
 
     public RootDataSet propertiesToRootDataSet( final CreateContentType command )
     {
-        final RootDataSet rootDataSet = new RootDataSet();
-        addPropertyIfNotNull( rootDataSet, DISPLAY_NAME_PROPERTY, command.getDisplayName() );
-        IconDataSerializer.nullableToData( command.getIcon(), ICON_DATA_SET, rootDataSet );
-        addPropertyIfNotNull( rootDataSet, SUPER_TYPE_PROPERTY, command.getSuperType() );
-        addPropertyIfNotNull( rootDataSet, CONTENT_DISPLAY_NAME_SCRIPT_PROPERTY, command.getContentDisplayNameScript() );
-        addPropertyIfNotNull( rootDataSet, ALLOW_CHILD_CONTENT_PROPERTY, Boolean.toString( command.getAllowChildContent() ) );
-        addPropertyIfNotNull( rootDataSet, BUILT_IN_PROPERTY, Boolean.toString( command.isBuiltIn() ) );
-        addPropertyIfNotNull( rootDataSet, ABSTRACT_PROPERTY, Boolean.toString( command.isAbstract() ) );
-        addPropertyIfNotNull( rootDataSet, FINAL_PROPERTY, Boolean.toString( command.isFinal() ) );
+        final RootDataSet contentTypeAsData = new RootDataSet();
+        addPropertyIfNotNull( contentTypeAsData, DISPLAY_NAME_PROPERTY, command.getDisplayName() );
+        IconDataSerializer.nullableToData( command.getIcon(), ICON_DATA_SET, contentTypeAsData );
+        addPropertyIfNotNull( contentTypeAsData, SUPER_TYPE_PROPERTY, command.getSuperType() );
+        addPropertyIfNotNull( contentTypeAsData, CONTENT_DISPLAY_NAME_SCRIPT_PROPERTY, command.getContentDisplayNameScript() );
+        addPropertyIfNotNull( contentTypeAsData, ALLOW_CHILD_CONTENT_PROPERTY, Boolean.toString( command.getAllowChildContent() ) );
+        addPropertyIfNotNull( contentTypeAsData, BUILT_IN_PROPERTY, Boolean.toString( command.isBuiltIn() ) );
+        addPropertyIfNotNull( contentTypeAsData, ABSTRACT_PROPERTY, Boolean.toString( command.isAbstract() ) );
+        addPropertyIfNotNull( contentTypeAsData, FINAL_PROPERTY, Boolean.toString( command.isFinal() ) );
 
-        final DataSet form = new DataSet( FORM_PATH );
-        final DataSet formItems = new DataSet( FORMITEMS_DATA_PATH );
-        form.add( formItems );
+        contentTypeAsData.add( FORM_SERIALIZER.toData( command.getForm() ) );
 
-        for ( Data data : SERIALIZER_FOR_FORM_ITEM_TO_DATA.serializeFormItems( command.getForm().getFormItems() ) )
-        {
-            formItems.add( data );
-        }
-        rootDataSet.add( form );
-
-        return rootDataSet;
+        return contentTypeAsData;
     }
-
 
     UpdateNode toUpdateNodeCommand( final SchemaId id, final NodeEditor editor )
     {
@@ -108,26 +89,17 @@ public class ContentTypeNodeTranslator
 
     NodeEditor toNodeEditor( final ContentType contentType )
     {
-        final RootDataSet rootDataSet = new RootDataSet();
-        addPropertyIfNotNull( rootDataSet, DISPLAY_NAME_PROPERTY, contentType.getDisplayName() );
-        IconDataSerializer.nullableToData( contentType.getIcon(), ICON_DATA_SET, rootDataSet );
-        addPropertyIfNotNull( rootDataSet, SUPER_TYPE_PROPERTY, contentType.getSuperType() );
-        addPropertyIfNotNull( rootDataSet, CONTENT_DISPLAY_NAME_SCRIPT_PROPERTY, contentType.getContentDisplayNameScript() );
-        addPropertyIfNotNull( rootDataSet, ALLOW_CHILD_CONTENT_PROPERTY, Boolean.toString( contentType.allowChildContent() ) );
-        addPropertyIfNotNull( rootDataSet, BUILT_IN_PROPERTY, Boolean.toString( contentType.isBuiltIn() ) );
-        addPropertyIfNotNull( rootDataSet, ABSTRACT_PROPERTY, Boolean.toString( contentType.isAbstract() ) );
-        addPropertyIfNotNull( rootDataSet, FINAL_PROPERTY, Boolean.toString( contentType.isFinal() ) );
+        final RootDataSet contentTypeAsData = new RootDataSet();
+        addPropertyIfNotNull( contentTypeAsData, DISPLAY_NAME_PROPERTY, contentType.getDisplayName() );
+        IconDataSerializer.nullableToData( contentType.getIcon(), ICON_DATA_SET, contentTypeAsData );
+        addPropertyIfNotNull( contentTypeAsData, SUPER_TYPE_PROPERTY, contentType.getSuperType() );
+        addPropertyIfNotNull( contentTypeAsData, CONTENT_DISPLAY_NAME_SCRIPT_PROPERTY, contentType.getContentDisplayNameScript() );
+        addPropertyIfNotNull( contentTypeAsData, ALLOW_CHILD_CONTENT_PROPERTY, Boolean.toString( contentType.allowChildContent() ) );
+        addPropertyIfNotNull( contentTypeAsData, BUILT_IN_PROPERTY, Boolean.toString( contentType.isBuiltIn() ) );
+        addPropertyIfNotNull( contentTypeAsData, ABSTRACT_PROPERTY, Boolean.toString( contentType.isAbstract() ) );
+        addPropertyIfNotNull( contentTypeAsData, FINAL_PROPERTY, Boolean.toString( contentType.isFinal() ) );
 
-        final DataSet form = new DataSet( FORM_PATH );
-        final DataSet formItems = new DataSet( FORMITEMS_DATA_PATH );
-        form.add( formItems );
-        final List<Data> dataList = SERIALIZER_FOR_FORM_ITEM_TO_DATA.serializeFormItems( contentType.form().getFormItems() );
-
-        for ( final Data data : dataList )
-        {
-            formItems.add( data );
-        }
-        rootDataSet.add( form );
+        contentTypeAsData.add( FORM_SERIALIZER.toData( contentType.form() ) );
 
         return new NodeEditor()
         {
@@ -136,19 +108,10 @@ public class ContentTypeNodeTranslator
             {
                 return Node.editNode( toBeEdited ).
                     name( NodeName.from( contentType.getName().toString() ) ).
-                    rootDataSet( rootDataSet );
+                    rootDataSet( contentTypeAsData );
             }
         };
     }
-
-    private void addPropertyIfNotNull( final RootDataSet rootDataSet, final String propertyName, final Object value )
-    {
-        if ( value != null )
-        {
-            rootDataSet.setProperty( propertyName, new Value.String( value.toString() ) );
-        }
-    }
-
 
     ContentTypes fromNodes( final Nodes nodes )
     {
@@ -160,60 +123,68 @@ public class ContentTypeNodeTranslator
         }
 
         return contentTypesBuilder.build();
-
     }
 
     ContentType fromNode( final Node node )
     {
-        final DataSet formItemsAsDataSet = node.dataSet( FORMITEMS_FULL_PATH );
-        final FormItems formItems = SERIALIZER_FOR_FORM_ITEM_TO_DATA.deserializeFormItems( formItemsAsDataSet );
+        final RootDataSet contentTypeAsData = node.data();
 
         final ContentType.Builder builder = newContentType().
             id( new SchemaId( node.id().toString() ) ).
             name( node.name().toString() ).
-            form( Form.newForm().addFormItems( formItems ).build() ).
             createdTime( node.getCreatedTime() ).
             creator( node.getCreator() ).
             modifiedTime( node.getModifiedTime() ).
             modifier( node.getModifier() ).
             icon( IconDataSerializer.toIconNullable( node.dataSet( ICON_DATA_SET ) ) );
 
-        if ( node.property( DISPLAY_NAME_PROPERTY ) != null )
+        if ( contentTypeAsData.hasData( FORM_PATH ) )
+        {
+            builder.form( FORM_SERIALIZER.fromData( contentTypeAsData.getDataSet( FORM_PATH ) ) );
+        }
+
+        if ( contentTypeAsData.hasData( DISPLAY_NAME_PROPERTY ) )
         {
             builder.displayName( node.property( DISPLAY_NAME_PROPERTY ).getString() );
         }
 
-        if ( node.property( ALLOW_CHILD_CONTENT_PROPERTY ) != null )
+        if ( contentTypeAsData.hasData( ALLOW_CHILD_CONTENT_PROPERTY ) )
         {
             builder.allowChildContent( Boolean.valueOf( node.property( ALLOW_CHILD_CONTENT_PROPERTY ).getString() ) );
         }
 
-        if ( node.property( CONTENT_DISPLAY_NAME_SCRIPT_PROPERTY ) != null )
+        if ( contentTypeAsData.hasData( CONTENT_DISPLAY_NAME_SCRIPT_PROPERTY ) )
         {
             builder.contentDisplayNameScript( node.property( CONTENT_DISPLAY_NAME_SCRIPT_PROPERTY ).getString() );
         }
 
-        if ( node.property( SUPER_TYPE_PROPERTY ) != null )
+        if ( contentTypeAsData.hasData( SUPER_TYPE_PROPERTY ) )
         {
             builder.superType( ContentTypeName.from( node.property( SUPER_TYPE_PROPERTY ).getString() ) );
         }
 
-        if ( node.property( BUILT_IN_PROPERTY ) != null )
+        if ( contentTypeAsData.hasData( BUILT_IN_PROPERTY ) )
         {
             builder.builtIn( Boolean.valueOf( node.property( BUILT_IN_PROPERTY ).getString() ) );
         }
 
-        if ( node.property( FINAL_PROPERTY ) != null )
+        if ( contentTypeAsData.hasData( FINAL_PROPERTY ) )
         {
-
             builder.setFinal( Boolean.valueOf( node.property( FINAL_PROPERTY ).getString() ) );
         }
-        if ( node.property( ABSTRACT_PROPERTY ) != null )
+        if ( contentTypeAsData.hasData( ABSTRACT_PROPERTY ) )
         {
-
             builder.setAbstract( Boolean.valueOf( node.property( ABSTRACT_PROPERTY ).getString() ) );
         }
 
         return builder.build();
+    }
+
+    private void addPropertyIfNotNull( final RootDataSet rootDataSet, final String propertyName, final Object value )
+    {
+        if ( value != null )
+        {
+            rootDataSet.setProperty( propertyName, new Value.String( value.toString() ) );
+        }
     }
 }

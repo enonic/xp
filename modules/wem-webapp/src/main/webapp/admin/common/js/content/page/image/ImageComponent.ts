@@ -2,59 +2,46 @@ module api.content.page.image {
 
     export class ImageComponent extends api.content.page.PageComponent<ImageTemplateKey> {
 
-        private config: api.data.RootDataSet;
-
-        private imageContent: api.content.ContentId;
+        private image: api.content.ContentId;
 
         constructor(builder?: ImageComponentBuilder) {
             super(builder);
             if (builder) {
-                this.config = builder.config;
-                this.imageContent = builder.imageContent;
+                this.image = builder.image;
             }
         }
 
-
-        getConfig(): api.data.RootDataSet {
-            return this.config;
+        getImage(): api.content.ContentId {
+            return this.image;
         }
 
-        getImageContentId(): api.content.ContentId {
-            return this.imageContent;
+        setImage(value: api.content.ContentId) {
+            this.image = value;
         }
 
-        setConfig(value: api.data.RootDataSet) {
-            this.config = value;
-        }
-
-        setImageContent(value: api.content.ContentId) {
-            this.imageContent = value;
+        toJson(): json.ImageComponentJson {
+            var json:json.ImageComponentJson = <json.ImageComponentJson>super.toJson();
+            json.image = this.image.toString();
+            return json;
         }
     }
 
-    export class ImageComponentBuilder extends api.content.page.ComponentBuilder<ImageTemplateKey> {
+    export class ImageComponentBuilder extends api.content.page.PageComponentBuilder<ImageTemplateKey> {
 
-        config: api.data.RootDataSet;
-
-        imageContent: api.content.ContentId;
+        image: api.content.ContentId;
 
         public fromJson(json: json.ImageComponentJson): ImageComponentBuilder {
             this.setTemplate(ImageTemplateKey.fromString(json.template));
             this.setName(new api.content.page.ComponentName(json.name));
             this.setConfig(api.data.DataFactory.createRootDataSet(json.config));
             if (json.image) {
-                this.setImageContent(new api.content.ContentId(json.image));
+                this.setImage(new api.content.ContentId(json.image));
             }
             return this;
         }
 
-        public setConfig(value: api.data.RootDataSet): ImageComponentBuilder {
-            this.config = value;
-            return this;
-        }
-
-        public setImageContent(value: api.content.ContentId): ImageComponentBuilder {
-            this.imageContent = value;
+        public setImage(value: api.content.ContentId): ImageComponentBuilder {
+            this.image = value;
             return this;
         }
 

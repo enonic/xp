@@ -4,9 +4,11 @@ module api.content.page {
 
         private contentId: api.content.ContentId;
 
-        private pageTemplateKey: api.content.page.PageTemplateKey;
+        private template: api.content.page.PageTemplateKey;
 
         private config: api.data.RootDataSet;
+
+        private regions: region.PageRegions;
 
         constructor(contentId: api.content.ContentId) {
             super();
@@ -15,7 +17,7 @@ module api.content.page {
         }
 
         setPageTemplateKey(pageTemplateKey: api.content.page.PageTemplateKey): UpdatePageRequest {
-            this.pageTemplateKey = pageTemplateKey;
+            this.template = pageTemplateKey;
             return this;
         }
 
@@ -24,11 +26,17 @@ module api.content.page {
             return this;
         }
 
+        setRegions(value: region.PageRegions): UpdatePageRequest {
+            this.regions = value;
+            return this;
+        }
+
         getParams(): Object {
             return {
                 contentId: this.contentId.toString(),
-                pageTemplateKey: this.pageTemplateKey.toString(),
-                config: this.config.toJson()
+                template: this.template.toString(),
+                config: this.config != null ? this.config.toJson() : null,
+                regions: this.regions != null ? this.regions.toJson() : null
             };
         }
 

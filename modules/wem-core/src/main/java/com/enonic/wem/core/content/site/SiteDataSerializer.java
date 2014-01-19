@@ -8,8 +8,10 @@ import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;
 
-public class SiteSerializer
+public class SiteDataSerializer
+    extends AbstractDataSetSerializer<Site,Site>
 {
     static final String SITE_TEMPLATE = "template";
 
@@ -21,14 +23,15 @@ public class SiteSerializer
 
     static final String SITE_MODULE_CONFIGS = "moduleConfigs";
 
+    private final String dataSetName;
 
-    public DataSet toData( final Site site, final String dataSetName )
+    public SiteDataSerializer( final String dataSetName )
     {
-        if ( site == null )
-        {
-            return null;
-        }
+        this.dataSetName = dataSetName;
+    }
 
+    public DataSet toData( final Site site )
+    {
         final DataSet siteDataSet = new DataSet( dataSetName );
 
         siteDataSet.addProperty( SITE_TEMPLATE, new Value.String( site.getTemplate().toString() ) );
@@ -49,7 +52,7 @@ public class SiteSerializer
         return siteDataSet;
     }
 
-    public Site toSite( final DataSet dataSet )
+    public Site fromData( final DataSet dataSet )
     {
         final Site.Builder siteBuilder = Site.newSite().
             template( SiteTemplateKey.from( dataSet.getProperty( SITE_TEMPLATE ).getString() ) );

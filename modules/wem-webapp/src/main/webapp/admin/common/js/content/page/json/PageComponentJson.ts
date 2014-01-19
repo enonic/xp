@@ -4,6 +4,10 @@ module api.content.page.json {
 
         type:string;
 
+        name:string;
+
         template:string;
+
+        config: api.data.json.DataTypeWrapperJson[];
     }
 }

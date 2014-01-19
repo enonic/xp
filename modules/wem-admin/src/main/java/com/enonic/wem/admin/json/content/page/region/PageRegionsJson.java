@@ -3,7 +3,10 @@ package com.enonic.wem.admin.json.content.page.region;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enonic.wem.api.content.page.region.PageRegions;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.region.Region;
 
 @SuppressWarnings("UnusedDeclaration")
@@ -31,9 +34,26 @@ public class PageRegionsJson
         }
     }
 
+    @JsonCreator
+    public PageRegionsJson( final List<RegionJson> regionJsons )
+    {
+        this.regionsJson = regionJsons;
+        final PageRegions.Builder builder = PageRegions.newPageRegions();
+        for ( RegionJson region : regionJsons )
+        {
+            builder.add( region.getRegion() );
+        }
+        this.regions = builder.build();
+    }
+
     public List<RegionJson> getRegions()
     {
         return regionsJson;
     }
 
+    @JsonIgnore
+    public PageRegions getPageRegions()
+    {
+        return regions;
+    }
 }

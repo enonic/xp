@@ -189,7 +189,6 @@ public final class CreateContent
     public void validate()
     {
         Preconditions.checkNotNull( this.contentData, "contentData cannot be null" );
-        Preconditions.checkNotNull( this.form, "form cannot be null" );
         Preconditions.checkArgument( draft || this.parentContentPath != null, "parentContentPath cannot be null" );
         Preconditions.checkNotNull( this.displayName, "displayName cannot be null" );
     }

@@ -94,7 +94,7 @@ module app.wizard.page {
 
             var formContext = new api.form.FormContextBuilder().build();
 
-            var form = pageTemplate.getDescriptor().getForm();
+            var form = pageTemplate.getDescriptor().getConfig();
             var config = pageTemplate.getConfig();
             this.formView = new api.form.FormView(formContext, form, config);
             this.configFormWrapper.appendChild(this.formView);

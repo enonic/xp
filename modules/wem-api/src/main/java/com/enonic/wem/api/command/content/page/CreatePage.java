@@ -5,7 +5,7 @@ import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.PageTemplateKey;
-import com.enonic.wem.api.content.page.region.PageRegions;
+import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.data.RootDataSet;
 
 public class CreatePage

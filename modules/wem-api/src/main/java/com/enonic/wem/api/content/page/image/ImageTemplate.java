@@ -1,6 +1,7 @@
 package com.enonic.wem.api.content.page.image;
 
 
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.Template;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.support.Changes;
@@ -11,14 +12,23 @@ import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 public final class ImageTemplate
     extends Template<ImageTemplateName, ImageTemplateKey, ImageDescriptorKey>
 {
+    private ContentId image;
+
     private ImageTemplate( final ImageTemplateProperties properties )
     {
         super( properties );
+        this.image = properties.image;
     }
 
     private ImageTemplate( final Builder builder )
     {
         super( builder );
+        this.image = builder.image;
+    }
+
+    public ContentId getImage()
+    {
+        return image;
     }
 
     public static Builder newImageTemplate()
@@ -29,8 +39,16 @@ public final class ImageTemplate
     public static class Builder
         extends BaseTemplateBuilder<Builder, ImageTemplate, ImageTemplateName, ImageTemplateKey, ImageDescriptorKey>
     {
+        private ContentId image;
+
         private Builder()
         {
+        }
+
+        public Builder image( final ContentId value )
+        {
+            this.image = value;
+            return this;
         }
 
         public ImageTemplate build()
@@ -42,7 +60,7 @@ public final class ImageTemplate
     public static class ImageTemplateProperties
         extends TemplateProperties
     {
-
+        ContentId image;
     }
 
     public static ImageTemplateEditBuilder editImageTemplate( final ImageTemplate toBeEdited )
@@ -81,6 +99,12 @@ public final class ImageTemplate
         {
             changes.recordChange( newPossibleChange( "config" ).from( this.original.getConfig() ).to( value ).build() );
             this.config = value;
+            return this;
+        }
+
+        public ImageTemplateEditBuilder image( final ContentId value )
+        {
+            this.image = value;
             return this;
         }
 

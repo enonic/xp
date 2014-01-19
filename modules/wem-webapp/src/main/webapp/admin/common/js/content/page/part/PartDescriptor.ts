@@ -10,22 +10,22 @@ module api.content.page.part {
 
             this.setName(new api.content.page.DescriptorName(json.name));
             this.setDisplayName(json.displayName);
-            this.setForm(json.configForm != null ? new api.form.Form(json.configForm) : null);
+            this.setConfig(json.config != null ? new api.form.Form(json.config) : null);
             return this;
         }
 
-        public setName(value:api.content.page.DescriptorName):PartDescriptorBuilder {
+        public setName(value: api.content.page.DescriptorName): PartDescriptorBuilder {
             this.name = value;
             return this;
         }
 
-        public setDisplayName(value:string):PartDescriptorBuilder {
+        public setDisplayName(value: string): PartDescriptorBuilder {
             this.displayName = value;
             return this;
         }
 
-        public setForm(value:api.form.Form):PartDescriptorBuilder {
-            this.form = value;
+        public setConfig(value: api.form.Form): PartDescriptorBuilder {
+            this.config = value;
             return this;
         }
 

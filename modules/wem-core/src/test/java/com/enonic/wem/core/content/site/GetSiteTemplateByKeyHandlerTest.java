@@ -21,6 +21,7 @@ import com.enonic.wem.api.content.page.image.ImageTemplate;
 import com.enonic.wem.api.content.page.image.ImageTemplateKey;
 import com.enonic.wem.api.content.page.image.ImageTemplateName;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
+import com.enonic.wem.api.content.page.layout.LayoutRegions;
 import com.enonic.wem.api.content.page.layout.LayoutTemplate;
 import com.enonic.wem.api.content.page.layout.LayoutTemplateKey;
 import com.enonic.wem.api.content.page.layout.LayoutTemplateName;
@@ -40,6 +41,8 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.core.config.SystemConfig;
 
+import static com.enonic.wem.api.content.page.PageRegions.newPageRegions;
+import static com.enonic.wem.api.content.page.layout.LayoutRegions.newLayoutRegions;
 import static com.enonic.wem.api.content.site.ContentTypeFilter.newContentFilter;
 import static com.enonic.wem.api.content.site.Vendor.newVendor;
 import static junit.framework.Assert.assertNotNull;
@@ -153,6 +156,7 @@ public class GetSiteTemplateByKeyHandlerTest
             config( pageTemplateConfig ).
             canRender( ContentTypeNames.from( "article", "banner" ) ).
             descriptor( PageDescriptorKey.from( "mainmodule-1.0.0:landing-page" ) ).
+            regions( newPageRegions().build() ).
             build();
 
         final RootDataSet layoutTemplateConfig = new RootDataSet();
@@ -163,6 +167,7 @@ public class GetSiteTemplateByKeyHandlerTest
             displayName( "Layout template" ).
             config( layoutTemplateConfig ).
             descriptor( LayoutDescriptorKey.from( "mainmodule-1.0.0:some-layout" ) ).
+            regions( newLayoutRegions().build() ).
             build();
 
         final RootDataSet imageTemplateConfig = new RootDataSet();

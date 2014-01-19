@@ -9,4 +9,8 @@
       <occurrences minimum="0" maximum="0"/>
     </input>
   </config>
+  <regions>
+    <region name="left"/>
+    <region name="right"/>
+  </regions>
 </layout-component>

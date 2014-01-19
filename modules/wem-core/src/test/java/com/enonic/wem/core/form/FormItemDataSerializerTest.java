@@ -1,8 +1,4 @@
-package com.enonic.wem.core.support;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
+package com.enonic.wem.core.form;
 
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
@@ -11,45 +7,31 @@ import org.junit.Test;
 
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
-import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.serializer.DataJsonSerializer;
-import com.enonic.wem.api.data.serializer.RootDataSetJsonSerializer;
 import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItemSet;
-import com.enonic.wem.api.form.FormItems;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.MixinReference;
 import com.enonic.wem.api.form.inputtype.InputType;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.support.JsonTestHelper;
-import com.enonic.wem.core.schema.content.serializer.FormItemsJsonSerializer;
 
 import static junit.framework.Assert.assertEquals;
 
-public class SerializerForFormItemToDataTest
+public class FormItemDataSerializerTest
 {
-    private FormItemsJsonSerializer formItemsJsonSerializer;
-
-    private RootDataSetJsonSerializer rootDataJsonSerializer;
-
     private DataJsonSerializer dataJsonSerializer;
 
-    private SerializerForFormItemToData serializer;
+    private FormItemDataSerializer serializer;
 
     private JsonTestHelper jsonHelper;
 
-    public SerializerForFormItemToDataTest()
+    public FormItemDataSerializerTest()
     {
-        this.serializer = new SerializerForFormItemToData();
+        this.serializer = new FormItemDataSerializer();
         jsonHelper = new JsonTestHelper( this, true );
-
-        formItemsJsonSerializer = new FormItemsJsonSerializer();
-        formItemsJsonSerializer.prettyPrint();
-
-        rootDataJsonSerializer = new RootDataSetJsonSerializer();
-        rootDataJsonSerializer.prettyPrint();
 
         dataJsonSerializer = new DataJsonSerializer();
         dataJsonSerializer.prettyPrint();
@@ -59,38 +41,13 @@ public class SerializerForFormItemToDataTest
     public void serializeFormItem_givenInput()
     {
         // exercise
-        Data generatedData = serializer.serializeFormItem( createInput( "text-area", InputTypes.TEXT_AREA ) );
+        Data generatedData = serializer.toData( createInput( "text-area", InputTypes.TEXT_AREA ) );
 
         // verify
         Data expectedData = createInputData( "text-area", InputTypes.TEXT_AREA );
         assertData( expectedData, generatedData );
     }
 
-    @Test
-    public void deserializeDatas_givenFormItems()
-    {
-        // setup
-        List<Data> dataList = new ArrayList<>();
-        dataList.add( createInputData( "text-area", InputTypes.TEXT_AREA ) );
-        dataList.add( createFormItemSetData( "form-item-set", createInputData( "text-line", InputTypes.TEXT_LINE ),
-                                             createInputData( "text-area", InputTypes.TEXT_AREA ) ) );
-        dataList.add( createFieldSetData( "field-set", createInputData( "text-line", InputTypes.TEXT_LINE ),
-                                          createInputData( "text-area", InputTypes.TEXT_AREA ) ) );
-
-        System.out.println( jsonHelper.jsonToString( rootDataJsonSerializer.serialize( listToRootDataSet( dataList ) ) ) );
-
-        // exercise
-        FormItems formItems = serializer.deserializeFormItems( dataList );
-
-        // verify
-        FormItems expectedFormItems = new FormItems();
-        expectedFormItems.add( createInput( "text-area", InputTypes.TEXT_AREA ) );
-        expectedFormItems.add( createFormItemSet( "form-item-set", createInput( "text-line", InputTypes.TEXT_LINE ),
-                                                  createInput( "text-area", InputTypes.TEXT_AREA ) ) );
-        expectedFormItems.add( createFieldSet( "field-set", createInput( "text-line", InputTypes.TEXT_LINE ),
-                                               createInput( "text-area", InputTypes.TEXT_AREA ) ) );
-        assertFormItems( expectedFormItems, formItems );
-    }
 
     @Test
     public void serializeFormItem_given_FormItemSet()
@@ -101,7 +58,7 @@ public class SerializerForFormItemToDataTest
                                                      createFormItemSet( "inner-form-item-set" ) );
 
         // exercise
-        Data generatedData = serializer.serializeFormItem( formItemSet );
+        Data generatedData = serializer.toData( formItemSet );
 
         // verify
         Data expectedData = createFormItemSetData( "form-item-set", createInputData( "text-line", InputTypes.TEXT_LINE ),
@@ -118,7 +75,7 @@ public class SerializerForFormItemToDataTest
                                             createInput( "html-area", InputTypes.HTML_AREA ) );
 
         // exercise
-        Data generatedData = serializer.serializeFormItem( fieldSet );
+        Data generatedData = serializer.toData( fieldSet );
 
         // verify
         Data expectedData = createFieldSetData( "field-set", createInputData( "text-line", InputTypes.TEXT_LINE ),
@@ -126,27 +83,6 @@ public class SerializerForFormItemToDataTest
         assertData( expectedData, generatedData );
     }
 
-    @Test
-    public void serializeFormItems_given_FormItems()
-        throws InvocationTargetException, IllegalAccessException
-    {
-        // setup
-        FormItems formItems = new FormItems();
-        formItems.add( createInput( "text-line", InputTypes.TEXT_LINE ) );
-        formItems.add( createInput( "html-area", InputTypes.HTML_AREA ) );
-        formItems.add( createFormItemSet( "form-item-set" ) );
-
-        // exercise
-        List<Data> generatedData = serializer.serializeFormItems( formItems );
-
-        // verify
-        List<Data> expectedData = new ArrayList<>();
-        expectedData.add( createInputData( "text-line", InputTypes.TEXT_LINE ) );
-        expectedData.add( createInputData( "html-area", InputTypes.HTML_AREA ) );
-        expectedData.add( createFormItemSetData( "form-item-set" ) );
-
-        assertDataList( expectedData, generatedData );
-    }
 
     @Test
     public void serializeFormItems_given_MixinReference()
@@ -154,7 +90,7 @@ public class SerializerForFormItemToDataTest
         final MixinReference mixinReference =
             MixinReference.newMixinReference().name( "mymixinreference" ).mixin( "mymixinreferencedto" ).build();
 
-        final Data dataSet = serializer.serializeFormItem( mixinReference );
+        final Data dataSet = serializer.toData( mixinReference );
 
         final MixinReference deserializedMixinReference = serializer.deserializeMixinReference( (DataSet) dataSet );
 
@@ -273,32 +209,10 @@ public class SerializerForFormItemToDataTest
             set( "maximum", 1, ValueTypes.LONG ).build();
     }
 
-
-    private void assertDataList( List<Data> expected, List<Data> actual )
-    {
-        String expectedJsonString = jsonHelper.jsonToString( rootDataJsonSerializer.serialize( listToRootDataSet( expected ) ) );
-        String actualJsonString = jsonHelper.jsonToString( rootDataJsonSerializer.serialize( listToRootDataSet( actual ) ) );
-        assertEquals( expectedJsonString, actualJsonString );
-    }
-
     private void assertData( Data expected, Data actual )
     {
         String expectedJsonString = jsonHelper.jsonToString( dataJsonSerializer.serialize( expected ) );
         String actualJsonString = jsonHelper.jsonToString( dataJsonSerializer.serialize( actual ) );
         assertEquals( expectedJsonString, actualJsonString );
-    }
-
-    private void assertFormItems( FormItems expected, FormItems actual )
-    {
-        String expectedJsonString = jsonHelper.jsonToString( formItemsJsonSerializer.serialize( expected ) );
-        String actualJsonString = jsonHelper.jsonToString( formItemsJsonSerializer.serialize( actual ) );
-        assertEquals( expectedJsonString, actualJsonString );
-    }
-
-    private RootDataSet listToRootDataSet( List<Data> list )
-    {
-        RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.addAll( list );
-        return rootDataSet;
     }
 }

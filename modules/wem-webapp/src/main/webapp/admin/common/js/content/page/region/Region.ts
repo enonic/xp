@@ -39,7 +39,7 @@ module api.content.page.region {
 
             var count = 0;
             this.pageComponents.forEach((component: api.content.page.PageComponent<api.content.page.TemplateKey>)=> {
-                if( component.getName().isDuplicateOf(name) ) {
+                if (component.getName().isDuplicateOf(name)) {
                     count++;
                 }
             });
@@ -83,6 +83,20 @@ module api.content.page.region {
 
         getComponent(name: api.content.page.ComponentName): api.content.page.PageComponent<api.content.page.TemplateKey> {
             return this.componentByName[name.toString()];
+        }
+
+        toJson(): json.RegionJson {
+
+            var componentJsons: api.content.page.json.PageComponentJson[] = [];
+
+            this.pageComponents.forEach((component: api.content.page.PageComponent<api.content.page.TemplateKey>) => {
+                componentJsons.push(component.toJson());
+            });
+
+            return {
+                name: this.name,
+                components: componentJsons
+            };
         }
     }
 

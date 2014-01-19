@@ -36,6 +36,8 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.core.content.site.SiteTemplateExporter;
 
+import static com.enonic.wem.api.content.page.PageRegions.newPageRegions;
+import static com.enonic.wem.api.content.page.layout.LayoutRegions.newLayoutRegions;
 import static com.enonic.wem.api.content.site.ContentTypeFilter.newContentFilter;
 import static com.enonic.wem.api.content.site.Vendor.newVendor;
 import static junit.framework.Assert.assertEquals;
@@ -134,6 +136,7 @@ public class SiteTemplateExporterTest
             config( pageTemplateConfig ).
             canRender( ContentTypeNames.from( "article", "banner" ) ).
             descriptor( PageDescriptorKey.from( "mainmodule-1.0.0:landing-page" ) ).
+            regions( newPageRegions().build() ).
             build();
 
         final RootDataSet layoutTemplateConfig = new RootDataSet();
@@ -144,6 +147,7 @@ public class SiteTemplateExporterTest
             displayName( "Layout template" ).
             config( layoutTemplateConfig ).
             descriptor( LayoutDescriptorKey.from( "mainmodule-1.0.0:some-layout" ) ).
+            regions( newLayoutRegions().build() ).
             build();
 
         final RootDataSet imageTemplateConfig = new RootDataSet();

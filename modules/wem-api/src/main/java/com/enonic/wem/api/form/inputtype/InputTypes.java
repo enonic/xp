@@ -31,8 +31,6 @@ public final class InputTypes
 
     public static final InputType PHONE = new Phone();
 
-    public static final InputType REGION = new Region();
-
     public static final InputType RELATIONSHIP = new Relationship();
 
     public static final InputType SINGLE_SELECTOR = new SingleSelector();
@@ -58,7 +56,6 @@ public final class InputTypes
         add( IMAGE_SELECTOR ).
         add( MONEY ).
         add( PHONE ).
-        add( REGION ).
         add( RELATIONSHIP ).
         add( SINGLE_SELECTOR ).
         add( TAGS ).

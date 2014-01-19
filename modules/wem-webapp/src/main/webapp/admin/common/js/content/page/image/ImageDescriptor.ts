@@ -10,7 +10,7 @@ module api.content.page.image {
 
             this.setName(new api.content.page.DescriptorName(json.name));
             this.setDisplayName(json.displayName);
-            this.setForm(json.configForm != null ? new api.form.Form(json.configForm) : null);
+            this.setConfig(json.config != null ? new api.form.Form(json.config) : null);
             return this;
         }
 
@@ -24,8 +24,8 @@ module api.content.page.image {
             return this;
         }
 
-        public setForm(value: api.form.Form): ImageDescriptorBuilder {
-            this.form = value;
+        public setConfig(value: api.form.Form): ImageDescriptorBuilder {
+            this.config = value;
             return this;
         }
 

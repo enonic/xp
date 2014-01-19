@@ -13,10 +13,10 @@ public class ContentEntityIndexConfigFactory
         final EntityPatternIndexConfig.Builder builder = EntityPropertyIndexConfig.newPatternIndexConfig().
             collection( IndexConstants.CONTENT_COLLECTION_NAME ).
             analyzer( "norwegian_fulltext" ).
-            addConfig( ContentNodeTranslator.PAGE_CONFIG_PATH, PropertyIndexConfig.INDEXNON_PROPERTY_CONFIG ).
-            addConfig( ContentNodeTranslator.CONTENT_DATA_PATH, PropertyIndexConfig.INDEXALL_PROPERTY_CONFIG ).
-            addConfig( ContentNodeTranslator.FORM_PATH, PropertyIndexConfig.INDEXNON_PROPERTY_CONFIG ).
-            addConfig( ContentNodeTranslator.SITE_CONFIG_PATH, PropertyIndexConfig.INDEXNON_PROPERTY_CONFIG ).
+            addConfig( ContentDataSerializer.PAGE, PropertyIndexConfig.INDEXNON_PROPERTY_CONFIG ).
+            addConfig( ContentDataSerializer.CONTENT_DATA, PropertyIndexConfig.INDEXALL_PROPERTY_CONFIG ).
+            addConfig( ContentDataSerializer.FORM, PropertyIndexConfig.INDEXNON_PROPERTY_CONFIG ).
+            addConfig( ContentDataSerializer.SITE, PropertyIndexConfig.INDEXNON_PROPERTY_CONFIG ).
             decideFulltextByValueType( true ).
             defaultConfig( PropertyIndexConfig.newPropertyIndexConfig().
                 enabled( true ).

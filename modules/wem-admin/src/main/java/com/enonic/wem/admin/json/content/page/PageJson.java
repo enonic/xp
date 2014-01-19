@@ -20,7 +20,7 @@ public final class PageJson
     public PageJson( final Page page )
     {
         this.page = page;
-        this.regionsJson = new PageRegionsJson( page.getRegions() );
+        this.regionsJson = page.hasRegions() ? new PageRegionsJson( page.getRegions() ) : null;
         this.configJson = page.hasConfig() ? new RootDataSetJson( page.getConfig() ) : null;
     }
 
@@ -31,12 +31,12 @@ public final class PageJson
 
     public List<RegionJson> getRegions()
     {
-        return regionsJson.getRegions();
+        return regionsJson != null ? regionsJson.getRegions() : null;
     }
 
     public List<DataJson> getConfig()
     {
-        return configJson.getSet();
+        return configJson != null ? configJson.getSet() : null;
     }
 
 }

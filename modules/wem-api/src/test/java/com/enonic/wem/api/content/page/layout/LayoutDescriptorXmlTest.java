@@ -2,10 +2,15 @@ package com.enonic.wem.api.content.page.layout;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.content.page.region.RegionDescriptor;
+import com.enonic.wem.api.content.page.region.RegionDescriptors;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.xml.BaseXmlSerializerTest;
 import com.enonic.wem.xml.XmlSerializers;
 
+import static com.enonic.wem.api.content.page.layout.LayoutRegions.newLayoutRegions;
+import static com.enonic.wem.api.content.page.region.RegionDescriptor.newRegionDescriptor;
+import static com.enonic.wem.api.content.page.region.RegionDescriptors.newRegionDescriptors;
 import static com.enonic.wem.api.form.Input.newInput;
 import static com.enonic.wem.api.form.inputtype.InputTypes.DECIMAL_NUMBER;
 import static junit.framework.Assert.assertEquals;
@@ -26,6 +31,10 @@ public class LayoutDescriptorXmlTest
             displayName( "A Layout" ).
             name( "mylayout" ).
             config( configForm ).
+            regions( newRegionDescriptors().
+                add( newRegionDescriptor().name( "left" ).build() ).
+                add( newRegionDescriptor().name( "right" ).build() ).
+                build() ).
             key( LayoutDescriptorKey.from( "module-1.0.0:mylayout" ) ).
             build();
 

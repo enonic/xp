@@ -1,25 +1,36 @@
 package com.enonic.wem.api.content.page;
 
 
-import com.enonic.wem.api.content.page.region.PageRegions;
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.rendering.Component;
 import com.enonic.wem.api.support.Changes;
 import com.enonic.wem.api.support.EditBuilder;
 
 import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
 public final class Page
-    extends PageComponent<PageTemplateKey>
+    implements Component
 {
+    private final PageTemplateKey template;
+
     private final PageRegions regions;
 
     private final RootDataSet config;
 
     private Page( final PageProperties properties )
     {
-        super( properties );
+        Preconditions.checkNotNull( properties.template, "template is required" );
+
+        this.template = properties.template;
         this.config = properties.config;
         this.regions = properties.regions;
+    }
+
+    public PageTemplateKey getTemplate()
+    {
+        return template;
     }
 
     public boolean hasRegions()
@@ -48,8 +59,9 @@ public final class Page
     }
 
     static class PageProperties
-        extends Properties<PageTemplateKey>
     {
+        PageTemplateKey template;
+
         PageRegions regions;
 
         RootDataSet config;
@@ -63,6 +75,12 @@ public final class Page
         {
             this.config = source.config.copy().toRootDataSet();
             this.template = source.getTemplate();
+        }
+
+        public PageProperties template( PageTemplateKey value )
+        {
+            this.template = value;
+            return this;
         }
     }
 

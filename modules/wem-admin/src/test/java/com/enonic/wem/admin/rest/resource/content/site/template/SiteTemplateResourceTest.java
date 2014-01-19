@@ -31,6 +31,7 @@ import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
 import com.enonic.wem.api.content.page.image.ImageTemplate;
 import com.enonic.wem.api.content.page.image.ImageTemplateKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
+import com.enonic.wem.api.content.page.layout.LayoutRegions;
 import com.enonic.wem.api.content.page.layout.LayoutTemplate;
 import com.enonic.wem.api.content.page.layout.LayoutTemplateKey;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
@@ -52,6 +53,7 @@ import com.enonic.wem.core.content.site.SiteTemplateExporter;
 
 import static com.enonic.wem.api.content.page.PageTemplate.newPageTemplate;
 import static com.enonic.wem.api.content.page.image.ImageTemplate.newImageTemplate;
+import static com.enonic.wem.api.content.page.layout.LayoutRegions.newLayoutRegions;
 import static com.enonic.wem.api.content.page.layout.LayoutTemplate.newLayoutTemplate;
 import static com.enonic.wem.api.content.page.part.PartTemplate.newPartTemplate;
 import static com.enonic.wem.api.content.site.Vendor.newVendor;
@@ -157,6 +159,7 @@ public class SiteTemplateResourceTest
             key( LayoutTemplateKey.from( "sitetemplate-1.0.0|mod-1.0.0|mainlayout" ) ).
             displayName( "Main Layout" ).
             descriptor( LayoutDescriptorKey.from( ModuleKey.from( "mod-1.0.0" ), new ComponentDescriptorName( "layout-descr" ) ) ).
+            regions( newLayoutRegions().build() ).
             build();
 
         final ContentTypeFilter filter = ContentTypeFilter.newContentFilter().

@@ -2,6 +2,7 @@ package com.enonic.wem.api.content.page;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.content.page.region.RegionDescriptors;
 import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItemSet;
@@ -9,6 +10,8 @@ import com.enonic.wem.api.form.Input;
 import com.enonic.wem.xml.BaseXmlSerializerTest;
 import com.enonic.wem.xml.XmlSerializers;
 
+import static com.enonic.wem.api.content.page.region.RegionDescriptor.newRegionDescriptor;
+import static com.enonic.wem.api.content.page.region.RegionDescriptors.newRegionDescriptors;
 import static com.enonic.wem.api.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.form.Input.newInput;
@@ -66,6 +69,11 @@ public class PageDescriptorXmlTest
             displayName( "Landing page" ).
             name( "mypage" ).
             config( pageForm ).
+            regions( newRegionDescriptors().
+                add( newRegionDescriptor().name( "header" ).build() ).
+                add( newRegionDescriptor().name( "main" ).build() ).
+                add( newRegionDescriptor().name( "footer" ).build() ).
+                build() ).
             key( PageDescriptorKey.from( "module-1.0.0:mypage" ) ).
             build();
 
@@ -73,16 +81,17 @@ public class PageDescriptorXmlTest
         pageDescriptorXml.from( pageDescriptor );
         final String result = XmlSerializers.pageDescriptor().serialize( pageDescriptorXml );
 
-        assertXml( "page-component.xml", result );
+        assertXml( "page-descriptor.xml", result );
     }
 
     @Test
     public void testTo()
         throws Exception
     {
-        final String xml = readFromFile( "page-component.xml" );
+        final String xml = readFromFile( "page-descriptor.xml" );
         final PageDescriptor.Builder builder = PageDescriptor.newPageDescriptor();
         builder.key( PageDescriptorKey.from( "module-1.0.0:mypage" ) );
+        builder.regions( RegionDescriptors.newRegionDescriptors().build() );
 
         XmlSerializers.pageDescriptor().parse( xml ).to( builder );
 

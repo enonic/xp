@@ -9,6 +9,7 @@ import com.enonic.wem.api.command.content.page.layout.CreateLayoutDescriptor;
 import com.enonic.wem.api.command.module.CreateModuleResource;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
+import com.enonic.wem.api.content.page.region.RegionDescriptors;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleKey;
@@ -16,6 +17,7 @@ import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.page.layout.CreateLayoutDescriptorHandler;
 
+import static com.enonic.wem.api.content.page.region.RegionDescriptors.newRegionDescriptors;
 import static com.enonic.wem.api.form.Input.newInput;
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.isA;
@@ -52,7 +54,8 @@ public class CreateLayoutDescriptorHandlerTest
             key( key ).
             name( descriptorName ).
             displayName( "Fancy layout" ).
-            config( layoutForm );
+            config( layoutForm ).
+            regions( newRegionDescriptors().build() );
 
         Resource res = Resource.newResource().build();
         Mockito.when( this.client.execute( isA( CreateModuleResource.class ) ) ).thenReturn( res );
