@@ -5,6 +5,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import com.enonic.wem.admin.rest.resource.ErrorJson;
@@ -13,10 +16,15 @@ import com.enonic.wem.admin.rest.resource.ErrorJson;
 public final class JsonMappingExceptionMapper
     implements ExceptionMapper<JsonMappingException>
 {
+    private final static Logger LOG = LoggerFactory.getLogger( JsonMappingExceptionMapper.class );
+
     @Override
     public Response toResponse( final JsonMappingException cause )
     {
-        return Response.status( Response.Status.BAD_REQUEST ).type( MediaType.APPLICATION_JSON_TYPE ).entity(
+        LOG.error( cause.getMessage(), cause );
+        cause.printStackTrace();
+
+        return Response.status( Response.Status.INTERNAL_SERVER_ERROR ).type( MediaType.APPLICATION_JSON_TYPE ).entity(
             new ErrorJson( cause.getMessage() ) ).build();
     }
 }
