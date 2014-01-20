@@ -1,13 +1,11 @@
 package com.enonic.wem.portal.script.lib;
 
 import java.io.StringReader;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.SourceLocator;
 import javax.xml.transform.TransformerException;
@@ -24,6 +22,8 @@ import com.google.common.collect.Maps;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.portal.script.SourceException;
+import com.enonic.wem.portal.xml.DomBuilder;
+import com.enonic.wem.portal.xml.DomHelper;
 import com.enonic.wem.portal.xslt.XsltProcessor;
 import com.enonic.wem.portal.xslt.XsltProcessorException;
 import com.enonic.wem.portal.xslt.XsltProcessorSpec;
@@ -33,31 +33,25 @@ public final class XsltScriptBean
     @Inject
     protected XsltProcessor processor;
 
-    private final DocumentBuilderFactory documentBuilderFactory;
-
-    public XsltScriptBean()
-    {
-        this.documentBuilderFactory = DocumentBuilderFactory.newInstance();
-    }
 
     public String render( final String name, final Object inputDoc, final Map<String, Object> params )
     {
-        final ContextScriptBean service = ContextScriptBean.get();
-        final Path path = service.resolveFile( name );
-
-        if ( !Files.isRegularFile( path ) )
+        try
         {
-            throw new IllegalArgumentException( "Could not find XSLT view [" + path.toString() + "]" );
+            return doRednder( name, inputDoc, params );
         }
-
-        final XsltProcessorSpec spec = new XsltProcessorSpec();
-        spec.xsl( toSource( path ) );
-        spec.source( toSource( inputDoc ) );
-        spec.parameters( convertParams( params ) );
-        return render( spec );
+        catch ( final XsltProcessorException e )
+        {
+            throw createError( e );
+        }
+        catch ( final Exception e )
+        {
+            throw new RuntimeException( e );
+        }
     }
 
     private Source toSource( final Object obj )
+        throws Exception
     {
         if ( obj instanceof XMLObject )
         {
@@ -69,18 +63,12 @@ public final class XsltScriptBean
     }
 
     private Source toSource( final XMLObject xml )
+        throws Exception
     {
-        try
-        {
-            final Node node = XMLLibImpl.toDomNode( xml );
-            final Document doc = this.documentBuilderFactory.newDocumentBuilder().newDocument();
-            doc.appendChild( doc.importNode( node, true ) );
-            return new DOMSource( doc );
-        }
-        catch ( final Exception e )
-        {
-            throw new RuntimeException( e );
-        }
+        final Node node = XMLLibImpl.toDomNode( xml );
+        final Document doc = DomHelper.newDocument();
+        doc.appendChild( doc.importNode( node, true ) );
+        return new DOMSource( doc );
     }
 
     private Source toSource( final Path path )
@@ -88,19 +76,22 @@ public final class XsltScriptBean
         return new StreamSource( path.toFile() );
     }
 
-    private String render( final XsltProcessorSpec spec )
+    private String doRednder( final String name, final Object inputDoc, final Map<String, Object> params )
+        throws Exception
     {
-        try
-        {
-            return this.processor.process( spec );
-        }
-        catch ( final XsltProcessorException e )
-        {
-            throw createError( e );
-        }
+        final ContextScriptBean service = ContextScriptBean.get();
+        final Path path = service.resolveFile( name );
+
+        final XsltProcessorSpec spec = new XsltProcessorSpec();
+        spec.xsl( toSource( path ) );
+        spec.source( toSource( inputDoc ) );
+        spec.parameters( convertParams( params ) );
+
+        return this.processor.process( spec );
     }
 
     private Object convertParam( final Object value )
+        throws Exception
     {
         if ( value instanceof XMLObject )
         {
@@ -111,15 +102,16 @@ public final class XsltScriptBean
     }
 
     private Map<String, Object> convertParams( final Map<String, Object> map )
+        throws Exception
     {
-        return Maps.transformEntries( map, new Maps.EntryTransformer<String, Object, Object>()
+        final Map<String, Object> result = Maps.newHashMap();
+        for ( final Map.Entry<String, Object> entry : map.entrySet() )
         {
-            @Override
-            public Object transformEntry( final String name, final Object value )
-            {
-                return convertParam( value );
-            }
-        } );
+            result.put( entry.getKey(), convertParam( entry.getValue() ) );
+        }
+
+        result.put( "_", createContextDoc() );
+        return result;
     }
 
     private SourceException createError( final XsltProcessorException e )
@@ -161,5 +153,13 @@ public final class XsltScriptBean
 
         final String name = filePath.toString().substring( modulePath.toString().length() + 1 );
         return new ModuleResourceKey( service.getModule(), ResourcePath.from( name ) );
+    }
+
+    private Document createContextDoc()
+        throws Exception
+    {
+        final DomBuilder builder = DomBuilder.create( "context" );
+        builder.start( "baseUrl" ).text( "http://localhost:8080" ).end();
+        return builder.getDocument();
     }
 }
