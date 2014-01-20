@@ -5,7 +5,7 @@ module api.ui.combobox {
         private selectedOptions:SelectedOptions<T>;
 
         constructor() {
-            super(true, "selected-options");
+            super("selected-options");
         }
 
         setSelectedOptions(value:SelectedOptions<T>) {

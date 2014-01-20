@@ -1,11 +1,9 @@
 module api.ui.dialog{
 
     export interface ModalDialogConfig {
-
         title:string;
         width:number;
         height:number;
-        generateId?:boolean;
     }
 
     export class ModalDialog extends api.dom.DivEl {
@@ -23,7 +21,7 @@ module api.ui.dialog{
         private actions:api.ui.Action[] = [];
 
         constructor(config:ModalDialogConfig) {
-            super(config.generateId, "modal-dialog");
+            super("modal-dialog");
 
             this.config = config;
             var el = this.getEl();
@@ -103,7 +101,7 @@ module api.ui.dialog{
     export class ModalDialogTitle extends api.dom.H2El {
 
         constructor(title:string) {
-            super(true);
+            super();
             this.getEl().setInnerHtml(title);
         }
 
@@ -115,14 +113,14 @@ module api.ui.dialog{
     export class ModalDialogContentPanel extends api.dom.DivEl {
 
         constructor() {
-            super(true, "content-panel");
+            super("content-panel");
         }
     }
 
     export class ModalDialogButtonRow extends api.dom.DivEl {
 
         constructor() {
-            super(true, "button-row");
+            super("button-row");
         }
 
         addAction(action:api.ui.Action):DialogButton {

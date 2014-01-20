@@ -17,7 +17,7 @@ module api.module {
                 this.triggerElement = triggerEl;
                 this.isExternalTriggerElement = true;
             } else {
-                this.triggerElement = new api.dom.ButtonEl(true);
+                this.triggerElement = new api.dom.ButtonEl();
                 this.triggerElement.hide();
                 api.dom.Body.get().appendChild(this.triggerElement);
             }

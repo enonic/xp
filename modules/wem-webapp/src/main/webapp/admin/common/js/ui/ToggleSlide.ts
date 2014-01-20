@@ -24,7 +24,7 @@ module api.ui{
         private slideRight:api.util.Animation;
 
         constructor(actions:ToggleSlideActions, initOn:boolean) {
-            super(true, 'toggle-slide');
+            super('toggle-slide');
 
             this.actions = actions;
 
@@ -80,10 +80,10 @@ module api.ui{
         }
 
         private createMarkup() {
-            this.slider = new api.dom.DivEl(null, 'slider');
-            this.holder = new api.dom.DivEl(null, 'holder');
-            this.onLabel = new api.dom.DivEl(null, 'on');
-            this.offLabel = new api.dom.DivEl(null, 'off');
+            this.slider = new api.dom.DivEl('slider');
+            this.holder = new api.dom.DivEl('holder');
+            this.onLabel = new api.dom.DivEl('on');
+            this.offLabel = new api.dom.DivEl('off');
 
             this.appendChild(this.slider);
             this.appendChild(this.holder);

@@ -6,7 +6,7 @@ module app.contextwindow {
         private infoEl:api.dom.DivEl;
 
         constructor(contextWindow:ContextWindow) {
-            super(true, "detail-panel");
+            super("detail-panel");
 
             this.initElements();
             this.setEmpty();

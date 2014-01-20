@@ -6,7 +6,7 @@ module app.contextwindow.image {
         private dataView:api.ui.grid.DataView<api.content.ContentSummary>;
 
         constructor() {
-            super(true, "recent-panel");
+            super("recent-panel");
             this.dataView = new api.ui.grid.DataView<api.content.ContentSummary>();
             this.recentGrid = new RecentGrid(this.dataView);
 

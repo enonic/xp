@@ -9,8 +9,8 @@ module api.ui.form {
         private invalidClass: string = "invalid";
 
         constructor(label: string, input: api.dom.FormInputEl) {
-            super(null, "form-input");
-            this.error = new api.dom.SpanEl(false, "error");
+            super("form-input");
+            this.error = new api.dom.SpanEl("error");
             this.label = new api.dom.LabelEl(label, input);
             this.input = input;
             this.appendChild(this.error);

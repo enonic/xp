@@ -7,8 +7,8 @@ module api.ui {
 
         private navigator:api.ui.DeckPanelNavigator;
 
-        constructor(navigator:DeckPanelNavigator, generateId?:boolean, className?:string) {
-            super(generateId, className);
+        constructor(navigator:DeckPanelNavigator, className?:string) {
+            super(className);
             this.navigator = navigator;
 
             navigator.addListener({

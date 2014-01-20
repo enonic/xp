@@ -4,10 +4,10 @@ module api.ui.tab {
 
         private labelEl:api.dom.SpanEl;
 
-        constructor(generateId?:boolean) {
-            super(generateId, "tab-menu-button");
+        constructor() {
+            super("tab-menu-button");
 
-            this.labelEl = new api.dom.SpanEl(null, 'label');
+            this.labelEl = new api.dom.SpanEl('label');
             this.appendChild(this.labelEl);
         }
 

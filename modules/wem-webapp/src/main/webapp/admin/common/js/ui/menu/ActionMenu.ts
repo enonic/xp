@@ -6,7 +6,7 @@ module api.ui.menu {
         private list:ActionList;
 
         constructor(actions:api.ui.Action[]) {
-            super(true, "action-menu");
+            super("action-menu");
 
             this.button = new api.ui.Button("Actions");
             this.button.getEl().addEventListener("click", (evt:Event) => {
@@ -77,7 +77,7 @@ module api.ui.menu {
         private menuItems:api.ui.menu.MenuItem[] = [];
 
         constructor(menu:ActionMenu, actions:api.ui.Action[]) {
-            super(true);
+            super();
             this.menu = menu;
 
             for (var i = 0; i < actions.length; i++) {

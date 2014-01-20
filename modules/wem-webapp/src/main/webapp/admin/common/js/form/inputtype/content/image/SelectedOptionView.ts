@@ -21,7 +21,7 @@ module api.form.inputtype.content.image {
 
             this.getEl().setBackgroundImage("url(" + this.content.getIconUrl() + ")");
 
-            var label = new api.dom.DivEl(null, "label");
+            var label = new api.dom.DivEl("label");
             label.getEl().setInnerHtml(this.content.getName().toString());
             this.appendChild(label);
         }

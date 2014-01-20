@@ -13,7 +13,7 @@ module api.form.inputtype.content.imageupload {
         private attachments:api.content.attachment.Attachments;
 
         constructor(config: api.form.inputtype.InputTypeViewConfig<any>) {
-            super(true, "image");
+            super("image");
             this.config = config;
             this.attachments = config.attachments;
         }

@@ -1,13 +1,8 @@
-module app.wizard
-{
+module app.wizard {
 
-    export class SummaryWizardStepForm extends api.app.wizard.WizardStepForm
-    {
-
-        constructor()
-        {
-            super(true);
+    export class SummaryWizardStepForm extends api.app.wizard.WizardStepForm {
+        constructor() {
+            super();
         }
-
     }
 }

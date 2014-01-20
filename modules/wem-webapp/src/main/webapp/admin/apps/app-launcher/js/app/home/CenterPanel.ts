@@ -6,10 +6,10 @@ module app.home {
         private rightColumn:api.dom.DivEl;
 
         constructor() {
-            super(null, 'center-panel');
+            super('center-panel');
 
-            this.leftColumn = new api.dom.DivEl(null, 'left-column');
-            this.rightColumn = new api.dom.DivEl(null, 'right-column');
+            this.leftColumn = new api.dom.DivEl('left-column');
+            this.rightColumn = new api.dom.DivEl('right-column');
             this.appendChild(this.leftColumn);
             this.appendChild(this.rightColumn);
         }

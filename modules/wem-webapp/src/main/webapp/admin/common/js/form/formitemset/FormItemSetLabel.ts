@@ -5,7 +5,7 @@ module api.form.formitemset {
         private formItemSet:api.form.FormItemSet;
 
         constructor(formItemSet:api.form.FormItemSet) {
-            super(true, "form-item-set-label");
+            super("form-item-set-label");
 
             this.formItemSet = formItemSet;
 
@@ -14,7 +14,7 @@ module api.form.formitemset {
 
             if( formItemSet.getOccurrences().required() ) {
                 nodes.push( document.createTextNode(" ") );
-                var requiredMarker = new api.dom.SpanEl(null, "required");
+                var requiredMarker = new api.dom.SpanEl("required");
                 nodes.push( requiredMarker.getHTMLElement() );
             }
             nodes.push( document.createTextNode(":") );

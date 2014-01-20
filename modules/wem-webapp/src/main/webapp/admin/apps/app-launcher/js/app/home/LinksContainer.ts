@@ -4,7 +4,7 @@ module app.home {
         private links:{text:string; url:string;}[];
 
         constructor() {
-            super(null, 'links-container');
+            super('links-container');
             this.links = [];
         }
 

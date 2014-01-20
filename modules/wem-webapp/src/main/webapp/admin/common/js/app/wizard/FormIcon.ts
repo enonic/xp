@@ -24,10 +24,10 @@ module api.app.wizard {
          * @param uploadUrl url to upload new icon to
          */
         constructor(public iconUrl:string, public iconTitle:string, public uploadUrl?:string) {
-            super(true, "form-icon");
+            super("form-icon");
             var el = this.getEl();
 
-            var img = this.img = new api.dom.ImgEl(this.iconUrl, true);
+            var img = this.img = new api.dom.ImgEl(this.iconUrl);
 
             el.appendChild(img.getHTMLElement());
 

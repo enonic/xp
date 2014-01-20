@@ -14,8 +14,8 @@ module api.ui.tab {
 
         private listeners: api.ui.DeckPanelNavigatorListener[] = [];
 
-        constructor(generateId?: boolean, className?: string) {
-            super(generateId, "tab-menu" + (className ? " " + className : ""));
+        constructor(className?: string) {
+            super("tab-menu" + (className ? " " + className : ""));
 
             this.tabMenuButton = this.createTabMenuButton();
             this.tabMenuButton.hide();

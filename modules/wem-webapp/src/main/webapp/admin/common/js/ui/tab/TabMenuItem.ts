@@ -22,12 +22,12 @@ module api.ui.tab {
         private listeners: TabMenuItemListener[] = [];
 
         constructor(label:string, options?:TabMenuItemOptions) {
-            super(true, "tab-menu-item");
+            super("tab-menu-item");
             if (!options) {
                 options = {};
             }
 
-            this.labelEl = new api.dom.SpanEl(null, 'label');
+            this.labelEl = new api.dom.SpanEl('label');
             this.appendChild(this.labelEl);
             this.setLabel(label);
             this.labelEl.getEl().addEventListener("click", () => {

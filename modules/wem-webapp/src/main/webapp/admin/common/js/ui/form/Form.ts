@@ -6,9 +6,9 @@ module api.ui.form {
 
         private fieldsets: api.ui.form.Fieldset[] = [];
 
-        constructor(generateId?: boolean, className?: string) {
-            super(generateId, className);
-            this.formEl = new api.dom.FormEl(false, "form");
+        constructor(className?: string) {
+            super(className);
+            this.formEl = new api.dom.FormEl("form");
 
             this.appendChild(this.formEl);
         }

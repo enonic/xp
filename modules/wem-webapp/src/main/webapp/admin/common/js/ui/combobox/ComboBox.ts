@@ -35,7 +35,7 @@ module api.ui.combobox {
         private listeners:ComboBoxListener<T>[] = [];
 
         constructor(name:string, config:ComboBoxConfig<T>) {
-            super("div", true, "combobox");
+            super("div", "combobox");
             this.getEl().setAttribute("name", name);
 
             this.hideComboBoxWhenMaxReached = config.hideComboBoxWhenMaxReached;
@@ -49,14 +49,14 @@ module api.ui.combobox {
             this.rowHeight = config.rowHeight || 24;
 
             if (config.iconUrl) {
-                this.icon = new api.dom.ImgEl(config.iconUrl, null, "input-icon");
+                this.icon = new api.dom.ImgEl(config.iconUrl, "input-icon");
                 this.appendChild(this.icon);
             }
 
             this.input = new ComboBoxInput();
             this.appendChild(this.input);
 
-            this.emptyDropdown = new api.dom.DivEl(null, "empty-options");
+            this.emptyDropdown = new api.dom.DivEl("empty-options");
             this.emptyDropdown.getEl().setInnerHtml("No matching items");
             this.emptyDropdown.hide();
             this.appendChild(this.emptyDropdown);

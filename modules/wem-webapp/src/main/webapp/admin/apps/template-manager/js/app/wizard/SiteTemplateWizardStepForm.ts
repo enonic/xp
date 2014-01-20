@@ -7,8 +7,8 @@ module app.wizard {
         private rootContentTypeComboBox: api.schema.content.ContentTypeComboBox;
 
         constructor() {
-            super(true);
-            this.descriptionField = api.ui.TextInput.large(true).setName("description");
+            super();
+            this.descriptionField = api.ui.TextInput.large().setName("description");
             this.moduleComboBox = new api.module.ModuleComboBox();
             this.rootContentTypeComboBox = new api.schema.content.ContentTypeComboBox(false);
         }

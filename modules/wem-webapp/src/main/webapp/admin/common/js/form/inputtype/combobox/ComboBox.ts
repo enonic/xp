@@ -15,7 +15,7 @@ module api.form.inputtype.combobox {
         private selectedOptionsView: api.ui.combobox.SelectedOptionsView<string>;
 
         constructor(config: api.form.inputtype.InputTypeViewConfig<ComboBoxConfig>) {
-            super(true, "combo-box");
+            super("combo-box");
             this.config = config.inputConfig;
         }
 

@@ -5,7 +5,7 @@ module api.app.wizard {
         private listeners:WizardHeaderListener[] = [];
 
         constructor() {
-            super(true, "wizard-header");
+            super("wizard-header");
 
         }
 

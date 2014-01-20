@@ -69,7 +69,7 @@ module app.create {
 
             this.recentList = new RecentContentTypesList("content-type-list");
 
-            var dropZone = new api.dom.DivEl(true, "drop-zone");
+            var dropZone = new api.dom.DivEl("drop-zone");
             rightColumn.appendChild(dropZone);
 
             this.recentList.addListener({

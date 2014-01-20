@@ -6,8 +6,8 @@ module api.form.inputtype.support {
 
         private inputOccurrences: InputOccurrences;
 
-        constructor(generateId: boolean, className?: string) {
-            super(generateId, "input-type-view" + ( className ? " " + className : ""));
+        constructor(className?: string) {
+            super("input-type-view" + ( className ? " " + className : ""));
             jQuery(this.getHTMLElement()).sortable({
                 axis: "y",
                 containment: 'parent',

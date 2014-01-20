@@ -4,8 +4,8 @@ module api.ui {
 
         private doOffset:boolean;
 
-        constructor(generateId?:boolean, className?:string) {
-            super(generateId, "panel" + (className ? " " + className : ""));
+        constructor(className?:string) {
+            super("panel" + (className ? " " + className : ""));
             this.doOffset = true;
         }
 

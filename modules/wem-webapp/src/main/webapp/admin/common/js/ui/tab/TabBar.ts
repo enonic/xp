@@ -8,8 +8,8 @@ module api.ui.tab {
 
         private listeners: api.ui.DeckPanelNavigatorListener[] = [];
 
-        constructor(generateId?: boolean, className?: string) {
-            super(generateId, "tab-bar" + (className ? " " + className : ""));
+        constructor(className?: string) {
+            super("tab-bar" + (className ? " " + className : ""));
         }
 
         addNavigationItem(tab: TabBarItem) {

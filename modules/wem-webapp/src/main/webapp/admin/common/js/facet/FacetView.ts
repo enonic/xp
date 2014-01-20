@@ -9,7 +9,7 @@ module api.facet {
         private facetEntrySelectionChangedListeners:Function[] = [];
 
         constructor(facet:Facet, parentGroupView:FacetGroupView) {
-            super(true, 'facet-view');
+            super('facet-view');
             this.facet = facet;
             this.parentGroupView = parentGroupView;
         }

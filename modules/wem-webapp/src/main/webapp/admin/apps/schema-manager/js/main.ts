@@ -16,7 +16,7 @@ module components {
 }
 
 window.onload = () => {
-    var appBar = new api.app.AppBar("Schema Manager", new api.app.AppBarTabMenu(true));
+    var appBar = new api.app.AppBar("Schema Manager", new api.app.AppBarTabMenu());
     var appPanel = new app.SchemaAppPanel(appBar);
 
     api.dom.Body.get().appendChild(appBar);

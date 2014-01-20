@@ -9,7 +9,7 @@ module app.create {
         private listeners: ContentTypesListListener[] = [];
 
         constructor(className?: string, title?: string, markRoots?: boolean) {
-            super(true, className, title);
+            super(className, title);
 
             this.markRoots = markRoots;
         }

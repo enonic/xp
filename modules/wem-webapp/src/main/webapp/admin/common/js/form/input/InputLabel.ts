@@ -5,7 +5,7 @@ module api.form.input {
         private input:api.form.Input;
 
         constructor(input:api.form.Input) {
-            super(true, "input-label");
+            super("input-label");
 
             this.input = input;
 
@@ -14,7 +14,7 @@ module api.form.input {
 
             if( input.getOccurrences().required() ) {
                 nodes.push( document.createTextNode(" ") );
-                var requiredMarker = new api.dom.SpanEl(null, "required");
+                var requiredMarker = new api.dom.SpanEl("required");
                 nodes.push( requiredMarker.getHTMLElement() );
             }
             this.getEl().appendChildren(nodes);

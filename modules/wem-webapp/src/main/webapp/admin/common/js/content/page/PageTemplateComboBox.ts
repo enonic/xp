@@ -75,8 +75,8 @@ module api.content.page {
         }
 
         layout() {
-            var removeButtonEl = new api.dom.AEl(null, "remove");
-            var optionValueEl = new api.dom.DivEl(null, 'option-value');
+            var removeButtonEl = new api.dom.AEl("remove");
+            var optionValueEl = new api.dom.DivEl('option-value');
 
             this.appendChild(removeButtonEl);
             this.appendChild(optionValueEl);

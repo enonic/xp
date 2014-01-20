@@ -19,7 +19,7 @@ module api.ui {
         private alignment:SplitPanelAlignment;
 
         constructor(panelA:api.ui.Panel, panelB:api.ui.Panel) {
-            super(false, "split-panel");
+            super("split-panel");
             this.splitter = new SplitPanelSplitter(this);
             this.splitter.setThickness(5);
             this.panelA = panelA;
@@ -122,7 +122,7 @@ module api.ui {
 
 
         constructor(splitPanel:SplitPanel) {
-            super(true, "splitter");
+            super("splitter");
             this.splitPanel = splitPanel;
             this.alignment = SplitPanelAlignment.HORIZONTAL;
             this.createGhostDragger();
@@ -191,7 +191,7 @@ module api.ui {
         }
 
         private createGhostDragger() {
-            this.ghostDragger = new api.dom.DivEl(false, "ghost-dragger");
+            this.ghostDragger = new api.dom.DivEl("ghost-dragger");
         }
 
         private addPanelMask() {

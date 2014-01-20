@@ -22,7 +22,7 @@ module api.form.inputtype.content.image {
                 this.editedSelectedOptionView.notifySelectedOptionToBeRemoved();
             });
 
-            this.clearer = new api.dom.DivEl(null, "clearer");
+            this.clearer = new api.dom.DivEl("clearer");
             this.appendChild(this.clearer);
         }
 

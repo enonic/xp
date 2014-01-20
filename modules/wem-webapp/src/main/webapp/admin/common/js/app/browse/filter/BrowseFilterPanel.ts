@@ -11,7 +11,7 @@ module api.app.browse.filter {
         private clearFilter:api.app.browse.filter.ClearFilterButton;
 
         constructor(facets?:api.facet.Facet[], groupViews?:api.facet.FacetGroupView[]) {
-            super(true);
+            super();
             this.addClass('filter-panel');
 
             this.searchField = new TextSearchField('Search');

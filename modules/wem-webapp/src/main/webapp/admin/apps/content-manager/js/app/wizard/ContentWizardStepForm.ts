@@ -9,7 +9,7 @@ module app.wizard {
         private formView: api.form.FormView;
 
         constructor() {
-            super(true);
+            super();
         }
 
         renderNew(formContext: api.form.FormContext, form: api.form.Form) {

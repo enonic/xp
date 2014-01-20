@@ -45,7 +45,7 @@ module api.app.wizard {
             });
             this.appendChild(this.displayNameEl);
 
-            this.pathEl = new api.dom.SpanEl(null, 'path');
+            this.pathEl = new api.dom.SpanEl('path');
             this.pathEl.hide();
             this.appendChild(this.pathEl);
 

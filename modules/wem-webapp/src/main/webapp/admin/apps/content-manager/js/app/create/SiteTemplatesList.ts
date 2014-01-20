@@ -7,7 +7,7 @@ module app.create {
         private contentTypes: ContentTypes;
 
         constructor(className?: string, title?: string) {
-            super(true, className, title);
+            super(className, title);
         }
 
         addListener(listener: SiteTemplatesListListener) {

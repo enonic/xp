@@ -17,7 +17,7 @@ module app.home {
         private backgroundImgUrl: string;
 
         constructor(builder: HomeMainContainerBuilder) {
-            super(null, 'home-main-container');
+            super('home-main-container');
 
             this.appSelector = builder.appSelector;
             this.loginForm = builder.loginForm;

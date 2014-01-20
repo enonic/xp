@@ -6,7 +6,7 @@ module app.home {
         private version:VersionInfo;
 
         constructor(installation?:string, version?:string) {
-            super(null, 'branding');
+            super('branding');
 
             installation = installation || '';
             version = version || '';

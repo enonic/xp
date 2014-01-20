@@ -6,7 +6,7 @@ module app.contextwindow {
         private contextWindow: ContextWindow;
 
         constructor(contextWindow: ContextWindow) {
-            super(true, "emulator-panel");
+            super("emulator-panel");
 
             this.contextWindow = contextWindow;
 

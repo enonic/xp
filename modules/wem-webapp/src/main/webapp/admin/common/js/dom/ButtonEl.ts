@@ -2,8 +2,8 @@ module api.dom {
 
     export class ButtonEl extends Element {
 
-        constructor(generateId?:boolean, className?:string) {
-            super(new ElementProperties().setTagName("button").setGenerateId(generateId).setClassName(className));
+        constructor(className?:string) {
+            super(new ElementProperties().setTagName("button").setClassName(className));
         }
 
         setText(text:string) {

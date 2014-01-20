@@ -40,7 +40,7 @@ module api.ui.grid {
         private dataView:DataView<T>;
 
         constructor(dataView:DataView<T>, columns:GridColumn<T>[], options:GridOptions = {}) {
-            super(true,"grid");
+            super("grid");
 
             if (options.hideColumnHeaders) {
                 this.addClass("no-header");

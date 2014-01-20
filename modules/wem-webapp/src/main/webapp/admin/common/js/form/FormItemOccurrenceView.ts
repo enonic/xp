@@ -6,8 +6,8 @@ module api.form {
 
         private listeners:FormItemOccurrenceViewListener[] = [];
 
-        constructor(generateId:boolean, className, formItemOccurrence:FormItemOccurrence<FormItemOccurrenceView>) {
-            super(generateId, className);
+        constructor(className, formItemOccurrence:FormItemOccurrence<FormItemOccurrenceView>) {
+            super(className);
             this.formItemOccurrence = formItemOccurrence;
         }
 

@@ -22,7 +22,7 @@ module api.app.view {
         private actionMenu:api.ui.menu.ActionMenu;
 
         constructor(itemStatisticsPanelParams:ItemStatisticsPanelParams) {
-            super(true);
+            super();
             this.getEl().addClass("item-statistics-panel");
 
             this.actionMenu = itemStatisticsPanelParams.actionMenu;
@@ -48,7 +48,7 @@ module api.app.view {
         }
 
         private addCanvas() {
-            var canvasEl = this.canvas = new api.dom.DivEl(true, "canvas");
+            var canvasEl = this.canvas = new api.dom.DivEl("canvas");
             this.appendChild(canvasEl);
         }
 
@@ -87,7 +87,7 @@ module api.app.view {
         private subtitleEl = new api.dom.H4El();
 
         constructor(actionMenu:api.ui.menu.ActionMenu) {
-            super(true, "header");
+            super("header");
 
             this.appendChild(this.iconContainerEl);
 
@@ -120,7 +120,7 @@ module api.app.view {
 
         constructor(name:string) {
             this.name = name;
-            this.content = new api.dom.DivEl(true);
+            this.content = new api.dom.DivEl();
             this.content.getEl().setInnerHtml(this.name);
         }
     }
@@ -130,11 +130,11 @@ module api.app.view {
         private tabs:api.dom.LiEl[] = [];
 
         constructor() {
-            super(true, "tab-list");
+            super("tab-list");
         }
 
         addTab(tab, clickCallback:(DetailPanelTab) => void) {
-            var tabEl = new api.dom.LiEl(true);
+            var tabEl = new api.dom.LiEl();
             this.tabs.push(tabEl);
             tabEl.getEl().setInnerHtml(tab.name);
             tabEl.getEl().addEventListener("click", (event) => {

@@ -19,7 +19,7 @@ module app.wizard.page {
         private configFormWrapper: api.dom.DivEl;
 
         constructor(config: PageWizardStepFormConfig) {
-            super(true);
+            super();
             this.addClass("page-wizard-step-form");
             this.parentContent = config.parentContent;
 

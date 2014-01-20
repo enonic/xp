@@ -3,7 +3,7 @@ module api.form.inputtype.text {
     export class HtmlArea extends api.form.inputtype.support.BaseInputTypeView {
 
         constructor() {
-            super(true);
+            super();
         }
 
         createInputOccurrenceElement(index:number, property:api.data.Property):api.dom.Element {

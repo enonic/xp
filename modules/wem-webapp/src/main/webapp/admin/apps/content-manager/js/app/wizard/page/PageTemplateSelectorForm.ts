@@ -7,7 +7,7 @@ module app.wizard.page {
         private pageTemplateChangedListeners: {(changedTo: api.content.page.PageTemplateSummary): void;}[] = [];
 
         constructor() {
-            super(true, "page-template-selector-form");
+            super("page-template-selector-form");
 
             this.pageTemplateComboBox = new api.content.page.PageTemplateComboBox();
 

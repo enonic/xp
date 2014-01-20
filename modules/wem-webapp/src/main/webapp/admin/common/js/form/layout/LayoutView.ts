@@ -4,8 +4,8 @@ module api.form.layout {
 
         private layout:api.form.Layout;
 
-        constructor(context: api.form.FormContext, layout:api.form.Layout, generateId:boolean, className:string) {
-            super(generateId, className, context, layout);
+        constructor(context: api.form.FormContext, layout:api.form.Layout, className:string) {
+            super(className, context, layout);
 
             this.layout = layout;
         }

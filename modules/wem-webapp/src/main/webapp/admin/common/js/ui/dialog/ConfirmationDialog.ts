@@ -20,7 +20,7 @@ module api.ui.dialog {
 
             this.addClass("confirmation-dialog");
 
-            this.questionEl = new api.dom.DivEl(null, "question");
+            this.questionEl = new api.dom.DivEl("question");
             this.appendChildToContentPanel(this.questionEl);
 
             this.noAction = new api.ui.Action("No", "esc");

@@ -3,7 +3,7 @@ module api.ui {
         private maskedItem:api.dom.Element;
 
         constructor(itemToMask:api.dom.Element) {
-            super(true, "dragging-mask");
+            super("dragging-mask");
             this.maskedItem = itemToMask;
             this.getEl().setDisplay("none");
         }

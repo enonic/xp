@@ -2,8 +2,8 @@ module api.dom {
 
     export class LabelEl extends Element {
 
-        constructor(value:string, forElement?:Element, generateId?:boolean, className?:string) {
-            super(new ElementProperties().setTagName("label").setGenerateId(generateId).setClassName(className));
+        constructor(value:string, forElement?:Element, className?:string) {
+            super(new ElementProperties().setTagName("label").setClassName(className));
             this.setValue(value);
             if (forElement) {
                 this.getEl().setAttribute("for", forElement.getId());

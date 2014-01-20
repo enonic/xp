@@ -2,8 +2,8 @@ module api.dom {
 
     export class SpanEl extends Element {
 
-        constructor(generateId?:boolean, className?:string) {
-            super(new ElementProperties().setTagName("span").setGenerateId(generateId).setClassName(className));
+        constructor(className?:string) {
+            super(new ElementProperties().setTagName("span").setClassName(className));
         }
 
         setHtml(html:string) {

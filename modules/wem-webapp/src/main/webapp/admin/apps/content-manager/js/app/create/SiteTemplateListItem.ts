@@ -7,7 +7,7 @@ module app.create {
         private contentType: api.schema.content.ContentTypeSummary;
 
         constructor(item: api.content.site.template.SiteTemplateSummary, contentType: api.schema.content.ContentTypeSummary) {
-            super(true, "site site-template-list-item");
+            super("site site-template-list-item");
 
             this.siteTemplate = item;
             this.contentType = contentType;

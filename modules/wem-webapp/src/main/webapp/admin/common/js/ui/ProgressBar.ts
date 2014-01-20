@@ -10,10 +10,10 @@ module api.ui {
          * @param value the initial value (defaults to 0)
          */
             constructor(value?:number) {
-            super(true, "progress-bar");
+            super("progress-bar");
             this.value = value || 0;
 
-            var progress = this.progress = new api.dom.DivEl(true, "progress-indicator");
+            var progress = this.progress = new api.dom.DivEl("progress-indicator");
             this.getEl().appendChild(progress.getHTMLElement());
             this.setValue(this.value);
         }

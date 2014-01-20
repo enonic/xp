@@ -7,7 +7,7 @@ module api.form.layout {
         private formItemViews:api.form.FormItemView[] = [];
 
          constructor(context:api.form.FormContext, fieldSet:api.form.FieldSet, dataSet?:api.data.DataSet) {
-            super(context, fieldSet, true, "field-set-view");
+            super(context, fieldSet, "field-set-view");
 
             this.fieldSet = fieldSet;
             this.doLayout(dataSet);
@@ -51,7 +51,7 @@ module api.form.layout {
             var label = new FieldSetLabel(this.fieldSet);
             this.appendChild(label);
 
-            var wrappingDiv = new api.dom.DivEl(null, "field-set-container");
+            var wrappingDiv = new api.dom.DivEl("field-set-container");
             this.appendChild(wrappingDiv);
 
             this.formItemViews =  new api.form.FormItemLayer().

@@ -17,7 +17,7 @@ module api.ui.tab {
         private listeners: TabBarItemListener[] = [];
 
         constructor(label:string, options:TabBarItemOptions = {}) {
-            super(true, "tab-bar-item");
+            super("tab-bar-item");
 
             this.setLabel(label);
             this.removable = options.removable;

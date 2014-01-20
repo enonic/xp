@@ -16,19 +16,19 @@ module app.contextwindow.image {
             image.getEl().setHeight("48px");
             image.getEl().setWidth("48px");
 
-            var container = new api.dom.DivEl(null, "container");
+            var container = new api.dom.DivEl("container");
 
-            var title = new api.dom.DivEl(null, "title");
+            var title = new api.dom.DivEl("title");
             title.getEl().setInnerHtml(this.content.getName().toString());
 
-            var subtitle = new api.dom.DivEl(null, "subtitle");
+            var subtitle = new api.dom.DivEl("subtitle");
             subtitle.getEl().setInnerHtml(api.util.limitString(this.content.getPath().toString(), 32));
 
             container.appendChild(title);
             container.appendChild(subtitle);
 
 
-            var removeButton = new api.dom.AEl(null, "remove");
+            var removeButton = new api.dom.AEl("remove");
             removeButton.getEl().addEventListener('click', (event:Event) => {
                 this.notifySelectedOptionToBeRemoved();
 

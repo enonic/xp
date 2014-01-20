@@ -14,7 +14,7 @@ module api.app.browse {
         private itemsSelectionPanel:ItemsSelectionPanel<M>;
 
         constructor(params:BrowseItemPanelParams) {
-            super(true, "browse-item-panel");
+            super("browse-item-panel");
 
             this.actionMenu = new api.ui.menu.ActionMenu(params.actionMenuActions);
             this.itemsSelectionPanel = new ItemsSelectionPanel<M>();

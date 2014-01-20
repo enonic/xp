@@ -17,12 +17,12 @@ module api.form.formitemset {
         private collapseButton: api.ui.Button;
 
         constructor(context: api.form.FormContext, formItemSet: api.form.FormItemSet, dataSets?: api.data.DataSet[]) {
-            super(true, "form-item-set-view", context, formItemSet);
+            super("form-item-set-view", context, formItemSet);
 
             this.formItemSet = formItemSet;
             this.dataSets = dataSets != null ? dataSets : [];
 
-            this.occurrenceViewsContainer = new api.dom.DivEl(null, "occurrence-views-container");
+            this.occurrenceViewsContainer = new api.dom.DivEl("occurrence-views-container");
             this.appendChild(this.occurrenceViewsContainer);
 
             this.formItemSetOccurrences =
@@ -37,7 +37,7 @@ module api.form.formitemset {
                 }
             });
 
-            this.bottomButtonRow = new api.dom.DivEl(null, "bottom-button-row");
+            this.bottomButtonRow = new api.dom.DivEl("bottom-button-row");
             this.appendChild(this.bottomButtonRow);
 
             this.addButton = new api.ui.Button("Add " + this.formItemSet.getLabel());

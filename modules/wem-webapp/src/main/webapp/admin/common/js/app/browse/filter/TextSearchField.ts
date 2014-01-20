@@ -7,7 +7,7 @@ module api.app.browse.filter {
         private valueChangedListeners:Function[] = [];
 
         constructor(placeholder?:string) {
-            super(true, 'text-search-field');
+            super('text-search-field');
             this.setPlaceholder(placeholder);
 
             this.getEl().addEventListener('keydown', (event:any) => {

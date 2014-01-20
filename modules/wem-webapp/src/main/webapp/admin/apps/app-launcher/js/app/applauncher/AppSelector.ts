@@ -17,9 +17,9 @@ module app.launcher {
             this.appTiles = {};
             this.selectedAppIndex = -1;
 
-            this.homeAppSelector = new api.dom.DivEl(null, 'app-selector');
+            this.homeAppSelector = new api.dom.DivEl('app-selector');
 
-            var searchInputContainer = new api.dom.DivEl(null, 'search-input-container');
+            var searchInputContainer = new api.dom.DivEl('search-input-container');
             this.applicationSearchInput = new api.ui.TextInput();
             this.applicationSearchInput.setPlaceholder('Application Filter');
             this.applicationSearchInput.addListener({
@@ -31,7 +31,7 @@ module app.launcher {
 
             this.homeAppSelector.appendChild(searchInputContainer);
 
-            var tilesPlaceholder = new api.dom.DivEl(null, 'app-tiles-placeholder');
+            var tilesPlaceholder = new api.dom.DivEl('app-tiles-placeholder');
             this.emptyMessagePlaceholder = new api.dom.DivEl();
             this.emptyMessagePlaceholder.getEl().setInnerHtml('No applications found');
             this.emptyMessagePlaceholder.hide();

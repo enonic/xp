@@ -3,7 +3,7 @@ module app.wizard {
     export class RelationshipTypeForm extends api.ui.form.Form {
 
         constructor() {
-            super(true);
+            super();
 
             var fieldset = new api.ui.form.Fieldset("Config");
             this.add(fieldset);

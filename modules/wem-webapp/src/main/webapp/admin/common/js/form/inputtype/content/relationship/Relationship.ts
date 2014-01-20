@@ -22,7 +22,7 @@ module api.form.inputtype.content.relationship {
         private contentRequestsAllowed: boolean;
 
         constructor(config?: api.form.inputtype.InputTypeViewConfig<RelationshipConfig>) {
-            super(true, "relationship");
+            super("relationship");
             this.config = config;
             this.contentSummaryLoader = new api.form.inputtype.content.ContentSummaryLoader();
             this.contentSummaryLoader.addListener({

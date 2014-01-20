@@ -9,7 +9,7 @@ module api.ui {
         private options:RadioButton[] = [];
 
         constructor(name:string, orientation?:string) {
-            super("div", true, "radio-group");
+            super("div", "radio-group");
             this.name = name;
             if (RadioGroup.ORIENTATION_VERTICAL == orientation) {
                 this.addClass("vertical");
@@ -53,7 +53,7 @@ module api.ui {
         private label:api.dom.LabelEl;
 
         constructor(label:string, value:string, name:string, checked?:boolean) {
-            super("span", true, "radio-button");
+            super("span", "radio-button");
 
             this.radio = new api.dom.InputEl();
             this.radio.getEl().setAttribute('type', 'radio');

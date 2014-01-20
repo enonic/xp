@@ -13,7 +13,7 @@ module api.form.input {
         private addButton: api.ui.Button;
 
         constructor(context: api.form.FormContext, input: api.form.Input, properties?: api.data.Property[]) {
-            super(true, "input-view", context, input);
+            super("input-view", context, input);
             this.input = input;
             this.properties = properties;
 
@@ -76,7 +76,7 @@ module api.form.input {
                     this.inputTypeView.createAndAddOccurrence();
                 });
 
-                this.bottomButtonRow = new api.dom.DivEl(null, "bottom-button-row");
+                this.bottomButtonRow = new api.dom.DivEl("bottom-button-row");
                 this.appendChild(this.bottomButtonRow);
                 this.bottomButtonRow.appendChild(this.addButton);
             }

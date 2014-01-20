@@ -12,7 +12,6 @@ module api.app.remove{
 
         constructor(modelName:string) {
             super({
-                idPrefix: modelName + "DeleteDialog",
                 title: "Delete " + modelName,
                 width: 500,
                 height: 300
@@ -77,7 +76,7 @@ module api.app.remove{
 
     export class DeleteDialogItemList extends api.dom.DivEl {
         constructor() {
-            super(true);
+            super();
             this.getEl().addClass("item-list");
         }
 
@@ -88,7 +87,7 @@ module api.app.remove{
 
     class DeleteDialogItemComponent extends api.dom.DivEl {
         constructor(deleteItem:DeleteItem) {
-            super(true);
+            super();
             this.getEl().addClass("item");
 
             var icon = new api.dom.ImgEl(deleteItem.getIconUrl());

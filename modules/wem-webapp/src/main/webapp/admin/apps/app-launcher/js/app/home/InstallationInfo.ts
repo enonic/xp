@@ -5,7 +5,7 @@ module app.home {
         private installation:string;
 
         constructor(installation:string) {
-            super(null, 'installation-info');
+            super('installation-info');
             this.setInstallation(installation);
         }
 

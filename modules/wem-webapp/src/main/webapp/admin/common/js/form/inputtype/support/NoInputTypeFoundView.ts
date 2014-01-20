@@ -3,7 +3,7 @@ module api.form.input {
     export class NoInputTypeFoundView extends api.form.inputtype.support.BaseInputTypeView {
 
         constructor() {
-            super(true);
+            super();
         }
 
         layout(input:api.form.Input, properties?:api.data.Property[]) {
@@ -16,7 +16,7 @@ module api.form.input {
 
         createInputOccurrenceElement(index:number, property:api.data.Property):api.dom.Element {
 
-            var inputEl = api.ui.TextInput.middle(true);
+            var inputEl = api.ui.TextInput.middle();
             inputEl.setName(this.getInput().getName());
             if (property != null) {
                 inputEl.setValue(property.getString());

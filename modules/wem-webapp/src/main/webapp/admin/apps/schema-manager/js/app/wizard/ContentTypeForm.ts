@@ -3,7 +3,7 @@ module app.wizard {
     export class ContentTypeForm extends api.ui.form.Form {
 
         constructor() {
-            super(true);
+            super();
 
             var fieldset = new api.ui.form.Fieldset("Config");
 

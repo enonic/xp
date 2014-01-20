@@ -13,7 +13,7 @@ module app.login {
         private onUserAuthenticatedHandler: (userName: string, userStore: UserStore) => void;
 
         constructor(authenticator: Authenticator) {
-            super(null, 'login-form');
+            super('login-form');
             this.authenticator = authenticator;
             this.userStores = {};
             this.onUserAuthenticatedHandler = null;
@@ -23,9 +23,9 @@ module app.login {
             title.setText('Login');
             this.userStoresDropdown = new api.ui.Dropdown('userstore');
             this.userStoresDropdown.addClass('form-item');
-            this.userIdInput = new api.ui.TextInput(null, 'form-item');
+            this.userIdInput = new api.ui.TextInput('form-item');
             this.userIdInput.setPlaceholder('userid or e-mail');
-            this.passwordInput = new api.ui.PasswordInput(null, 'form-item');
+            this.passwordInput = new api.ui.PasswordInput('form-item');
             this.passwordInput.setPlaceholder('password');
             this.userIdInput.getEl().addEventListener('keyup', (event:KeyboardEvent) => {
                 this.onInputTyped(event);
@@ -47,7 +47,7 @@ module app.login {
             formContainer.appendChild(this.loginButton);
             this.appendChild(formContainer);
 
-            this.licensedTo = new api.dom.DivEl(null, 'login-licensed-to');
+            this.licensedTo = new api.dom.DivEl('login-licensed-to');
             this.appendChild(this.licensedTo);
         }
 

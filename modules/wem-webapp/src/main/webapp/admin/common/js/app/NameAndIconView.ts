@@ -9,20 +9,20 @@ module api.app {
         private subNameEl: api.dom.PEl;
 
         constructor() {
-            super(true, "name-and-icon-view");
+            super("name-and-icon-view");
 
             this.iconEl = new api.dom.ImgEl();
             this.iconEl.setClass("icon");
             this.appendChild(this.iconEl);
 
-            var namesContainer = new api.dom.DivEl(false);
+            var namesContainer = new api.dom.DivEl();
             namesContainer.addClass("names-container");
             this.appendChild(namesContainer);
 
-            this.mainNameEl = new api.dom.H6El(false, "main-name");
+            this.mainNameEl = new api.dom.H6El("main-name");
             namesContainer.appendChild(this.mainNameEl);
 
-            this.subNameEl = new api.dom.PEl(false, "sub-name");
+            this.subNameEl = new api.dom.PEl("sub-name");
             namesContainer.appendChild(this.subNameEl);
         }
 

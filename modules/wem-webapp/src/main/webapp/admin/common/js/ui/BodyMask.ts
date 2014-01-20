@@ -15,7 +15,7 @@ module api.ui {
         }
 
         constructor() {
-            super(true);
+            super();
             this.getEl().setDisplay("none");
             this.getEl().addClass("body-mask");
             this.getEl().setZindex(30000);

@@ -13,7 +13,7 @@ module api.form.inputtype.support {
         private dragControl:api.dom.DivEl;
 
         constructor(inputOccurrence:InputOccurrence, inputElement:api.dom.Element) {
-            super(true, "input-occurrence-view", inputOccurrence);
+            super("input-occurrence-view", inputOccurrence);
 
             this.dragControl = new api.dom.DivEl();
 
@@ -24,10 +24,10 @@ module api.form.inputtype.support {
             this.inputElement = inputElement;
             this.appendChild(this.inputElement);
 
-            this.occurrenceCountEl = new api.dom.SpanEl(null, "occurrence-count");
+            this.occurrenceCountEl = new api.dom.SpanEl("occurrence-count");
             this.appendChild(this.occurrenceCountEl);
 
-            this.removeButtonEl = new api.dom.AEl(null, "remove-button");
+            this.removeButtonEl = new api.dom.AEl("remove-button");
 
             this.removeButtonEl.hide();
             this.appendChild(this.removeButtonEl);

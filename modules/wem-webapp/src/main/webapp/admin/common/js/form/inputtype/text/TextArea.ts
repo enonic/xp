@@ -6,7 +6,7 @@ module api.form.inputtype.text {
         private columns:number;
 
         constructor(config:api.form.inputtype.InputTypeViewConfig<TextAreaConfig>) {
-            super(true);
+            super();
             this.rows = config.inputConfig.rows;
             this.columns = config.inputConfig.columns;
         }

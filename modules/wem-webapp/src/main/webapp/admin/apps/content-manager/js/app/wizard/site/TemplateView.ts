@@ -9,13 +9,13 @@ module app.wizard.site {
         private nameAndIconView: api.app.NameAndIconView;
 
         constructor() {
-            super(true, "template-view");
+            super("template-view");
 
-            var label = new api.dom.DivEl(false, "input-label");
+            var label = new api.dom.DivEl("input-label");
             label.getEl().setInnerHtml("Site Template");
             this.appendChild(label);
 
-            var input = new api.dom.DivEl(false, "input-type-view");
+            var input = new api.dom.DivEl("input-type-view");
             this.appendChild(input);
 
             this.nameAndIconView = new api.app.NameAndIconView().medium();

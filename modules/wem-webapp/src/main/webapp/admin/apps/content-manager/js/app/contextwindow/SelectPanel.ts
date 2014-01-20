@@ -8,7 +8,7 @@ module app.contextwindow {
         private contextWindow:ContextWindow;
 
         constructor(contextWindow:ContextWindow) {
-            super(true, "select-panel");
+            super("select-panel");
             this.contextWindow = contextWindow;
 
             this.dataView = new api.ui.grid.DataView<ComponentData>();

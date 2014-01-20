@@ -5,7 +5,7 @@ module app.home {
         private version:string;
 
         constructor(version:string) {
-            super(null, 'version-info');
+            super('version-info');
         }
 
         setVersion(version:string):void {

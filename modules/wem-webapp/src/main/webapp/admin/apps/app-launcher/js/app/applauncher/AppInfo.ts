@@ -5,10 +5,10 @@ module app.launcher {
         private appInfoDescription:api.dom.DivEl;
 
         constructor() {
-            super(null, 'app-info');
+            super('app-info');
 
-            this.appInfoName = new api.dom.H3El(null, 'app-info-name');
-            this.appInfoDescription = new api.dom.DivEl(null, 'app-info-description');
+            this.appInfoName = new api.dom.H3El('app-info-name');
+            this.appInfoDescription = new api.dom.DivEl('app-info-description');
 
             this.appendChild(this.appInfoName);
             this.appendChild(this.appInfoDescription);

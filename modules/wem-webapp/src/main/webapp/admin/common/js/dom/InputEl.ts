@@ -2,8 +2,8 @@ module api.dom {
 
     export class InputEl extends FormInputEl {
 
-        constructor(generateId?:boolean, className?:string, type?:string) {
-            super("input", generateId, className);
+        constructor(className?:string, type?:string) {
+            super("input", className);
             this.getHTMLElement().setAttribute('type', type || 'text');
         }
 

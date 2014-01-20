@@ -2,8 +2,8 @@ module api.dom {
 
     export class AEl extends Element {
 
-        constructor(generateId?: boolean, className?: string) {
-            super(new ElementProperties().setTagName("a").setGenerateId(generateId).setClassName(className));
+        constructor(className?: string) {
+            super(new ElementProperties().setTagName("a").setClassName(className));
         }
 
         public setText(value: string) {

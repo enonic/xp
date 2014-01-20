@@ -13,9 +13,9 @@ module app.create {
         private listeners:SchemaTypesListListener[] = [];
 
         constructor(items:SchemaTypeListItem[]) {
-            super(true, "schema-type-list");
+            super("schema-type-list");
 
-            this.ul = new api.dom.UlEl(true);
+            this.ul = new api.dom.UlEl();
             this.appendChild(this.ul);
 
             this.layoutItems(items);
@@ -46,7 +46,7 @@ module app.create {
         }
 
         private renderListItem(item:SchemaTypeListItem):api.dom.LiEl {
-            var li = new api.dom.LiEl(true, "schema-type-list-item");
+            var li = new api.dom.LiEl("schema-type-list-item");
             var img = new api.dom.ImgEl(item.iconUrl);
             var h6 = new api.dom.H6El();
             h6.getEl().setInnerHtml(item.displayName);

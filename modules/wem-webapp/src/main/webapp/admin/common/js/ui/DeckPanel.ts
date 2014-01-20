@@ -11,8 +11,8 @@ module api.ui {
 
         private listeners: DeckPanelListener[] = [];
 
-        constructor(generateId?: boolean, className?: string) {
-            super(generateId, "deck-panel" + (className ? " " + className : ""));
+        constructor(className?: string) {
+            super("deck-panel" + (className ? " " + className : ""));
         }
 
         isEmpty(): boolean {

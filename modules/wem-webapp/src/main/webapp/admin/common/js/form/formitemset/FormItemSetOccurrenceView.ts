@@ -22,7 +22,7 @@ module api.form.formitemset {
 
         constructor(context: api.form.FormContext, formItemSetOccurrence:FormItemSetOccurrence, formItemSet:api.form.FormItemSet,
                     dataSet:api.data.DataSet) {
-            super(true, "form-item-set-occurrence-view", formItemSetOccurrence);
+            super("form-item-set-occurrence-view", formItemSetOccurrence);
             this.context = context;
             this.formItemSetOccurrence = formItemSetOccurrence;
             this.formItemSet = formItemSet;
@@ -33,20 +33,20 @@ module api.form.formitemset {
         }
 
         private doLayout() {
-            this.removeButton = new api.dom.AEl(null, "remove-button");
+            this.removeButton = new api.dom.AEl("remove-button");
             this.appendChild(this.removeButton);
             this.removeButton.setClickListener(() => {
                 this.notifyRemoveButtonClicked();
             });
 
-            this.occurrenceCountEl = new api.dom.SpanEl(null, "occurrence-count");
+            this.occurrenceCountEl = new api.dom.SpanEl("occurrence-count");
             this.occurrenceCountEl.getEl().setInnerHtml("#" + (this.getIndex() + 1));
             this.appendChild(this.occurrenceCountEl);
 
             var label = new FormItemSetLabel(this.formItemSet);
             this.appendChild(label);
 
-            this.formItemSetOccurrencesContainer = new api.dom.DivEl(null, "form-item-set-occurrences-container");
+            this.formItemSetOccurrencesContainer = new api.dom.DivEl("form-item-set-occurrences-container");
             this.appendChild(this.formItemSetOccurrencesContainer);
 
 

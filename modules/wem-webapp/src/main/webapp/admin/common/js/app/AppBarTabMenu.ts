@@ -4,8 +4,8 @@ module api.app{
 
         private appBarTabMenuButton:AppBarTabMenuButton;
 
-        constructor(generateId?:boolean) {
-            super(generateId, "appbar-tabmenu");
+        constructor() {
+            super("appbar-tabmenu");
         }
 
         showMenu() {

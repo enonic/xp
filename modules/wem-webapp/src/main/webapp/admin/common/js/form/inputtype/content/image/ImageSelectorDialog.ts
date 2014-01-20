@@ -17,7 +17,7 @@ module api.form.inputtype.content.image {
         private editButtonClickedListeners:{(): void;}[] = [];
 
         constructor() {
-            super(true, "dialog");
+            super("dialog");
 
             this.nameEl = new api.dom.H1El();
             this.appendChild(this.nameEl);

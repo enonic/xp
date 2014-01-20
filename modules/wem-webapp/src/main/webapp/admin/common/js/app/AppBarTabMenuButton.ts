@@ -6,8 +6,8 @@ module api.app{
 
         private tabCountEl:AppBarTabCount;
 
-        constructor(generateId?:boolean) {
-            super(generateId);
+        constructor() {
+            super();
             this.getEl().addClass("appbar-tabmenu-button");
 
             this.iconEl = new api.dom.ImgEl();
