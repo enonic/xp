@@ -10,6 +10,8 @@ module app.wizard.page {
 
         private parentContent: api.content.Content;
 
+        private content: api.content.Content;
+
         private pageTemplateSelectorForm: PageTemplateSelectorForm;
 
         private selectedPageTemplate: api.content.page.PageTemplate;
@@ -41,6 +43,8 @@ module app.wizard.page {
         layout(content: api.content.Content, siteContent: api.content.Content): Q.Promise<void> {
 
             var deferred = Q.defer<void>();
+
+            this.content = content;
 
             var page: api.content.page.Page = content.getPage();
 
@@ -96,6 +100,9 @@ module app.wizard.page {
 
             var form = pageTemplate.getDescriptor().getConfig();
             var config = pageTemplate.getConfig();
+            if (this.content.getPage().hasConfig()) {
+                config = this.content.getPage().getConfig();
+            }
             this.formView = new api.form.FormView(formContext, form, config);
             this.configFormWrapper.appendChild(this.formView);
         }
@@ -108,7 +115,8 @@ module app.wizard.page {
             if (this.formView == null) {
                 return new api.data.RootDataSet();
             }
-            return this.formView.getContentData();
+            var config = this.formView.getData();
+            return  config;
         }
 
     }

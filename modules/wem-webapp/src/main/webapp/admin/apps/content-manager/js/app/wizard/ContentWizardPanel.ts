@@ -381,6 +381,10 @@ module app.wizard {
                 return null;
             }
 
+            if( content.isPage() ) {
+                return null;
+            }
+
             var createRequest = new api.content.page.CreatePageRequest(content.getContentId())
                 .setPageTemplateKey(this.pageWizardStepForm.getPageTemplate().getKey());
 
@@ -457,6 +461,10 @@ module app.wizard {
             }
 
             if (this.pageWizardStepForm.getPageTemplate() == null) {
+                return null;
+            }
+
+            if (!content.isPage()) {
                 return null;
             }
 

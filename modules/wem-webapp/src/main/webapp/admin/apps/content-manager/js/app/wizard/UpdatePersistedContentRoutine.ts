@@ -17,9 +17,11 @@ module app.wizard {
 
         private createPageRequestProducer: {(content: api.content.Content) : api.content.page.CreatePageRequest; };
 
+        private doneHandledCreatePage = false;
+
         private updatePageRequestProducer: {(content: api.content.Content) : api.content.page.UpdatePageRequest; };
 
-        private doneHandledPage = false;
+        private doneHandledUpdatePage = false;
 
         constructor(thisOfProducer: ContentWizardPanel) {
             super(thisOfProducer);
@@ -83,12 +85,27 @@ module app.wizard {
                             });
                     });
             }
-            else if (!this.doneHandledPage) {
+            else if (!this.doneHandledCreatePage) {
 
-                this.doHandlePage(context).
+                this.doHandleCreatePage(context).
                     done(() => {
 
-                        this.doneHandledPage = true;
+                        this.doneHandledCreatePage = true;
+
+                        this.doExecuteNext(context).
+                            done((contentFromNext: api.content.Content) => {
+                                deferred.resolve(contentFromNext);
+                            });
+                    });
+
+            }
+
+            else if (!this.doneHandledUpdatePage) {
+
+                this.doHandleUpdatePage(context).
+                    done(() => {
+
+                        this.doneHandledUpdatePage = true;
 
                         this.doExecuteNext(context).
                             done((contentFromNext: api.content.Content) => {
@@ -111,26 +128,16 @@ module app.wizard {
 
             var deferred = Q.defer<void>();
 
-            if (this.updateContentRequestProducer != undefined) {
+            this.updateContentRequestProducer.call(this.getThisOfProducer()).
+                sendAndParse().
+                done((content: api.content.Content) => {
 
-                this.updateContentRequestProducer.call(this.getThisOfProducer()).
-                    sendAndParse().
-                    done((content: api.content.Content) => {
+                    console.log("UpdatePersistedContentRoutine.doHandleUpdateContent() ... content updated");
 
-                        console.log("UpdatePersistedContentRoutine.doHandleUpdateContent() ... content updated");
+                    context.content = content;
 
-                        context.content = content;
-
-                        deferred.resolve(null);
-                    });
-            }
-            else {
-
-                console.log("UpdatePersistedContentRoutine.doHandleUpdateContent() ... no updateContentRequestProducer defined");
-
-                deferred.resolve(null);
-
-            }
+                    deferred.resolve(null);
+                });
 
             return deferred.promise;
         }
@@ -141,29 +148,21 @@ module app.wizard {
 
             var deferred = Q.defer<void>();
 
-            if (this.updateSiteRequestProducer != undefined) {
+            var updateSiteRequest = this.updateSiteRequestProducer.call(this.getThisOfProducer(), context.content);
+            if (updateSiteRequest != null) {
+                updateSiteRequest.
+                    sendAndParse().
+                    done((content: api.content.Content) => {
 
-                var updateSiteRequest = this.updateSiteRequestProducer.call(this.getThisOfProducer(), context.content);
-                if (updateSiteRequest != null) {
-                    updateSiteRequest.
-                        sendAndParse().
-                        done((content: api.content.Content) => {
+                        console.log("UpdatePersistedContentRoutine.doHandleUpdateSite() ... site updated");
 
-                            console.log("UpdatePersistedContentRoutine.doHandleUpdateSite() ... site updated");
+                        context.content = content;
 
-                            context.content = content;
-
-                            deferred.resolve(null);
-                        });
-                }
-                else {
-                    console.log("UpdatePersistedContentRoutine.doHandleUpdateSite() ... no updateSiteRequest given");
-
-                    deferred.resolve(null);
-                }
+                        deferred.resolve(null);
+                    });
             }
             else {
-                console.log("UpdatePersistedContentRoutine.doHandleUpdateSite() ... no createSiteRequestProducer defined");
+                console.log("UpdatePersistedContentRoutine.doHandleUpdateSite() ... no updateSiteRequest given");
 
                 deferred.resolve(null);
             }
@@ -171,54 +170,54 @@ module app.wizard {
             return deferred.promise;
         }
 
-        private doHandlePage(context: UpdatePersistedContentRoutineContext): Q.Promise<void> {
+        private doHandleCreatePage(context: UpdatePersistedContentRoutineContext): Q.Promise<void> {
 
-            console.log("UpdatePersistedContentRoutine.doHandlePage() ...");
+            console.log("UpdatePersistedContentRoutine.doHandleCreatePage() ...");
 
             var deferred = Q.defer<void>();
 
+            var createPageRequest = this.createPageRequestProducer.call(this.getThisOfProducer(), context.content);
 
-            if (this.createPageRequestProducer != undefined) {
+            if (createPageRequest != null) {
+                createPageRequest.sendAndParse().
+                    done((content: api.content.Content) => {
 
-                var createPageRequest = this.createPageRequestProducer.call(this.getThisOfProducer(), context.content);
+                        console.log("UpdatePersistedContentRoutine.doHandleCreatePage() ... page created");
 
-                if (createPageRequest != null) {
-                    createPageRequest.sendAndParse().
-                        done((content: api.content.Content) => {
+                        context.content = content;
 
-                            console.log("UpdatePersistedContentRoutine.doHandlePage() ... page created");
-
-                            context.content = content;
-
-                            deferred.resolve(null);
-                        });
-                }
-                else {
-                    console.log("UpdatePersistedContentRoutine.doHandlePage() ... no createPageRequest given");
-                    deferred.resolve(null);
-                }
-            }
-            else if (this.updatePageRequestProducer != undefined) {
-                var updatePageRequest = this.updatePageRequestProducer.call(this.getThisOfProducer(), context.content);
-
-                if (updatePageRequest != null) {
-                    updatePageRequest.sendAndParse().
-                        done((content: api.content.Content) => {
-
-                            console.log("UpdatePersistedContentRoutine.doHandlePage() ... page created");
-
-                            context.content = content;
-
-                            deferred.resolve(null);
-                        });
-                }
-                else {
-                    console.log("UpdatePersistedContentRoutine.doHandlePage() ... no updatePageRequest given");
-                    deferred.resolve(null);
-                }
+                        deferred.resolve(null);
+                    });
             }
             else {
-                console.log("UpdatePersistedContentRoutine.doExecuteNext() no page to creat or update (no producers)");
+                console.log("UpdatePersistedContentRoutine.doHandleCreatePage() ... no createPageRequest given");
+                deferred.resolve(null);
+            }
+
+            return deferred.promise;
+        }
+
+        private doHandleUpdatePage(context: UpdatePersistedContentRoutineContext): Q.Promise<void> {
+
+            console.log("UpdatePersistedContentRoutine.doHandleUpdatePage() ...");
+
+            var deferred = Q.defer<void>();
+
+            var updatePageRequest = this.updatePageRequestProducer.call(this.getThisOfProducer(), context.content);
+
+            if (updatePageRequest != null) {
+                updatePageRequest.sendAndParse().
+                    done((content: api.content.Content) => {
+
+                        console.log("UpdatePersistedContentRoutine.doHandleUpdatePage() ... page created");
+
+                        context.content = content;
+
+                        deferred.resolve(null);
+                    });
+            }
+            else {
+                console.log("UpdatePersistedContentRoutine.doHandleUpdatePage() ... no updatePageRequest given");
                 deferred.resolve(null);
             }
 

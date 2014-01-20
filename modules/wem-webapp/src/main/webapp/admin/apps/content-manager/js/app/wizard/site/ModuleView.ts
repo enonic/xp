@@ -22,7 +22,7 @@ module app.wizard.site {
         }
 
         getModuleConfig(): api.content.site.ModuleConfig {
-            var config = this.formView.rebuildContentData();
+            var config = this.formView.getData();
             this.moduleConfig.setConfig(config);
             return this.moduleConfig;
         }

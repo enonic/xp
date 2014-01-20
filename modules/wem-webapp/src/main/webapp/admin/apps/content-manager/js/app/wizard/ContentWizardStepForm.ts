@@ -41,7 +41,7 @@ module app.wizard {
         }
 
         getContentData() {
-            return this.formView.rebuildContentData();
+            return this.formView.getData();
         }
 
         giveFocus(): boolean  {

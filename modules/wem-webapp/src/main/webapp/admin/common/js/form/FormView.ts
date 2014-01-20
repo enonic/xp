@@ -111,7 +111,7 @@ module api.form {
             return null;
         }
 
-        getContentData(): api.data.RootDataSet {
+        getOriginalData(): api.data.RootDataSet {
             return this.rootDataSet;
         }
 
@@ -123,7 +123,7 @@ module api.form {
             return attachments;
         }
 
-        rebuildContentData(): api.content.ContentData {
+        getData(): api.content.ContentData {
             var contentData: api.content.ContentData = new api.content.ContentData();
             this.formItemViews.forEach((formItemView: FormItemView) => {
 
