@@ -42,6 +42,7 @@ module app.wizard.page {
 
         layout(content: api.content.Content, siteContent: api.content.Content): Q.Promise<void> {
 
+            console.log("PageWizardStepForm.layot() ... ");
             var deferred = Q.defer<void>();
 
             this.content = content;
@@ -75,14 +76,18 @@ module app.wizard.page {
 
         private handlePageTemplateChanged(changedTo: api.content.page.PageTemplateSummary) {
 
+            console.log("PageWizardStepForm.handlePageTemplateChanged() ... ");
+
             if (this.formView != null) {
                 this.formView.remove();
             }
 
             if (changedTo == null) {
-
+                this.selectedPageTemplate = null;
+                console.log("PageWizardStepForm.handlePageTemplateChanged() ... changed to null");
             }
             else {
+                console.log("PageWizardStepForm.handlePageTemplateChanged() ... changed to something (loading...)");
                 new api.content.page.GetPageTemplateByKeyRequest(changedTo.getKey()).
                     sendAndParse().
                     done((pageTemplate: api.content.page.PageTemplate) => {
@@ -100,7 +105,7 @@ module app.wizard.page {
 
             var form = pageTemplate.getDescriptor().getConfig();
             var config = pageTemplate.getConfig();
-            if (this.content.getPage().hasConfig()) {
+            if (this.content.isPage() && this.content.getPage().hasConfig()) {
                 config = this.content.getPage().getConfig();
             }
             this.formView = new api.form.FormView(formContext, form, config);
