@@ -1,5 +1,20 @@
 module api.app {
 
+    export class NameAndIconViewBuilder {
+
+        size: NameAndIconViewSize;
+
+        public setSize(size: NameAndIconViewSize): NameAndIconViewBuilder {
+            this.size = size;
+            return this;
+        }
+
+        public build(): NameAndIconView {
+
+            return new NameAndIconView(this);
+        }
+    }
+
     export class NameAndIconView extends api.dom.DivEl {
 
         private iconEl: api.dom.ImgEl;
@@ -8,8 +23,10 @@ module api.app {
 
         private subNameEl: api.dom.PEl;
 
-        constructor() {
+        constructor(builder: NameAndIconViewBuilder) {
             super("name-and-icon-view");
+            var sizeClassName: string = NameAndIconViewSize[builder.size];
+            this.addClass(sizeClassName);
 
             this.iconEl = new api.dom.ImgEl();
             this.iconEl.setClass("icon");
@@ -45,21 +62,5 @@ module api.app {
             this.iconEl.setSrc(value);
             return this;
         }
-
-        small() : NameAndIconView {
-            this.addClass("small");
-            return this;
-        }
-
-        medium() : NameAndIconView {
-            this.addClass("medium");
-            return this;
-        }
-
-        large() : NameAndIconView {
-            this.addClass("large");
-            return this;
-        }
-
     }
 }

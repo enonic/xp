@@ -1,3 +1,4 @@
+///<reference path='NameAndIconViewSize.ts'/>
 ///<reference path='NameAndIconView.ts'/>
 ///<reference path='AppLauncherEventType.ts' />
 ///<reference path='AppLauncherEvent.ts' />

@@ -18,7 +18,7 @@ module app.wizard.site {
             var input = new api.dom.DivEl("input-type-view");
             this.appendChild(input);
 
-            this.nameAndIconView = new api.app.NameAndIconView().medium();
+            this.nameAndIconView = new api.app.NameAndIconViewBuilder().setSize(api.app.NameAndIconViewSize.medium).build();
             input.appendChild(this.nameAndIconView);
         }
 
