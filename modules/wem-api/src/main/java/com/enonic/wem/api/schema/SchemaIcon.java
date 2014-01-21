@@ -83,12 +83,12 @@ public final class SchemaIcon
         return new SchemaIcon( iconData, mimeType );
     }
 
-    public static SchemaIcon from( final InputStream data, final String mimeType )
+    public static SchemaIcon from( final InputStream dataStream, final String mimeType )
     {
-        Preconditions.checkNotNull( data, "data is mandatory" );
-        try
+        Preconditions.checkNotNull( dataStream, "dataStream is mandatory" );
+        try (InputStream is = dataStream)
         {
-            return new SchemaIcon( ByteStreams.toByteArray( data ), mimeType );
+            return new SchemaIcon( ByteStreams.toByteArray( is ), mimeType );
         }
         catch ( IOException e )
         {
