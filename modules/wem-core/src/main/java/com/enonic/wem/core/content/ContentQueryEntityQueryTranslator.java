@@ -16,7 +16,8 @@ public class ContentQueryEntityQueryTranslator
         final EntityQuery.Builder entityQueryBuilder = EntityQuery.newQuery().
             query( contentQuery.getQueryExpr() ).
             from( contentQuery.getFrom() ).
-            size( contentQuery.getSize() );
+            size( contentQuery.getSize() ).
+            setAggregationQueries( contentQuery.getAggregationQueries() );
 
         final ContentTypeNames contentTypeNames = contentQuery.getContentTypes();
 

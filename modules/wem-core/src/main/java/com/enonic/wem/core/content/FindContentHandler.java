@@ -10,15 +10,15 @@ import com.enonic.wem.api.content.query.ContentQueryResult;
 import com.enonic.wem.api.entity.query.EntityQuery;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.index.entity.EntityQueryResult;
-import com.enonic.wem.core.index.entity.EntitySearchResultEntry;
-import com.enonic.wem.core.index.entity.EntitySearchService;
+import com.enonic.wem.core.index.entity.EntityQueryResultEntry;
+import com.enonic.wem.core.index.entity.EntityQueryService;
 
 public class FindContentHandler
     extends CommandHandler<FindContent>
 {
     private ContentQueryEntityQueryTranslator translator = new ContentQueryEntityQueryTranslator();
 
-    private EntitySearchService entitySearchService;
+    private EntityQueryService entityQueryService;
 
     @Override
     public void handle()
@@ -28,7 +28,7 @@ public class FindContentHandler
 
         final EntityQuery entityQuery = translator.translate( contentQuery );
 
-        final EntityQueryResult entityQueryResult = entitySearchService.find( entityQuery );
+        final EntityQueryResult entityQueryResult = entityQueryService.find( entityQuery );
 
         ContentQueryResult contentIndexQueryResult = translateToContentIndexQueryResult( entityQueryResult );
 
@@ -40,19 +40,22 @@ public class FindContentHandler
     {
         final ContentQueryResult contentQueryResult = new ContentQueryResult( new Long( result.getTotalHits() ).intValue() );
 
-        final ImmutableSet<EntitySearchResultEntry> entries = result.getEntries();
+        final ImmutableSet<EntityQueryResultEntry> entries = result.getEntries();
 
-        for ( final EntitySearchResultEntry entry : entries )
+        for ( final EntityQueryResultEntry entry : entries )
         {
             contentQueryResult.addContentHit( ContentId.from( entry.getId() ), entry.getScore() );
         }
+
+        contentQueryResult.setAggregations( result.getAggregations() );
+
         return contentQueryResult;
     }
 
 
     @Inject
-    public void setEntitySearchService( final EntitySearchService entitySearchService )
+    public void setEntityQueryService( final EntityQueryService entityQueryService )
     {
-        this.entitySearchService = entitySearchService;
+        this.entityQueryService = entityQueryService;
     }
 }

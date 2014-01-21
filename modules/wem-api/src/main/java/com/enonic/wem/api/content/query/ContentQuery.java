@@ -1,5 +1,11 @@
 package com.enonic.wem.api.content.query;
 
+import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+
+import com.enonic.wem.api.query.aggregation.AggregationQuery;
 import com.enonic.wem.api.query.expr.QueryExpr;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
@@ -12,6 +18,8 @@ public class ContentQuery
 
     private final ContentTypeNames contentTypeNames;
 
+    private final ImmutableSet<AggregationQuery> aggregationQueries;
+
     private final int from;
 
     private final int size;
@@ -22,6 +30,7 @@ public class ContentQuery
         this.contentTypeNames = builder.contentTypeNamesBuilder.build();
         this.from = builder.from;
         this.size = builder.size;
+        this.aggregationQueries = ImmutableSet.copyOf( builder.aggregationQueries );
     }
 
     public static Builder newContentQuery()
@@ -49,6 +58,11 @@ public class ContentQuery
         return size;
     }
 
+    public ImmutableSet<AggregationQuery> getAggregationQueries()
+    {
+        return aggregationQueries;
+    }
+
     public static class Builder
     {
         private QueryExpr queryExpr;
@@ -59,6 +73,7 @@ public class ContentQuery
 
         private int size = DEFAULT_FETCH_SIZE;
 
+        private Set<AggregationQuery> aggregationQueries = Sets.newHashSet();
 
         public Builder queryExpr( final QueryExpr queryExpr )
         {
@@ -88,6 +103,12 @@ public class ContentQuery
         public Builder size( final int size )
         {
             this.size = size;
+            return this;
+        }
+
+        public Builder aggregationQuery( final AggregationQuery aggregationQuery )
+        {
+            this.aggregationQueries.add( aggregationQuery );
             return this;
         }
 

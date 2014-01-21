@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.facet.FacetBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
@@ -39,6 +40,8 @@ public class ElasticsearchQuery
 
     private final boolean explain;
 
+    private final ImmutableSet<AggregationBuilder> aggregations;
+
     private ElasticsearchQuery( final Builder builder )
     {
         this.query = builder.query;
@@ -50,6 +53,7 @@ public class ElasticsearchQuery
         this.size = builder.size;
         this.from = builder.from;
         this.explain = builder.explain;
+        this.aggregations = ImmutableSet.copyOf( builder.aggregations );
     }
 
     public QueryBuilder getQuery()
@@ -115,6 +119,14 @@ public class ElasticsearchQuery
             builder.filter( this.getFilter() );
         }
 
+        if ( this.aggregations != null && this.aggregations.size() > 0 )
+        {
+            for ( final AggregationBuilder agg : aggregations )
+            {
+                builder.aggregation( agg );
+            }
+        }
+
         if ( this.getFacetBuilders() != null && !this.getFacetBuilders().isEmpty() )
         {
             for ( final FacetBuilder facetBuilder : this.getFacetBuilders() )
@@ -171,6 +183,8 @@ public class ElasticsearchQuery
         private int size = DEFAULT_SIZE;
 
         private boolean explain = false;
+
+        private Set<AggregationBuilder> aggregations = Sets.newHashSet();
 
         public Builder query( final QueryBuilder query )
         {
@@ -236,11 +250,17 @@ public class ElasticsearchQuery
             return this;
         }
 
+        public Builder setAggregations( final Set<AggregationBuilder> aggregations )
+        {
+            this.aggregations = aggregations;
+            return this;
+        }
 
         public ElasticsearchQuery build()
         {
             return new ElasticsearchQuery( this );
         }
+
 
     }
 

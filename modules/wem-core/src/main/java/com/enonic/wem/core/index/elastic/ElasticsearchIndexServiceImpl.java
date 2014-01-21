@@ -33,7 +33,7 @@ import com.enonic.wem.core.index.IndexStatus;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.index.entity.EntityQueryResult;
-import com.enonic.wem.core.index.entity.EntitySearchResultFactory;
+import com.enonic.wem.core.index.entity.EntityQueryResultFactory;
 
 
 public class ElasticsearchIndexServiceImpl
@@ -50,7 +50,7 @@ public class ElasticsearchIndexServiceImpl
 
     private IndexSettingsBuilder indexSettingsBuilder;
 
-    private EntitySearchResultFactory entitySearchResultFactory = new EntitySearchResultFactory();
+    private EntityQueryResultFactory entityQueryResultFactory = new EntityQueryResultFactory();
 
     @Override
     public IndexStatus getIndexStatus( final Index index, final boolean waitForStatusYellow )
@@ -170,7 +170,7 @@ public class ElasticsearchIndexServiceImpl
 
         final SearchResponse searchResponse = doSearchRequest( searchRequest );
 
-        return entitySearchResultFactory.create( searchResponse );
+        return entityQueryResultFactory.create( searchResponse );
     }
 
     private SearchResponse doSearchRequest( SearchRequest searchRequest )

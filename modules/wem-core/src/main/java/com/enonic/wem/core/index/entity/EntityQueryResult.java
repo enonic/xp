@@ -8,10 +8,11 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.facet.Facets;
+import com.enonic.wem.api.query.aggregation.Aggregations;
 
 public class EntityQueryResult
 {
-    private final ImmutableSet<EntitySearchResultEntry> entries;
+    private final ImmutableSet<EntityQueryResultEntry> entries;
 
     private final long totalHits;
 
@@ -21,6 +22,8 @@ public class EntityQueryResult
 
     private final Facets facets;
 
+    private final Aggregations aggregations;
+
     private EntityQueryResult( final Builder builder )
     {
         this.entries = ImmutableSet.copyOf( builder.entries );
@@ -28,6 +31,7 @@ public class EntityQueryResult
         this.hits = builder.hits;
         this.maxScore = builder.maxScore;
         this.facets = builder.facets;
+        this.aggregations = builder.aggregations;
     }
 
     public static Builder newResult()
@@ -35,7 +39,7 @@ public class EntityQueryResult
         return new Builder();
     }
 
-    public ImmutableSet<EntitySearchResultEntry> getEntries()
+    public ImmutableSet<EntityQueryResultEntry> getEntries()
     {
         return entries;
     }
@@ -60,9 +64,14 @@ public class EntityQueryResult
         return facets;
     }
 
+    public Aggregations getAggregations()
+    {
+        return aggregations;
+    }
+
     public static class Builder
     {
-        private Set<EntitySearchResultEntry> entries = Sets.newHashSet();
+        private Set<EntityQueryResultEntry> entries = Sets.newHashSet();
 
         private long totalHits;
 
@@ -71,6 +80,8 @@ public class EntityQueryResult
         private float maxScore;
 
         private Facets facets;
+
+        private Aggregations aggregations;
 
         public EntityQueryResult build()
         {
@@ -105,12 +116,17 @@ public class EntityQueryResult
         {
             for ( final SearchHit hit : hits )
             {
-                entries.add( new EntitySearchResultEntry( hit.score(), hit.id() ) );
+                entries.add( new EntityQueryResultEntry( hit.score(), hit.id() ) );
             }
 
             return this;
         }
 
+        public Builder aggregations( final Aggregations aggregations )
+        {
+            this.aggregations = aggregations;
+            return this;
+        }
     }
 
 }

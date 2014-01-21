@@ -61,6 +61,7 @@ import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.query.ContentQuery;
 import com.enonic.wem.api.content.query.ContentQueryResult;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
+import com.enonic.wem.api.query.aggregation.AggregationQuery;
 import com.enonic.wem.api.query.expr.DynamicConstraintExpr;
 import com.enonic.wem.api.query.expr.FunctionExpr;
 import com.enonic.wem.api.query.expr.QueryExpr;
@@ -227,18 +228,19 @@ public class ContentResource
 
     }
 
-
     @POST
     @Path("find")
     @Consumes(MediaType.APPLICATION_JSON)
     public AbstractContentListJson find( final ContentFindParams params )
     {
 
-        final ContentQuery.Builder contentQueryBuilder = ContentQuery.newContentQuery().size( params.getCount() );
-
-        final QueryExpr fulltextQuery = _temp_buildFulltextFunctionExpression( params );
-
-        contentQueryBuilder.queryExpr( fulltextQuery );
+        // TODO: This should be GUI
+        final ContentQuery.Builder contentQueryBuilder = ContentQuery.newContentQuery().
+            size( params.getCount() ).
+            aggregationQuery( AggregationQuery.newTermsAggregation( "contentTypes" ).
+                fieldName( "contenttype" ).
+                build() ).
+            queryExpr( _temp_buildFulltextFunctionExpression( params ) );
 
         final FindContent findContent = Commands.content().find().query( contentQueryBuilder.build() );
         final ContentQueryResult contentIndexQueryResult = this.client.execute( findContent );

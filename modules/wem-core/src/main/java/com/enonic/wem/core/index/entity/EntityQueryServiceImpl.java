@@ -7,8 +7,8 @@ import com.enonic.wem.core.index.elastic.ElasticsearchIndexService;
 import com.enonic.wem.core.index.elastic.ElasticsearchQuery;
 import com.enonic.wem.core.index.query.EntityQueryTranslator;
 
-public class EntitySearchServiceImpl
-    implements EntitySearchService
+public class EntityQueryServiceImpl
+    implements EntityQueryService
 {
     private EntityQueryTranslator translator = new EntityQueryTranslator();
 
