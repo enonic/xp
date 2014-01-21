@@ -1,6 +1,8 @@
 package com.enonic.wem.core.schema;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.GetRootSchemas;
@@ -19,7 +21,7 @@ public class GetRootSchemasHandler
     public void handle()
         throws Exception
     {
-        ImmutableList.Builder<Schema> schemas = ImmutableList.builder();
+        final List<Schema> schemas = Lists.newArrayList();
 
         // ContentTypes are nested so query just the root ones
         final ContentTypes contentTypes = context.getClient().execute( Commands.contentType().get().roots() );
@@ -28,21 +30,21 @@ public class GetRootSchemasHandler
             schemas.addAll( contentTypes.getList() );
         }
 
-        // RelationshipTypes are not tested so adding all to root
+        // RelationshipTypes are not nested so adding all to root
         final RelationshipTypes relationshipTypes = context.getClient().execute( Commands.relationshipType().get().all() );
         if ( relationshipTypes.isNotEmpty() )
         {
             schemas.addAll( relationshipTypes.getList() );
         }
 
-        // Mixins are not tested so adding all to root
+        // Mixins are not nested so adding all to root
         final Mixins mixins = context.getClient().execute( Commands.mixin().get().all() );
         if ( mixins.isNotEmpty() )
         {
             schemas.addAll( mixins.getList() );
         }
 
-        command.setResult( Schemas.from( schemas.build() ) );
+        command.setResult( Schemas.from( schemas ) );
     }
 
 }

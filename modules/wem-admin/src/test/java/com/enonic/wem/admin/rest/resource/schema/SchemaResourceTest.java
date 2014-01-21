@@ -121,7 +121,7 @@ public class SchemaResourceTest
 
         String json = resource().path( "schema/list" ).get( String.class );
 
-        assertJson( "schema_by_empty_query.json", json );
+        assertJson( "schema_by_root.json", json );
     }
 
     @Test

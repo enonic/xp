@@ -14,8 +14,10 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
 
 import com.enonic.wem.admin.json.schema.SchemaJson;
 import com.enonic.wem.api.Client;
@@ -28,6 +30,7 @@ import com.enonic.wem.api.schema.SchemaKind;
 import com.enonic.wem.api.schema.Schemas;
 
 import static com.enonic.wem.api.command.Commands.schema;
+import static java.lang.String.CASE_INSENSITIVE_ORDER;
 
 @Path("schema")
 @Produces(MediaType.APPLICATION_JSON)
@@ -39,7 +42,7 @@ public class SchemaResource
     @Path("list")
     public List<SchemaJson> list( @QueryParam("parentKey") final String parentName )
     {
-        Schemas schemas;
+        final Schemas schemas;
         if ( StringUtils.isEmpty( parentName ) )
         {
             schemas = client.execute( Commands.schema().getRoots() );
@@ -50,8 +53,17 @@ public class SchemaResource
             schemas = client.execute( getSchemas );
         }
 
+        final List<Schema> sortedSchemas = Ordering.from( CASE_INSENSITIVE_ORDER ).onResultOf( new Function<Schema, String>()
+        {
+            @Override
+            public String apply( final Schema schema )
+            {
+                return Strings.nullToEmpty( schema.getDisplayName() );
+            }
+        } ).sortedCopy( schemas.getList() );
+
         final List<SchemaJson> schemaJsonResult = new ArrayList<>();
-        for ( Schema schema : schemas )
+        for ( Schema schema : sortedSchemas )
         {
             schemaJsonResult.add( SchemaJson.from( schema ) );
         }
