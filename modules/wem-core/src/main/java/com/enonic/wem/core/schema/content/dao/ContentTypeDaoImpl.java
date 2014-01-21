@@ -4,17 +4,13 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 
 import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 
 import com.google.common.base.Charsets;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.net.MediaType;
 
 import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.schema.SchemaIcon;
@@ -22,8 +18,8 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.core.config.SystemConfig;
+import com.enonic.wem.core.schema.SchemaIconDao;
 import com.enonic.wem.core.schema.content.serializer.ContentTypeXmlSerializer;
-import com.enonic.wem.util.MediaTypes;
 
 import static com.enonic.wem.api.schema.content.ContentTypes.newContentTypes;
 import static java.nio.file.Files.isDirectory;
@@ -34,11 +30,6 @@ public final class ContentTypeDaoImpl
 {
     private static final String CONTENT_TYPE_XML = "content-type.xml";
 
-    private static final String ICON_FILE_NAME = "thumb";
-
-    private final ImmutableMap<MediaType, String> imageTypeExtensions =
-        ImmutableMap.of( MediaType.JPEG, "jpeg", MediaType.GIF, "gif", MediaType.BMP, "bmp", MediaType.PNG, "png" );
-
     private Path basePath;
 
     @Override
@@ -47,7 +38,7 @@ public final class ContentTypeDaoImpl
         final Path contentTypePath = pathForContentType( contentType.getName() );
 
         writeContentTypeXml( contentType, contentTypePath );
-        writeContentTypeIcon( contentType, contentTypePath );
+        new SchemaIconDao().writeSchemaIcon( contentType.getSchemaIcon(), contentTypePath );
 
         return contentType;
     }
@@ -58,7 +49,7 @@ public final class ContentTypeDaoImpl
         final Path contentTypePath = pathForContentType( contentType.getName() );
 
         writeContentTypeXml( contentType, contentTypePath );
-        writeContentTypeIcon( contentType, contentTypePath );
+        new SchemaIconDao().writeSchemaIcon( contentType.getSchemaIcon(), contentTypePath );
     }
 
     @Override
@@ -121,36 +112,11 @@ public final class ContentTypeDaoImpl
         if ( isContentTypeDir )
         {
             final ContentType.Builder contentType = readContentTypeXml( contentTypePath );
-            final SchemaIcon icon = readContentTypeIcon( contentTypePath );
+            final SchemaIcon icon = new SchemaIconDao().readSchemaIcon( contentTypePath );
             contentType.schemaIcon( icon );
             return contentType;
         }
         return null;
-    }
-
-    private void writeContentTypeIcon( final ContentType contentType, final Path contentTypePath )
-    {
-        final SchemaIcon icon = contentType.getSchemaIcon();
-        if ( icon != null )
-        {
-            try
-            {
-                try (final DirectoryStream<Path> iconFiles = Files.newDirectoryStream( contentTypePath, ICON_FILE_NAME + ".*" ))
-                {
-                    for ( Path iconFile : iconFiles )
-                    {
-                        Files.deleteIfExists( iconFile );
-                    }
-                }
-                final String iconFileName = getIconFileName( icon );
-                final Path iconFile = contentTypePath.resolve( iconFileName );
-                Files.copy( icon.asInputStream(), iconFile, StandardCopyOption.REPLACE_EXISTING );
-            }
-            catch ( IOException e )
-            {
-                throw new SystemException( e, "Could not store content type [{0}] icon", contentType.getName() );
-            }
-        }
     }
 
     private void writeContentTypeXml( final ContentType contentType, final Path contentTypePath )
@@ -187,36 +153,9 @@ public final class ContentTypeDaoImpl
         }
     }
 
-    private SchemaIcon readContentTypeIcon( final Path contentTypePath )
-    {
-        try (final DirectoryStream<Path> iconFiles = Files.newDirectoryStream( contentTypePath, ICON_FILE_NAME + ".*" ))
-        {
-            for ( Path iconFile : iconFiles )
-            {
-                if ( Files.isRegularFile( iconFile ) )
-                {
-                    final String extension = FilenameUtils.getExtension( iconFile.getFileName().toString() );
-                    final MediaType mediaType = MediaTypes.instance().fromExt( extension );
-                    return SchemaIcon.from( Files.newInputStream( iconFile ), mediaType.toString() );
-                }
-            }
-            return null;
-        }
-        catch ( IOException e )
-        {
-            throw new SystemException( e, "Could not read content type icon form [{0}]", contentTypePath );
-        }
-    }
-
     private Path pathForContentType( final ContentTypeName contentTypeName )
     {
         return this.basePath.resolve( contentTypeName.toString() );
-    }
-
-    private String getIconFileName( final SchemaIcon icon )
-    {
-        final String ext = imageTypeExtensions.get( MediaType.parse( icon.getMimeType() ) );
-        return ext == null ? ICON_FILE_NAME : ICON_FILE_NAME + "." + ext;
     }
 
     @Inject
