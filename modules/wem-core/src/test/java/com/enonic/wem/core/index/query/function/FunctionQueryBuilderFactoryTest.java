@@ -3,7 +3,7 @@ package com.enonic.wem.core.index.query.function;
 import java.util.List;
 
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryStringQueryBuilder;
+import org.elasticsearch.index.query.SimpleQueryStringBuilder;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
@@ -17,7 +17,7 @@ public class FunctionQueryBuilderFactoryTest
 {
 
     @Test
-    public void testName()
+    public void test_fulltext()
     {
         FunctionQueryBuilderFactory factory = new FunctionQueryBuilderFactory();
 
@@ -26,6 +26,6 @@ public class FunctionQueryBuilderFactoryTest
 
         final QueryBuilder fulltext = factory.create( new FunctionExpr( "fulltext", arguments ) );
 
-        assertTrue( fulltext instanceof QueryStringQueryBuilder );
+        assertTrue( fulltext instanceof SimpleQueryStringBuilder );
     }
 }

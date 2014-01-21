@@ -1,7 +1,7 @@
 package com.enonic.wem.core.index.query.function
 
 import com.enonic.wem.api.query.expr.ValueExpr
-import org.elasticsearch.index.query.QueryStringQueryBuilder
+import org.elasticsearch.index.query.SimpleQueryStringBuilder
 import spock.lang.Specification
 
 class FulltextFunctionArgumentsTest
@@ -18,7 +18,7 @@ class FulltextFunctionArgumentsTest
         then:
         functionArguments.getFieldName() == "myField"
         functionArguments.getSearchString() == "SearchString"
-        functionArguments.getOperator() == QueryStringQueryBuilder.Operator.AND
+        functionArguments.getOperator() == SimpleQueryStringBuilder.Operator.AND
     }
 
     def "fulltext 2 arguments"()
@@ -32,7 +32,7 @@ class FulltextFunctionArgumentsTest
         then:
         functionArguments.getFieldName() == "myField"
         functionArguments.getSearchString() == "SearchString"
-        functionArguments.getOperator() == QueryStringQueryBuilder.Operator.OR
+        functionArguments.getOperator() == SimpleQueryStringBuilder.Operator.OR
     }
 
 
@@ -61,6 +61,6 @@ class FulltextFunctionArgumentsTest
         then:
         def exception = thrown( FunctionQueryBuilderException )
         exception.message == 'Illegal argument \'DUMMY\' in function \'fulltext\', positon 3'
-        exception.getCause().message == "No enum constant org.elasticsearch.index.query.QueryStringQueryBuilder.Operator.DUMMY"
+        exception.getCause().message == "No enum constant org.elasticsearch.index.query.SimpleQueryStringBuilder.Operator.DUMMY"
     }
 }

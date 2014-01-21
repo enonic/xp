@@ -2,7 +2,7 @@ package com.enonic.wem.core.index.query.function;
 
 import org.elasticsearch.index.query.MatchAllQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryStringQueryBuilder;
+import org.elasticsearch.index.query.SimpleQueryStringBuilder;
 
 import com.google.common.base.Strings;
 
@@ -36,9 +36,8 @@ public class FunctionQueryBuilderFactory
 
         final String queryFieldName = IndexQueryFieldNameResolver.resolveAnalyzedFieldName( baseFieldName );
 
-        QueryStringQueryBuilder builder = new QueryStringQueryBuilder( arguments.getSearchString() ).
-            defaultField( queryFieldName ).
-            analyzeWildcard( true ).
+        SimpleQueryStringBuilder builder = new SimpleQueryStringBuilder( arguments.getSearchString() ).
+            field( queryFieldName ).
             defaultOperator( arguments.getOperator() );
 
         return builder;

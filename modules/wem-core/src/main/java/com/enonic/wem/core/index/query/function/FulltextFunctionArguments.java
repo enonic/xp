@@ -2,7 +2,7 @@ package com.enonic.wem.core.index.query.function;
 
 import java.util.List;
 
-import org.elasticsearch.index.query.QueryStringQueryBuilder;
+import org.elasticsearch.index.query.SimpleQueryStringBuilder;
 
 import com.enonic.wem.api.query.expr.ValueExpr;
 
@@ -23,7 +23,7 @@ public class FulltextFunctionArguments
 
     private String fieldName;
 
-    private QueryStringQueryBuilder.Operator operator = QueryStringQueryBuilder.Operator.OR;
+    private SimpleQueryStringBuilder.Operator operator = SimpleQueryStringBuilder.Operator.OR;
 
     private final String searchString;
 
@@ -45,7 +45,7 @@ public class FulltextFunctionArguments
 
             try
             {
-                final QueryStringQueryBuilder.Operator operator = QueryStringQueryBuilder.Operator.valueOf( operatorAsString );
+                final SimpleQueryStringBuilder.Operator operator = SimpleQueryStringBuilder.Operator.valueOf( operatorAsString );
                 this.operator = operator;
             }
             catch ( IllegalArgumentException e )
@@ -55,7 +55,7 @@ public class FulltextFunctionArguments
         }
     }
 
-    public QueryStringQueryBuilder.Operator getOperator()
+    public SimpleQueryStringBuilder.Operator getOperator()
     {
         return operator;
     }
