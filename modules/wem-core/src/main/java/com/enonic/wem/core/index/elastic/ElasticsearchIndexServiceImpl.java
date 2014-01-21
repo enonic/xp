@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import javax.inject.Inject;
 
-import org.elasticsearch.ElasticSearchException;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
@@ -104,7 +104,7 @@ public class ElasticsearchIndexServiceImpl
         {
             this.client.delete( deleteRequest ).actionGet();
         }
-        catch ( ElasticSearchException e )
+        catch ( ElasticsearchException e )
         {
             throw new IndexException( "Failed to delete from index " + deleteDocument.getIndex() + " of type " +
                                           deleteDocument.getIndexType().getIndexTypeName() + " with id " + deleteDocument.getId(), e );
@@ -123,7 +123,7 @@ public class ElasticsearchIndexServiceImpl
         {
             client.admin().indices().create( createIndexRequest ).actionGet();
         }
-        catch ( ElasticSearchException e )
+        catch ( ElasticsearchException e )
         {
             throw new IndexException( "Failed to create index:" + index, e );
         }
@@ -148,7 +148,7 @@ public class ElasticsearchIndexServiceImpl
         {
             this.client.admin().indices().putMapping( mappingRequest ).actionGet();
         }
-        catch ( ElasticSearchException e )
+        catch ( ElasticsearchException e )
         {
             throw new IndexException( "Failed to apply mapping to index: " + index, e );
         }
@@ -227,7 +227,7 @@ public class ElasticsearchIndexServiceImpl
         {
             client.admin().indices().delete( req ).actionGet();
         }
-        catch ( ElasticSearchException e )
+        catch ( ElasticsearchException e )
         {
             throw new IndexException( "Failed to delete index:" + index.getName(), e );
         }

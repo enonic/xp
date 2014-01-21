@@ -4,7 +4,7 @@
             "path": "_document_analyzer"
         },
         "_all": {
-            "enabled": true
+            "enabled": false
         },
         "_source": {
             "enabled": true

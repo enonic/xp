@@ -2,7 +2,7 @@ package com.enonic.wem.core.index;
 
 import java.util.List;
 
-import org.elasticsearch.ElasticSearchException;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.indices.IndexAlreadyExistsException;
 import org.junit.Before;
 import org.junit.Test;
@@ -87,7 +87,7 @@ public class IndexServiceImplTest
         Mockito.verify( elasticsearchIndexService, Mockito.never() ).putMapping( Mockito.isA( IndexMapping.class ) );
     }
 
-    @Test(expected = ElasticSearchException.class)
+    @Test(expected = ElasticsearchException.class)
     public void testInitializeIndex_create_index_fails_with_exception()
         throws Exception
     {
@@ -95,7 +95,7 @@ public class IndexServiceImplTest
         Mockito.when( elasticsearchIndexService.getIndexStatus( Index.NODB, true ) ).thenReturn( IndexStatus.YELLOW );
         Mockito.when( elasticsearchIndexService.indexExists( Index.NODB ) ).thenReturn( false );
 
-        Mockito.doThrow( new ElasticSearchException( "expected" ) ).when( elasticsearchIndexService ).createIndex( Index.NODB );
+        Mockito.doThrow( new ElasticsearchException( "expected" ) ).when( elasticsearchIndexService ).createIndex( Index.NODB );
 
         final IndexMappingProvider indexMappingProvider = setUpIndexMappingMock();
 

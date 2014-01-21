@@ -116,7 +116,7 @@ public class ElasticsearchQuery
 
         if ( this.getFilter() != null )
         {
-            builder.filter( this.getFilter() );
+            builder.postFilter( this.getFilter() );
         }
 
         if ( this.aggregations != null && this.aggregations.size() > 0 )
