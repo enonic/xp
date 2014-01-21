@@ -6,13 +6,16 @@ module api.content.page.part {
             super(builder);
         }
 
-        toJson(): json.PartComponentJson {
-            var json: json.PartComponentJson = <json.PartComponentJson>super.toJson();
-            return json;
+        toJson(): api.content.page.json.PageComponentTypeWrapperJson {
+            var json:json.PartComponentJson = <json.PartComponentJson>super.toPageComponentJson();
+
+            return <api.content.page.json.PageComponentTypeWrapperJson> {
+                PartComponent : json
+            };
         }
     }
 
-    export class PartComponentBuilder extends api.content.page.PageComponentBuilder<PartTemplateKey> {
+    export class PartComponentBuilder extends api.content.page.PageComponentBuilder<PartTemplateKey,PartComponent> {
 
         public fromJson(json: json.PartComponentJson): PartComponentBuilder {
 

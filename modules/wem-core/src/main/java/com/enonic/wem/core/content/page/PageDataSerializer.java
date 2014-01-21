@@ -26,19 +26,19 @@ public class PageDataSerializer
 
     public DataSet toData( final Page page )
     {
-        final DataSet dataSet = new DataSet( dataSetName );
+        final DataSet asData = new DataSet( dataSetName );
 
-        dataSet.addProperty( PAGE_TEMPLATE, new Value.String( page.getTemplate().toString() ) );
+        asData.addProperty( PAGE_TEMPLATE, new Value.String( page.getTemplate().toString() ) );
         if ( page.hasRegions() )
         {
-            dataSet.add( regionsDataSerializer.toData( page.getRegions() ) );
+            asData.add( regionsDataSerializer.toData( page.getRegions() ) );
         }
         if ( page.hasConfig() )
         {
-            dataSet.add( page.getConfig().toDataSet( PAGE_CONFIG ) );
+            asData.add( page.getConfig().toDataSet( PAGE_CONFIG ) );
         }
 
-        return dataSet;
+        return asData;
     }
 
 

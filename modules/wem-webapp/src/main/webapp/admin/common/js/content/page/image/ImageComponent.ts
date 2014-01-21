@@ -19,14 +19,18 @@ module api.content.page.image {
             this.image = value;
         }
 
-        toJson(): json.ImageComponentJson {
-            var json:json.ImageComponentJson = <json.ImageComponentJson>super.toJson();
-            json.image = this.image.toString();
-            return json;
+        toJson(): api.content.page.json.PageComponentTypeWrapperJson {
+
+            var json:json.ImageComponentJson = <json.ImageComponentJson>super.toPageComponentJson();
+            json.image = this.image != null ? this.image.toString() : null;
+
+            return <api.content.page.json.PageComponentTypeWrapperJson> {
+                ImageComponent:  json
+            };
         }
     }
 
-    export class ImageComponentBuilder extends api.content.page.PageComponentBuilder<ImageTemplateKey> {
+    export class ImageComponentBuilder extends api.content.page.PageComponentBuilder<ImageTemplateKey,ImageComponent> {
 
         image: api.content.ContentId;
 

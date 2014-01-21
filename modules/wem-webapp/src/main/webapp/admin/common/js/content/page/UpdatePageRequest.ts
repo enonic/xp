@@ -8,7 +8,7 @@ module api.content.page {
 
         private config: api.data.RootDataSet;
 
-        private regions: region.PageRegions;
+        private regions: PageRegions;
 
         constructor(contentId: api.content.ContentId) {
             super();
@@ -26,7 +26,7 @@ module api.content.page {
             return this;
         }
 
-        setRegions(value: region.PageRegions): UpdatePageRequest {
+        setRegions(value: PageRegions): UpdatePageRequest {
             this.regions = value;
             return this;
         }

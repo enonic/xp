@@ -5,5 +5,7 @@ module api.content.page.layout.json {
         name:string;
 
         config:api.data.json.DataTypeWrapperJson[];
+
+        regions: api.content.page.region.json.RegionJson[];
     }
 }

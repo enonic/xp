@@ -19,6 +19,11 @@ public final class LayoutComponent
         this.regions = builder.regions;
     }
 
+    public boolean hasRegions()
+    {
+        return regions != null;
+    }
+
     public LayoutRegions getRegions()
     {
         return regions;

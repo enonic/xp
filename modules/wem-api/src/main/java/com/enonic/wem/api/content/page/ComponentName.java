@@ -25,4 +25,9 @@ public final class ComponentName
     {
         return value;
     }
+
+    public static ComponentName from( final String value )
+    {
+        return new ComponentName( value );
+    }
 }

@@ -18,8 +18,6 @@ public abstract class PageComponent<TEMPLATE_KEY extends TemplateKey>
     protected PageComponent( final Properties<TEMPLATE_KEY> properties )
     {
         Preconditions.checkNotNull( properties.name, "name cannot be null" );
-        Preconditions.checkNotNull( properties.template, "template cannot be null" );
-        Preconditions.checkNotNull( properties.config, "config cannot be null" );
         this.template = properties.template;
         this.name = properties.name;
         this.config = properties.config;
@@ -33,6 +31,11 @@ public abstract class PageComponent<TEMPLATE_KEY extends TemplateKey>
     public TEMPLATE_KEY getTemplate()
     {
         return template;
+    }
+
+    public boolean hasConfig()
+    {
+        return config != null;
     }
 
     public RootDataSet getConfig()

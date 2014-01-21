@@ -4,7 +4,9 @@ package com.enonic.wem.admin.json.content.page.region;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.admin.json.content.page.PageComponentJson;
 import com.enonic.wem.api.content.page.PageComponent;
@@ -16,6 +18,18 @@ public class RegionJson
     private final Region region;
 
     private final List<PageComponentJson> components = new ArrayList<>();
+
+    @JsonCreator
+    public RegionJson( @JsonProperty("name") final String name, @JsonProperty("components") final List<PageComponentJson> componentJsons )
+    {
+        final Region.Builder builder = Region.newRegion();
+        builder.name( name );
+        for ( final PageComponentJson componentJson : componentJsons )
+        {
+            builder.add( componentJson.getComponent() );
+        }
+        this.region = builder.build();
+    }
 
     public RegionJson( final Region region )
     {

@@ -3,6 +3,10 @@ package com.enonic.wem.admin.json.content.page;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import com.enonic.wem.admin.json.content.page.image.ImageComponentJson;
 import com.enonic.wem.admin.json.content.page.layout.LayoutComponentJson;
 import com.enonic.wem.admin.json.content.page.part.PartComponentJson;
@@ -14,21 +18,25 @@ import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.part.PartComponent;
 
 @SuppressWarnings("UnusedDeclaration")
-public abstract class PageComponentJson
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
+@JsonSubTypes({@JsonSubTypes.Type(value = ImageComponentJson.class, name = "ImageComponent"),
+                  @JsonSubTypes.Type(value = PartComponentJson.class, name = "PartComponent"),
+                  @JsonSubTypes.Type(value = LayoutComponentJson.class, name = "LayoutComponent")})
+public abstract class PageComponentJson<COMPONENT extends PageComponent>
 {
-    private final PageComponent component;
+    private final COMPONENT component;
 
     private final List<DataJson> config;
 
-    protected PageComponentJson( final PageComponent component )
+    protected PageComponentJson( final COMPONENT component )
     {
         this.component = component;
         this.config = component.getConfig() != null ? new RootDataSetJson( component.getConfig() ).getSet() : null;
     }
 
-    public String getType()
+    public String getName()
     {
-        return this.component.getClass().getSimpleName();
+        return component.getName().toString();
     }
 
     public String getTemplate()
@@ -59,5 +67,11 @@ public abstract class PageComponentJson
         {
             throw new IllegalArgumentException( "PageComponent not supported: " + component.getClass().getSimpleName() );
         }
+    }
+
+    @JsonIgnore
+    public COMPONENT getComponent()
+    {
+        return this.component;
     }
 }

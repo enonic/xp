@@ -3,9 +3,14 @@ package com.enonic.wem.admin.json.content.page.layout;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import com.enonic.wem.admin.json.content.page.region.RegionJson;
 import com.enonic.wem.api.content.page.layout.LayoutRegions;
 import com.enonic.wem.api.content.page.region.Region;
+
+import static com.enonic.wem.api.content.page.layout.LayoutRegions.newLayoutRegions;
 
 @SuppressWarnings("UnusedDeclaration")
 public class LayoutRegionsJson
@@ -32,9 +37,26 @@ public class LayoutRegionsJson
         }
     }
 
+    @JsonCreator
+    public LayoutRegionsJson( final List<RegionJson> regionJsons )
+    {
+        this.regionsJson = regionJsons;
+        final LayoutRegions.Builder builder = newLayoutRegions();
+        for ( RegionJson region : regionJsons )
+        {
+            builder.add( region.getRegion() );
+        }
+        this.regions = builder.build();
+    }
+
     public List<RegionJson> getRegions()
     {
         return regionsJson;
     }
 
+    @JsonIgnore
+    public LayoutRegions getLayoutRegions()
+    {
+        return regions;
+    }
 }

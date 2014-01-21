@@ -4,7 +4,7 @@ module api.content.page {
 
         private template: PageTemplateKey;
 
-        private regions: region.PageRegions;
+        private regions: PageRegions;
 
         private config: api.data.RootDataSet;
 
@@ -26,7 +26,7 @@ module api.content.page {
             return this.regions != null;
         }
 
-        getRegions(): region.PageRegions {
+        getRegions(): PageRegions {
             return this.regions;
         }
 
@@ -43,13 +43,13 @@ module api.content.page {
 
         template: PageTemplateKey;
 
-        regions: region.PageRegions;
+        regions: PageRegions;
 
         config: api.data.RootDataSet;
 
         public fromJson(json: api.content.page.json.PageJson): PageBuilder {
             this.setTemplate(PageTemplateKey.fromString(json.template));
-            this.setRegions(json.regions != null ? new region.PageRegionsBuilder().fromJson(json.regions).build() : null);
+            this.setRegions(json.regions != null ? new PageRegionsBuilder().fromJson(json.regions).build() : null);
             this.setConfig(json.config != null ? api.data.DataFactory.createRootDataSet(json.config) : null);
             return this;
         }
@@ -59,7 +59,7 @@ module api.content.page {
             return this;
         }
 
-        public setRegions(value: region.PageRegions): PageBuilder {
+        public setRegions(value: PageRegions): PageBuilder {
             this.regions = value;
             return this;
         }

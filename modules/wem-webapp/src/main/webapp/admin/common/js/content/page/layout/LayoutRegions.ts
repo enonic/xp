@@ -1,12 +1,12 @@
-module api.content.page.region {
+module api.content.page.layout {
 
-    export class PageRegions {
+    export class LayoutRegions {
 
-        private regionByName: {[s:string] : Region;} = {};
+        private regionByName: {[s:string] : api.content.page.region.Region;} = {};
 
-        constructor(builder: PageRegionsBuilder) {
+        constructor(builder: LayoutRegionsBuilder) {
 
-            builder.regions.forEach((region: Region) => {
+            builder.regions.forEach((region: api.content.page.region.Region) => {
                 if (this.regionByName[region.getName()] != undefined) {
                     throw new Error("Regions in a Page must be unique by name, duplicate found: " + region.getName());
                 }
@@ -23,7 +23,7 @@ module api.content.page.region {
 
         ensureUniqueComponentName(wantedName: api.content.page.ComponentName): api.content.page.ComponentName {
 
-            var region: Region;
+            var region: api.content.page.region.Region;
             var duplicates = false;
             for (var key in this.regionByName) {
                 region = this.regionByName[key];
@@ -47,7 +47,7 @@ module api.content.page.region {
             return wantedName.createDuplicate(instanceCount);
         }
 
-        getRegions(): Region[] {
+        getRegions(): api.content.page.region.Region[] {
             var regions = [];
             for (var i in this.regionByName) {
                 var region = this.regionByName[i];
@@ -56,7 +56,7 @@ module api.content.page.region {
             return regions;
         }
 
-        getRegion(name: string): Region {
+        getRegion(name: string): api.content.page.region.Region {
             return this.regionByName[name];
         }
 
@@ -64,7 +64,7 @@ module api.content.page.region {
         getComponent(name: api.content.page.ComponentName) {
 
             for (var key in this.regionByName) {
-                var region: Region = this.regionByName[key];
+                var region: api.content.page.region.Region = this.regionByName[key];
 
                 var component = region.getComponent(name);
                 if (component != null) {
@@ -75,28 +75,28 @@ module api.content.page.region {
             return null;
         }
 
-        public toJson(): json.RegionJson[] {
+        public toJson(): api.content.page.region.json.RegionJson[] {
 
-            var regionJsons: json.RegionJson[] = [];
-            this.getRegions().forEach((region: Region) => {
+            var regionJsons: api.content.page.region.json.RegionJson[] = [];
+            this.getRegions().forEach((region: api.content.page.region.Region) => {
                 regionJsons.push(region.toJson());
             });
             return regionJsons;
         }
     }
 
-    export class PageRegionsBuilder {
+    export class LayoutRegionsBuilder {
 
-        regions: Region[] = [];
+        regions: api.content.page.region.Region[] = [];
 
-        fromJson(regionsJson: json.RegionJson[]): PageRegionsBuilder {
+        fromJson(regionsJson: api.content.page.region.json.RegionJson[]): LayoutRegionsBuilder {
 
-            regionsJson.forEach((regionJson: json.RegionJson) => {
+            regionsJson.forEach((regionJson: api.content.page.region.json.RegionJson) => {
 
-                var regionBuilder = new RegionBuilder().
+                var regionBuilder = new api.content.page.region.RegionBuilder().
                     setName(regionJson.name);
 
-                regionJson.components.forEach((componentJson: api.content.page.json.PageComponentJson) => {
+                regionJson.components.forEach((componentJson: api.content.page.json.PageComponentTypeWrapperJson) => {
                     var pageComponent = api.content.page.PageComponentFactory.createFromJson(componentJson);
                     regionBuilder.addComponent(pageComponent);
                 });
@@ -107,13 +107,13 @@ module api.content.page.region {
             return this;
         }
 
-        addRegion(value: Region): PageRegionsBuilder {
+        addRegion(value: api.content.page.region.Region): LayoutRegionsBuilder {
             this.regions.push(value);
             return this;
         }
 
-        public build(): PageRegions {
-            return new PageRegions(this);
+        public build(): LayoutRegions {
+            return new LayoutRegions(this);
         }
     }
 }

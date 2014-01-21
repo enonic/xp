@@ -4,7 +4,7 @@ module api.content.page.region.json {
 
         name: string;
 
-        components: api.content.page.json.PageComponentJson[];
+        components: api.content.page.json.PageComponentTypeWrapperJson[];
     }
 
 }

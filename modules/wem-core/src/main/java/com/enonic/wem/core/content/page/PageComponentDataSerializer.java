@@ -27,16 +27,31 @@ public abstract class PageComponentDataSerializer<TO_DATA_INPUT extends PageComp
 
     public abstract FROM_DATA_OUTPUT fromData( final DataSet asData );
 
-    protected void applyPageComponentToData( final PageComponent component, final DataSet componentAsData )
+    protected void applyPageComponentToData( final PageComponent component, final DataSet asData )
     {
-        componentAsData.setProperty( "name", new Value.String( component.getName().toString() ) );
-        componentAsData.setProperty( "template", new Value.String( component.getTemplate().toString() ) );
+        asData.setProperty( "name", new Value.String( component.getName().toString() ) );
+        if ( component.getTemplate() != null )
+        {
+            asData.setProperty( "template", new Value.String( component.getTemplate().toString() ) );
+        }
+
+        if ( component.hasConfig() )
+        {
+            asData.add( component.getConfig().toDataSet( "config" ) );
+        }
     }
 
-    protected void applyPageComponentFromData( final PageComponent.Builder component, final DataSet componentAsData )
+    protected void applyPageComponentFromData( final PageComponent.Builder component, final DataSet asData )
     {
-        component.name( new ComponentName( componentAsData.getProperty( "name" ).getString() ) );
-        component.template( toTemplatekey( componentAsData.getProperty( "template" ).getString() ) );
+        component.name( new ComponentName( asData.getProperty( "name" ).getString() ) );
+        if ( asData.hasData( "template" ) )
+        {
+            component.template( toTemplatekey( asData.getProperty( "template" ).getString() ) );
+        }
+        if ( asData.hasData( "config" ) )
+        {
+            component.config( asData.getData( "config" ).toDataSet().toRootDataSet() );
+        }
     }
 
     protected abstract TemplateKey toTemplatekey( final String s );

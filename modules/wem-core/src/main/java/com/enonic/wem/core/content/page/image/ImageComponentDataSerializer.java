@@ -17,7 +17,10 @@ public class ImageComponentDataSerializer
     {
         final DataSet asData = new DataSet( ImageComponent.class.getSimpleName() );
         applyPageComponentToData( component, asData );
-        asData.addProperty( "image", new Value.ContentId( component.getImage() ) );
+        if ( component.getImage() != null )
+        {
+            asData.addProperty( "image", new Value.ContentId( component.getImage() ) );
+        }
         return asData;
     }
 
@@ -25,7 +28,10 @@ public class ImageComponentDataSerializer
     {
         ImageComponent.Builder component = ImageComponent.newImageComponent();
         applyPageComponentFromData( component, asData );
-        component.image( ContentId.from( asData.getProperty( "image" ).getString() ) );
+        if ( asData.hasData( "image" ) )
+        {
+            component.image( ContentId.from( asData.getProperty( "image" ).getString() ) );
+        }
         return component.build();
     }
 

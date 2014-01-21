@@ -470,7 +470,8 @@ module app.wizard {
 
             return new api.content.page.UpdatePageRequest(content.getContentId()).
                 setPageTemplateKey(this.pageWizardStepForm.getPageTemplate().getKey()).
-                setConfig(this.pageWizardStepForm.getConfig());
+                setConfig(this.pageWizardStepForm.getConfig()).
+                setRegions(this.livePanel.getRegions());
         }
 
         hasUnsavedChanges(): boolean {

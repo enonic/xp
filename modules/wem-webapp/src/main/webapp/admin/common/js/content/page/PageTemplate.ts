@@ -2,7 +2,7 @@ module api.content.page {
 
     export class PageTemplate extends Template<PageTemplateKey,PageTemplateName> {
 
-        private regions: region.PageRegions;
+        private regions: PageRegions;
 
         private canRender: api.schema.content.ContentTypeName[];
 
@@ -19,7 +19,7 @@ module api.content.page {
             return this.regions != null;
         }
 
-        getRegions(): region.PageRegions {
+        getRegions(): PageRegions {
             return this.regions;
         }
 
@@ -34,7 +34,7 @@ module api.content.page {
 
     export class PageTemplateBuilder extends TemplateBuilder<PageTemplateKey,PageTemplateName> {
 
-        regions: region.PageRegions;
+        regions: PageRegions;
 
         canRender: api.schema.content.ContentTypeName[] = [];
 
@@ -48,14 +48,14 @@ module api.content.page {
             this.setDescriptorKey(DescriptorKey.fromString(json.descriptorKey));
             this.descriptor = new PageDescriptorBuilder().fromJson(json.descriptor).build();
             this.setConfig(api.data.DataFactory.createRootDataSet(json.config));
-            this.setRegions(new region.PageRegionsBuilder().fromJson(json.regions).build());
+            this.setRegions(new PageRegionsBuilder().fromJson(json.regions).build());
             json.canRender.forEach((name: string)=> {
                 this.canRender.push(new api.schema.content.ContentTypeName(name))
             });
             return this;
         }
 
-        public setRegions(value: region.PageRegions): PageTemplateBuilder {
+        public setRegions(value: PageRegions): PageTemplateBuilder {
             this.regions = value;
             return this;
         }
