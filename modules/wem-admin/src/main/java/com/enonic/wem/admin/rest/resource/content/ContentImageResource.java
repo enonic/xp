@@ -21,7 +21,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.icon.Icon;
+import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
@@ -106,18 +106,13 @@ public class ContentImageResource
             }
         }
 
-        final Icon contentTypeIcon = findRootContentTypeIcon( contentType );
+        final SchemaIcon contentTypeIcon = findRootContentTypeIcon( contentType );
         if( contentTypeIcon == null )
         {
             throw new WebApplicationException( Response.Status.NOT_FOUND );
         }
 
-        final Blob blob = client.execute( Commands.blob().get( contentTypeIcon.getBlobKey() ) );
-        if ( blob == null )
-        {
-            throw new WebApplicationException( Response.Status.NOT_FOUND );
-        }
-        contentImage = helper.resizeImage( blob, size );
+        contentImage = helper.resizeImage( contentTypeIcon.asInputStream(), size );
         mimeType = contentTypeIcon.getMimeType();
 
         return Response.ok( contentImage, mimeType ).build();
@@ -131,14 +126,14 @@ public class ContentImageResource
         return imageProperty == null ? content.getName().toString() : imageProperty.getString();
     }
 
-    private Icon findRootContentTypeIcon( final ContentTypeName contentTypeName )
+    private SchemaIcon findRootContentTypeIcon( final ContentTypeName contentTypeName )
     {
         ContentType contentType = getContentType( contentTypeName );
-        while ( contentType != null && contentType.getIcon() == null )
+        while ( contentType != null && contentType.getSchemaIcon() == null )
         {
             contentType = getContentType( contentType.getSuperType() );
         }
-        return contentType == null ? null : contentType.getIcon();
+        return contentType == null ? null : contentType.getSchemaIcon();
     }
 
     private ContentType getContentType( final ContentTypeName contentTypeName )
