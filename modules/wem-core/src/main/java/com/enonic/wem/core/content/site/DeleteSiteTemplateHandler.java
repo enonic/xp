@@ -1,6 +1,7 @@
 package com.enonic.wem.core.content.site;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.inject.Inject;
 
@@ -20,15 +21,17 @@ public class DeleteSiteTemplateHandler
     public void handle()
         throws Exception
     {
-        File templatesDir = systemConfig.getTemplatesDir();
-        final File templateDir = new File( templatesDir, command.getKey().toString() );
+        Path templatesDir = systemConfig.getTemplatesDir();
+        final Path templateDir = templatesDir.resolve( command.getKey().toString() );
 
-        if ( templateDir.exists() )
+        if ( Files.isDirectory( templateDir ) )
         {
-            FileUtils.deleteDirectory( templateDir );
+            FileUtils.deleteDirectory( templateDir.toFile() );
             command.setResult( command.getKey() );
-        } else {
-            throw new NoSiteTemplateExistsException(command.getKey());
+        }
+        else
+        {
+            throw new NoSiteTemplateExistsException( command.getKey() );
         }
 
     }

@@ -55,7 +55,7 @@ public class GetAllSiteTemplatesHandlerTest
 
         assertTrue( templatesDir.exists() );
 
-        Mockito.when( systemConfig.getTemplatesDir() ).thenReturn( templatesDir );
+        Mockito.when( systemConfig.getTemplatesDir() ).thenReturn( templatesDir.toPath() );
 
         final SiteTemplate siteTemplate1 =
             createSiteTemplate( "Intranet-1.0.0", "Enonic Intranet", "A social intranet for the Enterprise", "Enonic",

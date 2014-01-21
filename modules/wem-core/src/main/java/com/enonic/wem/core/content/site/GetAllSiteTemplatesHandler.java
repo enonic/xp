@@ -23,7 +23,7 @@ public class GetAllSiteTemplatesHandler
     public void handle()
         throws Exception
     {
-        final File templatesDir = systemConfig.getTemplatesDir();
+        final File templatesDir = systemConfig.getTemplatesDir().toFile();
         File[] allTemplateDirs = templatesDir.listFiles( new FileFilter()
         {
             @Override

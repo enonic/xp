@@ -1,6 +1,7 @@
 package com.enonic.wem.core.content.site;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.inject.Inject;
 
@@ -22,13 +23,13 @@ public class GetSiteTemplateByKeyHandler
     public void handle()
         throws Exception
     {
-        final File templatesDir = systemConfig.getTemplatesDir();
+        final Path templatesDir = systemConfig.getTemplatesDir();
         final SiteTemplateKey templateKey = command.getKey();
-        final File templateDir = new File( templatesDir, templateKey.toString() );
+        final Path templateDir = templatesDir.resolve( templateKey.toString() );
 
-        if ( templateDir.exists() )
+        if ( Files.isDirectory( templateDir ) )
         {
-            final SiteTemplate.Builder builder = siteTemplateExporter.importFromDirectory( templateDir.toPath() );
+            final SiteTemplate.Builder builder = siteTemplateExporter.importFromDirectory( templateDir );
 
             if ( builder == null )
             {

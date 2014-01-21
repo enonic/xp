@@ -79,7 +79,7 @@ public class CreateSiteTemplateHandlerTest
         templateBuilder.descriptor( PartDescriptorKey.from( "resource-1.0.0:part-descr" ) );
         PartTemplate template = templateBuilder.build();
 
-        command.addTemplate(  template );
+        command.addTemplate( template );
 
         final ContentTypeFilter contentTypeFilter = newContentFilter().
             allowContentType( "article" ).
@@ -93,7 +93,7 @@ public class CreateSiteTemplateHandlerTest
 
         assertTrue( templateDir.exists() );
 
-        Mockito.when( systemConfig.getTemplatesDir() ).thenReturn( templatesDir );
+        Mockito.when( systemConfig.getTemplatesDir() ).thenReturn( templatesDir.toPath() );
 
         handler.setCommand( command );
         handler.handle();

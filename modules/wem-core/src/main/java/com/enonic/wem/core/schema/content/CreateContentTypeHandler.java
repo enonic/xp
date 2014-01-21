@@ -2,8 +2,8 @@ package com.enonic.wem.core.schema.content;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.command.entity.CreateNode;
-import com.enonic.wem.api.command.entity.CreateNodeResult;
+import org.joda.time.DateTime;
+
 import com.enonic.wem.api.command.schema.content.CreateContentType;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -11,16 +11,15 @@ import com.enonic.wem.api.schema.content.validator.ContentTypeSuperTypeValidator
 import com.enonic.wem.api.schema.content.validator.ContentTypeValidationResult;
 import com.enonic.wem.api.schema.content.validator.InvalidContentTypeException;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.entity.CreateNodeHandler;
-import com.enonic.wem.core.index.IndexService;
+import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
+
+import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 
 
 public final class CreateContentTypeHandler
     extends CommandHandler<CreateContentType>
 {
-    private final static ContentTypeNodeTranslator CONTENT_TYPE_NODE_TRANSLATOR = new ContentTypeNodeTranslator();
-
-    private IndexService indexService;
+    private ContentTypeDao contentTypeDao;
 
     @Override
     public void handle()
@@ -28,32 +27,28 @@ public final class CreateContentTypeHandler
     {
         validate( command.getName(), command.getSuperType() );
 
-        final CreateNode createNodeCommand = CONTENT_TYPE_NODE_TRANSLATOR.toCreateNodeCommand( command );
+        final ContentType createdContentType = newContentType().
+            name( command.getName() ).
+            superType( command.getSuperType() ).
+            allowChildContent( command.getAllowChildContent() ).
+            contentDisplayNameScript( command.getContentDisplayNameScript() ).
+            form( command.getForm().copy() ).
+            builtIn( command.isBuiltIn() ).
+            setAbstract( command.isAbstract() ).
+            setFinal( command.isFinal() ).
+            displayName( command.getDisplayName() ).
+            schemaIcon( command.getSchemaIcon() ).
+            createdTime( DateTime.now() ).
+            //creator( ... ).
+                build();
 
-        final CreateNodeResult result = createNode( createNodeCommand );
-
-        final ContentType createdContentType = CONTENT_TYPE_NODE_TRANSLATOR.fromNode( result.getPersistedNode() );
+        contentTypeDao.createContentType( createdContentType );
 
         command.setResult( createdContentType );
     }
 
-    private CreateNodeResult createNode( final CreateNode createNodeCommand )
-        throws Exception
-    {
-        final CreateNodeHandler createNodeHandler = CreateNodeHandler.create().
-            command( createNodeCommand ).
-            context( this.context ).
-            indexService( this.indexService ).
-            build();
-
-        createNodeHandler.handle();
-
-        return createNodeCommand.getResult();
-    }
-
     private void validate( final ContentTypeName contentTypeName, final ContentTypeName contentTypeSuperTypeName )
     {
-
         final ContentTypeSuperTypeValidator validator =
             ContentTypeSuperTypeValidator.newContentTypeSuperTypeValidator().client( context.getClient() ).build();
         validator.validate( contentTypeName, contentTypeSuperTypeName );
@@ -67,10 +62,9 @@ public final class CreateContentTypeHandler
         throw new InvalidContentTypeException( contentTypeName, validationResult.getFirst().getErrorMessage() );
     }
 
-
     @Inject
-    public void setIndexService( final IndexService indexService )
+    public void setContentTypeDao( final ContentTypeDao contentTypeDao )
     {
-        this.indexService = indexService;
+        this.contentTypeDao = contentTypeDao;
     }
 }

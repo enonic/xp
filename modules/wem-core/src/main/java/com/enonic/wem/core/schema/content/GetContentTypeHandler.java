@@ -1,16 +1,9 @@
 package com.enonic.wem.core.schema.content;
 
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.entity.GetNodeByPath;
 import com.enonic.wem.api.command.schema.content.GetContentType;
-import com.enonic.wem.api.entity.NoNodeAtPathFoundException;
-import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNotFoundException;
-import com.enonic.wem.core.entity.GetNodeByPathService;
-
-import static com.enonic.wem.api.entity.NodePath.newPath;
+import com.enonic.wem.api.schema.content.ContentTypes;
 
 public class GetContentTypeHandler
     extends AbstractContentTypeHandler<GetContentType>
@@ -19,12 +12,26 @@ public class GetContentTypeHandler
     public void handle()
         throws Exception
     {
-        final ContentType contentType = getContentType( command.getContentTypeName() );
-        if ( contentType == null )
+        final ContentType.Builder contentTypeBuilder = contentTypeDao.getContentType( command.getContentTypeName() );
+        if ( contentTypeBuilder == null )
         {
-            command.setResult( null );
+            if ( command.isNotFoundAsException() )
+            {
+                throw new ContentTypeNotFoundException( command.getContentTypeName() );
+            }
+            else
+            {
+                command.setResult( null );
+                return;
+            }
         }
-        else if ( !command.isMixinReferencesToFormItems() )
+
+        final ContentTypes allContentTypes = contentTypeDao.getAllContentTypes();
+        final ContentTypeInheritorResolver contentTypeInheritorResolver = new ContentTypeInheritorResolver( allContentTypes );
+        populateInheritors( contentTypeInheritorResolver, contentTypeBuilder, command.getContentTypeName() );
+        final ContentType contentType = contentTypeBuilder.build();
+
+        if ( !command.isMixinReferencesToFormItems() )
         {
             command.setResult( contentType );
         }
@@ -34,28 +41,4 @@ public class GetContentTypeHandler
         }
     }
 
-    private ContentType getContentType( final ContentTypeName contentTypeName )
-    {
-        final GetNodeByPath getNodeByPathCommand =
-            Commands.node().get().byPath( newPath( "/content-types/" + contentTypeName.toString() ).build() );
-
-        try
-        {
-            final Node contentTypeNode = new GetNodeByPathService( this.context.getJcrSession(), getNodeByPathCommand ).execute();
-            final ContentTypeInheritorResolver contentTypeInheritorResolver = new ContentTypeInheritorResolver( this.context.getClient() );
-            return nodeToContentType( contentTypeNode, contentTypeInheritorResolver );
-
-        }
-        catch ( NoNodeAtPathFoundException e )
-        {
-            if ( command.isNotFoundAsException() )
-            {
-                throw new ContentTypeNotFoundException( command.getContentTypeName() );
-            }
-            else
-            {
-                return null;
-            }
-        }
-    }
 }

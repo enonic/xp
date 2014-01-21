@@ -17,20 +17,21 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.command.content.blob.GetBlob;
-import com.enonic.wem.api.icon.Icon;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.command.schema.mixin.GetMixins;
 import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypes;
 import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.icon.Icon;
+import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinNames;
 import com.enonic.wem.api.schema.mixin.Mixins;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 import com.enonic.wem.core.blobstore.memory.MemoryBlobRecord;
 
@@ -63,14 +64,13 @@ public class SchemaImageResourceTest
         throws Exception
     {
         byte[] data = Resources.toByteArray( getClass().getResource( "contenttypeicon.png" ) );
-        Blob blob = new MemoryBlobRecord( BLOB_KEY, data );
-        Mockito.when( client.execute( Mockito.isA( GetBlob.class ) ) ).thenReturn( blob );
+        SchemaIcon schemaIcon = SchemaIcon.from( data, "image/png" );
 
         final ContentType contentType = ContentType.newContentType().
             name( "my_content_type" ).
             displayName( "My content type" ).
             superType( ContentTypeName.from( "unstructured" ) ).
-            icon( ICON ).
+            schemaIcon( schemaIcon ).
             build();
         setupContentType( contentType );
 
@@ -87,13 +87,12 @@ public class SchemaImageResourceTest
         throws Exception
     {
         byte[] data = Resources.toByteArray( getClass().getResource( "contenttypeicon.png" ) );
-        Blob blob = new MemoryBlobRecord( BLOB_KEY, data );
-        Mockito.when( client.execute( Mockito.isA( GetBlob.class ) ) ).thenReturn( blob );
+        SchemaIcon schemaIcon = SchemaIcon.from( data, "image/png" );
 
         final ContentType systemContentType = ContentType.newContentType().
             name( "unstructured" ).
             displayName( "Unstructured" ).
-            icon( ICON ).
+            schemaIcon( schemaIcon ).
             build();
         setupContentType( systemContentType );
 
@@ -227,8 +226,7 @@ public class SchemaImageResourceTest
         final List<ContentType> list = Lists.newArrayList();
         list.add( contentType );
         final ContentTypes result = ContentTypes.from( list );
-        final GetContentTypes command =
-            new GetContentTypes().contentTypeNames( ContentTypeNames.from( contentType.getName() ) );
+        final GetContentTypes command = new GetContentTypes().contentTypeNames( ContentTypeNames.from( contentType.getName() ) );
         Mockito.when( client.execute( command ) ).thenReturn( result );
     }
 
@@ -246,8 +244,7 @@ public class SchemaImageResourceTest
         final List<RelationshipType> list = Lists.newArrayList();
         list.add( relationshipType );
         final RelationshipTypes result = RelationshipTypes.from( list );
-        final GetRelationshipTypes command =
-            new GetRelationshipTypes().names( RelationshipTypeNames.from( relationshipType.getName() ) );
+        final GetRelationshipTypes command = new GetRelationshipTypes().names( RelationshipTypeNames.from( relationshipType.getName() ) );
         Mockito.when( client.execute( command ) ).thenReturn( result );
     }
 

@@ -12,11 +12,12 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.schema.content.serializer.ContentTypeXmlSerializer;
 
 import static com.enonic.wem.api.command.Commands.contentType;
-import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 
 public class ContentTypeCreateJson
 {
     private final CreateContentType createContentType;
+
+    private final IconJson iconJson;
 
     @JsonCreator
     public ContentTypeCreateJson( @JsonProperty("name") final String nameAsString, @JsonProperty("config") final String config,
@@ -26,11 +27,7 @@ public class ContentTypeCreateJson
         final ContentTypeName name = ContentTypeName.from( nameAsString );
 
         ContentType contentType = new ContentTypeXmlSerializer().overrideName( name.toString() ).toContentType( config );
-
-        if ( iconJson != null )
-        {
-            contentType = newContentType( contentType ).icon( iconJson.getIcon() ).build();
-        }
+        this.iconJson = iconJson;
 
         createContentType = contentType().create().
             name( name ).
@@ -39,7 +36,6 @@ public class ContentTypeCreateJson
             setAbstract( contentType.isAbstract() ).
             setFinal( contentType.isFinal() ).
             form( contentType.form() ).
-            icon( contentType.getIcon() ).
             contentDisplayNameScript( contentType.getContentDisplayNameScript() );
     }
 
@@ -48,4 +44,11 @@ public class ContentTypeCreateJson
     {
         return createContentType;
     }
+
+    @JsonIgnore
+    public IconJson getIconJson()
+    {
+        return this.iconJson;
+    }
+
 }

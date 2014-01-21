@@ -15,7 +15,9 @@ public interface SystemConfig
 
     public Path getModulesDir();
 
-    public File getTemplatesDir();
+    public Path getTemplatesDir();
+
+    public Path getSchemasDir();
 
     public boolean isMigrateEnabled();
 

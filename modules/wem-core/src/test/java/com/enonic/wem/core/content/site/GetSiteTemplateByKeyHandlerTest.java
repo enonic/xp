@@ -21,7 +21,6 @@ import com.enonic.wem.api.content.page.image.ImageTemplate;
 import com.enonic.wem.api.content.page.image.ImageTemplateKey;
 import com.enonic.wem.api.content.page.image.ImageTemplateName;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
-import com.enonic.wem.api.content.page.layout.LayoutRegions;
 import com.enonic.wem.api.content.page.layout.LayoutTemplate;
 import com.enonic.wem.api.content.page.layout.LayoutTemplateKey;
 import com.enonic.wem.api.content.page.layout.LayoutTemplateName;
@@ -88,7 +87,7 @@ public class GetSiteTemplateByKeyHandlerTest
 
         assertTrue( templatesDir.exists() );
 
-        Mockito.when( systemConfig.getTemplatesDir() ).thenReturn( templatesDir );
+        Mockito.when( systemConfig.getTemplatesDir() ).thenReturn( templatesDir.toPath() );
 
         final SiteTemplate siteTemplate = createSiteTemplate();
 
@@ -127,7 +126,7 @@ public class GetSiteTemplateByKeyHandlerTest
 
         assertTrue( templateDir.exists() );
 
-        Mockito.when( systemConfig.getTemplatesDir() ).thenReturn( templatesDir );
+        Mockito.when( systemConfig.getTemplatesDir() ).thenReturn( templatesDir.toPath() );
 
         final GetSiteTemplateByKey command = Commands.site().template().get().byKey( SiteTemplateKey.from( "root-1.0.0" ) );
 

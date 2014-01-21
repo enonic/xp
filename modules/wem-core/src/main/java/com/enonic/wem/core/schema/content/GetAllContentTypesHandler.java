@@ -6,12 +6,11 @@ import com.enonic.wem.api.schema.content.ContentTypes;
 public class GetAllContentTypesHandler
     extends AbstractContentTypeHandler<GetAllContentTypes>
 {
-
     @Override
     public void handle()
         throws Exception
     {
-        final ContentTypes allContentTypes = getAllContentTypes();
+        final ContentTypes allContentTypes = contentTypeDao.getAllContentTypes();
 
         final ContentTypes contentTypes = populateInheritors( allContentTypes );
 
@@ -24,4 +23,5 @@ public class GetAllContentTypesHandler
             command.setResult( transformMixinReferences( contentTypes ) );
         }
     }
+
 }

@@ -1,45 +1,29 @@
 package com.enonic.wem.core.schema.content;
 
+import javax.inject.Inject;
+
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.entity.GetNodesByParent;
-import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.entity.GetNodesByParentService;
+import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 public abstract class AbstractContentTypeHandler<T extends Command>
     extends CommandHandler<T>
 {
-    private final static ContentTypeNodeTranslator CONTENT_TYPE_NODE_TRANSLATOR = new ContentTypeNodeTranslator();
+    protected ContentTypeDao contentTypeDao;
 
-    ContentTypes getAllContentTypes()
-    {
-        final GetNodesByParent getNodesByParentCommand = Commands.node().get().byParent( new NodePath( "/content-types" ) );
-
-        final Nodes nodes = getNodesByParent( getNodesByParentCommand );
-
-        return CONTENT_TYPE_NODE_TRANSLATOR.fromNodes( nodes );
-    }
-
-    private Nodes getNodesByParent( final GetNodesByParent getNodesByParentCommand )
-    {
-        return new GetNodesByParentService( this.context.getJcrSession(), getNodesByParentCommand ).execute();
-    }
-
-    ContentType transformMixinReferences( final ContentType contentType )
+    protected ContentType transformMixinReferences( final ContentType contentType )
     {
         final ContentTypes contentTypes = doTranformMixinReferences( ContentTypes.from( contentType ) );
 
         return contentTypes.get( 0 );
     }
 
-    ContentTypes transformMixinReferences( final ContentTypes contentTypes )
+    protected ContentTypes transformMixinReferences( final ContentTypes contentTypes )
     {
         return doTranformMixinReferences( contentTypes );
     }
@@ -58,12 +42,12 @@ public abstract class AbstractContentTypeHandler<T extends Command>
         return transformedContentTypes.build();
     }
 
-
-    ContentTypes populateInheritors( final ContentTypes contentTypes )
+    protected ContentTypes populateInheritors( final ContentTypes contentTypes )
     {
         final ContentTypes.Builder builder = ContentTypes.newContentTypes();
 
-        final ContentTypeInheritorResolver contentTypeInheritorResolver = new ContentTypeInheritorResolver( this.context.getClient() );
+        final ContentTypes allContentTypes = this.contentTypeDao.getAllContentTypes();
+        final ContentTypeInheritorResolver contentTypeInheritorResolver = new ContentTypeInheritorResolver( allContentTypes );
 
         for ( final ContentType contentType : contentTypes )
         {
@@ -72,7 +56,7 @@ public abstract class AbstractContentTypeHandler<T extends Command>
         return builder.build();
     }
 
-    ContentType populateInheritors( final ContentTypeInheritorResolver contentTypeInheritorResolver, ContentType contentType )
+    private ContentType populateInheritors( final ContentTypeInheritorResolver contentTypeInheritorResolver, ContentType contentType )
     {
         contentType = ContentType.newContentType( contentType ).
             inheritors( contentTypeInheritorResolver.resolveInheritors( contentType.getName() ).isNotEmpty() ).
@@ -80,12 +64,16 @@ public abstract class AbstractContentTypeHandler<T extends Command>
         return contentType;
     }
 
-    ContentType nodeToContentType( final Node node, final ContentTypeInheritorResolver contentTypeInheritorResolver )
+    protected void populateInheritors( final ContentTypeInheritorResolver contentTypeInheritorResolver,
+                                       final ContentType.Builder contentType, final ContentTypeName contentTypeName )
     {
-        ContentType contentType = CONTENT_TYPE_NODE_TRANSLATOR.fromNode( node );
+        contentType.
+            inheritors( contentTypeInheritorResolver.resolveInheritors( contentTypeName ).isNotEmpty() );
+    }
 
-        contentType = populateInheritors( contentTypeInheritorResolver, contentType );
-
-        return contentType;
+    @Inject
+    public void setContentTypeDao( final ContentTypeDao contentTypeDao )
+    {
+        this.contentTypeDao = contentTypeDao;
     }
 }

@@ -9,8 +9,6 @@ import javax.imageio.ImageIO;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.blob.Blob;
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.icon.Icon;
 import com.enonic.wem.core.image.filter.effect.ScaleSquareFilter;
 
 public abstract class BaseImageHelper
@@ -72,5 +70,10 @@ public abstract class BaseImageHelper
     public BufferedImage resizeImage( final Blob blob, final int size )
     {
         return resizeImage( toBufferedImage( blob.getStream() ), size );
+    }
+
+    public BufferedImage resizeImage( final InputStream is, final int size )
+    {
+        return resizeImage( toBufferedImage( is ), size );
     }
 }

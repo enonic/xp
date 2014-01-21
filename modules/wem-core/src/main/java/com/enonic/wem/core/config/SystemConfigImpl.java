@@ -45,9 +45,15 @@ final class SystemConfigImpl
     }
 
     @Override
-    public File getTemplatesDir()
+    public Path getTemplatesDir()
     {
-        return getSharedConfigDir().resolve( "templates" ).toFile();
+        return getSharedConfigDir().resolve( "templates" );
+    }
+
+    @Override
+    public Path getSchemasDir()
+    {
+        return getSharedConfigDir().resolve( "schemas" );
     }
 
     @Override

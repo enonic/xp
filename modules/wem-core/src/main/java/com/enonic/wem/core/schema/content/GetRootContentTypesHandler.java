@@ -12,7 +12,7 @@ public class GetRootContentTypesHandler
     public void handle()
         throws Exception
     {
-        final ContentTypes allContentTypes = getAllContentTypes();
+        final ContentTypes allContentTypes = contentTypeDao.getAllContentTypes();
 
         ContentTypes.Builder builder = ContentTypes.newContentTypes();
 

@@ -16,6 +16,7 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.icon.Icon;
+import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.SchemaKey;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -54,8 +55,12 @@ public final class SchemaImageResource
         throws Exception
     {
         final SchemaKey schemaKey = SchemaKey.from( schemaKeyAsString );
+        if ( schemaKey.isContentType() )
+        {
+            return getSchemaIcon2( schemaKeyAsString, size );
+        }
 
-        final Icon icon = resolveIcon( schemaKey, size );
+        final Icon icon = resolveIcon( schemaKey );
 
         if ( icon == null && schemaKey.isMixin() )
         {
@@ -80,22 +85,42 @@ public final class SchemaImageResource
         {
             throw new WebApplicationException( Response.Status.NOT_FOUND );
         }
-
     }
 
-    private Icon resolveIcon( final SchemaKey schemaKey, final int size )
+
+    public Response getSchemaIcon2( @PathParam("schemaKey") final String schemaKeyAsString,
+                                    @QueryParam("size") @DefaultValue("128") final int size )
+        throws Exception
+    {
+        final SchemaKey schemaKey = SchemaKey.from( schemaKeyAsString );
+
+        final SchemaIcon icon = resolveSchemaIcon( schemaKey );
+
+        if ( icon == null && schemaKey.isMixin() )
+        {
+            final BufferedImage defaultMixinImage = helper.getDefaultMixinImage( size );
+            return Response.ok( defaultMixinImage, DEFAULT_MIME_TYPE ).build();
+        }
+        else if ( icon == null && schemaKey.isRelationshipType() )
+        {
+            final BufferedImage defaultRelationshipTypeImage = helper.getDefaultRelationshipTypeImage( size );
+            return Response.ok( defaultRelationshipTypeImage, DEFAULT_MIME_TYPE ).build();
+        }
+        else if ( icon != null )
+        {
+            return Response.ok( helper.resizeImage( icon.asInputStream(), size ), icon.getMimeType() ).build();
+        }
+        else
+        {
+            throw new WebApplicationException( Response.Status.NOT_FOUND );
+        }
+    }
+
+    private SchemaIcon resolveSchemaIcon( final SchemaKey schemaKey )
     {
         if ( schemaKey.isContentType() )
         {
-            return resolveContentTypeImage( schemaKey, size );
-        }
-        else if ( schemaKey.isRelationshipType() )
-        {
-            return resolveRelationshipTypeImage( schemaKey, size );
-        }
-        else if ( schemaKey.isMixin() )
-        {
-            return resolveMixinImage( schemaKey, size );
+            return resolveContentTypeImage2( schemaKey );
         }
         else
         {
@@ -103,19 +128,68 @@ public final class SchemaImageResource
         }
     }
 
-    private Icon resolveContentTypeImage( final SchemaKey schemaKey, final int size )
+    private Icon resolveIcon( final SchemaKey schemaKey )
+    {
+        if ( schemaKey.isContentType() )
+        {
+            return resolveContentTypeImage( schemaKey );
+        }
+        else if ( schemaKey.isRelationshipType() )
+        {
+            return resolveRelationshipTypeImage( schemaKey );
+        }
+        else if ( schemaKey.isMixin() )
+        {
+            return resolveMixinImage( schemaKey );
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    private SchemaIcon resolveContentTypeImage2( final SchemaKey schemaKey )
+    {
+        return findContentTypeIcon2( ContentTypeName.from( schemaKey.getLocalName() ) );
+    }
+
+    private Icon resolveContentTypeImage( final SchemaKey schemaKey )
     {
         return findContentTypeIcon( ContentTypeName.from( schemaKey.getLocalName() ) );
     }
 
-    private Icon resolveMixinImage( final SchemaKey schemaKey, final int size )
+    private Icon resolveMixinImage( final SchemaKey schemaKey )
     {
         return findMixinIcon( MixinName.from( schemaKey.getLocalName() ) );
     }
 
-    private Icon resolveRelationshipTypeImage( final SchemaKey schemaKey, final int size )
+    private Icon resolveRelationshipTypeImage( final SchemaKey schemaKey )
     {
         return findRelationshipTypeIcon( RelationshipTypeName.from( schemaKey.getLocalName() ) );
+    }
+
+    private SchemaIcon findContentTypeIcon2( final ContentTypeName contentTypeName )
+    {
+        ContentType contentType = getContentType( contentTypeName );
+        if ( contentType == null )
+        {
+            return null;
+        }
+        else if ( contentType.getSchemaIcon() != null )
+        {
+            return contentType.getSchemaIcon();
+        }
+
+        do
+        {
+            contentType = getContentType( contentType.getSuperType() );
+            if ( contentType.getSchemaIcon() != null )
+            {
+                return contentType.getSchemaIcon();
+            }
+        }
+        while ( contentType != null );
+        return null;
     }
 
     private Icon findContentTypeIcon( final ContentTypeName contentTypeName )

@@ -111,7 +111,7 @@ public class ContentTypesInitializer
         for ( ContentType contentType : SYSTEM_TYPES )
         {
             contentType = newContentType( contentType ).
-                icon( loadIcon( contentType.getName().toString() ) ).
+                schemaIcon( loadSchemaIcon( contentType.getName().toString() ) ).
                 build();
             createOrUpdate( contentType );
         }
@@ -141,7 +141,8 @@ public class ContentTypesInitializer
                 allowChildContent( contentType.allowChildContent() ).
                 builtIn( contentType.isBuiltIn() ).
                 form( contentType.form() ).
-                icon( contentType.getIcon() ).
+//                icon( contentType.getIcon() ).
+    schemaIcon( contentType.getSchemaIcon() ).
                 contentDisplayNameScript( contentType.getContentDisplayNameScript() );
             client.execute( createCommand );
         }

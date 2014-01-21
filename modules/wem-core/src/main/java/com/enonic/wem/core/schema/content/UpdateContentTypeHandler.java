@@ -3,33 +3,26 @@ package com.enonic.wem.core.schema.content;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.entity.UpdateNode;
-import com.enonic.wem.api.command.entity.UpdateNodeResult;
 import com.enonic.wem.api.command.schema.content.UpdateContentType;
 import com.enonic.wem.api.command.schema.content.UpdateContentTypeResult;
-import com.enonic.wem.api.entity.NodeEditor;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeNotFoundException;
 import com.enonic.wem.api.schema.content.validator.ContentTypeSuperTypeValidator;
 import com.enonic.wem.api.schema.content.validator.ContentTypeValidationResult;
 import com.enonic.wem.api.schema.content.validator.InvalidContentTypeException;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.entity.UpdateNodeHandler;
-import com.enonic.wem.core.index.IndexService;
+import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 
 public final class UpdateContentTypeHandler
     extends CommandHandler<UpdateContentType>
 {
-    private final static ContentTypeNodeTranslator CONTENTTYPE_NO_NODE_TRANSLATOR = new ContentTypeNodeTranslator();
-
-    private IndexService indexService;
+    private ContentTypeDao contentTypeDao;
 
     @Override
     public void handle()
         throws Exception
     {
-
         final ContentType persistedContentType =
             context.getClient().execute( Commands.contentType().get().byName().contentTypeName( command.getContentTypeName() ) );
 
@@ -45,26 +38,12 @@ public final class UpdateContentTypeHandler
             persistedContentType.checkIllegalEdit( editedContentType );
             validate( editedContentType );
 
-            final NodeEditor nodeEditor = CONTENTTYPE_NO_NODE_TRANSLATOR.toNodeEditor( editedContentType );
-            UpdateNode updateNodeCommand = CONTENTTYPE_NO_NODE_TRANSLATOR.toUpdateNodeCommand( persistedContentType.getId(), nodeEditor );
-
-            updateNode( updateNodeCommand );
+            contentTypeDao.updateContentType( editedContentType );
 
             command.setResult( UpdateContentTypeResult.SUCCESS );
         }
 
         command.setResult( UpdateContentTypeResult.SUCCESS );
-    }
-
-    private UpdateNodeResult updateNode( final UpdateNode updateNodeCommand )
-        throws Exception
-    {
-        UpdateNodeHandler updateNodeHandler =
-            UpdateNodeHandler.create().command( updateNodeCommand ).context( this.context ).indexService( this.indexService ).build();
-
-        updateNodeHandler.handle();
-
-        return updateNodeCommand.getResult();
     }
 
     private void validate( final ContentType contentType )
@@ -86,8 +65,8 @@ public final class UpdateContentTypeHandler
     }
 
     @Inject
-    public void setIndexService( final IndexService indexService )
+    public void setContentTypeDao( final ContentTypeDao contentTypeDao )
     {
-        this.indexService = indexService;
+        this.contentTypeDao = contentTypeDao;
     }
 }

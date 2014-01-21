@@ -45,7 +45,7 @@ public class DeleteSiteTemplateHandlerTest
 
         assertTrue( templateDir.exists() );
 
-        Mockito.when( systemConfig.getTemplatesDir() ).thenReturn( templatesDir );
+        Mockito.when( systemConfig.getTemplatesDir() ).thenReturn( templatesDir.toPath() );
 
         SiteTemplateKey key = SiteTemplateKey.from( "Intranet-1.0.0" );
         DeleteSiteTemplate command = Commands.site().template().delete( key );
@@ -68,7 +68,7 @@ public class DeleteSiteTemplateHandlerTest
 
         assertTrue( templateDir.exists() );
 
-        Mockito.when( systemConfig.getTemplatesDir() ).thenReturn( templatesDir );
+        Mockito.when( systemConfig.getTemplatesDir() ).thenReturn( templatesDir.toPath() );
 
         DeleteSiteTemplate command = Commands.site().template().delete( SiteTemplateKey.from( "root-1.0.0" ) );
         handler.setCommand( command );

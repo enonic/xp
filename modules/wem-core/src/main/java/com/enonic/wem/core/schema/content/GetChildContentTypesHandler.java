@@ -17,7 +17,7 @@ public class GetChildContentTypesHandler
 
         final ContentTypeName name = command.getParentName();
 
-        final ContentTypes allContentTypes = getAllContentTypes();
+        final ContentTypes allContentTypes = contentTypeDao.getAllContentTypes();
 
         for ( ContentType contentType : allContentTypes )
         {

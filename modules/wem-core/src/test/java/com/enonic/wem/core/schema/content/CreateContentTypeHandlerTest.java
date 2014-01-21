@@ -1,23 +1,18 @@
 package com.enonic.wem.core.schema.content;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.entity.CreateNode;
-import com.enonic.wem.api.command.entity.CreateNodeResult;
 import com.enonic.wem.api.command.schema.content.CreateContentType;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.validator.InvalidContentTypeException;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
+import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 import static com.enonic.wem.api.command.Commands.contentType;
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
@@ -28,17 +23,22 @@ public class CreateContentTypeHandlerTest
 {
     private CreateContentTypeHandler handler;
 
+    private ContentTypeDao contentTypeDao;
+
     @Before
     public void setUp()
         throws Exception
     {
         super.client = Mockito.mock( Client.class );
         super.initialize();
+
+        contentTypeDao = Mockito.mock( ContentTypeDao.class );
+
         handler = new CreateContentTypeHandler();
         handler.setContext( this.context );
+        handler.setContentTypeDao( contentTypeDao );
     }
 
-    @Ignore // We have fucked up by not using client here, fix later
     @Test
     public void createContentType()
         throws Exception
@@ -60,16 +60,10 @@ public class CreateContentTypeHandlerTest
             setAbstract( contentType.isAbstract() ).
             setFinal( contentType.isFinal() ).
             form( contentType.form() ).
-            icon( contentType.getIcon() ).
+            schemaIcon( contentType.getSchemaIcon() ).
             contentDisplayNameScript( contentType.getContentDisplayNameScript() );
 
-        final Node node = Node.newNode().
-            name( NodeName.from( contentType.getName().toString() ) ).
-            id( EntityId.from( "1" ) ).
-            property( "displayName", contentType.getDisplayName() ).
-            build();
-
-        Mockito.when( client.execute( Mockito.isA( CreateNode.class ) ) ).thenReturn( new CreateNodeResult( node ) );
+        Mockito.when( contentTypeDao.createContentType( Mockito.isA( ContentType.class ) ) ).thenReturn( contentType );
 
         // exercise
         this.handler.setCommand( command );
@@ -96,15 +90,6 @@ public class CreateContentTypeHandlerTest
             superType( ContentTypeName.shortcut() ).
             build();
 
-        final Node node = Node.newNode().
-            name( NodeName.from( contentType.getName().toString() ) ).
-            id( EntityId.from( "1" ) ).
-            property( "displayName", "Inheriting a final ContentType" ).
-            property( "superType", ContentTypeName.shortcut().toString() ).
-            build();
-
-        Mockito.when( client.execute( Mockito.isA( CreateNode.class ) ) ).thenReturn( new CreateNodeResult( node ) );
-
         // exercise
         final CreateContentType createCommand = contentType().create().
             name( contentType.getName() ).
@@ -113,7 +98,7 @@ public class CreateContentTypeHandlerTest
             setAbstract( contentType.isAbstract() ).
             setFinal( contentType.isFinal() ).
             form( contentType.form() ).
-            icon( contentType.getIcon() ).
+            schemaIcon( contentType.getSchemaIcon() ).
             contentDisplayNameScript( contentType.getContentDisplayNameScript() );
 
         this.handler.setCommand( createCommand );

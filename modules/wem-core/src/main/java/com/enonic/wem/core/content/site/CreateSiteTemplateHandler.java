@@ -39,7 +39,7 @@ public class CreateSiteTemplateHandler
         }
         final SiteTemplate siteTemplate = builder.build();
 
-        final Path templatesPath = systemConfig.getTemplatesDir().toPath();
+        final Path templatesPath = systemConfig.getTemplatesDir();
         Files.createDirectories( templatesPath );
 
         siteTemplateExporter.exportToDirectory( siteTemplate, templatesPath );
