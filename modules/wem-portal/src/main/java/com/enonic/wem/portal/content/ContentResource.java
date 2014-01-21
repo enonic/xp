@@ -13,6 +13,8 @@ import com.sun.jersey.api.core.HttpContext;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageDescriptor;
@@ -32,11 +34,13 @@ import static com.enonic.wem.api.command.Commands.page;
 @Path("{mode}/{path:.+}")
 public final class ContentResource
 {
+    private static final String EDIT_MODE = "edit";
+
     @PathParam("mode")
     protected String mode;
 
     @PathParam("path")
-    protected String contentPath;
+    protected String contentSelector;
 
     @Inject
     protected Client client;
@@ -71,8 +75,8 @@ public final class ContentResource
     private Response doHandle()
         throws Exception
     {
-        final ContentPath path = ContentPath.from( this.contentPath );
-        final Content content = getContent( path );
+        final Content content = getContent( this.contentSelector );
+        final ContentPath path = content.getPath();
         final ModuleResourceKey jsModuleResource = getJsModuleResource( content );
 
         final JsContext context = new JsContext();
@@ -99,15 +103,50 @@ public final class ContentResource
         return pageDescriptor.getComponentPath();
     }
 
-    private Content getContent( final ContentPath contentPath )
+    private Content getContent( final String contentSelector )
     {
-        final Content content = this.client.execute( content().get().byPath( contentPath ) );
+        final ContentPath contentPath = ContentPath.from( contentSelector );
+        final Content content = getContentByPath( contentPath );
         if ( content != null )
         {
             return content;
         }
 
+        final boolean inEditMode = EDIT_MODE.equals( this.mode );
+        if ( inEditMode )
+        {
+            final ContentId contentId = ContentId.from( contentSelector );
+            final Content contentById = getContentById( contentId );
+            if ( contentById != null )
+            {
+                return contentById;
+            }
+        }
         throw PortalWebException.notFound().message( "Page [{0}] not found.", contentPath ).build();
+    }
+
+    private Content getContentByPath( final ContentPath contentPath )
+    {
+        try
+        {
+            return this.client.execute( content().get().byPath( contentPath ) );
+        }
+        catch ( ContentNotFoundException e )
+        {
+            return null;
+        }
+    }
+
+    private Content getContentById( final ContentId contentId )
+    {
+        try
+        {
+            return this.client.execute( content().get().byId( contentId ) );
+        }
+        catch ( ContentNotFoundException e )
+        {
+            return null;
+        }
     }
 
     private PageDescriptor getPageDescriptor( final PageTemplate pageTemplate )
@@ -126,7 +165,7 @@ public final class ContentResource
         final PageTemplate pageTemplate = this.client.execute( page().template().page().getByKey().key( page.getTemplate() ) );
         if ( pageTemplate == null )
         {
-            throw PortalWebException.notFound().message( "Page [{0}] not found.", this.contentPath ).build();
+            throw PortalWebException.notFound().message( "Page [{0}] not found.", this.contentSelector ).build();
         }
         return pageTemplate;
     }
@@ -135,7 +174,7 @@ public final class ContentResource
     {
         if ( !content.isPage() )
         {
-            throw PortalWebException.notFound().message( "Page [{0}] not found.", this.contentPath ).build();
+            throw PortalWebException.notFound().message( "Page [{0}] not found.", this.contentSelector ).build();
         }
         return content.getPage();
     }

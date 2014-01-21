@@ -53,8 +53,8 @@ public class RelationshipKeyParam
     public RelationshipKey from()
     {
         final RelationshipTypeName type = RelationshipTypeName.from( this.type );
-        final ContentId fromContent = new ContentId( this.fromContent );
-        final ContentId toContent = new ContentId( this.toContent );
+        final ContentId fromContent = ContentId.from( this.fromContent );
+        final ContentId toContent = ContentId.from( this.toContent );
 
         return RelationshipKey.from( type, fromContent, toContent );
     }

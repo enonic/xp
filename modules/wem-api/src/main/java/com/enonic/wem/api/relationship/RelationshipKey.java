@@ -114,10 +114,10 @@ public final class RelationshipKey
         final RelationshipTypeName type = RelationshipTypeName.from( objectNode.get( "type" ).asText() );
 
         Preconditions.checkArgument( objectNode.has( "fromContent" ), "missing required field: fromContent" );
-        final ContentId fromContent = new ContentId( objectNode.get( "fromContent" ).asText() );
+        final ContentId fromContent = ContentId.from( objectNode.get( "fromContent" ).asText() );
 
         Preconditions.checkArgument( objectNode.has( "toContent" ), "missing required field: toContent" );
-        final ContentId toContent = new ContentId( objectNode.get( "toContent" ).asText() );
+        final ContentId toContent = ContentId.from( objectNode.get( "toContent" ).asText() );
 
         return new RelationshipKey( type, fromContent, toContent, null );
     }

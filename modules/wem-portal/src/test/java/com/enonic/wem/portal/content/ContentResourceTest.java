@@ -92,7 +92,7 @@ public class ContentResourceTest
         when( requestContext.getMethod() ).thenReturn( "method" );
 
         final ContentResource contentResource = new ContentResource();
-        contentResource.contentPath = "content";
+        contentResource.contentSelector = "content";
         contentResource.client = mock( Client.class );
         contentResource.httpContext = mock( HttpContext.class );
 
