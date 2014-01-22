@@ -66,15 +66,15 @@ public class SitesInitializer
 
     private Client client;
 
-    private final static ModuleKey DEMO_MODULE_KEY = ModuleKey.from( "demo-1.0.0" );
+    private final static ModuleKey DEMO_MODULE_KEY = ModuleKey.from( "test-1.0.0" );
 
     private static final ComponentDescriptorName LANDING_PAGE_DESCRIPTOR_NAME = new ComponentDescriptorName( "landing-page" );
 
     private static final ComponentDescriptorName PRODUCT_GRID_DESCRIPTOR_NAME = new ComponentDescriptorName( "product-grid" );
 
-    private final static SiteTemplateKey BLUMAN_SITE_TEMPLATE_KEY = SiteTemplateKey.from( "Blueman-1.0.0" );
+    private final static SiteTemplateKey HOMEPAGE_SITE_TEMPLATE_KEY = SiteTemplateKey.from( "Homepage-1.0.0" );
 
-    private final static SiteTemplateKey BLUMAN_INTRA_SITE_TEMPLATE_KEY = SiteTemplateKey.from( "BluemanIntra-1.0.0" );
+    private final static SiteTemplateKey INTRANET_SITE_TEMPLATE_KEY = SiteTemplateKey.from( "Intranet-1.0.0" );
 
     private static final PageTemplateName MAIN_PAGE_PAGE_TEMPLATE_NAME = new PageTemplateName( "main-page" );
 
@@ -86,7 +86,7 @@ public class SitesInitializer
 
     private static final ImageTemplateName MY_IMAGE_TEMPLATE_NAME = new ImageTemplateName( "my-image-template" );
 
-    private Module demoModule;
+    private Module testModule;
 
     private PageDescriptor landingPageDescriptor;
 
@@ -102,13 +102,13 @@ public class SitesInitializer
 
     private PartTemplate myPartTemplate;
 
-    private SiteTemplate bluManTrampolinerSiteTemplate;
+    private SiteTemplate homepageSiteTemplate;
 
-    private SiteTemplate bluManIntranettSiteTemplate;
+    private SiteTemplate intranetSiteTemplate;
 
-    private Content bluManTrampolineSite;
+    private Content homepageSite;
 
-    private Content bluManIntranetSite;
+    private Content intranetSite;
 
     protected SitesInitializer()
     {
@@ -133,8 +133,8 @@ public class SitesInitializer
         final CreateModule createModule = Commands.module().create().
             name( DEMO_MODULE_KEY.getName().toString() ).
             version( DEMO_MODULE_KEY.getVersion() ).
-            displayName( "Demo module" ).
-            info( "For demo purposes only." ).
+            displayName( "Test module" ).
+            info( "For test purposes only." ).
             url( "http://enonic.net" ).
             vendorName( "Enonic AS" ).
             vendorUrl( "http://www.enonic.com" ).
@@ -153,7 +153,7 @@ public class SitesInitializer
             // IGNORE IF NOT FOUND
         }
 
-        this.demoModule = client.execute( createModule );
+        this.testModule = client.execute( createModule );
     }
 
     private void initializeDescriptors()
@@ -201,16 +201,16 @@ public class SitesInitializer
     private void initializeSiteTemplates()
     {
         myPartTemplate = newPartTemplate().
-            key( PartTemplateKey.from( BLUMAN_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, MY_PART_TEMPLATE_NAME ) ).
+            key( PartTemplateKey.from( HOMEPAGE_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, MY_PART_TEMPLATE_NAME ) ).
             displayName( "My Part" ).
             descriptor( myPartDescriptor.getKey() ).
             build();
 
         // Main Page
         final PageRegions.Builder mainPageRegions = newPageRegions();
-        createDefaultPageRegions( mainPageRegions, BLUMAN_SITE_TEMPLATE_KEY );
+        createDefaultPageRegions( mainPageRegions, HOMEPAGE_SITE_TEMPLATE_KEY );
         mainPageLandingPageTemplate = newPageTemplate().
-            key( PageTemplateKey.from( BLUMAN_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, MAIN_PAGE_PAGE_TEMPLATE_NAME ) ).
+            key( PageTemplateKey.from( HOMEPAGE_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, MAIN_PAGE_PAGE_TEMPLATE_NAME ) ).
             displayName( "Main Page" ).
             regions( mainPageRegions.build() ).
             config( createLandingPagePageTemplateConfig( "blue" ) ).
@@ -225,11 +225,11 @@ public class SitesInitializer
                 add( PartComponent.newPartComponent().
                     name( "MyComponent" ).
                     template(
-                        PartTemplateKey.from( BLUMAN_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, new PartTemplateName( "my-part-template" ) ) ).
+                        PartTemplateKey.from( HOMEPAGE_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, new PartTemplateName( "my-part-template" ) ) ).
                     build() ).
                 build() );
         productGridPageTemplate = newPageTemplate().
-            key( PageTemplateKey.from( BLUMAN_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, PRODUCT_GRID_PAGE_TEMPLATE_NAME ) ).
+            key( PageTemplateKey.from( HOMEPAGE_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, PRODUCT_GRID_PAGE_TEMPLATE_NAME ) ).
             displayName( "Product grid" ).
             regions( productGridRegions.build() ).
             config( createProductPageTemplateConfig( 10, 10 ) ).
@@ -238,9 +238,9 @@ public class SitesInitializer
 
         // Department Page
         final PageRegions.Builder departmentPageRegions = newPageRegions();
-        createDefaultPageRegions( departmentPageRegions, BLUMAN_INTRA_SITE_TEMPLATE_KEY );
+        createDefaultPageRegions( departmentPageRegions, INTRANET_SITE_TEMPLATE_KEY );
         departmentPageLandingPageTemplate = newPageTemplate().
-            key( PageTemplateKey.from( BLUMAN_INTRA_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, DEPARTMENT_PAGE_PAGE_TEMPLATE_NAME ) ).
+            key( PageTemplateKey.from( INTRANET_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, DEPARTMENT_PAGE_PAGE_TEMPLATE_NAME ) ).
             displayName( "Department Page" ).
             regions( departmentPageRegions.build() ).
             config( createLandingPagePageTemplateConfig( "red" ) ).
@@ -249,7 +249,7 @@ public class SitesInitializer
 
         try
         {
-            client.execute( Commands.site().template().delete( BLUMAN_SITE_TEMPLATE_KEY ) );
+            client.execute( Commands.site().template().delete( HOMEPAGE_SITE_TEMPLATE_KEY ) );
         }
         catch ( NoSiteTemplateExistsException e )
         {
@@ -258,31 +258,31 @@ public class SitesInitializer
 
         try
         {
-            client.execute( Commands.site().template().delete( BLUMAN_INTRA_SITE_TEMPLATE_KEY ) );
+            client.execute( Commands.site().template().delete( INTRANET_SITE_TEMPLATE_KEY ) );
         }
         catch ( NoSiteTemplateExistsException e )
         {
             // IGNORE IF NOT FOUND
         }
 
-        bluManTrampolinerSiteTemplate = client.execute( site().template().create().
-            siteTemplateKey( BLUMAN_SITE_TEMPLATE_KEY ).
-            displayName( "Blueman Site Template" ).
+        homepageSiteTemplate = client.execute( site().template().create().
+            siteTemplateKey( HOMEPAGE_SITE_TEMPLATE_KEY ).
+            displayName( "Homepage Template" ).
             vendor( newVendor().name( "Enonic AS" ).url( "http://www.enonic.com" ).build() ).
-            modules( ModuleKeys.from( demoModule.getKey() ) ).
-            description( "Demo site template for portals" ).
+            modules( ModuleKeys.from( testModule.getKey() ) ).
+            description( "Test site template for home pages" ).
             url( "http://enonic.net" ).
             rootContentType( ContentTypeName.page() ).
             addTemplate( mainPageLandingPageTemplate ).
             addTemplate( productGridPageTemplate ).
             addTemplate( myPartTemplate ) );
 
-        bluManIntranettSiteTemplate = client.execute( site().template().create().
-            siteTemplateKey( BLUMAN_INTRA_SITE_TEMPLATE_KEY ).
-            displayName( "Blueman Intranet Site Template" ).
+        intranetSiteTemplate = client.execute( site().template().create().
+            siteTemplateKey( INTRANET_SITE_TEMPLATE_KEY ).
+            displayName( "Test site template for intranets" ).
             vendor( newVendor().name( "Enonic AS" ).url( "http://www.enonic.com" ).build() ).
-            modules( ModuleKeys.from( demoModule.getKey() ) ).
-            description( "Demo site template for intranets" ).
+            modules( ModuleKeys.from( testModule.getKey() ) ).
+            description( "Test site template for intranets ..." ).
             url( "http://enonic.net" ).
             rootContentType( ContentTypeName.page() ).
             addTemplate( departmentPageLandingPageTemplate ) );
@@ -290,37 +290,37 @@ public class SitesInitializer
 
     private void initializeSites()
     {
-        bluManTrampolineSite = createSiteContent( "bluman-trampoliner", "Bluman Trampoliner" );
+        homepageSite = createSiteContent( "homepage", "Homepage" );
 
-        bluManTrampolineSite = client.execute( site().create().
-            content( bluManTrampolineSite.getId() ).
-            template( this.bluManTrampolinerSiteTemplate.getKey() ).
+        homepageSite = client.execute( site().create().
+            content( homepageSite.getId() ).
+            template( this.homepageSiteTemplate.getKey() ).
             moduleConfigs( ModuleConfigs.from( newModuleConfig().
-                module( this.demoModule.getModuleKey() ).
+                module( this.testModule.getModuleKey() ).
                 config( createDemoModuleData( "First", "Second" ) ).build() ) ) );
 
         PageRegions.Builder pageRegions = newPageRegions();
-        createDefaultPageRegions( pageRegions, BLUMAN_SITE_TEMPLATE_KEY );
+        createDefaultPageRegions( pageRegions, HOMEPAGE_SITE_TEMPLATE_KEY );
 
-        bluManTrampolineSite = client.execute( page().create().
-            content( bluManTrampolineSite.getId() ).
+        homepageSite = client.execute( page().create().
+            content( homepageSite.getId() ).
             pageTemplate( this.mainPageLandingPageTemplate.getKey() ).
             regions( pageRegions.build() ).
             config( createLandingPagePageTemplateConfig( "blue" ) ) );
 
-        bluManIntranetSite = createSiteContent( "bluman-intranett", "Bluman Intranett" );
+        intranetSite = createSiteContent( "intranet", "Intranet" );
 
-        bluManIntranetSite = client.execute( site().create().
-            content( bluManIntranetSite.getId() ).
-            template( this.bluManIntranettSiteTemplate.getKey() ).
+        intranetSite = client.execute( site().create().
+            content( intranetSite.getId() ).
+            template( this.intranetSiteTemplate.getKey() ).
             moduleConfigs( ModuleConfigs.from( newModuleConfig().
-                module( this.demoModule.getModuleKey() ).
+                module( this.testModule.getModuleKey() ).
                 config( createDemoModuleData( "Uno", "Secondo" ) ).build() ) ) );
 
         pageRegions = newPageRegions();
-        createDefaultPageRegions( pageRegions, BLUMAN_INTRA_SITE_TEMPLATE_KEY );
-        bluManIntranetSite = client.execute( page().create().
-            content( bluManIntranetSite.getId() ).
+        createDefaultPageRegions( pageRegions, INTRANET_SITE_TEMPLATE_KEY );
+        intranetSite = client.execute( page().create().
+            content( intranetSite.getId() ).
             pageTemplate( this.departmentPageLandingPageTemplate.getKey() ).
             regions( pageRegions.build() ).
             config( createLandingPagePageTemplateConfig( "red" ) ) );
