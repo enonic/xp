@@ -120,10 +120,6 @@ public final class PostProcessorImpl
             return null;
         }
         final Page page = content.getPage();
-        if ( !page.hasRegions() )
-        {
-            return null;
-        }
         final PageRegions pageRegions = resolvePageRegions( page, context.getPageTemplate() );
 
         PageComponent component = pageRegions.getComponent( componentName );
