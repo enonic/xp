@@ -28,6 +28,9 @@ module api.ui.combobox {
             this.selectedOptionsView = builder.selectedOptionsView;
             this.selectedOptionsView.hide();
             this.comboBox = this.createComboBox(builder.comboBoxName);
+            if (builder.loader) {
+                this.setLoader(builder.loader);
+            }
 
             super(this.comboBox, this.selectedOptionsView);
 
@@ -154,6 +157,10 @@ module api.ui.combobox {
             this.loadedListeners.forEach( (listener) => {
                 listener(modules);
             });
+        }
+
+        giveFocus():boolean {
+            return this.comboBox.giveFocus();
         }
     }
 

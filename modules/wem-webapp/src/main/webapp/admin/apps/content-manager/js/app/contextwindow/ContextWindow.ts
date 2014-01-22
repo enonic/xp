@@ -19,6 +19,7 @@ module app.contextwindow {
         private contextWindowOptions:ContextWindowOptions;
         private selectedComponent:Component;
         private minimizer:Minimizer;
+        private pageRegions:api.content.page.PageRegions;
 
         constructor(options:ContextWindowOptions) {
             this.site = options.site;
@@ -131,8 +132,27 @@ module app.contextwindow {
                 new LiveEditDragStartEvent().fire()
                 this.hide();
             });
+            //TODO: Listen to component added event and generate component name. Set component name on component. Add component to region.
+            //this.pageRegions.ensureUniqueComponentName()
 
+            //TODO: Listen to imageComponentSetImage.
+            // TODO: var imageComponent = <api.content.page.image.ImageComponent>pageRegions.getComponent(event.getComponentName());
+            // TODO: imageComponent.setImage(event.getImage());
+            // TODO: liveFormPanel.saveChanges()
+            //        -> setPage will be called automatically when saveChanges is finished
 
+        }
+
+        setPage(content:api.content.Content, pageTemplate:api.content.page.PageTemplate) {
+            var page = content.getPage();
+            this.pageRegions = pageTemplate.getRegions();
+            if (page.hasRegions()) {
+                this.pageRegions = page.getRegions();
+            }
+        }
+
+        getPageRegions() : api.content.page.PageRegions {
+            return this.pageRegions;
         }
 
         getSelectedComponent():any {

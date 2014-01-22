@@ -48,15 +48,15 @@ module LiveEdit.component.mouseevent {
                 event.preventDefault();
 
                 var component = new LiveEdit.component.Component($(event.currentTarget));
-                var deselectComponent:boolean = component.isSelected() || LiveEdit.component.Selection.pageHasSelectedElement();
-
-                // Toggle select/deselect
-                if (deselectComponent) {
-                    LiveEdit.component.Selection.deselect();
-                } else {
+//                var deselectComponent:boolean = component.isSelected() || LiveEdit.component.Selection.pageHasSelectedElement();
+//
+//                // Toggle select/deselect
+//                if (deselectComponent) {
+//                    LiveEdit.component.Selection.deselect();
+//                } else {
                     LiveEdit.component.Selection.select(component, event);
                     LiveEdit.component.Selection.handleSelect(component.getElement()[0]);
-                }
+//                }
             });
         }
 

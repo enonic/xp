@@ -1,12 +1,16 @@
 // Globals
 ///<reference path='../../common/js/_module.ts' />
 
+///<reference path='event/ComponentSelectedEvent.ts' />
+///<reference path='event/ComponentDeselectedEvent.ts' />
 
 ///<reference path='shared/DomHelper.ts' />
 ///<reference path='shared/PlaceholderCreator.ts' />
 
 ///<reference path='component/Component.ts' />
 ///<reference path='component/ComponentType.ts' />
+///<reference path='component/ComponentPlaceholder.ts' />
+///<reference path='component/ImagePlaceholder.ts' />
 ///<reference path='component/dragdropsort/EmptyComponent.ts' />
 ///<reference path='component/helper/DragHelper.ts' />
 ///<reference path='component/helper/ComponentResizeObserver.ts' />
@@ -43,5 +47,8 @@
 ///<reference path='ui/contextmenu/menuitem/RemoveMenuItem.ts' />
 
 ///<reference path='component/dragdropsort/DragDropSort.ts' />
+
+
+
 
 ///<reference path='main.ts' />

@@ -9,29 +9,11 @@ module LiveEdit.component.dragdropsort {
             var emptyComponent = new api.dom.DivEl();
             emptyComponent.addClass("live-edit-empty-component");
             emptyComponent.getEl().setData('live-edit-empty-component', "true");
+            emptyComponent.getEl().setData('data-live-edit-component', "empty");
             emptyComponent.getEl().setData('live-edit-type', component.getComponentType().getName());
 
             if (component.componentType.getName() == "image") {
-                var iconEl = new api.dom.DivEl();
-                iconEl.setClass(component.getComponentType().getIconCls());
-                emptyComponent.appendChild(iconEl);
-
-                var uploaderConfig = {
-                    multiSelection: true,
-                    buttonsVisible: false,
-                    showImageAfterUpload: false,
-                    browseEnabled: true
-                };
-                var imageUploader = new api.ui.ImageUploader("image-selector-upload-dialog", api.util.getRestUri("upload"), uploaderConfig);
-                imageUploader.addListener({
-                    onFileUploaded: (uploadItem:api.ui.UploadItem) => {
-                        console.log("file is uploaded", arguments);
-                    },
-                    onUploadComplete: () => {
-                        console.log("upload complete", arguments);
-                    }
-                });
-                emptyComponent.appendChild(imageUploader);
+                return new LiveEdit.component.ImagePlaceholder();
             } else {
                 var emptyComponentIcon = new api.dom.DivEl();
                 emptyComponentIcon.addClass(component.getComponentType().getIconCls() + ' live-edit-empty-component-icon');

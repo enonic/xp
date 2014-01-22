@@ -21,22 +21,24 @@ module LiveEdit.component {
                     y: event.pageY
                 };
             }
-
+            console.log("triggering selectComponent");
             $(window).trigger('selectComponent.liveEdit', [component, mouseClickPagePosition]);
         }
 
         public static handleSelect(element:HTMLElement) {
+            console.log("handling select", element, Selection.getType(element));
             if (Selection.getType(element) == "page") {
                 $(window).trigger('pageSelect.liveEdit');
             } else if (Selection.getType(element) == "region") {
                 $(window).trigger('regionSelect.liveEdit', element.getAttribute(Selection.REGION_ATTR));
             } else if (Selection.getType(element) == "component") {
+                console.log("triggering componentSelect");
                 $(window).trigger('componentSelect.liveEdit', element.getAttribute(Selection.COMPONENT_ATTR));
             }
         }
 
         public static getType(element:HTMLElement):string {
-            if (element.hasAttribute(Selection.COMPONENT_ATTR)) {
+            if (element.hasAttribute(Selection.COMPONENT_ATTR) || element.getAttribute('data-live-edit-empty-component') == "true") {
                 return "component";
             } else if (element.hasAttribute(Selection.REGION_ATTR)) {
                 return "region";
@@ -48,6 +50,7 @@ module LiveEdit.component {
 
         public static deselect():void {
             $(window).trigger('deselectComponent.liveEdit');
+            $(window).trigger('componentDeselect.liveEdit');
             this.removeSelectedAttribute();
         }
 
