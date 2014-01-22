@@ -14,7 +14,7 @@ module api.form.formitemset {
 
         private addButton: api.ui.Button;
 
-        private collapseButton: api.ui.Button;
+        private collapseButton: api.dom.AEl;
 
         constructor(context: api.form.FormContext, formItemSet: api.form.FormItemSet, dataSets?: api.data.DataSet[]) {
             super("form-item-set-view", context, formItemSet);
@@ -63,8 +63,8 @@ module api.form.formitemset {
                 }
 
             });
-            this.collapseButton = new api.ui.Button("Collapse");
-            this.collapseButton.setClass("collapse-button");
+            this.collapseButton = new api.dom.AEl("collapse-button");
+            this.collapseButton.setText("Collapse");
             this.collapseButton.setClickListener(() => {
                 if (this.formItemSetOccurrences.isCollapsed()) {
                     this.collapseButton.setText("Collapse");

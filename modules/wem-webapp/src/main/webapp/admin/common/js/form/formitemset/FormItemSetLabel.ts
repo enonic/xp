@@ -10,6 +10,11 @@ module api.form.formitemset {
             this.formItemSet = formItemSet;
 
             var nodes:Node[] = [];
+
+            var dragHandle = new api.dom.SpanEl( "drag-handle" );
+            dragHandle.setHtml( ":::" );
+            nodes.push( dragHandle.getHTMLElement() );
+
             nodes.push(document.createTextNode(formItemSet.getLabel()));
 
             if( formItemSet.getOccurrences().required() ) {
