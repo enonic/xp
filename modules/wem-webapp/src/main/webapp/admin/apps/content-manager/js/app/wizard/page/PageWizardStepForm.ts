@@ -42,7 +42,7 @@ module app.wizard.page {
 
         layout(content: api.content.Content, siteContent: api.content.Content): Q.Promise<void> {
 
-            console.log("PageWizardStepForm.layot() ... ");
+            console.log("PageWizardStepForm.layout() ... ");
             var deferred = Q.defer<void>();
 
             this.content = content;
@@ -55,6 +55,7 @@ module app.wizard.page {
                     sendAndParse().
                     done((pageTemplate: api.content.page.PageTemplate) => {
 
+                        this.selectedPageTemplate = pageTemplate;
                         this.pageTemplateSelectorForm.layoutExisting(siteContent.getSite().getTemplateKey(), page.getTemplate()).
                             done(()=> {
 

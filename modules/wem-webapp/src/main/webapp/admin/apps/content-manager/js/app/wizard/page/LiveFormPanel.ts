@@ -3,59 +3,63 @@ module app.wizard {
 
         private frame: api.dom.IFrameEl;
 
+        private baseUrl: string;
+
         private url: string;
 
         private site: api.content.Content;
 
-        private contextWindow:app.contextwindow.ContextWindow;
+        private contextWindow: app.contextwindow.ContextWindow;
 
         //TODO: contextwindow as variable
 
         constructor(site: api.content.Content) {
             super("live-form-panel");
-            this.url = api.util.getUri("portal/edit/" + site.getContentId().toString());
+            this.baseUrl = api.util.getUri("portal/edit/");
             this.site = site;
+
+            this.frame = new api.dom.IFrameEl();
+            this.frame.addClass("live-edit-frame");
+            this.appendChild(this.frame);
         }
 
-        onElementShown() {
-            super.onElementShown();
-            this.doLoad();
-        }
+        private doLoad(liveEditUrl: string): Q.Promise<void> {
 
-        renderNew() {
+            var deferred = Q.defer<void>();
 
-        }
+            this.frame.setSrc(liveEditUrl);
 
-        private doLoad() {
-            if (!this.frame) {
-                this.frame = new api.dom.IFrameEl();
-                this.frame.addClass("live-edit-frame");
-                this.frame.setSrc(this.url);
-                this.appendChild(this.frame);
-
-                // Wait for iframe to be loaded before adding context window!
-                var maxIterations = 10;
-                var iterations = 0;
-                var intervalId = setInterval(() => {
-                    if (this.frame.isLoaded()) {
-                        if (this.frame.getHTMLElement()["contentWindow"].$liveEdit) {
-                            this.contextWindow = new app.contextwindow.ContextWindow({liveEditEl: this.frame, site: this.site});
-                            this.appendChild(this.contextWindow);
-                            //contextWindow.init();
-                            clearInterval(intervalId);
-                        }
-                    }
-                    iterations++;
-                    if (iterations >= maxIterations) {
+            // Wait for iframe to be loaded before adding context window!
+            var maxIterations = 10;
+            var iterations = 0;
+            var intervalId = setInterval(() => {
+                if (this.frame.isLoaded()) {
+                    if (this.frame.getHTMLElement()["contentWindow"].$liveEdit) {
+                        this.contextWindow = new app.contextwindow.ContextWindow({liveEditEl: this.frame, site: this.site});
+                        this.appendChild(this.contextWindow);
+                        //contextWindow.init();
                         clearInterval(intervalId);
+                        deferred.resolve(null);
                     }
-                }, 200);
-            }
+                }
+                iterations++;
+                if (iterations >= maxIterations) {
+                    clearInterval(intervalId);
+                }
+            }, 200);
+
+            return deferred.promise;
         }
 
         renderExisting(content: api.content.Content, pageTemplate: api.content.page.PageTemplate) {
+
             if (content.isPage() && pageTemplate != null) {
-                this.contextWindow.setPage(content, pageTemplate);
+
+                var liveEditUrl = this.baseUrl + content.getContentId().toString();
+
+                this.doLoad(liveEditUrl).done(() => {
+                    this.contextWindow.setPage(content, pageTemplate);
+                });
             }
         }
 
