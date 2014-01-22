@@ -19,6 +19,8 @@ public interface SystemConfig
 
     public Path getSchemasDir();
 
+    public Path getContentTypesDir();
+
     public boolean isMigrateEnabled();
 
     public String getMigrateJdbcDriver();

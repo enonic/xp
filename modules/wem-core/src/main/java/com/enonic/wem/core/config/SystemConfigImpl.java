@@ -57,6 +57,12 @@ final class SystemConfigImpl
     }
 
     @Override
+    public Path getContentTypesDir()
+    {
+        return getSchemasDir().resolve( "content-types" );
+    }
+
+    @Override
     public boolean isMigrateEnabled()
     {
         return "true".equals( this.config.getProperty( "cms.migrate.enabled" ) );

@@ -162,7 +162,7 @@ public final class ContentTypeDaoImpl
     public void setSystemConfig( final SystemConfig systemConfig )
         throws IOException
     {
-        this.basePath = systemConfig.getSchemasDir();
+        this.basePath = systemConfig.getContentTypesDir();
         Files.createDirectories( this.basePath );
     }
 }
