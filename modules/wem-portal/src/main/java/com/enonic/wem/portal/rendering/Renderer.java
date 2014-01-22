@@ -7,6 +7,5 @@ import com.enonic.wem.portal.controller.JsContext;
 
 public interface Renderer
 {
-    Response render( Renderable component, JsContext context )
-        throws Exception;
+    Response render( Renderable component, JsContext context );
 }

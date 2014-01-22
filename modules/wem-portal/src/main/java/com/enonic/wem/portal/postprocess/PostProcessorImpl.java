@@ -15,10 +15,10 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageComponent;
+import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.image.ImageComponent;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.part.PartComponent;
-import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsHttpResponse;
@@ -41,7 +41,6 @@ public final class PostProcessorImpl
 
     @Override
     public void processResponse( final JsContext context )
-        throws Exception
     {
         final JsHttpResponse response = context.getResponse();
         if ( !response.isPostProcess() )
@@ -70,7 +69,6 @@ public final class PostProcessorImpl
     }
 
     private boolean processDocument( final Document htmlDoc, final JsContext context )
-        throws Exception
     {
         boolean updated = false;
         final Elements elements = htmlDoc.getElementsByAttribute( WEM_COMPONENT_ATTRIBUTE );
@@ -83,7 +81,6 @@ public final class PostProcessorImpl
     }
 
     private void processComponentElement( final Element element, final JsContext context )
-        throws Exception
     {
         final String name = element.attr( WEM_COMPONENT_ATTRIBUTE );
         final ComponentName componentName = new ComponentName( name );

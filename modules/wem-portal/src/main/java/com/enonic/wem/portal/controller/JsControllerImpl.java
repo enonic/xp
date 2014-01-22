@@ -83,7 +83,6 @@ final class JsControllerImpl
 
     @Override
     public Response execute()
-        throws Exception
     {
         final String method = this.context.getRequest().getMethod();
         final ScriptSource script = findScript( method );
@@ -101,7 +100,6 @@ final class JsControllerImpl
     }
 
     private Response doExecute( final ScriptSource script )
-        throws Exception
     {
         this.runner.source( script );
         this.runner.execute();

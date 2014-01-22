@@ -14,7 +14,6 @@ abstract class BasePostProcessor
 
     @Override
     public void processResponse( final JsContext context )
-        throws Exception
     {
         final JsHttpResponse response = context.getResponse();
         if ( !response.isPostProcess() )
@@ -26,8 +25,21 @@ abstract class BasePostProcessor
             return;
         }
         final String responseBody = (String) response.getBody();
-        final String processedResponse = processStringResponse( responseBody );
+        final String processedResponse = doProcessStringResponse( responseBody );
+
         response.setBody( processedResponse );
+    }
+
+    private String doProcessStringResponse( final String responseBody )
+    {
+        try
+        {
+            return processStringResponse( responseBody );
+        }
+        catch ( Exception e )
+        {
+            throw new PostProcessException( "Failed to processStringResponse", e );
+        }
     }
 
     protected abstract String processStringResponse( final String responseBody )
