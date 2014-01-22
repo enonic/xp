@@ -48,7 +48,6 @@ module api.ui {
             }
 
             this.dropzone = new api.dom.DivEl("dropzone");
-            this.refreshDropzoneLabel();
             this.appendChild(this.dropzone);
 
             this.progress = new api.ui.ProgressBar();
@@ -111,7 +110,6 @@ module api.ui {
 
         setMaximumOccurrences(value:number) {
             this.maximumOccurrences = value;
-            this.refreshDropzoneLabel();
         }
 
         stop() {
@@ -125,16 +123,6 @@ module api.ui {
             this.setImageVisible(false);
             this.setDropzoneVisible(true);
             this.setValue(undefined);
-        }
-
-        private refreshDropzoneLabel() {
-            var label;
-            if (!this.multiSelection || this.maximumOccurrences == 1) {
-                label = "Drop file here or click to select";
-            } else {
-                label = "Drop files here or click to select";
-            }
-            this.dropzone.getEl().setInnerHtml(label);
         }
 
         private setDropzoneVisible(visible:boolean) {

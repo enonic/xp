@@ -1,0 +1,26 @@
+.dropzone {
+  .dropzone-glow(#a8c6fe);
+
+  background-color: #f1f5fe;
+  font-size: 22px;
+  font-weight: bold;
+  color: #555;
+  text-align: center;
+  overflow: hidden;
+  min-height: 100px;
+  line-height: 100px;
+
+  &:before {
+    content: "Drop here or click to select";
+  }
+}
+
+.dropzone-glow(@color: @admin-input-blue) {
+  border: 3px dashed @color;
+
+  &:hover,
+  &:focus {
+    border: 3px dashed darken(@color, 10%);
+    box-shadow: 0px 0px 5px darken(@color, 10%);
+  }
+}

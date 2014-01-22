@@ -51,26 +51,8 @@
     height: 268px;
   }
 
-  .drop-zone {
-    height: 100px;
-    width: 100%;
-    border: 3px dashed #a8c6fe;
-    background-color: #f1f5fe;
-    font-size: 22px;
-    line-height: 100px;
-    font-weight: bold !important;
-    color: #555;
-    text-align: center;
-    overflow: hidden;
-
-    &:before {
-      content: "Drag here to upload",
-    }
-
-    &:hover {
-      border-color:darken(#a8c6fe, 10%);
-      box-shadow:inset 0px 0px 30px @admin-input-blue;
-    }
+  .dropzone:before {
+    content: 'Drop here';
   }
 
   .site-template-list,
