@@ -53,6 +53,11 @@ public final class Page
         return config;
     }
 
+    public PageComponent getComponent( final ComponentName componentName )
+    {
+        return regions.getComponent( componentName );
+    }
+
     public static Builder newPage()
     {
         return new Builder();

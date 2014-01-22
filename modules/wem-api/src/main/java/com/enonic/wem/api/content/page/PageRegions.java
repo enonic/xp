@@ -1,31 +1,12 @@
 package com.enonic.wem.api.content.page;
 
 
-import java.util.Iterator;
-
-import com.google.common.collect.ImmutableMap;
-
-import com.enonic.wem.api.content.page.region.Region;
-
 public final class PageRegions
-    implements Iterable<Region>
+    extends AbstractRegions
 {
-    private final ImmutableMap<String, Region> regionByName;
-
     private PageRegions( final Builder builder )
     {
-        this.regionByName = builder.regions.build();
-    }
-
-    public Region getRegion( final String name )
-    {
-        return this.regionByName.get( name );
-    }
-
-    @Override
-    public Iterator<Region> iterator()
-    {
-        return this.regionByName.values().iterator();
+        super( builder );
     }
 
     public static Builder newPageRegions()
@@ -34,15 +15,8 @@ public final class PageRegions
     }
 
     public static class Builder
+        extends AbstractRegions.Builder<Builder>
     {
-        private ImmutableMap.Builder<String, Region> regions = new ImmutableMap.Builder<>();
-
-        public Builder add( final Region region )
-        {
-            regions.put( region.getName(), region );
-            return this;
-        }
-
         public PageRegions build()
         {
             return new PageRegions( this );

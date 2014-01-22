@@ -17,11 +17,6 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageComponent;
-import com.enonic.wem.api.content.page.image.ImageComponent;
-import com.enonic.wem.api.content.page.layout.LayoutComponent;
-import com.enonic.wem.api.content.page.part.PartComponent;
-import com.enonic.wem.api.content.page.PageRegions;
-import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsHttpRequest;
 import com.enonic.wem.portal.exception.PortalWebException;
@@ -80,7 +75,7 @@ public final class ComponentResource
         final Content content = getContent( path );
         final Page page = getPage( content );
 
-        final PageComponent component = resolveComponent( new ComponentName( this.componentName ), page );
+        final PageComponent component = getComponent( new ComponentName( this.componentName ), page );
 
         final Renderer renderer = rendererFactory.getRenderer( component );
 
@@ -104,38 +99,14 @@ public final class ComponentResource
         return context;
     }
 
-    private PageComponent resolveComponent( final ComponentName componentName, final Page page )
+    private PageComponent getComponent( final ComponentName componentName, final Page page )
     {
-        final PageRegions pageRegions = page.getRegions();
-        for ( Region region : pageRegions )
+        final PageComponent component = page.getComponent( componentName );
+        if ( component != null )
         {
-            for ( PageComponent component : region.getComponents() )
-            {
-                if ( componentName.equals( getName( component ) ) )
-                {
-                    return component;
-                }
-            }
+            return component;
         }
         throw PortalWebException.notFound().message( "Component [{0}] not found in page [{1}].", componentName, contentPath ).build();
-    }
-
-    // TODO temp fix until we add getName to PageComponent
-    private ComponentName getName( final PageComponent component )
-    {
-        if ( component instanceof PartComponent )
-        {
-            return ( (PartComponent) component ).getName();
-        }
-        else if ( component instanceof ImageComponent )
-        {
-            return ( (ImageComponent) component ).getName();
-        }
-        else if ( component instanceof LayoutComponent )
-        {
-            return ( (LayoutComponent) component ).getName();
-        }
-        return null;
     }
 
     private Content getContent( final ContentPath contentPath )
