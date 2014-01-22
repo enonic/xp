@@ -1,9 +1,6 @@
 package com.enonic.wem.portal.content;
 
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.OPTIONS;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
@@ -11,9 +8,7 @@ import javax.ws.rs.core.Response;
 
 import com.sun.jersey.api.core.HttpContext;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageComponent;
@@ -24,10 +19,9 @@ import com.enonic.wem.portal.rendering.Renderer;
 import com.enonic.wem.portal.rendering.RendererFactory;
 import com.enonic.wem.portal.script.lib.PortalUrlScriptBean;
 
-import static com.enonic.wem.api.command.Commands.content;
-
 @Path("{mode}/{path:.+}/_/component/{component}")
 public final class ComponentResource
+    extends RenderResource
 {
     @PathParam("mode")
     protected String mode;
@@ -36,10 +30,7 @@ public final class ComponentResource
     protected String contentPath;
 
     @PathParam("component")
-    protected String componentName;
-
-    @Inject
-    protected Client client;
+    protected String contentSelector;
 
     @Inject
     protected RendererFactory rendererFactory;
@@ -47,35 +38,14 @@ public final class ComponentResource
     @Context
     protected HttpContext httpContext;
 
-    @GET
-    public Response handleGet()
-        throws Exception
+    @Override
+    protected Response doHandle()
+    throws Exception
     {
-        return doHandle();
-    }
-
-    @POST
-    public Response handlePost()
-        throws Exception
-    {
-        return doHandle();
-    }
-
-    @OPTIONS
-    public Response handleOptions()
-        throws Exception
-    {
-        return doHandle();
-    }
-
-    private Response doHandle()
-        throws Exception
-    {
-        final ContentPath path = ContentPath.from( this.contentPath );
-        final Content content = getContent( path );
+        final Content content = getContent( this.contentPath, this.mode );
         final Page page = getPage( content );
 
-        final PageComponent component = getComponent( new ComponentName( this.componentName ), page );
+        final PageComponent component = getComponent( new ComponentName( this.contentSelector ), page );
 
         final Renderer renderer = rendererFactory.getRenderer( component );
 
@@ -109,23 +79,4 @@ public final class ComponentResource
         throw PortalWebException.notFound().message( "Component [{0}] not found in page [{1}].", componentName, contentPath ).build();
     }
 
-    private Content getContent( final ContentPath contentPath )
-    {
-        final Content content = this.client.execute( content().get().byPath( contentPath ) );
-        if ( content != null )
-        {
-            return content;
-        }
-
-        throw PortalWebException.notFound().message( "Page [{0}] not found.", contentPath ).build();
-    }
-
-    private Page getPage( final Content content )
-    {
-        if ( !content.isPage() )
-        {
-            throw PortalWebException.notFound().message( "Page [{0}] not found.", this.contentPath ).build();
-        }
-        return content.getPage();
-    }
 }
