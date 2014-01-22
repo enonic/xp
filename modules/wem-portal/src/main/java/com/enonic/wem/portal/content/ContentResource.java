@@ -8,12 +8,10 @@ import javax.ws.rs.core.Response;
 import com.sun.jersey.api.core.HttpContext;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageTemplate;
-import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsHttpRequest;
@@ -36,34 +34,30 @@ public final class ContentResource
     protected HttpContext httpContext;
 
     protected Response doHandle()
-    throws Exception
+        throws Exception
     {
         final Content content = getContent( this.contentSelector, this.mode );
-        final ContentPath path = content.getPath();
-        final ModuleResourceKey jsModuleResource = getJsModuleResource( content );
-
-        final JsContext context = new JsContext();
-        context.setContent( content );
-        final JsHttpRequest request = new JsHttpRequest( this.httpContext.getRequest() );
-        request.setMode( this.mode );
-        context.setRequest( request );
-        final PortalUrlScriptBean portalUrlScriptBean = new PortalUrlScriptBean();
-        portalUrlScriptBean.setContentPath( path.toString() );
-        context.setPortalUrlScriptBean( portalUrlScriptBean );
-
-        final JsController controller = this.controllerFactory.newController();
-        controller.scriptDir( jsModuleResource );
-        controller.context( context );
-
-        return controller.execute();
-    }
-
-    private ModuleResourceKey getJsModuleResource( final Content content )
-    {
         final Page page = getPage( content );
         final PageTemplate pageTemplate = getPageTemplate( page );
         final PageDescriptor pageDescriptor = getPageDescriptor( pageTemplate );
-        return pageDescriptor.getComponentPath();
+
+        final JsContext context = new JsContext();
+        context.setContent( content );
+        context.setPageTemplate( pageTemplate );
+
+        final JsHttpRequest request = new JsHttpRequest( this.httpContext.getRequest() );
+        request.setMode( this.mode );
+        context.setRequest( request );
+
+        final PortalUrlScriptBean portalUrlScriptBean = new PortalUrlScriptBean();
+        portalUrlScriptBean.setContentPath( content.getPath().toString() );
+        context.setPortalUrlScriptBean( portalUrlScriptBean );
+
+        final JsController controller = this.controllerFactory.newController();
+        controller.scriptDir( pageDescriptor.getComponentPath() );
+        controller.context( context );
+
+        return controller.execute();
     }
 
     private PageDescriptor getPageDescriptor( final PageTemplate pageTemplate )

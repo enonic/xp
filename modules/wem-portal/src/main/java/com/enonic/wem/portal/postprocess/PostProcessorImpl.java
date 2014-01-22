@@ -16,10 +16,10 @@ import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.PageRegions;
+import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.image.ImageComponent;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.part.PartComponent;
-import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsHttpResponse;
 import com.enonic.wem.portal.rendering.RenderException;
@@ -85,11 +85,8 @@ public final class PostProcessorImpl
         final String name = element.attr( WEM_COMPONENT_ATTRIBUTE );
         final ComponentName componentName = new ComponentName( name );
 
-        final PageComponent component = findComponent( context.getContent(), componentName );
-        if ( component == null )
-        {
-            throw new RenderException( "Component not found: [{0}]", componentName );
-        }
+        final PageComponent component = resolveComponent( context, componentName );
+
         final Renderer renderer = rendererFactory.getRenderer( component );
         final Response componentResult = renderer.render( component, context );
 
@@ -115,8 +112,9 @@ public final class PostProcessorImpl
         }
     }
 
-    private PageComponent findComponent( final Content content, final ComponentName componentName )
+    private PageComponent resolveComponent( final JsContext context, final ComponentName componentName )
     {
+        final Content content = context.getContent();
         if ( content == null || content.getPage() == null )
         {
             return null;
@@ -126,18 +124,31 @@ public final class PostProcessorImpl
         {
             return null;
         }
-        final PageRegions pageRegions = page.getRegions();
-        for ( Region region : pageRegions )
+        final PageRegions pageRegions = resolvePageRegions( page, context.getPageTemplate() );
+
+        PageComponent component = pageRegions.getComponent( componentName );
+        if ( component == null )
         {
-            for ( PageComponent component : region.getComponents() )
+            // TODO: Hack: See if component still exist in page template
+            component = context.getPageTemplate().getRegions().getComponent( componentName );
+            if ( component == null )
             {
-                if ( componentName.equals( getName( component ) ) )
-                {
-                    return component;
-                }
+                throw new RenderException( "Component not found: [{0}]", componentName );
             }
         }
-        return null;
+        return component;
+    }
+
+    private PageRegions resolvePageRegions( final Page page, final PageTemplate pageTemplate )
+    {
+        if ( page.hasRegions() )
+        {
+            return page.getRegions();
+        }
+        else
+        {
+            return pageTemplate.getRegions();
+        }
     }
 
     private String serializeResponseBody( final Response response )
