@@ -11,6 +11,10 @@ public class TermsAggregation
         this.buckets = builder.buckets;
     }
 
+    public Buckets getBuckets()
+    {
+        return buckets;
+    }
 
     public static class Builder
         extends Aggregation.Builder<Builder>
@@ -27,7 +31,6 @@ public class TermsAggregation
         {
             return new TermsAggregation( this );
         }
-
     }
 
 }

@@ -1,12 +1,12 @@
-package com.enonic.wem.api.query.aggregation;
+package com.enonic.wem.admin.json.aggregation;
 
-public class Bucket
+public class BucketJson
 {
-    final String name;
+    private final String name;
 
-    final long docCount;
+    private final long docCount;
 
-    public Bucket( final String name, final long docCount )
+    public BucketJson( final String name, final long docCount )
     {
         this.name = name;
         this.docCount = docCount;

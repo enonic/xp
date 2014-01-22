@@ -289,18 +289,16 @@ public class ContentResource
 
         if ( EXPAND_FULL.equalsIgnoreCase( contentQueryJson.getExpand() ) )
         {
-            //    return new FacetedContentListJson( contents, params.isIncludeFacets() ? contentQueryResult.getFacets() : null );
+            return new FacetedContentListJson( contents, null );
         }
         else if ( EXPAND_SUMMARY.equalsIgnoreCase( contentQueryJson.getExpand() ) )
         {
-            //    return new FacetedContentSummaryListJson( contents, params.isIncludeFacets() ? contentQueryResult.getFacets() : null );
+            return new FacetedContentSummaryListJson( contents, null );
         }
         else
         {
-            //    return new FacetedContentIdListJson( contents, params.isIncludeFacets() ? contentQueryResult.getFacets() : null );
+            return new FacetedContentIdListJson( contents, null );
         }
-
-        return new FacetedContentIdListJson( contents, null );
     }
 
     @GET
