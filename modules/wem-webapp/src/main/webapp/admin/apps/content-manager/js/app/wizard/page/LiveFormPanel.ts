@@ -21,9 +21,15 @@ module app.wizard {
             this.frame = new api.dom.IFrameEl();
             this.frame.addClass("live-edit-frame");
             this.appendChild(this.frame);
+
+            this.contextWindow = new app.contextwindow.ContextWindow({
+                liveEditEl: this.frame,
+                site: this.site});
         }
 
         private doLoad(liveEditUrl: string): Q.Promise<void> {
+
+            console.log("LiveFormPanel.doLoad() ... url: " + liveEditUrl);
 
             var deferred = Q.defer<void>();
 
@@ -35,10 +41,12 @@ module app.wizard {
             var intervalId = setInterval(() => {
                 if (this.frame.isLoaded()) {
                     if (this.frame.getHTMLElement()["contentWindow"].$liveEdit) {
-                        this.contextWindow = new app.contextwindow.ContextWindow({liveEditEl: this.frame, site: this.site});
+
                         this.appendChild(this.contextWindow);
                         //contextWindow.init();
                         clearInterval(intervalId);
+
+                        console.log("LiveFormPanel.doLoad() ... loaded");
                         deferred.resolve(null);
                     }
                 }
@@ -53,11 +61,15 @@ module app.wizard {
 
         renderExisting(content: api.content.Content, pageTemplate: api.content.page.PageTemplate) {
 
+            console.log("LiveFormPanel.renderExisting() ...");
+
             if (content.isPage() && pageTemplate != null) {
 
                 var liveEditUrl = this.baseUrl + content.getContentId().toString();
 
                 this.doLoad(liveEditUrl).done(() => {
+
+                    console.log("LiveFormPanel.renderExisting() calling contextWindow.setPage ");
                     this.contextWindow.setPage(content, pageTemplate);
                 });
             }
