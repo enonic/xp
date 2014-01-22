@@ -12,6 +12,8 @@ module api.form.formitemset {
 
         private removeButton:api.dom.AEl;
 
+        private label:FormItemSetLabel;
+
         private constructedWithData:boolean;
 
         private dataSet:api.data.DataSet;
@@ -43,8 +45,8 @@ module api.form.formitemset {
             this.occurrenceCountEl.getEl().setInnerHtml("#" + (this.getIndex() + 1));
             this.appendChild(this.occurrenceCountEl);
 
-            var label = new FormItemSetLabel(this.formItemSet);
-            this.appendChild(label);
+            this.label = new FormItemSetLabel(this.formItemSet);
+            this.appendChild(this.label);
 
             this.formItemSetOccurrencesContainer = new api.dom.DivEl("form-item-set-occurrences-container");
             this.appendChild(this.formItemSetOccurrencesContainer);
@@ -62,6 +64,12 @@ module api.form.formitemset {
         }
 
         refresh() {
+
+            if ( !this.formItemSetOccurrence.oneAndOnly() ) {
+                this.label.addClass("drag-control");
+            } else {
+                this.label.removeClass("drag-control");
+            }
 
             this.occurrenceCountEl.setHtml("#" + (this.formItemSetOccurrence.getIndex() + 1));
             this.getEl().setData("dataId", this.formItemSetOccurrence.getDataId().toString());

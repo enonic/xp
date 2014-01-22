@@ -213,5 +213,14 @@ module api.form {
         getOccurrenceViews(): V[] {
             return this.occurrenceViews;
         }
+
+        getOccurrenceViewById(elementId: string): V {
+            for (var i = 0 ; i < this.occurrenceViews.length ; i++ ) {
+                if (this.occurrenceViews[i].getId() == elementId) {
+                    return this.occurrenceViews[i];
+                }
+            }
+            return null;
+        }
     }
 }

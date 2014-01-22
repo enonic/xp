@@ -14,7 +14,7 @@ module api.form.formitemset {
 
         private addButton: api.ui.Button;
 
-        private collapseButton: api.ui.Button;
+        private collapseButton: api.dom.AEl;
 
         constructor(context: api.form.FormContext, formItemSet: api.form.FormItemSet, dataSets?: api.data.DataSet[]) {
             super("form-item-set-view", context, formItemSet);
@@ -23,6 +23,20 @@ module api.form.formitemset {
             this.dataSets = dataSets != null ? dataSets : [];
 
             this.occurrenceViewsContainer = new api.dom.DivEl("occurrence-views-container");
+            jQuery(this.occurrenceViewsContainer.getHTMLElement()).sortable({
+                revert: false,
+                containment: this.getHTMLElement(),
+                cursor: 'move',
+                cursorAt: {left: 14, top: 14},
+                distance: 20,
+                zIndex: 10000,
+                tolerance: 'pointer',
+                handle: '.drag-control',
+                placeholder: 'form-item-set-drop-target-placeholder',
+                helper: (event, helper) => this.createDnDHelper(),
+                start: (event, ui) => this.handleDnDStart(event, ui),
+                update: (event, ui) => this.handleDnDUpdate(event, ui)
+            });
             this.appendChild(this.occurrenceViewsContainer);
 
             this.formItemSetOccurrences =
@@ -49,8 +63,8 @@ module api.form.formitemset {
                 }
 
             });
-            this.collapseButton = new api.ui.Button("Collapse");
-            this.collapseButton.setClass("collapse-button");
+            this.collapseButton = new api.dom.AEl("collapse-button");
+            this.collapseButton.setText("Collapse");
             this.collapseButton.setClickListener(() => {
                 if (this.formItemSetOccurrences.isCollapsed()) {
                     this.collapseButton.setText("Collapse");
@@ -112,6 +126,51 @@ module api.form.formitemset {
                 }
             }
             return focusGiven;
+        }
+
+        private createDnDHelper():string {
+            var div = new api.dom.DivEl();
+            div.getEl()
+                .setId("drag-helper")
+                .addClass("form-item-set-drop-allowed" )
+                .setHeight("48px" )
+                .setWidth("48px" )
+                .setPosition("absolute")
+                .setZindex(400000);
+            return div.toString();
+        }
+
+        private handleDnDStart(event:JQueryEventObject, ui): void {
+            ui.placeholder.html("Drop form item here");
+        }
+
+        private handleDnDUpdate(event:JQueryEventObject, ui) {
+
+            var occurrenceOrderAccordingToDOM = this.resolveOccurrencesInOrderAccordingToDOM();
+
+            // Update index of each occurrence
+            occurrenceOrderAccordingToDOM.forEach((occurrence: FormItemSetOccurrence, index: number) => {
+                occurrence.setIndex(index);
+            });
+
+            this.formItemSetOccurrences.sortOccurrences((a: FormItemSetOccurrence, b: FormItemSetOccurrence) => {
+                return a.getIndex() - b.getIndex();
+            });
+        }
+
+        private resolveOccurrencesInOrderAccordingToDOM(): FormItemSetOccurrence[] {
+            var occurrencesInOrderAccordingToDOM: FormItemSetOccurrence[] = [];
+
+            var formItemSetViewChildren = this.occurrenceViewsContainer.getHTMLElement().children;
+            for (var i = 0 ; i < formItemSetViewChildren.length ; i++) {
+                var child = <HTMLElement> formItemSetViewChildren[i];
+                var occurrenceView = this.formItemSetOccurrences.getOccurrenceViewById( child.id );
+                if (occurrenceView) {
+                    occurrencesInOrderAccordingToDOM.push(<FormItemSetOccurrence> occurrenceView.getOccurrence());
+                }
+            }
+
+            return occurrencesInOrderAccordingToDOM;
         }
     }
 }
