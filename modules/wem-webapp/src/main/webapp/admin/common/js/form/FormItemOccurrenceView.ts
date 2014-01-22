@@ -38,5 +38,9 @@ module api.form {
         giveFocus(): boolean {
             return false;
         }
+
+        getOccurrence(): FormItemOccurrence<FormItemOccurrenceView> {
+            return this.formItemOccurrence;
+        }
     }
 }
