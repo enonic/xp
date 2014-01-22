@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.page.layout.LayoutTemplateKey;
 import static com.enonic.wem.api.command.Commands.page;
 
 public final class LayoutRenderer
-    extends BaseComponentRenderer
+    extends PageComponentRenderer
 {
 
     @Override

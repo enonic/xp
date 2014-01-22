@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.page.image.ImageTemplateKey;
 import static com.enonic.wem.api.command.Commands.page;
 
 public final class ImageRenderer
-    extends BaseComponentRenderer
+    extends PageComponentRenderer
 {
 
     @Override

@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.page.part.PartTemplateKey;
 import static com.enonic.wem.api.command.Commands.page;
 
 public final class PartRenderer
-    extends BaseComponentRenderer
+    extends PageComponentRenderer
 {
 
     @Override

@@ -16,8 +16,8 @@ import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsControllerFactory;
 
-abstract class BaseComponentRenderer
-    implements Renderer
+abstract class PageComponentRenderer
+implements Renderer
 {
     @Inject
     protected Client client;
