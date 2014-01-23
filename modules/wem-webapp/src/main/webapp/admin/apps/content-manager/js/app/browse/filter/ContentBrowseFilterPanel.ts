@@ -82,6 +82,7 @@ module app.browse.filter {
             var builder:api.content.query.ContentQueryBuilder = new api.content.query.ContentQueryBuilder();
             var contentQuery:api.content.query.ContentQuery = builder.
                 setQueryExpr( queryExpr).
+                setSize(0).
                 build();
 
             new api.content.ContentQueryRequest<api.content.ContentQueryResult<api.content.json.ContentSummaryJson>>( contentQuery ).
