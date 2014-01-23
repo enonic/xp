@@ -6,8 +6,15 @@ module api.form.inputtype.support {
 
         private inputOccurrences: InputOccurrences;
 
+        private listeners: {validitychange:{(event:any):void}[]};
+
+        private previousErrors:api.form.ValidationRecorder;
+
         constructor(className?: string) {
             super("input-type-view" + ( className ? " " + className : ""));
+            this.listeners = {
+                validitychange: []
+            };
             jQuery(this.getHTMLElement()).sortable({
                 axis: "y",
                 containment: 'parent',
@@ -68,6 +75,36 @@ module api.form.inputtype.support {
         removeFormItemOccurrencesListener(listener: api.form.FormItemOccurrencesListener) {
             this.inputOccurrences.removeListener(listener);
         }
+
+        addListener(eventName:string, listener:(event:any)=>void) {
+            if (this.listeners[eventName] != null) {
+                this.listeners[eventName].push(listener);
+            }
+        }
+
+        removeListener(eventName:string, listener:(event:any)=>void) {
+            if (this.listeners[eventName] != null) {
+                this.listeners[eventName].filter((currentListener:(event:any)=>void) => {
+                    return listener == currentListener;
+                })
+            }
+        }
+
+        notifyListeners(eventName:string, event:any) {
+            if (this.listeners[eventName] != null) {
+                this.listeners[eventName].forEach((listener:(event:any)=>void) => {
+                    listener(event);
+                })
+            }
+        }
+
+
+        validityChanged(validationRecorder:api.form.ValidationRecorder):boolean {
+            var validityChanged:boolean = this.previousErrors == null || this.previousErrors.valid() != validationRecorder.valid();
+            this.previousErrors = validationRecorder;
+            return validityChanged;
+        }
+
 
         public maximumOccurrencesReached(): boolean {
             return this.inputOccurrences.maximumOccurrencesReached();
