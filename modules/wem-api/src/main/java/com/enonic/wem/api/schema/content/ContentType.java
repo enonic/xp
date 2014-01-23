@@ -88,6 +88,11 @@ public final class ContentType
         return this.superType != null && this.superType.equals( contentType );
     }
 
+    public boolean hasSuperType()
+    {
+        return superType != null;
+    }
+
     public ContentTypeName getSuperType()
     {
         return superType;

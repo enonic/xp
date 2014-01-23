@@ -14,6 +14,11 @@ public class AggregationsFactory
 
     public Aggregations create( final org.elasticsearch.search.aggregations.Aggregations aggregations )
     {
+        if ( aggregations == null )
+        {
+            return Aggregations.empty();
+        }
+
         com.enonic.wem.api.query.aggregation.Aggregations.Builder aggregationsBuilder =
             new com.enonic.wem.api.query.aggregation.Aggregations.Builder();
 

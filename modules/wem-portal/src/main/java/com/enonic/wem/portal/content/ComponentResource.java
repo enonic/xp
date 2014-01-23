@@ -12,9 +12,12 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageComponent;
+import com.enonic.wem.api.content.page.PageRegions;
+import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsHttpRequest;
-import com.enonic.wem.portal.exception.PortalWebException;
+import com.enonic.wem.portal.rendering.PageComponentResolver;
+import com.enonic.wem.portal.rendering.PageRegionsResolver;
 import com.enonic.wem.portal.rendering.Renderer;
 import com.enonic.wem.portal.rendering.RendererFactory;
 import com.enonic.wem.portal.script.lib.PortalUrlScriptBean;
@@ -30,7 +33,7 @@ public final class ComponentResource
     protected String contentPath;
 
     @PathParam("component")
-    protected String contentSelector;
+    protected String componentSelector;
 
     @Inject
     protected RendererFactory rendererFactory;
@@ -40,12 +43,15 @@ public final class ComponentResource
 
     @Override
     protected Response doHandle()
-    throws Exception
+        throws Exception
     {
         final Content content = getContent( this.contentPath, this.mode );
         final Page page = getPage( content );
+        final PageTemplate pageTemplate = getPageTemplate( page );
 
-        final PageComponent component = getComponent( new ComponentName( this.contentSelector ), page );
+        final ComponentName componentName = new ComponentName( this.componentSelector );
+        final PageRegions pageRegions = PageRegionsResolver.resolve( page, pageTemplate );
+        final PageComponent component = PageComponentResolver.resolve( componentName, pageRegions );
 
         final Renderer renderer = rendererFactory.getRenderer( component );
 
@@ -57,6 +63,7 @@ public final class ComponentResource
     {
         final JsContext context = new JsContext();
         context.setContent( content );
+        context.setComponent( component );
 
         final JsHttpRequest request = new JsHttpRequest( this.httpContext.getRequest() );
         request.setMode( this.mode );
@@ -69,7 +76,7 @@ public final class ComponentResource
         return context;
     }
 
-    private PageComponent getComponent( final ComponentName componentName, final Page page )
+    /*private PageComponent getComponent( final ComponentName componentName, final Page page )
     {
         final PageComponent component = page.getComponent( componentName );
         if ( component != null )
@@ -77,6 +84,6 @@ public final class ComponentResource
             return component;
         }
         throw PortalWebException.notFound().message( "Component [{0}] not found in page [{1}].", componentName, contentPath ).build();
-    }
+    }*/
 
 }

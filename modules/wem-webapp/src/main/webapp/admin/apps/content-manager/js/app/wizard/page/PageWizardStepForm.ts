@@ -32,10 +32,6 @@ module app.wizard.page {
 
             this.appendChild(this.pageTemplateSelectorForm);
 
-            var configHeader = new api.dom.H3El();
-            configHeader.setText("Config");
-            this.appendChild(configHeader);
-
             this.configFormWrapper = new api.dom.DivEl();
             this.appendChild(this.configFormWrapper);
         }

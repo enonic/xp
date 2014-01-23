@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 
 import javax.inject.Inject;
 
@@ -128,7 +127,7 @@ public final class ContentTypeDaoImpl
         try
         {
             Files.createDirectories( contentTypePath );
-            Files.write( xmlFile, serializedContentType.getBytes( Charsets.UTF_8 ), StandardOpenOption.CREATE );
+            Files.write( xmlFile, serializedContentType.getBytes( Charsets.UTF_8 ) );
         }
         catch ( IOException e )
         {

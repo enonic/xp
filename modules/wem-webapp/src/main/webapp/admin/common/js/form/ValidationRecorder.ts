@@ -8,6 +8,10 @@ module api.form {
             this.breaksRequiredContract.push(data)
         }
 
+        valid():boolean {
+            return this.breaksRequiredContract.length == 0;
+        }
+
         // TODO:
     }
 }

@@ -12,7 +12,8 @@ module app.imp {
             super(new api.dom.ElementProperties().setTagName("div").setClassName("image-uploader"));
 
             this.dropzone = new api.dom.DivEl("dropzone");
-            this.dropzone.getEl().setInnerHtml("Drop files here or click to select");
+            // id needed for plupload to init
+            this.dropzone.setId('module-uploader-dropzone');
             this.appendChild(this.dropzone);
 
             this.progress = new api.ui.ProgressBar();
