@@ -34,8 +34,9 @@ module app.wizard {
             this.frame.setSrc(liveEditUrl);
 
             // Wait for iframe to be loaded before adding context window!
-            var maxIterations = 10;
+            var maxIterations = 50;
             var iterations = 0;
+            console.log("starting to load contextwindow");
             var intervalId = setInterval(() => {
                 console.log("checking if frame is loaded", this.frame.isLoaded());
                 if (this.frame.isLoaded()) {
