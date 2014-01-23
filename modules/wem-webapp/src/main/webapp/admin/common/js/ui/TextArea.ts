@@ -8,9 +8,24 @@ module api.ui {
 
     export class TextArea extends api.dom.FormInputEl {
 
+
+        listeners:{
+            "valuechange": {(event:any):void}[]
+        };
+
+        oldValue:string = "";
+
         constructor(name:string) {
             super("textarea");
             this.getEl().setAttribute("name", name);
+            this.listeners = {
+                "valuechange": []
+            };
+
+            this.getEl().addEventListener('input', () => {
+                this.notifyListeners("valuechange", { "oldValue": this.oldValue, "newValue": this.getValue()});
+                this.oldValue = this.getValue();
+            });
         }
 
         setValue(text:string) {
@@ -41,6 +56,20 @@ module api.ui {
                 break;
             }
             this.addClass(sizeClass);
+        }
+
+        addListener(eventName:string, listener:(event:any)=>void) {
+            if (this.listeners[eventName] ) {
+                this.listeners[eventName].push(listener);
+            }
+        }
+
+        notifyListeners(eventName:string, event:any) {
+            if (this.listeners[eventName]) {
+                this.listeners[eventName].forEach((listener:(event:any)=>void)=> {
+                   listener(event);
+                })
+            }
         }
     }
 

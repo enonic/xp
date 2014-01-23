@@ -23,6 +23,13 @@ module api.form.inputtype.text {
             if (property != null) {
                 inputEl.setValue(property.getString());
             }
+            inputEl.addListener( "valuechange", (event:any) => {
+                                    var validationRecorder:api.form.ValidationRecorder = new api.form.ValidationRecorder();
+                                    this.validate(validationRecorder);
+                                    if (this.validityChanged(validationRecorder)) {
+                                        this.notifyListeners("validitychange", {isValid: validationRecorder.valid()});
+                                    }
+                                });
             return inputEl;
         }
 
