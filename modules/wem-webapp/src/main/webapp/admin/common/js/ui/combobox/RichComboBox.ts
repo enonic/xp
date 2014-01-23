@@ -74,6 +74,7 @@ module api.ui.combobox {
                     var options = this.createOptions(modules);
                     this.comboBox.setOptions(options);
                     this.notifyLoaded(modules);
+                    console.log("LOADED", modules, this.loader);
                 }
             });
 

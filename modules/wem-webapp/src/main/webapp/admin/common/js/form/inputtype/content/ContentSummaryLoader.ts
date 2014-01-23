@@ -16,6 +16,7 @@ module api.form.inputtype.content {
             this.isLoading = false;
             this.findContentRequest = new api.content.FindContentRequest().setExpand("summary").setCount(100);
             this.loaderHelper = new api.util.LoaderHelper(this.doRequest, this, delay);
+            console.log("IAM CONTENT SUMMARYLOADER", this.findContentRequest);
         }
 
         setCount(count:number) {
