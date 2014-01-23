@@ -2,7 +2,7 @@ module app.wizard {
 
     export class SiteTemplateWizardPanel extends api.app.wizard.WizardPanel<api.content.site.template.SiteTemplate> {
 
-        private static DEFAULT_SITE_TEMPLATE_ICON_URL: string = api.util.getAdminUri("common/images/default.content.png");
+        private static DEFAULT_SITE_TEMPLATE_ICON_URL: string = api.util.getAdminUri("common/images/icons/icoMoon/128x128/earth.png");
         private formIcon: api.app.wizard.FormIcon;
         private wizardHeader: api.app.wizard.WizardHeaderWithDisplayNameAndName;
         private iconUploadId: string;
