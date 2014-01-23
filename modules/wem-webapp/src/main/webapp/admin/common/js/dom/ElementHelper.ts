@@ -48,6 +48,10 @@ module api.dom {
             return this.el.disabled;
         }
 
+        getId(): string {
+            return this.el.id;
+        }
+
         setId(value:string):ElementHelper {
             this.el.id = value;
             return this;

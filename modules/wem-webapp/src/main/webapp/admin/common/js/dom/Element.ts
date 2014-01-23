@@ -51,8 +51,6 @@ module api.dom {
 
         private el: ElementHelper;
 
-        private id: string;
-
         private parent: Element;
 
         private children: Element[];
@@ -72,11 +70,10 @@ module api.dom {
             var moduleName = api.util.getModuleName(this);
             if (properties.isGenerateId() || (properties.isGenerateId() == undefined && moduleName != "api.dom")) {
                 var id = ElementRegistry.registerElement(this);
-                this.id = id;
-                this.el.setId(id);
+                this.setId(id);
             }
             if (properties.getClassName()) {
-                this.el.setClass(properties.getClassName());
+                this.setClass(properties.getClassName());
             }
             this.children = [];
         }
@@ -185,7 +182,12 @@ module api.dom {
         }
 
         getId(): string {
-            return this.id;
+            return this.el.getId();
+        }
+
+        setId(value:string): api.dom.Element {
+            this.el.setId(value);
+            return this;
         }
 
         getEl(): ElementHelper {

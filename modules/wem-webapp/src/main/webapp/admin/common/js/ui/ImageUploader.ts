@@ -48,6 +48,8 @@ module api.ui {
             }
 
             this.dropzone = new api.dom.DivEl("dropzone");
+            // id needed for plupload to init
+            this.dropzone.setId('image-uploader-dropzone');
             this.appendChild(this.dropzone);
 
             this.progress = new api.ui.ProgressBar();

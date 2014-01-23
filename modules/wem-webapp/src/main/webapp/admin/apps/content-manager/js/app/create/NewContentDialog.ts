@@ -69,8 +69,10 @@ module app.create {
 
             this.recentList = new RecentContentTypesList("content-type-list");
 
-            var dropZone = new api.dom.DivEl("dropzone");
-            rightColumn.appendChild(dropZone);
+            var dropzone = new api.dom.DivEl("dropzone");
+            // id needed for plupload to init
+            dropzone.setId('new-content-dialog-dropzone');
+            rightColumn.appendChild(dropzone);
 
             this.recentList.addListener({
                 onSelected: (item: ContentTypeListItem) => {
