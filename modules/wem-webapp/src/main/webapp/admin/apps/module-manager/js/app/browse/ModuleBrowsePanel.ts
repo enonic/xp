@@ -58,7 +58,7 @@ module app.browse {
                 var item = new api.app.browse.BrowseItem<api.module.ModuleSummary>(moduleModel ).
                     setDisplayName(moduleModel.getDisplayName()).
                     setPath(moduleModel.getName()).
-                    setIconUrl(api.util.getAdminUri('common/images/icons/icoMoon/32x32/folder.png'));
+                    setIconUrl(api.util.getAdminUri('common/images/icons/icoMoon/32x32/puzzle.png'));
 
                 browseItems.push(item);
             });

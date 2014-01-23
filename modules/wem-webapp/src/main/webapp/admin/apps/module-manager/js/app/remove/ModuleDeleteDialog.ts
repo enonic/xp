@@ -24,7 +24,7 @@ module app.remove {
 
         setModuleToDelete(moduleModel:api.module.ModuleSummary) {
             this.moduleToDelete = moduleModel;
-            var deleteItem = new api.app.remove.DeleteItem(api.util.getAdminUri('common/images/icons/icoMoon/32x32/folder.png'), moduleModel.getDisplayName());
+            var deleteItem = new api.app.remove.DeleteItem(api.util.getAdminUri('common/images/icons/icoMoon/32x32/puzzle.png'), moduleModel.getDisplayName());
             var deleteItems:api.app.remove.DeleteItem[] = [deleteItem];
             this.setDeleteItems(deleteItems);
         }
