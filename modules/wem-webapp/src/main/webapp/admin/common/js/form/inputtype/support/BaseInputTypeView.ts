@@ -6,15 +6,14 @@ module api.form.inputtype.support {
 
         private inputOccurrences: InputOccurrences;
 
-        private listeners: {validitychange:{(event:any):void}[]};
+        private listeners: {[eventName:string]:{(event:any):void}[]} = {};
 
         private previousErrors:api.form.ValidationRecorder;
 
         constructor(className?: string) {
             super("input-type-view" + ( className ? " " + className : ""));
-            this.listeners = {
-                validitychange: []
-            };
+            this.listeners[InputTypeEvents.ValidityChange] = [];
+
             jQuery(this.getHTMLElement()).sortable({
                 axis: "y",
                 containment: 'parent',
@@ -76,26 +75,20 @@ module api.form.inputtype.support {
             this.inputOccurrences.removeListener(listener);
         }
 
-        addListener(eventName:string, listener:(event:any)=>void) {
-            if (this.listeners[eventName] != null) {
-                this.listeners[eventName].push(listener);
-            }
+        addListener(eventName:InputTypeEvents, listener:(event:any)=>void) {
+            this.listeners[eventName].push(listener);
         }
 
-        removeListener(eventName:string, listener:(event:any)=>void) {
-            if (this.listeners[eventName] != null) {
-                this.listeners[eventName].filter((currentListener:(event:any)=>void) => {
-                    return listener == currentListener;
-                })
-            }
+        removeListener(eventName:InputTypeEvents, listener:(event:any)=>void) {
+            this.listeners[eventName].filter((currentListener:(event:any)=>void) => {
+                return listener == currentListener;
+            });
         }
 
-        notifyListeners(eventName:string, event:any) {
-            if (this.listeners[eventName] != null) {
-                this.listeners[eventName].forEach((listener:(event:any)=>void) => {
-                    listener(event);
-                })
-            }
+        notifyListeners(eventName:InputTypeEvents, event:any) {
+            this.listeners[eventName].forEach((listener:(event:any)=>void) => {
+                listener(event);
+            });
         }
 
 

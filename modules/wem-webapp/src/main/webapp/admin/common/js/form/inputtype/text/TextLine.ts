@@ -1,6 +1,8 @@
 module api.form.inputtype.text {
 
-    export class TextLine extends api.form.inputtype.support.BaseInputTypeView {
+    import support = api.form.inputtype.support;
+
+    export class TextLine extends support.BaseInputTypeView {
 
         constructor() {
             super();
@@ -18,7 +20,7 @@ module api.form.inputtype.text {
                                     var validationRecorder:api.form.ValidationRecorder = new api.form.ValidationRecorder();
                                     this.validate(validationRecorder);
                                     if (this.validityChanged(validationRecorder)) {
-                                        this.notifyListeners("validitychange", { isValid: validationRecorder.valid()});
+                                        this.notifyListeners(support.InputTypeEvents.ValidityChange, { isValid: validationRecorder.valid()});
                                     }
                                 }
             });
