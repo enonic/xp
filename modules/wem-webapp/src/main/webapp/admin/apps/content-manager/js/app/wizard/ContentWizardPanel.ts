@@ -148,11 +148,11 @@ module app.wizard {
 
             var steps: api.app.wizard.WizardStep[] = [];
 
+            steps.push(new api.app.wizard.WizardStep(this.contentType.getDisplayName(), this.contentWizardStepForm));
+
             if (this.siteWizardStepForm != null) {
                 steps.push(new api.app.wizard.WizardStep("Site", this.siteWizardStepForm));
             }
-
-            steps.push(new api.app.wizard.WizardStep(this.contentType.getDisplayName(), this.contentWizardStepForm));
 
             if (this.pageWizardStepForm) {
                 steps.push(new api.app.wizard.WizardStep("Page", this.pageWizardStepForm));
