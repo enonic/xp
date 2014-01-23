@@ -12,7 +12,7 @@ module api.form.inputtype.content {
 
         private loaderHelper:api.util.LoaderHelper;
 
-        constructor(delay:number = 2500) {
+        constructor(delay:number = 500) {
             this.isLoading = false;
             this.findContentRequest = new api.content.FindContentRequest().setExpand("summary").setCount(100);
             this.loaderHelper = new api.util.LoaderHelper(this.doRequest, this, delay);
