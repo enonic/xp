@@ -12,10 +12,14 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.page.Page;
+import com.enonic.wem.api.content.page.PageDescriptor;
+import com.enonic.wem.api.content.page.PageDescriptorKey;
+import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.portal.controller.JsControllerFactory;
 import com.enonic.wem.portal.exception.PortalWebException;
 
 import static com.enonic.wem.api.command.Commands.content;
+import static com.enonic.wem.api.command.Commands.page;
 
 
 public abstract class RenderResource
@@ -81,6 +85,27 @@ public abstract class RenderResource
             throw PortalWebException.notFound().message( "Page not found." ).build();
         }
         return content.getPage();
+    }
+
+    protected PageDescriptor getPageDescriptor( final PageTemplate pageTemplate )
+    {
+        final PageDescriptorKey descriptorKey = pageTemplate.getDescriptor();
+        final PageDescriptor pageDescriptor = this.client.execute( page().descriptor().page().getByKey( descriptorKey ) );
+        if ( pageDescriptor == null )
+        {
+            throw PortalWebException.notFound().message( "Page descriptor for template [{0}] not found.", pageTemplate.getName() ).build();
+        }
+        return pageDescriptor;
+    }
+
+    protected PageTemplate getPageTemplate( final Page page )
+    {
+        final PageTemplate pageTemplate = this.client.execute( page().template().page().getByKey().key( page.getTemplate() ) );
+        if ( pageTemplate == null )
+        {
+            throw PortalWebException.notFound().message( "Page template [{0}] not found.", page.getTemplate() ).build();
+        }
+        return pageTemplate;
     }
 
     private Content getContentByPath( final ContentPath contentPath )
