@@ -25,7 +25,7 @@ module app.remove {
 
         setSiteTemplateToDelete(siteTemplate: api.content.site.template.SiteTemplateSummary) {
             this.siteTemplateToDelete = siteTemplate;
-            var deleteItem = new api.app.remove.DeleteItem(api.util.getAdminUri('common/images/icons/icoMoon/32x32/folder.png'),
+            var deleteItem = new api.app.remove.DeleteItem(api.util.getAdminUri('common/images/icons/icoMoon/32x32/earth.png'),
                 siteTemplate.getDisplayName());
             var deleteItems: api.app.remove.DeleteItem[] = [deleteItem];
             this.setDeleteItems(deleteItems);

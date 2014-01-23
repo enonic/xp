@@ -67,7 +67,7 @@ module app.browse {
 
             var template = record.data;
             var activeListType = this.getActiveList().getItemId();
-            return Ext.String.format(nameTemplate, activeListType, api.util.getAdminUri('common/images/icons/icoMoon/32x32/folder.png'), value, template.name);
+            return Ext.String.format(nameTemplate, activeListType, api.util.getAdminUri('common/images/icons/icoMoon/32x32/earth.png'), value, template.name);
         }
     }
 

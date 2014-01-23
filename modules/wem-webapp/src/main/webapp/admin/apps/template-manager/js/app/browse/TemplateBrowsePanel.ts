@@ -65,7 +65,7 @@ module app.browse {
                 var item = new api.app.browse.BrowseItem<api.content.site.template.SiteTemplateSummary>(siteTemplateSummary).
                     setDisplayName(siteTemplateSummary.getDisplayName()).
                     setPath(siteTemplateSummary.getName()).
-                    setIconUrl(api.util.getAdminUri('common/images/icons/icoMoon/32x32/folder.png'));
+                    setIconUrl(api.util.getAdminUri('common/images/icons/icoMoon/32x32/earth.png'));
 
                 browseItems.push(item);
             });
