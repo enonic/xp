@@ -75,11 +75,6 @@ module app.wizard.page {
 
             console.log("PageWizardStepForm.handlePageTemplateChanged() ... ");
 
-            if (this.formView != null) {
-                this.formView.remove();
-                this.formView = null;
-            }
-
             if (changedTo == null) {
                 this.selectedPageTemplate = null;
                 console.log("PageWizardStepForm.handlePageTemplateChanged() ... changed to null");
@@ -107,7 +102,9 @@ module app.wizard.page {
                 config = this.content.getPage().getConfig();
             }
             this.formView = new api.form.FormView(formContext, form, config);
+            this.configFormWrapper.removeChildren();
             this.configFormWrapper.appendChild(this.formView);
+
         }
 
         public getPageTemplate(): api.content.page.PageTemplate {
