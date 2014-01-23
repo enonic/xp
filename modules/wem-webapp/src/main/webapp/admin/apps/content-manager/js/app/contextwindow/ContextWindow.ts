@@ -134,11 +134,10 @@ module app.contextwindow {
                 new LiveEditDragStartEvent().fire()
                 this.hide();
             });
-            //TODO: Listen to component added event and generate component name. Set component name on component. Add component to region.
+
 
             this.getLiveEditJQuery()(this.getLiveEditWindow()).on('componentAdded.liveEdit', (event, component?) => {
-                console.log("component added!", arguments, component.getHTMLElement());
-
+                //TODO: Listen to component added event and generate component name. Set component name on component. Add component to region.
                 var componentName = this.pageRegions.ensureUniqueComponentName(new api.content.page.ComponentName("Image")).toString();
                 component.getEl().setData("data-live-edit-component", componentName);
                 component.getEl().setData("data-live-edit-name", componentName);
