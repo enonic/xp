@@ -77,7 +77,7 @@ module app.browse {
 
             var moduleData = record.data;
             var activeListType = this.getActiveList().getItemId();
-            return Ext.String.format( nameTemplate, activeListType, api.util.getAdminUri('common/images/icons/icoMoon/32x32/folder.png'), value, moduleData.key);
+            return Ext.String.format( nameTemplate, activeListType, api.util.getAdminUri('common/images/icons/icoMoon/32x32/puzzle.png'), value, moduleData.key);
         }
 
     }
