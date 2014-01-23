@@ -102,7 +102,7 @@ module app.contextwindow {
 
             this.getLiveEditJQuery()(this.getLiveEditWindow()).on('componentSelect.liveEdit',
                 (event, name?) => {
-                    new ComponentSelectEvent(name).fire();
+                    new ComponentSelectEvent(new api.content.page.ComponentName(name)).fire();
                 });
 
             this.getLiveEditJQuery()(this.getLiveEditWindow()).on('pageSelect.liveEdit',
