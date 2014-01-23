@@ -134,13 +134,17 @@ module app.contextwindow {
             });
             //TODO: Listen to component added event and generate component name. Set component name on component. Add component to region.
             //this.pageRegions.ensureUniqueComponentName()
+            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('componentAdded.liveEdit', () => {
+                console.log("component added!", arguments);
+            });
 
-            //TODO: Listen to imageComponentSetImage.
-            // TODO: var imageComponent = <api.content.page.image.ImageComponent>pageRegions.getComponent(event.getComponentName());
-            // TODO: imageComponent.setImage(event.getImage());
-            // TODO: liveFormPanel.saveChanges()
-            //        -> setPage will be called automatically when saveChanges is finished
-
+            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('imageComponentSetImage.liveEdit', () => {
+                console.log("image sat!", arguments);
+                // TODO: var imageComponent = <api.content.page.image.ImageComponent>pageRegions.getComponent(event.getComponentName());
+                // TODO: imageComponent.setImage(event.getImage());
+                // TODO: liveFormPanel.saveChanges()
+                //        -> setPage will be called automatically when saveChanges is finished
+            });
         }
 
         setPage(content:api.content.Content, pageTemplate:api.content.page.PageTemplate) {

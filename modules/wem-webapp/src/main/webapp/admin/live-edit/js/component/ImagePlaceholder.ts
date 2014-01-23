@@ -34,8 +34,7 @@ module LiveEdit.component {
 
             this.comboBox.addOptionSelectedListener((item) => {
                 console.log("item selected", item);
-                //$(window).trigger('imageComponentSetImage.liveEdit', []);
-                //TODO: Fire event
+                $(window).trigger('imageComponentSetImage.liveEdit', [item.value, "ComponentName"]);
             });
         }
 

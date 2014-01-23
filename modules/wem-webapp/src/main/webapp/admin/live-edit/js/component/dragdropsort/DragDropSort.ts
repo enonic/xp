@@ -190,7 +190,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             // Remove it now so the auto selection is properly aligned.
             this.removePaddingFromLayoutComponent();
 
-            //TODO: Fire component added event.
+            $(window).trigger('componentAdded.liveEdit', [emptyComponent]);
             LiveEdit.component.Selection.select(LiveEdit.component.Component.fromElement(emptyComponent));
             LiveEdit.component.Selection.handleSelect(emptyComponent.getHTMLElement());
         }
