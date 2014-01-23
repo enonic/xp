@@ -13,7 +13,7 @@ module api.content {
 
         static default(): string {
 
-            return api.util.getAdminUri("common/images/default.content.png");
+            return api.util.getAdminUri("common/images/default_content.png");
         }
     }
 }

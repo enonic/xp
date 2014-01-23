@@ -13,7 +13,7 @@ module api.module {
         optionFormatter(row:number, cell:number, moduleInst:api.module.ModuleSummary, columnDef:any, dataContext:api.ui.combobox.Option<api.module.ModuleSummary>):string {
             var img = new api.dom.ImgEl();
             img.setClass("icon");
-            img.getEl().setSrc(api.util.getAdminUri("common/images/default.content.png"));
+            img.getEl().setSrc(api.util.getAdminUri("common/images/default_content.png"));
 
             var contentSummary = new api.dom.DivEl();
             contentSummary.setClass("item-summary");
@@ -52,7 +52,7 @@ module api.module {
 
         resolveIconUrl(content:api.module.ModuleSummary):string
         {
-            return api.util.getAdminUri("common/images/default.content.png");
+            return api.util.getAdminUri("common/images/default_content.png");
         }
 
         resolveTitle(content:api.module.ModuleSummary):string
