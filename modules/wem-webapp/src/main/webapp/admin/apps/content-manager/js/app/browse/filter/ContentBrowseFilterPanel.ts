@@ -30,21 +30,50 @@ module app.browse.filter {
                         // but should all go under one facet name, i.e values['ranges']
                         var ranges = this.extractRangesFromFilterValues(values);
 
-                        new api.content.FindContentRequest<api.content.FindContentResult<api.content.json.ContentSummaryJson>>(values['query'] ? values['query'][0] : undefined).
-                            setContentTypes(values['contentType']).
-                            setSpaces(values['space']).
-                            setRanges(ranges).
-                            setExpand(api.content.FindContentRequest.EXPAND_SUMMARY).
-                            send().done((jsonResponse:api.rest.JsonResponse<api.content.FindContentResult<api.content.json.ContentSummaryJson>>) => {
+                        var fulltext:string = values['query'] ? values['query'][0] : undefined;
+
+                        var arguments:api.query.expr.ValueExpr[] = [];
+                        arguments.push( new api.query.expr.ValueExpr( new api.data.Value( "_all_text", api.data.ValueTypes.STRING ) ) );
+                        arguments.push( new api.query.expr.ValueExpr( new api.data.Value( fulltext, api.data.ValueTypes.STRING ) ) );
+                        arguments.push( new api.query.expr.ValueExpr( new api.data.Value( "OR", api.data.ValueTypes.STRING ) ) );
+
+                        var functionExpr:api.query.expr.FunctionExpr = new api.query.expr.FunctionExpr( "fulltext", arguments );
+                        var dynamicExpr:api.query.expr.DynamicConstraintExpr = new api.query.expr.DynamicConstraintExpr( functionExpr );
+
+                        var queryExpr:api.query.expr.QueryExpr = new api.query.expr.QueryExpr( dynamicExpr );
+
+                        var contentTypeNames:api.schema.content.ContentTypeName[] = this.parseContentTypeNames( values['contentType'] );
+
+                        var builder:api.content.query.ContentQueryBuilder = new api.content.query.ContentQueryBuilder();
+                        var contentQuery:api.content.query.ContentQuery = builder.
+                            setQueryExpr( queryExpr).
+                            setContentTypeNames( contentTypeNames ).
+                            build();
+
+                        new api.content.ContentQueryRequest<api.content.ContentQueryResult<api.content.json.ContentSummaryJson>>( contentQuery ).
+                            setExpand( api.rest.Expand.SUMMARY ).
+                            send().done((jsonResponse:api.rest.JsonResponse<api.content.ContentQueryResult<api.content.json.ContentSummaryJson>>) => {
                                 var result = jsonResponse.getResult();
-                                this.updateFacets(api.facet.FacetFactory.createFacets(result.facets));
+//                                this.updateFacets(api.facet.FacetFactory.createFacets(result.facets));
                                 new ContentBrowseSearchEvent(result.contents).fire();
                             })
                         ;
-
                     }
                 }
             );
+        }
+
+        private parseContentTypeNames( names:string[] ):api.schema.content.ContentTypeName[] {
+            var contentTypeNames:api.schema.content.ContentTypeName[] = [];
+
+            if( names ) {
+                for (var i = 0; i < names.length; i++) {
+                    var name = names[i];
+                    contentTypeNames.push( new api.schema.content.ContentTypeName( name ) );
+                }
+            }
+
+            return contentTypeNames;
         }
 
         private resetFacets(supressEvent?:boolean) {

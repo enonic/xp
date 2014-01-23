@@ -5,10 +5,12 @@ module api.query.expr {
         private constraint:ConstraintExpr;
         private orderList:OrderExpr[] = [];
 
-        constructor( constraint:ConstraintExpr, orderList:OrderExpr[] )
+        constructor( constraint:ConstraintExpr, orderList?:OrderExpr[] )
         {
             this.constraint = constraint;
-            this.orderList = orderList;
+            if(orderList) {
+                this.orderList = orderList;
+            }
         }
 
         getConstraint():ConstraintExpr
