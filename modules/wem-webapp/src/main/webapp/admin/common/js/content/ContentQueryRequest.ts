@@ -23,8 +23,21 @@ module api.content {
                 from:this.contentQuery.getFrom(),
                 size:this.contentQuery.getSize(),
                 contentTypeNames:this.contentTypeNamesAsString( this.contentQuery.getContentTypes() ),
-                expand: this.expand.toString()
+                expand: this.expandAsString()
             };
+        }
+
+        private expandAsString():string {
+            switch (this.expand) {
+                case api.rest.Expand.FULL:
+                    return "full";
+                case api.rest.Expand.SUMMARY:
+                    return "summary";
+                case api.rest.Expand.NONE:
+                    return "none";
+                default:
+                    return "summary";
+            }
         }
 
         contentTypeNamesAsString( names:api.schema.content.ContentTypeName[] ):string[] {
