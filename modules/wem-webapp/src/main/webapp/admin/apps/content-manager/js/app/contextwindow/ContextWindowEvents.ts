@@ -17,15 +17,16 @@ module app.contextwindow {
     }
 
     export class ComponentSelectEvent extends api.event.Event {
-        private componentPath:string;
 
-        constructor(name:string) {
-            this.componentPath = name;
+        private componentName: api.content.page.ComponentName;
+
+        constructor(name: api.content.page.ComponentName) {
+            this.componentName = name;
             super('componentSelect');
         }
 
-        getComponentPath():string {
-            return this.componentPath;
+        getComponentName(): api.content.page.ComponentName {
+            return this.componentName;
         }
 
         static on(handler:(event:ComponentSelectEvent) => void) {
