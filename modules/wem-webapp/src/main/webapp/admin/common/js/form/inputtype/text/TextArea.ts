@@ -1,6 +1,8 @@
 module api.form.inputtype.text {
 
-    export class TextArea extends api.form.inputtype.support.BaseInputTypeView {
+    import support = api.form.inputtype.support;
+
+    export class TextArea extends support.BaseInputTypeView {
 
         private rows:number;
         private columns:number;
@@ -23,11 +25,11 @@ module api.form.inputtype.text {
             if (property != null) {
                 inputEl.setValue(property.getString());
             }
-            inputEl.addListener( "valuechange", (event:any) => {
+            inputEl.addListener( api.ui.InputEvents.ValueChange, (event:any) => {
                                     var validationRecorder:api.form.ValidationRecorder = new api.form.ValidationRecorder();
                                     this.validate(validationRecorder);
                                     if (this.validityChanged(validationRecorder)) {
-                                        this.notifyListeners("validitychange", {isValid: validationRecorder.valid()});
+                                        this.notifyListeners(support.InputTypeEvents.ValidityChange, {isValid: validationRecorder.valid()});
                                     }
                                 });
             return inputEl;

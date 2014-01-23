@@ -1,3 +1,4 @@
+///<reference path='InputEvents.ts' />
 ///<reference path='KeyBinding.ts'/>
 ///<reference path='KeyBindings.ts'/>
 ///<reference path='Mnemonic.ts' />
