@@ -36,10 +36,13 @@ public abstract class AbstractRegions
                 else if ( component instanceof LayoutComponent )
                 {
                     final LayoutComponent layoutComponent = (LayoutComponent) component;
-                    final PageComponent match = layoutComponent.getComponent( name );
-                    if ( match != null )
+                    if ( layoutComponent.hasRegions() )
                     {
-                        return match;
+                        final PageComponent match = layoutComponent.getComponent( name );
+                        if ( match != null )
+                        {
+                            return match;
+                        }
                     }
                 }
             }

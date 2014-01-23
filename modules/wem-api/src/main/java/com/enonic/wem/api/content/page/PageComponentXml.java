@@ -38,7 +38,10 @@ public abstract class PageComponentXml
         builder.template( toTemplateKey( this.template ) );
 
         RootDataSet config = new RootDataSet();
-        this.config.to( config );
+        if ( this.config != null )
+        {
+            this.config.to( config );
+        }
         builder.config( config );
     }
 

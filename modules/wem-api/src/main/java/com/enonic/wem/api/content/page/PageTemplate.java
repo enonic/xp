@@ -34,6 +34,11 @@ public final class PageTemplate
         return canRender;
     }
 
+    public boolean hasRegions()
+    {
+        return regions != null;
+    }
+
     public PageRegions getRegions()
     {
         return regions;

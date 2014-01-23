@@ -36,7 +36,7 @@ public final class PageTemplateXml
             this.canRender.add( contentType.toString() );
         }
 
-        if ( template.getRegions() != null )
+        if ( template.hasRegions() )
         {
             for ( Region region : template.getRegions() )
             {
