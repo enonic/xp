@@ -6,9 +6,9 @@ module app.wizard {
         private url: string;
         private site: api.content.Content;
         private contextWindow: app.contextwindow.ContextWindow;
-        private contentWizardPanel:ContentWizardPanel;
+        private contentWizardPanel: ContentWizardPanel;
 
-        constructor(site: api.content.Content, contentWizardPanel:ContentWizardPanel) {
+        constructor(site: api.content.Content, contentWizardPanel: ContentWizardPanel) {
             super("live-form-panel");
             this.baseUrl = api.util.getUri("portal/edit/");
             this.site = site;
@@ -36,21 +36,33 @@ module app.wizard {
             // Wait for iframe to be loaded before adding context window!
             var maxIterations = 100;
             var iterations = 0;
+            var contextWindowAdded = false;
             var intervalId = setInterval(() => {
+
                 if (this.frame.isLoaded()) {
-                    if (this.frame.getHTMLElement()["contentWindow"].$liveEdit) {
+                    var contextWindowElement = this.frame.getHTMLElement()["contentWindow"];
+                    if (contextWindowElement && contextWindowElement.$liveEdit) {
 
                         this.appendChild(this.contextWindow);
+                        contextWindowAdded = true;
                         //contextWindow.init();
                         clearInterval(intervalId);
 
-                        console.log("LiveFormPanel.doLoad() ... loaded");
+                        console.log("LiveFormPanel.doLoad() ... Live edit loaded");
+
                         deferred.resolve(null);
                     }
                 }
+
                 iterations++;
                 if (iterations >= maxIterations) {
                     clearInterval(intervalId);
+                    if (contextWindowAdded) {
+                        deferred.resolve(null);
+                    }
+                    else {
+                        deferred.reject(null);
+                    }
                 }
             }, 200);
 
@@ -65,10 +77,13 @@ module app.wizard {
 
                 var liveEditUrl = this.baseUrl + content.getContentId().toString();
 
-                this.doLoad(liveEditUrl).done(() => {
-                    console.log("LiveFormPanel.renderExisting() calling contextWindow.setPage ");
-                    this.contextWindow.setPage(content, pageTemplate);
-                });
+                this.doLoad(liveEditUrl).
+                    then(() => {
+                        console.log("LiveFormPanel.renderExisting() calling contextWindow.setPage ");
+                        this.contextWindow.setPage(content, pageTemplate);
+                    }).fail(()=> {
+                        console.log("LiveFormPanel.renderExisting() loading Live edit failed (time out)");
+                    });
             }
         }
 
