@@ -13,7 +13,6 @@ module LiveEdit.component {
             };
 
             $(this.getHTMLElement()).on('click', 'input', (e) => {
-                console.log("it works!");
                 $(e.currentTarget).focus();
                 e.stopPropagation();
             });
@@ -33,8 +32,7 @@ module LiveEdit.component {
             this.appendChild(this.comboBox);
 
             this.comboBox.addOptionSelectedListener((item) => {
-                console.log("item selected", item);
-                $(window).trigger('imageComponentSetImage.liveEdit', [item.value, "ComponentName"]);
+                $liveEdit(window).trigger('imageComponentSetImage.liveEdit', [item.value, "ComponentName"]);
             });
         }
 

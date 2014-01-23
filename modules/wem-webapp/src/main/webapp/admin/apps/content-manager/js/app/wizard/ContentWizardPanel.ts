@@ -69,7 +69,7 @@ module app.wizard {
 
             var stepToolbar = new api.ui.toolbar.Toolbar();
 
-            this.livePanel = new LiveFormPanel(this.siteContent);
+            this.livePanel = new LiveFormPanel(this.siteContent, this);
 
             if (this.parentContent) {
                 this.contentWizardHeader.setPath(this.parentContent.getPath().toString() + "/");

@@ -34,10 +34,6 @@ module api.ui.combobox {
 
             super(this.comboBox, this.selectedOptionsView);
 
-            if (builder.loader) {
-                this.setLoader(builder.loader);
-            }
-
             this.loadedListeners = [];
             this.loadingListeners = [];
             this.inputValueChangedListeners = [];

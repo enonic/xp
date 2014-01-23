@@ -3,6 +3,7 @@ module app.contextwindow {
         liveEditEl?:api.dom.IFrameEl;
         liveEditId?:string;
         site:api.content.Content;
+        liveFormPanel:app.wizard.LiveFormPanel;
     }
 
     export class ContextWindow extends api.ui.NavigableFloatingWindow {
@@ -20,10 +21,11 @@ module app.contextwindow {
         private selectedComponent:Component;
         private minimizer:Minimizer;
         private pageRegions:api.content.page.PageRegions;
+        private liveFormPanel:app.wizard.LiveFormPanel;
 
         constructor(options:ContextWindowOptions) {
             this.site = options.site;
-
+            this.liveFormPanel = options.liveFormPanel;
             var dragStart = (event, ui) => {
                 this.draggingMask.show();
             };
@@ -133,17 +135,19 @@ module app.contextwindow {
                 this.hide();
             });
             //TODO: Listen to component added event and generate component name. Set component name on component. Add component to region.
-            //this.pageRegions.ensureUniqueComponentName()
-            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('componentAdded.liveEdit', () => {
-                console.log("component added!", arguments);
+
+            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('componentAdded.liveEdit', (event, component?) => {
+                console.log("component added!", arguments, component.getHTMLElement());
+
+                var componentName = this.pageRegions.ensureUniqueComponentName(new api.content.page.ComponentName("Image")).toString();
+                component.getEl().setData("data-live-edit-component", componentName);
+                component.getEl().setData("data-live-edit-name", componentName);
             });
 
-            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('imageComponentSetImage.liveEdit', () => {
-                console.log("image sat!", arguments);
-                // TODO: var imageComponent = <api.content.page.image.ImageComponent>pageRegions.getComponent(event.getComponentName());
-                // TODO: imageComponent.setImage(event.getImage());
-                // TODO: liveFormPanel.saveChanges()
-                //        -> setPage will be called automatically when saveChanges is finished
+            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('imageComponentSetImage.liveEdit', (event, imageId?, componentName?) => {
+                var imageComponent = <api.content.page.image.ImageComponent>this.pageRegions.getComponent(componentName);
+                imageComponent.setImage(imageId);
+                this.liveFormPanel.saveChanges()
             });
         }
 

@@ -2,21 +2,17 @@ module app.wizard {
     export class LiveFormPanel extends api.ui.Panel {
 
         private frame: api.dom.IFrameEl;
-
         private baseUrl: string;
-
         private url: string;
-
         private site: api.content.Content;
-
         private contextWindow: app.contextwindow.ContextWindow;
+        private contentWizardPanel:ContentWizardPanel;
 
-        //TODO: contextwindow as variable
-
-        constructor(site: api.content.Content) {
+        constructor(site: api.content.Content, contentWizardPanel:ContentWizardPanel) {
             super("live-form-panel");
             this.baseUrl = api.util.getUri("portal/edit/");
             this.site = site;
+            this.contentWizardPanel = contentWizardPanel;
 
             this.frame = new api.dom.IFrameEl();
             this.frame.addClass("live-edit-frame");
@@ -24,7 +20,9 @@ module app.wizard {
 
             this.contextWindow = new app.contextwindow.ContextWindow({
                 liveEditEl: this.frame,
-                site: this.site});
+                site: this.site,
+                liveFormPanel: this
+            });
         }
 
         private doLoad(liveEditUrl: string): Q.Promise<void> {
@@ -39,6 +37,7 @@ module app.wizard {
             var maxIterations = 10;
             var iterations = 0;
             var intervalId = setInterval(() => {
+                console.log("checking if frame is loaded", this.frame.isLoaded());
                 if (this.frame.isLoaded()) {
                     if (this.frame.getHTMLElement()["contentWindow"].$liveEdit) {
 
@@ -68,14 +67,15 @@ module app.wizard {
                 var liveEditUrl = this.baseUrl + content.getContentId().toString();
 
                 this.doLoad(liveEditUrl).done(() => {
-
                     console.log("LiveFormPanel.renderExisting() calling contextWindow.setPage ");
                     this.contextWindow.setPage(content, pageTemplate);
                 });
             }
         }
 
-        //TODO: saveChanges() - routes to ContentWizardPanel.saveChanges()
+        saveChanges() {
+            this.contentWizardPanel.saveChanges();
+        }
 
         public getRegions(): api.content.page.PageRegions {
 
