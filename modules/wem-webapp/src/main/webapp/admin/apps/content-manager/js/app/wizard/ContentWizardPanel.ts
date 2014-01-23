@@ -63,7 +63,8 @@ module app.wizard {
                 duplicateAction: actions.getDuplicateAction(),
                 deleteAction: actions.getDeleteAction(),
                 closeAction: actions.getCloseAction(),
-                publishAction: actions.getPublishAction()
+                publishAction: actions.getPublishAction(),
+                previewAction: actions.getPreviewAction()
             });
 
             var stepToolbar = new api.ui.toolbar.Toolbar();

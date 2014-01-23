@@ -6,6 +6,7 @@ module app.wizard {
         deleteAction:api.ui.Action;
         closeAction:api.ui.Action;
         publishAction:api.ui.Action;
+        previewAction:api.ui.Action;
     }
 
     export class ContentWizardToolbar extends api.ui.toolbar.Toolbar {
@@ -16,6 +17,7 @@ module app.wizard {
             super.addAction(params.duplicateAction);
             super.addAction(params.deleteAction);
             super.addAction(params.publishAction);
+            super.addAction(params.previewAction);
             super.addGreedySpacer();
             var displayModeToggle = new api.ui.ToggleSlide({
                 turnOnAction: new app.wizard.action.ShowLiveFormAction(),

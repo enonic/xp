@@ -11,7 +11,7 @@ module app.view {
 
         private statisticsPanelIndex:number;
 
-        private previewPanel;
+        private previewPanel:app.browse.ContentItemPreviewPanel;
 
         private previewMode:boolean;
 

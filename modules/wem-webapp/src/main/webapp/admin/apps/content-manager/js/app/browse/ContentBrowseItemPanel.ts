@@ -9,9 +9,9 @@ module app.browse {
 
         private previewPanel;
 
-        private previewMode:boolean;
+        private previewMode: boolean;
 
-        constructor(params:ContentBrowseItemPanelParams) {
+        constructor(params: ContentBrowseItemPanelParams) {
             super(<api.app.browse.BrowseItemPanelParams>{
                 actionMenuActions: params.actionMenuActions
             });
@@ -20,7 +20,7 @@ module app.browse {
             this.addPanel(this.previewPanel);
         }
 
-        public setPreviewMode(enabled:boolean) {
+        public setPreviewMode(enabled: boolean) {
             this.previewMode = enabled;
             this.updateDisplayedPanel();
         }
@@ -35,14 +35,14 @@ module app.browse {
             }
         }
 
-        public isPreviewMode():boolean {
+        public isPreviewMode(): boolean {
             return this.previewMode;
         }
     }
 
     export class ContentItemPreviewPanel extends api.ui.Panel {
 
-        private frame:api.dom.IFrameEl;
+        private frame: api.dom.IFrameEl;
 
         constructor() {
             super("item-preview-panel");
@@ -50,9 +50,12 @@ module app.browse {
             this.appendChild(this.frame);
         }
 
-        public setItem(item:api.app.browse.BrowseItem<api.content.ContentSummary>) {
-            //TODO: use real item path here
-            this.frame.setSrc(api.util.getUri("portal/live/" + item.getPath()));
+        public setItem(item: api.app.view.ViewItem<api.content.ContentSummary>) {
+            var escapedPath = item.getPath();
+            if (escapedPath.charAt(0) == '/') {
+                escapedPath = escapedPath.substring(1);
+            }
+            this.frame.setSrc(api.util.getUri("portal/live/" + escapedPath));
         }
 
     }
