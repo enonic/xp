@@ -1,21 +1,30 @@
 package com.enonic.wem.admin.json.aggregation;
 
+import com.google.common.collect.ImmutableSet;
+
+import com.enonic.wem.api.query.aggregation.Bucket;
 import com.enonic.wem.api.query.aggregation.TermsAggregation;
 
 public class TermsAggregationJson
     extends AggregationJson
 {
-    private final BucketsJson buckets;
+    private final ImmutableSet<BucketJson> buckets;
 
     public TermsAggregationJson( final TermsAggregation termsAggregation )
     {
         super( termsAggregation );
 
-        this.buckets = new BucketsJson( termsAggregation.getBuckets() );
+        ImmutableSet.Builder<BucketJson> builder = ImmutableSet.builder();
 
+        for ( final Bucket bucket : termsAggregation.getBuckets() )
+        {
+            builder.add( new BucketJson( bucket ) );
+        }
+
+        this.buckets = builder.build();
     }
 
-    public BucketsJson getBuckets()
+    public ImmutableSet<BucketJson> getBuckets()
     {
         return buckets;
     }

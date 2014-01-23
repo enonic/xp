@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.enonic.wem.api.query.aggregation.Aggregation;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
-@JsonSubTypes({@JsonSubTypes.Type(value = TermsAggregationJson.class, name = "TermsAggregation")})
+@JsonSubTypes({@JsonSubTypes.Type(value = TermsAggregationJson.class, name = "terms")})
 public class AggregationJson
 {
     private final String name;

@@ -1,15 +1,17 @@
 package com.enonic.wem.admin.json.aggregation;
 
+import com.enonic.wem.api.query.aggregation.Bucket;
+
 public class BucketJson
 {
     private final String name;
 
-    private final long docCount;
+    private final long count;
 
-    public BucketJson( final String name, final long docCount )
+    public BucketJson( final Bucket bucket )
     {
-        this.name = name;
-        this.docCount = docCount;
+        this.name = bucket.getName();
+        this.count = bucket.getDocCount();
     }
 
     public String getName()
@@ -17,8 +19,8 @@ public class BucketJson
         return name;
     }
 
-    public long getDocCount()
+    public long getCount()
     {
-        return docCount;
+        return count;
     }
 }

@@ -1,5 +1,7 @@
 package com.enonic.wem.admin.rest.resource.content.json;
 
+import com.google.common.collect.ImmutableSet;
+
 import com.enonic.wem.admin.json.content.ContentJson;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Contents;
@@ -15,7 +17,7 @@ public class AggregationsContentListJson
 
     public AggregationsContentListJson( final Contents contents, final Aggregations aggregations )
     {
-        super( contents, aggregations );
+        super( contents, ImmutableSet.copyOf( aggregations ) );
     }
 
     @Override

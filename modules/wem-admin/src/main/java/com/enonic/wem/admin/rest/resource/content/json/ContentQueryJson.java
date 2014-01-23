@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.api.content.query.ContentQuery;
+import com.enonic.wem.api.query.aggregation.AggregationQuery;
 import com.enonic.wem.api.query.parser.QueryParser;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
@@ -29,6 +30,9 @@ public class ContentQueryJson
             size( size ).
             queryExpr( QueryParser.parse( queryExprString ) ).
             addContentTypeNames( ContentTypeNames.from( contentTypeNameString ) ).
+            aggregationQuery( AggregationQuery.newTermsAggregation( "contentTypes" ).
+                fieldName( "contenttype" ).
+                build() ).
             build();
 
         this.expand = expand != null ? expand : "none";
