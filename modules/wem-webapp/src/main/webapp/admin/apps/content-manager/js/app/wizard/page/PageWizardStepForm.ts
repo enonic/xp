@@ -77,6 +77,7 @@ module app.wizard.page {
 
             if (this.formView != null) {
                 this.formView.remove();
+                this.formView = null;
             }
 
             if (changedTo == null) {
