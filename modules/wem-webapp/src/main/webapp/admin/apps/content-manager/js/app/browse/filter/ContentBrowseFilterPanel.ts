@@ -77,6 +77,27 @@ module app.browse.filter {
         }
 
         private resetFacets(supressEvent?:boolean) {
+            var queryExpr:api.query.expr.QueryExpr = new api.query.expr.QueryExpr( null );
+
+            var builder:api.content.query.ContentQueryBuilder = new api.content.query.ContentQueryBuilder();
+            var contentQuery:api.content.query.ContentQuery = builder.
+                setQueryExpr( queryExpr).
+                build();
+
+            new api.content.ContentQueryRequest<api.content.ContentQueryResult<api.content.json.ContentSummaryJson>>( contentQuery ).
+                send().done((jsonResponse:api.rest.JsonResponse<api.content.ContentQueryResult<api.content.json.ContentSummaryJson>>) => {
+                    var result = jsonResponse.getResult();
+                    new ContentBrowseSearchEvent(result.contents).fire();
+
+                    if (!supressEvent) {
+                        new ContentBrowseResetEvent().fire();
+                    }
+                }
+            );
+        }
+
+/*
+        private resetFacets(supressEvent?:boolean) {
             new api.content.FindContentRequest<api.content.FindContentResult<api.content.json.ContentSummaryJson>>().setCount(0).send().done(
                 (jsonResponse:api.rest.JsonResponse<api.content.FindContentResult<api.content.json.ContentSummaryJson>>) => {
                     var termsFacets:api.facet.Facet[] = api.facet.FacetFactory.createFacets(jsonResponse.getResult().facets);
@@ -87,6 +108,7 @@ module app.browse.filter {
                 }
             );
         }
+*/
 
         private extractRangesFromFilterValues(values:{ [s : string ] : string[]; }):{lower:Date; upper:Date}[] {
             var ranges = [];
