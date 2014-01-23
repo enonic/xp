@@ -121,7 +121,7 @@ public final class ContentTypeDaoImpl
 
     private void writeContentTypeXml( final ContentType contentType, final Path contentTypePath )
     {
-        final ContentTypeXmlSerializer xmlSerializer = new ContentTypeXmlSerializer();
+        final ContentTypeXmlSerializer xmlSerializer = new ContentTypeXmlSerializer().generateName( false );
         final String serializedContentType = xmlSerializer.toString( contentType );
         final Path xmlFile = contentTypePath.resolve( CONTENT_TYPE_XML );
 
@@ -142,7 +142,8 @@ public final class ContentTypeDaoImpl
         try
         {
             final String serializedContentType = new String( Files.readAllBytes( xmlFile ), Charsets.UTF_8 );
-            final ContentTypeXmlSerializer xmlSerializer = new ContentTypeXmlSerializer();
+            final String contentTypeName = contentTypePath.getFileName().toString();
+            final ContentTypeXmlSerializer xmlSerializer = new ContentTypeXmlSerializer().overrideName( contentTypeName );
             final ContentType contentType = xmlSerializer.toContentType( serializedContentType );
             // TODO make content type xml parser return ContentType.Builder
             return ContentType.newContentType( contentType );
