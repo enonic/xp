@@ -18,7 +18,7 @@ public abstract class PageComponentXml
     @XmlAttribute(name = "name", required = true)
     String name;
 
-    @XmlAttribute(name = "template", required = true)
+    @XmlAttribute(name = "template", required = false)
     String template;
 
     @XmlElement(name = "config", required = true)
