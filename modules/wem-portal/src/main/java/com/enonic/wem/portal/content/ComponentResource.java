@@ -76,14 +76,4 @@ public final class ComponentResource
         return context;
     }
 
-    /*private PageComponent getComponent( final ComponentName componentName, final Page page )
-    {
-        final PageComponent component = page.getComponent( componentName );
-        if ( component != null )
-        {
-            return component;
-        }
-        throw PortalWebException.notFound().message( "Component [{0}] not found in page [{1}].", componentName, contentPath ).build();
-    }*/
-
 }
