@@ -47,6 +47,37 @@ module api.content.page {
             return wantedName.createDuplicate(instanceCount);
         }
 
+        addComponent(component: api.content.page.PageComponent<TemplateKey>, regionName: string) {
+
+            var regionForComponent = this.getRegionForComponent(component.getName());
+            api.util.assert(regionForComponent == null, "Component already added to region [" + regionForComponent.getName() + "]: " + component.getName().toString());
+
+            var region = this.getRegion(regionName);
+            region.addComponent(component);
+        }
+
+        hasComponent(name: api.content.page.ComponentName): boolean {
+
+            for (var key in this.regionByName) {
+                var region = this.regionByName[key];
+                if (region.hasComponentWithName(name)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        getRegionForComponent(name: api.content.page.ComponentName): region.Region {
+
+            for (var key in this.regionByName) {
+                var region = this.regionByName[key];
+                if (region.hasComponentWithName(name)) {
+                    return region;
+                }
+            }
+            return null;
+        }
+
         getRegions(): region.Region[] {
             var regions = [];
             for (var i in this.regionByName) {

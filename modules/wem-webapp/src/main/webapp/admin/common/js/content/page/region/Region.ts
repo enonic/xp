@@ -48,7 +48,8 @@ module api.content.page.region {
 
         addComponent(component: api.content.page.PageComponent<TemplateKey>) {
 
-            api.util.assert(!this.hasComponentWithName(component.getName()));
+            api.util.assert(!this.hasComponentWithName(component.getName()),
+                "Component already added to region [" + this.name + "]: " + component.getName().toString());
 
             this.componentByName[component.getName().toString()] = component;
             this.pageComponents.push(component);
