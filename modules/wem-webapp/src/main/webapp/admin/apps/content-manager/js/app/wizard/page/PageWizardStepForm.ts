@@ -77,6 +77,7 @@ module app.wizard.page {
 
             if (changedTo == null) {
                 this.selectedPageTemplate = null;
+                this.configFormWrapper.removeChildren();
                 console.log("PageWizardStepForm.handlePageTemplateChanged() ... changed to null");
             }
             else {
