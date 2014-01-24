@@ -8,14 +8,21 @@ module api.ui.form {
         private validator: (input: api.dom.FormInputEl) => string;
         private invalidClass: string = "invalid";
 
-        constructor(label: string, input: api.dom.FormInputEl) {
-            super("form-input");
+        constructor(builder: FormItemBuilder) {
+            super("form-item");
             this.error = new api.dom.SpanEl("error");
-            this.label = new api.dom.LabelEl(label, input);
-            this.input = input;
             this.appendChild(this.error);
-            this.appendChild(this.label);
-            this.appendChild(input);
+
+            this.input = builder.getInput();
+            if (builder.getLabel()) {
+                this.label = new api.dom.LabelEl(builder.getLabel(), this.input);
+                this.appendChild(this.label);
+            }
+            this.appendChild(this.input);
+
+            if(builder.getValidator()) {
+                this.validator = builder.getValidator();
+            }
         }
 
         getLabel(): api.dom.LabelEl {
@@ -26,10 +33,16 @@ module api.ui.form {
             return this.input;
         }
 
-        validate(markInvalid?: boolean): string {
-            var validationMessage;
+        getValidator(): (input: api.dom.FormInputEl) => string {
+            return this.validator;
+        }
+
+        validate(validationResult:ValidationResult, markInvalid?: boolean) {
             if (this.validator) {
-                validationMessage = this.validator(this.input);
+                var validationMessage = this.validator(this.input);
+                if(validationMessage) {
+                    validationResult.addError(new ValidationError(this, validationMessage));
+                }
                 if (markInvalid) {
                     if (validationMessage) {
                         this.addClass(this.invalidClass);
@@ -39,12 +52,45 @@ module api.ui.form {
                     this.error.setHtml(validationMessage || "");
                 }
             }
-            return validationMessage;
         }
 
-        setValidator(validator: (input: api.dom.FormInputEl) => string): FormItem {
+    }
+
+    export class FormItemBuilder {
+
+        private label: string;
+        private validator: (el: api.dom.FormInputEl) => string;
+        private input: api.dom.FormInputEl;
+
+        constructor(input: api.dom.FormInputEl) {
+            if(!input) {
+                throw new Error("Input can't be null.");
+            }
+            this.input = input;
+        }
+
+        getInput(): api.dom.FormInputEl {
+            return this.input;
+        }
+
+        setLabel(label: string):FormItemBuilder {
+            this.label = label;
+            return this;
+        }
+
+        getLabel(): string {
+            return this.label;
+        }
+
+        setValidator(validator: (input: api.dom.FormInputEl) => string):FormItemBuilder {
             this.validator = validator;
             return this;
         }
+
+        getValidator(): (input: api.dom.FormInputEl) => string {
+            return this.validator;
+        }
+
     }
+
 }

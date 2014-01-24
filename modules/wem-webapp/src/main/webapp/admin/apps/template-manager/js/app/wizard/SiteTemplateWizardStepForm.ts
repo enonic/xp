@@ -15,18 +15,19 @@ module app.wizard {
 
         renderNew() {
             var fieldSet = new api.ui.form.Fieldset("Site Template");
-            fieldSet.add(new api.ui.form.FormItem("Description", this.descriptionField));
-            fieldSet.add(new api.ui.form.FormItem("Modules", this.moduleComboBox).setValidator(this.notEmptyValidator));
-            fieldSet.add(new api.ui.form.FormItem("Root Content Type", this.rootContentTypeComboBox).setValidator(this.notEmptyValidator));
+            fieldSet.add(new api.ui.form.FormItem(new api.ui.form.FormItemBuilder(this.descriptionField).
+                setLabel("Description")));
+            fieldSet.add(new api.ui.form.FormItem(new api.ui.form.FormItemBuilder(this.moduleComboBox).
+                setLabel("Modules").
+                setValidator(api.ui.form.Validators.notEmpty)));
+            fieldSet.add(new api.ui.form.FormItem(new api.ui.form.FormItemBuilder(this.rootContentTypeComboBox).
+                setLabel("Root Content Type").
+                setValidator(api.ui.form.Validators.notEmpty)));
 
             this.add(fieldSet);
         }
 
 
-        notEmptyValidator(input: api.dom.FormInputEl): string {
-            var value = input.getValue();
-            return !value || value.length == 0 ? "Required field" : undefined;
-        }
 
     }
 }

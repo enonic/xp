@@ -74,8 +74,8 @@ module app.wizard {
 
         persistNewItem(): Q.Promise<api.content.site.template.SiteTemplate> {
             var deferred = Q.defer<api.content.site.template.SiteTemplate>();
-            var validationErrors = this.siteTemplateStep.validate(true);
-            if (validationErrors.length == 0) {
+            var validationResult:api.ui.form.ValidationResult = this.siteTemplateStep.validate(true);
+            if (validationResult.isValid()) {
                 var data = this.siteTemplateStep.getFormData();
 
                 //TODO
@@ -86,8 +86,8 @@ module app.wizard {
 
         updatePersistedItem(): Q.Promise<api.content.site.template.SiteTemplate> {
             var deferred = Q.defer<api.content.site.template.SiteTemplate>();
-            var validationErrors = this.siteTemplateStep.validate(true);
-            if (validationErrors.length == 0) {
+            var validationResult:api.ui.form.ValidationResult = this.siteTemplateStep.validate(true);
+            if (validationResult.isValid()) {
                 var data = this.siteTemplateStep.getFormData();
 
                 //TODO

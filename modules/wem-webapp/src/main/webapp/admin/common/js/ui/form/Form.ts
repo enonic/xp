@@ -19,15 +19,12 @@ module api.ui.form {
             return this;
         }
 
-        validate(markInvalid?: boolean): string[] {
-            var errors:string[] = [];
+        validate(markInvalid?: boolean): ValidationResult {
+            var validationResult:ValidationResult = new ValidationResult();
             this.fieldsets.forEach((fieldset: api.ui.form.Fieldset) => {
-                var fieldsetErrors = fieldset.validate(markInvalid);
-                if (fieldsetErrors.length > 0) {
-                    errors = errors.concat(fieldsetErrors);
-                }
+                fieldset.validate(validationResult, markInvalid);
             });
-            return errors;
+            return validationResult;
         }
 
         setFormData(data: any) {

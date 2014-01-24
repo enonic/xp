@@ -15,7 +15,7 @@ module app.wizard {
                 setSize(api.ui.TextAreaSize.LARGE).
                 build();
 
-            fieldset.add(new api.ui.form.FormItem("XML", xmlTextArea));
+            fieldset.add(new api.ui.form.FormItem(new api.ui.form.FormItemBuilder(xmlTextArea).setLabel("XML")));
         }
 
     }
