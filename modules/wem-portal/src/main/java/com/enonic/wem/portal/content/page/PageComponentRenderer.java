@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.rendering;
+package com.enonic.wem.portal.content.page;
 
 
 import javax.inject.Inject;
@@ -15,6 +15,8 @@ import com.enonic.wem.api.rendering.Renderable;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsControllerFactory;
+import com.enonic.wem.portal.rendering.RenderException;
+import com.enonic.wem.portal.rendering.Renderer;
 
 abstract class PageComponentRenderer
 implements Renderer

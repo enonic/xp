@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.rendering;
+package com.enonic.wem.portal.content.page;
 
 
 import com.enonic.wem.api.NotFoundException;
@@ -8,6 +8,7 @@ import com.enonic.wem.api.content.page.Template;
 import com.enonic.wem.api.content.page.TemplateKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutTemplateKey;
+import com.enonic.wem.portal.rendering.RenderException;
 
 import static com.enonic.wem.api.command.Commands.page;
 

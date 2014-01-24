@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.rendering;
+package com.enonic.wem.portal.content.page;
 
 
 import com.enonic.wem.api.content.page.ComponentName;
