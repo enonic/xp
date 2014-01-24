@@ -46,6 +46,14 @@ module api.content.page.region {
             return count;
         }
 
+        addComponent(component: api.content.page.PageComponent) {
+
+            api.util.assert(!this.hasComponentWithName(component.getName()));
+
+            this.componentByName[component.getName().toString()] = component;
+            this.pageComponents.push(component);
+        }
+
         hasComponentWithName(name: api.content.page.ComponentName) {
             return this.componentByName[name.toString()] != undefined;
         }
