@@ -46,7 +46,7 @@ module api.content.page.region {
             return count;
         }
 
-        addComponent(component: api.content.page.PageComponent) {
+        addComponent(component: api.content.page.PageComponent<TemplateKey>) {
 
             api.util.assert(!this.hasComponentWithName(component.getName()));
 
