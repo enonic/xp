@@ -382,7 +382,7 @@ module app.wizard {
                 return null;
             }
 
-            if( content.isPage() ) {
+            if (content.isPage()) {
                 return null;
             }
 
@@ -491,8 +491,10 @@ module app.wizard {
             if (this.displayNameScriptExecutor.hasScript()) {
 
                 formView.getEl().addEventListener("keyup", (e) => {
-                    this.contentWizardHeader.getDisplayName();
-                    this.contentWizardHeader.setDisplayName(this.displayNameScriptExecutor.execute());
+
+                    if (this.displayNameScriptExecutor.hasScript()) {
+                        this.contentWizardHeader.setDisplayName(this.displayNameScriptExecutor.execute());
+                    }
                 });
             }
         }
