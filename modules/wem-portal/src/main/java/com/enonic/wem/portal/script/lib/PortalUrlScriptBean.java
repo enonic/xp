@@ -19,6 +19,12 @@ public final class PortalUrlScriptBean
         this.baseUrl = ServletRequestUrlHelper.createUrl( "" );
     }
 
+    // TODO: Hack!
+    public String getBaseUrl()
+    {
+        return this.baseUrl;
+    }
+
     public PortalUrlBuilder createUrl( final String path )
     {
         return PortalUrlBuilder.createUrl( this.baseUrl ).
