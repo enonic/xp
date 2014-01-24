@@ -150,6 +150,10 @@ module app.contextwindow {
 
             this.getLiveEditJQuery()(this.getLiveEditWindow()).on('imageComponentSetImage.liveEdit', (event, imageId?, componentName?) => {
                 var imageComponent = <api.content.page.image.ImageComponent>this.pageRegions.getComponent(new api.content.page.ComponentName(componentName));
+                var moduleKey = new api.module.ModuleKey("bluman.trampoline", "1.0.0");
+                var templateName = new api.content.page.image.ImageTemplateName("trampoline-image");
+                var imageTemplateKey = new api.content.page.image.ImageTemplateKey(this.site.getSite().getTemplateKey(), moduleKey, templateName);
+                imageComponent.setTemplate(imageTemplateKey);
                 imageComponent.setImage(imageId);
                 this.liveFormPanel.saveChanges()
             });
