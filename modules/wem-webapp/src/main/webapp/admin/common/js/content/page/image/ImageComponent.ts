@@ -35,12 +35,19 @@ module api.content.page.image {
         image: api.content.ContentId;
 
         public fromJson(json: json.ImageComponentJson): ImageComponentBuilder {
-            this.setTemplate(ImageTemplateKey.fromString(json.template));
-            this.setName(new api.content.page.ComponentName(json.name));
-            this.setConfig(api.data.DataFactory.createRootDataSet(json.config));
+
             if (json.image) {
                 this.setImage(new api.content.ContentId(json.image));
             }
+
+            this.setName(new api.content.page.ComponentName(json.name));
+
+            if( json.template ) {
+                this.setTemplate(ImageTemplateKey.fromString(json.template));
+            }
+
+            this.setConfig(api.data.DataFactory.createRootDataSet(json.config));
+
             return this;
         }
 
