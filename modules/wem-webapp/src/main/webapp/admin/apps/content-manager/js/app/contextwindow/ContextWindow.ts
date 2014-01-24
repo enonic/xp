@@ -136,15 +136,20 @@ module app.contextwindow {
             });
 
 
-            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('componentAdded.liveEdit', (event, component?) => {
+            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('componentAdded.liveEdit', (event, component?, regionName?) => {
                 //TODO: Listen to component added event and generate component name. Set component name on component. Add component to region.
-                var componentName = this.pageRegions.ensureUniqueComponentName(new api.content.page.ComponentName("Image")).toString();
-                component.getEl().setData("data-live-edit-component", componentName);
-                component.getEl().setData("data-live-edit-name", componentName);
+                var componentName = this.pageRegions.ensureUniqueComponentName(new api.content.page.ComponentName("Image"));
+                component.getEl().setData("live-edit-component", componentName.toString());
+                component.getEl().setData("live-edit-name", componentName.toString());
+
+                var builder = new api.content.page.image.ImageComponentBuilder();
+                builder.setName(componentName);
+                var pageComponent = builder.build();
+                this.pageRegions.addComponent(pageComponent, regionName);
             });
 
             this.getLiveEditJQuery()(this.getLiveEditWindow()).on('imageComponentSetImage.liveEdit', (event, imageId?, componentName?) => {
-                var imageComponent = <api.content.page.image.ImageComponent>this.pageRegions.getComponent(componentName);
+                var imageComponent = <api.content.page.image.ImageComponent>this.pageRegions.getComponent(new api.content.page.ComponentName(componentName));
                 imageComponent.setImage(imageId);
                 this.liveFormPanel.saveChanges()
             });

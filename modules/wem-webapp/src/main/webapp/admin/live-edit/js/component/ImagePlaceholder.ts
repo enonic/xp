@@ -32,7 +32,7 @@ module LiveEdit.component {
             this.appendChild(this.comboBox);
 
             this.comboBox.addOptionSelectedListener((item) => {
-                $liveEdit(window).trigger('imageComponentSetImage.liveEdit', [item.value, "ComponentName"]);
+                $liveEdit(window).trigger('imageComponentSetImage.liveEdit', [item.value, this.getComponentName()]);
             });
         }
 

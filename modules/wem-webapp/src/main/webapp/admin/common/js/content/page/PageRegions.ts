@@ -49,8 +49,8 @@ module api.content.page {
 
         addComponent(component: api.content.page.PageComponent<TemplateKey>, regionName: string) {
 
-            var regionForComponent = this.getRegionForComponent(component.getName());
-            api.util.assert(regionForComponent == null, "Component already added to region [" + regionForComponent.getName() + "]: " + component.getName().toString());
+            //var regionForComponent = this.getRegionForComponent(component.getName());
+            //api.util.assert(regionForComponent != null, "Component already added to region [" + regionForComponent.getName() + "]: " + component.getName().toString());
 
             var region = this.getRegion(regionName);
             region.addComponent(component);

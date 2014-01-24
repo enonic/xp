@@ -21,6 +21,16 @@ module LiveEdit.component {
             });
         }
 
+        getRegionName():string {
+            var regionName = $(this.getHTMLElement()).parent('[data-live-edit-region]').attr('data-live-edit-region');
+            console.log("FOUND REGION NAME", regionName);
+            return regionName;
+        }
+
+        getComponentName():string {
+            return this.getEl().getData('live-edit-component');
+        }
+
         onSelect() {
             console.log("selected component!", this);
         }

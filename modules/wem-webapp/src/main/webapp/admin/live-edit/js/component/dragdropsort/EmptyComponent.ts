@@ -5,8 +5,8 @@ module LiveEdit.component.dragdropsort {
 
     export class EmptyComponent {
 
-        public static createEmptyComponentHtml(component:LiveEdit.component.Component):api.dom.Element {
-            var emptyComponent = new api.dom.DivEl();
+        public static createEmptyComponentHtml(component:LiveEdit.component.Component):ComponentPlaceholder {
+            var emptyComponent = new ComponentPlaceholder();
             emptyComponent.addClass("live-edit-empty-component");
             emptyComponent.getEl().setData('live-edit-empty-component', "true");
             emptyComponent.getEl().setData('data-live-edit-component', "empty");
@@ -24,7 +24,7 @@ module LiveEdit.component.dragdropsort {
             return emptyComponent;
         }
 
-        public static restoreEmptyComponent():api.dom.Element {
+        public static restoreEmptyComponent():ComponentPlaceholder {
             var currentComponent = LiveEdit.component.Selection.getSelectedComponent();
             if (currentComponent) {
                 var emptyElement:JQuery = $(LiveEdit.component.dragdropsort.EmptyComponent.createEmptyComponentHtml(currentComponent).getHTMLElement());
