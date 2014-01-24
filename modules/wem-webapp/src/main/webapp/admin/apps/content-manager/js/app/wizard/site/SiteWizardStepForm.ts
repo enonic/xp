@@ -48,7 +48,7 @@ module app.wizard.site {
 
                     this.templateView.setValue(siteTemplate, this.contentType);
 
-                    this.loadModules(site, (modules: api.module.Module[]) => {
+                    this.loadModules(site, (...modules: api.module.Module[]) => {
 
                         this.removeExistingModuleViews();
                         this.layoutModules(modules);
@@ -73,23 +73,15 @@ module app.wizard.site {
             return moduleConfigs;
         }
 
-        private loadModules(site: api.content.site.Site, callback: (siteModules: api.module.Module[]) => void) {
+        private loadModules(site: api.content.site.Site, callback: (...modules: api.module.Module[]) => void) {
             var moduleConfigs: api.content.site.ModuleConfig[] = site.getModuleConfigs();
             var moduleRequests = [];
             for (var i = 0; i < moduleConfigs.length; i++) {
-                var request = new api.module.GetModuleRequest(moduleConfigs[i].getModuleKey()).send();
+                var request = new api.module.GetModuleRequest(moduleConfigs[i].getModuleKey()).sendAndParse();
                 moduleRequests.push(request);
             }
             // Using .apply() here to pass array of requests as arguments enum
-            jQuery.when.apply(jQuery, moduleRequests).then((moduleResponses: api.rest.JsonResponse<api.module.json.ModuleJson>[]) => {
-                var modules = [];
-                // Make array in case there's only one response
-                moduleResponses = new Array<api.rest.JsonResponse<api.module.json.ModuleJson>>().concat(moduleResponses);
-                for (var i = 0; i < moduleResponses.length; i++) {
-                    modules.push(new api.module.Module(moduleResponses[i].getResult()));
-                }
-                callback(modules);
-            })
+            jQuery.when.apply(jQuery, moduleRequests).then(callback);
         }
 
         private layoutModules(modules: api.module.Module[]) {
