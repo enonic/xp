@@ -1,33 +1,21 @@
 module app.wizard.site {
 
-    export class TemplateView extends api.dom.DivEl {
+    export class TemplateView extends api.app.NameAndIconView {
 
         private contentType: api.schema.content.ContentType;
 
         private siteTemplate: api.content.site.template.SiteTemplate;
 
-        private nameAndIconView: api.app.NameAndIconView;
-
         constructor() {
-            super("template-view");
-
-            var label = new api.dom.DivEl("input-label");
-            label.getEl().setInnerHtml("Site Template");
-            this.appendChild(label);
-
-            var input = new api.dom.DivEl("input-type-view");
-            this.appendChild(input);
-
-            this.nameAndIconView = new api.app.NameAndIconViewBuilder().setSize(api.app.NameAndIconViewSize.medium).build();
-            input.appendChild(this.nameAndIconView);
+            super(new api.app.NameAndIconViewBuilder().setSize(api.app.NameAndIconViewSize.medium));
+            this.addClass('template-view');
         }
 
         setValue(siteTemplate: api.content.site.template.SiteTemplate, contentType: api.schema.content.ContentType) {
             this.siteTemplate = siteTemplate;
             this.contentType = contentType;
 
-            this.nameAndIconView.
-                setMainName(siteTemplate.getDisplayName()).
+            this.setMainName(siteTemplate.getDisplayName()).
                 setSubName(siteTemplate.getDescription()).
                 setIconUrl(this.contentType.getIconUrl());
         }

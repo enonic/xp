@@ -15,8 +15,7 @@ module app.wizard.site {
         private moduleViews: ModuleView[] = [];
 
         constructor() {
-            super();
-            this.addClass("site-wizard-step-form");
+            super("site-wizard-step-form");
 
             this.templateView = new TemplateView();
             this.appendChild(this.templateView);
