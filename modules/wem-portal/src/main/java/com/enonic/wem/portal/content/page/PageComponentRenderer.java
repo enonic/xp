@@ -11,14 +11,13 @@ import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.Template;
 import com.enonic.wem.api.content.page.TemplateKey;
-import com.enonic.wem.api.rendering.Renderable;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsControllerFactory;
 import com.enonic.wem.portal.rendering.Renderer;
 
 abstract class PageComponentRenderer
-    implements Renderer
+    implements Renderer<PageComponent>
 {
     @Inject
     protected Client client;
@@ -26,9 +25,8 @@ abstract class PageComponentRenderer
     @Inject
     protected JsControllerFactory controllerFactory;
 
-    public Response render( final Renderable renderable, final JsContext context )
+    public Response render( final PageComponent pageComponent, final JsContext context )
     {
-        final PageComponent pageComponent = (PageComponent) renderable;
         final TemplateKey templateKey = pageComponent.getTemplate();
         final Template template = resolveTemplate( templateKey );
 
