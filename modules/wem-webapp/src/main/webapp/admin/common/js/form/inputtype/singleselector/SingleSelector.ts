@@ -1,5 +1,7 @@
 module api.form.inputtype.singleselector {
 
+    import ValueChangedEvent = api.ui.ValueChangedEvent;
+
     export interface SingleSelectorConfig {
         selectorType: string;
         options: {
@@ -54,7 +56,13 @@ module api.form.inputtype.singleselector {
                     grid.getDataView().setFilterArgs({searchString: newValue});
                     grid.getDataView().refresh();
                 },
-                onOptionSelected: null
+                onOptionSelected: () => {
+                    var validationRecorder:api.form.ValidationRecorder = new api.form.ValidationRecorder();
+                    this.validate(validationRecorder);
+                    if (this.validityChanged(validationRecorder)) {
+                        this.notifyValidityChanged(new support.ValidityChangedEvent(validationRecorder.valid()));
+                    }
+                }
             });
 
             if (this.config) {
@@ -87,6 +95,12 @@ module api.form.inputtype.singleselector {
                 inputEl.setValue(property.getString());
             }
 
+            inputEl.onValueChanged((event:ValueChangedEvent) => {
+                var validationRecorder:api.form.ValidationRecorder = new api.form.ValidationRecorder();
+                this.validate(validationRecorder);
+                if (this.validityChanged(validationRecorder)) {
+                    this.notifyValidityChanged(new support.ValidityChangedEvent(validationRecorder.valid()));
+                }});
             return inputEl;
         }
 
@@ -105,6 +119,14 @@ module api.form.inputtype.singleselector {
             if (property) {
                 inputEl.setValue(property.getString());
             }
+
+            inputEl.onValueChanged((event:ValueChangedEvent) => {
+                var validationRecorder:api.form.ValidationRecorder = new api.form.ValidationRecorder();
+                this.validate(validationRecorder);
+                if (this.validityChanged(validationRecorder)) {
+                    this.notifyValidityChanged(new support.ValidityChangedEvent(validationRecorder.valid()));
+                }
+            })
 
             return inputEl;
         }

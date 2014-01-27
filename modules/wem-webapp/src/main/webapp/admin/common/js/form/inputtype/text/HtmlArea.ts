@@ -14,7 +14,7 @@ module api.form.inputtype.text {
             if (property != null) {
                 textAreaEl.setValue(property.getString());
             }
-            textAreaEl.onValueChanged( (event:any) => {
+            textAreaEl.onValueChanged( () => {
                 var validationRecorder:api.form.ValidationRecorder = new api.form.ValidationRecorder();
                 this.validate(validationRecorder);
                 if (this.validityChanged(validationRecorder)) {

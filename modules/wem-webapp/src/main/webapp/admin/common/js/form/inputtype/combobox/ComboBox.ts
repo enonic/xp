@@ -1,5 +1,9 @@
 module api.form.inputtype.combobox {
 
+    import InputTypeEvent = api.form.inputtype.support.InputTypeEvent;
+    import InputTypeEvents = api.form.inputtype.support.InputTypeEvents;
+    import ValidityChangedEvent = api.form.inputtype.support.ValidityChangedEvent;
+
     export interface ComboBoxConfig {
         options: ComboBoxOption[]
     }
@@ -14,9 +18,14 @@ module api.form.inputtype.combobox {
 
         private selectedOptionsView: api.ui.combobox.SelectedOptionsView<string>;
 
+        private listeners: {[eventName:string]:{(event:InputTypeEvent):void}[]} = {};
+
+        private previousErrors:api.form.ValidationRecorder;
+
         constructor(config: api.form.inputtype.InputTypeViewConfig<ComboBoxConfig>) {
             super("combo-box");
             this.config = config.inputConfig;
+            this.listeners[InputTypeEvents.ValidityChanged] = [];
         }
 
         getHTMLElement(): HTMLElement {
@@ -81,7 +90,13 @@ module api.form.inputtype.combobox {
                     grid.getDataView().setFilterArgs({searchString: newValue});
                     grid.getDataView().refresh();
                 },
-                onOptionSelected: null
+                onOptionSelected: () => {
+                    var validationRecorder:api.form.ValidationRecorder = new api.form.ValidationRecorder();
+                    this.validate(validationRecorder);
+                    if (this.validityChanged(validationRecorder)) {
+                        this.notifyValidityChanged(new support.ValidityChangedEvent(validationRecorder.valid()));
+                    }
+                }
             });
 
             return comboBox;
@@ -123,6 +138,41 @@ module api.form.inputtype.combobox {
 
         private comboboxFilter(item: api.ui.combobox.Option<string>, args) {
             return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
+        }
+
+        private addListener(eventName:InputTypeEvents, listener:(event:InputTypeEvent)=>void) {
+            this.listeners[eventName].push(listener);
+        }
+
+        onValidityChanged(listener:(event:ValidityChangedEvent)=>void) {
+            this.addListener(InputTypeEvents.ValidityChanged, listener);
+        }
+
+        private removeListener(eventName:InputTypeEvents, listener:(event:InputTypeEvent)=>void) {
+            this.listeners[eventName].filter((currentListener:(event:InputTypeEvent)=>void) => {
+                return listener == currentListener;
+            });
+        }
+
+        unValidityChanged(listener:(event:ValidityChangedEvent)=>void) {
+            this.removeListener(InputTypeEvents.ValidityChanged, listener);
+        }
+
+        private notifyListeners(eventName:InputTypeEvents, event:any) {
+            this.listeners[eventName].forEach((listener:(event:InputTypeEvent)=>void) => {
+                listener(event);
+            });
+        }
+
+        private notifyValidityChanged(event:ValidityChangedEvent) {
+            this.notifyListeners(InputTypeEvents.ValidityChanged, event);
+        }
+
+
+        validityChanged(validationRecorder:api.form.ValidationRecorder):boolean {
+            var validityChanged:boolean = this.previousErrors == null || this.previousErrors.valid() != validationRecorder.valid();
+            this.previousErrors = validationRecorder;
+            return validityChanged;
         }
     }
 

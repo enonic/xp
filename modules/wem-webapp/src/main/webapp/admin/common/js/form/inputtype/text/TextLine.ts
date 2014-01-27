@@ -16,7 +16,7 @@ module api.form.inputtype.text {
                 inputEl.setValue(property.getString());
             }
             inputEl.addListener({
-                onValueChanged: (event:any) => {
+                onValueChanged: (oldValue:string, newValue:string) => {
                                     var validationRecorder:api.form.ValidationRecorder = new api.form.ValidationRecorder();
                                     this.validate(validationRecorder);
                                     if (this.validityChanged(validationRecorder)) {
