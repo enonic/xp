@@ -2327,48 +2327,48 @@ a {
 
 /* line 7, ../sass/admin/css/_core.scss */
 h1, h2, h3, h4, h5, h6 {
-    font-weight: normal !important;
+    font-weight: normal;
 }
 
 /* line 11, ../sass/admin/css/_core.scss */
 h1 {
-    font-size: 34px !important;
+    font-size: 34px ;
     line-height: 40px;
 }
 
 /* line 16, ../sass/admin/css/_core.scss */
 h2 {
-    font-size: 30px !important;
+    font-size: 30px ;
     line-height: 40px;
 }
 
 /* line 21, ../sass/admin/css/_core.scss */
 h3 {
-    font-size: 26px !important;
+    font-size: 26px ;
     line-height: 40px;
 }
 
 /* line 26, ../sass/admin/css/_core.scss */
 h4 {
-    font-size: 22px !important;
+    font-size: 22px ;
     line-height: 20px;
 }
 
 /* line 31, ../sass/admin/css/_core.scss */
 h5 {
-    font-size: 18px !important;
+    font-size: 18px ;
     line-height: 20px;
 }
 
 /* line 36, ../sass/admin/css/_core.scss */
 h6 {
-    font-size: 14px !important;
+    font-size: 14px ;
     line-height: 16px;
 }
 
 /* line 41, ../sass/admin/css/_core.scss */
 p {
-    margin: 0 0 10px !important;
+    margin: 0 0 10px ;
 }
 
 /* line 45, ../sass/admin/css/_core.scss */
@@ -5172,11 +5172,6 @@ li {
 /* line 101, ../sass/ext4/core/_reset.scss */
 caption, th {
     text-align: left;
-}
-
-/* line 105, ../sass/ext4/core/_reset.scss */
-h1, h2, h3, h4, h5, h6 {
-    font-size: 100%;
 }
 
 /* line 110, ../sass/ext4/core/_reset.scss */
