@@ -35,7 +35,7 @@ module app.browse.filter {
                         var arguments:api.query.expr.ValueExpr[] = [];
                         arguments.push( new api.query.expr.ValueExpr( new api.data.Value( "_all_text", api.data.ValueTypes.STRING ) ) );
                         arguments.push( new api.query.expr.ValueExpr( new api.data.Value( fulltext, api.data.ValueTypes.STRING ) ) );
-                        arguments.push( new api.query.expr.ValueExpr( new api.data.Value( "OR", api.data.ValueTypes.STRING ) ) );
+                        arguments.push(new api.query.expr.ValueExpr(new api.data.Value("AND", api.data.ValueTypes.STRING)));
 
                         var functionExpr:api.query.expr.FunctionExpr = new api.query.expr.FunctionExpr( "fulltext", arguments );
                         var dynamicExpr:api.query.expr.DynamicConstraintExpr = new api.query.expr.DynamicConstraintExpr( functionExpr );

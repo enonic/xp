@@ -17,7 +17,7 @@ module app.wizard {
         }
 
         hasScript(): boolean {
-            return this.script != null;
+            return !api.util.isStringBlank(this.script);
         }
 
         execute(): string {

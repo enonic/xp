@@ -18,7 +18,7 @@ public abstract class PageComponentXml
     @XmlAttribute(name = "name", required = true)
     String name;
 
-    @XmlAttribute(name = "template", required = true)
+    @XmlAttribute(name = "template", required = false)
     String template;
 
     @XmlElement(name = "config", required = true)
@@ -38,7 +38,10 @@ public abstract class PageComponentXml
         builder.template( toTemplateKey( this.template ) );
 
         RootDataSet config = new RootDataSet();
-        this.config.to( config );
+        if ( this.config != null )
+        {
+            this.config.to( config );
+        }
         builder.config( config );
     }
 

@@ -28,7 +28,9 @@ module api.content.page.layout {
         regions: LayoutRegions;
 
         public fromJson(json: json.LayoutComponentJson): LayoutComponentBuilder {
-            this.setTemplate(LayoutTemplateKey.fromString(json.template));
+            if( json.template ) {
+                this.setTemplate(LayoutTemplateKey.fromString(json.template));
+            }
             this.setName(new api.content.page.ComponentName(json.name));
             this.setConfig(api.data.DataFactory.createRootDataSet(json.config));
             this.setRegions(json.regions != null ? new LayoutRegionsBuilder().fromJson(json.regions).build() : null);

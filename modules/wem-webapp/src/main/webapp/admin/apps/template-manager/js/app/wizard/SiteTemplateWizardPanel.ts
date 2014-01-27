@@ -2,7 +2,7 @@ module app.wizard {
 
     export class SiteTemplateWizardPanel extends api.app.wizard.WizardPanel<api.content.site.template.SiteTemplate> {
 
-        private static DEFAULT_SITE_TEMPLATE_ICON_URL: string = api.util.getAdminUri("common/images/default.content.png");
+        private static DEFAULT_SITE_TEMPLATE_ICON_URL: string = api.util.getAdminUri("common/images/icons/icoMoon/128x128/earth.png");
         private formIcon: api.app.wizard.FormIcon;
         private wizardHeader: api.app.wizard.WizardHeaderWithDisplayNameAndName;
         private iconUploadId: string;
@@ -52,8 +52,8 @@ module app.wizard {
         createSteps(): api.app.wizard.WizardStep[] {
             var steps: api.app.wizard.WizardStep[] = [];
             this.siteTemplateStep = new SiteTemplateWizardStepForm();
-            steps.push(new api.app.wizard.WizardStep("Content", new ContentWizardStepForm()));
             steps.push(new api.app.wizard.WizardStep("Site Template", this.siteTemplateStep));
+            steps.push(new api.app.wizard.WizardStep("Content", new ContentWizardStepForm()));
             steps.push(new api.app.wizard.WizardStep("Components", new ComponentsWizardStepForm()));
             steps.push(new api.app.wizard.WizardStep("Summary", new SummaryWizardStepForm()));
             return steps;
@@ -74,8 +74,8 @@ module app.wizard {
 
         persistNewItem(): Q.Promise<api.content.site.template.SiteTemplate> {
             var deferred = Q.defer<api.content.site.template.SiteTemplate>();
-            var validationErrors = this.siteTemplateStep.validate(true);
-            if (validationErrors.length == 0) {
+            var validationResult:api.ui.form.ValidationResult = this.siteTemplateStep.validate(true);
+            if (validationResult.isValid()) {
                 var data = this.siteTemplateStep.getFormData();
 
                 //TODO
@@ -86,8 +86,8 @@ module app.wizard {
 
         updatePersistedItem(): Q.Promise<api.content.site.template.SiteTemplate> {
             var deferred = Q.defer<api.content.site.template.SiteTemplate>();
-            var validationErrors = this.siteTemplateStep.validate(true);
-            if (validationErrors.length == 0) {
+            var validationResult:api.ui.form.ValidationResult = this.siteTemplateStep.validate(true);
+            if (validationResult.isValid()) {
                 var data = this.siteTemplateStep.getFormData();
 
                 //TODO

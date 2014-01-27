@@ -18,15 +18,10 @@ module api.ui.form {
             this.appendChild(formItem);
         }
 
-        validate(markInvalid?: boolean): string[] {
-            var errors: string[] = [];
+        validate(validationResult:ValidationResult, markInvalid?: boolean) {
             this.items.forEach((item: api.ui.form.FormItem) => {
-                var itemError = item.validate(markInvalid);
-                if (itemError) {
-                    errors.push(itemError);
-                }
+                item.validate(validationResult, markInvalid);
             });
-            return errors;
         }
 
         setFieldsetData(data: any) {

@@ -69,7 +69,7 @@ module app.wizard {
 
             var stepToolbar = new api.ui.toolbar.Toolbar();
 
-            this.livePanel = new LiveFormPanel(this.siteContent);
+            this.livePanel = new LiveFormPanel(this.siteContent, this);
 
             if (this.parentContent) {
                 this.contentWizardHeader.setPath(this.parentContent.getPath().toString() + "/");
@@ -148,11 +148,11 @@ module app.wizard {
 
             var steps: api.app.wizard.WizardStep[] = [];
 
+            steps.push(new api.app.wizard.WizardStep(this.contentType.getDisplayName(), this.contentWizardStepForm));
+
             if (this.siteWizardStepForm != null) {
                 steps.push(new api.app.wizard.WizardStep("Site", this.siteWizardStepForm));
             }
-
-            steps.push(new api.app.wizard.WizardStep(this.contentType.getDisplayName(), this.contentWizardStepForm));
 
             if (this.pageWizardStepForm) {
                 steps.push(new api.app.wizard.WizardStep("Page", this.pageWizardStepForm));
@@ -382,7 +382,7 @@ module app.wizard {
                 return null;
             }
 
-            if( content.isPage() ) {
+            if (content.isPage()) {
                 return null;
             }
 
@@ -491,8 +491,10 @@ module app.wizard {
             if (this.displayNameScriptExecutor.hasScript()) {
 
                 formView.getEl().addEventListener("keyup", (e) => {
-                    this.contentWizardHeader.getDisplayName();
-                    this.contentWizardHeader.setDisplayName(this.displayNameScriptExecutor.execute());
+
+                    if (this.displayNameScriptExecutor.hasScript()) {
+                        this.contentWizardHeader.setDisplayName(this.displayNameScriptExecutor.execute());
+                    }
                 });
             }
         }

@@ -7,10 +7,10 @@ module api.content.page.part {
         }
 
         toJson(): api.content.page.json.PageComponentTypeWrapperJson {
-            var json:json.PartComponentJson = <json.PartComponentJson>super.toPageComponentJson();
+            var json: json.PartComponentJson = <json.PartComponentJson>super.toPageComponentJson();
 
             return <api.content.page.json.PageComponentTypeWrapperJson> {
-                PartComponent : json
+                PartComponent: json
             };
         }
     }
@@ -19,7 +19,9 @@ module api.content.page.part {
 
         public fromJson(json: json.PartComponentJson): PartComponentBuilder {
 
-            this.setTemplate(PartTemplateKey.fromString(json.template));
+            if (json.template) {
+                this.setTemplate(PartTemplateKey.fromString(json.template));
+            }
             this.setName(new api.content.page.ComponentName(json.name));
             this.setConfig(api.data.DataFactory.createRootDataSet(json.config));
             return this;

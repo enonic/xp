@@ -17,7 +17,7 @@ module app.wizard {
             var text = api.ui.TextInput.middle();
             text.setName("test");
 
-            fieldset.add(new api.ui.form.FormItem("XML", xmlTextArea));
+            fieldset.add(new api.ui.form.FormItem(new api.ui.form.FormItemBuilder(xmlTextArea).setLabel("XML")));
 
             this.add(fieldset);
 

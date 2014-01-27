@@ -8,6 +8,9 @@ import com.google.inject.multibindings.MapBinder;
 import com.enonic.wem.api.content.page.image.ImageComponent;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.part.PartComponent;
+import com.enonic.wem.portal.content.page.ImageRenderer;
+import com.enonic.wem.portal.content.page.LayoutRenderer;
+import com.enonic.wem.portal.content.page.PartRenderer;
 
 public final class RenderingModule
     extends AbstractModule

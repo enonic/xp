@@ -45,6 +45,7 @@ module api.rest {
 
             var deferred:JQueryDeferred<Response> = jQuery.Deferred<Response>();
             var request:XMLHttpRequest = new XMLHttpRequest();
+            request.timeout = 10000;
             request.onreadystatechange = () => {
 
                 if (request.readyState == 4) {

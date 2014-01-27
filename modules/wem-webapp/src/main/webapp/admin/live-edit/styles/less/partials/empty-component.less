@@ -15,9 +15,12 @@
     background: url("@{resourcePath}images/live-edit-empty-component-image-icon.png") @componentDefaultBackground no-repeat center center;
   }
 
-    .rich-combobox {
+  .rich-combobox {
     margin:@defaultHeight/2-20px auto 0 auto;
     width:255px;
+    .options-container {
+      z-index: 9999999; // must override shader
+    }
   }
 
 }

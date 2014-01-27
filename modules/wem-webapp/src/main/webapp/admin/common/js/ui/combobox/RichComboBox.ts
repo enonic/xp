@@ -34,10 +34,6 @@ module api.ui.combobox {
 
             super(this.comboBox, this.selectedOptionsView);
 
-            if (builder.loader) {
-                this.setLoader(builder.loader);
-            }
-
             this.loadedListeners = [];
             this.loadingListeners = [];
             this.inputValueChangedListeners = [];
@@ -78,6 +74,7 @@ module api.ui.combobox {
                     var options = this.createOptions(modules);
                     this.comboBox.setOptions(options);
                     this.notifyLoaded(modules);
+                    console.log("RichComboBox content loaded", modules, this.loader);
                 }
             });
 

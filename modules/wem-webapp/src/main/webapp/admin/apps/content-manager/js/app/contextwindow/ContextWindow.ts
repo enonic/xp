@@ -3,6 +3,7 @@ module app.contextwindow {
         liveEditEl?:api.dom.IFrameEl;
         liveEditId?:string;
         site:api.content.Content;
+        liveFormPanel:app.wizard.LiveFormPanel;
     }
 
     export class ContextWindow extends api.ui.NavigableFloatingWindow {
@@ -20,10 +21,11 @@ module app.contextwindow {
         private selectedComponent:Component;
         private minimizer:Minimizer;
         private pageRegions:api.content.page.PageRegions;
+        private liveFormPanel:app.wizard.LiveFormPanel;
 
         constructor(options:ContextWindowOptions) {
             this.site = options.site;
-
+            this.liveFormPanel = options.liveFormPanel;
             var dragStart = (event, ui) => {
                 this.draggingMask.show();
             };
@@ -132,18 +134,28 @@ module app.contextwindow {
                 new LiveEditDragStartEvent().fire()
                 this.hide();
             });
-            //TODO: Listen to component added event and generate component name. Set component name on component. Add component to region.
-            //this.pageRegions.ensureUniqueComponentName()
-            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('componentAdded.liveEdit', () => {
-                console.log("component added!", arguments);
+
+
+            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('componentAdded.liveEdit', (event, component?, regionName?) => {
+                //TODO: Listen to component added event and generate component name. Set component name on component. Add component to region.
+                var componentName = this.pageRegions.ensureUniqueComponentName(new api.content.page.ComponentName("Image"));
+                component.getEl().setData("live-edit-component", componentName.toString());
+                component.getEl().setData("live-edit-name", componentName.toString());
+
+                var builder = new api.content.page.image.ImageComponentBuilder();
+                builder.setName(componentName);
+                var pageComponent = builder.build();
+                this.pageRegions.addComponent(pageComponent, regionName);
             });
 
-            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('imageComponentSetImage.liveEdit', () => {
-                console.log("image sat!", arguments);
-                // TODO: var imageComponent = <api.content.page.image.ImageComponent>pageRegions.getComponent(event.getComponentName());
-                // TODO: imageComponent.setImage(event.getImage());
-                // TODO: liveFormPanel.saveChanges()
-                //        -> setPage will be called automatically when saveChanges is finished
+            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('imageComponentSetImage.liveEdit', (event, imageId?, componentName?) => {
+                var imageComponent = <api.content.page.image.ImageComponent>this.pageRegions.getComponent(new api.content.page.ComponentName(componentName));
+                var moduleKey = new api.module.ModuleKey("bluman.trampoline", "1.0.0");
+                var templateName = new api.content.page.image.ImageTemplateName("trampoline-image");
+                var imageTemplateKey = new api.content.page.image.ImageTemplateKey(this.site.getSite().getTemplateKey(), moduleKey, templateName);
+                imageComponent.setTemplate(imageTemplateKey);
+                imageComponent.setImage(imageId);
+                this.liveFormPanel.saveChanges()
             });
         }
 
