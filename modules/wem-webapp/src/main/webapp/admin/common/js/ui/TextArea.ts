@@ -9,7 +9,7 @@ module api.ui {
     export class TextArea extends api.dom.FormInputEl {
 
 
-        private listeners:{[eventName:string]: {(event:any):void}[]} = {};
+        private listeners:{[eventName:string]: {(event:InputEvent):void}[]} = {};
 
         private oldValue:string = "";
 
@@ -54,7 +54,7 @@ module api.ui {
             this.addClass(sizeClass);
         }
 
-        private addListener(eventName:InputEvents, listener:(event:any)=>void) {
+        private addListener(eventName:InputEvents, listener:(event:InputEvent)=>void) {
             if (this.listeners[eventName] ) {
                 this.listeners[eventName].push(listener);
             }
@@ -64,13 +64,13 @@ module api.ui {
             this.addListener(InputEvents.ValueChanged, listener);
         }
 
-        private notifyListeners(eventName:InputEvents, event:any) {
-            this.listeners[eventName].forEach((listener:(event:any)=>void)=> {
+        private notifyListeners(eventName:InputEvents, event:InputEvent) {
+            this.listeners[eventName].forEach((listener:(event:InputEvent)=>void)=> {
                 listener(event);
             });
         }
 
-        notifyValueChanged(event:ValueChangedEvent) {
+        private notifyValueChanged(event:ValueChangedEvent) {
             this.notifyListeners(InputEvents.ValueChanged, event);
         }
     }

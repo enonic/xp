@@ -8,18 +8,28 @@ module api.ui {
         private name:string;
         private options:RadioButton[] = [];
 
+        private oldValue:string = "";
+
+        private listeners:{[eventName:string]: {(event:InputEvent):void}[]} = {};
+
         constructor(name:string, orientation?:string) {
             super("div", "radio-group");
+            this.listeners[InputEvents.ValueChanged] = [];
             this.name = name;
             if (RadioGroup.ORIENTATION_VERTICAL == orientation) {
                 this.addClass("vertical");
             }
+
         }
 
         public addOption(value:string, label:string, checked?:boolean) {
             var radio = new RadioButton(label, value, this.name, checked);
             this.options.push(radio);
             this.appendChild(radio);
+            radio.getEl().addEventListener('click', () => {
+                this.notifyValueChanged(new ValueChangedEvent(this.oldValue, this.getValue()));
+                this.oldValue = this.getValue();
+            });
         }
 
         setValue(value:string):void {
@@ -43,6 +53,26 @@ module api.ui {
 
         getName():string {
             return this.name;
+        }
+
+        private addListener(eventName:InputEvents, listener:(event:InputEvent)=>void) {
+            if (this.listeners[eventName] ) {
+                this.listeners[eventName].push(listener);
+            }
+        }
+
+        onValueChanged(listener:(event:ValueChangedEvent)=>void) {
+            this.addListener(InputEvents.ValueChanged, listener);
+        }
+
+        private notifyListeners(eventName:InputEvents, event:InputEvent) {
+            this.listeners[eventName].forEach((listener:(event:InputEvent)=>void)=> {
+                listener(event);
+            });
+        }
+
+        private notifyValueChanged(event:ValueChangedEvent) {
+            this.notifyListeners(InputEvents.ValueChanged, event);
         }
     }
 

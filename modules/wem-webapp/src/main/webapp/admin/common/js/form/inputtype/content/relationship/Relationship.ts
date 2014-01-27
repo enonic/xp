@@ -1,5 +1,9 @@
 module api.form.inputtype.content.relationship {
 
+    import InputTypeEvent = api.form.inputtype.support.InputTypeEvent;
+    import InputTypeEvents = api.form.inputtype.support.InputTypeEvents;
+    import ValidityChangedEvent = api.form.inputtype.support.ValidityChangedEvent;
+
     export interface RelationshipConfig {
 
         relationshipType: {
@@ -21,8 +25,13 @@ module api.form.inputtype.content.relationship {
 
         private contentRequestsAllowed: boolean;
 
+        private listeners: {[eventName:string]:{(event:InputTypeEvent):void}[]} = {};
+
+        private previousErrors:api.form.ValidationRecorder;
+
         constructor(config?: api.form.inputtype.InputTypeViewConfig<RelationshipConfig>) {
             super("relationship");
+            this.listeners[InputTypeEvents.ValidityChanged] = [];
             this.config = config;
             this.contentSummaryLoader = new api.form.inputtype.content.ContentSummaryLoader();
             this.contentSummaryLoader.addListener({
@@ -119,7 +128,13 @@ module api.form.inputtype.content.relationship {
                 onInputValueChanged: (oldValue, newValue, grid) => {
                     this.loadOptions(newValue);
                 },
-                onOptionSelected: null
+                onOptionSelected: () => {
+                    var validationRecorder:api.form.ValidationRecorder = new api.form.ValidationRecorder();
+                    this.validate(validationRecorder);
+                    if (this.validityChanged(validationRecorder)) {
+                        this.notifyValidityChanged(new support.ValidityChangedEvent(validationRecorder.valid()));
+                    }
+                }
             });
 
             return comboBox;
@@ -170,6 +185,41 @@ module api.form.inputtype.content.relationship {
             }
 
             this.contentSummaryLoader.search(searchString);
+        }
+
+        private addListener(eventName:InputTypeEvents, listener:(event:InputTypeEvent)=>void) {
+            this.listeners[eventName].push(listener);
+        }
+
+        onValidityChanged(listener:(event:ValidityChangedEvent)=>void) {
+            this.addListener(InputTypeEvents.ValidityChanged, listener);
+        }
+
+        private removeListener(eventName:InputTypeEvents, listener:(event:InputTypeEvent)=>void) {
+            this.listeners[eventName].filter((currentListener:(event:InputTypeEvent)=>void) => {
+                return listener == currentListener;
+            });
+        }
+
+        unValidityChanged(listener:(event:ValidityChangedEvent)=>void) {
+            this.removeListener(InputTypeEvents.ValidityChanged, listener);
+        }
+
+        private notifyListeners(eventName:InputTypeEvents, event:InputTypeEvent) {
+            this.listeners[eventName].forEach((listener:(event:InputTypeEvent)=>void) => {
+                listener(event);
+            });
+        }
+
+        private notifyValidityChanged(event:ValidityChangedEvent) {
+            this.notifyListeners(InputTypeEvents.ValidityChanged, event);
+        }
+
+
+        validityChanged(validationRecorder:api.form.ValidationRecorder):boolean {
+            var validityChanged:boolean = this.previousErrors == null || this.previousErrors.valid() != validationRecorder.valid();
+            this.previousErrors = validationRecorder;
+            return validityChanged;
         }
 
         private createOptions(contents: api.content.ContentSummary[]): api.ui.combobox.Option<api.content.ContentSummary>[] {

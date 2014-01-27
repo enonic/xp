@@ -13,6 +13,15 @@ module api.form.inputtype.text {
             if (property != null) {
                 inputEl.setValue(property.getString());
             }
+            inputEl.addListener({
+                                    onValueChanged: (oldValue:string, newValue:string) => {
+                                        var validationRecorder:api.form.ValidationRecorder = new api.form.ValidationRecorder();
+                                        this.validate(validationRecorder);
+                                        if (this.validityChanged(validationRecorder)) {
+                                            this.notifyValidityChanged(new support.ValidityChangedEvent(validationRecorder.valid()));
+                                        }
+                                    }
+                                });
             return inputEl;
         }
 

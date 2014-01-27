@@ -84,7 +84,7 @@ module api.form.inputtype.support {
         }
 
         private removeListener(eventName:InputTypeEvents, listener:(event:InputTypeEvent)=>void) {
-            this.listeners[eventName].filter((currentListener:(event:any)=>void) => {
+            this.listeners[eventName].filter((currentListener:(event:InputTypeEvent)=>void) => {
                 return listener == currentListener;
             });
         }
@@ -93,8 +93,8 @@ module api.form.inputtype.support {
             this.removeListener(InputTypeEvents.ValidityChanged, listener);
         }
 
-        private notifyListeners(eventName:InputTypeEvents, event:any) {
-            this.listeners[eventName].forEach((listener:(event:any)=>void) => {
+        private notifyListeners(eventName:InputTypeEvents, event:InputTypeEvent) {
+            this.listeners[eventName].forEach((listener:(event:InputTypeEvent)=>void) => {
                 listener(event);
             });
         }
