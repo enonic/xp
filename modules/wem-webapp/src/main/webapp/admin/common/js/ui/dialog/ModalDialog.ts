@@ -1,7 +1,7 @@
 module api.ui.dialog{
 
     export interface ModalDialogConfig {
-        title:string;
+        title:api.ui.dialog.ModalDialogHeader;
         width:number;
         height:number;
     }
@@ -10,7 +10,7 @@ module api.ui.dialog{
 
         private config:ModalDialogConfig;
 
-        private title:ModalDialogTitle;
+        private title:api.ui.dialog.ModalDialogHeader;
 
         private contentPanel:ModalDialogContentPanel;
 
@@ -35,7 +35,7 @@ module api.ui.dialog{
                 setMarginLeft("-" + (this.config.width / 2) + "px").
                 setMarginTop("-" + (this.config.height / 2) + "px");
 
-            this.title = new ModalDialogTitle(this.config.title);
+            this.title = this.config.title;
             this.appendChild(this.title);
 
             this.contentPanel = new ModalDialogContentPanel();
@@ -98,10 +98,10 @@ module api.ui.dialog{
         }
     }
 
-    export class ModalDialogTitle extends api.dom.H2El {
+    export class ModalDialogHeader extends api.dom.DivEl {
 
         constructor(title:string) {
-            super();
+            super("dialog-header");
             this.getEl().setInnerHtml(title);
         }
 

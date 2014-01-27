@@ -21,7 +21,7 @@ module app.wizard.action {
         showPreviewDialog(content: api.content.Content) {
 
             if (!PreviewAction.dialog) {
-                var title = content.getDisplayName() + ' preview';
+                var title = new api.ui.dialog.ModalDialogHeader(content.getDisplayName() + ' preview');
                 var dialogConfig = {
                     title: title,
                     height: 600,

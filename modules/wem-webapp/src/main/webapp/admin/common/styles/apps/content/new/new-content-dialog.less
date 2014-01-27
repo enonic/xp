@@ -21,6 +21,15 @@
 
 .new-content-dialog {
 
+  .dialog-header .path {
+    font-size: 16px;
+  }
+
+  .text-input.large {
+    font-size: 20px;
+    border: 2px solid @admin-medium-gray-border;
+  }
+
   .panel {
     position: static;
     height: 100%;
@@ -51,8 +60,15 @@
     height: 268px;
   }
 
+  .dropzone {
+    padding: 10px;
+    height: 100px;
+    line-height: 29px;
+  }
+
   .dropzone:before {
-    content: 'Drop here';
+    content: 'Drag files here to upload';
+    vertical-align: middle;
   }
 
   .site-template-list,
@@ -95,6 +111,11 @@
 
       h6 {
         height: 1.14em; // 16px for 14px default text size
+        font-weight: bold !important;
+      }
+
+      p {
+        color: #acacac;
       }
 
       h6, p {
@@ -127,6 +148,10 @@
 
       .content-type-list {
         height: 270px;
+
+        h4 {
+          border-bottom: 1px solid #eee;
+        }
       }
     }
 

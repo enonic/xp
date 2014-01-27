@@ -13,7 +13,7 @@ module api.ui.dialog {
 
         constructor() {
             super({
-                title: "Confirmation",
+                title: new api.ui.dialog.ModalDialogHeader("Confirmation"),
                 width: 500,
                 height: 170
             });
