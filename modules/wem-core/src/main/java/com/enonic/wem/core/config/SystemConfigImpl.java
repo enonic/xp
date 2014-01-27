@@ -63,6 +63,12 @@ final class SystemConfigImpl
     }
 
     @Override
+    public Path getMixinsDir()
+    {
+        return getSchemasDir().resolve( "mixins" );
+    }
+
+    @Override
     public boolean isMigrateEnabled()
     {
         return "true".equals( this.config.getProperty( "cms.migrate.enabled" ) );

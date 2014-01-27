@@ -3,10 +3,10 @@ package com.enonic.wem.api.command.schema.mixin;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.icon.Icon;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItems;
+import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 
@@ -19,7 +19,7 @@ public final class CreateMixin
 
     private String displayName;
 
-    private Icon icon;
+    private SchemaIcon schemaIcon;
 
 
     public CreateMixin name( final MixinName name )
@@ -52,9 +52,9 @@ public final class CreateMixin
         return this;
     }
 
-    public CreateMixin icon( final Icon icon )
+    public CreateMixin schemaIcon( final SchemaIcon schemaIcon )
     {
-        this.icon = icon;
+        this.schemaIcon = schemaIcon;
         return this;
     }
 
@@ -73,9 +73,9 @@ public final class CreateMixin
         return displayName;
     }
 
-    public Icon getIcon()
+    public SchemaIcon getSchemaIcon()
     {
-        return icon;
+        return schemaIcon;
     }
 
     @Override
@@ -95,13 +95,13 @@ public final class CreateMixin
         return Objects.equal( this.name, that.name ) &&
             Objects.equal( this.formItems, that.formItems ) &&
             Objects.equal( this.displayName, that.displayName ) &&
-            Objects.equal( this.icon, that.icon );
+            Objects.equal( this.schemaIcon, that.schemaIcon );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.name, this.formItems, this.displayName, this.icon );
+        return Objects.hashCode( this.name, this.formItems, this.displayName, this.schemaIcon );
     }
 
     @Override

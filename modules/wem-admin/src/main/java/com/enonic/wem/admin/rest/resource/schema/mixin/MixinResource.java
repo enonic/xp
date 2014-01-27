@@ -10,6 +10,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.enonic.wem.admin.json.icon.IconJson;
 import com.enonic.wem.admin.json.schema.mixin.MixinConfigJson;
 import com.enonic.wem.admin.json.schema.mixin.MixinJson;
 import com.enonic.wem.admin.json.schema.mixin.MixinListJson;
@@ -17,11 +18,14 @@ import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.schema.json.CreateOrUpdateSchemaJsonResult;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
+import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.content.blob.GetBlob;
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
 import com.enonic.wem.api.command.schema.mixin.DeleteMixin;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixin;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixinResult;
+import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.MixinNames;
@@ -88,12 +92,13 @@ public class MixinResource
         final Mixin mixin = new MixinXmlSerializer().
             overrideName( params.getName().toString() ).
             toMixin( params.getConfig() );
+        final SchemaIcon schemaIcon = getSchemaIcon( params.getIconJson() );
 
         final CreateMixin createCommand = mixin().create().
             name( params.getName().toString() ).
             displayName( mixin.getDisplayName() ).
             formItems( mixin.getFormItems() ).
-            icon( params.getIconJson() != null ? params.getIconJson().getIcon() : null );
+            schemaIcon( schemaIcon );
 
         try
         {
@@ -117,6 +122,7 @@ public class MixinResource
             final Mixin parsed = new MixinXmlSerializer().
                 overrideName( params.getName().toString() ).
                 toMixin( params.getConfig() );
+            final SchemaIcon schemaIcon = getSchemaIcon( params.getIconJson() );
 
             final MixinEditor editor = new MixinEditor()
             {
@@ -127,9 +133,9 @@ public class MixinResource
                     builder.name( params.getName() );
                     builder.displayName( parsed.getDisplayName() );
                     builder.formItems( parsed.getFormItems() );
-                    if ( params.getIconJson() != null )
+                    if ( schemaIcon != null )
                     {
-                        builder.icon( params.getIconJson().getIcon() );
+                        builder.schemaIcon( schemaIcon );
                     }
                     return builder.build();
                 }
@@ -178,5 +184,15 @@ public class MixinResource
     private Mixin fetchMixin( final MixinName name )
     {
         return client.execute( mixin().get().byName( name ) );
+    }
+
+    private SchemaIcon getSchemaIcon( final IconJson iconJson )
+    {
+        if ( iconJson != null )
+        {
+            final Blob blob = client.execute( new GetBlob( iconJson.getIcon().getBlobKey() ) );
+            return SchemaIcon.from( blob.getStream(), iconJson.getMimeType() );
+        }
+        return null;
     }
 }

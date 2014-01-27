@@ -6,16 +6,11 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.entity.CreateNode;
-import com.enonic.wem.api.command.entity.CreateNodeResult;
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
-import com.enonic.wem.api.data.DataSet;
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
+import com.enonic.wem.core.schema.mixin.dao.MixinDao;
 
 import static com.enonic.wem.api.form.Input.newInput;
 import static org.junit.Assert.*;
@@ -25,6 +20,8 @@ public class CreateMixinHandlerTest
 {
     private CreateMixinHandler handler;
 
+    private MixinDao mixinDao;
+
     @Before
     public void setUp()
         throws Exception
@@ -32,8 +29,11 @@ public class CreateMixinHandlerTest
         super.client = Mockito.mock( Client.class );
         super.initialize();
 
+        mixinDao = Mockito.mock( MixinDao.class );
+
         handler = new CreateMixinHandler();
         handler.setContext( this.context );
+        handler.setMixinDao( mixinDao );
     }
 
     @Test
@@ -41,17 +41,15 @@ public class CreateMixinHandlerTest
         throws Exception
     {
         // setup
-        Node node = Node.newNode().
-            id( EntityId.from( "abc" ) ).
-            name( NodeName.from( "age" ) ).
-            property( "displayName", "Age" ).
-            addDataSet( new DataSet( "formItems" ) ).
+        final Mixin createdMixin = Mixin.newMixin().
+            name( "age" ).
+            displayName( "Age" ).
+            addFormItem( newInput().name( "age" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
-
-        Mockito.when( client.execute( Mockito.isA( CreateNode.class ) ) ).thenReturn( new CreateNodeResult( node ) );
+        Mockito.when( mixinDao.createMixin( Mockito.isA( Mixin.class ) ) ).thenReturn( createdMixin );
 
         // exercise
-        CreateMixin command = Commands.mixin().create().
+        final CreateMixin command = Commands.mixin().create().
             name( "age" ).
             displayName( "Age" ).
             addFormItem( newInput().name( "age" ).inputType( InputTypes.TEXT_LINE ).build() );
@@ -60,7 +58,7 @@ public class CreateMixinHandlerTest
         this.handler.handle();
 
         // verify
-        Mockito.verify( client, Mockito.atLeastOnce() ).execute( Mockito.isA( CreateNode.class ) );
+        Mockito.verify( mixinDao, Mockito.atLeastOnce() ).createMixin( Mockito.isA( Mixin.class ) );
 
         Mixin mixin = command.getResult();
         assertNotNull( mixin );

@@ -5,7 +5,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.icon.Icon;
 import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -28,8 +27,6 @@ public final class CreateContentType
     private boolean isBuiltIn = false;
 
     private Form form;
-
-    private Icon icon;
 
     private SchemaIcon schemaIcon;
 
@@ -130,17 +127,6 @@ public final class CreateContentType
         return this;
     }
 
-    public Icon getIcon()
-    {
-        return icon;
-    }
-
-    public CreateContentType icon( final Icon icon )
-    {
-        this.icon = icon;
-        return this;
-    }
-
     public SchemaIcon getSchemaIcon()
     {
         return schemaIcon;
@@ -182,13 +168,13 @@ public final class CreateContentType
             Objects.equal( this.isFinal, that.isFinal ) && Objects.equal( this.allowChildContent, that.allowChildContent ) &&
             Objects.equal( this.isBuiltIn, that.isBuiltIn ) &&
             Objects.equal( this.form, that.form ) &&
-            Objects.equal( this.icon, that.icon );
+            Objects.equal( this.schemaIcon, that.schemaIcon );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( name, displayName, superType, isAbstract, isFinal, allowChildContent, isBuiltIn, form, icon );
+        return Objects.hashCode( name, displayName, superType, isAbstract, isFinal, allowChildContent, isBuiltIn, form, schemaIcon );
     }
 
     @Override

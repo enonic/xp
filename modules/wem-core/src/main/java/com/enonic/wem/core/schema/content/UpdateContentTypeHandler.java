@@ -6,6 +6,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.content.UpdateContentType;
 import com.enonic.wem.api.command.schema.content.UpdateContentTypeResult;
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeAlreadyExistException;
 import com.enonic.wem.api.schema.content.ContentTypeNotFoundException;
 import com.enonic.wem.api.schema.content.validator.ContentTypeSuperTypeValidator;
 import com.enonic.wem.api.schema.content.validator.ContentTypeValidationResult;
@@ -33,12 +34,28 @@ public final class UpdateContentTypeHandler
 
         final ContentType editedContentType = command.getEditor().edit( persistedContentType );
 
-        if ( editedContentType != null )
+        if ( ( editedContentType != null ) && ( editedContentType != persistedContentType ) )
         {
             persistedContentType.checkIllegalEdit( editedContentType );
             validate( editedContentType );
 
-            contentTypeDao.updateContentType( editedContentType );
+            if ( !persistedContentType.getName().equals( editedContentType.getName() ) )
+            {
+                // renamed
+                final ContentType existing =
+                    context.getClient().execute( Commands.contentType().get().byName().contentTypeName( editedContentType.getName() ) );
+                if ( existing != null )
+                {
+                    throw new ContentTypeAlreadyExistException( editedContentType.getName() );
+                }
+
+                contentTypeDao.updateContentType( editedContentType );
+                contentTypeDao.deleteContentType( persistedContentType.getName() );
+            }
+            else
+            {
+                contentTypeDao.updateContentType( editedContentType );
+            }
 
             command.setResult( UpdateContentTypeResult.SUCCESS );
         }

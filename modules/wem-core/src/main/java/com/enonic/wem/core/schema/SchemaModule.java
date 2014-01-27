@@ -24,6 +24,8 @@ import com.enonic.wem.core.schema.mixin.GetMixinHandler;
 import com.enonic.wem.core.schema.mixin.GetMixinsHandler;
 import com.enonic.wem.core.schema.mixin.MixinsInitializer;
 import com.enonic.wem.core.schema.mixin.UpdateMixinHandler;
+import com.enonic.wem.core.schema.mixin.dao.MixinDao;
+import com.enonic.wem.core.schema.mixin.dao.MixinDaoImpl;
 import com.enonic.wem.core.schema.relationship.CreateRelationshipTypeHandler;
 import com.enonic.wem.core.schema.relationship.DeleteRelationshipTypeHandler;
 import com.enonic.wem.core.schema.relationship.GetAllRelationshipTypesHandler;
@@ -43,6 +45,7 @@ public final class SchemaModule
     {
         bind( RelationshipTypeDao.class ).to( RelationshipTypeDaoImpl.class ).in( Scopes.SINGLETON );
         bind( ContentTypeDao.class ).to( ContentTypeDaoImpl.class ).in( Scopes.SINGLETON );
+        bind( MixinDao.class ).to( MixinDaoImpl.class ).in( Scopes.SINGLETON );
 
         final InitializerTaskBinder tasks = InitializerTaskBinder.from( binder() );
         tasks.add( ContentTypesInitializer.class );

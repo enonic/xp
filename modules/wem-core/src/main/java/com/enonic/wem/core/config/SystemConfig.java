@@ -21,6 +21,8 @@ public interface SystemConfig
 
     public Path getContentTypesDir();
 
+    public Path getMixinsDir();
+
     public boolean isMigrateEnabled();
 
     public String getMigrateJdbcDriver();

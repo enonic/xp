@@ -27,7 +27,7 @@ public final class CreateContentTypeHandler
     {
         validate( command.getName(), command.getSuperType() );
 
-        final ContentType createdContentType = newContentType().
+        final ContentType contentType = newContentType().
             name( command.getName() ).
             superType( command.getSuperType() ).
             allowChildContent( command.getAllowChildContent() ).
@@ -42,8 +42,7 @@ public final class CreateContentTypeHandler
             //creator( ... ).
                 build();
 
-        contentTypeDao.createContentType( createdContentType );
-
+        final ContentType createdContentType = contentTypeDao.createContentType( contentType );
         command.setResult( createdContentType );
     }
 

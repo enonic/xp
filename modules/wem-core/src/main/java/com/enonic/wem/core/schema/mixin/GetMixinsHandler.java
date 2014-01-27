@@ -3,26 +3,24 @@ package com.enonic.wem.core.schema.mixin;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.entity.GetNodeByPath;
+import javax.inject.Inject;
+
 import com.enonic.wem.api.command.schema.mixin.GetMixins;
-import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.MixinNames;
 import com.enonic.wem.api.schema.mixin.MixinNotFoundException;
 import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.core.command.CommandHandler;
+import com.enonic.wem.core.schema.mixin.dao.MixinDao;
+
+import static com.enonic.wem.api.schema.mixin.Mixins.newMixins;
 
 
 public final class GetMixinsHandler
     extends CommandHandler<GetMixins>
 {
-    private final static MixinNodeTranslator MIXIN_NODE_TRANSLATOR = new MixinNodeTranslator();
-
-    private final List<MixinName> noFoundList = new ArrayList<>();
+    private MixinDao mixinDao;
 
     @Override
     public void handle()
@@ -32,60 +30,50 @@ public final class GetMixinsHandler
 
         if ( command.isGetAll() )
         {
-            mixins = getAllMixins();
+            mixins = mixinDao.getAllMixins();
         }
         else
         {
-            mixins = getMixins( command.getNames() );
+            final List<MixinName> missingMixins = new ArrayList<>();
+            mixins = getMixins( command.getNames(), missingMixins );
 
-            if ( !noFoundList.isEmpty() )
+            if ( !missingMixins.isEmpty() )
             {
-                throw new MixinNotFoundException( MixinNames.from( noFoundList ) );
+                throw new MixinNotFoundException( MixinNames.from( missingMixins ) );
             }
         }
 
         command.setResult( mixins );
     }
 
-    private Mixins getAllMixins()
+    private Mixins getMixins( final MixinNames mixinNames, final List<MixinName> missingMixins )
     {
-        final Nodes nodes = context.getClient().execute( Commands.node().get().byParent( new NodePath( "/mixins" ) ) );
-        return MIXIN_NODE_TRANSLATOR.fromNodes( nodes );
-    }
-
-    private Mixins getMixins( final MixinNames mixinNames )
-    {
-        final List<Mixin> mixinList = new ArrayList<>();
+        final Mixins.Builder mixins = newMixins();
 
         for ( MixinName mixinName : mixinNames )
         {
             final Mixin mixin = getMixin( mixinName );
             if ( mixin != null )
             {
-                mixinList.add( mixin );
+                mixins.add( mixin );
             }
             else
             {
-                noFoundList.add( mixinName );
+                missingMixins.add( mixinName );
             }
         }
-        return Mixins.from( mixinList );
+        return mixins.build();
     }
 
     private Mixin getMixin( final MixinName mixinName )
     {
-        final NodePath nodePath = new NodePath( "/mixins/" + mixinName.toString() );
-        final GetNodeByPath getNodeByPathCommand = Commands.node().get().byPath( nodePath );
+        final Mixin.Builder mixin = mixinDao.getMixin( mixinName );
+        return mixin != null ? mixin.build() : null;
+    }
 
-        final Node node = context.getClient().execute( getNodeByPathCommand );
-
-        if ( node != null )
-        {
-            return MIXIN_NODE_TRANSLATOR.fromNode( node );
-        }
-        else
-        {
-            return null;
-        }
+    @Inject
+    public void setMixinDao( final MixinDao mixinDao )
+    {
+        this.mixinDao = mixinDao;
     }
 }

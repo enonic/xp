@@ -1,33 +1,25 @@
 package com.enonic.wem.core.schema.mixin;
 
-import com.enonic.wem.api.command.Commands;
+import javax.inject.Inject;
+
 import com.enonic.wem.api.command.schema.mixin.GetMixin;
-import com.enonic.wem.api.entity.NoNodeAtPathFoundException;
-import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinNotFoundException;
 import com.enonic.wem.core.command.CommandHandler;
+import com.enonic.wem.core.schema.mixin.dao.MixinDao;
 
 
 public final class GetMixinHandler
     extends CommandHandler<GetMixin>
 {
-    private final static MixinNodeTranslator MIXIN_NODE_TRANSLATOR = new MixinNodeTranslator();
+    private MixinDao mixinDao;
 
     @Override
     public void handle()
         throws Exception
     {
-        final NodePath nodePath = new NodePath( "/mixins/" + command.getName().toString() );
-
-        try
-        {
-            final Node node = context.getClient().execute( Commands.node().get().byPath( nodePath ) );
-            final Mixin mixin = MIXIN_NODE_TRANSLATOR.fromNode( node );
-            command.setResult( mixin );
-        }
-        catch ( NoNodeAtPathFoundException e )
+        final Mixin.Builder mixin = mixinDao.getMixin( command.getName() );
+        if ( mixin == null )
         {
             if ( command.isNotFoundAsException() )
             {
@@ -38,5 +30,15 @@ public final class GetMixinHandler
                 command.setResult( null );
             }
         }
+        else
+        {
+            command.setResult( mixin.build() );
+        }
+    }
+
+    @Inject
+    public void setMixinDao( final MixinDao mixinDao )
+    {
+        this.mixinDao = mixinDao;
     }
 }

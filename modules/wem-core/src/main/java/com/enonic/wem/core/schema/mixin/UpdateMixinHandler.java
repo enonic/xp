@@ -1,20 +1,21 @@
 package com.enonic.wem.core.schema.mixin;
 
+import javax.inject.Inject;
+
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.entity.UpdateNode;
-import com.enonic.wem.api.command.entity.UpdateNodeResult;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixin;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixinResult;
-import com.enonic.wem.api.entity.NodeEditor;
 import com.enonic.wem.api.schema.mixin.Mixin;
+import com.enonic.wem.api.schema.mixin.MixinAlreadyExistException;
 import com.enonic.wem.api.schema.mixin.MixinNotFoundException;
 import com.enonic.wem.core.command.CommandHandler;
+import com.enonic.wem.core.schema.mixin.dao.MixinDao;
 
 
 public final class UpdateMixinHandler
     extends CommandHandler<UpdateMixin>
 {
-    private final static MixinNodeTranslator MIXIN_TO_ITEM_TRANSLATOR = new MixinNodeTranslator();
+    private MixinDao mixinDao;
 
     @Override
     public void handle()
@@ -29,17 +30,33 @@ public final class UpdateMixinHandler
         final Mixin modifiedMixin = command.getEditor().edit( original );
         if ( modifiedMixin != null )
         {
-            final NodeEditor nodeEditor = MIXIN_TO_ITEM_TRANSLATOR.toNodeEditor( modifiedMixin );
+            if ( !original.getName().equals( modifiedMixin.getName() ) )
+            {
+                final Mixin existing = context.getClient().execute( Commands.mixin().get().byName( modifiedMixin.getName() ) );
+                if ( existing != null )
+                {
+                    throw new MixinAlreadyExistException( modifiedMixin.getName() );
+                }
 
-            UpdateNode updateNode = MIXIN_TO_ITEM_TRANSLATOR.toUpdateNodeCommand( original.getId(), nodeEditor );
+                mixinDao.updateMixin( modifiedMixin );
+                mixinDao.deleteMixin( original.getName() );
+            }
+            else
+            {
+                mixinDao.updateMixin( modifiedMixin );
+            }
 
-            final UpdateNodeResult updateNodeResult = context.getClient().execute( updateNode );
-            final Mixin changed = MIXIN_TO_ITEM_TRANSLATOR.fromNode( updateNodeResult.getPersistedNode() );
-            command.setResult( new UpdateMixinResult( changed ) );
+            command.setResult( new UpdateMixinResult( modifiedMixin ) );
         }
         else
         {
             command.setResult( new UpdateMixinResult( original ) );
         }
+    }
+
+    @Inject
+    public void setMixinDao( final MixinDao mixinDao )
+    {
+        this.mixinDao = mixinDao;
     }
 }

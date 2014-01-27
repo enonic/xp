@@ -55,7 +55,7 @@ public final class SchemaImageResource
         throws Exception
     {
         final SchemaKey schemaKey = SchemaKey.from( schemaKeyAsString );
-        if ( schemaKey.isContentType() )
+        if ( schemaKey.isContentType() || schemaKey.isMixin() )
         {
             return getSchemaIcon2( schemaKeyAsString, size );
         }
@@ -122,6 +122,10 @@ public final class SchemaImageResource
         {
             return resolveContentTypeImage2( schemaKey );
         }
+        else if ( schemaKey.isMixin() )
+        {
+            return resolveMixinImage( schemaKey );
+        }
         else
         {
             return null;
@@ -130,17 +134,9 @@ public final class SchemaImageResource
 
     private Icon resolveIcon( final SchemaKey schemaKey )
     {
-        if ( schemaKey.isContentType() )
-        {
-            return resolveContentTypeImage( schemaKey );
-        }
-        else if ( schemaKey.isRelationshipType() )
+        if ( schemaKey.isRelationshipType() )
         {
             return resolveRelationshipTypeImage( schemaKey );
-        }
-        else if ( schemaKey.isMixin() )
-        {
-            return resolveMixinImage( schemaKey );
         }
         else
         {
@@ -158,7 +154,7 @@ public final class SchemaImageResource
         return findContentTypeIcon( ContentTypeName.from( schemaKey.getLocalName() ) );
     }
 
-    private Icon resolveMixinImage( final SchemaKey schemaKey )
+    private SchemaIcon resolveMixinImage( final SchemaKey schemaKey )
     {
         return findMixinIcon( MixinName.from( schemaKey.getLocalName() ) );
     }
@@ -216,10 +212,10 @@ public final class SchemaImageResource
         return null;
     }
 
-    private Icon findMixinIcon( final MixinName mixinName )
+    private SchemaIcon findMixinIcon( final MixinName mixinName )
     {
         final Mixin mixin = client.execute( mixin().get().byName( mixinName ) );
-        return mixin == null ? null : mixin.getIcon();
+        return mixin == null ? null : mixin.getSchemaIcon();
     }
 
     private Icon findRelationshipTypeIcon( final RelationshipTypeName relationshipTypeName )

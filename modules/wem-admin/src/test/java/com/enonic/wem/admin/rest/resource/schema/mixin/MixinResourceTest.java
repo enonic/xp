@@ -1,11 +1,12 @@
 package com.enonic.wem.admin.rest.resource.schema.mixin;
 
+import java.io.ByteArrayInputStream;
+
 import javax.ws.rs.core.MediaType;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -15,6 +16,8 @@ import junit.framework.Assert;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Client;
+import com.enonic.wem.api.blob.Blob;
+import com.enonic.wem.api.command.content.blob.GetBlob;
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
 import com.enonic.wem.api.command.schema.mixin.DeleteMixin;
 import com.enonic.wem.api.command.schema.mixin.DeleteMixinResult;
@@ -26,6 +29,7 @@ import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.SchemaId;
 import com.enonic.wem.api.schema.mixin.Mixin;
+import com.enonic.wem.api.schema.mixin.MixinAlreadyExistException;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.MixinNotFoundException;
 import com.enonic.wem.api.schema.mixin.Mixins;
@@ -175,14 +179,13 @@ public class MixinResourceTest
     }
 
     @Test
-    @Ignore
     public void test_create_mixin_already_exists()
         throws Exception
     {
         Mixin mixin = newMixin().createdTime( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).name( "some_input" ).addFormItem(
             newInput().name( "some_input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
-
-        Mockito.when( client.execute( isA( GetMixin.class ) ) ).thenReturn( mixin );
+        Mockito.when( client.execute( isA( CreateMixin.class ) ) ).thenThrow(
+            new MixinAlreadyExistException( MixinName.from( "my_set" ) ) );
 
         String result = resource().path( "schema/mixin/create" ).entity( readFromFile( "create_mixin_params.json" ),
                                                                          MediaType.APPLICATION_JSON_TYPE ).post( String.class );
@@ -199,6 +202,9 @@ public class MixinResourceTest
             id( new SchemaId( "abc" ) ).
             name( "my_set" ).
             build() );
+        final Blob iconBlob = Mockito.mock( Blob.class );
+        Mockito.when( iconBlob.getStream() ).thenReturn( new ByteArrayInputStream( "icondata".getBytes() ) );
+        Mockito.when( client.execute( isA( GetBlob.class ) ) ).thenReturn( iconBlob );
 
         String result = resource().path( "schema/mixin/create" ).entity( readFromFile( "create_mixin_with_icon_params.json" ),
                                                                          MediaType.APPLICATION_JSON_TYPE ).post( String.class );
@@ -215,6 +221,9 @@ public class MixinResourceTest
             newInput().name( "some_input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
 
         Mockito.when( client.execute( isA( UpdateMixin.class ) ) ).thenReturn( new UpdateMixinResult( mixin ) );
+        final Blob iconBlob = Mockito.mock( Blob.class );
+        Mockito.when( iconBlob.getStream() ).thenReturn( new ByteArrayInputStream( "icondata".getBytes() ) );
+        Mockito.when( client.execute( isA( GetBlob.class ) ) ).thenReturn( iconBlob );
 
         String result = resource().path( "schema/mixin/update" ).entity( readFromFile( "update_mixin_with_icon_params.json" ),
                                                                          MediaType.APPLICATION_JSON_TYPE ).post( String.class );
@@ -223,11 +232,10 @@ public class MixinResourceTest
     }
 
     @Test
-    @Ignore
     public void test_update_mixin_not_found()
         throws Exception
     {
-        Mockito.when( client.execute( isA( GetMixins.class ) ) ).thenReturn( Mixins.empty() );
+        Mockito.when( client.execute( isA( UpdateMixin.class ) ) ).thenThrow( new MixinNotFoundException( MixinName.from( "my_set" ) ) );
         String result = resource().path( "schema/mixin/update" ).entity( readFromFile( "create_mixin_params.json" ),
                                                                          MediaType.APPLICATION_JSON_TYPE ).post( String.class );
         assertJson( "update_mixin_not_found.json", result );
