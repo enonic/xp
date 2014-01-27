@@ -19,8 +19,8 @@ module app.create {
             h6.getEl().setAttribute("title", item.getDisplayName());
 
             var p = new api.dom.PEl();
-            p.getEl().setInnerHtml(item.getName());
-            p.getEl().setAttribute("title", item.getName());
+            p.getEl().setInnerHtml(item.getDescription());
+            p.getEl().setAttribute("title", item.getDescription());
 
             this.appendChild(img);
             this.appendChild(h6);
