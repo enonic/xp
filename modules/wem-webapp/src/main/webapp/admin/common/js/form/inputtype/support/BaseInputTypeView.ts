@@ -6,13 +6,13 @@ module api.form.inputtype.support {
 
         private inputOccurrences: InputOccurrences;
 
-        private listeners: {[eventName:string]:{(event:any):void}[]} = {};
+        private listeners: {[eventName:string]:{(event:InputTypeEvent):void}[]} = {};
 
         private previousErrors:api.form.ValidationRecorder;
 
         constructor(className?: string) {
             super("input-type-view" + ( className ? " " + className : ""));
-            this.listeners[InputTypeEvents.ValidityChange] = [];
+            this.listeners[InputTypeEvents.ValidityChanged] = [];
 
             jQuery(this.getHTMLElement()).sortable({
                 axis: "y",
@@ -75,20 +75,32 @@ module api.form.inputtype.support {
             this.inputOccurrences.removeListener(listener);
         }
 
-        addListener(eventName:InputTypeEvents, listener:(event:any)=>void) {
+        private addListener(eventName:InputTypeEvents, listener:(event:InputTypeEvent)=>void) {
             this.listeners[eventName].push(listener);
         }
 
-        removeListener(eventName:InputTypeEvents, listener:(event:any)=>void) {
+        onValidityChanged(listener:(event:ValidityChangedEvent)=>void) {
+            this.addListener(InputTypeEvents.ValidityChanged, listener);
+        }
+
+        private removeListener(eventName:InputTypeEvents, listener:(event:InputTypeEvent)=>void) {
             this.listeners[eventName].filter((currentListener:(event:any)=>void) => {
                 return listener == currentListener;
             });
         }
 
-        notifyListeners(eventName:InputTypeEvents, event:any) {
+        unValidityChanged(listener:(event:ValidityChangedEvent)=>void) {
+            this.removeListener(InputTypeEvents.ValidityChanged, listener);
+        }
+
+        private notifyListeners(eventName:InputTypeEvents, event:any) {
             this.listeners[eventName].forEach((listener:(event:any)=>void) => {
                 listener(event);
             });
+        }
+
+        notifyValidityChanged(event:ValidityChangedEvent) {
+            this.notifyListeners(InputTypeEvents.ValidityChanged, event);
         }
 
 
