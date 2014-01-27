@@ -24,7 +24,7 @@ module app.create {
 
         constructor() {
             super({
-                title: "Select Kind",
+                title: new api.ui.dialog.ModalDialogHeader("Select Kind"),
                 width: 400,
                 height: 300
             });

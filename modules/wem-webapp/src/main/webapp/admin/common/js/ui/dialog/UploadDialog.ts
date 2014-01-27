@@ -6,7 +6,7 @@ module api.ui.dialog {
 
         constructor(title:string, description: string, uploaderEl:UploadDialogUploaderEl) {
             super({
-                title: title,
+                title: new api.ui.dialog.ModalDialogHeader(title),
                 width: 800,
                 height: 520,
                 idPrefix: "UploadDialog"
