@@ -19,6 +19,10 @@ public class FunctionQueryBuilderFactory
         {
             return createFulltext( function );
         }
+        else if ( "ngram".equals( functionName ) )
+        {
+            return createNGram( function );
+        }
 
         throw new UnsupportedOperationException( "Function '" + functionName + "' is not supported" );
     }
@@ -35,6 +39,22 @@ public class FunctionQueryBuilderFactory
         final String baseFieldName = arguments.getFieldName();
 
         final String queryFieldName = IndexQueryFieldNameResolver.resolveAnalyzedFieldName( baseFieldName );
+
+        SimpleQueryStringBuilder builder = new SimpleQueryStringBuilder( arguments.getSearchString() ).
+            field( queryFieldName ).
+            defaultOperator( arguments.getOperator() );
+
+        return builder;
+    }
+
+
+    private QueryBuilder createNGram( final FunctionExpr functionExpr )
+    {
+        final NGramFunctionArguments arguments = new NGramFunctionArguments( functionExpr.getArguments() );
+
+        final String baseFieldName = arguments.getFieldName();
+
+        final String queryFieldName = IndexQueryFieldNameResolver.resolveNGramFieldName( baseFieldName );
 
         SimpleQueryStringBuilder builder = new SimpleQueryStringBuilder( arguments.getSearchString() ).
             field( queryFieldName ).

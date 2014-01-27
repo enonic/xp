@@ -7,7 +7,7 @@ public enum IndexValueType
 
     NUMBER( "_number" ),
 
-    TOKENIZED( "_tokenized" ),
+    NGRAM( "_ngram" ),
 
     ANALYZED( "_analyzed" ),
 

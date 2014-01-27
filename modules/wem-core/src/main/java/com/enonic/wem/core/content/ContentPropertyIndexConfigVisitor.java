@@ -12,13 +12,13 @@ public class ContentPropertyIndexConfigVisitor
     private final EntityPropertyIndexConfig.Builder builder;
 
     public static final PropertyIndexConfig CONTENT_DEFAULT_INDEX_CONFIG = PropertyIndexConfig.newPropertyIndexConfig().
-        tokenizedEnabled( false ).
+        nGramEnabled( false ).
         fulltextEnabled( false ).
         enabled( true ).
         build();
 
     public static final PropertyIndexConfig CONTENT_ROOT_DEFAULT_INDEX_CONFIG = PropertyIndexConfig.newPropertyIndexConfig().
-        tokenizedEnabled( false ).
+        nGramEnabled( false ).
         fulltextEnabled( false ).
         enabled( true ).
         build();
@@ -48,7 +48,7 @@ public class ContentPropertyIndexConfigVisitor
         {
             builder.addPropertyIndexConfig( property, PropertyIndexConfig.newPropertyIndexConfig().
                 enabled( true ).
-                tokenizedEnabled( true ).
+                nGramEnabled( true ).
                 fulltextEnabled( true ).
                 build() );
         }
@@ -56,7 +56,7 @@ public class ContentPropertyIndexConfigVisitor
         {
             builder.addPropertyIndexConfig( property, PropertyIndexConfig.newPropertyIndexConfig().
                 enabled( false ).
-                tokenizedEnabled( false ).
+                nGramEnabled( false ).
                 fulltextEnabled( false ).
                 build() );
         }
@@ -64,7 +64,7 @@ public class ContentPropertyIndexConfigVisitor
         {
             builder.addPropertyIndexConfig( property, PropertyIndexConfig.newPropertyIndexConfig().
                 enabled( false ).
-                tokenizedEnabled( false ).
+                nGramEnabled( false ).
                 fulltextEnabled( false ).
                 build() );
         }

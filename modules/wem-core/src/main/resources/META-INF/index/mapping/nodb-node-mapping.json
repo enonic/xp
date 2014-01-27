@@ -27,13 +27,13 @@
                 }
             },
             {
-                "template_tokenized": {
-                    "match": "*._tokenized",
+                "template_ngram": {
+                    "match": "*._ngram",
                     "mapping": {
                         "type": "string",
                         "store": "no",
                         "index": "analyzed",
-                        "analyzer": "tokenized",
+                        "index_analyzer": "ngram",
                         "include_in_all": false
                     }
                 }

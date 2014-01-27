@@ -37,20 +37,20 @@ public class NodeIndexDocumentFactory
 
     private static final PropertyIndexConfig metadataPropertyIndexConfig = PropertyIndexConfig.newPropertyIndexConfig().
         enabled( true ).
-        tokenizedEnabled( false ).
+        nGramEnabled( false ).
         fulltextEnabled( false ).
         build();
 
     private static final PropertyIndexConfig defaultPropertyIndexConfig = PropertyIndexConfig.newPropertyIndexConfig().
         enabled( true ).
-        tokenizedEnabled( false ).
+        nGramEnabled( false ).
         fulltextEnabled( false ).
         build();
 
     public static final PropertyIndexConfig namePropertyIndexConfig = PropertyIndexConfig.
         newPropertyIndexConfig().
         enabled( true ).
-        tokenizedEnabled( true ).
+        nGramEnabled( true ).
         fulltextEnabled( false ).
         build();
 
@@ -99,7 +99,7 @@ public class NodeIndexDocumentFactory
                 factory.create( CREATED_TIME_PROPERTY, new Value.DateTime( node.getCreatedTime() ), metadataPropertyIndexConfig ) );
         }
 
-        if ( node.path() != null )
+      /*  if ( node.path() != null )
         {
             builder.addEntries(
                 factory.create( PATH_PROPERTY_PATH, new Value.String( node.path().toString() ), metadataPropertyIndexConfig ) );
@@ -110,6 +110,7 @@ public class NodeIndexDocumentFactory
             builder.addEntries(
                 factory.create( PARENT_PROPERTY_PATH, new Value.String( node.parent().toString() ), metadataPropertyIndexConfig ) );
         }
+        */
 
         if ( node.getCreator() != null )
         {

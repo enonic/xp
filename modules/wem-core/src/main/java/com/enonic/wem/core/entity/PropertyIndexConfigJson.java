@@ -12,24 +12,24 @@ public class PropertyIndexConfigJson
 
     private final Boolean fulltextEnabled;
 
-    private final Boolean tokenizedEnabled;
+    private final Boolean nGramEnabled;
 
     public PropertyIndexConfigJson( final PropertyIndexConfig propertyIndexConfig )
     {
         this.enabled = propertyIndexConfig.enabled();
         this.fulltextEnabled = propertyIndexConfig.fulltextEnabled();
-        this.tokenizedEnabled = propertyIndexConfig.tokenizeEnabled();
+        this.nGramEnabled = propertyIndexConfig.tokenizeEnabled();
     }
 
     @SuppressWarnings("UnusedDeclaration")
     @JsonCreator
     public PropertyIndexConfigJson( @JsonProperty("enabled") final boolean enabled,
                                     @JsonProperty("fulltextEnabled") final boolean fulltextEnabled,
-                                    @JsonProperty("tokenizedEnabled") final boolean tokenizedEnabled )
+                                    @JsonProperty("nGramEnabled") final boolean nGramEnabled )
     {
         this.enabled = enabled;
         this.fulltextEnabled = fulltextEnabled;
-        this.tokenizedEnabled = tokenizedEnabled;
+        this.nGramEnabled = nGramEnabled;
     }
 
     @JsonIgnore
@@ -39,7 +39,7 @@ public class PropertyIndexConfigJson
             newPropertyIndexConfig().
             enabled( this.enabled ).
             fulltextEnabled( this.fulltextEnabled ).
-            tokenizedEnabled( this.tokenizedEnabled ).
+            nGramEnabled( this.nGramEnabled ).
             build();
     }
 
@@ -57,8 +57,8 @@ public class PropertyIndexConfigJson
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public Boolean getTokenizedEnabled()
+    public Boolean getnGramEnabled()
     {
-        return tokenizedEnabled;
+        return nGramEnabled;
     }
 }

@@ -73,8 +73,8 @@ public class IndexDocumentItemFactory
             indexDocumentItems.add( new IndexDocumentAnalyzedItem( IndexDocumentItemPath.from( IndexConstants.ALL_TEXT_FIELD_NAME ),
                                                                    propertyValue.asString() ) );
 
-            indexDocumentItems.add( new IndexDocumentTokenizedItem( IndexDocumentItemPath.from( IndexConstants.ALL_TEXT_FIELD_NAME ),
-                                                                    propertyValue.asString() ) );
+            indexDocumentItems.add(
+                new IndexDocumentNGramItem( IndexDocumentItemPath.from( IndexConstants.ALL_TEXT_FIELD_NAME ), propertyValue.asString() ) );
         }
     }
 
@@ -88,7 +88,7 @@ public class IndexDocumentItemFactory
 
         if ( propertyIndexConfig.tokenizeEnabled() )
         {
-            indexDocumentItems.add( new IndexDocumentTokenizedItem( path, propertyValue.asString() ) );
+            indexDocumentItems.add( new IndexDocumentNGramItem( path, propertyValue.asString() ) );
         }
     }
 
@@ -100,7 +100,7 @@ public class IndexDocumentItemFactory
         if ( isTextField( valueType ) )
         {
             indexDocumentItems.add( new IndexDocumentAnalyzedItem( path, propertyValue.asString() ) );
-            indexDocumentItems.add( new IndexDocumentTokenizedItem( path, propertyValue.asString() ) );
+            indexDocumentItems.add( new IndexDocumentNGramItem( path, propertyValue.asString() ) );
         }
     }
 

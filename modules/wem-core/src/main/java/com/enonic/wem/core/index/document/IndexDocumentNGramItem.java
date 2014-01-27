@@ -2,12 +2,12 @@ package com.enonic.wem.core.index.document;
 
 import com.enonic.wem.core.index.IndexValueType;
 
-public class IndexDocumentTokenizedItem
-    extends AbstractIndexDocumentItem<String>
+public class IndexDocumentNGramItem
+extends AbstractIndexDocumentItem<String>
 {
     private final String value;
 
-    public IndexDocumentTokenizedItem( final IndexDocumentItemPath path, final String value )
+    public IndexDocumentNGramItem( final IndexDocumentItemPath path, final String value )
     {
         super( path );
         this.value = value;
@@ -16,7 +16,7 @@ public class IndexDocumentTokenizedItem
     @Override
     public IndexValueType getIndexBaseType()
     {
-        return IndexValueType.TOKENIZED;
+        return IndexValueType.NGRAM;
     }
 
     @Override

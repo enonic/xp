@@ -4,34 +4,34 @@ import com.enonic.wem.api.data.DataPath
 import spock.lang.Specification
 
 class EntityPatternIndexConfigTest
-        extends Specification
+    extends Specification
 {
     def "test patterns"()
     {
         given:
         final EntityIndexConfig config = EntityIndexConfig.newPatternIndexConfig().
-                addConfig( EntityPatternIndexConfig.newConfig().
-                                   propertyIndexConfig( allConfig() ).
-                                   path( DataPath.from( "data" ) ).
-                                   build() ).
-                addConfig( EntityPatternIndexConfig.newConfig().
-                                   propertyIndexConfig( nonConfig() ).
-                                   path( DataPath.from( "page" ) ).
-                                   build() ).
-                addConfig( EntityPatternIndexConfig.newConfig().
-                                   propertyIndexConfig( allConfig() ).
-                                   path( DataPath.from( "page.displayname" ) ).
-                                   build() ).
-                addConfig( EntityPatternIndexConfig.newConfig().
-                                   propertyIndexConfig( nonConfig() ).
-                                   path( DataPath.from( "page.displayname.exclude" ) ).
-                                   build() ).
-                addConfig( EntityPatternIndexConfig.newConfig().
-                                   propertyIndexConfig( allConfig() ).
-                                   path( DataPath.from( "page.displayname.exclude.others" ) ).
-                                   build() ).
-                defaultConfig( defaultConfig() ).
-                build();
+            addConfig( EntityPatternIndexConfig.newConfig().
+                           propertyIndexConfig( allConfig() ).
+                           path( DataPath.from( "data" ) ).
+                           build() ).
+            addConfig( EntityPatternIndexConfig.newConfig().
+                           propertyIndexConfig( nonConfig() ).
+                           path( DataPath.from( "page" ) ).
+                           build() ).
+            addConfig( EntityPatternIndexConfig.newConfig().
+                           propertyIndexConfig( allConfig() ).
+                           path( DataPath.from( "page.displayname" ) ).
+                           build() ).
+            addConfig( EntityPatternIndexConfig.newConfig().
+                           propertyIndexConfig( nonConfig() ).
+                           path( DataPath.from( "page.displayname.exclude" ) ).
+                           build() ).
+            addConfig( EntityPatternIndexConfig.newConfig().
+                           propertyIndexConfig( allConfig() ).
+                           path( DataPath.from( "page.displayname.exclude.others" ) ).
+                           build() ).
+            defaultConfig( defaultConfig() ).
+            build();
 
 
         expect:
@@ -53,10 +53,10 @@ class EntityPatternIndexConfigTest
     private PropertyIndexConfig defaultConfig()
     {
         return PropertyIndexConfig.newPropertyIndexConfig().
-                enabled( true ).
-                fulltextEnabled( false ).
-                tokenizedEnabled( false ).
-                build();
+            enabled( true ).
+            fulltextEnabled( false ).
+            nGramEnabled( false ).
+            build();
     }
 
     private PropertyIndexConfig nonConfig()

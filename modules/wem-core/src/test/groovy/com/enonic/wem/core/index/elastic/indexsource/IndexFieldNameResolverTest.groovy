@@ -22,7 +22,7 @@ class IndexFieldNameResolverTest
         new IndexDocumentStringItem( IndexDocumentItemPath.from( "a.b.c" ), "myString" )                      | "a_b_c"
         new IndexDocumentNumberItem( IndexDocumentItemPath.from( "a.b.c" ), 1 )                               | "a_b_c._number"
         new IndexDocumentAnalyzedItem( IndexDocumentItemPath.from( "a.b.c" ), "myString" )                    | "a_b_c._analyzed"
-        new IndexDocumentTokenizedItem( IndexDocumentItemPath.from( "a.b.c" ), "myString" )                   | "a_b_c._tokenized"
+        new IndexDocumentNGramItem( IndexDocumentItemPath.from( "a.b.c" ), "myString" ) | "a_b_c._ngram"
         new IndexDocumentGeoPointItem( IndexDocumentItemPath.from( "a.b.c" ), new Value.GeoPoint( "80,80" ) ) | "a_b_c._geopoint"
         new IndexDocumentOrderbyItem( IndexDocumentItemPath.from( "a.b.c" ), "orderBy" )                      | "a_b_c._orderby"
         new IndexDocumentDateItem( IndexDocumentItemPath.from( "a.b.c" ), DateTime.now() )                    | "a_b_c._datetime"

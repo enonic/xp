@@ -12,7 +12,7 @@ public class ContentEntityIndexConfigFactory
     {
         final EntityPatternIndexConfig.Builder builder = EntityPropertyIndexConfig.newPatternIndexConfig().
             collection( IndexConstants.CONTENT_COLLECTION_NAME ).
-            analyzer( "norwegian_fulltext" ).
+            analyzer( "content_default" ).
             addConfig( ContentDataSerializer.PAGE, PropertyIndexConfig.INDEXNON_PROPERTY_CONFIG ).
             addConfig( ContentDataSerializer.CONTENT_DATA, PropertyIndexConfig.INDEXALL_PROPERTY_CONFIG ).
             addConfig( ContentDataSerializer.FORM, PropertyIndexConfig.INDEXNON_PROPERTY_CONFIG ).
@@ -21,7 +21,7 @@ public class ContentEntityIndexConfigFactory
             defaultConfig( PropertyIndexConfig.newPropertyIndexConfig().
                 enabled( true ).
                 fulltextEnabled( true ).
-                tokenizedEnabled( true ).
+                nGramEnabled( true ).
                 build() );
 
         return builder.build();

@@ -25,12 +25,12 @@ public class EntityPropertyIndexConfigJsonTest
             addPropertyIndexConfig( "test", PropertyIndexConfig.newPropertyIndexConfig().
                 enabled( true ).
                 fulltextEnabled( true ).
-                tokenizedEnabled( true ).
+                nGramEnabled( true ).
                 build() ).
             addPropertyIndexConfig( "test2", PropertyIndexConfig.newPropertyIndexConfig().
                 enabled( false ).
                 fulltextEnabled( false ).
-                tokenizedEnabled( false ).
+                nGramEnabled( false ).
                 build() ).
             build();
 
@@ -61,12 +61,12 @@ public class EntityPropertyIndexConfigJsonTest
             addPropertyIndexConfig( "test", PropertyIndexConfig.newPropertyIndexConfig().
                 enabled( true ).
                 fulltextEnabled( true ).
-                tokenizedEnabled( true ).
+                nGramEnabled( true ).
                 build() ).
             addPropertyIndexConfig( "test2", PropertyIndexConfig.newPropertyIndexConfig().
                 enabled( false ).
                 fulltextEnabled( false ).
-                tokenizedEnabled( false ).
+                nGramEnabled( false ).
                 build() ).
             build();
 

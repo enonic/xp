@@ -21,7 +21,7 @@ public class IndexDocumentItemFactoryTest
         Property property = new Property.Double( "myDoubleField", 123.0 );
 
         PropertyIndexConfig propertyIndexConfig =
-            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).tokenizedEnabled( false ).build();
+            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).nGramEnabled( false ).build();
 
         final IndexDocumentItemFactory factory = new IndexDocumentItemFactory( false );
 
@@ -38,7 +38,7 @@ public class IndexDocumentItemFactoryTest
         Property property = new Property.Long( "myDoubleField", 123L );
 
         PropertyIndexConfig propertyIndexConfig =
-            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).tokenizedEnabled( false ).build();
+            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).nGramEnabled( false ).build();
 
         final IndexDocumentItemFactory factory = new IndexDocumentItemFactory( false );
 
@@ -57,7 +57,7 @@ public class IndexDocumentItemFactoryTest
         final IndexDocumentItemFactory factory = new IndexDocumentItemFactory( false );
 
         PropertyIndexConfig propertyIndexConfig =
-            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).tokenizedEnabled( false ).build();
+            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).nGramEnabled( false ).build();
 
         final Set<AbstractIndexDocumentItem> indexDocumentItems = factory.create( property, propertyIndexConfig );
 
@@ -73,7 +73,7 @@ public class IndexDocumentItemFactoryTest
         Property property = new Property( "myGeoPoint", new Value.GeoPoint( "41.12,-71.34" ) );
 
         PropertyIndexConfig propertyIndexConfig =
-            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).tokenizedEnabled( false ).build();
+            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).nGramEnabled( false ).build();
 
         final IndexDocumentItemFactory factory = new IndexDocumentItemFactory( false );
 
@@ -90,7 +90,7 @@ public class IndexDocumentItemFactoryTest
         Property property = new Property( "myStringProp", new Value.String( "myStringValue" ) );
 
         PropertyIndexConfig propertyIndexConfig =
-            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).tokenizedEnabled( false ).build();
+            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).nGramEnabled( false ).build();
 
         // When not by type, no analyzed or tokenized
         assertEquals( 4, new IndexDocumentItemFactory( false ).create( property, propertyIndexConfig ).size() );

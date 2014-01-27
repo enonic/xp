@@ -9,16 +9,16 @@ public final class PropertyIndexConfig
 
     private final boolean fulltextEnabled;
 
-    private final boolean tokenizedEnabled;
+    private final boolean nGramEnabled;
 
     public static final PropertyIndexConfig INDEXNON_PROPERTY_CONFIG = PropertyIndexConfig.newPropertyIndexConfig().
-        tokenizedEnabled( false ).
+        nGramEnabled( false ).
         fulltextEnabled( false ).
         enabled( false ).
         build();
 
     public static final PropertyIndexConfig INDEXALL_PROPERTY_CONFIG = PropertyIndexConfig.newPropertyIndexConfig().
-        tokenizedEnabled( true ).
+        nGramEnabled( true ).
         fulltextEnabled( true ).
         enabled( true ).
         build();
@@ -27,7 +27,7 @@ public final class PropertyIndexConfig
     {
         this.enabled = builder.enabled;
         this.fulltextEnabled = builder.fulltextEnabled;
-        this.tokenizedEnabled = builder.tokenizedEnabled;
+        this.nGramEnabled = builder.nGramEnabled;
     }
 
     public boolean enabled()
@@ -47,7 +47,7 @@ public final class PropertyIndexConfig
 
     public boolean tokenizeEnabled()
     {
-        return tokenizedEnabled;
+        return nGramEnabled;
     }
 
     @Override
@@ -65,13 +65,13 @@ public final class PropertyIndexConfig
         final PropertyIndexConfig that = (PropertyIndexConfig) o;
         return Objects.equals( this.enabled, that.enabled ) &&
             Objects.equals( this.fulltextEnabled, that.fulltextEnabled ) &&
-            Objects.equals( this.tokenizedEnabled, that.tokenizedEnabled );
+            Objects.equals( this.nGramEnabled, that.nGramEnabled );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( this.enabled, this.fulltextEnabled, this.tokenizedEnabled );
+        return Objects.hash( this.enabled, this.fulltextEnabled, this.nGramEnabled );
     }
 
     public static class Builder
@@ -80,7 +80,7 @@ public final class PropertyIndexConfig
 
         private boolean fulltextEnabled = true;
 
-        private boolean tokenizedEnabled = true;
+        private boolean nGramEnabled = true;
 
         public Builder enabled( boolean value )
         {
@@ -99,9 +99,9 @@ public final class PropertyIndexConfig
             return this;
         }
 
-        public Builder tokenizedEnabled( final boolean tokenizedEnabled )
+        public Builder nGramEnabled( final boolean nGramEnabled )
         {
-            this.tokenizedEnabled = tokenizedEnabled;
+            this.nGramEnabled = nGramEnabled;
             return this;
         }
     }
