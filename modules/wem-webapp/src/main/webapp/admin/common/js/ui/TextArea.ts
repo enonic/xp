@@ -16,10 +16,10 @@ module api.ui {
         constructor(name:string) {
             super("textarea");
             this.getEl().setAttribute("name", name);
-            this.listeners[InputEvents.ValueChange] = [];
+            this.listeners[InputEvents.ValueChanged] = [];
 
             this.getEl().addEventListener('input', () => {
-                this.notifyListeners(InputEvents.ValueChange, { "oldValue": this.oldValue, "newValue": this.getValue()});
+                this.notifyValueChanged(new ValueChangedEvent(this.oldValue, this.getValue()));
                 this.oldValue = this.getValue();
             });
         }
@@ -54,16 +54,24 @@ module api.ui {
             this.addClass(sizeClass);
         }
 
-        addListener(eventName:InputEvents, listener:(event:any)=>void) {
+        private addListener(eventName:InputEvents, listener:(event:any)=>void) {
             if (this.listeners[eventName] ) {
                 this.listeners[eventName].push(listener);
             }
         }
 
-        notifyListeners(eventName:InputEvents, event:any) {
+        onValueChanged(listener:(event:ValueChangedEvent)=>void) {
+            this.addListener(InputEvents.ValueChanged, listener);
+        }
+
+        private notifyListeners(eventName:InputEvents, event:any) {
             this.listeners[eventName].forEach((listener:(event:any)=>void)=> {
                 listener(event);
             });
+        }
+
+        notifyValueChanged(event:ValueChangedEvent) {
+            this.notifyListeners(InputEvents.ValueChanged, event);
         }
     }
 

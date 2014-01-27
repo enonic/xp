@@ -20,7 +20,7 @@ module api.form.inputtype.text {
                                     var validationRecorder:api.form.ValidationRecorder = new api.form.ValidationRecorder();
                                     this.validate(validationRecorder);
                                     if (this.validityChanged(validationRecorder)) {
-                                        this.notifyListeners(support.InputTypeEvents.ValidityChange, { isValid: validationRecorder.valid()});
+                                        this.notifyValidityChanged(new support.ValidityChangedEvent(validationRecorder.valid()));
                                     }
                                 }
             });

@@ -25,11 +25,11 @@ module api.form.inputtype.text {
             if (property != null) {
                 inputEl.setValue(property.getString());
             }
-            inputEl.addListener( api.ui.InputEvents.ValueChange, (event:any) => {
+            inputEl.onValueChanged( (event:api.ui.ValueChangedEvent) => {
                                     var validationRecorder:api.form.ValidationRecorder = new api.form.ValidationRecorder();
                                     this.validate(validationRecorder);
                                     if (this.validityChanged(validationRecorder)) {
-                                        this.notifyListeners(support.InputTypeEvents.ValidityChange, {isValid: validationRecorder.valid()});
+                                        this.notifyValidityChanged(new support.ValidityChangedEvent(validationRecorder.valid()));
                                     }
                                 });
             return inputEl;

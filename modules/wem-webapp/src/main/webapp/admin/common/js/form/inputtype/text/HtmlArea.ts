@@ -14,11 +14,11 @@ module api.form.inputtype.text {
             if (property != null) {
                 textAreaEl.setValue(property.getString());
             }
-            textAreaEl.addListener( api.ui.InputEvents.ValueChange, (event:any) => {
+            textAreaEl.onValueChanged( (event:any) => {
                 var validationRecorder:api.form.ValidationRecorder = new api.form.ValidationRecorder();
                 this.validate(validationRecorder);
                 if (this.validityChanged(validationRecorder)) {
-                    this.notifyListeners(support.InputTypeEvents.ValidityChange, {isValid: validationRecorder.valid()});
+                    this.notifyValidityChanged(new support.ValidityChangedEvent( validationRecorder.valid()));
                 }
             });
             return textAreaEl;
