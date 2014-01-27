@@ -11,7 +11,7 @@
   .wizard-back-panel {
 
     .form-panel {
-      overflow-y:auto !important;
+      overflow-y: auto !important;
     }
 
     .form-icon {
@@ -29,19 +29,19 @@
 
       .text-input {
         min-width: 200px;
-        border:1px solid transparent;
-        margin:0;
-        padding:0;
-        background-color:transparent;
-        min-height:0;
+        border: 1px solid transparent;
+        margin: 0;
+        padding: 0;
+        background-color: transparent;
+        min-height: 0;
 
         &.large {
           min-width: 300px;
-          font-size:32px;
-          margin-top:-5px;
+          font-size: 32px;
+          margin-top: -5px;
         }
         &.middle {
-          margin-top:2px;
+          margin-top: 2px;
         }
         .input-glow();
         .placeholderColor(@admin-medium-gray-border);
@@ -71,7 +71,7 @@
           color: white;
           line-height: 20px;
           padding: 10px 15px 10px 15px;
-          margin:0;
+          margin: 0;
           &:hover {
             background-color: lighten(@admin-green, 5%);
           }
@@ -79,10 +79,10 @@
       }
 
       &.scroll-stick {
-        position:fixed;
-        top:84px;
-        width:100%;
-        z-index:100;
+        position: fixed;
+        top: 84px;
+        width: 100%;
+        z-index: 100;
         .scroll-shadow();
         //border-top:1px solid @admin-medium-gray-border;
       }
@@ -103,7 +103,7 @@
 
           &.first {
             //padding-left: 0;
-            margin-left:90px;
+            margin-left: 90px;
           }
 
           &:hover {
@@ -147,12 +147,16 @@
     }
 
     .step-panel {
-      margin: 10px 0 0 0px;
+      margin: 30px 0 0 0px;
       left: 120px;
       right: 0px;
       //overflow-y: auto;
       width: auto;
-      overflow:visible;
+      overflow: visible;
+
+      .form {
+        margin-top: 0;
+      }
 
       .panel {
         position: relative;
