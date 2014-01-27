@@ -137,7 +137,7 @@ module app.contextwindow {
 
 
             this.getLiveEditJQuery()(this.getLiveEditWindow()).on('componentAdded.liveEdit', (event, component?, regionName?) => {
-                //TODO: Listen to component added event and generate component name. Set component name on component. Add component to region.
+                //TODO: Make all components work and not only image
                 var componentName = this.pageRegions.ensureUniqueComponentName(new api.content.page.ComponentName("Image"));
                 component.getEl().setData("live-edit-component", componentName.toString());
                 component.getEl().setData("live-edit-name", componentName.toString());
