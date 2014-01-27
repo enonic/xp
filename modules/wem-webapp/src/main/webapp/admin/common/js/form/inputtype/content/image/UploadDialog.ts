@@ -8,7 +8,7 @@ module api.form.inputtype.content.image {
 
         constructor() {
             super({
-                title: "Image uploader",
+                title: new api.ui.dialog.ModalDialogHeader("Image uploader"),
                 width: 800,
                 height: 520,
                 idPrefix: "UploadDialog"

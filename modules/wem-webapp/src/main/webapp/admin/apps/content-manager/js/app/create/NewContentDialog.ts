@@ -4,6 +4,8 @@ module app.create {
 
         private parentContent: api.content.Content;
 
+        private contentDialogTitle: NewContentDialogTitle;
+
         private recentList: RecentContentTypesList;
         private contentList: ContentTypesList;
         private templatesList: SiteTemplatesList;
@@ -14,8 +16,10 @@ module app.create {
         private input: api.dom.InputEl;
 
         constructor() {
+            this.contentDialogTitle = new NewContentDialogTitle("What do you want to create?", "");
+
             super({
-                title: "Select Content Type",
+                title: this.contentDialogTitle,
                 width: 800,
                 height: 520
             });
@@ -113,6 +117,9 @@ module app.create {
         }
 
         show() {
+            if (this.parentContent) {
+                this.contentDialogTitle.setPath(this.parentContent.getPath().getParentPath().toString());
+            }
 
             super.show();
 
@@ -131,6 +138,33 @@ module app.create {
                 });
             });
 
+        }
+    }
+
+    export class NewContentDialogTitle extends api.ui.dialog.ModalDialogHeader {
+
+        private titleEl:api.dom.H2El;
+
+        private pathEl:api.dom.PEl;
+
+        constructor(title:string, path:string) {
+            super("");
+
+            this.titleEl = new api.dom.H2El('title');
+            this.titleEl.setText(title);
+            this.appendChild(this.titleEl);
+
+            this.pathEl = new api.dom.PEl('path');
+            this.pathEl.setText(path);
+            this.appendChild(this.pathEl);
+        }
+
+        setTitle(title:string) {
+            this.titleEl.setText(title);
+        }
+
+        setPath(path:string) {
+            this.pathEl.setText(path);
         }
     }
 

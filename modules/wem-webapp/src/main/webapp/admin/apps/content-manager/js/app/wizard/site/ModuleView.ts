@@ -13,7 +13,7 @@ module app.wizard.site {
             this.siteModule = theModule;
             this.moduleConfig = moduleConfig;
 
-            var headerEl = new api.dom.H3El();
+            var headerEl = new api.dom.H6El();
             headerEl.setText(theModule.getDisplayName());
             this.appendChild(headerEl);
 
