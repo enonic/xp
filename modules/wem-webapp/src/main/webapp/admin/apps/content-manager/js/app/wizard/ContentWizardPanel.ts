@@ -67,10 +67,6 @@ module app.wizard {
                 previewAction: actions.getPreviewAction()
             });
 
-            var stepToolbar = new api.ui.toolbar.Toolbar();
-
-            this.livePanel = new LiveFormPanel(this.siteContent, this);
-
             if (this.parentContent) {
                 this.contentWizardHeader.setPath(this.parentContent.getPath().toString() + "/");
             } else {
@@ -95,6 +91,11 @@ module app.wizard {
                 this.pageWizardStepForm = new page.PageWizardStepForm(pageWizardStepFormConfig);
             }
 
+            this.livePanel = new LiveFormPanel(<app.wizard.LiveFormPanelConfig> {
+                site: this.siteContent,
+                siteTemplate: this.siteTemplate,
+                contentSaveAction: actions.getSaveAction()});
+
             app.wizard.event.ShowContentLiveEvent.on((event) => {
                 this.toggleFormPanel(false);
             });
@@ -114,7 +115,6 @@ module app.wizard {
                 persistedItem: params.persistedContent,
                 formIcon: this.formIcon,
                 mainToolbar: mainToolbar,
-                stepToolbar: stepToolbar,
                 header: this.contentWizardHeader,
                 actions: actions,
                 livePanel: this.livePanel,
@@ -514,6 +514,10 @@ module app.wizard {
 
         getContentType(): api.schema.content.ContentType {
             return this.contentType;
+        }
+
+        getSiteTemplate(): api.content.site.template.SiteTemplate {
+            return this.siteTemplate;
         }
 
         setPersistAsDraft(draft: boolean) {

@@ -106,10 +106,8 @@ public class SiteTemplateTest
         assertEquals( new SiteTemplateVersion( "1.0.0" ), siteTemplate.getVersion() );
         assertEquals( "Enonic Intranet", siteTemplate.getDisplayName() );
         assertEquals( "A social intranet for the Enterprise", siteTemplate.getDescription() );
-        assertEquals( "[main-page, news-part, my-layout]", Iterators.toString( siteTemplate.names().iterator() ) );
         assertEquals( 3, Iterators.size( siteTemplate.iterator() ) );
         assertEquals( layoutTemplate, siteTemplate.getLayoutTemplates().first() );
-        assertEquals( layoutTemplate, siteTemplate.getTemplate( new LayoutTemplateName( "my-layout" ) ) );
         assertEquals( partTemplate, siteTemplate.getPartTemplates().first() );
         assertEquals( partTemplate, siteTemplate.getPartTemplates().getTemplate( new PartTemplateName( "news-part" ) ) );
     }

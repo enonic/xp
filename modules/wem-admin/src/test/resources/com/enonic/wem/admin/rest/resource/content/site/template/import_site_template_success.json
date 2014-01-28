@@ -1,20 +1,24 @@
 {
-  "contentFilter" : {
-    "allow" : [ "image" ],
-    "deny" : [ "*" ]
-  },
-  "deletable" : true,
-  "description" : "info",
-  "displayName" : "displayName",
-  "editable" : true,
-  "key" : "name-1.0.0",
-  "modules" : [ "module1-1.0.0" ],
-  "name" : "name",
-  "rootContentType" : "folder",
-  "url" : "url",
-  "vendor" : {
-    "name" : "vendorName",
-    "url" : "vendorUrl"
-  },
-  "version" : "1.0.0"
+    "contentTypeFilter": {
+        "allow": [ "image" ],
+        "deny": [ "*" ]
+    },
+    "deletable": true,
+    "description": "info",
+    "displayName": "displayName",
+    "editable": true,
+    "imageTemplates": [ ],
+    "key": "name-1.0.0",
+    "layoutTemplates": [ ],
+    "modules": [ "module1-1.0.0" ],
+    "name": "name",
+    "pageTemplates": [ ],
+    "partTemplates": [ ],
+    "rootContentType": "folder",
+    "url": "url",
+    "vendor": {
+        "name": "vendorName",
+        "url": "vendorUrl"
+    },
+    "version": "1.0.0"
 }

@@ -41,6 +41,11 @@ module app.wizard {
             return this;
         }
 
+        setSiteTemplate(value: api.content.site.template.SiteTemplate): ContentWizardPanelParams {
+            this.siteTemplate = value;
+            return this;
+        }
+
         setCreateSite(value: api.content.site.template.SiteTemplate): ContentWizardPanelParams {
             this.siteTemplate = value;
             this.createSite = this.siteTemplate != null;

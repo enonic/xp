@@ -51,9 +51,6 @@
 ///<reference path='blob/_module.ts' />
 ///<reference path='icon/_module.ts' />
 
-///<reference path='facet/_module.ts' />
-///<reference path='query/expr/_module.ts' />
-///<reference path='query/aggregation/_module.ts' />
 
 ///<reference path='data/json/_module.ts' />
 ///<reference path='data/_module.ts' />
@@ -74,23 +71,29 @@
 ///<reference path='form/layout/_module.ts' />
 
 ///<reference path='item/_module.ts' />
-///<reference path='module/_module.ts' />
-///<reference path='module/json/_module.ts' />
 
 ///<reference path='node/_module.ts' />
 
-///<reference path='module/json/_module.ts' />
-///<reference path='module/_module.ts' />
+///<reference path='facet/_module.ts' />
+///<reference path='query/expr/_module.ts' />
+///<reference path='query/aggregation/_module.ts' />
 
-///<reference path='content/attachment/_module.ts' />
-///<reference path='content/image/_module.ts' />
-///<reference path='content/site/json/_module.ts' />
-///<reference path='content/site/_module.ts' />
-///<reference path='content/site/template/_module.ts' />
-///<reference path='content/site/template/json/_module.ts' />
+///<reference path='module/_module.ts' />
+///<reference path='module/json/_module.ts' />
+
+///<reference path='schema/_module.ts' />
+///<reference path='schema/content/json/_module.ts' />
+///<reference path='schema/content/_module.ts' />
+///<reference path='schema/mixin/_module.ts'/>
+///<reference path='schema/mixin/json/_module.ts'/>
+///<reference path='schema/relationshiptype/_module.ts' />
+///<reference path='schema/relationshiptype/json/_module.ts' />
+
 ///<reference path='content/json/_module.ts' />
 ///<reference path='content/_module.ts' />
 ///<reference path='content/query/_module.ts' />
+///<reference path='content/attachment/_module.ts' />
+///<reference path='content/image/_module.ts' />
 ///<reference path='content/page/json/_module.ts' />
 ///<reference path='content/page/_module.ts' />
 ///<reference path='content/page/image/_module.ts' />
@@ -101,16 +104,11 @@
 ///<reference path='content/page/part/_module.ts' />
 ///<reference path='content/page/region/json/_module.ts' />
 ///<reference path='content/page/region/_module.ts' />
+///<reference path='content/site/json/_module.ts' />
+///<reference path='content/site/_module.ts' />
+///<reference path='content/site/template/_module.ts' />
+///<reference path='content/site/template/json/_module.ts' />
 
-
-///<reference path='schema/_module.ts' />
-
-///<reference path='schema/content/json/_module.ts' />
-///<reference path='schema/content/_module.ts' />
-///<reference path='schema/mixin/_module.ts'/>
-///<reference path='schema/mixin/json/_module.ts'/>
-///<reference path='schema/relationshiptype/_module.ts' />
-///<reference path='schema/relationshiptype/json/_module.ts' />
 
 ///<reference path='rendering/_module.ts' />
 

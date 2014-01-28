@@ -3,12 +3,14 @@ module app.contextwindow {
         liveEditEl?:api.dom.IFrameEl;
         liveEditId?:string;
         site:api.content.Content;
-        liveFormPanel:app.wizard.LiveFormPanel;
+        siteTemplate:api.content.site.template.SiteTemplate;
+        contentSaveAction: api.ui.Action;
     }
 
     export class ContextWindow extends api.ui.NavigableFloatingWindow {
 
         private site:api.content.Content;
+        private siteTemplate:api.content.site.template.SiteTemplate;
 
         private componentTypesPanel:ComponentTypesPanel;
         private inspectorPanel:InspectorPanel;
@@ -21,11 +23,12 @@ module app.contextwindow {
         private selectedComponent:Component;
         private minimizer:Minimizer;
         private pageRegions:api.content.page.PageRegions;
-        private liveFormPanel:app.wizard.LiveFormPanel;
+        private contentSaveAction: api.ui.Action;
 
         constructor(options:ContextWindowOptions) {
             this.site = options.site;
-            this.liveFormPanel = options.liveFormPanel;
+            this.siteTemplate = options.siteTemplate;
+            this.contentSaveAction = options.contentSaveAction;
             var dragStart = (event, ui) => {
                 this.draggingMask.show();
             };
@@ -151,11 +154,12 @@ module app.contextwindow {
             this.getLiveEditJQuery()(this.getLiveEditWindow()).on('imageComponentSetImage.liveEdit', (event, imageId?, componentName?) => {
                 var imageComponent = <api.content.page.image.ImageComponent>this.pageRegions.getComponent(new api.content.page.ComponentName(componentName));
                 var moduleKey = new api.module.ModuleKey("bluman.trampoline", "1.0.0");
-                var templateName = new api.content.page.image.ImageTemplateName("trampoline-image");
+                //var templateName = new api.content.page.image.ImageTemplateName("trampoline-image");
+                var templateName = this.siteTemplate.getDefaultImageTemplate();
                 var imageTemplateKey = new api.content.page.image.ImageTemplateKey(this.site.getSite().getTemplateKey(), moduleKey, templateName);
                 imageComponent.setTemplate(imageTemplateKey);
                 imageComponent.setImage(imageId);
-                this.liveFormPanel.saveChanges()
+                this.contentSaveAction.execute();
             });
         }
 

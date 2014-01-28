@@ -2,15 +2,17 @@ module api.content.site.template.json {
 
     export interface SiteTemplateSummaryJson extends api.item.ItemJson {
 
+        key:string;
+
         name:string;
 
         displayName:string;
 
+        description:string;
+
         vendor:api.content.site.json.VendorJson;
 
         modules:string[];
-
-        supportedContentTypes:string[];
 
         rootContentType:string;
 
@@ -22,8 +24,14 @@ module api.content.site.template.json {
 
         url:string;
 
-        key:string;
+        contentTypeFilter:ContentTypeFilterJson;
 
-        description:string;
+        pageTemplates:string[];
+
+        layoutTemplates:string[];
+
+        partTemplates:string[];
+
+        imageTemplates:string[];
     }
 }

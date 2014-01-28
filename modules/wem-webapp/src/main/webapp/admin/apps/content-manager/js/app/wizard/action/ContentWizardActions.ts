@@ -35,19 +35,19 @@ module app.wizard.action {
             this.delete.setEnabled(existing.isDeletable());
         }
 
-        getDeleteAction() {
+        getDeleteAction() :api.ui.Action {
             return this.delete;
         }
 
-        getSaveAction() {
+        getSaveAction(): api.ui.Action {
             return this.save;
         }
 
-        getDuplicateAction() {
+        getDuplicateAction() : api.ui.Action{
             return this.duplicate;
         }
 
-        getCloseAction() {
+        getCloseAction(): api.ui.Action {
             return this.close;
         }
 

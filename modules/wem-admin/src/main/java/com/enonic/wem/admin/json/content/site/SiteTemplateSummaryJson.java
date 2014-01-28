@@ -7,7 +7,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.VendorJson;
-import com.enonic.wem.api.content.site.ContentTypeFilter;
+import com.enonic.wem.api.content.page.Template;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.module.ModuleKey;
 
@@ -16,6 +16,8 @@ public class SiteTemplateSummaryJson
     implements ItemJson
 {
     protected final SiteTemplate siteTemplate;
+
+    private ContentTypeFilterJson contentTypeFilterJson;
 
     private final boolean editable;
 
@@ -26,6 +28,7 @@ public class SiteTemplateSummaryJson
         this.siteTemplate = siteTemplate;
         this.editable = true;
         this.deletable = true;
+        this.contentTypeFilterJson = new ContentTypeFilterJson( siteTemplate.getContentTypeFilter() );
     }
 
     public String getKey()
@@ -80,12 +83,6 @@ public class SiteTemplateSummaryJson
         } );
     }
 
-    public ContentTypeFilterJson getContentFilter()
-    {
-        final ContentTypeFilter contentTypeFilter = siteTemplate.getContentTypeFilter();
-        return contentTypeFilter == null ? null : new ContentTypeFilterJson( contentTypeFilter );
-    }
-
     @Override
     public boolean getDeletable()
     {
@@ -96,6 +93,44 @@ public class SiteTemplateSummaryJson
     public boolean getEditable()
     {
         return editable;
+    }
+
+
+    public ContentTypeFilterJson getContentTypeFilter()
+    {
+        return contentTypeFilterJson;
+    }
+
+    public List<String> getPageTemplates()
+    {
+        return templatesAsNameList( siteTemplate.getPageTemplates().getList() );
+    }
+
+    public List<String> getPartTemplates()
+    {
+        return templatesAsNameList( siteTemplate.getPartTemplates().getList() );
+    }
+
+    public List<String> getLayoutTemplates()
+    {
+        return templatesAsNameList( siteTemplate.getLayoutTemplates().getList() );
+    }
+
+    public List<String> getImageTemplates()
+    {
+        return templatesAsNameList( siteTemplate.getImageTemplates().getList() );
+    }
+
+    private List<String> templatesAsNameList( final List<? extends Template> templateList )
+    {
+        return Lists.transform( templateList, new Function<Template, String>()
+        {
+            @Override
+            public String apply( final Template template )
+            {
+                return template.getName().toString();
+            }
+        } );
     }
 
 }

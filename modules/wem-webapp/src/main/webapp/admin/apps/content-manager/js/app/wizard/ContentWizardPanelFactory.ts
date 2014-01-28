@@ -94,11 +94,15 @@ module app.wizard {
                     return this.loadSite(this.contentId).then((loadedSite: api.content.Content) => {
                         this.site = loadedSite;
 
-                        return this.loadParentContent().then((loadedParentContent: api.content.Content) => {
-                            this.parentContent = loadedParentContent;
+                        return this.loadSiteTemplate(this.site.getSite().getTemplateKey()).then((loadedSiteTemplate: api.content.site.template.SiteTemplate) => {
+                            this.siteTemplate = loadedSiteTemplate;
 
-                            this.newContentWizardPanelForEdit().done((wizardPanel: ContentWizardPanel)=> {
-                                deferred.resolve(wizardPanel);
+                            return this.loadParentContent().then((loadedParentContent: api.content.Content) => {
+                                this.parentContent = loadedParentContent;
+
+                                this.newContentWizardPanelForEdit().done((wizardPanel: ContentWizardPanel)=> {
+                                    deferred.resolve(wizardPanel);
+                                });
                             });
                         });
                     });
@@ -221,7 +225,8 @@ module app.wizard {
                 setContentType(this.contentType).
                 setParentContent(this.parentContent).
                 setPersistedContent(this.contentToEdit).
-                setSite(this.site);
+                setSite(this.site).
+                setSiteTemplate(this.siteTemplate);
 
             new app.wizard.ContentWizardPanel(wizardParams, (wizard: ContentWizardPanel) => {
                 deferred.resolve(wizard);

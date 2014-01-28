@@ -1,15 +1,16 @@
 package com.enonic.wem.api.content.site;
 
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.api.Identity;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplates;
 import com.enonic.wem.api.content.page.Template;
-import com.enonic.wem.api.content.page.TemplateName;
 import com.enonic.wem.api.content.page.image.ImageTemplate;
 import com.enonic.wem.api.content.page.image.ImageTemplates;
 import com.enonic.wem.api.content.page.layout.LayoutTemplate;
@@ -42,7 +43,7 @@ public final class SiteTemplate
 
     private final ContentTypeName rootContentType;
 
-    private final ImmutableMap<TemplateName, Template> templates;
+    private final ImmutableList<Template> templates;
 
     private final PageTemplates pageTemplates;
 
@@ -62,14 +63,14 @@ public final class SiteTemplate
         this.modules = properties.modules;
         this.contentTypeFilter = properties.contentTypeFilter;
         this.rootContentType = properties.rootContentType;
-        this.templates = properties.templates.build();
+        this.templates = ImmutableList.copyOf( properties.templates );
 
         final PageTemplates.Builder pageTemplatesBuilder = PageTemplates.newPageTemplates();
         final PartTemplates.Builder partTemplatesBuilder = PartTemplates.newPartTemplates();
         final ImageTemplates.Builder imageTemplatesBuilder = ImageTemplates.newImageTemplates();
         final LayoutTemplates.Builder layoutTemplatesBuilder = LayoutTemplates.newLayoutTemplates();
 
-        for ( Template template : this.templates.values() )
+        for ( final Template template : this.templates )
         {
             switch ( template.getKey().getTemplateType() )
             {
@@ -147,7 +148,7 @@ public final class SiteTemplate
     @Override
     public Iterator<Template> iterator()
     {
-        return templates.values().iterator();
+        return templates.iterator();
     }
 
     public PageTemplates getPageTemplates()
@@ -170,16 +171,6 @@ public final class SiteTemplate
         return imageTemplates;
     }
 
-    public Template getTemplate( final TemplateName name )
-    {
-        return this.templates.get( name );
-    }
-
-    public Iterable<TemplateName> names()
-    {
-        return templates.keySet();
-    }
-
     public static Builder newSiteTemplate()
     {
         return new Builder();
@@ -190,7 +181,7 @@ public final class SiteTemplate
     {
         private Builder()
         {
-            templates = ImmutableMap.builder();
+            templates = new ArrayList<>();
         }
 
         public Builder key( final SiteTemplateKey siteTemplateKey )
@@ -243,7 +234,7 @@ public final class SiteTemplate
 
         public Builder addTemplate( final Template template )
         {
-            templates.put( template.getName(), template );
+            templates.add( template );
             return this;
         }
 
@@ -271,7 +262,7 @@ public final class SiteTemplate
 
         ContentTypeName rootContentType;
 
-        ImmutableMap.Builder<TemplateName, Template> templates;
+        List<Template> templates;
     }
 
     public static SiteTemplateEditBuilder editSiteTemplate( final SiteTemplate toBeEdited )
@@ -345,7 +336,7 @@ public final class SiteTemplate
         {
             changes.recordChange( newPossibleChange( "pageTemplates" ).from( this.original.getPageTemplates().
                 getTemplate( value.getPath() ) ).to( value ).build() );
-            this.templates.put( value.getName(), value );
+            this.templates.add( value );
             return this;
         }
 
@@ -353,7 +344,7 @@ public final class SiteTemplate
         {
             changes.recordChange( newPossibleChange( "partTemplates" ).from( this.original.getPartTemplates().
                 getTemplate( value.getPath() ) ).to( value ).build() );
-            this.templates.put( value.getName(), value );
+            this.templates.add( value );
             return this;
         }
 
@@ -361,7 +352,7 @@ public final class SiteTemplate
         {
             changes.recordChange( newPossibleChange( "layoutTemplates" ).from( this.original.getLayoutTemplates().
                 getTemplate( value.getPath() ) ).to( value ).build() );
-            this.templates.put( value.getName(), value );
+            this.templates.add( value );
             return this;
         }
 
@@ -369,7 +360,7 @@ public final class SiteTemplate
         {
             changes.recordChange( newPossibleChange( "imageTemplates" ).from( this.original.getImageTemplates().
                 getTemplate( value.getPath() ) ).to( value ).build() );
-            this.templates.put( value.getName(), value );
+            this.templates.add( value );
             return this;
         }
 

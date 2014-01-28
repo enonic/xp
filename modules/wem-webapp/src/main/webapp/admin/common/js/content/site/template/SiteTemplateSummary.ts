@@ -1,5 +1,13 @@
 module api.content.site.template {
 
+    import PageTemplateName = api.content.page.PageTemplateName;
+
+    import PartTemplateName = api.content.page.part.PartTemplateName;
+
+    import LayoutTemplateName = api.content.page.layout.LayoutTemplateName;
+
+    import ImageTemplateName = api.content.page.image.ImageTemplateName;
+
     export class SiteTemplateSummary extends api.item.BaseItem {
 
         private name: string;
@@ -9,8 +17,6 @@ module api.content.site.template {
         private vendor: api.content.site.Vendor;
 
         private modules: api.module.ModuleKey[] = [];
-
-        private supportedContentTypes: string[];
 
         private rootContentType: api.schema.content.ContentTypeName;
 
@@ -22,6 +28,16 @@ module api.content.site.template {
 
         private description: string;
 
+        private contentTypeFilter: ContentTypeFilter;
+
+        private pageTemplates: PageTemplateName[];
+
+        private partTemplates: PartTemplateName[];
+
+        private layoutTemplates: LayoutTemplateName[];
+
+        private imageTemplates: ImageTemplateName[];
+
         constructor(json: api.content.site.template.json.SiteTemplateSummaryJson) {
             super(json);
             this.name = json.name;
@@ -30,12 +46,35 @@ module api.content.site.template {
             for (var i = 0; i < json.modules.length; i++) {
                 this.modules.push(api.module.ModuleKey.fromString(json.modules[i]));
             }
-            this.supportedContentTypes = json.supportedContentTypes;
             this.rootContentType = new api.schema.content.ContentTypeName(json.rootContentType);
             this.version = json.version;
             this.url = json.url;
             this.key = SiteTemplateKey.fromString(json.key);
             this.description = json.description;
+
+            this.contentTypeFilter = new ContentTypeFilterBuilder().
+                fromJson(json.contentTypeFilter).
+                build();
+
+            this.pageTemplates = [];
+            json.pageTemplates.forEach((name: string) => {
+                this.pageTemplates.push(new PageTemplateName(name));
+            });
+
+            this.layoutTemplates = [];
+            json.layoutTemplates.forEach((name: string) => {
+                this.layoutTemplates.push(new LayoutTemplateName(name));
+            });
+
+            this.partTemplates = [];
+            json.partTemplates.forEach((name: string) => {
+                this.partTemplates.push(new PartTemplateName(name));
+            });
+
+            this.imageTemplates = [];
+            json.imageTemplates.forEach((name: string) => {
+                this.imageTemplates.push(new ImageTemplateName(name));
+            });
         }
 
         static fromExtModel(model: Ext_data_Model): SiteTemplateSummary {
@@ -62,10 +101,6 @@ module api.content.site.template {
             return this.modules;
         }
 
-        getSupportedContentTypes(): string[] {
-            return this.supportedContentTypes;
-        }
-
         getRootContentType(): api.schema.content.ContentTypeName {
             return this.rootContentType;
         }
@@ -80,6 +115,14 @@ module api.content.site.template {
 
         getDescription(): string {
             return this.description;
+        }
+
+        public getDefaultImageTemplate(): ImageTemplateName {
+            if (this.imageTemplates.length == 0) {
+                return null;
+            }
+
+            return this.imageTemplates[0];
         }
 
         static fromJsonArray(jsonArray: api.content.site.template.json.SiteTemplateSummaryJson[]): SiteTemplateSummary[] {
