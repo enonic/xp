@@ -26,7 +26,7 @@
   }
 
   .text-input.large {
-    font-size: 20px;
+    font-size: 15px;
     border: 2px solid @admin-medium-gray-border;
   }
 
@@ -44,10 +44,9 @@
 
     .tab-bar-item {
       cursor: pointer;
-      color: #ccc;
-      padding: 10px;
-      font-size: 22px !important;
-      line-height: 20px;
+      color: #888;
+      padding: 10px 20px 10px 0;
+      font-size: 14px;
       display: inline-block;
 
       &.active {
@@ -63,7 +62,7 @@
   .dropzone {
     padding: 10px;
     height: 100px;
-    line-height: 29px;
+    line-height: 31px;
   }
 
   .dropzone:before {
@@ -76,9 +75,12 @@
     overflow-y: auto;
     overflow-x: hidden;
 
-    h4 {
-      color: #ccc;
-      margin: 20px 10px;
+    > h4 {
+      font-size: 14px;
+      color: #888;
+      margin: 20px 0px;
+      line-height: 0.9em;
+      padding-left:10px
     }
 
     .site-template-list-item,
@@ -105,7 +107,6 @@
         height: 32px;
         width: 32px;
         display: block;
-        margin: 0 15px 0 10px;
         float: left;
       }
 
@@ -115,13 +116,13 @@
       }
 
       p {
-        color: #acacac;
+        color: #888;
       }
 
       h6, p {
         .clearfix();
         // important needed to override style in admin.css
-        margin: 0 0 0 57px !important;
+        margin: 0 0 0 43px !important;
         .ellipsis();
         white-space: nowrap;
       }
@@ -150,7 +151,7 @@
         height: 270px;
 
         h4 {
-          border-bottom: 1px solid #eee;
+          border-bottom: 1px solid #aaa;
         }
       }
     }
