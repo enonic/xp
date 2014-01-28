@@ -29,7 +29,7 @@ import static java.nio.file.Files.isRegularFile;
 public final class RelationshipTypeDaoImpl
     implements RelationshipTypeDao
 {
-    private static final String RELATIONSHIP_TYPE_XML = "relation-type.xml";
+    private static final String RELATIONSHIP_TYPE_XML = "relationship-type.xml";
 
     private Path basePath;
 

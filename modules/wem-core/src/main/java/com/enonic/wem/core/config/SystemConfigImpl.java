@@ -71,7 +71,7 @@ final class SystemConfigImpl
     @Override
     public Path getRelationshiptTypesDir()
     {
-        return getSchemasDir().resolve( "relation-types" );
+        return getSchemasDir().resolve( "relationship-types" );
     }
 
     @Override
