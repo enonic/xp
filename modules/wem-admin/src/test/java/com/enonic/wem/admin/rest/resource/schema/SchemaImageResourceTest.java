@@ -14,14 +14,10 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.blob.Blob;
-import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.api.command.content.blob.GetBlob;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.command.schema.mixin.GetMixins;
-import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypes;
+import com.enonic.wem.api.command.schema.relationship.GetRelationshipType;
 import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.icon.Icon;
 import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -31,9 +27,6 @@ import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinNames;
 import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
-import com.enonic.wem.api.schema.relationship.RelationshipTypes;
-import com.enonic.wem.core.blobstore.memory.MemoryBlobRecord;
 
 import static com.enonic.wem.api.form.Input.newInput;
 import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
@@ -43,10 +36,6 @@ import static org.junit.Assert.*;
 public class SchemaImageResourceTest
 {
     private SchemaImageResource controller;
-
-    private static final BlobKey BLOB_KEY = new BlobKey( "ABC" );
-
-    private static final Icon ICON = Icon.from( BLOB_KEY, "image/png" );
 
     private Client client;
 
@@ -70,7 +59,7 @@ public class SchemaImageResourceTest
             name( "my_content_type" ).
             displayName( "My content type" ).
             superType( ContentTypeName.from( "unstructured" ) ).
-            schemaIcon( schemaIcon ).
+            icon( schemaIcon ).
             build();
         setupContentType( contentType );
 
@@ -92,7 +81,7 @@ public class SchemaImageResourceTest
         final ContentType systemContentType = ContentType.newContentType().
             name( "unstructured" ).
             displayName( "Unstructured" ).
-            schemaIcon( schemaIcon ).
+            icon( schemaIcon ).
             build();
         setupContentType( systemContentType );
 
@@ -136,13 +125,12 @@ public class SchemaImageResourceTest
         throws Exception
     {
         byte[] data = Resources.toByteArray( getClass().getResource( "contenttypeicon.png" ) );
-        Blob blob = new MemoryBlobRecord( BLOB_KEY, data );
-        Mockito.when( client.execute( Mockito.isA( GetBlob.class ) ) ).thenReturn( blob );
+        final SchemaIcon icon = SchemaIcon.from( data, "image/png" );
 
         Mixin mixin = newMixin().
             name( "postal_code" ).
             displayName( "My content type" ).
-            icon( ICON ).
+            icon( icon ).
             addFormItem( newInput().name( "postal_code" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         setupMixin( mixin );
@@ -179,8 +167,7 @@ public class SchemaImageResourceTest
         throws Exception
     {
         byte[] data = Resources.toByteArray( getClass().getResource( "contenttypeicon.png" ) );
-        Blob blob = new MemoryBlobRecord( BLOB_KEY, data );
-        Mockito.when( client.execute( Mockito.isA( GetBlob.class ) ) ).thenReturn( blob );
+        final SchemaIcon icon = SchemaIcon.from( data, "image/png" );
 
         RelationshipType relationshipType = newRelationshipType().
             name( "like" ).
@@ -188,7 +175,7 @@ public class SchemaImageResourceTest
             toSemantic( "liked by" ).
             addAllowedFromType( ContentTypeName.from( "person" ) ).
             addAllowedToType( ContentTypeName.from( "person" ) ).
-            icon( ICON ).
+            icon( icon ).
             build();
         setupRelationshipType( relationshipType );
 
@@ -241,11 +228,8 @@ public class SchemaImageResourceTest
 
     private void setupRelationshipType( final RelationshipType relationshipType )
     {
-        final List<RelationshipType> list = Lists.newArrayList();
-        list.add( relationshipType );
-        final RelationshipTypes result = RelationshipTypes.from( list );
-        final GetRelationshipTypes command = new GetRelationshipTypes().names( RelationshipTypeNames.from( relationshipType.getName() ) );
-        Mockito.when( client.execute( command ) ).thenReturn( result );
+        final GetRelationshipType command = new GetRelationshipType().name( relationshipType.getName() );
+        Mockito.when( client.execute( command ) ).thenReturn( relationshipType );
     }
 
     private void assertImage( final BufferedImage image, final int size )

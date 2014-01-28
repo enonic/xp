@@ -9,13 +9,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
 
-import com.google.common.io.ByteStreams;
-
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.blob.Blob;
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.blob.CreateBlob;
-import com.enonic.wem.api.icon.Icon;
 import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.core.initializer.InitializerTask;
 
@@ -46,28 +40,6 @@ public abstract class BaseInitializer
         catch ( IOException e )
         {
             throw new RuntimeException( "Failed to load file: " + filePath, e );
-        }
-    }
-
-    protected Icon loadIcon( final String name )
-    {
-        final String filePath = metaInfFolderBasePath + FILE_SEPARATOR + name.toLowerCase() + ".png";
-        try
-        {
-            final InputStream stream = this.getClass().getResourceAsStream( filePath );
-            if ( stream == null )
-            {
-                return null;
-            }
-
-            final byte[] iconData = IOUtils.toByteArray( stream );
-            final CreateBlob createBlob = Commands.blob().create( ByteStreams.newInputStreamSupplier( iconData ).getInput() );
-            final Blob blob = client.execute( createBlob );
-            return Icon.from( blob.getKey(), "image/png" );
-        }
-        catch ( Exception e )
-        {
-            throw new RuntimeException( "Failed to load icon file: " + filePath, e );
         }
     }
 

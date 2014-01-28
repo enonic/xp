@@ -1,18 +1,14 @@
 package com.enonic.wem.core.schema.relationship;
 
-import javax.jcr.Session;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypes;
+import com.enonic.wem.api.command.schema.relationship.GetRelationshipType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
-import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;
 
@@ -20,10 +16,10 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 
-public class GetRelationshipTypesHandlerTest
+public class GetRelationshipTypeHandlerTest
     extends AbstractCommandHandlerTest
 {
-    private GetRelationshipTypesHandler handler;
+    private GetRelationshipTypeHandler handler;
 
     private RelationshipTypeDao relationshipTypeDao;
 
@@ -34,7 +30,7 @@ public class GetRelationshipTypesHandlerTest
         super.initialize();
 
         relationshipTypeDao = Mockito.mock( RelationshipTypeDao.class );
-        handler = new GetRelationshipTypesHandler();
+        handler = new GetRelationshipTypeHandler();
         handler.setContext( this.context );
         handler.setRelationshipTypeDao( relationshipTypeDao );
     }
@@ -44,38 +40,27 @@ public class GetRelationshipTypesHandlerTest
         throws Exception
     {
         // setup
-        final RelationshipTypeName name1 = RelationshipTypeName.from( "like" );
+        final RelationshipTypeName name = RelationshipTypeName.from( "like" );
         final RelationshipType relationshipType = RelationshipType.newRelationshipType().
-            name( name1 ).
+            name( name ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
             addAllowedFromType( ContentTypeName.from( "person" ) ).
             addAllowedToType( ContentTypeName.from( "person" ) ).
             build();
 
-        final RelationshipTypeName name2 = RelationshipTypeName.from( "hate" );
-        final RelationshipType relationshipType2 = RelationshipType.newRelationshipType().
-            name( name2 ).
-            fromSemantic( "hates" ).
-            toSemantic( "hated by" ).
-            addAllowedFromType( ContentTypeName.from( "person" ) ).
-            addAllowedToType( ContentTypeName.from( "person" ) ).
-            build();
-
-        final RelationshipTypeNames selectors = RelationshipTypeNames.from( name1, name2 );
-        final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType, relationshipType2 );
-
         // expectation
-        Mockito.when( relationshipTypeDao.select( Mockito.eq( selectors ), Mockito.any( Session.class ) ) ).thenReturn( relationshipTypes );
+        Mockito.when( relationshipTypeDao.getRelationshipType( Mockito.eq( name ) ) ).thenReturn(
+            RelationshipType.newRelationshipType( relationshipType ) );
 
         // exercise
-        final GetRelationshipTypes command = Commands.relationshipType().get().byNames( selectors );
+        final GetRelationshipType command = Commands.relationshipType().get().byName( name );
 
         this.handler.setCommand( command );
         this.handler.handle();
 
         // verify
-        verify( relationshipTypeDao, only() ).select( Mockito.eq( selectors ), Mockito.any( Session.class ) );
-        assertEquals( 2, command.getResult().getSize() );
+        verify( relationshipTypeDao, only() ).getRelationshipType( Mockito.eq( name ) );
+        assertNotNull( command.getResult() );
     }
 }

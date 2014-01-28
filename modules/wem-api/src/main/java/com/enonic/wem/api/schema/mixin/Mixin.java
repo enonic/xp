@@ -4,7 +4,6 @@ import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItems;
 import com.enonic.wem.api.schema.BaseSchema;
 import com.enonic.wem.api.schema.Schema;
-import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.SchemaKey;
 
 public class Mixin
@@ -13,13 +12,10 @@ public class Mixin
 {
     private final FormItems formItems;
 
-    private final SchemaIcon schemaIcon;
-
     private Mixin( final Builder builder )
     {
         super( builder );
         this.formItems = builder.formItems;
-        this.schemaIcon = builder.schemaIcon;
     }
 
     @Override
@@ -44,11 +40,6 @@ public class Mixin
         return new Builder();
     }
 
-    public SchemaIcon getSchemaIcon()
-    {
-        return schemaIcon;
-    }
-
     public static Builder newMixin( final Mixin mixin )
     {
         return new Builder( mixin );
@@ -59,8 +50,6 @@ public class Mixin
     {
         private FormItems formItems = new FormItems();
 
-        private SchemaIcon schemaIcon;
-
         public Builder()
         {
             super();
@@ -70,7 +59,6 @@ public class Mixin
         {
             super( mixin );
             this.formItems = mixin.formItems;
-            this.schemaIcon = mixin.getSchemaIcon();
         }
 
         public Builder name( final MixinName value )
@@ -94,12 +82,6 @@ public class Mixin
         public Builder addFormItem( FormItem value )
         {
             this.formItems.add( value );
-            return this;
-        }
-
-        public Builder schemaIcon( SchemaIcon schemaIcon )
-        {
-            this.schemaIcon = schemaIcon;
             return this;
         }
 

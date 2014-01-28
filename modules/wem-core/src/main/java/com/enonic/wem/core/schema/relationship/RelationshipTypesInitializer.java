@@ -47,7 +47,7 @@ public class RelationshipTypesInitializer
         for ( RelationshipType relationshipType : SYSTEM_TYPES )
         {
             relationshipType = RelationshipType.newRelationshipType( relationshipType ).
-                icon( loadIcon( relationshipType.getName().toString() ) ).
+                icon( loadSchemaIcon( relationshipType.getName().toString() ) ).
                 build();
             createOrUpdate( relationshipType );
         }
@@ -67,7 +67,7 @@ public class RelationshipTypesInitializer
                 toSemantic( relationshipType.getToSemantic() ).
                 allowedFromTypes( relationshipType.getAllowedFromTypes() ).
                 allowedToTypes( relationshipType.getAllowedToTypes() ).
-                icon( relationshipType.getIcon() );
+                schemaIcon( relationshipType.getIcon() );
 
             client.execute( createCommand );
         }
@@ -81,7 +81,7 @@ public class RelationshipTypesInitializer
                 public RelationshipType edit( final RelationshipType relationshipType )
                 {
                     return RelationshipType.newRelationshipType( relationshipType ).
-                        displayName(relationshipType.getDisplayName()).
+                        displayName( relationshipType.getDisplayName() ).
                         fromSemantic( relationshipType.getFromSemantic() ).
                         toSemantic( relationshipType.getToSemantic() ).
                         addAllowedFromTypes( relationshipType.getAllowedFromTypes() ).
@@ -89,7 +89,7 @@ public class RelationshipTypesInitializer
                         icon( relationshipType.getIcon() ).
                         build();
                 }
-            });
+            } );
 
             client.execute( updateCommand );
         }

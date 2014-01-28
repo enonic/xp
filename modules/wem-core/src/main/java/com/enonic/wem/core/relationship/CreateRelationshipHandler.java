@@ -23,14 +23,15 @@ public final class CreateRelationshipHandler
     public void handle()
         throws Exception
     {
-        final Relationship.Builder builder = newRelationship();
-        builder.creator( AccountKey.anonymous() );
-        builder.createdTime( DateTime.now() );
-        builder.type( command.getType() );
-        builder.fromContent( command.getFromContent() );
-        builder.toContent( command.getToContent() );
-        builder.properties( command.getProperties() );
-        final Relationship relationship = builder.build();
+        final Relationship relationship = newRelationship().
+            creator( AccountKey.anonymous() ).
+            createdTime( DateTime.now() ).
+            type( command.getType() ).
+            fromContent( command.getFromContent() ).
+            toContent( command.getToContent() ).
+            properties( command.getProperties() ).
+            createdTime( DateTime.now() ).
+            build();
 
         final Session session = context.getJcrSession();
         relationshipDao.create( relationship, session );

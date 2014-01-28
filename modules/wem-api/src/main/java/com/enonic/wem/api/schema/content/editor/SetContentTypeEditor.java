@@ -2,8 +2,8 @@ package com.enonic.wem.api.schema.content.editor;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.icon.Icon;
 import com.enonic.wem.api.form.Form;
+import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
@@ -22,7 +22,7 @@ public final class SetContentTypeEditor
 
     private final Form form;
 
-    private final Icon icon;
+    private final SchemaIcon icon;
 
     private final String contentDisplayNameScript;
 
@@ -54,7 +54,7 @@ public final class SetContentTypeEditor
 
         private Form form;
 
-        private Icon icon;
+        private SchemaIcon icon;
 
         private String contentDisplayNameScript;
 
@@ -92,7 +92,7 @@ public final class SetContentTypeEditor
             return this;
         }
 
-        public Builder icon( final Icon icon )
+        public Builder icon( final SchemaIcon icon )
         {
             this.icon = icon;
             return this;

@@ -10,6 +10,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.enonic.wem.admin.json.icon.IconJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeConfigJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeListJson;
@@ -17,10 +18,13 @@ import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.schema.json.CreateOrUpdateSchemaJsonResult;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
+import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.content.blob.GetBlob;
 import com.enonic.wem.api.command.schema.relationship.CreateRelationshipType;
 import com.enonic.wem.api.command.schema.relationship.DeleteRelationshipType;
 import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipType;
+import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
@@ -118,6 +122,7 @@ public class RelationshipTypeResource
         {
             final RelationshipType relationshipType = new RelationshipTypeXmlSerializer().
                 overrideName( json.getName().toString() ).toRelationshipType( json.getConfig() );
+            final SchemaIcon schemaIcon = getSchemaIcon( json.getIconJson() );
 
             final CreateRelationshipType createCommand = Commands.relationshipType().create();
             createCommand.
@@ -127,7 +132,7 @@ public class RelationshipTypeResource
                 toSemantic( relationshipType.getToSemantic() ).
                 allowedFromTypes( relationshipType.getAllowedFromTypes() ).
                 allowedToTypes( relationshipType.getAllowedToTypes() ).
-                icon( json.getIconJson() != null ? json.getIconJson().getIcon() : null );
+                schemaIcon( schemaIcon );
 
             this.client.execute( createCommand );
 
@@ -148,6 +153,7 @@ public class RelationshipTypeResource
         {
             final RelationshipType parsed = new RelationshipTypeXmlSerializer().
                 overrideName( json.getName().toString() ).toRelationshipType( json.getConfig() );
+            final SchemaIcon schemaIcon = getSchemaIcon( json.getIconJson() );
 
             final RelationshipTypeEditor editor = new RelationshipTypeEditor()
             {
@@ -161,9 +167,9 @@ public class RelationshipTypeResource
                     builder.toSemantic( parsed.getToSemantic() );
                     builder.addAllowedFromTypes( parsed.getAllowedFromTypes() );
                     builder.addAllowedToTypes( parsed.getAllowedToTypes() );
-                    if ( json.getIconJson() != null )
+                    if ( schemaIcon != null )
                     {
-                        builder.icon( json.getIconJson().getIcon() );
+                        builder.icon( schemaIcon );
                     }
                     return builder.build();
                 }
@@ -181,5 +187,15 @@ public class RelationshipTypeResource
         {
             return CreateOrUpdateSchemaJsonResult.error( e.getMessage() );
         }
+    }
+
+    private SchemaIcon getSchemaIcon( final IconJson iconJson )
+    {
+        if ( iconJson != null )
+        {
+            final Blob blob = client.execute( new GetBlob( iconJson.getIcon().getBlobKey() ) );
+            return blob == null ? null : SchemaIcon.from( blob.getStream(), iconJson.getMimeType() );
+        }
+        return null;
     }
 }

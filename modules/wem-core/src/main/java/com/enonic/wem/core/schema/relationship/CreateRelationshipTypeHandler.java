@@ -1,7 +1,6 @@
 package com.enonic.wem.core.schema.relationship;
 
 import javax.inject.Inject;
-import javax.jcr.Session;
 
 import org.joda.time.DateTime;
 
@@ -39,12 +38,10 @@ public final class CreateRelationshipTypeHandler
         }
         builder.createdTime( currentTime );
         builder.modifiedTime( currentTime );
-        builder.icon( command.getIcon() );
+        builder.icon( command.getSchemaIcon() );
         final RelationshipType relationshipType = builder.build();
 
-        final Session session = context.getJcrSession();
-        relationshipTypeDao.create( relationshipType, session );
-        session.save();
+        relationshipTypeDao.createRelationshipType( relationshipType );
         command.setResult( relationshipType.getName() );
     }
 

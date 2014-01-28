@@ -3,8 +3,8 @@ package com.enonic.wem.api.command.schema.relationship;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.icon.Icon;
 import com.enonic.wem.api.command.Command;
+import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
@@ -23,7 +23,7 @@ public final class CreateRelationshipType
 
     private ContentTypeNames allowedToTypes;
 
-    private Icon icon;
+    private SchemaIcon schemaIcon;
 
     public CreateRelationshipType name( final String name )
     {
@@ -67,9 +67,9 @@ public final class CreateRelationshipType
         return this;
     }
 
-    public CreateRelationshipType icon( final Icon icon )
+    public CreateRelationshipType schemaIcon( final SchemaIcon schemaIcon )
     {
-        this.icon = icon;
+        this.schemaIcon = schemaIcon;
         return this;
     }
 
@@ -103,9 +103,9 @@ public final class CreateRelationshipType
         return allowedToTypes;
     }
 
-    public Icon getIcon()
+    public SchemaIcon getSchemaIcon()
     {
-        return icon;
+        return schemaIcon;
     }
 
     @Override
@@ -128,13 +128,13 @@ public final class CreateRelationshipType
             Objects.equal( this.toSemantic, that.toSemantic ) &&
             Objects.equal( this.allowedFromTypes, that.allowedFromTypes ) &&
             Objects.equal( this.allowedToTypes, that.allowedToTypes ) &&
-            Objects.equal( this.icon, that.icon );
+            Objects.equal( this.schemaIcon, that.schemaIcon );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( name, displayName, fromSemantic, toSemantic, allowedFromTypes, allowedToTypes, icon );
+        return Objects.hashCode( name, displayName, fromSemantic, toSemantic, allowedFromTypes, allowedToTypes, schemaIcon );
     }
 
     @Override

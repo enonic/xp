@@ -1,30 +1,21 @@
 package com.enonic.wem.core.schema.relationship.dao;
 
-import javax.jcr.Session;
-
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
-import com.enonic.wem.core.jcr.JcrConstants;
 
 public interface RelationshipTypeDao
 {
-    public static final String RELATIONSHIP_TYPES_NODE = "relationshipTypes";
+    RelationshipType createRelationshipType( final RelationshipType relationshipType );
 
-    public static final String RELATIONSHIP_TYPES_PATH = JcrConstants.ROOT_NODE + "/" + RELATIONSHIP_TYPES_NODE + "/";
+    void updateRelationshipType( final RelationshipType relationshipType );
 
-    public void create( final RelationshipType relationshipType, final Session session );
+    boolean deleteRelationshipType( final RelationshipTypeName relationshipTypeName );
 
-    public void update( final RelationshipType relationshipType, final Session session );
+    RelationshipTypeNames exists( final RelationshipTypeNames relationshipTypeNames );
 
-    public RelationshipType delete( final RelationshipTypeName relationshipTypeName, final Session session );
+    RelationshipTypes getAllRelationshipTypes();
 
-    public RelationshipTypeNames exists( final RelationshipTypeNames relationshipTypeNames, final Session session );
-
-    public RelationshipTypes selectAll( Session session );
-
-    public RelationshipTypes select( RelationshipTypeNames relationshipTypeNames, final Session session );
-
-    public RelationshipType select( RelationshipTypeName relationshipTypeName, final Session session );
+    RelationshipType.Builder getRelationshipType( RelationshipTypeName relationshipTypeName );
 }

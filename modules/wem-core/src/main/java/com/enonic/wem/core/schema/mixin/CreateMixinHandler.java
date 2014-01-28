@@ -30,7 +30,7 @@ public final class CreateMixinHandler
         final Mixin mixin = Mixin.newMixin().
             name( command.getName() ).
             displayName( command.getDisplayName() ).
-            schemaIcon( command.getSchemaIcon() ).
+            icon( command.getSchemaIcon() ).
             formItems( command.getFormItems() ).
             createdTime( DateTime.now() ).
             //creator( ... ).

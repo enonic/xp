@@ -167,7 +167,7 @@ public class ContentTypeResource
 
                     if ( schemaIcon != null )
                     {
-                        builder.schemaIcon( schemaIcon );
+                        builder.icon( schemaIcon );
                     }
 
                     return builder.build();
@@ -215,7 +215,7 @@ public class ContentTypeResource
         if ( iconJson != null )
         {
             final Blob blob = client.execute( new GetBlob( iconJson.getIcon().getBlobKey() ) );
-            return SchemaIcon.from( blob.getStream(), iconJson.getMimeType() );
+            return blob == null ? null : SchemaIcon.from( blob.getStream(), iconJson.getMimeType() );
         }
         return null;
     }

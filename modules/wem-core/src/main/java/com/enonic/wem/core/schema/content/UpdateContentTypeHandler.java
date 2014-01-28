@@ -56,8 +56,6 @@ public final class UpdateContentTypeHandler
             {
                 contentTypeDao.updateContentType( editedContentType );
             }
-
-            command.setResult( UpdateContentTypeResult.SUCCESS );
         }
 
         command.setResult( UpdateContentTypeResult.SUCCESS );

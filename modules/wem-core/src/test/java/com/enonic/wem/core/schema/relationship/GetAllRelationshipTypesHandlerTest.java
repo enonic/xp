@@ -1,7 +1,5 @@
 package com.enonic.wem.core.schema.relationship;
 
-import javax.jcr.Session;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -60,7 +58,7 @@ public class GetAllRelationshipTypesHandlerTest
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType, relationshipType2 );
 
         // expectation
-        Mockito.when( relationshipTypeDao.selectAll( Mockito.any( Session.class ) ) ).thenReturn( relationshipTypes );
+        Mockito.when( relationshipTypeDao.getAllRelationshipTypes() ).thenReturn( relationshipTypes );
 
         // exercise
         final GetAllRelationshipTypes command = Commands.relationshipType().get().all();
@@ -69,7 +67,7 @@ public class GetAllRelationshipTypesHandlerTest
         this.handler.handle();
 
         // verify
-        verify( relationshipTypeDao, atLeastOnce() ).selectAll( Mockito.any( Session.class ) );
+        verify( relationshipTypeDao, atLeastOnce() ).getAllRelationshipTypes();
         assertEquals( 2, command.getResult().getSize() );
     }
 }

@@ -4,7 +4,6 @@ package com.enonic.wem.api.schema.relationship;
 import java.util.List;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -98,7 +97,6 @@ public final class RelationshipType
 
     public void checkIllegalEdit( final RelationshipType to )
     {
-        Preconditions.checkArgument( this.getCreatedTime().equals( to.getCreatedTime() ) );
         IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), RelationshipType.class );
 
     }

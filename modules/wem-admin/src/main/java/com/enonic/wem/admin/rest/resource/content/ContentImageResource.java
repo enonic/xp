@@ -107,7 +107,7 @@ public class ContentImageResource
         }
 
         final SchemaIcon contentTypeIcon = findRootContentTypeIcon( contentType );
-        if( contentTypeIcon == null )
+        if ( contentTypeIcon == null )
         {
             throw new WebApplicationException( Response.Status.NOT_FOUND );
         }
@@ -129,11 +129,11 @@ public class ContentImageResource
     private SchemaIcon findRootContentTypeIcon( final ContentTypeName contentTypeName )
     {
         ContentType contentType = getContentType( contentTypeName );
-        while ( contentType != null && contentType.getSchemaIcon() == null )
+        while ( contentType != null && contentType.getIcon() == null )
         {
             contentType = getContentType( contentType.getSuperType() );
         }
-        return contentType == null ? null : contentType.getSchemaIcon();
+        return contentType == null ? null : contentType.getIcon();
     }
 
     private ContentType getContentType( final ContentTypeName contentTypeName )

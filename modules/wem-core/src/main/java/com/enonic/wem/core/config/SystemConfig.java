@@ -23,6 +23,8 @@ public interface SystemConfig
 
     public Path getMixinsDir();
 
+    public Path getRelationshiptTypesDir();
+
     public boolean isMigrateEnabled();
 
     public String getMigrateJdbcDriver();

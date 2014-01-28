@@ -1,8 +1,8 @@
 package com.enonic.wem.api.schema.mixin.editor;
 
-import com.enonic.wem.api.icon.Icon;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItems;
+import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.mixin.Mixin;
 
 public final class SetMixinEditor
@@ -12,7 +12,7 @@ public final class SetMixinEditor
 
     private final String displayName;
 
-    private final Icon icon;
+    private final SchemaIcon icon;
 
     private SetMixinEditor( final Builder builder )
     {
@@ -32,7 +32,7 @@ public final class SetMixinEditor
 
         private String displayName;
 
-        private Icon icon;
+        private SchemaIcon icon;
 
         public Builder formItems( final FormItems value )
         {
@@ -52,7 +52,7 @@ public final class SetMixinEditor
             return this;
         }
 
-        public Builder icon( final Icon value )
+        public Builder icon( final SchemaIcon value )
         {
             this.icon = value;
             return this;

@@ -1,17 +1,14 @@
 package com.enonic.wem.core.schema.relationship;
 
-import javax.jcr.Session;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.relationship.CreateRelationshipType;
-
 import com.enonic.wem.api.schema.content.ContentTypeNames;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;
 
@@ -55,7 +52,7 @@ public class CreateRelationshipTypeHandlerTest
         this.handler.handle();
 
         // verify
-        verify( relationshipTypeDao, atLeastOnce() ).create( Mockito.isA( RelationshipType.class ), Mockito.any( Session.class ) );
+        verify( relationshipTypeDao, atLeastOnce() ).createRelationshipType( Mockito.isA( RelationshipType.class ) );
         final RelationshipTypeName relationshipTypeName = command.getResult();
         assertNotNull( relationshipTypeName );
         assertEquals( "like", relationshipTypeName.toString() );

@@ -21,9 +21,9 @@ public final class DeleteRelationshipTypeHandler
     {
         final RelationshipTypeName relationshipTypeName = command.getName();
 
-        final RelationshipType deletedRelationshipType = relationshipTypeDao.delete( relationshipTypeName, context.getJcrSession() );
-        context.getJcrSession().save();
-        command.setResult( new DeleteRelationshipTypeResult( deletedRelationshipType ) );
+        final RelationshipType.Builder deletedRelationshipType = relationshipTypeDao.getRelationshipType( command.getName() );
+        relationshipTypeDao.deleteRelationshipType( relationshipTypeName );
+        command.setResult( new DeleteRelationshipTypeResult( deletedRelationshipType != null ? deletedRelationshipType.build() : null ) );
     }
 
     @Inject

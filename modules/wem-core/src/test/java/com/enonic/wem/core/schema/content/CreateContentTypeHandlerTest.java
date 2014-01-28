@@ -60,7 +60,7 @@ public class CreateContentTypeHandlerTest
             setAbstract( contentType.isAbstract() ).
             setFinal( contentType.isFinal() ).
             form( contentType.form() ).
-            schemaIcon( contentType.getSchemaIcon() ).
+            schemaIcon( contentType.getIcon() ).
             contentDisplayNameScript( contentType.getContentDisplayNameScript() );
 
         Mockito.when( contentTypeDao.createContentType( Mockito.isA( ContentType.class ) ) ).thenReturn( contentType );
@@ -98,7 +98,7 @@ public class CreateContentTypeHandlerTest
             setAbstract( contentType.isAbstract() ).
             setFinal( contentType.isFinal() ).
             form( contentType.form() ).
-            schemaIcon( contentType.getSchemaIcon() ).
+            schemaIcon( contentType.getIcon() ).
             contentDisplayNameScript( contentType.getContentDisplayNameScript() );
 
         this.handler.setCommand( createCommand );

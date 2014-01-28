@@ -33,7 +33,7 @@ public class MixinsInitializer
             final String mixinJson = loadFileAsString( demoMixinFileName );
             Mixin mixin = serializer.toMixin( mixinJson );
             mixin = Mixin.newMixin( mixin ).
-                schemaIcon( loadSchemaIcon( mixin.getName().toString() ) ).
+                icon( loadSchemaIcon( mixin.getName().toString() ) ).
                 build();
 
             storeMixin( mixin );
@@ -51,7 +51,7 @@ public class MixinsInitializer
             createMixin.name( mixin.getName() );
             createMixin.displayName( mixin.getDisplayName() );
             createMixin.formItems( mixin.getFormItems() );
-            createMixin.schemaIcon( mixin.getSchemaIcon() );
+            createMixin.schemaIcon( mixin.getIcon() );
             client.execute( createMixin );
         }
         else

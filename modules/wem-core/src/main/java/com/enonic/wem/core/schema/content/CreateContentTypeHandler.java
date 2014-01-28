@@ -37,7 +37,7 @@ public final class CreateContentTypeHandler
             setAbstract( command.isAbstract() ).
             setFinal( command.isFinal() ).
             displayName( command.getDisplayName() ).
-            schemaIcon( command.getSchemaIcon() ).
+            icon( command.getSchemaIcon() ).
             createdTime( DateTime.now() ).
             //creator( ... ).
                 build();

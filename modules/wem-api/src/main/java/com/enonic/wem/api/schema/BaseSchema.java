@@ -5,7 +5,6 @@ import org.joda.time.DateTime;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.icon.Icon;
 import com.enonic.wem.api.account.UserKey;
 
 public abstract class BaseSchema<T extends SchemaName>
@@ -25,7 +24,7 @@ public abstract class BaseSchema<T extends SchemaName>
 
     final UserKey modifier;
 
-    final Icon icon;
+    final SchemaIcon icon;
 
     protected BaseSchema( final Builder builder )
     {
@@ -36,7 +35,7 @@ public abstract class BaseSchema<T extends SchemaName>
         this.modifiedTime = builder.modifiedTime;
         this.creator = builder.creator;
         this.modifier = builder.modifier;
-        this.icon = builder.icon;
+        this.icon = builder.schemaIcon;
     }
 
     public SchemaId getId()
@@ -74,12 +73,12 @@ public abstract class BaseSchema<T extends SchemaName>
         return modifier;
     }
 
-    public Icon getIcon()
+    public SchemaIcon getIcon()
     {
         return icon;
     }
 
-    public static class Builder<T extends Builder,SCHEMA_NAME extends SchemaName>
+    public static class Builder<T extends Builder, SCHEMA_NAME extends SchemaName>
     {
         private SchemaId id;
 
@@ -95,7 +94,7 @@ public abstract class BaseSchema<T extends SchemaName>
 
         private UserKey modifier;
 
-        private Icon icon;
+        private SchemaIcon schemaIcon;
 
         public Builder()
         {
@@ -112,7 +111,7 @@ public abstract class BaseSchema<T extends SchemaName>
             this.modifiedTime = schema.modifiedTime;
             this.creator = schema.creator;
             this.modifier = schema.modifier;
-            this.icon = schema.icon;
+            this.schemaIcon = schema.icon;
         }
 
         private T getThis()
@@ -162,9 +161,9 @@ public abstract class BaseSchema<T extends SchemaName>
             return getThis();
         }
 
-        public T icon( Icon icon )
+        public T icon( SchemaIcon schemaIcon )
         {
-            this.icon = icon;
+            this.schemaIcon = schemaIcon;
             return getThis();
         }
     }

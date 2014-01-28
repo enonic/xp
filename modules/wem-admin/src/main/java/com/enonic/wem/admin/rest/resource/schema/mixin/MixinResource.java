@@ -135,7 +135,7 @@ public class MixinResource
                     builder.formItems( parsed.getFormItems() );
                     if ( schemaIcon != null )
                     {
-                        builder.schemaIcon( schemaIcon );
+                        builder.icon( schemaIcon );
                     }
                     return builder.build();
                 }
@@ -191,7 +191,7 @@ public class MixinResource
         if ( iconJson != null )
         {
             final Blob blob = client.execute( new GetBlob( iconJson.getIcon().getBlobKey() ) );
-            return SchemaIcon.from( blob.getStream(), iconJson.getMimeType() );
+            return blob == null ? null : SchemaIcon.from( blob.getStream(), iconJson.getMimeType() );
         }
         return null;
     }

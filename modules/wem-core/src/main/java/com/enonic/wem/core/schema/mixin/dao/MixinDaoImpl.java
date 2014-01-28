@@ -37,7 +37,7 @@ public final class MixinDaoImpl
         final Path mixinPath = pathForMixin( mixin.getName() );
 
         writeMixinXml( mixin, mixinPath );
-        new SchemaIconDao().writeSchemaIcon( mixin.getSchemaIcon(), mixinPath );
+        new SchemaIconDao().writeSchemaIcon( mixin.getIcon(), mixinPath );
 
         return mixin;
     }
@@ -48,7 +48,7 @@ public final class MixinDaoImpl
         final Path mixinPath = pathForMixin( mixin.getName() );
 
         writeMixinXml( mixin, mixinPath );
-        new SchemaIconDao().writeSchemaIcon( mixin.getSchemaIcon(), mixinPath );
+        new SchemaIconDao().writeSchemaIcon( mixin.getIcon(), mixinPath );
     }
 
     @Override
@@ -112,7 +112,7 @@ public final class MixinDaoImpl
         {
             final Mixin.Builder mixin = readMixinXml( mixinPath );
             final SchemaIcon icon = new SchemaIconDao().readSchemaIcon( mixinPath );
-            mixin.schemaIcon( icon );
+            mixin.icon( icon );
             return mixin;
         }
         return null;
@@ -120,7 +120,7 @@ public final class MixinDaoImpl
 
     private void writeMixinXml( final Mixin mixin, final Path mixinPath )
     {
-        final MixinXmlSerializer xmlSerializer = new MixinXmlSerializer().generateName( false );
+        final MixinXmlSerializer xmlSerializer = new MixinXmlSerializer().prettyPrint( true ).generateName( false );
         final String serializedMixin = xmlSerializer.toString( mixin );
         final Path xmlFile = mixinPath.resolve( MIXIN_XML );
 

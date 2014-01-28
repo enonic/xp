@@ -3,7 +3,6 @@ package com.enonic.wem.api.schema;
 
 import org.joda.time.DateTime;
 
-import com.enonic.wem.api.icon.Icon;
 import com.enonic.wem.api.support.ChangeTraceable;
 
 public interface Schema
@@ -21,6 +20,6 @@ public interface Schema
 
     boolean hasChildren();
 
-    Icon getIcon();
+    SchemaIcon getIcon();
 
 }

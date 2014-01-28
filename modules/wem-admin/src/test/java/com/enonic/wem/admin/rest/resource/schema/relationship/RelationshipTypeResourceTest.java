@@ -1,5 +1,7 @@
 package com.enonic.wem.admin.rest.resource.schema.relationship;
 
+import java.io.ByteArrayInputStream;
+
 import javax.ws.rs.core.MediaType;
 
 import org.junit.Before;
@@ -12,7 +14,9 @@ import junit.framework.Assert;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Client;
+import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.content.blob.GetBlob;
 import com.enonic.wem.api.command.schema.relationship.CreateRelationshipType;
 import com.enonic.wem.api.command.schema.relationship.DeleteRelationshipType;
 import com.enonic.wem.api.command.schema.relationship.DeleteRelationshipTypeResult;
@@ -204,6 +208,9 @@ public class RelationshipTypeResourceTest
     {
         Mockito.when( client.execute( isA( RelationshipTypesExists.class ) ) ).thenReturn( RelationshipTypesExistsResult.empty() );
         Mockito.when( client.execute( isA( CreateRelationshipType.class ) ) ).thenReturn( RelationshipTypeName.from( "love" ) );
+        final Blob iconBlob = Mockito.mock( Blob.class );
+        Mockito.when( iconBlob.getStream() ).thenReturn( new ByteArrayInputStream( "icondata".getBytes() ) );
+        Mockito.when( client.execute( isA( GetBlob.class ) ) ).thenReturn( iconBlob );
 
         resource().path( "schema/relationship/create" ).entity( readFromFile( "create_relationship_type_with_icon_params.json" ),
                                                                 MediaType.APPLICATION_JSON_TYPE ).post();

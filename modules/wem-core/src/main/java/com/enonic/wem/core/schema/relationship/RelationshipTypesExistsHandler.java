@@ -1,7 +1,6 @@
 package com.enonic.wem.core.schema.relationship;
 
 import javax.inject.Inject;
-import javax.jcr.Session;
 
 import com.enonic.wem.api.command.schema.relationship.RelationshipTypesExists;
 import com.enonic.wem.api.command.schema.relationship.RelationshipTypesExistsResult;
@@ -19,10 +18,8 @@ public final class RelationshipTypesExistsHandler
     public void handle()
         throws Exception
     {
-        final Session session = context.getJcrSession();
-
         final RelationshipTypeNames relationshipTypeNames = command.getNames();
-        final RelationshipTypeNames existing = relationshipTypeDao.exists( relationshipTypeNames, session );
+        final RelationshipTypeNames existing = relationshipTypeDao.exists( relationshipTypeNames );
 
         command.setResult( RelationshipTypesExistsResult.from( existing ) );
     }

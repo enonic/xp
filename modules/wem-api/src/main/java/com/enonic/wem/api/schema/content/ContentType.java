@@ -7,7 +7,6 @@ import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.schema.BaseSchema;
 import com.enonic.wem.api.schema.Schema;
-import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.SchemaKey;
 import com.enonic.wem.api.schema.SchemaKind;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
@@ -36,8 +35,6 @@ public final class ContentType
 
     private final boolean hasInheritors;
 
-    private final SchemaIcon schemaIcon;
-
     private ContentType( final Builder builder )
     {
         super( builder );
@@ -57,7 +54,6 @@ public final class ContentType
         this.isBuiltIn = builder.isBuiltIn;
         this.form = builder.formBuilder.build();
         this.contentDisplayNameScript = builder.contentDisplayNameScript;
-        this.schemaIcon = builder.schemaIcon;
     }
 
     @Override
@@ -128,11 +124,6 @@ public final class ContentType
         return contentDisplayNameScript;
     }
 
-    public SchemaIcon getSchemaIcon()
-    {
-        return schemaIcon;
-    }
-
     @Override
     public void checkIllegalEdit( final ContentType to )
         throws IllegalEditException
@@ -192,8 +183,6 @@ public final class ContentType
 
         private boolean inheritors;
 
-        private SchemaIcon schemaIcon;
-
         private Builder()
         {
             super();
@@ -215,9 +204,7 @@ public final class ContentType
             {
                 this.formBuilder = newForm( source.form() );
             }
-            this.icon( source.getIcon() );
             this.contentDisplayNameScript = source.getContentDisplayNameScript();
-            this.schemaIcon = source.getSchemaIcon();
         }
 
         public Builder name( final ContentTypeName value )
@@ -295,12 +282,6 @@ public final class ContentType
         public Builder contentDisplayNameScript( final String contentDisplayNameScript )
         {
             this.contentDisplayNameScript = contentDisplayNameScript;
-            return this;
-        }
-
-        public Builder schemaIcon( SchemaIcon schemaIcon )
-        {
-            this.schemaIcon = schemaIcon;
             return this;
         }
 

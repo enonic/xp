@@ -20,7 +20,7 @@ public final class GetRelationshipTypeHandler
         throws Exception
     {
         final RelationshipTypeName selector = command.getName();
-        final RelationshipType relationshipType = relationshipTypeDao.select( selector, context.getJcrSession() );
+        final RelationshipType.Builder relationshipType = relationshipTypeDao.getRelationshipType( selector );
         if ( relationshipType == null )
         {
             if ( command.isNotFoundAsException() )
@@ -31,10 +31,11 @@ public final class GetRelationshipTypeHandler
             {
                 command.setResult( null );
             }
-
         }
-
-        command.setResult( relationshipType );
+        else
+        {
+            command.setResult( relationshipType.build() );
+        }
     }
 
     @Inject

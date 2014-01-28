@@ -37,7 +37,7 @@ public final class ContentTypeDaoImpl
         final Path contentTypePath = pathForContentType( contentType.getName() );
 
         writeContentTypeXml( contentType, contentTypePath );
-        new SchemaIconDao().writeSchemaIcon( contentType.getSchemaIcon(), contentTypePath );
+        new SchemaIconDao().writeSchemaIcon( contentType.getIcon(), contentTypePath );
 
         return contentType;
     }
@@ -48,7 +48,7 @@ public final class ContentTypeDaoImpl
         final Path contentTypePath = pathForContentType( contentType.getName() );
 
         writeContentTypeXml( contentType, contentTypePath );
-        new SchemaIconDao().writeSchemaIcon( contentType.getSchemaIcon(), contentTypePath );
+        new SchemaIconDao().writeSchemaIcon( contentType.getIcon(), contentTypePath );
     }
 
     @Override
@@ -112,7 +112,7 @@ public final class ContentTypeDaoImpl
         {
             final ContentType.Builder contentType = readContentTypeXml( contentTypePath );
             final SchemaIcon icon = new SchemaIconDao().readSchemaIcon( contentTypePath );
-            contentType.schemaIcon( icon );
+            contentType.icon( icon );
             return contentType;
         }
         return null;
@@ -120,7 +120,7 @@ public final class ContentTypeDaoImpl
 
     private void writeContentTypeXml( final ContentType contentType, final Path contentTypePath )
     {
-        final ContentTypeXmlSerializer xmlSerializer = new ContentTypeXmlSerializer().generateName( false );
+        final ContentTypeXmlSerializer xmlSerializer = new ContentTypeXmlSerializer().prettyPrint( true ).generateName( false );
         final String serializedContentType = xmlSerializer.toString( contentType );
         final Path xmlFile = contentTypePath.resolve( CONTENT_TYPE_XML );
 

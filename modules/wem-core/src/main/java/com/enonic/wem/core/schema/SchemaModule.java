@@ -30,7 +30,6 @@ import com.enonic.wem.core.schema.relationship.CreateRelationshipTypeHandler;
 import com.enonic.wem.core.schema.relationship.DeleteRelationshipTypeHandler;
 import com.enonic.wem.core.schema.relationship.GetAllRelationshipTypesHandler;
 import com.enonic.wem.core.schema.relationship.GetRelationshipTypeHandler;
-import com.enonic.wem.core.schema.relationship.GetRelationshipTypesHandler;
 import com.enonic.wem.core.schema.relationship.RelationshipTypesExistsHandler;
 import com.enonic.wem.core.schema.relationship.RelationshipTypesInitializer;
 import com.enonic.wem.core.schema.relationship.UpdateRelationshipTypeHandler;
@@ -77,7 +76,6 @@ public final class SchemaModule
 
         commands.add( CreateRelationshipTypeHandler.class );
         commands.add( DeleteRelationshipTypeHandler.class );
-        commands.add( GetRelationshipTypesHandler.class );
         commands.add( GetAllRelationshipTypesHandler.class );
         commands.add( GetRelationshipTypeHandler.class );
         commands.add( RelationshipTypesExistsHandler.class );

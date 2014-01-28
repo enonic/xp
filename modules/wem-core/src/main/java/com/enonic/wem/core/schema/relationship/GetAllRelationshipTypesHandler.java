@@ -1,7 +1,6 @@
 package com.enonic.wem.core.schema.relationship;
 
 import javax.inject.Inject;
-import javax.jcr.Session;
 
 import com.enonic.wem.api.command.schema.relationship.GetAllRelationshipTypes;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
@@ -18,8 +17,7 @@ public final class GetAllRelationshipTypesHandler
     public void handle()
         throws Exception
     {
-        final Session session = context.getJcrSession();
-        final RelationshipTypes relationshipTypes = relationshipTypeDao.selectAll( session );
+        final RelationshipTypes relationshipTypes = relationshipTypeDao.getAllRelationshipTypes();
 
         command.setResult( relationshipTypes );
     }
