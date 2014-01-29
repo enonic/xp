@@ -18,9 +18,6 @@ import com.enonic.wem.xml.XmlObject;
 public abstract class AbstractTemplateXml<I, O>
     implements XmlObject<I, O>
 {
-    @XmlElement(name = "name", required = true)
-    private String name;
-
     @XmlElement(name = "display-name", required = false)
     private String displayName;
 
@@ -30,10 +27,8 @@ public abstract class AbstractTemplateXml<I, O>
     @XmlElement(name = "config", required = false)
     private DataSetXml config = new DataSetXml();
 
-
     protected void fromTemplate( final Template template )
     {
-        this.name = template.getName().toString();
         this.displayName = template.getDisplayName();
         this.descriptor = template.getDescriptor().toString();
         final RootDataSet cfgDataSet = template.getConfig();
@@ -65,10 +60,5 @@ public abstract class AbstractTemplateXml<I, O>
         final RootDataSet dataSet = new RootDataSet();
         this.config.to( dataSet );
         builder.config( dataSet );
-    }
-
-    public String getName()
-    {
-        return name;
     }
 }

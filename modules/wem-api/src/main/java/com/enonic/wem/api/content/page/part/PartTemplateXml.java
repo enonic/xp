@@ -19,6 +19,5 @@ public final class PartTemplateXml
     public void to( final PartTemplate.Builder builder )
     {
         toTemplate( builder );
-        builder.name( new PartTemplateName( getName() ) );
     }
 }

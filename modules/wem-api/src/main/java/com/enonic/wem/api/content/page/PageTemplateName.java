@@ -8,4 +8,9 @@ public class PageTemplateName
     {
         super( name );
     }
+
+    public static PageTemplateName from( final String name )
+    {
+        return new PageTemplateName( name );
+    }
 }

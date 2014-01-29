@@ -7,11 +7,7 @@ import java.nio.file.Path;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.Template;
-import com.enonic.wem.api.content.page.image.ImageTemplate;
-import com.enonic.wem.api.content.page.layout.LayoutTemplate;
-import com.enonic.wem.api.content.page.part.PartTemplate;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateXml;
@@ -89,6 +85,9 @@ public final class SiteTemplateExporter
                 {
                     continue;
                 }
+
+                final String templateName = StringUtils.remove( templateDir.getFileName().toString(), pathSeparator );
+
                 try (final DirectoryStream<Path> templateFileDs = Files.newDirectoryStream( templateDir, TEMPLATE_FILE_PATTERN ))
                 {
                     for ( final Path templateFile : templateFileDs )
@@ -99,41 +98,14 @@ public final class SiteTemplateExporter
                         if ( entityExporter != null )
                         {
                             final Template.BaseTemplateBuilder template = entityExporter.importObject( parentDirectory, templateFile );
-                            setTemplateKey( moduleName, template );
+                            template.name( templateName );
+                            template.module( moduleName );
                             siteTemplate.addTemplate( template.build() );
                             break;
                         }
                     }
                 }
             }
-        }
-    }
-
-    private void setTemplateKey( final ModuleName moduleName, final Template.BaseTemplateBuilder template )
-    {
-        if ( template instanceof ImageTemplate.Builder )
-        {
-            final ImageTemplate.Builder templateBuilder = (ImageTemplate.Builder) template;
-            templateBuilder.module( moduleName );
-        }
-        else if ( template instanceof PartTemplate.Builder )
-        {
-            final PartTemplate.Builder templateBuilder = (PartTemplate.Builder) template;
-            templateBuilder.module( moduleName );
-        }
-        else if ( template instanceof PageTemplate.Builder )
-        {
-            final PageTemplate.Builder templateBuilder = (PageTemplate.Builder) template;
-            templateBuilder.module( moduleName );
-        }
-        else if ( template instanceof LayoutTemplate.Builder )
-        {
-            final LayoutTemplate.Builder templateBuilder = (LayoutTemplate.Builder) template;
-            templateBuilder.module( moduleName );
-        }
-        else
-        {
-            throw new UnsupportedOperationException( "Template [" + template.getClass().getName() + "] not supported" );
         }
     }
 }

@@ -65,7 +65,7 @@ public class PageTemplateXmlTest
     {
         final String xml = readFromFile( "page-template.xml" );
         final PageTemplate.Builder builder = PageTemplate.newPageTemplate();
-
+        builder.name( "my-page-template" );
         XmlSerializers.pageTemplate().parse( xml ).to( builder );
 
         builder.module( ModuleName.from( "demo" ) );

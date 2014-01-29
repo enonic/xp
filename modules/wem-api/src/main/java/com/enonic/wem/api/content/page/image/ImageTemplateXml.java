@@ -19,6 +19,5 @@ public final class ImageTemplateXml
     public void to( final ImageTemplate.Builder builder )
     {
         toTemplate( builder );
-        builder.name( new ImageTemplateName( getName() ) );
     }
 }

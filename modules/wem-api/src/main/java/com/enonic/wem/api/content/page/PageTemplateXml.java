@@ -52,7 +52,6 @@ public final class PageTemplateXml
     {
         toTemplate( builder );
         builder.canRender( ContentTypeNames.from( this.canRender ) );
-        builder.name( new PageTemplateName( getName() ) );
 
         final PageRegions.Builder regionsBuilder = newPageRegions();
         for ( RegionXml regionAsXml : this.regions )

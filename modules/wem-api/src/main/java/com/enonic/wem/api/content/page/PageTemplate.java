@@ -67,6 +67,13 @@ public final class PageTemplate
         {
         }
 
+        @Override
+        public Builder name( final String name )
+        {
+            this.name = PageTemplateName.from( name );
+            return this;
+        }
+
         public Builder canRender( final ContentTypeNames canRender )
         {
             this.canRender = canRender;

@@ -10,4 +10,9 @@ public class ImageTemplateName
     {
         super( name );
     }
+
+    public static ImageTemplateName from( final String name )
+    {
+        return new ImageTemplateName( name );
+    }
 }

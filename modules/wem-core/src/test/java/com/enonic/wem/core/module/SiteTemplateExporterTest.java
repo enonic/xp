@@ -114,7 +114,6 @@ public class SiteTemplateExporterTest
 
     private SiteTemplate createSiteTemplate()
     {
-        final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( "mySiteTemplate-1.0.0" );
         final ModuleKey module = ModuleKey.from( "mymodule-1.0.0" );
 
         final RootDataSet partTemplateConfig = new RootDataSet();

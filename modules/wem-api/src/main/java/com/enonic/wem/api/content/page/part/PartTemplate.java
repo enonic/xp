@@ -40,6 +40,13 @@ public final class PartTemplate
         {
         }
 
+        @Override
+        public Builder name( final String name )
+        {
+            this.name = PartTemplateName.from( name );
+            return this;
+        }
+
         public PartTemplate build()
         {
             return new PartTemplate( this );

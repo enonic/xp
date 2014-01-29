@@ -54,6 +54,13 @@ public class LayoutTemplate
         {
         }
 
+        @Override
+        public Builder name( final String name )
+        {
+            this.name = LayoutTemplateName.from( name );
+            return this;
+        }
+
         public Builder regions( final LayoutRegions regions )
         {
             this.regions = regions;

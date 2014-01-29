@@ -126,6 +126,8 @@ public abstract class Template<NAME extends TemplateName, KEY extends TemplateKe
             return typecastToTemplateBuilder( this );
         }
 
+        public abstract B name( final String name );
+
         public B parentPath( final ResourcePath parentPath )
         {
             this.parentPath = parentPath;

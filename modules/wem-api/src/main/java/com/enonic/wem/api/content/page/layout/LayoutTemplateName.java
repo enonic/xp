@@ -10,4 +10,9 @@ public class LayoutTemplateName
     {
         super( name );
     }
+
+    public static LayoutTemplateName from( final String name )
+    {
+        return new LayoutTemplateName( name );
+    }
 }

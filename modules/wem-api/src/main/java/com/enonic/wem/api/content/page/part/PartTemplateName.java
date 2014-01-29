@@ -10,4 +10,9 @@ public class PartTemplateName
     {
         super( name );
     }
+
+    public static PartTemplateName from( final String name )
+    {
+        return new PartTemplateName( name );
+    }
 }

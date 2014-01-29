@@ -42,9 +42,8 @@ public final class LayoutTemplateXml
     public void to( final LayoutTemplate.Builder builder )
     {
         toTemplate( builder );
-        builder.name( new LayoutTemplateName( getName() ) );
-
         final LayoutRegions.Builder regionsBuilder = newLayoutRegions();
+
         for ( RegionXml regionAsXml : this.regions )
         {
             final Region.Builder regionBuilder = Region.newRegion();

@@ -52,6 +52,13 @@ public final class ImageTemplate
         {
         }
 
+        @Override
+        public Builder name( final String name )
+        {
+            this.name = ImageTemplateName.from( name );
+            return this;
+        }
+
         public Builder image( final ContentId value )
         {
             this.image = value;
