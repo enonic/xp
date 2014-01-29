@@ -4,15 +4,12 @@ module api.content.page {
 
         private key: KEY;
 
-        private name: NAME;
-
         private displayName: string;
 
         private descriptorKey: DescriptorKey;
 
         constructor(builder: TemplateSummaryBuilder<KEY,NAME>) {
             this.key = builder.key;
-            this.name = <NAME>this.key.getTemplateName();
             this.displayName = builder.displayName;
             this.descriptorKey = builder.descriptorKey;
         }
@@ -22,7 +19,7 @@ module api.content.page {
         }
 
         getName(): NAME {
-            return this.name;
+            return this.key.getTemplateName();
         }
 
         getDisplayName(): string {
