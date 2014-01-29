@@ -16,7 +16,6 @@ module api.content.page.image {
         static fromJson(json: api.content.page.image.json.ImageTemplateSummaryJson): ImageTemplateSummaryBuilder {
             var builder = new ImageTemplateSummaryBuilder();
             builder.setKey(ImageTemplateKey.fromString(json.key));
-            builder.setName(new ImageTemplateName(json.name));
             builder.setDisplayName(json.displayName);
             builder.setDescriptorKey(DescriptorKey.fromString(json.descriptorKey));
             return builder;

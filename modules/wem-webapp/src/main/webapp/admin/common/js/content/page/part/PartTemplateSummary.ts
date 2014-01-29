@@ -16,7 +16,6 @@ module api.content.page.part {
         static fromJson(json: api.content.page.part.json.PartTemplateSummaryJson): PartTemplateSummaryBuilder {
             var builder = new PartTemplateSummaryBuilder();
             builder.setKey(PartTemplateKey.fromString(json.key));
-            builder.setName(new PartTemplateName(json.name));
             builder.setDisplayName(json.displayName);
             builder.setDescriptorKey(DescriptorKey.fromString(json.descriptorKey));
             return builder;

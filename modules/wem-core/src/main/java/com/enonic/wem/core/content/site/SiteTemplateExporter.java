@@ -8,14 +8,10 @@ import java.nio.file.Path;
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.content.page.PageTemplate;
-import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.Template;
 import com.enonic.wem.api.content.page.image.ImageTemplate;
-import com.enonic.wem.api.content.page.image.ImageTemplateKey;
 import com.enonic.wem.api.content.page.layout.LayoutTemplate;
-import com.enonic.wem.api.content.page.layout.LayoutTemplateKey;
 import com.enonic.wem.api.content.page.part.PartTemplate;
-import com.enonic.wem.api.content.page.part.PartTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateXml;
@@ -138,22 +134,26 @@ public final class SiteTemplateExporter
         if ( template instanceof ImageTemplate.Builder )
         {
             final ImageTemplate.Builder templateBuilder = (ImageTemplate.Builder) template;
-            templateBuilder.key( ImageTemplateKey.from( siteTemplateKey, moduleKey, templateBuilder.getName() ) );
+            templateBuilder.siteTemplate( siteTemplateKey );
+            templateBuilder.module( moduleKey );
         }
         else if ( template instanceof PartTemplate.Builder )
         {
             final PartTemplate.Builder templateBuilder = (PartTemplate.Builder) template;
-            templateBuilder.key( PartTemplateKey.from( siteTemplateKey, moduleKey, templateBuilder.getName() ) );
+            templateBuilder.siteTemplate( siteTemplateKey );
+            templateBuilder.module( moduleKey );
         }
         else if ( template instanceof PageTemplate.Builder )
         {
             final PageTemplate.Builder templateBuilder = (PageTemplate.Builder) template;
-            templateBuilder.key( PageTemplateKey.from( siteTemplateKey, moduleKey, templateBuilder.getName() ) );
+            templateBuilder.siteTemplate( siteTemplateKey );
+            templateBuilder.module( moduleKey );
         }
         else if ( template instanceof LayoutTemplate.Builder )
         {
             final LayoutTemplate.Builder templateBuilder = (LayoutTemplate.Builder) template;
-            templateBuilder.key( LayoutTemplateKey.from( siteTemplateKey, moduleKey, templateBuilder.getName() ) );
+            templateBuilder.siteTemplate( siteTemplateKey );
+            templateBuilder.module( moduleKey );
         }
         else
         {

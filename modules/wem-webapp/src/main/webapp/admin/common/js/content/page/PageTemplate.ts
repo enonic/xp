@@ -43,7 +43,6 @@ module api.content.page {
         fromJson(json: api.content.page.json.PageTemplateJson): PageTemplateBuilder {
 
             this.setKey(PageTemplateKey.fromString(json.key));
-            this.setName(new PageTemplateName(json.name));
             this.setDisplayName(json.displayName);
             this.setDescriptorKey(DescriptorKey.fromString(json.descriptorKey));
             this.descriptor = new PageDescriptorBuilder().fromJson(json.descriptor).build();

@@ -25,11 +25,6 @@ public class TemplateSummaryJson
         return template.getKey().toString();
     }
 
-    public String getName()
-    {
-        return template.getName().toString();
-    }
-
     public String getDisplayName()
     {
         return template.getDisplayName();

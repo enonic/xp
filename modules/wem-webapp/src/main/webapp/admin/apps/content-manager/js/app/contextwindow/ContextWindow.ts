@@ -1,32 +1,31 @@
 module app.contextwindow {
+
     export interface ContextWindowOptions {
         liveEditEl?:api.dom.IFrameEl;
         liveEditId?:string;
-        site:api.content.Content;
         siteTemplate:api.content.site.template.SiteTemplate;
         contentSaveAction: api.ui.Action;
     }
 
     export class ContextWindow extends api.ui.NavigableFloatingWindow {
 
-        private site:api.content.Content;
-        private siteTemplate:api.content.site.template.SiteTemplate;
+        private siteTemplate: api.content.site.template.SiteTemplate;
 
-        private componentTypesPanel:ComponentTypesPanel;
-        private inspectorPanel:InspectorPanel;
-        private emulatorPanel:EmulatorPanel;
+        private componentTypesPanel: ComponentTypesPanel;
+        private inspectorPanel: InspectorPanel;
+        private emulatorPanel: EmulatorPanel;
 
-        private draggingMask:api.ui.DraggingMask;
-        private liveEditEl:api.dom.IFrameEl;
-        private liveEditJQuery:JQueryStatic;
-        private contextWindowOptions:ContextWindowOptions;
-        private selectedComponent:Component;
-        private minimizer:Minimizer;
-        private pageRegions:api.content.page.PageRegions;
+        private draggingMask: api.ui.DraggingMask;
+        private liveEditEl: api.dom.IFrameEl;
+        private liveEditJQuery: JQueryStatic;
+        private contextWindowOptions: ContextWindowOptions;
+        private selectedComponent: Component;
+        private minimizer: Minimizer;
+        private pageRegions: api.content.page.PageRegions;
         private contentSaveAction: api.ui.Action;
 
-        constructor(options:ContextWindowOptions) {
-            this.site = options.site;
+        constructor(options: ContextWindowOptions) {
+
             this.siteTemplate = options.siteTemplate;
             this.contentSaveAction = options.contentSaveAction;
             var dragStart = (event, ui) => {
@@ -76,10 +75,6 @@ module app.contextwindow {
             if (options.liveEditEl) {
                 this.liveEditEl = options.liveEditEl;
             }
-        }
-
-        getSite():api.content.Content {
-            return this.site;
         }
 
         afterRender() {
@@ -151,19 +146,21 @@ module app.contextwindow {
                 this.pageRegions.addComponent(pageComponent, regionName);
             });
 
-            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('imageComponentSetImage.liveEdit', (event, imageId?, componentName?) => {
-                var imageComponent = <api.content.page.image.ImageComponent>this.pageRegions.getComponent(new api.content.page.ComponentName(componentName));
+            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('imageComponentSetImage.liveEdit', (event, imageId?, componentNameAsString?) => {
+
+                var componentName = new api.content.page.ComponentName(componentNameAsString);
+                var imageComponent = <api.content.page.image.ImageComponent>this.pageRegions.getComponent(componentName);
+                var sitTemplate = this.siteTemplate.getKey();
                 var moduleKey = new api.module.ModuleKey("bluman.trampoline", "1.0.0");
-                //var templateName = new api.content.page.image.ImageTemplateName("trampoline-image");
-                var templateName = this.siteTemplate.getDefaultImageTemplate();
-                var imageTemplateKey = new api.content.page.image.ImageTemplateKey(this.site.getSite().getTemplateKey(), moduleKey, templateName);
+                var defaultImageTemplate = this.siteTemplate.getDefaultImageTemplate();
+                var imageTemplateKey = new api.content.page.image.ImageTemplateKey(sitTemplate, moduleKey, defaultImageTemplate);
                 imageComponent.setTemplate(imageTemplateKey);
                 imageComponent.setImage(imageId);
                 this.contentSaveAction.execute();
             });
         }
 
-        setPage(content:api.content.Content, pageTemplate:api.content.page.PageTemplate) {
+        setPage(content: api.content.Content, pageTemplate: api.content.page.PageTemplate) {
             var page = content.getPage();
             this.pageRegions = pageTemplate.getRegions();
             if (page.hasRegions()) {
@@ -171,15 +168,15 @@ module app.contextwindow {
             }
         }
 
-        getPageRegions() : api.content.page.PageRegions {
+        getPageRegions(): api.content.page.PageRegions {
             return this.pageRegions;
         }
 
-        getSelectedComponent():any {
+        getSelectedComponent(): any {
             return this.selectedComponent;
         }
 
-        getLiveEditJQuery():JQueryStatic {
+        getLiveEditJQuery(): JQueryStatic {
             if (!this.liveEditJQuery) {
                 //console.log(this.getLiveEditWindow());
                 this.liveEditJQuery = <JQueryStatic>this.getLiveEditWindow().$liveEdit;
@@ -188,11 +185,11 @@ module app.contextwindow {
 
         }
 
-        getLiveEditEl():api.dom.IFrameEl {
+        getLiveEditEl(): api.dom.IFrameEl {
             return this.liveEditEl;
         }
 
-        getLiveEditWindow():any {
+        getLiveEditWindow(): any {
             //TODO: "contentwindow" is hacky because we need HTMLIFrameElement to fetch that property, but it is impossible to cast to ><
             return this.liveEditEl.getHTMLElement()["contentWindow"];
         }
@@ -211,9 +208,9 @@ module app.contextwindow {
 
     class Minimizer extends api.dom.DivEl {
 
-        private minimized:boolean;
+        private minimized: boolean;
 
-        constructor(minimize:()=>void, maximize:()=>void, minimized:boolean = false) {
+        constructor(minimize: ()=>void, maximize: ()=>void, minimized: boolean = false) {
             super("minimizer live-edit-font-icon-minimize");
             this.minimized = minimized;
 

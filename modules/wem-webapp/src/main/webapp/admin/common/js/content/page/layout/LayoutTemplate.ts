@@ -13,7 +13,6 @@ module api.content.page.layout {
 
         public fromJson(json: api.content.page.layout.json.LayoutTemplateJson): LayoutTemplateBuilder {
             this.setKey(LayoutTemplateKey.fromString(json.key));
-            this.setName(new LayoutTemplateName(json.name));
             this.setDisplayName(json.displayName);
             this.setDescriptorKey(DescriptorKey.fromString(json.descriptorKey));
             this.descriptor = new LayoutDescriptorBuilder().fromJson(json.descriptor).build();

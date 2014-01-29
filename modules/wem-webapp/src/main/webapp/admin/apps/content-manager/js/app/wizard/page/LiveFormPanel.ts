@@ -2,8 +2,6 @@ module app.wizard {
 
     export interface LiveFormPanelConfig {
 
-        site: api.content.Content;
-
         siteTemplate: api.content.site.template.SiteTemplate;
 
         contentSaveAction: api.ui.Action;
@@ -14,7 +12,6 @@ module app.wizard {
         private frame: api.dom.IFrameEl;
         private baseUrl: string;
         private url: string;
-        private site: api.content.Content;
         private siteTemplate: api.content.site.template.SiteTemplate;
         private contextWindow: app.contextwindow.ContextWindow;
         private contentSaveAction: api.ui.Action;
@@ -22,7 +19,6 @@ module app.wizard {
         constructor(config:LiveFormPanelConfig) {
             super("live-form-panel");
             this.baseUrl = api.util.getUri("portal/edit/");
-            this.site = config.site;
             this.siteTemplate = config.siteTemplate;
             this.contentSaveAction = config.contentSaveAction;
 
@@ -32,7 +28,6 @@ module app.wizard {
 
             this.contextWindow = new app.contextwindow.ContextWindow({
                 liveEditEl: this.frame,
-                site: this.site,
                 contentSaveAction: this.contentSaveAction,
                 siteTemplate: this.siteTemplate
             });

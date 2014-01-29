@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.page.part.PartComponent;
 import com.enonic.wem.api.content.page.region.Region;
+import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.module.ModuleKey;
@@ -67,6 +68,8 @@ public class PageTemplateXmlTest
 
         XmlSerializers.pageTemplate().parse( xml ).to( builder );
 
+        builder.siteTemplate( SiteTemplateKey.from("BluemanIntra-1.0.0") );
+        builder.module( ModuleKey.from("demo-1.0.0") );
         final PageTemplate pageTemplate = builder.build();
 
         assertEquals( "Main page template", pageTemplate.getDisplayName() );

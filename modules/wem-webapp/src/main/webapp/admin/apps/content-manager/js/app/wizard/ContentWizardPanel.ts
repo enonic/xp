@@ -92,7 +92,6 @@ module app.wizard {
             }
 
             this.livePanel = new LiveFormPanel(<app.wizard.LiveFormPanelConfig> {
-                site: this.siteContent,
                 siteTemplate: this.siteTemplate,
                 contentSaveAction: actions.getSaveAction()});
 

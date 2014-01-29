@@ -29,7 +29,6 @@ module api.content.page.image {
 
         public fromJson(json: api.content.page.image.json.ImageTemplateJson): ImageTemplateBuilder {
             this.setKey(ImageTemplateKey.fromString(json.key));
-            this.setName(new ImageTemplateName(json.name));
             this.setDisplayName(json.displayName);
             this.setImage(new api.content.ContentId(json.image));
             this.setDescriptorKey(DescriptorKey.fromString(json.descriptorKey));

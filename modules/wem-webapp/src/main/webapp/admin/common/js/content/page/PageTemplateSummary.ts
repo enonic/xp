@@ -21,7 +21,6 @@ module api.content.page {
         fromJson(json: api.content.page.json.PageTemplateSummaryJson): PageTemplateSummaryBuilder {
 
             this.setKey(PageTemplateKey.fromString(json.key));
-            this.setName(new PageTemplateName(json.name));
             this.setDisplayName(json.displayName);
             this.setDescriptorKey(DescriptorKey.fromString(json.descriptorKey));
             return this;

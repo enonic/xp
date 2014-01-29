@@ -2,7 +2,9 @@ package com.enonic.wem.api.content.page;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ResourcePath;
 
 public abstract class Template<NAME extends TemplateName, KEY extends TemplateKey<NAME>, DESCRIPTOR_KEY extends DescriptorKey>
@@ -13,8 +15,6 @@ public abstract class Template<NAME extends TemplateName, KEY extends TemplateKe
 
     private final KEY key;
 
-    private final NAME name;
-
     private final String displayName;
 
     private final DESCRIPTOR_KEY descriptor;
@@ -23,16 +23,30 @@ public abstract class Template<NAME extends TemplateName, KEY extends TemplateKe
 
     protected Template( final TemplateProperties properties )
     {
-        Preconditions.checkArgument( properties.name != null || ( properties.key != null && properties.key.getTemplateName() != null ),
-                                     "name cannot be null" );
+        this.key = resolveKey( properties );
         this.parentPath = properties.parentPath;
-        this.key = (KEY) properties.key;
-        this.name = this.key != null ? this.key.getTemplateName() : (NAME) properties.name;
-        this.path = ResourcePath.from( this.parentPath, this.name.toString() );
+        this.path = ResourcePath.from( this.parentPath, this.key.getTemplateName().toString() );
         this.displayName = properties.displayName;
         this.descriptor = (DESCRIPTOR_KEY) properties.descriptor;
         this.config = properties.config;
     }
+
+    private KEY resolveKey( final TemplateProperties properties )
+    {
+        if ( properties.key != null )
+        {
+            return (KEY) properties.key;
+        }
+        else
+        {
+            Preconditions.checkNotNull( properties.siteTemplateKey, "siteTemplateKey cannot be null when key is not given" );
+            Preconditions.checkNotNull( properties.moduleKey, "moduleKey cannot be null when key is not given" );
+            Preconditions.checkNotNull( properties.siteTemplateKey, "name cannot be null when key is not given" );
+            return createKey( properties.siteTemplateKey, properties.moduleKey, (NAME) properties.name );
+        }
+    }
+
+    protected abstract KEY createKey( final SiteTemplateKey siteTemplateKey, final ModuleKey moduleKey, final NAME name );
 
     public KEY getKey()
     {
@@ -51,7 +65,7 @@ public abstract class Template<NAME extends TemplateName, KEY extends TemplateKe
 
     public NAME getName()
     {
-        return name;
+        return this.key.getTemplateName();
     }
 
     public DESCRIPTOR_KEY getDescriptor()
@@ -75,6 +89,10 @@ public abstract class Template<NAME extends TemplateName, KEY extends TemplateKe
 
         protected KEY key;
 
+        protected SiteTemplateKey siteTemplateKey;
+
+        protected ModuleKey moduleKey;
+
         protected NAME name;
 
         protected String displayName;
@@ -93,15 +111,33 @@ public abstract class Template<NAME extends TemplateName, KEY extends TemplateKe
             return typecastToTemplateBuilder( this );
         }
 
+        /**
+         * Optional. Only required when key is not given.
+         */
+        public B siteTemplate( final SiteTemplateKey value )
+        {
+
+            this.siteTemplateKey = value;
+            return typecastToTemplateBuilder( this );
+        }
+
+        /**
+         * Optional. Only required when key is not given.
+         */
+        public B module( final ModuleKey value )
+        {
+
+            this.moduleKey = value;
+            return typecastToTemplateBuilder( this );
+        }
+
+        /**
+         * Optional. Only required when key is not given.
+         */
         public B name( final NAME name )
         {
             this.name = name;
             return typecastToTemplateBuilder( this );
-        }
-
-        public NAME getName()
-        {
-            return this.name;
         }
 
         public B parentPath( final ResourcePath parentPath )

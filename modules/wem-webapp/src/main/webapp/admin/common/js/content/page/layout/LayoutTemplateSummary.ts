@@ -16,7 +16,6 @@ module api.content.page.layout {
         static fromJson(json: api.content.page.layout.json.LayoutTemplateSummaryJson): LayoutTemplateSummaryBuilder {
             var builder = new LayoutTemplateSummaryBuilder();
             builder.setKey(LayoutTemplateKey.fromString(json.key));
-            builder.setName(new LayoutTemplateName(json.name));
             builder.setDisplayName(json.displayName);
             builder.setDescriptorKey(DescriptorKey.fromString(json.descriptorKey));
             return builder;

@@ -12,7 +12,7 @@ module api.content.page {
 
         constructor(builder: TemplateSummaryBuilder<KEY,NAME>) {
             this.key = builder.key;
-            this.name = builder.name;
+            this.name = <NAME>this.key.getTemplateName();
             this.displayName = builder.displayName;
             this.descriptorKey = builder.descriptorKey;
         }
@@ -38,19 +38,12 @@ module api.content.page {
 
         key: KEY;
 
-        name: NAME;
-
         displayName: string;
 
         descriptorKey: DescriptorKey;
 
         public setKey(value: KEY): TemplateSummaryBuilder<KEY,NAME> {
             this.key = value;
-            return this;
-        }
-
-        public setName(value: NAME): TemplateSummaryBuilder<KEY,NAME> {
-            this.name = value;
             return this;
         }
 

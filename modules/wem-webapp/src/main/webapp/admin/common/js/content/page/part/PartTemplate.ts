@@ -13,7 +13,6 @@ module api.content.page.part {
 
         public fromJson(json: api.content.page.part.json.PartTemplateJson): PartTemplateBuilder {
             this.setKey(PartTemplateKey.fromString(json.key));
-            this.setName(new PartTemplateName(json.name));
             this.setDisplayName(json.displayName);
             this.setDescriptorKey(DescriptorKey.fromString(json.descriptorKey));
             this.descriptor = new PartDescriptorBuilder().fromJson(json.descriptor).build();

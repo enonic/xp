@@ -4,7 +4,12 @@ package com.enonic.wem.api.content.page.layout;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.page.Template;
+import com.enonic.wem.api.content.page.TemplateName;
+import com.enonic.wem.api.content.page.image.ImageTemplateKey;
+import com.enonic.wem.api.content.page.image.ImageTemplateName;
+import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.support.Changes;
 import com.enonic.wem.api.support.EditBuilder;
 
@@ -26,6 +31,12 @@ public class LayoutTemplate
     {
         super( properties );
         this.regions = properties.regions;
+    }
+
+    @Override
+    protected LayoutTemplateKey createKey( final SiteTemplateKey siteTemplateKey, final ModuleKey moduleKey, final LayoutTemplateName name )
+    {
+        return LayoutTemplateKey.from( siteTemplateKey, moduleKey, name );
     }
 
     public LayoutRegions getRegions()
