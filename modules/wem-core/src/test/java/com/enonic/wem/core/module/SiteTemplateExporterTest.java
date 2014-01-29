@@ -121,7 +121,7 @@ public class SiteTemplateExporterTest
         partTemplateConfig.addProperty( "width", new Value.Long( 200 ) );
 
         final PartTemplate partTemplate = PartTemplate.newPartTemplate().
-            key( PartTemplateKey.from( siteTemplateKey, module, new PartTemplateName( "my-part" ) ) ).
+            key( PartTemplateKey.from( module.getName(), new PartTemplateName( "my-part" ) ) ).
             displayName( "News part template" ).
             config( partTemplateConfig ).
             descriptor( PartDescriptorKey.from( "mainmodule-1.0.0:news-part" ) ).
@@ -131,7 +131,7 @@ public class SiteTemplateExporterTest
         pageTemplateConfig.addProperty( "pause", new Value.Long( 10000 ) );
 
         final PageTemplate pageTemplate = PageTemplate.newPageTemplate().
-            key( PageTemplateKey.from( siteTemplateKey, module, new PageTemplateName( "my-page" ) ) ).
+            key( PageTemplateKey.from( module.getName(), new PageTemplateName( "my-page" ) ) ).
             displayName( "Main page template" ).
             config( pageTemplateConfig ).
             canRender( ContentTypeNames.from( "article", "banner" ) ).
@@ -143,7 +143,7 @@ public class SiteTemplateExporterTest
         layoutTemplateConfig.addProperty( "columns", new Value.Long( 3 ) );
 
         final LayoutTemplate layoutTemplate = LayoutTemplate.newLayoutTemplate().
-            key( LayoutTemplateKey.from( siteTemplateKey, module, new LayoutTemplateName( "my-layout" ) ) ).
+            key( LayoutTemplateKey.from( module.getName(), new LayoutTemplateName( "my-layout" ) ) ).
             displayName( "Layout template" ).
             config( layoutTemplateConfig ).
             descriptor( LayoutDescriptorKey.from( "mainmodule-1.0.0:some-layout" ) ).
@@ -154,7 +154,7 @@ public class SiteTemplateExporterTest
         imageTemplateConfig.addProperty( "width", new Value.Long( 3000 ) );
 
         final ImageTemplate imageTemplate = ImageTemplate.newImageTemplate().
-            key( ImageTemplateKey.from( siteTemplateKey, module, new ImageTemplateName( "my-image" ) ) ).
+            key( ImageTemplateKey.from( module.getName(), new ImageTemplateName( "my-image" ) ) ).
             displayName( "Image template" ).
             config( imageTemplateConfig ).
             descriptor( ImageDescriptorKey.from( "mainmodule-1.0.0:some-image" ) ).

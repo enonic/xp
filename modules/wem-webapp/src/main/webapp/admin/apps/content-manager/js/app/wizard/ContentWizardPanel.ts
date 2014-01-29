@@ -86,7 +86,8 @@ module app.wizard {
 
             if (this.siteContent || this.createSite) {
                 var pageWizardStepFormConfig: page.PageWizardStepFormConfig = {
-                    parentContent: this.parentContent
+                    parentContent: this.parentContent,
+                    siteTemplate: this.siteTemplate
                 };
                 this.pageWizardStepForm = new page.PageWizardStepForm(pageWizardStepFormConfig);
             }

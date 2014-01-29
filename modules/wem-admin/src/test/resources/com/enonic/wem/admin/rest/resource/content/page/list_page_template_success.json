@@ -1,9 +1,11 @@
 {
-  "templates" : [ {
-    "deletable" : true,
-      "descriptorKey": "mainmodule-1.0.0:landing-page",
-      "displayName" : "Main page template",
-    "editable" : true,
-      "key": "mySiteTemplate-1.0.0|mymodule-1.0.0|my-page"
-  } ]
+    "templates": [
+        {
+            "deletable": true,
+            "descriptorKey": "mainmodule-1.0.0:landing-page",
+            "displayName": "Main page template",
+            "editable": true,
+            "key": "mymodule|my-page"
+        }
+    ]
 }

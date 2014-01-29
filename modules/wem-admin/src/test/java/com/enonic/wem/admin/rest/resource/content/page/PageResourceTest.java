@@ -98,7 +98,7 @@ public class PageResourceTest
         rootDataSet.add( dataSet );
 
         Page page = Page.newPage().
-            template( PageTemplateKey.from( "template-1.0.0|mymodule-1.0.0|my-page" ) ).
+            template( PageTemplateKey.from( "mymodule|my-page" ) ).
             config( rootDataSet ).
             regions( newPageRegions().build() ).
             build();

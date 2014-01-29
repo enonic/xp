@@ -24,28 +24,32 @@ public class GetNearestSiteByContentIdHandler
         }
         else
         {
-            command.setResult( checkOnSite( content.getParentPath() ) );
+            command.setResult( returnIfSiteOrTryParent( content.getParentPath() ) );
         }
     }
 
-    private Content checkOnSite( final ContentPath contentPath )
+    private Content returnIfSiteOrTryParent( final ContentPath contentPath )
     {
-        if ( contentPath != null && !contentPath.isRoot() )
+        if ( contentPath == null )
         {
-            final GetContentByPath getContent = Commands.content().get().byPath( contentPath );
-            final Content content = context.getClient().execute( getContent );
-
-            if ( content.isSite() )
-            {
-                return content;
-            }
-            else
-            {
-                final ContentPath parentPath = content.getParentPath();
-                return checkOnSite( parentPath );
-            }
+            return null;
+        }
+        if ( contentPath.isRoot() )
+        {
+            return null;
         }
 
-        return null;
+        final GetContentByPath getContent = Commands.content().get().byPath( contentPath );
+        final Content content = context.getClient().execute( getContent );
+
+        if ( content.isSite() )
+        {
+            return content;
+        }
+        else
+        {
+            final ContentPath parentPath = content.getParentPath();
+            return returnIfSiteOrTryParent( parentPath );
+        }
     }
 }

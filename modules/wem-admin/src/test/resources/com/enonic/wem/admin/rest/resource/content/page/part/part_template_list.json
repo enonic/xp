@@ -5,14 +5,14 @@
             "descriptorKey": "module-1.0.0:tpl",
             "displayName": "partTemplate1",
             "editable": true,
-            "key": "sitetemplate-1.0.0|module-1.0.0|partTemplate1"
+            "key": "module|partTemplate1"
         },
         {
             "deletable": true,
             "descriptorKey": "module-1.0.0:tpl",
             "displayName": "partTemplate2",
             "editable": true,
-            "key": "sitetemplate-1.0.0|module-1.0.0|partTemplate2"
+            "key": "module|partTemplate2"
         }
     ],
     "total": 2

@@ -1,9 +1,8 @@
 package com.enonic.wem.api.content.page;
 
 
-import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.support.Changes;
 import com.enonic.wem.api.support.EditBuilder;
@@ -32,9 +31,9 @@ public final class PageTemplate
     }
 
     @Override
-    protected PageTemplateKey createKey( final SiteTemplateKey siteTemplateKey, final ModuleKey moduleKey, final PageTemplateName name )
+    protected PageTemplateKey createKey( final ModuleName moduleName, final PageTemplateName name )
     {
-        return PageTemplateKey.from( siteTemplateKey, moduleKey, name );
+        return PageTemplateKey.from( moduleName, name );
     }
 
     public ContentTypeNames getCanRender()

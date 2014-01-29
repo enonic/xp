@@ -31,7 +31,6 @@ import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
 import com.enonic.wem.api.content.page.image.ImageTemplate;
 import com.enonic.wem.api.content.page.image.ImageTemplateKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
-import com.enonic.wem.api.content.page.layout.LayoutRegions;
 import com.enonic.wem.api.content.page.layout.LayoutTemplate;
 import com.enonic.wem.api.content.page.layout.LayoutTemplateKey;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
@@ -141,22 +140,22 @@ public class SiteTemplateResourceTest
         throws Exception
     {
         final PageTemplate pageTemplate = newPageTemplate().
-            key( PageTemplateKey.from( "sitetemplate-1.0.0|mod-1.0.0|mainpage" ) ).
+            key( PageTemplateKey.from( "mod|mainpage" ) ).
             displayName( "Main Page" ).
             descriptor( PageDescriptorKey.from( ModuleKey.from( "mod-1.0.0" ), new ComponentDescriptorName( "page-descr" ) ) ).
             build();
         final PartTemplate partTemplate = newPartTemplate().
-            key( PartTemplateKey.from( "sitetemplate-1.0.0|mod-1.0.0|mainpart" ) ).
+            key( PartTemplateKey.from( "mod|mainpart" ) ).
             displayName( "Main Part" ).
             descriptor( PartDescriptorKey.from( ModuleKey.from( "mod-1.0.0" ), new ComponentDescriptorName( "part-descr" ) ) ).
             build();
         final ImageTemplate imageTemplate = newImageTemplate().
-            key( ImageTemplateKey.from( "sitetemplate-1.0.0|mod-1.0.0|mainimage" ) ).
+            key( ImageTemplateKey.from( "mod|mainimage" ) ).
             displayName( "Main Image" ).
             descriptor( ImageDescriptorKey.from( ModuleKey.from( "mod-1.0.0" ), new ComponentDescriptorName( "image-descr" ) ) ).
             build();
         final LayoutTemplate layoutTemplate = newLayoutTemplate().
-            key( LayoutTemplateKey.from( "sitetemplate-1.0.0|mod-1.0.0|mainlayout" ) ).
+            key( LayoutTemplateKey.from( "mod|mainlayout" ) ).
             displayName( "Main Layout" ).
             descriptor( LayoutDescriptorKey.from( ModuleKey.from( "mod-1.0.0" ), new ComponentDescriptorName( "layout-descr" ) ) ).
             regions( newLayoutRegions().build() ).

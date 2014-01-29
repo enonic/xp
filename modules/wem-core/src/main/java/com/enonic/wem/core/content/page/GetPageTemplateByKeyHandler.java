@@ -19,7 +19,7 @@ public class GetPageTemplateByKeyHandler
         throws Exception
     {
         final PageTemplateKey pageTemplateKey = command.getKey();
-        final SiteTemplateKey siteTemplateKey = pageTemplateKey.getSiteTemplateKey();
+        final SiteTemplateKey siteTemplateKey = command.getSiteTemplateKey();
         final GetSiteTemplateByKey getSiteTemplateCommand = Commands.site().template().get().byKey( siteTemplateKey );
         final SiteTemplate siteTemplate = context.getClient().execute( getSiteTemplateCommand );
         final PageTemplate pageTemplate = siteTemplate.getPageTemplates().getTemplate( pageTemplateKey.getTemplateName() );

@@ -41,10 +41,10 @@ import com.enonic.wem.api.content.DeleteContentResult;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.Page;
+import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.part.PartComponent;
 import com.enonic.wem.api.content.page.part.PartTemplateKey;
-import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.query.ContentQueryResult;
 import com.enonic.wem.api.content.site.ModuleConfig;
@@ -243,7 +243,7 @@ public class ContentResourceTest
 
         PartComponent component = PartComponent.newPartComponent().
             name( "my-component" ).
-            template( PartTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|partTemplateName" ) ).
+            template( PartTemplateKey.from( "mainmodule|partTemplateName" ) ).
             config( componentConfig ).
             build();
 
@@ -259,7 +259,7 @@ public class ContentResourceTest
         RootDataSet pageConfig = new RootDataSet();
         pageConfig.setProperty( "background-color", new Value.String( "blue" ) );
         Page page = Page.newPage().
-            template( PageTemplateKey.from( "mysitetemplate-1.0.0|mymodule-1.0.0|mypagetemplate" ) ).
+            template( PageTemplateKey.from( "mymodule|mypagetemplate" ) ).
             regions( regions ).
             config( pageConfig ).
             build();

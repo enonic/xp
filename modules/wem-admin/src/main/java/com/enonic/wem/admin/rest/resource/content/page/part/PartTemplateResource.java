@@ -32,11 +32,15 @@ public class PartTemplateResource
     extends AbstractResource
 {
     @GET
-    public PartTemplateJson getByKey( @QueryParam("key") final String partTemplateKeyAsString )
+    public PartTemplateJson getByKey( @QueryParam("siteTemplateKey") final String siteTemplateKeyAsString,
+                                      @QueryParam("key") final String partTemplateKeyAsString )
         throws IOException
     {
+        final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( siteTemplateKeyAsString );
         final PartTemplateKey partTemplateKey = PartTemplateKey.from( partTemplateKeyAsString );
-        final GetPartTemplateByKey command = page().template().part().getByKey().key( partTemplateKey );
+        final GetPartTemplateByKey command = page().template().part().getByKey().
+            key( partTemplateKey ).
+            siteTemplateKey( siteTemplateKey );
 
         final PartTemplate partTemplate = client.execute( command );
         final PartDescriptor descriptor = getDescriptor( partTemplate.getDescriptor() );

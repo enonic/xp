@@ -33,12 +33,14 @@ public final class ContentResource
         throws Exception
     {
         final Content content = getContent( this.contentSelector, this.mode );
+        final Content siteContent = getSite( content );
         final Page page = getPage( content );
-        final PageTemplate pageTemplate = getPageTemplate( page );
+        final PageTemplate pageTemplate = getPageTemplate( page, siteContent.getSite() );
         final PageDescriptor pageDescriptor = getPageDescriptor( pageTemplate );
 
         final JsContext context = new JsContext();
         context.setContent( content );
+        context.setSiteContent( siteContent );
         context.setPageTemplate( pageTemplate );
 
         final JsHttpRequest request = new JsHttpRequest( this.httpContext.getRequest() );

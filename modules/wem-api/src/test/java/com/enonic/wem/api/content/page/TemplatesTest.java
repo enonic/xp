@@ -27,7 +27,7 @@ public class TemplatesTest
         pageTemplateConfig.addProperty( "pause", new Value.Long( 10000 ) );
 
         PageTemplate pageTemplate = PageTemplate.newPageTemplate().
-            key( PageTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|main-page" ) ).
+            key( PageTemplateKey.from( "mainmodule|main-page" ) ).
             displayName( "Main page template" ).
             config( pageTemplateConfig ).
             canRender( ContentTypeNames.from( "article", "banner" ) ).
@@ -45,7 +45,7 @@ public class TemplatesTest
         partTemplateConfig.addProperty( "width", new Value.Long( 200 ) );
 
         PartTemplate partTemplate = PartTemplate.newPartTemplate().
-            key( PartTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|news-part" ) ).
+            key( PartTemplateKey.from( "mainmodule|news-part" ) ).
             displayName( "News part template" ).
             config( partTemplateConfig ).
             descriptor( PartDescriptorKey.from( ModuleKey.from( "mainmodule-1.0.0" ), new ComponentDescriptorName( "news-part" ) ) ).
@@ -61,7 +61,7 @@ public class TemplatesTest
         layoutTemplateConfig.addProperty( "columns", new Value.Long( 3 ) );
 
         LayoutTemplate layoutTemplate = LayoutTemplate.newLayoutTemplate().
-            key( LayoutTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|my-layout" ) ).
+            key( LayoutTemplateKey.from( "mainmodule|my-layout" ) ).
             displayName( "Layout template" ).
             config( layoutTemplateConfig ).
             descriptor( LayoutDescriptorKey.from( ModuleKey.from( "mainmodule-1.0.0" ), new ComponentDescriptorName( "some-layout" ) ) ).

@@ -51,7 +51,7 @@ public class GetSiteTemplateByKeyHandlerTest
 {
     private static final String KEY = "Intranet-1.0.0";
 
-    private static final SiteTemplateKey TEMPLATE_KEY = SiteTemplateKey.from( KEY );
+    private static final SiteTemplateKey SITE_TEMPLATE_KEY = SiteTemplateKey.from( KEY );
 
     private static final ModuleKey MODULE_KEY = ModuleKey.from( "mymodule-1.0.0" );
 
@@ -93,7 +93,7 @@ public class GetSiteTemplateByKeyHandlerTest
 
         importer.exportToDirectory( siteTemplate, templatesDir.toPath() );
 
-        final GetSiteTemplateByKey command = Commands.site().template().get().byKey( TEMPLATE_KEY );
+        final GetSiteTemplateByKey command = Commands.site().template().get().byKey( SITE_TEMPLATE_KEY );
 
         handler.setCommand( command );
         handler.handle();
@@ -140,7 +140,7 @@ public class GetSiteTemplateByKeyHandlerTest
         partTemplateConfig.addProperty( "width", new Value.Long( 200 ) );
 
         final PartTemplate partTemplate = PartTemplate.newPartTemplate().
-            key( PartTemplateKey.from( TEMPLATE_KEY, MODULE_KEY, new PartTemplateName( "my-part" ) ) ).
+            key( PartTemplateKey.from( MODULE_KEY.getName(), new PartTemplateName( "my-part" ) ) ).
             displayName( "News part template" ).
             config( partTemplateConfig ).
             descriptor( PartDescriptorKey.from( "mainmodule-1.0.0:news-part" ) ).
@@ -150,7 +150,7 @@ public class GetSiteTemplateByKeyHandlerTest
         pageTemplateConfig.addProperty( "pause", new Value.Long( 10000 ) );
 
         final PageTemplate pageTemplate = PageTemplate.newPageTemplate().
-            key( PageTemplateKey.from( TEMPLATE_KEY, MODULE_KEY, new PageTemplateName( "my-page" ) ) ).
+            key( PageTemplateKey.from( MODULE_KEY.getName(), new PageTemplateName( "my-page" ) ) ).
             displayName( "Main page template" ).
             config( pageTemplateConfig ).
             canRender( ContentTypeNames.from( "article", "banner" ) ).
@@ -162,7 +162,7 @@ public class GetSiteTemplateByKeyHandlerTest
         layoutTemplateConfig.addProperty( "columns", new Value.Long( 3 ) );
 
         final LayoutTemplate layoutTemplate = LayoutTemplate.newLayoutTemplate().
-            key( LayoutTemplateKey.from( TEMPLATE_KEY, MODULE_KEY, new LayoutTemplateName( "my-layout" ) ) ).
+            key( LayoutTemplateKey.from( MODULE_KEY.getName(), new LayoutTemplateName( "my-layout" ) ) ).
             displayName( "Layout template" ).
             config( layoutTemplateConfig ).
             descriptor( LayoutDescriptorKey.from( "mainmodule-1.0.0:some-layout" ) ).
@@ -173,7 +173,7 @@ public class GetSiteTemplateByKeyHandlerTest
         imageTemplateConfig.addProperty( "width", new Value.Long( 3000 ) );
 
         final ImageTemplate imageTemplate = ImageTemplate.newImageTemplate().
-            key( ImageTemplateKey.from( TEMPLATE_KEY, MODULE_KEY, new ImageTemplateName( "my-image" ) ) ).
+            key( ImageTemplateKey.from( MODULE_KEY.getName(), new ImageTemplateName( "my-image" ) ) ).
             displayName( "Image template" ).
             config( imageTemplateConfig ).
             descriptor( ImageDescriptorKey.from( "mainmodule-1.0.0:some-image" ) ).
@@ -183,7 +183,7 @@ public class GetSiteTemplateByKeyHandlerTest
             newContentFilter().defaultDeny().allowContentTypes( ContentTypeNames.from( "com.enonic.intranet", "system.folder" ) ).build();
 
         return SiteTemplate.newSiteTemplate().
-            key( TEMPLATE_KEY ).
+            key( SITE_TEMPLATE_KEY ).
             displayName( "Enonic Intranet" ).
             description( "A social intranet for the Enterprise" ).
             vendor( newVendor().name( "Enonic" ).url( "https://www.enonic.com" ).build() ).

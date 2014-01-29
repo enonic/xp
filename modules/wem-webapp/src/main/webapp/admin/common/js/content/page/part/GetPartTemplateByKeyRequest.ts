@@ -1,22 +1,35 @@
-module api.content.page.part{
+module api.content.page.part {
 
     export class GetPartTemplateByKeyRequest extends PartTemplateResourceRequest<api.content.page.part.json.PartTemplateJson> {
 
-        private partTemplateKey:api.content.page.part.PartTemplateKey;
+        private siteTemplateKey: api.content.site.template.SiteTemplateKey;
 
-        constructor(partTemplateKey:api.content.page.part.PartTemplateKey) {
+        private partTemplateKey: api.content.page.part.PartTemplateKey;
+
+        constructor(partTemplateKey: api.content.page.part.PartTemplateKey) {
             super();
             super.setMethod("GET");
             this.partTemplateKey = partTemplateKey;
         }
 
-        getParams():Object {
+        setSiteTemplateKey(value: api.content.site.template.SiteTemplateKey): GetPartTemplateByKeyRequest {
+            this.siteTemplateKey = value;
+            return this;
+        }
+
+        getParams(): Object {
             return {
+                siteTemplateKey: this.siteTemplateKey.toString(),
                 key: this.partTemplateKey.toString()
             };
         }
 
-        getRequestPath():api.rest.Path {
+        validate() {
+            api.util.assertNotNull(this.siteTemplateKey, "siteTemplateKey cannot be null");
+            api.util.assertNotNull(this.partTemplateKey, "partTemplateKey cannot be null");
+        }
+
+        getRequestPath(): api.rest.Path {
             return super.getResourcePath();
         }
 

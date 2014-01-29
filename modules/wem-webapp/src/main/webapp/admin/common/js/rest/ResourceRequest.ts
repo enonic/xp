@@ -2,36 +2,45 @@ module api.rest {
 
     export class ResourceRequest<T> {
 
-        private restPath:Path;
+        private restPath: Path;
 
-        private method:string = "GET";
+        private method: string = "GET";
 
         constructor() {
-            this.restPath = Path.fromString( "admin/rest" );
+            this.restPath = Path.fromString("admin/rest");
         }
 
-        setMethod(value:string) {
+        setMethod(value: string) {
             this.method = value;
         }
 
-        getRestPath():Path {
+        getRestPath(): Path {
             return this.restPath;
         }
 
-        getRequestPath():Path {
+        getRequestPath(): Path {
             throw new Error("Must be implemented by inheritors");
         }
 
-        getParams():Object {
+        getParams(): Object {
             throw new Error("Must be implemented by inheritors");
         }
 
-        send():JQueryPromise<Response>{
+        /*
+         * Override to ensure any validation of ResourceRequest before sending.
+         */
+        validate() {
+
+        }
+
+        send(): JQueryPromise<Response> {
+
+            this.validate();
 
             var jsonRequest = new JsonRequest<T>().
-            setMethod(this.method).
-            setParams(this.getParams()).
-            setPath(this.getRequestPath());
+                setMethod(this.method).
+                setParams(this.getParams()).
+                setPath(this.getRequestPath());
             return jsonRequest.send();
         }
     }

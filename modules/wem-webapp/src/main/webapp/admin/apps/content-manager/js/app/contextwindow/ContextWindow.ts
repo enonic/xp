@@ -146,18 +146,18 @@ module app.contextwindow {
                 this.pageRegions.addComponent(pageComponent, regionName);
             });
 
-            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('imageComponentSetImage.liveEdit', (event, imageId?, componentNameAsString?) => {
+            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('imageComponentSetImage.liveEdit',
+                (event, imageId?, componentNameAsString?) => {
 
-                var componentName = new api.content.page.ComponentName(componentNameAsString);
-                var imageComponent = <api.content.page.image.ImageComponent>this.pageRegions.getComponent(componentName);
-                var sitTemplate = this.siteTemplate.getKey();
-                var moduleKey = new api.module.ModuleKey("bluman.trampoline", "1.0.0");
-                var defaultImageTemplate = this.siteTemplate.getDefaultImageTemplate();
-                var imageTemplateKey = new api.content.page.image.ImageTemplateKey(sitTemplate, moduleKey, defaultImageTemplate);
-                imageComponent.setTemplate(imageTemplateKey);
-                imageComponent.setImage(imageId);
-                this.contentSaveAction.execute();
-            });
+                    var componentName = new api.content.page.ComponentName(componentNameAsString);
+                    var imageComponent = <api.content.page.image.ImageComponent>this.pageRegions.getComponent(componentName);
+                    var moduleName = "bluman.trampoline";
+                    var defaultImageTemplate = this.siteTemplate.getDefaultImageTemplate();
+                    var imageTemplateKey = new api.content.page.image.ImageTemplateKey(moduleName, defaultImageTemplate);
+                    imageComponent.setTemplate(imageTemplateKey);
+                    imageComponent.setImage(imageId);
+                    this.contentSaveAction.execute();
+                });
         }
 
         setPage(content: api.content.Content, pageTemplate: api.content.page.PageTemplate) {

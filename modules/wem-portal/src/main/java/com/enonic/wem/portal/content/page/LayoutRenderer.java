@@ -7,6 +7,7 @@ import com.enonic.wem.api.content.page.Template;
 import com.enonic.wem.api.content.page.TemplateKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutTemplateKey;
+import com.enonic.wem.api.content.site.SiteTemplateKey;
 
 import static com.enonic.wem.api.command.Commands.page;
 
@@ -15,9 +16,11 @@ public final class LayoutRenderer
 {
 
     @Override
-    protected Template getComponentTemplate( final TemplateKey componentTemplateKey )
+    protected Template getComponentTemplate( final TemplateKey componentTemplateKey, final SiteTemplateKey siteTemplateKey )
     {
-        return client.execute( page().template().layout().getByKey().key( (LayoutTemplateKey) componentTemplateKey ) );
+        return client.execute( page().template().layout().getByKey().
+            key( (LayoutTemplateKey) componentTemplateKey ).
+            siteTemplateKey( siteTemplateKey ) );
     }
 
     @Override

@@ -12,6 +12,8 @@ public final class JsContext
 
     private JsHttpResponse response;
 
+    private Content siteContent;
+
     private Content content;
 
     private PageTemplate pageTemplate;
@@ -43,6 +45,16 @@ public final class JsContext
     public void setResponse( final JsHttpResponse response )
     {
         this.response = response;
+    }
+
+    public Content getSiteContent()
+    {
+        return siteContent;
+    }
+
+    public void setSiteContent( final Content siteContent )
+    {
+        this.siteContent = siteContent;
     }
 
     public Content getContent()

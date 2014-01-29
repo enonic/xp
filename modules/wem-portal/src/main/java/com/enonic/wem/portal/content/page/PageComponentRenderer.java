@@ -11,6 +11,7 @@ import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.Template;
 import com.enonic.wem.api.content.page.TemplateKey;
+import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsControllerFactory;
@@ -28,7 +29,7 @@ abstract class PageComponentRenderer
     public Response render( final PageComponent pageComponent, final JsContext context )
     {
         final TemplateKey templateKey = pageComponent.getTemplate();
-        final Template template = resolveTemplate( templateKey );
+        final Template template = resolveTemplate( templateKey, context.getSiteContent().getSite().getTemplate() );
 
         final Descriptor descriptor = resolveDescriptor( templateKey, template );
 
@@ -50,11 +51,11 @@ abstract class PageComponentRenderer
         }
     }
 
-    private Template resolveTemplate( final TemplateKey templateKey )
+    private Template resolveTemplate( final TemplateKey templateKey, final SiteTemplateKey siteTemplateKey )
     {
         try
         {
-            return getComponentTemplate( templateKey );
+            return getComponentTemplate( templateKey, siteTemplateKey );
         }
         catch ( NotFoundException e )
         {
@@ -72,7 +73,7 @@ abstract class PageComponentRenderer
         return descriptor;
     }
 
-    protected abstract Template getComponentTemplate( final TemplateKey componentTemplateKey );
+    protected abstract Template getComponentTemplate( final TemplateKey componentTemplateKey, final SiteTemplateKey siteTemplateKey );
 
     protected abstract Descriptor getComponentDescriptor( final DescriptorKey descriptorKey );
 

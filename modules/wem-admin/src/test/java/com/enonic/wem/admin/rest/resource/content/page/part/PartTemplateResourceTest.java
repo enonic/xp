@@ -74,7 +74,7 @@ public class PartTemplateResourceTest
     private PartTemplate createTemplate( String key )
     {
         return PartTemplate.newPartTemplate().
-            key( PartTemplateKey.from( "sitetemplate-1.0.0|module-1.0.0|" + key ) ).
+            key( PartTemplateKey.from( "module|" + key ) ).
             displayName( key ).
             name( new PartTemplateName( key ) ).
             parentPath( ResourcePath.root() ).

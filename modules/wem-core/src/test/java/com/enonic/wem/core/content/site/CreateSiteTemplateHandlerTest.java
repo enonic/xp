@@ -74,7 +74,7 @@ public class CreateSiteTemplateHandlerTest
             rootContentType( ContentTypeName.from( "document" ) );
 
         PartTemplate.Builder templateBuilder = PartTemplate.newPartTemplate();
-        templateBuilder.key( PartTemplateKey.from( SITE_TEMPLATE, MODULE_KEY, new PartTemplateName( "template-name" ) ) );
+        templateBuilder.key( PartTemplateKey.from( MODULE_KEY.getName(), new PartTemplateName( "template-name" ) ) );
         templateBuilder.displayName( "display-name" );
         templateBuilder.descriptor( PartDescriptorKey.from( "resource-1.0.0:part-descr" ) );
         PartTemplate template = templateBuilder.build();

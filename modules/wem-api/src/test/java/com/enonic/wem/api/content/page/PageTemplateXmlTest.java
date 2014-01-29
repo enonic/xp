@@ -4,10 +4,10 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.page.part.PartComponent;
 import com.enonic.wem.api.content.page.region.Region;
-import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.xml.BaseXmlSerializerTest;
@@ -32,7 +32,7 @@ public class PageTemplateXmlTest
             name( "my-region" ).
             add( PartComponent.newPartComponent().
                 name( "PartInHeader" ).
-                template( "BluemanIntra-1.0.0|demo-1.0.0|my-part-template" ).
+                template( "demo|my-part-template" ).
                 config( partInHeaderConfig ).
                 build() ).
             build();
@@ -44,7 +44,7 @@ public class PageTemplateXmlTest
         pageTemplateConfig.addProperty( "thing.second", new Value.String( "two" ) );
 
         PageTemplate pageTemplate = PageTemplate.newPageTemplate().
-            key( PageTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|main-page" ) ).
+            key( PageTemplateKey.from( "mainmodule|main-page" ) ).
             displayName( "Main page template" ).
             regions( regions ).
             config( pageTemplateConfig ).
@@ -68,8 +68,7 @@ public class PageTemplateXmlTest
 
         XmlSerializers.pageTemplate().parse( xml ).to( builder );
 
-        builder.siteTemplate( SiteTemplateKey.from("BluemanIntra-1.0.0") );
-        builder.module( ModuleKey.from("demo-1.0.0") );
+        builder.module( ModuleName.from( "demo" ) );
         final PageTemplate pageTemplate = builder.build();
 
         assertEquals( "Main page template", pageTemplate.getDisplayName() );
@@ -97,7 +96,7 @@ public class PageTemplateXmlTest
         assertTrue( component instanceof PartComponent );
         PartComponent partComponent = (PartComponent) component;
         assertEquals( "PartInHeader", partComponent.getName().toString() );
-        assertEquals( "BluemanIntra-1.0.0|demo-1.0.0|my-part-template", partComponent.getTemplate().toString() );
+        assertEquals( "demo|my-part-template", partComponent.getTemplate().toString() );
 
         // verify: component config
         RootDataSet partComponentConfig = partComponent.getConfig();

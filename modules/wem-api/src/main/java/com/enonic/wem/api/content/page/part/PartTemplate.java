@@ -2,11 +2,8 @@ package com.enonic.wem.api.content.page.part;
 
 
 import com.enonic.wem.api.content.page.Template;
-import com.enonic.wem.api.content.page.image.ImageTemplateKey;
-import com.enonic.wem.api.content.page.image.ImageTemplateName;
-import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.support.Changes;
 import com.enonic.wem.api.support.EditBuilder;
 
@@ -26,9 +23,9 @@ public final class PartTemplate
     }
 
     @Override
-    protected PartTemplateKey createKey( final SiteTemplateKey siteTemplateKey, final ModuleKey moduleKey, final PartTemplateName name )
+    protected PartTemplateKey createKey( final ModuleName moduleName, final PartTemplateName name )
     {
-        return PartTemplateKey.from( siteTemplateKey, moduleKey, name );
+        return PartTemplateKey.from( moduleName, name );
     }
 
     public static Builder newPartTemplate()

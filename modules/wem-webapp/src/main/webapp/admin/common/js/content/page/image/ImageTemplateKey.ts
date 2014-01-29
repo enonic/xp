@@ -1,22 +1,21 @@
-module api.content.page.image{
+module api.content.page.image {
 
-    export class ImageTemplateKey extends api.content.page.TemplateKey{
+    export class ImageTemplateKey extends api.content.page.TemplateKey {
 
-        constructor(siteTemplateKey:api.content.site.template.SiteTemplateKey, moduleKey:api.module.ModuleKey, templateName:ImageTemplateName) {
-            super(siteTemplateKey, moduleKey, templateName);
+        constructor(moduleName: string, templateName: ImageTemplateName) {
+            super(moduleName, templateName);
         }
 
-        getImageTemplateName():ImageTemplateName {
+        getImageTemplateName(): ImageTemplateName {
             return <ImageTemplateName>this.getTemplateName();
         }
 
-        public static fromString(str:string):ImageTemplateKey {
+        public static fromString(str: string): ImageTemplateKey {
 
-            var elements:string[] = str.split(api.content.page.TemplateKey.SEPARATOR);
-            var siteTemplateKey = api.content.site.template.SiteTemplateKey.fromString(elements[0]);
-            var moduleKey = api.module.ModuleKey.fromString(elements[1]);
-            var templateName = new ImageTemplateName(elements[2]);
-            return new ImageTemplateKey(siteTemplateKey, moduleKey, templateName);
+            var elements: string[] = str.split(api.content.page.TemplateKey.SEPARATOR);
+            var moduleName = elements[0];
+            var templateName = new ImageTemplateName(elements[1]);
+            return new ImageTemplateKey(moduleName, templateName);
         }
     }
 }

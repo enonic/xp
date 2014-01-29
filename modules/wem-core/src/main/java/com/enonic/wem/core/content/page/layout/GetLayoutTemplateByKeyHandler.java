@@ -19,7 +19,7 @@ public class GetLayoutTemplateByKeyHandler
         throws Exception
     {
         final LayoutTemplateKey layoutTemplateKey = command.getKey();
-        final SiteTemplateKey siteTemplateKey = layoutTemplateKey.getSiteTemplateKey();
+        final SiteTemplateKey siteTemplateKey = command.getSiteTemplateKey();
         final GetSiteTemplateByKey getSiteTemplateCommand = Commands.site().template().get().byKey( siteTemplateKey );
         final SiteTemplate siteTemplate = context.getClient().execute( getSiteTemplateCommand );
         final LayoutTemplate layoutTemplate = siteTemplate.getLayoutTemplates().getTemplate( layoutTemplateKey.getTemplateName() );

@@ -46,8 +46,9 @@ public final class ComponentResource
         throws Exception
     {
         final Content content = getContent( this.contentPath, this.mode );
+        final Content siteContent = getSite( content );
         final Page page = getPage( content );
-        final PageTemplate pageTemplate = getPageTemplate( page );
+        final PageTemplate pageTemplate = getPageTemplate( page, siteContent.getSite() );
 
         final ComponentName componentName = new ComponentName( this.componentSelector );
         final PageRegions pageRegions = PageRegionsResolver.resolve( page, pageTemplate );
@@ -55,14 +56,15 @@ public final class ComponentResource
 
         final Renderer renderer = rendererFactory.getRenderer( component );
 
-        final JsContext context = createContext( content, component );
+        final JsContext context = createContext( content, component, siteContent );
         return renderer.render( component, context );
     }
 
-    private JsContext createContext( final Content content, final PageComponent component )
+    private JsContext createContext( final Content content, final PageComponent component, final Content siteContent )
     {
         final JsContext context = new JsContext();
         context.setContent( content );
+        context.setSiteContent( siteContent );
         context.setComponent( component );
 
         final JsHttpRequest request = new JsHttpRequest( this.httpContext.getRequest() );

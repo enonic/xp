@@ -1,40 +1,33 @@
-module api.content.page{
+module api.content.page {
 
     export class TemplateKey {
 
-        public static SEPARATOR:string = "|";
+        public static SEPARATOR: string = "|";
 
-        private siteTemplateKey:api.content.site.template.SiteTemplateKey;
+        private moduleName: string;
 
-        private moduleKey:api.module.ModuleKey;
+        private templateName: TemplateName;
 
-        private templateName:TemplateName;
+        private refString: string;
 
-        private refString:string;
-
-        constructor(siteTemplateKey:api.content.site.template.SiteTemplateKey, moduleKey:api.module.ModuleKey, templateName:TemplateName) {
-            if( name == null ) {
+        constructor(moduleName: string, templateName: TemplateName) {
+            if (name == null) {
                 throw new Error("name cannot be null");
             }
-            this.siteTemplateKey = siteTemplateKey;
-            this.moduleKey = moduleKey;
+            this.moduleName = moduleName;
             this.templateName = templateName;
-            this.refString = siteTemplateKey.toString() + TemplateKey.SEPARATOR + moduleKey + TemplateKey.SEPARATOR +  templateName;
+            this.refString = this.moduleName + TemplateKey.SEPARATOR + this.templateName;
         }
 
-        getSiteTemplateKey():api.content.site.template.SiteTemplateKey {
-            return this.siteTemplateKey;
+        getModuleName(): string {
+            return this.moduleName;
         }
 
-        getModuleKey():api.module.ModuleKey {
-            return this.moduleKey;
-        }
-
-        getTemplateName():TemplateName {
+        getTemplateName(): TemplateName {
             return this.templateName;
         }
 
-        public toString():string {
+        public toString(): string {
             return this.refString;
         }
     }

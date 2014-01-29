@@ -30,12 +30,15 @@ public class ImageTemplateResource
     extends AbstractResource
 {
     @GET
-    public ImageTemplateJson getByKey( @QueryParam("key") final String imageTemplateKeyAsString )
+    public ImageTemplateJson getByKey( @QueryParam("siteTemplateKey") final String siteTemplateKeyAsString,
+                                       @QueryParam("key") final String imageTemplateKeyAsString )
         throws IOException
     {
+        final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( siteTemplateKeyAsString );
         final ImageTemplateKey imageTemplateKey = ImageTemplateKey.from( imageTemplateKeyAsString );
         final GetImageTemplateByKey command = page().template().image().getByKey().
-            key( imageTemplateKey );
+            key( imageTemplateKey ).
+            siteTemplateKey( siteTemplateKey );
 
         final ImageTemplate imageTemplate = client.execute( command );
         final ImageDescriptor descriptor = getDescriptor( imageTemplate.getDescriptor() );

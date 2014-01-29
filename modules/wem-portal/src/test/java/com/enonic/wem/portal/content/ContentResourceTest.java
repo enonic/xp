@@ -35,7 +35,6 @@ import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateName;
-import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
@@ -187,7 +186,7 @@ public class ContentResourceTest
         rootDataSet.add( dataSet );
 
         Page page = Page.newPage().
-            template( PageTemplateKey.from( "template-1.0.0|mymodule-1.0.0|my-page" ) ).
+            template( PageTemplateKey.from( "mymodule|my-page" ) ).
             config( rootDataSet ).
             build();
 
@@ -204,15 +203,13 @@ public class ContentResourceTest
 
     private PageTemplate createPageTemplate()
     {
-        final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( "mySiteTemplate-1.0.0" );
-
         final ModuleKey module = ModuleKey.from( "mymodule-1.0.0" );
 
         final RootDataSet pageTemplateConfig = new RootDataSet();
         pageTemplateConfig.addProperty( "pause", new Value.Long( 10000 ) );
 
         final PageTemplate pageTemplate = PageTemplate.newPageTemplate().
-            key( PageTemplateKey.from( siteTemplateKey, module, new PageTemplateName( "my-page" ) ) ).
+            key( PageTemplateKey.from( module.getName(), new PageTemplateName( "my-page" ) ) ).
             displayName( "Main page template" ).
             config( pageTemplateConfig ).
             canRender( ContentTypeNames.from( "article", "banner" ) ).

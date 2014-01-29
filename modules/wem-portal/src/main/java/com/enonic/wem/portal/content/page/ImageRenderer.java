@@ -7,6 +7,7 @@ import com.enonic.wem.api.content.page.Template;
 import com.enonic.wem.api.content.page.TemplateKey;
 import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
 import com.enonic.wem.api.content.page.image.ImageTemplateKey;
+import com.enonic.wem.api.content.site.SiteTemplateKey;
 
 import static com.enonic.wem.api.command.Commands.page;
 
@@ -15,9 +16,11 @@ public final class ImageRenderer
 {
 
     @Override
-    protected Template getComponentTemplate( final TemplateKey componentTemplateKey )
+    protected Template getComponentTemplate( final TemplateKey componentTemplateKey, final SiteTemplateKey siteTemplateKey )
     {
-        return client.execute( page().template().image().getByKey().key( (ImageTemplateKey) componentTemplateKey ) );
+        return client.execute( page().template().image().getByKey().
+            key( (ImageTemplateKey) componentTemplateKey ).
+            siteTemplateKey( siteTemplateKey ) );
     }
 
     @Override

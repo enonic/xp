@@ -4,11 +4,15 @@ module app.wizard.page {
 
         parentContent: api.content.Content;
 
+        siteTemplate: api.content.site.template.SiteTemplate;
+
     }
 
     export class PageWizardStepForm extends api.app.wizard.WizardStepForm {
 
         private parentContent: api.content.Content;
+
+        private siteTemplate: api.content.site.template.SiteTemplate;
 
         private content: api.content.Content;
 
@@ -24,6 +28,7 @@ module app.wizard.page {
             super();
             this.addClass("page-wizard-step-form");
             this.parentContent = config.parentContent;
+            this.siteTemplate = config.siteTemplate;
 
             this.pageTemplateSelectorForm = new PageTemplateSelectorForm();
             this.pageTemplateSelectorForm.addPageTemplateChangedListener((changedTo: api.content.page.PageTemplateSummary) => {
@@ -48,6 +53,7 @@ module app.wizard.page {
             if (page != null && page.getTemplate() != null) {
 
                 new api.content.page.GetPageTemplateByKeyRequest(page.getTemplate()).
+                    setSiteTemplateKey(this.siteTemplate.getKey()).
                     sendAndParse().
                     done((pageTemplate: api.content.page.PageTemplate) => {
 
@@ -83,6 +89,7 @@ module app.wizard.page {
             else {
                 console.log("PageWizardStepForm.handlePageTemplateChanged() ... changed to something (loading...)");
                 new api.content.page.GetPageTemplateByKeyRequest(changedTo.getKey()).
+                    setSiteTemplateKey(this.siteTemplate.getKey()).
                     sendAndParse().
                     done((pageTemplate: api.content.page.PageTemplate) => {
 

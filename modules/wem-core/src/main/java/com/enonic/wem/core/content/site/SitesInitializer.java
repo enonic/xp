@@ -201,7 +201,7 @@ public class SitesInitializer
     private void initializeSiteTemplates()
     {
         myPartTemplate = newPartTemplate().
-            key( PartTemplateKey.from( HOMEPAGE_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, MY_PART_TEMPLATE_NAME ) ).
+            key( PartTemplateKey.from( DEMO_MODULE_KEY.getName(), MY_PART_TEMPLATE_NAME ) ).
             displayName( "My Part" ).
             descriptor( myPartDescriptor.getKey() ).
             build();
@@ -210,7 +210,7 @@ public class SitesInitializer
         final PageRegions.Builder mainPageRegions = newPageRegions();
         createDefaultPageRegions( mainPageRegions, HOMEPAGE_SITE_TEMPLATE_KEY );
         mainPageLandingPageTemplate = newPageTemplate().
-            key( PageTemplateKey.from( HOMEPAGE_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, MAIN_PAGE_PAGE_TEMPLATE_NAME ) ).
+            key( PageTemplateKey.from( DEMO_MODULE_KEY.getName(), MAIN_PAGE_PAGE_TEMPLATE_NAME ) ).
             displayName( "Main Page" ).
             regions( mainPageRegions.build() ).
             config( createLandingPagePageTemplateConfig( "blue" ) ).
@@ -224,12 +224,11 @@ public class SitesInitializer
                 name( "main" ).
                 add( PartComponent.newPartComponent().
                     name( "MyComponent" ).
-                    template(
-                        PartTemplateKey.from( HOMEPAGE_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, new PartTemplateName( "my-part-template" ) ) ).
+                    template( PartTemplateKey.from( DEMO_MODULE_KEY.getName(), new PartTemplateName( "my-part-template" ) ) ).
                     build() ).
                 build() );
         productGridPageTemplate = newPageTemplate().
-            key( PageTemplateKey.from( HOMEPAGE_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, PRODUCT_GRID_PAGE_TEMPLATE_NAME ) ).
+            key( PageTemplateKey.from( DEMO_MODULE_KEY.getName(), PRODUCT_GRID_PAGE_TEMPLATE_NAME ) ).
             displayName( "Product grid" ).
             regions( productGridRegions.build() ).
             config( createProductPageTemplateConfig( 10, 10 ) ).
@@ -240,7 +239,7 @@ public class SitesInitializer
         final PageRegions.Builder departmentPageRegions = newPageRegions();
         createDefaultPageRegions( departmentPageRegions, INTRANET_SITE_TEMPLATE_KEY );
         departmentPageLandingPageTemplate = newPageTemplate().
-            key( PageTemplateKey.from( INTRANET_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, DEPARTMENT_PAGE_PAGE_TEMPLATE_NAME ) ).
+            key( PageTemplateKey.from( DEMO_MODULE_KEY.getName(), DEPARTMENT_PAGE_PAGE_TEMPLATE_NAME ) ).
             displayName( "Department Page" ).
             regions( departmentPageRegions.build() ).
             config( createLandingPagePageTemplateConfig( "red" ) ).
@@ -363,7 +362,7 @@ public class SitesInitializer
             name( "header" ).
             add( newPartComponent().
                 name( "PartInHeader" ).
-                template( PartTemplateKey.from( siteTemplateKey, DEMO_MODULE_KEY, MY_PART_TEMPLATE_NAME ) ).
+                template( PartTemplateKey.from( DEMO_MODULE_KEY.getName(), MY_PART_TEMPLATE_NAME ) ).
                 config( createMyImageTemplateConfig( 500, "So sweet!" ) ).
                 build() ).
             build();
@@ -373,12 +372,12 @@ public class SitesInitializer
             add( newImageComponent().
                 name( "FancyImage" ).
                 image( ContentId.from( "123" ) ).
-                template( ImageTemplateKey.from( siteTemplateKey, DEMO_MODULE_KEY, MY_IMAGE_TEMPLATE_NAME ) ).
+                template( ImageTemplateKey.from( DEMO_MODULE_KEY.getName(), MY_IMAGE_TEMPLATE_NAME ) ).
                 config( createMyImageTemplateConfig( 500, "So nice!" ) ).
                 build() ).
             add( newPartComponent().
                 name( "PartInMain" ).
-                template( PartTemplateKey.from( siteTemplateKey, DEMO_MODULE_KEY, MY_PART_TEMPLATE_NAME ) ).
+                template( PartTemplateKey.from( DEMO_MODULE_KEY.getName(), MY_PART_TEMPLATE_NAME ) ).
                 config( createMyPartTemplateConfig( "Take a part!" ) ).
                 build() ).
             build();
@@ -387,7 +386,7 @@ public class SitesInitializer
             name( "footer" ).
             add( newPartComponent().
                 name( "PartInFooter" ).
-                template( PartTemplateKey.from( siteTemplateKey, DEMO_MODULE_KEY, MY_PART_TEMPLATE_NAME ) ).
+                template( PartTemplateKey.from( DEMO_MODULE_KEY.getName(), MY_PART_TEMPLATE_NAME ) ).
                 config( createMyPartTemplateConfig( "Footer" ) ).
                 build() ).
             build();

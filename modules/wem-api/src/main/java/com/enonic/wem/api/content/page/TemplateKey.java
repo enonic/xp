@@ -1,7 +1,6 @@
 package com.enonic.wem.api.content.page;
 
-import com.enonic.wem.api.content.site.SiteTemplateKey;
-import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleName;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -20,24 +19,20 @@ public abstract class TemplateKey<NAME extends TemplateName>
 
     private final NAME name;
 
-    private final SiteTemplateKey siteTemplate;
-
-    private final ModuleKey module;
+    private final ModuleName module;
 
     private final String refString;
 
     private final TemplateType templateType;
 
-    protected TemplateKey( final SiteTemplateKey siteTemplate, final ModuleKey module, final NAME name, final TemplateType templateType )
+    protected TemplateKey( final ModuleName module, final NAME name, final TemplateType templateType )
     {
         checkNotNull( name, "Template name cannot be null" );
-        checkNotNull( siteTemplate, "SiteTemplate name cannot be null" );
         checkNotNull( module, "ModuleKey name cannot be null" );
         this.name = name;
-        this.siteTemplate = siteTemplate;
         this.module = module;
         this.templateType = templateType;
-        this.refString = siteTemplate.toString() + SEPARATOR + module.toString() + SEPARATOR + name.toString();
+        this.refString = module.toString() + SEPARATOR + name.toString();
     }
 
     public NAME getTemplateName()
@@ -45,12 +40,7 @@ public abstract class TemplateKey<NAME extends TemplateName>
         return name;
     }
 
-    public SiteTemplateKey getSiteTemplateKey()
-    {
-        return siteTemplate;
-    }
-
-    public ModuleKey getModuleKey()
+    public ModuleName getModuleName()
     {
         return module;
     }

@@ -3,10 +3,8 @@ package com.enonic.wem.api.content.page.image;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.Template;
-import com.enonic.wem.api.content.page.TemplateName;
-import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.support.Changes;
 import com.enonic.wem.api.support.EditBuilder;
 
@@ -24,9 +22,9 @@ public final class ImageTemplate
     }
 
     @Override
-    protected ImageTemplateKey createKey( final SiteTemplateKey siteTemplateKey, final ModuleKey moduleKey, final ImageTemplateName name )
+    protected ImageTemplateKey createKey( final ModuleName moduleName, final ImageTemplateName name )
     {
-        return ImageTemplateKey.from( siteTemplateKey, moduleKey, name );
+        return ImageTemplateKey.from( moduleName, name );
     }
 
     private ImageTemplate( final Builder builder )

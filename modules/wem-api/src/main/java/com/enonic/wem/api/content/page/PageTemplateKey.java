@@ -3,8 +3,7 @@ package com.enonic.wem.api.content.page;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.site.SiteTemplateKey;
-import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleName;
 
 import static com.google.common.base.Splitter.on;
 import static com.google.common.collect.Iterators.toArray;
@@ -12,27 +11,25 @@ import static com.google.common.collect.Iterators.toArray;
 public final class PageTemplateKey
     extends TemplateKey<PageTemplateName>
 {
-    private PageTemplateKey( final SiteTemplateKey siteTemplateKey, final ModuleKey moduleKey, final PageTemplateName templateName )
+    private PageTemplateKey( final ModuleName moduleName, final PageTemplateName templateName )
     {
-        super( siteTemplateKey, moduleKey, templateName, TemplateType.PAGE );
+        super( moduleName, templateName, TemplateType.PAGE );
     }
 
-    public static PageTemplateKey from( final SiteTemplateKey siteTemplateKey, final ModuleKey moduleKey,
-                                        final PageTemplateName templateName )
+    public static PageTemplateKey from( final ModuleName moduleKey, final PageTemplateName templateName )
     {
-        return new PageTemplateKey( siteTemplateKey, moduleKey, templateName );
+        return new PageTemplateKey( moduleKey, templateName );
     }
 
     public static PageTemplateKey from( final String templateKey )
     {
         Preconditions.checkNotNull( templateKey, "templateKey cannot be null" );
         final String[] templateKeyParts = toArray( on( SEPARATOR ).split( templateKey ).iterator(), String.class );
-        Preconditions.checkArgument( templateKeyParts.length == 3, "Invalid PageTemplateKey" );
+        Preconditions.checkArgument( templateKeyParts.length == 2, "Invalid PageTemplateKey" );
 
-        final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( templateKeyParts[0] );
-        final ModuleKey moduleKey = ModuleKey.from( templateKeyParts[1] );
-        final PageTemplateName pageTemplateName = new PageTemplateName( templateKeyParts[2] );
+        final ModuleName moduleName = ModuleName.from( templateKeyParts[0] );
+        final PageTemplateName templateName = new PageTemplateName( templateKeyParts[1] );
 
-        return new PageTemplateKey( siteTemplateKey, moduleKey, pageTemplateName );
+        return new PageTemplateKey( moduleName, templateName );
     }
 }

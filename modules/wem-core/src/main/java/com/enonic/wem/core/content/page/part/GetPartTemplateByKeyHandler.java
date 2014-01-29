@@ -19,7 +19,7 @@ public class GetPartTemplateByKeyHandler
         throws Exception
     {
         final PartTemplateKey partTemplateKey = command.getKey();
-        final SiteTemplateKey siteTemplateKey = partTemplateKey.getSiteTemplateKey();
+        final SiteTemplateKey siteTemplateKey = command.getSiteTemplateKey();
         final GetSiteTemplateByKey getSiteTemplateCommand = Commands.site().template().get().byKey( siteTemplateKey );
         final SiteTemplate siteTemplate = context.getClient().execute( getSiteTemplateCommand );
         final PartTemplate partTemplate = siteTemplate.getPartTemplates().getTemplate( partTemplateKey.getTemplateName() );

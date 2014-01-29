@@ -22,7 +22,7 @@ public class ImageTemplateXmlTest
         imageTemplateConfig.addProperty( "width", new Value.Long( 200 ) );
 
         ImageTemplate imageTemplate = ImageTemplate.newImageTemplate().
-            key( ImageTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|image" ) ).
+            key( ImageTemplateKey.from( "mainmodule|image" ) ).
             displayName( "Image template" ).
             config( imageTemplateConfig ).
             descriptor( ImageDescriptorKey.from( "mainmodule-1.0.0:image-temp" ) ).

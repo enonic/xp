@@ -19,7 +19,7 @@ public class GetImageTemplateByKeyHandler
         throws Exception
     {
         final ImageTemplateKey imageTemplateKey = command.getKey();
-        final SiteTemplateKey siteTemplateKey = imageTemplateKey.getSiteTemplateKey();
+        final SiteTemplateKey siteTemplateKey = command.getSiteTemplateKey();
         final GetSiteTemplateByKey getSiteTemplateCommand = Commands.site().template().get().byKey( siteTemplateKey );
         final SiteTemplate siteTemplate = context.getClient().execute( getSiteTemplateCommand );
         final ImageTemplate imageTemplate = siteTemplate.getImageTemplates().getTemplate( imageTemplateKey );

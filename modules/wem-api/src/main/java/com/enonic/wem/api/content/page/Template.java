@@ -2,9 +2,8 @@ package com.enonic.wem.api.content.page;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.module.ResourcePath;
 
 public abstract class Template<NAME extends TemplateName, KEY extends TemplateKey<NAME>, DESCRIPTOR_KEY extends DescriptorKey>
@@ -39,14 +38,13 @@ public abstract class Template<NAME extends TemplateName, KEY extends TemplateKe
         }
         else
         {
-            Preconditions.checkNotNull( properties.siteTemplateKey, "siteTemplateKey cannot be null when key is not given" );
-            Preconditions.checkNotNull( properties.moduleKey, "moduleKey cannot be null when key is not given" );
-            Preconditions.checkNotNull( properties.siteTemplateKey, "name cannot be null when key is not given" );
-            return createKey( properties.siteTemplateKey, properties.moduleKey, (NAME) properties.name );
+            Preconditions.checkNotNull( properties.moduleName, "moduleKey cannot be null when key is not given" );
+            Preconditions.checkNotNull( properties.name, "name cannot be null when key is not given" );
+            return createKey( properties.moduleName, (NAME) properties.name );
         }
     }
 
-    protected abstract KEY createKey( final SiteTemplateKey siteTemplateKey, final ModuleKey moduleKey, final NAME name );
+    protected abstract KEY createKey( final ModuleName moduleName, final NAME name );
 
     public KEY getKey()
     {
@@ -89,9 +87,7 @@ public abstract class Template<NAME extends TemplateName, KEY extends TemplateKe
 
         protected KEY key;
 
-        protected SiteTemplateKey siteTemplateKey;
-
-        protected ModuleKey moduleKey;
+        protected ModuleName moduleName;
 
         protected NAME name;
 
@@ -114,20 +110,10 @@ public abstract class Template<NAME extends TemplateName, KEY extends TemplateKe
         /**
          * Optional. Only required when key is not given.
          */
-        public B siteTemplate( final SiteTemplateKey value )
+        public B module( final ModuleName value )
         {
 
-            this.siteTemplateKey = value;
-            return typecastToTemplateBuilder( this );
-        }
-
-        /**
-         * Optional. Only required when key is not given.
-         */
-        public B module( final ModuleKey value )
-        {
-
-            this.moduleKey = value;
+            this.moduleName = value;
             return typecastToTemplateBuilder( this );
         }
 

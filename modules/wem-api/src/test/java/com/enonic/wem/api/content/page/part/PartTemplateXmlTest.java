@@ -22,7 +22,7 @@ public class PartTemplateXmlTest
         partTemplateConfig.addProperty( "width", new Value.Long( 200 ) );
 
         PartTemplate partTemplate = PartTemplate.newPartTemplate().
-            key( PartTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|news-part" ) ).
+            key( PartTemplateKey.from( "mainmodule|news-part" ) ).
             displayName( "News part template" ).
             config( partTemplateConfig ).
             descriptor( PartDescriptorKey.from( "mainmodule-1.0.0:news-part" ) ).

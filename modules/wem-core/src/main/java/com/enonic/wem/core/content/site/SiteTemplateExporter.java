@@ -15,9 +15,6 @@ import com.enonic.wem.api.content.page.part.PartTemplate;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateXml;
-import com.enonic.wem.api.exception.SystemException;
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.support.export.AbstractEntityExporter;
 import com.enonic.wem.core.support.export.EntityExporters;
@@ -54,7 +51,7 @@ public final class SiteTemplateExporter
             {
                 if ( Files.isDirectory( moduleDir ) )
                 {
-                    importTemplates( builder, moduleDir, siteTemplateKey );
+                    importTemplates( builder, moduleDir );
                 }
             }
         }
@@ -71,20 +68,18 @@ public final class SiteTemplateExporter
         for ( final Template template : siteTemplate )
         {
             final AbstractEntityExporter<Template, Template.BaseTemplateBuilder> exporter = EntityExporters.getForObject( template );
-            final ModuleKey templateModule = template.getKey().getModuleKey();
-            final Path templatePath = rootPath.resolve( templateModule.getName().toString() ).resolve( template.getName().toString() );
+            final ModuleName module = template.getKey().getModuleName();
+            final Path templatePath = rootPath.resolve( module.toString() ).resolve( template.getName().toString() );
             exporter.exportObject( template, createPath( templatePath ), "" );
         }
     }
 
-    private void importTemplates( final SiteTemplate.Builder siteTemplate, final Path parentDirectory,
-                                  final SiteTemplateKey siteTemplateKey )
+    private void importTemplates( final SiteTemplate.Builder siteTemplate, final Path parentDirectory )
         throws IOException
     {
         final String pathSeparator = parentDirectory.getFileSystem().getSeparator();
         final String pathName = StringUtils.remove( parentDirectory.getFileName().toString(), pathSeparator );
         final ModuleName moduleName = ModuleName.from( pathName );
-        final ModuleKey moduleKey = resolveModuleVersion( moduleName, siteTemplate );
 
         try (final DirectoryStream<Path> ds = Files.newDirectoryStream( parentDirectory ))
         {
@@ -104,7 +99,7 @@ public final class SiteTemplateExporter
                         if ( entityExporter != null )
                         {
                             final Template.BaseTemplateBuilder template = entityExporter.importObject( parentDirectory, templateFile );
-                            setTemplateKey( siteTemplateKey, moduleKey, template );
+                            setTemplateKey( moduleName, template );
                             siteTemplate.addTemplate( template.build() );
                             break;
                         }
@@ -114,46 +109,27 @@ public final class SiteTemplateExporter
         }
     }
 
-    private ModuleKey resolveModuleVersion( final ModuleName moduleName, final SiteTemplate.Builder siteTemplate )
-    {
-        final SiteTemplate st = siteTemplate.build();
-        final ModuleKeys siteTemplateModules = st.getModules();
-        for ( ModuleKey moduleKey : siteTemplateModules )
-        {
-            if ( moduleKey.getName().equals( moduleName ) )
-            {
-                return moduleKey;
-            }
-        }
-        throw new SystemException( "Could not resolve version for module [{0}] in site template [{1}]", moduleName, st.getKey() );
-    }
-
-    private void setTemplateKey( final SiteTemplateKey siteTemplateKey, final ModuleKey moduleKey,
-                                 final Template.BaseTemplateBuilder template )
+    private void setTemplateKey( final ModuleName moduleName, final Template.BaseTemplateBuilder template )
     {
         if ( template instanceof ImageTemplate.Builder )
         {
             final ImageTemplate.Builder templateBuilder = (ImageTemplate.Builder) template;
-            templateBuilder.siteTemplate( siteTemplateKey );
-            templateBuilder.module( moduleKey );
+            templateBuilder.module( moduleName );
         }
         else if ( template instanceof PartTemplate.Builder )
         {
             final PartTemplate.Builder templateBuilder = (PartTemplate.Builder) template;
-            templateBuilder.siteTemplate( siteTemplateKey );
-            templateBuilder.module( moduleKey );
+            templateBuilder.module( moduleName );
         }
         else if ( template instanceof PageTemplate.Builder )
         {
             final PageTemplate.Builder templateBuilder = (PageTemplate.Builder) template;
-            templateBuilder.siteTemplate( siteTemplateKey );
-            templateBuilder.module( moduleKey );
+            templateBuilder.module( moduleName );
         }
         else if ( template instanceof LayoutTemplate.Builder )
         {
             final LayoutTemplate.Builder templateBuilder = (LayoutTemplate.Builder) template;
-            templateBuilder.siteTemplate( siteTemplateKey );
-            templateBuilder.module( moduleKey );
+            templateBuilder.module( moduleName );
         }
         else
         {

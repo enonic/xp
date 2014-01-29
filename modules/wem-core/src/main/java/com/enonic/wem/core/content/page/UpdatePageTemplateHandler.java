@@ -20,11 +20,11 @@ public class UpdatePageTemplateHandler
     public void handle()
         throws Exception
     {
-        final GetSiteTemplateByKey getSiteTemplateCommand = Commands.site().template().get().byKey( command.getKey().getSiteTemplateKey() );
+        final GetSiteTemplateByKey getSiteTemplateCommand = Commands.site().template().get().byKey( command.getSiteTemplateKey() );
         final SiteTemplate siteTemplate = context.getClient().execute( getSiteTemplateCommand );
         if ( siteTemplate == null )
         {
-            throw new SiteTemplateNotFoundException( command.getKey().getSiteTemplateKey() );
+            throw new SiteTemplateNotFoundException( command.getSiteTemplateKey() );
         }
 
         final PageTemplate template = siteTemplate.getPageTemplates().getTemplate( command.getKey().getTemplateName() );
@@ -41,7 +41,7 @@ public class UpdatePageTemplateHandler
             final PageTemplate editedTemplate = editBuilder.build();
 
             final UpdateSiteTemplate updateCommand = Commands.site().template().update().
-                key( command.getKey().getSiteTemplateKey() ).
+                key( command.getSiteTemplateKey() ).
                 editor( new SiteTemplateEditor()
                 {
                     @Override

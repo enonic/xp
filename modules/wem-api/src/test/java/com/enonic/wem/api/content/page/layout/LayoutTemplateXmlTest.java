@@ -24,7 +24,7 @@ public class LayoutTemplateXmlTest
         layoutTemplateConfig.addProperty( "width", new Value.Long( 200 ) );
 
         LayoutTemplate layoutTemplate = LayoutTemplate.newLayoutTemplate().
-            key( LayoutTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|layout-name" ) ).
+            key( LayoutTemplateKey.from( "mainmodule|layout-name" ) ).
             displayName( "Layout template" ).
             config( layoutTemplateConfig ).
             descriptor( LayoutDescriptorKey.from( ModuleKey.from( "mainmodule-1.0.0" ), new ComponentDescriptorName( "layout-temp" ) ) ).

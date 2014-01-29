@@ -29,11 +29,15 @@ public final class PageTemplateResource
     extends AbstractResource
 {
     @GET
-    public PageTemplateJson getByKey( @QueryParam("key") final String pageTemplateKeyAsString )
+    public PageTemplateJson getByKey( @QueryParam("siteTemplateKey") final String siteTemplateKeyAsString,
+                                      @QueryParam("key") final String pageTemplateKeyAsString )
         throws IOException
     {
+        final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( siteTemplateKeyAsString );
         final PageTemplateKey pageTemplateKey = PageTemplateKey.from( pageTemplateKeyAsString );
-        final PageTemplate pageTemplate = client.execute( page().template().page().getByKey().key( pageTemplateKey ) );
+        final PageTemplate pageTemplate = client.execute( page().template().page().getByKey().
+            key( pageTemplateKey ).
+            siteTemplateKey( siteTemplateKey ) );
         final PageDescriptor descriptor = getDescriptor( pageTemplate.getDescriptor() );
         return new PageTemplateJson( pageTemplate, new PageDescriptorJson( descriptor ) );
     }

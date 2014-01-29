@@ -10,7 +10,6 @@ import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutTemplate;
 import com.enonic.wem.api.content.page.layout.LayoutTemplateKey;
-import com.enonic.wem.api.content.page.layout.LayoutTemplateName;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartTemplate;
 import com.enonic.wem.api.content.page.part.PartTemplateKey;
@@ -65,7 +64,7 @@ public class SiteTemplateTest
         partTemplateConfig.addProperty( "width", new Value.Long( 200 ) );
 
         final PartTemplate partTemplate = PartTemplate.newPartTemplate().
-            key( PartTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|news-part" ) ).
+            key( PartTemplateKey.from( "mainmodule|news-part" ) ).
             displayName( "News part template" ).
             config( partTemplateConfig ).
             descriptor( PartDescriptorKey.from( "mainmodule-1.0.0:news-part" ) ).
@@ -74,7 +73,7 @@ public class SiteTemplateTest
         layoutTemplateConfig.addProperty( "columns", new Value.Long( 3 ) );
 
         final LayoutTemplate layoutTemplate = LayoutTemplate.newLayoutTemplate().
-            key( LayoutTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|my-layout" ) ).
+            key( LayoutTemplateKey.from( "mainmodule|my-layout" ) ).
             displayName( "Layout template" ).
             config( layoutTemplateConfig ).
             descriptor( LayoutDescriptorKey.from( "mainmodule-1.0.0:some-layout" ) ).
@@ -85,7 +84,7 @@ public class SiteTemplateTest
         pageTemplateConfig.addProperty( "pause", new Value.Long( 10000 ) );
 
         final PageTemplate pageTemplate = PageTemplate.newPageTemplate().
-            key( PageTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|main-page" ) ).
+            key( PageTemplateKey.from( "mainmodule.0|main-page" ) ).
             displayName( "Main page template" ).
             config( pageTemplateConfig ).
             canRender( ContentTypeNames.from( "article", "banner" ) ).

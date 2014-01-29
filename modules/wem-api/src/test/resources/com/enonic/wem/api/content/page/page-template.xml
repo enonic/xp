@@ -16,7 +16,7 @@
   </can-render>
   <regions>
     <region name="my-region">
-      <part-component name="PartInHeader" template="BluemanIntra-1.0.0|demo-1.0.0|my-part-template">
+      <part-component name="PartInHeader" template="demo|my-part-template">
         <config>
           <property name="width" type="Long">500</property>
           <property name="caption" type="String">So sweet!</property>

@@ -36,14 +36,14 @@ public class LayoutTemplateResourceTest
     private LayoutTemplates createLayoutTemplates()
     {
         LayoutTemplate layoutTemplate1 = newLayoutTemplate().
-            key( LayoutTemplateKey.from( "sitetemplate-1.0.0|module1-1.0.0|layout1" ) ).
+            key( LayoutTemplateKey.from( "module1|layout1" ) ).
             displayName( "Layout1 template" ).
             config( new RootDataSet() ).descriptor( LayoutDescriptorKey.from( "module1-1.0.0:layout1-template" ) ).
             regions( newLayoutRegions().build() ).
             build();
 
         LayoutTemplate layoutTemplate2 = newLayoutTemplate().
-            key( LayoutTemplateKey.from( "sitetemplate-1.0.0|module2-1.0.0|layout2" ) ).
+            key( LayoutTemplateKey.from( "module2|layout2" ) ).
             displayName( "Layout2 template" ).config( new RootDataSet() ).
             descriptor( LayoutDescriptorKey.from( "module2-1.0.0:layout2-template" ) ).
             regions( newLayoutRegions().build() ).

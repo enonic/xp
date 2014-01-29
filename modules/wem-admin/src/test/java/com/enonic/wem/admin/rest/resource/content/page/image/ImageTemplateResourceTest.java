@@ -37,14 +37,14 @@ public class ImageTemplateResourceTest
         imageTemplateConfig.addProperty( "width", new Value.Long( 200 ) );
 
         ImageTemplate imageTemplate1 = ImageTemplate.newImageTemplate().
-            key( ImageTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|image" ) ).
+            key( ImageTemplateKey.from( "mainmodule|image" ) ).
             displayName( "Image template" ).
             config( imageTemplateConfig ).
             descriptor( ImageDescriptorKey.from( "mainmodule-1.0.0:image-temp" ) ).
             build();
 
         ImageTemplate imageTemplate2 = ImageTemplate.newImageTemplate().
-            key( ImageTemplateKey.from( "sitetemplate-1.0.0|module2-1.0.0|imageresponsive" ) ).
+            key( ImageTemplateKey.from( "module2|imageresponsive" ) ).
             displayName( "Responsive Image template" ).
             config( imageTemplateConfig ).
             descriptor( ImageDescriptorKey.from( "mainmodule-1.0.0:imageresp-temp" ) ).

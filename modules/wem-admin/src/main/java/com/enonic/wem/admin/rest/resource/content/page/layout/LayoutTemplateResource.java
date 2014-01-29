@@ -30,11 +30,15 @@ public class LayoutTemplateResource
     extends AbstractResource
 {
     @GET
-    public LayoutTemplateJson getByKey( @QueryParam("key") final String layoutTemplateKeyAsString )
+    public LayoutTemplateJson getByKey( @QueryParam("siteTemplateKey") final String siteTemplateKeyAsString,
+                                        @QueryParam("key") final String layoutTemplateKeyAsString )
         throws IOException
     {
+        final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( siteTemplateKeyAsString );
         final LayoutTemplateKey layoutTemplateKey = LayoutTemplateKey.from( layoutTemplateKeyAsString );
-        final GetLayoutTemplateByKey command = page().template().layout().getByKey().key( layoutTemplateKey );
+        final GetLayoutTemplateByKey command = page().template().layout().getByKey().
+            key( layoutTemplateKey ).
+            siteTemplateKey( siteTemplateKey );
 
         final LayoutTemplate layoutTemplate = client.execute( command );
         final LayoutDescriptor descriptor = getDescriptor( layoutTemplate.getDescriptor() );

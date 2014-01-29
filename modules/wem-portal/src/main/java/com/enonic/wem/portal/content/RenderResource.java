@@ -7,6 +7,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.core.Response;
 
 import com.enonic.wem.api.Client;
+import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
@@ -15,6 +16,7 @@ import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageTemplate;
+import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.portal.controller.JsControllerFactory;
 import com.enonic.wem.portal.exception.PortalWebException;
 
@@ -55,6 +57,16 @@ public abstract class RenderResource
 
     abstract protected Response doHandle()
         throws Exception;
+
+    protected Content getSite( final Content content )
+    {
+        final Content siteContent = client.execute( Commands.site().getNearestSite().content( content.getId() ) );
+        if ( siteContent == null )
+        {
+            throw new SiteNotFoundException( content.getPath() );
+        }
+        return siteContent;
+    }
 
     protected Content getContent( final String contentSelector, final String mode )
     {
@@ -98,9 +110,11 @@ public abstract class RenderResource
         return pageDescriptor;
     }
 
-    protected PageTemplate getPageTemplate( final Page page )
+    protected PageTemplate getPageTemplate( final Page page, final Site site )
     {
-        final PageTemplate pageTemplate = this.client.execute( page().template().page().getByKey().key( page.getTemplate() ) );
+        final PageTemplate pageTemplate = this.client.execute( page().template().page().getByKey().
+            siteTemplateKey( site.getTemplate() ).
+            key( page.getTemplate() ) );
         if ( pageTemplate == null )
         {
             throw PortalWebException.notFound().message( "Page template [{0}] not found.", page.getTemplate() ).build();

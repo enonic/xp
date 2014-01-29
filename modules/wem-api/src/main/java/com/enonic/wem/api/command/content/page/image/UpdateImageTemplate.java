@@ -7,13 +7,22 @@ import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.image.ImageTemplate;
 import com.enonic.wem.api.content.page.image.ImageTemplateEditor;
 import com.enonic.wem.api.content.page.image.ImageTemplateKey;
+import com.enonic.wem.api.content.site.SiteTemplateKey;
 
 public final class UpdateImageTemplate
     extends Command<ImageTemplate>
 {
+    private SiteTemplateKey siteTemplateKey;
+
     private ImageTemplateKey key;
 
     private ImageTemplateEditor editor;
+
+    public UpdateImageTemplate siteTemplateKey( final SiteTemplateKey siteTemplateKey )
+    {
+        this.siteTemplateKey = siteTemplateKey;
+        return this;
+    }
 
     public UpdateImageTemplate key( final ImageTemplateKey key )
     {
@@ -30,7 +39,13 @@ public final class UpdateImageTemplate
     @Override
     public void validate()
     {
+        Preconditions.checkNotNull( siteTemplateKey, "siteTemplateKey is required" );
         Preconditions.checkNotNull( key, "key is required" );
+    }
+
+    public SiteTemplateKey getSiteTemplateKey()
+    {
+        return siteTemplateKey;
     }
 
     public ImageTemplateKey getKey()
