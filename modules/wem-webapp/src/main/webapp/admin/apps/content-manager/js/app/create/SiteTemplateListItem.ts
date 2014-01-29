@@ -12,23 +12,15 @@ module app.create {
             this.siteTemplate = item;
             this.contentType = contentType;
 
-            var img = new api.dom.ImgEl(contentType.getIconUrl());
+            var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize( api.app.NamesAndIconViewSize.small ).build();
 
-            var h6 = new api.dom.H6El();
-            h6.getEl().setInnerHtml(item.getDisplayName());
-            h6.getEl().setAttribute("title", item.getDisplayName());
+            namesAndIconView
+                .setIconUrl(contentType.getIconUrl())
+                .setMainName(item.getDisplayName())
+                .setSubName(item.getName())
+                .setDisplayIconLabel(true);
 
-            var p = new api.dom.PEl();
-            p.getEl().setInnerHtml(item.getDescription());
-            p.getEl().setAttribute("title", item.getDescription());
-
-            this.appendChild(img);
-            this.appendChild(h6);
-            this.appendChild(p);
-
-            var span = new api.dom.SpanEl();
-            span.setClass('overlay');
-            this.appendChild(span);
+            this.appendChild(namesAndIconView);
         }
 
         getName(): string {

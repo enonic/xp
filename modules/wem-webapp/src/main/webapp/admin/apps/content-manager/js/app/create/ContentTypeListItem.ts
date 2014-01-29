@@ -6,36 +6,25 @@ module app.create {
 
         private contentType: api.schema.content.ContentTypeSummary;
 
-        private iconUrl: string;
-
-        constructor(item: api.schema.content.ContentTypeSummary, siteRoot?: boolean, markRoot?: boolean) {
+        constructor(item: api.schema.content.ContentTypeSummary, siteRoot: boolean = false, markRoot?: boolean) {
             super("content-type-list-item");
 
             this.contentType = item;
-            this.siteRoot = siteRoot || false;
-            this.iconUrl = item.getIconUrl();
+            this.siteRoot = siteRoot;
 
-            var img = new api.dom.ImgEl(item.getIconUrl());
+            var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize( api.app.NamesAndIconViewSize.small ).build();
 
-            var h6 = new api.dom.H6El();
-            h6.getEl().setInnerHtml(item.getDisplayName());
-            h6.getEl().setAttribute("title", item.getDisplayName());
-
-            var p = new api.dom.PEl();
-            p.getEl().setInnerHtml(item.getName());
-            p.getEl().setAttribute("title", item.getName());
-
-            this.appendChild(img);
-            this.appendChild(h6);
-            this.appendChild(p);
+            namesAndIconView
+                .setIconUrl(item.getIconUrl())
+                .setMainName(item.getDisplayName())
+                .setSubName(item.getName());
 
             if (siteRoot && markRoot) {
                 this.addClass('site');
-
-                var span = new api.dom.SpanEl();
-                span.setClass('overlay');
-                this.appendChild(span);
+                namesAndIconView.setDisplayIconLabel(true);
             }
+
+            this.appendChild(namesAndIconView);
         }
 
         getName(): string {
@@ -47,7 +36,7 @@ module app.create {
         }
 
         getIconUrl(): string {
-            return this.iconUrl;
+            return this.contentType.getIconUrl();
         }
 
         getContentType(): api.schema.content.ContentTypeSummary {

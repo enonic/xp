@@ -13,28 +13,16 @@ module api.content {
         }
 
 
-        optionFormatter(row:number, cell:number, content:api.content.ContentSummary, columnDef:any, dataContext:api.ui.combobox.Option<api.content.ContentSummary>):string {
-            var img = new api.dom.ImgEl();
-            img.setClass("icon");
-            img.getEl().setSrc(content.getIconUrl());
+        optionFormatter(row:number, cell:number, content:api.content.ContentSummary, columnDef:any, dataContext:api.ui.combobox.Option<api.content.ContentSummary>):string
+        {
+            var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize( api.app.NamesAndIconViewSize.small ).build();
 
-            var contentSummary = new api.dom.DivEl();
-            contentSummary.setClass("item-summary");
+            namesAndIconView
+                .setIconUrl(content.getIconUrl())
+                .setMainName(content.getDisplayName())
+                .setSubName(content.getPath().toString());
 
-            var displayName = new api.dom.DivEl();
-            displayName.setClass("display-name");
-            displayName.getEl().setAttribute("title", content.getDisplayName());
-            displayName.getEl().setInnerHtml(content.getDisplayName());
-
-            var path = new api.dom.DivEl();
-            path.setClass("path");
-            path.getEl().setAttribute("title", content.getPath().toString());
-            path.getEl().setInnerHtml(content.getPath().toString());
-
-            contentSummary.appendChild(displayName);
-            contentSummary.appendChild(path);
-
-            return img.toString() + contentSummary.toString();
+            return namesAndIconView.toString();
         }
 
         createConfig():api.ui.combobox.ComboBoxConfig<api.content.ContentSummary> {

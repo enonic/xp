@@ -22,31 +22,16 @@ module api.content.page {
 
         optionFormatter(row: number, cell: number, pageTemplateSummary: api.content.page.PageTemplateSummary, columnDef: any,
                                 dataContext: api.ui.combobox.Option<api.content.page.PageTemplateSummary>): string {
+            var namesView = new api.app.NamesView()
+                .setMainName( pageTemplateSummary.getDisplayName() )
+                .setSubName(pageTemplateSummary.getDescriptorKey().toString());
 
-            var summaryEl = new api.dom.DivEl();
-            summaryEl.setClass("page-template-summary");
-
-            var displayName = new api.dom.DivEl();
-            displayName.setClass("display-name");
-            displayName.getEl().setAttribute("title", pageTemplateSummary.getDisplayName());
-            displayName.getEl().setInnerHtml(pageTemplateSummary.getDisplayName());
-
-            var path = new api.dom.DivEl();
-            path.setClass("name");
-            path.getEl().setAttribute("title", pageTemplateSummary.getDescriptorKey().toString());
-            path.getEl().setInnerHtml(pageTemplateSummary.getDescriptorKey().toString());
-
-
-            summaryEl.appendChild(displayName);
-            summaryEl.appendChild(path);
-
-            return summaryEl.toString();
+            return namesView.toString();
         }
 
         createConfig():api.ui.combobox.ComboBoxConfig<PageTemplateSummary> {
             var config:api.ui.combobox.ComboBoxConfig<PageTemplateSummary> = super.createConfig();
             config.maximumOccurrences = 1;
-
 
             return config;
         }
@@ -75,30 +60,11 @@ module api.content.page {
         }
 
         layout() {
+            var namesView = new api.app.NamesView()
+                .setMainName( this.pageTemplate.getDisplayName() )
+                .setSubName( this.pageTemplate.getDescriptorKey().toString() );
+
             var removeButtonEl = new api.dom.AEl("remove");
-            var optionValueEl = new api.dom.DivEl('option-value');
-
-            this.appendChild(removeButtonEl);
-            this.appendChild(optionValueEl);
-
-            var pageTemplateSummaryEl = new api.dom.DivEl();
-            pageTemplateSummaryEl.setClass("page-template-summary");
-
-            var displayNameEl = new api.dom.DivEl();
-            displayNameEl.setClass("display-name");
-            displayNameEl.getEl().setAttribute("title", this.pageTemplate.getDisplayName());
-            displayNameEl.getEl().setInnerHtml(this.pageTemplate.getDisplayName());
-
-            var path = new api.dom.DivEl();
-            path.addClass("name");
-            path.getEl().setAttribute("title", this.pageTemplate.getDescriptorKey().toString());
-            path.getEl().setInnerHtml(this.pageTemplate.getDescriptorKey().toString());
-
-            pageTemplateSummaryEl.appendChild(displayNameEl);
-            pageTemplateSummaryEl.appendChild(path);
-
-            optionValueEl.appendChild(pageTemplateSummaryEl);
-
             removeButtonEl.getEl().addEventListener('click', (event: Event) => {
                 this.notifySelectedOptionToBeRemoved();
 
@@ -106,6 +72,9 @@ module api.content.page {
                 event.preventDefault();
                 return false;
             });
+
+            this.appendChild(removeButtonEl);
+            this.appendChild(namesView);
         }
 
     }

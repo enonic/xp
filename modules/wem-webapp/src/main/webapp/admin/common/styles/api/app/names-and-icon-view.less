@@ -1,0 +1,45 @@
+.names-and-icon-view {
+
+  // default
+  .names-and-icon-view-styles(48px);
+
+  &.small {
+    .names-and-icon-view-styles(32px);
+  }
+  &.medium {
+    .names-and-icon-view-styles(48px);
+  }
+  &.large {
+    .names-and-icon-view-styles(64px);
+  }
+
+  .names-and-icon-view-styles(@size) {
+    @icon-names-gap: 10px;
+
+    position: relative;
+
+    .icon {
+      height: @size;
+      width: @size;
+      margin-right:@icon-names-gap;
+      float: left;
+    }
+
+    .names-view {
+      margin: 0 0 0 @size + @icon-names-gap;
+    }
+
+    .icon-label {
+      position: absolute;
+      top: 0px;
+      left: @size - 10px;
+      line-height: 12px;
+      padding: 3px;
+
+      &:before {
+        content: "";
+      }
+    }
+  }
+
+}
