@@ -5,16 +5,14 @@
             "descriptorKey": "mainmodule-1.0.0:image-temp",
             "displayName": "Image template",
             "editable": true,
-            "key": "sitetemplate-1.0.0|mainmodule-1.0.0|image",
-            "name": "image"
+            "key": "sitetemplate-1.0.0|mainmodule-1.0.0|image"
         },
         {
             "deletable": true,
             "descriptorKey": "mainmodule-1.0.0:imageresp-temp",
             "displayName": "Responsive Image template",
             "editable": true,
-            "key": "sitetemplate-1.0.0|module2-1.0.0|imageresponsive",
-            "name": "imageresponsive"
+            "key": "sitetemplate-1.0.0|module2-1.0.0|imageresponsive"
         }
     ],
     "total": 2

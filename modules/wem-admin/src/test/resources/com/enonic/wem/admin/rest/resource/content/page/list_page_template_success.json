@@ -4,7 +4,6 @@
       "descriptorKey": "mainmodule-1.0.0:landing-page",
       "displayName" : "Main page template",
     "editable" : true,
-    "key" : "mySiteTemplate-1.0.0|mymodule-1.0.0|my-page",
-    "name" : "my-page"
+      "key": "mySiteTemplate-1.0.0|mymodule-1.0.0|my-page"
   } ]
 }

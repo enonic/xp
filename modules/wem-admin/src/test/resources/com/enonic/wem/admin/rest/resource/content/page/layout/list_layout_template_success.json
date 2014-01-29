@@ -1,18 +1,19 @@
 {
-  "templates" : [ {
-    "deletable" : true,
-      "descriptorKey": "module1-1.0.0:layout1-template",
-      "displayName" : "Layout1 template",
-    "editable" : true,
-    "key" : "sitetemplate-1.0.0|module1-1.0.0|layout1",
-    "name" : "layout1"
-  }, {
-    "deletable" : true,
-      "descriptorKey": "module2-1.0.0:layout2-template",
-      "displayName" : "Layout2 template",
-    "editable" : true,
-    "key" : "sitetemplate-1.0.0|module2-1.0.0|layout2",
-    "name" : "layout2"
-  } ],
-  "total" : 2
+    "templates": [
+        {
+            "deletable": true,
+            "descriptorKey": "module1-1.0.0:layout1-template",
+            "displayName": "Layout1 template",
+            "editable": true,
+            "key": "sitetemplate-1.0.0|module1-1.0.0|layout1"
+        },
+        {
+            "deletable": true,
+            "descriptorKey": "module2-1.0.0:layout2-template",
+            "displayName": "Layout2 template",
+            "editable": true,
+            "key": "sitetemplate-1.0.0|module2-1.0.0|layout2"
+        }
+    ],
+    "total": 2
 }
