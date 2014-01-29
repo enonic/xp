@@ -15,7 +15,7 @@ module api.form.input {
 
             if (!InputTypeManager.isRegistered(inputTypeName)) {
                 InputTypeManager.inputTypes[inputTypeName] = inputTypeClass;
-                console.log('Registered input type [' + inputTypeName + "]");
+                //console.log('Registered input type [' + inputTypeName + "]");
             }
             else {
                 throw new Error('Input type [' + inputTypeName + '] is already registered, unregister it first.');

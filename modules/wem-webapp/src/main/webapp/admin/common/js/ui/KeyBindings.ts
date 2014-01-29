@@ -19,7 +19,7 @@ module api.ui {
         constructor() {
             KeyBindings.instanceCount++;
             this.instance = KeyBindings.instanceCount;
-            console.log("KeyBindings constructed instance #" + this.instance);
+            //console.log("KeyBindings constructed instance #" + this.instance);
         }
 
         public bindKeys(bindings: KeyBinding[]) {
@@ -31,7 +31,7 @@ module api.ui {
             });
             logMessage += "]";
 
-            console.log("KeyBindings[#" + this.instance + "].bindKeys(): " + logMessage);
+            //console.log("KeyBindings[#" + this.instance + "].bindKeys(): " + logMessage);
         }
 
         private bindKey(binding: KeyBinding) {
@@ -47,9 +47,9 @@ module api.ui {
             bindings.forEach((binding: KeyBinding) => {
                 this.unbindKey(binding);
                 logMessage += "'" + binding.getCombination() + "' ,";
-            })
+            });
 
-            console.log("KeyBindings[#" + this.instance + "].unbindKeys(): " + logMessage);
+            //console.log("KeyBindings[#" + this.instance + "].unbindKeys(): " + logMessage);
         }
 
         private unbindKey(binding: KeyBinding) {
@@ -64,7 +64,7 @@ module api.ui {
         }
 
         public reset() {
-            console.log("KeyBindings[#" + this.instance + "].reset()");
+            //console.log("KeyBindings[#" + this.instance + "].reset()");
 
             Mousetrap.reset();
             this.activeBindings = {};
@@ -75,7 +75,7 @@ module api.ui {
          * Stores the current bindings on a new shelf and resets.
          */
         public shelveBindings() {
-            console.log("KeyBindings[#" + this.instance + "].shelveBindings(): ");
+            //console.log("KeyBindings[#" + this.instance + "].shelveBindings(): ");
             Mousetrap.reset();
             this.shelves.push(this.activeBindings);
             this.activeBindings = {};
@@ -89,11 +89,11 @@ module api.ui {
             Mousetrap.reset();
             var previousMousetraps: {[s:string] : KeyBinding;} = this.shelves.pop();
             if (previousMousetraps == undefined) {
-                console.log("KeyBindings[#" + this.instance + "].unshelveBindings(): nothing to unshelve");
+                //console.log("KeyBindings[#" + this.instance + "].unshelveBindings(): nothing to unshelve");
                 return;
             }
 
-            console.log("KeyBindings[#" + this.instance + "].unshelveBindings(): unshelving... ");
+            //console.log("KeyBindings[#" + this.instance + "].unshelveBindings(): unshelving... ");
             for (var key in previousMousetraps) {
                 var mousetrap: KeyBinding = <KeyBinding> previousMousetraps[key];
                 Mousetrap.bind(mousetrap.getCombination(), mousetrap.getCallback(), mousetrap.getAction());
