@@ -22,6 +22,7 @@ import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.part.PartTemplateKey;
 import com.enonic.wem.api.content.page.region.Region;
+import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
@@ -60,6 +61,8 @@ public class PostProcessorImplTest
         context.setResponse( resp );
         Content content = createPage( "content-id", "content-name", "content-type" );
         context.setContent( content );
+        Content siteContent = createSite( "site-id", "site-name", "content-type" );
+        context.setSiteContent( siteContent );
         postProcessor.processResponse( context );
 
         final String outputHtml = resp.getBody().toString();
@@ -92,13 +95,13 @@ public class PostProcessorImplTest
             name( "myRegion" ).
             add( newPartComponent().
                 name( "myPartComponent" ).
-                template( PartTemplateKey.from( "mysitetemplate-1.0.0|mymodule-1.0.0|myparttemplate" ) ).
+                template( PartTemplateKey.from( "mymodule|myparttemplate" ) ).
                 build() ).
             build();
 
         final PageRegions pageRegions = newPageRegions().add( region ).build();
         Page page = Page.newPage().
-            template( PageTemplateKey.from( "template-1.0.0|mymodule-1.0.0|my-page" ) ).
+            template( PageTemplateKey.from( "mymodule|my-page" ) ).
             regions( pageRegions ).
             build();
 
@@ -110,6 +113,32 @@ public class PostProcessorImplTest
             modifier( UserKey.superUser() ).
             type( ContentTypeName.from( contentTypeName ) ).
             page( page ).
+            build();
+    }
+
+    private Content createSite( final String id, final String name, final String contentTypeName )
+    {
+        RootDataSet rootDataSet = new RootDataSet();
+
+        Property dataSet = new Property( "property1", new Value.String( "value1" ) );
+        rootDataSet.add( dataSet );
+
+        Page page = Page.newPage().
+            template( PageTemplateKey.from( "mymodule|my-page" ) ).
+            config( rootDataSet ).
+            build();
+
+        Site site = Site.newSite().build();
+
+        return Content.newContent().
+            id( ContentId.from( id ) ).
+            path( ContentPath.from( name ) ).
+            owner( UserKey.from( "myStore:me" ) ).
+            displayName( "My Content" ).
+            modifier( UserKey.superUser() ).
+            type( ContentTypeName.from( contentTypeName ) ).
+            page( page ).
+            site( site ).
             build();
     }
 

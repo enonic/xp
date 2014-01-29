@@ -25,6 +25,7 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.content.GetContentByPath;
 import com.enonic.wem.api.command.content.page.GetPageDescriptor;
 import com.enonic.wem.api.command.content.page.GetPageTemplateByKey;
+import com.enonic.wem.api.command.content.site.GetNearestSiteByContentId;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
@@ -35,6 +36,7 @@ import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateName;
+import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
@@ -170,6 +172,8 @@ public class ContentResourceTest
         when( contentResource.client.execute( isA( GetPageTemplateByKey.class ) ) ).thenReturn( createPageTemplate() );
         when( contentResource.client.execute( isA( GetContentByPath.class ) ) ).thenReturn(
             createPage( "id", "content", "contenttypename" ) );
+        when( contentResource.client.execute( isA( GetNearestSiteByContentId.class ) ) ).thenReturn(
+            createSite( "id", "site", "contenttypename" ) );
         when( contentResource.client.execute( isA( GetPageDescriptor.class ) ) ).thenReturn( createDescriptor() );
 
         final Response response = contentResource.handleGet();
@@ -198,6 +202,32 @@ public class ContentResourceTest
             modifier( UserKey.superUser() ).
             type( ContentTypeName.from( contentTypeName ) ).
             page( page ).
+            build();
+    }
+
+    private Content createSite( final String id, final String name, final String contentTypeName )
+    {
+        RootDataSet rootDataSet = new RootDataSet();
+
+        Property dataSet = new Property( "property1", new Value.String( "value1" ) );
+        rootDataSet.add( dataSet );
+
+        Page page = Page.newPage().
+            template( PageTemplateKey.from( "mymodule|my-page" ) ).
+            config( rootDataSet ).
+            build();
+
+        Site site = Site.newSite().build();
+
+        return Content.newContent().
+            id( ContentId.from( id ) ).
+            path( ContentPath.from( name ) ).
+            owner( UserKey.from( "myStore:me" ) ).
+            displayName( "My Content" ).
+            modifier( UserKey.superUser() ).
+            type( ContentTypeName.from( contentTypeName ) ).
+            page( page ).
+            site( site ).
             build();
     }
 
