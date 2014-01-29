@@ -61,6 +61,11 @@ module app.browse.filter {
                             setExpand(api.rest.Expand.SUMMARY).
                             send().done((jsonResponse: api.rest.JsonResponse<api.content.ContentQueryResult<api.content.json.ContentSummaryJson>>) => {
                                 var result = jsonResponse.getResult();
+                                result.aggregations.forEach((aggregationJson: api.aggregation.AggregationTypeWrapperJson) => {
+                                    var aggregation = api.aggregation.AggregationFactory.createFromJson(aggregationJson);
+                                    console.log(aggregation);
+                                })
+
 //                                this.updateFacets(api.facet.FacetFactory.createFacets(result.facets));
                                 new ContentBrowseSearchEvent(result.contents).fire();
                             })

@@ -243,6 +243,9 @@ public class ContentResource
             aggregationQuery( AggregationQuery.newTermsAggregation( "contentTypes" ).
                 fieldName( "contenttype" ).
                 build() ).
+            aggregationQuery( AggregationQuery.newTermsAggregation( "otherStuff" ).
+                fieldName( "contenttype" ).
+                build() ).
             queryExpr( _temp_buildFulltextFunctionExpression( params ) );
 
         final FindContent findContent = Commands.content().find().query( contentQueryBuilder.build() );

@@ -1,4 +1,3 @@
-
 // require ExtJs as long as it is used for implementation
 ///<reference path='lib/ExtJs.d.ts' />
 
@@ -109,6 +108,7 @@
 ///<reference path='content/site/template/_module.ts' />
 ///<reference path='content/site/template/json/_module.ts' />
 
+///<reference path='aggregation/_module.ts' />
 
 ///<reference path='rendering/_module.ts' />
 
