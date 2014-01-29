@@ -1,5 +1,6 @@
-///<reference path='NameAndIconViewSize.ts'/>
-///<reference path='NameAndIconView.ts'/>
+///<reference path='NamesView.ts'/>
+///<reference path='NamesAndIconViewSize.ts'/>
+///<reference path='NamesAndIconView.ts'/>
 ///<reference path='AppLauncherEventType.ts' />
 ///<reference path='AppLauncherEvent.ts' />
 ///<reference path='AppBarTabId' />

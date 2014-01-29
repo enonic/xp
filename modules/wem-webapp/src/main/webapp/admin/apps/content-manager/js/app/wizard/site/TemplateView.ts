@@ -1,13 +1,13 @@
 module app.wizard.site {
 
-    export class TemplateView extends api.app.NameAndIconView {
+    export class TemplateView extends api.app.NamesAndIconView {
 
         private contentType: api.schema.content.ContentType;
 
         private siteTemplate: api.content.site.template.SiteTemplate;
 
         constructor() {
-            super(new api.app.NameAndIconViewBuilder().setSize(api.app.NameAndIconViewSize.medium));
+            super(new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.medium));
             this.addClass('template-view');
         }
 

@@ -24,24 +24,13 @@ module api.ui.combobox {
             return "";
         }
 
-        layout() {
-
-            var image = new api.dom.ImgEl();
-            image.getEl().setSrc(this.resolveIconUrl(this.content));
-            image.getEl().setHeight("48px");
-            image.getEl().setWidth("48px");
-
-            var container = new api.dom.DivEl("container");
-
-            var title = new api.dom.DivEl("title");
-            title.getEl().setInnerHtml(this.resolveTitle(this.content));
-
-            var subtitle = new api.dom.DivEl("subtitle");
-            subtitle.getEl().setInnerHtml(api.util.limitString(this.resolveSubTitle(this.content), 16));
-
-            container.appendChild(title);
-            container.appendChild(subtitle);
-
+        layout()
+        {
+            var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize( api.app.NamesAndIconViewSize.small ).build();
+            namesAndIconView
+                .setIconUrl(this.resolveIconUrl(this.content))
+                .setMainName(this.resolveTitle(this.content))
+                .setSubName(this.resolveSubTitle(this.content));
 
             var removeButton = new api.dom.AEl("remove");
             removeButton.getEl().addEventListener('click', (event:Event) => {
@@ -52,11 +41,8 @@ module api.ui.combobox {
                 return false;
             });
 
-
-            this.appendChild(image);
-            this.appendChild(container);
             this.appendChild(removeButton);
-
+            this.appendChild(namesAndIconView);
         }
     }
 }

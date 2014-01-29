@@ -7,31 +7,17 @@ module api.module {
             var builder:api.ui.combobox.RichComboBoxBuilder<api.module.ModuleSummary> = new api.ui.combobox.RichComboBoxBuilder<api.module.ModuleSummary>();
             builder.setComboBoxName("moduleSelector" ).setLoader(new api.module.ModuleLoader() ).setSelectedOptionsView(new ModuleSelectedOptionsView());
             super(builder);
-
         }
 
         optionFormatter(row:number, cell:number, moduleInst:api.module.ModuleSummary, columnDef:any, dataContext:api.ui.combobox.Option<api.module.ModuleSummary>):string {
-            var img = new api.dom.ImgEl();
-            img.setClass("icon");
-            img.getEl().setSrc(api.util.getAdminUri("common/images/icons/icoMoon/32x32/puzzle.png"));
+            var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize( api.app.NamesAndIconViewSize.small ).build();
 
-            var contentSummary = new api.dom.DivEl();
-            contentSummary.setClass("item-summary");
+            namesAndIconView.
+                setIconUrl(api.util.getAdminUri("common/images/icons/icoMoon/32x32/puzzle.png")).
+                setMainName(moduleInst.getDisplayName()).
+                setSubName(moduleInst.getUrl());
 
-            var displayName = new api.dom.DivEl();
-            displayName.setClass("display-name");
-            displayName.getEl().setAttribute("title", moduleInst.getDisplayName());
-            displayName.getEl().setInnerHtml(moduleInst.getDisplayName());
-
-            var path = new api.dom.DivEl();
-            path.setClass("path");
-            path.getEl().setAttribute("title", moduleInst.getUrl());
-            path.getEl().setInnerHtml(moduleInst.getUrl());
-
-            contentSummary.appendChild(displayName);
-            contentSummary.appendChild(path);
-
-            return img.toString() + contentSummary.toString();
+            return namesAndIconView.toString();
         }
     }
 
