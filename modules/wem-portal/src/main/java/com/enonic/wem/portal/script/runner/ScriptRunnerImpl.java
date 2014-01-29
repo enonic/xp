@@ -10,6 +10,7 @@ import org.mozilla.javascript.Scriptable;
 
 import com.google.common.collect.Maps;
 
+import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.script.SourceException;
 import com.enonic.wem.portal.script.compiler.ScriptCompiler;
 import com.enonic.wem.portal.script.lib.ContextScriptBean;
@@ -63,6 +64,8 @@ public final class ScriptRunnerImpl
 
         this.contextServiceBean.setModule( this.source.getModule() );
         this.contextServiceBean.install( context );
+        final JsContext portalContext = (JsContext) objects.get( "portal" );
+        this.contextServiceBean.setJsContext( portalContext );
 
         try
         {

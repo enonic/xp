@@ -11,6 +11,7 @@ import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.core.module.ModuleResourcePathResolver;
+import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.script.helper.ScriptHelper;
 
 public final class ContextScriptBean
@@ -18,6 +19,8 @@ public final class ContextScriptBean
     private final static String NAME = ContextScriptBean.class.getName();
 
     private ModuleKey module;
+
+    private JsContext jsContext;
 
     @Inject
     protected ModuleResourcePathResolver pathResolver;
@@ -30,6 +33,16 @@ public final class ContextScriptBean
     public void setModule( final ModuleKey module )
     {
         this.module = module;
+    }
+
+    public JsContext getJsContext()
+    {
+        return jsContext;
+    }
+
+    public void setJsContext( final JsContext jsContext )
+    {
+        this.jsContext = jsContext;
     }
 
     public Path getModulePath()

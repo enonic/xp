@@ -19,8 +19,12 @@ import org.w3c.dom.Node;
 
 import com.google.common.collect.Maps;
 
+import com.enonic.wem.api.content.page.PageComponent;
+import com.enonic.wem.api.content.page.PageRegions;
+import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ResourcePath;
+import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.script.SourceException;
 import com.enonic.wem.portal.xml.DomBuilder;
 import com.enonic.wem.portal.xml.DomHelper;
@@ -38,7 +42,7 @@ public final class XsltScriptBean
     {
         try
         {
-            return doRednder( name, inputDoc, params );
+            return doRender( name, inputDoc, params );
         }
         catch ( final XsltProcessorException e )
         {
@@ -76,8 +80,8 @@ public final class XsltScriptBean
         return new StreamSource( path.toFile() );
     }
 
-    private String doRednder( final String name, final Object inputDoc, final Map<String, Object> params )
-        throws Exception
+    private String doRender( final String name, final Object inputDoc, final Map<String, Object> params )
+    throws Exception
     {
         final ContextScriptBean service = ContextScriptBean.get();
         final Path path = service.resolveFile( name );
@@ -158,8 +162,36 @@ public final class XsltScriptBean
     private Document createContextDoc()
         throws Exception
     {
+        final ContextScriptBean service = ContextScriptBean.get();
+        final JsContext jsContext = service.getJsContext();
+        final String baseUrl = jsContext.getUrl().createResourceUrl( "" ).toString();
+
         final DomBuilder builder = DomBuilder.create( "context" );
-        builder.start( "baseUrl" ).text( "http://localhost:8080" ).end();
+        builder.start( "baseUrl" ).text( baseUrl ).end();
+        createRegionElements( builder, jsContext.getPageRegions() );
+
         return builder.getDocument();
+    }
+
+    private void createRegionElements( final DomBuilder builder, final PageRegions pageRegions )
+    {
+        builder.start( "regions" );
+        for ( Region region : pageRegions )
+        {
+            builder.start( "region" );
+            final String regionName = region.getName();
+            builder.attribute( "name", regionName );
+            builder.start( "components" );
+            for ( PageComponent component : region.getComponents() )
+            {
+                builder.start( "component" );
+                final String componentName = component.getName().toString();
+                builder.attribute( "name", componentName );
+                builder.end();
+            }
+            builder.end();
+            builder.end();
+        }
+        builder.end();
     }
 }
