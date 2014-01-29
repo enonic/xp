@@ -19,7 +19,7 @@ public final class OccurrencesXml
     public void from( final Occurrences input )
     {
         this.minimum = input.getMinimum();
-        this.maximum = input.getMinimum();
+        this.maximum = input.getMaximum();
     }
 
     @Override

@@ -14,7 +14,8 @@ public class FormXml
     implements XmlObject<Form, Form.Builder>
 {
     @XmlElements({@XmlElement(name = "input", type = InputXml.class), @XmlElement(name = "form-item-set", type = FormItemSetXml.class),
-                     @XmlElement(name = "field-set", type = FieldSetXml.class)})
+                     @XmlElement(name = "field-set", type = FieldSetXml.class),
+                     @XmlElement(name = "mixin-reference", type = MixinReferenceXml.class)})
     private List<FormItemXml> formItems = new ArrayList<>();
 
     @Override

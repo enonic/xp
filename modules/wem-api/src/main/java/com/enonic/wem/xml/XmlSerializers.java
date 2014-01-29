@@ -9,6 +9,8 @@ import com.enonic.wem.api.content.page.layout.LayoutTemplateXml;
 import com.enonic.wem.api.content.page.part.PartDescriptorXml;
 import com.enonic.wem.api.content.page.part.PartTemplateXml;
 import com.enonic.wem.api.content.site.SiteTemplateXml;
+import com.enonic.wem.api.form.FormXml;
+import com.enonic.wem.api.form.MixinReferenceXml;
 
 public final class XmlSerializers
 {
@@ -20,6 +22,16 @@ public final class XmlSerializers
     public static XmlSerializer<SiteTemplateXml> siteTemplate()
     {
         return create( SiteTemplateXml.class );
+    }
+
+    public static XmlSerializer<FormXml> form()
+    {
+        return create( FormXml.class );
+    }
+
+    public static XmlSerializer<MixinReferenceXml> mixinReference()
+    {
+        return create( MixinReferenceXml.class );
     }
 
     public static XmlSerializer<PageTemplateXml> pageTemplate()

@@ -22,7 +22,8 @@ public final class FieldSetXml
     private String label;
 
     @XmlElements({@XmlElement(name = "input", type = InputXml.class), @XmlElement(name = "form-item-set", type = FormItemSetXml.class),
-                     @XmlElement(name = "field-set", type = FieldSetXml.class)})
+                     @XmlElement(name = "field-set", type = FieldSetXml.class),
+                     @XmlElement(name = "mixin-reference", type = MixinReferenceXml.class)})
     @XmlElementWrapper(name = "items")
     private List<FormItemXml> formItems = new ArrayList<>();
 
