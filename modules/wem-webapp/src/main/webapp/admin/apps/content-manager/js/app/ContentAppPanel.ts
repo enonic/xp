@@ -56,17 +56,23 @@ module app {
             if (tabMenuItem != null) {
                 this.selectPanel(tabMenuItem);
 
-            } else {
+            }
+            else {
 
                 tabMenuItem = new api.app.AppBarTabMenuItem("New " + contentTypeSummary.getDisplayName(), tabId);
 
-                new app.wizard.ContentWizardPanelFactory().
+                var contentWizardPanelFactory = new app.wizard.ContentWizardPanelFactory().
                     setAppBarTabId(tabId).
                     setParentContent(parentContent).
-                    setContentTypeName(contentTypeSummary.getContentTypeName()).
-                    setSiteTemplate(newContentEvent.getSiteTemplate() != null ? newContentEvent.getSiteTemplate().getKey()
-                        : null).
-                    createForNew().then((wizard: app.wizard.ContentWizardPanel) => {
+                    setContentTypeName(contentTypeSummary.getContentTypeName());
+
+                if (newContentEvent.getSiteTemplate() != null) {
+                    contentWizardPanelFactory.setCreateSite(newContentEvent.getSiteTemplate().getKey());
+                }
+
+                contentWizardPanelFactory.createForNew().
+                    then((wizard: app.wizard.ContentWizardPanel) => {
+
                         this.addWizardPanel(tabMenuItem, wizard);
                         wizard.initWizardPanel();
                         wizard.reRender();

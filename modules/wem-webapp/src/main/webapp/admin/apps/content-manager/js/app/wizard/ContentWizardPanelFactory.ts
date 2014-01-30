@@ -4,6 +4,8 @@ module app.wizard {
 
         private creatingForNew: boolean;
 
+        private createSite: boolean = false;
+
         private contentId: api.content.ContentId;
 
         private appBarTabId: api.app.AppBarTabId;
@@ -20,7 +22,7 @@ module app.wizard {
 
         private siteTemplate: api.content.site.template.SiteTemplate;
 
-        private site: api.content.Content;
+        private siteContent: api.content.Content;
 
         setContentToEdit(value: api.content.ContentId): ContentWizardPanelFactory {
             this.contentId = value;
@@ -37,8 +39,9 @@ module app.wizard {
             return this;
         }
 
-        setSiteTemplate(value: api.content.site.template.SiteTemplateKey): ContentWizardPanelFactory {
+        setCreateSite(value: api.content.site.template.SiteTemplateKey): ContentWizardPanelFactory {
             this.siteTemplateKey = value;
+            this.createSite = true;
             return this;
         }
 
@@ -63,9 +66,14 @@ module app.wizard {
                     var parentContentId = loadedParentContent != null ? loadedParentContent.getContentId() : null;
 
                     return this.loadSite(parentContentId).then((loadedSite: api.content.Content) => {
-                        this.site = loadedSite;
+                        this.siteContent = loadedSite;
 
-                        return this.loadSiteTemplate(this.siteTemplateKey).then((loadedSiteTemplate: api.content.site.template.SiteTemplate) => {
+                        var siteTemplateToLoad:api.content.site.template.SiteTemplateKey = this.siteTemplateKey;
+                        if( siteTemplateToLoad == null && this.siteContent ) {
+                            siteTemplateToLoad = this.siteContent.getSite().getTemplateKey();
+                        }
+
+                        return this.loadSiteTemplate(siteTemplateToLoad).then((loadedSiteTemplate: api.content.site.template.SiteTemplate) => {
                             this.siteTemplate = loadedSiteTemplate;
 
                             this.newContentWizardPanelForNew().done((wizardPanel: ContentWizardPanel)=> {
@@ -98,8 +106,8 @@ module app.wizard {
 
                             var templateKey: api.content.site.template.SiteTemplateKey;
                             if (loadedSite && loadedSite.getSite()) {
-                                this.site = loadedSite;
-                                templateKey = this.site.getSite().getTemplateKey();
+                                this.siteContent = loadedSite;
+                                templateKey = this.siteContent.getSite().getTemplateKey();
                             }
 
                             return this.loadSiteTemplate(templateKey).then((loadedSiteTemplate: api.content.site.template.SiteTemplate) => {
@@ -206,13 +214,7 @@ module app.wizard {
                 setContentType(this.contentType).
                 setParentContent(this.parentContent).
                 setCreateSite(this.siteTemplate).
-                setSite(this.site);
-
-            // TODO: Configure ContentWizardPanel to open up support for editing site data
-            var newSite = false;
-            if (newSite) {
-
-            }
+                setSite(this.siteContent);
 
             new app.wizard.ContentWizardPanel(wizardParams, (wizard: ContentWizardPanel) => {
                 deferred.resolve(wizard);
@@ -230,7 +232,7 @@ module app.wizard {
                 setContentType(this.contentType).
                 setParentContent(this.parentContent).
                 setPersistedContent(this.contentToEdit).
-                setSite(this.site).
+                setSite(this.siteContent).
                 setSiteTemplate(this.siteTemplate);
 
             new app.wizard.ContentWizardPanel(wizardParams, (wizard: ContentWizardPanel) => {
