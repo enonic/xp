@@ -9,7 +9,7 @@ import javax.ws.rs.core.Response;
 import com.sun.jersey.api.core.HttpContext;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.page.ComponentName;
+import com.enonic.wem.api.content.page.ComponentPath;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.PageRegions;
@@ -50,9 +50,9 @@ public final class ComponentResource
         final Page page = getPage( content );
         final PageTemplate pageTemplate = getPageTemplate( page, siteContent.getSite() );
 
-        final ComponentName componentName = new ComponentName( this.componentSelector );
+        final ComponentPath componentPath = ComponentPath.from( this.componentSelector );
         final PageRegions pageRegions = PageRegionsResolver.resolve( page, pageTemplate );
-        final PageComponent component = PageComponentResolver.resolve( componentName, pageRegions );
+        final PageComponent component = PageComponentResolver.resolve( componentPath, pageRegions );
 
         final Renderer renderer = rendererFactory.getRenderer( component );
 

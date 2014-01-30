@@ -53,9 +53,9 @@ public final class Page
         return config;
     }
 
-    public PageComponent getComponent( final ComponentName componentName )
+    public PageComponent getComponent( final ComponentPath path )
     {
-        return regions.getComponent( componentName );
+        return regions.getComponent( path );
     }
 
     public static Builder newPage()

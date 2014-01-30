@@ -2,31 +2,43 @@ module api.content.page {
 
     export class ComponentPath {
 
-        private static COMPONENT_TYPE_SEPARATOR = ":";
+        private static DIVIDER = "/";
 
-        private static PATH_ELEMENT_DIVIDER = "/";
-
-        private componentType: string;
-
-        private pathElements: string[] = [];
+        private regionAndComponentList: ComponentPathRegionAndComponent[];
 
         private refString: string;
 
-        constructor(componentType: string, pathElements: string[]) {
-            this.componentType = componentType;
-            this.pathElements = pathElements;
+        constructor(regionAndComponentList: ComponentPathRegionAndComponent[]) {
 
-            this.refString = this.componentType + ComponentPath.COMPONENT_TYPE_SEPARATOR;
-            this.pathElements.forEach((element: string, index: number) => {
-                this.refString += element;
-                if (index < this.pathElements.length - 2) {
-                    this.refString += ComponentPath.PATH_ELEMENT_DIVIDER;
+            this.regionAndComponentList = regionAndComponentList;
+
+            this.refString = "";
+            this.regionAndComponentList.forEach((regionAndComponent: ComponentPathRegionAndComponent, index: number) => {
+                this.refString += regionAndComponent.toString();
+                if (index < this.regionAndComponentList.length - 2) {
+                    this.refString += ComponentPath.DIVIDER;
                 }
             });
         }
 
-        getComponentType(): string {
-            return this.componentType;
+        numberOfLevels(): number {
+            return this.regionAndComponentList.length;
+        }
+
+        getFirstLevel(): ComponentPathRegionAndComponent {
+            return this.regionAndComponentList[0];
+        }
+
+        public removeFirstLevel(): ComponentPath {
+            if (this.numberOfLevels() <= 1) {
+                return null;
+            }
+
+            var newRegionAndComponentList: ComponentPathRegionAndComponent[];
+            for (var i = 1; i < this.regionAndComponentList.length; i++) {
+                newRegionAndComponentList.push(this.regionAndComponentList[i]);
+            }
+            return new ComponentPath(newRegionAndComponentList);
         }
 
         public toString(): string {
@@ -35,25 +47,47 @@ module api.content.page {
 
         public static fromString(str: string): ComponentPath {
 
-            api.util.assert(str.indexOf(ComponentPath.COMPONENT_TYPE_SEPARATOR) != -1,
-                "Missing COMPONENT_TYPE_SEPARATOR (" + ComponentPath.COMPONENT_TYPE_SEPARATOR + ") in ComponentPath: " + str);
-            var pathStart = str.indexOf(ComponentPath.COMPONENT_TYPE_SEPARATOR);
-            var componentType = str.substring(0, pathStart);
+            var elements: string[] = str.split(ComponentPath.DIVIDER);
+            elements = api.util.removeEmptyStringElements(elements);
 
-            var pathAsString = str.substring(pathStart, str.length);
-            var elements: string[] = pathAsString.split(ComponentPath.PATH_ELEMENT_DIVIDER);
-            elements = ComponentPath.removeEmptyElements(elements);
-            return new ComponentPath(componentType, elements);
+            var regionAndComponentList: ComponentPathRegionAndComponent[] = [];
+            for (var i = 0; i < elements.length - 1; i += 2) {
+                var regionName = elements[i];
+                var componentName = new ComponentName(elements[i + 1]);
+                var regionAndComponent = new ComponentPathRegionAndComponent(regionName, componentName);
+                regionAndComponentList.push(regionAndComponent);
+            }
+
+            return new ComponentPath(regionAndComponentList);
+        }
+    }
+
+    export class ComponentPathRegionAndComponent {
+
+        private static DIVIDER = "/";
+
+        private regionName: string;
+
+        private componentName: ComponentName;
+
+        private refString: string;
+
+        constructor(regionName: string, componentName: ComponentName) {
+            this.regionName = regionName;
+            this.componentName = componentName;
+            this.refString = regionName + ComponentPathRegionAndComponent.DIVIDER + this.componentName.toString();
         }
 
-        private static removeEmptyElements(elements: string[]): string[] {
-            var filteredElements: string[] = [];
-            elements.forEach((element: string) => {
-                if (element.length > 0) {
-                    filteredElements.push(element);
-                }
-            });
-            return filteredElements;
+        getRegionName(): string {
+            return this.regionName;
+        }
+
+        getComponentName(): ComponentName {
+            return this.componentName;
+        }
+
+        toString(): string {
+            return this.refString;
         }
     }
 }

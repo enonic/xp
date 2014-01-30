@@ -15,6 +15,8 @@ public abstract class PageComponent<TEMPLATE_KEY extends TemplateKey>
 
     private final RootDataSet config;
 
+    private ComponentPath path;
+
     protected PageComponent( final Properties<TEMPLATE_KEY> properties )
     {
         Preconditions.checkNotNull( properties.name, "name cannot be null" );
@@ -26,6 +28,16 @@ public abstract class PageComponent<TEMPLATE_KEY extends TemplateKey>
     public ComponentName getName()
     {
         return name;
+    }
+
+    public void setPath( final ComponentPath path )
+    {
+        this.path = path;
+    }
+
+    public ComponentPath getPath()
+    {
+        return path;
     }
 
     public TEMPLATE_KEY getTemplate()

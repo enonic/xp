@@ -1,8 +1,11 @@
 package com.enonic.wem.api.content.page;
 
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
@@ -15,7 +18,7 @@ public abstract class AbstractRegions
 
     protected AbstractRegions( final Builder builder )
     {
-        this.regionByName = builder.regions.build();
+        this.regionByName = builder.regionMapBuilder.build();
     }
 
     public Region getRegion( final String name )
@@ -23,31 +26,29 @@ public abstract class AbstractRegions
         return this.regionByName.get( name );
     }
 
-    public PageComponent getComponent( final ComponentName name )
+    public PageComponent getComponent( final ComponentPath path )
     {
-        for ( Region region : this )
+        Preconditions.checkNotNull( path, "no path for PageComponent given" );
+        Preconditions.checkArgument( path.numberOfLevels() > 0, "empty path for PageComponent given" );
+
+        final ComponentPath.RegionAndComponent first = path.getFirstLevel();
+        final Region region = getRegion( first.getRegionName() );
+        final PageComponent component = region.getComponent( first.getComponentName() );
+
+        if ( path.numberOfLevels() == 1 )
         {
-            for ( PageComponent component : region.getComponents() )
-            {
-                if ( name.equals( component.getName() ) )
-                {
-                    return component;
-                }
-                else if ( component instanceof LayoutComponent )
-                {
-                    final LayoutComponent layoutComponent = (LayoutComponent) component;
-                    if ( layoutComponent.hasRegions() )
-                    {
-                        final PageComponent match = layoutComponent.getComponent( name );
-                        if ( match != null )
-                        {
-                            return match;
-                        }
-                    }
-                }
-            }
+            return component;
         }
-        return null;
+        else
+        {
+            if ( !( component instanceof LayoutComponent ) )
+            {
+                throw new IllegalArgumentException( "Expected component to be a LayoutComponent: " + component.getClass().getSimpleName() );
+            }
+
+            final LayoutComponent layoutComponent = (LayoutComponent) component;
+            return layoutComponent.getComponent( path.removeFirstLevel() );
+        }
     }
 
     @Override
@@ -58,7 +59,9 @@ public abstract class AbstractRegions
 
     public static class Builder<BUILDER extends Builder>
     {
-        private ImmutableMap.Builder<String, Region> regions = new ImmutableMap.Builder<>();
+        private final List<Region> regions = new ArrayList<>();
+
+        private ImmutableMap.Builder<String, Region> regionMapBuilder = new ImmutableMap.Builder<>();
 
         @SuppressWarnings("unchecked")
         private BUILDER getThis()
@@ -68,8 +71,14 @@ public abstract class AbstractRegions
 
         public BUILDER add( final Region region )
         {
-            regions.put( region.getName(), region );
+            regions.add( region );
+            regionMapBuilder.put( region.getName(), region );
             return getThis();
+        }
+
+        public Iterable<Region> regions()
+        {
+            return regions;
         }
     }
 }

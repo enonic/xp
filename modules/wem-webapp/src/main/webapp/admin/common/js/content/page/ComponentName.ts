@@ -11,8 +11,7 @@ module api.content.page {
         }
 
         public isDuplicateOf(other: ComponentName): boolean {
-            if( this.value == other.value )
-            {
+            if (this.value == other.value) {
                 return true;
             }
 
@@ -31,7 +30,7 @@ module api.content.page {
         }
 
         public toString(): string {
-            return this.value.toString();
+            return this.value;
         }
     }
 }

@@ -1,13 +1,13 @@
 package com.enonic.wem.portal.content.page;
 
 
-import com.enonic.wem.api.content.page.ComponentName;
+import com.enonic.wem.api.content.page.ComponentPath;
 
 public class PageComponentNotFoundException
     extends RuntimeException
 {
-    public PageComponentNotFoundException( final ComponentName componentName )
+    public PageComponentNotFoundException( final ComponentPath componentPath )
     {
-        super( "PageComponent not found: " + componentName );
+        super( "PageComponent not found: " + componentPath );
     }
 }

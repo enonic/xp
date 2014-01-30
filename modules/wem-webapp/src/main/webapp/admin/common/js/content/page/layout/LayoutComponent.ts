@@ -9,6 +9,10 @@ module api.content.page.layout {
             this.regions = builder.regions;
         }
 
+        public getComponent(path: ComponentPath): api.content.page.PageComponent<TemplateKey> {
+            return this.regions.getComponent(path);
+        }
+
         getLayoutRegions(): LayoutRegions {
             return this.regions;
         }
@@ -28,7 +32,7 @@ module api.content.page.layout {
         regions: LayoutRegions;
 
         public fromJson(json: json.LayoutComponentJson): LayoutComponentBuilder {
-            if( json.template ) {
+            if (json.template) {
                 this.setTemplate(LayoutTemplateKey.fromString(json.template));
             }
             this.setName(new api.content.page.ComponentName(json.name));

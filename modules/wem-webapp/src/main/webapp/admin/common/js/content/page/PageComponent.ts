@@ -2,7 +2,9 @@ module api.content.page {
 
     export class PageComponent<TEMPLATE_KEY extends TemplateKey> {
 
-        private name: api.content.page.ComponentName;
+        private name: ComponentName;
+
+        private path: ComponentPath;
 
         private template: TEMPLATE_KEY;
 
@@ -14,6 +16,10 @@ module api.content.page {
                 this.template = builder.template;
                 this.config = builder.config;
             }
+        }
+
+        setComponentPath(path: ComponentPath) {
+            this.path = path;
         }
 
         getName(): api.content.page.ComponentName {

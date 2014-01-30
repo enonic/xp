@@ -14,7 +14,7 @@ import org.jsoup.select.Elements;
 import com.google.gson.Gson;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.page.ComponentName;
+import com.enonic.wem.api.content.page.ComponentPath;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.PageRegions;
@@ -81,10 +81,10 @@ public final class PostProcessorImpl
 
     private void processComponentElement( final Element element, final JsContext context )
     {
-        final String name = element.attr( WEM_COMPONENT_ATTRIBUTE );
-        final ComponentName componentName = new ComponentName( name );
+        final String componentPathAsString = element.attr( WEM_COMPONENT_ATTRIBUTE );
+        final ComponentPath componentPath = ComponentPath.from( componentPathAsString );
 
-        final PageComponent component = resolveComponent( context, componentName );
+        final PageComponent component = resolveComponent( context, componentPath );
 
         final Renderer renderer = rendererFactory.getRenderer( component );
         final Response componentResult = renderer.render( component, context );
@@ -121,7 +121,7 @@ public final class PostProcessorImpl
         return doc;
     }
 
-    private PageComponent resolveComponent( final JsContext context, final ComponentName componentName )
+    private PageComponent resolveComponent( final JsContext context, final ComponentPath componentPath )
     {
         final Content content = context.getContent();
         if ( content == null || content.getPage() == null )
@@ -131,14 +131,14 @@ public final class PostProcessorImpl
         final Page page = content.getPage();
         final PageRegions pageRegions = resolvePageRegions( page, context.getPageTemplate() );
 
-        PageComponent component = pageRegions.getComponent( componentName );
+        PageComponent component = pageRegions.getComponent( componentPath );
         if ( component == null )
         {
             // TODO: Hack: See if component still exist in page template
-            component = context.getPageTemplate().getRegions().getComponent( componentName );
+            component = context.getPageTemplate().getRegions().getComponent( componentPath );
             if ( component == null )
             {
-                throw new RenderException( "Component not found: [{0}]", componentName );
+                throw new RenderException( "Component not found: [{0}]", componentPath );
             }
         }
         return component;

@@ -2,6 +2,7 @@ package com.enonic.wem.core.content.page;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.enonic.wem.api.content.page.PageComponent;
@@ -10,9 +11,9 @@ import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.support.serializer.AbstractDataListSerializer;
 
 public class PageComponentsDataSerializer
-    extends AbstractDataListSerializer<List<PageComponent>, List<PageComponent>>
+    extends AbstractDataListSerializer<Collection<PageComponent>, List<PageComponent>>
 {
-    public List<Data> toData( final List<PageComponent> components )
+    public List<Data> toData( final Collection<PageComponent> components )
     {
         final List<Data> dataList = new ArrayList<>( components.size() );
         for ( final PageComponent component : components )

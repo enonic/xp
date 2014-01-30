@@ -31,6 +31,10 @@ module LiveEdit.component {
             return this.getEl().getData('live-edit-component');
         }
 
+        getComponentPath(): string {
+            return this.getEl().getData('live-edit-component');
+        }
+
         onSelect() {
             console.log("selected component!", this);
         }

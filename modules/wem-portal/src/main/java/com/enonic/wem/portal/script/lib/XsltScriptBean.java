@@ -19,8 +19,9 @@ import org.w3c.dom.Node;
 
 import com.google.common.collect.Maps;
 
+import com.enonic.wem.api.content.page.AbstractRegions;
 import com.enonic.wem.api.content.page.PageComponent;
-import com.enonic.wem.api.content.page.PageRegions;
+import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ResourcePath;
@@ -81,7 +82,7 @@ public final class XsltScriptBean
     }
 
     private String doRender( final String name, final Object inputDoc, final Map<String, Object> params )
-    throws Exception
+        throws Exception
     {
         final ContextScriptBean service = ContextScriptBean.get();
         final Path path = service.resolveFile( name );
@@ -173,10 +174,10 @@ public final class XsltScriptBean
         return builder.getDocument();
     }
 
-    private void createRegionElements( final DomBuilder builder, final PageRegions pageRegions )
+    private void createRegionElements( final DomBuilder builder, final AbstractRegions regions )
     {
         builder.start( "regions" );
-        for ( Region region : pageRegions )
+        for ( Region region : regions )
         {
             builder.start( "region" );
             final String regionName = region.getName();
@@ -185,8 +186,13 @@ public final class XsltScriptBean
             for ( PageComponent component : region.getComponents() )
             {
                 builder.start( "component" );
-                final String componentName = component.getName().toString();
-                builder.attribute( "name", componentName );
+                builder.attribute( "name", component.getName().toString() );
+                builder.attribute( "path", component.getPath().toString() );
+                if ( component instanceof LayoutComponent )
+                {
+                    final LayoutComponent layoutComponent = (LayoutComponent) component;
+                    createRegionElements( builder, layoutComponent.getRegions() );
+                }
                 builder.end();
             }
             builder.end();

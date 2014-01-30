@@ -2,21 +2,24 @@ package com.enonic.wem.api.content.page.region;
 
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableMap;
 
+import com.enonic.wem.api.content.page.ComponentName;
+import com.enonic.wem.api.content.page.ComponentPath;
 import com.enonic.wem.api.content.page.PageComponent;
 
-public final class Region
+public class Region
 {
     private final String name;
 
-    private final ImmutableList<PageComponent> components;
+    private final ImmutableMap<ComponentName, PageComponent> componentByName;
 
     public Region( final Builder builder )
     {
         Preconditions.checkNotNull( builder.name, "name cannot be null" );
         this.name = builder.name;
-        this.components = builder.components.build();
+        this.componentByName = builder.components.build();
     }
 
     public String getName()
@@ -24,14 +27,19 @@ public final class Region
         return name;
     }
 
-    public int numberOfComponents()
+    public PageComponent getComponent( final ComponentName componentName )
     {
-        return this.components.size();
+        return this.componentByName.get( componentName );
     }
 
-    public ImmutableList<PageComponent> getComponents()
+    public int numberOfComponents()
     {
-        return components;
+        return this.componentByName.size();
+    }
+
+    public ImmutableCollection<PageComponent> getComponents()
+    {
+        return componentByName.values();
     }
 
     public static Builder newRegion()
@@ -44,11 +52,24 @@ public final class Region
         return new Builder( source );
     }
 
+    public void applyComponentPaths( final ComponentPath parent )
+    {
+        for ( final PageComponent component : this.getComponents() )
+        {
+            final ComponentPath.RegionAndComponent regionAndComponent =
+                ComponentPath.RegionAndComponent.from( this.getName(), component.getName() );
+
+            final ComponentPath componentPath =
+                parent != null ? ComponentPath.from( parent, regionAndComponent ) : ComponentPath.from( regionAndComponent );
+            component.setPath( componentPath );
+        }
+    }
+
     public static class Builder
     {
         private String name;
 
-        private ImmutableList.Builder<PageComponent> components = new ImmutableList.Builder<>();
+        private ImmutableMap.Builder<ComponentName, PageComponent> components = new ImmutableMap.Builder<>();
 
         public Builder()
         {
@@ -58,9 +79,9 @@ public final class Region
         public Builder( final Region source )
         {
             this.name = source.name;
-            for ( PageComponent component : source.components )
+            for ( final PageComponent component : source.componentByName.values() )
             {
-                this.components.add( component );
+                this.components.put( component.getName(), component );
             }
         }
 
@@ -72,7 +93,7 @@ public final class Region
 
         public Builder add( final PageComponent component )
         {
-            this.components.add( component );
+            this.components.put( component.getName(), component );
             return this;
         }
 

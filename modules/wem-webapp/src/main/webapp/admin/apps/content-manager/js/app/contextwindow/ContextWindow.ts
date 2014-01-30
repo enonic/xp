@@ -1,5 +1,10 @@
 module app.contextwindow {
 
+    import ComponentPath = api.content.page.ComponentPath;
+    import ImageComponent = api.content.page.image.ImageComponent;
+    import ImageTemplateKey = api.content.page.image.ImageTemplateKey;
+    import ImageComponentBuilder = api.content.page.image.ImageComponentBuilder;
+
     export interface ContextWindowOptions {
         liveEditEl?:api.dom.IFrameEl;
         liveEditId?:string;
@@ -135,25 +140,27 @@ module app.contextwindow {
 
 
             this.getLiveEditJQuery()(this.getLiveEditWindow()).on('componentAdded.liveEdit', (event, component?, regionName?) => {
+
                 //TODO: Make all components work and not only image
                 var componentName = this.pageRegions.ensureUniqueComponentName(new api.content.page.ComponentName("Image"));
-                component.getEl().setData("live-edit-component", componentName.toString());
+                var componentPath = ComponentPath.fromString(regionName + "/" + componentName.toString());
+                component.getEl().setData("live-edit-component", componentPath.toString());
                 component.getEl().setData("live-edit-name", componentName.toString());
 
-                var builder = new api.content.page.image.ImageComponentBuilder();
+                var builder = new ImageComponentBuilder();
                 builder.setName(componentName);
                 var pageComponent = builder.build();
                 this.pageRegions.addComponent(pageComponent, regionName);
             });
 
             this.getLiveEditJQuery()(this.getLiveEditWindow()).on('imageComponentSetImage.liveEdit',
-                (event, imageId?, componentNameAsString?) => {
+                (event, imageId?, componentPathAsString?) => {
 
-                    var componentName = new api.content.page.ComponentName(componentNameAsString);
-                    var imageComponent = <api.content.page.image.ImageComponent>this.pageRegions.getComponent(componentName);
+                    var componentPath = ComponentPath.fromString(componentPathAsString);
+                    var imageComponent = <ImageComponent>this.pageRegions.getComponent(componentPath);
                     var moduleName = "bluman.trampoline";
                     var defaultImageTemplate = this.siteTemplate.getDefaultImageTemplate();
-                    var imageTemplateKey = new api.content.page.image.ImageTemplateKey(moduleName, defaultImageTemplate);
+                    var imageTemplateKey = new ImageTemplateKey(moduleName, defaultImageTemplate);
                     imageComponent.setTemplate(imageTemplateKey);
                     imageComponent.setImage(imageId);
                     this.contentSaveAction.execute();
