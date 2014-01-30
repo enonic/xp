@@ -30,10 +30,9 @@ module api.app.browse.filter {
             if (groupViews != null) {
                 groupViews.forEach((aggregationGroupView: api.aggregation.AggregationGroupView) => {
 
-                        // facetGroupView.addFacetEntrySelectionChangeListener((event: api.facet.FacetEntryViewSelectionChangedEvent) => {
-                        //
-                        //     this.search();
-                        // });
+                        aggregationGroupView.addBucketViewSelectionChangedEventListener((event: api.aggregation.BucketViewSelectionChangedEvent) => {
+                            this.search();
+                        });
 
                         this.aggregationContainer.addAggregationGroupView(aggregationGroupView);
                     }
@@ -53,7 +52,7 @@ module api.app.browse.filter {
 
         getValues(): { [s : string ] : string[];
         } {
-            var values: {[s:string] : string[];
+            var values: { [s:string] : string[];
             } = this.aggregationContainer.getSelectedValuesByAggregationName();
             values['query'] = [this.searchField.getEl().getValue()];
             return values;

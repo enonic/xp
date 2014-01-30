@@ -1,15 +1,15 @@
 module api.ui {
 
     export class CheckboxInput extends api.dom.InputEl implements api.event.Observable {
-
+        //TODO: USE HTML CHECKED PROPERTY INSTEAD OF ATTRIBUTE CHECKED! from ljl
         /**
          * Input value before it was changed by last input event.
          */
-        private oldValue:boolean = false;
+        private oldValue: boolean = false;
 
-        private listeners:CheckboxInputListener[] = [];
+        private listeners: CheckboxInputListener[] = [];
 
-        constructor(className?:string) {
+        constructor(className?: string) {
             super(className);
 
             this.getEl().setAttribute('type', 'checkbox');
@@ -26,7 +26,7 @@ module api.ui {
             });
         }
 
-        setChecked(newValue:boolean, supressEvent?:boolean):CheckboxInput {
+        setChecked(newValue: boolean, supressEvent?: boolean): CheckboxInput {
             var oldValue = this.isChecked();
 
             if (oldValue != newValue) {
@@ -37,7 +37,7 @@ module api.ui {
                     this.getEl().removeAttribute("checked");
                 }
 
-                if(!supressEvent) {
+                if (!supressEvent) {
                     this.notifyValueChanged(oldValue, newValue);
                 }
                 // save new value to know which value was before input event.
@@ -47,45 +47,45 @@ module api.ui {
             return this;
         }
 
-        isChecked():boolean {
-            return this.getEl().hasAttribute("checked");
+        isChecked(): boolean {
+            return this.getHTMLElement()["checked"];
         }
 
-        setValue(value:string):CheckboxInput {
+        setValue(value: string): CheckboxInput {
             throw new Error("CheckboxInput does not support method setValue, use setChecked instead");
         }
 
-        getValue():string {
+        getValue(): string {
             throw new Error("CheckboxInput does not support method setValue, use isChecked instead");
         }
 
-        setName(value:string):CheckboxInput {
+        setName(value: string): CheckboxInput {
             super.setName(value);
             return this;
         }
 
-        setPlaceholder(value:string):CheckboxInput {
+        setPlaceholder(value: string): CheckboxInput {
             this.getEl().setAttribute('placeholder', value);
             return this;
         }
 
-        getPlaceholder():string {
+        getPlaceholder(): string {
             return this.getEl().getAttribute('placeholder');
         }
 
 
-        addListener(listener:CheckboxInputListener) {
+        addListener(listener: CheckboxInputListener) {
             this.listeners.push(listener);
         }
 
-        removeListener(listener:CheckboxInputListener) {
+        removeListener(listener: CheckboxInputListener) {
             this.listeners = this.listeners.filter(function (curr) {
                 return curr != listener;
             });
         }
 
-        private notifyValueChanged(oldValue:boolean, newValue:boolean) {
-            this.listeners.forEach((listener:CheckboxInputListener) => {
+        private notifyValueChanged(oldValue: boolean, newValue: boolean) {
+            this.listeners.forEach((listener: CheckboxInputListener) => {
                 listener.onValueChanged(oldValue, newValue);
             });
         }

@@ -5,7 +5,6 @@ module app.browse.filter {
         constructor() {
 
             var contentTypeAggregation = new api.aggregation.AggregationGroupView("contentTypes");
-
             //var spaceFacets = new api.facet.FacetGroupView("space", "Space");
             //var lastModifiedFacets = new api.facet.FacetGroupView("lastModified", "Last modified", null, this.lastModifiedGroupFacetFilter);
 
@@ -30,27 +29,16 @@ module app.browse.filter {
 
                         // ranges are passed as separate facets because each of them is of type QueryFacet
                         // but should all go under one facet name, i.e values['ranges']
-                        var ranges = this.extractRangesFromFilterValues(values);
+                        //var ranges = this.extractRangesFromFilterValues(values);
 
                         var fulltext: string = values['query'] ? values['query'][0] : undefined;
 
-                        var arguments: api.query.expr.ValueExpr[] = [];
-                        arguments.push(new api.query.expr.ValueExpr(new api.data.Value("_all_text", api.data.ValueTypes.STRING)));
-                        arguments.push(new api.query.expr.ValueExpr(new api.data.Value(fulltext, api.data.ValueTypes.STRING)));
-                        arguments.push(new api.query.expr.ValueExpr(new api.data.Value("AND", api.data.ValueTypes.STRING)));
+                        var fulltextExpression: api.query.expr.LogicalExpr = this.createFulltextSearchExpression(fulltext);
 
-                        var fulltextExp: api.query.expr.FunctionExpr = new api.query.expr.FunctionExpr("fulltext", arguments);
-                        var fulltextDynamicExpr: api.query.expr.DynamicConstraintExpr = new api.query.expr.DynamicConstraintExpr(fulltextExp);
 
-                        var nGramExpr: api.query.expr.FunctionExpr = new api.query.expr.FunctionExpr("ngram", arguments);
-                        var nGramDynamicExpr: api.query.expr.DynamicConstraintExpr = new api.query.expr.DynamicConstraintExpr(nGramExpr);
+                        var queryExpr: api.query.expr.QueryExpr = new api.query.expr.QueryExpr(fulltextExpression);
 
-                        var booleanExpr: api.query.expr.LogicalExpr =
-                            new api.query.expr.LogicalExpr(fulltextDynamicExpr, api.query.expr.LogicalOperator.OR, nGramDynamicExpr);
-
-                        var queryExpr: api.query.expr.QueryExpr = new api.query.expr.QueryExpr(booleanExpr);
-
-                        var contentTypeNames: api.schema.content.ContentTypeName[] = this.parseContentTypeNames(values['contentType']);
+                        var contentTypeNames: api.schema.content.ContentTypeName[] = this.parseContentTypeNames(values['contentTypes']);
 
                         var builder: api.content.query.ContentQueryBuilder = new api.content.query.ContentQueryBuilder();
                         var contentQuery: api.content.query.ContentQuery = builder.
@@ -71,6 +59,26 @@ module app.browse.filter {
                     }
                 }
             );
+        }
+
+        private createFulltextSearchExpression(fulltext: string): api.query.expr.LogicalExpr {
+
+            var arguments: api.query.expr.ValueExpr[] = [];
+
+            arguments.push(new api.query.expr.ValueExpr(new api.data.Value("_all_text", api.data.ValueTypes.STRING)));
+            arguments.push(new api.query.expr.ValueExpr(new api.data.Value(fulltext, api.data.ValueTypes.STRING)));
+            arguments.push(new api.query.expr.ValueExpr(new api.data.Value("AND", api.data.ValueTypes.STRING)));
+
+            var fulltextExp: api.query.expr.FunctionExpr = new api.query.expr.FunctionExpr("fulltext", arguments);
+            var fulltextDynamicExpr: api.query.expr.DynamicConstraintExpr = new api.query.expr.DynamicConstraintExpr(fulltextExp);
+
+            var nGramExpr: api.query.expr.FunctionExpr = new api.query.expr.FunctionExpr("ngram", arguments);
+            var nGramDynamicExpr: api.query.expr.DynamicConstraintExpr = new api.query.expr.DynamicConstraintExpr(nGramExpr);
+
+            var booleanExpr: api.query.expr.LogicalExpr =
+                new api.query.expr.LogicalExpr(fulltextDynamicExpr, api.query.expr.LogicalOperator.OR, nGramDynamicExpr);
+            return booleanExpr;
+
         }
 
         private refreshAggregations(aggregationWrapperJsons: api.aggregation.AggregationTypeWrapperJson[]) {

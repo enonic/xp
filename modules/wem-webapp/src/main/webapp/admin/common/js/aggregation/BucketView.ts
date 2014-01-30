@@ -28,9 +28,6 @@ module api.aggregation {
 
             this.label = new api.dom.LabelEl(this.resolveLabelValue(), this.checkbox);
             this.appendChild(this.label);
-            this.label.getEl().addEventListener('click', () => {
-                this.checkbox.setChecked(!this.checkbox.isChecked());
-            });
 
             this.updateUI();
         }
@@ -39,24 +36,40 @@ module api.aggregation {
             return this.bucket.getName() + ' (' + this.bucket.getDocCount() + ')';
         }
 
+        getName(): string {
+            return this.bucket.getName();
+        }
 
-        getParentAggregationView() {
-            return this.parentAggregationView;
+        update(bucket: api.aggregation.Bucket) {
+            this.bucket = bucket;
+            this.updateUI();
         }
 
         isSelected(): boolean {
             return this.checkbox.isChecked();
         }
 
-        getName(): string {
-            return this.bucket.getName();
-        }
-
         deselect(supressEvent?: boolean) {
             this.checkbox.setChecked(false, supressEvent);
         }
 
+        private updateUI() {
+
+            this.label.setValue(this.resolveLabelValue());
+
+            if (this.bucket.getDocCount() > 0 || this.isSelected()) {
+                this.show();
+            } else {
+                this.hide();
+            }
+        }
+
+        getParentAggregationView() {
+            return this.parentAggregationView;
+        }
+
         notifySelectionChanged(oldValue: boolean, newValue: boolean) {
+
             this.selectionChangedListeners.forEach((listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) => {
                 listener(new api.aggregation.BucketViewSelectionChangedEvent(oldValue, newValue, this));
             });
@@ -70,24 +83,6 @@ module api.aggregation {
 
         addSelectionChangeListener(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
             this.selectionChangedListeners.push(listener);
-        }
-
-        update(bucket: api.aggregation.Bucket) {
-            console.log("**** Updating bucket " + bucket.getName() + " with count + " + bucket.getDocCount());
-
-            this.bucket = bucket;
-            this.updateUI();
-        }
-
-        private updateUI() {
-
-            this.label.setValue(this.resolveLabelValue());
-
-            if (this.bucket.getDocCount() > 0 || this.isSelected()) {
-                this.show();
-            } else {
-                this.hide();
-            }
         }
 
     }

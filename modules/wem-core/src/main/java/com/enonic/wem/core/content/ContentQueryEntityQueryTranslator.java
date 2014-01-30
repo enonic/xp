@@ -23,7 +23,7 @@ public class ContentQueryEntityQueryTranslator
 
         if ( contentTypeNames != null && contentTypeNames.isNotEmpty() )
         {
-            final GenericValueFilter.Builder contentTypeFilterBuilder = Filter.newValueQueryFilter().fieldName( "contentTypeName" );
+            final GenericValueFilter.Builder contentTypeFilterBuilder = Filter.newValueQueryFilter().fieldName( "contentType" );
 
             for ( final ContentTypeName contentTypeName : contentTypeNames )
             {

@@ -9,13 +9,11 @@ module api.aggregation {
         private hasAnyCountLargerThanZero: boolean;
 
         constructor(termsAggregation: api.aggregation.TermsAggregation, parentGroupView: api.aggregation.AggregationGroupView) {
-
             super(termsAggregation, parentGroupView);
 
             this.termsAggregation = termsAggregation;
 
             this.hasAnyCountLargerThanZero = false;
-
             this.termsAggregation.getBuckets().forEach((bucket: api.aggregation.Bucket) => {
                 this.addBucket(new api.aggregation.BucketView(bucket, this));
                 if (bucket.getDocCount() > 0) {
@@ -39,14 +37,11 @@ module api.aggregation {
         }
 
         private addBucket(bucketView: api.aggregation.BucketView) {
-
             this.appendChild(bucketView);
-
             bucketView.addSelectionChangeListener((event: api.aggregation.BucketViewSelectionChangedEvent) => {
                     this.notifyBucketViewSelectionChangedEvent(event);
                 }
             );
-
             this.bucketViews.push(bucketView);
         }
 
@@ -68,20 +63,26 @@ module api.aggregation {
 
         update(aggregation: api.aggregation.Aggregation) {
 
-            console.log("**** Updating TermsAggregationView " + aggregation);
-
             this.termsAggregation = <api.aggregation.TermsAggregation> aggregation;
 
             var anyCountLargerThanZero = false;
-            this.termsAggregation.getBuckets().forEach((entry: api.aggregation.Bucket) => {
 
-                var existingEntry: api.aggregation.BucketView = this.bucetView(entry.getName());
+            // This block makes the non-existing bucket disappear, but that is not desired when selecing a bucket.
+            this.bucketViews.forEach((bucketView: api.aggregation.BucketView) => {
+                var existingBucket: api.aggregation.Bucket = this.termsAggregation.getBucketByName(bucketView.getName());
+                if (existingBucket == null) {
+                    bucketView.hide();
+                }
+            });
+
+            this.termsAggregation.getBuckets().forEach((bucket: api.aggregation.Bucket) => {
+                var existingEntry: api.aggregation.BucketView = this.bucketView(bucket.getName());
 
                 if (existingEntry != null) {
-                    existingEntry.update(entry);
+                    existingEntry.update(bucket);
                 }
 
-                if (entry.getDocCount() > 0) {
+                if (bucket.getDocCount() > 0) {
                     anyCountLargerThanZero = true;
                 }
             });
@@ -96,12 +97,11 @@ module api.aggregation {
             }
         }
 
-
-        private bucetView(name: string): api.aggregation.BucketView {
+        private bucketView(name: string): api.aggregation.BucketView {
             for (var i = 0; i < this.bucketViews.length; i++) {
-                var bucetView: api.aggregation.BucketView = this.bucketViews[i];
-                if (bucetView.getName() == name) {
-                    return bucetView;
+                var bucketView: api.aggregation.BucketView = this.bucketViews[i];
+                if (bucketView.getName() == name) {
+                    return bucketView;
                 }
             }
             return null;

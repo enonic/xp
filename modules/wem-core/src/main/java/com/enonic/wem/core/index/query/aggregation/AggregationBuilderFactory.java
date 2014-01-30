@@ -33,8 +33,10 @@ public class AggregationBuilderFactory
     private AggregationBuilder createTerms( final TermsAggregationQuery aggregation )
     {
 
-        final TermsBuilder termsBuilder =
-            new TermsBuilder( aggregation.getName() ).field( aggregation.getFieldName() ).size( aggregation.getSize() );
+        final TermsBuilder termsBuilder = new TermsBuilder( aggregation.getName() ).
+            minDocCount( 0 ).
+            field( aggregation.getFieldName() ).
+            size( aggregation.getSize() );
 
         return termsBuilder;
     }

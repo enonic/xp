@@ -39,11 +39,11 @@ module api.aggregation {
         }
 
 
-        addFacetEntrySelectionChangeListener(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
+        addBucketViewSelectionChangedEventListener(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
             this.bucketSelectionChangedListeners.push(listener);
         }
 
-        removeFacetEntrySelectionChangedListener(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
+        removeBucketViewSelectionChangedEventListener(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
             this.bucketSelectionChangedListeners = this.bucketSelectionChangedListeners.filter(function (curr) {
                 return curr != listener;
             });

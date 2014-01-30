@@ -16,8 +16,6 @@ module api.aggregation {
                     handleAggregationFilter?: (aggregation: api.aggregation.Aggregation) => boolean) {
             super("facet-group-view");
 
-            console.log("***** Construction AggregationGroupView, with name: " + name);
-
             this.name = name;
             this.handleAggregationFilter = handleAggregationFilter;
 
@@ -31,32 +29,29 @@ module api.aggregation {
             }
         }
 
+        private addAggregationView(aggregationView: api.aggregation.AggregationView) {
+            this.appendChild(aggregationView);
+
+            aggregationView.addBucketViewSelectionChangedEventListener((event: api.aggregation.BucketViewSelectionChangedEvent) => {
+                    this.notifyBucketViewSelectionChangedEventChanged(event);
+                }
+            );
+
+            this.aggregationViews.push(aggregationView);
+        }
+
         /*
          * Override this method to give other criteria for this group to display given facet.
          */
         handlesAggregation(aggregation: api.aggregation.Aggregation) {
 
-            console.log("decide if to handel aggregation: " + aggregation.getName());
-
             if (this.handleAggregationFilter) {
-                console.log("this.handleAggregationFilter?");
                 return this.handleAggregationFilter(aggregation);
             }
             else {
-                console.log("returning aggregation.getName (" + aggregation.getName() + ") eq this.name (" + this.name);
                 return aggregation.getName() == this.name;
             }
         }
-
-        private addAggregationView(aggregationView: api.aggregation.AggregationView) {
-            this.appendChild(aggregationView);
-            // aggregationView.addFacetEntrySelectionChangeListener((event: FacetEntryViewSelectionChangedEvent) => {
-            //         this.notifyFacetEntrySelectionChanged(event);
-            //     }
-            // );
-            this.aggregationViews.push(aggregationView);
-        }
-
 
         getSelectedValuesByAggregationName(): { [s : string ] : string[];
         } {
@@ -71,9 +66,7 @@ module api.aggregation {
             return values;
         }
 
-
         hasSelections(): boolean {
-
             var hasSelections = false;
             for (var i = 0; i < this.aggregationViews.length; i++) {
                 if (this.aggregationViews[i].hasSelectedEntry()) {
@@ -84,25 +77,23 @@ module api.aggregation {
             return hasSelections;
         }
 
-
         deselectGroup(supressEvent?: boolean) {
             this.aggregationViews.forEach((aggregationView: api.aggregation.AggregationView) => {
                 aggregationView.deselectFacet(supressEvent);
             });
         }
 
-
-        addFacetEntrySelectionChangeListener(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
+        addBucketViewSelectionChangedEventListener(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
             this.bucketSelectionChangedListeners.push(listener);
         }
 
-        removeFacetEntrySelectionChangedListener(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
+        removeBucketViewSelectionChangedEventListener(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
             this.bucketSelectionChangedListeners = this.bucketSelectionChangedListeners.filter(function (curr) {
                 return curr != listener;
             });
         }
 
-        private notifyFacetEntrySelectionChanged(event: api.aggregation.BucketViewSelectionChangedEvent) {
+        notifyBucketViewSelectionChangedEventChanged(event: api.aggregation.BucketViewSelectionChangedEvent) {
 
             this.bucketSelectionChangedListeners.forEach((listener: (event: BucketViewSelectionChangedEvent) => void) => {
                 listener(event);
@@ -120,8 +111,10 @@ module api.aggregation {
                 }
                 else {
                     if (existingAggregationView instanceof api.aggregation.TermsAggregationView) {
+
                         var termsAggregationView: api.aggregation.TermsAggregationView = <api.aggregation.TermsAggregationView>existingAggregationView;
                         termsAggregationView.update(aggregation);
+
                     }
                     // else if (existingFacetView instanceof QueryFacetView) {
                     //     var queryFacetView: QueryFacetView = <QueryFacetView>existingFacetView;
@@ -130,7 +123,6 @@ module api.aggregation {
                 }
             });
         }
-
 
         private getAggregationView(name: string): api.aggregation.AggregationView {
 
@@ -142,8 +134,6 @@ module api.aggregation {
             }
             return null;
         }
-
-
     }
 
 }
