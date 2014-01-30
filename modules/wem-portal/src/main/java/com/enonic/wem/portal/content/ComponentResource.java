@@ -56,11 +56,12 @@ public final class ComponentResource
 
         final Renderer renderer = rendererFactory.getRenderer( component );
 
-        final JsContext context = createContext( content, component, siteContent );
+        final JsContext context = createContext( content, component, siteContent, pageTemplate );
         return renderer.render( component, context );
     }
 
-    private JsContext createContext( final Content content, final PageComponent component, final Content siteContent )
+    private JsContext createContext( final Content content, final PageComponent component, final Content siteContent,
+                                     final PageTemplate pageTemplate )
     {
         final JsContext context = new JsContext();
         context.setContent( content );
@@ -73,6 +74,7 @@ public final class ComponentResource
 
         final PortalUrlScriptBean portalUrlScriptBean = new PortalUrlScriptBean();
         portalUrlScriptBean.setContentPath( content.getPath().toString() );
+        portalUrlScriptBean.setModule( pageTemplate.getKey().getModuleName().toString() );
         context.setPortalUrlScriptBean( portalUrlScriptBean );
 
         return context;

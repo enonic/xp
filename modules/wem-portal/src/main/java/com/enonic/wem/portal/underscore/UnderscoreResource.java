@@ -22,8 +22,6 @@ public abstract class UnderscoreResource
     @Inject
     protected ModuleKeyResolverService moduleKeyResolverService;
 
-    protected ModuleKeyResolver moduleKeyResolver;
-
     protected final ModuleKey resolveModule( final String contentPath, final String moduleName )
     {
         final ContentPath path = ContentPath.from( contentPath );
@@ -40,8 +38,8 @@ public abstract class UnderscoreResource
 
     private ModuleKey resolveModuleFromSite( final ContentPath contentPath, final String moduleName )
     {
-        this.moduleKeyResolver = this.moduleKeyResolverService.forContent( contentPath );
-        final ModuleKey key = this.moduleKeyResolver.resolve( ModuleName.from( moduleName ) );
+        final ModuleKeyResolver moduleKeyResolver = this.moduleKeyResolverService.forContent( contentPath );
+        final ModuleKey key = moduleKeyResolver.resolve( ModuleName.from( moduleName ) );
         if ( key != null )
         {
             return key;

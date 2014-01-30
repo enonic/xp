@@ -14,6 +14,8 @@ public final class PortalUrlScriptBean
 
     private String contentPath;
 
+    private String module;
+
     public PortalUrlScriptBean()
     {
         this.baseUrl = ServletRequestUrlHelper.createUrl( "" );
@@ -38,6 +40,7 @@ public final class PortalUrlScriptBean
             mode( this.mode ).
             contentPath( contentPath ).
             resourceType( PUBLIC_RESOURCE_TYPE ).
+            module( this.module ).
             resourcePath( resourcePath );
     }
 
@@ -66,5 +69,10 @@ public final class PortalUrlScriptBean
     public void setContentPath( final String contentPath )
     {
         this.contentPath = contentPath;
+    }
+
+    public void setModule( final String module )
+    {
+        this.module = module;
     }
 }

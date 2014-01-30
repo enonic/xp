@@ -22,6 +22,8 @@ abstract class BasePortalUrlBuilder<T extends BasePortalUrlBuilder>
 
     private static final String DEFAULT_MODE = "live";
 
+    private static final String PUBLIC_RESOURCE = "public";
+
     private final String baseUrl;
 
     private String contentPath;
@@ -32,6 +34,8 @@ abstract class BasePortalUrlBuilder<T extends BasePortalUrlBuilder>
 
     private String resourceType; // "public", "service", "image"
 
+    private String module;
+
     private final Map<String, String> params;
 
     protected BasePortalUrlBuilder( final String baseUrl )
@@ -41,6 +45,7 @@ abstract class BasePortalUrlBuilder<T extends BasePortalUrlBuilder>
         this.contentPath = "";
         this.resourceType = "";
         this.mode = DEFAULT_MODE;
+        this.module = "";
         this.params = Maps.newLinkedHashMap();
     }
 
@@ -90,6 +95,12 @@ abstract class BasePortalUrlBuilder<T extends BasePortalUrlBuilder>
         return typecastToUrlBuilder( this );
     }
 
+    public T module( final String module )
+    {
+        this.module = nullToEmpty( module );
+        return typecastToUrlBuilder( this );
+    }
+
     private String urlEncode( final String value )
     {
         try
@@ -124,6 +135,10 @@ abstract class BasePortalUrlBuilder<T extends BasePortalUrlBuilder>
         if ( !resourceType.isEmpty() )
         {
             append( str, "/_/" + resourceType );
+            if ( PUBLIC_RESOURCE.equals( resourceType ) && !module.isEmpty() )
+            {
+                str.append( "/" ).append( module );
+            }
         }
         append( str, resourcePath );
         str.append( serializeParams( this.params ) );

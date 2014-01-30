@@ -49,6 +49,7 @@ public final class ContentResource
 
         final PortalUrlScriptBean portalUrlScriptBean = new PortalUrlScriptBean();
         portalUrlScriptBean.setContentPath( content.getPath().toString() );
+        portalUrlScriptBean.setModule( pageTemplate.getKey().getModuleName().toString() );
         context.setPortalUrlScriptBean( portalUrlScriptBean );
 
         final JsController controller = this.controllerFactory.newController();
