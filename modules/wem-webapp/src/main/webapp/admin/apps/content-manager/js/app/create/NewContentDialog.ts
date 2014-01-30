@@ -68,7 +68,7 @@ module app.create {
             this.deckPanel.showPanel(0);
             tabBar.selectNavigationItem(0);
 
-            var rightColumn = new api.dom.DivEl().setClass("column column-right");
+            var rightColumn = new api.dom.DivEl("column column-right");
             this.appendChildToContentPanel(rightColumn);
 
             this.recentList = new RecentContentTypesList("content-type-list");
