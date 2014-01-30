@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export class PageTemplateSummary extends TemplateSummary<PageTemplateKey,PageTemplateName> {
+    export class PageTemplateSummary extends TemplateSummary {
 
         constructor(builder: PageTemplateSummaryBuilder) {
             super(builder);
@@ -16,11 +16,11 @@ module api.content.page {
         }
     }
 
-    export class PageTemplateSummaryBuilder extends TemplateSummaryBuilder<PageTemplateKey,PageTemplateName> {
+    export class PageTemplateSummaryBuilder extends TemplateSummaryBuilder {
 
         fromJson(json: api.content.page.json.PageTemplateSummaryJson): PageTemplateSummaryBuilder {
 
-            this.setKey(PageTemplateKey.fromString(json.key));
+            this.setKey(TemplateKey.fromString(json.key));
             this.setDisplayName(json.displayName);
             this.setDescriptorKey(DescriptorKey.fromString(json.descriptorKey));
             return this;

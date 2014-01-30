@@ -1,12 +1,6 @@
 module api.content.site.template {
 
-    import PageTemplateName = api.content.page.PageTemplateName;
-
-    import PartTemplateName = api.content.page.part.PartTemplateName;
-
-    import LayoutTemplateName = api.content.page.layout.LayoutTemplateName;
-
-    import ImageTemplateName = api.content.page.image.ImageTemplateName;
+    import TemplateName = api.content.page.TemplateName;
 
     export class SiteTemplateSummary extends api.item.BaseItem {
 
@@ -30,13 +24,13 @@ module api.content.site.template {
 
         private contentTypeFilter: ContentTypeFilter;
 
-        private pageTemplates: PageTemplateName[];
+        private pageTemplates: TemplateName[];
 
-        private partTemplates: PartTemplateName[];
+        private partTemplates: TemplateName[];
 
-        private layoutTemplates: LayoutTemplateName[];
+        private layoutTemplates: TemplateName[];
 
-        private imageTemplates: ImageTemplateName[];
+        private imageTemplates: TemplateName[];
 
         constructor(json: api.content.site.template.json.SiteTemplateSummaryJson) {
             super(json);
@@ -58,22 +52,22 @@ module api.content.site.template {
 
             this.pageTemplates = [];
             json.pageTemplates.forEach((name: string) => {
-                this.pageTemplates.push(new PageTemplateName(name));
+                this.pageTemplates.push(new TemplateName(name));
             });
 
             this.layoutTemplates = [];
             json.layoutTemplates.forEach((name: string) => {
-                this.layoutTemplates.push(new LayoutTemplateName(name));
+                this.layoutTemplates.push(new TemplateName(name));
             });
 
             this.partTemplates = [];
             json.partTemplates.forEach((name: string) => {
-                this.partTemplates.push(new PartTemplateName(name));
+                this.partTemplates.push(new TemplateName(name));
             });
 
             this.imageTemplates = [];
             json.imageTemplates.forEach((name: string) => {
-                this.imageTemplates.push(new ImageTemplateName(name));
+                this.imageTemplates.push(new TemplateName(name));
             });
         }
 
@@ -117,7 +111,7 @@ module api.content.site.template {
             return this.description;
         }
 
-        public getDefaultImageTemplate(): ImageTemplateName {
+        public getDefaultImageTemplate(): api.content.page.TemplateName {
             if (this.imageTemplates.length == 0) {
                 return null;
             }

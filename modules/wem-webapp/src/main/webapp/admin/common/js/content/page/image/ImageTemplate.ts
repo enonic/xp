@@ -21,14 +21,14 @@ module api.content.page.image {
         }
     }
 
-    export class ImageTemplateBuilder extends api.content.page.TemplateSummaryBuilder<ImageTemplateKey,ImageTemplateName> {
+    export class ImageTemplateBuilder extends api.content.page.TemplateSummaryBuilder {
 
         image: api.content.ContentId;
 
         descriptor: ImageDescriptor;
 
         public fromJson(json: api.content.page.image.json.ImageTemplateJson): ImageTemplateBuilder {
-            this.setKey(ImageTemplateKey.fromString(json.key));
+            this.setKey(TemplateKey.fromString(json.key));
             this.setDisplayName(json.displayName);
             this.setImage(new api.content.ContentId(json.image));
             this.setDescriptorKey(DescriptorKey.fromString(json.descriptorKey));

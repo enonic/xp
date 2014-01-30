@@ -6,7 +6,7 @@ module app.wizard.page {
 
         private pageTemplateChangedListeners: {(changedTo: api.content.page.PageTemplateSummary): void;}[] = [];
 
-        private pageTemplateToSelect: api.content.page.PageTemplateKey;
+        private pageTemplateToSelect: api.content.page.TemplateKey;
 
         constructor() {
             super("page-template-selector-form");
@@ -42,7 +42,7 @@ module app.wizard.page {
         }
 
         layoutExisting(siteTemplateKey: api.content.site.template.SiteTemplateKey,
-                       selectedPageTemplate: api.content.page.PageTemplateKey): Q.Promise<void> {
+                       selectedPageTemplate: api.content.page.TemplateKey): Q.Promise<void> {
             var deferred = Q.defer<void>();
 
             this.pageTemplateComboBox.setSiteTemplateKey(siteTemplateKey);
@@ -54,7 +54,7 @@ module app.wizard.page {
             return deferred.promise;
         }
 
-        setPageTemplateToSelect(value: api.content.page.PageTemplateKey) {
+        setPageTemplateToSelect(value: api.content.page.TemplateKey) {
             this.pageTemplateToSelect = value;
         }
 
@@ -74,7 +74,7 @@ module app.wizard.page {
             });
         }
 
-        public getPageTemplateKey(): api.content.page.PageTemplateKey {
+        public getPageTemplateKey(): api.content.page.TemplateKey {
 
             var selectedOptions = this.pageTemplateComboBox.getSelectedData();
             if (selectedOptions.length == 0) {

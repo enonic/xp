@@ -1,16 +1,16 @@
 module api.content.page {
 
-    export class PageComponent<TEMPLATE_KEY extends TemplateKey> {
+    export class PageComponent {
 
         private name: ComponentName;
 
         private path: ComponentPath;
 
-        private template: TEMPLATE_KEY;
+        private template: TemplateKey;
 
         private config: api.data.RootDataSet;
 
-        constructor(builder?: PageComponentBuilder<TEMPLATE_KEY,any>) {
+        constructor(builder?: PageComponentBuilder<any>) {
             if (builder != undefined) {
                 this.name = builder.name;
                 this.template = builder.template;
@@ -26,11 +26,11 @@ module api.content.page {
             return this.name;
         }
 
-        getTemplate(): TEMPLATE_KEY {
+        getTemplate(): TemplateKey {
             return this.template;
         }
 
-        setTemplate(template: TEMPLATE_KEY) {
+        setTemplate(template: TemplateKey) {
             this.template = template;
         }
 
@@ -56,25 +56,25 @@ module api.content.page {
         }
     }
 
-    export class PageComponentBuilder<TEMPLATE_KEY extends TemplateKey,COMPONENT extends PageComponent> {
+    export class PageComponentBuilder<COMPONENT extends PageComponent> {
 
         name: api.content.page.ComponentName;
 
-        template: TEMPLATE_KEY;
+        template: TemplateKey;
 
         config: api.data.RootDataSet;
 
-        public setName(value: api.content.page.ComponentName): PageComponentBuilder<TEMPLATE_KEY,COMPONENT> {
+        public setName(value: api.content.page.ComponentName): PageComponentBuilder<COMPONENT> {
             this.name = value;
             return this;
         }
 
-        public setTemplate(value: TEMPLATE_KEY): PageComponentBuilder<TEMPLATE_KEY,COMPONENT> {
+        public setTemplate(value: TemplateKey): PageComponentBuilder<COMPONENT> {
             this.template = value;
             return this;
         }
 
-        public setConfig(value: api.data.RootDataSet): PageComponentBuilder<TEMPLATE_KEY,COMPONENT> {
+        public setConfig(value: api.data.RootDataSet): PageComponentBuilder<COMPONENT> {
             this.config = value;
             return this;
         }

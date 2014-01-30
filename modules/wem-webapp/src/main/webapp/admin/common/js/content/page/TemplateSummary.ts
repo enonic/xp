@@ -1,24 +1,24 @@
 module api.content.page {
 
-    export class TemplateSummary<KEY extends TemplateKey,NAME extends TemplateName> {
+    export class TemplateSummary {
 
-        private key: KEY;
+        private key: TemplateKey;
 
         private displayName: string;
 
         private descriptorKey: DescriptorKey;
 
-        constructor(builder: TemplateSummaryBuilder<KEY,NAME>) {
+        constructor(builder: TemplateSummaryBuilder) {
             this.key = builder.key;
             this.displayName = builder.displayName;
             this.descriptorKey = builder.descriptorKey;
         }
 
-        getKey(): KEY {
+        getKey(): TemplateKey {
             return this.key;
         }
 
-        getName(): NAME {
+        getName(): TemplateName {
             return this.key.getTemplateName();
         }
 
@@ -31,25 +31,25 @@ module api.content.page {
         }
     }
 
-    export class TemplateSummaryBuilder<KEY extends TemplateKey,NAME extends TemplateName> {
+    export class TemplateSummaryBuilder {
 
-        key: KEY;
+        key: TemplateKey;
 
         displayName: string;
 
         descriptorKey: DescriptorKey;
 
-        public setKey(value: KEY): TemplateSummaryBuilder<KEY,NAME> {
+        public setKey(value: TemplateKey): TemplateSummaryBuilder {
             this.key = value;
             return this;
         }
 
-        public setDisplayName(value: string): TemplateSummaryBuilder<KEY,NAME> {
+        public setDisplayName(value: string): TemplateSummaryBuilder {
             this.displayName = value;
             return this;
         }
 
-        public setDescriptorKey(value: DescriptorKey): TemplateSummaryBuilder<KEY,NAME> {
+        public setDescriptorKey(value: DescriptorKey): TemplateSummaryBuilder {
             this.descriptorKey = value;
             return this;
         }

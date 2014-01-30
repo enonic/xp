@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export class PageTemplate extends Template<PageTemplateKey,PageTemplateName> {
+    export class PageTemplate extends Template {
 
         private regions: PageRegions;
 
@@ -32,7 +32,7 @@ module api.content.page {
         }
     }
 
-    export class PageTemplateBuilder extends TemplateBuilder<PageTemplateKey,PageTemplateName> {
+    export class PageTemplateBuilder extends TemplateBuilder {
 
         regions: PageRegions;
 
@@ -42,7 +42,7 @@ module api.content.page {
 
         fromJson(json: api.content.page.json.PageTemplateJson): PageTemplateBuilder {
 
-            this.setKey(PageTemplateKey.fromString(json.key));
+            this.setKey(TemplateKey.fromString(json.key));
             this.setDisplayName(json.displayName);
             this.setDescriptorKey(DescriptorKey.fromString(json.descriptorKey));
             this.descriptor = new PageDescriptorBuilder().fromJson(json.descriptor).build();

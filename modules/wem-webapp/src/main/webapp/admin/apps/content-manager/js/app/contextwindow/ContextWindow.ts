@@ -2,7 +2,7 @@ module app.contextwindow {
 
     import ComponentPath = api.content.page.ComponentPath;
     import ImageComponent = api.content.page.image.ImageComponent;
-    import ImageTemplateKey = api.content.page.image.ImageTemplateKey;
+    import TemplateKey = api.content.page.TemplateKey;
     import ImageComponentBuilder = api.content.page.image.ImageComponentBuilder;
 
     export interface ContextWindowOptions {
@@ -160,7 +160,7 @@ module app.contextwindow {
                     var imageComponent = <ImageComponent>this.pageRegions.getComponent(componentPath);
                     var moduleName = "bluman.trampoline";
                     var defaultImageTemplate = this.siteTemplate.getDefaultImageTemplate();
-                    var imageTemplateKey = new ImageTemplateKey(moduleName, defaultImageTemplate);
+                    var imageTemplateKey = new TemplateKey(moduleName, defaultImageTemplate);
                     imageComponent.setTemplate(imageTemplateKey);
                     imageComponent.setImage(imageId);
                     this.contentSaveAction.execute();

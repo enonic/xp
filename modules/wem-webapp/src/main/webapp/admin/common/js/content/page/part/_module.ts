@@ -1,7 +1,5 @@
 ///<reference path='PartDescriptor.ts' />
 
-///<reference path='PartTemplateName.ts' />
-///<reference path='PartTemplateKey.ts' />
 ///<reference path='PartTemplateSummary.ts' />
 ///<reference path='PartTemplate.ts' />
 ///<reference path='PartComponent.ts' />

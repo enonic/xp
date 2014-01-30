@@ -4,7 +4,7 @@ module api.content.page {
 
         private contentId: api.content.ContentId;
 
-        private template: api.content.page.PageTemplateKey;
+        private template: api.content.page.TemplateKey;
 
         private config: api.data.RootDataSet;
 
@@ -16,7 +16,7 @@ module api.content.page {
             this.contentId = contentId;
         }
 
-        setPageTemplateKey(pageTemplateKey: api.content.page.PageTemplateKey): UpdatePageRequest {
+        setPageTemplateKey(pageTemplateKey: api.content.page.TemplateKey): UpdatePageRequest {
             this.template = pageTemplateKey;
             return this;
         }

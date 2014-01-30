@@ -18,8 +18,6 @@
 ///<reference path='AbstractRegions.ts' />
 ///<reference path='PageRegions.ts' />
 
-///<reference path='PageTemplateName.ts' />
-///<reference path='PageTemplateKey.ts' />
 ///<reference path='PageTemplateSummary.ts' />
 ///<reference path='PageTemplate.ts' />
 ///<reference path='PageTemplateComboBox.ts' />

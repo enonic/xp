@@ -1,6 +1,6 @@
 module api.content.page.part {
 
-    export class PartComponent extends api.content.page.PageComponent<PartTemplateKey> {
+    export class PartComponent extends api.content.page.PageComponent {
 
         constructor(builder: PartComponentBuilder) {
             super(builder);
@@ -15,12 +15,12 @@ module api.content.page.part {
         }
     }
 
-    export class PartComponentBuilder extends api.content.page.PageComponentBuilder<PartTemplateKey,PartComponent> {
+    export class PartComponentBuilder extends api.content.page.PageComponentBuilder<PartComponent> {
 
         public fromJson(json: json.PartComponentJson): PartComponentBuilder {
 
             if (json.template) {
-                this.setTemplate(PartTemplateKey.fromString(json.template));
+                this.setTemplate(api.content.page.TemplateKey.fromString(json.template));
             }
             this.setName(new api.content.page.ComponentName(json.name));
             this.setConfig(api.data.DataFactory.createRootDataSet(json.config));

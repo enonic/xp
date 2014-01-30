@@ -4,9 +4,9 @@ module api.content.page {
 
         private siteTemplateKey: api.content.site.template.SiteTemplateKey;
 
-        private pageTemplateKey: api.content.page.PageTemplateKey;
+        private pageTemplateKey: api.content.page.TemplateKey;
 
-        constructor(pageTemplateKey: api.content.page.PageTemplateKey) {
+        constructor(pageTemplateKey: api.content.page.TemplateKey) {
             super();
             super.setMethod("GET");
             this.pageTemplateKey = pageTemplateKey;

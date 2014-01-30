@@ -4,9 +4,9 @@ module api.content.page.image {
 
         private siteTemplateKey: api.content.site.template.SiteTemplateKey;
 
-        private imageTemplateKey: api.content.page.image.ImageTemplateKey;
+        private imageTemplateKey: api.content.page.TemplateKey;
 
-        constructor(imageTemplateKey: api.content.page.image.ImageTemplateKey) {
+        constructor(imageTemplateKey: api.content.page.TemplateKey) {
             super();
             super.setMethod("GET");
             this.imageTemplateKey = imageTemplateKey;

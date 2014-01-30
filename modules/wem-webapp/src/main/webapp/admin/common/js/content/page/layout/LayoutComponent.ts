@@ -1,6 +1,6 @@
 module api.content.page.layout {
 
-    export class LayoutComponent extends api.content.page.PageComponent<LayoutTemplateKey> {
+    export class LayoutComponent extends api.content.page.PageComponent {
 
         private regions: LayoutRegions;
 
@@ -9,7 +9,7 @@ module api.content.page.layout {
             this.regions = builder.regions;
         }
 
-        public getComponent(path: ComponentPath): api.content.page.PageComponent<TemplateKey> {
+        public getComponent(path: ComponentPath): api.content.page.PageComponent {
             return this.regions.getComponent(path);
         }
 
@@ -27,13 +27,13 @@ module api.content.page.layout {
         }
     }
 
-    export class LayoutComponentBuilder extends api.content.page.PageComponentBuilder<LayoutTemplateKey,LayoutComponent> {
+    export class LayoutComponentBuilder extends api.content.page.PageComponentBuilder<LayoutComponent> {
 
         regions: LayoutRegions;
 
         public fromJson(json: json.LayoutComponentJson): LayoutComponentBuilder {
             if (json.template) {
-                this.setTemplate(LayoutTemplateKey.fromString(json.template));
+                this.setTemplate(TemplateKey.fromString(json.template));
             }
             this.setName(new api.content.page.ComponentName(json.name));
             this.setConfig(api.data.DataFactory.createRootDataSet(json.config));

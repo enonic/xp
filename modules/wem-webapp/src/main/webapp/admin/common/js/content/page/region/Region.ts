@@ -4,15 +4,15 @@ module api.content.page.region {
 
         private name: string;
 
-        private pageComponents: api.content.page.PageComponent<api.content.page.TemplateKey>[] = [];
+        private pageComponents: api.content.page.PageComponent[] = [];
 
-        private componentByName: {[s:string] : api.content.page.PageComponent<api.content.page.TemplateKey>;} = {};
+        private componentByName: {[s:string] : api.content.page.PageComponent;} = {};
 
         constructor(builder: RegionBuilder) {
             this.name = builder.name;
             this.pageComponents = builder.pageComponents;
 
-            this.pageComponents.forEach((c: api.content.page.PageComponent<api.content.page.TemplateKey>)=> {
+            this.pageComponents.forEach((c: api.content.page.PageComponent)=> {
                 if (c instanceof api.content.page.image.ImageComponent) {
                     var imageComponent = <api.content.page.image.ImageComponent>c;
                     this.componentByName[imageComponent.getName().toString()] = imageComponent;
@@ -38,7 +38,7 @@ module api.content.page.region {
         countNumberOfDuplicates(name: api.content.page.ComponentName): number {
 
             var count = 0;
-            this.pageComponents.forEach((component: api.content.page.PageComponent<api.content.page.TemplateKey>)=> {
+            this.pageComponents.forEach((component: api.content.page.PageComponent)=> {
                 if (component.getName().isDuplicateOf(name)) {
                     count++;
                 }
@@ -46,7 +46,7 @@ module api.content.page.region {
             return count;
         }
 
-        addComponent(component: api.content.page.PageComponent<TemplateKey>) {
+        addComponent(component: api.content.page.PageComponent) {
 
             api.util.assert(!this.hasComponentWithName(component.getName()),
                 "Component already added to region [" + this.name + "]: " + component.getName().toString());
@@ -59,7 +59,7 @@ module api.content.page.region {
             return this.componentByName[name.toString()] != undefined;
         }
 
-        getComponents(): api.content.page.PageComponent<api.content.page.TemplateKey>[] {
+        getComponents(): api.content.page.PageComponent[] {
             return this.pageComponents;
         }
 
@@ -90,7 +90,7 @@ module api.content.page.region {
             return <api.content.page.part.PartComponent>c;
         }
 
-        getComponent(name: api.content.page.ComponentName): api.content.page.PageComponent<api.content.page.TemplateKey> {
+        getComponent(name: api.content.page.ComponentName): api.content.page.PageComponent {
             return this.componentByName[name.toString()];
         }
 
@@ -98,7 +98,7 @@ module api.content.page.region {
 
             var componentJsons: api.content.page.json.PageComponentTypeWrapperJson[] = [];
 
-            this.pageComponents.forEach((component: api.content.page.PageComponent<api.content.page.TemplateKey>) => {
+            this.pageComponents.forEach((component: api.content.page.PageComponent) => {
                 componentJsons.push(component.toJson());
             });
 
@@ -113,14 +113,14 @@ module api.content.page.region {
 
         name: string;
 
-        pageComponents: api.content.page.PageComponent<api.content.page.TemplateKey>[] = [];
+        pageComponents: api.content.page.PageComponent[] = [];
 
         public setName(value: string): RegionBuilder {
             this.name = value;
             return this;
         }
 
-        public addComponent(value: api.content.page.PageComponent<api.content.page.TemplateKey>): RegionBuilder {
+        public addComponent(value: api.content.page.PageComponent): RegionBuilder {
             this.pageComponents.push(value);
             return this;
         }

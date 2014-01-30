@@ -2,7 +2,7 @@ module api.content.page {
 
     export class PageComponentFactory {
 
-        public static createFromJson(json: api.content.page.json.PageComponentTypeWrapperJson): api.content.page.PageComponent<api.content.page.TemplateKey> {
+        public static createFromJson(json: api.content.page.json.PageComponentTypeWrapperJson): api.content.page.PageComponent {
 
             if (json.PartComponent) {
                 return new part.PartComponentBuilder().fromJson(<part.json.PartComponentJson>json.PartComponent).build();

@@ -10,6 +10,14 @@ module api.content.page {
 
         private refString: string;
 
+        public static fromString(str: string): TemplateKey {
+
+            var elements: string[] = str.split(api.content.page.TemplateKey.SEPARATOR);
+            var moduleName = elements[0];
+            var templateName = new TemplateName(elements[1]);
+            return new TemplateKey(moduleName, templateName);
+        }
+
         constructor(moduleName: string, templateName: TemplateName) {
             if (name == null) {
                 throw new Error("name cannot be null");

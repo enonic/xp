@@ -15,7 +15,7 @@ module api.content.page {
             });
         }
 
-        addComponent(component: PageComponent<TemplateKey>, regionName: string) {
+        addComponent(component: PageComponent, regionName: string) {
 
             var region = this.getRegion(regionName);
             region.addComponent(component);

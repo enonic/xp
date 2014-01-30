@@ -4,9 +4,9 @@ module api.content.page.layout {
 
         private siteTemplateKey: api.content.site.template.SiteTemplateKey;
 
-        private layoutTemplateKey: api.content.page.layout.LayoutTemplateKey;
+        private layoutTemplateKey: api.content.page.TemplateKey;
 
-        constructor(layoutTemplateKey: api.content.page.layout.LayoutTemplateKey) {
+        constructor(layoutTemplateKey: api.content.page.TemplateKey) {
             super();
             super.setMethod("GET");
             this.layoutTemplateKey = layoutTemplateKey;

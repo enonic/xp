@@ -1,6 +1,6 @@
 module api.content.page.image {
 
-    export class ImageComponent extends api.content.page.PageComponent<ImageTemplateKey> {
+    export class ImageComponent extends api.content.page.PageComponent {
 
         private image: api.content.ContentId;
 
@@ -30,7 +30,7 @@ module api.content.page.image {
         }
     }
 
-    export class ImageComponentBuilder extends api.content.page.PageComponentBuilder<ImageTemplateKey,ImageComponent> {
+    export class ImageComponentBuilder extends api.content.page.PageComponentBuilder<ImageComponent> {
 
         image: api.content.ContentId;
 
@@ -43,7 +43,7 @@ module api.content.page.image {
             this.setName(new api.content.page.ComponentName(json.name));
 
             if( json.template ) {
-                this.setTemplate(ImageTemplateKey.fromString(json.template));
+                this.setTemplate(api.content.page.TemplateKey.fromString(json.template));
             }
 
             this.setConfig(api.data.DataFactory.createRootDataSet(json.config));

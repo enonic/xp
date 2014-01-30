@@ -1,18 +1,18 @@
 module api.content.page.part {
 
-    export class PartTemplate extends api.content.page.Template<PartTemplateKey,PartTemplateName> {
+    export class PartTemplate extends api.content.page.Template {
 
         constructor(builder: PartTemplateBuilder) {
             super(builder);
         }
     }
 
-    export class PartTemplateBuilder extends api.content.page.TemplateBuilder<PartTemplateKey,PartTemplateName> {
+    export class PartTemplateBuilder extends api.content.page.TemplateBuilder {
 
         descriptor: PartDescriptor;
 
         public fromJson(json: api.content.page.part.json.PartTemplateJson): PartTemplateBuilder {
-            this.setKey(PartTemplateKey.fromString(json.key));
+            this.setKey(api.content.page.TemplateKey.fromString(json.key));
             this.setDisplayName(json.displayName);
             this.setDescriptorKey(DescriptorKey.fromString(json.descriptorKey));
             this.descriptor = new PartDescriptorBuilder().fromJson(json.descriptor).build();
