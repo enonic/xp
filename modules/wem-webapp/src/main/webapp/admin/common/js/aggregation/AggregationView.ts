@@ -6,7 +6,7 @@ module api.aggregation {
 
         private aggregation: api.aggregation.Aggregation;
 
-        private facetEntrySelectionChangedListeners: Function[] = [];
+        private bucketSelectionChangedListeners: Function[] = [];
 
         constructor(aggregation: api.aggregation.Aggregation, parentGroupView: api.aggregation.AggregationGroupView) {
             super('facet-view');
@@ -38,24 +38,24 @@ module api.aggregation {
             throw new Error("Must be implemented by inheritor");
         }
 
-        /*
-         addFacetEntrySelectionChangeListener(listener: (event: FacetEntryViewSelectionChangedEvent) => void) {
-         this.facetEntrySelectionChangedListeners.push(listener);
-         }
 
-         removeFacetEntrySelectionChangedListener(listener: (event: FacetEntryViewSelectionChangedEvent) => void) {
-         this.facetEntrySelectionChangedListeners = this.facetEntrySelectionChangedListeners.filter(function (curr) {
-         return curr != listener;
-         });
-         }
+        addFacetEntrySelectionChangeListener(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
+            this.bucketSelectionChangedListeners.push(listener);
+        }
 
-         notifyFacetEntrySelectionChanged(event: FacetEntryViewSelectionChangedEvent) {
+        removeFacetEntrySelectionChangedListener(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
+            this.bucketSelectionChangedListeners = this.bucketSelectionChangedListeners.filter(function (curr) {
+                return curr != listener;
+            });
+        }
 
-         this.facetEntrySelectionChangedListeners.forEach((listener: (event: FacetEntryViewSelectionChangedEvent) => void) => {
-         listener(event);
-         });
-         }
-         */
+        notifyBucketViewSelectionChangedEvent(event: api.aggregation.BucketViewSelectionChangedEvent) {
+
+            this.bucketSelectionChangedListeners.forEach((listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) => {
+                listener(event);
+            });
+        }
+
 
         static createAggregationView(aggregation: api.aggregation.Aggregation,
                                      parentGroupView: api.aggregation.AggregationGroupView): api.aggregation.AggregationView {

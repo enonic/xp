@@ -108,7 +108,7 @@ public class UpdateContentHandler
     }
 
     private void deleteRemovedEmbeddedContent( final Content persistedContent, final Content editedContent )
-    throws Exception
+        throws Exception
     {
         final Map<ContentId, Content> embeddedContentsBeforeEdit = resolveEmbeddedContent( persistedContent.getContentData() );
 
@@ -131,6 +131,7 @@ public class UpdateContentHandler
     private void syncRelationships( final Content persistedContent, final Content temporaryContent )
     {
         final Session session = context.getJcrSession();
+
         final Client client = context.getClient();
 
         final ContentId contentId = persistedContent.getId();
@@ -146,6 +147,7 @@ public class UpdateContentHandler
 
     private void validateEditedContent( final Content persistedContent, final Content edited )
     {
+
         persistedContent.checkIllegalEdit( edited );
 
         if ( !edited.isDraft() )

@@ -4,11 +4,12 @@ module app.browse.filter {
 
         constructor() {
 
-            var contentTypeFacets = new api.facet.FacetGroupView("contentType", "Content Type");
-            var spaceFacets = new api.facet.FacetGroupView("space", "Space");
-            var lastModifiedFacets = new api.facet.FacetGroupView("lastModified", "Last modified", null, this.lastModifiedGroupFacetFilter);
+            var contentTypeAggregation = new api.aggregation.AggregationGroupView("contentTypes");
 
-            super(null, [contentTypeFacets, spaceFacets, lastModifiedFacets]);
+            //var spaceFacets = new api.facet.FacetGroupView("space", "Space");
+            //var lastModifiedFacets = new api.facet.FacetGroupView("lastModified", "Last modified", null, this.lastModifiedGroupFacetFilter);
+
+            super(null, [contentTypeAggregation]);
 
             this.resetFacets(true);
 
@@ -61,18 +62,26 @@ module app.browse.filter {
                             setExpand(api.rest.Expand.SUMMARY).
                             send().done((jsonResponse: api.rest.JsonResponse<api.content.ContentQueryResult<api.content.json.ContentSummaryJson>>) => {
                                 var result = jsonResponse.getResult();
-                                result.aggregations.forEach((aggregationJson: api.aggregation.AggregationTypeWrapperJson) => {
-                                    var aggregation = api.aggregation.AggregationFactory.createFromJson(aggregationJson);
-                                    console.log(aggregation);
-                                })
 
-//                                this.updateFacets(api.facet.FacetFactory.createFacets(result.facets));
+                                this.refreshAggregations(result.aggregations);
+
                                 new ContentBrowseSearchEvent(result.contents).fire();
                             })
                         ;
                     }
                 }
             );
+        }
+
+        private refreshAggregations(aggregationWrapperJsons: api.aggregation.AggregationTypeWrapperJson[]) {
+            var aggregations: api.aggregation.Aggregation[] = [];
+
+            aggregationWrapperJsons.forEach((aggregationJson: api.aggregation.AggregationTypeWrapperJson) => {
+                aggregations.push(api.aggregation.AggregationFactory.createFromJson(aggregationJson));
+                console.log("******* adding facet from result in reset-facets");
+            })
+
+            this.updateAggregations(aggregations);
         }
 
         private parseContentTypeNames(names: string[]): api.schema.content.ContentTypeName[] {
@@ -99,8 +108,11 @@ module app.browse.filter {
 
             new api.content.ContentQueryRequest<api.content.ContentQueryResult<api.content.json.ContentSummaryJson>>(contentQuery).
                 send().done((jsonResponse: api.rest.JsonResponse<api.content.ContentQueryResult<api.content.json.ContentSummaryJson>>) => {
+
                     var result = jsonResponse.getResult();
                     new ContentBrowseSearchEvent(result.contents).fire();
+
+                    this.refreshAggregations(result.aggregations);
 
                     if (!supressEvent) {
                         new ContentBrowseResetEvent().fire();
@@ -109,19 +121,6 @@ module app.browse.filter {
             );
         }
 
-        /*
-         private resetFacets(supressEvent?:boolean) {
-         new api.content.FindContentRequest<api.content.FindContentResult<api.content.json.ContentSummaryJson>>().setCount(0).send().done(
-         (jsonResponse:api.rest.JsonResponse<api.content.FindContentResult<api.content.json.ContentSummaryJson>>) => {
-         var termsFacets:api.facet.Facet[] = api.facet.FacetFactory.createFacets(jsonResponse.getResult().facets);
-         this.updateFacets(termsFacets);
-         if (!supressEvent) {
-         new ContentBrowseResetEvent().fire();
-         }
-         }
-         );
-         }
-         */
 
         private extractRangesFromFilterValues(values: { [s : string ] : string[];
         }): {lower:Date; upper:Date

@@ -10,6 +10,8 @@ module api.aggregation {
 
         private parentAggregationView: api.aggregation.AggregationView;
 
+        private selectionChangedListeners: Function[] = [];
+
         constructor(bucket: api.aggregation.Bucket, parentAggregationView: api.aggregation.AggregationView) {
 
             super('facet-entry-view');
@@ -46,6 +48,37 @@ module api.aggregation {
             return this.checkbox.isChecked();
         }
 
+        getName(): string {
+            return this.bucket.getName();
+        }
+
+        deselect(supressEvent?: boolean) {
+            this.checkbox.setChecked(false, supressEvent);
+        }
+
+        notifySelectionChanged(oldValue: boolean, newValue: boolean) {
+            this.selectionChangedListeners.forEach((listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) => {
+                listener(new api.aggregation.BucketViewSelectionChangedEvent(oldValue, newValue, this));
+            });
+        }
+
+        removeSelectionChangedListener(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
+            this.selectionChangedListeners = this.selectionChangedListeners.filter(function (curr) {
+                return curr != listener;
+            });
+        }
+
+        addSelectionChangeListener(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
+            this.selectionChangedListeners.push(listener);
+        }
+
+        update(bucket: api.aggregation.Bucket) {
+            console.log("**** Updating bucket " + bucket.getName() + " with count + " + bucket.getDocCount());
+
+            this.bucket = bucket;
+            this.updateUI();
+        }
+
         private updateUI() {
 
             this.label.setValue(this.resolveLabelValue());
@@ -57,11 +90,5 @@ module api.aggregation {
             }
         }
 
-        notifySelectionChanged(oldValue: boolean, newValue: boolean) {
-
-            //   this.selectionChangedListeners.forEach((listener:(event:FacetEntryViewSelectionChangedEvent) => void) => {
-            //       listener(new FacetEntryViewSelectionChangedEvent(oldValue, newValue, this));
-            //   });
-        }
     }
 }

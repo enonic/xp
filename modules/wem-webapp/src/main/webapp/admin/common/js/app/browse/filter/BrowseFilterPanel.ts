@@ -2,15 +2,15 @@ module api.app.browse.filter {
 
     export class BrowseFilterPanel extends api.ui.Panel implements api.event.Observable {
 
-        private listeners:BrowseFilterPanelListener[] = [];
+        private listeners: BrowseFilterPanelListener[] = [];
 
-        private facetContainer:api.facet.FacetContainer;
+        private aggregationContainer: api.aggregation.AggregationContainer;
 
-        private searchField:api.app.browse.filter.TextSearchField;
+        private searchField: api.app.browse.filter.TextSearchField;
 
-        private clearFilter:api.app.browse.filter.ClearFilterButton;
+        private clearFilter: api.app.browse.filter.ClearFilterButton;
 
-        constructor(facets?:api.facet.Facet[], groupViews?:api.facet.FacetGroupView[]) {
+        constructor(aggregations?: api.aggregation.Aggregation[], groupViews?: api.aggregation.AggregationGroupView[]) {
             super();
             this.addClass('filter-panel');
 
@@ -24,18 +24,18 @@ module api.app.browse.filter {
                 this.reset();
             });
 
-            this.facetContainer = new api.facet.FacetContainer();
-            this.appendChild(this.facetContainer);
+            this.aggregationContainer = new api.aggregation.AggregationContainer();
+            this.appendChild(this.aggregationContainer);
 
             if (groupViews != null) {
-                groupViews.forEach((facetGroupView:api.facet.FacetGroupView) => {
+                groupViews.forEach((aggregationGroupView: api.aggregation.AggregationGroupView) => {
 
-                        facetGroupView.addFacetEntrySelectionChangeListener((event:api.facet.FacetEntryViewSelectionChangedEvent) => {
+                        // facetGroupView.addFacetEntrySelectionChangeListener((event: api.facet.FacetEntryViewSelectionChangedEvent) => {
+                        //
+                        //     this.search();
+                        // });
 
-                            this.search();
-                        });
-
-                        this.facetContainer.addFacetGroupView(facetGroupView);
+                        this.aggregationContainer.addAggregationGroupView(aggregationGroupView);
                     }
                 );
             }
@@ -44,21 +44,23 @@ module api.app.browse.filter {
         afterRender() {
             this.appendChild(this.searchField);
             this.appendChild(this.clearFilter);
-            this.appendChild(this.facetContainer);
+            this.appendChild(this.aggregationContainer);
         }
 
-        updateFacets(facets:api.facet.Facet[]) {
-            this.facetContainer.updateFacets(facets)
+        updateAggregations(aggregations: api.aggregation.Aggregation[]) {
+            this.aggregationContainer.updateAggregations(aggregations);
         }
 
-        getValues():{ [s : string ] : string[]; } {
-            var values:{[s:string] : string[]; } = this.facetContainer.getSelectedValuesByFacetName();
+        getValues(): { [s : string ] : string[];
+        } {
+            var values: {[s:string] : string[];
+            } = this.aggregationContainer.getSelectedValuesByAggregationName();
             values['query'] = [this.searchField.getEl().getValue()];
             return values;
         }
 
         hasFilterSet() {
-            return this.facetContainer.hasSelectedFacetEntries() || this.searchField.getHTMLElement()['value'].trim() != '';
+            return this.aggregationContainer.hasSelectedBuckets() || this.searchField.getHTMLElement()['value'].trim() != '';
         }
 
         search() {
@@ -74,22 +76,23 @@ module api.app.browse.filter {
 
         reset() {
             this.searchField.clear(true);
-            this.facetContainer.deselectAll(true);
+            this.aggregationContainer.deselectAll(true);
             this.clearFilter.hide();
             this.notifyReset();
         }
 
-        addListener(listener:BrowseFilterPanelListener) {
+        addListener(listener: BrowseFilterPanelListener) {
             this.listeners.push(listener);
         }
 
-        removeListener(listener:BrowseFilterPanelListener) {
+        removeListener(listener: BrowseFilterPanelListener) {
             this.listeners = this.listeners.filter(function (curr) {
                 return curr != listener;
             });
         }
 
-        private notifySearch(values:{ [s : string ] : string[]; }) {
+        private notifySearch(values: { [s : string ] : string[];
+        }) {
             this.listeners.forEach((listener) => {
                 if (listener.onSearch) {
                     listener.onSearch(values);
