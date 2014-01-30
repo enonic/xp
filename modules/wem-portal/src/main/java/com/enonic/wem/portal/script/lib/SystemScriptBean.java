@@ -12,6 +12,9 @@ public final class SystemScriptBean
     @Inject
     protected XsltScriptBean xslt;
 
+    @Inject
+    protected ThymeleafScriptBean thymeleaf;
+
     public MustacheScriptBean getMustache()
     {
         return this.mustache;
@@ -20,5 +23,10 @@ public final class SystemScriptBean
     public XsltScriptBean getXslt()
     {
         return this.xslt;
+    }
+
+    public ThymeleafScriptBean getThymeleaf()
+    {
+        return this.thymeleaf;
     }
 }
