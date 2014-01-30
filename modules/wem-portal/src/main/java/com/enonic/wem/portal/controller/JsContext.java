@@ -4,6 +4,8 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
+import com.enonic.wem.api.content.page.layout.LayoutComponent;
+import com.enonic.wem.api.content.page.layout.LayoutRegions;
 import com.enonic.wem.portal.script.lib.PortalUrlScriptBean;
 
 public final class JsContext
@@ -86,6 +88,41 @@ public final class JsContext
         else
         {
             return this.pageTemplate.getRegions();
+        }
+    }
+
+    public LayoutRegions getLayoutRegions()
+    {
+        if ( this.component == null )
+        {
+            return null;
+        }
+
+        if ( !( this.component instanceof LayoutComponent ) )
+        {
+            return null;
+        }
+
+        LayoutComponent layoutComponent = (LayoutComponent) this.component;
+
+        if ( layoutComponent.hasRegions() )
+        {
+            return layoutComponent.getRegions();
+        }
+        else
+        {
+            final PageComponent possibleLayoutComponent = this.pageTemplate.getRegions().getComponent( this.component.getPath() );
+            if ( possibleLayoutComponent == null )
+            {
+                return null;
+            }
+
+            if ( !( possibleLayoutComponent instanceof LayoutComponent ) )
+            {
+                return null;
+            }
+            layoutComponent = (LayoutComponent) possibleLayoutComponent;
+            return layoutComponent.getRegions();
         }
     }
 
