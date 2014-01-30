@@ -13,8 +13,8 @@ module app.wizard.page {
 
             this.pageTemplateComboBox = new api.content.page.PageTemplateComboBox();
 
-            var fieldSet = new api.ui.form.Fieldset("Page Template");
-            fieldSet.add(new api.ui.form.FormItem(new api.ui.form.FormItemBuilder(this.pageTemplateComboBox).setLabel("Selected")));
+            var fieldSet = new api.ui.form.Fieldset();
+            fieldSet.add(new api.ui.form.FormItem(new api.ui.form.FormItemBuilder(this.pageTemplateComboBox).setLabel("Page Template")));
             this.add(fieldSet);
 
 
