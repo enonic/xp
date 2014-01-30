@@ -67,7 +67,9 @@ module api.aggregation {
 
             var anyCountLargerThanZero = false;
 
-            // This block makes the non-existing bucket disappear, but that is not desired when selecing a bucket.
+
+            // TODO: This should possible be done differently. The point is to remove
+            // buckets from view when they are no longer in the aggregation-result from the query.
             this.bucketViews.forEach((bucketView: api.aggregation.BucketView) => {
                 var existingBucket: api.aggregation.Bucket = this.termsAggregation.getBucketByName(bucketView.getName());
                 if (existingBucket == null) {
