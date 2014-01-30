@@ -21,7 +21,7 @@ import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.content.page.AbstractRegions;
 import com.enonic.wem.api.content.page.PageComponent;
-import com.enonic.wem.api.content.page.layout.LayoutComponent;
+import com.enonic.wem.api.content.page.layout.LayoutRegions;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ResourcePath;
@@ -169,7 +169,19 @@ public final class XsltScriptBean
 
         final DomBuilder builder = DomBuilder.create( "context" );
         builder.start( "baseUrl" ).text( baseUrl ).end();
-        createRegionElements( builder, jsContext.getPageRegions() );
+
+        if ( jsContext.getComponent() != null )
+        {
+            final LayoutRegions layoutRegions = jsContext.getLayoutRegions();
+            if ( layoutRegions != null )
+            {
+                createRegionElements( builder, layoutRegions );
+            }
+        }
+        else
+        {
+            createRegionElements( builder, jsContext.getPageRegions() );
+        }
 
         return builder.getDocument();
     }
@@ -188,11 +200,6 @@ public final class XsltScriptBean
                 builder.start( "component" );
                 builder.attribute( "name", component.getName().toString() );
                 builder.attribute( "path", component.getPath().toString() );
-                if ( component instanceof LayoutComponent )
-                {
-                    final LayoutComponent layoutComponent = (LayoutComponent) component;
-                    createRegionElements( builder, layoutComponent.getRegions() );
-                }
                 builder.end();
             }
             builder.end();
