@@ -167,5 +167,13 @@ module api.form.inputtype.support {
             }
             return false;
         }
+
+        addEditContentRequestListener(listener:(content:api.content.ContentSummary) => void) {
+            // Adapter for InputTypeView method, to be implemented on demand in inheritors
+        }
+
+        removeEditContentRequestListener(listener: (content:api.content.ContentSummary) => void) {
+            // Adapter for InputTypeView method, to be implemented on demand in inheritors
+        }
     }
 }

@@ -8,9 +8,13 @@ module api.form.inputtype.content.image {
 
         private clearer:api.dom.DivEl;
 
-        private editedSelectedOptionView:api.ui.combobox.SelectedOptionView<api.content.ContentSummary>;
+        private selectedOption:api.ui.combobox.SelectedOption<api.content.ContentSummary>;
 
         private dialog:ImageSelectorDialog;
+
+        private editSelectedOptionListeners: {(option:api.ui.combobox.SelectedOption<api.content.ContentSummary>): void}[] = [];
+
+        private removeSelectedOptionListeners: {(option:api.ui.combobox.SelectedOption<api.content.ContentSummary>): void}[] = [];
 
         constructor() {
             super();
@@ -18,12 +22,48 @@ module api.form.inputtype.content.image {
             this.dialog = new ImageSelectorDialog();
             this.dialog.hide();
             this.appendChild(this.dialog);
-            this.dialog.addSelectedOptionRemovedListener(() => {
-                this.editedSelectedOptionView.notifySelectedOptionToBeRemoved();
+            this.dialog.addRemoveButtonClickListener(() => {
+                this.removeOptionView(this.selectedOption);
+                this.notifyRemoveSelectedOption(this.selectedOption);
+            });
+            this.dialog.addEditButtonClickListener(() => {
+                this.notifyEditSelectedOption(this.selectedOption);
             });
 
             this.clearer = new api.dom.DivEl("clearer");
             this.appendChild(this.clearer);
+        }
+
+        private notifyRemoveSelectedOption(option:api.ui.combobox.SelectedOption<api.content.ContentSummary>) {
+            this.removeSelectedOptionListeners.forEach( (listener) => {
+                listener(option);
+            });
+        }
+
+        addRemoveSelectedOptionListener(listener: (option:api.ui.combobox.SelectedOption<api.content.ContentSummary>) => void) {
+            this.removeSelectedOptionListeners.push(listener);
+        }
+
+        removeRemoveSelectedOptionListener(listener: (option:api.ui.combobox.SelectedOption<api.content.ContentSummary>) => void) {
+            this.removeSelectedOptionListeners = this.removeSelectedOptionListeners.filter(function (curr) {
+                return curr != listener;
+            });
+        }
+
+        private notifyEditSelectedOption(option:api.ui.combobox.SelectedOption<api.content.ContentSummary>) {
+            this.editSelectedOptionListeners.forEach( (listener) => {
+                listener(option);
+            });
+        }
+
+        addEditSelectedOptionListener(listener:(option:api.ui.combobox.SelectedOption<api.content.ContentSummary>) => void) {
+            this.editSelectedOptionListeners.push(listener);
+        }
+
+        removeEditSelectedOptionListener(listener: (option:api.ui.combobox.SelectedOption<api.content.ContentSummary>) => void) {
+            this.editSelectedOptionListeners = this.editSelectedOptionListeners.filter(function (curr) {
+                return curr != listener;
+            });
         }
 
         createSelectedOption(option:api.ui.combobox.Option<api.content.ContentSummary>, index:number):api.ui.combobox.SelectedOption<api.content.ContentSummary> {
@@ -31,24 +71,29 @@ module api.form.inputtype.content.image {
             return new api.ui.combobox.SelectedOption<api.content.ContentSummary>(new SelectedOptionView(option), option, index);
         }
 
-        addOptionView(selectedOption:api.ui.combobox.SelectedOption<api.content.ContentSummary>) {
+        addOptionView(option:api.ui.combobox.SelectedOption<api.content.ContentSummary>) {
 
             this.dialog.hide();
-            var optionView:SelectedOptionView = <SelectedOptionView>selectedOption.getOptionView();
+            var optionView:SelectedOptionView = <SelectedOptionView>option.getOptionView();
 
             optionView.addClickEventListener(() => {
-                this.editedSelectedOptionView = optionView;
-                this.showImageSelectorDialog(selectedOption.getOption(), selectedOption.getIndex());
+                this.selectedOption = option;
+                this.showImageSelectorDialog(option.getOption(), option.getIndex());
+            });
+            optionView.addSelectedOptionToBeRemovedListener((optionView:api.ui.combobox.SelectedOptionView<api.content.ContentSummary>) => {
+                this.removeOptionView(option);
+                this.notifyRemoveSelectedOption(option);
             });
 
             optionView.insertBeforeEl(this.clearer);
             this.optionCount++;
-            optionView.setLastInRow(this.isLastInRow(selectedOption.getIndex()));
+            optionView.setLastInRow(this.isLastInRow(option.getIndex()));
+
             this.refreshStyles();
         }
 
-        removeOptionView(selectedOption:api.ui.combobox.SelectedOption<api.content.ContentSummary>) {
-            super.removeOptionView(selectedOption);
+        removeOptionView(option:api.ui.combobox.SelectedOption<api.content.ContentSummary>) {
+            super.removeOptionView(option);
 
             this.optionCount--;
 

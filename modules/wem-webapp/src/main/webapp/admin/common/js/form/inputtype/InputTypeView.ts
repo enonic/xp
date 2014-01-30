@@ -38,6 +38,16 @@ module api.form.inputtype {
         removeFormItemOccurrencesListener(listener:api.form.FormItemOccurrencesListener);
 
         /*
+         * Invoked when input wants to edit embedded content
+         */
+        addEditContentRequestListener(listener:(content:api.content.ContentSummary) => void);
+
+        /*
+         * Invoked when input wants to edit embedded content
+         */
+        removeEditContentRequestListener(listener: (content:api.content.ContentSummary) => void);
+
+        /*
          * Returns true if focus was successfully given.
          */
         giveFocus(): boolean;

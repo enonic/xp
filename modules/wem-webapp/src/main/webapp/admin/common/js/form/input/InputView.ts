@@ -50,6 +50,10 @@ module api.form.input {
                 this.inputTypeView = InputTypeManager.createView("NoInputTypeFound");
             }
 
+            this.inputTypeView.addEditContentRequestListener((content:api.content.ContentSummary) => {
+                this.notifyEditContentRequestListeners(content);
+            });
+
             this.inputTypeView.layout(this.input, this.properties);
             if (this.inputTypeView instanceof api.form.inputtype.support.BaseInputTypeView) {
                 this.appendChild(<api.form.inputtype.support.BaseInputTypeView>this.inputTypeView);

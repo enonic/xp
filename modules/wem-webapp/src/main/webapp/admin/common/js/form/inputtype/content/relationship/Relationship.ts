@@ -174,6 +174,14 @@ module api.form.inputtype.content.relationship {
             }
         }
 
+        addEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
+            // Have to use stub here because it doesn't extend BaseIntputTypeView
+        }
+
+        removeEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
+            // Have to use stub here because it doesn't extend BaseIntputTypeView
+        }
+
         private updateInputIcon(relationshipType: api.schema.relationshiptype.RelationshipType) {
 
             this.comboBox.setInputIconUrl(relationshipType.getIconUrl());

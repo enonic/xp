@@ -91,14 +91,19 @@ module app.wizard {
                 return this.loadContentType(this.contentToEdit.getType()).then((loadedContentType: api.schema.content.ContentType) => {
                     this.contentType = loadedContentType;
 
-                    return this.loadSite(this.contentId).then((loadedSite: api.content.Content) => {
-                        this.site = loadedSite;
+                    return this.loadParentContent().then((loadedParentContent: api.content.Content) => {
+                        this.parentContent = loadedParentContent;
 
-                        return this.loadSiteTemplate(this.site.getSite().getTemplateKey()).then((loadedSiteTemplate: api.content.site.template.SiteTemplate) => {
-                            this.siteTemplate = loadedSiteTemplate;
+                        return this.loadSite(this.contentId).then((loadedSite: api.content.Content) => {
 
-                            return this.loadParentContent().then((loadedParentContent: api.content.Content) => {
-                                this.parentContent = loadedParentContent;
+                            var templateKey: api.content.site.template.SiteTemplateKey;
+                            if (loadedSite && loadedSite.getSite()) {
+                                this.site = loadedSite;
+                                templateKey = this.site.getSite().getTemplateKey();
+                            }
+
+                            return this.loadSiteTemplate(templateKey).then((loadedSiteTemplate: api.content.site.template.SiteTemplate) => {
+                                this.siteTemplate = loadedSiteTemplate;
 
                                 this.newContentWizardPanelForEdit().done((wizardPanel: ContentWizardPanel)=> {
                                     deferred.resolve(wizardPanel);

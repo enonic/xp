@@ -27,6 +27,8 @@ module api.form.inputtype.content.image {
 
         private uploadDialog: UploadDialog;
 
+        private editContentRequestListeners: {(content: api.content.ContentSummary): void}[] = [];
+
         constructor(config: api.form.inputtype.InputTypeViewConfig<ImageSelectorConfig>) {
             super("image-selector");
 
@@ -164,9 +166,32 @@ module api.form.inputtype.content.image {
             throw new Error("ImageSelector manages occurrences self");
         }
 
+        addEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
+            this.editContentRequestListeners.push(listener);
+        }
+
+        removeEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
+            this.editContentRequestListeners = this.editContentRequestListeners.filter(function (curr) {
+                return curr != listener;
+            });
+        }
+
+        private notifyEditContentRequestListeners(content: api.content.ContentSummary) {
+            this.editContentRequestListeners.forEach((listener) => {
+                listener(content);
+            })
+        }
+
         private createComboBox(input: api.form.Input): api.ui.combobox.ComboBox<api.content.ContentSummary> {
 
             this.selectedOptionsView = new SelectedOptionsView();
+            this.selectedOptionsView.addEditSelectedOptionListener((option: api.ui.combobox.SelectedOption<api.content.ContentSummary>) => {
+                this.notifyEditContentRequestListeners(option.getOption().displayValue)
+            });
+
+            this.selectedOptionsView.addRemoveSelectedOptionListener((option) => {
+                this.comboBox.removeSelectedItem(option.getOption());
+            });
 
             var comboBoxConfig = <api.ui.combobox.ComboBoxConfig<api.content.ContentSummary>> {
                 rowHeight: 50,

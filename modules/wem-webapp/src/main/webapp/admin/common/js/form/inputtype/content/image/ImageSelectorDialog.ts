@@ -69,11 +69,11 @@ module api.form.inputtype.content.image {
             });
         }
 
-        addSelectedOptionRemovedListener(listener:{(): void;}) {
+        addRemoveButtonClickListener(listener:{(): void;}) {
             this.removeButtonClickedListeners.push(listener);
         }
 
-        addSelectedOptionEditListener(listener:{(): void;}) {
+        addEditButtonClickListener(listener:{(): void;}) {
             this.editButtonClickedListeners.push(listener);
         }
     }

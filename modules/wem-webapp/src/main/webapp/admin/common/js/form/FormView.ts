@@ -147,5 +147,24 @@ module api.form {
             }
             return focusGiven;
         }
+
+        addEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
+            this.formItemViews.forEach((formItemView:FormItemView) => {
+                formItemView.addEditContentRequestListener(listener);
+            });
+        }
+
+        removeEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
+            this.formItemViews.forEach((formItemView:FormItemView) => {
+                formItemView.removeEditContentRequestListener(listener);
+            });
+        }
+
+        private notifyEditContentRequestListeners(content: api.content.ContentSummary) {
+            this.formItemViews.forEach((formItemView:FormItemView) => {
+                formItemView.notifyEditContentRequestListeners(content);
+            })
+        }
+
     }
 }

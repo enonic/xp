@@ -6,6 +6,8 @@ module api.form {
 
         private formItem:FormItem;
 
+        editContentRequestListeners: {(content: api.content.ContentSummary): void}[] = [];
+
         constructor(className:string, context:api.form.FormContext, formItem:FormItem) {
             super(className);
             this.context = context;
@@ -44,6 +46,22 @@ module api.form {
 
         giveFocus(): boolean{
             return false;
+        }
+
+        addEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
+            this.editContentRequestListeners.push(listener);
+        }
+
+        removeEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
+            this.editContentRequestListeners = this.editContentRequestListeners.filter(function (curr) {
+                return curr != listener;
+            });
+        }
+
+        notifyEditContentRequestListeners(content: api.content.ContentSummary) {
+            this.editContentRequestListeners.forEach((listener) => {
+                listener(content);
+            })
         }
     }
 }
