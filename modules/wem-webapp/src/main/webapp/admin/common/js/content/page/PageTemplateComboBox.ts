@@ -22,11 +22,12 @@ module api.content.page {
 
         optionFormatter(row: number, cell: number, pageTemplateSummary: api.content.page.PageTemplateSummary, columnDef: any,
                                 dataContext: api.ui.combobox.Option<api.content.page.PageTemplateSummary>): string {
-            var namesView = new api.app.NamesView()
+            var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
+            namesAndIconView.setIconUrl(api.util.getAdminUri('common/images/icons/icoMoon/32x32/earth.png'))
                 .setMainName( pageTemplateSummary.getDisplayName() )
                 .setSubName(pageTemplateSummary.getDescriptorKey().toString());
 
-            return namesView.toString();
+            return namesAndIconView.toString();
         }
 
         createConfig():api.ui.combobox.ComboBoxConfig<PageTemplateSummary> {
@@ -60,7 +61,8 @@ module api.content.page {
         }
 
         layout() {
-            var namesView = new api.app.NamesView()
+            var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize( api.app.NamesAndIconViewSize.small ).build();
+            namesAndIconView.setIconUrl( api.util.getAdminUri('common/images/icons/icoMoon/32x32/earth.png') )
                 .setMainName( this.pageTemplate.getDisplayName() )
                 .setSubName( this.pageTemplate.getDescriptorKey().toString() );
 
@@ -74,7 +76,7 @@ module api.content.page {
             });
 
             this.appendChild(removeButtonEl);
-            this.appendChild(namesView);
+            this.appendChild(namesAndIconView);
         }
 
     }
