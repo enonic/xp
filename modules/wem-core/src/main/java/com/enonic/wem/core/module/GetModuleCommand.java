@@ -28,7 +28,7 @@ final class GetModuleCommand
             }
             catch ( final IOException e )
             {
-                throw Exceptions.newRutime( "Error fetching module [{0}]", this.key ).withoutCause();
+                throw Exceptions.newRutime( "Error fetching module [{0}]", this.key ).withCause( e );
             }
         }
 

@@ -36,7 +36,7 @@ final class DeleteModuleCommand
         }
         catch ( final IOException e )
         {
-            throw Exceptions.newRutime( "Error deleting module [{0}]", this.key ).withoutCause();
+            throw Exceptions.newRutime( "Error deleting module [{0}]", this.key ).withCause( e );
         }
     }
 

@@ -13,16 +13,6 @@ public final class ModuleCommands
         return new UpdateModule();
     }
 
-    public GetModules list()
-    {
-        return new GetModules();
-    }
-
-    public GetModules getAll()
-    {
-        return new GetModules().all();
-    }
-
     public GetModuleResource getResource()
     {
         return new GetModuleResource();

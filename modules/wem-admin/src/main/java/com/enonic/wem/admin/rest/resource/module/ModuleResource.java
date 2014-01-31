@@ -24,7 +24,6 @@ import com.enonic.wem.admin.json.module.ModuleSummaryJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.module.json.ListModuleJson;
 import com.enonic.wem.admin.rest.resource.module.json.ModuleDeleteParams;
-import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.module.CreateModule;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
@@ -47,7 +46,7 @@ public class ModuleResource
     @javax.ws.rs.Path("list")
     public ListModuleJson list()
     {
-        final Modules modules = client.execute( Commands.module().list() );
+        final Modules modules = this.moduleService.getAllModules();
         return new ListModuleJson( modules );
     }
 
