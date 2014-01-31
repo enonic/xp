@@ -91,11 +91,12 @@ module app.wizard {
                 };
                 this.pageWizardStepForm = new page.PageWizardStepForm(pageWizardStepFormConfig);
             }
-
-            this.livePanel = new LiveFormPanel(<app.wizard.LiveFormPanelConfig> {
-                siteTemplate: this.siteTemplate,
-                contentSaveAction: actions.getSaveAction()});
-
+            if (this.siteTemplate.getId()) {
+                console.log("sitetemplate",this.siteTemplate);
+                this.livePanel = new LiveFormPanel(<app.wizard.LiveFormPanelConfig> {
+                    siteTemplate: this.siteTemplate,
+                    contentSaveAction: actions.getSaveAction()});
+            }
             app.wizard.event.ShowContentLiveEvent.on((event) => {
                 this.toggleFormPanel(false);
             });
@@ -468,11 +469,14 @@ module app.wizard {
             if (!content.isPage()) {
                 return null;
             }
-
-            return new api.content.page.UpdatePageRequest(content.getContentId()).
+            var updatePageRequest = new api.content.page.UpdatePageRequest(content.getContentId()).
                 setPageTemplateKey(this.pageWizardStepForm.getPageTemplate().getKey()).
-                setConfig(this.pageWizardStepForm.getConfig()).
-                setRegions(this.livePanel.getRegions());
+                setConfig(this.pageWizardStepForm.getConfig());
+                if (this.livePanel) {
+                    updatePageRequest.setRegions(this.livePanel.getRegions());
+                }
+
+            return updatePageRequest;
         }
 
         hasUnsavedChanges(): boolean {

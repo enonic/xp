@@ -111,6 +111,7 @@ public class SitesInitializer
 
     private Content intranetSite;
 
+    @Inject
     protected ModuleService moduleService;
 
     protected SitesInitializer()
