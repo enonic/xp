@@ -17,7 +17,14 @@ public final class ModuleServiceImpl
     protected ModuleExporter moduleExporter;
 
     @Override
-    public Module delete( final ModuleKey key )
+    public Module getModule( final ModuleKey key )
+        throws ModuleNotFoundException
+    {
+        return null;
+    }
+
+    @Override
+    public Module deleteModule( final ModuleKey key )
         throws ModuleNotFoundException
     {
         return new DeleteModuleCommand().key( key ).moduleExporter( this.moduleExporter ).moduleResourcePathResolver(

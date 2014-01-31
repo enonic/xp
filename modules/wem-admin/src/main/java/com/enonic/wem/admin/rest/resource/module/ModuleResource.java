@@ -58,7 +58,7 @@ public class ModuleResource
     @javax.ws.rs.Path("delete")
     public ModuleJson delete( ModuleDeleteParams params )
     {
-        final Module deleted = this.moduleService.delete( params.getModuleKey() );
+        final Module deleted = this.moduleService.deleteModule( params.getModuleKey() );
         return new ModuleJson( deleted );
     }
 

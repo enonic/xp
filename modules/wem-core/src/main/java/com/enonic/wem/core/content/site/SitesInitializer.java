@@ -149,7 +149,7 @@ public class SitesInitializer
 
         try
         {
-            this.moduleService.delete( DEMO_MODULE_KEY );
+            this.moduleService.deleteModule( DEMO_MODULE_KEY );
         }
         catch ( ModuleNotFoundException e )
         {

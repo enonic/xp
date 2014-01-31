@@ -12,7 +12,7 @@ import spock.lang.Specification
 import java.nio.file.Files
 import java.nio.file.Path
 
-class ModuleServiceImpl_deleteTest
+class ModuleServiceImpl_deleteModuleTest
     extends Specification
 {
     @Rule
@@ -48,7 +48,7 @@ class ModuleServiceImpl_deleteTest
         this.service.moduleExporter.importFromDirectory( moduleDir ) >> fooModule
 
         when:
-        def result = this.service.delete( ModuleKey.from( "foomodule-1.2.0" ) );
+        def result = this.service.deleteModule( ModuleKey.from( "foomodule-1.2.0" ) );
 
         then:
         result != null
@@ -57,7 +57,7 @@ class ModuleServiceImpl_deleteTest
     def "delete non-existing module"()
     {
         when:
-        this.service.delete( ModuleKey.from( "foomodule-1.0.0" ) );
+        this.service.deleteModule( ModuleKey.from( "foomodule-1.0.0" ) );
 
         then:
         thrown( ModuleNotFoundException )
