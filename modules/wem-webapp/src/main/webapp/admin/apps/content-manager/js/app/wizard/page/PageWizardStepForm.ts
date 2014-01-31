@@ -16,7 +16,7 @@ module app.wizard.page {
 
         private content: api.content.Content;
 
-        private pageTemplateSelectorForm: PageTemplateSelectorForm;
+        private pageTemplateSelectorForm: PageTemplateSelector;
 
         private selectedPageTemplate: api.content.page.PageTemplate;
 
@@ -30,7 +30,7 @@ module app.wizard.page {
             this.parentContent = config.parentContent;
             this.siteTemplate = config.siteTemplate;
 
-            this.pageTemplateSelectorForm = new PageTemplateSelectorForm();
+            this.pageTemplateSelectorForm = new PageTemplateSelector(this);
             this.pageTemplateSelectorForm.addPageTemplateChangedListener((changedTo: api.content.page.PageTemplateSummary) => {
                 this.handlePageTemplateChanged(changedTo);
             });
