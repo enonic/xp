@@ -6,10 +6,10 @@ import java.nio.file.Path;
 
 import org.apache.commons.io.FileUtils;
 
-import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleNotFoundException;
+import com.enonic.wem.util.Exceptions;
 
 final class DeleteModuleCommand
 {
@@ -36,7 +36,7 @@ final class DeleteModuleCommand
         }
         catch ( final IOException e )
         {
-            throw new SystemException( e, "Error deleting module [{0}]", this.key );
+            throw Exceptions.newRutime( "Error deleting module [{0}]", this.key ).withoutCause();
         }
     }
 

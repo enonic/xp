@@ -26,15 +26,12 @@ import com.enonic.wem.admin.rest.resource.module.json.ListModuleJson;
 import com.enonic.wem.admin.rest.resource.module.json.ModuleDeleteParams;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.module.CreateModule;
-import com.enonic.wem.api.command.module.GetModule;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.Modules;
 import com.enonic.wem.core.module.ModuleExporter;
-
-import static com.enonic.wem.api.command.Commands.module;
 
 @javax.ws.rs.Path("module")
 @Produces(MediaType.APPLICATION_JSON)
@@ -112,11 +109,10 @@ public class ModuleResource
             return Response.status( Response.Status.BAD_REQUEST ).build();
         }
 
-        final GetModule getModuleCommand = module().get().module( moduleKey );
         final Module module;
         try
         {
-            module = client.execute( getModuleCommand );
+            module = this.moduleService.getModule( moduleKey );
         }
         catch ( ModuleNotFoundException e )
         {
@@ -142,9 +138,7 @@ public class ModuleResource
     @GET
     public ModuleJson getByKey( @QueryParam("moduleKey") String moduleKey )
     {
-        final GetModule getModuleCommand = Commands.module().get().module( ModuleKey.from( moduleKey ) );
-        final Module module = client.execute( getModuleCommand );
-
+        final Module module = this.moduleService.getModule( ModuleKey.from( moduleKey ) );
         return new ModuleJson( module );
     }
 }

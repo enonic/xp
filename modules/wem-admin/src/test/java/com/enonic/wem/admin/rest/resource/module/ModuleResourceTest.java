@@ -22,7 +22,6 @@ import com.sun.jersey.multipart.FormDataMultiPart;
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.module.CreateModule;
-import com.enonic.wem.api.command.module.GetModule;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
@@ -31,6 +30,7 @@ import com.enonic.wem.api.module.ModuleFileEntry;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleNotFoundException;
+import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
@@ -45,6 +45,8 @@ public class ModuleResourceTest
     extends AbstractResourceTest
 {
     private Client client;
+
+    private ModuleService moduleService;
 
     private Path tempDir;
 
@@ -113,7 +115,7 @@ public class ModuleResourceTest
         throws Exception
     {
         final Module module = createModule();
-        Mockito.when( client.execute( Mockito.isA( GetModule.class ) ) ).thenReturn( module );
+        Mockito.when( this.moduleService.getModule( Mockito.isA( ModuleKey.class ) ) ).thenReturn( module );
 
         final WebResource webResource = resource().
             path( "module/export" ).
@@ -134,7 +136,8 @@ public class ModuleResourceTest
         throws Exception
     {
         final Module module = createModule();
-        Mockito.when( client.execute( Mockito.isA( GetModule.class ) ) ).thenThrow( new ModuleNotFoundException( module.getModuleKey() ) );
+        Mockito.when( this.moduleService.getModule( Mockito.isA( ModuleKey.class ) ) ).thenThrow(
+            new ModuleNotFoundException( module.getModuleKey() ) );
 
         final WebResource webResource = resource().
             path( "module/export" ).
@@ -156,7 +159,8 @@ public class ModuleResourceTest
         throws Exception
     {
         final Module module = createModule();
-        Mockito.when( client.execute( Mockito.isA( GetModule.class ) ) ).thenThrow( new ModuleNotFoundException( module.getModuleKey() ) );
+        Mockito.when( this.moduleService.getModule( Mockito.isA( ModuleKey.class ) ) ).thenThrow(
+            new ModuleNotFoundException( module.getModuleKey() ) );
 
         final WebResource webResource = resource().
             path( "module/export" ).
@@ -178,7 +182,7 @@ public class ModuleResourceTest
         throws Exception
     {
         final Module module = createModule();
-        Mockito.when( client.execute( Mockito.isA( GetModule.class ) ) ).thenReturn( module );
+        Mockito.when( this.moduleService.getModule( Mockito.isA( ModuleKey.class ) ) ).thenReturn( module );
 
         String response = resource().
             path( "module" ).
@@ -227,8 +231,11 @@ public class ModuleResourceTest
     protected Object getResourceInstance()
     {
         client = Mockito.mock( Client.class );
+        moduleService = Mockito.mock( ModuleService.class );
+
         final ModuleResource resource = new ModuleResource();
         resource.setClient( client );
+        resource.moduleService = moduleService;
 
         return resource;
     }

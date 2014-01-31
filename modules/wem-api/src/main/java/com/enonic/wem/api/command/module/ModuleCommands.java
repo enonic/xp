@@ -18,11 +18,6 @@ public final class ModuleCommands
         return new GetModules();
     }
 
-    public GetModule get()
-    {
-        return new GetModule();
-    }
-
     public GetModules getAll()
     {
         return new GetModules().all();

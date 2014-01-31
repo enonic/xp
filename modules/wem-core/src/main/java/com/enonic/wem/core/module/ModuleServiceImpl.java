@@ -20,7 +20,8 @@ public final class ModuleServiceImpl
     public Module getModule( final ModuleKey key )
         throws ModuleNotFoundException
     {
-        return null;
+        return new GetModuleCommand().key( key ).moduleExporter( this.moduleExporter ).moduleResourcePathResolver(
+            this.moduleResourcePathResolver ).execute();
     }
 
     @Override
