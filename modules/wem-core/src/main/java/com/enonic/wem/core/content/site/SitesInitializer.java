@@ -39,6 +39,7 @@ import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleNotFoundException;
+import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
@@ -110,6 +111,8 @@ public class SitesInitializer
 
     private Content intranetSite;
 
+    protected ModuleService moduleService;
+
     protected SitesInitializer()
     {
         super( 13, "sites" );
@@ -146,7 +149,7 @@ public class SitesInitializer
 
         try
         {
-            client.execute( Commands.module().delete().module( DEMO_MODULE_KEY ) );
+            this.moduleService.delete( DEMO_MODULE_KEY );
         }
         catch ( ModuleNotFoundException e )
         {

@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -25,11 +26,11 @@ import com.enonic.wem.admin.rest.resource.module.json.ListModuleJson;
 import com.enonic.wem.admin.rest.resource.module.json.ModuleDeleteParams;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.module.CreateModule;
-import com.enonic.wem.api.command.module.DeleteModule;
 import com.enonic.wem.api.command.module.GetModule;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleNotFoundException;
+import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.Modules;
 import com.enonic.wem.core.module.ModuleExporter;
 
@@ -41,6 +42,9 @@ public class ModuleResource
     extends AbstractResource
 {
     private static final String ZIP_MIME_TYPE = "application/zip";
+
+    @Inject
+    protected ModuleService moduleService;
 
     @GET
     @javax.ws.rs.Path("list")
@@ -54,8 +58,7 @@ public class ModuleResource
     @javax.ws.rs.Path("delete")
     public ModuleJson delete( ModuleDeleteParams params )
     {
-        DeleteModule command = Commands.module().delete().module( params.getModuleKey() );
-        Module deleted = client.execute( command );
+        final Module deleted = this.moduleService.delete( params.getModuleKey() );
         return new ModuleJson( deleted );
     }
 

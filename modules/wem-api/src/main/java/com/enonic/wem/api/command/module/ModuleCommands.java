@@ -13,11 +13,6 @@ public final class ModuleCommands
         return new UpdateModule();
     }
 
-    public DeleteModule delete()
-    {
-        return new DeleteModule();
-    }
-
     public GetModules list()
     {
         return new GetModules();
