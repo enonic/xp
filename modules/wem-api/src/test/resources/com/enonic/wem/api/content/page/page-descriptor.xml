@@ -6,7 +6,7 @@
       <label>Pause parameter</label>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <occurrences minimum="0" maximum="0"/>
+      <occurrences minimum="0" maximum="1"/>
     </input>
     <form-item-set name="myFormItemSet">
       <label>My form item set</label>
@@ -21,7 +21,7 @@
           <label>My custom input</label>
           <immutable>false</immutable>
           <indexed>false</indexed>
-          <occurrences minimum="0" maximum="0"/>
+          <occurrences minimum="0" maximum="1"/>
         </input>
         <field-set name="myFieldSet">
           <label>My field set</label>
@@ -30,7 +30,7 @@
               <label>Field set Item</label>
               <immutable>false</immutable>
               <indexed>false</indexed>
-              <occurrences minimum="0" maximum="0"/>
+              <occurrences minimum="0" maximum="1"/>
             </input>
           </items>
         </field-set>

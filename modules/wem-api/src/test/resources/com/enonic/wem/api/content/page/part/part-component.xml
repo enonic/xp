@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <part-component>
   <display-name>A Part</display-name>
   <config>
@@ -6,7 +6,7 @@
       <label>Column width</label>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <occurrences minimum="0" maximum="0"/>
+      <occurrences minimum="0" maximum="1"/>
     </input>
   </config>
 </part-component>
