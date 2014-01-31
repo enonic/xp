@@ -29,6 +29,10 @@ module api.content.page {
             return this.regionAndComponentList[0];
         }
 
+        getLastLevel(): ComponentPathRegionAndComponent {
+            return this.regionAndComponentList[this.regionAndComponentList.length-1];
+        }
+
         public removeFirstLevel(): ComponentPath {
             if (this.numberOfLevels() <= 1) {
                 return null;

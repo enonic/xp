@@ -29,6 +29,10 @@ module api.content.page {
             return new ComponentName(newValue);
         }
 
+        public equals(other:ComponentName) {
+            return this.value == other.value;
+        }
+
         public toString(): string {
             return this.value;
         }

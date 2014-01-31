@@ -15,6 +15,20 @@ module api.content.page {
             });
         }
 
+        /*
+         *  Add component after target component. Returns true if component was added. Component will not be added if target component was not found.
+         */
+        addComponentAfter(component: PageComponent, target: ComponentPath): boolean {
+
+            var region = this.getRegionForComponent(target);
+            if (region == null) {
+                return false;
+            }
+
+            var index = region.addComponentAfter(component, target.getLastLevel().getComponentName());
+            return index > -1;
+        }
+
         addComponent(component: PageComponent, regionName: string) {
 
             var region = this.getRegion(regionName);
@@ -32,15 +46,25 @@ module api.content.page {
             return false;
         }
 
-        getRegionForComponent(name: ComponentName): region.Region {
+        getRegionForComponent(path: ComponentPath): region.Region {
 
-            for (var key in this.regionByName) {
-                var region = this.regionByName[key];
-                if (region.hasComponentWithName(name)) {
-                    return region;
-                }
+            var regionAndComponent = path.getFirstLevel();
+            var region = this.getRegion(regionAndComponent.getRegionName());
+            if (region == null) {
+                return null;
             }
-            return null;
+            var component = region.getComponentByName(regionAndComponent.getComponentName());
+            if (component == null) {
+                return null;
+            }
+
+            if (path.numberOfLevels() == 1) {
+                return region;
+            }
+
+            api.util.assert(component instanceof layout.LayoutComponent, "Expected LayoutComponent: " + api.util.getClassName(component));
+            var layoutComponent = <layout.LayoutComponent>component;
+            return layoutComponent.getLayoutRegions().getRegionForComponent(path.removeFirstLevel());
         }
 
         getRegions(): region.Region[] {
@@ -56,21 +80,21 @@ module api.content.page {
             return this.regionByName[name];
         }
 
-        getImageComponent(path: ComponentPath) : image.ImageComponent {
+        getImageComponent(path: ComponentPath): image.ImageComponent {
 
             var component = this.getComponent(path);
-            if(component == null) {
+            if (component == null) {
                 return null;
             }
             return <image.ImageComponent>component;
         }
 
 
-        getComponent(path: ComponentPath) : PageComponent {
+        getComponent(path: ComponentPath): PageComponent {
 
             var first: ComponentPathRegionAndComponent = path.getFirstLevel();
             var region = this.getRegion(first.getRegionName());
-            var component = region.getComponent(first.getComponentName());
+            var component = region.getComponentByName(first.getComponentName());
 
             if (path.numberOfLevels() == 1) {
                 return component;
