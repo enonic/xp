@@ -353,7 +353,7 @@ module app.wizard {
 
         private produceCreateSiteRequest(content: api.content.Content): api.content.site.CreateSiteRequest {
 
-            if (this.siteTemplate == null) {
+            if (!this.createSite) {
                 return null;
             }
 

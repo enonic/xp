@@ -9,6 +9,7 @@ module api.ui.form {
         constructor(className?: string) {
             super(className);
             this.formEl = new api.dom.FormEl("form");
+            this.formEl.preventSubmit();
 
             this.appendChild(this.formEl);
         }

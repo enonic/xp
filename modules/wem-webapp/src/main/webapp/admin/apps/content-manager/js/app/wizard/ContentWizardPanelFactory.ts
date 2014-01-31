@@ -68,8 +68,8 @@ module app.wizard {
                     return this.loadSite(parentContentId).then((loadedSite: api.content.Content) => {
                         this.siteContent = loadedSite;
 
-                        var siteTemplateToLoad:api.content.site.template.SiteTemplateKey = this.siteTemplateKey;
-                        if( siteTemplateToLoad == null && this.siteContent ) {
+                        var siteTemplateToLoad: api.content.site.template.SiteTemplateKey = this.siteTemplateKey;
+                        if (siteTemplateToLoad == null && this.siteContent) {
                             siteTemplateToLoad = this.siteContent.getSite().getTemplateKey();
                         }
 
@@ -213,8 +213,15 @@ module app.wizard {
                 setAppBarTabId(this.appBarTabId).
                 setContentType(this.contentType).
                 setParentContent(this.parentContent).
-                setCreateSite(this.siteTemplate).
                 setSite(this.siteContent);
+
+            if (this.createSite) {
+                wizardParams.setCreateSite(this.siteTemplate);
+            }
+            else {
+                wizardParams.setSiteTemplate(this.siteTemplate);
+            }
+
 
             new app.wizard.ContentWizardPanel(wizardParams, (wizard: ContentWizardPanel) => {
                 deferred.resolve(wizard);
