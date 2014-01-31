@@ -34,6 +34,12 @@ final class FormItemXmlHelper
             fieldSetXml.from( (FieldSet) formItem.toLayout() );
             return fieldSetXml;
         }
+        else if ( formItem instanceof MixinReference )
+        {
+            final MixinReferenceXml mixinReferenceXml = new MixinReferenceXml();
+            mixinReferenceXml.from( formItem.toMixinReference() );
+            return mixinReferenceXml;
+        }
         else
         {
             throw new XmlSerializingException( "Serialization for FormItem '" + formItem.getClass().getName() + "' not implemented" );
@@ -62,6 +68,13 @@ final class FormItemXmlHelper
             final FieldSetXml fieldSetXml = (FieldSetXml) formItemXml;
             fieldSetXml.to( fieldSetBuilder );
             return fieldSetBuilder.build();
+        }
+        else if ( formItemXml instanceof MixinReferenceXml )
+        {
+            final MixinReference.Builder mixinReferenceBuilder = MixinReference.newMixinReference();
+            final MixinReferenceXml mixinReferenceXml = (MixinReferenceXml) formItemXml;
+            mixinReferenceXml.to( mixinReferenceBuilder );
+            return mixinReferenceBuilder.build();
         }
         else
         {
