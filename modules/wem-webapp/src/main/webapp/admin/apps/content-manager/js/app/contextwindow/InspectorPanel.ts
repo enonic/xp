@@ -19,7 +19,7 @@ module app.contextwindow {
             SelectComponentEvent.on((event) => {
                 switch (event.getComponent().componentType.typeName) {
                     case 'image':
-                        this.showPanel(this.getPanelIndex(this.imageSelectPanel))
+                        this.showPanel(this.getPanelIndex(this.detailPanel));
                         break;
                     default:
                         event.getComponent().isEmpty() ? this.showPanel(this.getPanelIndex(this.selectPanel)) : this.showPanel(this.getPanelIndex(this.detailPanel));

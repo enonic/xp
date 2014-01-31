@@ -31,10 +31,14 @@ module app.contextwindow {
 
             this.iconEl.addClass("icon");
 
+            var templateBox = new api.content.page.TemplateComboBox();
+            templateBox.setLoader(new api.content.page.image.ImageTemplateSummaryLoader(new api.content.page.image.GetImageTemplatesRequest()))
+
             this.appendChild(this.iconEl);
             this.appendChild(this.header);
             this.appendChild(this.subtitle);
             this.appendChild(this.infoEl);
+            this.appendChild(templateBox);
         }
 
         private setEmpty() {

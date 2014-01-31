@@ -19,5 +19,24 @@ module api.content.page.image {
         getRequestPath(): api.rest.Path {
             return api.rest.Path.fromParent(super.getResourcePath(), "list");
         }
+
+        sendAndParse(): JQueryPromise<ImageTemplateSummary[]> {
+
+            var deferred = jQuery.Deferred<ImageTemplateSummary[]>();
+
+            this.send().
+                done((response: api.rest.JsonResponse<api.content.page.image.json.ImageTemplateSummaryListJson>) => {
+                    var array:ImageTemplateSummary[] = [];
+                    response.getResult().templates.forEach((templateJson:api.content.page.image.json.ImageTemplateSummaryJson) => {
+                        array.push(this.fromJsonToImageTemplateSummary(templateJson));
+                    });
+
+                    deferred.resolve(array);
+                }).fail((response: api.rest.RequestError) => {
+                    deferred.reject(null);
+                });
+
+            return deferred;
+        }
     }
 }

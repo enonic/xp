@@ -2,7 +2,7 @@ module app.wizard.page {
 
     export class PageTemplateSelectorForm extends api.ui.form.Form {
 
-        private pageTemplateComboBox: api.content.page.PageTemplateComboBox;
+        private pageTemplateComboBox: api.content.page.TemplateComboBox;
 
         private pageTemplateChangedListeners: {(changedTo: api.content.page.PageTemplateSummary): void;}[] = [];
 
@@ -11,7 +11,7 @@ module app.wizard.page {
         constructor() {
             super("page-template-selector-form");
 
-            this.pageTemplateComboBox = new api.content.page.PageTemplateComboBox();
+            this.pageTemplateComboBox = new api.content.page.TemplateComboBox();
 
             var fieldSet = new api.ui.form.Fieldset();
             fieldSet.add(new api.ui.form.FormItem(new api.ui.form.FormItemBuilder(this.pageTemplateComboBox).setLabel("Page Template")));
@@ -45,7 +45,8 @@ module app.wizard.page {
                        selectedPageTemplate: api.content.page.TemplateKey): Q.Promise<void> {
             var deferred = Q.defer<void>();
 
-            this.pageTemplateComboBox.setSiteTemplateKey(siteTemplateKey);
+            this.pageTemplateComboBox.setLoader(new api.content.page.PageTemplateSummaryLoader(siteTemplateKey));
+
 
             this.pageTemplateToSelect = selectedPageTemplate;
 

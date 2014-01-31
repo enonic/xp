@@ -7,3 +7,5 @@
 ///<reference path='ImageTemplateResource.ts' />
 ///<reference path='GetImageTemplateByKeyRequest.ts' />
 ///<reference path='GetImageTemplatesRequest.ts' />
+///<reference path='ImageTemplateSummaryLoader.ts' />
+

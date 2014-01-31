@@ -13,8 +13,12 @@ module api.content.page.image {
             return this.resourcePath;
         }
 
-        fromJsonToImageTemplate(json: api.content.page.image.json.ImageTemplateJson): api.content.page.image.ImageTemplate {
+        fromJsonToImageTemplate(json: json.ImageTemplateJson): ImageTemplate {
             return new ImageTemplateBuilder().fromJson(json).build();
+        }
+
+        fromJsonToImageTemplateSummary(json: json.ImageTemplateSummaryJson): ImageTemplate {
+            return ImageTemplateSummaryBuilder().fromJson(json).build();
         }
     }
 }

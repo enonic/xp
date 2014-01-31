@@ -6,6 +6,8 @@ module api.ui.combobox {
 
         comboBoxView:api.dom.DivEl;
 
+        comboBoxName:string;
+
         selectedOptionsView:any;
 
         comboBox:api.ui.combobox.ComboBox<T>;
@@ -20,16 +22,16 @@ module api.ui.combobox {
 
         private optionSelectedListeners:{(item:api.ui.combobox.Option<T>):void;}[];
 
-        constructor(builder:RichComboBoxBuilder<T>)
+        constructor(config:RichComboBoxBuilder<T>)
         {
-            this.identifierMethod = builder.identifierMethod;
+            this.identifierMethod = config.identifierMethod;
 
             this.comboBoxView = new api.dom.DivEl();
-            this.selectedOptionsView = builder.selectedOptionsView;
+            this.selectedOptionsView = config.selectedOptionsView;
             this.selectedOptionsView.hide();
-            this.comboBox = this.createComboBox(builder.comboBoxName);
-            if (builder.loader) {
-                this.setLoader(builder.loader);
+            this.comboBox = this.createComboBox(config.comboBoxName);
+            if (config.loader) {
+                this.setLoader(config.loader);
             }
 
             super(this.comboBox, this.selectedOptionsView);
@@ -159,6 +161,13 @@ module api.ui.combobox {
         giveFocus():boolean {
             return this.comboBox.giveFocus();
         }
+    }
+
+    export interface RichComboBoxConfig<T> {
+        comboBoxName?:string;
+        loader?:api.util.Loader;
+        selectedOptionsView?:SelectedOptionsView<T>;
+        identifierMethod?:string;
     }
 
     export class RichComboBoxBuilder<T> {

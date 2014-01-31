@@ -18,9 +18,13 @@
 ///<reference path='AbstractRegions.ts' />
 ///<reference path='PageRegions.ts' />
 
+///<reference path='TemplateComboBox.ts' />
+///<reference path='TemplateSummaryLoader.ts' />
+///<reference path='TemplateSummaryLoaderListener.ts' />
+
 ///<reference path='PageTemplateSummary.ts' />
 ///<reference path='PageTemplate.ts' />
-///<reference path='PageTemplateComboBox.ts' />
+
 ///<reference path='PageTemplateSummaryLoader.ts' />
 ///<reference path='PageTemplateSummaryLoaderListener.ts' />
 ///<reference path='PageTemplateResourceRequest.ts' />

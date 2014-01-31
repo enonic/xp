@@ -29,6 +29,10 @@ module api.content.page {
         getDescriptorKey(): DescriptorKey {
             return this.descriptorKey;
         }
+
+        static fromJsonArray(jsonArray:any[]):any[] {
+            throw new Error("Overridden by subclasses");
+        }
     }
 
     export class TemplateSummaryBuilder {
