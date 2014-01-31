@@ -2,13 +2,10 @@ package com.enonic.wem.api.content.page.layout;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.page.region.RegionDescriptor;
-import com.enonic.wem.api.content.page.region.RegionDescriptors;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.xml.BaseXmlSerializerTest;
 import com.enonic.wem.xml.XmlSerializers;
 
-import static com.enonic.wem.api.content.page.layout.LayoutRegions.newLayoutRegions;
 import static com.enonic.wem.api.content.page.region.RegionDescriptor.newRegionDescriptor;
 import static com.enonic.wem.api.content.page.region.RegionDescriptors.newRegionDescriptors;
 import static com.enonic.wem.api.form.Input.newInput;
