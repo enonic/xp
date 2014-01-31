@@ -21,9 +21,13 @@ module LiveEdit.component {
             });
         }
 
+        getPrecedingComponentPath():string {
+            var previousComponent = api.dom.Element.fromHtmlElement($liveEdit(this.getHTMLElement()).prevAll('[data-live-edit-component]')[0])
+            return previousComponent.getEl().getData("live-edit-component");
+        }
+
         getRegionName():string {
             var regionName = $(this.getHTMLElement()).parent('[data-live-edit-region]').attr('data-live-edit-region');
-            console.log("FOUND REGION NAME", regionName);
             return regionName;
         }
 

@@ -130,18 +130,17 @@ module app.contextwindow {
                 this.selectedComponent = null;
             });
             this.getLiveEditJQuery()(this.getLiveEditWindow()).on('sortableStop.liveEdit', (event) => {
-                new LiveEditDragStopEvent().fire()
+                new LiveEditDragStopEvent().fire();
                 this.show();
             });
             this.getLiveEditJQuery()(this.getLiveEditWindow()).on('sortableStart.liveEdit', (event) => {
-                new LiveEditDragStartEvent().fire()
+                new LiveEditDragStartEvent().fire();
                 this.hide();
             });
 
 
             this.getLiveEditJQuery()(this.getLiveEditWindow()).on('componentAdded.liveEdit',
                 (event, component?, regionName?, componentPathToAddAfterAsString?: string) => {
-
                     //TODO: Make all components work and not only image
                     var componentName = this.pageRegions.ensureUniqueComponentName(new api.content.page.ComponentName("Image"));
                     var componentPath = ComponentPath.fromString(regionName + "/" + componentName.toString());
