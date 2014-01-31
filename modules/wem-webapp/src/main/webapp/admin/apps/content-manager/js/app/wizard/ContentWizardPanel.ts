@@ -91,7 +91,7 @@ module app.wizard {
                 };
                 this.pageWizardStepForm = new page.PageWizardStepForm(pageWizardStepFormConfig);
             }
-            if (this.siteTemplate.getId()) {
+            if (this.siteTemplate != null) {
                 console.log("sitetemplate",this.siteTemplate);
                 this.livePanel = new LiveFormPanel(<app.wizard.LiveFormPanelConfig> {
                     siteTemplate: this.siteTemplate,
