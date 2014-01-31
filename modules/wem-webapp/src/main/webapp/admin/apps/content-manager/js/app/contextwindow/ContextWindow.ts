@@ -199,6 +199,10 @@ module app.contextwindow {
             return this.liveEditEl.getHTMLElement()["contentWindow"];
         }
 
+        getSiteTemplate():api.content.site.template.SiteTemplate {
+            return this.siteTemplate;
+        }
+
         minimize() {
             this.getDeck().hide();
             this.getEl().addClass("minimized");

@@ -4,12 +4,14 @@ module app.contextwindow {
         private subtitle:api.dom.DivEl;
         private iconEl:api.dom.DivEl;
         private infoEl:api.dom.DivEl;
+        private contextWindow:ContextWindow;
 
         constructor(contextWindow:ContextWindow) {
             super("detail-panel");
 
             this.initElements();
             this.setEmpty();
+            this.contextWindow = contextWindow;
 
             SelectComponentEvent.on((event) => {
                 this.setName(event.getComponent().name);
@@ -32,7 +34,7 @@ module app.contextwindow {
             this.iconEl.addClass("icon");
 
             var templateBox = new api.content.page.TemplateComboBox();
-            templateBox.setLoader(new api.content.page.image.ImageTemplateSummaryLoader(new api.content.page.image.GetImageTemplatesRequest()))
+            templateBox.setLoader(new api.content.page.image.ImageTemplateSummaryLoader(this.contextWindow.getSiteTemplate().getKey()));
 
             this.appendChild(this.iconEl);
             this.appendChild(this.header);

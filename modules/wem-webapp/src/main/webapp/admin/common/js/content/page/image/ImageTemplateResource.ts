@@ -17,8 +17,8 @@ module api.content.page.image {
             return new ImageTemplateBuilder().fromJson(json).build();
         }
 
-        fromJsonToImageTemplateSummary(json: json.ImageTemplateSummaryJson): ImageTemplate {
-            return ImageTemplateSummaryBuilder().fromJson(json).build();
+        fromJsonToImageTemplateSummary(json: json.ImageTemplateSummaryJson): ImageTemplateSummary {
+            return ImageTemplateSummaryBuilder.fromJson(json).build();
         }
     }
 }
