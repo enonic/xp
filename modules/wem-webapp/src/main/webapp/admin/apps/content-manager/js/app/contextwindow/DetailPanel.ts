@@ -8,7 +8,6 @@ module app.contextwindow {
 
         constructor(contextWindow:ContextWindow) {
             super("detail-panel");
-
             this.contextWindow = contextWindow;
 
             this.initElements();

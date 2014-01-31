@@ -2,8 +2,6 @@ module app.wizard {
 
     export interface LiveFormPanelConfig {
 
-        siteTemplate: api.content.site.template.SiteTemplate;
-
         contentSaveAction: api.ui.Action;
     }
 
@@ -19,18 +17,11 @@ module app.wizard {
         constructor(config:LiveFormPanelConfig) {
             super("live-form-panel");
             this.baseUrl = api.util.getUri("portal/edit/");
-            this.siteTemplate = config.siteTemplate;
             this.contentSaveAction = config.contentSaveAction;
 
             this.frame = new api.dom.IFrameEl();
             this.frame.addClass("live-edit-frame");
             this.appendChild(this.frame);
-
-            this.contextWindow = new app.contextwindow.ContextWindow({
-                liveEditEl: this.frame,
-                contentSaveAction: this.contentSaveAction,
-                siteTemplate: this.siteTemplate
-            });
         }
 
         private doLoad(liveEditUrl: string): Q.Promise<void> {
@@ -77,7 +68,16 @@ module app.wizard {
             return deferred.promise;
         }
 
-        renderExisting(content: api.content.Content, pageTemplate: api.content.page.PageTemplate) {
+        renderExisting(content: api.content.Content, pageTemplate: api.content.page.PageTemplate, siteTemplate: api.content.site.template.SiteTemplate) {
+            this.siteTemplate = siteTemplate;
+            if (!this.contextWindow) {
+                this.contextWindow = new app.contextwindow.ContextWindow({
+                    liveEditEl: this.frame,
+                    contentSaveAction: this.contentSaveAction,
+                    siteTemplate: this.siteTemplate
+                });
+            }
+
 
             console.log("LiveFormPanel.renderExisting() ...");
 
@@ -97,7 +97,7 @@ module app.wizard {
 
         public getRegions(): api.content.page.PageRegions {
 
-            return this.contextWindow.getPageRegions();
+            return this.contextWindow ? this.contextWindow.getPageRegions() : null;
 
 //            var pageRegions = new api.content.page.PageRegionsBuilder();
 //

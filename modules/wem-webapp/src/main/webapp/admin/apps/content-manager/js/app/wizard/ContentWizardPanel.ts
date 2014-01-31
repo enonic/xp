@@ -297,7 +297,7 @@ module app.wizard {
 
             var deferred = Q.defer<void>();
 
-            this.livePanel.renderExisting(content, pageTemplate);
+            this.livePanel.renderExisting(content, pageTemplate, this.siteTemplate);
 
             deferred.resolve(null);
             return deferred.promise;
