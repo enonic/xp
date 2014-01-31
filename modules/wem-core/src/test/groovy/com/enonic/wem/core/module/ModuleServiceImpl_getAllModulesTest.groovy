@@ -17,7 +17,7 @@ class ModuleServiceImpl_getAllModulesTest
         !result.empty
         result.size == 2
         result.moduleKeys.size == 2
-        result.moduleKeys.get( 0 ) == ModuleKey.from( "foomodule-1.2.0" )
-        result.moduleKeys.get( 1 ) == ModuleKey.from( "othermodule-1.3.0" )
+        result.moduleKeys.contains( ModuleKey.from( "foomodule-1.2.0" ) )
+        result.moduleKeys.contains( ModuleKey.from( "othermodule-1.3.0" ) )
     }
 }
