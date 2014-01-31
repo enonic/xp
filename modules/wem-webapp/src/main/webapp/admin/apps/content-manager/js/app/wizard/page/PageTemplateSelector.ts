@@ -1,6 +1,6 @@
 module app.wizard.page {
 
-    export class PageTemplateSelectorForm extends api.ui.form.Form {
+    export class PageTemplateSelector extends api.dom.DivEl {
 
         private pageTemplateComboBox: api.content.page.TemplateComboBox;
 
@@ -8,15 +8,14 @@ module app.wizard.page {
 
         private pageTemplateToSelect: api.content.page.TemplateKey;
 
-        constructor() {
+        constructor(form:PageWizardStepForm) {
             super("page-template-selector-form");
 
             this.pageTemplateComboBox = new api.content.page.TemplateComboBox();
 
             var fieldSet = new api.ui.form.Fieldset();
             fieldSet.add(new api.ui.form.FormItem(new api.ui.form.FormItemBuilder(this.pageTemplateComboBox).setLabel("Page Template")));
-            this.add(fieldSet);
-
+            form.add(fieldSet);
 
             this.pageTemplateComboBox.addOptionSelectedListener((option: api.ui.combobox.Option<api.content.page.PageTemplateSummary>) => {
                 this.pageTemplateToSelect = option.displayValue.getKey();
