@@ -56,8 +56,17 @@ module api.content.page {
             return this.regionByName[name];
         }
 
+        getImageComponent(path: ComponentPath) : image.ImageComponent {
 
-        getComponent(path: ComponentPath) {
+            var component = this.getComponent(path);
+            if(component == null) {
+                return null;
+            }
+            return <image.ImageComponent>component;
+        }
+
+
+        getComponent(path: ComponentPath) : PageComponent {
 
             var first: ComponentPathRegionAndComponent = path.getFirstLevel();
             var region = this.getRegion(first.getRegionName());

@@ -103,32 +103,32 @@ public class SiteTemplateSummaryJson
 
     public List<String> getPageTemplates()
     {
-        return templatesAsNameList( siteTemplate.getPageTemplates().getList() );
+        return templatesAsKeyList( siteTemplate.getPageTemplates().getList() );
     }
 
     public List<String> getPartTemplates()
     {
-        return templatesAsNameList( siteTemplate.getPartTemplates().getList() );
+        return templatesAsKeyList( siteTemplate.getPartTemplates().getList() );
     }
 
     public List<String> getLayoutTemplates()
     {
-        return templatesAsNameList( siteTemplate.getLayoutTemplates().getList() );
+        return templatesAsKeyList( siteTemplate.getLayoutTemplates().getList() );
     }
 
     public List<String> getImageTemplates()
     {
-        return templatesAsNameList( siteTemplate.getImageTemplates().getList() );
+        return templatesAsKeyList( siteTemplate.getImageTemplates().getList() );
     }
 
-    private List<String> templatesAsNameList( final List<? extends Template> templateList )
+    private List<String> templatesAsKeyList( final List<? extends Template> templateList )
     {
         return Lists.transform( templateList, new Function<Template, String>()
         {
             @Override
             public String apply( final Template template )
             {
-                return template.getName().toString();
+                return template.getKey().toString();
             }
         } );
     }

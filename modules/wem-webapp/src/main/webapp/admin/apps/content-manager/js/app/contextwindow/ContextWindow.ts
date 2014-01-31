@@ -147,22 +147,20 @@ module app.contextwindow {
                 component.getEl().setData("live-edit-component", componentPath.toString());
                 component.getEl().setData("live-edit-name", componentName.toString());
 
-                var builder = new ImageComponentBuilder();
-                builder.setName(componentName);
-                var pageComponent = builder.build();
-                this.pageRegions.addComponent(pageComponent, regionName);
+                var imageComponent = new ImageComponentBuilder();
+                imageComponent.setName(componentName);
+                this.pageRegions.addComponent(imageComponent.build(), regionName);
             });
 
             this.getLiveEditJQuery()(this.getLiveEditWindow()).on('imageComponentSetImage.liveEdit',
                 (event, imageId?, componentPathAsString?) => {
 
                     var componentPath = ComponentPath.fromString(componentPathAsString);
-                    var imageComponent = <ImageComponent>this.pageRegions.getComponent(componentPath);
-                    var moduleName = "bluman.trampoline";
                     var defaultImageTemplate = this.siteTemplate.getDefaultImageTemplate();
-                    var imageTemplateKey = new TemplateKey(moduleName, defaultImageTemplate);
-                    imageComponent.setTemplate(imageTemplateKey);
+
+                    var imageComponent = this.pageRegions.getImageComponent(componentPath);
                     imageComponent.setImage(imageId);
+                    imageComponent.setTemplate(defaultImageTemplate);
                     this.contentSaveAction.execute();
                 });
         }
