@@ -1,4 +1,4 @@
-module api.ui{
+module api.ui {
 
     export interface ToggleSlideActions {
 
@@ -9,21 +9,24 @@ module api.ui{
 
     export class ToggleSlide extends api.dom.DivEl {
 
-        private actions:ToggleSlideActions;
+        private actions: ToggleSlideActions;
 
-        private isOn:boolean;
+        private isOn: boolean;
+        private enabled: boolean = true;
 
-        private slider:api.dom.Element;
-        private holder:api.dom.Element;
-        private onLabel:api.dom.Element;
-        private offLabel:api.dom.Element;
+        private slider: api.dom.Element;
+        private holder: api.dom.Element;
+        private onLabel: api.dom.Element;
+        private offLabel: api.dom.Element;
 
-        private animationDuration:number = 300;
-        private sliderOffset:number;
-        private slideLeft:api.util.Animation;
-        private slideRight:api.util.Animation;
+        private animationDuration: number = 300;
+        private sliderOffset: number;
+        private slideLeft: api.util.Animation;
+        private slideRight: api.util.Animation;
 
-        constructor(actions:ToggleSlideActions, initOn:boolean) {
+        private disabledClass: string = "disabled";
+
+        constructor(actions: ToggleSlideActions, initOn: boolean) {
             super('toggle-slide');
 
             this.actions = actions;
@@ -32,7 +35,7 @@ module api.ui{
             this.calculateStyles();
             this.setupAnimation();
 
-            if( initOn ) {
+            if (initOn) {
                 this.slideOn();
             }
             else {
@@ -41,7 +44,9 @@ module api.ui{
             this.isOn = initOn;
 
             this.getEl().addEventListener('click', () => {
-                this.toggle();
+                if (this.enabled) {
+                    this.toggle();
+                }
             });
         }
 
@@ -75,8 +80,23 @@ module api.ui{
             this.slideLeft.start();
         }
 
-        isTurnedOn():boolean {
+        isTurnedOn(): boolean {
             return this.isOn;
+        }
+
+        setEnabled(enabled: boolean) {
+            if (enabled != this.enabled) {
+                if (!enabled) {
+                    this.addClass(this.disabledClass);
+                } else {
+                    this.removeClass(this.disabledClass);
+                }
+                this.enabled = enabled;
+            }
+        }
+
+        isEnabled(): boolean {
+            return this.enabled;
         }
 
         private createMarkup() {

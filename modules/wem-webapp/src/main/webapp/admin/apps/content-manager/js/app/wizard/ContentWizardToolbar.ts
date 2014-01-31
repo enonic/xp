@@ -23,6 +23,10 @@ module app.wizard {
                 turnOnAction: new app.wizard.action.ShowLiveFormAction(),
                 turnOffAction: new app.wizard.action.ShowFormAction()
             }, false);
+            displayModeToggle.setEnabled(params.previewAction.isEnabled());
+            params.previewAction.addPropertyChangeListener((action:api.ui.Action) => {
+                displayModeToggle.setEnabled(action.isEnabled());
+            })
             super.addElement(displayModeToggle);
             super.addAction(params.closeAction);
 

@@ -7,25 +7,25 @@ module app.view {
 
     export class ContentItemViewPanel extends api.app.view.ItemViewPanel<api.content.ContentSummary> {
 
-        private statisticsPanel:api.app.view.ItemStatisticsPanel<api.content.ContentSummary>;
+        private statisticsPanel: api.app.view.ItemStatisticsPanel<api.content.ContentSummary>;
 
-        private statisticsPanelIndex:number;
+        private statisticsPanelIndex: number;
 
-        private previewPanel:app.browse.ContentItemPreviewPanel;
+        private previewPanel: app.browse.ContentItemPreviewPanel;
 
-        private previewMode:boolean;
+        private previewMode: boolean;
 
-        private previewPanelIndex:number;
+        private previewPanelIndex: number;
 
-        private deckPanel:api.ui.DeckPanel;
+        private deckPanel: api.ui.DeckPanel;
 
-        private editAction:api.ui.Action;
+        private editAction: api.ui.Action;
 
-        private deleteAction:api.ui.Action;
+        private deleteAction: api.ui.Action;
 
-        private closeAction:api.ui.Action;
+        private closeAction: api.ui.Action;
 
-        constructor(params:ContentItemViewPanelParams) {
+        constructor(params: ContentItemViewPanelParams) {
 
             this.deckPanel = new api.ui.DeckPanel();
 
@@ -63,14 +63,14 @@ module app.view {
             });
         }
 
-        setItem(item:api.app.view.ViewItem<api.content.ContentSummary>) {
+        setItem(item: api.app.view.ViewItem<api.content.ContentSummary>) {
             super.setItem(item);
             this.statisticsPanel.setItem(item);
             this.previewPanel.setItem(item);
         }
 
 
-        public showPreview(enabled:boolean) {
+        public showPreview(enabled: boolean) {
             this.previewMode = enabled;
             // refresh the view
             if (enabled) {

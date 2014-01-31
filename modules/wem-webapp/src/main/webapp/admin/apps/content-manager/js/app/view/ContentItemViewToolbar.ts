@@ -10,7 +10,7 @@ module app.view {
 
     export class ContentItemViewToolbar extends api.ui.toolbar.Toolbar {
 
-        constructor(params:ContentItemViewToolbarParams) {
+        constructor(params: ContentItemViewToolbarParams) {
             super();
             super.addAction(params.editAction);
             super.addAction(params.deleteAction);
@@ -21,6 +21,10 @@ module app.view {
                 turnOnAction: params.showPreviewAction,
                 turnOffAction: params.showDetailsAction
             }, false);
+            displayModeToggle.setEnabled(params.showPreviewAction.isEnabled());
+            params.showPreviewAction.addPropertyChangeListener((action: api.ui.Action) => {
+                displayModeToggle.setEnabled(action.isEnabled());
+            });
             super.addElement(displayModeToggle);
             super.addAction(params.closeAction);
         }

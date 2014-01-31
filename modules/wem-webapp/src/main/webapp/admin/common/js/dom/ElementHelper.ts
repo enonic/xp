@@ -2,36 +2,36 @@ module api.dom {
 
     export class ElementHelper {
 
-        private el:HTMLElement;
+        private el: HTMLElement;
 
-        static fromName(name:string):ElementHelper {
+        static fromName(name: string): ElementHelper {
             return new ElementHelper(document.createElement(name));
         }
 
-        constructor(element:HTMLElement) {
+        constructor(element: HTMLElement) {
             this.el = element;
         }
 
-        getHTMLElement():HTMLElement {
+        getHTMLElement(): HTMLElement {
             return this.el;
         }
 
-        insertBefore(newEl:Element, existingEl:Element) {
+        insertBefore(newEl: Element, existingEl: Element) {
             this.el.insertBefore(newEl.getHTMLElement(), existingEl ? existingEl.getHTMLElement() : null);
         }
 
-        insertBeforeEl(existingEl:Element) {
+        insertBeforeEl(existingEl: Element) {
             existingEl.getHTMLElement().parentNode.insertBefore(this.el, existingEl.getHTMLElement());
         }
 
-        insertAfterEl(existingEl:Element) {
+        insertAfterEl(existingEl: Element) {
             existingEl.getHTMLElement().parentNode.insertBefore(this.el, existingEl.getHTMLElement().nextSibling);
         }
 
         /*
          * @returns {api.dom.ElementHelper} ElementHelper for previous node of this element.
          */
-        getPrevious():ElementHelper {
+        getPrevious(): ElementHelper {
             var previous = this.el.previousSibling;
             while (previous && previous.nodeType != Node.ELEMENT_NODE) {
                 previous = previous.previousSibling;
@@ -39,12 +39,12 @@ module api.dom {
             return previous ? new ElementHelper(<HTMLElement> previous) : null;
         }
 
-        setDisabled(value:boolean):ElementHelper {
+        setDisabled(value: boolean): ElementHelper {
             this.el.disabled = value;
             return this;
         }
 
-        isDisabled():boolean {
+        isDisabled(): boolean {
             return this.el.disabled;
         }
 
@@ -52,209 +52,217 @@ module api.dom {
             return this.el.id;
         }
 
-        setId(value:string):ElementHelper {
+        setId(value: string): ElementHelper {
             this.el.id = value;
             return this;
         }
 
-        setInnerHtml(value:string):ElementHelper {
+        setInnerHtml(value: string): ElementHelper {
             jQuery(this.el).html(value);
             return this;
         }
 
-        getInnerHtml():string {
+        getInnerHtml(): string {
             return this.el.innerHTML;
         }
 
-        setAttribute(name:string, value:string):ElementHelper {
+        setAttribute(name: string, value: string): ElementHelper {
             this.el.setAttribute(name, value);
             return this;
         }
 
-        getAttribute(name:string):string {
+        getAttribute(name: string): string {
             return this.el.getAttribute(name);
         }
 
-        hasAttribute(name:string):boolean {
+        hasAttribute(name: string): boolean {
             return this.el.hasAttribute(name);
         }
 
-        removeAttribute(name:string):ElementHelper {
+        removeAttribute(name: string): ElementHelper {
             this.el.removeAttribute(name);
             return this;
         }
 
-        getValue():string {
+        getValue(): string {
             return this.el['value'];
         }
 
-        setValue(value:string):ElementHelper {
+        setValue(value: string): ElementHelper {
             this.el['value'] = value;
             return this;
         }
 
-        addClass(clsName:string):ElementHelper {
-            if (!this.hasClass(clsName)) {
-                if (this.el.className === '') {
-                    this.el.className += clsName;
+        addClass(clsName: string): ElementHelper {
+            // spaces are not allowed
+            var classList: string[] = clsName.split(" ");
+            classList.forEach((classItem: string) => {
+                if (!this.hasClass(classItem)) {
+                    this.el.classList.add(classItem);
                 }
-                else {
-                    this.el.className += ' ' + clsName;
-                }
-            }
+            });
             return this;
         }
 
-        setClass(value:string):ElementHelper {
+        setClass(value: string): ElementHelper {
             this.el.className = value;
             return this;
         }
 
-        hasClass(clsName:string):boolean {
-            return this.el.className.match(new RegExp('(\\s|^)' + clsName + '(\\s|$)')) !== null;
+        hasClass(clsName: string): boolean {
+            // spaces are not allowed
+            var classList: string[] = clsName.split(" ");
+            for (var i = 0; i < classList.length; i++) {
+                var classItem = classList[i];
+                if (!this.el.classList.contains(classItem)) {
+                    return false;
+                }
+            }
+            return true;
         }
 
-        removeClass(clsName:string):ElementHelper {
-            if (this.hasClass(clsName)) {
-                var reg = new RegExp('(\\s|^)' + clsName + '(\\s|$)');
-                this.el.className = this.el.className.replace(reg, '');
-            }
+        removeClass(clsName: string): ElementHelper {
+            // spaces are not allowed
+            var classList: string[] = clsName.split(" ");
+            classList.forEach((classItem:string) => {
+                this.el.classList.remove(classItem);
+            });
             return this;
         }
 
-        addEventListener(eventName:string, f:(event:Event) => any):ElementHelper {
+        addEventListener(eventName: string, f: (event: Event) => any): ElementHelper {
             this.el.addEventListener(eventName, f);
             return this;
         }
 
-        removeEventListener(eventName:string, f:(event:Event) => any):ElementHelper {
+        removeEventListener(eventName: string, f: (event: Event) => any): ElementHelper {
             this.el.removeEventListener(eventName, f);
             return this;
         }
 
-        appendChild(child:Node):ElementHelper {
+        appendChild(child: Node): ElementHelper {
             this.el.appendChild(child);
             return this;
         }
 
-        appendChildren(children:Node[]):ElementHelper {
-            children.forEach((child:Node) => {
+        appendChildren(children: Node[]): ElementHelper {
+            children.forEach((child: Node) => {
                 this.el.appendChild(child);
             });
             return this;
         }
 
-        setData(name:string, value:string):ElementHelper {
+        setData(name: string, value: string): ElementHelper {
             jQuery(this.el).attr('data-' + name, value);
             return this;
         }
 
-        getData(name:string):string {
+        getData(name: string): string {
             return jQuery(this.el).data(name);
         }
 
-        getDisplay():string {
+        getDisplay(): string {
             return this.el.style.display;
         }
 
-        setDisplay(value:string):ElementHelper {
+        setDisplay(value: string): ElementHelper {
             this.el.style.display = value;
             return this;
         }
 
-        getVisibility():string {
+        getVisibility(): string {
             return this.el.style.visibility;
         }
 
-        setVisibility(value:string):ElementHelper {
+        setVisibility(value: string): ElementHelper {
             this.el.style.visibility = value;
             return this;
         }
 
-        setPosition(value:string):ElementHelper {
+        setPosition(value: string): ElementHelper {
             this.el.style.position = value;
             return this;
         }
 
-        setWidth(value:string):ElementHelper {
+        setWidth(value: string): ElementHelper {
             this.el.style.width = value;
             return this;
         }
 
-        getWidth():number {
+        getWidth(): number {
             return this.el.offsetWidth;
         }
 
-        setHeight(value:string):ElementHelper {
+        setHeight(value: string): ElementHelper {
             this.el.style.height = value;
             return this;
         }
 
-        getHeight():number {
+        getHeight(): number {
             return parseFloat(this.getComputedProperty('height'));
         }
 
-        getHeightWithMargin():number {
+        getHeightWithMargin(): number {
             return $(this.el).outerHeight();
         }
 
-        setTop(value:string):ElementHelper {
+        setTop(value: string): ElementHelper {
             this.el.style.top = value;
             return this;
         }
 
-        setTopPx(value:number):ElementHelper {
+        setTopPx(value: number): ElementHelper {
             return this.setTop(value + "px");
         }
 
-        setLeft(value:string):ElementHelper {
+        setLeft(value: string): ElementHelper {
             this.el.style.left = value;
             return this;
         }
 
-        setRight(value:string):ElementHelper {
+        setRight(value: string): ElementHelper {
             this.el.style.right = value;
             return this;
         }
 
-        setMarginLeft(value:string):ElementHelper {
+        setMarginLeft(value: string): ElementHelper {
             this.el.style.marginLeft = value;
             return this;
         }
 
-        setMarginRight(value:string):ElementHelper {
+        setMarginRight(value: string): ElementHelper {
             this.el.style.marginRight = value;
             return this;
         }
 
-        setMarginTop(value:string):ElementHelper {
+        setMarginTop(value: string): ElementHelper {
             this.el.style.marginTop = value;
             return this;
         }
 
-        setMarginBottom(value:string):ElementHelper {
+        setMarginBottom(value: string): ElementHelper {
             this.el.style.marginBottom = value;
             return this;
         }
 
-        getPaddingLeft():number {
+        getPaddingLeft(): number {
             return parseFloat(this.getComputedProperty('padding-left'));
         }
 
-        getBorderTopWidth():number {
+        getBorderTopWidth(): number {
             return parseFloat(this.getComputedProperty('border-top-width'));
         }
 
-        getBorderBottomWidth():number {
+        getBorderBottomWidth(): number {
             return parseFloat(this.getComputedProperty('border-bottom-width'));
         }
 
-        setZindex(value:number):ElementHelper {
+        setZindex(value: number): ElementHelper {
             this.el.style.zIndex = value.toString();
             return this;
         }
 
-        setBackgroundImage(value:string):ElementHelper {
+        setBackgroundImage(value: string): ElementHelper {
             this.el.style.backgroundImage = value;
             return this;
         }
@@ -264,7 +272,8 @@ module api.dom {
             parent.removeChild(this.el);
         }
 
-        getOffset():{ top:number; left:number; } {
+        getOffset(): { top:number; left:number;
+        } {
             var el = this.el;
             var x = 0,
                 y = 0;
@@ -276,11 +285,11 @@ module api.dom {
             return { top: y, left: x };
         }
 
-        getOffsetTop():number {
+        getOffsetTop(): number {
             return this.el.offsetTop;
         }
 
-        getComputedProperty(name:string, pseudoElement: string = null):string {
+        getComputedProperty(name: string, pseudoElement: string = null): string {
             return window.getComputedStyle(this.el, pseudoElement).getPropertyValue(name);
         }
 

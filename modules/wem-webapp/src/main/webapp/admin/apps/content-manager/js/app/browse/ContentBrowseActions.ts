@@ -89,7 +89,7 @@ module app.browse {
         constructor(treeGridPanel: api.app.browse.grid.TreeGridPanel) {
             super("PREVIEW");
 
-            this.setEnabled(true);
+            this.setEnabled(false);
             this.addExecutionListener(() => {
                 new ShowPreviewEvent(this.extModelsToContentSummaries(treeGridPanel.getSelection())).fire();
             });
@@ -169,31 +169,17 @@ module app.browse {
 
         updateActionsEnabledState(models: api.content.ContentSummary[]) {
 
-            if (models.length <= 0) {
-                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
-                this.OPEN_CONTENT.setEnabled(false);
-                this.EDIT_CONTENT.setEnabled(false);
-                this.DELETE_CONTENT.setEnabled(false);
-                this.DUPLICATE_CONTENT.setEnabled(false);
-                this.MOVE_CONTENT.setEnabled(false);
-            }
-            else if (models.length == 1) {
-                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
-                this.OPEN_CONTENT.setEnabled(true);
-                this.EDIT_CONTENT.setEnabled(models[0].isEditable());
-                this.DELETE_CONTENT.setEnabled(models[0].isDeletable());
-                this.DUPLICATE_CONTENT.setEnabled(true);
-                this.MOVE_CONTENT.setEnabled(true);
-            }
-            else {
-                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
-                this.OPEN_CONTENT.setEnabled(true);
-                this.EDIT_CONTENT.setEnabled(this.anyEditable(models));
-                this.DELETE_CONTENT.setEnabled(this.anyDeletable(models));
-                this.DUPLICATE_CONTENT.setEnabled(true);
-                this.MOVE_CONTENT.setEnabled(true);
-            }
+            var no: boolean = !models || models.length <= 0,
+                one: boolean = models && models.length == 1,
+                many: boolean = models && models.length > 1;
 
+            this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(no || one);
+            this.OPEN_CONTENT.setEnabled(one || many);
+            this.EDIT_CONTENT.setEnabled(one && models[0].isEditable() || many && this.anyEditable(models));
+            this.DELETE_CONTENT.setEnabled(one && models[0].isDeletable() || many && this.anyDeletable(models));
+            this.DUPLICATE_CONTENT.setEnabled(one || many);
+            this.MOVE_CONTENT.setEnabled(one || many);
+            this.SHOW_PREVIEW.setEnabled(one && models[0].isPage());
         }
 
         private anyEditable(contents: api.content.ContentSummary[]): boolean {
