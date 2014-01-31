@@ -139,18 +139,30 @@ module app.contextwindow {
             });
 
 
-            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('componentAdded.liveEdit', (event, component?, regionName?) => {
+            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('componentAdded.liveEdit',
+                (event, component?, regionName?, componentPathToAddAfterAsString?: string) => {
 
-                //TODO: Make all components work and not only image
-                var componentName = this.pageRegions.ensureUniqueComponentName(new api.content.page.ComponentName("Image"));
-                var componentPath = ComponentPath.fromString(regionName + "/" + componentName.toString());
-                component.getEl().setData("live-edit-component", componentPath.toString());
-                component.getEl().setData("live-edit-name", componentName.toString());
+                    //TODO: Make all components work and not only image
+                    var componentName = this.pageRegions.ensureUniqueComponentName(new api.content.page.ComponentName("Image"));
+                    var componentPath = ComponentPath.fromString(regionName + "/" + componentName.toString());
+                    component.getEl().setData("live-edit-component", componentPath.toString());
+                    component.getEl().setData("live-edit-name", componentName.toString());
 
-                var imageComponent = new ImageComponentBuilder();
-                imageComponent.setName(componentName);
-                this.pageRegions.addComponent(imageComponent.build(), regionName);
-            });
+                    var imageComponent = new ImageComponentBuilder();
+                    imageComponent.setName(componentName);
+
+                    var componentToAddAfter: api.content.page.ComponentPath = null;
+                    if (componentPathToAddAfterAsString) {
+                        componentToAddAfter = api.content.page.ComponentPath.fromString(componentPathToAddAfterAsString);
+                    }
+
+                    if (componentToAddAfter) {
+                        this.pageRegions.addComponentAfter(imageComponent.build(), componentToAddAfter);
+                    }
+                    else {
+                        this.pageRegions.addComponent(imageComponent.build(), regionName);
+                    }
+                });
 
             this.getLiveEditJQuery()(this.getLiveEditWindow()).on('imageComponentSetImage.liveEdit',
                 (event, imageId?, componentPathAsString?) => {
