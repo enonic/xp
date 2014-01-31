@@ -15,12 +15,6 @@ import org.jdom.output.XMLOutputter;
 
 public final class JdomHelper
 {
-    private final SAXBuilder saxBuilder;
-
-    public JdomHelper()
-    {
-        this.saxBuilder = new SAXBuilder();
-    }
 
     public Document parse( final String xml )
         throws IOException, JDOMException
@@ -31,19 +25,19 @@ public final class JdomHelper
     public Document parse( final Reader reader )
         throws IOException, JDOMException
     {
-        return this.saxBuilder.build( reader );
+        return new SAXBuilder().build( reader );
     }
 
     public Document parse( final InputStream in )
         throws IOException, JDOMException
     {
-        return this.saxBuilder.build( in );
+        return new SAXBuilder().build( in );
     }
 
     public Document parse( final URL url )
         throws IOException, JDOMException
     {
-        return this.saxBuilder.build( url );
+        return new SAXBuilder().build( url );
     }
 
     public String serialize( final Document node, final boolean prettyPrint )
