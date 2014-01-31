@@ -13,7 +13,7 @@ import com.enonic.wem.api.support.AbstractImmutableEntityList;
 public final class SiteTemplates
     extends AbstractImmutableEntityList<SiteTemplate>
 {
-    private final ImmutableMap<SiteTemplateName, SiteTemplate> map;
+    private final ImmutableMap<SiteTemplateKey, SiteTemplate> map;
 
     private SiteTemplates( final ImmutableList<SiteTemplate> list )
     {
@@ -21,12 +21,12 @@ public final class SiteTemplates
         this.map = Maps.uniqueIndex( list, new ToNameFunction() );
     }
 
-    public ImmutableSet<SiteTemplateName> getNames()
+    public ImmutableSet<SiteTemplateKey> getKeys()
     {
         return map.keySet();
     }
 
-    public SiteTemplate getSiteTemplate( final SiteTemplateName name )
+    public SiteTemplate getSiteTemplate( final SiteTemplateKey name )
     {
         return map.get( name );
     }
@@ -75,12 +75,12 @@ public final class SiteTemplates
     }
 
     private final static class ToNameFunction
-        implements Function<SiteTemplate, SiteTemplateName>
+        implements Function<SiteTemplate, SiteTemplateKey>
     {
         @Override
-        public SiteTemplateName apply( final SiteTemplate value )
+        public SiteTemplateKey apply( final SiteTemplate value )
         {
-            return value.getName();
+            return value.getKey();
         }
     }
 }
