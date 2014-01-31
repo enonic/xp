@@ -9,9 +9,10 @@ module app.contextwindow {
         constructor(contextWindow:ContextWindow) {
             super("detail-panel");
 
+            this.contextWindow = contextWindow;
+
             this.initElements();
             this.setEmpty();
-            this.contextWindow = contextWindow;
 
             SelectComponentEvent.on((event) => {
                 this.setName(event.getComponent().name);
