@@ -57,7 +57,7 @@ module app.wizard {
             });
 
             var actions = new app.wizard.action.ContentWizardActions(this);
-            actions.getPreviewAction().setEnabled(params.persistedContent.isPage());
+            actions.getPreviewAction().setEnabled(false);
 
             var mainToolbar = new ContentWizardToolbar({
                 saveAction: actions.getSaveAction(),
