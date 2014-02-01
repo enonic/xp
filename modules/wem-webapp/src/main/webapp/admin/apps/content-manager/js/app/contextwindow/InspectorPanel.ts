@@ -1,15 +1,30 @@
 module app.contextwindow {
-    export class InspectorPanel extends api.ui.DeckPanel {
-        private detailPanel:DetailPanel;
-        private selectPanel:SelectPanel;
-        private imageSelectPanel:app.contextwindow.image.ImageSelectPanel;
 
-        constructor(contextWindow:ContextWindow) {
+    import SiteTemplateKey = api.content.site.template.SiteTemplateKey;
+
+    export interface InspectorPanelConfig {
+
+        liveEditWindow:any;
+
+        siteTemplateKey:SiteTemplateKey;
+    }
+
+    export class InspectorPanel extends api.ui.DeckPanel {
+
+        private detailPanel: DetailPanel;
+        private selectPanel: SelectPanel;
+        private imageSelectPanel: app.contextwindow.image.ImageSelectPanel;
+
+        constructor(config: InspectorPanelConfig) {
             super();
 
-            this.detailPanel = new DetailPanel(contextWindow);
-            this.selectPanel = new SelectPanel(contextWindow);
-            this.imageSelectPanel = new app.contextwindow.image.ImageSelectPanel(contextWindow);
+            this.detailPanel = new DetailPanel(config.siteTemplateKey);
+
+            this.selectPanel = new SelectPanel({
+                liveEditWindow: config.liveEditWindow});
+
+            this.imageSelectPanel = new app.contextwindow.image.ImageSelectPanel({
+                liveEditWindow: config.liveEditWindow});
 
 
             this.addPanel(this.detailPanel);
@@ -17,12 +32,14 @@ module app.contextwindow {
             this.addPanel(this.imageSelectPanel);
 
             SelectComponentEvent.on((event) => {
+
                 switch (event.getComponent().componentType.typeName) {
-                    case 'image':
-                        this.showPanel(this.getPanelIndex(this.detailPanel));
-                        break;
-                    default:
-                        event.getComponent().isEmpty() ? this.showPanel(this.getPanelIndex(this.selectPanel)) : this.showPanel(this.getPanelIndex(this.detailPanel));
+                case 'image':
+                    this.showPanel(this.getPanelIndex(this.detailPanel));
+                    break;
+                default:
+                    event.getComponent().isEmpty() ? this.showPanel(this.getPanelIndex(this.selectPanel))
+                        : this.showPanel(this.getPanelIndex(this.detailPanel));
                 }
             });
         }

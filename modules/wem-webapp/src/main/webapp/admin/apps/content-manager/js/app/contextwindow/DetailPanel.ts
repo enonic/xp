@@ -1,14 +1,19 @@
 module app.contextwindow {
-    export class DetailPanel extends api.ui.Panel {
-        private header:api.dom.H3El;
-        private subtitle:api.dom.DivEl;
-        private iconEl:api.dom.DivEl;
-        private infoEl:api.dom.DivEl;
-        private contextWindow:ContextWindow;
 
-        constructor(contextWindow:ContextWindow) {
+    import SiteTemplateKey = api.content.site.template.SiteTemplateKey;
+
+    export class DetailPanel extends api.ui.Panel {
+
+        private header: api.dom.H3El;
+        private subtitle: api.dom.DivEl;
+        private iconEl: api.dom.DivEl;
+        private infoEl: api.dom.DivEl;
+        private siteTemplateKey: SiteTemplateKey;
+
+        constructor(siteTemplate: SiteTemplateKey) {
             super("detail-panel");
-            this.contextWindow = contextWindow;
+
+            this.siteTemplateKey = siteTemplate;
 
             this.initElements();
             this.setEmpty();
@@ -34,7 +39,7 @@ module app.contextwindow {
             this.iconEl.addClass("icon");
 
             var templateBox = new api.content.page.TemplateComboBox();
-            templateBox.setLoader(new api.content.page.image.ImageTemplateSummaryLoader(this.contextWindow.getSiteTemplate().getKey()));
+            templateBox.setLoader(new api.content.page.image.ImageTemplateSummaryLoader(this.siteTemplateKey));
 
             this.appendChild(this.iconEl);
             this.appendChild(this.header);
@@ -49,15 +54,15 @@ module app.contextwindow {
             this.iconEl.removeAllClasses("icon");
         }
 
-        setIcon(iconCls:string) {
+        setIcon(iconCls: string) {
             this.iconEl.addClass(iconCls);
         }
 
-        setName(name:string) {
+        setName(name: string) {
             this.subtitle.getEl().setInnerHtml(name);
         }
 
-        setType(type:string) {
+        setType(type: string) {
             this.header.getEl().setInnerHtml(type);
         }
     }

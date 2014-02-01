@@ -1,14 +1,21 @@
 module app.contextwindow {
 
+    export interface EmulatorPanelConfig {
+
+        liveEditIFrame: api.dom.IFrameEl;
+    }
+
     export class EmulatorPanel extends api.ui.Panel {
+
         private dataView: api.ui.grid.DataView<any>;
         private grid: EmulatorGrid;
-        private contextWindow: ContextWindow;
 
-        constructor(contextWindow: ContextWindow) {
+        private liveEditIFrame: api.dom.IFrameEl;
+
+        constructor(config: EmulatorPanelConfig) {
             super("emulator-panel");
 
-            this.contextWindow = contextWindow;
+            this.liveEditIFrame = config.liveEditIFrame;
 
             var text = new api.dom.PEl();
             text.getEl().setInnerHtml("Emulate different client's physical sizes");
@@ -25,17 +32,17 @@ module app.contextwindow {
                 var width = jQuery(event.currentTarget).children('div').data("width");
                 var height = jQuery(event.currentTarget).children('div').data("height");
                 var type = jQuery(event.currentTarget).children('div').data("device.type");
-                this.contextWindow.getLiveEditEl().getEl().setWidth(width);
-                this.contextWindow.getLiveEditEl().getEl().setHeight(height);
+                this.liveEditIFrame.getEl().setWidth(width);
+                this.liveEditIFrame.getEl().setHeight(height);
             });
 
             jQuery(this.getHTMLElement()).on("click", ".rotate", (event: JQueryEventObject) => {
                 event.stopPropagation();
-                var width = this.contextWindow.getLiveEditEl().getEl().getWidth();
-                var height = this.contextWindow.getLiveEditEl().getEl().getHeight();
+                var width = this.liveEditIFrame.getEl().getWidth();
+                var height = this.liveEditIFrame.getEl().getHeight();
 
-                this.contextWindow.getLiveEditEl().getEl().setHeight(width + "px");
-                this.contextWindow.getLiveEditEl().getEl().setWidth(height + "px");
+                this.liveEditIFrame.getEl().setHeight(width + "px");
+                this.liveEditIFrame.getEl().setWidth(height + "px");
             });
         }
 

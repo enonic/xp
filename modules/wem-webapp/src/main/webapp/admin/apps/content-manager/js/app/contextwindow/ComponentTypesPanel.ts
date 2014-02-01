@@ -5,18 +5,37 @@ module app.contextwindow {
         iconUrl:string;
     }
 
+    export interface ComponentTypesPanelConfig {
+
+        contextWindow: ContextWindow;
+        liveEditIFrame: api.dom.IFrameEl;
+        liveEditWindow: any;
+        liveEditJQuery: JQueryStatic;
+        draggingMask: api.ui.DraggingMask;
+    }
+
     export class ComponentTypesPanel extends api.ui.Panel {
+
         private searchBox;
         private dataView:api.ui.grid.DataView<ComponentData>;
         private data:ComponentData[];
         private grid:ComponentGrid;
         private contextWindow:ContextWindow;
+        private liveEditIFrame: api.dom.IFrameEl;
+        private liveEditWindow: any;
+        private liveEditJQuery: JQueryStatic;
+        private draggingMask: api.ui.DraggingMask;
 
-        constructor(contextWindow:ContextWindow) {
+        constructor(config:ComponentTypesPanelConfig) {
             super();
             this.addClass('component-types-panel');
 
-            this.contextWindow = contextWindow;
+            this.contextWindow = config.contextWindow;
+            this.liveEditIFrame = config.liveEditIFrame;
+            this.liveEditWindow = config.liveEditWindow;
+            this.liveEditJQuery = config.liveEditJQuery;
+            this.draggingMask = config.draggingMask;
+
             this.dataView = new api.ui.grid.DataView<ComponentData>();
 
             this.grid = new ComponentGrid(this.dataView, {draggableRows: true, rowClass: "comp"});
@@ -67,7 +86,7 @@ module app.contextwindow {
                 }
             });
 
-            jQuery(this.contextWindow.getLiveEditEl().getHTMLElement()).droppable({
+            jQuery(this.liveEditIFrame.getHTMLElement()).droppable({
                 tolerance: 'pointer',
                 addClasses: false,
                 accept: '.comp',
@@ -77,7 +96,7 @@ module app.contextwindow {
                 }
             });
 
-            this.contextWindow.getLiveEditJQuery()(this.contextWindow.getLiveEditWindow()).on('sortableUpdate.liveEdit sortableStop.liveEdit draggableStop.liveEdit',
+            this.liveEditJQuery(this.liveEditWindow).on('sortableUpdate.liveEdit sortableStop.liveEdit draggableStop.liveEdit',
                 (event:JQueryEventObject) => {
                     jQuery('[data-context-window-draggable="true"]').simulate('mouseup');
                     this.contextWindow.show();
@@ -85,15 +104,14 @@ module app.contextwindow {
         }
 
         onStartDrag(event, ui) {
-            this.contextWindow.getDraggingMask().show();
+            this.draggingMask.show();
         }
 
         onDragOverIFrame(event, ui) {
-            var liveEditJQ = this.contextWindow.getLiveEditJQuery();
 
-            this.contextWindow.getDraggingMask().hide();
+            this.draggingMask.hide();
 
-            var clone = liveEditJQ(ui.draggable.clone());
+            var clone = this.liveEditJQuery(ui.draggable.clone());
 
             clone.css({
                 'position': 'absolute',
@@ -102,11 +120,11 @@ module app.contextwindow {
             });
 
             console.log(clone);
-            liveEditJQ('body').append(clone);
+            this.liveEditJQuery('body').append(clone);
 
             ui.helper.hide(null);
 
-            this.contextWindow.getLiveEditWindow().LiveEdit.component.dragdropsort.DragDropSort.createJQueryUiDraggable(clone);
+            this.liveEditWindow.LiveEdit.component.dragdropsort.DragDropSort.createJQueryUiDraggable(clone);
 
             clone.simulate('mousedown');
 

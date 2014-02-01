@@ -5,8 +5,8 @@ module app.contextwindow {
     import TemplateKey = api.content.page.TemplateKey;
     import ImageComponentBuilder = api.content.page.image.ImageComponentBuilder;
 
-    export interface ContextWindowOptions {
-        liveEditEl?:api.dom.IFrameEl;
+    export interface ContextWindowConfig {
+        liveEditIFrame?:api.dom.IFrameEl;
         liveEditId?:string;
         siteTemplate:api.content.site.template.SiteTemplate;
         contentSaveAction: api.ui.Action;
@@ -21,18 +21,23 @@ module app.contextwindow {
         private emulatorPanel: EmulatorPanel;
 
         private draggingMask: api.ui.DraggingMask;
-        private liveEditEl: api.dom.IFrameEl;
+        private liveEditIFrame: api.dom.IFrameEl;
+        private liveEditWindow: any;
         private liveEditJQuery: JQueryStatic;
-        private contextWindowOptions: ContextWindowOptions;
         private selectedComponent: Component;
         private minimizer: Minimizer;
         private pageRegions: api.content.page.PageRegions;
         private contentSaveAction: api.ui.Action;
 
-        constructor(options: ContextWindowOptions) {
+        constructor(config: ContextWindowConfig) {
 
-            this.siteTemplate = options.siteTemplate;
-            this.contentSaveAction = options.contentSaveAction;
+            this.siteTemplate = config.siteTemplate;
+            this.contentSaveAction = config.contentSaveAction;
+            this.liveEditIFrame = config.liveEditIFrame;
+            //TODO: "contentwindow" is hacky because we need HTMLIFrameElement to fetch that property, but it is impossible to cast to ><
+            this.liveEditWindow = this.liveEditIFrame.getHTMLElement()["contentWindow"];
+            this.liveEditJQuery = <JQueryStatic>this.liveEditWindow.$liveEdit;
+
             var dragStart = (event, ui) => {
                 this.draggingMask.show();
             };
@@ -46,12 +51,26 @@ module app.contextwindow {
                 stop: dragStop,
                 handle: ".tab-bar"
             } });
-            this.contextWindowOptions = options;
+
             this.addClass("context-window");
 
-            this.componentTypesPanel = new ComponentTypesPanel(this);
-            this.inspectorPanel = new InspectorPanel(this);
-            this.emulatorPanel = new EmulatorPanel(this);
+            this.draggingMask = new api.ui.DraggingMask(this.liveEditIFrame);
+
+            this.componentTypesPanel = new ComponentTypesPanel({
+                contextWindow: this,
+                liveEditIFrame: this.liveEditIFrame,
+                liveEditWindow: this.liveEditWindow,
+                liveEditJQuery: this.liveEditJQuery,
+                draggingMask: this.draggingMask
+            });
+
+            this.inspectorPanel = new InspectorPanel({
+                liveEditWindow: this.liveEditWindow,
+                siteTemplateKey: this.siteTemplate.getKey()
+            });
+            this.emulatorPanel = new EmulatorPanel({
+                liveEditIFrame: this.liveEditIFrame
+            });
 
             this.addItem("Insert", this.componentTypesPanel);
             this.addItem("Settings", this.inspectorPanel);
@@ -77,69 +96,53 @@ module app.contextwindow {
                 this.selectPanel(this.componentTypesPanel);
             });
 
-            if (options.liveEditEl) {
-                this.liveEditEl = options.liveEditEl;
-            }
-        }
 
-        afterRender() {
-            if (this.contextWindowOptions.liveEditId) {
-                var el = <HTMLIFrameElement>document.querySelector("#" + this.contextWindowOptions.liveEditId);
-                if (el.tagName.toLowerCase() == "iframe") {
-                    this.liveEditEl = <api.dom.IFrameEl> api.dom.IFrameEl.fromHtmlElement(el);
-                }
-            }
-            this.draggingMask = new api.ui.DraggingMask(this.liveEditEl);
             document.body.appendChild(this.draggingMask.getHTMLElement());
             this.liveEditListen();
         }
 
-        getDraggingMask() {
-            return this.draggingMask;
-        }
-
         private liveEditListen() {
-            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('selectComponent.liveEdit',
+            this.liveEditJQuery(this.liveEditWindow).on('selectComponent.liveEdit',
                 (event, component?, mouseClickPagePosition?) => {
                     new SelectComponentEvent(<Component>component).fire();
                     this.selectedComponent = component;
                 });
 
-            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('componentSelect.liveEdit',
+            this.liveEditJQuery(this.liveEditWindow).on('componentSelect.liveEdit',
                 (event, name?) => {
                     new ComponentSelectEvent(new api.content.page.ComponentName(name)).fire();
                 });
 
-            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('pageSelect.liveEdit',
+            this.liveEditJQuery(this.liveEditWindow).on('pageSelect.liveEdit',
                 (event) => {
                     new PageSelectEvent().fire();
                 });
 
-            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('regionSelect.liveEdit',
+            this.liveEditJQuery(this.liveEditWindow).on('regionSelect.liveEdit',
                 (event, name?) => {
                     new RegionSelectEvent(name).fire();
                 });
 
-            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('deselectComponent.liveEdit', (event) => {
+            this.liveEditJQuery(this.liveEditWindow).on('deselectComponent.liveEdit', (event) => {
                 new ComponentDeselectEvent().fire();
                 this.selectedComponent = null;
             });
 
-            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('componentRemoved.liveEdit', (event) => {
+            this.liveEditJQuery(this.liveEditWindow).on('componentRemoved.liveEdit', (event) => {
                 new ComponentRemovedEvent().fire();
                 this.selectedComponent = null;
             });
-            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('sortableStop.liveEdit', (event) => {
+            this.liveEditJQuery(this.liveEditWindow).on('sortableStop.liveEdit', (event) => {
                 new LiveEditDragStopEvent().fire();
                 this.show();
             });
-            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('sortableStart.liveEdit', (event) => {
+            this.liveEditJQuery(this.liveEditWindow).on('sortableStart.liveEdit', (event) => {
                 new LiveEditDragStartEvent().fire();
                 this.hide();
             });
 
 
-            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('componentAdded.liveEdit',
+            this.liveEditJQuery(this.liveEditWindow).on('componentAdded.liveEdit',
                 (event, component?, regionName?, componentPathToAddAfterAsString?: string) => {
                     //TODO: Make all components work and not only image
                     var componentName = this.pageRegions.ensureUniqueComponentName(new api.content.page.ComponentName("Image"));
@@ -163,16 +166,21 @@ module app.contextwindow {
                     }
                 });
 
-            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('imageComponentSetImage.liveEdit',
+            this.liveEditJQuery(this.liveEditWindow).on('imageComponentSetImage.liveEdit',
                 (event, imageId?, componentPathAsString?) => {
 
                     var componentPath = ComponentPath.fromString(componentPathAsString);
                     var defaultImageTemplate = this.siteTemplate.getDefaultImageTemplate();
 
                     var imageComponent = this.pageRegions.getImageComponent(componentPath);
-                    imageComponent.setImage(imageId);
-                    imageComponent.setTemplate(defaultImageTemplate);
-                    this.contentSaveAction.execute();
+                    if (imageComponent != null) {
+                        imageComponent.setImage(imageId);
+                        imageComponent.setTemplate(defaultImageTemplate);
+                        this.contentSaveAction.execute();
+                    }
+                    else {
+                        console.log( "ImageComponent to set image on not found: " + componentPath );
+                    }
                 });
         }
 
@@ -188,38 +196,12 @@ module app.contextwindow {
             return this.pageRegions;
         }
 
-        getSelectedComponent(): any {
-            return this.selectedComponent;
-        }
-
-        getLiveEditJQuery(): JQueryStatic {
-            if (!this.liveEditJQuery) {
-                //console.log(this.getLiveEditWindow());
-                this.liveEditJQuery = <JQueryStatic>this.getLiveEditWindow().$liveEdit;
-            }
-            return this.liveEditJQuery;
-
-        }
-
-        getLiveEditEl(): api.dom.IFrameEl {
-            return this.liveEditEl;
-        }
-
-        getLiveEditWindow(): any {
-            //TODO: "contentwindow" is hacky because we need HTMLIFrameElement to fetch that property, but it is impossible to cast to ><
-            return this.liveEditEl.getHTMLElement()["contentWindow"];
-        }
-
-        getSiteTemplate():api.content.site.template.SiteTemplate {
-            return this.siteTemplate;
-        }
-
-        minimize() {
+        private minimize() {
             this.getDeck().hide();
             this.getEl().addClass("minimized");
         }
 
-        maximize() {
+        private maximize() {
             this.getDeck().show();
             this.getEl().removeClass("minimized");
         }

@@ -1,31 +1,36 @@
 module app.contextwindow.image {
+
+    export interface ImageSelectPanelConfig {
+
+        liveEditWindow:any;
+    }
+
     export class ImageSelectPanel extends api.ui.Panel {
 
-        private image:api.content.page.image.ImageComponent;
+        private liveEditWindow: any;
 
-        private contextWindow:ContextWindow;
+        private image: api.content.page.image.ImageComponent;
 
-        private comboBox:api.ui.combobox.ComboBox<api.content.ContentSummary>;
+        private comboBox: api.ui.combobox.ComboBox<api.content.ContentSummary>;
 
-        private selectedOptionsView:ImageSelectPanelSelectedOptionsView;
+        private selectedOptionsView: ImageSelectPanelSelectedOptionsView;
 
-        private templatePanel:api.ui.Panel;
+        private templatePanel: api.ui.Panel;
 
-        private recentPanel:RecentPanel;
+        private recentPanel: RecentPanel;
 
-        private deck:api.ui.DeckPanel;
+        private deck: api.ui.DeckPanel;
 
-        private selectedOption:api.ui.combobox.Option<api.content.ContentSummary>;
+        private selectedOption: api.ui.combobox.Option<api.content.ContentSummary>;
 
-        private liveEditItems:{[key: number]: api.content.ContentSummary
-        };
+        private liveEditItems: {[key: number]: api.content.ContentSummary };
 
-        private liveEditIndex:number = 1;
+        private liveEditIndex: number = 1;
 
-        constructor(contextWindow:ContextWindow) {
+        constructor(config: ImageSelectPanelConfig) {
             super("select-panel");
             var comboBoxWrapper = new api.dom.DivEl();
-            this.contextWindow = contextWindow;
+            this.liveEditWindow = config.liveEditWindow;
 
             this.liveEditItems = {};
 
@@ -33,7 +38,7 @@ module app.contextwindow.image {
             this.selectedOptionsView.hide();
             this.comboBox = this.createComboBox();
             this.comboBox.addSelectedOptionRemovedListener(() => {
-                this.contextWindow.getLiveEditWindow().LiveEdit.component.dragdropsort.EmptyComponent.restoreEmptyComponent();
+                this.liveEditWindow.LiveEdit.component.dragdropsort.EmptyComponent.restoreEmptyComponent();
                 this.itemRemoved();
             });
 
@@ -89,7 +94,7 @@ module app.contextwindow.image {
         }
 
         private addGridListeners() {
-            this.recentPanel.getGrid().setOnClick((event, data:api.ui.grid.GridOnClickData) => {
+            this.recentPanel.getGrid().setOnClick((event, data: api.ui.grid.GridOnClickData) => {
                 var option = <api.ui.combobox.Option<api.content.ContentSummary>> {
                     //TODO: what is value used for??
                     value: "test",
@@ -110,7 +115,7 @@ module app.contextwindow.image {
             this.deck.showPanel(0);
         }
 
-        private createComboBox():api.ui.combobox.ComboBox<api.content.ContentSummary> {
+        private createComboBox(): api.ui.combobox.ComboBox<api.content.ContentSummary> {
 
             var comboBoxConfig = <api.ui.combobox.ComboBoxConfig<api.content.ContentSummary>> {
                 rowHeight: 50,
@@ -129,11 +134,11 @@ module app.contextwindow.image {
                 onInputValueChanged: (oldValue, newValue, grid) => {
                     contentSummaryLoader.search(newValue);
                 },
-                onOptionSelected: (item:api.ui.combobox.Option<api.content.ContentSummary>) => {
+                onOptionSelected: (item: api.ui.combobox.Option<api.content.ContentSummary>) => {
                     //TODO: Mocked live use of image
                     var iconUrl = item.displayValue.getIconUrl();
                     this.selectedOption = item;
-                    this.contextWindow.getLiveEditWindow().LiveEdit.component.dragdropsort.EmptyComponent.loadComponent('10070', this.liveEditIndex, iconUrl);
+                    this.liveEditWindow.LiveEdit.component.dragdropsort.EmptyComponent.loadComponent('10070', this.liveEditIndex, iconUrl);
                     this.liveEditItems[this.liveEditIndex] = item.displayValue;
                     this.itemSelected();
                     this.liveEditIndex++;
@@ -146,7 +151,7 @@ module app.contextwindow.image {
                 onLoading: () => {
                     comboBox.setLabel("Searching...");
                 },
-                onLoaded: (contentSummaries:api.content.ContentSummary[]) => {
+                onLoaded: (contentSummaries: api.content.ContentSummary[]) => {
                     var options = this.createOptions(contentSummaries);
                     comboBox.setOptions(options);
                 }
@@ -157,9 +162,9 @@ module app.contextwindow.image {
             return comboBox;
         }
 
-        private createOptions(contents:api.content.ContentSummary[]):api.ui.combobox.Option<api.content.ContentSummary>[] {
+        private createOptions(contents: api.content.ContentSummary[]): api.ui.combobox.Option<api.content.ContentSummary>[] {
             var options = [];
-            contents.forEach((content:api.content.ContentSummary) => {
+            contents.forEach((content: api.content.ContentSummary) => {
                 options.push({
                     value: content.getId(),
                     displayValue: content
@@ -168,7 +173,8 @@ module app.contextwindow.image {
             return options;
         }
 
-        private optionFormatter(row:number, cell:number, content:api.content.ContentSummary, columnDef:any, dataContext:api.ui.combobox.Option<api.content.ContentSummary>):string {
+        private optionFormatter(row: number, cell: number, content: api.content.ContentSummary, columnDef: any,
+                                dataContext: api.ui.combobox.Option<api.content.ContentSummary>): string {
             var img = new api.dom.ImgEl();
             img.setClass("icon");
             img.getEl().setSrc(content.getIconUrl());
@@ -192,9 +198,9 @@ module app.contextwindow.image {
             return img.toString() + contentSummary.toString();
         }
 
-        private setSelectedContent(content:api.content.ContentSummary, removeCurrent:boolean = true) {
+        private setSelectedContent(content: api.content.ContentSummary, removeCurrent: boolean = true) {
             api.util.assertNotNull(content, "Cannot set content null");
-            var option:api.ui.combobox.Option<api.content.ContentSummary> = {
+            var option: api.ui.combobox.Option<api.content.ContentSummary> = {
                 value: content.getId(),
                 displayValue: content
             };
@@ -206,7 +212,7 @@ module app.contextwindow.image {
             this.comboBox.selectOption(this.selectedOption, true);
         }
 
-        setImage(image:api.content.page.image.ImageComponent) {
+        setImage(image: api.content.page.image.ImageComponent) {
             this.image = image;
             this.refreshUI();
         }
@@ -214,7 +220,7 @@ module app.contextwindow.image {
         private refreshUI() {
             new api.content.GetContentByIdRequest(this.image.getImage())
                 .send()
-                .done((jsonResponse:api.rest.JsonResponse<api.content.json.ContentSummaryJson>) => {
+                .done((jsonResponse: api.rest.JsonResponse<api.content.json.ContentSummaryJson>) => {
                     this.setSelectedContent(new api.content.ContentSummary(jsonResponse.getResult()))
                 });
         }
