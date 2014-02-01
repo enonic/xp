@@ -30,6 +30,8 @@ module app.wizard {
 
         private siteTemplate: api.content.site.template.SiteTemplate;
 
+        private previewAction: api.ui.Action;
+
         constructor(params: ContentWizardPanelParams, callback: (wizard: ContentWizardPanel) => void) {
 
             console.log("ContentWizardPanel.constructor started");
@@ -57,7 +59,7 @@ module app.wizard {
             });
 
             var actions = new app.wizard.action.ContentWizardActions(this);
-            actions.getPreviewAction().setEnabled(false);
+            this.previewAction = actions.getPreviewAction();
 
             var mainToolbar = new ContentWizardToolbar({
                 saveAction: actions.getSaveAction(),
@@ -78,7 +80,6 @@ module app.wizard {
             this.siteTemplate = params.siteTemplate;
             if (this.createSite || params.persistedContent != null && params.persistedContent.isSite()) {
                 this.siteWizardStepForm = new app.wizard.site.SiteWizardStepForm();
-
             }
             else {
                 this.siteWizardStepForm = null;
@@ -200,6 +201,8 @@ module app.wizard {
             console.log("ContentWizardPanel.layoutPersistedItem");
 
             var deferred = Q.defer<void>();
+
+            this.previewAction.setEnabled(persistedContent.isPage());
 
             this.formIcon.setSrc(persistedContent.getIconUrl());
             var contentData: api.content.ContentData = persistedContent.getContentData();
@@ -472,9 +475,9 @@ module app.wizard {
             var updatePageRequest = new api.content.page.UpdatePageRequest(content.getContentId()).
                 setPageTemplateKey(this.pageWizardStepForm.getPageTemplate().getKey()).
                 setConfig(this.pageWizardStepForm.getConfig());
-                if (this.livePanel) {
-                    updatePageRequest.setRegions(this.livePanel.getRegions());
-                }
+            if (this.livePanel) {
+                updatePageRequest.setRegions(this.livePanel.getRegions());
+            }
 
             return updatePageRequest;
         }
