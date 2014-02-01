@@ -10,11 +10,10 @@ module app.wizard {
         private frame: api.dom.IFrameEl;
         private baseUrl: string;
         private url: string;
-        private siteTemplate: api.content.site.template.SiteTemplate;
         private contextWindow: app.contextwindow.ContextWindow;
         private contentSaveAction: api.ui.Action;
 
-        constructor(config:LiveFormPanelConfig) {
+        constructor(config: LiveFormPanelConfig) {
             super("live-form-panel");
             this.baseUrl = api.util.getUri("portal/edit/");
             this.contentSaveAction = config.contentSaveAction;
@@ -24,7 +23,7 @@ module app.wizard {
             this.appendChild(this.frame);
         }
 
-        private doLoad(liveEditUrl: string): Q.Promise<void> {
+        private doLoadLiveEditWindow(liveEditUrl: string): Q.Promise<void> {
 
             console.log("LiveFormPanel.doLoad() ... url: " + liveEditUrl);
 
@@ -42,13 +41,12 @@ module app.wizard {
                     var contextWindowElement = this.frame.getHTMLElement()["contentWindow"];
                     if (contextWindowElement && contextWindowElement.$liveEdit) {
 
-                        this.appendChild(this.contextWindow);
-                        contextWindowAdded = true;
-                        //contextWindow.init();
+                        contextWindowElement.CONFIG = {};
+                        contextWindowElement.CONFIG.baseUri = CONFIG.baseUri
+
+                        var contextWindowAdded = true;
                         clearInterval(intervalId);
-
                         console.log("LiveFormPanel.doLoad() ... Live edit loaded");
-
                         deferred.resolve(null);
                     }
                 }
@@ -69,14 +67,6 @@ module app.wizard {
         }
 
         renderExisting(content: api.content.Content, pageTemplate: api.content.page.PageTemplate, siteTemplate: api.content.site.template.SiteTemplate) {
-            this.siteTemplate = siteTemplate;
-            if (!this.contextWindow) {
-                this.contextWindow = new app.contextwindow.ContextWindow({
-                    liveEditEl: this.frame,
-                    contentSaveAction: this.contentSaveAction,
-                    siteTemplate: this.siteTemplate
-                });
-            }
 
 
             console.log("LiveFormPanel.renderExisting() ...");
@@ -85,8 +75,23 @@ module app.wizard {
 
                 var liveEditUrl = this.baseUrl + content.getContentId().toString();
 
-                this.doLoad(liveEditUrl).
+                this.doLoadLiveEditWindow(liveEditUrl).
                     then(() => {
+
+                        if( this.contextWindow ) {
+                            // Have to remove previous ContextWindow to avoid two
+                            // TODO: ContextWindow should be resued with new values instead
+                            this.contextWindow.remove();
+                        }
+
+                        this.contextWindow = new app.contextwindow.ContextWindow({
+                            liveEditIFrame: this.frame,
+                            contentSaveAction: this.contentSaveAction,
+                            siteTemplate: siteTemplate
+                        });
+
+                        this.appendChild(this.contextWindow);
+
                         console.log("LiveFormPanel.renderExisting() calling contextWindow.setPage ");
                         this.contextWindow.setPage(content, pageTemplate);
                     }).fail(()=> {
@@ -97,63 +102,11 @@ module app.wizard {
 
         public getRegions(): api.content.page.PageRegions {
 
-            return this.contextWindow ? this.contextWindow.getPageRegions() : null;
+            if (this.contextWindow == null) {
+                return null;
+            }
 
-//            var pageRegions = new api.content.page.PageRegionsBuilder();
-//
-//            // Header region
-//            var headerRegion = new api.content.page.region.RegionBuilder();
-//            headerRegion.setName("header");
-//            var partInHeader = new api.content.page.part.PartComponentBuilder().
-//                setName(new api.content.page.ComponentName("PartInHeader")).
-//                setTemplate(api.content.page.part.PartTemplateKey.fromString("Blueman-1.0.0|demo-1.0.0|my-part")).
-//                build();
-//            headerRegion.addComponent(partInHeader);
-//            pageRegions.addRegion(headerRegion.build());
-//
-//            // Main region
-//            var mainRegion = new api.content.page.region.RegionBuilder();
-//            mainRegion.setName("main");
-//            var fancyImage = new api.content.page.image.ImageComponentBuilder().
-//                setImage(new api.content.ContentId("123")).
-//                setName(new api.content.page.ComponentName("FancyImage")).
-//                setTemplate(api.content.page.image.ImageTemplateKey.fromString("Blueman-1.0.0|demo-1.0.0|fancy-image")).
-//                build();
-//            mainRegion.addComponent(fancyImage);
-//            pageRegions.addRegion(mainRegion.build());
-//
-//            // Footer region
-//            var footerRegion = new api.content.page.region.RegionBuilder();
-//            footerRegion.setName("footer");
-//
-//            var twoColumnsLeftRegion = new api.content.page.region.RegionBuilder().
-//                setName("twoColumnsLeftRegion").
-//                addComponent(new api.content.page.part.PartComponentBuilder().
-//                    setName(new api.content.page.ComponentName("PartInTwoColumnLeft")).
-//                    setTemplate(api.content.page.part.PartTemplateKey.fromString("Blueman-1.0.0|demo-1.0.0|my-part")).
-//                    build()).
-//                build();
-//            var twoColumnsRightRegion = new api.content.page.region.RegionBuilder().
-//                setName("twoColumnsRightRegion").
-//                addComponent(new api.content.page.part.PartComponentBuilder().
-//                    setName(new api.content.page.ComponentName("PartInTwoColumnRight")).
-//                    setTemplate(api.content.page.part.PartTemplateKey.fromString("Blueman-1.0.0|demo-1.0.0|my-part")).
-//                    build()).
-//                build();
-//            var twoColumnsRegions = new api.content.page.layout.LayoutRegionsBuilder().
-//                addRegion(twoColumnsLeftRegion).
-//                addRegion(twoColumnsRightRegion).
-//                build();
-//            var twoColumns = new api.content.page.layout.LayoutComponentBuilder().
-//                setRegions(twoColumnsRegions).
-//                setName(new api.content.page.ComponentName("FooterTwoColumns")).
-//                setTemplate(api.content.page.layout.LayoutTemplateKey.fromString("Blueman-1.0.0|demo-1.0.0|two-columns")).
-//                build();
-//            footerRegion.addComponent(twoColumns);
-//
-//            pageRegions.addRegion(footerRegion.build());
-//
-//            return pageRegions.build();
+            return this.contextWindow.getPageRegions();
         }
     }
 }
