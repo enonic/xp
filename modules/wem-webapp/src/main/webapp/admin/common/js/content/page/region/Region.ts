@@ -60,6 +60,8 @@ module api.content.page.region {
                 return -1;
             }
 
+            this.componentByName[component.getName().toString()] = component;
+
             if (targetIndex == -1) {
                 this.pageComponents.push(component);
                 return 0;
