@@ -72,6 +72,11 @@ public final class ComponentPath
         this.refString = toString( this );
     }
 
+    public ComponentName getComponentName()
+    {
+        return getLastLevel().getComponentName();
+    }
+
     public int numberOfLevels()
     {
         return this.regionAndComponentList.size();
@@ -80,6 +85,11 @@ public final class ComponentPath
     public RegionAndComponent getFirstLevel()
     {
         return this.regionAndComponentList.get( 0 );
+    }
+
+    public RegionAndComponent getLastLevel()
+    {
+        return this.regionAndComponentList.get( regionAndComponentList.size() - 1 );
     }
 
     public ComponentPath removeFirstLevel()
