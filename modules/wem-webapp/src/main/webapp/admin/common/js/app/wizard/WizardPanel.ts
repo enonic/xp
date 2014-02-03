@@ -44,10 +44,6 @@ module api.app.wizard {
 
         private renderingNew: boolean;
 
-        private previous: WizardStepNavigationArrow;
-
-        private next: WizardStepNavigationArrow;
-
         private listeners: WizardPanelListener[] = [];
 
         private backPanel: api.ui.DeckPanel;
@@ -99,11 +95,6 @@ module api.app.wizard {
 
             this.stepPanels = new WizardStepDeckPanel(this.stepNavigator);
             this.formPanel.appendChild(this.stepPanels);
-
-            this.previous = new WizardStepNavigationArrow(WizardStepNavigationArrow.PREVIOUS, this.stepNavigator);
-            this.next = new WizardStepNavigationArrow(WizardStepNavigationArrow.NEXT, this.stepNavigator);
-            this.formPanel.appendChild(this.previous);
-            this.formPanel.appendChild(this.next);
 
             if (params.livePanel) {
                 this.backPanel.addPanel(params.livePanel);
