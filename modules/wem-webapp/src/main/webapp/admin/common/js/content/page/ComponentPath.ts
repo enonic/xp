@@ -15,7 +15,7 @@ module api.content.page {
             this.refString = "";
             this.regionAndComponentList.forEach((regionAndComponent: ComponentPathRegionAndComponent, index: number) => {
                 this.refString += regionAndComponent.toString();
-                if (index < this.regionAndComponentList.length - 2) {
+                if (index < this.regionAndComponentList.length - 1) {
                     this.refString += ComponentPath.DIVIDER;
                 }
             });
@@ -42,7 +42,7 @@ module api.content.page {
                 return null;
             }
 
-            var newRegionAndComponentList: ComponentPathRegionAndComponent[];
+            var newRegionAndComponentList: ComponentPathRegionAndComponent[] = [];
             for (var i = 1; i < this.regionAndComponentList.length; i++) {
                 newRegionAndComponentList.push(this.regionAndComponentList[i]);
             }
