@@ -8,8 +8,11 @@ module api.content.page.region {
 
         private componentByName: {[s:string] : api.content.page.PageComponent;} = {};
 
+        private path: api.content.page.RegionPath;
+
         constructor(builder: RegionBuilder) {
             this.name = builder.name;
+            this.path = builder.path;
             this.pageComponents = builder.pageComponents;
 
             this.pageComponents.forEach((c: api.content.page.PageComponent)=> {
@@ -33,6 +36,14 @@ module api.content.page.region {
 
         getName(): string {
             return this.name;
+        }
+
+        setPath(value: api.content.page.RegionPath) {
+            this.path = value;
+        }
+
+        getPath(): api.content.page.RegionPath {
+            return this.path;
         }
 
         countNumberOfDuplicates(name: api.content.page.ComponentName): number {
@@ -60,6 +71,9 @@ module api.content.page.region {
                 return -1;
             }
 
+            var componentPath = ComponentPath.fromRegionPathAndComponentName(this.path, component.getName());
+            component.setPath(componentPath);
+
             this.componentByName[component.getName().toString()] = component;
 
             if (targetIndex == -1) {
@@ -73,13 +87,18 @@ module api.content.page.region {
             }
         }
 
-        addComponentFirst(component: api.content.page.PageComponent) {
+        addComponentFirst(component: api.content.page.PageComponent): ComponentPath {
 
             api.util.assert(!this.hasComponentWithName(component.getName()),
                 "Component already added to region [" + this.name + "]: " + component.getName().toString());
 
+            var componentPath = ComponentPath.fromRegionPathAndComponentName(this.path, component.getName());
+            component.setPath(componentPath);
+
             this.componentByName[component.getName().toString()] = component;
             this.pageComponents.splice(0, 0, component);
+
+            return componentPath;
         }
 
         getComponentIndex(componentName: ComponentName): number {
@@ -157,8 +176,15 @@ module api.content.page.region {
 
         pageComponents: api.content.page.PageComponent[] = [];
 
+        path: api.content.page.RegionPath;
+
         public setName(value: string): RegionBuilder {
             this.name = value;
+            return this;
+        }
+
+        public setPath(value: api.content.page.RegionPath): RegionBuilder {
+            this.path = value;
             return this;
         }
 

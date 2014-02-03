@@ -4,6 +4,8 @@ module api.content.page {
 
         private name: ComponentName;
 
+        private region: RegionPath;
+
         private path: ComponentPath;
 
         private template: TemplateKey;
@@ -15,11 +17,17 @@ module api.content.page {
                 this.name = builder.name;
                 this.template = builder.template;
                 this.config = builder.config;
+                this.region = builder.region;
+                this.path = ComponentPath.fromRegionPathAndComponentName(this.region, this.name);
             }
         }
 
-        setComponentPath(path: ComponentPath) {
+        setPath(path: ComponentPath) {
             this.path = path;
+        }
+
+        getPath(): ComponentPath {
+            return this.path;
         }
 
         getName(): api.content.page.ComponentName {
@@ -64,6 +72,8 @@ module api.content.page {
 
         config: api.data.RootDataSet;
 
+        region: RegionPath;
+
         public setName(value: api.content.page.ComponentName): PageComponentBuilder<COMPONENT> {
             this.name = value;
             return this;
@@ -76,6 +86,11 @@ module api.content.page {
 
         public setConfig(value: api.data.RootDataSet): PageComponentBuilder<COMPONENT> {
             this.config = value;
+            return this;
+        }
+
+        public setRegion(value: api.content.page.RegionPath): PageComponentBuilder<COMPONENT> {
+            this.region = value;
             return this;
         }
 

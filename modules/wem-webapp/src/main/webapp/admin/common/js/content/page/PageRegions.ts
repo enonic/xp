@@ -15,11 +15,14 @@ module api.content.page {
 
             regionsJson.forEach((regionJson: region.json.RegionJson) => {
 
+                var regionPath = new RegionPath(null, regionJson.name);
+
                 var regionBuilder = new region.RegionBuilder().
-                    setName(regionJson.name);
+                    setName(regionJson.name).
+                    setPath(regionPath);
 
                 regionJson.components.forEach((componentJson: api.content.page.json.PageComponentTypeWrapperJson) => {
-                    var pageComponent = PageComponentFactory.createFromJson(componentJson);
+                    var pageComponent = PageComponentFactory.createFromJson(componentJson, regionPath);
                     regionBuilder.addComponent(pageComponent);
                 });
 

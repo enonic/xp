@@ -31,13 +31,18 @@ module api.content.page.layout {
 
         regions: LayoutRegions;
 
-        public fromJson(json: json.LayoutComponentJson): LayoutComponentBuilder {
+        public fromJson(json: json.LayoutComponentJson, regionPath: RegionPath): LayoutComponentBuilder {
             if (json.template) {
                 this.setTemplate(TemplateKey.fromString(json.template));
             }
-            this.setName(new api.content.page.ComponentName(json.name));
+            var componentName = new api.content.page.ComponentName(json.name);
+            this.setName(componentName);
             this.setConfig(api.data.DataFactory.createRootDataSet(json.config));
-            this.setRegions(json.regions != null ? new LayoutRegionsBuilder().fromJson(json.regions).build() : null);
+            this.setRegion(regionPath);
+
+            var componentPath = ComponentPath.fromRegionPathAndComponentName(regionPath, componentName);
+
+            this.setRegions(json.regions != null ? new LayoutRegionsBuilder().fromJson(json.regions, componentPath).build() : null);
             return this;
         }
 

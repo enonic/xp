@@ -21,11 +21,11 @@ module api.content.page.image {
 
         toJson(): api.content.page.json.PageComponentTypeWrapperJson {
 
-            var json:json.ImageComponentJson = <json.ImageComponentJson>super.toPageComponentJson();
+            var json: json.ImageComponentJson = <json.ImageComponentJson>super.toPageComponentJson();
             json.image = this.image != null ? this.image.toString() : null;
 
             return <api.content.page.json.PageComponentTypeWrapperJson> {
-                ImageComponent:  json
+                ImageComponent: json
             };
         }
     }
@@ -34,7 +34,7 @@ module api.content.page.image {
 
         image: api.content.ContentId;
 
-        public fromJson(json: json.ImageComponentJson): ImageComponentBuilder {
+        public fromJson(json: json.ImageComponentJson, regionPath: RegionPath): ImageComponentBuilder {
 
             if (json.image) {
                 this.setImage(new api.content.ContentId(json.image));
@@ -42,11 +42,12 @@ module api.content.page.image {
 
             this.setName(new api.content.page.ComponentName(json.name));
 
-            if( json.template ) {
+            if (json.template) {
                 this.setTemplate(api.content.page.TemplateKey.fromString(json.template));
             }
 
             this.setConfig(api.data.DataFactory.createRootDataSet(json.config));
+            this.setRegion(regionPath);
 
             return this;
         }

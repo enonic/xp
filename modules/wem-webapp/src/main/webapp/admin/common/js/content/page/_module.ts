@@ -15,6 +15,7 @@
 ///<reference path='ComponentPath.ts' />
 ///<reference path='PageComponent.ts' />
 ///<reference path='PageComponentFactory.ts' />
+///<reference path='RegionPath.ts' />
 ///<reference path='AbstractRegions.ts' />
 ///<reference path='PageRegions.ts' />
 

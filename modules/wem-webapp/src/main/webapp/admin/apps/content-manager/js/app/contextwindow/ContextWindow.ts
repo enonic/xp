@@ -145,25 +145,37 @@ module app.contextwindow {
             this.liveEditJQuery(this.liveEditWindow).on('componentAdded.liveEdit',
                 (event, component?, regionName?, componentPathToAddAfterAsString?: string) => {
                     //TODO: Make all components work and not only image
-                    var componentName = this.pageRegions.ensureUniqueComponentName(new api.content.page.ComponentName("Image"));
-                    var componentPath = ComponentPath.fromString(regionName + "/" + componentName.toString());
-                    component.getEl().setData("live-edit-component", componentPath.toString());
-                    component.getEl().setData("live-edit-name", componentName.toString());
 
-                    var imageComponent = new ImageComponentBuilder();
-                    imageComponent.setName(componentName);
+                    var componentName = this.pageRegions.ensureUniqueComponentName(new api.content.page.ComponentName("Image"));
 
                     var componentToAddAfter: api.content.page.ComponentPath = null;
                     if (componentPathToAddAfterAsString) {
                         componentToAddAfter = api.content.page.ComponentPath.fromString(componentPathToAddAfterAsString);
                     }
 
+                    var regionPath: api.content.page.RegionPath;
+                    if (componentToAddAfter != null) {
+                        regionPath = componentToAddAfter.getRegionPath();
+                    }
+                    else {
+                        regionPath = api.content.page.RegionPath.fromString(regionName);
+                    }
+
+                    var imageComponent = new ImageComponentBuilder();
+                    imageComponent.setName(componentName);
+                    imageComponent.setRegion(regionPath);
+
+                    var componentPath;
                     if (componentToAddAfter) {
-                        this.pageRegions.addComponentAfter(imageComponent.build(), componentToAddAfter);
+                        componentPath = this.pageRegions.addComponentAfter(imageComponent.build(), componentToAddAfter);
                     }
                     else {
                         this.pageRegions.addComponentFirst(imageComponent.build(), regionName);
+                        componentPath = ComponentPath.fromString(regionName + "/" + componentName.toString());
                     }
+
+                    component.getEl().setData("live-edit-component", componentPath.toString());
+                    component.getEl().setData("live-edit-name", componentName.toString());
                 });
 
             this.liveEditJQuery(this.liveEditWindow).on('imageComponentSetImage.liveEdit',
@@ -179,7 +191,7 @@ module app.contextwindow {
                         this.contentSaveAction.execute();
                     }
                     else {
-                        console.log( "ImageComponent to set image on not found: " + componentPath );
+                        console.log("ImageComponent to set image on not found: " + componentPath);
                     }
                 });
         }

@@ -18,21 +18,28 @@ module api.content.page {
         /*
          *  Add component after target component. Returns true if component was added. Component will not be added if target component was not found.
          */
-        addComponentAfter(component: PageComponent, target: ComponentPath): boolean {
+        addComponentAfter(component: PageComponent, target: ComponentPath): ComponentPath {
 
             var region = this.getRegionForComponent(target);
             if (region == null) {
-                return false;
+                return null;
             }
 
             var index = region.addComponentAfter(component, target.getLastLevel().getComponentName());
-            return index > -1;
+            if (index == -1) {
+                return null;
+            }
+            return component.getPath();
         }
 
-        addComponentFirst(component: PageComponent, regionName: string) {
+        addComponentFirst(component: PageComponent, regionName: string): ComponentPath {
 
             var region = this.getRegion(regionName);
-            region.addComponentFirst(component);
+            if (region == null) {
+                return null;
+            }
+
+            return region.addComponentFirst(component);
         }
 
         hasComponent(name: ComponentName): boolean {
@@ -86,6 +93,9 @@ module api.content.page {
             if (component == null) {
                 return null;
             }
+            api.util.assert(component instanceof image.ImageComponent,
+                "PageComponent [" + component.getPath().toString() + "] not an ImageComponent: " + api.util.getClassName(component));
+
             return <image.ImageComponent>component;
         }
 

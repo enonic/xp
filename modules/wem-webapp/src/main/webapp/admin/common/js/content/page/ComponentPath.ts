@@ -37,6 +37,25 @@ module api.content.page {
             return this.getLastLevel().getComponentName();
         }
 
+        getRegionPath(): RegionPath {
+
+            var regionPathAsString = "";
+            this.regionAndComponentList.forEach((regionAndComponent: ComponentPathRegionAndComponent, index: number) => {
+
+                if (index == this.regionAndComponentList.length - 1) {
+                    regionPathAsString += regionAndComponent.getRegionName();
+                }
+                else {
+                    regionPathAsString += regionAndComponent.toString();
+                    regionPathAsString += "/";
+                }
+
+
+            });
+
+            return RegionPath.fromString(regionPathAsString);
+        }
+
         public removeFirstLevel(): ComponentPath {
             if (this.numberOfLevels() <= 1) {
                 return null;
@@ -67,6 +86,12 @@ module api.content.page {
             }
 
             return new ComponentPath(regionAndComponentList);
+        }
+
+        public static fromRegionPathAndComponentName(regionPath: RegionPath, componentName: ComponentName): ComponentPath {
+
+            var componentPathAsString = regionPath.toString() + "/" + componentName.toString();
+            return ComponentPath.fromString(componentPathAsString);
         }
     }
 
