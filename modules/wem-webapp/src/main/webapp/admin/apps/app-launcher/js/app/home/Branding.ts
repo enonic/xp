@@ -2,10 +2,10 @@ module app.home {
 
     export class Branding extends api.dom.DivEl {
 
-        private installation:InstallationInfo;
-        private version:VersionInfo;
+        private installation: InstallationInfo;
+        private version: VersionInfo;
 
-        constructor(installation?:string, version?:string) {
+        constructor(installation?: string, version?: string) {
             super('branding');
 
             installation = installation || '';
@@ -16,25 +16,27 @@ module app.home {
             this.appendChild(this.installation);
             this.appendChild(this.version);
 
-            api.remote.util.RemoteSystemService.system_getSystemInfo({}, (result: api.remote.util.SystemGetSystemInfoResult) => {
-                this.setInstallation(result.installationName);
+            new api.system.StatusRequest().send().done((response: api.rest.JsonResponse<api.system.StatusJson>) => {
+                var result = response.getResult();
+
+                this.setInstallation(result.installation);
                 this.setVersion(result.version);
             });
         }
 
-        getInstallation():string {
+        getInstallation(): string {
             return this.installation.getInstallation();
         }
 
-        setInstallation(installationText:string):void {
+        setInstallation(installationText: string): void {
             return this.installation.setInstallation(installationText);
         }
 
-        getVersion():string {
+        getVersion(): string {
             return this.version.getVersion();
         }
 
-        setVersion(versionText:string):void {
+        setVersion(versionText: string): void {
             return this.version.setVersion(versionText);
         }
     }

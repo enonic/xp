@@ -2,6 +2,7 @@ package com.enonic.wem.admin.rest.resource.status;
 
 import org.junit.Test;
 
+import com.enonic.wem.Version;
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 
 public class StatusResourceTest
@@ -17,6 +18,7 @@ public class StatusResourceTest
     public void testGetStatus()
         throws Exception
     {
+        Version.get().setVersion( "5.0.0" );
         final String json = resource().path( "/status" ).get( String.class );
         assertJson( "status_ok.json", json );
     }

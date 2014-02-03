@@ -5,6 +5,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.enonic.wem.Version;
+
 @Path("status")
 public final class StatusResource
 {
@@ -12,6 +14,9 @@ public final class StatusResource
     @Produces(MediaType.APPLICATION_JSON)
     public StatusResult getStatus()
     {
-        return new StatusResult();
+        final StatusResult result = new StatusResult();
+        result.setVersion( Version.get().getVersion() );
+        result.setInstallation( "production" );
+        return result;
     }
 }
