@@ -1,13 +1,7 @@
 package com.enonic.wem.api.command.module;
 
-
 public final class ModuleCommands
 {
-    public CreateModule create()
-    {
-        return new CreateModule();
-    }
-
     public UpdateModule update()
     {
         return new UpdateModule();

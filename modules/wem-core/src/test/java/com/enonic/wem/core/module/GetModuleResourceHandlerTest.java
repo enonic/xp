@@ -10,11 +10,11 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.module.CreateModule;
 import com.enonic.wem.api.command.module.GetModuleResource;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.module.CreateModuleSpec;
 import com.enonic.wem.api.module.ModuleFileEntry;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
@@ -136,7 +136,7 @@ public class GetModuleResourceHandlerTest
         final ModuleFileEntry moduleDirectoryEntry = ModuleFileEntry.newModuleDirectory( "" ).
             addEntry( directoryBuilder.addEntry( subDirectory ) ).
             build();
-        final CreateModule command = Commands.module().create().
+        final CreateModuleSpec spec = new CreateModuleSpec().
             name( "modulename" ).
             version( ModuleVersion.from( 1, 0, 0 ) ).
             displayName( "module display name" ).
@@ -151,11 +151,10 @@ public class GetModuleResourceHandlerTest
             moduleDirectoryEntry( moduleDirectoryEntry ).
             config( config );
 
-        final CreateModuleHandler createModuleHandler = new CreateModuleHandler();
-        createModuleHandler.setContext( this.context );
-        createModuleHandler.setSystemConfig( systemConfig );
-        createModuleHandler.setModuleExporter( new ModuleExporter() );
-        createModuleHandler.setCommand( command );
-        createModuleHandler.handle();
+        final CreateModuleCommand createModuleHandler = new CreateModuleCommand();
+        createModuleHandler.systemConfig( systemConfig );
+        createModuleHandler.moduleExporter( new ModuleExporter() );
+        createModuleHandler.spec( spec );
+        createModuleHandler.execute();
     }
 }

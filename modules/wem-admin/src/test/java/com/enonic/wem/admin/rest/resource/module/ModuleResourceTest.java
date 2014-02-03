@@ -21,10 +21,10 @@ import com.sun.jersey.multipart.FormDataMultiPart;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.module.CreateModule;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.module.CreateModuleSpec;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleFileEntry;
 import com.enonic.wem.api.module.ModuleKey;
@@ -93,7 +93,7 @@ public class ModuleResourceTest
         throws Exception
     {
         final Module module = createModule();
-        Mockito.when( client.execute( Mockito.isA( CreateModule.class ) ) ).thenReturn( module );
+        Mockito.when( this.moduleService.createModule( Mockito.isA( CreateModuleSpec.class ) ) ).thenReturn( module );
 
         final ModuleExporter moduleExporter = new ModuleExporter();
         final Path exportedModuleFile = moduleExporter.exportToZip( module, tempDir );

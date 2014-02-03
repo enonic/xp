@@ -24,7 +24,7 @@ import com.enonic.wem.admin.json.module.ModuleSummaryJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.module.json.ListModuleJson;
 import com.enonic.wem.admin.rest.resource.module.json.ModuleDeleteParams;
-import com.enonic.wem.api.command.module.CreateModule;
+import com.enonic.wem.api.module.CreateModuleSpec;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleNotFoundException;
@@ -79,8 +79,8 @@ public class ModuleResource
 
             importedModule = moduleExporter.importFromZip( tempZipFile ).build();
 
-            final CreateModule createModuleCommand = CreateModule.fromModule( importedModule );
-            final Module createdModule = client.execute( createModuleCommand );
+            final CreateModuleSpec createModuleSpec = CreateModuleSpec.fromModule( importedModule );
+            final Module createdModule = this.moduleService.createModule( createModuleSpec );
 
             return new ModuleSummaryJson( createdModule );
         }

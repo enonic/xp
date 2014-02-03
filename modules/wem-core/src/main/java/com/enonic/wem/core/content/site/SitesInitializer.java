@@ -6,7 +6,6 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.page.part.CreatePartDescriptor;
-import com.enonic.wem.api.command.module.CreateModule;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
@@ -35,6 +34,7 @@ import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.module.CreateModuleSpec;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
@@ -134,7 +134,7 @@ public class SitesInitializer
 
     private void initializeModules()
     {
-        final CreateModule createModule = Commands.module().create().
+        final CreateModuleSpec spec = new CreateModuleSpec().
             name( DEMO_MODULE_KEY.getName().toString() ).
             version( DEMO_MODULE_KEY.getVersion() ).
             displayName( "Test module" ).
@@ -157,7 +157,7 @@ public class SitesInitializer
             // IGNORE IF NOT FOUND
         }
 
-        this.testModule = client.execute( createModule );
+        this.testModule = this.moduleService.createModule( spec );
     }
 
     private void initializeDescriptors()

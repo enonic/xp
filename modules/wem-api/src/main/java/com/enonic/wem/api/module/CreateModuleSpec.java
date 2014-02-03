@@ -1,19 +1,12 @@
-package com.enonic.wem.api.command.module;
+package com.enonic.wem.api.module;
 
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleFileEntry;
-import com.enonic.wem.api.module.ModuleKeys;
-import com.enonic.wem.api.module.ModuleName;
-import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
-public final class CreateModule
-    extends Command<Module>
+public final class CreateModuleSpec
 {
     private ModuleName name;
 
@@ -41,9 +34,9 @@ public final class CreateModule
 
     private ContentTypeNames contentTypeDependencies;
 
-    public static CreateModule fromModule( Module module )
+    public static CreateModuleSpec fromModule( Module module )
     {
-        CreateModule createModule = new CreateModule();
+        CreateModuleSpec createModule = new CreateModuleSpec();
         createModule.displayName( module.getDisplayName() );
         createModule.name = module.getName();
         createModule.version = module.getVersion();
@@ -61,85 +54,85 @@ public final class CreateModule
         return createModule;
     }
 
-    public CreateModule name( final ModuleName name )
+    public CreateModuleSpec name( final ModuleName name )
     {
         this.name = name;
         return this;
     }
 
-    public CreateModule name( final String name )
+    public CreateModuleSpec name( final String name )
     {
         this.name = ModuleName.from( name );
         return this;
     }
 
-    public CreateModule version( final ModuleVersion version )
+    public CreateModuleSpec version( final ModuleVersion version )
     {
         this.version = version;
         return this;
     }
 
-    public CreateModule displayName( final String displayName )
+    public CreateModuleSpec displayName( final String displayName )
     {
         this.displayName = displayName;
         return this;
     }
 
-    public CreateModule info( final String info )
+    public CreateModuleSpec info( final String info )
     {
         this.info = info;
         return this;
     }
 
-    public CreateModule url( final String url )
+    public CreateModuleSpec url( final String url )
     {
         this.url = url;
         return this;
     }
 
-    public CreateModule vendorName( final String vendorName )
+    public CreateModuleSpec vendorName( final String vendorName )
     {
         this.vendorName = vendorName;
         return this;
     }
 
-    public CreateModule vendorUrl( final String vendorUrl )
+    public CreateModuleSpec vendorUrl( final String vendorUrl )
     {
         this.vendorUrl = vendorUrl;
         return this;
     }
 
-    public CreateModule config( final Form config )
+    public CreateModuleSpec config( final Form config )
     {
         this.config = config;
         return this;
     }
 
-    public CreateModule moduleDirectoryEntry( final ModuleFileEntry fileEntryRoot )
+    public CreateModuleSpec moduleDirectoryEntry( final ModuleFileEntry fileEntryRoot )
     {
         this.moduleDirectoryEntry = fileEntryRoot;
         return this;
     }
 
-    public CreateModule minSystemVersion( final ModuleVersion version )
+    public CreateModuleSpec minSystemVersion( final ModuleVersion version )
     {
         this.minSystemVersion = version;
         return this;
     }
 
-    public CreateModule maxSystemVersion( final ModuleVersion version )
+    public CreateModuleSpec maxSystemVersion( final ModuleVersion version )
     {
         this.maxSystemVersion = version;
         return this;
     }
 
-    public CreateModule moduleDependencies( final ModuleKeys moduleDependencies )
+    public CreateModuleSpec moduleDependencies( final ModuleKeys moduleDependencies )
     {
         this.moduleDependencies = moduleDependencies;
         return this;
     }
 
-    public CreateModule contentTypeDependencies( final ContentTypeNames contentTypeDependencies )
+    public CreateModuleSpec contentTypeDependencies( final ContentTypeNames contentTypeDependencies )
     {
         this.contentTypeDependencies = contentTypeDependencies;
         return this;
@@ -210,7 +203,6 @@ public final class CreateModule
         return contentTypeDependencies;
     }
 
-    @Override
     public void validate()
     {
         Preconditions.checkNotNull( this.name, "name cannot be null" );

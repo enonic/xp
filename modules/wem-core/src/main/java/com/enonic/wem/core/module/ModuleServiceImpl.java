@@ -2,6 +2,7 @@ package com.enonic.wem.core.module;
 
 import javax.inject.Inject;
 
+import com.enonic.wem.api.module.CreateModuleSpec;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
@@ -49,5 +50,11 @@ public final class ModuleServiceImpl
     public Modules getAllModules()
     {
         return new GetAllModulesCommand().moduleExporter( this.moduleExporter ).systemConfig( this.systemConfig ).execute();
+    }
+
+    @Override
+    public Module createModule( final CreateModuleSpec spec )
+    {
+        return new CreateModuleCommand().spec( spec ).moduleExporter( this.moduleExporter ).systemConfig( this.systemConfig ).execute();
     }
 }

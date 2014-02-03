@@ -16,7 +16,6 @@ public final class ModuleModule
         bind( ModuleService.class ).to( ModuleServiceImpl.class ).in( Singleton.class );
 
         final CommandBinder commands = CommandBinder.from( binder() );
-        commands.add( CreateModuleHandler.class );
         commands.add( GetModuleResourceHandler.class );
         commands.add( CreateModuleResourceHandler.class );
         commands.add( UpdateModuleHandler.class );

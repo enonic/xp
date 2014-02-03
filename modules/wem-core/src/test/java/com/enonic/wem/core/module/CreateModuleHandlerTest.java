@@ -10,11 +10,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.module.CreateModule;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.module.CreateModuleSpec;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleFileEntry;
 import com.enonic.wem.api.module.ModuleKeys;
@@ -31,9 +30,9 @@ import static org.mockito.Mockito.when;
 public class CreateModuleHandlerTest
     extends AbstractCommandHandlerTest
 {
-    private CreateModuleHandler handler;
-
     private SystemConfig systemConfig;
+
+    private ModuleServiceImpl moduleService;
 
     @Before
     public void setUp()
@@ -43,10 +42,10 @@ public class CreateModuleHandlerTest
 
         systemConfig = Mockito.mock( SystemConfig.class );
         when( systemConfig.getModulesDir() ).thenReturn( java.nio.file.Files.createTempDirectory( "module" ) );
-        handler = new CreateModuleHandler();
-        handler.setContext( this.context );
-        handler.setSystemConfig( systemConfig );
-        handler.setModuleExporter( new ModuleExporter() );
+
+        this.moduleService = new ModuleServiceImpl();
+        this.moduleService.systemConfig = this.systemConfig;
+        this.moduleService.moduleExporter = new ModuleExporter();
     }
 
     @After
@@ -71,7 +70,7 @@ public class CreateModuleHandlerTest
             addFormItem( Input.newInput().name( "some-name" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
 
-        final CreateModule command = Commands.module().create().
+        final CreateModuleSpec spec = new CreateModuleSpec().
             name( "modulename" ).
             version( ModuleVersion.from( 1, 0, 0 ) ).
             displayName( "module display name" ).
@@ -86,12 +85,10 @@ public class CreateModuleHandlerTest
             config( config );
 
         // exercise
-        this.handler.setCommand( command );
-        this.handler.handle();
+        final Module moduleCreated = this.moduleService.createModule( spec );
 
         // verify
-        final Module moduleCreated = command.getResult();
-        assertNotNull( command.getResult() );
+        assertNotNull( moduleCreated );
         assertEquals( "modulename", moduleCreated.getName().toString() );
         assertEquals( "1.0.0", moduleCreated.getVersion().toString() );
         assertEquals( "module display name", moduleCreated.getDisplayName() );
@@ -130,7 +127,7 @@ public class CreateModuleHandlerTest
             addEntry( directoryBuilder.addEntry( subDirectory ) ).
             build();
 
-        final CreateModule command = Commands.module().create().
+        final CreateModuleSpec spec = new CreateModuleSpec().
             name( "modulename" ).
             version( ModuleVersion.from( 1, 0, 0 ) ).
             displayName( "module display name" ).
@@ -146,12 +143,10 @@ public class CreateModuleHandlerTest
             moduleDirectoryEntry( moduleDirectoryEntry );
 
         // exercise
-        this.handler.setCommand( command );
-        this.handler.handle();
+        final Module moduleCreated = this.moduleService.createModule( spec );
 
         // verify
-        final Module moduleCreated = command.getResult();
-        assertNotNull( command.getResult() );
+        assertNotNull( moduleCreated );
         assertEquals( "modulename", moduleCreated.getName().toString() );
         assertEquals( "1.0.0", moduleCreated.getVersion().toString() );
         assertEquals( "module display name", moduleCreated.getDisplayName() );

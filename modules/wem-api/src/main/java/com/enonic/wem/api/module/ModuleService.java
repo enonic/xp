@@ -11,4 +11,6 @@ public interface ModuleService
 
     public Module deleteModule( ModuleKey key )
         throws ModuleNotFoundException;
+
+    public Module createModule( CreateModuleSpec spec );
 }
