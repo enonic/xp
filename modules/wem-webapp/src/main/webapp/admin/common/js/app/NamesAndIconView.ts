@@ -17,7 +17,9 @@ module api.app {
 
     export class NamesAndIconView extends api.dom.DivEl {
 
-        private iconEl: api.dom.ImgEl;
+        private iconImageEl: api.dom.ImgEl;
+
+        private iconDivEl: api.dom.DivEl;
 
         private namesView: api.app.NamesView;
 
@@ -28,8 +30,12 @@ module api.app {
             var sizeClassName: string = NamesAndIconViewSize[builder.size];
             this.addClass(sizeClassName);
 
-            this.iconEl = new api.dom.ImgEl(null,"icon");
-            this.appendChild(this.iconEl);
+            this.iconImageEl = new api.dom.ImgEl(null,"icon");
+            this.appendChild(this.iconImageEl);
+
+            this.iconDivEl = new api.dom.DivEl("icon");
+            this.appendChild(this.iconDivEl);
+            this.iconDivEl.hide();
 
             this.namesView = new api.app.NamesView();
             this.appendChild(this.namesView);
@@ -51,9 +57,19 @@ module api.app {
             return this;
         }
 
+        setIconClass(value: string): NamesAndIconView {
+            this.iconDivEl.removeAllClasses("icon");
+            this.iconDivEl.addClass(value);
+            this.iconDivEl.show();
+            this.iconImageEl.hide();
+            return this;
+        }
+
         setIconUrl(value: string): NamesAndIconView
         {
-            this.iconEl.setSrc(value);
+            this.iconImageEl.setSrc(value);
+            this.iconDivEl.hide();
+            this.iconImageEl.show();
             return this;
         }
 

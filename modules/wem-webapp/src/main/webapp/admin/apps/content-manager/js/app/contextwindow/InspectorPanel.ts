@@ -1,12 +1,13 @@
 module app.contextwindow {
 
-    import SiteTemplateKey = api.content.site.template.SiteTemplateKey;
+    import SiteTemplate = api.content.site.template.SiteTemplate;
 
     export interface InspectorPanelConfig {
 
         liveEditWindow:any;
 
-        siteTemplateKey:SiteTemplateKey;
+        siteTemplate:SiteTemplate;
+
     }
 
     export class InspectorPanel extends api.ui.DeckPanel {
@@ -18,7 +19,9 @@ module app.contextwindow {
         constructor(config: InspectorPanelConfig) {
             super();
 
-            this.detailPanel = new DetailPanel(config.siteTemplateKey);
+            this.detailPanel = new DetailPanel({
+                siteTemplate: config.siteTemplate,
+            });
 
             this.selectPanel = new SelectPanel({
                 liveEditWindow: config.liveEditWindow});

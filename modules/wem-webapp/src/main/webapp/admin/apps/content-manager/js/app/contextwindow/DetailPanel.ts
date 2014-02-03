@@ -1,19 +1,19 @@
 module app.contextwindow {
 
-    import SiteTemplateKey = api.content.site.template.SiteTemplateKey;
+    import SiteTemplate = api.content.site.template.SiteTemplate;
+
+    export interface DetailPanelConfig {
+        siteTemplate:SiteTemplate;
+    }
 
     export class DetailPanel extends api.ui.Panel {
+        private siteTemplate: SiteTemplate;
+        private nameAndIcon:api.app.NamesAndIconView;
 
-        private header: api.dom.H3El;
-        private subtitle: api.dom.DivEl;
-        private iconEl: api.dom.DivEl;
-        private infoEl: api.dom.DivEl;
-        private siteTemplateKey: SiteTemplateKey;
-
-        constructor(siteTemplate: SiteTemplateKey) {
+        constructor(config: DetailPanelConfig) {
             super("detail-panel");
 
-            this.siteTemplateKey = siteTemplate;
+            this.siteTemplate = config.siteTemplate;
 
             this.initElements();
             this.setEmpty();
@@ -31,39 +31,43 @@ module app.contextwindow {
         }
 
         private initElements() {
-            this.header = new api.dom.H3El();
-            this.subtitle = new api.dom.DivEl();
-            this.iconEl = new api.dom.DivEl();
-            this.infoEl = new api.dom.DivEl();
-
-            this.iconEl.addClass("icon");
+            this.nameAndIcon = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.medium));
 
             var templateBox = new api.content.page.TemplateComboBox();
-            templateBox.setLoader(new api.content.page.image.ImageTemplateSummaryLoader(this.siteTemplateKey));
+            templateBox.setLoader(new api.content.page.image.ImageTemplateSummaryLoader(this.siteTemplate.getKey()));
+            templateBox.addLoadedListener((modules) => {
+                console.log("modules", modules);
+                templateBox.setValue(this.siteTemplate.getDefaultImageTemplate().toString());
+            });
 
-            this.appendChild(this.iconEl);
-            this.appendChild(this.header);
-            this.appendChild(this.subtitle);
-            this.appendChild(this.infoEl);
+
+
+            var templateHeader = new api.dom.H6El();
+            templateHeader.setText("Template");
+            templateHeader.addClass("template-header");
+
+            this.appendChild(this.nameAndIcon);
+
+            this.appendChild(templateHeader);
             this.appendChild(templateBox);
         }
 
         private setEmpty() {
-            this.header.getEl().setInnerHtml("Empty");
-            this.subtitle.getEl().setInnerHtml("No component selected");
-            this.iconEl.removeAllClasses("icon");
+            this.nameAndIcon.setMainName("Empty");
+            this.nameAndIcon.setMainName("No component selected");
+            this.nameAndIcon.setIconUrl("");
         }
 
         setIcon(iconCls: string) {
-            this.iconEl.addClass(iconCls);
+            this.nameAndIcon.setIconClass(iconCls);
         }
 
         setName(name: string) {
-            this.subtitle.getEl().setInnerHtml(name);
+            this.nameAndIcon.setMainName(name);
         }
 
         setType(type: string) {
-            this.header.getEl().setInnerHtml(type);
+            this.nameAndIcon.setSubName(type);
         }
     }
 }

@@ -17,7 +17,6 @@ module api.content.page {
             this.comboBox.selectOption(option);
         }
 
-
         optionFormatter(row: number, cell: number, pageTemplateSummary: TemplateSummary, columnDef: any,
                         dataContext: api.ui.combobox.Option<TemplateSummary>): string {
             var namesView = new api.app.NamesView()

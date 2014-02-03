@@ -66,7 +66,7 @@ module app.contextwindow {
 
             this.inspectorPanel = new InspectorPanel({
                 liveEditWindow: this.liveEditWindow,
-                siteTemplateKey: this.siteTemplate.getKey()
+                siteTemplate: this.siteTemplate
             });
             this.emulatorPanel = new EmulatorPanel({
                 liveEditIFrame: this.liveEditIFrame
