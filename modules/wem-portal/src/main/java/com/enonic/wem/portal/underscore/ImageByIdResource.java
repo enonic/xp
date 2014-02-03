@@ -12,23 +12,25 @@ import javax.ws.rs.core.Response;
 
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.core.image.ImageHelper;
 import com.enonic.wem.core.image.filter.ImageFilterBuilder;
 
-@Path("{mode}/{path:.+}/_/image/{fileName:.+}")
-public final class ImageResource
+import static org.apache.commons.lang.StringUtils.substringAfterLast;
+
+@Path("{mode}/{contextualContent:.+}/_/image/id/{id:.+}")
+public final class ImageByIdResource
     extends AbstractImageResource
 {
     @PathParam("mode")
     protected String mode;
 
-    @PathParam("path")
-    protected String contentPath;
+    @PathParam("contextualContent")
+    protected String contextualContentAsString;
 
-    @PathParam("fileName")
-    protected String fileName;
+    @PathParam("id")
+    protected String imageContentIdAsString;
 
     @QueryParam("filter")
     protected String filter;
@@ -41,7 +43,6 @@ public final class ImageResource
 
     @Inject
     protected ImageFilterBuilder imageFilterBuilder;
-
 
     @Override
     String getFilterParam()
@@ -65,25 +66,33 @@ public final class ImageResource
     public Response getResource()
         throws IOException
     {
-        final ContentPath path = ContentPath.from( contentPath );
-        final Content content = getContent( path );
+        final ContentId imageContentId = ContentId.from( imageContentIdAsString );
+        final Content imageContent = getContent( imageContentId );
 
-        final Attachment attachment = getAttachment( content.getId(), fileName );
+        final Attachment attachment = getAttachment( imageContent.getId(), imageContent.getName().toString() );
+        if ( attachment == null )
+        {
+            throw new RuntimeException( "Attachment not found: " + imageContent.getName().toString() );
+        }
 
         final Blob blob = getBlob( attachment.getBlobKey() );
         if ( blob == null )
         {
             throw new RuntimeException( "Blob not found: " + attachment.getBlobKey() );
         }
-
         final BufferedImage contentImage = toBufferedImage( blob.getStream() );
 
-        final String format = getFormat( this.fileName );
+        final String format = resolveFormat( attachment );
 
         final BufferedImage image = applyFilters( contentImage, format );
 
         byte[] imageData = ImageHelper.writeImage( image, format, resolveQuality() );
 
         return Response.ok( imageData, attachment.getMimeType() ).build();
+    }
+
+    private String resolveFormat( final Attachment attachment )
+    {
+        return substringAfterLast( attachment.getName(), "." );
     }
 }

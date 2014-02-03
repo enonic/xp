@@ -10,6 +10,7 @@ import com.enonic.wem.portal.exception.mapper.DefaultExceptionMapper;
 import com.enonic.wem.portal.exception.mapper.SourceExceptionMapper;
 import com.enonic.wem.portal.exception.mapper.PortalWebExceptionMapper;
 import com.enonic.wem.portal.exception.mapper.WebApplicationExceptionMapper;
+import com.enonic.wem.portal.underscore.ImageByIdResource;
 import com.enonic.wem.portal.underscore.ImageResource;
 import com.enonic.wem.portal.underscore.PublicResource;
 import com.enonic.wem.portal.underscore.ServicesResource;
@@ -28,6 +29,7 @@ public final class PortalServlet
         addClass( ComponentResource.class );
         addClass( PublicResource.class );
         addClass( ImageResource.class );
+        addClass( ImageByIdResource.class );
         addClass( ServicesResource.class );
         addClass( FreeMarkerViewWriter.class );
         addClass( SourceExceptionMapper.class );

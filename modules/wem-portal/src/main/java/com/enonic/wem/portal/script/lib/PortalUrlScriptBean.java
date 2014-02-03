@@ -1,5 +1,6 @@
 package com.enonic.wem.portal.script.lib;
 
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.web.servlet.ServletRequestUrlHelper;
 
 public final class PortalUrlScriptBean
@@ -50,6 +51,14 @@ public final class PortalUrlScriptBean
             mode( this.mode ).
             contentPath( contentPath ).
             resourcePath( name );
+    }
+
+    public PortalImageByIdUrlBuilder createImageByIdUrl( final ContentId contentId )
+    {
+        return PortalImageByIdUrlBuilder.createImageUrl( this.baseUrl ).
+            mode( this.mode ).
+            contentPath( contentPath ).
+            imageContent( contentId );
     }
 
     public PortalUrlBuilder createServiceUrl( final String name )
