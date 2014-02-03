@@ -23,11 +23,6 @@
 
 ///<reference path='model/_module.ts' />
 
-///<reference path='remote/_module.ts' />
-///<reference path='remote/account/_module.ts' />
-///<reference path='remote/userstore/_module.ts' />
-///<reference path='remote/util/_module.ts' />
-
 ///<reference path='notify/_module.ts' />
 
 ///<reference path='event/_module.ts' />
