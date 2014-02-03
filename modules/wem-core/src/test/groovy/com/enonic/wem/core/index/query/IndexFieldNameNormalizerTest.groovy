@@ -5,10 +5,11 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 @Unroll
-class IndexFieldNameNormalizerTest extends Specification
+class IndexFieldNameNormalizerTest
+    extends Specification
 {
 
-    def "normalize #path to #normalizedFieldName"( )
+    def "normalize #path to #normalizedFieldName"()
     {
         expect:
         normalizedFieldName == IndexFieldNameNormalizer.normalize( path )
@@ -20,17 +21,5 @@ class IndexFieldNameNormalizerTest extends Specification
         "a.b"   | "a_b"
         "a_b.c" | "a_b_c"
         "a.b.c" | "a_b_c"
-    }
-
-
-    def "dummy"( )
-    {
-        given:
-
-        when:
-        String test = "1"
-
-        then:
-        test == "1"
     }
 }

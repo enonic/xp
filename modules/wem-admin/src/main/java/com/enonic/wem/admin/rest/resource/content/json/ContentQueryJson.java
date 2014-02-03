@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.api.content.query.ContentQuery;
-import com.enonic.wem.api.query.aggregation.AggregationQuery;
 import com.enonic.wem.api.query.parser.QueryParser;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
@@ -22,19 +21,25 @@ public class ContentQueryJson
                       @JsonProperty("from") final Integer from, //
                       @JsonProperty("size") final Integer size, //
                       @JsonProperty("contentTypeNames") final List<String> contentTypeNameString,
-                      @JsonProperty("expand") final String expand )
+                      @JsonProperty("expand") final String expand,
+                      @JsonProperty("aggregationQueries") final List<AggregationQueryJson> aggregationQueries )
     {
 
-        this.contentQuery = ContentQuery.newContentQuery().
+        final ContentQuery.Builder builder = ContentQuery.newContentQuery().
             from( from ).
             size( size ).
             queryExpr( QueryParser.parse( queryExprString ) ).
-            addContentTypeNames( ContentTypeNames.from( contentTypeNameString ) ).
-            aggregationQuery( AggregationQuery.newTermsAggregation( "contentTypes" ).
-                fieldName( "contenttype" ).
-                build() ).
-            build();
+            addContentTypeNames( ContentTypeNames.from( contentTypeNameString ) );
 
+        if ( aggregationQueries != null )
+        {
+            for ( final AggregationQueryJson aggregationQueryJson : aggregationQueries )
+            {
+                builder.aggregationQuery( aggregationQueryJson.getAggregationQuery() );
+            }
+        }
+
+        this.contentQuery = builder.build();
         this.expand = expand != null ? expand : "none";
     }
 

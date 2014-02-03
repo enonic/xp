@@ -9,25 +9,27 @@ import spock.lang.Ignore
 import spock.lang.Unroll
 
 class QueryBuilderFactoryTest
-        extends BaseTestBuilderFactory
+    extends BaseTestBuilderFactory
 {
     @Unroll
     def "create query #query"()
     {
         given:
         def QueryBuilderFactory factory = new QueryBuilderFactory()
+        def expected = this.getClass().getResource( fileContainingExpectedJson ).text
+        def expression = factory.create( QueryParser.parse( query ), null ).toString()
+
+        def expectedJson = cleanString( expected )
+        def actualJson = cleanString( expression )
 
         expect:
-        def expected = this.getClass().getResource( fileName ).text
-        def expression = factory.create( query, null ).toString()
-
-        cleanString( expected ) == cleanString( expression )
+        expectedJson == actualJson
 
         where:
-        fileName                        | query
-        "not_range.json"                | QueryParser.parse( "not( myField > 1) " )
-        "not_not_range.json"            | QueryParser.parse( "not( not( myField > 1  ))" )
-        "function/fulltext_3_args.json" | QueryParser.parse( "fulltext('myField', 'my search phrase', 'OR')" )
+        query                                           | fileContainingExpectedJson
+        "not( myField > 1) "                            | "not_range.json"
+        "not( not( myField > 1  ))"                     | "not_not_range.json"
+        "fulltext('myField', 'my search phrase', 'OR')" | "function/fulltext_3_args.json"
     }
 
     def "create query with queryfilter"()
@@ -37,10 +39,10 @@ class QueryBuilderFactoryTest
         def expected = this.getClass().getResource( "query_with_queryfilter.json" ).text
 
         def queryFilter = Filter.newValueQueryFilter().
-                fieldName( "myField" ).
-                add( new Value.String( "myValue" ) ).
-                add( new Value.String( "mySecondValue" ) ).
-                build()
+            fieldName( "myField" ).
+            add( new Value.String( "myValue" ) ).
+            add( new Value.String( "mySecondValue" ) ).
+            build()
 
         Set<Filter> queryFilters = Sets.newHashSet();
         queryFilters.add( queryFilter );
@@ -62,10 +64,10 @@ class QueryBuilderFactoryTest
         def expected = this.getClass().getResource( "query_with_2_queryfilters.json" ).text
 
         def queryFilter1 = Filter.newValueQueryFilter().
-                fieldName( "myField" ).
-                add( new Value.String( "myValue" ) ).
-                add( new Value.String( "mySecondValue" ) ).
-                build()
+            fieldName( "myField" ).
+            add( new Value.String( "myValue" ) ).
+            add( new Value.String( "mySecondValue" ) ).
+            build()
 
         def queryFilter2 = Filter.newExistsFilter( "myField" )
 
