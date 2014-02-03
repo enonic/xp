@@ -65,6 +65,20 @@
       <groupId>jparsec</groupId>
       <artifactId>jparsec</artifactId>
       <version>2.0.1</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>easymock</artifactId>
+          <groupId>org.easymock</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>junit</artifactId>
+          <groupId>junit</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>cglib</artifactId>
+          <groupId>cglib</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.xmlmatchers</groupId>

@@ -24,7 +24,6 @@
   <modules>
     <module>modules/wem-api</module>
     <module>modules/wem-core</module>
-    <module>modules/wem-web</module>
     <module>modules/wem-admin</module>
     <module>modules/wem-portal</module>
     <module>modules/wem-boot</module>
@@ -68,6 +67,12 @@
       <groupId>org.spockframework</groupId>
       <artifactId>spock-core</artifactId>
       <version>0.7-groovy-2.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib-nodep</artifactId>
+      <version>3.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
