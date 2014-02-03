@@ -29,10 +29,10 @@ module api.content.page {
             return index > -1;
         }
 
-        addComponent(component: PageComponent, regionName: string) {
+        addComponentFirst(component: PageComponent, regionName: string) {
 
             var region = this.getRegion(regionName);
-            region.addComponent(component);
+            region.addComponentFirst(component);
         }
 
         hasComponent(name: ComponentName): boolean {

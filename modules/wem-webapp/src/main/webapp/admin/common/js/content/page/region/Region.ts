@@ -73,13 +73,13 @@ module api.content.page.region {
             }
         }
 
-        addComponent(component: api.content.page.PageComponent) {
+        addComponentFirst(component: api.content.page.PageComponent) {
 
             api.util.assert(!this.hasComponentWithName(component.getName()),
                 "Component already added to region [" + this.name + "]: " + component.getName().toString());
 
             this.componentByName[component.getName().toString()] = component;
-            this.pageComponents.push(component);
+            this.pageComponents.splice(0, 0, component);
         }
 
         getComponentIndex(componentName: ComponentName): number {

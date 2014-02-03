@@ -162,7 +162,7 @@ module app.contextwindow {
                         this.pageRegions.addComponentAfter(imageComponent.build(), componentToAddAfter);
                     }
                     else {
-                        this.pageRegions.addComponent(imageComponent.build(), regionName);
+                        this.pageRegions.addComponentFirst(imageComponent.build(), regionName);
                     }
                 });
 
