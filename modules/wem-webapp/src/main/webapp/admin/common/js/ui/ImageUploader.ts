@@ -48,8 +48,8 @@ module api.ui {
             }
 
             this.dropzone = new api.dom.DivEl("dropzone");
-            // id needed for plupload to init
-            this.dropzone.setId('image-uploader-dropzone');
+            // id needed for plupload to init, adding timestamp in case of multiple occurences on page
+            this.dropzone.setId('image-uploader-dropzone-' + new Date().getTime());
             this.appendChild(this.dropzone);
 
             this.progress = new api.ui.ProgressBar();

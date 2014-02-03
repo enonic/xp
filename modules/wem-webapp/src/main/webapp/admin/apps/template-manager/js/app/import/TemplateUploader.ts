@@ -12,8 +12,8 @@ module app.imp {
             super(new api.dom.ElementProperties().setTagName("div").setClassName("image-uploader"));
 
             this.dropzone = new api.dom.DivEl("dropzone");
-            // id needed for plupload to init
-            this.dropzone.setId('template-uploader-dropzone');
+            // id needed for plupload to init, adding timestamp in case of multiple occurences on page
+            this.dropzone.setId('template-uploader-dropzone-' + new Date().getTime());
             this.appendChild(this.dropzone);
 
             this.progress = new api.ui.ProgressBar();
