@@ -2,7 +2,6 @@ package com.enonic.wem.core;
 
 import com.google.inject.AbstractModule;
 
-import com.enonic.wem.core.account.AccountModule;
 import com.enonic.wem.core.blob.BlobModule;
 import com.enonic.wem.core.blobstore.BlobStoreModule;
 import com.enonic.wem.core.client.ClientModule;
@@ -21,8 +20,6 @@ import com.enonic.wem.core.module.ModuleModule;
 import com.enonic.wem.core.relationship.RelationshipModule;
 import com.enonic.wem.core.resource.ResourceModule;
 import com.enonic.wem.core.schema.SchemaModule;
-import com.enonic.wem.core.userstore.UserStoreModule;
-import com.enonic.wem.migrate.MigrateModule;
 
 public final class CoreModule
     extends AbstractModule
@@ -39,7 +36,6 @@ public final class CoreModule
         install( new ClientModule() );
         install( new BlobStoreModule() );
         install( new EntityModule() );
-        install( new AccountModule() );
         install( new BlobModule() );
         install( new ContentModule() );
         install( new SiteModule() );
@@ -47,13 +43,9 @@ public final class CoreModule
         install( new RelationshipModule() );
         install( new SchemaModule() );
         install( new IndexModule() );
-        install( new UserStoreModule() );
         install( new ResourceModule() );
         install( new ModuleModule() );
 
         install( new HazelcastModule() );
-
-        // TODO: Move to plugin. Need some service starting system first.
-        install( new MigrateModule() );
     }
 }

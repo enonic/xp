@@ -25,16 +25,6 @@ public interface SystemConfig
 
     public Path getRelationshiptTypesDir();
 
-    public boolean isMigrateEnabled();
-
-    public String getMigrateJdbcDriver();
-
-    public String getMigrateJdbcUrl();
-
-    public String getMigrateJdbcUser();
-
-    public String getMigrateJdbcPassword();
-
     public Path getSharedDir();
 
     public Path getSharedConfigDir();

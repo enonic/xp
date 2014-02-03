@@ -75,36 +75,6 @@ final class SystemConfigImpl
     }
 
     @Override
-    public boolean isMigrateEnabled()
-    {
-        return "true".equals( this.config.getProperty( "cms.migrate.enabled" ) );
-    }
-
-    @Override
-    public String getMigrateJdbcDriver()
-    {
-        return this.config.getProperty( "cms.migrate.jdbc.driver" );
-    }
-
-    @Override
-    public String getMigrateJdbcUrl()
-    {
-        return this.config.getProperty( "cms.migrate.jdbc.url" );
-    }
-
-    @Override
-    public String getMigrateJdbcUser()
-    {
-        return this.config.getProperty( "cms.migrate.jdbc.user" );
-    }
-
-    @Override
-    public String getMigrateJdbcPassword()
-    {
-        return this.config.getProperty( "cms.migrate.jdbc.password" );
-    }
-
-    @Override
     public Path getSharedDir()
     {
         return getHomeDir().toPath().resolve( "shared" );

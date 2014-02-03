@@ -9,8 +9,6 @@ import com.enonic.wem.admin.rest.exception.JsonMappingExceptionMapper;
 import com.enonic.wem.admin.rest.exception.NotFoundExceptionMapper;
 import com.enonic.wem.admin.rest.provider.JsonObjectProvider;
 import com.enonic.wem.admin.rest.provider.JsonSerializableProvider;
-import com.enonic.wem.admin.rest.resource.account.AccountExportResource;
-import com.enonic.wem.admin.rest.resource.account.AccountImageResource;
 import com.enonic.wem.admin.rest.resource.auth.AuthResource;
 import com.enonic.wem.admin.rest.resource.blob.BlobResource;
 import com.enonic.wem.admin.rest.resource.content.ContentAttachmentResource;
@@ -51,8 +49,6 @@ public final class RestServlet
         addClass( JsonSerializableProvider.class );
 
         addClass( BackgroundImageResource.class );
-        addClass( AccountExportResource.class );
-        addClass( AccountImageResource.class );
         addClass( ContentImageResource.class );
         addClass( ContentAttachmentResource.class );
         addClass( GetNodesResource.class );
