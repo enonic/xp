@@ -9,6 +9,7 @@ import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.Modules;
+import com.enonic.wem.api.module.UpdateModuleSpec;
 import com.enonic.wem.core.config.SystemConfig;
 
 public final class ModuleServiceImpl
@@ -56,5 +57,13 @@ public final class ModuleServiceImpl
     public Module createModule( final CreateModuleSpec spec )
     {
         return new CreateModuleCommand().spec( spec ).moduleExporter( this.moduleExporter ).systemConfig( this.systemConfig ).execute();
+    }
+
+    @Override
+    public boolean updateModule( final UpdateModuleSpec spec )
+        throws ModuleNotFoundException
+    {
+        return new UpdateModuleCommand().spec( spec ).moduleExporter( this.moduleExporter ).systemConfig(
+            this.systemConfig ).moduleResourcePathResolver( this.moduleResourcePathResolver ).execute();
     }
 }

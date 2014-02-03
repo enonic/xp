@@ -1,24 +1,20 @@
-package com.enonic.wem.api.command.module;
+package com.enonic.wem.api.module;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.module.ModuleKey;
-
-public final class UpdateModule
-    extends Command<Boolean>
+public final class UpdateModuleSpec
 {
     private ModuleKey moduleKey;
 
     private ModuleEditor editor;
 
-    public UpdateModule module( final ModuleKey moduleKey )
+    public UpdateModuleSpec module( final ModuleKey moduleKey )
     {
         this.moduleKey = moduleKey;
         return this;
     }
 
-    public UpdateModule editor( final ModuleEditor editor )
+    public UpdateModuleSpec editor( final ModuleEditor editor )
     {
         this.editor = editor;
         return this;
@@ -34,7 +30,6 @@ public final class UpdateModule
         return editor;
     }
 
-    @Override
     public void validate()
     {
         Preconditions.checkNotNull( this.moduleKey, "module key cannot be null" );

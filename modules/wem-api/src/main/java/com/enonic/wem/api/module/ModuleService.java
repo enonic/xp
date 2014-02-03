@@ -13,4 +13,7 @@ public interface ModuleService
         throws ModuleNotFoundException;
 
     public Module createModule( CreateModuleSpec spec );
+
+    public boolean updateModule( UpdateModuleSpec spec )
+        throws ModuleNotFoundException;
 }

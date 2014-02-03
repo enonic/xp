@@ -1,4 +1,4 @@
-package com.enonic.wem.api.command.module;
+package com.enonic.wem.api.module;
 
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.support.Editor;

@@ -10,17 +10,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.module.ModuleEditor;
-import com.enonic.wem.api.command.module.UpdateModule;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleEditor;
 import com.enonic.wem.api.module.ModuleFileEntry;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.api.module.ModuleVersion;
+import com.enonic.wem.api.module.UpdateModuleSpec;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.config.SystemConfig;
 
@@ -32,7 +31,7 @@ import static org.mockito.Mockito.when;
 public class UpdateModuleHandlerTest
     extends AbstractCommandHandlerTest
 {
-    private UpdateModuleHandler handler;
+    private ModuleServiceImpl moduleService;
 
     private SystemConfig systemConfig;
 
@@ -46,11 +45,10 @@ public class UpdateModuleHandlerTest
 
         when( systemConfig.getModulesDir() ).thenReturn( Files.createTempDirectory( "module" ) );
 
-        handler = new UpdateModuleHandler();
-        handler.setContext( this.context );
-        handler.setSystemConfig( systemConfig );
-        handler.setModuleResourcePathResolver( new ModuleResourcePathResolverImpl( systemConfig ) );
-        handler.setModuleExporter( new ModuleExporter() );
+        this.moduleService = new ModuleServiceImpl();
+        this.moduleService.systemConfig = systemConfig;
+        this.moduleService.moduleResourcePathResolver = new ModuleResourcePathResolverImpl( systemConfig );
+        this.moduleService.moduleExporter = new ModuleExporter();
     }
 
     @After
@@ -71,12 +69,18 @@ public class UpdateModuleHandlerTest
         throws Exception
     {
         ModuleKey moduleKey = ModuleKey.from( "foomodule-1.0.0" );
-        UpdateModule updateCommand = Commands.module().update().module( moduleKey );
+        UpdateModuleSpec spec = new UpdateModuleSpec().module( moduleKey ).editor( new ModuleEditor()
+        {
+            @Override
+            public Module edit( final Module module )
+            {
+                return module;
+            }
+        } );
 
         try
         {
-            handler.setCommand( updateCommand );
-            handler.handle();
+            this.moduleService.updateModule( spec );
         }
         catch ( ModuleNotFoundException e )
         {
@@ -93,7 +97,7 @@ public class UpdateModuleHandlerTest
         Module module = createModule( moduleKey );
         Path moduleDir = new ModuleExporter().exportToDirectory( module, systemConfig.getModulesDir() );
 
-        final UpdateModule command = Commands.module().update().
+        final UpdateModuleSpec spec = new UpdateModuleSpec().
             module( moduleKey ).
             editor( new ModuleEditor()
             {
@@ -105,12 +109,9 @@ public class UpdateModuleHandlerTest
             } );
 
         // exercise
-        this.handler.setCommand( command );
-        this.handler.handle();
+        final boolean edited = this.moduleService.updateModule( spec );
 
         // verify
-        final Boolean edited = command.getResult();
-
         assertTrue( edited );
         assertTrue( "Module directory not found: " + moduleDir, Files.isDirectory( moduleDir ) );
 
@@ -147,7 +148,7 @@ public class UpdateModuleHandlerTest
         Module module = createModule( moduleKey );
         Path moduleDir = new ModuleExporter().exportToDirectory( module, systemConfig.getModulesDir() );
 
-        final UpdateModule command = Commands.module().update().
+        final UpdateModuleSpec spec = new UpdateModuleSpec().
             module( moduleKey ).
             editor( new ModuleEditor()
             {
@@ -159,12 +160,9 @@ public class UpdateModuleHandlerTest
             } );
 
         // exercise
-        this.handler.setCommand( command );
-        this.handler.handle();
+        final boolean edited = this.moduleService.updateModule( spec );
 
         // verify
-        final Boolean edited = command.getResult();
-
         assertFalse( edited );
         assertTrue( "Module directory not found: " + moduleDir, Files.isDirectory( moduleDir ) );
 
