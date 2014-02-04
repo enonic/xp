@@ -12,6 +12,7 @@ import com.enonic.wem.api.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.api.support.serializer.JsonSerializerUtil;
 import com.enonic.wem.api.support.serializer.ParsingException;
 
+@Deprecated
 public class RelationshipTypeJsonSerializer
     extends AbstractJsonSerializer<RelationshipType>
     implements RelationshipTypeSerializer

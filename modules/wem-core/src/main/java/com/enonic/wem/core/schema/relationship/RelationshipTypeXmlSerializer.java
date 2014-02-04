@@ -13,6 +13,7 @@ import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.support.serializer.XmlParsingException;
 import com.enonic.wem.core.support.util.JdomHelper;
 
+@Deprecated
 public class RelationshipTypeXmlSerializer
     implements RelationshipTypeSerializer
 {

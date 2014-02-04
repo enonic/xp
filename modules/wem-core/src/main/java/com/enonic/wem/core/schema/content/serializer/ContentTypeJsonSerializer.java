@@ -14,6 +14,7 @@ import com.enonic.wem.api.support.serializer.JsonSerializerUtil;
 
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 
+@Deprecated
 public class ContentTypeJsonSerializer
     extends AbstractJsonSerializer<ContentType>
     implements ContentTypeSerializer

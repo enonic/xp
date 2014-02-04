@@ -15,6 +15,7 @@ import com.enonic.wem.core.support.util.JdomHelper;
 
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 
+@Deprecated
 public class ContentTypeXmlSerializer
     implements ContentTypeSerializer
 {
