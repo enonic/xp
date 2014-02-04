@@ -9,6 +9,7 @@ import com.enonic.wem.api.content.page.layout.LayoutTemplateXml;
 import com.enonic.wem.api.content.page.part.PartDescriptorXml;
 import com.enonic.wem.api.content.page.part.PartTemplateXml;
 import com.enonic.wem.api.content.site.SiteTemplateXml;
+import com.enonic.wem.api.schema.mixin.MixinXml;
 import com.enonic.wem.api.schema.content.ContentTypeXml;
 import com.enonic.wem.api.form.FormXml;
 import com.enonic.wem.api.form.MixinReferenceXml;
@@ -68,6 +69,11 @@ public final class XmlSerializers
     public static XmlSerializer<LayoutDescriptorXml> layoutDescriptor()
     {
         return create( LayoutDescriptorXml.class );
+    }
+
+    public static XmlSerializer<MixinXml> mixin()
+    {
+        return create( MixinXml.class );
     }
 
     public static XmlSerializer<ImageDescriptorXml> imageDescriptor()
