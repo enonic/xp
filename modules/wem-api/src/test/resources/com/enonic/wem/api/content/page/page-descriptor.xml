@@ -36,6 +36,7 @@
         </field-set>
       </items>
       <immutable>false</immutable>
+      <occurrences minimum="0" maximum="1"/>
     </form-item-set>
   </config>
   <regions>
