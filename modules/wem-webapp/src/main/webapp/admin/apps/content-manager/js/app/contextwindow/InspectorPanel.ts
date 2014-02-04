@@ -20,7 +20,7 @@ module app.contextwindow {
             super();
 
             this.detailPanel = new DetailPanel({
-                siteTemplate: config.siteTemplate,
+                siteTemplate: config.siteTemplate
             });
 
             this.selectPanel = new SelectPanel({

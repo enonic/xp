@@ -3,8 +3,7 @@ module api.content.page {
     export class TemplateComboBox extends api.ui.combobox.RichComboBox<TemplateSummary> {
 
 
-        constructor()
-        {
+        constructor() {
             super(new api.ui.combobox.RichComboBoxBuilder<TemplateSummary>().
                 setSelectedOptionsView(new TemplateSelectedOptionsView()).setIdentifierMethod("getKey"));
         }

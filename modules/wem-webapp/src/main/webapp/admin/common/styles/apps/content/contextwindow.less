@@ -116,12 +116,19 @@
       font-size: 48px;
     }
 
-    .names-and-icon-view {
+    & > .names-and-icon-view {
       margin-bottom:20px;
+      .main-name {
+        font-size:18px;
+        line-height:20px;
+        height:24px;
+        color:@admin-almost-white;
+      }
     }
 
     .template-header {
       margin-bottom:10px;
+      color:@admin-almost-white
     }
 
     h3 {
@@ -132,9 +139,6 @@
       color:@admin-almost-white;
     }
 
-    h6 {
-      color:white;
-    }
     .rich-combobox {
       clear:both;
       .selected-options {
@@ -146,6 +150,7 @@
           .names-and-icon-view {
             .main-name {
               color:@admin-almost-white;
+              font-weight:normal;
             }
           }
         }

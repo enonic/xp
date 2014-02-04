@@ -5,18 +5,11 @@ module LiveEdit.component {
             this.addClass("live-edit-empty-component");
             this.getEl().setData('live-edit-empty-component', "true");
 
-            console.log("attaching onSelectEvent");
-//            $(window).on('componentSelect.liveEdit', (event, name?)=> {
-//                console.log(event.currentTarget, this.getHTMLElement());
-//                if (event.currentTarget == this.getHTMLElement()) {
-//                    this.onSelect();
-//                }
-//            });
-            LiveEdit.event.ComponentSelectedEvent.on(() => {
+            $liveEdit(this.getHTMLElement()).on('componentSelect.liveEdit', (event, name?)=> {
                 this.onSelect();
             });
 
-            LiveEdit.event.ComponentDeselectedEvent.on(() => {
+            $liveEdit(window).on('componentDeselect.liveEdit', (event, name?)=> {
                 this.onDeselect();
             });
         }
@@ -35,7 +28,7 @@ module LiveEdit.component {
             return this.getEl().getData('live-edit-component');
         }
 
-        getComponentPath(): string {
+        getComponentPath():string {
             return this.getEl().getData('live-edit-component');
         }
 

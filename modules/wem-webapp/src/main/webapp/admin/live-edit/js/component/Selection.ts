@@ -26,11 +26,11 @@ module LiveEdit.component {
 
         public static handleSelect(element:HTMLElement) {
             if (Selection.getType(element) == "page") {
-                $(window).trigger('pageSelect.liveEdit');
+                $(element).trigger('pageSelect.liveEdit');
             } else if (Selection.getType(element) == "region") {
-                $(window).trigger('regionSelect.liveEdit', element.getAttribute(Selection.REGION_ATTR));
+                $(element).trigger('regionSelect.liveEdit', element.getAttribute(Selection.REGION_ATTR));
             } else if (Selection.getType(element) == "component") {
-                $(window).trigger('componentSelect.liveEdit', element.getAttribute(Selection.COMPONENT_ATTR));
+                $(element).trigger('componentSelect.liveEdit', element.getAttribute(Selection.COMPONENT_ATTR));
             }
         }
 
