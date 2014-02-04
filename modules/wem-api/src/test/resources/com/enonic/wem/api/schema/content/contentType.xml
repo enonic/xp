@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<type>
+    <display-name>All the Base Types</display-name>
+    <content-display-name-script>$('firstName') + ' ' + $('lastName')</content-display-name-script>
+    <super-type>content</super-type>
+    <is-abstract>false</is-abstract>
+    <is-final>true</is-final>
+    <is-built-in>false</is-built-in>
+    <allow-child-content>true</allow-child-content>
+    <form>
+        <form-item-set name="mySet">
+            <items>
+                <field-set name="myFieldSet">
+                    <label>My field set</label>
+                    <items>
+                        <input name="myTextLine" type="TextLine">
+                            <immutable>false</immutable>
+                            <indexed>false</indexed>
+                            <occurrences minimum="0" maximum="1"/>
+                        </input>
+                    </items>
+                </field-set>
+            </items>
+            <immutable>false</immutable>
+        </form-item-set>
+    </form>
+</type>
