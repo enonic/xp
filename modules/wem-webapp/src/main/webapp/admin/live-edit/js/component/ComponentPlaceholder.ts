@@ -33,11 +33,11 @@ module LiveEdit.component {
         }
 
         onSelect() {
-            console.log("selected component!", this);
+
         }
 
         onDeselect() {
-            console.log("deselected component!", this);
+
         }
 
         isSelected():boolean {
