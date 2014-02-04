@@ -143,24 +143,14 @@ module app.create {
 
     export class NewContentDialogTitle extends api.ui.dialog.ModalDialogHeader {
 
-        private titleEl:api.dom.H2El;
-
         private pathEl:api.dom.PEl;
 
         constructor(title:string, path:string) {
-            super("");
-
-            this.titleEl = new api.dom.H2El('title');
-            this.titleEl.setText(title);
-            this.appendChild(this.titleEl);
+            super(title);
 
             this.pathEl = new api.dom.PEl('path');
             this.pathEl.setText(path);
             this.appendChild(this.pathEl);
-        }
-
-        setTitle(title:string) {
-            this.titleEl.setText(title);
         }
 
         setPath(path:string) {
