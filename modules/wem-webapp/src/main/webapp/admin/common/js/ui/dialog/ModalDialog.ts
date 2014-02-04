@@ -100,13 +100,18 @@ module api.ui.dialog{
 
     export class ModalDialogHeader extends api.dom.DivEl {
 
+        private titleEl:api.dom.H2El;
+
         constructor(title:string) {
             super("dialog-header");
-            this.getEl().setInnerHtml(title);
+
+            this.titleEl = new api.dom.H2El('title');
+            this.titleEl.setText(title);
+            this.appendChild(this.titleEl);
         }
 
         setTitle(value:string) {
-            this.getEl().setInnerHtml(value);
+            this.titleEl.setText(value);
         }
     }
 
