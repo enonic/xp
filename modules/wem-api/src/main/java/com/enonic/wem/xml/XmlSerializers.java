@@ -9,6 +9,7 @@ import com.enonic.wem.api.content.page.layout.LayoutTemplateXml;
 import com.enonic.wem.api.content.page.part.PartDescriptorXml;
 import com.enonic.wem.api.content.page.part.PartTemplateXml;
 import com.enonic.wem.api.content.site.SiteTemplateXml;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeXml;
 import com.enonic.wem.api.schema.mixin.MixinXml;
 import com.enonic.wem.api.schema.content.ContentTypeXml;
 import com.enonic.wem.api.form.FormXml;
@@ -19,6 +20,11 @@ public final class XmlSerializers
     public static <T extends XmlObject> XmlSerializer<T> create( final Class<T> type )
     {
         return new XmlSerializerImpl<>( type );
+    }
+
+    public static XmlSerializer<RelationshipTypeXml> relationshipType()
+    {
+        return create( RelationshipTypeXml.class );
     }
 
     public static XmlSerializer<SiteTemplateXml> siteTemplate()
