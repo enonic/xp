@@ -4,16 +4,10 @@ module api.content.page {
 
 
         constructor() {
-            super(new api.ui.combobox.RichComboBoxBuilder<TemplateSummary>().
-                setSelectedOptionsView(new TemplateSelectedOptionsView()).setIdentifierMethod("getKey"));
-        }
-
-        setTemplate(pageTemplate:TemplateSummary) {
-            var option: api.ui.combobox.Option<TemplateSummary> = {
-                value: pageTemplate.getKey().toString(),
-                displayValue: pageTemplate
-            };
-            this.comboBox.selectOption(option);
+            super(new api.ui.combobox.RichComboBoxBuilder<TemplateSummary>()
+                      .setSelectedOptionsView(new TemplateSelectedOptionsView())
+                      .setIdentifierMethod("getKey")
+                      .setMaximumOccurrences(1));
         }
 
         optionFormatter(row: number, cell: number, pageTemplateSummary: TemplateSummary, columnDef: any,
@@ -23,17 +17,6 @@ module api.content.page {
                 .setSubName(pageTemplateSummary.getDescriptorKey().toString());
 
             return namesView.toString();
-        }
-
-        createConfig():api.ui.combobox.ComboBoxConfig<TemplateSummary> {
-            var config:api.ui.combobox.ComboBoxConfig<TemplateSummary> = super.createConfig();
-            config.maximumOccurrences = 1;
-
-            return config;
-        }
-
-        getSelectedData():api.ui.combobox.Option<TemplateSummary>[] {
-            return this.comboBox.getSelectedData();
         }
 
     }

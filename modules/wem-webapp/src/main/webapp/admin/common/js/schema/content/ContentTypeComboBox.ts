@@ -1,14 +1,13 @@
 module api.schema.content {
     export class ContentTypeComboBox extends api.ui.combobox.RichComboBox<ContentTypeSummary> {
 
-        private multipleSelection:boolean;
-
         constructor(multiple:boolean = true)
         {
-            super(new api.ui.combobox.RichComboBoxBuilder<ContentTypeSummary>().setLoader(new ContentTypeSummaryLoader()).setSelectedOptionsView(new RootContentTypeSelectedOptionsView()));
-            this.multipleSelection = multiple;
+            super(new api.ui.combobox.RichComboBoxBuilder<ContentTypeSummary>()
+                      .setLoader(new ContentTypeSummaryLoader())
+                      .setSelectedOptionsView(new RootContentTypeSelectedOptionsView())
+                      .setMaximumOccurrences(multiple ? 0 : 1));
         }
-
 
         optionFormatter(row:number, cell:number, content:ContentTypeSummary, columnDef:any, dataContext:api.ui.combobox.Option<ContentTypeSummary>):string
         {
@@ -22,12 +21,6 @@ module api.schema.content {
             return namesAndIconView.toString();
         }
 
-        createConfig():api.ui.combobox.ComboBoxConfig<ContentTypeSummary> {
-            var config:api.ui.combobox.ComboBoxConfig<ContentTypeSummary> = super.createConfig();
-            config.maximumOccurrences = this.multipleSelection ? 0 : 1;
-
-            return config;
-        }
     }
 
     export class RootContentTypeSelectedOptionsView extends api.ui.combobox.SelectedOptionsView<ContentTypeSummary> {
