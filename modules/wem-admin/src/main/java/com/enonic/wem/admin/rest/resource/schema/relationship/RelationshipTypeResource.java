@@ -31,7 +31,7 @@ import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeNotFoundException;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 import com.enonic.wem.api.schema.relationship.editor.RelationshipTypeEditor;
-import com.enonic.wem.core.schema.relationship.RelationshipTypeXmlSerializer;
+import com.enonic.wem.xml.XmlSerializers;
 
 @Path("schema/relationship")
 @Produces(MediaType.APPLICATION_JSON)
@@ -120,8 +120,10 @@ public class RelationshipTypeResource
     {
         try
         {
-            final RelationshipType relationshipType = new RelationshipTypeXmlSerializer().
-                overrideName( json.getName().toString() ).toRelationshipType( json.getConfig() );
+            final RelationshipType.Builder builder = RelationshipType.newRelationshipType().name( json.getName().toString() );
+            XmlSerializers.relationshipType().parse( json.getConfig() ).to( builder );
+            final RelationshipType relationshipType = builder.build();
+
             final SchemaIcon schemaIcon = getSchemaIcon( json.getIconJson() );
 
             final CreateRelationshipType createCommand = Commands.relationshipType().create();
@@ -151,8 +153,10 @@ public class RelationshipTypeResource
     {
         try
         {
-            final RelationshipType parsed = new RelationshipTypeXmlSerializer().
-                overrideName( json.getName().toString() ).toRelationshipType( json.getConfig() );
+            final RelationshipType.Builder builder = RelationshipType.newRelationshipType().name( json.getName().toString() );
+            XmlSerializers.relationshipType().parse( json.getConfig() ).to( builder );
+            final RelationshipType parsed = builder.build();
+
             final SchemaIcon schemaIcon = getSchemaIcon( json.getIconJson() );
 
             final RelationshipTypeEditor editor = new RelationshipTypeEditor()

@@ -34,7 +34,7 @@ public final class RegionXml
         this.components = new ArrayList<>();
         for ( PageComponent component : region.getComponents() )
         {
-            this.components.add( PageComponentXml.toXxml( component ) );
+            this.components.add( PageComponentXml.toXml( component ) );
         }
     }
 
@@ -45,7 +45,7 @@ public final class RegionXml
 
         for ( PageComponentXml componentXml : components )
         {
-            builder.add( PageComponentXml.fromXxml( componentXml ) );
+            builder.add( PageComponentXml.fromXml( componentXml ) );
         }
     }
 }
