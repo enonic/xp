@@ -23,7 +23,7 @@ class RangeAggregationBuilderFactoryTest
         given:
         def expectedJson = this.getClass().getResource( "aggs_daterange.json" ).text
 
-        def RangeAggregationQuery query = RangeAggregationQuery.newDateRangeAggregationQuery( "myRangeQuery" ).
+        def RangeAggregationQuery query = RangeAggregationQuery.dateRangeQuery( "myRangeQuery" ).
             fieldName( "myField" ).
             range( DateRange.newDateRange().
                        key( "to eternity" ).
@@ -48,7 +48,7 @@ class RangeAggregationBuilderFactoryTest
         given:
         def expectedJson = this.getClass().getResource( "aggs_numericrange.json" ).text
 
-        def RangeAggregationQuery query = RangeAggregationQuery.newNumericRangeAggregationQuery( "myRangeQuery" ).
+        def RangeAggregationQuery query = RangeAggregationQuery.numericRangeQuery( "myRangeQuery" ).
             fieldName( "myField" ).
             range( NumericRange.newNumericRange().
                        key( "to eternity" ).

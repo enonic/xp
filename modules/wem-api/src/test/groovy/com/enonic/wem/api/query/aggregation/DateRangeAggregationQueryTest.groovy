@@ -13,7 +13,7 @@ class DateRangeAggregationQueryTest
         def DateTime future = new DateTime( 2055, 01, 01, 12, 00 )
 
         when:
-        DateRangeAggregationQuery query = RangeAggregationQuery.newDateRangeAggregationQuery().
+        DateRangeAggregationQuery query = RangeAggregationQuery.dateRangeQuery().
             fieldName( "myFieldName" ).
             range( Range.newDateRange().
                        from( past ).

@@ -29,12 +29,12 @@ public abstract class RangeAggregationQuery<R extends Range>
         return fieldName;
     }
 
-    public static DateRangeAggregationQuery.Builder newDateRangeAggregationQuery( final String name )
+    public static DateRangeAggregationQuery.Builder dateRangeQuery( final String name )
     {
         return new DateRangeAggregationQuery.Builder( name );
     }
 
-    public static NumericRangeAggregationQuery.Builder newNumericRangeAggregationQuery( final String name )
+    public static NumericRangeAggregationQuery.Builder numericRangeQuery( final String name )
     {
         return new NumericRangeAggregationQuery.Builder( name );
     }
