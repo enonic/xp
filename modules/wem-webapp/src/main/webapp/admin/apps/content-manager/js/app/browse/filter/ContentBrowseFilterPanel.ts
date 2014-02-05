@@ -35,14 +35,12 @@ module app.browse.filter {
                         var query: api.query.expr.QueryExpr = new api.query.expr.QueryExpr(fulltextExpression);
 
                         var contentTypeNames: api.schema.content.ContentTypeName[] = this.parseContentTypeNames(values['contentTypes']);
-
                         contentQuery.setQueryExpr(query);
                         contentQuery.setContentTypeNames(contentTypeNames);
 
-                        var termsAggregation: api.query.aggregation.TermsAggregationQuery = new api.query.aggregation.TermsAggregationQuery("contentTypes");
-                        termsAggregation.setFieldName("contenttype");
-                        termsAggregation.setSize(5);
-                        contentQuery.addAggregationQuery(termsAggregation);
+                        var contentTypesAgg: api.query.aggregation.TermsAggregationQuery = this.createTermsAggregation("contentTypes",
+                            "contenttype", 10);
+                        contentQuery.addAggregationQuery(contentTypesAgg);
 
                         new api.content.ContentQueryRequest<api.content.ContentQueryResult<api.content.json.ContentSummaryJson>>(contentQuery).
                             setExpand(api.rest.Expand.SUMMARY).
@@ -114,10 +112,9 @@ module app.browse.filter {
             contentQuery.setQueryExpr(queryExpr);
             contentQuery.setSize(0);
 
-            var termsAggregation: api.query.aggregation.TermsAggregationQuery = new api.query.aggregation.TermsAggregationQuery("contentTypes");
-            termsAggregation.setFieldName("contenttype");
-            termsAggregation.setSize(5);
-            contentQuery.addAggregationQuery(termsAggregation);
+            var contentTypesAgg: api.query.aggregation.TermsAggregationQuery = this.createTermsAggregation("contentTypes", "contenttype",
+                10);
+            contentQuery.addAggregationQuery(contentTypesAgg);
 
             new api.content.ContentQueryRequest<api.content.ContentQueryResult<api.content.json.ContentSummaryJson>>(contentQuery).
                 send().done((jsonResponse: api.rest.JsonResponse<api.content.ContentQueryResult<api.content.json.ContentSummaryJson>>) => {
@@ -132,6 +129,13 @@ module app.browse.filter {
                     }
                 }
             );
+        }
+
+        private createTermsAggregation(name: string, fieldName: string, size: number): api.query.aggregation.TermsAggregationQuery {
+            var termsAggregation: api.query.aggregation.TermsAggregationQuery = new api.query.aggregation.TermsAggregationQuery(name);
+            termsAggregation.setFieldName(fieldName);
+            termsAggregation.setSize(size);
+            return termsAggregation;
         }
 
 
