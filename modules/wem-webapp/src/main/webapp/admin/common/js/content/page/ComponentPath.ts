@@ -74,6 +74,8 @@ module api.content.page {
 
         public static fromString(str: string): ComponentPath {
 
+            if (!str) return null;
+
             var elements: string[] = str.split(ComponentPath.DIVIDER);
             elements = api.util.removeEmptyStringElements(elements);
 

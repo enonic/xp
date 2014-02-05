@@ -43,15 +43,19 @@ module api.content.page {
         }
 
         moveComponent(componentPath: ComponentPath, toRegion: string, afterComponent: ComponentPath): ComponentPath {
-            var component = this.getComponent(componentPath);
-            var fromRegion = this.getRegionForComponent(componentPath);
-            fromRegion.removeComponent(component);
-
+            var component = this.removeComponent(componentPath);
+            console.log("moving component", arguments);
             if (afterComponent) {
                 return this.addComponentAfter(component, afterComponent);
             } else {
                 return this.addComponentFirst(component, toRegion);
             }
+        }
+
+        removeComponent(componentPath: ComponentPath) {
+            var componentToBeRemoved = this.getComponent(componentPath);
+            var region = this.getRegionForComponent(componentPath);
+            return region.removeComponent(componentToBeRemoved);
         }
 
         hasComponent(name: ComponentName): boolean {
