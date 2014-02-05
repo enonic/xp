@@ -25,7 +25,7 @@ module LiveEdit.ui.contextmenu.menuitem {
 
             $('[data-live-edit-type]', region).remove();
 
-            $(window).trigger('componentRemoved.liveEdit');
+            $(window).trigger('componentRemoved.liveEdit', [this.menu.selectedComponent]);
         }
     }
 }

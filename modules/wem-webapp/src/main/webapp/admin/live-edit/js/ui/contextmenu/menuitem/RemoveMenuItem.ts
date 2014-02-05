@@ -21,7 +21,7 @@ module LiveEdit.ui.contextmenu.menuitem {
 
         private onRemoveComponent() {
             this.menu.selectedComponent.getElement().remove();
-            $(window).trigger('componentRemoved.liveEdit');
+            $(window).trigger('componentRemoved.liveEdit', [this.menu.selectedComponent]);
         }
     }
 }
