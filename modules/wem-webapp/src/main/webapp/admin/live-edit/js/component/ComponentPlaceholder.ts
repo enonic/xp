@@ -28,7 +28,7 @@ module LiveEdit.component {
         }
 
         getPrecedingComponentPath():string {
-            var previousComponent = api.dom.Element.fromHtmlElement($liveEdit(this.getHTMLElement()).prevAll('[data-live-edit-component]')[0])
+            var previousComponent = api.dom.Element.fromHtmlElement($liveEdit(this.getHTMLElement()).prevAll('[data-live-edit-component]')[0]);
             return previousComponent.getEl().getData("live-edit-component");
         }
 

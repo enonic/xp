@@ -101,6 +101,18 @@ module api.content.page.region {
             return componentPath;
         }
 
+        removeComponent(component: api.content.page.PageComponent): void {
+            api.util.assert(this.hasComponentWithName(component.getName()),
+                "Component doesn't exists in region [" + this.name + "]: " + component.getName().toString());
+
+            console.log("PageComponents before remove", this.pageComponents, this.getComponentIndex(component.getName()));
+
+            this.pageComponents.splice(this.getComponentIndex(component.getName()), 1);
+            delete this.componentByName[component.getName().toString()];
+
+            console.log("PageComponents after remove", this.pageComponents);
+        }
+
         getComponentIndex(componentName: ComponentName): number {
 
             for (var i = 0; i < this.pageComponents.length; i++) {

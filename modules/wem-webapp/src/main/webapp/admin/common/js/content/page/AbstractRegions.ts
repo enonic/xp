@@ -42,6 +42,18 @@ module api.content.page {
             return region.addComponentFirst(component);
         }
 
+        moveComponent(componentPath: ComponentPath, toRegion: string, afterComponent: ComponentPath): ComponentPath {
+            var component = this.getComponent(componentPath);
+            var fromRegion = this.getRegionForComponent(componentPath);
+            fromRegion.removeComponent(component);
+
+            if (afterComponent) {
+                return this.addComponentAfter(component, afterComponent);
+            } else {
+                return this.addComponentFirst(component, toRegion);
+            }
+        }
+
         hasComponent(name: ComponentName): boolean {
 
             for (var key in this.regionByName) {

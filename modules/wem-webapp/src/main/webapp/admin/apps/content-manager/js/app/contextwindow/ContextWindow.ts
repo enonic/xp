@@ -140,6 +140,13 @@ module app.contextwindow {
                 new LiveEditDragStartEvent().fire();
                 this.hide();
             });
+            this.liveEditJQuery(this.liveEditWindow).on('sortableUpdate.liveEdit', (event, component?) => {
+                console.log("recieved sortable update", arguments);
+                var componentPath = api.content.page.ComponentPath.fromString(component.getComponentPath());
+                var afterComponentPath = api.content.page.ComponentPath.fromString(component.getPrecedingComponentPath());
+                console.log(this.pageRegions.moveComponent(componentPath, component.getRegionName(), afterComponentPath));
+
+            });
 
 
             this.liveEditJQuery(this.liveEditWindow).on('componentAdded.liveEdit',
