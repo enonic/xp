@@ -13,9 +13,11 @@ class ModuleServiceImpl_getModuleResourceTest
         createModule( "foomodule-1.2.0" )
         createResource( "foomodule-1.2.0", "shared/files/image.jpg", "some data" )
 
-        when: def result = this.service.getResource( ModuleResourceKey.from( "foomodule-1.2.0:/shared/files/image.jpg" ) );
+        when:
+        def result = this.service.getResource( ModuleResourceKey.from( "foomodule-1.2.0:/shared/files/image.jpg" ) );
 
-        then: result != null
+        then:
+        result != null
     }
 
     def "get non-existing module resource"()
@@ -24,9 +26,11 @@ class ModuleServiceImpl_getModuleResourceTest
         createModule( "foomodule-1.2.0" )
         createResource( "foomodule-1.2.0", "shared/files/image.jpg", "some data" )
 
-        when: this.service.getResource( ModuleResourceKey.from( "foomodule-1.0.0:/shared/files/image.jpg" ) );
+        when:
+        this.service.getResource( ModuleResourceKey.from( "foomodule-1.0.0:/shared/files/image.jpg" ) );
 
-        then: thrown( ModuleNotFoundException )
+        then:
+        thrown( ModuleNotFoundException )
     }
 
     def "get non-existing resource"()
@@ -35,8 +39,10 @@ class ModuleServiceImpl_getModuleResourceTest
         createModule( "foomodule-1.2.0" )
         createResource( "foomodule-1.2.0", "shared/files/image.jpg", "some data" )
 
-        when: this.service.getResource( ModuleResourceKey.from( "foomodule-1.2.0:/shared/files/missing_file.jpg" ) );
+        when:
+        this.service.getResource( ModuleResourceKey.from( "foomodule-1.2.0:/shared/files/missing_file.jpg" ) );
 
-        then: thrown( ResourceNotFoundException )
+        then:
+        thrown( ResourceNotFoundException )
     }
 }

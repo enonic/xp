@@ -1,12 +1,16 @@
 package com.enonic.wem.core.content.page;
 
+import javax.inject.Singleton;
+
 import com.google.inject.AbstractModule;
 
+import com.enonic.wem.api.content.page.image.ImageDescriptorService;
 import com.enonic.wem.core.command.CommandBinder;
 import com.enonic.wem.core.content.page.image.CreateImageDescriptorHandler;
 import com.enonic.wem.core.content.page.image.GetImageDescriptorHandler;
 import com.enonic.wem.core.content.page.image.GetImageTemplateByKeyHandler;
 import com.enonic.wem.core.content.page.image.GetImageTemplatesBySiteTemplateHandler;
+import com.enonic.wem.core.content.page.image.ImageDescriptorServiceImpl;
 import com.enonic.wem.core.content.page.image.UpdateImageTemplateHandler;
 import com.enonic.wem.core.content.page.layout.CreateLayoutDescriptorHandler;
 import com.enonic.wem.core.content.page.layout.GetLayoutDescriptorHandler;
@@ -25,6 +29,8 @@ public class PageModule
     @Override
     protected void configure()
     {
+        bind( ImageDescriptorService.class ).to( ImageDescriptorServiceImpl.class ).in( Singleton.class );
+
         final CommandBinder commands = CommandBinder.from( binder() );
         commands.add( CreatePageHandler.class );
         commands.add( UpdatePageHandler.class );
