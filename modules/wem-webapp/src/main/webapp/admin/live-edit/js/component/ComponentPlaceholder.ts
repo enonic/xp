@@ -14,6 +14,19 @@ module LiveEdit.component {
             });
         }
 
+        static fromComponent(type:string):ComponentPlaceholder {
+            var placeholder:ComponentPlaceholder;
+            if (type == "image") {
+                placeholder = new LiveEdit.component.ImagePlaceholder();
+            } else {
+                var emptyComponentIcon = new api.dom.DivEl();
+                emptyComponentIcon.addClass('live-edit-empty-component-icon');
+                placeholder = new ComponentPlaceholder();
+                placeholder.appendChild(emptyComponentIcon);
+            }
+            return placeholder;
+        }
+
         getPrecedingComponentPath():string {
             var previousComponent = api.dom.Element.fromHtmlElement($liveEdit(this.getHTMLElement()).prevAll('[data-live-edit-component]')[0])
             return previousComponent.getEl().getData("live-edit-component");

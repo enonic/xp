@@ -109,7 +109,7 @@ module LiveEdit.component {
         }
 
         private getComponentNameFromElement():string {
-            return this.element.data('live-edit-name') || '[No Name]';
+            return this.element.data('live-edit-component') || '[No Name]';
         }
 
         private getDimensionsFromElement():ElementDimensions {

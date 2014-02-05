@@ -46,13 +46,6 @@ declare var $liveEdit;
         $(document).on('mousedown', 'btn, button, a, select, input', (event) => {
             event.preventDefault();
         });
-
-//        $(window).on('componentSelect.liveEdit', (event, name?)=> {
-//            new LiveEdit.event.ComponentSelectedEvent().fire();
-//        });
-//        $(window).on('componentDeselect.liveEdit', (event, name?)=> {
-//            new LiveEdit.event.ComponentDeselectedEvent().fire();
-//        });
     });
 
 }($liveEdit));
