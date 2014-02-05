@@ -1,0 +1,67 @@
+package com.enonic.wem.api.query.aggregation;
+
+import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+
+public abstract class RangeAggregationQuery<R extends Range>
+    extends AggregationQuery
+{
+    private final String fieldName;
+
+    private final ImmutableSet<R> ranges;
+
+    protected RangeAggregationQuery( final Builder builder )
+    {
+        super( builder.name );
+        this.ranges = ImmutableSet.copyOf( builder.ranges );
+        this.fieldName = builder.fieldName;
+    }
+
+    public ImmutableSet<R> getRanges()
+    {
+        return ranges;
+    }
+
+    public String getFieldName()
+    {
+        return fieldName;
+    }
+
+    public static DateRangeAggregationQuery.Builder newDateRangeAggregationQuery( final String name )
+    {
+        return new DateRangeAggregationQuery.Builder( name );
+    }
+
+    public static NumericRangeAggregationQuery.Builder newNumericRangeAggregationQuery( final String name )
+    {
+        return new NumericRangeAggregationQuery.Builder( name );
+    }
+
+    public abstract static class Builder<T extends Builder, R extends Range>
+        extends AggregationQuery.Builder
+    {
+        private String fieldName;
+
+        public Set<R> ranges = Sets.newHashSet();
+
+        public Builder( final String name )
+        {
+            super( name );
+        }
+
+        public T range( final R range )
+        {
+            ranges.add( range );
+            return (T) this;
+        }
+
+        public T fieldName( final String fieldName )
+        {
+            this.fieldName = fieldName;
+            return (T) this;
+        }
+    }
+}
+

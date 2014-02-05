@@ -1,0 +1,16 @@
+{
+    "myRangeQuery": {
+        "range": {
+            "field": "myfield._number",
+            "ranges": [
+                {
+                    "from": 10.0
+                },
+                {
+                    "key": "toeternity",
+                    "to": 1000.0
+                }
+            ]
+        }
+    }
+}

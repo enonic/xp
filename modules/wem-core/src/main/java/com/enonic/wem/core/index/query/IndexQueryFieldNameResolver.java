@@ -41,6 +41,16 @@ public class IndexQueryFieldNameResolver
         return appendIndexValueType( IndexFieldNameNormalizer.normalize( queryFieldName ), IndexValueType.STRING );
     }
 
+    public static String resolveNumericFieldName( final String queryFieldName )
+    {
+        return appendIndexValueType( IndexFieldNameNormalizer.normalize( queryFieldName ), IndexValueType.NUMBER );
+    }
+
+    public static String resolveDateTimeFieldName( final String queryFieldName )
+    {
+        return appendIndexValueType( IndexFieldNameNormalizer.normalize( queryFieldName ), IndexValueType.DATETIME );
+    }
+
     public static String resolveAnalyzedFieldName( final String queryFieldName )
     {
         return appendIndexValueType( IndexFieldNameNormalizer.normalize( queryFieldName ), IndexValueType.ANALYZED );
