@@ -6,8 +6,6 @@ import com.google.inject.AbstractModule;
 
 import com.enonic.wem.api.content.page.image.ImageDescriptorService;
 import com.enonic.wem.core.command.CommandBinder;
-import com.enonic.wem.core.content.page.image.CreateImageDescriptorHandler;
-import com.enonic.wem.core.content.page.image.GetImageDescriptorHandler;
 import com.enonic.wem.core.content.page.image.GetImageTemplateByKeyHandler;
 import com.enonic.wem.core.content.page.image.GetImageTemplatesBySiteTemplateHandler;
 import com.enonic.wem.core.content.page.image.ImageDescriptorServiceImpl;
@@ -53,8 +51,6 @@ public class PageModule
 
         commands.add( CreatePageDescriptorHandler.class );
         commands.add( CreatePartDescriptorHandler.class );
-        commands.add( CreateImageDescriptorHandler.class );
-        commands.add( GetImageDescriptorHandler.class );
         commands.add( GetLayoutDescriptorHandler.class );
         commands.add( GetPartDescriptorHandler.class );
         commands.add( GetPageDescriptorHandler.class );

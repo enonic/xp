@@ -2,6 +2,7 @@ package com.enonic.wem.admin.rest.resource.content.page.image;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -12,11 +13,10 @@ import com.enonic.wem.admin.json.content.page.image.ImageDescriptorJson;
 import com.enonic.wem.admin.json.content.page.image.ImageTemplateJson;
 import com.enonic.wem.admin.json.content.page.image.ImageTemplateListJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
-import com.enonic.wem.api.command.content.page.image.GetImageDescriptor;
 import com.enonic.wem.api.command.content.page.image.GetImageTemplateByKey;
 import com.enonic.wem.api.command.content.page.image.GetImageTemplatesBySiteTemplate;
 import com.enonic.wem.api.content.page.image.ImageDescriptor;
-import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
+import com.enonic.wem.api.content.page.image.ImageDescriptorService;
 import com.enonic.wem.api.content.page.image.ImageTemplate;
 import com.enonic.wem.api.content.page.image.ImageTemplateKey;
 import com.enonic.wem.api.content.page.image.ImageTemplates;
@@ -29,6 +29,9 @@ import static com.enonic.wem.api.command.Commands.page;
 public class ImageTemplateResource
     extends AbstractResource
 {
+    @Inject
+    protected ImageDescriptorService imageDescriptorService;
+
     @GET
     public ImageTemplateJson getByKey( @QueryParam("siteTemplateKey") final String siteTemplateKeyAsString,
                                        @QueryParam("key") final String imageTemplateKeyAsString )
@@ -41,7 +44,7 @@ public class ImageTemplateResource
             siteTemplateKey( siteTemplateKey );
 
         final ImageTemplate imageTemplate = client.execute( command );
-        final ImageDescriptor descriptor = getDescriptor( imageTemplate.getDescriptor() );
+        final ImageDescriptor descriptor = this.imageDescriptorService.getImageDescriptor( imageTemplate.getDescriptor() );
         return new ImageTemplateJson( imageTemplate, new ImageDescriptorJson( descriptor ) );
     }
 
@@ -56,9 +59,4 @@ public class ImageTemplateResource
         return new ImageTemplateListJson( imageTemplates );
     }
 
-    private ImageDescriptor getDescriptor( final ImageDescriptorKey key )
-    {
-        final GetImageDescriptor getImageDescriptor = page().descriptor().image().getByKey( key );
-        return client.execute( getImageDescriptor );
-    }
 }
