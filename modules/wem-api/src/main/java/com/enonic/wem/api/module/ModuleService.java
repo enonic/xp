@@ -1,19 +1,29 @@
 package com.enonic.wem.api.module;
 
+import com.enonic.wem.api.resource.Resource;
+import com.enonic.wem.api.resource.ResourceNotFoundException;
+
 public interface ModuleService
 {
-    public Module getModule( ModuleKey key )
+    Module getModule( ModuleKey key )
         throws ModuleNotFoundException;
 
-    public Modules getModules( ModuleKeys keys );
+    Modules getModules( ModuleKeys keys );
 
-    public Modules getAllModules();
+    Modules getAllModules();
 
-    public Module deleteModule( ModuleKey key )
+    Module deleteModule( ModuleKey key )
         throws ModuleNotFoundException;
 
-    public Module createModule( CreateModuleSpec spec );
+    Module createModule( CreateModuleSpec spec );
 
-    public boolean updateModule( UpdateModuleSpec spec )
+    boolean updateModule( UpdateModuleSpec spec )
         throws ModuleNotFoundException;
+
+    Resource getResource( ModuleResourceKey key )
+        throws ModuleNotFoundException, ResourceNotFoundException;
+
+    Resource createResource( CreateModuleResourceSpec spec )
+        throws ModuleNotFoundException, ResourceNotFoundException;
+
 }

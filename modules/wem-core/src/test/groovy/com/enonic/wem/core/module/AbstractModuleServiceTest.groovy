@@ -36,7 +36,7 @@ abstract class AbstractModuleServiceTest
         this.service.systemConfig.getModulesDir() >> this.modulesDir
     }
 
-    def static Module.Builder buildModule( final String key )
+    def Module.Builder buildModule( final String key )
     {
         return Module.newModule().
             moduleKey( ModuleKey.from( key ) ).
@@ -63,4 +63,12 @@ abstract class AbstractModuleServiceTest
             createModule( it )
         }
     }
+
+    def createResource( final String moduleName, final String resourcePath, final String data )
+    {
+        def moduleDir = this.modulesDir.resolve( moduleName )
+        Files.createDirectories( moduleDir.resolve( resourcePath ).getParent() );
+        Files.write( moduleDir.resolve( resourcePath ) , data.getBytes() );
+    }
+
 }

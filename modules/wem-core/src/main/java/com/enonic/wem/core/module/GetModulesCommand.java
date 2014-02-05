@@ -28,7 +28,7 @@ final class GetModulesCommand
         }
         catch ( final IOException e )
         {
-            throw Exceptions.newRutime( "Error occured finding modules." ).withCause( e );
+            throw Exceptions.newRutime( "Error occurred finding modules." ).withCause( e );
         }
     }
 
