@@ -11,7 +11,6 @@
 ///<reference path='component/ComponentType.ts' />
 ///<reference path='component/ComponentPlaceholder.ts' />
 ///<reference path='component/ImagePlaceholder.ts' />
-///<reference path='component/dragdropsort/EmptyComponent.ts' />
 ///<reference path='component/helper/DragHelper.ts' />
 ///<reference path='component/helper/ComponentResizeObserver.ts' />
 
