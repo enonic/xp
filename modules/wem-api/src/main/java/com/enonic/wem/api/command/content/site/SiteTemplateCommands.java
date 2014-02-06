@@ -4,11 +4,6 @@ import com.enonic.wem.api.content.site.SiteTemplateKey;
 
 public class SiteTemplateCommands
 {
-    public CreateSiteTemplate create()
-    {
-        return new CreateSiteTemplate();
-    }
-
     public UpdateSiteTemplate update()
     {
         return new UpdateSiteTemplate();

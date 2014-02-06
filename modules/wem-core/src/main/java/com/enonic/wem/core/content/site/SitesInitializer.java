@@ -26,10 +26,12 @@ import com.enonic.wem.api.content.page.part.PartTemplate;
 import com.enonic.wem.api.content.page.part.PartTemplateKey;
 import com.enonic.wem.api.content.page.part.PartTemplateName;
 import com.enonic.wem.api.content.page.region.Region;
+import com.enonic.wem.api.content.site.CreateSiteTemplateSpec;
 import com.enonic.wem.api.content.site.ModuleConfigs;
 import com.enonic.wem.api.content.site.NoSiteTemplateExistsException;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
+import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.form.Form;
@@ -66,6 +68,8 @@ public class SitesInitializer
 {
 
     private Client client;
+
+    private SiteTemplateService siteTemplateService;
 
     private final static ModuleKey DEMO_MODULE_KEY = ModuleKey.from( "test-1.0.0" );
 
@@ -268,7 +272,7 @@ public class SitesInitializer
             // IGNORE IF NOT FOUND
         }
 
-        homepageSiteTemplate = client.execute( site().template().create().
+        final CreateSiteTemplateSpec specHomeSite = new CreateSiteTemplateSpec().
             siteTemplateKey( HOMEPAGE_SITE_TEMPLATE_KEY ).
             displayName( "Homepage Template" ).
             vendor( newVendor().name( "Enonic AS" ).url( "http://www.enonic.com" ).build() ).
@@ -278,9 +282,10 @@ public class SitesInitializer
             rootContentType( ContentTypeName.page() ).
             addTemplate( mainPageLandingPageTemplate ).
             addTemplate( productGridPageTemplate ).
-            addTemplate( myPartTemplate ) );
+            addTemplate( myPartTemplate );
+        homepageSiteTemplate = siteTemplateService.createSiteTemplate( specHomeSite );
 
-        intranetSiteTemplate = client.execute( site().template().create().
+        final CreateSiteTemplateSpec specIntraSite = new CreateSiteTemplateSpec().
             siteTemplateKey( INTRANET_SITE_TEMPLATE_KEY ).
             displayName( "Test site template for intranets" ).
             vendor( newVendor().name( "Enonic AS" ).url( "http://www.enonic.com" ).build() ).
@@ -288,7 +293,8 @@ public class SitesInitializer
             description( "Test site template for intranets ..." ).
             url( "http://enonic.net" ).
             rootContentType( ContentTypeName.page() ).
-            addTemplate( departmentPageLandingPageTemplate ) );
+            addTemplate( departmentPageLandingPageTemplate );
+        intranetSiteTemplate = siteTemplateService.createSiteTemplate( specIntraSite );
     }
 
     private void initializeSites()
@@ -437,5 +443,11 @@ public class SitesInitializer
     public void setClient( final Client client )
     {
         this.client = client;
+    }
+
+    @Inject
+    public void setSiteTemplateService( final SiteTemplateService siteTemplateService )
+    {
+        this.siteTemplateService = siteTemplateService;
     }
 }
