@@ -240,7 +240,7 @@ public class ContentResourceTest
 
         final PageTemplate pageTemplate = PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( module.getName(), new PageTemplateName( "my-page" ) ) ).
-            displayName( "Main page template" ).
+            displayName( "Main page emplate" ).
             config( pageTemplateConfig ).
             canRender( ContentTypeNames.from( "article", "banner" ) ).
             descriptor( PageDescriptorKey.from( "mainmodule-1.0.0:landing-page" ) ).
@@ -264,7 +264,6 @@ public class ContentResourceTest
         return builder.
             key( key ).
             displayName( "Landing page" ).
-            name( name ).
             build();
     }
 

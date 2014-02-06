@@ -55,7 +55,7 @@ public class LayoutDescriptorXmlTest
         final LayoutDescriptor layoutDescriptor = builder.name( "mylayout" ).build();
 
         assertEquals( "A Layout", layoutDescriptor.getDisplayName() );
-        final Form config = layoutDescriptor.getConfigForm();
+        final Form config = layoutDescriptor.getConfig();
         assertNotNull( config );
         assertEquals( DECIMAL_NUMBER, config.getFormItem( "width" ).toInput().getInputType() );
         assertEquals( "Column width", config.getFormItem( "width" ).toInput().getLabel() );

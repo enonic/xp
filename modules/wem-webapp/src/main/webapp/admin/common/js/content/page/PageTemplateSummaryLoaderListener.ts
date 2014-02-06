@@ -4,7 +4,7 @@ module api.content.page {
 
         onLoading: () => void;
 
-        onLoaded: (contentSummaries:PageTemplateSummary[]) => void;
+        onLoaded: (templates:PageTemplateSummary[]) => void;
 
     }
 

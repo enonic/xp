@@ -7,7 +7,7 @@ import java.nio.file.Path;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.enonic.wem.api.content.page.Template;
+import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateXml;
@@ -61,9 +61,9 @@ public final class SiteTemplateExporter
     {
         super.exportObject( siteTemplate, rootPath, "" );
 
-        for ( final Template template : siteTemplate )
+        for ( final PageTemplate template : siteTemplate.getPageTemplates() )
         {
-            final AbstractEntityExporter<Template, Template.BaseTemplateBuilder> exporter = EntityExporters.getForObject( template );
+            final AbstractEntityExporter<PageTemplate, PageTemplate.Builder> exporter = EntityExporters.getForObject( template );
             final ModuleName module = template.getKey().getModuleName();
             final Path templatePath = rootPath.resolve( module.toString() ).resolve( template.getName().toString() );
             exporter.exportObject( template, createPath( templatePath ), "" );
@@ -93,14 +93,14 @@ public final class SiteTemplateExporter
                     for ( final Path templateFile : templateFileDs )
                     {
                         final String filename = templateFile.getFileName().toString();
-                        final AbstractEntityExporter<Template, Template.BaseTemplateBuilder> entityExporter =
+                        final AbstractEntityExporter<PageTemplate, PageTemplate.Builder> entityExporter =
                             EntityExporters.getByFilename( filename );
                         if ( entityExporter != null )
                         {
-                            final Template.BaseTemplateBuilder template = entityExporter.importObject( parentDirectory, templateFile );
-                            template.name( templateName );
-                            template.module( moduleName );
-                            siteTemplate.addTemplate( template.build() );
+                            final PageTemplate.Builder pageTemplate = entityExporter.importObject( parentDirectory, templateFile );
+                            pageTemplate.name( templateName );
+                            pageTemplate.module( moduleName );
+                            siteTemplate.addPageTemplate( pageTemplate.build() );
                             break;
                         }
                     }

@@ -7,7 +7,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.VendorJson;
-import com.enonic.wem.api.content.page.Template;
+import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.module.ModuleKey;
 
@@ -106,27 +106,12 @@ public class SiteTemplateSummaryJson
         return templatesAsKeyList( siteTemplate.getPageTemplates().getList() );
     }
 
-    public List<String> getPartTemplates()
+    private List<String> templatesAsKeyList( final List<? extends PageTemplate> templateList )
     {
-        return templatesAsKeyList( siteTemplate.getPartTemplates().getList() );
-    }
-
-    public List<String> getLayoutTemplates()
-    {
-        return templatesAsKeyList( siteTemplate.getLayoutTemplates().getList() );
-    }
-
-    public List<String> getImageTemplates()
-    {
-        return templatesAsKeyList( siteTemplate.getImageTemplates().getList() );
-    }
-
-    private List<String> templatesAsKeyList( final List<? extends Template> templateList )
-    {
-        return Lists.transform( templateList, new Function<Template, String>()
+        return Lists.transform( templateList, new Function<PageTemplate, String>()
         {
             @Override
-            public String apply( final Template template )
+            public String apply( final PageTemplate template )
             {
                 return template.getKey().toString();
             }

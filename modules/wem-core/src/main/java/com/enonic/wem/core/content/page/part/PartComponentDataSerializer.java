@@ -1,9 +1,9 @@
 package com.enonic.wem.core.content.page.part;
 
 
-import com.enonic.wem.api.content.page.TemplateKey;
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.part.PartComponent;
-import com.enonic.wem.api.content.page.part.PartTemplateKey;
+import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.core.content.page.PageComponentDataSerializer;
 
@@ -26,9 +26,9 @@ public class PartComponentDataSerializer
     }
 
     @Override
-    protected TemplateKey toTemplatekey( final String s )
+    protected DescriptorKey toDescriptorkey( final String s )
     {
-        return PartTemplateKey.from( s );
+        return PartDescriptorKey.from( s );
     }
 
 }

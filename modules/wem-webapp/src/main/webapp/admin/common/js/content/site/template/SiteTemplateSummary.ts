@@ -1,6 +1,6 @@
 module api.content.site.template {
 
-    import TemplateKey = api.content.page.TemplateKey;
+    import TemplateKey = api.content.page.PageTemplateKey;
 
     export class SiteTemplateSummary extends api.item.BaseItem {
 

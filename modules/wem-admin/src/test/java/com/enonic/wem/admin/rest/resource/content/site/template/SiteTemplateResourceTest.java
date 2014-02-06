@@ -28,14 +28,8 @@ import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
-import com.enonic.wem.api.content.page.image.ImageTemplate;
-import com.enonic.wem.api.content.page.image.ImageTemplateKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
-import com.enonic.wem.api.content.page.layout.LayoutTemplate;
-import com.enonic.wem.api.content.page.layout.LayoutTemplateKey;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
-import com.enonic.wem.api.content.page.part.PartTemplate;
-import com.enonic.wem.api.content.page.part.PartTemplateKey;
 import com.enonic.wem.api.content.site.ContentTypeFilter;
 import com.enonic.wem.api.content.site.NoSiteTemplateExistsException;
 import com.enonic.wem.api.content.site.SiteTemplate;
@@ -51,10 +45,7 @@ import com.enonic.wem.api.support.export.InvalidZipFileException;
 import com.enonic.wem.core.content.site.SiteTemplateExporter;
 
 import static com.enonic.wem.api.content.page.PageTemplate.newPageTemplate;
-import static com.enonic.wem.api.content.page.image.ImageTemplate.newImageTemplate;
 import static com.enonic.wem.api.content.page.layout.LayoutRegions.newLayoutRegions;
-import static com.enonic.wem.api.content.page.layout.LayoutTemplate.newLayoutTemplate;
-import static com.enonic.wem.api.content.page.part.PartTemplate.newPartTemplate;
 import static com.enonic.wem.api.content.site.Vendor.newVendor;
 import static org.junit.Assert.*;
 
@@ -144,22 +135,6 @@ public class SiteTemplateResourceTest
             displayName( "Main Page" ).
             descriptor( PageDescriptorKey.from( ModuleKey.from( "mod-1.0.0" ), new ComponentDescriptorName( "page-descr" ) ) ).
             build();
-        final PartTemplate partTemplate = newPartTemplate().
-            key( PartTemplateKey.from( "mod|mainpart" ) ).
-            displayName( "Main Part" ).
-            descriptor( PartDescriptorKey.from( ModuleKey.from( "mod-1.0.0" ), new ComponentDescriptorName( "part-descr" ) ) ).
-            build();
-        final ImageTemplate imageTemplate = newImageTemplate().
-            key( ImageTemplateKey.from( "mod|mainimage" ) ).
-            displayName( "Main Image" ).
-            descriptor( ImageDescriptorKey.from( ModuleKey.from( "mod-1.0.0" ), new ComponentDescriptorName( "image-descr" ) ) ).
-            build();
-        final LayoutTemplate layoutTemplate = newLayoutTemplate().
-            key( LayoutTemplateKey.from( "mod|mainlayout" ) ).
-            displayName( "Main Layout" ).
-            descriptor( LayoutDescriptorKey.from( ModuleKey.from( "mod-1.0.0" ), new ComponentDescriptorName( "layout-descr" ) ) ).
-            regions( newLayoutRegions().build() ).
-            build();
 
         final ContentTypeFilter filter = ContentTypeFilter.newContentFilter().
             defaultAllow().
@@ -177,10 +152,7 @@ public class SiteTemplateResourceTest
             url( "http://enonic.net" ).
             contentTypeFilter( filter ).
             rootContentType( ContentTypeName.page() ).
-            addTemplate( pageTemplate ).
-            addTemplate( partTemplate ).
-            addTemplate( imageTemplate ).
-            addTemplate( layoutTemplate ).
+            addPageTemplate( pageTemplate ).
             build();
 
         Mockito.when( client.execute( Mockito.isA( GetSiteTemplateByKey.class ) ) ).thenReturn( siteTemplate );

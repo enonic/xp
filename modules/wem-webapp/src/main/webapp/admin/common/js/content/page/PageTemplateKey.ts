@@ -1,37 +1,37 @@
 module api.content.page {
 
-    export class TemplateKey {
+    export class PageTemplateKey {
 
         public static SEPARATOR: string = "|";
 
         private moduleName: string;
 
-        private templateName: TemplateName;
+        private templateName: PageTemplateName;
 
         private refString: string;
 
-        public static fromString(str: string): TemplateKey {
+        public static fromString(str: string): PageTemplateKey {
 
-            var elements: string[] = str.split(api.content.page.TemplateKey.SEPARATOR);
+            var elements: string[] = str.split(api.content.page.PageTemplateKey.SEPARATOR);
             var moduleName = elements[0];
-            var templateName = new TemplateName(elements[1]);
-            return new TemplateKey(moduleName, templateName);
+            var templateName = new PageTemplateName(elements[1]);
+            return new PageTemplateKey(moduleName, templateName);
         }
 
-        constructor(moduleName: string, templateName: TemplateName) {
+        constructor(moduleName: string, templateName: PageTemplateName) {
             if (name == null) {
                 throw new Error("name cannot be null");
             }
             this.moduleName = moduleName;
             this.templateName = templateName;
-            this.refString = this.moduleName + TemplateKey.SEPARATOR + this.templateName;
+            this.refString = this.moduleName + PageTemplateKey.SEPARATOR + this.templateName;
         }
 
         getModuleName(): string {
             return this.moduleName;
         }
 
-        getTemplateName(): TemplateName {
+        getTemplateName(): PageTemplateName {
             return this.templateName;
         }
 

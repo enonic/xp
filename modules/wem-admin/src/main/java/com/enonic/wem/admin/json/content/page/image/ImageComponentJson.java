@@ -12,7 +12,8 @@ import com.enonic.wem.admin.json.data.RootDataSetJson;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.image.ImageComponent;
-import com.enonic.wem.api.content.page.image.ImageTemplateKey;
+import com.enonic.wem.api.content.page.image.ImageDescriptor;
+import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
 
 import static com.enonic.wem.api.content.page.image.ImageComponent.newImageComponent;
 
@@ -23,12 +24,12 @@ public class ImageComponentJson
     private final ImageComponent image;
 
     @JsonCreator
-    public ImageComponentJson( @JsonProperty("name") final String name, @JsonProperty("template") final String template,
+    public ImageComponentJson( @JsonProperty("name") final String name, @JsonProperty("descriptor") final String descriptor,
                                @JsonProperty("config") final List<DataJson> config, @JsonProperty("image") final String image )
     {
         super( newImageComponent().
             name( ComponentName.from( name ) ).
-            template( template != null ? ImageTemplateKey.from( template ) : null ).
+            descriptor( descriptor != null ? ImageDescriptorKey.from( descriptor ) : null ).
             image( image != null ? ContentId.from( image ) : null ).
             config( config != null ? new RootDataSetJson( config ).getRootDataSet() : null ).
             build() );

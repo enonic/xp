@@ -2,16 +2,16 @@ module app.wizard.page {
 
     export class PageTemplateSelector extends api.dom.DivEl {
 
-        private pageTemplateComboBox: api.content.page.TemplateComboBox;
+        private pageTemplateComboBox: api.content.page.PageTemplateComboBox;
 
         private pageTemplateChangedListeners: {(changedTo: api.content.page.PageTemplateSummary): void;}[] = [];
 
-        private pageTemplateToSelect: api.content.page.TemplateKey;
+        private pageTemplateToSelect: api.content.page.PageTemplateKey;
 
         constructor(form:PageWizardStepForm) {
             super("page-template-selector-form");
 
-            this.pageTemplateComboBox = new api.content.page.TemplateComboBox();
+            this.pageTemplateComboBox = new api.content.page.PageTemplateComboBox();
 
             var fieldSet = new api.ui.form.Fieldset();
             fieldSet.add(new api.ui.form.FormItem(new api.ui.form.FormItemBuilder(this.pageTemplateComboBox).setLabel("Page Template")));
@@ -41,7 +41,7 @@ module app.wizard.page {
         }
 
         layoutExisting(siteTemplateKey: api.content.site.template.SiteTemplateKey,
-                       selectedPageTemplate: api.content.page.TemplateKey): Q.Promise<void> {
+                       selectedPageTemplate: api.content.page.PageTemplateKey): Q.Promise<void> {
             var deferred = Q.defer<void>();
 
             this.pageTemplateComboBox.setLoader(new api.content.page.PageTemplateSummaryLoader(siteTemplateKey));
@@ -54,7 +54,7 @@ module app.wizard.page {
             return deferred.promise;
         }
 
-        setPageTemplateToSelect(value: api.content.page.TemplateKey) {
+        setPageTemplateToSelect(value: api.content.page.PageTemplateKey) {
             this.pageTemplateToSelect = value;
         }
 
@@ -74,7 +74,7 @@ module app.wizard.page {
             });
         }
 
-        public getPageTemplateKey(): api.content.page.TemplateKey {
+        public getPageTemplateKey(): api.content.page.PageTemplateKey {
 
             var selectedOptions = this.pageTemplateComboBox.getSelectedData();
             if (selectedOptions.length == 0) {

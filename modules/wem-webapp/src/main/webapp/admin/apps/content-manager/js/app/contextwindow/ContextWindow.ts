@@ -2,7 +2,7 @@ module app.contextwindow {
 
     import ComponentPath = api.content.page.ComponentPath;
     import ImageComponent = api.content.page.image.ImageComponent;
-    import TemplateKey = api.content.page.TemplateKey;
+    import PageTemplateKey = api.content.page.PageTemplateKey;
     import ImageComponentBuilder = api.content.page.image.ImageComponentBuilder;
 
     export interface ContextWindowConfig {

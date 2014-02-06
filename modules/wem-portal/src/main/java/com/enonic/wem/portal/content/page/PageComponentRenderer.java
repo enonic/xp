@@ -5,13 +5,9 @@ import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.NotFoundException;
 import com.enonic.wem.api.content.page.Descriptor;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.PageComponent;
-import com.enonic.wem.api.content.page.Template;
-import com.enonic.wem.api.content.page.TemplateKey;
-import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsControllerFactory;
@@ -28,10 +24,7 @@ abstract class PageComponentRenderer
 
     public Response render( final PageComponent pageComponent, final JsContext context )
     {
-        final TemplateKey templateKey = pageComponent.getTemplate();
-        final Template template = resolveTemplate( templateKey, context.getSiteContent().getSite().getTemplate() );
-
-        final Descriptor descriptor = resolveDescriptor( templateKey, template );
+        final Descriptor descriptor = resolveDescriptor( pageComponent.getDescriptor() );
 
         // create controller
         final JsController controller = this.controllerFactory.newController();
@@ -51,29 +44,16 @@ abstract class PageComponentRenderer
         }
     }
 
-    private Template resolveTemplate( final TemplateKey templateKey, final SiteTemplateKey siteTemplateKey )
-    {
-        try
-        {
-            return getComponentTemplate( templateKey, siteTemplateKey );
-        }
-        catch ( NotFoundException e )
-        {
-            throw new TemplateNotFoundException( templateKey, e );
-        }
-    }
 
-    private Descriptor resolveDescriptor( final TemplateKey templateKey, final Template componentTemplate )
+    private Descriptor resolveDescriptor( final DescriptorKey descriptorKey )
     {
-        final Descriptor descriptor = getComponentDescriptor( componentTemplate.getDescriptor() );
+        final Descriptor descriptor = getComponentDescriptor( descriptorKey );
         if ( descriptor == null )
         {
-            throw new DescriptorNotFoundException( templateKey, componentTemplate.getDescriptor() );
+            throw new DescriptorNotFoundException( descriptorKey );
         }
         return descriptor;
     }
-
-    protected abstract Template getComponentTemplate( final TemplateKey componentTemplateKey, final SiteTemplateKey siteTemplateKey );
 
     protected abstract Descriptor getComponentDescriptor( final DescriptorKey descriptorKey );
 

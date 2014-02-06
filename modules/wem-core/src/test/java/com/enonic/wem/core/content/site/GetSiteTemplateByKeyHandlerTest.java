@@ -16,18 +16,6 @@ import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateName;
-import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
-import com.enonic.wem.api.content.page.image.ImageTemplate;
-import com.enonic.wem.api.content.page.image.ImageTemplateKey;
-import com.enonic.wem.api.content.page.image.ImageTemplateName;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
-import com.enonic.wem.api.content.page.layout.LayoutTemplate;
-import com.enonic.wem.api.content.page.layout.LayoutTemplateKey;
-import com.enonic.wem.api.content.page.layout.LayoutTemplateName;
-import com.enonic.wem.api.content.page.part.PartDescriptorKey;
-import com.enonic.wem.api.content.page.part.PartTemplate;
-import com.enonic.wem.api.content.page.part.PartTemplateKey;
-import com.enonic.wem.api.content.page.part.PartTemplateName;
 import com.enonic.wem.api.content.site.ContentTypeFilter;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
@@ -41,7 +29,6 @@ import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.core.config.SystemConfig;
 
 import static com.enonic.wem.api.content.page.PageRegions.newPageRegions;
-import static com.enonic.wem.api.content.page.layout.LayoutRegions.newLayoutRegions;
 import static com.enonic.wem.api.content.site.ContentTypeFilter.newContentFilter;
 import static com.enonic.wem.api.content.site.Vendor.newVendor;
 import static junit.framework.Assert.assertNotNull;
@@ -106,9 +93,6 @@ public class GetSiteTemplateByKeyHandlerTest
         Assert.assertEquals( "Enonic", result.getVendor().getName() );
         Assert.assertEquals( "https://www.enonic.com", result.getVendor().getUrl() );
 
-        assertNotNull( result.getImageTemplates().getTemplate( new ImageTemplateName( "my-image" ) ) );
-        assertNotNull( result.getPartTemplates().getTemplate( new PartTemplateName( "my-part" ) ) );
-        assertNotNull( result.getLayoutTemplates().getTemplate( new LayoutTemplateName( "my-layout" ) ) );
         assertNotNull( result.getPageTemplates().getTemplate( new PageTemplateName( "my-page" ) ) );
 
         assertTrue( templatesDir.exists() );
@@ -139,13 +123,6 @@ public class GetSiteTemplateByKeyHandlerTest
         final RootDataSet partTemplateConfig = new RootDataSet();
         partTemplateConfig.addProperty( "width", new Value.Long( 200 ) );
 
-        final PartTemplate partTemplate = PartTemplate.newPartTemplate().
-            key( PartTemplateKey.from( MODULE_KEY.getName(), new PartTemplateName( "my-part" ) ) ).
-            displayName( "News part template" ).
-            config( partTemplateConfig ).
-            descriptor( PartDescriptorKey.from( "mainmodule-1.0.0:news-part" ) ).
-            build();
-
         final RootDataSet pageTemplateConfig = new RootDataSet();
         pageTemplateConfig.addProperty( "pause", new Value.Long( 10000 ) );
 
@@ -161,23 +138,8 @@ public class GetSiteTemplateByKeyHandlerTest
         final RootDataSet layoutTemplateConfig = new RootDataSet();
         layoutTemplateConfig.addProperty( "columns", new Value.Long( 3 ) );
 
-        final LayoutTemplate layoutTemplate = LayoutTemplate.newLayoutTemplate().
-            key( LayoutTemplateKey.from( MODULE_KEY.getName(), new LayoutTemplateName( "my-layout" ) ) ).
-            displayName( "Layout template" ).
-            config( layoutTemplateConfig ).
-            descriptor( LayoutDescriptorKey.from( "mainmodule-1.0.0:some-layout" ) ).
-            regions( newLayoutRegions().build() ).
-            build();
-
         final RootDataSet imageTemplateConfig = new RootDataSet();
         imageTemplateConfig.addProperty( "width", new Value.Long( 3000 ) );
-
-        final ImageTemplate imageTemplate = ImageTemplate.newImageTemplate().
-            key( ImageTemplateKey.from( MODULE_KEY.getName(), new ImageTemplateName( "my-image" ) ) ).
-            displayName( "Image template" ).
-            config( imageTemplateConfig ).
-            descriptor( ImageDescriptorKey.from( "mainmodule-1.0.0:some-image" ) ).
-            build();
 
         final ContentTypeFilter contentTypeFilter =
             newContentFilter().defaultDeny().allowContentTypes( ContentTypeNames.from( "com.enonic.intranet", "system.folder" ) ).build();
@@ -191,10 +153,7 @@ public class GetSiteTemplateByKeyHandlerTest
                                       "com.enonic.resolvers-1.0.0", "mymodule-1.0.0" ) ).
             contentTypeFilter( contentTypeFilter ).
             rootContentType( ContentTypeName.from( "com.enonic.intranet" ) ).
-            addTemplate( partTemplate ).
-            addTemplate( pageTemplate ).
-            addTemplate( layoutTemplate ).
-            addTemplate( imageTemplate ).
+            addPageTemplate( pageTemplate ).
             build();
     }
 }

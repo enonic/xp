@@ -95,7 +95,6 @@ public class GetPageDescriptorHandlerTest
         return builder.
             key( key ).
             displayName( "Landing page" ).
-            name( "mypage" ).
             build();
     }
 

@@ -32,7 +32,7 @@ public class PageTemplateXmlTest
             name( "my-region" ).
             add( PartComponent.newPartComponent().
                 name( "PartInHeader" ).
-                template( "demo|my-part-template" ).
+                descriptor( "demo-1.0.0:my-part-template" ).
                 config( partInHeaderConfig ).
                 build() ).
             build();
@@ -96,7 +96,7 @@ public class PageTemplateXmlTest
         assertTrue( component instanceof PartComponent );
         PartComponent partComponent = (PartComponent) component;
         assertEquals( "PartInHeader", partComponent.getName().toString() );
-        assertEquals( "demo|my-part-template", partComponent.getTemplate().toString() );
+        assertEquals( "demo-1.0.0:my-part-template", partComponent.getDescriptor().toString() );
 
         // verify: component config
         RootDataSet partComponentConfig = partComponent.getConfig();

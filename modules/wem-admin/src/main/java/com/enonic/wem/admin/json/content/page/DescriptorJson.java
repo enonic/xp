@@ -18,7 +18,7 @@ public abstract class DescriptorJson
     {
         Preconditions.checkNotNull( descriptor );
         this.descriptor = descriptor;
-        this.configJson = new FormJson( descriptor.getConfigForm() );
+        this.configJson = new FormJson( descriptor.getConfig() );
     }
 
     public String getKey()

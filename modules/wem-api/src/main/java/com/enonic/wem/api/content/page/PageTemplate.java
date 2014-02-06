@@ -1,8 +1,11 @@
 package com.enonic.wem.api.content.page;
 
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleName;
+import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.support.Changes;
 import com.enonic.wem.api.support.EditBuilder;
@@ -10,30 +13,82 @@ import com.enonic.wem.api.support.EditBuilder;
 import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
 public final class PageTemplate
-    extends Template<PageTemplateName, PageTemplateKey, PageDescriptorKey>
 {
+    private final PageTemplateKey key;
+
+    private final ResourcePath parentPath;
+
+    private final ResourcePath path;
+
+    private final String displayName;
+
+    private final PageDescriptorKey descriptor;
+
+    private final RootDataSet config;
+
     private final PageRegions regions;
 
     private final ContentTypeNames canRender;
 
-    private PageTemplate( final Builder builder )
-    {
-        super( builder );
-        this.canRender = builder.canRender != null ? builder.canRender : ContentTypeNames.empty();
-        this.regions = builder.regions;
-    }
-
     private PageTemplate( final PageTemplateProperties properties )
     {
-        super( properties );
+        this.key = resolveKey( properties );
+        this.parentPath = properties.parentPath;
+        this.path = ResourcePath.from( this.parentPath, this.key.getTemplateName().toString() );
+        this.displayName = properties.displayName;
+        this.descriptor = properties.descriptor;
+        this.config = properties.config;
         this.canRender = properties.canRender != null ? properties.canRender : ContentTypeNames.empty();
         this.regions = properties.regions;
     }
 
-    @Override
-    protected PageTemplateKey createKey( final ModuleName moduleName, final PageTemplateName name )
+    private PageTemplateKey resolveKey( final PageTemplateProperties properties )
     {
-        return PageTemplateKey.from( moduleName, name );
+        if ( properties.key != null )
+        {
+            return properties.key;
+        }
+        else
+        {
+            Preconditions.checkNotNull( properties.moduleName, "moduleKey cannot be null when key is not given" );
+            Preconditions.checkNotNull( properties.name, "name cannot be null when key is not given" );
+            return PageTemplateKey.from( properties.moduleName, properties.name );
+        }
+    }
+
+    public PageTemplateKey getKey()
+    {
+        return key;
+    }
+
+    public PageTemplateName getName()
+    {
+        return this.key.getTemplateName();
+    }
+
+    public ResourcePath getParentPath()
+    {
+        return parentPath;
+    }
+
+    public ResourcePath getPath()
+    {
+        return path;
+    }
+
+    public String getDisplayName()
+    {
+        return displayName;
+    }
+
+    public PageDescriptorKey getDescriptor()
+    {
+        return descriptor;
+    }
+
+    public RootDataSet getConfig()
+    {
+        return config;
     }
 
     public ContentTypeNames getCanRender()
@@ -57,20 +112,67 @@ public final class PageTemplate
     }
 
     public static class Builder
-        extends BaseTemplateBuilder<Builder, PageTemplate, PageTemplateName, PageTemplateKey, PageDescriptorKey>
+        extends PageTemplateProperties
     {
-        private ContentTypeNames canRender;
-
-        private PageRegions regions;
-
         private Builder()
         {
         }
 
-        @Override
+        public Builder key( final PageTemplateKey key )
+        {
+            this.key = key;
+            return this;
+        }
+
+        /**
+         * Optional. Only required when key is not given.
+         */
+        public Builder module( final ModuleName value )
+        {
+
+            this.moduleName = value;
+            return this;
+        }
+
+        /**
+         * Optional. Only required when key is not given.
+         */
+        public Builder name( final PageTemplateName name )
+        {
+            this.name = name;
+            return this;
+        }
+
+        /**
+         * Optional. Only required when key is not given.
+         */
         public Builder name( final String name )
         {
             this.name = PageTemplateName.from( name );
+            return this;
+        }
+
+        public Builder parentPath( final ResourcePath parentPath )
+        {
+            this.parentPath = parentPath;
+            return this;
+        }
+
+        public Builder displayName( final String displayName )
+        {
+            this.displayName = displayName;
+            return this;
+        }
+
+        public Builder descriptor( final PageDescriptorKey descriptor )
+        {
+            this.descriptor = descriptor;
+            return this;
+        }
+
+        public Builder config( final RootDataSet config )
+        {
+            this.config = config;
             return this;
         }
 
@@ -93,12 +195,24 @@ public final class PageTemplate
     }
 
     public static class PageTemplateProperties
-        extends TemplateProperties
     {
+        ResourcePath parentPath = ResourcePath.root();
+
+        PageTemplateKey key;
+
+        ModuleName moduleName;
+
+        PageTemplateName name;
+
+        String displayName;
+
+        PageDescriptorKey descriptor;
+
+        RootDataSet config;
+
         ContentTypeNames canRender;
 
         PageRegions regions;
-
     }
 
     public static PageTemplateEditBuilder editPageTemplate( final PageTemplate toBeEdited )

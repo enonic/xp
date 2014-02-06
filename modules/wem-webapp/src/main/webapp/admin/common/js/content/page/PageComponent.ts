@@ -8,7 +8,7 @@ module api.content.page {
 
         private path: ComponentPath;
 
-        private template: TemplateKey;
+        private template: PageTemplateKey;
 
         private config: api.data.RootDataSet;
 
@@ -34,11 +34,11 @@ module api.content.page {
             return this.name;
         }
 
-        getTemplate(): TemplateKey {
+        getTemplate(): PageTemplateKey {
             return this.template;
         }
 
-        setTemplate(template: TemplateKey) {
+        setTemplate(template: PageTemplateKey) {
             this.template = template;
         }
 
@@ -68,7 +68,7 @@ module api.content.page {
 
         name: api.content.page.ComponentName;
 
-        template: TemplateKey;
+        template: PageTemplateKey;
 
         config: api.data.RootDataSet;
 
@@ -79,7 +79,7 @@ module api.content.page {
             return this;
         }
 
-        public setTemplate(value: TemplateKey): PageComponentBuilder<COMPONENT> {
+        public setTemplate(value: PageTemplateKey): PageComponentBuilder<COMPONENT> {
             this.template = value;
             return this;
         }

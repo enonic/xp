@@ -53,7 +53,7 @@ public final class ContentResource
         context.setPortalUrlScriptBean( portalUrlScriptBean );
 
         final JsController controller = this.controllerFactory.newController();
-        controller.scriptDir( pageDescriptor.getComponentPath() );
+        controller.scriptDir( pageDescriptor.getModuleResourceKey() );
         controller.context( context );
 
         return controller.execute();

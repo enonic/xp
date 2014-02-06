@@ -42,7 +42,7 @@
                     {
                         "PartComponent": {
                             "name": "my-component",
-                            "template": "mainmodule|partTemplateName",
+                            "descriptor": "mainmodule-1.0.0:partTemplateName",
                             "config": [
                                 {
                                     "Property": {

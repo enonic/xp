@@ -2,21 +2,11 @@ package com.enonic.wem.api.content.site;
 
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-
-import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.api.Identity;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplates;
-import com.enonic.wem.api.content.page.Template;
-import com.enonic.wem.api.content.page.image.ImageTemplate;
-import com.enonic.wem.api.content.page.image.ImageTemplates;
-import com.enonic.wem.api.content.page.layout.LayoutTemplate;
-import com.enonic.wem.api.content.page.layout.LayoutTemplates;
-import com.enonic.wem.api.content.page.part.PartTemplate;
-import com.enonic.wem.api.content.page.part.PartTemplates;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.support.Changes;
@@ -25,7 +15,7 @@ import com.enonic.wem.api.support.EditBuilder;
 import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
 public final class SiteTemplate
-    implements Iterable<Template>, Identity<SiteTemplateKey, SiteTemplateName>
+    implements Identity<SiteTemplateKey, SiteTemplateName>
 {
     private final SiteTemplateKey siteTemplateKey;
 
@@ -43,15 +33,7 @@ public final class SiteTemplate
 
     private final ContentTypeName rootContentType;
 
-    private final ImmutableList<Template> templates;
-
     private final PageTemplates pageTemplates;
-
-    private final PartTemplates partTemplates;
-
-    private final LayoutTemplates layoutTemplates;
-
-    private final ImageTemplates imageTemplates;
 
     private SiteTemplate( final SiteTemplateProperties properties )
     {
@@ -63,36 +45,11 @@ public final class SiteTemplate
         this.modules = properties.modules;
         this.contentTypeFilter = properties.contentTypeFilter;
         this.rootContentType = properties.rootContentType;
-        this.templates = ImmutableList.copyOf( properties.templates );
 
         final PageTemplates.Builder pageTemplatesBuilder = PageTemplates.newPageTemplates();
-        final PartTemplates.Builder partTemplatesBuilder = PartTemplates.newPartTemplates();
-        final ImageTemplates.Builder imageTemplatesBuilder = ImageTemplates.newImageTemplates();
-        final LayoutTemplates.Builder layoutTemplatesBuilder = LayoutTemplates.newLayoutTemplates();
-
-        for ( final Template template : this.templates )
-        {
-            switch ( template.getKey().getTemplateType() )
-            {
-                case IMAGE:
-                    imageTemplatesBuilder.add( (ImageTemplate) template );
-                    break;
-                case LAYOUT:
-                    layoutTemplatesBuilder.add( (LayoutTemplate) template );
-                    break;
-                case PAGE:
-                    pageTemplatesBuilder.add( (PageTemplate) template );
-                    break;
-                case PART:
-                    partTemplatesBuilder.add( (PartTemplate) template );
-                    break;
-            }
-        }
+        pageTemplatesBuilder.addAll( properties.pageTemplates );
 
         this.pageTemplates = pageTemplatesBuilder.build();
-        this.partTemplates = partTemplatesBuilder.build();
-        this.imageTemplates = imageTemplatesBuilder.build();
-        this.layoutTemplates = layoutTemplatesBuilder.build();
     }
 
     public SiteTemplateKey getKey()
@@ -145,30 +102,9 @@ public final class SiteTemplate
         return rootContentType;
     }
 
-    @Override
-    public Iterator<Template> iterator()
-    {
-        return templates.iterator();
-    }
-
     public PageTemplates getPageTemplates()
     {
         return pageTemplates;
-    }
-
-    public PartTemplates getPartTemplates()
-    {
-        return partTemplates;
-    }
-
-    public LayoutTemplates getLayoutTemplates()
-    {
-        return layoutTemplates;
-    }
-
-    public ImageTemplates getImageTemplates()
-    {
-        return imageTemplates;
     }
 
     public static Builder newSiteTemplate()
@@ -181,7 +117,7 @@ public final class SiteTemplate
     {
         private Builder()
         {
-            templates = new ArrayList<>();
+            pageTemplates = new ArrayList<>();
         }
 
         public Builder key( final SiteTemplateKey siteTemplateKey )
@@ -232,9 +168,9 @@ public final class SiteTemplate
             return this;
         }
 
-        public Builder addTemplate( final Template template )
+        public Builder addPageTemplate( final PageTemplate template )
         {
-            templates.add( template );
+            pageTemplates.add( template );
             return this;
         }
 
@@ -262,7 +198,7 @@ public final class SiteTemplate
 
         ContentTypeName rootContentType;
 
-        List<Template> templates;
+        List<PageTemplate> pageTemplates;
     }
 
     public static SiteTemplateEditBuilder editSiteTemplate( final SiteTemplate toBeEdited )
@@ -336,33 +272,10 @@ public final class SiteTemplate
         {
             changes.recordChange( newPossibleChange( "pageTemplates" ).from( this.original.getPageTemplates().
                 getTemplate( value.getPath() ) ).to( value ).build() );
-            this.templates.add( value );
+            this.pageTemplates.add( value );
             return this;
         }
 
-        public SiteTemplateEditBuilder setPartTemplate( final PartTemplate value )
-        {
-            changes.recordChange( newPossibleChange( "partTemplates" ).from( this.original.getPartTemplates().
-                getTemplate( value.getPath() ) ).to( value ).build() );
-            this.templates.add( value );
-            return this;
-        }
-
-        public SiteTemplateEditBuilder setLayoutTemplate( final LayoutTemplate value )
-        {
-            changes.recordChange( newPossibleChange( "layoutTemplates" ).from( this.original.getLayoutTemplates().
-                getTemplate( value.getPath() ) ).to( value ).build() );
-            this.templates.add( value );
-            return this;
-        }
-
-        public SiteTemplateEditBuilder setImageTemplate( final ImageTemplate value )
-        {
-            changes.recordChange( newPossibleChange( "imageTemplates" ).from( this.original.getImageTemplates().
-                getTemplate( value.getPath() ) ).to( value ).build() );
-            this.templates.add( value );
-            return this;
-        }
 
         public boolean isChanges()
         {

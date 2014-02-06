@@ -2,12 +2,11 @@ package com.enonic.wem.core.content.site;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
 import javax.inject.Inject;
 
 import com.enonic.wem.api.command.content.site.CreateSiteTemplate;
-import com.enonic.wem.api.content.page.Template;
+import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.config.SystemConfig;
@@ -32,10 +31,10 @@ public class CreateSiteTemplateHandler
             description( command.getDescription() ).
             rootContentType( command.getRootContentType() ).
             contentTypeFilter( command.getContentTypeFilter() );
-        final List<Template> templates = command.getTemplates();
-        for ( Template template : templates )
+
+        for ( PageTemplate template : command.getPageTemplates() )
         {
-            builder.addTemplate( template );
+            builder.addPageTemplate( template );
         }
         final SiteTemplate siteTemplate = builder.build();
 

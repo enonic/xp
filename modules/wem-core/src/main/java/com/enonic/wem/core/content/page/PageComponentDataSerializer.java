@@ -2,8 +2,8 @@ package com.enonic.wem.core.content.page;
 
 
 import com.enonic.wem.api.content.page.ComponentName;
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.PageComponent;
-import com.enonic.wem.api.content.page.TemplateKey;
 import com.enonic.wem.api.content.page.image.ImageComponent;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.part.PartComponent;
@@ -30,9 +30,9 @@ public abstract class PageComponentDataSerializer<TO_DATA_INPUT extends PageComp
     protected void applyPageComponentToData( final PageComponent component, final DataSet asData )
     {
         asData.setProperty( "name", new Value.String( component.getName().toString() ) );
-        if ( component.getTemplate() != null )
+        if ( component.getDescriptor() != null )
         {
-            asData.setProperty( "template", new Value.String( component.getTemplate().toString() ) );
+            asData.setProperty( "template", new Value.String( component.getDescriptor().toString() ) );
         }
 
         if ( component.hasConfig() )
@@ -46,7 +46,7 @@ public abstract class PageComponentDataSerializer<TO_DATA_INPUT extends PageComp
         component.name( new ComponentName( asData.getProperty( "name" ).getString() ) );
         if ( asData.hasData( "template" ) )
         {
-            component.template( toTemplatekey( asData.getProperty( "template" ).getString() ) );
+            component.descriptor( toDescriptorkey( asData.getProperty( "template" ).getString() ) );
         }
         if ( asData.hasData( "config" ) )
         {
@@ -54,7 +54,7 @@ public abstract class PageComponentDataSerializer<TO_DATA_INPUT extends PageComp
         }
     }
 
-    protected abstract TemplateKey toTemplatekey( final String s );
+    protected abstract DescriptorKey toDescriptorkey( final String s );
 
     public static PageComponentDataSerializer get( final DataSet dataSet )
     {

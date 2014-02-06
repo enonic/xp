@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.PageComponentXml;
 import com.enonic.wem.api.content.page.TemplateKey;
 import com.enonic.wem.xml.XmlObject;
@@ -31,8 +32,8 @@ public final class ImageComponentXml
     }
 
     @Override
-    protected TemplateKey toTemplateKey( final String s )
+    protected DescriptorKey toDescriptorKey( final String s )
     {
-        return ImageTemplateKey.from( s );
+        return ImageDescriptorKey.from( s );
     }
 }

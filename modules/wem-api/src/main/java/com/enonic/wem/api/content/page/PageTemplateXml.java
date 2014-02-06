@@ -9,16 +9,27 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.page.region.RegionXml;
+import com.enonic.wem.api.data.DataSetXml;
+import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
-import com.enonic.wem.xml.template.AbstractTemplateXml;
+import com.enonic.wem.xml.XmlObject;
 
 import static com.enonic.wem.api.content.page.PageRegions.newPageRegions;
 
 @XmlRootElement(name = "page-template")
 public final class PageTemplateXml
-    extends AbstractTemplateXml<PageTemplate, PageTemplate.Builder>
+    implements XmlObject<PageTemplate, PageTemplate.Builder>
 {
+    @XmlElement(name = "display-name", required = false)
+    private String displayName;
+
+    @XmlElement(name = "descriptor", required = false)
+    private String descriptor;
+
+    @XmlElement(name = "config", required = false)
+    private DataSetXml config = new DataSetXml();
+
     @XmlElement(name = "content-type", required = false)
     @XmlElementWrapper(name = "can-render")
     private List<String> canRender = new ArrayList<>();
@@ -30,7 +41,14 @@ public final class PageTemplateXml
     @Override
     public void from( final PageTemplate template )
     {
-        fromTemplate( template );
+        this.displayName = template.getDisplayName();
+        this.descriptor = template.getDescriptor().toString();
+        final RootDataSet cfgDataSet = template.getConfig();
+        if ( cfgDataSet != null )
+        {
+            this.config.from( cfgDataSet );
+        }
+
         for ( ContentTypeName contentType : template.getCanRender() )
         {
             this.canRender.add( contentType.toString() );
@@ -50,8 +68,12 @@ public final class PageTemplateXml
     @Override
     public void to( final PageTemplate.Builder builder )
     {
-        toTemplate( builder );
+        builder.displayName( this.displayName );
+        builder.descriptor( PageDescriptorKey.from( this.descriptor ) );
         builder.canRender( ContentTypeNames.from( this.canRender ) );
+        final RootDataSet configAsData = new RootDataSet();
+        this.config.to( configAsData );
+        builder.config( configAsData );
 
         final PageRegions.Builder regionsBuilder = newPageRegions();
         for ( RegionXml regionAsXml : this.regions )

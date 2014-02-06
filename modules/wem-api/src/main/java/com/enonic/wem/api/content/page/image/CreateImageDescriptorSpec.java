@@ -22,7 +22,7 @@ public final class CreateImageDescriptorSpec
         createModule.key = imageDescriptor.getKey();
         createModule.name = imageDescriptor.getName();
         createModule.displayName = imageDescriptor.getDisplayName();
-        createModule.config = imageDescriptor.getConfigForm();
+        createModule.config = imageDescriptor.getConfig();
         return createModule;
     }
 

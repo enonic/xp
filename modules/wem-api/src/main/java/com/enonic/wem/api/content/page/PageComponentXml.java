@@ -27,7 +27,7 @@ public abstract class PageComponentXml
     public void from( final PageComponent partComponent )
     {
         this.name = partComponent.getName().toString();
-        this.template = partComponent.getTemplate().toString();
+        this.template = partComponent.getDescriptor().toString();
         this.config = new RootDataSetXml();
         this.config.from( partComponent.getConfig() );
     }
@@ -35,7 +35,7 @@ public abstract class PageComponentXml
     public void to( final PageComponent.Builder builder )
     {
         builder.name( new ComponentName( this.name ) );
-        builder.template( toTemplateKey( this.template ) );
+        builder.descriptor( toDescriptorKey( this.template ) );
 
         RootDataSet config = new RootDataSet();
         if ( this.config != null )
@@ -45,7 +45,7 @@ public abstract class PageComponentXml
         builder.config( config );
     }
 
-    protected abstract TemplateKey toTemplateKey( String s );
+    protected abstract DescriptorKey toDescriptorKey( String s );
 
     public static PageComponent fromXxml( final PageComponentXml componentXml )
     {

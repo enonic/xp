@@ -3,11 +3,8 @@ package com.enonic.wem.xml;
 import com.enonic.wem.api.content.page.PageDescriptorXml;
 import com.enonic.wem.api.content.page.PageTemplateXml;
 import com.enonic.wem.api.content.page.image.ImageDescriptorXml;
-import com.enonic.wem.api.content.page.image.ImageTemplateXml;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorXml;
-import com.enonic.wem.api.content.page.layout.LayoutTemplateXml;
 import com.enonic.wem.api.content.page.part.PartDescriptorXml;
-import com.enonic.wem.api.content.page.part.PartTemplateXml;
 import com.enonic.wem.api.content.site.SiteTemplateXml;
 import com.enonic.wem.api.form.FormXml;
 import com.enonic.wem.api.form.MixinReferenceXml;
@@ -37,21 +34,6 @@ public final class XmlSerializers
     public static XmlSerializer<PageTemplateXml> pageTemplate()
     {
         return create( PageTemplateXml.class );
-    }
-
-    public static XmlSerializer<PartTemplateXml> partTemplate()
-    {
-        return create( PartTemplateXml.class );
-    }
-
-    public static XmlSerializer<LayoutTemplateXml> layoutTemplate()
-    {
-        return create( LayoutTemplateXml.class );
-    }
-
-    public static XmlSerializer<ImageTemplateXml> imageTemplate()
-    {
-        return create( ImageTemplateXml.class );
     }
 
     public static XmlSerializer<PageDescriptorXml> pageDescriptor()

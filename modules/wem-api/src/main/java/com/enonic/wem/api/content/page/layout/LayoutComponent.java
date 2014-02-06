@@ -7,7 +7,7 @@ import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.RootDataSet;
 
 public final class LayoutComponent
-    extends PageComponent<LayoutTemplateKey>
+    extends PageComponent<LayoutDescriptorKey>
     implements RegionPlaceableComponent
 {
     private LayoutRegions regions;
@@ -46,7 +46,7 @@ public final class LayoutComponent
     }
 
     public static class Builder
-        extends PageComponent.Builder<LayoutTemplateKey>
+        extends PageComponent.Builder<LayoutDescriptorKey>
     {
         private LayoutRegions regions;
 
@@ -67,9 +67,9 @@ public final class LayoutComponent
             return this;
         }
 
-        public Builder template( LayoutTemplateKey value )
+        public Builder descriptor( LayoutDescriptorKey value )
         {
-            this.template = value;
+            this.descrpitor = value;
             return this;
         }
 

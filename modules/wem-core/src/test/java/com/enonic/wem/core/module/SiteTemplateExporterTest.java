@@ -14,17 +14,8 @@ import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateName;
 import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
-import com.enonic.wem.api.content.page.image.ImageTemplate;
-import com.enonic.wem.api.content.page.image.ImageTemplateKey;
-import com.enonic.wem.api.content.page.image.ImageTemplateName;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
-import com.enonic.wem.api.content.page.layout.LayoutTemplate;
-import com.enonic.wem.api.content.page.layout.LayoutTemplateKey;
-import com.enonic.wem.api.content.page.layout.LayoutTemplateName;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
-import com.enonic.wem.api.content.page.part.PartTemplate;
-import com.enonic.wem.api.content.page.part.PartTemplateKey;
-import com.enonic.wem.api.content.page.part.PartTemplateName;
 import com.enonic.wem.api.content.site.ContentTypeFilter;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
@@ -106,9 +97,6 @@ public class SiteTemplateExporterTest
         assertEquals( "Enonic", siteTemplate1.getVendor().getName() );
         assertEquals( "https://www.enonic.com", siteTemplate1.getVendor().getUrl() );
 
-        assertNotNull( siteTemplate1.getImageTemplates().getTemplate( new ImageTemplateName( "my-image" ) ) );
-        assertNotNull( siteTemplate1.getPartTemplates().getTemplate( new PartTemplateName( "my-part" ) ) );
-        assertNotNull( siteTemplate1.getLayoutTemplates().getTemplate( new LayoutTemplateName( "my-layout" ) ) );
         assertNotNull( siteTemplate1.getPageTemplates().getTemplate( new PageTemplateName( "my-page" ) ) );
     }
 
@@ -118,13 +106,6 @@ public class SiteTemplateExporterTest
 
         final RootDataSet partTemplateConfig = new RootDataSet();
         partTemplateConfig.addProperty( "width", new Value.Long( 200 ) );
-
-        final PartTemplate partTemplate = PartTemplate.newPartTemplate().
-            key( PartTemplateKey.from( module.getName(), new PartTemplateName( "my-part" ) ) ).
-            displayName( "News part template" ).
-            config( partTemplateConfig ).
-            descriptor( PartDescriptorKey.from( "mainmodule-1.0.0:news-part" ) ).
-            build();
 
         final RootDataSet pageTemplateConfig = new RootDataSet();
         pageTemplateConfig.addProperty( "pause", new Value.Long( 10000 ) );
@@ -141,23 +122,8 @@ public class SiteTemplateExporterTest
         final RootDataSet layoutTemplateConfig = new RootDataSet();
         layoutTemplateConfig.addProperty( "columns", new Value.Long( 3 ) );
 
-        final LayoutTemplate layoutTemplate = LayoutTemplate.newLayoutTemplate().
-            key( LayoutTemplateKey.from( module.getName(), new LayoutTemplateName( "my-layout" ) ) ).
-            displayName( "Layout template" ).
-            config( layoutTemplateConfig ).
-            descriptor( LayoutDescriptorKey.from( "mainmodule-1.0.0:some-layout" ) ).
-            regions( newLayoutRegions().build() ).
-            build();
-
         final RootDataSet imageTemplateConfig = new RootDataSet();
         imageTemplateConfig.addProperty( "width", new Value.Long( 3000 ) );
-
-        final ImageTemplate imageTemplate = ImageTemplate.newImageTemplate().
-            key( ImageTemplateKey.from( module.getName(), new ImageTemplateName( "my-image" ) ) ).
-            displayName( "Image template" ).
-            config( imageTemplateConfig ).
-            descriptor( ImageDescriptorKey.from( "mainmodule-1.0.0:some-image" ) ).
-            build();
 
         final ContentTypeFilter contentTypeFilter =
             newContentFilter().defaultDeny().allowContentTypes( ContentTypeNames.from( "com.enonic.intranet", "system.folder" ) ).build();
@@ -171,10 +137,7 @@ public class SiteTemplateExporterTest
                                       "com.enonic.resolvers-1.0.0", "mymodule-1.0.0" ) ).
             contentTypeFilter( contentTypeFilter ).
             rootContentType( ContentTypeName.from( "com.enonic.intranet" ) ).
-            addTemplate( partTemplate ).
-            addTemplate( pageTemplate ).
-            addTemplate( layoutTemplate ).
-            addTemplate( imageTemplate ).
+            addPageTemplate( pageTemplate ).
             build();
     }
 }

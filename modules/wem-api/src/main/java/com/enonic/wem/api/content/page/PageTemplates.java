@@ -90,6 +90,15 @@ public final class PageTemplates
             return this;
         }
 
+        public Builder addAll( Iterable<PageTemplate> templates )
+        {
+            for( final PageTemplate template : templates )
+            {
+                this.list.add( template );
+            }
+            return this;
+        }
+
         public PageTemplates build()
         {
             return new PageTemplates( this.list.build() );

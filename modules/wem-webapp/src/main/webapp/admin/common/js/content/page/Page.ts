@@ -2,7 +2,7 @@ module api.content.page {
 
     export class Page {
 
-        private template: TemplateKey;
+        private template: PageTemplateKey;
 
         private regions: PageRegions;
 
@@ -14,11 +14,11 @@ module api.content.page {
             this.config = builder.config;
         }
 
-        getTemplate(): TemplateKey {
+        getTemplate(): PageTemplateKey {
             return this.template;
         }
 
-        setTemplate(template: TemplateKey) {
+        setTemplate(template: PageTemplateKey) {
             this.template = template;
         }
 
@@ -41,20 +41,20 @@ module api.content.page {
 
     export class PageBuilder {
 
-        template: TemplateKey;
+        template: PageTemplateKey;
 
         regions: PageRegions;
 
         config: api.data.RootDataSet;
 
         public fromJson(json: api.content.page.json.PageJson): PageBuilder {
-            this.setTemplate(TemplateKey.fromString(json.template));
+            this.setTemplate(PageTemplateKey.fromString(json.template));
             this.setRegions(json.regions != null ? new PageRegionsBuilder().fromJson(json.regions).build() : null);
             this.setConfig(json.config != null ? api.data.DataFactory.createRootDataSet(json.config) : null);
             return this;
         }
 
-        public setTemplate(value: TemplateKey): PageBuilder {
+        public setTemplate(value: PageTemplateKey): PageBuilder {
             this.template = value;
             return this;
         }

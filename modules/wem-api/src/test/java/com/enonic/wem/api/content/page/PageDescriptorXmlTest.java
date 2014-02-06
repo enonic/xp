@@ -67,7 +67,6 @@ public class PageDescriptorXmlTest
 
         PageDescriptor pageDescriptor = PageDescriptor.newPageDescriptor().
             displayName( "Landing page" ).
-            name( "mypage" ).
             config( pageForm ).
             regions( newRegionDescriptors().
                 add( newRegionDescriptor().name( "header" ).build() ).
@@ -95,10 +94,10 @@ public class PageDescriptorXmlTest
 
         XmlSerializers.pageDescriptor().parse( xml ).to( builder );
 
-        final PageDescriptor pageDescriptor = builder.name( "mypage" ).build();
+        final PageDescriptor pageDescriptor = builder.build();
 
         assertEquals( "Landing page", pageDescriptor.getDisplayName() );
-        final Form config = pageDescriptor.getConfigForm();
+        final Form config = pageDescriptor.getConfig();
         assertNotNull( config );
         assertEquals( DECIMAL_NUMBER, config.getFormItem( "pause" ).toInput().getInputType() );
         assertEquals( "Pause parameter", config.getFormItem( "pause" ).toInput().getLabel() );

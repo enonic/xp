@@ -6,7 +6,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.page.Template;
+import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.ContentTypeFilter;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
@@ -33,7 +33,7 @@ public class CreateSiteTemplate
 
     private ContentTypeName rootContentType;
 
-    private List<Template> templates = Lists.newArrayList();
+    private List<PageTemplate> templates = Lists.newArrayList();
 
     public static CreateSiteTemplate fromSiteTemplate( SiteTemplate siteTemplate )
     {
@@ -46,9 +46,9 @@ public class CreateSiteTemplate
         createSiteTemplate.modules( siteTemplate.getModules() );
         createSiteTemplate.contentTypeFilter( siteTemplate.getContentTypeFilter() );
         createSiteTemplate.rootContentType( siteTemplate.getRootContentType() );
-        for ( Template template : siteTemplate )
+        for ( PageTemplate template : siteTemplate.getPageTemplates() )
         {
-            createSiteTemplate.addTemplate( template );
+            createSiteTemplate.addPageTemplate( template );
         }
         return createSiteTemplate;
     }
@@ -101,7 +101,7 @@ public class CreateSiteTemplate
         return this;
     }
 
-    public CreateSiteTemplate addTemplate( final Template template )
+    public CreateSiteTemplate addPageTemplate( final PageTemplate template )
     {
         this.templates.add( template );
         return this;
@@ -147,7 +147,7 @@ public class CreateSiteTemplate
         return rootContentType;
     }
 
-    public List<Template> getTemplates()
+    public List<PageTemplate> getPageTemplates()
     {
         return templates;
     }

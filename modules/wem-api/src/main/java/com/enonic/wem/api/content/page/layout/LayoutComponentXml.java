@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.PageComponentXml;
 import com.enonic.wem.api.content.page.TemplateKey;
 import com.enonic.wem.api.content.page.region.Region;
@@ -56,8 +57,8 @@ public final class LayoutComponentXml
     }
 
     @Override
-    protected TemplateKey toTemplateKey( final String s )
+    protected DescriptorKey toDescriptorKey( final String s )
     {
-        return LayoutTemplateKey.from( s );
+        return LayoutDescriptorKey.from( s );
     }
 }

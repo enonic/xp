@@ -10,11 +10,7 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.site.CreateSiteTemplate;
-import com.enonic.wem.api.content.page.Template;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
-import com.enonic.wem.api.content.page.part.PartTemplate;
-import com.enonic.wem.api.content.page.part.PartTemplateKey;
-import com.enonic.wem.api.content.page.part.PartTemplateName;
 import com.enonic.wem.api.content.site.ContentTypeFilter;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
@@ -73,14 +69,6 @@ public class CreateSiteTemplateHandlerTest
             description( "description" ).
             rootContentType( ContentTypeName.from( "document" ) );
 
-        PartTemplate.Builder templateBuilder = PartTemplate.newPartTemplate();
-        templateBuilder.key( PartTemplateKey.from( MODULE_KEY.getName(), new PartTemplateName( "template-name" ) ) );
-        templateBuilder.displayName( "display-name" );
-        templateBuilder.descriptor( PartDescriptorKey.from( "resource-1.0.0:part-descr" ) );
-        PartTemplate template = templateBuilder.build();
-
-        command.addTemplate( template );
-
         final ContentTypeFilter contentTypeFilter = newContentFilter().
             allowContentType( "article" ).
             build();
@@ -104,8 +92,5 @@ public class CreateSiteTemplateHandlerTest
         assertEquals( "http://enonic.net", siteTemplate.getVendor().getUrl() );
         assertEquals( ContentTypeName.from( "document" ), siteTemplate.getRootContentType() );
         assertEquals( ContentTypeName.from( "article" ), siteTemplate.getContentTypeFilter().iterator().next() );
-
-        final Template resTempl = siteTemplate.iterator().next();
-        assertEquals( new PartTemplateName( "template-name" ), resTempl.getName() );
     }
 }

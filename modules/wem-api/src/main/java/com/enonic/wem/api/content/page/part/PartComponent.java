@@ -7,7 +7,7 @@ import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.RootDataSet;
 
 public final class PartComponent
-    extends PageComponent<PartTemplateKey>
+    extends PageComponent<PartDescriptorKey>
     implements RegionPlaceableComponent
 {
     public PartComponent( final Builder builder )
@@ -21,7 +21,7 @@ public final class PartComponent
     }
 
     public static class Builder
-        extends PageComponent.Builder<PartTemplateKey>
+        extends PageComponent.Builder<PartDescriptorKey>
     {
         private Builder()
         {
@@ -39,15 +39,15 @@ public final class PartComponent
             return this;
         }
 
-        public Builder template( PartTemplateKey value )
+        public Builder descriptor( PartDescriptorKey value )
         {
-            this.template = value;
+            this.descrpitor = value;
             return this;
         }
 
-        public Builder template( String value )
+        public Builder descriptor( String value )
         {
-            this.template = PartTemplateKey.from( value );
+            this.descrpitor = PartDescriptorKey.from( value );
             return this;
         }
 

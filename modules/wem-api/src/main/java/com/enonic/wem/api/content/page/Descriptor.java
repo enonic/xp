@@ -44,7 +44,7 @@ public abstract class Descriptor<KEY extends DescriptorKey>
         return displayName;
     }
 
-    public Form getConfigForm()
+    public Form getConfig()
     {
         return config;
     }

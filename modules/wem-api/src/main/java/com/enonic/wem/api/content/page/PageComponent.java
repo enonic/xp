@@ -6,21 +6,21 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.rendering.Component;
 
-public abstract class PageComponent<TEMPLATE_KEY extends TemplateKey>
+public abstract class PageComponent<DESCRIPTOR_KEY extends DescriptorKey>
     implements Component
 {
     private ComponentName name;
 
-    private final TEMPLATE_KEY template;
+    private final DESCRIPTOR_KEY descriptor;
 
     private final RootDataSet config;
 
     private ComponentPath path;
 
-    protected PageComponent( final Properties<TEMPLATE_KEY> properties )
+    protected PageComponent( final Properties<DESCRIPTOR_KEY> properties )
     {
         Preconditions.checkNotNull( properties.name, "name cannot be null" );
-        this.template = properties.template;
+        this.descriptor = properties.descrpitor;
         this.name = properties.name;
         this.config = properties.config;
     }
@@ -40,9 +40,9 @@ public abstract class PageComponent<TEMPLATE_KEY extends TemplateKey>
         return path;
     }
 
-    public TEMPLATE_KEY getTemplate()
+    public DESCRIPTOR_KEY getDescriptor()
     {
-        return template;
+        return descriptor;
     }
 
     public boolean hasConfig()
@@ -55,17 +55,17 @@ public abstract class PageComponent<TEMPLATE_KEY extends TemplateKey>
         return config;
     }
 
-    public static class Properties<TEMPLATE_KEY extends TemplateKey>
+    public static class Properties<DESCRIPTOR_KEY extends DescriptorKey>
     {
         protected ComponentName name;
 
-        protected TEMPLATE_KEY template;
+        protected DESCRIPTOR_KEY descrpitor;
 
         protected RootDataSet config;
     }
 
-    public static class Builder<TEMPLATE_KEY extends TemplateKey>
-        extends Properties<TEMPLATE_KEY>
+    public static class Builder<DESCRIPTOR_KEY extends DescriptorKey>
+        extends Properties<DESCRIPTOR_KEY>
     {
         protected Builder()
         {
@@ -78,9 +78,9 @@ public abstract class PageComponent<TEMPLATE_KEY extends TemplateKey>
             return this;
         }
 
-        public Builder<TEMPLATE_KEY> template( TEMPLATE_KEY value )
+        public Builder<DESCRIPTOR_KEY> descriptor( DESCRIPTOR_KEY value )
         {
-            this.template = value;
+            this.descrpitor = value;
             return this;
         }
 

@@ -6,10 +6,8 @@
 ///<reference path='PageDescriptorResourceRequest.ts' />
 ///<reference path='GetPageDescriptorByKeyRequest.ts' />
 
-///<reference path='TemplateKey.ts' />
-///<reference path='TemplateName.ts' />
-///<reference path='TemplateSummary.ts' />
-///<reference path='Template.ts' />
+///<reference path='PageTemplateKey.ts' />
+///<reference path='PageTemplateName.ts' />
 
 ///<reference path='ComponentName.ts' />
 ///<reference path='ComponentPath.ts' />
@@ -19,12 +17,10 @@
 ///<reference path='AbstractRegions.ts' />
 ///<reference path='PageRegions.ts' />
 
-///<reference path='TemplateComboBox.ts' />
-///<reference path='TemplateSummaryLoader.ts' />
-///<reference path='TemplateSummaryLoaderListener.ts' />
-
 ///<reference path='PageTemplateSummary.ts' />
 ///<reference path='PageTemplate.ts' />
+
+///<reference path='PageTemplateComboBox.ts' />
 
 ///<reference path='PageTemplateSummaryLoader.ts' />
 ///<reference path='PageTemplateSummaryLoaderListener.ts' />

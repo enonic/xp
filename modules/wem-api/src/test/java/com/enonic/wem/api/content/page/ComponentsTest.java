@@ -3,9 +3,9 @@ package com.enonic.wem.api.content.page;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
-import com.enonic.wem.api.content.page.layout.LayoutTemplateKey;
+import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartComponent;
-import com.enonic.wem.api.content.page.part.PartTemplateKey;
+import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 
@@ -41,13 +41,13 @@ public class ComponentsTest
 
         PartComponent partComponent = newPartComponent().
             name( "my-part" ).
-            template( PartTemplateKey.from( "mainmodule|partTemplateName" ) ).
+            descriptor( PartDescriptorKey.from( "mainmodule-1.0.0:partTemplateName" ) ).
             config( partConfig ).
             build();
 
         assertEquals( "my-part", partComponent.getName().toString() );
-        assertEquals( "partTemplateName", partComponent.getTemplate().getTemplateName().toString() );
-        assertEquals( "mainmodule", partComponent.getTemplate().getModuleName().toString() );
+        assertEquals( "partTemplateName", partComponent.getDescriptor().getName().toString() );
+        assertEquals( "mainmodule-1.0.0", partComponent.getDescriptor().getModuleKey().toString() );
     }
 
     @Test
@@ -58,12 +58,12 @@ public class ComponentsTest
 
         LayoutComponent layoutComponent = newLayoutComponent().
             name( "my-template" ).
-            template( LayoutTemplateKey.from( "mainmodule|layoutTemplateName" ) ).
+            descriptor( LayoutDescriptorKey.from( "mainmodule-1.0.0:layoutTemplateName" ) ).
             config( layoutConfig ).
             build();
 
         assertEquals( "my-template", layoutComponent.getName().toString() );
-        assertEquals( "layoutTemplateName", layoutComponent.getTemplate().getTemplateName().toString() );
-        assertEquals( "mainmodule", layoutComponent.getTemplate().getModuleName().toString() );
+        assertEquals( "layoutTemplateName", layoutComponent.getDescriptor().getName().toString() );
+        assertEquals( "mainmodule-1.0.0", layoutComponent.getDescriptor().getModuleKey().toString() );
     }
 }

@@ -7,13 +7,10 @@
     "description": "info",
     "displayName": "displayName",
     "editable": true,
-    "imageTemplates": [ ],
     "key": "name-1.0.0",
-    "layoutTemplates": [ ],
     "modules": [ "module1-1.0.0" ],
     "name": "name",
     "pageTemplates": [ ],
-    "partTemplates": [ ],
     "rootContentType": "folder",
     "url": "url",
     "vendor": {

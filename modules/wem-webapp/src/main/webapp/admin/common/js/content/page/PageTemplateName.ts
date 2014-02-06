@@ -1,6 +1,6 @@
 module api.content.page{
 
-    export class TemplateName {
+    export class PageTemplateName {
 
         private name:string;
 

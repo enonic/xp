@@ -8,7 +8,6 @@ import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
-import com.enonic.wem.api.content.page.region.RegionDescriptors;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 
@@ -28,7 +27,6 @@ public class DescriptorsTest
                 build();
 
         PageDescriptor pageDescriptor = PageDescriptor.newPageDescriptor().
-            name( "landing-page" ).
             displayName( "Landing page" ).
             config( pageForm ).
             regions( newRegionDescriptors().build() ).
@@ -36,6 +34,7 @@ public class DescriptorsTest
             build();
 
         assertEquals( "Landing page", pageDescriptor.getDisplayName() );
+        assertEquals( "landing-page", pageDescriptor.getName().toString() );
     }
 
     @Test

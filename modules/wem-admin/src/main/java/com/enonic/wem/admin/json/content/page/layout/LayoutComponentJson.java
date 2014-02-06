@@ -12,7 +12,7 @@ import com.enonic.wem.admin.json.data.DataJson;
 import com.enonic.wem.admin.json.data.RootDataSetJson;
 import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
-import com.enonic.wem.api.content.page.layout.LayoutTemplateKey;
+import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 
 import static com.enonic.wem.api.content.page.layout.LayoutComponent.newLayoutComponent;
 
@@ -25,13 +25,13 @@ public class LayoutComponentJson
     private final LayoutRegionsJson regionsJson;
 
     @JsonCreator
-    public LayoutComponentJson( @JsonProperty("name") final String name, @JsonProperty("template") final String template,
+    public LayoutComponentJson( @JsonProperty("name") final String name, @JsonProperty("descriptor") final String descriptor,
                                 @JsonProperty("config") final List<DataJson> config,
                                 final @JsonProperty("regions") List<RegionJson> regions )
     {
         super( newLayoutComponent().
             name( ComponentName.from( name ) ).
-            template( template != null ? LayoutTemplateKey.from( template ) : null ).
+            descriptor( descriptor != null ? LayoutDescriptorKey.from( descriptor ) : null ).
             config( config != null ? new RootDataSetJson( config ).getRootDataSet() : null ).
             regions( regions != null ? new LayoutRegionsJson( regions ).getLayoutRegions() : null ).
             build() );

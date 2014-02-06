@@ -39,9 +39,9 @@ public abstract class PageComponentJson<COMPONENT extends PageComponent>
         return component.getName().toString();
     }
 
-    public String getTemplate()
+    public String getDescriptor()
     {
-        return component.getTemplate() != null ? component.getTemplate().toString() : null;
+        return component.getDescriptor() != null ? component.getDescriptor().toString() : null;
     }
 
     public List<DataJson> getConfig()

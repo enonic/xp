@@ -49,7 +49,7 @@ public class PartDescriptorXmlTest
         final PartDescriptor partDescriptor = builder.name( "mypart" ).build();
 
         assertEquals( "A Part", partDescriptor.getDisplayName() );
-        final Form config = partDescriptor.getConfigForm();
+        final Form config = partDescriptor.getConfig();
         assertNotNull( config );
         assertEquals( DECIMAL_NUMBER, config.getFormItem( "width" ).toInput().getInputType() );
         assertEquals( "Column width", config.getFormItem( "width" ).toInput().getLabel() );

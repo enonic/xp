@@ -119,12 +119,6 @@ module api.content.page {
             }
         }
 
-        ensureUniqueComponentNameFromTemplate(templateName: TemplateName): ComponentName {
-
-            var wantedName = new ComponentName(templateName.toString());
-            return this.ensureUniqueComponentName(wantedName);
-        }
-
         ensureUniqueComponentName(wantedName: ComponentName): ComponentName {
 
             var region: region.Region;

@@ -28,7 +28,7 @@ public class GetPageDescriptorHandler
             final String descriptorXml = resource.readAsString();
             final PageDescriptor.Builder builder = PageDescriptor.newPageDescriptor();
             XmlSerializers.pageDescriptor().parse( descriptorXml ).to( builder );
-            builder.name( key.getName() ).key( key );
+            builder.key( key );
 
             final PageDescriptor pageDescriptor = builder.build();
 

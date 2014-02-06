@@ -17,14 +17,10 @@ import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateName;
-import com.enonic.wem.api.content.page.image.ImageTemplateKey;
-import com.enonic.wem.api.content.page.image.ImageTemplateName;
+import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartComponent;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
-import com.enonic.wem.api.content.page.part.PartTemplate;
-import com.enonic.wem.api.content.page.part.PartTemplateKey;
-import com.enonic.wem.api.content.page.part.PartTemplateName;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.site.ModuleConfigs;
 import com.enonic.wem.api.content.site.NoSiteTemplateExistsException;
@@ -51,7 +47,6 @@ import static com.enonic.wem.api.content.page.PageRegions.newPageRegions;
 import static com.enonic.wem.api.content.page.PageTemplate.newPageTemplate;
 import static com.enonic.wem.api.content.page.image.ImageComponent.newImageComponent;
 import static com.enonic.wem.api.content.page.part.PartComponent.newPartComponent;
-import static com.enonic.wem.api.content.page.part.PartTemplate.newPartTemplate;
 import static com.enonic.wem.api.content.page.region.Region.newRegion;
 import static com.enonic.wem.api.content.page.region.RegionDescriptor.newRegionDescriptor;
 import static com.enonic.wem.api.content.page.region.RegionDescriptors.newRegionDescriptors;
@@ -83,10 +78,6 @@ public class SitesInitializer
 
     private static final PageTemplateName DEPARTMENT_PAGE_PAGE_TEMPLATE_NAME = new PageTemplateName( "department-page" );
 
-    private static final PartTemplateName MY_PART_TEMPLATE_NAME = new PartTemplateName( "my-part-template" );
-
-    private static final ImageTemplateName MY_IMAGE_TEMPLATE_NAME = new ImageTemplateName( "my-image-template" );
-
     private Module testModule;
 
     private PageDescriptor landingPageDescriptor;
@@ -100,8 +91,6 @@ public class SitesInitializer
     private PageTemplate productGridPageTemplate;
 
     private PageTemplate departmentPageLandingPageTemplate;
-
-    private PartTemplate myPartTemplate;
 
     private SiteTemplate homepageSiteTemplate;
 
@@ -204,12 +193,6 @@ public class SitesInitializer
 
     private void initializeSiteTemplates()
     {
-        myPartTemplate = newPartTemplate().
-            key( PartTemplateKey.from( DEMO_MODULE_KEY.getName(), MY_PART_TEMPLATE_NAME ) ).
-            displayName( "My Part" ).
-            descriptor( myPartDescriptor.getKey() ).
-            build();
-
         // Main Page
         final PageRegions.Builder mainPageRegions = newPageRegions();
         createDefaultPageRegions( mainPageRegions, HOMEPAGE_SITE_TEMPLATE_KEY );
@@ -228,7 +211,7 @@ public class SitesInitializer
                 name( "main" ).
                 add( PartComponent.newPartComponent().
                     name( "MyComponent" ).
-                    template( PartTemplateKey.from( DEMO_MODULE_KEY.getName(), new PartTemplateName( "my-part-template" ) ) ).
+                    descriptor( PartDescriptorKey.from( DEMO_MODULE_KEY, new ComponentDescriptorName( "my-part-template" ) ) ).
                     build() ).
                 build() );
         productGridPageTemplate = newPageTemplate().
@@ -276,9 +259,8 @@ public class SitesInitializer
             description( "Test site template for home pages" ).
             url( "http://enonic.net" ).
             rootContentType( ContentTypeName.page() ).
-            addTemplate( mainPageLandingPageTemplate ).
-            addTemplate( productGridPageTemplate ).
-            addTemplate( myPartTemplate ) );
+            addPageTemplate( mainPageLandingPageTemplate ).
+            addPageTemplate( productGridPageTemplate ) );
 
         intranetSiteTemplate = client.execute( site().template().create().
             siteTemplateKey( INTRANET_SITE_TEMPLATE_KEY ).
@@ -288,7 +270,7 @@ public class SitesInitializer
             description( "Test site template for intranets ..." ).
             url( "http://enonic.net" ).
             rootContentType( ContentTypeName.page() ).
-            addTemplate( departmentPageLandingPageTemplate ) );
+            addPageTemplate( departmentPageLandingPageTemplate ) );
     }
 
     private void initializeSites()
@@ -329,7 +311,7 @@ public class SitesInitializer
             config( createLandingPagePageTemplateConfig( "red" ) ) );
     }
 
-    private RootDataSet createMyImageTemplateConfig( long width, String caption )
+    private RootDataSet createMyImageConfig( long width, String caption )
     {
         RootDataSet config = new RootDataSet();
         config.setProperty( "width", new Value.Long( width ) );
@@ -366,8 +348,8 @@ public class SitesInitializer
             name( "header" ).
             add( newPartComponent().
                 name( "PartInHeader" ).
-                template( PartTemplateKey.from( DEMO_MODULE_KEY.getName(), MY_PART_TEMPLATE_NAME ) ).
-                config( createMyImageTemplateConfig( 500, "So sweet!" ) ).
+                descriptor( PartDescriptorKey.from( DEMO_MODULE_KEY, new ComponentDescriptorName( "my-part-descriptor" ) ) ).
+                config( createMyImageConfig( 500, "So sweet!" ) ).
                 build() ).
             build();
 
@@ -376,12 +358,12 @@ public class SitesInitializer
             add( newImageComponent().
                 name( "FancyImage" ).
                 image( ContentId.from( "123" ) ).
-                template( ImageTemplateKey.from( DEMO_MODULE_KEY.getName(), MY_IMAGE_TEMPLATE_NAME ) ).
-                config( createMyImageTemplateConfig( 500, "So nice!" ) ).
+                descriptor( ImageDescriptorKey.from( DEMO_MODULE_KEY, new ComponentDescriptorName( "my-image-descriptor" ) ) ).
+                config( createMyImageConfig( 500, "So nice!" ) ).
                 build() ).
             add( newPartComponent().
                 name( "PartInMain" ).
-                template( PartTemplateKey.from( DEMO_MODULE_KEY.getName(), MY_PART_TEMPLATE_NAME ) ).
+                descriptor( PartDescriptorKey.from( DEMO_MODULE_KEY, new ComponentDescriptorName( "my-part-descriptor" ) ) ).
                 config( createMyPartTemplateConfig( "Take a part!" ) ).
                 build() ).
             build();
@@ -390,7 +372,7 @@ public class SitesInitializer
             name( "footer" ).
             add( newPartComponent().
                 name( "PartInFooter" ).
-                template( PartTemplateKey.from( DEMO_MODULE_KEY.getName(), MY_PART_TEMPLATE_NAME ) ).
+                descriptor( PartDescriptorKey.from( DEMO_MODULE_KEY, new ComponentDescriptorName( "my-part-descriptor" ) ) ).
                 config( createMyPartTemplateConfig( "Footer" ) ).
                 build() ).
             build();

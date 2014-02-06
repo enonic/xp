@@ -7,13 +7,10 @@
     "description": "Demo site template",
     "displayName": "Blueman Site Template",
     "editable": true,
-    "imageTemplates": [ "mod|mainimage" ],
     "key": "blueman-1.0.0",
-    "layoutTemplates": [ "mod|mainlayout" ],
     "modules": [ "module1-1.0.0", "module2-1.0.0" ],
     "name": "blueman",
     "pageTemplates": [ "mod|mainpage" ],
-    "partTemplates": [ "mod|mainpart" ],
     "rootContentType": "page",
     "url": "http://enonic.net",
     "vendor": {

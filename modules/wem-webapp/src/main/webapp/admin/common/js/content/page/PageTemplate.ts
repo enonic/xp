@@ -1,8 +1,10 @@
 module api.content.page {
 
-    export class PageTemplate extends Template {
+    export class PageTemplate extends PageTemplateSummary {
 
         private regions: PageRegions;
+
+        private config: api.data.RootDataSet;
 
         private canRender: api.schema.content.ContentTypeName[];
 
@@ -11,6 +13,7 @@ module api.content.page {
         constructor(builder: PageTemplateBuilder) {
             super(builder);
             this.regions = builder.regions;
+            this.config = builder.config;
             this.canRender = builder.canRender;
             this.descriptor = builder.descriptor;
         }
@@ -23,6 +26,10 @@ module api.content.page {
             return this.regions;
         }
 
+        getConfig(): api.data.RootDataSet {
+            return this.config;
+        }
+
         getCanRender(): api.schema.content.ContentTypeName[] {
             return this.canRender;
         }
@@ -32,9 +39,17 @@ module api.content.page {
         }
     }
 
-    export class PageTemplateBuilder extends TemplateBuilder {
+    export class PageTemplateBuilder extends PageTemplateSummaryBuilder {
+
+        key: PageTemplateKey;
+
+        displayName: string;
+
+        descriptorKey: DescriptorKey;
 
         regions: PageRegions;
+
+        config: api.data.RootDataSet;
 
         canRender: api.schema.content.ContentTypeName[] = [];
 
@@ -42,7 +57,7 @@ module api.content.page {
 
         fromJson(json: api.content.page.json.PageTemplateJson): PageTemplateBuilder {
 
-            this.setKey(TemplateKey.fromString(json.key));
+            this.setKey(PageTemplateKey.fromString(json.key));
             this.setDisplayName(json.displayName);
             this.setDescriptorKey(DescriptorKey.fromString(json.descriptorKey));
             this.descriptor = new PageDescriptorBuilder().fromJson(json.descriptor).build();
@@ -51,6 +66,26 @@ module api.content.page {
             json.canRender.forEach((name: string)=> {
                 this.canRender.push(new api.schema.content.ContentTypeName(name))
             });
+            return this;
+        }
+
+        public setKey(value: PageTemplateKey): PageTemplateBuilder {
+            this.key = value;
+            return this;
+        }
+
+        public setDisplayName(value: string): PageTemplateBuilder {
+            this.displayName = value;
+            return this;
+        }
+
+        public setDescriptorKey(value: DescriptorKey): PageTemplateBuilder {
+            this.descriptorKey = value;
+            return this;
+        }
+
+        public setConfig(value: api.data.RootDataSet): PageTemplateBuilder {
+            this.config = value;
             return this;
         }
 

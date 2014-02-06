@@ -1,24 +1,24 @@
 module api.content.page {
 
-    export class TemplateComboBox extends api.ui.combobox.RichComboBox<TemplateSummary> {
-
+    export class PageTemplateComboBox extends api.ui.combobox.RichComboBox<PageTemplateSummary> {
 
         constructor()
         {
-            super(new api.ui.combobox.RichComboBoxBuilder<TemplateSummary>().
-                setSelectedOptionsView(new TemplateSelectedOptionsView()).setIdentifierMethod("getKey"));
+            super(new api.ui.combobox.RichComboBoxBuilder<PageTemplateSummary>().
+                setSelectedOptionsView(new PageTemplateSelectedOptionsView()).setIdentifierMethod("getKey"));
         }
 
-        setTemplate(pageTemplate:TemplateSummary) {
-            var option: api.ui.combobox.Option<TemplateSummary> = {
+        setTemplate(pageTemplate:PageTemplateSummary) {
+            var option: api.ui.combobox.Option<PageTemplateSummary> = {
                 value: pageTemplate.getKey().toString(),
                 displayValue: pageTemplate
             };
             this.comboBox.selectOption(option);
         }
 
-        optionFormatter(row: number, cell: number, pageTemplateSummary: TemplateSummary, columnDef: any,
-                        dataContext: api.ui.combobox.Option<TemplateSummary>): string {
+        optionFormatter(row: number, cell: number, pageTemplateSummary: PageTemplateSummary, columnDef: any,
+                        dataContext: api.ui.combobox.Option<PageTemplateSummary>): string {
+
             var namesView = new api.app.NamesView()
                 .setMainName( pageTemplateSummary.getDisplayName() )
                 .setSubName(pageTemplateSummary.getDescriptorKey().toString());
@@ -26,31 +26,31 @@ module api.content.page {
             return namesView.toString();
         }
 
-        createConfig():api.ui.combobox.ComboBoxConfig<TemplateSummary> {
-            var config:api.ui.combobox.ComboBoxConfig<TemplateSummary> = super.createConfig();
+        createConfig():api.ui.combobox.ComboBoxConfig<PageTemplateSummary> {
+            var config:api.ui.combobox.ComboBoxConfig<PageTemplateSummary> = super.createConfig();
             config.maximumOccurrences = 1;
 
             return config;
         }
 
-        getSelectedData():api.ui.combobox.Option<TemplateSummary>[] {
+        getSelectedData():api.ui.combobox.Option<PageTemplateSummary>[] {
             return this.comboBox.getSelectedData();
         }
 
     }
 
-    export class TemplateSelectedOptionsView extends api.ui.combobox.SelectedOptionsView<TemplateSummary> {
+    export class PageTemplateSelectedOptionsView extends api.ui.combobox.SelectedOptionsView<PageTemplateSummary> {
 
-        createSelectedOption(option:api.ui.combobox.Option<TemplateSummary>, index:number):api.ui.combobox.SelectedOption<TemplateSummary> {
-            return new api.ui.combobox.SelectedOption<TemplateSummary>(new TemplateSelectedOptionView(option), option, index);
+        createSelectedOption(option:api.ui.combobox.Option<PageTemplateSummary>, index:number):api.ui.combobox.SelectedOption<PageTemplateSummary> {
+            return new api.ui.combobox.SelectedOption<PageTemplateSummary>(new PageTemplateSelectedOptionView(option), option, index);
         }
     }
 
-    export class TemplateSelectedOptionView extends api.ui.combobox.SelectedOptionView<TemplateSummary> {
+    export class PageTemplateSelectedOptionView extends api.ui.combobox.SelectedOptionView<PageTemplateSummary> {
 
-        private pageTemplate: TemplateSummary;
+        private pageTemplate: PageTemplateSummary;
 
-        constructor(option: api.ui.combobox.Option<TemplateSummary>) {
+        constructor(option: api.ui.combobox.Option<PageTemplateSummary>) {
             this.pageTemplate = option.displayValue;
             super(option);
             this.addClass("page-template-selected-option-view");

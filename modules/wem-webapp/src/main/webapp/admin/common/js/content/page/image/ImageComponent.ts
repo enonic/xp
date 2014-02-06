@@ -43,7 +43,7 @@ module api.content.page.image {
             this.setName(new api.content.page.ComponentName(json.name));
 
             if (json.template) {
-                this.setTemplate(api.content.page.TemplateKey.fromString(json.template));
+                this.setTemplate(api.content.page.PageTemplateKey.fromString(json.template));
             }
 
             this.setConfig(api.data.DataFactory.createRootDataSet(json.config));

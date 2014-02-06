@@ -1,9 +1,9 @@
 package com.enonic.wem.core.content.page.layout;
 
 
-import com.enonic.wem.api.content.page.TemplateKey;
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
-import com.enonic.wem.api.content.page.layout.LayoutTemplateKey;
+import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.core.content.page.PageComponentDataSerializer;
 
@@ -37,9 +37,9 @@ public class LayoutComponentDataSerializer
     }
 
     @Override
-    protected TemplateKey toTemplatekey( final String s )
+    protected DescriptorKey toDescriptorkey( final String s )
     {
-        return LayoutTemplateKey.from( s );
+        return LayoutDescriptorKey.from( s );
     }
 
 }

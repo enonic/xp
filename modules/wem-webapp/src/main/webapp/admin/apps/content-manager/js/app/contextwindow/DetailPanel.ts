@@ -33,7 +33,7 @@ module app.contextwindow {
         private initElements() {
             this.nameAndIcon = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.medium));
 
-            var templateBox = new api.content.page.TemplateComboBox();
+            var templateBox = new api.content.page.PageTemplateComboBox();
             templateBox.setLoader(new api.content.page.image.ImageTemplateSummaryLoader(this.siteTemplate.getKey()));
             templateBox.addLoadedListener((modules) => {
                 console.log("modules", modules);

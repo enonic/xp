@@ -44,7 +44,7 @@ import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.part.PartComponent;
-import com.enonic.wem.api.content.page.part.PartTemplateKey;
+import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.query.ContentQueryResult;
 import com.enonic.wem.api.content.site.ModuleConfig;
@@ -243,7 +243,7 @@ public class ContentResourceTest
 
         PartComponent component = PartComponent.newPartComponent().
             name( "my-component" ).
-            template( PartTemplateKey.from( "mainmodule|partTemplateName" ) ).
+            descriptor( PartDescriptorKey.from( "mainmodule-1.0.0:partTemplateName" ) ).
             config( componentConfig ).
             build();
 

@@ -1,6 +1,5 @@
 package com.enonic.wem.core.content.page.layout;
 
-import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.layout.LayoutRegions;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.data.DataSet;

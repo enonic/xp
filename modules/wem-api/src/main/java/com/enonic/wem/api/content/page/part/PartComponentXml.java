@@ -2,8 +2,8 @@ package com.enonic.wem.api.content.page.part;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.PageComponentXml;
-import com.enonic.wem.api.content.page.TemplateKey;
 import com.enonic.wem.xml.XmlObject;
 
 @XmlRootElement(name = "part-component")
@@ -25,8 +25,8 @@ public final class PartComponentXml
     }
 
     @Override
-    protected TemplateKey toTemplateKey( final String s )
+    protected DescriptorKey toDescriptorKey( final String s )
     {
-        return PartTemplateKey.from( s );
+        return PartDescriptorKey.from( s );
     }
 }

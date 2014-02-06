@@ -8,7 +8,7 @@ import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.RootDataSet;
 
 public class ImageComponent
-    extends PageComponent<ImageTemplateKey>
+    extends PageComponent<ImageDescriptorKey>
     implements RegionPlaceableComponent
 {
     private ContentId image;
@@ -30,7 +30,7 @@ public class ImageComponent
     }
 
     public static class Builder
-        extends PageComponent.Builder<ImageTemplateKey>
+        extends PageComponent.Builder<ImageDescriptorKey>
     {
         private ContentId image;
 
@@ -57,9 +57,9 @@ public class ImageComponent
             return this;
         }
 
-        public Builder template( ImageTemplateKey value )
+        public Builder descriptor( ImageDescriptorKey value )
         {
-            this.template = value;
+            this.descrpitor = value;
             return this;
         }
 

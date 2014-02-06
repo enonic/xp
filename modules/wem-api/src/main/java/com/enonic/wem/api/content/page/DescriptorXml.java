@@ -18,7 +18,7 @@ implements XmlObject<I, O>
     protected void fromDescriptor( final Descriptor descriptor )
     {
         this.displayName = descriptor.getDisplayName();
-        this.configForm.from( descriptor.getConfigForm() );
+        this.configForm.from( descriptor.getConfig() );
     }
 
     protected void toDescriptor( final Descriptor.BaseDescriptorBuilder builder )

@@ -20,7 +20,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplateKey;
-import com.enonic.wem.api.content.page.part.PartTemplateKey;
+import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.data.Property;
@@ -95,7 +95,7 @@ public class PostProcessorImplTest
             name( "myRegion" ).
             add( newPartComponent().
                 name( "myPartComponent" ).
-                template( PartTemplateKey.from( "mymodule|myparttemplate" ) ).
+                descriptor( PartDescriptorKey.from( "mymodule|myparttemplate" ) ).
                 build() ).
             build();
 

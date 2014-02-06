@@ -3,14 +3,22 @@ package com.enonic.wem.admin.json.content.page;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.base.Preconditions;
+
+import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.admin.json.content.page.region.RegionDescriptorJson;
+import com.enonic.wem.admin.json.form.FormJson;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.region.RegionDescriptor;
 import com.enonic.wem.api.content.page.region.RegionDescriptors;
 
 public class PageDescriptorJson
-    extends DescriptorJson
+    implements ItemJson
 {
+    private final PageDescriptor descriptor;
+
+    private final FormJson configJson;
+
     private final boolean editable;
 
     private final boolean deletable;
@@ -19,7 +27,10 @@ public class PageDescriptorJson
 
     public PageDescriptorJson( final PageDescriptor descriptor )
     {
-        super( descriptor );
+        Preconditions.checkNotNull( descriptor );
+        this.descriptor = descriptor;
+        this.configJson = new FormJson( descriptor.getConfig() );
+
         this.editable = false;
         this.deletable = false;
 
@@ -29,6 +40,26 @@ public class PageDescriptorJson
         {
             this.regionsJson.add( new RegionDescriptorJson( regionDescriptor ) );
         }
+    }
+
+    public String getKey()
+    {
+        return descriptor.getKey().toString();
+    }
+
+    public String getName()
+    {
+        return descriptor.getName() != null ? descriptor.getName().toString() : null;
+    }
+
+    public String getDisplayName()
+    {
+        return descriptor.getDisplayName();
+    }
+
+    public FormJson getConfig()
+    {
+        return configJson;
     }
 
     public List<RegionDescriptorJson> getRegions()

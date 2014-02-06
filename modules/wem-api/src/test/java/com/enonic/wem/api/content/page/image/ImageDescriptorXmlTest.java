@@ -49,7 +49,7 @@ public class ImageDescriptorXmlTest
         final ImageDescriptor imageDescriptor = builder.name( "myimage" ).build();
 
         assertEquals( "An Image", imageDescriptor.getDisplayName() );
-        final Form config = imageDescriptor.getConfigForm();
+        final Form config = imageDescriptor.getConfig();
         assertNotNull( config );
         assertEquals( DECIMAL_NUMBER, config.getFormItem( "width" ).toInput().getInputType() );
         assertEquals( "Column width", config.getFormItem( "width" ).toInput().getLabel() );

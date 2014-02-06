@@ -33,7 +33,7 @@ module api.content.page.layout {
 
         public fromJson(json: json.LayoutComponentJson, regionPath: RegionPath): LayoutComponentBuilder {
             if (json.template) {
-                this.setTemplate(TemplateKey.fromString(json.template));
+                this.setTemplate(PageTemplateKey.fromString(json.template));
             }
             var componentName = new api.content.page.ComponentName(json.name);
             this.setName(componentName);
