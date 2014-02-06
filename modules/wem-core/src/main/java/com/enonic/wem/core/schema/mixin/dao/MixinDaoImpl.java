@@ -15,10 +15,11 @@ import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
+import com.enonic.wem.api.schema.mixin.MixinXml;
 import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.core.config.SystemConfig;
 import com.enonic.wem.core.schema.SchemaIconDao;
-import com.enonic.wem.core.schema.mixin.MixinXmlSerializer;
+import com.enonic.wem.xml.XmlSerializers;
 
 import static com.enonic.wem.api.schema.mixin.Mixins.newMixins;
 import static java.nio.file.Files.isDirectory;
@@ -120,8 +121,10 @@ public final class MixinDaoImpl
 
     private void writeMixinXml( final Mixin mixin, final Path mixinPath )
     {
-        final MixinXmlSerializer xmlSerializer = new MixinXmlSerializer().prettyPrint( true ).generateName( false );
-        final String serializedMixin = xmlSerializer.toString( mixin );
+        final MixinXml mixinXml = new MixinXml();
+        mixinXml.from( mixin );
+        final String serializedMixin = XmlSerializers.mixin().serialize( mixinXml );
+
         final Path xmlFile = mixinPath.resolve( MIXIN_XML );
 
         try
@@ -142,10 +145,11 @@ public final class MixinDaoImpl
         {
             final String serializedMixin = new String( Files.readAllBytes( xmlFile ), Charsets.UTF_8 );
             final String mixinName = mixinPath.getFileName().toString();
-            final MixinXmlSerializer xmlSerializer = new MixinXmlSerializer().overrideName( mixinName );
-            final Mixin mixin = xmlSerializer.toMixin( serializedMixin );
-            // TODO make mixin xml parser return Mixin.Builder
-            return Mixin.newMixin( mixin );
+
+            final Mixin.Builder builder = Mixin.newMixin().name( mixinName );
+            XmlSerializers.mixin().parse( serializedMixin ).to( builder );
+
+            return builder;
         }
         catch ( IOException e )
         {
