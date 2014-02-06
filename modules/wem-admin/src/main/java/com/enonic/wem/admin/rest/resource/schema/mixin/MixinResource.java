@@ -33,7 +33,7 @@ import com.enonic.wem.api.schema.mixin.MixinNotFoundException;
 import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.mixin.UnableToDeleteMixinException;
 import com.enonic.wem.api.schema.mixin.editor.MixinEditor;
-import com.enonic.wem.xml.XmlSerializers;
+import com.enonic.wem.core.schema.mixin.MixinXmlSerializer;
 
 import static com.enonic.wem.api.command.Commands.mixin;
 
@@ -89,9 +89,9 @@ public class MixinResource
     @Consumes(MediaType.APPLICATION_JSON)
     public CreateOrUpdateSchemaJsonResult create( MixinCreateJson params )
     {
-        final Mixin.Builder builder = Mixin.newMixin().name( params.getName().toString() );
-        XmlSerializers.mixin().parse( params.getConfig() ).to( builder );
-        final Mixin mixin = builder.build();
+        final Mixin mixin = new MixinXmlSerializer().
+            overrideName( params.getName().toString() ).
+            toMixin( params.getConfig() );
         final SchemaIcon schemaIcon = getSchemaIcon( params.getIconJson() );
 
         final CreateMixin createCommand = mixin().create().
@@ -119,9 +119,9 @@ public class MixinResource
     {
         try
         {
-            final Mixin.Builder builder = Mixin.newMixin().name( params.getName().toString() );
-            XmlSerializers.mixin().parse( params.getConfig() ).to( builder );
-            final Mixin parsed = builder.build();
+            final Mixin parsed = new MixinXmlSerializer().
+                overrideName( params.getName().toString() ).
+                toMixin( params.getConfig() );
             final SchemaIcon schemaIcon = getSchemaIcon( params.getIconJson() );
 
             final MixinEditor editor = new MixinEditor()

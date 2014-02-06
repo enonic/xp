@@ -1,18 +1,19 @@
 package com.enonic.wem.admin.json.schema.mixin;
 
 import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.api.schema.mixin.MixinXml;
-import com.enonic.wem.xml.XmlSerializers;
+import com.enonic.wem.core.schema.mixin.MixinXmlSerializer;
 
 public class MixinConfigJson
 {
+    private final static MixinXmlSerializer mixinXmlSerializer = new MixinXmlSerializer().
+        generateName( false ).
+        prettyPrint( true );
+
     private final String mixinXml;
 
     public MixinConfigJson( final Mixin model )
     {
-        final MixinXml mixinXml = new MixinXml();
-        mixinXml.from( model );
-        this.mixinXml = XmlSerializers.mixin().serialize( mixinXml );
+        this.mixinXml = mixinXmlSerializer.toString( model );
     }
 
     public String getMixinXml()
