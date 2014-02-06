@@ -27,6 +27,17 @@ module app.wizard {
             this.add(fieldSet);
         }
 
+        renderExisting(siteTemplate: api.content.site.template.SiteTemplate) {
+
+            this.renderNew();
+
+            console.log("Rendering existing template", siteTemplate);
+            this.descriptionField.setValue(siteTemplate.getDescription());
+
+            // TODO: no method to set value on combobox
+            // this.rootContentTypeComboBox.setValue(siteTemplate.getRootContentType().toString());
+            // this.moduleComboBox.setValue(siteTemplate.getModules());
+        }
 
 
     }

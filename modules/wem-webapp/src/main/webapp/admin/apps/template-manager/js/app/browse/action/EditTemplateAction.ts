@@ -4,8 +4,11 @@ module app.browse.action {
 
         constructor() {
             super("Edit");
+
             this.addExecutionListener(() => {
-                console.log("edit template action");
+                var selection = components.gridPanel.getSelection();
+                var siteTemplateModel = api.content.site.template.SiteTemplateSummary.fromExtModelArray(selection);
+                new app.browse.event.EditTemplateEvent(siteTemplateModel).fire();
             });
         }
 
