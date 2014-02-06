@@ -1,5 +1,7 @@
 module api.form.inputtype {
 
+    import ValidityChangedEvent = api.form.inputtype.support.ValidityChangedEvent;
+
     export interface InputTypeView {
 
         getHTMLElement():HTMLElement;
@@ -51,5 +53,9 @@ module api.form.inputtype {
          * Returns true if focus was successfully given.
          */
         giveFocus(): boolean;
+
+        onValidityChanged(listener:(event:ValidityChangedEvent)=>void);
+
+        unValidityChanged(listener:(event:ValidityChangedEvent)=>void);
     }
 }
