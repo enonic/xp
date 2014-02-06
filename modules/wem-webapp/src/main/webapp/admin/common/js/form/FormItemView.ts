@@ -63,5 +63,13 @@ module api.form {
                 listener(content);
             })
         }
+
+        onValidityChanged(listener:(event:api.form.inputtype.support.ValidityChangedEvent)=>void) {
+            //Should be implemented in child classes
+        }
+
+        unValidityChanged(listener:(event:api.form.inputtype.support.ValidityChangedEvent)=>void) {
+            //Should be implemented in child classes
+        }
     }
 }
