@@ -86,7 +86,7 @@ public class ContentTypesInitializer
             "demo-contenttype-fieldset.json", "demo-contenttype-formItemset.json", "demo-contenttype-blog.json",
             "demo-contenttype-article1.json", "demo-contenttype-article2.json", "demo-contenttype-relation.json",
             "demo-contenttype-occurrences.json", "demo-contenttype-contentDisplayNameScript.json", "demo-contenttype-mixin-address.json",
-            "demo-contenttype-mixin-norwegian-counties.json", "demo-contenttype-relation-article.json", "demo-contenttype-layout.json",
+            /*"demo-contenttype-mixin-norwegian-counties.json", */"demo-contenttype-relation-article.json", "demo-contenttype-layout.json",
             "demo-contenttype-formItemset-min-occurrences.json", "demo-contenttype-singleSelectors.json", "demo-contenttype-comboBox.json",
             "demo-contenttype-all-input-types.json", "demo-contenttype-imageselector.json"};
 
