@@ -194,6 +194,7 @@ public final class XsltScriptBean
             builder.start( "region" );
             final String regionName = region.getName();
             builder.attribute( "name", regionName );
+            builder.attribute( "path", region.getRegionPath().toString() );
             builder.start( "components" );
             for ( PageComponent component : region.getComponents() )
             {
