@@ -43,6 +43,33 @@ class RangeAggregationBuilderFactoryTest
         // cleanString( getJson( builder ) ) == cleanString( expectedJson )
     }
 
+    def "date range aggregation with date math expression"()
+    {
+
+        given:
+        def expectedJson = this.getClass().getResource( "aggs_daterange_datemath.json" ).text
+
+        def RangeAggregationQuery query = RangeAggregationQuery.dateRangeQuery( "myRangeQuery" ).
+            fieldName( "myField" ).
+            range( DateRange.newDateRange().
+                       key( "ten days from now" ).
+                       to( "now+10d/d" ).
+                       build() ).
+            range( DateRange.newDateRange().
+                       from( "now-10d/d" ).
+                       build() ).
+            build();
+
+        when:
+        AggregationBuilder builder = RangeAggregationBuilderFactory.create( query )
+
+        then:
+        builder instanceof DateRangeBuilder
+        // This have to wait until we get a order neutral json comparer
+        // cleanString( getJson( builder ) ) == cleanString( expectedJson )
+    }
+
+
     def "numeric range aggregation"()
     {
         given:

@@ -5,9 +5,9 @@ import org.joda.time.DateTime;
 public class DateRange
     extends Range
 {
-    private final DateTime from;
+    private final Object from;
 
-    private final DateTime to;
+    private final Object to;
 
     public DateRange( final Builder builder )
     {
@@ -16,12 +16,12 @@ public class DateRange
         this.to = builder.to;
     }
 
-    public DateTime getFrom()
+    public Object getFrom()
     {
         return from;
     }
 
-    public DateTime getTo()
+    public Object getTo()
     {
         return to;
     }
@@ -29,9 +29,9 @@ public class DateRange
     public static class Builder
         extends Range.Builder<Builder>
     {
-        private DateTime from;
+        private Object from;
 
-        private DateTime to;
+        private Object to;
 
         public Builder from( final DateTime from )
         {
@@ -40,6 +40,18 @@ public class DateRange
         }
 
         public Builder to( final DateTime to )
+        {
+            this.to = to;
+            return this;
+        }
+
+        public Builder from( final String from )
+        {
+            this.from = from;
+            return this;
+        }
+
+        public Builder to( final String to )
         {
             this.to = to;
             return this;
