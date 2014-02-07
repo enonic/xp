@@ -41,9 +41,12 @@ public class NodeInMemoryDao
             throw new NoNodeAtPathFoundException( createNodeArguments.parent() );
         }
 
+        final DateTime now = DateTime.now();
+
         final Node newNode = Node.newNode().
             id( new EntityId() ).
-            createdTime( DateTime.now() ).
+            createdTime( now ).
+            modifiedTime( now ).
             creator( createNodeArguments.creator() ).
             parent( createNodeArguments.parent() ).
             name( NodeName.from( createNodeArguments.name() ) ).

@@ -59,9 +59,13 @@ public class NodeJcrDao
 
         final javax.jcr.Node parentJcrNode = findJcrParentNode( createNodeArguments );
 
+        final DateTime now = DateTime.now();
+
         final Node newNode = Node.newNode().
-            createdTime( DateTime.now() ).
+            createdTime( now ).
+            modifiedTime( now ).
             creator( createNodeArguments.creator() ).
+            modifier( createNodeArguments.creator() ).
             parent( createNodeArguments.parent() ).
             name( NodeName.from( createNodeArguments.name() ) ).
             rootDataSet( createNodeArguments.rootDataSet() ).

@@ -30,7 +30,11 @@ public class EntityHazelcastDao
     {
         final Entity.Builder entityBuilder = new Entity.Builder();
         entityBuilder.id( new EntityId() );
-        entityBuilder.createdTime( DateTime.now() );
+
+        final DateTime now = DateTime.now();
+        entityBuilder.createdTime( now );
+        entityBuilder.modifiedTime( now );
+
         entityBuilder.entityIndexConfig( args.entityIndexConfig );
         entityBuilder.rootDataSet( args.data );
 
