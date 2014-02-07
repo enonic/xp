@@ -6,17 +6,17 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import javax.inject.Provider;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.google.common.base.Charsets;
-import com.google.common.base.Throwables;
 import com.google.common.io.Resources;
+import com.google.inject.util.Providers;
 import com.sun.jersey.api.core.HttpContext;
 import com.sun.jersey.api.core.HttpRequestContext;
 
@@ -46,10 +46,7 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.portal.controller.JsControllerFactoryImpl;
 import com.enonic.wem.portal.controller.JsHttpRequest;
-import com.enonic.wem.portal.postprocess.JavaElExpressionExecutor;
 import com.enonic.wem.portal.postprocess.PostProcessor;
-import com.enonic.wem.portal.postprocess.PostProcessorFactory;
-import com.enonic.wem.portal.postprocess.PostProcessorString;
 import com.enonic.wem.portal.script.compiler.ScriptCacheImpl;
 import com.enonic.wem.portal.script.compiler.ScriptCompilerImpl;
 import com.enonic.wem.portal.script.lib.ContextScriptBean;
@@ -142,29 +139,12 @@ public class ContentResourceTest
             }
         };
 
-        final PostProcessorFactory postProcessorFactory = new PostProcessorFactory()
-        {
-            @Override
-            public PostProcessor newPostProcessor()
-            {
-                final PostProcessorString postProcessor = new PostProcessorString();
-                try
-                {
-                    postProcessor.setExpressionExecutor( new JavaElExpressionExecutor( false ) );
-                }
-                catch ( Exception e )
-                {
-                    throw Throwables.propagate( e );
-                }
-                return postProcessor;
-            }
-        };
-
         final SystemScriptBean systemScriptBean = new SystemScriptBean();
         scriptRunnerFactory.setSystemScriptBean( systemScriptBean );
-        scriptRunnerFactory.setContextServiceBeans( mock( Provider.class ) );
+        scriptRunnerFactory.setContextServiceBeans( Providers.of( new ContextScriptBean() ) );
         jsControllerFactory.setScriptRunnerFactory( scriptRunnerFactory );
-        jsControllerFactory.setPostProcessorFactory( postProcessorFactory );
+        jsControllerFactory.setPostProcessor( Mockito.mock( PostProcessor.class ) );
+
         contentResource.controllerFactory = jsControllerFactory;
 
         when( contentResource.httpContext.getRequest() ).thenReturn( requestContext );
@@ -238,15 +218,13 @@ public class ContentResourceTest
         final RootDataSet pageTemplateConfig = new RootDataSet();
         pageTemplateConfig.addProperty( "pause", new Value.Long( 10000 ) );
 
-        final PageTemplate pageTemplate = PageTemplate.newPageTemplate().
+        return PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( module.getName(), new PageTemplateName( "my-page" ) ) ).
             displayName( "Main page template" ).
             config( pageTemplateConfig ).
             canRender( ContentTypeNames.from( "article", "banner" ) ).
             descriptor( PageDescriptorKey.from( "mainmodule-1.0.0:landing-page" ) ).
             build();
-
-        return pageTemplate;
     }
 
     private PageDescriptor createDescriptor()
