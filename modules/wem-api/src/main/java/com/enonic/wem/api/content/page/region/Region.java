@@ -15,16 +15,24 @@ public class Region
 
     private final ImmutableMap<ComponentName, PageComponent> componentByName;
 
+    private RegionPath regionPath;
+
     public Region( final Builder builder )
     {
         Preconditions.checkNotNull( builder.name, "name cannot be null" );
         this.name = builder.name;
         this.componentByName = builder.components.build();
+        this.regionPath = builder.regionPath;
     }
 
     public String getName()
     {
         return name;
+    }
+
+    public RegionPath getRegionPath()
+    {
+        return regionPath;
     }
 
     public PageComponent getComponent( final ComponentName componentName )
@@ -54,6 +62,7 @@ public class Region
 
     public void applyComponentPaths( final ComponentPath parent )
     {
+        this.regionPath = RegionPath.from( parent, this.name );
         for ( final PageComponent component : this.getComponents() )
         {
             final ComponentPath.RegionAndComponent regionAndComponent =
@@ -71,6 +80,8 @@ public class Region
 
         private ImmutableMap.Builder<ComponentName, PageComponent> components = new ImmutableMap.Builder<>();
 
+        private RegionPath regionPath;
+
         public Builder()
         {
 
@@ -83,11 +94,18 @@ public class Region
             {
                 this.components.put( component.getName(), component );
             }
+            this.regionPath = source.regionPath;
         }
 
         public Builder name( final String value )
         {
             this.name = value;
+            return this;
+        }
+
+        public Builder regionPath( final RegionPath regionPath )
+        {
+            this.regionPath = regionPath;
             return this;
         }
 

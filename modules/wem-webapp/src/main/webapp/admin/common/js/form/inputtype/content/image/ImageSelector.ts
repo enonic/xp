@@ -1,5 +1,7 @@
 module api.form.inputtype.content.image {
 
+    import ValidityChangedEvent = api.form.inputtype.support.ValidityChangedEvent;
+
     export interface ImageSelectorConfig {
 
         relationshipType: {
@@ -267,6 +269,14 @@ module api.form.inputtype.content.image {
             contentEl.appendChild(pathEl);
 
             return imgEl.toString() + contentEl.toString();
+
+        }
+
+        onValidityChanged(listener:(event:ValidityChangedEvent)=>void) {
+
+        }
+
+        unValidityChanged(listener:(event:ValidityChangedEvent)=>void) {
 
         }
 

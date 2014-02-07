@@ -3,6 +3,7 @@ package com.enonic.wem.portal.postprocess;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
 import org.jsoup.nodes.Document;
@@ -25,14 +26,14 @@ import com.enonic.wem.portal.rendering.RenderException;
 import com.enonic.wem.portal.rendering.Renderer;
 import com.enonic.wem.portal.rendering.RendererFactory;
 
-
 public final class PostProcessorImpl
     implements PostProcessor
 {
 
     protected static final String WEM_COMPONENT_ATTRIBUTE = "wem:component";
 
-    private RendererFactory rendererFactory;
+    @Inject
+    protected RendererFactory rendererFactory;
 
     public PostProcessorImpl()
     {

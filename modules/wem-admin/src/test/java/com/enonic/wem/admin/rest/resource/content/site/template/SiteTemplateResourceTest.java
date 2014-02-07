@@ -19,7 +19,6 @@ import com.sun.jersey.multipart.FormDataMultiPart;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.content.site.CreateSiteTemplate;
 import com.enonic.wem.api.command.content.site.DeleteSiteTemplate;
 import com.enonic.wem.api.command.content.site.GetAllSiteTemplates;
 import com.enonic.wem.api.command.content.site.GetSiteTemplateByKey;
@@ -28,10 +27,12 @@ import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.site.ContentTypeFilter;
+import com.enonic.wem.api.content.site.CreateSiteTemplateSpec;
 import com.enonic.wem.api.content.site.NoSiteTemplateExistsException;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
+import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.content.site.SiteTemplates;
 import com.enonic.wem.api.content.site.Vendor;
 import com.enonic.wem.api.module.ModuleKey;
@@ -51,6 +52,8 @@ public class SiteTemplateResourceTest
 
     private Client client;
 
+    private SiteTemplateService siteTemplateService;
+
     private Path tempDir;
 
     @Override
@@ -58,9 +61,11 @@ public class SiteTemplateResourceTest
     {
 
         client = Mockito.mock( Client.class );
+        siteTemplateService = Mockito.mock( SiteTemplateService.class );
         SiteTemplateResource resource = new SiteTemplateResource();
 
         resource.setClient( client );
+        resource.setSiteTemplateService( siteTemplateService );
 
         return resource;
     }
@@ -191,7 +196,7 @@ public class SiteTemplateResourceTest
         throws Exception
     {
         final SiteTemplate siteTemplate = createSiteTemplate();
-        Mockito.when( client.execute( Mockito.isA( CreateSiteTemplate.class ) ) ).thenReturn( siteTemplate );
+        Mockito.when( siteTemplateService.createSiteTemplate( Mockito.isA( CreateSiteTemplateSpec.class ) ) ).thenReturn( siteTemplate );
 
         final SiteTemplateExporter siteTemplateExporter = new SiteTemplateExporter();
         final Path exportedSiteTemplateFile = siteTemplateExporter.exportToZip( siteTemplate, tempDir );

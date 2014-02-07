@@ -27,24 +27,20 @@ module app.browse.filter {
                             return;
                         }
 
-                        // ranges are passed as separate facets because each of them is of type QueryFacet
-                        // but should all go under one facet name, i.e values['ranges']
-                        //var ranges = this.extractRangesFromFilterValues(values);
+                        var contentQuery: api.content.query.ContentQuery = new api.content.query.ContentQuery();
 
                         var fulltext: string = values['query'] ? values['query'][0] : undefined;
 
-                        var fulltextExpression: api.query.expr.LogicalExpr = this.createFulltextSearchExpression(fulltext);
-
-
-                        var queryExpr: api.query.expr.QueryExpr = new api.query.expr.QueryExpr(fulltextExpression);
+                        var fulltextExpression: api.query.expr.Expression = this.createFulltextSearchExpression(fulltext);
+                        var query: api.query.expr.QueryExpr = new api.query.expr.QueryExpr(fulltextExpression);
 
                         var contentTypeNames: api.schema.content.ContentTypeName[] = this.parseContentTypeNames(values['contentTypes']);
+                        contentQuery.setQueryExpr(query);
+                        contentQuery.setContentTypeNames(contentTypeNames);
 
-                        var builder: api.content.query.ContentQueryBuilder = new api.content.query.ContentQueryBuilder();
-                        var contentQuery: api.content.query.ContentQuery = builder.
-                            setQueryExpr(queryExpr).
-                            setContentTypeNames(contentTypeNames).
-                            build();
+                        var contentTypesAgg: api.query.aggregation.TermsAggregationQuery = this.createTermsAggregation("contentTypes",
+                            "contenttype", 10);
+                        contentQuery.addAggregationQuery(contentTypesAgg);
 
                         new api.content.ContentQueryRequest<api.content.ContentQueryResult<api.content.json.ContentSummaryJson>>(contentQuery).
                             setExpand(api.rest.Expand.SUMMARY).
@@ -61,7 +57,11 @@ module app.browse.filter {
             );
         }
 
-        private createFulltextSearchExpression(fulltext: string): api.query.expr.LogicalExpr {
+        private createFulltextSearchExpression(fulltext: string): api.query.expr.Expression {
+
+            if (fulltext == null) {
+                return null;
+            }
 
             var arguments: api.query.expr.ValueExpr[] = [];
 
@@ -108,11 +108,13 @@ module app.browse.filter {
         private resetFacets(supressEvent?: boolean) {
             var queryExpr: api.query.expr.QueryExpr = new api.query.expr.QueryExpr(null);
 
-            var builder: api.content.query.ContentQueryBuilder = new api.content.query.ContentQueryBuilder();
-            var contentQuery: api.content.query.ContentQuery = builder.
-                setQueryExpr(queryExpr).
-                setSize(0).
-                build();
+            var contentQuery: api.content.query.ContentQuery = new api.content.query.ContentQuery();
+            contentQuery.setQueryExpr(queryExpr);
+            contentQuery.setSize(0);
+
+            var contentTypesAgg: api.query.aggregation.TermsAggregationQuery = this.createTermsAggregation("contentTypes", "contenttype",
+                10);
+            contentQuery.addAggregationQuery(contentTypesAgg);
 
             new api.content.ContentQueryRequest<api.content.ContentQueryResult<api.content.json.ContentSummaryJson>>(contentQuery).
                 send().done((jsonResponse: api.rest.JsonResponse<api.content.ContentQueryResult<api.content.json.ContentSummaryJson>>) => {
@@ -127,6 +129,13 @@ module app.browse.filter {
                     }
                 }
             );
+        }
+
+        private createTermsAggregation(name: string, fieldName: string, size: number): api.query.aggregation.TermsAggregationQuery {
+            var termsAggregation: api.query.aggregation.TermsAggregationQuery = new api.query.aggregation.TermsAggregationQuery(name);
+            termsAggregation.setFieldName(fieldName);
+            termsAggregation.setSize(size);
+            return termsAggregation;
         }
 
 

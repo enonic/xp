@@ -18,10 +18,11 @@ import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeXml;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 import com.enonic.wem.core.config.SystemConfig;
 import com.enonic.wem.core.schema.SchemaIconDao;
-import com.enonic.wem.core.schema.relationship.RelationshipTypeXmlSerializer;
+import com.enonic.wem.xml.XmlSerializers;
 
 import static java.nio.file.Files.isDirectory;
 import static java.nio.file.Files.isRegularFile;
@@ -146,8 +147,10 @@ public final class RelationshipTypeDaoImpl
 
     private void writeRelationshipTypeXml( final RelationshipType relationshipType, final Path relationshipPath )
     {
-        final RelationshipTypeXmlSerializer xmlSerializer = new RelationshipTypeXmlSerializer().generateName( false );
-        final String serializedRelationshipType = xmlSerializer.toString( relationshipType );
+        final RelationshipTypeXml relationshipTypeXml = new RelationshipTypeXml();
+        relationshipTypeXml.from( relationshipType );
+        final String serializedRelationshipType = XmlSerializers.relationshipType().serialize( relationshipTypeXml );
+
         final Path xmlFile = relationshipPath.resolve( RELATIONSHIP_TYPE_XML );
 
         try
@@ -168,10 +171,10 @@ public final class RelationshipTypeDaoImpl
         {
             final String serializedRelationshipType = new String( Files.readAllBytes( xmlFile ), Charsets.UTF_8 );
             final String relationshipTypeName = relationshipPath.getFileName().toString();
-            final RelationshipTypeXmlSerializer xmlSerializer = new RelationshipTypeXmlSerializer().overrideName( relationshipTypeName );
-            final RelationshipType relationshipType = xmlSerializer.toRelationshipType( serializedRelationshipType );
-            // TODO make relationship type xml parser return RelationshipType.Builder
-            return RelationshipType.newRelationshipType( relationshipType );
+
+            final RelationshipType.Builder builder = RelationshipType.newRelationshipType().name( relationshipTypeName );
+            XmlSerializers.relationshipType().parse( serializedRelationshipType ).to( builder );
+            return builder;
         }
         catch ( IOException e )
         {

@@ -16,6 +16,7 @@ import com.enonic.wem.core.support.util.JdomHelper;
 
 import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
 
+@Deprecated
 public class MixinXmlSerializer
     implements MixinSerializer
 {

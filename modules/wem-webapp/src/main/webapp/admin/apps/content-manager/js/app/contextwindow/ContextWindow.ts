@@ -128,9 +128,12 @@ module app.contextwindow {
                 this.selectedComponent = null;
             });
 
-            this.liveEditJQuery(this.liveEditWindow).on('componentRemoved.liveEdit', (event) => {
+            this.liveEditJQuery(this.liveEditWindow).on('componentRemoved.liveEdit', (event, component?) => {
                 new ComponentRemovedEvent().fire();
-                this.selectedComponent = null;
+                if (component) {
+                    this.pageRegions.removeComponent(api.content.page.ComponentPath.fromString(component.getComponentPath()));
+                    this.selectedComponent = null;
+                }
             });
             this.liveEditJQuery(this.liveEditWindow).on('sortableStop.liveEdit', (event) => {
                 new LiveEditDragStopEvent().fire();
@@ -139,6 +142,13 @@ module app.contextwindow {
             this.liveEditJQuery(this.liveEditWindow).on('sortableStart.liveEdit', (event) => {
                 new LiveEditDragStartEvent().fire();
                 this.hide();
+            });
+            this.liveEditJQuery(this.liveEditWindow).on('sortableUpdate.liveEdit', (event, component?) => {
+                if (component) {
+                    var componentPath = api.content.page.ComponentPath.fromString(component.getComponentPath());
+                    var afterComponentPath = api.content.page.ComponentPath.fromString(component.getPrecedingComponentPath());
+                    this.pageRegions.moveComponent(componentPath, component.getRegionName(), afterComponentPath);
+                }
             });
 
 

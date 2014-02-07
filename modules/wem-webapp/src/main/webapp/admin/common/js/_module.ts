@@ -49,6 +49,7 @@
 ///<reference path='data/json/_module.ts' />
 ///<reference path='data/_module.ts' />
 
+///<reference path='form/event/_module.ts' />
 ///<reference path='form/json/_module.ts' />
 ///<reference path='form/_module.ts' />
 ///<reference path='form/input/_module.ts' />
@@ -63,7 +64,6 @@
 ///<reference path='form/inputtype/text/_module.ts' />
 ///<reference path='form/formitemset/_module.ts' />
 ///<reference path='form/layout/_module.ts' />
-
 ///<reference path='item/_module.ts' />
 
 ///<reference path='node/_module.ts' />

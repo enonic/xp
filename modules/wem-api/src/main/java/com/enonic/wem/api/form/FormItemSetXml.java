@@ -30,6 +30,7 @@ public final class FormItemSetXml
     @XmlElement(name = "immutable", required = false)
     private boolean immutable;
 
+    @XmlElement(name = "occurrences")
     private OccurrencesXml occurrences = new OccurrencesXml();
 
     @XmlElement(name = "custom-text", required = false)

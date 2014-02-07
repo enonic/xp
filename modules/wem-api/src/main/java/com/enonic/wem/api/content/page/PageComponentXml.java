@@ -47,7 +47,7 @@ public abstract class PageComponentXml
 
     protected abstract DescriptorKey toDescriptorKey( String s );
 
-    public static PageComponent fromXxml( final PageComponentXml componentXml )
+    public static PageComponent fromXml( final PageComponentXml componentXml )
     {
         if ( componentXml instanceof ImageComponentXml )
         {
@@ -77,7 +77,7 @@ public abstract class PageComponentXml
         }
     }
 
-    public static PageComponentXml toXxml( final PageComponent component )
+    public static PageComponentXml toXml( final PageComponent component )
     {
         if ( component instanceof ImageComponent )
         {

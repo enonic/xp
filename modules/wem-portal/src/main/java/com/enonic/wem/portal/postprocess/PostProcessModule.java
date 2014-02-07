@@ -10,6 +10,6 @@ public final class PostProcessModule
     @Override
     protected void configure()
     {
-        bind( PostProcessorFactory.class ).to( PostProcessorFactoryImpl.class ).in( Singleton.class );
+        bind( PostProcessor.class ).to( PostProcessorImpl.class ).in( Singleton.class );
     }
 }

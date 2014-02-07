@@ -9,7 +9,9 @@ import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.query.aggregation.AggregationQuery;
+import com.enonic.wem.api.query.aggregation.RangeAggregationQuery;
 import com.enonic.wem.api.query.aggregation.TermsAggregationQuery;
+import com.enonic.wem.core.index.query.IndexQueryFieldNameResolver;
 
 public class AggregationBuilderFactory
 {
@@ -24,21 +26,26 @@ public class AggregationBuilderFactory
             {
                 aggregationBuilders.add( createTerms( (TermsAggregationQuery) aggregationQuery ) );
             }
+            else if ( aggregationQuery instanceof RangeAggregationQuery )
+            {
+                RangeAggregationBuilderFactory.create( (RangeAggregationQuery) aggregationQuery );
+            }
         }
 
         return aggregationBuilders;
-
     }
 
-    private AggregationBuilder createTerms( final TermsAggregationQuery aggregation )
+    private AggregationBuilder createTerms( final TermsAggregationQuery aggregationQuery )
     {
+        final String fieldName = IndexQueryFieldNameResolver.resolveStringFieldName( aggregationQuery.getFieldName() );
 
-        final TermsBuilder termsBuilder = new TermsBuilder( aggregation.getName() ).
+        final TermsBuilder termsBuilder = new TermsBuilder( aggregationQuery.getName() ).
             minDocCount( 0 ).
-            field( aggregation.getFieldName() ).
-            size( aggregation.getSize() );
+            field( fieldName ).
+            size( aggregationQuery.getSize() );
 
         return termsBuilder;
     }
+
 
 }

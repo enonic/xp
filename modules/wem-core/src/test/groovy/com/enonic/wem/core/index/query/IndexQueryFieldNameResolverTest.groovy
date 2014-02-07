@@ -7,10 +7,10 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 class IndexQueryFieldNameResolverTest
-        extends Specification
+    extends Specification
 {
     @Unroll
-    def "resolve path #field with value of type #valueExp.value.type expect #resolvedFieldName"()
+    def "given path '#field' and valuetype #valueExp.value.type then expect fieldname '#resolvedFieldName'"()
     {
         expect:
         resolvedFieldName == IndexQueryFieldNameResolver.resolve( CompareExpr.eq( new FieldExpr( field ), valueExp ) )
@@ -26,14 +26,4 @@ class IndexQueryFieldNameResolverTest
         "A.B.C" | ValueExpr.dateTime( "2013-08-01T10:00:00" ) | "a_b_c._datetime"
     }
 
-    def "dummy"()
-    {
-        given:
-
-        when:
-        String test = "1"
-
-        then:
-        test == "1"
-    }
 }

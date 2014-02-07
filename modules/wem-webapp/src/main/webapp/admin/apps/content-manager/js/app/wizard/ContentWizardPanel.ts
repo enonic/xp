@@ -32,6 +32,8 @@ module app.wizard {
 
         private previewAction: api.ui.Action;
 
+        private publishAction: api.ui.Action;
+
         constructor(params: ContentWizardPanelParams, callback: (wizard: ContentWizardPanel) => void) {
 
             console.log("ContentWizardPanel.constructor started");
@@ -60,6 +62,7 @@ module app.wizard {
 
             var actions = new app.wizard.action.ContentWizardActions(this);
             this.previewAction = actions.getPreviewAction();
+            this.publishAction = actions.getPublishAction();
 
             var mainToolbar = new ContentWizardToolbar({
                 saveAction: actions.getSaveAction(),
@@ -84,7 +87,7 @@ module app.wizard {
             else {
                 this.siteWizardStepForm = null;
             }
-            this.contentWizardStepForm = new ContentWizardStepForm();
+            this.contentWizardStepForm = new ContentWizardStepForm(this.publishAction);
 
             if (this.siteContent || this.createSite) {
                 var pageWizardStepFormConfig: page.PageWizardStepFormConfig = {

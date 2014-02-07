@@ -1,5 +1,9 @@
 module api.form {
 
+    import FormEventNames = api.form.event.FormEventNames;
+    import FormEvent = api.form.event.FormEvent;
+    import FormValidityChangedEvent = api.form.event.FormValidityChangedEvent;
+
     export class FormView extends api.ui.Panel {
 
         private context: FormContext;
@@ -10,11 +14,18 @@ module api.form {
 
         private formItemViews: FormItemView[] = [];
 
+        private listeners: {[eventName:string]:{(event:api.form.event.FormEvent):void}[]} = {};
+
+        private isValid:boolean;
+
         constructor(context: FormContext, form: Form, contentData?: api.data.RootDataSet) {
             super("form-view");
             this.context = context;
             this.form = form;
             this.rootDataSet = contentData;
+            this.isValid = true;
+
+            this.listeners[FormEventNames.FormValidityChanged] = [];
             this.doLayout();
         }
 
@@ -24,6 +35,24 @@ module api.form {
                 setFormItems(this.form.getFormItems()).
                 setParentElement(this).
                 layout(this.rootDataSet);
+            this.formItemViews.forEach((formItemView:FormItemView) => {
+                formItemView.onValidityChanged((event:api.form.inputtype.support.ValidityChangedEvent) => {
+                    this.formItemValidityChangedListener(event);
+                });
+            });
+        }
+
+        private formItemValidityChangedListener(event:api.form.inputtype.support.ValidityChangedEvent) {
+            var isValid:boolean = this.formItemViews.every((formItemView:FormItemView) => {
+                var recorder:ValidationRecorder = new ValidationRecorder();
+                formItemView.validate(recorder);
+                return recorder.valid();
+            });
+
+            if (isValid != this.isValid) {
+                this.isValid = isValid;
+                this.notifyValidityChanged(new FormValidityChangedEvent(isValid));
+            }
         }
 
         public getValueAtPath(path: api.data.DataPath): api.data.Value {
@@ -164,6 +193,34 @@ module api.form {
             this.formItemViews.forEach((formItemView:FormItemView) => {
                 formItemView.notifyEditContentRequestListeners(content);
             })
+        }
+
+        private addListener(eventName:FormEventNames, listener:(event:FormEvent)=>void) {
+            this.listeners[eventName].push(listener);
+        }
+
+        onValidityChanged(listener:(event:FormValidityChangedEvent)=>void) {
+            this.addListener(FormEventNames.FormValidityChanged, listener);
+        }
+
+        private removeListener(eventName:FormEventNames, listener:(event:FormEvent)=>void) {
+            this.listeners[eventName].filter((currentListener:(event:FormEvent)=>void) => {
+                return listener == currentListener;
+            });
+        }
+
+        unValidityChanged(listener:(event:FormValidityChangedEvent)=>void) {
+            this.removeListener(FormEventNames.FormValidityChanged, listener);
+        }
+
+        private notifyListeners(eventName:FormEventNames, event:FormEvent) {
+            this.listeners[eventName].forEach((listener:(event:FormEvent)=>void) => {
+                listener(event);
+            });
+        }
+
+        notifyValidityChanged(event:FormValidityChangedEvent) {
+            this.notifyListeners(FormEventNames.FormValidityChanged, event);
         }
 
     }

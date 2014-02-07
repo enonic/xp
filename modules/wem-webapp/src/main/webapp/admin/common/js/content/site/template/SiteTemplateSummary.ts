@@ -55,6 +55,14 @@ module api.content.site.template {
             return new SiteTemplateSummary(<api.content.site.template.json.SiteTemplateSummaryJson>model.raw);
         }
 
+        static fromExtModelArray(modelArray: Ext_data_Model[]): SiteTemplateSummary[] {
+            var array: SiteTemplateSummary[] = [];
+            modelArray.forEach((model: Ext_data_Model) => {
+                array.push(SiteTemplateSummary.fromExtModel(model));
+            });
+            return array;
+        }
+
         getKey(): SiteTemplateKey {
             return this.key;
         }

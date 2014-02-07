@@ -2,36 +2,26 @@ module api.query.aggregation {
 
     export class AggregationQuery {
 
-        private name:string;
+        private name: string;
 
-        constructor( name:string )
-        {
+        toJson(): api.query.aggregation.AggregationQueryTypeWrapperJson {
+            throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
+        }
+
+        toAggregationQueryJson(): api.query.aggregation.AggregationQueryJson {
+
+            return {
+                "name": this.getName()
+            };
+        }
+
+        constructor(name: string) {
             this.name = name;
         }
 
-        public getName():string
-        {
+        public getName(): string {
             return this.name;
         }
 
-        public static newTermsAggregation( name:string ):TermsAggregationQueryBuilder
-        {
-            return new TermsAggregationQueryBuilder( name );
-        }
-    }
-
-    export class AggregationQueryBuilder {
-
-        name:string;
-
-        constructor( name:string ) {
-            this.name = name;
-        }
-
-        public setName( name:string ):AggregationQueryBuilder
-        {
-            this.name = name;
-            return this;
-        }
     }
 }

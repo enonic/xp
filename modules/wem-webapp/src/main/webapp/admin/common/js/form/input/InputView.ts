@@ -125,5 +125,13 @@ module api.form.input {
         giveFocus(): boolean {
             return this.inputTypeView.giveFocus();
         }
+
+        onValidityChanged(listener:(event:api.form.inputtype.support.ValidityChangedEvent)=>void) {
+            this.inputTypeView.onValidityChanged(listener);
+        }
+
+        unValidityChanged(listener:(event:api.form.inputtype.support.ValidityChangedEvent)=>void) {
+            this.inputTypeView.unValidityChanged(listener);
+        }
     }
 }

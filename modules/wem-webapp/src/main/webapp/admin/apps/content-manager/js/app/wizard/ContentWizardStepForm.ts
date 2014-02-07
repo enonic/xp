@@ -8,8 +8,11 @@ module app.wizard {
 
         private formView: api.form.FormView;
 
-        constructor() {
+        private publishAction: api.ui.Action;
+
+        constructor(publishAction:api.ui.Action) {
             super();
+            this.publishAction = publishAction;
         }
 
         renderNew(formContext: api.form.FormContext, form: api.form.Form) {
@@ -34,6 +37,10 @@ module app.wizard {
             });
 
             this.appendChild(this.formView)
+
+            this.formView.onValidityChanged((event:api.form.event.FormValidityChangedEvent) => {
+                this.publishAction.setEnabled(event.isValid());
+            });
         }
 
         getForm(): api.form.Form {

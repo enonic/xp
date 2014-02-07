@@ -13,6 +13,7 @@ import com.enonic.wem.api.support.serializer.JsonParsingException;
 import com.enonic.wem.api.support.serializer.JsonSerializerUtil;
 import com.enonic.wem.core.schema.content.serializer.FormItemsJsonSerializer;
 
+@Deprecated
 public class MixinJsonSerializer
     extends AbstractJsonSerializer<Mixin>
     implements MixinSerializer

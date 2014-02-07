@@ -2,7 +2,7 @@ package com.enonic.wem.portal.controller;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.portal.postprocess.PostProcessorFactory;
+import com.enonic.wem.portal.postprocess.PostProcessor;
 import com.enonic.wem.portal.script.runner.ScriptRunnerFactory;
 
 public final class JsControllerFactoryImpl
@@ -12,13 +12,13 @@ public final class JsControllerFactoryImpl
     protected ScriptRunnerFactory scriptRunnerFactory;
 
     @Inject
-    protected PostProcessorFactory postProcessorFactory;
+    protected PostProcessor postProcessor;
 
     @Override
     public JsController newController()
     {
         final JsControllerImpl jsController = new JsControllerImpl( this.scriptRunnerFactory.newRunner() );
-        jsController.postProcessor( postProcessorFactory.newPostProcessor() );
+        jsController.postProcessor( this.postProcessor );
         return jsController;
     }
 
@@ -27,8 +27,8 @@ public final class JsControllerFactoryImpl
         this.scriptRunnerFactory = scriptRunnerFactory;
     }
 
-    public void setPostProcessorFactory( final PostProcessorFactory postProcessorFactory )
+    public void setPostProcessor( final PostProcessor postProcessor )
     {
-        this.postProcessorFactory = postProcessorFactory;
+        this.postProcessor = postProcessor;
     }
 }

@@ -34,6 +34,21 @@ module LiveEdit.component {
             return new Component($(element.getHTMLElement()));
         }
 
+        getRegionName():string {
+            var regionEl = api.dom.Element.fromHtmlElement($liveEdit(this.getElement()).parents('[data-live-edit-region]'));
+            console.log(regionEl);
+            return regionEl.getEl().getData('live-edit-region');
+        }
+
+        getComponentPath():string {
+            return this.getElement().data('live-edit-component');
+        }
+
+        getPrecedingComponentPath():string {
+            var previousComponent = api.dom.Element.fromHtmlElement($liveEdit(this.getElement()).prevAll('[data-live-edit-component]')[0]);
+            return previousComponent.getEl().getData("live-edit-component");
+        }
+
         getItemId():number {
             return parseInt(this.element.data("itemid"));
         }
@@ -109,7 +124,7 @@ module LiveEdit.component {
         }
 
         private getComponentNameFromElement():string {
-            return this.element.data('live-edit-name') || '[No Name]';
+            return this.element.data('live-edit-component') || '[No Name]';
         }
 
         private getDimensionsFromElement():ElementDimensions {

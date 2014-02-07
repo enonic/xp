@@ -44,9 +44,21 @@ module app.contextwindow {
                 //descriptorComboBox.setValue(this.siteTemplate.getDefaultImageTemplate().toString());
             });
 
+            
+            /*
+             TODO:
+             var templateBox = new api.content.page.TemplateComboBox();
+             templateBox.setLoader(new api.content.page.image.ImageTemplateSummaryLoader(this.siteTemplate.getKey()));
+             var firstLoad = (modules) => {
+             templateBox.setValue(this.siteTemplate.getDefaultImageTemplate().toString());
+             templateBox.removeLoadedListener(firstLoad);
+             };
+             templateBox.addLoadedListener(firstLoad);
+             */
+
 
             var templateHeader = new api.dom.H6El();
-            templateHeader.setText("Template");
+            templateHeader.setText("Template:");
             templateHeader.addClass("template-header");
 
             this.appendChild(this.nameAndIcon);

@@ -9,8 +9,11 @@ module app.wizard {
 
         private siteTemplateStep: SiteTemplateWizardStepForm;
 
-        constructor(tabId: api.app.AppBarTabId) {
+        constructor(tabId: api.app.AppBarTabId, siteTemplate?:api.content.site.template.SiteTemplate) {
             this.wizardHeader = new api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder().build();
+            if(siteTemplate) {
+                this.wizardHeader.initNames(siteTemplate.getDisplayName(), siteTemplate.getName(), true);
+            }
             var actions = new app.wizard.action.SiteTemplateWizardActions(this);
 
             var iconUrl = SiteTemplateWizardPanel.DEFAULT_SITE_TEMPLATE_ICON_URL;
@@ -38,7 +41,7 @@ module app.wizard {
             stepToolbar.addAction(actions.getSaveAction());
             super({
                 tabId: tabId,
-                persistedItem: null,
+                persistedItem: siteTemplate,
                 formIcon: this.formIcon,
                 mainToolbar: mainToolbar,
                 stepToolbar: stepToolbar,
@@ -68,6 +71,15 @@ module app.wizard {
                     this.siteTemplateStep.renderNew();
                     deferred.resolve(null);
                 });
+
+            return deferred.promise;
+        }
+
+        layoutPersistedItem(siteTemplate: api.content.site.template.SiteTemplate): Q.Promise<void> {
+            var deferred = Q.defer<void>();
+
+            this.siteTemplateStep.renderExisting(siteTemplate);
+            deferred.resolve(null);
 
             return deferred.promise;
         }

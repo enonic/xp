@@ -22,7 +22,7 @@ import com.enonic.wem.portal.rendering.Renderer;
 import com.enonic.wem.portal.rendering.RendererFactory;
 import com.enonic.wem.portal.script.lib.PortalUrlScriptBean;
 
-@Path("{mode}/{path:.+}/_/component/{component}")
+@Path("{mode}/{path:.+}/_/component/{component:.+}")
 public final class ComponentResource
     extends RenderResource
 {

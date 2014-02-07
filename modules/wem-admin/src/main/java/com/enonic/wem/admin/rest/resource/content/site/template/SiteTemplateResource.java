@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -25,12 +26,13 @@ import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.DeleteSiteTemplateJson;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.ListSiteTemplateJson;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.site.CreateSiteTemplate;
 import com.enonic.wem.api.command.content.site.DeleteSiteTemplate;
 import com.enonic.wem.api.command.content.site.GetSiteTemplateByKey;
+import com.enonic.wem.api.content.site.CreateSiteTemplateSpec;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
+import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.content.site.SiteTemplates;
 import com.enonic.wem.core.content.site.SiteTemplateExporter;
 
@@ -39,6 +41,8 @@ import com.enonic.wem.core.content.site.SiteTemplateExporter;
 public final class SiteTemplateResource
     extends AbstractResource
 {
+    private SiteTemplateService siteTemplateService;
+
     private static final String ZIP_MIME_TYPE = "application/zip";
 
     @GET
@@ -92,8 +96,8 @@ public final class SiteTemplateResource
 
             importedSiteTemplate = siteTemplateImporter.importFromZip( tempZipFile ).build();
 
-            final CreateSiteTemplate createSiteTemplateCommand = CreateSiteTemplate.fromSiteTemplate( importedSiteTemplate );
-            final SiteTemplate createdSiteTemplate = client.execute( createSiteTemplateCommand );
+            final CreateSiteTemplateSpec spec = CreateSiteTemplateSpec.fromSiteTemplate( importedSiteTemplate );
+            final SiteTemplate createdSiteTemplate = siteTemplateService.createSiteTemplate( spec );
 
             return new SiteTemplateSummaryJson( createdSiteTemplate );
         }
@@ -146,5 +150,11 @@ public final class SiteTemplateResource
         {
             FileUtils.deleteDirectory( tempDirectory.toFile() );
         }
+    }
+
+    @Inject
+    public void setSiteTemplateService( final SiteTemplateService siteTemplateService )
+    {
+        this.siteTemplateService = siteTemplateService;
     }
 }

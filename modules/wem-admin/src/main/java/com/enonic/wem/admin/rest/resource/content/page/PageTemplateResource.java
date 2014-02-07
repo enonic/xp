@@ -3,6 +3,7 @@ package com.enonic.wem.admin.rest.resource.content.page;
 import java.io.IOException;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -18,8 +19,10 @@ import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
+import com.enonic.wem.api.content.page.PageTemplateSpec;
 import com.enonic.wem.api.content.page.PageTemplates;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 
 import static com.enonic.wem.api.command.Commands.page;
 
@@ -51,6 +54,19 @@ public final class PageTemplateResource
         final PageTemplates pageTemplates = client.execute( command );
 
         return new PageTemplateListJson( pageTemplates );
+    }
+
+
+    @GET
+    @javax.ws.rs.Path( "listByCanRender" )
+    public PageTemplateListJson listByCanRender(@QueryParam("key") String siteTemplateKeyAsString, @QueryParam( "contentTypeName" ) String contentTypeName) {
+        final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( siteTemplateKeyAsString );
+        GetPageTemplatesBySiteTemplate command = Commands.page().template().page().getBySiteTemplate().siteTemplate( siteTemplateKey );
+        final PageTemplates pageTemplates = client.execute( command );
+        final PageTemplateSpec spec = PageTemplateSpec.newPageTemplateSpec().canRender( ContentTypeName.from( contentTypeName ) ).build();
+
+        return new PageTemplateListJson( pageTemplates.filter( spec ) );
+
     }
 
     private PageDescriptor getDescriptor( final PageDescriptorKey key )

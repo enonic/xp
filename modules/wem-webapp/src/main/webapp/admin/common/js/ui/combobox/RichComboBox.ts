@@ -134,6 +134,12 @@ module api.ui.combobox {
             this.loadedListeners.push(listener);
         }
 
+        removeLoadedListener(listenerToBeRemoved:{(modules:T[]): void;}) {
+            var index = this.loadedListeners.indexOf(listenerToBeRemoved);
+            this.loadedListeners.splice(index, 1);
+            console.log("removing listener from",index, this.loadedListeners);
+        }
+
         private notifyInputValueChanged(oldValue: string, newValue: string, grid: api.ui.grid.Grid<Option<T>>) {
             this.inputValueChangedListeners.forEach( (listener) => {
                 listener(oldValue, newValue, grid);

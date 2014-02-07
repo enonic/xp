@@ -144,7 +144,10 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     export function handleSortUpdate(event:JQueryEventObject, ui):void {
-        $(window).trigger('sortableUpdate.liveEdit', [event, ui]);
+        var el = api.dom.Element.fromHtmlElement(ui.item[0]);
+        var component = LiveEdit.component.Component.fromElement(el);
+
+        $(window).trigger('sortableUpdate.liveEdit', [ component ]);
     }
 
     export function handleSortStop(event:JQueryEventObject, ui):void {
@@ -175,13 +178,12 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     // When sortable receives a new item
     export function handleReceive(event:JQueryEventObject, ui):void {
         if (this.isItemDraggedFromContextWindow(ui.item)) {
+            var droppedComponent = $(event.target).children(CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR);
+            var type = droppedComponent.data('liveEditType');
 
-            var bogusComponent = new LiveEdit.component.Component($(event.target).children(CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR));
+            var emptyComponent = LiveEdit.component.ComponentPlaceholder.fromComponent(type);
 
-            //var emptyComponent:JQuery = $(LiveEdit.component.dragdropsort.EmptyComponent.createEmptyComponentHtml(bogusComponent).getHTMLElement());
-            var emptyComponent = LiveEdit.component.dragdropsort.EmptyComponent.createEmptyComponentHtml(bogusComponent);//new LiveEdit.component.Component(emptyElement);
-
-            bogusComponent.getElement().replaceWith(emptyComponent.getHTMLElement());
+            droppedComponent.replaceWith(emptyComponent.getHTMLElement());
             emptyComponent.init();
 
             $(window).trigger('sortableUpdate.liveEdit');

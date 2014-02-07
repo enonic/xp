@@ -5,24 +5,30 @@ module LiveEdit.component {
             this.addClass("live-edit-empty-component");
             this.getEl().setData('live-edit-empty-component', "true");
 
-            console.log("attaching onSelectEvent");
-//            $(window).on('componentSelect.liveEdit', (event, name?)=> {
-//                console.log(event.currentTarget, this.getHTMLElement());
-//                if (event.currentTarget == this.getHTMLElement()) {
-//                    this.onSelect();
-//                }
-//            });
-            LiveEdit.event.ComponentSelectedEvent.on(() => {
+            $liveEdit(this.getHTMLElement()).on('componentSelect.liveEdit', (event, name?)=> {
                 this.onSelect();
             });
 
-            LiveEdit.event.ComponentDeselectedEvent.on(() => {
+            $liveEdit(window).on('componentDeselect.liveEdit', (event, name?)=> {
                 this.onDeselect();
             });
         }
 
+        static fromComponent(type:string):ComponentPlaceholder {
+            var placeholder:ComponentPlaceholder;
+            if (type == "image") {
+                placeholder = new LiveEdit.component.ImagePlaceholder();
+            } else {
+                var emptyComponentIcon = new api.dom.DivEl();
+                emptyComponentIcon.addClass('live-edit-empty-component-icon');
+                placeholder = new ComponentPlaceholder();
+                placeholder.appendChild(emptyComponentIcon);
+            }
+            return placeholder;
+        }
+
         getPrecedingComponentPath():string {
-            var previousComponent = api.dom.Element.fromHtmlElement($liveEdit(this.getHTMLElement()).prevAll('[data-live-edit-component]')[0])
+            var previousComponent = api.dom.Element.fromHtmlElement($liveEdit(this.getHTMLElement()).prevAll('[data-live-edit-component]')[0]);
             return previousComponent.getEl().getData("live-edit-component");
         }
 
@@ -35,16 +41,16 @@ module LiveEdit.component {
             return this.getEl().getData('live-edit-component');
         }
 
-        getComponentPath(): string {
+        getComponentPath():string {
             return this.getEl().getData('live-edit-component');
         }
 
         onSelect() {
-            console.log("selected component!", this);
+
         }
 
         onDeselect() {
-            console.log("deselected component!", this);
+
         }
 
         isSelected():boolean {

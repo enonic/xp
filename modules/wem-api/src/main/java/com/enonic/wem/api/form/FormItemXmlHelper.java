@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.enonic.wem.api.support.serializer.XmlSerializingException;
 
-final class FormItemXmlHelper
+public final class FormItemXmlHelper
 {
     static void fromFormItem( List<FormItemXml> formItemXmlList, final Iterable<FormItem> formItems )
     {
@@ -14,7 +14,7 @@ final class FormItemXmlHelper
         }
     }
 
-    static FormItemXml fromFormItem( final FormItem formItem )
+    public static FormItemXml fromFormItem( final FormItem formItem )
     {
         if ( formItem instanceof Input )
         {
@@ -46,7 +46,7 @@ final class FormItemXmlHelper
         }
     }
 
-    static FormItem toFormItem( final FormItemXml formItemXml )
+    public static FormItem toFormItem( final FormItemXml formItemXml )
     {
         if ( formItemXml instanceof FormItemSetXml )
         {

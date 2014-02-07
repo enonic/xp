@@ -61,6 +61,20 @@ module api.form.layout {
                 layout(dataSet);
         }
 
+        addEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
+            super.addEditContentRequestListener(listener);
+            this.formItemViews.forEach((formItemView:FormItemView) => {
+                formItemView.addEditContentRequestListener(listener);
+            });
+        }
+
+        removeEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
+            super.removeEditContentRequestListener(listener);
+            this.formItemViews.forEach((formItemView:FormItemView) => {
+                formItemView.removeEditContentRequestListener(listener);
+            });
+        }
+
         giveFocus(): boolean {
 
             var focusGiven = false;

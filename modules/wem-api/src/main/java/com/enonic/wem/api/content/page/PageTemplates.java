@@ -1,8 +1,13 @@
 package com.enonic.wem.api.content.page;
 
 import java.util.Collection;
+import java.util.Collections;
+
+import javax.annotation.Nullable;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -32,6 +37,17 @@ public final class PageTemplates
     public PageTemplate getTemplate( final ResourcePath path )
     {
         return this.templatesByPath.get( path );
+    }
+
+    public PageTemplates filter(final PageTemplateSpec spec) {
+        return PageTemplates.from( Collections2.filter( templatesByName.values(), new Predicate<PageTemplate>()
+        {
+            @Override
+            public boolean apply( @Nullable final PageTemplate pageTemplate )
+            {
+                return spec.isSatisfiedBy( pageTemplate );
+            }
+        } ) );
     }
 
     public static PageTemplates empty()
