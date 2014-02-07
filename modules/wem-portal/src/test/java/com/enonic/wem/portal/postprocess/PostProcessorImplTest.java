@@ -95,7 +95,7 @@ public class PostProcessorImplTest
             name( "myRegion" ).
             add( newPartComponent().
                 name( "myPartComponent" ).
-                descriptor( PartDescriptorKey.from( "mymodule|myparttemplate" ) ).
+                descriptor( PartDescriptorKey.from( "mymodule-1.0.0:myparttemplate" ) ).
                 build() ).
             build();
 
