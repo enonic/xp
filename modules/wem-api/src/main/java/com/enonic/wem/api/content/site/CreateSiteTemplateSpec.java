@@ -5,8 +5,8 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.content.page.Template;
-import com.enonic.wem.api.content.page.Templates;
+import com.enonic.wem.api.content.page.PageTemplate;
+import com.enonic.wem.api.content.page.PageTemplates;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
@@ -30,11 +30,11 @@ public final class CreateSiteTemplateSpec
 
     private ContentTypeName rootContentType;
 
-    private List<Template> templates = Lists.newArrayList();
+    private List<PageTemplate> templates = Lists.newArrayList();
 
     public static CreateSiteTemplateSpec fromSiteTemplate( final SiteTemplate siteTemplate )
     {
-        CreateSiteTemplateSpec createSiteTemplate = new CreateSiteTemplateSpec().
+        final CreateSiteTemplateSpec createSiteTemplate = new CreateSiteTemplateSpec().
             name( siteTemplate.getName() ).
             version( siteTemplate.getVersion() ).
             displayName( siteTemplate.getDisplayName() ).
@@ -44,9 +44,9 @@ public final class CreateSiteTemplateSpec
             modules( siteTemplate.getModules() ).
             contentTypeFilter( siteTemplate.getContentTypeFilter() ).
             rootContentType( siteTemplate.getRootContentType() );
-        for ( Template template : siteTemplate )
+        for ( PageTemplate template : siteTemplate.getPageTemplates() )
         {
-            createSiteTemplate.addTemplate( template );
+            createSiteTemplate.addPageTemplate( template );
         }
         return createSiteTemplate;
     }
@@ -117,13 +117,13 @@ public final class CreateSiteTemplateSpec
         return this;
     }
 
-    public CreateSiteTemplateSpec addTemplate( final Template template )
+    public CreateSiteTemplateSpec addPageTemplate( final PageTemplate template )
     {
         this.templates.add( template );
         return this;
     }
 
-    public CreateSiteTemplateSpec addTemplates( final Templates templates )
+    public CreateSiteTemplateSpec addPageTemplate( final PageTemplates templates )
     {
         this.templates.addAll( templates.getList() );
         return this;
@@ -174,7 +174,7 @@ public final class CreateSiteTemplateSpec
         return rootContentType;
     }
 
-    public List<Template> getTemplates()
+    public List<PageTemplate> getTemplates()
     {
         return templates;
     }

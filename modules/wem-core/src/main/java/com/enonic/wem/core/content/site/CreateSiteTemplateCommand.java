@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import com.enonic.wem.api.content.page.Template;
+import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.CreateSiteTemplateSpec;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
@@ -47,9 +47,9 @@ final class CreateSiteTemplateCommand
             rootContentType( this.spec.getRootContentType() ).
             contentTypeFilter( this.spec.getContentTypeFilter() );
 
-        for ( Template template : spec.getTemplates() )
+        for ( PageTemplate template : spec.getTemplates() )
         {
-            builder.addTemplate( template );
+            builder.addPageTemplate( template );
         }
         final SiteTemplate siteTemplate = builder.build();
 

@@ -9,7 +9,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.PageComponentXml;
-import com.enonic.wem.api.content.page.TemplateKey;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.page.region.RegionXml;
 import com.enonic.wem.xml.XmlObject;

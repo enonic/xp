@@ -3,7 +3,6 @@ package com.enonic.wem.core.content.page.image;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.TemplateKey;
 import com.enonic.wem.api.content.page.image.ImageComponent;
 import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
 import com.enonic.wem.api.data.DataSet;
