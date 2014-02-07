@@ -69,7 +69,7 @@ class SiteTemplateServiceImpl_createSiteTemplateTest
                 description( "description" ).
                 contentTypeFilter( filter ).
                 rootContentType( ContentTypeName.from( "document" ) ).
-                addTemplate( pageTemplate );
+            addPageTemplate( pageTemplate );
 
         when:
         def result = this.service.createSiteTemplate( spec );
