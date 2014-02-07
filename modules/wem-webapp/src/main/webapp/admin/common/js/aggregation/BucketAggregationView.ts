@@ -65,27 +65,19 @@ module api.aggregation {
 
             this.bucketAggregation = <api.aggregation.BucketAggregation> aggregation;
 
+            this.bucketViews = [];
+            this.removeChildren();
+
             var anyCountLargerThanZero = false;
 
-            // TODO: This should possible be done differently. The point is to remove
-            // buckets from view when they are no longer in the aggregation-result from the query.
-            this.bucketViews.forEach((bucketView: api.aggregation.BucketView) => {
-                var existingBucket: api.aggregation.Bucket = this.bucketAggregation.getBucketByName(bucketView.getName());
-                if (existingBucket == null) {
-                    bucketView.hide();
-                }
-            });
-
             this.bucketAggregation.getBuckets().forEach((bucket: api.aggregation.Bucket) => {
-                var existingEntry: api.aggregation.BucketView = this.bucketView(bucket.getKey());
 
-                if (existingEntry != null) {
-                    existingEntry.update(bucket);
-                }
+                this.addBucket(new api.aggregation.BucketView(bucket, this));
 
                 if (bucket.getDocCount() > 0) {
                     anyCountLargerThanZero = true;
                 }
+
             });
 
             this.hasAnyCountLargerThanZero = anyCountLargerThanZero;
@@ -96,16 +88,6 @@ module api.aggregation {
             else if (!this.isVisible()) {
                 this.show();
             }
-        }
-
-        private bucketView(name: string): api.aggregation.BucketView {
-            for (var i = 0; i < this.bucketViews.length; i++) {
-                var bucketView: api.aggregation.BucketView = this.bucketViews[i];
-                if (bucketView.getName() == name) {
-                    return bucketView;
-                }
-            }
-            return null;
         }
 
     }
