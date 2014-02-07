@@ -42,8 +42,8 @@ module api.content.page.image {
 
             this.setName(new api.content.page.ComponentName(json.name));
 
-            if (json.template) {
-                this.setTemplate(api.content.page.PageTemplateKey.fromString(json.template));
+            if (json.descriptor) {
+                this.setDescriptor(api.content.page.DescriptorKey.fromString(json.descriptor));
             }
 
             this.setConfig(api.data.DataFactory.createRootDataSet(json.config));

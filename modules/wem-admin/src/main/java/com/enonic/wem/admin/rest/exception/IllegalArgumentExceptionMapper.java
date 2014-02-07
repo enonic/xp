@@ -17,6 +17,7 @@ public final class IllegalArgumentExceptionMapper
     @Override
     public Response toResponse( final IllegalArgumentException cause )
     {
+        cause.printStackTrace();
         return Response.status( Response.Status.BAD_REQUEST ).type( MediaType.APPLICATION_JSON_TYPE ).entity(
             new ErrorJson( cause.getMessage() ) ).build();
     }

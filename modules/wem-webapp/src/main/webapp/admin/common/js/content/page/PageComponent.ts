@@ -8,14 +8,14 @@ module api.content.page {
 
         private path: ComponentPath;
 
-        private template: PageTemplateKey;
+        private descriptorKey: DescriptorKey;
 
         private config: api.data.RootDataSet;
 
         constructor(builder?: PageComponentBuilder<any>) {
             if (builder != undefined) {
                 this.name = builder.name;
-                this.template = builder.template;
+                this.descriptorKey = builder.descriptor;
                 this.config = builder.config;
                 this.region = builder.region;
                 this.path = ComponentPath.fromRegionPathAndComponentName(this.region, this.name);
@@ -34,12 +34,12 @@ module api.content.page {
             return this.name;
         }
 
-        getTemplate(): PageTemplateKey {
-            return this.template;
+        getTemplate(): DescriptorKey {
+            return this.descriptorKey;
         }
 
-        setTemplate(template: PageTemplateKey) {
-            this.template = template;
+        setDescriptor(template: DescriptorKey) {
+            this.descriptorKey = template;
         }
 
         setConfig(value: api.data.RootDataSet) {
@@ -58,7 +58,7 @@ module api.content.page {
 
             return {
                 "name": this.name.toString(),
-                "template": this.template != null ? this.template.toString() : null,
+                "descriptor": this.descriptorKey != null ? this.descriptorKey.toString() : null,
                 "config": this.config != null ? this.config.toJson() : null
             };
         }
@@ -68,7 +68,7 @@ module api.content.page {
 
         name: api.content.page.ComponentName;
 
-        template: PageTemplateKey;
+        descriptor: DescriptorKey;
 
         config: api.data.RootDataSet;
 
@@ -79,8 +79,8 @@ module api.content.page {
             return this;
         }
 
-        public setTemplate(value: PageTemplateKey): PageComponentBuilder<COMPONENT> {
-            this.template = value;
+        public setDescriptor(value: DescriptorKey): PageComponentBuilder<COMPONENT> {
+            this.descriptor = value;
             return this;
         }
 

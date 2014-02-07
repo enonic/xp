@@ -18,8 +18,8 @@ public abstract class PageComponentXml
     @XmlAttribute(name = "name", required = true)
     String name;
 
-    @XmlAttribute(name = "template", required = false)
-    String template;
+    @XmlAttribute(name = "descriptor", required = false)
+    String descriptor;
 
     @XmlElement(name = "config", required = true)
     private RootDataSetXml config;
@@ -27,7 +27,7 @@ public abstract class PageComponentXml
     public void from( final PageComponent partComponent )
     {
         this.name = partComponent.getName().toString();
-        this.template = partComponent.getDescriptor().toString();
+        this.descriptor = partComponent.getDescriptor().toString();
         this.config = new RootDataSetXml();
         this.config.from( partComponent.getConfig() );
     }
@@ -35,7 +35,7 @@ public abstract class PageComponentXml
     public void to( final PageComponent.Builder builder )
     {
         builder.name( new ComponentName( this.name ) );
-        builder.descriptor( toDescriptorKey( this.template ) );
+        builder.descriptor( toDescriptorKey( this.descriptor ) );
 
         RootDataSet config = new RootDataSet();
         if ( this.config != null )

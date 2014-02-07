@@ -5,15 +5,70 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.module.ModuleName;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Splitter.on;
 import static com.google.common.collect.Iterators.toArray;
 
 public final class PageTemplateKey
-    extends TemplateKey<PageTemplateName>
 {
+    protected static final String SEPARATOR = "|";
+
+    private final PageTemplateName name;
+
+    private final ModuleName module;
+
+    private final String refString;
+
     private PageTemplateKey( final ModuleName moduleName, final PageTemplateName templateName )
     {
-        super( moduleName, templateName, TemplateType.PAGE );
+        checkNotNull( templateName, "PageTemplateName name cannot be null" );
+        checkNotNull( moduleName, "ModuleName name cannot be null" );
+        this.name = templateName;
+        this.module = moduleName;
+        this.refString = module.toString() + SEPARATOR + name.toString();
+    }
+
+    public PageTemplateName getTemplateName()
+    {
+        return name;
+    }
+
+    public ModuleName getModuleName()
+    {
+        return module;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final PageTemplateKey that = (PageTemplateKey) o;
+        if ( !refString.equals( that.refString ) )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return refString.hashCode();
+    }
+
+    @Override
+    public String toString()
+    {
+        return refString;
     }
 
     public static PageTemplateKey from( final ModuleName moduleKey, final PageTemplateName templateName )

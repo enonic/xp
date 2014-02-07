@@ -27,9 +27,6 @@ import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
-import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
-import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.site.ContentTypeFilter;
 import com.enonic.wem.api.content.site.NoSiteTemplateExistsException;
 import com.enonic.wem.api.content.site.SiteTemplate;
@@ -45,7 +42,6 @@ import com.enonic.wem.api.support.export.InvalidZipFileException;
 import com.enonic.wem.core.content.site.SiteTemplateExporter;
 
 import static com.enonic.wem.api.content.page.PageTemplate.newPageTemplate;
-import static com.enonic.wem.api.content.page.layout.LayoutRegions.newLayoutRegions;
 import static com.enonic.wem.api.content.site.Vendor.newVendor;
 import static org.junit.Assert.*;
 

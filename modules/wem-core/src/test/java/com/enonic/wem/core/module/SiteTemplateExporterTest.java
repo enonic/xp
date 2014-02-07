@@ -13,9 +13,6 @@ import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateName;
-import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
-import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.site.ContentTypeFilter;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
@@ -28,7 +25,6 @@ import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.core.content.site.SiteTemplateExporter;
 
 import static com.enonic.wem.api.content.page.PageRegions.newPageRegions;
-import static com.enonic.wem.api.content.page.layout.LayoutRegions.newLayoutRegions;
 import static com.enonic.wem.api.content.site.ContentTypeFilter.newContentFilter;
 import static com.enonic.wem.api.content.site.Vendor.newVendor;
 import static junit.framework.Assert.assertEquals;

@@ -8,7 +8,7 @@ module app.contextwindow {
 
     export class DetailPanel extends api.ui.Panel {
         private siteTemplate: SiteTemplate;
-        private nameAndIcon:api.app.NamesAndIconView;
+        private nameAndIcon: api.app.NamesAndIconView;
 
         constructor(config: DetailPanelConfig) {
             super("detail-panel");
@@ -31,15 +31,18 @@ module app.contextwindow {
         }
 
         private initElements() {
-            this.nameAndIcon = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.medium));
+            this.nameAndIcon =
+            new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.medium));
 
-            var templateBox = new api.content.page.PageTemplateComboBox();
-            templateBox.setLoader(new api.content.page.image.ImageTemplateSummaryLoader(this.siteTemplate.getKey()));
-            templateBox.addLoadedListener((modules) => {
-                console.log("modules", modules);
-                templateBox.setValue(this.siteTemplate.getDefaultImageTemplate().toString());
+            var imageDescriptorsRequest = new api.content.page.image.GetImageDescriptorsByModulesRequest(this.siteTemplate.getModules());
+            var imageDescriptorLoader = new api.content.page.image.ImageDescriptorLoader(imageDescriptorsRequest);
+            var descriptorComboBox = new api.content.page.image.ImageDescriptorComboBox(imageDescriptorLoader);
+
+
+            descriptorComboBox.addLoadedListener((imageDescriptors: api.content.page.image.ImageDescriptor[]) => {
+                console.log("modules", imageDescriptors);
+                //descriptorComboBox.setValue(this.siteTemplate.getDefaultImageTemplate().toString());
             });
-
 
 
             var templateHeader = new api.dom.H6El();
@@ -49,7 +52,7 @@ module app.contextwindow {
             this.appendChild(this.nameAndIcon);
 
             this.appendChild(templateHeader);
-            this.appendChild(templateBox);
+            this.appendChild(descriptorComboBox);
         }
 
         private setEmpty() {

@@ -2,7 +2,7 @@ module api.content.page {
 
     export class Descriptor {
 
-        private key:string;
+        private key: DescriptorKey;
 
         private name: DescriptorName;
 
@@ -16,7 +16,7 @@ module api.content.page {
             this.config = builder.config;
         }
 
-        getKey(): string {
+        getKey(): DescriptorKey {
             return this.key;
         }
 
@@ -35,7 +35,7 @@ module api.content.page {
 
     export class DescriptorBuilder {
 
-        key: string;
+        key: DescriptorKey;
 
         name: DescriptorName;
 

@@ -3,6 +3,8 @@ package com.enonic.wem.api;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.base.Preconditions;
+
 public abstract class BaseVersion
 {
     private final static Pattern VERSION_PATTERN = Pattern.compile( "^(\\d+)\\.(\\d+)\\.(\\d+)$" );
@@ -25,6 +27,7 @@ public abstract class BaseVersion
 
     protected BaseVersion( final String version )
     {
+        Preconditions.checkNotNull( version, "version not given" );
         final Matcher matcher = VERSION_PATTERN.matcher( version );
         if ( !matcher.find() )
         {

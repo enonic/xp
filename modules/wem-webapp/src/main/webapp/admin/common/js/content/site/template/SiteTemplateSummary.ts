@@ -1,6 +1,6 @@
 module api.content.site.template {
 
-    import TemplateKey = api.content.page.PageTemplateKey;
+    import PageTemplateKey = api.content.page.PageTemplateKey;
 
     export class SiteTemplateSummary extends api.item.BaseItem {
 
@@ -24,13 +24,7 @@ module api.content.site.template {
 
         private contentTypeFilter: ContentTypeFilter;
 
-        private pageTemplates: TemplateKey[];
-
-        private partTemplates: TemplateKey[];
-
-        private layoutTemplates: TemplateKey[];
-
-        private imageTemplates: TemplateKey[];
+        private pageTemplates: PageTemplateKey[];
 
         constructor(json: api.content.site.template.json.SiteTemplateSummaryJson) {
             super(json);
@@ -52,23 +46,9 @@ module api.content.site.template {
 
             this.pageTemplates = [];
             json.pageTemplates.forEach((key: string) => {
-                this.pageTemplates.push(TemplateKey.fromString(key));
+                this.pageTemplates.push(PageTemplateKey.fromString(key));
             });
 
-            this.layoutTemplates = [];
-            json.layoutTemplates.forEach((key: string) => {
-                this.layoutTemplates.push(TemplateKey.fromString(key));
-            });
-
-            this.partTemplates = [];
-            json.partTemplates.forEach((key: string) => {
-                this.partTemplates.push(TemplateKey.fromString(key));
-            });
-
-            this.imageTemplates = [];
-            json.imageTemplates.forEach((key: string) => {
-                this.imageTemplates.push(TemplateKey.fromString(key));
-            });
         }
 
         static fromExtModel(model: Ext_data_Model): SiteTemplateSummary {
@@ -109,14 +89,6 @@ module api.content.site.template {
 
         getDescription(): string {
             return this.description;
-        }
-
-        public getDefaultImageTemplate(): TemplateKey {
-            if (this.imageTemplates.length == 0) {
-                return null;
-            }
-
-            return this.imageTemplates[0];
         }
 
         static fromJsonArray(jsonArray: api.content.site.template.json.SiteTemplateSummaryJson[]): SiteTemplateSummary[] {

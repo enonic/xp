@@ -17,10 +17,10 @@ module api.content.page.part {
 
     export class PartComponentBuilder extends api.content.page.PageComponentBuilder<PartComponent> {
 
-        public fromJson(json: json.PartComponentJson, regionPath:RegionPath): PartComponentBuilder {
+        public fromJson(json: json.PartComponentJson, regionPath: RegionPath): PartComponentBuilder {
 
-            if (json.template) {
-                this.setTemplate(api.content.page.PageTemplateKey.fromString(json.template));
+            if (json.descriptor) {
+                this.setDescriptor(api.content.page.DescriptorKey.fromString(json.descriptor));
             }
             this.setName(new api.content.page.ComponentName(json.name));
             this.setConfig(api.data.DataFactory.createRootDataSet(json.config));

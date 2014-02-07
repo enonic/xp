@@ -4,7 +4,7 @@ module api.content.page.json {
 
         name:string;
 
-        template:string;
+        descriptor:string;
 
         config: api.data.json.DataTypeWrapperJson[];
     }

@@ -1,43 +1,51 @@
-module api.module{
+module api.module {
 
     export class ModuleKey {
 
-        private static SEPARATOR:string = "-";
+        private static SEPARATOR: string = "-";
 
-        private name:string;
+        private name: string;
 
-        private version:string;
+        private version: string;
 
-        private refString:string;
+        private refString: string;
 
-        public static fromString(str:string):ModuleKey{
-            var sepIndex:number = str.lastIndexOf(ModuleKey.SEPARATOR);
-            if( sepIndex == -1 ) {
+        public static fromString(str: string): ModuleKey {
+            var sepIndex: number = str.lastIndexOf(ModuleKey.SEPARATOR);
+            if (sepIndex == -1) {
                 throw new Error("ModuleKey must contain separator '" + ModuleKey.SEPARATOR + "':" + str);
             }
 
             var name = str.substring(0, sepIndex);
-            var version = str.substring(sepIndex+1, str.length);
+            var version = str.substring(sepIndex + 1, str.length);
 
             return new ModuleKey(name, version);
         }
 
-        constructor(moduleName:string, moduleVersion:string) {
+        constructor(moduleName: string, moduleVersion: string) {
             this.name = moduleName;
             this.version = moduleVersion;
             this.refString = this.name + ModuleKey.SEPARATOR + this.version;
         }
 
-        getName():string {
+        getName(): string {
             return this.name;
         }
 
-        getVersion():string {
+        getVersion(): string {
             return this.version;
         }
 
-        toString():string {
+        toString(): string {
             return this.refString;
+        }
+
+        static toStringArray(keys: ModuleKey[]): string[] {
+            var stringArray: string[] = [];
+            keys.forEach((key: ModuleKey) => {
+                stringArray.push(key.toString());
+            });
+            return stringArray;
         }
 
     }

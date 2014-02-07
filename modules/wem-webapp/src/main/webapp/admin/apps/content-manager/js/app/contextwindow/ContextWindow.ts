@@ -182,17 +182,18 @@ module app.contextwindow {
                 (event, imageId?, componentPathAsString?) => {
 
                     var componentPath = ComponentPath.fromString(componentPathAsString);
-                    var defaultImageTemplate = this.siteTemplate.getDefaultImageTemplate();
-
-                    var imageComponent = this.pageRegions.getImageComponent(componentPath);
-                    if (imageComponent != null) {
-                        imageComponent.setImage(imageId);
-                        imageComponent.setTemplate(defaultImageTemplate);
-                        this.contentSaveAction.execute();
-                    }
-                    else {
-                        console.log("ImageComponent to set image on not found: " + componentPath);
-                    }
+                    this.resolveDefaultImageDescriptor(this.siteTemplate.getModules()).
+                        done((defaultImageDescriptor: api.content.page.image.ImageDescriptor) => {
+                            var imageComponent = this.pageRegions.getImageComponent(componentPath);
+                            if (imageComponent != null) {
+                                imageComponent.setImage(imageId);
+                                imageComponent.setDescriptor(defaultImageDescriptor.getKey());
+                                this.contentSaveAction.execute();
+                            }
+                            else {
+                                console.log("ImageComponent to set image on not found: " + componentPath);
+                            }
+                        });
                 });
         }
 
@@ -206,6 +207,21 @@ module app.contextwindow {
 
         getPageRegions(): api.content.page.PageRegions {
             return this.pageRegions;
+        }
+
+        private resolveDefaultImageDescriptor(moduleKeys: api.module.ModuleKey[]): Q.Promise<api.content.page.image.ImageDescriptor> {
+
+            var d = Q.defer<api.content.page.image.ImageDescriptor>();
+            new api.content.page.image.GetImageDescriptorsByModulesRequest(moduleKeys).
+                sendAndParse().done((imageDescriptors: api.content.page.image.ImageDescriptor[]) => {
+                    if (imageDescriptors.length == 0) {
+                        d.resolve(null);
+                    }
+                    else {
+                        d.resolve(imageDescriptors[0]);
+                    }
+                });
+            return d.promise;
         }
 
         private minimize() {
