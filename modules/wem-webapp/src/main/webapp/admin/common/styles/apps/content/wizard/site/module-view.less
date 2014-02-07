@@ -9,6 +9,17 @@
   .form-view {
     border: 1px solid lightgray;
     padding: 17px 10px 10px 10px;
+
+    .input-view {
+      .input-label {
+        max-width: @form-label-width - 20px;
+      }
+
+      .input-type-view,
+      .bottom-button-row {
+        margin-left: @form-label-width - 10px;
+      }
+    }
   }
 
 }

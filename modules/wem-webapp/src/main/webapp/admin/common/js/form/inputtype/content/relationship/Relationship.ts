@@ -31,6 +31,8 @@ module api.form.inputtype.content.relationship {
 
         constructor(config?: api.form.inputtype.InputTypeViewConfig<RelationshipConfig>) {
             super("relationship");
+            this.addClass("input-type-view");
+
             this.listeners[InputTypeEvents.ValidityChanged] = [];
             this.config = config;
             this.contentSummaryLoader = new api.form.inputtype.content.ContentSummaryLoader();

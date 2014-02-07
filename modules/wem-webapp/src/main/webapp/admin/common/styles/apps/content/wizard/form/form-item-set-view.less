@@ -1,7 +1,6 @@
 .form-item-set-view {
 
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin: 10px 0;
 
   .occurrence-views-container {
     background-color: #eee;
@@ -14,16 +13,30 @@
     color: #000;
     font-size: 14px;
     text-align: center;
-    background-color: #eee;
     margin: 10px;
   }
 
-  .bottom-button-row {
-    background-color: #eeeeee;
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-bottom: 10px;
+  .input-view {
+    .input-label {
+      max-width: 90px;
+      margin-right: 10px;
+    }
 
+    .input-type-view {
+      margin-left: @form-label-width - 20px;
+    }
+
+    .bottom-button-row {
+      background-color: white;
+      margin-left: @form-label-width - 20px;
+      padding-left: 0px;
+      padding-right: 0px;
+    }
+  }
+
+  .bottom-button-row {
+    background-color: #eee;
+    padding: 0 10px 10px 10px;
     clear: left;
     overflow: hidden;
 
@@ -44,6 +57,25 @@
         cursor: pointer;
       }
     }
+  }
+
+  &.odd {
+    & > .occurrence-views-container {
+      background-color: #67656a;
+    }
+
+    & > .bottom-button-row {
+      background-color: #67656a;
+
+      .collapse-button {
+        color: white;
+      }
+    }
+  }
+
+  .form-item-set-view {
+    margin-left: -20px;
+    margin-right: -20px;
   }
 }
 
