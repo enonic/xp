@@ -3,9 +3,9 @@ package com.enonic.wem.admin.rest.resource.content.json;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.wem.admin.json.content.ContentSummaryJson;
+import com.enonic.wem.api.aggregation.Aggregations;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.api.query.aggregation.Aggregations;
 
 public class AggregationContentSummaryListJson
     extends AbstractAggregationContentListJson<ContentSummaryJson>

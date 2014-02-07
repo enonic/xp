@@ -5,8 +5,8 @@ import java.util.Collection;
 import org.elasticsearch.search.aggregations.bucket.range.date.DateRange;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 
-import com.enonic.wem.api.query.aggregation.Bucket;
-import com.enonic.wem.api.query.aggregation.Buckets;
+import com.enonic.wem.api.aggregation.Bucket;
+import com.enonic.wem.api.aggregation.Buckets;
 
 public class BucketsFactory
 {

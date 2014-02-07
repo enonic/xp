@@ -6,11 +6,11 @@ import com.enonic.wem.admin.json.aggregation.AggregationJson;
 import com.enonic.wem.admin.json.aggregation.BucketAggregationJson;
 import com.enonic.wem.admin.json.content.AbstractContentListJson;
 import com.enonic.wem.admin.json.content.ContentIdJson;
+import com.enonic.wem.api.aggregation.Aggregation;
+import com.enonic.wem.api.aggregation.Aggregations;
+import com.enonic.wem.api.aggregation.BucketAggregation;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.api.query.aggregation.Aggregation;
-import com.enonic.wem.api.query.aggregation.Aggregations;
-import com.enonic.wem.api.query.aggregation.BucketAggregation;
 
 public abstract class AbstractAggregationContentListJson<T extends ContentIdJson>
     extends AbstractContentListJson<T>

@@ -1,6 +1,6 @@
 package com.enonic.wem.admin.json.aggregation;
 
-import com.enonic.wem.api.query.aggregation.Bucket;
+import com.enonic.wem.api.aggregation.Bucket;
 
 public class BucketJson
 {

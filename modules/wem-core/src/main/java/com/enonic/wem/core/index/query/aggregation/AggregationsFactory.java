@@ -6,8 +6,8 @@ import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.wem.api.query.aggregation.Aggregations;
-import com.enonic.wem.api.query.aggregation.BucketAggregation;
+import com.enonic.wem.api.aggregation.Aggregations;
+import com.enonic.wem.api.aggregation.BucketAggregation;
 
 public class AggregationsFactory
 {
@@ -20,8 +20,7 @@ public class AggregationsFactory
             return Aggregations.empty();
         }
 
-        com.enonic.wem.api.query.aggregation.Aggregations.Builder aggregationsBuilder =
-            new com.enonic.wem.api.query.aggregation.Aggregations.Builder();
+        Aggregations.Builder aggregationsBuilder = new Aggregations.Builder();
 
         for ( final org.elasticsearch.search.aggregations.Aggregation aggregation : aggregations )
         {

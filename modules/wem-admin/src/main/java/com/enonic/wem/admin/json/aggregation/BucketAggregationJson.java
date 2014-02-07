@@ -2,8 +2,8 @@ package com.enonic.wem.admin.json.aggregation;
 
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.wem.api.query.aggregation.Bucket;
-import com.enonic.wem.api.query.aggregation.BucketAggregation;
+import com.enonic.wem.api.aggregation.Bucket;
+import com.enonic.wem.api.aggregation.BucketAggregation;
 
 public class BucketAggregationJson
     extends AggregationJson

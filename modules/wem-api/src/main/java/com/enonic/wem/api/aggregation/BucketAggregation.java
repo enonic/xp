@@ -1,4 +1,4 @@
-package com.enonic.wem.api.query.aggregation;
+package com.enonic.wem.api.aggregation;
 
 public class BucketAggregation
     extends Aggregation

@@ -7,8 +7,8 @@ import org.elasticsearch.search.SearchHit;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.api.aggregation.Aggregations;
 import com.enonic.wem.api.facet.Facets;
-import com.enonic.wem.api.query.aggregation.Aggregations;
 
 public class EntityQueryResult
 {

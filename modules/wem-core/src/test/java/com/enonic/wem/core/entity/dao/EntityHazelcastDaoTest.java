@@ -24,7 +24,6 @@ import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
 
 
 public class EntityHazelcastDaoTest
@@ -85,7 +84,7 @@ public class EntityHazelcastDaoTest
         // verify
         assertNotNull( createdEntity.id() );
         assertNotNull( createdEntity.getCreatedTime() );
-        assertNull( createdEntity.getModifiedTime() );
+        assertNotNull( createdEntity.getModifiedTime() );
         assertEquals( "A", createdEntity.property( "myProperty" ).getString() );
     }
 
@@ -109,7 +108,7 @@ public class EntityHazelcastDaoTest
         // verify
         assertNotNull( entity.id() );
         assertNotNull( entity.getCreatedTime() );
-        assertNull( entity.getModifiedTime() );
+        assertNotNull( entity.getModifiedTime() );
         assertEquals( "A", entity.property( "myProperty" ).getString() );
     }
 

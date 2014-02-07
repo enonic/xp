@@ -1,4 +1,4 @@
-package com.enonic.wem.api.query.aggregation;
+package com.enonic.wem.api.aggregation;
 
 import java.util.Set;
 
