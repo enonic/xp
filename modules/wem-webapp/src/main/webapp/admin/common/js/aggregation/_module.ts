@@ -3,9 +3,9 @@
 ///<reference path='Aggregation.ts' />
 ///<reference path='AggregationView.ts' />
 
-///<reference path='TermsAggregation.ts' />
-///<reference path='TermsAggregationJson.ts' />
-///<reference path='TermsAggregationView.ts' />
+///<reference path='BucketAggregation.ts' />
+///<reference path='BucketAggregationJson.ts' />
+///<reference path='BucketAggregationView.ts' />
 
 ///<reference path='Bucket.ts' />
 ///<reference path='BucketJson.ts' />

@@ -5,10 +5,11 @@ module app.browse.filter {
         constructor() {
 
             var contentTypeAggregation = new api.aggregation.AggregationGroupView("contentTypes");
+            var lastModifiedAggregation = new api.aggregation.AggregationGroupView("lastModified");
             //var spaceFacets = new api.facet.FacetGroupView("space", "Space");
             //var lastModifiedFacets = new api.facet.FacetGroupView("lastModified", "Last modified", null, this.lastModifiedGroupFacetFilter);
 
-            super(null, [contentTypeAggregation]);
+            super(null, [contentTypeAggregation, lastModifiedAggregation]);
 
             this.resetFacets(true);
 
@@ -37,10 +38,8 @@ module app.browse.filter {
                         var contentTypeNames: api.schema.content.ContentTypeName[] = this.parseContentTypeNames(values['contentTypes']);
                         contentQuery.setQueryExpr(query);
                         contentQuery.setContentTypeNames(contentTypeNames);
-
-                        var contentTypesAgg: api.query.aggregation.TermsAggregationQuery = this.createTermsAggregation("contentTypes",
-                            "contenttype", 10);
-                        contentQuery.addAggregationQuery(contentTypesAgg);
+                        this.addContentTypesAggregation(contentQuery);
+                        this.addLastModifiedAggregation(contentQuery);
 
                         new api.content.ContentQueryRequest<api.content.ContentQueryResult<api.content.json.ContentSummaryJson>>(contentQuery).
                             setExpand(api.rest.Expand.SUMMARY).
@@ -55,6 +54,19 @@ module app.browse.filter {
                     }
                 }
             );
+        }
+
+        private parseContentTypeNames(names: string[]): api.schema.content.ContentTypeName[] {
+            var contentTypeNames: api.schema.content.ContentTypeName[] = [];
+
+            if (names) {
+                for (var i = 0; i < names.length; i++) {
+                    var name = names[i];
+                    contentTypeNames.push(new api.schema.content.ContentTypeName(name));
+                }
+            }
+
+            return contentTypeNames;
         }
 
         private createFulltextSearchExpression(fulltext: string): api.query.expr.Expression {
@@ -86,23 +98,9 @@ module app.browse.filter {
 
             aggregationWrapperJsons.forEach((aggregationJson: api.aggregation.AggregationTypeWrapperJson) => {
                 aggregations.push(api.aggregation.AggregationFactory.createFromJson(aggregationJson));
-                console.log("******* adding facet from result in reset-facets");
             })
 
             this.updateAggregations(aggregations);
-        }
-
-        private parseContentTypeNames(names: string[]): api.schema.content.ContentTypeName[] {
-            var contentTypeNames: api.schema.content.ContentTypeName[] = [];
-
-            if (names) {
-                for (var i = 0; i < names.length; i++) {
-                    var name = names[i];
-                    contentTypeNames.push(new api.schema.content.ContentTypeName(name));
-                }
-            }
-
-            return contentTypeNames;
         }
 
         private resetFacets(supressEvent?: boolean) {
@@ -111,10 +109,8 @@ module app.browse.filter {
             var contentQuery: api.content.query.ContentQuery = new api.content.query.ContentQuery();
             contentQuery.setQueryExpr(queryExpr);
             contentQuery.setSize(0);
-
-            var contentTypesAgg: api.query.aggregation.TermsAggregationQuery = this.createTermsAggregation("contentTypes", "contenttype",
-                10);
-            contentQuery.addAggregationQuery(contentTypesAgg);
+            this.addContentTypesAggregation(contentQuery);
+            this.addLastModifiedAggregation(contentQuery);
 
             new api.content.ContentQueryRequest<api.content.ContentQueryResult<api.content.json.ContentSummaryJson>>(contentQuery).
                 send().done((jsonResponse: api.rest.JsonResponse<api.content.ContentQueryResult<api.content.json.ContentSummaryJson>>) => {
@@ -131,6 +127,10 @@ module app.browse.filter {
             );
         }
 
+        private addContentTypesAggregation(contentQuery) {
+            contentQuery.addAggregationQuery(this.createTermsAggregation("contentTypes", "contenttype", 10));
+        }
+
         private createTermsAggregation(name: string, fieldName: string, size: number): api.query.aggregation.TermsAggregationQuery {
             var termsAggregation: api.query.aggregation.TermsAggregationQuery = new api.query.aggregation.TermsAggregationQuery(name);
             termsAggregation.setFieldName(fieldName);
@@ -138,52 +138,28 @@ module app.browse.filter {
             return termsAggregation;
         }
 
+        private addLastModifiedAggregation(contentQuery: api.content.query.ContentQuery) {
 
-        private extractRangesFromFilterValues(values: { [s : string ] : string[];
-        }): {lower:Date; upper:Date
-        }[] {
-            var ranges = [];
+            var dateRangeAgg: api.query.aggregation.DateRangeAggregationQuery = new api.query.aggregation.DateRangeAggregationQuery("lastModified");
+            dateRangeAgg.setFieldName("modifiedTime");
+            dateRangeAgg.addRange(this.createDateRange("< 1 hour", "now-1h"));
+            dateRangeAgg.addRange(this.createDateRange("< 1 day", "now-1d"));
+            dateRangeAgg.addRange(this.createDateRange("< 1 week", "now-1w"));
 
-            if (values) {
-                var now = new Date();
-                var oneDayAgo = new Date();
-                var oneWeekAgo = new Date();
-                var oneHourAgo = new Date();
-                oneDayAgo.setDate(now.getDate() - 1);
-                oneWeekAgo.setDate(now.getDate() - 7);
-                Admin.lib.DateHelper.addHours(oneHourAgo, -1);
+            contentQuery.addAggregationQuery(dateRangeAgg);
+        }
 
-                for (var prop in values) {
-                    if (values.hasOwnProperty(prop) && values[prop].length > 0) {
-                        var lower = null;
-
-                        switch (values[prop][0]) {
-                        case '< 1 day':
-                            lower = oneDayAgo;
-                            break;
-                        case '< 1 hour':
-                            lower = oneHourAgo;
-                            break;
-                        case '1 < week':
-                            lower = oneWeekAgo;
-                            break;
-                        }
-
-                        if (lower) {
-                            ranges.push({
-                                lower: lower,
-                                upper: null
-                            })
-                        }
-                    }
-                }
+        private createDateRange(key: string, fromExpr: string, toExpr?: string): api.query.aggregation.DateRange {
+            var dateRange: api.query.aggregation.DateRange = new api.query.aggregation.DateRange();
+            dateRange.setKey(key);
+            dateRange.setFrom(fromExpr);
+            if (toExpr != null) {
+                dateRange.setTo(fromExpr);
             }
-            return ranges;
+            return dateRange;
         }
 
-        private lastModifiedGroupFacetFilter(facet: api.facet.Facet) {
-            return facet instanceof api.facet.QueryFacet;
-        }
+
     }
 
 }

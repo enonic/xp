@@ -33,11 +33,11 @@ module api.aggregation {
         }
 
         private resolveLabelValue(): string {
-            return this.bucket.getName() + ' (' + this.bucket.getDocCount() + ')';
+            return this.bucket.getKey() + ' (' + this.bucket.getDocCount() + ')';
         }
 
         getName(): string {
-            return this.bucket.getName();
+            return this.bucket.getKey();
         }
 
         update(bucket: api.aggregation.Bucket) {

@@ -28,7 +28,7 @@ public class AggregationBuilderFactory
             }
             else if ( aggregationQuery instanceof RangeAggregationQuery )
             {
-                RangeAggregationBuilderFactory.create( (RangeAggregationQuery) aggregationQuery );
+                aggregationBuilders.add( RangeAggregationBuilderFactory.create( (RangeAggregationQuery) aggregationQuery ) );
             }
         }
 

@@ -59,8 +59,8 @@ module api.aggregation {
 
         static createAggregationView(aggregation: api.aggregation.Aggregation,
                                      parentGroupView: api.aggregation.AggregationGroupView): api.aggregation.AggregationView {
-            if (aggregation instanceof api.aggregation.TermsAggregation) {
-                return new api.aggregation.TermsAggregationView(<api.aggregation.TermsAggregation>aggregation, parentGroupView);
+            if (aggregation instanceof api.aggregation.BucketAggregation) {
+                return new api.aggregation.BucketAggregationView(<api.aggregation.BucketAggregation>aggregation, parentGroupView);
             }
             else {
                 throw Error("Creating AggregationView of this type of Aggregation is not supported: " + aggregation);

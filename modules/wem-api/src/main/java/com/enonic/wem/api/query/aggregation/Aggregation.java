@@ -14,20 +14,19 @@ public abstract class Aggregation
         return name;
     }
 
-    public static TermsAggregation.Builder terms()
+    public static BucketAggregation.Builder bucketAggregation( final String name )
     {
-        return new TermsAggregation.Builder();
+        return new BucketAggregation.Builder( name );
     }
+
 
     public static class Builder<T extends Builder>
     {
-        private String name;
-
-        public T name( final String name )
+        public Builder( final String name )
         {
             this.name = name;
-            return (T) this;
         }
 
+        private String name;
     }
 }

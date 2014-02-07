@@ -59,8 +59,8 @@ module api.aggregation {
             var values: {[s:string] : string[];
             } = {};
 
-            this.aggregationViews.forEach((termsAggregationView: api.aggregation.TermsAggregationView) => {
-                values[termsAggregationView.getName()] = termsAggregationView.getSelectedValues();
+            this.aggregationViews.forEach((bucketAggregationView: api.aggregation.BucketAggregationView) => {
+                values[bucketAggregationView.getName()] = bucketAggregationView.getSelectedValues();
             });
 
             return values;
@@ -110,10 +110,10 @@ module api.aggregation {
                     this.addAggregationView(api.aggregation.AggregationView.createAggregationView(aggregation, this));
                 }
                 else {
-                    if (existingAggregationView instanceof api.aggregation.TermsAggregationView) {
+                    if (existingAggregationView instanceof api.aggregation.BucketAggregationView) {
 
-                        var termsAggregationView: api.aggregation.TermsAggregationView = <api.aggregation.TermsAggregationView>existingAggregationView;
-                        termsAggregationView.update(aggregation);
+                        var bucketAggregationView: api.aggregation.BucketAggregationView = <api.aggregation.BucketAggregationView>existingAggregationView;
+                        bucketAggregationView.update(aggregation);
 
                     }
                     // else if (existingFacetView instanceof QueryFacetView) {

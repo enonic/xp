@@ -1,6 +1,6 @@
 module api.aggregation {
 
     export interface AggregationTypeWrapperJson {
-        terms?:api.aggregation.TermsAggregationJson;
+        bucket?:api.aggregation.BucketAggregationJson;
     }
 }

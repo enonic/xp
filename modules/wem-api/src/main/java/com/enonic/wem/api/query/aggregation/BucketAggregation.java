@@ -1,11 +1,11 @@
 package com.enonic.wem.api.query.aggregation;
 
-public class TermsAggregation
+public class BucketAggregation
     extends Aggregation
 {
     private final Buckets buckets;
 
-    public TermsAggregation( final Builder builder )
+    private BucketAggregation( final Builder builder )
     {
         super( builder );
         this.buckets = builder.buckets;
@@ -21,16 +21,23 @@ public class TermsAggregation
     {
         private Buckets buckets;
 
+        public Builder( final String name )
+        {
+            super( name );
+        }
+
         public Builder buckets( final Buckets buckets )
         {
             this.buckets = buckets;
             return this;
         }
 
-        public TermsAggregation build()
+        public BucketAggregation build()
         {
-            return new TermsAggregation( this );
+            return new BucketAggregation( this );
         }
+
     }
+
 
 }

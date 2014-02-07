@@ -1,12 +1,13 @@
 package com.enonic.wem.core.index.query.aggregation;
 
 
+import org.elasticsearch.search.aggregations.bucket.range.date.DateRange;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.api.query.aggregation.Aggregations;
-import com.enonic.wem.api.query.aggregation.TermsAggregation;
+import com.enonic.wem.api.query.aggregation.BucketAggregation;
 
 public class AggregationsFactory
 {
@@ -28,6 +29,10 @@ public class AggregationsFactory
             {
                 aggregationsBuilder.add( createTermsAggregation( (Terms) aggregation ) );
             }
+            else if ( aggregation instanceof DateRange )
+            {
+                aggregationsBuilder.add( createDateRangeFacet( (DateRange) aggregation ) );
+            }
             else
             {
                 LOG.warn( "Aggregation translator for " + aggregation.getClass().getName() + " not implemented, skipping" );
@@ -37,13 +42,20 @@ public class AggregationsFactory
         return aggregationsBuilder.build();
     }
 
-    private TermsAggregation createTermsAggregation( final Terms termsAggregation )
+    private BucketAggregation createTermsAggregation( final Terms termsAggregation )
     {
-        return TermsAggregation.terms().
-            name( termsAggregation.getName() ).
-            buckets( BucketsFactory.create( termsAggregation.buckets() ) ).
+        return BucketAggregation.bucketAggregation( termsAggregation.getName() ).
+            buckets( BucketsFactory.createFromTerms( termsAggregation.buckets() ) ).
             build();
     }
+
+    private BucketAggregation createDateRangeFacet( final DateRange dateRangeAggregation )
+    {
+        return BucketAggregation.bucketAggregation( dateRangeAggregation.getName() ).
+            buckets( BucketsFactory.createFromDateRange( dateRangeAggregation.buckets() ) ).
+            build();
+    }
+
 }
 
 

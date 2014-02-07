@@ -1,20 +1,20 @@
 module api.aggregation {
 
-    export class TermsAggregationView extends api.aggregation.AggregationView {
+    export class BucketAggregationView extends api.aggregation.AggregationView {
 
-        private termsAggregation: api.aggregation.TermsAggregation;
+        private bucketAggregation: api.aggregation.BucketAggregation;
 
         private bucketViews: api.aggregation.BucketView[] = [];
 
         private hasAnyCountLargerThanZero: boolean;
 
-        constructor(termsAggregation: api.aggregation.TermsAggregation, parentGroupView: api.aggregation.AggregationGroupView) {
-            super(termsAggregation, parentGroupView);
+        constructor(bucketAggregation: api.aggregation.BucketAggregation, parentGroupView: api.aggregation.AggregationGroupView) {
+            super(bucketAggregation, parentGroupView);
 
-            this.termsAggregation = termsAggregation;
+            this.bucketAggregation = bucketAggregation;
 
             this.hasAnyCountLargerThanZero = false;
-            this.termsAggregation.getBuckets().forEach((bucket: api.aggregation.Bucket) => {
+            this.bucketAggregation.getBuckets().forEach((bucket: api.aggregation.Bucket) => {
                 this.addBucket(new api.aggregation.BucketView(bucket, this));
                 if (bucket.getDocCount() > 0) {
                     this.hasAnyCountLargerThanZero = true;
@@ -63,22 +63,21 @@ module api.aggregation {
 
         update(aggregation: api.aggregation.Aggregation) {
 
-            this.termsAggregation = <api.aggregation.TermsAggregation> aggregation;
+            this.bucketAggregation = <api.aggregation.BucketAggregation> aggregation;
 
             var anyCountLargerThanZero = false;
-
 
             // TODO: This should possible be done differently. The point is to remove
             // buckets from view when they are no longer in the aggregation-result from the query.
             this.bucketViews.forEach((bucketView: api.aggregation.BucketView) => {
-                var existingBucket: api.aggregation.Bucket = this.termsAggregation.getBucketByName(bucketView.getName());
+                var existingBucket: api.aggregation.Bucket = this.bucketAggregation.getBucketByName(bucketView.getName());
                 if (existingBucket == null) {
                     bucketView.hide();
                 }
             });
 
-            this.termsAggregation.getBuckets().forEach((bucket: api.aggregation.Bucket) => {
-                var existingEntry: api.aggregation.BucketView = this.bucketView(bucket.getName());
+            this.bucketAggregation.getBuckets().forEach((bucket: api.aggregation.Bucket) => {
+                var existingEntry: api.aggregation.BucketView = this.bucketView(bucket.getKey());
 
                 if (existingEntry != null) {
                     existingEntry.update(bucket);

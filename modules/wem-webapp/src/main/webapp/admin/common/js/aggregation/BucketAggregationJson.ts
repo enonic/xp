@@ -1,6 +1,6 @@
 module api.aggregation {
 
-    export interface TermsAggregationJson {
+    export interface BucketAggregationJson {
 
         name:string;
         buckets:api.aggregation.BucketJson[];

@@ -1,6 +1,6 @@
 package com.enonic.wem.api.query.aggregation;
 
-import java.util.Set;
+import java.util.Collection;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -44,7 +44,7 @@ public abstract class RangeAggregationQuery<R extends Range>
     {
         private String fieldName;
 
-        public Set<R> ranges = Sets.newHashSet();
+        public Collection<R> ranges = Sets.newHashSet();
 
         public Builder( final String name )
         {
@@ -54,6 +54,12 @@ public abstract class RangeAggregationQuery<R extends Range>
         public T range( final R range )
         {
             ranges.add( range );
+            return (T) this;
+        }
+
+        public T setRanges( final Collection<R> ranges )
+        {
+            this.ranges = ranges;
             return (T) this;
         }
 

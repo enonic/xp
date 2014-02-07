@@ -4,23 +4,23 @@ import com.enonic.wem.api.query.aggregation.Bucket;
 
 public class BucketJson
 {
-    private final String name;
+    private final String key;
 
-    private final long count;
+    private final long docCount;
 
     public BucketJson( final Bucket bucket )
     {
-        this.name = bucket.getName();
-        this.count = bucket.getDocCount();
+        this.key = bucket.getKey();
+        this.docCount = bucket.getDocCount();
     }
 
-    public String getName()
+    public String getKey()
     {
-        return name;
+        return key;
     }
 
-    public long getCount()
+    public long getDocCount()
     {
-        return count;
+        return docCount;
     }
 }

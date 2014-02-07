@@ -7,7 +7,12 @@ import com.enonic.wem.api.query.aggregation.AggregationQuery;
 
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
-@JsonSubTypes({@JsonSubTypes.Type(value = TermsAggregationQueryJson.class, name = "TermsAggregationQuery")})
+@JsonSubTypes(
+    {                                                                                                   //
+        @JsonSubTypes.Type(value = TermsAggregationQueryJson.class, name = "TermsAggregationQuery"),    //
+        @JsonSubTypes.Type(value = DateRangeAggregationQueryJson.class, name = "DateRangeAggregationQuery") //
+    }
+)
 public abstract class AggregationQueryJson
 {
 

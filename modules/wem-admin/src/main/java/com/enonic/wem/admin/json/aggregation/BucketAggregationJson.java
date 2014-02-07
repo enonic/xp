@@ -3,20 +3,20 @@ package com.enonic.wem.admin.json.aggregation;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.wem.api.query.aggregation.Bucket;
-import com.enonic.wem.api.query.aggregation.TermsAggregation;
+import com.enonic.wem.api.query.aggregation.BucketAggregation;
 
-public class TermsAggregationJson
+public class BucketAggregationJson
     extends AggregationJson
 {
     private final ImmutableSet<BucketJson> buckets;
 
-    public TermsAggregationJson( final TermsAggregation termsAggregation )
+    public BucketAggregationJson( final BucketAggregation bucketAggregation )
     {
-        super( termsAggregation );
+        super( bucketAggregation );
 
         ImmutableSet.Builder<BucketJson> builder = ImmutableSet.builder();
 
-        for ( final Bucket bucket : termsAggregation.getBuckets() )
+        for ( final Bucket bucket : bucketAggregation.getBuckets() )
         {
             builder.add( new BucketJson( bucket ) );
         }
@@ -28,6 +28,5 @@ public class TermsAggregationJson
     {
         return buckets;
     }
+
 }
-
-

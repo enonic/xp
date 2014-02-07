@@ -2,19 +2,19 @@ package com.enonic.wem.api.query.aggregation;
 
 public class Bucket
 {
-    final String name;
+    final String key;
 
     final long docCount;
 
-    public Bucket( final String name, final long docCount )
+    public Bucket( final String key, final long docCount )
     {
-        this.name = name;
+        this.key = key;
         this.docCount = docCount;
     }
 
-    public String getName()
+    public String getKey()
     {
-        return name;
+        return key;
     }
 
     public long getDocCount()

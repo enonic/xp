@@ -3,14 +3,14 @@ package com.enonic.wem.admin.rest.resource.content.json;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.wem.admin.json.aggregation.AggregationJson;
-import com.enonic.wem.admin.json.aggregation.TermsAggregationJson;
+import com.enonic.wem.admin.json.aggregation.BucketAggregationJson;
 import com.enonic.wem.admin.json.content.AbstractContentListJson;
 import com.enonic.wem.admin.json.content.ContentIdJson;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.query.aggregation.Aggregation;
 import com.enonic.wem.api.query.aggregation.Aggregations;
-import com.enonic.wem.api.query.aggregation.TermsAggregation;
+import com.enonic.wem.api.query.aggregation.BucketAggregation;
 
 public abstract class AbstractAggregationContentListJson<T extends ContentIdJson>
     extends AbstractContentListJson<T>
@@ -31,9 +31,9 @@ public abstract class AbstractAggregationContentListJson<T extends ContentIdJson
 
         for ( final Aggregation aggregation : aggregations )
         {
-            if ( aggregation instanceof TermsAggregation )
+            if ( aggregation instanceof BucketAggregation )
             {
-                builder.add( new TermsAggregationJson( (TermsAggregation) aggregation ) );
+                builder.add( new BucketAggregationJson( (BucketAggregation) aggregation ) );
             }
         }
 
