@@ -10,10 +10,6 @@ module api.content.page.image {
             this.moduleKeys = moduleKeys;
         }
 
-        getResourcePath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "list", "by_modules");
-        }
-
         getParams(): Object {
             return {
                 moduleKeys: api.module.ModuleKey.toStringArray(this.moduleKeys)
@@ -21,7 +17,7 @@ module api.content.page.image {
         }
 
         getRequestPath(): api.rest.Path {
-            return super.getResourcePath();
+            return api.rest.Path.fromParent(super.getResourcePath(), "list", "by_modules");
         }
     }
 }
