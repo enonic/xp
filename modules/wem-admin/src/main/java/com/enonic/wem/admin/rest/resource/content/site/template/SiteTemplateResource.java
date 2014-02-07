@@ -28,7 +28,7 @@ import com.enonic.wem.admin.rest.resource.content.site.template.json.ListSiteTem
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.site.DeleteSiteTemplate;
 import com.enonic.wem.api.command.content.site.GetSiteTemplateByKey;
-import com.enonic.wem.api.content.site.CreateSiteTemplateSpec;
+import com.enonic.wem.api.content.site.CreateSiteTemplateParam;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
@@ -96,8 +96,8 @@ public final class SiteTemplateResource
 
             importedSiteTemplate = siteTemplateImporter.importFromZip( tempZipFile ).build();
 
-            final CreateSiteTemplateSpec spec = CreateSiteTemplateSpec.fromSiteTemplate( importedSiteTemplate );
-            final SiteTemplate createdSiteTemplate = siteTemplateService.createSiteTemplate( spec );
+            final CreateSiteTemplateParam createSiteTemplate = CreateSiteTemplateParam.fromSiteTemplate( importedSiteTemplate );
+            final SiteTemplate createdSiteTemplate = siteTemplateService.createSiteTemplate( createSiteTemplate );
 
             return new SiteTemplateSummaryJson( createdSiteTemplate );
         }

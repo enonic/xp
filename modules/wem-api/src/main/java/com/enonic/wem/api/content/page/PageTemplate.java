@@ -7,10 +7,6 @@ import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
-import com.enonic.wem.api.support.Changes;
-import com.enonic.wem.api.support.EditBuilder;
-
-import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
 public final class PageTemplate
 {
@@ -30,19 +26,19 @@ public final class PageTemplate
 
     private final ContentTypeNames canRender;
 
-    private PageTemplate( final PageTemplateProperties properties )
+    private PageTemplate( final Builder builder )
     {
-        this.key = resolveKey( properties );
-        this.parentPath = properties.parentPath;
+        this.key = resolveKey( builder );
+        this.parentPath = builder.parentPath;
         this.path = ResourcePath.from( this.parentPath, this.key.getTemplateName().toString() );
-        this.displayName = properties.displayName;
-        this.descriptor = properties.descriptor;
-        this.config = properties.config;
-        this.canRender = properties.canRender != null ? properties.canRender : ContentTypeNames.empty();
-        this.regions = properties.regions;
+        this.displayName = builder.displayName;
+        this.descriptor = builder.descriptor;
+        this.config = builder.config;
+        this.canRender = builder.canRender != null ? builder.canRender : ContentTypeNames.empty();
+        this.regions = builder.regions;
     }
 
-    private PageTemplateKey resolveKey( final PageTemplateProperties properties )
+    private PageTemplateKey resolveKey( final Builder properties )
     {
         if ( properties.key != null )
         {
@@ -111,11 +107,44 @@ public final class PageTemplate
         return new Builder();
     }
 
-    public static class Builder
-        extends PageTemplateProperties
+    public static PageTemplate.Builder copyOf( final PageTemplate pageTemplate )
     {
+        return new Builder( pageTemplate );
+    }
+
+    public static class Builder
+    {
+        private ResourcePath parentPath = ResourcePath.root();
+
+        private PageTemplateKey key;
+
+        private ModuleName moduleName;
+
+        private PageTemplateName name;
+
+        private String displayName;
+
+        private PageDescriptorKey descriptor;
+
+        private RootDataSet config;
+
+        private ContentTypeNames canRender;
+
+        private PageRegions regions;
+
         private Builder()
         {
+        }
+
+        private Builder( final PageTemplate source )
+        {
+            this.parentPath = source.parentPath;
+            this.key = source.key;
+            this.displayName = source.displayName;
+            this.descriptor = source.descriptor;
+            this.config = source.config == null ? null : source.config.copy().toRootDataSet();
+            this.canRender = source.canRender;
+            this.regions = source.regions;
         }
 
         public Builder key( final PageTemplateKey key )
@@ -194,94 +223,4 @@ public final class PageTemplate
         }
     }
 
-    public static class PageTemplateProperties
-    {
-        ResourcePath parentPath = ResourcePath.root();
-
-        PageTemplateKey key;
-
-        ModuleName moduleName;
-
-        PageTemplateName name;
-
-        String displayName;
-
-        PageDescriptorKey descriptor;
-
-        RootDataSet config;
-
-        ContentTypeNames canRender;
-
-        PageRegions regions;
-    }
-
-    public static PageTemplateEditBuilder editPageTemplate( final PageTemplate toBeEdited )
-    {
-        return new PageTemplateEditBuilder( toBeEdited );
-    }
-
-    public static class PageTemplateEditBuilder
-        extends PageTemplateProperties
-        implements EditBuilder<PageTemplate>
-    {
-
-        private final PageTemplate original;
-
-        private final Changes.Builder changes = new Changes.Builder();
-
-        private PageTemplateEditBuilder( PageTemplate original )
-        {
-            this.original = original;
-        }
-
-        public PageTemplateEditBuilder displayName( final String value )
-        {
-            changes.recordChange( newPossibleChange( "displayName" ).from( this.original.getDisplayName() ).to( value ).build() );
-            this.displayName = value;
-            return this;
-        }
-
-        public PageTemplateEditBuilder descriptor( final PageDescriptorKey value )
-        {
-            changes.recordChange( newPossibleChange( "descriptor" ).from( this.original.getDescriptor() ).to( value ).build() );
-            this.descriptor = value;
-            return this;
-        }
-
-        public PageTemplateEditBuilder config( final RootDataSet value )
-        {
-            changes.recordChange( newPossibleChange( "config" ).from( this.original.getConfig() ).to( value ).build() );
-            this.config = value;
-            return this;
-        }
-
-        public PageTemplateEditBuilder canRender( final ContentTypeNames value )
-        {
-            changes.recordChange( newPossibleChange( "canRender" ).from( this.original.getCanRender() ).to( value ).build() );
-            this.canRender = value;
-            return this;
-        }
-
-        public PageTemplateEditBuilder regions( final PageRegions value )
-        {
-            changes.recordChange( newPossibleChange( "regions" ).from( this.original.getRegions() ).to( value ).build() );
-            this.regions = value;
-            return this;
-        }
-
-        public boolean isChanges()
-        {
-            return this.changes.isChanges();
-        }
-
-        public Changes getChanges()
-        {
-            return this.changes.build();
-        }
-
-        public PageTemplate build()
-        {
-            return new PageTemplate( this );
-        }
-    }
 }

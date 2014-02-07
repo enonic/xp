@@ -22,7 +22,7 @@ import com.enonic.wem.api.content.page.part.PartComponent;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.region.Region;
-import com.enonic.wem.api.content.site.CreateSiteTemplateSpec;
+import com.enonic.wem.api.content.site.CreateSiteTemplateParam;
 import com.enonic.wem.api.content.site.ModuleConfigs;
 import com.enonic.wem.api.content.site.NoSiteTemplateExistsException;
 import com.enonic.wem.api.content.site.SiteTemplate;
@@ -255,7 +255,7 @@ public class SitesInitializer
             // IGNORE IF NOT FOUND
         }
 
-        final CreateSiteTemplateSpec specHomeSite = new CreateSiteTemplateSpec().
+        final CreateSiteTemplateParam paramHomeSite = new CreateSiteTemplateParam().
             siteTemplateKey( HOMEPAGE_SITE_TEMPLATE_KEY ).
             displayName( "Homepage Template" ).
             vendor( newVendor().name( "Enonic AS" ).url( "http://www.enonic.com" ).build() ).
@@ -265,9 +265,9 @@ public class SitesInitializer
             rootContentType( ContentTypeName.page() ).
             addPageTemplate( mainPageLandingPageTemplate ).
             addPageTemplate( productGridPageTemplate );
-        homepageSiteTemplate = siteTemplateService.createSiteTemplate( specHomeSite );
+        homepageSiteTemplate = siteTemplateService.createSiteTemplate( paramHomeSite );
 
-        final CreateSiteTemplateSpec specIntraSite = new CreateSiteTemplateSpec().
+        final CreateSiteTemplateParam paramIntraSite = new CreateSiteTemplateParam().
             siteTemplateKey( INTRANET_SITE_TEMPLATE_KEY ).
             displayName( "Test site template for intranets" ).
             vendor( newVendor().name( "Enonic AS" ).url( "http://www.enonic.com" ).build() ).
@@ -276,7 +276,7 @@ public class SitesInitializer
             url( "http://enonic.net" ).
             rootContentType( ContentTypeName.page() ).
             addPageTemplate( departmentPageLandingPageTemplate );
-        intranetSiteTemplate = siteTemplateService.createSiteTemplate( specIntraSite );
+        intranetSiteTemplate = siteTemplateService.createSiteTemplate( paramIntraSite );
     }
 
     private void initializeSites()

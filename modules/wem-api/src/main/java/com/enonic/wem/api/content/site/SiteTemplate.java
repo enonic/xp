@@ -1,18 +1,14 @@
 package com.enonic.wem.api.content.site;
 
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
 
 import com.enonic.wem.api.Identity;
 import com.enonic.wem.api.content.page.PageTemplate;
+import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplates;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.support.Changes;
-import com.enonic.wem.api.support.EditBuilder;
-
-import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
 public final class SiteTemplate
     implements Identity<SiteTemplateKey, SiteTemplateName>
@@ -35,19 +31,19 @@ public final class SiteTemplate
 
     private final PageTemplates pageTemplates;
 
-    private SiteTemplate( final SiteTemplateProperties properties )
+    private SiteTemplate( final Builder builder )
     {
-        this.siteTemplateKey = properties.siteTemplateKey;
-        this.displayName = properties.displayName;
-        this.description = properties.description;
-        this.url = properties.url;
-        this.vendor = properties.vendor;
-        this.modules = properties.modules;
-        this.contentTypeFilter = properties.contentTypeFilter;
-        this.rootContentType = properties.rootContentType;
+        this.siteTemplateKey = builder.siteTemplateKey;
+        this.displayName = builder.displayName;
+        this.description = builder.description;
+        this.url = builder.url;
+        this.vendor = builder.vendor;
+        this.modules = builder.modules;
+        this.contentTypeFilter = builder.contentTypeFilter;
+        this.rootContentType = builder.rootContentType;
 
         final PageTemplates.Builder pageTemplatesBuilder = PageTemplates.newPageTemplates();
-        pageTemplatesBuilder.addAll( properties.pageTemplates );
+        pageTemplatesBuilder.addAll( builder.pageTemplates.values() );
 
         this.pageTemplates = pageTemplatesBuilder.build();
     }
@@ -112,12 +108,51 @@ public final class SiteTemplate
         return new Builder();
     }
 
-    public static class Builder
-        extends SiteTemplateProperties
+    public static Builder copyOf( final SiteTemplate siteTemplate )
     {
+        return new Builder( siteTemplate );
+    }
+
+    public static class Builder
+    {
+        private SiteTemplateKey siteTemplateKey;
+
+        private String displayName;
+
+        private String description;
+
+        private String url;
+
+        private Vendor vendor;
+
+        private ModuleKeys modules = ModuleKeys.empty();
+
+        private ContentTypeFilter contentTypeFilter;
+
+        private ContentTypeName rootContentType;
+
+        private final LinkedHashMap<PageTemplateKey, PageTemplate> pageTemplates;
+
         private Builder()
         {
-            pageTemplates = new ArrayList<>();
+            this.pageTemplates = new LinkedHashMap<>();
+        }
+
+        private Builder( final SiteTemplate source )
+        {
+            this.pageTemplates = new LinkedHashMap<>();
+            for ( PageTemplate pageTemplate : source.getPageTemplates() )
+            {
+                this.pageTemplates.put( pageTemplate.getKey(), PageTemplate.copyOf( pageTemplate ).build() );
+            }
+            this.siteTemplateKey = source.siteTemplateKey;
+            this.displayName = source.displayName;
+            this.description = source.description;
+            this.url = source.url;
+            this.vendor = source.vendor;
+            this.modules = source.modules;
+            this.contentTypeFilter = source.contentTypeFilter;
+            this.rootContentType = source.rootContentType;
         }
 
         public Builder key( final SiteTemplateKey siteTemplateKey )
@@ -168,9 +203,15 @@ public final class SiteTemplate
             return this;
         }
 
-        public Builder addPageTemplate( final PageTemplate template )
+        public Builder addPageTemplate( final PageTemplate pageTemplate )
         {
-            pageTemplates.add( template );
+            this.pageTemplates.put( pageTemplate.getKey(), pageTemplate );
+            return this;
+        }
+
+        public Builder removeTemplate( final PageTemplateKey pageTemplateKey )
+        {
+            this.pageTemplates.remove( pageTemplateKey );
             return this;
         }
 
@@ -180,116 +221,4 @@ public final class SiteTemplate
         }
     }
 
-    public static class SiteTemplateProperties
-    {
-        SiteTemplateKey siteTemplateKey;
-
-        String displayName;
-
-        String description;
-
-        String url;
-
-        Vendor vendor;
-
-        ModuleKeys modules = ModuleKeys.empty();
-
-        ContentTypeFilter contentTypeFilter;
-
-        ContentTypeName rootContentType;
-
-        List<PageTemplate> pageTemplates;
-    }
-
-    public static SiteTemplateEditBuilder editSiteTemplate( final SiteTemplate toBeEdited )
-    {
-        return new SiteTemplateEditBuilder( toBeEdited );
-    }
-
-    public static class SiteTemplateEditBuilder
-        extends SiteTemplateProperties
-        implements EditBuilder<SiteTemplate>
-    {
-        private final SiteTemplate original;
-
-        private final Changes.Builder changes = new Changes.Builder();
-
-        private SiteTemplateEditBuilder( SiteTemplate original )
-        {
-            this.original = original;
-        }
-
-        public SiteTemplateEditBuilder displayName( final String value )
-        {
-            this.displayName = value;
-            return this;
-        }
-
-        public SiteTemplateEditBuilder description( final String value )
-        {
-            changes.recordChange( newPossibleChange( "description" ).from( this.original.getDescription() ).to( value ).build() );
-            this.description = value;
-            return this;
-        }
-
-        public SiteTemplateEditBuilder url( final String value )
-        {
-            changes.recordChange( newPossibleChange( "url" ).from( this.original.getUrl() ).to( value ).build() );
-            this.url = value;
-            return this;
-        }
-
-        public SiteTemplateEditBuilder vendor( final Vendor value )
-        {
-            changes.recordChange( newPossibleChange( "vendor" ).from( this.original.getVendor() ).to( value ).build() );
-            this.vendor = value;
-            return this;
-        }
-
-        public SiteTemplateEditBuilder modules( final ModuleKeys value )
-        {
-            changes.recordChange( newPossibleChange( "modules" ).from( this.original.getModules() ).to( value ).build() );
-            this.modules = value;
-            return this;
-        }
-
-        public SiteTemplateEditBuilder contentTypeFilter( final ContentTypeFilter value )
-        {
-            changes.recordChange(
-                newPossibleChange( "contentTypeFilter" ).from( this.original.getContentTypeFilter() ).to( value ).build() );
-            this.contentTypeFilter = value;
-            return this;
-        }
-
-        public SiteTemplateEditBuilder rootContentType( final ContentTypeName value )
-        {
-            changes.recordChange( newPossibleChange( "rootContentType" ).from( this.original.getRootContentType() ).to( value ).build() );
-            this.rootContentType = value;
-            return this;
-        }
-
-        public SiteTemplateEditBuilder setPageTemplate( final PageTemplate value )
-        {
-            changes.recordChange( newPossibleChange( "pageTemplates" ).from( this.original.getPageTemplates().
-                getTemplate( value.getPath() ) ).to( value ).build() );
-            this.pageTemplates.add( value );
-            return this;
-        }
-
-
-        public boolean isChanges()
-        {
-            return this.changes.isChanges();
-        }
-
-        public Changes getChanges()
-        {
-            return this.changes.build();
-        }
-
-        public SiteTemplate build()
-        {
-            return new SiteTemplate( this );
-        }
-    }
 }

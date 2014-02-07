@@ -1,21 +1,28 @@
 package com.enonic.wem.core.content.page;
 
 
+import javax.inject.Inject;
+
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.page.UpdatePageTemplate;
 import com.enonic.wem.api.command.content.site.GetSiteTemplateByKey;
-import com.enonic.wem.api.command.content.site.UpdateSiteTemplate;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateEditor;
 import com.enonic.wem.api.content.page.PageTemplateNotFoundException;
+import com.enonic.wem.api.content.site.SetSiteTemplateEditor;
 import com.enonic.wem.api.content.site.SiteTemplate;
-import com.enonic.wem.api.content.site.SiteTemplateEditor;
 import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
+import com.enonic.wem.api.content.site.SiteTemplateService;
+import com.enonic.wem.api.content.site.UpdateSiteTemplateParam;
 import com.enonic.wem.core.command.CommandHandler;
+
+import static com.enonic.wem.api.content.site.SetSiteTemplateEditor.newEditor;
 
 public class UpdatePageTemplateHandler
     extends CommandHandler<UpdatePageTemplate>
 {
+    private SiteTemplateService siteTemplateService;
+
     @Override
     public void handle()
         throws Exception
@@ -34,29 +41,27 @@ public class UpdatePageTemplateHandler
         }
 
         final PageTemplateEditor editor = command.getEditor();
-        final PageTemplate.PageTemplateEditBuilder editBuilder = editor.edit( template );
+        final PageTemplate updatedTemplate = editor.edit( template );
 
-        if ( editBuilder.isChanges() )
-        {
-            final PageTemplate editedTemplate = editBuilder.build();
-
-            final UpdateSiteTemplate updateCommand = Commands.site().template().update().
-                key( command.getSiteTemplateKey() ).
-                editor( new SiteTemplateEditor()
-                {
-                    @Override
-                    public SiteTemplate.SiteTemplateEditBuilder edit( final SiteTemplate toBeEdited )
-                    {
-                        return SiteTemplate.editSiteTemplate( toBeEdited ).setPageTemplate( editedTemplate );
-                    }
-                } );
-
-            context.getClient().execute( updateCommand );
-            command.setResult( editedTemplate );
-        }
-        else
+        if ( updatedTemplate == null || updatedTemplate == template )
         {
             command.setResult( template );
         }
+        else
+        {
+            final SetSiteTemplateEditor siteTemplateEditor = newEditor().addTemplate( updatedTemplate ).build();
+            final UpdateSiteTemplateParam updateSiteParams = new UpdateSiteTemplateParam().
+                key( command.getSiteTemplateKey() ).
+                editor( siteTemplateEditor );
+            this.siteTemplateService.updateSiteTemplate( updateSiteParams );
+
+            command.setResult( updatedTemplate );
+        }
+    }
+
+    @Inject
+    public void setSiteTemplateService( final SiteTemplateService siteTemplateService )
+    {
+        this.siteTemplateService = siteTemplateService;
     }
 }

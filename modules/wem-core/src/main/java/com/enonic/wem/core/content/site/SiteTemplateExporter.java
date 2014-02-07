@@ -18,7 +18,7 @@ import com.enonic.wem.core.support.export.XMLFilename;
 import com.enonic.wem.xml.XmlSerializers;
 
 @XMLFilename("site.xml")
-public final class SiteTemplateExporter
+public class SiteTemplateExporter
     extends AbstractEntityExporter<SiteTemplate, SiteTemplate.Builder>
 {
     private static final String TEMPLATE_FILE_PATTERN = "*-template.xml";

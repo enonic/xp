@@ -9,11 +9,6 @@ public final class PageTemplateCommands
         return new CreatePageTemplate();
     }
 
-    public UpdatePageTemplate update()
-    {
-        return new UpdatePageTemplate();
-    }
-
     public DeletePageTemplate delete()
     {
         return new DeletePageTemplate();

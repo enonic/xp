@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import com.enonic.wem.api.content.page.PageTemplate;
-import com.enonic.wem.api.content.site.CreateSiteTemplateSpec;
+import com.enonic.wem.api.content.site.CreateSiteTemplateParam;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.core.config.SystemConfig;
@@ -13,7 +13,7 @@ import com.enonic.wem.util.Exceptions;
 
 final class CreateSiteTemplateCommand
 {
-    private CreateSiteTemplateSpec spec;
+    private CreateSiteTemplateParam param;
 
     private SystemConfig systemConfig;
 
@@ -21,7 +21,7 @@ final class CreateSiteTemplateCommand
 
     public SiteTemplate execute()
     {
-        this.spec.validate();
+        this.param.validate();
 
         try
         {
@@ -36,18 +36,18 @@ final class CreateSiteTemplateCommand
     private SiteTemplate doExecute()
         throws IOException
     {
-        final SiteTemplateKey siteTemplatekey = SiteTemplateKey.from( this.spec.getName(), this.spec.getVersion() );
+        final SiteTemplateKey siteTemplatekey = SiteTemplateKey.from( this.param.getName(), this.param.getVersion() );
         final SiteTemplate.Builder builder = SiteTemplate.newSiteTemplate().
-            displayName( this.spec.getDisplayName() ).
-            url( this.spec.getUrl() ).
-            vendor( this.spec.getVendor() ).
+            displayName( this.param.getDisplayName() ).
+            url( this.param.getUrl() ).
+            vendor( this.param.getVendor() ).
             key( siteTemplatekey ).
-            modules( this.spec.getModules() ).
-            description( this.spec.getDescription() ).
-            rootContentType( this.spec.getRootContentType() ).
-            contentTypeFilter( this.spec.getContentTypeFilter() );
+            modules( this.param.getModules() ).
+            description( this.param.getDescription() ).
+            rootContentType( this.param.getRootContentType() ).
+            contentTypeFilter( this.param.getContentTypeFilter() );
 
-        for ( PageTemplate template : spec.getTemplates() )
+        for ( PageTemplate template : param.getTemplates() )
         {
             builder.addPageTemplate( template );
         }
@@ -72,9 +72,9 @@ final class CreateSiteTemplateCommand
         return this;
     }
 
-    public CreateSiteTemplateCommand spec( final CreateSiteTemplateSpec spec )
+    public CreateSiteTemplateCommand param( final CreateSiteTemplateParam param )
     {
-        this.spec = spec;
+        this.param = param;
         return this;
     }
 }

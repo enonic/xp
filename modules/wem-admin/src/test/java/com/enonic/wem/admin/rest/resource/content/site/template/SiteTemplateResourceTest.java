@@ -27,7 +27,7 @@ import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.site.ContentTypeFilter;
-import com.enonic.wem.api.content.site.CreateSiteTemplateSpec;
+import com.enonic.wem.api.content.site.CreateSiteTemplateParam;
 import com.enonic.wem.api.content.site.NoSiteTemplateExistsException;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
@@ -196,7 +196,7 @@ public class SiteTemplateResourceTest
         throws Exception
     {
         final SiteTemplate siteTemplate = createSiteTemplate();
-        Mockito.when( siteTemplateService.createSiteTemplate( Mockito.isA( CreateSiteTemplateSpec.class ) ) ).thenReturn( siteTemplate );
+        Mockito.when( siteTemplateService.createSiteTemplate( Mockito.isA( CreateSiteTemplateParam.class ) ) ).thenReturn( siteTemplate );
 
         final SiteTemplateExporter siteTemplateExporter = new SiteTemplateExporter();
         final Path exportedSiteTemplateFile = siteTemplateExporter.exportToZip( siteTemplate, tempDir );

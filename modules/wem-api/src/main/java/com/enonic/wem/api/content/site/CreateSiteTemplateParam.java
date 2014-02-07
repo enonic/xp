@@ -10,7 +10,7 @@ import com.enonic.wem.api.content.page.PageTemplates;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
-public final class CreateSiteTemplateSpec
+public final class CreateSiteTemplateParam
 {
     private SiteTemplateName name;
 
@@ -32,9 +32,9 @@ public final class CreateSiteTemplateSpec
 
     private List<PageTemplate> templates = Lists.newArrayList();
 
-    public static CreateSiteTemplateSpec fromSiteTemplate( final SiteTemplate siteTemplate )
+    public static CreateSiteTemplateParam fromSiteTemplate( final SiteTemplate siteTemplate )
     {
-        final CreateSiteTemplateSpec createSiteTemplate = new CreateSiteTemplateSpec().
+        final CreateSiteTemplateParam createSiteTemplate = new CreateSiteTemplateParam().
             name( siteTemplate.getName() ).
             version( siteTemplate.getVersion() ).
             displayName( siteTemplate.getDisplayName() ).
@@ -51,79 +51,79 @@ public final class CreateSiteTemplateSpec
         return createSiteTemplate;
     }
 
-    public CreateSiteTemplateSpec siteTemplateKey( final SiteTemplateKey key )
+    public CreateSiteTemplateParam siteTemplateKey( final SiteTemplateKey key )
     {
         this.name( key.getName() );
         this.version( key.getVersion() );
         return this;
     }
 
-    public CreateSiteTemplateSpec name( final String name )
+    public CreateSiteTemplateParam name( final String name )
     {
         return this.name( new SiteTemplateName( name ) );
     }
 
-    public CreateSiteTemplateSpec name( final SiteTemplateName name )
+    public CreateSiteTemplateParam name( final SiteTemplateName name )
     {
         this.name = name;
         return this;
     }
 
-    public CreateSiteTemplateSpec version( final SiteTemplateVersion version )
+    public CreateSiteTemplateParam version( final SiteTemplateVersion version )
     {
         this.version = version;
         return this;
     }
 
-    public CreateSiteTemplateSpec displayName( final String displayName )
+    public CreateSiteTemplateParam displayName( final String displayName )
     {
         this.displayName = displayName;
         return this;
     }
 
-    public CreateSiteTemplateSpec description( final String description )
+    public CreateSiteTemplateParam description( final String description )
     {
         this.description = description;
         return this;
     }
 
-    public CreateSiteTemplateSpec url( final String url )
+    public CreateSiteTemplateParam url( final String url )
     {
         this.url = url;
         return this;
     }
 
-    public CreateSiteTemplateSpec vendor( final Vendor vendor )
+    public CreateSiteTemplateParam vendor( final Vendor vendor )
     {
         this.vendor = vendor;
         return this;
     }
 
-    public CreateSiteTemplateSpec modules( final ModuleKeys modules )
+    public CreateSiteTemplateParam modules( final ModuleKeys modules )
     {
         this.modules = modules;
         return this;
     }
 
-    public CreateSiteTemplateSpec contentTypeFilter( final ContentTypeFilter contentTypeFilter )
+    public CreateSiteTemplateParam contentTypeFilter( final ContentTypeFilter contentTypeFilter )
     {
         this.contentTypeFilter = contentTypeFilter;
         return this;
     }
 
-    public CreateSiteTemplateSpec rootContentType( final ContentTypeName rootContentType )
+    public CreateSiteTemplateParam rootContentType( final ContentTypeName rootContentType )
     {
         this.rootContentType = rootContentType;
         return this;
     }
 
-    public CreateSiteTemplateSpec addPageTemplate( final PageTemplate template )
+    public CreateSiteTemplateParam addPageTemplate( final PageTemplate template )
     {
         this.templates.add( template );
         return this;
     }
 
-    public CreateSiteTemplateSpec addPageTemplate( final PageTemplates templates )
+    public CreateSiteTemplateParam addPageTemplates( final PageTemplates templates )
     {
         this.templates.addAll( templates.getList() );
         return this;
