@@ -35,26 +35,33 @@ module api.ui {
         }
     }
 
-    export class CodeArea extends TextArea {
+    export class CodeArea extends api.ui.form.CompositeFormInputEl {
 
-        private options: CodeMirrorOptions = {};
+        private textArea: api.ui.TextArea;
+
+        private options: CodeMirrorOptions;
 
         private codeMirror;
 
         private mode: string;
 
         constructor(builder:CodeAreaBuilder) {
-            super(builder.name);
-            this.setSize(builder.size);
+            this.textArea = new TextArea(builder.name);
+
+            super(this.textArea);
+
+            this.textArea.setSize(builder.size);
             this.mode = builder.mode;
-            this.options.lineNumbers = builder.lineNumbers;
+            this.options = {
+                lineNumbers: builder.lineNumbers
+            };
             CodeMirror.modeURL = api.util.getUri('admin/common/lib/codemirror/mode/%N.js');
         }
 
         onElementAddedToParent(parent: api.dom.Element) {
 
-            this.codeMirror = CodeMirror.fromTextArea(<HTMLTextAreaElement>this.getHTMLElement(), this.options);
-            this.codeMirror.setSize("550px", "350px");
+            this.codeMirror = CodeMirror.fromTextArea(<HTMLTextAreaElement>this.textArea.getHTMLElement(), this.options);
+            this.codeMirror.setSize("540px", "350px");
             this.codeMirror.setOption("mode", this.mode);
             CodeMirror.autoLoadMode(this.codeMirror, this.mode);
             this.codeMirror.refresh();

@@ -1,6 +1,6 @@
 module app.wizard {
 
-    export class ContentTypeForm extends api.ui.form.Form {
+    export class ContentTypeForm extends api.app.wizard.WizardStepForm {
 
         constructor() {
             super();

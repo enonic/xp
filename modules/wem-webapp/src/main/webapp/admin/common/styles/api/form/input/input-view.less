@@ -17,7 +17,8 @@
   .input-label {
     float: left;
     clear: left;
-    width: 110px;
+    max-width: @form-label-width - 10px;
+    margin-right: 10px;
     padding-top: 10px;
 
     .required {
@@ -30,24 +31,12 @@
   }
 
   .bottom-button-row {
-
     clear: left;
     overflow: hidden;
-
     margin-left: @form-label-width;
 
     button {
       margin-left: 0px;
-    }
-  }
-
-  .form-item-set-view & {
-    .bottom-button-row {
-
-      background-color: white;
-      margin-left: @form-label-width;
-      padding-left: 0px;
-      padding-right: 0px;
     }
   }
 }

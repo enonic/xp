@@ -1,0 +1,87 @@
+.form-item-set-view {
+
+  margin: 10px 0;
+
+  .occurrence-views-container {
+    background-color: #eee;
+    overflow: hidden;
+  }
+
+  .form-item-set-drop-target-placeholder {
+    border: 2px dashed #000;
+    padding: 14px;
+    color: #000;
+    font-size: 14px;
+    text-align: center;
+    margin: 10px;
+  }
+
+  .input-view {
+    .input-label {
+      max-width: 90px;
+      margin-right: 10px;
+    }
+
+    .input-type-view {
+      margin-left: @form-label-width - 20px;
+    }
+
+    .bottom-button-row {
+      background-color: white;
+      margin-left: @form-label-width - 20px;
+      padding-left: 0px;
+      padding-right: 0px;
+    }
+  }
+
+  .bottom-button-row {
+    background-color: #eee;
+    padding: 0 10px 10px 10px;
+    clear: left;
+    overflow: hidden;
+
+    button {
+      margin-left: 0px;
+    }
+
+    .add-button {
+      float: left;
+    }
+
+    .collapse-button {
+      float: right;
+      text-decoration: underline;
+      line-height: 28px;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+
+  &.odd {
+    & > .occurrence-views-container {
+      background-color: #67656a;
+    }
+
+    & > .bottom-button-row {
+      background-color: #67656a;
+
+      .collapse-button {
+        color: white;
+      }
+    }
+  }
+
+  .form-item-set-view {
+    margin-left: -20px;
+    margin-right: -20px;
+  }
+}
+
+.form-item-set-drop-allowed {
+  background-color: #558e28;
+  text-align: center;
+  line-height: 48px;
+  .icon("\f00c", 2.4em, white);
+}

@@ -1,5 +1,4 @@
 .form {
-  width: 720px;
   margin-top: 20px;
 
   .form-item {
@@ -20,10 +19,7 @@
         display: block;
       }
 
-      select, input {
-        .input-error();
-      }
-      textarea {
+      select, input , textarea {
         .input-error();
       }
 
@@ -39,18 +35,26 @@
   }
 
   fieldset {
+
     legend {
       width: 100%;
       margin-bottom: 10px;
       padding-bottom: 2px;
       border-bottom: 1px solid @admin-medium-gray-border;
     }
+
     label {
       font-size: 12px;
-      width: 100px;
+      max-width: @form-label-width - 10px;
       margin-right: 10px;
       display: block;
       float: left;
+    }
+
+    label + input,
+    label + select,
+    .composite-input {
+      margin-left: @form-label-width;
     }
 
     select, input {

@@ -8,6 +8,8 @@ module api.ui.form {
 
         constructor(wrappedInput: api.dom.FormInputEl, ...additionalElements: api.dom.Element[]) {
             super("div");
+            this.addClass("composite-input");
+
             this.wrappedInput = wrappedInput;
             this.additionalElements = additionalElements;
 

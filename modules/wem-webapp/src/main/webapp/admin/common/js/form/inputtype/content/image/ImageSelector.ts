@@ -33,6 +33,7 @@ module api.form.inputtype.content.image {
 
         constructor(config: api.form.inputtype.InputTypeViewConfig<ImageSelectorConfig>) {
             super("image-selector");
+            this.addClass("input-type-view");
 
             this.config = config;
             this.contentSummaryLoader = new api.form.inputtype.content.ContentSummaryLoader();

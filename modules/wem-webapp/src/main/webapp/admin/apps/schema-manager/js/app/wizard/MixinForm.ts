@@ -1,6 +1,6 @@
 module app.wizard {
 
-    export class MixinForm extends api.ui.form.Form {
+    export class MixinForm extends api.app.wizard.WizardStepForm {
 
         constructor() {
             super();

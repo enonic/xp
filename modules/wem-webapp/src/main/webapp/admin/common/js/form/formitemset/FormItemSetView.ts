@@ -22,6 +22,8 @@ module api.form.formitemset {
             this.formItemSet = formItemSet;
             this.dataSets = dataSets != null ? dataSets : [];
 
+            this.addClass(this.formItemSet.getPath().getElements().length % 2 ? "even" : "odd");
+
             this.occurrenceViewsContainer = new api.dom.DivEl("occurrence-views-container");
             jQuery(this.occurrenceViewsContainer.getHTMLElement()).sortable({
                 revert: false,

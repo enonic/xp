@@ -24,6 +24,8 @@ module api.form.inputtype.combobox {
 
         constructor(config: api.form.inputtype.InputTypeViewConfig<ComboBoxConfig>) {
             super("combo-box");
+            this.addClass("input-type-view");
+
             this.config = config.inputConfig;
             this.listeners[InputTypeEvents.ValidityChanged] = [];
         }
