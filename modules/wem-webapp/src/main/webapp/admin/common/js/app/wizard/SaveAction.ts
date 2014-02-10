@@ -6,8 +6,13 @@ module api.app.wizard {
             super("Save", "mod+alt+s");
 
             this.addExecutionListener(() => {
+
+                this.setEnabled(false);
+
                 wizardPanel.saveChanges().
-                    done(() => {});
+                    finally(() => {
+                        this.setEnabled(true);
+                    });
             });
         }
     }

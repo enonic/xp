@@ -4,10 +4,19 @@ module app.wizard.action {
 
         constructor(wizard:app.wizard.ContentWizardPanel) {
             super("Publish");
+
+            this.setEnabled(false);
+
             this.addExecutionListener(() => {
-                console.log("Publish action");
+
                 wizard.setPersistAsDraft(false);
-                wizard.updatePersistedItem();
+
+                this.setEnabled(false);
+
+                wizard.updatePersistedItem().
+                    finally(()=> {
+                    this.setEnabled(true);
+                });
             });
         }
     }
