@@ -1,2 +1,2 @@
-///<reference path='Relationship.ts' />
 ///<reference path='RelationshipLoader.ts' />
+///<reference path='Relationship.ts' />
