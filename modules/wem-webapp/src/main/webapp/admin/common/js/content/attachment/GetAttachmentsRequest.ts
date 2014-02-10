@@ -21,17 +21,18 @@ module api.content.attachment {
             return api.rest.Path.fromParent(super.getResourcePath(), "all");
         }
 
-        sendAndParse(): JQueryPromise<api.content.attachment.Attachment[]> {
+        sendAndParse(): Q.Promise<api.content.attachment.Attachment[]> {
 
-            var deferred = jQuery.Deferred<api.content.attachment.Attachment[]>();
+            var deferred = Q.defer<api.content.attachment.Attachment[]>();
 
-            this.send().done((response: api.rest.JsonResponse<api.content.attachment.AttachmentListJson>) => {
+            this.send().
+                done((response: api.rest.JsonResponse<api.content.attachment.AttachmentListJson>) => {
                 deferred.resolve(this.fromJsonArrayToAttachments(response.getResult().attachments));
             }).fail((response: api.rest.RequestError) => {
                     deferred.reject(null);
                 });
 
-            return deferred;
+            return deferred.promise;
         }
     }
 }

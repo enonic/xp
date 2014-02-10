@@ -33,9 +33,9 @@ module api.schema.relationshiptype {
             return api.rest.Path.fromParent(super.getResourcePath(), 'update');
         }
 
-        sendAndParse(): JQueryPromise<RelationshipType> {
+        sendAndParse(): Q.Promise<RelationshipType> {
 
-            var deferred = jQuery.Deferred<RelationshipType>();
+            var deferred = Q.defer<RelationshipType>();
 
             this.send().done((response: api.rest.JsonResponse<api.schema.relationshiptype.json.RelationshipTypeJson>) => {
                     var json = response.getJson();
@@ -50,7 +50,7 @@ module api.schema.relationshiptype {
                     deferred.reject(null);
                 });
 
-            return deferred;
+            return deferred.promise;
         }
     }
 }

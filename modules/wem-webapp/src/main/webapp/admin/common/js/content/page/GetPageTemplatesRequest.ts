@@ -20,9 +20,9 @@ module api.content.page {
             return api.rest.Path.fromParent(super.getResourcePath(), "list");
         }
 
-        sendAndParse(): JQueryPromise<api.content.page.PageTemplateSummary[]> {
+        sendAndParse(): Q.Promise<api.content.page.PageTemplateSummary[]> {
 
-            var deferred = jQuery.Deferred<api.content.page.PageTemplateSummary[]>();
+            var deferred = Q.defer<api.content.page.PageTemplateSummary[]>();
 
             this.send().
                 done((response: api.rest.JsonResponse<api.content.page.json.PageTemplateSummaryListJson>) => {
@@ -36,7 +36,7 @@ module api.content.page {
                     deferred.reject(null);
                 });
 
-            return deferred;
+            return deferred.promise;
         }
     }
 }

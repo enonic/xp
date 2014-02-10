@@ -11,9 +11,9 @@ module api.content.page.image {
             return array;
         }
 
-        sendAndParse(): JQueryPromise<ImageDescriptor[]> {
+        sendAndParse(): Q.Promise<ImageDescriptor[]> {
 
-            var deferred = jQuery.Deferred<ImageDescriptor[]>();
+            var deferred = Q.defer<ImageDescriptor[]>();
 
             this.send().done((response: api.rest.JsonResponse<json.ImageDescriptorsJson>) => {
                 deferred.resolve(this.fromJsonToImageDescriptors(response.getResult()));
@@ -21,7 +21,7 @@ module api.content.page.image {
                 deferred.reject(null);
             });
 
-            return deferred;
+            return deferred.promise;
         }
     }
 }

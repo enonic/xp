@@ -11,12 +11,12 @@ module app.remove {
 
             this.getDeleteAction().addExecutionListener(() => {
                 new api.module.DeleteModuleRequest(this.moduleToDelete.getModuleKey().toString()).sendAndParse()
-                    .done((module:api.module.Module) => {
+                    .then((module:api.module.Module) => {
                         api.notify.showFeedback('Module \'' + module.getDisplayName() + '\' was deleted');
                         new api.module.ModuleDeletedEvent(module.getModuleKey()).fire();
-                    }).fail(() => {
+                    }).catch(() => {
                         api.notify.showError('Error while deleting module.');
-                    }).always(() => {
+                    }).finally(() => {
                         this.close();
                     });
             });

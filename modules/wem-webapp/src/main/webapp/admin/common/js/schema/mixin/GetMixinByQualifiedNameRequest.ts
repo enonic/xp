@@ -20,9 +20,9 @@ module api.schema.mixin {
             return super.getResourcePath();
         }
 
-        sendAndParse(): JQueryPromise<api.schema.mixin.Mixin> {
+        sendAndParse(): Q.Promise<api.schema.mixin.Mixin> {
 
-            var deferred = jQuery.Deferred<api.schema.mixin.Mixin>();
+            var deferred = Q.defer<api.schema.mixin.Mixin>();
 
             this.send().done((response: api.rest.JsonResponse<api.schema.mixin.json.MixinJson>) => {
                 deferred.resolve(this.fromJsonToMixin(response.getResult()));
@@ -30,7 +30,7 @@ module api.schema.mixin {
                     deferred.reject(null);
                 });
 
-            return deferred;
+            return deferred.promise;
         }
     }
 }

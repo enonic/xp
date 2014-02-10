@@ -20,20 +20,15 @@ module api.module {
             };
         }
 
-        sendAndParse(): JQueryPromise<api.module.Module> {
-            var deferred = jQuery.Deferred<api.module.Module>();
+        sendAndParse(): Q.Promise<api.module.Module> {
+            var deferred = Q.defer<api.module.Module>();
 
-            this.send().done((response: api.rest.JsonResponse<api.module.json.ModuleJson>) => {
-                if ( !response.isBlank() ) {
-                    deferred.resolve(this.fromJsonToModule(response.getResult()));
-                } else {
-                    deferred.reject();
-                }
-            }).fail(() => {
-                deferred.reject();
+            this.send().
+                done((response: api.rest.JsonResponse<api.module.json.ModuleJson>) => {
+                deferred.resolve(this.fromJsonToModule(response.getResult()));
             });
 
-            return deferred;
+            return deferred.promise;
         }
     }
 }

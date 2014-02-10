@@ -93,7 +93,7 @@ module api.content {
         private attachmentsToJson(): api.content.attachment.AttachmentJson[] {
             var array: api.content.attachment.AttachmentJson[] = [];
             this.attachments.forEach((attachment: api.content.attachment.Attachment)=> {
-                var attachmentJsonbj:api.content.attachment.AttachmentJson = {
+                var attachmentJsonbj: api.content.attachment.AttachmentJson = {
                     "blobKey": attachment.getBlobKey().toString(),
                     "attachmentName": attachment.getAttachmentName().toString(),
                     "mimeType": attachment.getMimeType(),
@@ -108,17 +108,20 @@ module api.content {
             return api.rest.Path.fromParent(super.getResourcePath(), "create");
         }
 
-        sendAndParse(): JQueryPromise<Content> {
+        sendAndParse(): Q.Promise<Content> {
 
-            var deferred = jQuery.Deferred<Content>();
+            var deferred = Q.defer<Content>();
 
-            this.send().done((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
-                deferred.resolve(this.fromJsonToContent(response.getResult()));
-            }).fail((response: api.rest.RequestError) => {
+            this.send().
+                done((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
+
+                    deferred.resolve(this.fromJsonToContent(response.getResult()));
+                }).fail((response: api.rest.RequestError) => {
+
                     deferred.reject(null);
                 });
 
-            return deferred;
+            return deferred.promise;
         }
 
     }

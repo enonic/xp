@@ -33,9 +33,9 @@ module api.content.page {
             return super.getResourcePath();
         }
 
-        sendAndParse(): JQueryPromise<api.content.page.PageTemplate> {
+        sendAndParse(): Q.Promise<api.content.page.PageTemplate> {
 
-            var deferred = jQuery.Deferred<api.content.page.PageTemplate>();
+            var deferred = Q.defer<api.content.page.PageTemplate>();
 
             this.send().done((response: api.rest.JsonResponse<api.content.page.json.PageTemplateJson>) => {
                 deferred.resolve(this.fromJsonToPageTemplate(response.getResult()));
@@ -43,7 +43,7 @@ module api.content.page {
                 deferred.reject(null);
             });
 
-            return deferred;
+            return deferred.promise;
         }
     }
 }

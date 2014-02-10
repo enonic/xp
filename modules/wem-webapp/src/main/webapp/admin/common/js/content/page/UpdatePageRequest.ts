@@ -44,9 +44,9 @@ module api.content.page {
             return api.rest.Path.fromParent(super.getResourcePath(), "update");
         }
 
-        sendAndParse(): JQueryPromise<api.content.Content> {
+        sendAndParse(): Q.Promise<api.content.Content> {
 
-            var deferred = jQuery.Deferred<api.content.Content>();
+            var deferred = Q.defer<api.content.Content>();
 
             this.send().
                 done((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
@@ -59,7 +59,7 @@ module api.content.page {
                     deferred.reject(null);
                 });
 
-            return deferred;
+            return deferred.promise;
         }
     }
 }

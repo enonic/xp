@@ -20,9 +20,9 @@ module api.content.page {
             return super.getResourcePath();
         }
 
-        sendAndParse(): JQueryPromise<api.content.page.PageDescriptor> {
+        sendAndParse(): Q.Promise<api.content.page.PageDescriptor> {
 
-            var deferred: JQueryDeferred<api.content.page.PageDescriptor> = jQuery.Deferred<api.content.page.PageDescriptor>();
+            var deferred = Q.defer<api.content.page.PageDescriptor>();
 
             this.send().done((response: api.rest.JsonResponse<api.content.page.json.PageDescriptorJson>) => {
                 deferred.resolve(this.fromJsonToPageDescriptor(response.getResult()));
@@ -30,7 +30,7 @@ module api.content.page {
                     deferred.reject(null);
                 });
 
-            return deferred;
+            return deferred.promise;
         }
     }
 }

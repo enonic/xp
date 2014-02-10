@@ -1,5 +1,13 @@
 module app.wizard {
 
+    import RelationshipType = api.schema.relationshiptype.RelationshipType;
+    import RelationshipTypeName = api.schema.relationshiptype.RelationshipTypeName;
+    import RelationshipTypeIconUrlResolver = api.schema.relationshiptype.RelationshipTypeIconUrlResolver;
+    import RelationshipTypeResourceRequest = api.schema.relationshiptype.RelationshipTypeResourceRequest;
+    import GetRelationshipTypeConfigByNameRequest = api.schema.relationshiptype.GetRelationshipTypeConfigByNameRequest;
+    import CreateRelationshipTypeRequest = api.schema.relationshiptype.CreateRelationshipTypeRequest;
+    import UpdateRelationshipTypeRequest = api.schema.relationshiptype.UpdateRelationshipTypeRequest;
+
     export class RelationshipTypeWizardPanel extends api.app.wizard.WizardPanel<api.schema.relationshiptype.RelationshipType> {
 
         public static NEW_WIZARD_HEADER = "new relationship type";
@@ -16,10 +24,10 @@ module app.wizard {
 
         private persistedConfig: string;
 
-        constructor(tabId: api.app.AppBarTabId, persistedRelationshipType: api.schema.relationshiptype.RelationshipType,
+        constructor(tabId: api.app.AppBarTabId, persistedRelationshipType: RelationshipType,
                     callback: (wizard: RelationshipTypeWizardPanel) => void) {
             this.relationShipTypeWizardHeader = new api.app.wizard.WizardHeaderWithName();
-            this.formIcon = new api.app.wizard.FormIcon(new api.schema.relationshiptype.RelationshipTypeIconUrlResolver().resolveDefault(),
+            this.formIcon = new api.app.wizard.FormIcon(new RelationshipTypeIconUrlResolver().resolveDefault(),
                 "Click to upload icon",
                 api.util.getRestUri("blob/upload"));
 
@@ -61,7 +69,7 @@ module app.wizard {
             });
         }
 
-        layoutPersistedItem(persistedRelationshipType: api.schema.relationshiptype.RelationshipType): Q.Promise<void> {
+        layoutPersistedItem(persistedRelationshipType: RelationshipType): Q.Promise<void> {
 
             var deferred = Q.defer<void>();
 
@@ -69,7 +77,7 @@ module app.wizard {
             this.formIcon.setSrc(persistedRelationshipType.getIconUrl());
             this.persistedRelationshipType = persistedRelationshipType;
 
-            new api.schema.relationshiptype.GetRelationshipTypeConfigByNameRequest(persistedRelationshipType.getRelationshiptypeName()).send().
+            new GetRelationshipTypeConfigByNameRequest(persistedRelationshipType.getRelationshiptypeName()).send().
                 done((response: api.rest.JsonResponse <api.schema.relationshiptype.GetRelationshipTypeConfigResult>) => {
 
                     this.relationshipTypeForm.setFormData({"xml": response.getResult().relationshipTypeXml});
@@ -80,41 +88,40 @@ module app.wizard {
             return deferred.promise;
         }
 
-        persistNewItem(): Q.Promise<api.schema.relationshiptype.RelationshipType> {
+        persistNewItem(): Q.Promise<RelationshipType> {
 
-            var deferred = Q.defer<api.schema.relationshiptype.RelationshipType>();
+            var deferred = Q.defer<RelationshipType>();
 
             var formData = this.relationshipTypeForm.getFormData();
-            var newName = new api.schema.relationshiptype.RelationshipTypeName(this.relationShipTypeWizardHeader.getName());
-            var request = new api.schema.relationshiptype.CreateRelationshipTypeRequest(newName, formData.xml, this.relationshipTypeIcon);
-            request.sendAndParse().
-                done((relationshipType: api.schema.relationshiptype.RelationshipType)=> {
+            var newName = new RelationshipTypeName(this.relationShipTypeWizardHeader.getName());
+            var request = new CreateRelationshipTypeRequest(newName, formData.xml, this.relationshipTypeIcon);
+            var sendAndParse: Q.Promise<RelationshipType> = request.sendAndParse();
+            sendAndParse.then((relationshipType: RelationshipType)=> {
 
-                    this.getTabId().changeToEditMode(relationshipType.getKey());
-                    new app.wizard.RelationshipTypeCreatedEvent().fire();
-                    api.notify.showFeedback('Relationship type was created!');
+                this.getTabId().changeToEditMode(relationshipType.getKey());
+                new app.wizard.RelationshipTypeCreatedEvent().fire();
+                api.notify.showFeedback('Relationship type was created!');
 
-                    new api.schema.SchemaCreatedEvent(relationshipType).fire();
+                new api.schema.SchemaCreatedEvent(relationshipType).fire();
 
-                    deferred.resolve(relationshipType);
-                }).
-                fail((error: api.rest.RequestError) => {
-                    api.notify.showError(error.getMessage());
-                });
+                deferred.resolve(relationshipType);
+            }).catch((error:api.rest.RequestError)=> {
+                    deferred.reject(error);
+                }).done();
 
             return deferred.promise;
         }
 
-        updatePersistedItem(): Q.Promise<api.schema.relationshiptype.RelationshipType> {
+        updatePersistedItem(): Q.Promise<RelationshipType> {
 
-            var deferred = Q.defer<api.schema.relationshiptype.RelationshipType>();
+            var deferred = Q.defer<RelationshipType>();
 
             var formData = this.relationshipTypeForm.getFormData();
-            var newName = new api.schema.relationshiptype.RelationshipTypeName(this.relationShipTypeWizardHeader.getName());
-            var request = new api.schema.relationshiptype.UpdateRelationshipTypeRequest(this.getPersistedItem().getRelationshiptypeName(),
+            var newName = new RelationshipTypeName(this.relationShipTypeWizardHeader.getName());
+            var request = new UpdateRelationshipTypeRequest(this.getPersistedItem().getRelationshiptypeName(),
                 newName, formData.xml, this.relationshipTypeIcon);
             request.sendAndParse().
-                done((relationshipType: api.schema.relationshiptype.RelationshipType)=> {
+                then((relationshipType: RelationshipType)=> {
 
                     new app.wizard.RelationshipTypeUpdatedEvent().fire();
                     api.notify.showFeedback('Relationship type was saved!');
@@ -123,15 +130,15 @@ module app.wizard {
 
                     deferred.resolve(relationshipType);
                 }).
-                fail((error: api.rest.RequestError) => {
+                catch((error: api.rest.RequestError) => {
                     api.notify.showError(error.getMessage());
-                });
+                }).done();
 
             return deferred.promise;
         }
 
         hasUnsavedChanges(): boolean {
-            var persistedRelationshipType: api.schema.relationshiptype.RelationshipType = this.getPersistedItem();
+            var persistedRelationshipType: RelationshipType = this.getPersistedItem();
             if (persistedRelationshipType == undefined) {
                 return true;
             } else {

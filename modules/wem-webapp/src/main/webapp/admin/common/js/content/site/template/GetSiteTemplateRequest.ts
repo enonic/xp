@@ -20,9 +20,9 @@ module api.content.site.template {
             return api.rest.Path.fromParent(super.getResourcePath());
         }
 
-        sendAndParse(): JQueryPromise<api.content.site.template.SiteTemplate> {
+        sendAndParse(): Q.Promise<api.content.site.template.SiteTemplate> {
 
-            var deferred = jQuery.Deferred<api.content.site.template.SiteTemplate>();
+            var deferred = Q.defer<api.content.site.template.SiteTemplate>();
 
             this.send().
                 done((response: api.rest.JsonResponse<api.content.site.template.json.SiteTemplateJson>) => {
@@ -31,7 +31,7 @@ module api.content.site.template {
                     deferred.reject(null);
                 });
 
-            return deferred;
+            return deferred.promise;
         }
     }
 }

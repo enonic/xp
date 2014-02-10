@@ -28,9 +28,9 @@ module api.schema.content {
             return super.getResourcePath();
         }
 
-        sendAndParse(): JQueryPromise<api.schema.content.ContentType> {
+        sendAndParse(): Q.Promise<api.schema.content.ContentType> {
 
-            var deferred = jQuery.Deferred<api.schema.content.ContentType>();
+            var deferred = Q.defer<api.schema.content.ContentType>();
 
             this.send().done((response: api.rest.JsonResponse<api.schema.content.json.ContentTypeJson>) => {
                 deferred.resolve(this.fromJsonToContentType(response.getResult()));
@@ -38,7 +38,7 @@ module api.schema.content {
                     deferred.reject(null);
                 });
 
-            return deferred;
+            return deferred.promise;
         }
     }
 }

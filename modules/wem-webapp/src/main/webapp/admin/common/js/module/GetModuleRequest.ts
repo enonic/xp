@@ -20,21 +20,17 @@ module api.module {
             return api.rest.Path.fromParent(super.getResourcePath());
         }
 
-        sendAndParse(): JQueryPromise<api.module.Module> {
+        sendAndParse(): Q.Promise<api.module.Module> {
 
-            var deferred = jQuery.Deferred<api.module.Module>();
+            var deferred = Q.defer<api.module.Module>();
 
-            this.send().done((response: api.rest.JsonResponse<api.module.json.ModuleJson>) => {
-                if (response.getJson().error) {
-                    deferred.fail(response.getJson().error);
-                } else {
-                    deferred.resolve(this.fromJsonToModule(response.getResult()));
-                }
-            }).fail((response: api.rest.RequestError) => {
-                        deferred.reject(null);
-                    });
+            this.send().
+                done((response: api.rest.JsonResponse<api.module.json.ModuleJson>) => {
 
-            return deferred;
+                deferred.resolve(this.fromJsonToModule(response.getResult()));
+            });
+
+            return deferred.promise;
         }
     }
 }

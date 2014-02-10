@@ -32,8 +32,9 @@ module api.schema.mixin {
             return api.rest.Path.fromParent(super.getResourcePath(), "delete");
         }
 
-        sendAndParse(): JQueryPromise<api.schema.SchemaDeleteResult> {
-            var deferred = jQuery.Deferred<api.schema.SchemaDeleteResult>();
+        sendAndParse(): Q.Promise<api.schema.SchemaDeleteResult> {
+
+            var deferred = Q.defer<api.schema.SchemaDeleteResult>();
 
             this.send().done((response:api.rest.JsonResponse<api.schema.SchemaDeleteJson>) => {
                 deferred.resolve(this.fromJsonToDeleteResult(response.getResult()));
@@ -41,7 +42,7 @@ module api.schema.mixin {
                 deferred.reject(null);
             });
 
-            return deferred;
+            return deferred.promise;
         }
 
         fromJsonToDeleteResult(json:api.schema.SchemaDeleteJson): api.schema.SchemaDeleteResult {

@@ -16,21 +16,17 @@ module api.module {
             return api.rest.Path.fromParent(super.getResourcePath(), "list");
         }
 
-        sendAndParse(): JQueryPromise<api.module.ModuleSummary[]> {
+        sendAndParse(): Q.Promise<api.module.ModuleSummary[]> {
 
-            var deferred = jQuery.Deferred<api.module.Module>();
+            var deferred = Q.defer<api.module.ModuleSummary[]>();
 
-            this.send().done((response: api.rest.JsonResponse<ModuleListResult>) => {
-                if (response.getJson().error) {
-                    deferred.reject(response.getJson().error);
-                } else {
-                    deferred.resolve(api.module.ModuleSummary.fromJsonArray(response.getResult().modules));
-                }
-            }).fail((response: api.rest.RequestError) => {
-                        deferred.reject(null);
-                    });
+            this.send().
+                done((response: api.rest.JsonResponse<ModuleListResult>) => {
 
-            return deferred;
+                deferred.resolve(ModuleSummary.fromJsonArray(response.getResult().modules));
+            });
+
+            return deferred.promise;
         }
     }
 }

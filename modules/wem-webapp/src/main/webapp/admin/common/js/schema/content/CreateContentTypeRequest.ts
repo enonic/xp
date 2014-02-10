@@ -28,9 +28,9 @@ module api.schema.content {
             return api.rest.Path.fromParent(super.getResourcePath(), "create");
         }
 
-        sendAndParse(): JQueryPromise<ContentType> {
+        sendAndParse(): Q.Promise<ContentType> {
 
-            var deferred = jQuery.Deferred<ContentType>();
+            var deferred = Q.defer<ContentType>();
 
             this.send().done((response: api.rest.JsonResponse<api.schema.content.json.ContentTypeJson>) => {
                 deferred.resolve(this.fromJsonToContentType(response.getResult()));
@@ -38,7 +38,7 @@ module api.schema.content {
                     deferred.reject(null);
                 });
 
-            return deferred;
+            return deferred.promise;
         }
     }
 
