@@ -149,7 +149,6 @@ module app.wizard {
             var d = Q.defer<api.content.page.image.ImageDescriptor>();
             new api.content.page.image.GetImageDescriptorsByModulesRequest(moduleKeys).
                 sendAndParse().done((imageDescriptors: api.content.page.image.ImageDescriptor[]) => {
-                    console.log("ImageDescriptors: ", imageDescriptors);
                     if (imageDescriptors.length == 0) {
                         d.resolve(null);
                     }
@@ -251,7 +250,6 @@ module app.wizard {
 
             this.liveEditJQuery(this.liveEditWindow).on('imageComponentSetImage.liveEdit',
                 (event, imageId?, componentPathAsString?, component?) => {
-                    console.log("imageComponentSetImage", component, arguments);
                     var componentPath = ComponentPath.fromString(componentPathAsString);
                     var imageComponent = this.pageRegions.getImageComponent(componentPath);
                     if (imageComponent != null) {

@@ -42,7 +42,6 @@ module app.contextwindow {
             var descriptorComboBox = new api.content.page.image.ImageDescriptorComboBox(imageDescriptorLoader);
 
             var firstLoad = (modules) => {
-                console.log("modules", modules);
                 descriptorComboBox.setValue(this.liveFormPanel.getDefaultImageDescriptor().getKey().toString());
                 descriptorComboBox.removeLoadedListener(firstLoad);
             };

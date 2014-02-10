@@ -21,7 +21,6 @@ module api.content.page.image {
                 done((descriptors: ImageDescriptor[]) => {
                     this.descriptors = descriptors;
                     this.isLoading = false;
-                    console.log("image descriptors", this.descriptors, this.descriptors[0].getKey());
                     this.notifyLoaded(this.descriptors);
                 });
         }
