@@ -21,7 +21,7 @@ public class SingleSelectorConfigJsonSerializer
 
         jsonConfig.put( "selectorType", singleSelectorConfig.getType().toString() );
         final ArrayNode jsonArray = jsonConfig.putArray( "options" );
-        for ( SingleSelectorConfig.Option option : singleSelectorConfig.getOptions() )
+        for ( Option option : singleSelectorConfig.getOptions() )
         {
             final ObjectNode jsonOption = jsonArray.addObject();
             jsonOption.put( "label", option.getLabel() );

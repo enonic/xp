@@ -109,7 +109,8 @@ public final class InputTypes
                 return inputType;
             }
         }
-        return null;
+
+        return new CustomInputType(simpleClassName);
     }
 
     public static ImmutableList<InputType> list()

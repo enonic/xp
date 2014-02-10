@@ -1,8 +1,14 @@
 package com.enonic.wem.xml;
 
+import org.w3c.dom.Node;
+
 public interface XmlSerializer<X extends XmlObject>
 {
-    public String serialize( X value );
+    String serialize( final X value );
 
-    public X parse( String text );
+    Node serializeToNode( final Object value );
+
+    X parse( final String text );
+
+    X parse( final Node element );
 }

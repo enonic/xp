@@ -30,7 +30,7 @@ public abstract class InputType
         this.inputTypeName = new InputTypeName( name, !this.builtIn );
     }
 
-    public final String getName()
+    public String getName()
     {
         return inputTypeName.toString();
     }

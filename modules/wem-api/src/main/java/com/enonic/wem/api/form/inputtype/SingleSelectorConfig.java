@@ -54,35 +54,12 @@ public class SingleSelectorConfig
         return s.toString();
     }
 
-    public static class Option
-    {
-        private String label;
-
-        private String value;
-
-        Option( final String label, final String value )
-        {
-            this.label = label;
-            this.value = value;
-        }
-
-        public String getLabel()
-        {
-            return label;
-        }
-
-        public String getValue()
-        {
-            return value;
-        }
-    }
-
     public static Builder newSingleSelectorConfig()
     {
         return new Builder();
     }
 
-    public static class Builder
+    public static class Builder implements OptionBuilder
     {
         private SingleSelectorConfig config = new SingleSelectorConfig();
 

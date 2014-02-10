@@ -17,7 +17,7 @@ public class ComboBoxConfigXmlSerializer
         final Element optionsEl = new Element( "options" );
         inputTypeConfigEl.addContent( optionsEl );
 
-        for ( ComboBoxConfig.Option option : config.getOptions() )
+        for ( Option option : config.getOptions() )
         {
             final Element optionEl = new Element( "option" );
             optionEl.addContent( new Element( "label" ).setText( option.getLabel() ) );

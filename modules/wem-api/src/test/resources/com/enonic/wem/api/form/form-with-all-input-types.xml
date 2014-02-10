@@ -98,7 +98,7 @@
             <columns>10</columns>
         </config>
     </input>
-    <input name="myWholeNumber" type="WholeNumber" >
+    <input name="myWholeNumber" type="WholeNumber">
         <immutable>false</immutable>
         <indexed>false</indexed>
         <occurrences minimum="0" maximum="1"/>

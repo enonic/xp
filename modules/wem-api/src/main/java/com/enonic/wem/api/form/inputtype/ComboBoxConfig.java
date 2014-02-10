@@ -16,6 +16,8 @@ public class ComboBoxConfig
 
     private final ImmutableMap<String, Option> optionsAsMap;
 
+
+
     private ComboBoxConfig( Builder builder )
     {
         this.optionsAsList = builder.listBuilder.build();
@@ -54,35 +56,12 @@ public class ComboBoxConfig
         return s.toString();
     }
 
-    public static class Option
-    {
-        private String label;
-
-        private String value;
-
-        Option( final String label, final String value )
-        {
-            this.label = label;
-            this.value = value;
-        }
-
-        public String getLabel()
-        {
-            return label;
-        }
-
-        public String getValue()
-        {
-            return value;
-        }
-    }
-
     public static Builder newComboBoxConfig()
     {
         return new Builder();
     }
 
-    public static class Builder
+    public static class Builder implements OptionBuilder
     {
         private ImmutableList.Builder<Option> listBuilder = new ImmutableList.Builder<>();
 
