@@ -19,6 +19,9 @@
 ///<reference path='AggregationEntryViewSelectionChangedEvent.ts' />
 ///<reference path='BucketViewSelectionChangedEvent.ts' />
 
+///<reference path='AggregationSelection.ts' />
+
+
 
 
 

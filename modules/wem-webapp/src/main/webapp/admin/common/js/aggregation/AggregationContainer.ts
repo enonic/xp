@@ -61,23 +61,17 @@ module api.aggregation {
         }
 
 
-        getSelectedValuesByAggregationName(): {[s:string] : string[];
-        } {
+        getSelectedValuesByAggregationName(): api.aggregation.AggregationSelection[] {
 
-            var allValues: { [s:string] : string[];
-            } = {};
+            var aggregationSelections: api.aggregation.AggregationSelection[] = [];
 
             this.aggregationGroupViews.forEach((aggregationGroupView: api.aggregation.AggregationGroupView) => {
-                var currValues: {[s:string] : string[];
-                } = aggregationGroupView.getSelectedValuesByAggregationName();
-
-                for (var aggregationName in currValues) {
-                    var selectedAggregationValues: string[] = currValues[aggregationName];
-                    allValues[aggregationName] = selectedAggregationValues;
-                }
+                var selectedValuesByAggregationName = aggregationGroupView.getSelectedValuesByAggregationName();
+                aggregationSelections = aggregationSelections.concat(selectedValuesByAggregationName);
 
             });
-            return allValues;
+
+            return aggregationSelections;
         }
 
     }
