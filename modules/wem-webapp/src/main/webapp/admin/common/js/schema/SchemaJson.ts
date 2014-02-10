@@ -6,6 +6,8 @@ module api.schema {
 
         displayName:string;
 
+        description:string;
+
         name: string;
 
         iconUrl: string;

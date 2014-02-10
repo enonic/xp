@@ -16,6 +16,8 @@ public abstract class BaseSchema<T extends SchemaName>
 
     final String displayName;
 
+    final String description;
+
     final DateTime createdTime;
 
     final DateTime modifiedTime;
@@ -31,6 +33,7 @@ public abstract class BaseSchema<T extends SchemaName>
         this.id = builder.id;
         this.name = (T) builder.name;
         this.displayName = builder.displayName;
+        this.description = builder.description;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
         this.creator = builder.creator;
@@ -51,6 +54,11 @@ public abstract class BaseSchema<T extends SchemaName>
     public String getDisplayName()
     {
         return displayName;
+    }
+
+    public String getDescription()
+    {
+        return description;
     }
 
     public DateTime getCreatedTime()
@@ -86,6 +94,8 @@ public abstract class BaseSchema<T extends SchemaName>
 
         private String displayName;
 
+        private String description;
+
         private DateTime createdTime;
 
         private DateTime modifiedTime;
@@ -107,6 +117,7 @@ public abstract class BaseSchema<T extends SchemaName>
             this.id = schema.id;
             this.name = (SCHEMA_NAME) schema.name;
             this.displayName = schema.displayName;
+            this.description = schema.description;
             this.createdTime = schema.createdTime;
             this.modifiedTime = schema.modifiedTime;
             this.creator = schema.creator;
@@ -134,6 +145,12 @@ public abstract class BaseSchema<T extends SchemaName>
         public T displayName( String value )
         {
             this.displayName = value;
+            return getThis();
+        }
+
+        public T description( String value )
+        {
+            this.description = value;
             return getThis();
         }
 

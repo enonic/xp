@@ -27,15 +27,15 @@ public class MixinXmlTest
         set.add( layout );
 
         final Mixin.Builder builder = newMixin().name( "mixin" );
-        builder.displayName( "display name" );
+        builder.displayName( "display name" ).description( "description" );
 
         builder.addFormItem( set );
 
-        final Mixin Mixin = builder.build();
+        final Mixin mixin = builder.build();
 
-        final MixinXml siteTemplateXml = new MixinXml();
-        siteTemplateXml.from( Mixin );
-        final String result = XmlSerializers.mixin().serialize( siteTemplateXml );
+        final MixinXml mixinXml = new MixinXml();
+        mixinXml.from( mixin );
+        final String result = XmlSerializers.mixin().serialize( mixinXml );
 
         assertXml( "mixin.xml", result );
     }
@@ -52,6 +52,7 @@ public class MixinXmlTest
         final Mixin mixin = builder.build();
         assertEquals( null, mixin.getName() );
         assertEquals( "display name", mixin.getDisplayName() );
+        assertEquals( "description", mixin.getDescription() );
 
         assertEquals( 1, mixin.getFormItems().size() );
 

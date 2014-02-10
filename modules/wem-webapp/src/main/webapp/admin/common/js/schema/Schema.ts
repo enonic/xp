@@ -8,6 +8,8 @@ module api.schema {
 
         private displayName:string;
 
+        private description:string;
+
         private iconUrl:string;
 
         private kind:SchemaKind;
@@ -37,6 +39,7 @@ module api.schema {
             this.key = json.key;
             this.name = json.name;
             this.displayName = json.displayName;
+            this.description = json.description;
             this.iconUrl = json.iconUrl;
             this.kind = SchemaKind.fromString(json.schemaKind );
         }
@@ -51,6 +54,10 @@ module api.schema {
 
         getDisplayName():string {
             return this.displayName;
+        }
+
+        getDescription():string {
+            return this.description;
         }
 
         getIconUrl():string{
