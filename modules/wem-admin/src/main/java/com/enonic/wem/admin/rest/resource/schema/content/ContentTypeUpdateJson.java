@@ -8,9 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.enonic.wem.admin.json.icon.IconJson;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.core.schema.content.serializer.ContentTypeXmlSerializer;
-
-import static com.enonic.wem.api.schema.content.ContentType.newContentType;
+import com.enonic.wem.xml.XmlSerializers;
 
 public class ContentTypeUpdateJson
 {
@@ -37,9 +35,9 @@ public class ContentTypeUpdateJson
 
     private ContentType parse( final ContentTypeName name, final String config )
     {
-        ContentType contentType = new ContentTypeXmlSerializer().overrideName( name.toString() ).toContentType( config );
-        contentType = newContentType( contentType ).build();
-        return contentType;
+        final ContentType.Builder builder = ContentType.newContentType().name( name );
+        XmlSerializers.contentType().parse( config ).to( builder );
+        return builder.build();
     }
 
     @JsonIgnore
