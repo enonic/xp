@@ -14,6 +14,8 @@ module api.ui.combobox {
 
         identifierMethod:string;
 
+        maximumOccurrences:number;
+
         private loadingListeners:{():void;}[];
 
         private loadedListeners:{(modules:T[]):void;}[];
@@ -29,6 +31,7 @@ module api.ui.combobox {
             this.comboBoxView = new api.dom.DivEl();
             this.selectedOptionsView = config.selectedOptionsView;
             this.selectedOptionsView.hide();
+            this.maximumOccurrences = config.maximumOccurrences;
             this.comboBox = this.createComboBox(config.comboBoxName);
             if (config.loader) {
                 this.setLoader(config.loader);
@@ -44,6 +47,28 @@ module api.ui.combobox {
             this.addClass('rich-combobox');
         }
 
+        getValues(): T[] {
+            return this.comboBox.getSelectedData().map((option: api.ui.combobox.Option<T>) => {
+                return option.displayValue;
+            });
+        }
+
+        getStringValues(): string[] {
+            return this.comboBox.getSelectedData().map((option: api.ui.combobox.Option<T>) => {
+                return option.value;
+            });
+        }
+
+        maximumOccurrencesReached():boolean {
+            return this.comboBox.maximumOccurrencesReached();
+        }
+
+        select(value:T) {
+            this.comboBox.selectOption({
+                value: value[this.identifierMethod](),
+                displayValue: value
+            });
+        }
 
         private createComboBox(name:string):api.ui.combobox.ComboBox<T> {
 
@@ -102,7 +127,7 @@ module api.ui.combobox {
         createConfig():api.ui.combobox.ComboBoxConfig<T> {
             return  {
                 rowHeight: 50,
-                maximumOccurrences: 0,
+                maximumOccurrences: this.maximumOccurrences,
                 optionFormatter: this.optionFormatter,
                 selectedOptionsView: this.selectedOptionsView,
                 hideComboBoxWhenMaxReached: true
@@ -112,6 +137,10 @@ module api.ui.combobox {
         setLoader(loader:api.util.Loader) {
             this.loader = loader;
             this.setupLoader();
+        }
+
+        setInputIconUrl(url:string) {
+            this.comboBox.setInputIconUrl(url);
         }
 
         addSelectedOptionRemovedListener(listener:{(option: SelectedOption<T>):void;}) {
@@ -186,6 +215,7 @@ module api.ui.combobox {
 
         identifierMethod:string = "getId";
 
+        maximumOccurrences:number = 0;
 
         setComboBoxName(comboBoxName:string):RichComboBoxBuilder<T> {
             this.comboBoxName = comboBoxName;
@@ -204,6 +234,11 @@ module api.ui.combobox {
 
         setSelectedOptionsView(selectedOptionsView:SelectedOptionsView<T>):RichComboBoxBuilder<T> {
             this.selectedOptionsView = selectedOptionsView;
+            return this;
+        }
+
+        setMaximumOccurrences(maximumOccurrences:number):RichComboBoxBuilder<T> {
+            this.maximumOccurrences = maximumOccurrences;
             return this;
         }
 
