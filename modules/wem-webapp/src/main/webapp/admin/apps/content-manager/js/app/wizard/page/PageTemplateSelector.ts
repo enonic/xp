@@ -32,7 +32,7 @@ module app.wizard.page {
                     pageTemplates.forEach((template: api.content.page.PageTemplateSummary) => {
                         if (this.pageTemplateToSelect) {
                             if (template.getKey().toString() == this.pageTemplateToSelect.toString()) {
-                                this.pageTemplateComboBox.setTemplate(template);
+                                this.pageTemplateComboBox.select(template);
                             }
                         }
                     });
@@ -76,12 +76,9 @@ module app.wizard.page {
 
         public getPageTemplateKey(): api.content.page.PageTemplateKey {
 
-            var selectedOptions = this.pageTemplateComboBox.getSelectedData();
-            if (selectedOptions.length == 0) {
-                return null;
-            }
+            var values = this.pageTemplateComboBox.getValues();
 
-            return selectedOptions[0].displayValue.getKey();
+            return values[0] ? values[0].getKey() : null;
         }
     }
 }
