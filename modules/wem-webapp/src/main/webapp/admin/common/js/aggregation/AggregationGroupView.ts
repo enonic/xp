@@ -53,17 +53,23 @@ module api.aggregation {
             }
         }
 
-        getSelectedValuesByAggregationName(): { [s : string ] : string[];
-        } {
+        getSelectedValuesByAggregationName(): api.aggregation.AggregationSelection[] {
 
-            var values: {[s:string] : string[];
-            } = {};
+            var aggregationSelections: api.aggregation.AggregationSelection[] = [];
 
             this.aggregationViews.forEach((bucketAggregationView: api.aggregation.BucketAggregationView) => {
-                values[bucketAggregationView.getName()] = bucketAggregationView.getSelectedValues();
+
+                var selectedValues: string[] = bucketAggregationView.getSelectedValues();
+
+                if (selectedValues != null) {
+                    var aggregationSelection: api.aggregation.AggregationSelection = new api.aggregation.AggregationSelection(bucketAggregationView.getName());
+                    aggregationSelection.setValues(selectedValues);
+
+                    aggregationSelections.push(aggregationSelection);
+                }
             });
 
-            return values;
+            return aggregationSelections;
         }
 
         hasSelections(): boolean {

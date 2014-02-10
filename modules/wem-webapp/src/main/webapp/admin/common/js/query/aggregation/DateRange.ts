@@ -5,6 +5,12 @@ module api.query.aggregation {
         private to: string;
         private from: string;
 
+        constructor(from: string, to: string, key?: string) {
+            super(key);
+            this.from = from;
+            this.to = to;
+        }
+
         public setTo(to: string) {
             this.to = to;
         }

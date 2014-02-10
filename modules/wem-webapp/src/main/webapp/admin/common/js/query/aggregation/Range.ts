@@ -4,6 +4,10 @@ module api.query.aggregation {
 
         private key: string;
 
+        constructor(key?: string) {
+            this.key = key;
+        }
+
         public setKey(key: string) {
             this.key = key;
         }

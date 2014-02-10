@@ -50,12 +50,14 @@ module api.app.browse.filter {
             this.aggregationContainer.updateAggregations(aggregations);
         }
 
-        getValues(): { [s : string ] : string[];
-        } {
-            var values: { [s:string] : string[];
-            } = this.aggregationContainer.getSelectedValuesByAggregationName();
-            values['query'] = [this.searchField.getEl().getValue()];
-            return values;
+        getSearchInputValues(): api.query.SearchInputValues {
+
+            var searchInputValues: api.query.SearchInputValues = new api.query.SearchInputValues();
+
+            searchInputValues.setAggregationSelections(this.aggregationContainer.getSelectedValuesByAggregationName());
+            searchInputValues.setTextSearchFieldValue(this.searchField.getEl().getValue());
+
+            return searchInputValues;
         }
 
         hasFilterSet() {
@@ -69,7 +71,7 @@ module api.app.browse.filter {
             else {
                 this.clearFilter.hide();
             }
-            var values = this.getValues();
+            var values = this.getSearchInputValues();
             this.notifySearch(values);
         }
 
@@ -90,11 +92,11 @@ module api.app.browse.filter {
             });
         }
 
-        private notifySearch(values: { [s : string ] : string[];
-        }) {
+        private notifySearch(searchInputValues: api.query.SearchInputValues) {
+
             this.listeners.forEach((listener) => {
                 if (listener.onSearch) {
-                    listener.onSearch(values);
+                    listener.onSearch(searchInputValues);
                 }
             });
         }
