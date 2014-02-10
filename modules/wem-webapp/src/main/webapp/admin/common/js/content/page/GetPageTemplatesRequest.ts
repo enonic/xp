@@ -25,16 +25,16 @@ module api.content.page {
             var deferred = Q.defer<api.content.page.PageTemplateSummary[]>();
 
             this.send().
-                done((response: api.rest.JsonResponse<api.content.page.json.PageTemplateSummaryListJson>) => {
+                then((response: api.rest.JsonResponse<api.content.page.json.PageTemplateSummaryListJson>) => {
                 var array:api.content.page.PageTemplateSummary[] = [];
                 response.getResult().templates.forEach((templateJson:api.content.page.json.PageTemplateSummaryJson) => {
                     array.push(this.fromJsonToPageTemplateSummary(templateJson));
                 });
 
                 deferred.resolve(array);
-            }).fail((response: api.rest.RequestError) => {
+            }).catch((response: api.rest.RequestError) => {
                     deferred.reject(null);
-                });
+                }).done();
 
             return deferred.promise;
         }

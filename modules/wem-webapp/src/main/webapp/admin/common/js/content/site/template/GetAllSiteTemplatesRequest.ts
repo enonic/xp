@@ -20,11 +20,11 @@ module api.content.site.template {
             var deferred = Q.defer<api.content.site.template.SiteTemplateSummary[]>();
 
             this.send().
-                done((response: api.rest.JsonResponse<api.content.site.template.json.SiteTemplateSummaryListJson>) => {
+                then((response: api.rest.JsonResponse<api.content.site.template.json.SiteTemplateSummaryListJson>) => {
                 deferred.resolve(this.fromJsonArrayToSiteTemplateSummaryArray(response.getResult().siteTemplates));
-            }).fail((response: api.rest.RequestError) => {
+            }).catch((response: api.rest.RequestError) => {
                     deferred.reject(null);
-                });
+                }).done();
 
             return deferred.promise;
         }

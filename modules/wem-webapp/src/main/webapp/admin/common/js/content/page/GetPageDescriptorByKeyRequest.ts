@@ -24,11 +24,11 @@ module api.content.page {
 
             var deferred = Q.defer<api.content.page.PageDescriptor>();
 
-            this.send().done((response: api.rest.JsonResponse<api.content.page.json.PageDescriptorJson>) => {
+            this.send().then((response: api.rest.JsonResponse<api.content.page.json.PageDescriptorJson>) => {
                 deferred.resolve(this.fromJsonToPageDescriptor(response.getResult()));
-            }).fail((response: api.rest.RequestError) => {
+            }).catch((response: api.rest.RequestError) => {
                     deferred.reject(null);
-                });
+                }).done();
 
             return deferred.promise;
         }

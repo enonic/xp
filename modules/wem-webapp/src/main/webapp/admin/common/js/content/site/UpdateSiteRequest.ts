@@ -42,15 +42,15 @@ module api.content.site {
 
             var deferred = Q.defer<api.content.Content>();
 
-            this.send().done((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
+            this.send().then((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
                 var siteContent = null;
                 if( !response.isBlank() ) {
                     siteContent = this.fromJsonToContent(response.getResult());
                 }
                 deferred.resolve(siteContent);
-            }).fail((response: api.rest.RequestError) => {
+            }).catch((response: api.rest.RequestError) => {
                     deferred.reject(null);
-                });
+                }).done();
 
             return deferred.promise;
         }

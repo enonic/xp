@@ -32,7 +32,7 @@ module api.schema.relationshiptype {
 
             var deferred = Q.defer<RelationshipType>();
 
-            this.send().done((response: api.rest.JsonResponse<api.schema.relationshiptype.json.RelationshipTypeJson>) => {
+            this.send().then((response: api.rest.JsonResponse<api.schema.relationshiptype.json.RelationshipTypeJson>) => {
                     var json = response.getJson();
                     if ( json.result ) {
                         deferred.resolve(this.fromJsonToReleationshipType(response.getResult()));
@@ -41,9 +41,9 @@ module api.schema.relationshiptype {
                     } else {
                         deferred.reject(null);
                     }
-                }).fail((response: api.rest.RequestError) => {
+                }).catch((response: api.rest.RequestError) => {
                     deferred.reject(null);
-                });
+                }).done();
 
             return deferred.promise;
         }

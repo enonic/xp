@@ -24,11 +24,11 @@ module api.schema.mixin {
 
             var deferred = Q.defer<api.schema.mixin.Mixin>();
 
-            this.send().done((response: api.rest.JsonResponse<api.schema.mixin.json.MixinJson>) => {
+            this.send().then((response: api.rest.JsonResponse<api.schema.mixin.json.MixinJson>) => {
                 deferred.resolve(this.fromJsonToMixin(response.getResult()));
-            }).fail((response: api.rest.RequestError) => {
+            }).catch((response: api.rest.RequestError) => {
                     deferred.reject(null);
-                });
+                }).done();
 
             return deferred.promise;
         }

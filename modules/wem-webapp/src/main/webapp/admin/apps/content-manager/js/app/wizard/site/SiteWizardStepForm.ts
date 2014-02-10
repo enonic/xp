@@ -47,13 +47,14 @@ module app.wizard.site {
 
                     this.templateView.setValue(siteTemplate, this.contentType);
 
-                    this.loadModules(site, (...modules: api.module.Module[]) => {
+                    this.loadModules(site).
+                        done((modules: api.module.Module[]) => {
 
-                        this.removeExistingModuleViews();
-                        this.layoutModules(modules);
+                            this.removeExistingModuleViews();
+                            this.layoutModules(modules);
 
-                        deferred.resolve(null);
-                    });
+                            deferred.resolve(null);
+                        });
                 });
 
             return deferred.promise;
@@ -72,15 +73,25 @@ module app.wizard.site {
             return moduleConfigs;
         }
 
-        private loadModules(site: api.content.site.Site, callback: (...modules: api.module.Module[]) => void) {
+        private loadModules(site: api.content.site.Site): Q.Promise<api.module.Module[]> {
+
+            var deferred = Q.defer<api.module.Module[]>();
+
             var moduleConfigs: api.content.site.ModuleConfig[] = site.getModuleConfigs();
-            var moduleRequests = [];
+
+            var moduleRequestPromises: Q.Promise<api.module.Module>[] = [];
             for (var i = 0; i < moduleConfigs.length; i++) {
-                var request = new api.module.GetModuleRequest(moduleConfigs[i].getModuleKey()).sendAndParse();
-                moduleRequests.push(request);
+                var requestPromise: Q.Promise<api.module.Module> = new api.module.GetModuleRequest(moduleConfigs[i].getModuleKey()).sendAndParse();
+                moduleRequestPromises.push(requestPromise);
             }
-            // Using .apply() here to pass array of requests as arguments enum
-            jQuery.when.apply(jQuery, moduleRequests).then(callback);
+            Q.allSettled(moduleRequestPromises).then((results: Q.PromiseState<api.module.Module>[])=> {
+                var modules: api.module.Module[] = [];
+                results.forEach((result: Q.PromiseState<api.module.Module>)=> {
+                    modules.push(result.value);
+                });
+                deferred.resolve(modules);
+            });
+            return deferred.promise;
         }
 
         private layoutModules(modules: api.module.Module[]) {

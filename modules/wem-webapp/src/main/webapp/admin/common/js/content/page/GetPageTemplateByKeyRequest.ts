@@ -37,11 +37,11 @@ module api.content.page {
 
             var deferred = Q.defer<api.content.page.PageTemplate>();
 
-            this.send().done((response: api.rest.JsonResponse<api.content.page.json.PageTemplateJson>) => {
+            this.send().then((response: api.rest.JsonResponse<api.content.page.json.PageTemplateJson>) => {
                 deferred.resolve(this.fromJsonToPageTemplate(response.getResult()));
-            }).fail((response: api.rest.RequestError) => {
+            }).catch((response: api.rest.RequestError) => {
                 deferred.reject(null);
-            });
+            }).done();
 
             return deferred.promise;
         }

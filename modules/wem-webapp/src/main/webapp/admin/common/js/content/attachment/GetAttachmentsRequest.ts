@@ -26,11 +26,11 @@ module api.content.attachment {
             var deferred = Q.defer<api.content.attachment.Attachment[]>();
 
             this.send().
-                done((response: api.rest.JsonResponse<api.content.attachment.AttachmentListJson>) => {
+                then((response: api.rest.JsonResponse<api.content.attachment.AttachmentListJson>) => {
                 deferred.resolve(this.fromJsonArrayToAttachments(response.getResult().attachments));
-            }).fail((response: api.rest.RequestError) => {
+            }).catch((response: api.rest.RequestError) => {
                     deferred.reject(null);
-                });
+                }).done();
 
             return deferred.promise;
         }

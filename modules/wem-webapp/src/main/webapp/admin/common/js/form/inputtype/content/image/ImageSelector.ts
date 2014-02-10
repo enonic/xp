@@ -227,7 +227,7 @@ module api.form.inputtype.content.image {
             return comboBox;
         }
 
-        private loadOptions(searchString: string): JQueryPromise<api.rest.Response> {
+        private loadOptions(searchString: string): Q.Promise<api.rest.Response> {
             if (!this.contentRequestsAllowed || !this.comboBox) {
                 return;
             }

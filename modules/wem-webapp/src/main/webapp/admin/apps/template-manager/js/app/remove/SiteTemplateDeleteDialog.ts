@@ -12,14 +12,14 @@ module app.remove {
             this.getDeleteAction().addExecutionListener(() => {
                 var key = this.siteTemplateToDelete.getKey();
                 var deleteRequest = new api.content.site.template.DeleteSiteTemplateRequest(key);
-                deleteRequest.send().done((resp: api.rest.JsonResponse<any>) => {
+                deleteRequest.send().then((resp: api.rest.JsonResponse<any>) => {
                     var respJson = resp.getJson();
                     api.notify.showFeedback('Site Template \'' + respJson.result + '\' was deleted');
                     new api.content.site.template.SiteTemplateDeletedEvent(api.content.site.template.SiteTemplateKey.fromString(respJson.result)).fire();
                     this.close();
-                }).fail(() => {
+                }).catch(() => {
                         this.close();
-                    })
+                    }).done();
             });
         }
 

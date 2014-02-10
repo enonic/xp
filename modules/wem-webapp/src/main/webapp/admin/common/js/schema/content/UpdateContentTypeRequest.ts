@@ -36,11 +36,11 @@ module api.schema.content {
 
             var deferred = Q.defer<ContentType>();
 
-            this.send().done((response: api.rest.JsonResponse<api.schema.content.json.ContentTypeJson>) => {
+            this.send().then((response: api.rest.JsonResponse<api.schema.content.json.ContentTypeJson>) => {
                 deferred.resolve(this.fromJsonToContentType(response.getResult()));
-            }).fail((response: api.rest.RequestError) => {
+            }).catch((response: api.rest.RequestError) => {
                     deferred.reject(null);
-                });
+                }).done();
 
             return deferred.promise;
         }

@@ -18,7 +18,7 @@ module app.remove {
                         api.notify.showError('Error while deleting module.');
                     }).finally(() => {
                         this.close();
-                    });
+                    }).done();
             });
         }
 

@@ -15,11 +15,11 @@ module api.content.page.image {
 
             var deferred = Q.defer<ImageDescriptor[]>();
 
-            this.send().done((response: api.rest.JsonResponse<json.ImageDescriptorsJson>) => {
+            this.send().then((response: api.rest.JsonResponse<json.ImageDescriptorsJson>) => {
                 deferred.resolve(this.fromJsonToImageDescriptors(response.getResult()));
-            }).fail((response: api.rest.RequestError) => {
+            }).catch((response: api.rest.RequestError) => {
                 deferred.reject(null);
-            });
+            }).done();
 
             return deferred.promise;
         }

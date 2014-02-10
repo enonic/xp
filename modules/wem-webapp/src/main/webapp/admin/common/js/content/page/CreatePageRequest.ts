@@ -49,15 +49,15 @@ module api.content.page {
             var deferred = Q.defer<api.content.Content>();
 
             this.send().
-                done((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
+                then((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
                     var content = null;
                     if( !response.isBlank() ) {
                         content = this.fromJsonToContent(response.getResult());
                     }
                     deferred.resolve(content);
-                }).fail((response: api.rest.RequestError) => {
+                }).catch((response: api.rest.RequestError) => {
                     deferred.reject(null);
-                });
+                }).done();
 
             return deferred.promise;
         }

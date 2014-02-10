@@ -29,8 +29,9 @@ module api.module {
             return api.rest.Path.fromParent(super.getResourcePath(), "install");
         }
 
-        send():JQueryPromise<api.rest.Response> {
-            this.deferred = jQuery.Deferred<api.rest.Response>();
+        send(): Q.Promise<api.rest.Response> {
+            var deferred = Q.defer<api.rest.Response>();
+            //this.deferred = jQuery.Deferred<api.rest.Response>();
             if (this.doneCallback) {
                 this.deferred.done(this.doneCallback);
             }
@@ -42,7 +43,8 @@ module api.module {
                 this.triggerElement.remove();
             }
             this.uploader.start();
-            return this.deferred;
+            //return this.deferred;
+            return deferred.promise;
         }
 
         done(fn:(resp:InstallModuleResponse)=>void) {

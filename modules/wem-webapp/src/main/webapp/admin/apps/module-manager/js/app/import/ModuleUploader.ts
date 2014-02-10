@@ -3,7 +3,7 @@ module app.imp {
     export class ModuleUploader extends api.dom.Element
         implements api.ui.dialog.UploadDialogUploaderEl
     {
-        private uploader;
+        private installModuleRequest: api.module.InstallModuleRequest;
 
         private dropzone:api.dom.DivEl;
         private progress:api.ui.ProgressBar;
@@ -23,13 +23,13 @@ module app.imp {
 
         afterRender() {
             super.afterRender();
-            this.uploader = new api.module.InstallModuleRequest(this.dropzone);
+            this.installModuleRequest = new api.module.InstallModuleRequest(this.dropzone);
             this.setProgressVisible(false);
         }
 
         stop() {
-           if (this.uploader) {
-                this.uploader.stop();
+           if (this.installModuleRequest) {
+                this.installModuleRequest.stop();
            }
         }
 
@@ -47,11 +47,11 @@ module app.imp {
         }
 
         onFinishUpload(fn:(resp:api.module.InstallModuleResponse)=>void) {
-            this.uploader.done(fn);
+            this.installModuleRequest.done(fn);
         }
 
         onError(fn:(resp:api.rest.Response)=>void) {
-            this.uploader.fail(fn);
+            this.installModuleRequest.fail(fn);
         }
     }
 }

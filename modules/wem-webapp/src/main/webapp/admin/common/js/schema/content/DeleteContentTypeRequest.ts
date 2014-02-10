@@ -37,11 +37,11 @@ module api.schema.content {
 
             var deferred = Q.defer<api.schema.SchemaDeleteResult>();
 
-            this.send().done((response:api.rest.JsonResponse<api.schema.SchemaDeleteJson>) => {
+            this.send().then((response:api.rest.JsonResponse<api.schema.SchemaDeleteJson>) => {
                 deferred.resolve(this.fromJsonToDeleteResult(response.getResult()));
-            }).fail((response:api.rest.RequestError) => {
+            }).catch((response:api.rest.RequestError) => {
                 deferred.reject(null);
-            });
+            }).done();
 
             return deferred.promise;
         }

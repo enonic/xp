@@ -25,25 +25,10 @@ module api.rest {
             return this;
         }
 
-        private prepareGETRequest(request: XMLHttpRequest) {
-            var paramString = JsonRequest.serializeParams(this.params);
-            request.open(this.method, api.util.getUri(this.path.toString()) + "?" + paramString, true);
-            request.setRequestHeader("Accept", "application/json");
-            return request;
-        }
+        send(): Q.Promise<Response> {
 
-        private preparePOSTRequest(request: XMLHttpRequest) {
-            var paramString = JSON.stringify(this.params);
-            request.open(this.method, api.util.getUri(this.path.toString()), true);
-            request.setRequestHeader("Accept", "application/json");
-            request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-            request.send(paramString);
-            return request;
-        }
+            var deferred = Q.defer<Response>();
 
-        send(): JQueryPromise<Response> {
-
-            var deferred: JQueryDeferred<Response> = jQuery.Deferred<Response>();
             var request: XMLHttpRequest = new XMLHttpRequest();
             request.timeout = 10000;
             request.onreadystatechange = () => {
@@ -69,21 +54,30 @@ module api.rest {
                 }
             };
 
-            try {
-                if ("POST" == this.method.toUpperCase()) {
-                    request = this.preparePOSTRequest(request);
-                }
-                else {
-                    var request = this.prepareGETRequest(request);
-                    request.send();
-                }
+            if ("POST" == this.method.toUpperCase()) {
+                this.preparePOSTRequest(request);
+                var paramString = JSON.stringify(this.params);
+                request.send(paramString);
             }
-            catch (error) {
-                var errorJson: any = JSON.parse(request.response);
-                deferred.reject(new RequestError(request.status, request.statusText, request.responseText, errorJson.message));
+            else {
+                var request = this.prepareGETRequest(request);
+                request.send();
             }
 
-            return deferred.promise();
+            return deferred.promise;
+        }
+
+        private prepareGETRequest(request: XMLHttpRequest) {
+            var paramString = JsonRequest.serializeParams(this.params);
+            request.open(this.method, api.util.getUri(this.path.toString()) + "?" + paramString, true);
+            request.setRequestHeader("Accept", "application/json");
+            return request;
+        }
+
+        private preparePOSTRequest(request: XMLHttpRequest) {
+            request.open(this.method, api.util.getUri(this.path.toString()), true);
+            request.setRequestHeader("Accept", "application/json");
+            request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
         }
 
         private static serializeParams(params: Object): string {
