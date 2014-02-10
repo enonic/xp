@@ -1,15 +1,13 @@
 package com.enonic.wem.admin.rest.resource.content.page.image;
 
-import java.util.List;
-
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-
-import com.google.common.collect.Iterables;
 
 import com.enonic.wem.admin.json.content.page.image.ImageDescriptorJson;
 import com.enonic.wem.admin.json.content.page.image.ImageDescriptorsJson;
@@ -18,7 +16,6 @@ import com.enonic.wem.api.content.page.image.ImageDescriptor;
 import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
 import com.enonic.wem.api.content.page.image.ImageDescriptorService;
 import com.enonic.wem.api.content.page.image.ImageDescriptors;
-import com.enonic.wem.api.module.ModuleKeys;
 
 @Path("content/page/image/descriptor")
 @Produces(MediaType.APPLICATION_JSON)
@@ -36,12 +33,12 @@ public class ImageDescriptorResource
         return new ImageDescriptorJson( descriptor );
     }
 
-    @GET
+    @POST
     @Path("list/by_modules")
-    public ImageDescriptorsJson getByModules( @QueryParam("moduleKeys") final List<String> moduleKeysAsStringList )
+    @Consumes(MediaType.APPLICATION_JSON)
+    public ImageDescriptorsJson getByModules( final GetByModulesParams params )
     {
-        ModuleKeys moduleKeys = ModuleKeys.from( Iterables.toArray( moduleKeysAsStringList, String.class ) );
-        final ImageDescriptors descriptors = imageDescriptorService.getImageDescriptorsByModules( moduleKeys );
+        final ImageDescriptors descriptors = imageDescriptorService.getImageDescriptorsByModules( params.getModuleKeys() );
         return new ImageDescriptorsJson( descriptors );
     }
 

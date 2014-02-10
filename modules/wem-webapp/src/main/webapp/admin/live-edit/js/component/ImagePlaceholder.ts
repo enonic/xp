@@ -33,7 +33,7 @@ module LiveEdit.component {
 
             this.comboBox.addOptionSelectedListener((item) => {
                 var componentPath = this.getComponentPath();
-                $liveEdit(window).trigger('imageComponentSetImage.liveEdit', [item.value, componentPath]);
+                $liveEdit(window).trigger('imageComponentSetImage.liveEdit', [item.value, componentPath, this]);
             });
         }
 

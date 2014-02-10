@@ -8,35 +8,29 @@ module app.contextwindow {
     export interface ContextWindowConfig {
         liveEditIFrame?:api.dom.IFrameEl;
         liveEditId?:string;
+        liveEditWindow: any;
+        liveEditJQuery: JQueryStatic;
         siteTemplate:api.content.site.template.SiteTemplate;
-        contentSaveAction: api.ui.Action;
+        liveFormPanel:app.wizard.LiveFormPanel;
     }
 
     export class ContextWindow extends api.ui.NavigableFloatingWindow {
-
-        private siteTemplate: api.content.site.template.SiteTemplate;
-
         private componentTypesPanel: ComponentTypesPanel;
         private inspectorPanel: InspectorPanel;
         private emulatorPanel: EmulatorPanel;
-
-        private draggingMask: api.ui.DraggingMask;
-        private liveEditIFrame: api.dom.IFrameEl;
         private liveEditWindow: any;
         private liveEditJQuery: JQueryStatic;
+        private draggingMask: api.ui.DraggingMask;
+        private liveEditIFrame: api.dom.IFrameEl;
         private selectedComponent: Component;
         private minimizer: Minimizer;
-        private pageRegions: api.content.page.PageRegions;
-        private contentSaveAction: api.ui.Action;
+        private liveFormPanel:app.wizard.LiveFormPanel;
 
         constructor(config: ContextWindowConfig) {
-
-            this.siteTemplate = config.siteTemplate;
-            this.contentSaveAction = config.contentSaveAction;
             this.liveEditIFrame = config.liveEditIFrame;
-            //TODO: "contentwindow" is hacky because we need HTMLIFrameElement to fetch that property, but it is impossible to cast to ><
-            this.liveEditWindow = this.liveEditIFrame.getHTMLElement()["contentWindow"];
-            this.liveEditJQuery = <JQueryStatic>this.liveEditWindow.$liveEdit;
+            this.liveEditJQuery = config.liveEditJQuery;
+            this.liveEditWindow = config.liveEditWindow;
+            this.liveFormPanel = config.liveFormPanel;
 
             var dragStart = (event, ui) => {
                 this.draggingMask.show();
@@ -66,7 +60,8 @@ module app.contextwindow {
 
             this.inspectorPanel = new InspectorPanel({
                 liveEditWindow: this.liveEditWindow,
-                siteTemplate: this.siteTemplate
+                siteTemplate: config.siteTemplate,
+                liveFormPanel: this.liveFormPanel
             });
             this.emulatorPanel = new EmulatorPanel({
                 liveEditIFrame: this.liveEditIFrame
@@ -98,140 +93,7 @@ module app.contextwindow {
 
 
             document.body.appendChild(this.draggingMask.getHTMLElement());
-            this.liveEditListen();
-        }
 
-        private liveEditListen() {
-            this.liveEditJQuery(this.liveEditWindow).on('selectComponent.liveEdit',
-                (event, component?, mouseClickPagePosition?) => {
-                    new SelectComponentEvent(<Component>component).fire();
-                    this.selectedComponent = component;
-                });
-
-            this.liveEditJQuery(this.liveEditWindow).on('componentSelect.liveEdit',
-                (event, name?) => {
-                    new ComponentSelectEvent(new api.content.page.ComponentName(name)).fire();
-                });
-
-            this.liveEditJQuery(this.liveEditWindow).on('pageSelect.liveEdit',
-                (event) => {
-                    new PageSelectEvent().fire();
-                });
-
-            this.liveEditJQuery(this.liveEditWindow).on('regionSelect.liveEdit',
-                (event, name?) => {
-                    new RegionSelectEvent(name).fire();
-                });
-
-            this.liveEditJQuery(this.liveEditWindow).on('deselectComponent.liveEdit', (event) => {
-                new ComponentDeselectEvent().fire();
-                this.selectedComponent = null;
-            });
-
-            this.liveEditJQuery(this.liveEditWindow).on('componentRemoved.liveEdit', (event, component?) => {
-                new ComponentRemovedEvent().fire();
-                if (component) {
-                    this.pageRegions.removeComponent(api.content.page.ComponentPath.fromString(component.getComponentPath()));
-                    this.selectedComponent = null;
-                }
-            });
-            this.liveEditJQuery(this.liveEditWindow).on('sortableStop.liveEdit', (event) => {
-                new LiveEditDragStopEvent().fire();
-                this.show();
-            });
-            this.liveEditJQuery(this.liveEditWindow).on('sortableStart.liveEdit', (event) => {
-                new LiveEditDragStartEvent().fire();
-                this.hide();
-            });
-            this.liveEditJQuery(this.liveEditWindow).on('sortableUpdate.liveEdit', (event, component?) => {
-                if (component) {
-                    var componentPath = api.content.page.ComponentPath.fromString(component.getComponentPath());
-                    var afterComponentPath = api.content.page.ComponentPath.fromString(component.getPrecedingComponentPath());
-                    this.pageRegions.moveComponent(componentPath, component.getRegionName(), afterComponentPath);
-                }
-            });
-
-
-            this.liveEditJQuery(this.liveEditWindow).on('componentAdded.liveEdit',
-                (event, component?, regionName?, componentPathToAddAfterAsString?: string) => {
-                    //TODO: Make all components work and not only image
-
-                    var componentName = this.pageRegions.ensureUniqueComponentName(new api.content.page.ComponentName("Image"));
-
-                    var componentToAddAfter: api.content.page.ComponentPath = null;
-                    if (componentPathToAddAfterAsString) {
-                        componentToAddAfter = api.content.page.ComponentPath.fromString(componentPathToAddAfterAsString);
-                    }
-
-                    var regionPath: api.content.page.RegionPath;
-                    if (componentToAddAfter != null) {
-                        regionPath = componentToAddAfter.getRegionPath();
-                    }
-                    else {
-                        regionPath = api.content.page.RegionPath.fromString(regionName);
-                    }
-
-                    var imageComponent = new ImageComponentBuilder();
-                    imageComponent.setName(componentName);
-                    imageComponent.setRegion(regionPath);
-
-                    var componentPath;
-                    if (componentToAddAfter) {
-                        componentPath = this.pageRegions.addComponentAfter(imageComponent.build(), componentToAddAfter);
-                    }
-                    else {
-                        this.pageRegions.addComponentFirst(imageComponent.build(), regionName);
-                        componentPath = ComponentPath.fromString(regionName + "/" + componentName.toString());
-                    }
-
-                    component.getEl().setData("live-edit-component", componentPath.toString());
-                    component.getEl().setData("live-edit-name", componentName.toString());
-                });
-
-            this.liveEditJQuery(this.liveEditWindow).on('imageComponentSetImage.liveEdit',
-                (event, imageId?, componentPathAsString?) => {
-
-                    var componentPath = ComponentPath.fromString(componentPathAsString);
-                    this.resolveDefaultImageDescriptor(this.siteTemplate.getModules()).
-                        done((defaultImageDescriptor: api.content.page.image.ImageDescriptor) => {
-                            var imageComponent = this.pageRegions.getImageComponent(componentPath);
-                            if (imageComponent != null) {
-                                imageComponent.setImage(imageId);
-                                imageComponent.setDescriptor(defaultImageDescriptor.getKey());
-                                this.contentSaveAction.execute();
-                            }
-                            else {
-                                console.log("ImageComponent to set image on not found: " + componentPath);
-                            }
-                        });
-                });
-        }
-
-        setPage(content: api.content.Content, pageTemplate: api.content.page.PageTemplate) {
-            var page = content.getPage();
-            this.pageRegions = pageTemplate.getRegions();
-            if (page.hasRegions()) {
-                this.pageRegions = page.getRegions();
-            }
-        }
-
-        getPageRegions(): api.content.page.PageRegions {
-            return this.pageRegions;
-        }
-
-        private resolveDefaultImageDescriptor(moduleKeys: api.module.ModuleKey[]): Q.Promise<api.content.page.image.ImageDescriptor> {
-
-            var d = Q.defer<api.content.page.image.ImageDescriptor>();
-            new api.content.page.image.GetImageDescriptorsByModulesRequest(moduleKeys).
-                sendAndParse().done((imageDescriptors: api.content.page.image.ImageDescriptor[]) => {
-                    if (imageDescriptors.length == 0) {
-                        d.resolve(null);
-                    }
-                    else {
-                        d.resolve(imageDescriptors[0]);
-                    }
-                });
-            return d.promise;
         }
 
         private minimize() {

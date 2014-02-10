@@ -12,6 +12,7 @@ module api.content.page {
 
         constructor(builder: DescriptorBuilder) {
             this.name = builder.name;
+            this.key = builder.key;
             this.displayName = builder.displayName;
             this.config = builder.config;
         }

@@ -8,9 +8,15 @@ module api.content.page.image {
 
         public fromJson(json: api.content.page.image.json.ImageDescriptorJson): ImageDescriptorBuilder {
 
+            this.setKey(api.content.page.DescriptorKey.fromString(json.key))
             this.setName(new api.content.page.DescriptorName(json.name));
             this.setDisplayName(json.displayName);
             this.setConfig(json.config != null ? new api.form.Form(json.config) : null);
+            return this;
+        }
+
+        public setKey(value: api.content.page.DescriptorKey): ImageDescriptorBuilder {
+            this.key = value;
             return this;
         }
 

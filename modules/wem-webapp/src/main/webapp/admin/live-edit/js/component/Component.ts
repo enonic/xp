@@ -94,6 +94,14 @@ module LiveEdit.component {
             return this.componentType;
         }
 
+        hasComponentPath():boolean {
+            if (this.getElement().data('data-live-edit-component')) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
         isEmpty():boolean {
             return this.getElement().attr('data-live-edit-empty-component') == 'true';
         }

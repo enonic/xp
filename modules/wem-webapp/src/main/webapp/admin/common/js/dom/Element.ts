@@ -305,7 +305,7 @@ module api.dom {
             return top;
         }
 
-        remove() {
+       remove() {
             if (this.parent) {
                 this.parent.removeChild(this);
             }

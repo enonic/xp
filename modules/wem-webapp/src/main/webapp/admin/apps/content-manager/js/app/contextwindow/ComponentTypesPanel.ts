@@ -119,7 +119,6 @@ module app.contextwindow {
                 'top': '-1000px'
             });
 
-            console.log(clone);
             this.liveEditJQuery('body').append(clone);
 
             ui.helper.hide(null);

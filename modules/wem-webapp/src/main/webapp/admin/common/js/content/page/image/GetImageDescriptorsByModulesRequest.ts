@@ -6,7 +6,7 @@ module api.content.page.image {
 
         constructor(moduleKeys: api.module.ModuleKey[]) {
             super();
-            super.setMethod("GET");
+            super.setMethod("POST");
             this.moduleKeys = moduleKeys;
         }
 

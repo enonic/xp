@@ -98,8 +98,7 @@ module app.wizard {
             }
             if (this.siteTemplate) {
                 this.livePanel = new LiveFormPanel(<app.wizard.LiveFormPanelConfig> {
-                    siteTemplate: this.siteTemplate,
-                    contentSaveAction: actions.getSaveAction()});
+                    contentWizardPanel:this});
             }
             app.wizard.event.ShowContentLiveEvent.on((event) => {
                 this.toggleFormPanel(false);

@@ -5,9 +5,8 @@ module app.contextwindow {
     export interface InspectorPanelConfig {
 
         liveEditWindow:any;
-
         siteTemplate:SiteTemplate;
-
+        liveFormPanel:app.wizard.LiveFormPanel;
     }
 
     export class InspectorPanel extends api.ui.DeckPanel {
@@ -15,12 +14,14 @@ module app.contextwindow {
         private detailPanel: DetailPanel;
         private selectPanel: SelectPanel;
         private imageSelectPanel: app.contextwindow.image.ImageSelectPanel;
+        private liveFormPanel:app.wizard.LiveFormPanel;
 
         constructor(config: InspectorPanelConfig) {
             super();
 
             this.detailPanel = new DetailPanel({
-                siteTemplate: config.siteTemplate
+                siteTemplate: config.siteTemplate,
+                liveFormPanel: config.liveFormPanel
             });
 
             this.selectPanel = new SelectPanel({

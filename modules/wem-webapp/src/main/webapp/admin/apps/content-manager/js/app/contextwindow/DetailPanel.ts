@@ -4,16 +4,19 @@ module app.contextwindow {
 
     export interface DetailPanelConfig {
         siteTemplate:SiteTemplate;
+        liveFormPanel:app.wizard.LiveFormPanel;
     }
 
     export class DetailPanel extends api.ui.Panel {
         private siteTemplate: SiteTemplate;
         private nameAndIcon: api.app.NamesAndIconView;
+        private liveFormPanel:app.wizard.LiveFormPanel;
 
         constructor(config: DetailPanelConfig) {
             super("detail-panel");
 
             this.siteTemplate = config.siteTemplate;
+            this.liveFormPanel = config.liveFormPanel;
 
             this.initElements();
             this.setEmpty();
@@ -38,23 +41,12 @@ module app.contextwindow {
             var imageDescriptorLoader = new api.content.page.image.ImageDescriptorLoader(imageDescriptorsRequest);
             var descriptorComboBox = new api.content.page.image.ImageDescriptorComboBox(imageDescriptorLoader);
 
-
-            descriptorComboBox.addLoadedListener((imageDescriptors: api.content.page.image.ImageDescriptor[]) => {
-                console.log("modules", imageDescriptors);
-                //descriptorComboBox.setValue(this.siteTemplate.getDefaultImageTemplate().toString());
-            });
-
-            
-            /*
-             TODO:
-             var templateBox = new api.content.page.TemplateComboBox();
-             templateBox.setLoader(new api.content.page.image.ImageTemplateSummaryLoader(this.siteTemplate.getKey()));
-             var firstLoad = (modules) => {
-             templateBox.setValue(this.siteTemplate.getDefaultImageTemplate().toString());
-             templateBox.removeLoadedListener(firstLoad);
-             };
-             templateBox.addLoadedListener(firstLoad);
-             */
+            var firstLoad = (modules) => {
+                console.log("modules", modules);
+                descriptorComboBox.setValue(this.liveFormPanel.getDefaultImageDescriptor().getKey().toString());
+                descriptorComboBox.removeLoadedListener(firstLoad);
+            };
+            descriptorComboBox.addLoadedListener(firstLoad);
 
 
             var templateHeader = new api.dom.H6El();

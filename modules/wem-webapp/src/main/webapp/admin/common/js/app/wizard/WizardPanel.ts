@@ -256,7 +256,6 @@ module api.app.wizard {
         }
 
         private setPersistedItem(persistedItem: T): Q.Promise<void> {
-            console.log("WizardPanel.setPersistedItem");
 
             var deferred = Q.defer<void>();
 
@@ -273,7 +272,6 @@ module api.app.wizard {
         }
 
         layoutPersistedItem(persistedItem: T): Q.Promise<void> {
-            console.log("WizardPanel.layoutPersistedItem");
 
             var deferred = Q.defer<void>();
             deferred.resolve(null);

@@ -133,7 +133,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     export function handleSortChange(event:JQueryEventObject, ui):void {
-        var component = new LiveEdit.component.Component($(event.target))
+        var component = new LiveEdit.component.Component($(event.target));
 
         this.addPaddingToLayoutComponent(component);
         LiveEdit.component.helper.DragHelper.updateStatusIcon(true);
@@ -147,7 +147,9 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         var el = api.dom.Element.fromHtmlElement(ui.item[0]);
         var component = LiveEdit.component.Component.fromElement(el);
 
-        $(window).trigger('sortableUpdate.liveEdit', [ component ]);
+        if (component.hasComponentPath()) {
+            $(window).trigger('sortableUpdate.liveEdit', [ component ]);
+        }
     }
 
     export function handleSortStop(event:JQueryEventObject, ui):void {
