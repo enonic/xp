@@ -38,7 +38,7 @@ module app.wizard {
 
             this.appendChild(this.formView);
 
-            //this.publishAction.setEnabled(this.formView.isValid());
+            this.publishAction.setEnabled(this.formView.valid());
             this.formView.onValidityChanged((event:api.form.event.FormValidityChangedEvent) => {
                 this.publishAction.setEnabled(event.isValid());
             });

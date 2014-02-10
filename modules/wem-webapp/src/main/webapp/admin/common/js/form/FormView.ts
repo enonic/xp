@@ -23,7 +23,6 @@ module api.form {
             this.context = context;
             this.form = form;
             this.rootDataSet = contentData;
-            this.isValid = true;
 
             this.listeners[FormEventNames.FormValidityChanged] = [];
             this.doLayout();
@@ -43,16 +42,20 @@ module api.form {
         }
 
         private formItemValidityChangedListener(event:api.form.inputtype.support.ValidityChangedEvent) {
-            var isValid:boolean = this.formItemViews.every((formItemView:FormItemView) => {
-                var recorder:ValidationRecorder = new ValidationRecorder();
-                formItemView.validate(recorder);
-                return recorder.valid();
-            });
+            var isValid:boolean = this.valid();
 
             if (isValid != this.isValid) {
                 this.isValid = isValid;
                 this.notifyValidityChanged(new FormValidityChangedEvent(isValid));
             }
+        }
+
+        public valid():boolean {
+            return this.formItemViews.every((formItemView:FormItemView) => {
+                var recorder:ValidationRecorder = new ValidationRecorder();
+                formItemView.validate(recorder);
+                return recorder.valid();
+            });
         }
 
         public getValueAtPath(path: api.data.DataPath): api.data.Value {
