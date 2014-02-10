@@ -8,10 +8,10 @@ module api.content.site.template {
 
         private multiSelection: boolean = true;
 
-        private deferred: JQueryDeferred<api.rest.Response>;
+        private deferred: Q.Deferred<InstallSiteTemplateResponse>;
 
-        private doneCallback: (response: InstallSiteTemplateResponse) => void;
-        private failCallback: (response: api.rest.Response) => void;
+        private doneCallback: (value: InstallSiteTemplateResponse) => void;
+        private failCallback: (reason: api.rest.RequestError) => void;
 
         constructor(triggerEl?: api.dom.Element) {
             super();
@@ -36,34 +36,32 @@ module api.content.site.template {
             return this;
         }
 
-        send(): Q.Promise<api.rest.Response> {
-            var deferred = Q.defer<api.rest.Response>();
-            //this.deferred = jQuery.Deferred<api.rest.Response>();
+        send(): Q.Promise<InstallSiteTemplateResponse> {
+            this.deferred = Q.defer<InstallSiteTemplateResponse>();
             if (this.doneCallback) {
-                this.deferred.done(this.doneCallback);
+                this.deferred.promise.then(this.doneCallback);
             }
             if (this.failCallback) {
-                this.deferred.fail(this.failCallback);
+                this.deferred.promise.catch(this.failCallback);
             }
             if (!this.isExternalTriggerElement) {
                 this.triggerElement.getHTMLElement().click();
                 this.triggerElement.remove();
             }
             this.uploader.start();
-            // return this.deferred;
-            return deferred.promise;
+            return this.deferred.promise;
         }
 
         done(fn: (resp: InstallSiteTemplateResponse)=>void) {
             if (this.deferred) {
-                this.deferred.done(fn);
+                this.deferred.promise.then(fn);
             }
             this.doneCallback = fn;
         }
 
-        fail(fn: (resp: api.rest.Response)=>void) {
+        fail(fn: (resp: api.rest.RequestError)=>void) {
             if (this.deferred) {
-                this.deferred.fail(fn);
+                this.deferred.promise.catch(fn);
             }
             this.failCallback = fn;
         }

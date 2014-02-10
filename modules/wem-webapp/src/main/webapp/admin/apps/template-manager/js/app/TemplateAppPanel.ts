@@ -32,7 +32,7 @@ module app {
                 new api.content.site.template.SiteTemplateImportedEvent().fire();
                 dialog.close();
             });
-            templateUploader.onError((resp: api.rest.JsonResponse<any>) => {
+            templateUploader.onError((resp: api.rest.RequestError) => {
                 api.notify.showError("Invalid Template file");
                 dialog.close();
             });

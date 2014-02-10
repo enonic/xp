@@ -50,7 +50,7 @@ module app.imp {
             this.uploader.done(fn);
         }
 
-        onError(fn:(resp:api.rest.Response)=>void) {
+        onError(fn:(resp:api.rest.RequestError)=>void) {
             this.uploader.fail(fn);
         }
     }

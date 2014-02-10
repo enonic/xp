@@ -8,7 +8,7 @@ module api.ui.dialog {
 
         onFinishUpload: (fn:(resp:api.rest.Response) => void) => void;
 
-        onError: (fn:(resp:api.rest.Response) => void) => void;
+        onError: (fn:(resp:api.rest.RequestError) => void) => void;
 
     }
 

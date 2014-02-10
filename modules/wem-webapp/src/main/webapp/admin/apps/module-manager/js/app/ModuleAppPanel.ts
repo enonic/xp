@@ -32,7 +32,7 @@ module app {
                 new api.module.ModuleImportedEvent().fire();
                 dialog.close();
             });
-            moduleUploader.onError((resp:api.rest.JsonResponse<api.module.ModuleSummary>)=> {
+            moduleUploader.onError((resp:api.rest.RequestError)=> {
                 api.notify.showError('Invalid Module file');
                 dialog.close();
             });

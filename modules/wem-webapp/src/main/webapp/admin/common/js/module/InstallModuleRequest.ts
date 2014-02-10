@@ -6,10 +6,10 @@ module api.module {
         private triggerElement:api.dom.Element;
         private isExternalTriggerElement:boolean = false;
 
-        private deferred:JQueryDeferred<api.rest.Response>;
+        private deferred: Q.Deferred<InstallModuleResponse>;
 
-        private doneCallback: (response: InstallModuleResponse) => void;
-        private failCallback: (response: api.rest.Response) => void;
+        private doneCallback: (value: InstallModuleResponse) => void;
+        private failCallback: (reason: api.rest.RequestError) => void;
 
         constructor(triggerEl?:api.dom.Element) {
             super();
@@ -29,14 +29,13 @@ module api.module {
             return api.rest.Path.fromParent(super.getResourcePath(), "install");
         }
 
-        send(): Q.Promise<api.rest.Response> {
-            var deferred = Q.defer<api.rest.Response>();
-            //this.deferred = jQuery.Deferred<api.rest.Response>();
+        send(): Q.Promise<InstallModuleResponse> {
+            this.deferred = Q.defer<InstallModuleResponse>();
             if (this.doneCallback) {
-                this.deferred.done(this.doneCallback);
+                this.deferred.promise.then(this.doneCallback);
             }
             if (this.failCallback) {
-                this.deferred.fail(this.failCallback);
+                this.deferred.promise.catch(this.failCallback);
             }
             if (!this.isExternalTriggerElement) {
                 this.triggerElement.getHTMLElement().click();
@@ -44,19 +43,19 @@ module api.module {
             }
             this.uploader.start();
             //return this.deferred;
-            return deferred.promise;
+            return this.deferred.promise;
         }
 
         done(fn:(resp:InstallModuleResponse)=>void) {
             if (this.deferred) {
-                this.deferred.done(fn);
+                this.deferred.promise.done(fn);
             }
             this.doneCallback = fn;
         }
 
-        fail(fn:(resp:api.rest.Response)=>void) {
+        fail(fn:(resp:api.rest.RequestError)=>void) {
             if (this.deferred) {
-                this.deferred.fail(fn);
+                this.deferred.promise.catch(fn);
             }
             this.failCallback = fn;
         }
