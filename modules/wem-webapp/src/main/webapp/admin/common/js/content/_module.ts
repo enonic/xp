@@ -2,6 +2,7 @@
 ///<reference path='ContentName.ts' />
 ///<reference path='ContentUnnamed.ts' />
 ///<reference path='ContentPath.ts' />
+///<reference path='ContentIdBaseItem.ts' />
 ///<reference path='ContentSummary.ts' />
 ///<reference path='ContentIconUrlResolver.ts' />
 ///<reference path='ContentData.ts' />
@@ -24,5 +25,5 @@
 ///<reference path='ContentUpdatedEvent.ts' />
 ///<reference path='ContentDeletedEvent.ts' />
 ///<reference path='ContentComboBox.ts' />
-///<reference path='ContentQueryResult.ts' />
 ///<reference path='ContentQueryRequest.ts' />
+///<reference path='ContentQueryResult.ts' />

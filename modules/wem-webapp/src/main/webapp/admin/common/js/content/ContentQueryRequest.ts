@@ -1,6 +1,6 @@
 module api.content {
 
-    export class ContentQueryRequest<T> extends ContentResourceRequest<ContentQueryResult<T>> {
+    export class ContentQueryRequest<CONTENT_JSON extends json.ContentIdBaseItemJson,CONTENT extends ContentIdBaseItem> extends ContentResourceRequest<json.ContentQueryResultJson<CONTENT_JSON>> {
 
         private contentQuery: api.content.query.ContentQuery;
 
@@ -12,7 +12,7 @@ module api.content {
             this.contentQuery = contentQuery;
         }
 
-        setExpand(expand: api.rest.Expand): ContentQueryRequest<T> {
+        setExpand(expand: api.rest.Expand): ContentQueryRequest<CONTENT_JSON,CONTENT> {
             this.expand = expand;
             return this;
         }
@@ -26,6 +26,43 @@ module api.content {
                 expand: this.expandAsString(),
                 aggregationQueries: this.aggregationQueriesToJson(this.contentQuery.getAggregationQueries())
             };
+        }
+
+        sendAndParse(): Q.Promise<ContentQueryResult<CONTENT>> {
+
+            var deferred = Q.defer<ContentQueryResult<CONTENT>>();
+
+            this.send().
+                then((response: api.rest.JsonResponse<json.ContentQueryResultJson<CONTENT_JSON>>) => {
+
+                    var responseResult: json.ContentQueryResultJson<CONTENT_JSON> = response.getResult();
+
+                    var aggregations = api.aggregation.Aggregation.fromJsonArray(responseResult.aggregations);
+
+                    var contentsAsJson: json.ContentIdBaseItemJson[] = responseResult.contents;
+
+                    if (this.expand == api.rest.Expand.NONE) {
+
+                        var contentIdBaseItems: CONTENT[] = <any[]> this.fromJsonToContentIdBaseItemArray(contentsAsJson);
+                        var contentQueryResult = new ContentQueryResult<CONTENT>(contentIdBaseItems, aggregations);
+                        deferred.resolve(contentQueryResult);
+                    }
+                    else if (this.expand == api.rest.Expand.SUMMARY) {
+                        var contentSummaries: CONTENT[] = <any[]> this.fromJsonToContentSummaryArray(<json.ContentSummaryJson[]>contentsAsJson);
+                        var contentQueryResult = new ContentQueryResult<CONTENT>(contentSummaries, aggregations);
+                        deferred.resolve(contentQueryResult);
+                    }
+                    else {
+                        var contents: CONTENT[] = <any[]>this.fromJsonToContentArray(<json.ContentJson[]>contentsAsJson);
+                        var contentQueryResult = new ContentQueryResult<CONTENT>(contents, aggregations);
+                        deferred.resolve(contentQueryResult);
+                    }
+
+                }).catch((response: api.rest.RequestError) => {
+                    deferred.reject(null);
+                }).done();
+
+            return deferred.promise;
         }
 
         private aggregationQueriesToJson(aggregationQueries: api.query.aggregation.AggregationQuery[]): api.query.aggregation.AggregationQueryTypeWrapperJson[] {

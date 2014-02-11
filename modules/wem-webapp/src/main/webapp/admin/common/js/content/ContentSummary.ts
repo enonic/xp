@@ -1,8 +1,6 @@
 module api.content{
 
-    export class ContentSummary extends api.item.BaseItem implements api.node.Node {
-
-        private contentId:ContentId;
+    export class ContentSummary extends ContentIdBaseItem implements api.node.Node {
 
         private name:ContentName;
 
@@ -28,6 +26,14 @@ module api.content{
 
         private draft:boolean;
 
+        private createdTime:Date;
+
+        private modifiedTime:Date;
+
+        private deletable:boolean;
+
+        private editable:boolean;
+
         static fromJsonArray(jsonArray:api.content.json.ContentSummaryJson[]):ContentSummary[] {
             var array:ContentSummary[] = [];
             jsonArray.forEach((json:api.content.json.ContentSummaryJson) => {
@@ -38,7 +44,6 @@ module api.content{
 
         constructor(json:api.content.json.ContentSummaryJson) {
             super(json);
-            this.contentId = new ContentId( json.id );
             this.name = ContentName.fromString(json.name);
             this.displayName = json.displayName;
             this.path = ContentPath.fromString(json.path);
@@ -51,10 +56,11 @@ module api.content{
             this.site = json.isSite;
             this.page = json.isPage;
             this.draft = json.draft;
-        }
 
-        getContentId():ContentId {
-            return this.contentId;
+            this.createdTime = new Date(json.createdTime);
+            this.modifiedTime = new Date(json.modifiedTime);
+            this.deletable = json.deletable;
+            this.editable = json.editable;
         }
 
         getName():ContentName {
@@ -107,6 +113,26 @@ module api.content{
 
         isDraft():boolean {
             return this.draft;
+        }
+
+        getId():string {
+            return this.getContentId().toString();
+        }
+
+        getCreatedTime():Date {
+            return this.createdTime;
+        }
+
+        getModifiedTime():Date {
+            return this.modifiedTime;
+        }
+
+        isDeletable():boolean {
+            return this.deletable;
+        }
+
+        isEditable():boolean {
+            return this.editable;
         }
     }
 }

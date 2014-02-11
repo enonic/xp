@@ -12,5 +12,16 @@ module api.aggregation {
             return this.name;
         }
 
+        public static fromJsonArray(aggregationWrapperJsons: AggregationTypeWrapperJson[]) : Aggregation[] {
+
+            var aggregations: Aggregation[] = [];
+
+            aggregationWrapperJsons.forEach((aggregationJson: AggregationTypeWrapperJson) => {
+                aggregations.push(AggregationFactory.createFromJson(aggregationJson));
+            });
+
+            return aggregations;
+        }
+
     }
 }

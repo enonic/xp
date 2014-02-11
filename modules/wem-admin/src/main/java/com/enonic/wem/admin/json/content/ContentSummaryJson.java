@@ -96,7 +96,8 @@ public class ContentSummaryJson
         return content.hasChildren();
     }
 
-    public boolean getIsDraft() {
+    public boolean getIsDraft()
+    {
         return content.isDraft();
     }
 
