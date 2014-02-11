@@ -6,6 +6,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.module.ResourcePath;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 public final class PageTemplate
@@ -90,6 +91,10 @@ public final class PageTemplate
     public ContentTypeNames getCanRender()
     {
         return canRender;
+    }
+
+    public boolean canRender(ContentTypeName name) {
+        return this.getCanRender().contains( name );
     }
 
     public boolean hasRegions()

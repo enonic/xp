@@ -2,7 +2,7 @@ module api.content.page {
 
     export class PageTemplateSummaryLoader implements api.util.Loader {
 
-        private getTemplatesRequest: GetPageTemplatesRequest;
+        private getTemplatesRequest: PageTemplateResourceRequest<api.content.page.json.PageTemplateSummaryListJson>;
 
         private isLoading: boolean;
 
@@ -10,12 +10,12 @@ module api.content.page {
 
         private listeners: PageTemplateSummaryLoaderListener[] = [];
 
-        constructor(siteTemplateKey: api.content.site.template.SiteTemplateKey) {
+        constructor(request: PageTemplateResourceRequest<api.content.page.json.PageTemplateSummaryListJson>) {
             this.isLoading = false;
-            this.setRequest(new GetPageTemplatesRequest(siteTemplateKey));
+            this.setRequest(request);
         }
 
-        setRequest(request: GetPageTemplatesRequest) {
+        setRequest(request: PageTemplateResourceRequest<api.content.page.json.PageTemplateSummaryListJson>) {
             this.getTemplatesRequest = request;
             this.isLoading = true;
             this.notifyLoading();
@@ -27,13 +27,11 @@ module api.content.page {
                 });
         }
 
-        doRequest(getTemplatesRequest: GetPageTemplatesRequest): Q.Promise<PageTemplateSummary[]> {
+        doRequest(getTemplatesRequest: PageTemplateResourceRequest<api.content.page.json.PageTemplateSummaryListJson>): Q.Promise<PageTemplateSummary[]> {
             var deferred = Q.defer<PageTemplateSummary[]>();
 
-            (<GetPageTemplatesRequest>getTemplatesRequest).sendAndParse()
-                .done((templates: PageTemplateSummary[]) => {
-
-
+            getTemplatesRequest.sendAndParse()
+                .done((templates:PageTemplateSummary[]) => {
                     deferred.resolve(templates)
                 });
             return deferred.promise;

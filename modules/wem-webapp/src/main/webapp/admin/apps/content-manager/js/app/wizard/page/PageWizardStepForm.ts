@@ -41,6 +41,10 @@ module app.wizard.page {
             this.appendChild(this.configFormWrapper);
         }
 
+        getContent():api.content.Content {
+            return this.content;
+        }
+
         layout(content: api.content.Content, siteContent: api.content.Content): Q.Promise<void> {
 
             console.log("PageWizardStepForm.layout() ... ");

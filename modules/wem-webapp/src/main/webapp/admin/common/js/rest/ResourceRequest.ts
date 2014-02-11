@@ -44,5 +44,9 @@ module api.rest {
 
             return jsonRequest.send();
         }
+
+        sendAndParse():JQueryPromise<any> {
+            throw new Error("sendAndParse method was not implemented");
+        }
     }
 }
