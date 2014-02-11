@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.rendering.RendererFactory;
 
-public final class NewPostProcessorImpl
+public final class PostProcessorImpl
     implements PostProcessor
 {
     @Inject
