@@ -22,6 +22,7 @@ public class SchemaJsonSerializer
         objectNode.put( "key", schema.getSchemaKey().toString() );
         objectNode.put( "name", schema.getName().toString() );
         objectNode.put( "displayName", schema.getDisplayName() );
+        objectNode.put( "description", schema.getDescription() );
         objectNode.put( "type", schema.getClass().getSimpleName() );
         JsonSerializerUtil.setDateTimeValue( "createdTime", schema.getCreatedTime(), objectNode );
         JsonSerializerUtil.setDateTimeValue( "modifiedTime", schema.getModifiedTime(), objectNode );

@@ -2,7 +2,6 @@ package com.enonic.wem.api.schema.content;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Layout;
@@ -27,13 +26,14 @@ public class ContentTypeXmlTest
             newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
         set.add( layout );
 
-        final ContentType.Builder contentTypeBuilder = newContentType().name( "all_schemas" );
-        contentTypeBuilder.addFormItem( set );
-        contentTypeBuilder.displayName( "All the Base Types" );
-        contentTypeBuilder.contentDisplayNameScript( "$('firstName') + ' ' + $('lastName')" );
-        contentTypeBuilder.superType( ContentTypeName.from( "content" ) );
-        contentTypeBuilder.setAbstract( false );
-        contentTypeBuilder.setFinal( true );
+        final ContentType.Builder contentTypeBuilder = newContentType().name( "all_schemas" )
+        .addFormItem( set )
+        .displayName( "All the Base Types" )
+        .description( "description" )
+        .contentDisplayNameScript( "$('firstName') + ' ' + $('lastName')" )
+        .superType( ContentTypeName.from( "content" ) )
+        .setAbstract( false )
+        .setFinal( true );
 
         final ContentType contentType = contentTypeBuilder.build();
 
@@ -56,6 +56,7 @@ public class ContentTypeXmlTest
         final ContentType contentType = builder.build();
         assertEquals(null, contentType.getName());
         assertEquals("All the Base Types", contentType.getDisplayName());
+        assertEquals("description", contentType.getDescription());
         assertEquals("$('firstName') + ' ' + $('lastName')", contentType.getContentDisplayNameScript());
         assertEquals("content", contentType.getSuperType().toString());
         assertEquals(false, contentType.isAbstract());

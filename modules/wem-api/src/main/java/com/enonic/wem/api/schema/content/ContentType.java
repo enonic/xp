@@ -143,6 +143,7 @@ public final class ContentType
         final Objects.ToStringHelper s = Objects.toStringHelper( this );
         s.add( "name", getName() );
         s.add( "displayName", getDisplayName() );
+        s.add( "description", getDescription() );
         s.add( "superType", superType );
         s.add( "isAbstract", isAbstract );
         s.add( "isFinal", isFinal );

@@ -50,6 +50,7 @@ public class CreateContentTypeHandlerTest
         ContentType contentType = newContentType().
             name( "my_content_type" ).
             displayName( "My content type" ).
+            description( "description" ).
             setAbstract( false ).
             superType( ContentTypeName.structured() ).
             build();
@@ -57,6 +58,7 @@ public class CreateContentTypeHandlerTest
         CreateContentType command = contentType().create().
             name( contentType.getName() ).
             displayName( contentType.getDisplayName() ).
+            description( contentType.getDescription() ).
             setAbstract( contentType.isAbstract() ).
             setFinal( contentType.isFinal() ).
             form( contentType.form() ).
@@ -86,6 +88,7 @@ public class CreateContentTypeHandlerTest
         ContentType contentType = newContentType().
             name( "my_content_type" ).
             displayName( "Inheriting a final ContentType" ).
+            displayName( "A description" ).
             setAbstract( false ).
             superType( ContentTypeName.shortcut() ).
             build();
@@ -94,6 +97,7 @@ public class CreateContentTypeHandlerTest
         final CreateContentType createCommand = contentType().create().
             name( contentType.getName() ).
             displayName( contentType.getDisplayName() ).
+            description( contentType.getDescription() ).
             superType( contentType.getSuperType() ).
             setAbstract( contentType.isAbstract() ).
             setFinal( contentType.isFinal() ).

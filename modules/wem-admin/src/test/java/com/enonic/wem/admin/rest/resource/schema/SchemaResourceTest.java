@@ -38,7 +38,7 @@ public class SchemaResourceTest
 
     private Mixin createMixin( String displayName )
     {
-        return Mixin.newMixin().name( displayName.toLowerCase() ).displayName( displayName ).createdTime(
+        return Mixin.newMixin().name( displayName.toLowerCase() ).displayName( displayName ).description( "M description" ).createdTime(
             DateTime.parse( currentTime ) ).modifiedTime( DateTime.parse( currentTime ) ).addFormItem(
             Input.newInput().name( displayName.toLowerCase() ).inputType( InputTypes.TEXT_AREA ).inputTypeConfig(
                 TextAreaConfig.newTextAreaConfig().rows( 10 ).columns( 10 ).build() ).build() ).build();
@@ -47,13 +47,13 @@ public class SchemaResourceTest
     private ContentType createContentType( String name )
     {
         return ContentType.newContentType().name( name ).createdTime( DateTime.parse( currentTime ) ).modifiedTime(
-            DateTime.parse( currentTime ) ).build();
+            DateTime.parse( currentTime ) ).description( "CT description" ).build();
     }
 
     private RelationshipType createRelationshipType( String name )
     {
         return RelationshipType.newRelationshipType().name( name ).createdTime( DateTime.parse( currentTime ) ).modifiedTime(
-            DateTime.parse( currentTime ) ).build();
+            DateTime.parse( currentTime ) ).description( "RT description" ).build();
     }
 
     private Schemas createSchemaList()

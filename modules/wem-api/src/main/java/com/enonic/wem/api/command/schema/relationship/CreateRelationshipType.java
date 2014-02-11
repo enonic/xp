@@ -15,6 +15,8 @@ public final class CreateRelationshipType
 
     private String displayName;
 
+    private String description;
+
     private String fromSemantic;
 
     private String toSemantic;
@@ -40,6 +42,12 @@ public final class CreateRelationshipType
     public CreateRelationshipType displayName( final String displayName )
     {
         this.displayName = displayName;
+        return this;
+    }
+
+    public CreateRelationshipType description( final String description )
+    {
+        this.description = description;
         return this;
     }
 
@@ -83,6 +91,11 @@ public final class CreateRelationshipType
         return displayName;
     }
 
+    public String getDescription()
+    {
+        return description;
+    }
+
     public String getFromSemantic()
     {
         return fromSemantic;
@@ -124,6 +137,7 @@ public final class CreateRelationshipType
         final CreateRelationshipType that = (CreateRelationshipType) o;
         return Objects.equal( this.name, that.name ) &&
             Objects.equal( this.displayName, that.displayName ) &&
+            Objects.equal( this.description, that.description ) &&
             Objects.equal( this.fromSemantic, that.fromSemantic ) &&
             Objects.equal( this.toSemantic, that.toSemantic ) &&
             Objects.equal( this.allowedFromTypes, that.allowedFromTypes ) &&
@@ -134,7 +148,7 @@ public final class CreateRelationshipType
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( name, displayName, fromSemantic, toSemantic, allowedFromTypes, allowedToTypes, schemaIcon );
+        return Objects.hashCode( name, displayName, description, fromSemantic, toSemantic, allowedFromTypes, allowedToTypes, schemaIcon );
     }
 
     @Override

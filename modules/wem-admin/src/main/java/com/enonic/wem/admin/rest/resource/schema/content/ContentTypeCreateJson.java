@@ -35,6 +35,7 @@ public class ContentTypeCreateJson
         createContentType = contentType().create().
             name( name ).
             displayName( contentType.getDisplayName() ).
+            description( contentType.getDescription() ).
             superType( contentType.getSuperType() ).
             setAbstract( contentType.isAbstract() ).
             setFinal( contentType.isFinal() ).

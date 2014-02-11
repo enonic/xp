@@ -170,6 +170,7 @@ public class MixinResourceTest
         Mockito.when( client.execute( isA( CreateMixin.class ) ) ).thenReturn( Mixin.newMixin().
             id( new SchemaId( "abc" ) ).
             name( "my_set" ).
+            description( "description" ).
             build() );
 
         String result = resource().path( "schema/mixin/create" ).entity( readFromFile( "create_mixin_params.json" ),
@@ -201,6 +202,7 @@ public class MixinResourceTest
         Mockito.when( client.execute( isA( CreateMixin.class ) ) ).thenReturn( Mixin.newMixin().
             id( new SchemaId( "abc" ) ).
             name( "my_set" ).
+            description( "description" ).
             build() );
         final Blob iconBlob = Mockito.mock( Blob.class );
         Mockito.when( iconBlob.getStream() ).thenReturn( new ByteArrayInputStream( "icondata".getBytes() ) );

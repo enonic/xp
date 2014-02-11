@@ -130,6 +130,7 @@ public class RelationshipTypeResource
             createCommand.
                 name( json.getName() ).
                 displayName( relationshipType.getDisplayName() ).
+                description( relationshipType.getDescription() ).
                 fromSemantic( relationshipType.getFromSemantic() ).
                 toSemantic( relationshipType.getToSemantic() ).
                 allowedFromTypes( relationshipType.getAllowedFromTypes() ).
@@ -167,6 +168,7 @@ public class RelationshipTypeResource
                     final RelationshipType.Builder builder = RelationshipType.newRelationshipType( relationshipType );
                     builder.name( json.getName() );
                     builder.displayName( parsed.getDisplayName() );
+                    builder.description( parsed.getDescription() );
                     builder.fromSemantic( parsed.getFromSemantic() );
                     builder.toSemantic( parsed.getToSemantic() );
                     builder.addAllowedFromTypes( parsed.getAllowedFromTypes() );

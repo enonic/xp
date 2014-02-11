@@ -19,6 +19,8 @@ public final class CreateMixin
 
     private String displayName;
 
+    private String description;
+
     private SchemaIcon schemaIcon;
 
 
@@ -52,6 +54,12 @@ public final class CreateMixin
         return this;
     }
 
+    public CreateMixin description( final String description )
+    {
+        this.description = description;
+        return this;
+    }
+
     public CreateMixin schemaIcon( final SchemaIcon schemaIcon )
     {
         this.schemaIcon = schemaIcon;
@@ -71,6 +79,11 @@ public final class CreateMixin
     public String getDisplayName()
     {
         return displayName;
+    }
+
+    public String getDescription()
+    {
+        return description;
     }
 
     public SchemaIcon getSchemaIcon()
@@ -95,13 +108,14 @@ public final class CreateMixin
         return Objects.equal( this.name, that.name ) &&
             Objects.equal( this.formItems, that.formItems ) &&
             Objects.equal( this.displayName, that.displayName ) &&
+            Objects.equal( this.description, that.description ) &&
             Objects.equal( this.schemaIcon, that.schemaIcon );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.name, this.formItems, this.displayName, this.schemaIcon );
+        return Objects.hashCode( this.name, this.formItems, this.displayName, this.description, this.schemaIcon );
     }
 
     @Override

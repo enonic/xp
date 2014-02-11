@@ -97,6 +97,7 @@ public class MixinResource
         final CreateMixin createCommand = mixin().create().
             name( params.getName().toString() ).
             displayName( mixin.getDisplayName() ).
+            description( mixin.getDescription() ).
             formItems( mixin.getFormItems() ).
             schemaIcon( schemaIcon );
 
@@ -132,6 +133,7 @@ public class MixinResource
                     final Mixin.Builder builder = Mixin.newMixin( mixin );
                     builder.name( params.getName() );
                     builder.displayName( parsed.getDisplayName() );
+                    builder.description( parsed.getDescription() );
                     builder.formItems( parsed.getFormItems() );
                     if ( schemaIcon != null )
                     {

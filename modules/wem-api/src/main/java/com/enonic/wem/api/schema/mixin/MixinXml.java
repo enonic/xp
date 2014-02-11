@@ -3,7 +3,6 @@ package com.enonic.wem.api.schema.mixin;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
@@ -24,6 +23,8 @@ public class MixinXml
     @XmlElement(name = "display-name", required = false)
     private String displayName;
 
+    @XmlElement(name = "description", required = false)
+    private String description;
 
     @XmlElements({@XmlElement(name = "input", type = InputXml.class), @XmlElement(name = "form-item-set", type = FormItemSetXml.class),
                      @XmlElement(name = "field-set", type = FieldSetXml.class)})
@@ -34,6 +35,7 @@ public class MixinXml
     public void from( final Mixin mixin )
     {
         this.displayName = mixin.getDisplayName();
+        this.description = mixin.getDescription();
 
         for ( final FormItem formItem : mixin.getFormItems() )
         {
@@ -44,8 +46,7 @@ public class MixinXml
     @Override
     public void to( final Mixin.Builder builder )
     {
-        builder
-            .displayName( displayName );
+        builder.displayName( displayName ).description( description );
 
         for ( final FormItemXml formItemXml : formItems )
         {

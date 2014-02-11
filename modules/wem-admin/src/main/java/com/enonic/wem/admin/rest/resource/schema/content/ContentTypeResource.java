@@ -159,6 +159,7 @@ public class ContentTypeResource
                     final ContentType.Builder builder = ContentType.newContentType( toEdit ).
                         name( contentTypeUpdate.getName() ).
                         displayName( contentTypeUpdate.getDisplayName() ).
+                        description( contentTypeUpdate.getDescription() ).
                         superType( contentTypeUpdate.getSuperType() ).
                         setAbstract( contentTypeUpdate.isAbstract() ).
                         setFinal( contentTypeUpdate.isFinal() ).

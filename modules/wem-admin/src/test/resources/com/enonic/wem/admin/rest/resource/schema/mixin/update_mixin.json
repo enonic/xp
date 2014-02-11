@@ -5,6 +5,7 @@
         "createdTime": null,
         "creator": null,
         "deletable": true,
+        "description" : null,
         "displayName": null,
         "editable": true,
         "hasChildren": false,

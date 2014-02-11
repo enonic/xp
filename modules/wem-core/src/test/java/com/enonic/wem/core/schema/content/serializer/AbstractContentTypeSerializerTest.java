@@ -75,6 +75,7 @@ public abstract class AbstractContentTypeSerializerTest
         ContentType.Builder contentTypeBuilder = newContentType().name( "all_schemas" );
         contentTypeBuilder.addFormItem( set );
         contentTypeBuilder.displayName( "All the Base Types" );
+        contentTypeBuilder.description( "A description" );
         contentTypeBuilder.contentDisplayNameScript( "$('firstName') + ' ' + $('lastName')" );
         contentTypeBuilder.superType( ContentTypeName.from( "content" ) );
         contentTypeBuilder.setAbstract( false );
@@ -327,6 +328,7 @@ public abstract class AbstractContentTypeSerializerTest
         ContentType.Builder contentTypeBuilder = newContentType().
             name( "all_input_types" ).
             displayName( "All the Input Types" ).
+            description( "A description" ).
             superType( ContentTypeName.structured() ).
             setAbstract( false ).
             setFinal( true );

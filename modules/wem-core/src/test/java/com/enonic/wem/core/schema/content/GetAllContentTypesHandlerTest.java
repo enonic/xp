@@ -63,11 +63,13 @@ public class GetAllContentTypesHandlerTest
                 name( NodeName.from( contentType1Name ) ).
                 id( EntityId.from( "123" ) ).
                 property( "displayName", "DisplayName" ).
+                property( "description", "Description" ).
                 build() ).
             add( Node.newNode().
                 name( NodeName.from( contentType2Name ) ).
                 id( EntityId.from( "234" ) ).
                 property( "displayName", "DisplayName2" ).
+                property( "description", "Description2" ).
                 build() ).
             build();
 
@@ -82,8 +84,8 @@ public class GetAllContentTypesHandlerTest
         final ContentTypes result = command.getResult();
         assertEquals( 2, result.getSize() );
 
-        verifyContentType( contentType1Name, "DisplayName", result );
-        verifyContentType( contentType2Name, "DisplayName2", result );
+        verifyContentType( contentType1Name, "DisplayName", "Description", result );
+        verifyContentType( contentType2Name, "DisplayName2", "Description2", result );
 
     }
 
@@ -144,11 +146,12 @@ public class GetAllContentTypesHandlerTest
         return rootDataSet;
     }
 
-    private void verifyContentType( final String contentTypeName, final String displayName, final ContentTypes result )
+    private void verifyContentType( final String contentTypeName, final String displayName, final String description, final ContentTypes result )
     {
         final ContentType contentType = result.getContentType( ContentTypeName.from( contentTypeName ) );
         assertNotNull( contentType );
         assertEquals( contentTypeName, contentType.getName().toString() );
         assertEquals( displayName, contentType.getDisplayName() );
+        assertEquals( description, contentType.getDescription() );
     }
 }

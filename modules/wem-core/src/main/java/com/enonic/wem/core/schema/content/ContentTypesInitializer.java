@@ -135,6 +135,7 @@ public class ContentTypesInitializer
             final CreateContentType createCommand = contentType().create().
                 name( contentType.getName() ).
                 displayName( contentType.getDisplayName() ).
+                description( contentType.getDescription() ).
                 superType( contentType.getSuperType() ).
                 setAbstract( contentType.isAbstract() ).
                 setFinal( contentType.isFinal() ).

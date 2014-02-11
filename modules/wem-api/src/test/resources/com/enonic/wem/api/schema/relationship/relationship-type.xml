@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <relationship-type>
+  <description>description</description>
   <from-semantic>likes</from-semantic>
   <to-semantic>liked by</to-semantic>
   <allowed-from-types>

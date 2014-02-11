@@ -4,6 +4,7 @@
         "createdTime": "2013-08-23T12:55:09.162Z",
         "creator": null,
         "deletable": true,
+        "description" : "M description",
         "displayName": "mixin",
         "editable": true,
         "hasChildren": false,
