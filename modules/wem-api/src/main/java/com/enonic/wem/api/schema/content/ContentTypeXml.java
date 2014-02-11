@@ -63,7 +63,7 @@ public class ContentTypeXml
         builder.
             displayName( displayName ).
             contentDisplayNameScript( contentDisplayNameScript ).
-            superType( ContentTypeName.from( superTypeString ) ).
+            superType( superTypeString != null ? ContentTypeName.from( superTypeString ) : null ).
             setAbstract( isAbstract ).
             setFinal( isFinal ).
             builtIn( isBuiltIn ).
