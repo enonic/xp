@@ -165,10 +165,13 @@ public final class XsltScriptBean
     {
         final ContextScriptBean service = ContextScriptBean.get();
         final JsContext jsContext = service.getJsContext();
-        final String baseUrl = jsContext.getUrl().createResourceUrl( "" ).toString();
-
         final DomBuilder builder = DomBuilder.create( "context" );
-        builder.start( "baseUrl" ).text( baseUrl ).end();
+
+        if ( jsContext.getUrl() != null )
+        {
+            final String baseUrl = jsContext.getUrl().createResourceUrl( "" ).toString();
+            builder.start( "baseUrl" ).text( baseUrl ).end();
+        }
 
         if ( jsContext.getComponent() != null )
         {
@@ -188,6 +191,11 @@ public final class XsltScriptBean
 
     private void createRegionElements( final DomBuilder builder, final AbstractRegions regions )
     {
+        if ( regions == null )
+        {
+            return;
+        }
+
         builder.start( "regions" );
         for ( Region region : regions )
         {
