@@ -24,23 +24,24 @@ module api.content.page {
             return api.rest.Path.fromParent(super.getResourcePath(), "listByCanRender");
         }
 
-        sendAndParse(): JQueryPromise<api.content.page.PageTemplateSummary[]> {
+        sendAndParse(): Q.Promise<api.content.page.PageTemplateSummary[]> {
 
-            var deferred = jQuery.Deferred<api.content.page.PageTemplateSummary[]>();
+            var deferred = Q.defer<api.content.page.PageTemplateSummary[]>();
 
             this.send().
-                done((response: api.rest.JsonResponse<api.content.page.json.PageTemplateSummaryListJson>) => {
-                         var array:api.content.page.PageTemplateSummary[] = [];
+                then((response: api.rest.JsonResponse<api.content.page.json.PageTemplateSummaryListJson>) => {
+
+                    var array:api.content.page.PageTemplateSummary[] = [];
                          response.getResult().templates.forEach((templateJson:api.content.page.json.PageTemplateSummaryJson) => {
                              array.push(this.fromJsonToPageTemplateSummary(templateJson));
                          });
 
                          deferred.resolve(array);
-                     }).fail((response: api.rest.RequestError) => {
+                     }).catch((response: api.rest.RequestError) => {
                                  deferred.reject(null);
-                             });
+                             }).done();
 
-            return deferred;
+            return deferred.promise;
         }
     }
 }
