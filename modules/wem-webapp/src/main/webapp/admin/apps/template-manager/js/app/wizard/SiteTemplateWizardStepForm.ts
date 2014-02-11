@@ -10,7 +10,7 @@ module app.wizard {
             super();
             this.descriptionField = api.ui.TextInput.middle().setName("description");
             this.moduleComboBox = new api.module.ModuleComboBox();
-            this.rootContentTypeComboBox = new api.schema.content.ContentTypeComboBox(false);
+            this.rootContentTypeComboBox = new api.schema.content.ContentTypeComboBox(1);
         }
 
         renderNew() {

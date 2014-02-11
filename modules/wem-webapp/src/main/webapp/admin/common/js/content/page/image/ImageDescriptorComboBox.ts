@@ -14,7 +14,8 @@ module api.content.page.image {
             super(new RichComboBoxBuilder<ImageDescriptor>().
                 setSelectedOptionsView(new ImageDescriptorSelectedOptionsView()).
                 setIdentifierMethod("getKey").
-                setLoader(loader));
+                setLoader(loader).
+                setMaximumOccurrences(1));
         }
 
         setDescriptor(descriptor: ImageDescriptor) {
@@ -33,13 +34,6 @@ module api.content.page.image {
                 .setSubName(descriptor.getName().toString());
 
             return namesView.toString();
-        }
-
-        createConfig(): ComboBoxConfig<ImageDescriptor> {
-
-            var config: ComboBoxConfig<ImageDescriptor> = super.createConfig();
-            config.maximumOccurrences = 1;
-            return config;
         }
 
         getSelectedData(): Option<ImageDescriptor>[] {

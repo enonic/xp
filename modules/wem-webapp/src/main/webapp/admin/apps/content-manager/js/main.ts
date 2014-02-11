@@ -30,9 +30,8 @@ window.onload = () => {
         var parentContent: api.content.ContentSummary = event.getParentContent();
 
         if (parentContent != null) {
-            new api.content.GetContentByIdRequest(parentContent.getContentId()).send().
-                done((jsonResponse: api.rest.JsonResponse<api.content.json.ContentJson>) => {
-                    var newParentContent = new api.content.Content(jsonResponse.getResult());
+            new api.content.GetContentByIdRequest(parentContent.getContentId()).sendAndParse().
+                done((newParentContent: api.content.Content) => {
                     newContentDialog.setParentContent(newParentContent);
                     newContentDialog.open();
                 });
@@ -46,10 +45,10 @@ window.onload = () => {
         window.parent["appLoaded"](getAppName());
     }
 
-    window.onmessage = (e:MessageEvent) => {
-        if( e.data.appLauncherEvent ) {
-            var eventType:api.app.AppLauncherEventType = api.app.AppLauncherEventType[<string>e.data.appLauncherEvent];
-            if( eventType ==  api.app.AppLauncherEventType.Show ) {
+    window.onmessage = (e: MessageEvent) => {
+        if (e.data.appLauncherEvent) {
+            var eventType: api.app.AppLauncherEventType = api.app.AppLauncherEventType[<string>e.data.appLauncherEvent];
+            if (eventType == api.app.AppLauncherEventType.Show) {
                 appPanel.activateCurrentKeyBindings();
             }
         }
@@ -67,19 +66,19 @@ function route(path: api.rest.Path) {
     case 'edit':
         var id = path.getElement(1);
         if (id) {
-            var getContentByIdPromise = new api.content.GetContentByIdRequest(new api.content.ContentId(id)).send();
-            jQuery.when(getContentByIdPromise).then((contentResponse: api.rest.JsonResponse<api.content.json.ContentJson>) => {
-                new app.browse.EditContentEvent([new api.content.Content(contentResponse.getResult())]).fire();
-            });
+            var getContentByIdPromise = new api.content.GetContentByIdRequest(new api.content.ContentId(id)).sendAndParse().
+                done((content: api.content.Content) => {
+                    new app.browse.EditContentEvent([content]).fire();
+                });
         }
         break;
     case 'view' :
         var id = path.getElement(1);
         if (id) {
-            var getContentByIdPromise = new api.content.GetContentByIdRequest(new api.content.ContentId(id)).send();
-            jQuery.when(getContentByIdPromise).then((contentResponse: api.rest.JsonResponse<api.content.json.ContentJson>) => {
-                new app.browse.ViewContentEvent([new api.content.Content(contentResponse.getResult())]).fire();
-            });
+            var getContentByIdPromise = new api.content.GetContentByIdRequest(new api.content.ContentId(id)).sendAndParse().
+                done((content: api.content.Content) => {
+                    new app.browse.ViewContentEvent([content]).fire();
+                });
         }
         break;
     default:
