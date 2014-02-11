@@ -8,11 +8,14 @@ module app.wizard.page {
 
         private pageTemplateToSelect: api.content.page.PageTemplateKey;
 
+        private form:PageWizardStepForm;
+
         constructor(form:PageWizardStepForm) {
             super("page-template-selector-form");
 
             this.pageTemplateComboBox = new api.content.page.PageTemplateComboBox();
 
+            this.form = form;
             var fieldSet = new api.ui.form.Fieldset();
             fieldSet.add(new api.ui.form.FormItem(new api.ui.form.FormItemBuilder(this.pageTemplateComboBox).setLabel("Page Template")));
             form.add(fieldSet);
@@ -26,7 +29,6 @@ module app.wizard.page {
                 this.pageTemplateToSelect = null;
                 this.notifyPageTemplateChanged(null);
             });
-
             this.pageTemplateComboBox.addLoadedListener((pageTemplates: api.content.page.PageTemplateSummary[]) => {
 
                     pageTemplates.forEach((template: api.content.page.PageTemplateSummary) => {
@@ -43,9 +45,10 @@ module app.wizard.page {
         layoutExisting(siteTemplateKey: api.content.site.template.SiteTemplateKey,
                        selectedPageTemplate: api.content.page.PageTemplateKey): Q.Promise<void> {
             var deferred = Q.defer<void>();
+            var request:api.content.page.GetPageTemplatesByCanRenderRequest = new api.content.page.GetPageTemplatesByCanRenderRequest(siteTemplateKey, this.form.getContent().getType());
+            var loader:api.util.Loader = new api.content.page.PageTemplateSummaryLoader(request);
 
-            this.pageTemplateComboBox.setLoader(new api.content.page.PageTemplateSummaryLoader(siteTemplateKey));
-
+            this.pageTemplateComboBox.setLoader(loader);
 
             this.pageTemplateToSelect = selectedPageTemplate;
 
