@@ -1,7 +1,8 @@
 package com.enonic.wem.admin.json.schema.content;
 
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.core.schema.content.serializer.ContentTypeXmlSerializer;
+import com.enonic.wem.api.schema.content.ContentTypeXml;
+import com.enonic.wem.xml.XmlSerializers;
 
 public class ContentTypeConfigJson
 {
@@ -9,7 +10,9 @@ public class ContentTypeConfigJson
 
     public ContentTypeConfigJson( final ContentType contentType )
     {
-        this.contentTypeXml = new ContentTypeXmlSerializer().prettyPrint( true ).generateName( false ).toString( contentType );
+        final ContentTypeXml contentTypeXml = new ContentTypeXml();
+        contentTypeXml.from( contentType );
+        this.contentTypeXml = XmlSerializers.contentType().serialize( contentTypeXml );
     }
 
     public String getContentTypeXml()

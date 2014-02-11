@@ -15,10 +15,11 @@ import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeXml;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.core.config.SystemConfig;
 import com.enonic.wem.core.schema.SchemaIconDao;
-import com.enonic.wem.core.schema.content.serializer.ContentTypeXmlSerializer;
+import com.enonic.wem.xml.XmlSerializers;
 
 import static com.enonic.wem.api.schema.content.ContentTypes.newContentTypes;
 import static java.nio.file.Files.isDirectory;
@@ -120,8 +121,9 @@ public final class ContentTypeDaoImpl
 
     private void writeContentTypeXml( final ContentType contentType, final Path contentTypePath )
     {
-        final ContentTypeXmlSerializer xmlSerializer = new ContentTypeXmlSerializer().prettyPrint( true ).generateName( false );
-        final String serializedContentType = xmlSerializer.toString( contentType );
+        final ContentTypeXml contentTypeXml = new ContentTypeXml();
+        contentTypeXml.from( contentType );
+        final String serializedContentType = XmlSerializers.contentType().serialize( contentTypeXml );
         final Path xmlFile = contentTypePath.resolve( CONTENT_TYPE_XML );
 
         try
@@ -142,10 +144,10 @@ public final class ContentTypeDaoImpl
         {
             final String serializedContentType = new String( Files.readAllBytes( xmlFile ), Charsets.UTF_8 );
             final String contentTypeName = contentTypePath.getFileName().toString();
-            final ContentTypeXmlSerializer xmlSerializer = new ContentTypeXmlSerializer().overrideName( contentTypeName );
-            final ContentType contentType = xmlSerializer.toContentType( serializedContentType );
-            // TODO make content type xml parser return ContentType.Builder
-            return ContentType.newContentType( contentType );
+
+            final ContentType.Builder builder = ContentType.newContentType().name( contentTypeName );
+            XmlSerializers.contentType().parse( serializedContentType ).to( builder );
+            return builder;
         }
         catch ( IOException e )
         {

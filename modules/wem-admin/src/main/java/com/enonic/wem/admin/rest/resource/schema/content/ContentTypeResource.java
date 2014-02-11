@@ -38,7 +38,7 @@ import com.enonic.wem.api.schema.content.UnableToDeleteContentTypeException;
 import com.enonic.wem.api.schema.content.editor.ContentTypeEditor;
 import com.enonic.wem.api.schema.content.validator.ContentTypeValidationResult;
 import com.enonic.wem.api.support.serializer.XmlParsingException;
-import com.enonic.wem.core.schema.content.serializer.ContentTypeXmlSerializer;
+import com.enonic.wem.xml.XmlSerializers;
 
 import static com.enonic.wem.api.command.Commands.contentType;
 
@@ -197,7 +197,9 @@ public class ContentTypeResource
         final ContentType contentType;
         try
         {
-            contentType = new ContentTypeXmlSerializer().toContentType( contentTypeXml );
+            final ContentType.Builder builder = ContentType.newContentType();
+            XmlSerializers.contentType().parse( contentTypeXml ).to( builder );
+            contentType = builder.build();
         }
         catch ( XmlParsingException e )
         {
