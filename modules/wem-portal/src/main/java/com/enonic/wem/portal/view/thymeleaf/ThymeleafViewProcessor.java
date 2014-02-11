@@ -1,10 +1,16 @@
 package com.enonic.wem.portal.view.thymeleaf;
 
+import java.util.Set;
+
 import javax.inject.Inject;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+import org.thymeleaf.dialect.IDialect;
+import org.thymeleaf.standard.StandardDialect;
 import org.thymeleaf.templateresolver.TemplateResolver;
+
+import com.google.common.collect.Sets;
 
 import com.enonic.wem.core.module.ModuleResourcePathResolver;
 import com.enonic.wem.portal.view.RenderViewSpec;
@@ -19,7 +25,12 @@ public final class ThymeleafViewProcessor
     public ThymeleafViewProcessor( final ModuleResourcePathResolver resolver )
     {
         this.engine = new TemplateEngine();
-        this.engine.setDialect( new ThymeleafDialect() );
+
+        final Set<IDialect> dialects = Sets.newHashSet();
+        dialects.add( new ThymeleafDialect() );
+        dialects.add( new StandardDialect() );
+
+        this.engine.setDialects( dialects );
 
         final TemplateResolver templateResolver = new TemplateResolver();
         templateResolver.setCacheable( false );
