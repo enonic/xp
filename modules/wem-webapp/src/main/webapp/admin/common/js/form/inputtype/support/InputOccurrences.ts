@@ -5,13 +5,13 @@ module api.form.inputtype.support {
      */
     export class InputOccurrences extends api.form.FormItemOccurrences<InputOccurrenceView> {
 
-        private baseInputTypeView:BaseInputTypeView;
+        private baseInputTypeView: BaseInputTypeView;
 
-        private input:api.form.Input;
+        private input: api.form.Input;
 
-        private properties:api.data.Property[];
+        private properties: api.data.Property[];
 
-        constructor(baseInputTypeView:BaseInputTypeView, input:api.form.Input, properties:api.data.Property[]) {
+        constructor(baseInputTypeView: BaseInputTypeView, input: api.form.Input, properties: api.data.Property[]) {
             super(input, baseInputTypeView, input.getOccurrences());
 
             this.baseInputTypeView = baseInputTypeView;
@@ -26,53 +26,56 @@ module api.form.inputtype.support {
             }
         }
 
-        getInput():api.form.Input {
+        getInput(): api.form.Input {
             return this.input;
         }
 
-        getAllowedOccurrences():api.form.Occurrences {
+        getAllowedOccurrences(): api.form.Occurrences {
             return this.input.getOccurrences();
         }
 
         private constructOccurrencesForData() {
-            this.properties.forEach((property:api.data.Property, index:number) => {
+            this.properties.forEach((property: api.data.Property, index: number) => {
                 this.addOccurrence(new InputOccurrence(this, index));
             });
 
             if (this.countOccurrences() < this.input.getOccurrences().getMinimum()) {
-                for (var index:number = this.countOccurrences();
+                for (var index: number = this.countOccurrences();
                      index < this.input.getOccurrences().getMinimum(); index++) {
                     this.addOccurrence(this.createNewOccurrence(this, index));
                 }
             }
         }
 
-        createNewOccurrence(formItemOccurrences:api.form.FormItemOccurrences<InputOccurrenceView>,
-                            insertAtIndex:number):api.form.FormItemOccurrence<InputOccurrenceView> {
+        createNewOccurrence(formItemOccurrences: api.form.FormItemOccurrences<InputOccurrenceView>,
+                            insertAtIndex: number): api.form.FormItemOccurrence<InputOccurrenceView> {
             return new InputOccurrence(<InputOccurrences>formItemOccurrences, insertAtIndex)
         }
 
-        createNewOccurrenceView(occurrence:InputOccurrence):InputOccurrenceView {
+        createNewOccurrenceView(occurrence: InputOccurrence): InputOccurrenceView {
 
-            var property:api.data.Property = this.properties != null ? this.properties[occurrence.getIndex()] : null;
+            var property: api.data.Property = this.properties != null ? this.properties[occurrence.getIndex()] : null;
             var inputElement = this.baseInputTypeView.createInputOccurrenceElement(occurrence.getIndex(), property);
 
-            var inputOccurrenceView:InputOccurrenceView = new InputOccurrenceView(occurrence, inputElement);
+            var inputOccurrenceView: InputOccurrenceView = new InputOccurrenceView(occurrence, inputElement);
 
-            var inputOccurrences:InputOccurrences = this;
+            var inputOccurrences: InputOccurrences = this;
             inputOccurrenceView.addListener(<api.form.FormItemOccurrenceViewListener>{
-                onRemoveButtonClicked: (toBeRemoved:InputOccurrenceView, index:number) => {
+                onRemoveButtonClicked: (toBeRemoved: InputOccurrenceView, index: number) => {
                     inputOccurrences.doRemoveOccurrence(toBeRemoved, index);
                 }
             });
             return inputOccurrenceView;
         }
 
-        getValues():api.data.Value[] {
+        getValues(): api.data.Value[] {
 
-            var values:api.data.Value[] = [];
-            this.getOccurrenceViews().forEach((occurrenceView:InputOccurrenceView) => {
-                values.push(this.baseInputTypeView.getValue(occurrenceView.getInputElement()));
+            var values: api.data.Value[] = [];
+            this.getOccurrenceViews().forEach((occurrenceView: InputOccurrenceView) => {
+                var value = this.baseInputTypeView.getValue(occurrenceView.getInputElement());
+                if (value != null) {
+                    values.push(value);
+                }
             });
             return values;
         }
@@ -81,9 +84,9 @@ module api.form.inputtype.support {
 
             var focusGiven = false;
             var occurrenceViews = this.getOccurrenceViews();
-            if( occurrenceViews.length > 0 ) {
-                for( var i  = 0; i < occurrenceViews.length; i++ ) {
-                    if(occurrenceViews[i].giveFocus() ) {
+            if (occurrenceViews.length > 0) {
+                for (var i = 0; i < occurrenceViews.length; i++) {
+                    if (occurrenceViews[i].giveFocus()) {
                         focusGiven = true;
                         break;
                     }

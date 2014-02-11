@@ -126,13 +126,16 @@ module api.form.inputtype.singleselector {
                 if (this.validityChanged(validationRecorder)) {
                     this.notifyValidityChanged(new support.ValidityChangedEvent(validationRecorder.valid()));
                 }
-            })
+            });
 
             return inputEl;
         }
 
         getValue(occurrence:api.dom.Element):api.data.Value {
             var inputEl = <api.dom.FormInputEl>occurrence;
+            if( !inputEl.getValue() ) {
+                return null;
+            }
             return new api.data.Value(inputEl.getValue(), api.data.ValueTypes.STRING);
         }
 
