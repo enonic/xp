@@ -51,8 +51,8 @@ public class PostProcessorImplTest
 
         final RendererFactory rendererFactory = newRendererFactory( "<b>part content</b>" );
 
-        final PostProcessorImpl postProcessor = new PostProcessorImpl();
-        postProcessor.setRendererFactory( rendererFactory );
+        final NewPostProcessorImpl postProcessor = new NewPostProcessorImpl();
+        postProcessor.rendererFactory = rendererFactory;
 
         final JsHttpResponse resp = new JsHttpResponse();
         resp.setPostProcess( true );
