@@ -254,7 +254,9 @@ module app.wizard {
                     var imageComponent = this.pageRegions.getImageComponent(componentPath);
                     if (imageComponent != null) {
                         imageComponent.setImage(imageId);
-                        imageComponent.setDescriptor(this.defaultImageDescriptor.getKey());
+                        if (this.defaultImageDescriptor) {
+                            imageComponent.setDescriptor(this.defaultImageDescriptor.getKey());
+                        }
 
                         this.skipReload = true;
                         this.contentWizardPanel.saveChanges().done(() => {
