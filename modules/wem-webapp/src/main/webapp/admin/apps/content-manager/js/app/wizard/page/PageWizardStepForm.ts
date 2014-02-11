@@ -41,10 +41,6 @@ module app.wizard.page {
             this.appendChild(this.configFormWrapper);
         }
 
-        getContent():api.content.Content {
-            return this.content;
-        }
-
         layout(content: api.content.Content, siteContent: api.content.Content): Q.Promise<void> {
 
             console.log("PageWizardStepForm.layout() ... ");
@@ -62,7 +58,7 @@ module app.wizard.page {
                     done((pageTemplate: api.content.page.PageTemplate) => {
 
                         this.selectedPageTemplate = pageTemplate;
-                        this.pageTemplateSelectorForm.layoutExisting(siteContent.getSite().getTemplateKey(), page.getTemplate()).
+                        this.pageTemplateSelectorForm.layoutExisting(content, siteContent.getSite().getTemplateKey(), page.getTemplate()).
                             done(()=> {
 
                                 deferred.resolve(null);
@@ -71,7 +67,7 @@ module app.wizard.page {
             }
             else {
 
-                this.pageTemplateSelectorForm.layoutExisting(siteContent.getSite().getTemplateKey(), null).
+                this.pageTemplateSelectorForm.layoutExisting(content, siteContent.getSite().getTemplateKey(), null).
                     done(()=> {
 
                         deferred.resolve(null);
