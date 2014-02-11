@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 
 import com.enonic.wem.api.aggregation.Bucket;
 import com.enonic.wem.api.aggregation.BucketAggregation;
+import com.enonic.wem.api.aggregation.DateRangeBucket;
 
 public class BucketAggregationJson
     extends AggregationJson
@@ -18,7 +19,14 @@ public class BucketAggregationJson
 
         for ( final Bucket bucket : bucketAggregation.getBuckets() )
         {
-            builder.add( new BucketJson( bucket ) );
+            if ( bucket instanceof DateRangeBucket )
+            {
+                builder.add( new DateRangeBucketJson( (DateRangeBucket) bucket ) );
+            }
+            else
+            {
+                builder.add( new BucketJson( bucket ) );
+            }
         }
 
         this.buckets = builder.build();

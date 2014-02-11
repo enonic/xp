@@ -53,6 +53,7 @@ module app.browse.filter {
                         var contentQuery: ContentQuery = new ContentQuery();
                         this.appendFulltextSearch(searchInputValues, contentQuery);
                         this.appendContentTypeFilter(searchInputValues, contentQuery);
+                        this.appendLastModifiedQuery(searchInputValues);
                         this.appendContentTypesAggregation(contentQuery);
                         this.appendLastModifiedAggregation(contentQuery);
 
@@ -129,17 +130,27 @@ module app.browse.filter {
 
         private appendContentTypeFilter(searchInputValues: SearchInputValues, contentQuery: ContentQuery): void {
 
-            var contentTypesSelections = searchInputValues.getSelectedValuesForAggregationName("contentTypes");
+            var contentTypesSelections: string[] = searchInputValues.getSelectedValuesForAggregationName("contentTypes");
 
             var contentTypeNames: ContentTypeName[] = this.parseContentTypeNames(contentTypesSelections);
 
             contentQuery.setContentTypeNames(contentTypeNames);
         }
 
-        private appendLastModifiedQuery(searchInputValues: SearchInputValues): void {
+        private appendLastModifiedQuery(searchInputValues: api.query.SearchInputValues): api.query.expr.QueryExpr {
 
-            var value = searchInputValues.getSelectedValuesForAggregationName("lastModified");
+            var lastModifiedSelections: string[] = searchInputValues.getSelectedValuesForAggregationName("lastModified");
 
+            if (lastModifiedSelections == null) {
+                return null;
+            }
+
+            var fieldExp: api.query.expr.FieldExpr = new api.query.expr.FieldExpr("lastModified");
+
+            if (lastModifiedSelections.length == 1) {
+
+            }
+            return null;
 
         }
 
@@ -177,7 +188,7 @@ module app.browse.filter {
 
             contentQuery.addAggregationQuery(dateRangeAgg);
         }
-
     }
+
 
 }

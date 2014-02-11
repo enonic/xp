@@ -18,7 +18,7 @@ public class Buckets
 
     public static class Builder
     {
-        private Set<Bucket> buckets = Sets.newHashSet();
+        private Set<Bucket> buckets = Sets.newLinkedHashSet();
 
         public Builder addBucket( final Bucket bucket )
         {

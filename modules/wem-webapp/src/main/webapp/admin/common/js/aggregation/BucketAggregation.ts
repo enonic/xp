@@ -33,8 +33,8 @@ module api.aggregation {
 
             var bucketAggregation: BucketAggregation = new BucketAggregation(json.name);
 
-            json.buckets.forEach((bucket: api.aggregation.BucketJson) => {
-                bucketAggregation.addBucket(api.aggregation.Bucket.fromJson(bucket));
+            json.buckets.forEach((bucketWrapper: api.aggregation.BucketWrapperJson) => {
+                bucketAggregation.addBucket(api.aggregation.BucketFactory.createFromJson(bucketWrapper));
             })
 
             return bucketAggregation;

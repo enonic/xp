@@ -1,4 +1,4 @@
-package com.enonic.wem.core.index.query.aggregation;
+package com.enonic.wem.core.index.aggregation;
 
 
 import org.elasticsearch.search.aggregations.bucket.range.date.DateRange;

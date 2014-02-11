@@ -1,12 +1,14 @@
-package com.enonic.wem.core.index.query.aggregation;
+package com.enonic.wem.core.index.aggregation;
 
 import java.util.Collection;
 
 import org.elasticsearch.search.aggregations.bucket.range.date.DateRange;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.joda.time.DateTime;
 
 import com.enonic.wem.api.aggregation.Bucket;
 import com.enonic.wem.api.aggregation.Buckets;
+import com.enonic.wem.api.aggregation.DateRangeBucket;
 
 public class BucketsFactory
 {
@@ -30,7 +32,10 @@ public class BucketsFactory
 
         for ( final DateRange.Bucket bucket : buckets )
         {
-            bucketsBuilder.addBucket( new Bucket( bucket.getKey().toString(), bucket.getDocCount() ) );
+            final DateRangeBucket dateRangeBucket = new DateRangeBucket( bucket.getKey().toString(), bucket.getDocCount() );
+            dateRangeBucket.setFrom( bucket.getFromAsDate() != null ? new DateTime( bucket.getFromAsDate().toDate() ) : null );
+            dateRangeBucket.setTo( bucket.getToAsDate() != null ? new DateTime( bucket.getToAsDate().toDate() ) : null );
+            bucketsBuilder.addBucket( dateRangeBucket );
         }
 
         return bucketsBuilder.build();

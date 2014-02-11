@@ -24,7 +24,7 @@ public class Aggregations
 
     public static class Builder
     {
-        private Set<Aggregation> aggregations = Sets.newHashSet();
+        private Set<Aggregation> aggregations = Sets.newLinkedHashSet();
 
 
         public Builder add( final Aggregation aggregation )

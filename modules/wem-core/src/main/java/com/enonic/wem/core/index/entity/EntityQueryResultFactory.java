@@ -3,8 +3,8 @@ package com.enonic.wem.core.index.entity;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.SearchHits;
 
+import com.enonic.wem.core.index.aggregation.AggregationsFactory;
 import com.enonic.wem.core.index.facet.FacetsFactory;
-import com.enonic.wem.core.index.query.aggregation.AggregationsFactory;
 
 public class EntityQueryResultFactory
 {

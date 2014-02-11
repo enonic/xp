@@ -1,7 +1,12 @@
 package com.enonic.wem.admin.json.aggregation;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import com.enonic.wem.api.aggregation.Bucket;
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
+@JsonSubTypes({@JsonSubTypes.Type(value = DateRangeBucketJson.class, name = "DateRangeBucket"),})
 public class BucketJson
 {
     private final String key;

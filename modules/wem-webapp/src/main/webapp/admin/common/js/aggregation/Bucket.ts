@@ -2,8 +2,13 @@ module api.aggregation {
 
     export class Bucket {
 
-        private key: string;
-        private docCount: number;
+        key: string;
+        docCount: number;
+
+        constructor(key: string, docCount: number) {
+            this.key = key;
+            this.docCount = docCount;
+        }
 
         public getKey(): string {
             return this.key;
@@ -13,11 +18,16 @@ module api.aggregation {
             return this.docCount;
         }
 
+        public setKey(key: string) {
+            this.key = key;
+        }
+
+        public setDocCount(docCount: number) {
+            this.docCount = docCount;
+        }
+
         public static fromJson(json: api.aggregation.BucketJson): Bucket {
-            var bucket: Bucket = new Bucket();
-            bucket.key = json.key;
-            bucket.docCount = json.docCount;
-            return bucket;
+            return new Bucket(json.key, json.docCount);
         }
     }
 }
