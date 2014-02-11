@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <type>
     <display-name>All the Base Types</display-name>
+    <description>description</description>
     <content-display-name-script>$('firstName') + ' ' + $('lastName')</content-display-name-script>
     <super-type>content</super-type>
     <is-abstract>false</is-abstract>

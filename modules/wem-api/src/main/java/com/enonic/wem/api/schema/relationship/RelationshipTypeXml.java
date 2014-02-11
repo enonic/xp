@@ -20,6 +20,9 @@ public class RelationshipTypeXml
     @XmlElement(name = "display-name", required = false)
     private String displayName;
 
+    @XmlElement(name = "description", required = false)
+    private String description;
+
     @XmlElement(name = "from-semantic", required = false)
     private String fromSemantic;
 
@@ -38,6 +41,7 @@ public class RelationshipTypeXml
     public void from( final RelationshipType relationshipType )
     {
         this.displayName = relationshipType.getDisplayName();
+        this.description = relationshipType.getDescription();
         this.fromSemantic = relationshipType.getFromSemantic();
         this.toSemantic = relationshipType.getToSemantic();
 
@@ -57,6 +61,7 @@ public class RelationshipTypeXml
     {
         builder.
             displayName( this.displayName ).
+            description( this.description ).
             fromSemantic( this.fromSemantic ).
             toSemantic( this.toSemantic ).
             addAllowedFromTypes( ContentTypeNames.from( Iterables.toArray( this.allowedFromTypes, String.class ) ) ).

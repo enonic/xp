@@ -16,6 +16,9 @@ public class ContentTypeXml
     @XmlElement(name = "display-name", required = false)
     private String displayName;
 
+    @XmlElement(name = "description", required = false)
+    private String description;
+
     @XmlElement(name = "content-display-name-script", required = false)
     private String contentDisplayNameScript;
 
@@ -42,6 +45,7 @@ public class ContentTypeXml
     public void from( final ContentType type )
     {
         this.displayName = type.getDisplayName();
+        this.description = type.getDescription();
         this.contentDisplayNameScript = type.getContentDisplayNameScript();
         this.superType = type.getSuperType() != null ? type.getSuperType().toString() : null;
         this.isAbstract = type.isAbstract();
@@ -62,6 +66,7 @@ public class ContentTypeXml
 
         builder.
             displayName( displayName ).
+            description( description ).
             contentDisplayNameScript( contentDisplayNameScript ).
             superType( superTypeString != null ? ContentTypeName.from( superTypeString ) : null ).
             setAbstract( isAbstract ).

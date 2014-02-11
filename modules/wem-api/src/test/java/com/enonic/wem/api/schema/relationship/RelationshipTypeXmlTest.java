@@ -20,6 +20,7 @@ public class RelationshipTypeXmlTest
     {
         final RelationshipType relationshipType = newRelationshipType().
             name( "like" ).
+            description( "description" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
             addAllowedFromType(  ContentTypeName.from( "person" ) ).
@@ -46,6 +47,7 @@ public class RelationshipTypeXmlTest
         final RelationshipType relationshipType = builder.build();
 
         assertEquals( null, relationshipType.getName() );
+        assertEquals( "description", relationshipType.getDescription() );
         assertEquals( "likes", relationshipType.getFromSemantic() );
         assertEquals( "liked by", relationshipType.getToSemantic() );
         assertEquals( ContentTypeNames.from( "animal", "person" ), relationshipType.getAllowedFromTypes() );

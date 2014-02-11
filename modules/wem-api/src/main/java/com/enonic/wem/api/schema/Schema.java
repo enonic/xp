@@ -14,6 +14,8 @@ public interface Schema
 
     String getDisplayName();
 
+    String getDescription();
+
     DateTime getCreatedTime();
 
     DateTime getModifiedTime();

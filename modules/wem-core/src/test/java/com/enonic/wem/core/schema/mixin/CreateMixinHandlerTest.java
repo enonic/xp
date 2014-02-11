@@ -44,6 +44,7 @@ public class CreateMixinHandlerTest
         final Mixin createdMixin = Mixin.newMixin().
             name( "age" ).
             displayName( "Age" ).
+            description( "description" ).
             addFormItem( newInput().name( "age" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         Mockito.when( mixinDao.createMixin( Mockito.isA( Mixin.class ) ) ).thenReturn( createdMixin );
@@ -63,6 +64,7 @@ public class CreateMixinHandlerTest
         Mixin mixin = command.getResult();
         assertNotNull( mixin );
         assertEquals( "age", mixin.getName().toString() );
+        assertEquals( "description", mixin.getDescription() );
     }
 
 }
