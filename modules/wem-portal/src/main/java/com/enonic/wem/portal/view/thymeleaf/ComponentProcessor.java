@@ -3,6 +3,7 @@ package com.enonic.wem.portal.view.thymeleaf;
 import java.util.List;
 
 import org.thymeleaf.Arguments;
+import org.thymeleaf.dom.Comment;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.dom.Node;
 import org.thymeleaf.processor.attr.AbstractFragmentHandlingAttrProcessor;
@@ -35,11 +36,8 @@ final class ComponentProcessor
                                           final String attributeValue )
     {
         final List<Node> list = Lists.newArrayList();
-
-        final Element elem = new Element( "div" );
-        elem.setAttribute( "wem:component", attributeValue );
-        list.add( elem );
-
+        final Comment comment = new Comment( "# COMPONENT " + attributeValue + " " );
+        list.add( comment );
         return list;
     }
 }

@@ -32,7 +32,13 @@ final class PostProcessEvaluatorImpl
         }
         catch ( final AttoParseException e )
         {
-            throw new RenderException( "Failed to post process document", e );
+            final Throwable cause = e.getCause();
+            if ( cause instanceof RuntimeException )
+            {
+                throw (RuntimeException) cause;
+            }
+
+            throw new RenderException( "Failed to post process document", cause != null ? cause : e );
         }
     }
 
