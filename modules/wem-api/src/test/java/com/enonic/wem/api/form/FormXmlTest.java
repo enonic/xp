@@ -1,13 +1,19 @@
 package com.enonic.wem.api.form;
 
+import org.junit.Test;
+
 import com.acme.DummyCustomInputType;
-import com.enonic.wem.api.form.inputtype.*;
+
+import com.enonic.wem.api.form.inputtype.ComboBoxConfig;
+import com.enonic.wem.api.form.inputtype.ImageSelectorConfig;
+import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.form.inputtype.RelationshipConfig;
+import com.enonic.wem.api.form.inputtype.SingleSelectorConfig;
+import com.enonic.wem.api.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.xml.BaseXmlSerializerTest;
 import com.enonic.wem.xml.XmlSerializers;
-import org.junit.Ignore;
-import org.junit.Test;
 
 import static com.enonic.wem.api.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
@@ -22,7 +28,7 @@ import static com.enonic.wem.api.form.inputtype.SingleSelectorConfig.newSingleSe
 import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class FormXmlTest
         extends BaseXmlSerializerTest {
@@ -93,7 +99,6 @@ public class FormXmlTest
         assertXml("form.xml", result);
     }
 
-    @Ignore
     @Test
     public void from_all_Input_types() throws Exception {
 
@@ -143,7 +148,6 @@ public class FormXmlTest
         assertEquals("Field set Item", form.getFormItem("myFormItemSet.fieldSetItem").toInput().getLabel());
     }
 
-    @Ignore
     @Test
     public void to_all_Input_types()
             throws Exception {

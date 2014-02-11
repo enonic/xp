@@ -20,7 +20,7 @@ public class ComboBoxConfigJsonSerializer
         final ObjectNode jsonConfig = objectMapper.createObjectNode();
 
         final ArrayNode jsonArray = jsonConfig.putArray( "options" );
-        for ( ComboBoxConfig.Option option : config.getOptions() )
+        for ( Option option : config.getOptions() )
         {
             final ObjectNode jsonOption = jsonArray.addObject();
             jsonOption.put( "label", option.getLabel() );

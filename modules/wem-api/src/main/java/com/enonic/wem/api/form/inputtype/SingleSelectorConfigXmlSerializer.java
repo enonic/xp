@@ -19,7 +19,7 @@ public class SingleSelectorConfigXmlSerializer
 
         final SingleSelectorConfig singleSelectorConfig = (SingleSelectorConfig) config;
         inputTypeConfigEl.addContent( new Element( "selector-type" ).setText( singleSelectorConfig.getType().toString() ) );
-        for ( SingleSelectorConfig.Option option : singleSelectorConfig.getOptions() )
+        for ( Option option : singleSelectorConfig.getOptions() )
         {
             final Element optionEl = new Element( "option" );
             optionEl.addContent( new Element( "label" ).setText( option.getLabel() ) );
