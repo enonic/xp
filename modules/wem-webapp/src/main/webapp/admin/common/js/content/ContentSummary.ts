@@ -2,6 +2,8 @@ module api.content{
 
     export class ContentSummary extends ContentIdBaseItem implements api.node.Node {
 
+        private id:string;
+
         private name:ContentName;
 
         private displayName:string;
@@ -57,6 +59,7 @@ module api.content{
             this.page = json.isPage;
             this.draft = json.draft;
 
+            this.id = json.id;
             this.createdTime = new Date(json.createdTime);
             this.modifiedTime = new Date(json.modifiedTime);
             this.deletable = json.deletable;
@@ -116,7 +119,7 @@ module api.content{
         }
 
         getId():string {
-            return this.getContentId().toString();
+            return this.id;
         }
 
         getCreatedTime():Date {
