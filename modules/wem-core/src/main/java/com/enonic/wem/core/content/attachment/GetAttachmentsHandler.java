@@ -25,7 +25,7 @@ public class GetAttachmentsHandler
         {
             final Node node =
                 new GetNodeByIdService( context.getJcrSession(), new GetNodeById( EntityId.from( command.getContentId() ) ) ).execute();
-            final Attachments.Builder attachmentsBuilder = Attachments.newAttachments();
+            final Attachments.Builder attachmentsBuilder = Attachments.builder();
 
             for ( com.enonic.wem.api.entity.Attachment entityAttachment : node.attachments() )
             {

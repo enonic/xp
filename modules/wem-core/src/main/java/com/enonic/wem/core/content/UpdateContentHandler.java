@@ -84,12 +84,16 @@ public class UpdateContentHandler
         editedContent = newContent( editedContent ).
             modifier( command.getModifier() ).build();
 
-        Attachments attachments = command.getAttachments();
+        final Attachments originalAttachments = getCurrentAttachments( command.getContentId() );
+        Attachments updateAttachments = command.getAttachments();
+
         final Attachment thumbnailAttachment = resolveThumbnailAttachment( command, editedContent );
         if ( thumbnailAttachment != null )
         {
-            attachments = attachments.add( thumbnailAttachment );
+            updateAttachments = updateAttachments.add( thumbnailAttachment );
         }
+
+        final Attachments attachments = mergeAttachments( originalAttachments, updateAttachments );
         final UpdateNode updateNodeCommand = translator.toUpdateNodeCommand( editedContent, attachments );
 
         final UpdateNodeHandler updateNodeHandler = UpdateNodeHandler.create().
@@ -105,6 +109,30 @@ public class UpdateContentHandler
         deleteRemovedEmbeddedContent( contentBeforeChange, persistedContent );
 
         command.setResult( persistedContent );
+    }
+
+    private Attachments mergeAttachments( final Attachments originalAttachments, final Attachments updatedAttachments )
+    {
+        if ( updatedAttachments.isEmpty() )
+        {
+            return originalAttachments;
+        }
+
+        Attachments mergedAttachments = originalAttachments;
+        for ( Attachment attachment : updatedAttachments )
+        {
+            if ( originalAttachments.hasAttachment( attachment.getName() ) )
+            {
+                mergedAttachments = mergedAttachments.remove( attachment.getName() );
+            }
+            mergedAttachments = mergedAttachments.add( attachment );
+        }
+        return mergedAttachments;
+    }
+
+    private Attachments getCurrentAttachments( final ContentId contentId )
+    {
+        return this.context.getClient().execute( Commands.attachment().getAll().contentId( contentId ) );
     }
 
     private void deleteRemovedEmbeddedContent( final Content persistedContent, final Content editedContent )

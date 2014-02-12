@@ -87,24 +87,37 @@ public class AttachmentsJcrMapper
         }
         else if ( attachments.isNotEmpty() && !jcrNode.hasNode( ATTACHMENTS_NODE_NAME ) )
         {
-            addNodes( attachments, jcrNode.addNode( ATTACHMENTS_NODE_NAME ) );
+            addNodes( attachments, jcrNode.addNode( ATTACHMENTS_NODE_NAME ), false );
         }
         else
         {
             final Node attachmentsNode = jcrNode.getNode( ATTACHMENTS_NODE_NAME );
             removeNodes( attachments, attachmentsNode );
-            addNodes( attachments, attachmentsNode );
+            addNodes( attachments, attachmentsNode, true );
         }
     }
 
-    private void addNodes( final Attachments attachments, final Node attachmentsNode )
+    private void addNodes( final Attachments attachments, final Node attachmentsNode, final boolean replaceExisting )
         throws RepositoryException
     {
         for ( Attachment attachment : attachments )
         {
-            if ( !attachmentsNode.hasNode( attachment.name() ) )
+            final String attachmentName = attachment.name();
+            final boolean nodeExists = attachmentsNode.hasNode( attachmentName );
+            if ( !nodeExists )
             {
                 addAttachmentJcrNode( attachment, attachmentsNode );
+            }
+            else if ( replaceExisting )
+            {
+                final Node attachmentNode = attachmentsNode.getNode( attachmentName );
+                final String blobKey = attachmentNode.getProperty( BLOB_KEY_PROPERTY ).getString();
+                final boolean isSameAttachment = blobKey.equals( attachment.blobKey().toString() );
+                if ( !isSameAttachment )
+                {
+                    attachmentNode.remove();
+                    addAttachmentJcrNode( attachment, attachmentsNode );
+                }
             }
         }
     }
