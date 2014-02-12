@@ -18,6 +18,7 @@ module api.form.inputtype.support {
                 axis: "y",
                 containment: 'parent',
                 handle: '.drag-control',
+                tolerance: 'pointer',
                 update: (event, ui) => {
 
                     var occurrenceOrderAccordingToDOM = this.resolveOccurrencesInOrderAccordingToDOM();

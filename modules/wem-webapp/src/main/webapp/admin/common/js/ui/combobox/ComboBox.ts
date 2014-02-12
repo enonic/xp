@@ -283,6 +283,10 @@ module api.ui.combobox {
             if (this.hideComboBoxWhenMaxReached) {
                 this.show();
             }
+
+            if (this.countSelected() == 0) {
+                this.removeClass("followed-by-options");
+            }
         }
 
         private selectRow(index:number) {
@@ -300,6 +304,7 @@ module api.ui.combobox {
 
             this.updateDropdownStyles();
             this.hideDropdown();
+            this.addClass("followed-by-options");
 
             if (this.maximumOccurrencesReached()) {
                 this.input.setMaximumReached();

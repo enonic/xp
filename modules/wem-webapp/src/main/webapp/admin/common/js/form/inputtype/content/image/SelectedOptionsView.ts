@@ -6,8 +6,6 @@ module api.form.inputtype.content.image {
 
         private optionCount:number = 0;
 
-        private clearer:api.dom.DivEl;
-
         private selectedOption:api.ui.combobox.SelectedOption<api.content.ContentSummary>;
 
         private dialog:ImageSelectorDialog;
@@ -29,9 +27,6 @@ module api.form.inputtype.content.image {
             this.dialog.addEditButtonClickListener(() => {
                 this.notifyEditSelectedOption(this.selectedOption);
             });
-
-            this.clearer = new api.dom.DivEl("clearer");
-            this.appendChild(this.clearer);
         }
 
         private notifyRemoveSelectedOption(option:api.ui.combobox.SelectedOption<api.content.ContentSummary>) {
@@ -85,7 +80,7 @@ module api.form.inputtype.content.image {
                 this.notifyRemoveSelectedOption(option);
             });
 
-            optionView.insertBeforeEl(this.clearer);
+            this.appendChild(optionView);
             this.optionCount++;
             optionView.setLastInRow(this.isLastInRow(option.getIndex()));
 
