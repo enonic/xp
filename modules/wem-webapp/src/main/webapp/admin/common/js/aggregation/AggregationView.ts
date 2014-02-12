@@ -30,7 +30,7 @@ module api.aggregation {
             throw new Error("Must be implemented by inheritor");
         }
 
-        getSelectedValues(): string[] {
+        getSelectedValues(): api.aggregation.Bucket[] {
             throw new Error("Must be implemented by inheritor");
         }
 

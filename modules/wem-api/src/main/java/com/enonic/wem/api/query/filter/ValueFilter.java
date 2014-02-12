@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableSet;
 import com.enonic.wem.api.data.Value;
 
 public class ValueFilter
-    extends Filter
+    extends FieldFilter
 {
     private final ImmutableSet<Value> values;
 

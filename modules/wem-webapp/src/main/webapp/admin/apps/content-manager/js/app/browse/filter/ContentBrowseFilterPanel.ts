@@ -19,9 +19,12 @@ module app.browse.filter {
     import ValueExpr = api.query.expr.ValueExpr;
     import FunctionExpr = api.query.expr.FunctionExpr;
     import LogicalOperator = api.query.expr.LogicalOperator;
+    import CompareExpr = api.query.expr.CompareExpr;
+    import LogicalExp = api.query.expr.LogicalExpr;
     import DynamicConstraintExpr = api.query.expr.DynamicConstraintExpr;
     import Value = api.data.Value;
     import ValueTypes = api.data.ValueTypes;
+
 
     export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel {
 
@@ -53,7 +56,13 @@ module app.browse.filter {
                         var contentQuery: ContentQuery = new ContentQuery();
                         this.appendFulltextSearch(searchInputValues, contentQuery);
                         this.appendContentTypeFilter(searchInputValues, contentQuery);
-                        this.appendLastModifiedQuery(searchInputValues);
+
+                        // TODO: Implement as separate filter
+                        var lastModified = this.appendLastModifiedQuery(searchInputValues);
+                        if (lastModified != null) {
+                            contentQuery.setQueryExpr(new QueryExpr(lastModified));
+                        }
+
                         this.appendContentTypesAggregation(contentQuery);
                         this.appendLastModifiedAggregation(contentQuery);
 
@@ -130,37 +139,68 @@ module app.browse.filter {
 
         private appendContentTypeFilter(searchInputValues: SearchInputValues, contentQuery: ContentQuery): void {
 
-            var contentTypesSelections: string[] = searchInputValues.getSelectedValuesForAggregationName("contentTypes");
+            var selectedBuckets: api.aggregation.Bucket[] = searchInputValues.getSelectedValuesForAggregationName("contentTypes");
 
-            var contentTypeNames: ContentTypeName[] = this.parseContentTypeNames(contentTypesSelections);
+            var contentTypeNames: ContentTypeName[] = this.parseContentTypeNames(selectedBuckets);
 
             contentQuery.setContentTypeNames(contentTypeNames);
         }
 
-        private appendLastModifiedQuery(searchInputValues: api.query.SearchInputValues): api.query.expr.QueryExpr {
+        private appendLastModifiedQuery(searchInputValues: api.query.SearchInputValues): api.query.expr.ConstraintExpr {
 
-            var lastModifiedSelections: string[] = searchInputValues.getSelectedValuesForAggregationName("lastModified");
+            var lastModifiedSelectedBuckets: api.aggregation.Bucket[] = searchInputValues.getSelectedValuesForAggregationName("lastModified");
 
-            if (lastModifiedSelections == null) {
+            if (lastModifiedSelectedBuckets == null) {
                 return null;
             }
 
-            var fieldExp: api.query.expr.FieldExpr = new api.query.expr.FieldExpr("lastModified");
+            var fieldExp: api.query.expr.FieldExpr = new api.query.expr.FieldExpr("modifiedtime");
+            var fieldExp: api.query.expr.FieldExpr = new api.query.expr.FieldExpr("modifiedtime");
 
-            if (lastModifiedSelections.length == 1) {
+            var expressions: api.query.expr.ConstraintExpr[] = [];
 
-            }
-            return null;
+            lastModifiedSelectedBuckets.forEach((dateRangeBucket: api.aggregation.DateRangeBucket)=> {
 
+                if (dateRangeBucket.getFrom() != null && dateRangeBucket.getTo() == null) {
+
+                    var compareExp: CompareExpr = new api.query.expr.CompareExpr(fieldExp, api.query.expr.CompareOperator.GTE,
+                        [ValueExpr.dateTime(dateRangeBucket.getFrom())]);
+
+                    expressions.push(compareExp);
+
+                } else if ((dateRangeBucket.getFrom() == null && dateRangeBucket.getTo() != null)) {
+
+                    var compareExp: CompareExpr = new api.query.expr.CompareExpr(fieldExp, api.query.expr.CompareOperator.LTE,
+                        [ValueExpr.dateTime(dateRangeBucket.getTo())]);
+
+                    expressions.push(compareExp);
+
+                } else if ((dateRangeBucket.getFrom() != null && dateRangeBucket.getTo() != null)) {
+
+                    var leftExpr: CompareExpr = new api.query.expr.CompareExpr(fieldExp, api.query.expr.CompareOperator.GTE,
+                        [ValueExpr.dateTime(dateRangeBucket.getFrom())]);
+
+                    var rightExpr: CompareExpr = new api.query.expr.CompareExpr(fieldExp, api.query.expr.CompareOperator.LTE,
+                        [ValueExpr.dateTime(dateRangeBucket.getTo())]);
+
+                    var logicalExp: LogicalExp = new api.query.expr.LogicalExpr(leftExpr, LogicalOperator.AND, rightExpr);
+                    expressions.push(logicalExp);
+                }
+            });
+
+
+            console.log("Created lastModifiedExpressions: " + expressions.toString(), expressions);
+
+            return expressions.pop();
         }
 
-        private parseContentTypeNames(names: string[]): ContentTypeName[] {
+        private parseContentTypeNames(buckets: api.aggregation.Bucket[]): ContentTypeName[] {
             var contentTypeNames: ContentTypeName[] = [];
 
-            if (names) {
-                for (var i = 0; i < names.length; i++) {
-                    var name = names[i];
-                    contentTypeNames.push(new ContentTypeName(name));
+            if (buckets) {
+                for (var i = 0; i < buckets.length; i++) {
+                    var bucket: api.aggregation.Bucket = buckets[i];
+                    contentTypeNames.push(new ContentTypeName(bucket.getKey()));
                 }
             }
 

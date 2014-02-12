@@ -71,9 +71,8 @@ public class IndexQueryFieldNameResolver
         return appendIndexValueType( IndexFieldNameNormalizer.normalize( queryFieldName ), IndexValueType.GEO_POINT );
     }
 
-    private static String createValueTypeAwareFieldName( final String baseFieldName, final Value value )
+    public static String createValueTypeAwareFieldName( final String baseFieldName, final Value value )
     {
-
         if ( value.isDateType() )
         {
             return appendIndexValueType( baseFieldName, IndexValueType.DATETIME );

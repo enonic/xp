@@ -3,22 +3,22 @@ module api.aggregation {
     export class AggregationSelection {
 
         name: string;
-        values: string[];
+        selectedBuckets: api.aggregation.Bucket[];
 
         constructor(name: string) {
             this.name = name;
         }
 
-        public setValues(values: string[]) {
-            this.values = values;
+        public setValues(selectedBuckets: api.aggregation.Bucket[]) {
+            this.selectedBuckets = selectedBuckets;
         }
 
         public getName(): string {
             return this.name;
         }
 
-        public getValues(): string[] {
-            return this.values;
+        public getSelectedBuckets(): api.aggregation.Bucket[] {
+            return this.selectedBuckets;
         }
 
     }

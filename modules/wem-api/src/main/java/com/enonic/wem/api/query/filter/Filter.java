@@ -2,19 +2,6 @@ package com.enonic.wem.api.query.filter;
 
 public abstract class Filter
 {
-    private final String fieldName;
-
-    protected Filter( final String fieldName )
-    {
-        this.fieldName = fieldName;
-    }
-
-    public String getFieldName()
-    {
-        return fieldName;
-    }
-
-
     public static ContentTypeFilter.Builder newContentTypeFilter()
     {
         return new ContentTypeFilter.Builder();
@@ -25,9 +12,9 @@ public abstract class Filter
         return new GenericValueFilter.Builder();
     }
 
-    public static ExistsFilter newExistsFilter( final String fieldName )
+    public static BooleanFilter.Builder newBooleanFilter()
     {
-        return new ExistsFilter( fieldName );
+        return new BooleanFilter.Builder();
     }
 
 }

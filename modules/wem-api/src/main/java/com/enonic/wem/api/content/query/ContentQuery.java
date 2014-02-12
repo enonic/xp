@@ -20,6 +20,7 @@ public class ContentQuery
 
     private final ImmutableSet<AggregationQuery> aggregationQueries;
 
+
     private final int from;
 
     private final int size;
@@ -63,6 +64,7 @@ public class ContentQuery
         return aggregationQueries;
     }
 
+
     public static class Builder
     {
         private QueryExpr queryExpr;
@@ -86,7 +88,6 @@ public class ContentQuery
             this.contentTypeNamesBuilder.add( contentTypeName );
             return this;
         }
-
 
         public Builder addContentTypeNames( final ContentTypeNames contentTypeNames )
         {

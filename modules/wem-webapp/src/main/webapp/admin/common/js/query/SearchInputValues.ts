@@ -19,12 +19,13 @@ module api.query {
             return this.textSearchFieldValue;
         }
 
-        public getSelectedValuesForAggregationName(name: string): string[] {
+        public getSelectedValuesForAggregationName(name: string): api.aggregation.Bucket[] {
 
             for (var i = 0; i < this.aggregationSelections.length; i++) {
 
                 if (this.aggregationSelections[i].getName() == name) {
-                    return this.aggregationSelections[i].getValues();
+
+                    return this.aggregationSelections[i].getSelectedBuckets();
                 }
 
             }

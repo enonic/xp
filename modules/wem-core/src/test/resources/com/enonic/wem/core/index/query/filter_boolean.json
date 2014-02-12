@@ -1,0 +1,38 @@
+{
+    "bool": {
+        "must": [
+            {
+                "exists": {
+                    "field": "mymust"
+                }
+            },
+            {
+                "exists": {
+                    "field": "mymust"
+                }
+            }
+        ],
+        "must_not": {
+            "exists": {
+                "field": "mymustnot"
+            }
+        },
+        "should": [
+            {
+                "exists": {
+                    "field": "myoptional"
+                }
+            },
+            {
+                "exists": {
+                    "field": "myoptional"
+                }
+            },
+            {
+                "exists": {
+                    "field": "myoptional"
+                }
+            }
+        ]
+    }
+}

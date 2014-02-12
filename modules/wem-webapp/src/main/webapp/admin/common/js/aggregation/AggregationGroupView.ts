@@ -59,11 +59,11 @@ module api.aggregation {
 
             this.aggregationViews.forEach((bucketAggregationView: api.aggregation.BucketAggregationView) => {
 
-                var selectedValues: string[] = bucketAggregationView.getSelectedValues();
+                var selectedBuckets: api.aggregation.Bucket[] = bucketAggregationView.getSelectedValues();
 
-                if (selectedValues != null) {
+                if (selectedBuckets != null) {
                     var aggregationSelection: api.aggregation.AggregationSelection = new api.aggregation.AggregationSelection(bucketAggregationView.getName());
-                    aggregationSelection.setValues(selectedValues);
+                    aggregationSelection.setValues(selectedBuckets);
 
                     aggregationSelections.push(aggregationSelection);
                 }

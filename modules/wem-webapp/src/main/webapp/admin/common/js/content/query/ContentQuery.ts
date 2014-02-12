@@ -22,7 +22,6 @@ module api.content.query {
 
         setContentTypeNames(contentTypeNames: api.schema.content.ContentTypeName[]) {
             this.contentTypeNames = contentTypeNames
-
         }
 
         getContentTypes(): api.schema.content.ContentTypeName[] {

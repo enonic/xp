@@ -16,7 +16,7 @@ module api.aggregation {
             this.hasAnyCountLargerThanZero = false;
             this.bucketAggregation.getBuckets().forEach((bucket: api.aggregation.Bucket) => {
 
-                this.addBucket(api.aggregation.BucketViewFactory.createBucketView(bucket, this));
+                this.addBucket(new api.aggregation.BucketView(bucket, this));
 
                 if (bucket.getDocCount() > 0) {
                     this.hasAnyCountLargerThanZero = true;
@@ -48,14 +48,17 @@ module api.aggregation {
             this.bucketViews.push(bucketView);
         }
 
-        getSelectedValues(): string[] {
-            var selectedValues: string[] = [];
+        getSelectedValues(): api.aggregation.Bucket[] {
+
+            var selectedBuckets: api.aggregation.Bucket[] = [];
+
             this.bucketViews.forEach((bucketView: api.aggregation.BucketView) => {
                 if (bucketView.isSelected()) {
-                    selectedValues.push(bucketView.getSelectedValue());
+                    selectedBuckets.push(bucketView.getBucket());
                 }
             });
-            return selectedValues;
+
+            return selectedBuckets;
         }
 
         deselectFacet(supressEvent?: boolean) {
@@ -74,9 +77,7 @@ module api.aggregation {
             var anyCountLargerThanZero = false;
 
             this.bucketAggregation.getBuckets().forEach((bucket: api.aggregation.Bucket) => {
-
-                this.addBucket(api.aggregation.BucketViewFactory.createBucketView(bucket, this));
-
+                this.addBucket(new api.aggregation.BucketView(bucket, this));
                 if (bucket.getDocCount() > 0) {
                     anyCountLargerThanZero = true;
                 }

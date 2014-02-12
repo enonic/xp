@@ -1,20 +1,22 @@
 package com.enonic.wem.core.index.query
 
 import com.enonic.wem.api.data.Value
-import com.enonic.wem.api.query.filter.Filter
+import com.enonic.wem.api.query.filter.BooleanFilter
+import com.enonic.wem.api.query.filter.ExistsFilter
+import com.enonic.wem.api.query.filter.FieldFilter
 import org.elasticsearch.index.query.FilterBuilder
 
 class FilterBuilderFactoryTest
-        extends BaseTestBuilderFactory
+    extends BaseTestBuilderFactory
 {
     def "create string value filter"()
     {
         given:
-        def queryFilter = Filter.newValueQueryFilter().
-                fieldName( "myField" ).
-                add( new Value.String( "myValue" ) ).
-                add( new Value.String( "mySecondValue" ) ).
-                build()
+        def queryFilter = FieldFilter.newValueQueryFilter().
+            fieldName( "myField" ).
+            add( new Value.String( "myValue" ) ).
+            add( new Value.String( "mySecondValue" ) ).
+            build()
         def expected = this.getClass().getResource( "filter_values_string.json" ).text
         FilterBuilderFactory factory = new FilterBuilderFactory();
 
@@ -28,11 +30,11 @@ class FilterBuilderFactoryTest
     def "create number value filter"()
     {
         given:
-        def queryFilter = Filter.newValueQueryFilter().
-                fieldName( "myField" ).
-                add( new Value.Double( 1.0 ) ).
-                add( new Value.Double( 2.0 ) ).
-                build()
+        def queryFilter = FieldFilter.newValueQueryFilter().
+            fieldName( "myField" ).
+            add( new Value.Double( 1.0 ) ).
+            add( new Value.Double( 2.0 ) ).
+            build()
         def expected = this.getClass().getResource( "filter_values_number.json" ).text
         FilterBuilderFactory factory = new FilterBuilderFactory();
 
@@ -46,7 +48,7 @@ class FilterBuilderFactoryTest
     def "create number exists filter"()
     {
         given:
-        def queryFilter = Filter.newExistsFilter( "myField" );
+        def queryFilter = ExistsFilter.newExistsFilter( "myField" );
         def expected = this.getClass().getResource( "filter_exists.json" ).text
         FilterBuilderFactory factory = new FilterBuilderFactory();
 
@@ -56,5 +58,28 @@ class FilterBuilderFactoryTest
         then:
         cleanString( expected ) == cleanString( filterBuilder.toString() )
     }
+
+    def "boolean filter"()
+    {
+        given:
+        BooleanFilter.Builder builder = BooleanFilter.newBooleanFilter()
+
+        builder.must( ExistsFilter.newExistsFilter( "MyMust" ) );
+        builder.must( ExistsFilter.newExistsFilter( "MyMust" ) );
+        builder.mustNot( ExistsFilter.newExistsFilter( "MyMustNot" ) );
+        builder.should( ExistsFilter.newExistsFilter( "MyOptional" ) );
+        builder.should( ExistsFilter.newExistsFilter( "MyOptional" ) );
+        builder.should( ExistsFilter.newExistsFilter( "MyOptional" ) );
+
+        def expected = this.getClass().getResource( "filter_boolean.json" ).text
+        FilterBuilderFactory factory = new FilterBuilderFactory();
+
+        when:
+        def FilterBuilder filterBuilder = factory.create( builder.build() )
+
+        then:
+        cleanString( expected ) == cleanString( filterBuilder.toString() )
+    }
+
 
 }

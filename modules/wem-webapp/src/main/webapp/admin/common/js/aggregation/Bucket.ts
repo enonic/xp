@@ -29,5 +29,10 @@ module api.aggregation {
         public static fromJson(json: api.aggregation.BucketJson): Bucket {
             return new Bucket(json.key, json.docCount);
         }
+
+        public getSelectionValue(): any {
+            return "test";
+        }
+
     }
 }

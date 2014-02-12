@@ -5,7 +5,7 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 class QueryParserTest
-        extends Specification
+    extends Specification
 {
     @Unroll
     def "test comparison (#query)"()
@@ -94,8 +94,8 @@ class QueryParserTest
         expr.toString() == expected
 
         where:
-        query = "a = dateTime('2013-11-11T22:22:22')"
-        expected = "a = dateTime('2013-11-11T22:22:22')"
+        query                                 | expected
+        "a = dateTime('2013-11-11T22:22:22')" | "a = dateTime('2013-11-11T22:22:22')"
     }
 
     def "test NOT expression"()

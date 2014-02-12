@@ -37,9 +37,8 @@ module api.aggregation {
             return this.bucket.getKey() + ' (' + this.bucket.getDocCount() + ')';
         }
 
-        public getSelectedValue(): string {
-
-            return this.getName();
+        getBucket(): api.aggregation.Bucket {
+            return this.bucket;
         }
 
         getName(): string {

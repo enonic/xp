@@ -309,7 +309,7 @@ public abstract class JavaTypeConverter<T>
 
         public org.joda.time.DateTime convertFromString( final java.lang.String value )
         {
-            return FORMATTER.parseDateTime( value ).toDateTime();
+            return com.enonic.wem.api.support.DateTimeFormatter.parse( value );
         }
     }
 
