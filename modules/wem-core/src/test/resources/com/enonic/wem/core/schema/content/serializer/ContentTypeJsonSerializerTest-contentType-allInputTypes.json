@@ -1,6 +1,7 @@
 {
     "name": "all_input_types",
     "displayName": "All the Input Types",
+    "description": "A description",
     "contentDisplayNameScript": null,
     "superType": "structured",
     "isAbstract": false,

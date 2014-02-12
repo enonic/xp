@@ -94,6 +94,7 @@ public class MixinXmlSerializer
         final Mixin.Builder builder = newMixin();
         builder.name( overridingName != null ? overridingName : mixinEl.getChildTextTrim( "name" ) );
         builder.displayName( mixinEl.getChildTextTrim( "display-name" ) );
+        builder.description( mixinEl.getChildTextTrim( "description" ) );
 
         Iterable<FormItem> formItems = formItemsSerializer.parse( mixinEl.getChild( "items" ) );
         for ( FormItem formItem : formItems )

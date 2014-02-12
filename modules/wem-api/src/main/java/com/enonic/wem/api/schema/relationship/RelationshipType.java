@@ -83,6 +83,7 @@ public final class RelationshipType
         final RelationshipType that = (RelationshipType) o;
         return Objects.equal( this.getName(), that.getName() ) &&
             Objects.equal( this.getDisplayName(), that.getDisplayName() ) &&
+            Objects.equal( this.getDescription(), that.getDescription() ) &&
             Objects.equal( this.fromSemantic, that.fromSemantic ) &&
             Objects.equal( this.toSemantic, that.toSemantic ) &&
             Objects.equal( this.allowedFromTypes, that.allowedFromTypes ) &&
@@ -92,7 +93,7 @@ public final class RelationshipType
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( getName(), getDisplayName(), fromSemantic, toSemantic, allowedFromTypes, allowedToTypes );
+        return Objects.hashCode( getName(), getDisplayName(), getDescription(), fromSemantic, toSemantic, allowedFromTypes, allowedToTypes );
     }
 
     public void checkIllegalEdit( final RelationshipType to )

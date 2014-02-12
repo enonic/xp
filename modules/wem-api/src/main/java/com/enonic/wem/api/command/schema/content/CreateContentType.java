@@ -16,6 +16,8 @@ public final class CreateContentType
 
     private String displayName;
 
+    private String description;
+
     private ContentTypeName superType;
 
     private boolean isAbstract;
@@ -58,6 +60,17 @@ public final class CreateContentType
     public CreateContentType displayName( final String displayName )
     {
         this.displayName = displayName;
+        return this;
+    }
+
+    public String getDescription()
+    {
+        return description;
+    }
+
+    public CreateContentType description( final String description )
+    {
+        this.description = description;
         return this;
     }
 

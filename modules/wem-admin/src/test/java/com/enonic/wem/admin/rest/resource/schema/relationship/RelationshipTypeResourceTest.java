@@ -67,6 +67,7 @@ public class RelationshipTypeResourceTest
     {
         final RelationshipType relationshipType = newRelationshipType().
             name( "the_relationship_type" ).
+            description( "RT description" ).
             build();
 
         final RelationshipTypeName name = RelationshipTypeName.from( "the_relationship_type" );

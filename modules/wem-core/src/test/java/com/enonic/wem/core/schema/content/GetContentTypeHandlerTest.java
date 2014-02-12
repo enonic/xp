@@ -46,6 +46,7 @@ public class GetContentTypeHandlerTest
             name( NodeName.from( "content_type_1" ) ).
             id( EntityId.from( "1" ) ).
             property( "displayName", "DisplayName" ).
+            property( "description", "Description" ).
             build();
 
         Mockito.when( client.execute( Mockito.isA( GetNodesByParent.class ) ) ).thenReturn( Nodes.from( node ) );
@@ -61,5 +62,6 @@ public class GetContentTypeHandlerTest
         final ContentType contentType = command.getResult();
 
         assertEquals( "DisplayName", contentType.getDisplayName() );
+        assertEquals( "Description", contentType.getDescription() );
     }
 }

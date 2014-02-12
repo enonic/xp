@@ -1,6 +1,7 @@
 {
     "name": "all_schemas",
     "displayName": "All the Base Types",
+    "description": "A description",
     "contentDisplayNameScript": "$('firstName') + ' ' + $('lastName')",
     "superType": "content",
     "isAbstract": false,

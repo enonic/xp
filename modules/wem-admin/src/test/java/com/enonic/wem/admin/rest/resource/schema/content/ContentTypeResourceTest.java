@@ -76,6 +76,7 @@ public class ContentTypeResourceTest
             createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ) ).
             superType( ContentTypeName.unstructured() ).
             displayName( "My ContentType" ).
+            description( "My description" ).
             addFormItem( newInput().
                 name( "myTextLine" ).
                 inputType( TEXT_LINE ).

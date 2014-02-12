@@ -5,7 +5,6 @@ import org.joda.time.DateTime;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import com.enonic.wem.admin.json.DateTimeFormatter;
 import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeSummaryJson;
@@ -30,6 +29,8 @@ public class SchemaJson
     private final String name;
 
     private final String displayName;
+
+    private final String description;
 
     private final DateTime createdTime;
 
@@ -60,6 +61,7 @@ public class SchemaJson
         this.key = schema.getSchemaKey() != null ? schema.getSchemaKey().toString() : null;
         this.name = schema.getName() != null ? schema.getName().toString() : null;
         this.displayName = schema.getDisplayName();
+        this.description = schema.getDescription();
         this.createdTime = schema.getCreatedTime();
         this.modifiedTime = schema.getModifiedTime();
         this.iconUrl = SchemaIconUrlResolver.resolve( schema.getSchemaKey() );
@@ -79,6 +81,11 @@ public class SchemaJson
     public String getDisplayName()
     {
         return displayName;
+    }
+
+    public String getDescription()
+    {
+        return description;
     }
 
     public DateTime getCreatedTime()

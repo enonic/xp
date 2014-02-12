@@ -4,6 +4,7 @@
     "allowedToTypes": [ ],
     "createdTime": null,
     "deletable": true,
+    "description": "RT description",
     "displayName": null,
     "editable": true,
     "fromSemantic": null,

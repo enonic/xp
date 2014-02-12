@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mixin>
     <display-name>display name</display-name>
+    <description>description</description>
     <items>
         <form-item-set name="mySet">
             <items>

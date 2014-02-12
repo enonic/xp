@@ -45,6 +45,7 @@ public class ContentTypeJsonSerializer
         final ObjectNode objectNode = mapper.createObjectNode();
         objectNode.put( "name", contentType.getName().toString() );
         objectNode.put( "displayName", contentType.getDisplayName() );
+        objectNode.put( "description", contentType.getDescription() );
         objectNode.put( "contentDisplayNameScript", contentType.getContentDisplayNameScript() );
         objectNode.put( "superType", contentType.getSuperType() != null ? contentType.getSuperType().toString() : null );
         objectNode.put( "isAbstract", contentType.isAbstract() );
