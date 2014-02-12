@@ -16,7 +16,7 @@ module app.contextwindow {
 
     export class ContextWindow extends api.ui.NavigableFloatingWindow {
         private componentTypesPanel: ComponentTypesPanel;
-        private inspectorPanel: InspectorPanel;
+        private inspectionPanel: InspectionPanel;
         private emulatorPanel: EmulatorPanel;
         private liveEditWindow: any;
         private liveEditJQuery: JQueryStatic;
@@ -58,7 +58,7 @@ module app.contextwindow {
                 draggingMask: this.draggingMask
             });
 
-            this.inspectorPanel = new InspectorPanel({
+            this.inspectionPanel = new InspectionPanel({
                 liveEditWindow: this.liveEditWindow,
                 siteTemplate: config.siteTemplate,
                 liveFormPanel: this.liveFormPanel
@@ -68,7 +68,7 @@ module app.contextwindow {
             });
 
             this.addItem("Insert", this.componentTypesPanel);
-            this.addItem("Settings", this.inspectorPanel);
+            this.addItem("Settings", this.inspectionPanel);
             this.addItem("Emulator", this.emulatorPanel);
 
             this.minimizer = new Minimizer(()=> {
@@ -79,7 +79,7 @@ module app.contextwindow {
             this.getNavigator().appendChild(this.minimizer);
 
             SelectComponentEvent.on((event) => {
-                this.selectPanel(this.inspectorPanel);
+                this.selectPanel(this.inspectionPanel);
                 this.selectedComponent = event.getComponent();
             });
 

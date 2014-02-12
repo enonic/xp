@@ -6,5 +6,5 @@
 ///<reference path='EmulatorPanel.ts' />
 ///<reference path='SelectPanel.ts' />
 ///<reference path='DetailPanel.ts' />
-///<reference path='InspectorPanel.ts' />
+///<reference path='InspectionPanel.ts' />
 ///<reference path='ContextWindow.ts' />

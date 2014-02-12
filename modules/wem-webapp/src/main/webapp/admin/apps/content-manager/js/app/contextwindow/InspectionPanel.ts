@@ -2,21 +2,21 @@ module app.contextwindow {
 
     import SiteTemplate = api.content.site.template.SiteTemplate;
 
-    export interface InspectorPanelConfig {
+    export interface InspectionPanelConfig {
 
         liveEditWindow:any;
         siteTemplate:SiteTemplate;
         liveFormPanel:app.wizard.LiveFormPanel;
     }
 
-    export class InspectorPanel extends api.ui.DeckPanel {
+    export class InspectionPanel extends api.ui.DeckPanel {
 
         private detailPanel: DetailPanel;
         private selectPanel: SelectPanel;
         private imageSelectPanel: app.contextwindow.image.ImageSelectPanel;
         private liveFormPanel:app.wizard.LiveFormPanel;
 
-        constructor(config: InspectorPanelConfig) {
+        constructor(config: InspectionPanelConfig) {
             super();
 
             this.detailPanel = new DetailPanel({
