@@ -19,7 +19,7 @@ module api.content.page {
                 return false;
             }
 
-            var nameWithoutCountPostfix = this.value.substring(this.value.lastIndexOf(ComponentName.COUNT_DELIMITER), this.value.length);
+            var nameWithoutCountPostfix = this.value.substring(0, this.value.lastIndexOf(ComponentName.COUNT_DELIMITER));
             return nameWithoutCountPostfix == other.toString();
         }
 
