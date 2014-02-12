@@ -18,12 +18,17 @@ module api.content.page {
                 this.descriptorKey = builder.descriptor;
                 this.config = builder.config;
                 this.region = builder.region;
-                this.path = ComponentPath.fromRegionPathAndComponentName(this.region, this.name);
+                if (this.region && this.name) {
+                    this.path = ComponentPath.fromRegionPathAndComponentName(this.region, this.name);
+                }
             }
         }
 
         setPath(path: ComponentPath) {
             this.path = path;
+            if (path != null) {
+                this.region = path.getRegionPath();
+            }
         }
 
         getPath(): ComponentPath {

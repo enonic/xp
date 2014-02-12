@@ -16,40 +16,34 @@ module api.content.page {
         }
 
         /*
-         *  Add component after target component. Returns true if component was added. Component will not be added if target component was not found.
+         *  Add component after precedingComponent in given region. Returns null if region was not found.
+         *  Adds component first in region if preceding component is null.
          */
-        addComponentAfter(component: PageComponent, target: ComponentPath): ComponentPath {
+        addComponentAfter(component: PageComponent, regionPath: RegionPath, precedingComponent: ComponentPath): ComponentPath {
 
-            var region = this.getRegionForComponent(target);
+            var region = this.getRegionByPath(regionPath);
             if (region == null) {
                 return null;
             }
 
-            var index = region.addComponentAfter(component, target.getLastLevel().getComponentName());
-            if (index == -1) {
-                return null;
+            if (precedingComponent == null) {
+                region.addComponentAfter(component, null);
             }
+            else {
+                var index = region.addComponentAfter(component, precedingComponent.getLastLevel().getComponentName());
+                if (index == -1) {
+                    return null;
+                }
+            }
+
             return component.getPath();
         }
 
-        addComponentFirst(component: PageComponent, regionName: string): ComponentPath {
+        moveComponent(componentPath: ComponentPath, toRegion: RegionPath, precedingComponent: ComponentPath): ComponentPath {
 
-            var region = this.getRegion(regionName);
-            if (region == null) {
-                return null;
-            }
-
-            return region.addComponentFirst(component);
-        }
-
-        moveComponent(componentPath: ComponentPath, toRegion: string, afterComponent: ComponentPath): ComponentPath {
             var component = this.removeComponent(componentPath);
             console.log("moving component", arguments);
-            if (afterComponent) {
-                return this.addComponentAfter(component, afterComponent);
-            } else {
-                return this.addComponentFirst(component, toRegion);
-            }
+            return this.addComponentAfter(component, toRegion, precedingComponent);
         }
 
         removeComponent(componentPath: ComponentPath) {
@@ -71,23 +65,7 @@ module api.content.page {
 
         getRegionForComponent(path: ComponentPath): region.Region {
 
-            var regionAndComponent = path.getFirstLevel();
-            var region = this.getRegion(regionAndComponent.getRegionName());
-            if (region == null) {
-                return null;
-            }
-            var component = region.getComponentByName(regionAndComponent.getComponentName());
-            if (component == null) {
-                return null;
-            }
-
-            if (path.numberOfLevels() == 1) {
-                return region;
-            }
-
-            api.util.assert(component instanceof layout.LayoutComponent, "Expected LayoutComponent: " + api.util.getClassName(component));
-            var layoutComponent = <layout.LayoutComponent>component;
-            return layoutComponent.getLayoutRegions().getRegionForComponent(path.removeFirstLevel());
+            return this.getRegionByPath(path.getRegionPath());
         }
 
         getRegions(): region.Region[] {
@@ -99,8 +77,21 @@ module api.content.page {
             return regions;
         }
 
-        getRegion(name: string): region.Region {
+        getRegionByName(name: string): region.Region {
+
             return this.regionByName[name];
+        }
+
+        getRegionByPath(path: RegionPath): region.Region {
+
+            if (!path.hasParentComponentPath()) {
+                return this.getRegionByName(path.getRegionName());
+            }
+            else {
+
+                var layout = this.getLayoutComponent(path.getParentComponentPath());
+                return layout.getLayoutRegions().getRegionByName(path.getRegionName())
+            }
         }
 
         getImageComponent(path: ComponentPath): image.ImageComponent {
@@ -115,11 +106,23 @@ module api.content.page {
             return <image.ImageComponent>component;
         }
 
+        getLayoutComponent(path: ComponentPath): layout.LayoutComponent {
+
+            var component = this.getComponent(path);
+            if (component == null) {
+                return null;
+            }
+            api.util.assert(component instanceof layout.LayoutComponent,
+                "PageComponent [" + component.getPath().toString() + "] not an LayoutComponent: " + api.util.getClassName(component));
+
+            return <layout.LayoutComponent>component;
+        }
+
 
         getComponent(path: ComponentPath): PageComponent {
 
             var first: ComponentPathRegionAndComponent = path.getFirstLevel();
-            var region = this.getRegion(first.getRegionName());
+            var region = this.getRegionByName(first.getRegionName());
             var component = region.getComponentByName(first.getComponentName());
 
             if (path.numberOfLevels() == 1) {
@@ -135,30 +138,10 @@ module api.content.page {
             }
         }
 
-        ensureUniqueComponentName(wantedName: ComponentName): ComponentName {
+        ensureUniqueComponentName(inRegion: RegionPath, wantedName: ComponentName): ComponentName {
 
-            var region: region.Region;
-            var duplicates = false;
-            for (var key in this.regionByName) {
-                region = this.regionByName[key];
-
-                if (region.countNumberOfDuplicates(wantedName) > 0) {
-                    duplicates = true;
-                    break;
-                }
-            }
-
-            if (!duplicates) {
-                return wantedName;
-            }
-
-            var instanceCount = 0;
-            for (key in this.regionByName) {
-                region = this.regionByName[key];
-                instanceCount += region.countNumberOfDuplicates(wantedName);
-            }
-
-            return wantedName.createDuplicate(instanceCount);
+            var region = this.getRegionByPath(inRegion);
+            return region.ensureUniqueComponentName(wantedName);
         }
 
         public toJson(): region.json.RegionJson[] {

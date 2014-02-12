@@ -46,6 +46,15 @@ module api.content.page.region {
             return this.path;
         }
 
+        ensureUniqueComponentName(wantedName: ComponentName): ComponentName {
+
+            var numberOfDuplicates = this.countNumberOfDuplicates(wantedName);
+            if (numberOfDuplicates == 0) {
+                return wantedName;
+            }
+            return wantedName.createDuplicate(numberOfDuplicates + 1);
+        }
+
         countNumberOfDuplicates(name: api.content.page.ComponentName): number {
 
             var count = 0;
@@ -61,44 +70,33 @@ module api.content.page.region {
          *  Add component after target component. Component will only be added if target component is found.
          *  Returns the index of the added component, -1 if target component was not found.
          */
-        addComponentAfter(component: api.content.page.PageComponent, target: ComponentName): number {
+        addComponentAfter(component: api.content.page.PageComponent, precedingComponent: ComponentName): number {
 
             api.util.assert(!this.hasComponentWithName(component.getName()),
                 "Component already added to region [" + this.name + "]: " + component.getName().toString());
 
-            var targetIndex = this.getComponentIndex(target);
-            if (targetIndex == -1 && this.pageComponents.length > 1) {
-                return -1;
+
+            var precedingIndex = -1;
+            if (precedingComponent != null) {
+                precedingIndex = this.getComponentIndex(precedingComponent);
+                if (precedingIndex == -1 && this.pageComponents.length > 1) {
+                    return -1;
+                }
             }
 
             var componentPath = ComponentPath.fromRegionPathAndComponentName(this.path, component.getName());
             component.setPath(componentPath);
-
             this.componentByName[component.getName().toString()] = component;
 
-            if (targetIndex == -1) {
+            if (precedingIndex == -1) {
                 this.pageComponents.push(component);
                 return 0;
             }
             else {
-                var index = targetIndex + 1;
+                var index = precedingIndex + 1;
                 this.pageComponents.splice(index, 0, component);
                 return index;
             }
-        }
-
-        addComponentFirst(component: api.content.page.PageComponent): ComponentPath {
-
-            api.util.assert(!this.hasComponentWithName(component.getName()),
-                "Component already added to region [" + this.name + "]: " + component.getName().toString());
-
-            var componentPath = ComponentPath.fromRegionPathAndComponentName(this.path, component.getName());
-            component.setPath(componentPath);
-
-            this.componentByName[component.getName().toString()] = component;
-            this.pageComponents.splice(0, 0, component);
-
-            return componentPath;
         }
 
         removeComponent(component: api.content.page.PageComponent): api.content.page.PageComponent {

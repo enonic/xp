@@ -309,39 +309,26 @@ module app.wizard {
 
 
             this.liveEditJQuery(this.liveEditWindow).on('componentAdded.liveEdit',
-                (event, component?, regionName?, componentPathToAddAfterAsString?: string) => {
+                (event, componentEl?: api.dom.Element, regionPathAsString?: string, componentPathToAddAfterAsString?: string) => {
                     //TODO: Make all components work and not only image
 
-                    var componentName = this.pageRegions.ensureUniqueComponentName(new api.content.page.ComponentName("Image"));
+                    var regionPath = api.content.page.RegionPath.fromString(regionPathAsString);
+
+                    var componentName = this.pageRegions.ensureUniqueComponentName(regionPath, new api.content.page.ComponentName("Image"));
 
                     var componentToAddAfter: api.content.page.ComponentPath = null;
                     if (componentPathToAddAfterAsString) {
                         componentToAddAfter = api.content.page.ComponentPath.fromString(componentPathToAddAfterAsString);
                     }
 
-                    var regionPath: api.content.page.RegionPath;
-                    if (componentToAddAfter != null) {
-                        regionPath = componentToAddAfter.getRegionPath();
-                    }
-                    else {
-                        regionPath = api.content.page.RegionPath.fromString(regionName);
-                    }
-
                     var imageComponent = new ImageComponentBuilder();
                     imageComponent.setName(componentName);
-                    imageComponent.setRegion(regionPath);
+                    var componentPath = this.pageRegions.addComponentAfter(imageComponent.build(), regionPath, componentToAddAfter);
 
-                    var componentPath;
-                    if (componentToAddAfter) {
-                        componentPath = this.pageRegions.addComponentAfter(imageComponent.build(), componentToAddAfter);
-                    }
-                    else {
-                        this.pageRegions.addComponentFirst(imageComponent.build(), regionName);
-                        componentPath = ComponentPath.fromString(regionName + "/" + componentName.toString());
-                    }
-
-                    component.getEl().setData("live-edit-component", componentPath.toString());
-                    component.getEl().setData("live-edit-name", componentName.toString());
+                    componentEl.getEl().setData("live-edit-component", componentPath.toString());
+                    componentEl.getEl().setData("live-edit-name", componentName.toString());
+                    // TODO: resolve type dynamically
+                    componentEl.getEl().setData("live-edit-type", "image");
                 });
 
             this.liveEditJQuery(this.liveEditWindow).on('imageComponentSetImage.liveEdit',
