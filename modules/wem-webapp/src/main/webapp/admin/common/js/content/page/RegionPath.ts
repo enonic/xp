@@ -22,6 +22,11 @@ module api.content.page {
             }
         }
 
+        public hasParentComponentPath(): boolean {
+
+            return this.parentComponentPath != null;
+        }
+
         public getParentComponentPath(): ComponentPath {
             return this.parentComponentPath;
         }
