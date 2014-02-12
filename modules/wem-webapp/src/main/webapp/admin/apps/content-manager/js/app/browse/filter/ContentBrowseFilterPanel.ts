@@ -57,10 +57,9 @@ module app.browse.filter {
                         this.appendFulltextSearch(searchInputValues, contentQuery);
                         this.appendContentTypeFilter(searchInputValues, contentQuery);
 
-                        // TODO: Implement as separate filter
-                        var lastModified = this.appendLastModifiedQuery(searchInputValues);
-                        if (lastModified != null) {
-                            contentQuery.setQueryExpr(new QueryExpr(lastModified));
+                        var lastModifiedFilter: api.query.filter.Filter = this.appendLastModifiedQuery(searchInputValues);
+                        if (lastModifiedFilter != null) {
+                            contentQuery.addQueryFilter(lastModifiedFilter);
                         }
 
                         this.appendContentTypesAggregation(contentQuery);
@@ -146,52 +145,24 @@ module app.browse.filter {
             contentQuery.setContentTypeNames(contentTypeNames);
         }
 
-        private appendLastModifiedQuery(searchInputValues: api.query.SearchInputValues): api.query.expr.ConstraintExpr {
+        private appendLastModifiedQuery(searchInputValues: api.query.SearchInputValues): api.query.filter.Filter {
 
             var lastModifiedSelectedBuckets: api.aggregation.Bucket[] = searchInputValues.getSelectedValuesForAggregationName("lastModified");
 
-            if (lastModifiedSelectedBuckets == null) {
+            if (lastModifiedSelectedBuckets == null || lastModifiedSelectedBuckets.length == 0) {
                 return null;
             }
 
-            var fieldExp: api.query.expr.FieldExpr = new api.query.expr.FieldExpr("modifiedtime");
-            var fieldExp: api.query.expr.FieldExpr = new api.query.expr.FieldExpr("modifiedtime");
 
-            var expressions: api.query.expr.ConstraintExpr[] = [];
+            var dateRangeBucket: api.aggregation.DateRangeBucket = <api.aggregation.DateRangeBucket> lastModifiedSelectedBuckets.pop();
 
-            lastModifiedSelectedBuckets.forEach((dateRangeBucket: api.aggregation.DateRangeBucket)=> {
+            // FIX FIX FIX
 
-                if (dateRangeBucket.getFrom() != null && dateRangeBucket.getTo() == null) {
+            var rangeFilter: api.query.filter.RangeFilter = new api.query.filter.RangeFilter("modifiedtime",
+                ValueExpr.dateTime(dateRangeBucket.getFrom()).getValue(), null);
 
-                    var compareExp: CompareExpr = new api.query.expr.CompareExpr(fieldExp, api.query.expr.CompareOperator.GTE,
-                        [ValueExpr.dateTime(dateRangeBucket.getFrom())]);
+            return rangeFilter;
 
-                    expressions.push(compareExp);
-
-                } else if ((dateRangeBucket.getFrom() == null && dateRangeBucket.getTo() != null)) {
-
-                    var compareExp: CompareExpr = new api.query.expr.CompareExpr(fieldExp, api.query.expr.CompareOperator.LTE,
-                        [ValueExpr.dateTime(dateRangeBucket.getTo())]);
-
-                    expressions.push(compareExp);
-
-                } else if ((dateRangeBucket.getFrom() != null && dateRangeBucket.getTo() != null)) {
-
-                    var leftExpr: CompareExpr = new api.query.expr.CompareExpr(fieldExp, api.query.expr.CompareOperator.GTE,
-                        [ValueExpr.dateTime(dateRangeBucket.getFrom())]);
-
-                    var rightExpr: CompareExpr = new api.query.expr.CompareExpr(fieldExp, api.query.expr.CompareOperator.LTE,
-                        [ValueExpr.dateTime(dateRangeBucket.getTo())]);
-
-                    var logicalExp: LogicalExp = new api.query.expr.LogicalExpr(leftExpr, LogicalOperator.AND, rightExpr);
-                    expressions.push(logicalExp);
-                }
-            });
-
-
-            console.log("Created lastModifiedExpressions: " + expressions.toString(), expressions);
-
-            return expressions.pop();
         }
 
         private parseContentTypeNames(buckets: api.aggregation.Bucket[]): ContentTypeName[] {

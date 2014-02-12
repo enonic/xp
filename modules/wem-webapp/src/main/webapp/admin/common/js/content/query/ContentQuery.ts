@@ -8,6 +8,8 @@ module api.content.query {
 
         private aggregationQueries: api.query.aggregation.AggregationQuery[] = [];
 
+        private queryFilters: api.query.filter.Filter[] = [];
+
         private from: number = 0;
 
         private size: number = 10;
@@ -50,6 +52,14 @@ module api.content.query {
 
         getAggregationQueries(): api.query.aggregation.AggregationQuery[] {
             return this.aggregationQueries;
+        }
+
+        addQueryFilter(queryFilter: api.query.filter.Filter) {
+            this.queryFilters.push(queryFilter);
+        }
+
+        getQueryFilters(): api.query.filter.Filter[] {
+            return this.queryFilters;
         }
 
     }

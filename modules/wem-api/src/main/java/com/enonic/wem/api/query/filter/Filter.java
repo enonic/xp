@@ -17,5 +17,10 @@ public abstract class Filter
         return new BooleanFilter.Builder();
     }
 
+    public static RangeFilter.Builder newRangeFilter( final String fieldName )
+    {
+        return new RangeFilter.Builder( fieldName );
+    }
+
 }
 

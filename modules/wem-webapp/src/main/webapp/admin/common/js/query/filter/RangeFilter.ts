@@ -1,0 +1,35 @@
+module api.query.filter {
+
+    export class RangeFilter extends Filter {
+
+        private from: api.data.Value;
+        private to: api.data.Value;
+        private fieldName: string;
+
+        constructor(fieldName: string, from: api.data.Value, to: api.data.Value) {
+            super();
+            this.fieldName = fieldName;
+            this.from = from;
+            this.to = to;
+        }
+
+        toJson(): api.query.filter.FilterTypeWrapperJson {
+
+            var json: api.query.filter.RangeFilterJson = {
+                fieldName: this.fieldName,
+                from: this.from != null ? this.from.asString() : null,
+                to: this.to != null ? this.to.asString() : null
+            }
+
+            return <api.query.filter.FilterTypeWrapperJson> {
+                RangeFilter: json
+            }
+
+        }
+
+
+    }
+
+
+}
+

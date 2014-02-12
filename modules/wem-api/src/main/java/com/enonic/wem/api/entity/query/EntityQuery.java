@@ -123,6 +123,12 @@ public class EntityQuery
             return this;
         }
 
+        public Builder addQueryFilters( final Set<Filter> queryFilters )
+        {
+            this.queryFilters.addAll( queryFilters );
+            return this;
+        }
+
         public Builder addFacet( final FacetQuery facetQuery )
         {
             this.facetQueries.add( facetQuery );
@@ -141,11 +147,12 @@ public class EntityQuery
             return this;
         }
 
-        public Builder setAggregationQueries( final Set<AggregationQuery> aggregationQueries )
+        public Builder addAggregationQueries( final Set<AggregationQuery> aggregationQueries )
         {
-            this.aggregationQueries = aggregationQueries;
+            this.aggregationQueries.addAll( aggregationQueries );
             return this;
         }
+
 
         public EntityQuery build()
         {

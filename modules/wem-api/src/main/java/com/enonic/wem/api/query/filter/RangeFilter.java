@@ -34,7 +34,7 @@ public class RangeFilter
 
         private String fieldName;
 
-        private Builder( final String fieldName )
+        public Builder( final String fieldName )
         {
             this.fieldName = fieldName;
         }

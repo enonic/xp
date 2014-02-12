@@ -24,7 +24,8 @@ module api.content {
                 size: this.contentQuery.getSize(),
                 contentTypeNames: this.contentTypeNamesAsString(this.contentQuery.getContentTypes()),
                 expand: this.expandAsString(),
-                aggregationQueries: this.aggregationQueriesToJson(this.contentQuery.getAggregationQueries())
+                aggregationQueries: this.aggregationQueriesToJson(this.contentQuery.getAggregationQueries()),
+                queryFilters: this.queryFiltersToJson(this.contentQuery.getQueryFilters())
             };
         }
 
@@ -65,6 +66,7 @@ module api.content {
             return deferred.promise;
         }
 
+
         private aggregationQueriesToJson(aggregationQueries: api.query.aggregation.AggregationQuery[]): api.query.aggregation.AggregationQueryTypeWrapperJson[] {
             var aggregationQueryJsons: api.query.aggregation.AggregationQueryTypeWrapperJson[] = [];
 
@@ -77,6 +79,24 @@ module api.content {
             });
 
             return aggregationQueryJsons;
+        }
+
+
+        private queryFiltersToJson(queryFilters: api.query.filter.Filter[]): api.query.filter.FilterTypeWrapperJson[] {
+
+            var queryFilterJsons: api.query.filter.FilterTypeWrapperJson[] = [];
+
+            if (queryFilters == null || queryFilters.length == 0) {
+                return queryFilterJsons;
+            }
+
+            queryFilters.forEach((queryFilter: api.query.filter.Filter)=> {
+
+                queryFilterJsons.push(queryFilter.toJson());
+
+            });
+
+            return queryFilterJsons;
         }
 
         private expandAsString(): string {

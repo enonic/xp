@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.enonic.wem.admin.rest.resource.content.json.filter.FilterJson;
 import com.enonic.wem.api.content.query.ContentQuery;
 import com.enonic.wem.api.query.parser.QueryParser;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
@@ -22,7 +23,8 @@ public class ContentQueryJson
                       @JsonProperty("size") final Integer size, //
                       @JsonProperty("contentTypeNames") final List<String> contentTypeNameString,
                       @JsonProperty("expand") final String expand,
-                      @JsonProperty("aggregationQueries") final List<AggregationQueryJson> aggregationQueries )
+                      @JsonProperty("aggregationQueries") final List<AggregationQueryJson> aggregationQueries, //
+                      @JsonProperty("queryFilters") final List<FilterJson> queryFilters )
     {
 
         final ContentQuery.Builder builder = ContentQuery.newContentQuery().
@@ -36,6 +38,14 @@ public class ContentQueryJson
             for ( final AggregationQueryJson aggregationQueryJson : aggregationQueries )
             {
                 builder.aggregationQuery( aggregationQueryJson.getAggregationQuery() );
+            }
+        }
+
+        if ( queryFilters != null )
+        {
+            for ( final FilterJson queryFilterJson : queryFilters )
+            {
+                builder.queryFilter( queryFilterJson.getFilter() );
             }
         }
 
