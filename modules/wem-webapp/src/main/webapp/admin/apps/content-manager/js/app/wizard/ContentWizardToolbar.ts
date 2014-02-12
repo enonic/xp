@@ -7,6 +7,8 @@ module app.wizard {
         closeAction:api.ui.Action;
         publishAction:api.ui.Action;
         previewAction:api.ui.Action;
+        showLiveEditAction:api.ui.Action;
+        showFormAction:api.ui.Action;
     }
 
     export class ContentWizardToolbar extends api.ui.toolbar.Toolbar {
@@ -19,15 +21,17 @@ module app.wizard {
             super.addAction(params.publishAction);
             super.addAction(params.previewAction);
             super.addGreedySpacer();
-            var displayModeToggle = new api.ui.ToggleSlide({
-                turnOnAction: new app.wizard.action.ShowLiveFormAction(),
-                turnOffAction: new app.wizard.action.ShowFormAction()
+
+            var liveFormToggler = new api.ui.ToggleSlide({
+                turnOnAction: params.showLiveEditAction,
+                turnOffAction: params.showFormAction
             }, false);
-            displayModeToggle.setEnabled(params.previewAction.isEnabled());
+            liveFormToggler.setEnabled(params.previewAction.isEnabled());
             params.previewAction.addPropertyChangeListener((action:api.ui.Action) => {
-                displayModeToggle.setEnabled(action.isEnabled());
-            })
-            super.addElement(displayModeToggle);
+                liveFormToggler.setEnabled(action.isEnabled());
+            });
+
+            super.addElement(liveFormToggler);
             super.addAction(params.closeAction);
 
         }

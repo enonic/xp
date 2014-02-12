@@ -182,12 +182,12 @@ module api.app.wizard {
             });
         }
 
-        toggleFormPanel(toggle: boolean) {
-            if (toggle) {
-                this.backPanel.showPanel(0)
-            } else {
-                this.backPanel.showPanel(1)
-            }
+        showPanel(panel: api.ui.Panel) {
+            this.backPanel.showPanel(this.backPanel.getPanelIndex(panel));
+        }
+
+        showMainPanel() {
+            this.backPanel.showPanel(0);
         }
 
         addListener(listener: WizardPanelListener) {
@@ -326,11 +326,11 @@ module api.app.wizard {
                         this.postPersistNewItem(persistedItem).
                             done(()=> {
 
-                            this.setPersistedItem(persistedItem).
-                                done(() => {
-                                    deferred.resolve(persistedItem);
-                                });
-                        });
+                                this.setPersistedItem(persistedItem).
+                                    done(() => {
+                                        deferred.resolve(persistedItem);
+                                    });
+                            });
 
                     });
             }

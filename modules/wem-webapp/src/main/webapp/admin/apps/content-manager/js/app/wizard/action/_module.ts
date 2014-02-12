@@ -3,5 +3,5 @@
 ///<reference path='PublishAction.ts' />
 ///<reference path='PreviewAction.ts' />
 ///<reference path='ShowFormAction.ts' />
-///<reference path='ShowLiveFormAction.ts' />
+///<reference path='ShowLiveEditAction.ts' />
 ///<reference path='ContentWizardActions.ts' />

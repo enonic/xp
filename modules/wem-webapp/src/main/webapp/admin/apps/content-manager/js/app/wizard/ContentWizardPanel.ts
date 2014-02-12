@@ -70,7 +70,9 @@ module app.wizard {
                 deleteAction: actions.getDeleteAction(),
                 closeAction: actions.getCloseAction(),
                 publishAction: actions.getPublishAction(),
-                previewAction: actions.getPreviewAction()
+                previewAction: actions.getPreviewAction(),
+                showLiveEditAction: actions.getShowLiveEditAction(),
+                showFormAction: actions.getShowFormAction()
             });
 
             if (this.parentContent) {
@@ -98,15 +100,8 @@ module app.wizard {
             }
             if (this.siteTemplate) {
                 this.livePanel = new LiveFormPanel(<app.wizard.LiveFormPanelConfig> {
-                    contentWizardPanel:this});
+                    contentWizardPanel: this, siteTemplate: this.siteTemplate});
             }
-            app.wizard.event.ShowContentLiveEvent.on((event) => {
-                this.toggleFormPanel(false);
-            });
-
-            app.wizard.event.ShowContentFormEvent.on((event) => {
-                this.toggleFormPanel(true);
-            });
 
             if (this.contentType.hasContentDisplayNameScript()) {
 
@@ -303,7 +298,9 @@ module app.wizard {
 
             var deferred = Q.defer<void>();
 
-            this.livePanel.renderExisting(content, pageTemplate, this.siteTemplate);
+            if (content.isPage() && pageTemplate != null && this.siteTemplate) {
+                this.livePanel.renderExisting(content, pageTemplate);
+            }
 
             deferred.resolve(null);
             return deferred.promise;
@@ -531,6 +528,20 @@ module app.wizard {
 
         setPersistAsDraft(draft: boolean) {
             this.persistAsDraft = draft;
+        }
+
+        showLiveEdit() {
+
+            super.showPanel(this.livePanel);
+
+            this.livePanel.loadPageIfNotLoaded().
+                done(() => {
+
+                });
+        }
+
+        showWizard() {
+            super.showMainPanel();
         }
     }
 

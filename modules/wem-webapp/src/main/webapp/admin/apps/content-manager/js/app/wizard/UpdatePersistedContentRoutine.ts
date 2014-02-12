@@ -209,7 +209,7 @@ module app.wizard {
                 updatePageRequest.sendAndParse().
                     done((content: api.content.Content) => {
 
-                        console.log("UpdatePersistedContentRoutine.doHandleUpdatePage() ... page created");
+                        console.log("UpdatePersistedContentRoutine.doHandleUpdatePage() ... page updated");
 
                         context.content = content;
 

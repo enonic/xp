@@ -1,13 +1,15 @@
 module app.wizard.action {
 
-    export class ShowLiveFormAction extends api.ui.Action {
+    export class ShowLiveEditAction extends api.ui.Action {
 
-        constructor() {
+        constructor(wizard:app.wizard.ContentWizardPanel) {
             super("LIVE");
 
             this.setEnabled(true);
             this.addExecutionListener(() => {
-                new app.wizard.event.ShowContentLiveEvent().fire();
+
+                wizard.showLiveEdit();
+
             });
         }
     }

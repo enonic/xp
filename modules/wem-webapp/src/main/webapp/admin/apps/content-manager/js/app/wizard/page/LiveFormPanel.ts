@@ -7,131 +7,228 @@ module app.wizard {
 
     export interface LiveFormPanelConfig {
 
+        siteTemplate:api.content.site.template.SiteTemplate;
         contentWizardPanel:ContentWizardPanel;
     }
 
     export class LiveFormPanel extends api.ui.Panel {
 
-        private frame: api.dom.IFrameEl;
-        private baseUrl: string;
-        private url: string;
-        private contextWindow: app.contextwindow.ContextWindow;
-        private skipReload: boolean;
-        private liveEditWindow: any;
-        private liveEditJQuery: JQueryStatic;
+        private siteTemplate: api.content.site.template.SiteTemplate;
+        private initialized: boolean;
+        private defaultImageDescriptor: api.content.page.image.ImageDescriptor
+
+        private pageContent: api.content.Content;
+        private pageTemplate: api.content.page.PageTemplate;
         private selectedComponent: app.contextwindow.Component;
         private pageRegions: api.content.page.PageRegions;
-        private persistedContent: api.content.Content;
-        private siteTemplate: api.content.site.template.SiteTemplate;
+
+        private pageNeedsReload: boolean;
+        private pageLoading: boolean;
+
+        private pageSkipReload: boolean;
+        private frame: api.dom.IFrameEl;
+        private baseUrl: string;
+
+        private pageUrl: string;
+        private contextWindow: app.contextwindow.ContextWindow;
+        private liveEditWindow: any;
+        private liveEditJQuery: JQueryStatic;
+
         private contentWizardPanel: ContentWizardPanel;
-        private defaultImageDescriptor: api.content.page.image.ImageDescriptor
 
         constructor(config: LiveFormPanelConfig) {
             super("live-form-panel");
-            this.baseUrl = api.util.getUri("portal/edit/");
             this.contentWizardPanel = config.contentWizardPanel;
-            this.skipReload = false;
+            this.siteTemplate = config.siteTemplate;
 
+            this.initialized = false;
 
+            this.pageNeedsReload = true;
+            this.pageLoading = false;
+            this.pageSkipReload = false;
+
+            this.baseUrl = api.util.getUri("portal/edit/");
             this.frame = new api.dom.IFrameEl();
             this.frame.addClass("live-edit-frame");
             this.appendChild(this.frame);
         }
 
+        private initialize(): Q.Promise<void> {
+            var deferred = Q.defer<void>();
 
-        private doLoadLiveEditWindow(liveEditUrl: string): Q.Promise<void> {
+            if (!this.initialized) {
 
-            console.log("LiveFormPanel.doLoad() ... url: " + liveEditUrl);
+                this.resolveDefaultImageDescriptor(this.siteTemplate.getModules()).
+                    done((imageDescriptor: api.content.page.image.ImageDescriptor)=> {
+
+                        this.defaultImageDescriptor = imageDescriptor;
+                        this.initialized = true;
+                        deferred.resolve(null);
+                    });
+            }
+            else {
+                deferred.resolve(null);
+            }
+
+            return deferred.promise;
+        }
+
+        loadPageIfNotLoaded(): Q.Promise<void> {
+
+            console.log("LiveFormPanel.loadPageIfNotLoaded() this.needsReload = " + this.pageNeedsReload);
+            var deferred = Q.defer<void>();
+
+            this.initialize().done(() => {
+
+                if (this.pageNeedsReload && !this.pageLoading) {
+
+                    this.pageLoading = true;
+                    this.doLoad().done(()=> {
+
+                        this.pageLoading = false;
+                        this.pageNeedsReload = false;
+
+                        this.setupContextWindow();
+                        deferred.resolve(null);
+                    });
+                }
+                else {
+                    deferred.resolve(null);
+                }
+            });
+
+            return deferred.promise;
+        }
+
+
+        private doLoad(): Q.Promise<void> {
+
+            console.log("LiveFormPanel.doLoad() ... url: " + this.pageUrl);
+
+            api.util.assertNotNull(this.pageUrl, "No page to load");
 
             var deferred = Q.defer<void>();
 
-            this.frame.setSrc(liveEditUrl);
+            this.frame.setSrc(this.pageUrl);
 
-            // Wait for iframe to be loaded before adding context window!
             var maxIterations = 100;
             var iterations = 0;
-            var contextWindowAdded = false;
+            var pageLoaded = false;
             var intervalId = setInterval(() => {
 
                 if (this.frame.isLoaded()) {
-                    var contextWindowElement = this.frame.getHTMLElement()["contentWindow"];
-                    if (contextWindowElement && contextWindowElement.$liveEdit) {
+                    var liveEditWindow = this.frame.getHTMLElement()["contentWindow"];
+                    if (liveEditWindow && liveEditWindow.$liveEdit) {
 
-                        contextWindowElement.CONFIG = {};
-                        contextWindowElement.CONFIG.baseUri = CONFIG.baseUri
+                        // Give loaded page same CONFIG.baseUri as in admin
+                        liveEditWindow.CONFIG = {};
+                        liveEditWindow.CONFIG.baseUri = CONFIG.baseUri
 
-                        var contextWindowAdded = true;
+                        var pageLoaded = true;
                         clearInterval(intervalId);
+
                         console.log("LiveFormPanel.doLoad() ... Live edit loaded");
+
                         deferred.resolve(null);
                     }
                 }
 
                 iterations++;
-                if (iterations >= maxIterations) {
+                if (!pageLoaded && iterations >= maxIterations) {
                     clearInterval(intervalId);
-                    if (contextWindowAdded) {
+                    if (pageLoaded) {
                         deferred.resolve(null);
                     }
                     else {
                         deferred.reject(null);
                     }
                 }
-            }, 200);
+            }, 50);
 
             return deferred.promise;
         }
 
-        renderExisting(content: api.content.Content, pageTemplate: api.content.page.PageTemplate,
-                       siteTemplate: api.content.site.template.SiteTemplate) {
-
+        renderExisting(content: api.content.Content, pageTemplate: api.content.page.PageTemplate) {
 
             console.log("LiveFormPanel.renderExisting() ...");
 
-            if (content.isPage() && pageTemplate != null && !this.skipReload) {
-                this.resolveDefaultImageDescriptor(siteTemplate.getModules());
+            api.util.assertNotNull(content, "Expected content not be null");
+            api.util.assertNotNull(pageTemplate, "Expected content not be null");
+            api.util.assert(content.isPage(), "Expected content to be a page: " + content.getPath().toString());
 
-                var liveEditUrl = this.baseUrl + content.getContentId().toString();
+            this.pageContent = content;
+            this.pageTemplate = pageTemplate;
+            this.pageUrl = this.baseUrl + content.getContentId().toString();
 
-                this.doLoadLiveEditWindow(liveEditUrl).
-                    then(() => {
+            console.log("LiveFormPanel.renderExisting() ... pageSkipReload = " + this.pageSkipReload);
 
-                        if (this.contextWindow) {
-                            // Have to remove previous ContextWindow to avoid two
-                            // TODO: ContextWindow should be resued with new values instead
-                            this.contextWindow.remove();
-                        }
+            if (!this.pageSkipReload) {
+                this.pageRegions = this.resolvePageRegions();
+            }
 
-                        this.siteTemplate = siteTemplate;
-                        this.persistedContent = content;
-                        this.liveEditWindow = this.frame.getHTMLElement()["contentWindow"];
-                        this.liveEditJQuery = <JQueryStatic>this.liveEditWindow.$liveEdit;
-                        this.liveEditListen();
+            if (!this.isVisible()) {
 
-                        this.contextWindow = new app.contextwindow.ContextWindow({
-                            liveEditIFrame: this.frame,
-                            siteTemplate: this.siteTemplate,
-                            liveEditWindow: this.liveEditWindow,
-                            liveEditJQuery: this.liveEditJQuery,
-                            liveFormPanel: this
-                        });
+                this.pageNeedsReload = true;
 
-                        this.appendChild(this.contextWindow);
+                console.log("LiveFormPanel.renderExisting() ... not visible, returning");
+                return;
+            }
 
-                        console.log("LiveFormPanel.renderExisting() calling contextWindow.setPage ");
-                        this.setPage(content, pageTemplate);
-                    }).fail(()=> {
-                        console.log("LiveFormPanel.renderExisting() loading Live edit failed (time out)");
-                    });
+            if (this.pageSkipReload == true) {
+                console.log("LiveFormPanel.renderExisting() ... skipReload is true, returning");
+                return;
+            }
+
+            this.doLoad().
+                then(() => {
+
+                    this.setupContextWindow();
+
+                }).fail(()=> {
+                    console.log("LiveFormPanel.renderExisting() loading Live edit failed (time out)");
+                }).done();
+        }
+
+        private resolvePageRegions(): api.content.page.PageRegions {
+
+            var page = this.pageContent.getPage();
+            if (page.hasRegions()) {
+                return page.getRegions();
+            }
+            else {
+                return this.pageTemplate.getRegions();
             }
         }
 
-        setPage(content: api.content.Content, pageTemplate: api.content.page.PageTemplate) {
-            var page = content.getPage();
-            this.pageRegions = pageTemplate.getRegions();
-            if (page.hasRegions()) {
-                this.pageRegions = page.getRegions();
+        private setupContextWindow() {
+
+            if (this.contextWindow) {
+                // Have to remove previous ContextWindow to avoid two
+                // TODO: ContextWindow should be resued with new values instead
+                this.contextWindow.remove();
             }
+
+            this.contextWindow = this.createContextWindow();
+
+            this.appendChild(this.contextWindow);
+
+            this.liveEditListen();
+        }
+
+        private createContextWindow(): app.contextwindow.ContextWindow {
+
+            this.liveEditWindow = this.frame.getHTMLElement()["contentWindow"];
+            this.liveEditJQuery = <JQueryStatic>this.liveEditWindow.$liveEdit;
+
+            var contextWindow = new app.contextwindow.ContextWindow({
+                liveEditIFrame: this.frame,
+                siteTemplate: this.siteTemplate,
+                liveEditWindow: this.liveEditWindow,
+                liveEditJQuery: this.liveEditJQuery,
+                liveFormPanel: this
+            });
+
+            return contextWindow;
         }
 
 
@@ -153,7 +250,6 @@ module app.wizard {
                         d.resolve(null);
                     }
                     else {
-                        this.defaultImageDescriptor = imageDescriptors[0];
                         d.resolve(imageDescriptors[0]);
                     }
                 });
@@ -250,6 +346,7 @@ module app.wizard {
 
             this.liveEditJQuery(this.liveEditWindow).on('imageComponentSetImage.liveEdit',
                 (event, imageId?, componentPathAsString?, component?) => {
+
                     var componentPath = ComponentPath.fromString(componentPathAsString);
                     var imageComponent = this.pageRegions.getImageComponent(componentPath);
                     if (imageComponent != null) {
@@ -258,10 +355,13 @@ module app.wizard {
                             imageComponent.setDescriptor(this.defaultImageDescriptor.getKey());
                         }
 
-                        this.skipReload = true;
+                        this.pageSkipReload = true;
                         this.contentWizardPanel.saveChanges().done(() => {
+
+                            this.pageSkipReload = false;
                             $.ajax({
-                                url: api.util.getComponentUri( this.persistedContent.getContentId().toString(), componentPath.toString(), true),
+                                url: api.util.getComponentUri(this.pageContent.getContentId().toString(), componentPath.toString(),
+                                    true),
                                 method: 'GET',
                                 success: (data) => {
                                     $(component.getHTMLElement()).replaceWith(data);
