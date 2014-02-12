@@ -54,8 +54,7 @@ module LiveEdit.component.mouseevent {
 //                if (deselectComponent) {
 //                    LiveEdit.component.Selection.deselect();
 //                } else {
-                    LiveEdit.component.Selection.select(component, event);
-                    LiveEdit.component.Selection.handleSelect(component.getElement()[0]);
+                    LiveEdit.component.Selection.handleSelect(component.getElement()[0], event);
 //                }
             });
         }

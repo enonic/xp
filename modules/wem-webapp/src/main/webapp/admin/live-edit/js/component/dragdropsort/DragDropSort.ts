@@ -195,7 +195,6 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             this.removePaddingFromLayoutComponent();
 
             $(window).trigger('componentAdded.liveEdit', [emptyComponent, emptyComponent.getRegionName(), emptyComponent.getPrecedingComponentPath()]);
-            LiveEdit.component.Selection.select(LiveEdit.component.Component.fromElement(emptyComponent));
             LiveEdit.component.Selection.handleSelect(emptyComponent.getHTMLElement());
         }
     }

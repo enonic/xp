@@ -83,8 +83,7 @@ module LiveEdit.component.mouseevent {
 
             LiveEdit.component.Selection.removeSelectedAttribute();
 
-            LiveEdit.component.Selection.select(this.selectedParagraph, event);
-            LiveEdit.component.Selection.handleSelect(this.selectedParagraph.element[0]);
+            LiveEdit.component.Selection.handleSelect(this.selectedParagraph.element[0], event);
 
             $(window).trigger('selectParagraphComponent.liveEdit', [this.selectedParagraph]);
         }

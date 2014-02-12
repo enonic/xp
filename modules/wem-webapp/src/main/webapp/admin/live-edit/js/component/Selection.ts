@@ -10,9 +10,18 @@ module LiveEdit.component {
         static COMPONENT_ATTR:string = "data-live-edit-component";
         static REGION_ATTR:string = "data-live-edit-region";
 
-        public static select(component:LiveEdit.component.Component, event?:JQueryEventObject):void {
+        public static handleSelect(element:HTMLElement, event?:JQueryEventObject) {
+            var component = new Component($(element));
 
-            this.setSelectionAttributeOnElement(component.getElement());
+            if (Selection.getType(element) == "page") {
+                $(element).trigger('pageSelect.liveEdit');
+            } else if (Selection.getType(element) == "region") {
+                $(element).trigger('regionSelect.liveEdit', element.getAttribute(Selection.REGION_ATTR));
+            } else if (Selection.getType(element) == "component") {
+                $(element).trigger('componentSelect.liveEdit', element.getAttribute(Selection.COMPONENT_ATTR));
+            }
+
+            this.setSelectionAttributeOnElement($(element));
 
             var mouseClickPagePosition:any = null;
             if (event && !component.isEmpty()) {
@@ -21,17 +30,8 @@ module LiveEdit.component {
                     y: event.pageY
                 };
             }
-            $(window).trigger('selectComponent.liveEdit', [component, mouseClickPagePosition]);
-        }
 
-        public static handleSelect(element:HTMLElement) {
-            if (Selection.getType(element) == "page") {
-                $(element).trigger('pageSelect.liveEdit');
-            } else if (Selection.getType(element) == "region") {
-                $(element).trigger('regionSelect.liveEdit', element.getAttribute(Selection.REGION_ATTR));
-            } else if (Selection.getType(element) == "component") {
-                $(element).trigger('componentSelect.liveEdit', element.getAttribute(Selection.COMPONENT_ATTR));
-            }
+            $(window).trigger('selectComponent.liveEdit', [new Component($(element)), mouseClickPagePosition]);
         }
 
         public static getType(element:HTMLElement):string {

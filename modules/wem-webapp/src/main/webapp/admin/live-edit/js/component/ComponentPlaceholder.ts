@@ -32,6 +32,10 @@ module LiveEdit.component {
             return previousComponent.getEl().getData("live-edit-component");
         }
 
+        showLoadingSpinner() {
+            var spinner = new LoadingOverlay(this);
+        }
+
         getRegionName():string {
             var regionName = $(this.getHTMLElement()).parent('[data-live-edit-region]').attr('data-live-edit-region');
             return regionName;

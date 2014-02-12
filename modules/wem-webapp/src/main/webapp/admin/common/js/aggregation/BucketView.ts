@@ -19,6 +19,7 @@ module api.aggregation {
             this.parentAggregationView = parentAggregationView;
 
             this.checkbox = new api.ui.CheckboxInput();
+
             this.checkbox.addListener({
                 onValueChanged: (oldValue: boolean, newValue: boolean) => {
                     this.notifySelectionChanged(oldValue, newValue);

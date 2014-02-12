@@ -347,6 +347,7 @@ module app.wizard {
             this.liveEditJQuery(this.liveEditWindow).on('imageComponentSetImage.liveEdit',
                 (event, imageId?, componentPathAsString?, component?) => {
 
+                    component.showLoadingSpinner();
                     var componentPath = ComponentPath.fromString(componentPathAsString);
                     var imageComponent = this.pageRegions.getImageComponent(componentPath);
                     if (imageComponent != null) {
@@ -357,14 +358,16 @@ module app.wizard {
 
                         this.pageSkipReload = true;
                         this.contentWizardPanel.saveChanges().done(() => {
-
                             this.pageSkipReload = false;
                             $.ajax({
                                 url: api.util.getComponentUri(this.pageContent.getContentId().toString(), componentPath.toString(),
                                     true),
                                 method: 'GET',
                                 success: (data) => {
-                                    $(component.getHTMLElement()).replaceWith(data);
+                                    var newElement = $(data);
+                                    $(component.getHTMLElement()).replaceWith(newElement);
+                                    this.liveEditWindow.LiveEdit.component.Selection.deselect();
+                                    this.liveEditWindow.LiveEdit.component.Selection.handleSelect(newElement[0]);
                                 }
                             });
                         })
