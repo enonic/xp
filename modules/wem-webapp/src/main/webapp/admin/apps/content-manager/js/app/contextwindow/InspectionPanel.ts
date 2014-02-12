@@ -11,15 +11,15 @@ module app.contextwindow {
 
     export class InspectionPanel extends api.ui.DeckPanel {
 
-        private detailPanel: DetailPanel;
+        private imageInspectionPanel: ImageInspectionPanel;
         private selectPanel: SelectPanel;
         private imageSelectPanel: app.contextwindow.image.ImageSelectPanel;
-        private liveFormPanel:app.wizard.LiveFormPanel;
+        private liveFormPanel: app.wizard.LiveFormPanel;
 
         constructor(config: InspectionPanelConfig) {
             super();
 
-            this.detailPanel = new DetailPanel({
+            this.imageInspectionPanel = new ImageInspectionPanel({
                 siteTemplate: config.siteTemplate,
                 liveFormPanel: config.liveFormPanel
             });
@@ -31,7 +31,7 @@ module app.contextwindow {
                 liveEditWindow: config.liveEditWindow});
 
 
-            this.addPanel(this.detailPanel);
+            this.addPanel(this.imageInspectionPanel);
             this.addPanel(this.selectPanel);
             this.addPanel(this.imageSelectPanel);
 
@@ -39,11 +39,11 @@ module app.contextwindow {
 
                 switch (event.getComponent().componentType.typeName) {
                 case 'image':
-                    this.showPanel(this.getPanelIndex(this.detailPanel));
+                    this.showPanel(this.getPanelIndex(this.imageInspectionPanel));
                     break;
                 default:
                     event.getComponent().isEmpty() ? this.showPanel(this.getPanelIndex(this.selectPanel))
-                        : this.showPanel(this.getPanelIndex(this.detailPanel));
+                        : this.showPanel(this.getPanelIndex(this.imageInspectionPanel));
                 }
             });
         }

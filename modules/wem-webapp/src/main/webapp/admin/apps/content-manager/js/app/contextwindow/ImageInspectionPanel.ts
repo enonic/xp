@@ -2,17 +2,17 @@ module app.contextwindow {
 
     import SiteTemplate = api.content.site.template.SiteTemplate;
 
-    export interface DetailPanelConfig {
+    export interface ImageInspectionPanelConfig {
         siteTemplate:SiteTemplate;
         liveFormPanel:app.wizard.LiveFormPanel;
     }
 
-    export class DetailPanel extends api.ui.Panel {
+    export class ImageInspectionPanel extends api.ui.Panel {
         private siteTemplate: SiteTemplate;
         private nameAndIcon: api.app.NamesAndIconView;
-        private liveFormPanel:app.wizard.LiveFormPanel;
+        private liveFormPanel: app.wizard.LiveFormPanel;
 
-        constructor(config: DetailPanelConfig) {
+        constructor(config: ImageInspectionPanelConfig) {
             super("detail-panel");
 
             this.siteTemplate = config.siteTemplate;
