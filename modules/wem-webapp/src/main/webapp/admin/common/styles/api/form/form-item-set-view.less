@@ -24,17 +24,30 @@
 
     .input-type-view {
       margin-left: @form-label-width - 20px;
+      padding-right: 20px;
+
+      &.image-selector {
+        display: block;
+
+        .combobox {
+          width: 448px;
+        }
+      }
+
+      .input-occurrence-view.ui-sortable-helper {
+        input, textarea {
+          width: 466px;
+        }
+      }
     }
 
     .bottom-button-row {
       background-color: white;
       margin-left: @form-label-width - 20px;
-      padding-left: 0px;
-      padding-right: 0px;
     }
   }
 
-  .bottom-button-row {
+  & > .bottom-button-row {
     background-color: #eee;
     padding: 0 10px 10px 10px;
     clear: left;

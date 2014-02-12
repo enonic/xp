@@ -1,6 +1,6 @@
 .input-view {
   .clearfix();
-  margin-bottom: 7px;
+  margin-bottom: 15px;
 
   &.no-label {
 
@@ -16,10 +16,8 @@
 
   .input-label {
     float: left;
-    clear: left;
     max-width: @form-label-width - 10px;
     margin-right: 10px;
-    padding-top: 10px;
 
     .required {
       .icon-asterix(0.9em, crimson);
@@ -27,16 +25,26 @@
   }
 
   .input-type-view {
-    margin-left: @form-label-width;
+    display: table;
+    width: @form-width - @form-label-width;
+    margin: 0 0 0 @form-label-width;
+
+    & :last-child .drag-control {
+      height: 30px;
+    }
+
+    &.image-selector .combobox {
+      width: 468px;
+    }
   }
 
   .bottom-button-row {
     clear: left;
     overflow: hidden;
-    margin-left: @form-label-width;
+    margin: 0 0 0 @form-label-width;
 
     button {
-      margin-left: 0px;
+      margin: 10px 0 0 0;
     }
   }
 }

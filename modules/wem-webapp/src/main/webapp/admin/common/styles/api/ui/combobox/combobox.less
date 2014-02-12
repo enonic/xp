@@ -1,7 +1,11 @@
 .combobox {
   position: relative;
   display: inline-block;
-  margin: 3px 3px 3px 0;
+  width: 100%;
+
+  &.followed-by-options {
+    margin-bottom: 10px;
+  }
 
   .input-icon {
     position: absolute;
@@ -14,10 +18,9 @@
 
   input {
     .box-sizing(border-box);
-    width: 255px;
+    width: 100%;
     height: 24px;
     padding: 3px 8px;
-    margin: 0 0 10px 0;
     border: 1px @admin-medium-gray-border solid;
     line-height: 16px;
     font-size: 15px;
@@ -83,7 +86,6 @@
   }
 
   &+.selected-options {
-    width: 255px;
     float: none;
 
     .selected-option {
