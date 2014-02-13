@@ -8,8 +8,6 @@ module api.form.formitemset {
 
         private formItemSet:api.form.FormItemSet;
 
-        private occurrenceCountEl:api.dom.SpanEl;
-
         private removeButton:api.dom.AEl;
 
         private label:FormItemSetLabel;
@@ -41,10 +39,6 @@ module api.form.formitemset {
                 this.notifyRemoveButtonClicked();
             });
 
-            this.occurrenceCountEl = new api.dom.SpanEl("occurrence-count");
-            this.occurrenceCountEl.getEl().setInnerHtml("#" + (this.getIndex() + 1));
-            this.appendChild(this.occurrenceCountEl);
-
             this.label = new FormItemSetLabel(this.formItemSet);
             this.appendChild(this.label);
 
@@ -71,7 +65,6 @@ module api.form.formitemset {
                 this.label.removeClass("drag-control");
             }
 
-            this.occurrenceCountEl.setHtml("#" + (this.formItemSetOccurrence.getIndex() + 1));
             this.getEl().setData("dataId", this.formItemSetOccurrence.getDataId().toString());
 
             this.removeButton.setVisible(this.formItemSetOccurrence.showRemoveButton());

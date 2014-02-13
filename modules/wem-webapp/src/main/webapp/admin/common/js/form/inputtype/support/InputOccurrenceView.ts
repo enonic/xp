@@ -8,8 +8,6 @@ module api.form.inputtype.support {
 
         private removeButtonEl:api.dom.AEl;
 
-        private occurrenceCountEl:api.dom.SpanEl;
-
         private dragControl:api.dom.DivEl;
 
         constructor(inputOccurrence:InputOccurrence, inputElement:api.dom.Element) {
@@ -23,9 +21,6 @@ module api.form.inputtype.support {
 
             this.inputElement = inputElement;
             this.appendChild(this.inputElement);
-
-            this.occurrenceCountEl = new api.dom.SpanEl("occurrence-count");
-            this.appendChild(this.occurrenceCountEl);
 
             this.removeButtonEl = new api.dom.AEl("remove-button");
 
@@ -47,7 +42,6 @@ module api.form.inputtype.support {
                 this.dragControl.removeClass("drag-control");
             }
 
-            this.occurrenceCountEl.setHtml("#" + (this.inputOccurrence.getIndex() + 1));
             this.getEl().setData("dataId", this.inputOccurrence.getDataId().toString());
 
             this.removeButtonEl.setVisible(this.inputOccurrence.showRemoveButton());
