@@ -12,7 +12,7 @@ module api.content.query {
 
         private from: number = 0;
 
-        private size: number = 10;
+        private size: number = 100;
 
         setQueryExpr(queryExpr: api.query.expr.QueryExpr) {
             this.queryExpr = queryExpr;
