@@ -45,7 +45,7 @@ public final class SiteTemplate
         final PageTemplates.Builder pageTemplatesBuilder = PageTemplates.newPageTemplates();
         pageTemplatesBuilder.addAll( builder.pageTemplates.values() );
 
-        this.pageTemplates = pageTemplatesBuilder.build();
+        this.pageTemplates = pageTemplatesBuilder.build().sort();
     }
 
     public SiteTemplateKey getKey()
