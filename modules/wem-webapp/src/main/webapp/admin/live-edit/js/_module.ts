@@ -1,5 +1,5 @@
 // Globals
-///<reference path='../../common/js/_module.ts' />
+///<reference path='../../common/js/_all.d.ts' />
 
 ///<reference path='event/ComponentSelectedEvent.ts' />
 ///<reference path='event/ComponentDeselectedEvent.ts' />

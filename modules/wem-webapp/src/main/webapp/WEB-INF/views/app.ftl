@@ -21,6 +21,7 @@
 </script>
 
 <!-- App javascript -->
+<script type="text/javascript" src="${baseUrl}/admin/common/js/_all.js"></script>
 <script type="text/javascript" src="${baseUrl}/admin/apps/${app}/js/_all.js"></script>
 
 </body>
