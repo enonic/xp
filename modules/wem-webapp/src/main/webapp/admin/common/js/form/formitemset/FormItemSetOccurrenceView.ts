@@ -1,5 +1,7 @@
 module api.form.formitemset {
 
+    import support = api.form.inputtype.support;
+
     export class FormItemSetOccurrenceView extends api.form.FormItemOccurrenceView {
 
         private context: api.form.FormContext;
@@ -20,9 +22,14 @@ module api.form.formitemset {
 
         private formItemSetOccurrencesContainer:api.dom.DivEl;
 
+        private inputTypeListeners: {[eventName:string]:{(event:api.form.inputtype.support.InputTypeEvent):void}[]} = {};
+
+        private previousErrors:api.form.ValidationRecorder;
+
         constructor(context: api.form.FormContext, formItemSetOccurrence:FormItemSetOccurrence, formItemSet:api.form.FormItemSet,
                     dataSet:api.data.DataSet) {
             super("form-item-set-occurrence-view", formItemSetOccurrence);
+            this.inputTypeListeners[api.form.inputtype.support.InputTypeEvents.ValidityChanged] = [];
             this.context = context;
             this.formItemSetOccurrence = formItemSetOccurrence;
             this.formItemSet = formItemSet;
@@ -51,6 +58,16 @@ module api.form.formitemset {
                 setFormItems(this.formItemSet.getFormItems()).
                 setParentElement(this.formItemSetOccurrencesContainer).
                 layout(this.dataSet);
+
+            this.formItemViews.forEach((formItemView:api.form.FormItemView) => {
+                formItemView.onValidityChanged((event:support.ValidityChangedEvent) => {
+                    var validationRecorder:api.form.ValidationRecorder = new api.form.ValidationRecorder();
+                    this.validate(validationRecorder);
+                    if (this.validityChanged(validationRecorder)) {
+                        this.notifyValidityChanged(new support.ValidityChangedEvent(validationRecorder.valid()));
+                    }
+                });
+            });
         }
 
         getFormItemViews():api.form.FormItemView[] {
@@ -130,6 +147,12 @@ module api.form.formitemset {
             return <FormItemSetView>formItemView;
         }
 
+        validate(validationRecorder: api.form.ValidationRecorder) {
+            this.formItemViews.forEach((formItemView:api.form.FormItemView) => {
+                formItemView.validate(validationRecorder);
+            });
+        }
+
         public getFormItemView(name:string):api.form.FormItemView {
 
             // TODO: Performance could be improved if the views where accessible by name from a map
@@ -182,6 +205,33 @@ module api.form.formitemset {
             } else {
                 this.formItemSetOccurrencesContainer.hide();
             }
+        }
+
+        onValidityChanged(listener:(event:support.ValidityChangedEvent)=>void) {
+            this.inputTypeListeners[support.InputTypeEvents.ValidityChanged].push(listener);
+        }
+
+        unValidityChanged(listener:(event:support.ValidityChangedEvent)=>void) {
+            this.inputTypeListeners[support.InputTypeEvents.ValidityChanged].filter((currentListener:(event:support.InputTypeEvent)=>void) => {
+                return listener == currentListener;
+            });
+        }
+
+        private notifyListeners(eventName:support.InputTypeEvents, event:support.InputTypeEvent) {
+            this.inputTypeListeners[eventName].forEach((listener:(event:support.InputTypeEvent)=>void) => {
+                listener(event);
+            });
+        }
+
+        private notifyValidityChanged(event:support.ValidityChangedEvent) {
+            this.notifyListeners(support.InputTypeEvents.ValidityChanged, event);
+        }
+
+
+        private validityChanged(validationRecorder:api.form.ValidationRecorder):boolean {
+            var validityChanged:boolean = this.previousErrors == null || this.previousErrors.valid() != validationRecorder.valid();
+            this.previousErrors = validationRecorder;
+            return validityChanged;
         }
     }
 

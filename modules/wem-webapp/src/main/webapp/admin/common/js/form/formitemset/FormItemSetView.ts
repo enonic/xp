@@ -1,5 +1,7 @@
 module api.form.formitemset {
 
+    import support = api.form.inputtype.support;
+
     export class FormItemSetView extends api.form.FormItemView {
 
         private formItemSet: api.form.FormItemSet;
@@ -16,9 +18,14 @@ module api.form.formitemset {
 
         private collapseButton: api.dom.AEl;
 
+        private listeners: {[eventName:string]:{(event:support.InputTypeEvent):void}[]} = {};
+
+        private previousErrors:api.form.ValidationRecorder;
+
         constructor(context: api.form.FormContext, formItemSet: api.form.FormItemSet, dataSets?: api.data.DataSet[]) {
             super("form-item-set-view", context, formItemSet);
 
+            this.listeners[support.InputTypeEvents.ValidityChanged] = [];
             this.formItemSet = formItemSet;
             this.dataSets = dataSets != null ? dataSets : [];
 
@@ -53,6 +60,15 @@ module api.form.formitemset {
                 }
             });
 
+            this.formItemSetOccurrences.getFormItemSetOccurrenceViews().forEach((formItemSetOccurrenceView:api.form.formitemset.FormItemSetOccurrenceView)=> {
+                formItemSetOccurrenceView.onValidityChanged((event:support.ValidityChangedEvent) => {
+                    var validationRecorder:api.form.ValidationRecorder = new api.form.ValidationRecorder();
+                    this.validate(validationRecorder);
+                    if (this.validityChanged(validationRecorder)) {
+                        this.notifyValidityChanged(new support.ValidityChangedEvent(validationRecorder.valid()));
+                    }
+                });
+            })
             this.bottomButtonRow = new api.dom.DivEl("bottom-button-row");
             this.appendChild(this.bottomButtonRow);
 
@@ -111,8 +127,47 @@ module api.form.formitemset {
         }
 
         validate(validationRecorder: api.form.ValidationRecorder) {
+            this.formItemSetOccurrences.getFormItemSetOccurrenceViews().forEach((formItemSetOccurrenceView:FormItemSetOccurrenceView) => {
+                formItemSetOccurrenceView.validate(validationRecorder);
+            });
+            if (!validationRecorder.valid() || this.formItemSetOccurrences.getOccurrenceViews().length < this.formItemSetOccurrences.getAllowedOccurrences().getMinimum()) {
+                validationRecorder.registerBreaksRequiredContract(new api.data.DataId(this.formItemSet.getName(), 0));
+            }
+        }
 
-            // TODO:
+        private addListener(eventName:support.InputTypeEvents, listener:(event:support.InputTypeEvent)=>void) {
+            this.listeners[eventName].push(listener);
+        }
+
+        onValidityChanged(listener:(event:support.ValidityChangedEvent)=>void) {
+            this.addListener(support.InputTypeEvents.ValidityChanged, listener);
+        }
+
+        private removeListener(eventName:support.InputTypeEvents, listener:(event:support.InputTypeEvent)=>void) {
+            this.listeners[eventName].filter((currentListener:(event:support.InputTypeEvent)=>void) => {
+                return listener == currentListener;
+            });
+        }
+
+        unValidityChanged(listener:(event:support.ValidityChangedEvent)=>void) {
+            this.removeListener(support.InputTypeEvents.ValidityChanged, listener);
+        }
+
+        private notifyListeners(eventName:support.InputTypeEvents, event:support.InputTypeEvent) {
+            this.listeners[eventName].forEach((listener:(event:support.InputTypeEvent)=>void) => {
+                listener(event);
+            });
+        }
+
+        private notifyValidityChanged(event:support.ValidityChangedEvent) {
+            this.notifyListeners(support.InputTypeEvents.ValidityChanged, event);
+        }
+
+
+        private validityChanged(validationRecorder:api.form.ValidationRecorder):boolean {
+            var validityChanged:boolean = this.previousErrors == null || this.previousErrors.valid() != validationRecorder.valid();
+            this.previousErrors = validationRecorder;
+            return validityChanged;
         }
 
         giveFocus(): boolean {
@@ -174,5 +229,6 @@ module api.form.formitemset {
 
             return occurrencesInOrderAccordingToDOM;
         }
+
     }
 }
