@@ -74,6 +74,10 @@ module api.form.formitemset {
             return this.formItemSetOccurrenceViews[index];
         }
 
+        getFormItemSetOccurrenceViews():FormItemSetOccurrenceView[] {
+            return this.formItemSetOccurrenceViews;
+        }
+
         getDataSets():api.data.DataSet[] {
             var dataSets:api.data.DataSet[] = [];
             this.getOccurrenceViews().forEach((occurrenceView:FormItemSetOccurrenceView) => {
