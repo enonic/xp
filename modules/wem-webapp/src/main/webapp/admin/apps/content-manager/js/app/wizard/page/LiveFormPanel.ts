@@ -189,7 +189,6 @@ module app.wizard {
 
                 }).fail(()=> {
                     console.log("Error while loading page: ", arguments);
-                    deferred.reject(arguments);
                 }).done();
         }
 
