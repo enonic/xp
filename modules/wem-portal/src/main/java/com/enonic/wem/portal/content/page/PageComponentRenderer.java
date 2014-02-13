@@ -1,6 +1,8 @@
 package com.enonic.wem.portal.content.page;
 
 
+import java.text.MessageFormat;
+
 import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -20,7 +22,7 @@ abstract class PageComponentRenderer
 {
     private static final String EDIT_MODE = "edit";
 
-    private static final String EMPTY_COMPONENT_HTML = "<div></div>";
+    private static final String EMPTY_COMPONENT_HTML = "<div data-live-edit-type=\"{0}\" data-live-edit-component=\"{1}\" data-live-edit-empty-component=\"true\" class=\"live-edit-empty-component\"></div>";
 
     @Inject
     protected Client client;
@@ -35,7 +37,7 @@ abstract class PageComponentRenderer
         {
             if ( inEditMode( context ) )
             {
-                return renderEmptyComponent();
+                return renderEmptyComponent( pageComponent );
             }
             throw new DescriptorNotFoundException( pageComponent.getDescriptor() );
         }
@@ -58,11 +60,14 @@ abstract class PageComponentRenderer
         }
     }
 
-    private Response renderEmptyComponent()
+    private Response renderEmptyComponent( final PageComponent pageComponent )
     {
+        final String html =
+            MessageFormat.format( EMPTY_COMPONENT_HTML, pageComponent.getType().toString(), pageComponent.getPath().toString() );
+
         return Response.ok().
             type( MediaType.TEXT_HTML_TYPE ).
-            entity( EMPTY_COMPONENT_HTML ).
+            entity( html ).
             build();
     }
 

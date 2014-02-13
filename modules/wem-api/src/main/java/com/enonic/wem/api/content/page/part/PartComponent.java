@@ -15,6 +15,12 @@ public final class PartComponent
         super( builder );
     }
 
+    @Override
+    public Type getType()
+    {
+        return Type.PART;
+    }
+
     public static Builder newPartComponent()
     {
         return new Builder();

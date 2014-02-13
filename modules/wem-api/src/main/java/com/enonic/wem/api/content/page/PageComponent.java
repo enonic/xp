@@ -3,6 +3,9 @@ package com.enonic.wem.api.content.page;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.content.page.image.ImageComponent;
+import com.enonic.wem.api.content.page.layout.LayoutComponent;
+import com.enonic.wem.api.content.page.part.PartComponent;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.rendering.Component;
 
@@ -24,6 +27,9 @@ public abstract class PageComponent<DESCRIPTOR_KEY extends DescriptorKey>
         this.name = properties.name;
         this.config = properties.config;
     }
+
+    public abstract Type getType();
+
 
     public ComponentName getName()
     {
@@ -53,6 +59,28 @@ public abstract class PageComponent<DESCRIPTOR_KEY extends DescriptorKey>
     public RootDataSet getConfig()
     {
         return config;
+    }
+
+    public static enum Type
+    {
+        IMAGE( "image", ImageComponent.class ),
+        PART( "part", PartComponent.class ),
+        LAYOUT( "layout", LayoutComponent.class );
+
+        private Class clazz;
+
+        private String shortName;
+
+        Type( final String shortName, final Class clazz )
+        {
+            this.shortName = shortName;
+            this.clazz = clazz;
+        }
+
+        public String toString()
+        {
+            return shortName;
+        }
     }
 
     public static class Properties<DESCRIPTOR_KEY extends DescriptorKey>

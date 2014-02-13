@@ -19,6 +19,12 @@ public final class LayoutComponent
     }
 
     @Override
+    public Type getType()
+    {
+        return Type.LAYOUT;
+    }
+
+    @Override
     public void setPath( final ComponentPath path )
     {
         super.setPath( path );

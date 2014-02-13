@@ -19,6 +19,12 @@ public class ImageComponent
         this.image = builder.image;
     }
 
+    @Override
+    public Type getType()
+    {
+        return Type.IMAGE;
+    }
+
     public ContentId getImage()
     {
         return image;
