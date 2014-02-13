@@ -2,31 +2,31 @@ module api.form.inputtype.content {
 
     export class ContentSummaryLoader implements api.util.Loader {
 
-        private findContentRequest:api.content.FindContentRequest<api.content.json.ContentSummaryJson>;
+        private isLoading: boolean;
 
-        private isLoading:boolean;
+        private preservedSearchString: string;
 
-        private preservedSearchString:string;
+        private listeners: ContentSummaryLoaderListener[] = [];
 
-        private listeners:ContentSummaryLoaderListener[] = [];
+        private loaderHelper: api.util.LoaderHelper;
 
-        private loaderHelper:api.util.LoaderHelper;
+        private contentQuery: api.content.query.ContentQuery;
 
-        constructor(delay:number = 500) {
+        constructor(delay: number = 500) {
             this.isLoading = false;
-            this.findContentRequest = new api.content.FindContentRequest().setExpand("summary").setCount(100);
+            this.contentQuery = new api.content.query.ContentQuery();
             this.loaderHelper = new api.util.LoaderHelper(this.doRequest, this, delay);
         }
 
-        setCount(count:number) {
-            this.findContentRequest.setCount(count);
+        setAllowedContentTypes(contentTypes: string[]) {
+            this.contentQuery.setContentTypeNames(this.createContentTypeNames(contentTypes));
         }
 
-        setAllowedContentTypes(contentTypes:string[]) {
-            this.findContentRequest.setContentTypes(contentTypes);
+        setSize(size: number) {
+            this.contentQuery.setSize(size);
         }
 
-        search(searchString:string) {
+        search(searchString: string) {
             if (this.isLoading) {
                 this.preservedSearchString = searchString;
                 return;
@@ -35,43 +35,66 @@ module api.form.inputtype.content {
             this.loaderHelper.search(searchString);
         }
 
-        private doRequest(searchString:string) {
+        private doRequest(searchString: string) {
             this.isLoading = true;
             this.notifyLoading();
 
-            this.findContentRequest.setFulltext(searchString).send()
-                .done((jsonResponse:api.rest.JsonResponse<api.content.FindContentResult<api.content.json.ContentSummaryJson>>) => {
-                var result = jsonResponse.getResult();
 
-                this.isLoading = false;
-                this.notifyLoaded(api.content.ContentSummary.fromJsonArray(result.contents));
-                if (this.preservedSearchString) {
-                    this.search(this.preservedSearchString);
-                    this.preservedSearchString = null;
-                }
-            });
+            var fulltextExpression: api.query.expr.Expression = api.query.FulltextFunctionFactory.create(searchString);
+            var queryExpr: api.query.expr.QueryExpr = new api.query.expr.QueryExpr(fulltextExpression);
+            this.contentQuery.setQueryExpr(queryExpr)
+
+
+            new api.content.ContentQueryRequest<api.content.json.ContentSummaryJson,api.content.ContentSummary>(this.contentQuery).
+                setExpand(api.rest.Expand.SUMMARY).
+                send().done((jsonResponse: api.rest.JsonResponse<api.content.json.ContentQueryResultJson<api.content.json.ContentSummaryJson>>) => {
+
+                    var result: api.content.json.ContentQueryResultJson<api.content.json.ContentSummaryJson> = jsonResponse.getResult();
+                    this.isLoading = false;
+                    this.notifyLoaded(api.content.ContentSummary.fromJsonArray(result.contents));
+                    if (this.preservedSearchString) {
+                        this.search(this.preservedSearchString);
+                        this.preservedSearchString = null;
+                    }
+
+                });
         }
 
-        addListener(listener:ContentSummaryLoaderListener) {
+        addListener(listener: ContentSummaryLoaderListener) {
             this.listeners.push(listener);
         }
 
-        removeListener(listenerToRemove:ContentSummaryLoaderListener) {
+        removeListener(listenerToRemove: ContentSummaryLoaderListener) {
             this.listeners = this.listeners.filter((listener) => {
                 return listener != listenerToRemove;
             })
         }
 
+        private createContentTypeNames(names: string[]): api.schema.content.ContentTypeName[] {
+
+            var contentTypeNames: api.schema.content.ContentTypeName[] = [];
+
+            if (names == null) {
+                return contentTypeNames;
+            }
+
+            names.forEach((name: string) => {
+                contentTypeNames.push(new api.schema.content.ContentTypeName(name));
+            });
+
+            return contentTypeNames;
+        }
+
         private notifyLoading() {
-            this.listeners.forEach((listener:ContentSummaryLoaderListener) => {
+            this.listeners.forEach((listener: ContentSummaryLoaderListener) => {
                 if (listener.onLoading) {
                     listener.onLoading();
                 }
             });
         }
 
-        private notifyLoaded(contentSummaries:api.content.ContentSummary[]) {
-            this.listeners.forEach((listener:ContentSummaryLoaderListener) => {
+        private notifyLoaded(contentSummaries: api.content.ContentSummary[]) {
+            this.listeners.forEach((listener: ContentSummaryLoaderListener) => {
                 if (listener.onLoaded) {
                     listener.onLoaded(contentSummaries);
                 }

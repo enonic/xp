@@ -108,32 +108,9 @@ module app.browse.filter {
         private appendFulltextSearch(searchInputValues: SearchInputValues, contentQuery: ContentQuery) {
 
             var fulltext: string = searchInputValues.getTextSearchFieldValue();
-            var fulltextExpression: api.query.expr.Expression = this.createFulltextSearchExpression(fulltext);
+            var fulltextExpression: api.query.expr.Expression = api.query.FulltextFunctionFactory.create(fulltext);
             var query: QueryExpr = new QueryExpr(fulltextExpression);
             contentQuery.setQueryExpr(query);
-        }
-
-        private createFulltextSearchExpression(fulltext: string): api.query.expr.Expression {
-
-            if (fulltext == null) {
-                return null;
-            }
-
-            var arguments: ValueExpr[] = [];
-
-            arguments.push(new ValueExpr(new Value("_all_text", ValueTypes.STRING)));
-            arguments.push(new ValueExpr(new Value(fulltext, ValueTypes.STRING)));
-            arguments.push(new ValueExpr(new Value("AND", ValueTypes.STRING)));
-
-            var fulltextExp: FunctionExpr = new FunctionExpr("fulltext", arguments);
-            var fulltextDynamicExpr: DynamicConstraintExpr = new DynamicConstraintExpr(fulltextExp);
-
-            var nGramExpr: FunctionExpr = new FunctionExpr("ngram", arguments);
-            var nGramDynamicExpr: DynamicConstraintExpr = new DynamicConstraintExpr(nGramExpr);
-
-            var booleanExpr: api.query.expr.LogicalExpr =
-                new api.query.expr.LogicalExpr(fulltextDynamicExpr, LogicalOperator.OR, nGramDynamicExpr);
-            return booleanExpr;
         }
 
         private appendContentTypeFilter(searchInputValues: SearchInputValues, contentQuery: ContentQuery): void {
