@@ -24,7 +24,7 @@ module api.form.inputtype.support {
 
             this.removeButtonEl = new api.dom.AEl("remove-button");
 
-            this.removeButtonEl.hide();
+            this.removeButtonEl.addClass('hidden');
             this.appendChild(this.removeButtonEl);
             this.removeButtonEl.setClickListener(() => {
                 this.notifyRemoveButtonClicked();
@@ -44,7 +44,12 @@ module api.form.inputtype.support {
 
             this.getEl().setData("dataId", this.inputOccurrence.getDataId().toString());
 
-            this.removeButtonEl.setVisible(this.inputOccurrence.showRemoveButton());
+            if (this.inputOccurrence.showRemoveButton()) {
+                this.removeButtonEl.removeClass('hidden');
+            }
+            else if (!this.removeButtonEl.hasClass('hidden')) {
+                this.removeButtonEl.addClass('hidden');
+            }
         }
 
         getIndex():number {
