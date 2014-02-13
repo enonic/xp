@@ -83,14 +83,17 @@ module app.wizard {
                 if (this.pageNeedsReload && !this.pageLoading) {
 
                     this.pageLoading = true;
-                    this.doLoad().done(()=> {
+                    this.doLoad().then(()=> {
 
                         this.pageLoading = false;
                         this.pageNeedsReload = false;
 
                         this.setupContextWindow();
                         deferred.resolve(null);
-                    });
+                    }).catch(()=> {
+                        console.log("Error while loading page: ", arguments);
+                        deferred.reject(arguments);
+                    }).done();
                 }
                 else {
                     deferred.resolve(null);
@@ -185,7 +188,8 @@ module app.wizard {
                     this.setupContextWindow();
 
                 }).fail(()=> {
-                    console.log("LiveFormPanel.renderExisting() loading Live edit failed (time out)");
+                    console.log("Error while loading page: ", arguments);
+                    deferred.reject(arguments);
                 }).done();
         }
 
