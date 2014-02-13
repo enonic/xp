@@ -46,11 +46,6 @@ final class BootEnvironment
         logBanner();
     }
 
-    public void destroy()
-    {
-        // Do nothing for now
-    }
-
     private void resolveHomeDir()
     {
         final HomeResolver resolver = new HomeResolver();
