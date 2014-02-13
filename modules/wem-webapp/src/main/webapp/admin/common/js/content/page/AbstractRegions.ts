@@ -42,7 +42,7 @@ module api.content.page {
         moveComponent(componentPath: ComponentPath, toRegion: RegionPath, precedingComponent: ComponentPath): ComponentPath {
 
             var component = this.removeComponent(componentPath);
-            console.log("moving component", arguments);
+
             return this.addComponentAfter(component, toRegion, precedingComponent);
         }
 

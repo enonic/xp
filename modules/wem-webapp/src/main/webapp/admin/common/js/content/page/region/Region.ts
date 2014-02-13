@@ -89,7 +89,7 @@ module api.content.page.region {
             this.componentByName[component.getName().toString()] = component;
 
             if (precedingIndex == -1) {
-                this.pageComponents.push(component);
+                this.pageComponents.splice(0, 0, component);
                 return 0;
             }
             else {
