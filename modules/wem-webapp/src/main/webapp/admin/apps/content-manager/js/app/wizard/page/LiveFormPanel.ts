@@ -48,9 +48,7 @@ module app.wizard {
             this.pageSkipReload = false;
 
             this.baseUrl = api.util.getUri("portal/edit/");
-            this.frame = new api.dom.IFrameEl();
-            this.frame.addClass("live-edit-frame");
-            this.appendChild(this.frame);
+
         }
 
         private initialize(): Q.Promise<void> {
@@ -112,7 +110,7 @@ module app.wizard {
 
             var deferred = Q.defer<void>();
 
-            this.frame.setSrc(this.pageUrl);
+            this.setupFrame();
 
             var maxIterations = 100;
             var iterations = 0;
@@ -201,6 +199,17 @@ module app.wizard {
             else {
                 return this.pageTemplate.getRegions();
             }
+        }
+
+        private setupFrame() {
+            if (this.frame) {
+                this.frame.remove();
+            }
+
+            this.frame = new api.dom.IFrameEl();
+            this.frame.addClass("live-edit-frame");
+            this.appendChild(this.frame);
+            this.frame.setSrc(this.pageUrl);
         }
 
         private setupContextWindow() {
