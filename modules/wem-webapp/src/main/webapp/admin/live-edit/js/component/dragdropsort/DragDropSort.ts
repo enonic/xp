@@ -46,7 +46,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             tolerance: 'intersect',
             cursor: 'move',
             cursorAt: CURSOR_AT,
-            scrollSensitivity: Math.round(LiveEdit.DomHelper.getViewPortSize().height / 8),
+            scrollSensitivity: Math.round(document.body.clientHeight / 8),
             placeholder: 'live-edit-drop-target-placeholder',
             zIndex: 1001001,
             helper:     (event, helper) => LiveEdit.component.helper.DragHelper.createDragHelperHtml(),
