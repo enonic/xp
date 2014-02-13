@@ -22,9 +22,8 @@ module app.contextwindow {
         private liveEditJQuery: JQueryStatic;
         private draggingMask: api.ui.DraggingMask;
         private liveEditIFrame: api.dom.IFrameEl;
-        private selectedComponent: Component;
         private minimizer: Minimizer;
-        private liveFormPanel:app.wizard.LiveFormPanel;
+        private liveFormPanel: app.wizard.LiveFormPanel;
 
         constructor(config: ContextWindowConfig) {
             this.liveEditIFrame = config.liveEditIFrame;
@@ -78,22 +77,32 @@ module app.contextwindow {
             });
             this.getNavigator().appendChild(this.minimizer);
 
-            SelectComponentEvent.on((event) => {
-                this.selectPanel(this.inspectionPanel);
-                this.selectedComponent = event.getComponent();
-            });
-
-            ComponentDeselectEvent.on((event) => {
-                this.selectPanel(this.componentTypesPanel);
-            });
-
-            ComponentRemovedEvent.on((event) => {
-                this.selectPanel(this.componentTypesPanel);
-            });
-
-
             document.body.appendChild(this.draggingMask.getHTMLElement());
+        }
 
+        public inspectComponent(component: api.content.page.PageComponent) {
+            this.inspectionPanel.inspectComponent(component);
+            this.selectPanel(this.inspectionPanel);
+        }
+
+        public inspectPage(page: api.content.Content) {
+            this.inspectionPanel.inspectPage(page);
+            this.selectPanel(this.inspectionPanel);
+        }
+
+        public inspectRegion(region: api.content.page.region.Region) {
+            this.inspectionPanel.inspectRegion(region);
+            this.selectPanel(this.inspectionPanel);
+        }
+
+        public inspectContent(content: api.content.Content) {
+            this.inspectionPanel.inspectContent(content);
+            this.selectPanel(this.inspectionPanel);
+        }
+
+        public clearSelection() {
+            this.inspectionPanel.clearSelection();
+            this.selectPanel(this.componentTypesPanel);
         }
 
         private minimize() {

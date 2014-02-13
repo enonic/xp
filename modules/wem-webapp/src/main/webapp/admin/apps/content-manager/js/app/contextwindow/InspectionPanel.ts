@@ -1,6 +1,9 @@
 module app.contextwindow {
 
     import SiteTemplate = api.content.site.template.SiteTemplate;
+    import ImageComponent = api.content.page.image.ImageComponent
+    import PartComponent = api.content.page.part.PartComponent;
+    import LayoutComponent = api.content.page.layout.LayoutComponent;
 
     export interface InspectionPanelConfig {
 
@@ -11,41 +14,93 @@ module app.contextwindow {
 
     export class InspectionPanel extends api.ui.DeckPanel {
 
+        private noSelectionPanel: EmptyInspectionPanel;
         private imageInspectionPanel: ImageInspectionPanel;
-        private selectPanel: SelectPanel;
-        private imageSelectPanel: app.contextwindow.image.ImageSelectPanel;
+        private partInspectionPanel: PartInspectionPanel;
+        private layoutInspectionPanel: LayoutInspectionPanel;
+        private contentInspectionPanel: ContentInspectionPanel;
+        private pageInspectionPanel: PageInspectionPanel;
+        private regionInspectionPanel: RegionInspectionPanel;
         private liveFormPanel: app.wizard.LiveFormPanel;
 
         constructor(config: InspectionPanelConfig) {
             super();
 
+            this.noSelectionPanel = new EmptyInspectionPanel();
             this.imageInspectionPanel = new ImageInspectionPanel({
                 siteTemplate: config.siteTemplate,
                 liveFormPanel: config.liveFormPanel
             });
-
-            this.selectPanel = new SelectPanel({
-                liveEditWindow: config.liveEditWindow});
-
-            this.imageSelectPanel = new app.contextwindow.image.ImageSelectPanel({
-                liveEditWindow: config.liveEditWindow});
-
+            this.partInspectionPanel = new PartInspectionPanel({
+                siteTemplate: config.siteTemplate,
+                liveFormPanel: config.liveFormPanel
+            });
+            this.layoutInspectionPanel = new LayoutInspectionPanel({
+                siteTemplate: config.siteTemplate,
+                liveFormPanel: config.liveFormPanel
+            });
+            this.contentInspectionPanel = new ContentInspectionPanel({
+                siteTemplate: config.siteTemplate,
+                liveFormPanel: config.liveFormPanel
+            });
+            this.pageInspectionPanel = new PageInspectionPanel({
+                siteTemplate: config.siteTemplate,
+                liveFormPanel: config.liveFormPanel
+            });
+            this.regionInspectionPanel = new RegionInspectionPanel({
+                siteTemplate: config.siteTemplate,
+                liveFormPanel: config.liveFormPanel
+            });
 
             this.addPanel(this.imageInspectionPanel);
-            this.addPanel(this.selectPanel);
-            this.addPanel(this.imageSelectPanel);
+            this.addPanel(this.partInspectionPanel);
+            this.addPanel(this.layoutInspectionPanel);
+            this.addPanel(this.contentInspectionPanel);
+            this.addPanel(this.regionInspectionPanel);
+            this.addPanel(this.pageInspectionPanel);
+            this.addPanel(this.noSelectionPanel);
 
-            SelectComponentEvent.on((event) => {
+            this.clearSelection();
+        }
 
-                switch (event.getComponent().componentType.typeName) {
-                case 'image':
-                    this.showPanel(this.getPanelIndex(this.imageInspectionPanel));
-                    break;
-                default:
-                    event.getComponent().isEmpty() ? this.showPanel(this.getPanelIndex(this.selectPanel))
-                        : this.showPanel(this.getPanelIndex(this.imageInspectionPanel));
-                }
-            });
+        private showInspectionPanel(panel: api.ui.Panel) {
+            this.showPanel(this.getPanelIndex(panel));
+        }
+
+        public clearSelection() {
+            this.showInspectionPanel(this.noSelectionPanel);
+        }
+
+        public inspectPage(page: api.content.Content) {
+            this.pageInspectionPanel.setPage(page);
+            this.showInspectionPanel(this.pageInspectionPanel);
+        }
+
+        public inspectRegion(region: api.content.page.region.Region) {
+            this.regionInspectionPanel.setRegion(region);
+            this.showInspectionPanel(this.regionInspectionPanel);
+        }
+
+        public inspectContent(content: api.content.Content) {
+            this.contentInspectionPanel.setContent(content);
+            this.showInspectionPanel(this.contentInspectionPanel);
+        }
+
+        public inspectComponent(component: api.content.page.PageComponent) {
+            if (component instanceof ImageComponent) {
+                this.imageInspectionPanel.setImageComponent(<ImageComponent>component);
+                this.showInspectionPanel(this.imageInspectionPanel);
+
+            } else if (component instanceof PartComponent) {
+                this.partInspectionPanel.setPartComponent(<PartComponent>component);
+                this.showInspectionPanel(this.partInspectionPanel);
+
+            } else if (component instanceof api.content.page.layout.LayoutComponent) {
+                this.layoutInspectionPanel.setLayoutComponent(<LayoutComponent>component);
+                this.showInspectionPanel(this.layoutInspectionPanel);
+            } else {
+                console.warn('Unsupported component in InspectionPanel', component);
+            }
         }
     }
 }

@@ -39,7 +39,7 @@ module LiveEdit.component {
                 return "component";
             } else if (element.hasAttribute(Selection.REGION_ATTR)) {
                 return "region";
-            } else if (element.tagName == "body") {
+            } else if (element.tagName.toLocaleLowerCase() === "body") {
                 return "page";
             }
             return null;

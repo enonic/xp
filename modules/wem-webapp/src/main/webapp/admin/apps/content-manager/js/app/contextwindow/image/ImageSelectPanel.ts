@@ -62,33 +62,33 @@ module app.contextwindow.image {
             this.appendChild(comboBoxWrapper);
             this.appendChild(this.deck);
 
-            SelectComponentEvent.on((event) => {
-                //TODO: set image here
-                if (!event.getComponent().isEmpty()) {
-                    this.image = new api.content.page.image.ImageComponent();
-                    this.itemSelected();
-                    if (event.getComponent().getItemId()) {
-                        console.log("itemId:", event.getComponent().getItemId());
-                        var itemId = event.getComponent().getItemId();
-                        this.setSelectedContent(this.liveEditItems[itemId]);
-                    }
-                } else if (this.selectedOption != null) {
-                    this.comboBox.removeSelectedItem(this.selectedOption, true);
-                }
+//            SelectComponentEvent.on((event) => {
+//                //TODO: set image here
+//                if (!event.getComponent().isEmpty()) {
+//                    this.image = new api.content.page.image.ImageComponent();
+//                    this.itemSelected();
+//                    if (event.getComponent().getItemId()) {
+//                        console.log("itemId:", event.getComponent().getItemId());
+//                        var itemId = event.getComponent().getItemId();
+//                        this.setSelectedContent(this.liveEditItems[itemId]);
+//                    }
+//                } else if (this.selectedOption != null) {
+//                    this.comboBox.removeSelectedItem(this.selectedOption, true);
+//                }
+//
+//
+//            });
 
+//            ComponentDeselectEvent.on((event) => {
+//                this.itemRemoved();
+//            });
 
-            });
-
-            ComponentDeselectEvent.on((event) => {
-                this.itemRemoved();
-            });
-
-            ComponentRemovedEvent.on((event) => {
-                if (this.selectedOption != null) {
-                    this.comboBox.removeSelectedItem(this.selectedOption);
-                    this.itemRemoved();
-                }
-            });
+//            ComponentRemovedEvent.on((event) => {
+//                if (this.selectedOption != null) {
+//                    this.comboBox.removeSelectedItem(this.selectedOption);
+//                    this.itemRemoved();
+//                }
+//            });
 
             this.addGridListeners();
         }

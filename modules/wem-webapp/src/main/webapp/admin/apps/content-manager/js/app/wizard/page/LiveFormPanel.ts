@@ -19,7 +19,6 @@ module app.wizard {
 
         private pageContent: api.content.Content;
         private pageTemplate: api.content.page.PageTemplate;
-        private selectedComponent: app.contextwindow.Component;
         private pageRegions: api.content.page.PageRegions;
 
         private pageNeedsReload: boolean;
@@ -89,9 +88,9 @@ module app.wizard {
                         this.setupContextWindow();
                         deferred.resolve(null);
                     }).catch(()=> {
-                        console.log("Error while loading page: ", arguments);
-                        deferred.reject(arguments);
-                    }).done();
+                            console.log("Error while loading page: ", arguments);
+                            deferred.reject(arguments);
+                        }).done();
                 }
                 else {
                     deferred.resolve(null);
@@ -123,7 +122,7 @@ module app.wizard {
 
                         // Give loaded page same CONFIG.baseUri as in admin
                         liveEditWindow.CONFIG = {};
-                        liveEditWindow.CONFIG.baseUri = CONFIG.baseUri
+                        liveEditWindow.CONFIG.baseUri = CONFIG.baseUri;
 
                         var pageLoaded = true;
                         clearInterval(intervalId);
@@ -268,39 +267,59 @@ module app.wizard {
             return d.promise;
         }
 
+        private onComponentSelected(pathAsString: string) {
+            var componentPath = api.content.page.ComponentPath.fromString(pathAsString);
+            var component = this.pageRegions.getComponent(componentPath);
+            this.contextWindow.inspectComponent(component);
+        }
+
+        private onRegionSelected(pathAsString: string) {
+            var regionPath = api.content.page.RegionPath.fromString(pathAsString);
+            var region = this.pageRegions.getRegionByPath(regionPath);
+            this.contextWindow.inspectRegion(region);
+        }
+
+        private onPageSelected() {
+            this.contextWindow.inspectPage(this.pageContent);
+        }
+
+        private onContentSelected(contentIdStr: string) {
+            var contentId = new api.content.ContentId(contentIdStr);
+            this.contextWindow.inspectContent(null);
+        }
 
         private liveEditListen() {
             this.liveEditJQuery(this.liveEditWindow).on('selectComponent.liveEdit',
-                (event, component?, mouseClickPagePosition?) => {
-                    new app.contextwindow.SelectComponentEvent(<app.contextwindow.Component>component).fire();
-                    this.selectedComponent = component;
+                (event, component?) => {
+                    var type = component.componentType.typeName;
+                    if (type === 'content') {
+                        this.onContentSelected(component.name);
+                    }
                 });
 
             this.liveEditJQuery(this.liveEditWindow).on('componentSelect.liveEdit',
-                (event, name?) => {
-                    new app.contextwindow.ComponentSelectEvent(new api.content.page.ComponentName(name)).fire();
+                (event, pathAsString?) => {
+                    this.onComponentSelected(pathAsString);
                 });
 
             this.liveEditJQuery(this.liveEditWindow).on('pageSelect.liveEdit',
                 (event) => {
-                    new app.contextwindow.PageSelectEvent().fire();
+                    this.onPageSelected();
                 });
 
             this.liveEditJQuery(this.liveEditWindow).on('regionSelect.liveEdit',
-                (event, name?) => {
-                    new app.contextwindow.RegionSelectEvent(name).fire();
+                (event, regionName?) => {
+                    this.onRegionSelected(regionName);
                 });
 
             this.liveEditJQuery(this.liveEditWindow).on('deselectComponent.liveEdit', (event) => {
-                new app.contextwindow.ComponentDeselectEvent().fire();
-                this.selectedComponent = null;
+                this.contextWindow.clearSelection();
             });
 
             this.liveEditJQuery(this.liveEditWindow).on('componentRemoved.liveEdit', (event, component?) => {
-                new app.contextwindow.ComponentRemovedEvent().fire();
                 if (component) {
                     this.pageRegions.removeComponent(api.content.page.ComponentPath.fromString(component.getComponentPath()));
-                    this.selectedComponent = null;
+                    this.contextWindow.clearSelection();
                 }
             });
             this.liveEditJQuery(this.liveEditWindow).on('sortableStop.liveEdit', (event) => {

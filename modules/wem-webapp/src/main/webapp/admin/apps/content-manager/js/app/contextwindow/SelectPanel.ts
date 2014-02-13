@@ -28,9 +28,9 @@ module app.contextwindow {
             this.appendChild(this.searchBox);
             this.appendChild(this.grid);
 
-            SelectComponentEvent.on((event) => {
-                this.getData(event.getComponent().componentType.type);
-            });
+//            SelectComponentEvent.on((event) => {
+//                this.getData(event.getComponent().componentType.type);
+//            });
 
             // Using jQuery since grid.setOnClick fires event twice, bug in slickgrid
             jQuery(this.getHTMLElement()).on("click", ".grid-row", (event:JQueryEventObject) => {
