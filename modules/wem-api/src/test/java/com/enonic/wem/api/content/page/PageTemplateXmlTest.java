@@ -60,6 +60,47 @@ public class PageTemplateXmlTest
     }
 
     @Test
+    public void test_templates_sort_by_displayName()
+        throws Exception
+    {
+        // 1
+        final String xml = readFromFile( "page-template.xml" );
+        PageTemplate.Builder builder = PageTemplate.newPageTemplate();
+        builder.name( "my-page-template1" );
+        XmlSerializers.pageTemplate().parse( xml ).to( builder );
+
+        builder.module( ModuleName.from( "demo1" ) );
+        builder.displayName( "BBB" );
+        PageTemplate pageTemplate = builder.build();
+
+        final PageTemplates.Builder player = PageTemplates.newPageTemplates();
+        player.add( pageTemplate );
+
+        // 2
+        builder = PageTemplate.newPageTemplate();
+        builder.name( "my-page-template2" );
+        XmlSerializers.pageTemplate().parse( xml ).to( builder );
+
+        builder.module( ModuleName.from( "demo2" ) );
+        builder.displayName( "CCC" );
+        pageTemplate = builder.build();
+        player.add( pageTemplate );
+
+        // 3
+        builder = PageTemplate.newPageTemplate();
+        builder.name( "my-page-template3" );
+        XmlSerializers.pageTemplate().parse( xml ).to( builder );
+
+        builder.module( ModuleName.from( "demo3" ) );
+        builder.displayName( "AAA" );
+        pageTemplate = builder.build();
+        player.add( pageTemplate );
+
+        PageTemplates result = player.build().sort();
+        System.out.println( result );
+    }
+
+    @Test
     public void testTo()
         throws Exception
     {

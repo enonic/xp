@@ -11,5 +11,9 @@ module api.schema.content{
         toString():string {
             return this.value;
         }
+
+        equals(other: ContentTypeName):boolean {
+            return this.value == other.toString();
+        }
     }
 }
