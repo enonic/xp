@@ -209,6 +209,7 @@ public final class XsltScriptBean
                 builder.start( "component" );
                 builder.attribute( "name", component.getName().toString() );
                 builder.attribute( "path", component.getPath().toString() );
+                builder.attribute( "type", component.getType().toString() );
                 builder.end();
             }
             builder.end();
