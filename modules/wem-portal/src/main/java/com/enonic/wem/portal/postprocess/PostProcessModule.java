@@ -1,8 +1,10 @@
 package com.enonic.wem.portal.postprocess;
 
-import javax.inject.Singleton;
-
 import com.google.inject.AbstractModule;
+import com.google.inject.multibindings.Multibinder;
+
+import com.enonic.wem.portal.postprocess.instruction.ComponentInstruction;
+import com.enonic.wem.portal.postprocess.instruction.PostProcessInstruction;
 
 public final class PostProcessModule
     extends AbstractModule
@@ -10,6 +12,9 @@ public final class PostProcessModule
     @Override
     protected void configure()
     {
-        bind( PostProcessor.class ).to( PostProcessorImpl.class ).in( Singleton.class );
+        final Multibinder<PostProcessInstruction> instructions = Multibinder.newSetBinder( binder(), PostProcessInstruction.class );
+        instructions.addBinding().to( ComponentInstruction.class );
+
+        bind( PostProcessor.class ).to( PostProcessorImpl.class );
     }
 }

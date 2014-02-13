@@ -1,7 +1,9 @@
-package com.enonic.wem.portal.postprocess;
+package com.enonic.wem.portal.postprocess.instruction;
 
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.ws.rs.core.Response;
 
 import com.google.common.base.Splitter;
@@ -18,42 +20,34 @@ import com.enonic.wem.portal.rendering.RenderException;
 import com.enonic.wem.portal.rendering.Renderer;
 import com.enonic.wem.portal.rendering.RendererFactory;
 
-final class ComponentInstruction
+@Singleton
+public final class ComponentInstruction
     implements PostProcessInstruction
 {
     private final RendererFactory rendererFactory;
 
-    private final JsContext context;
-
-    public ComponentInstruction( final RendererFactory rendererFactory, final JsContext context )
+    @Inject
+    public ComponentInstruction( final RendererFactory rendererFactory )
     {
         this.rendererFactory = rendererFactory;
-        this.context = context;
     }
 
     @Override
-    public String evaluate( final PostProcessEvaluator evaluator, final String content )
+    public String evaluate( final JsContext context, final String instruction )
     {
-        if ( !content.startsWith( "COMPONENT " ) )
+        if ( !instruction.startsWith( "COMPONENT " ) )
         {
             return null;
         }
 
-        final List<String> list = Lists.newArrayList( Splitter.on( ' ' ).omitEmptyStrings().split( content ) );
+        final List<String> list = Lists.newArrayList( Splitter.on( ' ' ).omitEmptyStrings().split( instruction ) );
         if ( list.size() != 2 )
         {
             return null;
         }
 
         final String path = list.get( 1 );
-        final String result = renderComponent( context, path );
-
-        if ( result == null )
-        {
-            return null;
-        }
-
-        return evaluator.evaluate( result );
+        return renderComponent( context, path );
     }
 
     private String renderComponent( final JsContext context, final String path )
