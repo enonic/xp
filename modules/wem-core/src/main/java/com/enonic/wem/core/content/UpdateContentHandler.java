@@ -70,7 +70,7 @@ public class UpdateContentHandler
 
         final Content.EditBuilder editBuilder = command.getEditor().edit( contentBeforeChange );
 
-        if ( !editBuilder.isChanges() )
+        if ( !editBuilder.isChanges() && command.getAttachments().isEmpty() )
         {
             command.setResult( contentBeforeChange );
             return;
