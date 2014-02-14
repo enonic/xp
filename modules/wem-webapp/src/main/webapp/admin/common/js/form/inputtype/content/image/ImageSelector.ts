@@ -3,10 +3,7 @@ module api.form.inputtype.content.image {
     import ValidityChangedEvent = api.form.inputtype.support.ValidityChangedEvent;
 
     export interface ImageSelectorConfig {
-
-        relationshipType: {
-            name: string
-        }
+        relationshipType: string
     }
 
     export class ImageSelector extends api.dom.DivEl implements api.form.inputtype.InputTypeView {
@@ -29,7 +26,8 @@ module api.form.inputtype.content.image {
 
         private uploadDialog: UploadDialog;
 
-        private editContentRequestListeners: {(content: api.content.ContentSummary): void}[] = [];
+        private editContentRequestListeners: {(content: api.content.ContentSummary): void
+        }[] = [];
 
         constructor(config: api.form.inputtype.InputTypeViewConfig<ImageSelectorConfig>) {
             super("image-selector");
@@ -52,8 +50,9 @@ module api.form.inputtype.content.image {
             this.contentRequestsAllowed = false;
 
             var name = new api.schema.relationshiptype.RelationshipTypeName("default");
-            if (config.inputConfig.relationshipType.name != null) {
-                name = new api.schema.relationshiptype.RelationshipTypeName(config.inputConfig.relationshipType.name);
+
+            if (config.inputConfig.relationshipType != null) {
+                name = new api.schema.relationshiptype.RelationshipTypeName(config.inputConfig.relationshipType);
             }
             new api.schema.relationshiptype.GetRelationshipTypeByNameRequest(name).sendAndParse()
                 .done((relationshipType: api.schema.relationshiptype.RelationshipType) => {
@@ -273,11 +272,11 @@ module api.form.inputtype.content.image {
 
         }
 
-        onValidityChanged(listener:(event:ValidityChangedEvent)=>void) {
+        onValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
 
         }
 
-        unValidityChanged(listener:(event:ValidityChangedEvent)=>void) {
+        unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
 
         }
 

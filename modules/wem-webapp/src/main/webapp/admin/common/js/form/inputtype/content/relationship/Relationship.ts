@@ -5,10 +5,7 @@ module api.form.inputtype.content.relationship {
     import ValidityChangedEvent = api.form.inputtype.support.ValidityChangedEvent;
 
     export interface RelationshipConfig {
-
-        relationshipType: {
-            name: string
-        };
+        relationshipType: string
     }
 
     export class Relationship extends api.dom.DivEl implements api.form.inputtype.InputTypeView {
@@ -26,7 +23,7 @@ module api.form.inputtype.content.relationship {
             this.addClass("input-type-view");
 
             this.listeners[InputTypeEvents.ValidityChanged] = [];
-            this.relationshipTypeName = config.inputConfig.relationshipType.name;
+            this.relationshipTypeName = config.inputConfig.relationshipType;
         }
 
         getHTMLElement(): HTMLElement {

@@ -31,7 +31,8 @@ public class RelationshipTypesInitializer
                                 ContentTypeNames.from( "article" ) );
 
     private static final RelationshipType IMAGE =
-        createRelationshipType( RelationshipTypeName.from( "image" ), "Image", "relates to image", "related of image" );
+        createRelationshipType( RelationshipTypeName.from( "image" ), "Image", "relates to image", "related of image",
+                                ContentTypeNames.from( "image" ) );
 
     private static final RelationshipType[] SYSTEM_TYPES = {DEFAULT, PARENT, LINK, LIKE, CITATION, IMAGE};
 
