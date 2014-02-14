@@ -66,6 +66,7 @@ public final class LiveEditInjection
 
         final StringWriter out = new StringWriter();
         template.execute( map, out );
+        out.write( '\n' );
         return out.toString();
     }
 
@@ -75,7 +76,7 @@ public final class LiveEditInjection
         {
             final URL url = getClass().getResource( name );
             final String str = Resources.toString( url, Charsets.UTF_8 );
-            return Mustache.compiler().compile( str );
+            return Mustache.compiler().compile( str.trim() );
         }
         catch ( final Exception e )
         {

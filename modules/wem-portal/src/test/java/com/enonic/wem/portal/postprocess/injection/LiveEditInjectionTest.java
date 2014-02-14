@@ -65,7 +65,7 @@ public class LiveEditInjectionTest
 
         final String result = this.injection.inject( this.context, PostProcessInjection.Tag.HEAD_END );
         assertNotNull( result );
-        assertEquals( readResource( "liveEditInjectionHeadEnd.html" ), result );
+        assertEquals( readResource( "liveEditInjectionHeadEnd.html" ).trim() + "\n", result );
     }
 
     @Test
@@ -76,7 +76,7 @@ public class LiveEditInjectionTest
 
         final String result = this.injection.inject( this.context, PostProcessInjection.Tag.BODY_END );
         assertNotNull( result );
-        assertEquals( readResource( "liveEditInjectionBodyEnd.html" ), result );
+        assertEquals( readResource( "liveEditInjectionBodyEnd.html" ).trim() + "\n", result );
     }
 
     private void mockCurrentContextHttpRequest()
