@@ -93,11 +93,8 @@ module api.form.inputtype.content.image {
                 });
             }
 
-            this.appendChild(this.comboBox);
-
             this.libraryButton = new api.ui.Button("");
             this.libraryButton.addClass("open-library-button");
-            this.appendChild(this.libraryButton);
 
             this.uploadButton = new api.ui.Button("");
             this.uploadButton.addClass("upload-button");
@@ -114,7 +111,13 @@ module api.form.inputtype.content.image {
                 this.uploadDialog.setMaximumOccurrences(rest);
                 this.uploadDialog.open();
             });
+
             this.appendChild(this.uploadButton);
+            this.appendChild(this.libraryButton);
+
+            var comboboxWrapper = new api.dom.DivEl("combobox-wrapper");
+            comboboxWrapper.appendChild(this.comboBox);
+            this.appendChild(comboboxWrapper);
 
             this.appendChild(this.selectedOptionsView);
         }
