@@ -1,17 +1,18 @@
 module app.contextwindow {
 
+    import SiteTemplate = api.content.site.template.SiteTemplate;
+
     export class PartInspectionPanel extends app.contextwindow.BaseComponentInspectionPanel {
 
         private partComponent: api.content.page.part.PartComponent;
 
-        constructor(config: ComponentInspectionPanelConfig) {
-            super(config, "live-edit-font-icon-part");
-
+        constructor(liveFormPanel: app.wizard.LiveFormPanel, siteTemplate: SiteTemplate) {
+            super("live-edit-font-icon-part", liveFormPanel, siteTemplate);
         }
 
         setPartComponent(component: api.content.page.part.PartComponent) {
             this.partComponent = component;
-            this.setName(component.getName().toString(), component.getPath().toString());
+            this.setComponentName(component);
         }
 
     }

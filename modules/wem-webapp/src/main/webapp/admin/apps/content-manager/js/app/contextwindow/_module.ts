@@ -1,9 +1,10 @@
+///<reference path='BaseInspectionPanel.ts' />
 ///<reference path='BaseComponentInspectionPanel.ts' />
 ///<reference path='Component.ts' />
 ///<reference path='ContextWindowEvents.ts' />
 ///<reference path='ComponentTypesPanel.ts' />
 ///<reference path='ComponentGrid.ts' />
-///<reference path='EmptyInspectionPanel.ts' />
+///<reference path='NoSelectionInspectionPanel.ts' />
 ///<reference path='EmulatorGrid.ts' />
 ///<reference path='EmulatorPanel.ts' />
 ///<reference path='SelectPanel.ts' />

@@ -14,7 +14,7 @@ module app.contextwindow {
 
     export class InspectionPanel extends api.ui.DeckPanel {
 
-        private noSelectionPanel: EmptyInspectionPanel;
+        private noSelectionPanel: NoSelectionInspectionPanel;
         private imageInspectionPanel: ImageInspectionPanel;
         private partInspectionPanel: PartInspectionPanel;
         private layoutInspectionPanel: LayoutInspectionPanel;
@@ -26,31 +26,13 @@ module app.contextwindow {
         constructor(config: InspectionPanelConfig) {
             super();
 
-            this.noSelectionPanel = new EmptyInspectionPanel();
-            this.imageInspectionPanel = new ImageInspectionPanel({
-                siteTemplate: config.siteTemplate,
-                liveFormPanel: config.liveFormPanel
-            });
-            this.partInspectionPanel = new PartInspectionPanel({
-                siteTemplate: config.siteTemplate,
-                liveFormPanel: config.liveFormPanel
-            });
-            this.layoutInspectionPanel = new LayoutInspectionPanel({
-                siteTemplate: config.siteTemplate,
-                liveFormPanel: config.liveFormPanel
-            });
-            this.contentInspectionPanel = new ContentInspectionPanel({
-                siteTemplate: config.siteTemplate,
-                liveFormPanel: config.liveFormPanel
-            });
-            this.pageInspectionPanel = new PageInspectionPanel({
-                siteTemplate: config.siteTemplate,
-                liveFormPanel: config.liveFormPanel
-            });
-            this.regionInspectionPanel = new RegionInspectionPanel({
-                siteTemplate: config.siteTemplate,
-                liveFormPanel: config.liveFormPanel
-            });
+            this.noSelectionPanel = new NoSelectionInspectionPanel();
+            this.imageInspectionPanel = new ImageInspectionPanel(config.liveFormPanel, config.siteTemplate);
+            this.partInspectionPanel = new PartInspectionPanel(config.liveFormPanel, config.siteTemplate);
+            this.layoutInspectionPanel = new LayoutInspectionPanel(config.liveFormPanel, config.siteTemplate);
+            this.contentInspectionPanel = new ContentInspectionPanel();
+            this.pageInspectionPanel = new PageInspectionPanel();
+            this.regionInspectionPanel = new RegionInspectionPanel();
 
             this.addPanel(this.imageInspectionPanel);
             this.addPanel(this.partInspectionPanel);

@@ -1,20 +1,22 @@
 module app.contextwindow {
 
-    export class ImageInspectionPanel extends app.contextwindow.BaseComponentInspectionPanel {
+    import SiteTemplate = api.content.site.template.SiteTemplate;
+
+    export class ImageInspectionPanel extends BaseComponentInspectionPanel {
 
         private imageComponent: api.content.page.image.ImageComponent;
 
-        constructor(config: ComponentInspectionPanelConfig) {
-            super(config, "live-edit-font-icon-image");
+        constructor(liveFormPanel: app.wizard.LiveFormPanel, siteTemplate: SiteTemplate) {
+            super("live-edit-font-icon-image", liveFormPanel, siteTemplate);
 
             this.initElements();
         }
 
         private initElements() {
-            var templateHeader = new api.dom.H6El();
-            templateHeader.setText("Template:");
-            templateHeader.addClass("template-header");
-            this.appendChild(templateHeader);
+            var descriptorHeader = new api.dom.H6El();
+            descriptorHeader.setText("Descriptor:");
+            descriptorHeader.addClass("descriptor-header");
+            this.appendChild(descriptorHeader);
 
             var imageDescriptorsRequest = new api.content.page.image.GetImageDescriptorsByModulesRequest(this.getSiteTemplate().getModules());
             var imageDescriptorLoader = new api.content.page.image.ImageDescriptorLoader(imageDescriptorsRequest);
@@ -30,7 +32,7 @@ module app.contextwindow {
 
         setImageComponent(component: api.content.page.image.ImageComponent) {
             this.imageComponent = component;
-            this.setName(component.getName().toString(), component.getPath().toString());
+            this.setComponentName(component);
         }
     }
 }
