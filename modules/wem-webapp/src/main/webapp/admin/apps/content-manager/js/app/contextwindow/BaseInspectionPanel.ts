@@ -17,9 +17,12 @@ module app.contextwindow {
             this.appendChild(this.nameAndIcon);
         }
 
-        setName(name: string, path: string) {
-            this.nameAndIcon.setMainName(name).setSubName(path);
+        setMainName(value: string) {
+            this.nameAndIcon.setMainName(value);
         }
 
+        setSubName(value: string) {
+            this.nameAndIcon.setSubName(value);
+        }
     }
 }

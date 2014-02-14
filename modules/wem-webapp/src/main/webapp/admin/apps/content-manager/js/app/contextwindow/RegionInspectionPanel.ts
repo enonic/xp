@@ -11,9 +11,11 @@ module app.contextwindow {
         setRegion(region: api.content.page.region.Region) {
             this.region = region;
             if (region) {
-                this.setName(region.getName(), region.getPath().toString());
+                this.setMainName(region.getName() );
+                this.setSubName(region.getPath().toString());
             } else {
-                this.setName('[No Name]', 'region');
+                this.setMainName("[No  Region given]" );
+                this.setSubName("");
             }
         }
 

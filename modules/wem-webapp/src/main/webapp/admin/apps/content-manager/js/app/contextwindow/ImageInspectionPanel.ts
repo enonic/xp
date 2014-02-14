@@ -2,7 +2,7 @@ module app.contextwindow {
 
     import SiteTemplate = api.content.site.template.SiteTemplate;
 
-    export class ImageInspectionPanel extends BaseComponentInspectionPanel {
+    export class ImageInspectionPanel extends BaseComponentInspectionPanel<api.content.page.image.ImageComponent> {
 
         private imageComponent: api.content.page.image.ImageComponent;
 
@@ -31,8 +31,10 @@ module app.contextwindow {
         }
 
         setImageComponent(component: api.content.page.image.ImageComponent) {
+
+            this.setComponent(component);
             this.imageComponent = component;
-            this.setComponentName(component);
+
         }
     }
 }

@@ -11,9 +11,11 @@ module app.contextwindow {
         setContent(content: api.content.Content) {
             this.content = content;
             if (content) {
-                this.setName(content.getDisplayName(), content.getPath().toString());
+                this.setMainName(content.getDisplayName());
+                this.setSubName(content.getPath().toString());
             } else {
-                this.setName('[No Name]', 'content');
+                this.setMainName("[No Content given]");
+                this.setSubName("");
             }
         }
 

@@ -2,10 +2,11 @@ module app.contextwindow {
 
     import SiteTemplate = api.content.site.template.SiteTemplate;
 
-    export class BaseComponentInspectionPanel extends BaseInspectionPanel {
+    export class BaseComponentInspectionPanel<COMPONENT extends api.content.page.PageComponent> extends BaseInspectionPanel {
 
         private siteTemplate: SiteTemplate;
         private liveFormPanel: app.wizard.LiveFormPanel;
+        private component: COMPONENT;
 
         constructor(iconClass: string, liveFormPanel: app.wizard.LiveFormPanel, siteTemplate: SiteTemplate) {
             super(iconClass);
@@ -22,8 +23,15 @@ module app.contextwindow {
             return this.siteTemplate;
         }
 
-        setComponentName(component: api.content.page.PageComponent) {
-            this.setName(component.getName().toString(), component.getPath().toString());
+        setComponent(component: COMPONENT) {
+
+            this.component = component;
+
+            this.setMainName(component.getName().toString());
+            this.setSubName(component.getPath().toString());
+
+            // TODO: select descriptor (component.descriptor)
+            // TODO: display config form for selected descriptor
         }
     }
 }

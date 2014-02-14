@@ -11,9 +11,11 @@ module app.contextwindow {
         setPage(page: api.content.Content) {
             this.page = page;
             if (page) {
-                this.setName(page.getDisplayName(), page.getPath().toString());
+                this.setMainName(page.getDisplayName());
+                this.setSubName(page.getPath().toString());
             } else {
-                this.setName('[No Name]', 'page');
+                this.setMainName("[No Page given]");
+                this.setSubName("");
             }
         }
 
