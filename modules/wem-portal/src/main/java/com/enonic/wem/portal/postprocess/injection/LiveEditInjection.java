@@ -75,7 +75,7 @@ public final class LiveEditInjection
         {
             final URL url = getClass().getResource( name );
             final String str = Resources.toString( url, Charsets.UTF_8 );
-            return Mustache.compiler().compile( str.trim() );
+            return Mustache.compiler().compile( str );
         }
         catch ( final Exception e )
         {

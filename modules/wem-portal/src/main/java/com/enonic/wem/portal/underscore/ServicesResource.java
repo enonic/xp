@@ -18,6 +18,7 @@ import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsControllerFactory;
 import com.enonic.wem.portal.controller.JsHttpRequest;
+import com.enonic.wem.portal.script.lib.PortalUrlScriptBean;
 
 @Path("{mode}/{path:.+}/_/service/{module}/{service}")
 public final class ServicesResource
@@ -67,7 +68,13 @@ public final class ServicesResource
     {
         final ModuleKey moduleKey = resolveModule( this.contentPath, this.moduleName );
         final JsContext context = new JsContext();
-        context.setRequest( new JsHttpRequest( this.httpContext.getRequest() ) );
+
+        final JsHttpRequest request = new JsHttpRequest( this.httpContext.getRequest() );
+        request.setMode( this.mode );
+        context.setRequest( request );
+
+        final PortalUrlScriptBean portalUrlScriptBean = new PortalUrlScriptBean();
+        context.setPortalUrlScriptBean( portalUrlScriptBean );
 
         final JsController controller = this.controllerFactory.newController();
 
