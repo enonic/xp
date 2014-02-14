@@ -17,7 +17,7 @@ public final class PostProcessorImpl
     @Inject
     protected Set<PostProcessInstruction> instructions;
 
-    // @Inject
+    @Inject
     protected Set<PostProcessInjection> injections;
 
     @Override
