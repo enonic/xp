@@ -95,7 +95,7 @@ module LiveEdit.component {
         }
 
         hasComponentPath():boolean {
-            if (this.getElement().data('data-live-edit-component')) {
+            if (this.getElement().data('live-edit-component')) {
                 return true;
             } else {
                 return false;
