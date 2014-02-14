@@ -4,6 +4,8 @@ module api.aggregation {
 
         private name: string;
 
+        private displayName: string;
+
         private aggregationViews: api.aggregation.AggregationView[] = [];
 
         private titleEl = new api.dom.H2El();
@@ -12,14 +14,15 @@ module api.aggregation {
 
         private handleAggregationFilter: (aggregation: api.aggregation.Aggregation) => boolean;
 
-        constructor(name: string, aggregations?: api.aggregation.Aggregation[],
+        constructor(name: string, displayName: string, aggregations?: api.aggregation.Aggregation[],
                     handleAggregationFilter?: (aggregation: api.aggregation.Aggregation) => boolean) {
             super("facet-group-view");
 
             this.name = name;
+            this.displayName = displayName;
             this.handleAggregationFilter = handleAggregationFilter;
 
-            this.titleEl.getEl().setInnerHtml(this.name);
+            this.titleEl.getEl().setInnerHtml(this.displayName);
             this.appendChild(this.titleEl);
 
             if (aggregations) {

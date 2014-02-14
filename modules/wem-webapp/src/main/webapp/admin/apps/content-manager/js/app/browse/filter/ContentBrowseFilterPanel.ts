@@ -28,12 +28,15 @@ module app.browse.filter {
 
     export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel {
 
+        static CONTENT_TYPE_AGGREGATION_DISPLAY_NAME: string = "Content Types"
+        static LAST_MODIFIED_AGGREGATION_DISPLAY_NAME: string = "Last Modified"
+
         constructor() {
 
-            var contentTypeAggregation = new AggregationGroupView("contentTypes");
-            var lastModifiedAggregation = new AggregationGroupView("lastModified");
-            //var spaceFacets = new api.facet.FacetGroupView("space", "Space");
-            //var lastModifiedFacets = new api.facet.FacetGroupView("lastModified", "Last modified", null, this.lastModifiedGroupFacetFilter);
+            var contentTypeAggregation = new AggregationGroupView("contentTypes",
+                ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_DISPLAY_NAME);
+            var lastModifiedAggregation = new AggregationGroupView("lastModified",
+                ContentBrowseFilterPanel.LAST_MODIFIED_AGGREGATION_DISPLAY_NAME);
 
             super(null, [contentTypeAggregation, lastModifiedAggregation]);
 
