@@ -20,7 +20,6 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.DeleteContent;
-import com.enonic.wem.api.command.content.FindContent;
 import com.enonic.wem.api.command.content.GenerateContentName;
 import com.enonic.wem.api.command.content.GetChildContent;
 import com.enonic.wem.api.command.content.GetContentById;
@@ -460,111 +459,6 @@ public class ContentResourceTest
         String jsonString = resource().path( "content/list" ).queryParam( "expand", "none" ).get( String.class );
 
         assertJson( "list_content_id.json", jsonString );
-    }
-
-    @Test
-    public void find_content_with_facets()
-        throws Exception
-    {
-        final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
-
-        final ContentData aContentData = aContent.getContentData();
-        aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
-
-        aContentData.setProperty( "mySet.setProperty1", new Value.Long( 1 ) );
-        aContentData.setProperty( "mySet.setProperty2", new Value.Long( 2 ) );
-
-        final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
-
-        final ContentData bContentData = bContent.getContentData();
-
-        bContentData.setProperty( "myArray[0]", new Value.String( "arrayValue1" ) );
-        bContentData.setProperty( "myArray[1]", new Value.String( "arrayValue2" ) );
-
-        bContentData.setProperty( "mySetWithArray.myArray[0]", new Value.Double( 3.14159 ) );
-        bContentData.setProperty( "mySetWithArray.myArray[1]", new Value.Double( 1.333 ) );
-
-        Mockito.when( client.execute( Mockito.isA( FindContent.class ) ) ).thenReturn(
-            createContentIndexQueryResult( Contents.from( aContent, bContent ), true ) );
-
-        Mockito.when( client.execute( Mockito.isA( GetContentByIds.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
-
-        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
-            ContentTypes.from( createContentType( "my_type" ) ) );
-
-        String jsonString = resource().path( "content/find" ).entity( readFromFile( "find_content_with_facets_params.json" ),
-                                                                      MediaType.APPLICATION_JSON_TYPE ).post( String.class );
-        assertJson( "find_content_id_with_facets.json", jsonString );
-    }
-
-    @Test
-    public void find_content_summary_with_facets()
-        throws Exception
-    {
-        final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
-
-        final ContentData aContentData = aContent.getContentData();
-        aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
-
-        aContentData.setProperty( "mySet.setProperty1", new Value.Long( 1 ) );
-        aContentData.setProperty( "mySet.setProperty2", new Value.Long( 2 ) );
-
-        final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
-
-        final ContentData bContentData = bContent.getContentData();
-
-        bContentData.setProperty( "myArray[0]", new Value.String( "arrayValue1" ) );
-        bContentData.setProperty( "myArray[1]", new Value.String( "arrayValue2" ) );
-
-        bContentData.setProperty( "mySetWithArray.myArray[0]", new Value.Double( 3.14159 ) );
-        bContentData.setProperty( "mySetWithArray.myArray[1]", new Value.Double( 1.333 ) );
-
-        Mockito.when( client.execute( Mockito.isA( FindContent.class ) ) ).thenReturn(
-            createContentIndexQueryResult( Contents.from( aContent, bContent ), true ) );
-
-        Mockito.when( client.execute( Mockito.isA( GetContentByIds.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
-
-        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
-            ContentTypes.from( createContentType( "my_type" ) ) );
-
-        String jsonString = resource().path( "content/find" ).entity( readFromFile( "find_content_summary_with_facets_params.json" ),
-                                                                      MediaType.APPLICATION_JSON_TYPE ).post( String.class );
-        assertJson( "find_content_summary_with_facets.json", jsonString );
-    }
-
-    @Test
-    public void find_content_full_without_facets()
-        throws Exception
-    {
-        final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
-
-        final ContentData aContentData = aContent.getContentData();
-        aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
-
-        aContentData.setProperty( "mySet.setProperty1", new Value.Long( 1 ) );
-        aContentData.setProperty( "mySet.setProperty2", new Value.Long( 2 ) );
-
-        final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
-
-        final ContentData bContentData = bContent.getContentData();
-
-        bContentData.setProperty( "myArray[0]", new Value.String( "arrayValue1" ) );
-        bContentData.setProperty( "myArray[1]", new Value.String( "arrayValue2" ) );
-
-        bContentData.setProperty( "mySetWithArray.myArray[0]", new Value.Double( 3.14159 ) );
-        bContentData.setProperty( "mySetWithArray.myArray[1]", new Value.Double( 1.333 ) );
-
-        Mockito.when( client.execute( Mockito.isA( FindContent.class ) ) ).thenReturn(
-            createContentIndexQueryResult( Contents.from( aContent, bContent ), true ) );
-
-        Mockito.when( client.execute( Mockito.isA( GetContentByIds.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
-
-        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
-            ContentTypes.from( createContentType( "my_type" ) ) );
-
-        String jsonString = resource().path( "content/find" ).entity( readFromFile( "find_content_full_without_facets_params.json" ),
-                                                                      MediaType.APPLICATION_JSON_TYPE ).post( String.class );
-        assertJson( "find_content_full_without_facets.json", jsonString );
     }
 
     @Test

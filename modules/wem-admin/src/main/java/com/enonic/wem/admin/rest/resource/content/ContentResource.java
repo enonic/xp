@@ -14,7 +14,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.google.common.collect.Lists;
 import com.sun.jersey.api.NotFoundException;
 
 import com.enonic.wem.admin.json.content.AbstractContentListJson;
@@ -30,15 +29,11 @@ import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.content.json.AggregationContentIdListJson;
 import com.enonic.wem.admin.rest.resource.content.json.AggregationContentSummaryListJson;
 import com.enonic.wem.admin.rest.resource.content.json.AggregationsContentListJson;
-import com.enonic.wem.admin.rest.resource.content.json.ContentFindParams;
 import com.enonic.wem.admin.rest.resource.content.json.ContentNameJson;
 import com.enonic.wem.admin.rest.resource.content.json.ContentQueryJson;
 import com.enonic.wem.admin.rest.resource.content.json.CreateContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentParams;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentResultJson;
-import com.enonic.wem.admin.rest.resource.content.json.FacetedContentIdListJson;
-import com.enonic.wem.admin.rest.resource.content.json.FacetedContentListJson;
-import com.enonic.wem.admin.rest.resource.content.json.FacetedContentSummaryListJson;
 import com.enonic.wem.admin.rest.resource.content.json.UpdateContentParams;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
@@ -64,11 +59,6 @@ import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.query.ContentQuery;
 import com.enonic.wem.api.content.query.ContentQueryResult;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
-import com.enonic.wem.api.query.aggregation.AggregationQuery;
-import com.enonic.wem.api.query.expr.DynamicConstraintExpr;
-import com.enonic.wem.api.query.expr.FunctionExpr;
-import com.enonic.wem.api.query.expr.QueryExpr;
-import com.enonic.wem.api.query.expr.ValueExpr;
 
 import static com.enonic.wem.api.content.Content.editContent;
 
@@ -228,58 +218,6 @@ public class ContentResource
         {
             return new ContentSummaryListJson( contents );
         }
-
-    }
-
-    @POST
-    @Path("find")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public AbstractContentListJson find( final ContentFindParams params )
-    {
-
-        // TODO: This should be GUI
-        final ContentQuery.Builder contentQueryBuilder = ContentQuery.newContentQuery().
-            size( params.getCount() ).
-            aggregationQuery( AggregationQuery.newTermsAggregation( "contentTypes" ).
-                fieldName( "contenttype" ).
-                build() ).
-            aggregationQuery( AggregationQuery.newTermsAggregation( "otherStuff" ).
-                fieldName( "contenttype" ).
-                build() ).
-            queryExpr( _temp_buildFulltextFunctionExpression( params ) );
-
-        final FindContent findContent = Commands.content().find().query( contentQueryBuilder.build() );
-        final ContentQueryResult contentIndexQueryResult = this.client.execute( findContent );
-
-        final GetContentByIds getContents = Commands.content().get().byIds( ContentIds.from( contentIndexQueryResult.getContentIds() ) );
-        final Contents contents = this.client.execute( getContents );
-
-        if ( EXPAND_FULL.equalsIgnoreCase( params.getExpand() ) )
-        {
-            return new FacetedContentListJson( contents, params.isIncludeFacets() ? contentIndexQueryResult.getFacets() : null );
-        }
-        else if ( EXPAND_SUMMARY.equalsIgnoreCase( params.getExpand() ) )
-        {
-            return new FacetedContentSummaryListJson( contents, params.isIncludeFacets() ? contentIndexQueryResult.getFacets() : null );
-        }
-        else
-        {
-            return new FacetedContentIdListJson( contents, params.isIncludeFacets() ? contentIndexQueryResult.getFacets() : null );
-        }
-    }
-
-    private QueryExpr _temp_buildFulltextFunctionExpression( final ContentFindParams params )
-    {
-        final List<ValueExpr> valueExprs = Lists.newArrayList();
-        valueExprs.add( ValueExpr.string( "_all_text" ) );
-        valueExprs.add( ValueExpr.string( params.getFulltext() ) );
-        valueExprs.add( ValueExpr.string( "OR" ) );
-
-        final FunctionExpr functionExpr = new FunctionExpr( "fulltext", valueExprs );
-
-        final DynamicConstraintExpr fulltextSearch = new DynamicConstraintExpr( functionExpr );
-
-        return new QueryExpr( fulltextSearch, null );
     }
 
     @POST
