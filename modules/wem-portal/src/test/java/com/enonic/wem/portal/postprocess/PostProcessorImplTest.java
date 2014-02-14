@@ -1,15 +1,11 @@
 package com.enonic.wem.portal.postprocess;
 
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-
 import org.junit.Test;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Sets;
+import com.google.common.io.Resources;
 
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsHttpResponse;
@@ -19,14 +15,15 @@ import static junit.framework.Assert.assertEquals;
 public class PostProcessorImplTest
 {
     @Test
-    public void testPostProcessing()
+    public void testPostProcessingInstructions()
         throws Exception
     {
-        final String html = readResource( "postProcessSource.html" );
+        final String html = readResource( "postProcessSource1.html" );
 
         final PostProcessorImpl postProcessor = new PostProcessorImpl();
         postProcessor.instructions = Sets.newHashSet();
         postProcessor.instructions.add( new TestPostProcessInstruction() );
+        postProcessor.injections = Sets.newHashSet();
 
         final JsHttpResponse resp = new JsHttpResponse();
         resp.setPostProcess( true );
@@ -38,32 +35,40 @@ public class PostProcessorImplTest
         postProcessor.processResponse( context );
 
         final String outputHtml = resp.getBody().toString();
-        final String expectedResult = readResource( "postProcessResult.html" );
+        final String expectedResult = readResource( "postProcessResult1.html" );
 
-        equalToIgnoringWhiteSpace( expectedResult, outputHtml );
+        assertEquals( expectedResult, outputHtml );
     }
 
-    public String readResource( final String resourceName )
-        throws IOException
+    @Test
+    public void testPostProcessingInjections()
+        throws Exception
     {
-        try
-        {
-            final byte[] bytes = Files.readAllBytes( new File( PostProcessorImplTest.class.getResource( resourceName ).toURI() ).toPath() );
-            return new String( bytes, Charsets.UTF_8 );
-        }
-        catch ( URISyntaxException e )
-        {
-            throw new IllegalStateException( e );
-        }
+        final String html = readResource( "postProcessSource2.html" );
+
+        final PostProcessorImpl postProcessor = new PostProcessorImpl();
+        postProcessor.instructions = Sets.newHashSet();
+        postProcessor.injections = Sets.newHashSet();
+        postProcessor.injections.add( new TestPostProcessInjection() );
+
+        final JsHttpResponse resp = new JsHttpResponse();
+        resp.setPostProcess( true );
+        resp.setBody( html );
+
+        final JsContext context = new JsContext();
+        context.setResponse( resp );
+
+        postProcessor.processResponse( context );
+
+        final String outputHtml = resp.getBody().toString();
+        final String expectedResult = readResource( "postProcessResult2.html" );
+
+        assertEquals( expectedResult, outputHtml );
     }
 
-    private void equalToIgnoringWhiteSpace( final String expected, final String actual )
+    private String readResource( final String resourceName )
+        throws Exception
     {
-        final String expectedWithoutSpaces = expected.replaceAll( "\\s+", "" );
-        final String actualWithoutSpaces = actual.replaceAll( "\\s+", "" );
-        if ( !expectedWithoutSpaces.equals( actualWithoutSpaces ) )
-        {
-            assertEquals( expected, actual );
-        }
+        return Resources.toString( getClass().getResource( resourceName ), Charsets.UTF_8 );
     }
 }

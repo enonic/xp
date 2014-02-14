@@ -5,18 +5,20 @@ import java.util.Set;
 import org.attoparser.AttoParseException;
 import org.attoparser.IAttoHandler;
 import org.attoparser.markup.CommentMarkupParsingUtil;
+import org.attoparser.markup.ElementMarkupParsingUtil;
+import org.attoparser.markup.IBasicElementHandling;
 import org.attoparser.markup.ICommentHandling;
 import org.attoparser.markup.MarkupAttoParser;
 
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.portal.controller.JsContext;
-import com.enonic.wem.portal.postprocess.inject.PostProcessInjection;
+import com.enonic.wem.portal.postprocess.injection.PostProcessInjection;
 import com.enonic.wem.portal.postprocess.instruction.PostProcessInstruction;
 import com.enonic.wem.portal.rendering.RenderException;
 
 final class PostProcessEvaluator
-    implements IAttoHandler, ICommentHandling
+    implements IAttoHandler, ICommentHandling, IBasicElementHandling
 {
     private final StringBuilder result;
 
@@ -83,6 +85,11 @@ final class PostProcessEvaluator
             return;
         }
 
+        if ( ElementMarkupParsingUtil.tryParseElement( buffer, offset, len, line, col, this ) )
+        {
+            return;
+        }
+
         this.result.append( new String( buffer, offset, len ) );
     }
 
@@ -134,5 +141,87 @@ final class PostProcessEvaluator
         evaluator.input = result;
 
         return evaluator.evaluate();
+    }
+
+    @Override
+    public void handleStandaloneElement( final char[] buffer, final int contentOffset, final int contentLen, final int outerOffset,
+                                         final int outerLen, final int line, final int col )
+        throws AttoParseException
+    {
+        this.result.append( new String( buffer, outerOffset, outerLen ) );
+    }
+
+    @Override
+    public void handleOpenElement( final char[] buffer, final int contentOffset, final int contentLen, final int outerOffset,
+                                   final int outerLen, final int line, final int col )
+        throws AttoParseException
+    {
+        this.result.append( new String( buffer, outerOffset, outerLen ) );
+
+        if ( isHeadElement( buffer, contentOffset, contentLen ) )
+        {
+            injectHtml( PostProcessInjection.Tag.HEAD_BEGIN );
+        }
+
+        if ( isBodyElement( buffer, contentOffset, contentLen ) )
+        {
+            injectHtml( PostProcessInjection.Tag.BODY_BEGIN );
+        }
+    }
+
+    @Override
+    public void handleCloseElement( final char[] buffer, final int contentOffset, final int contentLen, final int outerOffset,
+                                    final int outerLen, final int line, final int col )
+        throws AttoParseException
+    {
+        if ( isHeadElement( buffer, contentOffset, contentLen ) )
+        {
+            injectHtml( PostProcessInjection.Tag.HEAD_END );
+        }
+
+        if ( isBodyElement( buffer, contentOffset, contentLen ) )
+        {
+            injectHtml( PostProcessInjection.Tag.BODY_END );
+        }
+
+        this.result.append( new String( buffer, outerOffset, outerLen ) );
+    }
+
+    private boolean isTag( final String tag, final char[] buffer, final int offset, final int len )
+    {
+        if ( len < tag.length() )
+        {
+            return false;
+        }
+
+        final String str = new String( buffer, offset, tag.length() );
+        if ( len == tag.length() )
+        {
+            return str.equalsIgnoreCase( tag );
+        }
+
+        return str.equalsIgnoreCase( tag ) && ( buffer[offset + tag.length()] == ' ' );
+    }
+
+    private boolean isHeadElement( final char[] buffer, final int offset, final int len )
+    {
+        return isTag( "head", buffer, offset, len );
+    }
+
+    private boolean isBodyElement( final char[] buffer, final int offset, final int len )
+    {
+        return isTag( "body", buffer, offset, len );
+    }
+
+    private void injectHtml( final PostProcessInjection.Tag tag )
+    {
+        for ( final PostProcessInjection injection : this.injections )
+        {
+            final String html = injection.inject( this.context, tag );
+            if ( html != null )
+            {
+                this.result.append( html );
+            }
+        }
     }
 }

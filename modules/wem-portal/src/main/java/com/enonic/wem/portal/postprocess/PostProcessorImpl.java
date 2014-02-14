@@ -5,10 +5,9 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import com.google.common.collect.Sets;
-
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsHttpResponse;
+import com.enonic.wem.portal.postprocess.injection.PostProcessInjection;
 import com.enonic.wem.portal.postprocess.instruction.PostProcessInstruction;
 
 @Singleton
@@ -17,6 +16,9 @@ public final class PostProcessorImpl
 {
     @Inject
     protected Set<PostProcessInstruction> instructions;
+
+    // @Inject
+    protected Set<PostProcessInjection> injections;
 
     @Override
     public void processResponse( final JsContext context )
@@ -42,7 +44,7 @@ public final class PostProcessorImpl
         evaluator.context = context;
         evaluator.input = body;
         evaluator.instructions = this.instructions;
-        evaluator.injections = Sets.newHashSet();
+        evaluator.injections = this.injections;
 
         context.getResponse().setBody( evaluator.evaluate() );
     }
