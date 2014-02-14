@@ -1,48 +1,49 @@
 .input-occurrence-view {
+  .clearfix();
 
-  display: table-row;
-
-  & > * {
-    display: table-cell;
+  &:not(:last-child) {
+    margin-bottom: 10px;
   }
 
   .drag-control {
+    float: left;
     background: url("../images/nail-plate.png") no-repeat;
     width: 5px;
-    height: 30px + 10px;
+    height: 30px;
     cursor: move;
   }
 
-  input, textarea {
-    width: 100%
+  .input-wrapper {
+    input, textarea {
+      width: 100%
+    }
   }
 
   .remove-button {
+    float: right;
     width: 20px;
-    padding-left: 10px;
     .icon-remove(2em, @admin-medium-gray-font);
     text-decoration: none;
     cursor: pointer;
-
-    &.hidden {
-      display: none;
-    }
   }
 
-  &.ui-sortable-helper {
-    & > * {
-      float: left;
+  &.single-occurrence {
+
+    .drag-control, .remove-button {
+      display: none;
+    }
+
+  }
+
+  &.multiple-occurrence {
+
+    .drag-control, .remove-button {
       display: block;
     }
 
-    input, textarea {
-      width: 506px;
+    .input-wrapper {
+      margin: 0 30px 0 5px;
     }
 
-    .remove-button {
-      float: right;
-      width: 29px;
-    }
   }
-
 }

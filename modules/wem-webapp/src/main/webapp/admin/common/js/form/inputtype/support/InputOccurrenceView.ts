@@ -13,43 +13,36 @@ module api.form.inputtype.support {
         constructor(inputOccurrence:InputOccurrence, inputElement:api.dom.Element) {
             super("input-occurrence-view", inputOccurrence);
 
-            this.dragControl = new api.dom.DivEl();
-
-            this.appendChild(this.dragControl);
-
             this.inputOccurrence = inputOccurrence;
 
-            this.inputElement = inputElement;
-            this.appendChild(this.inputElement);
+            this.dragControl = new api.dom.DivEl("drag-control");
+            this.appendChild(this.dragControl);
 
             this.removeButtonEl = new api.dom.AEl("remove-button");
-
-            this.removeButtonEl.addClass('hidden');
             this.appendChild(this.removeButtonEl);
             this.removeButtonEl.setClickListener(() => {
                 this.notifyRemoveButtonClicked();
             });
+
+            var inputWrapper = new api.dom.DivEl("input-wrapper");
+            this.appendChild(inputWrapper);
+
+            this.inputElement = inputElement;
+            inputWrapper.appendChild(this.inputElement);
 
             this.refresh();
         }
 
         refresh() {
 
-            if( !this.inputOccurrence.oneAndOnly() ){
-                this.dragControl.addClass("drag-control");
+            if( this.inputOccurrence.oneAndOnly() ){
+                this.addClass("single-occurrence").removeClass("multiple-occurrence");
             }
             else {
-                this.dragControl.removeClass("drag-control");
+                this.addClass("multiple-occurrence").removeClass("single-occurrence");
             }
 
             this.getEl().setData("dataId", this.inputOccurrence.getDataId().toString());
-
-            if (this.inputOccurrence.showRemoveButton()) {
-                this.removeButtonEl.removeClass('hidden');
-            }
-            else if (!this.removeButtonEl.hasClass('hidden')) {
-                this.removeButtonEl.addClass('hidden');
-            }
         }
 
         getIndex():number {
