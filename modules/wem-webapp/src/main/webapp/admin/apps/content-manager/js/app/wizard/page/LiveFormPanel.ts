@@ -331,7 +331,6 @@ module app.wizard {
                 this.contextWindow.hide();
             });
             this.liveEditJQuery(this.liveEditWindow).on('sortableUpdate.liveEdit', (event, component?) => {
-                console.log("MOVING COMPONENT", arguments);
                 if (component) {
                     var componentPath = api.content.page.ComponentPath.fromString(component.getComponentPath());
                     var afterComponentPath = api.content.page.ComponentPath.fromString(component.getPrecedingComponentPath());

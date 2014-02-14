@@ -144,7 +144,6 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     export function handleSortUpdate(event:JQueryEventObject, ui):void {
-        console.log("HANDLING SORT UPDATE");
         var el = api.dom.Element.fromHtmlElement(ui.item[0]);
         var component = LiveEdit.component.Component.fromElement(el);
 
