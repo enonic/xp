@@ -2,7 +2,7 @@ module app.contextwindow {
 
     import SiteTemplate = api.content.site.template.SiteTemplate;
 
-    export class PartInspectionPanel extends BaseComponentInspectionPanel<api.content.page.part.PartComponent> {
+    export class PartInspectionPanel extends PageComponentInspectionPanel<api.content.page.part.PartComponent> {
 
         private partComponent: api.content.page.part.PartComponent;
 

@@ -2,7 +2,7 @@ module app.contextwindow {
 
     import SiteTemplate = api.content.site.template.SiteTemplate;
 
-    export class BaseComponentInspectionPanel<COMPONENT extends api.content.page.PageComponent> extends BaseInspectionPanel {
+    export class PageComponentInspectionPanel<COMPONENT extends api.content.page.PageComponent> extends BaseInspectionPanel {
 
         private siteTemplate: SiteTemplate;
         private liveFormPanel: app.wizard.LiveFormPanel;

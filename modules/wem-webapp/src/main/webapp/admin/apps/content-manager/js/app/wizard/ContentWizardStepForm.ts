@@ -10,7 +10,7 @@ module app.wizard {
 
         private publishAction: api.ui.Action;
 
-        constructor(publishAction:api.ui.Action) {
+        constructor(publishAction: api.ui.Action) {
             super();
             this.publishAction = publishAction;
         }
@@ -32,14 +32,15 @@ module app.wizard {
         private layout(form: api.form.Form, contentData?: api.content.ContentData) {
 
             this.formView = new api.form.FormView(this.formContext, form, contentData);
-            this.formView.addEditContentRequestListener((content:api.content.ContentSummary) => {
+            this.formView.addEditContentRequestListener((content: api.content.ContentSummary) => {
                 new app.browse.EditContentEvent([content]).fire();
             });
 
             this.appendChild(this.formView);
 
-            this.publishAction.setEnabled(this.formView.valid());
-            this.formView.onValidityChanged((event:api.form.event.FormValidityChangedEvent) => {
+            this.publishAction.setEnabled(this.formView.isValid());
+            this.formView.onValidityChanged((event: api.form.FormValidityChangedEvent) => {
+                console.log("formView validity changed: " + event.isValid());
                 this.publishAction.setEnabled(event.isValid());
             });
         }
@@ -56,7 +57,7 @@ module app.wizard {
             return this.formView.getData();
         }
 
-        giveFocus(): boolean  {
+        giveFocus(): boolean {
             return this.formView.giveFocus();
         }
     }

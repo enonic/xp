@@ -59,6 +59,11 @@ module api.form.inputtype.content.imageupload {
         }
 
         valueBreaksRequiredContract(value: api.data.Value): boolean {
+
+            if( value == null ) {
+                return true;
+            }
+
             if (api.util.isStringBlank(value.asString())) {
                 return true;
             } else {

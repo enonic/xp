@@ -10,13 +10,15 @@ module api.form.inputtype.content.relationship {
 
     export class Relationship extends api.dom.DivEl implements api.form.inputtype.InputTypeView {
 
+        private input: api.form.Input;
+
         private relationshipTypeName: string;
 
         private contentComboBox: api.content.ContentComboBox;
 
-        private listeners: {[eventName:string]:{(event:InputTypeEvent):void}[]} = {};
+        private listeners: {[eventName:string]:{(event: InputTypeEvent):void}[]} = {};
 
-        private previousErrors:api.form.ValidationRecorder;
+        private previousValidationRecording: api.form.ValidationRecorder;
 
         constructor(config?: api.form.inputtype.InputTypeViewConfig<RelationshipConfig>) {
             super("relationship");
@@ -52,6 +54,7 @@ module api.form.inputtype.content.relationship {
 
         layout(input: api.form.Input, properties: api.data.Property[]) {
 
+            this.input = input;
             var relationshipLoader = new RelationshipLoader();
             this.contentComboBox = new api.content.ContentComboBoxBuilder()
                 .setName(input.getName())
@@ -59,15 +62,14 @@ module api.form.inputtype.content.relationship {
                 .setLoader(relationshipLoader)
                 .build();
 
-            this.contentComboBox.addOptionSelectedListener((item:api.ui.combobox.Option<api.content.ContentSummary>) => {
-                var validationRecorder:api.form.ValidationRecorder = new api.form.ValidationRecorder();
-                this.validate(validationRecorder);
-                if (this.validityChanged(validationRecorder)) {
-                    this.notifyValidityChanged(new support.ValidityChangedEvent(validationRecorder.valid()));
-                }
+            this.contentComboBox.addOptionSelectedListener((item: api.ui.combobox.Option<api.content.ContentSummary>) => {
+
+                this.validate(false);
+
             });
 
-            var name = new api.schema.relationshiptype.RelationshipTypeName((this.relationshipTypeName == null) ? "default" : this.relationshipTypeName);
+            var name = new api.schema.relationshiptype.RelationshipTypeName((this.relationshipTypeName == null) ? "default"
+                : this.relationshipTypeName);
             new api.schema.relationshiptype.GetRelationshipTypeByNameRequest(name)
                 .sendAndParse().done((relationshipType: api.schema.relationshiptype.RelationshipType) => {
                     this.contentComboBox.setInputIconUrl(relationshipType.getIconUrl());
@@ -88,7 +90,7 @@ module api.form.inputtype.content.relationship {
         }
 
         getValues(): api.data.Value[] {
-            return this.contentComboBox.getStringValues().map((value:string) => {
+            return this.contentComboBox.getStringValues().map((value: string) => {
                 return new api.data.Value(value, api.data.ValueTypes.STRING);
             });
         }
@@ -97,9 +99,24 @@ module api.form.inputtype.content.relationship {
             return [];
         }
 
-        validate(validationRecorder: api.form.ValidationRecorder) {
+        validate(silent:boolean = true) {
 
-            // TODO:
+            var recording: api.form.ValidationRecorder = new api.form.ValidationRecorder();
+
+            var numberOfValids = this.contentComboBox.countSelected();
+            if (numberOfValids < this.input.getOccurrences().getMinimum()) {
+                recording.breaksMinimumOccurrences(this.input.getPath());
+            }
+            if (numberOfValids > this.input.getOccurrences().getMaximum()) {
+                recording.breaksMaximumOccurrences(this.input.getPath());
+            }
+
+            if (recording.validityChanged(this.previousValidationRecording)) {
+                this.notifyValidityChanged(new support.ValidityChangedEvent(recording, this.input.getPath()));
+            }
+
+            this.previousValidationRecording = recording;
+            return recording;
         }
 
         giveFocus(): boolean {
@@ -121,40 +138,33 @@ module api.form.inputtype.content.relationship {
             // Have to use stub here because it doesn't extend BaseIntputTypeView
         }
 
-        private addListener(eventName:InputTypeEvents, listener:(event:InputTypeEvent)=>void) {
+        private addListener(eventName: InputTypeEvents, listener: (event: InputTypeEvent)=>void) {
             this.listeners[eventName].push(listener);
         }
 
-        onValidityChanged(listener:(event:ValidityChangedEvent)=>void) {
+        onValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
             this.addListener(InputTypeEvents.ValidityChanged, listener);
         }
 
-        private removeListener(eventName:InputTypeEvents, listener:(event:InputTypeEvent)=>void) {
-            this.listeners[eventName].filter((currentListener:(event:InputTypeEvent)=>void) => {
+        private removeListener(eventName: InputTypeEvents, listener: (event: InputTypeEvent)=>void) {
+            this.listeners[eventName].filter((currentListener: (event: InputTypeEvent)=>void) => {
                 return listener == currentListener;
             });
         }
 
-        unValidityChanged(listener:(event:ValidityChangedEvent)=>void) {
+        unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
             this.removeListener(InputTypeEvents.ValidityChanged, listener);
         }
 
-        private notifyListeners(eventName:InputTypeEvents, event:InputTypeEvent) {
-            this.listeners[eventName].forEach((listener:(event:InputTypeEvent)=>void) => {
+        private notifyListeners(eventName: InputTypeEvents, event: InputTypeEvent) {
+            this.listeners[eventName].forEach((listener: (event: InputTypeEvent)=>void) => {
                 listener(event);
             });
         }
 
-        private notifyValidityChanged(event:ValidityChangedEvent) {
+        private notifyValidityChanged(event: ValidityChangedEvent) {
             this.notifyListeners(InputTypeEvents.ValidityChanged, event);
         }
-
-        validityChanged(validationRecorder:api.form.ValidationRecorder):boolean {
-            var validityChanged:boolean = this.previousErrors == null || this.previousErrors.valid() != validationRecorder.valid();
-            this.previousErrors = validationRecorder;
-            return validityChanged;
-        }
-
     }
 
     api.form.input.InputTypeManager.register("Relationship", Relationship);

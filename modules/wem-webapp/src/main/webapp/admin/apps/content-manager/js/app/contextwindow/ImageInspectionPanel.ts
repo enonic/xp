@@ -2,7 +2,7 @@ module app.contextwindow {
 
     import SiteTemplate = api.content.site.template.SiteTemplate;
 
-    export class ImageInspectionPanel extends BaseComponentInspectionPanel<api.content.page.image.ImageComponent> {
+    export class ImageInspectionPanel extends PageComponentInspectionPanel<api.content.page.image.ImageComponent> {
 
         private imageComponent: api.content.page.image.ImageComponent;
 

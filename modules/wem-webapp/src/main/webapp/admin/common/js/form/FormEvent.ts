@@ -1,4 +1,4 @@
-module api.form.event {
+module api.form {
 
     export class FormEvent {
 

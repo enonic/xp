@@ -4,16 +4,16 @@ module api.form.inputtype.text {
 
     export class TextArea extends support.BaseInputTypeView {
 
-        private rows:number;
-        private columns:number;
+        private rows: number;
+        private columns: number;
 
-        constructor(config:api.form.inputtype.InputTypeViewConfig<TextAreaConfig>) {
+        constructor(config: api.form.inputtype.InputTypeViewConfig<TextAreaConfig>) {
             super();
             this.rows = config.inputConfig.rows;
             this.columns = config.inputConfig.columns;
         }
 
-        createInputOccurrenceElement(index:number, property:api.data.Property):api.dom.Element {
+        createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
 
             var inputEl = new api.ui.TextArea(this.getInput().getName() + "-" + index);
             if (this.rows) {
@@ -25,22 +25,31 @@ module api.form.inputtype.text {
             if (property != null) {
                 inputEl.setValue(property.getString());
             }
-            inputEl.onValueChanged( (event:api.ui.ValueChangedEvent) => {
-                                    var validationRecorder:api.form.ValidationRecorder = new api.form.ValidationRecorder();
-                                    this.validate(validationRecorder);
-                                    if (this.validityChanged(validationRecorder)) {
-                                        this.notifyValidityChanged(new support.ValidityChangedEvent(validationRecorder.valid()));
-                                    }
-                                });
             return inputEl;
         }
 
-        getValue(occurrence:api.dom.Element):api.data.Value {
-            var inputEl = <api.ui.TextArea>occurrence;
-            return new api.data.Value(inputEl.getValue(), api.data.ValueTypes.STRING);
+        addOnValueChangedListener(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
+            var inputEl = <api.ui.TextArea>element;
+            inputEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
+                listener(new api.form.inputtype.support.ValueChangedEvent(this.newValue(event.getOldValue()), this.newValue(event.getNewValue())));
+            });
         }
 
-        valueBreaksRequiredContract(value:api.data.Value):boolean {
+        private newValue(s: string): api.data.Value {
+            return new api.data.Value(s, api.data.ValueTypes.STRING);
+        }
+
+        getValue(occurrence: api.dom.Element): api.data.Value {
+            var inputEl = <api.ui.TextArea>occurrence;
+            return this.newValue(inputEl.getValue());
+        }
+
+        valueBreaksRequiredContract(value: api.data.Value): boolean {
+
+            if( value == null ) {
+                return true;
+            }
+
             if (api.util.isStringBlank(value.asString())) {
                 return true;
             } else {

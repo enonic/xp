@@ -173,31 +173,11 @@ module api.form {
 
         sortOccurrences(compareFunction: (a: form.FormItemOccurrence<V>, b: form.FormItemOccurrence<V>) => number) {
 
-            /*console.log("this.occurrences before sort:");
-            this.occurrences.forEach((o: FormItemOccurrence<V>, index: number)=> {
-                console.log("  " + index + ": index=[" + o.getIndex() + "], dataId=[" + o.getDataId().toString() + "]");
-            });*/
-
             this.occurrences.sort(compareFunction);
 
-            /*console.log("this.occurrences after sort:");
-            this.occurrences.forEach((o: FormItemOccurrence<V>, index: number)=> {
-                console.log("  " + index + ": index=[" + o.getIndex() + "], dataId=[" + o.getDataId().toString() + "]");
-            });*/
-
-
-
-            /*console.log("this.occurrenceViews before sort:");
-            this.occurrenceViews.forEach((ov: FormItemOccurrenceView, index: number)=> {
-                console.log("  " + index + ": index=[" + ov.getIndex() + "], id=[" + ov.getId() + "]");
-            });*/
             this.occurrenceViews.sort((a: FormItemOccurrenceView, b: FormItemOccurrenceView)=> {
                 return a.getIndex() - b.getIndex();
             });
-            /*console.log("this.occurrenceViews after sort:");
-            this.occurrenceViews.forEach((ov: FormItemOccurrenceView, index: number)=> {
-                console.log("  " + index + ": index=[" + ov.getIndex() + "], id=[" + ov.getId() + "]");
-            });*/
 
             this.refreshOccurrenceViews();
         }

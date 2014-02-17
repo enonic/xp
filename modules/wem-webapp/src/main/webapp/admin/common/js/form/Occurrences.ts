@@ -37,6 +37,13 @@ module api.form{
             return occurrenceCount >= this.maximum;
         }
 
+        maximumBreached(occurrenceCount:number):boolean {
+            if (this.maximum == 0) {
+                return false;
+            }
+            return occurrenceCount > this.maximum;
+        }
+
         public toJson():api.form.json.OccurrencesJson {
 
             return <api.form.json.OccurrencesJson>{

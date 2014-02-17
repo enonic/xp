@@ -1,9 +1,5 @@
 module api.form {
 
-    import FormEventNames = api.form.event.FormEventNames;
-    import FormEvent = api.form.event.FormEvent;
-    import FormValidityChangedEvent = api.form.event.FormValidityChangedEvent;
-
     export class FormView extends api.ui.Panel {
 
         private context: FormContext;
@@ -14,9 +10,9 @@ module api.form {
 
         private formItemViews: FormItemView[] = [];
 
-        private listeners: {[eventName:string]:{(event:api.form.event.FormEvent):void}[]} = {};
+        private listeners: {[eventName:string]:{(event: FormEvent):void}[]} = {};
 
-        private isValid:boolean;
+        private previousValidationRecording: ValidationRecorder;
 
         constructor(context: FormContext, form: Form, contentData?: api.data.RootDataSet) {
             super("form-view");
@@ -29,33 +25,48 @@ module api.form {
         }
 
         private doLayout() {
+
             this.formItemViews = new FormItemLayer().
                 setFormContext(this.context).
                 setFormItems(this.form.getFormItems()).
                 setParentElement(this).
                 layout(this.rootDataSet);
-            this.formItemViews.forEach((formItemView:FormItemView) => {
-                formItemView.onValidityChanged((event:api.form.inputtype.support.ValidityChangedEvent) => {
-                    this.formItemValidityChangedListener(event);
+
+            this.formItemViews.forEach((formItemView: FormItemView) => {
+                formItemView.onValidityChanged((event: api.form.inputtype.support.ValidityChangedEvent) => {
+
+                    console.log("FormView.formItemView[" + event.getOrigin().toString() + "].onValidityChanged -> " + event.isValid());
+
+                    var previousValidState = this.previousValidationRecording.isValid();
+                    if(event.isValid() ){
+                        this.previousValidationRecording.removeByPath(event.getOrigin());
+                    }
+
+                    if (previousValidState != this.previousValidationRecording.isValid()) {
+                        this.notifyValidityChanged(new FormValidityChangedEvent(this.previousValidationRecording));
+                    }
                 });
             });
         }
 
-        private formItemValidityChangedListener(event:api.form.inputtype.support.ValidityChangedEvent) {
-            var isValid:boolean = this.valid();
+        public validate(): ValidationRecorder {
 
-            if (isValid != this.isValid) {
-                this.isValid = isValid;
-                this.notifyValidityChanged(new FormValidityChangedEvent(isValid));
-            }
+            var allRecordings: ValidationRecorder = new ValidationRecorder();
+            this.formItemViews.forEach((formItemView: FormItemView) => {
+                var currRecorder = formItemView.validate(true);
+                allRecordings.flatten(currRecorder);
+            });
+
+            this.previousValidationRecording = allRecordings;
+
+            console.log("FormView.validate:");
+            allRecordings.print();
+            return allRecordings;
         }
 
-        public valid():boolean {
-            return this.formItemViews.every((formItemView:FormItemView) => {
-                var recorder:ValidationRecorder = new ValidationRecorder();
-                formItemView.validate(recorder);
-                return recorder.valid();
-            });
+        public isValid(): boolean {
+
+            return this.validate().isValid();
         }
 
         public getValueAtPath(path: api.data.DataPath): api.data.Value {
@@ -181,49 +192,50 @@ module api.form {
         }
 
         addEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
-            this.formItemViews.forEach((formItemView:FormItemView) => {
+            this.formItemViews.forEach((formItemView: FormItemView) => {
                 formItemView.addEditContentRequestListener(listener);
             });
         }
 
         removeEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
-            this.formItemViews.forEach((formItemView:FormItemView) => {
+            this.formItemViews.forEach((formItemView: FormItemView) => {
                 formItemView.removeEditContentRequestListener(listener);
             });
         }
 
+        onValidityChanged(listener: (event: FormValidityChangedEvent)=>void) {
+            this.addListener(FormEventNames.FormValidityChanged, listener);
+        }
+
+        unValidityChanged(listener: (event: FormValidityChangedEvent)=>void) {
+            this.removeListener(FormEventNames.FormValidityChanged, listener);
+        }
+
+        private notifyValidityChanged(event: FormValidityChangedEvent) {
+            console.log("FormView.notifyValidityChanged -> " + event.isValid());
+            this.notifyListeners(FormEventNames.FormValidityChanged, event);
+        }
+
         private notifyEditContentRequestListeners(content: api.content.ContentSummary) {
-            this.formItemViews.forEach((formItemView:FormItemView) => {
+            this.formItemViews.forEach((formItemView: FormItemView) => {
                 formItemView.notifyEditContentRequestListeners(content);
             })
         }
 
-        private addListener(eventName:FormEventNames, listener:(event:FormEvent)=>void) {
+        private addListener(eventName: FormEventNames, listener: (event: FormEvent)=>void) {
             this.listeners[eventName].push(listener);
         }
 
-        onValidityChanged(listener:(event:FormValidityChangedEvent)=>void) {
-            this.addListener(FormEventNames.FormValidityChanged, listener);
-        }
-
-        private removeListener(eventName:FormEventNames, listener:(event:FormEvent)=>void) {
-            this.listeners[eventName].filter((currentListener:(event:FormEvent)=>void) => {
+        private removeListener(eventName: FormEventNames, listener: (event: FormEvent)=>void) {
+            this.listeners[eventName].filter((currentListener: (event: FormEvent)=>void) => {
                 return listener == currentListener;
             });
         }
 
-        unValidityChanged(listener:(event:FormValidityChangedEvent)=>void) {
-            this.removeListener(FormEventNames.FormValidityChanged, listener);
-        }
-
-        private notifyListeners(eventName:FormEventNames, event:FormEvent) {
-            this.listeners[eventName].forEach((listener:(event:FormEvent)=>void) => {
+        private notifyListeners(eventName: FormEventNames, event: FormEvent) {
+            this.listeners[eventName].forEach((listener: (event: FormEvent)=>void) => {
                 listener(event);
             });
-        }
-
-        notifyValidityChanged(event:FormValidityChangedEvent) {
-            this.notifyListeners(FormEventNames.FormValidityChanged, event);
         }
 
     }

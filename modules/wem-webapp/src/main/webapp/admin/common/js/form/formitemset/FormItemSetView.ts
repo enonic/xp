@@ -1,6 +1,7 @@
 module api.form.formitemset {
 
     import support = api.form.inputtype.support;
+    import ValidationRecorder = api.form.ValidationRecorder;
 
     export class FormItemSetView extends api.form.FormItemView {
 
@@ -18,9 +19,9 @@ module api.form.formitemset {
 
         private collapseButton: api.dom.AEl;
 
-        private listeners: {[eventName:string]:{(event:support.InputTypeEvent):void}[]} = {};
+        private listeners: {[eventName:string]:{(event: support.InputTypeEvent):void}[]} = {};
 
-        private previousErrors:api.form.ValidationRecorder;
+        private previousValidationRecording: api.form.ValidationRecorder;
 
         constructor(context: api.form.FormContext, formItemSet: api.form.FormItemSet, dataSets?: api.data.DataSet[]) {
             super("form-item-set-view", context, formItemSet);
@@ -60,12 +61,19 @@ module api.form.formitemset {
                 }
             });
 
-            this.formItemSetOccurrences.getFormItemSetOccurrenceViews().forEach((formItemSetOccurrenceView:api.form.formitemset.FormItemSetOccurrenceView)=> {
-                formItemSetOccurrenceView.onValidityChanged((event:support.ValidityChangedEvent) => {
-                    var validationRecorder:api.form.ValidationRecorder = new api.form.ValidationRecorder();
-                    this.validate(validationRecorder);
-                    if (this.validityChanged(validationRecorder)) {
-                        this.notifyValidityChanged(new support.ValidityChangedEvent(validationRecorder.valid()));
+            this.formItemSetOccurrences.getFormItemSetOccurrenceViews().forEach((formItemSetOccurrenceView: api.form.formitemset.FormItemSetOccurrenceView)=> {
+
+                formItemSetOccurrenceView.onValidityChanged((event: support.ValidityChangedEvent) => {
+
+                    console.log("FormView.formItemView[" + event.getOrigin().toString() + "].onValidityChanged -> " + event.isValid());
+
+                    var previousValidState = this.previousValidationRecording.isValid();
+                    if(event.isValid() ){
+                        this.previousValidationRecording.removeByPath(event.getOrigin());
+                    }
+
+                    if (previousValidState != this.previousValidationRecording.isValid()) {
+                        this.notifyValidityChanged(new support.ValidityChangedEvent(this.previousValidationRecording, this.formItemSet.getPath()));
                     }
                 });
             })
@@ -97,6 +105,16 @@ module api.form.formitemset {
             this.bottomButtonRow.appendChild(this.addButton);
             this.bottomButtonRow.appendChild(this.collapseButton);
             this.refresh();
+
+            this.onValidityChanged((event: support.ValidityChangedEvent) => {
+
+                if (event.isValid()) {
+                    this.removeClass("invalid")
+                }
+                else {
+                    this.addClass("invalid");
+                }
+            })
         }
 
         refresh() {
@@ -126,55 +144,80 @@ module api.form.formitemset {
             return this.getData().length >= this.formItemSet.getOccurrences().getMaximum();
         }
 
-        validate(validationRecorder: api.form.ValidationRecorder) {
-            this.formItemSetOccurrences.getFormItemSetOccurrenceViews().forEach((formItemSetOccurrenceView:FormItemSetOccurrenceView) => {
-                formItemSetOccurrenceView.validate(validationRecorder);
+        validate(silent: boolean = true): ValidationRecorder {
+
+            var recording = new ValidationRecorder();
+            var occurrenceViews = this.formItemSetOccurrences.getFormItemSetOccurrenceViews();
+
+            var numberOfValids = 0;
+            occurrenceViews.forEach((occurrenceView: FormItemSetOccurrenceView) => {
+                var recorderForOccurrence = occurrenceView.validate(silent);
+                if (recorderForOccurrence.isValid()) {
+                    numberOfValids++;
+                }
+                recording.flatten(recorderForOccurrence);
             });
-            if (!validationRecorder.valid() || this.formItemSetOccurrences.getOccurrenceViews().length < this.formItemSetOccurrences.getAllowedOccurrences().getMinimum()) {
-                validationRecorder.registerBreaksRequiredContract(new api.data.DataId(this.formItemSet.getName(), 0));
+
+            if (numberOfValids < this.formItemSet.getOccurrences().getMinimum()) {
+                recording.breaksMinimumOccurrences(this.formItemSet.getPath());
             }
+            if (this.formItemSet.getOccurrences().maximumBreached(numberOfValids)) {
+                recording.breaksMaximumOccurrences(this.formItemSet.getPath());
+            }
+
+            if (!silent) {
+                if (recording.validityChanged(this.previousValidationRecording)) {
+                    this.notifyValidityChanged(new support.ValidityChangedEvent(recording, this.formItemSet.getPath()));
+                }
+            }
+
+            if (recording.isValid()) {
+                this.removeClass("invalid")
+            }
+            else {
+                this.addClass("invalid");
+            }
+
+            console.log("FormItemSetView[" + this.formItemSet.getPath().toString() + "].validate: " + recording.isValid());
+            recording.print();
+
+            this.previousValidationRecording = recording;
+            return recording;
         }
 
-        private addListener(eventName:support.InputTypeEvents, listener:(event:support.InputTypeEvent)=>void) {
+        private addListener(eventName: support.InputTypeEvents, listener: (event: support.InputTypeEvent)=>void) {
             this.listeners[eventName].push(listener);
         }
 
-        onValidityChanged(listener:(event:support.ValidityChangedEvent)=>void) {
+        onValidityChanged(listener: (event: support.ValidityChangedEvent)=>void) {
             this.addListener(support.InputTypeEvents.ValidityChanged, listener);
         }
 
-        private removeListener(eventName:support.InputTypeEvents, listener:(event:support.InputTypeEvent)=>void) {
-            this.listeners[eventName].filter((currentListener:(event:support.InputTypeEvent)=>void) => {
+        private removeListener(eventName: support.InputTypeEvents, listener: (event: support.InputTypeEvent)=>void) {
+            this.listeners[eventName].filter((currentListener: (event: support.InputTypeEvent)=>void) => {
                 return listener == currentListener;
             });
         }
 
-        unValidityChanged(listener:(event:support.ValidityChangedEvent)=>void) {
+        unValidityChanged(listener: (event: support.ValidityChangedEvent)=>void) {
             this.removeListener(support.InputTypeEvents.ValidityChanged, listener);
         }
 
-        private notifyListeners(eventName:support.InputTypeEvents, event:support.InputTypeEvent) {
-            this.listeners[eventName].forEach((listener:(event:support.InputTypeEvent)=>void) => {
+        private notifyListeners(eventName: support.InputTypeEvents, event: support.InputTypeEvent) {
+            this.listeners[eventName].forEach((listener: (event: support.InputTypeEvent)=>void) => {
                 listener(event);
             });
         }
 
-        private notifyValidityChanged(event:support.ValidityChangedEvent) {
+        private notifyValidityChanged(event: support.ValidityChangedEvent) {
             this.notifyListeners(support.InputTypeEvents.ValidityChanged, event);
-        }
-
-
-        private validityChanged(validationRecorder:api.form.ValidationRecorder):boolean {
-            var validityChanged:boolean = this.previousErrors == null || this.previousErrors.valid() != validationRecorder.valid();
-            this.previousErrors = validationRecorder;
-            return validityChanged;
         }
 
         giveFocus(): boolean {
 
             var focusGiven = false;
             if (this.formItemSetOccurrences.getOccurrenceViews().length > 0) {
-                var views:api.form.FormItemOccurrenceView[] = this.formItemSetOccurrences.getOccurrenceViews();
+                var views: api.form.FormItemOccurrenceView[] = this.formItemSetOccurrences.getOccurrenceViews();
                 for (var i = 0; i < views.length; i++) {
                     if (views[i].giveFocus()) {
                         focusGiven = true;
@@ -185,23 +228,23 @@ module api.form.formitemset {
             return focusGiven;
         }
 
-        private createDnDHelper():string {
+        private createDnDHelper(): string {
             var div = new api.dom.DivEl();
             div.getEl()
                 .setId("drag-helper")
-                .addClass("form-item-set-drop-allowed" )
-                .setHeight("48px" )
-                .setWidth("48px" )
+                .addClass("form-item-set-drop-allowed")
+                .setHeight("48px")
+                .setWidth("48px")
                 .setPosition("absolute")
                 .setZindex(400000);
             return div.toString();
         }
 
-        private handleDnDStart(event:JQueryEventObject, ui): void {
-            ui.placeholder.html("Drop form item here");
+        private handleDnDStart(event: JQueryEventObject, ui): void {
+            ui.placeholder.html("Drop form item set here");
         }
 
-        private handleDnDUpdate(event:JQueryEventObject, ui) {
+        private handleDnDUpdate(event: JQueryEventObject, ui) {
 
             var occurrenceOrderAccordingToDOM = this.resolveOccurrencesInOrderAccordingToDOM();
 
@@ -219,9 +262,9 @@ module api.form.formitemset {
             var occurrencesInOrderAccordingToDOM: FormItemSetOccurrence[] = [];
 
             var formItemSetViewChildren = this.occurrenceViewsContainer.getHTMLElement().children;
-            for (var i = 0 ; i < formItemSetViewChildren.length ; i++) {
+            for (var i = 0; i < formItemSetViewChildren.length; i++) {
                 var child = <HTMLElement> formItemSetViewChildren[i];
-                var occurrenceView = this.formItemSetOccurrences.getOccurrenceViewById( child.id );
+                var occurrenceView = this.formItemSetOccurrences.getOccurrenceViewById(child.id);
                 if (occurrenceView) {
                     occurrencesInOrderAccordingToDOM.push(<FormItemSetOccurrence> occurrenceView.getOccurrence());
                 }

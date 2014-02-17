@@ -18,9 +18,9 @@ module api.form.inputtype.combobox {
 
         private selectedOptionsView: api.ui.combobox.SelectedOptionsView<string>;
 
-        private listeners: {[eventName:string]:{(event:InputTypeEvent):void}[]} = {};
+        private listeners: {[eventName:string]:{(event: InputTypeEvent):void}[]} = {};
 
-        private previousErrors:api.form.ValidationRecorder;
+        private previousValidationRecording: api.form.ValidationRecorder;
 
         constructor(config: api.form.inputtype.InputTypeViewConfig<ComboBoxConfig>) {
             super("combo-box");
@@ -93,11 +93,8 @@ module api.form.inputtype.combobox {
                     grid.getDataView().refresh();
                 },
                 onOptionSelected: () => {
-                    var validationRecorder:api.form.ValidationRecorder = new api.form.ValidationRecorder();
-                    this.validate(validationRecorder);
-                    if (this.validityChanged(validationRecorder)) {
-                        this.notifyValidityChanged(new support.ValidityChangedEvent(validationRecorder.valid()));
-                    }
+
+                    this.validate(false);
                 }
             });
 
@@ -116,11 +113,6 @@ module api.form.inputtype.combobox {
 
         getAttachments(): api.content.attachment.Attachment[] {
             return [];
-        }
-
-        validate(validationRecorder: api.form.ValidationRecorder) {
-
-            // TODO:
         }
 
         giveFocus(): boolean {
@@ -150,40 +142,55 @@ module api.form.inputtype.combobox {
             return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
         }
 
-        private addListener(eventName:InputTypeEvents, listener:(event:InputTypeEvent)=>void) {
+        private addListener(eventName: InputTypeEvents, listener: (event: InputTypeEvent)=>void) {
             this.listeners[eventName].push(listener);
         }
 
-        onValidityChanged(listener:(event:ValidityChangedEvent)=>void) {
+        validate(silent:boolean = true) : api.form.ValidationRecorder {
+
+            var recording: api.form.ValidationRecorder = new api.form.ValidationRecorder();
+
+            var numberOfValids = this.comboBox.countSelected();
+            if (numberOfValids < this.input.getOccurrences().getMinimum()) {
+                recording.breaksMinimumOccurrences(this.input.getPath());
+            }
+            if (numberOfValids > this.input.getOccurrences().getMaximum()) {
+                recording.breaksMaximumOccurrences(this.input.getPath());
+            }
+
+            if (recording.validityChanged(this.previousValidationRecording)) {
+                this.notifyValidityChanged(new support.ValidityChangedEvent(recording, this.input.getPath()));
+            }
+
+            this.previousValidationRecording = recording;
+            return recording;
+        }
+
+        onValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
             this.addListener(InputTypeEvents.ValidityChanged, listener);
         }
 
-        private removeListener(eventName:InputTypeEvents, listener:(event:InputTypeEvent)=>void) {
-            this.listeners[eventName].filter((currentListener:(event:InputTypeEvent)=>void) => {
+        unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
+            this.removeListener(InputTypeEvents.ValidityChanged, listener);
+        }
+
+        private notifyValidityChanged(event: ValidityChangedEvent) {
+            this.notifyListeners(InputTypeEvents.ValidityChanged, event);
+        }
+
+        private removeListener(eventName: InputTypeEvents, listener: (event: InputTypeEvent)=>void) {
+            this.listeners[eventName].filter((currentListener: (event: InputTypeEvent)=>void) => {
                 return listener == currentListener;
             });
         }
 
-        unValidityChanged(listener:(event:ValidityChangedEvent)=>void) {
-            this.removeListener(InputTypeEvents.ValidityChanged, listener);
-        }
-
-        private notifyListeners(eventName:InputTypeEvents, event:any) {
-            this.listeners[eventName].forEach((listener:(event:InputTypeEvent)=>void) => {
+        private notifyListeners(eventName: InputTypeEvents, event: any) {
+            this.listeners[eventName].forEach((listener: (event: InputTypeEvent)=>void) => {
                 listener(event);
             });
         }
 
-        private notifyValidityChanged(event:ValidityChangedEvent) {
-            this.notifyListeners(InputTypeEvents.ValidityChanged, event);
-        }
 
-
-        validityChanged(validationRecorder:api.form.ValidationRecorder):boolean {
-            var validityChanged:boolean = this.previousErrors == null || this.previousErrors.valid() != validationRecorder.valid();
-            this.previousErrors = validationRecorder;
-            return validityChanged;
-        }
     }
 
     api.form.input.InputTypeManager.register("ComboBox", ComboBox);

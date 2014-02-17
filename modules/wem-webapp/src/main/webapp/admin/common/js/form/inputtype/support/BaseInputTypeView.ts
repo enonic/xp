@@ -6,9 +6,9 @@ module api.form.inputtype.support {
 
         private inputOccurrences: InputOccurrences;
 
-        private listeners: {[eventName:string]:{(event:InputTypeEvent):void}[]} = {};
+        private listeners: {[eventName:string]:{(event: InputTypeEvent):void}[]} = {};
 
-        private previousErrors:api.form.ValidationRecorder;
+        private previousValidationRecording: api.form.ValidationRecorder;
 
         constructor(className?: string) {
             super("input-type-view" + ( className ? " " + className : ""));
@@ -76,45 +76,34 @@ module api.form.inputtype.support {
             this.inputOccurrences.removeListener(listener);
         }
 
-        private addListener(eventName:InputTypeEvents, listener:(event:InputTypeEvent)=>void) {
+        private addListener(eventName: InputTypeEvents, listener: (event: InputTypeEvent)=>void) {
             this.listeners[eventName].push(listener);
         }
 
-        onValidityChanged(listener:(event:ValidityChangedEvent)=>void) {
+        onValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
             this.addListener(InputTypeEvents.ValidityChanged, listener);
         }
 
-        private removeListener(eventName:InputTypeEvents, listener:(event:InputTypeEvent)=>void) {
-            this.listeners[eventName].filter((currentListener:(event:InputTypeEvent)=>void) => {
+        private removeListener(eventName: InputTypeEvents, listener: (event: InputTypeEvent)=>void) {
+            this.listeners[eventName].filter((currentListener: (event: InputTypeEvent)=>void) => {
                 return listener == currentListener;
             });
         }
 
-        unValidityChanged(listener:(event:ValidityChangedEvent)=>void) {
+        unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
             this.removeListener(InputTypeEvents.ValidityChanged, listener);
         }
 
-        private notifyListeners(eventName:InputTypeEvents, event:InputTypeEvent) {
-            this.listeners[eventName].forEach((listener:(event:InputTypeEvent)=>void) => {
+        private notifyListeners(eventName: InputTypeEvents, event: InputTypeEvent) {
+            this.listeners[eventName].forEach((listener: (event: InputTypeEvent)=>void) => {
                 listener(event);
             });
         }
 
-        notifyValidityChanged(event:ValidityChangedEvent) {
-            this.notifyListeners(InputTypeEvents.ValidityChanged, event);
-        }
-
-
-        validityChanged(validationRecorder:api.form.ValidationRecorder):boolean {
-            var validityChanged:boolean = this.previousErrors == null || this.previousErrors.valid() != validationRecorder.valid();
-            this.previousErrors = validationRecorder;
-            return validityChanged;
-        }
-
-
         public maximumOccurrencesReached(): boolean {
             return this.inputOccurrences.maximumOccurrencesReached();
         }
+
 
         createAndAddOccurrence() {
             this.inputOccurrences.createAndAddOccurrence();
@@ -137,13 +126,49 @@ module api.form.inputtype.support {
             return [];
         }
 
-        validate(validationRecorder: api.form.ValidationRecorder) {
+        validate(silent: boolean = true): api.form.ValidationRecorder {
 
-            this.getValues().forEach((value: api.data.Value, index: number) => {
-                if (this.valueBreaksRequiredContract(value)) {
-                    validationRecorder.registerBreaksRequiredContract(new api.data.DataId(this.input.getName(), index))
+            var recording = new api.form.ValidationRecorder();
+            var numberOfValids = 0;
+            this.inputOccurrences.getOccurrenceViews().forEach((occurrenceView: InputOccurrenceView) => {
+
+                var value = this.getValue(occurrenceView.getInputElement());
+                var breaksRequiredContract = this.valueBreaksRequiredContract(value);
+                if (!breaksRequiredContract) {
+                    numberOfValids++;
                 }
             });
+
+            if (numberOfValids < this.input.getOccurrences().getMinimum()) {
+                recording.breaksMinimumOccurrences(this.input.getPath());
+            }
+            if (this.input.getOccurrences().maximumBreached(numberOfValids)) {
+                recording.breaksMaximumOccurrences(this.input.getPath());
+            }
+
+            //console.log("BaseInputView[" + this.input.getPath().toString() + "].validate:");
+            //recording.print();
+
+            if (!silent) {
+                if (recording.validityChanged(this.previousValidationRecording)) {
+                    console.log(".. validity changed - notifying");
+                    this.notifyValidityChanged(new ValidityChangedEvent(recording, this.input.getPath()));
+                }
+            }
+
+            this.previousValidationRecording = recording;
+            return recording;
+        }
+
+        notifyRequiredContractBroken(state: boolean, index: number) {
+
+            this.validate(false);
+        }
+
+        notifyValidityChanged(event: ValidityChangedEvent) {
+
+            console.log("Validity changed for [" + this.input.getPath().toString() + "] ->  " + event.isValid());
+            this.notifyListeners(InputTypeEvents.ValidityChanged, event);
         }
 
         getInput(): api.form.Input {
@@ -162,6 +187,10 @@ module api.form.inputtype.support {
             throw new Error("Must be implemented by inheritor");
         }
 
+        addOnValueChangedListener(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
+            throw new Error("Must be implemented by inheritor");
+        }
+
         giveFocus(): boolean {
             if (this.inputOccurrences) {
                 return this.inputOccurrences.giveFocus();
@@ -169,11 +198,11 @@ module api.form.inputtype.support {
             return false;
         }
 
-        addEditContentRequestListener(listener:(content:api.content.ContentSummary) => void) {
+        addEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
             // Adapter for InputTypeView method, to be implemented on demand in inheritors
         }
 
-        removeEditContentRequestListener(listener: (content:api.content.ContentSummary) => void) {
+        removeEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
             // Adapter for InputTypeView method, to be implemented on demand in inheritors
         }
     }

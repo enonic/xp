@@ -2,15 +2,26 @@ module api.form.inputtype.support {
 
     export class ValidityChangedEvent extends InputTypeEvent {
 
-        private valid:boolean;
+        private origin: api.form.FormItemPath;
 
-        constructor(isValid:boolean) {
+        private recording: api.form.ValidationRecorder;
+
+        constructor(recording: api.form.ValidationRecorder, origin: api.form.FormItemPath) {
             super();
-            this.valid = isValid;
+            this.recording = recording;
+            this.origin = origin;
         }
 
-        isValid():boolean {
-            return this.valid;
+        getOrigin(): api.form.FormItemPath {
+            return this.origin;
+        }
+
+        isValid(): boolean {
+            return this.recording.isValid();
+        }
+
+        getRecording(): api.form.ValidationRecorder {
+            return this.recording;
         }
     }
 }

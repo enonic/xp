@@ -12,8 +12,6 @@ module api.form.inputtype {
 
         getAttachments(): api.content.attachment.Attachment[];
 
-        validate(validationRecorder:api.form.ValidationRecorder);
-
         /*
          * Whether the InputTypeView it self is managing adding new occurrences or not.
          */
@@ -53,6 +51,8 @@ module api.form.inputtype {
          * Returns true if focus was successfully given.
          */
         giveFocus(): boolean;
+
+        validate(silent:boolean) : api.form.ValidationRecorder ;
 
         onValidityChanged(listener:(event:ValidityChangedEvent)=>void);
 

@@ -12,36 +12,77 @@ module api.form.inputtype.singleselector {
 
     export class SingleSelector extends api.form.inputtype.support.BaseInputTypeView {
 
-        public static TYPE_DROPDOWN = "DROPDOWN";
-        public static TYPE_RADIO = "RADIO";
-        public static TYPE_COMBOBOX = "COMBOBOX";
+        public static TYPE_DROPDOWN: string = "DROPDOWN";
+        public static TYPE_RADIO: string = "RADIO";
+        public static TYPE_COMBOBOX: string = "COMBOBOX";
 
-        private config:SingleSelectorConfig;
+        private config: SingleSelectorConfig;
 
-        constructor(config:api.form.inputtype.InputTypeViewConfig<SingleSelectorConfig>) {
+        private type: string;
+
+        constructor(config: api.form.inputtype.InputTypeViewConfig<SingleSelectorConfig>) {
             super("single-selector");
             this.config = config.inputConfig;
+            this.type = this.config && this.config.selectorType && this.config.selectorType.toUpperCase();
+
+            if (!(SingleSelector.TYPE_RADIO == this.type || SingleSelector.TYPE_COMBOBOX == this.type ||
+                  SingleSelector.TYPE_DROPDOWN == this.type)) {
+                throw new Error("Unsupported type of SingleSelector: " + this.type);
+            }
         }
 
-        createInputOccurrenceElement(index:number, property:api.data.Property):api.dom.Element {
+        createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
 
-            var type = this.config && this.config.selectorType && this.config.selectorType.toUpperCase();
             var name = this.getInput().getName() + "-" + index;
-            if (SingleSelector.TYPE_RADIO == type) {
+            if (SingleSelector.TYPE_RADIO == this.type) {
                 return this.createRadioElement(name, property);
             }
-            else if (SingleSelector.TYPE_COMBOBOX == type) {
+            else if (SingleSelector.TYPE_COMBOBOX == this.type) {
                 return this.createComboBoxElement(name, property);
             }
-            else if (SingleSelector.TYPE_DROPDOWN == type) {
+            else if (SingleSelector.TYPE_DROPDOWN == this.type) {
                 return this.createDropdownElement(name, property);
-            }
-            else {
-                throw new Error("Unsupported type of SingleSelector: " + type);
             }
         }
 
-        private createComboBoxElement(name:string, property:api.data.Property):api.dom.Element {
+        addOnValueChangedListener(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
+
+            if (SingleSelector.TYPE_RADIO == this.type) {
+                var radioGroup = <api.ui.RadioGroup>element;
+                radioGroup.onValueChanged((event: ValueChangedEvent)=> {
+                    listener(new api.form.inputtype.support.ValueChangedEvent(this.newValue(event.getOldValue()),
+                        this.newValue(event.getNewValue())));
+                });
+            }
+            else if (SingleSelector.TYPE_COMBOBOX == this.type) {
+                var comboBox = <api.ui.combobox.ComboBox<string>>element;
+                comboBox.addListener({
+                    onInputValueChanged: null,
+                    onOptionSelected: ()=> {
+
+                        // TODO: detect selected option changed
+
+                        //listener(new api.form.inputtype.support.ValueChangedEvent(this.newValue(event.getOldValue()),
+                        //    this.newValue(event.getNewValue())));
+
+
+                    }
+                });
+            }
+            else if (SingleSelector.TYPE_DROPDOWN == this.type) {
+                var dropdown = <api.ui.Dropdown>element;
+                dropdown.onValueChanged((event: ValueChangedEvent) => {
+
+                    // TODO: detect selected option changed
+
+                    //listener(new api.form.inputtype.support.ValueChangedEvent(this.newValue(event.getOldValue()),
+                    //    this.newValue(event.getNewValue())));
+
+                });
+            }
+        }
+
+        private createComboBoxElement(name: string, property: api.data.Property): api.dom.Element {
 
             var selectedOptionsView = new api.ui.combobox.SelectedOptionsView<string>();
             var comboBox = new api.ui.combobox.ComboBox<string>(name, {
@@ -56,13 +97,7 @@ module api.form.inputtype.singleselector {
                     grid.getDataView().setFilterArgs({searchString: newValue});
                     grid.getDataView().refresh();
                 },
-                onOptionSelected: () => {
-                    var validationRecorder:api.form.ValidationRecorder = new api.form.ValidationRecorder();
-                    this.validate(validationRecorder);
-                    if (this.validityChanged(validationRecorder)) {
-                        this.notifyValidityChanged(new support.ValidityChangedEvent(validationRecorder.valid()));
-                    }
-                }
+                onOptionSelected: null
             });
 
             if (this.config) {
@@ -80,7 +115,7 @@ module api.form.inputtype.singleselector {
             return comboBox;
         }
 
-        private createDropdownElement(name:string, property:api.data.Property):api.dom.Element {
+        private createDropdownElement(name: string, property: api.data.Property): api.dom.Element {
 
             var inputEl = new api.ui.Dropdown(name);
 
@@ -95,17 +130,11 @@ module api.form.inputtype.singleselector {
                 inputEl.setValue(property.getString());
             }
 
-            inputEl.onValueChanged((event:ValueChangedEvent) => {
-                var validationRecorder:api.form.ValidationRecorder = new api.form.ValidationRecorder();
-                this.validate(validationRecorder);
-                if (this.validityChanged(validationRecorder)) {
-                    this.notifyValidityChanged(new support.ValidityChangedEvent(validationRecorder.valid()));
-                }});
             return inputEl;
         }
 
 
-        private createRadioElement(name:string, property:api.data.Property):api.dom.Element {
+        private createRadioElement(name: string, property: api.data.Property): api.dom.Element {
 
             var inputEl = new api.ui.RadioGroup(name);
 
@@ -120,26 +149,27 @@ module api.form.inputtype.singleselector {
                 inputEl.setValue(property.getString());
             }
 
-            inputEl.onValueChanged((event:ValueChangedEvent) => {
-                var validationRecorder:api.form.ValidationRecorder = new api.form.ValidationRecorder();
-                this.validate(validationRecorder);
-                if (this.validityChanged(validationRecorder)) {
-                    this.notifyValidityChanged(new support.ValidityChangedEvent(validationRecorder.valid()));
-                }
-            });
-
             return inputEl;
         }
 
-        getValue(occurrence:api.dom.Element):api.data.Value {
-            var inputEl = <api.dom.FormInputEl>occurrence;
-            if( !inputEl.getValue() ) {
-                return null;
-            }
-            return new api.data.Value(inputEl.getValue(), api.data.ValueTypes.STRING);
+        private newValue(s: string): api.data.Value {
+            return new api.data.Value(s, api.data.ValueTypes.STRING);
         }
 
-        valueBreaksRequiredContract(value:api.data.Value):boolean {
+        getValue(occurrence: api.dom.Element): api.data.Value {
+            var inputEl = <api.dom.FormInputEl>occurrence;
+            if (!inputEl.getValue()) {
+                return null;
+            }
+            return this.newValue(inputEl.getValue());
+        }
+
+        valueBreaksRequiredContract(value: api.data.Value): boolean {
+
+            if( value == null ) {
+                return true;
+            }
+
             if (api.util.isStringBlank(value.asString())) {
                 return true;
             } else {
@@ -147,7 +177,7 @@ module api.form.inputtype.singleselector {
             }
         }
 
-        private comboboxFilter(item:api.ui.combobox.Option<string>, args) {
+        private comboboxFilter(item: api.ui.combobox.Option<string>, args) {
             return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
         }
     }

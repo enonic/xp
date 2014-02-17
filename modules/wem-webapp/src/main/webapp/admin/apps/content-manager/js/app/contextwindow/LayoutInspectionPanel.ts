@@ -2,7 +2,7 @@ module app.contextwindow {
 
     import SiteTemplate = api.content.site.template.SiteTemplate;
 
-    export class LayoutInspectionPanel extends BaseComponentInspectionPanel<api.content.page.layout.LayoutComponent> {
+    export class LayoutInspectionPanel extends PageComponentInspectionPanel<api.content.page.layout.LayoutComponent> {
 
         private layoutComponent: api.content.page.layout.LayoutComponent;
 

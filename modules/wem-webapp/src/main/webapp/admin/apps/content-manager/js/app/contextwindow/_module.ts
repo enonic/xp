@@ -1,5 +1,5 @@
 ///<reference path='BaseInspectionPanel.ts' />
-///<reference path='BaseComponentInspectionPanel.ts' />
+///<reference path='PageComponentInspectionPanel.ts' />
 ///<reference path='Component.ts' />
 ///<reference path='ContextWindowEvents.ts' />
 ///<reference path='ComponentTypesPanel.ts' />

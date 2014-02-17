@@ -6,3 +6,4 @@
 ///<reference path='InputOccurrenceView.ts' />
 ///<reference path='BaseInputTypeView.ts' />
 ///<reference path='NoInputTypeFoundView.ts' />
+///<reference path='ValueChangedEvent.ts' />

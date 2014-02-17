@@ -8,36 +8,47 @@ module api.form.inputtype.text {
             super();
         }
 
-        createInputOccurrenceElement(index:number, property:api.data.Property):api.dom.Element {
+        createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
 
             var inputEl = api.ui.TextInput.middle();
-            inputEl.setName(this.getInput().getName());
+
             if (property != null) {
+                inputEl.setName(this.getInput().getName() + "-" + property.getArrayIndex());
                 inputEl.setValue(property.getString());
             }
-            inputEl.addListener({
-                onValueChanged: (oldValue:string, newValue:string) => {
-                                    var validationRecorder:api.form.ValidationRecorder = new api.form.ValidationRecorder();
-                                    this.validate(validationRecorder);
-                                    if (this.validityChanged(validationRecorder)) {
-                                        this.notifyValidityChanged(new support.ValidityChangedEvent(validationRecorder.valid()));
-                                    }
-                                }
-            });
+            else {
+                inputEl.setName(this.getInput().getName());
+            }
             return inputEl;
         }
 
-        getValue(occurrence:api.dom.Element):api.data.Value {
-            var inputEl = <api.ui.TextInput>occurrence;
-            return new api.data.Value(inputEl.getValue(), api.data.ValueTypes.STRING);
+        addOnValueChangedListener(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
+            var inputEl = <api.ui.TextInput>element;
+            inputEl.addListener({
+                onValueChanged: (oldValue: string, newValue: string) => {
+                    listener(new api.form.inputtype.support.ValueChangedEvent(this.newValue(oldValue), this.newValue(newValue)));
+                }
+            });
         }
 
-        valueBreaksRequiredContract(value:api.data.Value):boolean {
-            if (api.util.isStringBlank(value.asString())) {
+        private newValue(s: string): api.data.Value {
+            return new api.data.Value(s, api.data.ValueTypes.STRING);
+        }
+
+        getValue(occurrence: api.dom.Element): api.data.Value {
+            var inputEl: api.ui.TextInput = <api.ui.TextInput>occurrence;
+            return this.newValue(inputEl.getValue());
+        }
+
+        valueBreaksRequiredContract(value: api.data.Value): boolean {
+            if (value == null) {
                 return true;
-            } else {
-                return false;
             }
+            return this.stringValueBreaksRequiredContract(value.asString());
+        }
+
+        private stringValueBreaksRequiredContract(value: string): boolean {
+            return api.util.isStringBlank(value);
         }
     }
 

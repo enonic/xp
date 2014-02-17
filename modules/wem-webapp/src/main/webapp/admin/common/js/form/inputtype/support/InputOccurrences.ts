@@ -49,15 +49,13 @@ module api.form.inputtype.support {
 
         createNewOccurrence(formItemOccurrences: api.form.FormItemOccurrences<InputOccurrenceView>,
                             insertAtIndex: number): api.form.FormItemOccurrence<InputOccurrenceView> {
-            return new InputOccurrence(<InputOccurrences>formItemOccurrences, insertAtIndex)
+            return new InputOccurrence(<InputOccurrences>formItemOccurrences, insertAtIndex);
         }
 
         createNewOccurrenceView(occurrence: InputOccurrence): InputOccurrenceView {
 
             var property: api.data.Property = this.properties != null ? this.properties[occurrence.getIndex()] : null;
-            var inputElement = this.baseInputTypeView.createInputOccurrenceElement(occurrence.getIndex(), property);
-
-            var inputOccurrenceView: InputOccurrenceView = new InputOccurrenceView(occurrence, inputElement);
+            var inputOccurrenceView: InputOccurrenceView = new InputOccurrenceView(occurrence, this.baseInputTypeView, property);
 
             var inputOccurrences: InputOccurrences = this;
             inputOccurrenceView.addListener(<api.form.FormItemOccurrenceViewListener>{
