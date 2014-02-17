@@ -389,8 +389,8 @@ module app.wizard {
                 return null;
             }
 
-            var createRequest = new api.content.page.CreatePageRequest(content.getContentId())
-                .setPageTemplateKey(this.pageWizardStepForm.getPageTemplate().getKey());
+            var pageTemplate = this.siteTemplate.getDefaultPageTemplate(content.getType());
+            var createRequest = new api.content.page.CreatePageRequest(content.getContentId()).setPageTemplateKey(pageTemplate.getKey());
 
             var config = this.pageWizardStepForm.getConfig();
             createRequest.setConfig(config);

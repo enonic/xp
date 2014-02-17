@@ -24,7 +24,7 @@ module api.content.site.template {
 
         private contentTypeFilter: ContentTypeFilter;
 
-        private pageTemplates: PageTemplateKey[];
+        private pageTemplateKeys: PageTemplateKey[];
 
         constructor(json: api.content.site.template.json.SiteTemplateSummaryJson) {
             super(json);
@@ -44,9 +44,9 @@ module api.content.site.template {
                 fromJson(json.contentTypeFilter).
                 build();
 
-            this.pageTemplates = [];
-            json.pageTemplates.forEach((key: string) => {
-                this.pageTemplates.push(PageTemplateKey.fromString(key));
+            this.pageTemplateKeys = [];
+            json.pageTemplateKeys.forEach((key: string) => {
+                this.pageTemplateKeys.push(PageTemplateKey.fromString(key));
             });
 
         }
