@@ -12,7 +12,7 @@ module api.form {
 
         private listeners: {[eventName:string]:{(event: FormEvent):void}[]} = {};
 
-        private previousValidationRecording: ValidationRecorder;
+        private previousValidationRecording: ValidationRecording;
 
         constructor(context: FormContext, form: Form, contentData?: api.data.RootDataSet) {
             super("form-view");
@@ -49,12 +49,12 @@ module api.form {
             });
         }
 
-        public validate(): ValidationRecorder {
+        public validate(): ValidationRecording {
 
-            var allRecordings: ValidationRecorder = new ValidationRecorder();
+            var allRecordings: ValidationRecording = new ValidationRecording();
             this.formItemViews.forEach((formItemView: FormItemView) => {
-                var currRecorder = formItemView.validate(true);
-                allRecordings.flatten(currRecorder);
+                var currRecording = formItemView.validate(true);
+                allRecordings.flatten(currRecording);
             });
 
             this.previousValidationRecording = allRecordings;

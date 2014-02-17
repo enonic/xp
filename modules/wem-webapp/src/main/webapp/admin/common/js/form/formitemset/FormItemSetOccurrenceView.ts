@@ -24,7 +24,7 @@ module api.form.formitemset {
 
         private inputTypeListeners: {[eventName:string]:{(event: api.form.inputtype.support.InputTypeEvent):void}[]} = {};
 
-        private previousValidationRecording: api.form.ValidationRecorder;
+        private previousValidationRecording: api.form.ValidationRecording;
 
         constructor(context: api.form.FormContext, formItemSetOccurrence: FormItemSetOccurrence, formItemSet: api.form.FormItemSet,
                     dataSet: api.data.DataSet) {
@@ -207,9 +207,9 @@ module api.form.formitemset {
             }
         }
 
-        validate(silent: boolean = true): api.form.ValidationRecorder {
+        validate(silent: boolean = true): api.form.ValidationRecording {
 
-            var allRecordings = new api.form.ValidationRecorder();
+            var allRecordings = new api.form.ValidationRecording();
             this.formItemViews.forEach((formItemView: api.form.FormItemView) => {
                 var currRecording = formItemView.validate(silent);
                 allRecordings.flatten(currRecording);

@@ -33,10 +33,10 @@ module api.form {
             return [];
         }
 
-        validate(silent:boolean = true): api.form.ValidationRecorder {
+        validate(silent:boolean = true): api.form.ValidationRecording {
 
             // Default method to avoid having to implement method in Layout-s.
-            return new api.form.ValidationRecorder();
+            return new api.form.ValidationRecording();
         }
 
         hasValidOccurrences():boolean {

@@ -8,7 +8,7 @@ module api.form.inputtype.support {
 
         private listeners: {[eventName:string]:{(event: InputTypeEvent):void}[]} = {};
 
-        private previousValidationRecording: api.form.ValidationRecorder;
+        private previousValidationRecording: api.form.ValidationRecording;
 
         constructor(className?: string) {
             super("input-type-view" + ( className ? " " + className : ""));
@@ -126,9 +126,9 @@ module api.form.inputtype.support {
             return [];
         }
 
-        validate(silent: boolean = true): api.form.ValidationRecorder {
+        validate(silent: boolean = true): api.form.ValidationRecording {
 
-            var recording = new api.form.ValidationRecorder();
+            var recording = new api.form.ValidationRecording();
             var numberOfValids = 0;
             this.inputOccurrences.getOccurrenceViews().forEach((occurrenceView: InputOccurrenceView) => {
 

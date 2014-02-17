@@ -1,7 +1,7 @@
 module api.form.formitemset {
 
     import support = api.form.inputtype.support;
-    import ValidationRecorder = api.form.ValidationRecorder;
+    import ValidationRecording = api.form.ValidationRecording;
 
     export class FormItemSetView extends api.form.FormItemView {
 
@@ -21,7 +21,7 @@ module api.form.formitemset {
 
         private listeners: {[eventName:string]:{(event: support.InputTypeEvent):void}[]} = {};
 
-        private previousValidationRecording: api.form.ValidationRecorder;
+        private previousValidationRecording: api.form.ValidationRecording;
 
         constructor(context: api.form.FormContext, formItemSet: api.form.FormItemSet, dataSets?: api.data.DataSet[]) {
             super("form-item-set-view", context, formItemSet);
@@ -144,18 +144,18 @@ module api.form.formitemset {
             return this.getData().length >= this.formItemSet.getOccurrences().getMaximum();
         }
 
-        validate(silent: boolean = true): ValidationRecorder {
+        validate(silent: boolean = true): ValidationRecording {
 
-            var recording = new ValidationRecorder();
+            var recording = new ValidationRecording();
             var occurrenceViews = this.formItemSetOccurrences.getFormItemSetOccurrenceViews();
 
             var numberOfValids = 0;
             occurrenceViews.forEach((occurrenceView: FormItemSetOccurrenceView) => {
-                var recorderForOccurrence = occurrenceView.validate(silent);
-                if (recorderForOccurrence.isValid()) {
+                var recordingForOccurrence = occurrenceView.validate(silent);
+                if (recordingForOccurrence.isValid()) {
                     numberOfValids++;
                 }
-                recording.flatten(recorderForOccurrence);
+                recording.flatten(recordingForOccurrence);
             });
 
             if (numberOfValids < this.formItemSet.getOccurrences().getMinimum()) {

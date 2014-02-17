@@ -124,7 +124,7 @@ module api.form.input {
             return this.inputTypeView.getAttachments();
         }
 
-        validate(silent: boolean = true): api.form.ValidationRecorder {
+        validate(silent: boolean = true): api.form.ValidationRecording {
 
             var recording = this.inputTypeView.validate(silent);
 

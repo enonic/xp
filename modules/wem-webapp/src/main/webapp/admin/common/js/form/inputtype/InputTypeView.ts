@@ -52,7 +52,7 @@ module api.form.inputtype {
          */
         giveFocus(): boolean;
 
-        validate(silent:boolean) : api.form.ValidationRecorder ;
+        validate(silent:boolean) : api.form.ValidationRecording ;
 
         onValidityChanged(listener:(event:ValidityChangedEvent)=>void);
 

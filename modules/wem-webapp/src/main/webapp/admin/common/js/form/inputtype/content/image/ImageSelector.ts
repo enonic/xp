@@ -32,7 +32,7 @@ module api.form.inputtype.content.image {
 
         private listeners: {[eventName:string]:{(event: InputTypeEvent):void}[]} = {};
 
-        private previousValidationRecording: api.form.ValidationRecorder;
+        private previousValidationRecording: api.form.ValidationRecording;
 
         constructor(config: api.form.inputtype.InputTypeViewConfig<ImageSelectorConfig>) {
             super("image-selector");
@@ -149,7 +149,7 @@ module api.form.inputtype.content.image {
 
         validate(silent: boolean = true) {
 
-            var recording: api.form.ValidationRecorder = new api.form.ValidationRecorder();
+            var recording: api.form.ValidationRecording = new api.form.ValidationRecording();
 
             var numberOfValids = this.comboBox.countSelected();
             if (numberOfValids < this.input.getOccurrences().getMinimum()) {

@@ -18,7 +18,7 @@ module api.form.inputtype.content.relationship {
 
         private listeners: {[eventName:string]:{(event: InputTypeEvent):void}[]} = {};
 
-        private previousValidationRecording: api.form.ValidationRecorder;
+        private previousValidationRecording: api.form.ValidationRecording;
 
         constructor(config?: api.form.inputtype.InputTypeViewConfig<RelationshipConfig>) {
             super("relationship");
@@ -101,7 +101,7 @@ module api.form.inputtype.content.relationship {
 
         validate(silent: boolean = true) {
 
-            var recording: api.form.ValidationRecorder = new api.form.ValidationRecorder();
+            var recording: api.form.ValidationRecording = new api.form.ValidationRecording();
 
             var numberOfValids = this.contentComboBox.countSelected();
             if (numberOfValids < this.input.getOccurrences().getMinimum()) {

@@ -1,7 +1,7 @@
 module api.form {
 
     // TODO: Rename ValidationRecording
-    export class ValidationRecorder {
+    export class ValidationRecording {
 
         private breaksMinimumOccurrencesArray: FormItemPath[] = [];
 
@@ -25,14 +25,14 @@ module api.form {
             return this.breaksMinimumOccurrencesArray.length == 0 && this.breaksMaximumOccurrencesArray.length == 0;
         }
 
-        flatten(recorder: ValidationRecorder) {
-            this.breaksMinimumOccurrencesArray = this.breaksMinimumOccurrencesArray.concat(recorder.breaksMinimumOccurrencesArray);
-            this.breaksMaximumOccurrencesArray = this.breaksMaximumOccurrencesArray.concat(recorder.breaksMaximumOccurrencesArray);
+        flatten(recording: ValidationRecording) {
+            this.breaksMinimumOccurrencesArray = this.breaksMinimumOccurrencesArray.concat(recording.breaksMinimumOccurrencesArray);
+            this.breaksMaximumOccurrencesArray = this.breaksMaximumOccurrencesArray.concat(recording.breaksMaximumOccurrencesArray);
         }
 
         removeByPath(path: api.form.FormItemPath) {
 
-            console.log("ValidationRecorder.removeByPath(" + path.toString() + ")");
+            console.log("ValidationRecording.removeByPath(" + path.toString() + ")");
             console.log(" before remove: ");
             this.print();
             var pathAsString = path.toString();
@@ -52,7 +52,7 @@ module api.form {
             this.print();
         }
 
-        equals(other: ValidationRecorder): boolean {
+        equals(other: ValidationRecording): boolean {
 
             if (this.breaksMinimumOccurrencesArray.length != other.breaksMinimumOccurrencesArray.length) {
                 return false;
@@ -76,7 +76,7 @@ module api.form {
             return true;
         }
 
-        validityChanged(previous: api.form.ValidationRecorder): boolean {
+        validityChanged(previous: api.form.ValidationRecording): boolean {
             return previous == undefined || previous == null || !previous.equals(this);
         }
 

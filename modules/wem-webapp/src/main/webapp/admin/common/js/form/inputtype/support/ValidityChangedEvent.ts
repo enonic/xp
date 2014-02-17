@@ -4,9 +4,9 @@ module api.form.inputtype.support {
 
         private origin: api.form.FormItemPath;
 
-        private recording: api.form.ValidationRecorder;
+        private recording: api.form.ValidationRecording;
 
-        constructor(recording: api.form.ValidationRecorder, origin: api.form.FormItemPath) {
+        constructor(recording: api.form.ValidationRecording, origin: api.form.FormItemPath) {
             super();
             this.recording = recording;
             this.origin = origin;
@@ -20,7 +20,7 @@ module api.form.inputtype.support {
             return this.recording.isValid();
         }
 
-        getRecording(): api.form.ValidationRecorder {
+        getRecording(): api.form.ValidationRecording {
             return this.recording;
         }
     }

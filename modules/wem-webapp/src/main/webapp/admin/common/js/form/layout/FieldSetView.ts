@@ -90,9 +90,9 @@ module api.form.layout {
             return focusGiven;
         }
 
-        validate(silent:boolean = true) : ValidationRecorder {
+        validate(silent:boolean = true) : ValidationRecording {
 
-            var recording = new ValidationRecorder();
+            var recording = new ValidationRecording();
             this.formItemViews.forEach((formItemView: api.form.FormItemView)=> {
                 var currRecording = formItemView.validate(silent);
                 recording.flatten(currRecording);
