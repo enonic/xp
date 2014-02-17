@@ -87,7 +87,9 @@ module app.wizard.site {
             Q.allSettled(moduleRequestPromises).then((results: Q.PromiseState<api.module.Module>[])=> {
                 var modules: api.module.Module[] = [];
                 results.forEach((result: Q.PromiseState<api.module.Module>)=> {
-                    modules.push(result.value);
+                    if (result.state == "fulfilled") {
+                        modules.push(result.value);
+                    }
                 });
                 deferred.resolve(modules);
             });
