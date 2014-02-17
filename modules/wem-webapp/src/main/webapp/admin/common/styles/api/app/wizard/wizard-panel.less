@@ -205,3 +205,23 @@
 .scroll-shadow() {
   box-shadow: 0px 2px 6px -2px #000;
 }
+
+@media (min-width: 720px) and (max-width: 960px) {
+  .wizard-panel .wizard-back-panel .step-panel {
+    left: 25px;
+  }
+}
+
+@media (min-width: 540px) and (max-width: 720px) {
+  .wizard-panel .wizard-back-panel .step-panel {
+    left: 25px;
+    right: 25px;
+  }
+}
+
+@media (max-width: 540px) {
+  .wizard-panel .wizard-back-panel .step-panel {
+    left: 0;
+    right: 0;
+  }
+}
