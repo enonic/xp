@@ -87,6 +87,9 @@ module api.aggregation {
         }
 
         deselectGroup(supressEvent?: boolean) {
+
+            console.log("reset group", this.name, this.aggregationViews);
+
             this.aggregationViews.forEach((aggregationView: api.aggregation.AggregationView) => {
                 aggregationView.deselectFacet(supressEvent);
             });

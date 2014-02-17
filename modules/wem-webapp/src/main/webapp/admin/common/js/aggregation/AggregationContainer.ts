@@ -27,6 +27,7 @@ module api.aggregation {
             this.aggregationGroupViews.forEach((aggregationGroupView: api.aggregation.AggregationGroupView) => {
                 aggregationGroupView.deselectGroup(supressEvent);
             });
+
             this.lastSelectedGroupView = null;
         }
 

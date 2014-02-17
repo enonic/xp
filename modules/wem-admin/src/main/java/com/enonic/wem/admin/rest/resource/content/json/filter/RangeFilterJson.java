@@ -15,7 +15,6 @@ public class RangeFilterJson
     private final RangeFilter rangeFilter;
 
     @JsonCreator
-
     public RangeFilterJson( @JsonProperty("from") final String from, //
                             @JsonProperty("fieldName") final String fieldName, //
                             @JsonProperty("to") final String to )

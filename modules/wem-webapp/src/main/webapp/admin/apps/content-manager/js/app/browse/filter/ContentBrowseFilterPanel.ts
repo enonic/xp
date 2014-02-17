@@ -100,7 +100,6 @@ module app.browse.filter {
 
                     this.updateAggregations(Aggregation.fromJsonArray(result.aggregations));
 
-
                     if (!supressEvent) {
                         new ContentBrowseResetEvent().fire();
                     }
@@ -133,15 +132,23 @@ module app.browse.filter {
                 return null;
             }
 
+            if (lastModifiedSelectedBuckets.length == 1) {
 
-            var dateRangeBucket: api.aggregation.DateRangeBucket = <api.aggregation.DateRangeBucket> lastModifiedSelectedBuckets.pop();
+                var dateRangeBucket: api.aggregation.DateRangeBucket = <api.aggregation.DateRangeBucket> lastModifiedSelectedBuckets.pop();
 
-            // FIX FIX FIX
+                return new api.query.filter.RangeFilter("modifiedtime", ValueExpr.dateTime(dateRangeBucket.getFrom()).getValue(), null);
+            }
 
-            var rangeFilter: api.query.filter.RangeFilter = new api.query.filter.RangeFilter("modifiedtime",
-                ValueExpr.dateTime(dateRangeBucket.getFrom()).getValue(), null);
+            var booleanFilter: api.query.filter.BooleanFilter = new api.query.filter.BooleanFilter();
 
-            return rangeFilter;
+            lastModifiedSelectedBuckets.forEach((selectedBucket: api.aggregation.DateRangeBucket) => {
+                var rangeFilter: api.query.filter.RangeFilter =
+                    new api.query.filter.RangeFilter("modifiedtime", ValueExpr.dateTime(selectedBucket.getFrom()).getValue(), null);
+
+                booleanFilter.addShould(<api.query.filter.Filter>rangeFilter);
+            });
+
+            return booleanFilter;
 
         }
 
