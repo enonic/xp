@@ -69,15 +69,21 @@ module api.aggregation {
 
         update(aggregation: api.aggregation.Aggregation) {
 
-            this.bucketAggregation = <api.aggregation.BucketAggregation> aggregation;
+            var selectedBucketNames: string[] = this.getSelectedBucketNames();
 
+            this.bucketAggregation = <api.aggregation.BucketAggregation> aggregation;
             this.bucketViews = [];
             this.removeChildren();
 
             var anyCountLargerThanZero = false;
 
             this.bucketAggregation.getBuckets().forEach((bucket: api.aggregation.Bucket) => {
-                this.addBucket(new api.aggregation.BucketView(bucket, this));
+
+                var wasSelected: boolean = (jQuery.inArray(bucket.getKey(), selectedBucketNames)) > -1;
+
+                var bucketView: api.aggregation.BucketView = new api.aggregation.BucketView(bucket, this, wasSelected);
+                this.addBucket(bucketView);
+
                 if (bucket.getDocCount() > 0) {
                     anyCountLargerThanZero = true;
                 }
@@ -94,6 +100,17 @@ module api.aggregation {
             }
         }
 
-    }
+        private getSelectedBucketNames(): string[] {
 
+            var selectedBucketNames: string[] = [];
+
+            var selectedBuckets: api.aggregation.Bucket[] = this.getSelectedValues();
+
+            selectedBuckets.forEach((bucket: api.aggregation.Bucket) => {
+                selectedBucketNames.push(bucket.getKey());
+            });
+
+            return selectedBucketNames;
+        }
+    }
 }

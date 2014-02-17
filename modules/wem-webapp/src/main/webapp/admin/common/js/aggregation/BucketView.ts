@@ -12,13 +12,17 @@ module api.aggregation {
 
         private selectionChangedListeners: Function[] = [];
 
-        constructor(bucket: api.aggregation.Bucket, parentAggregationView: api.aggregation.AggregationView) {
+        constructor(bucket: api.aggregation.Bucket, parentAggregationView: api.aggregation.AggregationView, select?: boolean) {
 
             super('facet-entry-view');
             this.bucket = bucket;
             this.parentAggregationView = parentAggregationView;
 
             this.checkbox = new api.ui.CheckboxInput();
+
+            if (select) {
+                this.checkbox.setChecked(true, true);
+            }
 
             this.checkbox.addListener({
                 onValueChanged: (oldValue: boolean, newValue: boolean) => {
@@ -56,6 +60,10 @@ module api.aggregation {
 
         deselect(supressEvent?: boolean) {
             this.checkbox.setChecked(false, supressEvent);
+        }
+
+        setSelected(supressEvent?: boolean) {
+            this.checkbox.setChecked(true, supressEvent);
         }
 
         private updateUI() {

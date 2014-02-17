@@ -4,7 +4,7 @@ module api.aggregation {
 
         aggregationGroupViews: api.aggregation.AggregationGroupView[] = [];
 
-        private firstSelectedGroupView: api.aggregation.AggregationGroupView;
+        private lastSelectedGroupView: api.aggregation.AggregationGroupView;
 
         constructor() {
             super();
@@ -15,10 +15,9 @@ module api.aggregation {
 
             aggregationGroupView.addBucketViewSelectionChangedEventListener((event: api.aggregation.BucketViewSelectionChangedEvent) => {
 
-                if (event.getNewValue() && this.firstSelectedGroupView == null) {
-                    this.firstSelectedGroupView = event.getBucketView().getParentAggregationView().getParentGroupView();
+                if (event.getNewValue()) {
+                    this.lastSelectedGroupView = event.getBucketView().getParentAggregationView().getParentGroupView();
                 }
-
             });
 
             this.aggregationGroupViews.push(aggregationGroupView);
@@ -28,7 +27,7 @@ module api.aggregation {
             this.aggregationGroupViews.forEach((aggregationGroupView: api.aggregation.AggregationGroupView) => {
                 aggregationGroupView.deselectGroup(supressEvent);
             });
-            this.firstSelectedGroupView = null;
+            this.lastSelectedGroupView = null;
         }
 
         hasSelectedBuckets(): boolean {
@@ -57,7 +56,7 @@ module api.aggregation {
 
         private isGroupUpdatable(aggregationGroupView: api.aggregation.AggregationGroupView) {
 
-            return aggregationGroupView != this.firstSelectedGroupView;
+            return aggregationGroupView != this.lastSelectedGroupView;
         }
 
 
