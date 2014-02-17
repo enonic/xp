@@ -146,7 +146,7 @@ module api.form.inputtype.combobox {
             this.listeners[eventName].push(listener);
         }
 
-        validate(silent:boolean = true) : api.form.ValidationRecorder {
+        validate(silent: boolean = true): api.form.ValidationRecorder {
 
             var recording: api.form.ValidationRecorder = new api.form.ValidationRecorder();
 
@@ -158,8 +158,10 @@ module api.form.inputtype.combobox {
                 recording.breaksMaximumOccurrences(this.input.getPath());
             }
 
-            if (recording.validityChanged(this.previousValidationRecording)) {
-                this.notifyValidityChanged(new support.ValidityChangedEvent(recording, this.input.getPath()));
+            if (!silent) {
+                if (recording.validityChanged(this.previousValidationRecording)) {
+                    this.notifyValidityChanged(new support.ValidityChangedEvent(recording, this.input.getPath()));
+                }
             }
 
             this.previousValidationRecording = recording;

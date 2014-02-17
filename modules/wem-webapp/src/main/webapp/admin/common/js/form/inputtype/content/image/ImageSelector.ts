@@ -159,8 +159,10 @@ module api.form.inputtype.content.image {
                 recording.breaksMaximumOccurrences(this.input.getPath());
             }
 
-            if (recording.validityChanged(this.previousValidationRecording)) {
-                this.notifyValidityChanged(new support.ValidityChangedEvent(recording, this.input.getPath()));
+            if (!silent) {
+                if (recording.validityChanged(this.previousValidationRecording)) {
+                    this.notifyValidityChanged(new support.ValidityChangedEvent(recording, this.input.getPath()));
+                }
             }
 
             this.previousValidationRecording = recording;

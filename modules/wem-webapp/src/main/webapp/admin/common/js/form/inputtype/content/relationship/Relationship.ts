@@ -99,7 +99,7 @@ module api.form.inputtype.content.relationship {
             return [];
         }
 
-        validate(silent:boolean = true) {
+        validate(silent: boolean = true) {
 
             var recording: api.form.ValidationRecorder = new api.form.ValidationRecorder();
 
@@ -111,8 +111,10 @@ module api.form.inputtype.content.relationship {
                 recording.breaksMaximumOccurrences(this.input.getPath());
             }
 
-            if (recording.validityChanged(this.previousValidationRecording)) {
-                this.notifyValidityChanged(new support.ValidityChangedEvent(recording, this.input.getPath()));
+            if (!silent) {
+                if (recording.validityChanged(this.previousValidationRecording)) {
+                    this.notifyValidityChanged(new support.ValidityChangedEvent(recording, this.input.getPath()));
+                }
             }
 
             this.previousValidationRecording = recording;
