@@ -158,6 +158,10 @@ module api.ui.combobox {
             }
         }
 
+        getValues(): Option<T>[] {
+            return this.dropdownData.getItems();
+        }
+
         addOption(option:Option<T>) {
             this.dropdownData.addItem( option );
         }
@@ -397,6 +401,17 @@ module api.ui.combobox {
             api.util.assertNotNull(optionToRemove, "optionToRemove cannot be null");
 
             this.selectedOptionsCtrl.removeOption(optionToRemove, silent);
+
+            this.updateDropdownStyles();
+
+            this.input.openForTypingAndFocus();
+        }
+
+        clearSelection() {
+            var allOptions: Option<T>[] = this.selectedOptionsCtrl.getOptions();
+            allOptions.forEach((option: Option<T>) => {
+                this.selectedOptionsCtrl.removeOption(option, true);
+            });
 
             this.updateDropdownStyles();
 

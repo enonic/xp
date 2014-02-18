@@ -46,8 +46,14 @@ module api.ui.combobox {
             this.addClass('rich-combobox');
         }
 
-        getValues(): T[] {
+        getSelectedValues(): T[] {
             return this.comboBox.getSelectedData().map((option: api.ui.combobox.Option<T>) => {
+                return option.displayValue;
+            });
+        }
+
+        getValues(): T[] {
+            return this.comboBox.getValues().map((option: api.ui.combobox.Option<T>) => {
                 return option.displayValue;
             });
         }

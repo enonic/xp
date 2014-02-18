@@ -1,4 +1,4 @@
-module api.content.page.image {
+module api.content.page.layout {
 
     import RichComboBox = api.ui.combobox.RichComboBox;
     import RichComboBoxBuilder = api.ui.combobox.RichComboBoxBuilder;
@@ -9,21 +9,21 @@ module api.content.page.image {
     import SelectedOptionsView = api.ui.combobox.SelectedOptionsView;
     import DescriptorKey = api.content.page.DescriptorKey;
 
-    export class ImageDescriptorComboBox extends RichComboBox<ImageDescriptor> {
+    export class LayoutDescriptorComboBox extends RichComboBox<LayoutDescriptor> {
 
-        constructor(loader: ImageDescriptorLoader) {
-            super(new RichComboBoxBuilder<ImageDescriptor>().
-                setSelectedOptionsView(new ImageDescriptorSelectedOptionsView()).
+        constructor(loader: LayoutDescriptorLoader) {
+            super(new RichComboBoxBuilder<LayoutDescriptor>().
                 setIdentifierMethod("getKey").
+                setSelectedOptionsView(new LayoutDescriptorSelectedOptionsView()).
                 setLoader(loader).
                 setMaximumOccurrences(1));
         }
 
         setDescriptor(key: DescriptorKey) {
 
-            var descriptorToSelect: ImageDescriptor;
+            var descriptorToSelect: LayoutDescriptor;
 
-            this.getValues().forEach((descriptor: ImageDescriptor) => {
+            this.getValues().forEach((descriptor: LayoutDescriptor) => {
                 if (descriptor.getKey().toString() == key.toString()) {
                     descriptorToSelect = descriptor;
                 }
@@ -32,7 +32,7 @@ module api.content.page.image {
                 return;
             }
 
-            var option: Option<ImageDescriptor> = {
+            var option: Option<LayoutDescriptor> = {
                 value: descriptorToSelect.getKey().toString(),
                 displayValue: descriptorToSelect
             };
@@ -40,8 +40,8 @@ module api.content.page.image {
             this.comboBox.selectOption(option);
         }
 
-        optionFormatter(row: number, cell: number, descriptor: ImageDescriptor, columnDef: any,
-                        dataContext: Option<ImageDescriptor>): string {
+        optionFormatter(row: number, cell: number, descriptor: LayoutDescriptor, columnDef: any,
+                        dataContext: Option<LayoutDescriptor>): string {
 
             var namesView = new api.app.NamesView()
                 .setMainName(descriptor.getDisplayName())
@@ -50,27 +50,27 @@ module api.content.page.image {
             return namesView.toString();
         }
 
-        getSelectedData(): Option<ImageDescriptor>[] {
+        getSelectedData(): Option<LayoutDescriptor>[] {
             return this.comboBox.getSelectedData();
         }
 
     }
 
-    export class ImageDescriptorSelectedOptionsView extends SelectedOptionsView<ImageDescriptor> {
+    export class LayoutDescriptorSelectedOptionsView extends SelectedOptionsView<LayoutDescriptor> {
 
-        createSelectedOption(option: Option<ImageDescriptor>, index: number): SelectedOption<ImageDescriptor> {
-            return new SelectedOption<ImageDescriptor>(new ImageDescriptorSelectedOptionView(option), option, index);
+        createSelectedOption(option: Option<LayoutDescriptor>, index: number): SelectedOption<LayoutDescriptor> {
+            return new SelectedOption<LayoutDescriptor>(new LayoutDescriptorSelectedOptionView(option), option, index);
         }
     }
 
-    export class ImageDescriptorSelectedOptionView extends SelectedOptionView<ImageDescriptor> {
+    export class LayoutDescriptorSelectedOptionView extends SelectedOptionView<LayoutDescriptor> {
 
-        private descriptor: ImageDescriptor;
+        private descriptor: LayoutDescriptor;
 
-        constructor(option: Option<ImageDescriptor>) {
+        constructor(option: Option<LayoutDescriptor>) {
             this.descriptor = option.displayValue;
             super(option);
-            this.addClass("image-descriptor-selected-option-view");
+            this.addClass("layout-descriptor-selected-option-view");
         }
 
         layout() {

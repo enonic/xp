@@ -36,6 +36,10 @@ module api.ui.grid {
             return this.slickDataView.getItem(index);
         }
 
+        getItems(): T[] {
+            return this.slickDataView.getItems();
+        }
+
         getItemById(id: string):T {
             return this.slickDataView.getItemById(id);
         }

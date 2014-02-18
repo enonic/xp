@@ -15,7 +15,9 @@ module app.wizard {
 
         private siteTemplate: api.content.site.template.SiteTemplate;
         private initialized: boolean;
-        private defaultImageDescriptor: api.content.page.image.ImageDescriptor
+        private defaultImageDescriptor: api.content.page.image.ImageDescriptor;
+        private defaultPartDescriptor: api.content.page.part.PartDescriptor;
+        private defaultLayoutDescriptor: api.content.page.layout.LayoutDescriptor;
 
         private pageContent: api.content.Content;
         private pageTemplate: api.content.page.PageTemplate;
@@ -54,14 +56,28 @@ module app.wizard {
             var deferred = Q.defer<void>();
 
             if (!this.initialized) {
+                var siteModules = this.siteTemplate.getModules();
+                var defaultImageDescrResolved = this.resolveDefaultImageDescriptor(siteModules);
+                var defaultPartDescrResolved = this.resolveDefaultPartDescriptor(siteModules);
+                var defaultLayoutDescrResolved = this.resolveDefaultLayoutDescriptor(siteModules);
+                var defaultDescriptorsResolved: Q.Promise<any>[] = [defaultImageDescrResolved, defaultPartDescrResolved, defaultLayoutDescrResolved];
 
-                this.resolveDefaultImageDescriptor(this.siteTemplate.getModules()).
-                    done((imageDescriptor: api.content.page.image.ImageDescriptor)=> {
+                defaultImageDescrResolved.done((imageDescriptor: api.content.page.image.ImageDescriptor)=> {
+                    this.defaultImageDescriptor = imageDescriptor;
+                });
 
-                        this.defaultImageDescriptor = imageDescriptor;
-                        this.initialized = true;
-                        deferred.resolve(null);
-                    });
+                defaultPartDescrResolved.done((partDescriptor: api.content.page.part.PartDescriptor)=> {
+                    this.defaultPartDescriptor = partDescriptor;
+                });
+
+                defaultLayoutDescrResolved.done((layoutDescriptor: api.content.page.layout.LayoutDescriptor)=> {
+                    this.defaultLayoutDescriptor = layoutDescriptor;
+                });
+
+                Q.allSettled(defaultDescriptorsResolved).then((results: Q.PromiseState<any>[])=> {
+                    this.initialized = true;
+                    deferred.resolve(null);
+                });
             }
             else {
                 deferred.resolve(null);
@@ -252,6 +268,14 @@ module app.wizard {
             return this.defaultImageDescriptor;
         }
 
+        getDefaultPartDescriptor(): api.content.page.part.PartDescriptor {
+            return this.defaultPartDescriptor;
+        }
+
+        getDefaultLayoutDescriptor(): api.content.page.layout.LayoutDescriptor {
+            return this.defaultLayoutDescriptor;
+        }
+
         private resolveDefaultImageDescriptor(moduleKeys: api.module.ModuleKey[]): Q.Promise<api.content.page.image.ImageDescriptor> {
 
             var d = Q.defer<api.content.page.image.ImageDescriptor>();
@@ -267,6 +291,36 @@ module app.wizard {
             return d.promise;
         }
 
+        private resolveDefaultPartDescriptor(moduleKeys: api.module.ModuleKey[]): Q.Promise<api.content.page.part.PartDescriptor> {
+
+            var d = Q.defer<api.content.page.part.PartDescriptor>();
+            new api.content.page.part.GetPartDescriptorsByModulesRequest(moduleKeys).
+                sendAndParse().done((partDescriptors: api.content.page.part.PartDescriptor[]) => {
+                    if (partDescriptors.length == 0) {
+                        d.resolve(null);
+                    }
+                    else {
+                        d.resolve(partDescriptors[0]);
+                    }
+                });
+            return d.promise;
+        }
+
+        private resolveDefaultLayoutDescriptor(moduleKeys: api.module.ModuleKey[]): Q.Promise<api.content.page.layout.LayoutDescriptor> {
+
+            var d = Q.defer<api.content.page.layout.LayoutDescriptor>();
+            new api.content.page.layout.GetLayoutDescriptorsByModulesRequest(moduleKeys).
+                sendAndParse().done((layoutDescriptors: api.content.page.layout.LayoutDescriptor[]) => {
+                    if (layoutDescriptors.length == 0) {
+                        d.resolve(null);
+                    }
+                    else {
+                        d.resolve(layoutDescriptors[0]);
+                    }
+                });
+            return d.promise;
+        }
+        
         private onComponentSelected(pathAsString: string) {
             var componentPath = api.content.page.ComponentPath.fromString(pathAsString);
             var component = this.pageRegions.getComponent(componentPath);

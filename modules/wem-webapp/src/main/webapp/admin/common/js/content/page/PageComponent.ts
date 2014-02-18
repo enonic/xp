@@ -39,12 +39,12 @@ module api.content.page {
             return this.name;
         }
 
-        getTemplate(): DescriptorKey {
+        getDescriptor(): DescriptorKey {
             return this.descriptorKey;
         }
 
-        setDescriptor(template: DescriptorKey) {
-            this.descriptorKey = template;
+        setDescriptor(key: DescriptorKey) {
+            this.descriptorKey = key;
         }
 
         setConfig(value: api.data.RootDataSet) {
