@@ -69,11 +69,17 @@ module api.form.input {
             if (!this.inputTypeView.isManagingAdd()) {
 
                 this.inputTypeView.addFormItemOccurrencesListener(<api.form.FormItemOccurrencesListener>{
-                    onOccurrenceAdded: (occurrenceAdded: api.form.FormItemOccurrence<any>) => {
+                    onOccurrenceAdded: (occurrenceAdded: api.form.FormItemOccurrence<any>, occurrenceViewAdded: FormItemOccurrenceView) => {
                         this.refresh();
                     },
-                    onOccurrenceRemoved: (occurrenceRemoved: api.form.FormItemOccurrence<any>) => {
+                    onOccurrenceRemoved: (occurrenceRemoved: api.form.FormItemOccurrence<any>,
+                                          occurrenceViewRemoved: FormItemOccurrenceView) => {
                         this.refresh();
+
+                        if (occurrenceViewRemoved instanceof api.form.inputtype.support.InputOccurrenceView) {
+                            // force validate, since InputView might have become invalid
+                            this.validate(false);
+                        }
                     }
                 });
 
@@ -189,13 +195,13 @@ module api.form.input {
         private notifyFormValidityChanged(event: api.form.ValidityChangedEvent) {
 
             /*console.log("InputView[ " + event.getOrigin().toString() + " ] validity changed");
-            if (event.getRecording().isValid()) {
-                console.log(" valid!");
-            }
-            else {
-                console.log(" invalid:");
-                event.getRecording().print();
-            }*/
+             if (event.getRecording().isValid()) {
+             console.log(" valid!");
+             }
+             else {
+             console.log(" invalid:");
+             event.getRecording().print();
+             }*/
 
             this.validityChangedListeners.forEach((listener: (event: api.form.ValidityChangedEvent)=>void) => {
                 listener(event);
