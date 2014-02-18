@@ -71,6 +71,10 @@ module api.form.inputtype.content.imageupload {
             }
         }
 
+        addOnValueChangedListener(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
+            //TODO: implement logic
+        }
+
         private uploadItemToAttachment(uploadItem:api.ui.UploadItem) : api.content.attachment.Attachment {
              return new api.content.attachment.AttachmentBuilder().
                 setBlobKey(uploadItem.getBlobKey()).
