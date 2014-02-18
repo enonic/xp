@@ -205,8 +205,8 @@ module api.ui {
             this.maskA.show();
             this.maskB.show();
 
-            this.splitPanel.getPanelA().getParent().appendChild(this.maskA);
-            this.splitPanel.getPanelA().getParent().appendChild(this.maskB);
+            this.splitPanel.getPanelA().getParentElement().appendChild(this.maskA);
+            this.splitPanel.getPanelA().getParentElement().appendChild(this.maskB);
         }
 
         private removePanelMask() {

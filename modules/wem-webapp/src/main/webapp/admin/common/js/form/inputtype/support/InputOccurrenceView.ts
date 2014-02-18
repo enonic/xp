@@ -12,7 +12,7 @@ module api.form.inputtype.support {
 
         private requiredContractBroken: boolean;
 
-        constructor(inputOccurrence: InputOccurrence, baseInputTypeView: BaseInputTypeView, property: api.data.Property) {
+        constructor(inputOccurrence: InputOccurrence, baseInputTypeView: BaseInputTypeView<any>, property: api.data.Property) {
             super("input-occurrence-view", inputOccurrence);
 
             var inputElement = baseInputTypeView.createInputOccurrenceElement(inputOccurrence.getIndex(), property);
@@ -20,8 +20,6 @@ module api.form.inputtype.support {
             this.requiredContractBroken = baseInputTypeView.valueBreaksRequiredContract(property != null ? property.getValue() : null);
 
             baseInputTypeView.addOnValueChangedListener(inputElement, (event: api.form.inputtype.support.ValueChangedEvent) => {
-
-                console.log("InputOccurrenceView value changed from [" + event.getOldValue().asString() + "] to [" + event.getNewValue().asString() + "]");
 
                 var newStateOfRequiredContractBroken = baseInputTypeView.valueBreaksRequiredContract(event.getNewValue());
 

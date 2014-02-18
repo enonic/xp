@@ -5,13 +5,13 @@ module api.form.inputtype.support {
      */
     export class InputOccurrences extends api.form.FormItemOccurrences<InputOccurrenceView> {
 
-        private baseInputTypeView: BaseInputTypeView;
+        private baseInputTypeView: BaseInputTypeView<any>;
 
         private input: api.form.Input;
 
         private properties: api.data.Property[];
 
-        constructor(baseInputTypeView: BaseInputTypeView, input: api.form.Input, properties: api.data.Property[]) {
+        constructor(baseInputTypeView: BaseInputTypeView<any>, input: api.form.Input, properties: api.data.Property[]) {
             super(input, baseInputTypeView, input.getOccurrences());
 
             this.baseInputTypeView = baseInputTypeView;

@@ -2,9 +2,7 @@ declare var plupload;
 
 module api.form.inputtype.content.imageupload {
 
-    export class Image extends api.form.inputtype.support.BaseInputTypeView {
-
-        private config: api.form.inputtype.InputTypeViewConfig<any>;
+    export class Image extends api.form.inputtype.support.BaseInputTypeView<any> {
 
         private imageUploaders: api.ui.ImageUploader[] = [];
 
@@ -13,8 +11,7 @@ module api.form.inputtype.content.imageupload {
         private attachments:api.content.attachment.Attachments;
 
         constructor(config: api.form.inputtype.InputTypeViewConfig<any>) {
-            super("image");
-            this.config = config;
+            super(config, "image");
             this.attachments = config.attachments;
         }
 
@@ -40,7 +37,7 @@ module api.form.inputtype.content.imageupload {
 
             if (property != null) {
                 this.attachmentName = property.getString();
-                var imageUrl = api.util.getRestUri("content/image/") + this.config.contentId;
+                var imageUrl = api.util.getRestUri("content/image/") + this.getConfig().contentId;
                 imageUrl += "?thumbnail=false&size=494"; // TODO: size is hack
                 imageUploader.setValue(imageUrl);
             }

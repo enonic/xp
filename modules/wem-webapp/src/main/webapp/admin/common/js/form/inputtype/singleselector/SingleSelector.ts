@@ -10,20 +10,17 @@ module api.form.inputtype.singleselector {
         }[]
     }
 
-    export class SingleSelector extends api.form.inputtype.support.BaseInputTypeView {
+    export class SingleSelector extends api.form.inputtype.support.BaseInputTypeView<SingleSelectorConfig>{
 
         public static TYPE_DROPDOWN: string = "DROPDOWN";
         public static TYPE_RADIO: string = "RADIO";
         public static TYPE_COMBOBOX: string = "COMBOBOX";
 
-        private config: SingleSelectorConfig;
-
         private type: string;
 
         constructor(config: api.form.inputtype.InputTypeViewConfig<SingleSelectorConfig>) {
-            super("single-selector");
-            this.config = config.inputConfig;
-            this.type = this.config && this.config.selectorType && this.config.selectorType.toUpperCase();
+            super(config, "single-selector");
+            this.type = config && config.inputConfig.selectorType && config.inputConfig.selectorType.toUpperCase();
 
             if (!(SingleSelector.TYPE_RADIO == this.type || SingleSelector.TYPE_COMBOBOX == this.type ||
                   SingleSelector.TYPE_DROPDOWN == this.type)) {
@@ -43,6 +40,7 @@ module api.form.inputtype.singleselector {
             else if (SingleSelector.TYPE_DROPDOWN == this.type) {
                 return this.createDropdownElement(name, property);
             }
+            return null;
         }
 
         addOnValueChangedListener(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
@@ -100,10 +98,11 @@ module api.form.inputtype.singleselector {
                 onOptionSelected: null
             });
 
-            if (this.config) {
+            var inputConfig:SingleSelectorConfig = this.getConfig().inputConfig;
+            if (inputConfig) {
                 var option;
-                for (var i = 0; i < this.config.options.length; i++) {
-                    option = this.config.options[i];
+                for (var i = 0; i < inputConfig.options.length; i++) {
+                    option = inputConfig.options[i];
                     comboBox.addOption({ value: option.value, displayValue: option.label});
                 }
             }
@@ -119,9 +118,10 @@ module api.form.inputtype.singleselector {
 
             var inputEl = new api.ui.Dropdown(name);
 
-            if (this.config) {
-                for (var i = 0; i < this.config.options.length; i++) {
-                    var option = this.config.options[i];
+            var inputConfig:SingleSelectorConfig = this.getConfig().inputConfig;
+            if (inputConfig) {
+                for (var i = 0; i < inputConfig.options.length; i++) {
+                    var option = inputConfig.options[i];
                     inputEl.addOption(option.value, option.label);
                 }
             }
@@ -138,9 +138,10 @@ module api.form.inputtype.singleselector {
 
             var inputEl = new api.ui.RadioGroup(name);
 
-            if (this.config) {
-                for (var i = 0; i < this.config.options.length; i++) {
-                    var option = this.config.options[i];
+            var inputConfig:SingleSelectorConfig = this.getConfig().inputConfig;
+            if (inputConfig) {
+                for (var i = 0; i < inputConfig.options.length; i++) {
+                    var option = inputConfig.options[i];
                     inputEl.addOption(option.value, option.label);
                 }
             }

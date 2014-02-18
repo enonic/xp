@@ -2,27 +2,42 @@ module api.form {
 
     export class FormItemView extends api.dom.DivEl {
 
-        private context:api.form.FormContext;
+        private context: api.form.FormContext;
 
-        private formItem:FormItem;
+        private formItem: FormItem;
+
+        private parent: api.form.formitemset.FormItemSetOccurrenceView;
 
         editContentRequestListeners: {(content: api.content.ContentSummary): void}[] = [];
 
-        constructor(className:string, context:api.form.FormContext, formItem:FormItem) {
+        constructor(className: string, context: api.form.FormContext, formItem: FormItem,
+                    parent: api.form.formitemset.FormItemSetOccurrenceView) {
             super(className);
             this.context = context;
             this.formItem = formItem;
+            this.parent = parent;
         }
 
-        getContext():FormContext {
+        getContext(): FormContext {
             return this.context;
         }
 
-        getFormItem():FormItem {
+        getFormItem(): FormItem {
             return this.formItem;
         }
 
-        getData():api.data.Data[] {
+        getParent(): api.form.formitemset.FormItemSetOccurrenceView {
+            return this.parent;
+        }
+
+        getParentDataPath(): api.data.DataPath {
+            if (this.parent) {
+                return this.parent.getDataPath();
+            }
+            return null;
+        }
+
+        getData(): api.data.Data[] {
             throw new Error("Method needs to be implemented in inheritor");
         }
 
@@ -33,19 +48,19 @@ module api.form {
             return [];
         }
 
-        validate(silent:boolean = true): api.form.ValidationRecording {
+        validate(silent: boolean = true): api.form.ValidationRecording {
 
             // Default method to avoid having to implement method in Layout-s.
             return new api.form.ValidationRecording();
         }
 
-        hasValidOccurrences():boolean {
+        hasValidOccurrences(): boolean {
 
             // Default true to avoid having to implement method in Layout-s.
             return true;
         }
 
-        giveFocus(): boolean{
+        giveFocus(): boolean {
             return false;
         }
 
@@ -65,11 +80,11 @@ module api.form {
             })
         }
 
-        onValidityChanged(listener:(event:api.form.inputtype.support.ValidityChangedEvent)=>void) {
+        onValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
             //Should be implemented in child classes
         }
 
-        unValidityChanged(listener:(event:api.form.inputtype.support.ValidityChangedEvent)=>void) {
+        unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
             //Should be implemented in child classes
         }
     }

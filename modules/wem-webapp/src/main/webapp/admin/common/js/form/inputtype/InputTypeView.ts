@@ -1,7 +1,5 @@
 module api.form.inputtype {
 
-    import ValidityChangedEvent = api.form.inputtype.support.ValidityChangedEvent;
-
     export interface InputTypeView {
 
         getHTMLElement():HTMLElement;
@@ -52,10 +50,10 @@ module api.form.inputtype {
          */
         giveFocus(): boolean;
 
-        validate(silent:boolean) : api.form.ValidationRecording ;
+        validate(silent:boolean) : InputValidationRecording;
 
-        onValidityChanged(listener:(event:ValidityChangedEvent)=>void);
+        onValidityChanged(listener:(event:InputValidityChangedEvent)=>void);
 
-        unValidityChanged(listener:(event:ValidityChangedEvent)=>void);
+        unValidityChanged(listener:(event:InputValidityChangedEvent)=>void);
     }
 }

@@ -1,18 +1,21 @@
 module api.form.inputtype.support {
 
-    export class BaseInputTypeView extends api.dom.DivEl implements api.form.inputtype.InputTypeView {
+    export class BaseInputTypeView<CONFIG> extends api.dom.DivEl implements api.form.inputtype.InputTypeView {
+
+        private config: api.form.inputtype.InputTypeViewConfig<CONFIG>;
 
         private input: api.form.Input;
 
         private inputOccurrences: InputOccurrences;
 
-        private listeners: {[eventName:string]:{(event: InputTypeEvent):void}[]} = {};
+        private inputValidityChangedListeners: {(event: api.form.inputtype.InputValidityChangedEvent) : void}[] = [];
 
-        private previousValidationRecording: api.form.ValidationRecording;
+        private previousValidationRecording: api.form.inputtype.InputValidationRecording;
 
-        constructor(className?: string) {
+        constructor(config: api.form.inputtype.InputTypeViewConfig<CONFIG>, className?: string) {
             super("input-type-view" + ( className ? " " + className : ""));
-            this.listeners[InputTypeEvents.ValidityChanged] = [];
+            api.util.assertNotNull(config, "config cannt be null");
+            this.config = config;
 
             jQuery(this.getHTMLElement()).sortable({
                 axis: "y",
@@ -33,6 +36,10 @@ module api.form.inputtype.support {
                     });
                 }
             });
+        }
+
+        public getConfig(): api.form.inputtype.InputTypeViewConfig<CONFIG> {
+            return this.config;
         }
 
         private resolveOccurrencesInOrderAccordingToDOM(): InputOccurrence[] {
@@ -76,26 +83,18 @@ module api.form.inputtype.support {
             this.inputOccurrences.removeListener(listener);
         }
 
-        private addListener(eventName: InputTypeEvents, listener: (event: InputTypeEvent)=>void) {
-            this.listeners[eventName].push(listener);
+        onValidityChanged(listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) {
+            this.inputValidityChangedListeners.push(listener);
         }
 
-        onValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
-            this.addListener(InputTypeEvents.ValidityChanged, listener);
-        }
-
-        private removeListener(eventName: InputTypeEvents, listener: (event: InputTypeEvent)=>void) {
-            this.listeners[eventName].filter((currentListener: (event: InputTypeEvent)=>void) => {
+        unValidityChanged(listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) {
+            this.inputValidityChangedListeners.filter((currentListener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) => {
                 return listener == currentListener;
             });
         }
 
-        unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
-            this.removeListener(InputTypeEvents.ValidityChanged, listener);
-        }
-
-        private notifyListeners(eventName: InputTypeEvents, event: InputTypeEvent) {
-            this.listeners[eventName].forEach((listener: (event: InputTypeEvent)=>void) => {
+        private notifyValidityChanged(event: api.form.inputtype.InputValidityChangedEvent) {
+            this.inputValidityChangedListeners.forEach((listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) => {
                 listener(event);
             });
         }
@@ -103,7 +102,6 @@ module api.form.inputtype.support {
         public maximumOccurrencesReached(): boolean {
             return this.inputOccurrences.maximumOccurrencesReached();
         }
-
 
         createAndAddOccurrence() {
             this.inputOccurrences.createAndAddOccurrence();
@@ -126,9 +124,9 @@ module api.form.inputtype.support {
             return [];
         }
 
-        validate(silent: boolean = true): api.form.ValidationRecording {
+        validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
 
-            var recording = new api.form.ValidationRecording();
+            var recording = new api.form.inputtype.InputValidationRecording();
             var numberOfValids = 0;
             this.inputOccurrences.getOccurrenceViews().forEach((occurrenceView: InputOccurrenceView) => {
 
@@ -140,19 +138,15 @@ module api.form.inputtype.support {
             });
 
             if (numberOfValids < this.input.getOccurrences().getMinimum()) {
-                recording.breaksMinimumOccurrences(this.input.getPath());
+                recording.setBreaksMinimumOccurrences(true);
             }
             if (this.input.getOccurrences().maximumBreached(numberOfValids)) {
-                recording.breaksMaximumOccurrences(this.input.getPath());
+                recording.setBreaksMaximumOccurrences(true);
             }
-
-            //console.log("BaseInputView[" + this.input.getPath().toString() + "].validate:");
-            //recording.print();
 
             if (!silent) {
                 if (recording.validityChanged(this.previousValidationRecording)) {
-                    console.log(".. validity changed - notifying");
-                    this.notifyValidityChanged(new ValidityChangedEvent(recording, this.input.getPath()));
+                    this.notifyValidityChanged(new api.form.inputtype.InputValidityChangedEvent(recording, this.input.getName()));
                 }
             }
 
@@ -163,12 +157,6 @@ module api.form.inputtype.support {
         notifyRequiredContractBroken(state: boolean, index: number) {
 
             this.validate(false);
-        }
-
-        notifyValidityChanged(event: ValidityChangedEvent) {
-
-            console.log("Validity changed for [" + this.input.getPath().toString() + "] ->  " + event.isValid());
-            this.notifyListeners(InputTypeEvents.ValidityChanged, event);
         }
 
         getInput(): api.form.Input {

@@ -8,8 +8,6 @@ module api.form.inputtype {
 
         parentContentPath: api.content.ContentPath;
 
-        dataPath:api.data.DataPath;
-
         inputConfig:C;
 
         attachments:api.content.attachment.Attachments;

@@ -2,6 +2,8 @@ module api.data {
 
     export class DataPath {
 
+        public static ROOT:DataPath = new DataPath([], true);
+
         private static ELEMENT_DIVIDER: string = ".";
 
         private absolute: boolean;
@@ -29,6 +31,11 @@ module api.data {
             });
 
             return new DataPath(elements, parent.isAbsolute());
+        }
+
+        static fromPathElement(element: DataPathElement) {
+
+            return new DataPath([element], true);
         }
 
         private static removeEmptyElements(elements: string[]): string[] {
@@ -108,6 +115,14 @@ module api.data {
             return this.absolute;
         }
 
+        asRelative() : DataPath {
+            return new DataPath(this.elements, false);
+        }
+
+        isRoot() : boolean {
+            return this.elementCount() == 0;
+        }
+
         asNewWithoutFirstPathElement(): DataPath {
             api.util.assert(this.elementCount() > 1,
                 "Cannot create new path without first path element when path does not contain more than one element");
@@ -117,7 +132,7 @@ module api.data {
                     elements.push(new DataPathElement(element.getName(), element.getIndex()));
                 }
             });
-            return new DataPath( elements, this.isAbsolute() );
+            return new DataPath(elements, this.isAbsolute());
         }
     }
 
@@ -148,6 +163,9 @@ module api.data {
             return this.name + "[" + this.index + "]";
         }
 
+        static fromDataId(dataId: DataId) {
+            return new DataPathElement(dataId.getName(), dataId.getArrayIndex());
+        }
         static fromString(str: string) {
             if (str.indexOf("[") == -1) {
                 return new DataPathElement(str, 0);

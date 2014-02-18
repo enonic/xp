@@ -11,6 +11,8 @@
 ///<reference path='FormEventNames.ts' />
 ///<reference path='Form.ts' />
 ///<reference path='FormItemFactory.ts' />
+///<reference path='ValidationRecordingPath.ts' />
+///<reference path='ValidityChangedEvent.ts' />
 ///<reference path='ValidationRecording.ts' />
 ///<reference path='FormContext.ts' />
 ///<reference path='FormItemOccurrenceViewListener.ts' />

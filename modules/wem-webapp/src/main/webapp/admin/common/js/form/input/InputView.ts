@@ -12,8 +12,13 @@ module api.form.input {
 
         private addButton: api.ui.Button;
 
-        constructor(context: api.form.FormContext, input: api.form.Input, properties?: api.data.Property[]) {
-            super("input-view", context, input);
+        private previousValidityRecording: api.form.ValidationRecording;
+
+        private validityChangedListeners: {(event: api.form.ValidityChangedEvent) : void}[] = [];
+
+        constructor(context: api.form.FormContext, input: api.form.Input, parent: api.form.formitemset.FormItemSetOccurrenceView,
+                    properties?: api.data.Property[]) {
+            super("input-view", context, input, parent);
             this.input = input;
             this.properties = properties;
 
@@ -38,7 +43,6 @@ module api.form.input {
                     contentId: this.getContext().getContentId(),
                     contentPath: this.getContext().getContentPath(),
                     parentContentPath: this.getContext().getParentContentPath(),
-                    dataPath: api.data.DataPath.fromString(this.input.getPath().toString()),
                     inputConfig: inputTypeConfig,
                     attachments: this.getContext().getAttachments()
                 };
@@ -56,7 +60,7 @@ module api.form.input {
 
             this.inputTypeView.layout(this.input, this.properties);
             if (this.inputTypeView instanceof api.form.inputtype.support.BaseInputTypeView) {
-                this.appendChild(<api.form.inputtype.support.BaseInputTypeView>this.inputTypeView);
+                this.appendChild(<api.form.inputtype.support.BaseInputTypeView<any>>this.inputTypeView);
             }
             else {
                 this.appendChild(api.dom.Element.fromHtmlElement(this.inputTypeView.getHTMLElement()))
@@ -85,16 +89,9 @@ module api.form.input {
                 this.bottomButtonRow.appendChild(this.addButton);
             }
 
-            this.inputTypeView.onValidityChanged((event: inputtype.support.ValidityChangedEvent)=> {
+            this.inputTypeView.onValidityChanged((event: api.form.inputtype.InputValidityChangedEvent)=> {
 
-                console.log("InputView[" + this.input.getPath().toString() + "].inputTypeView.onValidityChanged -> " + event.isValid());
-
-                if (event.isValid()) {
-                    this.removeClass("invalid");
-                }
-                else {
-                    this.addClass("invalid");
-                }
+                this.handleInputValidationRecording(event.getRecording(), false);
             });
         }
 
@@ -124,21 +121,50 @@ module api.form.input {
             return this.inputTypeView.getAttachments();
         }
 
+        private resolveValidationRecordingPath(): api.form.ValidationRecordingPath {
+
+            return new api.form.ValidationRecordingPath(this.getParentDataPath(), this.input.getName());
+        }
+
         validate(silent: boolean = true): api.form.ValidationRecording {
 
-            var recording = this.inputTypeView.validate(silent);
+            console.log("InputView[ " + this.resolveValidationRecordingPath() + " ].validate(" + silent + ")");
+
+            var inputRecording = this.inputTypeView.validate(silent);
+            return this.handleInputValidationRecording(inputRecording, silent);
+        }
+
+        private handleInputValidationRecording(inputRecording: api.form.inputtype.InputValidationRecording,
+                                               silent: boolean = true): api.form.ValidationRecording {
+
+            var recording = new api.form.ValidationRecording();
+            var validationRecordingPath = this.resolveValidationRecordingPath();
+
+            if (inputRecording.isMinimumOccurrenesBreached()) {
+                recording.breaksMinimumOccurrences(validationRecordingPath);
+            }
+            if (inputRecording.isMaximumOccurrenesBreached()) {
+                recording.breaksMaximumOccurrences(validationRecordingPath);
+            }
+
+            if (!silent) {
+                if (recording.validityChanged(this.previousValidityRecording)) {
+                    this.notifyFormValidityChanged(new ValidityChangedEvent(recording, validationRecordingPath));
+                }
+            }
 
             if (recording.isValid()) {
                 this.removeClass("invalid");
+                this.addClass("valid");
             }
             else {
+                this.removeClass("valid");
                 this.addClass("invalid");
             }
 
-            console.log("InputView[" + this.input.getPath().toString() + "].validate: " + recording.isValid());
-            recording.print();
-
+            this.previousValidityRecording = recording;
             return recording;
+
         }
 
         hasValidOccurrences(): boolean {
@@ -150,12 +176,29 @@ module api.form.input {
             return this.inputTypeView.giveFocus();
         }
 
-        onValidityChanged(listener: (event: api.form.inputtype.support.ValidityChangedEvent)=>void) {
-            this.inputTypeView.onValidityChanged(listener);
+        onValidityChanged(listener: (event: api.form.ValidityChangedEvent)=>void) {
+            this.validityChangedListeners.push(listener);
         }
 
-        unValidityChanged(listener: (event: api.form.inputtype.support.ValidityChangedEvent)=>void) {
-            this.inputTypeView.unValidityChanged(listener);
+        unValidityChanged(listener: (event: api.form.ValidityChangedEvent)=>void) {
+            this.validityChangedListeners.filter((currentListener: (event: api.form.ValidityChangedEvent)=>void) => {
+                return listener == currentListener;
+            });
+        }
+
+        private notifyFormValidityChanged(event: api.form.ValidityChangedEvent) {
+            console.log("InputView[ " + event.getOrigin().toString() + " ] validity changed");
+            if (event.getRecording().isValid()) {
+                console.log(" valid!");
+            }
+            else {
+                console.log(" invalid:");
+                event.getRecording().print();
+            }
+
+            this.validityChangedListeners.forEach((listener: (event: api.form.ValidityChangedEvent)=>void) => {
+                listener(event);
+            });
         }
     }
 }

@@ -2,10 +2,10 @@ module api.form.inputtype.text {
 
     import support = api.form.inputtype.support;
 
-    export class HtmlArea extends support.BaseInputTypeView {
+    export class HtmlArea extends support.BaseInputTypeView<any> {
 
-        constructor() {
-            super();
+        constructor(config: api.form.inputtype.InputTypeViewConfig<any>) {
+            super(config);
         }
 
         createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {

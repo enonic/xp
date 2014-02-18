@@ -1,5 +1,8 @@
 module api.form.formitemset {
 
+    import DataPath = api.data.DataPath;
+    import DataPathElement = api.data.DataPathElement;
+    import DataSet = api.data.DataSet;
     import support = api.form.inputtype.support;
 
     export class FormItemSetOccurrenceView extends api.form.FormItemOccurrenceView {
@@ -16,27 +19,40 @@ module api.form.formitemset {
 
         private constructedWithData: boolean;
 
-        private dataSet: api.data.DataSet;
+        private parent: FormItemSetOccurrenceView;
+
+        private dataSet: DataSet;
 
         private formItemViews: api.form.FormItemView[] = [];
 
         private formItemSetOccurrencesContainer: api.dom.DivEl;
 
-        private inputTypeListeners: {[eventName:string]:{(event: api.form.inputtype.support.InputTypeEvent):void}[]} = {};
+        private validityChangedListeners: {(event: api.form.ValidityChangedEvent) : void}[] = [];
 
         private previousValidationRecording: api.form.ValidationRecording;
 
         constructor(context: api.form.FormContext, formItemSetOccurrence: FormItemSetOccurrence, formItemSet: api.form.FormItemSet,
-                    dataSet: api.data.DataSet) {
+                    parent: FormItemSetOccurrenceView, dataSet: DataSet) {
             super("form-item-set-occurrence-view", formItemSetOccurrence);
-            this.inputTypeListeners[api.form.inputtype.support.InputTypeEvents.ValidityChanged] = [];
             this.context = context;
             this.formItemSetOccurrence = formItemSetOccurrence;
             this.formItemSet = formItemSet;
+            this.parent = parent;
             this.constructedWithData = dataSet != null;
             this.dataSet = dataSet;
             this.doLayout();
             this.refresh();
+        }
+
+        getDataPath(): DataPath {
+
+            var parent: DataPath = this.parent != null ? this.parent.getDataPath() : null;
+            if (parent == null) {
+                return DataPath.fromPathElement(DataPathElement.fromDataId(this.formItemSetOccurrence.getDataId()));
+            }
+            else {
+                return DataPath.fromParent(parent, DataPathElement.fromDataId(this.formItemSetOccurrence.getDataId()));
+            }
         }
 
         private doLayout() {
@@ -57,20 +73,25 @@ module api.form.formitemset {
                 setFormContext(this.context).
                 setFormItems(this.formItemSet.getFormItems()).
                 setParentElement(this.formItemSetOccurrencesContainer).
+                setParent(this).
                 layout(this.dataSet);
 
-            this.formItemViews.forEach((formItemView: api.form.FormItemView) => {
-                formItemView.onValidityChanged((event: support.ValidityChangedEvent) => {
+            this.validate(true);
 
-                    console.log("FormItemSetOccurrenceView.formItemView[" + event.getOrigin().toString() + "].onValidityChanged -> " + event.isValid());
+            this.formItemViews.forEach((formItemView: api.form.FormItemView) => {
+                formItemView.onValidityChanged((event: api.form.ValidityChangedEvent) => {
 
                     var previousValidState = this.previousValidationRecording.isValid();
-                    if(event.isValid() ){
+                    if (event.isValid()) {
                         this.previousValidationRecording.removeByPath(event.getOrigin());
+                    }
+                    else {
+                        this.previousValidationRecording.flatten(event.getRecording());
                     }
 
                     if (previousValidState != this.previousValidationRecording.isValid()) {
-                        this.notifyValidityChanged(new support.ValidityChangedEvent(this.previousValidationRecording, this.formItemSet.getPath()));
+                        this.notifyValidityChanged(new api.form.ValidityChangedEvent(this.previousValidationRecording,
+                            this.resolveValidationRecordingPath()));
                     }
                 });
             });
@@ -93,7 +114,7 @@ module api.form.formitemset {
             this.removeButton.setVisible(this.formItemSetOccurrence.showRemoveButton());
         }
 
-        public getValueAtPath(path: api.data.DataPath): api.data.Value {
+        public getValueAtPath(path: DataPath): api.data.Value {
             if (path == null) {
                 throw new Error("To get a value, a path is required");
             }
@@ -118,7 +139,7 @@ module api.form.formitemset {
             return inputView.getValue(dataId.getArrayIndex());
         }
 
-        private forwardGetValueAtPath(path: api.data.DataPath): api.data.Value {
+        private forwardGetValueAtPath(path: DataPath): api.data.Value {
 
             var dataId: api.data.DataId = path.getFirstElement().toDataId();
             var formItemSetView = this.getFormItemSetView(dataId.getName());
@@ -178,9 +199,9 @@ module api.form.formitemset {
             return null;
         }
 
-        getDataSet(): api.data.DataSet {
+        getDataSet(): DataSet {
 
-            var dataSet = new api.data.DataSet(this.formItemSet.getName());
+            var dataSet = new DataSet(this.formItemSet.getName());
             this.formItemViews.forEach((formItemView: api.form.FormItemView) => {
                 formItemView.getData().forEach((data: api.data.Data) => {
                     dataSet.addData(data);
@@ -207,7 +228,17 @@ module api.form.formitemset {
             }
         }
 
+        private resolveValidationRecordingPath(): api.form.ValidationRecordingPath {
+            return new api.form.ValidationRecordingPath(this.getDataPath(), null);
+        }
+
+        getLastValidationRecording(): api.form.ValidationRecording {
+            return this.previousValidationRecording;
+        }
+
         validate(silent: boolean = true): api.form.ValidationRecording {
+
+            console.log("FormItemSetOccurrenceView[ " + this.resolveValidationRecordingPath() + " ].validate(" + silent + ")");
 
             var allRecordings = new api.form.ValidationRecording();
             this.formItemViews.forEach((formItemView: api.form.FormItemView) => {
@@ -218,31 +249,37 @@ module api.form.formitemset {
 
             if (!silent) {
                 if (allRecordings.validityChanged(this.previousValidationRecording)) {
-                    this.notifyValidityChanged(new support.ValidityChangedEvent(allRecordings, this.formItemSet.getPath()));
+                    this.notifyValidityChanged(new api.form.ValidityChangedEvent(allRecordings, this.resolveValidationRecordingPath()));
                 }
             }
             this.previousValidationRecording = allRecordings;
             return allRecordings;
         }
 
-        onValidityChanged(listener: (event: support.ValidityChangedEvent)=>void) {
-            this.inputTypeListeners[support.InputTypeEvents.ValidityChanged].push(listener);
+        onValidityChanged(listener: (event: api.form.ValidityChangedEvent)=>void) {
+            this.validityChangedListeners.push(listener);
         }
 
-        unValidityChanged(listener: (event: support.ValidityChangedEvent)=>void) {
-            this.inputTypeListeners[support.InputTypeEvents.ValidityChanged].filter((currentListener: (event: support.InputTypeEvent)=>void) => {
+        unValidityChanged(listener: (event: api.form.ValidityChangedEvent)=>void) {
+            this.validityChangedListeners.filter((currentListener: (event: api.form.ValidityChangedEvent)=>void) => {
                 return listener == currentListener;
             });
         }
 
-        private notifyListeners(eventName: support.InputTypeEvents, event: support.InputTypeEvent) {
-            this.inputTypeListeners[eventName].forEach((listener: (event: support.InputTypeEvent)=>void) => {
+        private notifyValidityChanged(event: api.form.ValidityChangedEvent) {
+
+            console.log("FormItemSetOccurrenceView " + event.getOrigin().toString() + " validity changed: ");
+            if (event.getRecording().isValid()) {
+                console.log(" valid! ");
+            }
+            else {
+                console.log(" invalid: ");
+                event.getRecording().print();
+            }
+
+            this.validityChangedListeners.forEach((listener: (event: api.form.ValidityChangedEvent)=>void) => {
                 listener(event);
             });
-        }
-
-        private notifyValidityChanged(event: support.ValidityChangedEvent) {
-            this.notifyListeners(support.InputTypeEvents.ValidityChanged, event);
         }
     }
 

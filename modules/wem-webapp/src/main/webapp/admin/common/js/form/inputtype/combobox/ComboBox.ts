@@ -1,33 +1,30 @@
 module api.form.inputtype.combobox {
 
-    import InputTypeEvent = api.form.inputtype.support.InputTypeEvent;
-    import InputTypeEvents = api.form.inputtype.support.InputTypeEvents;
-    import ValidityChangedEvent = api.form.inputtype.support.ValidityChangedEvent;
-
     export interface ComboBoxConfig {
         options: ComboBoxOption[]
     }
 
     export class ComboBox extends api.dom.DivEl implements api.form.inputtype.InputTypeView {
 
-        private input: api.form.Input;
+        private config : api.form.inputtype.InputTypeViewConfig<ComboBoxConfig>;
 
-        private config: ComboBoxConfig;
+        private comboBoxConfig: ComboBoxConfig;
+
+        private input: api.form.Input;
 
         private comboBox: api.ui.combobox.ComboBox<string>;
 
         private selectedOptionsView: api.ui.combobox.SelectedOptionsView<string>;
 
-        private listeners: {[eventName:string]:{(event: InputTypeEvent):void}[]} = {};
+        private inputValidityChangedListeners: {(event: api.form.inputtype.InputValidityChangedEvent) : void}[] = [];
 
-        private previousValidationRecording: api.form.ValidationRecording;
+        private previousValidationRecording: api.form.inputtype.InputValidationRecording;
 
         constructor(config: api.form.inputtype.InputTypeViewConfig<ComboBoxConfig>) {
             super("combo-box");
             this.addClass("input-type-view");
-
-            this.config = config.inputConfig;
-            this.listeners[InputTypeEvents.ValidityChanged] = [];
+            this.config = config;
+            this.comboBoxConfig = config.inputConfig;
         }
 
         getHTMLElement(): HTMLElement {
@@ -61,7 +58,7 @@ module api.form.inputtype.combobox {
             this.selectedOptionsView = new api.ui.combobox.SelectedOptionsView<string>();
             this.comboBox = this.createComboBox(input);
 
-            this.config.options.forEach((option: ComboBoxOption) => {
+            this.comboBoxConfig.options.forEach((option: ComboBoxOption) => {
                 this.comboBox.addOption({value: option.value, displayValue: option.label})
             });
 
@@ -78,14 +75,13 @@ module api.form.inputtype.combobox {
         }
 
         createComboBox(input: api.form.Input): api.ui.combobox.ComboBox<string> {
-            var comboboxConfig = {
+            var comboBox = new api.ui.combobox.ComboBox<string>(name, {
                 rowHeight: 24,
                 filter: this.comboboxFilter,
                 selectedOptionsView: this.selectedOptionsView,
                 maximumOccurrences: input.getOccurrences().getMaximum(),
                 hideComboBoxWhenMaxReached: true
-            };
-            var comboBox = new api.ui.combobox.ComboBox<string>(name, comboboxConfig);
+            });
 
             comboBox.addListener({
                 onInputValueChanged: function (oldValue, newValue, grid) {
@@ -142,25 +138,21 @@ module api.form.inputtype.combobox {
             return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
         }
 
-        private addListener(eventName: InputTypeEvents, listener: (event: InputTypeEvent)=>void) {
-            this.listeners[eventName].push(listener);
-        }
+        validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
 
-        validate(silent: boolean = true): api.form.ValidationRecording {
-
-            var recording: api.form.ValidationRecording = new api.form.ValidationRecording();
+            var recording = new api.form.inputtype.InputValidationRecording();
 
             var numberOfValids = this.comboBox.countSelected();
             if (numberOfValids < this.input.getOccurrences().getMinimum()) {
-                recording.breaksMinimumOccurrences(this.input.getPath());
+                recording.setBreaksMinimumOccurrences(true);
             }
             if (numberOfValids > this.input.getOccurrences().getMaximum()) {
-                recording.breaksMaximumOccurrences(this.input.getPath());
+                recording.setBreaksMaximumOccurrences(true);
             }
 
             if (!silent) {
                 if (recording.validityChanged(this.previousValidationRecording)) {
-                    this.notifyValidityChanged(new support.ValidityChangedEvent(recording, this.input.getPath()));
+                    this.notifyValidityChanged(new api.form.inputtype.InputValidityChangedEvent(recording, this.input.getName()));
                 }
             }
 
@@ -168,30 +160,21 @@ module api.form.inputtype.combobox {
             return recording;
         }
 
-        onValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
-            this.addListener(InputTypeEvents.ValidityChanged, listener);
+        onValidityChanged(listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) {
+            this.inputValidityChangedListeners.push(listener);
         }
 
-        unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
-            this.removeListener(InputTypeEvents.ValidityChanged, listener);
-        }
-
-        private notifyValidityChanged(event: ValidityChangedEvent) {
-            this.notifyListeners(InputTypeEvents.ValidityChanged, event);
-        }
-
-        private removeListener(eventName: InputTypeEvents, listener: (event: InputTypeEvent)=>void) {
-            this.listeners[eventName].filter((currentListener: (event: InputTypeEvent)=>void) => {
+        unValidityChanged(listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) {
+            this.inputValidityChangedListeners.filter((currentListener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) => {
                 return listener == currentListener;
             });
         }
 
-        private notifyListeners(eventName: InputTypeEvents, event: any) {
-            this.listeners[eventName].forEach((listener: (event: InputTypeEvent)=>void) => {
+        private notifyValidityChanged(event: api.form.inputtype.InputValidityChangedEvent) {
+            this.inputValidityChangedListeners.forEach((listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) => {
                 listener(event);
             });
         }
-
 
     }
 

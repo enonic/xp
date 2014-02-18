@@ -1,9 +1,5 @@
 module api.form.inputtype.content.image {
 
-    import InputTypeEvent = api.form.inputtype.support.InputTypeEvent;
-    import InputTypeEvents = api.form.inputtype.support.InputTypeEvents;
-    import ValidityChangedEvent = api.form.inputtype.support.ValidityChangedEvent;
-
     export interface ImageSelectorConfig {
         relationshipType: string
     }
@@ -30,15 +26,13 @@ module api.form.inputtype.content.image {
 
         private editContentRequestListeners: {(content: api.content.ContentSummary): void }[] = [];
 
-        private listeners: {[eventName:string]:{(event: InputTypeEvent):void}[]} = {};
+        private inputValidityChangedListeners: {(event: api.form.inputtype.InputValidityChangedEvent) : void}[] = [];
 
-        private previousValidationRecording: api.form.ValidationRecording;
+        private previousValidationRecording: api.form.inputtype.InputValidationRecording;
 
         constructor(config: api.form.inputtype.InputTypeViewConfig<ImageSelectorConfig>) {
             super("image-selector");
             this.addClass("input-type-view");
-
-            this.listeners[InputTypeEvents.ValidityChanged] = [];
 
             this.config = config;
             this.contentSummaryLoader = new api.form.inputtype.content.ContentSummaryLoader();
@@ -147,26 +141,42 @@ module api.form.inputtype.content.image {
             return super.getHTMLElement();
         }
 
-        validate(silent: boolean = true) {
+        validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
 
-            var recording: api.form.ValidationRecording = new api.form.ValidationRecording();
+            var recording = new api.form.inputtype.InputValidationRecording();
 
             var numberOfValids = this.comboBox.countSelected();
             if (numberOfValids < this.input.getOccurrences().getMinimum()) {
-                recording.breaksMinimumOccurrences(this.input.getPath());
+                recording.setBreaksMinimumOccurrences(true);
             }
             if (numberOfValids > this.input.getOccurrences().getMaximum()) {
-                recording.breaksMaximumOccurrences(this.input.getPath());
+                recording.setBreaksMaximumOccurrences(true);
             }
 
             if (!silent) {
                 if (recording.validityChanged(this.previousValidationRecording)) {
-                    this.notifyValidityChanged(new support.ValidityChangedEvent(recording, this.input.getPath()));
+                    this.notifyValidityChanged(new api.form.inputtype.InputValidityChangedEvent(recording, this.input.getName()));
                 }
             }
 
             this.previousValidationRecording = recording;
             return recording;
+        }
+
+        onValidityChanged(listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) {
+            this.inputValidityChangedListeners.push(listener);
+        }
+
+        unValidityChanged(listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) {
+            this.inputValidityChangedListeners.filter((currentListener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) => {
+                return listener == currentListener;
+            });
+        }
+
+        private notifyValidityChanged(event: api.form.inputtype.InputValidityChangedEvent) {
+            this.inputValidityChangedListeners.forEach((listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) => {
+                listener(event);
+            });
         }
 
         giveFocus(): boolean {
@@ -256,16 +266,6 @@ module api.form.inputtype.content.image {
             return comboBox;
         }
 
-        private notifyListeners(eventName: InputTypeEvents, event: any) {
-            this.listeners[eventName].forEach((listener: (event: InputTypeEvent)=>void) => {
-                listener(event);
-            });
-        }
-
-        private notifyValidityChanged(event: ValidityChangedEvent) {
-            this.notifyListeners(InputTypeEvents.ValidityChanged, event);
-        }
-
         private loadOptions(searchString: string): Q.Promise<api.rest.Response> {
             if (!this.contentRequestsAllowed || !this.comboBox) {
                 return;
@@ -310,24 +310,6 @@ module api.form.inputtype.content.image {
 
             return imgEl.toString() + contentEl.toString();
 
-        }
-
-        onValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
-            this.addListener(InputTypeEvents.ValidityChanged, listener);
-        }
-
-        unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
-            this.removeListener(InputTypeEvents.ValidityChanged, listener);
-        }
-
-        private addListener(eventName: InputTypeEvents, listener: (event: InputTypeEvent)=>void) {
-            this.listeners[eventName].push(listener);
-        }
-
-        private removeListener(eventName: InputTypeEvents, listener: (event: InputTypeEvent)=>void) {
-            this.listeners[eventName].filter((currentListener: (event: InputTypeEvent)=>void) => {
-                return listener == currentListener;
-            });
         }
 
         private createEmbeddedImageContent(uploadItem: api.ui.UploadItem) {

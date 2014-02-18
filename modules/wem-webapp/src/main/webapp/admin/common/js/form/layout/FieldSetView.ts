@@ -6,8 +6,8 @@ module api.form.layout {
 
         private formItemViews: api.form.FormItemView[] = [];
 
-        constructor(context: api.form.FormContext, fieldSet: api.form.FieldSet, dataSet?: api.data.DataSet) {
-            super(context, fieldSet, "field-set-view");
+        constructor(context: api.form.FormContext, fieldSet: api.form.FieldSet, parent: api.form.formitemset.FormItemSetOccurrenceView, dataSet?: api.data.DataSet) {
+            super(context, fieldSet, parent, "field-set-view");
 
             this.fieldSet = fieldSet;
             this.doLayout(dataSet);
@@ -58,6 +58,7 @@ module api.form.layout {
                 setFormContext(this.getContext()).
                 setFormItems(this.fieldSet.getFormItems()).
                 setParentElement(wrappingDiv).
+                setParent(this.getParent()).
                 layout(dataSet);
         }
 
@@ -99,6 +100,19 @@ module api.form.layout {
             });
 
             return recording;
+        }
+
+        onValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
+
+            this.formItemViews.forEach((formItemView: api.form.FormItemView)=> {
+                formItemView.onValidityChanged(listener);
+            });
+        }
+
+        unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
+            this.formItemViews.forEach((formItemView: api.form.FormItemView)=> {
+                formItemView.unValidityChanged(listener);
+            });
         }
     }
 }

@@ -33,13 +33,16 @@ module api.form {
                 layout(this.rootDataSet);
 
             this.formItemViews.forEach((formItemView: FormItemView) => {
-                formItemView.onValidityChanged((event: api.form.inputtype.support.ValidityChangedEvent) => {
 
-                    console.log("FormView.formItemView[" + event.getOrigin().toString() + "].onValidityChanged -> " + event.isValid());
+                formItemView.onValidityChanged((event: api.form.ValidityChangedEvent) => {
 
                     var previousValidState = this.previousValidationRecording.isValid();
-                    if(event.isValid() ){
+
+                    if (event.isValid()) {
                         this.previousValidationRecording.removeByPath(event.getOrigin());
+                    }
+                    else {
+                        this.previousValidationRecording.flatten(event.getRecording());
                     }
 
                     if (previousValidState != this.previousValidationRecording.isValid()) {
@@ -212,7 +215,15 @@ module api.form {
         }
 
         private notifyValidityChanged(event: FormValidityChangedEvent) {
-            console.log("FormView.notifyValidityChanged -> " + event.isValid());
+            console.log("FormView.validityChanged");
+            if (event.getRecording().isValid()) {
+                console.log(" valid: ");
+            }
+            else {
+                console.log(" invalid: ");
+                event.getRecording().print();
+            }
+
             this.notifyListeners(FormEventNames.FormValidityChanged, event);
         }
 

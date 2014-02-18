@@ -2,13 +2,13 @@ module api.form.inputtype.text {
 
     import support = api.form.inputtype.support;
 
-    export class TextArea extends support.BaseInputTypeView {
+    export class TextArea extends support.BaseInputTypeView<TextAreaConfig> {
 
         private rows: number;
         private columns: number;
 
         constructor(config: api.form.inputtype.InputTypeViewConfig<TextAreaConfig>) {
-            super();
+            super(config);
             this.rows = config.inputConfig.rows;
             this.columns = config.inputConfig.columns;
         }

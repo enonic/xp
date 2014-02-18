@@ -1,24 +1,21 @@
 module api.form {
 
-    // TODO: Rename ValidationRecording
     export class ValidationRecording {
 
-        private breaksMinimumOccurrencesArray: FormItemPath[] = [];
+        private breaksMinimumOccurrencesArray: ValidationRecordingPath[] = [];
 
-        private breaksMaximumOccurrencesArray: FormItemPath[] = [];
+        private breaksMaximumOccurrencesArray: ValidationRecordingPath[] = [];
 
-        private breaksRequiredContract: api.data.DataId[] = [];
-
-        breaksMinimumOccurrences(formItem: FormItemPath) {
-            this.breaksMinimumOccurrencesArray.push(formItem);
+        breaksMinimumOccurrences(path: ValidationRecordingPath) {
+            if (!this.exists(path, this.breaksMinimumOccurrencesArray)) {
+                this.breaksMinimumOccurrencesArray.push(path);
+            }
         }
 
-        breaksMaximumOccurrences(formItem: FormItemPath) {
-            this.breaksMaximumOccurrencesArray.push(formItem);
-        }
-
-        registerBreaksRequiredContract(data: api.data.DataId) {
-            this.breaksRequiredContract.push(data)
+        breaksMaximumOccurrences(path: ValidationRecordingPath) {
+            if (!this.exists(path, this.breaksMaximumOccurrencesArray)) {
+                this.breaksMaximumOccurrencesArray.push(path);
+            }
         }
 
         isValid(): boolean {
@@ -26,30 +23,39 @@ module api.form {
         }
 
         flatten(recording: ValidationRecording) {
-            this.breaksMinimumOccurrencesArray = this.breaksMinimumOccurrencesArray.concat(recording.breaksMinimumOccurrencesArray);
-            this.breaksMaximumOccurrencesArray = this.breaksMaximumOccurrencesArray.concat(recording.breaksMaximumOccurrencesArray);
+
+            recording.breaksMinimumOccurrencesArray.forEach((path: ValidationRecordingPath)=> {
+
+                this.breaksMinimumOccurrences(path);
+            });
+
+            recording.breaksMaximumOccurrencesArray.forEach((path: ValidationRecordingPath)=> {
+                this.breaksMinimumOccurrences(path);
+            });
         }
 
-        removeByPath(path: api.form.FormItemPath) {
+        removeByPath(path: ValidationRecordingPath) {
 
-            console.log("ValidationRecording.removeByPath(" + path.toString() + ")");
-            console.log(" before remove: ");
-            this.print();
-            var pathAsString = path.toString();
+            this.removeUnreachedMinimumOccurrencesByPath(path);
+            this.removeBreachedMaximumOccurrencesByPath(path);
+        }
+
+        removeUnreachedMinimumOccurrencesByPath(path: ValidationRecordingPath) {
 
             for (var i = this.breaksMinimumOccurrencesArray.length - 1; i >= 0; i--) {
-                if (this.breaksMinimumOccurrencesArray[i].toString().indexOf(pathAsString) == 0) {
+                if (this.breaksMinimumOccurrencesArray[i].toString().indexOf(path.toString()) == 0) {
                     this.breaksMinimumOccurrencesArray.splice(i, 1);
                 }
             }
+        }
+
+        removeBreachedMaximumOccurrencesByPath(path: ValidationRecordingPath) {
 
             for (var i = this.breaksMaximumOccurrencesArray.length - 1; i >= 0; i--) {
-                if (this.breaksMaximumOccurrencesArray[i].toString().indexOf(pathAsString) == 0) {
+                if (this.breaksMaximumOccurrencesArray[i].toString().indexOf(path.toString()) == 0) {
                     this.breaksMaximumOccurrencesArray.splice(i, 1);
                 }
             }
-            console.log(" after remove: ");
-            this.print();
         }
 
         equals(other: ValidationRecording): boolean {
@@ -81,14 +87,18 @@ module api.form {
         }
 
         print() {
-            this.breaksMinimumOccurrencesArray.forEach((path: FormItemPath, index: number) => {
-                console.log("  breaksMinimumOccurrencesArray[" + index + "] = " + path.toString());
+            this.breaksMinimumOccurrencesArray.forEach((path: ValidationRecordingPath, index: number) => {
+                console.log("   " + path.toString());
             });
+        }
 
-            this.breaksMaximumOccurrencesArray.forEach((path: FormItemPath, index: number) => {
-                console.log("  breaksMaximumOccurrencesArray[" + index + "] = " + path.toString());
-            });
-
+        private exists(path: ValidationRecordingPath, array: ValidationRecordingPath[]): boolean {
+            for (var i = 0; i < array.length; i++) {
+                if (array[i].toString() == path.toString()) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

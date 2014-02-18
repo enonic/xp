@@ -48,12 +48,12 @@ module api.ui {
                 // Then insert attendant element after input for further size updates.
                 api.dom.Body.get().appendChild(this.attendant);
                 this.updateSize();
-                this.getParent().appendChild(this.attendant);
+                this.getParentElement().appendChild(this.attendant);
             }
             else {
                 // If input is visible then insert attendant element after it
                 // and calculate initial size according to text width.
-                this.getParent().appendChild(this.attendant);
+                this.getParentElement().appendChild(this.attendant);
                 this.updateSize();
             }
         }

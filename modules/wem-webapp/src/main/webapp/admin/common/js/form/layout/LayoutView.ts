@@ -4,8 +4,8 @@ module api.form.layout {
 
         private layout:api.form.Layout;
 
-        constructor(context: api.form.FormContext, layout:api.form.Layout, className:string) {
-            super(className, context, layout);
+        constructor(context: api.form.FormContext, layout:api.form.Layout, parent: api.form.formitemset.FormItemSetOccurrenceView, className:string) {
+            super(className, context, layout, parent);
 
             this.layout = layout;
         }

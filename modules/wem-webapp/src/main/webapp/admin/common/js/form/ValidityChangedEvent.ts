@@ -1,18 +1,17 @@
-module api.form.inputtype.support {
+module api.form {
 
-    export class ValidityChangedEvent extends InputTypeEvent {
+    export class ValidityChangedEvent {
 
-        private origin: api.form.FormItemPath;
+        private origin: api.form.ValidationRecordingPath;
 
         private recording: api.form.ValidationRecording;
 
-        constructor(recording: api.form.ValidationRecording, origin: api.form.FormItemPath) {
-            super();
+        constructor(recording: api.form.ValidationRecording, origin: api.form.ValidationRecordingPath) {
             this.recording = recording;
             this.origin = origin;
         }
 
-        getOrigin(): api.form.FormItemPath {
+        getOrigin(): api.form.ValidationRecordingPath {
             return this.origin;
         }
 

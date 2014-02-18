@@ -51,7 +51,7 @@ module api.dom {
 
         private el: ElementHelper;
 
-        private parent: Element;
+        private parentElement: Element;
 
         private children: Element[];
 
@@ -245,20 +245,20 @@ module api.dom {
 
         insertAfterEl(existingEl: Element) {
             this.el.insertAfterEl(existingEl);
-            var parent = existingEl.getParent();
+            var parent = existingEl.getParentElement();
             var index = parent.getChildren().indexOf(existingEl) + 1;
             this.insert(this, parent, index);
         }
 
         insertBeforeEl(existingEl: Element) {
             this.el.insertBeforeEl(existingEl);
-            var parent = existingEl.getParent();
+            var parent = existingEl.getParentElement();
             var index = parent.getChildren().indexOf(existingEl);
             this.insert(this, parent, index);
         }
 
         private insert(child: Element, parent: Element, index: number) {
-            child.setParent(parent);
+            child.setParentElement(parent);
             parent.getChildren().splice(index, 0, child);
             if (parent.isRendered()) {
                 child.init();
@@ -273,12 +273,12 @@ module api.dom {
             this.children = [];
         }
 
-        private setParent(parent: Element) {
-            this.parent = parent;
+        private setParentElement(parent: Element) {
+            this.parentElement = parent;
         }
 
-        getParent(): Element {
-            return this.parent;
+        getParentElement(): Element {
+            return this.parentElement;
         }
 
         getChildren(): Element[] {
@@ -306,8 +306,8 @@ module api.dom {
         }
 
        remove() {
-            if (this.parent) {
-                this.parent.removeChild(this);
+            if (this.parentElement) {
+                this.parentElement.removeChild(this);
             }
         }
 

@@ -34,15 +34,15 @@ module api.form {
             });
         }
 
-        private notifyOccurrenceAdded(occurrence: FormItemOccurrence<V>) {
+        private notifyOccurrenceAdded(occurrence: FormItemOccurrence<V>, occurrenceView:V) {
             this.listeners.forEach((listener: FormItemOccurrencesListener) => {
-                listener.onOccurrenceAdded(occurrence);
+                listener.onOccurrenceAdded(occurrence, occurrenceView);
             });
         }
 
-        private notifyOccurrenceRemoved(occurrence: FormItemOccurrence<V>) {
+        private notifyOccurrenceRemoved(occurrence: FormItemOccurrence<V>, occurrenceView:V) {
             this.listeners.forEach((listener: FormItemOccurrencesListener) => {
-                listener.onOccurrenceRemoved(occurrence);
+                listener.onOccurrenceRemoved(occurrence, occurrenceView);
             });
         }
 
@@ -103,7 +103,7 @@ module api.form {
 
             this.resetOccurrenceIndexes();
             this.refreshOccurrenceViews();
-            this.notifyOccurrenceRemoved(occurrenceToRemove);
+            this.notifyOccurrenceRemoved(occurrenceToRemove, occurrenceViewToRemove);
         }
 
         createAndAddOccurrence() {
@@ -143,7 +143,7 @@ module api.form {
 
             this.resetOccurrenceIndexes();
             this.refreshOccurrenceViews();
-            this.notifyOccurrenceAdded(occurrence);
+            this.notifyOccurrenceAdded(occurrence, occurrenceView);
         }
 
         resetOccurrenceIndexes() {

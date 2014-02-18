@@ -55,7 +55,7 @@ module api.ui {
             if (!this.tooltipEl) {
                 this.tooltipEl = new api.dom.DivEl("tooltip " + this.side);
                 this.tooltipEl.getEl().setInnerHtml(this.text).setClass("tooltip " + this.side);
-                this.target.getParent().appendChild(this.tooltipEl);
+                this.target.getParentElement().appendChild(this.tooltipEl);
                 this.tooltipEl.show();
                 this.positionByTarget();
             }
