@@ -2,6 +2,7 @@ package com.enonic.wem.api.command.content.page.part;
 
 
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
+import com.enonic.wem.api.module.ModuleKeys;
 
 public final class PartDescriptorCommands
 {
@@ -13,5 +14,10 @@ public final class PartDescriptorCommands
     public CreatePartDescriptor create()
     {
         return new CreatePartDescriptor();
+    }
+
+    public GetPartDescriptorsByModules getByModules( final ModuleKeys moduleKeys )
+    {
+        return new GetPartDescriptorsByModules( moduleKeys );
     }
 }

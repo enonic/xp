@@ -9,8 +9,10 @@ import com.enonic.wem.core.command.CommandBinder;
 import com.enonic.wem.core.content.page.image.ImageDescriptorServiceImpl;
 import com.enonic.wem.core.content.page.layout.CreateLayoutDescriptorHandler;
 import com.enonic.wem.core.content.page.layout.GetLayoutDescriptorHandler;
+import com.enonic.wem.core.content.page.layout.GetLayoutDescriptorsByModulesHandler;
 import com.enonic.wem.core.content.page.part.CreatePartDescriptorHandler;
 import com.enonic.wem.core.content.page.part.GetPartDescriptorHandler;
+import com.enonic.wem.core.content.page.part.GetPartDescriptorsByModulesHandler;
 
 public class PageModule
     extends AbstractModule
@@ -33,6 +35,8 @@ public class PageModule
         commands.add( GetLayoutDescriptorHandler.class );
         commands.add( GetPartDescriptorHandler.class );
         commands.add( GetPageDescriptorHandler.class );
+        commands.add( GetPartDescriptorsByModulesHandler.class );
+        commands.add( GetLayoutDescriptorsByModulesHandler.class );
         commands.add( CreateLayoutDescriptorHandler.class );
     }
 }

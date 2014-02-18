@@ -17,6 +17,8 @@ import com.enonic.wem.admin.rest.resource.content.page.PageDescriptorResource;
 import com.enonic.wem.admin.rest.resource.content.page.PageResource;
 import com.enonic.wem.admin.rest.resource.content.page.PageTemplateResource;
 import com.enonic.wem.admin.rest.resource.content.page.image.ImageDescriptorResource;
+import com.enonic.wem.admin.rest.resource.content.page.layout.LayoutDescriptorResource;
+import com.enonic.wem.admin.rest.resource.content.page.part.PartDescriptorResource;
 import com.enonic.wem.admin.rest.resource.content.site.SiteResource;
 import com.enonic.wem.admin.rest.resource.content.site.template.SiteTemplateResource;
 import com.enonic.wem.admin.rest.resource.jcr.GetNodesResource;
@@ -76,6 +78,8 @@ public final class RestServlet
         addClass( PageTemplateResource.class );
         addClass( PageDescriptorResource.class );
         addClass( ImageDescriptorResource.class );
+        addClass( PartDescriptorResource.class );
+        addClass( LayoutDescriptorResource.class );
 
         addClass( DefaultExceptionMapper.class );
         addClass( IllegalArgumentExceptionMapper.class );
