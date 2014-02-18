@@ -9,7 +9,6 @@ import com.google.common.collect.Sets;
 import com.enonic.wem.api.query.aggregation.AggregationQuery;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.expr.QueryExpr;
-import com.enonic.wem.api.query.facet.FacetQuery;
 import com.enonic.wem.api.query.filter.Filter;
 
 public class EntityQuery
@@ -22,8 +21,6 @@ public class EntityQuery
 
     private final ImmutableSet<AggregationQuery> aggregationQueries;
 
-    private final ImmutableSet<FacetQuery> facetQueries;
-
     private final ImmutableList<OrderExpr> orderBys;
 
     private final int from;
@@ -35,7 +32,6 @@ public class EntityQuery
         this.query = builder.query;
         this.filters = ImmutableSet.copyOf( builder.filters );
         this.queryFilters = ImmutableSet.copyOf( builder.queryFilters );
-        this.facetQueries = ImmutableSet.copyOf( builder.facetQueries );
         this.orderBys = query != null ? ImmutableList.copyOf( query.getOrderList() ) : ImmutableList.<OrderExpr>of();
         this.size = builder.size;
         this.from = builder.from;
@@ -62,11 +58,6 @@ public class EntityQuery
     public ImmutableSet<Filter> getQueryFilters()
     {
         return queryFilters;
-    }
-
-    public ImmutableSet<FacetQuery> getFacetQueries()
-    {
-        return facetQueries;
     }
 
     public ImmutableList<OrderExpr> getOrderBys()
@@ -99,8 +90,6 @@ public class EntityQuery
 
         private Set<AggregationQuery> aggregationQueries = Sets.newHashSet();
 
-        private Set<FacetQuery> facetQueries = Sets.newHashSet();
-
         private int from = 0;
 
         private int size = 10;
@@ -129,11 +118,6 @@ public class EntityQuery
             return this;
         }
 
-        public Builder addFacet( final FacetQuery facetQuery )
-        {
-            this.facetQueries.add( facetQuery );
-            return this;
-        }
 
         public Builder from( final int from )
         {

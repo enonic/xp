@@ -1,9 +1,0 @@
-{
-    "myQueryFacet": {
-        "query": {
-            "term": {
-                "myfield._number": 1.0
-            }
-        }
-    }
-}

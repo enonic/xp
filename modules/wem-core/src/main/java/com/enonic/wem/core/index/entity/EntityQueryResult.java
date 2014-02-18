@@ -8,7 +8,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.aggregation.Aggregations;
-import com.enonic.wem.api.facet.Facets;
 
 public class EntityQueryResult
 {
@@ -20,7 +19,6 @@ public class EntityQueryResult
 
     private final float maxScore;
 
-    private final Facets facets;
 
     private final Aggregations aggregations;
 
@@ -30,7 +28,6 @@ public class EntityQueryResult
         this.totalHits = builder.totalHits;
         this.hits = builder.hits;
         this.maxScore = builder.maxScore;
-        this.facets = builder.facets;
         this.aggregations = builder.aggregations;
     }
 
@@ -59,11 +56,6 @@ public class EntityQueryResult
         return maxScore;
     }
 
-    public Facets getFacets()
-    {
-        return facets;
-    }
-
     public Aggregations getAggregations()
     {
         return aggregations;
@@ -78,8 +70,6 @@ public class EntityQueryResult
         private long hits;
 
         private float maxScore;
-
-        private Facets facets;
 
         private Aggregations aggregations;
 
@@ -103,12 +93,6 @@ public class EntityQueryResult
         public Builder maxScore( final float maxScore )
         {
             this.maxScore = maxScore;
-            return this;
-        }
-
-        public Builder facets( final Facets facets )
-        {
-            this.facets = facets;
             return this;
         }
 

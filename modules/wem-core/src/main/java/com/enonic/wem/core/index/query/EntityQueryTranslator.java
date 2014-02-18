@@ -5,15 +5,12 @@ import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.elastic.ElasticsearchQuery;
 import com.enonic.wem.core.index.query.aggregation.AggregationBuilderFactory;
-import com.enonic.wem.core.index.query.facet.FacetBuilderFactory;
 
 public class EntityQueryTranslator
 {
     private QueryBuilderFactory queryBuilderFactory = new QueryBuilderFactory();
 
     private FilterBuilderFactory filterBuilderFactory = new FilterBuilderFactory();
-
-    private FacetBuilderFactory facetBuilderFactory = new FacetBuilderFactory();
 
     private SortBuilderFactory sortBuilderFactory = new SortBuilderFactory();
 
@@ -26,7 +23,6 @@ public class EntityQueryTranslator
             indexType( IndexType.NODE ).
             query( queryBuilderFactory.create( entityQuery.getQuery(), entityQuery.getQueryFilters() ) ).
             filter( filterBuilderFactory.create( entityQuery.getFilters() ) ).
-            addFacets( facetBuilderFactory.create( entityQuery.getFacetQueries() ) ).
             setAggregations( aggregationBuilderFactory.create( entityQuery.getAggregationQueries() ) ).
             sortBuilders( sortBuilderFactory.create( entityQuery.getOrderBys() ) ).
             from( entityQuery.getFrom() ).
