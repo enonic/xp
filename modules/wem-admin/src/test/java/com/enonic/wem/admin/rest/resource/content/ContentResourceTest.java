@@ -53,9 +53,6 @@ import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.facet.Facets;
-import com.enonic.wem.api.facet.QueryFacet;
-import com.enonic.wem.api.facet.TermsFacet;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleKey;
@@ -692,40 +689,6 @@ public class ContentResourceTest
         {
             result.addContentHit( content.getId(), 1f );
         }
-
-        if ( includeFacets )
-        {
-            Facets facets = new Facets();
-
-            TermsFacet contentTypesFacet = TermsFacet.newTermsFacet( "contentType" ).
-                addEntry( "folder", 5 ).
-                addEntry( "image", 24 ).
-                addEntry( "space", 4 ).
-                build();
-
-            facets.addFacet( contentTypesFacet );
-
-            TermsFacet spacesFacet = TermsFacet.newTermsFacet( "space" ).
-                addEntry( "bildearkiv", 30 ).
-                addEntry( "bluman trampoliner", 1 ).
-                addEntry( "bluman intranett", 1 ).
-                build();
-
-            facets.addFacet( spacesFacet );
-
-            QueryFacet query1 = new QueryFacet( 0l );
-            query1.setName( "< 1 hour" );
-            facets.addFacet( query1 );
-            QueryFacet query2 = new QueryFacet( 0l );
-            query2.setName( "< 1 week" );
-            facets.addFacet( query2 );
-            QueryFacet query3 = new QueryFacet( 0l );
-            query3.setName( "< 1 day" );
-            facets.addFacet( query3 );
-
-            result.setFacets( facets );
-        }
-
         return result;
     }
 

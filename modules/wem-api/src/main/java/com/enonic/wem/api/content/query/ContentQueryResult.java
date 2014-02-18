@@ -7,7 +7,6 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.aggregation.Aggregations;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.facet.Facets;
 
 public class ContentQueryResult
 {
@@ -16,8 +15,6 @@ public class ContentQueryResult
     private final int totalSize;
 
     private Set<ContentQueryHit> contentQueryHits = Sets.newLinkedHashSet();
-
-    private Facets facets;
 
     private Aggregations aggregations;
 
@@ -53,20 +50,9 @@ public class ContentQueryResult
         return contentQueryHits;
     }
 
-    public void setFacets( final Facets facets )
-    {
-        this.facets = facets;
-    }
-
-
     public void setAggregations( final Aggregations aggregations )
     {
         this.aggregations = aggregations;
-    }
-
-    public Facets getFacets()
-    {
-        return facets;
     }
 
     public Aggregations getAggregations()
