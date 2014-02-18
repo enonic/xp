@@ -16,7 +16,7 @@ module api.aggregation {
 
         constructor(name: string, displayName: string, aggregations?: api.aggregation.Aggregation[],
                     handleAggregationFilter?: (aggregation: api.aggregation.Aggregation) => boolean) {
-            super("facet-group-view");
+            super("aggregation-group-view");
 
             this.name = name;
             this.displayName = displayName;

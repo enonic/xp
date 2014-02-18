@@ -67,7 +67,6 @@
 
 ///<reference path='node/_module.ts' />
 
-///<reference path='facet/_module.ts' />
 ///<reference path='query/_module.ts' />
 ///<reference path='query/expr/_module.ts' />
 ///<reference path='query/aggregation/_module.ts' />

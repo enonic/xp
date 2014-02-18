@@ -14,7 +14,7 @@ module api.aggregation {
 
         constructor(bucket: api.aggregation.Bucket, parentAggregationView: api.aggregation.AggregationView, select?: boolean) {
 
-            super('facet-entry-view');
+            super('aggregation-bucket-view');
             this.bucket = bucket;
             this.parentAggregationView = parentAggregationView;
 

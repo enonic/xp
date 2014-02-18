@@ -9,7 +9,7 @@ module api.aggregation {
         private bucketSelectionChangedListeners: Function[] = [];
 
         constructor(aggregation: api.aggregation.Aggregation, parentGroupView: api.aggregation.AggregationGroupView) {
-            super('facet-view');
+            super('aggregation-view');
             this.aggregation = aggregation;
             this.parentGroupView = parentGroupView;
         }
