@@ -26,7 +26,7 @@ module LiveEdit.ui {
             // The component should be re-selected after drag'n drop
             $(window).on('sortstop.liveedit.component', (event, uiEvent, ui, wasSelectedOnDragStart) => {
                 if (wasSelectedOnDragStart) {
-                    var component = new LiveEdit.component.Component(ui.item);
+                    var component = LiveEdit.component.Component.fromJQuery(ui.item);
                     LiveEdit.component.Selection.handleSelect(component.getElement()[0]);
                 }
             });

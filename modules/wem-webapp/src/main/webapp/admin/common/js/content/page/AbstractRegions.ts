@@ -35,15 +35,19 @@ module api.content.page {
                     return null;
                 }
             }
-
+            console.log(this.regionByName);
             return component.getPath();
         }
 
         moveComponent(componentPath: ComponentPath, toRegion: RegionPath, precedingComponent: ComponentPath): ComponentPath {
 
             var component = this.removeComponent(componentPath);
+            if (component) {
+                return this.addComponentAfter(component, toRegion, precedingComponent);
+            } else {
+                return null;
+            }
 
-            return this.addComponentAfter(component, toRegion, precedingComponent);
         }
 
         removeComponent(componentPath: ComponentPath) {

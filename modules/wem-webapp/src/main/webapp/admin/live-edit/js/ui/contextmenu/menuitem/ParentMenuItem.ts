@@ -22,7 +22,7 @@ module LiveEdit.ui.contextmenu.menuitem {
             var parentElement:JQuery = this.menu.selectedComponent.getElement().parents('[data-live-edit-type]');
 
             if (parentElement && parentElement.length > 0) {
-                var parentComponent = new LiveEdit.component.Component($(parentElement[0]));
+                var parentComponent = LiveEdit.component.Component.fromJQuery($(parentElement[0]));
                 parentComponent.setSelectedAsParent(true);
                 LiveEdit.component.Selection.deselect();
                 LiveEdit.component.Selection.handleSelect(parentComponent.getElement()[0]);

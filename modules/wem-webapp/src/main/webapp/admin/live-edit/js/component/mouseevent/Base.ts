@@ -19,7 +19,7 @@ module LiveEdit.component.mouseevent {
 
                 LiveEdit.component.Selection.removeSelectedAttribute();
 
-                var component:LiveEdit.component.Component = new LiveEdit.component.Component($(event.currentTarget));
+                var component:LiveEdit.component.Component = LiveEdit.component.Component.fromJQuery($(event.currentTarget));
 
                 $(window).trigger('mouseOverComponent.liveEdit', [ component ]);
             });
@@ -47,7 +47,7 @@ module LiveEdit.component.mouseevent {
                 // Needed so the browser's context menu is not shown on contextmenu
                 event.preventDefault();
 
-                var component = new LiveEdit.component.Component($(event.currentTarget));
+                var component = LiveEdit.component.Component.fromJQuery($(event.currentTarget));
 //                var deselectComponent:boolean = component.isSelected() || LiveEdit.component.Selection.pageHasSelectedElement();
 //
 //                // Toggle select/deselect

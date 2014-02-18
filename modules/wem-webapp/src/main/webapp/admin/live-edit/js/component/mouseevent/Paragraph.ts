@@ -41,7 +41,7 @@ module LiveEdit.component.mouseevent {
         attachClickEvent():void {
             // Listen for left/right click.
             $(document).on('click contextmenu touchstart', this.componentCssSelectorFilter, (event:JQueryEventObject) => {
-                var paragraphComponent = new LiveEdit.component.Component($(event.currentTarget));
+                var paragraphComponent = LiveEdit.component.Component.fromJQuery($(event.currentTarget));
                 this.handleClick(event, paragraphComponent);
             });
         }

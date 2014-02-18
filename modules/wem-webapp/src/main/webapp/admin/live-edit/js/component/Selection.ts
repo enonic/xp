@@ -11,7 +11,7 @@ module LiveEdit.component {
         static REGION_ATTR:string = "data-live-edit-region";
 
         public static handleSelect(element:HTMLElement, event?:JQueryEventObject) {
-            var component = new Component($(element));
+            var component = Component.fromElement(element);
 
             if (Selection.getType(element) == "page") {
                 $(element).trigger('pageSelect.liveEdit');
@@ -31,7 +31,7 @@ module LiveEdit.component {
                 };
             }
 
-            $(window).trigger('selectComponent.liveEdit', [new Component($(element)), mouseClickPagePosition]);
+            $(window).trigger('selectComponent.liveEdit', [Component.fromElement(element), mouseClickPagePosition]);
         }
 
         public static getType(element:HTMLElement):string {
@@ -56,9 +56,9 @@ module LiveEdit.component {
             element.attr(ATTRIBUTE_NAME, 'true');
         }
 
-        public static getSelectedComponent():LiveEdit.component.Component {
+        public static getSelectedComponent():Component {
             try {
-                return new LiveEdit.component.Component($('[' + ATTRIBUTE_NAME + ']'));
+                return Component.fromJQuery($('[' + ATTRIBUTE_NAME + ']'));
 
             } catch (ex) {
                 return null;

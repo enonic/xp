@@ -60,7 +60,7 @@ module LiveEdit.ui {
             });
 
             $(document).on('mouseover', '[data-live-edit-type]', (event) => {
-                var component:LiveEdit.component.Component = new LiveEdit.component.Component($(event.target).closest('[data-live-edit-type]'));
+                var component:LiveEdit.component.Component = LiveEdit.component.Component.fromJQuery($(event.target).closest('[data-live-edit-type]'));
 
                 this.setText(component);
 

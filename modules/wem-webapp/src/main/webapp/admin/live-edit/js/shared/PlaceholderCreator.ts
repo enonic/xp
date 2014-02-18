@@ -34,7 +34,7 @@ module LiveEdit {
                 region = $(allRegionElements[i]);
                 regionIsEmpty = this.isRegionEmpty(region);
                 if (regionIsEmpty) {
-                    regionComponent = new LiveEdit.component.Component(region);
+                    regionComponent = LiveEdit.component.Component.fromJQuery(region);
 
                     region.append(this.createEmptyRegionPlaceholder(regionComponent));
                 }

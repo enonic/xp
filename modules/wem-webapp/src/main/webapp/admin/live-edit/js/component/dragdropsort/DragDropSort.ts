@@ -94,7 +94,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     export function handleSortStart(event:JQueryEventObject, ui):void {
         _isDragging = true;
 
-        var component = new LiveEdit.component.Component(ui.item);
+        var component = LiveEdit.component.Component.fromJQuery(ui.item);
 
         // Temporary store the selection info during the drag drop lifecycle.
         // Data is nullified on drag stop.
@@ -110,7 +110,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     export function handleDragOver(event:JQueryEventObject, ui):void {
         event.stopPropagation();
 
-        var component = new LiveEdit.component.Component(ui.item);
+        var component = LiveEdit.component.Component.fromJQuery(ui.item);
 
         var isDraggingOverLayoutComponent = ui.placeholder.closest(LAYOUT_SELECTOR).length > 0;
 
@@ -133,7 +133,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     export function handleSortChange(event:JQueryEventObject, ui):void {
-        var component = new LiveEdit.component.Component($(event.target));
+        var component = LiveEdit.component.Component.fromJQuery($(event.target));
 
         this.addPaddingToLayoutComponent(component);
         LiveEdit.component.helper.DragHelper.updateStatusIcon(true);
@@ -144,8 +144,9 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     export function handleSortUpdate(event:JQueryEventObject, ui):void {
-        var el = api.dom.Element.fromHtmlElement(ui.item[0]);
-        var component = LiveEdit.component.Component.fromElement(el);
+        var component = LiveEdit.component.Component.fromJQuery(ui.item);
+        console.log(ui.item);
+        console.log("sortUpdate", component);
 
         if (component.hasComponentPath()) {
             $(window).trigger('sortableUpdate.liveEdit', [ component ]);
@@ -155,7 +156,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     export function handleSortStop(event:JQueryEventObject, ui):void {
         _isDragging = false;
 
-        var component = new LiveEdit.component.Component(ui.item);
+        var component = LiveEdit.component.Component.fromJQuery(ui.item);
 
         this.removePaddingFromLayoutComponent();
 

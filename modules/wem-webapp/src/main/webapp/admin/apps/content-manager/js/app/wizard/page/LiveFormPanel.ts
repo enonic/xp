@@ -330,12 +330,20 @@ module app.wizard {
                 new app.contextwindow.LiveEditDragStartEvent().fire();
                 this.contextWindow.hide();
             });
-            this.liveEditJQuery(this.liveEditWindow).on('sortableUpdate.liveEdit', (event, component?) => {
-                if (component) {
-                    var componentPath = api.content.page.ComponentPath.fromString(component.getComponentPath());
-                    var afterComponentPath = api.content.page.ComponentPath.fromString(component.getPrecedingComponentPath());
-                    var regionPath = api.content.page.RegionPath.fromString(component.getRegionName());
-                    this.pageRegions.moveComponent(componentPath, regionPath, afterComponentPath);
+            this.liveEditJQuery(this.liveEditWindow).on('sortableUpdate.liveEdit', (event, componentEl?) => {
+
+                if (componentEl) {
+                    var componentPath = api.content.page.ComponentPath.fromString(componentEl.getComponentPath());
+                    console.log("recieved sortableupdate", componentPath);
+                    var afterComponentPath = api.content.page.ComponentPath.fromString(componentEl.getPrecedingComponentPath());
+                    var regionPath = api.content.page.RegionPath.fromString(componentEl.getRegionName());
+                    var newPath = this.pageRegions.moveComponent(componentPath, regionPath, afterComponentPath);
+                    if (newPath) {
+                        console.log("new path:", newPath.toString());
+                        componentEl.getEl().setData("live-edit-component", newPath.toString());
+                    }
+
+                    //componentEl.getEl().setData("live-edit-name", componentName.toString());
                 }
             });
 
@@ -358,7 +366,7 @@ module app.wizard {
                     var componentPath = this.pageRegions.addComponentAfter(imageComponent.build(), regionPath, componentToAddAfter);
 
                     componentEl.getEl().setData("live-edit-component", componentPath.toString());
-                    componentEl.getEl().setData("live-edit-name", componentName.toString());
+                    //componentEl.getEl().setData("live-edit-name", componentName.toString());
                     // TODO: resolve type dynamically
                     componentEl.getEl().setData("live-edit-type", "image");
                 });

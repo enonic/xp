@@ -1,5 +1,5 @@
 module LiveEdit.component {
-    export class ComponentPlaceholder extends api.dom.DivEl {
+    export class ComponentPlaceholder extends Component {
         constructor() {
             super();
             this.addClass("live-edit-empty-component");
@@ -27,28 +27,6 @@ module LiveEdit.component {
             return placeholder;
         }
 
-        getPrecedingComponentPath():string {
-            var previousComponent = api.dom.Element.fromHtmlElement($liveEdit(this.getHTMLElement()).prevAll('[data-live-edit-component]')[0]);
-            return previousComponent.getEl().getData("live-edit-component");
-        }
-
-        showLoadingSpinner() {
-            var spinner = new LoadingOverlay(this);
-        }
-
-        getRegionName():string {
-            var regionName = $(this.getHTMLElement()).parent('[data-live-edit-region]').attr('data-live-edit-region');
-            return regionName;
-        }
-
-        getComponentName():string {
-            return this.getEl().getData('live-edit-component');
-        }
-
-        getComponentPath():string {
-            return this.getEl().getData('live-edit-component');
-        }
-
         onSelect() {
 
         }
@@ -57,8 +35,5 @@ module LiveEdit.component {
 
         }
 
-        isSelected():boolean {
-            return this.getEl().getAttribute("data-live-edit-selected") == "true";
-        }
     }
 }
