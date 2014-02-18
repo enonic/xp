@@ -1,6 +1,12 @@
 package com.enonic.wem.api.content.page;
 
+import java.util.List;
+
 import org.junit.Test;
+
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.page.part.PartComponent;
 import com.enonic.wem.api.content.page.region.Region;
@@ -57,6 +63,61 @@ public class PageTemplateXmlTest
         final String result = XmlSerializers.pageTemplate().serialize( pageTemplateXml );
 
         assertXml( "page-template.xml", result );
+    }
+
+    @Test
+    public void test_templates_sort_by_displayName()
+        throws Exception
+    {
+        // 1
+        final String xml = readFromFile( "page-template.xml" );
+        PageTemplate.Builder builder = PageTemplate.newPageTemplate();
+        builder.name( "my-page-template1" );
+        XmlSerializers.pageTemplate().parse( xml ).to( builder );
+
+        builder.module( ModuleName.from( "demo1" ) );
+        builder.displayName( "BBB" );
+        PageTemplate pageTemplate = builder.build();
+
+        final PageTemplates.Builder player = PageTemplates.newPageTemplates();
+        player.add( pageTemplate );
+
+        // 2
+        builder = PageTemplate.newPageTemplate();
+        builder.name( "my-page-template2" );
+        XmlSerializers.pageTemplate().parse( xml ).to( builder );
+
+        builder.module( ModuleName.from( "demo2" ) );
+        builder.displayName( "CCC" );
+        pageTemplate = builder.build();
+        player.add( pageTemplate );
+
+        // 3
+        builder = PageTemplate.newPageTemplate();
+        builder.name( "my-page-template3" );
+        XmlSerializers.pageTemplate().parse( xml ).to( builder );
+
+        builder.module( ModuleName.from( "demo3" ) );
+        builder.displayName( "AAA" );
+        pageTemplate = builder.build();
+        player.add( pageTemplate );
+
+        PageTemplates sorted = player.build().sort();
+        List<String> result = templatesAsString( sorted.getList() );
+
+        assertEquals( "AAA, BBB, CCC", Joiner.on( ", " ).join( result ) );
+    }
+
+    private List<String> templatesAsString( final List<PageTemplate> templateList )
+    {
+        return Lists.transform( templateList, new Function<PageTemplate, String>()
+        {
+            @Override
+            public String apply( final PageTemplate template )
+            {
+                return template.getDisplayName();
+            }
+        } );
     }
 
     @Test

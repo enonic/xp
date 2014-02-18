@@ -37,6 +37,15 @@ module api.content.page {
         getDescriptor(): PageDescriptor {
             return this.descriptor;
         }
+
+        isCanRender(pattern:api.schema.content.ContentTypeName): boolean {
+            this.canRender.forEach((name:api.schema.content.ContentTypeName)=> {
+                if (name.equals(pattern)) {
+                    return true;
+                }
+            });
+            return false;
+        }
     }
 
     export class PageTemplateBuilder extends PageTemplateSummaryBuilder {
