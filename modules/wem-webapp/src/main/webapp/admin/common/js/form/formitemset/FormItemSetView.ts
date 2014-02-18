@@ -70,8 +70,8 @@ module api.form.formitemset {
                     this.refresh();
 
                     if (occurrenceViewRemoved instanceof api.form.formitemset.FormItemSetOccurrenceView) {
-                        var removedFormItemSetOccurrenceView = <api.form.formitemset.FormItemSetOccurrenceView>occurrenceViewRemoved;
-                        // TODO: remove related entries in this.previousValidationRecording?
+                        // force validate, since FormItemSet might have become invalid
+                        this.validate(false);
                     }
                 }
             });
@@ -196,7 +196,7 @@ module api.form.formitemset {
         validate(silent: boolean = true): ValidationRecording {
 
             var validationRecordingPath = this.resolveValidationRecordingPath();
-            console.log("FormItemSetView[ " + validationRecordingPath + " ].validate(" + silent + ")");
+            //console.log("FormItemSetView[ " + validationRecordingPath + " ].validate(" + silent + ")");
 
             var recording = new ValidationRecording();
 
@@ -250,14 +250,14 @@ module api.form.formitemset {
 
         private notifyValidityChanged(event: api.form.ValidityChangedEvent) {
 
-            console.log("FormItemSetView[ " + event.getOrigin().toString()  + " ] validity changed");
+            /*console.log("FormItemSetView[ " + event.getOrigin().toString() + " ] validity changed");
             if (event.getRecording().isValid()) {
                 console.log(" valid!");
             }
             else {
                 console.log(" invalid: ");
                 event.getRecording().print();
-            }
+            }*/
 
             this.validityChangedListeners.forEach((listener: (event: api.form.ValidityChangedEvent)=>void) => {
                 listener(event);

@@ -128,7 +128,7 @@ module api.form.input {
 
         validate(silent: boolean = true): api.form.ValidationRecording {
 
-            console.log("InputView[ " + this.resolveValidationRecordingPath() + " ].validate(" + silent + ")");
+            //console.log("InputView[ " + this.resolveValidationRecordingPath() + " ].validate(" + silent + ")");
 
             var inputRecording = this.inputTypeView.validate(silent);
             return this.handleInputValidationRecording(inputRecording, silent);
@@ -187,14 +187,15 @@ module api.form.input {
         }
 
         private notifyFormValidityChanged(event: api.form.ValidityChangedEvent) {
-            console.log("InputView[ " + event.getOrigin().toString() + " ] validity changed");
+
+            /*console.log("InputView[ " + event.getOrigin().toString() + " ] validity changed");
             if (event.getRecording().isValid()) {
                 console.log(" valid!");
             }
             else {
                 console.log(" invalid:");
                 event.getRecording().print();
-            }
+            }*/
 
             this.validityChangedListeners.forEach((listener: (event: api.form.ValidityChangedEvent)=>void) => {
                 listener(event);

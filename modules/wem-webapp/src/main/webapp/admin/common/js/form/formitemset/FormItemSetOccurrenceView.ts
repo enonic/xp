@@ -238,7 +238,7 @@ module api.form.formitemset {
 
         validate(silent: boolean = true): api.form.ValidationRecording {
 
-            console.log("FormItemSetOccurrenceView[ " + this.resolveValidationRecordingPath() + " ].validate(" + silent + ")");
+            //console.log("FormItemSetOccurrenceView[ " + this.resolveValidationRecordingPath() + " ].validate(" + silent + ")");
 
             var allRecordings = new api.form.ValidationRecording();
             this.formItemViews.forEach((formItemView: api.form.FormItemView) => {
@@ -268,14 +268,14 @@ module api.form.formitemset {
 
         private notifyValidityChanged(event: api.form.ValidityChangedEvent) {
 
-            console.log("FormItemSetOccurrenceView " + event.getOrigin().toString() + " validity changed: ");
+            /*console.log("FormItemSetOccurrenceView " + event.getOrigin().toString() + " validity changed: ");
             if (event.getRecording().isValid()) {
                 console.log(" valid! ");
             }
             else {
                 console.log(" invalid: ");
                 event.getRecording().print();
-            }
+            }*/
 
             this.validityChangedListeners.forEach((listener: (event: api.form.ValidityChangedEvent)=>void) => {
                 listener(event);

@@ -40,7 +40,6 @@ module app.wizard {
 
             this.publishAction.setEnabled(this.formView.isValid());
             this.formView.onValidityChanged((event: api.form.FormValidityChangedEvent) => {
-                console.log("formView validity changed: " + event.isValid());
                 this.publishAction.setEnabled(event.isValid());
             });
         }
