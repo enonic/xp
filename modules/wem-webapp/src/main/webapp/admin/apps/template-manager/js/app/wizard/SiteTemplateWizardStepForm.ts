@@ -34,9 +34,33 @@ module app.wizard {
             console.log("Rendering existing template", siteTemplate);
             this.descriptionField.setValue(siteTemplate.getDescription());
 
-            // TODO: no method to set value on combobox
-            // this.rootContentTypeComboBox.setValue(siteTemplate.getRootContentType().toString());
-            // this.moduleComboBox.setValue(siteTemplate.getModules());
+            var setRootContentTypesListener = (contentTypes: api.schema.content.ContentTypeSummary[]) => {
+                var contentType: api.schema.content.ContentTypeSummary;
+                for (var i = 0; i < contentTypes.length; i++) {
+                    contentType = contentTypes[i];
+                    if (siteTemplate.getRootContentType().equals(contentType.getContentTypeName())) {
+                        this.rootContentTypeComboBox.select(contentType);
+                        break;
+                    }
+                }
+                this.rootContentTypeComboBox.removeLoadedListener(setRootContentTypesListener);
+            };
+            this.rootContentTypeComboBox.addLoadedListener(setRootContentTypesListener);
+
+            var setModulesListener = (modules: api.module.ModuleSummary[]) => {
+                siteTemplate.getModules().forEach((moduleKey: api.module.ModuleKey) => {
+                    var aModule: api.module.ModuleSummary;
+                    for (var i = 0; i < modules.length; i++) {
+                        aModule = modules[i];
+                        if (moduleKey.equals(aModule.getModuleKey())) {
+                            this.moduleComboBox.select(aModule);
+                            break;
+                        }
+                    }
+                });
+                this.moduleComboBox.removeLoadedListener(setModulesListener);
+            };
+            this.moduleComboBox.addLoadedListener(setModulesListener);
         }
 
 

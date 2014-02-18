@@ -40,6 +40,10 @@ module api.module {
             return this.refString;
         }
 
+        equals(moduleKey: ModuleKey): boolean {
+            return this.toString() == moduleKey.toString();
+        }
+
         static toStringArray(keys: ModuleKey[]): string[] {
             var stringArray: string[] = [];
             keys.forEach((key: ModuleKey) => {
