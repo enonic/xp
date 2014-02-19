@@ -19,9 +19,7 @@ module app.create {
             this.contentDialogTitle = new NewContentDialogTitle("What do you want to create?", "");
 
             super({
-                title: this.contentDialogTitle,
-                width: 800,
-                height: 520
+                title: this.contentDialogTitle
             });
 
             this.getEl().addClass("new-content-dialog");

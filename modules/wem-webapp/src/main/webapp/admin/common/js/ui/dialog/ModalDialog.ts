@@ -2,8 +2,6 @@ module api.ui.dialog{
 
     export interface ModalDialogConfig {
         title:api.ui.dialog.ModalDialogHeader;
-        width:number;
-        height:number;
     }
 
     export class ModalDialog extends api.dom.DivEl {
@@ -24,16 +22,9 @@ module api.ui.dialog{
             super("modal-dialog");
 
             this.config = config;
-            var el = this.getEl();
-            el.setDisplay("none");
-            el.setWidth(this.config.width + "px").setHeight(this.config.height + "px");
-            el.setZindex(30001);
 
-            // center element...
-            el.setPosition("fixed").
-                setTop("50%").setLeft("50%").
-                setMarginLeft("-" + (this.config.width / 2) + "px").
-                setMarginTop("-" + (this.config.height / 2) + "px");
+            this.getEl().setDisplay("none").setZindex(30001).
+                setPosition("fixed").setTop("50%").setLeft("50%");
 
             this.title = this.config.title;
             this.appendChild(this.title);
@@ -68,8 +59,16 @@ module api.ui.dialog{
         }
 
         show() {
+            this.centerMyself();
             // experimenting with transitions
             jQuery(this.getEl().getHTMLElement()).show(100);
+        }
+
+        private centerMyself() {
+            var el = this.getEl();
+            var jqel = $(this.getHTMLElement());
+            el.setMarginLeft("-" + (jqel.outerWidth() / 2) + "px").
+                setMarginTop("-" + (jqel.outerHeight() / 2) + "px");
         }
 
         hide() {
@@ -118,14 +117,14 @@ module api.ui.dialog{
     export class ModalDialogContentPanel extends api.dom.DivEl {
 
         constructor() {
-            super("content-panel");
+            super("dialog-content");
         }
     }
 
     export class ModalDialogButtonRow extends api.dom.DivEl {
 
         constructor() {
-            super("button-row");
+            super("dialog-buttons");
         }
 
         addAction(action:api.ui.Action):DialogButton {

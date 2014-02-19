@@ -12,9 +12,7 @@ module api.app.wizard {
         constructor(wizardPanel: api.app.wizard.WizardPanel<any>) {
             super({
                 idPrefix: "SaveBeforeCloseDialog",
-                title: new api.ui.dialog.ModalDialogHeader("Close wizard"),
-                width: 500,
-                height: 180
+                title: new api.ui.dialog.ModalDialogHeader("Close wizard")
             });
 
             this.setCancelAction(new api.ui.Action('Cancel', 'esc'));
