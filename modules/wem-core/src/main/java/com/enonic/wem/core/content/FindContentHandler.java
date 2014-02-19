@@ -35,23 +35,21 @@ public class FindContentHandler
         command.setResult( contentIndexQueryResult );
     }
 
-
     private ContentQueryResult translateToContentIndexQueryResult( final EntityQueryResult result )
     {
-        final ContentQueryResult contentQueryResult = new ContentQueryResult( new Long( result.getTotalHits() ).intValue() );
+        final ContentQueryResult.Builder builder = ContentQueryResult.newResult( result.getTotalHits() );
 
         final ImmutableSet<EntityQueryResultEntry> entries = result.getEntries();
 
         for ( final EntityQueryResultEntry entry : entries )
         {
-            contentQueryResult.addContentHit( ContentId.from( entry.getId() ), entry.getScore() );
+            builder.addContentHit( ContentId.from( entry.getId() ), entry.getScore() );
         }
 
-        contentQueryResult.setAggregations( result.getAggregations() );
+        builder.setAggregations( result.getAggregations() );
 
-        return contentQueryResult;
+        return builder.build();
     }
-
 
     @Inject
     public void setEntityQueryService( final EntityQueryService entityQueryService )

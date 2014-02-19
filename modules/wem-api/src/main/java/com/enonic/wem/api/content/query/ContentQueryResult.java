@@ -3,6 +3,7 @@ package com.enonic.wem.api.content.query;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.aggregation.Aggregations;
@@ -10,27 +11,22 @@ import com.enonic.wem.api.content.ContentId;
 
 public class ContentQueryResult
 {
-    // TODO: Make as builder
+    private final long totalSize;
 
-    private final int totalSize;
+    private final ImmutableSet<ContentQueryHit> contentQueryHits;
 
-    private Set<ContentQueryHit> contentQueryHits = Sets.newLinkedHashSet();
+    private final Aggregations aggregations;
 
-    private Aggregations aggregations;
-
-    public ContentQueryResult( final int totalSize )
+    private ContentQueryResult( final Builder builder )
     {
-        this.totalSize = totalSize;
+        this.totalSize = builder.totalSize;
+        this.contentQueryHits = ImmutableSet.copyOf( builder.contentQueryHits );
+        this.aggregations = builder.aggregations;
     }
 
-    public int getTotalSize()
+    public long getTotalSize()
     {
         return totalSize;
-    }
-
-    public void addContentHit( final ContentId contentId, final float score )
-    {
-        this.contentQueryHits.add( new ContentQueryHit( score, contentId ) );
     }
 
     public Set<ContentId> getContentIds()
@@ -50,13 +46,46 @@ public class ContentQueryResult
         return contentQueryHits;
     }
 
-    public void setAggregations( final Aggregations aggregations )
-    {
-        this.aggregations = aggregations;
-    }
-
     public Aggregations getAggregations()
     {
         return aggregations;
     }
+
+    public static Builder newResult( long totalSize )
+    {
+        return new Builder( totalSize );
+    }
+
+    public static class Builder
+    {
+        private long totalSize;
+
+        private Set<ContentQueryHit> contentQueryHits = Sets.newLinkedHashSet();
+
+        private Aggregations aggregations;
+
+        public Builder( final long totalSize )
+        {
+            this.totalSize = totalSize;
+        }
+
+        public Builder addContentHit( final ContentId contentId, final float score )
+        {
+            this.contentQueryHits.add( new ContentQueryHit( score, contentId ) );
+            return this;
+        }
+
+        public Builder setAggregations( final Aggregations aggregations )
+        {
+            this.aggregations = aggregations;
+            return this;
+        }
+
+        public ContentQueryResult build()
+        {
+            return new ContentQueryResult( this );
+        }
+    }
+
+
 }

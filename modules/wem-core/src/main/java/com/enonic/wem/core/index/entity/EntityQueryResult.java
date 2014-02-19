@@ -63,7 +63,7 @@ public class EntityQueryResult
 
     public static class Builder
     {
-        private Set<EntityQueryResultEntry> entries = Sets.newHashSet();
+        private Set<EntityQueryResultEntry> entries = Sets.newLinkedHashSet();
 
         private long totalHits;
 

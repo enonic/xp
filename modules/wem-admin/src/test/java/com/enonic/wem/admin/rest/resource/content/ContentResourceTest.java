@@ -684,12 +684,12 @@ public class ContentResourceTest
 
     private ContentQueryResult createContentIndexQueryResult( Contents contents, boolean includeFacets )
     {
-        ContentQueryResult result = new ContentQueryResult( contents.getSize() );
+        ContentQueryResult.Builder builder = ContentQueryResult.newResult( contents.getSize() );
         for ( Content content : contents )
         {
-            result.addContentHit( content.getId(), 1f );
+            builder.addContentHit( content.getId(), 1f );
         }
-        return result;
+        return builder.build();
     }
 
     private ContentType createContentType( String name )

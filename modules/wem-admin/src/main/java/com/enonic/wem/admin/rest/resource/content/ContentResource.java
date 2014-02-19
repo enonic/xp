@@ -26,9 +26,7 @@ import com.enonic.wem.admin.json.content.ContentSummaryListJson;
 import com.enonic.wem.admin.json.content.attachment.AttachmentJson;
 import com.enonic.wem.admin.json.data.DataJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
-import com.enonic.wem.admin.rest.resource.content.json.AggregationContentIdListJson;
-import com.enonic.wem.admin.rest.resource.content.json.AggregationContentSummaryListJson;
-import com.enonic.wem.admin.rest.resource.content.json.AggregationsContentListJson;
+import com.enonic.wem.admin.rest.resource.content.json.AbstractContentQueryResultJson;
 import com.enonic.wem.admin.rest.resource.content.json.ContentNameJson;
 import com.enonic.wem.admin.rest.resource.content.json.ContentQueryJson;
 import com.enonic.wem.admin.rest.resource.content.json.CreateContentJson;
@@ -223,7 +221,7 @@ public class ContentResource
     @POST
     @Path("query")
     @Consumes(MediaType.APPLICATION_JSON)
-    public AbstractContentListJson query( final ContentQueryJson contentQueryJson )
+    public AbstractContentQueryResultJson query( final ContentQueryJson contentQueryJson )
     {
         final ContentQuery contentQuery = contentQueryJson.getContentQuery();
 
@@ -234,18 +232,7 @@ public class ContentResource
         final GetContentByIds getContents = Commands.content().get().byIds( ContentIds.from( contentQueryResult.getContentIds() ) );
         final Contents contents = this.client.execute( getContents );
 
-        if ( EXPAND_FULL.equalsIgnoreCase( contentQueryJson.getExpand() ) )
-        {
-            return new AggregationsContentListJson( contents, contentQueryResult.getAggregations() );
-        }
-        else if ( EXPAND_SUMMARY.equalsIgnoreCase( contentQueryJson.getExpand() ) )
-        {
-            return new AggregationContentSummaryListJson( contents, contentQueryResult.getAggregations() );
-        }
-        else
-        {
-            return new AggregationContentIdListJson( contents, contentQueryResult.getAggregations() );
-        }
+        return ContentQueryResultJsonFactory.create( contentQueryResult, contents, contentQueryJson.getExpand() );
     }
 
     @GET

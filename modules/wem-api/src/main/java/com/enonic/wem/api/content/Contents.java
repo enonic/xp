@@ -5,15 +5,20 @@ import java.util.Collection;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.support.AbstractImmutableEntityList;
 
 public final class Contents
     extends AbstractImmutableEntityList<Content>
 {
+    private final ImmutableMap<ContentId, Content> map;
+
     private Contents( final ImmutableList<Content> list )
     {
         super( list );
+        this.map = Maps.uniqueIndex( list, new ToIdFunction() );
     }
 
     public ContentPaths getPaths()
@@ -26,6 +31,11 @@ public final class Contents
     {
         final Collection<ContentId> ids = Collections2.transform( this.list, new ToIdFunction() );
         return ContentIds.from( ids );
+    }
+
+    public Content getContentById( final ContentId contentId )
+    {
+        return this.map.get( contentId );
     }
 
     public static Contents empty()
