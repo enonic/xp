@@ -43,7 +43,7 @@ module app.wizard.page {
                        selectedPageTemplate: api.content.page.PageTemplateKey): Q.Promise<void> {
             var deferred = Q.defer<void>();
             var request:api.content.page.GetPageTemplatesByCanRenderRequest = new api.content.page.GetPageTemplatesByCanRenderRequest(siteTemplateKey, content.getType());
-            var loader:api.util.Loader = new api.content.page.PageTemplateSummaryLoader(request);
+            var loader:api.content.page.PageTemplateSummaryLoader = new api.content.page.PageTemplateSummaryLoader(request);
 
             this.pageTemplateComboBox.setLoader(loader);
 

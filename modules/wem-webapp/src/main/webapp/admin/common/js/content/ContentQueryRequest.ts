@@ -6,9 +6,13 @@ module api.content {
 
         private expand: api.rest.Expand = api.rest.Expand.SUMMARY;
 
-        constructor(contentQuery: api.content.query.ContentQuery) {
+        constructor(contentQuery?: api.content.query.ContentQuery) {
             super();
             super.setMethod("POST");
+            this.contentQuery = contentQuery;
+        }
+
+        setContentQuery(contentQuery: api.content.query.ContentQuery) {
             this.contentQuery = contentQuery;
         }
 

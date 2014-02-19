@@ -123,7 +123,7 @@ module api.app.browse {
         }
 
         private setIcon(iconUrl:string, size:number) {
-            this.getEl().appendChild(api.util.ImageLoader.get(iconUrl + "?size=" + size, 32, 32));
+            this.getEl().appendChild(api.util.loader.ImageLoader.get(iconUrl + "?size=" + size, 32, 32));
         }
 
         private setData(title:string, subtitle:string) {

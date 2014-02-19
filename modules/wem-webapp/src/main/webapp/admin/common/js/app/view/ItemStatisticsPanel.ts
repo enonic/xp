@@ -102,7 +102,7 @@ module api.app.view {
         setItem(item:ViewItem<M>) {
             this.browseItem = item;
 
-            var icon:HTMLImageElement = api.util.ImageLoader.get(this.browseItem.getIconUrl() + "?size=64", 64, 64);
+            var icon:HTMLImageElement = api.util.loader.ImageLoader.get(this.browseItem.getIconUrl() + "?size=64", 64, 64);
             var iconEl = new api.dom.Element(new api.dom.ElementProperties().setTagName("img").setHelper(new api.dom.ImgHelper(icon)));
             this.iconContainerEl.removeChildren();
             this.iconContainerEl.appendChild(iconEl);

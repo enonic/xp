@@ -1,5 +1,8 @@
 module app.contextwindow.image {
 
+    import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
+    import LoadingDataEvent = api.util.loader.event.LoadingDataEvent;
+
     export interface ImageSelectPanelConfig {
 
         liveEditWindow:any;
@@ -147,15 +150,13 @@ module app.contextwindow.image {
 
             var contentSummaryLoader = new api.form.inputtype.content.ContentSummaryLoader();
             contentSummaryLoader.setAllowedContentTypes(["image"]);
-            contentSummaryLoader.addListener({
-                onLoading: () => {
+            contentSummaryLoader.onLoadingData((event:LoadingDataEvent) => {
                     comboBox.setLabel("Searching...");
-                },
-                onLoaded: (contentSummaries: api.content.ContentSummary[]) => {
-                    var options = this.createOptions(contentSummaries);
+                });
+            contentSummaryLoader.onLoadedData((event:LoadedDataEvent<api.content.ContentSummary>) => {
+                    var options = this.createOptions(event.getData());
                     comboBox.setOptions(options);
-                }
-            });
+                });
 
             contentSummaryLoader.search("");
 

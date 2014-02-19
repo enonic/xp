@@ -1,4 +1,6 @@
 module app.contextwindow.image {
+    import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
+    import LoadingDataEvent = api.util.loader.event.LoadingDataEvent;
     export class RecentPanel extends api.ui.Panel {
 
         private recentGrid:RecentGrid;
@@ -13,13 +15,11 @@ module app.contextwindow.image {
             var contentSummaryLoader = new api.form.inputtype.content.ContentSummaryLoader();
             contentSummaryLoader.setSize(7);
             contentSummaryLoader.setAllowedContentTypes(["image"]);
-            contentSummaryLoader.addListener({
-                onLoading: () => {
-                },
-                onLoaded: (contentSummaries:api.content.ContentSummary[]) => {
-                    this.dataView.setItems(contentSummaries);
-                }
-            });
+            contentSummaryLoader.onLoadingData((event:LoadingDataEvent) => {
+                });
+            contentSummaryLoader.onLoadedData((event:LoadedDataEvent<api.content.ContentSummary>) => {
+                    this.dataView.setItems(event.getData());
+                });
             contentSummaryLoader.search("");
 
             var title = new api.dom.H3El();
