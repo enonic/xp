@@ -342,6 +342,11 @@ module app.wizard {
             this.contextWindow.inspectContent(null);
         }
 
+        private onComponentReset(pathAsString: string) {
+            var componentPath = api.content.page.ComponentPath.fromString(pathAsString);
+            this.pageRegions.removeComponent(componentPath);
+        }
+
         private liveEditListen() {
 
             this.liveEditJQuery(this.liveEditWindow).on('componentSelect.liveEdit',
@@ -376,6 +381,12 @@ module app.wizard {
                 if (component) {
                     this.pageRegions.removeComponent(api.content.page.ComponentPath.fromString(component.getComponentPath()));
                     this.contextWindow.clearSelection();
+                }
+            });
+            this.liveEditJQuery(this.liveEditWindow).on('componentReset.liveEdit', (event, component?) => {
+                if (component) {
+                    this.contextWindow.clearSelection();
+                    this.onComponentReset(component.getComponentPath());
                 }
             });
             this.liveEditJQuery(this.liveEditWindow).on('sortableStop.liveEdit', (event, component?) => {
