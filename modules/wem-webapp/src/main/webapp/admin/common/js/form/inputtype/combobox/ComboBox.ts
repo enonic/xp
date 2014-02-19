@@ -93,6 +93,9 @@ module api.form.inputtype.combobox {
                     this.validate(false);
                 }
             });
+            comboBox.addSelectedOptionRemovedListener((removed:api.ui.combobox.SelectedOption<string>) => {
+                this.validate(false);
+            });
 
             return comboBox;
         }
@@ -146,7 +149,7 @@ module api.form.inputtype.combobox {
             if (numberOfValids < this.input.getOccurrences().getMinimum()) {
                 recording.setBreaksMinimumOccurrences(true);
             }
-            if (numberOfValids > this.input.getOccurrences().getMaximum()) {
+            if (this.input.getOccurrences().maximumBreached(numberOfValids)) {
                 recording.setBreaksMaximumOccurrences(true);
             }
 

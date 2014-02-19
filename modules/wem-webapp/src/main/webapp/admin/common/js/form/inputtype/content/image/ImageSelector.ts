@@ -149,7 +149,7 @@ module api.form.inputtype.content.image {
             if (numberOfValids < this.input.getOccurrences().getMinimum()) {
                 recording.setBreaksMinimumOccurrences(true);
             }
-            if (numberOfValids > this.input.getOccurrences().getMaximum()) {
+            if (this.input.getOccurrences().maximumBreached(numberOfValids)) {
                 recording.setBreaksMaximumOccurrences(true);
             }
 
@@ -231,6 +231,7 @@ module api.form.inputtype.content.image {
 
             this.selectedOptionsView.addRemoveSelectedOptionListener((option) => {
                 this.comboBox.removeSelectedItem(option.getOption());
+                this.validate(false);
             });
 
             var comboBoxConfig = <api.ui.combobox.ComboBoxConfig<api.content.ContentSummary>> {
@@ -244,10 +245,12 @@ module api.form.inputtype.content.image {
 
             this.loadOptions("");
 
-            comboBox.addSelectedOptionRemovedListener(()=> {
+            comboBox.addSelectedOptionRemovedListener((removed: api.ui.combobox.SelectedOption<api.content.ContentSummary>) => {
                 if (!comboBox.maximumOccurrencesReached()) {
                     this.uploadButton.setEnabled(true);
                 }
+
+                this.validate(false);
             });
 
             comboBox.addListener({

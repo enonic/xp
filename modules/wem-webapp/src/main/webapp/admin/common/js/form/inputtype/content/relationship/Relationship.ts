@@ -62,7 +62,10 @@ module api.form.inputtype.content.relationship {
             this.contentComboBox.addOptionSelectedListener((item: api.ui.combobox.Option<api.content.ContentSummary>) => {
 
                 this.validate(false);
+            });
 
+            this.contentComboBox.addSelectedOptionRemovedListener((removed: api.ui.combobox.SelectedOption<api.content.ContentSummary>) => {
+                this.validate(false);
             });
 
             var name = new api.schema.relationshiptype.RelationshipTypeName((this.relationshipTypeName == null) ? "default"
@@ -104,7 +107,7 @@ module api.form.inputtype.content.relationship {
             if (numberOfValids < this.input.getOccurrences().getMinimum()) {
                 recording.setBreaksMinimumOccurrences(true);
             }
-            if (numberOfValids > this.input.getOccurrences().getMaximum()) {
+            if (this.input.getOccurrences().maximumBreached(numberOfValids)) {
                 recording.setBreaksMaximumOccurrences(true);
             }
 
