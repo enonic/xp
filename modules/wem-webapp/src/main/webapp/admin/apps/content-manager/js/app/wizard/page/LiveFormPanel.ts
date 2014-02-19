@@ -343,16 +343,16 @@ module app.wizard {
         }
 
         private liveEditListen() {
-            this.liveEditJQuery(this.liveEditWindow).on('selectComponent.liveEdit',
-                (event, component?) => {
-                    var type = component.componentType.typeName;
-                    if (type === 'content') {
-                        this.onContentSelected(component.name);
-                    }
-                });
 
             this.liveEditJQuery(this.liveEditWindow).on('componentSelect.liveEdit',
-                (event, pathAsString?) => {
+                (event, pathAsString?, component?) => {
+                    if (component) {
+                        if (component.isEmpty()) {
+                            this.contextWindow.hide();
+                        } else {
+                            this.contextWindow.show();
+                        }
+                    }
                     this.onComponentSelected(pathAsString);
                 });
 
@@ -367,21 +367,27 @@ module app.wizard {
                 });
 
             this.liveEditJQuery(this.liveEditWindow).on('deselectComponent.liveEdit', (event) => {
+                this.contextWindow.show();
                 this.contextWindow.clearSelection();
             });
 
             this.liveEditJQuery(this.liveEditWindow).on('componentRemoved.liveEdit', (event, component?) => {
+                this.contextWindow.show();
                 if (component) {
                     this.pageRegions.removeComponent(api.content.page.ComponentPath.fromString(component.getComponentPath()));
                     this.contextWindow.clearSelection();
                 }
             });
-            this.liveEditJQuery(this.liveEditWindow).on('sortableStop.liveEdit', (event) => {
-                new app.contextwindow.LiveEditDragStopEvent().fire();
-                this.contextWindow.show();
+            this.liveEditJQuery(this.liveEditWindow).on('sortableStop.liveEdit', (event, component?) => {
+                if (component) {
+                    if (!component.isEmpty()) {
+                        this.contextWindow.show();
+                    }
+                } else {
+                    this.contextWindow.show();
+                }
             });
             this.liveEditJQuery(this.liveEditWindow).on('sortableStart.liveEdit', (event) => {
-                new app.contextwindow.LiveEditDragStartEvent().fire();
                 this.contextWindow.hide();
             });
             this.liveEditJQuery(this.liveEditWindow).on('sortableUpdate.liveEdit', (event, componentEl?) => {

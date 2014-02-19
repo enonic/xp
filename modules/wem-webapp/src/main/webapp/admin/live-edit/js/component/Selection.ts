@@ -18,7 +18,7 @@ module LiveEdit.component {
             } else if (Selection.getType(element) == "region") {
                 $(element).trigger('regionSelect.liveEdit', element.getAttribute(Selection.REGION_ATTR));
             } else if (Selection.getType(element) == "component") {
-                $(element).trigger('componentSelect.liveEdit', element.getAttribute(Selection.COMPONENT_ATTR));
+                $(element).trigger('componentSelect.liveEdit', [ element.getAttribute(Selection.COMPONENT_ATTR), component ]);
             }
 
             this.setSelectionAttributeOnElement($(element));

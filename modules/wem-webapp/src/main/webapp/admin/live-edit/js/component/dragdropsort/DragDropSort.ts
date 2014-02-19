@@ -173,7 +173,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
         var wasSelectedOnDragStart = component.getElement().data('live-edit-selected-on-drag-start');
 
-        $(window).trigger('sortableStop.liveEdit', [event, ui, wasSelectedOnDragStart]);
+        $(window).trigger('sortableStop.liveEdit', [component]);
 
         component.getElement().removeData('live-edit-selected-on-drag-start');
     }
