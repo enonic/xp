@@ -32,17 +32,9 @@ module api.content.page {
         }
 
         isCanRender(pattern:api.schema.content.ContentTypeName): boolean {
-            var result = false;
-            this.canRender.some((name:api.schema.content.ContentTypeName)=> {
-                if (name.equals(pattern)) {
-                    result = true;
-                    return true;
-                }
-                else {
-                    return false;
-                }
+            return this.canRender.some((name:api.schema.content.ContentTypeName)=> {
+                return name.equals(pattern);
             });
-            return result;
         }
     }
 
