@@ -381,16 +381,26 @@ module app.wizard {
                 return null;
             }
 
+            if (!this.siteTemplate) {
+                return null;
+            }
+
+            var pageTemplateKey: api.content.page.PageTemplateKey = null;
+
             if (this.pageWizardStepForm.getPageTemplate() == null) {
+                var pageTemplate = this.siteTemplate.getDefaultPageTemplate(content.getType());
+                if (pageTemplate) {
+                    pageTemplateKey = pageTemplate.getKey();
+                }
+            }
+            else {
+                pageTemplateKey = this.pageWizardStepForm.getPageTemplate().getKey();
+            }
+            if( pageTemplate == null ) {
                 return null;
             }
 
-            if (content.isPage()) {
-                return null;
-            }
-
-            var pageTemplate = this.siteTemplate.getDefaultPageTemplate(content.getType());
-            var createRequest = new api.content.page.CreatePageRequest(content.getContentId()).setPageTemplateKey(pageTemplate.getKey());
+            var createRequest = new api.content.page.CreatePageRequest(content.getContentId()).setPageTemplateKey(pageTemplateKey);
 
             var config = this.pageWizardStepForm.getConfig();
             createRequest.setConfig(config);

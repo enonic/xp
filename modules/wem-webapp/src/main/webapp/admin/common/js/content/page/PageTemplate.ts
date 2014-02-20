@@ -8,14 +8,11 @@ module api.content.page {
 
         private canRender: api.schema.content.ContentTypeName[];
 
-        private descriptor: PageDescriptor;
-
         constructor(builder: PageTemplateBuilder) {
             super(builder);
             this.regions = builder.regions;
             this.config = builder.config;
             this.canRender = builder.canRender;
-            this.descriptor = builder.descriptor;
         }
 
         hasRegions(): boolean {
@@ -34,17 +31,14 @@ module api.content.page {
             return this.canRender;
         }
 
-        getDescriptor(): PageDescriptor {
-            return this.descriptor;
-        }
-
         isCanRender(pattern:api.schema.content.ContentTypeName): boolean {
+            var result = false;
             this.canRender.forEach((name:api.schema.content.ContentTypeName)=> {
                 if (name.equals(pattern)) {
-                    return true;
+                    result = true;
                 }
             });
-            return false;
+            return result;
         }
     }
 
@@ -62,14 +56,11 @@ module api.content.page {
 
         canRender: api.schema.content.ContentTypeName[] = [];
 
-        descriptor: PageDescriptor;
-
         fromJson(json: api.content.page.json.PageTemplateJson): PageTemplateBuilder {
 
             this.setKey(PageTemplateKey.fromString(json.key));
             this.setDisplayName(json.displayName);
             this.setDescriptorKey(DescriptorKey.fromString(json.descriptorKey));
-            this.descriptor = new PageDescriptorBuilder().fromJson(json.descriptor).build();
             this.setConfig(api.data.DataFactory.createRootDataSet(json.config));
             this.setRegions(new PageRegionsBuilder().fromJson(json.regions).build());
             json.canRender.forEach((name: string)=> {

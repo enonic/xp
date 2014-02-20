@@ -94,17 +94,20 @@ module app.wizard.page {
                     done((pageTemplate: api.content.page.PageTemplate) => {
 
                         this.selectedPageTemplate = pageTemplate;
-
-                        this.layoutPageTemplateForm(pageTemplate);
+                        new api.content.page.GetPageDescriptorByKeyRequest(pageTemplate.getDescriptorKey()).
+                            sendAndParse().
+                            done((pageDescriptor: api.content.page.PageDescriptor) => {
+                                this.layoutPageTemplateForm(pageTemplate, pageDescriptor);
+                            });
                     });
             }
         }
 
-        private layoutPageTemplateForm(pageTemplate: api.content.page.PageTemplate) {
+        private layoutPageTemplateForm(pageTemplate: api.content.page.PageTemplate, pageDescriptor: api.content.page.PageDescriptor) {
 
             var formContext = new api.form.FormContextBuilder().build();
 
-            var form = pageTemplate.getDescriptor().getConfig();
+            var form = pageDescriptor.getConfig();
             var config = pageTemplate.getConfig();
             if (this.content.isPage() && this.content.getPage().hasConfig()) {
                 config = this.content.getPage().getConfig();
