@@ -27,7 +27,7 @@ public final class PageTemplates
 
     private PageTemplates( final ImmutableList<PageTemplate> list )
     {
-        super( list );
+        super( sort( list ) );
         this.templatesByName = Maps.uniqueIndex( list, new ToNameFunction() );
         this.templatesByPath = Maps.uniqueIndex( list, new ToPathFunction() );
     }
@@ -74,7 +74,7 @@ public final class PageTemplates
         return new PageTemplates( ImmutableList.copyOf( templates ) );
     }
 
-    public PageTemplates sort()
+    private static ImmutableList<PageTemplate> sort( final ImmutableList<PageTemplate> unordered )
     {
         final Comparator<PageTemplate> comparator = new Comparator<PageTemplate>()
         {
@@ -87,15 +87,11 @@ public final class PageTemplates
                 return displayName1 == null ? -1 : displayName2 == null ? 1 : displayName1.compareTo( displayName2 );
             }
         };
-        return sort( comparator );
-    }
 
-    public PageTemplates sort( Comparator<PageTemplate> comparator )
-    {
-        final List<PageTemplate> unordered = Lists.newArrayList( this.list );
-        Collections.sort( unordered, comparator );
+        final List<PageTemplate> result = Lists.newArrayList( unordered );
+        Collections.sort( result, comparator );
 
-        return new PageTemplates( ImmutableList.copyOf( unordered ) );
+        return ImmutableList.copyOf( result );
     }
 
     private final static class ToNameFunction

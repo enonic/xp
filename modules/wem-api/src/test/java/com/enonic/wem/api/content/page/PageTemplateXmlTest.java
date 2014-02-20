@@ -102,7 +102,7 @@ public class PageTemplateXmlTest
         pageTemplate = builder.build();
         player.add( pageTemplate );
 
-        PageTemplates sorted = player.build().sort();
+        PageTemplates sorted = player.build();
         List<String> result = templatesAsString( sorted.getList() );
 
         assertEquals( "AAA, BBB, CCC", Joiner.on( ", " ).join( result ) );
