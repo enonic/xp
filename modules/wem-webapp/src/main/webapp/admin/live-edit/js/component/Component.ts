@@ -118,7 +118,13 @@ module LiveEdit.component {
         }
 
         private getComponentTypeNameFromElement(): string {
-            return this.getEl().getData('liveEditType');
+
+            var type =  this.getEl().getData('liveEditType');
+            if (!type) {
+                console.log("componentdata", this.getEl());
+                console.trace();
+            }
+            return type;
         }
 
         private getComponentNameFromElement(): string {

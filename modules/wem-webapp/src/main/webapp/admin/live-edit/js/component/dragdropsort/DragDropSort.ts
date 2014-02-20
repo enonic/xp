@@ -182,8 +182,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     export function handleReceive(event:JQueryEventObject, ui):void {
         if (this.isItemDraggedFromContextWindow(ui.item)) {
             var droppedComponent = $(event.target).children(CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR);
-            var type: string = droppedComponent.data('liveEditType');
-
+            var type: string = droppedComponent.data('liveEditType').toUpperCase();
             var emptyComponent = LiveEdit.component.ComponentPlaceholder.fromComponent(Type[type]);
 
             droppedComponent.replaceWith(emptyComponent.getHTMLElement());
