@@ -173,11 +173,6 @@ module api.form.input {
 
         }
 
-        hasValidOccurrences(): boolean {
-
-            return this.getData().length >= this.input.getOccurrences().getMaximum();
-        }
-
         giveFocus(): boolean {
             return this.inputTypeView.giveFocus();
         }
