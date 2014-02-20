@@ -16,9 +16,13 @@ module api.content.site.template {
         getDefaultPageTemplate(contentType: api.schema.content.ContentTypeName): api.content.page.PageTemplate {
 
             var foundPageTemplate = null;
-            this.pageTemplates.forEach((pageTemplate: api.content.page.PageTemplate) => {
+            this.pageTemplates.some((pageTemplate: api.content.page.PageTemplate) => {
                 if (pageTemplate.isCanRender(contentType)) {
                     foundPageTemplate = pageTemplate;
+                    return true;
+                }
+                else {
+                    return false;
                 }
             });
             return foundPageTemplate;
