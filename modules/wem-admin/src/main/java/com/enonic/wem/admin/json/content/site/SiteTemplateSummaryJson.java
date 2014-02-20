@@ -12,6 +12,7 @@ import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.module.ModuleKey;
 
 
+@SuppressWarnings("UnusedDeclaration")
 public class SiteTemplateSummaryJson
     implements ItemJson
 {
