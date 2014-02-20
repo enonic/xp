@@ -36,17 +36,23 @@ module api.form {
 
                 formItemView.onValidityChanged((event: api.form.ValidityChangedEvent) => {
 
-                    var previousValidState = this.previousValidationRecording.isValid();
-
-                    if (event.isValid()) {
-                        this.previousValidationRecording.removeByPath(event.getOrigin());
+                    if (!this.previousValidationRecording) {
+                        this.previousValidationRecording = event.getRecording();
+                        this.notifyValidityChanged(new FormValidityChangedEvent(this.previousValidationRecording));
                     }
                     else {
-                        this.previousValidationRecording.flatten(event.getRecording());
-                    }
+                        var previousValidState = this.previousValidationRecording.isValid();
 
-                    if (previousValidState != this.previousValidationRecording.isValid()) {
-                        this.notifyValidityChanged(new FormValidityChangedEvent(this.previousValidationRecording));
+                        if (event.isValid()) {
+                            this.previousValidationRecording.removeByPath(event.getOrigin());
+                        }
+                        else {
+                            this.previousValidationRecording.flatten(event.getRecording());
+                        }
+
+                        if (previousValidState != this.previousValidationRecording.isValid()) {
+                            this.notifyValidityChanged(new FormValidityChangedEvent(this.previousValidationRecording));
+                        }
                     }
                 });
             });
