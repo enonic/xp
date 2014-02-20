@@ -20,6 +20,22 @@ module api.content.site.template {
         getDeny(): ContentTypeName[] {
             return this.deny;
         }
+
+        toJson(): Object {
+            var json = {
+                allow: [],
+                deny: []
+            };
+
+            this.allow.forEach((name: ContentTypeName) => {
+                json.allow.push(name.toString());
+            });
+            this.deny.forEach((name: ContentTypeName) => {
+                json.deny.push(name.toString());
+            });
+
+            return json;
+        }
     }
 
     export class ContentTypeFilterBuilder {

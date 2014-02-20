@@ -23,11 +23,15 @@ import com.sun.jersey.multipart.FormDataParam;
 import com.enonic.wem.admin.json.content.site.SiteTemplateJson;
 import com.enonic.wem.admin.json.content.site.SiteTemplateSummaryJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
+import com.enonic.wem.admin.rest.resource.content.site.template.json.CreateSiteTemplateJson;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.DeleteSiteTemplateJson;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.ListSiteTemplateJson;
+import com.enonic.wem.admin.rest.resource.content.site.template.json.UpdateSiteTemplateJson;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.content.site.CreateSiteTemplate;
 import com.enonic.wem.api.command.content.site.DeleteSiteTemplate;
 import com.enonic.wem.api.command.content.site.GetSiteTemplateByKey;
+import com.enonic.wem.api.command.content.site.UpdateSiteTemplate;
 import com.enonic.wem.api.content.site.CreateSiteTemplateParam;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
@@ -65,6 +69,28 @@ public final class SiteTemplateResource
         final HashMap<String, String> map = new HashMap<>();
         map.put( "result", siteTemplateKey.toString() );
         return map;
+    }
+
+    @POST
+    @javax.ws.rs.Path("create")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public SiteTemplateJson create( final CreateSiteTemplateJson params )
+    {
+        final CreateSiteTemplate command = params.getCommand();
+        final SiteTemplate siteTemplate = client.execute( command );
+
+        return new SiteTemplateJson(siteTemplate );
+    }
+
+    @POST
+    @javax.ws.rs.Path("update")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public SiteTemplateJson update( final UpdateSiteTemplateJson params )
+    {
+        final UpdateSiteTemplate command = params.getCommand();
+        final SiteTemplate siteTemplate = client.execute( command );
+
+        return new SiteTemplateJson(siteTemplate );
     }
 
     @GET

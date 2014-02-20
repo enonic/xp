@@ -1,6 +1,8 @@
 package com.enonic.wem.admin.rest.resource;
 
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,6 +17,8 @@ import com.sun.jersey.test.framework.AppDescriptor;
 import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.LowLevelAppDescriptor;
 import com.sun.jersey.test.framework.spi.container.inmemory.InMemoryTestContainerFactory;
+
+import junit.framework.Assert;
 
 import com.enonic.wem.admin.json.ObjectMapperHelper;
 import com.enonic.wem.admin.rest.provider.JsonObjectProvider;
@@ -94,5 +98,48 @@ public abstract class AbstractResourceTest
     {
         final ObjectMapper mapper = ObjectMapperHelper.create();
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString( value );
+    }
+
+    public static void assertUnorderedListEquals( Object[] a1, List a2 )
+    {
+        assertArrayEquals( a1, a2.toArray() );
+    }
+
+    public static void assertListEquals( Object[] a1, List a2 ) {
+        assertArrayEquals( a1, a2.toArray() );
+    }
+
+    public static void assertUnorderedArrayEquals( Object[] a1, Object[] a2 )
+    {
+        Object[] b1 = a1.clone();
+        Object[] b2 = a2.clone();
+
+        Arrays.sort( b1 );
+        Arrays.sort( b2 );
+
+        assertArrayEquals( b1, b2 );
+    }
+
+    public static void assertArrayEquals( Object[] a1, Object[] a2 )
+    {
+        Assert.assertEquals( arrayToString( a1 ), arrayToString( a2 ) );
+    }
+
+    public static String arrayToString( Object[] a )
+    {
+        final StringBuilder result = new StringBuilder( "[" );
+
+        for ( int i = 0; i < a.length; i++ )
+        {
+            result.append( i ).append( ": " ).append( a[i] );
+            if ( i < a.length - 1 )
+            {
+                result.append( ", " );
+            }
+        }
+
+        result.append( "]" );
+
+        return result.toString();
     }
 }
