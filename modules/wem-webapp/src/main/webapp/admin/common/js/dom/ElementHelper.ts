@@ -257,6 +257,14 @@ module api.dom {
             return parseFloat(this.getComputedProperty('border-bottom-width'));
         }
 
+        getMarginRight(): number {
+            return parseFloat(this.getComputedProperty('margin-right'));
+        }
+
+        getMarginLeft(): number {
+            return parseFloat(this.getComputedProperty('margin-left')) || 0;
+        }
+
         setZindex(value: number): ElementHelper {
             this.el.style.zIndex = value.toString();
             return this;

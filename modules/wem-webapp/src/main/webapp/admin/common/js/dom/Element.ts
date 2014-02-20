@@ -147,10 +147,7 @@ module api.dom {
         }
 
         isVisible() {
-            var displayed = this.el.getDisplay() != "none";
-            var visible = this.el.getVisibility() != "hidden";
-            var sized = this.el.getWidth() != 0 || this.el.getHeight() != 0;
-            return displayed && visible && sized;
+            return jQuery(this.el.getHTMLElement()).is(':visible');
         }
 
         empty() {

@@ -2,30 +2,30 @@ module api.ui.toolbar {
 
     export class Toolbar extends api.dom.DivEl implements api.ui.ActionContainer {
 
-        private components:any[] = [];
+        private fold: Fold;
 
-        private greedySpacerInsertPoint;
+        private hasGreedySpacer: boolean;
 
         private actions:api.ui.Action[] = [];
 
         constructor() {
             super("toolbar");
+
+            this.fold = new Fold();
+            this.fold.addClass("pull-right").hide();
+            this.appendChild(this.fold);
+
+            window.addEventListener("resize", () => this.foldOrExpand());
         }
 
         afterRender() {
             super.afterRender();
+            this.foldOrExpand();
         }
 
         addAction(action:api.ui.Action) {
-            var button:ToolbarButton = this.addActionButton(action);
             this.actions.push(action);
-            this.addElement(button);
-        }
-
-        addActions(actions:api.ui.Action[]) {
-            actions.forEach((action:api.ui.Action) => {
-                this.addAction(action);
-            });
+            this.addElement(new api.ui.ActionButton(action));
         }
 
         getActions():api.ui.Action[] {
@@ -33,53 +33,65 @@ module api.ui.toolbar {
         }
 
         addElement(element:api.dom.Element) {
-            if (this.hasGreedySpacer()) {
-                element.getEl().addClass('pull-right');
-                element.insertAfterEl(this.greedySpacerInsertPoint);
+            if (this.hasGreedySpacer) {
+                element.addClass('pull-right');
+                element.insertAfterEl(this.fold);
             } else {
-                this.appendChild(element);
+                element.insertBeforeEl(this.fold);
             }
         }
 
         addGreedySpacer() {
-            var spacer = new ToolbarGreedySpacer();
-            this.components.push(spacer);
-            this.greedySpacerInsertPoint = this.getLastChild();
+            this.hasGreedySpacer = true;
         }
 
-        private addActionButton(action:api.ui.Action):api.ui.toolbar.ToolbarButton {
-            var button:ToolbarButton = new ToolbarButton(action);
-            this.components.push(button);
-            return button;
-        }
+        private foldOrExpand() {
+            if (!this.isVisible()) {
+                return;
+            }
 
-        private hasGreedySpacer():boolean {
-            return this.components.some((comp:any) => {
-                if (comp instanceof ToolbarGreedySpacer) {
-                    return true;
-                }
-                return false;
-            });
-        }
-
-    }
-
-    export class ToolbarButton extends api.ui.ActionButton {
-
-        constructor(action:api.ui.Action) {
-            super(action, true);
-        }
-
-        setFloatRight(value:boolean) {
-            if (value) {
-                this.getEl().addClass('pull-right');
+            var toolbarWidth = this.getEl().getWidth();
+            if (toolbarWidth <= this.getDisplayedButtonsWidth()) {
+                do {
+                    var buttonToHide = this.getLastRightButton() || this.getLastLeftButton();
+                    if (!buttonToHide) {
+                        return;
+                    }
+                    this.removeChild(buttonToHide);
+                    this.fold.push(buttonToHide);
+                    this.fold.show();
+                } while (toolbarWidth <= this.getDisplayedButtonsWidth());
+            } else if (!this.fold.isEmpty()) {
+                do {
+                    var buttonToShow = this.fold.pop();
+                    buttonToShow.getEl().setVisibility('hidden');
+                    buttonToShow.hasClass('pull-right') ? buttonToShow.insertAfterEl(this.fold) : buttonToShow.insertBeforeEl(this.fold);
+                    if (toolbarWidth <= this.getDisplayedButtonsWidth()) {
+                        this.removeChild(buttonToShow);
+                        this.fold.push(buttonToShow);
+                        buttonToShow.getEl().setVisibility('visible');
+                        return;
+                    }
+                    buttonToShow.getEl().setVisibility('visible');
+                } while (!this.fold.isEmpty());
+                this.fold.hide();
             }
         }
-    }
 
-    export class ToolbarGreedySpacer {
-        constructor() {
+        private getDisplayedButtonsWidth(): number {
+            return this.getChildren().reduce((totalWidth: number, element: api.dom.Element) => {
+                return totalWidth + element.getEl().getMarginLeft() + element.getEl().getWidth() + element.getEl().getMarginRight();
+            }, 0);
         }
+
+        private getLastLeftButton(): api.dom.Element {
+            return this.getChildren()[this.getChildren().indexOf(this.fold) - 1];
+        }
+
+        private getLastRightButton(): api.dom.Element {
+            return this.getChildren()[this.getChildren().indexOf(this.fold) + 1];
+        }
+
     }
 
 }
