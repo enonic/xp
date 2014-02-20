@@ -46,7 +46,10 @@ module app.contextwindow {
 
             var descriptorKey = component.getDescriptor();
             if (descriptorKey) {
+                var layoutDescriptorOption: api.ui.combobox.Option<LayoutDescriptor> = this.descriptorComboBox.getSelectedData()[0];
+                var layoutDescriptor = layoutDescriptorOption.displayValue;
                 this.descriptorComboBox.setDescriptor(descriptorKey);
+                this.setupComponentForm(component, layoutDescriptor);
             }
         }
 

@@ -44,7 +44,10 @@ module app.contextwindow {
 
             var descriptorKey = component.getDescriptor();
             if (descriptorKey) {
+                var partDescriptorOption: api.ui.combobox.Option<PartDescriptor> = this.descriptorComboBox.getSelectedData()[0];
+                var partDescriptor = partDescriptorOption.displayValue;
                 this.descriptorComboBox.setDescriptor(descriptorKey);
+                this.setupComponentForm(component, partDescriptor);
             }
         }
 
