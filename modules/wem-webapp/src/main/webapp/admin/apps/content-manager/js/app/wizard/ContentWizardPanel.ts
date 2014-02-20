@@ -22,7 +22,7 @@ module app.wizard {
 
         private displayNameScriptExecutor: DisplayNameScriptExecutor;
 
-        private livePanel: LiveFormPanel;
+        private liveFormPanel: LiveFormPanel;
 
         private persistAsDraft: boolean;
 
@@ -93,11 +93,11 @@ module app.wizard {
 
             if (this.siteContent || this.createSite) {
 
-                this.livePanel = new LiveFormPanel(<app.wizard.LiveFormPanelConfig> {
+                this.liveFormPanel = new LiveFormPanel(<app.wizard.LiveFormPanelConfig> {
                     contentWizardPanel: this, siteTemplate: this.siteTemplate});
 
                 var pageWizardStepFormConfig: page.PageWizardStepFormConfig = {
-                    liveFormPanel: this.livePanel,
+                    liveFormPanel: this.liveFormPanel,
                     parentContent: this.parentContent,
                     siteTemplate: this.siteTemplate,
                     showLiveEditAction: actions.getShowLiveEditAction()
@@ -118,7 +118,7 @@ module app.wizard {
                 mainToolbar: mainToolbar,
                 header: this.contentWizardHeader,
                 actions: actions,
-                livePanel: this.livePanel,
+                livePanel: this.liveFormPanel,
                 steps: this.createSteps(params.persistedContent)
             }, () => {
                 console.log("ContentWizardPanel.constructor finished");
@@ -231,17 +231,7 @@ module app.wizard {
                                 this.doRenderExistingPage(persistedContent, this.siteContent, formContext).
                                     then(() => {
 
-                                        var pageTemplate = this.pageWizardStepForm.getPageTemplate();
-
-                                        if (pageTemplate != null) {
-                                            this.doRenderLivePanel(persistedContent, pageTemplate).
-                                                done(() => {
-                                                    deferred.resolve(null);
-                                                });
-                                        }
-                                        else {
-                                            deferred.resolve(null);
-                                        }
+                                        deferred.resolve(null);
                                     });
                             }
                             else {
@@ -293,18 +283,6 @@ module app.wizard {
                 });
 
 
-            return deferred.promise;
-        }
-
-        private doRenderLivePanel(content: api.content.Content, pageTemplate: api.content.page.PageTemplate): Q.Promise<void> {
-
-            var deferred = Q.defer<void>();
-
-            if (content.isPage() && pageTemplate != null && this.siteTemplate) {
-                this.livePanel.renderExisting(content, pageTemplate);
-            }
-
-            deferred.resolve(null);
             return deferred.promise;
         }
 
@@ -487,12 +465,12 @@ module app.wizard {
             if (!content.isPage()) {
                 return null;
             }
+            var regions = this.pageWizardStepForm.getRegions();
+            console.log( "saving page regions: ", regions.toJson() );
             var updatePageRequest = new api.content.page.UpdatePageRequest(content.getContentId()).
                 setPageTemplateKey(this.pageWizardStepForm.getPageTemplate().getKey()).
-                setConfig(this.pageWizardStepForm.getConfig());
-            if (this.livePanel) {
-                updatePageRequest.setRegions(this.livePanel.getRegions());
-            }
+                setConfig(this.pageWizardStepForm.getConfig()).
+                setRegions(regions);
 
             return updatePageRequest;
         }
@@ -548,12 +526,8 @@ module app.wizard {
 
         showLiveEdit() {
 
-            super.showPanel(this.livePanel);
-
-            this.livePanel.loadPageIfNotLoaded().
-                done(() => {
-
-                });
+            super.showPanel(this.liveFormPanel);
+            this.pageWizardStepForm.showLiveEdit();
         }
 
         showWizard() {

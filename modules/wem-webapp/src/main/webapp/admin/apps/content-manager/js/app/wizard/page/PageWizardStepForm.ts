@@ -64,15 +64,17 @@ module app.wizard.page {
 
                 this.showLiveEditAction.setEnabled(true);
 
-                new api.content.page.GetPageTemplateByKeyRequest(page.getTemplate()).
+                var getPageTemplatePromise = new api.content.page.GetPageTemplateByKeyRequest(page.getTemplate()).
                     setSiteTemplateKey(this.siteTemplate.getKey()).
-                    sendAndParse().
-                    done((pageTemplate: api.content.page.PageTemplate) => {
+                    sendAndParse().done((pageTemplate: api.content.page.PageTemplate) => {
 
                         this.selectedPageTemplate = pageTemplate;
                         this.pageTemplateSelectorForm.layoutExisting(content, siteContent.getSite().getTemplateKey(), page.getTemplate()).
                             done(()=> {
 
+                                if (this.siteTemplate) {
+                                    this.layoutLiveFormPanel(content, pageTemplate);
+                                }
                                 deferred.resolve(null);
                             });
                     });
@@ -83,11 +85,19 @@ module app.wizard.page {
                 this.pageTemplateSelectorForm.layoutExisting(content, siteContent.getSite().getTemplateKey(), null).
                     done(()=> {
 
+                        this.layoutLiveFormPanel(content, null);
                         deferred.resolve(null);
                     });
             }
 
             return deferred.promise;
+        }
+
+        private layoutLiveFormPanel(content: api.content.Content, pageTemplate: api.content.page.PageTemplate) {
+
+            if (pageTemplate != null) {
+                this.liveFormPanel.setPage(content, pageTemplate);
+            }
         }
 
         private handlePageTemplateChanged(changedTo: api.content.page.PageTemplateSummary) {
@@ -112,9 +122,10 @@ module app.wizard.page {
 
                         this.selectedPageTemplate = pageTemplate;
 
-                        this.liveFormPanel.renderExisting(this.content, this.selectedPageTemplate);
+                        this.liveFormPanel.setPage(this.content, this.selectedPageTemplate);
 
-                        var changedToSameAsPersisted:boolean = this.content.getPage().getTemplate().toString() == changedTo.getKey().toString();
+                        var changedToSameAsPersisted: boolean = this.content.getPage().getTemplate().toString() ==
+                                                                changedTo.getKey().toString();
                         this.showLiveEditAction.setEnabled(changedToSameAsPersisted);
 
                         new api.content.page.GetPageDescriptorByKeyRequest(pageTemplate.getDescriptorKey()).
@@ -151,6 +162,19 @@ module app.wizard.page {
             }
             var config = this.formView.getData();
             return  config;
+        }
+
+        public getRegions(): api.content.page.PageRegions {
+
+            return this.liveFormPanel.getRegions();
+        }
+
+        showLiveEdit() {
+
+            this.liveFormPanel.loadPageIfNotLoaded().
+                done(() => {
+
+                });
         }
 
     }

@@ -166,9 +166,9 @@ module app.wizard {
             return deferred.promise;
         }
 
-        renderExisting(content: api.content.Content, pageTemplate: api.content.page.PageTemplate) {
+        setPage(content: api.content.Content, pageTemplate: api.content.page.PageTemplate) {
 
-            console.log("LiveFormPanel.renderExisting() ...");
+            console.log("LiveFormPanel.setPage() ...");
 
             api.util.assertNotNull(content, "Expected content not be null");
             api.util.assertNotNull(pageTemplate, "Expected content not be null");
@@ -180,10 +180,9 @@ module app.wizard {
 
             this.pageUrl = this.baseUrl + content.getContentId().toString();
 
-            console.log("LiveFormPanel.renderExisting() ... pageSkipReload = " + this.pageSkipReload);
-
             if (!this.pageSkipReload) {
                 if (pageTemplateChanged) {
+                    console.log( "pageTemplateChanged, resetting regions to regions of template" );
                     this.pageRegions = this.pageTemplate.getRegions();
                 } else {
                     this.pageRegions = this.resolvePageRegions();
@@ -195,12 +194,12 @@ module app.wizard {
 
                 this.pageNeedsReload = true;
 
-                console.log("LiveFormPanel.renderExisting() ... not visible, returning");
+                console.log("LiveFormPanel.setPage() ... not visible, returning");
                 return;
             }
 
             if (this.pageSkipReload == true) {
-                console.log("LiveFormPanel.renderExisting() ... skipReload is true, returning");
+                console.log("LiveFormPanel.setPage() ... skipReload is true, returning");
                 return;
             }
 
@@ -226,9 +225,11 @@ module app.wizard {
 
             var page = this.pageContent.getPage();
             if (page.hasRegions()) {
+                console.log( "resolvePageRegions.. from page" );
                 return page.getRegions();
             }
             else {
+                console.log( "resolvePageRegions.. from page template" );
                 return this.pageTemplate.getRegions();
             }
         }
