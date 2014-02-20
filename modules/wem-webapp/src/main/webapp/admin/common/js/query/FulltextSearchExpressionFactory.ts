@@ -1,7 +1,6 @@
 module api.query {
 
-
-    export class FulltextFunctionFactory {
+    export class FulltextSearchExpressionFactory {
 
         public static create(searchString: string): api.query.expr.Expression {
 
@@ -10,7 +9,10 @@ module api.query {
             }
             var arguments: api.query.expr.ValueExpr[] = [];
 
-            arguments.push(new api.query.expr.ValueExpr(new api.data.Value("_all_text", api.data.ValueTypes.STRING)));
+            var fields: api.query.expr.ValueExpr = new api.query.expr.ValueExpr(new api.data.Value("displayName^5,name^3,_all_text",
+                api.data.ValueTypes.STRING));
+
+            arguments.push(fields);
             arguments.push(new api.query.expr.ValueExpr(new api.data.Value(searchString, api.data.ValueTypes.STRING)));
             arguments.push(new api.query.expr.ValueExpr(new api.data.Value("AND", api.data.ValueTypes.STRING)));
 

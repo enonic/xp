@@ -5,7 +5,7 @@ import org.elasticsearch.index.query.SimpleQueryStringBuilder
 import spock.lang.Specification
 
 class FulltextFunctionArgumentsTest
-        extends Specification
+    extends Specification
 {
     def "fulltext 3 arguments"()
     {
@@ -16,7 +16,7 @@ class FulltextFunctionArgumentsTest
         FulltextFunctionArguments functionArguments = new FulltextFunctionArguments( arguments );
 
         then:
-        functionArguments.getFieldName() == "myField"
+        functionArguments.getWeightedQueryFieldName().iterator().next().getBaseFieldName() == "myField"
         functionArguments.getSearchString() == "SearchString"
         functionArguments.getOperator() == SimpleQueryStringBuilder.Operator.AND
     }
@@ -30,7 +30,7 @@ class FulltextFunctionArgumentsTest
         FulltextFunctionArguments functionArguments = new FulltextFunctionArguments( arguments );
 
         then:
-        functionArguments.getFieldName() == "myField"
+        functionArguments.getWeightedQueryFieldName().iterator().next().getBaseFieldName() == "myField"
         functionArguments.getSearchString() == "SearchString"
         functionArguments.getOperator() == SimpleQueryStringBuilder.Operator.OR
     }
@@ -63,4 +63,5 @@ class FulltextFunctionArgumentsTest
         exception.message == 'Illegal argument \'DUMMY\' in function \'fulltext\', positon 3'
         exception.getCause().message == "No enum constant org.elasticsearch.index.query.SimpleQueryStringBuilder.Operator.DUMMY"
     }
+
 }

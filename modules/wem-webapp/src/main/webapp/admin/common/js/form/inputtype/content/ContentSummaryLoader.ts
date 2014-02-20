@@ -40,7 +40,7 @@ module api.form.inputtype.content {
             this.notifyLoading();
 
 
-            var fulltextExpression: api.query.expr.Expression = api.query.FulltextFunctionFactory.create(searchString);
+            var fulltextExpression: api.query.expr.Expression = api.query.FulltextSearchExpressionFactory.create(searchString);
             var queryExpr: api.query.expr.QueryExpr = new api.query.expr.QueryExpr(fulltextExpression);
             this.contentQuery.setQueryExpr(queryExpr)
 

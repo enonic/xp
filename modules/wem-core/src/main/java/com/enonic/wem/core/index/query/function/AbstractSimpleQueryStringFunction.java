@@ -6,7 +6,7 @@ import org.elasticsearch.index.query.SimpleQueryStringBuilder;
 
 import com.enonic.wem.api.query.expr.ValueExpr;
 
-public class AbstractSimpleQueryStringFunction
+public abstract class AbstractSimpleQueryStringFunction
     extends AbstractFunctionArguments
 {
     public static final int FIELDNAME_INDEX = 0;
@@ -19,7 +19,7 @@ public class AbstractSimpleQueryStringFunction
 
     private static final int MAX_ARGUMENTS = 3;
 
-    private final String fieldName;
+    private final WeightedQueryFieldNames fieldNames;
 
     private SimpleQueryStringBuilder.Operator operator = SimpleQueryStringBuilder.Operator.OR;
 
@@ -29,12 +29,14 @@ public class AbstractSimpleQueryStringFunction
     {
         verifyNumberOfArguments( arguments );
 
-        fieldName = arguments.get( FIELDNAME_INDEX ).getValue().asString();
+        final String fieldString = arguments.get( FIELDNAME_INDEX ).getValue().asString();
+
+        this.fieldNames = WeightedQueryFieldNames.from( fieldString );
+
         searchString = arguments.get( SEARCHSTRING_INDEX ).getValue().asString();
 
         setOperator( arguments );
     }
-
 
     @Override
     int getMinArguments()
@@ -49,10 +51,7 @@ public class AbstractSimpleQueryStringFunction
     }
 
     @Override
-    public String getFunctionName()
-    {
-        return null;
-    }
+    public abstract String getFunctionName();
 
     private void setOperator( final List<ValueExpr> arguments )
     {
@@ -72,10 +71,9 @@ public class AbstractSimpleQueryStringFunction
         }
     }
 
-
-    public String getFieldName()
+    public WeightedQueryFieldNames getWeightedQueryFieldName()
     {
-        return fieldName;
+        return fieldNames;
     }
 
     public SimpleQueryStringBuilder.Operator getOperator()
@@ -87,4 +85,6 @@ public class AbstractSimpleQueryStringFunction
     {
         return searchString;
     }
+
+    public abstract String resolveQueryFieldName( final String baseFieldName );
 }
