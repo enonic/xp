@@ -61,7 +61,8 @@ module app.wizard {
                 var defaultImageDescrResolved = this.resolveDefaultImageDescriptor(siteModules);
                 var defaultPartDescrResolved = this.resolveDefaultPartDescriptor(siteModules);
                 var defaultLayoutDescrResolved = this.resolveDefaultLayoutDescriptor(siteModules);
-                var defaultDescriptorsResolved: Q.Promise<any>[] = [defaultImageDescrResolved, defaultPartDescrResolved, defaultLayoutDescrResolved];
+                var defaultDescriptorsResolved: Q.Promise<any>[] = [defaultImageDescrResolved, defaultPartDescrResolved,
+                    defaultLayoutDescrResolved];
 
                 defaultImageDescrResolved.done((imageDescriptor: api.content.page.image.ImageDescriptor)=> {
                     this.defaultImageDescriptor = imageDescriptor;
@@ -105,9 +106,9 @@ module app.wizard {
                         this.setupContextWindow();
                         deferred.resolve(null);
                     }).catch(()=> {
-                            console.log("Error while loading page: ", arguments);
-                            deferred.reject(arguments);
-                        }).done();
+                        console.log("Error while loading page: ", arguments);
+                        deferred.reject(arguments);
+                    }).done();
                 }
                 else {
                     deferred.resolve(null);
@@ -174,13 +175,19 @@ module app.wizard {
             api.util.assert(content.isPage(), "Expected content to be a page: " + content.getPath().toString());
 
             this.pageContent = content;
+            var pageTemplateChanged = this.pageTemplate && this.pageTemplate.getKey().toString() != pageTemplate.getKey().toString();
             this.pageTemplate = pageTemplate;
+
             this.pageUrl = this.baseUrl + content.getContentId().toString();
 
             console.log("LiveFormPanel.renderExisting() ... pageSkipReload = " + this.pageSkipReload);
 
             if (!this.pageSkipReload) {
-                this.pageRegions = this.resolvePageRegions();
+                if (pageTemplateChanged) {
+                    this.pageRegions = this.pageTemplate.getRegions();
+                } else {
+                    this.pageRegions = this.resolvePageRegions();
+                }
                 this.resolvePageDescriptor(pageTemplate);
             }
 
@@ -330,7 +337,7 @@ module app.wizard {
                 });
             return d.promise;
         }
-        
+
         private onComponentSelected(pathAsString: string) {
             var componentPath = api.content.page.ComponentPath.fromString(pathAsString);
             var component = this.pageRegions.getComponent(componentPath);

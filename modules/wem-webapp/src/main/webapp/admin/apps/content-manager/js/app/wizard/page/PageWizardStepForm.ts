@@ -2,17 +2,25 @@ module app.wizard.page {
 
     export interface PageWizardStepFormConfig {
 
+        liveFormPanel: LiveFormPanel;
+
         parentContent: api.content.Content;
 
         siteTemplate: api.content.site.template.SiteTemplate;
+
+        showLiveEditAction: api.ui.Action;
 
     }
 
     export class PageWizardStepForm extends api.app.wizard.WizardStepForm {
 
+        private liveFormPanel: LiveFormPanel;
+
         private parentContent: api.content.Content;
 
         private siteTemplate: api.content.site.template.SiteTemplate;
+
+        private showLiveEditAction: api.ui.Action;
 
         private content: api.content.Content;
 
@@ -27,8 +35,10 @@ module app.wizard.page {
         constructor(config: PageWizardStepFormConfig) {
             super();
             this.addClass("page-wizard-step-form");
+            this.liveFormPanel = config.liveFormPanel;
             this.parentContent = config.parentContent;
             this.siteTemplate = config.siteTemplate;
+            this.showLiveEditAction = config.showLiveEditAction;
 
             this.pageTemplateSelectorForm = new PageTemplateSelector(this);
             this.pageTemplateSelectorForm.addPageTemplateChangedListener((changedTo: api.content.page.PageTemplateSummary) => {
@@ -52,6 +62,8 @@ module app.wizard.page {
 
             if (page != null && page.getTemplate() != null) {
 
+                this.showLiveEditAction.setEnabled(true);
+
                 new api.content.page.GetPageTemplateByKeyRequest(page.getTemplate()).
                     setSiteTemplateKey(this.siteTemplate.getKey()).
                     sendAndParse().
@@ -66,6 +78,7 @@ module app.wizard.page {
                     });
             }
             else {
+                this.showLiveEditAction.setEnabled(false);
 
                 this.pageTemplateSelectorForm.layoutExisting(content, siteContent.getSite().getTemplateKey(), null).
                     done(()=> {
@@ -82,11 +95,15 @@ module app.wizard.page {
             console.log("PageWizardStepForm.handlePageTemplateChanged() ... ");
 
             if (changedTo == null) {
+
+                this.showLiveEditAction.setEnabled(false);
                 this.selectedPageTemplate = null;
                 this.configFormWrapper.removeChildren();
+
                 console.log("PageWizardStepForm.handlePageTemplateChanged() ... changed to null");
             }
             else {
+
                 console.log("PageWizardStepForm.handlePageTemplateChanged() ... changed to something (loading...)");
                 new api.content.page.GetPageTemplateByKeyRequest(changedTo.getKey()).
                     setSiteTemplateKey(this.siteTemplate.getKey()).
@@ -94,6 +111,12 @@ module app.wizard.page {
                     done((pageTemplate: api.content.page.PageTemplate) => {
 
                         this.selectedPageTemplate = pageTemplate;
+
+                        this.liveFormPanel.renderExisting(this.content, this.selectedPageTemplate);
+
+                        var changedToSameAsPersisted:boolean = this.content.getPage().getTemplate().toString() == changedTo.getKey().toString();
+                        this.showLiveEditAction.setEnabled(changedToSameAsPersisted);
+
                         new api.content.page.GetPageDescriptorByKeyRequest(pageTemplate.getDescriptorKey()).
                             sendAndParse().
                             done((pageDescriptor: api.content.page.PageDescriptor) => {
