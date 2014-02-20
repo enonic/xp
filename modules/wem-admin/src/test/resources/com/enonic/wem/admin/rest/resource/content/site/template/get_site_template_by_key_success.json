@@ -10,7 +10,19 @@
     "key": "blueman-1.0.0",
     "modules": [ "module1-1.0.0", "module2-1.0.0" ],
     "name": "blueman",
-    "pageTemplates": [ "mod|mainpage" ],
+    "pageTemplateKeys": [ "mod|mainpage" ],
+    "pageTemplates": [
+        {
+            "canRender": [ ],
+            "config": [ ],
+            "deletable": true,
+            "descriptorKey": "mod-1.0.0:page-descr",
+            "displayName": "Main Page",
+            "editable": true,
+            "key": "mod|mainpage",
+            "regions": null
+        }
+    ],
     "rootContentType": "page",
     "url": "http://enonic.net",
     "vendor": {

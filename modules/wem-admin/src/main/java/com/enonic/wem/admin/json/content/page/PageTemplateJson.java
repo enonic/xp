@@ -21,14 +21,7 @@ public class PageTemplateJson
 
     private final ImmutableList<String> canRender;
 
-    private final PageDescriptorJson descriptorJson;
-
     public PageTemplateJson( final PageTemplate template )
-    {
-        this( template, null );
-    }
-
-    public PageTemplateJson( final PageTemplate template, final PageDescriptorJson descriptorJson )
     {
         super( template );
         this.regionsJson = new PageRegionsJson( template.getRegions() );
@@ -39,7 +32,6 @@ public class PageTemplateJson
             canRenderBuilder.add( contentTypeName.toString() );
         }
         this.canRender = canRenderBuilder.build();
-        this.descriptorJson = descriptorJson;
     }
 
     public List<RegionJson> getRegions()
@@ -57,8 +49,4 @@ public class PageTemplateJson
         return canRender;
     }
 
-    public PageDescriptorJson getDescriptor()
-    {
-        return descriptorJson;
-    }
 }

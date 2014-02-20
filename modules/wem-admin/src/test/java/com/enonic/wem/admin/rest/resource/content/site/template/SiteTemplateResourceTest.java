@@ -35,6 +35,7 @@ import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
 import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.content.site.SiteTemplates;
 import com.enonic.wem.api.content.site.Vendor;
+import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -135,6 +136,7 @@ public class SiteTemplateResourceTest
             key( PageTemplateKey.from( "mod|mainpage" ) ).
             displayName( "Main Page" ).
             descriptor( PageDescriptorKey.from( ModuleKey.from( "mod-1.0.0" ), new ComponentDescriptorName( "page-descr" ) ) ).
+            config( new RootDataSet() ).
             build();
 
         final ContentTypeFilter filter = ContentTypeFilter.newContentFilter().
