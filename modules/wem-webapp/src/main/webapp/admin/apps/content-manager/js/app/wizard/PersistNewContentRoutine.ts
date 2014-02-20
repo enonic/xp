@@ -46,8 +46,6 @@ module app.wizard {
 
         doExecuteNext(context: PersistedNewContentRoutineContext): Q.Promise<api.content.Content> {
 
-            console.log("PersistNewContentRoutine.doExecuteNext() ...");
-
             var deferred = Q.defer<api.content.Content>();
 
             if (!this.doneHandledContent) {
@@ -88,7 +86,6 @@ module app.wizard {
                                 deferred.resolve(contentFromNext);
                             });
                     });
-
             }
             else {
 
@@ -100,8 +97,6 @@ module app.wizard {
 
         private doHandleCreateContent(context: PersistedNewContentRoutineContext): Q.Promise<void> {
 
-            console.log("PersistNewContentRoutine.doHandleCreateContent() ... ");
-
             var deferred = Q.defer<void>();
 
             if (this.createContentRequestProducer != undefined) {
@@ -110,20 +105,12 @@ module app.wizard {
                     sendAndParse().
                     done((content: api.content.Content) => {
 
-                        console.log("PersistNewContentRoutine.doHandleCreateContent() ... content created");
-
                         context.content = content;
-
-
                         deferred.resolve(null);
                     });
             }
             else {
-
-                console.log("PersistNewContentRoutine.doHandleCreateContent() ... no createContentRequestProducer defined");
-
                 deferred.resolve(null);
-
             }
 
             return deferred.promise;
@@ -131,35 +118,21 @@ module app.wizard {
 
         private doHandleCreateSite(context: PersistedNewContentRoutineContext): Q.Promise<void> {
 
-            console.log("PersistNewContentRoutine.doHandleCreateSite() ...");
-
             var deferred = Q.defer<void>();
 
             var createSiteRequest = null;
-            if (this.createSiteRequestProducer != undefined) {
 
-                createSiteRequest = this.createSiteRequestProducer.call(this.getThisOfProducer(), context.content);
-                if (createSiteRequest != null) {
-                    createSiteRequest.
-                        sendAndParse().
-                        done((content: api.content.Content) => {
+            createSiteRequest = this.createSiteRequestProducer.call(this.getThisOfProducer(), context.content);
+            if (createSiteRequest != null) {
+                createSiteRequest.
+                    sendAndParse().
+                    done((content: api.content.Content) => {
 
-                            console.log("PersistNewContentRoutine.doHandleCreateSite() ... site created");
-
-                            context.content = content;
-
-                            deferred.resolve(null);
-                        });
-                }
-                else {
-                    console.log("PersistNewContentRoutine.doHandleCreateSite() ... no createSiteRequest given");
-
-                    deferred.resolve(null);
-                }
+                        context.content = content;
+                        deferred.resolve(null);
+                    });
             }
             else {
-                console.log("PersistNewContentRoutine.doHandleCreateSite() ... no createSiteRequestProducer defined");
-
                 deferred.resolve(null);
             }
 
@@ -168,31 +141,19 @@ module app.wizard {
 
         private doHandleCreatePage(context: PersistedNewContentRoutineContext): Q.Promise<void> {
 
-            console.log("PersistNewContentRoutine.doHandleCreatePage() ...");
-
             var deferred = Q.defer<void>();
 
-            if (this.createPageRequestProducer != undefined) {
-                var createPageRequest = this.createPageRequestProducer.call(this.getThisOfProducer(), context.content);
+            var createPageRequest = this.createPageRequestProducer.call(this.getThisOfProducer(), context.content);
 
-                if (createPageRequest != null) {
-                    createPageRequest.sendAndParse().
-                        done((content: api.content.Content) => {
+            if (createPageRequest != null) {
+                createPageRequest.sendAndParse().
+                    done((content: api.content.Content) => {
 
-                            console.log("PersistNewContentRoutine.doHandleCreatePage() ... page created");
-
-                            context.content = content;
-
-                            deferred.resolve(null);
-                        });
-                }
-                else {
-                    console.log("PersistNewContentRoutine.doHandleCreatePage() ... no createPageRequest given");
-                    deferred.resolve(null);
-                }
+                        context.content = content;
+                        deferred.resolve(null);
+                    });
             }
             else {
-                console.log("PersistNewContentRoutine.doExecuteNext() doing create page... no createPageRequestProducer defined");
                 deferred.resolve(null);
             }
 
