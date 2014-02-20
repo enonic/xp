@@ -41,7 +41,7 @@ module api.aggregation {
             return hasSelected;
         }
 
-        updateAggregations(aggregations: api.aggregation.Aggregation[]) {
+        updateAggregations(aggregations: api.aggregation.Aggregation[], doUpdateAll?: boolean) {
 
             this.aggregationGroupViews.forEach((aggregationGroupView: api.aggregation.AggregationGroupView) => {
 
@@ -49,20 +49,17 @@ module api.aggregation {
                     return aggregationGroupView.handlesAggregation(current);
                 });
 
-                if (this.isGroupUpdatable(aggregationGroupView)) {
+                if (doUpdateAll || this.isGroupUpdatable(aggregationGroupView)) {
                     aggregationGroupView.update(matchingAggregations);
                 }
             });
         }
 
         private isGroupUpdatable(aggregationGroupView: api.aggregation.AggregationGroupView) {
-
             return aggregationGroupView != this.lastSelectedGroupView;
         }
 
-
         getSelectedValuesByAggregationName(): api.aggregation.AggregationSelection[] {
-
             var aggregationSelections: api.aggregation.AggregationSelection[] = [];
 
             this.aggregationGroupViews.forEach((aggregationGroupView: api.aggregation.AggregationGroupView) => {
@@ -73,6 +70,5 @@ module api.aggregation {
 
             return aggregationSelections;
         }
-
     }
 }

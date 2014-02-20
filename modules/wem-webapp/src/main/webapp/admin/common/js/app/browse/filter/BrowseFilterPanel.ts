@@ -16,7 +16,7 @@ module api.app.browse.filter {
 
             this.searchField = new TextSearchField('Search');
             this.searchField.addValueChangedListener(() => {
-                this.search();
+                this.search(this.searchField);
             });
 
             this.clearFilter = new ClearFilterButton();
@@ -31,7 +31,7 @@ module api.app.browse.filter {
                 groupViews.forEach((aggregationGroupView: api.aggregation.AggregationGroupView) => {
 
                         aggregationGroupView.addBucketViewSelectionChangedEventListener((event: api.aggregation.BucketViewSelectionChangedEvent) => {
-                            this.search();
+                            this.search(event.getBucketView());
                         });
 
                         this.aggregationContainer.addAggregationGroupView(aggregationGroupView);
@@ -46,8 +46,8 @@ module api.app.browse.filter {
             this.appendChild(this.aggregationContainer);
         }
 
-        updateAggregations(aggregations: api.aggregation.Aggregation[]) {
-            this.aggregationContainer.updateAggregations(aggregations);
+        updateAggregations(aggregations: api.aggregation.Aggregation[], doUpdateAll?: boolean) {
+            this.aggregationContainer.updateAggregations(aggregations, doUpdateAll);
         }
 
         getSearchInputValues(): api.query.SearchInputValues {
@@ -64,7 +64,8 @@ module api.app.browse.filter {
             return this.aggregationContainer.hasSelectedBuckets() || this.searchField.getHTMLElement()['value'].trim() != '';
         }
 
-        search() {
+
+        search(elementChanged?: api.dom.Element) {
             if (this.hasFilterSet()) {
                 this.clearFilter.show();
             }
@@ -72,7 +73,7 @@ module api.app.browse.filter {
                 this.clearFilter.hide();
             }
             var values = this.getSearchInputValues();
-            this.notifySearch(values);
+            this.notifySearch(values, elementChanged);
         }
 
         reset() {
@@ -92,11 +93,11 @@ module api.app.browse.filter {
             });
         }
 
-        private notifySearch(searchInputValues: api.query.SearchInputValues) {
+        private notifySearch(searchInputValues: api.query.SearchInputValues, elementChanged?: api.dom.Element) {
 
             this.listeners.forEach((listener) => {
                 if (listener.onSearch) {
-                    listener.onSearch(searchInputValues);
+                    listener.onSearch(searchInputValues, elementChanged);
                 }
             });
         }

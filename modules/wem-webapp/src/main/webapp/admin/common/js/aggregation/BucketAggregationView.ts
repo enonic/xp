@@ -6,25 +6,25 @@ module api.aggregation {
 
         private bucketViews: api.aggregation.BucketView[] = [];
 
-        private hasAnyCountLargerThanZero: boolean;
+        private showBucketView: boolean;
 
         constructor(bucketAggregation: api.aggregation.BucketAggregation, parentGroupView: api.aggregation.AggregationGroupView) {
             super(bucketAggregation, parentGroupView);
 
             this.bucketAggregation = bucketAggregation;
 
-            this.hasAnyCountLargerThanZero = false;
+            this.showBucketView = false;
             this.bucketAggregation.getBuckets().forEach((bucket: api.aggregation.Bucket) => {
 
                 this.addBucket(new api.aggregation.BucketView(bucket, this));
 
                 if (bucket.getDocCount() > 0) {
-                    this.hasAnyCountLargerThanZero = true;
+                    this.showBucketView = true;
                 }
 
             });
 
-            if (!this.hasAnyCountLargerThanZero) {
+            if (!this.showBucketView) {
                 this.hide();
             }
         }
@@ -75,24 +75,25 @@ module api.aggregation {
             this.bucketViews = [];
             this.removeChildren();
 
-            var anyCountLargerThanZero = false;
+            var anyBucketVisible = false;
 
             this.bucketAggregation.getBuckets().forEach((bucket: api.aggregation.Bucket) => {
 
                 var wasSelected: boolean = (jQuery.inArray(bucket.getKey(), selectedBucketNames)) > -1;
 
                 var bucketView: api.aggregation.BucketView = new api.aggregation.BucketView(bucket, this, wasSelected);
+
                 this.addBucket(bucketView);
 
-                if (bucket.getDocCount() > 0) {
-                    anyCountLargerThanZero = true;
+                if (bucket.getDocCount() > 0 || wasSelected) {
+                    anyBucketVisible = true;
                 }
 
             });
 
-            this.hasAnyCountLargerThanZero = anyCountLargerThanZero;
+            this.showBucketView = anyBucketVisible;
 
-            if (!this.hasAnyCountLargerThanZero) {
+            if (!this.showBucketView) {
                 this.hide();
             }
             else if (!this.isVisible()) {

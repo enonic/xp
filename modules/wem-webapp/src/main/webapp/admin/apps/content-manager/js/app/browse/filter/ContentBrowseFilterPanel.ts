@@ -48,7 +48,7 @@ module app.browse.filter {
                         this.resetFacets();
                     },
 
-                    onSearch: (searchInputValues: SearchInputValues)=> {
+                    onSearch: (searchInputValues: SearchInputValues, elementChanged?: api.dom.Element)=> {
 
                         var isClean = !this.hasFilterSet();
                         if (isClean) {
@@ -74,7 +74,11 @@ module app.browse.filter {
 
                                 var result: ContentQueryResultJson<ContentSummaryJson> = jsonResponse.getResult();
 
-                                this.updateAggregations(Aggregation.fromJsonArray(result.aggregations));
+                                var doUpdateAll = true;
+                                if (elementChanged instanceof api.aggregation.BucketView) {
+                                    doUpdateAll = false;
+                                }
+                                 this.updateAggregations(Aggregation.fromJsonArray(result.aggregations), doUpdateAll);
 
                                 new ContentBrowseSearchEvent(result.contents).fire();
                             });
