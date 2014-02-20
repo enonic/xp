@@ -120,10 +120,6 @@ module LiveEdit.component {
         private getComponentTypeNameFromElement(): string {
 
             var type =  this.getEl().getData('liveEditType');
-            if (!type) {
-                console.log("componentdata", this.getEl());
-                console.trace();
-            }
             return type;
         }
 
