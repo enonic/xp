@@ -1,6 +1,8 @@
 .toolbar {
+  @toolbar-height: 40px;
+
   background-color: @admin-light-gray-bg;
-  height: 40px;
+  height: @toolbar-height;
 
   button {
     font-family: @admin-font-family;
@@ -27,5 +29,42 @@
 
   .toggle-slide {
     margin: 11px 7px;
+  }
+
+  .fold {
+    width: 20px;
+    height: @toolbar-height;
+    line-height: @toolbar-height;
+    text-align: center;
+    .icon-angle-double-down(15px, @admin-light-gray-font);
+
+    .dropdown {
+      display: none;
+      position: absolute;
+      top: @toolbar-height;
+      right: 0;
+      z-index: 1000;
+      padding: 0 10px;
+      background-color: @admin-light-gray-bg;
+      .box-shadow(-1px 1px 2px 0px rgba(0,0,0,0.3));
+
+      & > * {
+        display: block;
+        margin-left: auto;
+        margin-right: 0;
+      }
+
+      button {
+        padding-right: 0;
+      }
+
+      .pull-right {
+        float: none;
+      }
+    }
+
+    &:hover .dropdown {
+      display: block;
+    }
   }
 }
