@@ -385,6 +385,10 @@ module app.wizard {
                 return null;
             }
 
+            if (content.isPage()) {
+                return null;
+            }
+
             var pageTemplateKey: api.content.page.PageTemplateKey = null;
 
             if (this.pageWizardStepForm.getPageTemplate() == null) {
@@ -396,7 +400,7 @@ module app.wizard {
             else {
                 pageTemplateKey = this.pageWizardStepForm.getPageTemplate().getKey();
             }
-            if( pageTemplate == null ) {
+            if (pageTemplateKey == null) {
                 return null;
             }
 
