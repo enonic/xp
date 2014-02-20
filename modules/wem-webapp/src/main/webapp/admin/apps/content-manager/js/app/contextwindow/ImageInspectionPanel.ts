@@ -24,11 +24,12 @@ module app.contextwindow {
             var imageDescriptorLoader = new api.content.page.image.ImageDescriptorLoader(imageDescriptorsRequest);
             this.descriptorComboBox = new api.content.page.image.ImageDescriptorComboBox(imageDescriptorLoader);
 
-            var firstLoad = (modules) => {
+            var onDescriptorsLoaded = () => {
                 this.descriptorComboBox.setValue(this.getLiveFormPanel().getDefaultImageDescriptor().getKey().toString());
-                this.descriptorComboBox.removeLoadedListener(firstLoad);
+                this.descriptorComboBox.removeLoadedListener(onDescriptorsLoaded); // execute only on the first loaded event
             };
-            this.descriptorComboBox.addLoadedListener(firstLoad);
+            this.descriptorComboBox.addLoadedListener(onDescriptorsLoaded);
+
             this.descriptorComboBox.addOptionSelectedListener((option: api.ui.combobox.Option<ImageDescriptor>) => {
                 if (this.imageComponent) {
                     var selectedDescriptor = option.displayValue.getKey();

@@ -22,6 +22,7 @@ module app.wizard {
         private pageContent: api.content.Content;
         private pageTemplate: api.content.page.PageTemplate;
         private pageRegions: api.content.page.PageRegions;
+        private pageDescriptor: api.content.page.PageDescriptor;
 
         private pageNeedsReload: boolean;
         private pageLoading: boolean;
@@ -180,6 +181,7 @@ module app.wizard {
 
             if (!this.pageSkipReload) {
                 this.pageRegions = this.resolvePageRegions();
+                this.resolvePageDescriptor(pageTemplate);
             }
 
             if (!this.isVisible()) {
@@ -203,6 +205,14 @@ module app.wizard {
                 }).fail(()=> {
                     console.log("Error while loading page: ", arguments);
                 }).done();
+        }
+
+        private resolvePageDescriptor(pageTemplate: api.content.page.PageTemplate) {
+            new api.content.page.GetPageDescriptorByKeyRequest(pageTemplate.getDescriptorKey()).
+                sendAndParse().
+                done((pageDescriptor: api.content.page.PageDescriptor) => {
+                    this.pageDescriptor = pageDescriptor;
+                });
         }
 
         private resolvePageRegions(): api.content.page.PageRegions {
@@ -334,7 +344,7 @@ module app.wizard {
         }
 
         private onPageSelected() {
-            this.contextWindow.inspectPage(this.pageContent);
+            this.contextWindow.inspectPage(this.pageContent, this.pageTemplate, this.pageDescriptor);
         }
 
         private onContentSelected(contentIdStr: string) {

@@ -23,11 +23,12 @@ module app.contextwindow {
             var partDescriptorLoader = new api.content.page.part.PartDescriptorLoader(partDescriptorsRequest);
             this.descriptorComboBox = new api.content.page.part.PartDescriptorComboBox(partDescriptorLoader);
 
-            var firstLoad = (modules) => {
+            var onDescriptorsLoaded = () => {
                 this.descriptorComboBox.setValue(this.getLiveFormPanel().getDefaultPartDescriptor().getKey().toString());
-                this.descriptorComboBox.removeLoadedListener(firstLoad);
+                this.descriptorComboBox.removeLoadedListener(onDescriptorsLoaded); // execute only on the first loaded event
             };
-            this.descriptorComboBox.addLoadedListener(firstLoad);
+            this.descriptorComboBox.addLoadedListener(onDescriptorsLoaded);
+
             this.descriptorComboBox.addOptionSelectedListener((option: api.ui.combobox.Option<PartDescriptor>) => {
                 if (this.partComponent) {
                     var selectedDescriptor = option.displayValue.getKey();
