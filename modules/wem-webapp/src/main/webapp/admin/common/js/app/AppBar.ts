@@ -4,25 +4,33 @@ module api.app {
 
         ext;
 
-        private appName:string;
+        private appName: string;
 
-        private actions:AppBarActionsConfig;
+        private actions: AppBarActionsConfig;
 
-        private launcherButton:api.dom.ButtonEl;
+        private launcherButton: api.dom.ButtonEl;
 
-        private homeButton:api.dom.ButtonEl;
+        private homeButton: api.dom.ButtonEl;
 
-        private tabMenu:AppBarTabMenu;
+        private tabMenu: AppBarTabMenu;
 
-        private userButton:UserButton;
+        private userButton: UserButton;
 
-        private userInfoPopup:UserInfoPopup;
+        private userInfoPopup: UserInfoPopup;
 
-        constructor(appName, tabMenu:AppBarTabMenu, actions?:AppBarActionsConfig) {
+        constructor(appName, tabMenu: AppBarTabMenu, actions?: AppBarActionsConfig) {
             super("appbar");
 
             this.appName = appName;
             this.tabMenu = tabMenu;
+            this.tabMenu.addListener({
+                onNavigationItemSelected: (tab: api.ui.PanelNavigationItem) => {
+                    this.layoutChildren();
+                },
+                onNavigationItemDeselected: (tab: api.ui.PanelNavigationItem) => {
+                    this.layoutChildren();
+                }
+            });
 
             this.actions = <AppBarActionsConfig> {};
             this.actions.showAppLauncherAction = (actions && actions.showAppLauncherAction) || AppBarActions.SHOW_APP_LAUNCHER;
@@ -44,20 +52,47 @@ module api.app {
 
             this.userInfoPopup = new UserInfoPopup();
 
-            this.userButton.getEl().addEventListener('click', (event:Event) => {
+            this.userButton.getEl().addEventListener('click', (event: Event) => {
                 this.userInfoPopup.toggle();
             });
 
-            var appManager:api.app.AppManager = api.app.AppManager.instance();
+            var appManager: api.app.AppManager = api.app.AppManager.instance();
             this.launcherButton.setClickListener((event) => {
                 appManager.showLauncher();
             });
 
             this.setBackgroundImgUrl(api.util.getRestUri('ui/background.jpg'));
+
+            window.addEventListener('resize', () => {
+                this.layoutChildren();
+            });
         }
 
-        getTabMenu():AppBarTabMenu {
+        getTabMenu(): AppBarTabMenu {
             return this.tabMenu;
+        }
+
+        afterRender() {
+            this.layoutChildren();
+        }
+
+        private layoutChildren() {
+            var fullWidth = this.getEl().getWidth();
+
+            var homeEl = this.homeButton.getEl();
+            var homeElRightEdge = homeEl.getOffset().left + homeEl.getWidthWithMargin();
+
+            var tabEl = this.tabMenu.getEl();
+            var centerLeftEdge = (fullWidth - tabEl.getWidth() ) / 2;
+
+            var tabElLeftEdge = Math.max(homeElRightEdge, centerLeftEdge);
+            tabEl.setLeft(tabElLeftEdge + "px");
+
+            var userEl = this.userButton.getEl();
+            var tabElRightEdge = tabElLeftEdge + tabEl.getWidthWithMargin();
+
+            var userElRightEdge = Math.max(fullWidth, tabElRightEdge + userEl.getWidthWithMargin());
+            userEl.setRight((fullWidth - userElRightEdge) + "px");
         }
     }
 
@@ -70,10 +105,10 @@ module api.app {
 
     export class LauncherButton extends api.dom.ButtonEl {
 
-        constructor(action:api.ui.Action) {
+        constructor(action: api.ui.Action) {
             super('launcher-button');
 
-            this.getEl().addEventListener('click', (event:Event) => {
+            this.getEl().addEventListener('click', (event: Event) => {
                 action.execute();
             });
         }
@@ -90,12 +125,12 @@ module api.app {
 
     export class HomeButton extends api.dom.ButtonEl {
 
-        constructor(text:string, action:api.ui.Action) {
+        constructor(text: string, action: api.ui.Action) {
             super('home-button');
 
             this.getEl().setInnerHtml(text);
 
-            this.getEl().addEventListener('click', (event:Event) => {
+            this.getEl().addEventListener('click', (event: Event) => {
                 action.execute();
             });
         }
@@ -111,7 +146,7 @@ module api.app {
             this.setIcon(photoUrl);
         }
 
-        setIcon(photoUrl:string) {
+        setIcon(photoUrl: string) {
             this.getEl().setBackgroundImage('url("' + photoUrl + '")');
         }
 

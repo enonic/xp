@@ -186,8 +186,12 @@ module api.ui.tab {
         }
 
         deselectNavigationItem() {
-            this.tabMenuButton.setLabel("");
+            var selectedTab = this.getSelectedNavigationItem();
             this.selectedTab = -1;
+            this.setButtonLabel("[Select]");
+            this.updateActiveTab(this.selectedTab);
+
+            this.notifyTabDeselectedListeners(selectedTab);
         }
 
         addListener(listener: api.ui.DeckPanelNavigatorListener) {
@@ -212,6 +216,14 @@ module api.ui.tab {
             this.listeners.forEach((listener: api.ui.DeckPanelNavigatorListener) => {
                 if (listener.onNavigationItemSelected) {
                     listener.onNavigationItemSelected(tab);
+                }
+            });
+        }
+
+        private notifyTabDeselectedListeners(tab: TabMenuItem) {
+            this.listeners.forEach((listener: api.ui.DeckPanelNavigatorListener) => {
+                if (listener.onNavigationItemDeselected) {
+                    listener.onNavigationItemDeselected(tab);
                 }
             });
         }

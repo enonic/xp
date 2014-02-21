@@ -124,7 +124,7 @@ module api.dom {
         removeClass(clsName: string): ElementHelper {
             // spaces are not allowed
             var classList: string[] = clsName.split(" ");
-            classList.forEach((classItem:string) => {
+            classList.forEach((classItem: string) => {
                 this.el.classList.remove(classItem);
             });
             return this;
@@ -190,7 +190,19 @@ module api.dom {
         }
 
         getWidth(): number {
-            return this.el.offsetWidth;
+            return $(this.el).innerWidth();
+        }
+
+        getWidthWithoutPadding(): number {
+            return $(this.el).width();
+        }
+
+        getWidthWithBorder(): number {
+            return $(this.el).outerWidth();
+        }
+
+        getWidthWithMargin(): number {
+            return $(this.el).outerWidth(true);
         }
 
         setHeight(value: string): ElementHelper {
@@ -199,11 +211,19 @@ module api.dom {
         }
 
         getHeight(): number {
-            return parseFloat(this.getComputedProperty('height'));
+            return $(this.el).innerHeight();
+        }
+
+        getHeightWithoutPadding(): number {
+            return $(this.el).height();
+        }
+
+        getHeightWithBorder(): number {
+            return $(this.el).outerHeight();
         }
 
         getHeightWithMargin(): number {
-            return $(this.el).outerHeight();
+            return $(this.el).outerHeight(true);
         }
 
         setTop(value: string): ElementHelper {

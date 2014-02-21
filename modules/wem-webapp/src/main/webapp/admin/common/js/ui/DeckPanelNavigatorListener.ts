@@ -6,6 +6,8 @@ module api.ui {
 
         onNavigationItemSelected?: (tab:PanelNavigationItem) => void;
 
+        onNavigationItemDeselected?: (tab:PanelNavigationItem) => void;
+
     }
 
 }
