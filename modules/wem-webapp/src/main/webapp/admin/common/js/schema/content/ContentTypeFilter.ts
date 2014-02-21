@@ -1,4 +1,4 @@
-module api.content.site.template {
+module api.schema.content {
 
     import ContentTypeName = api.schema.content.ContentTypeName;
 
@@ -20,6 +20,22 @@ module api.content.site.template {
         getDeny(): ContentTypeName[] {
             return this.deny;
         }
+
+        toJson(): Object {
+            var json = {
+                allow: [],
+                deny: []
+            };
+
+            this.allow.forEach((name: ContentTypeName) => {
+                json.allow.push(name.toString());
+            });
+            this.deny.forEach((name: ContentTypeName) => {
+                json.deny.push(name.toString());
+            });
+
+            return json;
+        }
     }
 
     export class ContentTypeFilterBuilder {
@@ -28,7 +44,7 @@ module api.content.site.template {
 
         deny: ContentTypeName[] = [];
 
-        fromJson(json: json.ContentTypeFilterJson): ContentTypeFilterBuilder {
+        fromJson(json: api.content.site.template.json.ContentTypeFilterJson): ContentTypeFilterBuilder {
             json.allow.forEach((name: string) => {
                 this.allow.push(new ContentTypeName(name));
             });

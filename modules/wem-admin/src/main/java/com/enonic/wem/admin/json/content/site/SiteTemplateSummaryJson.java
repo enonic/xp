@@ -6,6 +6,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.admin.json.ItemJson;
+import com.enonic.wem.admin.json.content.ContentTypeFilterJson;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.VendorJson;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.SiteTemplate;
