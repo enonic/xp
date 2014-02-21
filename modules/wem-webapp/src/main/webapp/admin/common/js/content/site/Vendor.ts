@@ -18,5 +18,14 @@ module api.content.site{
         getUrl():string{
             return this.url;
         }
+
+        toJson(): Object {
+            var json = {
+                name: this.name,
+                url: this.url
+            };
+
+            return json;
+        }
     }
 }

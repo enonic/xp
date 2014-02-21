@@ -3,6 +3,8 @@ package com.enonic.wem.admin.rest.resource.content.site.template;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.ws.rs.core.MediaType;
 
@@ -11,7 +13,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataBodyPart;
@@ -19,9 +25,11 @@ import com.sun.jersey.multipart.FormDataMultiPart;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Client;
+import com.enonic.wem.api.command.content.site.CreateSiteTemplate;
 import com.enonic.wem.api.command.content.site.DeleteSiteTemplate;
 import com.enonic.wem.api.command.content.site.GetAllSiteTemplates;
 import com.enonic.wem.api.command.content.site.GetSiteTemplateByKey;
+import com.enonic.wem.api.command.content.site.UpdateSiteTemplate;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageTemplate;
@@ -191,6 +199,133 @@ public class SiteTemplateResourceTest
         final String jsonString = webResource.type( MediaType.MULTIPART_FORM_DATA_TYPE ).post( String.class, mp );
 
         assertJson( "import_site_template_exception.json", jsonString );
+    }
+
+    @Test
+    public void create_site_template_success()
+        throws Exception
+    {
+        final PageTemplate pageTemplate = newPageTemplate().
+            key( PageTemplateKey.from( "mod|mainpage" ) ).
+            displayName( "Main Page" ).
+            descriptor( PageDescriptorKey.from( ModuleKey.from( "mod-1.0.0" ), new ComponentDescriptorName( "page-descr" ) ) ).
+            build();
+
+        final ContentTypeFilter filter = ContentTypeFilter.newContentFilter().
+            defaultAllow().
+            denyContentType( ContentTypeName.from( "com.enonic.tweet" ) ).
+            denyContentType( "system.folder" ).
+            denyContentTypes( ContentTypeNames.from( "com.enonic.article", "com.enonic.employee" ) ).
+            build();
+
+        final SiteTemplate siteTemplate = SiteTemplate.newSiteTemplate().
+            key( SiteTemplateKey.from( "blueman-1.0.0" ) ).
+            displayName( "Blueman Site Template" ).
+            vendor( newVendor().name( "Enonic AS" ).url( "http://www.enonic.com" ).build() ).
+            modules( ModuleKeys.from( "module1-1.0.0", "module2-1.0.0" ) ).
+            description( "Demo site template" ).
+            url( "http://enonic.net" ).
+            contentTypeFilter( filter ).
+            rootContentType( ContentTypeName.page() ).
+            addPageTemplate( pageTemplate ).
+            build();
+
+        Mockito.when( client.execute( Mockito.isA( CreateSiteTemplate.class ) ) ).thenAnswer( new Answer()
+        {
+            @Override
+            public Object answer( final InvocationOnMock invocation )
+                throws Throwable
+            {
+                final CreateSiteTemplate command = (CreateSiteTemplate) invocation.getArguments()[0];
+                assertEquals( "Demo site template", command.getDescription() );
+                assertEquals( "Blueman Site Template", command.getDisplayName() );
+                assertEquals( "www.enonic.com", command.getUrl() );
+
+                // Vendor
+                Vendor vendor = Vendor.newVendor().name( "Enonic AS" ).url( "http://www.enonic.com" ).build();
+                assertEquals( vendor, command.getVendor() );
+
+                // Module keys
+                assertUnorderedListEquals( new String[]{"module1-1.0.0", "module2-1.0.0"}, command.getModules().getList() );
+
+                // ContentTypeFilter
+                final ContentTypeFilter filter = command.getContentTypeFilter();
+                assertListEquals( new String[]{"image", "com.enonic.tweet", "system.folder", "com.enonic.article", "com.enonic.employee"},
+                                  parseContentTypeNames( filter.iterator() ) );
+
+                // RootContentType
+                assertEquals( ContentTypeName.from( "page" ), command.getRootContentType() );
+
+                return siteTemplate;
+            }
+        } );
+
+        String jsonString = resource().path( "content/site/template/create" ).
+            entity( readFromFile( "create_site_template_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post( String.class );
+
+        assertJson( "create_site_template_success.json", jsonString );
+    }
+
+    @Test
+    public void update_site_template_success()
+        throws Exception
+    {
+        final PageTemplate pageTemplate = newPageTemplate().
+            key( PageTemplateKey.from( "mod|mainpage" ) ).
+            displayName( "Main Page" ).
+            descriptor( PageDescriptorKey.from( ModuleKey.from( "mod-1.0.0" ), new ComponentDescriptorName( "page-descr" ) ) ).
+            build();
+
+        final ContentTypeFilter filter = ContentTypeFilter.newContentFilter().
+            defaultAllow().
+            denyContentType( ContentTypeName.from( "com.enonic.tweet" ) ).
+            denyContentType( "system.folder" ).
+            denyContentTypes( ContentTypeNames.from( "com.enonic.article", "com.enonic.employee" ) ).
+            build();
+
+        final SiteTemplate siteTemplate = SiteTemplate.newSiteTemplate().
+            key( SiteTemplateKey.from( "blueman-1.0.0" ) ).
+            displayName( "Blueman Site Template" ).
+            vendor( newVendor().name( "Enonic AS" ).url( "http://www.enonic.com" ).build() ).
+            modules( ModuleKeys.from( "module1-1.0.0", "module2-1.0.0" ) ).
+            description( "Demo site template" ).
+            url( "http://enonic.net" ).
+            contentTypeFilter( filter ).
+            rootContentType( ContentTypeName.page() ).
+            addPageTemplate( pageTemplate ).
+            build();
+
+        Mockito.when( client.execute( Mockito.isA( UpdateSiteTemplate.class ) ) ).thenAnswer( new Answer()
+        {
+            @Override
+            public Object answer( final InvocationOnMock invocation )
+                throws Throwable
+            {
+                final UpdateSiteTemplate command = (UpdateSiteTemplate) invocation.getArguments()[0];
+                assertEquals( SiteTemplateKey.from( "blueman-1.0.0" ), command.getKey() );
+
+                return siteTemplate;
+            }
+        } );
+
+        String jsonString = resource().path( "content/site/template/update" ).
+            entity( readFromFile( "update_site_template_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post( String.class );
+
+        assertJson( "update_site_template_success.json", jsonString );
+    }
+
+    private List<String> parseContentTypeNames( Iterator<ContentTypeName> iterator )
+    {
+        return Lists.transform( Lists.newArrayList( iterator ), new Function<ContentTypeName, String>()
+        {
+            @Override
+            public String apply( final ContentTypeName name )
+            {
+                return name.toString();
+            }
+        } );
     }
 
     @Test
