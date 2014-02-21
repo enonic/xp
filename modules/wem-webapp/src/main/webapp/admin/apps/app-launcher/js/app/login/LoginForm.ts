@@ -20,13 +20,13 @@ module app.login {
 
             var formContainer = new api.dom.DivEl();
             var title = new api.dom.H3El();
-            title.setText('Login');
+            title.setText(api.i18n.message('Login'));
             this.userStoresDropdown = new api.ui.Dropdown('userstore');
             this.userStoresDropdown.addClass('form-item');
             this.userIdInput = new api.ui.TextInput('form-item');
-            this.userIdInput.setPlaceholder('userid or e-mail');
+            this.userIdInput.setPlaceholder(api.i18n.message('userid or e-mail'));
             this.passwordInput = new api.ui.PasswordInput('form-item');
-            this.passwordInput.setPlaceholder('password');
+            this.passwordInput.setPlaceholder(api.i18n.message('password'));
             this.userIdInput.getEl().addEventListener('keyup', (event:KeyboardEvent) => {
                 this.onInputTyped(event);
             });
@@ -34,7 +34,7 @@ module app.login {
                 this.onInputTyped(event);
             });
 
-            this.loginButton = new api.ui.Button('Log in');
+            this.loginButton = new api.ui.Button(api.i18n.message('Log in'));
             this.loginButton.addClass('login-button').addClass('disabled');
             this.loginButton.setClickListener((event) => {
                 this.loginButtonClick();
