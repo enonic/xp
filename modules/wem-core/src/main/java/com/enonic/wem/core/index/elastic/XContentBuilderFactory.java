@@ -1,5 +1,6 @@
 package com.enonic.wem.core.index.elastic;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.elasticsearch.common.xcontent.XContentBuilder;
@@ -7,12 +8,14 @@ import org.elasticsearch.common.xcontent.XContentFactory;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 import com.enonic.wem.core.index.IndexConstants;
 import com.enonic.wem.core.index.IndexException;
 import com.enonic.wem.core.index.document.AbstractIndexDocumentItem;
 import com.enonic.wem.core.index.document.IndexDocument;
+import com.enonic.wem.core.index.document.IndexDocumentOrderbyItem;
 
 public class XContentBuilderFactory
 {
@@ -38,7 +41,7 @@ public class XContentBuilderFactory
     }
 
     private static XContentBuilder startBuilder()
-    throws Exception
+        throws Exception
     {
         final XContentBuilder result = XContentFactory.jsonBuilder();
         result.startObject();
@@ -58,7 +61,7 @@ public class XContentBuilderFactory
     }
 
     private static void addCollectionInfo( final XContentBuilder builder, final IndexDocument indexDocument )
-    throws Exception
+        throws Exception
     {
         final String collection = indexDocument.getCollection();
 
@@ -69,7 +72,10 @@ public class XContentBuilderFactory
     private static void adddIndexDocumentItems( final XContentBuilder result, final IndexDocument indexDocument )
         throws Exception
     {
-        final Multimap<String, Object> fieldValueMap = ArrayListMultimap.create();
+        final Multimap<String, Object> fieldMultiValueMap = ArrayListMultimap.create();
+
+        // OrderBy should only have one value, add to own one-value-map
+        final Map<String, Object> orderByMap = Maps.newHashMap();
 
         final Set<AbstractIndexDocumentItem> indexDocumentItems = indexDocument.getIndexDocumentItems();
 
@@ -77,12 +83,24 @@ public class XContentBuilderFactory
         {
             final String fieldName = IndexFieldNameResolver.resolve( item );
 
-            fieldValueMap.put( fieldName, item.getValue() );
+            if ( item instanceof IndexDocumentOrderbyItem )
+            {
+                orderByMap.put( fieldName, item.getValue() );
+            }
+            else
+            {
+                fieldMultiValueMap.put( fieldName, item.getValue() );
+            }
         }
 
-        for ( String field : fieldValueMap.keySet() )
+        for ( String field : fieldMultiValueMap.keySet() )
         {
-            addField( result, field, fieldValueMap.get( field ) );
+            addField( result, field, fieldMultiValueMap.get( field ) );
+        }
+
+        for ( String field : orderByMap.keySet() )
+        {
+            addField( result, field, orderByMap.get( field ) );
         }
     }
 

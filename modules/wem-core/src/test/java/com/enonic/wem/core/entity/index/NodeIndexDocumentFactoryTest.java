@@ -1,10 +1,13 @@
 package com.enonic.wem.core.entity.index;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.junit.Test;
+
+import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.DataPath;
@@ -160,6 +163,31 @@ public class NodeIndexDocumentFactoryTest
         assertNotNull( getItemWithName( indexDocument, IndexDocumentItemPath.from( "a_b_d" ), IndexValueType.DATETIME ) );
     }
 
+    @Test
+    public void create_for_properties_with_multiple_values()
+        throws Exception
+    {
+        RootDataSet rootDataSet = new RootDataSet();
+        rootDataSet.addProperty( DataPath.from( "a.b.c" ), new Value.Double( 2.0 ) );
+        rootDataSet.addProperty( DataPath.from( "a.b.c" ), new Value.Double( 3.0 ) );
+
+        Node node = Node.newNode().
+            id( EntityId.from( "myId" ) ).
+            rootDataSet( rootDataSet ).
+            build();
+
+        final Collection<IndexDocument> indexDocuments = factory.create( node );
+
+        assertTrue( indexDocuments.iterator().hasNext() );
+        final IndexDocument next = indexDocuments.iterator().next();
+
+        final Set<AbstractIndexDocumentItem> numberItems =
+            getItemsWithName( next, IndexDocumentItemPath.from( "a_b_c" ), IndexValueType.NUMBER );
+
+        assertEquals( 2, numberItems.size() );
+
+    }
+
     private IndexDocument getIndexDocumentOfType( final Collection<IndexDocument> indexDocuments, final IndexType indexType )
     {
         for ( IndexDocument indexDocument : indexDocuments )
@@ -185,5 +213,23 @@ public class NodeIndexDocumentFactoryTest
 
         return null;
     }
+
+    public Set<AbstractIndexDocumentItem> getItemsWithName( final IndexDocument indexDocument, final IndexDocumentItemPath path,
+                                                            final IndexValueType baseType )
+    {
+
+        Set<AbstractIndexDocumentItem> items = Sets.newHashSet();
+
+        for ( AbstractIndexDocumentItem item : indexDocument.getIndexDocumentItems() )
+        {
+            if ( item.getPath().equals( path.toString() ) && item.getIndexBaseType().equals( baseType ) )
+            {
+                items.add( item );
+            }
+        }
+
+        return items;
+    }
+
 
 }

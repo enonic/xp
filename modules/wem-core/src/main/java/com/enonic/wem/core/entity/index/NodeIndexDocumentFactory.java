@@ -99,19 +99,6 @@ public class NodeIndexDocumentFactory
                 factory.create( CREATED_TIME_PROPERTY, new Value.DateTime( node.getCreatedTime() ), metadataPropertyIndexConfig ) );
         }
 
-      /*  if ( node.path() != null )
-        {
-            builder.addEntries(
-                factory.create( PATH_PROPERTY_PATH, new Value.String( node.path().toString() ), metadataPropertyIndexConfig ) );
-        }
-
-        if ( node.parent() != null )
-        {
-            builder.addEntries(
-                factory.create( PARENT_PROPERTY_PATH, new Value.String( node.parent().toString() ), metadataPropertyIndexConfig ) );
-        }
-        */
-
         if ( node.getCreator() != null )
         {
             builder.addEntries( factory.create( CREATOR_PROPERTY_PATH, new Value.String( node.getCreator().getQualifiedName() ),
