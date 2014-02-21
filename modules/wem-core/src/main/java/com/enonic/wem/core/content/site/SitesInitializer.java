@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
+import com.enonic.wem.api.command.content.page.CreatePageDescriptor;
 import com.enonic.wem.api.command.content.page.part.CreatePartDescriptor;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -13,6 +14,7 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
+import com.enonic.wem.api.content.page.PageDescriptorService;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
@@ -21,6 +23,7 @@ import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartComponent;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
+import com.enonic.wem.api.content.page.part.PartDescriptorService;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.site.CreateSiteTemplateParam;
 import com.enonic.wem.api.content.site.ModuleConfigs;
@@ -107,6 +110,11 @@ public class SitesInitializer
     @Inject
     protected ModuleService moduleService;
 
+    @Inject
+    protected PartDescriptorService partDescriptorService;
+    @Inject
+    protected PageDescriptorService pageDescriptorService;
+
     protected SitesInitializer()
     {
         super( 13, "sites" );
@@ -155,7 +163,7 @@ public class SitesInitializer
 
     private void initializeDescriptors()
     {
-        landingPageDescriptor = client.execute( page().descriptor().page().create().
+        CreatePageDescriptor command = new CreatePageDescriptor().
             displayName( "Landing page" ).
             name( "landing-page" ).
             key( PageDescriptorKey.from( DEMO_MODULE_KEY, LANDING_PAGE_DESCRIPTOR_NAME ) ).
@@ -166,9 +174,10 @@ public class SitesInitializer
                 build() ).
             config( newForm().
                 addFormItem( newInput().name( "background-color" ).label( "Background color" ).inputType( InputTypes.TEXT_LINE ).build() ).
-                build() ) );
+                build() );
+        landingPageDescriptor = pageDescriptorService.create( command );
 
-        productGridPageDescriptor = client.execute( page().descriptor().page().create().
+        command = new CreatePageDescriptor().
             displayName( "Product grid" ).
             name( "product-grid" ).
             key( PageDescriptorKey.from( DEMO_MODULE_KEY, PRODUCT_GRID_DESCRIPTOR_NAME ) ).
@@ -184,15 +193,16 @@ public class SitesInitializer
                     name( "columns" ).label( "Columns" ).
                     maximumOccurrences( 1 ).minimumOccurrences( 1 ).
                     inputType( InputTypes.TEXT_LINE ).build() ).
-                build() ) );
+                build() );
+        productGridPageDescriptor = pageDescriptorService.create( command );
 
         final ComponentDescriptorName partName = new ComponentDescriptorName( "mypart" );
-        final CreatePartDescriptor createPartDescriptor = page().descriptor().part().create().
+        final CreatePartDescriptor createPartDescriptor = new CreatePartDescriptor().
             name( partName ).
             key( PartDescriptorKey.from( DEMO_MODULE_KEY, partName ) ).
             displayName( "My part" ).
             config( Form.newForm().build() );
-        myPartDescriptor = client.execute( createPartDescriptor );
+        myPartDescriptor = partDescriptorService.create( createPartDescriptor );
     }
 
     private void initializeSiteTemplates()

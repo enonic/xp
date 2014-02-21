@@ -4,11 +4,11 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.content.page.layout.GetLayoutDescriptorsByModules;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
+import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptors;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleFileEntry;
@@ -18,8 +18,6 @@ import com.enonic.wem.api.module.Modules;
 import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.core.command.CommandHandler;
 
-import static com.enonic.wem.api.command.Commands.page;
-
 public class GetLayoutDescriptorsByModulesHandler
     extends CommandHandler<GetLayoutDescriptorsByModules>
 {
@@ -28,6 +26,8 @@ public class GetLayoutDescriptorsByModulesHandler
     private static final ResourcePath LAYOUT_DESCRIPTOR_XML = ResourcePath.from( "layout.xml" );
 
     private ModuleService moduleService;
+
+    private LayoutDescriptorService layoutDescriptorService;
 
     @Override
     public void handle()
@@ -52,14 +52,13 @@ public class GetLayoutDescriptorsByModulesHandler
                 continue;
             }
             final ModuleFileEntry componentFolder = root.getEntry( COMPONENT_FOLDER );
-            final Client client = context.getClient();
             for ( ModuleFileEntry descriptorFolder : componentFolder )
             {
                 if ( descriptorFolder.contains( LAYOUT_DESCRIPTOR_XML ) )
                 {
                     final ComponentDescriptorName descriptorName = new ComponentDescriptorName( descriptorFolder.getName() );
                     final LayoutDescriptorKey key = LayoutDescriptorKey.from( module.getModuleKey(), descriptorName );
-                    final LayoutDescriptor layoutDescriptor = client.execute( page().descriptor().layout().getByKey( key ) );
+                    final LayoutDescriptor layoutDescriptor = layoutDescriptorService.getByKey( key );
                     if ( layoutDescriptor != null )
                     {
                         layoutDescriptors.add( layoutDescriptor );
@@ -75,5 +74,11 @@ public class GetLayoutDescriptorsByModulesHandler
     public void setModuleService( final ModuleService moduleService )
     {
         this.moduleService = moduleService;
+    }
+
+    @Inject
+    public void setLayoutDescriptorService( final LayoutDescriptorService layoutDescriptorService )
+    {
+        this.layoutDescriptorService = layoutDescriptorService;
     }
 }

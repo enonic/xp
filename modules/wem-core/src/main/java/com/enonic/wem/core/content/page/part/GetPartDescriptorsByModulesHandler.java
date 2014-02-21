@@ -4,11 +4,11 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.content.page.part.GetPartDescriptorsByModules;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
+import com.enonic.wem.api.content.page.part.PartDescriptorService;
 import com.enonic.wem.api.content.page.part.PartDescriptors;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleFileEntry;
@@ -18,8 +18,6 @@ import com.enonic.wem.api.module.Modules;
 import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.core.command.CommandHandler;
 
-import static com.enonic.wem.api.command.Commands.page;
-
 public class GetPartDescriptorsByModulesHandler
     extends CommandHandler<GetPartDescriptorsByModules>
 {
@@ -28,6 +26,8 @@ public class GetPartDescriptorsByModulesHandler
     private static final ResourcePath PART_DESCRIPTOR_XML = ResourcePath.from( "part.xml" );
 
     private ModuleService moduleService;
+
+    private PartDescriptorService partDescriptorService;
 
     @Override
     public void handle()
@@ -52,14 +52,13 @@ public class GetPartDescriptorsByModulesHandler
                 continue;
             }
             final ModuleFileEntry componentFolder = root.getEntry( COMPONENT_FOLDER );
-            final Client client = context.getClient();
             for ( ModuleFileEntry descriptorFolder : componentFolder )
             {
                 if ( descriptorFolder.contains( PART_DESCRIPTOR_XML ) )
                 {
                     final ComponentDescriptorName descriptorName = new ComponentDescriptorName( descriptorFolder.getName() );
                     final PartDescriptorKey key = PartDescriptorKey.from( module.getModuleKey(), descriptorName );
-                    final PartDescriptor partDescriptor = client.execute( page().descriptor().part().getByKey( key ) );
+                    final PartDescriptor partDescriptor = partDescriptorService.getByKey( key );
                     if ( partDescriptor != null )
                     {
                         partDescriptors.add( partDescriptor );
@@ -75,5 +74,11 @@ public class GetPartDescriptorsByModulesHandler
     public void setModuleService( final ModuleService moduleService )
     {
         this.moduleService = moduleService;
+    }
+
+    @Inject
+    public void setPartDescriptorService( final PartDescriptorService partDescriptorService )
+    {
+        this.partDescriptorService = partDescriptorService;
     }
 }

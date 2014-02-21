@@ -1,19 +1,22 @@
 package com.enonic.wem.portal.content.page;
 
 
+import javax.inject.Inject;
+
 import com.enonic.wem.api.content.page.Descriptor;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
-
-import static com.enonic.wem.api.command.Commands.page;
+import com.enonic.wem.api.content.page.part.PartDescriptorService;
 
 public final class PartRenderer
     extends PageComponentRenderer
 {
+    @Inject
+    protected PartDescriptorService partDescriptorService;
 
     @Override
     protected Descriptor getComponentDescriptor( final DescriptorKey descriptorKey )
     {
-        return this.client.execute( page().descriptor().part().getByKey( (PartDescriptorKey) descriptorKey ) );
+        return partDescriptorService.getByKey( (PartDescriptorKey) descriptorKey );
     }
 }
