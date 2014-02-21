@@ -43,8 +43,16 @@ public class AggregationBuilderFactory
         final TermsBuilder termsBuilder = new TermsBuilder( aggregationQuery.getName() ).
             minDocCount( 0 ).
             field( fieldName ).
-            size( aggregationQuery.getSize() ).
-            order( Terms.Order.term( false ) );
+            size( aggregationQuery.getSize() );
+
+        if ( aggregationQuery.getOrderType() == TermsAggregationQuery.Type.TERM )
+        {
+            termsBuilder.order( Terms.Order.term( aggregationQuery.getOrderDirection().equals( TermsAggregationQuery.Direction.ASC ) ) );
+        }
+        else
+        {
+            termsBuilder.order( Terms.Order.count( aggregationQuery.getOrderDirection().equals( TermsAggregationQuery.Direction.ASC ) ) );
+        }
 
         return termsBuilder;
     }
