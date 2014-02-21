@@ -8,13 +8,10 @@ module api.form.inputtype.content.image {
 
         constructor() {
             super({
-                title: new api.ui.dialog.ModalDialogHeader("Image uploader"),
-                width: 800,
-                height: 520,
-                idPrefix: "UploadDialog"
+                title: new api.ui.dialog.ModalDialogHeader("Image uploader")
             });
 
-            this.getEl().addClass("image-selector-upload-dialog");
+            this.getEl().addClass("upload-dialog");
 
             var description = new api.dom.PEl();
             description.getEl().setInnerHtml("Images uploaded will be embedded directly in this content, you may move them to the library later if desired");

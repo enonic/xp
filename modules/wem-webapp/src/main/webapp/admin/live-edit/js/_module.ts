@@ -11,6 +11,8 @@
 ///<reference path='component/ComponentType.ts' />
 ///<reference path='component/ComponentPlaceholder.ts' />
 ///<reference path='component/ImagePlaceholder.ts' />
+///<reference path='component/PartPlaceholder.ts' />
+///<reference path='component/LayoutPlaceholder.ts' />
 ///<reference path='component/helper/DragHelper.ts' />
 ///<reference path='component/helper/ComponentResizeObserver.ts' />
 ///<reference path='component/LoadingOverlay.ts' />
@@ -43,6 +45,7 @@
 ///<reference path='ui/contextmenu/menuitem/EditMenuItem.ts' />
 ///<reference path='ui/contextmenu/menuitem/ResetMenuItem.ts' />
 ///<reference path='ui/contextmenu/menuitem/EmptyMenuItem.ts' />
+///<reference path='ui/contextmenu/menuitem/EmptyRegionMenuItem.ts' />
 ///<reference path='ui/contextmenu/menuitem/ViewMenuItem.ts' />
 ///<reference path='ui/contextmenu/menuitem/RemoveMenuItem.ts' />
 

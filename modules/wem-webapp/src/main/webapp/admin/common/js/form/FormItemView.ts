@@ -54,12 +54,6 @@ module api.form {
             return new api.form.ValidationRecording();
         }
 
-        hasValidOccurrences(): boolean {
-
-            // Default true to avoid having to implement method in Layout-s.
-            return true;
-        }
-
         giveFocus(): boolean {
             return false;
         }

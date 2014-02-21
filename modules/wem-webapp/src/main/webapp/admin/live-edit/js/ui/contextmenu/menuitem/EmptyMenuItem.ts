@@ -5,12 +5,12 @@ module LiveEdit.ui.contextmenu.menuitem {
 
     export class EmptyMenuItem extends LiveEdit.ui.contextmenu.menuitem.BaseMenuItem {
 
-        constructor(menu) {
+        constructor(menu: LiveEdit.ui.contextmenu.ContextMenu) {
             super({
                 text: 'Empty',
                 name: 'clear',
-                handler: (event:Event) => {
-                    this.onEmptyRegion();
+                handler: (event: Event) => {
+                    this.onEmptyComponent();
                     event.stopPropagation();
                 }
             }, menu);
@@ -18,14 +18,22 @@ module LiveEdit.ui.contextmenu.menuitem {
             this.menu = menu;
         }
 
-        private onEmptyRegion() {
-            var region:JQuery = this.menu.selectedComponent.getElement();
+        private onEmptyComponent() {
+            var selectedComponent = this.menu.selectedComponent;
+            var componentEl: JQuery = selectedComponent.getElement();
+            var component = LiveEdit.component.Component.fromJQuery(componentEl);
 
             LiveEdit.component.Selection.deselect();
 
-            $('[data-live-edit-type]', region).remove();
+            $(window).trigger('componentReset.liveEdit', [selectedComponent]);
 
-            $(window).trigger('componentRemoved.liveEdit', [this.menu.selectedComponent]);
+            var type = selectedComponent.getComponentType().getType();
+            var emptyComponent = LiveEdit.component.ComponentPlaceholder.fromComponent(type);
+            emptyComponent.setName(component.getName());
+            emptyComponent.getEl().setData('live-edit-component', component.getName());
+
+            componentEl.replaceWith(emptyComponent.getHTMLElement());
+            emptyComponent.init();
         }
     }
 }

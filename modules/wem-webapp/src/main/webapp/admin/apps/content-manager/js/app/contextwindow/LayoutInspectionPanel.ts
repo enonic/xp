@@ -25,11 +25,12 @@ module app.contextwindow {
             var layoutDescriptorLoader = new api.content.page.layout.LayoutDescriptorLoader(layoutDescriptorsRequest);
             this.descriptorComboBox = new api.content.page.layout.LayoutDescriptorComboBox(layoutDescriptorLoader);
 
-            var firstLoad = (modules) => {
+            var onDescriptorsLoaded = () => {
                 this.descriptorComboBox.setValue(this.getLiveFormPanel().getDefaultLayoutDescriptor().getKey().toString());
-                this.descriptorComboBox.removeLoadedListener(firstLoad);
+                this.descriptorComboBox.removeLoadedListener(onDescriptorsLoaded); // execute only on the first loaded event
             };
-            this.descriptorComboBox.addLoadedListener(firstLoad);
+            this.descriptorComboBox.addLoadedListener(onDescriptorsLoaded);
+
             this.descriptorComboBox.addOptionSelectedListener((option: api.ui.combobox.Option<LayoutDescriptor>) => {
                 if (this.layoutComponent) {
                     var selectedDescriptor = option.displayValue.getKey();
@@ -45,7 +46,10 @@ module app.contextwindow {
 
             var descriptorKey = component.getDescriptor();
             if (descriptorKey) {
+                var layoutDescriptorOption: api.ui.combobox.Option<LayoutDescriptor> = this.descriptorComboBox.getSelectedData()[0];
+                var layoutDescriptor = layoutDescriptorOption.displayValue;
                 this.descriptorComboBox.setDescriptor(descriptorKey);
+                this.setupComponentForm(component, layoutDescriptor);
             }
         }
 

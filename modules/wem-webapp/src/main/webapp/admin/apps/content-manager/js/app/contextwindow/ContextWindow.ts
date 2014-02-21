@@ -85,8 +85,8 @@ module app.contextwindow {
             this.selectPanel(this.inspectionPanel);
         }
 
-        public inspectPage(page: api.content.Content) {
-            this.inspectionPanel.inspectPage(page);
+        public inspectPage(page: api.content.Content, pageTemplate: api.content.page.PageTemplate, pageDescriptor: api.content.page.PageDescriptor) {
+            this.inspectionPanel.inspectPage(page, pageTemplate, pageDescriptor);
             this.selectPanel(this.inspectionPanel);
         }
 

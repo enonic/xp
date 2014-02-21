@@ -183,11 +183,6 @@ module api.form.formitemset {
             return this.formItemSetOccurrences.getAttachments();
         }
 
-        hasValidOccurrences(): boolean {
-
-            return this.getData().length >= this.formItemSet.getOccurrences().getMaximum();
-        }
-
         private resolveValidationRecordingPath(): api.form.ValidationRecordingPath {
 
             return new api.form.ValidationRecordingPath(this.getParentDataPath(), this.formItemSet.getName());

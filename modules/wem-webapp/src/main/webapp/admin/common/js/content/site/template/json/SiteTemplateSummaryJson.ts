@@ -26,12 +26,7 @@ module api.content.site.template.json {
 
         contentTypeFilter:ContentTypeFilterJson;
 
-        pageTemplates:string[];
+        pageTemplateKeys:string[];
 
-        layoutTemplates:string[];
-
-        partTemplates:string[];
-
-        imageTemplates:string[];
     }
 }

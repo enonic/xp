@@ -22,6 +22,7 @@ module app.wizard {
         private pageContent: api.content.Content;
         private pageTemplate: api.content.page.PageTemplate;
         private pageRegions: api.content.page.PageRegions;
+        private pageDescriptor: api.content.page.PageDescriptor;
 
         private pageNeedsReload: boolean;
         private pageLoading: boolean;
@@ -60,7 +61,8 @@ module app.wizard {
                 var defaultImageDescrResolved = this.resolveDefaultImageDescriptor(siteModules);
                 var defaultPartDescrResolved = this.resolveDefaultPartDescriptor(siteModules);
                 var defaultLayoutDescrResolved = this.resolveDefaultLayoutDescriptor(siteModules);
-                var defaultDescriptorsResolved: Q.Promise<any>[] = [defaultImageDescrResolved, defaultPartDescrResolved, defaultLayoutDescrResolved];
+                var defaultDescriptorsResolved: Q.Promise<any>[] = [defaultImageDescrResolved, defaultPartDescrResolved,
+                    defaultLayoutDescrResolved];
 
                 defaultImageDescrResolved.done((imageDescriptor: api.content.page.image.ImageDescriptor)=> {
                     this.defaultImageDescriptor = imageDescriptor;
@@ -104,9 +106,9 @@ module app.wizard {
                         this.setupContextWindow();
                         deferred.resolve(null);
                     }).catch(()=> {
-                            console.log("Error while loading page: ", arguments);
-                            deferred.reject(arguments);
-                        }).done();
+                        console.log("Error while loading page: ", arguments);
+                        deferred.reject(arguments);
+                    }).done();
                 }
                 else {
                     deferred.resolve(null);
@@ -164,34 +166,40 @@ module app.wizard {
             return deferred.promise;
         }
 
-        renderExisting(content: api.content.Content, pageTemplate: api.content.page.PageTemplate) {
+        setPage(content: api.content.Content, pageTemplate: api.content.page.PageTemplate) {
 
-            console.log("LiveFormPanel.renderExisting() ...");
+            console.log("LiveFormPanel.setPage() ...");
 
             api.util.assertNotNull(content, "Expected content not be null");
             api.util.assertNotNull(pageTemplate, "Expected content not be null");
             api.util.assert(content.isPage(), "Expected content to be a page: " + content.getPath().toString());
 
             this.pageContent = content;
+            var pageTemplateChanged = this.pageTemplate && this.pageTemplate.getKey().toString() != pageTemplate.getKey().toString();
             this.pageTemplate = pageTemplate;
+
             this.pageUrl = this.baseUrl + content.getContentId().toString();
 
-            console.log("LiveFormPanel.renderExisting() ... pageSkipReload = " + this.pageSkipReload);
-
             if (!this.pageSkipReload) {
-                this.pageRegions = this.resolvePageRegions();
+                if (pageTemplateChanged) {
+                    console.log( "pageTemplateChanged, resetting regions to regions of template" );
+                    this.pageRegions = this.pageTemplate.getRegions();
+                } else {
+                    this.pageRegions = this.resolvePageRegions();
+                }
+                this.resolvePageDescriptor(pageTemplate);
             }
 
             if (!this.isVisible()) {
 
                 this.pageNeedsReload = true;
 
-                console.log("LiveFormPanel.renderExisting() ... not visible, returning");
+                console.log("LiveFormPanel.setPage() ... not visible, returning");
                 return;
             }
 
             if (this.pageSkipReload == true) {
-                console.log("LiveFormPanel.renderExisting() ... skipReload is true, returning");
+                console.log("LiveFormPanel.setPage() ... skipReload is true, returning");
                 return;
             }
 
@@ -205,13 +213,23 @@ module app.wizard {
                 }).done();
         }
 
+        private resolvePageDescriptor(pageTemplate: api.content.page.PageTemplate) {
+            new api.content.page.GetPageDescriptorByKeyRequest(pageTemplate.getDescriptorKey()).
+                sendAndParse().
+                done((pageDescriptor: api.content.page.PageDescriptor) => {
+                    this.pageDescriptor = pageDescriptor;
+                });
+        }
+
         private resolvePageRegions(): api.content.page.PageRegions {
 
             var page = this.pageContent.getPage();
             if (page.hasRegions()) {
+                console.log( "resolvePageRegions.. from page" );
                 return page.getRegions();
             }
             else {
+                console.log( "resolvePageRegions.. from page template" );
                 return this.pageTemplate.getRegions();
             }
         }
@@ -320,7 +338,7 @@ module app.wizard {
                 });
             return d.promise;
         }
-        
+
         private onComponentSelected(pathAsString: string) {
             var componentPath = api.content.page.ComponentPath.fromString(pathAsString);
             var component = this.pageRegions.getComponent(componentPath);
@@ -334,7 +352,7 @@ module app.wizard {
         }
 
         private onPageSelected() {
-            this.contextWindow.inspectPage(this.pageContent);
+            this.contextWindow.inspectPage(this.pageContent, this.pageTemplate, this.pageDescriptor);
         }
 
         private onContentSelected(contentIdStr: string) {
@@ -342,17 +360,22 @@ module app.wizard {
             this.contextWindow.inspectContent(null);
         }
 
+        private onComponentReset(pathAsString: string) {
+            var componentPath = api.content.page.ComponentPath.fromString(pathAsString);
+            this.pageRegions.removeComponent(componentPath);
+        }
+
         private liveEditListen() {
-            this.liveEditJQuery(this.liveEditWindow).on('selectComponent.liveEdit',
-                (event, component?) => {
-                    var type = component.componentType.typeName;
-                    if (type === 'content') {
-                        this.onContentSelected(component.name);
-                    }
-                });
 
             this.liveEditJQuery(this.liveEditWindow).on('componentSelect.liveEdit',
-                (event, pathAsString?) => {
+                (event, pathAsString?, component?) => {
+                    if (component) {
+                        if (component.isEmpty()) {
+                            this.contextWindow.hide();
+                        } else {
+                            this.contextWindow.show();
+                        }
+                    }
                     this.onComponentSelected(pathAsString);
                 });
 
@@ -367,21 +390,33 @@ module app.wizard {
                 });
 
             this.liveEditJQuery(this.liveEditWindow).on('deselectComponent.liveEdit', (event) => {
+                this.contextWindow.show();
                 this.contextWindow.clearSelection();
             });
 
             this.liveEditJQuery(this.liveEditWindow).on('componentRemoved.liveEdit', (event, component?) => {
+                this.contextWindow.show();
                 if (component) {
                     this.pageRegions.removeComponent(api.content.page.ComponentPath.fromString(component.getComponentPath()));
                     this.contextWindow.clearSelection();
                 }
             });
-            this.liveEditJQuery(this.liveEditWindow).on('sortableStop.liveEdit', (event) => {
-                new app.contextwindow.LiveEditDragStopEvent().fire();
-                this.contextWindow.show();
+            this.liveEditJQuery(this.liveEditWindow).on('componentReset.liveEdit', (event, component?) => {
+                if (component) {
+                    this.contextWindow.clearSelection();
+                    this.onComponentReset(component.getComponentPath());
+                }
+            });
+            this.liveEditJQuery(this.liveEditWindow).on('sortableStop.liveEdit', (event, component?) => {
+                if (component) {
+                    if (!component.isEmpty()) {
+                        this.contextWindow.show();
+                    }
+                } else {
+                    this.contextWindow.show();
+                }
             });
             this.liveEditJQuery(this.liveEditWindow).on('sortableStart.liveEdit', (event) => {
-                new app.contextwindow.LiveEditDragStartEvent().fire();
                 this.contextWindow.hide();
             });
             this.liveEditJQuery(this.liveEditWindow).on('sortableUpdate.liveEdit', (event, componentEl?) => {

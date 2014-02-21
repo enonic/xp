@@ -35,7 +35,11 @@ module app.launcher {
                 }
             });
             this.lostConnectionDetector = new app.launcher.LostConnectionDetector();
-            this.lostConnectionDetector.startPolling();
+            if (CONFIG.baseUri.search('localhost') == -1) {
+                this.lostConnectionDetector.startPolling();
+            } else {
+                console.log( "LostConnectionDetector disabled when client runs against localhost");
+            }
             api.dom.Body.get().appendChild(this.adminApplicationFrames);
         }
 

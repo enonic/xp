@@ -48,7 +48,7 @@ module app.browse.filter {
                         this.resetFacets();
                     },
 
-                    onSearch: (searchInputValues: SearchInputValues)=> {
+                    onSearch: (searchInputValues: SearchInputValues, elementChanged?: api.dom.Element)=> {
 
                         var isClean = !this.hasFilterSet();
                         if (isClean) {
@@ -74,7 +74,11 @@ module app.browse.filter {
 
                                 var result: ContentQueryResultJson<ContentSummaryJson> = jsonResponse.getResult();
 
-                                this.updateAggregations(Aggregation.fromJsonArray(result.aggregations));
+                                var doUpdateAll = true;
+                                if (elementChanged instanceof api.aggregation.BucketView) {
+                                    doUpdateAll = false;
+                                }
+                                 this.updateAggregations(Aggregation.fromJsonArray(result.aggregations), doUpdateAll);
 
                                 new ContentBrowseSearchEvent(result.contents).fire();
                             });
@@ -109,9 +113,9 @@ module app.browse.filter {
 
         private appendFulltextSearch(searchInputValues: SearchInputValues, contentQuery: ContentQuery) {
 
-            var fulltext: string = searchInputValues.getTextSearchFieldValue();
-            var fulltextExpression: api.query.expr.Expression = api.query.FulltextFunctionFactory.create(fulltext);
-            var query: QueryExpr = new QueryExpr(fulltextExpression);
+            var searchString: string = searchInputValues.getTextSearchFieldValue();
+            var fulltextSearchExpression: api.query.expr.Expression = api.query.FulltextSearchExpressionFactory.create(searchString);
+            var query: QueryExpr = new QueryExpr(fulltextSearchExpression);
             contentQuery.setQueryExpr(query);
         }
 

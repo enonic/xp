@@ -4,6 +4,8 @@ declare var CONFIG;
 
 declare var $liveEdit;
 
+var siteTemplate;
+
 (function ($) {
     'use strict';
 

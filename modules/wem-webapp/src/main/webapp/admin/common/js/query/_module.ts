@@ -1,5 +1,5 @@
 ///<reference path='SearchInputValues.ts' />
-///<reference path='FulltextFunctionFactory.ts' />
+///<reference path='FulltextSearchExpressionFactory.ts' />
 
 
 

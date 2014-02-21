@@ -53,8 +53,8 @@ module app.contextwindow {
             this.showInspectionPanel(this.noSelectionPanel);
         }
 
-        public inspectPage(page: api.content.Content) {
-            this.pageInspectionPanel.setPage(page);
+        public inspectPage(page: api.content.Content, pageTemplate: api.content.page.PageTemplate, pageDescriptor: api.content.page.PageDescriptor) {
+            this.pageInspectionPanel.setPage(page, pageTemplate, pageDescriptor);
             this.showInspectionPanel(this.pageInspectionPanel);
         }
 

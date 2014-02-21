@@ -1,21 +1,25 @@
 .modal-dialog {
   display: none;
   background-color: white;
-  padding: 20px;
+  padding: 30px;
+  min-width: 400px;
 
-  .content-panel {
+  .dialog-header {
     .clearfix();
-    margin-top: 20px;
     margin-bottom: 20px;
+
+    h2 {
+      line-height: 0.8em;
+    }
   }
 
-  .button-row {
+  .dialog-content {
+    .clearfix();
+  }
 
-    position: absolute;
-    bottom: 0;
-    right: 20px;
-    width: 100%;
-    height: 50px;
+  .dialog-buttons {
+    .clearfix();
+    margin-top: 20px;
 
     button {
       font-family: @admin-font-family;
@@ -28,7 +32,7 @@
 
       display: inline-block;
       float: right;
-      margin-left: 11px;
+      margin: 0 0 0 11px;
 
       &:hover {
         cursor: pointer;
@@ -36,4 +40,12 @@
       }
     }
   }
+}
+
+.upload-dialog {
+  width: 800px;
+}
+
+.confirmation-dialog {
+  width: 500px;
 }

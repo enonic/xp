@@ -126,12 +126,8 @@ module api.aggregation {
 
                         var bucketAggregationView: api.aggregation.BucketAggregationView = <api.aggregation.BucketAggregationView>existingAggregationView;
                         bucketAggregationView.update(aggregation);
-
                     }
-                    // else if (existingFacetView instanceof QueryFacetView) {
-                    //     var queryFacetView: QueryFacetView = <QueryFacetView>existingFacetView;
-                    //     queryFacetView.update(facet);
-                    // }
+                    // Here be Metric-aggregations
                 }
             });
         }

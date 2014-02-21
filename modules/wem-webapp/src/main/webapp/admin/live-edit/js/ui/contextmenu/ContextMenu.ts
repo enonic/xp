@@ -9,7 +9,7 @@ module LiveEdit.ui.contextmenu {
 
         hidden = true;
 
-        menuItems:any[] = [];
+        menuItems: LiveEdit.ui.contextmenu.menuitem.BaseMenuItem[] = [];
 
         constructor() {
             super();
@@ -79,7 +79,6 @@ module LiveEdit.ui.contextmenu {
         private fadeOutAndHide():void {
             this.getEl().fadeOut(500, () => {
                 this.hide();
-                LiveEdit.component.Selection.deselect();
             });
             this.selectedComponent = null;
         }
@@ -100,6 +99,7 @@ module LiveEdit.ui.contextmenu {
             this.menuItems.push(new menuItem.InsertMenuItem(this));
             this.menuItems.push(new menuItem.ResetMenuItem(this));
             this.menuItems.push(new menuItem.EmptyMenuItem(this));
+            this.menuItems.push(new menuItem.EmptyRegionMenuItem(this));
             this.menuItems.push(new menuItem.OpenContentMenuItem(this));
             this.menuItems.push(new menuItem.ViewMenuItem(this));
             this.menuItems.push(new menuItem.EditMenuItem(this));

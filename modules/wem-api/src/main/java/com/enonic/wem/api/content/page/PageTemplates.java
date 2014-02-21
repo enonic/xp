@@ -2,6 +2,8 @@ package com.enonic.wem.api.content.page;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -10,6 +12,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.module.ResourcePath;
@@ -24,7 +27,7 @@ public final class PageTemplates
 
     private PageTemplates( final ImmutableList<PageTemplate> list )
     {
-        super( list );
+        super( sort( list ) );
         this.templatesByName = Maps.uniqueIndex( list, new ToNameFunction() );
         this.templatesByPath = Maps.uniqueIndex( list, new ToPathFunction() );
     }
@@ -69,6 +72,26 @@ public final class PageTemplates
     public static PageTemplates from( final Collection<? extends PageTemplate> templates )
     {
         return new PageTemplates( ImmutableList.copyOf( templates ) );
+    }
+
+    private static ImmutableList<PageTemplate> sort( final ImmutableList<PageTemplate> unordered )
+    {
+        final Comparator<PageTemplate> comparator = new Comparator<PageTemplate>()
+        {
+            @Override
+            public int compare( final PageTemplate input1, final PageTemplate input2 )
+            {
+                String displayName1 = input1.getDisplayName();
+                String displayName2 = input2.getDisplayName();
+
+                return displayName1 == null ? -1 : displayName2 == null ? 1 : displayName1.compareTo( displayName2 );
+            }
+        };
+
+        final List<PageTemplate> result = Lists.newArrayList( unordered );
+        Collections.sort( result, comparator );
+
+        return ImmutableList.copyOf( result );
     }
 
     private final static class ToNameFunction

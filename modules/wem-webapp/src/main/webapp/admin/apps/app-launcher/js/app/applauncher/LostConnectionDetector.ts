@@ -9,7 +9,7 @@ module app.launcher {
 
         private listeners:LostConnectionDetectorListener[] = [];
 
-        constructor(pollIntervalMs:number = 5000000) {
+        constructor(pollIntervalMs:number = 5000) {
             this.pollIntervalMs = pollIntervalMs;
 
             this.addListener(api.app.AppManager.instance());

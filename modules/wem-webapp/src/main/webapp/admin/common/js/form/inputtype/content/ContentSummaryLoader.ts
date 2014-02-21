@@ -35,7 +35,15 @@ module api.form.inputtype.content {
                 return;
             }
 
-            var fulltextExpression: api.query.expr.Expression = api.query.FulltextFunctionFactory.create(searchString);
+            this.loaderHelper.search(searchString);
+        }
+
+        private doRequest(searchString: string) {
+            this.isLoading = true;
+            this.notifyLoading();
+
+
+            var fulltextExpression: api.query.expr.Expression = api.query.FulltextSearchExpressionFactory.create(searchString);
             var queryExpr: api.query.expr.QueryExpr = new api.query.expr.QueryExpr(fulltextExpression);
             this.contentQuery.setQueryExpr(queryExpr)
             this.loaderHelper.search(searchString);

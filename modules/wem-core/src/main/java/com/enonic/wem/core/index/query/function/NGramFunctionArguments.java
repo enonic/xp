@@ -3,10 +3,10 @@ package com.enonic.wem.core.index.query.function;
 import java.util.List;
 
 import com.enonic.wem.api.query.expr.ValueExpr;
+import com.enonic.wem.core.index.query.IndexQueryFieldNameResolver;
 
 public class NGramFunctionArguments
     extends AbstractSimpleQueryStringFunction
-
 {
     @Override
     public String getFunctionName()
@@ -19,4 +19,9 @@ public class NGramFunctionArguments
         super( arguments );
     }
 
+    @Override
+    public String resolveQueryFieldName( final String baseFieldName )
+    {
+        return IndexQueryFieldNameResolver.resolveNGramFieldName( baseFieldName );
+    }
 }

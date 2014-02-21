@@ -82,7 +82,7 @@ module app.contextwindow {
                     this.onStartDrag(event, ui);
                 },
                 stop: () => {
-                    this.contextWindow.show();
+                    //this.contextWindow.show();
                 }
             });
 
@@ -99,7 +99,7 @@ module app.contextwindow {
             this.liveEditJQuery(this.liveEditWindow).on('sortableUpdate.liveEdit sortableStop.liveEdit draggableStop.liveEdit',
                 (event:JQueryEventObject) => {
                     jQuery('[data-context-window-draggable="true"]').simulate('mouseup');
-                    this.contextWindow.show();
+                    //this.contextWindow.show();
                 });
         }
 

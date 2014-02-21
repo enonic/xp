@@ -22,7 +22,7 @@ module app.wizard {
 
         private displayNameScriptExecutor: DisplayNameScriptExecutor;
 
-        private livePanel: LiveFormPanel;
+        private liveFormPanel: LiveFormPanel;
 
         private persistAsDraft: boolean;
 
@@ -92,15 +92,17 @@ module app.wizard {
             this.contentWizardStepForm = new ContentWizardStepForm(this.publishAction);
 
             if (this.siteContent || this.createSite) {
+
+                this.liveFormPanel = new LiveFormPanel(<app.wizard.LiveFormPanelConfig> {
+                    contentWizardPanel: this, siteTemplate: this.siteTemplate});
+
                 var pageWizardStepFormConfig: page.PageWizardStepFormConfig = {
+                    liveFormPanel: this.liveFormPanel,
                     parentContent: this.parentContent,
-                    siteTemplate: this.siteTemplate
+                    siteTemplate: this.siteTemplate,
+                    showLiveEditAction: actions.getShowLiveEditAction()
                 };
                 this.pageWizardStepForm = new page.PageWizardStepForm(pageWizardStepFormConfig);
-            }
-            if (this.siteTemplate) {
-                this.livePanel = new LiveFormPanel(<app.wizard.LiveFormPanelConfig> {
-                    contentWizardPanel: this, siteTemplate: this.siteTemplate});
             }
 
             if (this.contentType.hasContentDisplayNameScript()) {
@@ -116,7 +118,7 @@ module app.wizard {
                 mainToolbar: mainToolbar,
                 header: this.contentWizardHeader,
                 actions: actions,
-                livePanel: this.livePanel,
+                livePanel: this.liveFormPanel,
                 steps: this.createSteps(params.persistedContent)
             }, () => {
                 console.log("ContentWizardPanel.constructor finished");
@@ -229,17 +231,7 @@ module app.wizard {
                                 this.doRenderExistingPage(persistedContent, this.siteContent, formContext).
                                     then(() => {
 
-                                        var pageTemplate = this.pageWizardStepForm.getPageTemplate();
-
-                                        if (pageTemplate != null) {
-                                            this.doRenderLivePanel(persistedContent, pageTemplate).
-                                                done(() => {
-                                                    deferred.resolve(null);
-                                                });
-                                        }
-                                        else {
-                                            deferred.resolve(null);
-                                        }
+                                        deferred.resolve(null);
                                     });
                             }
                             else {
@@ -291,18 +283,6 @@ module app.wizard {
                 });
 
 
-            return deferred.promise;
-        }
-
-        private doRenderLivePanel(content: api.content.Content, pageTemplate: api.content.page.PageTemplate): Q.Promise<void> {
-
-            var deferred = Q.defer<void>();
-
-            if (content.isPage() && pageTemplate != null && this.siteTemplate) {
-                this.livePanel.renderExisting(content, pageTemplate);
-            }
-
-            deferred.resolve(null);
             return deferred.promise;
         }
 
@@ -381,7 +361,7 @@ module app.wizard {
                 return null;
             }
 
-            if (this.pageWizardStepForm.getPageTemplate() == null) {
+            if (!this.siteTemplate) {
                 return null;
             }
 
@@ -389,8 +369,22 @@ module app.wizard {
                 return null;
             }
 
-            var createRequest = new api.content.page.CreatePageRequest(content.getContentId())
-                .setPageTemplateKey(this.pageWizardStepForm.getPageTemplate().getKey());
+            var pageTemplateKey: api.content.page.PageTemplateKey = null;
+
+            if (this.pageWizardStepForm.getPageTemplate() == null) {
+                var pageTemplate = this.siteTemplate.getDefaultPageTemplate(content.getType());
+                if (pageTemplate) {
+                    pageTemplateKey = pageTemplate.getKey();
+                }
+            }
+            else {
+                pageTemplateKey = this.pageWizardStepForm.getPageTemplate().getKey();
+            }
+            if (pageTemplateKey == null) {
+                return null;
+            }
+
+            var createRequest = new api.content.page.CreatePageRequest(content.getContentId()).setPageTemplateKey(pageTemplateKey);
 
             var config = this.pageWizardStepForm.getConfig();
             createRequest.setConfig(config);
@@ -471,12 +465,12 @@ module app.wizard {
             if (!content.isPage()) {
                 return null;
             }
+            var regions = this.pageWizardStepForm.getRegions();
+            console.log( "saving page regions: ", regions.toJson() );
             var updatePageRequest = new api.content.page.UpdatePageRequest(content.getContentId()).
                 setPageTemplateKey(this.pageWizardStepForm.getPageTemplate().getKey()).
-                setConfig(this.pageWizardStepForm.getConfig());
-            if (this.livePanel) {
-                updatePageRequest.setRegions(this.livePanel.getRegions());
-            }
+                setConfig(this.pageWizardStepForm.getConfig()).
+                setRegions(regions);
 
             return updatePageRequest;
         }
@@ -532,12 +526,8 @@ module app.wizard {
 
         showLiveEdit() {
 
-            super.showPanel(this.livePanel);
-
-            this.livePanel.loadPageIfNotLoaded().
-                done(() => {
-
-                });
+            super.showPanel(this.liveFormPanel);
+            this.pageWizardStepForm.showLiveEdit();
         }
 
         showWizard() {

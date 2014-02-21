@@ -12,6 +12,7 @@ import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.module.ModuleKey;
 
 
+@SuppressWarnings("UnusedDeclaration")
 public class SiteTemplateSummaryJson
     implements ItemJson
 {
@@ -101,12 +102,12 @@ public class SiteTemplateSummaryJson
         return contentTypeFilterJson;
     }
 
-    public List<String> getPageTemplates()
+    public List<String> getPageTemplateKeys()
     {
         return templatesAsKeyList( siteTemplate.getPageTemplates().getList() );
     }
 
-    private List<String> templatesAsKeyList( final List<? extends PageTemplate> templateList )
+    private List<String> templatesAsKeyList( final List<PageTemplate> templateList )
     {
         return Lists.transform( templateList, new Function<PageTemplate, String>()
         {

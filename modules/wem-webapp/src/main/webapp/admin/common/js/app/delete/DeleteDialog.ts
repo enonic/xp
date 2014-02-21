@@ -12,9 +12,7 @@ module api.app.remove{
 
         constructor(modelName:string) {
             super({
-                title: new api.ui.dialog.ModalDialogHeader("Delete " + modelName),
-                width: 500,
-                height: 300
+                title: new api.ui.dialog.ModalDialogHeader("Delete " + modelName)
             });
             this.setCancelAction(new CancelDeleteDialogAction());
 

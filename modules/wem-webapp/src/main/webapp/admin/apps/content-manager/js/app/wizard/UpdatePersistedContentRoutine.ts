@@ -55,8 +55,6 @@ module app.wizard {
 
         doExecuteNext(context: UpdatePersistedContentRoutineContext): Q.Promise<api.content.Content> {
 
-            console.log("UpdatePersistedContentRoutine.doExecuteNext() ...");
-
             var deferred = Q.defer<api.content.Content>();
 
             if (!this.doneHandledContent) {
@@ -97,7 +95,6 @@ module app.wizard {
                                 deferred.resolve(contentFromNext);
                             });
                     });
-
             }
 
             else if (!this.doneHandledUpdatePage) {
@@ -112,7 +109,6 @@ module app.wizard {
                                 deferred.resolve(contentFromNext);
                             });
                     });
-
             }
             else {
 
@@ -124,18 +120,13 @@ module app.wizard {
 
         private doHandleUpdateContent(context: UpdatePersistedContentRoutineContext): Q.Promise<void> {
 
-            console.log("UpdatePersistedContentRoutine.doHandleUpdateContent() ... ");
-
             var deferred = Q.defer<void>();
 
             this.updateContentRequestProducer.call(this.getThisOfProducer()).
                 sendAndParse().
                 done((content: api.content.Content) => {
 
-                    console.log("UpdatePersistedContentRoutine.doHandleUpdateContent() ... content updated");
-
                     context.content = content;
-
                     deferred.resolve(null);
                 });
 
@@ -143,8 +134,6 @@ module app.wizard {
         }
 
         private doHandleUpdateSite(context: UpdatePersistedContentRoutineContext): Q.Promise<void> {
-
-            console.log("UpdatePersistedContentRoutine.doHandleUpdateSite() ...");
 
             var deferred = Q.defer<void>();
 
@@ -154,16 +143,11 @@ module app.wizard {
                     sendAndParse().
                     done((content: api.content.Content) => {
 
-                        console.log("UpdatePersistedContentRoutine.doHandleUpdateSite() ... site updated");
-
                         context.content = content;
-
                         deferred.resolve(null);
                     });
             }
             else {
-                console.log("UpdatePersistedContentRoutine.doHandleUpdateSite() ... no updateSiteRequest given");
-
                 deferred.resolve(null);
             }
 
@@ -171,8 +155,6 @@ module app.wizard {
         }
 
         private doHandleCreatePage(context: UpdatePersistedContentRoutineContext): Q.Promise<void> {
-
-            console.log("UpdatePersistedContentRoutine.doHandleCreatePage() ...");
 
             var deferred = Q.defer<void>();
 
@@ -182,15 +164,11 @@ module app.wizard {
                 createPageRequest.sendAndParse().
                     done((content: api.content.Content) => {
 
-                        console.log("UpdatePersistedContentRoutine.doHandleCreatePage() ... page created");
-
                         context.content = content;
-
                         deferred.resolve(null);
                     });
             }
             else {
-                console.log("UpdatePersistedContentRoutine.doHandleCreatePage() ... no createPageRequest given");
                 deferred.resolve(null);
             }
 
@@ -198,8 +176,6 @@ module app.wizard {
         }
 
         private doHandleUpdatePage(context: UpdatePersistedContentRoutineContext): Q.Promise<void> {
-
-            console.log("UpdatePersistedContentRoutine.doHandleUpdatePage() ...");
 
             var deferred = Q.defer<void>();
 
@@ -209,15 +185,11 @@ module app.wizard {
                 updatePageRequest.sendAndParse().
                     done((content: api.content.Content) => {
 
-                        console.log("UpdatePersistedContentRoutine.doHandleUpdatePage() ... page updated");
-
                         context.content = content;
-
                         deferred.resolve(null);
                     });
             }
             else {
-                console.log("UpdatePersistedContentRoutine.doHandleUpdatePage() ... no updatePageRequest given");
                 deferred.resolve(null);
             }
 

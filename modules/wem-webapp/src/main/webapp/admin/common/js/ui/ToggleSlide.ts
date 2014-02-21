@@ -30,6 +30,9 @@ module api.ui {
             super('toggle-slide');
 
             this.actions = actions;
+            actions.turnOnAction.addPropertyChangeListener((action: api.ui.Action)=> {
+                this.setEnabled(action.isEnabled());
+            });
 
             this.createMarkup();
             this.calculateStyles();

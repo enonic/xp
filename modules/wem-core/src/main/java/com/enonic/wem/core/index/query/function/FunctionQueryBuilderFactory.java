@@ -36,31 +36,43 @@ public class FunctionQueryBuilderFactory
             return new MatchAllQueryBuilder();
         }
 
-        final String baseFieldName = arguments.getFieldName();
-
-        final String queryFieldName = IndexQueryFieldNameResolver.resolveAnalyzedFieldName( baseFieldName );
-
         SimpleQueryStringBuilder builder = new SimpleQueryStringBuilder( arguments.getSearchString() ).
-            field( queryFieldName ).
             defaultOperator( arguments.getOperator() );
+
+        appendQueryFieldNames( arguments, builder );
 
         return builder;
     }
-
 
     private QueryBuilder createNGram( final FunctionExpr functionExpr )
     {
         final NGramFunctionArguments arguments = new NGramFunctionArguments( functionExpr.getArguments() );
 
-        final String baseFieldName = arguments.getFieldName();
-
-        final String queryFieldName = IndexQueryFieldNameResolver.resolveNGramFieldName( baseFieldName );
 
         SimpleQueryStringBuilder builder = new SimpleQueryStringBuilder( arguments.getSearchString() ).
-            field( queryFieldName ).
             defaultOperator( arguments.getOperator() );
+
+        appendQueryFieldNames( arguments, builder );
 
         return builder;
     }
+
+    private void appendQueryFieldNames( final AbstractSimpleQueryStringFunction arguments, final SimpleQueryStringBuilder builder )
+    {
+        for ( final WeightedQueryFieldName weightedQueryFieldName : arguments.getWeightedQueryFieldName() )
+        {
+            final String queryFieldName = arguments.resolveQueryFieldName( weightedQueryFieldName.getBaseFieldName() );
+
+            if ( weightedQueryFieldName.getWeight() != null )
+            {
+                builder.field( queryFieldName, weightedQueryFieldName.getWeight() );
+            }
+            else
+            {
+                builder.field( queryFieldName );
+            }
+        }
+    }
+
 
 }

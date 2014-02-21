@@ -2,9 +2,9 @@ module api.content.page {
 
     export class GetPageDescriptorByKeyRequest extends PageDescriptorResourceRequest<api.content.page.json.PageDescriptorJson> {
 
-        private key: api.module.ModuleResourceKey;
+        private key: DescriptorKey;
 
-        constructor(key: api.module.ModuleResourceKey) {
+        constructor(key: DescriptorKey) {
             super();
             super.setMethod("GET");
             this.key = key;

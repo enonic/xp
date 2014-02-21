@@ -14,10 +14,14 @@ module LiveEdit.component {
             });
         }
 
-        static fromComponent(type:string):ComponentPlaceholder {
-            var placeholder:ComponentPlaceholder;
-            if (type == "image") {
+        static fromComponent(type: LiveEdit.component.Type): ComponentPlaceholder {
+            var placeholder: ComponentPlaceholder;
+            if (type === Type.IMAGE) {
                 placeholder = new LiveEdit.component.ImagePlaceholder();
+            } else if (type == Type.PART) {
+                placeholder = new LiveEdit.component.PartPlaceholder();
+            } else if (type == Type.LAYOUT) {
+                placeholder = new LiveEdit.component.LayoutPlaceholder();
             } else {
                 var emptyComponentIcon = new api.dom.DivEl();
                 emptyComponentIcon.addClass('live-edit-empty-component-icon');

@@ -59,9 +59,8 @@ module app.contextwindow {
 
         private buildRow(row, cell, data):api.dom.DivEl {
             var rowEl = new api.dom.DivEl();
-            rowEl.getEl().setData('live-edit-key', data.key);
-            rowEl.getEl().setData('live-edit-name', data.name);
             rowEl.getEl().setData('live-edit-type', data.typeName);
+            rowEl.getEl().setData('live-edit-empty-component', 'true');
             if (this.componentGridOptions.draggableRows) {
                 rowEl.getEl().setData('context-window-draggable', 'true');
             }

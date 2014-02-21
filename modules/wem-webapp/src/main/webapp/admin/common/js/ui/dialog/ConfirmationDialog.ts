@@ -13,9 +13,7 @@ module api.ui.dialog {
 
         constructor() {
             super({
-                title: new api.ui.dialog.ModalDialogHeader("Confirmation"),
-                width: 500,
-                height: 170
+                title: new api.ui.dialog.ModalDialogHeader("Confirmation")
             });
 
             this.addClass("confirmation-dialog");

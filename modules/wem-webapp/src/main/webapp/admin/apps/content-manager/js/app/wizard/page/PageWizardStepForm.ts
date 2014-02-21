@@ -2,17 +2,25 @@ module app.wizard.page {
 
     export interface PageWizardStepFormConfig {
 
+        liveFormPanel: LiveFormPanel;
+
         parentContent: api.content.Content;
 
         siteTemplate: api.content.site.template.SiteTemplate;
+
+        showLiveEditAction: api.ui.Action;
 
     }
 
     export class PageWizardStepForm extends api.app.wizard.WizardStepForm {
 
+        private liveFormPanel: LiveFormPanel;
+
         private parentContent: api.content.Content;
 
         private siteTemplate: api.content.site.template.SiteTemplate;
+
+        private showLiveEditAction: api.ui.Action;
 
         private content: api.content.Content;
 
@@ -27,8 +35,10 @@ module app.wizard.page {
         constructor(config: PageWizardStepFormConfig) {
             super();
             this.addClass("page-wizard-step-form");
+            this.liveFormPanel = config.liveFormPanel;
             this.parentContent = config.parentContent;
             this.siteTemplate = config.siteTemplate;
+            this.showLiveEditAction = config.showLiveEditAction;
 
             this.pageTemplateSelectorForm = new PageTemplateSelector(this);
             this.pageTemplateSelectorForm.addPageTemplateChangedListener((changedTo: api.content.page.PageTemplateSummary) => {
@@ -52,24 +62,30 @@ module app.wizard.page {
 
             if (page != null && page.getTemplate() != null) {
 
-                new api.content.page.GetPageTemplateByKeyRequest(page.getTemplate()).
+                this.showLiveEditAction.setEnabled(true);
+
+                var getPageTemplatePromise = new api.content.page.GetPageTemplateByKeyRequest(page.getTemplate()).
                     setSiteTemplateKey(this.siteTemplate.getKey()).
-                    sendAndParse().
-                    done((pageTemplate: api.content.page.PageTemplate) => {
+                    sendAndParse().done((pageTemplate: api.content.page.PageTemplate) => {
 
                         this.selectedPageTemplate = pageTemplate;
                         this.pageTemplateSelectorForm.layoutExisting(content, siteContent.getSite().getTemplateKey(), page.getTemplate()).
                             done(()=> {
 
+                                if (this.siteTemplate) {
+                                    this.layoutLiveFormPanel(content, pageTemplate);
+                                }
                                 deferred.resolve(null);
                             });
                     });
             }
             else {
+                this.showLiveEditAction.setEnabled(false);
 
                 this.pageTemplateSelectorForm.layoutExisting(content, siteContent.getSite().getTemplateKey(), null).
                     done(()=> {
 
+                        this.layoutLiveFormPanel(content, null);
                         deferred.resolve(null);
                     });
             }
@@ -77,16 +93,27 @@ module app.wizard.page {
             return deferred.promise;
         }
 
+        private layoutLiveFormPanel(content: api.content.Content, pageTemplate: api.content.page.PageTemplate) {
+
+            if (pageTemplate != null) {
+                this.liveFormPanel.setPage(content, pageTemplate);
+            }
+        }
+
         private handlePageTemplateChanged(changedTo: api.content.page.PageTemplateSummary) {
 
             console.log("PageWizardStepForm.handlePageTemplateChanged() ... ");
 
             if (changedTo == null) {
+
+                this.showLiveEditAction.setEnabled(false);
                 this.selectedPageTemplate = null;
                 this.configFormWrapper.removeChildren();
+
                 console.log("PageWizardStepForm.handlePageTemplateChanged() ... changed to null");
             }
             else {
+
                 console.log("PageWizardStepForm.handlePageTemplateChanged() ... changed to something (loading...)");
                 new api.content.page.GetPageTemplateByKeyRequest(changedTo.getKey()).
                     setSiteTemplateKey(this.siteTemplate.getKey()).
@@ -95,16 +122,26 @@ module app.wizard.page {
 
                         this.selectedPageTemplate = pageTemplate;
 
-                        this.layoutPageTemplateForm(pageTemplate);
+                        this.liveFormPanel.setPage(this.content, this.selectedPageTemplate);
+
+                        var changedToSameAsPersisted: boolean = this.content.getPage().getTemplate().toString() ==
+                                                                changedTo.getKey().toString();
+                        this.showLiveEditAction.setEnabled(changedToSameAsPersisted);
+
+                        new api.content.page.GetPageDescriptorByKeyRequest(pageTemplate.getDescriptorKey()).
+                            sendAndParse().
+                            done((pageDescriptor: api.content.page.PageDescriptor) => {
+                                this.layoutPageTemplateForm(pageTemplate, pageDescriptor);
+                            });
                     });
             }
         }
 
-        private layoutPageTemplateForm(pageTemplate: api.content.page.PageTemplate) {
+        private layoutPageTemplateForm(pageTemplate: api.content.page.PageTemplate, pageDescriptor: api.content.page.PageDescriptor) {
 
             var formContext = new api.form.FormContextBuilder().build();
 
-            var form = pageTemplate.getDescriptor().getConfig();
+            var form = pageDescriptor.getConfig();
             var config = pageTemplate.getConfig();
             if (this.content.isPage() && this.content.getPage().hasConfig()) {
                 config = this.content.getPage().getConfig();
@@ -125,6 +162,19 @@ module app.wizard.page {
             }
             var config = this.formView.getData();
             return  config;
+        }
+
+        public getRegions(): api.content.page.PageRegions {
+
+            return this.liveFormPanel.getRegions();
+        }
+
+        showLiveEdit() {
+
+            this.liveFormPanel.loadPageIfNotLoaded().
+                done(() => {
+
+                });
         }
 
     }
