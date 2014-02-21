@@ -1,5 +1,8 @@
 module api.form.inputtype.content.image {
 
+   import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
+    import LoadingDataEvent = api.util.loader.event.LoadingDataEvent;
+
     export interface ImageSelectorConfig {
         relationshipType: string
     }
@@ -36,16 +39,14 @@ module api.form.inputtype.content.image {
 
             this.config = config;
             this.contentSummaryLoader = new api.form.inputtype.content.ContentSummaryLoader();
-            this.contentSummaryLoader.addListener({
-                onLoading: () => {
+            this.contentSummaryLoader.onLoadingData((event:LoadingDataEvent) => {
                     this.comboBox.setLabel("Searching...");
-                },
-                onLoaded: (contentSummaries: api.content.ContentSummary[]) => {
-                    var options = this.createOptions(contentSummaries);
+                });
+            this.contentSummaryLoader.onLoadedData((event: LoadedDataEvent<api.content.ContentSummary>) => {
+                    var options = this.createOptions(event.getData());
 
                     this.comboBox.setOptions(options);
-                }
-            });
+                });
 
             // requests aren't allowed until allowed contentTypes are specified
             this.contentRequestsAllowed = false;

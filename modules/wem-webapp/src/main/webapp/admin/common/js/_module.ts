@@ -20,6 +20,8 @@
 
 
 ///<reference path='util/_module.ts' />
+///<reference path='util/loader/event/_module.ts' />
+///<reference path='util/loader/_module.ts' />
 
 ///<reference path='model/_module.ts' />
 

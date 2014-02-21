@@ -1,21 +1,24 @@
 module api.form.inputtype.content {
 
-    export class ContentSummaryLoader implements api.util.Loader {
+    import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
+    import LoadingDataEvent = api.util.loader.event.LoadingDataEvent;
 
-        private isLoading: boolean;
+    export class ContentSummaryLoader extends api.util.loader.BaseLoader<api.content.json.ContentSummaryJson,api.content.ContentSummary> {
+
 
         private preservedSearchString: string;
 
-        private listeners: ContentSummaryLoaderListener[] = [];
-
-        private loaderHelper: api.util.LoaderHelper;
+        private loaderHelper: api.util.loader.LoaderHelper;
 
         private contentQuery: api.content.query.ContentQuery;
 
         constructor(delay: number = 500) {
-            this.isLoading = false;
             this.contentQuery = new api.content.query.ContentQuery();
-            this.loaderHelper = new api.util.LoaderHelper(this.doRequest, this, delay);
+            this.loaderHelper = new api.util.loader.LoaderHelper(this.load, this, delay);
+            var contentRequest = new api.content.ContentQueryRequest<api.content.json.ContentSummaryJson,api.content.ContentSummary>(this.contentQuery).
+                setExpand(api.rest.Expand.SUMMARY);
+            super(contentRequest, false);
+            this.loading(false);
         }
 
         setAllowedContentTypes(contentTypes: string[]) {
@@ -27,31 +30,26 @@ module api.form.inputtype.content {
         }
 
         search(searchString: string) {
-            if (this.isLoading) {
+            if (this.loading()) {
                 this.preservedSearchString = searchString;
                 return;
             }
 
-            this.loaderHelper.search(searchString);
-        }
-
-        private doRequest(searchString: string) {
-            this.isLoading = true;
-            this.notifyLoading();
-
-
             var fulltextExpression: api.query.expr.Expression = api.query.FulltextSearchExpressionFactory.create(searchString);
             var queryExpr: api.query.expr.QueryExpr = new api.query.expr.QueryExpr(fulltextExpression);
             this.contentQuery.setQueryExpr(queryExpr)
+            this.loaderHelper.search(searchString);
+        }
 
 
-            new api.content.ContentQueryRequest<api.content.json.ContentSummaryJson,api.content.ContentSummary>(this.contentQuery).
-                setExpand(api.rest.Expand.SUMMARY).
-                send().done((jsonResponse: api.rest.JsonResponse<api.content.json.ContentQueryResultJson<api.content.json.ContentSummaryJson>>) => {
+        load() {
+            this.loading(true);
+            this.notifyLoadingData(new LoadingDataEvent());
 
-                    var result: api.content.json.ContentQueryResultJson<api.content.json.ContentSummaryJson> = jsonResponse.getResult();
-                    this.isLoading = false;
-                    this.notifyLoaded(api.content.ContentSummary.fromJsonArray(result.contents));
+            this.doRequest().done((contents: api.content.ContentSummary[]) => {
+
+                    this.loading(false);
+                    this.notifyLoadedData(new LoadedDataEvent<api.content.ContentSummary>(contents));
                     if (this.preservedSearchString) {
                         this.search(this.preservedSearchString);
                         this.preservedSearchString = null;
@@ -60,14 +58,14 @@ module api.form.inputtype.content {
                 });
         }
 
-        addListener(listener: ContentSummaryLoaderListener) {
-            this.listeners.push(listener);
-        }
+        doRequest(): Q.Promise<api.content.ContentSummary[]> {
+            var deferred = Q.defer<api.content.ContentSummary[]>();
 
-        removeListener(listenerToRemove: ContentSummaryLoaderListener) {
-            this.listeners = this.listeners.filter((listener) => {
-                return listener != listenerToRemove;
-            })
+            this.getRequest().sendAndParse().done((queryResult: api.content.ContentQueryResult<api.content.ContentSummary>) => {
+                deferred.resolve(queryResult.getContents());
+            });
+
+            return deferred.promise;
         }
 
         private createContentTypeNames(names: string[]): api.schema.content.ContentTypeName[] {
@@ -83,22 +81,6 @@ module api.form.inputtype.content {
             });
 
             return contentTypeNames;
-        }
-
-        private notifyLoading() {
-            this.listeners.forEach((listener: ContentSummaryLoaderListener) => {
-                if (listener.onLoading) {
-                    listener.onLoading();
-                }
-            });
-        }
-
-        private notifyLoaded(contentSummaries: api.content.ContentSummary[]) {
-            this.listeners.forEach((listener: ContentSummaryLoaderListener) => {
-                if (listener.onLoaded) {
-                    listener.onLoaded(contentSummaries);
-                }
-            });
         }
 
     }

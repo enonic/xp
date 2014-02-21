@@ -1,4 +1,4 @@
-module api.util {
+module api.util.loader {
     export class ImageLoader {
 
         private static cachedImages:HTMLImageElement[] = [];

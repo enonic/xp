@@ -2,7 +2,7 @@ module api.ui.combobox {
 
     export class RichComboBox<T> extends api.ui.form.CompositeFormInputEl {
 
-        loader: api.util.Loader;
+        loader:api.util.loader.BaseLoader<api.item.ItemJson, T>;
 
         comboBoxView: api.dom.DivEl;
 
@@ -18,7 +18,7 @@ module api.ui.combobox {
 
         private loadingListeners: {():void;}[];
 
-        private loadedListeners: {(modules: T[]):void;}[];
+        private loadedListeners: {(items: T[]):void;}[];
 
         private inputValueChangedListeners: {(oldValue: string, newValue: string, grid: api.ui.grid.Grid<Option<T>>):void;}[];
 
@@ -101,33 +101,32 @@ module api.ui.combobox {
                 }
             });
 
-            this.loader.addListener({
-                onLoading: () => {
+            this.loader.onLoadingData( (event:api.util.loader.event.LoadingDataEvent) => {
                     this.comboBox.setLabel("Searching...");
                     this.notifyLoading();
-                },
-                onLoaded: (modules: T[]) => {
-                    var options = this.createOptions(modules);
+                });
+
+            this.loader.onLoadedData((event:api.util.loader.event.LoadedDataEvent<T>) => {
+                    var options = this.createOptions(event.getData());
                     this.comboBox.setOptions(options);
-                    this.notifyLoaded(modules);
-                }
-            });
+                    this.notifyLoaded(event.getData());
+                });
 
             this.loader.search("");
         }
 
-        private createOptions(contents: T[]): api.ui.combobox.Option<T>[] {
+        private createOptions(items: T[]): api.ui.combobox.Option<T>[] {
             var options = [];
-            contents.forEach((moduleInst: T) => {
+            items.forEach((itemInst: T) => {
                 options.push({
-                    value: moduleInst[this.identifierMethod](),
-                    displayValue: moduleInst
+                    value: itemInst[this.identifierMethod](),
+                    displayValue: itemInst
                 });
             });
             return options;
         }
 
-        optionFormatter(row: number, cell: number, moduleInst: T, columnDef: any, dataContext: api.ui.combobox.Option<T>): string {
+        optionFormatter(row: number, cell: number, itemInst: T, columnDef: any, dataContext: api.ui.combobox.Option<T>): string {
 
             return "";
         }
@@ -142,7 +141,7 @@ module api.ui.combobox {
             };
         }
 
-        setLoader(loader: api.util.Loader) {
+        setLoader(loader:api.util.loader.BaseLoader<api.item.ItemJson, T>) {
             this.loader = loader;
             this.setupLoader();
         }
@@ -167,11 +166,11 @@ module api.ui.combobox {
             this.loadingListeners.push(listener);
         }
 
-        addLoadedListener(listener: {(modules: T[]): void;}) {
+        addLoadedListener(listener: {(items: T[]): void;}) {
             this.loadedListeners.push(listener);
         }
 
-        removeLoadedListener(listenerToBeRemoved: {(modules: T[]): void;}) {
+        removeLoadedListener(listenerToBeRemoved: {(items: T[]): void;}) {
             var index = this.loadedListeners.indexOf(listenerToBeRemoved);
             this.loadedListeners.splice(index, 1);
         }
@@ -194,9 +193,9 @@ module api.ui.combobox {
             });
         }
 
-        private notifyLoaded(modules: T[]) {
+        private notifyLoaded(items: T[]) {
             this.loadedListeners.forEach((listener) => {
-                listener(modules);
+                listener(items);
             });
         }
 
@@ -207,7 +206,7 @@ module api.ui.combobox {
 
     export interface RichComboBoxConfig<T> {
         comboBoxName?:string;
-        loader?:api.util.Loader;
+        loader?:api.util.loader.BaseLoader<api.item.ItemJson, T>;
         selectedOptionsView?:SelectedOptionsView<T>;
         identifierMethod?:string;
     }
@@ -216,7 +215,7 @@ module api.ui.combobox {
 
         comboBoxName: string;
 
-        loader: api.util.Loader;
+        loader:api.util.loader.BaseLoader<api.item.ItemJson, T>;
 
         selectedOptionsView: SelectedOptionsView<T>;
 
@@ -234,7 +233,8 @@ module api.ui.combobox {
             return this;
         }
 
-        setLoader(loader: api.util.Loader): RichComboBoxBuilder<T> {
+
+        setLoader(loader:api.util.loader.BaseLoader<api.item.ItemJson, T>):RichComboBoxBuilder<T> {
             this.loader = loader;
             return this;
         }

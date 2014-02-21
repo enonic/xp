@@ -1,74 +1,18 @@
 module api.content.page.image {
 
-    export class ImageDescriptorLoader implements api.util.Loader {
+    import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
+    import LoadingDataEvent = api.util.loader.event.LoadingDataEvent;
 
-        private request: ImageDescriptorsResourceRequest;
-
-        private isLoading: boolean;
-
-        private descriptors: ImageDescriptor[];
-
-        private listeners: ImageDescriptorLoaderListener[] = [];
+    export class ImageDescriptorLoader extends api.util.loader.BaseLoader<json.ImageDescriptorsJson, ImageDescriptor> {
 
         constructor(request: ImageDescriptorsResourceRequest) {
-            this.isLoading = false;
-            this.request = request;
-
-            this.isLoading = true;
-            this.notifyLoading();
-
-            this.doRequest(this.request).
-                done((descriptors: ImageDescriptor[]) => {
-                    this.descriptors = descriptors;
-                    this.isLoading = false;
-                    this.notifyLoaded(this.descriptors);
-                });
+           super(request);
         }
 
-        doRequest(request: ImageDescriptorsResourceRequest): Q.Promise<ImageDescriptor[]> {
-            var deferred = Q.defer<ImageDescriptor[]>();
-
-            request.sendAndParse()
-                .done((descriptors: ImageDescriptor[]) => {
-                    deferred.resolve(descriptors)
-                });
-            return deferred.promise;
+        filterFn(descriptor: ImageDescriptor) {
+            return descriptor.getDisplayName().toString().indexOf(this.getSearchString().toLowerCase()) != -1;
         }
 
-        search(searchString: string) {
 
-            if (this.descriptors) {
-                var filtered = this.descriptors.filter((descriptor: ImageDescriptor) => {
-                    return descriptor.getDisplayName().toString().indexOf(searchString.toLowerCase()) != -1;
-                });
-                this.notifyLoaded(filtered);
-            }
-        }
-
-        addListener(listener: ImageDescriptorLoaderListener) {
-            this.listeners.push(listener);
-        }
-
-        removeListener(listenerToRemove: ImageDescriptorLoaderListener) {
-            this.listeners = this.listeners.filter((listener) => {
-                return listener != listenerToRemove;
-            })
-        }
-
-        private notifyLoading() {
-            this.listeners.forEach((listener: ImageDescriptorLoaderListener) => {
-                if (listener.onLoading) {
-                    listener.onLoading();
-                }
-            });
-        }
-
-        private notifyLoaded(descriptors: ImageDescriptor[]) {
-            this.listeners.forEach((listener: ImageDescriptorLoaderListener) => {
-                if (listener.onLoaded) {
-                    listener.onLoaded(descriptors);
-                }
-            });
-        }
     }
 }

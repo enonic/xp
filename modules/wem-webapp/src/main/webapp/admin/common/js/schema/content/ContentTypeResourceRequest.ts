@@ -16,5 +16,9 @@ module api.schema.content {
         fromJsonToContentType(json:api.schema.content.json.ContentTypeJson):ContentType {
             return new ContentType(json);
         }
+
+        fromJsonToContentTypeSummary(json:api.schema.content.json.ContentTypeSummaryJson):ContentTypeSummary  {
+            return new ContentTypeSummary(json);
+        }
     }
 }

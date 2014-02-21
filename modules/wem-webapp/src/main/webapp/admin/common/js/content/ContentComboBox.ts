@@ -66,7 +66,7 @@ module api.content {
 
         maximumOccurrences:number = 0;
 
-        loader:api.util.Loader;
+        loader:api.util.loader.BaseLoader<api.schema.SchemaJson, api.content.ContentSummary>;
 
         setName(value:string):ContentComboBoxBuilder {
             this.name = value;
@@ -78,7 +78,7 @@ module api.content {
             return this;
         }
 
-        setLoader(loader:api.util.Loader):ContentComboBoxBuilder {
+        setLoader(loader:api.util.loader.BaseLoader<api.schema.SchemaJson, api.content.ContentSummary>):ContentComboBoxBuilder {
             this.loader = loader;
             return this;
         }

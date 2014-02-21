@@ -1,4 +1,4 @@
-module api.util {
+module api.util.loader {
 
     export class LoaderHelper {
 
@@ -7,7 +7,7 @@ module api.util {
         private timerId:number;
         private context:any;
 
-        constructor(requestFunc:(searchString:string)=>void, context:any, delay:number = 500)
+        constructor(requestFunc:(searchString?:string)=>void, context:any, delay:number = 500)
         {
             this.requestFunc = requestFunc;
             this.delay = delay;
