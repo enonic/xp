@@ -9,12 +9,11 @@ import com.enonic.wem.api.relationship.RelationshipIds;
 import com.enonic.wem.api.relationship.RelationshipKey;
 import com.enonic.wem.api.relationship.RelationshipNotFoundException;
 import com.enonic.wem.api.relationship.Relationships;
-import com.enonic.wem.core.content.dao.ContentDao;
 
 
 public interface RelationshipDao
 {
-    public static final String RELATIONSHIPS_NODE = ContentDao.NON_CONTENT_NODE_PREFIX + "relationships";
+    public static final String RELATIONSHIPS_NODE = "__relationships";
 
     public static final String TO_CONTENT_NODE_PREFIX = "toContent_";
 

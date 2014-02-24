@@ -1,13 +1,10 @@
 package com.enonic.wem.core.content;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Scopes;
 
 import com.enonic.wem.core.command.CommandBinder;
 import com.enonic.wem.core.content.attachment.GetAttachmentHandler;
 import com.enonic.wem.core.content.attachment.GetAttachmentsHandler;
-import com.enonic.wem.core.content.dao.ContentDao;
-import com.enonic.wem.core.content.dao.ContentDaoImpl;
 import com.enonic.wem.core.initializer.InitializerTaskBinder;
 
 public final class ContentModule
@@ -16,8 +13,6 @@ public final class ContentModule
     @Override
     protected void configure()
     {
-        bind( ContentDao.class ).to( ContentDaoImpl.class ).in( Scopes.SINGLETON );
-
         final InitializerTaskBinder tasks = InitializerTaskBinder.from( binder() );
         tasks.add( ContentInitializer.class );
 
@@ -32,8 +27,6 @@ public final class ContentModule
         commands.add( GetContentByPathHandler.class );
         commands.add( GetContentByPathsHandler.class );
         commands.add( GetRootContentHandler.class );
-        commands.add( GetContentVersionHandler.class );
-        commands.add( GetContentVersionHistoryHandler.class );
         commands.add( RenameContentHandler.class );
         commands.add( UpdateContentHandler.class );
         commands.add( ValidateContentDataHandler.class );

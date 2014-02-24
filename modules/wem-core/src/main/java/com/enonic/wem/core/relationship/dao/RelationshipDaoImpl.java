@@ -21,7 +21,6 @@ import com.enonic.wem.core.index.IndexService;
 public class RelationshipDaoImpl
     implements RelationshipDao
 {
-
     private IndexService indexService;
 
     public RelationshipId create( final Relationship relationship, final Session session )

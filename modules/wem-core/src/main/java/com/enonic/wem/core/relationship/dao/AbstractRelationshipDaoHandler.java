@@ -30,7 +30,7 @@ abstract class AbstractRelationshipDaoHandler<T>
     AbstractRelationshipDaoHandler( final Session session, final IndexService indexService )
     {
         this.session = session;
-        contentDaoHandler = new ContentDaoHandler( session, indexService );
+       // contentDaoHandler = new ContentDaoHandler( session, indexService );
     }
 
     protected final Node getRelationshipNode( final RelationshipId relationshipId )
@@ -163,10 +163,6 @@ abstract class AbstractRelationshipDaoHandler<T>
     private class ContentDaoHandler
         extends AbstractContentDaoHandler
     {
-        ContentDaoHandler( final Session session, final IndexService indexService )
-        {
-            super( session, indexService );
-        }
 
         private Node getContentNode( ContentId contentId )
             throws RepositoryException
