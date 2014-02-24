@@ -12,7 +12,7 @@ module LiveEdit.component {
                 e.stopPropagation();
             });
             this.getEl().setData('live-edit-type', 'part');
-            var request = new api.content.page.part.GetPartDescriptorsByModulesRequest(null);
+            var request = new api.content.page.part.GetPartDescriptorsByModulesRequest(siteTemplate.getModules());
             var loader = new api.content.page.part.PartDescriptorLoader(request);
             this.comboBox = new api.content.page.part.PartDescriptorComboBox(loader);
             this.comboBox.hide();

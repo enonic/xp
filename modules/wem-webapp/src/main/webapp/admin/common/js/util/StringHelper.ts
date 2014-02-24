@@ -5,6 +5,10 @@ module api.util {
         return str;
     }
 
+    export function capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
     export function isStringEmpty(str: string) {
         if (!str) {
             return true;

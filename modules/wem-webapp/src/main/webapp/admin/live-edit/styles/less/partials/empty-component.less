@@ -11,14 +11,30 @@
   position: relative;
   min-height: @defaultHeight;
 
+  &[data-live-edit-type] {
+    &:before {
+      .live-edit-font-icon-layout;
+      font-size:105px;
+      color: #d3e0f2;
+      position:absolute;
+      left: ~"calc(50% - 52px)";
+    }
+  }
+
   &[data-live-edit-type="image"] {
-    background: url("@{resourcePath}images/live-edit-empty-component-image-icon.png") @componentDefaultBackground no-repeat center center;
+    &:before {
+      content: "\e005";
+    }
   }
   &[data-live-edit-type="part"] {
-    background: url("@{resourcePath}images/live-edit-empty-component-image-icon.png") @componentDefaultBackground no-repeat center center;
+    &:before {
+      content: "\e003";
+    }
   }
   &[data-live-edit-type="layout"] {
-    background: url("@{resourcePath}images/live-edit-empty-component-image-icon.png") @componentDefaultBackground no-repeat center center;
+      &:before {
+        content: "\e004";
+      }
   }
 
   .rich-combobox {
