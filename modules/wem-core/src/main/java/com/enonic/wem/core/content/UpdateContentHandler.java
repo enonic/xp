@@ -78,8 +78,7 @@ public class UpdateContentHandler
 
         Content editedContent = editBuilder.build();
 
-        // TODO: Fix this
-        //validateEditedContent( contentBeforeChange, editedContent );
+        validateEditedContent( contentBeforeChange, editedContent );
 
         editedContent = newContent( editedContent ).
             modifier( command.getModifier() ).build();
@@ -175,7 +174,6 @@ public class UpdateContentHandler
 
     private void validateEditedContent( final Content persistedContent, final Content edited )
     {
-
         persistedContent.checkIllegalEdit( edited );
 
         if ( !edited.isDraft() )
@@ -192,7 +190,6 @@ public class UpdateContentHandler
             @Override
             public void visit( final Property property )
             {
-
                 final Content content = new GetContentByIdService( context, new GetContentById( property.getContentId() ) ).execute();
 
                 if ( content != null )

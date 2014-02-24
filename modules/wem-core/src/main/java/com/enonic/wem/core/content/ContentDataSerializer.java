@@ -94,6 +94,11 @@ public class ContentDataSerializer
             builder.site( SITE_SERIALIZER.fromData( dataSet.getDataSet( SITE ) ) );
         }
 
+        if ( dataSet.hasData( DRAFT ) )
+        {
+            builder.draft( new Boolean( dataSet.getProperty( DRAFT ).getString() ) );
+        }
+
         return builder;
     }
 
