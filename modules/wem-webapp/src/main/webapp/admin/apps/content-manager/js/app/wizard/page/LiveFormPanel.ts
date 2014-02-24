@@ -38,6 +38,8 @@ module app.wizard {
 
         private contentWizardPanel: ContentWizardPanel;
 
+        private loader:LiveEditLoader;
+
         constructor(config: LiveFormPanelConfig) {
             super("live-form-panel");
             this.contentWizardPanel = config.contentWizardPanel;
@@ -123,15 +125,19 @@ module app.wizard {
 
             console.log("LiveFormPanel.doLoad() ... url: " + this.pageUrl);
 
+
             api.util.assertNotNull(this.pageUrl, "No page to load");
 
             var deferred = Q.defer<void>();
 
             this.setupFrame();
+            this.loader = new LiveEditLoader();
+            this.loader.start();
 
             var maxIterations = 100;
             var iterations = 0;
             var pageLoaded = false;
+
             var intervalId = setInterval(() => {
 
                 if (this.frame.isLoaded()) {
@@ -147,7 +153,7 @@ module app.wizard {
                         clearInterval(intervalId);
 
                         console.log("LiveFormPanel.doLoad() ... Live edit loaded");
-
+                        this.loader.stop();
                         deferred.resolve(null);
                     }
                 }
@@ -244,6 +250,7 @@ module app.wizard {
             this.frame.addClass("live-edit-frame");
             this.appendChild(this.frame);
             this.frame.setSrc(this.pageUrl);
+
         }
 
         private setupContextWindow() {
@@ -489,6 +496,33 @@ module app.wizard {
                         console.log("ImageComponent to set image on not found: " + componentPath);
                     }
                 });
+        }
+    }
+
+    export class LiveEditLoader extends api.dom.DivEl {
+
+        constructor() {
+            super("live-edit-loader");
+
+//            this.getEl().setTopPx(elementToCover.getEl().getOffsetTop());
+//            this.getEl().setLeftPx(elementToCover.getEl().getOffset().left);
+//            this.getEl().setHeightPx(elementToCover.getEl().getHeight());
+//            this.getEl().setWidthPx(elementToCover.getEl().getWidth());
+
+
+            var dots = new api.dom.DivEl("dots");
+            this.appendChild(dots);
+            document.body.appendChild(this.getHTMLElement());
+        }
+
+        start() {
+        }
+
+        stop() {
+            $(this.getHTMLElement()).fadeOut(1500, () => {
+                document.body.removeChild(this.getHTMLElement());
+            })
+
         }
     }
 }

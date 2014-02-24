@@ -189,6 +189,11 @@ module api.dom {
             return this;
         }
 
+        setWidthPx(value: number): ElementHelper {
+            this.setWidth(value + "px");
+            return this;
+        }
+
         getWidth(): number {
             return $(this.el).innerWidth();
         }
@@ -207,6 +212,11 @@ module api.dom {
 
         setHeight(value: string): ElementHelper {
             this.el.style.height = value;
+            return this;
+        }
+
+        setHeightPx(value: number): ElementHelper {
+            this.setHeight(value + "px");
             return this;
         }
 
@@ -233,6 +243,10 @@ module api.dom {
 
         setTopPx(value: number): ElementHelper {
             return this.setTop(value + "px");
+        }
+
+        setLeftPx(value: number): ElementHelper {
+            return this.setLeft(value + "px");
         }
 
         setLeft(value: string): ElementHelper {
@@ -315,6 +329,10 @@ module api.dom {
 
         getOffsetTop(): number {
             return this.el.offsetTop;
+        }
+
+        getOffsetLeft(): number {
+            return this.el.offsetLeft;
         }
 
         getComputedProperty(name: string, pseudoElement: string = null): string {
