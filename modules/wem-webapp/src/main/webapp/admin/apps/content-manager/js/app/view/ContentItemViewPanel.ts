@@ -43,10 +43,7 @@ module app.view {
 
             super(toolbar, this.deckPanel);
 
-            this.statisticsPanel = new ContentItemStatisticsPanel({
-                editAction: this.editAction,
-                deleteAction: this.deleteAction
-            });
+            this.statisticsPanel = new ContentItemStatisticsPanel();
             this.previewPanel = new app.browse.ContentItemPreviewPanel();
 
             this.statisticsPanelIndex = this.deckPanel.addPanel(this.statisticsPanel);

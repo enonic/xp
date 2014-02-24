@@ -16,13 +16,7 @@ module app.browse {
             treeGridContextMenu.setActions(this.browseActions);
 
             this.toolbar = new SchemaBrowseToolbar(this.browseActions);
-            var browseItemPanel = components.detailPanel = new SchemaBrowseItemPanel({actionMenuActions: [
-                this.browseActions.NEW_SCHEMA,
-                this.browseActions.EDIT_SCHEMA,
-                this.browseActions.OPEN_SCHEMA,
-                this.browseActions.DELETE_SCHEMA,
-                this.browseActions.REINDEX_SCHEMA,
-                this.browseActions.EXPORT_SCHEMA]});
+            var browseItemPanel = components.detailPanel = new SchemaBrowseItemPanel();
 
 
             super({
