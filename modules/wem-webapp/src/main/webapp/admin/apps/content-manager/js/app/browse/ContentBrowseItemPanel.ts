@@ -1,26 +1,23 @@
 module app.browse {
 
-    export interface ContentBrowseItemPanelParams {
-
-        actionMenuActions:api.ui.Action[];
-    }
-
     export class ContentBrowseItemPanel extends api.app.browse.BrowseItemPanel<api.content.ContentSummary> {
 
         private previewPanel;
 
         private previewMode: boolean;
 
-        constructor(params: ContentBrowseItemPanelParams) {
-            super(<api.app.browse.BrowseItemPanelParams>{
-                actionMenuActions: params.actionMenuActions
-            });
+        constructor() {
+            super();
 
             this.previewPanel = new ContentItemPreviewPanel();
             this.addPanel(this.previewPanel);
         }
 
-        public setPreviewMode(enabled: boolean) {
+        createItemStatisticsPanel(): app.view.ContentItemStatisticsPanel {
+            return new app.view.ContentItemStatisticsPanel();
+        }
+
+        setPreviewMode(enabled: boolean) {
             this.previewMode = enabled;
             this.updateDisplayedPanel();
         }

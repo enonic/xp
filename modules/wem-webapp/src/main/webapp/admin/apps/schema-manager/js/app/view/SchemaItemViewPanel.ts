@@ -19,10 +19,7 @@ module app.view {
                 closeAction: this.closeAction
             });
 
-            this.statisticsPanel = new SchemaItemStatisticsPanel({
-                editAction: this.editAction,
-                deleteAction: this.deleteAction
-            });
+            this.statisticsPanel = new SchemaItemStatisticsPanel();
 
             super(toolbar, this.statisticsPanel);
 
