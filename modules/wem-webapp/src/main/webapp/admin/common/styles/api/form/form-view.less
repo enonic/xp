@@ -1,5 +1,7 @@
 .form-view {
   font-size: 12px;
+  position: relative;
+  overflow: visible;
 
   & > * {
     margin-bottom: 35px;
@@ -58,4 +60,10 @@
     margin-right: 10px;
   }
 
+}
+
+.context-window {
+  .form-view > * {
+    margin-bottom: 15px;
+  }
 }

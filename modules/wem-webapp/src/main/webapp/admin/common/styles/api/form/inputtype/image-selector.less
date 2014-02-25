@@ -152,3 +152,52 @@
     background: url("../images/upload.png");
   }
 }
+
+.image-selector-small() {
+  .image-selector {
+    .selected-options {
+      color: @admin-dark-gray-font;
+
+      .selected-option {
+        width:135px;
+        height:135px;
+        margin:10px 15px 10px 0;
+
+        &.last-in-row {
+          margin-right:0px;
+        }
+
+        &.editing {
+          -webkit-transform: scale(1.0);
+          -moz-transform: scale(1.0);
+          -ms-transform: scale(1.0);
+          -o-transform: scale(1.0);
+          transform: scale(1.0);
+          top:auto;
+          background-color: @admin-blue-button2;
+        }
+      }
+      .dialog {
+        width: 100%;
+        height: auto;
+        padding: 10px;
+
+        h1 {
+          font-size: 18px;
+          margin-top: 0;
+        }
+
+        p {
+          margin-bottom: 5px;
+        }
+
+        button {
+          &.edit {
+            margin-right: 0;
+            margin-bottom: 5px;
+          }
+        }
+      }
+    }
+  }
+}
