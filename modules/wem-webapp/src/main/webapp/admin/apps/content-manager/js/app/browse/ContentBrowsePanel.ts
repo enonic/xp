@@ -16,7 +16,7 @@ module app.browse {
 
         constructor() {
             var treeGridContextMenu = new ContentTreeGridContextMenu();
-            this.contentTreeGridPanel = components.gridPanel = new app.browse.ContentTreeGridPanel({
+            this.contentTreeGridPanel = new app.browse.ContentTreeGridPanel({
                 contextMenu: treeGridContextMenu
             });
 

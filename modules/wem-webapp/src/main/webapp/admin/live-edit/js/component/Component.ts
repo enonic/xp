@@ -46,6 +46,10 @@ module LiveEdit.component {
             return regionEl.getEl().getData('live-edit-region');
         }
 
+        setComponentPath(path:string) {
+            this.getEl().setData('live-edit-component', path);
+        }
+
         getComponentPath(): string {
             return this.getEl().getData('live-edit-component');
         }

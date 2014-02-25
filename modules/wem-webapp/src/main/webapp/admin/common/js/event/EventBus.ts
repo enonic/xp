@@ -2,7 +2,7 @@ module api.event {
 
     var bus = new Ext.util.Observable({});
 
-    export function onEvent(name:string, handler:(event:Event) => void) {
+    export function onEvent(name:string, handler:(event:api.event.Event) => void) {
         bus.on(name, handler);
     }
 

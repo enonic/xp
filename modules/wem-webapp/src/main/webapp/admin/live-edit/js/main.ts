@@ -33,7 +33,22 @@ var siteTemplate:api.content.site.template.SiteTemplate;
 
         $(window).unload(() => console.log('Clean up any css classes etc. that live edit / sortable has added') );
 
-        console.log('Live Edit Initialized. Using jQuery version: ' + $.fn.jquery);
+        //TODO: Maybe move/make more generic
+        $('[data-live-edit-empty-component="true"]').each((index, element) => {
+            var type = $(element).data('live-edit-type');
+            var path = $(element).data('live-edit-component');
+            console.log("found empty component", type, path);
+            var newEl;
+            if (type == "image") {
+                newEl = new LiveEdit.component.ImagePlaceholder();
+            } else if (type == "part") {
+                newEl = new LiveEdit.component.PartPlaceholder();
+            } else if (type == "layout") {
+                newEl = new LiveEdit.component.LayoutPlaceholder();
+            }
+            newEl.setComponentPath(path);
+            $(element).replaceWith(newEl.getHTMLElement());
+        });
 
     });
 

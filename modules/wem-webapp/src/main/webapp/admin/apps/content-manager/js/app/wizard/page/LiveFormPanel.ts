@@ -527,12 +527,6 @@ module app.wizard {
         constructor() {
             super("live-edit-loader");
 
-//            this.getEl().setTopPx(elementToCover.getEl().getOffsetTop());
-//            this.getEl().setLeftPx(elementToCover.getEl().getOffset().left);
-//            this.getEl().setHeightPx(elementToCover.getEl().getHeight());
-//            this.getEl().setWidthPx(elementToCover.getEl().getWidth());
-
-
             var dots = new api.dom.DivEl("dots");
             this.appendChild(dots);
             document.body.appendChild(this.getHTMLElement());
