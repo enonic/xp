@@ -1,6 +1,6 @@
 module api.rest {
 
-    export class JsonResponse<T> extends Response {
+    export class JsonResponse<T> extends api.rest.Response {
 
         private json:any;
 

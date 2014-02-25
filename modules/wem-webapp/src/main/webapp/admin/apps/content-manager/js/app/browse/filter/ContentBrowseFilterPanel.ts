@@ -28,14 +28,21 @@ module app.browse.filter {
 
     export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel {
 
-        static CONTENT_TYPE_AGGREGATION_DISPLAY_NAME: string = "Content Types"
-        static LAST_MODIFIED_AGGREGATION_DISPLAY_NAME: string = "Last Modified"
+        static CONTENT_TYPE_AGGREGATION_NAME: string = "contentTypes";
+        static LAST_MODIFIED_AGGREGATION_NAME: string = "lastModified";
+        static CONTENT_TYPE_AGGREGATION_DISPLAY_NAME: string = "Content Types";
+        static LAST_MODIFIED_AGGREGATION_DISPLAY_NAME: string = "Last Modified";
 
         constructor() {
 
-            var contentTypeAggregation = new AggregationGroupView("contentTypes",
+            var contentTypeAggregation: AggregationGroupView = new AggregationGroupView(
+                ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME,
                 ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_DISPLAY_NAME);
-            var lastModifiedAggregation = new AggregationGroupView("lastModified",
+            this.loadAndSetContentTypeDisplayNames(contentTypeAggregation);
+
+
+            var lastModifiedAggregation: AggregationGroupView = new AggregationGroupView(
+                ContentBrowseFilterPanel.LAST_MODIFIED_AGGREGATION_NAME,
                 ContentBrowseFilterPanel.LAST_MODIFIED_AGGREGATION_DISPLAY_NAME);
 
             super(null, [contentTypeAggregation, lastModifiedAggregation]);
@@ -75,16 +82,41 @@ module app.browse.filter {
                                 var result: ContentQueryResultJson<ContentSummaryJson> = jsonResponse.getResult();
 
                                 var doUpdateAll = true;
+
                                 if (elementChanged instanceof api.aggregation.BucketView) {
                                     doUpdateAll = false;
                                 }
-                                 this.updateAggregations(Aggregation.fromJsonArray(result.aggregations), doUpdateAll);
+
+                                this.updateAggregations(Aggregation.fromJsonArray(result.aggregations), doUpdateAll);
 
                                 new ContentBrowseSearchEvent(result.contents).fire();
                             });
                     }
                 }
             );
+        }
+
+        private loadAndSetContentTypeDisplayNames(aggregationGroupView: AggregationGroupView) {
+
+            var displayNameMap: string[] = [];
+
+            var request = new api.schema.content.GetAllContentTypesRequest();
+            request.send().done((response: api.rest.JsonResponse<api.schema.content.json.ContentTypeSummaryListJson>) => {
+
+                var contentTypes: api.schema.content.ContentTypeSummary[] =
+                    api.schema.content.ContentTypeSummary.fromJsonArray(response.getResult().contentTypes);
+
+                contentTypes.forEach((contentType: api.schema.content.ContentTypeSummary)=> {
+                    displayNameMap[contentType.getName()] = contentType.getDisplayName();
+                });
+
+                aggregationGroupView.getAggregationViews().forEach((aggregationView: api.aggregation.AggregationView)=> {
+                    if (aggregationView.getName() == ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME) {
+                        aggregationView.setDisplayNamesMap(displayNameMap);
+                    }
+                });
+
+            });
         }
 
         private resetFacets(supressEvent?: boolean) {
@@ -120,8 +152,7 @@ module app.browse.filter {
         }
 
         private appendContentTypeFilter(searchInputValues: SearchInputValues, contentQuery: ContentQuery): void {
-
-            var selectedBuckets: api.aggregation.Bucket[] = searchInputValues.getSelectedValuesForAggregationName("contentTypes");
+            var selectedBuckets: api.aggregation.Bucket[] = searchInputValues.getSelectedValuesForAggregationName(ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME);
 
             var contentTypeNames: ContentTypeName[] = this.parseContentTypeNames(selectedBuckets);
 
@@ -130,16 +161,14 @@ module app.browse.filter {
 
         private appendLastModifiedQuery(searchInputValues: api.query.SearchInputValues): api.query.filter.Filter {
 
-            var lastModifiedSelectedBuckets: api.aggregation.Bucket[] = searchInputValues.getSelectedValuesForAggregationName("lastModified");
+            var lastModifiedSelectedBuckets: api.aggregation.Bucket[] = searchInputValues.getSelectedValuesForAggregationName(ContentBrowseFilterPanel.LAST_MODIFIED_AGGREGATION_NAME);
 
             if (lastModifiedSelectedBuckets == null || lastModifiedSelectedBuckets.length == 0) {
                 return null;
             }
 
             if (lastModifiedSelectedBuckets.length == 1) {
-
                 var dateRangeBucket: api.aggregation.DateRangeBucket = <api.aggregation.DateRangeBucket> lastModifiedSelectedBuckets.pop();
-
                 return new api.query.filter.RangeFilter("modifiedtime", ValueExpr.dateTime(dateRangeBucket.getFrom()).getValue(), null);
             }
 
@@ -170,7 +199,8 @@ module app.browse.filter {
         }
 
         private appendContentTypesAggregation(contentQuery) {
-            contentQuery.addAggregationQuery(this.createTermsAggregation("contentTypes", "contenttype", 10));
+            contentQuery.addAggregationQuery(this.createTermsAggregation((ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME),
+                "contenttype", 10));
         }
 
         private createTermsAggregation(name: string, fieldName: string, size: number): TermsAggregationQuery {
@@ -182,7 +212,7 @@ module app.browse.filter {
 
         private appendLastModifiedAggregation(contentQuery: ContentQuery) {
 
-            var dateRangeAgg = new DateRangeAggregationQuery("lastModified");
+            var dateRangeAgg = new DateRangeAggregationQuery((ContentBrowseFilterPanel.LAST_MODIFIED_AGGREGATION_NAME));
             dateRangeAgg.setFieldName("modifiedTime");
             dateRangeAgg.addRange(new DateRange("now-1h", null, "< 1 hour"));
             dateRangeAgg.addRange(new DateRange("now-1d", null, "< 1 day"));
@@ -191,6 +221,4 @@ module app.browse.filter {
             contentQuery.addAggregationQuery(dateRangeAgg);
         }
     }
-
-
 }

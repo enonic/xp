@@ -1,6 +1,6 @@
 module api.query.filter {
 
-    export class RangeFilter extends Filter {
+    export class RangeFilter extends api.query.filter.Filter {
 
         private from: api.data.Value;
         private to: api.data.Value;

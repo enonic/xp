@@ -12,11 +12,15 @@ module api.aggregation {
 
         private selectionChangedListeners: Function[] = [];
 
-        constructor(bucket: api.aggregation.Bucket, parentAggregationView: api.aggregation.AggregationView, select?: boolean) {
+        private displayName: string;
+
+        constructor(bucket: api.aggregation.Bucket, parentAggregationView: api.aggregation.AggregationView, select: boolean,
+                    displayName?: string) {
 
             super('aggregation-bucket-view');
             this.bucket = bucket;
             this.parentAggregationView = parentAggregationView;
+            this.displayName = displayName;
 
             this.checkbox = new api.ui.CheckboxInput();
 
@@ -38,7 +42,21 @@ module api.aggregation {
         }
 
         private resolveLabelValue(): string {
+
+            if (this.displayName != null) {
+                return this.displayName + ' (' + this.bucket.getDocCount() + ')';
+            }
+
             return this.bucket.getKey() + ' (' + this.bucket.getDocCount() + ')';
+        }
+
+        setDisplayName(displayName: string) {
+            this.displayName = displayName;
+            this.updateLabel();
+        }
+
+        private updateLabel(): void {
+            this.label.setValue(this.resolveLabelValue());
         }
 
         getBucket(): api.aggregation.Bucket {
@@ -60,10 +78,6 @@ module api.aggregation {
 
         deselect(supressEvent?: boolean) {
             this.checkbox.setChecked(false, supressEvent);
-        }
-
-        setSelected(supressEvent?: boolean) {
-            this.checkbox.setChecked(true, supressEvent);
         }
 
         private updateUI() {

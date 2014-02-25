@@ -15,9 +15,7 @@ module api.aggregation {
 
             this.showBucketView = false;
             this.bucketAggregation.getBuckets().forEach((bucket: api.aggregation.Bucket) => {
-
-                this.addBucket(new api.aggregation.BucketView(bucket, this));
-
+                this.addBucket(new api.aggregation.BucketView(bucket, this, false, this.getDisplayNameForName(bucket.getKey())));
                 if (bucket.getDocCount() > 0) {
                     this.showBucketView = true;
                 }
@@ -27,6 +25,12 @@ module api.aggregation {
             if (!this.showBucketView) {
                 this.hide();
             }
+        }
+
+        setDisplayNames(): void {
+            this.bucketViews.forEach((bucketView: api.aggregation.BucketView) => {
+                bucketView.setDisplayName(this.getDisplayNameForName(bucketView.getName()));
+            })
         }
 
         hasSelectedEntry(): boolean {
@@ -81,7 +85,8 @@ module api.aggregation {
 
                 var wasSelected: boolean = (jQuery.inArray(bucket.getKey(), selectedBucketNames)) > -1;
 
-                var bucketView: api.aggregation.BucketView = new api.aggregation.BucketView(bucket, this, wasSelected);
+                var bucketView: api.aggregation.BucketView = new api.aggregation.BucketView(bucket, this, wasSelected,
+                    this.getDisplayNameForName(bucket.getKey()));
 
                 this.addBucket(bucketView);
 

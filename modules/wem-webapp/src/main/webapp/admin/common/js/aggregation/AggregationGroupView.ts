@@ -12,24 +12,15 @@ module api.aggregation {
 
         private bucketSelectionChangedListeners: Function[] = [];
 
-        private handleAggregationFilter: (aggregation: api.aggregation.Aggregation) => boolean;
 
-        constructor(name: string, displayName: string, aggregations?: api.aggregation.Aggregation[],
-                    handleAggregationFilter?: (aggregation: api.aggregation.Aggregation) => boolean) {
+        constructor(name: string, displayName: string) {
             super("aggregation-group-view");
 
             this.name = name;
             this.displayName = displayName;
-            this.handleAggregationFilter = handleAggregationFilter;
 
             this.titleEl.getEl().setInnerHtml(this.displayName);
             this.appendChild(this.titleEl);
-
-            if (aggregations) {
-                aggregations.forEach((aggregation: api.aggregation.Aggregation) => {
-                    this.addAggregationView(api.aggregation.AggregationView.createAggregationView(aggregation, this));
-                });
-            }
         }
 
         private addAggregationView(aggregationView: api.aggregation.AggregationView) {
@@ -43,17 +34,20 @@ module api.aggregation {
             this.aggregationViews.push(aggregationView);
         }
 
+        getAggregationViews(): api.aggregation.AggregationView[] {
+            return this.aggregationViews;
+        }
+
+        getName(): string {
+            return this.name;
+        }
+
         /*
          * Override this method to give other criteria for this group to display given facet.
          */
         handlesAggregation(aggregation: api.aggregation.Aggregation) {
 
-            if (this.handleAggregationFilter) {
-                return this.handleAggregationFilter(aggregation);
-            }
-            else {
-                return aggregation.getName() == this.name;
-            }
+            return aggregation.getName() == this.name;
         }
 
         getSelectedValuesByAggregationName(): api.aggregation.AggregationSelection[] {

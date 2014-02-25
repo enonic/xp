@@ -8,10 +8,29 @@ module api.aggregation {
 
         private bucketSelectionChangedListeners: Function[] = [];
 
+        displayNameMap: string[] = [];
+
         constructor(aggregation: api.aggregation.Aggregation, parentGroupView: api.aggregation.AggregationGroupView) {
             super('aggregation-view');
             this.aggregation = aggregation;
             this.parentGroupView = parentGroupView;
+        }
+
+        setDisplayNamesMap(displayNameMap: string[]): void {
+            this.displayNameMap = displayNameMap;
+            this.setDisplayNames();
+        }
+
+        setDisplayNames(): void {
+            throw new Error("Must be implemented by inheritor");
+        }
+
+        getDisplayNameForName(name: string): string {
+            return this.displayNameMap[name];
+        }
+
+        getAggregation(): api.aggregation.Aggregation {
+            return this.aggregation;
         }
 
         getParentGroupView() {
