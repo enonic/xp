@@ -10,7 +10,6 @@ module app.contextwindow {
 
         constructor(liveFormPanel: app.wizard.LiveFormPanel, siteTemplate: SiteTemplate) {
             super("live-edit-font-icon-image", liveFormPanel, siteTemplate);
-
             this.initElements();
         }
 
@@ -25,7 +24,7 @@ module app.contextwindow {
             this.descriptorComboBox = new api.content.page.image.ImageDescriptorComboBox(imageDescriptorLoader);
 
             var onDescriptorsLoaded = () => {
-                this.descriptorComboBox.setValue(this.getLiveFormPanel().getDefaultImageDescriptor().getKey().toString());
+                this.descriptorComboBox.setDescriptor(this.getLiveFormPanel().getDefaultImageDescriptor().getKey());
                 this.descriptorComboBox.removeLoadedListener(onDescriptorsLoaded); // execute only on the first loaded event
             };
             this.descriptorComboBox.addLoadedListener(onDescriptorsLoaded);
@@ -45,11 +44,12 @@ module app.contextwindow {
 
             var descriptorKey = component.getDescriptor();
             if (descriptorKey) {
+                this.descriptorComboBox.setDescriptor(descriptorKey);
                 var imageDescriptorOption: api.ui.combobox.Option<ImageDescriptor> = this.descriptorComboBox.getSelectedData()[0];
                 var imageDescriptor = imageDescriptorOption.displayValue;
-                this.descriptorComboBox.setDescriptor(descriptorKey);
                 this.setupComponentForm(component, imageDescriptor);
             }
         }
+
     }
 }

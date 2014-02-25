@@ -24,7 +24,7 @@ module app.contextwindow {
             this.descriptorComboBox = new api.content.page.part.PartDescriptorComboBox(partDescriptorLoader);
 
             var onDescriptorsLoaded = () => {
-                this.descriptorComboBox.setValue(this.getLiveFormPanel().getDefaultPartDescriptor().getKey().toString());
+                this.descriptorComboBox.setDescriptor(this.getLiveFormPanel().getDefaultPartDescriptor().getKey());
                 this.descriptorComboBox.removeLoadedListener(onDescriptorsLoaded); // execute only on the first loaded event
             };
             this.descriptorComboBox.addLoadedListener(onDescriptorsLoaded);
@@ -44,9 +44,9 @@ module app.contextwindow {
 
             var descriptorKey = component.getDescriptor();
             if (descriptorKey) {
+                this.descriptorComboBox.setDescriptor(descriptorKey);
                 var partDescriptorOption: api.ui.combobox.Option<PartDescriptor> = this.descriptorComboBox.getSelectedData()[0];
                 var partDescriptor = partDescriptorOption.displayValue;
-                this.descriptorComboBox.setDescriptor(descriptorKey);
                 this.setupComponentForm(component, partDescriptor);
             }
         }

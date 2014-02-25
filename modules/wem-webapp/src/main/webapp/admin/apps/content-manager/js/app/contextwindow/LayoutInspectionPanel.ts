@@ -8,9 +8,7 @@ module app.contextwindow {
         private layoutComponent: api.content.page.layout.LayoutComponent;
         private descriptorComboBox: api.content.page.layout.LayoutDescriptorComboBox;
 
-
         constructor(liveFormPanel: app.wizard.LiveFormPanel, siteTemplate: SiteTemplate) {
-
             super("live-edit-font-icon-layout", liveFormPanel, siteTemplate);
             this.initElements();
         }
@@ -26,7 +24,7 @@ module app.contextwindow {
             this.descriptorComboBox = new api.content.page.layout.LayoutDescriptorComboBox(layoutDescriptorLoader);
 
             var onDescriptorsLoaded = () => {
-                this.descriptorComboBox.setValue(this.getLiveFormPanel().getDefaultLayoutDescriptor().getKey().toString());
+                this.descriptorComboBox.setDescriptor(this.getLiveFormPanel().getDefaultLayoutDescriptor().getKey());
                 this.descriptorComboBox.removeLoadedListener(onDescriptorsLoaded); // execute only on the first loaded event
             };
             this.descriptorComboBox.addLoadedListener(onDescriptorsLoaded);
@@ -46,9 +44,9 @@ module app.contextwindow {
 
             var descriptorKey = component.getDescriptor();
             if (descriptorKey) {
+                this.descriptorComboBox.setDescriptor(descriptorKey);
                 var layoutDescriptorOption: api.ui.combobox.Option<LayoutDescriptor> = this.descriptorComboBox.getSelectedData()[0];
                 var layoutDescriptor = layoutDescriptorOption.displayValue;
-                this.descriptorComboBox.setDescriptor(descriptorKey);
                 this.setupComponentForm(component, layoutDescriptor);
             }
         }
