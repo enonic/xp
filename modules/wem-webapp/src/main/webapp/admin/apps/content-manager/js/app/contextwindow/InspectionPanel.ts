@@ -53,7 +53,8 @@ module app.contextwindow {
             this.showInspectionPanel(this.noSelectionPanel);
         }
 
-        public inspectPage(page: api.content.Content, pageTemplate: api.content.page.PageTemplate, pageDescriptor: api.content.page.PageDescriptor) {
+        public inspectPage(page: api.content.Content, pageTemplate: api.content.page.PageTemplate,
+                           pageDescriptor: api.content.page.PageDescriptor) {
             this.pageInspectionPanel.setPage(page, pageTemplate, pageDescriptor);
             this.showInspectionPanel(this.pageInspectionPanel);
         }
@@ -81,7 +82,9 @@ module app.contextwindow {
                 this.layoutInspectionPanel.setLayoutComponent(<LayoutComponent>component);
                 this.showInspectionPanel(this.layoutInspectionPanel);
             } else {
-                console.warn('Unsupported component in InspectionPanel', component);
+                if (component) {
+                    console.warn('Unsupported component in InspectionPanel', component);
+                }
             }
         }
     }

@@ -370,7 +370,20 @@ module app.wizard {
 
         private onComponentReset(pathAsString: string) {
             var componentPath = api.content.page.ComponentPath.fromString(pathAsString);
-            this.pageRegions.removeComponent(componentPath);
+            //this.pageRegions.removeComponent(componentPath);
+        }
+
+        private loadComponent(componentPath: api.content.page.ComponentPath, componentPlaceholder: api.dom.Element) {
+            $.ajax({
+                url: api.util.getComponentUri(this.pageContent.getContentId().toString(), componentPath.toString(), true),
+                method: 'GET',
+                success: (data) => {
+                    var newElement = $(data);
+                    $(componentPlaceholder.getHTMLElement()).replaceWith(newElement);
+                    this.liveEditWindow.LiveEdit.component.Selection.deselect();
+                    this.liveEditWindow.LiveEdit.component.Selection.handleSelect(newElement[0]);
+                }
+            });
         }
 
         private liveEditListen() {
@@ -464,9 +477,9 @@ module app.wizard {
                 });
 
             this.liveEditJQuery(this.liveEditWindow).on('imageComponentSetImage.liveEdit',
-                (event, imageId?, componentPathAsString?, component?) => {
+                (event, imageId?, componentPathAsString?, componentPlaceholder?) => {
 
-                    component.showLoadingSpinner();
+                    componentPlaceholder.showLoadingSpinner();
                     var componentPath = ComponentPath.fromString(componentPathAsString);
                     var imageComponent = this.pageRegions.getImageComponent(componentPath);
                     if (imageComponent != null) {
@@ -478,23 +491,33 @@ module app.wizard {
                         this.pageSkipReload = true;
                         this.contentWizardPanel.saveChanges().done(() => {
                             this.pageSkipReload = false;
-                            $.ajax({
-                                url: api.util.getComponentUri(this.pageContent.getContentId().toString(), componentPath.toString(),
-                                    true),
-                                method: 'GET',
-                                success: (data) => {
-                                    var newElement = $(data);
-                                    $(component.getHTMLElement()).replaceWith(newElement);
-                                    this.liveEditWindow.LiveEdit.component.Selection.deselect();
-                                    this.liveEditWindow.LiveEdit.component.Selection.handleSelect(newElement[0]);
-                                }
-                            });
+                            this.loadComponent(componentPath, componentPlaceholder);
                         })
 
                     }
                     else {
                         console.log("ImageComponent to set image on not found: " + componentPath);
                     }
+                });
+
+            this.liveEditJQuery(this.liveEditWindow).on('partComponentSetDescriptor.liveEdit',
+                (event, descriptorKey?: api.content.page.DescriptorKey, componentPathAsString?: string, componentPlaceholder?) => {
+
+                    var componentPath = ComponentPath.fromString(componentPathAsString);
+                    var component = this.pageRegions.getComponent(componentPath);
+                    console.log('Setting descriptor ' + descriptorKey.toString() + ' on component:', component);
+                    if (!component || !descriptorKey) {
+                        return;
+                    }
+
+                    component.setDescriptor(descriptorKey);
+                    componentPlaceholder.showLoadingSpinner();
+
+                    this.pageSkipReload = true;
+                    this.contentWizardPanel.saveChanges().done(() => {
+                        this.pageSkipReload = false;
+                        this.loadComponent(componentPath, componentPlaceholder);
+                    });
                 });
         }
     }
