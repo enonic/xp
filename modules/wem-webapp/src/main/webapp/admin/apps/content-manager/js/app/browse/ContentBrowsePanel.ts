@@ -38,14 +38,6 @@ module app.browse {
                 browseItemPanel: this.contentBrowseItemPanel,
                 filterPanel: this.contentFilterPanel});
 
-            ShowPreviewEvent.on((event) => {
-                this.contentBrowseItemPanel.setPreviewMode(true);
-            });
-
-            ShowDetailsEvent.on((event) => {
-                this.contentBrowseItemPanel.setPreviewMode(false);
-            });
-
             api.content.ContentDeletedEvent.on((event) => {
                 var contents:api.content.ContentSummary[] = event.getContents();
                 for (var i = 0; i < contents.length; i++) {
