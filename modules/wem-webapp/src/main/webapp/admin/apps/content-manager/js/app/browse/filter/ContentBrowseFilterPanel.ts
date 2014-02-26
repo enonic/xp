@@ -77,9 +77,7 @@ module app.browse.filter {
 
                         new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).
                             setExpand(api.rest.Expand.SUMMARY).
-                            send().done((jsonResponse: api.rest.JsonResponse<ContentQueryResultJson<ContentSummaryJson>>) => {
-
-                                var result: ContentQueryResultJson<ContentSummaryJson> = jsonResponse.getResult();
+                            sendAndParse().done((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
 
                                 var doUpdateAll = true;
 
@@ -87,9 +85,9 @@ module app.browse.filter {
                                     doUpdateAll = false;
                                 }
 
-                                this.updateAggregations(Aggregation.fromJsonArray(result.aggregations), doUpdateAll);
+                                this.updateAggregations(contentQueryResult.getAggregations(), doUpdateAll);
 
-                                new ContentBrowseSearchEvent(result.contents).fire();
+                                new ContentBrowseSearchEvent(contentQueryResult.getContentsAsJson()).fire();
                             });
                     }
                 }
@@ -101,10 +99,7 @@ module app.browse.filter {
             var displayNameMap: string[] = [];
 
             var request = new api.schema.content.GetAllContentTypesRequest();
-            request.send().done((response: api.rest.JsonResponse<api.schema.content.json.ContentTypeSummaryListJson>) => {
-
-                var contentTypes: api.schema.content.ContentTypeSummary[] =
-                    api.schema.content.ContentTypeSummary.fromJsonArray(response.getResult().contentTypes);
+            request.sendAndParse().done((contentTypes: api.schema.content.ContentTypeSummary[]) => {
 
                 contentTypes.forEach((contentType: api.schema.content.ContentTypeSummary)=> {
                     displayNameMap[contentType.getName()] = contentType.getDisplayName();
@@ -129,12 +124,11 @@ module app.browse.filter {
             this.appendLastModifiedAggregation(contentQuery);
 
             new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).
-                send().done((jsonResponse: api.rest.JsonResponse<ContentQueryResultJson<ContentSummaryJson>>) => {
+                sendAndParse().done((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
 
-                    var result: ContentQueryResultJson<ContentSummaryJson> = jsonResponse.getResult();
-                    new ContentBrowseSearchEvent(result.contents).fire();
+                    new ContentBrowseSearchEvent(contentQueryResult.getContentsAsJson()).fire();
 
-                    this.updateAggregations(Aggregation.fromJsonArray(result.aggregations));
+                    this.updateAggregations(contentQueryResult.getAggregations());
 
                     if (!supressEvent) {
                         new ContentBrowseResetEvent().fire();
@@ -182,7 +176,6 @@ module app.browse.filter {
             });
 
             return booleanFilter;
-
         }
 
         private parseContentTypeNames(buckets: api.aggregation.Bucket[]): ContentTypeName[] {

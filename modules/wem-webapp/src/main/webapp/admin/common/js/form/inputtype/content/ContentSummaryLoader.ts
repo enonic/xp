@@ -61,7 +61,7 @@ module api.form.inputtype.content {
         doRequest(): Q.Promise<api.content.ContentSummary[]> {
             var deferred = Q.defer<api.content.ContentSummary[]>();
 
-            this.getRequest().sendAndParse().done((queryResult: api.content.ContentQueryResult<api.content.ContentSummary>) => {
+            this.getRequest().sendAndParse().done((queryResult: api.content.ContentQueryResult<api.content.ContentSummary,api.content.json.ContentSummaryJson>) => {
                 deferred.resolve(queryResult.getContents());
             });
 

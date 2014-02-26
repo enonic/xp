@@ -33,9 +33,9 @@ module api.content {
             };
         }
 
-        sendAndParse(): Q.Promise<ContentQueryResult<CONTENT>> {
+        sendAndParse(): Q.Promise<ContentQueryResult<CONTENT,CONTENT_JSON>> {
 
-            var deferred = Q.defer<ContentQueryResult<CONTENT>>();
+            var deferred = Q.defer<ContentQueryResult<CONTENT,CONTENT_JSON>>();
 
             this.send().
                 then((response: api.rest.JsonResponse<json.ContentQueryResultJson<CONTENT_JSON>>) => {
@@ -49,17 +49,17 @@ module api.content {
                     if (this.expand == api.rest.Expand.NONE) {
 
                         var contentIdBaseItems: CONTENT[] = <any[]> this.fromJsonToContentIdBaseItemArray(contentsAsJson);
-                        var contentQueryResult = new ContentQueryResult<CONTENT>(contentIdBaseItems, aggregations);
+                        var contentQueryResult = new ContentQueryResult<CONTENT,CONTENT_JSON>(contentIdBaseItems, aggregations, <CONTENT_JSON[]>contentsAsJson);
                         deferred.resolve(contentQueryResult);
                     }
                     else if (this.expand == api.rest.Expand.SUMMARY) {
                         var contentSummaries: CONTENT[] = <any[]> this.fromJsonToContentSummaryArray(<json.ContentSummaryJson[]>contentsAsJson);
-                        var contentQueryResult = new ContentQueryResult<CONTENT>(contentSummaries, aggregations);
+                        var contentQueryResult = new ContentQueryResult<CONTENT,CONTENT_JSON>(contentSummaries, aggregations, <CONTENT_JSON[]>contentsAsJson);
                         deferred.resolve(contentQueryResult);
                     }
                     else {
                         var contents: CONTENT[] = <any[]>this.fromJsonToContentArray(<json.ContentJson[]>contentsAsJson);
-                        var contentQueryResult = new ContentQueryResult<CONTENT>(contents, aggregations);
+                        var contentQueryResult = new ContentQueryResult<CONTENT,CONTENT_JSON>(contents, aggregations, <CONTENT_JSON[]>contentsAsJson);
                         deferred.resolve(contentQueryResult);
                     }
 
