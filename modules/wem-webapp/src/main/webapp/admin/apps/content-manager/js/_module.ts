@@ -3,8 +3,6 @@
 
 ///<reference path='model/_module.ts' />
 
-///<reference path='lib/ux/toggleslide/_module.ts' />
-
 ///<reference path='app/_module.ts' />
 ///<reference path='app/browse/_module.ts' />
 ///<reference path='app/browse/filter/_module.ts' />

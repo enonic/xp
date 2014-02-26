@@ -15,17 +15,6 @@ module app.view {
             super.addAction(params.editAction);
             super.addAction(params.deleteAction);
             super.addGreedySpacer();
-
-
-            var displayModeToggle = new api.ui.ToggleSlide({
-                turnOnAction: params.showPreviewAction,
-                turnOffAction: params.showDetailsAction
-            }, false);
-            displayModeToggle.setEnabled(params.showPreviewAction.isEnabled());
-            params.showPreviewAction.addPropertyChangeListener((action: api.ui.Action) => {
-                displayModeToggle.setEnabled(action.isEnabled());
-            });
-            super.addElement(displayModeToggle);
             super.addAction(params.closeAction);
         }
     }

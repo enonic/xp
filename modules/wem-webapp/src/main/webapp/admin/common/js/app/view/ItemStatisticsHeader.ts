@@ -8,10 +8,8 @@ module api.app.view {
 
         private headerTextEl = new api.dom.H1El();
 
-        constructor(tabMenu:api.ui.tab.TabMenu) {
+        constructor() {
             super("header");
-
-            this.appendChild(tabMenu);
             this.appendChild(this.headerTextEl);
         }
 
