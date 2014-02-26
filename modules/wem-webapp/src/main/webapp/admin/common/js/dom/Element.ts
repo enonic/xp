@@ -47,6 +47,32 @@ module api.dom {
         }
     }
 
+    export class ElementEvent {
+
+        private name: string;
+        private element: Element;
+        private target: Element;
+
+        constructor(name: string, element: Element, target?: Element) {
+            this.name = name;
+            this.element = element;
+            this.target = target || element;
+        }
+
+        getName(): string {
+            return this.name;
+        }
+
+        getElement(): Element {
+            return this.element;
+        }
+
+        getTarget(): Element {
+            return this.target;
+        }
+
+    }
+
     export class Element {
 
         private el: ElementHelper;
@@ -56,6 +82,12 @@ module api.dom {
         private children: Element[];
 
         private rendered: boolean;
+
+        private addedListeners: {(event: ElementEvent) : void}[] = [];
+        private removedListeners: {(event: ElementEvent) : void}[] = [];
+        private renderedListeners: {(event: ElementEvent) : void}[] = [];
+        private shownListeners: {(event: ElementEvent) : void}[] = [];
+        private hiddenListeners: {(event: ElementEvent) : void}[] = [];
 
         constructor(properties: ElementProperties) {
             this.rendered = false;
@@ -83,27 +115,22 @@ module api.dom {
         }
 
         init() {
-            if (!this.isRendered()) {
-                this.afterRender();
-                this.rendered = true;
-            }
-
-            this.children.forEach((child) => {
+            this.children.forEach((child: Element) => {
                 child.init();
-            })
-        }
-
-        reRender() {
-
-            this.children.forEach((child) => {
-                child.reRender();
             });
-
-            this.afterRender();
+            if (!this.isRendered()) {
+                this.render(false);
+            }
         }
 
-        afterRender() {
-
+        render(deep: boolean = true) {
+            if (deep) {
+                this.children.forEach((child: Element) => {
+                    child.render();
+                });
+            }
+            this.rendered = true;
+            this.notifyRendered();
         }
 
         isRendered(): boolean {
@@ -115,43 +142,28 @@ module api.dom {
             return this;
         }
 
-        onElementShown() {
-            // To be overridden by inheritors interested in when it's shown
-        }
-
-        private broadcastElementShown() {
-            this.onElementShown();
-            this.children.forEach((child) => {
-                child.onElementShown();
-            })
-        }
-
         show() {
             // Using jQuery to show, since it seems to contain some smartness
             jQuery(this.el.getHTMLElement()).show();
-            this.broadcastElementShown();
+            this.notifyShown(this);
         }
 
         hide() {
             // Using jQuery to hide, since it seems to contain some smartness
             jQuery(this.el.getHTMLElement()).hide();
+            this.notifyHidden(this);
         }
 
         setVisible(value: boolean) {
             if (value) {
                 this.show();
-            }
-            else {
+            } else {
                 this.hide();
             }
         }
 
         isVisible() {
             return jQuery(this.el.getHTMLElement()).is(':visible');
-        }
-
-        empty() {
-            this.el.setInnerHtml("");
         }
 
         setClass(className: string): api.dom.Element {
@@ -173,16 +185,11 @@ module api.dom {
             return this;
         }
 
-        removeAllClasses(exceptions: string = ""): api.dom.Element {
-            this.el.getHTMLElement().className = exceptions;
-            return this;
-        }
-
         getId(): string {
             return this.el.getId();
         }
 
-        setId(value:string): api.dom.Element {
+        setId(value: string): api.dom.Element {
             this.el.setId(value);
             return this;
         }
@@ -211,33 +218,14 @@ module api.dom {
             return this.el.getHTMLElement();
         }
 
-        onElementAddedToParent(parent: Element) {
-            // To be overridden by inheritors interested in when it's shown
-        }
-
-        private broadcastElementAddedToParent(child: Element) {
-            child.onElementAddedToParent(this);
-        }
-
         appendChild<T extends api.dom.Element>(child: T) {
             this.el.appendChild(child.getEl().getHTMLElement());
             this.insert(child, this, this.children.length);
-
-            this.broadcastElementAddedToParent(child);
         }
 
         prependChild(child: api.dom.Element) {
             this.el.getHTMLElement().insertBefore(child.getHTMLElement(), this.el.getHTMLElement().firstChild);
             this.insert(child, this, 0);
-        }
-
-        removeChild(child: api.dom.Element) {
-            if (this.getHTMLElement().contains(child.getHTMLElement())) {
-                this.getHTMLElement().removeChild(child.getHTMLElement());
-                this.children = this.children.filter((element) => {
-                    return element != child;
-                });
-            }
         }
 
         insertAfterEl(existingEl: Element) {
@@ -260,14 +248,27 @@ module api.dom {
             if (parent.isRendered()) {
                 child.init();
             }
+            child.notifyAdded();
+        }
+
+        removeChild(child: api.dom.Element) {
+            var index = this.children.indexOf(child);
+            if (index > -1) {
+                child.remove();
+                this.children.splice(index, 1);
+            }
         }
 
         removeChildren() {
-            var htmlEl = this.el.getHTMLElement();
-            while (htmlEl.firstChild) {
-                htmlEl.removeChild(htmlEl.firstChild);
-            }
+            this.children.forEach((child:Element) => {
+                child.remove();
+            });
             this.children = [];
+        }
+
+        remove() {
+            this.getEl().remove();
+            this.notifyRemoved(this);
         }
 
         private setParentElement(parent: Element) {
@@ -288,24 +289,6 @@ module api.dom {
 
         getFirstChild(): Element {
             return this.children[0];
-        }
-
-        getCumulativeOffsetTop() {
-            var top = 0;
-            var element = this.el.getHTMLElement();
-            do {
-                top += parseInt(element.style.top, 10) || 0;
-                element = element.parentElement;
-            }
-            while (element);
-
-            return top;
-        }
-
-       remove() {
-            if (this.parentElement) {
-                this.parentElement.removeChild(this);
-            }
         }
 
         toString(): string {
@@ -344,6 +327,102 @@ module api.dom {
         private contains(container: HTMLElement, maybe: HTMLElement) {
             return container.contains ? container.contains(maybe) :
                    !!(container.compareDocumentPosition(maybe) & 16);
+        }
+
+        onAdded(listener: (event: ElementEvent) => void) {
+            this.addedListeners.push(listener);
+        }
+
+        unAdded(listener: (event: ElementEvent) => void) {
+            this.addedListeners = this.addedListeners.filter((curr) => {
+                return curr !== listener;
+            })
+        }
+
+        notifyAdded() {
+            var addedEvent = new ElementEvent("added", this);
+            this.addedListeners.forEach((listener) => {
+                listener(addedEvent);
+            });
+            // Each child throw its own added
+        }
+
+        onRemoved(listener: (event: ElementEvent) => void) {
+            this.removedListeners.push(listener);
+        }
+
+        unRemoved(listener: (event: ElementEvent) => void) {
+            this.removedListeners = this.removedListeners.filter((curr) => {
+                return curr !== listener;
+            })
+        }
+
+        notifyRemoved(target?:Element) {
+            var removedEvent = new ElementEvent("removed", this, target);
+            this.removedListeners.forEach((listener) => {
+                listener(removedEvent);
+            });
+            this.children.forEach((child:Element) => {
+                child.notifyRemoved(target);
+            })
+        }
+
+        onRendered(listener: (event: ElementEvent) => void) {
+            this.renderedListeners.push(listener);
+        }
+
+        unRendered(listener: (event: ElementEvent) => void) {
+            this.renderedListeners = this.renderedListeners.filter((curr) => {
+                return curr !== listener;
+            })
+        }
+
+        notifyRendered() {
+            var renderedEvent = new ElementEvent("rendered", this);
+            this.renderedListeners.forEach((listener) => {
+                listener(renderedEvent);
+            });
+            // Each child throw its own rendered
+        }
+
+        onShown(listener: (event: ElementEvent) => void) {
+            this.shownListeners.push(listener);
+        }
+
+        unShown(listener: (event: ElementEvent) => void) {
+            this.shownListeners = this.shownListeners.filter((curr) => {
+                return curr !== listener;
+            })
+        }
+
+        notifyShown(target?:Element) {
+            var shownEvent = new ElementEvent("shown", this, target);
+            this.shownListeners.forEach((listener) => {
+                listener(shownEvent);
+            });
+            this.children.forEach((child:Element) => {
+                child.notifyShown(target);
+            })
+        }
+
+        onHidden(listener: (event: ElementEvent) => void) {
+            this.hiddenListeners.push(listener);
+        }
+
+        unHidden(listener: (event: ElementEvent) => void) {
+            this.hiddenListeners = this.hiddenListeners.filter((curr) => {
+                return curr !== listener;
+            })
+        }
+
+        notifyHidden(target?:Element) {
+            var hiddenEvent = new ElementEvent("hidden", this, target);
+            this.hiddenListeners.forEach((listener) => {
+                listener(hiddenEvent);
+            });
+            this.children.forEach((child:Element) => {
+                child.notifyHidden(target);
+            })
         }
 
     }

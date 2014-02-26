@@ -19,12 +19,16 @@ module app.imp {
             this.progress = new api.ui.ProgressBar();
             this.progress.setClass("progress");
             this.appendChild(this.progress);
-        }
 
-        afterRender() {
-            super.afterRender();
-            this.uploader = new api.content.site.template.InstallSiteTemplateRequest(this.dropzone);
-            this.setProgressVisible(false);
+            this.onRendered((event) => {
+                console.log("TemplateUploader rendered, creating plupload");
+                this.uploader = new api.content.site.template.InstallSiteTemplateRequest(this.dropzone);
+                this.setProgressVisible(false);
+            });
+            this.onRemoved((event) => {
+                console.log("TemplateUploader removed, destroying plupload");
+                this.uploader.destroy();
+            })
         }
 
         stop() {

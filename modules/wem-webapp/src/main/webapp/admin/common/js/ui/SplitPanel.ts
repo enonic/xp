@@ -156,7 +156,7 @@ module api.ui {
 
         private getSplitPanelOffset() {
             if (!this.splitPanelOffset || this.splitPanelOffset == 0) {
-                this.splitPanelOffset = this.splitPanel.getCumulativeOffsetTop();
+                this.splitPanelOffset = this.splitPanel.getEl().getOffset().top;
             }
             return this.splitPanelOffset;
         }

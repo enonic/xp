@@ -30,10 +30,6 @@ module api.notify {
         private el:any;
 
         constructor() {
-            this.render();
-        }
-
-        private render() {
             // Create template
             var template = templates.manager;
 

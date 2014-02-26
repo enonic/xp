@@ -2,13 +2,16 @@ module api.app {
 
     export class UserInfoPopup extends api.dom.DivEl {
 
-        private isShown:boolean = false;
-
         constructor() {
             super('user-info-popup');
 
             this.createContent();
-            this.render();
+
+            api.dom.Body.get().appendChild(this);
+        }
+
+        toggle() {
+            this.isVisible() ? this.hide() : this.show();
         }
 
         private createContent() {
@@ -32,17 +35,6 @@ module api.app {
                           '</div>';
 
             this.getEl().setInnerHtml(content);
-        }
-
-        private render() {
-            this.hide();
-            this.isShown = false;
-            api.dom.Body.get().appendChild(this);
-        }
-
-        toggle() {
-            this.isShown ? this.hide() : this.show();
-            this.isShown = !this.isShown;
         }
     }
 

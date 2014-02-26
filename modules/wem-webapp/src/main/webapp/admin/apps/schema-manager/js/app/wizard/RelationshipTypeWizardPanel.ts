@@ -20,7 +20,7 @@ module app.wizard {
 
         private relationshipTypeForm: RelationshipTypeForm;
 
-        private persistedRelationshipType: api.schema.relationshiptype.RelationshipType;
+        private persistedRelationshipType: RelationshipType;
 
         private persistedConfig: string;
 

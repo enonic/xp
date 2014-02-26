@@ -17,7 +17,7 @@ module api.app {
                 onPanelShown: (event: api.ui.PanelShownEvent) => {
                     if (!this.isHomePanel(event.index)) {
                         // do panel afterRender to calculate offsets for each but home panel cuz they were created hidden
-                        event.panel.afterRender();
+                        // event.panel.render();
                     }
                 }
             });

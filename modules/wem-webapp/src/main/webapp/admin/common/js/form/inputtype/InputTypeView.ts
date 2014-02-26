@@ -2,7 +2,7 @@ module api.form.inputtype {
 
     export interface InputTypeView {
 
-        getHTMLElement():HTMLElement;
+        getElement(): api.dom.Element;
 
         layout(input:api.form.Input, properties:api.data.Property[]);
 

@@ -59,12 +59,8 @@ module api.form.input {
             });
 
             this.inputTypeView.layout(this.input, this.properties);
-            if (this.inputTypeView instanceof api.form.inputtype.support.BaseInputTypeView) {
-                this.appendChild(<api.form.inputtype.support.BaseInputTypeView<any>>this.inputTypeView);
-            }
-            else {
-                this.appendChild(api.dom.Element.fromHtmlElement(this.inputTypeView.getHTMLElement()))
-            }
+
+            this.appendChild(this.inputTypeView.getElement());
 
             if (!this.inputTypeView.isManagingAdd()) {
 

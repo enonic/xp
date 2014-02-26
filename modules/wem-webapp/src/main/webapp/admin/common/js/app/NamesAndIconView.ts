@@ -58,8 +58,7 @@ module api.app {
         }
 
         setIconClass(value: string): NamesAndIconView {
-            this.iconDivEl.removeAllClasses("icon");
-            this.iconDivEl.addClass(value);
+            this.iconDivEl.setClass("icon " + value);
             this.iconDivEl.show();
             this.iconImageEl.hide();
             return this;

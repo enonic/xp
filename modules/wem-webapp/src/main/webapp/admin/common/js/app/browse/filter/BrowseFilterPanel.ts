@@ -38,12 +38,12 @@ module api.app.browse.filter {
                     }
                 );
             }
-        }
 
-        afterRender() {
-            this.appendChild(this.searchField);
-            this.appendChild(this.clearFilter);
-            this.appendChild(this.aggregationContainer);
+            this.onRendered((event) => {
+                this.appendChild(this.searchField);
+                this.appendChild(this.clearFilter);
+                this.appendChild(this.aggregationContainer);
+            })
         }
 
         updateAggregations(aggregations: api.aggregation.Aggregation[], doUpdateAll?: boolean) {

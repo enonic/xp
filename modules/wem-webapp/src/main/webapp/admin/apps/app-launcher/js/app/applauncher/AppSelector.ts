@@ -62,6 +62,13 @@ module app.launcher {
                 return false;
             }));
 
+            this.onRendered((event) => {
+                this.activateKeyBindings();
+
+                setTimeout(() => {
+                    this.homeAppSelector.addClass('fade-in-and-scale-up');
+                }, 200);
+            })
         }
 
         show() {
@@ -88,16 +95,6 @@ module app.launcher {
 
         addListener(listener: AppSelectorListener) {
             this.listeners.push(listener);
-        }
-
-        afterRender() {
-            super.afterRender();
-
-            this.activateKeyBindings();
-
-            setTimeout(() => {
-                this.homeAppSelector.addClass('fade-in-and-scale-up');
-            }, 200);
         }
 
         private highlightNextAppTile() {

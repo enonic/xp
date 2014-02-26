@@ -25,8 +25,8 @@ module api.form.inputtype.content.relationship {
             this.relationshipTypeName = config.inputConfig.relationshipType;
         }
 
-        getHTMLElement(): HTMLElement {
-            return super.getHTMLElement();
+        getElement(): api.dom.Element {
+            return this;
         }
 
         isManagingAdd(): boolean {

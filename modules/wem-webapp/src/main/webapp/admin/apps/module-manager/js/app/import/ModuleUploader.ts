@@ -19,12 +19,16 @@ module app.imp {
             this.progress = new api.ui.ProgressBar();
             this.progress.setClass("progress");
             this.appendChild(this.progress);
-        }
 
-        afterRender() {
-            super.afterRender();
-            this.installModuleRequest = new api.module.InstallModuleRequest(this.dropzone);
-            this.setProgressVisible(false);
+            this.onRendered((event) => {
+                console.log("ModuleUploader rendered, creating plupload");
+                this.installModuleRequest = new api.module.InstallModuleRequest(this.dropzone);
+                this.setProgressVisible(false);
+            });
+            this.onRemoved((event) => {
+                console.log("ModuleUploader removed, destroying plupload");
+                this.installModuleRequest.destroy();
+            });
         }
 
         stop() {

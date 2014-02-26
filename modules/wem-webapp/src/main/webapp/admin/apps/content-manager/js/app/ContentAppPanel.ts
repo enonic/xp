@@ -72,10 +72,7 @@ module app {
 
                 contentWizardPanelFactory.createForNew().
                     then((wizard: app.wizard.ContentWizardPanel) => {
-
                         this.addWizardPanel(tabMenuItem, wizard);
-                        wizard.initWizardPanel();
-                        wizard.reRender();
                     }).done();
             }
         }
@@ -130,8 +127,6 @@ module app {
 
                             tabMenuItem = new api.app.AppBarTabMenuItem(content.getDisplayName(), tabId, true);
                             this.addWizardPanel(tabMenuItem, wizard);
-                            wizard.initWizardPanel();
-                            wizard.reRender();
                         }).
                         done();
 

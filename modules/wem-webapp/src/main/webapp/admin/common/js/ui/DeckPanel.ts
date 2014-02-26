@@ -86,7 +86,7 @@ module api.ui {
                 return -1;
             }
 
-            panelToRemove.getEl().remove();
+            panelToRemove.remove();
             this.panels.splice(index, 1);
 
             if (this.isEmpty()) {

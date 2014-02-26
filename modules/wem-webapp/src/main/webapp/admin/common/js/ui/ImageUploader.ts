@@ -73,22 +73,27 @@ module api.ui {
                 this.reset();
             });
             this.appendChild(this.resetBtn);
-        }
 
-        afterRender() {
-            super.afterRender();
-            if (!this.uploader && this.uploadUrl) {
-                this.uploader = this.initUploader(this.dropzone.getId());
-            }
-            if (this.value) {
-                this.setDropzoneVisible(false);
-                this.setProgressVisible(false);
-                this.setImageVisible(true);
-            } else {
-                this.setDropzoneVisible(true);
-                this.setProgressVisible(false);
-                this.setImageVisible(false);
-            }
+            this.onRendered((event) => {
+                console.log("ImageUploader rendered, creating plupload");
+                if (!this.uploader && this.uploadUrl) {
+                    this.uploader = this.initUploader(this.dropzone.getId());
+                }
+                if (this.value) {
+                    this.setDropzoneVisible(false);
+                    this.setProgressVisible(false);
+                    this.setImageVisible(true);
+                } else {
+                    this.setDropzoneVisible(true);
+                    this.setProgressVisible(false);
+                    this.setImageVisible(false);
+                }
+            });
+
+            this.onRemoved((event) => {
+                console.log("ImageUploader removed, destroying plupload");
+                this.uploader.destroy();
+            });
         }
 
         getName():string {

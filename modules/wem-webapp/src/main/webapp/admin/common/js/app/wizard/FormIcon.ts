@@ -36,13 +36,17 @@ module api.app.wizard {
                 el.appendChild(this.progress.getHTMLElement());
             }
 
-        }
+            this.onRendered((event) => {
+                console.log("FormIcon rendered, creating plupload");
+                if (!this.uploader && this.uploadUrl) {
+                    this.uploader = this.initUploader(this.getId());
+                }
+            });
 
-        afterRender() {
-            super.afterRender();
-            if (!this.uploader && this.uploadUrl) {
-                this.uploader = this.initUploader(this.getId());
-            }
+            this.onRemoved((event) => {
+                console.log("FormIcon removed, destroying plupload");
+                this.uploader.destroy();
+            });
         }
 
         setSrc(src:string) {

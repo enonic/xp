@@ -50,10 +50,10 @@ module app.contextwindow {
             this.appendChild(this.searchBox);
             this.appendChild(this.grid);
             this.getData();
-        }
 
-        afterRender() {
-            this.initComponentDraggables();
+            this.onRendered((event) => {
+                this.initComponentDraggables();
+            })
         }
 
         setData(dataArray:ComponentData[]) {

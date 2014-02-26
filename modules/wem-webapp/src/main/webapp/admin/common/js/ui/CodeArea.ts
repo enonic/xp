@@ -56,19 +56,23 @@ module api.ui {
                 lineNumbers: builder.lineNumbers
             };
             CodeMirror.modeURL = api.util.getUri('admin/common/lib/codemirror/mode/%N.js');
-        }
 
-        onElementAddedToParent(parent: api.dom.Element) {
+            this.onAdded((event) => {
+                this.codeMirror = CodeMirror.fromTextArea(<HTMLTextAreaElement>this.textArea.getHTMLElement(), this.options);
+                this.codeMirror.setSize("540px", "350px");
+                this.codeMirror.setOption("mode", this.mode);
+                CodeMirror.autoLoadMode(this.codeMirror, this.mode);
+                this.codeMirror.refresh();
+            });
 
-            this.codeMirror = CodeMirror.fromTextArea(<HTMLTextAreaElement>this.textArea.getHTMLElement(), this.options);
-            this.codeMirror.setSize("540px", "350px");
-            this.codeMirror.setOption("mode", this.mode);
-            CodeMirror.autoLoadMode(this.codeMirror, this.mode);
-            this.codeMirror.refresh();
-        }
+            this.onRendered((event) => {
+                console.log("CodeMirror rendered");
+                this.codeMirror.refresh();
+            });
 
-        afterRender() {
-            this.codeMirror.refresh();
+            this.onRemoved((event) => {
+                console.log("CodeMirror removed");
+            })
         }
 
         setValue(value: string) {

@@ -5,7 +5,7 @@ module api.ui {
         private attendant: api.dom.Element;
         private clone: api.dom.Element;
 
-        constructor(className?:string, size:string = TextInput.MIDDLE) {
+        constructor(className?: string, size: string = TextInput.MIDDLE) {
             super(className, size);
 
             this.addClass('autosize');
@@ -31,31 +31,31 @@ module api.ui {
             window.addEventListener('resize', () => {
                 this.updateSize();
             });
+
+            this.onRendered((event) => {
+                if (!this.isVisible()) {
+                    // If input isn't visible then append attendant element to body
+                    // in order to update input size according to initial text width.
+                    // Then insert attendant element after input for further size updates.
+                    api.dom.Body.get().appendChild(this.attendant);
+                    this.updateSize();
+                    this.getParentElement().appendChild(this.attendant);
+                }
+                else {
+                    // If input is visible then insert attendant element after it
+                    // and calculate initial size according to text width.
+                    this.getParentElement().appendChild(this.attendant);
+                    this.updateSize();
+                }
+            })
         }
 
-        static large(className?:string):AutosizeTextInput {
+        static large(className?: string): AutosizeTextInput {
             return new AutosizeTextInput(className, TextInput.LARGE);
         }
 
-        static middle(className?:string):AutosizeTextInput {
+        static middle(className?: string): AutosizeTextInput {
             return new AutosizeTextInput(className, TextInput.MIDDLE);
-        }
-
-        afterRender() {
-            if (!this.isVisible()) {
-                // If input isn't visible then append attendant element to body
-                // in order to update input size according to initial text width.
-                // Then insert attendant element after input for further size updates.
-                api.dom.Body.get().appendChild(this.attendant);
-                this.updateSize();
-                this.getParentElement().appendChild(this.attendant);
-            }
-            else {
-                // If input is visible then insert attendant element after it
-                // and calculate initial size according to text width.
-                this.getParentElement().appendChild(this.attendant);
-                this.updateSize();
-            }
         }
 
         setValue(value: string): AutosizeTextInput {

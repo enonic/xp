@@ -57,11 +57,6 @@ module app.wizard {
             });
         }
 
-        initWizardPanel() {
-            super.initWizardPanel();
-            this.mixinForm.reRender();
-        }
-
         layoutPersistedItem(persistedMixin: api.schema.mixin.Mixin) : Q.Promise<void> {
 
             var deferred = Q.defer<void>();
@@ -73,7 +68,7 @@ module app.wizard {
                 send().
                 done((response: api.rest.JsonResponse<api.schema.mixin.GetMixinConfigResult>) => {
 
-                    this.mixinForm.reRender();
+                    this.mixinForm.render();
                     this.mixinForm.setFormData({"xml": response.getResult().mixinXml});
                     this.persistedConfig = response.getResult().mixinXml || "";
                     deferred.resolve(null)

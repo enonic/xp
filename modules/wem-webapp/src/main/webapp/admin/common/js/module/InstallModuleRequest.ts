@@ -64,6 +64,10 @@ module api.module {
             this.uploader.stop();
         }
 
+        destroy() {
+            this.uploader.destroy();
+        }
+
         private createUploader(triggerElement:api.dom.Element):any {
             if (!plupload) {
                 throw new Error("ImageUploader: plupload not found, check if it is included in page.");

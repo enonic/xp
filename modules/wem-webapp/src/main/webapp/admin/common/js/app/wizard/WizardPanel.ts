@@ -131,10 +131,17 @@ module api.app.wizard {
                             });
                     });
             }
+
+            this.onRendered((event) => {
+                this.onWizardRendered();
+            });
+            this.onShown((event) => {
+                this.onWizardShown();
+            });
         }
 
-        onElementShown() {
-            console.log("WizardPanel.onElementShown");
+        onWizardShown() {
+            console.log("WizardPanel shown", this);
 
             if (this.lastFocusedElement) {
                 console.log("Last focused element was remembered: ", this.lastFocusedElement);
@@ -142,10 +149,10 @@ module api.app.wizard {
             }
         }
 
-        afterRender() {
-            super.afterRender();
-            this.stepPanels.afterRender();
-            this.backPanel.afterRender();
+        onWizardRendered() {
+            console.log("WizardPanel rendered", this);
+
+            this.initWizardPanel();
 
             $('.form-panel').scroll(() => {
                 var scrollTop = $('.form-panel').scrollTop();

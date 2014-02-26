@@ -16,13 +16,12 @@ module app.contextwindow {
             this.componentDataView = dataView;
             this.componentGridOptions = options;
             this.setFilter(this.filter);
-        }
 
-        afterRender() {
-            super.afterRender();
-            if (this.componentGridOptions.onClick) {
-                this.setOnClick(this.componentGridOptions.onClick);
-            }
+            this.onRendered((event) => {
+                if (this.componentGridOptions.onClick) {
+                    this.setOnClick(this.componentGridOptions.onClick);
+                }
+            })
         }
 
         private filter(item, args) {

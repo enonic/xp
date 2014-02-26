@@ -46,7 +46,6 @@ window.onload = () => {
         api.util.CookieHelper.setCookie('dummy.userIsLoggedIn', 'true');
         loginForm.hide();
         appSelector.show();
-        appSelector.afterRender();
     });
 
     var homeMainContainer = new app.home.HomeMainContainerBuilder().
@@ -60,7 +59,6 @@ window.onload = () => {
 
     if (userLoggedIn) {
         loginForm.hide();
-        appSelector.afterRender();
     } else {
         appSelector.hide();
     }

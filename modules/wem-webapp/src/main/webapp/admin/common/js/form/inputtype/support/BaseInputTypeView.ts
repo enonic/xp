@@ -36,6 +36,16 @@ module api.form.inputtype.support {
                     });
                 }
             });
+
+            this.onAdded((event) => {
+                this.addFormItemOccurrencesListener({
+                    onOccurrenceAdded: () => {
+                        jQuery(this.getHTMLElement()).sortable("refresh");
+                    },
+                    onOccurrenceRemoved: () => {
+                    }
+                });
+            })
         }
 
         public getConfig(): api.form.inputtype.InputTypeViewConfig<CONFIG> {
@@ -56,19 +66,8 @@ module api.form.inputtype.support {
             return occurrenceOrderAccordingToDOM;
         }
 
-        onElementAddedToParent(parent: api.dom.Element) {
-            super.onElementAddedToParent(parent);
-            this.addFormItemOccurrencesListener({
-                onOccurrenceAdded: () => {
-                    jQuery(this.getHTMLElement()).sortable("refresh");
-                },
-                onOccurrenceRemoved: () => {
-                }
-            });
-        }
-
-        getHTMLElement(): HTMLElement {
-            return super.getHTMLElement();
+        getElement(): api.dom.Element {
+            return this;
         }
 
         isManagingAdd(): boolean {

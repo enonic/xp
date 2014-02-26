@@ -55,24 +55,18 @@ module app {
                         tabMenuItem = new api.app.AppBarTabMenuItem(app.wizard.ContentTypeWizardPanel.NEW_WIZARD_HEADER, tabId, true);
                         new app.wizard.ContentTypeWizardPanel(tabId, null, (wizard:app.wizard.ContentTypeWizardPanel) => {
                             this.addWizardPanel(tabMenuItem, wizard);
-                            wizard.initWizardPanel();
-                            wizard.reRender();
                         });
                         break;
                     case api.schema.SchemaKind.RELATIONSHIP_TYPE:
                         tabMenuItem = new api.app.AppBarTabMenuItem(app.wizard.RelationshipTypeWizardPanel.NEW_WIZARD_HEADER, tabId, true);
                         new app.wizard.RelationshipTypeWizardPanel(tabId, null, (wizard:app.wizard.RelationshipTypeWizardPanel) => {
                             this.addWizardPanel(tabMenuItem, wizard);
-                            wizard.initWizardPanel();
-                            wizard.reRender();
                         });
                         break;
                     case api.schema.SchemaKind.MIXIN:
                         tabMenuItem = new api.app.AppBarTabMenuItem(app.wizard.MixinWizardPanel.NEW_WIZARD_HEADER, tabId, true);
                         new app.wizard.MixinWizardPanel(tabId, null, (wizard:app.wizard.MixinWizardPanel) => {
                             this.addWizardPanel(tabMenuItem, wizard);
-                            wizard.initWizardPanel();
-                            wizard.reRender();
                         });
                         break;
                     }
@@ -99,8 +93,6 @@ module app {
 
                                     new app.wizard.ContentTypeWizardPanel(tabId, contentType, (wizard:app.wizard.ContentTypeWizardPanel) => {
                                         this.addWizardPanel(tabMenuItem, wizard);
-                                        wizard.initWizardPanel();
-                                        wizard.reRender();
                                     });
                                 });
                         }
@@ -113,8 +105,6 @@ module app {
 
                                     new app.wizard.RelationshipTypeWizardPanel(tabId, relationshipType, (wizard:app.wizard.RelationshipTypeWizardPanel) => {
                                         this.addWizardPanel(tabMenuItem, wizard);
-                                        wizard.initWizardPanel();
-                                        wizard.reRender();
                                     });
                                 });
                         }
@@ -127,8 +117,6 @@ module app {
 
                                     new app.wizard.MixinWizardPanel(tabId, mixin, (wizard:app.wizard.MixinWizardPanel) => {
                                         this.addWizardPanel(tabMenuItem, wizard);
-                                        wizard.initWizardPanel();
-                                        wizard.reRender();
                                     });
                                 });
                         }

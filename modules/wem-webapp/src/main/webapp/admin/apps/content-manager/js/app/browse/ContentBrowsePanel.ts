@@ -63,10 +63,10 @@ module app.browse {
             ShowNewContentGridEvent.on( () => {
                 super.toggleShowingNewGrid();
             });
-        }
 
-        onElementShown() {
-            app.Router.setHash("browse");
+            this.onShown((event) => {
+                app.Router.setHash("browse");
+            })
         }
 
         getActions():api.ui.Action[] {

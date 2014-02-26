@@ -124,6 +124,14 @@ module app.wizard {
                 console.log("ContentWizardPanel.constructor finished");
                 callback(this);
             });
+
+            this.onShown((event) => {
+                if (this.getPersistedItem()) {
+                    app.Router.setHash("edit/" + this.getPersistedItem().getId());
+                } else {
+                    app.Router.setHash("new/" + this.contentType.getName());
+                }
+            });
         }
 
         giveInitialFocus() {
@@ -162,14 +170,6 @@ module app.wizard {
             return steps;
         }
 
-        onElementShown() {
-            if (this.getPersistedItem()) {
-                app.Router.setHash("edit/" + this.getPersistedItem().getId());
-            } else {
-                app.Router.setHash("new/" + this.contentType.getName());
-            }
-            super.onElementShown();
-        }
 
         preRenderNew(): Q.Promise<void> {
             console.log("ContentWizardPanel.preRenderNew");

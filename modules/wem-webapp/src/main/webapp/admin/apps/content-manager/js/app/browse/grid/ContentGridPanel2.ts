@@ -52,14 +52,14 @@ module app.browse.grid {
                     this.initData(contents);
                 }
             );
-        }
 
-        afterRender() {
-            this.grid.resizeCanvas();
-        }
+            this.onShown((event) => {
+                this.grid.resizeCanvas();
+            });
 
-        onElementShown() {
-            this.grid.resizeCanvas();
+            this.onRendered((event) => {
+                this.grid.resizeCanvas();
+            })
         }
 
         private initData(contents:api.content.ContentSummary[]) {

@@ -27,8 +27,8 @@ module api.form.inputtype.combobox {
             this.comboBoxConfig = config.inputConfig;
         }
 
-        getHTMLElement(): HTMLElement {
-            return super.getHTMLElement();
+        getElement(): api.dom.Element {
+            return this;
         }
 
         isManagingAdd(): boolean {

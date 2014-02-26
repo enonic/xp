@@ -102,6 +102,7 @@ module api.ui.grid {
 
         render() {
             this.slickGrid.render();
+            super.render();
         }
 
         resizeCanvas() {

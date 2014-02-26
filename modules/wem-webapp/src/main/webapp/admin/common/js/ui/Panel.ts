@@ -7,18 +7,18 @@ module api.ui {
         constructor(className?:string) {
             super("panel" + (className ? " " + className : ""));
             this.doOffset = true;
-        }
 
-        onElementShown() {
-            if(this.doOffset) {
-                this.calculateOffset();
-            }
-        }
+            this.onShown((event) => {
+                if(this.doOffset) {
+                    this.calculateOffset();
+                }
+            });
 
-        afterRender() {
-            if(this.doOffset) {
-                this.calculateOffset();
-            }
+            this.onRendered((event) => {
+                if(this.doOffset) {
+                    this.calculateOffset();
+                }
+            });
         }
 
         setDoOffset(value:boolean) {

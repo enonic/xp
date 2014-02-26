@@ -311,7 +311,9 @@ module api.dom {
 
         remove() {
             var parent = this.el.parentElement;
-            parent.removeChild(this.el);
+            if (parent) {
+                parent.removeChild(this.el);
+            }
         }
 
         getOffset(): { top:number; left:number;

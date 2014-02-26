@@ -15,12 +15,7 @@ module api.app.view {
             this.toolbar = toolbar;
             this.panel = panel;
             this.appendChild(this.toolbar);
-            this.appendChild(this.panel)
-        }
-
-        afterRender() {
-            super.afterRender();
-            this.panel.afterRender();
+            this.appendChild(this.panel);
         }
 
         setItem(item:ViewItem<M>) {

@@ -16,11 +16,10 @@ module api.ui.toolbar {
             this.appendChild(this.fold);
 
             window.addEventListener("resize", () => this.foldOrExpand());
-        }
 
-        afterRender() {
-            super.afterRender();
-            this.foldOrExpand();
+            this.onRendered((event) => {
+                this.foldOrExpand();
+            })
         }
 
         addAction(action:api.ui.Action) {

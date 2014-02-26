@@ -51,6 +51,7 @@ module api.app {
             this.appendChild(this.tabMenu);
 
             this.userInfoPopup = new UserInfoPopup();
+            this.userInfoPopup.hide();
 
             this.userButton.getEl().addEventListener('click', (event: Event) => {
                 this.userInfoPopup.toggle();
@@ -66,14 +67,14 @@ module api.app {
             window.addEventListener('resize', () => {
                 this.layoutChildren();
             });
+
+            this.onRendered((event) => {
+                this.layoutChildren();
+            })
         }
 
         getTabMenu(): AppBarTabMenu {
             return this.tabMenu;
-        }
-
-        afterRender() {
-            this.layoutChildren();
         }
 
         private layoutChildren() {

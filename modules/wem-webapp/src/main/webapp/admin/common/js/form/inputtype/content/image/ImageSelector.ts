@@ -71,6 +71,11 @@ module api.form.inputtype.content.image {
                     this.createEmbeddedImageContent(uploadItem);
                 }
             });
+
+            // Don't forget to clean up the modal dialog on remove
+            this.onRemoved((event) => {
+                this.uploadDialog.remove();
+            })
         }
 
         layout(input: api.form.Input, properties: api.data.Property[]) {
@@ -138,8 +143,8 @@ module api.form.inputtype.content.image {
             return [];
         }
 
-        getHTMLElement(): HTMLElement {
-            return super.getHTMLElement();
+        getElement(): api.dom.Element {
+            return this;
         }
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {

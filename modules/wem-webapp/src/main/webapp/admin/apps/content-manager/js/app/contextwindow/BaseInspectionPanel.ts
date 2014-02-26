@@ -9,19 +9,17 @@ module app.contextwindow {
             super("inspection-panel");
 
             this.iconClass = iconClass;
-            this.nameAndIcon =
-            new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().
+            this.nameAndIcon = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().
                 setSize(api.app.NamesAndIconViewSize.medium)).
                 setIconClass(this.iconClass);
 
             this.appendChild(this.nameAndIcon);
-        }
 
-        afterRender() {
-            super.afterRender();
-            $(this.getHTMLElement()).slimScroll({
-                height: '450px'
-            });
+            this.onRendered((event) => {
+                $(this.getHTMLElement()).slimScroll({
+                    height: '450px'
+                });
+            })
         }
 
         setMainName(value: string) {

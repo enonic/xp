@@ -9,11 +9,10 @@ module api.app.browse {
             this.setScrollY();
             this.addClass("grid-container");
             this.grid = grid;
-        }
 
-        afterRender() {
-            this.grid.create('center', this.getId());
-            super.afterRender();
+            this.onRendered((event) => {
+                this.grid.create('center', this.getId());
+            });
         }
     }
 }

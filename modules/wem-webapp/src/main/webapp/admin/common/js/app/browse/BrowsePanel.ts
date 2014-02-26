@@ -89,6 +89,12 @@ module api.app.browse{
                 },
                 onItemDoubleClicked: null
             });
+
+            this.onRendered((event) => {
+                this.appendChild(this.gridAndFilterAndDetailSplitPanel);
+                this.gridAndFilterAndDetailSplitPanel.render();
+                this.gridAndDetailSplitPanel.render();
+            });
         }
 
         getActions():api.ui.Action[] {
@@ -128,10 +134,5 @@ module api.app.browse{
             }
         }
 
-        afterRender() {
-            this.appendChild(this.gridAndFilterAndDetailSplitPanel);
-            this.gridAndFilterAndDetailSplitPanel.render();
-            this.gridAndDetailSplitPanel.render();
-        }
     }
 }

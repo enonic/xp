@@ -70,6 +70,10 @@ module api.content.site.template {
             this.uploader.stop();
         }
 
+        destroy() {
+            this.uploader.destroy();
+        }
+
         private createUploader(triggerElement: api.dom.Element): any {
             if (!plupload) {
                 throw new Error("InstallSiteTemplateRequest: plupload not found, check if it is included in page.");
