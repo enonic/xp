@@ -27,7 +27,8 @@ public class GetContentByIdsHandler
             throw new ContentNotFoundException( contentId );
 
         }
-        command.setResult( contents );
+
+        command.setResult( this.command.doGetCHildrenIds() ? new ChildContentIdsResolver( this.context ).resolve( contents ) : contents );
     }
 
 }

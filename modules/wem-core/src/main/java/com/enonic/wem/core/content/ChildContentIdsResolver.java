@@ -9,7 +9,7 @@ class ChildContentIdsResolver
 {
     private final CommandContext context;
 
-    ChildContentIdsResolver( final CommandContext context )
+        ChildContentIdsResolver( final CommandContext context )
     {
         this.context = context;
     }

@@ -10,11 +10,24 @@ import com.enonic.wem.api.content.Contents;
 public class GetContentByIds
     extends Command<Contents>
 {
+    private boolean getChildrenIds = false;
+
     private final ContentIds ids;
 
     public GetContentByIds( final ContentIds ids )
     {
         this.ids = ids;
+    }
+
+    public GetContentByIds setGetChildrenIds( final boolean getChildrenIds )
+    {
+        this.getChildrenIds = getChildrenIds;
+        return this;
+    }
+
+    public boolean doGetCHildrenIds()
+    {
+        return getChildrenIds;
     }
 
     @Override

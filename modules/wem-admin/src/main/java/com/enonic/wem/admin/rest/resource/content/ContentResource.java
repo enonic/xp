@@ -153,7 +153,7 @@ public class ContentResource
     public AbstractContentListJson listById( @QueryParam("parentId") final String parentIdParam,
                                              @QueryParam("expand") @DefaultValue(EXPAND_SUMMARY) final String expandParam )
     {
-        Contents contents;
+        final Contents contents;
         if ( StringUtils.isEmpty( parentIdParam ) )
         {
             contents = client.execute( Commands.content().getRoots() );
@@ -192,7 +192,6 @@ public class ContentResource
     public AbstractContentListJson listByPath( @QueryParam("parentPath") final String parentPathParam,
                                                @QueryParam("expand") @DefaultValue(EXPAND_SUMMARY) final String expandParam )
     {
-
         final Contents contents;
         if ( StringUtils.isEmpty( parentPathParam ) )
         {
@@ -229,7 +228,11 @@ public class ContentResource
 
         final ContentQueryResult contentQueryResult = this.client.execute( findContent );
 
-        final GetContentByIds getContents = Commands.content().get().byIds( ContentIds.from( contentQueryResult.getContentIds() ) );
+        final boolean getChildrenIds = !Expand.NONE.matches( contentQueryJson.getExpand() );
+
+        final GetContentByIds getContents =
+            Commands.content().get().byIds( ContentIds.from( contentQueryResult.getContentIds() ) ).setGetChildrenIds( getChildrenIds );
+
         final Contents contents = this.client.execute( getContents );
 
         return ContentQueryResultJsonFactory.create( contentQueryResult, contents, contentQueryJson.getExpand() );
@@ -239,13 +242,11 @@ public class ContentResource
     @Path("generateName")
     public ContentNameJson generateName( @QueryParam("displayName") final String displayNameParam )
     {
-
         final GenerateContentName generateContentName = Commands.content().generateContentName().displayName( displayNameParam );
 
         final String generatedContentName = client.execute( generateContentName );
 
         return new ContentNameJson( generatedContentName );
-
     }
 
     /* TODO: Re-introduce or remove when doing task: CMS-2256 Validate occurrences before save when user clicks Publish
@@ -314,7 +315,6 @@ public class ContentResource
     @Path("update")
     public ContentJson update( final UpdateContentParams params )
     {
-
         final ContentData contentData = parseContentData( params.getContentData() );
         final List<Attachment> attachments = parseAttachments( params.getAttachments() );
 
