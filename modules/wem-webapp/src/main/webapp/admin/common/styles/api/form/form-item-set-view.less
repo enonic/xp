@@ -11,7 +11,7 @@
   }
 
   .occurrence-views-container {
-    background-color: #eee;
+    background-color: @admin-light-gray-bg;
     .clearfix();
   }
 
@@ -41,7 +41,7 @@
   }
 
   & > .bottom-button-row {
-    background-color: #eee;
+    background-color: @admin-light-gray-bg;
     padding: 0 10px 10px 10px;
     clear: left;
     .clearfix();
@@ -115,5 +115,39 @@
   .form-item-set-view {
     margin-left: -10px;
     margin-right: -10px;
+  }
+}
+
+.context-window {
+  .form-item-set-view-small();
+  .form-item-set-view-inverse();
+}
+
+.form-item-set-view-inverse() {
+  .form-item-set-view {
+    .occurrence-views-container {
+      background-color: @admin-dark-gray;
+    }
+    & > .bottom-button-row {
+      background-color: @admin-dark-gray;
+
+      .collapse-button {
+        color:@admin-almost-white;
+      }
+    }
+  }
+}
+
+.form-item-set-view-small() {
+  .form-item-set-view {
+    .input-view {
+      .input-label {
+        max-width: 100%;
+      }
+
+      .input-type-view {
+        margin-left: 0;
+      }
+    }
   }
 }

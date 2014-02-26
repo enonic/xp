@@ -22,6 +22,10 @@
     }
   }
 
+  input {
+    background-color: transparent;
+  }
+
   .input-label {
     float: left;
     max-width: @form-label-width - 10px;
@@ -53,6 +57,7 @@
 
 .context-window {
   .input-view-vertical();
+  .input-view-inverse();
 }
 
 .input-view-vertical(){
@@ -70,6 +75,14 @@
 
     .bottom-button-row {
       margin: 0;
+    }
+  }
+}
+
+.input-view-inverse() {
+  .input-view {
+    input {
+      color: @admin-almost-white;
     }
   }
 }

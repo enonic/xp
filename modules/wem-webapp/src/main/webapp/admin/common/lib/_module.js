@@ -19,3 +19,4 @@
 // @include slickgrid/slick.checkboxselectcolumn.js
 // @include mousetrap.min.js
 // @include q.js
+// @include jquery.slimscroll.min.js

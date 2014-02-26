@@ -17,6 +17,13 @@ module app.contextwindow {
             this.appendChild(this.nameAndIcon);
         }
 
+        afterRender() {
+            super.afterRender();
+            $(this.getHTMLElement()).slimScroll({
+                height: '450px'
+            });
+        }
+
         setMainName(value: string) {
             this.nameAndIcon.setMainName(value);
         }
