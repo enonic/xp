@@ -1,10 +1,29 @@
-declare var Ext:Ext_Packages;
+declare var Ext: Ext_Packages;
 declare var Admin;
 declare var CONFIG;
 
 declare var $liveEdit;
 
-var siteTemplate:api.content.site.template.SiteTemplate;
+var siteTemplate: api.content.site.template.SiteTemplate;
+
+function initializeLiveEdit() {
+    //TODO: Maybe move/make more generic
+    $('[data-live-edit-empty-component="true"]').each((index, element) => {
+        var type = $(element).data('live-edit-type');
+        var path = $(element).data('live-edit-component');
+        console.log("found empty component", type, path);
+        var newEl;
+        if (type === "image") {
+            newEl = new LiveEdit.component.ImagePlaceholder();
+        } else if (type === "part") {
+            newEl = new LiveEdit.component.PartPlaceholder();
+        } else if (type === "layout") {
+            newEl = new LiveEdit.component.LayoutPlaceholder();
+        }
+        newEl.setComponentPath(path);
+        $(element).replaceWith(newEl.getHTMLElement());
+    });
+}
 
 (function ($) {
     'use strict';
@@ -31,24 +50,7 @@ var siteTemplate:api.content.site.template.SiteTemplate;
 
         $(window).resize(() => $(window).trigger('resizeBrowserWindow.liveEdit'));
 
-        $(window).unload(() => console.log('Clean up any css classes etc. that live edit / sortable has added') );
-
-        //TODO: Maybe move/make more generic
-        $('[data-live-edit-empty-component="true"]').each((index, element) => {
-            var type = $(element).data('live-edit-type');
-            var path = $(element).data('live-edit-component');
-            console.log("found empty component", type, path);
-            var newEl;
-            if (type == "image") {
-                newEl = new LiveEdit.component.ImagePlaceholder();
-            } else if (type == "part") {
-                newEl = new LiveEdit.component.PartPlaceholder();
-            } else if (type == "layout") {
-                newEl = new LiveEdit.component.LayoutPlaceholder();
-            }
-            newEl.setComponentPath(path);
-            $(element).replaceWith(newEl.getHTMLElement());
-        });
+        $(window).unload(() => console.log('Clean up any css classes etc. that live edit / sortable has added'));
 
     });
 

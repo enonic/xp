@@ -3,6 +3,9 @@ module app.wizard {
     import ComponentPath = api.content.page.ComponentPath;
     import ImageComponent = api.content.page.image.ImageComponent;
     import ImageComponentBuilder = api.content.page.image.ImageComponentBuilder;
+    import PartComponentBuilder = api.content.page.part.PartComponentBuilder;
+    import LayoutComponentBuilder = api.content.page.layout.LayoutComponentBuilder;
+    import PageComponentBuilder = api.content.page.PageComponentBuilder;
 
 
     export interface LiveFormPanelConfig {
@@ -154,6 +157,7 @@ module app.wizard {
 
                         console.log("LiveFormPanel.doLoad() ... Live edit loaded");
                         this.loader.stop();
+                        liveEditWindow.initializeLiveEdit();
                         deferred.resolve(null);
                     }
                 }
@@ -468,16 +472,27 @@ module app.wizard {
                         componentToAddAfter = api.content.page.ComponentPath.fromString(componentPathToAddAfterAsString);
                     }
 
-                    var imageComponent = new ImageComponentBuilder();
-                    imageComponent.setName(componentName);
-                    var componentPath = this.pageRegions.addComponentAfter(imageComponent.build(), regionPath, componentToAddAfter);
+                    var pageComponent: PageComponentBuilder<api.content.page.PageComponent>;
+                    switch (componentType) {
+                        case "image":
+                            pageComponent = new ImageComponentBuilder();
+                            break;
+                        case "part":
+                            pageComponent = new PartComponentBuilder();
+                            break;
+                        case "layout":
+                            pageComponent = new LayoutComponentBuilder();
+                            break;
+                    }
+                    pageComponent.setName(componentName);
+                    var componentPath = this.pageRegions.addComponentAfter(pageComponent.build(), regionPath, componentToAddAfter);
 
                     componentEl.getEl().setData("live-edit-component", componentPath.toString());
                     componentEl.getEl().setData("live-edit-type", componentType);
                 });
 
             this.liveEditJQuery(this.liveEditWindow).on('imageComponentSetImage.liveEdit',
-                (event, imageId?, componentPathAsString?, componentPlaceholder?) => {
+                (event, imageId?, componentPathAsString?: string, componentPlaceholder?) => {
 
                     componentPlaceholder.showLoadingSpinner();
                     var componentPath = ComponentPath.fromString(componentPathAsString);
@@ -505,13 +520,12 @@ module app.wizard {
 
                     var componentPath = ComponentPath.fromString(componentPathAsString);
                     var component = this.pageRegions.getComponent(componentPath);
-                    console.log('Setting descriptor ' + descriptorKey.toString() + ' on component:', component);
                     if (!component || !descriptorKey) {
                         return;
                     }
 
-                    component.setDescriptor(descriptorKey);
                     componentPlaceholder.showLoadingSpinner();
+                    component.setDescriptor(descriptorKey);
 
                     this.pageSkipReload = true;
                     this.contentWizardPanel.saveChanges().done(() => {
