@@ -1,30 +1,24 @@
 module api.app.browse {
 
-    export interface BrowseItemPanelParams {
-
-        actionMenuActions:api.ui.Action[];
-    }
-
     export class BrowseItemPanel<M> extends api.ui.DeckPanel {
-
-        private actionMenu:api.ui.menu.ActionMenu;
 
         private itemStatisticsPanel:api.app.view.ItemStatisticsPanel<M>;
 
         private itemsSelectionPanel:ItemsSelectionPanel<M>;
 
-        constructor(params:BrowseItemPanelParams) {
+        constructor() {
             super("browse-item-panel");
 
-            this.actionMenu = new api.ui.menu.ActionMenu(params.actionMenuActions);
             this.itemsSelectionPanel = new ItemsSelectionPanel<M>();
-
-            this.itemStatisticsPanel = new api.app.view.ItemStatisticsPanel<M>({actionMenu: this.actionMenu});
+            this.itemStatisticsPanel = this.createItemStatisticsPanel();
 
             this.addPanel(this.itemsSelectionPanel);
             this.addPanel(this.itemStatisticsPanel);
             this.showPanel(0);
+        }
 
+        createItemStatisticsPanel(): api.app.view.ItemStatisticsPanel<M> {
+            return new api.app.view.ItemStatisticsPanel<M>();
         }
 
         setItems(items:any) {

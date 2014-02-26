@@ -18,10 +18,7 @@ module app.browse {
             treeGridContextMenu.setActions(this.browseActions);
 
             this.toolbar = new ModuleBrowseToolbar(this.browseActions);
-            var browseItemPanel = components.detailPanel = new ModuleBrowseItemPanel({actionMenuActions: [
-                this.browseActions.IMPORT_MODULE,
-                this.browseActions.EXPORT_MODULE,
-                this.browseActions.DELETE_MODULE]});
+            var browseItemPanel = components.detailPanel = new ModuleBrowseItemPanel();
 
             super({
                 browseToolbar: this.toolbar,

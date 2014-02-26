@@ -25,13 +25,7 @@ module app.browse {
 
             this.toolbar = new ContentBrowseToolbar(this.browseActions);
             this.contentBrowseItemPanel =
-            components.detailPanel = new ContentBrowseItemPanel({actionMenuActions: [
-                this.browseActions.SHOW_NEW_CONTENT_DIALOG_ACTION,
-                this.browseActions.EDIT_CONTENT,
-                this.browseActions.OPEN_CONTENT,
-                this.browseActions.DELETE_CONTENT,
-                this.browseActions.DUPLICATE_CONTENT,
-                this.browseActions.MOVE_CONTENT]});
+            components.detailPanel = new ContentBrowseItemPanel();
 
             this.contentFilterPanel = new app.browse.filter.ContentBrowseFilterPanel();
 
