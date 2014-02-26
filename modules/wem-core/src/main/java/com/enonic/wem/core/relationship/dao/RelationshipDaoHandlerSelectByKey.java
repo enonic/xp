@@ -9,6 +9,7 @@ import com.enonic.wem.api.relationship.RelationshipKey;
 import com.enonic.wem.core.index.IndexService;
 
 
+@Deprecated
 final class RelationshipDaoHandlerSelectByKey
     extends AbstractRelationshipDaoHandler<Relationship>
 {

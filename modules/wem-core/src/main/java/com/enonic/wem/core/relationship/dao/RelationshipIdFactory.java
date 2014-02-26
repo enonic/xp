@@ -5,6 +5,8 @@ import javax.jcr.RepositoryException;
 
 import com.enonic.wem.api.relationship.RelationshipId;
 
+
+@Deprecated
 public final class RelationshipIdFactory
 {
     static RelationshipId from( final Node node )

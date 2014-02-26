@@ -11,6 +11,7 @@ import com.enonic.wem.api.relationship.Relationships;
 import com.enonic.wem.core.index.IndexService;
 
 
+@Deprecated
 final class RelationshipDaoHandlerSelectByIds
     extends AbstractRelationshipDaoHandler<Relationships>
 {

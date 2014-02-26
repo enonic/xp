@@ -17,7 +17,7 @@ import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.jcr.JcrHelper;
 import com.enonic.wem.core.support.dao.AbstractDaoHandler;
 
-
+@Deprecated
 abstract class AbstractRelationshipDaoHandler<T>
     extends AbstractDaoHandler<T>
 {

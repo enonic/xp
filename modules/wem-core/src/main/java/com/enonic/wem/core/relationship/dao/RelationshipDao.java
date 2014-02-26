@@ -10,7 +10,7 @@ import com.enonic.wem.api.relationship.RelationshipKey;
 import com.enonic.wem.api.relationship.RelationshipNotFoundException;
 import com.enonic.wem.api.relationship.Relationships;
 
-
+@Deprecated
 public interface RelationshipDao
 {
     public static final String RELATIONSHIPS_NODE = "__relationships";

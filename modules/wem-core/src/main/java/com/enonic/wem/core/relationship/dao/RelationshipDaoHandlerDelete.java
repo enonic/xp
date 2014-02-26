@@ -10,6 +10,7 @@ import com.enonic.wem.api.relationship.RelationshipNotFoundException;
 import com.enonic.wem.core.index.IndexService;
 
 
+@Deprecated
 final class RelationshipDaoHandlerDelete
     extends AbstractRelationshipDaoHandler
 {

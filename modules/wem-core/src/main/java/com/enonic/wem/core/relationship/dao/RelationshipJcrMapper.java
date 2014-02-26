@@ -9,6 +9,8 @@ import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.core.jcr.JcrHelper;
 import com.enonic.wem.core.relationship.RelationshipJsonSerializer;
 
+
+@Deprecated
 class RelationshipJcrMapper
 {
     private static final String RELATIONSHIP = "relationship";

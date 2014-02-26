@@ -18,6 +18,8 @@ import com.enonic.wem.core.index.IndexService;
  * Note: the managingData part is only included if set
  */
 
+
+@Deprecated
 public class RelationshipDaoImpl
     implements RelationshipDao
 {

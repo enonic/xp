@@ -11,7 +11,7 @@ import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.jcr.JcrConstants;
 import com.enonic.wem.core.jcr.JcrHelper;
 
-
+@Deprecated
 final class RelationshipDaoHandlerCreate
     extends AbstractRelationshipDaoHandler<RelationshipId>
 {

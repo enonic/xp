@@ -8,6 +8,7 @@ import com.enonic.wem.api.relationship.RelationshipIds;
 import com.enonic.wem.core.index.IndexService;
 
 
+@Deprecated
 final class RelationshipDaoHandlerExists
     extends AbstractRelationshipDaoHandler<RelationshipIds>
 {
