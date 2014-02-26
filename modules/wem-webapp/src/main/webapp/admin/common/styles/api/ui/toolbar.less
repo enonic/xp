@@ -32,11 +32,13 @@
   }
 
   .fold {
-    width: 20px;
+    width: 10px;
     height: @toolbar-height;
     line-height: @toolbar-height;
+    padding: 0 17px;
     text-align: center;
     .icon-angle-double-down(15px, @admin-light-gray-font);
+    .box-sizing(content-box);
 
     .dropdown {
       display: none;
