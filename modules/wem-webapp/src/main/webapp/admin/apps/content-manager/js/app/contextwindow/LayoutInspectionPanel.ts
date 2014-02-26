@@ -6,36 +6,27 @@ module app.contextwindow {
     export class LayoutInspectionPanel extends PageComponentInspectionPanel<api.content.page.layout.LayoutComponent> {
 
         private layoutComponent: api.content.page.layout.LayoutComponent;
-        private descriptorComboBox: api.content.page.layout.LayoutDescriptorComboBox;
+        private layoutDescriptors: {
+            [key: string]: LayoutDescriptor;
+        };
 
         constructor(liveFormPanel: app.wizard.LiveFormPanel, siteTemplate: SiteTemplate) {
             super("live-edit-font-icon-layout", liveFormPanel, siteTemplate);
+            this.layoutDescriptors = {};
             this.initElements();
         }
 
         private initElements() {
-            var descriptorHeader = new api.dom.H6El();
-            descriptorHeader.setText("Descriptor:");
-            descriptorHeader.addClass("descriptor-header");
-            this.appendChild(descriptorHeader);
-
-            var layoutDescriptorsRequest = new api.content.page.layout.GetLayoutDescriptorsByModulesRequest(this.getSiteTemplate().getModules());
-            var layoutDescriptorLoader = new api.content.page.layout.LayoutDescriptorLoader(layoutDescriptorsRequest);
-            this.descriptorComboBox = new api.content.page.layout.LayoutDescriptorComboBox(layoutDescriptorLoader);
-
-            var onDescriptorsLoaded = () => {
-                this.descriptorComboBox.setDescriptor(this.getLiveFormPanel().getDefaultLayoutDescriptor().getKey());
-                this.descriptorComboBox.removeLoadedListener(onDescriptorsLoaded); // execute only on the first loaded event
-            };
-            this.descriptorComboBox.addLoadedListener(onDescriptorsLoaded);
-
-            this.descriptorComboBox.addOptionSelectedListener((option: api.ui.combobox.Option<LayoutDescriptor>) => {
-                if (this.layoutComponent) {
-                    var selectedDescriptor = option.displayValue.getKey();
-                    this.layoutComponent.setDescriptor(selectedDescriptor);
-                }
+            var getLayoutDescriptorsRequest = new api.content.page.layout.GetLayoutDescriptorsByModulesRequest(this.getSiteTemplate().getModules());
+            getLayoutDescriptorsRequest.sendAndParse().done((results: LayoutDescriptor[]) => {
+                results.forEach((layoutDescriptor: LayoutDescriptor) => {
+                    this.layoutDescriptors[layoutDescriptor.getKey().toString()] = layoutDescriptor;
+                });
             });
-            this.appendChild(this.descriptorComboBox);
+        }
+
+        private getDescriptor(key: api.content.page.DescriptorKey): LayoutDescriptor {
+            return this.layoutDescriptors[key.toString()];
         }
 
         setLayoutComponent(component: api.content.page.layout.LayoutComponent) {
@@ -44,9 +35,11 @@ module app.contextwindow {
 
             var descriptorKey = component.getDescriptor();
             if (descriptorKey) {
-                this.descriptorComboBox.setDescriptor(descriptorKey);
-                var layoutDescriptorOption: api.ui.combobox.Option<LayoutDescriptor> = this.descriptorComboBox.getSelectedData()[0];
-                var layoutDescriptor = layoutDescriptorOption.displayValue;
+                var layoutDescriptor = this.getDescriptor(descriptorKey);
+                if (!layoutDescriptor) {
+                    console.warn('Layout descriptor not found' + descriptorKey);
+                    return;
+                }
                 this.setupComponentForm(component, layoutDescriptor);
             }
         }

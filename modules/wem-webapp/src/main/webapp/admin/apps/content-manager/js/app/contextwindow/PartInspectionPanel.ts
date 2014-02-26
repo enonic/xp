@@ -6,47 +6,40 @@ module app.contextwindow {
     export class PartInspectionPanel extends PageComponentInspectionPanel<api.content.page.part.PartComponent> {
 
         private partComponent: api.content.page.part.PartComponent;
-        private descriptorComboBox: api.content.page.part.PartDescriptorComboBox;
-
+        private partDescriptors: {
+            [key: string]: PartDescriptor;
+        };
+        
         constructor(liveFormPanel: app.wizard.LiveFormPanel, siteTemplate: SiteTemplate) {
             super("live-edit-font-icon-part", liveFormPanel, siteTemplate);
+            this.partDescriptors = {};
             this.initElements();
         }
 
         private initElements() {
-            var descriptorHeader = new api.dom.H6El();
-            descriptorHeader.setText("Descriptor:");
-            descriptorHeader.addClass("descriptor-header");
-            this.appendChild(descriptorHeader);
-
-            var partDescriptorsRequest = new api.content.page.part.GetPartDescriptorsByModulesRequest(this.getSiteTemplate().getModules());
-            var partDescriptorLoader = new api.content.page.part.PartDescriptorLoader(partDescriptorsRequest);
-            this.descriptorComboBox = new api.content.page.part.PartDescriptorComboBox(partDescriptorLoader);
-
-            var onDescriptorsLoaded = () => {
-                this.descriptorComboBox.setDescriptor(this.getLiveFormPanel().getDefaultPartDescriptor().getKey());
-                this.descriptorComboBox.removeLoadedListener(onDescriptorsLoaded); // execute only on the first loaded event
-            };
-            this.descriptorComboBox.addLoadedListener(onDescriptorsLoaded);
-
-            this.descriptorComboBox.addOptionSelectedListener((option: api.ui.combobox.Option<PartDescriptor>) => {
-                if (this.partComponent) {
-                    var selectedDescriptor = option.displayValue.getKey();
-                    this.partComponent.setDescriptor(selectedDescriptor);
-                }
+            var getPartDescriptorsRequest = new api.content.page.part.GetPartDescriptorsByModulesRequest(this.getSiteTemplate().getModules());
+            getPartDescriptorsRequest.sendAndParse().done((results: PartDescriptor[]) => {
+                results.forEach((partDescriptor: PartDescriptor) => {
+                    this.partDescriptors[partDescriptor.getKey().toString()] = partDescriptor;
+                });
             });
-            this.appendChild(this.descriptorComboBox);
         }
 
+        private getDescriptor(key: api.content.page.DescriptorKey): PartDescriptor {
+            return this.partDescriptors[key.toString()];
+        }
+        
         setPartComponent(component: api.content.page.part.PartComponent) {
             this.setComponent(component);
             this.partComponent = component;
 
             var descriptorKey = component.getDescriptor();
             if (descriptorKey) {
-                this.descriptorComboBox.setDescriptor(descriptorKey);
-                var partDescriptorOption: api.ui.combobox.Option<PartDescriptor> = this.descriptorComboBox.getSelectedData()[0];
-                var partDescriptor = partDescriptorOption.displayValue;
+                var partDescriptor = this.getDescriptor(descriptorKey);
+                if (!partDescriptor) {
+                    console.warn('Part descriptor not found' + descriptorKey);
+                    return;
+                }
                 this.setupComponentForm(component, partDescriptor);
             }
         }
