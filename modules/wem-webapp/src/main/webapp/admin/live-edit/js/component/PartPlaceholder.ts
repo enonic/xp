@@ -1,7 +1,7 @@
 module LiveEdit.component {
     export class PartPlaceholder extends ComponentPlaceholder {
 
-        private comboBox:api.content.page.part.PartDescriptorComboBox;
+        private comboBox: api.content.page.part.PartDescriptorComboBox;
 
         constructor() {
             this.setComponentType(new ComponentType(Type.PART));
@@ -18,9 +18,10 @@ module LiveEdit.component {
             this.comboBox.hide();
             this.appendChild(this.comboBox);
 
-            this.comboBox.addOptionSelectedListener((item) => {
+            this.comboBox.addOptionSelectedListener((item: api.ui.combobox.Option<api.content.page.part.PartDescriptor>) => {
                 var componentPath = this.getComponentPath();
-                $liveEdit(window).trigger('partComponentSetDescriptor.liveEdit', [item.value, componentPath, this]);
+                var descriptorKey: api.content.page.DescriptorKey = item.displayValue.getKey();
+                $liveEdit(window).trigger('pageComponentSetDescriptor.liveEdit', [descriptorKey, componentPath, this]);
             });
 
         }

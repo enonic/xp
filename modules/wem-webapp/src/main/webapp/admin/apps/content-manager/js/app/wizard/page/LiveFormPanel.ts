@@ -515,7 +515,7 @@ module app.wizard {
                     }
                 });
 
-            this.liveEditJQuery(this.liveEditWindow).on('partComponentSetDescriptor.liveEdit',
+            this.liveEditJQuery(this.liveEditWindow).on('pageComponentSetDescriptor.liveEdit',
                 (event, descriptorKey?: api.content.page.DescriptorKey, componentPathAsString?: string, componentPlaceholder?) => {
 
                     var componentPath = ComponentPath.fromString(componentPathAsString);
