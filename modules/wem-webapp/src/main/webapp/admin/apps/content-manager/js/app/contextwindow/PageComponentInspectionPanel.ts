@@ -29,7 +29,11 @@ module app.contextwindow {
 
             this.component = component;
 
-            this.setMainName(this.getDescriptor(component.getDescriptor()).getName().toString());
+            if (component.getDescriptor()) {
+                this.setMainName(this.getDescriptor(component.getDescriptor()).getName().toString());
+            } else {
+                this.setMainName(component.getName().toString());
+            }
             this.setSubName(component.getName().toString());
 
             // TODO: select descriptor (component.descriptor)

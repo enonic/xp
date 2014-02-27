@@ -13,6 +13,7 @@ module app.contextwindow {
 
         constructor(liveFormPanel: app.wizard.LiveFormPanel, siteTemplate: SiteTemplate) {
             super("live-edit-font-icon-image", liveFormPanel, siteTemplate);
+            this.imageDescriptors = {};
             this.initElements();
         }
 
