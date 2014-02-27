@@ -1,7 +1,9 @@
-package com.enonic.wem.admin.json.content.site;
+package com.enonic.wem.admin.json.content;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.api.content.site.ContentTypeFilter;
@@ -14,6 +16,13 @@ public final class ContentTypeFilterJson
     private final ImmutableList<String> allow;
 
     private final ImmutableList<String> deny;
+
+    @JsonCreator
+    ContentTypeFilterJson( @JsonProperty("allow") final List<String> allow, @JsonProperty("deny") final List<String> deny )
+    {
+        this.allow = ImmutableList.copyOf( allow );
+        this.deny = ImmutableList.copyOf( deny );
+    }
 
     public ContentTypeFilterJson( final ContentTypeFilter contentTypeFilter )
     {
@@ -45,13 +54,30 @@ public final class ContentTypeFilterJson
         }
     }
 
+    public ContentTypeFilter toContentTypeFilter()
+    {
+        final ContentTypeFilter.Builder filter = ContentTypeFilter.newContentFilter();
+
+        for ( final String allowStr : allow )
+        {
+            filter.allowContentType( allowStr );
+        }
+
+        for ( final String denyStr : deny )
+        {
+            filter.denyContentType( denyStr );
+        }
+
+        return filter.build();
+    }
+
     public List<String> getAllow()
     {
-        return allow;
+        return this.allow;
     }
 
     public List<String> getDeny()
     {
-        return deny;
+        return this.deny;
     }
 }

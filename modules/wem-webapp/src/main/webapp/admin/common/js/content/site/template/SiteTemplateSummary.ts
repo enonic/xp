@@ -22,7 +22,7 @@ module api.content.site.template {
 
         private description: string;
 
-        private contentTypeFilter: ContentTypeFilter;
+        private contentTypeFilter: api.schema.content.ContentTypeFilter;
 
         private pageTemplateKeys: PageTemplateKey[];
 
@@ -40,7 +40,7 @@ module api.content.site.template {
             this.key = SiteTemplateKey.fromString(json.key);
             this.description = json.description;
 
-            this.contentTypeFilter = new ContentTypeFilterBuilder().
+            this.contentTypeFilter = new api.schema.content.ContentTypeFilterBuilder().
                 fromJson(json.contentTypeFilter).
                 build();
 

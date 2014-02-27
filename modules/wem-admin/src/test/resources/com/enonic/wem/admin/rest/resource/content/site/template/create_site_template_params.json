@@ -1,0 +1,15 @@
+{
+    "description" : "Demo site template",
+    "displayName" : "Blueman Site Template",
+    "url": "www.enonic.com",
+    "vendor": {
+        "name": "Enonic AS",
+        "url": "http://www.enonic.com"
+    },
+    "moduleKeys": [ "module1-1.0.0", "module2-1.0.0" ],
+    "contentTypeFilter": {
+        "allow": [ "image" ],
+        "deny": [ "com.enonic.tweet", "system.folder", "com.enonic.article", "com.enonic.employee" ]
+    },
+    "rootContentType": "page"
+}
