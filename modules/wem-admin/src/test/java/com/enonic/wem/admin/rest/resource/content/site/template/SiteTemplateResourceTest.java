@@ -209,6 +209,7 @@ public class SiteTemplateResourceTest
             key( PageTemplateKey.from( "mod|mainpage" ) ).
             displayName( "Main Page" ).
             descriptor( PageDescriptorKey.from( ModuleKey.from( "mod-1.0.0" ), new ComponentDescriptorName( "page-descr" ) ) ).
+            config( new RootDataSet() ).
             build();
 
         final ContentTypeFilter filter = ContentTypeFilter.newContentFilter().
@@ -275,6 +276,7 @@ public class SiteTemplateResourceTest
             key( PageTemplateKey.from( "mod|mainpage" ) ).
             displayName( "Main Page" ).
             descriptor( PageDescriptorKey.from( ModuleKey.from( "mod-1.0.0" ), new ComponentDescriptorName( "page-descr" ) ) ).
+            config( new RootDataSet() ).
             build();
 
         final ContentTypeFilter filter = ContentTypeFilter.newContentFilter().
