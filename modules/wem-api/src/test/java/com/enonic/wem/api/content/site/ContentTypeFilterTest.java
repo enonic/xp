@@ -5,6 +5,7 @@ import java.util.Iterator;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.enonic.wem.api.schema.content.ContentTypeFilter;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 

@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Iterables;
 
-import com.enonic.wem.admin.json.content.ContentTypeFilterJson;
+import com.enonic.wem.admin.json.schema.content.ContentTypeFilterJson;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.site.UpdateSiteTemplate;
 import com.enonic.wem.api.content.site.SetSiteTemplateEditor;
@@ -22,10 +22,8 @@ public class UpdateSiteTemplateJson
 
     @JsonCreator
     UpdateSiteTemplateJson( @JsonProperty("siteTemplateKey") final String siteTemplateKey,
-                            @JsonProperty("displayName") final String displayName,
-                            @JsonProperty("description") final String description,
-                            @JsonProperty("url") final String url,
-                            @JsonProperty("vendor") final VendorJson vendorJson,
+                            @JsonProperty("displayName") final String displayName, @JsonProperty("description") final String description,
+                            @JsonProperty("url") final String url, @JsonProperty("vendor") final VendorJson vendorJson,
                             @JsonProperty("moduleKeys") List<String> moduleKeys,
                             @JsonProperty("contentTypeFilter") final ContentTypeFilterJson filterJson,
                             @JsonProperty("rootContentType") final String rootContentType )

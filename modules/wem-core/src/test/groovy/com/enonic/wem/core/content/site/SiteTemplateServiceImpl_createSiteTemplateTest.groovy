@@ -10,10 +10,10 @@ import com.enonic.wem.api.content.site.Vendor
 import com.enonic.wem.api.module.ModuleKeys
 import com.enonic.wem.api.schema.content.ContentTypeName
 
-import static com.enonic.wem.api.content.site.ContentTypeFilter.newContentFilter
+import static com.enonic.wem.api.schema.content.ContentTypeFilter.newContentFilter
 
 class SiteTemplateServiceImpl_createSiteTemplateTest
-        extends AbstractSiteTemplateServiceTest
+    extends AbstractSiteTemplateServiceTest
 {
     def "create site template"()
     {
@@ -22,15 +22,15 @@ class SiteTemplateServiceImpl_createSiteTemplateTest
         def moduleKeys = ModuleKeys.from( "foomodule-1.0.0" );
         def filter = newContentFilter().defaultDeny().allowContentType( ContentTypeName.from( "page" ) ).build();
         def createSiteTemplateParam = new CreateSiteTemplateParam().
-                name( "intranet" ).
-                version( SiteTemplateVersion.from( 1, 2, 0 ) ).
-                displayName( "Intranet template" ).
-                vendor( vendor ).
-                url( "http://www.enonic.com" ).
-                modules( moduleKeys ).
-                description( "description" ).
-                contentTypeFilter( filter ).
-                rootContentType( ContentTypeName.from( "document" ) );
+            name( "intranet" ).
+            version( SiteTemplateVersion.from( 1, 2, 0 ) ).
+            displayName( "Intranet template" ).
+            vendor( vendor ).
+            url( "http://www.enonic.com" ).
+            modules( moduleKeys ).
+            description( "description" ).
+            contentTypeFilter( filter ).
+            rootContentType( ContentTypeName.from( "document" ) );
 
         when:
         def result = this.service.createSiteTemplate( createSiteTemplateParam );
@@ -55,20 +55,20 @@ class SiteTemplateServiceImpl_createSiteTemplateTest
         def moduleKeys = ModuleKeys.from( "foomodule-1.0.0" );
         def filter = newContentFilter().defaultDeny().allowContentType( ContentTypeName.from( "page" ) ).build();
         def pageTemplate = PageTemplate.newPageTemplate().
-                key( PageTemplateKey.from( "foomodule-1.0.0|template-name" ) ).
-                displayName( "My page template" ).
-                descriptor( PageDescriptorKey.from( "resource-1.0.0:page-descr" ) ).build();
+            key( PageTemplateKey.from( "foomodule-1.0.0|template-name" ) ).
+            displayName( "My page template" ).
+            descriptor( PageDescriptorKey.from( "resource-1.0.0:page-descr" ) ).build();
 
         def createSiteTemplateParam = new CreateSiteTemplateParam().
-                name( "intranet" ).
-                version( SiteTemplateVersion.from( 1, 2, 0 ) ).
-                displayName( "Intranet template" ).
-                vendor( vendor ).
-                url( "http://www.enonic.com" ).
-                modules( moduleKeys ).
-                description( "description" ).
-                contentTypeFilter( filter ).
-                rootContentType( ContentTypeName.from( "document" ) ).
+            name( "intranet" ).
+            version( SiteTemplateVersion.from( 1, 2, 0 ) ).
+            displayName( "Intranet template" ).
+            vendor( vendor ).
+            url( "http://www.enonic.com" ).
+            modules( moduleKeys ).
+            description( "description" ).
+            contentTypeFilter( filter ).
+            rootContentType( ContentTypeName.from( "document" ) ).
             addPageTemplate( pageTemplate );
 
         when:

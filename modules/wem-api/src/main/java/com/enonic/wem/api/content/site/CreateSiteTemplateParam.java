@@ -8,6 +8,7 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplates;
 import com.enonic.wem.api.module.ModuleKeys;
+import com.enonic.wem.api.schema.content.ContentTypeFilter;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public final class CreateSiteTemplateParam

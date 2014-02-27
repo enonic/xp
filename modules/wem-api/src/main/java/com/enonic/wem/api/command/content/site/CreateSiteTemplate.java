@@ -7,11 +7,11 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.PageTemplate;
-import com.enonic.wem.api.content.site.ContentTypeFilter;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.Vendor;
 import com.enonic.wem.api.module.ModuleKeys;
+import com.enonic.wem.api.schema.content.ContentTypeFilter;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public class CreateSiteTemplate

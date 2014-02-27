@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.json.content;
+package com.enonic.wem.admin.json.schema.content;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.wem.api.content.site.ContentTypeFilter;
+import com.enonic.wem.api.schema.content.ContentTypeFilter;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public final class ContentTypeFilterJson

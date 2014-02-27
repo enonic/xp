@@ -1,12 +1,9 @@
-package com.enonic.wem.api.content.site;
+package com.enonic.wem.api.schema.content;
 
 import java.util.Iterator;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
-
-import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 public final class ContentTypeFilter
     implements Iterable<ContentTypeName>

@@ -8,11 +8,12 @@ import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.module.ModuleKeys;
+import com.enonic.wem.api.schema.content.ContentTypeFilter;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
-import static com.enonic.wem.api.content.site.ContentTypeFilter.newContentFilter;
 import static com.enonic.wem.api.content.site.Vendor.newVendor;
+import static com.enonic.wem.api.schema.content.ContentTypeFilter.newContentFilter;
 import static org.junit.Assert.*;
 
 public class SiteTemplateTest

@@ -3,13 +3,14 @@ package com.enonic.wem.api.content.site;
 import org.junit.Test;
 
 import com.enonic.wem.api.module.ModuleKeys;
+import com.enonic.wem.api.schema.content.ContentTypeFilter;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.xml.BaseXmlSerializerTest;
 import com.enonic.wem.xml.XmlSerializers;
 
-import static com.enonic.wem.api.content.site.ContentTypeFilter.newContentFilter;
 import static com.enonic.wem.api.content.site.Vendor.newVendor;
+import static com.enonic.wem.api.schema.content.ContentTypeFilter.newContentFilter;
 import static junit.framework.Assert.assertEquals;
 
 public class SiteTemplateXmlTest

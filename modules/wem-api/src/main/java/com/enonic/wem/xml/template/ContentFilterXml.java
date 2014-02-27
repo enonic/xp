@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlElement;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.content.site.ContentTypeFilter;
+import com.enonic.wem.api.schema.content.ContentTypeFilter;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.xml.XmlObject;
 
