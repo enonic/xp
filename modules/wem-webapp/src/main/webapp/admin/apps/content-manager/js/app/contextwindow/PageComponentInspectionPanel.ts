@@ -57,6 +57,7 @@ module app.contextwindow {
             var form = descriptor.getConfig();
             var config: api.data.RootDataSet = component.getConfig();
             this.formView = new api.form.FormView(formContext, form, config);
+            this.formView.setDoOffset(false);
             this.appendChild(this.formView);
         }
     }
