@@ -84,6 +84,15 @@ module api.dom {
             return this;
         }
 
+        setData(name: string, value: string): ElementHelper {
+            jQuery(this.el).data(name, value);
+            return this;
+        }
+
+        getData(name: string): string {
+            return jQuery(this.el).data(name);
+        }
+
         getValue(): string {
             return this.el['value'];
         }
@@ -150,15 +159,6 @@ module api.dom {
                 this.el.appendChild(child);
             });
             return this;
-        }
-
-        setData(name: string, value: string): ElementHelper {
-            jQuery(this.el).data(name, value);
-            return this;
-        }
-
-        getData(name: string): string {
-            return jQuery(this.el).data(name);
         }
 
         getDisplay(): string {
