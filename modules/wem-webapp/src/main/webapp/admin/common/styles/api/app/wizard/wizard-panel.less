@@ -60,6 +60,7 @@
 
     .wizard-step-navigator-and-toolbar {
       background-color: #eeeeee;
+      padding-left: 95px;
 
       .toolbar {
         float: right;
@@ -90,59 +91,6 @@
         box-shadow: 0px 2px 6px -2px #000;
       }
 
-      .step-navigator {
-        background-color: @admin-light-gray-bg;
-        color: @admin-medium-gray-font;
-        overflow: hidden;
-
-        li {
-          float: left;
-          padding: 10px 20px 10px 30px;
-          cursor: pointer;
-
-          &.first {
-            //padding-left: 0;
-            margin-left: 90px;
-          }
-
-          &:hover {
-            color: darken(@admin-medium-gray-font, 10%);
-          }
-
-          &.active {
-            background-color: white;
-            color: @admin-dark-gray-font;
-            padding-bottom: 0;
-
-            &:before {
-              content: " ";
-              display: block;
-              float: left;
-              height: 0;
-              width: 0;
-              margin-top: -10px;
-              border-top: 20px solid transparent;
-              border-bottom: 20px solid transparent;
-              border-left: 10px solid @admin-light-gray-bg;
-              margin-left: -30px;
-            }
-
-            &:after {
-              content: " ";
-              display: block;
-              float: right;
-              height: 0;
-              width: 0;
-              margin-top: -10px;
-              border-top: 20px solid transparent;
-              border-bottom: 20px solid transparent;
-              border-left: 10px solid white;
-              margin-left: 10px;
-              margin-right: -30px;
-            }
-          }
-        }
-      }
     }
 
     .step-panel {
@@ -203,6 +151,12 @@
 
 .scroll-shadow() {
   box-shadow: 0px 2px 6px -2px #000;
+}
+
+@media (max-width: 960px) {
+  .wizard-panel .wizard-back-panel .wizard-step-navigator-and-toolbar {
+    padding-left: 0;
+  }
 }
 
 @media (min-width: 720px) and (max-width: 960px) {
