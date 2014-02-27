@@ -3,7 +3,7 @@ module api.app.wizard {
     export class WizardStepNavigator extends api.ui.tab.TabBar {
 
         constructor() {
-            super("step-navigator");
+            super("wizard-step-navigator");
         }
 
         addNavigationItem(step:api.ui.tab.TabBarItem) {
