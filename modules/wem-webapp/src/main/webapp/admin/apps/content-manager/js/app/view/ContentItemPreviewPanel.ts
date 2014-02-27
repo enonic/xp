@@ -1,4 +1,4 @@
-module app.browse {
+module app.view {
 
     export class ContentItemPreviewPanel extends api.ui.Panel {
 

@@ -11,7 +11,7 @@ module app.view {
 
         private statisticsPanelIndex: number;
 
-        private previewPanel: app.browse.ContentItemPreviewPanel;
+        private previewPanel: ContentItemPreviewPanel;
 
         private previewMode: boolean;
 
@@ -44,7 +44,7 @@ module app.view {
             super(toolbar, this.deckPanel);
 
             this.statisticsPanel = new ContentItemStatisticsPanel();
-            this.previewPanel = new app.browse.ContentItemPreviewPanel();
+            this.previewPanel = new ContentItemPreviewPanel();
 
             this.statisticsPanelIndex = this.deckPanel.addPanel(this.statisticsPanel);
             this.previewPanelIndex = this.deckPanel.addPanel(this.previewPanel);

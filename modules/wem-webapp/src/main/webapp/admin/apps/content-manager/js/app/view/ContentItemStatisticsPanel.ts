@@ -2,15 +2,19 @@ module app.view {
 
     export class ContentItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.content.ContentSummary> {
 
-        private previewPanel: app.browse.ContentItemPreviewPanel;
+        private previewPanel: ContentItemPreviewPanel;
+
+        private analyticsPanel: ContentItemAnalyticsPanel;
 
         constructor() {
             super();
 
-            this.previewPanel = new app.browse.ContentItemPreviewPanel();
+            this.previewPanel = new ContentItemPreviewPanel();
             this.addNavigablePanel(new api.ui.tab.TabMenuItem("Preview"), this.previewPanel);
 
-            this.addNavigablePanel(new api.ui.tab.TabMenuItem("Google Analytics"), new api.ui.Panel());
+            this.analyticsPanel = new ContentItemAnalyticsPanel();
+            this.addNavigablePanel(new api.ui.tab.TabMenuItem("Google Analytics"), this.analyticsPanel);
+
             this.addNavigablePanel(new api.ui.tab.TabMenuItem("Details"), new api.ui.Panel());
             this.addNavigablePanel(new api.ui.tab.TabMenuItem("Relationships"), new api.ui.Panel());
             this.addNavigablePanel(new api.ui.tab.TabMenuItem("Version History"), new api.ui.Panel());
