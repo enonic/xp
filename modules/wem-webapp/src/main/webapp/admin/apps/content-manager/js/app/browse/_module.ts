@@ -2,7 +2,6 @@
 ///<reference path='ContentBrowseActions.ts' />
 ///<reference path='ContentBrowseToolbar.ts' />
 ///<reference path='ContentTreeGridContextMenu.ts' />
-///<reference path='ContentItemPreviewPanel.ts' />
 ///<reference path='ContentBrowseItemPanel.ts' />
 ///<reference path='ContentBrowsePanel.ts' />
 ///<reference path='ContentTreeGridPanel.ts' />

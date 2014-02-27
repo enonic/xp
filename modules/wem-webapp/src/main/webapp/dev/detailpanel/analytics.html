@@ -6,6 +6,7 @@
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
   <script src="http://cdn.oesmith.co.uk/morris-0.4.1.min.js"></script>
+  <link rel="stylesheet" href="icons-font/style.css">
   <style type="text/css">
     body {
       font-family: sans-serif;
@@ -13,72 +14,116 @@
       text-align: center;
     }
 
-    .display-data {
-      text-align: center;
-      display: inline-block;
-      /*width:100px;*/
-      padding: 10px 3%;
-      border-right: 1px solid #ccc;
-    }
-
-    .display-data span {
-      display: block;
-    }
-
-    .value {
-      font-size: 50px;
-    }
-
-    .subtitle {
-      font-size: 14px;
-    }
-
-    .display-data.last {
-      border: none;
-    }
-
     h3 {
       text-align: right;
       font-weight: normal;
     }
 
+    .top-bar {
+        height: 30px;
+        border-bottom: 1px solid #CECECE;
+        position: relative;
+    }
 
+    .top-bar .left-button {
+        position: absolute;
+        bottom: -1px;
+        width: 100px;
+        height: 20px;
+        line-height: 20px;
+        margin-left: 5px;
+        background: #eee; /* Old browsers */
+        background: -webkit-linear-gradient(bottom, #eee, #fff); /* Chrome10+,Safari5.1+ */
+        background: -moz-linear-gradient(bottom, #eee, #fff); /* FF3.6+ */
+        background: -ms-linear-gradient(bottom, #eee, #fff); /* IE10+ */
+        background: -o-linear-gradient(bottom, #eee, #fff); /* Opera 11.10+ */
+        background: linear-gradient(bottom, #eee, #fff); /* W3C */
+        border: 1px solid #cecece;
+        border-bottom: 1px solid #eee;
+        border-radius: 2px;
+        color: #757575;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    .icon-stats {
+        color: #4294de;
+    }
+
+    .icon-arrow-down {
+        color: #BEBEBE;
+    }
+
+    .top-bar li i {
+        color: #848484;
+        line-height: 24px;
+        background: white;
+    }
+
+    .top-bar ul {
+        float: right;
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+    }
+
+    .top-bar ul li {
+        float: left;
+        display: block;
+        width: 30px;
+        height: 24px;
+        background: #eee; /* Old browsers */
+        background: -webkit-linear-gradient(bottom, #eee, #fff); /* Chrome10+,Safari5.1+ */
+        background: -moz-linear-gradient(bottom, #eee, #fff); /* FF3.6+ */
+        background: -ms-linear-gradient(bottom, #eee, #fff); /* IE10+ */
+        background: -o-linear-gradient(bottom, #eee, #fff); /* Opera 11.10+ */
+        background: linear-gradient(bottom, #eee, #fff); /* W3C */
+        border: 1px solid #cecece;
+    }
+
+    .top-bar ul li:first-child {
+        border-radius: 4px 0 0 4px;
+        background: #b3b3b3; /* Old browsers */
+        background: -webkit-linear-gradient(bottom, #b3b3b3, #8c8c8c); /* Chrome10+,Safari5.1+ */
+        background: -moz-linear-gradient(bottom, #b3b3b3, #8c8c8c); /* FF3.6+ */
+        background: -ms-linear-gradient(bottom, #b3b3b3, #8c8c8c); /* IE10+ */
+        background: -o-linear-gradient(bottom, #b3b3b3, #8c8c8c); /* Opera 11.10+ */
+        background: linear-gradient(bottom, #b3b3b3, #8c8c8c); /* W3C */
+    }
+
+    .top-bar ul li:last-child {
+        border-radius: 0 4px 4px 0;
+    }
+
+    .top-bar ul li + li {
+        margin-left: -1px;
+    }
+
+    .top-bar > span {
+        display: block;
+        float: right;
+        height: 24px;
+        line-height: 24px;
+        color: #c1c1c1;
+        font-size: 14px;
+        font-weight: bold;
+        margin: 0 3px;
+    }
   </style>
 </head>
 <body>
-<h3>Visitors 01.01.2013 - 30.01.2013</h3>
+<h3>Dec 16, 2008 - April 18, 2013</h3>
+<div class="top-bar">
+    <div class="left-button"><i class="icon-stats"></i> Visits <i class="icon-arrow-down"></i></div>
+    <ul>
+        <li><i class="icon-grid-alt"></i></li>
+        <li><i class="icon-list"></i></li>
+        <li><i class="icon-menu"></i></li>
+    </ul>
+    <span>Graph by:</span>
+</div>
 
 <div id="analytics-chart" style="height: 200px;"></div>
-<div class="display-data">
-  <span class="title">Page views</span>
-  <span class="value">53</span>
-  <span class="subtitle">5% of total</span>
-</div>
-<div class="display-data">
-  <span class="title">Unique views</span>
-  <span class="value">30</span>
-  <span class="subtitle">7% of total</span>
-</div>
-<div class="display-data">
-  <span class="title">Avg. time on page</span>
-  <span class="value">0:12:11</span>
-  <span class="subtitle">7% of total</span>
-</div>
-<div class="display-data">
-  <span class="title">Entries</span>
-  <span class="value">48</span>
-  <span class="subtitle">5% of total</span>
-</div>
-<div class="display-data">
-  <span class="title">Exits</span>
-  <span class="value">3</span>
-  <span class="subtitle">1% of total</span>
-</div>
-<div class="display-data last">
-  <span class="title">Escape freq</span>
-  <span class="value">40%</span>
-  <span class="subtitle">1% of total</span>
-</div>
 <script type="text/javascript">
   window.onresize = function () {
     clearGraph();

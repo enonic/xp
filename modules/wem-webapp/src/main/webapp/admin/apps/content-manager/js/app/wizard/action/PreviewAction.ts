@@ -3,7 +3,7 @@ module app.wizard.action {
     export class PreviewAction extends api.ui.Action {
 
         private static dialog: api.ui.dialog.ModalDialog;
-        private static preview: app.browse.ContentItemPreviewPanel;
+        private static preview: app.view.ContentItemPreviewPanel;
 
         constructor(wizard: app.wizard.ContentWizardPanel) {
             super("Preview");
@@ -34,7 +34,7 @@ module app.wizard.action {
                 dialog.addClass('wizard-preview-dialog');
                 api.dom.Body.get().appendChild(dialog);
 
-                var preview = new app.browse.ContentItemPreviewPanel();
+                var preview = new app.view.ContentItemPreviewPanel();
                 dialog.appendChildToContentPanel(preview);
 
                 PreviewAction.dialog = dialog;
