@@ -10,6 +10,7 @@ public class SiteTemplateGetCommands
         return new GetAllSiteTemplates();
     }
 
+    @Deprecated
     public GetSiteTemplateByKey byKey( final SiteTemplateKey key )
     {
         return new GetSiteTemplateByKey( key );

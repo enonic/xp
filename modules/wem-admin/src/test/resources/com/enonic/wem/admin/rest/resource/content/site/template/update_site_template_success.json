@@ -3,6 +3,7 @@
     "allow" : [ "*" ],
     "deny" : [ "com.enonic.tweet", "system.folder", "com.enonic.article", "com.enonic.employee" ]
   },
+  "defaultPageTemplate" : null,
   "deletable" : true,
   "description" : "Demo site template",
   "displayName" : "Blueman Site Template",

@@ -5,6 +5,7 @@ import javax.inject.Inject;
 
 import com.enonic.wem.api.content.site.CreateSiteTemplateParam;
 import com.enonic.wem.api.content.site.SiteTemplate;
+import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
 import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.content.site.UpdateSiteTemplateParam;
@@ -30,11 +31,22 @@ public final class SiteTemplateServiceImpl
     }
 
     @Override
-    public boolean updateSiteTemplate( final UpdateSiteTemplateParam param  )
+    public boolean updateSiteTemplate( final UpdateSiteTemplateParam param )
         throws SiteTemplateNotFoundException
     {
         return new UpdateSiteTemplateCommand().
             param( param ).
+            systemConfig( this.systemConfig ).
+            siteTemplateExporter( this.siteTemplateExporter ).
+            execute();
+    }
+
+    @Override
+    public SiteTemplate getSiteTemplate( final SiteTemplateKey key )
+        throws SiteTemplateNotFoundException
+    {
+        return new GetSiteTemplateCommand().
+            key( key ).
             systemConfig( this.systemConfig ).
             siteTemplateExporter( this.siteTemplateExporter ).
             execute();

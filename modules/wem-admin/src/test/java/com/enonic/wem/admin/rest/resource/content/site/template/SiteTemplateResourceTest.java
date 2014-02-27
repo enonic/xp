@@ -34,6 +34,7 @@ import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
+import com.enonic.wem.api.content.page.PageTemplateName;
 import com.enonic.wem.api.content.site.CreateSiteTemplateParam;
 import com.enonic.wem.api.content.site.NoSiteTemplateExistsException;
 import com.enonic.wem.api.content.site.SiteTemplate;
@@ -164,6 +165,7 @@ public class SiteTemplateResourceTest
             contentTypeFilter( filter ).
             rootContentType( ContentTypeName.page() ).
             addPageTemplate( pageTemplate ).
+            defaultPageTemplate( PageTemplateName.from( "default-template" ) ).
             build();
 
         Mockito.when( client.execute( Mockito.isA( GetSiteTemplateByKey.class ) ) ).thenReturn( siteTemplate );
@@ -374,10 +376,19 @@ public class SiteTemplateResourceTest
 
     private SiteTemplate createSiteTemplate()
     {
-        return SiteTemplate.newSiteTemplate().key( SiteTemplateKey.from( "name-1.0.0" ) ).displayName( "displayName" ).description(
-            "info" ).url( "url" ).vendor( Vendor.newVendor().name( "vendorName" ).url( "vendorUrl" ).build() ).modules(
-            ModuleKeys.from( "module1-1.0.0" ) ).contentTypeFilter(
-            ContentTypeFilter.newContentFilter().allowContentType( ContentTypeName.imageMedia() ).denyContentType(
-                ContentTypeName.shortcut() ).build() ).rootContentType( ContentTypeName.folder() ).build();
+        return SiteTemplate.newSiteTemplate().
+            key( SiteTemplateKey.from( "name-1.0.0" ) ).
+            displayName( "displayName" ).
+            description( "info" ).
+            url( "url" ).
+            vendor( Vendor.newVendor().name( "vendorName" ).url( "vendorUrl" ).build() ).
+            modules( ModuleKeys.from( "module1-1.0.0" ) ).
+            contentTypeFilter( ContentTypeFilter.newContentFilter().
+                allowContentType( ContentTypeName.imageMedia() ).
+                denyContentType( ContentTypeName.shortcut() ).
+                build() ).
+            rootContentType( ContentTypeName.folder() ).
+            defaultPageTemplate( PageTemplateName.from( "default-template" ) ).
+            build();
     }
 }

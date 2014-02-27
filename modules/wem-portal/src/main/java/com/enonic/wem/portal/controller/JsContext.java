@@ -1,6 +1,7 @@
 package com.enonic.wem.portal.controller;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
@@ -81,9 +82,10 @@ public final class JsContext
             return null;
         }
 
-        if ( this.content.getPage().hasRegions() )
+        final Page page = this.content.getPage();
+        if ( ( page != null ) && page.hasRegions() )
         {
-            return this.content.getPage().getRegions();
+            return page.getRegions();
         }
         else
         {

@@ -4,11 +4,13 @@ import com.enonic.wem.api.content.site.SiteTemplateKey;
 
 public class SiteTemplateCommands
 {
+    @Deprecated
     public UpdateSiteTemplate update()
     {
         return new UpdateSiteTemplate();
     }
 
+    @Deprecated
     public CreateSiteTemplate create()
     {
         return new CreateSiteTemplate();

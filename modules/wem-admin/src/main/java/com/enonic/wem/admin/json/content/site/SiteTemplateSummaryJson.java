@@ -9,6 +9,7 @@ import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeFilterJson;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.VendorJson;
 import com.enonic.wem.api.content.page.PageTemplate;
+import com.enonic.wem.api.content.page.PageTemplateName;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.module.ModuleKey;
 
@@ -83,6 +84,12 @@ public class SiteTemplateSummaryJson
                 return moduleKey.toString();
             }
         } );
+    }
+
+    public String getDefaultPageTemplate()
+    {
+        final PageTemplateName templateKey = this.siteTemplate.getDefaultPageTemplateName();
+        return templateKey != null ? templateKey.toString() : null;
     }
 
     @Override
