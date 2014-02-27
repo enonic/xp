@@ -15,13 +15,14 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
+import com.enonic.wem.api.content.page.PageDescriptorService;
 import com.enonic.wem.api.content.page.PageTemplate;
+import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.portal.controller.JsControllerFactory;
 import com.enonic.wem.portal.exception.PortalWebException;
 
 import static com.enonic.wem.api.command.Commands.content;
-import static com.enonic.wem.api.command.Commands.page;
 
 
 public abstract class RenderResource
@@ -33,6 +34,12 @@ public abstract class RenderResource
 
     @Inject
     protected JsControllerFactory controllerFactory;
+
+    @Inject
+    protected PageDescriptorService pageDescriptorService;
+
+    @Inject
+    protected PageTemplateService pageTemplateService;
 
     @GET
     public Response handleGet()
@@ -102,7 +109,7 @@ public abstract class RenderResource
     protected PageDescriptor getPageDescriptor( final PageTemplate pageTemplate )
     {
         final PageDescriptorKey descriptorKey = pageTemplate.getDescriptor();
-        final PageDescriptor pageDescriptor = this.client.execute( page().descriptor().page().getByKey( descriptorKey ) );
+        final PageDescriptor pageDescriptor = pageDescriptorService.getByKey( descriptorKey );
         if ( pageDescriptor == null )
         {
             throw PortalWebException.notFound().message( "Page descriptor for template [{0}] not found.", pageTemplate.getName() ).build();
@@ -112,9 +119,7 @@ public abstract class RenderResource
 
     protected PageTemplate getPageTemplate( final Page page, final Site site )
     {
-        final PageTemplate pageTemplate = this.client.execute( page().template().page().getByKey().
-            siteTemplateKey( site.getTemplate() ).
-            key( page.getTemplate() ) );
+        final PageTemplate pageTemplate = pageTemplateService.getByKey( page.getTemplate(), site.getTemplate() );
         if ( pageTemplate == null )
         {
             throw PortalWebException.notFound().message( "Page template [{0}] not found.", page.getTemplate() ).build();
