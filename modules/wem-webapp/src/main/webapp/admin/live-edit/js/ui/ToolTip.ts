@@ -38,7 +38,7 @@ module LiveEdit.ui {
             var tooltip:JQuery = this.getEl();
 
             tooltip.children('.live-edit-tool-tip-type-text').text(component.getComponentType().getName());
-            tooltip.children('.live-edit-tool-tip-name-text').text(component.getName());
+            tooltip.children('.live-edit-tool-tip-name-text').text(component.getComponentName());
         }
 
         private attachEventListeners():void {

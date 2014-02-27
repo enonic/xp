@@ -153,7 +153,7 @@ module api.dom {
         }
 
         setData(name: string, value: string): ElementHelper {
-            jQuery(this.el).attr('data-' + name, value);
+            jQuery(this.el).data(name, value);
             return this;
         }
 

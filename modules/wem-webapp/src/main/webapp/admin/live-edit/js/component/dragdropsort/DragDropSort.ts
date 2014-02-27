@@ -145,8 +145,6 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
     export function handleSortUpdate(event:JQueryEventObject, ui):void {
         var component = LiveEdit.component.Component.fromJQuery(ui.item);
-        console.log(ui.item);
-        console.log("sortUpdate", component);
 
         if (component.hasComponentPath()) {
             $(window).trigger('sortableUpdate.liveEdit', [ component ]);
@@ -188,7 +186,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             droppedComponent.replaceWith(emptyComponent.getHTMLElement());
             emptyComponent.init();
 
-            $(window).trigger('sortableUpdate.liveEdit');
+            //$(window).trigger('sortableUpdate.liveEdit');
 
             // The layout padding is removed on sortStop, but this is not fired yet at this point
             // Remove it now so the auto selection is properly aligned.

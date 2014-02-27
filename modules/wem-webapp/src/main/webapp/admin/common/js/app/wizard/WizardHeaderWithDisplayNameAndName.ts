@@ -124,9 +124,6 @@ module api.app.wizard {
                 this.displayNameEl.setValue(value);
                 this.doAutoGenerateName(value);
             }
-            else {
-                console.log("*** setDisplayName ignored: " + value);
-            }
         }
 
         setPath(value: string) {

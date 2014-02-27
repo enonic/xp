@@ -11,8 +11,6 @@ module LiveEdit.component {
 
         element: JQuery;
         componentType: ComponentType;
-        key: string;
-        name: string;
         elementDimensions: ElementDimensions;
         selectedAsParent: boolean;
 
@@ -26,7 +24,6 @@ module LiveEdit.component {
                 props.setTagName("div");
             }
             super(props);
-            this.setName(this.getComponentNameFromElement());
             this.setElementDimensions(this.getDimensionsFromElement());
             if (!this.componentType) {
                 this.setComponentType(new LiveEdit.component.ComponentType(this.resolveComponentTypeEnum()));
@@ -50,6 +47,10 @@ module LiveEdit.component {
             this.getEl().setData('live-edit-component', path);
         }
 
+        getComponentName(): string {
+            return this.getComponentPath() || '[No Name]';
+        }
+
         getComponentPath(): string {
             return this.getEl().getData('live-edit-component');
         }
@@ -65,14 +66,6 @@ module LiveEdit.component {
 
         getElement(): JQuery {
             return $(this.getHTMLElement());
-        }
-
-        getName(): string {
-            return this.name;
-        }
-
-        setName(name: string): void {
-            this.name = name;
         }
 
         getElementDimensions(): ElementDimensions {
@@ -125,10 +118,6 @@ module LiveEdit.component {
 
             var type =  this.getEl().getData('liveEditType');
             return type;
-        }
-
-        private getComponentNameFromElement(): string {
-            return this.getEl().getData('live-edit-component') || '[No Name]';
         }
 
         showLoadingSpinner() {
