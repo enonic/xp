@@ -3,12 +3,14 @@ package com.enonic.wem.admin.json.schema.content;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.api.schema.content.ContentTypeFilter;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
+@SuppressWarnings("UnusedDeclaration")
 public final class ContentTypeFilterJson
 {
     private final static ImmutableList<String> LIST_ALL = ImmutableList.of( "*" );
@@ -54,6 +56,17 @@ public final class ContentTypeFilterJson
         }
     }
 
+    public List<String> getAllow()
+    {
+        return this.allow;
+    }
+
+    public List<String> getDeny()
+    {
+        return this.deny;
+    }
+
+    @JsonIgnore
     public ContentTypeFilter toContentTypeFilter()
     {
         final ContentTypeFilter.Builder filter = ContentTypeFilter.newContentFilter();
@@ -69,15 +82,5 @@ public final class ContentTypeFilterJson
         }
 
         return filter.build();
-    }
-
-    public List<String> getAllow()
-    {
-        return this.allow;
-    }
-
-    public List<String> getDeny()
-    {
-        return this.deny;
     }
 }
