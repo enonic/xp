@@ -47,32 +47,6 @@ module api.dom {
         }
     }
 
-    export class ElementEvent {
-
-        private name: string;
-        private element: Element;
-        private target: Element;
-
-        constructor(name: string, element: Element, target?: Element) {
-            this.name = name;
-            this.element = element;
-            this.target = target || element;
-        }
-
-        getName(): string {
-            return this.name;
-        }
-
-        getElement(): Element {
-            return this.element;
-        }
-
-        getTarget(): Element {
-            return this.target;
-        }
-
-    }
-
     export class Element {
 
         private el: ElementHelper;
@@ -83,11 +57,11 @@ module api.dom {
 
         private rendered: boolean;
 
-        private addedListeners: {(event: ElementEvent) : void}[] = [];
-        private removedListeners: {(event: ElementEvent) : void}[] = [];
-        private renderedListeners: {(event: ElementEvent) : void}[] = [];
-        private shownListeners: {(event: ElementEvent) : void}[] = [];
-        private hiddenListeners: {(event: ElementEvent) : void}[] = [];
+        private addedListeners: {(event: ElementAddedEvent) : void}[] = [];
+        private removedListeners: {(event: ElementRemovedEvent) : void}[] = [];
+        private renderedListeners: {(event: ElementRenderedEvent) : void}[] = [];
+        private shownListeners: {(event: ElementShownEvent) : void}[] = [];
+        private hiddenListeners: {(event: ElementHiddenEvent) : void}[] = [];
 
         constructor(properties: ElementProperties) {
             this.rendered = false;
@@ -260,7 +234,7 @@ module api.dom {
         }
 
         removeChildren() {
-            this.children.forEach((child:Element) => {
+            this.children.forEach((child: Element) => {
                 child.remove();
             });
             this.children = [];
@@ -340,7 +314,7 @@ module api.dom {
         }
 
         notifyAdded() {
-            var addedEvent = new ElementEvent("added", this);
+            var addedEvent = new ElementAddedEvent(this);
             this.addedListeners.forEach((listener) => {
                 listener(addedEvent);
             });
@@ -357,13 +331,13 @@ module api.dom {
             })
         }
 
-        notifyRemoved(target?:Element) {
-            var removedEvent = new ElementEvent("removed", this, target);
+        notifyRemoved(target?: Element) {
+            var removedEvent = new ElementRemovedEvent(this, target);
             this.removedListeners.forEach((listener) => {
                 listener(removedEvent);
             });
-            this.children.forEach((child:Element) => {
-                child.notifyRemoved(target);
+            this.children.forEach((child: Element) => {
+                child.notifyRemoved(removedEvent.getTarget());
             })
         }
 
@@ -378,7 +352,7 @@ module api.dom {
         }
 
         notifyRendered() {
-            var renderedEvent = new ElementEvent("rendered", this);
+            var renderedEvent = new ElementRenderedEvent(this);
             this.renderedListeners.forEach((listener) => {
                 listener(renderedEvent);
             });
@@ -395,13 +369,13 @@ module api.dom {
             })
         }
 
-        notifyShown(target?:Element) {
-            var shownEvent = new ElementEvent("shown", this, target);
+        notifyShown(target?: Element) {
+            var shownEvent = new ElementShownEvent(this, target);
             this.shownListeners.forEach((listener) => {
                 listener(shownEvent);
             });
-            this.children.forEach((child:Element) => {
-                child.notifyShown(target);
+            this.children.forEach((child: Element) => {
+                child.notifyShown(shownEvent.getTarget());
             })
         }
 
@@ -415,13 +389,13 @@ module api.dom {
             })
         }
 
-        notifyHidden(target?:Element) {
-            var hiddenEvent = new ElementEvent("hidden", this, target);
+        notifyHidden(target?: Element) {
+            var hiddenEvent = new ElementHiddenEvent(this, target);
             this.hiddenListeners.forEach((listener) => {
                 listener(hiddenEvent);
             });
-            this.children.forEach((child:Element) => {
-                child.notifyHidden(target);
+            this.children.forEach((child: Element) => {
+                child.notifyHidden(hiddenEvent.getTarget());
             })
         }
 

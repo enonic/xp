@@ -2,6 +2,12 @@
 ///<reference path='ImgElHelper.ts' />
 ///<reference path='Element.ts' />
 ///<reference path='ElementRegistry.ts' />
+///<reference path='ElementEvent.ts' />
+///<reference path='ElementAddedEvent.ts' />
+///<reference path='ElementRenderedEvent.ts' />
+///<reference path='ElementShownEvent.ts' />
+///<reference path='ElementHiddenEvent.ts' />
+///<reference path='ElementRemovedEvent.ts' />
 ///<reference path='AEl.ts' />
 ///<reference path='Body.ts' />
 ///<reference path='DivEl.ts' />

@@ -2,8 +2,6 @@ module api.app {
 
     export class AppBar extends api.dom.DivEl {
 
-        ext;
-
         private appName: string;
 
         private actions: AppBarActionsConfig;
