@@ -85,6 +85,7 @@ module api.dom {
         }
 
         setData(name: string, value: string): ElementHelper {
+            this.el.setAttribute('data-' + name, value);
             jQuery(this.el).data(name, value);
             return this;
         }
