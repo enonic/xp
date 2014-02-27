@@ -4,8 +4,8 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.command.content.page.layout.GetLayoutDescriptorsByModules;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
+import com.enonic.wem.api.content.page.layout.GetLayoutDescriptorsByModules;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;

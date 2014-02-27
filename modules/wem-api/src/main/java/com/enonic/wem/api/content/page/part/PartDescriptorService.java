@@ -1,6 +1,5 @@
 package com.enonic.wem.api.content.page.part;
 
-import com.enonic.wem.api.command.content.page.part.CreatePartDescriptor;
 import com.enonic.wem.api.module.ModuleKeys;
 
 public interface PartDescriptorService

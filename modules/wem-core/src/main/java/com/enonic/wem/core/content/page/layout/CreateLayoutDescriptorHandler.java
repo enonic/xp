@@ -1,6 +1,6 @@
 package com.enonic.wem.core.content.page.layout;
 
-import com.enonic.wem.api.command.content.page.layout.CreateLayoutDescriptor;
+import com.enonic.wem.api.content.page.layout.CreateLayoutDescriptor;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorXml;
 import com.enonic.wem.core.command.CommandHandler;

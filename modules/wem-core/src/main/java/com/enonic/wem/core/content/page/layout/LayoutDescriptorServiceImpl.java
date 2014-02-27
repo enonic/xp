@@ -3,9 +3,9 @@ package com.enonic.wem.core.content.page.layout;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.content.page.layout.CreateLayoutDescriptor;
-import com.enonic.wem.api.command.content.page.layout.GetLayoutDescriptor;
-import com.enonic.wem.api.command.content.page.layout.GetLayoutDescriptorsByModules;
+import com.enonic.wem.api.content.page.layout.CreateLayoutDescriptor;
+import com.enonic.wem.api.content.page.layout.GetLayoutDescriptor;
+import com.enonic.wem.api.content.page.layout.GetLayoutDescriptorsByModules;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;

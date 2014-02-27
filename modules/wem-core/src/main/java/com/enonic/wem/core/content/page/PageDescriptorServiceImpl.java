@@ -3,8 +3,8 @@ package com.enonic.wem.core.content.page;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.content.page.CreatePageDescriptor;
-import com.enonic.wem.api.command.content.page.GetPageDescriptor;
+import com.enonic.wem.api.content.page.CreatePageDescriptor;
+import com.enonic.wem.api.content.page.GetPageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageDescriptorService;

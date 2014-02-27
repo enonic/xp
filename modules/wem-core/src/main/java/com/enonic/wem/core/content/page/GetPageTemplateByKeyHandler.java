@@ -2,8 +2,8 @@ package com.enonic.wem.core.content.page;
 
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.page.GetPageTemplateByKey;
 import com.enonic.wem.api.command.content.site.GetSiteTemplateByKey;
+import com.enonic.wem.api.content.page.GetPageTemplateByKey;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateNotFoundException;

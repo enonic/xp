@@ -15,9 +15,9 @@ import com.google.common.io.Files;
 import com.google.common.io.Resources;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.content.page.GetPageDescriptor;
 import com.enonic.wem.api.command.module.GetModuleResource;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
+import com.enonic.wem.api.content.page.GetPageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageDescriptorXmlTest;

@@ -1,9 +1,7 @@
-package com.enonic.wem.api.command.content.page;
+package com.enonic.wem.api.content.page;
 
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.page.PageTemplate;
-import com.enonic.wem.api.content.page.PageTemplateName;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;

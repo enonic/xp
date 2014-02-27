@@ -8,9 +8,9 @@ import javax.ws.rs.core.MediaType;
 
 import com.enonic.wem.admin.json.content.ContentJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
-import com.enonic.wem.api.command.content.page.CreatePage;
-import com.enonic.wem.api.command.content.page.UpdatePage;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.page.CreatePage;
+import com.enonic.wem.api.content.page.UpdatePage;
 
 @Path("content/page")
 @Produces(MediaType.APPLICATION_JSON)

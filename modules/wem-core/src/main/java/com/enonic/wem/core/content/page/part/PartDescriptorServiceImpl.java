@@ -3,9 +3,9 @@ package com.enonic.wem.core.content.page.part;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.content.page.part.CreatePartDescriptor;
-import com.enonic.wem.api.command.content.page.part.GetPartDescriptor;
-import com.enonic.wem.api.command.content.page.part.GetPartDescriptorsByModules;
+import com.enonic.wem.api.content.page.part.CreatePartDescriptor;
+import com.enonic.wem.api.content.page.part.GetPartDescriptor;
+import com.enonic.wem.api.content.page.part.GetPartDescriptorsByModules;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartDescriptorService;

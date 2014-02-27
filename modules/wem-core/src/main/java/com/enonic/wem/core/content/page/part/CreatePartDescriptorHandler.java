@@ -1,6 +1,6 @@
 package com.enonic.wem.core.content.page.part;
 
-import com.enonic.wem.api.command.content.page.part.CreatePartDescriptor;
+import com.enonic.wem.api.content.page.part.CreatePartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptorXml;
 import com.enonic.wem.core.command.CommandHandler;

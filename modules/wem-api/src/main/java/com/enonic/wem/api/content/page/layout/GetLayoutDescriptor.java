@@ -1,11 +1,9 @@
-package com.enonic.wem.api.command.content.page.layout;
+package com.enonic.wem.api.content.page.layout;
 
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 
 public class GetLayoutDescriptor
     extends Command<LayoutDescriptor>

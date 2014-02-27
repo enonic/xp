@@ -1,10 +1,9 @@
-package com.enonic.wem.api.command.content.page;
+package com.enonic.wem.api.content.page;
 
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.page.PageTemplates;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 
 public class GetPageTemplatesBySiteTemplate

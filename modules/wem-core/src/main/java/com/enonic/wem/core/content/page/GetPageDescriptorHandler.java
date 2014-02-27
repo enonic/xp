@@ -1,7 +1,7 @@
 package com.enonic.wem.core.content.page;
 
-import com.enonic.wem.api.command.content.page.GetPageDescriptor;
 import com.enonic.wem.api.command.module.GetModuleResource;
+import com.enonic.wem.api.content.page.GetPageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageDescriptorNotFoundException;
