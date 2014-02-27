@@ -11,7 +11,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -24,8 +23,6 @@ import com.sun.jersey.api.core.HttpRequestContext;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.content.GetContentByPath;
-import com.enonic.wem.api.command.content.page.GetPageDescriptor;
-import com.enonic.wem.api.command.content.page.GetPageTemplateByKey;
 import com.enonic.wem.api.command.content.site.GetNearestSiteByContentId;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -34,10 +31,13 @@ import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
+import com.enonic.wem.api.content.page.PageDescriptorService;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateName;
+import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.site.Site;
+import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
@@ -80,7 +80,6 @@ public class ContentResourceTest
     private Console console = new Console();
 
     @Test
-    @Ignore
     public void testScript()
         throws Exception
     {
@@ -95,6 +94,12 @@ public class ContentResourceTest
         contentResource.contentSelector = "content";
         contentResource.client = mock( Client.class );
         contentResource.httpContext = mock( HttpContext.class );
+
+        final PageDescriptorService pageDescriptorServiceMock = mock( PageDescriptorService.class );
+        final PageTemplateService pageTemplateServiceMock = mock( PageTemplateService.class );
+
+        contentResource.pageDescriptorService = pageDescriptorServiceMock;
+        contentResource.pageTemplateService = pageTemplateServiceMock;
 
         final Path path = Files.createTempFile( "prefix", "js" );
         final String script = readFromFile( "script-page-component.js" );
@@ -151,12 +156,13 @@ public class ContentResourceTest
 
         when( contentResource.httpContext.getRequest() ).thenReturn( requestContext );
 
-        when( contentResource.client.execute( isA( GetPageTemplateByKey.class ) ) ).thenReturn( createPageTemplate() );
+        when( pageTemplateServiceMock.getByKey( Mockito.eq( PageTemplateKey.from( "mymodule|my-page" ) ),
+                                                Mockito.eq( (SiteTemplateKey) null ) ) ).thenReturn( createPageTemplate() );
         when( contentResource.client.execute( isA( GetContentByPath.class ) ) ).thenReturn(
             createPage( "id", "content", "contenttypename" ) );
         when( contentResource.client.execute( isA( GetNearestSiteByContentId.class ) ) ).thenReturn(
             createSite( "id", "site", "contenttypename" ) );
-        when( contentResource.client.execute( isA( GetPageDescriptor.class ) ) ).thenReturn( createDescriptor() );
+        when( pageDescriptorServiceMock.getByKey( isA( PageDescriptorKey.class ) ) ).thenReturn( createDescriptor() );
 
         final Response response = contentResource.handleGet();
         assertEquals( 200, response.getStatus() );
