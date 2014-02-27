@@ -3,7 +3,7 @@ module app.contextwindow {
     import SiteTemplate = api.content.site.template.SiteTemplate;
     import PartDescriptor = api.content.page.part.PartDescriptor;
 
-    export class PartInspectionPanel extends PageComponentInspectionPanel<api.content.page.part.PartComponent> {
+    export class PartInspectionPanel extends PageComponentInspectionPanel<api.content.page.part.PartComponent, PartDescriptor> {
 
         private partComponent: api.content.page.part.PartComponent;
         private partDescriptors: {
@@ -25,7 +25,7 @@ module app.contextwindow {
             });
         }
 
-        private getDescriptor(key: api.content.page.DescriptorKey): PartDescriptor {
+        getDescriptor(key: api.content.page.DescriptorKey): PartDescriptor {
             return this.partDescriptors[key.toString()];
         }
         

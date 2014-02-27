@@ -3,10 +3,13 @@ module app.contextwindow {
     import SiteTemplate = api.content.site.template.SiteTemplate;
     import ImageDescriptor = api.content.page.image.ImageDescriptor;
 
-    export class ImageInspectionPanel extends PageComponentInspectionPanel<api.content.page.image.ImageComponent> {
+    export class ImageInspectionPanel extends PageComponentInspectionPanel<api.content.page.image.ImageComponent, ImageDescriptor> {
 
         private imageComponent: api.content.page.image.ImageComponent;
         private descriptorComboBox: api.content.page.image.ImageDescriptorComboBox;
+        private imageDescriptors: {
+            [key: string]: ImageDescriptor;
+        };
 
         constructor(liveFormPanel: app.wizard.LiveFormPanel, siteTemplate: SiteTemplate) {
             super("live-edit-font-icon-image", liveFormPanel, siteTemplate);
@@ -23,7 +26,10 @@ module app.contextwindow {
             var imageDescriptorLoader = new api.content.page.image.ImageDescriptorLoader(imageDescriptorsRequest);
             this.descriptorComboBox = new api.content.page.image.ImageDescriptorComboBox(imageDescriptorLoader);
 
-            var onDescriptorsLoaded = () => {
+            var onDescriptorsLoaded = (imageDescriptors:ImageDescriptor[]) => {
+                imageDescriptors.forEach((imageDescriptor:ImageDescriptor) => {
+                    this.imageDescriptors[imageDescriptor.getKey().toString()] = imageDescriptor;
+                })
                 this.descriptorComboBox.setDescriptor(this.getLiveFormPanel().getDefaultImageDescriptor().getKey());
                 this.descriptorComboBox.removeLoadedListener(onDescriptorsLoaded); // execute only on the first loaded event
             };
@@ -36,6 +42,10 @@ module app.contextwindow {
                 }
                 });
             this.appendChild(this.descriptorComboBox);
+        }
+
+        getDescriptor(key: api.content.page.DescriptorKey): ImageDescriptor {
+            return this.imageDescriptors[key.toString()];
         }
         
         setImageComponent(component: api.content.page.image.ImageComponent) {

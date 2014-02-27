@@ -3,7 +3,7 @@ module app.contextwindow {
     import SiteTemplate = api.content.site.template.SiteTemplate;
     import LayoutDescriptor = api.content.page.layout.LayoutDescriptor;
 
-    export class LayoutInspectionPanel extends PageComponentInspectionPanel<api.content.page.layout.LayoutComponent> {
+    export class LayoutInspectionPanel extends PageComponentInspectionPanel<api.content.page.layout.LayoutComponent, LayoutDescriptor> {
 
         private layoutComponent: api.content.page.layout.LayoutComponent;
         private layoutDescriptors: {
@@ -25,7 +25,7 @@ module app.contextwindow {
             });
         }
 
-        private getDescriptor(key: api.content.page.DescriptorKey): LayoutDescriptor {
+        getDescriptor(key: api.content.page.DescriptorKey): LayoutDescriptor {
             return this.layoutDescriptors[key.toString()];
         }
 

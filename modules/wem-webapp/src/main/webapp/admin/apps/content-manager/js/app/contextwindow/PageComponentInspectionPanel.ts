@@ -2,7 +2,7 @@ module app.contextwindow {
 
     import SiteTemplate = api.content.site.template.SiteTemplate;
 
-    export class PageComponentInspectionPanel<COMPONENT extends api.content.page.PageComponent> extends BaseInspectionPanel {
+    export class PageComponentInspectionPanel<COMPONENT extends api.content.page.PageComponent, DESCRIPTOR extends api.content.page.Descriptor> extends BaseInspectionPanel {
 
         private siteTemplate: SiteTemplate;
         private liveFormPanel: app.wizard.LiveFormPanel;
@@ -29,12 +29,16 @@ module app.contextwindow {
 
             this.component = component;
 
-            this.setMainName(component.getName().toString());
-            this.setSubName(component.getPath().toString());
+            this.setMainName(this.getDescriptor(component.getDescriptor()).getName().toString());
+            this.setSubName(component.getName().toString());
 
             // TODO: select descriptor (component.descriptor)
             // TODO: display config form for selected descriptor
 
+        }
+
+        getDescriptor(key: api.content.page.DescriptorKey): DESCRIPTOR   {
+            throw new Error("To be implemented by subclasses")
         }
 
         setupComponentForm(component: api.content.page.PageComponent, descriptor: api.content.page.Descriptor) {
