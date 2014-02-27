@@ -10,24 +10,9 @@ module api.content.site.template {
         private contentTypeFilter: api.schema.content.ContentTypeFilter;
         private rootContentType: api.schema.content.ContentTypeName;
 
-        constructor(displayName:string,
-                    description:string,
-                    url:string,
-                    vendor: api.content.site.Vendor,
-                    moduleKeys: api.module.ModuleKey[],
-                    contentTypeFilter: api.schema.content.ContentTypeFilter,
-                    rootContentType: api.schema.content.ContentTypeName) {
-
+        constructor() {
             super();
             super.setMethod("POST");
-
-            this.displayName = displayName;
-            this.description = description;
-            this.url = url;
-            this.vendor = vendor;
-            this.moduleKeys = moduleKeys;
-            this.contentTypeFilter = contentTypeFilter;
-            this.rootContentType = rootContentType;
         }
 
         setDisplayName(displayName: string): CreateSiteTemplateRequest {
