@@ -4,8 +4,8 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.command.content.page.part.GetPartDescriptorsByModules;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
+import com.enonic.wem.api.content.page.part.GetPartDescriptorsByModules;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartDescriptorService;

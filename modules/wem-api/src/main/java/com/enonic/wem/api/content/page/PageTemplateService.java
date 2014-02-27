@@ -1,7 +1,5 @@
 package com.enonic.wem.api.content.page;
 
-import com.enonic.wem.api.command.content.page.CreatePageTemplate;
-import com.enonic.wem.api.command.content.page.DeletePageTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 
 public interface PageTemplateService

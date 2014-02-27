@@ -11,8 +11,8 @@ import com.enonic.wem.admin.json.content.page.region.PageRegionsJson;
 import com.enonic.wem.admin.json.content.page.region.RegionJson;
 import com.enonic.wem.admin.json.data.DataJson;
 import com.enonic.wem.admin.json.data.RootDataSetJson;
-import com.enonic.wem.api.command.content.page.CreatePage;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.page.CreatePage;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 
 public class CreatePageJson

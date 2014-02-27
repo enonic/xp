@@ -1,11 +1,9 @@
-package com.enonic.wem.api.command.content.page;
+package com.enonic.wem.api.content.page;
 
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.page.PageDescriptor;
-import com.enonic.wem.api.content.page.PageDescriptorKey;
 
 public class GetPageDescriptor
     extends Command<PageDescriptor>

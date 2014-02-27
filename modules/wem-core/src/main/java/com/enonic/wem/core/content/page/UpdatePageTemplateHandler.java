@@ -4,11 +4,11 @@ package com.enonic.wem.core.content.page;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.page.UpdatePageTemplate;
 import com.enonic.wem.api.command.content.site.GetSiteTemplateByKey;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateEditor;
 import com.enonic.wem.api.content.page.PageTemplateNotFoundException;
+import com.enonic.wem.api.content.page.UpdatePageTemplate;
 import com.enonic.wem.api.content.site.SetSiteTemplateEditor;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;

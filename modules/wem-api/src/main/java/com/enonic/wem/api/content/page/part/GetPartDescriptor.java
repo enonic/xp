@@ -1,11 +1,9 @@
-package com.enonic.wem.api.command.content.page.part;
+package com.enonic.wem.api.content.page.part;
 
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.page.part.PartDescriptor;
-import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 
 public class GetPartDescriptor
     extends Command<PartDescriptor>

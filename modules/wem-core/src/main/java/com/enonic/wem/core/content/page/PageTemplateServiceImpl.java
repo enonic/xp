@@ -3,10 +3,10 @@ package com.enonic.wem.core.content.page;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.content.page.CreatePageTemplate;
-import com.enonic.wem.api.command.content.page.DeletePageTemplate;
-import com.enonic.wem.api.command.content.page.GetPageTemplateByKey;
-import com.enonic.wem.api.command.content.page.GetPageTemplatesBySiteTemplate;
+import com.enonic.wem.api.content.page.CreatePageTemplate;
+import com.enonic.wem.api.content.page.DeletePageTemplate;
+import com.enonic.wem.api.content.page.GetPageTemplateByKey;
+import com.enonic.wem.api.content.page.GetPageTemplatesBySiteTemplate;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateService;

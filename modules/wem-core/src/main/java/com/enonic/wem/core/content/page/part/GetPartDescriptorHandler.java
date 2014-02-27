@@ -1,7 +1,7 @@
 package com.enonic.wem.core.content.page.part;
 
-import com.enonic.wem.api.command.content.page.part.GetPartDescriptor;
 import com.enonic.wem.api.command.module.GetModuleResource;
+import com.enonic.wem.api.content.page.part.GetPartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartDescriptorNotFoundException;

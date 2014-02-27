@@ -1,6 +1,5 @@
 package com.enonic.wem.api.content.page.layout;
 
-import com.enonic.wem.api.command.content.page.layout.CreateLayoutDescriptor;
 import com.enonic.wem.api.module.ModuleKeys;
 
 public interface LayoutDescriptorService

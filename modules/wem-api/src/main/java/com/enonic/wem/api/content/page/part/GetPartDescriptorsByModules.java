@@ -1,18 +1,17 @@
-package com.enonic.wem.api.command.content.page.layout;
+package com.enonic.wem.api.content.page.part;
 
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptors;
 import com.enonic.wem.api.module.ModuleKeys;
 
-public class GetLayoutDescriptorsByModules
-    extends Command<LayoutDescriptors>
+public class GetPartDescriptorsByModules
+    extends Command<PartDescriptors>
 {
     private final ModuleKeys moduleKeys;
 
-    public GetLayoutDescriptorsByModules( final ModuleKeys moduleKeys )
+    public GetPartDescriptorsByModules( final ModuleKeys moduleKeys )
     {
         this.moduleKeys = moduleKeys;
     }

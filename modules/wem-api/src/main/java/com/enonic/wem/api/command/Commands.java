@@ -3,7 +3,6 @@ package com.enonic.wem.api.command;
 import com.enonic.wem.api.command.content.ContentCommands;
 import com.enonic.wem.api.command.content.attachment.AttachmentCommands;
 import com.enonic.wem.api.command.content.blob.BlobCommands;
-import com.enonic.wem.api.command.content.page.PageCommands;
 import com.enonic.wem.api.command.content.site.SiteCommands;
 import com.enonic.wem.api.command.entity.NodeCommands;
 import com.enonic.wem.api.command.module.ModuleCommands;
@@ -13,6 +12,7 @@ import com.enonic.wem.api.command.schema.SchemaCommands;
 import com.enonic.wem.api.command.schema.content.ContentTypeCommands;
 import com.enonic.wem.api.command.schema.mixin.MixinCommands;
 import com.enonic.wem.api.command.schema.relationship.RelationshipTypeCommands;
+import com.enonic.wem.api.content.page.PageCommands;
 
 public final class Commands
 {

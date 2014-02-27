@@ -1,6 +1,6 @@
 package com.enonic.wem.core.content.page;
 
-import com.enonic.wem.api.command.content.page.CreatePageDescriptor;
+import com.enonic.wem.api.content.page.CreatePageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorXml;
 import com.enonic.wem.api.module.ModuleResourceKey;
