@@ -88,8 +88,6 @@ module api.app.browse {
 
             this.onRendered((event) => {
                 this.appendChild(this.gridAndFilterAndDetailSplitPanel);
-                this.gridAndFilterAndDetailSplitPanel.render();
-                this.gridAndDetailSplitPanel.render();
             });
         }
 
