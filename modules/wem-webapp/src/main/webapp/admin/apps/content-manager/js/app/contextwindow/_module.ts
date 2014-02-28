@@ -7,7 +7,6 @@
 ///<reference path='NoSelectionInspectionPanel.ts' />
 ///<reference path='EmulatorGrid.ts' />
 ///<reference path='EmulatorPanel.ts' />
-///<reference path='SelectPanel.ts' />
 ///<reference path='ImageInspectionPanel.ts' />
 ///<reference path='PartInspectionPanel.ts' />
 ///<reference path='LayoutInspectionPanel.ts' />
