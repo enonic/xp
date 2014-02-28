@@ -39,5 +39,9 @@ module api.content.page {
         toString():string {
             return this.refString;
         }
+
+        equals(other: DescriptorKey) {
+            return other && (this.refString === other.refString);
+        }
     }
 }

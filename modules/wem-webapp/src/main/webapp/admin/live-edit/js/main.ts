@@ -25,6 +25,10 @@ function initializeLiveEdit() {
     });
 }
 
+function getComponentByPath(path:string): LiveEdit.component.Component {
+    return LiveEdit.component.Component.fromJQuery($('[data-live-edit-component="'+ path +'"]'));
+}
+
 (function ($) {
     'use strict';
 

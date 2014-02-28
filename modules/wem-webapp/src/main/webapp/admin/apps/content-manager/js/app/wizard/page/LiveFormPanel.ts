@@ -183,7 +183,6 @@ module app.wizard {
 
             api.util.assertNotNull(content, "Expected content not be null");
             api.util.assertNotNull(pageTemplate, "Expected content not be null");
-            api.util.assert(content.isPage(), "Expected content to be a page: " + content.getPath().toString());
 
             this.pageContent = content;
             var pageTemplateChanged = this.pageTemplate && this.pageTemplate.getKey().toString() != pageTemplate.getKey().toString();
@@ -235,7 +234,7 @@ module app.wizard {
         private resolvePageRegions(): api.content.page.PageRegions {
 
             var page = this.pageContent.getPage();
-            if (page.hasRegions()) {
+            if (page && page.hasRegions()) {
                 console.log( "resolvePageRegions.. from page" );
                 return page.getRegions();
             }
@@ -390,6 +389,28 @@ module app.wizard {
             });
         }
 
+        setComponentDescriptor(descriptorKey: api.content.page.DescriptorKey, componentPath: api.content.page.ComponentPath, componentPlaceholder) {
+            var component = this.pageRegions.getComponent(componentPath);
+            if (!component || !descriptorKey) {
+                return;
+            }
+
+            this.contextWindow.hide();
+
+            componentPlaceholder.showLoadingSpinner();
+            component.setDescriptor(descriptorKey);
+
+            this.pageSkipReload = true;
+            this.contentWizardPanel.saveChanges().done(() => {
+                this.pageSkipReload = false;
+                this.loadComponent(componentPath, componentPlaceholder);
+            });
+        }
+
+        getLiveEditWindow() {
+            return this.liveEditWindow;
+        }
+
         private liveEditListen() {
 
             this.liveEditJQuery(this.liveEditWindow).on('componentSelect.liveEdit',
@@ -517,19 +538,7 @@ module app.wizard {
                 (event, descriptorKey?: api.content.page.DescriptorKey, componentPathAsString?: string, componentPlaceholder?) => {
 
                     var componentPath = ComponentPath.fromString(componentPathAsString);
-                    var component = this.pageRegions.getComponent(componentPath);
-                    if (!component || !descriptorKey) {
-                        return;
-                    }
-
-                    componentPlaceholder.showLoadingSpinner();
-                    component.setDescriptor(descriptorKey);
-
-                    this.pageSkipReload = true;
-                    this.contentWizardPanel.saveChanges().done(() => {
-                        this.pageSkipReload = false;
-                        this.loadComponent(componentPath, componentPlaceholder);
-                    });
+                    this.setComponentDescriptor(descriptorKey, componentPath, componentPlaceholder);
                 });
         }
     }

@@ -6,6 +6,7 @@ module app.contextwindow {
     export class ImageInspectionPanel extends PageComponentInspectionPanel<api.content.page.image.ImageComponent, ImageDescriptor> {
 
         private imageComponent: api.content.page.image.ImageComponent;
+        private descriptorSelected: api.content.page.DescriptorKey;
         private descriptorComboBox: api.content.page.image.ImageDescriptorComboBox;
         private imageDescriptors: {
             [key: string]: ImageDescriptor;
@@ -38,17 +39,25 @@ module app.contextwindow {
 
             this.descriptorComboBox.addOptionSelectedListener((option: api.ui.combobox.Option<ImageDescriptor>) => {
                 if (this.imageComponent) {
-                    var selectedDescriptor = option.displayValue.getKey();
+                    var selectedDescriptor: api.content.page.DescriptorKey = option.displayValue.getKey();
                     this.imageComponent.setDescriptor(selectedDescriptor);
+
+                    var hasDescriptorChanged = this.descriptorSelected && !this.descriptorSelected.equals(selectedDescriptor);
+                    this.descriptorSelected = selectedDescriptor;
+                    if (hasDescriptorChanged) {
+                        var path = this.imageComponent.getPath();
+                        var component = this.getLiveFormPanel().getLiveEditWindow().getComponentByPath(path.toString());
+                        this.getLiveFormPanel().setComponentDescriptor(selectedDescriptor, path, component);
+                    }
                 }
-                });
+            });
             this.appendChild(this.descriptorComboBox);
         }
 
         getDescriptor(key: api.content.page.DescriptorKey): ImageDescriptor {
             return this.imageDescriptors[key.toString()];
         }
-        
+
         setImageComponent(component: api.content.page.image.ImageComponent) {
             this.setComponent(component);
             this.imageComponent = component;

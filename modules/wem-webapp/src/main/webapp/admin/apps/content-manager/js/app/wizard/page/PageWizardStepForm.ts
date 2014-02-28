@@ -124,8 +124,8 @@ module app.wizard.page {
 
                         this.liveFormPanel.setPage(this.content, this.selectedPageTemplate);
 
-                        var changedToSameAsPersisted: boolean = this.content.getPage().getTemplate().toString() ==
-                                                                changedTo.getKey().toString();
+                        var page = this.content.getPage();
+                        var changedToSameAsPersisted: boolean = page && changedTo.getKey().equals(page.getTemplate());
                         this.showLiveEditAction.setEnabled(changedToSameAsPersisted);
 
                         new api.content.page.GetPageDescriptorByKeyRequest(pageTemplate.getDescriptorKey()).

@@ -35,8 +35,12 @@ module api.content.page {
             return this.templateName;
         }
 
-        public toString(): string {
+        toString(): string {
             return this.refString;
+        }
+
+        equals(other: PageTemplateKey) {
+            return other && (this.refString === other.refString);
         }
     }
 }
