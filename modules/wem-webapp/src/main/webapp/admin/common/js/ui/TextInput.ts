@@ -1,28 +1,28 @@
 module api.ui {
 
-    export class TextInput extends api.dom.InputEl implements api.event.Observable {
+    export class TextInput extends api.dom.InputEl {
 
-        static MIDDLE:string = 'middle';
-        static LARGE:string = 'large';
+        static MIDDLE: string = 'middle';
+        static LARGE: string = 'large';
 
         /**
          * Specifies RegExp for characters that will be removed during input.
          */
-        private stripCharsRe:RegExp;
+        private stripCharsRe: RegExp;
         /**
-        * Forbidden chars filters out keyCodes for delete, backspace and arrow buttons in Firefox, so we need to
+         * Forbidden chars filters out keyCodes for delete, backspace and arrow buttons in Firefox, so we need to
          * allow these to pass the filter (8=backspace, 46=delete, 39=right arrow, 47=left arrow)
-        */
-        private allowedKeyCodes:number[] = [8, 46, 39, 37];
+         */
+        private allowedKeyCodes: number[] = [8, 46, 39, 37];
 
         /**
          * Input value before it was changed by last input event.
          */
-        private oldValue:string = "";
+        private oldValue: string = "";
 
-        private listeners:TextInputListener[] = [];
+        private valueChangedListeners: {(event: ValueChangedEvent):void}[] = [];
 
-        constructor(className?:string, size?:string) {
+        constructor(className?: string, size?: string) {
             super(className);
 
             this.getEl().setAttribute('type', 'text');
@@ -30,7 +30,7 @@ module api.ui {
                 this.addClass('text-input').addClass(size);
             }
 
-            this.getEl().addEventListener('keypress', (event:KeyboardEvent) => {
+            this.getEl().addEventListener('keypress', (event: KeyboardEvent) => {
                 if (!this.stripCharsRe) {
                     return;
                 }
@@ -52,15 +52,15 @@ module api.ui {
             });
         }
 
-        static large(className?:string):TextInput {
+        static large(className?: string): TextInput {
             return new TextInput(className, TextInput.LARGE);
         }
 
-        static middle(className?:string):TextInput {
+        static middle(className?: string): TextInput {
             return new TextInput(className, TextInput.MIDDLE);
         }
 
-        setValue(value:string):TextInput {
+        setValue(value: string): TextInput {
             var oldValue = this.getValue();
             var newValue = this.removeForbiddenChars(value);
 
@@ -74,54 +74,56 @@ module api.ui {
             return this;
         }
 
-        setName(value:string):TextInput {
+        setName(value: string): TextInput {
             super.setName(value);
             return this;
         }
 
-        setPlaceholder(value:string):TextInput {
+        setPlaceholder(value: string): TextInput {
             this.getEl().setAttribute('placeholder', value);
             return this;
         }
 
-        getPlaceholder():string {
+        getPlaceholder(): string {
             return this.getEl().getAttribute('placeholder');
         }
 
-        setForbiddenCharsRe(re:RegExp):TextInput {
+        setForbiddenCharsRe(re: RegExp): TextInput {
             this.stripCharsRe = re;
             return this;
         }
 
-        addListener(listener:TextInputListener) {
-            this.listeners.push(listener);
+        onValueChanged(listener: (event: ValueChangedEvent)=>void) {
+            this.valueChangedListeners.push(listener);
         }
 
-        removeListener(listener:TextInputListener) {
-            this.listeners = this.listeners.filter(function (curr) {
-                return curr != listener;
+        unValueChanged(listener: (event: ValueChangedEvent)=>void) {
+            this.valueChangedListeners = this.valueChangedListeners.filter((currentListener: (event: ValueChangedEvent)=>void) => {
+                return listener != currentListener;
             });
         }
 
-        private notifyValueChanged(oldValue:string, newValue:string) {
-            this.listeners.forEach((listener:TextInputListener) => {
-                listener.onValueChanged(oldValue, newValue);
+        private notifyValueChanged(oldValue: string, newValue: string) {
+            this.valueChangedListeners.forEach((listener: (event: ValueChangedEvent)=>void) => {
+                listener.call(this, new ValueChangedEvent(oldValue, newValue));
             });
         }
 
-        private removeForbiddenChars(rawValue:string):string {
+        private removeForbiddenChars(rawValue: string): string {
             return this.stripCharsRe ? (rawValue || '').replace(this.stripCharsRe, '') : rawValue;
         }
 
-        private containsForbiddenChars(value:string):boolean {
+        private containsForbiddenChars(value: string): boolean {
             // create new RegExp object in order not to mess RegExp.lastIndex
             var forbidden = new RegExp(<any> this.stripCharsRe);
             return forbidden.test(value);
         }
 
-        private keyCodeAllowed(keyCode:number):boolean {
+        private keyCodeAllowed(keyCode: number): boolean {
             for (var i = 0; i < this.allowedKeyCodes.length; i++) {
-                if (keyCode == this.allowedKeyCodes[i]) return true;
+                if (keyCode == this.allowedKeyCodes[i]) {
+                    return true;
+                }
             }
             return false;
         }

@@ -1,6 +1,6 @@
 module api.form.inputtype.support {
 
-    export class InputOccurrenceView extends api.form.FormItemOccurrenceView implements api.event.Observable {
+    export class InputOccurrenceView extends api.form.FormItemOccurrenceView {
 
         private inputOccurrence: InputOccurrence;
 

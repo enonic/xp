@@ -20,13 +20,10 @@ module app.wizard {
             var defaultFormIconUrl = new api.schema.content.ContentTypeIconUrlResolver().resolveDefault();
             this.formIcon = new api.app.wizard.FormIcon(defaultFormIconUrl, "Click to upload icon",
                 api.util.getRestUri("blob/upload"));
-            this.formIcon.addListener({
-                onUploadStarted: null,
-                onUploadFinished: (uploadItem: api.ui.UploadItem) => {
-                    this.contentTypeIcon = new api.icon.IconBuilder().
-                        setBlobKey(uploadItem.getBlobKey()).setMimeType(uploadItem.getMimeType()).build();
-                    this.formIcon.setSrc(api.util.getRestUri('blob/' + this.contentTypeIcon.getBlobKey()));
-                }
+            this.formIcon.onUploadFinished((event: api.app.wizard.UploadFinishedEvent) => {
+                this.contentTypeIcon = new api.icon.IconBuilder().
+                    setBlobKey(event.getUploadItem().getBlobKey()).setMimeType(event.getUploadItem().getMimeType()).build();
+                this.formIcon.setSrc(api.util.getRestUri('blob/' + this.contentTypeIcon.getBlobKey()));
             });
             var actions = new ContentTypeWizardActions(this);
 

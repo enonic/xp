@@ -3,13 +3,13 @@ module api.ui {
     /**
      * A panel having multiple child panels, but showing only one at a time - like a deck of cards.
      */
-    export class DeckPanel extends Panel implements api.event.Observable {
+    export class DeckPanel extends Panel {
 
         private panels: Panel[] = [];
 
         private panelShown: Panel = null;
 
-        private listeners: DeckPanelListener[] = [];
+        private panelShownListeners: {(event: PanelShownEvent):void}[] = [];
 
         constructor(className?: string) {
             super("deck-panel" + (className ? " " + className : ""));
@@ -124,25 +124,19 @@ module api.ui {
             this.notifyPanelShown(panelToShow, this.getPanelIndex(panelToShow), previousPanel);
         }
 
-        addListener(listener: DeckPanelListener) {
-            this.listeners.push(listener);
+        onPanelShown(listener: (event: PanelShownEvent)=>void) {
+            this.panelShownListeners.push(listener);
         }
 
-        removeListener(listener: DeckPanelListener) {
-            this.listeners = this.listeners.filter(function (curr) {
-                return curr != listener;
+        unPanelShown(listener: (event: PanelShownEvent)=>void) {
+            this.panelShownListeners = this.panelShownListeners.filter((currentListener: (event: PanelShownEvent) => void) => {
+                return  listener != currentListener;
             });
         }
 
         private notifyPanelShown(panel: Panel, panelIndex: number, previousPanel: Panel) {
-            this.listeners.forEach((listener: DeckPanelListener) => {
-                if (listener.onPanelShown) {
-                    listener.onPanelShown(<PanelShownEvent>{
-                        panel: panel,
-                        index: panelIndex,
-                        previousPanel: previousPanel
-                    });
-                }
+            this.panelShownListeners.forEach((listener: (event: PanelShownEvent) => void) => {
+                listener.call(this, new PanelShownEvent(panel, panelIndex, previousPanel));
             });
         }
     }

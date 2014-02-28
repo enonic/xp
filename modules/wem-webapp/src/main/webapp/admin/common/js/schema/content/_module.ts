@@ -4,7 +4,6 @@
 ///<reference path='ContentTypeIconUrlResolver.ts' />
 ///<reference path='ContentTypeComboBox.ts' />
 ///<reference path='ContentTypeSummaryLoader.ts' />
-///<reference path='ContentTypeSummaryLoaderListener.ts' />
 ///<reference path='ContentTypeFilter.ts' />
 
 ///<reference path='ContentTypeResourceRequest.ts' />

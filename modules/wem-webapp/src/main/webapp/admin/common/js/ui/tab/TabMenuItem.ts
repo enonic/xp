@@ -5,23 +5,27 @@ module api.ui.tab {
         removeText?:string;
     }
 
-    export class TabMenuItem extends api.dom.LiEl implements api.ui.PanelNavigationItem, api.event.Observable {
+    export class TabMenuItem extends api.dom.LiEl implements api.ui.PanelNavigationItem {
 
-        private tabIndex:number;
+        private tabIndex: number;
 
-        private label:string;
+        private label: string;
 
-        private labelEl:api.dom.SpanEl;
+        private labelEl: api.dom.SpanEl;
 
-        private visibleInMenu:boolean = true;
+        private visibleInMenu: boolean = true;
 
-        private removable:boolean = true;
+        private removable: boolean = true;
 
-        private active:boolean;
+        private active: boolean;
 
-        private listeners: TabMenuItemListener[] = [];
+        private labelChangedListeners: {(event: TabMenuItemLabelChangedEvent):void}[] = [];
 
-        constructor(label:string, options?:TabMenuItemOptions) {
+        private closedListeners: {(event: TabMenuItemClosedEvent):void}[] = [];
+
+        private selectedListeners: {(event: TabMenuItemSelectedEvent):void}[] = [];
+
+        constructor(label: string, options?: TabMenuItemOptions) {
             super("tab-menu-item");
             if (!options) {
                 options = {};
@@ -41,25 +45,25 @@ module api.ui.tab {
                 this.prependChild(removeButton);
                 removeButton.getEl().addEventListener("click", () => {
                     if (this.removable) {
-                        this.notifyCloseListeners(this);
+                        this.notifyClosedListeners(this);
                     }
                 });
             }
         }
 
-        setIndex(value:number) {
+        setIndex(value: number) {
             this.tabIndex = value;
         }
 
-        getIndex():number {
+        getIndex(): number {
             return this.tabIndex;
         }
 
-        getLabel():string {
+        getLabel(): string {
             return this.label;
         }
 
-        setLabel(newValue:string) {
+        setLabel(newValue: string) {
             if (this.label == newValue) {
                 return;
             }
@@ -71,16 +75,16 @@ module api.ui.tab {
             this.notifyLabelChangedListeners(newValue, oldValue);
         }
 
-        isVisibleInMenu():boolean {
+        isVisibleInMenu(): boolean {
             return this.visibleInMenu
         }
 
-        setVisibleInMenu(value:boolean) {
+        setVisibleInMenu(value: boolean) {
             this.visibleInMenu = value;
             super.setVisible(value);
         }
 
-        setActive(value:boolean) {
+        setActive(value: boolean) {
             this.active = value;
             if (this.active) {
                 this.getEl().addClass("active");
@@ -89,49 +93,64 @@ module api.ui.tab {
             }
         }
 
-        isActive():boolean {
+        isActive(): boolean {
             return this.active;
         }
 
-        setRemovable(value:boolean) {
+        setRemovable(value: boolean) {
             this.removable = value;
         }
 
-        isRemovable():boolean {
+        isRemovable(): boolean {
             return this.removable;
         }
 
-        addListener(listener:TabMenuItemListener) {
-            this.listeners.push(listener);
+        onLabelChanged(listener: (event: TabMenuItemLabelChangedEvent)=>void) {
+            this.labelChangedListeners.push(listener);
         }
 
-        removeListener(listener:TabMenuItemListener) {
-            this.listeners = this.listeners.filter((elem) => {
-                return elem != listener;
+        onSelected(listener: (event: TabMenuItemSelectedEvent)=>void) {
+            this.selectedListeners.push(listener);
+        }
+
+        onClosed(listener: (event: TabMenuItemClosedEvent)=>void) {
+            this.closedListeners.push(listener);
+        }
+
+        unLabelChanged(listener: (event: TabMenuItemLabelChangedEvent)=>void) {
+            this.labelChangedListeners =
+            this.labelChangedListeners.filter((currentListener: (event: TabMenuItemLabelChangedEvent)=>void) => {
+                return listener != currentListener;
             });
         }
 
-        private notifyLabelChangedListeners(newValue:string, oldValue:string) {
-            this.listeners.forEach((listener:TabMenuItemListener) => {
-                if (listener.onLabelChanged) {
-                    listener.onLabelChanged(newValue, oldValue);
-                }
+        unSelected(listener: (event: TabMenuItemSelectedEvent)=>void) {
+            this.selectedListeners = this.selectedListeners.filter((currentListener: (event: TabMenuItemSelectedEvent)=>void) => {
+                return listener != currentListener;
             });
         }
 
-        private notifySelectedListeners(tab:TabMenuItem) {
-            this.listeners.forEach((listener:TabMenuItemListener) => {
-                if (listener.onSelected) {
-                    listener.onSelected(this);
-                }
+        unClosed(listener: (event: TabMenuItemClosedEvent)=>void) {
+            this.closedListeners = this.closedListeners.filter((currentListener: (event: TabMenuItemClosedEvent)=>void) => {
+                return listener != currentListener;
             });
         }
 
-        private notifyCloseListeners(tab:TabMenuItem) {
-            this.listeners.forEach((listener:TabMenuItemListener) => {
-                if (listener.onClose) {
-                    listener.onClose(this);
-                }
+        private notifyLabelChangedListeners(newValue: string, oldValue: string) {
+            this.labelChangedListeners.forEach((listener: (event: TabMenuItemLabelChangedEvent)=>void) => {
+                listener.call(this, new TabMenuItemLabelChangedEvent(this, oldValue, newValue));
+            });
+        }
+
+        private notifySelectedListeners(tab: TabMenuItem) {
+            this.selectedListeners.forEach((listener: (event: TabMenuItemSelectedEvent)=>void) => {
+                listener.call(this, new TabMenuItemSelectedEvent(tab));
+            });
+        }
+
+        private notifyClosedListeners(tab: TabMenuItem) {
+            this.closedListeners.forEach((listener: (event: TabMenuItemClosedEvent)=>void) => {
+                listener.call(this, new TabMenuItemClosedEvent(tab));
             });
         }
 

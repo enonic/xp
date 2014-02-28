@@ -1,6 +1,6 @@
 module app.create {
 
-    export class RecentContentTypesList extends ContentTypesList implements api.event.Observable {
+    export class RecentContentTypesList extends ContentTypesList {
 
         constructor(className?: string, markRoots?: boolean) {
             super(className, "Recently used", markRoots);

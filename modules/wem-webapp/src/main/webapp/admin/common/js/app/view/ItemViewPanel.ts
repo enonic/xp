@@ -1,16 +1,16 @@
 module api.app.view {
 
-    export class ItemViewPanel<M> extends api.ui.Panel implements api.ui.Closeable, api.event.Observable {
+    export class ItemViewPanel<M> extends api.ui.Panel implements api.ui.Closeable {
 
-        private toolbar:api.ui.toolbar.Toolbar;
+        private toolbar: api.ui.toolbar.Toolbar;
 
-        private panel:api.ui.Panel;
+        private panel: api.ui.Panel;
 
-        private browseItem:ViewItem<M>;
+        private browseItem: ViewItem<M>;
 
-        private listeners:ItemViewPanelListener<M>[] = [];
+        private closedListeners: {(event: ItemViewClosedEvent<M>):void}[] = [];
 
-        constructor(toolbar:api.ui.toolbar.Toolbar, panel:api.ui.Panel) {
+        constructor(toolbar: api.ui.toolbar.Toolbar, panel: api.ui.Panel) {
             super("item-view-panel");
             this.toolbar = toolbar;
             this.panel = panel;
@@ -18,22 +18,22 @@ module api.app.view {
             this.appendChild(this.panel);
         }
 
-        setItem(item:ViewItem<M>) {
+        setItem(item: ViewItem<M>) {
             this.browseItem = item;
         }
 
-        getItem():ViewItem<M> {
+        getItem(): ViewItem<M> {
             return this.browseItem;
         }
 
-        close(checkCanClose:boolean = false) {
+        close(checkCanClose: boolean = false) {
             if (checkCanClose && !this.canClose()) {
                 return;
             }
             this.closing();
         }
 
-        canClose():boolean {
+        canClose(): boolean {
             return true;
         }
 
@@ -41,21 +41,19 @@ module api.app.view {
             this.notifyClosedListeners();
         }
 
-        addListener(listener:ItemViewPanelListener<M>) {
-            this.listeners.push(listener);
+        onClosed(listener: (event: ItemViewClosedEvent<M>)=>void) {
+            this.closedListeners.push(listener);
         }
 
-        removeListener(listener:ItemViewPanelListener<M>) {
-            this.listeners = this.listeners.filter((elem) => {
-                return elem != listener;
-            });
+        unClosed(listener: (event: ItemViewClosedEvent<M>)=>void) {
+            this.closedListeners = this.closedListeners.filter((currentListener: (event: ItemViewClosedEvent<M>)=>void) => {
+                return currentListener != listener;
+            })
         }
 
         private notifyClosedListeners() {
-            this.listeners.forEach((listener:ItemViewPanelListener<M>) => {
-                if (listener.onClosed) {
-                    listener.onClosed(this);
-                }
+            this.closedListeners.forEach((listener: (event: ItemViewClosedEvent<M>)=>void) => {
+                listener.call(this, new ItemViewClosedEvent(this));
             });
         }
 

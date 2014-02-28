@@ -33,11 +33,19 @@ module api.form.inputtype.content.relationship {
             return true;
         }
 
-        addFormItemOccurrencesListener(listener: api.form.FormItemOccurrencesListener) {
+        onOccurrenceAdded(listener: (event: api.form.OccurrenceAddedEvent)=>void) {
             throw new Error("Relationship manages occurrences self");
         }
 
-        removeFormItemOccurrencesListener(listener: api.form.FormItemOccurrencesListener) {
+        onOccurrenceRemoved(listener: (event: api.form.OccurrenceRemovedEvent)=>void) {
+            throw new Error("Relationship manages occurrences self");
+        }
+
+        unOccurrenceAdded(listener: (event: api.form.OccurrenceAddedEvent)=>void) {
+            throw new Error("Relationship manages occurrences self");
+        }
+
+        unOccurrenceRemoved(listener: (event: api.form.OccurrenceRemovedEvent)=>void) {
             throw new Error("Relationship manages occurrences self");
         }
 

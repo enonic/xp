@@ -1,10 +1,10 @@
 module api.form.inputtype.content.image {
 
-    export class UploadDialog extends api.ui.dialog.ModalDialog implements api.event.Observable {
+    export class UploadDialog extends api.ui.dialog.ModalDialog {
 
-        private uploader:api.ui.ImageUploader;
+        private uploader: api.ui.ImageUploader;
 
-        private listeners:UploadDialogListener[] = [];
+        private imageUploadedListeners: {(event: api.ui.ImageUploadedEvent):void}[] = [];
 
         constructor() {
             super({
@@ -23,18 +23,16 @@ module api.form.inputtype.content.image {
                 showImageAfterUpload: false
             };
             this.uploader = new api.ui.ImageUploader("image-selector-upload-dialog", api.util.getRestUri("blob/upload"), uploaderConfig);
-            this.uploader.addListener({
-                onFileUploaded: (uploadItem:api.ui.UploadItem) => {
-                    this.notifyImageUploaded(uploadItem);
-                },
-                onUploadComplete: () => {
-                    this.close();
-                }
+            this.uploader.onImageUploaded((event: api.ui.ImageUploadedEvent) => {
+                this.notifyImageUploaded(event.getUploadedItem());
+            });
+            this.uploader.onImageUploadComplete(() => {
+                this.close();
             });
             this.appendChildToContentPanel(this.uploader);
 
             this.setCancelAction(new UploadDialogCancelAction());
-            this.getCancelAction().addExecutionListener((action:UploadDialogCancelAction) => {
+            this.getCancelAction().addExecutionListener((action: UploadDialogCancelAction) => {
                 this.uploader.stop();
                 this.uploader.reset();
                 this.close();
@@ -44,7 +42,7 @@ module api.form.inputtype.content.image {
 
         }
 
-        setMaximumOccurrences(value:number) {
+        setMaximumOccurrences(value: number) {
             this.uploader.setMaximumOccurrences(value);
         }
 
@@ -53,19 +51,20 @@ module api.form.inputtype.content.image {
             super.open();
         }
 
-        addListener(listener:UploadDialogListener) {
-            this.listeners.push(listener);
+        onImageUploaded(listener: (event: api.ui.ImageUploadedEvent)=>void) {
+            this.imageUploadedListeners.push(listener);
         }
 
-        removeListener(listener:UploadDialogListener) {
-            this.listeners = this.listeners.filter(function (curr) {
-                return curr != listener;
-            });
+        unImageUploaded(listener: (event: api.ui.ImageUploadedEvent)=>void) {
+            this.imageUploadedListeners =
+            this.imageUploadedListeners.filter((currentListener: (event: api.ui.ImageUploadedEvent)=>void) => {
+                return listener != currentListener;
+            })
         }
 
-        private notifyImageUploaded(uploadItem:api.ui.UploadItem) {
-            this.listeners.forEach((listener:UploadDialogListener) => {
-                listener.onImageUploaded(uploadItem);
+        private notifyImageUploaded(uploadItem: api.ui.UploadItem) {
+            this.imageUploadedListeners.forEach((listener: (event: api.ui.ImageUploadedEvent)=>void) => {
+                listener.call(this, new api.ui.ImageUploadedEvent(uploadItem));
             });
         }
 

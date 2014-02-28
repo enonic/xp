@@ -2,32 +2,33 @@ module api.form {
 
     export class FormItemOccurrenceView extends api.dom.DivEl {
 
-        private formItemOccurrence:FormItemOccurrence<FormItemOccurrenceView>;
+        private formItemOccurrence: FormItemOccurrence<FormItemOccurrenceView>;
 
-        private listeners:FormItemOccurrenceViewListener[] = [];
+        private removeButtonClickedListeners: {(event: RemoveButtonClickedEvent<FormItemOccurrenceView>):void}[] = [];
 
-        constructor(className, formItemOccurrence:FormItemOccurrence<FormItemOccurrenceView>) {
+        constructor(className, formItemOccurrence: FormItemOccurrence<FormItemOccurrenceView>) {
             super(className);
             this.formItemOccurrence = formItemOccurrence;
         }
 
-        addListener(listener:FormItemOccurrenceViewListener) {
-            this.listeners.push(listener);
+        onRemoveButtonClicked(listener: (event: RemoveButtonClickedEvent<FormItemOccurrenceView>)=>void) {
+            this.removeButtonClickedListeners.push(listener);
         }
 
-        removeListener(listener:FormItemOccurrenceViewListener) {
-            this.listeners = this.listeners.filter(function (curr) {
-                return curr != listener;
+        unRemoveButtonClicked(listener: (event: RemoveButtonClickedEvent<FormItemOccurrenceView>)=>void) {
+            this.removeButtonClickedListeners.filter((currentListener: (event: RemoveButtonClickedEvent<FormItemOccurrenceView>)=>void) => {
+                return currentListener != listener;
             });
         }
+
 
         notifyRemoveButtonClicked() {
-            this.listeners.forEach((listener:FormItemOccurrenceViewListener) => {
-                listener.onRemoveButtonClicked(this, this.formItemOccurrence.getIndex());
+            this.removeButtonClickedListeners.forEach((listener: (event: RemoveButtonClickedEvent<FormItemOccurrenceView>)=>void) => {
+                listener.call(this, new RemoveButtonClickedEvent(this, this.formItemOccurrence.getIndex()));
             });
         }
 
-        getIndex():number {
+        getIndex(): number {
             return this.formItemOccurrence.getIndex();
         }
 

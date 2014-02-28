@@ -1,12 +1,13 @@
 module app.create {
 
-    export class ContentTypesList extends api.ui.list.ListView<api.schema.content.ContentTypeSummary> implements api.event.Observable {
+    export class ContentTypesList extends api.ui.list.ListView<api.schema.content.ContentTypeSummary> {
 
         private markRoots: boolean;
 
         private siteRootContentTypes: SiteRootContentTypes;
 
-        private listeners: ContentTypesListListener[] = [];
+        private selectedListeners: {(event: ContentTypesListSelectedEvent):void}[] = [];
+
 
         constructor(className?: string, title?: string, markRoots?: boolean) {
             super(className, title);
@@ -14,19 +15,19 @@ module app.create {
             this.markRoots = markRoots;
         }
 
-        addListener(listener: ContentTypesListListener) {
-            this.listeners.push(listener);
+        onSelected(listener: (event: ContentTypesListSelectedEvent)=>void) {
+            this.selectedListeners.push(listener);
         }
 
-        removeListener(listener: ContentTypesListListener) {
-            this.listeners = this.listeners.filter(function (curr) {
-                return curr != listener;
+        unSelected(listener: (event: ContentTypesListSelectedEvent)=>void) {
+            this.selectedListeners = this.selectedListeners.filter((currentListener: (event: ContentTypesListSelectedEvent)=>void)=> {
+                return currentListener != listener;
             });
         }
 
         private notifySelected(contentTypeListItem: ContentTypeListItem) {
-            this.listeners.forEach((listener: ContentTypesListListener) => {
-                listener.onSelected(contentTypeListItem);
+            this.selectedListeners.forEach((listener: (event: ContentTypesListSelectedEvent)=>void) => {
+                listener.call(this, new ContentTypesListSelectedEvent(contentTypeListItem));
             });
         }
 
@@ -39,7 +40,7 @@ module app.create {
         createListItem(contentType: api.schema.content.ContentTypeSummary): ContentTypeListItem {
 
             var isSiteRoot = false;
-            if(this.siteRootContentTypes) {
+            if (this.siteRootContentTypes) {
                 isSiteRoot = this.siteRootContentTypes.isSiteRoot(contentType.getName());
             }
             var listItem = new ContentTypeListItem(contentType, isSiteRoot, this.markRoots);

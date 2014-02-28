@@ -7,11 +7,11 @@
 
 ///<reference path='ContentTypesList.ts' />
 ///<reference path='ContentTypeListItem.ts' />
-///<reference path='ContentTypesListListener.ts' />
+///<reference path='ContentTypesListSelectedEvent.ts' />
 
 ///<reference path='RecentContentTypesList.ts' />
 ///<reference path='RecommendedContentTypesList.ts' />
 
 ///<reference path='SiteTemplatesList.ts' />
 ///<reference path='SiteTemplateListItem.ts' />
-///<reference path='SiteTemplatesListListener.ts' />
+///<reference path='SiteTemplatesListSelectedEvent.ts' />

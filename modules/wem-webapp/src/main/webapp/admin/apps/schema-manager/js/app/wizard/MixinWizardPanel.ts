@@ -20,13 +20,10 @@ module app.wizard {
             this.formIcon = new api.app.wizard.FormIcon(new api.schema.mixin.MixinIconUrlResolver().resolveDefault(),
                 "Click to upload icon", api.util.getRestUri("blob/upload"));
 
-            this.formIcon.addListener({
-                onUploadStarted: null,
-                onUploadFinished: (uploadItem: api.ui.UploadItem) => {
-                    this.mixinIcon = new api.icon.IconBuilder().
-                        setBlobKey(uploadItem.getBlobKey()).setMimeType(uploadItem.getMimeType()).build();
-                    this.formIcon.setSrc(api.util.getRestUri('blob/' + this.mixinIcon.getBlobKey()));
-                }
+            this.formIcon.onUploadFinished((event: api.app.wizard.UploadFinishedEvent) => {
+                this.mixinIcon = new api.icon.IconBuilder().
+                    setBlobKey(event.getUploadItem().getBlobKey()).setMimeType(event.getUploadItem().getMimeType()).build();
+                this.formIcon.setSrc(api.util.getRestUri('blob/' + this.mixinIcon.getBlobKey()));
             });
             var actions = new MixinWizardActions(this);
 
@@ -57,7 +54,7 @@ module app.wizard {
             });
         }
 
-        layoutPersistedItem(persistedMixin: api.schema.mixin.Mixin) : Q.Promise<void> {
+        layoutPersistedItem(persistedMixin: api.schema.mixin.Mixin): Q.Promise<void> {
 
             var deferred = Q.defer<void>();
 

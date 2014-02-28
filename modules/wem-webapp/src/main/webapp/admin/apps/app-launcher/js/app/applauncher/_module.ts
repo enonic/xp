@@ -6,5 +6,4 @@
 ///<reference path='AppSelector.ts' />
 ///<reference path='AppLauncher.ts' />
 ///<reference path='LostConnectionDetector.ts' />
-///<reference path='LostConnectionDetectorListener.ts' />
 ///<reference path='AppRouter.ts' />

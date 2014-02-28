@@ -1,32 +1,27 @@
 module api.app.wizard {
 
-    export class WizardHeader extends api.dom.DivEl implements api.event.Observable {
+    export class WizardHeader extends api.dom.DivEl {
 
-        private listeners:WizardHeaderListener[] = [];
+        private propertyChangedListener: {(event: PropertyChangedEvent):void}[] = [];
 
         constructor() {
             super("wizard-header");
         }
 
-        addListener(listener:WizardHeaderListener) {
-            this.listeners.push(listener);
+        onPropertyChanged(listener: (event: PropertyChangedEvent)=>void) {
+            this.propertyChangedListener.push(listener);
         }
 
-        removeListener(listener:WizardHeaderListener) {
-            this.listeners = this.listeners.filter(function (curr) {
-                return curr != listener;
+        unPropertyChanged(listener: (event: PropertyChangedEvent)=>void) {
+            this.propertyChangedListener = this.propertyChangedListener.filter((currentListener: (event: PropertyChangedEvent)=>void) => {
+                return listener != currentListener;
             });
         }
 
-        notifyPropertyChanged(property:string, oldValue:string, newValue:string) {
-            this.listeners.forEach((listener:WizardHeaderListener) => {
-                if (listener.onPropertyChanged) {
-                    listener.onPropertyChanged({
-                        property: property,
-                        oldValue: oldValue,
-                        newValue: newValue});
-                }
-            });
+        notifyPropertyChanged(property: string, oldValue: string, newValue: string) {
+            this.propertyChangedListener.forEach((listener: (event: PropertyChangedEvent)=>void) => {
+                listener.call(this, new PropertyChangedEvent(property, oldValue, newValue));
+            })
         }
 
         giveFocus(): boolean {

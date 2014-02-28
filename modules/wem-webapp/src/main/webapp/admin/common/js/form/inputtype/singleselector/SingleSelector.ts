@@ -10,7 +10,7 @@ module api.form.inputtype.singleselector {
         }[]
     }
 
-    export class SingleSelector extends api.form.inputtype.support.BaseInputTypeView<SingleSelectorConfig>{
+    export class SingleSelector extends api.form.inputtype.support.BaseInputTypeView<SingleSelectorConfig> {
 
         public static TYPE_DROPDOWN: string = "DROPDOWN";
         public static TYPE_RADIO: string = "RADIO";
@@ -54,17 +54,10 @@ module api.form.inputtype.singleselector {
             }
             else if (SingleSelector.TYPE_COMBOBOX == this.type) {
                 var comboBox = <api.ui.combobox.ComboBox<string>>element;
-                comboBox.addListener({
-                    onInputValueChanged: null,
-                    onOptionSelected: ()=> {
-
-                        // TODO: detect selected option changed
-
-                        //listener(new api.form.inputtype.support.ValueChangedEvent(this.newValue(event.getOldValue()),
-                        //    this.newValue(event.getNewValue())));
-
-
-                    }
+                comboBox.onOptionSelected(()=> {
+                    // TODO: detect selected option changed
+                    //listener(new api.form.inputtype.support.ValueChangedEvent(this.newValue(event.getOldValue()),
+                    //    this.newValue(event.getNewValue())));
                 });
             }
             else if (SingleSelector.TYPE_DROPDOWN == this.type) {
@@ -90,15 +83,12 @@ module api.form.inputtype.singleselector {
                 maximumOccurrences: 1,
                 hideComboBoxWhenMaxReached: true
             });
-            comboBox.addListener({
-                onInputValueChanged: function (oldValue, newValue, grid) {
-                    grid.getDataView().setFilterArgs({searchString: newValue});
-                    grid.getDataView().refresh();
-                },
-                onOptionSelected: null
+            comboBox.onValueChanged((event: api.ui.combobox.ComboBoxValueChangedEvent<string>) => {
+                event.getGrid().getDataView().setFilterArgs({searchString: event.getNewValue()});
+                event.getGrid().getDataView().refresh();
             });
 
-            var inputConfig:SingleSelectorConfig = this.getConfig().inputConfig;
+            var inputConfig: SingleSelectorConfig = this.getConfig().inputConfig;
             if (inputConfig) {
                 var option;
                 for (var i = 0; i < inputConfig.options.length; i++) {
@@ -118,7 +108,7 @@ module api.form.inputtype.singleselector {
 
             var inputEl = new api.ui.Dropdown(name);
 
-            var inputConfig:SingleSelectorConfig = this.getConfig().inputConfig;
+            var inputConfig: SingleSelectorConfig = this.getConfig().inputConfig;
             if (inputConfig) {
                 for (var i = 0; i < inputConfig.options.length; i++) {
                     var option = inputConfig.options[i];
@@ -138,7 +128,7 @@ module api.form.inputtype.singleselector {
 
             var inputEl = new api.ui.RadioGroup(name);
 
-            var inputConfig:SingleSelectorConfig = this.getConfig().inputConfig;
+            var inputConfig: SingleSelectorConfig = this.getConfig().inputConfig;
             if (inputConfig) {
                 for (var i = 0; i < inputConfig.options.length; i++) {
                     var option = inputConfig.options[i];
@@ -167,7 +157,7 @@ module api.form.inputtype.singleselector {
 
         valueBreaksRequiredContract(value: api.data.Value): boolean {
 
-            if( value == null ) {
+            if (value == null) {
                 return true;
             }
 

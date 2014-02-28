@@ -64,18 +64,15 @@ module api.form.input {
 
             if (!this.inputTypeView.isManagingAdd()) {
 
-                this.inputTypeView.addFormItemOccurrencesListener(<api.form.FormItemOccurrencesListener>{
-                    onOccurrenceAdded: (occurrenceAdded: api.form.FormItemOccurrence<any>, occurrenceViewAdded: FormItemOccurrenceView) => {
-                        this.refresh();
-                    },
-                    onOccurrenceRemoved: (occurrenceRemoved: api.form.FormItemOccurrence<any>,
-                                          occurrenceViewRemoved: FormItemOccurrenceView) => {
-                        this.refresh();
+                this.inputTypeView.onOccurrenceAdded(() => {
+                    this.refresh();
+                });
+                this.inputTypeView.onOccurrenceRemoved((event: api.form.OccurrenceRemovedEvent) => {
+                    this.refresh();
 
-                        if (occurrenceViewRemoved instanceof api.form.inputtype.support.InputOccurrenceView) {
-                            // force validate, since InputView might have become invalid
-                            this.validate(false);
-                        }
+                    if (event.getOccurrenceView() instanceof api.form.inputtype.support.InputOccurrenceView) {
+                        // force validate, since InputView might have become invalid
+                        this.validate(false);
                     }
                 });
 

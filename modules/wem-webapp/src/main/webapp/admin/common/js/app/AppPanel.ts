@@ -13,12 +13,10 @@ module api.app {
             homePanelMenuItem.setRemovable(false);
             this.addNavigablePanelToFront(homePanelMenuItem, this.homePanel);
 
-            this.addListener({
-                onPanelShown: (event: api.ui.PanelShownEvent) => {
-                    if (!this.isHomePanel(event.index)) {
-                        // do panel afterRender to calculate offsets for each but home panel cuz they were created hidden
-                        // event.panel.render();
-                    }
+            this.onPanelShown((event: api.ui.PanelShownEvent) => {
+                if (!this.isHomePanel(event.getIndex())) {
+                    // do panel afterRender to calculate offsets for each but home panel cuz they were created hidden
+                    //event.getPanel().afterRender();
                 }
             });
         }

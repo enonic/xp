@@ -2,7 +2,7 @@ module api.ui.combobox {
 
     export class RichComboBox<T> extends api.ui.form.CompositeFormInputEl {
 
-        loader:api.util.loader.BaseLoader<api.item.ItemJson, T>;
+        loader: api.util.loader.BaseLoader<api.item.ItemJson, T>;
 
         comboBoxView: api.dom.DivEl;
 
@@ -90,27 +90,25 @@ module api.ui.combobox {
             this.comboBox.addSelectedOptionRemovedListener(()=> {
                 this.loader.search("");
             });
-            this.comboBox.addListener({
-                onInputValueChanged: (oldValue, newValue, grid) => {
-                    this.loader.search(newValue);
-                    this.notifyInputValueChanged(oldValue, newValue, grid);
-                },
-                onOptionSelected: (item: api.ui.combobox.Option<T>) => {
-                    this.selectedOptionsView.show();
-                    this.notifyOptionSelected(item);
-                }
+            this.comboBox.onValueChanged((event: ComboBoxValueChangedEvent<T>) => {
+                this.loader.search(event.getNewValue());
+                this.notifyInputValueChanged(event.getOldValue(), event.getNewValue(), event.getGrid());
+            });
+            this.comboBox.onOptionSelected((event: ComboBoxOptionSelectedEvent<T>) => {
+                this.selectedOptionsView.show();
+                this.notifyOptionSelected(event.getItem());
             });
 
-            this.loader.onLoadingData( (event:api.util.loader.event.LoadingDataEvent) => {
-                    this.comboBox.setLabel("Searching...");
-                    this.notifyLoading();
-                });
+            this.loader.onLoadingData((event: api.util.loader.event.LoadingDataEvent) => {
+                this.comboBox.setLabel("Searching...");
+                this.notifyLoading();
+            });
 
-            this.loader.onLoadedData((event:api.util.loader.event.LoadedDataEvent<T>) => {
-                    var options = this.createOptions(event.getData());
-                    this.comboBox.setOptions(options);
-                    this.notifyLoaded(event.getData());
-                });
+            this.loader.onLoadedData((event: api.util.loader.event.LoadedDataEvent<T>) => {
+                var options = this.createOptions(event.getData());
+                this.comboBox.setOptions(options);
+                this.notifyLoaded(event.getData());
+            });
 
             this.loader.search("");
         }
@@ -141,7 +139,7 @@ module api.ui.combobox {
             };
         }
 
-        setLoader(loader:api.util.loader.BaseLoader<api.item.ItemJson, T>) {
+        setLoader(loader: api.util.loader.BaseLoader<api.item.ItemJson, T>) {
             this.loader = loader;
             this.setupLoader();
         }
@@ -215,7 +213,7 @@ module api.ui.combobox {
 
         comboBoxName: string;
 
-        loader:api.util.loader.BaseLoader<api.item.ItemJson, T>;
+        loader: api.util.loader.BaseLoader<api.item.ItemJson, T>;
 
         selectedOptionsView: SelectedOptionsView<T>;
 
@@ -234,7 +232,7 @@ module api.ui.combobox {
         }
 
 
-        setLoader(loader:api.util.loader.BaseLoader<api.item.ItemJson, T>):RichComboBoxBuilder<T> {
+        setLoader(loader: api.util.loader.BaseLoader<api.item.ItemJson, T>): RichComboBoxBuilder<T> {
             this.loader = loader;
             return this;
         }

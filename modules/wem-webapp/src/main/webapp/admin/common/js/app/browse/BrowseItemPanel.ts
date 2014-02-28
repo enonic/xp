@@ -2,9 +2,9 @@ module api.app.browse {
 
     export class BrowseItemPanel<M> extends api.ui.DeckPanel {
 
-        private itemStatisticsPanel:api.app.view.ItemStatisticsPanel<M>;
+        private itemStatisticsPanel: api.app.view.ItemStatisticsPanel<M>;
 
-        private itemsSelectionPanel:ItemsSelectionPanel<M>;
+        private itemsSelectionPanel: ItemsSelectionPanel<M>;
 
         constructor() {
             super("browse-item-panel");
@@ -21,12 +21,12 @@ module api.app.browse {
             return new api.app.view.ItemStatisticsPanel<M>();
         }
 
-        setItems(items:any) {
+        setItems(items: any) {
             this.itemsSelectionPanel.setItems(items);
             this.updateDisplayedPanel();
         }
 
-        getItems():BrowseItem<M>[] {
+        getItems(): BrowseItem<M>[] {
             return this.itemsSelectionPanel.getItems();
         }
 
@@ -40,14 +40,12 @@ module api.app.browse {
             }
         }
 
-        addListener(listener:BrowseItemPanelListener<M>) {
-            super.addListener(listener);
-            this.itemsSelectionPanel.addListener(listener);
+        onDeselected(listener: (event: ItemDeselectedEvent<M>)=>void) {
+            this.itemsSelectionPanel.onDeselected(listener);
         }
 
-        removeListener(listener:BrowseItemPanelListener<M>) {
-            super.removeListener(listener);
-            this.itemsSelectionPanel.removeListener(listener);
+        unDeselected(listener: (event: ItemDeselectedEvent<M>)=>void) {
+            this.itemsSelectionPanel.unDeselected(listener);
         }
     }
 }

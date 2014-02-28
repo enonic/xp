@@ -8,7 +8,7 @@
 ///<reference path='ActionContainer.ts' />
 ///<reference path='Closeable.ts' />
 ///<reference path='Panel.ts' />
-///<reference path='DeckPanelListener.ts' />
+///<reference path='PanelShownEvent.ts' />
 ///<reference path='DeckPanel.ts' />
 ///<reference path='DraggingMask.ts' />
 ///<reference path='SplitPanel.ts' />
@@ -20,20 +20,19 @@
 ///<reference path='ToggleSlide.ts' />
 ///<reference path='PanelNavigationItem.ts' />
 ///<reference path='DeckPanelNavigator.ts' />
-///<reference path='DeckPanelNavigatorListener.ts' />
 ///<reference path='NavigatedDeckPanel.ts' />
 ///<reference path='FloatingWindow.ts' />
 ///<reference path='NavigableFloatingWindow.ts' />
 ///<reference path='Dropdown.ts' />
 ///<reference path='RadioGroup.ts' />
-///<reference path='TextInputListener.ts' />
 ///<reference path='TextInput.ts' />
 ///<reference path='AutosizeTextInput.ts' />
-///<reference path='CheckboxInputListener.ts' />
 ///<reference path='CheckboxInput.ts' />
+
 ///<reference path='PasswordInput.ts' />
 ///<reference path='TextArea.ts' />
 ///<reference path='CodeArea.ts' />
 ///<reference path='UploadItem.ts' />
 ///<reference path='ImageUploader.ts' />
-///<reference path='ImageUploaderListener.ts' />
+///<reference path='DeckPanelNavigatorEvent.ts' />
+///<reference path='ImageUploadedEvent.ts' />

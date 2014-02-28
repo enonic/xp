@@ -6,7 +6,7 @@ module api.form.inputtype.combobox {
 
     export class ComboBox extends api.dom.DivEl implements api.form.inputtype.InputTypeView {
 
-        private config : api.form.inputtype.InputTypeViewConfig<ComboBoxConfig>;
+        private config: api.form.inputtype.InputTypeViewConfig<ComboBoxConfig>;
 
         private comboBoxConfig: ComboBoxConfig;
 
@@ -35,11 +35,19 @@ module api.form.inputtype.combobox {
             return true;
         }
 
-        addFormItemOccurrencesListener(listener: api.form.FormItemOccurrencesListener) {
+        onOccurrenceAdded(listener: (event: api.form.OccurrenceAddedEvent)=>void) {
             throw new Error("ComboBox manages occurrences self");
         }
 
-        removeFormItemOccurrencesListener(listener: api.form.FormItemOccurrencesListener) {
+        onOccurrenceRemoved(listener: (event: api.form.OccurrenceRemovedEvent)=>void) {
+            throw new Error("ComboBox manages occurrences self");
+        }
+
+        unOccurrenceAdded(listener: (event: api.form.OccurrenceAddedEvent)=>void) {
+            throw new Error("ComboBox manages occurrences self");
+        }
+
+        unOccurrenceRemoved(listener: (event: api.form.OccurrenceRemovedEvent)=>void) {
             throw new Error("ComboBox manages occurrences self");
         }
 
@@ -83,17 +91,14 @@ module api.form.inputtype.combobox {
                 hideComboBoxWhenMaxReached: true
             });
 
-            comboBox.addListener({
-                onInputValueChanged: function (oldValue, newValue, grid) {
-                    grid.getDataView().setFilterArgs({searchString: newValue});
-                    grid.getDataView().refresh();
-                },
-                onOptionSelected: () => {
-
-                    this.validate(false);
-                }
+            comboBox.onValueChanged((event: api.ui.combobox.ComboBoxValueChangedEvent<string>) => {
+                event.getGrid().getDataView().setFilterArgs({searchString: event.getNewValue()});
+                event.getGrid().getDataView().refresh();
             });
-            comboBox.addSelectedOptionRemovedListener((removed:api.ui.combobox.SelectedOption<string>) => {
+            comboBox.onOptionSelected(() => {
+                this.validate(false);
+            });
+            comboBox.addSelectedOptionRemovedListener((removed: api.ui.combobox.SelectedOption<string>) => {
                 this.validate(false);
             });
 

@@ -14,5 +14,4 @@
 ///<reference path='AppPanel.ts' />
 ///<reference path='BrowseAndWizardBasedAppPanel.ts' />
 ///<reference path='AppManager.ts'/>
-///<reference path='AppManagerListener.ts'/>
 

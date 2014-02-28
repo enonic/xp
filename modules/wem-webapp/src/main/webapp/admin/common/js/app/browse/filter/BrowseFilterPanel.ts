@@ -1,8 +1,10 @@
 module api.app.browse.filter {
 
-    export class BrowseFilterPanel extends api.ui.Panel implements api.event.Observable {
+    export class BrowseFilterPanel extends api.ui.Panel {
 
-        private listeners: BrowseFilterPanelListener[] = [];
+        private searchListeners: {(event: SearchEvent):void}[] = [];
+
+        private resetListeners: {():void}[] = [];
 
         private aggregationContainer: api.aggregation.AggregationContainer;
 
@@ -83,30 +85,36 @@ module api.app.browse.filter {
             this.notifyReset();
         }
 
-        addListener(listener: BrowseFilterPanelListener) {
-            this.listeners.push(listener);
+        onSearch(listener: (event: SearchEvent)=>void) {
+            this.searchListeners.push(listener);
         }
 
-        removeListener(listener: BrowseFilterPanelListener) {
-            this.listeners = this.listeners.filter(function (curr) {
-                return curr != listener;
+        onReset(listener: ()=>void) {
+            this.resetListeners.push(listener);
+        }
+
+        unSearch(listener: (event: SearchEvent)=>void) {
+            this.searchListeners = this.searchListeners.filter((currentListener: (event: SearchEvent)=>void) => {
+                return currentListener != listener;
             });
         }
 
-        private notifySearch(searchInputValues: api.query.SearchInputValues, elementChanged?: api.dom.Element) {
+        unReset(listener: ()=>void) {
+            this.resetListeners = this.resetListeners.filter((currentListener: ()=>void) => {
+                return currentListener != listener;
+            });
 
-            this.listeners.forEach((listener) => {
-                if (listener.onSearch) {
-                    listener.onSearch(searchInputValues, elementChanged);
-                }
+        }
+
+        private notifySearch(searchInputValues: api.query.SearchInputValues, elementChanged?: api.dom.Element) {
+            this.searchListeners.forEach((listener: (event: SearchEvent)=>void) => {
+                listener.call(this, new SearchEvent(searchInputValues, elementChanged));
             });
         }
 
         private notifyReset() {
-            this.listeners.forEach((listener) => {
-                if (listener.onReset) {
-                    listener.onReset();
-                }
+            this.resetListeners.forEach((listener: ()=>void) => {
+                listener.call(this);
             });
         }
     }

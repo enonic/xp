@@ -1,6 +1,6 @@
 module api.form.inputtype.content.image {
 
-   import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
+    import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import LoadingDataEvent = api.util.loader.event.LoadingDataEvent;
 
     export interface ImageSelectorConfig {
@@ -39,14 +39,14 @@ module api.form.inputtype.content.image {
 
             this.config = config;
             this.contentSummaryLoader = new api.form.inputtype.content.ContentSummaryLoader();
-            this.contentSummaryLoader.onLoadingData((event:LoadingDataEvent) => {
-                    this.comboBox.setLabel("Searching...");
-                });
+            this.contentSummaryLoader.onLoadingData((event: LoadingDataEvent) => {
+                this.comboBox.setLabel("Searching...");
+            });
             this.contentSummaryLoader.onLoadedData((event: LoadedDataEvent<api.content.ContentSummary>) => {
-                    var options = this.createOptions(event.getData());
+                var options = this.createOptions(event.getData());
 
-                    this.comboBox.setOptions(options);
-                });
+                this.comboBox.setOptions(options);
+            });
 
             // requests aren't allowed until allowed contentTypes are specified
             this.contentRequestsAllowed = false;
@@ -65,11 +65,8 @@ module api.form.inputtype.content.image {
                 });
 
             this.uploadDialog = new UploadDialog();
-            this.uploadDialog.addListener({
-                onImageUploaded: (uploadItem: api.ui.UploadItem) => {
-
-                    this.createEmbeddedImageContent(uploadItem);
-                }
+            this.uploadDialog.onImageUploaded((event: api.ui.ImageUploadedEvent) => {
+                this.createEmbeddedImageContent(event.getUploadedItem());
             });
 
             // Don't forget to clean up the modal dialog on remove
@@ -204,13 +201,22 @@ module api.form.inputtype.content.image {
             return this.input.getOccurrences().maximumReached(this.comboBox.countSelected());
         }
 
-        addFormItemOccurrencesListener(listener: api.form.FormItemOccurrencesListener) {
+        onOccurrenceAdded(listener: (event: api.form.OccurrenceAddedEvent)=>void) {
             throw new Error("ImageSelector manages occurrences self");
         }
 
-        removeFormItemOccurrencesListener(listener: api.form.FormItemOccurrencesListener) {
+        onOccurrenceRemoved(listener: (event: api.form.OccurrenceRemovedEvent)=>void) {
             throw new Error("ImageSelector manages occurrences self");
         }
+
+        unOccurrenceAdded(listener: (event: api.form.OccurrenceAddedEvent)=>void) {
+            throw new Error("ImageSelector manages occurrences self");
+        }
+
+        unOccurrenceRemoved(listener: (event: api.form.OccurrenceRemovedEvent)=>void) {
+            throw new Error("ImageSelector manages occurrences self");
+        }
+
 
         addEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
             this.editContentRequestListeners.push(listener);
@@ -259,17 +265,15 @@ module api.form.inputtype.content.image {
                 this.validate(false);
             });
 
-            comboBox.addListener({
-                onInputValueChanged: (oldValue, newValue, grid) => {
-                    this.loadOptions(newValue);
-                },
-                onOptionSelected: (item: api.ui.combobox.Option<api.content.ContentSummary>) => {
-                    if (this.comboBox.maximumOccurrencesReached()) {
-                        this.uploadButton.setEnabled(false);
-                    }
-
-                    this.validate(false);
+            comboBox.onValueChanged((event: api.ui.combobox.ComboBoxValueChangedEvent<api.content.ContentSummary>) => {
+                this.loadOptions(event.getNewValue());
+            });
+            comboBox.onOptionSelected((event: api.ui.combobox.ComboBoxOptionSelectedEvent<api.content.ContentSummary>) => {
+                if (this.comboBox.maximumOccurrencesReached()) {
+                    this.uploadButton.setEnabled(false);
                 }
+
+                this.validate(false);
             });
 
             return comboBox;

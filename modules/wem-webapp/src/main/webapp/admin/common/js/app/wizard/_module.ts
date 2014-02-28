@@ -3,7 +3,6 @@
 ///<reference path='CloseAction.ts' />
 ///<reference path='WizardActions.ts' />
 ///<reference path='FormIcon.ts' />
-///<reference path='WizardHeaderListener.ts' />
 ///<reference path='WizardHeader.ts' />
 ///<reference path='WizardHeaderWithDisplayNameAndName.ts' />
 ///<reference path='WizardHeaderWithName.ts' />
@@ -11,6 +10,8 @@
 ///<reference path='WizardStepNavigator.ts' />
 ///<reference path='WizardStep.ts' />
 ///<reference path='WizardStepForm.ts' />
-///<reference path='WizardPanelListener.ts' />
 ///<reference path='WizardPanel.ts' />
 ///<reference path='SaveBeforeCloseDialog.ts' />
+///<reference path='PropertyChangedEvent.ts' />
+///<reference path='UploadFinishedEvent.ts' />
+///<reference path='WizardClosedEvent.ts' />

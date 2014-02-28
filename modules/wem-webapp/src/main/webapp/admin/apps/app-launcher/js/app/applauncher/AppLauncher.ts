@@ -24,21 +24,17 @@ module app.launcher {
             this.adminApplicationFrames.getEl().setHeight('100%').setWidth('100%');
 
             this.appManager = new api.app.AppManager();
-            this.appManager.addListener({
-                onShowLauncher: ()=> {
-                    this.showLauncherScreen();
-                },
-                onConnectionLost: ()=> {
-                    new api.notify.showError("Lost connection to server - Please wait until connection is restored");
-                },
-                onConnectionRestored: ()=> {
-                }
+            this.appManager.onShowLauncher(()=> {
+                this.showLauncherScreen();
+            });
+            this.appManager.onConnectionLost(()=> {
+                new api.notify.showError("Lost connection to server - Please wait until connection is restored");
             });
             this.lostConnectionDetector = new app.launcher.LostConnectionDetector();
             if (CONFIG.baseUri.search('localhost') == -1) {
                 this.lostConnectionDetector.startPolling();
             } else {
-                console.log( "LostConnectionDetector disabled when client runs against localhost");
+                console.log("LostConnectionDetector disabled when client runs against localhost");
             }
             api.dom.Body.get().appendChild(this.adminApplicationFrames);
         }

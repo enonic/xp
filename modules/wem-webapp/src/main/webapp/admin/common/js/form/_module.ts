@@ -15,12 +15,13 @@
 ///<reference path='ValidityChangedEvent.ts' />
 ///<reference path='ValidationRecording.ts' />
 ///<reference path='FormContext.ts' />
-///<reference path='FormItemOccurrenceViewListener.ts' />
 ///<reference path='FormItemOccurrenceView.ts' />
-///<reference path='FormItemOccurrencesListener.ts' />
 ///<reference path='FormItemOccurrences.ts' />
 ///<reference path='FormItemOccurrence.ts' />
 ///<reference path='FormItemView.ts' />
 ///<reference path='FormItemLayer.ts' />
 ///<reference path='FormView.ts' />
+///<reference path='RemoveButtonClickedEvent.ts' />
+///<reference path='OccurrenceRemovedEvent.ts' />
+///<reference path='OccurrenceAddedEvent.ts' />
 

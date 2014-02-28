@@ -1,51 +1,68 @@
 module api.app {
 
-    export class AppManager implements api.event.Observable {
+    export class AppManager {
         private static _instance: api.app.AppManager = null;
 
-        private listeners: api.app.AppManagerListener[] = [];
+        private connectionLostListeners: {():void}[] = [];
+
+        private connectionRestoredListeners: {():void}[] = [];
+
+        private showLauncherListeners: {():void}[] = [];
 
         constructor() {
             api.app.AppManager._instance = this;
+
         }
 
         showLauncher(): void {
             this.notifyShowLauncher();
         }
 
-        addListener(listener: api.app.AppManagerListener) {
-            this.listeners.push(listener);
+        onConnectionLost(listener: ()=>void) {
+            this.connectionLostListeners.push(listener);
         }
 
-        removeListener(listener: api.app.AppManagerListener) {
-            this.listeners = this.listeners.filter(function (curr) {
-                return curr !== listener;
+        onConnectionRestored(listener: ()=>void) {
+            this.connectionRestoredListeners.push(listener);
+        }
+
+        onShowLauncher(listener: ()=>void) {
+            this.showLauncherListeners.push(listener);
+        }
+
+        unConnectionLost(listener: ()=>void) {
+            this.connectionLostListeners = this.connectionLostListeners.filter((currentListener: ()=>void) => {
+                return listener != currentListener;
             });
         }
 
-        onConnectionLost() {
-            this.notifyConnectionLost();
-        }
-
-        onConnectionRestored() {
-            this.notifyConnectionRestored();
-        }
-
-        private notifyConnectionLost() {
-            this.listeners.forEach((listener: api.app.AppManagerListener) => {
-                listener.onConnectionLost();
+        unConnectionRestored(listener: ()=>void) {
+            this.connectionRestoredListeners = this.connectionRestoredListeners.filter((currentListener: ()=>void) => {
+                return listener != currentListener;
             });
         }
 
-        private notifyConnectionRestored() {
-            this.listeners.forEach((listener: api.app.AppManagerListener) => {
-                listener.onConnectionRestored();
+        unShowLauncher(listener: ()=>void) {
+            this.showLauncherListeners = this.showLauncherListeners.filter((currentListener: ()=>void) => {
+                return listener != currentListener;
+            });
+        }
+
+        notifyConnectionLost() {
+            this.connectionLostListeners.forEach((listener: ()=>void) => {
+                listener.call(this);
+            });
+        }
+
+        notifyConnectionRestored() {
+            this.connectionRestoredListeners.forEach((listener: ()=>void) => {
+                listener.call(this);
             });
         }
 
         private notifyShowLauncher() {
-            this.listeners.forEach((listener: api.app.AppManagerListener) => {
-                listener.onShowLauncher();
+            this.showLauncherListeners.forEach((listener: ()=>void) => {
+                listener.call(this);
             });
         }
 
