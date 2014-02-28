@@ -38,14 +38,10 @@ module api.form.inputtype.support {
             });
 
             this.onAdded((event) => {
-                this.addFormItemOccurrencesListener({
-                    onOccurrenceAdded: () => {
-                        jQuery(this.getHTMLElement()).sortable("refresh");
-                    },
-                    onOccurrenceRemoved: () => {
-                    }
+                this.onOccurrenceAdded(() => {
+                    jQuery(this.getHTMLElement()).sortable("refresh");
                 });
-            })
+            });
         }
 
         public getConfig(): api.form.inputtype.InputTypeViewConfig<CONFIG> {
@@ -74,12 +70,20 @@ module api.form.inputtype.support {
             return false;
         }
 
-        addFormItemOccurrencesListener(listener: api.form.FormItemOccurrencesListener) {
-            this.inputOccurrences.addListener(listener);
+        onOccurrenceAdded(listener: (event: api.form.OccurrenceAddedEvent)=>void) {
+            this.inputOccurrences.onOccurrenceAdded(listener);
         }
 
-        removeFormItemOccurrencesListener(listener: api.form.FormItemOccurrencesListener) {
-            this.inputOccurrences.removeListener(listener);
+        onOccurrenceRemoved(listener: (event: api.form.OccurrenceRemovedEvent)=>void) {
+            this.inputOccurrences.onOccurrenceRemoved(listener);
+        }
+
+        unOccurrenceAdded(listener: (event: api.form.OccurrenceAddedEvent)=>void) {
+            this.inputOccurrences.unOccurrenceAdded(listener);
+        }
+
+        unOccurrenceRemoved(listener: (event: api.form.OccurrenceRemovedEvent)=>void) {
+            this.inputOccurrences.unOccurrenceRemoved(listener);
         }
 
         onValidityChanged(listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) {

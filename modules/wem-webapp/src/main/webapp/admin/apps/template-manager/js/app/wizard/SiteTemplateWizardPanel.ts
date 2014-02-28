@@ -9,9 +9,9 @@ module app.wizard {
 
         private siteTemplateStep: SiteTemplateWizardStepForm;
 
-        constructor(tabId: api.app.AppBarTabId, siteTemplate?:api.content.site.template.SiteTemplate) {
+        constructor(tabId: api.app.AppBarTabId, siteTemplate?: api.content.site.template.SiteTemplate) {
             this.wizardHeader = new api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder().build();
-            if(siteTemplate) {
+            if (siteTemplate) {
                 this.wizardHeader.initNames(siteTemplate.getDisplayName(), siteTemplate.getName(), true);
             }
             var actions = new app.wizard.action.SiteTemplateWizardActions(this);
@@ -20,13 +20,10 @@ module app.wizard {
             this.formIcon = new api.app.wizard.FormIcon(iconUrl, "Click to upload icon",
                 api.util.getRestUri("upload"));
 
-            this.formIcon.addListener({
+            this.formIcon.onUploadFinished((event: api.app.wizard.UploadFinishedEvent) => {
 
-                onUploadFinished: (uploadItem: api.ui.UploadItem) => {
-
-                    this.iconUploadId = uploadItem.getName();
-                    this.formIcon.setSrc(api.util.getRestUri('upload/' + uploadItem.getName()));
-                }
+                this.iconUploadId = event.getUploadItem().getName();
+                this.formIcon.setSrc(api.util.getRestUri('upload/' + event.getUploadItem().getName()));
             });
 
             var mainToolbar = new SiteTemplateWizardToolbar({
@@ -86,7 +83,7 @@ module app.wizard {
 
         persistNewItem(): Q.Promise<api.content.site.template.SiteTemplate> {
             var deferred = Q.defer<api.content.site.template.SiteTemplate>();
-            var validationResult:api.ui.form.ValidationResult = this.siteTemplateStep.validate(true);
+            var validationResult: api.ui.form.ValidationResult = this.siteTemplateStep.validate(true);
             if (validationResult.isValid()) {
                 var data = this.siteTemplateStep.getFormData();
 
@@ -98,7 +95,7 @@ module app.wizard {
 
         updatePersistedItem(): Q.Promise<api.content.site.template.SiteTemplate> {
             var deferred = Q.defer<api.content.site.template.SiteTemplate>();
-            var validationResult:api.ui.form.ValidationResult = this.siteTemplateStep.validate(true);
+            var validationResult: api.ui.form.ValidationResult = this.siteTemplateStep.validate(true);
             if (validationResult.isValid()) {
                 var data = this.siteTemplateStep.getFormData();
 

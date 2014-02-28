@@ -1,14 +1,14 @@
 module api.ui {
 
-    export interface DeckPanelNavigator extends api.event.Observable {
+    export interface DeckPanelNavigator {
 
-        addNavigationItem(item:PanelNavigationItem);
+        addNavigationItem(item: PanelNavigationItem);
 
-        removeNavigationItem(item:PanelNavigationItem);
+        removeNavigationItem(item: PanelNavigationItem);
 
-        getNavigationItem(index:number):PanelNavigationItem;
+        getNavigationItem(index: number):PanelNavigationItem;
 
-        selectNavigationItem(index:number);
+        selectNavigationItem(index: number);
 
         getSelectedNavigationItem():PanelNavigationItem;
 
@@ -23,9 +23,16 @@ module api.ui {
 
         getNavigationItems():PanelNavigationItem[];
 
-        addListener(listener:DeckPanelNavigatorListener);
+        onNavigationItemAdded(listener: (event: DeckPanelNavigatorEvent) => void);
 
-        removeListener(listener:DeckPanelNavigatorListener);
+        onNavigationItemSelected(listener: (event: DeckPanelNavigatorEvent) => void);
 
+        onNavigationItemDeselected(listener: (event: DeckPanelNavigatorEvent) => void);
+
+        unNavigationItemAdded(listener: (event: DeckPanelNavigatorEvent) => void);
+
+        unNavigationItemSelected(listener: (event: DeckPanelNavigatorEvent) => void);
+
+        unNavigationItemDeselected(listener: (event: DeckPanelNavigatorEvent) => void);
     }
 }

@@ -1,8 +1,8 @@
 module app.create {
 
-    export class SiteTemplatesList extends api.ui.list.ListView<api.content.site.template.SiteTemplateSummary> implements api.event.Observable {
+    export class SiteTemplatesList extends api.ui.list.ListView<api.content.site.template.SiteTemplateSummary> {
 
-        private listeners: SiteTemplatesListListener[] = [];
+        private selectedListeners: {(event: SiteTemplatesListSelectedEvent):void}[] = [];
 
         private contentTypes: ContentTypes;
 
@@ -10,19 +10,19 @@ module app.create {
             super(className, title);
         }
 
-        addListener(listener: SiteTemplatesListListener) {
-            this.listeners.push(listener);
+        onSelected(listener: (event: SiteTemplatesListSelectedEvent)=>void) {
+            this.selectedListeners.push(listener);
         }
 
-        removeListener(listener: SiteTemplatesListListener) {
-            this.listeners = this.listeners.filter(function (curr) {
-                return curr != listener;
+        unSelected(listener: (event: SiteTemplatesListSelectedEvent)=>void) {
+            this.selectedListeners = this.selectedListeners.filter((currentListener: (event: SiteTemplatesListSelectedEvent)=>void)=> {
+                return listener != currentListener;
             });
         }
 
         private notifySelected(item: SiteTemplateListItem) {
-            this.listeners.forEach((listener: SiteTemplatesListListener) => {
-                listener.onSelected(item);
+            this.selectedListeners.forEach((listener: (event: SiteTemplatesListSelectedEvent)=>void)=> {
+                listener.call(this, new SiteTemplatesListSelectedEvent(item));
             });
         }
 

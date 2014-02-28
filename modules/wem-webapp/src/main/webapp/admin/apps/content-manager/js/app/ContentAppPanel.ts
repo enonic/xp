@@ -36,14 +36,11 @@ module app {
         addWizardPanel(tabMenuItem: api.app.AppBarTabMenuItem, wizardPanel: api.app.wizard.WizardPanel<api.content.Content>) {
             super.addWizardPanel(tabMenuItem, wizardPanel);
 
-            wizardPanel.getHeader().addListener(
-                {
-                    onPropertyChanged: (event: api.app.wizard.WizardHeaderPropertyChangedEvent) => {
-                        if (event.property == "displayName") {
-                            tabMenuItem.setLabel(event.newValue);
-                        }
-                    }
-                });
+            wizardPanel.getHeader().onPropertyChanged((event: api.app.wizard.PropertyChangedEvent) => {
+                if (event.getProperty() == "displayName") {
+                    tabMenuItem.setLabel(event.getNewValue());
+                }
+            });
         }
 
         private handleNew(newContentEvent: app.create.NewContentEvent) {

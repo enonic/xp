@@ -28,10 +28,8 @@ module api.aggregation {
                 this.checkbox.setChecked(true, true);
             }
 
-            this.checkbox.addListener({
-                onValueChanged: (oldValue: boolean, newValue: boolean) => {
-                    this.notifySelectionChanged(oldValue, newValue);
-                }
+            this.checkbox.onValueChanged((event: api.ui.ValueChangedEvent) => {
+                this.notifySelectionChanged(eval(event.getOldValue()), eval(event.getNewValue()));
             });
             this.appendChild(this.checkbox);
 

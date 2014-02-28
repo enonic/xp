@@ -21,13 +21,11 @@ module api.app {
 
             this.appName = appName;
             this.tabMenu = tabMenu;
-            this.tabMenu.addListener({
-                onNavigationItemSelected: (tab: api.ui.PanelNavigationItem) => {
-                    this.layoutChildren();
-                },
-                onNavigationItemDeselected: (tab: api.ui.PanelNavigationItem) => {
-                    this.layoutChildren();
-                }
+            this.tabMenu.onNavigationItemSelected(() => {
+                this.layoutChildren();
+            });
+            this.tabMenu.onNavigationItemDeselected(() => {
+                this.layoutChildren();
             });
 
             this.actions = <AppBarActionsConfig> {};

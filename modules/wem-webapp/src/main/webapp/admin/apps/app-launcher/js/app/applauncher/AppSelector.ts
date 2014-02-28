@@ -22,10 +22,8 @@ module app.launcher {
             var searchInputContainer = new api.dom.DivEl('search-input-container');
             this.applicationSearchInput = new api.ui.TextInput();
             this.applicationSearchInput.setPlaceholder('Application Filter');
-            this.applicationSearchInput.addListener({
-                onValueChanged: (oldValue, newValue) => {
-                    this.filterTiles(newValue);
-                }
+            this.applicationSearchInput.onValueChanged((event: api.ui.ValueChangedEvent) => {
+                this.filterTiles(event.getNewValue());
             });
             searchInputContainer.appendChild(this.applicationSearchInput);
 

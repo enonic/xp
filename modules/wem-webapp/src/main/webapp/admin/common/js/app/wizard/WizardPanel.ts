@@ -21,7 +21,7 @@ module api.app.wizard {
         steps:api.app.wizard.WizardStep[];
     }
 
-    export class WizardPanel<T> extends api.ui.Panel implements api.ui.Closeable, api.event.Observable, api.ui.ActionContainer {
+    export class WizardPanel<T> extends api.ui.Panel implements api.ui.Closeable, api.ui.ActionContainer {
 
         private tabId: api.app.AppBarTabId;
 
@@ -44,7 +44,7 @@ module api.app.wizard {
 
         private renderingNew: boolean;
 
-        private listeners: WizardPanelListener[] = [];
+        private closedListeners: {(event: WizardClosedEvent):void}[] = [];
 
         private backPanel: api.ui.DeckPanel;
 
@@ -195,16 +195,6 @@ module api.app.wizard {
 
         showMainPanel() {
             this.backPanel.showPanel(0);
-        }
-
-        addListener(listener: WizardPanelListener) {
-            this.listeners.push(listener);
-        }
-
-        removeListener(listener: WizardPanelListener) {
-            this.listeners = this.listeners.filter(function (curr) {
-                return curr != listener;
-            });
         }
 
         getTabId(): api.app.AppBarTabId {
@@ -396,11 +386,19 @@ module api.app.wizard {
             this.notifyClosed();
         }
 
+        onClosed(listener: (event: WizardClosedEvent)=>void) {
+            this.closedListeners.push(listener);
+        }
+
+        unClosed(listener: (event: WizardClosedEvent)=>void) {
+            this.closedListeners = this.closedListeners.filter((currentListener: (event: WizardClosedEvent)=>void) => {
+                return currentListener != listener;
+            });
+        }
+
         private notifyClosed() {
-            this.listeners.forEach((listener: WizardPanelListener) => {
-                if (listener.onClosed) {
-                    listener.onClosed(this);
-                }
+            this.closedListeners.forEach((listener: (event: WizardClosedEvent)=>void) => {
+                listener.call(this, new WizardClosedEvent(this));
             });
         }
     }

@@ -2,20 +2,15 @@ declare var plupload;
 
 module api.app.wizard {
 
-    export interface FormIconListener extends api.event.Listener {
-
-        onUploadStarted?();
-
-        onUploadFinished?(uploadItem:api.ui.UploadItem);
-    }
-
-    export class FormIcon extends api.dom.ButtonEl implements api.event.Observable {
+    export class FormIcon extends api.dom.ButtonEl {
 
         private uploader;
-        private img:api.dom.ImgEl;
-        private progress:api.ui.ProgressBar;
+        private img: api.dom.ImgEl;
+        private progress: api.ui.ProgressBar;
 
-        private listeners:FormIconListener[] = [];
+        private uploadStartedListeners: {():void}[] = [];
+
+        private uploadFinishedListeners: {(event: UploadFinishedEvent):void}[] = [];
 
         /*
          * Icon widget with tooltip and upload possibility
@@ -23,7 +18,7 @@ module api.app.wizard {
          * @param iconTitle text to display in tooltip
          * @param uploadUrl url to upload new icon to
          */
-        constructor(public iconUrl:string, public iconTitle:string, public uploadUrl?:string) {
+        constructor(public iconUrl: string, public iconTitle: string, public uploadUrl?: string) {
             super("form-icon");
             var el = this.getEl();
 
@@ -49,21 +44,11 @@ module api.app.wizard {
             });
         }
 
-        setSrc(src:string) {
+        setSrc(src: string) {
             this.img.getEl().setSrc(src);
         }
 
-        addListener(listener:FormIconListener) {
-            this.listeners.push(listener);
-        }
-
-        removeListener(listener:FormIconListener) {
-            this.listeners = this.listeners.filter(function (curr) {
-                return curr != listener;
-            });
-        }
-
-        private initUploader(elId:string) {
+        private initUploader(elId: string) {
 
             if (!plupload) {
                 console.log('FormIcon: plupload not found, check if it is included in page.');
@@ -122,7 +107,7 @@ module api.app.wizard {
                     if (responseObj.items && responseObj.items.length > 0) {
                         var file = responseObj.items[0];
 
-                        var uploadItem:api.ui.UploadItem = new api.ui.UploadItemBuilder().
+                        var uploadItem: api.ui.UploadItem = new api.ui.UploadItemBuilder().
                             setId(file.id).
                             setName(file.name).
                             setMimeType(file.mimeType).
@@ -149,19 +134,35 @@ module api.app.wizard {
             return uploader;
         }
 
-        private notifyUploadStarted() {
-            this.listeners.forEach((listener:FormIconListener) => {
-                if (listener.onUploadStarted) {
-                    listener.onUploadStarted();
-                }
+        onUploadStarted(listener: ()=>void) {
+            this.uploadStartedListeners.push(listener);
+        }
+
+        onUploadFinished(listener: (event: UploadFinishedEvent)=>void) {
+            this.uploadFinishedListeners.push(listener);
+        }
+
+        unUploadStarted(listener: ()=>void) {
+            this.uploadStartedListeners = this.uploadStartedListeners.filter((currentListener: ()=>void) => {
+                return currentListener != listener;
             });
         }
 
-        private notifyUploadFinished(uploadItem:api.ui.UploadItem) {
-            this.listeners.forEach((listener:FormIconListener) => {
-                if (listener.onUploadFinished) {
-                    listener.onUploadFinished(uploadItem);
-                }
+        unUploadFinished(listener: (event: UploadFinishedEvent)=>void) {
+            this.uploadFinishedListeners = this.uploadFinishedListeners.filter((currentListener: (event: UploadFinishedEvent)=>void)=> {
+                return currentListener != listener;
+            });
+        }
+
+        private notifyUploadStarted() {
+            this.uploadStartedListeners.forEach((listener: ()=>void) => {
+                listener.call(this);
+            });
+        }
+
+        private notifyUploadFinished(uploadItem: api.ui.UploadItem) {
+            this.uploadFinishedListeners.forEach((listener: (event: UploadFinishedEvent)=>void) => {
+                listener.call(this, new UploadFinishedEvent(uploadItem));
             });
         }
 

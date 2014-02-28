@@ -1,4 +1,4 @@
-module api.app.browse{
+module api.app.browse {
 
     export interface BrowsePanelParams<M> {
 
@@ -15,29 +15,29 @@ module api.app.browse{
 
     export class BrowsePanel<M> extends api.ui.Panel implements api.ui.ActionContainer {
 
-        private browseToolbar:api.ui.toolbar.Toolbar;
+        private browseToolbar: api.ui.toolbar.Toolbar;
 
-        private treeGridPanel:api.app.browse.grid.TreeGridPanel;
+        private treeGridPanel: api.app.browse.grid.TreeGridPanel;
 
-        private gridPanel2:api.app.browse.grid2.GridPanel2;
+        private gridPanel2: api.app.browse.grid2.GridPanel2;
 
-        private treeSwapperDeckPanel:api.ui.DeckPanel;
+        private treeSwapperDeckPanel: api.ui.DeckPanel;
 
-        private browseItemPanel:BrowseItemPanel<M>;
+        private browseItemPanel: BrowseItemPanel<M>;
 
-        private gridAndDetailSplitPanel:api.ui.SplitPanel;
+        private gridAndDetailSplitPanel: api.ui.SplitPanel;
 
-        private filterPanel:api.app.browse.filter.BrowseFilterPanel;
+        private filterPanel: api.app.browse.filter.BrowseFilterPanel;
 
-        private gridContainer:api.app.browse.GridContainer;
+        private gridContainer: api.app.browse.GridContainer;
 
         private gridAndFilterAndDetailSplitPanel;
 
-        private gridAndToolbarContainer:api.ui.Panel;
+        private gridAndToolbarContainer: api.ui.Panel;
 
-        private refreshNeeded:boolean = false;
+        private refreshNeeded: boolean = false;
 
-        constructor(params:BrowsePanelParams<M>) {
+        constructor(params: BrowsePanelParams<M>) {
             super();
 
             this.browseToolbar = params.browseToolbar;
@@ -46,12 +46,8 @@ module api.app.browse{
             this.browseItemPanel = params.browseItemPanel;
             this.filterPanel = params.filterPanel;
 
-            this.browseItemPanel.addListener({
-                onDeselected: (item:BrowseItem<M>) => {
-                    this.treeGridPanel.deselect(item.getPath());
-                },
-                onPanelShown: (item) => {
-                }
+            this.browseItemPanel.onDeselected((event: ItemDeselectedEvent<M>) => {
+                this.treeGridPanel.deselect(event.getBrowseItem().getPath());
             });
 
             this.gridContainer = new api.app.browse.GridContainer(this.treeGridPanel);
@@ -83,8 +79,8 @@ module api.app.browse{
             }
 
             this.treeGridPanel.addListener({
-                onSelectionChanged: (event:api.app.browse.grid.TreeGridSelectionChangedEvent) => {
-                    var browseItems:api.app.browse.BrowseItem<M>[] = this.extModelsToBrowseItems(event.selectedModels);
+                onSelectionChanged: (event: api.app.browse.grid.TreeGridSelectionChangedEvent) => {
+                    var browseItems: api.app.browse.BrowseItem<M>[] = this.extModelsToBrowseItems(event.selectedModels);
                     this.browseItemPanel.setItems(browseItems);
                 },
                 onItemDoubleClicked: null
@@ -97,11 +93,11 @@ module api.app.browse{
             });
         }
 
-        getActions():api.ui.Action[] {
+        getActions(): api.ui.Action[] {
             return this.browseToolbar.getActions();
         }
 
-        extModelsToBrowseItems(models:Ext_data_Model[]):BrowseItem<M>[] {
+        extModelsToBrowseItems(models: Ext_data_Model[]): BrowseItem<M>[] {
             throw Error("To be implemented by inheritor");
         }
 
@@ -117,16 +113,16 @@ module api.app.browse{
             }
         }
 
-        isRefreshNeeded():boolean {
+        isRefreshNeeded(): boolean {
             return this.refreshNeeded;
         }
 
-        setRefreshNeeded(refreshNeeded:boolean) {
+        setRefreshNeeded(refreshNeeded: boolean) {
             this.refreshNeeded = refreshNeeded;
         }
 
         toggleShowingNewGrid() {
-            if( this.treeSwapperDeckPanel.getPanelShownIndex() == 0 ) {
+            if (this.treeSwapperDeckPanel.getPanelShownIndex() == 0) {
                 this.treeSwapperDeckPanel.showPanel(1);
             }
             else {

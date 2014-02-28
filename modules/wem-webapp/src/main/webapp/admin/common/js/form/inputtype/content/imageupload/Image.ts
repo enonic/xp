@@ -8,7 +8,7 @@ module api.form.inputtype.content.imageupload {
 
         private attachmentName: string;
 
-        private attachments:api.content.attachment.Attachments;
+        private attachments: api.content.attachment.Attachments;
 
         constructor(config: api.form.inputtype.InputTypeViewConfig<any>) {
             super(config, "image");
@@ -25,14 +25,11 @@ module api.form.inputtype.content.imageupload {
             };
             var uploadUrl = api.util.getRestUri("blob/upload");
             var imageUploader = new api.ui.ImageUploader(inputName, uploadUrl, imageUploaderConfig);
-            imageUploader.addListener({
-                onFileUploaded: (uploadItem: api.ui.UploadItem) => {
-                    this.attachments = new api.content.attachment.AttachmentsBuilder().
-                        addAll(this.attachments.getAttachments()).
-                        add(this.uploadItemToAttachment(uploadItem)).build();
-                    this.attachmentName = uploadItem.getName();
-                },
-                onUploadComplete: null
+            imageUploader.onImageUploaded((event: api.ui.ImageUploadedEvent) => {
+                this.attachments = new api.content.attachment.AttachmentsBuilder().
+                    addAll(this.attachments.getAttachments()).
+                    add(this.uploadItemToAttachment(event.getUploadedItem())).build();
+                this.attachmentName = event.getUploadedItem().getName();
             });
 
             if (property != null) {
@@ -57,7 +54,7 @@ module api.form.inputtype.content.imageupload {
 
         valueBreaksRequiredContract(value: api.data.Value): boolean {
 
-            if( value == null ) {
+            if (value == null) {
                 return true;
             }
 
@@ -72,8 +69,8 @@ module api.form.inputtype.content.imageupload {
             //TODO: implement logic
         }
 
-        private uploadItemToAttachment(uploadItem:api.ui.UploadItem) : api.content.attachment.Attachment {
-             return new api.content.attachment.AttachmentBuilder().
+        private uploadItemToAttachment(uploadItem: api.ui.UploadItem): api.content.attachment.Attachment {
+            return new api.content.attachment.AttachmentBuilder().
                 setBlobKey(uploadItem.getBlobKey()).
                 setAttachmentName(new api.content.attachment.AttachmentName(uploadItem.getName())).
                 setMimeType(uploadItem.getMimeType()).

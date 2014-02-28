@@ -37,30 +37,24 @@ module app.create {
 
             var tabBar = new api.ui.tab.TabBar();
             this.deckPanel = new api.ui.NavigatedDeckPanel(tabBar);
-            this.deckPanel.addListener({
-                onPanelShown: (event: api.ui.PanelShownEvent) => {
-                    var value = this.input.getValue();
+            this.deckPanel.onPanelShown((event: api.ui.PanelShownEvent) => {
+                var value = this.input.getValue();
                     this.filterList(value);
-                }
             });
             leftColumn.appendChild(tabBar);
             leftColumn.appendChild(this.deckPanel);
 
             this.contentTab = new api.ui.tab.TabBarItem("Content (0)");
             this.contentList = new app.create.ContentTypesList("content-type-list");
-            this.contentList.addListener({
-                onSelected: (contentTypeListItem: ContentTypeListItem) => {
-                    this.closeAndFireEventFromContentType(contentTypeListItem);
-                }
+            this.contentList.onSelected((event: app.create.ContentTypesListSelectedEvent) => {
+                this.closeAndFireEventFromContentType(event.getItem());
             });
             this.deckPanel.addNavigablePanelToBack(this.contentTab, this.contentList);
 
             this.templatesTab = new api.ui.tab.TabBarItem("Sites (0)");
             this.templatesList = new app.create.SiteTemplatesList("site-template-list");
-            this.templatesList.addListener({
-                onSelected: (item: SiteTemplateListItem) => {
-                    this.closeAndFireEventFromSiteTemplate(item);
-                }
+            this.templatesList.onSelected((event: app.create.SiteTemplatesListSelectedEvent) => {
+                this.closeAndFireEventFromSiteTemplate(event.getItem());
             });
             this.deckPanel.addNavigablePanelToBack(this.templatesTab, this.templatesList);
             this.deckPanel.showPanel(0);
@@ -76,10 +70,8 @@ module app.create {
             dropzone.setId('new-content-dialog-dropzone');
             rightColumn.appendChild(dropzone);
 
-            this.recentList.addListener({
-                onSelected: (item: ContentTypeListItem) => {
-                    this.closeAndFireEventFromContentType(item);
-                }
+            this.recentList.onSelected((event: app.create.ContentTypesListSelectedEvent) => {
+                this.closeAndFireEventFromContentType(event.getItem());
             });
             rightColumn.appendChild(this.recentList);
 

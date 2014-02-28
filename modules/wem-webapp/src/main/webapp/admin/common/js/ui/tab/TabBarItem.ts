@@ -4,19 +4,19 @@ module api.ui.tab {
         removable?:boolean;
     }
 
-    export class TabBarItem extends api.dom.LiEl implements api.ui.PanelNavigationItem, api.event.Observable {
+    export class TabBarItem extends api.dom.LiEl implements api.ui.PanelNavigationItem {
 
         private label: string;
 
         private index: number;
 
-        private active:boolean = false;
+        private active: boolean = false;
 
-        private removable:boolean = true;
+        private removable: boolean = true;
 
-        private listeners: TabBarItemListener[] = [];
+        private onSelectedListeners: {(event: TabBarItemEvent):void}[] = [];
 
-        constructor(label:string, options:TabBarItemOptions = {}) {
+        constructor(label: string, options: TabBarItemOptions = {}) {
             super("tab-bar-item");
 
             this.setLabel(label);
@@ -27,56 +27,54 @@ module api.ui.tab {
             });
         }
 
-        setIndex(value:number) {
+        setIndex(value: number) {
             this.index = value;
         }
 
-        getIndex():number {
+        getIndex(): number {
             return this.index;
         }
 
-        setLabel(value:string) {
+        setLabel(value: string) {
             this.label = value;
             this.getEl().setInnerHtml(value);
             this.getEl().setAttribute('title', value);
         }
 
-        getLabel():string {
+        getLabel(): string {
             return this.label;
         }
 
-        setActive(value:boolean) {
+        setActive(value: boolean) {
             this.active = value;
             this.active ? this.addClass("active") : this.removeClass("active");
         }
 
-        isActive():boolean {
+        isActive(): boolean {
             return this.active;
         }
 
-        setRemovable(value:boolean) {
+        setRemovable(value: boolean) {
             this.removable = value;
         }
 
-        isRemovable():boolean {
+        isRemovable(): boolean {
             return this.removable;
         }
 
-        addListener(listener:TabBarItemListener) {
-            this.listeners.push(listener);
+        onSelected(listener: (event: TabBarItemEvent)=>void) {
+            this.onSelectedListeners.push(listener);
         }
 
-        removeListener(listener:TabBarItemListener) {
-            this.listeners = this.listeners.filter((elem) => {
-                return elem != listener;
+        unSelected(listener: (event: TabBarItemEvent)=>void) {
+            this.onSelectedListeners = this.onSelectedListeners.filter((currentListener: (event: TabBarItemEvent)=>void) => {
+                return currentListener != listener;
             });
         }
 
         private notifySelectedListeners() {
-            this.listeners.forEach((listener:TabBarItemListener) => {
-                if (listener.onSelected) {
-                    listener.onSelected(this);
-                }
+            this.onSelectedListeners.forEach((listener: (event: TabBarItemEvent)=>void) => {
+                listener.call(this, new TabBarItemEvent(this));
             });
         }
 

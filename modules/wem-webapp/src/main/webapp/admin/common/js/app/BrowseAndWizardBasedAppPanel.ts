@@ -9,13 +9,13 @@ module api.app {
 
     export class BrowseAndWizardBasedAppPanel<M> extends api.app.AppPanel {
 
-        private browsePanel:api.app.browse.BrowsePanel<M>;
+        private browsePanel: api.app.browse.BrowsePanel<M>;
 
-        private appBarTabMenu:api.app.AppBarTabMenu;
+        private appBarTabMenu: api.app.AppBarTabMenu;
 
-        private currentKeyBindings:api.ui.KeyBinding[];
+        private currentKeyBindings: api.ui.KeyBinding[];
 
-        constructor(config:BrowseBasedAppPanelConfig<M>) {
+        constructor(config: BrowseBasedAppPanelConfig<M>) {
             super(config.appBar.getTabMenu(), config.browsePanel);
 
             this.browsePanel = config.browsePanel;
@@ -24,77 +24,67 @@ module api.app {
             this.currentKeyBindings = api.ui.Action.getKeyBindings(this.resolveActions(this.browsePanel));
             this.activateCurrentKeyBindings();
 
-            this.addListener({
-                onPanelShown: (event:api.ui.PanelShownEvent) => {
-                    if (event.panel === this.browsePanel) {
-                        this.browsePanel.refreshFilterAndGrid();
-                    }
-
-                    var previousActions = this.resolveActions(event.previousPanel);
-                    api.ui.KeyBindings.get().unbindKeys(api.ui.Action.getKeyBindings(previousActions));
-
-                    var nextActions = this.resolveActions(event.panel);
-                    this.currentKeyBindings = api.ui.Action.getKeyBindings(nextActions);
-                    api.ui.KeyBindings.get().bindKeys(this.currentKeyBindings);
+            this.onPanelShown((event: api.ui.PanelShownEvent) => {
+                if (event.getPanel() === this.browsePanel) {
+                    this.browsePanel.refreshFilterAndGrid();
                 }
+
+                var previousActions = this.resolveActions(event.getPreviousPanel());
+                api.ui.KeyBindings.get().unbindKeys(api.ui.Action.getKeyBindings(previousActions));
+
+                var nextActions = this.resolveActions(event.getPanel());
+                this.currentKeyBindings = api.ui.Action.getKeyBindings(nextActions);
+                api.ui.KeyBindings.get().bindKeys(this.currentKeyBindings);
             });
         }
 
         activateCurrentKeyBindings() {
 
-            if( this.currentKeyBindings ) {
+            if (this.currentKeyBindings) {
                 api.ui.KeyBindings.get().bindKeys(this.currentKeyBindings);
             }
         }
 
-        getAppBarTabMenu():api.app.AppBarTabMenu {
+        getAppBarTabMenu(): api.app.AppBarTabMenu {
             return this.appBarTabMenu;
         }
 
-        addViewPanel(tabMenuItem:AppBarTabMenuItem, viewPanel:api.app.view.ItemViewPanel<M>) {
+        addViewPanel(tabMenuItem: AppBarTabMenuItem, viewPanel: api.app.view.ItemViewPanel<M>) {
             super.addNavigablePanelToFront(tabMenuItem, viewPanel);
 
-            tabMenuItem.addListener({
-                onClose: (tab: AppBarTabMenuItem) => {
-                    viewPanel.close();
-                }
+            tabMenuItem.onClosed(() => {
+                viewPanel.close();
             });
 
-            viewPanel.addListener({
-                onClosed: (view) => {
-                    this.removePanel(view, false);
-                }
+            viewPanel.onClosed((event: api.app.view.ItemViewClosedEvent<M>) => {
+                this.removePanel(event.getView(), false);
             });
         }
 
-        addWizardPanel(tabMenuItem:AppBarTabMenuItem, wizardPanel:api.app.wizard.WizardPanel<any>) {
+        addWizardPanel(tabMenuItem: AppBarTabMenuItem, wizardPanel: api.app.wizard.WizardPanel<any>) {
             super.addNavigablePanelToFront(tabMenuItem, wizardPanel);
 
-            tabMenuItem.addListener({
-                onClose: (tab: AppBarTabMenuItem) => {
-                    wizardPanel.close();
-                }
+            tabMenuItem.onClosed(() => {
+                wizardPanel.close();
             });
 
-            wizardPanel.addListener({
-                onClosed: (wizard) => {
-                    this.removePanel(wizard, false);
-                }
+            wizardPanel.onClosed((event: api.app.wizard.WizardClosedEvent) => {
+                this.removePanel(event.getWizard(), false);
             });
         }
 
-        canRemovePanel(panel:api.ui.Panel):boolean {
+        canRemovePanel(panel: api.ui.Panel): boolean {
             if (panel instanceof api.app.wizard.WizardPanel) {
-                var wizardPanel:api.app.wizard.WizardPanel<any> = <api.app.wizard.WizardPanel<any>>panel;
+                var wizardPanel: api.app.wizard.WizardPanel<any> = <api.app.wizard.WizardPanel<any>>panel;
                 return wizardPanel.canClose();
             }
             return true;
         }
 
-        private resolveActions(panel:api.ui.Panel):api.ui.Action[] {
+        private resolveActions(panel: api.ui.Panel): api.ui.Action[] {
 
             if (panel instanceof api.app.wizard.WizardPanel || panel instanceof api.app.browse.BrowsePanel) {
-                var actionContainer:api.ui.ActionContainer = <any>panel;
+                var actionContainer: api.ui.ActionContainer = <any>panel;
                 return actionContainer.getActions();
             }
             else {

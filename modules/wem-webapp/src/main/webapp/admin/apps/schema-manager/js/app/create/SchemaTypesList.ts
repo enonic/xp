@@ -6,13 +6,13 @@ module app.create {
         iconUrl: string;
     }
 
-    export class SchemaTypesList extends api.dom.DivEl implements api.event.Observable {
+    export class SchemaTypesList extends api.dom.DivEl {
 
-        private ul:api.dom.UlEl;
+        private ul: api.dom.UlEl;
 
-        private listeners:SchemaTypesListListener[] = [];
+        private selectedListeners: {(event: ItemSelectedEvent):void}[] = [];
 
-        constructor(items:SchemaTypeListItem[]) {
+        constructor(items: SchemaTypeListItem[]) {
             super("schema-type-list");
 
             this.ul = new api.dom.UlEl();
@@ -21,23 +21,23 @@ module app.create {
             this.layoutItems(items);
         }
 
-        addListener(listener:SchemaTypesListListener) {
-            this.listeners.push(listener);
+        onSelected(listener: (event: ItemSelectedEvent)=>void) {
+            this.selectedListeners.push(listener);
         }
 
-        removeListener(listener:SchemaTypesListListener) {
-            this.listeners = this.listeners.filter(function (curr) {
-                return curr != listener;
+        unSelected(listener: (event: ItemSelectedEvent)=>void) {
+            this.selectedListeners = this.selectedListeners.filter((currentListener: (event: ItemSelectedEvent)=>void) => {
+                return currentListener != listener;
             });
         }
 
-        private notifySelected(schemaType:SchemaTypeListItem) {
-            this.listeners.forEach((listener:SchemaTypesListListener) => {
-                listener.onSelected(schemaType);
-            });
+        private notifySelected(schemaType: SchemaTypeListItem) {
+            this.selectedListeners.forEach((listener: (event: ItemSelectedEvent)=>void)=> {
+                listener.call(this, new ItemSelectedEvent(schemaType));
+            })
         }
 
-        private layoutItems(items:SchemaTypeListItem[]) {
+        private layoutItems(items: SchemaTypeListItem[]) {
             this.ul.removeChildren();
             for (var i = 0; i < items.length; i++) {
                 this.ul.appendChild(this.renderListItem(items[i]));
@@ -45,7 +45,7 @@ module app.create {
             return this;
         }
 
-        private renderListItem(item:SchemaTypeListItem):api.dom.LiEl {
+        private renderListItem(item: SchemaTypeListItem): api.dom.LiEl {
             var li = new api.dom.LiEl("schema-type-list-item");
             var img = new api.dom.ImgEl(item.iconUrl);
             var h6 = new api.dom.H6El();
@@ -54,7 +54,7 @@ module app.create {
             li.appendChild(img);
             li.appendChild(h6);
 
-            li.getEl().addEventListener("click", (event:Event) => {
+            li.getEl().addEventListener("click", (event: Event) => {
                 this.notifySelected(item);
             });
             return li;

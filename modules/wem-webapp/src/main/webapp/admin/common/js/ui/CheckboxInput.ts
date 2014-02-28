@@ -1,13 +1,13 @@
 module api.ui {
 
-    export class CheckboxInput extends api.dom.InputEl implements api.event.Observable {
+    export class CheckboxInput extends api.dom.InputEl {
         //TODO: USE HTML CHECKED PROPERTY INSTEAD OF ATTRIBUTE CHECKED! from ljl
         /**
          * Input value before it was changed by last input event.
          */
         private oldValue: boolean = false;
 
-        private listeners: CheckboxInputListener[] = [];
+        private valueChangedListeners: {(event: ValueChangedEvent):void}[] = [];
 
         constructor(className?: string) {
             super(className);
@@ -74,19 +74,19 @@ module api.ui {
         }
 
 
-        addListener(listener: CheckboxInputListener) {
-            this.listeners.push(listener);
+        onValueChanged(listener: (event: ValueChangedEvent)=>void) {
+            this.valueChangedListeners.push(listener);
         }
 
-        removeListener(listener: CheckboxInputListener) {
-            this.listeners = this.listeners.filter(function (curr) {
-                return curr != listener;
+        unValueChanged(listener: (event: ValueChangedEvent)=>void) {
+            this.valueChangedListeners = this.valueChangedListeners.filter((currentListener: (event: ValueChangedEvent)=>void) => {
+                return listener != currentListener;
             });
         }
 
         private notifyValueChanged(oldValue: boolean, newValue: boolean) {
-            this.listeners.forEach((listener: CheckboxInputListener) => {
-                listener.onValueChanged(oldValue, newValue);
+            this.valueChangedListeners.forEach((listener: (event: ValueChangedEvent)=>void) => {
+                listener.call(this, new ValueChangedEvent(oldValue.toString(), newValue.toString()));
             });
         }
     }

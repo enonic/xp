@@ -51,13 +51,10 @@ module app.wizard {
             this.formIcon = new api.app.wizard.FormIcon(iconUrl, "Click to upload icon",
                 api.util.getRestUri("blob/upload"));
 
-            this.formIcon.addListener({
+            this.formIcon.onUploadFinished((event: api.app.wizard.UploadFinishedEvent) => {
 
-                onUploadFinished: (uploadItem: api.ui.UploadItem) => {
-
-                    this.iconUploadItem = uploadItem;
-                    this.formIcon.setSrc(api.util.getRestUri('blob/' + this.iconUploadItem.getBlobKey()));
-                }
+                this.iconUploadItem = event.getUploadItem();
+                this.formIcon.setSrc(api.util.getRestUri('blob/' + this.iconUploadItem.getBlobKey()));
             });
 
             var actions = new app.wizard.action.ContentWizardActions(this);
@@ -461,7 +458,7 @@ module app.wizard {
                 return null;
             }
             var regions = this.pageWizardStepForm.getRegions();
-            console.log( "saving page regions: ", regions.toJson() );
+            console.log("saving page regions: ", regions.toJson());
             var updatePageRequest = new api.content.page.UpdatePageRequest(content.getContentId()).
                 setPageTemplateKey(this.pageWizardStepForm.getPageTemplate().getKey()).
                 setConfig(this.pageWizardStepForm.getConfig()).

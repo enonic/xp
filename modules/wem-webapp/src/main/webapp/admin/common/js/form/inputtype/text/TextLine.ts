@@ -24,10 +24,9 @@ module api.form.inputtype.text {
 
         addOnValueChangedListener(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
             var inputEl = <api.ui.TextInput>element;
-            inputEl.addListener({
-                onValueChanged: (oldValue: string, newValue: string) => {
-                    listener(new api.form.inputtype.support.ValueChangedEvent(this.newValue(oldValue), this.newValue(newValue)));
-                }
+            inputEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
+                listener(new api.form.inputtype.support.ValueChangedEvent(this.newValue(event.getOldValue()),
+                    this.newValue(event.getNewValue())));
             });
         }
 

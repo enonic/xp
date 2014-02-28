@@ -4,7 +4,7 @@ module api.form.inputtype {
 
         getElement(): api.dom.Element;
 
-        layout(input:api.form.Input, properties:api.data.Property[]);
+        layout(input: api.form.Input, properties: api.data.Property[]);
 
         getValues(): api.data.Value[];
 
@@ -28,32 +28,42 @@ module api.form.inputtype {
         /*
          * Is only invoked if InputTypeView is not managing add.
          */
-        addFormItemOccurrencesListener(listener:api.form.FormItemOccurrencesListener);
+        onOccurrenceAdded(listener: (event: api.form.OccurrenceAddedEvent)=>void);
 
         /*
          * Is only invoked if InputTypeView is not managing add.
          */
-        removeFormItemOccurrencesListener(listener:api.form.FormItemOccurrencesListener);
+        onOccurrenceRemoved(listener: (event: api.form.OccurrenceRemovedEvent)=>void);
+
+        /*
+         * Is only invoked if InputTypeView is not managing add.
+         */
+        unOccurrenceAdded(listener: (event: api.form.OccurrenceAddedEvent)=>void);
+
+        /*
+         * Is only invoked if InputTypeView is not managing add.
+         */
+        unOccurrenceRemoved(listener: (event: api.form.OccurrenceRemovedEvent)=>void)
 
         /*
          * Invoked when input wants to edit embedded content
          */
-        addEditContentRequestListener(listener:(content:api.content.ContentSummary) => void);
+        addEditContentRequestListener(listener: (content: api.content.ContentSummary) => void);
 
         /*
          * Invoked when input wants to edit embedded content
          */
-        removeEditContentRequestListener(listener: (content:api.content.ContentSummary) => void);
+        removeEditContentRequestListener(listener: (content: api.content.ContentSummary) => void);
 
         /*
          * Returns true if focus was successfully given.
          */
         giveFocus(): boolean;
 
-        validate(silent:boolean) : InputValidationRecording;
+        validate(silent: boolean) : InputValidationRecording;
 
-        onValidityChanged(listener:(event:InputValidityChangedEvent)=>void);
+        onValidityChanged(listener: (event: InputValidityChangedEvent)=>void);
 
-        unValidityChanged(listener:(event:InputValidityChangedEvent)=>void);
+        unValidityChanged(listener: (event: InputValidityChangedEvent)=>void);
     }
 }

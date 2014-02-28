@@ -133,30 +133,28 @@ module app.contextwindow.image {
             comboBox.addSelectedOptionRemovedListener(()=> {
                 this.selectedOption = null;
             });
-            comboBox.addListener({
-                onInputValueChanged: (oldValue, newValue, grid) => {
-                    contentSummaryLoader.search(newValue);
-                },
-                onOptionSelected: (item: api.ui.combobox.Option<api.content.ContentSummary>) => {
-                    //TODO: Mocked live use of image
-                    var iconUrl = item.displayValue.getIconUrl();
-                    this.selectedOption = item;
-                    this.liveEditWindow.LiveEdit.component.dragdropsort.EmptyComponent.loadComponent('10070', this.liveEditIndex, iconUrl);
-                    this.liveEditItems[this.liveEditIndex] = item.displayValue;
-                    this.itemSelected();
-                    this.liveEditIndex++;
-                }
-            });
 
+            comboBox.onValueChanged((event: api.ui.combobox.ComboBoxValueChangedEvent<api.content.ContentSummary>) => {
+                contentSummaryLoader.search(event.getNewValue());
+            });
+            comboBox.onOptionSelected((event: api.ui.combobox.ComboBoxOptionSelectedEvent<api.content.ContentSummary>) => {
+                //TODO: Mocked live use of image
+                var iconUrl = event.getItem().displayValue.getIconUrl();
+                this.selectedOption = event.getItem();
+                this.liveEditWindow.LiveEdit.component.dragdropsort.EmptyComponent.loadComponent('10070', this.liveEditIndex, iconUrl);
+                this.liveEditItems[this.liveEditIndex] = event.getItem().displayValue;
+                this.itemSelected();
+                this.liveEditIndex++;
+            });
             var contentSummaryLoader = new api.form.inputtype.content.ContentSummaryLoader();
             contentSummaryLoader.setAllowedContentTypes(["image"]);
-            contentSummaryLoader.onLoadingData((event:LoadingDataEvent) => {
-                    comboBox.setLabel("Searching...");
-                });
-            contentSummaryLoader.onLoadedData((event:LoadedDataEvent<api.content.ContentSummary>) => {
-                    var options = this.createOptions(event.getData());
-                    comboBox.setOptions(options);
-                });
+            contentSummaryLoader.onLoadingData((event: LoadingDataEvent) => {
+                comboBox.setLabel("Searching...");
+            });
+            contentSummaryLoader.onLoadedData((event: LoadedDataEvent<api.content.ContentSummary>) => {
+                var options = this.createOptions(event.getData());
+                comboBox.setOptions(options);
+            });
 
             contentSummaryLoader.search("");
 

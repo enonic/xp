@@ -9,29 +9,31 @@ module api.ui {
         browseEnabled?: boolean;
     }
 
-    export class ImageUploader extends api.dom.FormInputEl implements api.event.Observable {
+    export class ImageUploader extends api.dom.FormInputEl {
 
-        private name:string;
-        private value:string;
-        private uploadUrl:string;
+        private name: string;
+        private value: string;
+        private uploadUrl: string;
         private uploader;
 
-        private input:api.ui.TextInput;
-        private dropzone:api.dom.DivEl;
-        private progress:api.ui.ProgressBar;
-        private cancelBtn:api.ui.Button;
-        private image:api.dom.ImgEl;
-        private resetBtn:api.ui.Button;
+        private input: api.ui.TextInput;
+        private dropzone: api.dom.DivEl;
+        private progress: api.ui.ProgressBar;
+        private cancelBtn: api.ui.Button;
+        private image: api.dom.ImgEl;
+        private resetBtn: api.ui.Button;
 
-        private multiSelection:boolean;
-        private buttonsVisible:boolean;
-        private showImageAfterUpload:boolean;
-        private maximumOccurrences:number;
-        private browseEnabled:boolean;
+        private multiSelection: boolean;
+        private buttonsVisible: boolean;
+        private showImageAfterUpload: boolean;
+        private maximumOccurrences: number;
+        private browseEnabled: boolean;
 
-        private listeners:ImageUploaderListener[] = [];
+        private imageUploadedListeners: {(event: ImageUploadedEvent):void}[] = [];
 
-        constructor(name:string, uploadUrl:string, config:ImageUploaderConfig = {}) {
+        private imageUploadCompleteListeners: {():void}[] = [];
+
+        constructor(name: string, uploadUrl: string, config: ImageUploaderConfig = {}) {
             super("div", "image-uploader");
             this.name = name;
             this.uploadUrl = uploadUrl;
@@ -96,18 +98,18 @@ module api.ui {
             });
         }
 
-        getName():string {
+        getName(): string {
             return this.name;
         }
 
-        getValue():string {
+        getValue(): string {
             return this.value;
         }
 
-        setValue(value:string) {
+        setValue(value: string) {
             this.value = value;
-            var src:string;
-            if( value && value.indexOf("http://") == -1 ) {
+            var src: string;
+            if (value && value.indexOf("http://") == -1) {
                 src = api.util.getAdminUri(value ? 'rest/blob/' + value : 'common/images/x-user-photo.png');
             } else {
                 src = value;
@@ -115,7 +117,7 @@ module api.ui {
             this.image.getEl().setSrc(src);
         }
 
-        setMaximumOccurrences(value:number) {
+        setMaximumOccurrences(value: number) {
             this.maximumOccurrences = value;
         }
 
@@ -132,24 +134,24 @@ module api.ui {
             this.setValue(undefined);
         }
 
-        private setDropzoneVisible(visible:boolean) {
+        private setDropzoneVisible(visible: boolean) {
             if (this.input) {
                 this.input.setVisible(visible);
             }
             this.dropzone.setVisible(visible);
         }
 
-        private setProgressVisible(visible:boolean) {
+        private setProgressVisible(visible: boolean) {
             this.progress.setVisible(visible);
             this.cancelBtn.setVisible(visible && this.buttonsVisible);
         }
 
-        private setImageVisible(visible:boolean) {
+        private setImageVisible(visible: boolean) {
             this.image.setVisible(visible);
             this.resetBtn.setVisible(visible && this.buttonsVisible);
         }
 
-        private initUploader(elId:string) {
+        private initUploader(elId: string) {
 
             if (!plupload) {
                 throw new Error("ImageUploader: plupload not found, check if it is included in page.");
@@ -206,20 +208,20 @@ module api.ui {
                 //console.log('uploader file uploaded', up, file, response);
 
                 if (response && response.status === 200) {
-                    var responseObj:any = Ext.decode(response.response);
+                    var responseObj: any = Ext.decode(response.response);
 
                     if (responseObj.items && responseObj.items.length > 0) {
                         file = responseObj.items[0];
 
                         this.setValue(file.id);
 
-                        var uploadItem:UploadItem = new UploadItemBuilder().
+                        var uploadItem: UploadItem = new UploadItemBuilder().
                             setId(file.id).
                             setName(file.name).
                             setMimeType(file.mimeType).
                             setSize(file.size).
                             build();
-                        this.notifyFileUploaded(uploadItem);
+                        this.notifyImageUploaded(uploadItem);
                     }
                 }
 
@@ -233,7 +235,7 @@ module api.ui {
                     this.setImageVisible(true);
                 }
 
-                this.notifyUploadComplete();
+                this.notifyImageUploadComplete();
 
                 if (this.uploader.files.length > 0) {
                     this.uploader.splice();
@@ -245,29 +247,35 @@ module api.ui {
             return uploader;
         }
 
-        addListener(listener:ImageUploaderListener) {
-            this.listeners.push(listener);
+        onImageUploaded(listener: (event: ImageUploadedEvent)=>void) {
+            this.imageUploadedListeners.push(listener);
         }
 
-        removeListener(listener:ImageUploaderListener) {
-            this.listeners = this.listeners.filter(function (curr) {
-                return curr != listener;
+        unImageUploaded(listener: (event: ImageUploadedEvent)=>void) {
+            this.imageUploadedListeners = this.imageUploadedListeners.filter((currentListener: (event: ImageUploadedEvent)=>void) => {
+                return listener != currentListener;
+            })
+        }
+
+        onImageUploadComplete(listener: ()=>void) {
+            this.imageUploadCompleteListeners.push(listener);
+        }
+
+        unImageUploadComplete(listener: ()=>void) {
+            this.imageUploadCompleteListeners = this.imageUploadCompleteListeners.filter((currentListener: ()=>void) => {
+                return listener != currentListener;
             });
         }
 
-        private notifyFileUploaded(uploadItem:UploadItem) {
-            this.listeners.forEach((listener:ImageUploaderListener) => {
-                if (listener.onFileUploaded) {
-                    listener.onFileUploaded(uploadItem);
-                }
+        private notifyImageUploaded(uploadItem: UploadItem) {
+            this.imageUploadedListeners.forEach((listener: (event: ImageUploadedEvent)=>void) => {
+                listener.call(this, new ImageUploadedEvent(uploadItem));
             });
         }
 
-        private notifyUploadComplete() {
-            this.listeners.forEach((listener:ImageUploaderListener) => {
-                if (listener.onUploadComplete) {
-                    listener.onUploadComplete();
-                }
+        private notifyImageUploadComplete() {
+            this.imageUploadCompleteListeners.forEach((listener: ()=>void) => {
+                listener.call(this);
             });
         }
     }

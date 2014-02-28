@@ -49,49 +49,44 @@ module app.browse.filter {
 
             this.resetFacets(true);
 
-            this.addListener(
-                {
-                    onReset: ()=> {
-                        this.resetFacets();
-                    },
+            this.onReset(()=> {
+                this.resetFacets();
+            });
 
-                    onSearch: (searchInputValues: SearchInputValues, elementChanged?: api.dom.Element)=> {
+            this.onSearch((event: api.app.browse.filter.SearchEvent)=> {
 
-                        var isClean = !this.hasFilterSet();
-                        if (isClean) {
-                            this.reset();
-                            return;
-                        }
-
-                        var contentQuery: ContentQuery = new ContentQuery();
-                        this.appendFulltextSearch(searchInputValues, contentQuery);
-                        this.appendContentTypeFilter(searchInputValues, contentQuery);
-
-                        var lastModifiedFilter: api.query.filter.Filter = this.appendLastModifiedQuery(searchInputValues);
-                        if (lastModifiedFilter != null) {
-                            contentQuery.addQueryFilter(lastModifiedFilter);
-                        }
-
-                        this.appendContentTypesAggregation(contentQuery);
-                        this.appendLastModifiedAggregation(contentQuery);
-
-                        new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).
-                            setExpand(api.rest.Expand.SUMMARY).
-                            sendAndParse().done((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
-
-                                var doUpdateAll = true;
-
-                                if (elementChanged instanceof api.aggregation.BucketView) {
-                                    doUpdateAll = false;
-                                }
-
-                                this.updateAggregations(contentQueryResult.getAggregations(), doUpdateAll);
-
-                                new ContentBrowseSearchEvent(contentQueryResult.getContentsAsJson()).fire();
-                            });
-                    }
+                var isClean = !this.hasFilterSet();
+                if (isClean) {
+                    this.reset();
+                    return;
                 }
-            );
+
+                var contentQuery: ContentQuery = new ContentQuery();
+                this.appendFulltextSearch(event.getSearchInputValues(), contentQuery);
+                this.appendContentTypeFilter(event.getSearchInputValues(), contentQuery);
+
+                var lastModifiedFilter: api.query.filter.Filter = this.appendLastModifiedQuery(event.getSearchInputValues());
+                if (lastModifiedFilter != null) {
+                    contentQuery.addQueryFilter(lastModifiedFilter);
+                }
+
+                this.appendContentTypesAggregation(contentQuery);
+                this.appendLastModifiedAggregation(contentQuery);
+
+                new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).
+                    setExpand(api.rest.Expand.SUMMARY).
+                    sendAndParse().done((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
+
+                        var doUpdateAll = true;
+                        if (event.getElementChanged() instanceof api.aggregation.BucketView) {
+                            doUpdateAll = false;
+                        }
+
+                        this.updateAggregations(contentQueryResult.getAggregations(), doUpdateAll);
+
+                        new ContentBrowseSearchEvent(contentQueryResult.getContentsAsJson()).fire();
+                    });
+            });
         }
 
         private loadAndSetContentTypeDisplayNames(aggregationGroupView: AggregationGroupView) {

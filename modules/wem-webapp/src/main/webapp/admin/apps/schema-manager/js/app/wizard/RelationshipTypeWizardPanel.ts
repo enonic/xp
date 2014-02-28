@@ -31,14 +31,11 @@ module app.wizard {
                 "Click to upload icon",
                 api.util.getRestUri("blob/upload"));
 
-            this.formIcon.addListener({
-                onUploadStarted: null,
-                onUploadFinished: (uploadItem: api.ui.UploadItem) => {
-                    this.relationshipTypeIcon = new api.icon.IconBuilder().
-                        setBlobKey(uploadItem.getBlobKey()).setMimeType(uploadItem.getMimeType()).build();
+            this.formIcon.onUploadFinished((event: api.app.wizard.UploadFinishedEvent) => {
+                this.relationshipTypeIcon = new api.icon.IconBuilder().
+                    setBlobKey(event.getUploadItem().getBlobKey()).setMimeType(event.getUploadItem().getMimeType()).build();
 
-                    this.formIcon.setSrc(api.util.getRestUri('blob/' + this.relationshipTypeIcon.getBlobKey()));
-                }
+                this.formIcon.setSrc(api.util.getRestUri('blob/' + this.relationshipTypeIcon.getBlobKey()));
             });
 
             var actions = new RelationshipTypeWizardActions(this);
@@ -105,7 +102,7 @@ module app.wizard {
                 new api.schema.SchemaCreatedEvent(relationshipType).fire();
 
                 deferred.resolve(relationshipType);
-            }).catch((error:api.rest.RequestError)=> {
+            }).catch((error: api.rest.RequestError)=> {
                     deferred.reject(error);
                 }).done();
 

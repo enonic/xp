@@ -15,7 +15,7 @@ module api.app.wizard {
 
     }
 
-    export class WizardHeaderWithDisplayNameAndName extends WizardHeader implements api.event.Observable {
+    export class WizardHeaderWithDisplayNameAndName extends WizardHeader {
 
         private displayNameGenerator: DisplayNameGenerator;
 
@@ -38,10 +38,8 @@ module api.app.wizard {
 
             this.displayNameEl = api.ui.AutosizeTextInput.large().setName('displayName');
             this.displayNameEl.setPlaceholder("Display Name");
-            this.displayNameEl.addListener({
-                onValueChanged: (oldValue, newValue) => {
-                    this.notifyPropertyChanged("displayName", oldValue, newValue);
-                }
+            this.displayNameEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
+                this.notifyPropertyChanged("displayName", event.getOldValue(), event.getNewValue());
             });
             this.appendChild(this.displayNameEl);
 
@@ -51,10 +49,8 @@ module api.app.wizard {
 
             this.nameEl = api.ui.AutosizeTextInput.middle().setName('name').setForbiddenCharsRe(this.forbiddenChars);
             this.nameEl.setPlaceholder("name");
-            this.nameEl.addListener({
-                onValueChanged: (oldValue, newValue) => {
-                    this.notifyPropertyChanged("name", oldValue, newValue);
-                }
+            this.nameEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
+                this.notifyPropertyChanged("name", event.getOldValue(), event.getNewValue());
             });
             this.appendChild(this.nameEl);
 
@@ -67,9 +63,6 @@ module api.app.wizard {
 
                     this.displayNameProgrammaticallySet =
                     generatedDisplayName == actualDisplayName || api.util.isStringEmpty(actualDisplayName);
-//                    console.log("*** DisplayName manually changed to [" + actualDisplayName + "] - generated is [" + generatedDisplayName +
-//                                "], this.displayNameProgrammaticallySet = " +
-//                                this.displayNameProgrammaticallySet);
                 }
                 this.doAutoGenerateName(actualDisplayName);
             });

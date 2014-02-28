@@ -58,10 +58,8 @@ module api.form.inputtype.support {
             var inputOccurrenceView: InputOccurrenceView = new InputOccurrenceView(occurrence, this.baseInputTypeView, property);
 
             var inputOccurrences: InputOccurrences = this;
-            inputOccurrenceView.addListener(<api.form.FormItemOccurrenceViewListener>{
-                onRemoveButtonClicked: (toBeRemoved: InputOccurrenceView, index: number) => {
-                    inputOccurrences.doRemoveOccurrence(toBeRemoved, index);
-                }
+            inputOccurrenceView.onRemoveButtonClicked((event: api.form.RemoveButtonClickedEvent<InputOccurrenceView>) => {
+                inputOccurrences.doRemoveOccurrence(event.getView(), event.getIndex());
             });
             return inputOccurrenceView;
         }

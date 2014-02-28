@@ -12,7 +12,9 @@ module api.form {
 
         private allowedOccurrences: Occurrences;
 
-        private listeners: FormItemOccurrencesListener[] = [];
+        private occurrenceAddedListeners: {(event: OccurrenceAddedEvent):void}[] = [];
+
+        private occurrenceRemovedListeners: {(event: OccurrenceRemovedEvent):void}[] = [];
 
         constructor(formItem: FormItem, occurrenceViewContainer: api.dom.Element, allowedOccurrences?: Occurrences) {
             this.formItem = formItem;
@@ -24,25 +26,36 @@ module api.form {
             throw new Error("Must be implemented by inheritor");
         }
 
-        addListener(listener: FormItemOccurrencesListener) {
-            this.listeners.push(listener);
+        onOccurrenceAdded(listener: (event: OccurrenceAddedEvent)=>void) {
+            this.occurrenceAddedListeners.push(listener);
         }
 
-        removeListener(listener: FormItemOccurrencesListener) {
-            this.listeners = this.listeners.filter(function (curr) {
-                return curr != listener;
+        onOccurrenceRemoved(listener: (event: OccurrenceRemovedEvent)=>void) {
+            this.occurrenceRemovedListeners.push(listener);
+        }
+
+        unOccurrenceAdded(listener: (event: OccurrenceAddedEvent)=>void) {
+            this.occurrenceAddedListeners = this.occurrenceAddedListeners.filter((currentListener: (event: OccurrenceAddedEvent)=>void)=> {
+                return listener != currentListener;
+            });
+        }
+
+        unOccurrenceRemoved(listener: (event: OccurrenceRemovedEvent)=>void) {
+            this.occurrenceRemovedListeners =
+            this.occurrenceRemovedListeners.filter((currentListener: (event: OccurrenceRemovedEvent)=>void)=> {
+                return listener != currentListener;
             });
         }
 
         private notifyOccurrenceAdded(occurrence: FormItemOccurrence<V>, occurrenceView:V) {
-            this.listeners.forEach((listener: FormItemOccurrencesListener) => {
-                listener.onOccurrenceAdded(occurrence, occurrenceView);
+            this.occurrenceAddedListeners.forEach((listener: (event: OccurrenceAddedEvent)=>void)=> {
+                listener.call(this, new OccurrenceAddedEvent(occurrence, occurrenceView))
             });
         }
 
         private notifyOccurrenceRemoved(occurrence: FormItemOccurrence<V>, occurrenceView:V) {
-            this.listeners.forEach((listener: FormItemOccurrencesListener) => {
-                listener.onOccurrenceRemoved(occurrence, occurrenceView);
+            this.occurrenceRemovedListeners.forEach((listener: (event: OccurrenceRemovedEvent)=>void)=> {
+                listener.call(this, new OccurrenceRemovedEvent(occurrence, occurrenceView))
             });
         }
 

@@ -1,18 +1,23 @@
 module app.launcher {
 
-    export class LostConnectionDetector implements api.event.Observable {
+    export class LostConnectionDetector {
 
-        private intervalId:number = -1;
-        private pollIntervalMs:number;
+        private intervalId: number = -1;
+        private pollIntervalMs: number;
 
-        private connected:boolean = true;
+        private connected: boolean = true;
 
-        private listeners:LostConnectionDetectorListener[] = [];
+        private connectionLostListeners: {():void}[] = [];
 
-        constructor(pollIntervalMs:number = 5000) {
+        private connectionRestoredListeners: {():void}[] = [];
+
+        constructor(pollIntervalMs: number = 5000) {
             this.pollIntervalMs = pollIntervalMs;
 
-            this.addListener(api.app.AppManager.instance());
+            var managerInstance = api.app.AppManager.instance();
+
+            this.onConnectionLost(managerInstance.notifyConnectionLost);
+            this.onConnectionRestored(managerInstance.notifyConnectionRestored);
         }
 
         startPolling() {
@@ -49,29 +54,35 @@ module app.launcher {
             xhr.send(null);
         }
 
-        addListener(listener:LostConnectionDetectorListener) {
-            this.listeners.push(listener);
+        onConnectionLost(listener: ()=>void) {
+            this.connectionLostListeners.push(listener);
         }
 
-        removeListener(listener:LostConnectionDetectorListener) {
-            this.listeners = this.listeners.filter(function (curr) {
-                return curr !== listener;
+        onConnectionRestored(listener: ()=>void) {
+            this.connectionRestoredListeners.push(listener);
+        }
+
+        unConnectionLost(listener: ()=>void) {
+            this.connectionLostListeners = this.connectionLostListeners.filter((currentListener: ()=>void) => {
+                return currentListener != listener;
             });
         }
 
+        unConnectionRestored(listener: ()=>void) {
+            this.connectionRestoredListeners = this.connectionRestoredListeners.filter((currentListener: ()=>void) => {
+                return currentListener != listener;
+            })
+        }
+
         private notifyConnectionLost() {
-            this.listeners.forEach((listener:LostConnectionDetectorListener) => {
-                if (listener.onConnectionLost) {
-                    listener.onConnectionLost();
-                }
+            this.connectionLostListeners.forEach((listener: ()=>void) => {
+                listener.call(this);
             });
         }
 
         private notifyConnectionRestored() {
-            this.listeners.forEach((listener:LostConnectionDetectorListener) => {
-                if (listener.onConnectionRestored) {
-                    listener.onConnectionRestored();
-                }
+            this.connectionRestoredListeners.forEach((listener: ()=>void) => {
+                listener.call(this);
             });
         }
     }

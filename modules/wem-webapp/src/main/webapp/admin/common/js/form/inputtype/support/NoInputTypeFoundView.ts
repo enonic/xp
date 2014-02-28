@@ -6,7 +6,7 @@ module api.form.input.support {
             super(config);
         }
 
-        layout(input:api.form.Input, properties?:api.data.Property[]) {
+        layout(input: api.form.Input, properties?: api.data.Property[]) {
 
             var divEl = new api.dom.DivEl();
             divEl.getEl().setInnerHtml("Warning: no input type found: " + input.getInputType().toString());
@@ -14,7 +14,7 @@ module api.form.input.support {
             super.layout(input, properties);
         }
 
-        createInputOccurrenceElement(index:number, property:api.data.Property):api.dom.Element {
+        createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
 
             var inputEl = api.ui.TextInput.middle();
             inputEl.setName(this.getInput().getName());
@@ -26,10 +26,9 @@ module api.form.input.support {
 
         addOnValueChangedListener(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
             var inputEl = <api.ui.TextInput>element;
-            inputEl.addListener({
-                onValueChanged: (oldValue: string, newValue: string) => {
-                    listener(new api.form.inputtype.support.ValueChangedEvent(this.newValue(oldValue), this.newValue(newValue)));
-                }
+            inputEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
+                listener(new api.form.inputtype.support.ValueChangedEvent(this.newValue(event.getOldValue()),
+                    this.newValue(event.getNewValue())));
             });
         }
 
@@ -37,12 +36,12 @@ module api.form.input.support {
             return new api.data.Value(s, api.data.ValueTypes.STRING);
         }
 
-        getValue(occurrence:api.dom.Element):api.data.Value {
+        getValue(occurrence: api.dom.Element): api.data.Value {
             var inputEl = <api.ui.TextInput>occurrence;
             return this.newValue(inputEl.getValue());
         }
 
-        valueBreaksRequiredContract(value:api.data.Value):boolean {
+        valueBreaksRequiredContract(value: api.data.Value): boolean {
             if (value == null) {
                 return true;
             }

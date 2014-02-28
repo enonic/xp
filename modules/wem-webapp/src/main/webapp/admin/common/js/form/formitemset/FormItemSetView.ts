@@ -54,25 +54,22 @@ module api.form.formitemset {
             this.formItemSetOccurrences.layout();
 
             this.validate(true);
-            this.formItemSetOccurrences.addListener(<api.form.FormItemOccurrencesListener>{
-                onOccurrenceAdded: (occurrenceAdded: api.form.FormItemOccurrence<any>, occurrenceViewAdded: FormItemOccurrenceView) => {
-                    this.refresh();
+            this.formItemSetOccurrences.onOccurrenceAdded((event: api.form.OccurrenceAddedEvent) => {
+                this.refresh();
 
-                    if (occurrenceViewAdded instanceof api.form.formitemset.FormItemSetOccurrenceView) {
-                        var addedFormItemSetOccurrenceView = <api.form.formitemset.FormItemSetOccurrenceView>occurrenceViewAdded;
-                        addedFormItemSetOccurrenceView.onValidityChanged((event: api.form.ValidityChangedEvent) => {
-                            this.handleFormItemSetOccurrenceViewValidityChanged(event);
-                        });
-                    }
-                },
-                onOccurrenceRemoved: (occurrenceRemoved: api.form.FormItemOccurrence<any>,
-                                      occurrenceViewRemoved: FormItemOccurrenceView) => {
-                    this.refresh();
+                if (event.getOccurrenceView() instanceof api.form.formitemset.FormItemSetOccurrenceView) {
+                    var addedFormItemSetOccurrenceView = <api.form.formitemset.FormItemSetOccurrenceView>event.getOccurrenceView();
+                    addedFormItemSetOccurrenceView.onValidityChanged((event: api.form.ValidityChangedEvent) => {
+                        this.handleFormItemSetOccurrenceViewValidityChanged(event);
+                    });
+                }
+            });
+            this.formItemSetOccurrences.onOccurrenceRemoved((event: api.form.OccurrenceRemovedEvent) => {
+                this.refresh();
 
-                    if (occurrenceViewRemoved instanceof api.form.formitemset.FormItemSetOccurrenceView) {
-                        // force validate, since FormItemSet might have become invalid
-                        this.validate(false);
-                    }
+                if (event.getOccurrenceView() instanceof api.form.formitemset.FormItemSetOccurrenceView) {
+                    // force validate, since FormItemSet might have become invalid
+                    this.validate(false);
                 }
             });
 
@@ -246,13 +243,13 @@ module api.form.formitemset {
         private notifyValidityChanged(event: api.form.ValidityChangedEvent) {
 
             /*console.log("FormItemSetView[ " + event.getOrigin().toString() + " ] validity changed");
-            if (event.getRecording().isValid()) {
-                console.log(" valid!");
-            }
-            else {
-                console.log(" invalid: ");
-                event.getRecording().print();
-            }*/
+             if (event.getRecording().isValid()) {
+             console.log(" valid!");
+             }
+             else {
+             console.log(" invalid: ");
+             event.getRecording().print();
+             }*/
 
             this.validityChangedListeners.forEach((listener: (event: api.form.ValidityChangedEvent)=>void) => {
                 listener(event);

@@ -2,9 +2,9 @@ module app.create {
 
     export class NewSchemaDialog extends api.ui.dialog.ModalDialog {
 
-        private schemaTypesList:SchemaTypesList;
+        private schemaTypesList: SchemaTypesList;
 
-        private schemaTypeListItems:SchemaTypeListItem[] = [
+        private schemaTypeListItems: SchemaTypeListItem[] = [
             {
                 type: api.schema.SchemaKind.CONTENT_TYPE,
                 displayName: 'Content Type',
@@ -37,11 +37,9 @@ module app.create {
                 this.close();
             });
 
-            this.schemaTypesList.addListener({
-                onSelected: (selectedItem:SchemaTypeListItem) => {
-                    this.close();
-                    new NewSchemaEvent(selectedItem.type).fire();
-                }
+            this.schemaTypesList.onSelected((event: app.create.ItemSelectedEvent) => {
+                this.close();
+                new NewSchemaEvent(event.getSchemaType().type).fire();
             });
 
             api.dom.Body.get().appendChild(this);

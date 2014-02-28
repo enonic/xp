@@ -65,10 +65,8 @@ module api.form.formitemset {
             var dataSet: api.data.DataSet = this.dataSets != null ? this.dataSets[occurrence.getIndex()] : null;
             var newOccurrenceView: FormItemSetOccurrenceView = new FormItemSetOccurrenceView(this.context, occurrence, this.formItemSet,
                 this.parent, dataSet);
-            newOccurrenceView.addListener(<api.form.FormItemOccurrenceViewListener>{
-                onRemoveButtonClicked: (toBeRemoved: FormItemSetOccurrenceView, index: number) => {
-                    formItemSetOccurrences.doRemoveOccurrence(toBeRemoved, index);
-                }
+            newOccurrenceView.onRemoveButtonClicked((event: RemoveButtonClickedEvent<FormItemSetOccurrenceView>) => {
+                formItemSetOccurrences.doRemoveOccurrence(event.getView(), event.getIndex());
             });
             this.formItemSetOccurrenceViews.push(newOccurrenceView);
             return newOccurrenceView;
