@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import com.enonic.wem.api.module.CreateModuleSpec;
+import com.enonic.wem.api.module.CreateModuleParams;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleFileEntry;
 import com.enonic.wem.api.module.ModuleKey;
@@ -13,7 +13,7 @@ import com.enonic.wem.util.Exceptions;
 
 final class CreateModuleCommand
 {
-    private CreateModuleSpec spec;
+    private CreateModuleParams params;
 
     private SystemConfig systemConfig;
 
@@ -21,7 +21,7 @@ final class CreateModuleCommand
 
     public Module execute()
     {
-        this.spec.validate();
+        this.params.validate();
         
         try
         {
@@ -36,21 +36,21 @@ final class CreateModuleCommand
     private Module doExecute()
         throws IOException
     {
-        final ModuleKey moduleKey = ModuleKey.from( spec.getName(), spec.getVersion() );
+        final ModuleKey moduleKey = ModuleKey.from( params.getName(), params.getVersion() );
         final Module.Builder moduleBuilder = Module.newModule().
             moduleKey( moduleKey ).
-            displayName( spec.getDisplayName() ).
-            info( spec.getInfo() ).
-            url( spec.getUrl() ).
-            vendorName( spec.getVendorName() ).
-            vendorUrl( spec.getVendorUrl() ).
-            config( spec.getConfig() ).
-            minSystemVersion( spec.getMinSystemVersion() ).
-            maxSystemVersion( spec.getMaxSystemVersion() ).
-            addContentTypeDependencies( spec.getContentTypeDependencies() ).
-            addModuleDependencies( spec.getModuleDependencies() );
+            displayName( params.getDisplayName() ).
+            info( params.getInfo() ).
+            url( params.getUrl() ).
+            vendorName( params.getVendorName() ).
+            vendorUrl( params.getVendorUrl() ).
+            config( params.getConfig() ).
+            minSystemVersion( params.getMinSystemVersion() ).
+            maxSystemVersion( params.getMaxSystemVersion() ).
+            addContentTypeDependencies( params.getContentTypeDependencies() ).
+            addModuleDependencies( params.getModuleDependencies() );
 
-        final ModuleFileEntry moduleDirectoryEntry = spec.getModuleDirectoryEntry();
+        final ModuleFileEntry moduleDirectoryEntry = params.getModuleDirectoryEntry();
         if ( moduleDirectoryEntry != null && moduleDirectoryEntry.isDirectory() && !moduleDirectoryEntry.isEmpty() )
         {
             final ModuleFileEntry.Builder moduleDirectoryBaseEntry = moduleBuilder.getModuleDirectoryEntry();
@@ -68,9 +68,9 @@ final class CreateModuleCommand
         return module;
     }
 
-    public CreateModuleCommand spec( final CreateModuleSpec spec )
+    public CreateModuleCommand params( final CreateModuleParams params )
     {
-        this.spec = spec;
+        this.params = params;
         return this;
     }
 

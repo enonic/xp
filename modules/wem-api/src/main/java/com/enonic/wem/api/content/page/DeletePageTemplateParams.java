@@ -5,12 +5,12 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
 
-public final class DeletePageTemplate
+public final class DeletePageTemplateParams
     extends Command<Boolean>
 {
     private PageTemplateKey key;
 
-    public DeletePageTemplate key( final PageTemplateKey value )
+    public DeletePageTemplateParams key( final PageTemplateKey value )
     {
         this.key = value;
         return this;

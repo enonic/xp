@@ -1,17 +1,16 @@
-package com.enonic.wem.api.content.page.layout;
+package com.enonic.wem.api.content.page;
 
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.region.RegionDescriptors;
 import com.enonic.wem.api.form.Form;
 
-public class CreateLayoutDescriptor
-    extends Command<LayoutDescriptor>
+public class CreatePageDescriptorParams
+    extends Command<PageDescriptor>
 {
-    private LayoutDescriptorKey key;
+    private PageDescriptorKey key;
 
     private ComponentDescriptorName name;
 
@@ -21,41 +20,47 @@ public class CreateLayoutDescriptor
 
     private RegionDescriptors regions;
 
-    public CreateLayoutDescriptor()
+    public CreatePageDescriptorParams()
     {
     }
 
-    public CreateLayoutDescriptor key( final LayoutDescriptorKey key )
+    public CreatePageDescriptorParams key( final PageDescriptorKey key )
     {
         this.key = key;
         return this;
     }
 
-    public CreateLayoutDescriptor name( final ComponentDescriptorName name )
+    public CreatePageDescriptorParams name( final ComponentDescriptorName name )
     {
         this.name = name;
         return this;
     }
 
-    public CreateLayoutDescriptor displayName( final String displayName )
+    public CreatePageDescriptorParams name( final String name )
+    {
+        this.name = new ComponentDescriptorName( name );
+        return this;
+    }
+
+    public CreatePageDescriptorParams displayName( final String displayName )
     {
         this.displayName = displayName;
         return this;
     }
 
-    public CreateLayoutDescriptor config( final Form config )
+    public CreatePageDescriptorParams config( final Form config )
     {
         this.config = config;
         return this;
     }
 
-    public CreateLayoutDescriptor regions( final RegionDescriptors value )
+    public CreatePageDescriptorParams regions( final RegionDescriptors value )
     {
         this.regions = value;
         return this;
     }
 
-    public LayoutDescriptorKey getKey()
+    public PageDescriptorKey getKey()
     {
         return key;
     }
@@ -86,7 +91,7 @@ public class CreateLayoutDescriptor
         Preconditions.checkNotNull( key, "key is required" );
         Preconditions.checkNotNull( name, "name is required" );
         Preconditions.checkNotNull( displayName, "displayName is required" );
-        Preconditions.checkNotNull( config, "config cannot be null" );
-        Preconditions.checkNotNull( regions, "regions cannot be null" );
+        Preconditions.checkNotNull( regions, "regions are required" );
+        Preconditions.checkNotNull( config, "config is required" );
     }
 }

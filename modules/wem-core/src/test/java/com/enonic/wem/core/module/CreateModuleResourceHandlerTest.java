@@ -14,7 +14,7 @@ import com.enonic.wem.api.command.module.CreateModuleResource;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.module.CreateModuleSpec;
+import com.enonic.wem.api.module.CreateModuleParams;
 import com.enonic.wem.api.module.ModuleFileEntry;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
@@ -121,7 +121,7 @@ public class CreateModuleResourceHandlerTest
         final ModuleFileEntry moduleDirectoryEntry = ModuleFileEntry.newModuleDirectory( "" ).
             addEntry( directoryBuilder.addEntry( subDirectory ) ).
             build();
-        final CreateModuleSpec spec = new CreateModuleSpec().
+        final CreateModuleParams params = new CreateModuleParams().
             name( "modulename" ).
             version( ModuleVersion.from( 1, 0, 0 ) ).
             displayName( "module display name" ).
@@ -139,7 +139,7 @@ public class CreateModuleResourceHandlerTest
         final CreateModuleCommand createModuleHandler = new CreateModuleCommand();
         createModuleHandler.systemConfig( systemConfig );
         createModuleHandler.moduleExporter( new ModuleExporter() );
-        createModuleHandler.spec( spec );
+        createModuleHandler.params( params );
         createModuleHandler.execute();
     }
 }

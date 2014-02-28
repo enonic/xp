@@ -3,7 +3,7 @@ package com.enonic.wem.core.content.page;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.content.page.CreatePageDescriptor;
+import com.enonic.wem.api.content.page.CreatePageDescriptorParams;
 import com.enonic.wem.api.content.page.GetPageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
@@ -21,8 +21,8 @@ public class PageDescriptorServiceImpl
         return client.execute( command );
     }
 
-    public PageDescriptor create( final CreatePageDescriptor command )
+    public PageDescriptor create( final CreatePageDescriptorParams params )
     {
-        return client.execute( command );
+        return client.execute( params );
     }
 }

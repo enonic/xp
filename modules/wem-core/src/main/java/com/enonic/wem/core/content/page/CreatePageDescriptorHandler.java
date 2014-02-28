@@ -1,6 +1,6 @@
 package com.enonic.wem.core.content.page;
 
-import com.enonic.wem.api.content.page.CreatePageDescriptor;
+import com.enonic.wem.api.content.page.CreatePageDescriptorParams;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorXml;
 import com.enonic.wem.api.module.ModuleResourceKey;
@@ -13,7 +13,7 @@ import static com.enonic.wem.api.content.page.PageDescriptor.newPageDescriptor;
 import static com.enonic.wem.api.resource.Resource.newResource;
 
 public class CreatePageDescriptorHandler
-    extends CommandHandler<CreatePageDescriptor>
+    extends CommandHandler<CreatePageDescriptorParams>
 {
     @Override
     public void handle()

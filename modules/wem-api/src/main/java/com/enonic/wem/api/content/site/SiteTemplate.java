@@ -6,13 +6,13 @@ import java.util.LinkedHashMap;
 import com.enonic.wem.api.Identity;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
-import com.enonic.wem.api.content.page.PageTemplateSpec;
+import com.enonic.wem.api.content.page.PageTemplateParams;
 import com.enonic.wem.api.content.page.PageTemplates;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.schema.content.ContentTypeFilter;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
-import static com.enonic.wem.api.content.page.PageTemplateSpec.newPageTemplateSpec;
+import static com.enonic.wem.api.content.page.PageTemplateParams.newPageTemplateParams;
 
 public final class SiteTemplate
     implements Identity<SiteTemplateKey, SiteTemplateName>
@@ -109,8 +109,8 @@ public final class SiteTemplate
 
     public PageTemplate getDefaultPageTemplate( final ContentTypeName contentType )
     {
-        final PageTemplateSpec spec = newPageTemplateSpec().canRender( contentType ).build();
-        return pageTemplates.filter( spec ).first();
+        final PageTemplateParams params = newPageTemplateParams().canRender( contentType ).build();
+        return pageTemplates.filter( params ).first();
     }
 
     public static Builder newSiteTemplate()

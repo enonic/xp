@@ -5,19 +5,19 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.resource.Resource;
 
-public final class CreateModuleResourceSpec
+public final class CreateModuleResourceParams
 {
     private ModuleResourceKey resourceKey;
 
     private Resource resource;
 
-    public CreateModuleResourceSpec resourceKey( final ModuleResourceKey value )
+    public CreateModuleResourceParams resourceKey( final ModuleResourceKey value )
     {
         this.resourceKey = value;
         return this;
     }
 
-    public CreateModuleResourceSpec resource( final Resource resource )
+    public CreateModuleResourceParams resource( final Resource resource )
     {
         this.resource = resource;
         return this;

@@ -1,6 +1,6 @@
 package com.enonic.wem.core.content.page.layout;
 
-import com.enonic.wem.api.content.page.layout.CreateLayoutDescriptor;
+import com.enonic.wem.api.content.page.layout.CreateLayoutDescriptorParams;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorXml;
 import com.enonic.wem.core.command.CommandHandler;
@@ -10,7 +10,7 @@ import com.enonic.wem.xml.XmlSerializers;
 import static com.enonic.wem.api.content.page.layout.LayoutDescriptor.newLayoutDescriptor;
 
 public class CreateLayoutDescriptorHandler
-    extends CommandHandler<CreateLayoutDescriptor>
+    extends CommandHandler<CreateLayoutDescriptorParams>
 {
     @Override
     public void handle()

@@ -3,8 +3,8 @@ package com.enonic.wem.core.content.page;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.content.page.CreatePageTemplate;
-import com.enonic.wem.api.content.page.DeletePageTemplate;
+import com.enonic.wem.api.content.page.CreatePageTemplateParams;
+import com.enonic.wem.api.content.page.DeletePageTemplateParams;
 import com.enonic.wem.api.content.page.GetPageTemplateByKey;
 import com.enonic.wem.api.content.page.GetPageTemplatesBySiteTemplate;
 import com.enonic.wem.api.content.page.PageTemplate;
@@ -19,14 +19,14 @@ public class PageTemplateServiceImpl
     @Inject
     private Client client;
 
-    public PageTemplate create( final CreatePageTemplate command )
+    public PageTemplate create( final CreatePageTemplateParams params )
     {
-        return client.execute( command );
+        return client.execute( params );
     }
 
-    public boolean delete( final DeletePageTemplate command )
+    public boolean delete( final DeletePageTemplateParams params )
     {
-        return client.execute( command );
+        return client.execute( params );
     }
 
     public PageTemplate getByKey( final PageTemplateKey pageTemplateKey, final SiteTemplateKey siteTemplateKey )

@@ -7,7 +7,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.module.CreateModuleResource;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
-import com.enonic.wem.api.content.page.layout.CreateLayoutDescriptor;
+import com.enonic.wem.api.content.page.layout.CreateLayoutDescriptorParams;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
@@ -49,7 +49,7 @@ public class CreateLayoutDescriptorHandlerTest
         final ModuleKey module = ModuleKey.from( "mainmodule-1.0.0" );
         final ComponentDescriptorName descriptorName = new ComponentDescriptorName( "fancy-layout" );
         final LayoutDescriptorKey key = LayoutDescriptorKey.from( module, descriptorName );
-        final CreateLayoutDescriptor command = new CreateLayoutDescriptor().
+        final CreateLayoutDescriptorParams params = new CreateLayoutDescriptorParams().
             key( key ).
             name( descriptorName ).
             displayName( "Fancy layout" ).
@@ -58,9 +58,9 @@ public class CreateLayoutDescriptorHandlerTest
 
         Resource res = Resource.newResource().build();
         Mockito.when( this.client.execute( isA( CreateModuleResource.class ) ) ).thenReturn( res );
-        handler.setCommand( command );
+        handler.setCommand( params );
         handler.handle();
 
-        assertEquals( key, command.getResult().getKey() );
+        assertEquals( key, params.getResult().getKey() );
     }
 }

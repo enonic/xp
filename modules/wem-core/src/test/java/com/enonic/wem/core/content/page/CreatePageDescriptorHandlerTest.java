@@ -7,7 +7,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.module.CreateModuleResource;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
-import com.enonic.wem.api.content.page.CreatePageDescriptor;
+import com.enonic.wem.api.content.page.CreatePageDescriptorParams;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
@@ -47,7 +47,7 @@ public class CreatePageDescriptorHandlerTest
         final ModuleKey module = ModuleKey.from( "mainmodule-1.0.0" );
         final ComponentDescriptorName descriptorName = new ComponentDescriptorName( "landing-page" );
         final PageDescriptorKey key = PageDescriptorKey.from( module, descriptorName );
-        final CreatePageDescriptor command = new CreatePageDescriptor().
+        final CreatePageDescriptorParams params = new CreatePageDescriptorParams().
             key( key ).
             name( descriptorName ).
             regions( newRegionDescriptors().build() ).
@@ -56,9 +56,9 @@ public class CreatePageDescriptorHandlerTest
 
         Resource res = Resource.newResource().build();
         Mockito.when( this.client.execute( isA( CreateModuleResource.class ) ) ).thenReturn( res );
-        handler.setCommand( command );
+        handler.setCommand( params );
         handler.handle();
 
-        assertEquals( key, command.getResult().getKey() );
+        assertEquals( key, params.getResult().getKey() );
     }
 }

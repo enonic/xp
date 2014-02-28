@@ -7,7 +7,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.module.CreateModuleResource;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
-import com.enonic.wem.api.content.page.part.CreatePartDescriptor;
+import com.enonic.wem.api.content.page.part.CreatePartDescriptorParams;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
@@ -48,7 +48,7 @@ public class CreatePartDescriptorHandlerTest
         final ModuleKey module = ModuleKey.from( "mainmodule-1.0.0" );
         final ComponentDescriptorName descriptorName = new ComponentDescriptorName( "news-part" );
         final PartDescriptorKey key = PartDescriptorKey.from( module, descriptorName );
-        final CreatePartDescriptor command = new CreatePartDescriptor().
+        final CreatePartDescriptorParams params = new CreatePartDescriptorParams().
             key( key ).
             name( descriptorName ).
             displayName( "News part" ).
@@ -56,9 +56,9 @@ public class CreatePartDescriptorHandlerTest
 
         Resource res = Resource.newResource().build();
         Mockito.when( this.client.execute( isA( CreateModuleResource.class ) ) ).thenReturn( res );
-        handler.setCommand( command );
+        handler.setCommand( params );
         handler.handle();
 
-        assertEquals( key, command.getResult().getKey() );
+        assertEquals( key, params.getResult().getKey() );
     }
 }

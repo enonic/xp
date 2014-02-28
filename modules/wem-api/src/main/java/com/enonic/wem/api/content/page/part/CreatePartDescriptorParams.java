@@ -1,14 +1,16 @@
-package com.enonic.wem.api.content.page.image;
+package com.enonic.wem.api.content.page.part;
 
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.form.Form;
 
-public final class CreateImageDescriptorSpec
+public class CreatePartDescriptorParams
+    extends Command<PartDescriptor>
 {
-    private ImageDescriptorKey key;
+    private PartDescriptorKey key;
 
     private ComponentDescriptorName name;
 
@@ -16,41 +18,35 @@ public final class CreateImageDescriptorSpec
 
     private Form config;
 
-    public static CreateImageDescriptorSpec fromImageDescriptor( final ImageDescriptor imageDescriptor )
+    public CreatePartDescriptorParams()
     {
-        final CreateImageDescriptorSpec createModule = new CreateImageDescriptorSpec();
-        createModule.key = imageDescriptor.getKey();
-        createModule.name = imageDescriptor.getName();
-        createModule.displayName = imageDescriptor.getDisplayName();
-        createModule.config = imageDescriptor.getConfig();
-        return createModule;
     }
 
-    public CreateImageDescriptorSpec key( final ImageDescriptorKey key )
+    public CreatePartDescriptorParams key( final PartDescriptorKey key )
     {
         this.key = key;
         return this;
     }
 
-    public CreateImageDescriptorSpec name( final ComponentDescriptorName name )
+    public CreatePartDescriptorParams name( final ComponentDescriptorName name )
     {
         this.name = name;
         return this;
     }
 
-    public CreateImageDescriptorSpec displayName( final String displayName )
+    public CreatePartDescriptorParams displayName( final String displayName )
     {
         this.displayName = displayName;
         return this;
     }
 
-    public CreateImageDescriptorSpec config( final Form config )
+    public CreatePartDescriptorParams config( final Form config )
     {
         this.config = config;
         return this;
     }
 
-    public ImageDescriptorKey getKey()
+    public PartDescriptorKey getKey()
     {
         return key;
     }
@@ -70,7 +66,7 @@ public final class CreateImageDescriptorSpec
         return config;
     }
 
-
+    @Override
     public void validate()
     {
         Preconditions.checkNotNull( key, "key is required" );

@@ -7,7 +7,7 @@ import java.nio.file.Path;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.wem.api.module.CreateModuleResourceSpec;
+import com.enonic.wem.api.module.CreateModuleResourceParams;
 import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.resource.Resource;
@@ -19,11 +19,11 @@ final class CreateModuleResourceCommand
 {
     private ModuleResourcePathResolver moduleResourcePathResolver;
 
-    private CreateModuleResourceSpec spec;
+    private CreateModuleResourceParams params;
 
     public Resource execute()
     {
-        this.spec.validate();
+        this.params.validate();
 
         try
         {
@@ -31,14 +31,14 @@ final class CreateModuleResourceCommand
         }
         catch ( IOException e )
         {
-            throw Exceptions.newRutime( "Error creating module resource [{0}]", this.spec.getResourceKey() ).withCause( e );
+            throw Exceptions.newRutime( "Error creating module resource [{0}]", this.params.getResourceKey() ).withCause( e );
         }
     }
 
     private Resource doExecute()
         throws IOException
     {
-        final ModuleResourceKey moduleResourceKey = this.spec.getResourceKey();
+        final ModuleResourceKey moduleResourceKey = this.params.getResourceKey();
 
         final Path modulePath = moduleResourcePathResolver.resolveModulePath( moduleResourceKey.getModuleKey() );
         if ( !Files.isDirectory( modulePath ) )
@@ -49,12 +49,12 @@ final class CreateModuleResourceCommand
         final Path resourceFilePath = moduleResourcePathResolver.resolveResourcePath( moduleResourceKey );
 
         Files.createDirectories( resourceFilePath.getParent() );
-        final ByteSource byteSource = this.spec.getResource().getByteSource();
+        final ByteSource byteSource = this.params.getResource().getByteSource();
         try (InputStream is = byteSource.openStream())
         {
             Files.copy( is, resourceFilePath, REPLACE_EXISTING );
         }
-        return this.spec.getResource();
+        return this.params.getResource();
     }
 
     public CreateModuleResourceCommand moduleResourcePathResolver( final ModuleResourcePathResolver moduleResourcePathResolver )
@@ -63,9 +63,9 @@ final class CreateModuleResourceCommand
         return this;
     }
 
-    public CreateModuleResourceCommand spec( final CreateModuleResourceSpec spec )
+    public CreateModuleResourceCommand params( final CreateModuleResourceParams params )
     {
-        this.spec = spec;
+        this.params = params;
         return this;
     }
 }

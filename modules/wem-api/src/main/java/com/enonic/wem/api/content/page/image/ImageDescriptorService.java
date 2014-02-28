@@ -5,7 +5,7 @@ import com.enonic.wem.api.module.ModuleKeys;
 
 public interface ImageDescriptorService
 {
-    ImageDescriptor create( CreateImageDescriptorSpec spec );
+    ImageDescriptor create( CreateImageDescriptorParams params );
 
     ImageDescriptor getImageDescriptor( ImageDescriptorKey key )
         throws ImageDescriptorNotFoundException;
