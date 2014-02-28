@@ -27,6 +27,10 @@ module LiveEdit.ui.contextmenu.menuitem {
                 LiveEdit.component.Selection.deselect();
                 LiveEdit.component.Selection.handleSelect(parentComponent.getElement()[0]);
 
+                var xPos = parentComponent.getElement().offset().left + parentComponent.getElement().width()/2 - (this.menu.getEl().width() / 2);
+                var yPos = parentComponent.getElement().offset().top + 11;
+                this.menu.moveToXY(xPos, yPos);
+
                 this.scrollComponentIntoView(parentComponent);
             }
         }

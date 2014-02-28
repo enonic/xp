@@ -83,7 +83,7 @@ module LiveEdit.ui.contextmenu {
             this.selectedComponent = null;
         }
 
-        private moveToXY(x, y):void {
+        moveToXY(x, y):void {
             this.getEl().css({
                 left: x,
                 top: y,
