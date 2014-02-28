@@ -5,19 +5,19 @@ module api.util.loader {
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import LoadingDataEvent = api.util.loader.event.LoadingDataEvent;
 
-    export class BaseLoader<T, V> {
+    export class BaseLoader<JSON, OBJECT> {
 
-        private request: api.rest.ResourceRequest<T>;
+        private request: api.rest.ResourceRequest<JSON>;
 
         private isLoading: boolean;
 
-        private results: V[];
+        private results: OBJECT[];
 
         private searchString: string;
 
         private listeners: {[eventName:string]:{(event: LoaderEvent):void}[]} = {};
 
-        constructor(request: api.rest.ResourceRequest<T>, autoLoad: boolean = true) {
+        constructor(request: api.rest.ResourceRequest<JSON>, autoLoad: boolean = true) {
             this.listeners[LoaderEvents.LoadedData] = [];
             this.listeners[LoaderEvents.LoadingData] = [];
             this.isLoading = false;
@@ -27,10 +27,10 @@ module api.util.loader {
             }
         }
 
-        doRequest(): Q.Promise<V[]> {
-            var deferred = Q.defer<V[]>();
+        doRequest(): Q.Promise<OBJECT[]> {
+            var deferred = Q.defer<OBJECT[]>();
 
-            this.request.sendAndParse().done((results: V[]) => {
+            this.request.sendAndParse().done((results: OBJECT[]) => {
                 deferred.resolve(results);
             });
 
@@ -40,25 +40,25 @@ module api.util.loader {
         load(): void {
             this.isLoading = true;
             this.notifyLoadingData(new LoadingDataEvent());
-            this.doRequest().done((results: V[]) => {
+            this.doRequest().done((results: OBJECT[]) => {
                 this.results = results;
                 this.isLoading = false;
                 this.notifyLoadedData(new LoadedDataEvent(results));
             });
         }
 
-        loading(isLoading?:boolean):boolean {
-            if (typeof isLoading == 'boolean' ) {
+        loading(isLoading?: boolean): boolean {
+            if (typeof isLoading == 'boolean') {
                 this.isLoading = isLoading;
             }
             return this.isLoading;
         }
 
-        setRequest(request: api.rest.ResourceRequest<T>) {
+        setRequest(request: api.rest.ResourceRequest<JSON>) {
             this.request = request;
         }
 
-        getRequest(): api.rest.ResourceRequest<T> {
+        getRequest(): api.rest.ResourceRequest<JSON> {
             return this.request;
         }
 
@@ -67,7 +67,7 @@ module api.util.loader {
             this.searchString = searchString;
             if (this.results) {
                 var filtered = this.results.filter(this.filterFn, this);
-                this.notifyLoadedData(new LoadedDataEvent<V>(this.results));
+                this.notifyLoadedData(new LoadedDataEvent<OBJECT>(this.results));
             }
         }
 
@@ -75,7 +75,7 @@ module api.util.loader {
             return this.searchString;
         }
 
-        filterFn(result: V): boolean {
+        filterFn(result: OBJECT): boolean {
             throw Error("must be implemented");
         }
 
@@ -95,7 +95,7 @@ module api.util.loader {
             });
         }
 
-        notifyLoadedData(event: LoadedDataEvent<V>) {
+        notifyLoadedData(event: LoadedDataEvent<OBJECT>) {
             this.notifyListeners(LoaderEvents.LoadedData, event);
         }
 
@@ -103,7 +103,7 @@ module api.util.loader {
             this.notifyListeners(LoaderEvents.LoadingData, event);
         }
 
-        onLoadedData(listener: (event: LoadedDataEvent<V>) => void) {
+        onLoadedData(listener: (event: LoadedDataEvent<OBJECT>) => void) {
             this.addListener(LoaderEvents.LoadedData, listener);
         }
 
@@ -111,7 +111,7 @@ module api.util.loader {
             this.addListener(LoaderEvents.LoadingData, listener);
         }
 
-        unLoadedData(listener: (event: LoadedDataEvent<V>) => void) {
+        unLoadedData(listener: (event: LoadedDataEvent<OBJECT>) => void) {
             this.removeListener(LoaderEvents.LoadedData, listener);
         }
 
