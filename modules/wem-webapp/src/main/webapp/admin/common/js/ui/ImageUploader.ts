@@ -29,9 +29,11 @@ module api.ui {
         private maximumOccurrences: number;
         private browseEnabled: boolean;
 
-        private imageUploadedListeners: {(event: ImageUploadedEvent):void}[] = [];
+        private imageUploadedListeners: {(event: ImageUploadedEvent):void }[] = [];
 
-        private imageUploadCompleteListeners: {():void}[] = [];
+        private imageUploadCompleteListeners: { ():void }[] = [];
+
+        private imageResetListeners: {():void }[] = [];
 
         constructor(name: string, uploadUrl: string, config: ImageUploaderConfig = {}) {
             super("div", "image-uploader");
@@ -114,7 +116,10 @@ module api.ui {
             } else {
                 src = value;
             }
-            this.image.getEl().setSrc(src);
+
+            if (src != null) {
+                this.image.getEl().setSrc(src);
+            }
         }
 
         setMaximumOccurrences(value: number) {
@@ -131,7 +136,8 @@ module api.ui {
             this.setProgressVisible(false);
             this.setImageVisible(false);
             this.setDropzoneVisible(true);
-            this.setValue(undefined);
+            this.setValue(null);
+            this.notifyImageReset();
         }
 
         private setDropzoneVisible(visible: boolean) {
@@ -257,6 +263,16 @@ module api.ui {
             })
         }
 
+        onImageReset(listener: () => void) {
+            this.imageResetListeners.push(listener);
+        }
+
+        unImageReset(listener: () => void) {
+            this.imageResetListeners = this.imageResetListeners.filter((currentListener: ()=> void) => {
+                return listener != currentListener;
+            })
+        }
+
         onImageUploadComplete(listener: ()=>void) {
             this.imageUploadCompleteListeners.push(listener);
         }
@@ -275,6 +291,12 @@ module api.ui {
 
         private notifyImageUploadComplete() {
             this.imageUploadCompleteListeners.forEach((listener: ()=>void) => {
+                listener.call(this);
+            });
+        }
+
+        private notifyImageReset() {
+            this.imageResetListeners.forEach((listener: ()=>void) => {
                 listener.call(this);
             });
         }

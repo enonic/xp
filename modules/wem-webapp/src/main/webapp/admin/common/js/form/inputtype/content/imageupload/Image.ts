@@ -8,11 +8,11 @@ module api.form.inputtype.content.imageupload {
 
         private attachmentName: string;
 
-        private attachments: api.content.attachment.Attachments;
+        private attachment: api.content.attachment.Attachment;
 
         constructor(config: api.form.inputtype.InputTypeViewConfig<any>) {
             super(config, "image");
-            this.attachments = config.attachments;
+            this.attachment = config.attachments.getAttachments().pop();
         }
 
         createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
@@ -24,12 +24,16 @@ module api.form.inputtype.content.imageupload {
                 maximumOccurrences: 1
             };
             var uploadUrl = api.util.getRestUri("blob/upload");
-            var imageUploader = new api.ui.ImageUploader(inputName, uploadUrl, imageUploaderConfig);
+            var imageUploader: api.ui.ImageUploader = new api.ui.ImageUploader(inputName, uploadUrl, imageUploaderConfig);
+
             imageUploader.onImageUploaded((event: api.ui.ImageUploadedEvent) => {
-                this.attachments = new api.content.attachment.AttachmentsBuilder().
-                    addAll(this.attachments.getAttachments()).
-                    add(this.uploadItemToAttachment(event.getUploadedItem())).build();
+                this.attachment = this.uploadItemToAttachment(event.getUploadedItem());
                 this.attachmentName = event.getUploadedItem().getName();
+            });
+
+            imageUploader.onImageReset(() => {
+                this.attachment = null;
+                this.attachmentName = null;
             });
 
             if (property != null) {
@@ -43,17 +47,14 @@ module api.form.inputtype.content.imageupload {
         }
 
         getValue(occurrence: api.dom.Element): api.data.Value {
-
             return new api.data.Value(this.attachmentName, api.data.ValueTypes.STRING);
         }
 
         getAttachments(): api.content.attachment.Attachment[] {
-
-            return this.attachments.getAttachments();
+            return [this.attachment];
         }
 
         valueBreaksRequiredContract(value: api.data.Value): boolean {
-
             if (value == null) {
                 return true;
             }
@@ -77,9 +78,7 @@ module api.form.inputtype.content.imageupload {
                 setSize(uploadItem.getSize()).
                 build();
         }
-
     }
 
     api.form.input.InputTypeManager.register("Image", Image);
-
 }

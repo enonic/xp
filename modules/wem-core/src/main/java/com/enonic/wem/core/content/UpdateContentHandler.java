@@ -93,6 +93,7 @@ public class UpdateContentHandler
         }
 
         final Attachments attachments = mergeAttachments( originalAttachments, updateAttachments );
+
         final UpdateNode updateNodeCommand = translator.toUpdateNodeCommand( editedContent, attachments );
 
         final UpdateNodeHandler updateNodeHandler = UpdateNodeHandler.create().
