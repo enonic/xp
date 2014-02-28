@@ -16,6 +16,7 @@ import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
 import com.enonic.wem.api.content.site.SiteTemplateService;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsHttpRequest;
@@ -47,7 +48,7 @@ public final class ContentResource
         final PageTemplate pageTemplate;
         if ( !content.isPage() )
         {
-            pageTemplate = getDefaultSitePageTemplate( siteContent.getSite() );
+            pageTemplate = getDefaultPageTemplate( content.getType(), siteContent.getSite() );
             if ( pageTemplate == null )
             {
                 throw PortalWebException.notFound().message( "Page not found." ).build();
@@ -81,12 +82,12 @@ public final class ContentResource
         return controller.execute();
     }
 
-    private PageTemplate getDefaultSitePageTemplate( final Site site )
+    private PageTemplate getDefaultPageTemplate( final ContentTypeName contentType, final Site site )
     {
         try
         {
             final SiteTemplate siteTemplate = this.siteTemplateService.getSiteTemplate( site.getTemplate() );
-            return siteTemplate.getDefaultPageTemplate();
+            return siteTemplate.getDefaultPageTemplate( contentType );
         }
         catch ( SiteTemplateNotFoundException e )
         {

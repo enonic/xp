@@ -9,7 +9,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.collect.Iterables;
 
-import com.enonic.wem.api.content.page.PageTemplateName;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.schema.content.ContentTypeFilter;
@@ -17,7 +16,6 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.xml.XmlObject;
 import com.enonic.wem.xml.template.ContentFilterXml;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 
 @XmlRootElement(name = "site-template")
 public final class SiteTemplateXml
@@ -45,9 +43,6 @@ public final class SiteTemplateXml
     @XmlElement(name = "root-content-type", required = true)
     private String siteContent;
 
-    @XmlElement(name = "default-page-template", required = false)
-    private String defaultPageTemplate;
-
     @Override
     public void from( final SiteTemplate template )
     {
@@ -73,8 +68,6 @@ public final class SiteTemplateXml
         }
 
         this.siteContent = template.getRootContentType().getContentTypeName();
-        final PageTemplateName defaultTemplate = template.getDefaultPageTemplateName();
-        this.defaultPageTemplate = defaultTemplate == null ? null : defaultTemplate.toString();
     }
 
     @Override
@@ -85,12 +78,6 @@ public final class SiteTemplateXml
             description( this.description ).
             url( this.url ).
             rootContentType( ContentTypeName.from( this.siteContent ) );
-
-        if ( !isNullOrEmpty( this.defaultPageTemplate ) )
-        {
-            final PageTemplateName defaultTemplateName = PageTemplateName.from( this.defaultPageTemplate );
-            builder.defaultPageTemplate( defaultTemplateName );
-        }
 
         final Vendor.Builder vendorBuilder = Vendor.newVendor();
         this.vendor.to( vendorBuilder );

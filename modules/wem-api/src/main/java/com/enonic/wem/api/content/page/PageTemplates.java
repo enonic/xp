@@ -42,7 +42,8 @@ public final class PageTemplates
         return this.templatesByPath.get( path );
     }
 
-    public PageTemplates filter(final PageTemplateSpec spec) {
+    public PageTemplates filter( final PageTemplateSpec spec )
+    {
         return PageTemplates.from( Collections2.filter( templatesByName.values(), new Predicate<PageTemplate>()
         {
             @Override
@@ -131,7 +132,7 @@ public final class PageTemplates
 
         public Builder addAll( Iterable<PageTemplate> templates )
         {
-            for( final PageTemplate template : templates )
+            for ( final PageTemplate template : templates )
             {
                 this.list.add( template );
             }

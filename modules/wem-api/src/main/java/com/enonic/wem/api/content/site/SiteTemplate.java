@@ -6,11 +6,13 @@ import java.util.LinkedHashMap;
 import com.enonic.wem.api.Identity;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
-import com.enonic.wem.api.content.page.PageTemplateName;
+import com.enonic.wem.api.content.page.PageTemplateSpec;
 import com.enonic.wem.api.content.page.PageTemplates;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.schema.content.ContentTypeFilter;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+
+import static com.enonic.wem.api.content.page.PageTemplateSpec.newPageTemplateSpec;
 
 public final class SiteTemplate
     implements Identity<SiteTemplateKey, SiteTemplateName>
@@ -33,8 +35,6 @@ public final class SiteTemplate
 
     private final PageTemplates pageTemplates;
 
-    private final PageTemplateName defaultPageTemplate;
-
     private SiteTemplate( final Builder builder )
     {
         this.siteTemplateKey = builder.siteTemplateKey;
@@ -45,7 +45,6 @@ public final class SiteTemplate
         this.modules = builder.modules;
         this.contentTypeFilter = builder.contentTypeFilter;
         this.rootContentType = builder.rootContentType;
-        this.defaultPageTemplate = builder.defaultPageTemplate;
 
         final PageTemplates.Builder pageTemplatesBuilder = PageTemplates.newPageTemplates();
         pageTemplatesBuilder.addAll( builder.pageTemplates.values() );
@@ -108,14 +107,10 @@ public final class SiteTemplate
         return pageTemplates;
     }
 
-    public PageTemplate getDefaultPageTemplate()
+    public PageTemplate getDefaultPageTemplate( final ContentTypeName contentType )
     {
-        return pageTemplates.getTemplate( this.defaultPageTemplate );
-    }
-
-    public PageTemplateName getDefaultPageTemplateName()
-    {
-        return this.defaultPageTemplate;
+        final PageTemplateSpec spec = newPageTemplateSpec().canRender( contentType ).build();
+        return pageTemplates.filter( spec ).first();
     }
 
     public static Builder newSiteTemplate()
@@ -148,8 +143,6 @@ public final class SiteTemplate
 
         private final LinkedHashMap<PageTemplateKey, PageTemplate> pageTemplates;
 
-        private PageTemplateName defaultPageTemplate;
-
         private Builder()
         {
             this.pageTemplates = new LinkedHashMap<>();
@@ -162,7 +155,6 @@ public final class SiteTemplate
             {
                 this.pageTemplates.put( pageTemplate.getKey(), PageTemplate.copyOf( pageTemplate ).build() );
             }
-            this.defaultPageTemplate = source.defaultPageTemplate;
             this.siteTemplateKey = source.siteTemplateKey;
             this.displayName = source.displayName;
             this.description = source.description;
@@ -230,12 +222,6 @@ public final class SiteTemplate
         public Builder removeTemplate( final PageTemplateKey pageTemplateKey )
         {
             this.pageTemplates.remove( pageTemplateKey );
-            return this;
-        }
-
-        public Builder defaultPageTemplate( final PageTemplateName pageTemplate )
-        {
-            this.defaultPageTemplate = pageTemplate;
             return this;
         }
 

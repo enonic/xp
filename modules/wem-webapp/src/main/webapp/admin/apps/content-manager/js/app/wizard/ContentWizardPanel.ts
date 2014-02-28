@@ -371,16 +371,11 @@ module app.wizard {
 
             var pageTemplateKey: api.content.page.PageTemplateKey = null;
 
-            if (this.pageWizardStepForm.getPageTemplate() == null) {
-                var pageTemplate = this.siteTemplate.getDefaultPageTemplate(content.getType());
-                if (pageTemplate) {
-                    pageTemplateKey = pageTemplate.getKey();
-                }
+            var pageTemplate = this.pageWizardStepForm.getPageTemplate();
+            if (pageTemplate) {
+                pageTemplateKey = pageTemplate.getKey();
             }
-            else {
-                pageTemplateKey = this.pageWizardStepForm.getPageTemplate().getKey();
-            }
-            if (pageTemplateKey == null) {
+            if (!pageTemplateKey) {
                 return null;
             }
 

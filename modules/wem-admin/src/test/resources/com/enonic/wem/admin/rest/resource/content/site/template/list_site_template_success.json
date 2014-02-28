@@ -5,7 +5,6 @@
                 "allow": [ "image" ],
                 "deny": [ "*" ]
             },
-            "defaultPageTemplate" : "default-template",
             "deletable": true,
             "description": "info",
             "displayName": "displayName",

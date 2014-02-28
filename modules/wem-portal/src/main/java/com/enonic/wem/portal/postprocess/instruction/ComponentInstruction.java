@@ -70,13 +70,21 @@ public final class ComponentInstruction
     private PageComponent resolveComponent( final JsContext context, final ComponentPath path )
     {
         final Content content = context.getContent();
-        if ( content == null || content.getPage() == null )
+        if ( content == null )
         {
             return null;
         }
 
         final Page page = content.getPage();
-        final PageRegions pageRegions = resolvePageRegions( page, context.getPageTemplate() );
+        final PageRegions pageRegions;
+        if ( ( page != null ) && page.hasRegions() )
+        {
+            pageRegions = resolvePageRegions( page, context.getPageTemplate() );
+        }
+        else
+        {
+            pageRegions = context.getPageTemplate().getRegions();
+        }
 
         PageComponent component = pageRegions.getComponent( path );
         if ( component == null )
