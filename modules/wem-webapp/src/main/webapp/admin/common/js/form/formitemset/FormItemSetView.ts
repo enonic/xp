@@ -159,7 +159,7 @@ module api.form.formitemset {
         }
 
         refresh() {
-
+            this.collapseButton.setVisible(this.formItemSetOccurrences.getOccurrences().length > 0);
             this.addButton.setVisible(!this.formItemSetOccurrences.maximumOccurrencesReached());
         }
 
