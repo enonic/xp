@@ -6,13 +6,13 @@ import java.nio.file.Path;
 
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleNotFoundException;
-import com.enonic.wem.api.module.UpdateModuleSpec;
+import com.enonic.wem.api.module.UpdateModuleParams;
 import com.enonic.wem.core.config.SystemConfig;
 import com.enonic.wem.util.Exceptions;
 
 final class UpdateModuleCommand
 {
-    private UpdateModuleSpec spec;
+    private UpdateModuleParams params;
 
     private SystemConfig systemConfig;
 
@@ -22,7 +22,7 @@ final class UpdateModuleCommand
 
     public boolean execute()
     {
-        this.spec.validate();
+        this.params.validate();
 
         try
         {
@@ -38,14 +38,14 @@ final class UpdateModuleCommand
         throws IOException
     {
         final Path modulesDir = systemConfig.getModulesDir();
-        final Path moduleDir = moduleResourcePathResolver.resolveModulePath( spec.getModuleKey() );
+        final Path moduleDir = moduleResourcePathResolver.resolveModulePath( params.getModuleKey() );
         if ( Files.notExists( moduleDir ) )
         {
-            throw new ModuleNotFoundException( spec.getModuleKey() );
+            throw new ModuleNotFoundException( params.getModuleKey() );
         }
 
         Module module = moduleExporter.importFromDirectory( moduleDir ).build();
-        Module editedModule = spec.getEditor().edit( module );
+        Module editedModule = params.getEditor().edit( module );
         boolean edited = editedModule != null && !editedModule.equals( module );
         if ( edited )
         {
@@ -55,9 +55,9 @@ final class UpdateModuleCommand
         return edited;
     }
 
-    public UpdateModuleCommand spec( final UpdateModuleSpec spec )
+    public UpdateModuleCommand params( final UpdateModuleParams params )
     {
-        this.spec = spec;
+        this.params = params;
         return this;
     }
 

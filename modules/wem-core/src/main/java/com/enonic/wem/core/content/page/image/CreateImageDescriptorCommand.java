@@ -1,9 +1,9 @@
 package com.enonic.wem.core.content.page.image;
 
-import com.enonic.wem.api.content.page.image.CreateImageDescriptorSpec;
+import com.enonic.wem.api.content.page.image.CreateImageDescriptorParams;
 import com.enonic.wem.api.content.page.image.ImageDescriptor;
 import com.enonic.wem.api.content.page.image.ImageDescriptorXml;
-import com.enonic.wem.api.module.CreateModuleResourceSpec;
+import com.enonic.wem.api.module.CreateModuleResourceParams;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.resource.Resource;
@@ -15,19 +15,19 @@ import static com.enonic.wem.api.resource.Resource.newResource;
 
 final class CreateImageDescriptorCommand
 {
-    private CreateImageDescriptorSpec spec;
+    private CreateImageDescriptorParams params;
 
     private ModuleService moduleService;
 
     public ImageDescriptor execute()
     {
-        this.spec.validate();
+        this.params.validate();
 
         final ImageDescriptor imageDescriptor = newImageDescriptor().
-            config( spec.getConfig() ).
-            displayName( spec.getDisplayName() ).
-            name( spec.getName() ).
-            key( spec.getKey() ).
+            config( params.getConfig() ).
+            displayName( params.getDisplayName() ).
+            name( params.getName() ).
+            key( params.getKey() ).
             build();
 
         final String imageDescriptorXml = serialize( imageDescriptor );
@@ -38,7 +38,7 @@ final class CreateImageDescriptorCommand
             build();
 
         final ModuleResourceKey resourceKey = DescriptorKeyToModuleResourceKey.translate( imageDescriptor.getKey() );
-        final CreateModuleResourceSpec createResourceSpec = new CreateModuleResourceSpec().
+        final CreateModuleResourceParams createResourceSpec = new CreateModuleResourceParams().
             resourceKey( resourceKey ).
             resource( descriptorResource );
         this.moduleService.createResource( createResourceSpec );
@@ -53,9 +53,9 @@ final class CreateImageDescriptorCommand
         return XmlSerializers.imageDescriptor().serialize( imageDescriptorXml );
     }
 
-    public CreateImageDescriptorCommand spec( final CreateImageDescriptorSpec spec )
+    public CreateImageDescriptorCommand params( final CreateImageDescriptorParams params )
     {
-        this.spec = spec;
+        this.params = params;
         return this;
     }
 

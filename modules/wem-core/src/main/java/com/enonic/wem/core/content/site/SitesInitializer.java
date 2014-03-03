@@ -10,7 +10,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
-import com.enonic.wem.api.content.page.CreatePageDescriptor;
+import com.enonic.wem.api.content.page.CreatePageDescriptorParams;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageDescriptorService;
@@ -19,7 +19,7 @@ import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateName;
 import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
-import com.enonic.wem.api.content.page.part.CreatePartDescriptor;
+import com.enonic.wem.api.content.page.part.CreatePartDescriptorParams;
 import com.enonic.wem.api.content.page.part.PartComponent;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
@@ -35,7 +35,7 @@ import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.module.CreateModuleSpec;
+import com.enonic.wem.api.module.CreateModuleParams;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
@@ -135,7 +135,7 @@ public class SitesInitializer
 
     private void initializeModules()
     {
-        final CreateModuleSpec spec = new CreateModuleSpec().
+        final CreateModuleParams params = new CreateModuleParams().
             name( DEMO_MODULE_KEY.getName().toString() ).
             version( DEMO_MODULE_KEY.getVersion() ).
             displayName( "Test module" ).
@@ -158,12 +158,12 @@ public class SitesInitializer
             // IGNORE IF NOT FOUND
         }
 
-        this.testModule = this.moduleService.createModule( spec );
+        this.testModule = this.moduleService.createModule( params );
     }
 
     private void initializeDescriptors()
     {
-        CreatePageDescriptor command = new CreatePageDescriptor().
+        CreatePageDescriptorParams params = new CreatePageDescriptorParams().
             displayName( "Landing page" ).
             name( "landing-page" ).
             key( PageDescriptorKey.from( DEMO_MODULE_KEY, LANDING_PAGE_DESCRIPTOR_NAME ) ).
@@ -175,9 +175,9 @@ public class SitesInitializer
             config( newForm().
                 addFormItem( newInput().name( "background-color" ).label( "Background color" ).inputType( InputTypes.TEXT_LINE ).build() ).
                 build() );
-        landingPageDescriptor = pageDescriptorService.create( command );
+        landingPageDescriptor = pageDescriptorService.create( params );
 
-        command = new CreatePageDescriptor().
+        params = new CreatePageDescriptorParams().
             displayName( "Product grid" ).
             name( "product-grid" ).
             key( PageDescriptorKey.from( DEMO_MODULE_KEY, PRODUCT_GRID_DESCRIPTOR_NAME ) ).
@@ -194,15 +194,15 @@ public class SitesInitializer
                     maximumOccurrences( 1 ).minimumOccurrences( 1 ).
                     inputType( InputTypes.TEXT_LINE ).build() ).
                 build() );
-        productGridPageDescriptor = pageDescriptorService.create( command );
+        productGridPageDescriptor = pageDescriptorService.create( params );
 
         final ComponentDescriptorName partName = new ComponentDescriptorName( "mypart" );
-        final CreatePartDescriptor createPartDescriptor = new CreatePartDescriptor().
+        final CreatePartDescriptorParams createPartDescriptorParams = new CreatePartDescriptorParams().
             name( partName ).
             key( PartDescriptorKey.from( DEMO_MODULE_KEY, partName ) ).
             displayName( "My part" ).
             config( Form.newForm().build() );
-        myPartDescriptor = partDescriptorService.create( createPartDescriptor );
+        myPartDescriptor = partDescriptorService.create( createPartDescriptorParams );
     }
 
     private void initializeSiteTemplates()

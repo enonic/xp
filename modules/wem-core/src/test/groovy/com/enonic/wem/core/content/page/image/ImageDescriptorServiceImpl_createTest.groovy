@@ -1,7 +1,7 @@
 package com.enonic.wem.core.content.page.image
 
 import com.enonic.wem.api.content.page.ComponentDescriptorName
-import com.enonic.wem.api.content.page.image.CreateImageDescriptorSpec
+import com.enonic.wem.api.content.page.image.CreateImageDescriptorParams
 import com.enonic.wem.api.content.page.image.ImageDescriptorKey
 import com.enonic.wem.api.form.Form
 import com.enonic.wem.api.form.inputtype.InputTypes
@@ -22,14 +22,14 @@ class ImageDescriptorServiceImpl_createTest
         def moduleKey = ModuleKey.from( "mainmodule-1.0.0" );
         def descriptorName = new ComponentDescriptorName( "image" );
         def key = ImageDescriptorKey.from( moduleKey, descriptorName );
-        def spec = new CreateImageDescriptorSpec().
+        def params = new CreateImageDescriptorParams().
                 key( key ).
                 name( descriptorName ).
                 displayName( "Image" ).
                 config( imageForm );
 
         when:
-        def result = this.service.create( spec );
+        def result = this.service.create( params );
 
         then:
         result != null

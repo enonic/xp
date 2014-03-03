@@ -4,9 +4,9 @@ import com.enonic.wem.api.content.site.SiteTemplateKey;
 
 public interface PageTemplateService
 {
-    PageTemplate create( final CreatePageTemplate command );
+    PageTemplate create( final CreatePageTemplateParams params );
 
-    boolean delete( final DeletePageTemplate command );
+    boolean delete( final DeletePageTemplateParams params );
 
     PageTemplate getByKey( final PageTemplateKey pageTemplateKey, final SiteTemplateKey siteTemplateKey );
 

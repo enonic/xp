@@ -13,8 +13,8 @@ import com.enonic.wem.admin.json.content.page.PageTemplateListJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
+import com.enonic.wem.api.content.page.PageTemplateParams;
 import com.enonic.wem.api.content.page.PageTemplateService;
-import com.enonic.wem.api.content.page.PageTemplateSpec;
 import com.enonic.wem.api.content.page.PageTemplates;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -55,9 +55,9 @@ public final class PageTemplateResource
     {
         final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( siteTemplateKeyAsString );
         final PageTemplates pageTemplates = pageTemplateService.getBySiteTemplate( siteTemplateKey );
-        final PageTemplateSpec spec = PageTemplateSpec.newPageTemplateSpec().canRender( ContentTypeName.from( contentTypeName ) ).build();
+        final PageTemplateParams params = PageTemplateParams.newPageTemplateParams().canRender( ContentTypeName.from( contentTypeName ) ).build();
 
-        return new PageTemplateListJson( pageTemplates.filter( spec ) );
+        return new PageTemplateListJson( pageTemplates.filter( params ) );
 
     }
 }

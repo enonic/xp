@@ -3,7 +3,7 @@ package com.enonic.wem.core.content.page.layout;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.content.page.layout.CreateLayoutDescriptor;
+import com.enonic.wem.api.content.page.layout.CreateLayoutDescriptorParams;
 import com.enonic.wem.api.content.page.layout.GetLayoutDescriptor;
 import com.enonic.wem.api.content.page.layout.GetLayoutDescriptorsByModules;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
@@ -24,9 +24,9 @@ public class LayoutDescriptorServiceImpl
         return client.execute( command );
     }
 
-    public LayoutDescriptor create( final CreateLayoutDescriptor command )
+    public LayoutDescriptor create( final CreateLayoutDescriptorParams params )
     {
-        return client.execute( command );
+        return client.execute( params );
     }
 
     public LayoutDescriptors getByModules( final ModuleKeys moduleKeys )

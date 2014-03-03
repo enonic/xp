@@ -2,8 +2,8 @@ package com.enonic.wem.core.module;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.module.CreateModuleResourceSpec;
-import com.enonic.wem.api.module.CreateModuleSpec;
+import com.enonic.wem.api.module.CreateModuleParams;
+import com.enonic.wem.api.module.CreateModuleResourceParams;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
@@ -11,7 +11,7 @@ import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.Modules;
-import com.enonic.wem.api.module.UpdateModuleSpec;
+import com.enonic.wem.api.module.UpdateModuleParams;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceNotFoundException;
 import com.enonic.wem.core.config.SystemConfig;
@@ -58,16 +58,16 @@ public final class ModuleServiceImpl
     }
 
     @Override
-    public Module createModule( final CreateModuleSpec spec )
+    public Module createModule( final CreateModuleParams params )
     {
-        return new CreateModuleCommand().spec( spec ).moduleExporter( this.moduleExporter ).systemConfig( this.systemConfig ).execute();
+        return new CreateModuleCommand().params( params ).moduleExporter( this.moduleExporter ).systemConfig( this.systemConfig ).execute();
     }
 
     @Override
-    public boolean updateModule( final UpdateModuleSpec spec )
+    public boolean updateModule( final UpdateModuleParams params )
         throws ModuleNotFoundException
     {
-        return new UpdateModuleCommand().spec( spec ).moduleExporter( this.moduleExporter ).systemConfig(
+        return new UpdateModuleCommand().params( params ).moduleExporter( this.moduleExporter ).systemConfig(
             this.systemConfig ).moduleResourcePathResolver( this.moduleResourcePathResolver ).execute();
     }
 
@@ -79,9 +79,9 @@ public final class ModuleServiceImpl
     }
 
     @Override
-    public Resource createResource( final CreateModuleResourceSpec spec )
+    public Resource createResource( final CreateModuleResourceParams params )
         throws ModuleNotFoundException, ResourceNotFoundException
     {
-        return new CreateModuleResourceCommand().spec( spec ).moduleResourcePathResolver( this.moduleResourcePathResolver ).execute();
+        return new CreateModuleResourceCommand().params( params ).moduleResourcePathResolver( this.moduleResourcePathResolver ).execute();
     }
 }

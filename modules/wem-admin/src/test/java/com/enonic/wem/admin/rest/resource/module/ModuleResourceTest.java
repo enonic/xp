@@ -24,7 +24,7 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.module.CreateModuleSpec;
+import com.enonic.wem.api.module.CreateModuleParams;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleFileEntry;
 import com.enonic.wem.api.module.ModuleKey;
@@ -93,7 +93,7 @@ public class ModuleResourceTest
         throws Exception
     {
         final Module module = createModule();
-        Mockito.when( this.moduleService.createModule( Mockito.isA( CreateModuleSpec.class ) ) ).thenReturn( module );
+        Mockito.when( this.moduleService.createModule( Mockito.isA( CreateModuleParams.class ) ) ).thenReturn( module );
 
         final ModuleExporter moduleExporter = new ModuleExporter();
         final Path exportedModuleFile = moduleExporter.exportToZip( module, tempDir );

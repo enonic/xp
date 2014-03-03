@@ -15,15 +15,15 @@ public interface ModuleService
     Module deleteModule( ModuleKey key )
         throws ModuleNotFoundException;
 
-    Module createModule( CreateModuleSpec spec );
+    Module createModule( CreateModuleParams params );
 
-    boolean updateModule( UpdateModuleSpec spec )
+    boolean updateModule( UpdateModuleParams params )
         throws ModuleNotFoundException;
 
     Resource getResource( ModuleResourceKey key )
         throws ModuleNotFoundException, ResourceNotFoundException;
 
-    Resource createResource( CreateModuleResourceSpec spec )
+    Resource createResource( CreateModuleResourceParams params )
         throws ModuleNotFoundException, ResourceNotFoundException;
 
 }

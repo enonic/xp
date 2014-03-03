@@ -2,19 +2,19 @@ package com.enonic.wem.api.module;
 
 import com.google.common.base.Preconditions;
 
-public final class UpdateModuleSpec
+public final class UpdateModuleParams
 {
     private ModuleKey moduleKey;
 
     private ModuleEditor editor;
 
-    public UpdateModuleSpec module( final ModuleKey moduleKey )
+    public UpdateModuleParams module( final ModuleKey moduleKey )
     {
         this.moduleKey = moduleKey;
         return this;
     }
 
-    public UpdateModuleSpec editor( final ModuleEditor editor )
+    public UpdateModuleParams editor( final ModuleEditor editor )
     {
         this.editor = editor;
         return this;

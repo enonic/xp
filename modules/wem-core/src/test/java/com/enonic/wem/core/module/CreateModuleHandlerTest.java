@@ -13,7 +13,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.module.CreateModuleSpec;
+import com.enonic.wem.api.module.CreateModuleParams;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleFileEntry;
 import com.enonic.wem.api.module.ModuleKeys;
@@ -70,7 +70,7 @@ public class CreateModuleHandlerTest
             addFormItem( Input.newInput().name( "some-name" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
 
-        final CreateModuleSpec spec = new CreateModuleSpec().
+        final CreateModuleParams params = new CreateModuleParams().
             name( "modulename" ).
             version( ModuleVersion.from( 1, 0, 0 ) ).
             displayName( "module display name" ).
@@ -85,7 +85,7 @@ public class CreateModuleHandlerTest
             config( config );
 
         // exercise
-        final Module moduleCreated = this.moduleService.createModule( spec );
+        final Module moduleCreated = this.moduleService.createModule( params );
 
         // verify
         assertNotNull( moduleCreated );
@@ -127,7 +127,7 @@ public class CreateModuleHandlerTest
             addEntry( directoryBuilder.addEntry( subDirectory ) ).
             build();
 
-        final CreateModuleSpec spec = new CreateModuleSpec().
+        final CreateModuleParams params = new CreateModuleParams().
             name( "modulename" ).
             version( ModuleVersion.from( 1, 0, 0 ) ).
             displayName( "module display name" ).
@@ -143,7 +143,7 @@ public class CreateModuleHandlerTest
             moduleDirectoryEntry( moduleDirectoryEntry );
 
         // exercise
-        final Module moduleCreated = this.moduleService.createModule( spec );
+        final Module moduleCreated = this.moduleService.createModule( params );
 
         // verify
         assertNotNull( moduleCreated );

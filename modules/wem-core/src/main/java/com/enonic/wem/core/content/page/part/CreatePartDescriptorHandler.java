@@ -1,6 +1,6 @@
 package com.enonic.wem.core.content.page.part;
 
-import com.enonic.wem.api.content.page.part.CreatePartDescriptor;
+import com.enonic.wem.api.content.page.part.CreatePartDescriptorParams;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptorXml;
 import com.enonic.wem.core.command.CommandHandler;
@@ -10,7 +10,7 @@ import com.enonic.wem.xml.XmlSerializers;
 import static com.enonic.wem.api.content.page.part.PartDescriptor.newPartDescriptor;
 
 public class CreatePartDescriptorHandler
-    extends CommandHandler<CreatePartDescriptor>
+    extends CommandHandler<CreatePartDescriptorParams>
 {
     @Override
     public void handle()

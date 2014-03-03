@@ -6,7 +6,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
-public final class CreateModuleSpec
+public final class CreateModuleParams
 {
     private ModuleName name;
 
@@ -34,9 +34,9 @@ public final class CreateModuleSpec
 
     private ContentTypeNames contentTypeDependencies;
 
-    public static CreateModuleSpec fromModule( Module module )
+    public static CreateModuleParams fromModule( Module module )
     {
-        CreateModuleSpec createModule = new CreateModuleSpec();
+        CreateModuleParams createModule = new CreateModuleParams();
         createModule.displayName( module.getDisplayName() );
         createModule.name = module.getName();
         createModule.version = module.getVersion();
@@ -54,85 +54,85 @@ public final class CreateModuleSpec
         return createModule;
     }
 
-    public CreateModuleSpec name( final ModuleName name )
+    public CreateModuleParams name( final ModuleName name )
     {
         this.name = name;
         return this;
     }
 
-    public CreateModuleSpec name( final String name )
+    public CreateModuleParams name( final String name )
     {
         this.name = ModuleName.from( name );
         return this;
     }
 
-    public CreateModuleSpec version( final ModuleVersion version )
+    public CreateModuleParams version( final ModuleVersion version )
     {
         this.version = version;
         return this;
     }
 
-    public CreateModuleSpec displayName( final String displayName )
+    public CreateModuleParams displayName( final String displayName )
     {
         this.displayName = displayName;
         return this;
     }
 
-    public CreateModuleSpec info( final String info )
+    public CreateModuleParams info( final String info )
     {
         this.info = info;
         return this;
     }
 
-    public CreateModuleSpec url( final String url )
+    public CreateModuleParams url( final String url )
     {
         this.url = url;
         return this;
     }
 
-    public CreateModuleSpec vendorName( final String vendorName )
+    public CreateModuleParams vendorName( final String vendorName )
     {
         this.vendorName = vendorName;
         return this;
     }
 
-    public CreateModuleSpec vendorUrl( final String vendorUrl )
+    public CreateModuleParams vendorUrl( final String vendorUrl )
     {
         this.vendorUrl = vendorUrl;
         return this;
     }
 
-    public CreateModuleSpec config( final Form config )
+    public CreateModuleParams config( final Form config )
     {
         this.config = config;
         return this;
     }
 
-    public CreateModuleSpec moduleDirectoryEntry( final ModuleFileEntry fileEntryRoot )
+    public CreateModuleParams moduleDirectoryEntry( final ModuleFileEntry fileEntryRoot )
     {
         this.moduleDirectoryEntry = fileEntryRoot;
         return this;
     }
 
-    public CreateModuleSpec minSystemVersion( final ModuleVersion version )
+    public CreateModuleParams minSystemVersion( final ModuleVersion version )
     {
         this.minSystemVersion = version;
         return this;
     }
 
-    public CreateModuleSpec maxSystemVersion( final ModuleVersion version )
+    public CreateModuleParams maxSystemVersion( final ModuleVersion version )
     {
         this.maxSystemVersion = version;
         return this;
     }
 
-    public CreateModuleSpec moduleDependencies( final ModuleKeys moduleDependencies )
+    public CreateModuleParams moduleDependencies( final ModuleKeys moduleDependencies )
     {
         this.moduleDependencies = moduleDependencies;
         return this;
     }
 
-    public CreateModuleSpec contentTypeDependencies( final ContentTypeNames contentTypeDependencies )
+    public CreateModuleParams contentTypeDependencies( final ContentTypeNames contentTypeDependencies )
     {
         this.contentTypeDependencies = contentTypeDependencies;
         return this;

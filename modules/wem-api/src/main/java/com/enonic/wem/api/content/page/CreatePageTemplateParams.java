@@ -7,7 +7,7 @@ import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
-public final class CreatePageTemplate
+public final class CreatePageTemplateParams
     extends Command<PageTemplate>
 {
     private SiteTemplateKey siteTemplate;
@@ -22,37 +22,37 @@ public final class CreatePageTemplate
 
     private ContentTypeNames canRender;
 
-    public CreatePageTemplate siteTemplate( final SiteTemplateKey value )
+    public CreatePageTemplateParams siteTemplate( final SiteTemplateKey value )
     {
         this.siteTemplate = value;
         return this;
     }
 
-    public CreatePageTemplate name( final PageTemplateName name )
+    public CreatePageTemplateParams name( final PageTemplateName name )
     {
         this.name = name;
         return this;
     }
 
-    public CreatePageTemplate displayName( final String displayName )
+    public CreatePageTemplateParams displayName( final String displayName )
     {
         this.displayName = displayName;
         return this;
     }
 
-    public CreatePageTemplate descriptor( final ModuleResourceKey descriptor )
+    public CreatePageTemplateParams descriptor( final ModuleResourceKey descriptor )
     {
         this.descriptor = descriptor;
         return this;
     }
 
-    public CreatePageTemplate config( final RootDataSet config )
+    public CreatePageTemplateParams config( final RootDataSet config )
     {
         this.config = config;
         return this;
     }
 
-    public CreatePageTemplate canRender( final ContentTypeNames canRender )
+    public CreatePageTemplateParams canRender( final ContentTypeNames canRender )
     {
         this.canRender = canRender;
         return this;

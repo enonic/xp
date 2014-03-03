@@ -1,16 +1,17 @@
-package com.enonic.wem.api.content.page.part;
+package com.enonic.wem.api.content.page.layout;
 
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
+import com.enonic.wem.api.content.page.region.RegionDescriptors;
 import com.enonic.wem.api.form.Form;
 
-public class CreatePartDescriptor
-    extends Command<PartDescriptor>
+public class CreateLayoutDescriptorParams
+    extends Command<LayoutDescriptor>
 {
-    private PartDescriptorKey key;
+    private LayoutDescriptorKey key;
 
     private ComponentDescriptorName name;
 
@@ -18,35 +19,43 @@ public class CreatePartDescriptor
 
     private Form config;
 
-    public CreatePartDescriptor()
+    private RegionDescriptors regions;
+
+    public CreateLayoutDescriptorParams()
     {
     }
 
-    public CreatePartDescriptor key( final PartDescriptorKey key )
+    public CreateLayoutDescriptorParams key( final LayoutDescriptorKey key )
     {
         this.key = key;
         return this;
     }
 
-    public CreatePartDescriptor name( final ComponentDescriptorName name )
+    public CreateLayoutDescriptorParams name( final ComponentDescriptorName name )
     {
         this.name = name;
         return this;
     }
 
-    public CreatePartDescriptor displayName( final String displayName )
+    public CreateLayoutDescriptorParams displayName( final String displayName )
     {
         this.displayName = displayName;
         return this;
     }
 
-    public CreatePartDescriptor config( final Form config )
+    public CreateLayoutDescriptorParams config( final Form config )
     {
         this.config = config;
         return this;
     }
 
-    public PartDescriptorKey getKey()
+    public CreateLayoutDescriptorParams regions( final RegionDescriptors value )
+    {
+        this.regions = value;
+        return this;
+    }
+
+    public LayoutDescriptorKey getKey()
     {
         return key;
     }
@@ -66,11 +75,18 @@ public class CreatePartDescriptor
         return config;
     }
 
+    public RegionDescriptors getRegions()
+    {
+        return regions;
+    }
+
     @Override
     public void validate()
     {
         Preconditions.checkNotNull( key, "key is required" );
         Preconditions.checkNotNull( name, "name is required" );
         Preconditions.checkNotNull( displayName, "displayName is required" );
+        Preconditions.checkNotNull( config, "config cannot be null" );
+        Preconditions.checkNotNull( regions, "regions cannot be null" );
     }
 }

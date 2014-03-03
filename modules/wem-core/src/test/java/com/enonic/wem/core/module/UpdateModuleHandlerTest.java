@@ -19,7 +19,7 @@ import com.enonic.wem.api.module.ModuleFileEntry;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.api.module.ModuleVersion;
-import com.enonic.wem.api.module.UpdateModuleSpec;
+import com.enonic.wem.api.module.UpdateModuleParams;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.config.SystemConfig;
 
@@ -69,7 +69,7 @@ public class UpdateModuleHandlerTest
         throws Exception
     {
         ModuleKey moduleKey = ModuleKey.from( "foomodule-1.0.0" );
-        UpdateModuleSpec spec = new UpdateModuleSpec().module( moduleKey ).editor( new ModuleEditor()
+        UpdateModuleParams params = new UpdateModuleParams().module( moduleKey ).editor( new ModuleEditor()
         {
             @Override
             public Module edit( final Module module )
@@ -80,7 +80,7 @@ public class UpdateModuleHandlerTest
 
         try
         {
-            this.moduleService.updateModule( spec );
+            this.moduleService.updateModule( params );
         }
         catch ( ModuleNotFoundException e )
         {
@@ -97,7 +97,7 @@ public class UpdateModuleHandlerTest
         Module module = createModule( moduleKey );
         Path moduleDir = new ModuleExporter().exportToDirectory( module, systemConfig.getModulesDir() );
 
-        final UpdateModuleSpec spec = new UpdateModuleSpec().
+        final UpdateModuleParams params = new UpdateModuleParams().
             module( moduleKey ).
             editor( new ModuleEditor()
             {
@@ -109,7 +109,7 @@ public class UpdateModuleHandlerTest
             } );
 
         // exercise
-        final boolean edited = this.moduleService.updateModule( spec );
+        final boolean edited = this.moduleService.updateModule( params );
 
         // verify
         assertTrue( edited );
@@ -148,7 +148,7 @@ public class UpdateModuleHandlerTest
         Module module = createModule( moduleKey );
         Path moduleDir = new ModuleExporter().exportToDirectory( module, systemConfig.getModulesDir() );
 
-        final UpdateModuleSpec spec = new UpdateModuleSpec().
+        final UpdateModuleParams params = new UpdateModuleParams().
             module( moduleKey ).
             editor( new ModuleEditor()
             {
@@ -160,7 +160,7 @@ public class UpdateModuleHandlerTest
             } );
 
         // exercise
-        final boolean edited = this.moduleService.updateModule( spec );
+        final boolean edited = this.moduleService.updateModule( params );
 
         // verify
         assertFalse( edited );
