@@ -16,7 +16,6 @@ module app.contextwindow {
 
     export class ComponentTypesPanel extends api.ui.Panel {
 
-        private searchBox;
         private dataView:api.ui.grid.DataView<ComponentData>;
         private data:ComponentData[];
         private grid:ComponentGrid;
@@ -40,14 +39,6 @@ module app.contextwindow {
 
             this.grid = new ComponentGrid(this.dataView, {draggableRows: true, rowClass: "comp"});
 
-            this.searchBox = new api.ui.TextInput();
-            this.searchBox.addClass("search");
-            this.searchBox.setPlaceholder("Search");
-            this.searchBox.getEl().addEventListener("keyup", (e) => {
-                this.grid.updateFilter(this.searchBox.getValue());
-            });
-
-            this.appendChild(this.searchBox);
             this.appendChild(this.grid);
             this.getData();
 
