@@ -181,7 +181,7 @@ public class ContentNodeTranslator
     private Attachment createThumbnailAttachment( final Attachment origin )
     {
         final Blob originalImage = client.execute( Commands.blob().get( origin.getBlobKey() ) );
-        final InputSupplier<ByteArrayInputStream> inputSupplier = ImageThumbnailResolver.resolve( originalImage );
+        final InputSupplier<ByteArrayInputStream> inputSupplier = ThumbnailFactory.resolve( originalImage );
         final Blob thumbnailBlob;
         try
         {

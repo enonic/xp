@@ -14,7 +14,7 @@ import com.google.common.io.InputSupplier;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.core.image.filter.effect.ScaleMaxFilter;
 
-class ImageThumbnailResolver
+class ThumbnailFactory
 {
     static final int THUMBNAIL_SIZE = 512;
 

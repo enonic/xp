@@ -250,7 +250,7 @@ public class UpdateContentHandler
     private Attachment createThumbnailAttachment( final Attachment attachment )
     {
         final Blob originalImage = context.getClient().execute( Commands.blob().get( attachment.getBlobKey() ) );
-        final InputSupplier<ByteArrayInputStream> inputSupplier = ImageThumbnailResolver.resolve( originalImage );
+        final InputSupplier<ByteArrayInputStream> inputSupplier = ThumbnailFactory.resolve( originalImage );
         final Blob thumbnailBlob;
         try
         {
