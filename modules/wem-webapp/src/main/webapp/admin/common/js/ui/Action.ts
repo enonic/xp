@@ -2,25 +2,25 @@ module api.ui {
 
     export class Action {
 
-        private label:string;
+        private label: string;
 
-        private iconClass:string;
+        private iconClass: string;
 
-        private shortcut:KeyBinding;
+        private shortcut: KeyBinding;
 
-        private mnemonic:Mnemonic;
+        private mnemonic: Mnemonic;
 
-        private enabled:boolean = true;
+        private enabled: boolean = true;
 
-        private executionListeners:Function[] = [];
+        private executionListeners: Function[] = [];
 
-        private propertyChangeListeners:Function[] = [];
+        private propertyChangeListeners: Function[] = [];
 
-        constructor(label:string, shortcut?:string) {
+        constructor(label: string, shortcut?: string, global?: boolean) {
             this.label = label;
 
             if (shortcut) {
-                this.shortcut = new KeyBinding(shortcut).setCallback((e:ExtendedKeyboardEvent, combo:string) => {
+                this.shortcut = new KeyBinding(shortcut).setGlobal(global).setCallback((e: ExtendedKeyboardEvent, combo: string) => {
 
                     // preventing Browser shortcuts to kick in
                     if (e.preventDefault) {
@@ -35,11 +35,11 @@ module api.ui {
             }
         }
 
-        getLabel():string {
+        getLabel(): string {
             return this.label;
         }
 
-        setLabel(value:string) {
+        setLabel(value: string) {
 
             if (value !== this.label) {
                 this.label = value;
@@ -50,11 +50,11 @@ module api.ui {
             }
         }
 
-        isEnabled():boolean {
+        isEnabled(): boolean {
             return this.enabled;
         }
 
-        setEnabled(value:boolean) {
+        setEnabled(value: boolean) {
 
             if (value !== this.enabled) {
                 this.enabled = value;
@@ -65,11 +65,11 @@ module api.ui {
             }
         }
 
-        getIconClass():string {
+        getIconClass(): string {
             return this.iconClass;
         }
 
-        setIconClass(value:string) {
+        setIconClass(value: string) {
 
             if (value !== this.iconClass) {
                 this.iconClass = value;
@@ -80,27 +80,27 @@ module api.ui {
             }
         }
 
-        hasShortcut():boolean {
+        hasShortcut(): boolean {
             return this.shortcut != null;
         }
 
-        getShortcut():KeyBinding {
+        getShortcut(): KeyBinding {
             return this.shortcut;
         }
 
-        setMnemonic(value:string) {
+        setMnemonic(value: string) {
             this.mnemonic = new Mnemonic(value);
         }
 
-        hasMnemonic():boolean {
+        hasMnemonic(): boolean {
             return this.mnemonic != null;
         }
 
-        getMnemonic():Mnemonic {
+        getMnemonic(): Mnemonic {
             return this.mnemonic;
         }
 
-        execute():void {
+        execute(): void {
 
             if (this.enabled) {
                 for (var i in this.executionListeners) {
@@ -109,18 +109,18 @@ module api.ui {
             }
         }
 
-        addExecutionListener(listener:(action:Action) => void):Action {
+        addExecutionListener(listener: (action: Action) => void): Action {
             this.executionListeners.push(listener);
             return this;
         }
 
-        addPropertyChangeListener(listener:(action:Action) => void) {
+        addPropertyChangeListener(listener: (action: Action) => void) {
             this.propertyChangeListeners.push(listener);
         }
 
-        getKeyBindings():KeyBinding[] {
+        getKeyBindings(): KeyBinding[] {
 
-            var bindings:KeyBinding[] = [];
+            var bindings: KeyBinding[] = [];
 
             if (this.hasShortcut()) {
                 bindings.push(this.getShortcut());
@@ -134,11 +134,11 @@ module api.ui {
             return bindings;
         }
 
-        static getKeyBindings(actions:api.ui.Action[]):KeyBinding[] {
+        static getKeyBindings(actions: api.ui.Action[]): KeyBinding[] {
 
-            var bindings:KeyBinding[] = [];
-            actions.forEach((action:Action) => {
-                action.getKeyBindings().forEach((keyBinding:KeyBinding) => {
+            var bindings: KeyBinding[] = [];
+            actions.forEach((action: Action) => {
+                action.getKeyBindings().forEach((keyBinding: KeyBinding) => {
                     bindings.push(keyBinding);
                 });
 

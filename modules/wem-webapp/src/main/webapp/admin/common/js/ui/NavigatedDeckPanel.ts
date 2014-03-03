@@ -13,7 +13,7 @@ module api.ui {
 
             navigator.onNavigationItemSelected((event: DeckPanelNavigatorEvent) => {
                 this.showPanel(event.getTabItem().getIndex());
-            })
+            });
         }
 
         getSelectedNavigationItem(): PanelNavigationItem {
@@ -37,8 +37,8 @@ module api.ui {
         }
 
         selectPanelFromIndex(index: number) {
-            this.showPanel(index);
             this.navigator.selectNavigationItem(index);
+            // panel will be shown because of the selected navigator listener in constructor
         }
 
         removePanel(panel: Panel, checkCanRemovePanel: boolean = true): number {

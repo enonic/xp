@@ -18,5 +18,6 @@
 // @include slickgrid/slick.rowselectionmodel.js
 // @include slickgrid/slick.checkboxselectcolumn.js
 // @include mousetrap.min.js
+// @include mousetrap-global-bind.min.js
 // @include q.js
 // @include jquery.slimscroll.min.js

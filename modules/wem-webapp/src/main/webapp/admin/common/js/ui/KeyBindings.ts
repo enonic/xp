@@ -12,6 +12,8 @@ module api.ui {
 
         private shelves: {[s:string] : KeyBinding;}[] = [];
 
+        private debug: boolean = false;
+
         public static get(): KeyBindings {
             return KeyBindings.INSTANCE;
         }
@@ -19,7 +21,9 @@ module api.ui {
         constructor() {
             KeyBindings.instanceCount++;
             this.instance = KeyBindings.instanceCount;
-            //console.log("KeyBindings constructed instance #" + this.instance);
+            if (this.debug) {
+                console.log("KeyBindings constructed instance #" + this.instance);
+            }
         }
 
         public bindKeys(bindings: KeyBinding[]) {
@@ -30,13 +34,17 @@ module api.ui {
                 logMessage += "'" + binding.getCombination() + "' ,";
             });
             logMessage += "]";
-
-            //console.log("KeyBindings[#" + this.instance + "].bindKeys(): " + logMessage);
+            if (this.debug) {
+                console.log("KeyBindings[#" + this.instance + "].bindKeys(): " + logMessage);
+            }
         }
 
         private bindKey(binding: KeyBinding) {
-
-            Mousetrap.bind(binding.getCombination(), binding.getCallback(), binding.getAction());
+            if (binding.isGlobal()) {
+                Mousetrap.bindGlobal(binding.getCombination(), binding.getCallback(), binding.getAction());
+            } else {
+                Mousetrap.bind(binding.getCombination(), binding.getCallback(), binding.getAction());
+            }
             this.activeBindings[binding.getCombination()] = binding;
         }
 
@@ -48,8 +56,9 @@ module api.ui {
                 this.unbindKey(binding);
                 logMessage += "'" + binding.getCombination() + "' ,";
             });
-
-            //console.log("KeyBindings[#" + this.instance + "].unbindKeys(): " + logMessage);
+            if (this.debug) {
+                console.log("KeyBindings[#" + this.instance + "].unbindKeys(): " + logMessage);
+            }
         }
 
         private unbindKey(binding: KeyBinding) {
@@ -64,7 +73,9 @@ module api.ui {
         }
 
         public reset() {
-            //console.log("KeyBindings[#" + this.instance + "].reset()");
+            if (this.debug) {
+                console.log("KeyBindings[#" + this.instance + "].reset()");
+            }
 
             Mousetrap.reset();
             this.activeBindings = {};
@@ -75,7 +86,9 @@ module api.ui {
          * Stores the current bindings on a new shelf and resets.
          */
         public shelveBindings() {
-            //console.log("KeyBindings[#" + this.instance + "].shelveBindings(): ");
+            if (this.debug) {
+                console.log("KeyBindings[#" + this.instance + "].shelveBindings(): ");
+            }
             Mousetrap.reset();
             this.shelves.push(this.activeBindings);
             this.activeBindings = {};
@@ -89,16 +102,18 @@ module api.ui {
             Mousetrap.reset();
             var previousMousetraps: {[s:string] : KeyBinding;} = this.shelves.pop();
             if (previousMousetraps == undefined) {
-                //console.log("KeyBindings[#" + this.instance + "].unshelveBindings(): nothing to unshelve");
+                if (this.debug) {
+                    console.log("KeyBindings[#" + this.instance + "].unshelveBindings(): nothing to unshelve");
+                }
                 return;
             }
-
-            //console.log("KeyBindings[#" + this.instance + "].unshelveBindings(): unshelving... ");
+            if (this.debug) {
+                console.log("KeyBindings[#" + this.instance + "].unshelveBindings(): unshelving... ");
+            }
             for (var key in previousMousetraps) {
                 var mousetrap: KeyBinding = <KeyBinding> previousMousetraps[key];
-                Mousetrap.bind(mousetrap.getCombination(), mousetrap.getCallback(), mousetrap.getAction());
+                this.bindKey(mousetrap);
             }
-            this.activeBindings = previousMousetraps;
         }
     }
 }

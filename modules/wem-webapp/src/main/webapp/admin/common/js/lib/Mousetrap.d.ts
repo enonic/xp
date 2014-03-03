@@ -7,7 +7,7 @@ interface ExtendedKeyboardEvent extends KeyboardEvent {
     returnValue: boolean; // IE returnValue
 }
 
-interface MousetrapStatic {
+interface Mousetrap {
     stopCallback: (e: ExtendedKeyboardEvent, element: Element, combo: string) => boolean;
 
     bind(keys: string, callback: (e: ExtendedKeyboardEvent, combo: string) => any, action?: string): void;
@@ -17,5 +17,17 @@ interface MousetrapStatic {
     trigger(keys: string, action?: string): void;
     reset(): void;
 }
+
+// Mousetrap global bind plugin
+// https://github.com/ccampbell/mousetrap/tree/master/plugins/global-bind
+
+interface MousetrapGlobal {
+
+    bindGlobal(keys: string, callback: (e: ExtendedKeyboardEvent, combo: string) => any, action?: string): void;
+    bindGlobal(keyArray: string[], callback: (e: ExtendedKeyboardEvent, combo: string) => any, action?: string): void;
+
+}
+
+interface MousetrapStatic extends Mousetrap, MousetrapGlobal {}
 
 declare var Mousetrap: MousetrapStatic;
