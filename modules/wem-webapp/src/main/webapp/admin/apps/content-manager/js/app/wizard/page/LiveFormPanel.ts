@@ -502,11 +502,17 @@ module app.wizard {
                         case "layout":
                             pageComponent = new LayoutComponentBuilder();
                             break;
+                        case "paragraph":
+                            //TODO: Implement paragraph
+                            pageComponent = null;
+                        break;
                     }
-                    pageComponent.setName(componentName);
-                    var componentPath = this.pageRegions.addComponentAfter(pageComponent.build(), regionPath, componentToAddAfter);
+                    if (pageComponent) {
+                        pageComponent.setName(componentName);
+                        var componentPath = this.pageRegions.addComponentAfter(pageComponent.build(), regionPath, componentToAddAfter);
+                        componentEl.getEl().setData("live-edit-component", componentPath.toString());
+                    }
 
-                    componentEl.getEl().setData("live-edit-component", componentPath.toString());
                     componentEl.getEl().setData("live-edit-type", componentType);
                 });
 

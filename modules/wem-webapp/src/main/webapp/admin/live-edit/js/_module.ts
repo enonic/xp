@@ -13,6 +13,7 @@
 ///<reference path='component/ImagePlaceholder.ts' />
 ///<reference path='component/PartPlaceholder.ts' />
 ///<reference path='component/LayoutPlaceholder.ts' />
+///<reference path='component/TextPlaceholder.ts' />
 ///<reference path='component/helper/DragHelper.ts' />
 ///<reference path='component/helper/ComponentResizeObserver.ts' />
 ///<reference path='component/LoadingOverlay.ts' />

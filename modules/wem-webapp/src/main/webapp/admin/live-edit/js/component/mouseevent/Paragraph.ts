@@ -60,6 +60,7 @@ module LiveEdit.component.mouseevent {
                 this.currentMode = this.modes.UNSELECTED;
             }
 
+            console.log("setting selected paragraph to",component);
             this.selectedParagraph = component;
 
             if (this.currentMode === this.modes.UNSELECTED) {
