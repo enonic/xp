@@ -2,12 +2,12 @@ package com.enonic.wem.api.content.page;
 
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
-public class PageTemplateParams
+public class PageTemplateSpec
 {
 
     private ContentTypeName canRender;
 
-    private PageTemplateParams( Builder builder ) {
+    private PageTemplateSpec( Builder builder ) {
         this.canRender = builder.canRender;
     }
 
@@ -33,8 +33,8 @@ public class PageTemplateParams
             return this;
         }
 
-        public PageTemplateParams build() {
-            return new PageTemplateParams( this );
+        public PageTemplateSpec build() {
+            return new PageTemplateSpec( this );
         }
 
     }

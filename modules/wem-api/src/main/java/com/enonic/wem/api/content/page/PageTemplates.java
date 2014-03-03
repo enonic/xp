@@ -42,14 +42,14 @@ public final class PageTemplates
         return this.templatesByPath.get( path );
     }
 
-    public PageTemplates filter( final PageTemplateParams params )
+    public PageTemplates filter( final PageTemplateSpec spec )
     {
         return PageTemplates.from( Collections2.filter( templatesByName.values(), new Predicate<PageTemplate>()
         {
             @Override
             public boolean apply( @Nullable final PageTemplate pageTemplate )
             {
-                return params.isSatisfiedBy( pageTemplate );
+                return spec.isSatisfiedBy( pageTemplate );
             }
         } ) );
     }
