@@ -1,8 +1,10 @@
 package com.enonic.wem.core.content.attachment;
 
+import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.attachment.GetAttachments;
 import com.enonic.wem.api.command.entity.GetNodeById;
 import com.enonic.wem.api.content.ContentNotFoundException;
+import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
@@ -29,7 +31,14 @@ public class GetAttachmentsHandler
 
             for ( com.enonic.wem.api.entity.Attachment entityAttachment : node.attachments() )
             {
-                attachmentsBuilder.add( CONTENT_ATTACHMENT_NODE_TRANSLATOR.toContentAttachment( entityAttachment ) );
+                final boolean isThumbnail = entityAttachment.name().equals( CreateContent.THUMBNAIL_NAME );
+
+                if ( !isThumbnail || command.isIncludeThumbnail() )
+                {
+                    final Attachment attachment = CONTENT_ATTACHMENT_NODE_TRANSLATOR.toContentAttachment( entityAttachment );
+
+                    attachmentsBuilder.add( attachment );
+                }
             }
 
             command.setResult( attachmentsBuilder.build() );

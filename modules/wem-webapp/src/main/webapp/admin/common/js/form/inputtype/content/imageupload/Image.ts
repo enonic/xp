@@ -12,7 +12,14 @@ module api.form.inputtype.content.imageupload {
 
         constructor(config: api.form.inputtype.InputTypeViewConfig<any>) {
             super(config, "image");
-            this.attachment = config.attachments.getAttachments().pop();
+
+            var attachments: api.content.attachment.Attachment[] = config.attachments.getAttachments();
+
+            if (attachments.length > 1) {
+                throw new Error("Expected max one attachment for Image content, actual " + (attachments.length));
+            }
+
+            this.attachment = attachments.pop();
         }
 
         createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {

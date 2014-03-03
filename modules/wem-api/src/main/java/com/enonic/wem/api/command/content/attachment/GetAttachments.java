@@ -14,6 +14,8 @@ public final class GetAttachments
 {
     private ContentId contentId;
 
+    private boolean includeThumbnail = false;
+
     public GetAttachments contentId( final ContentId contentId )
     {
         this.contentId = contentId;
@@ -25,6 +27,16 @@ public final class GetAttachments
         return contentId;
     }
 
+    public boolean isIncludeThumbnail()
+    {
+        return includeThumbnail;
+    }
+
+    public GetAttachments setIncludeThumbnail( final boolean includeThumbnail )
+    {
+        this.includeThumbnail = includeThumbnail;
+        return this;
+    }
 
     @Override
     public boolean equals( final Object o )
