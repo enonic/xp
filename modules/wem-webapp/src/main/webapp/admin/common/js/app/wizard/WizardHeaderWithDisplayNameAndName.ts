@@ -54,7 +54,7 @@ module api.app.wizard {
             });
             this.appendChild(this.nameEl);
 
-            this.displayNameEl.getEl().addEventListener('input', () => {
+            this.displayNameEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
 
                 var actualDisplayName = this.displayNameEl.getValue();
 
@@ -67,12 +67,15 @@ module api.app.wizard {
                 this.doAutoGenerateName(actualDisplayName);
             });
 
-            this.nameEl.getEl().addEventListener('input', () => {
+            this.nameEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
                 var currentName = this.nameEl.getValue();
 
                 var generatedName = this.generateName(this.getDisplayName());
                 this.autoGenerateName = currentName == generatedName;
             });
+
+            this.onShown((event) => this.updatePathAndNameWidth());
+            window.addEventListener('resize', () => this.updatePathAndNameWidth());
 
         }
 
@@ -143,6 +146,35 @@ module api.app.wizard {
 
         private generateName(value: string): string {
             return api.Name.ensureValidName(value);
+        }
+
+        private updatePathAndNameWidth() {
+            var pathEl = this.pathEl.getEl(),
+                nameEl = this.nameEl.getEl(),
+                headerWidth = this.getEl().getWidth(),
+                pathWidth = pathEl.getWidthWithMargin(),
+                nameWidth = nameEl.getWidthWithMargin(),
+                nameMinWidth = nameEl.getMinWidth();
+
+            if (pathWidth + nameWidth > headerWidth) {
+                if (nameWidth > nameMinWidth) {
+                    nameEl.setWidthPx(Math.max(nameMinWidth, headerWidth - pathWidth));
+                }
+                if (pathWidth + nameMinWidth > headerWidth) {
+                    pathEl.setWidthPx(headerWidth - nameMinWidth - pathEl.getMarginLeft() - pathEl.getMarginRight());
+                }
+            } else {
+                var pathClone = new api.dom.SpanEl('path');
+                pathClone.setHtml(pathEl.getInnerHtml());
+                pathClone.getEl().setHeight('0px');
+                pathClone.insertAfterEl(this.pathEl);
+                var pathCloneWidth = pathClone.getEl().getWidth();
+
+                if (pathEl.getWidth() < pathCloneWidth) {
+                    pathEl.setWidthPx(Math.min(pathCloneWidth, headerWidth - nameWidth - pathEl.getMarginLeft() - pathEl.getMarginRight()));
+                }
+                pathClone.remove();
+            }
         }
 
     }

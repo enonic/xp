@@ -22,32 +22,14 @@ module api.ui {
             this.attendant = new api.dom.DivEl().addClass('autosize-attendant');
             this.attendant.appendChild(this.clone);
 
+            // Update input after input has been shown.
+            this.onShown((event) => this.updateSize());
+
             // Update input width according to current text length.
-            this.getEl().addEventListener('input', () => {
-                this.updateSize();
-            });
+            this.onValueChanged((event) => this.updateSize());
 
             // Update input width according to current page size.
-            window.addEventListener('resize', () => {
-                this.updateSize();
-            });
-
-            this.onRendered((event) => {
-                if (!this.isVisible()) {
-                    // If input isn't visible then append attendant element to body
-                    // in order to update input size according to initial text width.
-                    // Then insert attendant element after input for further size updates.
-                    api.dom.Body.get().appendChild(this.attendant);
-                    this.updateSize();
-                    this.getParentElement().appendChild(this.attendant);
-                }
-                else {
-                    // If input is visible then insert attendant element after it
-                    // and calculate initial size according to text width.
-                    this.getParentElement().appendChild(this.attendant);
-                    this.updateSize();
-                }
-            })
+            window.addEventListener('resize', () => this.updateSize());
         }
 
         static large(className?: string): AutosizeTextInput {
@@ -58,22 +40,18 @@ module api.ui {
             return new AutosizeTextInput(className, TextInput.MIDDLE);
         }
 
-        setValue(value: string): AutosizeTextInput {
-            super.setValue(value);
-            this.updateSize();
-            return this;
-        }
-
         private updateSize() {
+            this.attendant.insertAfterEl(this);
 
             var attendantEl = this.attendant.getEl();
             var cloneEl = this.clone.getEl();
 
             cloneEl.setInnerHtml(this.getValue());
-            //console.log("updating size", this, cloneEl, cloneEl.getWidth(), attendantEl, attendantEl.getWidth());
             // Set input width to text length from the clone <div>
             // or to maximum possible width corresponding to attendant width.
-            this.getEl().setWidth(Math.min(cloneEl.getWidth(), attendantEl.getWidth()) + 'px');
+            this.getEl().setWidth(Math.min(cloneEl.getWidthWithBorder(), attendantEl.getWidth()) + 'px');
+
+            this.attendant.remove();
         }
 
     }
