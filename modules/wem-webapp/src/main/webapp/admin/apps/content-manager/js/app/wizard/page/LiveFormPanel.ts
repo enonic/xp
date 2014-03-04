@@ -134,7 +134,7 @@ module app.wizard {
             var deferred = Q.defer<void>();
 
             this.setupFrame();
-            this.loader = new LiveEditLoader();
+            this.loader = new LiveEditLoader(this);
             this.loader.start();
 
             var maxIterations = 100;
@@ -422,7 +422,9 @@ module app.wizard {
                             this.contextWindow.show();
                         }
                     }
-                    this.onComponentSelected(pathAsString);
+                    if (pathAsString) {
+                        this.onComponentSelected(pathAsString);
+                    }
                 });
 
             this.liveEditJQuery(this.liveEditWindow).on('pageSelect.liveEdit',
@@ -442,7 +444,7 @@ module app.wizard {
 
             this.liveEditJQuery(this.liveEditWindow).on('componentRemoved.liveEdit', (event, component?) => {
                 this.contextWindow.show();
-                if (component) {
+                if (component && component.getComponentPath()) {
                     this.pageRegions.removeComponent(api.content.page.ComponentPath.fromString(component.getComponentPath()));
                     this.contextWindow.clearSelection();
                 }
@@ -551,9 +553,10 @@ module app.wizard {
 
     export class LiveEditLoader extends api.dom.DivEl {
 
-        constructor() {
+        constructor(elementToCover:api.dom.Element) {
             super("live-edit-loader");
 
+            this.getEl().setTopPx(elementToCover.getEl().getOffsetTop());
             var dots = new api.dom.DivEl("dots");
             this.appendChild(dots);
             document.body.appendChild(this.getHTMLElement());
@@ -563,7 +566,7 @@ module app.wizard {
         }
 
         stop() {
-            $(this.getHTMLElement()).fadeOut(1500, () => {
+            $(this.getHTMLElement()).fadeOut(750, () => {
                 document.body.removeChild(this.getHTMLElement());
             })
 

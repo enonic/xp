@@ -156,7 +156,7 @@ module api.app.wizard {
 
             $('.form-panel').scroll(() => {
                 var scrollTop = $('.form-panel').scrollTop();
-                var wizardHeaderHeight = this.header.getEl().getHeightWithMargin() + this.header.getEl().getOffsetTop();
+                var wizardHeaderHeight = this.header.getEl().getHeightWithMargin() + this.header.getEl().getOffsetTopRelativeToParent();
                 if (scrollTop > wizardHeaderHeight) {
                     this.mainToolbar.removeClass("scrolling");
                     this.stepNavigatorAndToolbarContainer.addClass("scroll-stick");

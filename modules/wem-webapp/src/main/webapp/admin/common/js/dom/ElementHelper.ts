@@ -331,10 +331,18 @@ module api.dom {
         }
 
         getOffsetTop(): number {
+            return $(this.el).offset().top;
+        }
+
+        getOffsetTopRelativeToParent(): number {
             return this.el.offsetTop;
         }
 
         getOffsetLeft(): number {
+            return $(this.el).offset().left;
+        }
+
+        getOffsetLeftRelativeToParent(): number {
             return this.el.offsetLeft;
         }
 
