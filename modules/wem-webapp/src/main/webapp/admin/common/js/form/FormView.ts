@@ -10,7 +10,7 @@ module api.form {
 
         private formItemViews: FormItemView[] = [];
 
-        private listeners: {[eventName:string]:{(event: FormEvent):void}[]} = {};
+        private formValidityChangedListeners: {(event: FormValidityChangedEvent):void}[] = [];
 
         private previousValidationRecording: ValidationRecording;
 
@@ -20,7 +20,6 @@ module api.form {
             this.form = form;
             this.rootDataSet = contentData;
 
-            this.listeners[FormEventNames.FormValidityChanged] = [];
             this.doLayout();
         }
 
@@ -213,11 +212,14 @@ module api.form {
         }
 
         onValidityChanged(listener: (event: FormValidityChangedEvent)=>void) {
-            this.addListener(FormEventNames.FormValidityChanged, listener);
+            this.formValidityChangedListeners.push(listener);
         }
 
         unValidityChanged(listener: (event: FormValidityChangedEvent)=>void) {
-            this.removeListener(FormEventNames.FormValidityChanged, listener);
+            this.formValidityChangedListeners =
+            this.formValidityChangedListeners.filter((currentListener: (event: FormValidityChangedEvent)=>void)=> {
+                return listener != currentListener;
+            });
         }
 
         private notifyValidityChanged(event: FormValidityChangedEvent) {
@@ -230,29 +232,15 @@ module api.form {
                 event.getRecording().print();
             }
 
-            this.notifyListeners(FormEventNames.FormValidityChanged, event);
+            this.formValidityChangedListeners.forEach((listener: (event: FormValidityChangedEvent)=>void)=> {
+                listener.call(this, event);
+            })
         }
 
         private notifyEditContentRequestListeners(content: api.content.ContentSummary) {
             this.formItemViews.forEach((formItemView: FormItemView) => {
                 formItemView.notifyEditContentRequestListeners(content);
             })
-        }
-
-        private addListener(eventName: FormEventNames, listener: (event: FormEvent)=>void) {
-            this.listeners[eventName].push(listener);
-        }
-
-        private removeListener(eventName: FormEventNames, listener: (event: FormEvent)=>void) {
-            this.listeners[eventName].filter((currentListener: (event: FormEvent)=>void) => {
-                return listener == currentListener;
-            });
-        }
-
-        private notifyListeners(eventName: FormEventNames, event: FormEvent) {
-            this.listeners[eventName].forEach((listener: (event: FormEvent)=>void) => {
-                listener(event);
-            });
         }
 
     }

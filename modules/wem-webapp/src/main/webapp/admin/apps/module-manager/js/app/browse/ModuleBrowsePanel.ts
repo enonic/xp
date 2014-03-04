@@ -2,11 +2,11 @@ module app.browse {
 
     export class ModuleBrowsePanel extends api.app.browse.BrowsePanel<api.module.ModuleSummary> {
 
-        private browseActions:app.browse.ModuleBrowseActions;
+        private browseActions: app.browse.ModuleBrowseActions;
 
-        private moduleTreeGridPanel:ModuleTreeGridPanel;
+        private moduleTreeGridPanel: ModuleTreeGridPanel;
 
-        private toolbar:ModuleBrowseToolbar;
+        private toolbar: ModuleBrowseToolbar;
 
         constructor() {
             var treeGridContextMenu = new app.browse.ModuleTreeGridContextMenu();
@@ -27,32 +27,30 @@ module app.browse {
                 filterPanel: undefined
             });
 
-            api.module.ModuleImportedEvent.on((event:api.module.ModuleImportedEvent) => {
+            api.module.ModuleImportedEvent.on((event: api.module.ModuleImportedEvent) => {
                 this.setRefreshNeeded(true);
                 this.refreshFilterAndGrid();
             });
 
-            api.module.ModuleDeletedEvent.on((event:api.module.ModuleDeletedEvent) => {
+            api.module.ModuleDeletedEvent.on((event: api.module.ModuleDeletedEvent) => {
                 var moduleKey = event.getModuleKey();
                 this.moduleTreeGridPanel.remove(moduleKey.toString());
             });
 
-            this.moduleTreeGridPanel.addListener(<api.app.browse.grid.TreeGridPanelListener>{
-                onSelectionChanged: (event:api.app.browse.grid.TreeGridSelectionChangedEvent) => {
-                    this.browseActions.updateActionsEnabledState(<any[]>event.selectedModels);
-                }
+            this.moduleTreeGridPanel.onTreeGridSelectionChanged((event: api.app.browse.grid.TreeGridSelectionChangedEvent) => {
+                this.browseActions.updateActionsEnabledState(<any[]>event.getSelectedModels());
             });
         }
 
-        extModelsToBrowseItems(models:Ext_data_Model[]):api.app.browse.BrowseItem<api.module.ModuleSummary>[] {
+        extModelsToBrowseItems(models: Ext_data_Model[]): api.app.browse.BrowseItem<api.module.ModuleSummary>[] {
 
-            var browseItems:api.app.browse.BrowseItem<api.module.ModuleSummary>[] = [];
+            var browseItems: api.app.browse.BrowseItem<api.module.ModuleSummary>[] = [];
 
-            models.forEach((model:Ext_data_Model, index:number) => {
+            models.forEach((model: Ext_data_Model, index: number) => {
 
-                var moduleModel:api.module.ModuleSummary = api.module.ModuleSummary.fromExtModel(model);
+                var moduleModel: api.module.ModuleSummary = api.module.ModuleSummary.fromExtModel(model);
 
-                var item = new api.app.browse.BrowseItem<api.module.ModuleSummary>(moduleModel ).
+                var item = new api.app.browse.BrowseItem<api.module.ModuleSummary>(moduleModel).
                     setDisplayName(moduleModel.getDisplayName()).
                     setPath(moduleModel.getName()).
                     setIconUrl(api.util.getAdminUri('common/images/icons/icoMoon/32x32/puzzle.png'));

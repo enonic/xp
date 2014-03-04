@@ -2,11 +2,11 @@ module app.browse {
 
     export class TemplateBrowsePanel extends api.app.browse.BrowsePanel<app.browse.TemplateBrowseItem> {
 
-        private browseActions:app.browse.action.TemplateBrowseActions;
+        private browseActions: app.browse.action.TemplateBrowseActions;
 
         private templateTreeGridPanel: app.browse.TemplateTreeGridPanel;
 
-        private toolbar:TemplateBrowseToolbar;
+        private toolbar: TemplateBrowseToolbar;
 
         constructor() {
             var treeGridContextMenu = new app.browse.TemplateTreeGridContextMenu();
@@ -33,10 +33,8 @@ module app.browse {
                 console.log(siteTemplateKey);
             });
 
-            this.templateTreeGridPanel.addListener(<api.app.browse.grid.TreeGridPanelListener>{
-                onSelectionChanged: (event: api.app.browse.grid.TreeGridSelectionChangedEvent) => {
-                    this.browseActions.updateActionsEnabledState(<any[]>event.selectedModels);
-                }
+            this.templateTreeGridPanel.onTreeGridSelectionChanged((event: api.app.browse.grid.TreeGridSelectionChangedEvent) => {
+                this.browseActions.updateActionsEnabledState(<any[]>event.getSelectedModels());
             });
 
             api.content.site.template.SiteTemplateImportedEvent.on(() => {

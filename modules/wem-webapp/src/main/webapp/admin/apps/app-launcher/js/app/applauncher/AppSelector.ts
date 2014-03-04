@@ -4,7 +4,9 @@ module app.launcher {
         private selectedAppIndex: number;
         private apps: Application[];
         private appTiles: {[name: string]: AppTile;};
-        private listeners: AppSelectorListener[] = [];
+        private appHighlightedListeners: {(event: AppHighlightedEvent):void}[] = [];
+        private appUnhighlightedListeners: {(event: AppUnhighlightedEvent):void}[] = [];
+        private appSelectedListeners: {(event: AppSelectedEvent):void}[] = [];
         private applicationSearchInput: api.ui.TextInput;
         private emptyMessagePlaceholder: api.dom.DivEl;
         private homeAppSelector: api.dom.DivEl;
@@ -89,10 +91,6 @@ module app.launcher {
 
         giveFocus(): boolean {
             return this.applicationSearchInput.giveFocus();
-        }
-
-        addListener(listener: AppSelectorListener) {
-            this.listeners.push(listener);
         }
 
         private highlightNextAppTile() {
@@ -195,21 +193,52 @@ module app.launcher {
             return this.appTiles[this.apps[appIndex].getName()].isVisible();
         }
 
+        onAppHighlighted(listener: (event: AppHighlightedEvent)=>void) {
+            this.appHighlightedListeners.push(listener);
+        }
+
+        onAppUnhighlighted(listener: (event: AppUnhighlightedEvent)=>void) {
+            this.appUnhighlightedListeners.push(listener);
+        }
+
+        onAppSelected(listener: (event: AppSelectedEvent)=>void) {
+            this.appSelectedListeners.push(listener);
+        }
+
+        unAppHighlighted(listener: (event: AppHighlightedEvent)=>void) {
+            this.appHighlightedListeners = this.appHighlightedListeners.filter((currentListener: (event: AppHighlightedEvent)=>void)=> {
+                return listener != currentListener
+            });
+        }
+
+        unAppUnhighlighted(listener: (event: AppUnhighlightedEvent)=>void) {
+            this.appUnhighlightedListeners =
+            this.appUnhighlightedListeners.filter((currentListener: (event: AppUnhighlightedEvent)=>void)=> {
+                return listener != currentListener
+            });
+        }
+
+        unAppSelected(listener: (event: AppSelectedEvent)=>void) {
+            this.appSelectedListeners = this.appSelectedListeners.filter((currentListener: (event: AppSelectedEvent)=>void)=> {
+                return listener != currentListener
+            });
+        }
+
         private notifyAppHighlighted(app: Application) {
-            this.listeners.forEach((listener: AppSelectorListener)=> {
-                listener.onAppHighlighted(app);
+            this.appHighlightedListeners.forEach((listener: (event: AppHighlightedEvent)=>void)=> {
+                listener.call(this, new AppHighlightedEvent(app));
             });
         }
 
         private notifyAppUnhighlighted(app: Application) {
-            this.listeners.forEach((listener: AppSelectorListener)=> {
-                listener.onAppUnhighlighted(app);
+            this.appUnhighlightedListeners.forEach((listener: (event: AppUnhighlightedEvent)=>void)=> {
+                listener.call(this, new AppUnhighlightedEvent(app));
             });
         }
 
         private notifyAppSelected(app: Application) {
-            this.listeners.forEach((listener: AppSelectorListener)=> {
-                listener.onAppSelected(app);
+            this.appSelectedListeners.forEach((listener: (event: AppSelectedEvent)=>void)=> {
+                listener.call(this, new AppSelectedEvent(app));
             });
         }
 

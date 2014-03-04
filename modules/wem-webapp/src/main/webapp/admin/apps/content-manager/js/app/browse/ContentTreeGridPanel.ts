@@ -7,7 +7,7 @@ module app.browse {
 
     export class ContentTreeGridPanel extends api.app.browse.grid.TreeGridPanel {
 
-        constructor(params:ContentTreeGridPanelParams) {
+        constructor(params: ContentTreeGridPanelParams) {
 
             super({
                 columns: this.createColumns(),
@@ -30,13 +30,8 @@ module app.browse {
                 this.refresh();
             });
 
-            this.addListener({
-                onItemDoubleClicked: (event:api.app.browse.grid.TreeItemDoubleClickedEvent) => {
-                    new app.browse.EditContentEvent([<any>event.clickedModel]).fire();
-                },
-                onSelectionChanged: null,
-                onSelect: null,
-                onDeselect: null
+            this.onTreeGridItemDoubleClicked((event: api.app.browse.grid.TreeGridItemDoubleClickedEvent) => {
+                new app.browse.EditContentEvent([<any>event.getClickedModel()]).fire();
             });
         }
 
@@ -80,7 +75,7 @@ module app.browse {
         private nameRenderer(value, metaData, record, rowIndex, colIndex, store, view) {
             var content = record.data;
             // typescript swears when extracting this as the class field
-            var nameTemplate = '<div class="admin-{0}-thumbnail' + (content.isSite ? ' site' : '') +  '">' +
+            var nameTemplate = '<div class="admin-{0}-thumbnail' + (content.isSite ? ' site' : '') + '">' +
                                '<img src="{1}"/>' +
                                '<span class="overlay"></span>' +
                                '</div>' +

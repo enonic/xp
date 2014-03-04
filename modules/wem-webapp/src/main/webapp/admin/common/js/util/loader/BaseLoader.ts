@@ -15,11 +15,11 @@ module api.util.loader {
 
         private searchString: string;
 
-        private listeners: {[eventName:string]:{(event: LoaderEvent):void}[]} = {};
+        private loadedDataListeners: {(event: LoadedDataEvent):void}[] = [];
+
+        private loadingDataListeners: {(event: LoadingDataEvent):void}[] = [];
 
         constructor(request: api.rest.ResourceRequest<JSON>, autoLoad: boolean = true) {
-            this.listeners[LoaderEvents.LoadedData] = [];
-            this.listeners[LoaderEvents.LoadingData] = [];
             this.isLoading = false;
             this.setRequest(request);
             if (autoLoad) {
@@ -39,11 +39,11 @@ module api.util.loader {
 
         load(): void {
             this.isLoading = true;
-            this.notifyLoadingData(new LoadingDataEvent());
+            this.notifyLoadingData();
             this.doRequest().done((results: OBJECT[]) => {
                 this.results = results;
                 this.isLoading = false;
-                this.notifyLoadedData(new LoadedDataEvent(results));
+                this.notifyLoadedData(results);
             });
         }
 
@@ -67,7 +67,7 @@ module api.util.loader {
             this.searchString = searchString;
             if (this.results) {
                 var filtered = this.results.filter(this.filterFn, this);
-                this.notifyLoadedData(new LoadedDataEvent<OBJECT>(this.results));
+                this.notifyLoadedData(this.results);
             }
         }
 
@@ -79,44 +79,36 @@ module api.util.loader {
             throw Error("must be implemented");
         }
 
-        private addListener(eventName: LoaderEvents, listener: (event: LoaderEvent) => void) {
-            this.listeners[eventName].push(listener);
-        }
-
-        private removeListener(eventName: LoaderEvents, listener: (event: LoaderEvent) => void) {
-            this.listeners[eventName].filter((currentListener: (event: LoaderEvent)=>void) => {
-                return listener == currentListener;
+        notifyLoadedData(results: OBJECT[]) {
+            this.loadedDataListeners.forEach((listener: (event: LoadedDataEvent)=>void)=> {
+                listener.call(this, new LoadedDataEvent<OBJECT>(results));
             });
         }
 
-        private notifyListeners(eventName: LoaderEvents, event: LoaderEvent) {
-            this.listeners[eventName].forEach((listener: (event: LoaderEvent)=>void) => {
-                listener(event);
+        notifyLoadingData() {
+            this.loadingDataListeners.forEach((listener: (event: LoadingDataEvent)=>void)=> {
+                listener.call(this, new LoadingDataEvent());
             });
-        }
-
-        notifyLoadedData(event: LoadedDataEvent<OBJECT>) {
-            this.notifyListeners(LoaderEvents.LoadedData, event);
-        }
-
-        notifyLoadingData(event: LoadingDataEvent) {
-            this.notifyListeners(LoaderEvents.LoadingData, event);
         }
 
         onLoadedData(listener: (event: LoadedDataEvent<OBJECT>) => void) {
-            this.addListener(LoaderEvents.LoadedData, listener);
+            this.loadedDataListeners.push(listener);
         }
 
         onLoadingData(listener: (event: LoadingDataEvent) => void) {
-            this.addListener(LoaderEvents.LoadingData, listener);
+            this.loadingDataListeners.push(listener);
         }
 
         unLoadedData(listener: (event: LoadedDataEvent<OBJECT>) => void) {
-            this.removeListener(LoaderEvents.LoadedData, listener);
+            this.loadedDataListeners = this.loadedDataListeners.filter((currentListener: (event: LoadedDataEvent)=>void)=> {
+                return currentListener != listener;
+            });
         }
 
         unLoadingData(listener: (event: LoadingDataEvent) => void) {
-            this.removeListener(LoaderEvents.LoadingData, listener);
+            this.loadingDataListeners = this.loadingDataListeners.filter((currentListener: (event: LoadingDataEvent)=>void)=> {
+                return currentListener != listener;
+            });
         }
 
     }
