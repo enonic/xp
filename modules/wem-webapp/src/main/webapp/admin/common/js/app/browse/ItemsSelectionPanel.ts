@@ -7,8 +7,8 @@ module api.app.browse {
         private selectionItems: SelectionItem<M>[] = [];
 
         constructor() {
-            super();
-            this.getEl().setInnerHtml("Nothing selected");
+            super("empty-space");
+            this.getEl().setInnerHtml("You are wasting this space - select something!");
         }
 
         setItems(items: BrowseItem<M>[]) {
@@ -59,7 +59,7 @@ module api.app.browse {
             this.items.splice(index, 1);
 
             if (this.items.length == 0) {
-                this.getEl().setInnerHtml("Nothing selected");
+                this.getEl().setInnerHtml("You are wasting this space - select something!");
             }
 
             this.notifyDeselected(item);
