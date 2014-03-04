@@ -238,6 +238,7 @@ module api.dom {
                 child.remove();
             });
             this.children = [];
+            this.el.setInnerHtml('');
         }
 
         remove() {
