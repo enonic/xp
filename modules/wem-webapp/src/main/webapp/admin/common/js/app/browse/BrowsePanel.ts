@@ -78,12 +78,9 @@ module api.app.browse {
                 this.gridAndFilterAndDetailSplitPanel = this.gridAndDetailSplitPanel;
             }
 
-            this.treeGridPanel.addListener({
-                onSelectionChanged: (event: api.app.browse.grid.TreeGridSelectionChangedEvent) => {
-                    var browseItems: api.app.browse.BrowseItem<M>[] = this.extModelsToBrowseItems(event.selectedModels);
-                    this.browseItemPanel.setItems(browseItems);
-                },
-                onItemDoubleClicked: null
+            this.treeGridPanel.onTreeGridSelectionChanged((event: api.app.browse.grid.TreeGridSelectionChangedEvent) => {
+                var browseItems: api.app.browse.BrowseItem<M>[] = this.extModelsToBrowseItems(event.getSelectedModels());
+                this.browseItemPanel.setItems(browseItems);
             });
 
             this.onRendered((event) => {

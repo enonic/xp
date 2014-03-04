@@ -200,7 +200,7 @@ module api.form {
         }
 
         canRemove() {
-            return this.occurrences.length > Math.max(1, this.allowedOccurrences.getMinimum());
+            return this.occurrences.length > Math.max(0, this.allowedOccurrences.getMinimum());
         }
 
         getOccurrenceViews(): V[] {

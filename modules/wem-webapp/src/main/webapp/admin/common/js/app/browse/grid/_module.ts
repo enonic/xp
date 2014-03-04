@@ -1,6 +1,11 @@
-///<reference path='GridPanelListener.ts' />
 ///<reference path='GridPanel.ts' />
-///<reference path='TreePanelListener.ts' />
 ///<reference path='TreePanel.ts' />
-///<reference path='TreeGridPanelListener.ts' />
 ///<reference path='TreeGridPanel.ts' />
+///<reference path='TreeGridItemDoubleClickedEvent.ts' />
+///<reference path='TreeGridSelectionChangedEvent.ts' />
+///<reference path='TreeItemDoubleClickedEvent.ts' />
+///<reference path='TreeSelectionChangedEvent.ts' />
+///<reference path='TreeShowContextMenuEvent.ts' />
+///<reference path='GridShowContextMenuEvent.ts' />
+///<reference path='GridItemDoubleClickedEvent.ts' />
+///<reference path='GridSelectionChangedEvent.ts' />

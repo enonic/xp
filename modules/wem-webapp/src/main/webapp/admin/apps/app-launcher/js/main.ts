@@ -21,16 +21,14 @@ window.onload = () => {
 
     var applications = app.launcher.Applications.getAllApps();
     var appSelector = new app.launcher.AppSelector(applications);
-    appSelector.addListener({
-        onAppHighlighted: (app: app.launcher.Application) => {
-            appInfoPanel.showAppInfo(app);
-        },
-        onAppUnhighlighted: (app: app.launcher.Application) => {
-            appInfoPanel.hideAppInfo();
-        },
-        onAppSelected: (app: app.launcher.Application) => {
-            appLauncher.loadApplication(app);
-        }
+    appSelector.onAppHighlighted((event: app.launcher.AppHighlightedEvent) => {
+        appInfoPanel.showAppInfo(event.getApplication());
+    });
+    appSelector.onAppUnhighlighted(() => {
+        appInfoPanel.hideAppInfo();
+    });
+    appSelector.onAppSelected((event: app.launcher.AppSelectedEvent) => {
+        appLauncher.loadApplication(event.getApplication());
     });
 
     var linksContainer = new app.home.LinksContainer().

@@ -34,7 +34,8 @@ module api.app.browse.grid {
 
         private contextMenu: api.ui.menu.ContextMenu;
 
-        private listeners: TreeGridPanelListener[] = [];
+        private treeGridItemDoubleClickedListeners: {(event: TreeGridItemDoubleClickedEvent):void}[] = [];
+        private treeGridSelectionChangedListeners: {(event: TreeGridSelectionChangedEvent):void}[] = [];
 
         constructor(params: TreeGridPanelParams) {
 
@@ -78,80 +79,66 @@ module api.app.browse.grid {
                 }
             });
 
-            treePanel.addListener(<TreePanelListener>{
-                onSelectionChanged: (event: TreeSelectionChangedEvent) => {
+            treePanel.onTreeSelectionChanged((event: TreeSelectionChangedEvent) => {
 
-                    //console.log("TreeGridPanel onSelectionChanged from tree", event);
+                this.notifyTreeGridSelectionChanged(event.getSelectedModels(), event.getSelectionCount());
+            });
+            treePanel.onTreeItemDoubleClicked((event: TreeItemDoubleClickedEvent) => {
 
-                    this.notifyTreeGridSelectionChanged({
-                        selectionCount: event.selectionCount,
-                        selectedModels: event.selectedModels
-                    });
-                },
-                onItemDoubleClicked: (event: TreeItemDoubleClickedEvent) => {
+                this.notifyTreeGridItemDoubleClicked(event.getSelectedModel());
+            });
+            treePanel.onTreeShowContextMenu((event: TreeShowContextMenuEvent) => {
 
-                    //console.log("TreeGridPanel onItemDoubleClicked from tree", event);
-
-                    this.notifyItemDoubleClicked({
-                        clickedModel: event.clickedModel
-                    });
-                },
-                onShowContextMenu: (event: TreeShowContextMenuEvent) => {
-
-                    //console.log("TreeGridPanel onShowContextMenu from tree", event);
-
-                    this.contextMenu.showAt(event.x, event.y);
-                }
+                this.contextMenu.showAt(event.getX(), event.getY());
             });
 
-            gridPanel.addListener(<GridPanelListener>{
-                onSelectionChanged: (event: GridSelectionChangedEvent) => {
+            gridPanel.onGridSelectionChanged((event: GridSelectionChangedEvent) => {
 
-                    //console.log("TreeGridPanel onSelectionChanged from grid", event);
+                this.notifyTreeGridSelectionChanged(event.getSelectedModels(), event.getSelectionCount());
+            });
+            gridPanel.onGridItemDoubleClicked((event: GridItemDoubleClickedEvent) => {
 
-                    this.notifyTreeGridSelectionChanged({
-                        selectionCount: event.selectionCount,
-                        selectedModels: event.selectedModels
-                    });
-                },
-                onItemDoubleClicked: (event: GridItemDoubleClickedEvent) => {
+                this.notifyTreeGridItemDoubleClicked(event.getClickedModel());
+            });
+            gridPanel.onGridShowContextMenu((event: GridShowContextMenuEvent) => {
 
-                    //console.log("TreeGridPanel onItemDoubleClicked from grid", event);
-
-                    this.notifyItemDoubleClicked({
-                        clickedModel: event.clickedModel
-                    });
-                },
-                onShowContextMenu: (event: GridShowContextMenuEvent) => {
-
-                    //console.log("TreeGridPanel onShowContextMenu from grid", event);
-
-                    this.contextMenu.showAt(event.x, event.y);
-                }
+                this.contextMenu.showAt(event.getX(), event.getY());
             });
 
             return this;
         }
 
-        addListener(listener: TreeGridPanelListener) {
-            this.listeners.push(listener);
+        onTreeGridSelectionChanged(listener: (event: TreeGridSelectionChangedEvent)=>void) {
+            this.treeGridSelectionChangedListeners.push(listener);
         }
 
-        private notifyTreeGridSelectionChanged(event: TreeGridSelectionChangedEvent) {
+        onTreeGridItemDoubleClicked(listener: (event: TreeGridItemDoubleClickedEvent)=>void) {
+            this.treeGridItemDoubleClickedListeners.push(listener);
+        }
 
-            this.listeners.forEach((listener: TreeGridPanelListener)=> {
-                if (listener.onSelectionChanged) {
-                    listener.onSelectionChanged(event);
-                }
+        unTreeGridSelectionChanged(listener: (event: TreeGridSelectionChangedEvent)=>void) {
+            this.treeGridSelectionChangedListeners =
+            this.treeGridSelectionChangedListeners.filter((currentListener: (event: TreeGridSelectionChangedEvent)=>void)=> {
+                return currentListener != listener;
             });
         }
 
-        private notifyItemDoubleClicked(event: TreeGridItemDoubleClickedEvent) {
+        unTreeGridItemDoubleClicked(listener: (event: TreeGridItemDoubleClickedEvent)=>void) {
+            this.treeGridItemDoubleClickedListeners =
+            this.treeGridItemDoubleClickedListeners.filter((currentListener: (event: TreeGridItemDoubleClickedEvent)=>void)=> {
+                return currentListener != listener;
+            });
+        }
 
-            this.listeners.forEach((listener: TreeGridPanelListener)=> {
-                if (listener.onItemDoubleClicked) {
-                    listener.onItemDoubleClicked(event);
-                }
+        private notifyTreeGridSelectionChanged(selectedModels: Ext_data_Model[], selectionCount: number) {
+            this.treeGridSelectionChangedListeners.forEach((listener: (event: TreeGridSelectionChangedEvent)=>void) => {
+                listener.call(this, new TreeGridSelectionChangedEvent(selectedModels, selectionCount));
+            })
+        }
+
+        private notifyTreeGridItemDoubleClicked(clickedModel: Ext_data_Model) {
+            this.treeGridItemDoubleClickedListeners.forEach((listener: (event: TreeGridItemDoubleClickedEvent)=>void)=> {
+                listener.call(this, new TreeGridItemDoubleClickedEvent(clickedModel));
             });
         }
 

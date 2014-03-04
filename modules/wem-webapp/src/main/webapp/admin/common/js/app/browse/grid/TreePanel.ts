@@ -2,13 +2,17 @@ module api.app.browse.grid {
 
     export class TreePanel {
 
-        private extTreePanel:Ext_tree_Panel;
+        private extTreePanel: Ext_tree_Panel;
 
-        private listeners:TreePanelListener[] = [];
+        private treeShowContextMenuListeners: {(event: TreeShowContextMenuEvent):void}[] = [];
 
-        private expandedIds:string[] = [];
+        private treeItemDoubleClickedListeners: {(event: TreeItemDoubleClickedEvent):void}[] = [];
 
-        constructor(treeStore:Ext_data_TreeStore, columns:any[], keyField:string, treeConfig?:Object) {
+        private treeSelectionChangedListeners: {(event: TreeSelectionChangedEvent):void}[] = [];
+
+        private expandedIds: string[] = [];
+
+        constructor(treeStore: Ext_data_TreeStore, columns: any[], keyField: string, treeConfig?: Object) {
 
 
             var persistentGridSelectionPlugin = new Admin.plugin.PersistentGridSelectionPlugin({
@@ -60,54 +64,66 @@ module api.app.browse.grid {
             treeStore.on("load", this.handleStoreLoad, this);
         }
 
-        addListener(listener:TreePanelListener) {
-            this.listeners.push(listener);
+        onTreeSelectionChanged(listener: (event: TreeSelectionChangedEvent)=>void) {
+            this.treeSelectionChangedListeners.push(listener);
         }
 
-        private notifySelectionChanged(selectionModel:Ext_selection_Model, models:Ext_data_Model[]) {
-
-            this.listeners.forEach((listener:TreePanelListener)=> {
-                if (listener.onSelectionChanged != null) {
-                    var selectionPlugin = <any>this.extTreePanel.getPlugin('persistentGridSelection');
-                    listener.onSelectionChanged({
-                        selectionCount: selectionPlugin.getSelectionCount(),
-                        selectedModels: selectionPlugin.getSelection()
-                    });
-                }
+        unTreeSelectionChanged(listener: (event: TreeSelectionChangedEvent)=>void) {
+            this.treeSelectionChangedListeners =
+            this.treeSelectionChangedListeners.filter((currentListener: (event: TreeSelectionChangedEvent)=>void)=> {
+                return currentListener != listener;
             });
         }
 
-        private notifyItemDoubleClicked(view:Ext_view_View, record:Ext_data_Model) {
+        onTreeItemDoubleClicked(listener: (event: TreeItemDoubleClickedEvent)=>void) {
+            this.treeItemDoubleClickedListeners.push(listener);
+        }
 
-            this.listeners.forEach((listener:TreePanelListener)=> {
-                if (listener.onItemDoubleClicked != null) {
-                    listener.onItemDoubleClicked({
-                        clickedModel: record
-                    });
-                }
+        unTreeItemDoubleClicked(listener: (event: TreeItemDoubleClickedEvent)=>void) {
+            this.treeItemDoubleClickedListeners =
+            this.treeItemDoubleClickedListeners.filter((currentListener: (event: TreeItemDoubleClickedEvent)=>void)=> {
+                return currentListener != listener;
             });
         }
 
-        private handleItemContextMenuEvent(view:Ext_view_View, record:Ext_data_Model, item:HTMLElement, index:number,
-                                           event:Ext_EventObject) {
+        onTreeShowContextMenu(listener: (event: TreeShowContextMenuEvent)=>void) {
+            this.treeShowContextMenuListeners.push(listener);
+        }
 
+        unTreeShowContextMenu(listener: (event: TreeShowContextMenuEvent)=>void) {
+            this.treeShowContextMenuListeners =
+            this.treeShowContextMenuListeners.filter((currentListener: (event: TreeShowContextMenuEvent)=>void)=> {
+                return currentListener != listener;
+            })
+        }
+
+        private notifySelectionChanged(selectionModel: Ext_selection_Model, models: Ext_data_Model[]) {
+            var selectionPlugin = <any>this.extTreePanel.getPlugin('persistentGridSelection');
+            this.treeSelectionChangedListeners.forEach((listener: (event: TreeSelectionChangedEvent)=>void)=> {
+                listener.call(this, new TreeSelectionChangedEvent(selectionPlugin.getSelectionCount(), selectionPlugin.getSelection()));
+            });
+        }
+
+        private notifyItemDoubleClicked(view: Ext_view_View, record: Ext_data_Model) {
+
+            this.treeItemDoubleClickedListeners.forEach((listener: (event: TreeItemDoubleClickedEvent)=>void)=> {
+                listener.call(this, new TreeItemDoubleClickedEvent(record));
+            });
+        }
+
+        private handleItemContextMenuEvent(view: Ext_view_View, record: Ext_data_Model, item: HTMLElement, index: number,
+                                           event: Ext_EventObject) {
             event.stopEvent();
-
-            this.listeners.forEach((listener:TreePanelListener)=> {
-                if (listener.onShowContextMenu != null) {
-                    listener.onShowContextMenu({
-                        x: event.getXY()[0],
-                        y: event.getXY()[1]
-                    });
-                }
+            this.treeShowContextMenuListeners.forEach((listener: (event: TreeShowContextMenuEvent)=>void)=> {
+                listener.call(this, new TreeShowContextMenuEvent(event.getXY()[0], event.getXY()[1]));
             });
         }
 
-        private handleItemExpand(node:Ext_data_NodeInterface, event:Ext_EventObject) {
+        private handleItemExpand(node: Ext_data_NodeInterface, event: Ext_EventObject) {
 
             var id = this.getNodeId(node);
 
-            for (var i = 0 ; i < this.expandedIds.length ; i++) {
+            for (var i = 0; i < this.expandedIds.length; i++) {
                 if (this.expandedIds[i] == id) {
                     return;
                 }
@@ -115,11 +131,11 @@ module api.app.browse.grid {
             this.expandedIds.push(id);
         }
 
-        private handleItemCollapse(node:Ext_data_NodeInterface, event:Ext_EventObject) {
+        private handleItemCollapse(node: Ext_data_NodeInterface, event: Ext_EventObject) {
 
             var id = this.getNodeId(node);
 
-            for (var i = 0 ; i < this.expandedIds.length ; i++) {
+            for (var i = 0; i < this.expandedIds.length; i++) {
                 if (this.expandedIds[i] == id) {
                     this.expandedIds.splice(i, 1);
                     return;
@@ -127,9 +143,9 @@ module api.app.browse.grid {
             }
         }
 
-        private handleStoreLoad(store:Ext_data_TreeStore, event:Ext_EventObject) {
+        private handleStoreLoad(store: Ext_data_TreeStore, event: Ext_EventObject) {
 
-            for (var i = 0 ; i < this.expandedIds.length ; i++) {
+            for (var i = 0; i < this.expandedIds.length; i++) {
                 var node = store.getNodeById(this.expandedIds[i]);
                 if (node && !node.isExpanded() && !node.hasChildNodes()) {
                     node.expand();
@@ -138,7 +154,7 @@ module api.app.browse.grid {
             }
         }
 
-        private getNodeId(node:Ext_data_NodeInterface):string {
+        private getNodeId(node: Ext_data_NodeInterface): string {
             var path = node.getPath();
             return path.substring(path.lastIndexOf("/") + 1);
         }

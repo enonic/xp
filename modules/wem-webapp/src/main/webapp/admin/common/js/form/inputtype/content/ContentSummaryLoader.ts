@@ -44,13 +44,13 @@ module api.form.inputtype.content {
 
         load() {
             this.loading(true);
-            this.notifyLoadingData(new LoadingDataEvent());
+            this.notifyLoadingData();
 
             this.doRequest().done((contents: api.content.ContentSummary[]) => {
 
                     this.loading(false);
-                    this.notifyLoadedData(new LoadedDataEvent<api.content.ContentSummary>(contents));
-                    if (this.preservedSearchString) {
+                this.notifyLoadedData(contents);
+                if (this.preservedSearchString) {
                         this.search(this.preservedSearchString);
                         this.preservedSearchString = null;
                     }

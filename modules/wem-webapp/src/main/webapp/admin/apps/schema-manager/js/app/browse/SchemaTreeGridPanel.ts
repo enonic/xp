@@ -7,7 +7,7 @@ module app.browse {
 
     export class SchemaTreeGridPanel extends api.app.browse.grid.TreeGridPanel {
 
-        constructor(params:SchemaTreeGridPanelParams) {
+        constructor(params: SchemaTreeGridPanelParams) {
 
             super({
                 columns: this.createColumns(),
@@ -22,13 +22,8 @@ module app.browse {
             this.setActiveList(api.app.browse.grid.TreeGridPanel.TREE);
             this.setKeyField("key");
 
-            this.addListener({
-                onItemDoubleClicked: (event:api.app.browse.grid.TreeItemDoubleClickedEvent) => {
-                    new app.browse.EditSchemaEvent([<any>event.clickedModel]).fire();
-                },
-                onSelectionChanged: null,
-                onSelect: null,
-                onDeselect: null
+            this.onTreeGridItemDoubleClicked((event: api.app.browse.grid.TreeGridItemDoubleClickedEvent) => {
+                new app.browse.EditSchemaEvent([<any>event.getClickedModel()]).fire();
             });
         }
 
@@ -88,7 +83,7 @@ module app.browse {
 
             var schema = record.data;
             var activeListType = this.getActiveList().getItemId();
-            return Ext.String.format( nameTemplate, activeListType, schema.iconUrl, value, schema.name, schema.schemaKind);
+            return Ext.String.format(nameTemplate, activeListType, schema.iconUrl, value, schema.name, schema.schemaKind);
         }
 
         private prettyDateRenderer(value) {

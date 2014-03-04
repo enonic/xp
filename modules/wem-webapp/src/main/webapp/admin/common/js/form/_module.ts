@@ -8,7 +8,6 @@
 ///<reference path='FormItemSet.ts' />
 ///<reference path='FormEvent.ts' />
 ///<reference path='FormValidityChangedEvent.ts' />
-///<reference path='FormEventNames.ts' />
 ///<reference path='Form.ts' />
 ///<reference path='FormItemFactory.ts' />
 ///<reference path='ValidationRecordingPath.ts' />

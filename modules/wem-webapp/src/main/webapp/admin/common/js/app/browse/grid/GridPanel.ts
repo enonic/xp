@@ -2,11 +2,13 @@ module api.app.browse.grid {
 
     export class GridPanel {
 
-        private extGridPanel:Ext_grid_Panel;
+        private extGridPanel: Ext_grid_Panel;
 
-        private listeners:GridPanelListener[] = [];
+        private gridShowContextMenuListeners: {(event: GridShowContextMenuEvent):void}[] = [];
+        private gridItemDoubleClickedListeners: {(event: GridItemDoubleClickedEvent):void}[] = [];
+        private gridSelectionChangedListeners: {(event: GridSelectionChangedEvent):void}[] = [];
 
-        constructor(gridStore:Ext_data_Store, columns:any[], keyField:string, gridConfig?:Object) {
+        constructor(gridStore: Ext_data_Store, columns: any[], keyField: string, gridConfig?: Object) {
 
             var persistentGridSelectionPlugin = new Admin.plugin.PersistentGridSelectionPlugin({
                 keyField: keyField
@@ -44,46 +46,64 @@ module api.app.browse.grid {
             this.extGridPanel.on("itemcontextmenu", this.handleItemContextMenuEvent, this);
         }
 
-        addListener(listener:GridPanelListener) {
-            this.listeners.push(listener);
+
+        onGridShowContextMenu(listener: (event: GridShowContextMenuEvent)=>void) {
+            this.gridShowContextMenuListeners.push(listener);
         }
 
-        private notifySelectionChanged(selectionModel:Ext_selection_Model, models:Ext_data_Model[]) {
-
-            this.listeners.forEach((listener:GridPanelListener)=> {
-                if (listener.onSelectionChanged != null) {
-                    var selectionPlugin = <any>this.extGridPanel.getPlugin('persistentGridSelection');
-                    listener.onSelectionChanged({
-                        selectionCount: selectionPlugin.getSelectionCount(),
-                        selectedModels: selectionPlugin.getSelection()
-                    });
-                }
+        unGridShowContextMenu(listener: (event: GridShowContextMenuEvent)=>void) {
+            this.gridShowContextMenuListeners =
+            this.gridShowContextMenuListeners.filter((currentListener: (event: GridShowContextMenuEvent)=>void)=> {
+                return listener != currentListener;
             });
         }
 
-        private notifyItemDoubleClicked(view:Ext_view_View, record:Ext_data_Model) {
+        onGridItemDoubleClicked(listener: (event: GridItemDoubleClickedEvent)=>void) {
+            this.gridItemDoubleClickedListeners.push(listener);
+        }
 
-            this.listeners.forEach((listener:GridPanelListener)=> {
-                if (listener.onItemDoubleClicked != null) {
-                    listener.onItemDoubleClicked({
-                        clickedModel: record
-                    });
-                }
+        unGridItemDoubleClicked(listener: (event: GridItemDoubleClickedEvent)=>void) {
+            this.gridItemDoubleClickedListeners =
+            this.gridItemDoubleClickedListeners.filter((currentListener: (event: GridItemDoubleClickedEvent)=>void)=> {
+                return currentListener != listener;
+            })
+        }
+
+        onGridSelectionChanged(listener: (event: GridSelectionChangedEvent)=>void) {
+            this.gridSelectionChangedListeners.push(listener);
+        }
+
+        unGridSelectionChanged(listener: (event: GridSelectionChangedEvent)=>void) {
+            this.gridSelectionChangedListeners =
+            this.gridSelectionChangedListeners.filter((currentListener: (event: GridSelectionChangedEvent)=>void)=> {
+                return currentListener != listener;
             });
         }
 
-        private handleItemContextMenuEvent(view:Ext_view_View, record:Ext_data_Model, item:HTMLElement, index:number,
-                                           event:Ext_EventObject) {
+
+        private notifySelectionChanged(selectionModel: Ext_selection_Model, models: Ext_data_Model[]) {
+
+            var selectionPlugin = <any>this.extGridPanel.getPlugin('persistentGridSelection');
+            this.gridSelectionChangedListeners.forEach((listener: (event: GridSelectionChangedEvent)=>void)=> {
+                listener.call(this, new GridSelectionChangedEvent(selectionPlugin.getSelectionCount(), selectionPlugin.getSelection()))
+            });
+
+        }
+
+        private notifyItemDoubleClicked(view: Ext_view_View, record: Ext_data_Model) {
+
+            this.gridItemDoubleClickedListeners.forEach((listener: (event: GridItemDoubleClickedEvent)=>void)=> {
+                listener.call(this, new GridItemDoubleClickedEvent(record));
+            });
+        }
+
+        private handleItemContextMenuEvent(view: Ext_view_View, record: Ext_data_Model, item: HTMLElement, index: number,
+                                           event: Ext_EventObject) {
 
             event.stopEvent();
 
-            this.listeners.forEach((listener:GridPanelListener)=> {
-                if (listener.onShowContextMenu != null) {
-                    listener.onShowContextMenu({
-                        x: event.getXY()[0],
-                        y: event.getXY()[1]
-                    });
-                }
+            this.gridShowContextMenuListeners.forEach((listener: (event: GridShowContextMenuEvent)=>void)=> {
+                listener.call(this, new GridShowContextMenuEvent(event.getXY()[0], event.getXY()[1]));
             });
         }
 

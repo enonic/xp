@@ -2,44 +2,38 @@ module api.form {
 
     export class FormItemOccurrence<V extends FormItemOccurrenceView> {
 
-        private occurrences:FormItemOccurrences<V>;
+        private occurrences: FormItemOccurrences<V>;
 
-        private formItem:FormItem;
+        private formItem: FormItem;
 
-        private allowedOccurrences:Occurrences;
+        private allowedOccurrences: Occurrences;
 
-        private index:number;
+        private index: number;
 
-        constructor(occurrences:FormItemOccurrences<V>, index:number, allowedOccurrences:Occurrences) {
+        constructor(occurrences: FormItemOccurrences<V>, index: number, allowedOccurrences: Occurrences) {
             this.occurrences = occurrences;
             this.formItem = occurrences.getFormItem();
             this.allowedOccurrences = allowedOccurrences;
             this.index = index;
         }
 
-        setIndex(value:number) {
+        setIndex(value: number) {
             this.index = value;
         }
 
-        getIndex():number {
+        getIndex(): number {
             return this.index;
         }
 
-        getDataId():api.data.DataId {
+        getDataId(): api.data.DataId {
             return new api.data.DataId(this.formItem.getName(), this.index);
         }
 
-        showRemoveButton():boolean {
-
-            if (this.oneAndOnly()) {
-                return false;
-            }
-            else {
-                return this.moreThanRequiredOccurrences();
-            }
+        showRemoveButton(): boolean {
+            return this.moreThanRequiredOccurrences();
         }
 
-        showAddButton():boolean {
+        showAddButton(): boolean {
 
             if (!this.isLastOccurrence()) {
                 return false;
@@ -48,7 +42,7 @@ module api.form {
             return this.lessOccurrencesThanMaximumAllowed();
         }
 
-        public isMultiple():boolean {
+        public isMultiple(): boolean {
             return this.allowedOccurrences.multiple();
         }
 
@@ -60,7 +54,7 @@ module api.form {
             return this.allowedOccurrences.minimumReached(this.occurrences.countOccurrences());
         }
 
-        private lessOccurrencesThanMaximumAllowed():boolean {
+        private lessOccurrencesThanMaximumAllowed(): boolean {
             return !this.allowedOccurrences.maximumReached(this.occurrences.countOccurrences());
         }
 

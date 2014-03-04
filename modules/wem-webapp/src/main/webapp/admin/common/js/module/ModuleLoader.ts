@@ -26,14 +26,14 @@ module api.module {
 
         load() {
             this.loading(true)
-            this.notifyLoadingData(new LoadingDataEvent());
+            this.notifyLoadingData();
 
             this.doRequest()
                 .done((modules:api.module.ModuleSummary[]) => {
 
                           this.loading(false);
-                          this.notifyLoadedData(new LoadedDataEvent<api.module.ModuleSummary>(modules));
-                          if (this.preservedSearchString) {
+                    this.notifyLoadedData(modules);
+                    if (this.preservedSearchString) {
                               this.search(this.preservedSearchString);
                               this.preservedSearchString = null;
                           }

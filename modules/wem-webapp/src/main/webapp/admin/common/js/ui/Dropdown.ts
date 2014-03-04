@@ -3,14 +3,13 @@ module api.ui {
 
         private oldValue:string = "";
 
-        private listeners:{[eventName:string]: {(event:InputEvent):void}[]} = {};
+        private valueChangedListeners: {(event: ValueChangedEvent):void}[] = [];
 
         constructor(name:string) {
             super();
-            this.listeners[InputEvents.ValueChanged] = [];
             this.getEl().setAttribute("name", name);
             this.getEl().addEventListener("change", () => {
-                this.notifyValueChanged(new ValueChangedEvent(this.oldValue, this.getValue()));
+                this.notifyValueChanged(this.oldValue, this.getValue());
                 this.oldValue = this.getValue();
             })
         }
@@ -21,24 +20,20 @@ module api.ui {
         }
 
 
-        private addListener(eventName:InputEvents, listener:(event:InputEvent)=>void) {
-            if (this.listeners[eventName] ) {
-                this.listeners[eventName].push(listener);
-            }
-        }
-
         onValueChanged(listener:(event:ValueChangedEvent)=>void) {
-            this.addListener(InputEvents.ValueChanged, listener);
+            this.valueChangedListeners.push(listener);
         }
 
-        private notifyListeners(eventName:InputEvents, event:InputEvent) {
-            this.listeners[eventName].forEach((listener:(event:InputEvent)=>void)=> {
-                listener(event);
+        unValueChanged(listener: (event: ValueChangedEvent)=>void) {
+            this.valueChangedListeners = this.valueChangedListeners.filter((currentListener: (event: ValueChangedEvent)=>void)=> {
+                return currentListener != listener;
             });
         }
 
-        private notifyValueChanged(event:ValueChangedEvent) {
-            this.notifyListeners(InputEvents.ValueChanged, event);
+        private notifyValueChanged(oldValue: string, newValue: string) {
+            this.valueChangedListeners.forEach((listener: (event: ValueChangedEvent)=>void)=> {
+                listener.call(this, new ValueChangedEvent(oldValue, newValue));
+            })
         }
     }
 
