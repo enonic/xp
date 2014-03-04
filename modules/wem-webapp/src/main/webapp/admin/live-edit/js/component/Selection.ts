@@ -56,15 +56,6 @@ module LiveEdit.component {
             element.attr(ATTRIBUTE_NAME, 'true');
         }
 
-        public static getSelectedComponent():Component {
-            try {
-                return Component.fromJQuery($('[' + ATTRIBUTE_NAME + ']'));
-
-            } catch (ex) {
-                return null;
-            }
-        }
-
         public static pageHasSelectedElement():boolean {
             return $('[' + ATTRIBUTE_NAME + ']').length > 0;
         }

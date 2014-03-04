@@ -37,6 +37,13 @@
       }
   }
 
+  &[data-live-edit-type="paragraph"] {
+    &:before {
+      content: "\e006";
+    }
+    background-color: transparent;
+  }
+
   .rich-combobox {
     margin:@defaultHeight/2-20px auto 0 auto;
     width:255px;
