@@ -61,7 +61,7 @@ module api.form.inputtype.content.image {
             });
         }
 
-        createSelectedOption(option:api.ui.selector.combobox.Option<api.content.ContentSummary>, index:number):api.ui.selector.combobox.SelectedOption<api.content.ContentSummary> {
+        createSelectedOption(option:api.ui.selector.Option<api.content.ContentSummary>, index:number):api.ui.selector.combobox.SelectedOption<api.content.ContentSummary> {
 
             return new api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>(new SelectedOptionView(option), option, index);
         }
@@ -95,7 +95,7 @@ module api.form.inputtype.content.image {
             this.refreshStyles();
         }
 
-        showImageSelectorDialog(selectedOption:api.ui.selector.combobox.Option<api.content.ContentSummary>, selectedOptionIndex:number) {
+        showImageSelectorDialog(selectedOption:api.ui.selector.Option<api.content.ContentSummary>, selectedOptionIndex:number) {
 
             var content = selectedOption.displayValue;
 

@@ -24,7 +24,7 @@ module app.contextwindow.image {
 
         private deck: api.ui.DeckPanel;
 
-        private selectedOption: api.ui.selector.combobox.Option<api.content.ContentSummary>;
+        private selectedOption: api.ui.selector.Option<api.content.ContentSummary>;
 
         private liveEditItems: {[key: number]: api.content.ContentSummary };
 
@@ -98,7 +98,7 @@ module app.contextwindow.image {
 
         private addGridListeners() {
             this.recentPanel.getGrid().setOnClick((event, data: api.ui.grid.GridOnClickData) => {
-                var option = <api.ui.selector.combobox.Option<api.content.ContentSummary>> {
+                var option = <api.ui.selector.Option<api.content.ContentSummary>> {
                     //TODO: what is value used for??
                     value: "test",
                     displayValue: this.recentPanel.getDataView().getItem(data.row)
@@ -161,7 +161,7 @@ module app.contextwindow.image {
             return comboBox;
         }
 
-        private createOptions(contents: api.content.ContentSummary[]): api.ui.selector.combobox.Option<api.content.ContentSummary>[] {
+        private createOptions(contents: api.content.ContentSummary[]): api.ui.selector.Option<api.content.ContentSummary>[] {
             var options = [];
             contents.forEach((content: api.content.ContentSummary) => {
                 options.push({
@@ -173,7 +173,7 @@ module app.contextwindow.image {
         }
 
         private optionFormatter(row: number, cell: number, content: api.content.ContentSummary, columnDef: any,
-                                dataContext: api.ui.selector.combobox.Option<api.content.ContentSummary>): string {
+                                dataContext: api.ui.selector.Option<api.content.ContentSummary>): string {
             var img = new api.dom.ImgEl();
             img.setClass("icon");
             img.getEl().setSrc(content.getIconUrl());
@@ -199,7 +199,7 @@ module app.contextwindow.image {
 
         private setSelectedContent(content: api.content.ContentSummary, removeCurrent: boolean = true) {
             api.util.assertNotNull(content, "Cannot set content null");
-            var option: api.ui.selector.combobox.Option<api.content.ContentSummary> = {
+            var option: api.ui.selector.Option<api.content.ContentSummary> = {
                 value: content.getId(),
                 displayValue: content
             };

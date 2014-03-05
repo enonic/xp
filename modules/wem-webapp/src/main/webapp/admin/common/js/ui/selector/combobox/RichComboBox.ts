@@ -20,9 +20,9 @@ module api.ui.selector.combobox {
 
         private loadedListeners: {(items: T[]):void;}[];
 
-        private inputValueChangedListeners: {(oldValue: string, newValue: string, grid: api.ui.grid.Grid<Option<T>>):void;}[];
+        private inputValueChangedListeners: {(oldValue: string, newValue: string, grid: api.ui.grid.Grid<api.ui.selector.Option<T>>):void;}[];
 
-        private optionSelectedListeners: {(item: api.ui.selector.combobox.Option<T>):void;}[];
+        private optionSelectedListeners: {(item: api.ui.selector.Option<T>):void;}[];
 
         constructor(config: RichComboBoxBuilder<T>) {
             this.identifierMethod = config.identifierMethod;
@@ -47,19 +47,19 @@ module api.ui.selector.combobox {
         }
 
         getSelectedValues(): T[] {
-            return this.comboBox.getSelectedData().map((option: api.ui.selector.combobox.Option<T>) => {
+            return this.comboBox.getSelectedData().map((option: api.ui.selector.Option<T>) => {
                 return option.displayValue;
             });
         }
 
         getValues(): T[] {
-            return this.comboBox.getValues().map((option: api.ui.selector.combobox.Option<T>) => {
+            return this.comboBox.getValues().map((option: api.ui.selector.Option<T>) => {
                 return option.displayValue;
             });
         }
 
         getStringValues(): string[] {
-            return this.comboBox.getSelectedData().map((option: api.ui.selector.combobox.Option<T>) => {
+            return this.comboBox.getSelectedData().map((option: api.ui.selector.Option<T>) => {
                 return option.value;
             });
         }
@@ -113,7 +113,7 @@ module api.ui.selector.combobox {
             this.loader.search("");
         }
 
-        private createOptions(items: T[]): api.ui.selector.combobox.Option<T>[] {
+        private createOptions(items: T[]): api.ui.selector.Option<T>[] {
             var options = [];
             items.forEach((itemInst: T) => {
                 options.push({
@@ -124,7 +124,7 @@ module api.ui.selector.combobox {
             return options;
         }
 
-        optionFormatter(row: number, cell: number, itemInst: T, columnDef: any, dataContext: api.ui.selector.combobox.Option<T>): string {
+        optionFormatter(row: number, cell: number, itemInst: T, columnDef: any, dataContext: api.ui.selector.Option<T>): string {
 
             return "";
         }
@@ -152,11 +152,11 @@ module api.ui.selector.combobox {
             this.comboBox.addSelectedOptionRemovedListener(listener);
         }
 
-        addInputValueChangedListener(listener: {(oldValue: string, newValue: string, grid: api.ui.grid.Grid<Option<T>>): void;}) {
+        addInputValueChangedListener(listener: {(oldValue: string, newValue: string, grid: api.ui.grid.Grid<api.ui.selector.Option<T>>): void;}) {
             this.inputValueChangedListeners.push(listener);
         }
 
-        addOptionSelectedListener(listener: {(item: api.ui.selector.combobox.Option<T>): void;}) {
+        addOptionSelectedListener(listener: {(item: api.ui.selector.Option<T>): void;}) {
             this.optionSelectedListeners.push(listener);
         }
 
@@ -173,13 +173,13 @@ module api.ui.selector.combobox {
             this.loadedListeners.splice(index, 1);
         }
 
-        private notifyInputValueChanged(oldValue: string, newValue: string, grid: api.ui.grid.Grid<Option<T>>) {
+        private notifyInputValueChanged(oldValue: string, newValue: string, grid: api.ui.grid.Grid<api.ui.selector.Option<T>>) {
             this.inputValueChangedListeners.forEach((listener) => {
                 listener(oldValue, newValue, grid);
             });
         }
 
-        private notifyOptionSelected(item: api.ui.selector.combobox.Option<T>) {
+        private notifyOptionSelected(item: api.ui.selector.Option<T>) {
             this.optionSelectedListeners.forEach((listener) => {
                 listener(item);
             });

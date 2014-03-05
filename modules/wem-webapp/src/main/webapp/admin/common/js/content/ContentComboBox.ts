@@ -15,7 +15,7 @@ module api.content {
         }
 
 
-        optionFormatter(row:number, cell:number, content:api.content.ContentSummary, columnDef:any, dataContext:api.ui.selector.combobox.Option<api.content.ContentSummary>):string
+        optionFormatter(row:number, cell:number, content:api.content.ContentSummary, columnDef:any, dataContext:api.ui.selector.Option<api.content.ContentSummary>):string
         {
             var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize( api.app.NamesAndIconViewSize.small ).build();
 
@@ -30,7 +30,7 @@ module api.content {
 
     export class ContentSelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<api.content.ContentSummary> {
 
-        createSelectedOption(option:api.ui.selector.combobox.Option<api.content.ContentSummary>, index:number):api.ui.selector.combobox.SelectedOption<api.content.ContentSummary> {
+        createSelectedOption(option:api.ui.selector.Option<api.content.ContentSummary>, index:number):api.ui.selector.combobox.SelectedOption<api.content.ContentSummary> {
             var optionView = new ContentSelectedOptionView( option );
             return new api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>( optionView, option, index);
         }
@@ -39,7 +39,7 @@ module api.content {
     export class ContentSelectedOptionView extends api.ui.selector.combobox.RichSelectedOptionView<api.content.ContentSummary> {
 
 
-        constructor(option:api.ui.selector.combobox.Option<api.content.ContentSummary>) {
+        constructor(option:api.ui.selector.Option<api.content.ContentSummary>) {
             super(option);
         }
 

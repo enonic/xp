@@ -4,7 +4,7 @@ module api.ui.selector.combobox {
 
         private optionDisplayValue:T;
 
-        constructor(option:api.ui.selector.combobox.Option<T>) {
+        constructor(option:api.ui.selector.Option<T>) {
             this.optionDisplayValue = option.displayValue;
             super(option);
         }

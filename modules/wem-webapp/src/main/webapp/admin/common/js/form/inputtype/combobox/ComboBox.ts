@@ -112,7 +112,7 @@ module api.form.inputtype.combobox {
         getValues(): api.data.Value[] {
 
             var values: api.data.Value[] = [];
-            this.comboBox.getSelectedData().forEach((option: api.ui.selector.combobox.Option<string>)  => {
+            this.comboBox.getSelectedData().forEach((option: api.ui.selector.Option<string>)  => {
                 var value = new api.data.Value(option.value, api.data.ValueTypes.STRING);
                 values.push(value);
             });
@@ -146,7 +146,7 @@ module api.form.inputtype.combobox {
             // Have to use stub here because it doesn't extend BaseIntputTypeView
         }
 
-        private comboboxFilter(item: api.ui.selector.combobox.Option<string>, args) {
+        private comboboxFilter(item: api.ui.selector.Option<string>, args) {
             return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
         }
 

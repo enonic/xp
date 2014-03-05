@@ -3,7 +3,7 @@ module api.content.page.layout {
     import RichComboBox = api.ui.selector.combobox.RichComboBox;
     import RichComboBoxBuilder = api.ui.selector.combobox.RichComboBoxBuilder;
     import ComboBoxConfig = api.ui.selector.combobox.ComboBoxConfig;
-    import Option = api.ui.selector.combobox.Option;
+    import Option = api.ui.selector.Option;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import SelectedOptionView = api.ui.selector.combobox.SelectedOptionView;
     import SelectedOptionsView = api.ui.selector.combobox.SelectedOptionsView;

@@ -37,7 +37,7 @@ module app.contextwindow {
             };
             this.descriptorComboBox.addLoadedListener(onDescriptorsLoaded);
 
-            this.descriptorComboBox.addOptionSelectedListener((option: api.ui.selector.combobox.Option<ImageDescriptor>) => {
+            this.descriptorComboBox.addOptionSelectedListener((option: api.ui.selector.Option<ImageDescriptor>) => {
                 if (this.imageComponent) {
                     var selectedDescriptor: api.content.page.DescriptorKey = option.displayValue.getKey();
                     this.imageComponent.setDescriptor(selectedDescriptor);
@@ -65,7 +65,7 @@ module app.contextwindow {
             var descriptorKey = component.getDescriptor();
             if (descriptorKey) {
                 this.descriptorComboBox.setDescriptor(descriptorKey);
-                var imageDescriptorOption: api.ui.selector.combobox.Option<ImageDescriptor> = this.descriptorComboBox.getSelectedData()[0];
+                var imageDescriptorOption: api.ui.selector.Option<ImageDescriptor> = this.descriptorComboBox.getSelectedData()[0];
                 var imageDescriptor = imageDescriptorOption.displayValue;
                 this.setupComponentForm(component, imageDescriptor);
             }

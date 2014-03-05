@@ -12,8 +12,8 @@ module api.ui.selector.combobox {
             return this.list[index];
         }
 
-        getOptions():Option<T>[] {
-            var options:Option<T>[] = [];
+        getOptions():api.ui.selector.Option<T>[] {
+            var options:api.ui.selector.Option<T>[] = [];
             this.list.forEach( (selectedOption:SelectedOption<T>) => {
                 options.push(selectedOption.getOption());
             } );
@@ -42,7 +42,7 @@ module api.ui.selector.combobox {
             return null;
         }
 
-        getByOption(option:Option<T>):SelectedOption<T> {
+        getByOption(option:api.ui.selector.Option<T>):SelectedOption<T> {
 
             for(var i = 0; i < this.list.length; i++) {
                 if( this.list[i].getOption() == option ) {

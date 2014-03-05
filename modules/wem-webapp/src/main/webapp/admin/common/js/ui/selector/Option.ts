@@ -1,4 +1,4 @@
-module api.ui.selector.combobox {
+module api.ui.selector {
 
     export interface Option<T> extends Slick.SlickData {
 

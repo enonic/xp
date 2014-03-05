@@ -92,7 +92,7 @@ module api.form.inputtype.content.image {
                         .send()
                         .done((jsonResponse: api.rest.JsonResponse<api.content.json.ContentSummaryJson>) => {
                             var contentSummary = new api.content.ContentSummary(jsonResponse.getResult());
-                            this.comboBox.selectOption(<api.ui.selector.combobox.Option<api.content.ContentSummary>>{
+                            this.comboBox.selectOption(<api.ui.selector.Option<api.content.ContentSummary>>{
                                 value: contentSummary.getId(),
                                 displayValue: contentSummary
                             });
@@ -131,7 +131,7 @@ module api.form.inputtype.content.image {
 
         getValues(): api.data.Value[] {
             var values: api.data.Value[] = [];
-            this.comboBox.getSelectedData().forEach((option: api.ui.selector.combobox.Option<api.content.ContentSummary>) => {
+            this.comboBox.getSelectedData().forEach((option: api.ui.selector.Option<api.content.ContentSummary>) => {
 
                 var value = new api.data.Value(option.value, api.data.ValueTypes.CONTENT_ID);
 
@@ -291,8 +291,8 @@ module api.form.inputtype.content.image {
             this.contentSummaryLoader.search(searchString);
         }
 
-        private createOptions(contents: api.content.ContentSummary[]): api.ui.selector.combobox.Option<api.content.ContentSummary>[] {
-            var options: api.ui.selector.combobox.Option<api.content.ContentSummary>[] = [];
+        private createOptions(contents: api.content.ContentSummary[]): api.ui.selector.Option<api.content.ContentSummary>[] {
+            var options: api.ui.selector.Option<api.content.ContentSummary>[] = [];
             contents.forEach((content: api.content.ContentSummary) => {
                 options.push({
                     value: content.getId(),
@@ -303,7 +303,7 @@ module api.form.inputtype.content.image {
         }
 
         private optionFormatter(row: number, cell: number, content: api.content.ContentSummary, columnDef: any,
-                                dataContext: api.ui.selector.combobox.Option<api.content.ContentSummary>): string {
+                                dataContext: api.ui.selector.Option<api.content.ContentSummary>): string {
 
             var imgEl = new api.dom.ImgEl();
             imgEl.setClass("icon");

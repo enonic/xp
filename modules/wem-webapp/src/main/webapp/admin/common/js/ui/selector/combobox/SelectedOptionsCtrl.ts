@@ -27,11 +27,11 @@ module api.ui.selector.combobox {
             return this.count() >= this.maximumOccurrences;
         }
 
-        getOptions():Option<T>[] {
+        getOptions():api.ui.selector.Option<T>[] {
             return this.selectedOptions.getOptions();
         }
 
-        addOption(option:Option<T>):boolean {
+        addOption(option:api.ui.selector.Option<T>):boolean {
 
             if (!this.canAdd(option)) {
                 return false;
@@ -50,7 +50,7 @@ module api.ui.selector.combobox {
             return true;
         }
 
-        private canAdd(option:Option<T>):boolean {
+        private canAdd(option:api.ui.selector.Option<T>):boolean {
             if (this.maximumOccurrencesReached()) {
                 return false;
             }
@@ -58,7 +58,7 @@ module api.ui.selector.combobox {
         }
 
         //TODO: Theese block contextwindows stuff. Probably because the OptionData.value is faked
-        removeOption(optionToRemove:Option<T>, silent:boolean = false) {
+        removeOption(optionToRemove:api.ui.selector.Option<T>, silent:boolean = false) {
             api.util.assertNotNull(optionToRemove, "optionToRemove cannot be null");
 
             var selectedOption = this.selectedOptions.getByOption( optionToRemove );

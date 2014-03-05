@@ -2,13 +2,13 @@ module api.ui.selector.combobox {
 
     export class ComboBoxOptionSelectedEvent<T> {
 
-        private item: Option<T>;
+        private item: api.ui.selector.Option<T>;
 
-        constructor(item: Option<T>) {
+        constructor(item: api.ui.selector.Option<T>) {
             this.item = item;
         }
 
-        getItem(): Option<T> {
+        getItem(): api.ui.selector.Option<T> {
             return this.item;
         }
     }

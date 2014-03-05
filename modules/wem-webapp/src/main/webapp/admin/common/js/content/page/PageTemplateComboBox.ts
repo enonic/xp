@@ -10,7 +10,7 @@ module api.content.page {
         }
 
         optionFormatter(row: number, cell: number, pageTemplateSummary: PageTemplateSummary, columnDef: any,
-                        dataContext: api.ui.selector.combobox.Option<PageTemplateSummary>): string {
+                        dataContext: api.ui.selector.Option<PageTemplateSummary>): string {
 
             var namesView = new api.app.NamesView()
                 .setMainName( pageTemplateSummary.getDisplayName() )
@@ -22,7 +22,7 @@ module api.content.page {
 
     export class PageTemplateSelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<PageTemplateSummary> {
 
-        createSelectedOption(option:api.ui.selector.combobox.Option<PageTemplateSummary>, index:number):api.ui.selector.combobox.SelectedOption<PageTemplateSummary> {
+        createSelectedOption(option:api.ui.selector.Option<PageTemplateSummary>, index:number):api.ui.selector.combobox.SelectedOption<PageTemplateSummary> {
             return new api.ui.selector.combobox.SelectedOption<PageTemplateSummary>(new PageTemplateSelectedOptionView(option), option, index);
         }
     }
@@ -31,7 +31,7 @@ module api.content.page {
 
         private pageTemplate: PageTemplateSummary;
 
-        constructor(option: api.ui.selector.combobox.Option<PageTemplateSummary>) {
+        constructor(option: api.ui.selector.Option<PageTemplateSummary>) {
             this.pageTemplate = option.displayValue;
             super(option);
             this.addClass("page-template-selected-option-view");

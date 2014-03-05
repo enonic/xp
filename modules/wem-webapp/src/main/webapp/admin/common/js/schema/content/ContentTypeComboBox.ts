@@ -10,7 +10,7 @@ module api.schema.content {
         }
 
         optionFormatter(row: number, cell: number, content: ContentTypeSummary, columnDef: any,
-                        dataContext: api.ui.selector.combobox.Option<ContentTypeSummary>): string {
+                        dataContext: api.ui.selector.Option<ContentTypeSummary>): string {
             var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
 
             namesAndIconView
@@ -25,7 +25,7 @@ module api.schema.content {
 
     export class ContentTypeSelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<ContentTypeSummary> {
 
-        createSelectedOption(option: api.ui.selector.combobox.Option<ContentTypeSummary>,
+        createSelectedOption(option: api.ui.selector.Option<ContentTypeSummary>,
                              index: number): api.ui.selector.combobox.SelectedOption<ContentTypeSummary> {
 
             var optionView = new ContentTypeSelectedOptionView(option);
@@ -35,7 +35,7 @@ module api.schema.content {
 
     export class ContentTypeSelectedOptionView extends api.ui.selector.combobox.RichSelectedOptionView<ContentTypeSummary> {
 
-        constructor(option: api.ui.selector.combobox.Option<ContentTypeSummary>) {
+        constructor(option: api.ui.selector.Option<ContentTypeSummary>) {
             super(option);
         }
 

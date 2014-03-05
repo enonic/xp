@@ -4,7 +4,7 @@ module app.contextwindow.image {
 
         private content:api.content.ContentSummary;
 
-        constructor(option:api.ui.selector.combobox.Option<api.content.ContentSummary>) {
+        constructor(option:api.ui.selector.Option<api.content.ContentSummary>) {
             this.content = option.displayValue;
             super(option);
         }

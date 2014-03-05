@@ -71,7 +71,7 @@ module api.form.inputtype.content.relationship {
                 .setLoader(relationshipLoader)
                 .build();
 
-            this.contentComboBox.addOptionSelectedListener((item: api.ui.selector.combobox.Option<api.content.ContentSummary>) => {
+            this.contentComboBox.addOptionSelectedListener((item: api.ui.selector.Option<api.content.ContentSummary>) => {
 
                 this.validate(false);
             });
