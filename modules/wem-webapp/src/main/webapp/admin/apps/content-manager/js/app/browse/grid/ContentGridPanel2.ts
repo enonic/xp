@@ -10,14 +10,38 @@ module app.browse.grid {
 
         private gridData:api.ui.grid.DataView<api.content.ContentSummary>;
 
+        private nameFormatter: (row: number, cell: number, value: any, columnDef: any, dataContext: Slick.SlickData) => string;
+
         constructor() {
             super();
+
+            this.nameFormatter = (row: number, cell: number, value: any, columnDef: any, item: api.content.ContentSummary) => {
+                var rowEl = new api.dom.DivEl();
+
+                var toggleSpan = new api.dom.SpanEl("toggle");
+                if (item.hasChildren()) {
+                    toggleSpan.addClass("expand");
+                }
+
+                rowEl.appendChild(toggleSpan);
+
+                var namesAndIconView = new api.app.NamesAndIconViewBuilder().
+                    setSize(api.app.NamesAndIconViewSize.small).build();
+
+                namesAndIconView.setMainName(item.getDisplayName());
+                namesAndIconView.setSubName(item.getPath().toString());
+                namesAndIconView.setIconUrl(item.getIconUrl());
+
+                rowEl.appendChild(namesAndIconView);
+
+                return rowEl.toString();
+            };
 
             var column1 = <api.ui.grid.GridColumn<any>> {
                 name: "Name",
                 id: "displayName",
                 field: "displayName",
-                formatter: this.getNameFormatter()
+                formatter: this.nameFormatter
             };
             var column2 = <api.ui.grid.GridColumn<any>> {
                 name: "ModifiedTime",
@@ -60,6 +84,8 @@ module app.browse.grid {
             this.onRendered((event) => {
                 this.grid.resizeCanvas();
             })
+
+
         }
 
         private initData(contents:api.content.ContentSummary[]) {
