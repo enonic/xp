@@ -1,4 +1,4 @@
-module api.ui.list {
+module api.ui.selector.list {
 
     export class ListBox<T> extends api.ui.Panel {
 
