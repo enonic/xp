@@ -15,19 +15,24 @@
 
     .form-icon {
       float: left;
-      margin-top: 5px;
-      margin-left: 25px;
-      margin-right: 25px;
-      margin-bottom: 0px;
+      width: 64px;
+      height: 64px;
+      margin: 5px 25px 0 25px;
+
+      img {
+        width: 64px;
+        height: 64px;
+      }
+    }
+
+    .form-icon + .wizard-header {
+      margin-left: 116px;
     }
 
     .wizard-header {
-
-      margin-top: 15px;
-      margin-bottom: 15px;
+      margin: 15px 25px;
 
       .text-input {
-        min-width: 200px;
         border: 1px solid transparent;
         margin: 0;
         padding: 0;
@@ -35,11 +40,11 @@
         min-height: 0;
 
         &.large {
-          min-width: 300px;
+          min-width: 220px;
           font-size: 32px;
-          margin-top: -5px;
         }
         &.middle {
+          min-width: 100px;
           margin-top: 2px;
         }
         .input-glow();
@@ -51,7 +56,6 @@
         height: 28px;
         line-height: 28px;
         margin: 0 0 0 4px;
-        max-width: 300px;
         font-size: 16px;
         color: @admin-light-gray-font;
         .ellipsis();
@@ -173,9 +177,20 @@
 }
 
 @media (max-width: 540px) {
-  .wizard-panel .wizard-back-panel .step-panel {
-    left: 10px;
-    right: 10px;
-    margin-top: 15px;
+  .wizard-panel .wizard-back-panel {
+    .step-panel {
+      left: 10px;
+      right: 10px;
+      margin-top: 15px;
+    }
+
+    .form-icon {
+      margin: 5px 10px 0 10px;
+    }
+
+    .form-icon + .wizard-header {
+      margin-left: 86px;
+      margin-right: 10px;
+    }
   }
 }

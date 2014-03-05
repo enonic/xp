@@ -26,8 +26,9 @@ module api.ui {
             super(className);
 
             this.getEl().setAttribute('type', 'text');
+            this.addClass('text-input');
             if (size) {
-                this.addClass('text-input').addClass(size);
+                this.addClass(size);
             }
 
             this.getEl().addEventListener('keypress', (event: KeyboardEvent) => {
