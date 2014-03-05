@@ -16,7 +16,7 @@ module api.i18n {
         }
     }
 
-    export function message(key: string, ...args: any[]): string {
+    export function message(key: string, args: any[]): string {
 
         var message = key;
         var current = messages[currentLocale];
@@ -25,10 +25,15 @@ module api.i18n {
             message = current[key];
         }
 
-        return message.replace(/\{(\d+)\}/g, function () {
-            console.log(arguments[1]);
-            return args[arguments[1]];
+        return message.replace(/\$(\d+)/g, function () {
+            return args[arguments[1] - 1];
         });
     }
 
 }
+
+// Global i18n message method
+var _i18n = (key: string, ...args: any[]) => api.i18n.message(key, args);
+
+
+

@@ -4,7 +4,7 @@ module app.i18n {
         'Login': 'Logg inn',
         'Log in': 'Logg inn',
         'userid or e-mail': 'userid eller e-post',
-        'password': 'passord',
+        'password': 'passord'
 
     };
 

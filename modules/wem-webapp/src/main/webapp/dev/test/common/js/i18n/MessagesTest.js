@@ -1,12 +1,12 @@
 describe("Tests Message functions", function () {
 
     it("test no translation", function () {
-        var message = api.i18n.message('no translation for this');
+        var message = api.i18n.message('no translation for this', []);
         expect(message).toBe('no translation for this');
     });
 
     it("test no translation with arguments", function () {
-        var message = api.i18n.message('no {0} for {1}', 'translation', 'this');
+        var message = api.i18n.message('no $1 for $2', ['translation', 'this']);
         expect(message).toBe('no translation for this');
     });
 
@@ -17,7 +17,7 @@ describe("Tests Message functions", function () {
             'translation for this': 'oversetting for dette'
         });
 
-        var message = api.i18n.message('translation for this');
+        var message = api.i18n.message('translation for this', []);
         expect(message).toBe('oversetting for dette');
     });
 
@@ -25,10 +25,10 @@ describe("Tests Message functions", function () {
 
         api.i18n.setLocale('no');
         api.i18n.addBundle('no', {
-            '{0} for this': '{0} for dette'
+            '$1 for this': '$1 for dette'
         });
 
-        var message = api.i18n.message('{0} for this', 'oversetting');
+        var message = api.i18n.message('$1 for this', ['oversetting']);
         expect(message).toBe('oversetting for dette');
     });
 
