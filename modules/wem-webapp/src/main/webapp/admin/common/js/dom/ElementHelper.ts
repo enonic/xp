@@ -211,6 +211,10 @@ module api.dom {
             return $(this.el).outerWidth(true);
         }
 
+        getMinWidth(): number {
+            return parseFloat(this.getComputedProperty('min-width')) || 0;
+        }
+
         setHeight(value: string): ElementHelper {
             this.el.style.height = value;
             return this;
