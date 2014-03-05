@@ -39,13 +39,13 @@
 ///<reference path='ui/_module.ts' />
 ///<reference path='ui/dialog/_module.ts' />
 ///<reference path='ui/form/_module.ts' />
-///<reference path='ui/combobox/_module.ts' />
 ///<reference path='ui/grid/_module.ts' />
 ///<reference path='ui/menu/_module.ts' />
 ///<reference path='ui/tab/_module.ts' />
 ///<reference path='ui/toolbar/_module.ts' />
 
 ///<reference path='ui/selector/list/_module.ts' />
+///<reference path='ui/selector/combobox/_module.ts' />
 
 ///<reference path='blob/_module.ts' />
 ///<reference path='icon/_module.ts' />

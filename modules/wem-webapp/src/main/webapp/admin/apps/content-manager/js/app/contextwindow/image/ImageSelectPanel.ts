@@ -14,7 +14,7 @@ module app.contextwindow.image {
 
         private image: api.content.page.image.ImageComponent;
 
-        private comboBox: api.ui.combobox.ComboBox<api.content.ContentSummary>;
+        private comboBox: api.ui.selector.combobox.ComboBox<api.content.ContentSummary>;
 
         private selectedOptionsView: ImageSelectPanelSelectedOptionsView;
 
@@ -24,7 +24,7 @@ module app.contextwindow.image {
 
         private deck: api.ui.DeckPanel;
 
-        private selectedOption: api.ui.combobox.Option<api.content.ContentSummary>;
+        private selectedOption: api.ui.selector.combobox.Option<api.content.ContentSummary>;
 
         private liveEditItems: {[key: number]: api.content.ContentSummary };
 
@@ -98,7 +98,7 @@ module app.contextwindow.image {
 
         private addGridListeners() {
             this.recentPanel.getGrid().setOnClick((event, data: api.ui.grid.GridOnClickData) => {
-                var option = <api.ui.combobox.Option<api.content.ContentSummary>> {
+                var option = <api.ui.selector.combobox.Option<api.content.ContentSummary>> {
                     //TODO: what is value used for??
                     value: "test",
                     displayValue: this.recentPanel.getDataView().getItem(data.row)
@@ -118,9 +118,9 @@ module app.contextwindow.image {
             this.deck.showPanel(0);
         }
 
-        private createComboBox(): api.ui.combobox.ComboBox<api.content.ContentSummary> {
+        private createComboBox(): api.ui.selector.combobox.ComboBox<api.content.ContentSummary> {
 
-            var comboBoxConfig = <api.ui.combobox.ComboBoxConfig<api.content.ContentSummary>> {
+            var comboBoxConfig = <api.ui.selector.combobox.ComboBoxConfig<api.content.ContentSummary>> {
                 rowHeight: 50,
                 maximumOccurrences: 1,
                 optionFormatter: this.optionFormatter,
@@ -128,16 +128,16 @@ module app.contextwindow.image {
                 hideComboBoxWhenMaxReached: true
             };
 
-            var comboBox = new api.ui.combobox.ComboBox("imagePicker", comboBoxConfig);
+            var comboBox = new api.ui.selector.combobox.ComboBox("imagePicker", comboBoxConfig);
 
             comboBox.addSelectedOptionRemovedListener(()=> {
                 this.selectedOption = null;
             });
 
-            comboBox.onValueChanged((event: api.ui.combobox.ComboBoxValueChangedEvent<api.content.ContentSummary>) => {
+            comboBox.onValueChanged((event: api.ui.selector.combobox.ComboBoxValueChangedEvent<api.content.ContentSummary>) => {
                 contentSummaryLoader.search(event.getNewValue());
             });
-            comboBox.onOptionSelected((event: api.ui.combobox.ComboBoxOptionSelectedEvent<api.content.ContentSummary>) => {
+            comboBox.onOptionSelected((event: api.ui.selector.combobox.ComboBoxOptionSelectedEvent<api.content.ContentSummary>) => {
                 //TODO: Mocked live use of image
                 var iconUrl = event.getItem().displayValue.getIconUrl();
                 this.selectedOption = event.getItem();
@@ -161,7 +161,7 @@ module app.contextwindow.image {
             return comboBox;
         }
 
-        private createOptions(contents: api.content.ContentSummary[]): api.ui.combobox.Option<api.content.ContentSummary>[] {
+        private createOptions(contents: api.content.ContentSummary[]): api.ui.selector.combobox.Option<api.content.ContentSummary>[] {
             var options = [];
             contents.forEach((content: api.content.ContentSummary) => {
                 options.push({
@@ -173,7 +173,7 @@ module app.contextwindow.image {
         }
 
         private optionFormatter(row: number, cell: number, content: api.content.ContentSummary, columnDef: any,
-                                dataContext: api.ui.combobox.Option<api.content.ContentSummary>): string {
+                                dataContext: api.ui.selector.combobox.Option<api.content.ContentSummary>): string {
             var img = new api.dom.ImgEl();
             img.setClass("icon");
             img.getEl().setSrc(content.getIconUrl());
@@ -199,7 +199,7 @@ module app.contextwindow.image {
 
         private setSelectedContent(content: api.content.ContentSummary, removeCurrent: boolean = true) {
             api.util.assertNotNull(content, "Cannot set content null");
-            var option: api.ui.combobox.Option<api.content.ContentSummary> = {
+            var option: api.ui.selector.combobox.Option<api.content.ContentSummary> = {
                 value: content.getId(),
                 displayValue: content
             };

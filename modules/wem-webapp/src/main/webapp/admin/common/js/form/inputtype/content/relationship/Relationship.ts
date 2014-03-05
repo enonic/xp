@@ -67,12 +67,12 @@ module api.form.inputtype.content.relationship {
                 .setLoader(relationshipLoader)
                 .build();
 
-            this.contentComboBox.addOptionSelectedListener((item: api.ui.combobox.Option<api.content.ContentSummary>) => {
+            this.contentComboBox.addOptionSelectedListener((item: api.ui.selector.combobox.Option<api.content.ContentSummary>) => {
 
                 this.validate(false);
             });
 
-            this.contentComboBox.addSelectedOptionRemovedListener((removed: api.ui.combobox.SelectedOption<api.content.ContentSummary>) => {
+            this.contentComboBox.addSelectedOptionRemovedListener((removed: api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) => {
                 this.validate(false);
             });
 

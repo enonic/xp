@@ -1,10 +1,10 @@
-module api.ui.combobox {
+module api.ui.selector.combobox {
 
-    export class RichSelectedOptionView<T extends api.item.Item> extends api.ui.combobox.SelectedOptionView<T> {
+    export class RichSelectedOptionView<T extends api.item.Item> extends api.ui.selector.combobox.SelectedOptionView<T> {
 
         private optionDisplayValue:T;
 
-        constructor(option:api.ui.combobox.Option<T>) {
+        constructor(option:api.ui.selector.combobox.Option<T>) {
             this.optionDisplayValue = option.displayValue;
             super(option);
         }

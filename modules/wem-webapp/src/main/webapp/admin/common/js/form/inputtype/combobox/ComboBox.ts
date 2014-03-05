@@ -12,9 +12,9 @@ module api.form.inputtype.combobox {
 
         private input: api.form.Input;
 
-        private comboBox: api.ui.combobox.ComboBox<string>;
+        private comboBox: api.ui.selector.combobox.ComboBox<string>;
 
-        private selectedOptionsView: api.ui.combobox.SelectedOptionsView<string>;
+        private selectedOptionsView: api.ui.selector.combobox.SelectedOptionsView<string>;
 
         private inputValidityChangedListeners: {(event: api.form.inputtype.InputValidityChangedEvent) : void}[] = [];
 
@@ -63,7 +63,7 @@ module api.form.inputtype.combobox {
 
             this.input = input;
 
-            this.selectedOptionsView = new api.ui.combobox.SelectedOptionsView<string>();
+            this.selectedOptionsView = new api.ui.selector.combobox.SelectedOptionsView<string>();
             this.comboBox = this.createComboBox(input);
 
             this.comboBoxConfig.options.forEach((option: ComboBoxOption) => {
@@ -82,8 +82,8 @@ module api.form.inputtype.combobox {
             this.appendChild(this.selectedOptionsView);
         }
 
-        createComboBox(input: api.form.Input): api.ui.combobox.ComboBox<string> {
-            var comboBox = new api.ui.combobox.ComboBox<string>(name, {
+        createComboBox(input: api.form.Input): api.ui.selector.combobox.ComboBox<string> {
+            var comboBox = new api.ui.selector.combobox.ComboBox<string>(name, {
                 rowHeight: 24,
                 filter: this.comboboxFilter,
                 selectedOptionsView: this.selectedOptionsView,
@@ -91,14 +91,14 @@ module api.form.inputtype.combobox {
                 hideComboBoxWhenMaxReached: true
             });
 
-            comboBox.onValueChanged((event: api.ui.combobox.ComboBoxValueChangedEvent<string>) => {
+            comboBox.onValueChanged((event: api.ui.selector.combobox.ComboBoxValueChangedEvent<string>) => {
                 event.getGrid().getDataView().setFilterArgs({searchString: event.getNewValue()});
                 event.getGrid().getDataView().refresh();
             });
             comboBox.onOptionSelected(() => {
                 this.validate(false);
             });
-            comboBox.addSelectedOptionRemovedListener((removed: api.ui.combobox.SelectedOption<string>) => {
+            comboBox.addSelectedOptionRemovedListener((removed: api.ui.selector.combobox.SelectedOption<string>) => {
                 this.validate(false);
             });
 
@@ -108,7 +108,7 @@ module api.form.inputtype.combobox {
         getValues(): api.data.Value[] {
 
             var values: api.data.Value[] = [];
-            this.comboBox.getSelectedData().forEach((option: api.ui.combobox.Option<string>)  => {
+            this.comboBox.getSelectedData().forEach((option: api.ui.selector.combobox.Option<string>)  => {
                 var value = new api.data.Value(option.value, api.data.ValueTypes.STRING);
                 values.push(value);
             });
@@ -142,7 +142,7 @@ module api.form.inputtype.combobox {
             // Have to use stub here because it doesn't extend BaseIntputTypeView
         }
 
-        private comboboxFilter(item: api.ui.combobox.Option<string>, args) {
+        private comboboxFilter(item: api.ui.selector.combobox.Option<string>, args) {
             return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
         }
 

@@ -1,10 +1,10 @@
 module app.contextwindow.image {
 
-    export class ImageSelectPanelSelectedOptionView extends api.ui.combobox.SelectedOptionView<api.content.ContentSummary> {
+    export class ImageSelectPanelSelectedOptionView extends api.ui.selector.combobox.SelectedOptionView<api.content.ContentSummary> {
 
         private content:api.content.ContentSummary;
 
-        constructor(option:api.ui.combobox.Option<api.content.ContentSummary>) {
+        constructor(option:api.ui.selector.combobox.Option<api.content.ContentSummary>) {
             this.content = option.displayValue;
             super(option);
         }

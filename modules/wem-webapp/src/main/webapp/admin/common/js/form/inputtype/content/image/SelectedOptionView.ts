@@ -1,12 +1,12 @@
 module api.form.inputtype.content.image {
 
-    export class SelectedOptionView extends api.ui.combobox.SelectedOptionView<api.content.ContentSummary> {
+    export class SelectedOptionView extends api.ui.selector.combobox.SelectedOptionView<api.content.ContentSummary> {
 
         private content:api.content.ContentSummary;
 
         private lastInRow:boolean;
 
-        constructor(option:api.ui.combobox.Option<api.content.ContentSummary>) {
+        constructor(option:api.ui.selector.combobox.Option<api.content.ContentSummary>) {
             this.content = option.displayValue;
             super(option);
         }

@@ -1,12 +1,12 @@
 module api.content.page.part {
 
-    import RichComboBox = api.ui.combobox.RichComboBox;
-    import RichComboBoxBuilder = api.ui.combobox.RichComboBoxBuilder;
-    import ComboBoxConfig = api.ui.combobox.ComboBoxConfig;
-    import Option = api.ui.combobox.Option;
-    import SelectedOption = api.ui.combobox.SelectedOption;
-    import SelectedOptionView = api.ui.combobox.SelectedOptionView;
-    import SelectedOptionsView = api.ui.combobox.SelectedOptionsView;
+    import RichComboBox = api.ui.selector.combobox.RichComboBox;
+    import RichComboBoxBuilder = api.ui.selector.combobox.RichComboBoxBuilder;
+    import ComboBoxConfig = api.ui.selector.combobox.ComboBoxConfig;
+    import Option = api.ui.selector.combobox.Option;
+    import SelectedOption = api.ui.selector.combobox.SelectedOption;
+    import SelectedOptionView = api.ui.selector.combobox.SelectedOptionView;
+    import SelectedOptionsView = api.ui.selector.combobox.SelectedOptionsView;
     import DescriptorKey = api.content.page.DescriptorKey;
 
     export class PartDescriptorComboBox extends RichComboBox<PartDescriptor> {

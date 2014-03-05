@@ -1,4 +1,4 @@
-module api.ui.combobox {
+module api.ui.selector.combobox {
 
     export class ComboBox<T> extends api.dom.FormInputEl {
 
@@ -14,7 +14,7 @@ module api.ui.combobox {
 
         private optionFormatter: (row: number, cell: number, value: T, columnDef: any, dataContext: Option<T>) => string;
 
-        private filter: (item: api.ui.combobox.Option<T>, args: any) => boolean;
+        private filter: (item: api.ui.selector.combobox.Option<T>, args: any) => boolean;
 
         private multipleSelections: boolean = false;
 

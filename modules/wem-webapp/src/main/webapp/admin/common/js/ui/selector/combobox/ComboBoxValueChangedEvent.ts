@@ -1,4 +1,4 @@
-module api.ui.combobox {
+module api.ui.selector.combobox {
 
     export class ComboBoxValueChangedEvent<T> {
 

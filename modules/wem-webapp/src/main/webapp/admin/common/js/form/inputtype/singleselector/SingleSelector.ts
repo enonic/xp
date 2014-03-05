@@ -53,7 +53,7 @@ module api.form.inputtype.singleselector {
                 });
             }
             else if (SingleSelector.TYPE_COMBOBOX == this.type) {
-                var comboBox = <api.ui.combobox.ComboBox<string>>element;
+                var comboBox = <api.ui.selector.combobox.ComboBox<string>>element;
                 comboBox.onOptionSelected(()=> {
                     // TODO: detect selected option changed
                     //listener(new api.form.inputtype.support.ValueChangedEvent(this.newValue(event.getOldValue()),
@@ -75,15 +75,15 @@ module api.form.inputtype.singleselector {
 
         private createComboBoxElement(name: string, property: api.data.Property): api.dom.Element {
 
-            var selectedOptionsView = new api.ui.combobox.SelectedOptionsView<string>();
-            var comboBox = new api.ui.combobox.ComboBox<string>(name, {
+            var selectedOptionsView = new api.ui.selector.combobox.SelectedOptionsView<string>();
+            var comboBox = new api.ui.selector.combobox.ComboBox<string>(name, {
                 rowHeight: 24,
                 filter: this.comboboxFilter,
                 selectedOptionsView: selectedOptionsView,
                 maximumOccurrences: 1,
                 hideComboBoxWhenMaxReached: true
             });
-            comboBox.onValueChanged((event: api.ui.combobox.ComboBoxValueChangedEvent<string>) => {
+            comboBox.onValueChanged((event: api.ui.selector.combobox.ComboBoxValueChangedEvent<string>) => {
                 event.getGrid().getDataView().setFilterArgs({searchString: event.getNewValue()});
                 event.getGrid().getDataView().refresh();
             });
@@ -168,7 +168,7 @@ module api.form.inputtype.singleselector {
             }
         }
 
-        private comboboxFilter(item: api.ui.combobox.Option<string>, args) {
+        private comboboxFilter(item: api.ui.selector.combobox.Option<string>, args) {
             return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
         }
     }

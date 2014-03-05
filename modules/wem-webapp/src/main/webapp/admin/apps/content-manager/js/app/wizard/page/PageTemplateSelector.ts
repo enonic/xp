@@ -17,7 +17,7 @@ module app.wizard.page {
             fieldSet.add(new api.ui.form.FormItem(new api.ui.form.FormItemBuilder(this.pageTemplateComboBox).setLabel("Page Template")));
             form.add(fieldSet);
 
-            this.pageTemplateComboBox.addOptionSelectedListener((option: api.ui.combobox.Option<api.content.page.PageTemplateSummary>) => {
+            this.pageTemplateComboBox.addOptionSelectedListener((option: api.ui.selector.combobox.Option<api.content.page.PageTemplateSummary>) => {
                 this.pageTemplateToSelect = option.displayValue.getKey();
                 this.notifyPageTemplateChanged(option.displayValue);
             });
