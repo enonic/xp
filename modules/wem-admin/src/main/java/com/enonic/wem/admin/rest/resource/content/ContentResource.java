@@ -32,6 +32,7 @@ import com.enonic.wem.admin.rest.resource.content.json.ContentQueryJson;
 import com.enonic.wem.admin.rest.resource.content.json.CreateContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentParams;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentResultJson;
+import com.enonic.wem.admin.rest.resource.content.json.UpdateAttachmentsJson;
 import com.enonic.wem.admin.rest.resource.content.json.UpdateContentParams;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
@@ -316,12 +317,13 @@ public class ContentResource
     public ContentJson update( final UpdateContentParams params )
     {
         final ContentData contentData = parseContentData( params.getContentData() );
-        final List<Attachment> attachments = parseAttachments( params.getAttachments() );
+
+        final UpdateAttachmentsJson updateAttachments = params.getUpdateAttachments();
 
         final UpdateContent updateContent = Commands.content().update().
             contentId( params.getContentId() ).
             modifier( AccountKey.anonymous() ).
-            attachments( attachments ).
+            updateAttachments( params.getUpdateAttachments() != null ? params.getUpdateAttachments().getUpdateAttachments() : null ).
             editor( new ContentEditor()
             {
                 @Override

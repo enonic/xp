@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.jcr.Session;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.InputSupplier;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
@@ -43,7 +41,6 @@ import com.enonic.wem.core.entity.DeleteNodeByPathService;
 import com.enonic.wem.core.entity.UpdateNodeHandler;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.relationship.RelationshipService;
-import com.enonic.wem.core.relationship.SyncRelationshipsCommand;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.content.attachment.Attachment.newAttachment;
@@ -52,8 +49,6 @@ public class UpdateContentHandler
     extends CommandHandler<UpdateContent>
 {
     private static final String THUMBNAIL_MIME_TYPE = "image/png";
-
-    private RelationshipService relationshipService;
 
     private IndexService indexService;
 
@@ -70,7 +65,7 @@ public class UpdateContentHandler
 
         final Content.EditBuilder editBuilder = command.getEditor().edit( contentBeforeChange );
 
-        if ( !editBuilder.isChanges() && command.getAttachments().isEmpty() )
+        if ( !editBuilder.isChanges() && command.getUpdateAttachments() == null )
         {
             command.setResult( contentBeforeChange );
             return;
@@ -83,16 +78,22 @@ public class UpdateContentHandler
         editedContent = newContent( editedContent ).
             modifier( command.getModifier() ).build();
 
-        final Attachments originalAttachments = getCurrentAttachments( command.getContentId() );
-        Attachments updateAttachments = command.getAttachments();
+        final Attachments attachments;
+
+        if ( command.getUpdateAttachments() != null )
+        {
+            attachments = command.getUpdateAttachments().getAttachments();
+        }
+        else
+        {
+            attachments = getCurrentAttachments( command.getContentId() );
+        }
 
         final Attachment thumbnailAttachment = resolveThumbnailAttachment( command, editedContent );
         if ( thumbnailAttachment != null )
         {
-            updateAttachments = updateAttachments.add( thumbnailAttachment );
+            attachments.add( thumbnailAttachment );
         }
-
-        final Attachments attachments = mergeAttachments( originalAttachments, updateAttachments );
 
         final UpdateNode updateNodeCommand = translator.toUpdateNodeCommand( editedContent, attachments );
 
@@ -109,25 +110,6 @@ public class UpdateContentHandler
         deleteRemovedEmbeddedContent( contentBeforeChange, persistedContent );
 
         command.setResult( persistedContent );
-    }
-
-    private Attachments mergeAttachments( final Attachments originalAttachments, final Attachments updatedAttachments )
-    {
-        if ( updatedAttachments.isEmpty() )
-        {
-            return originalAttachments;
-        }
-
-        Attachments mergedAttachments = originalAttachments;
-        for ( Attachment attachment : updatedAttachments )
-        {
-            if ( originalAttachments.hasAttachment( attachment.getName() ) )
-            {
-                mergedAttachments = mergedAttachments.remove( attachment.getName() );
-            }
-            mergedAttachments = mergedAttachments.add( attachment );
-        }
-        return mergedAttachments;
     }
 
     private Attachments getCurrentAttachments( final ContentId contentId )
@@ -147,30 +129,11 @@ public class UpdateContentHandler
         {
             if ( !embeddedContentsToKeep.containsKey( embeddedContentBeforeEdit.getId() ) )
             {
-                final NodePath nodePathToEmbeddedContentNode =
-                    EmbeddedNodePathFactory.create( embeddedContentBeforeEdit.getParentPath(), embeddedContentBeforeEdit.getName() );
-                final DeleteNodeByPath deleteNodeByPathCommand = new DeleteNodeByPath( nodePathToEmbeddedContentNode );
+                final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( embeddedContentBeforeEdit.getPath() );
+                final DeleteNodeByPath deleteNodeByPathCommand = new DeleteNodeByPath( nodePath );
                 new DeleteNodeByPathService( this.context.getJcrSession(), indexService, deleteNodeByPathCommand ).execute();
             }
         }
-    }
-
-
-    private void syncRelationships( final Content persistedContent, final Content temporaryContent )
-    {
-        final Session session = context.getJcrSession();
-
-        final Client client = context.getClient();
-
-        final ContentId contentId = persistedContent.getId();
-
-        relationshipService.syncRelationships( new SyncRelationshipsCommand().
-            client( client ).
-            jcrSession( session ).
-            contentType( persistedContent.getType() ).
-            contentToUpdate( contentId ).
-            contentBeforeEditing( persistedContent.getContentData() ).
-            contentAfterEditing( temporaryContent.getContentData() ) );
     }
 
     private void validateEditedContent( final Content persistedContent, final Content edited )
@@ -238,7 +201,7 @@ public class UpdateContentHandler
             Attachment mediaAttachment = command.getAttachment( content.getName().toString() );
             if ( mediaAttachment == null )
             {
-                mediaAttachment = command.getAttachments().first();
+                mediaAttachment = command.getUpdateAttachments().getAttachments().first();
             }
             if ( mediaAttachment != null )
             {
@@ -273,12 +236,6 @@ public class UpdateContentHandler
     private ContentType getContentType( final ContentTypeName contentTypeName )
     {
         return context.getClient().execute( Commands.contentType().get().byName().contentTypeName( contentTypeName ) );
-    }
-
-    @Inject
-    public void setRelationshipService( final RelationshipService relationshipService )
-    {
-        this.relationshipService = relationshipService;
     }
 
     @Inject

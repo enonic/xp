@@ -23,6 +23,8 @@ public class ContentDataSerializer
 
     public static final String CONTENT_TYPE = "contentType";
 
+    public static final String EMBEDDED = "embedded";
+
     public static final String FORM = "form";
 
     public static final String PAGE = "page";
@@ -43,6 +45,7 @@ public class ContentDataSerializer
         addPropertyIfNotNull( contentAsData, DRAFT, content.isDraft() );
         addPropertyIfNotNull( contentAsData, DISPLAY_NAME, content.getDisplayName() );
         addPropertyIfNotNull( contentAsData, CONTENT_TYPE, content.getType().getContentTypeName() );
+        addPropertyIfNotNull( contentAsData, EMBEDDED, content.isEmbedded() );
 
         contentAsData.add( content.getContentData().toDataSet( CONTENT_DATA ) );
         contentAsData.add( FORM_SERIALIZER.toData( content.getForm() ) );
@@ -79,6 +82,11 @@ public class ContentDataSerializer
             builder.contentData( new ContentData( dataSet.getDataSet( CONTENT_DATA ).toRootDataSet() ) );
         }
 
+        if ( dataSet.hasData( EMBEDDED ) )
+        {
+            builder.embedded( Boolean.valueOf( dataSet.getProperty( EMBEDDED ).getString() ) );
+        }
+
         if ( dataSet.hasData( FORM ) )
         {
             builder.form( FORM_SERIALIZER.fromData( dataSet.getDataSet( FORM ) ) );
@@ -109,6 +117,7 @@ public class ContentDataSerializer
         addPropertyIfNotNull( contentAsData, DRAFT, command.isDraft() );
         addPropertyIfNotNull( contentAsData, DISPLAY_NAME, command.getDisplayName() );
         addPropertyIfNotNull( contentAsData, CONTENT_TYPE, command.getContentType() );
+        addPropertyIfNotNull( contentAsData, EMBEDDED, command.isEmbed() );
 
         if ( command.getContentData() != null )
         {

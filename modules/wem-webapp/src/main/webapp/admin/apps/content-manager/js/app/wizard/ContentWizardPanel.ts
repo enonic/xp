@@ -410,7 +410,7 @@ module app.wizard {
 
         private produceUpdateContentRequest(content: api.content.Content): api.content.UpdateContentRequest {
 
-            var updateContentRequest = new api.content.UpdateContentRequest(this.getPersistedItem().getId()).
+            var updateContentRequest: api.content.UpdateContentRequest = new api.content.UpdateContentRequest(this.getPersistedItem().getId()).
                 setDraft(this.persistAsDraft).
                 setContentName(this.resolveContentNameForUpdateReuest()).
                 setContentType(this.contentType.getContentTypeName()).
@@ -418,7 +418,10 @@ module app.wizard {
                 setForm(this.contentWizardStepForm.getForm()).
                 setContentData(this.contentWizardStepForm.getContentData());
 
-            updateContentRequest.addAttachments(this.contentWizardStepForm.getFormView().getAttachments());
+            var contentId: api.content.ContentId = new api.content.ContentId(this.getPersistedItem().getId());
+            var updateAttachments: api.content.UpdateAttachments =
+                api.content.UpdateAttachments.create(contentId, this.contentWizardStepForm.getFormView().getAttachments());
+            updateContentRequest.setUpdateAttachments(updateAttachments);
 
             if (this.iconUploadItem) {
                 var attachment = new api.content.attachment.AttachmentBuilder().
@@ -427,7 +430,9 @@ module app.wizard {
                     setMimeType(this.iconUploadItem.getMimeType()).
                     setSize(this.iconUploadItem.getSize()).
                     build();
-                updateContentRequest.addAttachment(attachment);
+
+                var updateAttachments = api.content.UpdateAttachments.create(contentId, [attachment]);
+                updateContentRequest.setUpdateAttachments(updateAttachments);
             }
 
             return updateContentRequest;

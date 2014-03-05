@@ -57,7 +57,6 @@ public class UpdateContentHandlerTest
 
         handler = new UpdateContentHandler();
         handler.setContext( this.context );
-        handler.setRelationshipService( relationshipService );
         handler.setIndexService( indexService );
 
         Mockito.when( super.client.execute( isA( ValidateContentData.class ) ) ).thenReturn( DataValidationErrors.empty() );

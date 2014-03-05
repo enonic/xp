@@ -2,7 +2,8 @@ module api.content.attachment {
 
     export class Attachments {
 
-        private attachmentByName: {[s:string] : Attachment;} = {};
+        private attachmentByName: {[s:string] : Attachment;
+        } = {};
 
         private attachments: Attachment[] = [];
 
@@ -10,7 +11,7 @@ module api.content.attachment {
 
         constructor(builder: AttachmentsBuilder) {
 
-            var count:number = 0;
+            var count: number = 0;
             builder.attachments.forEach((attachment: Attachment) => {
                 this.attachmentByName[attachment.getAttachmentName().toString()] = attachment;
                 count++;
@@ -30,7 +31,6 @@ module api.content.attachment {
         getSize(): number {
             return this.size;
         }
-
     }
 
     export class AttachmentsBuilder {

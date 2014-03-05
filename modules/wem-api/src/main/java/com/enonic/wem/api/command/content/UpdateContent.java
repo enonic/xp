@@ -1,11 +1,7 @@
 package com.enonic.wem.api.command.content;
 
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterables;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Command;
@@ -13,12 +9,12 @@ import com.enonic.wem.api.command.content.attachment.UpdateAttachments;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.editor.ContentEditor;
 
 public final class UpdateContent
     extends Command<Content>
 {
+
     private UpdateAttachments updateAttachments;
 
     private ContentEditor editor;
@@ -26,8 +22,6 @@ public final class UpdateContent
     private UserKey modifier;
 
     private ContentId contentId;
-
-    private Map<String, Attachment> attachments = new LinkedHashMap<>();
 
     public ContentEditor getEditor()
     {
@@ -62,30 +56,21 @@ public final class UpdateContent
         return this;
     }
 
-    public UpdateContent attachments( final Attachment... attachments )
+    public UpdateContent updateAttachments( final UpdateAttachments updateAttachments )
     {
-        for ( Attachment attachment : attachments )
-        {
-            Preconditions.checkArgument( !this.attachments.containsKey( attachment.getName() ), "attachment with duplicated name: %s",
-                                         attachment.getName() );
-            this.attachments.put( attachment.getName(), attachment );
-        }
+        this.updateAttachments = updateAttachments;
         return this;
     }
 
-    public UpdateContent attachments( final Iterable<Attachment> attachments )
-    {
-        return attachments( Iterables.toArray( attachments, Attachment.class ) );
-    }
-
-    public Attachments getAttachments()
-    {
-        return Attachments.from( attachments.values() );
-    }
 
     public Attachment getAttachment( final String attachmentName )
     {
-        return attachments.get( attachmentName );
+        return updateAttachments.getAttachments().getAttachment( attachmentName );
+    }
+
+    public UpdateAttachments getUpdateAttachments()
+    {
+        return updateAttachments;
     }
 
     @Override

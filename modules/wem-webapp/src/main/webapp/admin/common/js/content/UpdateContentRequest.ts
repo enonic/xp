@@ -2,76 +2,69 @@ module api.content {
 
     export class UpdateContentRequest extends ContentResourceRequest<any> {
 
-        private id:string;
+        private id: string;
 
-        private name:ContentName;
+        private name: ContentName;
 
-        private contentType:api.schema.content.ContentTypeName;
+        private contentType: api.schema.content.ContentTypeName;
 
-        private form:api.form.Form;
+        private form: api.form.Form;
 
-        private contentData:ContentData;
+        private contentData: ContentData;
 
-        private displayName:string;
+        private displayName: string;
 
-        private draft:boolean;
+        private draft: boolean;
 
-        private attachments:api.content.attachment.Attachment[] = [];
+        private updateAttachments: api.content.UpdateAttachments;
 
-        constructor(id:string) {
+        constructor(id: string) {
             super();
             this.id = id;
             this.draft = false;
             this.setMethod("POST");
         }
 
-        setId(id:string):UpdateContentRequest {
+        setUpdateAttachments(updateAttachments: api.content.UpdateAttachments) {
+            this.updateAttachments = updateAttachments;
+        }
+
+        setId(id: string): UpdateContentRequest {
             this.id = id;
             return this;
         }
 
-        setContentName(value:ContentName):UpdateContentRequest {
+        setContentName(value: ContentName): UpdateContentRequest {
             this.name = value;
             return this;
         }
 
-        setContentType(value:api.schema.content.ContentTypeName):UpdateContentRequest {
+        setContentType(value: api.schema.content.ContentTypeName): UpdateContentRequest {
             this.contentType = value;
             return this;
         }
 
-        setForm(form:api.form.Form):UpdateContentRequest {
+        setForm(form: api.form.Form): UpdateContentRequest {
             this.form = form;
             return this;
         }
 
-        setContentData(contentData:api.content.ContentData):UpdateContentRequest {
+        setContentData(contentData: api.content.ContentData): UpdateContentRequest {
             this.contentData = contentData;
             return this;
         }
 
-        setDisplayName(displayName:string):UpdateContentRequest {
+        setDisplayName(displayName: string): UpdateContentRequest {
             this.displayName = displayName;
             return this;
         }
 
-        setDraft(draft:boolean):UpdateContentRequest {
+        setDraft(draft: boolean): UpdateContentRequest {
             this.draft = draft;
             return this;
         }
 
-
-        addAttachment(attachment:api.content.attachment.Attachment):UpdateContentRequest {
-            this.attachments.push( attachment );
-            return this;
-        }
-
-        addAttachments(attachments:api.content.attachment.Attachment[]):UpdateContentRequest {
-            this.attachments = this.attachments.concat(attachments);
-            return this;
-        }
-
-        getParams():Object {
+        getParams(): Object {
             return {
                 contentId: this.id,
                 draft: this.draft,
@@ -80,25 +73,11 @@ module api.content {
                 form: this.form.toJson(),
                 contentData: this.contentData.toJson(),
                 displayName: this.displayName,
-                attachments: this.attachmentsToJson()
+                updateAttachments: this.updateAttachments.toJson()
             };
         }
 
-        private attachmentsToJson(): api.content.attachment.AttachmentJson[] {
-            var array: api.content.attachment.AttachmentJson[] = [];
-            this.attachments.forEach((attachment: api.content.attachment.Attachment)=> {
-                var attachmentJsonbj:api.content.attachment.AttachmentJson = {
-                    "blobKey": attachment.getBlobKey().toString(),
-                    "attachmentName": attachment.getAttachmentName().toString(),
-                    "mimeType": attachment.getMimeType(),
-                    "size": attachment.getSize()
-                };
-                array.push(attachmentJsonbj);
-            });
-            return array;
-        }
-
-        getRequestPath():api.rest.Path {
+        getRequestPath(): api.rest.Path {
             return api.rest.Path.fromParent(super.getResourcePath(), "update");
         }
 
@@ -109,10 +88,12 @@ module api.content {
             this.send().then((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
                 deferred.resolve(this.fromJsonToContent(response.getResult()));
             }).catch((response: api.rest.RequestError) => {
-                    deferred.reject(null);
-                }).done();
+                deferred.reject(null);
+            }).done();
 
             return deferred.promise;
         }
+
     }
+
 }

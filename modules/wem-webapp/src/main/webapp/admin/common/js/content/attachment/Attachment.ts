@@ -32,6 +32,17 @@ module api.content.attachment {
         getSize(): number {
             return this.size;
         }
+
+        toJson(): api.content.attachment.AttachmentJson {
+
+            return {
+                "blobKey": this.getBlobKey().toString(),
+                "attachmentName": this.getAttachmentName().toString(),
+                "mimeType": this.getMimeType(),
+                "size": this.getSize()
+            };
+        }
+
     }
 
     export class AttachmentBuilder {

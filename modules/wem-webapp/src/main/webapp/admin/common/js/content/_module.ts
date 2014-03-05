@@ -25,3 +25,5 @@
 ///<reference path='ContentComboBox.ts' />
 ///<reference path='ContentQueryRequest.ts' />
 ///<reference path='ContentQueryResult.ts' />
+///<reference path='UpdateContentRequest.ts' />
+

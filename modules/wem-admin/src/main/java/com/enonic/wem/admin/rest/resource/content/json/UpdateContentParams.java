@@ -3,7 +3,6 @@ package com.enonic.wem.admin.rest.resource.content.json;
 
 import java.util.List;
 
-import com.enonic.wem.admin.json.content.attachment.AttachmentJson;
 import com.enonic.wem.admin.json.data.DataJson;
 import com.enonic.wem.admin.json.form.FormJson;
 import com.enonic.wem.api.content.ContentId;
@@ -24,7 +23,7 @@ public class UpdateContentParams
 
     private String displayName;
 
-    private List<AttachmentJson> attachments;
+    private UpdateAttachmentsJson updateAttachments;
 
     private String draft;
 
@@ -98,13 +97,13 @@ public class UpdateContentParams
         this.displayName = displayName;
     }
 
-    public List<AttachmentJson> getAttachments()
+    public UpdateAttachmentsJson getUpdateAttachments()
     {
-        return attachments;
+        return updateAttachments;
     }
 
-    public void setAttachments( final List<AttachmentJson> attachmentParams )
+    public void setUpdateAttachments( final UpdateAttachmentsJson updateAttachments )
     {
-        this.attachments = attachmentParams;
+        this.updateAttachments = updateAttachments;
     }
 }
