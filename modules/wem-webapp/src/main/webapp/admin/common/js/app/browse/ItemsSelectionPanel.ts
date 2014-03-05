@@ -5,10 +5,11 @@ module api.app.browse {
         private deselectedListeners: {(event: ItemDeselectedEvent<M>):void}[] = [];
         private items: BrowseItem<M>[] = [];
         private selectionItems: SelectionItem<M>[] = [];
+        private messageForNoSelection = "You are wasting this space - select something!";
 
         constructor() {
             super("empty-space");
-            this.getEl().setInnerHtml("You are wasting this space - select something!");
+            this.getEl().setInnerHtml(this.messageForNoSelection);
         }
 
         setItems(items: BrowseItem<M>[]) {
@@ -59,7 +60,7 @@ module api.app.browse {
             this.items.splice(index, 1);
 
             if (this.items.length == 0) {
-                this.getEl().setInnerHtml("You are wasting this space - select something!");
+                this.getEl().setInnerHtml(this.messageForNoSelection);
             }
 
             this.notifyDeselected(item);
