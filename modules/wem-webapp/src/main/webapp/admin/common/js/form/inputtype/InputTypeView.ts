@@ -65,5 +65,8 @@ module api.form.inputtype {
         onValidityChanged(listener: (event: InputValidityChangedEvent)=>void);
 
         unValidityChanged(listener: (event: InputValidityChangedEvent)=>void);
+
+        availableSizeChanged(newSize:number);
+
     }
 }

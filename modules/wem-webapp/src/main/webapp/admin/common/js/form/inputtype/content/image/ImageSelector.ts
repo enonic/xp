@@ -75,6 +75,10 @@ module api.form.inputtype.content.image {
             })
         }
 
+        availableSizeChanged(newSize: number) {
+            console.log("ImageSelector.availableSizeChanged("+newSize+")" );
+        }
+
         layout(input: api.form.Input, properties: api.data.Property[]) {
 
             this.input = input;

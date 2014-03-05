@@ -44,6 +44,10 @@ module api.form.inputtype.support {
             });
         }
 
+        availableSizeChanged(newSize: number) {
+            console.log("BaseInputTypeView.availableSizeChanged("+newSize+")" );
+        }
+
         public getConfig(): api.form.inputtype.InputTypeViewConfig<CONFIG> {
             return this.config;
         }
