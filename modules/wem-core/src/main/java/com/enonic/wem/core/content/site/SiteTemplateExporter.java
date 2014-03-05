@@ -8,10 +8,10 @@ import java.nio.file.Path;
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.content.page.PageTemplate;
+import com.enonic.wem.api.content.page.PageTemplateName;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateXml;
-import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.support.export.AbstractEntityExporter;
 import com.enonic.wem.core.support.export.EntityExporters;
 import com.enonic.wem.core.support.export.XMLFilename;
@@ -21,7 +21,7 @@ import com.enonic.wem.xml.XmlSerializers;
 public class SiteTemplateExporter
     extends AbstractEntityExporter<SiteTemplate, SiteTemplate.Builder>
 {
-    private static final String TEMPLATE_FILE_PATTERN = "*-template.xml";
+    private static final String PAGE_TEMPLATE_FILE = "page-template.xml";
 
     protected String toXMLString( final SiteTemplate siteTemplate )
     {
@@ -43,11 +43,11 @@ public class SiteTemplateExporter
 
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream( directoryPath ))
         {
-            for ( Path moduleDir : directoryStream )
+            for ( Path templateDir : directoryStream )
             {
-                if ( Files.isDirectory( moduleDir ) )
+                if ( Files.isDirectory( templateDir ) && !IGNORE_FILES.contains( getFileName( templateDir ) ) )
                 {
-                    importTemplates( builder, moduleDir );
+                    importPageTemplate( builder, templateDir );
                 }
             }
         }
@@ -64,48 +64,27 @@ public class SiteTemplateExporter
         for ( final PageTemplate template : siteTemplate.getPageTemplates() )
         {
             final AbstractEntityExporter<PageTemplate, PageTemplate.Builder> exporter = EntityExporters.getForObject( template );
-            final ModuleName module = template.getKey().getModuleName();
-            final Path templatePath = rootPath.resolve( module.toString() ).resolve( template.getName().toString() );
+            final Path templatePath = rootPath.resolve( template.getName().toString() );
             exporter.exportObject( template, createPath( templatePath ), "" );
         }
     }
 
-    private void importTemplates( final SiteTemplate.Builder siteTemplate, final Path parentDirectory )
+    private void importPageTemplate( final SiteTemplate.Builder siteTemplate, final Path templateDir )
         throws IOException
     {
-        final String pathSeparator = parentDirectory.getFileSystem().getSeparator();
-        final String pathName = StringUtils.remove( parentDirectory.getFileName().toString(), pathSeparator );
-        final ModuleName moduleName = ModuleName.from( pathName );
-
-        try (final DirectoryStream<Path> ds = Files.newDirectoryStream( parentDirectory ))
+        final Path templateFile = templateDir.resolve( PAGE_TEMPLATE_FILE );
+        if ( !Files.isRegularFile( templateFile ) )
         {
-            for ( final Path templateDir : ds )
-            {
-                if ( !Files.isDirectory( templateDir ) || IGNORE_FILES.contains( getFileName( templateDir ) ) )
-                {
-                    continue;
-                }
-
-                final String templateName = StringUtils.remove( templateDir.getFileName().toString(), pathSeparator );
-
-                try (final DirectoryStream<Path> templateFileDs = Files.newDirectoryStream( templateDir, TEMPLATE_FILE_PATTERN ))
-                {
-                    for ( final Path templateFile : templateFileDs )
-                    {
-                        final String filename = templateFile.getFileName().toString();
-                        final AbstractEntityExporter<PageTemplate, PageTemplate.Builder> entityExporter =
-                            EntityExporters.getByFilename( filename );
-                        if ( entityExporter != null )
-                        {
-                            final PageTemplate.Builder pageTemplate = entityExporter.importObject( parentDirectory, templateFile );
-                            pageTemplate.name( templateName );
-                            pageTemplate.module( moduleName );
-                            siteTemplate.addPageTemplate( pageTemplate.build() );
-                            break;
-                        }
-                    }
-                }
-            }
+            return;
         }
+        final String pathSeparator = templateDir.getFileSystem().getSeparator();
+        final String pathName = StringUtils.remove( templateDir.getFileName().toString(), pathSeparator );
+        final PageTemplateName templateName = PageTemplateName.from( pathName );
+
+        final AbstractEntityExporter<PageTemplate, PageTemplate.Builder> entityExporter = EntityExporters.getForClass( PageTemplate.class );
+
+        final PageTemplate.Builder pageTemplate = entityExporter.importObject( templateDir, templateFile );
+        pageTemplate.name( templateName );
+        siteTemplate.addPageTemplate( pageTemplate.build() );
     }
 }

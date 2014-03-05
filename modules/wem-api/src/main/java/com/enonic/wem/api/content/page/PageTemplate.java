@@ -4,7 +4,6 @@ package com.enonic.wem.api.content.page;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
@@ -39,17 +38,17 @@ public final class PageTemplate
         this.regions = builder.regions;
     }
 
-    private PageTemplateKey resolveKey( final Builder properties )
+    private PageTemplateKey resolveKey( final Builder builder )
     {
-        if ( properties.key != null )
+        if ( builder.key != null )
         {
-            return properties.key;
+            return builder.key;
         }
         else
         {
-            Preconditions.checkNotNull( properties.moduleName, "moduleKey cannot be null when key is not given" );
-            Preconditions.checkNotNull( properties.name, "name cannot be null when key is not given" );
-            return PageTemplateKey.from( properties.moduleName, properties.name );
+            Preconditions.checkNotNull( builder.descriptor, "descriptor cannot be null when key is not given" );
+            Preconditions.checkNotNull( builder.name, "name cannot be null when key is not given" );
+            return PageTemplateKey.from( builder.descriptor.getModuleKey().getName(), builder.name );
         }
     }
 
@@ -93,7 +92,8 @@ public final class PageTemplate
         return canRender;
     }
 
-    public boolean canRender(ContentTypeName name) {
+    public boolean canRender( ContentTypeName name )
+    {
         return this.getCanRender().contains( name );
     }
 
@@ -122,8 +122,6 @@ public final class PageTemplate
         private ResourcePath parentPath = ResourcePath.root();
 
         private PageTemplateKey key;
-
-        private ModuleName moduleName;
 
         private PageTemplateName name;
 
@@ -155,16 +153,6 @@ public final class PageTemplate
         public Builder key( final PageTemplateKey key )
         {
             this.key = key;
-            return this;
-        }
-
-        /**
-         * Optional. Only required when key is not given.
-         */
-        public Builder module( final ModuleName value )
-        {
-
-            this.moduleName = value;
             return this;
         }
 

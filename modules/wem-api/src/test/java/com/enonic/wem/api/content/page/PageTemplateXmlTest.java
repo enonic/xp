@@ -13,7 +13,6 @@ import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.xml.BaseXmlSerializerTest;
@@ -75,7 +74,6 @@ public class PageTemplateXmlTest
         builder.name( "my-page-template1" );
         XmlSerializers.pageTemplate().parse( xml ).to( builder );
 
-        builder.module( ModuleName.from( "demo1" ) );
         builder.displayName( "BBB" );
         PageTemplate pageTemplate = builder.build();
 
@@ -87,7 +85,6 @@ public class PageTemplateXmlTest
         builder.name( "my-page-template2" );
         XmlSerializers.pageTemplate().parse( xml ).to( builder );
 
-        builder.module( ModuleName.from( "demo2" ) );
         builder.displayName( "CCC" );
         pageTemplate = builder.build();
         player.add( pageTemplate );
@@ -97,7 +94,6 @@ public class PageTemplateXmlTest
         builder.name( "my-page-template3" );
         XmlSerializers.pageTemplate().parse( xml ).to( builder );
 
-        builder.module( ModuleName.from( "demo3" ) );
         builder.displayName( "AAA" );
         pageTemplate = builder.build();
         player.add( pageTemplate );
@@ -129,7 +125,6 @@ public class PageTemplateXmlTest
         builder.name( "my-page-template" );
         XmlSerializers.pageTemplate().parse( xml ).to( builder );
 
-        builder.module( ModuleName.from( "demo" ) );
         final PageTemplate pageTemplate = builder.build();
 
         assertEquals( "Main page template", pageTemplate.getDisplayName() );
