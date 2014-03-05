@@ -1,9 +1,4 @@
 module app.contextwindow {
-    export interface ComponentData {
-        title:string;
-        subtitle:string;
-        iconUrl:string;
-    }
 
     export interface ComponentTypesPanelConfig {
 
@@ -16,8 +11,7 @@ module app.contextwindow {
 
     export class ComponentTypesPanel extends api.ui.Panel {
 
-        private dataView:api.ui.grid.DataView<ComponentData>;
-        private data:ComponentData[];
+        private dataView:api.ui.grid.DataView<Insertable>;
         private grid:ComponentGrid;
         private contextWindow:ContextWindow;
         private liveEditIFrame: api.dom.IFrameEl;
@@ -35,26 +29,17 @@ module app.contextwindow {
             this.liveEditJQuery = config.liveEditJQuery;
             this.draggingMask = config.draggingMask;
 
-            this.dataView = new api.ui.grid.DataView<ComponentData>();
+            this.dataView = new api.ui.grid.DataView<Insertable>();
 
             this.grid = new ComponentGrid(this.dataView, {draggableRows: true, rowClass: "comp"});
 
             this.appendChild(this.grid);
-            this.getData();
+            this.dataView.setItems(Insertables.ALL, "name");
 
             this.onRendered((event) => {
                 this.initComponentDraggables();
             })
         }
-
-        setData(dataArray:ComponentData[]) {
-            this.data = dataArray;
-        }
-
-        appendData(data:ComponentData) {
-            this.data.push(data);
-        }
-
 
         initComponentDraggables() {
             var components = jQuery('[data-context-window-draggable="true"]');
@@ -119,15 +104,6 @@ module app.contextwindow {
             clone.simulate('mousedown');
 
             this.contextWindow.hide();
-        }
-
-        private getData():void {
-            jQuery.ajax({
-                url: api.util.getAdminUri("apps/content-manager/js/data/context-window/mock-component-types.json"),
-                success: (data:any, textStatus:string, jqXHR:JQueryXHR) => {
-                    this.dataView.setItems(ComponentGrid.toSlickData(data));
-                }
-            });
         }
     }
 }

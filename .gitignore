@@ -1,6 +1,7 @@
 .DS_Store
 build/
 temp/
+temp/*.*
 target/
 .gradle/
 *.iws

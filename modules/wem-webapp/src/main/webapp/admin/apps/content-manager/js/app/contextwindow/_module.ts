@@ -2,6 +2,8 @@
 ///<reference path='PageComponentInspectionPanel.ts' />
 ///<reference path='Component.ts' />
 ///<reference path='ContextWindowEvents.ts' />
+///<reference path='Insertable.ts' />
+///<reference path='Insertables.ts' />
 ///<reference path='ComponentTypesPanel.ts' />
 ///<reference path='ComponentGrid.ts' />
 ///<reference path='NoSelectionInspectionPanel.ts' />

@@ -5,17 +5,16 @@ module app.contextwindow {
         onClick?:(el) => void;
     }
 
-    export class ComponentGrid extends api.ui.grid.Grid<ComponentData> {
+    export class ComponentGrid extends api.ui.grid.Grid<Insertable> {
 
-        private componentGridOptions:ComponentGridOptions;
+        private componentGridOptions: ComponentGridOptions;
 
-        private componentDataView:api.ui.grid.DataView<ComponentData>;
+        private componentDataView: api.ui.grid.DataView<Insertable>;
 
-        constructor(dataView:api.ui.grid.DataView<ComponentData>, options:ComponentGridOptions = {}) {
+        constructor(dataView: api.ui.grid.DataView<Insertable>, options: ComponentGridOptions = {}) {
             super(dataView, this.createColumns(), {hideColumnHeaders: true, rowHeight: 50, height: 400, width: 320});
             this.componentDataView = dataView;
             this.componentGridOptions = options;
-            this.setFilter(this.filter);
 
             this.onRendered((event) => {
                 if (this.componentGridOptions.onClick) {
@@ -24,24 +23,7 @@ module app.contextwindow {
             })
         }
 
-        private filter(item, args) {
-            if (args) {
-                if (args.searchString != "" && item["component"]["name"].indexOf(args.searchString) == -1) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        updateFilter(searchString:string) {
-            this.componentDataView.setFilterArgs({
-                searchString: searchString
-            });
-            this.componentDataView.refresh();
-        }
-
-        private createColumns():api.ui.grid.GridColumn<ComponentData>[] {
+        private createColumns(): api.ui.grid.GridColumn<Insertable>[] {
             return [
                 {
                     name: "component",
@@ -50,15 +32,15 @@ module app.contextwindow {
                     width: 320,
                     cssClass: "grid-row",
                     formatter: (row, cell, value, columnDef, dataContext) => {
-                        return this.buildRow(row, cell, value).toString();
+                        return this.buildRow(row, cell, value, columnDef, <Insertable>dataContext).toString();
                     }
                 }
             ];
         }
 
-        private buildRow(row, cell, data):api.dom.DivEl {
+        private buildRow(row: number, cell: number, value: any, columnDef: any, insertable: Insertable): api.dom.DivEl {
             var rowEl = new api.dom.DivEl();
-            rowEl.getEl().setData('live-edit-type', data.typeName);
+            rowEl.getEl().setData('live-edit-type', insertable.getName());
             rowEl.getEl().setData('live-edit-empty-component', 'true');
             if (this.componentGridOptions.draggableRows) {
                 rowEl.getEl().setData('context-window-draggable', 'true');
@@ -68,14 +50,14 @@ module app.contextwindow {
             }
 
             var icon = new api.dom.DivEl();
-            icon.setClass('live-edit-font-icon-' + data.typeName);
+            icon.setClass('live-edit-font-icon-' + insertable.getIconCls());
             icon.addClass('icon');
 
             var title = new api.dom.H5El();
-            title.getEl().setInnerHtml(data.name);
+            title.getEl().setInnerHtml(insertable.getDisplayName());
 
             var subtitle = new api.dom.H6El();
-            subtitle.getEl().setInnerHtml(data.subtitle);
+            subtitle.getEl().setInnerHtml(insertable.getDescription());
 
             rowEl.appendChild(icon);
             rowEl.appendChild(title);
@@ -83,19 +65,5 @@ module app.contextwindow {
 
             return rowEl;
         }
-
-        static toSlickData(data:any[]):any[] {
-            var result = [];
-            data["components"].forEach((item, index) => {
-                var tmp = {
-                    "id": item.key,
-                    "component": item
-                };
-                result.push(tmp);
-            });
-            return result;
-        }
     }
-
-
 }
