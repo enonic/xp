@@ -19,7 +19,11 @@ module api.ui.toolbar {
 
             this.onRendered((event) => {
                 this.foldOrExpand();
-            })
+            });
+
+            this.onShown((event) => {
+                this.foldOrExpand();
+            });
         }
 
         addAction(action:api.ui.Action) {
