@@ -1,6 +1,6 @@
 module app.create {
 
-    export class SiteTemplatesList extends api.ui.list.ListView<api.content.site.template.SiteTemplateSummary> {
+    export class SiteTemplatesList extends api.ui.list.ListBox<api.content.site.template.SiteTemplateSummary> {
 
         private selectedListeners: {(event: SiteTemplatesListSelectedEvent):void}[] = [];
 

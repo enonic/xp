@@ -1,6 +1,6 @@
 module api.ui.list {
 
-    export class ListView<T> extends api.ui.Panel {
+    export class ListBox<T> extends api.ui.Panel {
 
         private h4: api.dom.H4El;
         private ul: api.dom.UlEl;

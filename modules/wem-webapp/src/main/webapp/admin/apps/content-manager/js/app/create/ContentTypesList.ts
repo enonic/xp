@@ -1,6 +1,6 @@
 module app.create {
 
-    export class ContentTypesList extends api.ui.list.ListView<api.schema.content.ContentTypeSummary> {
+    export class ContentTypesList extends api.ui.list.ListBox<api.schema.content.ContentTypeSummary> {
 
         private markRoots: boolean;
 
