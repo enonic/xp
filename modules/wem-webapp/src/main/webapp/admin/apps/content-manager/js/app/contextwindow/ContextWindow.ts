@@ -14,7 +14,7 @@ module app.contextwindow {
         liveFormPanel:app.wizard.LiveFormPanel;
     }
 
-    export class ContextWindow extends api.ui.NavigableFloatingWindow {
+    export class ContextWindow extends api.ui.DockedWindow {
         private componentTypesPanel: ComponentTypesPanel;
         private inspectionPanel: InspectionPanel;
         private emulatorPanel: EmulatorPanel;
@@ -22,7 +22,6 @@ module app.contextwindow {
         private liveEditJQuery: JQueryStatic;
         private draggingMask: api.ui.DraggingMask;
         private liveEditIFrame: api.dom.IFrameEl;
-        private minimizer: Minimizer;
         private liveFormPanel: app.wizard.LiveFormPanel;
 
         constructor(config: ContextWindowConfig) {
@@ -31,19 +30,7 @@ module app.contextwindow {
             this.liveEditWindow = config.liveEditWindow;
             this.liveFormPanel = config.liveFormPanel;
 
-            var dragStart = (event, ui) => {
-                this.draggingMask.show();
-            };
-
-            var dragStop = (event, ui) => {
-                this.draggingMask.hide();
-            };
-
-            super({draggableOptions: {
-                start: dragStart,
-                stop: dragStop,
-                handle: ".tab-bar"
-            } });
+            super();
 
             this.addClass("context-window");
 
@@ -69,13 +56,6 @@ module app.contextwindow {
             this.addItem("Insert", this.componentTypesPanel);
             this.addItem("Settings", this.inspectionPanel);
             this.addItem("Emulator", this.emulatorPanel);
-
-            this.minimizer = new Minimizer(()=> {
-                this.minimize();
-            }, ()=> {
-                this.maximize();
-            });
-            this.getNavigator().appendChild(this.minimizer);
 
             document.body.appendChild(this.draggingMask.getHTMLElement());
         }
@@ -104,42 +84,6 @@ module app.contextwindow {
             this.inspectionPanel.clearSelection();
             this.selectPanel(this.componentTypesPanel);
         }
-
-        private minimize() {
-            this.getDeck().hide();
-            this.getEl().addClass("minimized");
-        }
-
-        private maximize() {
-            this.getDeck().show();
-            this.getEl().removeClass("minimized");
-        }
-
-    }
-
-    class Minimizer extends api.dom.DivEl {
-
-        private minimized: boolean;
-
-        constructor(minimize: ()=>void, maximize: ()=>void, minimized: boolean = false) {
-            super("minimizer live-edit-font-icon-minimize");
-            this.minimized = minimized;
-
-            this.getEl().addEventListener("click", (event) => {
-                if (this.minimized) {
-                    this.removeClass("live-edit-font-icon-maximize");
-                    this.addClass("live-edit-font-icon-minimize");
-                    maximize();
-                    this.minimized = false;
-                } else {
-                    this.removeClass("live-edit-font-icon-minimize");
-                    this.addClass("live-edit-font-icon-maximize");
-                    minimize();
-                    this.minimized = true;
-                }
-            });
-        }
-
 
     }
 }

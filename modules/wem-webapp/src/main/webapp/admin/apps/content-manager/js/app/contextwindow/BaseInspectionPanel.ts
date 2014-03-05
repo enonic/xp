@@ -17,13 +17,13 @@ module app.contextwindow {
 
             this.onRendered((event) => {
                 $(this.getHTMLElement()).slimScroll({
-                    height: '450px'
+                    height: '100%'
                 });
             })
         }
 
         setMainName(value: string) {
-            this.nameAndIcon.setMainName(value);
+            this.nameAndIcon.setMainName(api.util.limitString(value, 20));
         }
 
         setSubName(value: string) {

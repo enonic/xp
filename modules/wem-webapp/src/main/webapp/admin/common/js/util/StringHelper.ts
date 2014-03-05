@@ -1,6 +1,6 @@
 module api.util {
 
-    export function limitString(str: string, length: number, ending: string = "..."): string {
+    export function limitString(str: string, length: number, ending: string = "…"): string {
         str = str.substring(0, length) + ending;
         return str;
     }
