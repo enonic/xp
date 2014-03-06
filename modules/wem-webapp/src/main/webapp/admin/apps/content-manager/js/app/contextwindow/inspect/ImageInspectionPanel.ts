@@ -1,4 +1,4 @@
-module app.contextwindow {
+module app.contextwindow.inspect {
 
     import SiteTemplate = api.content.site.template.SiteTemplate;
     import ImageDescriptor = api.content.page.image.ImageDescriptor;

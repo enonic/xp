@@ -15,8 +15,9 @@ module app.contextwindow {
     }
 
     export class ContextWindow extends api.ui.DockedWindow {
+
         private insertablesPanel: insert.InsertablesPanel;
-        private inspectionPanel: InspectionPanel;
+        private inspectionPanel: inspect.InspectionPanel;
         private emulatorPanel: EmulatorPanel;
         private liveEditWindow: any;
         private liveEditJQuery: JQueryStatic;
@@ -44,7 +45,7 @@ module app.contextwindow {
                 draggingMask: this.draggingMask
             });
 
-            this.inspectionPanel = new InspectionPanel({
+            this.inspectionPanel = new inspect.InspectionPanel({
                 liveEditWindow: this.liveEditWindow,
                 siteTemplate: config.siteTemplate,
                 liveFormPanel: this.liveFormPanel

@@ -1,8 +1,11 @@
-module app.contextwindow {
+module app.contextwindow.inspect{
 
     import SiteTemplate = api.content.site.template.SiteTemplate;
+    import PageComponent = api.content.page.PageComponent;
+    import DescriptorKey = api.content.page.DescriptorKey;
+    import Descriptor = api.content.page.Descriptor;
 
-    export class PageComponentInspectionPanel<COMPONENT extends api.content.page.PageComponent, DESCRIPTOR extends api.content.page.Descriptor> extends BaseInspectionPanel {
+    export class PageComponentInspectionPanel<COMPONENT extends PageComponent, DESCRIPTOR extends Descriptor> extends BaseInspectionPanel {
 
         private siteTemplate: SiteTemplate;
         private liveFormPanel: app.wizard.LiveFormPanel;
@@ -41,11 +44,11 @@ module app.contextwindow {
 
         }
 
-        getDescriptor(key: api.content.page.DescriptorKey): DESCRIPTOR   {
+        getDescriptor(key: DescriptorKey): DESCRIPTOR   {
             throw new Error("To be implemented by subclasses")
         }
 
-        setupComponentForm(component: api.content.page.PageComponent, descriptor: api.content.page.Descriptor) {
+        setupComponentForm(component: PageComponent, descriptor: Descriptor) {
             if (this.formView) {
                 this.removeChild(this.formView);
             }

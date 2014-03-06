@@ -1,4 +1,4 @@
-module app.contextwindow {
+module app.contextwindow.inspect {
 
     import SiteTemplate = api.content.site.template.SiteTemplate;
     import ImageComponent = api.content.page.image.ImageComponent

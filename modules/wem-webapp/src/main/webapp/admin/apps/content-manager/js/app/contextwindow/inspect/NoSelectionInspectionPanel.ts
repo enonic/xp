@@ -1,4 +1,4 @@
-module app.contextwindow {
+module app.contextwindow.inspect {
 
     export class NoSelectionInspectionPanel extends api.ui.Panel {
 
