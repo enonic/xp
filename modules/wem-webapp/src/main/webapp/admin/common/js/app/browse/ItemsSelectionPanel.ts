@@ -8,8 +8,8 @@ module api.app.browse {
         private messageForNoSelection = "You are wasting this space - select something!";
 
         constructor() {
-            super();
-            this.getEl().addClass('empty-space').setInnerHtml(this.messageForNoSelection);
+            super("items-selection-panel");
+            this.getEl().addClass('no-selection').setInnerHtml(this.messageForNoSelection);
         }
 
         setItems(items: BrowseItem<M>[]) {
@@ -36,7 +36,7 @@ module api.app.browse {
             }
 
             if (this.items.length == 0) {
-                this.removeClass('empty-space');
+                this.removeClass('no-selection');
                 this.removeChildren();
             }
 
@@ -61,7 +61,7 @@ module api.app.browse {
             this.items.splice(index, 1);
 
             if (this.items.length == 0) {
-                this.getEl().addClass('empty-space').setInnerHtml(this.messageForNoSelection);
+                this.getEl().addClass('no-selection').setInnerHtml(this.messageForNoSelection);
             }
 
             this.notifyDeselected(item);
