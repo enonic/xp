@@ -16,6 +16,8 @@ module api.form.input {
 
         private validityChangedListeners: {(event: api.form.ValidityChangedEvent) : void}[] = [];
 
+        private inputTypeViewSize: number = -1;
+
         constructor(context: api.form.FormContext, input: api.form.Input, parent: api.form.formitemset.FormItemSetOccurrenceView,
                     properties?: api.data.Property[]) {
             super("input-view", context, input, parent);
@@ -61,6 +63,11 @@ module api.form.input {
             this.inputTypeView.layout(this.input, this.properties);
 
             this.appendChild(this.inputTypeView.getElement());
+            this.inputTypeView.getElement().
+                onResized((event: api.dom.ElementResizedEvent) => {
+                this.inputTypeView.availableSizeChanged(event.getNewSize());
+            });
+
 
             if (!this.inputTypeView.isManagingAdd()) {
 

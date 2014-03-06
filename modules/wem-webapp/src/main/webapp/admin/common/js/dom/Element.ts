@@ -62,6 +62,7 @@ module api.dom {
         private renderedListeners: {(event: ElementRenderedEvent) : void}[] = [];
         private shownListeners: {(event: ElementShownEvent) : void}[] = [];
         private hiddenListeners: {(event: ElementHiddenEvent) : void}[] = [];
+        private resizedListeners: {(event: ElementResizedEvent) : void}[] = [];
 
         constructor(properties: ElementProperties) {
             this.rendered = false;
@@ -314,7 +315,7 @@ module api.dom {
             })
         }
 
-        notifyAdded() {
+        private notifyAdded() {
             var addedEvent = new ElementAddedEvent(this);
             this.addedListeners.forEach((listener) => {
                 listener(addedEvent);
@@ -332,7 +333,7 @@ module api.dom {
             })
         }
 
-        notifyRemoved(target?: Element) {
+        private notifyRemoved(target?: Element) {
             var removedEvent = new ElementRemovedEvent(this, target);
             this.removedListeners.forEach((listener) => {
                 listener(removedEvent);
@@ -352,7 +353,7 @@ module api.dom {
             })
         }
 
-        notifyRendered() {
+        private notifyRendered() {
             var renderedEvent = new ElementRenderedEvent(this);
             this.renderedListeners.forEach((listener) => {
                 listener(renderedEvent);
@@ -370,7 +371,7 @@ module api.dom {
             })
         }
 
-        notifyShown(target?: Element) {
+        private notifyShown(target?: Element) {
             var shownEvent = new ElementShownEvent(this, target);
             this.shownListeners.forEach((listener) => {
                 listener(shownEvent);
@@ -387,10 +388,10 @@ module api.dom {
         unHidden(listener: (event: ElementHiddenEvent) => void) {
             this.hiddenListeners = this.hiddenListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
-        notifyHidden(target?: Element) {
+        private notifyHidden(target?: Element) {
             var hiddenEvent = new ElementHiddenEvent(this, target);
             this.hiddenListeners.forEach((listener) => {
                 listener(hiddenEvent);
@@ -398,6 +399,38 @@ module api.dom {
             this.children.forEach((child: Element) => {
                 child.notifyHidden(hiddenEvent.getTarget());
             })
+        }
+
+        onResized(listener: (event: ElementResizedEvent) => void) {
+
+            var first = this.resizedListeners.length == 0;
+            this.resizedListeners.push(listener);
+
+            if (first) {
+                jQuery(this.getHTMLElement()).resize(this.handleJqueryPluginResizeEvent);
+            }
+        }
+
+        private handleJqueryPluginResizeEvent() {
+            console.log("Element.resized: ", arguments);
+            this.notifyResized(this.getEl().getWidth());
+        }
+
+        unResized(listener: (event: ElementResizedEvent) => void) {
+            this.resizedListeners = this.resizedListeners.filter((curr) => {
+                return curr !== listener;
+            });
+
+            if( this.resizedListeners.length == 0 ) {
+                (<any>jQuery(this.getHTMLElement())).removeResize(this.handleJqueryPluginResizeEvent);
+            }
+        }
+
+        private notifyResized(newSize: number) {
+            var event = new ElementResizedEvent(newSize, this);
+            this.resizedListeners.forEach((listener) => {
+                listener(event);
+            });
         }
 
     }

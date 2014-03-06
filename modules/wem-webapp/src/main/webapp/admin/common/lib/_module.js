@@ -3,7 +3,9 @@
 // @include jquery-2.0.2.js
 // @include jquery-ui-1.10.3.custom.min.js
 // @include jquery.ui.live-draggable.js
+// @include jquery.resize.js
 // @include jquery.simulate.js
+// @include jquery.slimscroll.min.js
 // @include codemirror/codemirror.js
 // @include codemirror/addon/loadmode.js
 // @include signals.js
@@ -20,4 +22,3 @@
 // @include mousetrap.min.js
 // @include mousetrap-global-bind.min.js
 // @include q.js
-// @include jquery.slimscroll.min.js
