@@ -1,5 +1,5 @@
-///<reference path='BaseSiteTemplateModelEvent.ts' />
-///<reference path='DeleteSiteTemplatePromptEvent.ts' />
+///<reference path='BaseTemplateModelEvent.ts' />
+///<reference path='DeleteTemplatePromptEvent.ts' />
 ///<reference path='ExportTemplateEvent.ts' />
 ///<reference path='ImportTemplateEvent.ts' />
 ///<reference path='NewTemplateEvent.ts' />

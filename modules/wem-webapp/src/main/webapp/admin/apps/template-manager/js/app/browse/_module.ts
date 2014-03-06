@@ -4,3 +4,4 @@
 ///<reference path='TemplateTreeGridContextMenu.ts' />
 ///<reference path='TemplateTreeGridPanel.ts' />
 ///<reference path='TemplateBrowseToolbar.ts' />
+///<reference path='TemplateSummary.ts' />

@@ -6,8 +6,8 @@ module app.browse.action {
             this.setEnabled(false);
             this.addExecutionListener(() => {
                 var selection = components.gridPanel.getSelection()[0];
-                var siteTemplateModel = api.content.site.template.SiteTemplateSummary.fromExtModel(selection);
-                new app.browse.event.ExportTemplateEvent(siteTemplateModel).fire();
+                var template = app.browse.TemplateSummary.fromExtModel(selection);
+                new app.browse.event.ExportTemplateEvent(template).fire();
             });
         }
 

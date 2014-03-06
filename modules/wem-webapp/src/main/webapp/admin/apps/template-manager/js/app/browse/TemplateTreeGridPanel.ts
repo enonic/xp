@@ -8,7 +8,11 @@ module app.browse {
 
     export class TemplateTreeGridPanel extends api.app.browse.grid.TreeGridPanel {
 
-        constructor(params:TemplateTreeGridParams) {
+        private pageTemplateIconUri: string;
+
+        private siteTemplateIconUri: string;
+
+        constructor(params: TemplateTreeGridParams) {
             super({
                 columns: this.createColumns(),
                 gridStore: new app.browse.grid.TemplateGridStore().getExtDataStore(),
@@ -20,8 +24,11 @@ module app.browse {
 
             this.setItemId("TemplateTreeGridPanel");
 
-            this.setActiveList(api.app.browse.grid.TreeGridPanel.GRID);
+            this.setActiveList(api.app.browse.grid.TreeGridPanel.TREE);
             this.setKeyField("key");
+
+            this.pageTemplateIconUri = api.util.getAdminUri('common/images/icons/icoMoon/32x32/newspaper.png');
+            this.siteTemplateIconUri = api.util.getAdminUri('common/images/icons/icoMoon/32x32/earth.png');
         }
 
         private createColumns() {
@@ -67,10 +74,12 @@ module app.browse {
 
             var template = record.data;
             var activeListType = this.getActiveList().getItemId();
-            return Ext.String.format(nameTemplate, activeListType, api.util.getAdminUri('common/images/icons/icoMoon/32x32/earth.png'), value, template.name);
+
+            var type: TemplateType = TemplateType[<string>record.get('templateType')];
+            var iconUrl = type === TemplateType.PAGE ? this.pageTemplateIconUri : this.siteTemplateIconUri;
+            return Ext.String.format(nameTemplate, activeListType, iconUrl, value, template.name);
         }
     }
-
 
 
 }

@@ -5,6 +5,7 @@ module app.browse.action
         constructor()
         {
             super( "Open" );
+            this.setEnabled(false);
             this.addExecutionListener( () => {
                 console.log( "open template action" );
             } );

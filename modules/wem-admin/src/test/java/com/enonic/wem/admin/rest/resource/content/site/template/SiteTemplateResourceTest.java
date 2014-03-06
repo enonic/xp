@@ -51,6 +51,7 @@ import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.support.export.InvalidZipFileException;
 import com.enonic.wem.core.content.site.SiteTemplateExporter;
 
+import static com.enonic.wem.api.content.page.PageRegions.newPageRegions;
 import static com.enonic.wem.api.content.page.PageTemplate.newPageTemplate;
 import static com.enonic.wem.api.content.site.Vendor.newVendor;
 import static org.junit.Assert.*;
@@ -112,6 +113,35 @@ public class SiteTemplateResourceTest
         String resultJson = resource().path( "content/site/template/list" ).get( String.class );
 
         assertJson( "list_site_template_success.json", resultJson );
+    }
+
+    @Test
+    public void testTemplateTreeSite()
+        throws Exception
+    {
+        final SiteTemplate siteTemplate = createSiteTemplate();
+        final SiteTemplates siteTemplates = SiteTemplates.from( siteTemplate );
+
+        Mockito.when( client.execute( Mockito.isA( GetAllSiteTemplates.class ) ) ).thenReturn( siteTemplates );
+
+        String resultJson = resource().path( "content/site/template/tree" ).get( String.class );
+
+        assertJson( "tree_site_template_success.json", resultJson );
+    }
+
+    @Test
+    public void testTemplateTreePage()
+        throws Exception
+    {
+        final SiteTemplate siteTemplate = createTemplateWithPageTemplates();
+        final SiteTemplateKey siteTemplateKey = siteTemplate.getKey();
+        Mockito.when( siteTemplateService.getSiteTemplate( Mockito.eq( siteTemplateKey ) ) ).thenReturn( siteTemplate );
+
+        String resultJson = resource().path( "content/site/template/tree" ).
+            queryParam( "parentId", "name-1.0.0" ).
+            get( String.class );
+
+        assertJson( "tree_page_templates_success.json", resultJson );
     }
 
     @Test
@@ -386,6 +416,40 @@ public class SiteTemplateResourceTest
                 denyContentType( ContentTypeName.shortcut() ).
                 build() ).
             rootContentType( ContentTypeName.folder() ).
+            build();
+    }
+
+    private SiteTemplate createTemplateWithPageTemplates()
+    {
+        final PageTemplate pageTemplate1 = PageTemplate.newPageTemplate().
+            key( PageTemplateKey.from( "module|my-page" ) ).
+            displayName( "Main page template" ).
+            canRender( ContentTypeNames.from( "article", "banner" ) ).
+            descriptor( PageDescriptorKey.from( "mainmodule-1.0.0:landing-page" ) ).
+            regions( newPageRegions().build() ).
+            build();
+        final PageTemplate pageTemplate2 = PageTemplate.newPageTemplate().
+            key( PageTemplateKey.from( "module|my-other-page" ) ).
+            displayName( "Another page template" ).
+            canRender( ContentTypeNames.from( "article" ) ).
+            descriptor( PageDescriptorKey.from( "mainmodule-1.0.0:other-page" ) ).
+            regions( newPageRegions().build() ).
+            build();
+
+        return SiteTemplate.newSiteTemplate().
+            key( SiteTemplateKey.from( "name-1.0.0" ) ).
+            displayName( "displayName" ).
+            description( "info" ).
+            url( "url" ).
+            vendor( Vendor.newVendor().name( "vendorName" ).url( "vendorUrl" ).build() ).
+            modules( ModuleKeys.from( "module1-1.0.0" ) ).
+            contentTypeFilter( ContentTypeFilter.newContentFilter().
+                allowContentType( ContentTypeName.imageMedia() ).
+                denyContentType( ContentTypeName.shortcut() ).
+                build() ).
+            rootContentType( ContentTypeName.folder() ).
+            addPageTemplate( pageTemplate1 ).
+            addPageTemplate( pageTemplate2 ).
             build();
     }
 }

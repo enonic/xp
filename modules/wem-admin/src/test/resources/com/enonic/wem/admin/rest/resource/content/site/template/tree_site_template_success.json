@@ -1,0 +1,14 @@
+{
+    "templates": [
+        {
+            "deletable": true,
+            "displayName": "displayName",
+            "editable": true,
+            "hasChildren": false,
+            "key": "name-1.0.0",
+            "name": "name",
+            "templateType": "SITE"
+        }
+    ],
+    "total": 1
+}

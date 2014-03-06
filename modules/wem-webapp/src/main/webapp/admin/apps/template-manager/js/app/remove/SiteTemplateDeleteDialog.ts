@@ -2,7 +2,7 @@ module app.remove {
 
     export class SiteTemplateDeleteDialog extends api.app.remove.DeleteDialog {
 
-        private siteTemplateToDelete: api.content.site.template.SiteTemplateSummary;
+        private siteTemplateToDelete: app.browse.TemplateSummary;
 
         constructor() {
             super("SiteTemplate");
@@ -10,7 +10,7 @@ module app.remove {
             this.setDeleteAction(new SiteTemplateDeleteDialogAction());
 
             this.getDeleteAction().addExecutionListener(() => {
-                var key = this.siteTemplateToDelete.getKey();
+                var key = this.siteTemplateToDelete.getSiteTemplateKey();
                 var deleteRequest = new api.content.site.template.DeleteSiteTemplateRequest(key);
                 deleteRequest.send().then((resp: api.rest.JsonResponse<any>) => {
                     var respJson = resp.getJson();
@@ -23,7 +23,7 @@ module app.remove {
             });
         }
 
-        setSiteTemplateToDelete(siteTemplate: api.content.site.template.SiteTemplateSummary) {
+        setSiteTemplateToDelete(siteTemplate: app.browse.TemplateSummary) {
             this.siteTemplateToDelete = siteTemplate;
             var deleteItem = new api.app.remove.DeleteItem(api.util.getAdminUri('common/images/icons/icoMoon/32x32/earth.png'),
                 siteTemplate.getDisplayName());

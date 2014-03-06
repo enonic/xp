@@ -1,9 +1,9 @@
 module app.browse.event {
     export class EditTemplateEvent extends api.event.Event {
 
-        private templates: api.content.site.template.SiteTemplateSummary[];
+        private templates: app.browse.TemplateSummary[];
 
-        constructor(templates: api.content.site.template.SiteTemplateSummary[]) {
+        constructor(templates: app.browse.TemplateSummary[]) {
             super('editTemplate');
             this.templates = templates;
         }
@@ -12,7 +12,7 @@ module app.browse.event {
             api.event.onEvent('editTemplate', handler);
         }
 
-        public getTemplates(): api.content.site.template.SiteTemplateSummary[] {
+        public getTemplates(): app.browse.TemplateSummary[] {
             return this.templates;
         }
     }

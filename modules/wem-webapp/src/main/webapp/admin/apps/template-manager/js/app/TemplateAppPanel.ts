@@ -42,11 +42,10 @@ module app {
             });
 
             app.browse.event.ExportTemplateEvent.on((event: app.browse.event.ExportTemplateEvent) => {
-                var siteTemplate: api.content.site.template.SiteTemplateSummary = event.getSiteTemplate();
+                var template: app.browse.TemplateSummary = event.getTemplate();
 
-                var exportTemplate = new api.content.site.template.ExportSiteTemplateRequest(siteTemplate.getKey());
-                var templateExportUrl = exportTemplate.getRequestPath().toString() + '?siteTemplateKey=' + siteTemplate.getKey().toString();
-                console.log('Download Site Template file from: ' + templateExportUrl);
+                var exportTemplate = new api.content.site.template.ExportSiteTemplateRequest(template.getSiteTemplateKey());
+                var templateExportUrl = exportTemplate.getRequestPath().toString() + '?siteTemplateKey=' + template.getSiteTemplateKey().toString();
 
                 window.location.href = templateExportUrl;
             });
@@ -59,9 +58,12 @@ module app {
             });
 
             app.browse.event.EditTemplateEvent.on((event: app.browse.event.EditTemplateEvent) => {
-                event.getTemplates().forEach((template: api.content.site.template.SiteTemplateSummary) => {
+                event.getTemplates().forEach((template: app.browse.TemplateSummary) => {
 
-                    new api.content.site.template.GetSiteTemplateRequest(template.getKey()).sendAndParse().
+                    if (!template.isSiteTemplate()) {
+                        return;
+                    }
+                    new api.content.site.template.GetSiteTemplateRequest(template.getSiteTemplateKey()).sendAndParse().
                         done((siteTemplate: api.content.site.template.SiteTemplate)=> {
 
                             var tabId = api.app.AppBarTabId.forEdit(template.getId());

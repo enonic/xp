@@ -8,7 +8,7 @@ module app.browse.grid {
 
             this.extDataStore = <any> new Ext.data.TreeStore({
 
-                model: 'Admin.model.schemaManager.SchemaModel',
+                model: 'Admin.model.templateManager.TemplateModel',
 
                 remoteSort: false,
                 folderSort: false,
@@ -16,16 +16,15 @@ module app.browse.grid {
                 clearOnLoad: true,
                 autoSync: false,
                 defaultRootId: undefined,
-                nodeParam: 'parentKey',
+                nodeParam: 'parentId',
 
                 proxy: {
                     type: 'rest',
-                    //TODO: add real url
-                    url: api.util.getUri('/'),
+                    url: api.util.getAdminUri('rest/content/site/template/tree'),
                     reader: {
                         type: 'json',
-                        root: '',
-                        totalProperty: undefined
+                        root: 'templates',
+                        totalProperty: 'total'
                     }
                 }
 

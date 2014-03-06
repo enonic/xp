@@ -8,7 +8,14 @@ module app.browse {
 
         private toolbar: TemplateBrowseToolbar;
 
+        private pageTemplateIconUri: string;
+
+        private siteTemplateIconUri: string;
+
         constructor() {
+            this.pageTemplateIconUri = api.util.getAdminUri('common/images/icons/icoMoon/32x32/newspaper.png');
+            this.siteTemplateIconUri = api.util.getAdminUri('common/images/icons/icoMoon/32x32/earth.png');
+
             var treeGridContextMenu = new app.browse.TemplateTreeGridContextMenu();
             this.templateTreeGridPanel = components.gridPanel = new TemplateTreeGridPanel({
                 contextMenu: treeGridContextMenu
@@ -43,18 +50,21 @@ module app.browse {
             });
         }
 
-        extModelsToBrowseItems(models: Ext_data_Model[]): api.app.browse.BrowseItem<api.content.site.template.SiteTemplateSummary>[] {
+        extModelsToBrowseItems(models: Ext_data_Model[]): api.app.browse.BrowseItem<app.browse.TemplateSummary>[] {
 
-            var browseItems: api.app.browse.BrowseItem<api.content.site.template.SiteTemplateSummary>[] = [];
+            var browseItems: api.app.browse.BrowseItem<app.browse.TemplateSummary>[] = [];
 
             models.forEach((model: Ext_data_Model, index: number) => {
 
-                var siteTemplateSummary: api.content.site.template.SiteTemplateSummary = api.content.site.template.SiteTemplateSummary.fromExtModel(model);
+                var templateSummary: app.browse.TemplateSummary = app.browse.TemplateSummary.fromExtModel(model);
 
-                var item = new api.app.browse.BrowseItem<api.content.site.template.SiteTemplateSummary>(siteTemplateSummary).
-                    setDisplayName(siteTemplateSummary.getDisplayName()).
-                    setPath(siteTemplateSummary.getName()).
-                    setIconUrl(api.util.getAdminUri('common/images/icons/icoMoon/32x32/earth.png'));
+                var type: TemplateType = TemplateType[<string>model.get('templateType')];
+                var iconUrl = type === TemplateType.PAGE ? this.pageTemplateIconUri : this.siteTemplateIconUri;
+
+                var item = new api.app.browse.BrowseItem<app.browse.TemplateSummary>(templateSummary).
+                    setDisplayName(templateSummary.getDisplayName()).
+                    setPath(templateSummary.getName()).
+                    setIconUrl(iconUrl);
 
                 browseItems.push(item);
             });

@@ -17,6 +17,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.FileUtils;
 
+import com.google.common.base.Strings;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 
@@ -26,6 +27,7 @@ import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.CreateSiteTemplateJson;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.DeleteSiteTemplateJson;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.ListSiteTemplateJson;
+import com.enonic.wem.admin.rest.resource.content.site.template.json.ListTemplateItemJson;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.UpdateSiteTemplateJson;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.site.CreateSiteTemplate;
@@ -57,6 +59,23 @@ public final class SiteTemplateResource
         return new ListSiteTemplateJson( siteTemplates );
     }
 
+    @GET
+    @javax.ws.rs.Path("tree")
+    public ListTemplateItemJson listTemplates( @QueryParam("parentId") final String parentIdParam )
+    {
+        if ( Strings.isNullOrEmpty( parentIdParam ) )
+        {
+            SiteTemplates siteTemplates = client.execute( Commands.site().template().get().all() );
+            return new ListTemplateItemJson( siteTemplates );
+        }
+        else
+        {
+            final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( parentIdParam );
+            final SiteTemplate siteTemplate = siteTemplateService.getSiteTemplate( siteTemplateKey );
+            return new ListTemplateItemJson( siteTemplate.getPageTemplates() );
+        }
+    }
+
     @POST
     @javax.ws.rs.Path("delete")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -79,7 +98,7 @@ public final class SiteTemplateResource
         final CreateSiteTemplate command = params.getCommand();
         final SiteTemplate siteTemplate = client.execute( command );
 
-        return new SiteTemplateJson(siteTemplate );
+        return new SiteTemplateJson( siteTemplate );
     }
 
     @POST
@@ -90,7 +109,7 @@ public final class SiteTemplateResource
         final UpdateSiteTemplate command = params.getCommand();
         final SiteTemplate siteTemplate = client.execute( command );
 
-        return new SiteTemplateJson(siteTemplate );
+        return new SiteTemplateJson( siteTemplate );
     }
 
     @GET

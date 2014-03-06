@@ -33,10 +33,17 @@ module app.browse.action {
                 this.DELETE_TEMPLATE, this.DUPLICATE_TEMPLATE, this.EXPORT_TEMPLATE);
         }
 
-        updateActionsEnabledState(modules: any[]) {
-            var modulesSelected = modules.length;
-            this.DELETE_TEMPLATE.setEnabled(modulesSelected > 0);
-            this.EXPORT_TEMPLATE.setEnabled(modulesSelected === 1);
+        updateActionsEnabledState(templates: any[]) {
+            var modulesSelected = templates.length;
+            var siteTemplateSelected: boolean = templates.some(function (templateRecord){
+                var type: TemplateType = TemplateType[<string>templateRecord.get('templateType')];
+                return type === TemplateType.SITE;
+            });
+            this.DELETE_TEMPLATE.setEnabled(siteTemplateSelected);
+            this.EDIT_TEMPLATE.setEnabled(siteTemplateSelected);
+            this.OPEN_TEMPLATE.setEnabled(siteTemplateSelected);
+            this.DUPLICATE_TEMPLATE.setEnabled(siteTemplateSelected);
+            this.EXPORT_TEMPLATE.setEnabled((modulesSelected === 1) && siteTemplateSelected);
         }
 
     }
