@@ -6,7 +6,7 @@ module api.event {
         bus.on(name, handler);
     }
 
-    export function fireEvent(event:Event) {
+    export function fireEvent(event:api.event.Event) {
         bus.fireEvent(event.getName(), event);
     }
 

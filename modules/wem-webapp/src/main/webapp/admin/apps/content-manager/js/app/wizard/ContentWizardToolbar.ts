@@ -20,6 +20,7 @@ module app.wizard {
             super.addAction(params.deleteAction);
             super.addAction(params.publishAction);
             super.addAction(params.previewAction);
+            super.addAction(params.closeAction);
             super.addGreedySpacer();
 
             var liveFormToggler = new api.ui.ToggleSlide({
@@ -32,8 +33,18 @@ module app.wizard {
             });
 
             super.addElement(liveFormToggler);
-            super.addAction(params.closeAction);
+            var contextWindowToggler = new ContextWindowToggler();
+            super.addElement(contextWindowToggler);
 
+        }
+    }
+
+    export class ContextWindowToggler extends api.ui.Button {
+        constructor() {
+            super("CW");
+            this.getEl().addEventListener('click', () => {
+                new ToggleContextWindowEvent().fire();
+            });
         }
     }
 }

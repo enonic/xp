@@ -6,3 +6,4 @@
 ///<reference path='UpdatePersistedContentRoutine.ts' />
 ///<reference path='ContentWizardPanelFactory.ts' />
 ///<reference path='ContentWizardPanelParams.ts' />
+///<reference path='ContentWizardEvents.ts' />

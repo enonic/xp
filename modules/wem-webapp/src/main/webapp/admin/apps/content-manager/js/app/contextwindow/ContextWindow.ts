@@ -54,10 +54,29 @@ module app.contextwindow {
                 liveEditIFrame: this.liveEditIFrame
             });
 
+            app.wizard.ToggleContextWindowEvent.on(() => {
+                if (this.hasClass("hidden")) {
+                    this.show();
+                } else {
+                    this.hide();
+
+                }
+            });
+
             this.addItem("Insert", this.insertablesPanel);
             this.addItem("Settings", this.inspectionPanel);
             this.addItem("Emulator", this.emulatorPanel);
 
+        }
+
+        hide() {
+            this.addClass("hidden");
+            this.getEl().setRight("-290px");
+        }
+
+        show() {
+            this.removeClass("hidden");
+            this.getEl().setRight("0px");
             api.dom.Body.get().appendChild(this.dragMask);
         }
 
