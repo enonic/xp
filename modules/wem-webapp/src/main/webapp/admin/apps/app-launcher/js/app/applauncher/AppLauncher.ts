@@ -14,6 +14,8 @@ module app.launcher {
 
         private router: AppRouter;
 
+        private loadMask: api.ui.LoadMask;
+
         constructor(mainContainer: app.home.HomeMainContainer) {
             this.homeMainContainer = mainContainer;
             this.appIframes = {};
@@ -22,6 +24,8 @@ module app.launcher {
             this.adminApplicationFrames = new api.dom.DivEl();
             this.adminApplicationFrames.getEl().setAttribute("style", "overflow-y: hidden;");
             this.adminApplicationFrames.getEl().setHeight('100%').setWidth('100%');
+
+            this.loadMask = new api.ui.LoadMask(this.adminApplicationFrames);
 
             this.appManager = new api.app.AppManager();
             this.appManager.onShowLauncher(()=> {
@@ -39,9 +43,9 @@ module app.launcher {
             api.dom.Body.get().appendChild(this.adminApplicationFrames);
         }
 
-        loadApplication(app: Application) {
-            if (!app.getAppUrl()) {
-                console.warn('Missing URL for app "' + app.getName() + '". Cannot be opened.');
+        loadApplication(application: Application) {
+            if (!application.getAppUrl()) {
+                console.warn('Missing URL for app "' + application.getName() + '". Cannot be opened.');
                 return;
             }
 
@@ -53,14 +57,17 @@ module app.launcher {
 //                }
 //            });
 
-            var initial = !app.hasAppFrame();
-            var appFrame: api.dom.IFrameEl = app.getAppFrame();
+            var initial = !application.hasAppFrame();
+            var appFrame: api.dom.IFrameEl = application.getAppFrame();
             if (!initial) {
                 appFrame.show();
             }
             else {
                 this.adminApplicationFrames.appendChild(appFrame);
-                this.showLoadMask();
+                this.loadMask.show();
+                application.onLoaded(() => {
+                    this.loadMask.hide();
+                });
             }
             var type = api.app.AppLauncherEventType.Show;
             appFrame.postMessage(<api.app.AppLauncherEvent>{appLauncherEvent: api.app.AppLauncherEventType[type]});
@@ -70,14 +77,13 @@ module app.launcher {
             Applications.getAllApps().forEach((app: Application) => {
                 app.hide();
             });
+            if (this.loadMask.isVisible()) {
+                this.loadMask.hide();
+            }
             api.ui.KeyBindings.get().reset();
             this.homeMainContainer.show();
             this.homeMainContainer.giveFocus();
             hasher.setHash(AppRouter.HOME_HASH_ID);
-        }
-
-        private showLoadMask() {
-            // TODO implement loadMask
         }
 
         setRouter(router: AppRouter) {

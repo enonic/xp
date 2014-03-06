@@ -21,7 +21,7 @@ module app.contextwindow {
         private emulatorPanel: EmulatorPanel;
         private liveEditWindow: any;
         private liveEditJQuery: JQueryStatic;
-        private draggingMask: api.ui.DraggingMask;
+        private dragMask: api.ui.DragMask;
         private liveEditIFrame: api.dom.IFrameEl;
         private liveFormPanel: app.wizard.LiveFormPanel;
 
@@ -35,14 +35,14 @@ module app.contextwindow {
 
             this.addClass("context-window");
 
-            this.draggingMask = new api.ui.DraggingMask(this.liveEditIFrame);
+            this.dragMask = new api.ui.DragMask(this.liveEditIFrame);
 
             this.insertablesPanel = new insert.InsertablesPanel({
                 contextWindow: this,
                 liveEditIFrame: this.liveEditIFrame,
                 liveEditWindow: this.liveEditWindow,
                 liveEditJQuery: this.liveEditJQuery,
-                draggingMask: this.draggingMask
+                draggingMask: this.dragMask
             });
 
             this.inspectionPanel = new inspect.InspectionPanel({
@@ -58,7 +58,7 @@ module app.contextwindow {
             this.addItem("Settings", this.inspectionPanel);
             this.addItem("Emulator", this.emulatorPanel);
 
-            document.body.appendChild(this.draggingMask.getHTMLElement());
+            api.dom.Body.get().appendChild(this.dragMask);
         }
 
         public inspectComponent(component: api.content.page.PageComponent) {

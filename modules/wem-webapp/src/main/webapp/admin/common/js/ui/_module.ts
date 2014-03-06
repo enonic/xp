@@ -10,7 +10,10 @@
 ///<reference path='Panel.ts' />
 ///<reference path='PanelShownEvent.ts' />
 ///<reference path='DeckPanel.ts' />
-///<reference path='DraggingMask.ts' />
+///<reference path='Mask.ts' />
+///<reference path='BodyMask.ts' />
+///<reference path='LoadMask.ts' />
+///<reference path='DragMask.ts' />
 ///<reference path='SplitPanel.ts' />
 ///<reference path='BodyMask.ts' />
 ///<reference path='Tooltip.ts' />

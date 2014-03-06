@@ -24,6 +24,10 @@ window.onload = () => {
 
     appPanel.init();
 
+    if (window.parent["appLoaded"]) {
+        window.parent["appLoaded"](getAppName());
+    }
+
     window.onmessage = (e:MessageEvent) => {
         if( e.data.appLauncherEvent ) {
             var eventType:api.app.AppLauncherEventType = api.app.AppLauncherEventType[<string>e.data.appLauncherEvent];
@@ -33,3 +37,7 @@ window.onload = () => {
         }
     }
 };
+
+function getAppName(): string {
+    return jQuery(window.frameElement).data("wem-app");
+}

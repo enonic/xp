@@ -304,11 +304,11 @@ module api.dom {
                    !!(container.compareDocumentPosition(maybe) & 16);
         }
 
-        onAdded(listener: (event: ElementEvent) => void) {
+        onAdded(listener: (event: ElementAddedEvent) => void) {
             this.addedListeners.push(listener);
         }
 
-        unAdded(listener: (event: ElementEvent) => void) {
+        unAdded(listener: (event: ElementAddedEvent) => void) {
             this.addedListeners = this.addedListeners.filter((curr) => {
                 return curr !== listener;
             })
@@ -322,11 +322,11 @@ module api.dom {
             // Each child throw its own added
         }
 
-        onRemoved(listener: (event: ElementEvent) => void) {
+        onRemoved(listener: (event: ElementRemovedEvent) => void) {
             this.removedListeners.push(listener);
         }
 
-        unRemoved(listener: (event: ElementEvent) => void) {
+        unRemoved(listener: (event: ElementRemovedEvent) => void) {
             this.removedListeners = this.removedListeners.filter((curr) => {
                 return curr !== listener;
             })
@@ -342,11 +342,11 @@ module api.dom {
             })
         }
 
-        onRendered(listener: (event: ElementEvent) => void) {
+        onRendered(listener: (event: ElementRenderedEvent) => void) {
             this.renderedListeners.push(listener);
         }
 
-        unRendered(listener: (event: ElementEvent) => void) {
+        unRendered(listener: (event: ElementRenderedEvent) => void) {
             this.renderedListeners = this.renderedListeners.filter((curr) => {
                 return curr !== listener;
             })
@@ -360,11 +360,11 @@ module api.dom {
             // Each child throw its own rendered
         }
 
-        onShown(listener: (event: ElementEvent) => void) {
+        onShown(listener: (event: ElementShownEvent) => void) {
             this.shownListeners.push(listener);
         }
 
-        unShown(listener: (event: ElementEvent) => void) {
+        unShown(listener: (event: ElementShownEvent) => void) {
             this.shownListeners = this.shownListeners.filter((curr) => {
                 return curr !== listener;
             })
@@ -380,11 +380,11 @@ module api.dom {
             })
         }
 
-        onHidden(listener: (event: ElementEvent) => void) {
+        onHidden(listener: (event: ElementHiddenEvent) => void) {
             this.hiddenListeners.push(listener);
         }
 
-        unHidden(listener: (event: ElementEvent) => void) {
+        unHidden(listener: (event: ElementHiddenEvent) => void) {
             this.hiddenListeners = this.hiddenListeners.filter((curr) => {
                 return curr !== listener;
             })

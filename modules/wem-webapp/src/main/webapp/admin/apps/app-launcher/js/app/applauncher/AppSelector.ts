@@ -56,8 +56,8 @@ module app.launcher {
             }));
             this.keyBindings.push(new api.ui.KeyBinding('return', (e: ExtendedKeyboardEvent, combo: string)=> {
                 if (this.selectedAppIndex >= 0) {
-                    var app: Application = this.apps[this.selectedAppIndex];
-                    this.notifyAppSelected(app);
+                    var application: Application = this.apps[this.selectedAppIndex];
+                    this.notifyAppSelected(application);
                 }
                 return false;
             }));
@@ -162,13 +162,13 @@ module app.launcher {
         private filterTiles(value: string) {
             var valueLowerCased = value.toLowerCase();
             var anyMatch = false;
-            this.apps.forEach((app: Application) => {
-                var isMatch = app.getName().toLowerCase().indexOf(valueLowerCased) > -1;
+            this.apps.forEach((application: Application) => {
+                var isMatch = application.getName().toLowerCase().indexOf(valueLowerCased) > -1;
                 if (isMatch) {
-                    this.showAppTile(app.getName());
+                    this.showAppTile(application.getName());
                     anyMatch = true;
                 } else {
-                    this.hideAppTile(app.getName());
+                    this.hideAppTile(application.getName());
                 }
             });
 
@@ -224,21 +224,21 @@ module app.launcher {
             });
         }
 
-        private notifyAppHighlighted(app: Application) {
+        private notifyAppHighlighted(application: Application) {
             this.appHighlightedListeners.forEach((listener: (event: AppHighlightedEvent)=>void)=> {
-                listener.call(this, new AppHighlightedEvent(app));
+                listener.call(this, new AppHighlightedEvent(application));
             });
         }
 
-        private notifyAppUnhighlighted(app: Application) {
+        private notifyAppUnhighlighted(application: Application) {
             this.appUnhighlightedListeners.forEach((listener: (event: AppUnhighlightedEvent)=>void)=> {
-                listener.call(this, new AppUnhighlightedEvent(app));
+                listener.call(this, new AppUnhighlightedEvent(application));
             });
         }
 
-        private notifyAppSelected(app: Application) {
+        private notifyAppSelected(application: Application) {
             this.appSelectedListeners.forEach((listener: (event: AppSelectedEvent)=>void)=> {
-                listener.call(this, new AppSelectedEvent(app));
+                listener.call(this, new AppSelectedEvent(application));
             });
         }
 

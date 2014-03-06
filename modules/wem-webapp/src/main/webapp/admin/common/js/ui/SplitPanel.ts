@@ -116,9 +116,9 @@ module api.ui {
 
         private alignment:SplitPanelAlignment;
 
-        private maskA:api.ui.DraggingMask;
+        private maskA:api.ui.DragMask;
 
-        private maskB:api.ui.DraggingMask;
+        private maskB:api.ui.DragMask;
 
 
         constructor(splitPanel:SplitPanel) {
@@ -196,10 +196,10 @@ module api.ui {
 
         private addPanelMask() {
             if (!this.maskA) {
-                this.maskA = new api.ui.DraggingMask(this.splitPanel.getPanelA());
+                this.maskA = new api.ui.DragMask(this.splitPanel.getPanelA());
             }
             if (!this.maskB) {
-                this.maskB = new api.ui.DraggingMask(this.splitPanel.getPanelB());
+                this.maskB = new api.ui.DragMask(this.splitPanel.getPanelB());
             }
 
             this.maskA.show();

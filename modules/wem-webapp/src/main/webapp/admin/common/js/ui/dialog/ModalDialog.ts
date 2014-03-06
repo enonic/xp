@@ -78,7 +78,7 @@ module api.ui.dialog{
 
         close() {
 
-            api.ui.BodyMask.get().deActivate();
+            api.ui.BodyMask.get().hide();
 
             this.hide();
 
@@ -87,7 +87,7 @@ module api.ui.dialog{
 
         open() {
 
-            api.ui.BodyMask.get().activate();
+            api.ui.BodyMask.get().show();
 
             api.ui.KeyBindings.get().shelveBindings();
 

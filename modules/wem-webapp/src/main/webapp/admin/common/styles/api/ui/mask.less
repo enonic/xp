@@ -1,0 +1,46 @@
+.mask {
+  background-color: black;
+  opacity: 0.5;
+  display: none;
+  z-index: 30000;
+
+  .mask-splash {
+    position: absolute;
+    padding: 10px;
+    left: 50%;
+    top: 50%;
+    display: none;
+
+    .dots {
+      position: static;
+      float: left;
+      top: 0;
+      left: 0;
+    }
+
+    .text {
+      margin-left: 10px;
+      color: @admin-black;
+      line-height: 55px;    // equal to that of the dots animation
+    }
+  }
+}
+
+.body-mask {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+}
+
+.load-mask {
+  position: absolute;
+}
+
+.drag-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(255, 255, 255, 0.5);
+}

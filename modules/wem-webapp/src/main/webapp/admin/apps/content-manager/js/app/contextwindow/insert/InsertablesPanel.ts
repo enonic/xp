@@ -6,7 +6,7 @@ module app.contextwindow.insert {
         liveEditIFrame: api.dom.IFrameEl;
         liveEditWindow: any;
         liveEditJQuery: JQueryStatic;
-        draggingMask: api.ui.DraggingMask;
+        draggingMask: api.ui.DragMask;
     }
 
     export class InsertablesPanel extends api.ui.Panel {
@@ -15,7 +15,7 @@ module app.contextwindow.insert {
         private liveEditIFrame: api.dom.IFrameEl;
         private liveEditWindow: any;
         private liveEditJQuery: JQueryStatic;
-        private draggingMask: api.ui.DraggingMask;
+        private draggingMask: api.ui.DragMask;
 
         private insertablesGrid: InsertablesGrid;
         private insertablesDataView: api.ui.grid.DataView<Insertable>;

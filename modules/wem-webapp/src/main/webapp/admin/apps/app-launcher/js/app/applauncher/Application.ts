@@ -10,7 +10,10 @@ module app.launcher {
         private appFrame:api.dom.IFrameEl;
         private loaded:boolean;
 
-        constructor(id: string, name:string, iconUrl:string, description?:string, appFrame:api.dom.IFrameEl = null, fullSizeIcon:boolean = false) {
+        private loadedListeners: {(): void}[] = [];
+
+        constructor(id: string, name: string, iconUrl: string, description?: string, appFrame: api.dom.IFrameEl = null,
+                    fullSizeIcon: boolean = false) {
             this.id = id;
             this.name = name;
             this.iconUrl = iconUrl;
@@ -81,10 +84,27 @@ module app.launcher {
 
         setLoaded(value:boolean) {
             this.loaded = value;
+            this.notifyLoaded();
         }
 
         setFullSizeIcon(value:boolean) {
             this.fullSizeIcon = value;
+        }
+
+        onLoaded(listener: () => void) {
+            this.loadedListeners.push(listener);
+        }
+
+        unLoaded(listener: () => void) {
+            this.loadedListeners = this.loadedListeners.filter((curr) => {
+                return curr !== listener;
+            })
+        }
+
+        private notifyLoaded() {
+            this.loadedListeners.forEach((listener) => {
+                listener();
+            })
         }
     }
 
