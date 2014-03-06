@@ -11,7 +11,8 @@ public abstract class DescriptorKey
         IMAGE,
         LAYOUT,
         PAGE,
-        PART
+        PART,
+        TEXT
     }
 
     protected static final String SEPARATOR = ":";

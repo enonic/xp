@@ -6,6 +6,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.page.image.ImageComponent;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.part.PartComponent;
+import com.enonic.wem.api.content.page.text.TextComponent;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.rendering.Component;
 
@@ -65,7 +66,8 @@ public abstract class PageComponent<DESCRIPTOR_KEY extends DescriptorKey>
     {
         IMAGE( "image", ImageComponent.class ),
         PART( "part", PartComponent.class ),
-        LAYOUT( "layout", LayoutComponent.class );
+        LAYOUT( "layout", LayoutComponent.class ),
+        TEXT( "text", TextComponent.class );
 
         private Class clazz;
 
