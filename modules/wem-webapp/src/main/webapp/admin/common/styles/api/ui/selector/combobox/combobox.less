@@ -22,15 +22,25 @@
 
   .dropdown-arrow {
     position: absolute;
-    top: 50%;
-    right: 10px;
-    width: 0;
-    height: 0;
-    margin: -5px 0 0 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 10px solid @admin-dark-gray;
+    top: 0;
+    right: 0;
+    width: 37px;
+    height: 100%;
     cursor: pointer;
+
+    &:after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      margin: -5px 0 0 -6px;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 10px solid @admin-dark-gray;
+    }
+
   }
 
   .empty-options, .options-container {
