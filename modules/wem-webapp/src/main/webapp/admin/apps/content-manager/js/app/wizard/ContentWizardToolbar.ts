@@ -41,7 +41,8 @@ module app.wizard {
 
     export class ContextWindowToggler extends api.ui.Button {
         constructor() {
-            super("CW");
+            super("Toggle Content Window");
+            this.addClass()
             this.getEl().addEventListener('click', () => {
                 new ToggleContextWindowEvent().fire();
             });
