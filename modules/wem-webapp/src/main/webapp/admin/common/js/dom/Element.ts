@@ -407,7 +407,7 @@ module api.dom {
             this.resizedListeners.push(listener);
 
             if (first) {
-                jQuery(this.getHTMLElement()).resize(this.handleJqueryPluginResizeEvent);
+                //jQuery(this.getHTMLElement()).resize(this.handleJqueryPluginResizeEvent);
             }
         }
 
@@ -422,7 +422,7 @@ module api.dom {
             });
 
             if( this.resizedListeners.length == 0 ) {
-                (<any>jQuery(this.getHTMLElement())).removeResize(this.handleJqueryPluginResizeEvent);
+                //(<any>jQuery(this.getHTMLElement())).removeResize(this.handleJqueryPluginResizeEvent);
             }
         }
 
