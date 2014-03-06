@@ -41,11 +41,36 @@ module app.wizard {
 
     export class ContextWindowToggler extends api.ui.Button {
         constructor() {
-            super("Toggle Content Window");
-            this.addClass()
+            super("");
+            this.addClass("icon-menu6 icon-large");
+            this.setActive(true);
+            this.setEnabled(false);
             this.getEl().addEventListener('click', () => {
                 new ToggleContextWindowEvent().fire();
             });
+
+            ToggleContextWindowEvent.on(() => {
+               this.setActive(!this.isActive());
+            });
+
+            ShowLiveEditEvent.on(() => {
+               this.setEnabled(true);
+            });
+
+            ShowContentFormEvent.on(() => {
+                this.setEnabled(false);
+            });
+        }
+
+        setActive(value:boolean) {
+            if (value) {
+                this.addClass("active");
+            }
+            else this.removeClass("active");
+        }
+
+        isActive() {
+            return this.hasClass("active");
         }
     }
 }
