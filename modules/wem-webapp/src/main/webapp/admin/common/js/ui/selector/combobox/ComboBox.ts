@@ -222,6 +222,7 @@ module api.ui.selector.combobox {
                 }
                 if (!this.isDropdownShown()) {
                     this.showDropdown();
+                    this.giveFocus();
                 }
             });
 
