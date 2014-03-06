@@ -14,7 +14,7 @@ module app.wizard {
         }
 
         renderNew() {
-            var fieldSet = new api.ui.form.Fieldset("Site Template");
+            var fieldSet = new api.ui.form.Fieldset();
             fieldSet.add(new api.ui.form.FormItem(new api.ui.form.FormItemBuilder(this.descriptionField).
                 setLabel("Description")));
             fieldSet.add(new api.ui.form.FormItem(new api.ui.form.FormItemBuilder(this.rootContentTypeComboBox).
