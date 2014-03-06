@@ -50,7 +50,6 @@ module app.wizard.site {
                     this.loadModules(site).
                         done((modules: api.module.Module[]) => {
 
-                            this.removeExistingModuleViews();
                             this.layoutModules(modules);
 
                             deferred.resolve(null);
@@ -97,6 +96,9 @@ module app.wizard.site {
         }
 
         private layoutModules(modules: api.module.Module[]) {
+
+            this.removeExistingModuleViews();
+            this.moduleViewsContainer.removeChildren();
 
             modules.forEach((theModule: api.module.Module) => {
 
