@@ -1,4 +1,4 @@
-///<reference path='ComboBoxInput.ts' />
+///<reference path='ComboBoxOptionFilterInput.ts' />
 ///<reference path='ComboBox.ts' />
 ///<reference path='ComboBoxConfig.ts' />
 ///<reference path='SelectedOptionView.ts' />

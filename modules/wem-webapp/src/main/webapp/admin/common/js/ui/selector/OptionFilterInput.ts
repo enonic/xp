@@ -1,15 +1,10 @@
-module api.ui.selector.combobox {
+module api.ui.selector {
 
-    export class ComboBoxInput extends api.ui.TextInput {
+    export class OptionFilterInput extends api.ui.TextInput {
 
         constructor() {
-            super();
+            super("option-filter-input");
             this.setPlaceholder("Type to search...");
-        }
-
-        setMaximumReached() {
-            this.setPlaceholder("Maximum reached");
-            this.getEl().setDisabled(true);
         }
 
         openForTypingAndFocus() {

@@ -4,7 +4,7 @@ module api.ui.selector.combobox {
 
         private icon: api.dom.ImgEl;
 
-        private input: ComboBoxInput;
+        private input: ComboBoxOptionFilterInput;
 
         private dropdownData: api.ui.grid.DataView<api.ui.selector.Option<T>>;
 
@@ -55,7 +55,7 @@ module api.ui.selector.combobox {
                 this.appendChild(this.icon);
             }
 
-            this.input = new ComboBoxInput();
+            this.input = new ComboBoxOptionFilterInput();
             this.appendChild(this.input);
 
             this.emptyDropdown = new api.dom.DivEl("empty-options");
