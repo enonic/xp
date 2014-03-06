@@ -4,6 +4,8 @@ module api.ui.selector.combobox {
 
         private icon: api.dom.ImgEl;
 
+        private arrow: api.dom.DivEl;
+
         private input: ComboBoxOptionFilterInput;
 
         private dropdownData: api.ui.grid.DataView<api.ui.selector.Option<T>>;
@@ -57,6 +59,9 @@ module api.ui.selector.combobox {
 
             this.input = new ComboBoxOptionFilterInput();
             this.appendChild(this.input);
+
+            this.arrow = new api.dom.DivEl("dropdown-arrow");
+            this.appendChild(this.arrow);
 
             this.emptyDropdown = new api.dom.DivEl("empty-options");
             this.emptyDropdown.getEl().setInnerHtml("No matching items");
@@ -136,6 +141,7 @@ module api.ui.selector.combobox {
                 this.emptyDropdown.getEl().setInnerHtml("No matching items");
                 this.emptyDropdown.show();
             }
+            this.arrow.hide();
 
             this.dropdown.render();
         }
@@ -150,6 +156,7 @@ module api.ui.selector.combobox {
         }
 
         hideDropdown() {
+            this.arrow.show();
             this.emptyDropdown.hide();
             this.dropdown.hide();
         }
@@ -207,6 +214,16 @@ module api.ui.selector.combobox {
         private setupListeners() {
             this.getEl().addEventListener('click', () => {
                 this.setOnBlurListener();
+            });
+
+            this.arrow.getEl().addEventListener('click', (event: any) => {
+                if (!this.dropdown.getActiveCell()) {
+                    this.dropdown.setActiveCell(0, 0);
+                }
+                if (!this.isDropdownShown()) {
+                    this.showDropdown();
+                    this.giveFocus();
+                }
             });
 
             this.input.onValueChanged((event: api.ui.ValueChangedEvent) => {
