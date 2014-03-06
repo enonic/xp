@@ -1,17 +1,18 @@
-module app.contextwindow {
-    export interface ComponentGridOptions {
+module app.contextwindow.insert {
+
+    export interface InsertablesGridOptions {
         draggableRows?:boolean;
         rowClass?:string;
         onClick?:(el) => void;
     }
 
-    export class ComponentGrid extends api.ui.grid.Grid<Insertable> {
+    export class InsertablesGrid extends api.ui.grid.Grid<Insertable> {
 
-        private componentGridOptions: ComponentGridOptions;
+        private componentGridOptions: InsertablesGridOptions;
 
         private componentDataView: api.ui.grid.DataView<Insertable>;
 
-        constructor(dataView: api.ui.grid.DataView<Insertable>, options: ComponentGridOptions = {}) {
+        constructor(dataView: api.ui.grid.DataView<Insertable>, options: InsertablesGridOptions = {}) {
             super(dataView, this.createColumns(), {hideColumnHeaders: true, rowHeight: 50, height: 400, width: 320});
             this.componentDataView = dataView;
             this.componentGridOptions = options;

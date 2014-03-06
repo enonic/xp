@@ -1,4 +1,4 @@
-module app.contextwindow {
+module app.contextwindow.insert {
 
     export class Insertable {
 

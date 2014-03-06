@@ -15,7 +15,7 @@ module app.contextwindow {
     }
 
     export class ContextWindow extends api.ui.DockedWindow {
-        private componentTypesPanel: ComponentTypesPanel;
+        private insertablesPanel: insert.InsertablesPanel;
         private inspectionPanel: InspectionPanel;
         private emulatorPanel: EmulatorPanel;
         private liveEditWindow: any;
@@ -36,7 +36,7 @@ module app.contextwindow {
 
             this.draggingMask = new api.ui.DraggingMask(this.liveEditIFrame);
 
-            this.componentTypesPanel = new ComponentTypesPanel({
+            this.insertablesPanel = new insert.InsertablesPanel({
                 contextWindow: this,
                 liveEditIFrame: this.liveEditIFrame,
                 liveEditWindow: this.liveEditWindow,
@@ -53,7 +53,7 @@ module app.contextwindow {
                 liveEditIFrame: this.liveEditIFrame
             });
 
-            this.addItem("Insert", this.componentTypesPanel);
+            this.addItem("Insert", this.insertablesPanel);
             this.addItem("Settings", this.inspectionPanel);
             this.addItem("Emulator", this.emulatorPanel);
 
@@ -82,7 +82,7 @@ module app.contextwindow {
 
         public clearSelection() {
             this.inspectionPanel.clearSelection();
-            this.selectPanel(this.componentTypesPanel);
+            this.selectPanel(this.insertablesPanel);
         }
 
     }

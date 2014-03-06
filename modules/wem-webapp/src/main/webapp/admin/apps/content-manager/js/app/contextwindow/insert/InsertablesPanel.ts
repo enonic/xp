@@ -1,4 +1,4 @@
-module app.contextwindow {
+module app.contextwindow.insert {
 
     export interface ComponentTypesPanelConfig {
 
@@ -9,19 +9,19 @@ module app.contextwindow {
         draggingMask: api.ui.DraggingMask;
     }
 
-    export class ComponentTypesPanel extends api.ui.Panel {
+    export class InsertablesPanel extends api.ui.Panel {
 
-        private dataView:api.ui.grid.DataView<Insertable>;
-        private grid:ComponentGrid;
-        private contextWindow:ContextWindow;
+        private contextWindow: ContextWindow;
         private liveEditIFrame: api.dom.IFrameEl;
         private liveEditWindow: any;
         private liveEditJQuery: JQueryStatic;
         private draggingMask: api.ui.DraggingMask;
 
-        constructor(config:ComponentTypesPanelConfig) {
-            super();
-            this.addClass('component-types-panel');
+        private insertablesGrid: InsertablesGrid;
+        private insertablesDataView: api.ui.grid.DataView<Insertable>;
+
+        constructor(config: ComponentTypesPanelConfig) {
+            super("insertables-panel");
 
             this.contextWindow = config.contextWindow;
             this.liveEditIFrame = config.liveEditIFrame;
@@ -29,12 +29,11 @@ module app.contextwindow {
             this.liveEditJQuery = config.liveEditJQuery;
             this.draggingMask = config.draggingMask;
 
-            this.dataView = new api.ui.grid.DataView<Insertable>();
+            this.insertablesDataView = new api.ui.grid.DataView<Insertable>();
+            this.insertablesGrid = new InsertablesGrid(this.insertablesDataView, {draggableRows: true, rowClass: "comp"});
 
-            this.grid = new ComponentGrid(this.dataView, {draggableRows: true, rowClass: "comp"});
-
-            this.appendChild(this.grid);
-            this.dataView.setItems(Insertables.ALL, "name");
+            this.appendChild(this.insertablesGrid);
+            this.insertablesDataView.setItems(Insertables.ALL, "name");
 
             this.onRendered((event) => {
                 this.initComponentDraggables();
@@ -58,7 +57,7 @@ module app.contextwindow {
                     this.onStartDrag(event, ui);
                 },
                 stop: () => {
-                    //this.contextWindow.show();
+
                 }
             });
 
@@ -73,9 +72,8 @@ module app.contextwindow {
             });
 
             this.liveEditJQuery(this.liveEditWindow).on('sortableUpdate.liveEdit sortableStop.liveEdit draggableStop.liveEdit',
-                (event:JQueryEventObject) => {
+                (event: JQueryEventObject) => {
                     jQuery('[data-context-window-draggable="true"]').simulate('mouseup');
-                    //this.contextWindow.show();
                 });
         }
 
