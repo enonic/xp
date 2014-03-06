@@ -64,16 +64,16 @@ module api.app.browse {
                 this.treeSwapperDeckPanel.showPanel(0);
 
 
-                this.gridAndDetailSplitPanel = new api.ui.SplitPanel(this.gridAndToolbarContainer, this.treeSwapperDeckPanel);
+                this.gridAndDetailSplitPanel = new api.ui.SplitPanelBuilder(this.gridAndToolbarContainer, this.treeSwapperDeckPanel).build();
             }
             else {
-                this.gridAndDetailSplitPanel = new api.ui.SplitPanel(this.gridAndToolbarContainer, this.browseItemPanel);
+                this.gridAndDetailSplitPanel = new api.ui.SplitPanelBuilder(this.gridAndToolbarContainer, this.browseItemPanel).build();
             }
 
             if (this.filterPanel) {
-                this.gridAndFilterAndDetailSplitPanel = new api.ui.SplitPanel(this.filterPanel, this.gridAndDetailSplitPanel);
-                this.gridAndFilterAndDetailSplitPanel.setDistribution(15, 85);
-                this.gridAndFilterAndDetailSplitPanel.setAlignment(api.ui.SplitPanelAlignment.VERTICAL);
+                this.gridAndFilterAndDetailSplitPanel = new api.ui.SplitPanelBuilder(this.filterPanel, this.gridAndDetailSplitPanel)
+                    .fixStartPanelSize("200px")
+                    .setAlignment(api.ui.SplitPanelAlignment.VERTICAL).build();
             } else {
                 this.gridAndFilterAndDetailSplitPanel = this.gridAndDetailSplitPanel;
             }
