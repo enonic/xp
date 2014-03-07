@@ -3,7 +3,6 @@ package com.enonic.wem.core.index.query.function;
 import org.elasticsearch.index.query.MatchAllQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.SimpleQueryStringBuilder;
-import org.elasticsearch.index.query.SimpleQueryStringFlag;
 
 import com.google.common.base.Strings;
 
@@ -37,7 +36,7 @@ public class FunctionQueryBuilderFactory
         }
 
         SimpleQueryStringBuilder builder = new SimpleQueryStringBuilder( arguments.getSearchString() ).
-            defaultOperator( arguments.getOperator() ).flags( SimpleQueryStringFlag.ESCAPE );
+            defaultOperator( arguments.getOperator() );
 
         appendQueryFieldNames( arguments, builder );
 
