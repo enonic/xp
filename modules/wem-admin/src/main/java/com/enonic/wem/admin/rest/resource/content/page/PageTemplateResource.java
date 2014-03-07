@@ -11,11 +11,15 @@ import javax.ws.rs.core.MediaType;
 import com.enonic.wem.admin.json.content.page.PageTemplateJson;
 import com.enonic.wem.admin.json.content.page.PageTemplateListJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
+import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.page.PageTemplateSpec;
 import com.enonic.wem.api.content.page.PageTemplates;
+import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
@@ -59,5 +63,31 @@ public final class PageTemplateResource
 
         return new PageTemplateListJson( pageTemplates.filter( spec ) );
 
+    }
+
+    @GET
+    @javax.ws.rs.Path("isRenderable")
+    public boolean isRenderable( @QueryParam("contentId") String contentIdAsString )
+    {
+        final ContentId contentId = ContentId.from( contentIdAsString );
+        final Content content = client.execute( Commands.content().get().byId( contentId ) );
+
+        final Site site = content.getSite();
+
+        if ( site != null )
+        {
+            final ContentTypeName type = content.getType();
+            final SiteTemplateKey siteTemplateKey = site.getTemplate();
+            final PageTemplates pageTemplates = pageTemplateService.getBySiteTemplate( siteTemplateKey );
+
+            for ( final PageTemplate pageTemplate : pageTemplates )
+            {
+                if ( pageTemplate.canRender( type ) )
+                {
+                    return true ;
+                }
+            }
+        }
+        return false;
     }
 }
