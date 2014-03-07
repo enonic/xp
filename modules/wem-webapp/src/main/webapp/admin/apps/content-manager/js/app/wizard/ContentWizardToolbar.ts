@@ -40,6 +40,7 @@ module app.wizard {
     }
 
     export class ContextWindowToggler extends api.ui.Button {
+
         constructor() {
             super("");
             this.addClass("icon-menu6 icon-large");
