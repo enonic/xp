@@ -6,6 +6,9 @@ import javax.xml.transform.Source;
 
 import com.google.common.collect.ImmutableMap;
 
+import static com.google.common.base.Predicates.notNull;
+import static com.google.common.collect.Maps.filterValues;
+
 public final class XsltProcessorSpec
 {
     private Source xsl;
@@ -48,7 +51,7 @@ public final class XsltProcessorSpec
 
     public XsltProcessorSpec parameters( final Map<String, Object> params )
     {
-        this.parameters = ImmutableMap.copyOf( params );
+        this.parameters = ImmutableMap.copyOf( filterValues( params, notNull() ) );
         return this;
     }
 }

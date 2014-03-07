@@ -11,29 +11,31 @@ import com.enonic.wem.api.rendering.Renderable;
 final class RendererFactoryImpl
     implements RendererFactory
 {
-    private final ImmutableMap<Class, Provider<Renderer>> renderers;
+    private final ImmutableMap<Class<? extends Renderable>, Provider<Renderer>> renderers;
 
     @Inject
-    public RendererFactoryImpl( final Map<Class, Provider<Renderer>> renderers )
+    public RendererFactoryImpl( final Map<Class<? extends Renderable>, Provider<Renderer>> renderers )
     {
         this.renderers = ImmutableMap.copyOf( renderers );
     }
 
     @Override
-    public Renderer getRenderer( final Class<? extends Renderable> renderableType )
+    public <T extends Renderable> Renderer<T> getRenderer( final Class<T> renderableType )
     {
         return findRenderer( renderableType );
     }
 
     @Override
-    public Renderer getRenderer( final Renderable renderable )
+    @SuppressWarnings("unchecked")
+    public <T extends Renderable> Renderer<T> getRenderer( final T renderable )
     {
-        return getRenderer( renderable.getClass() );
+        return getRenderer( (Class<T>) renderable.getClass() );
     }
 
-    private synchronized Renderer findRenderer( final Class type )
+    @SuppressWarnings("unchecked")
+    private <T extends Renderable> Renderer<T> findRenderer( final Class<T> type )
     {
-        final Provider<Renderer> renderer = this.renderers.get( type );
+        final Provider<? extends Renderer> renderer = this.renderers.get( type );
         return renderer != null ? renderer.get() : null;
     }
 }

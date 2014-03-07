@@ -29,7 +29,7 @@ import static com.enonic.wem.api.content.page.PageRegions.newPageRegions;
 import static com.enonic.wem.api.content.page.part.PartComponent.newPartComponent;
 import static com.enonic.wem.api.content.page.region.Region.newRegion;
 import static junit.framework.Assert.assertEquals;
-import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
 
 public class ComponentInstructionTest
@@ -114,7 +114,7 @@ public class ComponentInstructionTest
     private RendererFactory newRendererFactory( final String renderResult )
     {
         final RendererFactory rendererFactory = mock( RendererFactory.class );
-        final Renderer renderer = new Renderer()
+        final Renderer<Renderable> renderer = new Renderer<Renderable>()
         {
             @Override
             public Response render( final Renderable component, final JsContext context )
@@ -122,7 +122,7 @@ public class ComponentInstructionTest
                 return Response.ok( renderResult ).build();
             }
         };
-        Mockito.when( rendererFactory.getRenderer( any( Renderable.class ) ) ).thenReturn( renderer );
+        Mockito.when( rendererFactory.getRenderer( isA( Renderable.class ) ) ).thenReturn( renderer );
         return rendererFactory;
     }
 }

@@ -10,11 +10,15 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.ComponentPath;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
+import com.enonic.wem.api.content.page.part.PartComponent;
+import com.enonic.wem.api.content.page.part.PartDescriptorKey;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.rendering.RenderException;
 import com.enonic.wem.portal.rendering.Renderer;
@@ -50,12 +54,26 @@ public final class ComponentInstruction
         return renderComponent( context, path );
     }
 
-    private String renderComponent( final JsContext context, final String path )
+    private String renderComponent( final JsContext context, final String componentSelector )
     {
-        final ComponentPath componentPath = ComponentPath.from( path );
-        final PageComponent component = resolveComponent( context, componentPath );
+        final PageComponent component;
+        if ( componentSelector.contains( ComponentPath.DIVIDER ) )
+        {
+            final ComponentPath componentPath = ComponentPath.from( componentSelector );
+            component = resolveComponent( context, componentPath );
+        }
+        else
+        {
+            final ComponentDescriptorName componentName = new ComponentDescriptorName( componentSelector );
+            final ModuleKey currentModule = context.getPageTemplate().getDescriptor().getModuleKey();
+            component = getComponentByDescriptor( currentModule, componentName );
+        }
+        return renderPageComponent( context, component );
+    }
 
-        final Renderer renderer = this.rendererFactory.getRenderer( component );
+    private String renderPageComponent( final JsContext context, final PageComponent component )
+    {
+        final Renderer<PageComponent> renderer = this.rendererFactory.getRenderer( component );
         final Response result = renderer.render( component, context );
 
         final Object body = result.getEntity();
@@ -111,4 +129,17 @@ public final class ComponentInstruction
             return pageTemplate.getRegions();
         }
     }
+
+    private PageComponent getComponentByDescriptor( final ModuleKey module, final ComponentDescriptorName componentName )
+    {
+        // TODO check component type
+        final PartDescriptorKey descriptor = PartDescriptorKey.from( module, componentName );
+        final PartComponent component = PartComponent.newPartComponent().
+            name( componentName.toString() ).
+            descriptor( descriptor ).
+            build();
+
+        return component;
+    }
+
 }

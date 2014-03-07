@@ -54,7 +54,7 @@ public final class ComponentResource
         final PageRegions pageRegions = PageRegionsResolver.resolve( page, pageTemplate );
         final PageComponent component = PageComponentResolver.resolve( componentPath, pageRegions );
 
-        final Renderer renderer = rendererFactory.getRenderer( component );
+        final Renderer<PageComponent> renderer = rendererFactory.getRenderer( component );
 
         final JsContext context = createContext( content, component, siteContent, pageTemplate );
         return renderer.render( component, context );

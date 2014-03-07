@@ -21,7 +21,7 @@ import com.google.common.collect.Lists;
 public final class ComponentPath
     implements Iterable<ComponentPath.RegionAndComponent>
 {
-    private static final String DIVIDER = "/";
+    public static final String DIVIDER = "/";
 
     private final ImmutableList<RegionAndComponent> regionAndComponentList;
 

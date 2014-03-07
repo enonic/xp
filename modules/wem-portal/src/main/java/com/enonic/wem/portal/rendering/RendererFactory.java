@@ -4,7 +4,7 @@ import com.enonic.wem.api.rendering.Renderable;
 
 public interface RendererFactory
 {
-    Renderer getRenderer( Class<? extends Renderable> renderableType );
+    <T extends Renderable> Renderer<T> getRenderer( Class<T> renderableType );
 
-    Renderer getRenderer( Renderable renderable );
+    <T extends Renderable> Renderer<T> getRenderer( T renderable );
 }
