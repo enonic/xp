@@ -16,7 +16,8 @@ module api.ui.selector.combobox {
 
         private emptyDropdown: api.dom.DivEl;
 
-        private optionFormatter: (row: number, cell: number, value: OPTION_DISPLAY_VALUE, columnDef: any, dataContext: api.ui.selector.Option<OPTION_DISPLAY_VALUE>) => string;
+        private optionFormatter: (row: number, cell: number, value: OPTION_DISPLAY_VALUE, columnDef: any,
+                                  dataContext: api.ui.selector.Option<OPTION_DISPLAY_VALUE>) => string;
 
         private filter: (item: api.ui.selector.Option<OPTION_DISPLAY_VALUE>, args: any) => boolean;
 
@@ -112,8 +113,7 @@ module api.ui.selector.combobox {
         }
 
         showDropdown() {
-            var rowsLength = this.dropdownData.getLength();
-            if (rowsLength > 0) {
+            if (this.hasOptions()) {
                 this.emptyDropdown.hide();
                 this.dropdown.show();
                 this.adjustDropdownSize();
@@ -155,26 +155,47 @@ module api.ui.selector.combobox {
             this.dropdownData.addItem(option);
         }
 
+        hasOptions(): boolean {
+            return this.dropdownData.getLength() > 0;
+        }
+
+        getOptionCount(): number {
+            return this.dropdownData.getLength();
+        }
+
         getOptions(): api.ui.selector.Option<OPTION_DISPLAY_VALUE>[] {
             return this.dropdownData.getItems();
         }
 
+        getOptionByValue(value: string): api.ui.selector.Option<OPTION_DISPLAY_VALUE> {
+            return <api.ui.selector.Option<OPTION_DISPLAY_VALUE>>this.dropdownData.getItemById(value);
+        }
+
+        getOptionByRow(rowIndex: number): api.ui.selector.Option<OPTION_DISPLAY_VALUE> {
+            return <api.ui.selector.Option<OPTION_DISPLAY_VALUE>>this.dropdownData.getItem(rowIndex);
+        }
+
         setValue(value: string) {
-            var item = <api.ui.selector.Option<OPTION_DISPLAY_VALUE>>this.dropdownData.getItemById(value);
-            this.selectOption(item);
+            var option = this.getOptionByValue(value);
+            if (option != null) {
+                this.selectOption(option);
+            }
         }
 
         setValues(values: string[]) {
             values.forEach((value: string) => {
-                var item = <api.ui.selector.Option<OPTION_DISPLAY_VALUE>>this.dropdownData.getItemById(value);
-                this.selectOption(item);
+                var option = this.getOptionByValue(value);
+                if (option != null) {
+                    this.selectOption(option);
+                }
             });
         }
 
         selectRow(index: number) {
-            var item = <api.ui.selector.Option<OPTION_DISPLAY_VALUE>>this.dropdownData.getItem(index);
-
-            this.selectOption(item);
+            var option = this.getOptionByRow(index);
+            if (option != null) {
+                this.selectOption(option);
+            }
         }
 
         selectOption(option: api.ui.selector.Option<OPTION_DISPLAY_VALUE>, silent: boolean = false) {
@@ -224,7 +245,6 @@ module api.ui.selector.combobox {
         getSelectedOptions(): api.ui.selector.Option<OPTION_DISPLAY_VALUE>[] {
             if (this.multipleSelections) {
                 return this.selectedOptionsCtrl.getOptions();
-                ;
             }
             else {
                 throw new Error("Not supported yet");
@@ -316,13 +336,13 @@ module api.ui.selector.combobox {
                     return;
                 }
 
-                var rowsLength = this.dropdownData.getLength();
+                var rowCount = this.getOptionCount();
                 var activeCell = this.dropdown.getActiveCell();
 
                 if (event.which == 38) { // up
-                    this.dropdown.setActiveCell((activeCell.row || rowsLength) - 1, 0);
+                    this.dropdown.setActiveCell((activeCell.row || rowCount) - 1, 0);
                 } else if (event.which == 40) { // down
-                    this.dropdown.setActiveCell((activeCell.row + 1) % rowsLength, 0);
+                    this.dropdown.setActiveCell((activeCell.row + 1) % rowCount, 0);
                 } else if (event.which == 13) { // enter
                     this.selectRow(activeCell.row);
                     this.input.getEl().setValue("");
@@ -449,7 +469,7 @@ module api.ui.selector.combobox {
                 dropdownEl.setWidth(inputEl.getWidth() + "px");
             }
 
-            var rowsHeight = this.dropdownData.getLength() * this.rowHeight;
+            var rowsHeight = this.getOptionCount() * this.rowHeight;
             if (rowsHeight < this.maxHeight) {
                 var borderWidth = dropdownEl.getBorderTopWidth() + dropdownEl.getBorderBottomWidth();
                 dropdownEl.setHeight(rowsHeight + borderWidth + "px");
