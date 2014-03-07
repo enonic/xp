@@ -56,27 +56,29 @@ module api.app.browse {
             this.gridAndToolbarContainer.appendChild(this.browseToolbar);
             this.gridAndToolbarContainer.appendChild(this.gridContainer);
 
-            // this.gridAndDetailSplitPanel = new api.ui.SplitPanel(this.gridAndToolbarContainer, this.browseItemPanel);
+            var windowSize = api.dom.Body.get().getEl().getWidthWithMargin();
             if (this.gridPanel2 != null) {
                 this.treeSwapperDeckPanel = new api.ui.DeckPanel();
                 this.treeSwapperDeckPanel.addPanel(this.browseItemPanel);
                 this.treeSwapperDeckPanel.addPanel(this.gridPanel2);
                 this.treeSwapperDeckPanel.showPanel(0);
 
-
-                this.gridAndDetailSplitPanel = new api.ui.SplitPanelBuilder(this.gridAndToolbarContainer, this.treeSwapperDeckPanel).build();
+                this.gridAndDetailSplitPanel = new api.ui.SplitPanelBuilder(this.gridAndToolbarContainer, this.treeSwapperDeckPanel)
+                    .setAlignment((windowSize > 1440) ? api.ui.SplitPanelAlignment.VERTICAL : api.ui.SplitPanelAlignment.HORIZONTAL).build();
             }
             else {
-                this.gridAndDetailSplitPanel = new api.ui.SplitPanelBuilder(this.gridAndToolbarContainer, this.browseItemPanel).build();
+                this.gridAndDetailSplitPanel = new api.ui.SplitPanelBuilder(this.gridAndToolbarContainer, this.browseItemPanel)
+                    .setAlignment((windowSize > 1440) ? api.ui.SplitPanelAlignment.VERTICAL : api.ui.SplitPanelAlignment.HORIZONTAL).build();
             }
 
             if (this.filterPanel) {
                 this.gridAndFilterAndDetailSplitPanel = new api.ui.SplitPanelBuilder(this.filterPanel, this.gridAndDetailSplitPanel)
-                    .fixStartPanelSize("200px")
-                    .setAlignment(api.ui.SplitPanelAlignment.VERTICAL).build();
+                    .fixFirstPanelSize("200px").setAlignment(api.ui.SplitPanelAlignment.VERTICAL).build();
             } else {
                 this.gridAndFilterAndDetailSplitPanel = this.gridAndDetailSplitPanel;
             }
+
+            window.addEventListener("resize", () => this.updatePanelAlignment());
 
             this.treeGridPanel.onTreeGridSelectionChanged((event: api.app.browse.grid.TreeGridSelectionChangedEvent) => {
                 var browseItems: api.app.browse.BrowseItem<M>[] = this.extModelsToBrowseItems(event.getSelectedModels());
@@ -122,6 +124,15 @@ module api.app.browse {
             }
             else {
                 this.treeSwapperDeckPanel.showPanel(0);
+            }
+        }
+
+        private updatePanelAlignment() {
+            var windowSize = api.dom.Body.get().getEl().getWidthWithMargin();
+            if (windowSize > 1440 && this.gridAndDetailSplitPanel.isHorizontal()) {
+                this.gridAndDetailSplitPanel.setAlignment(api.ui.SplitPanelAlignment.VERTICAL);
+            } else if (windowSize < 1440 && !this.gridAndDetailSplitPanel.isHorizontal()) {
+                this.gridAndDetailSplitPanel.setAlignment(api.ui.SplitPanelAlignment.HORIZONTAL);
             }
         }
 

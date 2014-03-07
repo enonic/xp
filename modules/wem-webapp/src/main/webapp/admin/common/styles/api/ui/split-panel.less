@@ -2,36 +2,25 @@
   width: 100%;
   right: 0;
 
-  &.dragging {
-    cursor: ns-resize;
-  }
-
   .panel {
     position: relative;
   }
 
-  > .panel {
-    overflow-y: auto;
-    &.vertical {
-      position: absolute;
-      top:0;
-      bottom:0;
-    }
+  &.dragging {
+    cursor: ns-resize;
   }
 
-  .splitter {
+  > .panel {
+    overflow-y: auto;
+  }
+
+  > .splitter {
     background-color: @admin-light-gray-bg;
     cursor: ns-resize;
     .noSelect();
-    &.vertical {
-      position: absolute;
-      top:0;
-      bottom:0;
-      cursor: ew-resize;
-    }
   }
 
-  .ghost-dragger {
+  > .ghost-dragger {
     height: 5px;
     background-color: @admin-dark-gray;
     opacity: 0.5;
@@ -40,11 +29,28 @@
     cursor: ns-resize;
     width: 100%;
     .noSelect();
-    &.vertical {
-      width:5px;
-      height:100%;
+  }
+
+  &.vertical {
+    > .panel,
+    > .splitter,
+    > .ghost-dragger {
+      position: absolute;
       top:0;
       bottom:0;
+    }
+
+    > .splitter {
+      cursor: ew-resize;
+    }
+
+    > .splitter + .panel {
+      right: 0;
+    }
+
+    > .ghost-dragger {
+      width:5px;
+      height:100%;
       cursor: ew-resize;
     }
   }
