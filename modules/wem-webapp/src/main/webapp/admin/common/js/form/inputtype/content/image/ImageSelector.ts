@@ -272,7 +272,7 @@ module api.form.inputtype.content.image {
             comboBox.onValueChanged((event: api.ui.selector.combobox.ComboBoxValueChangedEvent<api.content.ContentSummary>) => {
                 this.loadOptions(event.getNewValue());
             });
-            comboBox.onOptionSelected((event: api.ui.selector.combobox.ComboBoxOptionSelectedEvent<api.content.ContentSummary>) => {
+            comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {
                 if (this.comboBox.maximumOccurrencesReached()) {
                     this.uploadButton.setEnabled(false);
                 }

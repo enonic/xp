@@ -1,5 +1,7 @@
 module api.ui.selector.combobox {
 
+    import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
+
     export class RichComboBox<T> extends api.ui.form.CompositeFormInputEl {
 
         loader: api.util.loader.BaseLoader<api.item.ItemJson, T>;
@@ -94,7 +96,7 @@ module api.ui.selector.combobox {
                 this.loader.search(event.getNewValue());
                 this.notifyInputValueChanged(event.getOldValue(), event.getNewValue(), event.getGrid());
             });
-            this.comboBox.onOptionSelected((event: ComboBoxOptionSelectedEvent<T>) => {
+            this.comboBox.onOptionSelected((event: OptionSelectedEvent<T>) => {
                 this.selectedOptionsView.show();
                 this.notifyOptionSelected(event.getItem());
             });

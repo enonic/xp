@@ -1,5 +1,7 @@
 module api.ui.selector.combobox {
 
+    import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
+
     export class ComboBox<T> extends api.dom.FormInputEl {
 
         private icon: api.dom.ImgEl;
@@ -28,7 +30,7 @@ module api.ui.selector.combobox {
 
         private hideComboBoxWhenMaxReached: boolean;
 
-        private optionSelectedListeners: {(event: ComboBoxOptionSelectedEvent<T>):void}[] = [];
+        private optionSelectedListeners: {(event: OptionSelectedEvent<T>):void}[] = [];
 
         private valueChangedListeners: {(event: ComboBoxValueChangedEvent<T>):void}[] = [];
 
@@ -464,12 +466,12 @@ module api.ui.selector.combobox {
             this.emptyDropdown.getEl().setTopPx(this.input.getEl().getHeight() - this.input.getEl().getBorderBottomWidth());
         }
 
-        onOptionSelected(listener: (event: ComboBoxOptionSelectedEvent<T>)=>void) {
+        onOptionSelected(listener: (event: OptionSelectedEvent<T>)=>void) {
             this.optionSelectedListeners.push(listener);
         }
 
-        unOptionSelected(listener: (event: ComboBoxOptionSelectedEvent<T>)=>void) {
-            this.optionSelectedListeners.filter((currentListener: (event: ComboBoxOptionSelectedEvent<T>)=>void) => {
+        unOptionSelected(listener: (event: OptionSelectedEvent<T>)=>void) {
+            this.optionSelectedListeners.filter((currentListener: (event: OptionSelectedEvent<T>)=>void) => {
                 return listener != currentListener;
             });
         }
@@ -491,8 +493,8 @@ module api.ui.selector.combobox {
         }
 
         private notifyOptionSelected(item: api.ui.selector.Option<T>) {
-            this.optionSelectedListeners.forEach((listener: (event: ComboBoxOptionSelectedEvent<T>)=>void) => {
-                listener.call(this, new ComboBoxOptionSelectedEvent<T>(item));
+            this.optionSelectedListeners.forEach((listener: (event: OptionSelectedEvent<T>)=>void) => {
+                listener.call(this, new OptionSelectedEvent<T>(item));
             });
         }
 

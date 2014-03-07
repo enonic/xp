@@ -137,7 +137,7 @@ module app.contextwindow.image {
             comboBox.onValueChanged((event: api.ui.selector.combobox.ComboBoxValueChangedEvent<api.content.ContentSummary>) => {
                 contentSummaryLoader.search(event.getNewValue());
             });
-            comboBox.onOptionSelected((event: api.ui.selector.combobox.ComboBoxOptionSelectedEvent<api.content.ContentSummary>) => {
+            comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {
                 //TODO: Mocked live use of image
                 var iconUrl = event.getItem().displayValue.getIconUrl();
                 this.selectedOption = event.getItem();
