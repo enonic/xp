@@ -2,7 +2,7 @@ module api.ui.selector.combobox {
 
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
 
-    export class ComboBox<T> extends api.dom.FormInputEl {
+    export class ComboBox<OPTION_DISPLAY_VALUE> extends api.dom.FormInputEl {
 
         private icon: api.dom.ImgEl;
 
@@ -10,19 +10,19 @@ module api.ui.selector.combobox {
 
         private input: ComboBoxOptionFilterInput;
 
-        private dropdownData: api.ui.grid.DataView<api.ui.selector.Option<T>>;
+        private dropdownData: api.ui.grid.DataView<api.ui.selector.Option<OPTION_DISPLAY_VALUE>>;
 
-        private dropdown: api.ui.grid.Grid<api.ui.selector.Option<T>>;
+        private dropdown: api.ui.grid.Grid<api.ui.selector.Option<OPTION_DISPLAY_VALUE>>;
 
         private emptyDropdown: api.dom.DivEl;
 
-        private optionFormatter: (row: number, cell: number, value: T, columnDef: any, dataContext: api.ui.selector.Option<T>) => string;
+        private optionFormatter: (row: number, cell: number, value: OPTION_DISPLAY_VALUE, columnDef: any, dataContext: api.ui.selector.Option<OPTION_DISPLAY_VALUE>) => string;
 
-        private filter: (item: api.ui.selector.Option<T>, args: any) => boolean;
+        private filter: (item: api.ui.selector.Option<OPTION_DISPLAY_VALUE>, args: any) => boolean;
 
         private multipleSelections: boolean = false;
 
-        private selectedOptionsCtrl: SelectedOptionsCtrl<T>;
+        private selectedOptionsCtrl: SelectedOptionsCtrl<OPTION_DISPLAY_VALUE>;
 
         private maxHeight: number = 200;
 
@@ -30,9 +30,9 @@ module api.ui.selector.combobox {
 
         private hideComboBoxWhenMaxReached: boolean;
 
-        private optionSelectedListeners: {(event: OptionSelectedEvent<T>):void}[] = [];
+        private optionSelectedListeners: {(event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>):void}[] = [];
 
-        private valueChangedListeners: {(event: ComboBoxValueChangedEvent<T>):void}[] = [];
+        private valueChangedListeners: {(event: ComboBoxValueChangedEvent<OPTION_DISPLAY_VALUE>):void}[] = [];
 
         /**
          * Indicates if combobox is currently has focus
@@ -40,7 +40,7 @@ module api.ui.selector.combobox {
          */
         private active: boolean = false;
 
-        constructor(name: string, config: ComboBoxConfig<T>) {
+        constructor(name: string, config: ComboBoxConfig<OPTION_DISPLAY_VALUE>) {
             super("div", "combobox");
             this.getEl().setAttribute("name", name);
 
@@ -70,7 +70,7 @@ module api.ui.selector.combobox {
             this.emptyDropdown.hide();
             this.appendChild(this.emptyDropdown);
 
-            var columns: api.ui.grid.GridColumn<api.ui.selector.Option<T>>[] = [
+            var columns: api.ui.grid.GridColumn<api.ui.selector.Option<OPTION_DISPLAY_VALUE>>[] = [
                 {
                     id: "option",
                     name: "Options",
@@ -88,8 +88,8 @@ module api.ui.selector.combobox {
                 dataIdProperty: config.dataIdProperty ? config.dataIdProperty : "value"
             };
 
-            this.dropdownData = new api.ui.grid.DataView<api.ui.selector.Option<T>>();
-            this.dropdown = new api.ui.grid.Grid<api.ui.selector.Option<T>>(this.dropdownData, columns, options);
+            this.dropdownData = new api.ui.grid.DataView<api.ui.selector.Option<OPTION_DISPLAY_VALUE>>();
+            this.dropdown = new api.ui.grid.Grid<api.ui.selector.Option<OPTION_DISPLAY_VALUE>>(this.dropdownData, columns, options);
             this.dropdown.addClass("options-container");
             this.dropdown.getEl().setPosition("absolute");
             this.dropdown.hide();
@@ -144,40 +144,40 @@ module api.ui.selector.combobox {
             this.dropdown.hide();
         }
 
-        setOptions(options: api.ui.selector.Option<T>[], optionIdProperty?: string) {
+        setOptions(options: api.ui.selector.Option<OPTION_DISPLAY_VALUE>[], optionIdProperty?: string) {
             this.dropdownData.setItems(options, optionIdProperty);
             if (this.dropdown.isVisible() || this.emptyDropdown.isVisible()) {
                 this.showDropdown();
             }
         }
 
-        addOption(option: api.ui.selector.Option<T>) {
+        addOption(option: api.ui.selector.Option<OPTION_DISPLAY_VALUE>) {
             this.dropdownData.addItem(option);
         }
 
-        getOptions(): api.ui.selector.Option<T>[] {
+        getOptions(): api.ui.selector.Option<OPTION_DISPLAY_VALUE>[] {
             return this.dropdownData.getItems();
         }
 
         setValue(value: string) {
-            var item = <api.ui.selector.Option<T>>this.dropdownData.getItemById(value);
+            var item = <api.ui.selector.Option<OPTION_DISPLAY_VALUE>>this.dropdownData.getItemById(value);
             this.selectOption(item);
         }
 
         setValues(values: string[]) {
             values.forEach((value: string) => {
-                var item = <api.ui.selector.Option<T>>this.dropdownData.getItemById(value);
+                var item = <api.ui.selector.Option<OPTION_DISPLAY_VALUE>>this.dropdownData.getItemById(value);
                 this.selectOption(item);
             });
         }
 
         selectRow(index: number) {
-            var item = <api.ui.selector.Option<T>>this.dropdownData.getItem(index);
+            var item = <api.ui.selector.Option<OPTION_DISPLAY_VALUE>>this.dropdownData.getItem(index);
 
             this.selectOption(item);
         }
 
-        selectOption(option: api.ui.selector.Option<T>, silent: boolean = false) {
+        selectOption(option: api.ui.selector.Option<OPTION_DISPLAY_VALUE>, silent: boolean = false) {
 
             var added = this.selectedOptionsCtrl.addOption(option);
             if (!added) {
@@ -200,7 +200,7 @@ module api.ui.selector.combobox {
             }
         }
 
-        removeSelectedOption(optionToRemove: api.ui.selector.Option<T>, silent: boolean = false) {
+        removeSelectedOption(optionToRemove: api.ui.selector.Option<OPTION_DISPLAY_VALUE>, silent: boolean = false) {
             api.util.assertNotNull(optionToRemove, "optionToRemove cannot be null");
 
             this.selectedOptionsCtrl.removeOption(optionToRemove, silent);
@@ -211,8 +211,8 @@ module api.ui.selector.combobox {
         }
 
         clearSelection() {
-            var allOptions: api.ui.selector.Option<T>[] = this.selectedOptionsCtrl.getOptions();
-            allOptions.forEach((option: api.ui.selector.Option<T>) => {
+            var allOptions: api.ui.selector.Option<OPTION_DISPLAY_VALUE>[] = this.selectedOptionsCtrl.getOptions();
+            allOptions.forEach((option: api.ui.selector.Option<OPTION_DISPLAY_VALUE>) => {
                 this.selectedOptionsCtrl.removeOption(option, true);
             });
 
@@ -221,7 +221,7 @@ module api.ui.selector.combobox {
             this.input.openForTypingAndFocus();
         }
 
-        getSelectedOptions(): api.ui.selector.Option<T>[] {
+        getSelectedOptions(): api.ui.selector.Option<OPTION_DISPLAY_VALUE>[] {
             if (this.multipleSelections) {
                 return this.selectedOptionsCtrl.getOptions();
                 ;
@@ -234,7 +234,7 @@ module api.ui.selector.combobox {
         getValue(): string {
             if (this.multipleSelections) {
                 var values = [];
-                this.selectedOptionsCtrl.getOptions().forEach((item: api.ui.selector.Option<T>) => {
+                this.selectedOptionsCtrl.getOptions().forEach((item: api.ui.selector.Option<OPTION_DISPLAY_VALUE>) => {
                     values.push(item.value);
                 });
                 return values.join(';');
@@ -351,13 +351,13 @@ module api.ui.selector.combobox {
 
             if (this.multipleSelections) {
                 this.selectedOptionsCtrl.addSelectedOptionRemovedListener(
-                    (removedOption: SelectedOption<T>) => {
+                    (removedOption: SelectedOption<OPTION_DISPLAY_VALUE>) => {
                         this.handleSelectedOptionRemoved(removedOption);
                     });
             }
         }
 
-        private handleSelectedOptionRemoved(removedSelectedOption: SelectedOption<T>) {
+        private handleSelectedOptionRemoved(removedSelectedOption: SelectedOption<OPTION_DISPLAY_VALUE>) {
             this.updateDropdownStyles();
             this.input.openForTypingAndFocus();
 
@@ -399,7 +399,7 @@ module api.ui.selector.combobox {
 
         private updateDropdownStyles() {
             var stylesHash: Slick.CellCssStylesHash = {};
-            this.selectedOptionsCtrl.getOptions().forEach((option: api.ui.selector.Option<T>) => {
+            this.selectedOptionsCtrl.getOptions().forEach((option: api.ui.selector.Option<OPTION_DISPLAY_VALUE>) => {
                 var row = this.dropdownData.getRowById(option.value);
                 stylesHash[row] = {option: "selected"};
             });
@@ -466,43 +466,43 @@ module api.ui.selector.combobox {
             this.emptyDropdown.getEl().setTopPx(this.input.getEl().getHeight() - this.input.getEl().getBorderBottomWidth());
         }
 
-        onOptionSelected(listener: (event: OptionSelectedEvent<T>)=>void) {
+        onOptionSelected(listener: (event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>)=>void) {
             this.optionSelectedListeners.push(listener);
         }
 
-        unOptionSelected(listener: (event: OptionSelectedEvent<T>)=>void) {
-            this.optionSelectedListeners.filter((currentListener: (event: OptionSelectedEvent<T>)=>void) => {
+        unOptionSelected(listener: (event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>)=>void) {
+            this.optionSelectedListeners.filter((currentListener: (event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
                 return listener != currentListener;
             });
         }
 
-        onValueChanged(listener: (event: ComboBoxValueChangedEvent<T>)=>void) {
+        onValueChanged(listener: (event: ComboBoxValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) {
             this.valueChangedListeners.push(listener);
         }
 
-        unValueChanged(listener: (event: ComboBoxValueChangedEvent<T>)=>void) {
-            this.valueChangedListeners.filter((currentListener: (event: ComboBoxValueChangedEvent<T>)=>void) => {
+        unValueChanged(listener: (event: ComboBoxValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) {
+            this.valueChangedListeners.filter((currentListener: (event: ComboBoxValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
                 return listener != currentListener;
             })
         }
 
         private notifyValueChanged(oldValue: string, newValue: string) {
-            this.valueChangedListeners.forEach((listener: (event: ComboBoxValueChangedEvent<T>)=>void) => {
+            this.valueChangedListeners.forEach((listener: (event: ComboBoxValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
                 listener.call(this, new ComboBoxValueChangedEvent(oldValue, newValue, this.dropdown));
             });
         }
 
-        private notifyOptionSelected(item: api.ui.selector.Option<T>) {
-            this.optionSelectedListeners.forEach((listener: (event: OptionSelectedEvent<T>)=>void) => {
-                listener.call(this, new OptionSelectedEvent<T>(item));
+        private notifyOptionSelected(item: api.ui.selector.Option<OPTION_DISPLAY_VALUE>) {
+            this.optionSelectedListeners.forEach((listener: (event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
+                listener.call(this, new OptionSelectedEvent<OPTION_DISPLAY_VALUE>(item));
             });
         }
 
-        addSelectedOptionRemovedListener(listener: {(removed: SelectedOption<T>): void;}) {
+        addSelectedOptionRemovedListener(listener: {(removed: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
             this.selectedOptionsCtrl.addSelectedOptionRemovedListener(listener);
         }
 
-        removeSelectedOptionRemovedListener(listener: {(removed: SelectedOption<T>): void;}) {
+        removeSelectedOptionRemovedListener(listener: {(removed: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
             this.selectedOptionsCtrl.removeSelectedOptionRemovedListener(listener);
         }
     }
