@@ -48,7 +48,8 @@ module LiveEdit.component {
         }
 
         getComponentName(): string {
-            return this.getComponentPath() || '[No Name]';
+            var path = this.getComponentPath();
+            return path ? path.substring(path.lastIndexOf('/') + 1) : '[No Name]';
         }
 
         getComponentPath(): string {
