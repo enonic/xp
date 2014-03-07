@@ -50,8 +50,8 @@ module api.content.page.layout {
             return namesView.toString();
         }
 
-        getSelectedData(): Option<LayoutDescriptor>[] {
-            return this.comboBox.getSelectedData();
+        getSelectedOptions(): Option<LayoutDescriptor>[] {
+            return this.comboBox.getSelectedOptions();
         }
 
     }

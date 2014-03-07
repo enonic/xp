@@ -50,8 +50,8 @@ module api.content.page.image {
             return namesView.toString();
         }
 
-        getSelectedData(): Option<ImageDescriptor>[] {
-            return this.comboBox.getSelectedData();
+        getSelectedOptions(): Option<ImageDescriptor>[] {
+            return this.comboBox.getSelectedOptions();
         }
 
     }

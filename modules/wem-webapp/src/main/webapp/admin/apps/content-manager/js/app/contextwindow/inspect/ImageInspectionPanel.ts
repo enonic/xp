@@ -65,7 +65,7 @@ module app.contextwindow.inspect {
             var descriptorKey = component.getDescriptor();
             if (descriptorKey) {
                 this.descriptorComboBox.setDescriptor(descriptorKey);
-                var imageDescriptorOption: api.ui.selector.Option<ImageDescriptor> = this.descriptorComboBox.getSelectedData()[0];
+                var imageDescriptorOption: api.ui.selector.Option<ImageDescriptor> = this.descriptorComboBox.getSelectedOptions()[0];
                 var imageDescriptor = imageDescriptorOption.displayValue;
                 this.setupComponentForm(component, imageDescriptor);
             }

@@ -107,7 +107,7 @@ module api.form.inputtype.content.image {
             this.uploadButton.addClass("upload-button");
             this.uploadButton.setClickListener((event: any) => {
                 var inputMaximum = input.getOccurrences().getMaximum();
-                var countSelected = this.comboBox.countSelected();
+                var countSelected = this.comboBox.countSelectedOptions();
                 var rest = -1;
                 if (inputMaximum == 0) {
                     rest = 0;
@@ -131,7 +131,7 @@ module api.form.inputtype.content.image {
 
         getValues(): api.data.Value[] {
             var values: api.data.Value[] = [];
-            this.comboBox.getSelectedData().forEach((option: api.ui.selector.Option<api.content.ContentSummary>) => {
+            this.comboBox.getSelectedOptions().forEach((option: api.ui.selector.Option<api.content.ContentSummary>) => {
 
                 var value = new api.data.Value(option.value, api.data.ValueTypes.CONTENT_ID);
 
@@ -152,7 +152,7 @@ module api.form.inputtype.content.image {
 
             var recording = new api.form.inputtype.InputValidationRecording();
 
-            var numberOfValids = this.comboBox.countSelected();
+            var numberOfValids = this.comboBox.countSelectedOptions();
             if (numberOfValids < this.input.getOccurrences().getMinimum()) {
                 recording.setBreaksMinimumOccurrences(true);
             }
@@ -202,7 +202,7 @@ module api.form.inputtype.content.image {
         }
 
         maximumOccurrencesReached(): boolean {
-            return this.input.getOccurrences().maximumReached(this.comboBox.countSelected());
+            return this.input.getOccurrences().maximumReached(this.comboBox.countSelectedOptions());
         }
 
         onOccurrenceAdded(listener: (event: api.form.OccurrenceAddedEvent)=>void) {
@@ -246,7 +246,7 @@ module api.form.inputtype.content.image {
             });
 
             this.selectedOptionsView.addRemoveSelectedOptionListener((option) => {
-                this.comboBox.removeSelectedItem(option.getOption());
+                this.comboBox.removeSelectedOption(option.getOption());
                 this.validate(false);
             });
 

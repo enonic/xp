@@ -56,7 +56,7 @@ module api.form.inputtype.combobox {
         }
 
         public maximumOccurrencesReached(): boolean {
-            return this.input.getOccurrences().maximumReached(this.comboBox.countSelected());
+            return this.input.getOccurrences().maximumReached(this.comboBox.countSelectedOptions());
         }
 
         createAndAddOccurrence() {
@@ -112,7 +112,7 @@ module api.form.inputtype.combobox {
         getValues(): api.data.Value[] {
 
             var values: api.data.Value[] = [];
-            this.comboBox.getSelectedData().forEach((option: api.ui.selector.Option<string>)  => {
+            this.comboBox.getSelectedOptions().forEach((option: api.ui.selector.Option<string>)  => {
                 var value = new api.data.Value(option.value, api.data.ValueTypes.STRING);
                 values.push(value);
             });
@@ -154,7 +154,7 @@ module api.form.inputtype.combobox {
 
             var recording = new api.form.inputtype.InputValidationRecording();
 
-            var numberOfValids = this.comboBox.countSelected();
+            var numberOfValids = this.comboBox.countSelectedOptions();
             if (numberOfValids < this.input.getOccurrences().getMinimum()) {
                 recording.setBreaksMinimumOccurrences(true);
             }

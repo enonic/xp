@@ -50,8 +50,8 @@ module api.content.page.part {
             return namesView.toString();
         }
 
-        getSelectedData(): Option<PartDescriptor>[] {
-            return this.comboBox.getSelectedData();
+        getSelectedOptions(): Option<PartDescriptor>[] {
+            return this.comboBox.getSelectedOptions();
         }
 
     }

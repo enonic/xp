@@ -107,25 +107,6 @@ module api.ui.selector.combobox {
             return this.input.giveFocus();
         }
 
-        countSelected(): number {
-            if (this.multipleSelections) {
-                return this.selectedOptionsCtrl.count();
-            }
-            else {
-                throw new Error("Not supported yet");
-            }
-        }
-
-        getSelectedData(): api.ui.selector.Option<T>[] {
-            if (this.multipleSelections) {
-                return this.selectedOptionsCtrl.getOptions();
-                ;
-            }
-            else {
-                throw new Error("Not supported yet");
-            }
-        }
-
         isDropdownShown(): boolean {
             return this.emptyDropdown.isVisible() || this.dropdown.isVisible();
         }
@@ -170,12 +151,12 @@ module api.ui.selector.combobox {
             }
         }
 
-        getValues(): api.ui.selector.Option<T>[] {
-            return this.dropdownData.getItems();
-        }
-
         addOption(option: api.ui.selector.Option<T>) {
             this.dropdownData.addItem(option);
+        }
+
+        getOptions(): api.ui.selector.Option<T>[] {
+            return this.dropdownData.getItems();
         }
 
         setValue(value: string) {
@@ -190,6 +171,66 @@ module api.ui.selector.combobox {
             });
         }
 
+        selectRow(index: number) {
+            var item = <api.ui.selector.Option<T>>this.dropdownData.getItem(index);
+
+            this.selectOption(item);
+        }
+
+        selectOption(option: api.ui.selector.Option<T>, silent: boolean = false) {
+
+            var added = this.selectedOptionsCtrl.addOption(option);
+            if (!added) {
+                return;
+            }
+
+            this.updateDropdownStyles();
+            this.hideDropdown();
+            this.addClass("followed-by-options");
+
+            if (this.maximumOccurrencesReached()) {
+                this.input.setMaximumReached();
+                this.moveFocuseToNextInput();
+            }
+            if (!silent) {
+                this.notifyOptionSelected(option);
+            }
+            if (this.maximumOccurrencesReached() && this.hideComboBoxWhenMaxReached) {
+                this.hide();
+            }
+        }
+
+        removeSelectedOption(optionToRemove: api.ui.selector.Option<T>, silent: boolean = false) {
+            api.util.assertNotNull(optionToRemove, "optionToRemove cannot be null");
+
+            this.selectedOptionsCtrl.removeOption(optionToRemove, silent);
+
+            this.updateDropdownStyles();
+
+            this.input.openForTypingAndFocus();
+        }
+
+        clearSelection() {
+            var allOptions: api.ui.selector.Option<T>[] = this.selectedOptionsCtrl.getOptions();
+            allOptions.forEach((option: api.ui.selector.Option<T>) => {
+                this.selectedOptionsCtrl.removeOption(option, true);
+            });
+
+            this.updateDropdownStyles();
+
+            this.input.openForTypingAndFocus();
+        }
+
+        getSelectedOptions(): api.ui.selector.Option<T>[] {
+            if (this.multipleSelections) {
+                return this.selectedOptionsCtrl.getOptions();
+                ;
+            }
+            else {
+                throw new Error("Not supported yet");
+            }
+        }
+
         getValue(): string {
             if (this.multipleSelections) {
                 var values = [];
@@ -201,6 +242,22 @@ module api.ui.selector.combobox {
             else {
                 throw new Error("Not supported yet");
             }
+        }
+
+        countSelectedOptions(): number {
+            if (this.multipleSelections) {
+                return this.selectedOptionsCtrl.count();
+            }
+            else {
+                throw new Error("Not supported yet");
+            }
+        }
+
+        maximumOccurrencesReached(): boolean {
+            api.util.assert(this.multipleSelections,
+                "No point of calling maximumOccurrencesReached when no multiple selections are enabled");
+
+            return this.selectedOptionsCtrl.maximumOccurrencesReached();
         }
 
         setInputIconUrl(iconUrl: string) {
@@ -308,37 +365,8 @@ module api.ui.selector.combobox {
                 this.show();
             }
 
-            if (this.countSelected() == 0) {
+            if (this.countSelectedOptions() == 0) {
                 this.removeClass("followed-by-options");
-            }
-        }
-
-        private selectRow(index: number) {
-            var item = <api.ui.selector.Option<T>>this.dropdownData.getItem(index);
-
-            this.selectOption(item);
-        }
-
-        selectOption(option: api.ui.selector.Option<T>, silent: boolean = false) {
-
-            var added = this.selectedOptionsCtrl.addOption(option);
-            if (!added) {
-                return;
-            }
-
-            this.updateDropdownStyles();
-            this.hideDropdown();
-            this.addClass("followed-by-options");
-
-            if (this.maximumOccurrencesReached()) {
-                this.input.setMaximumReached();
-                this.moveFocuseToNextInput();
-            }
-            if (!silent) {
-                this.notifyOptionSelected(option);
-            }
-            if (this.maximumOccurrencesReached() && this.hideComboBoxWhenMaxReached) {
-                this.hide();
             }
         }
 
@@ -367,13 +395,6 @@ module api.ui.selector.combobox {
                     return;
                 }
             }
-        }
-
-        maximumOccurrencesReached(): boolean {
-            api.util.assert(this.multipleSelections,
-                "No point of calling maximumOccurrencesReached when no multiple selections are enabled");
-
-            return this.selectedOptionsCtrl.maximumOccurrencesReached();
         }
 
         private updateDropdownStyles() {
@@ -416,27 +437,6 @@ module api.ui.selector.combobox {
                 this.active = true;
                 api.dom.Body.get().getEl().addEventListener('click', hideDropdownOnBlur);
             }
-        }
-
-        removeSelectedItem(optionToRemove: api.ui.selector.Option<T>, silent: boolean = false) {
-            api.util.assertNotNull(optionToRemove, "optionToRemove cannot be null");
-
-            this.selectedOptionsCtrl.removeOption(optionToRemove, silent);
-
-            this.updateDropdownStyles();
-
-            this.input.openForTypingAndFocus();
-        }
-
-        clearSelection() {
-            var allOptions: api.ui.selector.Option<T>[] = this.selectedOptionsCtrl.getOptions();
-            allOptions.forEach((option: api.ui.selector.Option<T>) => {
-                this.selectedOptionsCtrl.removeOption(option, true);
-            });
-
-            this.updateDropdownStyles();
-
-            this.input.openForTypingAndFocus();
         }
 
         private adjustDropdownSize() {

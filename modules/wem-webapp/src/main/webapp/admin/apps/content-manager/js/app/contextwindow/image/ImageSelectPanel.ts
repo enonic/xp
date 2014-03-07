@@ -204,7 +204,7 @@ module app.contextwindow.image {
                 displayValue: content
             };
             if (this.selectedOption != null) {
-                this.comboBox.removeSelectedItem(this.selectedOption, true);
+                this.comboBox.removeSelectedOption(this.selectedOption, true);
 
             }
             this.selectedOption = option;

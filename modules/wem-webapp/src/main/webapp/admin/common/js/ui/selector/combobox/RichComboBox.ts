@@ -49,19 +49,19 @@ module api.ui.selector.combobox {
         }
 
         getSelectedValues(): T[] {
-            return this.comboBox.getSelectedData().map((option: api.ui.selector.Option<T>) => {
+            return this.comboBox.getSelectedOptions().map((option: api.ui.selector.Option<T>) => {
                 return option.displayValue;
             });
         }
 
         getValues(): T[] {
-            return this.comboBox.getValues().map((option: api.ui.selector.Option<T>) => {
+            return this.comboBox.getOptions().map((option: api.ui.selector.Option<T>) => {
                 return option.displayValue;
             });
         }
 
         getStringValues(): string[] {
-            return this.comboBox.getSelectedData().map((option: api.ui.selector.Option<T>) => {
+            return this.comboBox.getSelectedOptions().map((option: api.ui.selector.Option<T>) => {
                 return option.value;
             });
         }
@@ -71,7 +71,7 @@ module api.ui.selector.combobox {
         }
 
         countSelected(): number {
-            return this.comboBox.countSelected();
+            return this.comboBox.countSelectedOptions();
         }
 
         select(value: T) {
