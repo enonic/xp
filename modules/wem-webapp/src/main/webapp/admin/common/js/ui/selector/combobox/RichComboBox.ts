@@ -146,6 +146,10 @@ module api.ui.selector.combobox {
             this.setupLoader();
         }
 
+        getLoader():api.util.loader.BaseLoader<api.item.ItemJson, T> {
+            return this.loader;
+        }
+
         setInputIconUrl(url: string) {
             this.comboBox.setInputIconUrl(url);
         }

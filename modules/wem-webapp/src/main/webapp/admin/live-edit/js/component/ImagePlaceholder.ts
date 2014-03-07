@@ -28,7 +28,7 @@ module LiveEdit.component {
             //    }
             //});
             this.getEl().setData('live-edit-type', "image");
-            this.comboBox = new api.content.ContentComboBoxBuilder().build();
+            this.comboBox = new api.content.ContentComboBoxBuilder().setAllowedContentTypes(["image"]).build();
             this.comboBox.hide();
             this.appendChild(this.comboBox);
 

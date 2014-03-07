@@ -12,6 +12,11 @@ module api.content {
                 .setMaximumOccurrences(contentComboBoxBuilder.maximumOccurrences);
 
             super(builder);
+
+            if (contentComboBoxBuilder.allowedContentTypes) {
+                var loader = <api.form.inputtype.content.ContentSummaryLoader>this.getLoader();
+                loader.setAllowedContentTypes(contentComboBoxBuilder.allowedContentTypes);
+            }
         }
 
 
@@ -68,6 +73,8 @@ module api.content {
 
         loader:api.util.loader.BaseLoader<api.schema.SchemaJson, api.content.ContentSummary>;
 
+        allowedContentTypes:string[];
+
         setName(value:string):ContentComboBoxBuilder {
             this.name = value;
             return this;
@@ -80,6 +87,11 @@ module api.content {
 
         setLoader(loader:api.util.loader.BaseLoader<api.schema.SchemaJson, api.content.ContentSummary>):ContentComboBoxBuilder {
             this.loader = loader;
+            return this;
+        }
+
+        setAllowedContentTypes(allowedTypes:string[]):ContentComboBoxBuilder {
+            this.allowedContentTypes = allowedTypes;
             return this;
         }
 
