@@ -151,11 +151,11 @@ module app.wizard {
                         liveEditWindow.CONFIG = {};
                         liveEditWindow.CONFIG.baseUri = CONFIG.baseUri;
                         liveEditWindow.siteTemplate = this.siteTemplate;
+                        liveEditWindow.content = this.pageContent;
 
                         var pageLoaded = true;
                         clearInterval(intervalId);
 
-                        console.log("LiveFormPanel.doLoad() ... Live edit loaded");
                         this.loader.stop();
                         liveEditWindow.initializeLiveEdit();
                         deferred.resolve(null);
@@ -217,7 +217,6 @@ module app.wizard {
                 then(() => {
 
                     this.setupContextWindow();
-
                 }).fail(()=> {
                     console.log("Error while loading page: ", arguments);
                 }).done();

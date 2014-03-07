@@ -5,6 +5,7 @@ declare var CONFIG;
 declare var $liveEdit;
 
 var siteTemplate: api.content.site.template.SiteTemplate;
+var content: api.content.Content;
 
 function initializeLiveEdit() {
     //TODO: Maybe move/make more generic
@@ -55,7 +56,6 @@ function getComponentByPath(path:string): LiveEdit.component.Component {
         $(window).resize(() => $(window).trigger('resizeBrowserWindow.liveEdit'));
 
         $(window).unload(() => console.log('Clean up any css classes etc. that live edit / sortable has added'));
-
     });
 
 //    Prevent the user from clicking on things
