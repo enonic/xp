@@ -193,9 +193,10 @@ module api.dom {
             return this.el.getHTMLElement();
         }
 
-        appendChild<T extends api.dom.Element>(child: T) {
+        appendChild<T extends api.dom.Element>(child: T): Element {
             this.el.appendChild(child.getEl().getHTMLElement());
             this.insert(child, this, this.children.length);
+            return this;
         }
 
         prependChild(child: api.dom.Element) {
@@ -421,7 +422,7 @@ module api.dom {
                 return curr !== listener;
             });
 
-            if( this.resizedListeners.length == 0 ) {
+            if (this.resizedListeners.length == 0) {
                 //(<any>jQuery(this.getHTMLElement())).removeResize(this.handleJqueryPluginResizeEvent);
             }
         }

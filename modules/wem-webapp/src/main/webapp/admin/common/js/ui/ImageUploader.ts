@@ -21,7 +21,8 @@ module api.ui {
         private progress: api.ui.ProgressBar;
         private cancelBtn: api.ui.Button;
         private image: api.dom.ImgEl;
-        private resetBtn: api.ui.Button;
+        private imageBox: api.dom.DivEl;
+        private resetBtn: api.dom.AEl;
 
         private multiSelection: boolean;
         private buttonsVisible: boolean;
@@ -60,8 +61,11 @@ module api.ui {
             this.progress.setClass("progress");
             this.appendChild(this.progress);
 
+            this.imageBox = new api.dom.DivEl();
+            this.imageBox.addClass('image-box');
             this.image = new api.dom.ImgEl();
-            this.appendChild(this.image);
+            this.imageBox.appendChild(this.image);
+            this.appendChild(this.imageBox);
 
             this.cancelBtn = new api.ui.Button("Cancel");
             this.cancelBtn.setVisible(this.buttonsVisible);
@@ -71,12 +75,33 @@ module api.ui {
             });
             this.appendChild(this.cancelBtn);
 
-            this.resetBtn = new api.ui.Button("Reset");
+            this.resetBtn = new api.dom.AEl();
+            this.resetBtn.addClass('reset');
+            this.resetBtn.setText('Replace');
+            this.resetBtn.setUrl('#');
             this.resetBtn.setVisible(this.buttonsVisible);
             this.resetBtn.setClickListener(() => {
                 this.reset();
             });
-            this.appendChild(this.resetBtn);
+            this.imageBox.appendChild(this.resetBtn);
+
+            //Image toolbar stub buttons
+            //TODO: should be replaced with working buttons later
+            var btn1 = new api.ui.Button('');
+            btn1.addClass("icon-crop2").addClass('icon24');
+            var btn2 = new api.ui.Button('');
+            btn2.addClass("icon-rotate").addClass('icon24');
+            var btn3 = new api.ui.Button('');
+            btn3.addClass("icon-rotate2").addClass('icon24');
+            var btn4 = new api.ui.Button('');
+            btn4.addClass("icon-flip").addClass('icon24');
+            var btn5 = new api.ui.Button('');
+            btn5.addClass("icon-flip2").addClass('icon24');
+            var btn6 = new api.ui.Button('');
+            btn6.addClass("icon-palette").addClass('icon24');
+
+            this.imageBox.appendChild(btn1).appendChild(btn2).appendChild(btn3).appendChild(btn4).appendChild(btn5).appendChild(btn6);
+            //End of stub
 
             this.onRendered((event) => {
                 console.log("ImageUploader rendered, creating plupload");
@@ -153,7 +178,7 @@ module api.ui {
         }
 
         private setImageVisible(visible: boolean) {
-            this.image.setVisible(visible);
+            this.imageBox.setVisible(visible);
             this.resetBtn.setVisible(visible && this.buttonsVisible);
         }
 
