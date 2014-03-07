@@ -21,7 +21,7 @@ module api.app.browse {
             return new api.app.view.ItemStatisticsPanel<M>();
         }
 
-        setItems(items: any) {
+        setItems(items: api.app.browse.BrowseItem<M>[]) {
             this.itemsSelectionPanel.setItems(items);
             this.updateDisplayedPanel();
         }
@@ -33,8 +33,8 @@ module api.app.browse {
         updateDisplayedPanel() {
             var selectedItems = this.getItems();
             if (selectedItems.length == 1) {
-                this.itemStatisticsPanel.setItem(selectedItems[0].toViewItem());
                 this.showPanel(1);
+                this.itemStatisticsPanel.setItem(selectedItems[0].toViewItem());
             } else {
                 this.showPanel(0);
             }

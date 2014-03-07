@@ -8,6 +8,8 @@ module app.browse {
 
         private contentTreeGridPanel: app.browse.ContentTreeGridPanel;
 
+        private contentTreeGridPanelMask: api.ui.LoadMask;
+
         private contentTreeGridPanel2: app.browse.grid.ContentGridPanel2;
 
         private contentFilterPanel: app.browse.filter.ContentBrowseFilterPanel;
@@ -19,6 +21,8 @@ module app.browse {
             this.contentTreeGridPanel = new app.browse.ContentTreeGridPanel({
                 contextMenu: treeGridContextMenu
             });
+
+            this.contentTreeGridPanelMask = new api.ui.LoadMask(this.contentTreeGridPanel);
 
             this.browseActions = ContentBrowseActions.init(this.contentTreeGridPanel);
             treeGridContextMenu.setActions(this.browseActions);
@@ -41,7 +45,7 @@ module app.browse {
             api.content.ContentDeletedEvent.on((event) => {
                 var contents: api.content.ContentSummary[] = event.getContents();
                 for (var i = 0; i < contents.length; i++) {
-                    this.contentTreeGridPanel.remove(contents[i].getPath().toString());
+                    this.contentTreeGridPanel.removeItem(contents[i].getPath().toString());
                 }
             });
 
@@ -51,6 +55,15 @@ module app.browse {
 
             api.content.ContentUpdatedEvent.on((event) => {
                 this.setRefreshNeeded(true);
+            });
+
+            var showMask = () => {
+                this.contentTreeGridPanelMask.show();
+            };
+            this.contentFilterPanel.onSearch(showMask);
+            this.contentFilterPanel.onReset(showMask);
+            this.contentTreeGridPanel.onTreeGridStoreLoaded(() => {
+                this.contentTreeGridPanelMask.hide();
             });
 
             this.contentTreeGridPanel.onTreeGridSelectionChanged((event: api.app.browse.grid.TreeGridSelectionChangedEvent) => {

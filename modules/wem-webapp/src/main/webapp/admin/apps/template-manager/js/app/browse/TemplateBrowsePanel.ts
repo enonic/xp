@@ -36,7 +36,7 @@ module app.browse {
 
             api.content.site.template.SiteTemplateDeletedEvent.on((event: api.content.site.template.SiteTemplateDeletedEvent) => {
                 var siteTemplateKey = event.getSiteTemplateKey();
-                this.templateTreeGridPanel.remove(siteTemplateKey.toString());
+                this.templateTreeGridPanel.removeItem(siteTemplateKey.toString());
                 console.log(siteTemplateKey);
             });
 

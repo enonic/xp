@@ -15,7 +15,7 @@ module api.app.browse.grid {
         contextMenu:api.ui.menu.ContextMenu;
     }
 
-    export class TreeGridPanel {
+    export class TreeGridPanel extends api.ui.Panel {
 
         static GRID = "grid";
         static TREE = "tree";
@@ -36,8 +36,11 @@ module api.app.browse.grid {
 
         private treeGridItemDoubleClickedListeners: {(event: TreeGridItemDoubleClickedEvent):void}[] = [];
         private treeGridSelectionChangedListeners: {(event: TreeGridSelectionChangedEvent):void}[] = [];
+        private treeGridStoreLoadedListeners: {():void}[] = [];
 
         constructor(params: TreeGridPanelParams) {
+            super("grid-container");
+            this.setScrollY();
 
             this.gridStore = params.gridStore;
             this.treeStore = params.treeStore;
@@ -45,25 +48,36 @@ module api.app.browse.grid {
             this.gridConfig = params.gridConfig;
             this.treeConfig = params.treeConfig;
             this.contextMenu = params.contextMenu;
+
+            this.onRendered((event) => {
+                this.createExtGrid();
+            });
         }
 
-        //TODO: move to constructor after ext has been dropped
-        create(region?: string, renderTo?: string) {
+        private createExtGrid() {
 
             this.ext = <any> new Ext.panel.Panel({
                 cls: 'tree-grid-panel',
-                region: region,
-                renderTo: renderTo,
+                region: 'center',
+                renderTo: this.getId(),
                 layout: 'card',
                 border: false,
                 activeItem: this.activeList,
                 itemId: this.itemId
             });
 
+            var onLoadListener = (store, node, records, success, opts) => {
+                // update the parent node deletable flag if no records were loaded
+                if (!records || records.length == 0) {
+                    node.set('deletable', true);
+                }
+                this.notifyTreeGridStoreLoaded();
+            };
+
             var gridPanel = new GridPanel(this.gridStore, this.columns, this.keyField, this.gridConfig);
             this.ext.add(gridPanel.getExt());
 
-            this.gridStore.on('datachanged', this.fireUpdateEvent, this);
+            this.gridStore.on('load', onLoadListener);
 
             var treeColumns = Ext.clone(this.columns);
             treeColumns[0].xtype = 'treecolumn';
@@ -71,13 +85,7 @@ module api.app.browse.grid {
             var treePanel = new TreePanel(this.treeStore, treeColumns, this.keyField, this.treeConfig);
             this.ext.add(treePanel.getExt());
 
-            this.treeStore.on('datachanged', this.fireUpdateEvent, this);
-            this.treeStore.on('load', (store, node, records, success, opts) => {
-                // update the parent node deletable flag if no records were loaded
-                if (!records || records.length == 0) {
-                    node.set('deletable', true);
-                }
-            });
+            this.treeStore.on('load', onLoadListener);
 
             treePanel.onTreeSelectionChanged((event: TreeSelectionChangedEvent) => {
 
@@ -130,6 +138,23 @@ module api.app.browse.grid {
             });
         }
 
+        onTreeGridStoreLoaded(listener: ()=>void) {
+            this.treeGridStoreLoadedListeners.push(listener);
+        }
+
+        unTreeGridStoreLoaded(listener: ()=>void) {
+            this.treeGridStoreLoadedListeners =
+            this.treeGridStoreLoadedListeners.filter((currentListener: ()=>void)=> {
+                return currentListener != listener;
+            });
+        }
+
+        private notifyTreeGridStoreLoaded() {
+            this.treeGridStoreLoadedListeners.forEach((listener: ()=>void) => {
+                listener();
+            })
+        }
+
         private notifyTreeGridSelectionChanged(selectedModels: Ext_data_Model[], selectionCount: number) {
             this.treeGridSelectionChangedListeners.forEach((listener: (event: TreeGridSelectionChangedEvent)=>void) => {
                 listener.call(this, new TreeGridSelectionChangedEvent(selectedModels, selectionCount));
@@ -140,11 +165,6 @@ module api.app.browse.grid {
             this.treeGridItemDoubleClickedListeners.forEach((listener: (event: TreeGridItemDoubleClickedEvent)=>void)=> {
                 listener.call(this, new TreeGridItemDoubleClickedEvent(clickedModel));
             });
-        }
-
-
-        private fireUpdateEvent(values) {
-            this.ext.fireEvent('datachanged', values);
         }
 
         getActiveList(): Ext_panel_Table {
@@ -201,6 +221,7 @@ module api.app.browse.grid {
                     root.appendChild(root.createNode(data[i]));
                 }
             }
+            this.notifyTreeGridStoreLoaded();
         }
 
         removeAll() {
@@ -213,8 +234,8 @@ module api.app.browse.grid {
             }
         }
 
-        remove(keyFieldValue: any) {
-            this.deselect(keyFieldValue);
+        removeItem(keyFieldValue: any) {
+            this.deselectItem(keyFieldValue);
             var activeList = this.getActiveList();
             if (this.activeList == TreeGridPanel.GRID) {
                 var store = this.getActiveList().getStore();
@@ -246,7 +267,7 @@ module api.app.browse.grid {
             this.getActiveList().getSelectionModel().deselectAll();
         }
 
-        deselect(keyFieldValue: any) {
+        deselectItem(keyFieldValue: any) {
             var selModel = this.getActiveList().getSelectionModel(),
                 selNodes = selModel.getSelection(),
                 i;

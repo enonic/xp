@@ -34,7 +34,7 @@ module app.browse {
 
             api.module.ModuleDeletedEvent.on((event: api.module.ModuleDeletedEvent) => {
                 var moduleKey = event.getModuleKey();
-                this.moduleTreeGridPanel.remove(moduleKey.toString());
+                this.moduleTreeGridPanel.removeItem(moduleKey.toString());
             });
 
             this.moduleTreeGridPanel.onTreeGridSelectionChanged((event: api.app.browse.grid.TreeGridSelectionChangedEvent) => {

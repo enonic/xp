@@ -323,19 +323,11 @@ module api.dom {
 
         getOffset(): { top:number; left:number;
         } {
-            var el = this.el;
-            var x = 0,
-                y = 0;
-            while (el && !isNaN(el.offsetLeft) && !isNaN(el.offsetTop)) {
-                x += el.offsetLeft - el.scrollLeft;
-                y += el.offsetTop - el.scrollTop;
-                el = <HTMLElement> el.offsetParent;
-            }
-            return { top: y, left: x };
+            return $(this.el).offset();
         }
 
         getOffsetTop(): number {
-            return $(this.el).offset().top;
+            return this.getOffset().top;
         }
 
         getOffsetTopRelativeToParent(): number {
@@ -343,7 +335,7 @@ module api.dom {
         }
 
         getOffsetLeft(): number {
-            return $(this.el).offset().left;
+            return this.getOffset().left;
         }
 
         getOffsetLeftRelativeToParent(): number {

@@ -29,8 +29,6 @@ module api.app.browse {
 
         private filterPanel: api.app.browse.filter.BrowseFilterPanel;
 
-        private gridContainer: api.app.browse.GridContainer;
-
         private gridAndFilterAndDetailSplitPanel;
 
         private gridAndToolbarContainer: api.ui.Panel;
@@ -47,14 +45,12 @@ module api.app.browse {
             this.filterPanel = params.filterPanel;
 
             this.browseItemPanel.onDeselected((event: ItemDeselectedEvent<M>) => {
-                this.treeGridPanel.deselect(event.getBrowseItem().getPath());
+                this.treeGridPanel.deselectItem(event.getBrowseItem().getPath());
             });
-
-            this.gridContainer = new api.app.browse.GridContainer(this.treeGridPanel);
 
             this.gridAndToolbarContainer = new api.ui.Panel();
             this.gridAndToolbarContainer.appendChild(this.browseToolbar);
-            this.gridAndToolbarContainer.appendChild(this.gridContainer);
+            this.gridAndToolbarContainer.appendChild(this.treeGridPanel);
 
             // this.gridAndDetailSplitPanel = new api.ui.SplitPanel(this.gridAndToolbarContainer, this.browseItemPanel);
             if (this.gridPanel2 != null) {

@@ -24,20 +24,21 @@ module api.ui {
         }
 
         show() {
-            if (this.masked && this.masked.isVisible()) {
+            if (this.masked) {
                 this.positionOver(this.masked);
-        }
+            }
             super.show();
         }
 
         private positionOver(masked: api.dom.Element) {
             var maskedEl = masked.getEl();
-            var maskedOffsets = maskedEl.getOffset();
+
+            var maskedOffset = maskedEl.getOffset();
             var maskedWidth = maskedEl.getWidthWithBorder();
             var maskedHeight = maskedEl.getHeightWithBorder();
 
-            var maskEl = this.getEl();
-            maskEl.setTop(maskedOffsets.top + "px").setLeft(maskedOffsets.left + "px").setWidth(maskedWidth + "px").setHeight(maskedHeight + "px");
+            this.getEl().setTop(maskedOffset.top + "px").setLeft(maskedOffset.left + "px").
+                setWidth(maskedWidth + "px").setHeight(maskedHeight + "px");
         }
 
         getMasked(): api.dom.Element {

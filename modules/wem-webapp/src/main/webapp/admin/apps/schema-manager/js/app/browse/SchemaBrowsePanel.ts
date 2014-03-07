@@ -31,7 +31,7 @@ module app.browse {
                 for (var i = 0; i < schemas.length; i++) {
                     var schema: api.schema.Schema = schemas[i];
                     // make up schema key
-                    treeGridPanel.remove(schema.getSchemaKind().toString() + ":" + schema.getName());
+                    treeGridPanel.removeItem(schema.getSchemaKind().toString() + ":" + schema.getName());
                 }
             });
 

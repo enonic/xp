@@ -4,9 +4,15 @@ module app.view {
 
         private frame: api.dom.IFrameEl;
 
+        private mask: api.ui.LoadMask;
+
         constructor() {
             super("item-preview-panel");
+            this.mask = new api.ui.LoadMask(this);
             this.frame = new api.dom.IFrameEl();
+            this.frame.getEl().addEventListener("load", () => {
+                this.mask.hide();
+            });
             this.appendChild(this.frame);
         }
 
@@ -16,16 +22,18 @@ module app.view {
                 escapedPath = escapedPath.substring(1);
             }
 
+            this.mask.show();
+
             new api.content.page.IsRenderableRequest(item.getModel().getContentId()).send()
                 .then((response: api.rest.JsonResponse<boolean>) => {
-                    console.log(response);
                     if (response.getResult()) {
                         this.getEl().removeClass('no-preview icon-blocked');
                         this.frame.setSrc(api.util.getUri("portal/live/" + escapedPath));
                     } else {
                         this.getEl().addClass('no-preview icon-blocked').setInnerHtml("");
+                        this.mask.hide();
                     }
-                }).done();
+                });
         }
     }
 }
