@@ -7,7 +7,7 @@ module LiveEdit.ui.contextmenu.menuitem {
 
         constructor(menu) {
             super({
-                text: 'Reset to Default',
+                text: 'Reset',
                 name: 'reset',
                 handler: (event:Event) => {
                     this.onReset();

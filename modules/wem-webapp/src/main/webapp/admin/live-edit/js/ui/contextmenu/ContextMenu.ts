@@ -95,7 +95,6 @@ module LiveEdit.ui.contextmenu {
             var menuItem = LiveEdit.ui.contextmenu.menuitem;
 
             this.menuItems.push(new menuItem.ParentMenuItem(this));
-            this.menuItems.push(new menuItem.DetailsMenuItem(this));
             this.menuItems.push(new menuItem.InsertMenuItem(this));
             this.menuItems.push(new menuItem.ResetMenuItem(this));
             this.menuItems.push(new menuItem.EmptyMenuItem(this));
