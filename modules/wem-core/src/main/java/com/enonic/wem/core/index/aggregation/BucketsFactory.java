@@ -26,7 +26,7 @@ public class BucketsFactory
     }
 
 
-    public static Buckets createFromDateRange( final Collection<DateRange.Bucket> buckets )
+    public static Buckets createFromDateRange( final Collection<? extends DateRange.Bucket> buckets )
     {
         final Buckets.Builder bucketsBuilder = new Buckets.Builder();
 

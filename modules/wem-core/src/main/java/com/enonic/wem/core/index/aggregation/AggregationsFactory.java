@@ -44,14 +44,14 @@ public class AggregationsFactory
     private BucketAggregation createTermsAggregation( final Terms termsAggregation )
     {
         return BucketAggregation.bucketAggregation( termsAggregation.getName() ).
-            buckets( BucketsFactory.createFromTerms( termsAggregation.buckets() ) ).
+            buckets( BucketsFactory.createFromTerms( termsAggregation.getBuckets() ) ).
             build();
     }
 
     private BucketAggregation createDateRangeFacet( final DateRange dateRangeAggregation )
     {
         return BucketAggregation.bucketAggregation( dateRangeAggregation.getName() ).
-            buckets( BucketsFactory.createFromDateRange( dateRangeAggregation.buckets() ) ).
+            buckets( BucketsFactory.createFromDateRange( dateRangeAggregation.getBuckets() ) ).
             build();
     }
 

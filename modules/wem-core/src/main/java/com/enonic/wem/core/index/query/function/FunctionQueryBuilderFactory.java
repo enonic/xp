@@ -3,11 +3,11 @@ package com.enonic.wem.core.index.query.function;
 import org.elasticsearch.index.query.MatchAllQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.SimpleQueryStringBuilder;
+import org.elasticsearch.index.query.SimpleQueryStringFlag;
 
 import com.google.common.base.Strings;
 
 import com.enonic.wem.api.query.expr.FunctionExpr;
-import com.enonic.wem.core.index.query.IndexQueryFieldNameResolver;
 
 public class FunctionQueryBuilderFactory
 {
@@ -37,7 +37,7 @@ public class FunctionQueryBuilderFactory
         }
 
         SimpleQueryStringBuilder builder = new SimpleQueryStringBuilder( arguments.getSearchString() ).
-            defaultOperator( arguments.getOperator() );
+            defaultOperator( arguments.getOperator() ).flags( SimpleQueryStringFlag.ESCAPE );
 
         appendQueryFieldNames( arguments, builder );
 
@@ -47,7 +47,6 @@ public class FunctionQueryBuilderFactory
     private QueryBuilder createNGram( final FunctionExpr functionExpr )
     {
         final NGramFunctionArguments arguments = new NGramFunctionArguments( functionExpr.getArguments() );
-
 
         SimpleQueryStringBuilder builder = new SimpleQueryStringBuilder( arguments.getSearchString() ).
             defaultOperator( arguments.getOperator() );
