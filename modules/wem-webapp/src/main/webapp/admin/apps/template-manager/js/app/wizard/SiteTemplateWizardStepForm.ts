@@ -15,8 +15,10 @@ module app.wizard {
 
         renderNew() {
             var fieldSet = new api.ui.form.Fieldset();
-            fieldSet.add(new api.ui.form.FormItem(new api.ui.form.FormItemBuilder(this.descriptionField).
-                setLabel("Description")));
+            var descriptionField = new api.ui.form.FormItem(new api.ui.form.FormItemBuilder(this.descriptionField).
+                setLabel("Description"));
+            descriptionField.getInput().wrapWithElement(new api.dom.DivEl("input-wrapper"));
+            fieldSet.add(descriptionField);
             fieldSet.add(new api.ui.form.FormItem(new api.ui.form.FormItemBuilder(this.rootContentTypeComboBox).
                 setLabel("Root Content Type").
                 setValidator(api.ui.form.Validators.notEmpty)));

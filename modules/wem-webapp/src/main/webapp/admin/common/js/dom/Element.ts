@@ -218,6 +218,26 @@ module api.dom {
             this.insert(this, parent, index);
         }
 
+        wrapWithElement(wrapperElement: Element) {
+            var parent = this.getParentElement();
+            if (!parent) {
+                return;
+            }
+            var l = parent.children.length;
+            var childPos: number;
+            for (var i = 0; i < l; i++) {
+                if (parent.children[i] === this) {
+                    childPos = i;
+                    break;
+                }
+            }
+            parent.removeChild(this);
+            wrapperElement.appendChild(this);
+            // add wrapper to parent in the same position of the current element
+            parent.el.appendChild(wrapperElement.getEl().getHTMLElement());
+            parent.insert(wrapperElement, this, childPos);
+        }
+
         private insert(child: Element, parent: Element, index: number) {
             child.setParentElement(parent);
             parent.getChildren().splice(index, 0, child);

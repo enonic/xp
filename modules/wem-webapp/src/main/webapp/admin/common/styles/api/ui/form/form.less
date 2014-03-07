@@ -28,6 +28,13 @@
     * {
       vertical-align: top;
     }
+
+    .input-wrapper {
+      input, textarea {
+        width: 100%
+      }
+    }
+
   }
 
   .CodeMirror {
@@ -53,7 +60,8 @@
 
     label + input,
     label + select,
-    label + .composite-input {
+    label + .composite-input,
+    label + .input-wrapper {
       margin-left: @form-label-width;
     }
 
