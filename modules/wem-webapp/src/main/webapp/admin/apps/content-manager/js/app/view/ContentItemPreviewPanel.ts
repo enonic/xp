@@ -15,8 +15,17 @@ module app.view {
             if (escapedPath.charAt(0) == '/') {
                 escapedPath = escapedPath.substring(1);
             }
-            this.frame.setSrc(api.util.getUri("portal/live/" + escapedPath));
-        }
 
+            new api.content.page.IsRenderableRequest(item.getModel().getContentId()).send()
+                .then((response: api.rest.JsonResponse<boolean>) => {
+                    console.log(response);
+                    if (response.getResult()) {
+                        this.getEl().removeClass('no-preview icon-blocked');
+                        this.frame.setSrc(api.util.getUri("portal/live/" + escapedPath));
+                    } else {
+                        this.getEl().addClass('no-preview icon-blocked').setInnerHtml("");
+                    }
+                }).done();
+        }
     }
 }
