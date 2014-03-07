@@ -14,7 +14,7 @@ module api.ui {
         private oldValue:string = "";
 
         constructor(name:string) {
-            super("textarea");
+            super("textarea", "text-area");
             this.getEl().setAttribute("name", name);
 
             this.getEl().addEventListener('input', () => {
