@@ -124,7 +124,7 @@ module api.ui.selector.combobox {
                 this.emptyDropdown.getEl().setInnerHtml("No matching items");
                 this.emptyDropdown.show();
             }
-            this.arrow.hide();
+            this.arrow.addClass('active');
 
             this.dropdown.render();
         }
@@ -139,7 +139,7 @@ module api.ui.selector.combobox {
         }
 
         hideDropdown() {
-            this.arrow.show();
+            this.arrow.removeClass('active');
             this.emptyDropdown.hide();
             this.dropdown.hide();
         }
@@ -302,6 +302,9 @@ module api.ui.selector.combobox {
                 if (!this.isDropdownShown()) {
                     this.showDropdown();
                     this.giveFocus();
+                } else {
+                    this.hideDropdown();
+                    this.giveFocus();
                 }
             });
 
@@ -463,7 +466,7 @@ module api.ui.selector.combobox {
             var dropdownEl = this.dropdown.getEl();
             var inputEl = this.input.getEl();
 
-            dropdownEl.setTopPx(inputEl.getHeight() - inputEl.getBorderBottomWidth());
+            dropdownEl.setTopPx(inputEl.getHeightWithBorder() - inputEl.getBorderBottomWidth());
 
             if (dropdownEl.getWidth() != inputEl.getWidth()) {
                 dropdownEl.setWidth(inputEl.getWidth() + "px");
@@ -483,7 +486,7 @@ module api.ui.selector.combobox {
         }
 
         private adjustEmptyDropdownSize() {
-            this.emptyDropdown.getEl().setTopPx(this.input.getEl().getHeight() - this.input.getEl().getBorderBottomWidth());
+            this.emptyDropdown.getEl().setTopPx(this.input.getEl().getHeightWithBorder() - this.input.getEl().getBorderBottomWidth());
         }
 
         onOptionSelected(listener: (event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>)=>void) {
