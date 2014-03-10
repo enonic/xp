@@ -48,7 +48,11 @@ public class ContentDataSerializer
         addPropertyIfNotNull( contentAsData, EMBEDDED, content.isEmbedded() );
 
         contentAsData.add( content.getContentData().toDataSet( CONTENT_DATA ) );
-        contentAsData.add( FORM_SERIALIZER.toData( content.getForm() ) );
+
+        if ( content.getForm() != null )
+        {
+            contentAsData.add( FORM_SERIALIZER.toData( content.getForm() ) );
+        }
 
         if ( content.isPage() )
         {
