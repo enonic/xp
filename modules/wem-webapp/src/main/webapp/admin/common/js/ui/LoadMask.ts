@@ -16,7 +16,7 @@ module api.ui {
             this.addClass("load-mask");
 
             this.splash = new api.dom.DivEl("mask-splash");
-            this.spinner = new api.dom.DivEl("dots");
+            this.spinner = new api.dom.DivEl("spinner");
             this.splash.appendChild(this.spinner);
 
             this.appendChild(this.splash);

@@ -103,3 +103,10 @@
     color: @color;
   }
 }
+
+.animation (@name, @duration: infinite, @delay: 0, @ease: ease) {
+  -webkit-animation: @name @duration @delay @ease;
+  -moz-animation: @name @duration @delay @ease;
+  -ms-animation: @name @duration @delay @ease;
+  animation: @name @duration @delay @ease;
+}
