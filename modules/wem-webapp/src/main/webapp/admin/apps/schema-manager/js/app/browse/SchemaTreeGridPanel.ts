@@ -47,7 +47,9 @@ module app.browse {
                 {
                     header: 'Modified',
                     dataIndex: 'modifiedTime',
-                    renderer: this.prettyDateRenderer
+                    renderer: this.prettyDateRenderer,
+                    maxWidth: 190,
+                    flex: 1
                 }
             ];
         }
@@ -91,7 +93,13 @@ module app.browse {
                 if (parent && Ext.isFunction(parent['humane.date'])) {
                     return parent['humane.date'](value);
                 } else {
-                    return value;
+                    return value.getFullYear() + "-" +
+                        (value.getMonth() < 9 ? "0" : "") + (value.getMonth() + 1) + "-" +
+                        (value.getDate() < 10 ? "0" : "") + value.getDate() + " " +
+                        (value.getHours() < 10 ? "0" : "") + value.getHours() + ":" +
+                        (value.getMinutes() < 10 ? "0" : "") + value.getMinutes() + ":" +
+                        (value.getSeconds() < 10 ? "0" : "") + value.getSeconds() + " " +
+                        (/(GMT[-,+]\d*)/g).exec(value)[0];
                 }
             }
             catch (e) {
