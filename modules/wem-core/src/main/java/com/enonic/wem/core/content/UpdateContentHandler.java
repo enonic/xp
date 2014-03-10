@@ -14,7 +14,6 @@ import com.google.common.io.InputSupplier;
 
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.GetContentById;
 import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.ValidateContentData;
@@ -26,6 +25,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyVisitor;
 import com.enonic.wem.api.data.type.ValueTypes;
@@ -40,10 +40,8 @@ import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.entity.DeleteNodeByPathService;
 import com.enonic.wem.core.entity.UpdateNodeHandler;
 import com.enonic.wem.core.index.IndexService;
-import com.enonic.wem.core.relationship.RelationshipService;
 
 import static com.enonic.wem.api.content.Content.newContent;
-import static com.enonic.wem.api.content.attachment.Attachment.newAttachment;
 
 public class UpdateContentHandler
     extends CommandHandler<UpdateContent>
@@ -78,6 +76,9 @@ public class UpdateContentHandler
         editedContent = newContent( editedContent ).
             modifier( command.getModifier() ).build();
 
+        final Thumbnail thumbnail = resoveThumbnail( command, editedContent );
+        editedContent = newContent( editedContent ).thumbnail( thumbnail ).build();
+
         final Attachments attachments;
 
         if ( command.getUpdateAttachments() != null )
@@ -87,12 +88,6 @@ public class UpdateContentHandler
         else
         {
             attachments = getCurrentAttachments( command.getContentId() );
-        }
-
-        final Attachment thumbnailAttachment = resolveThumbnailAttachment( command, editedContent );
-        if ( thumbnailAttachment != null )
-        {
-            attachments.add( thumbnailAttachment );
         }
 
         final UpdateNode updateNodeCommand = translator.toUpdateNodeCommand( editedContent, attachments );
@@ -188,9 +183,10 @@ public class UpdateContentHandler
         }
     }
 
-    private Attachment resolveThumbnailAttachment( final UpdateContent command, final Content content )
+    private Thumbnail resoveThumbnail( final UpdateContent command, final Content content )
     {
         final ContentType contentType = getContentType( content.getType() );
+
         if ( contentType.getSuperType() == null )
         {
             return null;
@@ -199,19 +195,20 @@ public class UpdateContentHandler
         if ( contentType.getSuperType().isMedia() )
         {
             Attachment mediaAttachment = command.getAttachment( content.getName().toString() );
+
             if ( mediaAttachment == null )
             {
                 mediaAttachment = command.getUpdateAttachments().getAttachments().first();
             }
             if ( mediaAttachment != null )
             {
-                return createThumbnailAttachment( mediaAttachment );
+                return createThumbnail( mediaAttachment );
             }
         }
         return null;
     }
 
-    private Attachment createThumbnailAttachment( final Attachment attachment )
+    private Thumbnail createThumbnail( final Attachment attachment )
     {
         final Blob originalImage = context.getClient().execute( Commands.blob().get( attachment.getBlobKey() ) );
         final InputSupplier<ByteArrayInputStream> inputSupplier = ThumbnailFactory.resolve( originalImage );
@@ -225,12 +222,7 @@ public class UpdateContentHandler
             throw new RuntimeException( "Failed to create blob for thumbnail attachment: " + e.getMessage() );
         }
 
-        return newAttachment( attachment ).
-            blobKey( thumbnailBlob.getKey() ).
-            name( CreateContent.THUMBNAIL_NAME ).
-            mimeType( THUMBNAIL_MIME_TYPE ).
-            size( thumbnailBlob.getLength() ).
-            build();
+        return Thumbnail.from( thumbnailBlob.getKey(), THUMBNAIL_MIME_TYPE, thumbnailBlob.getLength() );
     }
 
     private ContentType getContentType( final ContentTypeName contentTypeName )

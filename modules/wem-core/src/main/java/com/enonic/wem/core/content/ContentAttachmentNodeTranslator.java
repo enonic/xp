@@ -37,7 +37,6 @@ public class ContentAttachmentNodeTranslator
             name( contentAttachment.getName() ).build();
     }
 
-
     public Attachment toContentAttachment( final com.enonic.wem.api.entity.Attachment entityAttachment )
     {
         if ( entityAttachment == null )

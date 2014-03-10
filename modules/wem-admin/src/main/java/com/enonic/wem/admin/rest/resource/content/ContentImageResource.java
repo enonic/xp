@@ -15,11 +15,11 @@ import javax.ws.rs.core.Response;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.content.ContentType;
@@ -67,15 +67,15 @@ public class ContentImageResource
 
         if ( thumbnail )
         {
-            // check if content has a thumbnail attachment ("_thumb.png")
-            final Attachment attachmentThumbnail = findAttachment( contentId, CreateContent.THUMBNAIL_NAME );
-            if ( attachmentThumbnail != null )
+            final Thumbnail contentThumbnail = content.getThumbnail();
+
+            if ( contentThumbnail != null )
             {
-                final Blob blob = client.execute( Commands.blob().get( attachmentThumbnail.getBlobKey() ) );
+                final Blob blob = client.execute( Commands.blob().get( contentThumbnail.getBlobKey() ) );
                 if ( blob != null )
                 {
                     final BufferedImage thumbnailImage = helper.getImageFromBlob( blob, size, ScaleSquareFilter );
-                    return Response.ok( thumbnailImage, attachmentThumbnail.getMimeType() ).build();
+                    return Response.ok( thumbnailImage, contentThumbnail.getMimeType() ).build();
                 }
             }
         }

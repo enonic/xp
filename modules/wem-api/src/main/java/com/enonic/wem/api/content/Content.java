@@ -10,6 +10,7 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.site.Site;
+import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -62,6 +63,8 @@ public final class Content
 
     private final Page page;
 
+    private final Thumbnail thumbnail;
+
     private Content( final BaseBuilder builder )
     {
         Preconditions.checkNotNull( builder.name, "name is required for a Content" );
@@ -95,6 +98,7 @@ public final class Content
         this.childrenIds = builder.childrenIdsBuilder.build();
         this.site = builder.site;
         this.page = builder.page;
+        this.thumbnail = builder.thumbnail;
     }
 
     public ContentPath getParentPath()
@@ -207,6 +211,11 @@ public final class Content
         return page;
     }
 
+    public Thumbnail getThumbnail()
+    {
+        return thumbnail;
+    }
+
     @Override
     public void checkIllegalEdit( final Content to )
         throws IllegalEditException
@@ -220,6 +229,7 @@ public final class Content
         IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), Content.class );
         IllegalEdit.check( "modifier", this.getModifier(), to.getModifier(), Content.class );
         IllegalEdit.check( "owner", this.getOwner(), to.getOwner(), Content.class );
+        IllegalEdit.check( "thumbnail", this.getThumbnail(), to.getThumbnail(), Content.class );
     }
 
     @Override
@@ -294,6 +304,8 @@ public final class Content
 
         Page page;
 
+        Thumbnail thumbnail;
+
         BaseBuilder()
         {
             this.contentData = new ContentData();
@@ -320,6 +332,7 @@ public final class Content
             this.childrenIdsBuilder.addAll( content.childrenIds );
             this.site = content.site;
             this.page = content.page;
+            this.thumbnail = content.thumbnail;
         }
     }
 
@@ -343,7 +356,8 @@ public final class Content
             return this;
         }
 
-        public EditBuilder draft( boolean draft) {
+        public EditBuilder draft( boolean draft )
+        {
             this.draft = draft;
             return this;
         }
@@ -536,6 +550,12 @@ public final class Content
         public Builder site( final Site site )
         {
             this.site = site;
+            return this;
+        }
+
+        public Builder thumbnail( final Thumbnail thumbnail )
+        {
+            this.thumbnail = thumbnail;
             return this;
         }
 

@@ -6,37 +6,43 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.api.icon.Icon;
+import com.enonic.wem.api.content.thumb.Thumbnail;
 
 public class IconJson
 {
-    private final Icon icon;
+    private final Thumbnail thumbnail;
 
     @JsonIgnore
-    public IconJson( final Icon icon )
+    public IconJson( final Thumbnail thumbnail )
     {
-        this.icon = icon;
+        this.thumbnail = thumbnail;
     }
 
     @JsonCreator
     public IconJson( @JsonProperty("blobKey") final String blobKey, @JsonProperty("mimeType") final String mimeType )
     {
-        this.icon = Icon.from( new BlobKey( blobKey ), mimeType );
+        this.thumbnail = Thumbnail.from( new BlobKey( blobKey ), mimeType, 0 );
     }
 
     public String getBlobKey()
     {
-        return this.icon.getBlobKey().toString();
+        return this.thumbnail.getBlobKey().toString();
     }
 
     public String getMimeType()
     {
-        return this.icon.getMimeType();
+        return this.thumbnail.getMimeType();
+    }
+
+
+    public long getSize()
+    {
+        return this.thumbnail.getSize();
     }
 
     @JsonIgnore
-    public Icon getIcon()
+    public Thumbnail getThumbnail()
     {
-        return icon;
+        return thumbnail;
     }
 }

@@ -118,4 +118,26 @@ public class ContentNodeTranslatorTest
         assertTrue( !testIndexConfig.enabled() && !testIndexConfig.fulltextEnabled() && !testIndexConfig.tokenizeEnabled() );
     }
 
+    @Test
+    public void translate_attachment_to_thumbnail()
+        throws Exception
+    {
+        final DataSet rootDataSet = RootDataSet.newDataSet().set( "test", "testValue", ValueTypes.STRING ).build();
+
+        final CreateContent mycontent = new CreateContent().
+            name( "mycontent" ).
+            parent( ContentPath.ROOT ).
+            contentType( ContentTypeName.from( "my-content-type" ) ).
+            contentData( new ContentData( rootDataSet.toRootDataSet() ) );
+
+        final CreateNode createNode = translator.toCreateNode( mycontent );
+
+        final EntityIndexConfig entityIndexConfig = createNode.getEntityIndexConfig();
+
+        final PropertyIndexConfig testIndexConfig = entityIndexConfig.getPropertyIndexConfig( DataPath.from( "contentdata.test" ) );
+
+        assertNotNull( testIndexConfig );
+        assertTrue( testIndexConfig.enabled() && testIndexConfig.fulltextEnabled() && testIndexConfig.tokenizeEnabled() );
+    }
+
 }

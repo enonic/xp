@@ -18,6 +18,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
+import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIndexConfig;
@@ -28,8 +29,7 @@ import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-
-import static com.enonic.wem.api.content.attachment.Attachment.newAttachment;
+import com.enonic.wem.core.content.serializer.ThumbnailAttachmentSerializer;
 
 public class ContentNodeTranslator
 {
@@ -40,6 +40,7 @@ public class ContentNodeTranslator
     public static final String FORM_PATH = "form";
 
     private static final ContentAttachmentNodeTranslator CONTENT_ATTACHMENT_NODE_TRANSLATOR = new ContentAttachmentNodeTranslator();
+
 
     private final ContentDataSerializer CONTENT_SERIALIZER = new ContentDataSerializer();
 
@@ -56,11 +57,16 @@ public class ContentNodeTranslator
         final RootDataSet contentAsData = CONTENT_SERIALIZER.toData( command );
         final EntityIndexConfig entityIndexConfig = ContentEntityIndexConfigFactory.create();
 
-        Attachments attachments = command.getAttachments();
-        final Attachment thumbnail = resolveThumbnailAttachment( command );
+        Attachments contentAttachments = command.getAttachments();
+
+        final com.enonic.wem.api.entity.Attachments.Builder nodeAttachmentsBuilder = com.enonic.wem.api.entity.Attachments.builder().
+            addAll( CONTENT_ATTACHMENT_NODE_TRANSLATOR.toNodeAttachments( contentAttachments ) );
+
+        final Thumbnail thumbnail = resolveThumbnailAttachment( command );
+
         if ( thumbnail != null )
         {
-            attachments = attachments.add( thumbnail );
+            nodeAttachmentsBuilder.add( ThumbnailAttachmentSerializer.toAttachment( thumbnail ) );
         }
 
         final CreateNode createNode = new CreateNode();
@@ -68,7 +74,8 @@ public class ContentNodeTranslator
         createNode.parent( resolveParentNodePath( command.getParentContentPath() ) );
         createNode.embed( command.isEmbed() );
         createNode.data( contentAsData );
-        createNode.attachments( CONTENT_ATTACHMENT_NODE_TRANSLATOR.toNodeAttachments( attachments ) );
+        createNode.attachments( nodeAttachmentsBuilder.build() );
+
         createNode.entityIndexConfig( entityIndexConfig );
         return createNode;
     }
@@ -104,6 +111,22 @@ public class ContentNodeTranslator
         final NodePath parentContentPathAsNodePath = parentNodePath.removeFromBeginning( CONTENTS_ROOT_PATH );
         final ContentPath parentContentPath = ContentPath.from( parentContentPathAsNodePath.toString() );
 
+        final com.enonic.wem.api.entity.Attachments nodeAttachments = node.attachments();
+
+        final com.enonic.wem.api.entity.Attachment thumbnailAttachment =
+            nodeAttachments.getAttachment( ThumbnailAttachmentSerializer.THUMB_NAME );
+
+        final Thumbnail thumbnail;
+
+        if ( thumbnailAttachment != null )
+        {
+            thumbnail = ThumbnailAttachmentSerializer.toThumbnail( thumbnailAttachment );
+        }
+        else
+        {
+            thumbnail = null;
+        }
+
         final Content.Builder builder = CONTENT_SERIALIZER.fromData( node.data() );
         builder.
             id( ContentId.from( node.id() ) ).
@@ -112,7 +135,8 @@ public class ContentNodeTranslator
             createdTime( node.getCreatedTime() ).
             creator( node.getCreator() ).
             modifiedTime( node.getModifiedTime() ).
-            modifier( node.getModifier() );
+            modifier( node.getModifier() ).
+            thumbnail( thumbnail );
 
         return builder.build();
     }
@@ -128,9 +152,25 @@ public class ContentNodeTranslator
             @Override
             public Node.EditBuilder edit( final Node toBeEdited )
             {
+
+                final com.enonic.wem.api.entity.Attachments contentAttachmentsAsNodeAttachments =
+                    CONTENT_ATTACHMENT_NODE_TRANSLATOR.toNodeAttachments( attachments );
+
+                final com.enonic.wem.api.entity.Attachments.Builder nodeAttachmentsBuilder =
+                    com.enonic.wem.api.entity.Attachments.builder().
+                        addAll( contentAttachmentsAsNodeAttachments );
+
+                final com.enonic.wem.api.entity.Attachment thumbnailAttachment =
+                    ThumbnailAttachmentSerializer.toAttachment( content.getThumbnail() );
+
+                if ( thumbnailAttachment != null )
+                {
+                    nodeAttachmentsBuilder.add( thumbnailAttachment );
+                }
+
                 return Node.editNode( toBeEdited ).
                     name( NodeName.from( content.getName().toString() ) ).
-                    attachments( CONTENT_ATTACHMENT_NODE_TRANSLATOR.toNodeAttachments( attachments ) ).
+                    attachments( nodeAttachmentsBuilder.build() ).
                     entityIndexConfig( entityIndexConfig ).
                     rootDataSet( rootDataSet );
             }
@@ -155,7 +195,7 @@ public class ContentNodeTranslator
         return NodePath.newPath( CONTENTS_ROOT_PATH ).elements( parentContentPath.toString() ).build();
     }
 
-    private Attachment resolveThumbnailAttachment( final CreateContent command )
+    private Thumbnail resolveThumbnailAttachment( final CreateContent command )
     {
         final ContentType contentType = getContentType( command.getContentType() );
         if ( contentType.getSuperType() == null )
@@ -172,13 +212,13 @@ public class ContentNodeTranslator
             }
             if ( mediaAttachment != null )
             {
-                return createThumbnailAttachment( mediaAttachment );
+                return createThumbnail( mediaAttachment );
             }
         }
         return null;
     }
 
-    private Attachment createThumbnailAttachment( final Attachment origin )
+    private Thumbnail createThumbnail( final Attachment origin )
     {
         final Blob originalImage = client.execute( Commands.blob().get( origin.getBlobKey() ) );
         final InputSupplier<ByteArrayInputStream> inputSupplier = ThumbnailFactory.resolve( originalImage );
@@ -191,13 +231,7 @@ public class ContentNodeTranslator
         {
             throw new RuntimeException( "Failed to create blob for thumbnail attachment: " + e.getMessage() );
         }
-
-        return newAttachment( origin ).
-            blobKey( thumbnailBlob.getKey() ).
-            name( CreateContent.THUMBNAIL_NAME ).
-            mimeType( THUMBNAIL_MIME_TYPE ).
-            size( thumbnailBlob.getLength() ).
-            build();
+        return Thumbnail.from( thumbnailBlob.getKey(), THUMBNAIL_MIME_TYPE, thumbnailBlob.getLength() );
     }
 
     private ContentType getContentType( final ContentTypeName contentTypeName )

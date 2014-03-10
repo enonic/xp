@@ -6,7 +6,7 @@ import org.joda.time.DateTime;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.icon.Icon;
+import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.Name;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
@@ -32,7 +32,7 @@ public final class RelationshipType
 
     //private final ContentTypeNames allowedToTypes;
 
-    private final Icon icon;
+    private final Thumbnail thumbnail;
 
     private RelationshipType( final Builder builder )
     {
@@ -43,7 +43,7 @@ public final class RelationshipType
         this.relationshipTypeName = new RelationshipTypeName( builder.name );
         this.fromSemantic = builder.fromSemantic;
         this.toSemantic = builder.toSemantic;
-        this.icon = builder.icon;
+        this.thumbnail = builder.thumbnail;
     }
 
     public String getName()
@@ -81,9 +81,9 @@ public final class RelationshipType
         return toSemantic;
     }
 
-    public Icon getIcon()
+    public Thumbnail getThumbnail()
     {
-        return icon;
+        return thumbnail;
     }
 
 
@@ -147,7 +147,7 @@ public final class RelationshipType
 
         private String toSemantic;
 
-        private Icon icon;
+        private Thumbnail thumbnail;
 
         private Builder()
         {
@@ -162,7 +162,7 @@ public final class RelationshipType
             this.modifiedTime = relationshipType.modifiedTime;
             this.fromSemantic = relationshipType.fromSemantic;
             this.toSemantic = relationshipType.toSemantic;
-            this.icon = relationshipType.icon;
+            this.thumbnail = relationshipType.thumbnail;
         }
 
         public Builder name( String value )
@@ -201,9 +201,9 @@ public final class RelationshipType
             return this;
         }
 
-        public Builder icon( Icon icon )
+        public Builder icon( Thumbnail thumbnail )
         {
-            this.icon = icon;
+            this.thumbnail = thumbnail;
             return this;
         }
 
