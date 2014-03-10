@@ -56,6 +56,12 @@ module app.wizard {
 
             this.baseUrl = api.util.getUri("portal/edit/");
 
+            ShowContentFormEvent.on(() => {
+               if (this.loader) {
+                   this.loader.stop();
+               }
+            });
+
         }
 
         private initialize(): Q.Promise<void> {
@@ -146,7 +152,6 @@ module app.wizard {
                 if (this.frame.isLoaded()) {
                     var liveEditWindow = this.frame.getHTMLElement()["contentWindow"];
                     if (liveEditWindow && liveEditWindow.$liveEdit) {
-
                         // Give loaded page same CONFIG.baseUri as in admin
                         liveEditWindow.CONFIG = {};
                         liveEditWindow.CONFIG.baseUri = CONFIG.baseUri;
@@ -170,6 +175,7 @@ module app.wizard {
                     }
                     else {
                         deferred.reject(null);
+                        this.loader.stop();
                     }
                 }
             }, 50);
@@ -383,7 +389,8 @@ module app.wizard {
                     var newElement = $(data);
                     $(componentPlaceholder.getHTMLElement()).replaceWith(newElement);
                     this.liveEditWindow.LiveEdit.component.Selection.deselect();
-                    this.liveEditWindow.LiveEdit.component.Selection.handleSelect(newElement[0]);
+                    var comp = this.liveEditWindow.getComponentByPath(componentPath);
+                    this.liveEditWindow.LiveEdit.component.Selection.handleSelect(comp.getHTMLElement(), null, true);
                 }
             });
         }
