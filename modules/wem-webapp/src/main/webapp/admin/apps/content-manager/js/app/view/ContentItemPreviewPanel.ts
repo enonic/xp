@@ -30,7 +30,8 @@ module app.view {
                         this.getEl().removeClass('no-preview icon-blocked');
                         this.frame.setSrc(api.util.getUri("portal/live/" + escapedPath));
                     } else {
-                        this.getEl().addClass('no-preview icon-blocked').setInnerHtml("");
+                        this.getEl().addClass('no-preview icon-blocked');
+                        this.frame.setSrc("about:blank");
                         this.mask.hide();
                     }
                 });

@@ -11,6 +11,7 @@
     margin: 0;
     padding: 0;
     overflow: auto;
+    display: block;
   }
 
   &.no-preview {
@@ -18,6 +19,10 @@
     font-family: "Open Sans", sans-serif;
     color: lightgray;
     text-align: center;
+
+    iframe {
+      display: none;
+    }
 
     &.icon-blocked:before {
       position: absolute;
