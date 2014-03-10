@@ -10,7 +10,8 @@ module LiveEdit.component {
         static COMPONENT_ATTR:string = "data-live-edit-component";
         static REGION_ATTR:string = "data-live-edit-region";
 
-        public static handleSelect(element:HTMLElement, event?:JQueryEventObject) {
+        public static handleSelect(element:HTMLElement, event?:JQueryEventObject, waitForRender:boolean = false) {
+
             var component = Component.fromElement(element);
 
             if (Selection.getType(element) == "page") {
@@ -31,7 +32,24 @@ module LiveEdit.component {
                 };
             }
 
-            $(window).trigger('selectComponent.liveEdit', [Component.fromElement(element), mouseClickPagePosition]);
+            if (waitForRender) {
+                var maxIterations = 10;
+                var iterations = 0;
+                var interval = setInterval(() => {
+                    if (element.offsetHeight > 0) {
+                        $(window).trigger('selectComponent.liveEdit', [Component.fromElement(element), mouseClickPagePosition]);
+                        clearInterval(interval);
+                    }
+                    iterations++;
+                    if (iterations >= maxIterations) {
+                        clearInterval(interval);
+                    }
+                }, 300);
+            } else {
+                $(window).trigger('selectComponent.liveEdit', [Component.fromElement(element), mouseClickPagePosition]);
+            }
+
+
         }
 
         public static getType(element:HTMLElement):string {
