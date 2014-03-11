@@ -69,7 +69,7 @@ module api.ui.selector.combobox {
 
             this.onRendered((event: api.dom.ElementRenderedEvent) => {
 
-                var inputEl = input.getEl();
+                var inputEl = this.input.getEl();
                 this.comboBoxDropdown.setTopPx(inputEl.getHeight() - inputEl.getBorderBottomWidth());
                 this.comboBoxDropdown.setWidth(inputEl.getWidth());
             });
