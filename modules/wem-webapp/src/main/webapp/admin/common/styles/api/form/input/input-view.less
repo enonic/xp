@@ -32,7 +32,10 @@
     margin-right: 10px;
 
     .required {
-      .icon-asterix(0.9em, crimson);
+      &:after {
+        content: '*';
+        color:crimson;
+      }
     }
   }
 

@@ -4,6 +4,7 @@
 ///<reference path='KeyBinding.ts'/>
 ///<reference path='KeyBindings.ts'/>
 ///<reference path='Mnemonic.ts' />
+///<reference path='Icon.ts' />
 ///<reference path='Action.ts' />
 ///<reference path='ActionContainer.ts' />
 ///<reference path='Closeable.ts' />

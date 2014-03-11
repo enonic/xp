@@ -43,7 +43,7 @@ module app.wizard {
 
         constructor() {
             super("");
-            this.addClass("icon-menu6 icon-large");
+            this.appendChild(new api.ui.Icon("icon-menu6", api.ui.IconSize.LARGE));
             this.setActive(true);
             this.setEnabled(false);
             this.getEl().addEventListener('click', () => {

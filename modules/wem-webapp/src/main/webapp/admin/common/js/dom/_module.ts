@@ -10,6 +10,7 @@
 ///<reference path='ElementRemovedEvent.ts' />
 ///<reference path='ElementResizedEvent.ts' />
 ///<reference path='AEl.ts' />
+///<reference path='IEl.ts' />
 ///<reference path='Body.ts' />
 ///<reference path='DivEl.ts' />
 ///<reference path='H1El.ts' />
