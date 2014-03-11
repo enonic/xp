@@ -11,7 +11,6 @@ module app.wizard {
                 setName("xml").
                 setMode("xml").
                 setLineNumbers(true).
-                setSize(api.ui.TextAreaSize.LARGE).
                 build();
 
             var text = api.ui.TextInput.middle();

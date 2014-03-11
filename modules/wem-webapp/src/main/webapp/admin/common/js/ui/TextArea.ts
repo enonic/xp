@@ -1,17 +1,14 @@
 module api.ui {
 
-    export enum TextAreaSize {
-        LARGE,
-        MEDIUM,
-        SMALL
-    }
-
     export class TextArea extends api.dom.FormInputEl {
-
 
         private valueChangedListeners: {(event: ValueChangedEvent):void}[] = [];
 
         private oldValue:string = "";
+
+        private attendant: api.dom.Element;
+
+        private clone: api.dom.Element;
 
         constructor(name:string) {
             super("textarea", "text-area");
@@ -21,10 +18,22 @@ module api.ui {
                 this.notifyValueChanged(this.oldValue, this.getValue());
                 this.oldValue = this.getValue();
             });
+
+            this.clone = new api.dom.DivEl().addClass('autosize-clone').addClass(this.getEl().getAttribute('class'));
+            this.attendant = new api.dom.DivEl('autosize-attendant');
+            this.attendant.appendChild(this.clone);
+
+            this.onShown((event: api.dom.ElementShownEvent) => this.updateSize());
+            this.onValueChanged((event: ValueChangedEvent) => this.updateSize());
+            window.addEventListener('resize', () => this.updateSize());
         }
 
         setValue(text:string) {
-            this.getEl().setValue(text);
+            if (this.oldValue != text) {
+                super.setValue(text);
+                this.notifyValueChanged(this.oldValue, text);
+                this.oldValue = text;
+            }
         }
 
         setRows(rows:number) {
@@ -35,22 +44,11 @@ module api.ui {
             this.getEl().setAttribute("cols", columns.toString());
         }
 
-        setSize(size:TextAreaSize) {
-            var sizeClass;
-            switch (size) {
-            case TextAreaSize.LARGE:
-                sizeClass = "large";
-                break;
-            case TextAreaSize.MEDIUM:
-                sizeClass = "medium";
-                break;
-            case TextAreaSize.SMALL:
-                sizeClass = "small";
-                break;
-            default:
-                break;
-            }
-            this.addClass(sizeClass);
+        private updateSize() {
+            this.attendant.insertAfterEl(this);
+            this.clone.getEl().setInnerHtml(this.getValue() + " ");
+            this.getEl().setHeightPx(this.clone.getEl().getHeightWithBorder());
+            this.attendant.remove();
         }
 
         onValueChanged(listener:(event:ValueChangedEvent)=>void) {
@@ -66,7 +64,7 @@ module api.ui {
         private notifyValueChanged(oldValue: string, newValue: string) {
             this.valueChangedListeners.forEach((listener: (event: ValueChangedEvent)=>void)=> {
                 listener.call(this, new ValueChangedEvent(oldValue, newValue));
-            })
+            });
         }
     }
 

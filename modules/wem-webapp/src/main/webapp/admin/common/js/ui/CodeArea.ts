@@ -8,8 +8,6 @@ module api.ui {
 
         lineNumbers:boolean;
 
-        size:api.ui.TextAreaSize;
-
         public setName(value:string) : CodeAreaBuilder {
             this.name = value;
             return this;
@@ -22,11 +20,6 @@ module api.ui {
 
         public setLineNumbers(value:boolean) : CodeAreaBuilder {
             this.lineNumbers = value;
-            return this;
-        }
-
-        public setSize(value:api.ui.TextAreaSize) : CodeAreaBuilder {
-            this.size = value;
             return this;
         }
 
@@ -50,7 +43,6 @@ module api.ui {
 
             super(this.textArea);
 
-            this.textArea.setSize(builder.size);
             this.mode = builder.mode;
             this.options = {
                 lineNumbers: builder.lineNumbers
