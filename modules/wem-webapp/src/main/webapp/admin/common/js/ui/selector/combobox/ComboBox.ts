@@ -51,7 +51,6 @@ module api.ui.selector.combobox {
 
             this.comboBoxDropdown = new ComboBoxDropdown(<ComboBoxDropdownConfig<OPTION_DISPLAY_VALUE>>{
                 comboBox: this,
-                input: this.input,
                 maxHeight: 200,
                 width: this.input.getEl().getWidth(),
                 optionFormatter: config.optionFormatter,
@@ -64,9 +63,16 @@ module api.ui.selector.combobox {
                 this.selectRow(event.getRow());
             });
 
-            this.appendChild(this.comboBoxDropdown.getDropdownElement());
+            this.appendChild(this.comboBoxDropdown.getGrid());
 
             this.setupListeners();
+
+            this.onRendered((event: api.dom.ElementRenderedEvent) => {
+
+                var inputEl = input.getEl();
+                this.comboBoxDropdown.setTopPx(inputEl.getHeight() - inputEl.getBorderBottomWidth());
+                this.comboBoxDropdown.setWidth(inputEl.getWidth());
+            });
         }
 
         giveFocus(): boolean {
@@ -82,7 +88,7 @@ module api.ui.selector.combobox {
             this.comboBoxDropdown.showDropdown(this.selectedOptionsCtrl.getOptions());
             this.arrow.addClass('active');
 
-            this.comboBoxDropdown.getDropdownElement().render();
+            this.comboBoxDropdown.getGrid().render();
         }
 
         setLabel(label: string) {

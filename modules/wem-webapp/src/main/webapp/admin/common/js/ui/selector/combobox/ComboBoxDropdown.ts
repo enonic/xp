@@ -4,8 +4,6 @@ module api.ui.selector.combobox {
 
         comboBox: ComboBox<OPTION_DISPLAY_VALUE>;
 
-        input: ComboBoxOptionFilterInput;
-
         maxHeight: number;
 
         width: number;
@@ -24,17 +22,15 @@ module api.ui.selector.combobox {
 
         private comboBox: ComboBox<OPTION_DISPLAY_VALUE>;
 
-        private input: ComboBoxOptionFilterInput;
-
         private maxHeight: number = 200;
 
         private width: number;
 
         private emptyDropdown: api.dom.DivEl;
 
-        private dropdown: api.ui.grid.Grid<api.ui.selector.Option<OPTION_DISPLAY_VALUE>>;
+        private grid: api.ui.grid.Grid<api.ui.selector.Option<OPTION_DISPLAY_VALUE>>;
 
-        private dropdownData: api.ui.grid.DataView<api.ui.selector.Option<OPTION_DISPLAY_VALUE>>;
+        private gridData: api.ui.grid.DataView<api.ui.selector.Option<OPTION_DISPLAY_VALUE>>;
 
         private dataIdProperty: string;
 
@@ -50,7 +46,6 @@ module api.ui.selector.combobox {
         constructor(config: ComboBoxDropdownConfig<OPTION_DISPLAY_VALUE>) {
 
             this.comboBox = config.comboBox;
-            this.input = config.input;
             this.optionFormatter = config.optionFormatter;
             this.filter = config.filter;
             this.rowHeight = config.rowHeight;
@@ -81,18 +76,18 @@ module api.ui.selector.combobox {
                 dataIdProperty: config.dataIdProperty ? config.dataIdProperty : "value"
             };
 
-            this.dropdownData = new api.ui.grid.DataView<api.ui.selector.Option<OPTION_DISPLAY_VALUE>>();
-            this.dropdown = new api.ui.grid.Grid<api.ui.selector.Option<OPTION_DISPLAY_VALUE>>(this.dropdownData, columns, options);
-            this.dropdown.addClass("options-container");
-            this.dropdown.getEl().setPosition("absolute");
-            this.dropdown.hide();
+            this.gridData = new api.ui.grid.DataView<api.ui.selector.Option<OPTION_DISPLAY_VALUE>>();
+            this.grid = new api.ui.grid.Grid<api.ui.selector.Option<OPTION_DISPLAY_VALUE>>(this.gridData, columns, options);
+            this.grid.addClass("options-container");
+            this.grid.getEl().setPosition("absolute");
+            this.grid.hide();
 
             if (this.filter) {
-                this.dropdownData.setFilter(this.filter);
+                this.gridData.setFilter(this.filter);
             }
 
             // Listen to click in grid and issue selection
-            this.dropdown.subscribeOnClick((e, args) => {
+            this.grid.subscribeOnClick((e, args) => {
 
                 this.notifyRowSelection(args.row);
 
@@ -101,13 +96,13 @@ module api.ui.selector.combobox {
                 return false;
             });
 
-            this.dropdownData.onRowsChanged((e, args) => {
+            this.gridData.onRowsChanged((e, args) => {
                 // this.markSelections();
                 // TODO: After refactoring during task CMS-3104, this does not seem to be necessary
                 // TODO: Remove this when sure or re-implement
             });
 
-            this.dropdownData.onRowCountChanged((e, args) => {
+            this.gridData.onRowCountChanged((e, args) => {
                 // this.markSelections();
                 // TODO: After refactoring during task CMS-3104, this does not seem to be necessary
                 // TODO: Remove this when sure or re-implement
@@ -115,58 +110,53 @@ module api.ui.selector.combobox {
         }
 
         getGrid() : api.ui.grid.Grid<api.ui.selector.Option<OPTION_DISPLAY_VALUE>> {
-            return this.dropdown;
-        }
-
-        getDropdownElement(): api.dom.Element {
-            return this.dropdown;
+            return this.grid;
         }
 
         isDropdownShown(): boolean {
-            return this.emptyDropdown.isVisible() || this.dropdown.isVisible();
+            return this.emptyDropdown.isVisible() || this.grid.isVisible();
         }
 
         setOptions(options: api.ui.selector.Option<OPTION_DISPLAY_VALUE>[]) {
-            this.dropdownData.setItems(options, this.dataIdProperty);
-            if (this.dropdown.isVisible() || this.emptyDropdown.isVisible()) {
+            this.gridData.setItems(options, this.dataIdProperty);
+            if (this.grid.isVisible() || this.emptyDropdown.isVisible()) {
                 this.showDropdown([]);
             }
         }
 
         addOption(option: api.ui.selector.Option<OPTION_DISPLAY_VALUE>) {
-            this.dropdownData.addItem(option);
+            this.gridData.addItem(option);
         }
 
         hasOptions(): boolean {
-            return this.dropdownData.getLength() > 0;
+            return this.gridData.getLength() > 0;
         }
 
         getOptionCount(): number {
-            return this.dropdownData.getLength();
+            return this.gridData.getLength();
         }
 
         getOptions(): api.ui.selector.Option<OPTION_DISPLAY_VALUE>[] {
-            return this.dropdownData.getItems();
+            return this.gridData.getItems();
         }
 
         getOptionByValue(value: string): api.ui.selector.Option<OPTION_DISPLAY_VALUE> {
-            return <api.ui.selector.Option<OPTION_DISPLAY_VALUE>>this.dropdownData.getItemById(value);
+            return <api.ui.selector.Option<OPTION_DISPLAY_VALUE>>this.gridData.getItemById(value);
         }
 
         getOptionByRow(rowIndex: number): api.ui.selector.Option<OPTION_DISPLAY_VALUE> {
-            return <api.ui.selector.Option<OPTION_DISPLAY_VALUE>>this.dropdownData.getItem(rowIndex);
+            return <api.ui.selector.Option<OPTION_DISPLAY_VALUE>>this.gridData.getItem(rowIndex);
         }
 
         showDropdown(selectedOptions: api.ui.selector.Option<OPTION_DISPLAY_VALUE>[]) {
 
             if (this.hasOptions()) {
                 this.emptyDropdown.hide();
-                this.dropdown.show();
+                this.grid.show();
                 this.adjustDropdownSize();
                 this.markSelections(selectedOptions);
             } else {
-                this.dropdown.hide();
-                this.adjustEmptyDropdownSize();
+                this.grid.hide();
                 this.emptyDropdown.getEl().setInnerHtml("No matching items");
                 this.emptyDropdown.show();
             }
@@ -175,58 +165,55 @@ module api.ui.selector.combobox {
         hideDropdown() {
 
             this.emptyDropdown.hide();
-            this.dropdown.hide();
+            this.grid.hide();
         }
 
         setLabel(label: string) {
 
             if (this.isDropdownShown()) {
-                this.dropdown.hide();
-                this.adjustEmptyDropdownSize();
+                this.grid.hide();
                 this.emptyDropdown.getEl().setInnerHtml(label);
                 this.emptyDropdown.show();
             }
         }
 
+        setTopPx(value:number) {
+            this.grid.getEl().setTopPx(value);
+            this.emptyDropdown.getEl().setTopPx(value);
+        }
+
+        setWidth(value:number) {
+            this.grid.getEl().setWidthPx(value);
+        }
+
         private adjustDropdownSize() {
-            var dropdownEl = this.dropdown.getEl();
-            var inputEl: api.dom.ElementHelper = this.input.getEl();
-
-            dropdownEl.setTopPx(inputEl.getHeight() - inputEl.getBorderBottomWidth());
-
-            if (dropdownEl.getWidth() != inputEl.getWidth()) {
-                dropdownEl.setWidth(inputEl.getWidth() + "px");
-            }
+            var dropdownEl = this.grid.getEl();
 
             var rowsHeight = this.getOptionCount() * this.rowHeight;
             if (rowsHeight < this.maxHeight) {
                 var borderWidth = dropdownEl.getBorderTopWidth() + dropdownEl.getBorderBottomWidth();
                 dropdownEl.setHeight(rowsHeight + borderWidth + "px");
-                this.dropdown.setOptions({autoHeight: true});
+                this.grid.setOptions({autoHeight: true});
             } else if (dropdownEl.getHeight() < this.maxHeight) {
                 dropdownEl.setHeight(this.maxHeight + "px");
-                this.dropdown.setOptions({autoHeight: false});
+                this.grid.setOptions({autoHeight: false});
             }
 
-            this.dropdown.resizeCanvas();
-        }
-
-        private adjustEmptyDropdownSize() {
-            this.emptyDropdown.getEl().setTopPx(this.input.getEl().getHeight() - this.input.getEl().getBorderBottomWidth());
+            this.grid.resizeCanvas();
         }
 
         markSelections(selectedOptions: api.ui.selector.Option<OPTION_DISPLAY_VALUE>[]) {
 
             var stylesHash: Slick.CellCssStylesHash = {};
             selectedOptions.forEach((selectedOption: api.ui.selector.Option<OPTION_DISPLAY_VALUE>) => {
-                var row = this.dropdownData.getRowById(selectedOption.value);
+                var row = this.gridData.getRowById(selectedOption.value);
                 stylesHash[row] = {option: "selected"};
             });
-            this.dropdown.setCellCssStyles("selected", stylesHash);
+            this.grid.setCellCssStyles("selected", stylesHash);
         }
 
         hasActiveRow(): boolean {
-            var activeCell = this.dropdown.getActiveCell();
+            var activeCell = this.grid.getActiveCell();
             if (activeCell) {
                 return true;
             }
@@ -237,7 +224,7 @@ module api.ui.selector.combobox {
         }
 
         getActiveRow(): number {
-            var activeCell = this.dropdown.getActiveCell();
+            var activeCell = this.grid.getActiveCell();
             if (activeCell) {
                 return activeCell.row;
             }
@@ -248,22 +235,22 @@ module api.ui.selector.combobox {
 
         makeFirstRowActive() {
 
-            this.dropdown.setActiveCell(0, 0);
+            this.grid.setActiveCell(0, 0);
         }
 
         makeFirstRowActiveIfNoRowIsActive() {
 
-            if (!this.dropdown.getActiveCell()) {
-                this.dropdown.setActiveCell(0, 0);
+            if (!this.grid.getActiveCell()) {
+                this.grid.setActiveCell(0, 0);
             }
         }
 
         navigateToNextRow() {
-            this.dropdown.navigateDown();
+            this.grid.navigateDown();
         }
 
         navigateToPreviousRow() {
-            this.dropdown.navigateUp();
+            this.grid.navigateUp();
         }
 
 
