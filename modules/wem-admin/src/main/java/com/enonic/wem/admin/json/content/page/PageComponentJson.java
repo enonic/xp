@@ -10,12 +10,14 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.enonic.wem.admin.json.content.page.image.ImageComponentJson;
 import com.enonic.wem.admin.json.content.page.layout.LayoutComponentJson;
 import com.enonic.wem.admin.json.content.page.part.PartComponentJson;
+import com.enonic.wem.admin.json.content.page.text.TextComponentJson;
 import com.enonic.wem.admin.json.data.DataJson;
 import com.enonic.wem.admin.json.data.RootDataSetJson;
 import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.image.ImageComponent;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.part.PartComponent;
+import com.enonic.wem.api.content.page.text.TextComponent;
 
 @SuppressWarnings("UnusedDeclaration")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
@@ -62,6 +64,10 @@ public abstract class PageComponentJson<COMPONENT extends PageComponent>
         else if ( component instanceof LayoutComponent )
         {
             return new LayoutComponentJson( (LayoutComponent) component );
+        }
+        else if ( component instanceof TextComponent )
+        {
+            return new TextComponentJson( (TextComponent) component );
         }
         else
         {
