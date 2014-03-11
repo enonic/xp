@@ -56,6 +56,8 @@ module api.app.wizard {
 
         private stepNavigatorAndToolbarContainer: api.dom.DivEl;
 
+        private new: boolean;
+
         constructor(params: WizardPanelParams, callback: Function) {
             super();
 
@@ -63,6 +65,7 @@ module api.app.wizard {
 
             this.tabId = params.tabId;
             this.persistedItem = params.persistedItem;
+            this.new = params.persistedItem == null;
             this.header = params.header;
             this.mainToolbar = params.mainToolbar;
             this.stepToolbar = params.stepToolbar;
@@ -140,6 +143,10 @@ module api.app.wizard {
             this.onShown((event) => {
                 this.onWizardShown();
             });
+        }
+
+        isNew(): boolean {
+            return this.new;
         }
 
         onWizardShown() {
