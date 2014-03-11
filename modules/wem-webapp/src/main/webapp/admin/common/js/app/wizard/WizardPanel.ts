@@ -44,6 +44,8 @@ module api.app.wizard {
 
         private renderingNew: boolean;
 
+        private firstShow: boolean;
+
         private closedListeners: {(event: WizardClosedEvent):void}[] = [];
 
         private backPanel: api.ui.DeckPanel;
@@ -143,11 +145,15 @@ module api.app.wizard {
         onWizardShown() {
             console.log("WizardPanel shown", this);
 
+            if (this.firstShow) {
+                this.firstShow = false;
+                this.giveInitialFocus();
+            }
+
             if (this.lastFocusedElement) {
                 console.log("Last focused element was remembered: ", this.lastFocusedElement);
                 this.lastFocusedElement.focus();
-            }
-        }
+            }        }
 
         onWizardRendered() {
             console.log("WizardPanel rendered", this);
@@ -172,7 +178,7 @@ module api.app.wizard {
 
         initWizardPanel() {
             console.log("WizardPanel.initWizardPanel");
-            this.giveInitialFocus();
+            this.firstShow = true;
         }
 
         giveInitialFocus() {
