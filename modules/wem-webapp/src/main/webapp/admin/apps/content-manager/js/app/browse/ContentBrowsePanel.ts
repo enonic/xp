@@ -62,6 +62,7 @@ module app.browse {
             };
             this.contentFilterPanel.onSearch(showMask);
             this.contentFilterPanel.onReset(showMask);
+            this.contentTreeGridPanel.onRendered(showMask);
             this.contentTreeGridPanel.onTreeGridStoreLoaded(() => {
                 this.contentTreeGridPanelMask.hide();
             });
