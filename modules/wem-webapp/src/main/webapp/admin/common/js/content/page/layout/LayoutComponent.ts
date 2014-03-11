@@ -6,7 +6,11 @@ module api.content.page.layout {
 
         constructor(builder: LayoutComponentBuilder) {
             super(builder);
-            this.regions = builder.regions;
+            if (builder.regions) {
+                this.regions = builder.regions;
+            } else {
+                this.regions = new api.content.page.layout.LayoutRegionsBuilder().build();
+            }
         }
 
         public getComponent(path: ComponentPath): api.content.page.PageComponent {
