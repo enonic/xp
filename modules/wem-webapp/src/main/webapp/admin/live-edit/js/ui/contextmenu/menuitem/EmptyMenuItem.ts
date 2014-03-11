@@ -29,7 +29,7 @@ module LiveEdit.ui.contextmenu.menuitem {
 
             var type = selectedComponent.getComponentType().getType();
             var emptyComponent = LiveEdit.component.ComponentPlaceholder.fromComponent(type);
-            emptyComponent.setComponentPath(component.getComponentName());
+            emptyComponent.setComponentPath(component.getComponentPath());
 
             componentEl.replaceWith(emptyComponent.getHTMLElement());
             emptyComponent.init();
