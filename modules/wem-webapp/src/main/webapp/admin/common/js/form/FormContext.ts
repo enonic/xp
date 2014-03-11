@@ -8,9 +8,12 @@ module api.form {
 
         private attachments: api.content.attachment.Attachments;
 
+        private showEmptyFormItemSetOccurrences: boolean;
+
         constructor(builder: FormContextBuilder) {
             this.parentContent = builder.parentContent;
             this.persistedContent = builder.persistedContent;
+            this.showEmptyFormItemSetOccurrences = builder.showEmptyFormItemSetOccurrences;
             this.attachments = builder.attachments;
         }
 
@@ -34,6 +37,10 @@ module api.form {
         getAttachments() : api.content.attachment.Attachments{
             return this.attachments;
         }
+
+        getShowEmptyFormItemSetOccurrences(): boolean {
+            return this.showEmptyFormItemSetOccurrences;
+        }
     }
 
     export class FormContextBuilder {
@@ -43,6 +50,8 @@ module api.form {
         persistedContent: api.content.Content;
 
         attachments: api.content.attachment.Attachments;
+
+        showEmptyFormItemSetOccurrences: boolean;
 
         public setParentContent(value: api.content.Content): FormContextBuilder {
             this.parentContent = value;
@@ -56,6 +65,11 @@ module api.form {
 
         public setAttachments(value: api.content.attachment.Attachments): FormContextBuilder {
             this.attachments = value;
+            return this;
+        }
+
+        public setShowEmptyFormItemSetOccurrences(value: boolean): FormContextBuilder {
+            this.showEmptyFormItemSetOccurrences = value;
             return this;
         }
 

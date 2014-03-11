@@ -24,12 +24,25 @@ module api.form.formitemset {
             this.formItemSet = formItemSet;
             this.parent = parent;
             this.dataSets = dataSets;
-
             if (dataSets != null && dataSets.length > 0) {
                 this.constructOccurrencesForData();
             }
             else {
                 this.constructOccurrencesForNoData();
+            }
+        }
+
+        constructOccurrencesForNoData() {
+            if (this.getAllowedOccurrences().getMinimum() > 0) {
+
+                for (var i = 0; i < this.getAllowedOccurrences().getMinimum(); i++) {
+                    this.addOccurrence(this.createNewOccurrence(this, i));
+                }
+            }
+            else {
+                if (this.context.getShowEmptyFormItemSetOccurrences()) {
+                    this.addOccurrence(this.createNewOccurrence(this, 0));
+                }
             }
         }
 

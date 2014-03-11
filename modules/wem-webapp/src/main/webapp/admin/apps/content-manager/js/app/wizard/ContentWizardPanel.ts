@@ -215,6 +215,7 @@ module app.wizard {
                         setParentContent(this.parentContent).
                         setPersistedContent(persistedContent).
                         setAttachments(attachments).
+                        setShowEmptyFormItemSetOccurrences(this.isNew()).
                         build();
 
                     this.contentWizardStepForm.renderExisting(formContext, contentData, persistedContent.getForm());
