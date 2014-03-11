@@ -4,37 +4,31 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.module.CreateModuleResource;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.CreatePageDescriptorParams;
+import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.module.CreateModuleResourceParams;
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.resource.Resource;
-import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 
 import static com.enonic.wem.api.content.page.region.RegionDescriptors.newRegionDescriptors;
 import static com.enonic.wem.api.form.Input.newInput;
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.isA;
 
-public class CreatePageDescriptorHandlerTest
-    extends AbstractCommandHandlerTest
+public class CreatePageDescriptorCommandTest
 {
-
-    private CreatePageDescriptorHandler handler;
+    private ModuleService moduleService;
 
     @Before
     public void setUp()
         throws Exception
     {
-        super.client = Mockito.mock( Client.class );
-        super.initialize();
-
-        handler = new CreatePageDescriptorHandler();
-        handler.setContext( this.context );
+        moduleService = Mockito.mock( ModuleService.class );
     }
 
     @Test
@@ -54,11 +48,11 @@ public class CreatePageDescriptorHandlerTest
             displayName( "Landing page" ).
             config( pageForm );
 
-        Resource res = Resource.newResource().build();
-        Mockito.when( this.client.execute( isA( CreateModuleResource.class ) ) ).thenReturn( res );
-        handler.setCommand( params );
-        handler.handle();
+        final Resource res = Resource.newResource().build();
+        Mockito.when( this.moduleService.createResource( isA( CreateModuleResourceParams.class ) ) ).thenReturn( res );
 
-        assertEquals( key, params.getResult().getKey() );
+        final PageDescriptor result = new CreatePageDescriptorCommand().params( params ).moduleService( this.moduleService ).execute();
+
+        assertEquals( key, result.getKey() );
     }
 }
