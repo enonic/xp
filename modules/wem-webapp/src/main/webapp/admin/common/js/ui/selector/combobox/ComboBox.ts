@@ -10,24 +10,11 @@ module api.ui.selector.combobox {
 
         private input: ComboBoxOptionFilterInput;
 
-        private dropdownData: api.ui.grid.DataView<api.ui.selector.Option<OPTION_DISPLAY_VALUE>>;
-
-        private dropdown: api.ui.grid.Grid<api.ui.selector.Option<OPTION_DISPLAY_VALUE>>;
-
-        private emptyDropdown: api.dom.DivEl;
-
-        private optionFormatter: (row: number, cell: number, value: OPTION_DISPLAY_VALUE, columnDef: any,
-                                  dataContext: api.ui.selector.Option<OPTION_DISPLAY_VALUE>) => string;
-
-        private filter: (item: api.ui.selector.Option<OPTION_DISPLAY_VALUE>, args: any) => boolean;
-
         private multipleSelections: boolean = false;
 
         private selectedOptionsCtrl: SelectedOptionsCtrl<OPTION_DISPLAY_VALUE>;
 
-        private maxHeight: number = 200;
-
-        private rowHeight;
+        private comboBoxDropdown: ComboBoxDropdown<OPTION_DISPLAY_VALUE>;
 
         private hideComboBoxWhenMaxReached: boolean;
 
@@ -46,15 +33,11 @@ module api.ui.selector.combobox {
             this.getEl().setAttribute("name", name);
 
             this.hideComboBoxWhenMaxReached = config.hideComboBoxWhenMaxReached;
-            this.optionFormatter = config.optionFormatter;
             if (config.selectedOptionsView != null) {
                 this.selectedOptionsCtrl = new SelectedOptionsCtrl(config.selectedOptionsView,
                     config.maximumOccurrences != null ? config.maximumOccurrences : 0);
                 this.multipleSelections = true;
             }
-            this.filter = config.filter;
-            this.rowHeight = config.rowHeight || 24;
-
             if (config.iconUrl) {
                 this.icon = new api.dom.ImgEl(config.iconUrl, "input-icon");
                 this.appendChild(this.icon);
@@ -66,40 +49,22 @@ module api.ui.selector.combobox {
             this.arrow = new api.dom.DivEl("dropdown-arrow");
             this.appendChild(this.arrow);
 
-            this.emptyDropdown = new api.dom.DivEl("empty-options");
-            this.emptyDropdown.getEl().setInnerHtml("No matching items");
-            this.emptyDropdown.hide();
-            this.appendChild(this.emptyDropdown);
-
-            var columns: api.ui.grid.GridColumn<api.ui.selector.Option<OPTION_DISPLAY_VALUE>>[] = [
-                {
-                    id: "option",
-                    name: "Options",
-                    field: "displayValue",
-                    formatter: this.optionFormatter}
-            ];
-            var options: api.ui.grid.GridOptions = {
+            this.comboBoxDropdown = new ComboBoxDropdown(<ComboBoxDropdownConfig<OPTION_DISPLAY_VALUE>>{
+                comboBox: this,
+                input: this.input,
+                maxHeight: 200,
                 width: this.input.getEl().getWidth(),
-                height: this.maxHeight,
-                hideColumnHeaders: true,
-                enableColumnReorder: false,
-                fullWidthRows: true,
-                forceFitColumns: true,
-                rowHeight: this.rowHeight,
-                dataIdProperty: config.dataIdProperty ? config.dataIdProperty : "value"
-            };
+                optionFormatter: config.optionFormatter,
+                filter: config.filter,
+                rowHeight: config.rowHeight || 24,
+                dataIdProperty: config.dataIdProperty
+            });
 
-            this.dropdownData = new api.ui.grid.DataView<api.ui.selector.Option<OPTION_DISPLAY_VALUE>>();
-            this.dropdown = new api.ui.grid.Grid<api.ui.selector.Option<OPTION_DISPLAY_VALUE>>(this.dropdownData, columns, options);
-            this.dropdown.addClass("options-container");
-            this.dropdown.getEl().setPosition("absolute");
-            this.dropdown.hide();
+            this.comboBoxDropdown.onRowSelection((event: ComboBoxDropdownRowSelectedEvent) => {
+                this.selectRow(event.getRow());
+            });
 
-            if (this.filter) {
-                this.dropdownData.setFilter(this.filter);
-            }
-
-            this.appendChild(this.dropdown);
+            this.appendChild(this.comboBoxDropdown.getDropdownElement());
 
             this.setupListeners();
         }
@@ -109,70 +74,52 @@ module api.ui.selector.combobox {
         }
 
         isDropdownShown(): boolean {
-            return this.emptyDropdown.isVisible() || this.dropdown.isVisible();
+            return this.comboBoxDropdown.isDropdownShown();
         }
 
         showDropdown() {
-            if (this.hasOptions()) {
-                this.emptyDropdown.hide();
-                this.dropdown.show();
-                this.adjustDropdownSize();
-                this.updateDropdownStyles();
-            } else {
-                this.dropdown.hide();
-                this.adjustEmptyDropdownSize();
-                this.emptyDropdown.getEl().setInnerHtml("No matching items");
-                this.emptyDropdown.show();
-            }
+
+            this.comboBoxDropdown.showDropdown(this.selectedOptionsCtrl.getOptions());
             this.arrow.addClass('active');
 
-            this.dropdown.render();
+            this.comboBoxDropdown.getDropdownElement().render();
         }
 
         setLabel(label: string) {
-            if (this.dropdown.isVisible() || this.emptyDropdown.isVisible()) {
-                this.dropdown.hide();
-                this.adjustEmptyDropdownSize();
-                this.emptyDropdown.getEl().setInnerHtml(label);
-                this.emptyDropdown.show();
-            }
+            this.comboBoxDropdown.setLabel(label);
         }
 
         hideDropdown() {
             this.arrow.removeClass('active');
-            this.emptyDropdown.hide();
-            this.dropdown.hide();
+            this.comboBoxDropdown.hideDropdown();
         }
 
-        setOptions(options: api.ui.selector.Option<OPTION_DISPLAY_VALUE>[], optionIdProperty?: string) {
-            this.dropdownData.setItems(options, optionIdProperty);
-            if (this.dropdown.isVisible() || this.emptyDropdown.isVisible()) {
-                this.showDropdown();
-            }
+        setOptions(options: api.ui.selector.Option<OPTION_DISPLAY_VALUE>[]) {
+            this.comboBoxDropdown.setOptions(options);
         }
 
         addOption(option: api.ui.selector.Option<OPTION_DISPLAY_VALUE>) {
-            this.dropdownData.addItem(option);
+            this.comboBoxDropdown.addOption(option);
         }
 
         hasOptions(): boolean {
-            return this.dropdownData.getLength() > 0;
+            return this.comboBoxDropdown.hasOptions();
         }
 
         getOptionCount(): number {
-            return this.dropdownData.getLength();
+            return this.comboBoxDropdown.getOptionCount();
         }
 
         getOptions(): api.ui.selector.Option<OPTION_DISPLAY_VALUE>[] {
-            return this.dropdownData.getItems();
+            return this.comboBoxDropdown.getOptions();
         }
 
         getOptionByValue(value: string): api.ui.selector.Option<OPTION_DISPLAY_VALUE> {
-            return <api.ui.selector.Option<OPTION_DISPLAY_VALUE>>this.dropdownData.getItemById(value);
+            return this.comboBoxDropdown.getOptionByValue(value);
         }
 
         getOptionByRow(rowIndex: number): api.ui.selector.Option<OPTION_DISPLAY_VALUE> {
-            return <api.ui.selector.Option<OPTION_DISPLAY_VALUE>>this.dropdownData.getItem(rowIndex);
+            return this.comboBoxDropdown.getOptionByRow(rowIndex);
         }
 
         setValue(value: string) {
@@ -205,7 +152,7 @@ module api.ui.selector.combobox {
                 return;
             }
 
-            this.updateDropdownStyles();
+            this.comboBoxDropdown.markSelections(this.selectedOptionsCtrl.getOptions());
             this.hideDropdown();
             this.addClass("followed-by-options");
 
@@ -226,7 +173,7 @@ module api.ui.selector.combobox {
 
             this.selectedOptionsCtrl.removeOption(optionToRemove, silent);
 
-            this.updateDropdownStyles();
+            this.comboBoxDropdown.markSelections(this.selectedOptionsCtrl.getOptions());
 
             this.input.openForTypingAndFocus();
         }
@@ -237,7 +184,7 @@ module api.ui.selector.combobox {
                 this.selectedOptionsCtrl.removeOption(option, true);
             });
 
-            this.updateDropdownStyles();
+            this.comboBoxDropdown.markSelections(this.selectedOptionsCtrl.getOptions());
 
             this.input.openForTypingAndFocus();
         }
@@ -291,14 +238,15 @@ module api.ui.selector.combobox {
         }
 
         private setupListeners() {
+
             this.getEl().addEventListener('click', () => {
                 this.setOnBlurListener();
             });
 
             this.arrow.getEl().addEventListener('click', (event: any) => {
-                if (!this.dropdown.getActiveCell()) {
-                    this.dropdown.setActiveCell(0, 0);
-                }
+
+                this.comboBoxDropdown.makeFirstRowActiveIfNoRowIsActive();
+
                 if (!this.isDropdownShown()) {
                     this.showDropdown();
                     this.giveFocus();
@@ -309,67 +257,54 @@ module api.ui.selector.combobox {
             });
 
             this.input.onValueChanged((event: api.ui.ValueChangedEvent) => {
+
                 this.notifyValueChanged(event.getOldValue(), event.getNewValue());
                 this.showDropdown();
-                this.dropdown.setActiveCell(0, 0);
+                this.comboBoxDropdown.makeFirstRowActive();
+
             });
 
             this.input.getEl().addEventListener('dblclick', (event: any) => {
-                if (!this.dropdown.getActiveCell()) {
-                    this.dropdown.setActiveCell(0, 0);
-                }
+
+                this.comboBoxDropdown.makeFirstRowActiveIfNoRowIsActive();
+
                 if (!this.isDropdownShown()) {
                     this.showDropdown();
                 }
             });
 
             this.input.getEl().addEventListener('keydown', (event: any) => {
+
                 if (event.which == 9) { // tab
                     this.hideDropdown();
                     return;
-                } else if (event.which == 16 || event.which == 17 || event.which == 18) {  // shift or ctrl or alt
+                }
+                else if (event.which == 16 || event.which == 17 || event.which == 18) {  // shift or ctrl or alt
                     return;
                 }
 
-                if (!this.dropdown.getActiveCell()) {
-                    this.dropdown.setActiveCell(0, 0);
-                }
+                this.comboBoxDropdown.makeFirstRowActiveIfNoRowIsActive();
+
                 if (!this.isDropdownShown()) {
                     this.showDropdown();
                     return;
                 }
 
-                var rowCount = this.getOptionCount();
-                var activeCell = this.dropdown.getActiveCell();
-
                 if (event.which == 38) { // up
-                    this.dropdown.setActiveCell((activeCell.row || rowCount) - 1, 0);
-                } else if (event.which == 40) { // down
-                    this.dropdown.setActiveCell((activeCell.row + 1) % rowCount, 0);
-                } else if (event.which == 13) { // enter
-                    this.selectRow(activeCell.row);
+                    this.comboBoxDropdown.navigateToPreviousRow();
+                }
+                else if (event.which == 40) { // down
+                    this.comboBoxDropdown.navigateToNextRow();
+                }
+                else if (event.which == 13) { // enter
+                    this.selectRow(this.comboBoxDropdown.getActiveRow());
                     this.input.getEl().setValue("");
-                } else if (event.which == 27) { // esc
+                }
+                else if (event.which == 27) { // esc
                     this.hideDropdown();
                 }
 
                 this.input.getHTMLElement().focus();
-            });
-
-            this.dropdown.subscribeOnClick((e, args) => {
-                this.selectRow(args.row);
-
-                e.preventDefault();
-                e.stopPropagation();
-                return false;
-            });
-
-            this.dropdownData.subscribeOnRowsChanged((e, args) => {
-                this.updateDropdownStyles();
-            });
-
-            this.dropdownData.subscribeOnRowCountChanged((e, args) => {
-                this.updateDropdownStyles();
             });
 
             if (this.multipleSelections) {
@@ -381,7 +316,7 @@ module api.ui.selector.combobox {
         }
 
         private handleSelectedOptionRemoved(removedSelectedOption: SelectedOption<OPTION_DISPLAY_VALUE>) {
-            this.updateDropdownStyles();
+            this.comboBoxDropdown.markSelections(this.selectedOptionsCtrl.getOptions());
             this.input.openForTypingAndFocus();
 
             if (this.hideComboBoxWhenMaxReached) {
@@ -420,15 +355,6 @@ module api.ui.selector.combobox {
             }
         }
 
-        private updateDropdownStyles() {
-            var stylesHash: Slick.CellCssStylesHash = {};
-            this.selectedOptionsCtrl.getOptions().forEach((option: api.ui.selector.Option<OPTION_DISPLAY_VALUE>) => {
-                var row = this.dropdownData.getRowById(option.value);
-                stylesHash[row] = {option: "selected"};
-            });
-            this.dropdown.setCellCssStyles("selected", stylesHash);
-        }
-
         /**
          * Setup event listener that hides dropdown when combobox loses focus.
          * Listener is added to document body when combobox makes active and removed on click outside of combobox.
@@ -462,33 +388,6 @@ module api.ui.selector.combobox {
             }
         }
 
-        private adjustDropdownSize() {
-            var dropdownEl = this.dropdown.getEl();
-            var inputEl = this.input.getEl();
-
-            dropdownEl.setTopPx(inputEl.getHeightWithBorder() - inputEl.getBorderBottomWidth());
-
-            if (dropdownEl.getWidth() != inputEl.getWidth()) {
-                dropdownEl.setWidth(inputEl.getWidth() + "px");
-            }
-
-            var rowsHeight = this.getOptionCount() * this.rowHeight;
-            if (rowsHeight < this.maxHeight) {
-                var borderWidth = dropdownEl.getBorderTopWidth() + dropdownEl.getBorderBottomWidth();
-                dropdownEl.setHeight(rowsHeight + borderWidth + "px");
-                this.dropdown.setOptions({autoHeight: true});
-            } else if (dropdownEl.getHeight() < this.maxHeight) {
-                dropdownEl.setHeight(this.maxHeight + "px");
-                this.dropdown.setOptions({autoHeight: false});
-            }
-
-            this.dropdown.resizeCanvas();
-        }
-
-        private adjustEmptyDropdownSize() {
-            this.emptyDropdown.getEl().setTopPx(this.input.getEl().getHeightWithBorder() - this.input.getEl().getBorderBottomWidth());
-        }
-
         onOptionSelected(listener: (event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>)=>void) {
             this.optionSelectedListeners.push(listener);
         }
@@ -496,6 +395,13 @@ module api.ui.selector.combobox {
         unOptionSelected(listener: (event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>)=>void) {
             this.optionSelectedListeners.filter((currentListener: (event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
                 return listener != currentListener;
+            });
+        }
+
+        private notifyOptionSelected(item: api.ui.selector.Option<OPTION_DISPLAY_VALUE>) {
+            var event = new OptionSelectedEvent<OPTION_DISPLAY_VALUE>(item);
+            this.optionSelectedListeners.forEach((listener: (event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
+                listener(event);
             });
         }
 
@@ -510,14 +416,9 @@ module api.ui.selector.combobox {
         }
 
         private notifyValueChanged(oldValue: string, newValue: string) {
+            var event = new ComboBoxValueChangedEvent<OPTION_DISPLAY_VALUE>(oldValue, newValue, this.comboBoxDropdown.getGrid());
             this.valueChangedListeners.forEach((listener: (event: ComboBoxValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
-                listener.call(this, new ComboBoxValueChangedEvent(oldValue, newValue, this.dropdown));
-            });
-        }
-
-        private notifyOptionSelected(item: api.ui.selector.Option<OPTION_DISPLAY_VALUE>) {
-            this.optionSelectedListeners.forEach((listener: (event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
-                listener.call(this, new OptionSelectedEvent<OPTION_DISPLAY_VALUE>(item));
+                listener(event);
             });
         }
 

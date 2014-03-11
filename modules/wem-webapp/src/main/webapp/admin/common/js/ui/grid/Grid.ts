@@ -73,12 +73,12 @@ module api.ui.grid {
 
         private autoRenderGridOnDataChanges(dataView:DataView<T>) {
 
-            dataView.subscribeOnRowCountChanged((eventData:Slick.EventData, args) => {
+            dataView.onRowCountChanged((eventData:Slick.EventData, args) => {
                 this.updateRowCount();
                 this.render();
             });
 
-            dataView.subscribeOnRowsChanged((eventData:Slick.EventData, args) => {
+            dataView.onRowsChanged((eventData:Slick.EventData, args) => {
                 this.invalidateRows(args.rows);
                 this.render();
             });

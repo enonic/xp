@@ -52,11 +52,11 @@ module api.ui.grid {
             return this.slickDataView.getRowById(id);
         }
 
-        subscribeOnRowsChanged(callback:(eventData:Slick.EventData, args) => void) {
+        onRowsChanged(callback:(eventData:Slick.EventData, args) => void) {
             this.slickDataView.onRowsChanged.subscribe(callback);
         }
 
-        subscribeOnRowCountChanged(listener:(eventData:Slick.EventData, args) => void) {
+        onRowCountChanged(listener:(eventData:Slick.EventData, args) => void) {
             this.slickDataView.onRowCountChanged.subscribe(listener);
         }
     }

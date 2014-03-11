@@ -83,11 +83,6 @@ module api.form.inputtype.singleselector {
                 maximumOccurrences: 1,
                 hideComboBoxWhenMaxReached: true
             });
-            comboBox.onValueChanged((event: api.ui.selector.combobox.ComboBoxValueChangedEvent<string>) => {
-                event.getGrid().getDataView().setFilterArgs({searchString: event.getNewValue()});
-                event.getGrid().getDataView().refresh();
-            });
-
             var inputConfig: SingleSelectorConfig = this.getConfig().inputConfig;
             if (inputConfig) {
                 var option;
@@ -100,6 +95,11 @@ module api.form.inputtype.singleselector {
             if (property) {
                 comboBox.setValue(property.getString());
             }
+
+            comboBox.onValueChanged((event: api.ui.selector.combobox.ComboBoxValueChangedEvent<string>) => {
+                event.getGrid().getDataView().setFilterArgs({searchString: event.getNewValue()});
+                event.getGrid().getDataView().refresh();
+            });
 
             return comboBox;
         }
