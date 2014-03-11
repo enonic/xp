@@ -14,36 +14,29 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
 
-import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.module.GetModuleResource;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
-import com.enonic.wem.api.content.page.GetPageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageDescriptorXmlTest;
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.resource.Resource;
-import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.xml.XmlSerializers;
 
 import static com.enonic.wem.api.resource.Resource.newResource;
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.isA;
 
-public class GetPageDescriptorHandlerTest
-    extends AbstractCommandHandlerTest
+public class GetPageDescriptorCommandTest
 {
-    private GetPageDescriptorHandler handler;
+    private ModuleService moduleService;
 
     @Before
     public void setUp()
         throws Exception
     {
-        super.client = Mockito.mock( Client.class );
-        super.initialize();
-
-        handler = new GetPageDescriptorHandler();
-        handler.setContext( this.context );
+        moduleService = Mockito.mock( ModuleService.class );
     }
 
     @Test
@@ -51,7 +44,6 @@ public class GetPageDescriptorHandlerTest
         throws Exception
     {
         final PageDescriptor descriptor = createDescriptor();
-        final GetPageDescriptor command = new GetPageDescriptor( descriptor.getKey() );
 
         // 1. Create temp dir.
         final Path tempDir = java.nio.file.Files.createTempDirectory( "tempo" );
@@ -73,12 +65,12 @@ public class GetPageDescriptorHandlerTest
             size( resourceFile.length() ).
             build();
 
-        Mockito.when( this.client.execute( isA( GetModuleResource.class ) ) ).thenReturn( resource );
-        handler.setCommand( command );
-        handler.handle();
+        Mockito.when( this.moduleService.getResource( isA( ModuleResourceKey.class ) ) ).thenReturn( resource );
 
-        assertEquals( "Landing page", command.getResult().getDisplayName() );
-        assertEquals( "landing-page", command.getResult().getName().toString() );
+        final PageDescriptor result = new GetPageDescriptorCommand().key( descriptor.getKey() ).moduleService( this.moduleService ).execute();
+
+        assertEquals( "Landing page", result.getDisplayName() );
+        assertEquals( "landing-page", result.getName().toString() );
     }
 
     private PageDescriptor createDescriptor()

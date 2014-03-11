@@ -40,11 +40,9 @@ public class PageModule
         commands.add( GetPageTemplatesBySiteTemplateHandler.class );
         commands.add( UpdatePageTemplateHandler.class );
 
-        commands.add( CreatePageDescriptorHandler.class );
         commands.add( CreatePartDescriptorHandler.class );
         commands.add( GetLayoutDescriptorHandler.class );
         commands.add( GetPartDescriptorHandler.class );
-        commands.add( GetPageDescriptorHandler.class );
         commands.add( GetPartDescriptorsByModulesHandler.class );
         commands.add( GetLayoutDescriptorsByModulesHandler.class );
         commands.add( CreateLayoutDescriptorHandler.class );
