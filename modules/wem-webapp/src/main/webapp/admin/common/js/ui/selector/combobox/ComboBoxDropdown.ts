@@ -153,7 +153,7 @@ module api.ui.selector.combobox {
             if (this.hasOptions()) {
                 this.emptyDropdown.hide();
                 this.grid.show();
-                this.adjustDropdownSize();
+                this.adjustGridHeight();
                 this.markSelections(selectedOptions);
             } else {
                 this.grid.hide();
@@ -186,16 +186,18 @@ module api.ui.selector.combobox {
             this.grid.getEl().setWidthPx(value);
         }
 
-        private adjustDropdownSize() {
-            var dropdownEl = this.grid.getEl();
+        private adjustGridHeight() {
 
+            var gridEl = this.grid.getEl();
             var rowsHeight = this.getOptionCount() * this.rowHeight;
+
             if (rowsHeight < this.maxHeight) {
-                var borderWidth = dropdownEl.getBorderTopWidth() + dropdownEl.getBorderBottomWidth();
-                dropdownEl.setHeight(rowsHeight + borderWidth + "px");
+                var borderWidth = gridEl.getBorderTopWidth() + gridEl.getBorderBottomWidth();
+                gridEl.setHeightPx(rowsHeight + borderWidth);
                 this.grid.setOptions({autoHeight: true});
-            } else if (dropdownEl.getHeight() < this.maxHeight) {
-                dropdownEl.setHeight(this.maxHeight + "px");
+            }
+            else if (gridEl.getHeight() < this.maxHeight) {
+                gridEl.setHeightPx(this.maxHeight);
                 this.grid.setOptions({autoHeight: false});
             }
 
