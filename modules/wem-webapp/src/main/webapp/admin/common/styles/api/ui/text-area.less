@@ -1,6 +1,20 @@
 .text-area {
   .input-border();
   .input-font();
-  padding:5px;
-  min-height:100px;
+  padding: 5px;
+  resize: none;
+  line-height: 20px;
+  min-height: 52px;
+  max-height: 400px;
+}
+
+.text-area + .autosize-attendant {
+  height: 0;
+  overflow: hidden;
+
+  .autosize-clone {
+    .text-area;
+    word-break: break-word;
+    white-space: pre-wrap;
+  }
 }

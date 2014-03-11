@@ -43,13 +43,10 @@ module api.ui {
         private updateSize() {
             this.attendant.insertAfterEl(this);
 
-            var attendantEl = this.attendant.getEl();
-            var cloneEl = this.clone.getEl();
-
-            cloneEl.setInnerHtml(this.getValue());
+            this.clone.getEl().setInnerHtml(this.getValue());
             // Set input width to text length from the clone <div>
             // or to maximum possible width corresponding to attendant width.
-            this.getEl().setWidth(Math.min(cloneEl.getWidthWithBorder(), attendantEl.getWidth()) + 'px');
+            this.getEl().setWidthPx(Math.min(this.clone.getEl().getWidthWithBorder(), this.attendant.getEl().getWidth()));
 
             this.attendant.remove();
         }
