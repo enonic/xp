@@ -9,6 +9,8 @@ import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.layout.LayoutComponentXml;
 import com.enonic.wem.api.content.page.part.PartComponent;
 import com.enonic.wem.api.content.page.part.PartComponentXml;
+import com.enonic.wem.api.content.page.text.TextComponent;
+import com.enonic.wem.api.content.page.text.TextComponentXml;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.RootDataSetXml;
 
@@ -70,6 +72,13 @@ public abstract class PageComponentXml
             layoutComponentXml.to( layoutComponent );
             return layoutComponent.build();
         }
+        else if ( componentXml instanceof TextComponentXml )
+        {
+            TextComponentXml textComponentXml = (TextComponentXml) componentXml;
+            TextComponent.Builder textComponent = TextComponent.newTextComponent();
+            textComponentXml.to( textComponent );
+            return textComponent.build();
+        }
         else
         {
             throw new UnsupportedOperationException(
@@ -95,6 +104,12 @@ public abstract class PageComponentXml
         {
             LayoutComponentXml componentXml = new LayoutComponentXml();
             componentXml.from( (LayoutComponent) component );
+            return componentXml;
+        }
+        else if ( component instanceof TextComponent )
+        {
+            TextComponentXml componentXml = new TextComponentXml();
+            componentXml.from( (TextComponent) component );
             return componentXml;
         }
         else

@@ -7,12 +7,14 @@ import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.image.ImageComponent;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.part.PartComponent;
+import com.enonic.wem.api.content.page.text.TextComponent;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;
 import com.enonic.wem.core.content.page.image.ImageComponentDataSerializer;
 import com.enonic.wem.core.content.page.layout.LayoutComponentDataSerializer;
 import com.enonic.wem.core.content.page.part.PartComponentDataSerializer;
+import com.enonic.wem.core.content.page.text.TextComponentDataSerializer;
 
 public abstract class PageComponentDataSerializer<TO_DATA_INPUT extends PageComponent, FROM_DATA_OUTPUT extends PageComponent>
     extends AbstractDataSetSerializer<TO_DATA_INPUT, FROM_DATA_OUTPUT>
@@ -22,6 +24,8 @@ public abstract class PageComponentDataSerializer<TO_DATA_INPUT extends PageComp
     private static PartComponentDataSerializer partComponentSerializer = new PartComponentDataSerializer();
 
     private static LayoutComponentDataSerializer layoutComponentSerializer = new LayoutComponentDataSerializer();
+
+    private static TextComponentDataSerializer textComponentSerializer = new TextComponentDataSerializer();
 
     public abstract DataSet toData( final TO_DATA_INPUT component );
 
@@ -70,6 +74,10 @@ public abstract class PageComponentDataSerializer<TO_DATA_INPUT extends PageComp
         {
             return layoutComponentSerializer;
         }
+        else if ( TextComponent.class.getSimpleName().equals( dataSet.getName() ) )
+        {
+            return textComponentSerializer;
+        }
         else
         {
             throw new UnsupportedOperationException( "PageComponent not supported: " + dataSet.getName() );
@@ -89,6 +97,10 @@ public abstract class PageComponentDataSerializer<TO_DATA_INPUT extends PageComp
         else if ( component instanceof LayoutComponent )
         {
             return layoutComponentSerializer;
+        }
+        else if ( component instanceof TextComponent )
+        {
+            return textComponentSerializer;
         }
         else
         {
