@@ -16,13 +16,11 @@ public final class ContentServiceScriptBean
 
     public Contents getRootContent()
     {
-        final Contents rootContent = client.execute( new GetRootContent() );
-        return rootContent;
+        return client.execute( new GetRootContent() );
     }
 
     public Contents getChildContent( final String parentPath )
     {
-        final Contents childContents = client.execute( new GetChildContent().parentPath( ContentPath.from( parentPath ) ) );
-        return childContents;
+        return client.execute( new GetChildContent().parentPath( ContentPath.from( parentPath ) ) );
     }
 }
