@@ -77,6 +77,15 @@ module app {
                     var tabId = api.app.AppBarTabId.forEdit(schema.getKey());
                     var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
+                    var self = this;
+                    function removeViewTabMenuItem() {
+                        var viewTabId = api.app.AppBarTabId.forView(schema.getId());
+                        var viewTabMenuItem = self.getAppBarTabMenu().getNavigationItemById(viewTabId);
+                        if (viewTabMenuItem != null) {
+                            self.removePanelByIndex(viewTabMenuItem.getIndex());
+                        }
+                    }
+
                     if (tabMenuItem != null) {
                         this.selectPanel(tabMenuItem);
 
@@ -84,7 +93,7 @@ module app {
                         if (schema.getSchemaKind() == api.schema.SchemaKind.CONTENT_TYPE) {
                             var contentType = <api.schema.content.ContentType>schema;
                             new api.schema.content.GetContentTypeByNameRequest(contentType.getContentTypeName()).
-                                sendAndParse().done((contentType: api.schema.content.ContentType) => {
+                                sendAndParse().then((contentType: api.schema.content.ContentType) => {
 
                                     tabMenuItem = new api.app.AppBarTabMenuItem(contentType.getName(), tabId, true);
 
@@ -92,12 +101,12 @@ module app {
                                         (wizard: app.wizard.ContentTypeWizardPanel) => {
                                             this.addWizardPanel(tabMenuItem, wizard);
                                         });
-                                });
+                                }).then(removeViewTabMenuItem).done();
                         }
                         else if (schema.getSchemaKind() == api.schema.SchemaKind.RELATIONSHIP_TYPE) {
                             var relationhipType = <api.schema.relationshiptype.RelationshipType>schema;
                             new api.schema.relationshiptype.GetRelationshipTypeByNameRequest(relationhipType.getRelationshiptypeName()).
-                                sendAndParse().done((relationshipType: api.schema.relationshiptype.RelationshipType) => {
+                                sendAndParse().then((relationshipType: api.schema.relationshiptype.RelationshipType) => {
 
                                     tabMenuItem = new api.app.AppBarTabMenuItem(relationshipType.getDisplayName(), tabId, true);
 
@@ -105,19 +114,19 @@ module app {
                                         (wizard: app.wizard.RelationshipTypeWizardPanel) => {
                                             this.addWizardPanel(tabMenuItem, wizard);
                                         });
-                                });
+                                }).then(removeViewTabMenuItem).done();
                         }
                         else if (schema.getSchemaKind() == api.schema.SchemaKind.MIXIN) {
                             var mixin = <api.schema.mixin.Mixin>schema;
                             new api.schema.mixin.GetMixinByQualifiedNameRequest(mixin.getMixinName()).
-                                sendAndParse().done((mixin: api.schema.mixin.Mixin)=> {
+                                sendAndParse().then((mixin: api.schema.mixin.Mixin)=> {
 
                                     tabMenuItem = new api.app.AppBarTabMenuItem(mixin.getDisplayName(), tabId, true);
 
                                     new app.wizard.MixinWizardPanel(tabId, mixin, (wizard: app.wizard.MixinWizardPanel) => {
                                         this.addWizardPanel(tabMenuItem, wizard);
                                     });
-                                });
+                                }).then(removeViewTabMenuItem).done();
                         }
                         else {
                             throw new Error("Unknown SchemaKind: " + schema.getSchemaKind())
@@ -129,23 +138,31 @@ module app {
             app.browse.OpenSchemaEvent.on((event) => {
                 event.getSchemas().forEach((schema: api.schema.Schema) => {
 
-                        var tabId = api.app.AppBarTabId.forView(schema.getKey());
+                        var tabId = api.app.AppBarTabId.forEdit(schema.getId());
                         var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                         if (tabMenuItem != null) {
                             this.selectPanel(tabMenuItem);
 
                         } else {
-                            tabMenuItem = new api.app.AppBarTabMenuItem(schema.getName(), tabId);
-                            var schemaItemViewPanel = new app.view.SchemaItemViewPanel();
-                            var schemaViewItem = new api.app.view.ViewItem<api.schema.Schema>(schema)
-                                .setDisplayName(schema.getDisplayName())
-                                .setPath(schema.getName())
-                                .setIconUrl(schema.getIconUrl());
+                            tabId = api.app.AppBarTabId.forView(schema.getKey());
+                            tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
-                            schemaItemViewPanel.setItem(schemaViewItem);
+                            if (tabMenuItem != null) {
+                                this.selectPanel(tabMenuItem);
 
-                            this.addViewPanel(tabMenuItem, schemaItemViewPanel);
+                            } else {
+                                tabMenuItem = new api.app.AppBarTabMenuItem(schema.getName(), tabId);
+                                var schemaItemViewPanel = new app.view.SchemaItemViewPanel();
+                                var schemaViewItem = new api.app.view.ViewItem<api.schema.Schema>(schema)
+                                    .setDisplayName(schema.getDisplayName())
+                                    .setPath(schema.getName())
+                                    .setIconUrl(schema.getIconUrl());
+
+                                schemaItemViewPanel.setItem(schemaViewItem);
+
+                                this.addViewPanel(tabMenuItem, schemaItemViewPanel);
+                            }
                         }
                     }
                 );

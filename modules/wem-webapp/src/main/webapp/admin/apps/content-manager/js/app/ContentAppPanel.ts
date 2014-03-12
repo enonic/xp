@@ -79,27 +79,36 @@ module app {
             var contents: api.content.ContentSummary[] = event.getModels();
             contents.forEach((content: api.content.ContentSummary) => {
 
-                var tabId = api.app.AppBarTabId.forView(content.getId());
+                var tabId = api.app.AppBarTabId.forEdit(content.getId());
                 var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                 if (tabMenuItem != null) {
                     this.selectPanel(tabMenuItem);
 
                 } else {
-                    tabMenuItem = new api.app.AppBarTabMenuItem(content.getDisplayName(), tabId);
-                    var contentItemViewPanel = new app.view.ContentItemViewPanel({
-                        showPreviewAction: app.browse.ContentBrowseActions.get().SHOW_PREVIEW,
-                        showDetailsAction: app.browse.ContentBrowseActions.get().SHOW_DETAILS
-                    });
 
-                    var contentItem = new api.app.view.ViewItem(content)
-                        .setDisplayName(content.getDisplayName())
-                        .setPath(content.getPath().toString())
-                        .setIconUrl(content.getIconUrl());
+                    tabId = api.app.AppBarTabId.forView(content.getId());
+                    tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
-                    contentItemViewPanel.setItem(contentItem);
+                    if (tabMenuItem != null) {
+                        this.selectPanel(tabMenuItem);
 
-                    this.addViewPanel(tabMenuItem, contentItemViewPanel);
+                    } else {
+                        tabMenuItem = new api.app.AppBarTabMenuItem(content.getDisplayName(), tabId);
+                        var contentItemViewPanel = new app.view.ContentItemViewPanel({
+                            showPreviewAction: app.browse.ContentBrowseActions.get().SHOW_PREVIEW,
+                            showDetailsAction: app.browse.ContentBrowseActions.get().SHOW_DETAILS
+                        });
+
+                        var contentItem = new api.app.view.ViewItem(content)
+                            .setDisplayName(content.getDisplayName())
+                            .setPath(content.getPath().toString())
+                            .setIconUrl(content.getIconUrl());
+
+                        contentItemViewPanel.setItem(contentItem);
+
+                        this.addViewPanel(tabMenuItem, contentItemViewPanel);
+                    }
                 }
             });
         }
@@ -124,8 +133,13 @@ module app {
 
                             tabMenuItem = new api.app.AppBarTabMenuItem(content.getDisplayName(), tabId, true);
                             this.addWizardPanel(tabMenuItem, wizard);
-                        }).
-                        done();
+                        }).then(() => {
+                            var viewTabId = api.app.AppBarTabId.forView(content.getId());
+                            var viewTabMenuItem = this.getAppBarTabMenu().getNavigationItemById(viewTabId);
+                            if (viewTabMenuItem != null) {
+                                this.removePanelByIndex(viewTabMenuItem.getIndex());
+                            }
+                        }).done();
 
                 }
             });
