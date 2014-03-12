@@ -15,6 +15,9 @@ public final class SystemScriptBean
     @Inject
     protected ThymeleafScriptBean thymeleaf;
 
+    @Inject
+    protected ContentServiceScriptBean contentService;
+
     public MustacheScriptBean getMustache()
     {
         return this.mustache;
@@ -28,5 +31,10 @@ public final class SystemScriptBean
     public ThymeleafScriptBean getThymeleaf()
     {
         return this.thymeleaf;
+    }
+
+    public ContentServiceScriptBean getContentService()
+    {
+        return this.contentService;
     }
 }
