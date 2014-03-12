@@ -40,7 +40,7 @@ module api.form.inputtype.content.image {
             this.config = config;
             this.contentSummaryLoader = new api.form.inputtype.content.ContentSummaryLoader();
             this.contentSummaryLoader.onLoadingData((event: LoadingDataEvent) => {
-                this.comboBox.setLabel("Searching...");
+                this.comboBox.setEmptyDropdownText("Searching...");
             });
             this.contentSummaryLoader.onLoadedData((event: LoadedDataEvent<api.content.ContentSummary>) => {
                 var options = this.createOptions(event.getData());

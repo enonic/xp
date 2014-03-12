@@ -1,6 +1,6 @@
-module api.ui.selector.combobox {
+module api.ui.selector {
 
-    export class ComboBoxDropdownRowSelectedEvent {
+    export class DropdownGridRowSelectedEvent {
 
         private row: number;
 

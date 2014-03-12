@@ -102,7 +102,7 @@ module api.ui.selector.combobox {
             });
 
             this.loader.onLoadingData((event: api.util.loader.event.LoadingDataEvent) => {
-                this.comboBox.setLabel("Searching...");
+                this.comboBox.setEmptyDropdownText("Searching...");
                 this.notifyLoading();
             });
 

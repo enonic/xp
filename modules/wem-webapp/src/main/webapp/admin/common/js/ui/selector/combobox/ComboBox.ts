@@ -1,5 +1,6 @@
 module api.ui.selector.combobox {
 
+    import Option = api.ui.selector.Option;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
 
     export class ComboBox<OPTION_DISPLAY_VALUE> extends api.dom.FormInputEl {
@@ -50,20 +51,20 @@ module api.ui.selector.combobox {
             this.appendChild(this.arrow);
 
             this.comboBoxDropdown = new ComboBoxDropdown(<ComboBoxDropdownConfig<OPTION_DISPLAY_VALUE>>{
-                comboBox: this,
                 maxHeight: 200,
                 width: this.input.getEl().getWidth(),
                 optionFormatter: config.optionFormatter,
                 filter: config.filter,
-                rowHeight: config.rowHeight || 24,
+                rowHeight: config.rowHeight,
                 dataIdProperty: config.dataIdProperty
             });
 
-            this.comboBoxDropdown.onRowSelection((event: ComboBoxDropdownRowSelectedEvent) => {
+            this.comboBoxDropdown.onRowSelection((event: DropdownGridRowSelectedEvent) => {
                 this.selectRow(event.getRow());
             });
 
-            this.appendChild(this.comboBoxDropdown.getGrid());
+            this.appendChild(this.comboBoxDropdown.getEmptyDropdown());
+            this.appendChild(this.comboBoxDropdown.getGrid().getElement());
 
             this.setupListeners();
 
@@ -93,11 +94,11 @@ module api.ui.selector.combobox {
             this.comboBoxDropdown.showDropdown(this.selectedOptionsCtrl.getOptions());
             this.arrow.addClass('active');
 
-            this.comboBoxDropdown.getGrid().render();
+            this.comboBoxDropdown.renderDropdownGrid();
         }
 
-        setLabel(label: string) {
-            this.comboBoxDropdown.setLabel(label);
+        setEmptyDropdownText(label: string) {
+            this.comboBoxDropdown.setEmptyDropdownText(label);
         }
 
         hideDropdown() {
@@ -105,11 +106,11 @@ module api.ui.selector.combobox {
             this.comboBoxDropdown.hideDropdown();
         }
 
-        setOptions(options: api.ui.selector.Option<OPTION_DISPLAY_VALUE>[]) {
+        setOptions(options: Option<OPTION_DISPLAY_VALUE>[]) {
             this.comboBoxDropdown.setOptions(options);
         }
 
-        addOption(option: api.ui.selector.Option<OPTION_DISPLAY_VALUE>) {
+        addOption(option: Option<OPTION_DISPLAY_VALUE>) {
             this.comboBoxDropdown.addOption(option);
         }
 
@@ -121,15 +122,15 @@ module api.ui.selector.combobox {
             return this.comboBoxDropdown.getOptionCount();
         }
 
-        getOptions(): api.ui.selector.Option<OPTION_DISPLAY_VALUE>[] {
+        getOptions(): Option<OPTION_DISPLAY_VALUE>[] {
             return this.comboBoxDropdown.getOptions();
         }
 
-        getOptionByValue(value: string): api.ui.selector.Option<OPTION_DISPLAY_VALUE> {
+        getOptionByValue(value: string): Option<OPTION_DISPLAY_VALUE> {
             return this.comboBoxDropdown.getOptionByValue(value);
         }
 
-        getOptionByRow(rowIndex: number): api.ui.selector.Option<OPTION_DISPLAY_VALUE> {
+        getOptionByRow(rowIndex: number): Option<OPTION_DISPLAY_VALUE> {
             return this.comboBoxDropdown.getOptionByRow(rowIndex);
         }
 
@@ -156,7 +157,7 @@ module api.ui.selector.combobox {
             }
         }
 
-        selectOption(option: api.ui.selector.Option<OPTION_DISPLAY_VALUE>, silent: boolean = false) {
+        selectOption(option: Option<OPTION_DISPLAY_VALUE>, silent: boolean = false) {
 
             var added = this.selectedOptionsCtrl.addOption(option);
             if (!added) {
@@ -179,7 +180,7 @@ module api.ui.selector.combobox {
             }
         }
 
-        removeSelectedOption(optionToRemove: api.ui.selector.Option<OPTION_DISPLAY_VALUE>, silent: boolean = false) {
+        removeSelectedOption(optionToRemove: Option<OPTION_DISPLAY_VALUE>, silent: boolean = false) {
             api.util.assertNotNull(optionToRemove, "optionToRemove cannot be null");
 
             this.selectedOptionsCtrl.removeOption(optionToRemove, silent);
@@ -190,8 +191,8 @@ module api.ui.selector.combobox {
         }
 
         clearSelection() {
-            var allOptions: api.ui.selector.Option<OPTION_DISPLAY_VALUE>[] = this.selectedOptionsCtrl.getOptions();
-            allOptions.forEach((option: api.ui.selector.Option<OPTION_DISPLAY_VALUE>) => {
+            var allOptions: Option<OPTION_DISPLAY_VALUE>[] = this.selectedOptionsCtrl.getOptions();
+            allOptions.forEach((option: Option<OPTION_DISPLAY_VALUE>) => {
                 this.selectedOptionsCtrl.removeOption(option, true);
             });
 
@@ -200,7 +201,7 @@ module api.ui.selector.combobox {
             this.input.openForTypingAndFocus();
         }
 
-        getSelectedOptions(): api.ui.selector.Option<OPTION_DISPLAY_VALUE>[] {
+        getSelectedOptions(): Option<OPTION_DISPLAY_VALUE>[] {
             if (this.multipleSelections) {
                 return this.selectedOptionsCtrl.getOptions();
             }
@@ -212,7 +213,7 @@ module api.ui.selector.combobox {
         getValue(): string {
             if (this.multipleSelections) {
                 var values = [];
-                this.selectedOptionsCtrl.getOptions().forEach((item: api.ui.selector.Option<OPTION_DISPLAY_VALUE>) => {
+                this.selectedOptionsCtrl.getOptions().forEach((item: Option<OPTION_DISPLAY_VALUE>) => {
                     values.push(item.value);
                 });
                 return values.join(';');
@@ -256,7 +257,7 @@ module api.ui.selector.combobox {
 
             this.arrow.getEl().addEventListener('click', (event: any) => {
 
-                this.comboBoxDropdown.makeFirstRowActiveIfNoRowIsActive();
+                this.comboBoxDropdown.navigateToFirstRowIfNotActive();
 
                 if (!this.isDropdownShown()) {
                     this.showDropdown();
@@ -271,13 +272,13 @@ module api.ui.selector.combobox {
 
                 this.notifyValueChanged(event.getOldValue(), event.getNewValue());
                 this.showDropdown();
-                this.comboBoxDropdown.makeFirstRowActive();
+                this.comboBoxDropdown.nagivateToFirstRow();
 
             });
 
             this.input.getEl().addEventListener('dblclick', (event: any) => {
 
-                this.comboBoxDropdown.makeFirstRowActiveIfNoRowIsActive();
+                this.comboBoxDropdown.navigateToFirstRowIfNotActive();
 
                 if (!this.isDropdownShown()) {
                     this.showDropdown();
@@ -294,7 +295,7 @@ module api.ui.selector.combobox {
                     return;
                 }
 
-                this.comboBoxDropdown.makeFirstRowActiveIfNoRowIsActive();
+                this.comboBoxDropdown.navigateToFirstRowIfNotActive();
 
                 if (!this.isDropdownShown()) {
                     this.showDropdown();
@@ -409,7 +410,7 @@ module api.ui.selector.combobox {
             });
         }
 
-        private notifyOptionSelected(item: api.ui.selector.Option<OPTION_DISPLAY_VALUE>) {
+        private notifyOptionSelected(item: Option<OPTION_DISPLAY_VALUE>) {
             var event = new OptionSelectedEvent<OPTION_DISPLAY_VALUE>(item);
             this.optionSelectedListeners.forEach((listener: (event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
                 listener(event);
@@ -427,7 +428,8 @@ module api.ui.selector.combobox {
         }
 
         private notifyValueChanged(oldValue: string, newValue: string) {
-            var event = new ComboBoxValueChangedEvent<OPTION_DISPLAY_VALUE>(oldValue, newValue, this.comboBoxDropdown.getGrid());
+            var event = new ComboBoxValueChangedEvent<OPTION_DISPLAY_VALUE>(oldValue, newValue,
+                this.comboBoxDropdown.getGrid().getElement());
             this.valueChangedListeners.forEach((listener: (event: ComboBoxValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
                 listener(event);
             });

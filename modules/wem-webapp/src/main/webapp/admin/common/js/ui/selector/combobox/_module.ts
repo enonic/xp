@@ -1,6 +1,5 @@
 ///<reference path='ComboBoxOptionFilterInput.ts' />
 ///<reference path='ComboBoxConfig.ts' />
-///<reference path='ComboBoxDropdownRowSelectedEvent.ts' />
 ///<reference path='ComboBoxDropdown.ts' />
 ///<reference path='ComboBox.ts' />
 ///<reference path='SelectedOptionView.ts' />

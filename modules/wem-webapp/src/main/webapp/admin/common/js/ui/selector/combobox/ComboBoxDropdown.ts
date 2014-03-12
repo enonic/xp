@@ -1,162 +1,106 @@
 module api.ui.selector.combobox {
 
+    import Option = api.ui.selector.Option;
+    import DropdownGridConfig = api.ui.selector.DropdownGridConfig;
+    import DropdownGrid = api.ui.selector.DropdownGrid;
+    import DropdownGridRowSelectedEvent = api.ui.selector.DropdownGridRowSelectedEvent;
+
     export interface ComboBoxDropdownConfig<OPTION_DISPLAY_VALUE> {
 
-        comboBox: ComboBox<OPTION_DISPLAY_VALUE>;
-
-        maxHeight: number;
+        maxHeight?: number;
 
         width: number;
 
         optionFormatter: (row: number, cell: number, value: OPTION_DISPLAY_VALUE, columnDef: any,
                           dataContext: api.ui.selector.Option<OPTION_DISPLAY_VALUE>) => string;
 
-        filter: (item: api.ui.selector.Option<OPTION_DISPLAY_VALUE>, args: any) => boolean;
+        filter: (item: Option<OPTION_DISPLAY_VALUE>, args: any) => boolean;
 
-        rowHeight: number;
+        rowHeight?: number;
 
         dataIdProperty?:string;
     }
 
     export class ComboBoxDropdown<OPTION_DISPLAY_VALUE> {
 
-        private comboBox: ComboBox<OPTION_DISPLAY_VALUE>;
-
-        private maxHeight: number = 200;
-
-        private width: number;
-
         private emptyDropdown: api.dom.DivEl;
 
-        private grid: api.ui.grid.Grid<api.ui.selector.Option<OPTION_DISPLAY_VALUE>>;
-
-        private gridData: api.ui.grid.DataView<api.ui.selector.Option<OPTION_DISPLAY_VALUE>>;
-
-        private dataIdProperty: string;
-
-        private optionFormatter: (row: number, cell: number, value: OPTION_DISPLAY_VALUE, columnDef: any,
-                                  dataContext: api.ui.selector.Option<OPTION_DISPLAY_VALUE>) => string;
-
-        private filter: (item: api.ui.selector.Option<OPTION_DISPLAY_VALUE>, args: any) => boolean;
-
-        private rowHeight: number;
-
-        private rowSelectionListeners: {(event: ComboBoxDropdownRowSelectedEvent):void}[] = [];
+        private dropdownGrid: DropdownGrid<OPTION_DISPLAY_VALUE>;
 
         constructor(config: ComboBoxDropdownConfig<OPTION_DISPLAY_VALUE>) {
-
-            this.comboBox = config.comboBox;
-            this.optionFormatter = config.optionFormatter;
-            this.filter = config.filter;
-            this.rowHeight = config.rowHeight;
-            this.dataIdProperty = config.dataIdProperty;
-            this.maxHeight = config.maxHeight;
-            this.width = config.width;
 
             this.emptyDropdown = new api.dom.DivEl("empty-options");
             this.emptyDropdown.getEl().setInnerHtml("No matching items");
             this.emptyDropdown.hide();
-            this.comboBox.appendChild(this.emptyDropdown);
 
-            var columns: api.ui.grid.GridColumn<api.ui.selector.Option<OPTION_DISPLAY_VALUE>>[] = [
-                {
-                    id: "option",
-                    name: "Options",
-                    field: "displayValue",
-                    formatter: this.optionFormatter}
-            ];
-            var options: api.ui.grid.GridOptions = {
-                width: this.width,
-                height: this.maxHeight,
-                hideColumnHeaders: true,
-                enableColumnReorder: false,
-                fullWidthRows: true,
-                forceFitColumns: true,
-                rowHeight: this.rowHeight,
-                dataIdProperty: config.dataIdProperty ? config.dataIdProperty : "value"
-            };
-
-            this.gridData = new api.ui.grid.DataView<api.ui.selector.Option<OPTION_DISPLAY_VALUE>>();
-            this.grid = new api.ui.grid.Grid<api.ui.selector.Option<OPTION_DISPLAY_VALUE>>(this.gridData, columns, options);
-            this.grid.addClass("options-container");
-            this.grid.getEl().setPosition("absolute");
-            this.grid.hide();
-
-            if (this.filter) {
-                this.gridData.setFilter(this.filter);
-            }
-
-            // Listen to click in grid and issue selection
-            this.grid.subscribeOnClick((e, args) => {
-
-                this.notifyRowSelection(args.row);
-
-                e.preventDefault();
-                e.stopPropagation();
-                return false;
-            });
-
-            this.gridData.onRowsChanged((e, args) => {
-                // this.markSelections();
-                // TODO: After refactoring during task CMS-3104, this does not seem to be necessary
-                // TODO: Remove this when sure or re-implement
-            });
-
-            this.gridData.onRowCountChanged((e, args) => {
-                // this.markSelections();
-                // TODO: After refactoring during task CMS-3104, this does not seem to be necessary
-                // TODO: Remove this when sure or re-implement
+            this.dropdownGrid = new DropdownGrid<OPTION_DISPLAY_VALUE>(<DropdownGridConfig<OPTION_DISPLAY_VALUE>>{
+                maxHeight: config.maxHeight,
+                width: config.width,
+                optionFormatter: config.optionFormatter,
+                filter: config.filter,
+                rowHeight: config.rowHeight,
+                dataIdProperty: config.dataIdProperty
             });
         }
 
-        getGrid() : api.ui.grid.Grid<api.ui.selector.Option<OPTION_DISPLAY_VALUE>> {
-            return this.grid;
+        getGrid(): DropdownGrid<OPTION_DISPLAY_VALUE> {
+            return this.dropdownGrid;
+        }
+
+        renderDropdownGrid() {
+            this.dropdownGrid.renderGrid();
+        }
+
+        getEmptyDropdown(): api.dom.DivEl {
+            return this.emptyDropdown;
         }
 
         isDropdownShown(): boolean {
-            return this.emptyDropdown.isVisible() || this.grid.isVisible();
+            return this.emptyDropdown.isVisible() || this.dropdownGrid.isVisible();
         }
 
-        setOptions(options: api.ui.selector.Option<OPTION_DISPLAY_VALUE>[]) {
-            this.gridData.setItems(options, this.dataIdProperty);
-            if (this.grid.isVisible() || this.emptyDropdown.isVisible()) {
+        setOptions(options: Option<OPTION_DISPLAY_VALUE>[]) {
+
+            this.dropdownGrid.setOptions(options);
+
+            if (this.dropdownGrid.isVisible() || this.emptyDropdown.isVisible()) {
                 this.showDropdown([]);
             }
         }
 
-        addOption(option: api.ui.selector.Option<OPTION_DISPLAY_VALUE>) {
-            this.gridData.addItem(option);
+        addOption(option: Option<OPTION_DISPLAY_VALUE>) {
+            this.dropdownGrid.addOption(option);
         }
 
         hasOptions(): boolean {
-            return this.gridData.getLength() > 0;
+            return this.dropdownGrid.hasOptions();
         }
 
         getOptionCount(): number {
-            return this.gridData.getLength();
+            return this.dropdownGrid.getOptionCount();
         }
 
-        getOptions(): api.ui.selector.Option<OPTION_DISPLAY_VALUE>[] {
-            return this.gridData.getItems();
+        getOptions(): Option<OPTION_DISPLAY_VALUE>[] {
+            return this.dropdownGrid.getOptions();
         }
 
-        getOptionByValue(value: string): api.ui.selector.Option<OPTION_DISPLAY_VALUE> {
-            return <api.ui.selector.Option<OPTION_DISPLAY_VALUE>>this.gridData.getItemById(value);
+        getOptionByValue(value: string): Option<OPTION_DISPLAY_VALUE> {
+            return this.dropdownGrid.getOptionByValue(value);
         }
 
-        getOptionByRow(rowIndex: number): api.ui.selector.Option<OPTION_DISPLAY_VALUE> {
-            return <api.ui.selector.Option<OPTION_DISPLAY_VALUE>>this.gridData.getItem(rowIndex);
+        getOptionByRow(rowIndex: number): Option<OPTION_DISPLAY_VALUE> {
+            return this.dropdownGrid.getOptionByRow(rowIndex);
         }
 
-        showDropdown(selectedOptions: api.ui.selector.Option<OPTION_DISPLAY_VALUE>[]) {
+        showDropdown(selectedOptions: Option<OPTION_DISPLAY_VALUE>[]) {
 
             if (this.hasOptions()) {
                 this.emptyDropdown.hide();
-                this.grid.show();
-                this.adjustGridHeight();
-                this.markSelections(selectedOptions);
+                this.dropdownGrid.show();
+                this.dropdownGrid.adjustGridHeight();
+                this.dropdownGrid.markSelections(selectedOptions);
             } else {
-                this.grid.hide();
+                this.dropdownGrid.hide();
                 this.emptyDropdown.getEl().setInnerHtml("No matching items");
                 this.emptyDropdown.show();
             }
@@ -165,112 +109,61 @@ module api.ui.selector.combobox {
         hideDropdown() {
 
             this.emptyDropdown.hide();
-            this.grid.hide();
+            this.dropdownGrid.hide();
         }
 
-        setLabel(label: string) {
+        setEmptyDropdownText(label: string) {
 
             if (this.isDropdownShown()) {
-                this.grid.hide();
+                this.dropdownGrid.hide();
                 this.emptyDropdown.getEl().setInnerHtml(label);
                 this.emptyDropdown.show();
             }
         }
 
-        setTopPx(value:number) {
-            this.grid.getEl().setTopPx(value);
+        setTopPx(value: number) {
+            this.dropdownGrid.setTopPx(value);
             this.emptyDropdown.getEl().setTopPx(value);
         }
 
-        setWidth(value:number) {
-            this.grid.getEl().setWidthPx(value);
-        }
-
-        private adjustGridHeight() {
-
-            var gridEl = this.grid.getEl();
-            var rowsHeight = this.getOptionCount() * this.rowHeight;
-
-            if (rowsHeight < this.maxHeight) {
-                var borderWidth = gridEl.getBorderTopWidth() + gridEl.getBorderBottomWidth();
-                gridEl.setHeightPx(rowsHeight + borderWidth);
-                this.grid.setOptions({autoHeight: true});
-            }
-            else if (gridEl.getHeight() < this.maxHeight) {
-                gridEl.setHeightPx(this.maxHeight);
-                this.grid.setOptions({autoHeight: false});
-            }
-
-            this.grid.resizeCanvas();
-        }
-
-        markSelections(selectedOptions: api.ui.selector.Option<OPTION_DISPLAY_VALUE>[]) {
-
-            var stylesHash: Slick.CellCssStylesHash = {};
-            selectedOptions.forEach((selectedOption: api.ui.selector.Option<OPTION_DISPLAY_VALUE>) => {
-                var row = this.gridData.getRowById(selectedOption.value);
-                stylesHash[row] = {option: "selected"};
-            });
-            this.grid.setCellCssStyles("selected", stylesHash);
+        setWidth(value: number) {
+            this.dropdownGrid.setWidthPx(value);
         }
 
         hasActiveRow(): boolean {
-            var activeCell = this.grid.getActiveCell();
-            if (activeCell) {
-                return true;
-            }
-            else {
-                return false;
-
-            }
+            return this.dropdownGrid.hasActiveRow();
         }
 
         getActiveRow(): number {
-            var activeCell = this.grid.getActiveCell();
-            if (activeCell) {
-                return activeCell.row;
-            }
-            else {
-                return -1;
-            }
+            return this.dropdownGrid.getActiveRow();
         }
 
-        makeFirstRowActive() {
-
-            this.grid.setActiveCell(0, 0);
+        nagivateToFirstRow() {
+            this.dropdownGrid.nagivateToFirstRow();
         }
 
-        makeFirstRowActiveIfNoRowIsActive() {
-
-            if (!this.grid.getActiveCell()) {
-                this.grid.setActiveCell(0, 0);
-            }
+        navigateToFirstRowIfNotActive() {
+            this.dropdownGrid.navigateToFirstRowIfNotActive();
         }
 
         navigateToNextRow() {
-            this.grid.navigateDown();
+            this.dropdownGrid.navigateToNextRow();
         }
 
         navigateToPreviousRow() {
-            this.grid.navigateUp();
+            this.dropdownGrid.navigateToPreviousRow();
         }
 
-
-        onRowSelection(listener: (event: ComboBoxDropdownRowSelectedEvent) => void) {
-            this.rowSelectionListeners.push(listener);
+        markSelections(selectedOptions: Option<OPTION_DISPLAY_VALUE>[]) {
+            this.dropdownGrid.markSelections(selectedOptions);
         }
 
-        unRowSelection(listener: (event: ComboBoxDropdownRowSelectedEvent) => void) {
-            this.rowSelectionListeners.filter((currentListener: (event: ComboBoxDropdownRowSelectedEvent) => void) => {
-                return listener != currentListener;
-            })
+        onRowSelection(listener: (event: DropdownGridRowSelectedEvent) => void) {
+            this.dropdownGrid.onRowSelection(listener);
         }
 
-        private notifyRowSelection(rowSelected: number) {
-            var event = new ComboBoxDropdownRowSelectedEvent(rowSelected);
-            this.rowSelectionListeners.forEach((listener: (event: ComboBoxDropdownRowSelectedEvent)=>void) => {
-                listener(event);
-            });
+        unRowSelection(listener: (event: DropdownGridRowSelectedEvent) => void) {
+            this.dropdownGrid.unRowSelection(listener);
         }
     }
 }

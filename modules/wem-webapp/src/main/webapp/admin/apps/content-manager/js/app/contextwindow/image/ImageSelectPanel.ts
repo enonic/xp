@@ -149,7 +149,7 @@ module app.contextwindow.image {
             var contentSummaryLoader = new api.form.inputtype.content.ContentSummaryLoader();
             contentSummaryLoader.setAllowedContentTypes(["image"]);
             contentSummaryLoader.onLoadingData((event: LoadingDataEvent) => {
-                comboBox.setLabel("Searching...");
+                comboBox.setEmptyDropdownText("Searching...");
             });
             contentSummaryLoader.onLoadedData((event: LoadedDataEvent<api.content.ContentSummary>) => {
                 var options = this.createOptions(event.getData());
