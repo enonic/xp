@@ -1,8 +1,8 @@
-module api.app{
+module api.app {
 
     export class AppBarTabMenu extends api.ui.tab.TabMenu {
 
-        private appBarTabMenuButton:AppBarTabMenuButton;
+        private appBarTabMenuButton: AppBarTabMenuButton;
 
         constructor() {
             super("appbar-tabmenu");
@@ -13,12 +13,12 @@ module api.app{
             this.updateMenuPosition();
         }
 
-        createTabMenuButton():AppBarTabMenuButton {
+        createTabMenuButton(): AppBarTabMenuButton {
             this.appBarTabMenuButton = new AppBarTabMenuButton();
             return this.appBarTabMenuButton;
         }
 
-        addNavigationItem(tab:AppBarTabMenuItem) {
+        addNavigationItem(tab: AppBarTabMenuItem) {
             super.addNavigationItem(tab);
 
             this.appBarTabMenuButton.setTabCount(this.countVisible());
@@ -29,7 +29,7 @@ module api.app{
             }
         }
 
-        removeNavigationItem(tab:AppBarTabMenuItem) {
+        removeNavigationItem(tab: AppBarTabMenuItem) {
             super.removeNavigationItem(tab);
 
             this.appBarTabMenuButton.setTabCount(this.countVisible());
@@ -55,7 +55,7 @@ module api.app{
             return null;
         }
 
-        selectNavigationItem(tabIndex:number) {
+        selectNavigationItem(tabIndex: number) {
             super.selectNavigationItem(tabIndex);
             var tab = <AppBarTabMenuItem>this.getNavigationItem(tabIndex);
             this.appBarTabMenuButton.setEditing(tab.isEditing());

@@ -79,36 +79,27 @@ module app {
             var contents: api.content.ContentSummary[] = event.getModels();
             contents.forEach((content: api.content.ContentSummary) => {
 
-                var tabId = api.app.AppBarTabId.forEdit(content.getId());
-                var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
+                var tabMenuItem = this.isContentBeingEditedOrViewed(content);
 
-                if (tabMenuItem != null) {
+                if (tabMenuItem) {
                     this.selectPanel(tabMenuItem);
 
                 } else {
+                    var tabId = api.app.AppBarTabId.forView(content.getId());
+                    tabMenuItem = new api.app.AppBarTabMenuItem(content.getDisplayName(), tabId);
+                    var contentItemViewPanel = new app.view.ContentItemViewPanel({
+                        showPreviewAction: app.browse.ContentBrowseActions.get().SHOW_PREVIEW,
+                        showDetailsAction: app.browse.ContentBrowseActions.get().SHOW_DETAILS
+                    });
 
-                    tabId = api.app.AppBarTabId.forView(content.getId());
-                    tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
+                    var contentItem = new api.app.view.ViewItem(content)
+                        .setDisplayName(content.getDisplayName())
+                        .setPath(content.getPath().toString())
+                        .setIconUrl(content.getIconUrl());
 
-                    if (tabMenuItem != null) {
-                        this.selectPanel(tabMenuItem);
+                    contentItemViewPanel.setItem(contentItem);
 
-                    } else {
-                        tabMenuItem = new api.app.AppBarTabMenuItem(content.getDisplayName(), tabId);
-                        var contentItemViewPanel = new app.view.ContentItemViewPanel({
-                            showPreviewAction: app.browse.ContentBrowseActions.get().SHOW_PREVIEW,
-                            showDetailsAction: app.browse.ContentBrowseActions.get().SHOW_DETAILS
-                        });
-
-                        var contentItem = new api.app.view.ViewItem(content)
-                            .setDisplayName(content.getDisplayName())
-                            .setPath(content.getPath().toString())
-                            .setIconUrl(content.getIconUrl());
-
-                        contentItemViewPanel.setItem(contentItem);
-
-                        this.addViewPanel(tabMenuItem, contentItemViewPanel);
-                    }
+                    this.addViewPanel(tabMenuItem, contentItemViewPanel);
                 }
             });
         }
@@ -118,14 +109,13 @@ module app {
             var contents: api.content.ContentSummary[] = event.getModels();
             contents.forEach((content: api.content.ContentSummary) => {
 
-                var tabId = api.app.AppBarTabId.forEdit(content.getId());
-                var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
+                var tabMenuItem = this.isContentBeingEditedOrViewed(content);
 
                 if (tabMenuItem != null) {
                     this.selectPanel(tabMenuItem);
 
                 } else {
-
+                    var tabId = api.app.AppBarTabId.forEdit(content.getId());
                     new app.wizard.ContentWizardPanelFactory().
                         setAppBarTabId(tabId).
                         setContentToEdit(content.getContentId()).
@@ -143,6 +133,20 @@ module app {
 
                 }
             });
+        }
+
+        private isContentBeingEditedOrViewed(content: api.content.ContentSummary): api.app.AppBarTabMenuItem {
+            var tabId = this.getAppBarTabMenu().getNavigationItemById(api.app.AppBarTabId.forEdit(content.getId()));
+            if (tabId) {
+                return tabId;
+            }
+            tabId = this.getAppBarTabMenu().getNavigationItemById(api.app.AppBarTabId.forView(content.getId()));
+            if (tabId) {
+                return tabId;
+            }
+            else {
+                return null;
+            }
         }
     }
 
