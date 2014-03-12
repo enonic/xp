@@ -432,10 +432,11 @@ module api.dom {
                 if (this.isVisible()) {
                     jQuery(this.getHTMLElement()).resize(handler);
                 } else {
-                    this.onShown((event: ElementShownEvent) => {
+                    var firstShowListener = (event: ElementShownEvent) => {
                         jQuery(this.getHTMLElement()).resize(handler);
-                        this.unShown(handler);
-                    });
+                        this.unShown(firstShowListener);
+                    }
+                    this.onShown(firstShowListener);
                 }
             }
         }
@@ -447,7 +448,7 @@ module api.dom {
 
             if (this.resizedListeners.length == 0) {
                 jQuery(this.getHTMLElement()).removeResize((event) => {
-                    this.notifyResized()
+                    this.notifyResized();
                 });
             }
         }
