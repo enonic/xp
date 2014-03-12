@@ -22,8 +22,6 @@ module api.ui.selector.combobox {
 
         private loadedListeners: {(items: T[]):void;}[];
 
-        private inputValueChangedListeners: {(oldValue: string, newValue: string, grid: api.ui.grid.Grid<api.ui.selector.Option<T>>):void;}[];
-
         private optionSelectedListeners: {(item: api.ui.selector.Option<T>):void;}[];
 
         constructor(config: RichComboBoxBuilder<T>) {
@@ -42,7 +40,6 @@ module api.ui.selector.combobox {
 
             this.loadedListeners = [];
             this.loadingListeners = [];
-            this.inputValueChangedListeners = [];
             this.optionSelectedListeners = [];
 
             this.addClass('rich-combobox');
@@ -94,7 +91,6 @@ module api.ui.selector.combobox {
             });
             this.comboBox.onValueChanged((event: ComboBoxValueChangedEvent<T>) => {
                 this.loader.search(event.getNewValue());
-                this.notifyInputValueChanged(event.getOldValue(), event.getNewValue(), event.getGrid());
             });
             this.comboBox.onOptionSelected((event: OptionSelectedEvent<T>) => {
                 this.selectedOptionsView.show();
@@ -158,10 +154,6 @@ module api.ui.selector.combobox {
             this.comboBox.addSelectedOptionRemovedListener(listener);
         }
 
-        addInputValueChangedListener(listener: {(oldValue: string, newValue: string, grid: api.ui.grid.Grid<api.ui.selector.Option<T>>): void;}) {
-            this.inputValueChangedListeners.push(listener);
-        }
-
         addOptionSelectedListener(listener: {(item: api.ui.selector.Option<T>): void;}) {
             this.optionSelectedListeners.push(listener);
         }
@@ -177,12 +169,6 @@ module api.ui.selector.combobox {
         removeLoadedListener(listenerToBeRemoved: {(items: T[]): void;}) {
             var index = this.loadedListeners.indexOf(listenerToBeRemoved);
             this.loadedListeners.splice(index, 1);
-        }
-
-        private notifyInputValueChanged(oldValue: string, newValue: string, grid: api.ui.grid.Grid<api.ui.selector.Option<T>>) {
-            this.inputValueChangedListeners.forEach((listener) => {
-                listener(oldValue, newValue, grid);
-            });
         }
 
         private notifyOptionSelected(item: api.ui.selector.Option<T>) {
@@ -206,13 +192,6 @@ module api.ui.selector.combobox {
         giveFocus(): boolean {
             return this.comboBox.giveFocus();
         }
-    }
-
-    export interface RichComboBoxConfig<T> {
-        comboBoxName?:string;
-        loader?:api.util.loader.BaseLoader<api.item.ItemJson, T>;
-        selectedOptionsView?:SelectedOptionsView<T>;
-        identifierMethod?:string;
     }
 
     export class RichComboBoxBuilder<T> {
