@@ -17,11 +17,15 @@ module api.content.page.layout {
             return this.regions.getComponent(path);
         }
 
-        getLayoutRegions(): LayoutRegions {
+        public getLayoutRegions(): LayoutRegions {
             return this.regions;
         }
 
-        toJson(): api.content.page.json.PageComponentTypeWrapperJson {
+        public setLayoutRegions(value: LayoutRegions) {
+            this.regions = value;
+        }
+
+        public toJson(): api.content.page.json.PageComponentTypeWrapperJson {
             var json: json.LayoutComponentJson = <json.LayoutComponentJson>super.toPageComponentJson();
             json.regions = this.regions.toJson();
 

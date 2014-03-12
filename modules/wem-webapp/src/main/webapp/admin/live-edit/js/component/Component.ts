@@ -50,11 +50,13 @@ module LiveEdit.component {
         getComponentName(): string {
             if (this.getComponentType().getType() == Type.PAGE) {
                 return content ? content.getDisplayName() : '[No Name]';
+            } else if (this.getComponentType().getType() == Type.REGION) {
+                var regionPath = this.getEl().getData('live-edit-region');
+                return regionPath ? regionPath.substring(regionPath.lastIndexOf('/') + 1) : '[No Name]';
             } else {
                 var path = this.getComponentPath();
                 return path ? path.substring(path.lastIndexOf('/') + 1) : '[No Name]';
             }
-
         }
 
         getComponentPath(): string {

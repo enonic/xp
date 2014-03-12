@@ -23,6 +23,10 @@ module api.content.page {
             this.setName(new DescriptorName(json.name));
             this.setDisplayName(json.displayName);
             this.setConfig(json.config != null ? new api.form.Form(json.config) : null);
+            for (var i = 0; i < json.regions.length; i++) {
+                var region = new api.content.page.region.RegionDescriptorBuilder().fromJson(json.regions[i]).build();
+                this.regions.push(region);
+            }
 
             return this;
         }
@@ -39,6 +43,11 @@ module api.content.page {
 
         public setConfig(value: api.form.Form): PageDescriptorBuilder {
             this.config = value;
+            return this;
+        }
+
+        public addRegion(value: region.RegionDescriptor): PageDescriptorBuilder {
+            this.regions.push(value);
             return this;
         }
 

@@ -41,7 +41,7 @@ module app.wizard {
 
         private contentWizardPanel: ContentWizardPanel;
 
-        private loader:LiveEditLoader;
+        private loader: LiveEditLoader;
 
         constructor(config: LiveFormPanelConfig) {
             super("live-form-panel");
@@ -57,9 +57,9 @@ module app.wizard {
             this.baseUrl = api.util.getUri("portal/edit/");
 
             ShowContentFormEvent.on(() => {
-               if (this.loader) {
-                   this.loader.stop();
-               }
+                if (this.loader) {
+                    this.loader.stop();
+                }
             });
 
         }
@@ -198,7 +198,7 @@ module app.wizard {
 
             if (!this.pageSkipReload) {
                 if (pageTemplateChanged) {
-                    console.log( "pageTemplateChanged, resetting regions to regions of template" );
+                    console.log("pageTemplateChanged, resetting regions to regions of template");
                     this.pageRegions = this.pageTemplate.getRegions();
                 } else {
                     this.pageRegions = this.resolvePageRegions();
@@ -240,11 +240,11 @@ module app.wizard {
 
             var page = this.pageContent.getPage();
             if (page && page.hasRegions()) {
-                console.log( "resolvePageRegions.. from page" );
+                console.log("resolvePageRegions.. from page");
                 return page.getRegions();
             }
             else {
-                console.log( "resolvePageRegions.. from page template" );
+                console.log("resolvePageRegions.. from page template");
                 return this.pageTemplate.getRegions();
             }
         }
@@ -389,28 +389,56 @@ module app.wizard {
                     var newElement = $(data);
                     $(componentPlaceholder.getHTMLElement()).replaceWith(newElement);
                     this.liveEditWindow.LiveEdit.component.Selection.deselect();
+
+                    this.liveEditWindow.LiveEdit.PlaceholderCreator.renderEmptyRegionPlaceholders();
+
                     var comp = this.liveEditWindow.getComponentByPath(componentPath);
                     this.liveEditWindow.LiveEdit.component.Selection.handleSelect(comp.getHTMLElement(), null, true);
                 }
             });
         }
 
-        setComponentDescriptor(descriptorKey: api.content.page.DescriptorKey, componentPath: api.content.page.ComponentPath, componentPlaceholder) {
+        setComponentDescriptor(descriptor: api.content.page.Descriptor, componentPath: api.content.page.ComponentPath,
+                               componentPlaceholder) {
             var component = this.pageRegions.getComponent(componentPath);
-            if (!component || !descriptorKey) {
+            if (!component || !descriptor) {
                 return;
             }
 
             this.contextWindow.hide();
 
             componentPlaceholder.showLoadingSpinner();
-            component.setDescriptor(descriptorKey);
+            component.setDescriptor(descriptor.getKey());
+
+            // use of "instanceof" does not work because the descriptor object has been created in another frame
+            var isLayoutDescriptor = (descriptor instanceof api.content.page.layout.LayoutDescriptor) ||
+                                     (<any>descriptor).constructor.name === 'LayoutDescriptor';
+            if (isLayoutDescriptor) {
+                var layoutDescriptor = <api.content.page.layout.LayoutDescriptor> descriptor;
+                var layoutComponent = <api.content.page.layout.LayoutComponent>component;
+                this.addLayoutRegions(layoutComponent, layoutDescriptor);
+            }
 
             this.pageSkipReload = true;
             this.contentWizardPanel.saveChanges().done(() => {
                 this.pageSkipReload = false;
                 this.loadComponent(componentPath, componentPlaceholder);
             });
+        }
+
+        private addLayoutRegions(layoutComponent: api.content.page.layout.LayoutComponent,
+                                 layoutDescriptor: api.content.page.layout.LayoutDescriptor) {
+            var layoutRegionsBuilder = new api.content.page.layout.LayoutRegionsBuilder();
+            layoutDescriptor.getRegions().forEach(function (regionDescriptor: api.content.page.region.RegionDescriptor) {
+
+                var regionPath = new api.content.page.RegionPath(layoutComponent.getPath(), regionDescriptor.getName());
+                var layoutRegion = new api.content.page.region.RegionBuilder().
+                    setName(regionDescriptor.getName()).
+                    setPath(regionPath).
+                    build();
+                layoutRegionsBuilder.addRegion(layoutRegion);
+            });
+            layoutComponent.setLayoutRegions(layoutRegionsBuilder.build());
         }
 
         getLiveEditWindow() {
@@ -492,7 +520,8 @@ module app.wizard {
                     var componentType = componentEl.getComponentType().getName();
                     var regionPath = api.content.page.RegionPath.fromString(regionPathAsString);
 
-                    var componentName = this.pageRegions.ensureUniqueComponentName(regionPath, new api.content.page.ComponentName(api.util.capitalize(componentType)));
+                    var componentName = this.pageRegions.ensureUniqueComponentName(regionPath,
+                        new api.content.page.ComponentName(api.util.capitalize(componentType)));
 
                     var componentToAddAfter: api.content.page.ComponentPath = null;
                     if (componentPathToAddAfterAsString) {
@@ -501,18 +530,18 @@ module app.wizard {
 
                     var pageComponent: PageComponentBuilder<api.content.page.PageComponent>;
                     switch (componentType) {
-                        case "image":
-                            pageComponent = new ImageComponentBuilder();
-                            break;
-                        case "part":
-                            pageComponent = new PartComponentBuilder();
-                            break;
-                        case "layout":
-                            pageComponent = new LayoutComponentBuilder();
-                            break;
-                        case "paragraph":
-                            //TODO: Implement paragraph
-                            pageComponent = null;
+                    case "image":
+                        pageComponent = new ImageComponentBuilder();
+                        break;
+                    case "part":
+                        pageComponent = new PartComponentBuilder();
+                        break;
+                    case "layout":
+                        pageComponent = new LayoutComponentBuilder();
+                        break;
+                    case "paragraph":
+                        //TODO: Implement paragraph
+                        pageComponent = null;
                         break;
                     }
                     if (pageComponent) {
@@ -549,17 +578,17 @@ module app.wizard {
                 });
 
             this.liveEditJQuery(this.liveEditWindow).on('pageComponentSetDescriptor.liveEdit',
-                (event, descriptorKey?: api.content.page.DescriptorKey, componentPathAsString?: string, componentPlaceholder?) => {
+                (event, descriptor?: api.content.page.Descriptor, componentPathAsString?: string, componentPlaceholder?) => {
 
                     var componentPath = ComponentPath.fromString(componentPathAsString);
-                    this.setComponentDescriptor(descriptorKey, componentPath, componentPlaceholder);
+                    this.setComponentDescriptor(descriptor, componentPath, componentPlaceholder);
                 });
         }
     }
 
     export class LiveEditLoader extends api.dom.DivEl {
 
-        constructor(elementToCover:api.dom.Element) {
+        constructor(elementToCover: api.dom.Element) {
             super("live-edit-loader");
 
             this.getEl().setTopPx(elementToCover.getEl().getOffsetTop());

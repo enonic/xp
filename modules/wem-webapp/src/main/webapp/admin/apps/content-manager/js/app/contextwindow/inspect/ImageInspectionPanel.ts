@@ -39,14 +39,15 @@ module app.contextwindow.inspect {
 
             this.descriptorComboBox.addOptionSelectedListener((option: api.ui.selector.Option<ImageDescriptor>) => {
                 if (this.imageComponent) {
-                    var selectedDescriptor: api.content.page.DescriptorKey = option.displayValue.getKey();
-                    this.imageComponent.setDescriptor(selectedDescriptor);
+                    var selectedDescriptorKey: api.content.page.DescriptorKey = option.displayValue.getKey();
+                    this.imageComponent.setDescriptor(selectedDescriptorKey);
 
-                    var hasDescriptorChanged = this.descriptorSelected && !this.descriptorSelected.equals(selectedDescriptor);
-                    this.descriptorSelected = selectedDescriptor;
+                    var hasDescriptorChanged = this.descriptorSelected && !this.descriptorSelected.equals(selectedDescriptorKey);
+                    this.descriptorSelected = selectedDescriptorKey;
                     if (hasDescriptorChanged) {
                         var path = this.imageComponent.getPath();
                         var component = this.getLiveFormPanel().getLiveEditWindow().getComponentByPath(path.toString());
+                        var selectedDescriptor: api.content.page.Descriptor = option.displayValue;
                         this.getLiveFormPanel().setComponentDescriptor(selectedDescriptor, path, component);
                     }
                 }
