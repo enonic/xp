@@ -171,6 +171,7 @@ module api.ui.selector.combobox {
             if (this.maximumOccurrencesReached()) {
                 this.input.setMaximumReached();
                 this.moveFocuseToNextInput();
+                this.arrow.addClass('disabled');
             }
             if (!silent) {
                 this.notifyOptionSelected(option);
@@ -188,6 +189,8 @@ module api.ui.selector.combobox {
             this.comboBoxDropdown.markSelections(this.selectedOptionsCtrl.getOptions());
 
             this.input.openForTypingAndFocus();
+
+            this.arrow.removeClass('disabled');
         }
 
         clearSelection() {
@@ -199,6 +202,8 @@ module api.ui.selector.combobox {
             this.comboBoxDropdown.markSelections(this.selectedOptionsCtrl.getOptions());
 
             this.input.openForTypingAndFocus();
+
+            this.arrow.removeClass('disabled');
         }
 
         getSelectedOptions(): Option<OPTION_DISPLAY_VALUE>[] {
@@ -259,12 +264,14 @@ module api.ui.selector.combobox {
 
                 this.comboBoxDropdown.navigateToFirstRowIfNotActive();
 
-                if (!this.isDropdownShown()) {
-                    this.showDropdown();
-                    this.giveFocus();
-                } else {
-                    this.hideDropdown();
-                    this.giveFocus();
+                if (!this.maximumOccurrencesReached()) {
+                    if (this.isDropdownShown()) {
+                        this.hideDropdown();
+                        this.giveFocus();
+                    } else {
+                        this.showDropdown();
+                        this.giveFocus();
+                    }
                 }
             });
 
@@ -330,6 +337,8 @@ module api.ui.selector.combobox {
         private handleSelectedOptionRemoved(removedSelectedOption: SelectedOption<OPTION_DISPLAY_VALUE>) {
             this.comboBoxDropdown.markSelections(this.selectedOptionsCtrl.getOptions());
             this.input.openForTypingAndFocus();
+
+            this.arrow.removeClass('disabled');
 
             if (this.hideComboBoxWhenMaxReached) {
                 this.show();
