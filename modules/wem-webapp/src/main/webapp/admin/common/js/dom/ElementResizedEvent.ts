@@ -2,15 +2,21 @@ module api.dom {
 
     export class ElementResizedEvent extends ElementEvent {
 
-        private newSize:number;
+        private newWidth:number;
+        private newHeight:number;
 
-        constructor(newSize:number, element: Element, target?: Element) {
-            super("rendered", element, target);
-            this.newSize = newSize;
+        constructor(newWidth:number, newHeight:number, element: Element, target?: Element) {
+            super("resized", element, target);
+            this.newWidth = newWidth;
+            this.newHeight = newHeight;
         }
 
-        getNewSize(): number {
-            return this.newSize;
+        getNewWidth(): number {
+            return this.newWidth;
+        }
+
+        getNewHeight(): number {
+            return this.newHeight;
         }
     }
 }

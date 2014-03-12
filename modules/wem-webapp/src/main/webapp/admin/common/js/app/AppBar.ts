@@ -49,12 +49,12 @@ module api.app {
             this.userInfoPopup = new UserInfoPopup();
             this.userInfoPopup.hide();
 
-            this.userButton.getEl().addEventListener('click', (event: Event) => {
+            this.userButton.onClicked((event: Event) => {
                 this.userInfoPopup.toggle();
             });
 
             var appManager: api.app.AppManager = api.app.AppManager.instance();
-            this.launcherButton.setClickListener((event) => {
+            this.launcherButton.onClicked((event) => {
                 appManager.showLauncher();
             });
 
@@ -105,7 +105,7 @@ module api.app {
         constructor(action: api.ui.Action) {
             super('launcher-button');
 
-            this.getEl().addEventListener('click', (event: Event) => {
+            this.onClicked((event: Event) => {
                 action.execute();
             });
         }
@@ -127,7 +127,7 @@ module api.app {
 
             this.getEl().setInnerHtml(text);
 
-            this.getEl().addEventListener('click', (event: Event) => {
+            this.onClicked((event: Event) => {
                 action.execute();
             });
         }

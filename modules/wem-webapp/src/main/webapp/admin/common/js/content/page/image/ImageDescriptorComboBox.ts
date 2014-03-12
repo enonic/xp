@@ -80,7 +80,7 @@ module api.content.page.image {
                 .setSubName(this.descriptor.getName().toString());
 
             var removeButtonEl = new api.dom.AEl("remove");
-            removeButtonEl.getEl().addEventListener('click', (event: Event) => {
+            removeButtonEl.onClicked((event: Event) => {
                 this.notifySelectedOptionToBeRemoved();
 
                 event.stopPropagation();

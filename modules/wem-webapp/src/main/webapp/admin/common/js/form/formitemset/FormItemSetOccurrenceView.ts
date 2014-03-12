@@ -58,7 +58,7 @@ module api.form.formitemset {
         private doLayout() {
             this.removeButton = new api.dom.AEl("remove-button");
             this.appendChild(this.removeButton);
-            this.removeButton.setClickListener(() => {
+            this.removeButton.onClicked(() => {
                 this.notifyRemoveButtonClicked();
             });
 

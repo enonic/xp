@@ -256,11 +256,11 @@ module api.ui.selector.combobox {
 
         private setupListeners() {
 
-            this.getEl().addEventListener('click', () => {
+            this.onClicked(() => {
                 this.setOnBlurListener();
             });
 
-            this.arrow.getEl().addEventListener('click', (event: any) => {
+            this.arrow.onClicked((event: any) => {
 
                 this.comboBoxDropdown.navigateToFirstRowIfNotActive();
 
@@ -405,7 +405,7 @@ module api.ui.selector.combobox {
             // set callback function on document body if combobox wasn't marked as active
             if (!this.active) {
                 this.active = true;
-                api.dom.Body.get().getEl().addEventListener('click', hideDropdownOnBlur);
+                api.dom.Body.get().onClicked(hideDropdownOnBlur);
             }
         }
 

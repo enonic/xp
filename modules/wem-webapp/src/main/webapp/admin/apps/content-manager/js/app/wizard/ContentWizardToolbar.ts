@@ -46,7 +46,7 @@ module app.wizard {
             this.addClass("icon-menu6 icon-large");
             this.setActive(true);
             this.setEnabled(false);
-            this.getEl().addEventListener('click', () => {
+            this.onClicked(() => {
                 new ToggleContextWindowEvent().fire();
             });
 

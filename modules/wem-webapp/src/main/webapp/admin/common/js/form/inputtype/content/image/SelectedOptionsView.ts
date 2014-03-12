@@ -71,7 +71,7 @@ module api.form.inputtype.content.image {
             this.dialog.hide();
             var optionView:SelectedOptionView = <SelectedOptionView>option.getOptionView();
 
-            optionView.addClickEventListener(() => {
+            optionView.onClicked(() => {
                 this.selectedOption = option;
                 this.showImageSelectorDialog(option.getOption(), option.getIndex());
             });

@@ -29,7 +29,7 @@ module app.contextwindow.image {
 
 
             var removeButton = new api.dom.AEl("remove");
-            removeButton.getEl().addEventListener('click', (event:Event) => {
+            removeButton.onClicked((event:Event) => {
                 this.notifySelectedOptionToBeRemoved();
 
                 event.stopPropagation();

@@ -36,7 +36,7 @@ module api.form.inputtype.support {
 
             this.removeButtonEl = new api.dom.AEl("remove-button");
             this.appendChild(this.removeButtonEl);
-            this.removeButtonEl.setClickListener(() => {
+            this.removeButtonEl.onClicked(() => {
                 this.notifyRemoveButtonClicked();
             });
 

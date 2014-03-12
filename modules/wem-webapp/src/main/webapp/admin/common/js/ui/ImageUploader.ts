@@ -69,7 +69,7 @@ module api.ui {
 
             this.cancelBtn = new api.ui.Button("Cancel");
             this.cancelBtn.setVisible(this.buttonsVisible);
-            this.cancelBtn.setClickListener(() => {
+            this.cancelBtn.onClicked(() => {
                 this.stop();
                 this.reset();
             });
@@ -80,7 +80,7 @@ module api.ui {
             this.resetBtn.setText('Replace');
             this.resetBtn.setUrl('#');
             this.resetBtn.setVisible(this.buttonsVisible);
-            this.resetBtn.setClickListener(() => {
+            this.resetBtn.onClicked(() => {
                 this.reset();
             });
             this.imageBox.appendChild(this.resetBtn);

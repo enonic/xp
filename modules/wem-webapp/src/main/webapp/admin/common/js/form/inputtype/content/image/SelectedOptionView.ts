@@ -11,12 +11,6 @@ module api.form.inputtype.content.image {
             super(option);
         }
 
-        addClickEventListener(listener:(event: Event)=>void) {
-            this.getEl().addEventListener("click", (event: Event) => {
-                listener(event);
-            });
-        }
-
         layout() {
 
             this.getEl().setBackgroundImage("url(" + this.content.getIconUrl() + ")");

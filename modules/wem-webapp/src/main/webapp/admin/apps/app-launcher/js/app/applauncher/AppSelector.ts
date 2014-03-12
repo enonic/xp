@@ -125,7 +125,7 @@ module app.launcher {
                 appTile.onMouseLeave((event: MouseEvent) => {
                     this.unhighlightAppTile(application, idx, appTile);
                 });
-                appTile.getEl().addEventListener("click", (evt: Event) => {
+                appTile.onClicked((evt: Event) => {
                     this.notifyAppSelected(application);
                 });
 

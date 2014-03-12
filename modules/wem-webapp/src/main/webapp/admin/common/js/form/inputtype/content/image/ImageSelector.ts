@@ -75,8 +75,8 @@ module api.form.inputtype.content.image {
             })
         }
 
-        availableSizeChanged(newSize: number) {
-            console.log("ImageSelector.availableSizeChanged("+newSize+")" );
+        availableSizeChanged(newWidth:number, newHeight:number) {
+            console.log("ImageSelector.availableSizeChanged("+newWidth+"x"+newHeight+")" );
         }
 
         layout(input: api.form.Input, properties: api.data.Property[]) {
@@ -105,7 +105,7 @@ module api.form.inputtype.content.image {
 
             this.uploadButton = new api.ui.Button("");
             this.uploadButton.addClass("upload-button");
-            this.uploadButton.setClickListener((event: any) => {
+            this.uploadButton.onClicked((event: any) => {
                 var inputMaximum = input.getOccurrences().getMaximum();
                 var countSelected = this.comboBox.countSelectedOptions();
                 var rest = -1;

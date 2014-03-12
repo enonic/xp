@@ -8,7 +8,7 @@ module api.ui.menu {
             super("menu-item");
             this.action = action;
             this.getEl().setInnerHtml(this.action.getLabel());
-            this.getEl().addEventListener("click", () => {
+            this.onClicked(() => {
                 if (action.isEnabled()) {
                     this.action.execute();
                 }

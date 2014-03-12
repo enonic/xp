@@ -21,7 +21,7 @@ module api.ui.selector.combobox {
             var optionValueEl = new api.dom.DivEl('option-value');
             optionValueEl.getEl().setInnerHtml(this.option.displayValue.toString());
 
-            removeButtonEl.getEl().addEventListener('click', (event:Event) => {
+            removeButtonEl.onClicked((event:Event) => {
                 this.notifySelectedOptionToBeRemoved();
 
                 event.stopPropagation();

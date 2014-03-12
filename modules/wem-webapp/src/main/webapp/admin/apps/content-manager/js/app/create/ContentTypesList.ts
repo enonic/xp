@@ -45,7 +45,7 @@ module app.create {
             }
             var listItem = new ContentTypeListItem(contentType, isSiteRoot, this.markRoots);
 
-            listItem.getEl().addEventListener("click", () => {
+            listItem.onClicked(() => {
                 this.notifySelected(listItem);
             });
             return listItem;

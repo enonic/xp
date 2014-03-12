@@ -27,8 +27,8 @@ module api.form.inputtype.combobox {
             this.comboBoxConfig = config.inputConfig;
         }
 
-        availableSizeChanged(newSize: number) {
-            console.log("ComboBox.availableSizeChanged("+newSize+")" );
+        availableSizeChanged(newWidth:number, newHeight:number) {
+            console.log("ComboBox.availableSizeChanged("+newWidth+"x"+newHeight+")" );
         }
 
         getElement(): api.dom.Element {

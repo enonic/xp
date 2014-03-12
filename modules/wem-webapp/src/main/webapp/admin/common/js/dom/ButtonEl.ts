@@ -9,9 +9,5 @@ module api.dom {
         setText(text:string) {
             this.getEl().setInnerHtml(text);
         }
-
-        setClickListener(f:(event) => void) {
-            this.getEl().addEventListener("click", f);
-        }
     }
 }

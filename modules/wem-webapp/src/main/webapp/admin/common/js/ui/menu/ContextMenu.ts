@@ -26,7 +26,7 @@ module api.ui.menu{
 
         private createMenuItem(action:api.ui.Action):MenuItem {
             var menuItem = new MenuItem(action);
-            menuItem.getEl().addEventListener('click', (evt:Event) => {
+            menuItem.onClicked((evt:Event) => {
                 this.hide();
             });
             this.menuItems.push(menuItem);

@@ -17,7 +17,6 @@ module api.ui.toolbar {
 
             window.addEventListener("resize", () => this.foldOrExpand());
 
-            this.onRendered((event) => this.foldOrExpand());
             this.onShown((event) => this.foldOrExpand());
         }
 

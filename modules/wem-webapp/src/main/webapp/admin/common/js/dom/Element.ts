@@ -96,6 +96,9 @@ module api.dom {
             if (!this.isRendered()) {
                 this.render(false);
             }
+            if (this.isVisible()) {
+                this.notifyShown();
+            }
         }
 
         render(deep: boolean = true) {
@@ -110,11 +113,6 @@ module api.dom {
 
         isRendered(): boolean {
             return this.rendered;
-        }
-
-        className(value: string): Element {
-            this.getHTMLElement().className = value;
-            return this;
         }
 
         show() {
@@ -398,7 +396,9 @@ module api.dom {
                 listener(shownEvent);
             });
             this.children.forEach((child: Element) => {
-                child.notifyShown(shownEvent.getTarget());
+                if (child.isVisible()) {
+                    child.notifyShown(shownEvent.getTarget());
+                }
             })
         }
 
@@ -423,18 +423,21 @@ module api.dom {
         }
 
         onResized(listener: (event: ElementResizedEvent) => void) {
-
-            var first = this.resizedListeners.length == 0;
             this.resizedListeners.push(listener);
 
-            if (first) {
-                //jQuery(this.getHTMLElement()).resize(this.handleJqueryPluginResizeEvent);
+            if (this.resizedListeners.length == 1) {
+                var handler = (event) => {
+                    this.notifyResized();
+                }
+                if (this.isVisible()) {
+                    jQuery(this.getHTMLElement()).resize(handler);
+                } else {
+                    this.onShown((event: ElementShownEvent) => {
+                        jQuery(this.getHTMLElement()).resize(handler);
+                        this.unShown(handler);
+                    });
+                }
             }
-        }
-
-        private handleJqueryPluginResizeEvent() {
-            console.log("Element.resized: ", arguments);
-            this.notifyResized(this.getEl().getWidth());
         }
 
         unResized(listener: (event: ElementResizedEvent) => void) {
@@ -443,16 +446,27 @@ module api.dom {
             });
 
             if (this.resizedListeners.length == 0) {
-                //(<any>jQuery(this.getHTMLElement())).removeResize(this.handleJqueryPluginResizeEvent);
+                jQuery(this.getHTMLElement()).removeResize((event) => {
+                    this.notifyResized()
+                });
             }
         }
 
-        private notifyResized(newSize: number) {
-            var event = new ElementResizedEvent(newSize, this);
+        private notifyResized() {
+            var width = this.getEl().getWidth();
+            var height = this.getEl().getHeight();
+            var event = new ElementResizedEvent(width, height, this);
             this.resizedListeners.forEach((listener) => {
                 listener(event);
             });
         }
 
+        onClicked(listener: (event) => void) {
+            this.getEl().addEventListener("click", listener);
+        }
+
+        unClicked(listener: (event) => void) {
+            this.getEl().removeEventListener("click", listener);
+        }
     }
 }

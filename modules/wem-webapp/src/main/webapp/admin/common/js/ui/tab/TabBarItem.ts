@@ -22,7 +22,7 @@ module api.ui.tab {
             this.setLabel(label);
             this.removable = options.removable;
 
-            this.getEl().addEventListener("click", (event) => {
+            this.onClicked((event) => {
                 this.notifySelectedListeners();
             });
         }

@@ -34,7 +34,7 @@ module api.ui.tab {
             this.labelEl = new api.dom.SpanEl('label');
             this.appendChild(this.labelEl);
             this.setLabel(label);
-            this.labelEl.getEl().addEventListener("click", () => {
+            this.labelEl.onClicked(() => {
                 this.notifySelectedListeners(this);
             });
 
@@ -43,7 +43,7 @@ module api.ui.tab {
                 var removeButton = new api.dom.ButtonEl();
                 removeButton.getEl().setInnerHtml(options.removeText ? options.removeText : "&times;");
                 this.prependChild(removeButton);
-                removeButton.getEl().addEventListener("click", () => {
+                removeButton.onClicked(() => {
                     if (this.removable) {
                         this.notifyClosedListeners(this);
                     }

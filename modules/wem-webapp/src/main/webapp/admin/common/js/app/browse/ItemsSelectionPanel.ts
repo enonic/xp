@@ -111,15 +111,14 @@ module api.app.browse {
         }
 
         private addRemoveButton(callback?: () => void) {
-            var removeEl = document.createElement("div");
-            removeEl.className = "remove";
-            removeEl.innerHTML = "&times;";
-            removeEl.addEventListener("click", (event) => {
+            var removeEl = new api.dom.DivEl("remove");
+            removeEl.getEl().setInnerHtml("&times;")
+            removeEl.onClicked((event) => {
                 if (callback) {
                     callback();
                 }
             });
-            this.getEl().appendChild(removeEl);
+            this.appendChild(removeEl);
         }
 
         private setIcon(iconUrl: string, size: number) {

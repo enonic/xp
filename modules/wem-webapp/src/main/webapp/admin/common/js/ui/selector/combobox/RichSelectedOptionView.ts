@@ -33,7 +33,7 @@ module api.ui.selector.combobox {
                 .setSubName(this.resolveSubTitle(this.optionDisplayValue));
 
             var removeButton = new api.dom.AEl("remove");
-            removeButton.getEl().addEventListener('click', (event:Event) => {
+            removeButton.onClicked((event:Event) => {
                 this.notifySelectedOptionToBeRemoved();
 
                 event.stopPropagation();

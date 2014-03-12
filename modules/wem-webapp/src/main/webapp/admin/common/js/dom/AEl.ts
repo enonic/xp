@@ -13,9 +13,5 @@ module api.dom {
         public setUrl(value: string) {
             this.getEl().setAttribute('href', value);
         }
-
-        setClickListener(f: (event) => void) {
-            this.getEl().addEventListener("click", f);
-        }
     }
 }

@@ -46,7 +46,7 @@ module api.ui {
             }
             this.isOn = initOn;
 
-            this.getEl().addEventListener('click', () => {
+            this.onClicked(() => {
                 if (this.enabled) {
                     this.toggle();
                 }

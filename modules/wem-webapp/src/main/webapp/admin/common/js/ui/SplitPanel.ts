@@ -156,7 +156,6 @@ module api.ui {
                 }
             });
 
-            this.onRendered((event: api.dom.ElementRenderedEvent) => this.distribute());
             this.onShown((event: api.dom.ElementShownEvent) => this.distribute());
         }
 
