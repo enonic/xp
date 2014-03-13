@@ -13,7 +13,7 @@ module api.content.page.image {
             return this.resourcePath;
         }
 
-        fromJsonToImageDescriptor(json: json.ImageDescriptorJson): ImageDescriptor {
+        fromJsonToImageDescriptor(json: ImageDescriptorJson): ImageDescriptor {
 
             return new api.content.page.image.ImageDescriptorBuilder().fromJson(json).build();
         }

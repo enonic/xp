@@ -25,11 +25,11 @@ module api.content.page.layout {
             this.regions = value;
         }
 
-        public toJson(): api.content.page.json.PageComponentTypeWrapperJson {
-            var json: json.LayoutComponentJson = <json.LayoutComponentJson>super.toPageComponentJson();
+        public toJson(): api.content.page.PageComponentTypeWrapperJson {
+            var json: LayoutComponentJson = <LayoutComponentJson>super.toPageComponentJson();
             json.regions = this.regions.toJson();
 
-            return <api.content.page.json.PageComponentTypeWrapperJson> {
+            return <api.content.page.PageComponentTypeWrapperJson> {
                 LayoutComponent: json
             };
         }
@@ -39,7 +39,7 @@ module api.content.page.layout {
 
         regions: LayoutRegions;
 
-        public fromJson(json: json.LayoutComponentJson, regionPath: RegionPath): LayoutComponentBuilder {
+        public fromJson(json: LayoutComponentJson, regionPath: RegionPath): LayoutComponentBuilder {
 
             if (json.descriptor) {
                 this.setDescriptor(api.content.page.DescriptorKey.fromString(json.descriptor));

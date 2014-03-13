@@ -52,7 +52,7 @@ module api.content.page {
 
         canRender: api.schema.content.ContentTypeName[] = [];
 
-        fromJson(json: api.content.page.json.PageTemplateJson): PageTemplateBuilder {
+        fromJson(json: api.content.page.PageTemplateJson): PageTemplateBuilder {
 
             this.setKey(PageTemplateKey.fromString(json.key));
             this.setDisplayName(json.displayName);

@@ -47,7 +47,7 @@ module api.content.page {
 
         config: api.data.RootDataSet;
 
-        public fromJson(json: api.content.page.json.PageJson): PageBuilder {
+        public fromJson(json: api.content.page.PageJson): PageBuilder {
             this.setTemplate(PageTemplateKey.fromString(json.template));
             this.setRegions(json.regions != null ? new PageRegionsBuilder().fromJson(json.regions).build() : null);
             this.setConfig(json.config != null ? api.data.DataFactory.createRootDataSet(json.config) : null);

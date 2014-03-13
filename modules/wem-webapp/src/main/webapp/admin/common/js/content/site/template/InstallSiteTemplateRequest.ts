@@ -1,6 +1,6 @@
 module api.content.site.template {
 
-    export class InstallSiteTemplateRequest extends SiteTemplateResourceRequest<api.content.site.template.json.SiteTemplateSummaryJson> {
+    export class InstallSiteTemplateRequest extends SiteTemplateResourceRequest<api.content.site.template.SiteTemplateSummaryJson> {
 
         private uploader: any;
         private triggerElement: api.dom.Element;
@@ -93,7 +93,7 @@ module api.content.site.template {
                 ]
             });
 
-            var results: api.rest.JsonResponse<api.content.site.template.json.SiteTemplateSummaryJson>[] = [];
+            var results: api.rest.JsonResponse<api.content.site.template.SiteTemplateSummaryJson>[] = [];
             this.uploader.bind('QueueChanged', (up) => {
                 this.send();
                 results.length = 0;
@@ -101,7 +101,7 @@ module api.content.site.template {
 
             this.uploader.bind('FileUploaded', (up, file, response) => {
                 if (response && response.status === 200) {
-                    results.push(new api.rest.JsonResponse<api.content.site.template.json.SiteTemplateSummaryJson>(response.response));
+                    results.push(new api.rest.JsonResponse<api.content.site.template.SiteTemplateSummaryJson>(response.response));
                 } else if (this.deferred) {
                     this.deferred.reject(new api.rest.RequestError(response.status, response.statusText, response.responseText, null));
                     this.deferred = undefined;
@@ -134,9 +134,9 @@ module api.content.site.template {
 
         private templates: SiteTemplateSummary[] = [];
 
-        constructor(templateResponses: api.rest.JsonResponse<api.content.site.template.json.SiteTemplateSummaryJson>[]) {
+        constructor(templateResponses: api.rest.JsonResponse<api.content.site.template.SiteTemplateSummaryJson>[]) {
             super();
-            templateResponses.forEach((response: api.rest.JsonResponse<api.content.site.template.json.SiteTemplateSummaryJson>) => {
+            templateResponses.forEach((response: api.rest.JsonResponse<api.content.site.template.SiteTemplateSummaryJson>) => {
                 var responseJson = response.getJson();
                 if (responseJson) {
                     this.templates.push(new SiteTemplateSummary(responseJson));

@@ -1,6 +1,6 @@
 module api.content.site {
 
-    export class GetSiteRequest extends SiteResourceRequest<api.content.site.json.SiteJson> {
+    export class GetSiteRequest extends SiteResourceRequest<api.content.site.SiteJson> {
 
         private siteId:string;
 

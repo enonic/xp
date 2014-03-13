@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export class GetPageTemplatesByCanRenderRequest extends PageTemplateResourceRequest<api.content.page.json.PageTemplateSummaryListJson> {
+    export class GetPageTemplatesByCanRenderRequest extends PageTemplateResourceRequest<api.content.page.PageTemplateSummaryListJson> {
 
         private siteTemplateKey: api.content.site.template.SiteTemplateKey;
 
@@ -29,10 +29,10 @@ module api.content.page {
             var deferred = Q.defer<api.content.page.PageTemplateSummary[]>();
 
             this.send().
-                then((response: api.rest.JsonResponse<api.content.page.json.PageTemplateSummaryListJson>) => {
+                then((response: api.rest.JsonResponse<api.content.page.PageTemplateSummaryListJson>) => {
 
                     var array:api.content.page.PageTemplateSummary[] = [];
-                         response.getResult().templates.forEach((templateJson:api.content.page.json.PageTemplateSummaryJson) => {
+                         response.getResult().templates.forEach((templateJson:api.content.page.PageTemplateSummaryJson) => {
                              array.push(this.fromJsonToPageTemplateSummary(templateJson));
                          });
 

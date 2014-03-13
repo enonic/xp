@@ -18,7 +18,7 @@ module api.content.page {
 
         regions: region.RegionDescriptor[] = [];
 
-        public fromJson(json: api.content.page.json.PageDescriptorJson): PageDescriptorBuilder {
+        public fromJson(json: api.content.page.PageDescriptorJson): PageDescriptorBuilder {
 
             this.setName(new DescriptorName(json.name));
             this.setDisplayName(json.displayName);

@@ -13,12 +13,12 @@ module api.content.page {
             return this.resourcePath;
         }
 
-        fromJsonToPageTemplate(json:api.content.page.json.PageTemplateJson):api.content.page.PageTemplate {
+        fromJsonToPageTemplate(json:api.content.page.PageTemplateJson):api.content.page.PageTemplate {
             return new PageTemplateBuilder().
                 fromJson(json).build();
         }
 
-        fromJsonToPageTemplateSummary(json:api.content.page.json.PageTemplateSummaryJson):api.content.page.PageTemplateSummary {
+        fromJsonToPageTemplateSummary(json:api.content.page.PageTemplateSummaryJson):api.content.page.PageTemplateSummary {
             return new PageTemplateSummaryBuilder().
                 fromJson(json).build();
         }

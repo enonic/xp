@@ -11,9 +11,9 @@ module api.content.page {
 
         regions: region.Region[] = [];
 
-        fromJson(regionsJson: region.json.RegionJson[]): PageRegionsBuilder {
+        fromJson(regionsJson: api.content.page.region.RegionJson[]): PageRegionsBuilder {
 
-            regionsJson.forEach((regionJson: region.json.RegionJson) => {
+            regionsJson.forEach((regionJson: api.content.page.region.RegionJson) => {
 
                 var regionPath = new RegionPath(null, regionJson.name);
 
@@ -21,7 +21,7 @@ module api.content.page {
                     setName(regionJson.name).
                     setPath(regionPath);
 
-                regionJson.components.forEach((componentJson: api.content.page.json.PageComponentTypeWrapperJson) => {
+                regionJson.components.forEach((componentJson: api.content.page.PageComponentTypeWrapperJson) => {
                     var pageComponent = PageComponentFactory.createFromJson(componentJson, regionPath);
                     regionBuilder.addComponent(pageComponent);
                 });

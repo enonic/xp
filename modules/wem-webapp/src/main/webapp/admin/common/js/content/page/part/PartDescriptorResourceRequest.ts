@@ -13,7 +13,7 @@ module api.content.page.part {
             return this.resourcePath;
         }
 
-        fromJsonToPartDescriptor(json: json.PartDescriptorJson): PartDescriptor {
+        fromJsonToPartDescriptor(json: PartDescriptorJson): PartDescriptor {
 
             return new api.content.page.part.PartDescriptorBuilder().fromJson(json).build();
         }

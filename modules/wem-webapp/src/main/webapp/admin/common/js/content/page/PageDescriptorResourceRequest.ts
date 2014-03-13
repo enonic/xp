@@ -13,7 +13,7 @@ module api.content.page {
             return this.resourcePath;
         }
 
-        fromJsonToPageDescriptor(json:api.content.page.json.PageDescriptorJson):api.content.page.PageDescriptor {
+        fromJsonToPageDescriptor(json:api.content.page.PageDescriptorJson):api.content.page.PageDescriptor {
             return new api.content.page.PageDescriptorBuilder().fromJson(json).build();
         }
     }

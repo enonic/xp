@@ -1,11 +1,11 @@
 module api.content.page.layout {
 
-    export class LayoutDescriptorsResourceRequest extends LayoutDescriptorResourceRequest<json.LayoutDescriptorsJson> {
+    export class LayoutDescriptorsResourceRequest extends LayoutDescriptorResourceRequest<LayoutDescriptorsJson> {
 
-        fromJsonToLayoutDescriptors(json: json.LayoutDescriptorsJson): LayoutDescriptor[] {
+        fromJsonToLayoutDescriptors(json: LayoutDescriptorsJson): LayoutDescriptor[] {
 
             var array: api.content.page.layout.LayoutDescriptor[] = [];
-            json.descriptors.forEach((descriptorJson: json.LayoutDescriptorJson)=> {
+            json.descriptors.forEach((descriptorJson: LayoutDescriptorJson)=> {
                 array.push(this.fromJsonToLayoutDescriptor(descriptorJson));
             });
             return array;
@@ -15,7 +15,7 @@ module api.content.page.layout {
 
             var deferred = Q.defer<LayoutDescriptor[]>();
 
-            this.send().then((response: api.rest.JsonResponse<json.LayoutDescriptorsJson>) => {
+            this.send().then((response: api.rest.JsonResponse<LayoutDescriptorsJson>) => {
                 deferred.resolve(this.fromJsonToLayoutDescriptors(response.getResult()));
             }).catch((response: api.rest.RequestError) => {
                 deferred.reject(null);

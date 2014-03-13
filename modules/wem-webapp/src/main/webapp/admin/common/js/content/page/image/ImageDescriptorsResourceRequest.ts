@@ -1,11 +1,11 @@
 module api.content.page.image {
 
-    export class ImageDescriptorsResourceRequest extends ImageDescriptorResourceRequest<json.ImageDescriptorsJson> {
+    export class ImageDescriptorsResourceRequest extends ImageDescriptorResourceRequest<ImageDescriptorsJson> {
 
-        fromJsonToImageDescriptors(json: json.ImageDescriptorsJson): ImageDescriptor[] {
+        fromJsonToImageDescriptors(json: ImageDescriptorsJson): ImageDescriptor[] {
 
             var array: api.content.page.image.ImageDescriptor[] = [];
-            json.descriptors.forEach((descriptorJson: json.ImageDescriptorJson)=> {
+            json.descriptors.forEach((descriptorJson: ImageDescriptorJson)=> {
                 array.push(this.fromJsonToImageDescriptor(descriptorJson));
             });
             return array;
@@ -15,7 +15,7 @@ module api.content.page.image {
 
             var deferred = Q.defer<ImageDescriptor[]>();
 
-            this.send().then((response: api.rest.JsonResponse<json.ImageDescriptorsJson>) => {
+            this.send().then((response: api.rest.JsonResponse<ImageDescriptorsJson>) => {
                 deferred.resolve(this.fromJsonToImageDescriptors(response.getResult()));
             }).catch((response: api.rest.RequestError) => {
                 deferred.reject(null);

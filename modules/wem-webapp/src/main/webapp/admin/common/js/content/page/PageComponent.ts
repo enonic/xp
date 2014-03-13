@@ -55,11 +55,11 @@ module api.content.page {
             return this.config;
         }
 
-        toJson(): api.content.page.json.PageComponentTypeWrapperJson {
+        toJson(): api.content.page.PageComponentTypeWrapperJson {
             throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
         }
 
-        toPageComponentJson(): json.PageComponentJson {
+        toPageComponentJson(): PageComponentJson {
 
             return {
                 "name": this.name.toString(),

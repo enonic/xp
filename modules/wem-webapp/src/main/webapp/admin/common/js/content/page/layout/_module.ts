@@ -1,5 +1,7 @@
+///<reference path='LayoutDescriptorJson.ts' />
+///<reference path='LayoutComponentJson.ts' />
+///<reference path='LayoutDescriptorsJson.ts' />
 ///<reference path='LayoutDescriptor.ts' />
-
 ///<reference path='LayoutRegions.ts' />
 ///<reference path='LayoutComponent.ts' />
 ///<reference path='LayoutDescriptorComboBox.ts' />

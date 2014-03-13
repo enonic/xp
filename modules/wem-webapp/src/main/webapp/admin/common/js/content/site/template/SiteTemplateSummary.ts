@@ -26,7 +26,7 @@ module api.content.site.template {
 
         private pageTemplateKeys: PageTemplateKey[];
 
-        constructor(json: api.content.site.template.json.SiteTemplateSummaryJson) {
+        constructor(json: api.content.site.template.SiteTemplateSummaryJson) {
             super(json);
             this.name = json.name;
             this.displayName = json.name;
@@ -52,7 +52,7 @@ module api.content.site.template {
         }
 
         static fromExtModel(model: Ext_data_Model): SiteTemplateSummary {
-            return new SiteTemplateSummary(<api.content.site.template.json.SiteTemplateSummaryJson>model.raw);
+            return new SiteTemplateSummary(<api.content.site.template.SiteTemplateSummaryJson>model.raw);
         }
 
         static fromExtModelArray(modelArray: Ext_data_Model[]): SiteTemplateSummary[] {
@@ -99,10 +99,10 @@ module api.content.site.template {
             return this.description;
         }
 
-        static fromJsonArray(jsonArray: api.content.site.template.json.SiteTemplateSummaryJson[]): SiteTemplateSummary[] {
+        static fromJsonArray(jsonArray: api.content.site.template.SiteTemplateSummaryJson[]): SiteTemplateSummary[] {
             var array: SiteTemplateSummary[] = [];
 
-            jsonArray.forEach((json: api.content.site.template.json.SiteTemplateSummaryJson) => {
+            jsonArray.forEach((json: api.content.site.template.SiteTemplateSummaryJson) => {
                 array.push(new SiteTemplateSummary(json));
             });
             return array;

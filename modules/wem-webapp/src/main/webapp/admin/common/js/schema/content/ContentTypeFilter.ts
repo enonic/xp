@@ -44,7 +44,7 @@ module api.schema.content {
 
         deny: ContentTypeName[] = [];
 
-        fromJson(json: api.content.site.template.json.ContentTypeFilterJson): ContentTypeFilterBuilder {
+        fromJson(json: api.content.site.template.ContentTypeFilterJson): ContentTypeFilterBuilder {
             json.allow.forEach((name: string) => {
                 this.allow.push(new ContentTypeName(name));
             });

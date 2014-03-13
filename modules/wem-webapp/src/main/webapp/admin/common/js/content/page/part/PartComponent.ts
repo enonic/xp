@@ -6,10 +6,10 @@ module api.content.page.part {
             super(builder);
         }
 
-        toJson(): api.content.page.json.PageComponentTypeWrapperJson {
-            var json: json.PartComponentJson = <json.PartComponentJson>super.toPageComponentJson();
+        toJson(): api.content.page.PageComponentTypeWrapperJson {
+            var json: PartComponentJson = <PartComponentJson>super.toPageComponentJson();
 
-            return <api.content.page.json.PageComponentTypeWrapperJson> {
+            return <api.content.page.PageComponentTypeWrapperJson> {
                 PartComponent: json
             };
         }
@@ -17,7 +17,7 @@ module api.content.page.part {
 
     export class PartComponentBuilder extends api.content.page.PageComponentBuilder<PartComponent> {
 
-        public fromJson(json: json.PartComponentJson, regionPath: RegionPath): PartComponentBuilder {
+        public fromJson(json: PartComponentJson, regionPath: RegionPath): PartComponentBuilder {
 
             if (json.descriptor) {
                 this.setDescriptor(api.content.page.DescriptorKey.fromString(json.descriptor));

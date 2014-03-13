@@ -14,16 +14,16 @@ module api.content.site.template {
             return this.resourcePath;
         }
 
-        fromJsonArrayToSiteTemplateSummaryArray(jsonArray:api.content.site.template.json.SiteTemplateSummaryJson[]) : api.content.site.template.SiteTemplateSummary[] {
+        fromJsonArrayToSiteTemplateSummaryArray(jsonArray:api.content.site.template.SiteTemplateSummaryJson[]) : api.content.site.template.SiteTemplateSummary[] {
 
             var summaryArray: api.content.site.template.SiteTemplateSummary[] = [];
-            jsonArray.forEach((summaryJson:api.content.site.template.json.SiteTemplateSummaryJson) => {
+            jsonArray.forEach((summaryJson:api.content.site.template.SiteTemplateSummaryJson) => {
                 summaryArray.push(new api.content.site.template.SiteTemplateSummary(summaryJson));
             });
             return summaryArray;
         }
 
-        fromJsonToSiteTemplate(json:api.content.site.template.json.SiteTemplateJson) : api.content.site.template.SiteTemplate {
+        fromJsonToSiteTemplate(json:api.content.site.template.SiteTemplateJson) : api.content.site.template.SiteTemplate {
 
             return new api.content.site.template.SiteTemplate(json);
         }

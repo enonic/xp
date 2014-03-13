@@ -1,6 +1,6 @@
 module api.content.page.layout {
 
-    export class LayoutDescriptorLoader extends api.util.loader.BaseLoader<json.LayoutDescriptorsJson, LayoutDescriptor> {
+    export class LayoutDescriptorLoader extends api.util.loader.BaseLoader<LayoutDescriptorsJson, LayoutDescriptor> {
 
         constructor(request: LayoutDescriptorsResourceRequest) {
             super(request);

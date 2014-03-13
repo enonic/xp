@@ -6,7 +6,7 @@ module api.content.page.image {
 
     export class ImageDescriptorBuilder extends api.content.page.DescriptorBuilder {
 
-        public fromJson(json: api.content.page.image.json.ImageDescriptorJson): ImageDescriptorBuilder {
+        public fromJson(json: api.content.page.image.ImageDescriptorJson): ImageDescriptorBuilder {
 
             this.setKey(api.content.page.DescriptorKey.fromString(json.key))
             this.setName(new api.content.page.DescriptorName(json.name));

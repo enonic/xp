@@ -6,7 +6,7 @@ module api.content.page.part {
 
     export class PartDescriptorBuilder extends api.content.page.DescriptorBuilder {
 
-        public fromJson(json: api.content.page.part.json.PartDescriptorJson): PartDescriptorBuilder {
+        public fromJson(json: api.content.page.part.PartDescriptorJson): PartDescriptorBuilder {
 
             this.setKey(api.content.page.DescriptorKey.fromString(json.key))
             this.setName(new api.content.page.DescriptorName(json.name));

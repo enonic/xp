@@ -1,3 +1,6 @@
+///<reference path='PartDescriptorJson.ts' />
+///<reference path='PartComponentJson.ts' />
+///<reference path='PartDescriptorsJson.ts' />
 ///<reference path='PartDescriptor.ts' />
 ///<reference path='PartComponent.ts' />
 ///<reference path='PartDescriptorComboBox.ts' />

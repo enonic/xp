@@ -95,20 +95,13 @@
 ///<reference path='content/query/_module.ts' />
 ///<reference path='content/attachment/_module.ts' />
 ///<reference path='content/image/_module.ts' />
-///<reference path='content/page/json/_module.ts' />
 ///<reference path='content/page/_module.ts' />
 ///<reference path='content/page/image/_module.ts' />
-///<reference path='content/page/image/json/_module.ts' />
-///<reference path='content/page/layout/json/_module.ts' />
 ///<reference path='content/page/layout/_module.ts' />
-///<reference path='content/page/part/json/_module.ts' />
 ///<reference path='content/page/part/_module.ts' />
-///<reference path='content/page/region/json/_module.ts' />
 ///<reference path='content/page/region/_module.ts' />
-///<reference path='content/site/json/_module.ts' />
 ///<reference path='content/site/_module.ts' />
 ///<reference path='content/site/template/_module.ts' />
-///<reference path='content/site/template/json/_module.ts' />
 
 ///<reference path='aggregation/_module.ts' />
 

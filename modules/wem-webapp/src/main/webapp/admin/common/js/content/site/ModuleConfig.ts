@@ -37,7 +37,7 @@ module api.content.site {
 
         config: api.data.RootDataSet;
 
-        setFromJson(moduleConfigJson: api.content.site.json.ModuleConfigJson):ModuleConfigBuilder {
+        setFromJson(moduleConfigJson: api.content.site.ModuleConfigJson):ModuleConfigBuilder {
             this.moduleKey = api.module.ModuleKey.fromString(moduleConfigJson.moduleKey);
             this.config = api.data.DataFactory.createRootDataSet(moduleConfigJson.config);
             return this;

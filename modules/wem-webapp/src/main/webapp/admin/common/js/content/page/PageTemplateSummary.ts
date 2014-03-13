@@ -31,10 +31,10 @@ module api.content.page {
             return this.descriptorKey;
         }
 
-        static fromJsonArray(jsonArray: json.PageTemplateSummaryJson[]): PageTemplateSummary[] {
+        static fromJsonArray(jsonArray: PageTemplateSummaryJson[]): PageTemplateSummary[] {
             var array: PageTemplateSummary[] = [];
 
-            jsonArray.forEach((summaryJson: json.PageTemplateSummaryJson) => {
+            jsonArray.forEach((summaryJson: PageTemplateSummaryJson) => {
                 array.push(new PageTemplateSummaryBuilder().fromJson(summaryJson).build());
             });
             return array;
@@ -49,7 +49,7 @@ module api.content.page {
 
         descriptorKey: DescriptorKey;
 
-        fromJson(json: api.content.page.json.PageTemplateSummaryJson): PageTemplateSummaryBuilder {
+        fromJson(json: api.content.page.PageTemplateSummaryJson): PageTemplateSummaryBuilder {
 
             this.setKey(PageTemplateKey.fromString(json.key));
             this.setDisplayName(json.displayName);

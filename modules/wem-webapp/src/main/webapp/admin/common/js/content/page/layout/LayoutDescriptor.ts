@@ -17,7 +17,7 @@ module api.content.page.layout {
 
         regions: region.RegionDescriptor[] = [];
 
-        public fromJson(json: api.content.page.layout.json.LayoutDescriptorJson): LayoutDescriptorBuilder {
+        public fromJson(json: api.content.page.layout.LayoutDescriptorJson): LayoutDescriptorBuilder {
 
             this.setKey(api.content.page.DescriptorKey.fromString(json.key))
             this.setName(new api.content.page.DescriptorName(json.name));

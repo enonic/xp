@@ -19,12 +19,12 @@ module api.content.page.image {
             this.image = value;
         }
 
-        toJson(): api.content.page.json.PageComponentTypeWrapperJson {
+        toJson(): api.content.page.PageComponentTypeWrapperJson {
 
-            var json: json.ImageComponentJson = <json.ImageComponentJson>super.toPageComponentJson();
+            var json: ImageComponentJson = <ImageComponentJson>super.toPageComponentJson();
             json.image = this.image != null ? this.image.toString() : null;
 
-            return <api.content.page.json.PageComponentTypeWrapperJson> {
+            return <api.content.page.PageComponentTypeWrapperJson> {
                 ImageComponent: json
             };
         }
@@ -34,7 +34,7 @@ module api.content.page.image {
 
         image: api.content.ContentId;
 
-        public fromJson(json: json.ImageComponentJson, regionPath: RegionPath): ImageComponentBuilder {
+        public fromJson(json: ImageComponentJson, regionPath: RegionPath): ImageComponentBuilder {
 
             if (json.image) {
                 this.setImage(new api.content.ContentId(json.image));

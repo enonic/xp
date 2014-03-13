@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export class GetPageTemplateByKeyRequest extends PageTemplateResourceRequest<api.content.page.json.PageTemplateJson> {
+    export class GetPageTemplateByKeyRequest extends PageTemplateResourceRequest<api.content.page.PageTemplateJson> {
 
         private siteTemplateKey: api.content.site.template.SiteTemplateKey;
 
@@ -37,7 +37,7 @@ module api.content.page {
 
             var deferred = Q.defer<api.content.page.PageTemplate>();
 
-            this.send().then((response: api.rest.JsonResponse<api.content.page.json.PageTemplateJson>) => {
+            this.send().then((response: api.rest.JsonResponse<api.content.page.PageTemplateJson>) => {
                 deferred.resolve(this.fromJsonToPageTemplate(response.getResult()));
             }).catch((response: api.rest.RequestError) => {
                 deferred.reject(null);

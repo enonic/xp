@@ -19,7 +19,7 @@ module app.browse {
 
         private siteTemplateKey: api.content.site.template.SiteTemplateKey;
 
-        constructor(json: api.content.site.template.json.TemplateSummaryJson) {
+        constructor(json: api.content.site.template.TemplateSummaryJson) {
             super(json);
             this.name = json.name;
             this.displayName = json.name;
@@ -31,7 +31,7 @@ module app.browse {
         }
 
         static fromExtModel(model: Ext_data_Model): TemplateSummary {
-            return new TemplateSummary(<api.content.site.template.json.TemplateSummaryJson>model.raw);
+            return new TemplateSummary(<api.content.site.template.TemplateSummaryJson>model.raw);
         }
 
         static fromExtModelArray(modelArray: Ext_data_Model[]): TemplateSummary[] {

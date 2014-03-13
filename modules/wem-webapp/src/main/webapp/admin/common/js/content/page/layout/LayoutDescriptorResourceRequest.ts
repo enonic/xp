@@ -13,7 +13,7 @@ module api.content.page.layout {
             return this.resourcePath;
         }
 
-        fromJsonToLayoutDescriptor(json: json.LayoutDescriptorJson): LayoutDescriptor {
+        fromJsonToLayoutDescriptor(json: LayoutDescriptorJson): LayoutDescriptor {
 
             return new api.content.page.layout.LayoutDescriptorBuilder().fromJson(json).build();
         }

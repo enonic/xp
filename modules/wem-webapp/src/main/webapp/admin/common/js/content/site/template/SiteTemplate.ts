@@ -4,11 +4,11 @@ module api.content.site.template {
 
         private pageTemplates: api.content.page.PageTemplate[];
 
-        constructor(json: api.content.site.template.json.SiteTemplateJson) {
+        constructor(json: api.content.site.template.SiteTemplateJson) {
             super(json);
 
             this.pageTemplates = [];
-            json.pageTemplates.forEach((pageTemplateJson: api.content.page.json.PageTemplateJson)=> {
+            json.pageTemplates.forEach((pageTemplateJson: api.content.page.PageTemplateJson)=> {
                 this.pageTemplates.push(new api.content.page.PageTemplateBuilder().fromJson(pageTemplateJson).build());
             });
         }

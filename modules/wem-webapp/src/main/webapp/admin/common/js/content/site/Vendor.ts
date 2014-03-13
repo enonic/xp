@@ -6,7 +6,7 @@ module api.content.site{
 
         private url:string;
 
-        constructor( json:api.content.site.json.VendorJson ){
+        constructor( json:api.content.site.VendorJson ){
             this.name = json.name;
             this.url = json.url;
         }

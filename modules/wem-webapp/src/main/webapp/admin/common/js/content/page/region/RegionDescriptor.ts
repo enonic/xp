@@ -17,7 +17,7 @@ module api.content.page.region {
 
         name: string;
 
-        public fromJson(json: json.RegionsDescriptorJson): RegionDescriptorBuilder {
+        public fromJson(json: RegionsDescriptorJson): RegionDescriptorBuilder {
             this.name = json.name;
             return this;
         }

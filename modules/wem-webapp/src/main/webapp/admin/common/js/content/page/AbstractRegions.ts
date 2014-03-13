@@ -148,9 +148,9 @@ module api.content.page {
             return region.ensureUniqueComponentName(wantedName);
         }
 
-        public toJson(): region.json.RegionJson[] {
+        public toJson(): region.RegionJson[] {
 
-            var regionJsons: region.json.RegionJson[] = [];
+            var regionJsons: region.RegionJson[] = [];
             this.getRegions().forEach((region: region.Region) => {
                 regionJsons.push(region.toJson());
             });

@@ -1,6 +1,6 @@
 module api.content.site.template {
 
-    export class UpdateSiteTemplateRequest extends SiteTemplateResourceRequest<api.content.site.template.json.SiteTemplateJson> {
+    export class UpdateSiteTemplateRequest extends SiteTemplateResourceRequest<api.content.site.template.SiteTemplateJson> {
 
         private siteTemplateKey: api.content.site.template.SiteTemplateKey;
         private displayName: string;
@@ -78,7 +78,7 @@ module api.content.site.template {
             var deferred = Q.defer<api.content.site.template.SiteTemplate>();
 
             this.send().
-                then((response: api.rest.JsonResponse<api.content.site.template.json.SiteTemplateJson>) => {
+                then((response: api.rest.JsonResponse<api.content.site.template.SiteTemplateJson>) => {
                     deferred.resolve(this.fromJsonToSiteTemplate(response.getResult()));
                 }).catch((response: api.rest.RequestError) => {
                     deferred.reject(null);

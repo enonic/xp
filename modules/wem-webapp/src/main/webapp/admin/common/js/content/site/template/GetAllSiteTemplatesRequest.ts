@@ -1,6 +1,6 @@
 module api.content.site.template {
 
-    export class GetAllSiteTemplatesRequest extends SiteTemplateResourceRequest<api.content.site.template.json.SiteTemplateSummaryListJson> {
+    export class GetAllSiteTemplatesRequest extends SiteTemplateResourceRequest<api.content.site.template.SiteTemplateSummaryListJson> {
 
         constructor() {
             super();
@@ -20,7 +20,7 @@ module api.content.site.template {
             var deferred = Q.defer<api.content.site.template.SiteTemplateSummary[]>();
 
             this.send().
-                then((response: api.rest.JsonResponse<api.content.site.template.json.SiteTemplateSummaryListJson>) => {
+                then((response: api.rest.JsonResponse<api.content.site.template.SiteTemplateSummaryListJson>) => {
                 deferred.resolve(this.fromJsonArrayToSiteTemplateSummaryArray(response.getResult().siteTemplates));
             }).catch((response: api.rest.RequestError) => {
                     deferred.reject(null);

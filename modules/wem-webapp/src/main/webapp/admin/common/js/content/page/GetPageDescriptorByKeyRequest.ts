@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export class GetPageDescriptorByKeyRequest extends PageDescriptorResourceRequest<api.content.page.json.PageDescriptorJson> {
+    export class GetPageDescriptorByKeyRequest extends PageDescriptorResourceRequest<api.content.page.PageDescriptorJson> {
 
         private key: DescriptorKey;
 
@@ -24,7 +24,7 @@ module api.content.page {
 
             var deferred = Q.defer<api.content.page.PageDescriptor>();
 
-            this.send().then((response: api.rest.JsonResponse<api.content.page.json.PageDescriptorJson>) => {
+            this.send().then((response: api.rest.JsonResponse<api.content.page.PageDescriptorJson>) => {
                 deferred.resolve(this.fromJsonToPageDescriptor(response.getResult()));
             }).catch((response: api.rest.RequestError) => {
                     deferred.reject(null);

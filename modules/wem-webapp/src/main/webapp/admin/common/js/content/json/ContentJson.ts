@@ -6,8 +6,8 @@ module api.content.json{
 
         form: api.form.json.FormJson;
 
-        site: api.content.site.json.SiteJson;
+        site: api.content.site.SiteJson;
 
-        page: api.content.page.json.PageJson;
+        page: api.content.page.PageJson;
     }
 }

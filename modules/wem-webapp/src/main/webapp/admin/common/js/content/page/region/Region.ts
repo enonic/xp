@@ -166,9 +166,9 @@ module api.content.page.region {
             return <api.content.page.part.PartComponent>c;
         }
 
-        toJson(): json.RegionJson {
+        toJson(): RegionJson {
 
-            var componentJsons: api.content.page.json.PageComponentTypeWrapperJson[] = [];
+            var componentJsons: api.content.page.PageComponentTypeWrapperJson[] = [];
 
             this.pageComponents.forEach((component: api.content.page.PageComponent) => {
                 componentJsons.push(component.toJson());

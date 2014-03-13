@@ -1,6 +1,6 @@
 module api.content.page.image {
 
-    export class GetImageDescriptorsByModuleRequest extends ImageDescriptorResourceRequest<json.ImageDescriptorJson> {
+    export class GetImageDescriptorsByModuleRequest extends ImageDescriptorResourceRequest<ImageDescriptorJson> {
 
         private key: api.module.ModuleResourceKey;
 
@@ -24,7 +24,7 @@ module api.content.page.image {
 
             var deferred = Q.defer<ImageDescriptor>();
 
-            this.send().then((response: api.rest.JsonResponse<json.ImageDescriptorJson>) => {
+            this.send().then((response: api.rest.JsonResponse<ImageDescriptorJson>) => {
                 deferred.resolve(this.fromJsonToImageDescriptor(response.getResult()));
             }).catch((response: api.rest.RequestError) => {
                 deferred.reject(null);
