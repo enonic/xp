@@ -602,7 +602,10 @@ module app.wizard {
 
         stop() {
             $(this.getHTMLElement()).fadeOut(750, () => {
-                document.body.removeChild(this.getHTMLElement());
+                var parent = this.getHTMLElement().parentNode;
+                if (parent) {
+                    parent.removeChild(this.getHTMLElement());
+                }
             })
 
         }
