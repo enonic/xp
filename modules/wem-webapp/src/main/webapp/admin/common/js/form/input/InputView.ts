@@ -64,7 +64,6 @@ module api.form.input {
 
             this.appendChild(this.inputTypeView.getElement());
             this.inputTypeView.getElement().onResized((event: api.dom.ElementResizedEvent) => {
-                console.log("InputView has been resized to " + event.getNewWidth() + "x" + event.getNewHeight());
                 this.inputTypeView.availableSizeChanged(event.getNewWidth(), event.getNewHeight());
             });
 
@@ -86,7 +85,7 @@ module api.form.input {
                 this.addButton = new api.ui.Button("Add");
                 this.addButton.setClass("add-button");
 
-                this.addButton.onClicked(() => {
+                this.addButton.onClicked((event: MouseEvent) => {
                     this.inputTypeView.createAndAddOccurrence();
                 });
 

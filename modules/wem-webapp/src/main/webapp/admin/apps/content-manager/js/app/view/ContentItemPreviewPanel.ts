@@ -10,9 +10,7 @@ module app.view {
             super("item-preview-panel");
             this.mask = new api.ui.LoadMask(this);
             this.frame = new api.dom.IFrameEl();
-            this.frame.getEl().addEventListener("load", () => {
-                this.mask.hide();
-            });
+            this.frame.onLoaded((event: UIEvent) => this.mask.hide());
             this.appendChild(this.frame);
         }
 

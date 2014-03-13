@@ -83,7 +83,7 @@ module api.form.formitemset {
 
             this.addButton = new api.ui.Button("Add " + this.formItemSet.getLabel());
             this.addButton.setClass("add-button");
-            this.addButton.onClicked(() => {
+            this.addButton.onClicked((event: MouseEvent) => {
                 this.formItemSetOccurrences.createAndAddOccurrence();
                 if (this.formItemSetOccurrences.isCollapsed()) {
                     this.collapseButton.getHTMLElement().click();
@@ -92,7 +92,7 @@ module api.form.formitemset {
             });
             this.collapseButton = new api.dom.AEl("collapse-button");
             this.collapseButton.setText("Collapse");
-            this.collapseButton.onClicked(() => {
+            this.collapseButton.onClicked((event: MouseEvent) => {
                 if (this.formItemSetOccurrences.isCollapsed()) {
                     this.collapseButton.setText("Collapse");
                     this.formItemSetOccurrences.toggleOccurences(true);

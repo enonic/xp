@@ -13,7 +13,7 @@ module app.wizard {
 
     export class ContentWizardToolbar extends api.ui.toolbar.Toolbar {
 
-        constructor(params:ContentWizardToolbarParams) {
+        constructor(params: ContentWizardToolbarParams) {
             super();
             super.addAction(params.saveAction);
             super.addAction(params.duplicateAction);
@@ -28,7 +28,7 @@ module app.wizard {
                 turnOffAction: params.showFormAction
             }, false);
             liveFormToggler.setEnabled(params.previewAction.isEnabled());
-            params.previewAction.addPropertyChangeListener((action:api.ui.Action) => {
+            params.previewAction.addPropertyChangeListener((action: api.ui.Action) => {
                 liveFormToggler.setEnabled(action.isEnabled());
             });
 
@@ -46,16 +46,16 @@ module app.wizard {
             this.addClass("icon-menu6 icon-large");
             this.setActive(true);
             this.setEnabled(false);
-            this.onClicked(() => {
+            this.onClicked((event: MouseEvent) => {
                 new ToggleContextWindowEvent().fire();
             });
 
             ToggleContextWindowEvent.on(() => {
-               this.setActive(!this.isActive());
+                this.setActive(!this.isActive());
             });
 
             ShowLiveEditEvent.on(() => {
-               this.setEnabled(true);
+                this.setEnabled(true);
             });
 
             ShowContentFormEvent.on(() => {
@@ -63,11 +63,13 @@ module app.wizard {
             });
         }
 
-        setActive(value:boolean) {
+        setActive(value: boolean) {
             if (value) {
                 this.addClass("active");
             }
-            else this.removeClass("active");
+            else {
+                this.removeClass("active");
+            }
         }
 
         isActive() {

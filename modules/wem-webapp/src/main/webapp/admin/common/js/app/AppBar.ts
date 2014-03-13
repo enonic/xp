@@ -49,20 +49,14 @@ module api.app {
             this.userInfoPopup = new UserInfoPopup();
             this.userInfoPopup.hide();
 
-            this.userButton.onClicked((event: Event) => {
-                this.userInfoPopup.toggle();
-            });
+            this.userButton.onClicked((event: MouseEvent) => this.userInfoPopup.toggle());
 
             var appManager: api.app.AppManager = api.app.AppManager.instance();
-            this.launcherButton.onClicked((event) => {
-                appManager.showLauncher();
-            });
+            this.launcherButton.onClicked((event: MouseEvent) => appManager.showLauncher());
 
             this.setBackgroundImgUrl(api.util.getRestUri('ui/background.jpg'));
 
-            window.addEventListener('resize', () => {
-                this.layoutChildren();
-            });
+            api.dom.Window.get().onResized((event: UIEvent) => this.layoutChildren());
 
             this.onRendered((event) => {
                 this.layoutChildren();
@@ -105,7 +99,7 @@ module api.app {
         constructor(action: api.ui.Action) {
             super('launcher-button');
 
-            this.onClicked((event: Event) => {
+            this.onClicked((event: MouseEvent) => {
                 action.execute();
             });
         }
@@ -127,7 +121,7 @@ module api.app {
 
             this.getEl().setInnerHtml(text);
 
-            this.onClicked((event: Event) => {
+            this.onClicked((event: MouseEvent) => {
                 action.execute();
             });
         }

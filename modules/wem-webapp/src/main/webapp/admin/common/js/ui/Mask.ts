@@ -16,9 +16,7 @@ module api.ui {
                     this.remove();
                 });
                 // Masked element might have been resized on window resize
-                window.addEventListener("resize", () => {
-                    this.positionOver(this.masked);
-                });
+                api.dom.Window.get().onResized((event: UIEvent) => this.positionOver(this.masked));
             }
             api.dom.Body.get().appendChild(this);
         }

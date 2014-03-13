@@ -462,12 +462,68 @@ module api.dom {
             });
         }
 
-        onClicked(listener: (event) => void) {
+        onClicked(listener: (event: MouseEvent) => void) {
             this.getEl().addEventListener("click", listener);
         }
 
-        unClicked(listener: (event) => void) {
+        unClicked(listener: (event: MouseEvent) => void) {
             this.getEl().removeEventListener("click", listener);
+        }
+
+        onDblClicked(listener: (event: MouseEvent) => void) {
+            this.getEl().addEventListener("dblclick", listener);
+        }
+
+        unDblClicked(listener: (event: MouseEvent) => void) {
+            this.getEl().removeEventListener("dblclick", listener);
+        }
+
+        onMouseDown(listener: (event: MouseEvent) => void) {
+            this.getEl().addEventListener("mousedown", listener);
+        }
+
+        UnMouseDown(listener: (event: MouseEvent) => void) {
+            this.getEl().removeEventListener("mousedown", listener);
+        }
+
+        onMouseUp(listener: (event: MouseEvent) => void) {
+            this.getEl().addEventListener("mouseup", listener);
+        }
+
+        unMouseUp(listener: (event: MouseEvent) => void) {
+            this.getEl().removeEventListener("mouseup", listener);
+        }
+
+        onMouseMove(listener: (event: MouseEvent) => void) {
+            this.getEl().addEventListener("mousemove", listener);
+        }
+
+        unMouseMove(listener: (event: MouseEvent) => void) {
+            this.getEl().removeEventListener("mousemove", listener);
+        }
+
+        onKeyUp(listener: (event: KeyboardEvent) => void) {
+            this.getEl().addEventListener("keyup", listener);
+        }
+
+        unKeyUp(listener: (event: KeyboardEvent) => void) {
+            this.getEl().removeEventListener("keyup", listener);
+        }
+
+        onKeyDown(listener: (event: KeyboardEvent) => void) {
+            this.getEl().addEventListener("keydown", listener);
+        }
+
+        unKeyDown(listener: (event: KeyboardEvent) => void) {
+            this.getEl().removeEventListener("keydown", listener);
+        }
+
+        onKeyPressed(listener: (event: KeyboardEvent) => void) {
+            this.getEl().addEventListener("keypress", listener);
+        }
+
+        unKeyPressed(listener: (event: KeyboardEvent) => void) {
+            this.getEl().removeEventListener("keypress", listener);
         }
     }
 }

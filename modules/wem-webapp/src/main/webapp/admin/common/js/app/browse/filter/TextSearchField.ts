@@ -2,15 +2,15 @@ module api.app.browse.filter {
 
     export class TextSearchField extends api.dom.InputEl {
 
-        private timerId:number;
+        private timerId: number;
 
-        private valueChangedListeners:Function[] = [];
+        private valueChangedListeners: Function[] = [];
 
-        constructor(placeholder?:string) {
+        constructor(placeholder?: string) {
             super('text-search-field');
             this.setPlaceholder(placeholder);
 
-            this.getEl().addEventListener('keydown', (event:any) => {
+            this.onKeyDown((event: KeyboardEvent) => {
                 if (event.which === 97) {
                     this.notifyValueChanged();
                 } else {
@@ -25,7 +25,7 @@ module api.app.browse.filter {
             });
         }
 
-        clear(supressEvent?:boolean) {
+        clear(supressEvent?: boolean) {
             window.clearTimeout(this.timerId);
             this.getHTMLElement()['value'] = '';
             if (!supressEvent) {
@@ -33,16 +33,16 @@ module api.app.browse.filter {
             }
         }
 
-        setPlaceholder(placeholder:string) {
+        setPlaceholder(placeholder: string) {
             this.getEl().setAttribute('placeholder', placeholder);
         }
 
-        addValueChangedListener(listener:() => void) {
+        addValueChangedListener(listener: () => void) {
             this.valueChangedListeners.push(listener);
         }
 
         private notifyValueChanged() {
-            this.valueChangedListeners.forEach((listener:() => void) => {
+            this.valueChangedListeners.forEach((listener: () => void) => {
                 listener();
             });
         }

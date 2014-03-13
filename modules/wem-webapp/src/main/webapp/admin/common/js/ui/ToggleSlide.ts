@@ -46,7 +46,7 @@ module api.ui {
             }
             this.isOn = initOn;
 
-            this.onClicked(() => {
+            this.onClicked((event: MouseEvent) => {
                 if (this.enabled) {
                     this.toggle();
                 }

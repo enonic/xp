@@ -19,11 +19,6 @@ module api.ui {
                 this.notifyValueChanged(this.oldValue, newValue);
                 this.oldValue = newValue;
             });
-
-            this.getEl().addEventListener('input', () => {
-
-
-            });
         }
 
         setChecked(newValue: boolean, supressEvent?: boolean): CheckboxInput {

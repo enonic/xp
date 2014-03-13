@@ -66,9 +66,6 @@ module app.browse {
             this.contentTreeGridPanel.onTreeGridStoreLoaded(() => {
                 this.contentTreeGridPanelMask.hide();
             });
-            this.contentTreeGridPanel.onResized((event:api.dom.ElementResizedEvent) => {
-                console.log("contentTreeGridPanel has been resized to", event.getNewWidth(), event.getNewHeight());
-            })
 
             this.contentTreeGridPanel.onTreeGridSelectionChanged((event: api.app.browse.grid.TreeGridSelectionChangedEvent) => {
                 var contentSummaries = this.extModelsToContentSummaries(event.getSelectedModels());

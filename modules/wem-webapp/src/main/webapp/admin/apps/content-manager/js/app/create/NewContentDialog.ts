@@ -29,7 +29,7 @@ module app.create {
 
             this.input = api.ui.TextInput.large().setPlaceholder("Search");
             this.input.addClass("list-filter");
-            this.input.getEl().addEventListener("keyup", (event: Event) => {
+            this.input.onKeyUp((event: KeyboardEvent) => {
                 var value = (<HTMLInputElement> event.target).value;
                 this.filterList(value);
             });
@@ -39,7 +39,7 @@ module app.create {
             this.deckPanel = new api.ui.NavigatedDeckPanel(tabBar);
             this.deckPanel.onPanelShown((event: api.ui.PanelShownEvent) => {
                 var value = this.input.getValue();
-                    this.filterList(value);
+                this.filterList(value);
             });
             leftColumn.appendChild(tabBar);
             leftColumn.appendChild(this.deckPanel);
@@ -133,9 +133,9 @@ module app.create {
 
     export class NewContentDialogTitle extends api.ui.dialog.ModalDialogHeader {
 
-        private pathEl:api.dom.PEl;
+        private pathEl: api.dom.PEl;
 
-        constructor(title:string, path:string) {
+        constructor(title: string, path: string) {
             super(title);
 
             this.pathEl = new api.dom.PEl('path');
@@ -143,7 +143,7 @@ module app.create {
             this.appendChild(this.pathEl);
         }
 
-        setPath(path:string) {
+        setPath(path: string) {
             this.pathEl.setText(path);
         }
     }

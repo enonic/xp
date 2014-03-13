@@ -30,7 +30,7 @@ module api.form.inputtype.content.image {
             this.editButton = new api.ui.Button("Edit");
             this.editButton.addClass("edit");
             buttonsBar.appendChild(this.editButton);
-            this.editButton.onClicked((event) => {
+            this.editButton.onClicked((event: MouseEvent) => {
                 this.notifyEditButtonClicked();
             });
 
@@ -38,7 +38,7 @@ module api.form.inputtype.content.image {
             this.removeButton = new api.ui.Button("Remove");
             this.removeButton.addClass("remove");
             buttonsBar.appendChild(this.removeButton);
-            this.removeButton.onClicked((event) => {
+            this.removeButton.onClicked((event: MouseEvent) => {
                 this.hide();
                 this.notifyRemoveButtonClicked();
             });

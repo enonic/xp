@@ -488,7 +488,7 @@ module app.wizard {
 
             if (this.displayNameScriptExecutor.hasScript()) {
 
-                formView.getEl().addEventListener("keyup", (e) => {
+                formView.onKeyUp((event: KeyboardEvent) => {
 
                     if (this.displayNameScriptExecutor.hasScript()) {
                         this.contentWizardHeader.setDisplayName(this.displayNameScriptExecutor.execute());

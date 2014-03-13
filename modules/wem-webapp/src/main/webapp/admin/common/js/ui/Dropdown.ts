@@ -1,26 +1,26 @@
 module api.ui {
     export class Dropdown extends api.dom.SelectEl {
 
-        private oldValue:string = "";
+        private oldValue: string = "";
 
         private valueChangedListeners: {(event: ValueChangedEvent):void}[] = [];
 
-        constructor(name:string) {
+        constructor(name: string) {
             super();
             this.getEl().setAttribute("name", name);
-            this.getEl().addEventListener("change", () => {
+            this.onChange((event: Event) => {
                 this.notifyValueChanged(this.oldValue, this.getValue());
                 this.oldValue = this.getValue();
             })
         }
 
-        addOption(value:string, displayName:string) {
+        addOption(value: string, displayName: string) {
             var option = new DropdownOption(value, displayName);
             this.appendChild(option);
         }
 
 
-        onValueChanged(listener:(event:ValueChangedEvent)=>void) {
+        onValueChanged(listener: (event: ValueChangedEvent)=>void) {
             this.valueChangedListeners.push(listener);
         }
 
@@ -39,7 +39,7 @@ module api.ui {
 
 
     export class DropdownOption extends api.dom.OptionEl {
-        constructor(value:string, displayName:string) {
+        constructor(value: string, displayName: string) {
             super(value, displayName);
         }
     }

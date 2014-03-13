@@ -27,5 +27,13 @@ module api.dom {
             var thisIFrameElement: HTMLIFrameElement = <HTMLIFrameElement>this.getHTMLElement();
             thisIFrameElement.contentWindow.postMessage(data, targetOrigin)
         }
+
+        onLoaded(listener: (event: UIEvent) => void) {
+            this.getEl().addEventListener("load", listener);
+        }
+
+        unLoaded(listener: (event: UIEvent) => void) {
+            this.getEl().removeEventListener("load", listener);
+        }
     }
 }

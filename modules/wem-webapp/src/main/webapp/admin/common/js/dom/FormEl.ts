@@ -7,10 +7,17 @@ module api.dom {
         }
 
         preventSubmit() {
-
-            this.getEl().addEventListener("submit", (event: Event) => {
+            this.onSubmit((event: Event) => {
                 event.preventDefault();
             })
+        }
+
+        onSubmit(listener: (event: Event) => void) {
+            this.getEl().addEventListener("submit", listener);
+        }
+
+        unSubmit(listener: (event: Event) => void) {
+            this.getEl().removeEventListener("submit", listener);
         }
     }
 }

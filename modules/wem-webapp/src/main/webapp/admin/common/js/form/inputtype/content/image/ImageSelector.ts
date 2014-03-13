@@ -105,7 +105,7 @@ module api.form.inputtype.content.image {
 
             this.uploadButton = new api.ui.Button("");
             this.uploadButton.addClass("upload-button");
-            this.uploadButton.onClicked((event: any) => {
+            this.uploadButton.onClicked((event: MouseEvent) => {
                 var inputMaximum = input.getOccurrences().getMaximum();
                 var countSelected = this.comboBox.countSelectedOptions();
                 var rest = -1;

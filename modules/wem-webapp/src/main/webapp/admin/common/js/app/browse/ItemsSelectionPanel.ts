@@ -113,7 +113,7 @@ module api.app.browse {
         private addRemoveButton(callback?: () => void) {
             var removeEl = new api.dom.DivEl("remove");
             removeEl.getEl().setInnerHtml("&times;")
-            removeEl.onClicked((event) => {
+            removeEl.onClicked((event: MouseEvent) => {
                 if (callback) {
                     callback();
                 }

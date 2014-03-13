@@ -54,7 +54,7 @@ module app.create {
             li.appendChild(img);
             li.appendChild(h6);
 
-            li.onClicked((event: Event) => {
+            li.onClicked((event: MouseEvent) => {
                 this.notifySelected(item);
             });
             return li;

@@ -38,7 +38,7 @@ module api.app.browse.grid {
                 ]
             }, treeConfig));
 
-            window.addEventListener('resize', () => {
+            api.dom.Window.get().onResized((event: UIEvent) => {
                 this.extTreePanel.doComponentLayout();
             });
 

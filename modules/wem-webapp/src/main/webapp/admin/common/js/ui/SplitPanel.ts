@@ -143,13 +143,13 @@ module api.ui {
                 }
             };
 
-            this.splitter.getEl().addEventListener("mousedown", (e:MouseEvent) => {
+            this.splitter.onMouseDown((e:MouseEvent) => {
                 e.preventDefault();
                 this.ghostDragger.insertBeforeEl(this.splitter);
                 this.startDrag();
             });
 
-            this.getEl().addEventListener("mouseup", (e:MouseEvent) => {
+            this.onMouseUp((e:MouseEvent) => {
                 if (this.ghostDragger.getHTMLElement().parentNode) {
                     this.stopDrag(e);
                     this.removeChild(this.ghostDragger);
@@ -162,7 +162,7 @@ module api.ui {
         private startDrag() {
             this.addPanelMask();
             this.addClass("dragging");
-            this.getEl().addEventListener("mousemove", this.dragListener);
+            this.onMouseMove(this.dragListener);
 
             if (this.isHorizontal()) {
                 this.ghostDragger.getEl().setTopPx(this.splitter.getEl().getOffsetTopRelativeToParent()).setLeft(null);

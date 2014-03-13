@@ -16,5 +16,21 @@ module api.dom {
         setValue(value: string) {
             this.getEl().setValue(value);
         }
+
+        onChange(listener: (event: Event) => void) {
+            this.getEl().addEventListener("change", listener);
+        }
+
+        unChange(listener: (event: Event) => void) {
+            this.getEl().removeEventListener("change", listener);
+        }
+
+        onInput(listener: (event:Event) => void) {
+            this.getEl().addEventListener("input", listener);
+        }
+
+        unInput(listener: (event:Event) => void) {
+            this.getEl().removeEventListener("input", listener);
+        }
     }
 }

@@ -6,7 +6,7 @@ module api.ui.toolbar {
 
         private hasGreedySpacer: boolean;
 
-        private actions:api.ui.Action[] = [];
+        private actions: api.ui.Action[] = [];
 
         constructor() {
             super("toolbar");
@@ -15,21 +15,21 @@ module api.ui.toolbar {
             this.fold.addClass("pull-right").hide();
             this.appendChild(this.fold);
 
-            window.addEventListener("resize", () => this.foldOrExpand());
+            api.dom.Window.get().onResized((event: UIEvent) => this.foldOrExpand());
 
             this.onShown((event) => this.foldOrExpand());
         }
 
-        addAction(action:api.ui.Action) {
+        addAction(action: api.ui.Action) {
             this.actions.push(action);
             this.addElement(new api.ui.ActionButton(action));
         }
 
-        getActions():api.ui.Action[] {
+        getActions(): api.ui.Action[] {
             return this.actions;
         }
 
-        addElement(element:api.dom.Element) {
+        addElement(element: api.dom.Element) {
             if (this.hasGreedySpacer) {
                 element.addClass('pull-right');
                 element.insertAfterEl(this.fold);

@@ -31,7 +31,7 @@ module api.ui {
                 this.addClass(size);
             }
 
-            this.getEl().addEventListener('keypress', (event: KeyboardEvent) => {
+            this.onKeyPressed((event: KeyboardEvent) => {
                 if (!this.stripCharsRe) {
                     return;
                 }
@@ -47,7 +47,7 @@ module api.ui {
                 }
             });
 
-            this.getEl().addEventListener('input', () => {
+            this.onInput((event: Event) => {
                 this.notifyValueChanged(this.oldValue, this.getValue());
                 this.oldValue = this.getValue();
             });

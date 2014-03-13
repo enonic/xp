@@ -28,7 +28,7 @@ module api.ui{
                 this.tooltip = new Tooltip(this, this.action.getShortcut().getCombination(), 1000);
             }
 
-            this.onClicked(() => {
+            this.onClicked((event: MouseEvent) => {
                 this.action.execute();
             });
 

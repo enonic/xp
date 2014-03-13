@@ -25,15 +25,13 @@ module api.ui.tab {
             this.tabMenuButton = this.createTabMenuButton();
             this.tabMenuButton.hide();
             this.tabMenuButton.addClass("tab-menu-button");
-            this.tabMenuButton.onClicked((evt:Event) => this.toggleMenu());
+            this.tabMenuButton.onClicked((event: MouseEvent) => this.toggleMenu());
             this.appendChild(this.tabMenuButton);
 
             this.menuEl = this.createMenu();
             this.appendChild(this.menuEl);
 
-            document.addEventListener('click', (evt:Event) => {
-                this.hideMenuOnOutsideClick(evt);
-            });
+            api.dom.Body.get().onClicked((event: MouseEvent) => this.hideMenuOnOutsideClick(event));
         }
 
         createTabMenuButton(): TabMenuButton {

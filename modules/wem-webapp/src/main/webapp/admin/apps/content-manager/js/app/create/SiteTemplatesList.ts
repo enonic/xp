@@ -36,7 +36,7 @@ module app.create {
             var contentType = this.contentTypes.getByName(item.getRootContentType());
             var listItem = new SiteTemplateListItem(item, contentType);
 
-            listItem.onClicked(() => {
+            listItem.onClicked((event: MouseEvent) => {
                 this.notifySelected(listItem);
             });
             return listItem;

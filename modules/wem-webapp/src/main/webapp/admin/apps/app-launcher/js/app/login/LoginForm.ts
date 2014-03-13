@@ -27,16 +27,16 @@ module app.login {
             this.userIdInput.setPlaceholder(_i18n('userid or e-mail'));
             this.passwordInput = new api.ui.PasswordInput('form-item');
             this.passwordInput.setPlaceholder(_i18n('password'));
-            this.userIdInput.getEl().addEventListener('keyup', (event:KeyboardEvent) => {
+            this.userIdInput.onKeyUp((event: KeyboardEvent) => {
                 this.onInputTyped(event);
             });
-            this.passwordInput.getEl().addEventListener('keyup', (event:KeyboardEvent) => {
+            this.passwordInput.onKeyUp((event: KeyboardEvent) => {
                 this.onInputTyped(event);
             });
 
             this.loginButton = new api.ui.Button(_i18n('Log in'));
             this.loginButton.addClass('login-button').addClass('disabled');
-            this.loginButton.onClicked((event) => {
+            this.loginButton.onClicked((event: MouseEvent) => {
                 this.loginButtonClick();
             });
 

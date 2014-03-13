@@ -1,3 +1,4 @@
+///<reference path='Window.ts' />
 ///<reference path='ElementHelper.ts' />
 ///<reference path='ImgElHelper.ts' />
 ///<reference path='Element.ts' />

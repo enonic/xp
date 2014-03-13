@@ -4,17 +4,17 @@ module api.ui {
 
         private valueChangedListeners: {(event: ValueChangedEvent):void}[] = [];
 
-        private oldValue:string = "";
+        private oldValue: string = "";
 
         private attendant: api.dom.Element;
 
         private clone: api.dom.Element;
 
-        constructor(name:string) {
+        constructor(name: string) {
             super("textarea", "text-area");
             this.getEl().setAttribute("name", name);
 
-            this.getEl().addEventListener('input', () => {
+            this.onInput((event: Event) => {
                 this.notifyValueChanged(this.oldValue, this.getValue());
                 this.oldValue = this.getValue();
             });
@@ -25,10 +25,10 @@ module api.ui {
 
             this.onShown((event: api.dom.ElementShownEvent) => this.updateSize());
             this.onValueChanged((event: ValueChangedEvent) => this.updateSize());
-            window.addEventListener('resize', () => this.updateSize());
+            api.dom.Window.get().onResized((event: UIEvent) => this.updateSize());
         }
 
-        setValue(text:string) {
+        setValue(text: string) {
             if (this.oldValue != text) {
                 super.setValue(text);
                 this.notifyValueChanged(this.oldValue, text);
@@ -36,11 +36,11 @@ module api.ui {
             }
         }
 
-        setRows(rows:number) {
+        setRows(rows: number) {
             this.getEl().setAttribute("rows", rows.toString());
         }
 
-        setColumns(columns:number) {
+        setColumns(columns: number) {
             this.getEl().setAttribute("cols", columns.toString());
         }
 
@@ -51,7 +51,7 @@ module api.ui {
             this.attendant.remove();
         }
 
-        onValueChanged(listener:(event:ValueChangedEvent)=>void) {
+        onValueChanged(listener: (event: ValueChangedEvent)=>void) {
             this.valueChangedListeners.push(listener);
         }
 

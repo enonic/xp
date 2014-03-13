@@ -15,7 +15,7 @@ module api.app.browse {
 
     export class BrowsePanel<M> extends api.ui.Panel implements api.ui.ActionContainer {
 
-        private static SPLIT_PANEL_ALIGNMENT_TRESHOLD:number = 1440;
+        private static SPLIT_PANEL_ALIGNMENT_TRESHOLD: number = 1440;
 
         private browseToolbar: api.ui.toolbar.Toolbar;
 
@@ -63,11 +63,13 @@ module api.app.browse {
                 this.treeSwapperDeckPanel.showPanel(0);
 
                 this.gridAndDetailSplitPanel = new api.ui.SplitPanelBuilder(this.gridAndToolbarContainer, this.treeSwapperDeckPanel)
-                    .setAlignment((windowSize > BrowsePanel.SPLIT_PANEL_ALIGNMENT_TRESHOLD) ? api.ui.SplitPanelAlignment.VERTICAL : api.ui.SplitPanelAlignment.HORIZONTAL).build();
+                    .setAlignment((windowSize > BrowsePanel.SPLIT_PANEL_ALIGNMENT_TRESHOLD) ? api.ui.SplitPanelAlignment.VERTICAL
+                        : api.ui.SplitPanelAlignment.HORIZONTAL).build();
             }
             else {
                 this.gridAndDetailSplitPanel = new api.ui.SplitPanelBuilder(this.gridAndToolbarContainer, this.browseItemPanel)
-                    .setAlignment((windowSize > BrowsePanel.SPLIT_PANEL_ALIGNMENT_TRESHOLD) ? api.ui.SplitPanelAlignment.VERTICAL : api.ui.SplitPanelAlignment.HORIZONTAL).build();
+                    .setAlignment((windowSize > BrowsePanel.SPLIT_PANEL_ALIGNMENT_TRESHOLD) ? api.ui.SplitPanelAlignment.VERTICAL
+                        : api.ui.SplitPanelAlignment.HORIZONTAL).build();
             }
 
             if (this.filterPanel) {
@@ -77,7 +79,7 @@ module api.app.browse {
                 this.gridAndFilterAndDetailSplitPanel = this.gridAndDetailSplitPanel;
             }
 
-            window.addEventListener("resize", () => this.updatePanelAlignment());
+            api.dom.Window.get().onResized((event: UIEvent) => this.updatePanelAlignment());
 
             this.treeGridPanel.onTreeGridSelectionChanged((event: api.app.browse.grid.TreeGridSelectionChangedEvent) => {
                 var browseItems: api.app.browse.BrowseItem<M>[] = this.extModelsToBrowseItems(event.getSelectedModels());

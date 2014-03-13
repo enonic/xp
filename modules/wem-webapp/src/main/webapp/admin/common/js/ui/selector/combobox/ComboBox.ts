@@ -277,11 +277,11 @@ module api.ui.selector.combobox {
 
         private setupListeners() {
 
-            this.onClicked(() => {
+            this.onClicked((event: MouseEvent) => {
                 this.setOnBlurListener();
             });
 
-            this.dropdownHandle.onClicked((event: any) => {
+            this.dropdownHandle.onClicked((event: MouseEvent) => {
 
                 this.comboBoxDropdown.navigateToFirstRowIfNotActive();
 
@@ -304,7 +304,7 @@ module api.ui.selector.combobox {
 
             });
 
-            this.input.getEl().addEventListener('dblclick', (event: any) => {
+            this.input.onDblClicked((event: MouseEvent) => {
 
                 this.comboBoxDropdown.navigateToFirstRowIfNotActive();
 
@@ -313,7 +313,7 @@ module api.ui.selector.combobox {
                 }
             });
 
-            this.input.getEl().addEventListener('keydown', (event: any) => {
+            this.input.onKeyDown((event: KeyboardEvent) => {
 
                 if (event.which == 9) { // tab
                     this.hideDropdown();

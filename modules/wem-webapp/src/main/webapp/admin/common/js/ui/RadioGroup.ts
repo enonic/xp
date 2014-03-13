@@ -25,7 +25,7 @@ module api.ui {
             var radio = new RadioButton(label, value, this.name, checked);
             this.options.push(radio);
             this.appendChild(radio);
-            radio.onClicked(() => {
+            radio.onClicked((event: MouseEvent) => {
                 this.notifyValueChanged(this.oldValue, this.getValue());
                 this.oldValue = this.getValue();
             });

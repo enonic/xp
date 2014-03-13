@@ -22,7 +22,7 @@ module api.app.browse.filter {
             });
 
             this.clearFilter = new ClearFilterButton();
-            this.clearFilter.onClicked(() => {
+            this.clearFilter.onClicked((event: MouseEvent) => {
                 this.reset();
             });
 

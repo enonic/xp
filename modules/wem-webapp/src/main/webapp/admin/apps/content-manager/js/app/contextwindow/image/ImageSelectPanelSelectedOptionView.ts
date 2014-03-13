@@ -2,9 +2,9 @@ module app.contextwindow.image {
 
     export class ImageSelectPanelSelectedOptionView extends api.ui.selector.combobox.SelectedOptionView<api.content.ContentSummary> {
 
-        private content:api.content.ContentSummary;
+        private content: api.content.ContentSummary;
 
-        constructor(option:api.ui.selector.Option<api.content.ContentSummary>) {
+        constructor(option: api.ui.selector.Option<api.content.ContentSummary>) {
             this.content = option.displayValue;
             super(option);
         }
@@ -29,7 +29,7 @@ module app.contextwindow.image {
 
 
             var removeButton = new api.dom.AEl("remove");
-            removeButton.onClicked((event:Event) => {
+            removeButton.onClicked((event: MouseEvent) => {
                 this.notifySelectedOptionToBeRemoved();
 
                 event.stopPropagation();
