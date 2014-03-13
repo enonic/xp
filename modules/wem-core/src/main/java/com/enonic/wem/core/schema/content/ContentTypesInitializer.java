@@ -174,7 +174,7 @@ public class ContentTypesInitializer
     {
         return Form.newForm().
             addFormItem( Input.newInput().name( "image" ).
-                inputType( InputTypes.IMAGE ).label( "Media" ).build() ).
+                inputType( InputTypes.IMAGE ).build() ).
             addFormItem( Input.newInput().name( "mimeType" ).
                 inputType( InputTypes.TEXT_LINE ).
                 label( "Mime type" ).

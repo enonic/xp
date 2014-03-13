@@ -320,6 +320,7 @@ module api.app.wizard {
             var deferred = Q.defer<T>();
 
             if (this.isItemPersisted()) {
+                this.new = false;
                 this.updatePersistedItem().
                     done((persisted: T) => {
                         this.setPersistedItem(persisted).
