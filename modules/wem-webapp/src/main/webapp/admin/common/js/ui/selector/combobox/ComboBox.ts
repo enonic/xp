@@ -3,6 +3,26 @@ module api.ui.selector.combobox {
     import Option = api.ui.selector.Option;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
 
+    export interface ComboBoxConfig<T> {
+
+        iconUrl?: string;
+
+        rowHeight?: number;
+
+        optionFormatter?: (row:number, cell:number, value:T, columnDef:any, dataContext:Slick.SlickData) => string;
+
+        selectedOptionsView: SelectedOptionsView<T>;
+
+        maximumOccurrences?: number;
+
+        filter?: (item:any, args:any) => boolean;
+
+        hideComboBoxWhenMaxReached?:boolean;
+
+        dataIdProperty?:string;
+
+    }
+
     export class ComboBox<OPTION_DISPLAY_VALUE> extends api.dom.FormInputEl {
 
         private icon: api.dom.ImgEl;
