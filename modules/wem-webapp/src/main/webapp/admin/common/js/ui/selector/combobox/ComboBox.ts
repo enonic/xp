@@ -2,6 +2,7 @@ module api.ui.selector.combobox {
 
     import Option = api.ui.selector.Option;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
+    import DropdownHandle = api.ui.selector.DropdownHandle;
 
     export interface ComboBoxConfig<T> {
 
@@ -9,13 +10,13 @@ module api.ui.selector.combobox {
 
         rowHeight?: number;
 
-        optionFormatter?: (row:number, cell:number, value:T, columnDef:any, dataContext:Slick.SlickData) => string;
+        optionFormatter?: (row: number, cell: number, value: T, columnDef: any, dataContext: Slick.SlickData) => string;
 
         selectedOptionsView: SelectedOptionsView<T>;
 
         maximumOccurrences?: number;
 
-        filter?: (item:any, args:any) => boolean;
+        filter?: (item: any, args: any) => boolean;
 
         hideComboBoxWhenMaxReached?:boolean;
 
@@ -27,7 +28,7 @@ module api.ui.selector.combobox {
 
         private icon: api.dom.ImgEl;
 
-        private arrow: api.dom.DivEl;
+        private dropdownHandle: DropdownHandle;
 
         private input: ComboBoxOptionFilterInput;
 
@@ -67,8 +68,8 @@ module api.ui.selector.combobox {
             this.input = new ComboBoxOptionFilterInput();
             this.appendChild(this.input);
 
-            this.arrow = new api.dom.DivEl("dropdown-arrow");
-            this.appendChild(this.arrow);
+            this.dropdownHandle = new DropdownHandle();
+            this.appendChild(this.dropdownHandle);
 
             this.comboBoxDropdown = new ComboBoxDropdown(<ComboBoxDropdownConfig<OPTION_DISPLAY_VALUE>>{
                 maxHeight: 200,
@@ -112,7 +113,7 @@ module api.ui.selector.combobox {
 
             this.doUpdateDropdownTopPositionAndWidth();
             this.comboBoxDropdown.showDropdown(this.selectedOptionsCtrl.getOptions());
-            this.arrow.addClass('active');
+            this.dropdownHandle.down();
 
             this.comboBoxDropdown.renderDropdownGrid();
         }
@@ -122,7 +123,7 @@ module api.ui.selector.combobox {
         }
 
         hideDropdown() {
-            this.arrow.removeClass('active');
+            this.dropdownHandle.up();
             this.comboBoxDropdown.hideDropdown();
         }
 
@@ -191,7 +192,7 @@ module api.ui.selector.combobox {
             if (this.maximumOccurrencesReached()) {
                 this.input.setMaximumReached();
                 this.moveFocuseToNextInput();
-                this.arrow.addClass('disabled');
+                this.dropdownHandle.setEnabled(false);
             }
             if (!silent) {
                 this.notifyOptionSelected(option);
@@ -210,7 +211,7 @@ module api.ui.selector.combobox {
 
             this.input.openForTypingAndFocus();
 
-            this.arrow.removeClass('disabled');
+            this.dropdownHandle.setEnabled(true);
         }
 
         clearSelection() {
@@ -223,7 +224,7 @@ module api.ui.selector.combobox {
 
             this.input.openForTypingAndFocus();
 
-            this.arrow.removeClass('disabled');
+            this.dropdownHandle.setEnabled(true);
         }
 
         getSelectedOptions(): Option<OPTION_DISPLAY_VALUE>[] {
@@ -280,7 +281,7 @@ module api.ui.selector.combobox {
                 this.setOnBlurListener();
             });
 
-            this.arrow.onClicked((event: any) => {
+            this.dropdownHandle.onClicked((event: any) => {
 
                 this.comboBoxDropdown.navigateToFirstRowIfNotActive();
 
@@ -358,7 +359,7 @@ module api.ui.selector.combobox {
             this.comboBoxDropdown.markSelections(this.selectedOptionsCtrl.getOptions());
             this.input.openForTypingAndFocus();
 
-            this.arrow.removeClass('disabled');
+            this.dropdownHandle.setEnabled(true);
 
             if (this.hideComboBoxWhenMaxReached) {
                 this.show();
