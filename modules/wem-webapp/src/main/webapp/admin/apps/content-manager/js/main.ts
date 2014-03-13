@@ -10,7 +10,9 @@ module components {
 }
 
 window.onload = () => {
-    var appBar = new api.app.AppBar("Content Manager", new api.app.AppBarTabMenu());
+    var application:api.app.Application = api.app.Application.getApplication();
+
+    var appBar = new api.app.AppBar(application);
     var appPanel = new app.ContentAppPanel(appBar);
 
     api.dom.Body.get().appendChild(appBar);
@@ -41,9 +43,7 @@ window.onload = () => {
             newContentDialog.open();
         }
     });
-    if (window.parent["appLoaded"]) {
-        window.parent["appLoaded"](getAppName());
-    }
+    application.setLoaded(true);
 
     window.onmessage = (e: MessageEvent) => {
         if (e.data.appLauncherEvent) {
@@ -54,10 +54,6 @@ window.onload = () => {
         }
     }
 };
-
-function getAppName(): string {
-    return jQuery(window.frameElement).data("wem-app");
-}
 
 function route(path: api.rest.Path) {
     var action = path.getElement(0);

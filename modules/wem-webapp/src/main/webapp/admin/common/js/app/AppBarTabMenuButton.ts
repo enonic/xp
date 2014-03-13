@@ -10,12 +10,12 @@ module api.app{
             super();
             this.getEl().addClass("appbar-tabmenu-button");
 
+            this.tabCountEl = new AppBarTabCount();
+            this.prependChild(this.tabCountEl);
+
             this.iconEl = new api.dom.ImgEl();
             this.iconEl.hide();
             this.prependChild(this.iconEl);
-
-            this.tabCountEl = new AppBarTabCount();
-            this.appendChild(this.tabCountEl);
         }
 
         setTabCount(value:number) {
@@ -35,12 +35,7 @@ module api.app{
         }
 
         setCount(value:number) {
-            if (value > 0) {
-                this.getEl().setInnerHtml("" + value);
-            }
-            else {
-                this.getEl().setInnerHtml("");
-            }
+            this.getEl().setInnerHtml(value > 0 ? "" + value : "");
         }
     }
 }

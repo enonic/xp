@@ -4,8 +4,26 @@ module api.app {
 
         private appBarTabMenuButton: AppBarTabMenuButton;
 
+        private buttonLabelChanged: {():void}[] = [];
+
         constructor() {
             super("appbar-tabmenu");
+        }
+
+        createTabMenuButton():AppBarTabMenuButton {
+            this.appBarTabMenuButton = new AppBarTabMenuButton();
+            return this.appBarTabMenuButton;
+        }
+
+        createMenu(): api.dom.UlEl {
+            var menu = super.createMenu();
+            menu.getEl().setPosition('fixed');
+            return menu;
+        }
+
+        setButtonLabel(value: string) {
+            super.setButtonLabel(value);
+            this.notifyButtonLabelChanged();
         }
 
         showMenu() {
@@ -13,20 +31,11 @@ module api.app {
             this.updateMenuPosition();
         }
 
-        createTabMenuButton(): AppBarTabMenuButton {
-            this.appBarTabMenuButton = new AppBarTabMenuButton();
-            return this.appBarTabMenuButton;
-        }
-
         addNavigationItem(tab: AppBarTabMenuItem) {
             super.addNavigationItem(tab);
 
             this.appBarTabMenuButton.setTabCount(this.countVisible());
             this.appBarTabMenuButton.setEditing(tab.isEditing());
-
-            if (this.isShowingMenuItems()) {
-                this.updateMenuPosition();
-            }
         }
 
         removeNavigationItem(tab: AppBarTabMenuItem) {
@@ -36,10 +45,6 @@ module api.app {
             var newSelectedTab = <AppBarTabMenuItem>this.getSelectedNavigationItem();
             if (newSelectedTab) {
                 this.appBarTabMenuButton.setEditing(newSelectedTab.isEditing());
-            }
-
-            if (this.isShowingMenuItems()) {
-                this.updateMenuPosition();
             }
         }
 
@@ -66,18 +71,35 @@ module api.app {
         deselectNavigationItem() {
             super.deselectNavigationItem();
             this.appBarTabMenuButton.setEditing(false);
-            this.updateMenuPosition();
         }
 
         /*
          * Aligns tab items list to the center of the tab menu button
          */
-        private updateMenuPosition() {
-            var containerWidth = this.getEl().getWidth();
-            var menuWidth = this.getMenuEl().getEl().getWidth();
-            var containerPaddingLeft = this.getEl().getPaddingLeft();
+        updateMenuPosition() {
+            var fullWidth = api.dom.Body.get().getEl().getWidth();
+            var tabEl = this.getEl();
+            var menuEl = this.getMenuEl().getEl();
 
-            this.getMenuEl().getEl().setMarginLeft((containerWidth - menuWidth) / 2 - containerPaddingLeft + 'px');
+            var tabCenterOffsetRight = fullWidth - tabEl.getOffsetLeft() - tabEl.getWidthWithMargin() / 2;
+            menuEl.setRight(Math.max(tabCenterOffsetRight - menuEl.getWidthWithBorder() / 2, 0)  + 'px');
+            menuEl.setWidth('auto').setWidth(fullWidth < menuEl.getWidthWithBorder() ? fullWidth + 'px' : 'auto');
+        }
+
+        onButtonLabelChanged(listener: () => void) {
+            this.buttonLabelChanged.push(listener);
+        }
+
+        unButtonLabelChanged(listener: () => void) {
+            this.buttonLabelChanged = this.buttonLabelChanged.filter((currentListener: () => void) => {
+                return listener != currentListener;
+            });
+        }
+
+        private notifyButtonLabelChanged() {
+            this.buttonLabelChanged.forEach((listener: () => void) => {
+                listener.call(this);
+            });
         }
     }
 }

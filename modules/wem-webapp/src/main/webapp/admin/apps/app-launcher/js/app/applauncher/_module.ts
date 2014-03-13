@@ -1,4 +1,3 @@
-///<reference path='Application.ts' />
 ///<reference path='Applications.ts' />
 ///<reference path='AppTile.ts' />
 ///<reference path='AppInfo.ts' />

@@ -158,13 +158,13 @@ module api.ui.tab {
             }
 
             if (this.countVisible() == 0) {
-                this.tabMenuButton.setLabel("");
+                this.setButtonLabel("");
                 this.tabMenuButton.hide();
                 this.hideMenu();
             } else {
                 var newTab = this.getSelectedNavigationItem();
                 if (newTab) {
-                    this.tabMenuButton.setLabel(newTab.getLabel());
+                    this.setButtonLabel(newTab.getLabel());
                 }
             }
         }
