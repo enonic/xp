@@ -1,9 +1,9 @@
 module app.launcher {
 
     export class AppTile extends api.dom.DivEl {
-        private app:Application;
+        private app:api.app.Application;
 
-        constructor(application:Application) {
+        constructor(application:api.app.Application) {
             super('app-tile');
             this.app = application;
             if (this.app.useFullSizeIcon()) {

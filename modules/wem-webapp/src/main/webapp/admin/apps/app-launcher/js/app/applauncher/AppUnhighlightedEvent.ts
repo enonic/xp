@@ -2,13 +2,13 @@ module app.launcher {
 
     export class AppUnhighlightedEvent {
 
-        private application: Application;
+        private application: api.app.Application;
 
-        constructor(app: Application) {
+        constructor(app: api.app.Application) {
             this.application = app;
         }
 
-        getApplication(): Application {
+        getApplication(): api.app.Application {
             return this.application;
         }
     }

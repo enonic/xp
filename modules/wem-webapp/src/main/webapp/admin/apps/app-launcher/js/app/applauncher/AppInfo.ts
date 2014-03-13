@@ -14,7 +14,7 @@ module app.launcher {
             this.appendChild(this.appInfoDescription);
         }
 
-        showAppInfo(application:Application) {
+        showAppInfo(application:api.app.Application) {
             this.appInfoName.setText(application.getName());
             this.appInfoDescription.getEl().setInnerHtml(application.getDescription());
         }

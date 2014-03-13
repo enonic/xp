@@ -2,11 +2,11 @@ module app.launcher {
 
     export interface AppSelectorListener {
 
-        onAppHighlighted(app:Application): void;
+        onAppHighlighted(app:api.app.Application): void;
 
-        onAppUnhighlighted(app:Application): void;
+        onAppUnhighlighted(app:api.app.Application): void;
 
-        onAppSelected(app:Application): void;
+        onAppSelected(app:api.app.Application): void;
     }
 
 }

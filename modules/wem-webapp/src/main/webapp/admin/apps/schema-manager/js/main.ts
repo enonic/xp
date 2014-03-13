@@ -16,7 +16,8 @@ module components {
 }
 
 window.onload = () => {
-    var appBar = new api.app.AppBar("Schema Manager", new api.app.AppBarTabMenu());
+    var application:api.app.Application = api.app.Application.getApplication();
+    var appBar = new api.app.AppBar(application);
     var appPanel = new app.SchemaAppPanel(appBar);
 
     api.dom.Body.get().appendChild(appBar);
@@ -24,9 +25,7 @@ window.onload = () => {
 
     appPanel.init();
 
-    if (window.parent["appLoaded"]) {
-        window.parent["appLoaded"](getAppName());
-    }
+    application.setLoaded(true);
 
     window.onmessage = (e:MessageEvent) => {
         if( e.data.appLauncherEvent ) {
@@ -37,7 +36,3 @@ window.onload = () => {
         }
     }
 };
-
-function getAppName(): string {
-    return jQuery(window.frameElement).data("wem-app");
-}
