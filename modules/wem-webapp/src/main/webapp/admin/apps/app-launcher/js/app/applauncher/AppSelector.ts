@@ -2,7 +2,7 @@ module app.launcher {
 
     export class AppSelector extends api.dom.DivEl {
         private selectedAppIndex: number;
-        private apps: Application[];
+        private apps: api.app.Application[];
         private appTiles: {[name: string]: AppTile;};
         private appHighlightedListeners: {(event: AppHighlightedEvent):void}[] = [];
         private appUnhighlightedListeners: {(event: AppUnhighlightedEvent):void}[] = [];
@@ -13,7 +13,7 @@ module app.launcher {
 
         private keyBindings: api.ui.KeyBinding[] = [];
 
-        constructor(applications: Application[]) {
+        constructor(applications: api.app.Application[]) {
             super();
             this.apps = applications;
             this.appTiles = {};
@@ -56,7 +56,7 @@ module app.launcher {
             }));
             this.keyBindings.push(new api.ui.KeyBinding('return', (e: ExtendedKeyboardEvent, combo: string)=> {
                 if (this.selectedAppIndex >= 0) {
-                    var application: Application = this.apps[this.selectedAppIndex];
+                    var application: api.app.Application = this.apps[this.selectedAppIndex];
                     this.notifyAppSelected(application);
                 }
                 return false;
@@ -115,8 +115,8 @@ module app.launcher {
             this.highlightAppTile(this.apps[idx], idx);
         }
 
-        private addAppTiles(applications: Application[], tilesPlaceholder: api.dom.DivEl) {
-            applications.forEach((application: Application, idx: number) => {
+        private addAppTiles(applications: api.app.Application[], tilesPlaceholder: api.dom.DivEl) {
+            applications.forEach((application: api.app.Application, idx: number) => {
                 var appTile = new AppTile(application);
 
                 appTile.onMouseEnter((event: MouseEvent) => {
@@ -134,7 +134,7 @@ module app.launcher {
             });
         }
 
-        private highlightAppTile(application: Application, index: number, appTile?: AppTile) {
+        private highlightAppTile(application: api.app.Application, index: number, appTile?: AppTile) {
             if (!appTile) {
                 appTile = this.appTiles[application.getName()];
             }
@@ -148,7 +148,7 @@ module app.launcher {
             this.notifyAppHighlighted(application);
         }
 
-        private unhighlightAppTile(application: Application, index: number, appTile?: AppTile) {
+        private unhighlightAppTile(application: api.app.Application, index: number, appTile?: AppTile) {
             if (!appTile) {
                 appTile = this.appTiles[application.getName()];
             }
@@ -162,7 +162,7 @@ module app.launcher {
         private filterTiles(value: string) {
             var valueLowerCased = value.toLowerCase();
             var anyMatch = false;
-            this.apps.forEach((application: Application) => {
+            this.apps.forEach((application: api.app.Application) => {
                 var isMatch = application.getName().toLowerCase().indexOf(valueLowerCased) > -1;
                 if (isMatch) {
                     this.showAppTile(application.getName());
@@ -224,19 +224,19 @@ module app.launcher {
             });
         }
 
-        private notifyAppHighlighted(application: Application) {
+        private notifyAppHighlighted(application: api.app.Application) {
             this.appHighlightedListeners.forEach((listener: (event: AppHighlightedEvent)=>void)=> {
                 listener.call(this, new AppHighlightedEvent(application));
             });
         }
 
-        private notifyAppUnhighlighted(application: Application) {
+        private notifyAppUnhighlighted(application: api.app.Application) {
             this.appUnhighlightedListeners.forEach((listener: (event: AppUnhighlightedEvent)=>void)=> {
                 listener.call(this, new AppUnhighlightedEvent(application));
             });
         }
 
-        private notifyAppSelected(application: Application) {
+        private notifyAppSelected(application: api.app.Application) {
             this.appSelectedListeners.forEach((listener: (event: AppSelectedEvent)=>void)=> {
                 listener.call(this, new AppSelectedEvent(application));
             });

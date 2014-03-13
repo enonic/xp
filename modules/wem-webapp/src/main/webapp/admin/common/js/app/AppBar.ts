@@ -2,9 +2,7 @@ module api.app {
 
     export class AppBar extends api.dom.DivEl {
 
-        private appName: string;
-
-        private actions: AppBarActionsConfig;
+        private application: Application;
 
         private launcherButton: api.dom.ButtonEl;
 
@@ -16,29 +14,22 @@ module api.app {
 
         private userInfoPopup: UserInfoPopup;
 
-        constructor(appName, tabMenu: AppBarTabMenu, actions?: AppBarActionsConfig) {
+        constructor(application: Application) {
             super("appbar");
 
-            this.appName = appName;
-            this.tabMenu = tabMenu;
-            this.tabMenu.onNavigationItemSelected(() => {
-                this.layoutChildren();
-            });
-            this.tabMenu.onNavigationItemDeselected(() => {
-                this.layoutChildren();
-            });
+            this.application = application;
+            this.tabMenu = new api.app.AppBarTabMenu();
+            this.tabMenu.onNavigationItemSelected(() => this.layoutChildren());
+            this.tabMenu.onNavigationItemDeselected(() => this.layoutChildren());
+            this.tabMenu.onButtonLabelChanged(() => this.layoutChildren());
 
-            this.actions = <AppBarActionsConfig> {};
-            this.actions.showAppLauncherAction = (actions && actions.showAppLauncherAction) || AppBarActions.SHOW_APP_LAUNCHER;
-            this.actions.showAppBrowsePanelAction = (actions && actions.showAppBrowsePanelAction) || AppBarActions.SHOW_APP_BROWSE_PANEL;
-
-            this.launcherButton = new LauncherButton(this.actions.showAppLauncherAction);
+            this.launcherButton = new LauncherButton(AppBarActions.SHOW_APP_LAUNCHER);
             this.appendChild(this.launcherButton);
 
             var separator = new Separator();
             this.appendChild(separator);
 
-            this.homeButton = new HomeButton(this.appName, this.actions.showAppBrowsePanelAction);
+            this.homeButton = new HomeButton(this.application.getName(), AppBarActions.SHOW_APP_BROWSE_PANEL);
             this.appendChild(this.homeButton);
 
             this.userButton = new UserButton();
@@ -60,13 +51,8 @@ module api.app {
 
             this.setBackgroundImgUrl(api.util.getRestUri('ui/background.jpg'));
 
-            window.addEventListener('resize', () => {
-                this.layoutChildren();
-            });
-
-            this.onRendered((event) => {
-                this.layoutChildren();
-            })
+            window.addEventListener('resize', () => this.layoutChildren());
+            this.onRendered((event) => this.layoutChildren())
         }
 
         getTabMenu(): AppBarTabMenu {
@@ -74,30 +60,38 @@ module api.app {
         }
 
         private layoutChildren() {
+            this.updateHomeButtonLabel();
+
             var fullWidth = this.getEl().getWidth();
 
             var homeEl = this.homeButton.getEl();
             var homeElRightEdge = homeEl.getOffset().left + homeEl.getWidthWithMargin();
 
-            var tabEl = this.tabMenu.getEl();
-            var centerLeftEdge = (fullWidth - tabEl.getWidth() ) / 2;
-
-            var tabElLeftEdge = Math.max(homeElRightEdge, centerLeftEdge);
-            tabEl.setLeft(tabElLeftEdge + "px");
-
             var userEl = this.userButton.getEl();
-            var tabElRightEdge = tabElLeftEdge + tabEl.getWidthWithMargin();
+            var tabAvailableWidth = fullWidth - homeElRightEdge - userEl.getWidthWithMargin();
 
-            var userElRightEdge = Math.max(fullWidth, tabElRightEdge + userEl.getWidthWithMargin());
-            userEl.setRight((fullWidth - userElRightEdge) + "px");
+            var tabEl = this.tabMenu.getEl();
+            tabEl.setWidth('auto').setWidth(tabEl.getWidthWithMargin() > tabAvailableWidth ? tabAvailableWidth+'px' : 'auto');
+
+            var centerLeftEdge = (fullWidth - tabEl.getWidth()) / 2;
+            tabEl.setLeftPx(Math.max(homeElRightEdge, centerLeftEdge));
+
+            if (this.tabMenu.isShowingMenuItems()) {
+                this.tabMenu.updateMenuPosition();
+            }
         }
-    }
 
-    export interface AppBarActionsConfig {
+        private updateHomeButtonLabel() {
+            var fullWidth = this.getEl().getWidth(),
+                homeEl = this.homeButton.getEl(),
+                homeLabel = homeEl.getInnerHtml();
 
-        showAppLauncherAction?:api.ui.Action;
-
-        showAppBrowsePanelAction?:api.ui.Action;
+            if (fullWidth > 540 && homeLabel != this.application.getName()) {
+                homeEl.setInnerHtml(this.application.getName());
+            } else if (fullWidth <= 540 && homeLabel != this.application.getShortName()) {
+                homeEl.setInnerHtml(this.application.getShortName());
+            }
+        }
     }
 
     export class LauncherButton extends api.dom.ButtonEl {

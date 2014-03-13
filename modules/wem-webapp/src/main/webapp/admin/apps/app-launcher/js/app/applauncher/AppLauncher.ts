@@ -43,7 +43,7 @@ module app.launcher {
             api.dom.Body.get().appendChild(this.adminApplicationFrames);
         }
 
-        loadApplication(application: Application) {
+        loadApplication(application: api.app.Application) {
             if (!application.getAppUrl()) {
                 console.warn('Missing URL for app "' + application.getName() + '". Cannot be opened.');
                 return;
@@ -51,30 +51,22 @@ module app.launcher {
 
             api.ui.KeyBindings.get().reset();
             this.homeMainContainer.hide();
-//            Applications.getAllApps().forEach((currentApp: Application) => {
-//                if (currentApp != app) {
-//                    currentApp.hide();
-//                }
-//            });
 
-            var initial = !application.hasAppFrame();
             var appFrame: api.dom.IFrameEl = application.getAppFrame();
-            if (!initial) {
+            if (application.isLoaded()) {
                 appFrame.show();
             }
             else {
                 this.adminApplicationFrames.appendChild(appFrame);
                 this.loadMask.show();
-                application.onLoaded(() => {
-                    this.loadMask.hide();
-                });
+                application.onLoaded(() => this.loadMask.hide());
             }
             var type = api.app.AppLauncherEventType.Show;
             appFrame.postMessage(<api.app.AppLauncherEvent>{appLauncherEvent: api.app.AppLauncherEventType[type]});
         }
 
         showLauncherScreen() {
-            Applications.getAllApps().forEach((app: Application) => {
+            Applications.getAllApps().forEach((app: api.app.Application) => {
                 app.hide();
             });
             if (this.loadMask.isVisible()) {

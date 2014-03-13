@@ -9,34 +9,30 @@ module app.launcher {
         private static DESCR4 = 'Ei malis impedit expetendis quo. His id iusto nihil quando, qui facer equidem molestie ei, dolore possit eripuit ad eum. Dissentiet instructior no nec, blandit salutandi ea vel, legere essent quo at. At eos consul perpetua. Sea duis postea et, cum agam justo cu. Nulla numquam vim no.';
         private static ICONS_PATH = api.util.getAdminUri('common/images/icons/metro/40x40/');
 
-        private static applications:Application[] = [
-            new Application('profile', 'Profile', api.util.getAdminUri('common/images/tsi-profil.jpg'), Applications.PROFILE_DESC, null, true),
-            new Application('content-manager', 'Content Manager',
-                Applications.ICONS_PATH + 'database.png',
-                Applications.DESCR1),
-            new Application('relationships', 'Relationships', Applications.ICONS_PATH + 'share.png', Applications.DESCR2),
-            new Application('schema-manager', 'Schema Manager',
-                Applications.ICONS_PATH + 'signup.png',
-                Applications.DESCR4),
+        private static applications:api.app.Application[] = [
+            new api.app.Application('profile', 'Profile', 'PF', api.util.getAdminUri('common/images/tsi-profil.jpg'), Applications.PROFILE_DESC, null, true),
+            new api.app.Application('content-manager', 'Content Manager', 'CM', Applications.ICONS_PATH + 'database.png', Applications.DESCR1),
+            new api.app.Application('relationships', 'Relationships', 'RS', Applications.ICONS_PATH + 'share.png', Applications.DESCR2),
+            new api.app.Application('schema-manager', 'Schema Manager', 'SC', Applications.ICONS_PATH + 'signup.png', Applications.DESCR4),
 
-            new Application('store-manager', 'Store Manager', Applications.ICONS_PATH + 'cart.png', Applications.DESCR4),
-            new Application('segment-builder', 'Segment Builder', Applications.ICONS_PATH + 'pie.png', Applications.DESCR3),
-            new Application('optimizer', 'Optimizer', Applications.ICONS_PATH + 'target.png', Applications.DESCR2),
-            new Application('analytics', 'Analytics', Applications.ICONS_PATH + 'stats.png', Applications.DESCR1),
+            new api.app.Application('store-manager', 'Store Manager', 'ST', Applications.ICONS_PATH + 'cart.png', Applications.DESCR4),
+            new api.app.Application('segment-builder', 'Segment Builder', 'SB', Applications.ICONS_PATH + 'pie.png', Applications.DESCR3),
+            new api.app.Application('optimizer', 'Optimizer', 'OP', Applications.ICONS_PATH + 'target.png', Applications.DESCR2),
+            new api.app.Application('analytics', 'Analytics', 'AN', Applications.ICONS_PATH + 'stats.png', Applications.DESCR1),
 
-            new Application('accounts', 'Accounts', Applications.ICONS_PATH + 'users.png', Applications.DESCR2),
-            new Application('module-manager', 'Modules', Applications.ICONS_PATH + 'puzzle.png', Applications.DESCR1),
-            new Application('template-manager', 'Templates', Applications.ICONS_PATH + 'earth.png', Applications.DESCR4),
-            new Application('diagnostics', 'Diagnostics', Applications.ICONS_PATH + 'aid.png', Applications.DESCR3)
+            new api.app.Application('accounts', 'Accounts', 'AC', Applications.ICONS_PATH + 'users.png', Applications.DESCR2),
+            new api.app.Application('module-manager', 'Modules', 'MD', Applications.ICONS_PATH + 'puzzle.png', Applications.DESCR1),
+            new api.app.Application('template-manager', 'Templates', 'TM', Applications.ICONS_PATH + 'earth.png', Applications.DESCR4),
+            new api.app.Application('diagnostics', 'Diagnostics', 'DI', Applications.ICONS_PATH + 'aid.png', Applications.DESCR3)
         ];
 
-        static getAllApps():Application[] {
+        static getAllApps():api.app.Application[] {
             return Applications.applications;
         }
 
-        static getAppById(id:string):Application {
-            var app:Application = null;
-            Applications.getAllApps().forEach((currentApp:Application) => {
+        static getAppById(id:string):api.app.Application {
+            var app:api.app.Application = null;
+            Applications.getAllApps().forEach((currentApp:api.app.Application) => {
                if (currentApp.getId() == id) {
                    app = currentApp;
                }
