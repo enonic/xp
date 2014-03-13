@@ -25,7 +25,7 @@ public final class RegionXml
     @XmlElements({@XmlElement(name = "part-component", type = PartComponentXml.class),
                      @XmlElement(name = "image-component", type = ImageComponentXml.class),
                      @XmlElement(name = "layout-component", type = LayoutComponentXml.class)})
-    private List<PageComponentXml> components;
+    private List<PageComponentXml> components = new ArrayList<>();
 
     @Override
     public void from( final Region region )
