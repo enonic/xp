@@ -101,11 +101,14 @@ module app.wizard.site {
             this.moduleViewsContainer.removeChildren();
 
             modules.forEach((theModule: api.module.Module) => {
+                if (theModule.getForm().getFormItems().length == 0) {
+                    return;
+                }
 
                 var moduleView = new ModuleView(this.formContext, theModule,
                     this.moduleConfigsByKey[theModule.getModuleKey().toString()]);
 
-                this.moduleViewsContainer.appendChild(moduleView)
+                this.moduleViewsContainer.appendChild(moduleView);
                 this.moduleViews.push(moduleView);
             });
         }

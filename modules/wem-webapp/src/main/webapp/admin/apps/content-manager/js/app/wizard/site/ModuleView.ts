@@ -18,6 +18,7 @@ module app.wizard.site {
             this.appendChild(headerEl);
 
             this.formView = new api.form.FormView(context, theModule.getForm(), moduleConfig ? moduleConfig.getConfig() : undefined);
+            this.formView.setDoOffset(false);
             this.appendChild(this.formView);
         }
 
