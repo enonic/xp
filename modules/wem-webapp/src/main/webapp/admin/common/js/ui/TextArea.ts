@@ -19,9 +19,13 @@ module api.ui {
                 this.oldValue = this.getValue();
             });
 
-            this.clone = new api.dom.DivEl().addClass('autosize-clone').addClass(this.getEl().getAttribute('class'));
+            this.clone = new api.dom.DivEl('autosize-clone').addClass(this.getEl().getAttribute('class'));
             this.attendant = new api.dom.DivEl('autosize-attendant');
             this.attendant.appendChild(this.clone);
+
+            this.onAdded((event: api.dom.ElementAddedEvent) => {
+                this.attendant.insertAfterEl(this);
+            });
 
             this.onShown((event: api.dom.ElementShownEvent) => this.updateSize());
             this.onValueChanged((event: ValueChangedEvent) => this.updateSize());
@@ -45,10 +49,10 @@ module api.ui {
         }
 
         private updateSize() {
-            this.attendant.insertAfterEl(this);
-            this.clone.getEl().setInnerHtml(this.getValue() + " ");
-            this.getEl().setHeightPx(this.clone.getEl().getHeightWithBorder());
-            this.attendant.remove();
+            if (this.isRendered()) {
+                this.clone.getEl().setInnerHtml(this.getValue() + " ");
+                this.getEl().setHeightPx(this.clone.getEl().getHeightWithBorder());
+            }
         }
 
         onValueChanged(listener: (event: ValueChangedEvent)=>void) {
