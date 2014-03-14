@@ -88,17 +88,17 @@ module api.ui {
             //Image toolbar stub buttons
             //TODO: should be replaced with working buttons later
             var btn1 = new api.ui.Button('');
-            btn1.addClass("icon-crop2").addClass('icon24');
+            btn1.addClass("icon-crop2 icon-large");
             var btn2 = new api.ui.Button('');
-            btn2.addClass("icon-rotate").addClass('icon24');
+            btn2.addClass("icon-rotate icon-large");
             var btn3 = new api.ui.Button('');
-            btn3.addClass("icon-rotate2").addClass('icon24');
+            btn3.addClass("icon-rotate2 icon-large");
             var btn4 = new api.ui.Button('');
-            btn4.addClass("icon-flip").addClass('icon24');
+            btn4.addClass("icon-flip icon-large");
             var btn5 = new api.ui.Button('');
-            btn5.addClass("icon-flip2").addClass('icon24');
+            btn5.addClass("icon-flip2 icon-large");
             var btn6 = new api.ui.Button('');
-            btn6.addClass("icon-palette").addClass('icon24');
+            btn6.addClass("icon-palette icon-large");
 
             this.imageBox.appendChild(btn1).appendChild(btn2).appendChild(btn3).appendChild(btn4).appendChild(btn5).appendChild(btn6);
             //End of stub
