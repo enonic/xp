@@ -80,23 +80,10 @@
         <indexed>false</indexed>
         <occurrences minimum="0" maximum="1"/>
     </input>
-    <input name="myTextArea_default" type="TextArea">
+    <input name="myTextArea" type="TextArea">
         <immutable>false</immutable>
         <indexed>false</indexed>
         <occurrences minimum="0" maximum="1"/>
-        <config>
-            <rows>10</rows>
-            <columns>50</columns>
-        </config>
-    </input>
-    <input name="myTextArea_10cols_10_rows" type="TextArea">
-        <immutable>false</immutable>
-        <indexed>false</indexed>
-        <occurrences minimum="0" maximum="1"/>
-        <config>
-            <rows>10</rows>
-            <columns>10</columns>
-        </config>
     </input>
     <input name="myWholeNumber" type="WholeNumber">
         <immutable>false</immutable>

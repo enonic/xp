@@ -9,7 +9,6 @@ import com.enonic.wem.api.form.inputtype.ImageSelectorConfig;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.form.inputtype.RelationshipConfig;
 import com.enonic.wem.api.form.inputtype.SingleSelectorConfig;
-import com.enonic.wem.api.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.xml.BaseXmlSerializerTest;
@@ -231,10 +230,8 @@ public class FormXmlTest
                 newInput().name("mySingleSelector").inputType(InputTypes.SINGLE_SELECTOR).inputTypeConfig(singleSelectorConfig).build());
         formBuilder.addFormItem(newInput().name("myTags").inputType(InputTypes.TAGS).build());
         formBuilder.addFormItem(newInput().name("myTextLine").inputType(InputTypes.TEXT_LINE).build());
-        formBuilder.addFormItem(newInput().name("myTextArea_default").inputType(InputTypes.TEXT_AREA).inputTypeConfig(
+        formBuilder.addFormItem(newInput().name("myTextArea").inputType(InputTypes.TEXT_AREA).inputTypeConfig(
                 InputTypes.TEXT_AREA.getDefaultConfig()).build());
-        formBuilder.addFormItem(newInput().name("myTextArea_10cols_10_rows").inputType(InputTypes.TEXT_AREA).inputTypeConfig(
-                TextAreaConfig.newTextAreaConfig().rows(10).columns(10).build()).build());
         formBuilder.addFormItem(newInput().name("myWholeNumber").inputType(InputTypes.WHOLE_NUMBER).build());
         formBuilder.addFormItem(newInput().name("myXml").inputType(InputTypes.XML).build());
         formBuilder.addFormItem(

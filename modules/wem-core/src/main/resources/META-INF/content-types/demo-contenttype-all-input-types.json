@@ -233,29 +233,7 @@
         },
         {
             "Input": {
-                "name": "myTextArea_default",
-                "label": "My TextArea, default",
-                "immutable": false,
-                "occurrences": {
-                    "minimum": 0,
-                    "maximum": 0
-                },
-                "indexed": false,
-                "customText": null,
-                "validationRegexp": null,
-                "helpText": null,
-                "type": {
-                    "name": "TextArea",
-                    "config": {
-                        "rows": 10,
-                        "columns": 50
-                    }
-                }
-            }
-        },
-        {
-            "Input": {
-                "name": "myTextArea_10cols_10_rows",
+                "name": "myTextArea",
                 "label": "My TextArea",
                 "immutable": false,
                 "occurrences": {
@@ -267,11 +245,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "TextArea",
-                    "config": {
-                        "rows": 10,
-                        "columns": 10
-                    }
+                    "name": "TextArea"
                 }
             }
         },

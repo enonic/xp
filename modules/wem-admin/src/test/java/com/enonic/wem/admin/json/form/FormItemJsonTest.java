@@ -9,7 +9,6 @@ import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.support.JsonTestHelper;
 
 import static junit.framework.Assert.assertEquals;
@@ -66,7 +65,7 @@ public class FormItemJsonTest
             helpText( "Help text" ).
             occurrences( 1, 3 ).
             inputType( InputTypes.TEXT_AREA ).
-            inputTypeConfig( TextAreaConfig.newTextAreaConfig().columns( 100 ).rows( 100 ).build() ).
+            inputTypeConfig( InputTypes.TEXT_AREA.getDefaultConfig() ).
             build() );
 
         // serialize from object

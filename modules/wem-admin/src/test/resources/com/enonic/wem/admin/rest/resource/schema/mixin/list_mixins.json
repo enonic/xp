@@ -63,10 +63,7 @@
                             "minimum": 1,
                             "maximum": 1
                         },
-                        "config": {
-                            "rows": 10,
-                            "columns": 10
-                        }
+                        "config": { }
                     }
                 }
             ],

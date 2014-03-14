@@ -26,7 +26,6 @@ import com.enonic.wem.api.command.schema.mixin.GetMixins;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixin;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixinResult;
 import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.SchemaId;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinAlreadyExistException;
@@ -151,7 +150,7 @@ public class MixinResourceTest
         Mixin mixin2 = Mixin.newMixin().createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ) ).name(
             MY_MIXIN_QUALIFIED_NAME_2.toString() ).addFormItem(
             newInput().name( MY_MIXIN_QUALIFIED_NAME_2.toString() ).inputType( TEXT_AREA ).inputTypeConfig(
-                TextAreaConfig.newTextAreaConfig().columns( 10 ).rows( 10 ).build() ).label( "Text Area" ).required( true ).helpText(
+                TEXT_AREA.getDefaultConfig() ).label( "Text Area" ).required( true ).helpText(
                 "Help text area" ).required( true ).build() ).build();
 
         Mockito.when( client.execute( Mockito.isA( GetMixins.class ) ) ).thenReturn( Mixins.from( mixin1, mixin2 ) );

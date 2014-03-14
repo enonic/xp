@@ -16,7 +16,6 @@ import com.enonic.wem.api.form.inputtype.ImageSelectorConfig;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.form.inputtype.RelationshipConfig;
 import com.enonic.wem.api.form.inputtype.SingleSelectorConfig;
-import com.enonic.wem.api.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.mixin.Mixin;
@@ -126,8 +125,7 @@ public abstract class AbstractContentTypeSerializerTest
         assertNotNull( actualContentType.form().getFormItem( "mySingleSelector" ) );
         assertNotNull( actualContentType.form().getFormItem( "myTags" ) );
         assertNotNull( actualContentType.form().getFormItem( "myTextLine" ) );
-        assertNotNull( actualContentType.form().getFormItem( "myTextArea_default" ) );
-        assertNotNull( actualContentType.form().getFormItem( "myTextArea_10cols_10_rows" ) );
+        assertNotNull( actualContentType.form().getFormItem( "myTextArea" ) );
         assertNotNull( actualContentType.form().getFormItem( "myWholeNumber" ) );
         assertNotNull( actualContentType.form().getFormItem( "myXml" ) );
         assertNotNull( actualContentType.form().getFormItem( "myCustomInput" ) );
@@ -155,9 +153,7 @@ public abstract class AbstractContentTypeSerializerTest
         assertEquals( "mySingleSelector", actualContentType.form().getFormItem( "mySingleSelector" ).getPath().toString() );
         assertEquals( "myTags", actualContentType.form().getFormItem( "myTags" ).getPath().toString() );
         assertEquals( "myTextLine", actualContentType.form().getFormItem( "myTextLine" ).getPath().toString() );
-        assertEquals( "myTextArea_default", actualContentType.form().getFormItem( "myTextArea_default" ).getPath().toString() );
-        assertEquals( "myTextArea_10cols_10_rows",
-                      actualContentType.form().getFormItem( "myTextArea_10cols_10_rows" ).getPath().toString() );
+        assertEquals( "myTextArea", actualContentType.form().getFormItem( "myTextArea" ).getPath().toString() );
         assertEquals( "myWholeNumber", actualContentType.form().getFormItem( "myWholeNumber" ).getPath().toString() );
         assertEquals( "myXml", actualContentType.form().getFormItem( "myXml" ).getPath().toString() );
         assertEquals( "myCustomInput", actualContentType.form().getFormItem( "myCustomInput" ).getPath().toString() );
@@ -346,10 +342,8 @@ public abstract class AbstractContentTypeSerializerTest
             newInput().name( "mySingleSelector" ).inputType( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myTags" ).inputType( InputTypes.TAGS ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() );
-        contentTypeBuilder.addFormItem( newInput().name( "myTextArea_default" ).inputType( InputTypes.TEXT_AREA ).inputTypeConfig(
+        contentTypeBuilder.addFormItem( newInput().name( "myTextArea" ).inputType( InputTypes.TEXT_AREA ).inputTypeConfig(
             InputTypes.TEXT_AREA.getDefaultConfig() ).build() );
-        contentTypeBuilder.addFormItem( newInput().name( "myTextArea_10cols_10_rows" ).inputType( InputTypes.TEXT_AREA ).inputTypeConfig(
-            TextAreaConfig.newTextAreaConfig().rows( 10 ).columns( 10 ).build() ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myWholeNumber" ).inputType( InputTypes.WHOLE_NUMBER ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myXml" ).inputType( InputTypes.XML ).build() );
         contentTypeBuilder.addFormItem(
