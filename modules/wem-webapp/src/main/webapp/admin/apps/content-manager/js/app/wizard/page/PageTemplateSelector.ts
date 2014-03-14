@@ -8,7 +8,7 @@ module app.wizard.page {
 
         private pageTemplateToSelect: api.content.page.PageTemplateKey;
 
-        constructor(form:PageWizardStepForm) {
+        constructor(form:api.ui.form.Form) {
             super("page-template-selector-form");
 
             this.pageTemplateComboBox = new api.content.page.PageTemplateComboBox();
