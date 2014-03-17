@@ -15,8 +15,6 @@ module api.form.inputtype.content.image {
 
         private comboBox: api.ui.selector.combobox.ComboBox<api.content.ContentSummary>;
 
-        private libraryButton: api.ui.Button;
-
         private uploadButton: api.ui.Button;
 
         private selectedOptionsView: SelectedOptionsView;
@@ -100,9 +98,6 @@ module api.form.inputtype.content.image {
                 });
             }
 
-            this.libraryButton = new api.ui.Button("");
-            this.libraryButton.addClass("open-library-button");
-
             this.uploadButton = new api.ui.Button("");
             this.uploadButton.addClass("upload-button");
             this.uploadButton.onClicked((event: MouseEvent) => {
@@ -119,12 +114,13 @@ module api.form.inputtype.content.image {
                 this.uploadDialog.open();
             });
 
-            this.appendChild(this.uploadButton);
-            this.appendChild(this.libraryButton);
+
 
             var comboboxWrapper = new api.dom.DivEl("combobox-wrapper");
             comboboxWrapper.appendChild(this.comboBox);
             this.appendChild(comboboxWrapper);
+
+            this.appendChild(this.uploadButton);
 
             this.appendChild(this.selectedOptionsView);
         }
