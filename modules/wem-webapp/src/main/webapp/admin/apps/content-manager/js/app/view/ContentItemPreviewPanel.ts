@@ -4,6 +4,8 @@ module app.view {
 
         private frame: api.dom.IFrameEl;
 
+        private image: api.dom.ImgEl;
+
         private mask: api.ui.LoadMask;
 
         constructor() {
@@ -12,27 +14,65 @@ module app.view {
             this.frame = new api.dom.IFrameEl();
             this.frame.onLoaded((event: UIEvent) => this.mask.hide());
             this.appendChild(this.frame);
+            this.image = new api.dom.ImgEl();
+            this.image.onLoaded((event: UIEvent) => {
+                this.mask.hide();
+                var imgEl = this.image.getEl();
+                var myEl = this.getEl();
+                this.centerImage(imgEl.getWidth(), imgEl.getHeight(), myEl.getWidth(), myEl.getHeight());
+            });
+            this.appendChild(this.image);
+
+            this.onResized((event: api.dom.ElementResizedEvent) => {
+                if (this.hasClass("image-preview")) {
+                    var imgEl = this.image.getEl();
+                    this.centerImage(imgEl.getWidth(), imgEl.getHeight(), event.getNewWidth(), event.getNewHeight());
+                }
+            })
+        }
+
+        private centerImage(imgWidth, imgHeight, myWidth, myHeight) {
+            var imgRatio = imgWidth / imgHeight;
+            var myRatio = myWidth / myHeight;
+            var imgMarginTop = 0;
+            if (imgRatio > myRatio) {
+                // image should be centered vertically
+                imgMarginTop = (myHeight - imgHeight) / 2;
+            }
+            this.image.getEl().setMarginTop(imgMarginTop + "px");
         }
 
         public setItem(item: api.app.view.ViewItem<api.content.ContentSummary>) {
-            var escapedPath = item.getPath();
-            if (escapedPath.charAt(0) == '/') {
-                escapedPath = escapedPath.substring(1);
-            }
 
             this.mask.show();
 
-            new api.content.page.IsRenderableRequest(item.getModel().getContentId()).send()
-                .then((response: api.rest.JsonResponse<boolean>) => {
-                    if (response.getResult()) {
-                        this.getEl().removeClass('no-preview icon-blocked');
-                        this.frame.setSrc(api.util.getUri("portal/live/" + escapedPath));
-                    } else {
-                        this.getEl().addClass('no-preview icon-blocked');
-                        this.frame.setSrc("about:blank");
-                        this.mask.hide();
-                    }
-                });
+            if (item.getModel().getType().toString() == "image") {
+                this.getEl().removeClass("no-preview page-preview").addClass("image-preview");
+                var imgSize = Math.max(this.getEl().getWidth(), this.getEl().getHeight());
+                var imgSrc = api.util.getRestUri("content/image/") + item.getModel().getContentId();
+                this.image.setSrc(imgSrc + '?thumbnail=false&size=' + imgSize);
+            } else {
+                new api.content.page.IsRenderableRequest(item.getModel().getContentId()).send()
+                    .then((response: api.rest.JsonResponse<boolean>) => {
+                        if (response.getResult()) {
+                            this.getEl().removeClass("image-preview no-preview").addClass('page-preview');
+                            this.frame.setSrc(api.util.getUri("portal/live/" + this.escapePath(item.getPath())));
+                        } else {
+                            this.getEl().removeClass("image-preview page-preview").addClass('no-preview');
+                            this.frame.setSrc("about:blank");
+                            this.mask.hide();
+                        }
+                    });
+            }
+        }
+
+
+        private escapePath(path: string): string {
+            var escapedPath = path;
+            if (escapedPath.charAt(0) == '/') {
+                escapedPath = escapedPath.substring(1);
+            }
+            return escapedPath;
         }
     }
 }

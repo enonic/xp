@@ -18,5 +18,13 @@ module api.dom {
         getEl(): ImgHelper {
             return <ImgHelper>super.getEl();
         }
+
+        onLoaded(listener: (event: UIEvent) => void) {
+            this.getEl().addEventListener("load", listener);
+        }
+
+        unLoaded(listener: (event: UIEvent) => void) {
+            this.getEl().removeEventListener("load", listener);
+        }
     }
 }

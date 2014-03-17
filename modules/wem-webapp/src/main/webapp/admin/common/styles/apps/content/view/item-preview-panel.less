@@ -4,14 +4,41 @@
   padding: 0 !important;
   overflow: hidden;
 
-  iframe {
+  > iframe {
     width: 100%;
     height: 100%;
     border: 0 none;
     margin: 0;
     padding: 0;
     overflow: auto;
-    display: block;
+    display: none;
+  }
+
+  > img {
+    display: none;
+    margin: auto;
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  &.page-preview {
+    > iframe {
+      display: block;
+    }
+    > img {
+      display: none;
+    }
+  }
+
+  &.image-preview {
+    background-color: @admin-dark-gray;
+
+    > iframe {
+      display: none;
+    }
+    > img {
+      display: block;
+    }
   }
 
   &.no-preview {
@@ -20,7 +47,7 @@
     color: lightgray;
     text-align: center;
 
-    iframe {
+    > iframe, > img {
       display: none;
     }
 

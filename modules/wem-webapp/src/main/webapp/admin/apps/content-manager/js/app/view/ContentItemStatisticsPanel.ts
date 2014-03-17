@@ -24,7 +24,11 @@ module app.view {
                 this.onTabSelected(event.getTabItem());
             });
 
-            this.showPanel(0);
+            var firstShowListener = (event: api.dom.ElementShownEvent) => {
+                this.showPanel(0);
+                this.unShown(firstShowListener);
+            }
+            this.onShown(firstShowListener);
         }
 
         setItem(item: api.app.view.ViewItem<api.content.ContentSummary>) {
