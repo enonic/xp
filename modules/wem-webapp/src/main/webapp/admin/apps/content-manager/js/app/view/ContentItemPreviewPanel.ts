@@ -32,10 +32,8 @@ module app.view {
         }
 
         private centerImage(imgWidth, imgHeight, myWidth, myHeight) {
-            var imgRatio = imgWidth / imgHeight;
-            var myRatio = myWidth / myHeight;
             var imgMarginTop = 0;
-            if (imgRatio > myRatio) {
+            if (imgHeight < myHeight) {
                 // image should be centered vertically
                 imgMarginTop = (myHeight - imgHeight) / 2;
             }
