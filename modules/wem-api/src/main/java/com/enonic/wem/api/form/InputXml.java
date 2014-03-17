@@ -17,8 +17,6 @@ import com.enonic.wem.api.form.inputtype.RelationshipConfig;
 import com.enonic.wem.api.form.inputtype.RelationshipConfigXml;
 import com.enonic.wem.api.form.inputtype.SingleSelectorConfig;
 import com.enonic.wem.api.form.inputtype.SingleSelectorConfigXml;
-import com.enonic.wem.api.form.inputtype.TextAreaConfig;
-import com.enonic.wem.api.form.inputtype.TextAreaConfigXml;
 import com.enonic.wem.xml.XmlObject;
 import com.enonic.wem.xml.XmlSerializers;
 
@@ -86,11 +84,6 @@ public final class InputXml
                     singleSelectorConfigXml.from( SingleSelectorConfig.class.cast( inputTypeConfig ) );
                     this.config = singleSelectorConfigXml;
                     break;
-                case "TextArea":
-                    final TextAreaConfigXml textAreaConfigXml = new TextAreaConfigXml();
-                    textAreaConfigXml.from( TextAreaConfig.class.cast( inputTypeConfig ) );
-                    this.config = textAreaConfigXml;
-                    break;
                 case "Relationship":
                     final RelationshipConfigXml relationshipConfigXml = new RelationshipConfigXml();
                     relationshipConfigXml.from( RelationshipConfig.class.cast( inputTypeConfig ) );
@@ -126,13 +119,6 @@ public final class InputXml
                 final SingleSelectorConfig.Builder singleSelectorConfigBuilder = SingleSelectorConfig.newSingleSelectorConfig();
                 singleSelectorConfigXml.to( singleSelectorConfigBuilder );
                 output.inputTypeConfig( singleSelectorConfigBuilder.build() );
-                break;
-            case "TextArea":
-                final TextAreaConfigXml textAreaConfigXml =
-                    XmlSerializers.create( TextAreaConfigXml.class ).parse( this.config.getElement() );
-                final TextAreaConfig.Builder textAreaConfigBuilder = TextAreaConfig.newTextAreaConfig();
-                textAreaConfigXml.to( textAreaConfigBuilder );
-                output.inputTypeConfig( textAreaConfigBuilder.build() );
                 break;
             case "Relationship":
                 final RelationshipConfigXml relationshipConfigXml =

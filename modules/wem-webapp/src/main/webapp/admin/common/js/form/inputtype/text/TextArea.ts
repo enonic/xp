@@ -2,26 +2,15 @@ module api.form.inputtype.text {
 
     import support = api.form.inputtype.support;
 
-    export class TextArea extends support.BaseInputTypeView<TextAreaConfig> {
+    export class TextArea extends support.BaseInputTypeView<{}> {
 
-        private rows: number;
-        private columns: number;
-
-        constructor(config: api.form.inputtype.InputTypeViewConfig<TextAreaConfig>) {
+        constructor(config: api.form.inputtype.InputTypeViewConfig<{}>) {
             super(config);
-            this.rows = config.inputConfig.rows;
-            this.columns = config.inputConfig.columns;
         }
 
         createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
 
             var inputEl = new api.ui.TextArea(this.getInput().getName() + "-" + index);
-            if (this.rows) {
-                inputEl.setRows(this.rows);
-            }
-            if (this.columns) {
-                inputEl.setColumns(this.columns);
-            }
             if (property != null) {
                 inputEl.setValue(property.getString());
             }

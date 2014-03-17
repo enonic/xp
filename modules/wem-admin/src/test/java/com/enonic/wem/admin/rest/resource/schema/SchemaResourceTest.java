@@ -14,7 +14,6 @@ import com.enonic.wem.api.command.schema.GetRootSchemas;
 import com.enonic.wem.api.command.schema.SchemaTypes;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.Schemas;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.mixin.Mixin;
@@ -41,7 +40,7 @@ public class SchemaResourceTest
         return Mixin.newMixin().name( displayName.toLowerCase() ).displayName( displayName ).description( "M description" ).createdTime(
             DateTime.parse( currentTime ) ).modifiedTime( DateTime.parse( currentTime ) ).addFormItem(
             Input.newInput().name( displayName.toLowerCase() ).inputType( InputTypes.TEXT_AREA ).inputTypeConfig(
-                TextAreaConfig.newTextAreaConfig().rows( 10 ).columns( 10 ).build() ).build() ).build();
+                InputTypes.TEXT_AREA.getDefaultConfig() ).build() ).build();
     }
 
     private ContentType createContentType( String name )

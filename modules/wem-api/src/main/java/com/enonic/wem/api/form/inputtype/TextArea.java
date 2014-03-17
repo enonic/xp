@@ -11,19 +11,7 @@ final class TextArea
 {
     TextArea()
     {
-        super( TextAreaConfig.class );
-    }
-
-    @Override
-    public AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
-    {
-        return TextAreaConfigJsonSerializer.DEFAULT;
-    }
-
-    @Override
-    public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
-    {
-        return TextAreaConfigXmlSerializer.DEFAULT;
+        super();
     }
 
     @Override
@@ -46,7 +34,7 @@ final class TextArea
     @Override
     public InputTypeConfig getDefaultConfig()
     {
-        return TextAreaConfig.newTextAreaConfig().columns( 50 ).rows( 10 ).build();
+        return null;
     }
 
 }
