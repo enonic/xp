@@ -30,7 +30,7 @@ module api.ui.selector.combobox {
 
         private dropdownHandle: DropdownHandle;
 
-        private multipleHandler: api.ui.Button;
+        private applySelectionsButton: api.ui.Button;
 
         private input: ComboBoxOptionFilterInput;
 
@@ -74,10 +74,10 @@ module api.ui.selector.combobox {
             this.appendChild(this.dropdownHandle);
 
             if (this.multipleSelections) {
-                this.multipleHandler = new Button("Apply");
-                this.multipleHandler.addClass('add-button');
-                this.multipleHandler.hide();
-                this.appendChild(this.multipleHandler);
+                this.applySelectionsButton = new Button("Apply");
+                this.applySelectionsButton.addClass('add-button');
+                this.applySelectionsButton.hide();
+                this.appendChild(this.applySelectionsButton);
             }
 
             this.comboBoxDropdown = new ComboBoxDropdown(<ComboBoxDropdownConfig<OPTION_DISPLAY_VALUE>>{
@@ -124,8 +124,8 @@ module api.ui.selector.combobox {
             this.doUpdateDropdownTopPositionAndWidth();
             this.comboBoxDropdown.showDropdown(this.selectedOptionsCtrl.getOptions());
             this.dropdownHandle.down();
-            if (this.multipleHandler) {
-                this.multipleHandler.show();
+            if (this.applySelectionsButton) {
+                this.applySelectionsButton.show();
             }
 
             this.comboBoxDropdown.renderDropdownGrid();
@@ -138,8 +138,8 @@ module api.ui.selector.combobox {
         hideDropdown() {
             this.dropdownHandle.up();
             this.comboBoxDropdown.hideDropdown();
-            if (this.multipleHandler) {
-                this.multipleHandler.hide();
+            if (this.applySelectionsButton) {
+                this.applySelectionsButton.hide();
             }
         }
 
@@ -312,8 +312,8 @@ module api.ui.selector.combobox {
                 }
             });
 
-            if (this.multipleHandler) {
-                this.multipleHandler.onClicked((event: any) => {
+            if (this.applySelectionsButton) {
+                this.applySelectionsButton.onClicked((event: any) => {
                      this.comboBoxDropdown.applyMultiselection();
                 });
             }
