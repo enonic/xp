@@ -20,6 +20,7 @@ import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.page.PageTemplateSpec;
 import com.enonic.wem.api.content.page.PageTemplates;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
+import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
 @javax.ws.rs.Path("content/page/template")
@@ -64,6 +65,7 @@ public final class PageTemplateResource
 
     }
 
+    // TODO: Move to some kind of Portal meta resource?
     @GET
     @javax.ws.rs.Path("isRenderable")
     public boolean isRenderable( @QueryParam("contentId") String contentIdAsString )
@@ -76,14 +78,21 @@ public final class PageTemplateResource
         {
             final ContentTypeName type = content.getType();
             final SiteTemplateKey siteTemplateKey = nearestSite.getSite().getTemplate();
-            final PageTemplates pageTemplates = pageTemplateService.getBySiteTemplate( siteTemplateKey );
-
-            for ( final PageTemplate pageTemplate : pageTemplates )
+            try
             {
-                if ( pageTemplate.canRender( type ) )
+                final PageTemplates pageTemplates = pageTemplateService.getBySiteTemplate( siteTemplateKey );
+
+                for ( final PageTemplate pageTemplate : pageTemplates )
                 {
-                    return true ;
+                    if ( pageTemplate.canRender( type ) )
+                    {
+                        return true;
+                    }
                 }
+            }
+            catch ( SiteTemplateNotFoundException e )
+            {
+                return false;
             }
         }
         return false;
