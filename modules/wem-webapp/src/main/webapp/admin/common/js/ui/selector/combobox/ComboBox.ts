@@ -30,6 +30,8 @@ module api.ui.selector.combobox {
 
         private dropdownHandle: DropdownHandle;
 
+        private applySelectionsButton: api.ui.Button;
+
         private input: ComboBoxOptionFilterInput;
 
         private multipleSelections: boolean = false;
@@ -71,13 +73,21 @@ module api.ui.selector.combobox {
             this.dropdownHandle = new DropdownHandle();
             this.appendChild(this.dropdownHandle);
 
+            if (this.multipleSelections) {
+                this.applySelectionsButton = new Button("Apply");
+                this.applySelectionsButton.addClass('add-button');
+                this.applySelectionsButton.hide();
+                this.appendChild(this.applySelectionsButton);
+            }
+
             this.comboBoxDropdown = new ComboBoxDropdown(<ComboBoxDropdownConfig<OPTION_DISPLAY_VALUE>>{
                 maxHeight: 200,
                 width: this.input.getEl().getWidth(),
                 optionFormatter: config.optionFormatter,
                 filter: config.filter,
                 rowHeight: config.rowHeight,
-                dataIdProperty: config.dataIdProperty
+                dataIdProperty: config.dataIdProperty,
+                multipleSelections: this.multipleSelections
             });
 
             this.comboBoxDropdown.onRowSelection((event: DropdownGridRowSelectedEvent) => {
@@ -97,8 +107,8 @@ module api.ui.selector.combobox {
 
         private doUpdateDropdownTopPositionAndWidth() {
             var inputEl = this.input.getEl();
-            this.comboBoxDropdown.setTopPx(inputEl.getHeight() - inputEl.getBorderBottomWidth());
-            this.comboBoxDropdown.setWidth(inputEl.getWidth());
+            this.comboBoxDropdown.setTopPx(inputEl.getHeightWithBorder() - inputEl.getBorderBottomWidth());
+            this.comboBoxDropdown.setWidth(inputEl.getWidthWithBorder());
         }
 
         giveFocus(): boolean {
@@ -114,6 +124,9 @@ module api.ui.selector.combobox {
             this.doUpdateDropdownTopPositionAndWidth();
             this.comboBoxDropdown.showDropdown(this.selectedOptionsCtrl.getOptions());
             this.dropdownHandle.down();
+            if (this.applySelectionsButton) {
+                this.applySelectionsButton.show();
+            }
 
             this.comboBoxDropdown.renderDropdownGrid();
         }
@@ -125,6 +138,9 @@ module api.ui.selector.combobox {
         hideDropdown() {
             this.dropdownHandle.up();
             this.comboBoxDropdown.hideDropdown();
+            if (this.applySelectionsButton) {
+                this.applySelectionsButton.hide();
+            }
         }
 
         setOptions(options: Option<OPTION_DISPLAY_VALUE>[]) {
@@ -295,6 +311,12 @@ module api.ui.selector.combobox {
                     }
                 }
             });
+
+            if (this.applySelectionsButton) {
+                this.applySelectionsButton.onClicked((event: any) => {
+                     this.comboBoxDropdown.applyMultiselection();
+                });
+            }
 
             this.input.onValueChanged((event: api.ui.ValueChangedEvent) => {
 
