@@ -78,7 +78,7 @@ module api.ui.selector {
             this.grid.addClass("options-container");
             this.grid.getEl().setPosition("absolute");
             this.grid.hide();
-            this.grid.setSelectionModel(new Slick.RowSelectionModel());
+            this.grid.setSelectionModel(new Slick.RowSelectionModel({selectActiveRow: false}));
 
             if (this.filter) {
                 this.gridData.setFilter(this.filter);
