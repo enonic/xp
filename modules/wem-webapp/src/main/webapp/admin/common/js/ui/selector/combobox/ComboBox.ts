@@ -73,7 +73,7 @@ module api.ui.selector.combobox {
             this.dropdownHandle = new DropdownHandle();
             this.appendChild(this.dropdownHandle);
 
-            if (this.multipleSelections) {
+            if (this.multipleSelections && (config.maximumOccurrences != 1)) {
                 this.applySelectionsButton = new Button("Apply");
                 this.applySelectionsButton.addClass('add-button');
                 this.applySelectionsButton.hide();
@@ -87,7 +87,7 @@ module api.ui.selector.combobox {
                 filter: config.filter,
                 rowHeight: config.rowHeight,
                 dataIdProperty: config.dataIdProperty,
-                multipleSelections: this.multipleSelections
+                multipleSelections: (this.multipleSelections && (config.maximumOccurrences != 1))
             });
 
             this.comboBoxDropdown.onRowSelection((event: DropdownGridRowSelectedEvent) => {
@@ -314,7 +314,7 @@ module api.ui.selector.combobox {
 
             if (this.applySelectionsButton) {
                 this.applySelectionsButton.onClicked((event: any) => {
-                     this.comboBoxDropdown.applyMultiselection();
+                    this.comboBoxDropdown.applyMultiselection();
                 });
             }
 
