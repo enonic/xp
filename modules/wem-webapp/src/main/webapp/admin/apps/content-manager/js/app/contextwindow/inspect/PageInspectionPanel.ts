@@ -9,7 +9,7 @@ module app.contextwindow.inspect {
         private currentPageTemplate: api.content.page.PageTemplateKey;
 
         constructor() {
-            super("live-edit-font-icon-page");
+            super("live-edit-font-icon-page", false);
             this.formView = null;
             this.pageSelectorEl = null;
             this.currentPageTemplate = null;
@@ -18,13 +18,7 @@ module app.contextwindow.inspect {
         setPage(pageContent: api.content.Content, pageTemplate: api.content.page.PageTemplate,
                 pageDescriptor: api.content.page.PageDescriptor) {
             this.page = pageContent;
-            if (pageContent) {
-                this.setMainName(pageContent.getDisplayName());
-                this.setSubName(pageContent.getPath().toString());
-            } else {
-                this.setMainName("[No Page given]");
-                this.setSubName("");
-            }
+
 
             this.setupPageTemplateSelector(pageContent, pageTemplate, pageDescriptor);
             this.setupForm(pageContent, pageTemplate, pageDescriptor);

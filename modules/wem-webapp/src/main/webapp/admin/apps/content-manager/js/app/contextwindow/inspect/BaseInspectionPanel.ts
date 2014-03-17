@@ -5,15 +5,17 @@ module app.contextwindow.inspect {
         private nameAndIcon: api.app.NamesAndIconView;
         private iconClass: string;
 
-        constructor(iconClass: string) {
+        constructor(iconClass: string, renderNameAndIcon: boolean = true) {
             super("inspection-panel");
 
             this.iconClass = iconClass;
-            this.nameAndIcon = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().
-                setSize(api.app.NamesAndIconViewSize.medium)).
-                setIconClass(this.iconClass);
+            if (renderNameAndIcon) {
+                this.nameAndIcon = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().
+                    setSize(api.app.NamesAndIconViewSize.medium)).
+                    setIconClass(this.iconClass);
 
-            this.appendChild(this.nameAndIcon);
+                this.appendChild(this.nameAndIcon);
+            }
 
             this.onRendered((event) => {
                 $(this.getHTMLElement()).slimScroll({
@@ -23,11 +25,15 @@ module app.contextwindow.inspect {
         }
 
         setMainName(value: string) {
-            this.nameAndIcon.setMainName(api.util.limitString(value, 20));
+            if (this.nameAndIcon) {
+                this.nameAndIcon.setMainName(api.util.limitString(value, 20));
+            }
         }
 
         setSubName(value: string) {
-            this.nameAndIcon.setSubName(value);
+            if (this.nameAndIcon) {
+                this.nameAndIcon.setSubName(value);
+            }
         }
     }
 }
