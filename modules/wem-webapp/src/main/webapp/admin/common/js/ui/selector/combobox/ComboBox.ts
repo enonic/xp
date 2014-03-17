@@ -75,7 +75,7 @@ module api.ui.selector.combobox {
 
             if (this.multipleSelections && (config.maximumOccurrences != 1)) {
                 this.applySelectionsButton = new Button("Apply");
-                this.applySelectionsButton.addClass('add-button');
+                this.applySelectionsButton.addClass('apply-button');
                 this.applySelectionsButton.hide();
                 this.appendChild(this.applySelectionsButton);
             }
@@ -314,7 +314,9 @@ module api.ui.selector.combobox {
 
             if (this.applySelectionsButton) {
                 this.applySelectionsButton.onClicked((event: any) => {
+                    this.clearSelection();
                     this.comboBoxDropdown.applyMultiselection();
+                    this.hideDropdown();
                 });
             }
 
