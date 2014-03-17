@@ -31,7 +31,7 @@ module api.ui {
         private positionOver(masked: api.dom.Element) {
             var maskedEl = masked.getEl();
 
-            var maskedOffset = maskedEl.getOffset();
+            var maskedOffset = this.getParentElement() == api.dom.Body.get() ? maskedEl.getOffset() : {top: 0, left: 0};
             var maskedWidth = maskedEl.getWidthWithBorder();
             var maskedHeight = maskedEl.getHeightWithBorder();
 

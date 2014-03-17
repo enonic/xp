@@ -19,6 +19,8 @@ module api.ui {
 
         private alignment: SplitPanelAlignment = SplitPanelAlignment.HORIZONTAL;
 
+        private alignmentTreshold: number;
+
         private splitterThickness: number = 5;
 
         constructor(firstPanel: api.ui.Panel, secondPanel: api.ui.Panel) {
@@ -44,6 +46,11 @@ module api.ui {
 
         setAlignment(alignment: SplitPanelAlignment): SplitPanelBuilder {
             this.alignment = alignment;
+            return this;
+        }
+
+        setAlignmentTreshold(treshold: number): SplitPanelBuilder {
+            this.alignmentTreshold = treshold;
             return this;
         }
 
@@ -76,6 +83,10 @@ module api.ui {
             return this.alignment;
         }
 
+        getAlignmentTreshold(): number {
+            return this.alignmentTreshold;
+        }
+
         getSplitterThickness(): number {
             return this.splitterThickness;
         }
@@ -101,13 +112,13 @@ module api.ui {
 
         private alignment:SplitPanelAlignment;
 
+        private alignmentTreshold: number;
+
         private ghostDragger: api.dom.DivEl;
 
         private dragListener: (e:MouseEvent) => void;
 
-        private maskA:api.ui.DragMask;
-
-        private maskB:api.ui.DragMask;
+        private mask:api.ui.DragMask;
 
         constructor(builder:SplitPanelBuilder) {
             super("split-panel");
@@ -119,6 +130,7 @@ module api.ui {
                 this.setSecondPanelSize(builder.getSecondPanelSize());
             }
             this.alignment = builder.getAlignment();
+            this.alignmentTreshold = builder.getAlignmentTreshold();
             this.splitterThickness = builder.getSplitterThickness();
             this.splitter = new api.dom.DivEl("splitter");
 
@@ -130,10 +142,8 @@ module api.ui {
             this.appendChild(this.secondPanel);
 
             this.ghostDragger = new api.dom.DivEl("ghost-dragger");
-            this.maskA = new api.ui.DragMask(this.firstPanel);
-            this.maskB = new api.ui.DragMask(this.secondPanel);
-
-            this.updateAlignment();
+            this.mask = new api.ui.DragMask(this);
+            this.appendChild(this.mask);
 
             this.dragListener = (e:MouseEvent) => {
                 if (this.isHorizontal()) {
@@ -156,11 +166,15 @@ module api.ui {
                 }
             });
 
-            this.onShown((event: api.dom.ElementShownEvent) => this.distribute());
+            if (this.alignmentTreshold) {
+                api.dom.Window.get().onResized((event: UIEvent) => this.updateAlignment());
+            }
+
+            this.onShown((event: api.dom.ElementShownEvent) => this.updateAlignment());
         }
 
         private startDrag() {
-            this.addPanelMask();
+            this.mask.show();
             this.addClass("dragging");
             this.onMouseMove(this.dragListener);
 
@@ -172,9 +186,9 @@ module api.ui {
         }
 
         private stopDrag(e:MouseEvent) {
-            this.removePanelMask();
+            this.mask.hide();
             this.removeClass("dragging");
-            this.getHTMLElement().removeEventListener("mousemove", this.dragListener);
+            this.unMouseMove(this.dragListener);
 
             var splitPanelEl = this.getEl(),
                 dragOffset = this.isHorizontal() ? e.clientY - splitPanelEl.getOffsetTop() : e.clientX - splitPanelEl.getOffsetLeft(),
@@ -184,16 +198,7 @@ module api.ui {
 
             this.isFirstPanelFixed() ? this.setFirstPanelSize(fixedPanelSize) : this.setSecondPanelSize(fixedPanelSize);
             this.distribute();
-        }
-
-        private addPanelMask() {
-            this.appendChild(this.maskA);
-            this.appendChild(this.maskB);
-        }
-
-        private removePanelMask() {
-            this.maskA.remove();
-            this.maskB.remove();
+            this.fireResizeEvent();
         }
 
         setAlignment(alignment:SplitPanelAlignment) {
@@ -202,6 +207,13 @@ module api.ui {
         }
 
         private updateAlignment() {
+            var splitPanelWidth = this.getEl().getWidthWithMargin();
+            if (splitPanelWidth > this.alignmentTreshold && this.isHorizontal()) {
+                this.alignment = api.ui.SplitPanelAlignment.VERTICAL;
+            } else if (splitPanelWidth < this.alignmentTreshold && !this.isHorizontal()) {
+                this.alignment = api.ui.SplitPanelAlignment.HORIZONTAL;
+            }
+
             if (this.isHorizontal()) {
                 this.removeClass("vertical");
                 this.firstPanel.getEl().setWidth(null);
@@ -240,6 +252,12 @@ module api.ui {
                 this.secondPanel.getEl().setWidth("calc(" + this.secondPanelSize + " - " + this.splitterThickness / 2 + "px)").setHeight(null);
                 this.splitter.getEl().setLeft("calc(" + this.firstPanelSize + " - " + this.splitterThickness / 2 + "px)");
             }
+        }
+
+        private fireResizeEvent() {
+            var event = document.createEvent('Event');
+            event.initEvent('resize', true, true);
+            this.getHTMLElement().dispatchEvent(event);
         }
 
         isHorizontal() {
