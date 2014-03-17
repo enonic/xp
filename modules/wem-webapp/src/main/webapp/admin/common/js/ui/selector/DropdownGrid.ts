@@ -14,6 +14,8 @@ module api.ui.selector {
         rowHeight?: number;
 
         dataIdProperty?:string;
+
+        multipleSelections: boolean;
     }
 
     export class DropdownGrid<OPTION_DISPLAY_VALUE> {
@@ -37,8 +39,9 @@ module api.ui.selector {
 
         private rowSelectionListeners: {(event: DropdownGridRowSelectedEvent):void}[];
 
-        constructor(config: DropdownGridConfig<OPTION_DISPLAY_VALUE>) {
+        private multipleSelections: boolean;
 
+        constructor(config: DropdownGridConfig<OPTION_DISPLAY_VALUE>) {
             this.rowSelectionListeners = [];
             this.maxHeight = config.maxHeight || 200;
             this.optionFormatter = config.optionFormatter;
@@ -47,6 +50,7 @@ module api.ui.selector {
             this.dataIdProperty = config.dataIdProperty;
             this.maxHeight = config.maxHeight;
             this.width = config.width;
+            this.multipleSelections = config.multipleSelections || false;
 
             var columns: api.ui.grid.GridColumn<Option<OPTION_DISPLAY_VALUE>>[] = [
                 {
@@ -63,6 +67,8 @@ module api.ui.selector {
                 fullWidthRows: true,
                 forceFitColumns: true,
                 rowHeight: this.rowHeight,
+                checkableRows: this.multipleSelections,
+                multiSelect: this.multipleSelections,
                 dataIdProperty: config.dataIdProperty ? config.dataIdProperty : "value"
             };
 
@@ -72,6 +78,7 @@ module api.ui.selector {
             this.grid.addClass("options-container");
             this.grid.getEl().setPosition("absolute");
             this.grid.hide();
+            this.grid.setSelectionModel(new Slick.RowSelectionModel());
 
             if (this.filter) {
                 this.gridData.setFilter(this.filter);
@@ -232,6 +239,13 @@ module api.ui.selector {
             this.rowSelectionListeners.filter((currentListener: (event: DropdownGridRowSelectedEvent) => void) => {
                 return listener != currentListener;
             });
+        }
+
+        applyMultiselection() {
+            var rows:number[] = this.grid.getSelectedRows();
+            for (var key in rows) {
+                this.notifyRowSelection(rows[key]);
+            }
         }
 
         private notifyRowSelection(rowSelected: number) {

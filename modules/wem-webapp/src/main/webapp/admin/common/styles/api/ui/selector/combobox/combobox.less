@@ -62,6 +62,14 @@
 
   }
 
+  .add-button {
+    position: absolute;
+    top: 50%;
+    right: 37px;
+    height: 28px;
+    margin-top: -14px !important;
+  }
+
   .empty-options, .options-container {
     position: absolute;
     .box-sizing(border-box);
@@ -78,6 +86,22 @@
     .slick-header {
       height: 0px;
       display: none;
+    }
+
+    .slick-row {
+      &:hover, &.active {
+        background: @admin-light-gray-bg;
+      }
+
+      &.selected {
+        color: #d3d3d3;
+      }
+    }
+
+    .slick-cell-checkboxsel {
+      input[type="checkbox"] {
+        width: 20px;
+      }
     }
 
     .slick-cell {

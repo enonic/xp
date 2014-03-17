@@ -19,6 +19,8 @@ module api.ui.selector.combobox {
         rowHeight?: number;
 
         dataIdProperty?:string;
+
+        multipleSelections: boolean;
     }
 
     export class ComboBoxDropdown<OPTION_DISPLAY_VALUE> {
@@ -39,7 +41,8 @@ module api.ui.selector.combobox {
                 optionFormatter: config.optionFormatter,
                 filter: config.filter,
                 rowHeight: config.rowHeight,
-                dataIdProperty: config.dataIdProperty
+                dataIdProperty: config.dataIdProperty,
+                multipleSelections: config.multipleSelections
             });
         }
 
@@ -152,6 +155,10 @@ module api.ui.selector.combobox {
 
         navigateToPreviousRow() {
             this.dropdownGrid.navigateToPreviousRow();
+        }
+
+        applyMultiselection() {
+            this.dropdownGrid.applyMultiselection();
         }
 
         markSelections(selectedOptions: Option<OPTION_DISPLAY_VALUE>[]) {
