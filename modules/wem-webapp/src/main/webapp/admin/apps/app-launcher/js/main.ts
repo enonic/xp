@@ -19,7 +19,7 @@ window.onload = () => {
 
     var appInfoPanel = new app.launcher.AppInfo();
 
-    var applications = app.launcher.Applications.getAllApps();
+    var applications:api.app.Application[] = app.launcher.Applications.getAllApps();
     var appSelector = new app.launcher.AppSelector(applications);
     appSelector.onAppHighlighted((event: app.launcher.AppHighlightedEvent) => {
         appInfoPanel.showAppInfo(event.getApplication());
@@ -67,10 +67,8 @@ window.onload = () => {
     appLauncher.setRouter(router);
 };
 
-
-function appLoaded(appName: string) {
-    var loadedApp = app.launcher.Applications.getAppById(appName);
-    loadedApp.setLoaded(true);
+function getApplication(id: string): api.app.Application {
+    return app.launcher.Applications.getAppById(id);
 }
 
 function setHash(path: string) {

@@ -3,7 +3,8 @@ declare var Admin;
 declare var CONFIG;
 
 window.onload = () => {
-    var appBar = new api.app.AppBar("Module Manager", new api.app.AppBarTabMenu());
+    var application:api.app.Application = api.app.Application.getApplication();
+    var appBar = new api.app.AppBar(application);
     var appPanel = new app.ModuleAppPanel(appBar);
 
     api.dom.Body.get().appendChild(appBar);
@@ -17,9 +18,7 @@ window.onload = () => {
         moduleDeleteDialog.open();
     });
 
-    if (window.parent["appLoaded"]) {
-        window.parent["appLoaded"](getAppName());
-    }
+    application.setLoaded(true);
 
     window.onmessage = (e:MessageEvent) => {
         if( e.data.appLauncherEvent ) {
@@ -34,10 +33,6 @@ window.onload = () => {
 module components {
     export var detailPanel:app.browse.ModuleBrowseItemPanel;
     export var gridPanel:app.browse.ModuleTreeGridPanel;
-}
-
-function getAppName():string {
-    return jQuery(window.frameElement).data("wem-app");
 }
 
 function route(path:api.rest.Path) {

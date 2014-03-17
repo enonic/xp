@@ -3,10 +3,10 @@ module app.launcher {
     export class AppRouter {
         static HOME_HASH_ID = 'home';
 
-        private applications:Application[];
+        private applications:api.app.Application[];
         private appLauncher:AppLauncher;
 
-        constructor(applications:Application[], appLauncher:AppLauncher) {
+        constructor(applications:api.app.Application[], appLauncher:AppLauncher) {
             this.applications = applications;
             this.appLauncher = appLauncher;
             this.initRouting();
@@ -39,7 +39,7 @@ module app.launcher {
         }
 
         private setupAppsRouting() {
-            this.applications.forEach((application:Application, idx:number) => {
+            this.applications.forEach((application:api.app.Application, idx:number) => {
                 var appRoutPattern = application.getId() + '/:p1:/:p2:/:p3:'; // optional parameters in URL: action, id
                 crossroads.addRoute(appRoutPattern, (p1:string, p2:string, p3:string) => {
                     this.appLauncher.loadApplication(application);
@@ -56,7 +56,7 @@ module app.launcher {
             });
         }
 
-        private runAction(app:Application, path:api.rest.Path):boolean {
+        private runAction(app:api.app.Application, path:api.rest.Path):boolean {
             if (app.isLoaded()) {
                 if (app.getWindow().route) {
                     app.getWindow().route(path);
