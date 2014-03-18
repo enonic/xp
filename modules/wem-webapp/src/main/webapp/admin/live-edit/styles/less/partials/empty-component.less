@@ -1,4 +1,4 @@
-@defaultHeight: 105px;
+@defaultHeight: 135px;
 
 .live-edit-empty-component {
   clear: both;
@@ -7,6 +7,7 @@
   margin: 1px 0 10px 0;
   position: relative;
   min-height: @defaultHeight;
+  box-sizing: border-box;
 
   &[data-live-edit-type] {
     &:before {
@@ -42,7 +43,7 @@
   }
 
   .rich-combobox {
-    margin:@defaultHeight/2-20px auto 0 auto;
+    margin:@defaultHeight/2-30px auto 0 auto;
     width:255px;
     .options-container {
       z-index: 9999999; // must override shader
