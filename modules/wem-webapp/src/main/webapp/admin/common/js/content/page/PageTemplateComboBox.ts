@@ -39,7 +39,7 @@ module api.content.page {
 
         layout() {
             var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize( api.app.NamesAndIconViewSize.small ).build();
-            namesAndIconView.setIconUrl( api.util.getAdminUri('common/images/icons/icoMoon/32x32/earth.png') )
+            namesAndIconView.setIconUrl( api.util.getAdminUri('common/images/icons/icoMoon/32x32/newspaper.png') )
                 .setMainName( this.pageTemplate.getDisplayName() )
                 .setSubName( this.pageTemplate.getDescriptorKey().toString() );
 
