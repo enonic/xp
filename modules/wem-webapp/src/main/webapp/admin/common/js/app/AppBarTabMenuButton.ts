@@ -14,7 +14,6 @@ module api.app{
             this.prependChild(this.tabCountEl);
 
             this.iconEl = new api.dom.ImgEl();
-            this.iconEl.hide();
             this.prependChild(this.iconEl);
         }
 
@@ -22,8 +21,12 @@ module api.app{
             this.tabCountEl.setCount(value);
         }
 
-        setEditing(value:boolean) {
-            this.iconEl[value ? "show" : "hide"]();
+        setEditing(editing:boolean) {
+            if (editing && !this.hasClass('editing')) {
+                this.addClass('editing');
+            } else if (!editing && this.hasClass('editing')) {
+                this.removeClass('editing');
+            }
         }
     }
 
