@@ -181,14 +181,19 @@ module api.ui.selector {
             this.grid.resizeCanvas();
         }
 
-        markSelections(selectedOptions: Option<OPTION_DISPLAY_VALUE>[]) {
+        markSelections(selectedOptions: Option<OPTION_DISPLAY_VALUE>[], ignoreEmpty: boolean = false) {
 
             var stylesHash: Slick.CellCssStylesHash = {};
+            var rows: number[] = [];
             selectedOptions.forEach((selectedOption: Option<OPTION_DISPLAY_VALUE>) => {
                 var row = this.gridData.getRowById(selectedOption.value);
+                rows.push(row);
                 stylesHash[row] = {option: "selected"};
             });
             this.grid.setCellCssStyles("selected", stylesHash);
+            if (!(rows.length === 0 && ignoreEmpty)) {
+                this.grid.setSelectedRows(rows);
+            }
         }
 
         hasActiveRow(): boolean {
