@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export class UpdatePageRequest extends PageResourceRequest<api.content.json.ContentJson> {
+    export class UpdatePageRequest extends PageResourceRequest<api.content.json.ContentJson> implements PageCUDRequest {
 
         private contentId: api.content.ContentId;
 
@@ -50,12 +50,12 @@ module api.content.page {
 
             this.send().
                 then((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
-                var content = null;
-                if( !response.isBlank() ) {
-                    content = this.fromJsonToContent(response.getResult());
-                }
-                deferred.resolve(content);
-            }).catch((response: api.rest.RequestError) => {
+                    var content = null;
+                    if (!response.isBlank()) {
+                        content = this.fromJsonToContent(response.getResult());
+                    }
+                    deferred.resolve(content);
+                }).catch((response: api.rest.RequestError) => {
                     deferred.reject(null);
                 }).done();
 

@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export class CreatePageRequest extends PageResourceRequest<api.content.json.ContentJson> {
+    export class CreatePageRequest extends PageResourceRequest<api.content.json.ContentJson> implements PageCUDRequest {
 
         private contentId: api.content.ContentId;
 

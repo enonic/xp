@@ -31,6 +31,7 @@
 ///<reference path='PageTemplateSummary.ts' />
 ///<reference path='PageTemplate.ts' />
 
+///<reference path='PageTemplateSummaryViewer.ts' />
 ///<reference path='PageTemplateComboBox.ts' />
 
 ///<reference path='PageTemplateSummaryLoader.ts' />
@@ -41,7 +42,9 @@
 ///<reference path="IsRenderableRequest.ts" />
 
 ///<reference path='PageResourceRequest.ts' />
+///<reference path='PageCUDRequest.ts' />
 ///<reference path='CreatePageRequest.ts' />
 ///<reference path='UpdatePageRequest.ts' />
+///<reference path='DeletePageRequest.ts' />
 
 ///<reference path='Page.ts' />
