@@ -2,47 +2,40 @@ module api.ui {
 
     export class Mnemonic {
 
-        private value:string;
+        private value: string;
 
-        constructor(value:string) {
+        constructor(value: string) {
 
             this.value = value;
         }
 
-        getValue():string {
+        getValue(): string {
             return this.value;
         }
 
-        toKeyBinding(callback?:(e:ExtendedKeyboardEvent, combo:string) => any):KeyBinding {
+        toKeyBinding(callback?: (e: ExtendedKeyboardEvent, combo: string) => any): KeyBinding {
             return new KeyBinding("alt+" + this.getValue(), callback);
         }
 
-        underlineMnemonic(text:string):Node[] {
+        underlineMnemonic(text: string): string {
 
-            var nodes:Node[] = [];
-            var mStart:number = text.indexOf(this.value);
+            var mStart: number = text.indexOf(this.value);
             if (mStart == -1) {
                 mStart = text.indexOf(this.value.toLowerCase());
                 if (mStart == -1) {
                     mStart = text.indexOf(this.value.toUpperCase());
                 }
             }
-
-            if (mStart == 0) {
-                var underlineEl = new api.dom.Element(new api.dom.ElementProperties().setTagName("u"));
-                nodes.push(underlineEl.getHTMLElement());
-                underlineEl.getEl().appendChild(document.createTextNode(text.charAt(0)));
-                nodes.push(document.createTextNode(text.substr(1, text.length)));
+            var result = "";
+            if (mStart > 0) {
+                result = text.substr(0, mStart);
             }
-            else {
-                nodes.push(document.createTextNode(text.substr(0, mStart)));
-                var underlineEl = new api.dom.Element(new api.dom.ElementProperties().setTagName("u"));
-                nodes.push(underlineEl.getHTMLElement());
-                underlineEl.getEl().appendChild(document.createTextNode(text.charAt(mStart)));
-                nodes.push(document.createTextNode(text.substr(mStart + 1, text.length)));
+            result += "<u>" + text.charAt(mStart) + "</u>";
+            if (mStart < text.length - 1) {
+                result += text.substr(mStart + 1, text.length);
             }
 
-            return nodes;
+            return result;
         }
     }
 }

@@ -3,40 +3,12 @@
 
   background-color: @admin-light-gray-bg;
   height: @toolbar-height;
+  overflow: visible;      // for the button glow
 
-  button {
-    padding: 9px 15px 9px 15px;
-    background-color: transparent;
-    font-size: 14px;
-    border-width: 0;
-    line-height:22px;
-    color: @admin-light-gray-font;
-    margin:0;
-
-    &:hover {
-      cursor: pointer;
-      color: @admin-dark-gray-font;
-
-      &:disabled {
-        color:@admin-light-gray-font;
-      }
-    }
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: default;
-    }
-
-    &.pull-right {
-      float: right;
-    }
-
-    &.active {
-      color:@admin-blue-button2;
-      &:disabled {
-        color:@admin-light-gray-font;
-      }
-    }
+  .button {
+    .button(@admin-light-gray-font, transparent, @admin-dark-gray-font, transparent);
+    padding: 8px 14px 8px 14px;
+    line-height: 22px;
   }
 
   .toggle-slide {

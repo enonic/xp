@@ -21,23 +21,12 @@
     .clearfix();
     margin-top: 20px;
 
-    button {
-      font-family: @admin-font-family;
-      padding: 6px 19px 6px 19px;
-      background-color: @admin-blue-button;
-
-      font-size: 12px;
-      border-width: 0;
-      color: white;
-
-      display: inline-block;
+    .button {
+      .button(@form-button-font, @admin-blue-button, @form-button-font, lighten(@admin-blue-button, 10%));
+      padding: 5px 18px 5px 18px;
+      line-height: 22px;
       float: right;
-      margin: 0 0 0 11px;
-
-      &:hover {
-        cursor: pointer;
-        color: @admin-light-gray-font;
-      }
+      margin-left: 11px;
     }
   }
 }

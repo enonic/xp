@@ -1,27 +1,27 @@
 module api.ui{
 
-    export class ActionButton extends api.dom.ButtonEl {
+    export class ActionButton extends api.ui.Button {
 
         private action:Action;
         private tooltip:Tooltip;
 
         constructor(action:Action, showTooltip:boolean = true) {
-            super();
-
             this.action = action;
 
-            if (this.action.getIconClass()) {
-                this.getEl().addClass(action.getIconClass());
+            var label:string;
+            if (this.action.hasMnemonic()) {
+                label = this.action.getMnemonic().underlineMnemonic(this.action.getLabel());
             }
+            else {
+                label = this.action.getLabel();
+            }
+            super(label);
+            this.addClass("action-button");
 
             this.setEnabled(this.action.isEnabled());
 
-            if (this.action.hasMnemonic()) {
-                var htmlNodes:Node[] = this.action.getMnemonic().underlineMnemonic(this.action.getLabel());
-                this.getEl().appendChildren(htmlNodes);
-            }
-            else {
-                this.getEl().appendChild(document.createTextNode(this.action.getLabel()));
+            if (this.action.getIconClass()) {
+                this.addClass(action.getIconClass());
             }
 
             if (this.action.hasShortcut() && showTooltip) {
@@ -35,14 +35,6 @@ module api.ui{
             this.action.addPropertyChangeListener((action:api.ui.Action) => {
                 this.setEnabled(action.isEnabled());
             });
-        }
-
-        setEnabled(value:boolean) {
-            this.getEl().setDisabled(!value);
-        }
-
-        isEnabled() {
-            return !this.getEl().isDisabled();
         }
 
     }

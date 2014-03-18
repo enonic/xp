@@ -11,7 +11,10 @@ module api.app.browse.filter {
             this.setPlaceholder(placeholder);
 
             this.onKeyDown((event: KeyboardEvent) => {
-                if (event.which === 97) {
+                if (event.which == 9) {
+                    // tab
+                } else if (event.which == 13) {
+                    // enter
                     this.notifyValueChanged();
                 } else {
                     if (this.timerId !== null) {

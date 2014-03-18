@@ -128,30 +128,21 @@
   }
 
   .upload-button {
+    .button(@admin-light-gray-font, transparent, @admin-dark-gray-font, transparent);
     box-sizing: content-box;
     vertical-align: top;
     height: 24px;
     width: 24px;
     padding: 0;
-    margin: 7px 0 7px 10px;
-    border: none;
-    cursor: pointer;
+    margin: 0;
     position: absolute;
-    top: 0;
-    right: 0;
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: default;
-    }
+    top: 7px;
+    right: 0px;
+    background: url("../images/upload.png") no-repeat center;
   }
 
   .open-library-button {
-    background: url("../images/folder-open.png");
-  }
-
-  .upload-button {
-    background: url("../images/upload.png");
+    background: url("../images/folder-open.png") no-repeat center;
   }
 }
 

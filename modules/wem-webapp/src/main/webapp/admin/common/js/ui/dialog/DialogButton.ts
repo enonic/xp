@@ -4,6 +4,7 @@ module api.ui.dialog{
 
         constructor(action:api.ui.Action) {
             super(action, false);
+            this.addClass("dialog-button");
         }
     }
 }
