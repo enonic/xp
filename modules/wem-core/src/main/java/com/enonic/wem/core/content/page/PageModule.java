@@ -35,6 +35,7 @@ public class PageModule
         final CommandBinder commands = CommandBinder.from( binder() );
         commands.add( CreatePageHandler.class );
         commands.add( UpdatePageHandler.class );
+        commands.add( DeletePageHandler.class );
 
         commands.add( GetPageTemplateByKeyHandler.class );
         commands.add( GetPageTemplatesBySiteTemplateHandler.class );
