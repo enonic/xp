@@ -164,8 +164,8 @@ module api.ui.selector.combobox {
             this.dropdownGrid.navigateToPreviousRow();
         }
 
-        applyMultiselection() {
-            this.dropdownGrid.applyMultiselection();
+        applyMultipleSelection() {
+            this.dropdownGrid.applyMultipleSelection();
         }
 
         markSelections(selectedOptions: Option<OPTION_DISPLAY_VALUE>[], ignoreEmpty: boolean = false) {
@@ -180,12 +180,12 @@ module api.ui.selector.combobox {
             this.dropdownGrid.unRowSelection(listener);
         }
 
-        onMultiselection(listener: (event: DropdownGridMultiselectEvent) => void) {
-            this.dropdownGrid.onMultiselection(listener);
+        onMultipleSelection(listener: (event: DropdownGridMultipleSelectionEvent) => void) {
+            this.dropdownGrid.onMultipleSelection(listener);
         }
 
-        unMultiselection(listener: (event: DropdownGridMultiselectEvent) => void) {
-            this.dropdownGrid.unMultiselection(listener);
+        unMultipleSelection(listener: (event: DropdownGridMultipleSelectionEvent) => void) {
+            this.dropdownGrid.unMultipleSelection(listener);
         }
     }
 }

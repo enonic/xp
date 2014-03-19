@@ -1,6 +1,6 @@
 module api.ui.selector {
 
-    export class DropdownGridMultiselectEvent {
+    export class DropdownGridMultipleSelectionEvent {
 
         private rows: number[];
 
