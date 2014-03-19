@@ -3,4 +3,5 @@
 ///<reference path='OptionSelectedEvent.ts' />
 ///<reference path='DropdownHandle.ts' />
 ///<reference path='DropdownGridRowSelectedEvent.ts' />
+///<reference path='DropdownGridMultiselectEvent.ts' />
 ///<reference path='DropdownGrid.ts' />

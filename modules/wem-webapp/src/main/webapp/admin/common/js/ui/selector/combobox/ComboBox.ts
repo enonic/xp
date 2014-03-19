@@ -90,10 +90,6 @@ module api.ui.selector.combobox {
                 multipleSelections: (this.multipleSelections && (config.maximumOccurrences != 1))
             });
 
-            this.comboBoxDropdown.onRowSelection((event: DropdownGridRowSelectedEvent) => {
-                this.selectRow(event.getRow());
-            });
-
             this.appendChild(this.comboBoxDropdown.getEmptyDropdown());
             this.appendChild(this.comboBoxDropdown.getGrid().getElement());
 
@@ -124,9 +120,6 @@ module api.ui.selector.combobox {
             this.doUpdateDropdownTopPositionAndWidth();
             this.comboBoxDropdown.showDropdown(this.selectedOptionsCtrl.getOptions());
             this.dropdownHandle.down();
-            if (this.applySelectionsButton) {
-                this.applySelectionsButton.show();
-            }
 
             this.comboBoxDropdown.renderDropdownGrid();
         }
@@ -297,6 +290,10 @@ module api.ui.selector.combobox {
                 this.setOnBlurListener();
             });
 
+            this.comboBoxDropdown.onRowSelection((event: DropdownGridRowSelectedEvent) => {
+                this.selectRow(event.getRow());
+            });
+
             this.dropdownHandle.onClicked((event: MouseEvent) => {
 
                 this.comboBoxDropdown.navigateToFirstRowIfNotActive();
@@ -318,6 +315,7 @@ module api.ui.selector.combobox {
                     this.comboBoxDropdown.applyMultiselection();
                     this.hideDropdown();
                 });
+                this.comboBoxDropdown.onMultiselection(this.handleMultiselectionChanged.bind(this));
             }
 
             this.input.onValueChanged((event: api.ui.ValueChangedEvent) => {
@@ -392,6 +390,24 @@ module api.ui.selector.combobox {
             if (this.countSelectedOptions() == 0) {
                 this.removeClass("followed-by-options");
             }
+        }
+
+        private handleMultiselectionChanged(event: DropdownGridMultiselectEvent) {
+
+            if (this.selectedOptionsCtrl.getOptions().length === event.getRows().length) {
+                var currentOptions = this.selectedOptionsCtrl.getOptions().map((x) => { return x.value; }).sort();
+                var eventOptions = [];
+                event.getRows().forEach((row: number) => {
+                    eventOptions.push(this.comboBoxDropdown.getGrid().getOptionByRow(row));
+                });
+                eventOptions = eventOptions.map((x) => { return x.value; }).sort();
+                if (currentOptions.join() === eventOptions.join()) {
+                    this.applySelectionsButton.hide();
+                    return;
+                }
+            }
+
+            this.applySelectionsButton.show();
         }
 
         private moveFocuseToNextInput() {

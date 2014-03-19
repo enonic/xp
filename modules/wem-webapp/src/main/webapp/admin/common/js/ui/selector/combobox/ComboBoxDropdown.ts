@@ -172,5 +172,13 @@ module api.ui.selector.combobox {
         unRowSelection(listener: (event: DropdownGridRowSelectedEvent) => void) {
             this.dropdownGrid.unRowSelection(listener);
         }
+
+        onMultiselection(listener: (event: DropdownGridMultiselectEvent) => void) {
+            this.dropdownGrid.onMultiselection(listener);
+        }
+
+        unMultiselection(listener: (event: DropdownGridMultiselectEvent) => void) {
+            this.dropdownGrid.unMultiselection(listener);
+        }
     }
 }

@@ -39,10 +39,13 @@ module api.ui.selector {
 
         private rowSelectionListeners: {(event: DropdownGridRowSelectedEvent):void}[];
 
+        private multiselectionListeners: {(event: DropdownGridMultiselectEvent):void}[];
+
         private multipleSelections: boolean;
 
         constructor(config: DropdownGridConfig<OPTION_DISPLAY_VALUE>) {
             this.rowSelectionListeners = [];
+            this.multiselectionListeners = [];
             this.maxHeight = config.maxHeight || 200;
             this.optionFormatter = config.optionFormatter;
             this.filter = config.filter;
@@ -92,6 +95,10 @@ module api.ui.selector {
                 e.preventDefault();
                 e.stopPropagation();
                 return false;
+            });
+
+            this.grid.subscribeOnSelectedRowsChanged((e, args) => {
+                this.notifyMultiselection(args.rows);
             });
 
             this.gridData.onRowsChanged((e, args) => {
@@ -246,6 +253,16 @@ module api.ui.selector {
             });
         }
 
+        onMultiselection(listener: (event: DropdownGridMultiselectEvent) => void) {
+            this.multiselectionListeners.push(listener);
+        }
+
+        unMultiselection(listener: (event: DropdownGridMultiselectEvent) => void) {
+            this.multiselectionListeners.filter((currentListener: (event: DropdownGridMultiselectEvent) => void) => {
+                return listener != currentListener;
+            });
+        }
+
         applyMultiselection() {
             var rows:number[] = this.grid.getSelectedRows();
             for (var key in rows) {
@@ -256,6 +273,13 @@ module api.ui.selector {
         private notifyRowSelection(rowSelected: number) {
             var event = new DropdownGridRowSelectedEvent(rowSelected);
             this.rowSelectionListeners.forEach((listener: (event: DropdownGridRowSelectedEvent)=>void) => {
+                listener(event);
+            });
+        }
+
+        private notifyMultiselection(rowsSelected: number[]) {
+            var event = new DropdownGridMultiselectEvent(rowsSelected);
+            this.multiselectionListeners.forEach((listener: (event: DropdownGridMultiselectEvent)=>void) => {
                 listener(event);
             });
         }
