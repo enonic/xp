@@ -83,7 +83,7 @@ module api.form.input {
                 });
 
                 this.addButton = new api.ui.Button("Add");
-                this.addButton.addClass("add-button");
+                this.addButton.addClass("small");
                 this.addButton.onClicked((event: MouseEvent) => {
                     this.inputTypeView.createAndAddOccurrence();
                 });

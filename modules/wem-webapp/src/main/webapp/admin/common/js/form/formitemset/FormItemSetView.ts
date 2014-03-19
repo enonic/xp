@@ -82,7 +82,7 @@ module api.form.formitemset {
             this.appendChild(this.bottomButtonRow);
 
             this.addButton = new api.ui.Button("Add " + this.formItemSet.getLabel());
-            this.addButton.addClass("add-button");
+            this.addButton.addClass("small");
             this.addButton.onClicked((event: MouseEvent) => {
                 this.formItemSetOccurrences.createAndAddOccurrence();
                 if (this.formItemSetOccurrences.isCollapsed()) {

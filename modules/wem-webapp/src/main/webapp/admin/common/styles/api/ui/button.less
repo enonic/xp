@@ -7,6 +7,10 @@
   background-color: @bg;
   color: @color;
   border: 1px solid transparent;
+  outline: none;
+  &::-moz-focus-inner {
+    border: 0;
+  }
 
   &:disabled {
     opacity: 0.5;
@@ -19,14 +23,23 @@
   }
 
   &:focus:not(:disabled) {
-    color: @hoverColor;
-    background-color: @hoverBg;
     box-shadow: 0px 0px 5px @admin-input-blue;
     border: 1px solid @admin-input-blue;
   }
 
   &.active:not(:disabled) {
     color: @admin-blue-button2;
+  }
+
+  &.small {
+    font-size: 12px;
+    line-height: 14px;
+    padding: 5px 15px 5px 15px;
+  }
+
+  &.large {
+    font-size: 16px;
+    line-height: 22px;
   }
 }
 
