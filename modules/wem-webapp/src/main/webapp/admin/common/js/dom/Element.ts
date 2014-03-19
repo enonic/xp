@@ -221,14 +221,8 @@ module api.dom {
             if (!parent) {
                 return;
             }
-            var l = parent.children.length;
-            var childPos: number;
-            for (var i = 0; i < l; i++) {
-                if (parent.children[i] === this) {
-                    childPos = i;
-                    break;
-                }
-            }
+
+            var childPos = parent.children.indexOf(this);
             parent.removeChild(this);
             wrapperElement.appendChild(this);
             // add wrapper to parent in the same position of the current element
@@ -248,21 +242,33 @@ module api.dom {
         removeChild(child: api.dom.Element) {
             var index = this.children.indexOf(child);
             if (index > -1) {
-                child.remove();
                 this.children.splice(index, 1);
+                child.getEl().remove();
+                child.setParentElement(null);
+                child.notifyRemoved(this);
             }
         }
 
         removeChildren() {
-            this.children.forEach((child: Element) => {
-                child.remove();
-            });
+            var children = this.children;
             this.children = [];
             this.el.setInnerHtml('');
+            children.forEach((child: Element) => {
+                child.setParentElement(null);
+                child.notifyRemoved(this);
+            });
         }
 
         remove() {
+            var siblings = this.getParentElement() ? this.getParentElement().getChildren() : null;
+            if (siblings) {
+                var index = siblings.indexOf(this);
+                if (index > -1) {
+                    siblings.splice(index, 1);
+                }
+            }
             this.getEl().remove();
+            this.setParentElement(null);
             this.notifyRemoved(this);
         }
 
