@@ -320,10 +320,10 @@ module api.ui.selector.combobox {
             if (this.applySelectionsButton) {
                 this.applySelectionsButton.onClicked((event: any) => {
                     this.clearSelection(true);
-                    this.comboBoxDropdown.applyMultiselection();
+                    this.comboBoxDropdown.applyMultipleSelection();
                     this.hideDropdown();
                 });
-                this.comboBoxDropdown.onMultiselection(this.handleMultiselectionChanged.bind(this));
+                this.comboBoxDropdown.onMultipleSelection(this.handleMultipleSelectionChanged.bind(this));
             }
 
             this.input.onValueChanged((event: api.ui.ValueChangedEvent) => {
@@ -400,7 +400,7 @@ module api.ui.selector.combobox {
             }
         }
 
-        private handleMultiselectionChanged(event: DropdownGridMultiselectEvent) {
+        private handleMultipleSelectionChanged(event: DropdownGridMultipleSelectionEvent) {
 
             if (this.selectedOptionsCtrl.getOptions().length === event.getRows().length) {
                 var currentOptions = this.selectedOptionsCtrl.getOptions().map((x) => { return x.value; }).sort();

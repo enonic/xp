@@ -45,13 +45,13 @@ module api.ui.selector {
 
         private rowSelectionListeners: {(event: DropdownGridRowSelectedEvent):void}[];
 
-        private multiselectionListeners: {(event: DropdownGridMultiselectEvent):void}[];
+        private multipleSelectionListeners: {(event: DropdownGridMultipleSelectionEvent):void}[];
 
         private multipleSelections: boolean;
 
         constructor(config: DropdownGridConfig<OPTION_DISPLAY_VALUE>) {
             this.rowSelectionListeners = [];
-            this.multiselectionListeners = [];
+            this.multipleSelectionListeners = [];
             this.maxHeight = config.maxHeight || 200;
             this.optionFormatter = config.optionFormatter;
             this.optionDisplayValueViewer = config.optionDisplayValueViewer ? config.optionDisplayValueViewer : !config.optionFormatter ? new DefaultOptionDisplayValueViewer() : undefined ;
@@ -121,7 +121,7 @@ module api.ui.selector {
             });
 
             this.grid.subscribeOnSelectedRowsChanged((e, args) => {
-                this.notifyMultiselection(args.rows);
+                this.notifyMultipleSelection(args.rows);
             });
 
             this.gridData.onRowsChanged((e, args) => {
@@ -285,17 +285,17 @@ module api.ui.selector {
             });
         }
 
-        onMultiselection(listener: (event: DropdownGridMultiselectEvent) => void) {
-            this.multiselectionListeners.push(listener);
+        onMultipleSelection(listener: (event: DropdownGridMultipleSelectionEvent) => void) {
+            this.multipleSelectionListeners.push(listener);
         }
 
-        unMultiselection(listener: (event: DropdownGridMultiselectEvent) => void) {
-            this.multiselectionListeners.filter((currentListener: (event: DropdownGridMultiselectEvent) => void) => {
+        unMultipleSelection(listener: (event: DropdownGridMultipleSelectionEvent) => void) {
+            this.multipleSelectionListeners.filter((currentListener: (event: DropdownGridMultipleSelectionEvent) => void) => {
                 return listener != currentListener;
             });
         }
 
-        applyMultiselection() {
+        applyMultipleSelection() {
             var rows: number[] = this.grid.getSelectedRows();
             for (var key in rows) {
                 this.notifyRowSelection(rows[key]);
@@ -309,9 +309,9 @@ module api.ui.selector {
             });
         }
 
-        private notifyMultiselection(rowsSelected: number[]) {
-            var event = new DropdownGridMultiselectEvent(rowsSelected);
-            this.multiselectionListeners.forEach((listener: (event: DropdownGridMultiselectEvent)=>void) => {
+        private notifyMultipleSelection(rowsSelected: number[]) {
+            var event = new DropdownGridMultipleSelectionEvent(rowsSelected);
+            this.multipleSelectionListeners.forEach((listener: (event: DropdownGridMultipleSelectionEvent)=>void) => {
                 listener(event);
             });
         }
