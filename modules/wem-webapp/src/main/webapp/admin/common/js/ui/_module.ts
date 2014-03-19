@@ -8,6 +8,7 @@
 ///<reference path='Action.ts' />
 ///<reference path='ActionContainer.ts' />
 ///<reference path='Closeable.ts' />
+///<reference path='Viewer.ts' />
 ///<reference path='Panel.ts' />
 ///<reference path='PanelShownEvent.ts' />
 ///<reference path='DeckPanel.ts' />

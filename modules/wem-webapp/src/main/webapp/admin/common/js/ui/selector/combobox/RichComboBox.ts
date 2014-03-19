@@ -1,6 +1,7 @@
 module api.ui.selector.combobox {
 
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
+    import Viewer = api.ui.Viewer;
 
     export class RichComboBox<T> extends api.ui.form.CompositeFormInputEl {
 
@@ -18,6 +19,8 @@ module api.ui.selector.combobox {
 
         maximumOccurrences: number;
 
+        private optionDisplayValueViewer:Viewer<T>;
+
         private loadingListeners: {():void;}[];
 
         private loadedListeners: {(items: T[]):void;}[];
@@ -31,6 +34,7 @@ module api.ui.selector.combobox {
             this.selectedOptionsView = config.selectedOptionsView;
             this.selectedOptionsView.hide();
             this.maximumOccurrences = config.maximumOccurrences;
+            this.optionDisplayValueViewer = config.optionDisplayValueViewer;
             this.comboBox = this.createComboBox(config.comboBoxName);
             if (config.loader) {
                 this.setLoader(config.loader);
@@ -133,6 +137,7 @@ module api.ui.selector.combobox {
                 maximumOccurrences: this.maximumOccurrences,
                 optionFormatter: this.optionFormatter,
                 selectedOptionsView: this.selectedOptionsView,
+                optionDisplayValueViewer: this.optionDisplayValueViewer,
                 hideComboBoxWhenMaxReached: true
             };
         }
@@ -206,6 +211,8 @@ module api.ui.selector.combobox {
 
         maximumOccurrences: number = 0;
 
+        optionDisplayValueViewer: Viewer<T>;
+
         setComboBoxName(comboBoxName: string): RichComboBoxBuilder<T> {
             this.comboBoxName = comboBoxName;
             return this;
@@ -229,6 +236,11 @@ module api.ui.selector.combobox {
 
         setMaximumOccurrences(maximumOccurrences: number): RichComboBoxBuilder<T> {
             this.maximumOccurrences = maximumOccurrences;
+            return this;
+        }
+
+        setOptionDisplayValueViewer(value: Viewer<T>): RichComboBoxBuilder<T> {
+            this.optionDisplayValueViewer = value;
             return this;
         }
 

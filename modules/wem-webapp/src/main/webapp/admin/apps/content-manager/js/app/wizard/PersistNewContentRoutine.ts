@@ -15,10 +15,6 @@ module app.wizard {
 
         private doneHandledSite = false;
 
-        private createPageRequestProducer: {(content: api.content.Content) : api.content.page.CreatePageRequest; };
-
-        private doneHandledPage = false;
-
         constructor(thisOfProducer: ContentWizardPanel) {
             super(thisOfProducer);
         }
@@ -30,11 +26,6 @@ module app.wizard {
 
         public setCreateSiteRequestProducer(producer: {(content: api.content.Content) : api.content.site.CreateSiteRequest; }): PersistNewContentRoutine {
             this.createSiteRequestProducer = producer;
-            return this;
-        }
-
-        public setCreatePageRequestProducer(producer: {(content: api.content.Content) : api.content.page.CreatePageRequest; }): PersistNewContentRoutine {
-            this.createPageRequestProducer = producer;
             return this;
         }
 
@@ -67,19 +58,6 @@ module app.wizard {
                     done(()=> {
 
                         this.doneHandledSite = true;
-
-                        this.doExecuteNext(context).
-                            done((contentFromNext: api.content.Content) => {
-                                deferred.resolve(contentFromNext);
-                            });
-                    });
-            }
-            else if (!this.doneHandledPage) {
-
-                this.doHandleCreatePage(context).
-                    done(() => {
-
-                        this.doneHandledPage = true;
 
                         this.doExecuteNext(context).
                             done((contentFromNext: api.content.Content) => {
@@ -138,27 +116,5 @@ module app.wizard {
 
             return deferred.promise;
         }
-
-        private doHandleCreatePage(context: PersistedNewContentRoutineContext): Q.Promise<void> {
-
-            var deferred = Q.defer<void>();
-
-            var createPageRequest = this.createPageRequestProducer.call(this.getThisOfProducer(), context.content);
-
-            if (createPageRequest != null) {
-                createPageRequest.sendAndParse().
-                    done((content: api.content.Content) => {
-
-                        context.content = content;
-                        deferred.resolve(null);
-                    });
-            }
-            else {
-                deferred.resolve(null);
-            }
-
-            return deferred.promise;
-        }
-
     }
 }

@@ -48,6 +48,7 @@
 ///<reference path='ui/selector/_module.ts' />
 ///<reference path='ui/selector/list/_module.ts' />
 ///<reference path='ui/selector/combobox/_module.ts' />
+///<reference path='ui/selector/dropdown/_module.ts' />
 
 ///<reference path='blob/_module.ts' />
 ///<reference path='icon/_module.ts' />

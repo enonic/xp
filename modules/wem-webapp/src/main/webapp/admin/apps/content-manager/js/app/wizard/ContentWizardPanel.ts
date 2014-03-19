@@ -292,7 +292,6 @@ module app.wizard {
             new PersistNewContentRoutine(this).
                 setCreateContentRequestProducer(this.produceCreateContentRequest).
                 setCreateSiteRequestProducer(this.produceCreateSiteRequest).
-                setCreatePageRequestProducer(this.produceCreatePageRequest).
                 execute().
                 done((content: api.content.Content) => {
 
@@ -353,7 +352,7 @@ module app.wizard {
 
         }
 
-        private produceCreatePageRequest(content: api.content.Content): api.content.page.CreatePageRequest {
+        private producePageCUDRequest(content: api.content.Content): api.content.page.PageCUDRequest {
 
             if (!this.pageWizardStepForm) {
                 return null;
@@ -363,27 +362,28 @@ module app.wizard {
                 return null;
             }
 
-            if (content.isPage()) {
-                return null;
-            }
-
-            var pageTemplateKey: api.content.page.PageTemplateKey = null;
-
             var pageTemplate = this.pageWizardStepForm.getPageTemplate();
-            if (pageTemplate) {
-                pageTemplateKey = pageTemplate.getKey();
-            }
+            var pageTemplateKey = pageTemplate ? pageTemplate.getKey() : null;
+
             if (!pageTemplateKey) {
-                return null;
+                return new api.content.page.DeletePageRequest(content.getContentId());
             }
+            else if (!content.isPage()) {
+                var createRequest = new api.content.page.CreatePageRequest(content.getContentId()).setPageTemplateKey(pageTemplateKey);
 
-            var createRequest = new api.content.page.CreatePageRequest(content.getContentId()).setPageTemplateKey(pageTemplateKey);
+                createRequest.setConfig(this.pageWizardStepForm.getConfig());
+                createRequest.setRegions(this.pageWizardStepForm.getRegions());
 
-            var config = this.pageWizardStepForm.getConfig();
-            createRequest.setConfig(config);
-            createRequest.setRegions(null);
+                return createRequest;
+            }
+            else {
+                var updatePageRequest = new api.content.page.UpdatePageRequest(content.getContentId()).
+                    setPageTemplateKey(this.pageWizardStepForm.getPageTemplate().getKey()).
+                    setConfig(this.pageWizardStepForm.getConfig()).
+                    setRegions(this.pageWizardStepForm.getRegions());
 
-            return createRequest;
+                return updatePageRequest;
+            }
         }
 
         updatePersistedItem(): Q.Promise<api.content.Content> {
@@ -395,8 +395,7 @@ module app.wizard {
             new UpdatePersistedContentRoutine(this).
                 setUpdateContentRequestProducer(this.produceUpdateContentRequest).
                 setUpdateSiteRequestProducer(this.produceUpdateSiteRequest).
-                setCreatePageRequestProducer(this.produceCreatePageRequest).
-                setUpdatePageRequestProducer(this.produceUpdatePageRequest).
+                setPageCUDRequestProducer(this.producePageCUDRequest).
                 execute().
                 done((content: api.content.Content) => {
 
@@ -448,29 +447,6 @@ module app.wizard {
             return new api.content.site.UpdateSiteRequest(content.getId()).
                 setSiteTemplateKey(this.siteWizardStepForm.getTemplateKey()).
                 setModuleConfigs(this.siteWizardStepForm.getModuleConfigs());
-        }
-
-        private produceUpdatePageRequest(content: api.content.Content): api.content.page.UpdatePageRequest {
-
-            if (!this.pageWizardStepForm) {
-                return null;
-            }
-
-            if (this.pageWizardStepForm.getPageTemplate() == null) {
-                return null;
-            }
-
-            if (!content.isPage()) {
-                return null;
-            }
-            var regions = this.pageWizardStepForm.getRegions();
-            console.log("saving page regions: ", regions.toJson());
-            var updatePageRequest = new api.content.page.UpdatePageRequest(content.getContentId()).
-                setPageTemplateKey(this.pageWizardStepForm.getPageTemplate().getKey()).
-                setConfig(this.pageWizardStepForm.getConfig()).
-                setRegions(regions);
-
-            return updatePageRequest;
         }
 
         hasUnsavedChanges(): boolean {

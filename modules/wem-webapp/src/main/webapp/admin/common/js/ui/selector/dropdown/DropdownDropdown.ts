@@ -1,11 +1,11 @@
-module api.ui.selector.combobox {
+module api.ui.selector.dropdown {
 
     import Option = api.ui.selector.Option;
     import DropdownGridConfig = api.ui.selector.DropdownGridConfig;
     import DropdownGrid = api.ui.selector.DropdownGrid;
     import DropdownGridRowSelectedEvent = api.ui.selector.DropdownGridRowSelectedEvent;
 
-    export interface ComboBoxDropdownConfig<OPTION_DISPLAY_VALUE> {
+    export interface DropdownDropdownConfig<OPTION_DISPLAY_VALUE> {
 
         maxHeight?: number;
 
@@ -21,21 +21,13 @@ module api.ui.selector.combobox {
         rowHeight?: number;
 
         dataIdProperty?:string;
-
-        multipleSelections: boolean;
     }
 
-    export class ComboBoxDropdown<OPTION_DISPLAY_VALUE> {
-
-        private emptyDropdown: api.dom.DivEl;
+    export class DropdownDropdown<OPTION_DISPLAY_VALUE> {
 
         private dropdownGrid: DropdownGrid<OPTION_DISPLAY_VALUE>;
 
-        constructor(config: ComboBoxDropdownConfig<OPTION_DISPLAY_VALUE>) {
-
-            this.emptyDropdown = new api.dom.DivEl("empty-options");
-            this.emptyDropdown.getEl().setInnerHtml("No matching items");
-            this.emptyDropdown.hide();
+        constructor(config: DropdownDropdownConfig<OPTION_DISPLAY_VALUE>) {
 
             this.dropdownGrid = new DropdownGrid<OPTION_DISPLAY_VALUE>(<DropdownGridConfig<OPTION_DISPLAY_VALUE>>{
                 maxHeight: config.maxHeight,
@@ -44,8 +36,7 @@ module api.ui.selector.combobox {
                 optionDisplayValueViewer: config.optionDisplayValueViewer,
                 filter: config.filter,
                 rowHeight: config.rowHeight,
-                dataIdProperty: config.dataIdProperty,
-                multipleSelections: config.multipleSelections
+                dataIdProperty: config.dataIdProperty
             });
         }
 
@@ -57,21 +48,22 @@ module api.ui.selector.combobox {
             this.dropdownGrid.renderGrid();
         }
 
-        getEmptyDropdown(): api.dom.DivEl {
-            return this.emptyDropdown;
-        }
 
         isDropdownShown(): boolean {
-            return this.emptyDropdown.isVisible() || this.dropdownGrid.isVisible();
+            return this.dropdownGrid.isVisible();
         }
 
         setOptions(options: Option<OPTION_DISPLAY_VALUE>[]) {
 
             this.dropdownGrid.setOptions(options);
 
-            if (this.dropdownGrid.isVisible() || this.emptyDropdown.isVisible()) {
-                this.showDropdown([]);
+            if (this.dropdownGrid.isVisible()) {
+                this.showDropdown(null);
             }
+        }
+
+        removeAllOptions() {
+            this.dropdownGrid.removeAllOptions();
         }
 
         addOption(option: Option<OPTION_DISPLAY_VALUE>) {
@@ -98,23 +90,25 @@ module api.ui.selector.combobox {
             return this.dropdownGrid.getOptionByRow(rowIndex);
         }
 
-        showDropdown(selectedOptions: Option<OPTION_DISPLAY_VALUE>[]) {
+        setFilterArgs(args: any) {
+            this.dropdownGrid.setFilterArgs(args);
+        }
+
+        showDropdown(selectedOption: Option<OPTION_DISPLAY_VALUE>) {
 
             if (this.hasOptions()) {
-                this.emptyDropdown.hide();
                 this.dropdownGrid.show();
                 this.dropdownGrid.adjustGridHeight();
-                this.dropdownGrid.markSelections(selectedOptions);
+                if (selectedOption) {
+                    this.dropdownGrid.markSelections([selectedOption]);
+                }
             } else {
                 this.dropdownGrid.hide();
-                this.emptyDropdown.getEl().setInnerHtml("No matching items");
-                this.emptyDropdown.show();
             }
         }
 
         hideDropdown() {
 
-            this.emptyDropdown.hide();
             this.dropdownGrid.hide();
         }
 
@@ -122,14 +116,11 @@ module api.ui.selector.combobox {
 
             if (this.isDropdownShown()) {
                 this.dropdownGrid.hide();
-                this.emptyDropdown.getEl().setInnerHtml(label);
-                this.emptyDropdown.show();
             }
         }
 
         setTopPx(value: number) {
             this.dropdownGrid.setTopPx(value);
-            this.emptyDropdown.getEl().setTopPx(value);
         }
 
         setWidth(value: number) {
@@ -160,12 +151,8 @@ module api.ui.selector.combobox {
             this.dropdownGrid.navigateToPreviousRow();
         }
 
-        applyMultiselection() {
-            this.dropdownGrid.applyMultiselection();
-        }
-
-        markSelections(selectedOptions: Option<OPTION_DISPLAY_VALUE>[], ignoreEmpty: boolean = false) {
-            this.dropdownGrid.markSelections(selectedOptions, ignoreEmpty);
+        markSelections(selectedOptions: Option<OPTION_DISPLAY_VALUE>[]) {
+            this.dropdownGrid.markSelections(selectedOptions);
         }
 
         onRowSelection(listener: (event: DropdownGridRowSelectedEvent) => void) {
@@ -174,14 +161,6 @@ module api.ui.selector.combobox {
 
         unRowSelection(listener: (event: DropdownGridRowSelectedEvent) => void) {
             this.dropdownGrid.unRowSelection(listener);
-        }
-
-        onMultiselection(listener: (event: DropdownGridMultiselectEvent) => void) {
-            this.dropdownGrid.onMultiselection(listener);
-        }
-
-        unMultiselection(listener: (event: DropdownGridMultiselectEvent) => void) {
-            this.dropdownGrid.unMultiselection(listener);
         }
     }
 }
