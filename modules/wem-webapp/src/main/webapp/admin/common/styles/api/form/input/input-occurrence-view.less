@@ -1,11 +1,15 @@
 .input-occurrence-view {
   .clearfix();
+  .flexbox();
+  align-items: center;
 
   &:not(:last-child) {
     margin-bottom: 10px;
   }
 
   .drag-control {
+    .order(1);
+
     float: left;
     background: url("../images/nail-plate.png") no-repeat;
     width: 5px;
@@ -14,12 +18,17 @@
   }
 
   .input-wrapper {
+    .order(2);
+
+    width: 100%;
     input, textarea {
-      width: 100%
+      width: 100%;
     }
   }
 
   .remove-button {
+    .order(3);
+
     float: right;
     width: 20px;
     .icon-close;
@@ -41,16 +50,12 @@
       display: block;
     }
 
-    .remove-button {
-      font-size: 9px;
-    }
-
     .input-wrapper {
-      margin: 0 30px 0 5px;
+      margin: 0 5px 0 0;
     }
 
     &:nth-last-of-type(2) {
-      margin-bottom: 5px;
+      margin-bottom: 7px;
     }
 
   }

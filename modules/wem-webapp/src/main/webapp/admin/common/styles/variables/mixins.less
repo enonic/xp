@@ -116,3 +116,27 @@
   padding:8px;
   .box-sizing(border-box);
 }
+
+.flexbox() {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+
+.flex(@values) {
+  -webkit-box-flex: @values;
+  -moz-box-flex: @values;
+  -webkit-flex: @values;
+  -ms-flex: @values;
+  flex: @values;
+}
+
+.order(@value) {
+  -webkit-box-ordinal-group: @value;
+  -moz-box-ordinal-group: @value;
+  -ms-flex-order: @value;
+  -webkit-order: @value;
+  order: @value;
+}
