@@ -161,8 +161,8 @@ module api.ui.selector.combobox {
             this.dropdownGrid.applyMultiselection();
         }
 
-        markSelections(selectedOptions: Option<OPTION_DISPLAY_VALUE>[]) {
-            this.dropdownGrid.markSelections(selectedOptions);
+        markSelections(selectedOptions: Option<OPTION_DISPLAY_VALUE>[], ignoreEmpty: boolean = false) {
+            this.dropdownGrid.markSelections(selectedOptions, ignoreEmpty);
         }
 
         onRowSelection(listener: (event: DropdownGridRowSelectedEvent) => void) {

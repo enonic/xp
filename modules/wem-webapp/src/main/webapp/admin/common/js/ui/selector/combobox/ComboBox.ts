@@ -230,13 +230,13 @@ module api.ui.selector.combobox {
             this.dropdownHandle.setEnabled(true);
         }
 
-        clearSelection() {
+        clearSelection(ignoreEmpty: boolean = false) {
             var allOptions: Option<OPTION_DISPLAY_VALUE>[] = this.selectedOptionsCtrl.getOptions();
             allOptions.forEach((option: Option<OPTION_DISPLAY_VALUE>) => {
                 this.selectedOptionsCtrl.removeOption(option, true);
             });
 
-            this.comboBoxDropdown.markSelections(this.selectedOptionsCtrl.getOptions());
+            this.comboBoxDropdown.markSelections(this.selectedOptionsCtrl.getOptions(), ignoreEmpty);
 
             this.input.openForTypingAndFocus();
 
@@ -314,7 +314,7 @@ module api.ui.selector.combobox {
 
             if (this.applySelectionsButton) {
                 this.applySelectionsButton.onClicked((event: any) => {
-                    this.clearSelection();
+                    this.clearSelection(true);
                     this.comboBoxDropdown.applyMultiselection();
                     this.hideDropdown();
                 });
