@@ -43,7 +43,6 @@ module api.ui {
 
             var targetEl = target.getEl();
             targetEl.addEventListener(this.getEventName(true), (event:Event) => {
-                this.stopTimeout();
                 this.startShowDelay();
             });
             targetEl.addEventListener(this.getEventName(false), (event:Event) => {
@@ -54,12 +53,11 @@ module api.ui {
         show() {
             if (!this.tooltipEl) {
                 this.tooltipEl = new api.dom.DivEl("tooltip " + this.side);
-                this.tooltipEl.getEl().setInnerHtml(this.text).setClass("tooltip " + this.side);
+                this.tooltipEl.getEl().setInnerHtml(this.text);
                 this.target.getParentElement().appendChild(this.tooltipEl);
                 this.tooltipEl.show();
                 this.positionByTarget();
             }
-
         }
 
         hide() {
