@@ -120,8 +120,8 @@ module api.ui.selector.dropdown {
 
         private doUpdateDropdownTopPositionAndWidth() {
             var inputEl = this.input.getEl();
-            this.dropdownDropdown.setTopPx(inputEl.getHeight() - inputEl.getBorderBottomWidth());
-            this.dropdownDropdown.setWidth(inputEl.getWidth());
+            this.dropdownDropdown.setTopPx(inputEl.getHeightWithBorder() - inputEl.getBorderBottomWidth());
+            this.dropdownDropdown.setWidth(inputEl.getWidthWithBorder());
         }
 
         giveFocus(): boolean {
