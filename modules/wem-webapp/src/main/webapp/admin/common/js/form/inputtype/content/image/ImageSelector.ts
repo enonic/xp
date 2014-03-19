@@ -248,7 +248,7 @@ module api.form.inputtype.content.image {
 
             var comboBoxConfig = <api.ui.selector.combobox.ComboBoxConfig<api.content.ContentSummary>> {
                 rowHeight: 50,
-                optionFormatter: this.optionFormatter,
+                optionDisplayValueViewer: new api.content.ContentSummaryViewer(),
                 selectedOptionsView: this.selectedOptionsView,
                 maximumOccurrences: input.getOccurrences().getMaximum()
             };
@@ -296,33 +296,6 @@ module api.form.inputtype.content.image {
                 });
             });
             return options;
-        }
-
-        private optionFormatter(row: number, cell: number, content: api.content.ContentSummary, columnDef: any,
-                                dataContext: api.ui.selector.Option<api.content.ContentSummary>): string {
-
-            var imgEl = new api.dom.ImgEl();
-            imgEl.setClass("icon");
-            imgEl.getEl().setSrc(content.getIconUrl());
-
-            var contentEl = new api.dom.DivEl();
-            contentEl.setClass("content-summary");
-
-            var displayNameEl = new api.dom.DivEl();
-            displayNameEl.setClass("display-name");
-            displayNameEl.getEl().setAttribute("title", content.getDisplayName());
-            displayNameEl.getEl().setInnerHtml(content.getDisplayName());
-
-            var pathEl = new api.dom.DivEl();
-            pathEl.setClass("path");
-            pathEl.getEl().setAttribute("title", content.getPath().toString());
-            pathEl.getEl().setInnerHtml(content.getPath().toString());
-
-            contentEl.appendChild(displayNameEl);
-            contentEl.appendChild(pathEl);
-
-            return imgEl.toString() + contentEl.toString();
-
         }
 
         private createEmbeddedImageContent(uploadItem: api.ui.UploadItem) {

@@ -3,27 +3,20 @@ module api.content.page {
     export class PageTemplateComboBox extends api.ui.selector.combobox.RichComboBox<PageTemplateSummary> {
 
         constructor() {
-            super(new api.ui.selector.combobox.RichComboBoxBuilder<PageTemplateSummary>()
-                      .setSelectedOptionsView(new PageTemplateSelectedOptionsView())
-                      .setIdentifierMethod("getKey")
-                      .setMaximumOccurrences(1));
-        }
-
-        optionFormatter(row: number, cell: number, pageTemplateSummary: PageTemplateSummary, columnDef: any,
-                        dataContext: api.ui.selector.Option<PageTemplateSummary>): string {
-
-            var namesView = new api.app.NamesView()
-                .setMainName( pageTemplateSummary.getDisplayName() )
-                .setSubName(pageTemplateSummary.getDescriptorKey().toString());
-
-            return namesView.toString();
+            super(new api.ui.selector.combobox.RichComboBoxBuilder<PageTemplateSummary>().
+                setSelectedOptionsView(new PageTemplateSelectedOptionsView()).
+                setIdentifierMethod("getKey").
+                setMaximumOccurrences(1).
+                setOptionDisplayValueViewer(new PageTemplateSummaryViewer));
         }
     }
 
     export class PageTemplateSelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<PageTemplateSummary> {
 
-        createSelectedOption(option:api.ui.selector.Option<PageTemplateSummary>, index:number):api.ui.selector.combobox.SelectedOption<PageTemplateSummary> {
-            return new api.ui.selector.combobox.SelectedOption<PageTemplateSummary>(new PageTemplateSelectedOptionView(option), option, index);
+        createSelectedOption(option: api.ui.selector.Option<PageTemplateSummary>,
+                             index: number): api.ui.selector.combobox.SelectedOption<PageTemplateSummary> {
+            return new api.ui.selector.combobox.SelectedOption<PageTemplateSummary>(new PageTemplateSelectedOptionView(option), option,
+                index);
         }
     }
 

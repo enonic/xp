@@ -3,6 +3,7 @@ module api.ui.selector.combobox {
     import Option = api.ui.selector.Option;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import DropdownHandle = api.ui.selector.DropdownHandle;
+    import Viewer = api.ui.Viewer;
 
     export interface ComboBoxConfig<T> {
 
@@ -11,6 +12,8 @@ module api.ui.selector.combobox {
         rowHeight?: number;
 
         optionFormatter?: (row: number, cell: number, value: T, columnDef: any, dataContext: Slick.SlickData) => string;
+
+        optionDisplayValueViewer?: Viewer<T>;
 
         selectedOptionsView: SelectedOptionsView<T>;
 
@@ -84,6 +87,7 @@ module api.ui.selector.combobox {
                 maxHeight: 200,
                 width: this.input.getEl().getWidth(),
                 optionFormatter: config.optionFormatter,
+                optionDisplayValueViewer: config.optionDisplayValueViewer,
                 filter: config.filter,
                 rowHeight: config.rowHeight,
                 dataIdProperty: config.dataIdProperty,
@@ -207,7 +211,7 @@ module api.ui.selector.combobox {
 
             if (this.maximumOccurrencesReached()) {
                 this.input.setMaximumReached();
-                this.moveFocuseToNextInput();
+                api.dom.FormEl.moveFocuseToNextInput(this.input);
                 this.dropdownHandle.setEnabled(false);
             }
             if (!silent) {
@@ -391,33 +395,6 @@ module api.ui.selector.combobox {
 
             if (this.countSelectedOptions() == 0) {
                 this.removeClass("followed-by-options");
-            }
-        }
-
-        private moveFocuseToNextInput() {
-            // get all inputs from this FormView
-            var focusableElements = document.querySelectorAll("input");
-
-            // find index of current input
-            var index = -1;
-            var inputEl = this.input.getHTMLElement();
-            for (var i = 0; i < focusableElements.length; i++) {
-                if (inputEl == focusableElements.item(i)) {
-                    index = i;
-                    break;
-                }
-            }
-            if (index < 0) {
-                return;
-            }
-
-            // set focus to the next visible input
-            for (var i = index + 1; i < focusableElements.length; i++) {
-                var nextFocusable = api.dom.Element.fromHtmlElement(<HTMLElement>focusableElements.item(i));
-                if (nextFocusable.isVisible()) {
-                    nextFocusable.getEl().focuse();
-                    return;
-                }
             }
         }
 

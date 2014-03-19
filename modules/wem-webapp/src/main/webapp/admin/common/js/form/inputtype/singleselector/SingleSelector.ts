@@ -1,6 +1,9 @@
 module api.form.inputtype.singleselector {
 
     import ValueChangedEvent = api.ui.ValueChangedEvent;
+    import Option = api.ui.selector.Option;
+    import Dropdown = api.ui.selector.dropdown.Dropdown;
+    import DropdownConfig = api.ui.selector.dropdown.DropdownConfig;
 
     export interface SingleSelectorConfig {
         selectorType: string;
@@ -106,6 +109,8 @@ module api.form.inputtype.singleselector {
 
         private createDropdownElement(name: string, property: api.data.Property): api.dom.Element {
 
+            var dropdown = new Dropdown<string>(name, <DropdownConfig>{});
+
             var inputEl = new api.ui.Dropdown(name);
 
             var inputConfig: SingleSelectorConfig = this.getConfig().inputConfig;
@@ -113,14 +118,17 @@ module api.form.inputtype.singleselector {
                 for (var i = 0; i < inputConfig.options.length; i++) {
                     var option = inputConfig.options[i];
                     inputEl.addOption(option.value, option.label);
+                    var option2:Option<string> = <Option<string>>{ value: option.value, displayValue: option.label};
+                    dropdown.addOption(option2);
                 }
             }
 
             if (property) {
                 inputEl.setValue(property.getString());
+                dropdown.setValue(property.getString());
             }
 
-            return inputEl;
+            return dropdown;
         }
 
 
@@ -168,7 +176,7 @@ module api.form.inputtype.singleselector {
             }
         }
 
-        private comboboxFilter(item: api.ui.selector.Option<string>, args) {
+        private comboboxFilter(item: Option<string>, args) {
             return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
         }
     }

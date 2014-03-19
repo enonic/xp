@@ -1,15 +1,16 @@
 module api.content {
+
     export class ContentComboBox extends api.ui.selector.combobox.RichComboBox<api.content.ContentSummary> {
 
         constructor(contentComboBoxBuilder:ContentComboBoxBuilder)
         {
             var builder:api.ui.selector.combobox.RichComboBoxBuilder<api.content.ContentSummary> = new api.ui.selector.combobox.RichComboBoxBuilder<api.content.ContentSummary>();
-
             builder
                 .setComboBoxName(contentComboBoxBuilder.name ? contentComboBoxBuilder.name : 'contentSelector')
                 .setLoader(contentComboBoxBuilder.loader ? contentComboBoxBuilder.loader : new api.form.inputtype.content.ContentSummaryLoader())
                 .setSelectedOptionsView(new ContentSelectedOptionsView())
-                .setMaximumOccurrences(contentComboBoxBuilder.maximumOccurrences);
+                .setMaximumOccurrences(contentComboBoxBuilder.maximumOccurrences)
+                .setOptionDisplayValueViewer(new api.content.ContentSummaryViewer());
 
             super(builder);
 
@@ -17,19 +18,6 @@ module api.content {
                 var loader = <api.form.inputtype.content.ContentSummaryLoader>this.getLoader();
                 loader.setAllowedContentTypes(contentComboBoxBuilder.allowedContentTypes);
             }
-        }
-
-
-        optionFormatter(row:number, cell:number, content:api.content.ContentSummary, columnDef:any, dataContext:api.ui.selector.Option<api.content.ContentSummary>):string
-        {
-            var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize( api.app.NamesAndIconViewSize.small ).build();
-
-            namesAndIconView
-                .setIconUrl(content.getIconUrl())
-                .setMainName(content.getDisplayName())
-                .setSubName(content.getPath().toString());
-
-            return namesAndIconView.toString();
         }
     }
 

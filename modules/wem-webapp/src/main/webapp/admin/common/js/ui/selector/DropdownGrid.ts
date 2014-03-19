@@ -1,5 +1,7 @@
 module api.ui.selector {
 
+    import Viewer = api.ui.Viewer;
+
     export interface DropdownGridConfig<OPTION_DISPLAY_VALUE> {
 
         maxHeight?: number;
@@ -8,6 +10,8 @@ module api.ui.selector {
 
         optionFormatter: (row: number, cell: number, value: OPTION_DISPLAY_VALUE, columnDef: any,
                           dataContext: Option<OPTION_DISPLAY_VALUE>) => string;
+
+        optionDisplayValueViewer?: Viewer<OPTION_DISPLAY_VALUE>;
 
         filter: (item: Option<OPTION_DISPLAY_VALUE>, args: any) => boolean;
 
@@ -33,6 +37,8 @@ module api.ui.selector {
         private optionFormatter: (row: number, cell: number, value: OPTION_DISPLAY_VALUE, columnDef: any,
                                   dataContext: Option<OPTION_DISPLAY_VALUE>) => string;
 
+        private optionDisplayValueViewer: Viewer<OPTION_DISPLAY_VALUE>;
+
         private filter: (item: Option<OPTION_DISPLAY_VALUE>, args: any) => boolean;
 
         private rowHeight: number;
@@ -43,21 +49,39 @@ module api.ui.selector {
 
         constructor(config: DropdownGridConfig<OPTION_DISPLAY_VALUE>) {
             this.rowSelectionListeners = [];
-            this.maxHeight = config.maxHeight || 200;
+            this.maxHeight = config.maxHeight || 200;
             this.optionFormatter = config.optionFormatter;
+            this.optionDisplayValueViewer = config.optionDisplayValueViewer;
             this.filter = config.filter;
-            this.rowHeight = config.rowHeight || 24;
+            this.rowHeight =
+            config.optionDisplayValueViewer ? config.optionDisplayValueViewer.getPreferredHeight() : config.rowHeight || 24;
             this.dataIdProperty = config.dataIdProperty;
             this.maxHeight = config.maxHeight;
             this.width = config.width;
             this.multipleSelections = config.multipleSelections || false;
+
+            if (!config.optionDisplayValueViewer && !config.optionFormatter) {
+                this.optionDisplayValueViewer = new DefaultOptionDisplayValueViewer();
+            }
+
+            var columnFormatter;
+            if (this.optionDisplayValueViewer) {
+                columnFormatter =
+                (row: number, cell: number, value: OPTION_DISPLAY_VALUE, columnDef: any, dataContext: Option<OPTION_DISPLAY_VALUE>) => {
+                    this.optionDisplayValueViewer.setObject(value);
+                    return this.optionDisplayValueViewer.toString();
+                };
+            }
+            else {
+                columnFormatter = this.optionFormatter
+            }
 
             var columns: api.ui.grid.GridColumn<Option<OPTION_DISPLAY_VALUE>>[] = [
                 {
                     id: "option",
                     name: "Options",
                     field: "displayValue",
-                    formatter: this.optionFormatter}
+                    formatter: columnFormatter}
             ];
             var options: api.ui.grid.GridOptions = {
                 width: this.width,
@@ -73,6 +97,9 @@ module api.ui.selector {
             };
 
             this.gridData = new api.ui.grid.DataView<Option<OPTION_DISPLAY_VALUE>>();
+            if (this.filter) {
+                this.gridData.setFilter(this.filter);
+            }
             this.grid = new api.ui.grid.Grid<Option<OPTION_DISPLAY_VALUE>>(this.gridData, columns, options);
 
             this.grid.addClass("options-container");
@@ -80,9 +107,6 @@ module api.ui.selector {
             this.grid.hide();
             this.grid.setSelectionModel(new Slick.RowSelectionModel({selectActiveRow: false}));
 
-            if (this.filter) {
-                this.gridData.setFilter(this.filter);
-            }
 
             // Listen to click in grid and issue selection
             this.grid.subscribeOnClick((e, args) => {
@@ -115,7 +139,7 @@ module api.ui.selector {
             this.grid.render();
         }
 
-        isVisible() : boolean {
+        isVisible(): boolean {
             return this.grid.isVisible();
         }
 
@@ -129,6 +153,10 @@ module api.ui.selector {
 
         setOptions(options: Option<OPTION_DISPLAY_VALUE>[]) {
             this.gridData.setItems(options, this.dataIdProperty);
+        }
+
+        removeAllOptions() {
+            this.gridData.setItems([]);
         }
 
         addOption(option: Option<OPTION_DISPLAY_VALUE>) {
@@ -153,6 +181,11 @@ module api.ui.selector {
 
         getOptionByRow(rowIndex: number): Option<OPTION_DISPLAY_VALUE> {
             return <Option<OPTION_DISPLAY_VALUE>>this.gridData.getItem(rowIndex);
+        }
+
+        setFilterArgs(args: any) {
+            this.gridData.setFilterArgs(args);
+            this.gridData.refresh();
         }
 
         setTopPx(value: number) {
@@ -247,7 +280,7 @@ module api.ui.selector {
         }
 
         applyMultiselection() {
-            var rows:number[] = this.grid.getSelectedRows();
+            var rows: number[] = this.grid.getSelectedRows();
             for (var key in rows) {
                 this.notifyRowSelection(rows[key]);
             }

@@ -15,13 +15,9 @@ module app.wizard {
 
         private doneHandledSite = false;
 
-        private createPageRequestProducer: {(content: api.content.Content) : api.content.page.CreatePageRequest; };
+        private pageCUDRequestProducer: {(content: api.content.Content) : api.content.page.PageCUDRequest; };
 
-        private doneHandledCreatePage = false;
-
-        private updatePageRequestProducer: {(content: api.content.Content) : api.content.page.UpdatePageRequest; };
-
-        private doneHandledUpdatePage = false;
+        private doneHandledPage = false;
 
         constructor(thisOfProducer: ContentWizardPanel) {
             super(thisOfProducer);
@@ -37,13 +33,8 @@ module app.wizard {
             return this;
         }
 
-        public setCreatePageRequestProducer(producer: {(content: api.content.Content) : api.content.page.CreatePageRequest; }): UpdatePersistedContentRoutine {
-            this.createPageRequestProducer = producer;
-            return this;
-        }
-
-        public setUpdatePageRequestProducer(producer: {(content: api.content.Content) : api.content.page.UpdatePageRequest; }): UpdatePersistedContentRoutine {
-            this.updatePageRequestProducer = producer;
+        public setPageCUDRequestProducer(producer: {(content: api.content.Content) : api.content.page.PageCUDRequest; }): UpdatePersistedContentRoutine {
+            this.pageCUDRequestProducer = producer;
             return this;
         }
 
@@ -83,26 +74,12 @@ module app.wizard {
                             });
                     });
             }
-            else if (!this.doneHandledCreatePage) {
+            else if (!this.doneHandledPage) {
 
-                this.doHandleCreatePage(context).
+                this.doHandlePage(context).
                     done(() => {
 
-                        this.doneHandledCreatePage = true;
-
-                        this.doExecuteNext(context).
-                            done((contentFromNext: api.content.Content) => {
-                                deferred.resolve(contentFromNext);
-                            });
-                    });
-            }
-
-            else if (!this.doneHandledUpdatePage) {
-
-                this.doHandleUpdatePage(context).
-                    done(() => {
-
-                        this.doneHandledUpdatePage = true;
+                        this.doneHandledPage = true;
 
                         this.doExecuteNext(context).
                             done((contentFromNext: api.content.Content) => {
@@ -154,35 +131,14 @@ module app.wizard {
             return deferred.promise;
         }
 
-        private doHandleCreatePage(context: UpdatePersistedContentRoutineContext): Q.Promise<void> {
+        private doHandlePage(context: UpdatePersistedContentRoutineContext): Q.Promise<void> {
 
             var deferred = Q.defer<void>();
 
-            var createPageRequest = this.createPageRequestProducer.call(this.getThisOfProducer(), context.content);
+            var createPageRequest = this.pageCUDRequestProducer.call(this.getThisOfProducer(), context.content);
 
             if (createPageRequest != null) {
                 createPageRequest.sendAndParse().
-                    done((content: api.content.Content) => {
-
-                        context.content = content;
-                        deferred.resolve(null);
-                    });
-            }
-            else {
-                deferred.resolve(null);
-            }
-
-            return deferred.promise;
-        }
-
-        private doHandleUpdatePage(context: UpdatePersistedContentRoutineContext): Q.Promise<void> {
-
-            var deferred = Q.defer<void>();
-
-            var updatePageRequest = this.updatePageRequestProducer.call(this.getThisOfProducer(), context.content);
-
-            if (updatePageRequest != null) {
-                updatePageRequest.sendAndParse().
                     done((content: api.content.Content) => {
 
                         context.content = content;
