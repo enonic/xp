@@ -17,6 +17,8 @@ module api.content.page.part {
                 setSelectedOptionsView(new PartDescriptorSelectedOptionsView()).
                 setLoader(loader).
                 setMaximumOccurrences(1));
+
+            this.setInputIconUrl(api.util.getAdminUri('common/images/icons/icoMoon/32x32/puzzle.png'));
         }
 
         setDescriptor(key: DescriptorKey) {
@@ -75,7 +77,7 @@ module api.content.page.part {
 
         layout() {
             var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
-            namesAndIconView.setIconUrl(api.util.getAdminUri('common/images/icons/icoMoon/32x32/earth.png'))
+            namesAndIconView.setIconUrl(api.util.getAdminUri('common/images/icons/icoMoon/32x32/puzzle.png'))
                 .setMainName(this.descriptor.getDisplayName())
                 .setSubName(this.descriptor.getName().toString());
 
