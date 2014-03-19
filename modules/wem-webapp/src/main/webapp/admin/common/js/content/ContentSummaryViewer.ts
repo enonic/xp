@@ -10,7 +10,7 @@ module api.content {
             this.appendChild(this.namesAndIconView);
         }
 
-        setObject(content: Content) {
+        setObject(content: ContentSummary) {
             super.setObject(content);
             this.namesAndIconView.setMainName(content.getDisplayName()).
                 setSubName(content.getPath().toString()).

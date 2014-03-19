@@ -175,6 +175,10 @@ module api.ui.selector.combobox {
             return this.comboBoxDropdown.getOptionByRow(rowIndex);
         }
 
+        setFilterArgs(args: any) {
+            this.comboBoxDropdown.setFilterArgs(args);
+        }
+
         setValue(value: string) {
             var option = this.getOptionByValue(value);
             if (option != null) {

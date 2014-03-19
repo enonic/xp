@@ -98,6 +98,10 @@ module api.ui.selector.combobox {
             return this.dropdownGrid.getOptionByRow(rowIndex);
         }
 
+        setFilterArgs(args: any) {
+            this.dropdownGrid.setFilterArgs(args);
+        }
+
         showDropdown(selectedOptions: Option<OPTION_DISPLAY_VALUE>[]) {
 
             if (this.hasOptions()) {

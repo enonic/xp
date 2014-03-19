@@ -88,16 +88,15 @@ module api.form.inputtype.combobox {
 
         createComboBox(input: api.form.Input): api.ui.selector.combobox.ComboBox<string> {
             var comboBox = new api.ui.selector.combobox.ComboBox<string>(name, {
-                rowHeight: 24,
                 filter: this.comboboxFilter,
                 selectedOptionsView: this.selectedOptionsView,
                 maximumOccurrences: input.getOccurrences().getMaximum(),
+                optionDisplayValueViewer: new ComboBoxDisplayValueViewer(),
                 hideComboBoxWhenMaxReached: true
             });
 
             comboBox.onValueChanged((event: api.ui.selector.combobox.ComboBoxValueChangedEvent<string>) => {
-                event.getGrid().getDataView().setFilterArgs({searchString: event.getNewValue()});
-                event.getGrid().getDataView().refresh();
+                this.comboBox.setFilterArgs({searchString: event.getNewValue()});
             });
             comboBox.onOptionSelected(() => {
                 this.validate(false);

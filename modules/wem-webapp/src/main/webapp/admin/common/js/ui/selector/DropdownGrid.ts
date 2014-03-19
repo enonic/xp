@@ -51,10 +51,9 @@ module api.ui.selector {
             this.rowSelectionListeners = [];
             this.maxHeight = config.maxHeight || 200;
             this.optionFormatter = config.optionFormatter;
-            this.optionDisplayValueViewer = config.optionDisplayValueViewer;
+            this.optionDisplayValueViewer = config.optionDisplayValueViewer ? config.optionDisplayValueViewer : !config.optionFormatter ? new DefaultOptionDisplayValueViewer() : undefined ;
             this.filter = config.filter;
-            this.rowHeight =
-            config.optionDisplayValueViewer ? config.optionDisplayValueViewer.getPreferredHeight() : config.rowHeight || 24;
+            this.rowHeight = this.optionDisplayValueViewer ? this.optionDisplayValueViewer.getPreferredHeight() : config.rowHeight || 34;
             this.dataIdProperty = config.dataIdProperty;
             this.maxHeight = config.maxHeight;
             this.width = config.width;

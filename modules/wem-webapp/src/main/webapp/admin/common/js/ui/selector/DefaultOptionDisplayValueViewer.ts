@@ -12,7 +12,7 @@ module api.ui.selector {
         }
 
         getPreferredHeight(): number {
-            return 50;
+            return 34;
         }
     }
 
