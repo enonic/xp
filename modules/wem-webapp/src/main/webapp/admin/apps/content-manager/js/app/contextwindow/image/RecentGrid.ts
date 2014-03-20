@@ -30,7 +30,7 @@ module app.contextwindow.image {
             title.getEl().setInnerHtml(dataContext.getDisplayName());
 
             var subtitle = new api.dom.H6El();
-            subtitle.getEl().setInnerHtml(api.util.limitString(dataContext.path.refString, 43));
+            subtitle.getEl().setInnerHtml(dataContext.path.refString);
 
             rowEl.appendChild(image);
             rowEl.appendChild(title);
