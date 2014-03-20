@@ -62,6 +62,11 @@ module app.wizard {
                 }
             });
 
+            this.onRendered((e) => {
+                if (!this.loader) {
+                    this.loader = new LiveEditLoader(this);
+                }
+            });
         }
 
         private initialize(): Q.Promise<void> {
@@ -140,7 +145,6 @@ module app.wizard {
             var deferred = Q.defer<void>();
 
             this.setupFrame();
-            this.loader = new LiveEditLoader(this);
             this.loader.start();
 
             var maxIterations = 100;
@@ -597,18 +601,15 @@ module app.wizard {
             var dots = new api.dom.DivEl("dots");
             this.appendChild(dots);
             document.body.appendChild(this.getHTMLElement());
+            this.hide();
         }
 
         start() {
+            this.show();
         }
 
         stop() {
-            $(this.getHTMLElement()).fadeOut(750, () => {
-                var parent = this.getHTMLElement().parentNode;
-                if (parent) {
-                    parent.removeChild(this.getHTMLElement());
-                }
-            })
+            $(this.getHTMLElement()).fadeOut(750);
 
         }
     }
