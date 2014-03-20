@@ -12,7 +12,7 @@ import com.enonic.wem.api.resource.ResourceNotFoundException;
 import com.enonic.wem.util.Exceptions;
 import com.enonic.wem.xml.XmlSerializers;
 
-public class  GetPageDescriptorCommand
+class GetPageDescriptorCommand
 {
     private PageDescriptorKey key;
 

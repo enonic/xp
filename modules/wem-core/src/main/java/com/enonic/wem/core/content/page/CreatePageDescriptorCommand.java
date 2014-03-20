@@ -12,7 +12,7 @@ import com.enonic.wem.xml.XmlSerializers;
 import static com.enonic.wem.api.content.page.PageDescriptor.newPageDescriptor;
 import static com.enonic.wem.api.resource.Resource.newResource;
 
-public class CreatePageDescriptorCommand
+class CreatePageDescriptorCommand
 {
     private CreatePageDescriptorParams params;
 

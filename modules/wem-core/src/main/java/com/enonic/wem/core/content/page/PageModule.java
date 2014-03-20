@@ -4,6 +4,7 @@ import javax.inject.Singleton;
 
 import com.google.inject.AbstractModule;
 
+import com.enonic.wem.api.content.page.PageComponentService;
 import com.enonic.wem.api.content.page.PageDescriptorService;
 import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.page.image.ImageDescriptorService;
@@ -31,6 +32,7 @@ public class PageModule
         bind( PartDescriptorService.class ).to( PartDescriptorServiceImpl.class ).in( Singleton.class );
         bind( PageDescriptorService.class ).to( PageDescriptorServiceImpl.class ).in( Singleton.class );
         bind( PageTemplateService.class ).to( PageTemplateServiceImpl.class ).in( Singleton.class );
+        bind( PageComponentService.class ).to( PageComponentServiceImpl.class ).in( Singleton.class );
 
         final CommandBinder commands = CommandBinder.from( binder() );
         commands.add( CreatePageHandler.class );

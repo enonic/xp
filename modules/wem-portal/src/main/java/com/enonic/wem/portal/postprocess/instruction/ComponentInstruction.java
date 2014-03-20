@@ -10,30 +10,36 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.page.ComponentDescriptorName;
+import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.ComponentPath;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageComponent;
+import com.enonic.wem.api.content.page.PageComponentService;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
-import com.enonic.wem.api.content.page.part.PartComponent;
-import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.rendering.RenderException;
 import com.enonic.wem.portal.rendering.Renderer;
 import com.enonic.wem.portal.rendering.RendererFactory;
 
+import static org.apache.commons.lang.StringUtils.substringAfter;
+
 @Singleton
 public final class ComponentInstruction
     implements PostProcessInstruction
 {
+    static final String MODULE_COMPONENT_PREFIX = "module:";
+
     private final RendererFactory rendererFactory;
 
+    private final PageComponentService pageComponentService;
+
     @Inject
-    public ComponentInstruction( final RendererFactory rendererFactory )
+    public ComponentInstruction( final RendererFactory rendererFactory, final PageComponentService pageComponentService )
     {
         this.rendererFactory = rendererFactory;
+        this.pageComponentService = pageComponentService;
     }
 
     @Override
@@ -57,16 +63,17 @@ public final class ComponentInstruction
     private String renderComponent( final JsContext context, final String componentSelector )
     {
         final PageComponent component;
-        if ( componentSelector.contains( ComponentPath.DIVIDER ) )
+        if ( !componentSelector.startsWith( MODULE_COMPONENT_PREFIX ) )
         {
             final ComponentPath componentPath = ComponentPath.from( componentSelector );
             component = resolveComponent( context, componentPath );
         }
         else
         {
-            final ComponentDescriptorName componentName = new ComponentDescriptorName( componentSelector );
+            final String name = substringAfter( componentSelector, MODULE_COMPONENT_PREFIX );
+            final ComponentName componentName = new ComponentName( name );
             final ModuleKey currentModule = context.getPageTemplate().getDescriptor().getModuleKey();
-            component = getComponentByDescriptor( currentModule, componentName );
+            component = pageComponentService.getByName( currentModule, componentName );
         }
         return renderPageComponent( context, component );
     }
@@ -128,18 +135,6 @@ public final class ComponentInstruction
         {
             return pageTemplate.getRegions();
         }
-    }
-
-    private PageComponent getComponentByDescriptor( final ModuleKey module, final ComponentDescriptorName componentName )
-    {
-        // TODO check component type
-        final PartDescriptorKey descriptor = PartDescriptorKey.from( module, componentName );
-        final PartComponent component = PartComponent.newPartComponent().
-            name( componentName.toString() ).
-            descriptor( descriptor ).
-            build();
-
-        return component;
     }
 
 }

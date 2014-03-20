@@ -10,6 +10,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.page.Page;
+import com.enonic.wem.api.content.page.PageComponentService;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
@@ -39,7 +40,8 @@ public class ComponentInstructionTest
         throws Exception
     {
         final RendererFactory rendererFactory = newRendererFactory( "<b>part content</b>" );
-        final ComponentInstruction instruction = new ComponentInstruction( rendererFactory );
+        final PageComponentService pageComponentService = Mockito.mock( PageComponentService.class );
+        final ComponentInstruction instruction = new ComponentInstruction( rendererFactory, pageComponentService );
 
         final JsHttpResponse resp = new JsHttpResponse();
         resp.setPostProcess( true );
