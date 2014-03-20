@@ -1,22 +1,19 @@
 module api.dom {
 
-    export class IFrameEl extends Element {
+    export class IFrameEl extends api.dom.Element {
 
         private loaded: boolean = false;
 
         constructor(className?: string, elHelper?: ElementHelper) {
             super(new ElementProperties().setTagName("iframe").setClassName(className).setHelper(elHelper));
-            this.getHTMLElement().onload = (event) => {
+            this.onLoaded((event: UIEvent) => {
                 this.loaded = true;
-            }
+            });
         }
 
-        static fromHtmlElement(element: HTMLIFrameElement): IFrameEl {
-            return new IFrameEl(null, new ElementHelper(element));
-        }
-
-        public setSrc(src: string) {
+        public setSrc(src: string): api.dom.IFrameEl {
             this.getEl().setAttribute("src", src);
+            return this;
         }
 
         isLoaded() {

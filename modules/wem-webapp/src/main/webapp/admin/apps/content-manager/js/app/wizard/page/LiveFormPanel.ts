@@ -41,7 +41,7 @@ module app.wizard {
 
         private contentWizardPanel: ContentWizardPanel;
 
-        private loader: LiveEditLoader;
+        private mask: api.ui.LoadMask;
 
         constructor(config: LiveFormPanelConfig) {
             super("live-form-panel");
@@ -56,15 +56,11 @@ module app.wizard {
 
             this.baseUrl = api.util.getUri("portal/edit/");
 
-            ShowContentFormEvent.on(() => {
-                if (this.loader) {
-                    this.loader.stop();
-                }
-            });
+            this.mask = new api.ui.LoadMask(this);
 
-            this.onRendered((e) => {
-                if (!this.loader) {
-                    this.loader = new LiveEditLoader(this);
+            ShowContentFormEvent.on(() => {
+                if (this.mask.isVisible()) {
+                    this.mask.hide();
                 }
             });
         }
@@ -138,51 +134,26 @@ module app.wizard {
         private doLoad(): Q.Promise<void> {
 
             console.log("LiveFormPanel.doLoad() ... url: " + this.pageUrl);
-
-
             api.util.assertNotNull(this.pageUrl, "No page to load");
 
-            var deferred = Q.defer<void>();
-
+            this.mask.show();
             this.setupFrame();
-            this.loader.start();
 
-            var maxIterations = 100;
-            var iterations = 0;
-            var pageLoaded = false;
+            var deferred = Q.defer<void>();
+            this.frame.onLoaded((event:UIEvent) => {
+                var liveEditWindow = this.frame.getHTMLElement()["contentWindow"];
+                if (liveEditWindow && liveEditWindow.$liveEdit && typeof(liveEditWindow.initializeLiveEdit) === "function") {
+                    // Give loaded page same CONFIG.baseUri as in admin
+                    liveEditWindow.CONFIG = {};
+                    liveEditWindow.CONFIG.baseUri = CONFIG.baseUri;
+                    liveEditWindow.siteTemplate = this.siteTemplate;
+                    liveEditWindow.content = this.pageContent;
 
-            var intervalId = setInterval(() => {
-
-                if (this.frame.isLoaded()) {
-                    var liveEditWindow = this.frame.getHTMLElement()["contentWindow"];
-                    if (liveEditWindow && liveEditWindow.$liveEdit && typeof(liveEditWindow.initializeLiveEdit) === "function") {
-                        // Give loaded page same CONFIG.baseUri as in admin
-                        liveEditWindow.CONFIG = {};
-                        liveEditWindow.CONFIG.baseUri = CONFIG.baseUri;
-                        liveEditWindow.siteTemplate = this.siteTemplate;
-                        liveEditWindow.content = this.pageContent;
-
-                        var pageLoaded = true;
-                        clearInterval(intervalId);
-
-                        this.loader.stop();
-                        liveEditWindow.initializeLiveEdit();
-                        deferred.resolve(null);
-                    }
+                    this.mask.hide();
+                    liveEditWindow.initializeLiveEdit();
+                    deferred.resolve(null);
                 }
-
-                iterations++;
-                if (!pageLoaded && iterations >= maxIterations) {
-                    clearInterval(intervalId);
-                    if (pageLoaded) {
-                        deferred.resolve(null);
-                    }
-                    else {
-                        deferred.reject(null);
-                        this.loader.stop();
-                    }
-                }
-            }, 50);
+            });
 
             return deferred.promise;
         }
@@ -258,10 +229,8 @@ module app.wizard {
                 this.frame.remove();
             }
 
-            this.frame = new api.dom.IFrameEl();
-            this.frame.addClass("live-edit-frame");
+            this.frame = new api.dom.IFrameEl("live-edit-frame").setSrc(this.pageUrl);
             this.appendChild(this.frame);
-            this.frame.setSrc(this.pageUrl);
 
         }
 
@@ -589,28 +558,6 @@ module app.wizard {
                     var componentPath = ComponentPath.fromString(componentPathAsString);
                     this.setComponentDescriptor(descriptor, componentPath, componentPlaceholder);
                 });
-        }
-    }
-
-    export class LiveEditLoader extends api.dom.DivEl {
-
-        constructor(elementToCover: api.dom.Element) {
-            super("live-edit-loader");
-
-            this.getEl().setTopPx(elementToCover.getEl().getOffsetTop());
-            var dots = new api.dom.DivEl("dots");
-            this.appendChild(dots);
-            document.body.appendChild(this.getHTMLElement());
-            this.hide();
-        }
-
-        start() {
-            this.show();
-        }
-
-        stop() {
-            $(this.getHTMLElement()).fadeOut(750);
-
         }
     }
 }
