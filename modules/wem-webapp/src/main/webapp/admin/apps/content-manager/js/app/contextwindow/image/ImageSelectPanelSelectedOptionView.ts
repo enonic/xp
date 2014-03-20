@@ -22,7 +22,7 @@ module app.contextwindow.image {
             title.getEl().setInnerHtml(this.content.getName().toString());
 
             var subtitle = new api.dom.DivEl("subtitle");
-            subtitle.getEl().setInnerHtml(api.util.limitString(this.content.getPath().toString(), 32));
+            subtitle.getEl().setInnerHtml(this.content.getPath().toString());
 
             container.appendChild(title);
             container.appendChild(subtitle);

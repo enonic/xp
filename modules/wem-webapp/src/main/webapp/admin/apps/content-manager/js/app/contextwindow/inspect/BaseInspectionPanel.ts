@@ -26,7 +26,7 @@ module app.contextwindow.inspect {
 
         setMainName(value: string) {
             if (this.nameAndIcon) {
-                this.nameAndIcon.setMainName(api.util.limitString(value, 20));
+                this.nameAndIcon.setMainName(value);
             }
         }
 
