@@ -151,7 +151,7 @@ module app.wizard {
 
                 if (this.frame.isLoaded()) {
                     var liveEditWindow = this.frame.getHTMLElement()["contentWindow"];
-                    if (liveEditWindow && liveEditWindow.$liveEdit) {
+                    if (liveEditWindow && liveEditWindow.$liveEdit && typeof(liveEditWindow.initializeLiveEdit) === "function") {
                         // Give loaded page same CONFIG.baseUri as in admin
                         liveEditWindow.CONFIG = {};
                         liveEditWindow.CONFIG.baseUri = CONFIG.baseUri;
@@ -394,6 +394,8 @@ module app.wizard {
 
                     var comp = this.liveEditWindow.getComponentByPath(componentPath);
                     this.liveEditWindow.LiveEdit.component.Selection.handleSelect(comp.getHTMLElement(), null, true);
+
+                    this.liveEditJQuery(this.liveEditWindow).trigger("componentLoaded.liveEdit", [comp]);
                 }
             });
         }
