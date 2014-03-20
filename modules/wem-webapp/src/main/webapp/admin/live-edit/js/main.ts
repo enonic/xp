@@ -56,6 +56,13 @@ function getComponentByPath(path:string): LiveEdit.component.Component {
         $(window).resize(() => $(window).trigger('resizeBrowserWindow.liveEdit'));
 
         $(window).unload(() => console.log('Clean up any css classes etc. that live edit / sortable has added'));
+
+        //TODO: move this somewhere logical
+        $(window).on('componentLoaded.liveEdit', (event, component:LiveEdit.component.Component) => {
+            if (component.getComponentType().getType() == LiveEdit.component.Type.LAYOUT) {
+                LiveEdit.component.dragdropsort.DragDropSort.createSortableLayout(component);
+            }
+        })
     });
 
 //    Prevent the user from clicking on things
