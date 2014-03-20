@@ -14,6 +14,7 @@ module api.content.page.part {
         constructor(loader: PartDescriptorLoader) {
             super(new RichComboBoxBuilder<PartDescriptor>().
                 setIdentifierMethod("getKey").
+                setOptionDisplayValueViewer(new PartDescriptorViewer()).
                 setSelectedOptionsView(new PartDescriptorSelectedOptionsView()).
                 setLoader(loader).
                 setMaximumOccurrences(1));
@@ -40,17 +41,6 @@ module api.content.page.part {
             };
             this.comboBox.clearSelection();
             this.comboBox.selectOption(option);
-        }
-
-        optionFormatter(row: number, cell: number, descriptor: PartDescriptor, columnDef: any,
-                        dataContext: Option<PartDescriptor>): string {
-            var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
-            namesAndIconView.
-                setIconUrl(api.util.getAdminUri("common/images/icons/icoMoon/32x32/puzzle.png")).
-                setMainName(descriptor.getDisplayName()).
-                setSubName(descriptor.getName().toString());
-
-            return namesAndIconView.toString();
         }
 
         getSelectedOptions(): Option<PartDescriptor>[] {
