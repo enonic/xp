@@ -23,6 +23,8 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
     var _isDragging:boolean = false;
 
+    var draggingUI;
+
     export function init():void {
         this.createJQueryUiSortable(REGION_SELECTOR);
         this.registerGlobalListeners();
@@ -44,7 +46,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     export function createJQueryUiSortable(selector):void {
-        console.log("Creating jQuery sortable on selector: ", selector, this    );
+        console.log("Creating jQuery sortable on selector: ", selector, this);
         $(selector).sortable({
             revert: false,
             connectWith: REGION_SELECTOR, //removing this solves the over event not firing bug, not sure what it might break though. it broke dragging out of layouts, now seems to work.
@@ -66,6 +68,14 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             update:     (event, ui)     => this.handleSortUpdate(event, ui),
             stop:       (event, ui)     => this.handleSortStop(event, ui)
         });
+//        $(selector).on('mouseover', (event) => {
+//            if ($(event.currentTarget).hasClass("ui-sortable")) {
+//                if (draggingUI) {
+//                    this.handleDragOver(event, draggingUI);
+//                }
+//            }
+//
+//        });
     }
 
     // Used by the Context Window when dragging above the IFrame
@@ -100,6 +110,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     export function handleSortStart(event:JQueryEventObject, ui):void {
+        //draggingUI = ui;
         _isDragging = true;
 
         var component = LiveEdit.component.Component.fromJQuery(ui.item);
