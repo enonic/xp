@@ -43,13 +43,29 @@
   }
 
   .rich-combobox {
-    margin:@defaultHeight/2-30px auto 0 auto;
+    margin:@defaultHeight/2-37px auto 0 auto;
     width:255px;
     .options-container {
       z-index: 9999999; // must override shader
     }
     .selected-options {
       display:none !important;
+    }
+    .combobox {
+      input {
+        height: 50px;
+      }
+    }
+  }
+
+  .combobox {
+    .input-icon {
+      top: 9px;
+      left: 9px;
+      width: 32px;
+      height: 32px;
+
+      font-size: 15px;
     }
   }
 
