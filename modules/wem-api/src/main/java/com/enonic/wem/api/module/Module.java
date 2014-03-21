@@ -3,8 +3,6 @@ package com.enonic.wem.api.module;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.concurrent.Immutable;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
@@ -16,7 +14,6 @@ import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
-@Immutable
 public final class Module
     implements Identity<ModuleKey, ModuleName>
 {

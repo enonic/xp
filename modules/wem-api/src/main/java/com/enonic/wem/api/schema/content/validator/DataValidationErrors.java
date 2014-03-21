@@ -2,11 +2,8 @@ package com.enonic.wem.api.schema.content.validator;
 
 import java.util.Iterator;
 
-import javax.annotation.concurrent.Immutable;
-
 import com.google.common.collect.ImmutableList;
 
-@Immutable
 public final class DataValidationErrors
     implements Iterable<DataValidationError>
 {

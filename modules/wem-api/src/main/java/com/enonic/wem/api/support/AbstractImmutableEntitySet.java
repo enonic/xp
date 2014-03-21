@@ -3,11 +3,8 @@ package com.enonic.wem.api.support;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.annotation.concurrent.Immutable;
-
 import com.google.common.collect.ImmutableSet;
 
-@Immutable
 public abstract class AbstractImmutableEntitySet<T>
     implements Iterable<T>
 {

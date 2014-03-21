@@ -4,15 +4,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import javax.annotation.concurrent.Immutable;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.data.DataPath;
 
-@Immutable
 public class FormItemPath
     implements Iterable<String>
 {

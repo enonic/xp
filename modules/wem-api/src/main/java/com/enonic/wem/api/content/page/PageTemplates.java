@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
@@ -47,7 +45,7 @@ public final class PageTemplates
         return PageTemplates.from( Collections2.filter( templatesByName.values(), new Predicate<PageTemplate>()
         {
             @Override
-            public boolean apply( @Nullable final PageTemplate pageTemplate )
+            public boolean apply( final PageTemplate pageTemplate )
             {
                 return spec.isSatisfiedBy( pageTemplate );
             }

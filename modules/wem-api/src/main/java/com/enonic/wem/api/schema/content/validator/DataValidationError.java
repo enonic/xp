@@ -2,11 +2,8 @@ package com.enonic.wem.api.schema.content.validator;
 
 import java.text.MessageFormat;
 
-import javax.annotation.concurrent.Immutable;
-
 import com.enonic.wem.api.form.FormItemPath;
 
-@Immutable
 public class DataValidationError
 {
     private final FormItemPath path;

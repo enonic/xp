@@ -3,14 +3,11 @@ package com.enonic.wem.api.resource;
 
 import java.io.IOException;
 
-import javax.annotation.concurrent.Immutable;
-
 import com.google.common.base.Charsets;
 import com.google.common.base.Objects;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
-@Immutable
 public final class Resource
 {
     private final String name;

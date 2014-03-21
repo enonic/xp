@@ -2,8 +2,6 @@ package com.enonic.wem.api.module;
 
 import java.util.Collection;
 
-import javax.annotation.concurrent.Immutable;
-
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -11,7 +9,6 @@ import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.support.AbstractImmutableEntityList;
 
-@Immutable
 public final class Modules
     extends AbstractImmutableEntityList<Module>
 {
