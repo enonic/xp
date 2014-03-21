@@ -1,23 +1,16 @@
-package com.enonic.wem.api.command.entity;
-
+package com.enonic.wem.api.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.entity.Nodes;
-
-public class GetNodesByParent
-    extends Command<Nodes>
+public class GetNodesByParentParams
 {
     private final NodePath parent;
 
-    public GetNodesByParent( final NodePath parent )
+    public GetNodesByParentParams( final NodePath parent )
     {
         this.parent = parent;
     }
 
-    @Override
     public void validate()
     {
         Preconditions.checkNotNull( parent, "parent must be specified" );
@@ -28,5 +21,3 @@ public class GetNodesByParent
         return this.parent;
     }
 }
-
-

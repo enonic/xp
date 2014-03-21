@@ -2,26 +2,28 @@ package com.enonic.wem.core.entity;
 
 import javax.jcr.Session;
 
-import com.enonic.wem.api.command.entity.GetNodeById;
-import com.enonic.wem.api.command.entity.RenameNode;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.core.index.IndexService;
 
 public class RenameNodeService
-    extends NodeService
+    extends AbstractNodeService
 {
-    private final RenameNode command;
+    private final EntityId entityId;
+
+    private final NodeName nodeName;
 
     private final IndexService indexService;
 
-    public RenameNodeService( final Session session, final IndexService indexService, final RenameNode renameNode )
+    public RenameNodeService( final Session session, final IndexService indexService, final EntityId entityId, final NodeName nodeName )
     {
         super( session );
-        this.command = renameNode;
+        this.entityId = entityId;
+        this.nodeName = nodeName;
         this.indexService = indexService;
     }
 
@@ -29,27 +31,26 @@ public class RenameNodeService
         throws Exception
 
     {
-        final Node existingNode = getNodeById( command.getId() );
+        final Node existingNode = getNodeById( this.entityId );
 
         if ( existingNode == null )
         {
-            final ContentId contentId = ContentId.from( command.getId().toString() );
+            final ContentId contentId = ContentId.from( this.entityId.toString() );
             throw new ContentNotFoundException( contentId );
         }
 
         final boolean moved = nodeJcrDao.moveNode( existingNode.path().asAbsolute(),
-                                                   new NodePath( existingNode.parent().asAbsolute(), command.getNodeName() ) );
+                                                   new NodePath( existingNode.parent().asAbsolute(), this.nodeName ) );
 
         session.save();
 
-        this.indexService.indexNode( getNodeById( command.getId() ) );
+        this.indexService.indexNode( getNodeById( this.entityId ) );
 
         return moved;
     }
 
     private Node getNodeById( final EntityId entityId )
     {
-        final GetNodeById getNodeByIdCommand = new GetNodeById( entityId );
-        return new GetNodeByIdService( session, getNodeByIdCommand ).execute();
+        return new GetNodeByIdService( session, entityId ).execute();
     }
 }

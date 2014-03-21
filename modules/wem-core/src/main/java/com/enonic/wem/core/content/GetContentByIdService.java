@@ -1,7 +1,6 @@
 package com.enonic.wem.core.content;
 
 import com.enonic.wem.api.command.content.GetContentById;
-import com.enonic.wem.api.command.entity.GetNodeById;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.entity.EntityId;
@@ -23,11 +22,11 @@ public class GetContentByIdService
 
     public Content execute()
     {
-        final GetNodeById getNodeByIdCommand = new GetNodeById( EntityId.from( command.getId().toString() ) );
+        final EntityId entityId = EntityId.from( command.getId().toString() );
 
         try
         {
-            final Node node = new GetNodeByIdService( session, getNodeByIdCommand ).execute();
+            final Node node = new GetNodeByIdService( session, entityId ).execute();
             return translator.fromNode( node );
         }
         catch ( NoEntityWithIdFoundException e )

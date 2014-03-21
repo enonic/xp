@@ -1,23 +1,16 @@
-package com.enonic.wem.api.command.entity;
-
+package com.enonic.wem.api.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.entity.EntityIds;
-import com.enonic.wem.api.entity.Nodes;
-
-public class GetNodesByIds
-    extends Command<Nodes>
+public class GetNodesByIdsParams
 {
     private final EntityIds ids;
 
-    public GetNodesByIds( final EntityIds ids )
+    public GetNodesByIdsParams( final EntityIds ids )
     {
         this.ids = ids;
     }
 
-    @Override
     public void validate()
     {
         Preconditions.checkNotNull( ids, "ids must be specified" );
@@ -28,5 +21,3 @@ public class GetNodesByIds
         return this.ids;
     }
 }
-
-
