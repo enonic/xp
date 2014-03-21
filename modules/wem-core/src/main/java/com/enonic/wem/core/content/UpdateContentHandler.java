@@ -17,8 +17,6 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.GetContentById;
 import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.ValidateContentData;
-import com.enonic.wem.api.command.entity.DeleteNodeByPath;
-import com.enonic.wem.api.command.entity.UpdateNode;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentId;
@@ -29,16 +27,18 @@ import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyVisitor;
 import com.enonic.wem.api.data.type.ValueTypes;
+import com.enonic.wem.api.entity.DeleteNodeByPathParams;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
+import com.enonic.wem.api.entity.NodeService;
+import com.enonic.wem.api.entity.UpdateNodeParams;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.entity.DeleteNodeByPathService;
-import com.enonic.wem.core.entity.UpdateNodeHandler;
+import com.enonic.wem.core.entity.UpdateNodeCommand;
 import com.enonic.wem.core.index.IndexService;
 
 import static com.enonic.wem.api.content.Content.newContent;
@@ -50,6 +50,8 @@ public class UpdateContentHandler
 
     private IndexService indexService;
 
+    private NodeService nodeService;
+
     private final static Logger LOG = LoggerFactory.getLogger( UpdateContentHandler.class );
 
     @Override
@@ -59,7 +61,7 @@ public class UpdateContentHandler
         final ContentNodeTranslator translator = new ContentNodeTranslator( this.context.getClient() );
 
         final GetContentById getContentByIdCommand = new GetContentById( command.getContentId() );
-        final Content contentBeforeChange = new GetContentByIdService( this.context, getContentByIdCommand ).execute();
+        final Content contentBeforeChange = new GetContentByIdService( this.context, getContentByIdCommand, nodeService ).execute();
 
         final Content.EditBuilder editBuilder = command.getEditor().edit( contentBeforeChange );
 
@@ -90,16 +92,15 @@ public class UpdateContentHandler
             attachments = getCurrentAttachments( command.getContentId() );
         }
 
-        final UpdateNode updateNodeCommand = translator.toUpdateNodeCommand( editedContent, attachments );
+        final UpdateNodeParams updateNodeParams = translator.toUpdateNodeCommand( editedContent, attachments );
 
-        final UpdateNodeHandler updateNodeHandler = UpdateNodeHandler.create().
-            context( this.context ).
-            command( updateNodeCommand ).
+        final Node editedNode = UpdateNodeCommand.create().
+            session( this.context.getJcrSession() ).
+            params( updateNodeParams ).
             indexService( this.indexService ).
-            build();
-        updateNodeHandler.handle();
-
-        final Node editedNode = updateNodeCommand.getResult().getPersistedNode();
+            build().
+            execute().
+            getPersistedNode();
         final Content persistedContent = translator.fromNode( editedNode );
 
         deleteRemovedEmbeddedContent( contentBeforeChange, persistedContent );
@@ -125,8 +126,9 @@ public class UpdateContentHandler
             if ( !embeddedContentsToKeep.containsKey( embeddedContentBeforeEdit.getId() ) )
             {
                 final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( embeddedContentBeforeEdit.getPath() );
-                final DeleteNodeByPath deleteNodeByPathCommand = new DeleteNodeByPath( nodePath );
-                new DeleteNodeByPathService( this.context.getJcrSession(), indexService, deleteNodeByPathCommand ).execute();
+
+                final DeleteNodeByPathParams params = new DeleteNodeByPathParams( nodePath );
+                nodeService.deleteByPath( params );
             }
         }
     }
@@ -149,7 +151,7 @@ public class UpdateContentHandler
             @Override
             public void visit( final Property property )
             {
-                final Content content = new GetContentByIdService( context, new GetContentById( property.getContentId() ) ).execute();
+                final Content content = new GetContentByIdService( context, new GetContentById( property.getContentId() ), nodeService ).execute();
 
                 if ( content != null )
                 {
@@ -236,4 +238,9 @@ public class UpdateContentHandler
         this.indexService = indexService;
     }
 
+    @Inject
+    public void setNodeService( final NodeService nodeService )
+    {
+        this.nodeService = nodeService;
+    }
 }

@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.GetContentById;
 import com.enonic.wem.api.command.content.GetContentByPath;
@@ -27,9 +26,8 @@ public class GetNearestSiteByContentIdHandlerTest
     public void setUp()
         throws Exception
     {
-        super.client = Mockito.mock( Client.class );
-
         super.initialize();
+
         handler = new GetNearestSiteByContentIdHandler();
         handler.setContext( this.context );
     }

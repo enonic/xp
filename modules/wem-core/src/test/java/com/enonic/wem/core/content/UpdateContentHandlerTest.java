@@ -8,7 +8,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.content.UpdateContent;
@@ -49,7 +48,6 @@ public class UpdateContentHandlerTest
     public void before()
         throws Exception
     {
-        super.client = Mockito.mock( Client.class );
         super.initialize();
 
         relationshipService = Mockito.mock( RelationshipService.class );
@@ -59,7 +57,7 @@ public class UpdateContentHandlerTest
         handler.setContext( this.context );
         handler.setIndexService( indexService );
 
-        Mockito.when( super.client.execute( isA( ValidateContentData.class ) ) ).thenReturn( DataValidationErrors.empty() );
+        Mockito.when( client.execute( isA( ValidateContentData.class ) ) ).thenReturn( DataValidationErrors.empty() );
 
         final ContentTypeName myContentTypeName = ContentTypeName.from( "my_content_type" );
         final ContentType myContentType = newContentType().

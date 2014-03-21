@@ -10,15 +10,15 @@ import org.slf4j.LoggerFactory;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.ValidateContentData;
-import com.enonic.wem.api.command.entity.CreateNode;
-import com.enonic.wem.api.command.entity.CreateNodeResult;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.entity.CreateNodeParams;
+import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.entity.CreateNodeHandler;
+import com.enonic.wem.core.entity.CreateNodeCommand;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.relationship.RelationshipService;
 import com.enonic.wem.core.relationship.SyncRelationshipsCommand;
@@ -46,17 +46,17 @@ public class CreateContentHandler
             validateContentData( command );
         }
 
-        final CreateNode createNodeCommand = translator.toCreateNode( command );
+        final CreateNodeParams createNodeParams = translator.toCreateNode( command );
 
-        final CreateNodeHandler createNodeHandler = CreateNodeHandler.create().
-            command( createNodeCommand ).
+        final Node createdNode = CreateNodeCommand.create().
+            session( this.context.getJcrSession() ).
             indexService( indexService ).
-            context( this.context ).
-            build();
-        createNodeHandler.handle();
-        final CreateNodeResult createdNode = createNodeCommand.getResult();
+            params( createNodeParams ).
+            build().
+            execute().
+            getPersistedNode();
 
-        final Content storedContent = translator.fromNode( createdNode.getPersistedNode() );
+        final Content storedContent = translator.fromNode( createdNode );
 
         // addAttachments( builtContent, storedContent );
         //// addRelationships( session, builtContent, storedContent );
