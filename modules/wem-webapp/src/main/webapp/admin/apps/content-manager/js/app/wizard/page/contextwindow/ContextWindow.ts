@@ -62,9 +62,9 @@ module app.wizard.page.contextwindow {
 
             app.wizard.ToggleContextWindowEvent.on(() => {
                 if (this.hasClass("hidden")) {
-                    this.show();
+                    this.enable();
                 } else {
-                    this.hide();
+                    this.disable();
 
                 }
             });
@@ -75,12 +75,12 @@ module app.wizard.page.contextwindow {
 
         }
 
-        hide() {
+        disable() {
             this.addClass("hidden");
             this.getEl().setRight("-290px");
         }
 
-        show() {
+        enable() {
             this.removeClass("hidden");
             this.getEl().setRight("0px");
             api.dom.Body.get().appendChild(this.dragMask);
