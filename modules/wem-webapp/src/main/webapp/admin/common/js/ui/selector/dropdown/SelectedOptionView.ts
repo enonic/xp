@@ -2,7 +2,7 @@ module api.ui.selector.dropdown {
 
     import DropdownHandle = api.ui.selector.DropdownHandle;
 
-    export class SelectedOptionView<T> extends api.dom.DivEl {
+    export class SelectedOptionView<T> extends api.dom.ButtonEl {
 
         private objectViewer:Viewer<T>;
 
@@ -37,6 +37,12 @@ module api.ui.selector.dropdown {
                 }
 
                 this.notifyOpenDropdown();
+            });
+
+            this.onKeyPressed((event:KeyboardEvent) => {
+                if (event.which == 32 || event.which == 13) { // space or enter
+                    this.notifyOpenDropdown();
+                }
             });
         }
 

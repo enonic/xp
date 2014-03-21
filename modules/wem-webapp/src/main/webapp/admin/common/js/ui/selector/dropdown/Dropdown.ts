@@ -90,6 +90,7 @@ module api.ui.selector.dropdown {
 
             this.selectedOptionView.onOpenDropdown(() => {
                 this.showDropdown();
+                this.input.giveFocus();
             });
 
             this.setupListeners();
@@ -218,7 +219,7 @@ module api.ui.selector.dropdown {
         selectOption(option: Option<OPTION_DISPLAY_VALUE>, silent: boolean = false) {
 
             this.dropdownDropdown.markSelections([option]);
-            this.hideDropdown();
+            api.dom.FormEl.moveFocuseToNextFocusable(this.input);
             //this.input.setPlaceholder(option.value);
             if (!silent) {
                 this.notifyOptionSelected(option);
@@ -315,6 +316,8 @@ module api.ui.selector.dropdown {
                 else if (event.which == 13) { // enter
                     this.selectRow(this.dropdownDropdown.getActiveRow());
                     this.input.getEl().setValue("");
+                    event.preventDefault();
+                    event.stopPropagation();
                 }
                 else if (event.which == 27) { // esc
                     this.hideDropdown();

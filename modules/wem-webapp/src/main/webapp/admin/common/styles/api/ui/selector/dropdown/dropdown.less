@@ -1,7 +1,6 @@
 .dropdown {
   position: relative;
-  display: inline-block;
-  width: 100%;
+  display: block;
 
   .input-icon {
     position: absolute;
@@ -72,9 +71,7 @@
     .box-shadow(2px 2px 2px @admin-medium-gray-border);
     background: white;
     z-index: 5;
-  }
 
-  .options-container {
     .slick-header {
       height: 0px;
       display: none;
@@ -93,5 +90,16 @@
         color: #d3d3d3;
       }
     }
+  }
+
+  .selected-option {
+    .input-border();
+    .input-glow();
+    width: 100%;
+    min-height: 37px;
+    padding: 4px 37px 4px 10px;
+    margin: 0;
+    text-align: left;
+    background: white;
   }
 }

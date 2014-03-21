@@ -14,7 +14,6 @@
     }
 
     &.invalid {
-
       .error {
         display: block;
       }
@@ -22,32 +21,6 @@
       select, input , textarea {
         .input-error();
       }
-
-    }
-
-    * {
-      vertical-align: top;
-    }
-
-    .input-wrapper {
-      input, textarea {
-        width: 100%
-      }
-    }
-
-  }
-
-  .CodeMirror {
-    float: left;
-  }
-
-  fieldset {
-
-    legend {
-      width: 100%;
-      margin-bottom: 10px;
-      padding-bottom: 2px;
-      border-bottom: 1px solid @admin-medium-gray-border;
     }
 
     label {
@@ -58,23 +31,24 @@
       float: left;
     }
 
-    label + input,
-    label + select,
-    label + .composite-input,
-    label + .input-wrapper {
+    label + .form-input {
       margin-left: @form-label-width;
     }
 
     select, input {
       .input-glow();
     }
+  }
 
-    textarea {
-      .input-glow();
-      &.large {
-        height: 350px;
-      }
-    }
+  .CodeMirror {
+    float: left;
+  }
+
+  fieldset legend {
+    width: 100%;
+    margin-bottom: 10px;
+    padding-bottom: 2px;
+    border-bottom: 1px solid @admin-medium-gray-border;
   }
 }
 
@@ -87,17 +61,14 @@
 }
 
 .form-fieldset-vertical(){
-  .form fieldset {
-
+  .form .form-item {
     label {
       float: none;
       max-width: 100%;
       margin: 0 0 3px 0;
     }
 
-    label + input,
-    label + select,
-    label + .composite-input {
+    label + .form-input {
       margin-left: 0;
     }
   }
