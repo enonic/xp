@@ -3,13 +3,13 @@ package com.enonic.wem.core.content.page.image
 import com.enonic.wem.api.content.page.image.ImageDescriptorKey
 import com.enonic.wem.api.module.*
 import com.enonic.wem.api.resource.Resource
-import com.google.common.io.ByteStreams
+import com.google.common.io.ByteSource
 import spock.lang.Specification
 
 import static com.enonic.wem.api.module.ModuleFileEntry.newModuleDirectory
 
 abstract class AbstractImageDescriptorServiceTest
-        extends Specification
+    extends Specification
 {
     def ImageDescriptorServiceImpl service
 
@@ -24,28 +24,30 @@ abstract class AbstractImageDescriptorServiceTest
     {
         def resources = [];
         def descriptorKeys = [];
-        for (key in keys) {
+        for ( key in keys )
+        {
             def descriptorKey = ImageDescriptorKey.from( key )
-            def descriptorXml = "<image-component><display-name>" + descriptorKey.getName().toString() + "</display-name></image-component>";
+            def descriptorXml = "<image-component><display-name>" + descriptorKey.getName().toString() +
+                "</display-name></image-component>";
             def resource = Resource.newResource().name( "image.xml" ).stringValue( descriptorXml ).build();
             resources.add( resource );
             descriptorKeys.add( descriptorKey );
         }
-        this.service.moduleService.getResource(_) >>> resources;
+        this.service.moduleService.getResource( _ ) >>> resources;
         return descriptorKeys;
     }
 
     def Module createModule( final String moduleKey )
     {
-        def descriptorName = ModuleKey.from( moduleKey ).getName().toString(  ) + "-image-descr";
+        def descriptorName = ModuleKey.from( moduleKey ).getName().toString() + "-image-descr";
         final ModuleFileEntry componentDir = newModuleDirectory( "component" ).
-                addEntry( newModuleDirectory( descriptorName ).addFile( "image.xml", ByteStreams.asByteSource( "xml".getBytes() ) ) ).
-                build();
+            addEntry( newModuleDirectory( descriptorName ).addFile( "image.xml", ByteSource.wrap( "xml".getBytes() ) ) ).
+            build();
         def module = Module.newModule().
-                moduleKey( ModuleKey.from( moduleKey ) ).
-                displayName( moduleKey.toUpperCase() ).
-                addFileEntry( componentDir ).
-                build();
+            moduleKey( ModuleKey.from( moduleKey ) ).
+            displayName( moduleKey.toUpperCase() ).
+            addFileEntry( componentDir ).
+            build();
 
         this.service.moduleService.getModule( ModuleKey.from( moduleKey ) ) >> module
         return module;

@@ -4,8 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.IOUtils;
+
 import com.google.common.io.ByteStreams;
-import com.google.common.io.Closeables;
 
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
@@ -45,7 +46,7 @@ public abstract class BlobRecord
         }
         finally
         {
-            Closeables.closeQuietly( stream );
+            IOUtils.closeQuietly( stream );
         }
     }
 

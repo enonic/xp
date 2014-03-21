@@ -6,7 +6,6 @@ import java.nio.charset.Charset;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
-import com.google.common.io.ByteStreams;
 
 public final class RenderingResult
 {
@@ -83,7 +82,7 @@ public final class RenderingResult
 
         public Builder result( final String value )
         {
-            this.result = ByteStreams.asByteSource( value.getBytes( Charset.forName( "UTF-8" ) ) );
+            this.result = ByteSource.wrap( value.getBytes( Charset.forName( "UTF-8" ) ) );
             return this;
         }
 

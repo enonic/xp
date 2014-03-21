@@ -9,6 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.module.GetModuleResource;
 import com.enonic.wem.api.form.Form;
@@ -29,7 +31,6 @@ import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.config.SystemConfig;
 
 import static com.enonic.wem.api.module.ModuleFileEntry.newModuleDirectory;
-import static com.google.common.io.ByteStreams.asByteSource;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
@@ -127,12 +128,12 @@ public class GetModuleResourceHandlerTest
             addFormItem( Input.newInput().name( "some-name" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         final ModuleFileEntry.Builder directoryBuilder = newModuleDirectory( "public" ).
-            addFile( "resource1.txt", asByteSource( "data1".getBytes() ) ).
-            addFile( "resource2.txt", asByteSource( "data2".getBytes() ) ).
-            addFile( "resource3.txt", asByteSource( "data3".getBytes() ) );
+            addFile( "resource1.txt", ByteSource.wrap( "data1".getBytes() ) ).
+            addFile( "resource2.txt", ByteSource.wrap( "data2".getBytes() ) ).
+            addFile( "resource3.txt", ByteSource.wrap( "data3".getBytes() ) );
         final ModuleFileEntry.Builder subDirectory = newModuleDirectory( "javascript" ).
-            addFile( "controller.js", asByteSource( "some data".getBytes() ) ).
-            addFile( "helper.js", asByteSource( "more data".getBytes() ) );
+            addFile( "controller.js", ByteSource.wrap( "some data".getBytes() ) ).
+            addFile( "helper.js", ByteSource.wrap( "more data".getBytes() ) );
         final ModuleFileEntry moduleDirectoryEntry = ModuleFileEntry.newModuleDirectory( "" ).
             addEntry( directoryBuilder.addEntry( subDirectory ) ).
             build();

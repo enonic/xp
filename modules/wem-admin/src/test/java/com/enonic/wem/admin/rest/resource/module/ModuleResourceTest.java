@@ -12,7 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.google.common.io.ByteStreams;
+import com.google.common.io.ByteSource;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.header.FormDataContentDisposition;
@@ -194,10 +194,10 @@ public class ModuleResourceTest
     private Module createModule()
     {
         final ModuleFileEntry publicDir = newModuleDirectory( "public" ).
-            addEntry( newFileEntry( "file1.txt", ByteStreams.asByteSource( "some data".getBytes() ) ) ).
+            addEntry( newFileEntry( "file1.txt", ByteSource.wrap( "some data".getBytes() ) ) ).
             build();
         final ModuleFileEntry templatesDir = newModuleDirectory( "templates" ).
-            addEntry( newFileEntry( "template1.txt", ByteStreams.asByteSource( "some more data".getBytes() ) ) ).
+            addEntry( newFileEntry( "template1.txt", ByteSource.wrap( "some more data".getBytes() ) ) ).
             build();
 
         final Form config = Form.newForm().

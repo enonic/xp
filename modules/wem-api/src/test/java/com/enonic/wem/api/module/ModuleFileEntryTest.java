@@ -7,9 +7,8 @@ import org.junit.Test;
 
 import com.google.common.io.ByteSource;
 
-import static com.enonic.wem.api.module.ModuleFileEntry.newModuleDirectory;
 import static com.enonic.wem.api.module.ModuleFileEntry.newFileEntry;
-import static com.google.common.io.ByteStreams.asByteSource;
+import static com.enonic.wem.api.module.ModuleFileEntry.newModuleDirectory;
 import static org.junit.Assert.*;
 
 public class ModuleFileEntryTest
@@ -17,7 +16,7 @@ public class ModuleFileEntryTest
     @Test
     public void testCreateModuleFileEntry()
     {
-        final ByteSource byteSource = asByteSource( "data".getBytes() );
+        final ByteSource byteSource = ByteSource.wrap( "data".getBytes() );
         final ModuleFileEntry entry = newFileEntry( "resource-name", byteSource );
 
         // verify
@@ -81,7 +80,7 @@ public class ModuleFileEntryTest
         final ModuleFileEntry.Builder directoryBuilder = newModuleDirectory( "public" ).
             addFile( Paths.get( "/temp/text1.txt" ) ).
             addFile( Paths.get( "/temp/text2.txt" ) ).
-            addFile( "text3.txt", asByteSource( "data".getBytes() ) );
+            addFile( "text3.txt", ByteSource.wrap( "data".getBytes() ) );
 
         final ModuleFileEntry.Builder subDirectory = newModuleDirectory( "javascript" ).
             addFile( Paths.get( "/temp/file.js" ) ).

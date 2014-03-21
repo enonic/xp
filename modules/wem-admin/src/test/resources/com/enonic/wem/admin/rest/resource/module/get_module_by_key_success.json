@@ -34,7 +34,7 @@
       "entries" : [ {
         "entries" : [ ],
         "name" : "file1.txt",
-        "resource" : "Resource{name=file1.txt, byteSource=ByteStreams.asByteSource(736F6D652064617461), size=unknown}"
+        "resource" : "Resource{name=file1.txt, byteSource=ByteSource.wrap(736F6D652064617461), size=unknown}"
       } ],
       "name" : "public",
       "resource" : null
@@ -42,7 +42,7 @@
       "entries" : [ {
         "entries" : [ ],
         "name" : "template1.txt",
-        "resource" : "Resource{name=template1.txt, byteSource=ByteStreams.asByteSource(736F6D65206D6F72652064617461), size=unknown}"
+        "resource" : "Resource{name=template1.txt, byteSource=ByteSource.wrap(736F6D65206D6F72652064617461), size=unknown}"
       } ],
       "name" : "templates",
       "resource" : null

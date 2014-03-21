@@ -6,7 +6,6 @@ import java.io.IOException;
 import com.google.common.base.Charsets;
 import com.google.common.base.Objects;
 import com.google.common.io.ByteSource;
-import com.google.common.io.ByteStreams;
 
 public final class Resource
 {
@@ -118,7 +117,7 @@ public final class Resource
 
         public Builder stringValue( final String value )
         {
-            this.byteSource = ByteStreams.asByteSource( value.getBytes( Charsets.UTF_8 ) );
+            this.byteSource = ByteSource.wrap( value.getBytes( Charsets.UTF_8 ) );
             return this;
         }
 

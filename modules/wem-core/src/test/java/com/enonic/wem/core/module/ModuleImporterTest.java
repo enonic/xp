@@ -9,7 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.io.ByteStreams;
+import com.google.common.io.ByteSource;
 
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
@@ -107,10 +107,10 @@ public class ModuleImporterTest
     private Module createModule()
     {
         final ModuleFileEntry publicDir = newModuleDirectory( "public" ).
-            addEntry( newFileEntry( "file1.txt", ByteStreams.asByteSource( "some data".getBytes() ) ) ).
+            addEntry( newFileEntry( "file1.txt", ByteSource.wrap( "some data".getBytes() ) ) ).
             build();
         final ModuleFileEntry templatesDir = newModuleDirectory( "templates" ).
-            addEntry( newFileEntry( "template1.txt", ByteStreams.asByteSource( "some more data".getBytes() ) ) ).
+            addEntry( newFileEntry( "template1.txt", ByteSource.wrap( "some more data".getBytes() ) ) ).
             build();
 
         final Form config = Form.newForm().

@@ -19,7 +19,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
-import com.google.common.io.ByteStreams;
 import com.sun.nio.zipfs.ZipPath;
 
 import com.enonic.wem.api.resource.Resource;
@@ -218,7 +217,7 @@ public final class ModuleFileEntry
             {
                 resource = newResource().
                     name( filePath.getFileName().toString() ).
-                    byteSource( ByteStreams.asByteSource( Files.readAllBytes( filePath ) ) ).build();
+                    byteSource( ByteSource.wrap( Files.readAllBytes( filePath ) ) ).build();
             }
             catch ( IOException e )
             {
