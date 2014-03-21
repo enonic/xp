@@ -16,8 +16,13 @@ module app.launcher {
 
             var managerInstance = api.app.AppManager.instance();
 
-            this.onConnectionLost(managerInstance.notifyConnectionLost);
-            this.onConnectionRestored(managerInstance.notifyConnectionRestored);
+            this.onConnectionLost(() => {
+                managerInstance.notifyConnectionLost();
+            });
+
+            this.onConnectionRestored(() => {
+                managerInstance.notifyConnectionRestored();
+            });
         }
 
         startPolling() {
