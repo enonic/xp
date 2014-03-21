@@ -63,9 +63,11 @@ module api.form.input {
             this.inputTypeView.layout(this.input, this.properties);
 
             this.appendChild(this.inputTypeView.getElement());
-            this.inputTypeView.getElement().onResized((event: api.dom.ElementResizedEvent) => {
-                this.inputTypeView.availableSizeChanged(event.getNewWidth(), event.getNewHeight());
-            });
+            // TODO: Disabled for now since it causes performance slowdown when form as many InputView-s
+            // TODO: onResized listening should be done on FormView instead and the broadcasted to any InputViews within the FormView
+            //this.inputTypeView.getElement().onResized((event: api.dom.ElementResizedEvent) => {
+            //    this.inputTypeView.availableSizeChanged(event.getNewWidth(), event.getNewHeight());
+            //});
 
 
             if (!this.inputTypeView.isManagingAdd()) {
