@@ -18,9 +18,9 @@ public final class RGBAdjustFilterCommand
 
     protected Object doBuild( BuilderContext context, Object[] args )
     {
-        double r = getDoubleArg( args, 0, 0.0 );
-        double g = getDoubleArg( args, 1, 0.0 );
-        double b = getDoubleArg( args, 2, 0.0 );
+        float r = getFloatArg( args, 0, 0f );
+        float g = getFloatArg( args, 1, 0f );
+        float b = getFloatArg( args, 2, 0f );
 
         return new RGBAdjustFilter( r, g, b );
     }

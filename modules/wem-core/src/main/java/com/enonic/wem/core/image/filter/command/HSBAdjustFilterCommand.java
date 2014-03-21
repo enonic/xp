@@ -18,9 +18,9 @@ public final class HSBAdjustFilterCommand
 
     protected Object doBuild( BuilderContext context, Object[] args )
     {
-        double h = getDoubleArg( args, 0, 0.0 );
-        double s = getDoubleArg( args, 1, 0.0 );
-        double b = getDoubleArg( args, 2, 0.0 );
+        float h = getFloatArg( args, 0, 0f );
+        float s = getFloatArg( args, 1, 0f );
+        float b = getFloatArg( args, 2, 0f );
 
         return new HSBAdjustFilter( h, s, b );
     }

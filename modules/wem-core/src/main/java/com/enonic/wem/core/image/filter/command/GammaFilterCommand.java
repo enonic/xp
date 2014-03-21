@@ -18,7 +18,7 @@ public final class GammaFilterCommand
 
     protected Object doBuild( BuilderContext context, Object[] args )
     {
-        double g = getDoubleArg( args, 0, 0.0 );
+        float g = getFloatArg( args, 0, 0f );
         return new GammaFilter( g );
     }
 }
