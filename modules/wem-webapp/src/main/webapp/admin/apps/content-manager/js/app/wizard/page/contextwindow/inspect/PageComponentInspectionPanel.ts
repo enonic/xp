@@ -1,4 +1,4 @@
-module app.contextwindow.inspect{
+module app.wizard.page.contextwindow.inspect{
 
     import SiteTemplate = api.content.site.template.SiteTemplate;
     import PageComponent = api.content.page.PageComponent;

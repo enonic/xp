@@ -1,18 +1,27 @@
-module app.contextwindow.inspect {
+module app.wizard.page.contextwindow.inspect {
 
+    import LiveFormPanel = app.wizard.LiveFormPanel;
     import SiteTemplate = api.content.site.template.SiteTemplate;
+    import ImageComponent = api.content.page.image.ImageComponent;
     import ImageDescriptor = api.content.page.image.ImageDescriptor;
+    import GetImageDescriptorsByModulesRequest = api.content.page.image.GetImageDescriptorsByModulesRequest;
+    import ImageDescriptorLoader = api.content.page.image.ImageDescriptorLoader;
+    import ImageDescriptorComboBox = api.content.page.image.ImageDescriptorComboBox;
+    import DescriptorKey = api.content.page.DescriptorKey;
+    import Descriptor = api.content.page.Descriptor;
+    import Option = api.ui.selector.Option;
 
-    export class ImageInspectionPanel extends PageComponentInspectionPanel<api.content.page.image.ImageComponent, ImageDescriptor> {
 
-        private imageComponent: api.content.page.image.ImageComponent;
-        private descriptorSelected: api.content.page.DescriptorKey;
-        private descriptorComboBox: api.content.page.image.ImageDescriptorComboBox;
+    export class ImageInspectionPanel extends PageComponentInspectionPanel<ImageComponent, ImageDescriptor> {
+
+        private imageComponent: ImageComponent;
+        private descriptorSelected: DescriptorKey;
+        private descriptorComboBox: ImageDescriptorComboBox;
         private imageDescriptors: {
             [key: string]: ImageDescriptor;
         };
 
-        constructor(liveFormPanel: app.wizard.LiveFormPanel, siteTemplate: SiteTemplate) {
+        constructor(liveFormPanel: LiveFormPanel, siteTemplate: SiteTemplate) {
             super("live-edit-font-icon-image", liveFormPanel, siteTemplate);
             this.imageDescriptors = {};
             this.initElements();
@@ -24,9 +33,9 @@ module app.contextwindow.inspect {
             descriptorHeader.addClass("descriptor-header");
             this.appendChild(descriptorHeader);
 
-            var imageDescriptorsRequest = new api.content.page.image.GetImageDescriptorsByModulesRequest(this.getSiteTemplate().getModules());
-            var imageDescriptorLoader = new api.content.page.image.ImageDescriptorLoader(imageDescriptorsRequest);
-            this.descriptorComboBox = new api.content.page.image.ImageDescriptorComboBox(imageDescriptorLoader);
+            var imageDescriptorsRequest = new GetImageDescriptorsByModulesRequest(this.getSiteTemplate().getModules());
+            var imageDescriptorLoader = new ImageDescriptorLoader(imageDescriptorsRequest);
+            this.descriptorComboBox = new ImageDescriptorComboBox(imageDescriptorLoader);
 
             var onDescriptorsLoaded = (imageDescriptors:ImageDescriptor[]) => {
                 imageDescriptors.forEach((imageDescriptor:ImageDescriptor) => {
@@ -37,9 +46,9 @@ module app.contextwindow.inspect {
             };
             this.descriptorComboBox.addLoadedListener(onDescriptorsLoaded);
 
-            this.descriptorComboBox.addOptionSelectedListener((option: api.ui.selector.Option<ImageDescriptor>) => {
+            this.descriptorComboBox.addOptionSelectedListener((option: Option<ImageDescriptor>) => {
                 if (this.imageComponent) {
-                    var selectedDescriptorKey: api.content.page.DescriptorKey = option.displayValue.getKey();
+                    var selectedDescriptorKey: DescriptorKey = option.displayValue.getKey();
                     this.imageComponent.setDescriptor(selectedDescriptorKey);
 
                     var hasDescriptorChanged = this.descriptorSelected && !this.descriptorSelected.equals(selectedDescriptorKey);
@@ -47,7 +56,7 @@ module app.contextwindow.inspect {
                     if (hasDescriptorChanged) {
                         var path = this.imageComponent.getPath();
                         var component = this.getLiveFormPanel().getLiveEditWindow().getComponentByPath(path.toString());
-                        var selectedDescriptor: api.content.page.Descriptor = option.displayValue;
+                        var selectedDescriptor: Descriptor = option.displayValue;
                         this.getLiveFormPanel().setComponentDescriptor(selectedDescriptor, path, component);
                     }
                 }
@@ -55,18 +64,18 @@ module app.contextwindow.inspect {
             this.appendChild(this.descriptorComboBox);
         }
 
-        getDescriptor(key: api.content.page.DescriptorKey): ImageDescriptor {
+        getDescriptor(key: DescriptorKey): ImageDescriptor {
             return this.imageDescriptors[key.toString()];
         }
 
-        setImageComponent(component: api.content.page.image.ImageComponent) {
+        setImageComponent(component: ImageComponent) {
             this.setComponent(component);
             this.imageComponent = component;
 
             var descriptorKey = component.getDescriptor();
             if (descriptorKey) {
                 this.descriptorComboBox.setDescriptor(descriptorKey);
-                var imageDescriptorOption: api.ui.selector.Option<ImageDescriptor> = this.descriptorComboBox.getSelectedOptions()[0];
+                var imageDescriptorOption: Option<ImageDescriptor> = this.descriptorComboBox.getSelectedOptions()[0];
                 var imageDescriptor = imageDescriptorOption.displayValue;
                 this.setupComponentForm(component, imageDescriptor);
             }

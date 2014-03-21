@@ -1,11 +1,14 @@
-module app.contextwindow.inspect {
+module app.wizard.page.contextwindow.inspect {
 
     import SiteTemplate = api.content.site.template.SiteTemplate;
     import LayoutDescriptor = api.content.page.layout.LayoutDescriptor;
+    import DescriptorKey = api.content.page.DescriptorKey;
+    import LayoutComponent = api.content.page.layout.LayoutComponent;
+    import GetLayoutDescriptorsByModulesRequest = api.content.page.layout.GetLayoutDescriptorsByModulesRequest;
 
-    export class LayoutInspectionPanel extends PageComponentInspectionPanel<api.content.page.layout.LayoutComponent, LayoutDescriptor> {
+    export class LayoutInspectionPanel extends PageComponentInspectionPanel<LayoutComponent, LayoutDescriptor> {
 
-        private layoutComponent: api.content.page.layout.LayoutComponent;
+        private layoutComponent: LayoutComponent;
         private layoutDescriptors: {
             [key: string]: LayoutDescriptor;
         };
@@ -17,7 +20,7 @@ module app.contextwindow.inspect {
         }
 
         private initElements() {
-            var getLayoutDescriptorsRequest = new api.content.page.layout.GetLayoutDescriptorsByModulesRequest(this.getSiteTemplate().getModules());
+            var getLayoutDescriptorsRequest = new GetLayoutDescriptorsByModulesRequest(this.getSiteTemplate().getModules());
             getLayoutDescriptorsRequest.sendAndParse().done((results: LayoutDescriptor[]) => {
                 results.forEach((layoutDescriptor: LayoutDescriptor) => {
                     this.layoutDescriptors[layoutDescriptor.getKey().toString()] = layoutDescriptor;
@@ -25,11 +28,11 @@ module app.contextwindow.inspect {
             });
         }
 
-        getDescriptor(key: api.content.page.DescriptorKey): LayoutDescriptor {
+        getDescriptor(key: DescriptorKey): LayoutDescriptor {
             return this.layoutDescriptors[key.toString()];
         }
 
-        setLayoutComponent(component: api.content.page.layout.LayoutComponent) {
+        setLayoutComponent(component: LayoutComponent) {
             this.setComponent(component);
             this.layoutComponent = component;
 

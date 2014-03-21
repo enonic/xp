@@ -1,4 +1,4 @@
-module app.contextwindow {
+module app.wizard.page.contextwindow {
 
     export interface EmulatorPanelConfig {
 

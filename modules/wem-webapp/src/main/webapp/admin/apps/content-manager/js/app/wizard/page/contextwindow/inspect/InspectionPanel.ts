@@ -1,6 +1,12 @@
-module app.contextwindow.inspect {
+module app.wizard.page.contextwindow.inspect {
 
+    import LiveFormPanel = app.wizard.LiveFormPanel;
     import SiteTemplate = api.content.site.template.SiteTemplate;
+    import Content = api.content.Content;
+    import PageTemplate = api.content.page.PageTemplate;
+    import PageDescriptor = api.content.page.PageDescriptor;
+    import Region = api.content.page.region.Region;
+    import PageComponent = api.content.page.PageComponent
     import ImageComponent = api.content.page.image.ImageComponent
     import PartComponent = api.content.page.part.PartComponent;
     import LayoutComponent = api.content.page.layout.LayoutComponent;
@@ -9,7 +15,7 @@ module app.contextwindow.inspect {
 
         liveEditWindow:any;
         siteTemplate:SiteTemplate;
-        liveFormPanel:app.wizard.LiveFormPanel;
+        liveFormPanel:LiveFormPanel;
     }
 
     export class InspectionPanel extends api.ui.DeckPanel {
@@ -21,7 +27,7 @@ module app.contextwindow.inspect {
         private contentInspectionPanel: ContentInspectionPanel;
         private pageInspectionPanel: PageInspectionPanel;
         private regionInspectionPanel: RegionInspectionPanel;
-        private liveFormPanel: app.wizard.LiveFormPanel;
+        private liveFormPanel: LiveFormPanel;
 
         constructor(config: InspectionPanelConfig) {
             super();
@@ -53,23 +59,23 @@ module app.contextwindow.inspect {
             this.showInspectionPanel(this.noSelectionPanel);
         }
 
-        public inspectPage(page: api.content.Content, pageTemplate: api.content.page.PageTemplate,
-                           pageDescriptor: api.content.page.PageDescriptor) {
+        public inspectPage(page: Content, pageTemplate: PageTemplate,
+                           pageDescriptor: PageDescriptor) {
             this.pageInspectionPanel.setPage(page, pageTemplate, pageDescriptor);
             this.showInspectionPanel(this.pageInspectionPanel);
         }
 
-        public inspectRegion(region: api.content.page.region.Region) {
+        public inspectRegion(region: Region) {
             this.regionInspectionPanel.setRegion(region);
             this.showInspectionPanel(this.regionInspectionPanel);
         }
 
-        public inspectContent(content: api.content.Content) {
+        public inspectContent(content: Content) {
             this.contentInspectionPanel.setContent(content);
             this.showInspectionPanel(this.contentInspectionPanel);
         }
 
-        public inspectComponent(component: api.content.page.PageComponent) {
+        public inspectComponent(component: PageComponent) {
             if (component instanceof ImageComponent) {
                 this.imageInspectionPanel.setImageComponent(<ImageComponent>component);
                 this.showInspectionPanel(this.imageInspectionPanel);

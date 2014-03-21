@@ -1,4 +1,4 @@
-module app.contextwindow.insert {
+module app.wizard.page.contextwindow.insert {
 
     export interface InsertablesGridOptions {
         draggableRows?:boolean;

@@ -1,14 +1,16 @@
-module app.contextwindow.inspect {
+module app.wizard.page.contextwindow.inspect {
+
+    import Region = api.content.page.region.Region;
 
     export class RegionInspectionPanel extends BaseInspectionPanel {
 
-        private region: api.content.page.region.Region;
+        private region: Region;
 
         constructor() {
             super("live-edit-font-icon-region");
         }
 
-        setRegion(region: api.content.page.region.Region) {
+        setRegion(region: Region) {
             this.region = region;
             if (region) {
                 this.setMainName(region.getName() );

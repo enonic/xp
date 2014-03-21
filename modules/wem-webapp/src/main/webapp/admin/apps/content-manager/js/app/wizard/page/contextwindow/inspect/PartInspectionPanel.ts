@@ -1,11 +1,14 @@
-module app.contextwindow.inspect {
+module app.wizard.page.contextwindow.inspect {
 
     import SiteTemplate = api.content.site.template.SiteTemplate;
     import PartDescriptor = api.content.page.part.PartDescriptor;
+    import GetPartDescriptorsByModulesRequest = api.content.page.part.GetPartDescriptorsByModulesRequest;
+    import PartComponent = api.content.page.part.PartComponent;
+    import DescriptorKey = api.content.page.DescriptorKey;
 
-    export class PartInspectionPanel extends PageComponentInspectionPanel<api.content.page.part.PartComponent, PartDescriptor> {
+    export class PartInspectionPanel extends PageComponentInspectionPanel<PartComponent, PartDescriptor> {
 
-        private partComponent: api.content.page.part.PartComponent;
+        private partComponent: PartComponent;
         private partDescriptors: {
             [key: string]: PartDescriptor;
         };
@@ -17,7 +20,7 @@ module app.contextwindow.inspect {
         }
 
         private initElements() {
-            var getPartDescriptorsRequest = new api.content.page.part.GetPartDescriptorsByModulesRequest(this.getSiteTemplate().getModules());
+            var getPartDescriptorsRequest = new GetPartDescriptorsByModulesRequest(this.getSiteTemplate().getModules());
             getPartDescriptorsRequest.sendAndParse().done((results: PartDescriptor[]) => {
                 results.forEach((partDescriptor: PartDescriptor) => {
                     this.partDescriptors[partDescriptor.getKey().toString()] = partDescriptor;
@@ -25,11 +28,11 @@ module app.contextwindow.inspect {
             });
         }
 
-        getDescriptor(key: api.content.page.DescriptorKey): PartDescriptor {
+        getDescriptor(key: DescriptorKey): PartDescriptor {
             return this.partDescriptors[key.toString()];
         }
         
-        setPartComponent(component: api.content.page.part.PartComponent) {
+        setPartComponent(component: PartComponent) {
             this.setComponent(component);
             this.partComponent = component;
 

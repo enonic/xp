@@ -1,4 +1,4 @@
-module app.contextwindow.inspect {
+module app.wizard.page.contextwindow.inspect {
 
     export class BaseInspectionPanel extends api.ui.Panel {
 

@@ -1,4 +1,5 @@
-module app.contextwindow {
+module app.wizard.page.contextwindow {
+
     export class EmulatorGrid extends api.ui.grid.Grid<any> {
 
         constructor(dataView:api.ui.grid.DataView<any>) {

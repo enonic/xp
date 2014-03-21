@@ -1,8 +1,15 @@
-module app.contextwindow.inspect {
+module app.wizard.page.contextwindow.inspect {
+
+    import SiteTemplate = api.content.site.template.SiteTemplate;
+    import Content = api.content.Content;
+    import PageTemplate = api.content.page.PageTemplate;
+    import PageTemplateSummary = api.content.page.PageTemplateSummary;
+    import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
+    import PageDescriptor = api.content.page.PageDescriptor;
 
     export class PageInspectionPanel extends BaseInspectionPanel {
 
-        private page: api.content.Content;
+        private page: Content;
 
         private formView: api.form.FormView;
         private pageSelectorEl: api.dom.Element;
@@ -15,8 +22,8 @@ module app.contextwindow.inspect {
             this.currentPageTemplate = null;
         }
 
-        setPage(pageContent: api.content.Content, pageTemplate: api.content.page.PageTemplate,
-                pageDescriptor: api.content.page.PageDescriptor) {
+        setPage(pageContent: Content, pageTemplate: PageTemplate,
+                pageDescriptor: PageDescriptor) {
             this.page = pageContent;
 
 
@@ -24,8 +31,8 @@ module app.contextwindow.inspect {
             this.setupForm(pageContent, pageTemplate, pageDescriptor);
         }
 
-        private setupPageTemplateSelector(pageContent: api.content.Content, pageTemplate: api.content.page.PageTemplate,
-                                          pageDescriptor: api.content.page.PageDescriptor) {
+        private setupPageTemplateSelector(pageContent: Content, pageTemplate: PageTemplate,
+                                          pageDescriptor: PageDescriptor) {
             if (this.pageSelectorEl) {
                 this.removeChild(this.pageSelectorEl);
                 this.currentPageTemplate = null;
@@ -37,7 +44,7 @@ module app.contextwindow.inspect {
             var containerForm = new api.ui.form.Form('form-view');
             containerForm.setDoOffset(false);
             var pageTemplateSelector = new app.wizard.page.PageTemplateSelector(containerForm);
-            pageTemplateSelector.addPageTemplateChangedListener((selectedPageTemplate: api.content.page.PageTemplateSummary) => {
+            pageTemplateSelector.addPageTemplateChangedListener((selectedPageTemplate: PageTemplateSummary) => {
                 if (!selectedPageTemplate || !selectedPageTemplate.getKey().equals(this.currentPageTemplate)) {
                     this.handlePageTemplateChanged(selectedPageTemplate, pageContent);
                 }
@@ -50,8 +57,8 @@ module app.contextwindow.inspect {
             this.appendChild(containerForm);
         }
 
-        private setupForm(pageContent: api.content.Content, pageTemplate: api.content.page.PageTemplate,
-                          pageDescriptor: api.content.page.PageDescriptor) {
+        private setupForm(pageContent: Content, pageTemplate: PageTemplate,
+                          pageDescriptor: PageDescriptor) {
             if (this.formView) {
                 this.removeChild(this.formView);
             }
@@ -73,19 +80,19 @@ module app.contextwindow.inspect {
             this.appendChild(this.formView);
         }
 
-        private handlePageTemplateChanged(selectedPageTemplate: api.content.page.PageTemplateSummary, pageContent: api.content.Content) {
+        private handlePageTemplateChanged(selectedPageTemplate: PageTemplateSummary, pageContent: Content) {
             this.removeChild(this.formView);
             this.formView = null;
             this.currentPageTemplate = null;
 
             if (selectedPageTemplate) {
                 var siteTemplateKey = pageContent.getSite().getTemplateKey();
-                var getPageTemplatePromise: Q.Promise<api.content.page.PageTemplate> = new api.content.page.GetPageTemplateByKeyRequest(selectedPageTemplate.getKey()).
+                var getPageTemplatePromise: Q.Promise<PageTemplate> = new GetPageTemplateByKeyRequest(selectedPageTemplate.getKey()).
                     setSiteTemplateKey(siteTemplateKey).sendAndParse();
 
-                getPageTemplatePromise.done((pageTemplate: api.content.page.PageTemplate) => {
+                getPageTemplatePromise.done((pageTemplate: PageTemplate) => {
                     new api.content.page.GetPageDescriptorByKeyRequest(pageTemplate.getDescriptorKey()).sendAndParse().
-                        done((pageDescriptor: api.content.page.PageDescriptor) => {
+                        done((pageDescriptor: PageDescriptor) => {
                             this.setupPageTemplateSelector(pageContent, pageTemplate, pageDescriptor);
                             this.setupForm(pageContent, pageTemplate, pageDescriptor);
                         });

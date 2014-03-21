@@ -1,31 +1,53 @@
 module app.wizard {
 
+    import ModuleKey = api.module.ModuleKey;
+    import SiteTemplate = api.content.site.template.SiteTemplate;
+    import PageTemplate = api.content.page.PageTemplate;
+    import Content = api.content.Content;
     import ComponentPath = api.content.page.ComponentPath;
+    import PageRegions = api.content.page.PageRegions;
+    import RegionPath = api.content.page.RegionPath;
+
+    import PageDescriptor = api.content.page.PageDescriptor;
+    import RegionDescriptor = api.content.page.region.RegionDescriptor;
+    import Descriptor = api.content.page.Descriptor;
+    import PartDescriptor = api.content.page.part.PartDescriptor;
+    import ImageDescriptor = api.content.page.image.ImageDescriptor;
+    import LayoutDescriptor = api.content.page.layout.LayoutDescriptor;
+    import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
+    import GetPartDescriptorsByModulesRequest = api.content.page.part.GetPartDescriptorsByModulesRequest;
+    import GetImageDescriptorsByModulesRequest = api.content.page.image.GetImageDescriptorsByModulesRequest;
+    import GetLayoutDescriptorsByModulesRequest = api.content.page.layout.GetLayoutDescriptorsByModulesRequest;
+
+    import PageComponentBuilder = api.content.page.PageComponentBuilder;
+    import PageComponent = api.content.page.PageComponent;
+    import LayoutComponent = api.content.page.layout.LayoutComponent;
+    import PartComponentBuilder = api.content.page.part.PartComponentBuilder;
     import ImageComponent = api.content.page.image.ImageComponent;
     import ImageComponentBuilder = api.content.page.image.ImageComponentBuilder;
-    import PartComponentBuilder = api.content.page.part.PartComponentBuilder;
     import LayoutComponentBuilder = api.content.page.layout.LayoutComponentBuilder;
-    import PageComponentBuilder = api.content.page.PageComponentBuilder;
+
+    import ContextWindow = app.wizard.page.contextwindow.ContextWindow;
 
 
     export interface LiveFormPanelConfig {
 
-        siteTemplate:api.content.site.template.SiteTemplate;
+        siteTemplate:SiteTemplate;
         contentWizardPanel:ContentWizardPanel;
     }
 
     export class LiveFormPanel extends api.ui.Panel {
 
-        private siteTemplate: api.content.site.template.SiteTemplate;
+        private siteTemplate: SiteTemplate;
         private initialized: boolean;
-        private defaultImageDescriptor: api.content.page.image.ImageDescriptor;
-        private defaultPartDescriptor: api.content.page.part.PartDescriptor;
-        private defaultLayoutDescriptor: api.content.page.layout.LayoutDescriptor;
+        private defaultImageDescriptor: ImageDescriptor;
+        private defaultPartDescriptor: PartDescriptor;
+        private defaultLayoutDescriptor: LayoutDescriptor;
 
-        private pageContent: api.content.Content;
-        private pageTemplate: api.content.page.PageTemplate;
-        private pageRegions: api.content.page.PageRegions;
-        private pageDescriptor: api.content.page.PageDescriptor;
+        private pageContent: Content;
+        private pageTemplate: PageTemplate;
+        private pageRegions: PageRegions;
+        private pageDescriptor: PageDescriptor;
 
         private pageNeedsReload: boolean;
         private pageLoading: boolean;
@@ -35,7 +57,7 @@ module app.wizard {
         private baseUrl: string;
 
         private pageUrl: string;
-        private contextWindow: app.contextwindow.ContextWindow;
+        private contextWindow: ContextWindow;
         private liveEditWindow: any;
         private liveEditJQuery: JQueryStatic;
 
@@ -76,15 +98,15 @@ module app.wizard {
                 var defaultDescriptorsResolved: Q.Promise<any>[] = [defaultImageDescrResolved, defaultPartDescrResolved,
                     defaultLayoutDescrResolved];
 
-                defaultImageDescrResolved.done((imageDescriptor: api.content.page.image.ImageDescriptor)=> {
+                defaultImageDescrResolved.done((imageDescriptor: ImageDescriptor)=> {
                     this.defaultImageDescriptor = imageDescriptor;
                 });
 
-                defaultPartDescrResolved.done((partDescriptor: api.content.page.part.PartDescriptor)=> {
+                defaultPartDescrResolved.done((partDescriptor: PartDescriptor)=> {
                     this.defaultPartDescriptor = partDescriptor;
                 });
 
-                defaultLayoutDescrResolved.done((layoutDescriptor: api.content.page.layout.LayoutDescriptor)=> {
+                defaultLayoutDescrResolved.done((layoutDescriptor: LayoutDescriptor)=> {
                     this.defaultLayoutDescriptor = layoutDescriptor;
                 });
 
@@ -158,7 +180,7 @@ module app.wizard {
             return deferred.promise;
         }
 
-        setPage(content: api.content.Content, pageTemplate: api.content.page.PageTemplate) {
+        setPage(content: Content, pageTemplate: PageTemplate) {
 
             console.log("LiveFormPanel.setPage() ...");
 
@@ -203,15 +225,15 @@ module app.wizard {
                 }).done();
         }
 
-        private resolvePageDescriptor(pageTemplate: api.content.page.PageTemplate) {
-            new api.content.page.GetPageDescriptorByKeyRequest(pageTemplate.getDescriptorKey()).
+        private resolvePageDescriptor(pageTemplate: PageTemplate) {
+            new GetPageDescriptorByKeyRequest(pageTemplate.getDescriptorKey()).
                 sendAndParse().
-                done((pageDescriptor: api.content.page.PageDescriptor) => {
+                done((pageDescriptor: PageDescriptor) => {
                     this.pageDescriptor = pageDescriptor;
                 });
         }
 
-        private resolvePageRegions(): api.content.page.PageRegions {
+        private resolvePageRegions(): PageRegions {
 
             var page = this.pageContent.getPage();
             if (page && page.hasRegions()) {
@@ -249,12 +271,12 @@ module app.wizard {
             this.liveEditListen();
         }
 
-        private createContextWindow(): app.contextwindow.ContextWindow {
+        private createContextWindow(): ContextWindow {
 
             this.liveEditWindow = this.frame.getHTMLElement()["contentWindow"];
             this.liveEditJQuery = <JQueryStatic>this.liveEditWindow.$liveEdit;
 
-            var contextWindow = new app.contextwindow.ContextWindow({
+            var contextWindow = new ContextWindow({
                 liveEditIFrame: this.frame,
                 siteTemplate: this.siteTemplate,
                 liveEditWindow: this.liveEditWindow,
@@ -266,28 +288,28 @@ module app.wizard {
         }
 
 
-        public getRegions(): api.content.page.PageRegions {
+        public getRegions(): PageRegions {
 
             return this.pageRegions;
         }
 
-        getDefaultImageDescriptor(): api.content.page.image.ImageDescriptor {
+        getDefaultImageDescriptor(): ImageDescriptor {
             return this.defaultImageDescriptor;
         }
 
-        getDefaultPartDescriptor(): api.content.page.part.PartDescriptor {
+        getDefaultPartDescriptor(): PartDescriptor {
             return this.defaultPartDescriptor;
         }
 
-        getDefaultLayoutDescriptor(): api.content.page.layout.LayoutDescriptor {
+        getDefaultLayoutDescriptor(): LayoutDescriptor {
             return this.defaultLayoutDescriptor;
         }
 
-        private resolveDefaultImageDescriptor(moduleKeys: api.module.ModuleKey[]): Q.Promise<api.content.page.image.ImageDescriptor> {
+        private resolveDefaultImageDescriptor(moduleKeys: ModuleKey[]): Q.Promise<ImageDescriptor> {
 
-            var d = Q.defer<api.content.page.image.ImageDescriptor>();
-            new api.content.page.image.GetImageDescriptorsByModulesRequest(moduleKeys).
-                sendAndParse().done((imageDescriptors: api.content.page.image.ImageDescriptor[]) => {
+            var d = Q.defer<ImageDescriptor>();
+            new GetImageDescriptorsByModulesRequest(moduleKeys).
+                sendAndParse().done((imageDescriptors: ImageDescriptor[]) => {
                     if (imageDescriptors.length == 0) {
                         d.resolve(null);
                     }
@@ -298,11 +320,11 @@ module app.wizard {
             return d.promise;
         }
 
-        private resolveDefaultPartDescriptor(moduleKeys: api.module.ModuleKey[]): Q.Promise<api.content.page.part.PartDescriptor> {
+        private resolveDefaultPartDescriptor(moduleKeys: ModuleKey[]): Q.Promise<PartDescriptor> {
 
-            var d = Q.defer<api.content.page.part.PartDescriptor>();
-            new api.content.page.part.GetPartDescriptorsByModulesRequest(moduleKeys).
-                sendAndParse().done((partDescriptors: api.content.page.part.PartDescriptor[]) => {
+            var d = Q.defer<PartDescriptor>();
+            new GetPartDescriptorsByModulesRequest(moduleKeys).
+                sendAndParse().done((partDescriptors: PartDescriptor[]) => {
                     if (partDescriptors.length == 0) {
                         d.resolve(null);
                     }
@@ -313,11 +335,11 @@ module app.wizard {
             return d.promise;
         }
 
-        private resolveDefaultLayoutDescriptor(moduleKeys: api.module.ModuleKey[]): Q.Promise<api.content.page.layout.LayoutDescriptor> {
+        private resolveDefaultLayoutDescriptor(moduleKeys: ModuleKey[]): Q.Promise<LayoutDescriptor> {
 
-            var d = Q.defer<api.content.page.layout.LayoutDescriptor>();
-            new api.content.page.layout.GetLayoutDescriptorsByModulesRequest(moduleKeys).
-                sendAndParse().done((layoutDescriptors: api.content.page.layout.LayoutDescriptor[]) => {
+            var d = Q.defer<LayoutDescriptor>();
+            new GetLayoutDescriptorsByModulesRequest(moduleKeys).
+                sendAndParse().done((layoutDescriptors: LayoutDescriptor[]) => {
                     if (layoutDescriptors.length == 0) {
                         d.resolve(null);
                     }
@@ -329,13 +351,13 @@ module app.wizard {
         }
 
         private onComponentSelected(pathAsString: string) {
-            var componentPath = api.content.page.ComponentPath.fromString(pathAsString);
+            var componentPath = ComponentPath.fromString(pathAsString);
             var component = this.pageRegions.getComponent(componentPath);
             this.contextWindow.inspectComponent(component);
         }
 
         private onRegionSelected(pathAsString: string) {
-            var regionPath = api.content.page.RegionPath.fromString(pathAsString);
+            var regionPath = RegionPath.fromString(pathAsString);
             var region = this.pageRegions.getRegionByPath(regionPath);
             this.contextWindow.inspectRegion(region);
         }
@@ -350,11 +372,11 @@ module app.wizard {
         }
 
         private onComponentReset(pathAsString: string) {
-            var componentPath = api.content.page.ComponentPath.fromString(pathAsString);
+            var componentPath = ComponentPath.fromString(pathAsString);
             //this.pageRegions.removeComponent(componentPath);
         }
 
-        private loadComponent(componentPath: api.content.page.ComponentPath, componentPlaceholder: api.dom.Element) {
+        private loadComponent(componentPath: ComponentPath, componentPlaceholder: api.dom.Element) {
             $.ajax({
                 url: api.util.getComponentUri(this.pageContent.getContentId().toString(), componentPath.toString(), true),
                 method: 'GET',
@@ -373,7 +395,7 @@ module app.wizard {
             });
         }
 
-        setComponentDescriptor(descriptor: api.content.page.Descriptor, componentPath: api.content.page.ComponentPath,
+        setComponentDescriptor(descriptor: Descriptor, componentPath: ComponentPath,
                                componentPlaceholder) {
             var component = this.pageRegions.getComponent(componentPath);
             if (!component || !descriptor) {
@@ -386,11 +408,11 @@ module app.wizard {
             component.setDescriptor(descriptor.getKey());
 
             // use of "instanceof" does not work because the descriptor object has been created in another frame
-            var isLayoutDescriptor = (descriptor instanceof api.content.page.layout.LayoutDescriptor) ||
+            var isLayoutDescriptor = (descriptor instanceof LayoutDescriptor) ||
                                      (<any>descriptor).constructor.name === 'LayoutDescriptor';
             if (isLayoutDescriptor) {
-                var layoutDescriptor = <api.content.page.layout.LayoutDescriptor> descriptor;
-                var layoutComponent = <api.content.page.layout.LayoutComponent>component;
+                var layoutDescriptor = <LayoutDescriptor> descriptor;
+                var layoutComponent = <LayoutComponent>component;
                 this.addLayoutRegions(layoutComponent, layoutDescriptor);
             }
 
@@ -401,12 +423,12 @@ module app.wizard {
             });
         }
 
-        private addLayoutRegions(layoutComponent: api.content.page.layout.LayoutComponent,
-                                 layoutDescriptor: api.content.page.layout.LayoutDescriptor) {
+        private addLayoutRegions(layoutComponent: LayoutComponent,
+                                 layoutDescriptor: LayoutDescriptor) {
             var layoutRegionsBuilder = new api.content.page.layout.LayoutRegionsBuilder();
-            layoutDescriptor.getRegions().forEach(function (regionDescriptor: api.content.page.region.RegionDescriptor) {
+            layoutDescriptor.getRegions().forEach(function (regionDescriptor: RegionDescriptor) {
 
-                var regionPath = new api.content.page.RegionPath(layoutComponent.getPath(), regionDescriptor.getName());
+                var regionPath = new RegionPath(layoutComponent.getPath(), regionDescriptor.getName());
                 var layoutRegion = new api.content.page.region.RegionBuilder().
                     setName(regionDescriptor.getName()).
                     setPath(regionPath).
@@ -454,7 +476,7 @@ module app.wizard {
             this.liveEditJQuery(this.liveEditWindow).on('componentRemoved.liveEdit', (event, component?) => {
                 this.contextWindow.show();
                 if (component && component.getComponentPath()) {
-                    this.pageRegions.removeComponent(api.content.page.ComponentPath.fromString(component.getComponentPath()));
+                    this.pageRegions.removeComponent(ComponentPath.fromString(component.getComponentPath()));
                     this.contextWindow.clearSelection();
                 }
             });
@@ -479,9 +501,9 @@ module app.wizard {
             this.liveEditJQuery(this.liveEditWindow).on('sortableUpdate.liveEdit', (event, componentEl?) => {
 
                 if (componentEl) {
-                    var componentPath = api.content.page.ComponentPath.fromString(componentEl.getComponentPath());
-                    var afterComponentPath = api.content.page.ComponentPath.fromString(componentEl.getPrecedingComponentPath());
-                    var regionPath = api.content.page.RegionPath.fromString(componentEl.getRegionName());
+                    var componentPath = ComponentPath.fromString(componentEl.getComponentPath());
+                    var afterComponentPath = ComponentPath.fromString(componentEl.getPrecedingComponentPath());
+                    var regionPath = RegionPath.fromString(componentEl.getRegionName());
                     var newPath = this.pageRegions.moveComponent(componentPath, regionPath, afterComponentPath);
                     if (newPath) {
                         componentEl.setComponentPath(newPath.toString());
@@ -493,17 +515,17 @@ module app.wizard {
             this.liveEditJQuery(this.liveEditWindow).on('componentAdded.liveEdit',
                 (event, componentEl?, regionPathAsString?: string, componentPathToAddAfterAsString?: string) => {
                     var componentType = componentEl.getComponentType().getName();
-                    var regionPath = api.content.page.RegionPath.fromString(regionPathAsString);
+                    var regionPath = RegionPath.fromString(regionPathAsString);
 
                     var componentName = this.pageRegions.ensureUniqueComponentName(regionPath,
                         new api.content.page.ComponentName(api.util.capitalize(componentType)));
 
-                    var componentToAddAfter: api.content.page.ComponentPath = null;
+                    var componentToAddAfter: ComponentPath = null;
                     if (componentPathToAddAfterAsString) {
-                        componentToAddAfter = api.content.page.ComponentPath.fromString(componentPathToAddAfterAsString);
+                        componentToAddAfter = ComponentPath.fromString(componentPathToAddAfterAsString);
                     }
 
-                    var pageComponent: PageComponentBuilder<api.content.page.PageComponent>;
+                    var pageComponent: PageComponentBuilder<PageComponent>;
                     switch (componentType) {
                     case "image":
                         pageComponent = new ImageComponentBuilder();
@@ -553,7 +575,7 @@ module app.wizard {
                 });
 
             this.liveEditJQuery(this.liveEditWindow).on('pageComponentSetDescriptor.liveEdit',
-                (event, descriptor?: api.content.page.Descriptor, componentPathAsString?: string, componentPlaceholder?) => {
+                (event, descriptor?: Descriptor, componentPathAsString?: string, componentPlaceholder?) => {
 
                     var componentPath = ComponentPath.fromString(componentPathAsString);
                     this.setComponentDescriptor(descriptor, componentPath, componentPlaceholder);

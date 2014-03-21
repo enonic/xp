@@ -1,8 +1,14 @@
-module app.contextwindow {
+module app.wizard.page.contextwindow {
 
+    import LiveFormPanel = app.wizard.LiveFormPanel;
     import ComponentPath = api.content.page.ComponentPath;
-    import ImageComponent = api.content.page.image.ImageComponent;
+    import Content = api.content.Content;
     import PageTemplateKey = api.content.page.PageTemplateKey;
+    import PageTemplate = api.content.page.PageTemplate;
+    import PageDescriptor = api.content.page.PageDescriptor;
+    import PageComponent = api.content.page.PageComponent;
+    import Region = api.content.page.region.Region;
+    import ImageComponent = api.content.page.image.ImageComponent;
     import ImageComponentBuilder = api.content.page.image.ImageComponentBuilder;
 
     export interface ContextWindowConfig {
@@ -11,7 +17,7 @@ module app.contextwindow {
         liveEditWindow: any;
         liveEditJQuery: JQueryStatic;
         siteTemplate:api.content.site.template.SiteTemplate;
-        liveFormPanel:app.wizard.LiveFormPanel;
+        liveFormPanel:LiveFormPanel;
     }
 
     export class ContextWindow extends api.ui.DockedWindow {
@@ -23,7 +29,7 @@ module app.contextwindow {
         private liveEditJQuery: JQueryStatic;
         private dragMask: api.ui.DragMask;
         private liveEditIFrame: api.dom.IFrameEl;
-        private liveFormPanel: app.wizard.LiveFormPanel;
+        private liveFormPanel: LiveFormPanel;
 
         constructor(config: ContextWindowConfig) {
             this.liveEditIFrame = config.liveEditIFrame;
@@ -80,22 +86,22 @@ module app.contextwindow {
             api.dom.Body.get().appendChild(this.dragMask);
         }
 
-        public inspectComponent(component: api.content.page.PageComponent) {
+        public inspectComponent(component: PageComponent) {
             this.inspectionPanel.inspectComponent(component);
             this.selectPanel(this.inspectionPanel);
         }
 
-        public inspectPage(page: api.content.Content, pageTemplate: api.content.page.PageTemplate, pageDescriptor: api.content.page.PageDescriptor) {
+        public inspectPage(page: Content, pageTemplate: PageTemplate, pageDescriptor: PageDescriptor) {
             this.inspectionPanel.inspectPage(page, pageTemplate, pageDescriptor);
             this.selectPanel(this.inspectionPanel);
         }
 
-        public inspectRegion(region: api.content.page.region.Region) {
+        public inspectRegion(region: Region) {
             this.inspectionPanel.inspectRegion(region);
             this.selectPanel(this.inspectionPanel);
         }
 
-        public inspectContent(content: api.content.Content) {
+        public inspectContent(content: Content) {
             this.inspectionPanel.inspectContent(content);
             this.selectPanel(this.inspectionPanel);
         }
