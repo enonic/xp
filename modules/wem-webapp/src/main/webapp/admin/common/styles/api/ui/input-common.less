@@ -6,3 +6,21 @@
   font-family: @admin-font-family;
   font-size: 15px;
 }
+
+.input-error(@color: @admin-input-red) {
+  border: 1px solid @color;
+
+  &:focus {
+    box-shadow: 0px 0px 5px @color;
+  }
+}
+
+.input-glow(@color: @admin-input-blue) {
+  &:hover {
+    border: 1px solid @color;
+  }
+  &:focus {
+    box-shadow: 0px 0px 5px @color;
+    border: 1px solid @color;
+  }
+}
