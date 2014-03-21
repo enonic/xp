@@ -11,7 +11,7 @@ module app.wizard.page {
         constructor() {
             super();
 
-            this.defaultPageTemplateIconUrl = api.util.getAdminUri('common/images/icons/icoMoon/32x32/newspaper.png');
+            this.defaultPageTemplateIconUrl = api.util.getAdminUri('common/images/icons/icoMoon/32x32/wand.png');
             this.pageTemplateIconUrl = api.util.getAdminUri('common/images/icons/icoMoon/32x32/newspaper.png');
 
             this.namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
