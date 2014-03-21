@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.schema.content.CreateContentType;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.schema.content.ContentType;
@@ -29,7 +28,6 @@ public class CreateContentTypeHandlerTest
     public void setUp()
         throws Exception
     {
-        super.client = Mockito.mock( Client.class );
         super.initialize();
 
         contentTypeDao = Mockito.mock( ContentTypeDao.class );

@@ -6,7 +6,6 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.command.content.GetContentByIds;
-import com.enonic.wem.api.command.entity.GetNodesByIds;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.Contents;
@@ -30,9 +29,8 @@ public class GetContentByIdsService
 
     public Contents execute()
     {
-        final GetNodesByIds getNodesByIdsCommand = new GetNodesByIds( getAsEntityIds( command.getIds() ) );
-
-        final Nodes nodes = new GetNodesByIdsService( session, getNodesByIdsCommand ).execute();
+        final EntityIds entityIds = getAsEntityIds( command.getIds() );
+        final Nodes nodes = new GetNodesByIdsService( session, entityIds ).execute();
 
         return translator.fromNodes( nodes );
     }

@@ -2,30 +2,30 @@ package com.enonic.wem.core.entity;
 
 import javax.jcr.Session;
 
-import com.enonic.wem.api.command.entity.DeleteNodeByPath;
 import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.core.index.IndexService;
 
 public class DeleteNodeByPathService
-    extends NodeService
+    extends AbstractNodeService
 {
     private IndexService indexService;
 
-    private DeleteNodeByPath command;
+    private NodePath nodePath;
 
-    public DeleteNodeByPathService( final Session session, final IndexService indexService, final DeleteNodeByPath command )
+    public DeleteNodeByPathService( final Session session, final IndexService indexService, final NodePath nodePath )
     {
         super( session );
         this.indexService = indexService;
-        this.command = command;
+        this.nodePath = nodePath;
     }
 
     public Node execute()
         throws Exception
     {
-        final Node nodeToDelete = nodeJcrDao.getNodeByPath( command.getPath() );
+        final Node nodeToDelete = nodeJcrDao.getNodeByPath( nodePath );
 
-        nodeJcrDao.deleteNodeByPath( command.getPath() );
+        nodeJcrDao.deleteNodeByPath( nodePath );
         session.save();
 
         indexService.deleteEntity( nodeToDelete.id() );

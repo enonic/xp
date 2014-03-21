@@ -4,7 +4,6 @@ import com.enonic.wem.api.command.content.ContentCommands;
 import com.enonic.wem.api.command.content.attachment.AttachmentCommands;
 import com.enonic.wem.api.command.content.blob.BlobCommands;
 import com.enonic.wem.api.command.content.site.SiteCommands;
-import com.enonic.wem.api.command.entity.NodeCommands;
 import com.enonic.wem.api.command.module.ModuleCommands;
 import com.enonic.wem.api.command.relationship.RelationshipCommands;
 import com.enonic.wem.api.command.resource.ResourceCommands;
@@ -16,8 +15,6 @@ import com.enonic.wem.api.content.page.PageCommands;
 
 public final class Commands
 {
-    private static final NodeCommands NODE_COMMANDS = new NodeCommands();
-
     private static final ContentCommands CONTENT_COMMANDS = new ContentCommands();
 
     private static final SiteCommands SITE_COMMANDS = new SiteCommands();
@@ -44,11 +41,6 @@ public final class Commands
 
     private Commands()
     {
-    }
-
-    public static NodeCommands node()
-    {
-        return NODE_COMMANDS;
     }
 
     public static ContentCommands content()

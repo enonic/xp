@@ -2,22 +2,22 @@ package com.enonic.wem.core.entity;
 
 import javax.jcr.Session;
 
-import com.enonic.wem.api.command.entity.GetNodeById;
+import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
 
 public class GetNodeByIdService
-    extends NodeService
+    extends AbstractNodeService
 {
-    private final GetNodeById getNodeById;
+    private final EntityId entityId;
 
-    public GetNodeByIdService( final Session session, final GetNodeById command )
+    public GetNodeByIdService( final Session session, final EntityId entityId )
     {
         super( session );
-        this.getNodeById = command;
+        this.entityId = entityId;
     }
 
     public Node execute()
     {
-        return nodeJcrDao.getNodeById( getNodeById.getId() );
+        return nodeJcrDao.getNodeById( this.entityId );
     }
 }

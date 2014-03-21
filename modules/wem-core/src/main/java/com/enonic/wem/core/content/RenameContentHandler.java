@@ -4,7 +4,6 @@ import javax.inject.Inject;
 
 import com.enonic.wem.api.command.content.GetContentById;
 import com.enonic.wem.api.command.content.RenameContent;
-import com.enonic.wem.api.command.entity.RenameNode;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.NodeName;
@@ -25,9 +24,9 @@ public class RenameContentHandler
     {
 
         final EntityId entityId = EntityId.from( command.getContentId() );
-        final RenameNode renameNodeCommand = new RenameNode( entityId, NodeName.from( command.getNewName().toString() ) );
+        final NodeName nodeName = NodeName.from( command.getNewName().toString() );
 
-        new RenameNodeService( this.context.getJcrSession(), this.indexService, renameNodeCommand ).execute();
+        new RenameNodeService( this.context.getJcrSession(), this.indexService, entityId, nodeName ).execute();
         this.context.getJcrSession().save();
 
         GetContentById getContentByIdCommand = new GetContentById( command.getContentId() );

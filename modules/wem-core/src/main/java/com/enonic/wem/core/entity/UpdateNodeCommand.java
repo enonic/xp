@@ -1,65 +1,64 @@
 package com.enonic.wem.core.entity;
 
 
-import javax.inject.Inject;
 import javax.jcr.Session;
 
-import com.enonic.wem.api.command.entity.UpdateNode;
 import com.enonic.wem.api.command.entity.UpdateNodeResult;
 import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.core.command.CommandContext;
-import com.enonic.wem.core.command.CommandHandler;
+import com.enonic.wem.api.entity.UpdateNodeParams;
 import com.enonic.wem.core.entity.dao.NodeJcrDao;
 import com.enonic.wem.core.entity.dao.UpdateNodeArgs;
 import com.enonic.wem.core.index.IndexService;
+import com.enonic.wem.util.Exceptions;
 
 import static com.enonic.wem.core.entity.dao.UpdateNodeArgs.newUpdateItemArgs;
 
-public class UpdateNodeHandler
-    extends CommandHandler<UpdateNode>
+public class UpdateNodeCommand
 {
-
     private IndexService indexService;
 
-    @Inject
-    public void setIndexService( final IndexService indexService )
-    {
-        this.indexService = indexService;
-    }
+    private Session session;
 
-    public UpdateNodeHandler()
-    {
-    }
+    private UpdateNodeParams params;
 
-    public UpdateNodeHandler( final Builder builder )
+    private UpdateNodeCommand( final Builder builder )
     {
         this.indexService = builder.indexService;
-        this.context = builder.context;
-        this.command = builder.command;
+        this.session = builder.session;
+        this.params = builder.params;
     }
 
-    @Override
-    public void handle()
+    public UpdateNodeResult execute()
+    {
+        this.params.validate();
+
+        try
+        {
+            return doExecute();
+        }
+        catch ( final Exception e )
+        {
+            throw Exceptions.newRutime( "Error updating node" ).withCause( e );
+        }
+    }
+
+    private UpdateNodeResult doExecute()
         throws Exception
     {
-        final Session session = context.getJcrSession();
-
         final NodeJcrDao nodeJcrDao = new NodeJcrDao( session );
+        final Node beforeChange = nodeJcrDao.getNodeById( params.getId() );
 
-        final Node beforeChange = nodeJcrDao.getNodeById( command.getId() );
-
-        final Node.EditBuilder editBuilder = command.getEditor().edit( beforeChange );
+        final Node.EditBuilder editBuilder = params.getEditor().edit( beforeChange );
         if ( !editBuilder.isChanges() )
         {
-            command.setResult( new UpdateNodeResult( beforeChange ) );
-            return;
+            return new UpdateNodeResult( beforeChange );
         }
 
         final Node edited = editBuilder.build();
         beforeChange.checkIllegalEdit( edited );
 
         final UpdateNodeArgs updateNodeArgs = newUpdateItemArgs().
-            nodeToUpdate( command.getId() ).
+            nodeToUpdate( params.getId() ).
             name( edited.name() ).
             rootDataSet( edited.data() ).
             attachments( edited.attachments() ).
@@ -71,7 +70,7 @@ public class UpdateNodeHandler
 
         indexService.indexNode( updatedNode );
 
-        command.setResult( new UpdateNodeResult( updatedNode ) );
+        return new UpdateNodeResult( updatedNode );
     }
 
     public static Builder create()
@@ -83,9 +82,9 @@ public class UpdateNodeHandler
     {
         private IndexService indexService;
 
-        private CommandContext context;
+        private Session session;
 
-        private UpdateNode command;
+        private UpdateNodeParams params;
 
         public Builder indexService( final IndexService indexService )
         {
@@ -93,21 +92,21 @@ public class UpdateNodeHandler
             return this;
         }
 
-        public Builder context( final CommandContext context )
+        public Builder session( final Session session )
         {
-            this.context = context;
+            this.session = session;
             return this;
         }
 
-        public Builder command( final UpdateNode command )
+        public Builder params( final UpdateNodeParams params )
         {
-            this.command = command;
+            this.params = params;
             return this;
         }
 
-        public UpdateNodeHandler build()
+        public UpdateNodeCommand build()
         {
-            return new UpdateNodeHandler( this );
+            return new UpdateNodeCommand( this );
         }
     }
 

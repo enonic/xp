@@ -2,23 +2,23 @@ package com.enonic.wem.core.entity;
 
 import javax.jcr.Session;
 
-import com.enonic.wem.api.command.entity.GetNodeByPath;
 import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodePath;
 
 public class GetNodeByPathService
-    extends NodeService
+    extends AbstractNodeService
 {
-    private final GetNodeByPath getNodeByPath;
+    private final NodePath nodePath;
 
-    public GetNodeByPathService( final Session session, final GetNodeByPath getNodeByPath )
+    public GetNodeByPathService( final Session session, final NodePath nodePath )
     {
         super( session );
-        this.getNodeByPath = getNodeByPath;
+        this.nodePath = nodePath;
     }
 
     public Node execute()
     {
-        return nodeJcrDao.getNodeByPath( getNodeByPath.getPath() );
+        return nodeJcrDao.getNodeByPath( nodePath );
     }
 
 }
