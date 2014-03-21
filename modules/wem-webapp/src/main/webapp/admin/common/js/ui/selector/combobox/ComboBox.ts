@@ -78,7 +78,7 @@ module api.ui.selector.combobox {
 
             if (this.multipleSelections && (config.maximumOccurrences != 1)) {
                 this.applySelectionsButton = new Button("Apply");
-                this.applySelectionsButton.addClass('apply-button');
+                this.applySelectionsButton.addClass('small apply-button');
                 this.applySelectionsButton.hide();
                 this.appendChild(this.applySelectionsButton);
             }
