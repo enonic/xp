@@ -7,14 +7,14 @@
 ///<reference path='app/browse/_module.ts' />
 ///<reference path='app/browse/filter/_module.ts' />
 ///<reference path='app/browse/grid/_module.ts' />
-///<reference path='app/wizard/page/contextwindow/_module.ts' />
-///<reference path='app/wizard/page/contextwindow/insert/_module.ts' />
-///<reference path='app/wizard/page/contextwindow/inspect/_module.ts' />
 ///<reference path='app/remove/_module.ts' />
 ///<reference path='app/create/_module.ts' />
 ///<reference path='app/view/_module.ts' />
 
 ///<reference path='app/wizard/action/_module.ts' />
+///<reference path='app/wizard/page/contextwindow/insert/_module.ts' />
+///<reference path='app/wizard/page/contextwindow/inspect/_module.ts' />
+///<reference path='app/wizard/page/contextwindow/_module.ts' />
 ///<reference path='app/wizard/page/_module.ts' />
 ///<reference path='app/wizard/site/_module.ts' />
 ///<reference path='app/wizard/_module.ts' />

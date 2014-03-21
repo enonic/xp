@@ -13,7 +13,7 @@ module app.wizard.page.contextwindow.inspect {
             [key: string]: LayoutDescriptor;
         };
 
-        constructor(liveFormPanel: app.wizard.LiveFormPanel, siteTemplate: SiteTemplate) {
+        constructor(liveFormPanel: app.wizard.page.LiveFormPanel, siteTemplate: SiteTemplate) {
             super("live-edit-font-icon-layout", liveFormPanel, siteTemplate);
             this.layoutDescriptors = {};
             this.initElements();

@@ -13,7 +13,7 @@ module app.wizard.page.contextwindow.inspect {
             [key: string]: PartDescriptor;
         };
         
-        constructor(liveFormPanel: app.wizard.LiveFormPanel, siteTemplate: SiteTemplate) {
+        constructor(liveFormPanel: app.wizard.page.LiveFormPanel, siteTemplate: SiteTemplate) {
             super("live-edit-font-icon-part", liveFormPanel, siteTemplate);
             this.partDescriptors = {};
             this.initElements();

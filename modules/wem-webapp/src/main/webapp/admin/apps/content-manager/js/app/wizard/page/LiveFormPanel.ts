@@ -1,4 +1,4 @@
-module app.wizard {
+module app.wizard.page {
 
     import ModuleKey = api.module.ModuleKey;
     import SiteTemplate = api.content.site.template.SiteTemplate;

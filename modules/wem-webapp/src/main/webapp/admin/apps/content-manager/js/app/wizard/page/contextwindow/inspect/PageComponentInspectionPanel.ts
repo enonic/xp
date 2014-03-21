@@ -8,11 +8,11 @@ module app.wizard.page.contextwindow.inspect{
     export class PageComponentInspectionPanel<COMPONENT extends PageComponent, DESCRIPTOR extends Descriptor> extends BaseInspectionPanel {
 
         private siteTemplate: SiteTemplate;
-        private liveFormPanel: app.wizard.LiveFormPanel;
+        private liveFormPanel: app.wizard.page.LiveFormPanel;
         private formView: api.form.FormView;
         private component: COMPONENT;
 
-        constructor(iconClass: string, liveFormPanel: app.wizard.LiveFormPanel, siteTemplate: SiteTemplate) {
+        constructor(iconClass: string, liveFormPanel: app.wizard.page.LiveFormPanel, siteTemplate: SiteTemplate) {
             super(iconClass);
 
             this.siteTemplate = siteTemplate;
@@ -20,7 +20,7 @@ module app.wizard.page.contextwindow.inspect{
             this.formView = null;
         }
 
-        getLiveFormPanel(): app.wizard.LiveFormPanel {
+        getLiveFormPanel(): app.wizard.page.LiveFormPanel {
             return this.liveFormPanel;
         }
 

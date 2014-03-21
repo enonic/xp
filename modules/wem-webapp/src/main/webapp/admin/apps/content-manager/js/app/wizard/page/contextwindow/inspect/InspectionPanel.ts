@@ -1,6 +1,6 @@
 module app.wizard.page.contextwindow.inspect {
 
-    import LiveFormPanel = app.wizard.LiveFormPanel;
+    import LiveFormPanel = app.wizard.page.LiveFormPanel;
     import SiteTemplate = api.content.site.template.SiteTemplate;
     import Content = api.content.Content;
     import PageTemplate = api.content.page.PageTemplate;

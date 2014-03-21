@@ -22,7 +22,7 @@ module app.wizard {
 
         private displayNameScriptExecutor: DisplayNameScriptExecutor;
 
-        private liveFormPanel: LiveFormPanel;
+        private liveFormPanel: page.LiveFormPanel;
 
         private persistAsDraft: boolean;
 
@@ -90,7 +90,7 @@ module app.wizard {
 
             if (this.siteContent || this.createSite) {
 
-                this.liveFormPanel = new LiveFormPanel(<app.wizard.LiveFormPanelConfig> {
+                this.liveFormPanel = new page.LiveFormPanel(<page.LiveFormPanelConfig> {
                     contentWizardPanel: this, siteTemplate: this.siteTemplate});
 
                 var pageWizardStepFormConfig: page.PageWizardStepFormConfig = {
