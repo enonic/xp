@@ -16,12 +16,9 @@ module api.util {
 
             var deferred = Q.defer<RESULT>();
 
-            console.log("Flow.execute() ...");
-
             this.doExecuteNext(context).
                 done((result: RESULT) => {
 
-                    console.log("Flow.execute() finished ", result);
                     deferred.resolve(result);
                 });
 
@@ -31,6 +28,5 @@ module api.util {
         doExecuteNext(context:CONTEXT): Q.Promise<RESULT> {
             throw new Error("Must be implemented by inheritor");
         }
-
     }
 }
