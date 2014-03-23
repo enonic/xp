@@ -97,13 +97,9 @@ module api.app.wizard {
                 if (!forceDisplayNameProgrammaticallySet) {
                     var generatedDisplayName = this.displayNameGenerator.execute();
                     this.displayNameProgrammaticallySet = generatedDisplayName == displayName;
-                    console.log("*** initNames(" + displayName + ", " + name + ") - generated is [" + generatedDisplayName +
-                                "]: displayNameProgrammaticallySet to: " +
-                                this.displayNameProgrammaticallySet);
                 }
                 else {
                     this.displayNameProgrammaticallySet = true;
-                    console.log("*** initNames(" + displayName + ", " + name + "): Forced displayNameProgrammaticallySet to true");
                 }
             }
         }
