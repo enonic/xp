@@ -104,7 +104,6 @@ module api.ui {
             //End of stub
 
             this.onRendered((event) => {
-                console.log("ImageUploader rendered, creating plupload");
                 if (!this.uploader && this.uploadUrl) {
                     this.uploader = this.initUploader(this.dropzone.getId());
                 }
@@ -120,7 +119,6 @@ module api.ui {
             });
 
             this.onRemoved((event) => {
-                console.log("ImageUploader removed, destroying plupload");
                 this.uploader.destroy();
             });
         }
