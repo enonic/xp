@@ -6,7 +6,6 @@ module api.schema.content{
 
         constructor(json:api.schema.content.json.ContentTypeJson) {
             super(json);
-            console.log(json.form);
             this.form = api.form.FormItemFactory.createForm(json.form);
         }
 
