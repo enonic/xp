@@ -16,8 +16,6 @@ module api.content.attachment {
         fromJsonArrayToAttachments(jsonArray: AttachmentJson[]): Attachment[] {
             var array: Attachment[] = [];
 
-            console.log("$$$$$$$$$$$ jsonArray of attachments!", jsonArray.toString(), jsonArray);
-
             jsonArray.forEach((json: AttachmentJson)=> {
                 array.push(this.fromJsonToAttachment(json));
             });
