@@ -92,7 +92,6 @@ module app.browse.grid {
 
             //console.log("initData", contents);
             this.gridData.setItems(contents, "id");
-            console.log(contents);
         }
     }
 }
