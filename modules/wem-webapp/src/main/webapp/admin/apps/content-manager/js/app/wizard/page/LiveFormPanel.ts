@@ -2,11 +2,14 @@ module app.wizard.page {
 
     import ModuleKey = api.module.ModuleKey;
     import SiteTemplate = api.content.site.template.SiteTemplate;
+    import PageTemplateKey = api.content.page.PageTemplateKey;
     import PageTemplate = api.content.page.PageTemplate;
+    import GetDefaultPageTemplateRequest = api.content.page.GetDefaultPageTemplateRequest;
     import Content = api.content.Content;
     import ComponentPath = api.content.page.ComponentPath;
     import PageRegions = api.content.page.PageRegions;
     import RegionPath = api.content.page.RegionPath;
+    import RootDataSet = api.data.RootDataSet;
 
     import PageDescriptor = api.content.page.PageDescriptor;
     import RegionDescriptor = api.content.page.region.RegionDescriptor;
@@ -40,6 +43,7 @@ module app.wizard.page {
 
         private siteTemplate: SiteTemplate;
         private initialized: boolean;
+        private defaultPageTemplate: PageTemplate;
         private defaultImageDescriptor: ImageDescriptor;
         private defaultPartDescriptor: PartDescriptor;
         private defaultLayoutDescriptor: LayoutDescriptor;
@@ -47,6 +51,7 @@ module app.wizard.page {
         private pageContent: Content;
         private pageTemplate: PageTemplate;
         private pageRegions: PageRegions;
+        private pageConfig: RootDataSet;
         private pageDescriptor: PageDescriptor;
 
         private pageNeedsReload: boolean;
@@ -91,12 +96,24 @@ module app.wizard.page {
             var deferred = Q.defer<void>();
 
             if (!this.initialized) {
+
                 var siteModules = this.siteTemplate.getModules();
+
+                var defaultPageTemplatePromise = new GetDefaultPageTemplateRequest(this.siteTemplate.getKey(),
+                    this.pageContent.getType()).sendAndParse();
                 var defaultImageDescrResolved = this.resolveDefaultImageDescriptor(siteModules);
                 var defaultPartDescrResolved = this.resolveDefaultPartDescriptor(siteModules);
                 var defaultLayoutDescrResolved = this.resolveDefaultLayoutDescriptor(siteModules);
-                var defaultDescriptorsResolved: Q.Promise<any>[] = [defaultImageDescrResolved, defaultPartDescrResolved,
+
+                var allPromises: Q.Promise<any>[] = [
+                    defaultPageTemplatePromise,
+                    defaultImageDescrResolved,
+                    defaultPartDescrResolved,
                     defaultLayoutDescrResolved];
+
+                defaultPageTemplatePromise.done((defaultPageTemplate: PageTemplate)=> {
+                    this.defaultPageTemplate = defaultPageTemplate;
+                });
 
                 defaultImageDescrResolved.done((imageDescriptor: ImageDescriptor)=> {
                     this.defaultImageDescriptor = imageDescriptor;
@@ -110,8 +127,14 @@ module app.wizard.page {
                     this.defaultLayoutDescriptor = layoutDescriptor;
                 });
 
-                Q.allSettled(defaultDescriptorsResolved).then((results: Q.PromiseState<any>[])=> {
+                Q.allSettled(allPromises).then((results: Q.PromiseState<any>[])=> {
                     this.initialized = true;
+
+                    if (!this.pageTemplate) {
+                        this.pageConfig = this.defaultPageTemplate.getConfig();
+                        this.pageRegions = this.defaultPageTemplate.getRegions();
+                    }
+
                     deferred.resolve(null);
                 });
             }
@@ -162,7 +185,7 @@ module app.wizard.page {
             this.setupFrame();
 
             var deferred = Q.defer<void>();
-            this.frame.onLoaded((event:UIEvent) => {
+            this.frame.onLoaded((event: UIEvent) => {
                 var liveEditWindow = this.frame.getHTMLElement()["contentWindow"];
                 if (liveEditWindow && liveEditWindow.$liveEdit && typeof(liveEditWindow.initializeLiveEdit) === "function") {
                     // Give loaded page same CONFIG.baseUri as in admin
@@ -185,28 +208,40 @@ module app.wizard.page {
             console.log("LiveFormPanel.setPage() ...");
 
             api.util.assertNotNull(content, "Expected content not be null");
-            api.util.assertNotNull(pageTemplate, "Expected content not be null");
 
             this.pageContent = content;
-            var pageTemplateChanged = this.pageTemplate && this.pageTemplate.getKey().toString() != pageTemplate.getKey().toString();
+            var pageTemplateChanged = this.resolvePageTemplateChanged(pageTemplate);
             this.pageTemplate = pageTemplate;
 
             this.pageUrl = this.baseUrl + content.getContentId().toString();
 
             if (!this.pageSkipReload) {
-                if (pageTemplateChanged) {
-                    console.log("pageTemplateChanged, resetting regions to regions of template");
+
+                if (pageTemplateChanged && this.pageTemplate) {
+
                     this.pageRegions = this.pageTemplate.getRegions();
-                } else {
-                    this.pageRegions = this.resolvePageRegions();
+                    this.pageConfig = this.pageTemplate.getConfig();
                 }
-                this.resolvePageDescriptor(pageTemplate);
+                else if (pageTemplateChanged && !this.pageTemplate) {
+
+                    this.pageRegions = null;
+                    this.pageConfig = null;
+                }
+                else {
+                    this.pageRegions = this.resolvePageRegions(content, pageTemplate);
+                    this.pageConfig = this.resolvePageConfig(content, pageTemplate);
+                }
+                if (pageTemplate) {
+                    new GetPageDescriptorByKeyRequest(pageTemplate.getDescriptorKey()).sendAndParse().
+                        done((pageDescriptor: PageDescriptor) => {
+                            this.pageDescriptor = pageDescriptor;
+                        });
+                }
             }
 
             if (!this.isVisible()) {
 
                 this.pageNeedsReload = true;
-
                 console.log("LiveFormPanel.setPage() ... not visible, returning");
                 return;
             }
@@ -225,25 +260,57 @@ module app.wizard.page {
                 }).done();
         }
 
-        private resolvePageDescriptor(pageTemplate: PageTemplate) {
-            new GetPageDescriptorByKeyRequest(pageTemplate.getDescriptorKey()).
-                sendAndParse().
-                done((pageDescriptor: PageDescriptor) => {
-                    this.pageDescriptor = pageDescriptor;
-                });
-        }
-
-        private resolvePageRegions(): PageRegions {
-
-            var page = this.pageContent.getPage();
-            if (page && page.hasRegions()) {
-                console.log("resolvePageRegions.. from page");
-                return page.getRegions();
+        private resolvePageTemplateChanged(pageTemplate: PageTemplate) {
+            if (!pageTemplate && !this.pageTemplate) {
+                return false;
+            }
+            else if (!pageTemplate && this.pageTemplate) {
+                return true;
+            }
+            else if (pageTemplate && !this.pageTemplate) {
+                return true;
+            }
+            else if (this.pageTemplate.getKey().toString() != pageTemplate.getKey().toString()) {
+                return true;
             }
             else {
-                console.log("resolvePageRegions.. from page template");
-                return this.pageTemplate.getRegions();
+                return false;
             }
+        }
+
+        private resolvePageRegions(content: Content, pageTemplate: PageTemplate): PageRegions {
+
+            if (!pageTemplate) {
+                return null;
+            }
+
+            if (content.isPage() && content.getPage().hasRegions()) {
+                return content.getPage().getRegions();
+            }
+            else {
+                return pageTemplate.getRegions();
+            }
+        }
+
+        private resolvePageConfig(content: Content, pageTemplate: PageTemplate): RootDataSet {
+
+            if (!pageTemplate) {
+                return null;
+            }
+
+            if (content.isPage() && content.getPage().hasConfig()) {
+                return content.getPage().getConfig();
+            }
+            else {
+                return pageTemplate.getConfig();
+            }
+        }
+
+        private initializePageFromDefault() {
+
+            this.pageTemplate = this.defaultPageTemplate;
+            this.pageConfig = this.defaultPageTemplate.getConfig();
+            this.pageRegions = this.defaultPageTemplate.getRegions();
         }
 
         private setupFrame() {
@@ -251,7 +318,8 @@ module app.wizard.page {
                 this.frame.remove();
             }
 
-            this.frame = new api.dom.IFrameEl("live-edit-frame").setSrc(this.pageUrl);
+            this.frame = new api.dom.IFrameEl("live-edit-frame");
+            this.frame.setSrc(this.pageUrl);
             this.appendChild(this.frame);
 
         }
@@ -281,16 +349,34 @@ module app.wizard.page {
                 siteTemplate: this.siteTemplate,
                 liveEditWindow: this.liveEditWindow,
                 liveEditJQuery: this.liveEditJQuery,
-                liveFormPanel: this
+                liveFormPanel: this,
+                contentType: this.pageContent.getType()
             });
 
             return contextWindow;
         }
 
+        public getPageTemplate(): PageTemplateKey {
+
+            var page = this.contextWindow.getPage();
+            if (!page) {
+                return null;
+            }
+            return page.getTemplate();
+        }
 
         public getRegions(): PageRegions {
 
             return this.pageRegions;
+        }
+
+        public getConfig(): RootDataSet {
+
+            var page = this.contextWindow.getPage();
+            if (!page) {
+                return null;
+            }
+            return page.getConfig();
         }
 
         getDefaultImageDescriptor(): ImageDescriptor {
@@ -359,6 +445,7 @@ module app.wizard.page {
         private onRegionSelected(pathAsString: string) {
             var regionPath = RegionPath.fromString(pathAsString);
             var region = this.pageRegions.getRegionByPath(regionPath);
+
             this.contextWindow.inspectRegion(region);
         }
 
@@ -395,8 +482,7 @@ module app.wizard.page {
             });
         }
 
-        setComponentDescriptor(descriptor: Descriptor, componentPath: ComponentPath,
-                               componentPlaceholder) {
+        setComponentDescriptor(descriptor: Descriptor, componentPath: ComponentPath, componentPlaceholder) {
             var component = this.pageRegions.getComponent(componentPath);
             if (!component || !descriptor) {
                 return;
@@ -423,8 +509,7 @@ module app.wizard.page {
             });
         }
 
-        private addLayoutRegions(layoutComponent: LayoutComponent,
-                                 layoutDescriptor: LayoutDescriptor) {
+        private addLayoutRegions(layoutComponent: LayoutComponent, layoutDescriptor: LayoutDescriptor) {
             var layoutRegionsBuilder = new api.content.page.layout.LayoutRegionsBuilder();
             layoutDescriptor.getRegions().forEach(function (regionDescriptor: RegionDescriptor) {
 
@@ -514,6 +599,11 @@ module app.wizard.page {
 
             this.liveEditJQuery(this.liveEditWindow).on('componentAdded.liveEdit',
                 (event, componentEl?, regionPathAsString?: string, componentPathToAddAfterAsString?: string) => {
+
+                    if (!this.pageTemplate) {
+                        this.initializePageFromDefault();
+                    }
+
                     var componentType = componentEl.getComponentType().getName();
                     var regionPath = RegionPath.fromString(regionPathAsString);
 

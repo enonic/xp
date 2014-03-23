@@ -5,6 +5,7 @@
 ///<reference path='PartInspectionPanel.ts' />
 ///<reference path='LayoutInspectionPanel.ts' />
 ///<reference path='ContentInspectionPanel.ts' />
+///<reference path='PageTemplateSelector.ts' />
 ///<reference path='PageInspectionPanel.ts' />
 ///<reference path='RegionInspectionPanel.ts' />
 ///<reference path='InspectionPanel.ts' />

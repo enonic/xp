@@ -1,12 +1,21 @@
 module app.wizard {
 
-    export class ContentWizardPanel extends api.app.wizard.WizardPanel<api.content.Content> {
+    import Content = api.content.Content;
+    import ContentId = api.content.ContentId;
+    import ContentName = api.content.ContentName;
+    import Page = api.content.page.Page;
+    import ContentType = api.schema.content.ContentType;
+    import SiteTemplate = api.content.site.template.SiteTemplate;
+    import PageTemplate = api.content.page.PageTemplate;
+    import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
 
-        private parentContent: api.content.Content;
+    export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
-        private siteContent: api.content.Content;
+        private parentContent: Content;
 
-        private contentType: api.schema.content.ContentType;
+        private siteContent: Content;
+
+        private contentType: ContentType;
 
         private formIcon: api.app.wizard.FormIcon;
 
@@ -16,19 +25,19 @@ module app.wizard {
 
         private contentWizardStepForm: ContentWizardStepForm;
 
-        private pageWizardStepForm: page.PageWizardStepForm;
-
         private iconUploadItem: api.ui.UploadItem;
 
         private displayNameScriptExecutor: DisplayNameScriptExecutor;
 
         private liveFormPanel: page.LiveFormPanel;
 
+        private showLiveEditAction: api.ui.Action;
+
         private persistAsDraft: boolean;
 
         private createSite: boolean;
 
-        private siteTemplate: api.content.site.template.SiteTemplate;
+        private siteTemplate: SiteTemplate;
 
         private previewAction: api.ui.Action;
 
@@ -46,7 +55,6 @@ module app.wizard {
             this.contentWizardHeader = new api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder().
                 setDisplayNameGenerator(this.displayNameScriptExecutor).
                 build();
-
             var iconUrl = api.content.ContentIconUrlResolver.default();
             this.formIcon = new api.app.wizard.FormIcon(iconUrl, "Click to upload icon",
                 api.util.getRestUri("blob/upload"));
@@ -72,6 +80,8 @@ module app.wizard {
                 showFormAction: actions.getShowFormAction()
             });
 
+            this.showLiveEditAction = actions.getShowLiveEditAction();
+
             if (this.parentContent) {
                 this.contentWizardHeader.setPath(this.parentContent.getPath().toString() + "/");
             } else {
@@ -92,14 +102,6 @@ module app.wizard {
 
                 this.liveFormPanel = new page.LiveFormPanel(<page.LiveFormPanelConfig> {
                     contentWizardPanel: this, siteTemplate: this.siteTemplate});
-
-                var pageWizardStepFormConfig: page.PageWizardStepFormConfig = {
-                    liveFormPanel: this.liveFormPanel,
-                    parentContent: this.parentContent,
-                    siteTemplate: this.siteTemplate,
-                    showLiveEditAction: actions.getShowLiveEditAction()
-                };
-                this.pageWizardStepForm = new page.PageWizardStepForm(pageWizardStepFormConfig);
             }
 
             if (this.contentType.hasContentDisplayNameScript()) {
@@ -132,7 +134,7 @@ module app.wizard {
         }
 
         giveInitialFocus() {
-            console.log("ContentWizardPanel.giveInitialFocus");
+            //console.log("ContentWizardPanel.giveInitialFocus");
 
             var newWithoutDisplayCameScript = this.isRenderingNew() && !this.contentType.hasContentDisplayNameScript();
             var displayNameEmpty = api.util.isStringEmpty(this.getPersistedItem().getDisplayName());
@@ -150,7 +152,7 @@ module app.wizard {
             this.startRememberFocus();
         }
 
-        private createSteps(content: api.content.Content): api.app.wizard.WizardStep[] {
+        private createSteps(content: Content): api.app.wizard.WizardStep[] {
 
             var steps: api.app.wizard.WizardStep[] = [];
 
@@ -160,16 +162,12 @@ module app.wizard {
                 steps.push(new api.app.wizard.WizardStep("Site", this.siteWizardStepForm));
             }
 
-            if (this.pageWizardStepForm) {
-                steps.push(new api.app.wizard.WizardStep("Page", this.pageWizardStepForm));
-            }
-
             return steps;
         }
 
 
         preRenderNew(): Q.Promise<void> {
-            console.log("ContentWizardPanel.preRenderNew");
+            //console.log("ContentWizardPanel.preRenderNew");
             var deferred = Q.defer<void>();
 
             // Ensure a nameless and empty content is persisted before rendering new
@@ -182,7 +180,7 @@ module app.wizard {
         }
 
         postRenderNew(): Q.Promise<void> {
-            console.log("ContentWizardPanel.postRenderNew");
+            //console.log("ContentWizardPanel.postRenderNew");
             var deferred = Q.defer<void>();
 
             this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
@@ -193,7 +191,7 @@ module app.wizard {
             return deferred.promise;
         }
 
-        layoutPersistedItem(persistedContent: api.content.Content): Q.Promise<void> {
+        layoutPersistedItem(persistedContent: Content): Q.Promise<void> {
             console.log("ContentWizardPanel.layoutPersistedItem");
 
             var deferred = Q.defer<void>();
@@ -225,7 +223,7 @@ module app.wizard {
                     this.doRenderExistingSite(persistedContent, formContext)
                         .then(() => {
 
-                            if (this.pageWizardStepForm) {
+                            if (this.liveFormPanel) {
                                 this.doRenderExistingPage(persistedContent, this.siteContent, formContext).
                                     then(() => {
 
@@ -241,7 +239,7 @@ module app.wizard {
             return deferred.promise;
         }
 
-        postRenderExisting(existing: api.content.Content): Q.Promise<void> {
+        postRenderExisting(existing: Content): Q.Promise<void> {
             console.log("ContentWizardPanel.postRenderExisting");
             var deferred = Q.defer<void>();
 
@@ -253,7 +251,7 @@ module app.wizard {
             return deferred.promise;
         }
 
-        private doRenderExistingSite(content: api.content.Content, formContext: api.form.FormContext): Q.Promise<void> {
+        private doRenderExistingSite(content: Content, formContext: api.form.FormContext): Q.Promise<void> {
 
             var deferred = Q.defer<void>();
 
@@ -270,12 +268,11 @@ module app.wizard {
             return deferred.promise;
         }
 
-        private doRenderExistingPage(content: api.content.Content, siteContent: api.content.Content,
-                                     formContext: api.form.FormContext): Q.Promise<void> {
+        private doRenderExistingPage(content: Content, siteContent: Content, formContext: api.form.FormContext): Q.Promise<void> {
 
             var deferred = Q.defer<void>();
 
-            this.pageWizardStepForm.layout(content, siteContent).
+            this.layout(content, siteContent).
                 done(() => {
                     deferred.resolve(null);
                 });
@@ -284,16 +281,47 @@ module app.wizard {
             return deferred.promise;
         }
 
-        persistNewItem(): Q.Promise<api.content.Content> {
+        private layout(content: Content, siteContent: Content): Q.Promise<void> {
+
+            var deferred = Q.defer<void>();
+
+            var page: Page = content.getPage();
+
+            if (page != null && page.getTemplate() != null) {
+
+                var getPageTemplatePromise = new GetPageTemplateByKeyRequest(page.getTemplate()).
+                    setSiteTemplateKey(this.siteTemplate.getKey()).
+                    sendAndParse().done((pageTemplate: PageTemplate) => {
+
+                        this.layoutLiveFormPanel(content, pageTemplate);
+                        deferred.resolve(null);
+                    });
+            }
+            else {
+                this.layoutLiveFormPanel(content, null);
+                deferred.resolve(null);
+            }
+
+            return deferred.promise;
+        }
+
+        private layoutLiveFormPanel(content: Content, pageTemplate: PageTemplate) {
+
+
+            this.liveFormPanel.setPage(content, pageTemplate);
+
+        }
+
+        persistNewItem(): Q.Promise<Content> {
             console.log("ContentWizardPanel.persistNewItem");
 
-            var deferred = Q.defer<api.content.Content>();
+            var deferred = Q.defer<Content>();
 
             new PersistNewContentRoutine(this).
                 setCreateContentRequestProducer(this.produceCreateContentRequest).
                 setCreateSiteRequestProducer(this.produceCreateSiteRequest).
                 execute().
-                done((content: api.content.Content) => {
+                done((content: Content) => {
 
                     deferred.resolve(content);
 
@@ -302,7 +330,7 @@ module app.wizard {
             return deferred.promise;
         }
 
-        postPersistNewItem(persistedContent: api.content.Content): Q.Promise<void> {
+        postPersistNewItem(persistedContent: Content): Q.Promise<void> {
             var deferred = Q.defer<void>();
 
             if (persistedContent.isSite()) {
@@ -331,7 +359,7 @@ module app.wizard {
             return createRequest;
         }
 
-        private produceCreateSiteRequest(content: api.content.Content): api.content.site.CreateSiteRequest {
+        private produceCreateSiteRequest(content: Content): api.content.site.CreateSiteRequest {
 
             if (!this.createSite) {
                 return null;
@@ -352,44 +380,44 @@ module app.wizard {
 
         }
 
-        private producePageCUDRequest(content: api.content.Content): api.content.page.PageCUDRequest {
-
-            if (!this.pageWizardStepForm) {
-                return null;
-            }
+        private producePageCUDRequest(content: Content): api.content.page.PageCUDRequest {
 
             if (!this.siteTemplate) {
                 return null;
             }
 
-            var pageTemplate = this.pageWizardStepForm.getPageTemplate();
-            var pageTemplateKey = pageTemplate ? pageTemplate.getKey() : null;
+            var pageTemplateKey = this.liveFormPanel.getPageTemplate();
 
-            if (!pageTemplateKey) {
+            if (content.isPage() && !pageTemplateKey) {
+                console.log("*** producePageCUDRequest: delete");
                 return new api.content.page.DeletePageRequest(content.getContentId());
             }
-            else if (!content.isPage()) {
-                var createRequest = new api.content.page.CreatePageRequest(content.getContentId()).setPageTemplateKey(pageTemplateKey);
+            else if (!content.isPage() && pageTemplateKey) {
 
-                createRequest.setConfig(this.pageWizardStepForm.getConfig());
-                createRequest.setRegions(this.pageWizardStepForm.getRegions());
-
+                console.log("*** producePageCUDRequest: create");
+                var createRequest = new api.content.page.CreatePageRequest(content.getContentId()).
+                    setPageTemplateKey(pageTemplateKey).
+                    setConfig(this.liveFormPanel.getConfig()).
+                    setRegions(this.liveFormPanel.getRegions());
                 return createRequest;
             }
-            else {
+            else if( content.isPage() && pageTemplateKey ) {
+
+                console.log("*** producePageCUDRequest: update");
                 var updatePageRequest = new api.content.page.UpdatePageRequest(content.getContentId()).
-                    setPageTemplateKey(this.pageWizardStepForm.getPageTemplate().getKey()).
-                    setConfig(this.pageWizardStepForm.getConfig()).
-                    setRegions(this.pageWizardStepForm.getRegions());
+                    setPageTemplateKey(pageTemplateKey).
+                    setConfig(this.liveFormPanel.getConfig()).
+                    setRegions(this.liveFormPanel.getRegions());
 
                 return updatePageRequest;
             }
+            console.log("*** producePageCUDRequest: none");
         }
 
-        updatePersistedItem(): Q.Promise<api.content.Content> {
+        updatePersistedItem(): Q.Promise<Content> {
             console.log("ContentWizardPanel.updatePersistedItem");
 
-            var deferred = Q.defer<api.content.Content>();
+            var deferred = Q.defer<Content>();
 
 
             new UpdatePersistedContentRoutine(this).
@@ -397,7 +425,7 @@ module app.wizard {
                 setUpdateSiteRequestProducer(this.produceUpdateSiteRequest).
                 setPageCUDRequestProducer(this.producePageCUDRequest).
                 execute().
-                done((content: api.content.Content) => {
+                done((content: Content) => {
 
                     new api.content.ContentUpdatedEvent(content).fire();
                     api.notify.showFeedback('Content was updated!');
@@ -408,7 +436,7 @@ module app.wizard {
             return deferred.promise;
         }
 
-        private produceUpdateContentRequest(content: api.content.Content): api.content.UpdateContentRequest {
+        private produceUpdateContentRequest(content: Content): api.content.UpdateContentRequest {
 
             var updateContentRequest: api.content.UpdateContentRequest = new api.content.UpdateContentRequest(this.getPersistedItem().getId()).
                 setDraft(this.persistAsDraft).
@@ -418,7 +446,7 @@ module app.wizard {
                 setForm(this.contentWizardStepForm.getForm()).
                 setContentData(this.contentWizardStepForm.getContentData());
 
-            var contentId: api.content.ContentId = new api.content.ContentId(this.getPersistedItem().getId());
+            var contentId: ContentId = new ContentId(this.getPersistedItem().getId());
             var updateAttachments: api.content.UpdateAttachments =
                 api.content.UpdateAttachments.create(contentId, this.contentWizardStepForm.getFormView().getAttachments());
             updateContentRequest.setUpdateAttachments(updateAttachments);
@@ -438,7 +466,7 @@ module app.wizard {
             return updateContentRequest;
         }
 
-        private produceUpdateSiteRequest(content: api.content.Content): api.content.site.UpdateSiteRequest {
+        private produceUpdateSiteRequest(content: Content): api.content.site.UpdateSiteRequest {
 
             if (this.siteWizardStepForm == null) {
                 return null;
@@ -450,7 +478,7 @@ module app.wizard {
         }
 
         hasUnsavedChanges(): boolean {
-            var persistedContent: api.content.Content = this.getPersistedItem();
+            var persistedContent: Content = this.getPersistedItem();
             if (persistedContent == undefined) {
                 return true;
             } else {
@@ -473,24 +501,24 @@ module app.wizard {
             }
         }
 
-        private resolveContentNameForUpdateReuest(): api.content.ContentName {
+        private resolveContentNameForUpdateReuest(): ContentName {
             if (api.util.isStringEmpty(this.contentWizardHeader.getName()) && this.getPersistedItem().getName().isUnnamed()) {
                 return this.getPersistedItem().getName();
             }
             else {
-                return api.content.ContentName.fromString(this.contentWizardHeader.getName());
+                return ContentName.fromString(this.contentWizardHeader.getName());
             }
         }
 
-        getParentContent(): api.content.Content {
+        getParentContent(): Content {
             return this.parentContent;
         }
 
-        getContentType(): api.schema.content.ContentType {
+        getContentType(): ContentType {
             return this.contentType;
         }
 
-        getSiteTemplate(): api.content.site.template.SiteTemplate {
+        getSiteTemplate(): SiteTemplate {
             return this.siteTemplate;
         }
 
@@ -501,7 +529,10 @@ module app.wizard {
         showLiveEdit() {
 
             super.showPanel(this.liveFormPanel);
-            this.pageWizardStepForm.showLiveEdit();
+            this.liveFormPanel.loadPageIfNotLoaded().
+                done(() => {
+
+                });
         }
 
         showWizard() {

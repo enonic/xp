@@ -23,16 +23,12 @@ module app.wizard {
             super.addAction(params.closeAction);
             super.addGreedySpacer();
 
-            var liveFormToggler = new api.ui.ToggleSlide({
+            var liveEditFormToggler = new api.ui.ToggleSlide({
                 turnOnAction: params.showLiveEditAction,
                 turnOffAction: params.showFormAction
             }, false);
-            liveFormToggler.setEnabled(params.previewAction.isEnabled());
-            params.previewAction.addPropertyChangeListener((action: api.ui.Action) => {
-                liveFormToggler.setEnabled(action.isEnabled());
-            });
 
-            super.addElement(liveFormToggler);
+            super.addElement(liveEditFormToggler);
             var contextWindowToggler = new ContextWindowToggler();
             super.addElement(contextWindowToggler);
 

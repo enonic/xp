@@ -15,7 +15,7 @@ module api.content.page {
 
         getParams():Object {
             return {
-                key: this.siteTemplateKey.toString(),
+                siteTemplateKey: this.siteTemplateKey.toString(),
                 contentTypeName: this.contentTypeName.toString()
             }
         }

@@ -3,6 +3,7 @@ module app.wizard.page.contextwindow.inspect {
     import LiveFormPanel = app.wizard.page.LiveFormPanel;
     import SiteTemplate = api.content.site.template.SiteTemplate;
     import Content = api.content.Content;
+    import ContentTypeName = api.schema.content.ContentTypeName;
     import PageTemplate = api.content.page.PageTemplate;
     import PageDescriptor = api.content.page.PageDescriptor;
     import Region = api.content.page.region.Region;
@@ -16,6 +17,7 @@ module app.wizard.page.contextwindow.inspect {
         liveEditWindow:any;
         siteTemplate:SiteTemplate;
         liveFormPanel:LiveFormPanel;
+        contentType:ContentTypeName;
     }
 
     export class InspectionPanel extends api.ui.DeckPanel {
@@ -37,7 +39,9 @@ module app.wizard.page.contextwindow.inspect {
             this.partInspectionPanel = new PartInspectionPanel(config.liveFormPanel, config.siteTemplate);
             this.layoutInspectionPanel = new LayoutInspectionPanel(config.liveFormPanel, config.siteTemplate);
             this.contentInspectionPanel = new ContentInspectionPanel();
-            this.pageInspectionPanel = new PageInspectionPanel();
+            this.pageInspectionPanel = new PageInspectionPanel({
+                contentType: config.contentType,
+                siteTemplateKey: config.siteTemplate.getKey()});
             this.regionInspectionPanel = new RegionInspectionPanel();
 
             this.addPanel(this.imageInspectionPanel);
@@ -92,6 +96,10 @@ module app.wizard.page.contextwindow.inspect {
                     console.warn('Unsupported component in InspectionPanel', component);
                 }
             }
+        }
+
+        public getPage() : api.content.page.Page {
+            return this.pageInspectionPanel.getPage();
         }
     }
 }

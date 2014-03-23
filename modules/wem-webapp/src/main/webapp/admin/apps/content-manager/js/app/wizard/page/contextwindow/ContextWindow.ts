@@ -3,6 +3,7 @@ module app.wizard.page.contextwindow {
     import LiveFormPanel = app.wizard.page.LiveFormPanel;
     import ComponentPath = api.content.page.ComponentPath;
     import Content = api.content.Content;
+    import ContentTypeName = api.schema.content.ContentTypeName;
     import PageTemplateKey = api.content.page.PageTemplateKey;
     import PageTemplate = api.content.page.PageTemplate;
     import PageDescriptor = api.content.page.PageDescriptor;
@@ -12,12 +13,20 @@ module app.wizard.page.contextwindow {
     import ImageComponentBuilder = api.content.page.image.ImageComponentBuilder;
 
     export interface ContextWindowConfig {
+
         liveEditIFrame?:api.dom.IFrameEl;
+
         liveEditId?:string;
+
         liveEditWindow: any;
+
         liveEditJQuery: JQueryStatic;
+
         siteTemplate:api.content.site.template.SiteTemplate;
+
         liveFormPanel:LiveFormPanel;
+
+        contentType:ContentTypeName;
     }
 
     export class ContextWindow extends api.ui.DockedWindow {
@@ -54,7 +63,8 @@ module app.wizard.page.contextwindow {
             this.inspectionPanel = new inspect.InspectionPanel({
                 liveEditWindow: this.liveEditWindow,
                 siteTemplate: config.siteTemplate,
-                liveFormPanel: this.liveFormPanel
+                liveFormPanel: this.liveFormPanel,
+                contentType: config.contentType
             });
             this.emulatorPanel = new EmulatorPanel({
                 liveEditIFrame: this.liveEditIFrame
@@ -109,6 +119,10 @@ module app.wizard.page.contextwindow {
         public clearSelection() {
             this.inspectionPanel.clearSelection();
             this.selectPanel(this.insertablesPanel);
+        }
+
+        public getPage() : api.content.page.Page {
+            return this.inspectionPanel.getPage();
         }
 
     }
