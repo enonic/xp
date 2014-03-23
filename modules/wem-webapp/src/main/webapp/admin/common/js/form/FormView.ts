@@ -67,8 +67,8 @@ module api.form {
 
             this.previousValidationRecording = allRecordings;
 
-            console.log("FormView.validate:");
-            allRecordings.print();
+            //console.log("FormView.validate:");
+            //allRecordings.print();
             return allRecordings;
         }
 
@@ -174,16 +174,16 @@ module api.form {
             return attachments;
         }
 
-        getData(): api.content.ContentData {
-            var contentData: api.content.ContentData = new api.content.ContentData();
+        getData(): api.data.RootDataSet {
+            var rootDataSet = new api.data.RootDataSet();
             this.formItemViews.forEach((formItemView: FormItemView) => {
 
                 formItemView.getData().forEach((data: api.data.Data) => {
-                    contentData.addData(data)
+                    rootDataSet.addData(data)
                 });
 
             });
-            return contentData;
+            return rootDataSet;
         }
 
         giveFocus(): boolean {
@@ -223,14 +223,14 @@ module api.form {
         }
 
         private notifyValidityChanged(event: FormValidityChangedEvent) {
-            console.log("FormView.validityChanged");
-            if (event.getRecording().isValid()) {
-                console.log(" valid: ");
-            }
-            else {
-                console.log(" invalid: ");
-                event.getRecording().print();
-            }
+            //console.log("FormView.validityChanged");
+            //if (event.getRecording().isValid()) {
+            //    console.log(" valid: ");
+            //}
+            //else {
+            //    console.log(" invalid: ");
+            //    event.getRecording().print();
+            //}
 
             this.formValidityChangedListeners.forEach((listener: (event: FormValidityChangedEvent)=>void)=> {
                 listener.call(this, event);
