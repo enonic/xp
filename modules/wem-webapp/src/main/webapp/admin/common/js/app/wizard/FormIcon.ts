@@ -32,14 +32,12 @@ module api.app.wizard {
             }
 
             this.onRendered((event) => {
-                console.log("FormIcon rendered, creating plupload");
                 if (!this.uploader && this.uploadUrl) {
                     this.uploader = this.initUploader(this.getId());
                 }
             });
 
             this.onRemoved((event) => {
-                console.log("FormIcon removed, destroying plupload");
                 this.uploader.destroy();
             });
         }
@@ -49,10 +47,6 @@ module api.app.wizard {
         }
 
         private initUploader(elId: string) {
-
-            if (!plupload) {
-                console.log('FormIcon: plupload not found, check if it is included in page.');
-            }
 
             var uploader = new plupload.Uploader({
                 runtimes: 'gears,html5,flash,silverlight,browserplus',
@@ -69,15 +63,15 @@ module api.app.wizard {
             });
 
             uploader.bind('Init', (up, params) => {
-                console.log('uploader init', up, params);
+                //console.log('uploader init', up, params);
             });
 
             uploader.bind('FilesAdded', (up, files) => {
-                console.log('uploader files added', up, files);
+                //console.log('uploader files added', up, files);
             });
 
             uploader.bind('QueueChanged', (up) => {
-                console.log('uploader queue changed', up);
+                //console.log('uploader queue changed', up);
 
                 if (up.files.length > 0) {
                     up.start();
@@ -86,13 +80,13 @@ module api.app.wizard {
             });
 
             uploader.bind('UploadFile', (up, file) => {
-                console.log('uploader upload file', up, file);
+                //console.log('uploader upload file', up, file);
 
                 this.progress.show();
             });
 
             uploader.bind('UploadProgress', (up, file) => {
-                console.log('uploader upload progress', up, file);
+                //console.log('uploader upload progress', up, file);
 
                 this.progress.setValue(file.percent);
             });
@@ -122,7 +116,7 @@ module api.app.wizard {
             });
 
             uploader.bind('UploadComplete', (up, files) => {
-                console.log('uploader upload complete', up, files);
+                //console.log('uploader upload complete', up, files);
 
                 up.total.reset();
                 var uploadedFiles = up.splice();
