@@ -54,7 +54,7 @@ public final class PageTemplateResource
 
     @GET
     @javax.ws.rs.Path("listByCanRender")
-    public PageTemplateListJson listByCanRender( @QueryParam("key") String siteTemplateKeyAsString,
+    public PageTemplateListJson listByCanRender( @QueryParam("siteTemplateKey") String siteTemplateKeyAsString,
                                                  @QueryParam("contentTypeName") String contentTypeName )
     {
         final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( siteTemplateKeyAsString );
@@ -63,6 +63,17 @@ public final class PageTemplateResource
 
         return new PageTemplateListJson( pageTemplates.filter( spec ) );
 
+    }
+
+    @GET
+    @javax.ws.rs.Path("default")
+    public PageTemplateJson getDefault( @QueryParam("siteTemplateKey") String siteTemplateKeyAsString,
+                                        @QueryParam("contentTypeName") String contentTypeNameAsString )
+    {
+        final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( siteTemplateKeyAsString );
+        final ContentTypeName contentTypeName = ContentTypeName.from( contentTypeNameAsString );
+        final PageTemplate pageTemplate = pageTemplateService.getDefault( siteTemplateKey, contentTypeName );
+        return new PageTemplateJson( pageTemplate );
     }
 
     // TODO: Move to some kind of Portal meta resource?

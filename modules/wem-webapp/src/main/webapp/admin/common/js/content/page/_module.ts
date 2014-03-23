@@ -39,6 +39,7 @@
 ///<reference path='GetPageTemplateByKeyRequest.ts' />
 ///<reference path="GetPageTemplatesRequest.ts"/>
 ///<reference path="GetPageTemplatesByCanRenderRequest.ts" />
+///<reference path="GetDefaultPageTemplateRequest.ts" />
 ///<reference path="IsRenderableRequest.ts" />
 
 ///<reference path='PageResourceRequest.ts' />
