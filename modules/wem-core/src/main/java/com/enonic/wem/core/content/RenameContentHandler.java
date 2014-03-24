@@ -4,20 +4,20 @@ import javax.inject.Inject;
 
 import com.enonic.wem.api.command.content.GetContentById;
 import com.enonic.wem.api.command.content.RenameContent;
-import com.enonic.wem.api.command.entity.RenameNode;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.NodeName;
+import com.enonic.wem.api.entity.NodeService;
+import com.enonic.wem.api.entity.RenameNodeParams;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.entity.RenameNodeService;
-import com.enonic.wem.core.index.IndexService;
 
 
 public class RenameContentHandler
     extends CommandHandler<RenameContent>
 {
 
-    private IndexService indexService;
+    @Inject
+    private NodeService nodeService;
 
     @Override
     public void handle()
@@ -25,22 +25,13 @@ public class RenameContentHandler
     {
 
         final EntityId entityId = EntityId.from( command.getContentId() );
-        final RenameNode renameNodeCommand = new RenameNode( entityId, NodeName.from( command.getNewName().toString() ) );
-
-        new RenameNodeService( this.context.getJcrSession(), this.indexService, renameNodeCommand ).execute();
+        final NodeName nodeName = NodeName.from( command.getNewName().toString() );
+        nodeService.rename( new RenameNodeParams().entityId( entityId ).nodeName( nodeName ) );
         this.context.getJcrSession().save();
 
         GetContentById getContentByIdCommand = new GetContentById( command.getContentId() );
-        final Content renamedContent = new GetContentByIdService( this.context, getContentByIdCommand ).execute();
+        final Content renamedContent = new GetContentByIdService( this.context, getContentByIdCommand, this.nodeService ).execute();
 
         command.setResult( renamedContent );
     }
-
-
-    @Inject
-    public void setIndexService( final IndexService indexService )
-    {
-        this.indexService = indexService;
-    }
-
 }

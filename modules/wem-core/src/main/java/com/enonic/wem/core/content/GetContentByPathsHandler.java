@@ -1,16 +1,22 @@
 package com.enonic.wem.core.content;
 
+import javax.inject.Inject;
+
 import com.enonic.wem.api.command.content.GetContentByPaths;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.entity.NoNodeAtPathFoundException;
+import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.core.command.CommandHandler;
 
 
 public class GetContentByPathsHandler
     extends CommandHandler<GetContentByPaths>
 {
+    @Inject
+    private NodeService nodeService;
+
     @Override
     public void handle()
         throws Exception
@@ -19,7 +25,7 @@ public class GetContentByPathsHandler
 
         try
         {
-            contents = new GetContentByPathsService( this.context, this.command ).execute();
+            contents = new GetContentByPathsService( this.context, this.command, this.nodeService ).execute();
         }
         catch ( NoNodeAtPathFoundException ex )
         {

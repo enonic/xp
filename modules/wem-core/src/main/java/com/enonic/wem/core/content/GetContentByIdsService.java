@@ -6,15 +6,15 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.command.content.GetContentByIds;
-import com.enonic.wem.api.command.entity.GetNodesByIds;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
+import com.enonic.wem.api.entity.GetNodesByIdsParams;
+import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.core.command.CommandContext;
-import com.enonic.wem.core.entity.GetNodesByIdsService;
 
 
 public class GetContentByIdsService
@@ -22,17 +22,17 @@ public class GetContentByIdsService
 {
     private final GetContentByIds command;
 
-    public GetContentByIdsService( final CommandContext context, final GetContentByIds command )
+    public GetContentByIdsService( final CommandContext context, final GetContentByIds command, final NodeService nodeService )
     {
-        super( context );
+        super( context, nodeService );
         this.command = command;
     }
 
     public Contents execute()
+        throws Exception
     {
-        final GetNodesByIds getNodesByIdsCommand = new GetNodesByIds( getAsEntityIds( command.getIds() ) );
-
-        final Nodes nodes = new GetNodesByIdsService( session, getNodesByIdsCommand ).execute();
+        final EntityIds entityIds = getAsEntityIds( command.getIds() );
+        final Nodes nodes = nodeService.getByIds( new GetNodesByIdsParams( entityIds ) );
 
         return translator.fromNodes( nodes );
     }
