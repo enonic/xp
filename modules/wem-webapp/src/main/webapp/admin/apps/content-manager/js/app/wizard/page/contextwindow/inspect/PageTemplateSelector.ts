@@ -44,7 +44,7 @@ module app.wizard.page.contextwindow.inspect {
             });
 
             var fieldSet = new api.ui.form.Fieldset();
-            fieldSet.add(new api.ui.form.FormItem(new api.ui.form.FormItemBuilder(this.pageTemplateDropdown).setLabel("Page Template")));
+            fieldSet.add(new api.ui.form.FormItemBuilder(this.pageTemplateDropdown).setLabel("Page Template").build());
             config.form.add(fieldSet);
 
             this.pageTemplateDropdown.onOptionSelected((event: OptionSelectedEvent<PageTemplateOption>) => {

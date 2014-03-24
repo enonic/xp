@@ -208,7 +208,7 @@ module api.ui.selector.combobox {
 
             if (this.maximumOccurrencesReached()) {
                 this.input.setMaximumReached();
-                api.dom.FormEl.moveFocuseToNextInput(this.input);
+                api.dom.FormEl.moveFocuseToNextFocusable(this.input);
                 this.dropdownHandle.setEnabled(false);
             }
             if (!silent) {

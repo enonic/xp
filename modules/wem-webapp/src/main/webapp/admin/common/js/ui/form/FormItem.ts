@@ -69,6 +69,10 @@ module api.ui.form {
             this.input = input;
         }
 
+        build() {
+            return new FormItem(this);
+        }
+
         getInput(): api.dom.FormInputEl {
             return this.input;
         }
