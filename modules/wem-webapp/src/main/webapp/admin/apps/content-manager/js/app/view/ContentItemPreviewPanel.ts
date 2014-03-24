@@ -1,5 +1,7 @@
 module app.view {
 
+    import IsRenderableRequest = api.content.page.IsRenderableRequest;
+
     export class ContentItemPreviewPanel extends api.ui.Panel {
 
         private frame: api.dom.IFrameEl;
@@ -50,9 +52,9 @@ module app.view {
                 var imgSrc = api.util.getRestUri("content/image/") + item.getModel().getContentId();
                 this.image.setSrc(imgSrc + '?thumbnail=false&size=' + imgSize);
             } else {
-                new api.content.page.IsRenderableRequest(item.getModel().getContentId()).send()
-                    .then((response: api.rest.JsonResponse<boolean>) => {
-                        if (response.getResult()) {
+                new IsRenderableRequest(item.getModel().getContentId()).sendAndParse()
+                    .done((renderable: boolean) => {
+                        if (renderable) {
                             this.getEl().removeClass("image-preview no-preview").addClass('page-preview');
                             this.frame.setSrc(api.util.getUri("portal/live/" + this.escapePath(item.getPath())));
                         } else {

@@ -8,6 +8,7 @@ module app.wizard {
     import SiteTemplate = api.content.site.template.SiteTemplate;
     import PageTemplate = api.content.page.PageTemplate;
     import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
+    import IsRenderableRequest = api.content.page.IsRenderableRequest;
 
     export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
@@ -81,12 +82,7 @@ module app.wizard {
             });
 
             this.showLiveEditAction = actions.getShowLiveEditAction();
-            if (this.siteContent) {
-                this.showLiveEditAction.setEnabled(true);
-            }
-            else {
-                this.showLiveEditAction.setEnabled(false);
-            }
+            this.showLiveEditAction.setEnabled(false);
 
             if (this.parentContent) {
                 this.contentWizardHeader.setPath(this.parentContent.getPath().toString() + "/");
@@ -206,6 +202,11 @@ module app.wizard {
 
             this.formIcon.setSrc(persistedContent.getIconUrl());
             var contentData: api.content.ContentData = persistedContent.getContentData();
+
+            new IsRenderableRequest(persistedContent.getContentId()).sendAndParse().
+                done((renderable: boolean) => {
+                    this.showLiveEditAction.setEnabled(renderable);
+                });
 
             new api.content.attachment.GetAttachmentsRequest(persistedContent.getContentId()).
                 sendAndParse().

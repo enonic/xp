@@ -24,5 +24,18 @@ module api.content.page {
         getRequestPath(): api.rest.Path {
             return api.rest.Path.fromParent(super.getResourcePath(), "isRenderable");
         }
+
+        sendAndParse(): Q.Promise<boolean> {
+
+            var deferred = Q.defer<boolean>();
+
+            this.send().then((response: api.rest.JsonResponse<boolean>) => {
+                deferred.resolve(response.getResult());
+            }).catch((response: api.rest.RequestError) => {
+                deferred.reject(null);
+            }).done();
+
+            return deferred.promise;
+        }
     }
 }
