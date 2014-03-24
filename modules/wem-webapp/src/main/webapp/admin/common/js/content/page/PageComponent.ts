@@ -39,6 +39,15 @@ module api.content.page {
             return this.name;
         }
 
+        hasDescriptor(): boolean {
+            if (this.descriptorKey) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
         getDescriptor(): DescriptorKey {
             return this.descriptorKey;
         }

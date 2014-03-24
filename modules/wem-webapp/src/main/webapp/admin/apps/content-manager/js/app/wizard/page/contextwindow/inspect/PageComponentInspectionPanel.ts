@@ -1,5 +1,7 @@
 module app.wizard.page.contextwindow.inspect{
 
+    import RootDataSet = api.data.RootDataSet;
+    import FormView = api.form.FormView;
     import SiteTemplate = api.content.site.template.SiteTemplate;
     import PageComponent = api.content.page.PageComponent;
     import DescriptorKey = api.content.page.DescriptorKey;
@@ -9,7 +11,7 @@ module app.wizard.page.contextwindow.inspect{
 
         private siteTemplate: SiteTemplate;
         private liveFormPanel: app.wizard.page.LiveFormPanel;
-        private formView: api.form.FormView;
+        private formView: FormView;
         private component: COMPONENT;
 
         constructor(iconClass: string, liveFormPanel: app.wizard.page.LiveFormPanel, siteTemplate: SiteTemplate) {
@@ -33,7 +35,7 @@ module app.wizard.page.contextwindow.inspect{
             this.component = component;
 
             if (component.getDescriptor()) {
-                this.setMainName(this.getDescriptor(component.getDescriptor()).getName().toString());
+                this.setMainName(this.getDescriptor().getName().toString());
             } else {
                 this.setMainName(component.getName().toString());
             }
@@ -44,7 +46,11 @@ module app.wizard.page.contextwindow.inspect{
 
         }
 
-        getDescriptor(key: DescriptorKey): DESCRIPTOR   {
+        getComponent(): COMPONENT {
+            return this.component;
+        }
+
+        getDescriptor(): DESCRIPTOR {
             throw new Error("To be implemented by subclasses")
         }
 
@@ -58,8 +64,8 @@ module app.wizard.page.contextwindow.inspect{
 
             var formContext = new api.form.FormContextBuilder().build();
             var form = descriptor.getConfig();
-            var config: api.data.RootDataSet = component.getConfig();
-            this.formView = new api.form.FormView(formContext, form, config);
+            var config: RootDataSet = component.getConfig();
+            this.formView = new FormView(formContext, form, config);
             this.formView.setDoOffset(false);
             this.appendChild(this.formView);
         }
