@@ -1,5 +1,6 @@
 module app.wizard.page.contextwindow {
 
+    import RootDataSet = api.data.RootDataSet;
     import LiveFormPanel = app.wizard.page.LiveFormPanel;
     import ComponentPath = api.content.page.ComponentPath;
     import Content = api.content.Content;
@@ -121,8 +122,16 @@ module app.wizard.page.contextwindow {
             this.selectPanel(this.insertablesPanel);
         }
 
-        public getPage() : api.content.page.Page {
-            return this.inspectionPanel.getPage();
+        setPage(page: Content, pageTemplate: PageTemplate, pageDescriptor: PageDescriptor) {
+            this.inspectionPanel.setPage(page, pageTemplate, pageDescriptor);
+        }
+
+        getPageTemplate(): PageTemplateKey {
+            return this.inspectionPanel.getPageTemplate();
+        }
+
+        getPageConfig(): RootDataSet {
+            return this.inspectionPanel.getPageConfig();
         }
 
     }

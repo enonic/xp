@@ -23,6 +23,7 @@ module app.wizard.page {
     import GetLayoutDescriptorsByModulesRequest = api.content.page.layout.GetLayoutDescriptorsByModulesRequest;
 
     import PageComponentBuilder = api.content.page.PageComponentBuilder;
+    import ComponentName = api.content.page.ComponentName;
     import PageComponent = api.content.page.PageComponent;
     import LayoutComponent = api.content.page.layout.LayoutComponent;
     import PartComponentBuilder = api.content.page.part.PartComponentBuilder;
@@ -311,11 +312,24 @@ module app.wizard.page {
             }
         }
 
-        private initializePageFromDefault() {
+        private initializePageFromDefault(): Q.Promise<void> {
 
-            this.pageTemplate = this.defaultPageTemplate;
-            this.pageConfig = this.defaultPageTemplate.getConfig();
-            this.pageRegions = this.defaultPageTemplate.getRegions();
+            var deferred = Q.defer<void>();
+
+            new GetPageDescriptorByKeyRequest(this.defaultPageTemplate.getDescriptorKey()).sendAndParse().
+                done((pageDescriptor: PageDescriptor) => {
+
+                    this.pageTemplate = this.defaultPageTemplate;
+                    this.pageConfig = this.defaultPageTemplate.getConfig();
+                    this.pageRegions = this.defaultPageTemplate.getRegions();
+                    this.pageDescriptor = pageDescriptor;
+
+                    this.contextWindow.setPage(this.content, this.pageTemplate, pageDescriptor);
+
+                    deferred.resolve(null);
+                });
+
+            return deferred.promise;
         }
 
         private setupContextWindow() {
@@ -352,20 +366,16 @@ module app.wizard.page {
 
         public getPageTemplate(): PageTemplateKey {
 
-            if( !this.contextWindow  ) {
+            if (!this.contextWindow) {
                 return this.content.isPage() ? this.content.getPage().getTemplate() : null;
             }
 
-            var page = this.contextWindow.getPage();
-            if (!page) {
-                return null;
-            }
-            return page.getTemplate();
+            return this.contextWindow.getPageTemplate();
         }
 
         public getRegions(): PageRegions {
 
-            if( !this.contextWindow  ) {
+            if (!this.contextWindow) {
                 return this.content.isPage() ? this.content.getPage().getRegions() : null;
             }
 
@@ -374,15 +384,11 @@ module app.wizard.page {
 
         public getConfig(): RootDataSet {
 
-            if( !this.contextWindow  ) {
+            if (!this.contextWindow) {
                 return this.content.isPage() ? this.content.getPage().getConfig() : null;
             }
 
-            var page = this.contextWindow.getPage();
-            if (!page) {
-                return null;
-            }
-            return page.getConfig();
+            return this.contextWindow.getPageConfig();
         }
 
         getDefaultImageDescriptor(): ImageDescriptor {
@@ -467,6 +473,38 @@ module app.wizard.page {
         private onComponentReset(pathAsString: string) {
             var componentPath = ComponentPath.fromString(pathAsString);
             //this.pageRegions.removeComponent(componentPath);
+        }
+
+        private addComponent(componentType: string, regionPath: RegionPath, precedingComponent: ComponentPath): PageComponent {
+
+            var componentName = this.pageRegions.ensureUniqueComponentName(regionPath,
+                new ComponentName(api.util.capitalize(componentType)));
+
+            var builder: PageComponentBuilder<PageComponent>;
+            switch (componentType) {
+            case "image":
+                builder = new ImageComponentBuilder();
+                break;
+            case "part":
+                builder = new PartComponentBuilder();
+                break;
+            case "layout":
+                builder = new LayoutComponentBuilder();
+                break;
+            case "paragraph":
+                //TODO: Implement paragraph
+                builder = null;
+                break;
+            }
+            if (builder) {
+                builder.setName(componentName);
+                var component = builder.build();
+                var componentPath = this.pageRegions.addComponentAfter(component, regionPath, precedingComponent);
+                return component;
+            }
+            else {
+                return null;
+            }
         }
 
         private loadComponent(componentPath: ComponentPath, componentPlaceholder: api.dom.Element) {
@@ -604,46 +642,33 @@ module app.wizard.page {
 
 
             this.liveEditJQuery(this.liveEditWindow).on('componentAdded.liveEdit',
-                (event, componentEl?, regionPathAsString?: string, componentPathToAddAfterAsString?: string) => {
-
-                    if (!this.pageTemplate) {
-                        this.initializePageFromDefault();
-                    }
+                (event, componentEl?, regionPathAsString?: string, precedingComponentPathAsString?: string) => {
 
                     var componentType = componentEl.getComponentType().getName();
                     var regionPath = RegionPath.fromString(regionPathAsString);
 
-                    var componentName = this.pageRegions.ensureUniqueComponentName(regionPath,
-                        new api.content.page.ComponentName(api.util.capitalize(componentType)));
-
-                    var componentToAddAfter: ComponentPath = null;
-                    if (componentPathToAddAfterAsString) {
-                        componentToAddAfter = ComponentPath.fromString(componentPathToAddAfterAsString);
+                    var preceedingComponentPath: ComponentPath = null;
+                    if (precedingComponentPathAsString) {
+                        preceedingComponentPath = ComponentPath.fromString(precedingComponentPathAsString);
                     }
 
-                    var pageComponent: PageComponentBuilder<PageComponent>;
-                    switch (componentType) {
-                    case "image":
-                        pageComponent = new ImageComponentBuilder();
-                        break;
-                    case "part":
-                        pageComponent = new PartComponentBuilder();
-                        break;
-                    case "layout":
-                        pageComponent = new LayoutComponentBuilder();
-                        break;
-                    case "paragraph":
-                        //TODO: Implement paragraph
-                        pageComponent = null;
-                        break;
-                    }
-                    if (pageComponent) {
-                        pageComponent.setName(componentName);
-                        var componentPath = this.pageRegions.addComponentAfter(pageComponent.build(), regionPath, componentToAddAfter);
-                        componentEl.getEl().setData("live-edit-component", componentPath.toString());
-                    }
+                    if (!this.pageTemplate) {
+                        this.initializePageFromDefault().done(() => {
 
-                    componentEl.getEl().setData("live-edit-type", componentType);
+                            var component = this.addComponent(componentType, regionPath, preceedingComponentPath);
+                            if (component) {
+                                componentEl.getEl().setData("live-edit-component", component.getPath().toString());
+                            }
+                            componentEl.getEl().setData("live-edit-type", componentType);
+                        });
+                    }
+                    else {
+                        var component = this.addComponent(componentType, regionPath, preceedingComponentPath);
+                        if (component) {
+                            componentEl.getEl().setData("live-edit-component", component.getPath().toString());
+                        }
+                        componentEl.getEl().setData("live-edit-type", componentType);
+                    }
                 });
 
             this.liveEditJQuery(this.liveEditWindow).on('imageComponentSetImage.liveEdit',

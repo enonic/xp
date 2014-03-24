@@ -1,9 +1,11 @@
 module app.wizard.page.contextwindow.inspect {
 
+    import RootDataSet = api.data.RootDataSet;
     import LiveFormPanel = app.wizard.page.LiveFormPanel;
     import SiteTemplate = api.content.site.template.SiteTemplate;
     import Content = api.content.Content;
     import ContentTypeName = api.schema.content.ContentTypeName;
+    import PageTemplateKey = api.content.page.PageTemplateKey;
     import PageTemplate = api.content.page.PageTemplate;
     import PageDescriptor = api.content.page.PageDescriptor;
     import Region = api.content.page.region.Region;
@@ -98,8 +100,16 @@ module app.wizard.page.contextwindow.inspect {
             }
         }
 
-        public getPage() : api.content.page.Page {
-            return this.pageInspectionPanel.getPage();
+        setPage(page: Content, pageTemplate: PageTemplate, pageDescriptor: PageDescriptor) {
+            this.pageInspectionPanel.setPage(page, pageTemplate, pageDescriptor);
+        }
+
+        getPageTemplate(): PageTemplateKey {
+            return this.pageInspectionPanel.getPageTemplate();
+        }
+
+        getPageConfig(): RootDataSet {
+            return this.pageInspectionPanel.getPageConfig();
         }
     }
 }

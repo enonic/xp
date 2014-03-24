@@ -25,7 +25,7 @@ module app.wizard.page.contextwindow.inspect {
 
         private contentType: ContentTypeName;
 
-        private siteTemplateKey:SiteTemplateKey;
+        private siteTemplateKey: SiteTemplateKey;
 
         private pageTemplateDropdown: Dropdown<PageTemplateOption>;
 
@@ -88,11 +88,11 @@ module app.wizard.page.contextwindow.inspect {
             });
         }
 
-        onPageTemplateChangedListener(listener: {(changedTo: PageTemplateSummary): void;}) {
+        onPageTemplateChanged(listener: {(changedTo: PageTemplateSummary): void;}) {
             this.pageTemplateChangedListeners.push(listener);
         }
 
-        unPageTemplateChangedListener(listener: {(changedTo: PageTemplateSummary): void;}) {
+        unPageTemplateChanged(listener: {(changedTo: PageTemplateSummary): void;}) {
             this.pageTemplateChangedListeners = this.pageTemplateChangedListeners.filter(function (curr) {
                 return curr != listener;
             });

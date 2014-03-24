@@ -25,7 +25,7 @@ module app.wizard.page.contextwindow.inspect {
 
     export class PageInspectionPanel extends BaseInspectionPanel {
 
-        private siteTemplateKey:SiteTemplateKey;
+        private siteTemplateKey: SiteTemplateKey;
 
         private content: Content;
 
@@ -57,7 +57,7 @@ module app.wizard.page.contextwindow.inspect {
             this.pageSelectorEl = containerForm;
             this.appendChild(containerForm);
 
-            this.pageTemplateSelector.onPageTemplateChangedListener((pageTemplate: PageTemplateSummary) => {
+            this.pageTemplateSelector.onPageTemplateChanged((pageTemplate: PageTemplateSummary) => {
 
                 if (!pageTemplate || !pageTemplate.getKey().equals(this.currentPageTemplate)) {
                     this.handlePageTemplateChanged(pageTemplate);
@@ -75,8 +75,7 @@ module app.wizard.page.contextwindow.inspect {
 
                 var getPageTemplatePromise: Q.Promise<PageTemplate> = new GetPageTemplateByKeyRequest(selectedPageTemplate.getKey()).
                     setSiteTemplateKey(this.siteTemplateKey).sendAndParse();
-                getPageTemplatePromise.
-                    done((pageTemplate: PageTemplate) => {
+                getPageTemplatePromise.done((pageTemplate: PageTemplate) => {
 
                     new GetPageDescriptorByKeyRequest(pageTemplate.getDescriptorKey()).sendAndParse().
                         done((pageDescriptor: PageDescriptor) => {
@@ -101,17 +100,12 @@ module app.wizard.page.contextwindow.inspect {
             this.refreshConfigForm(pageTemplate, pageDescriptor);
         }
 
-        getPage(): Page {
+        getPageTemplate(): PageTemplateKey {
+            return this.currentPageTemplate ? this.currentPageTemplate : null;
+        }
 
-            if (this.currentPageTemplate) {
-                return new PageBuilder().
-                    setTemplate(this.currentPageTemplate).
-                    setConfig(this.formView.getData()).
-                    build();
-            }
-            else {
-                return null;
-            }
+        getPageConfig(): RootDataSet {
+            return this.currentPageTemplate ? this.formView.getData() : null;
         }
 
         private refreshConfigForm(pageTemplate: PageTemplate, pageDescriptor: PageDescriptor) {
