@@ -48,7 +48,7 @@ module app.wizard.page {
         private defaultPartDescriptor: PartDescriptor;
         private defaultLayoutDescriptor: LayoutDescriptor;
 
-        private pageContent: Content;
+        private content: Content;
         private pageTemplate: PageTemplate;
         private pageRegions: PageRegions;
         private pageConfig: RootDataSet;
@@ -100,7 +100,7 @@ module app.wizard.page {
                 var siteModules = this.siteTemplate.getModules();
 
                 var defaultPageTemplatePromise = new GetDefaultPageTemplateRequest(this.siteTemplate.getKey(),
-                    this.pageContent.getType()).sendAndParse();
+                    this.content.getType()).sendAndParse();
                 var defaultImageDescrResolved = this.resolveDefaultImageDescriptor(siteModules);
                 var defaultPartDescrResolved = this.resolveDefaultPartDescriptor(siteModules);
                 var defaultLayoutDescrResolved = this.resolveDefaultLayoutDescriptor(siteModules);
@@ -192,7 +192,7 @@ module app.wizard.page {
                     liveEditWindow.CONFIG = {};
                     liveEditWindow.CONFIG.baseUri = CONFIG.baseUri;
                     liveEditWindow.siteTemplate = this.siteTemplate;
-                    liveEditWindow.content = this.pageContent;
+                    liveEditWindow.content = this.content;
 
                     this.mask.hide();
                     liveEditWindow.initializeLiveEdit();
@@ -209,7 +209,7 @@ module app.wizard.page {
 
             api.util.assertNotNull(content, "Expected content not be null");
 
-            this.pageContent = content;
+            this.content = content;
             var pageTemplateChanged = this.resolvePageTemplateChanged(pageTemplate);
             this.pageTemplate = pageTemplate;
 
@@ -350,13 +350,17 @@ module app.wizard.page {
                 liveEditWindow: this.liveEditWindow,
                 liveEditJQuery: this.liveEditJQuery,
                 liveFormPanel: this,
-                contentType: this.pageContent.getType()
+                contentType: this.content.getType()
             });
 
             return contextWindow;
         }
 
         public getPageTemplate(): PageTemplateKey {
+
+            if( !this.contextWindow  ) {
+                return this.content.isPage() ? this.content.getPage().getTemplate() : null;
+            }
 
             var page = this.contextWindow.getPage();
             if (!page) {
@@ -367,10 +371,18 @@ module app.wizard.page {
 
         public getRegions(): PageRegions {
 
+            if( !this.contextWindow  ) {
+                return this.content.isPage() ? this.content.getPage().getRegions() : null;
+            }
+
             return this.pageRegions;
         }
 
         public getConfig(): RootDataSet {
+
+            if( !this.contextWindow  ) {
+                return this.content.isPage() ? this.content.getPage().getConfig() : null;
+            }
 
             var page = this.contextWindow.getPage();
             if (!page) {
@@ -450,7 +462,7 @@ module app.wizard.page {
         }
 
         private onPageSelected() {
-            this.contextWindow.inspectPage(this.pageContent, this.pageTemplate, this.pageDescriptor);
+            this.contextWindow.inspectPage(this.content, this.pageTemplate, this.pageDescriptor);
         }
 
         private onContentSelected(contentIdStr: string) {
@@ -465,7 +477,7 @@ module app.wizard.page {
 
         private loadComponent(componentPath: ComponentPath, componentPlaceholder: api.dom.Element) {
             $.ajax({
-                url: api.util.getComponentUri(this.pageContent.getContentId().toString(), componentPath.toString(), true),
+                url: api.util.getComponentUri(this.content.getContentId().toString(), componentPath.toString(), true),
                 method: 'GET',
                 success: (data) => {
                     var newElement = $(data);
