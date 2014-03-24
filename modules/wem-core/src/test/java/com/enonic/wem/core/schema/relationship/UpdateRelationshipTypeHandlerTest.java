@@ -7,7 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.relationship.GetRelationshipType;
 import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipType;
@@ -35,7 +34,6 @@ public class UpdateRelationshipTypeHandlerTest
     {
         DateTimeUtils.setCurrentMillisFixed( new DateTime( 2012, 1, 1, 12, 0, 0 ).getMillis() );
 
-        super.client = Mockito.mock( Client.class );
         super.initialize();
 
         relationshipTypeDao = Mockito.mock( RelationshipTypeDao.class );

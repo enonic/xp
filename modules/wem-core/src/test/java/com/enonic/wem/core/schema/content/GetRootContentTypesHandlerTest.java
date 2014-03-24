@@ -5,11 +5,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.entity.GetNodesByParent;
 import com.enonic.wem.api.command.schema.content.GetRootContentTypes;
 import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.GetNodesByParentParams;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.Nodes;
@@ -29,8 +28,8 @@ public class GetRootContentTypesHandlerTest
     public void setUp()
         throws Exception
     {
-        client = Mockito.mock( Client.class );
         super.initialize();
+
         handler = new GetRootContentTypesHandler();
         handler.setContext( this.context );
     }
@@ -56,7 +55,7 @@ public class GetRootContentTypesHandlerTest
                 build() ).
             build();
 
-        Mockito.when( client.execute( Mockito.isA( GetNodesByParent.class ) ) ).thenReturn( nodes );
+        Mockito.when( nodeService.getByParent( Mockito.isA( GetNodesByParentParams.class ) ) ).thenReturn( nodes );
 
         // exercise
         final GetRootContentTypes command = Commands.contentType().get().roots();
@@ -64,7 +63,7 @@ public class GetRootContentTypesHandlerTest
         this.handler.handle();
 
         // verify
-        verify( client, atLeastOnce() ).execute( Mockito.isA( GetNodesByParent.class ) );
+        verify( nodeService, atLeastOnce() ).getByParent( Mockito.isA( GetNodesByParentParams.class ) );
         final ContentTypes types = command.getResult();
         assertEquals( 1, types.getSize() );
         assertEquals( "my_content_type1", types.get( 0 ).getName().toString() );
