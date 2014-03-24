@@ -13,10 +13,12 @@ import javax.ws.rs.core.Response;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.core.image.ImageHelper;
 import com.enonic.wem.core.image.filter.ImageFilterBuilder;
 
+import static com.enonic.wem.api.command.Commands.attachment;
 import static org.apache.commons.lang.StringUtils.substringAfterLast;
 
 @Path("{mode}/{contextualContent:.+}/_/image/id/{id:.+}")
@@ -69,7 +71,7 @@ public final class ImageByIdResource
         final ContentId imageContentId = ContentId.from( imageContentIdAsString );
         final Content imageContent = getContent( imageContentId );
 
-        final Attachment attachment = getAttachment( imageContent.getId(), imageContent.getName().toString() );
+        final Attachment attachment = getAttachment( imageContent.getId() );
         if ( attachment == null )
         {
             throw new RuntimeException( "Attachment not found: " + imageContent.getName().toString() );
@@ -89,6 +91,19 @@ public final class ImageByIdResource
         byte[] imageData = ImageHelper.writeImage( image, format, resolveQuality() );
 
         return Response.ok( imageData, attachment.getMimeType() ).build();
+    }
+
+    Attachment getAttachment( final ContentId contentId )
+    {
+        // TODO : Better not found handling
+        try
+        {
+            return client.execute( attachment().getAll().contentId( contentId ) ).first();
+        }
+        catch ( ContentNotFoundException e )
+        {
+            return null;
+        }
     }
 
     private String resolveFormat( final Attachment attachment )

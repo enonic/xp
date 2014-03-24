@@ -1,4 +1,4 @@
-module api.ui.dialog{
+module api.ui.dialog {
 
     export interface ModalDialogConfig {
         title:api.ui.dialog.ModalDialogHeader;
@@ -6,24 +6,24 @@ module api.ui.dialog{
 
     export class ModalDialog extends api.dom.DivEl {
 
-        private config:ModalDialogConfig;
+        private config: ModalDialogConfig;
 
-        private title:api.ui.dialog.ModalDialogHeader;
+        private title: api.ui.dialog.ModalDialogHeader;
 
-        private contentPanel:ModalDialogContentPanel;
+        private contentPanel: ModalDialogContentPanel;
 
-        private buttonRow:ModalDialogButtonRow;
+        private buttonRow: ModalDialogButtonRow;
 
-        private cancelAction:api.ui.Action;
+        private cancelAction: api.ui.Action;
 
-        private actions:api.ui.Action[] = [];
+        private actions: api.ui.Action[] = [];
 
-        constructor(config:ModalDialogConfig) {
+        constructor(config: ModalDialogConfig) {
             super("modal-dialog");
 
             this.config = config;
 
-            this.getEl().setDisplay("none").setZindex(30001).
+            this.getEl().setDisplay("none").setZindex(3000001).
                 setPosition("fixed").setTop("50%").setLeft("50%");
 
             this.title = this.config.title;
@@ -36,24 +36,24 @@ module api.ui.dialog{
             this.appendChild(this.buttonRow);
         }
 
-        setCancelAction(action:api.ui.Action) {
+        setCancelAction(action: api.ui.Action) {
             this.cancelAction = action;
             this.addAction(action);
         }
 
-        getCancelAction():api.ui.Action {
+        getCancelAction(): api.ui.Action {
             return this.cancelAction;
         }
 
-        setTitle(value:string) {
+        setTitle(value: string) {
             this.title.setTitle(value);
         }
 
-        appendChildToContentPanel(child:api.dom.Element) {
+        appendChildToContentPanel(child: api.dom.Element) {
             this.contentPanel.appendChild(child);
         }
 
-        addAction(action:api.ui.Action) {
+        addAction(action: api.ui.Action) {
             this.actions.push(action);
             this.buttonRow.addAction(action);
         }
@@ -99,9 +99,9 @@ module api.ui.dialog{
 
     export class ModalDialogHeader extends api.dom.DivEl {
 
-        private titleEl:api.dom.H2El;
+        private titleEl: api.dom.H2El;
 
-        constructor(title:string) {
+        constructor(title: string) {
             super("dialog-header");
 
             this.titleEl = new api.dom.H2El('title');
@@ -109,7 +109,7 @@ module api.ui.dialog{
             this.appendChild(this.titleEl);
         }
 
-        setTitle(value:string) {
+        setTitle(value: string) {
             this.titleEl.setText(value);
         }
     }
@@ -127,7 +127,7 @@ module api.ui.dialog{
             super("dialog-buttons");
         }
 
-        addAction(action:api.ui.Action):DialogButton {
+        addAction(action: api.ui.Action): DialogButton {
             var button = new DialogButton(action);
             this.appendChild(button);
             return button;
