@@ -26,25 +26,30 @@ module api.ui {
 
         private disabledClass: string = "disabled";
 
-        constructor(actions: ToggleSlideActions, initOn: boolean) {
+        constructor(actions: ToggleSlideActions) {
             super('toggle-slide');
 
             this.actions = actions;
-            actions.turnOnAction.addPropertyChangeListener((action: api.ui.Action)=> {
+            actions.turnOnAction.onPropertyChanged((action: api.ui.Action)=> {
                 this.setEnabled(action.isEnabled());
             });
+
+            if (!actions.turnOnAction.isEnabled()) {
+                this.setEnabled(false);
+            }
 
             this.createMarkup();
             this.calculateStyles();
             this.setupAnimation();
 
-            if (initOn) {
+            var turnOn = actions.turnOnAction.isEnabled();
+            if (turnOn) {
                 this.slideOn();
             }
             else {
                 this.slideOff();
             }
-            this.isOn = initOn;
+            this.isOn = turnOn;
 
             this.onClicked((event: MouseEvent) => {
                 if (this.enabled) {

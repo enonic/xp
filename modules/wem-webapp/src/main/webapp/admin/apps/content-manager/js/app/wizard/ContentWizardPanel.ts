@@ -81,6 +81,12 @@ module app.wizard {
             });
 
             this.showLiveEditAction = actions.getShowLiveEditAction();
+            if (this.siteContent) {
+                this.showLiveEditAction.setEnabled(true);
+            }
+            else {
+                this.showLiveEditAction.setEnabled(false);
+            }
 
             if (this.parentContent) {
                 this.contentWizardHeader.setPath(this.parentContent.getPath().toString() + "/");
@@ -401,7 +407,7 @@ module app.wizard {
                     setRegions(this.liveFormPanel.getRegions());
                 return createRequest;
             }
-            else if( content.isPage() && pageTemplateKey ) {
+            else if (content.isPage() && pageTemplateKey) {
 
                 console.log("*** producePageCUDRequest: update");
                 var updatePageRequest = new api.content.page.UpdatePageRequest(content.getContentId()).

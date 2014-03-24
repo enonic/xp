@@ -26,7 +26,7 @@ module app.wizard {
             var liveEditFormToggler = new api.ui.ToggleSlide({
                 turnOnAction: params.showLiveEditAction,
                 turnOffAction: params.showFormAction
-            }, false);
+            });
 
             super.addElement(liveEditFormToggler);
             var contextWindowToggler = new ContextWindowToggler();

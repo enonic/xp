@@ -15,7 +15,7 @@ module api.ui.menu {
             });
             this.setEnable(action.isEnabled());
 
-            action.addPropertyChangeListener((action:api.ui.Action) => {
+            action.onPropertyChanged((action: api.ui.Action) => {
                 this.setEnable(action.isEnabled());
             });
         }

@@ -14,7 +14,7 @@ module api.ui {
 
         private executionListeners: Function[] = [];
 
-        private propertyChangeListeners: Function[] = [];
+        private propertyChangedListeners: Function[] = [];
 
         constructor(label: string, shortcut?: string, global?: boolean) {
             this.label = label;
@@ -44,8 +44,8 @@ module api.ui {
             if (value !== this.label) {
                 this.label = value;
 
-                for (var i in this.propertyChangeListeners) {
-                    this.propertyChangeListeners[i](this);
+                for (var i in this.propertyChangedListeners) {
+                    this.propertyChangedListeners[i](this);
                 }
             }
         }
@@ -59,8 +59,8 @@ module api.ui {
             if (value !== this.enabled) {
                 this.enabled = value;
 
-                for (var i in this.propertyChangeListeners) {
-                    this.propertyChangeListeners[i](this);
+                for (var i in this.propertyChangedListeners) {
+                    this.propertyChangedListeners[i](this);
                 }
             }
         }
@@ -74,8 +74,8 @@ module api.ui {
             if (value !== this.iconClass) {
                 this.iconClass = value;
 
-                for (var i in this.propertyChangeListeners) {
-                    this.propertyChangeListeners[i](this);
+                for (var i in this.propertyChangedListeners) {
+                    this.propertyChangedListeners[i](this);
                 }
             }
         }
@@ -114,8 +114,8 @@ module api.ui {
             return this;
         }
 
-        addPropertyChangeListener(listener: (action: Action) => void) {
-            this.propertyChangeListeners.push(listener);
+        onPropertyChanged(listener: (action: Action) => void) {
+            this.propertyChangedListeners.push(listener);
         }
 
         getKeyBindings(): KeyBinding[] {

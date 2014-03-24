@@ -32,7 +32,7 @@ module api.ui{
                 this.action.execute();
             });
 
-            this.action.addPropertyChangeListener((action:api.ui.Action) => {
+            this.action.onPropertyChanged((action: api.ui.Action) => {
                 this.setEnabled(action.isEnabled());
             });
         }
