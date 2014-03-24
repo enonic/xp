@@ -1,22 +1,16 @@
-package com.enonic.wem.api.command.entity;
+package com.enonic.wem.api.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodePath;
-
-public class DeleteNodeByPath
-    extends Command<Node>
+public class DeleteNodeByPathParams
 {
     private final NodePath path;
 
-    public DeleteNodeByPath( final NodePath path )
+    public DeleteNodeByPathParams( final NodePath path )
     {
         this.path = path;
     }
 
-    @Override
     public void validate()
     {
         Preconditions.checkNotNull( path, "path must be specified" );

@@ -3,20 +3,25 @@ package com.enonic.wem.core.content;
 import com.enonic.wem.api.command.content.GetChildContent;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.core.command.CommandContext;
 
 class ChildContentIdsResolver
 {
     private final CommandContext context;
 
-        ChildContentIdsResolver( final CommandContext context )
+    private final NodeService nodeService;
+
+    ChildContentIdsResolver( final CommandContext context, final NodeService nodeService )
     {
         this.context = context;
+        this.nodeService = nodeService;
     }
 
     Content resolve( final Content content )
+        throws Exception
     {
-        final Contents children = new GetChildContentService( context, new GetChildContent().parentPath( content.getPath() ) ).execute();
+        final Contents children = new GetChildContentService( context, new GetChildContent().parentPath( content.getPath() ), nodeService ).execute();
 
         if ( children.isNotEmpty() )
         {
@@ -34,6 +39,7 @@ class ChildContentIdsResolver
     }
 
     Contents resolve( final Contents contents )
+        throws Exception
     {
         final Contents.Builder builder = new Contents.Builder();
 

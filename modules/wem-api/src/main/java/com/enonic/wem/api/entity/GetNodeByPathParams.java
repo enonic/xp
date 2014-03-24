@@ -1,23 +1,16 @@
-package com.enonic.wem.api.command.entity;
-
+package com.enonic.wem.api.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodePath;
-
-public class GetNodeByPath
-    extends Command<Node>
+public class GetNodeByPathParams
 {
     private final NodePath path;
 
-    public GetNodeByPath( final NodePath path )
+    public GetNodeByPathParams( final NodePath path )
     {
         this.path = path;
     }
 
-    @Override
     public void validate()
     {
         Preconditions.checkNotNull( path, "path must be specified" );
@@ -28,5 +21,3 @@ public class GetNodeByPath
         return this.path;
     }
 }
-
-
