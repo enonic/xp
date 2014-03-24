@@ -9,8 +9,7 @@ module LiveEdit.component.mouseevent {
 
             this.componentCssSelectorFilter = LiveEdit.component.TypeConfiguration[LiveEdit.component.Type.PAGE].cssSelector;
 
-            //Commented because affects modal dialog
-            //this.attachClickEvent();
+            this.attachClickEvent();
         }
     }
 }
