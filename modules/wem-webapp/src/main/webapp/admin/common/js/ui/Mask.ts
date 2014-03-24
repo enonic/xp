@@ -16,27 +16,66 @@ module api.ui {
                     this.remove();
                 });
                 // Masked element might have been resized on window resize
-                api.dom.Window.get().onResized((event: UIEvent) => this.positionOver(this.masked));
+                api.dom.Window.get().onResized((event: UIEvent) => {
+                    if (this.isVisible()) {
+                        this.positionOver(this.masked)
+                    }
+                });
             }
             api.dom.Body.get().appendChild(this);
         }
 
         show() {
+            super.show();
             if (this.masked) {
                 this.positionOver(this.masked);
             }
-            super.show();
         }
 
         private positionOver(masked: api.dom.Element) {
-            var maskedEl = masked.getEl();
+            var maskedEl = masked.getEl(),
+                maskEl = this.getEl(),
+                maskedOffset: {top:number; left: number},
+                isMaskedPositioned = maskedEl.getPosition() != 'static',
+                maskedDimensions: {width: number; height: number} = {
+                    width: maskedEl.getWidthWithBorder(),
+                    height: maskedEl.getHeightWithBorder()
+                };
 
-            var maskedOffset = this.getParentElement() == api.dom.Body.get() ? maskedEl.getOffset() : {top: 0, left: 0};
-            var maskedWidth = maskedEl.getWidthWithBorder();
-            var maskedHeight = maskedEl.getHeightWithBorder();
+            if (masked.contains(this) && isMaskedPositioned) {
+                // mask is inside masked element & it is positioned
+                maskedOffset = {
+                    top: 0,
+                    left: 0
+                };
+            } else {
+                // mask is outside masked element
+                var maskedParent = maskedEl.getOffsetParent(),
+                    maskParent = maskEl.getOffsetParent();
 
-            this.getEl().setTop(maskedOffset.top + "px").setLeft(maskedOffset.left + "px").
-                setWidth(maskedWidth + "px").setHeight(maskedHeight + "px");
+                maskedOffset = maskedEl.getOffsetToParent();
+
+                if (maskedParent != maskParent) {
+                    // they have different offset parents so calc the difference
+                    var maskedParentOffset = new api.dom.ElementHelper(maskedParent).getOffset(),
+                        maskParentOffset = new api.dom.ElementHelper(maskParent).getOffset();
+
+                    maskedOffset.left = maskedOffset.left + (maskedParentOffset.left - maskParentOffset.left);
+                    maskedOffset.top = maskedOffset.top + (maskedParentOffset.top - maskParentOffset.top);
+                }
+
+                if (!isMaskedPositioned) {
+                    // account for margins if masked is positioned statically
+                    maskedOffset.top += maskedEl.getMarginTop();
+                    maskedOffset.left += maskedEl.getMarginLeft();
+                }
+            }
+
+            this.getEl().
+                setTop(maskedOffset.top + "px").
+                setLeft(maskedOffset.left + "px").
+                setWidth(maskedDimensions.width + "px").
+                setHeight(maskedDimensions.height + "px");
         }
 
         getMasked(): api.dom.Element {

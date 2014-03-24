@@ -24,8 +24,8 @@ module api.ui {
 
         show() {
             super.show();
-            this.centerSplash();
             this.splash.show();
+            this.centerSplash();
         }
 
         hide() {

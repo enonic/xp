@@ -180,6 +180,10 @@ module api.dom {
             return this;
         }
 
+        getPosition(): string {
+            return this.getComputedProperty('position');
+        }
+
         setPosition(value: string): ElementHelper {
             this.el.style.position = value;
             return this;
@@ -264,9 +268,17 @@ module api.dom {
             return this;
         }
 
+        getMarginLeft(): number {
+            return parseFloat(this.getComputedProperty('margin-left')) || 0;
+        }
+
         setMarginLeft(value: string): ElementHelper {
             this.el.style.marginLeft = value;
             return this;
+        }
+
+        getMarginRight(): number {
+            return parseFloat(this.getComputedProperty('margin-right'));
         }
 
         setMarginRight(value: string): ElementHelper {
@@ -274,9 +286,17 @@ module api.dom {
             return this;
         }
 
+        getMarginTop(): number {
+            return parseFloat(this.getComputedProperty('margin-top'));
+        }
+
         setMarginTop(value: string): ElementHelper {
             this.el.style.marginTop = value;
             return this;
+        }
+
+        getMarginBottom(): number {
+            return parseFloat(this.getComputedProperty('margin-bottom'));
         }
 
         setMarginBottom(value: string): ElementHelper {
@@ -296,14 +316,6 @@ module api.dom {
             return parseFloat(this.getComputedProperty('border-bottom-width'));
         }
 
-        getMarginRight(): number {
-            return parseFloat(this.getComputedProperty('margin-right'));
-        }
-
-        getMarginLeft(): number {
-            return parseFloat(this.getComputedProperty('margin-left')) || 0;
-        }
-
         setZindex(value: number): ElementHelper {
             this.el.style.zIndex = value.toString();
             return this;
@@ -321,9 +333,34 @@ module api.dom {
             }
         }
 
+        contains(element: HTMLElement): boolean {
+            return this.el.contains ? this.el.contains(element) : !!(this.el.compareDocumentPosition(element) & 16);
+        }
+
+        /**
+         * Calculate offset relative to document
+         * @returns {{left: number, top: number}}
+         */
         getOffset(): { top:number; left:number;
         } {
             return $(this.el).offset();
+        }
+
+        /**
+         * Goes up the hierarchy and returns first non-statically positioned parent
+         * @returns {HTMLElement}
+         */
+        getOffsetParent(): HTMLElement {
+            return $(this.el).offsetParent()[0];
+        }
+
+        /**
+         * Calculates offset relative to first positioned parent ( element with position: relative, absolute or fixed )
+         * @returns {{top: number, left: number}}
+         */
+        getOffsetToParent(): { top:number; left:number;
+        } {
+            return $(this.el).position();
         }
 
         getOffsetTop(): number {

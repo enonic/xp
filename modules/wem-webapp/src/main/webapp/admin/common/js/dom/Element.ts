@@ -297,37 +297,37 @@ module api.dom {
         }
 
         onMouseEnter(handler: (e: MouseEvent)=>any) {
-            this.mouseEnterLeave(this.getHTMLElement(), 'mouseenter', handler);
+            this.mouseEnterLeave('mouseenter', handler);
         }
 
         onMouseLeave(handler: (e: MouseEvent)=>any) {
-            this.mouseEnterLeave(this.getHTMLElement(), 'mouseleave', handler);
+            this.mouseEnterLeave('mouseleave', handler);
         }
 
         setBackgroundImgUrl(backgroundImgUrl: string) {
             this.getHTMLElement().style.backgroundImage = "url('" + backgroundImgUrl + "')";
         }
 
-        private mouseEnterLeave(elem: HTMLElement, type: string, handler: (e: MouseEvent)=>any) {
+        private mouseEnterLeave(type: string, handler: (e: MouseEvent)=>any) {
             var mouseEnter = type === 'mouseenter',
+                containerEl = this.getEl(),
                 ie = mouseEnter ? 'fromElement' : 'toElement',
                 mouseEventHandler = (e: any) => { //Had use any since window.event isn't of type MouseEvent and caused compiler to bug
                     e = e || window.event;
                     var target: HTMLElement = <HTMLElement> (e.target || e.srcElement),
                         related: HTMLElement = <HTMLElement> (e.relatedTarget || e[ie]);
-                    if ((elem === target || this.contains(elem, target)) && !this.contains(elem, related)) {
+                    if ((this.getHTMLElement() === target || containerEl.contains(target)) && !containerEl.contains(related)) {
                         handler(e);
                     }
                 };
             type = mouseEnter ? 'mouseover' : 'mouseout';
 
-            elem.addEventListener(type, mouseEventHandler);
+            containerEl.addEventListener(type, mouseEventHandler);
             return mouseEventHandler;
         }
 
-        private contains(container: HTMLElement, maybe: HTMLElement) {
-            return container.contains ? container.contains(maybe) :
-                   !!(container.compareDocumentPosition(maybe) & 16);
+        contains(element: api.dom.Element) {
+            return this.getEl().contains(element.getHTMLElement());
         }
 
         onAdded(listener: (event: ElementAddedEvent) => void) {

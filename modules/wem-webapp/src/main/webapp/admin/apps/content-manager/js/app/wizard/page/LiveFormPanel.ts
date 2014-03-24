@@ -83,7 +83,12 @@ module app.wizard.page {
 
             this.baseUrl = api.util.getUri("portal/edit/");
 
-            this.mask = new api.ui.LoadMask(this);
+            this.frame = new api.dom.IFrameEl("live-edit-frame");
+            this.appendChild(this.frame);
+
+            this.mask = new api.ui.LoadMask(this.frame);
+            // append it here in order for the context window to be above
+            this.appendChild(this.mask);
 
             ShowContentFormEvent.on(() => {
                 if (this.mask.isVisible()) {
@@ -182,7 +187,7 @@ module app.wizard.page {
             api.util.assertNotNull(this.pageUrl, "No page to load");
 
             this.mask.show();
-            this.setupFrame();
+            this.frame.setSrc(this.pageUrl);
 
             var deferred = Q.defer<void>();
             this.frame.onLoaded((event: UIEvent) => {
@@ -311,17 +316,6 @@ module app.wizard.page {
             this.pageTemplate = this.defaultPageTemplate;
             this.pageConfig = this.defaultPageTemplate.getConfig();
             this.pageRegions = this.defaultPageTemplate.getRegions();
-        }
-
-        private setupFrame() {
-            if (this.frame) {
-                this.frame.remove();
-            }
-
-            this.frame = new api.dom.IFrameEl("live-edit-frame");
-            this.frame.setSrc(this.pageUrl);
-            this.appendChild(this.frame);
-
         }
 
         private setupContextWindow() {
