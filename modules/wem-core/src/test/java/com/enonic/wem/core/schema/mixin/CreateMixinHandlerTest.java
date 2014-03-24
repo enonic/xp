@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
 import com.enonic.wem.api.form.inputtype.InputTypes;
@@ -26,7 +25,6 @@ public class CreateMixinHandlerTest
     public void setUp()
         throws Exception
     {
-        super.client = Mockito.mock( Client.class );
         super.initialize();
 
         mixinDao = Mockito.mock( MixinDao.class );

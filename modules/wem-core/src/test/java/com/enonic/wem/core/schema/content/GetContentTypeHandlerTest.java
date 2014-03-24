@@ -5,12 +5,11 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.entity.GetNodeByPath;
-import com.enonic.wem.api.command.entity.GetNodesByParent;
 import com.enonic.wem.api.command.schema.content.GetContentType;
 import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.GetNodeByPathParams;
+import com.enonic.wem.api.entity.GetNodesByParentParams;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.Nodes;
@@ -23,16 +22,14 @@ import static org.junit.Assert.*;
 public class GetContentTypeHandlerTest
     extends AbstractCommandHandlerTest
 {
-
-
     private GetContentTypeHandler handler;
 
     @Before
     public void setUp()
         throws Exception
     {
-        super.client = Mockito.mock( Client.class );
         super.initialize();
+
         handler = new GetContentTypeHandler();
         handler.setContext( this.context );
     }
@@ -49,8 +46,8 @@ public class GetContentTypeHandlerTest
             property( "description", "Description" ).
             build();
 
-        Mockito.when( client.execute( Mockito.isA( GetNodesByParent.class ) ) ).thenReturn( Nodes.from( node ) );
-        Mockito.when( client.execute( Mockito.isA( GetNodeByPath.class ) ) ).thenReturn( node );
+        Mockito.when( nodeService.getByParent( Mockito.isA( GetNodesByParentParams.class ) ) ).thenReturn( Nodes.from( node ) );
+        Mockito.when( nodeService.getByPath( Mockito.isA( GetNodeByPathParams.class ) ) ).thenReturn( node );
 
         // Exercise:
         GetContentType command = Commands.contentType().get().byName().contentTypeName( ContentTypeName.from( "content_type_1" ) );

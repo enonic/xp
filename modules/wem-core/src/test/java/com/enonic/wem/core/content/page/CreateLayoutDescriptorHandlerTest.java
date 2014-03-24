@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.module.CreateModuleResource;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.layout.CreateLayoutDescriptorParams;
@@ -31,7 +30,6 @@ public class CreateLayoutDescriptorHandlerTest
     public void setUp()
         throws Exception
     {
-        super.client = Mockito.mock( Client.class );
         super.initialize();
 
         handler = new CreateLayoutDescriptorHandler();

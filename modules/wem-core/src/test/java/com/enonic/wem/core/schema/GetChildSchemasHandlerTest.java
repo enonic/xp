@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.GetChildSchemas;
 import com.enonic.wem.api.command.schema.content.GetChildContentTypes;
@@ -28,7 +27,6 @@ public class GetChildSchemasHandlerTest
     public void setUp()
         throws Exception
     {
-        super.client = Mockito.mock( Client.class );
         super.initialize();
 
         handler = new GetChildSchemasHandler();

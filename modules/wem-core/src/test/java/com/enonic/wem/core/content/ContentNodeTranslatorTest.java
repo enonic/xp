@@ -8,8 +8,6 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.command.content.CreateContent;
-import com.enonic.wem.api.command.entity.CreateNode;
-import com.enonic.wem.api.command.entity.UpdateNode;
 import com.enonic.wem.api.command.schema.content.GetContentType;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -24,12 +22,14 @@ import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.type.ValueTypes;
+import com.enonic.wem.api.entity.CreateNodeParams;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIndexConfig;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.PropertyIndexConfig;
+import com.enonic.wem.api.entity.UpdateNodeParams;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
@@ -69,7 +69,7 @@ public class ContentNodeTranslatorTest
             contentType( ContentTypeName.from( "my-content-type" ) ).
             contentData( new ContentData( rootDataSet.toRootDataSet() ) );
 
-        final CreateNode createNode = translator.toCreateNode( mycontent );
+        final CreateNodeParams createNode = translator.toCreateNode( mycontent );
 
         final Property testProperty = createNode.getData().getProperty( "contentdata.test" );
 
@@ -89,7 +89,7 @@ public class ContentNodeTranslatorTest
             contentType( ContentTypeName.from( "my-content-type" ) ).
             contentData( new ContentData( rootDataSet.toRootDataSet() ) );
 
-        final CreateNode createNode = translator.toCreateNode( mycontent );
+        final CreateNodeParams createNode = translator.toCreateNode( mycontent );
 
         final EntityIndexConfig entityIndexConfig = createNode.getEntityIndexConfig();
 
@@ -121,7 +121,7 @@ public class ContentNodeTranslatorTest
             contentType( ContentTypeName.from( "my-content-type" ) ).
             form( form );
 
-        final CreateNode createNode = translator.toCreateNode( mycontent );
+        final CreateNodeParams createNode = translator.toCreateNode( mycontent );
 
         final EntityIndexConfig entityIndexConfig = createNode.getEntityIndexConfig();
 
@@ -150,7 +150,7 @@ public class ContentNodeTranslatorTest
             mimeType( "image/png" ).
             build() );
 
-        final UpdateNode updateNode = translator.toUpdateNodeCommand( content, attachments );
+        final UpdateNodeParams updateNode = translator.toUpdateNodeCommand( content, attachments );
 
         final Node node = Node.newNode().build();
 
