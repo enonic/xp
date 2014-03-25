@@ -8,6 +8,14 @@
   position: relative;
   min-height: @defaultHeight;
   box-sizing: border-box;
+  font-family: @admin-font-family;
+
+  //Reset styles from page
+  & * {
+    font-family: @admin-font-family;
+    color: @admin-black;
+    font-weight:normal;
+  }
 
   &[data-live-edit-type] {
     &:before {
