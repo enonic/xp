@@ -37,6 +37,7 @@ module LiveEdit.component {
                 setMaximumOccurrences(1).
                 setAllowedContentTypes(["image"]).
                 build();
+            this.comboBox.addClass('image-placeholder');
             this.comboBox.hide();
             this.appendChild(this.comboBox);
 
