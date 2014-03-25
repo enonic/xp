@@ -90,6 +90,7 @@ module api.ui.selector.dropdown {
 
             this.selectedOptionView.onOpenDropdown(() => {
                 this.showDropdown();
+                this.dropdownDropdown.navigateToFirstRowIfNotActive();
                 this.input.giveFocus();
             });
 
