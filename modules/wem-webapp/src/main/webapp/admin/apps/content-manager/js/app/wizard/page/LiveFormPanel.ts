@@ -166,8 +166,12 @@ module app.wizard.page {
                         this.pageLoading = false;
                         this.pageNeedsReload = false;
 
-                        this.setupContextWindow();
-                        deferred.resolve(null);
+                        this.loadPageDescriptor().done(() => {
+
+                            this.setupContextWindow();
+                            deferred.resolve(null);
+                        });
+
                     }).catch(()=> {
                         console.log("Error while loading page: ", arguments);
                         deferred.reject(arguments);
@@ -237,12 +241,6 @@ module app.wizard.page {
                     this.pageRegions = this.resolvePageRegions(content, pageTemplate);
                     this.pageConfig = this.resolvePageConfig(content, pageTemplate);
                 }
-                if (pageTemplate) {
-                    new GetPageDescriptorByKeyRequest(pageTemplate.getDescriptorKey()).sendAndParse().
-                        done((pageDescriptor: PageDescriptor) => {
-                            this.pageDescriptor = pageDescriptor;
-                        });
-                }
             }
 
             if (!this.isVisible()) {
@@ -260,10 +258,31 @@ module app.wizard.page {
             this.doLoad().
                 then(() => {
 
-                    this.setupContextWindow();
+                    this.loadPageDescriptor().done(() => {
+
+                        this.setupContextWindow();
+                    });
                 }).fail(()=> {
                     console.log("Error while loading page: ", arguments);
                 }).done();
+
+        }
+
+        private loadPageDescriptor(): Q.Promise<void> {
+
+            var deferred = Q.defer<void>();
+            if (!this.pageTemplate) {
+                deferred.resolve(null);
+            }
+            else {
+                new GetPageDescriptorByKeyRequest(this.pageTemplate.getDescriptorKey()).sendAndParse().
+                    done((pageDescriptor: PageDescriptor) => {
+                        this.pageDescriptor = pageDescriptor;
+                        deferred.resolve(null);
+                    });
+            }
+
+            return deferred.promise;
         }
 
         private resolvePageTemplateChanged(pageTemplate: PageTemplate) {
@@ -360,6 +379,8 @@ module app.wizard.page {
                 liveFormPanel: this,
                 contentType: this.content.getType()
             });
+
+            contextWindow.setPage(this.content, this.pageTemplate, this.pageDescriptor);
 
             return contextWindow;
         }

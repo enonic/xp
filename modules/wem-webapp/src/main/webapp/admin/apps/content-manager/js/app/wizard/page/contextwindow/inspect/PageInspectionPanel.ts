@@ -114,7 +114,7 @@ module app.wizard.page.contextwindow.inspect {
                 this.removeChild(this.formView);
             }
 
-            if (!pageTemplate) {
+            if (!pageTemplate || !pageDescriptor) {
                 return;
             }
 
