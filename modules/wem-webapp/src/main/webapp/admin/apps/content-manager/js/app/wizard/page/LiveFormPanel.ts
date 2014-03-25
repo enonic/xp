@@ -286,13 +286,19 @@ module app.wizard.page {
         }
 
         private resolvePageTemplateChanged(pageTemplate: PageTemplate) {
-            if (!pageTemplate && !this.pageTemplate) {
+
+            if (this.pageTemplate == undefined) {
+                // initially pageTemplate is not changed
                 return false;
             }
-            else if (!pageTemplate && this.pageTemplate) {
+
+            if (!pageTemplate && this.pageTemplate == null) {
+                return false;
+            }
+            else if (!pageTemplate && this.pageTemplate != null) {
                 return true;
             }
-            else if (pageTemplate && !this.pageTemplate) {
+            else if (pageTemplate && this.pageTemplate == null) {
                 return true;
             }
             else if (this.pageTemplate.getKey().toString() != pageTemplate.getKey().toString()) {
