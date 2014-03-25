@@ -60,13 +60,13 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             placeholder: 'live-edit-drop-target-placeholder',
             zIndex: 1001001,
             helper:     (event, helper) => LiveEdit.component.helper.DragHelper.createDragHelperHtml(),
-            start:      (event, ui)     => this.handleSortStart(event, ui),
-            over:       (event, ui)     => this.handleDragOver(event, ui),
-            out:        (event, ui)     => this.handleDragOut(event, ui),
-            change:     (event, ui)     => this.handleSortChange(event, ui),
-            receive:    (event, ui)     => this.handleReceive(event, ui),
-            update:     (event, ui)     => this.handleSortUpdate(event, ui),
-            stop:       (event, ui)     => this.handleSortStop(event, ui)
+            start:      (event, ui)     => LiveEdit.component.dragdropsort.DragDropSort.handleSortStart(event, ui),
+            over:       (event, ui)     => LiveEdit.component.dragdropsort.DragDropSort.handleDragOver(event, ui),
+            out:        (event, ui)     => LiveEdit.component.dragdropsort.DragDropSort.handleDragOut(event, ui),
+            change:     (event, ui)     => LiveEdit.component.dragdropsort.DragDropSort.handleSortChange(event, ui),
+            receive:    (event, ui)     => LiveEdit.component.dragdropsort.DragDropSort.handleReceive(event, ui),
+            update:     (event, ui)     => LiveEdit.component.dragdropsort.DragDropSort.handleSortUpdate(event, ui),
+            stop:       (event, ui)     => LiveEdit.component.dragdropsort.DragDropSort.handleSortStop(event, ui)
         });
 //        $(selector).on('mouseover', (event) => {
 //            if ($(event.currentTarget).hasClass("ui-sortable")) {
