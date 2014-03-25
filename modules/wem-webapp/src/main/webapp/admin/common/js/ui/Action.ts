@@ -45,10 +45,7 @@ module api.ui {
 
             if (value !== this.label) {
                 this.label = value;
-
-                for (var i in this.propertyChangedListeners) {
-                    this.propertyChangedListeners[i](this);
-                }
+                this.notifyPropertyChanged();
             }
         }
 
@@ -60,10 +57,7 @@ module api.ui {
 
             if (value !== this.enabled) {
                 this.enabled = value;
-
-                for (var i in this.propertyChangedListeners) {
-                    this.propertyChangedListeners[i](this);
-                }
+                this.notifyPropertyChanged();
             }
         }
 
@@ -75,10 +69,7 @@ module api.ui {
 
             if (value !== this.visible) {
                 this.visible = value;
-
-                for (var i in this.propertyChangedListeners) {
-                    this.propertyChangedListeners[i](this);
-                }
+                this.notifyPropertyChanged();
             }
         }
 
@@ -90,10 +81,13 @@ module api.ui {
 
             if (value !== this.iconClass) {
                 this.iconClass = value;
+                this.notifyPropertyChanged();
+            }
+        }
 
-                for (var i in this.propertyChangedListeners) {
-                    this.propertyChangedListeners[i](this);
-                }
+        private notifyPropertyChanged() {
+            for (var i in this.propertyChangedListeners) {
+                this.propertyChangedListeners[i](this);
             }
         }
 
