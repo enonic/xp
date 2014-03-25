@@ -44,6 +44,8 @@ module app.wizard {
 
         private publishAction: api.ui.Action;
 
+        private contextWindowToggler: ContextWindowToggler;
+
         constructor(params: ContentWizardPanelParams, callback: (wizard: ContentWizardPanel) => void) {
 
             console.log("ContentWizardPanel.constructor started");
@@ -81,6 +83,7 @@ module app.wizard {
                 showFormAction: actions.getShowFormAction()
             });
 
+            this.contextWindowToggler = mainToolbar.getContextWindowToggler();
             this.showLiveEditAction = actions.getShowLiveEditAction();
             this.showLiveEditAction.setEnabled(false);
 
@@ -205,7 +208,9 @@ module app.wizard {
 
             new IsRenderableRequest(persistedContent.getContentId()).sendAndParse().
                 done((renderable: boolean) => {
-                    this.showLiveEditAction.setEnabled(renderable);
+                    this.showLiveEditAction.setVisible(renderable);
+                    this.previewAction.setVisible(renderable);
+                    this.contextWindowToggler.setVisible(renderable);
                 });
 
             new api.content.attachment.GetAttachmentsRequest(persistedContent.getContentId()).

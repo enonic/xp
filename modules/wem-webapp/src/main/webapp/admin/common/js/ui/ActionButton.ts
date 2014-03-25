@@ -1,14 +1,14 @@
-module api.ui{
+module api.ui {
 
     export class ActionButton extends api.ui.Button {
 
-        private action:Action;
-        private tooltip:Tooltip;
+        private action: Action;
+        private tooltip: Tooltip;
 
-        constructor(action:Action, showTooltip:boolean = true) {
+        constructor(action: Action, showTooltip: boolean = true) {
             this.action = action;
 
-            var label:string;
+            var label: string;
             if (this.action.hasMnemonic()) {
                 label = this.action.getMnemonic().underlineMnemonic(this.action.getLabel());
             }
@@ -34,6 +34,7 @@ module api.ui{
 
             this.action.onPropertyChanged((action: api.ui.Action) => {
                 this.setEnabled(action.isEnabled());
+                this.setVisible(action.isVisible());
             });
         }
 

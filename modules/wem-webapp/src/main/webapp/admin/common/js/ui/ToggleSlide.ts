@@ -32,6 +32,7 @@ module api.ui {
             this.actions = actions;
             actions.turnOnAction.onPropertyChanged((action: api.ui.Action)=> {
                 this.setEnabled(action.isEnabled());
+                this.setVisible(action.isVisible());
             });
 
             if (!actions.turnOnAction.isEnabled()) {

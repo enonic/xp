@@ -12,6 +12,8 @@ module api.ui {
 
         private enabled: boolean = true;
 
+        private visible: boolean = true;
+
         private executionListeners: Function[] = [];
 
         private propertyChangedListeners: Function[] = [];
@@ -58,6 +60,21 @@ module api.ui {
 
             if (value !== this.enabled) {
                 this.enabled = value;
+
+                for (var i in this.propertyChangedListeners) {
+                    this.propertyChangedListeners[i](this);
+                }
+            }
+        }
+
+        isVisible(): boolean {
+            return this.visible;
+        }
+
+        setVisible(value: boolean) {
+
+            if (value !== this.visible) {
+                this.visible = value;
 
                 for (var i in this.propertyChangedListeners) {
                     this.propertyChangedListeners[i](this);
