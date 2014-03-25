@@ -136,11 +136,6 @@ module app.wizard.page {
                 Q.allSettled(allPromises).then((results: Q.PromiseState<any>[])=> {
                     this.initialized = true;
 
-                    if (!this.pageTemplate) {
-                        this.pageConfig = this.defaultPageTemplate.getConfig();
-                        this.pageRegions = this.defaultPageTemplate.getRegions();
-                    }
-
                     deferred.resolve(null);
                 });
             }
@@ -213,9 +208,9 @@ module app.wizard.page {
             return deferred.promise;
         }
 
-        setPage(content: Content, pageTemplate: PageTemplate) {
+        setPage(content: Content, pageTemplate: PageTemplate): Q.Promise<void> {
 
-            console.log("LiveFormPanel.setPage() ...");
+            var deferred = Q.defer<void>();
 
             api.util.assertNotNull(content, "Expected content not be null");
 
@@ -225,47 +220,54 @@ module app.wizard.page {
 
             this.pageUrl = this.baseUrl + content.getContentId().toString();
 
-            if (!this.pageSkipReload) {
+            this.initialize().done(() => {
 
-                if (pageTemplateChanged && this.pageTemplate) {
+                if (!this.pageSkipReload) {
 
-                    this.pageRegions = this.pageTemplate.getRegions();
-                    this.pageConfig = this.pageTemplate.getConfig();
+                    if (pageTemplateChanged && this.pageTemplate) {
+
+                        this.pageRegions = this.pageTemplate.getRegions();
+                        this.pageConfig = this.pageTemplate.getConfig();
+                    }
+                    else if (pageTemplateChanged && !this.pageTemplate) {
+
+                        this.pageRegions = this.defaultPageTemplate.getRegions();
+                        this.pageConfig = this.defaultPageTemplate.getConfig();
+                    }
+                    else {
+                        this.pageRegions = this.resolvePageRegions(content, pageTemplate);
+                        this.pageConfig = this.resolvePageConfig(content, pageTemplate);
+                    }
                 }
-                else if (pageTemplateChanged && !this.pageTemplate) {
 
-                    this.pageRegions = null;
-                    this.pageConfig = null;
+                if (!this.isVisible()) {
+
+                    this.pageNeedsReload = true;
+                    //console.log("LiveFormPanel.setPage() ... not visible, returning");
+                    deferred.resolve(null);
+                }
+                else if (this.pageSkipReload == true) {
+                    //console.log("LiveFormPanel.setPage() ... skipReload is true, returning");
+                    deferred.resolve(null);
                 }
                 else {
-                    this.pageRegions = this.resolvePageRegions(content, pageTemplate);
-                    this.pageConfig = this.resolvePageConfig(content, pageTemplate);
+                    this.doLoad().
+                        then(() => {
+
+                            this.loadPageDescriptor().done(() => {
+
+                                this.setupContextWindow();
+                                deferred.resolve(null);
+                            });
+                        }).fail(()=> {
+                            console.log("Error while loading page: ", arguments);
+                            deferred.reject(null);
+                        }).done();
                 }
-            }
 
-            if (!this.isVisible()) {
+            });
 
-                this.pageNeedsReload = true;
-                console.log("LiveFormPanel.setPage() ... not visible, returning");
-                return;
-            }
-
-            if (this.pageSkipReload == true) {
-                console.log("LiveFormPanel.setPage() ... skipReload is true, returning");
-                return;
-            }
-
-            this.doLoad().
-                then(() => {
-
-                    this.loadPageDescriptor().done(() => {
-
-                        this.setupContextWindow();
-                    });
-                }).fail(()=> {
-                    console.log("Error while loading page: ", arguments);
-                }).done();
-
+            return deferred.promise;
         }
 
         private loadPageDescriptor(): Q.Promise<void> {
@@ -312,7 +314,7 @@ module app.wizard.page {
         private resolvePageRegions(content: Content, pageTemplate: PageTemplate): PageRegions {
 
             if (!pageTemplate) {
-                return null;
+                return this.defaultPageTemplate.getRegions();
             }
 
             if (content.isPage() && content.getPage().hasRegions()) {
@@ -326,7 +328,7 @@ module app.wizard.page {
         private resolvePageConfig(content: Content, pageTemplate: PageTemplate): RootDataSet {
 
             if (!pageTemplate) {
-                return null;
+                return this.defaultPageTemplate.getConfig();
             }
 
             if (content.isPage() && content.getPage().hasConfig()) {
