@@ -33,7 +33,10 @@ module LiveEdit.component {
             this.appendChild(divEl);
 
             this.getEl().setData('live-edit-type', "image");
-            this.comboBox = new api.content.ContentComboBoxBuilder().setAllowedContentTypes(["image"]).build();
+            this.comboBox = new api.content.ContentComboBoxBuilder().
+                setMaximumOccurrences(1).
+                setAllowedContentTypes(["image"]).
+                build();
             this.comboBox.hide();
             this.appendChild(this.comboBox);
 
