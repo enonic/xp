@@ -302,27 +302,22 @@ module app.wizard {
 
             if (page != null && page.getTemplate() != null) {
 
-                var getPageTemplatePromise = new GetPageTemplateByKeyRequest(page.getTemplate()).
+                new GetPageTemplateByKeyRequest(page.getTemplate()).
                     setSiteTemplateKey(this.siteTemplate.getKey()).
                     sendAndParse().done((pageTemplate: PageTemplate) => {
 
-                        this.layoutLiveFormPanel(content, pageTemplate);
-                        deferred.resolve(null);
+                        this.liveFormPanel.setPage(content, pageTemplate).done(() => {
+                            deferred.resolve(null);
+                        });
                     });
             }
             else {
-                this.layoutLiveFormPanel(content, null);
-                deferred.resolve(null);
+                this.liveFormPanel.setPage(content, null).done( () => {
+                    deferred.resolve(null);
+                });
             }
 
             return deferred.promise;
-        }
-
-        private layoutLiveFormPanel(content: Content, pageTemplate: PageTemplate) {
-
-
-            this.liveFormPanel.setPage(content, pageTemplate);
-
         }
 
         persistNewItem(): Q.Promise<Content> {
