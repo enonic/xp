@@ -27,7 +27,7 @@ module api.ui.selector.dropdown {
                 this.notifyOpenDropdown();
             } );
 
-            this.onDblClicked((event:MouseEvent)=> {
+            this.onClicked((event: MouseEvent)=> {
 
                 if(document.selection && document.selection.empty) {
                     document.selection.empty();
