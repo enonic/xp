@@ -3,18 +3,17 @@
   position: relative;
   overflow: visible;
 
-  & > *:not(:last-child) {
-    margin-bottom: 35px;
+  .form-element-spacing(@form-field-set-spacing);
+
+  .field-set-view, .form-item-set-view {
+    .form-element-spacing(@form-field-set-spacing);
+  }
+
+  .input-view {
+    .form-element-spacing(@form-field-spacing);
   }
 
   input, textarea {
     .input-glow();
-  }
-}
-
-
-.context-window {
-  .form-view > * {
-    margin-bottom: 15px;
   }
 }
