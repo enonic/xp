@@ -51,7 +51,6 @@ module app.wizard.page.contextwindow.inspect {
                 imageDescriptors.forEach((imageDescriptor: ImageDescriptor) => {
                     this.imageDescriptors[imageDescriptor.getKey().toString()] = imageDescriptor;
                 });
-                console.log(this.imageDescriptors);
                 // set default descriptor
                 this.descriptorSelector.setDescriptor(this.getLiveFormPanel().getDefaultImageDescriptor().getKey());
             };
