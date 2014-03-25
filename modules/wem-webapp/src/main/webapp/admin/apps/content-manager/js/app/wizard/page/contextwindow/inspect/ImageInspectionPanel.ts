@@ -6,17 +6,23 @@ module app.wizard.page.contextwindow.inspect {
     import ImageDescriptor = api.content.page.image.ImageDescriptor;
     import GetImageDescriptorsByModulesRequest = api.content.page.image.GetImageDescriptorsByModulesRequest;
     import ImageDescriptorLoader = api.content.page.image.ImageDescriptorLoader;
-    import ImageDescriptorComboBox = api.content.page.image.ImageDescriptorComboBox;
+    import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
+    import ImageDescriptorDropdown = api.content.page.image.ImageDescriptorDropdown;
+    import ImageDescriptorDropdownConfig = api.content.page.image.ImageDescriptorDropdownConfig;
     import DescriptorKey = api.content.page.DescriptorKey;
     import Descriptor = api.content.page.Descriptor;
     import Option = api.ui.selector.Option;
+    import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
 
 
     export class ImageInspectionPanel extends PageComponentInspectionPanel<ImageComponent, ImageDescriptor> {
 
         private imageComponent: ImageComponent;
+
         private descriptorSelected: DescriptorKey;
-        private descriptorComboBox: ImageDescriptorComboBox;
+
+        private descriptorSelector: ImageDescriptorDropdown;
+
         private imageDescriptors: {
             [key: string]: ImageDescriptor;
         };
@@ -30,20 +36,31 @@ module app.wizard.page.contextwindow.inspect {
             descriptorHeader.addClass("descriptor-header");
             this.appendChild(descriptorHeader);
 
+
             var imageDescriptorsRequest = new GetImageDescriptorsByModulesRequest(this.getSiteTemplate().getModules());
             var imageDescriptorLoader = new ImageDescriptorLoader(imageDescriptorsRequest);
-            this.descriptorComboBox = new ImageDescriptorComboBox(imageDescriptorLoader);
+            this.descriptorSelector = new ImageDescriptorDropdown("imageDescriptor", <ImageDescriptorDropdownConfig>{
+                loader: imageDescriptorLoader
+            });
 
-            var descriptorsLoadedHandler = (imageDescriptors: ImageDescriptor[]) => {
-                imageDescriptors.forEach((imageDescriptor:ImageDescriptor) => {
+            var descriptorsLoadedHandler = (event: LoadedDataEvent<ImageDescriptor>) => {
+
+                var imageDescriptors = event.getData();
+                // cache descriptors
+                this.imageDescriptors = {};
+                imageDescriptors.forEach((imageDescriptor: ImageDescriptor) => {
                     this.imageDescriptors[imageDescriptor.getKey().toString()] = imageDescriptor;
-                })
-                this.descriptorComboBox.setDescriptor(this.getLiveFormPanel().getDefaultImageDescriptor().getKey());
-                this.descriptorComboBox.removeLoadedListener(descriptorsLoadedHandler); // execute only on the first loaded event
+                });
+                console.log(this.imageDescriptors);
+                // set default descriptor
+                this.descriptorSelector.setDescriptor(this.getLiveFormPanel().getDefaultImageDescriptor().getKey());
             };
-            this.descriptorComboBox.addLoadedListener(descriptorsLoadedHandler);
+            imageDescriptorLoader.onLoadedData(descriptorsLoadedHandler);
 
-            this.descriptorComboBox.addOptionSelectedListener((option: Option<ImageDescriptor>) => {
+            imageDescriptorLoader.load();
+            this.descriptorSelector.onOptionSelected((event: OptionSelectedEvent<ImageDescriptor>) => {
+
+                var option: Option<ImageDescriptor> = event.getItem();
 
                 if (this.getComponent()) {
                     var selectedDescriptorKey: DescriptorKey = option.displayValue.getKey();
@@ -59,7 +76,7 @@ module app.wizard.page.contextwindow.inspect {
                     }
                 }
             });
-            this.appendChild(this.descriptorComboBox);
+            this.appendChild(this.descriptorSelector);
         }
 
         getDescriptor(): ImageDescriptor {
@@ -76,7 +93,7 @@ module app.wizard.page.contextwindow.inspect {
             var descriptor = this.getDescriptor();
             if (descriptor) {
 
-                this.descriptorComboBox.setDescriptor(descriptor.getKey());
+                this.descriptorSelector.setDescriptor(descriptor.getKey());
                 this.setupComponentForm(component, descriptor);
             }
         }

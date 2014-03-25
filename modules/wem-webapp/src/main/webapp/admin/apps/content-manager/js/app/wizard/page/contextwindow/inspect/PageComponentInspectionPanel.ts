@@ -1,4 +1,4 @@
-module app.wizard.page.contextwindow.inspect{
+module app.wizard.page.contextwindow.inspect {
 
     import RootDataSet = api.data.RootDataSet;
     import FormView = api.form.FormView;
@@ -34,20 +34,25 @@ module app.wizard.page.contextwindow.inspect{
 
             this.component = component;
 
-            if (component.getDescriptor()) {
+            if (this.hasDescriptor()) {
                 this.setMainName(this.getDescriptor().getName().toString());
             } else {
                 this.setMainName(component.getName().toString());
             }
             this.setSubName(component.getName().toString());
-
-            // TODO: select descriptor (component.descriptor)
-            // TODO: display config form for selected descriptor
-
         }
 
         getComponent(): COMPONENT {
             return this.component;
+        }
+
+        hasDescriptor(): boolean {
+            if (this.getDescriptor()) {
+                return true;
+            }
+            else {
+                return false;
+            }
         }
 
         getDescriptor(): DESCRIPTOR {

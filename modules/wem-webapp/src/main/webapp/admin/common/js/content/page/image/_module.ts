@@ -9,5 +9,4 @@
 ///<reference path='GetImageDescriptorsByModulesRequest.ts' />
 ///<reference path='ImageDescriptorLoader.ts' />
 ///<reference path='ImageDescriptorViewer.ts' />
-///<reference path='ImageDescriptorComboBox.ts' />
 ///<reference path='ImageDescriptorDropdown.ts' />
