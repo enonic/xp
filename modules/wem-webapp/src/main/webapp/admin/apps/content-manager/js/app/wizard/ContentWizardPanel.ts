@@ -209,6 +209,7 @@ module app.wizard {
             new IsRenderableRequest(persistedContent.getContentId()).sendAndParse().
                 done((renderable: boolean) => {
                     this.showLiveEditAction.setVisible(renderable);
+                    this.showLiveEditAction.setEnabled(renderable);
                     this.previewAction.setVisible(renderable);
                     this.contextWindowToggler.setVisible(renderable);
                 });
