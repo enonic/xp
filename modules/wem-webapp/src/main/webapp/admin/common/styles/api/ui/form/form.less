@@ -3,7 +3,7 @@
 
   .form-item {
     .clearfix();
-    margin-bottom: 15px;
+    .form-element-spacing(@form-field-spacing);
 
     .error {
       display: none;
@@ -18,11 +18,11 @@
         display: block;
       }
 
-      select, input , textarea {
+      select, input, textarea {
         .input-error();
       }
     }
-
+    
     label {
       font-size: 12px;
       max-width: @form-label-width - 10px;
@@ -31,24 +31,34 @@
       float: left;
     }
 
-    label + .form-input {
+    label + .form-input,
+    label + .input-wrapper {
       margin-left: @form-label-width;
     }
 
-    select, input {
+    .input-wrapper .form-input {
+      width: 100%;
+    }
+
+    select, input, textarea {
       .input-glow();
+    }
+  }
+
+  fieldset {
+    min-width: 100%;
+    .form-element-spacing(@form-field-set-spacing);
+    
+    legend {
+      width: 100%;
+      margin-bottom: 10px;
+      padding-bottom: 2px;
+      border-bottom: 1px solid @admin-medium-gray-border;
     }
   }
 
   .CodeMirror {
     float: left;
-  }
-
-  fieldset legend {
-    width: 100%;
-    margin-bottom: 10px;
-    padding-bottom: 2px;
-    border-bottom: 1px solid @admin-medium-gray-border;
   }
 }
 
@@ -68,7 +78,8 @@
       margin: 0 0 3px 0;
     }
 
-    label + .form-input {
+    label + .form-input,
+    label + .input-wrapper {
       margin-left: 0;
     }
   }
