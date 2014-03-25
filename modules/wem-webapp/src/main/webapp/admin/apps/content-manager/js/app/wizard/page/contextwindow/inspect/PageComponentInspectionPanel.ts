@@ -35,11 +35,12 @@ module app.wizard.page.contextwindow.inspect {
             this.component = component;
 
             if (this.hasDescriptor()) {
-                this.setMainName(this.getDescriptor().getName().toString());
-            } else {
+                this.setMainName(this.getDescriptor().getDisplayName().toString());
+            }
+            else {
                 this.setMainName(component.getName().toString());
             }
-            this.setSubName(component.getName().toString());
+            this.setSubName(component.getPath().toString());
         }
 
         getComponent(): COMPONENT {
