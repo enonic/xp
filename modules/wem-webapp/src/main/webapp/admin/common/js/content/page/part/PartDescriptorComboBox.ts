@@ -18,8 +18,6 @@ module api.content.page.part {
                 setSelectedOptionsView(new PartDescriptorSelectedOptionsView()).
                 setLoader(loader).
                 setMaximumOccurrences(1));
-
-            this.setInputIconUrl(api.util.getAdminUri('common/images/icons/icoMoon/32x32/puzzle.png'));
         }
 
         setDescriptor(key: DescriptorKey) {
