@@ -59,7 +59,7 @@ module api.app.wizard {
         private new: boolean;
 
         constructor(params: WizardPanelParams, callback: Function) {
-            super();
+            super("wizard-panel");
 
             console.log("WizardPanel.constructor started");
 
@@ -71,12 +71,10 @@ module api.app.wizard {
             this.stepToolbar = params.stepToolbar;
             this.actions = params.actions;
 
-            this.getEl().addClass("wizard-panel");
-            this.backPanel = new api.ui.DeckPanel();
-            this.backPanel.addClass("wizard-back-panel");
-            this.formPanel = new api.ui.Panel();
-            this.formPanel.addClass("form-panel");
+            this.formPanel = new api.ui.Panel("form-panel");
+            $(this.formPanel.getHTMLElement()).scroll(() => this.updateStickyToolbar());
 
+            this.backPanel = new api.ui.DeckPanel("wizard-back-panel");
             this.backPanel.addPanel(this.formPanel);
             this.backPanel.showPanel(0);
 
@@ -137,11 +135,23 @@ module api.app.wizard {
                     });
             }
 
-            this.onRendered((event) => {
-                this.onWizardRendered();
+            this.onRendered((event: api.dom.ElementRenderedEvent) => {
+                console.log("WizardPanel rendered", this);
+
+                this.firstShow = true;
             });
-            this.onShown((event) => {
-                this.onWizardShown();
+            this.onShown((event: api.dom.ElementShownEvent) => {
+                console.log("WizardPanel shown", this);
+
+                if (this.firstShow) {
+                    this.firstShow = false;
+                    this.giveInitialFocus();
+                }
+
+                if (this.lastFocusedElement) {
+                    console.log("Last focused element was remembered: ", this.lastFocusedElement);
+                    this.lastFocusedElement.focus();
+                }
             });
         }
 
@@ -149,43 +159,21 @@ module api.app.wizard {
             return this.new;
         }
 
-        onWizardShown() {
-            console.log("WizardPanel shown", this);
-
-            if (this.firstShow) {
-                this.firstShow = false;
-                this.giveInitialFocus();
+        updateStickyToolbar() {
+            var scrollTop = $('.form-panel').scrollTop();
+            var wizardHeaderHeight = this.header.getEl().getHeightWithMargin() + this.header.getEl().getOffsetTopRelativeToParent();
+            if (scrollTop > wizardHeaderHeight) {
+                this.mainToolbar.removeClass("scrolling");
+                this.stepNavigatorAndToolbarContainer.addClass("scroll-stick");
+            } else if (scrollTop < wizardHeaderHeight) {
+                this.mainToolbar.addClass("scrolling");
+                this.stepNavigatorAndToolbarContainer.removeClass("scroll-stick");
+                // do render to account for sticky toolbar
+                this.formPanel.render();
             }
-
-            if (this.lastFocusedElement) {
-                console.log("Last focused element was remembered: ", this.lastFocusedElement);
-                this.lastFocusedElement.focus();
-            }        }
-
-        onWizardRendered() {
-            console.log("WizardPanel rendered", this);
-
-            this.initWizardPanel();
-
-            $('.form-panel').scroll(() => {
-                var scrollTop = $('.form-panel').scrollTop();
-                var wizardHeaderHeight = this.header.getEl().getHeightWithMargin() + this.header.getEl().getOffsetTopRelativeToParent();
-                if (scrollTop > wizardHeaderHeight) {
-                    this.mainToolbar.removeClass("scrolling");
-                    this.stepNavigatorAndToolbarContainer.addClass("scroll-stick");
-                } else if (scrollTop < wizardHeaderHeight) {
-                    this.mainToolbar.addClass("scrolling");
-                    this.stepNavigatorAndToolbarContainer.removeClass("scroll-stick");
-                }
-                if (scrollTop == 0) {
-                    this.mainToolbar.removeClass("scrolling");
-                }
-            });
-        }
-
-        initWizardPanel() {
-            console.log("WizardPanel.initWizardPanel");
-            this.firstShow = true;
+            if (scrollTop == 0) {
+                this.mainToolbar.removeClass("scrolling");
+            }
         }
 
         giveInitialFocus() {
