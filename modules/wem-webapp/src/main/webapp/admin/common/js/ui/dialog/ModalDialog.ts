@@ -53,27 +53,25 @@ module api.ui.dialog {
             this.contentPanel.appendChild(child);
         }
 
-        addAction(action: api.ui.Action) {
+        addAction(action: api.ui.Action, useDefault?: boolean, prepend?: boolean) {
             this.actions.push(action);
-            this.buttonRow.addAction(action);
+            this.buttonRow.addAction(action, useDefault, prepend);
         }
 
         show() {
+            super.show();
             this.centerMyself();
-            // experimenting with transitions
-            jQuery(this.getEl().getHTMLElement()).show(100);
+            this.buttonRow.focusDefaultAction();
         }
 
         private centerMyself() {
             var el = this.getEl();
-            var jqel = $(this.getHTMLElement());
-            el.setMarginLeft("-" + (jqel.outerWidth() / 2) + "px").
-                setMarginTop("-" + (jqel.outerHeight() / 2) + "px");
+            el.setMarginLeft("-" + (el.getWidthWithBorder() / 2) + "px").
+                setMarginTop("-" + (el.getHeightWithBorder() / 2) + "px");
         }
 
         hide() {
-            // experimenting with transitions
-            jQuery(this.getEl().getHTMLElement()).hide(100);
+            super.hide();
         }
 
         close() {
@@ -123,14 +121,29 @@ module api.ui.dialog {
 
     export class ModalDialogButtonRow extends api.dom.DivEl {
 
+        private defaultButton: DialogButton;
+
         constructor() {
             super("dialog-buttons");
         }
 
-        addAction(action: api.ui.Action): DialogButton {
+        addAction(action: api.ui.Action, useDefault?: boolean, prepend?: boolean): DialogButton {
             var button = new DialogButton(action);
+            if (useDefault) {
+                this.defaultButton = button;
+            }
+            if (prepend) {
+                this.prependChild(button);
+            } else {
             this.appendChild(button);
+            }
             return button;
+        }
+
+        focusDefaultAction() {
+            if (this.defaultButton) {
+                this.defaultButton.giveFocus();
+            }
         }
     }
 

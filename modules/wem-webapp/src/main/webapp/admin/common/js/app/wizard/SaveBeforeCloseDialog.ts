@@ -15,32 +15,29 @@ module api.app.wizard {
                 title: new api.ui.dialog.ModalDialogHeader("Close wizard")
             });
 
-            this.setCancelAction(new api.ui.Action('Cancel', 'esc'));
-
             this.wizardPanel = wizardPanel;
-
-            this.getCancelAction().setMnemonic("c");
-            this.getCancelAction().addExecutionListener(() => {
-                this.close();
-            });
-
-            this.yesAction.setMnemonic("y");
-            this.yesAction.addExecutionListener(() => {
-                this.doSaveAndClose();
-            });
-
-            this.noAction.setMnemonic("n");
-            this.noAction.addExecutionListener(() => {
-                this.doCloseWithoutSaveCheck();
-            });
-
 
             var message = new api.dom.H6El();
             message.getEl().setInnerHtml("There are unsaved changes, do you want to save them before closing?");
             this.appendChildToContentPanel(message);
 
+            this.yesAction.setMnemonic("y");
+            this.yesAction.addExecutionListener(() => {
+                this.doSaveAndClose();
+            });
+            this.addAction(this.yesAction, true);
+
+            this.noAction.setMnemonic("n");
+            this.noAction.addExecutionListener(() => {
+                this.doCloseWithoutSaveCheck();
+            });
             this.addAction(this.noAction);
-            this.addAction(this.yesAction);
+
+            this.setCancelAction(new api.ui.Action('Cancel', 'esc'));
+            this.getCancelAction().setMnemonic("c");
+            this.getCancelAction().addExecutionListener(() => {
+                this.close();
+            });
         }
 
         show() {
@@ -56,9 +53,7 @@ module api.app.wizard {
         private doSaveAndClose() {
 
             this.close();
-            this.wizardPanel.saveChanges().
-                done(() => {
-
+            this.wizardPanel.saveChanges().done(() => {
                 this.wizardPanel.close(true);
             });
         }

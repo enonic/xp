@@ -2,13 +2,13 @@ module api.dom {
 
     export class ElementRegistry {
 
-        private static counters: number[] = [];
+        private static counters: { [index: string]: number; } = {};
 
-        private static elements: Element[] = [];
+        private static elements: { [index: string]: api.dom.Element; } = {};
 
-        public static registerElement(el: Element): string {
-            var fullName;
-            var id = el.getId();
+        public static registerElement(el: api.dom.Element): string {
+            var fullName,
+                id = el.getId();
 
             if (!id) {
                 id = fullName = api.util.getFullName(el);
@@ -21,20 +21,23 @@ module api.dom {
             }
 
             ElementRegistry.counters[fullName] = count || 0;
-            ElementRegistry.elements[fullName] = el;
+            ElementRegistry.elements[id] = el;
 
             return id;
         }
 
-        public static unregisterElement(el: Element) {
-            var index = ElementRegistry.elements.indexOf(el);
-            if (index > -1) {
-                ElementRegistry.elements.splice(index, 1);
-                ElementRegistry.counters.splice(index, 1);
+        public static unregisterElement(el: api.dom.Element) {
+            if (el) {
+                delete ElementRegistry.elements[el.getId()];
+                var fullName = api.util.getFullName(el);
+                var count = --ElementRegistry.counters[fullName];
+                if (count < 0) {
+                    delete ElementRegistry.counters[fullName];
+                }
             }
         }
 
-        public static getElementById(id: string): Element {
+        public static getElementById(id: string): api.dom.Element {
             return ElementRegistry.elements[id];
         }
 
