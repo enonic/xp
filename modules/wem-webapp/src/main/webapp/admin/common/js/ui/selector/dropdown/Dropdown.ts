@@ -221,7 +221,6 @@ module api.ui.selector.dropdown {
 
             this.dropdownDropdown.markSelections([option]);
             api.dom.FormEl.moveFocuseToNextFocusable(this.input);
-            //this.input.setPlaceholder(option.value);
             if (!silent) {
                 this.notifyOptionSelected(option);
             }
