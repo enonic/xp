@@ -9,3 +9,4 @@
 ///<reference path='PartDescriptorResourceRequest.ts' />
 ///<reference path='PartDescriptorsResourceRequest.ts' />
 ///<reference path='GetPartDescriptorsByModulesRequest.ts' />
+///<reference path='DefaultPartDescriptorResolver.ts' />

@@ -1,6 +1,5 @@
 module app.wizard.page {
 
-    import ModuleKey = api.module.ModuleKey;
     import SiteTemplate = api.content.site.template.SiteTemplate;
     import PageTemplateKey = api.content.page.PageTemplateKey;
     import PageTemplate = api.content.page.PageTemplate;
@@ -17,10 +16,10 @@ module app.wizard.page {
     import PartDescriptor = api.content.page.part.PartDescriptor;
     import ImageDescriptor = api.content.page.image.ImageDescriptor;
     import LayoutDescriptor = api.content.page.layout.LayoutDescriptor;
+    import DefaultImageDescriptorResolver = api.content.page.image.DefaultImageDescriptorResolver;
+    import DefaultPartDescriptorResolver = api.content.page.part.DefaultPartDescriptorResolver;
+    import DefaultLayoutDescriptorResolver = api.content.page.layout.DefaultLayoutDescriptorResolver;
     import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
-    import GetPartDescriptorsByModulesRequest = api.content.page.part.GetPartDescriptorsByModulesRequest;
-    import GetImageDescriptorsByModulesRequest = api.content.page.image.GetImageDescriptorsByModulesRequest;
-    import GetLayoutDescriptorsByModulesRequest = api.content.page.layout.GetLayoutDescriptorsByModulesRequest;
 
     import PageComponentBuilder = api.content.page.PageComponentBuilder;
     import ComponentName = api.content.page.ComponentName;
@@ -107,9 +106,9 @@ module app.wizard.page {
 
                 var defaultPageTemplatePromise = new GetDefaultPageTemplateRequest(this.siteTemplate.getKey(),
                     this.content.getType()).sendAndParse();
-                var defaultImageDescriptorPromise = this.resolveDefaultImageDescriptor(siteModules);
-                var defaultPartDescriptorPromise = this.resolveDefaultPartDescriptor(siteModules);
-                var defaultLayoutDescriptorPromise = this.resolveDefaultLayoutDescriptor(siteModules);
+                var defaultImageDescriptorPromise = DefaultImageDescriptorResolver.resolve(siteModules);
+                var defaultPartDescriptorPromise = DefaultPartDescriptorResolver.resolve(siteModules);
+                var defaultLayoutDescriptorPromise = DefaultLayoutDescriptorResolver.resolve(siteModules);
 
                 var allPromises: Q.Promise<any>[] = [
                     defaultPageTemplatePromise,
@@ -423,51 +422,6 @@ module app.wizard.page {
 
         getDefaultLayoutDescriptor(): LayoutDescriptor {
             return this.defaultLayoutDescriptor;
-        }
-
-        private resolveDefaultImageDescriptor(moduleKeys: ModuleKey[]): Q.Promise<ImageDescriptor> {
-
-            var d = Q.defer<ImageDescriptor>();
-            new GetImageDescriptorsByModulesRequest(moduleKeys).
-                sendAndParse().done((imageDescriptors: ImageDescriptor[]) => {
-                    if (imageDescriptors.length == 0) {
-                        d.resolve(null);
-                    }
-                    else {
-                        d.resolve(imageDescriptors[0]);
-                    }
-                });
-            return d.promise;
-        }
-
-        private resolveDefaultPartDescriptor(moduleKeys: ModuleKey[]): Q.Promise<PartDescriptor> {
-
-            var d = Q.defer<PartDescriptor>();
-            new GetPartDescriptorsByModulesRequest(moduleKeys).
-                sendAndParse().done((partDescriptors: PartDescriptor[]) => {
-                    if (partDescriptors.length == 0) {
-                        d.resolve(null);
-                    }
-                    else {
-                        d.resolve(partDescriptors[0]);
-                    }
-                });
-            return d.promise;
-        }
-
-        private resolveDefaultLayoutDescriptor(moduleKeys: ModuleKey[]): Q.Promise<LayoutDescriptor> {
-
-            var d = Q.defer<LayoutDescriptor>();
-            new GetLayoutDescriptorsByModulesRequest(moduleKeys).
-                sendAndParse().done((layoutDescriptors: LayoutDescriptor[]) => {
-                    if (layoutDescriptors.length == 0) {
-                        d.resolve(null);
-                    }
-                    else {
-                        d.resolve(layoutDescriptors[0]);
-                    }
-                });
-            return d.promise;
         }
 
         private onComponentSelected(pathAsString: string) {

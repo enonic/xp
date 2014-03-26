@@ -7,6 +7,7 @@
 ///<reference path='ImageDescriptorsResourceRequest.ts' />
 ///<reference path='GetImageDescriptorByKeyRequest.ts' />
 ///<reference path='GetImageDescriptorsByModulesRequest.ts' />
+///<reference path='DefaultImageDescriptorResolver.ts' />
 ///<reference path='ImageDescriptorLoader.ts' />
 ///<reference path='ImageDescriptorViewer.ts' />
 ///<reference path='ImageDescriptorDropdown.ts' />

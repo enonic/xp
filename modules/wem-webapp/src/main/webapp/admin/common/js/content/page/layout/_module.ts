@@ -9,3 +9,4 @@
 ///<reference path='LayoutDescriptorResourceRequest.ts' />
 ///<reference path='LayoutDescriptorsResourceRequest.ts' />
 ///<reference path='GetLayoutDescriptorsByModulesRequest.ts' />
+///<reference path='DefaultLayoutDescriptorResolver.ts' />
