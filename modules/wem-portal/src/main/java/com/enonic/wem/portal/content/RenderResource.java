@@ -77,13 +77,6 @@ public abstract class RenderResource
 
     protected Content getContent( final String contentSelector, final String mode )
     {
-        final ContentPath contentPath = ContentPath.from( contentSelector );
-        final Content content = getContentByPath( contentPath );
-        if ( content != null )
-        {
-            return content;
-        }
-
         final boolean inEditMode = EDIT_MODE.equals( mode );
         if ( inEditMode )
         {
@@ -93,8 +86,18 @@ public abstract class RenderResource
             {
                 return contentById;
             }
+            throw PortalWebException.notFound().message( "Page [{0}] not found.", contentId ).build();
         }
-        throw PortalWebException.notFound().message( "Page [{0}] not found.", contentPath ).build();
+        else
+        {
+            final ContentPath contentPath = ContentPath.from( contentSelector );
+            final Content content = getContentByPath( contentPath );
+            if ( content != null )
+            {
+                return content;
+            }
+            throw PortalWebException.notFound().message( "Page [{0}] not found.", contentPath ).build();
+        }
     }
 
     protected Page getPage( final Content content )
