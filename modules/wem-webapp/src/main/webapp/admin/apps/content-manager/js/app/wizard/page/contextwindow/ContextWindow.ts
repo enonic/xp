@@ -15,21 +15,13 @@ module app.wizard.page.contextwindow {
     import ImageComponentBuilder = api.content.page.image.ImageComponentBuilder;
 
     export interface ContextWindowConfig {
-
         liveEditIFrame?:api.dom.IFrameEl;
-
         liveEditId?:string;
-
         liveEditWindow: any;
-
         liveEditJQuery: JQueryStatic;
-
         siteTemplate:api.content.site.template.SiteTemplate;
-
         liveFormPanel:LiveFormPanel;
-
         contentType:ContentTypeName;
-
         defaultModels:DefaultModels;
     }
 
@@ -43,8 +35,10 @@ module app.wizard.page.contextwindow {
         private dragMask: api.ui.DragMask;
         private liveEditIFrame: api.dom.IFrameEl;
         private liveFormPanel: LiveFormPanel;
+        private pinned: boolean;
 
         constructor(config: ContextWindowConfig) {
+            this.pinned = true;
             this.liveEditIFrame = config.liveEditIFrame;
             this.liveEditJQuery = config.liveEditJQuery;
             this.liveEditWindow = config.liveEditWindow;
@@ -52,16 +46,20 @@ module app.wizard.page.contextwindow {
 
             super();
 
+            if (this.pinned) {
+                this.liveFormPanel.resizeFrameContainer($(window).width() - 280);
+            }
+
             this.addClass("context-window");
 
-            //this.dragMask = new api.ui.DragMask(this.liveEditIFrame);
+            this.dragMask = new api.ui.DragMask(this.liveEditIFrame);
 
             this.insertablesPanel = new insert.InsertablesPanel({
                 contextWindow: this,
                 liveEditIFrame: this.liveEditIFrame,
                 liveEditWindow: this.liveEditWindow,
                 liveEditJQuery: this.liveEditJQuery,
-                draggingMask: this.dragMask
+                draggingMask: this.dragMask //DragMask temporarily disabled
             });
 
             this.inspectionPanel = new inspect.InspectionPanel({
@@ -93,12 +91,22 @@ module app.wizard.page.contextwindow {
         disable() {
             this.addClass("hidden");
             this.getEl().setRight("-290px");
+            if (this.pinned) this.liveFormPanel.resizeFrameContainer($(window).width());
         }
 
         enable() {
             this.removeClass("hidden");
             this.getEl().setRight("0px");
-            //api.dom.Body.get().appendChild(this.dragMask);
+            api.dom.Body.get().appendChild(this.dragMask);
+            if (this.pinned) this.liveFormPanel.resizeFrameContainer($(window).width() - 280);
+        }
+
+        hide() {
+            if (!this.pinned) super.hide();
+        }
+
+        show() {
+            if (!this.pinned) super.show();
         }
 
         public inspectComponent(component: PageComponent) {

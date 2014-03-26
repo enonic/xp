@@ -1,10 +1,9 @@
 .context-window {
   color: @admin-dark-gray-font;
-  transition: 0.5s;
-  -webkit-animation: slide 0.5s forwards;
-  -webkit-animation-delay: 2s;
-  animation: slide 0.5s forwards;
-  animation-delay: 2s;
+  -webkit-transition: all 0.5s ease-in-out;
+  -moz-transition: all 0.5s ease-in-out;
+  -o-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
 
   input.search {
     margin: 15px;
@@ -261,6 +260,49 @@
 
   .image-selector-small();
 
+}
+
+.drag-mask {
+  background-color: transparent;
+}
+
+.live-edit-drag-helper-transition (@property, @duration) {
+  transition: @property @duration;
+  -webkit-transition: @property @duration;
+}
+
+.live-edit-drag-helper-scale (@scale) {
+  transform: @scale;
+  -webkit-transform: @scale;
+}
+
+#live-edit-drag-helper {
+  font-size: 24px;
+  color: #fff;
+
+}
+
+/* Align the font icon */
+#live-edit-drag-helper:before {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+}
+
+.live-edit-font-icon-drop-allowed {
+  transform: scale(.8);
+  background-color: #558e28;
+  .icon-checkmark;
+
+}
+.live-edit-font-icon-drop-not-allowed {
+  background-color: #d90b00;
+  .icon-blocked;
+}
+
+.live-edit-component-padding {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
 }
 
 .imagePicker() {

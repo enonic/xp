@@ -53,6 +53,7 @@ module app.wizard.page {
         private pageLoading: boolean;
 
         private pageSkipReload: boolean;
+        private frameContainer: api.ui.Panel;
         private frame: api.dom.IFrameEl;
         private baseUrl: string;
 
@@ -78,8 +79,10 @@ module app.wizard.page {
 
             this.baseUrl = api.util.getUri("portal/edit/");
 
+            this.frameContainer = new api.ui.Panel("frame-container");
+            this.appendChild(this.frameContainer);
             this.frame = new api.dom.IFrameEl("live-edit-frame");
-            this.appendChild(this.frame);
+            this.frameContainer.appendChild(this.frame);
 
             this.mask = new api.ui.LoadMask(this.frame);
             // append it here in order for the context window to be above
@@ -359,6 +362,10 @@ module app.wizard.page {
             this.liveEditListen();
         }
 
+        resizeFrameContainer(width:number) {
+            this.frameContainer.getEl().setWidthPx(width);
+        }
+
         public getPageTemplate(): PageTemplateKey {
 
             if (!this.contextWindow) {
@@ -422,7 +429,7 @@ module app.wizard.page {
 
         private onComponentReset(pathAsString: string) {
             var componentPath = ComponentPath.fromString(pathAsString);
-            //this.pageRegions.removeComponent(componentPath);
+            this.pageRegions.getComponent(componentPath).setDescriptor(null);
         }
 
         private addComponent(componentType: string, regionPath: RegionPath, precedingComponent: ComponentPath): PageComponent {

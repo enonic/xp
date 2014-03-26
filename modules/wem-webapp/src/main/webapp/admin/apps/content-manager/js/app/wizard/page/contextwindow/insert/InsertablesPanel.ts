@@ -51,7 +51,9 @@ module app.wizard.page.contextwindow.insert {
                 revert: 'true',
                 distance: 10,
                 addClasses: false,
-                helper: 'clone',
+                helper: () => {
+                    return $('<div id="live-edit-drag-helper" class="live-edit-font-icon-drop-allowed live-edit-font-icon-drop-not-allowed" style="width: 48px; height: 48px; position: absolute; z-index: 400000;" data-live-edit-drop-allowed="false"></div>');
+                },
                 scope: 'component',
                 start: (event, ui) => {
                     this.onStartDrag(event, ui);
@@ -78,12 +80,12 @@ module app.wizard.page.contextwindow.insert {
         }
 
         onStartDrag(event, ui) {
-            //this.draggingMask.show();
+            this.draggingMask.show();
         }
 
         onDragOverIFrame(event, ui) {
 
-            //this.draggingMask.hide();
+            this.draggingMask.hide();
 
             var clone = this.liveEditJQuery(ui.draggable.clone());
 

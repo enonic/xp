@@ -43,9 +43,6 @@ module app.wizard.page.contextwindow.inspect {
             this.setComponent(component);
 
             var partDescriptor = this.getDescriptor();
-            if (!partDescriptor) {
-                return;
-            }
             this.setupComponentForm(component, partDescriptor);
         }
     }
