@@ -2,7 +2,7 @@ package com.enonic.wem.api.form.inputtype;
 
 
 import org.apache.commons.lang.StringUtils;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 

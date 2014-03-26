@@ -3,7 +3,8 @@ package com.enonic.wem.api.form.inputtype;
 
 import java.util.Iterator;
 
-import org.jdom.Element;
+import org.jdom2.Element;
+
 
 import static com.enonic.wem.api.form.inputtype.SingleSelectorConfig.newSingleSelectorConfig;
 

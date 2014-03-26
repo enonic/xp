@@ -27,7 +27,7 @@ public class PageTemplateJson
         this.regionsJson = new PageRegionsJson( template.getRegions() );
         this.configJson = new RootDataSetJson( template.getConfig() );
         ImmutableList.Builder<String> canRenderBuilder = new ImmutableList.Builder<>();
-        for ( ContentTypeName contentTypeName : template.getCanRender() )
+        for ( ContentTypeName contentTypeName : template.getCanRender(  ) )
         {
             canRenderBuilder.add( contentTypeName.toString() );
         }

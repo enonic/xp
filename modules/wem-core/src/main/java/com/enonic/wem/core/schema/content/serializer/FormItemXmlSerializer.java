@@ -1,7 +1,7 @@
 package com.enonic.wem.core.schema.content.serializer;
 
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.FormItem;

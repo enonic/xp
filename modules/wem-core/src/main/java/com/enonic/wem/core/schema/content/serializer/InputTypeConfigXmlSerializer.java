@@ -1,6 +1,6 @@
 package com.enonic.wem.core.schema.content.serializer;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import com.google.common.base.Preconditions;
 

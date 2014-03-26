@@ -2,9 +2,9 @@ package com.enonic.wem.core.form;
 
 import java.io.StringReader;
 
-import org.jdom.Element;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.Element;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.XMLOutputter;
 
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
