@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.SchemaTypes;
+import com.enonic.wem.api.command.schema.mixin.MixinService;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaKind;
 import com.enonic.wem.api.schema.Schemas;
@@ -22,6 +23,7 @@ import com.enonic.wem.core.command.CommandHandler;
 public final class GetSchemasHandler
     extends CommandHandler<SchemaTypes>
 {
+    private MixinService mixinService;
 
     @Override
     public void handle()
@@ -39,7 +41,7 @@ public final class GetSchemasHandler
 
         if ( command.isIncludeType( SchemaKind.MIXIN ) )
         {
-            final Mixins mixins = context.getClient().execute( Commands.mixin().get().all() );
+            final Mixins mixins = mixinService.getAll();
             Iterables.addAll( schemaList, mixins );
         }
 
@@ -54,4 +56,9 @@ public final class GetSchemasHandler
         command.setResult( schemas );
     }
 
+    @Inject
+    public void setMixinService( final MixinService mixinService )
+    {
+        this.mixinService = mixinService;
+    }
 }

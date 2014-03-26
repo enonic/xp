@@ -1,5 +1,6 @@
 package com.enonic.wem.admin.rest.resource.schema.mixin;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -19,11 +20,12 @@ import com.enonic.wem.admin.rest.resource.schema.json.CreateOrUpdateSchemaJsonRe
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
 import com.enonic.wem.api.blob.Blob;
-import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.blob.GetBlob;
-import com.enonic.wem.api.command.schema.mixin.CreateMixin;
-import com.enonic.wem.api.command.schema.mixin.DeleteMixin;
-import com.enonic.wem.api.command.schema.mixin.UpdateMixin;
+import com.enonic.wem.api.command.schema.mixin.CreateMixinParams;
+import com.enonic.wem.api.command.schema.mixin.DeleteMixinParams;
+import com.enonic.wem.api.command.schema.mixin.GetMixinParams;
+import com.enonic.wem.api.command.schema.mixin.MixinService;
+import com.enonic.wem.api.command.schema.mixin.UpdateMixinParams;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixinResult;
 import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.mixin.Mixin;
@@ -35,13 +37,13 @@ import com.enonic.wem.api.schema.mixin.UnableToDeleteMixinException;
 import com.enonic.wem.api.schema.mixin.editor.MixinEditor;
 import com.enonic.wem.core.schema.mixin.MixinXmlSerializer;
 
-import static com.enonic.wem.api.command.Commands.mixin;
-
 @Path("schema/mixin")
 @Produces(MediaType.APPLICATION_JSON)
 public class MixinResource
     extends AbstractResource
 {
+    private MixinService mixinService;
+
     @GET
     public MixinJson get( @QueryParam("name") final String name )
     {
@@ -79,7 +81,7 @@ public class MixinResource
     @Path("list")
     public MixinListJson list()
     {
-        final Mixins mixins = client.execute( Commands.mixin().get().all() );
+        final Mixins mixins = mixinService.getAll();
 
         return new MixinListJson( mixins );
     }
@@ -94,7 +96,7 @@ public class MixinResource
             toMixin( params.getConfig() );
         final SchemaIcon schemaIcon = getSchemaIcon( params.getIconJson() );
 
-        final CreateMixin createCommand = mixin().create().
+        final CreateMixinParams createParams = new CreateMixinParams().
             name( params.getName().toString() ).
             displayName( mixin.getDisplayName() ).
             description( mixin.getDescription() ).
@@ -103,7 +105,7 @@ public class MixinResource
 
         try
         {
-            final Mixin createdMixin = client.execute( createCommand );
+            final Mixin createdMixin = mixinService.create( createParams );
             final MixinJson mixinJson = new MixinJson( createdMixin );
             return CreateOrUpdateSchemaJsonResult.result( mixinJson );
         }
@@ -143,11 +145,11 @@ public class MixinResource
                 }
             };
 
-            final UpdateMixin updateCommand = mixin().update().
+            final UpdateMixinParams updateParams = new UpdateMixinParams().
                 name( params.getMixinToUpdate() ).
                 editor( editor );
 
-            final UpdateMixinResult result = client.execute( updateCommand );
+            final UpdateMixinResult result = mixinService.update( updateParams );
             final Mixin updatedMixin = result.getPersistedMixin();
             return CreateOrUpdateSchemaJsonResult.result( new MixinJson( updatedMixin ) );
         }
@@ -168,10 +170,10 @@ public class MixinResource
         final SchemaDeleteJson deletionResult = new SchemaDeleteJson();
         for ( MixinName mixinName : mixinNames )
         {
-            final DeleteMixin deleteMixin = Commands.mixin().delete().name( mixinName );
+            final DeleteMixinParams deleteMixin = new DeleteMixinParams().name( mixinName );
             try
             {
-                client.execute( deleteMixin );
+                mixinService.delete( deleteMixin );
                 deletionResult.success( mixinName );
             }
             catch ( MixinNotFoundException | UnableToDeleteMixinException e )
@@ -185,7 +187,7 @@ public class MixinResource
 
     private Mixin fetchMixin( final MixinName name )
     {
-        return client.execute( mixin().get().byName( name ) );
+        return mixinService.getByName( new GetMixinParams( name ) );
     }
 
     private SchemaIcon getSchemaIcon( final IconJson iconJson )
@@ -196,5 +198,11 @@ public class MixinResource
             return blob == null ? null : SchemaIcon.from( blob.getStream(), iconJson.getMimeType() );
         }
         return null;
+    }
+
+    @Inject
+    public void setMixinService( final MixinService mixinService )
+    {
+        this.mixinService = mixinService;
     }
 }

@@ -3,20 +3,17 @@ package com.enonic.wem.api.form;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.base.Preconditions;
-
-import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.schema.mixin.GetMixinParams;
+import com.enonic.wem.api.command.schema.mixin.MixinService;
 import com.enonic.wem.api.schema.mixin.Mixin;
 
 public class MixinReferencesToFormItemsTransformer
 {
-    private final Client client;
+    private final MixinService mixinService;
 
-    public MixinReferencesToFormItemsTransformer( final Client client )
+    public MixinReferencesToFormItemsTransformer( final MixinService mixinService )
     {
-        Preconditions.checkNotNull( client, "client cannot be null" );
-        this.client = client;
+        this.mixinService = mixinService;
     }
 
     public Form transformForm( final Form form )
@@ -39,7 +36,7 @@ public class MixinReferencesToFormItemsTransformer
             if ( formItem instanceof MixinReference )
             {
                 final MixinReference mixinReference = (MixinReference) formItem;
-                final Mixin mixin = client.execute( Commands.mixin().get().byName( mixinReference.getMixinName() ) );
+                final Mixin mixin = mixinService.getByName( new GetMixinParams( mixinReference.getMixinName() ) );
                 if ( mixin != null )
                 {
                     for ( FormItem mixinFormItem : mixin.getFormItems() )

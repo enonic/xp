@@ -3,30 +3,32 @@ package com.enonic.wem.api.command.schema.mixin;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 
-public final class GetMixin
-    extends Command<Mixin>
+public final class GetMixinParams
 {
     private MixinName name;
 
     private boolean notFoundAsException = false;
 
-    public GetMixin name( final MixinName value )
+    public GetMixinParams( final MixinName name )
+    {
+        this.name = name;
+    }
+
+    public GetMixinParams name( final MixinName value )
     {
         this.name = value;
         return this;
     }
 
-    public GetMixin notFoundAsException()
+    public GetMixinParams notFoundAsException()
     {
         notFoundAsException = true;
         return this;
     }
 
-    public GetMixin notFoundAsNull()
+    public GetMixinParams notFoundAsNull()
     {
         notFoundAsException = false;
         return this;
@@ -40,12 +42,12 @@ public final class GetMixin
             return true;
         }
 
-        if ( !( o instanceof GetMixin ) )
+        if ( !( o instanceof GetMixinParams ) )
         {
             return false;
         }
 
-        final GetMixin that = (GetMixin) o;
+        final GetMixinParams that = (GetMixinParams) o;
         return Objects.equal( this.name, that.name );
     }
 
@@ -55,7 +57,6 @@ public final class GetMixin
         return Objects.hashCode( this.name );
     }
 
-    @Override
     public void validate()
     {
         Preconditions.checkNotNull( this.name, "name cannot be null" );

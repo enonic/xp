@@ -9,7 +9,6 @@ import com.enonic.wem.api.command.relationship.RelationshipCommands;
 import com.enonic.wem.api.command.resource.ResourceCommands;
 import com.enonic.wem.api.command.schema.SchemaCommands;
 import com.enonic.wem.api.command.schema.content.ContentTypeCommands;
-import com.enonic.wem.api.command.schema.mixin.MixinCommands;
 import com.enonic.wem.api.command.schema.relationship.RelationshipTypeCommands;
 import com.enonic.wem.api.content.page.PageCommands;
 
@@ -26,8 +25,6 @@ public final class Commands
     private static final SchemaCommands SCHEMA_COMMANDS = new SchemaCommands();
 
     private static final ContentTypeCommands CONTENT_TYPE_COMMANDS = new ContentTypeCommands();
-
-    private static final MixinCommands MIXIN_COMMANDS = new MixinCommands();
 
     private static final RelationshipTypeCommands RELATIONSHIP_TYPE_COMMANDS = new RelationshipTypeCommands();
 
@@ -71,11 +68,6 @@ public final class Commands
     public static ContentTypeCommands contentType()
     {
         return CONTENT_TYPE_COMMANDS;
-    }
-
-    public static MixinCommands mixin()
-    {
-        return MIXIN_COMMANDS;
     }
 
     public static RelationshipTypeCommands relationshipType()

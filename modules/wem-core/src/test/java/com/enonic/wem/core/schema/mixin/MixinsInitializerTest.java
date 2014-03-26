@@ -4,8 +4,8 @@ package com.enonic.wem.core.schema.mixin;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.schema.mixin.GetMixin;
+import com.enonic.wem.api.command.schema.mixin.GetMixinParams;
+import com.enonic.wem.api.command.schema.mixin.MixinService;
 
 public class MixinsInitializerTest
 {
@@ -13,11 +13,11 @@ public class MixinsInitializerTest
     public void demo()
         throws Exception
     {
-        Client client = Mockito.mock( Client.class );
-        Mockito.when( client.execute( Mockito.any( GetMixin.class ) ) ).thenReturn( null );
+        final MixinService mixinService = Mockito.mock( MixinService.class );
+        Mockito.when( mixinService.getByName( Mockito.any( GetMixinParams.class ) ) ).thenReturn( null );
 
         MixinsInitializer mixinsInitializer = new MixinsInitializer();
-        mixinsInitializer.setClient( client );
+        mixinsInitializer.setMixinService( mixinService );
         mixinsInitializer.initialize();
     }
 }
