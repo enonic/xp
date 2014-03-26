@@ -7,7 +7,7 @@ module api.content.page.image {
         constructor() {
             super();
             this.namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
-            this.namesAndIconView.setIconUrl(api.util.getAdminUri('common/images/icons/icoMoon/32x32/earth.png'));
+            this.namesAndIconView.setIconUrl(api.util.getAdminUri('common/images/icons/icoMoon/32x32/pictures.png'));
             // TODO: this.namesAndIconView.setIconClass("icon-image");
             this.appendChild(this.namesAndIconView);
         }
