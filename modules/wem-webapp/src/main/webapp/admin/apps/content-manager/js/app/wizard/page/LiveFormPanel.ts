@@ -107,29 +107,29 @@ module app.wizard.page {
 
                 var defaultPageTemplatePromise = new GetDefaultPageTemplateRequest(this.siteTemplate.getKey(),
                     this.content.getType()).sendAndParse();
-                var defaultImageDescrResolved = this.resolveDefaultImageDescriptor(siteModules);
-                var defaultPartDescrResolved = this.resolveDefaultPartDescriptor(siteModules);
-                var defaultLayoutDescrResolved = this.resolveDefaultLayoutDescriptor(siteModules);
+                var defaultImageDescriptorPromise = this.resolveDefaultImageDescriptor(siteModules);
+                var defaultPartDescriptorPromise = this.resolveDefaultPartDescriptor(siteModules);
+                var defaultLayoutDescriptorPromise = this.resolveDefaultLayoutDescriptor(siteModules);
 
                 var allPromises: Q.Promise<any>[] = [
                     defaultPageTemplatePromise,
-                    defaultImageDescrResolved,
-                    defaultPartDescrResolved,
-                    defaultLayoutDescrResolved];
+                    defaultImageDescriptorPromise,
+                    defaultPartDescriptorPromise,
+                    defaultLayoutDescriptorPromise];
 
                 defaultPageTemplatePromise.done((defaultPageTemplate: PageTemplate)=> {
                     this.defaultPageTemplate = defaultPageTemplate;
                 });
 
-                defaultImageDescrResolved.done((imageDescriptor: ImageDescriptor)=> {
+                defaultImageDescriptorPromise.done((imageDescriptor: ImageDescriptor)=> {
                     this.defaultImageDescriptor = imageDescriptor;
                 });
 
-                defaultPartDescrResolved.done((partDescriptor: PartDescriptor)=> {
+                defaultPartDescriptorPromise.done((partDescriptor: PartDescriptor)=> {
                     this.defaultPartDescriptor = partDescriptor;
                 });
 
-                defaultLayoutDescrResolved.done((layoutDescriptor: LayoutDescriptor)=> {
+                defaultLayoutDescriptorPromise.done((layoutDescriptor: LayoutDescriptor)=> {
                     this.defaultLayoutDescriptor = layoutDescriptor;
                 });
 
@@ -156,7 +156,7 @@ module app.wizard.page {
                 if (this.pageNeedsReload && !this.pageLoading) {
 
                     this.pageLoading = true;
-                    this.doLoad().then(()=> {
+                    this.doLoadPage().then(()=> {
 
                         this.pageLoading = false;
                         this.pageNeedsReload = false;
@@ -181,7 +181,7 @@ module app.wizard.page {
         }
 
 
-        private doLoad(): Q.Promise<void> {
+        private doLoadPage(): Q.Promise<void> {
 
             console.log("LiveFormPanel.doLoad() ... url: " + this.pageUrl);
             api.util.assertNotNull(this.pageUrl, "No page to load");
@@ -251,7 +251,7 @@ module app.wizard.page {
                     deferred.resolve(null);
                 }
                 else {
-                    this.doLoad().
+                    this.doLoadPage().
                         then(() => {
 
                             this.loadPageDescriptor().done(() => {
