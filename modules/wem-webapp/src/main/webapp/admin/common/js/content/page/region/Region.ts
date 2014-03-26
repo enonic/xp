@@ -52,10 +52,17 @@ module api.content.page.region {
             if (numberOfDuplicates == 0) {
                 return wantedName;
             }
-            return wantedName.createDuplicate(numberOfDuplicates + 1);
+
+            var duplicateCounter = numberOfDuplicates + 1;
+            var possibleNewName = wantedName.createDuplicate(duplicateCounter);
+            while (this.nameAlreadyInUse(possibleNewName)) {
+                possibleNewName = wantedName.createDuplicate(++duplicateCounter);
+            }
+
+            return possibleNewName;
         }
 
-        countNumberOfDuplicates(name: api.content.page.ComponentName): number {
+        private countNumberOfDuplicates(name: api.content.page.ComponentName): number {
 
             var count = 0;
             this.pageComponents.forEach((component: api.content.page.PageComponent)=> {
@@ -66,6 +73,12 @@ module api.content.page.region {
             return count;
         }
 
+        private nameAlreadyInUse(name: api.content.page.ComponentName) {
+
+            var exisiting = this.componentByName[name.toString()];
+            return !exisiting ? false :true;
+        }
+
         /*
          *  Add component after target component. Component will only be added if target component is found.
          *  Returns the index of the added component, -1 if target component was not found.
@@ -73,7 +86,7 @@ module api.content.page.region {
         addComponentAfter(component: api.content.page.PageComponent, precedingComponent: ComponentName): number {
 
             api.util.assert(!this.hasComponentWithName(component.getName()),
-                "Component already added to region [" + this.name + "]: " + component.getName().toString());
+                    "Component already added to region [" + this.name + "]: " + component.getName().toString());
 
 
             var precedingIndex = -1;
