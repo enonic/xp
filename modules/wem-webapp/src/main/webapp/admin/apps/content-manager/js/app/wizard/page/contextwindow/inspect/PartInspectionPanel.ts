@@ -6,17 +6,25 @@ module app.wizard.page.contextwindow.inspect {
     import PartComponent = api.content.page.part.PartComponent;
     import DescriptorKey = api.content.page.DescriptorKey;
 
+    export interface PartInspectionPanelConfig {
+
+        siteTemplate: SiteTemplate;
+    }
+
     export class PartInspectionPanel extends PageComponentInspectionPanel<PartComponent, PartDescriptor> {
 
         private partDescriptors: {
             [key: string]: PartDescriptor;
         };
 
-        constructor(liveFormPanel: app.wizard.page.LiveFormPanel, siteTemplate: SiteTemplate) {
-            super("live-edit-font-icon-part", liveFormPanel, siteTemplate);
+        constructor(config: PartInspectionPanelConfig) {
+            super(<PageComponentInspectionPanelConfig>{
+                iconClass: "live-edit-font-icon-part"
+            });
+
             this.partDescriptors = {};
 
-            var getPartDescriptorsRequest = new GetPartDescriptorsByModulesRequest(this.getSiteTemplate().getModules());
+            var getPartDescriptorsRequest = new GetPartDescriptorsByModulesRequest(config.siteTemplate.getModules());
             getPartDescriptorsRequest.sendAndParse().done((results: PartDescriptor[]) => {
                 results.forEach((partDescriptor: PartDescriptor) => {
                     this.partDescriptors[partDescriptor.getKey().toString()] = partDescriptor;

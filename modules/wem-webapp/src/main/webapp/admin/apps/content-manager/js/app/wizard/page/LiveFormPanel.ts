@@ -3,7 +3,6 @@ module app.wizard.page {
     import SiteTemplate = api.content.site.template.SiteTemplate;
     import PageTemplateKey = api.content.page.PageTemplateKey;
     import PageTemplate = api.content.page.PageTemplate;
-    import GetDefaultPageTemplateRequest = api.content.page.GetDefaultPageTemplateRequest;
     import Content = api.content.Content;
     import ComponentPath = api.content.page.ComponentPath;
     import PageRegions = api.content.page.PageRegions;
@@ -16,9 +15,6 @@ module app.wizard.page {
     import PartDescriptor = api.content.page.part.PartDescriptor;
     import ImageDescriptor = api.content.page.image.ImageDescriptor;
     import LayoutDescriptor = api.content.page.layout.LayoutDescriptor;
-    import DefaultImageDescriptorResolver = api.content.page.image.DefaultImageDescriptorResolver;
-    import DefaultPartDescriptorResolver = api.content.page.part.DefaultPartDescriptorResolver;
-    import DefaultLayoutDescriptorResolver = api.content.page.layout.DefaultLayoutDescriptorResolver;
     import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
 
     import PageComponentBuilder = api.content.page.PageComponentBuilder;
@@ -43,10 +39,8 @@ module app.wizard.page {
 
         private siteTemplate: SiteTemplate;
         private initialized: boolean;
-        private defaultPageTemplate: PageTemplate;
-        private defaultImageDescriptor: ImageDescriptor;
-        private defaultPartDescriptor: PartDescriptor;
-        private defaultLayoutDescriptor: LayoutDescriptor;
+
+        private defaultModels: DefaultModels;
 
         private content: Content;
         private pageTemplate: PageTemplate;
@@ -104,37 +98,13 @@ module app.wizard.page {
 
                 var siteModules = this.siteTemplate.getModules();
 
-                var defaultPageTemplatePromise = new GetDefaultPageTemplateRequest(this.siteTemplate.getKey(),
-                    this.content.getType()).sendAndParse();
-                var defaultImageDescriptorPromise = DefaultImageDescriptorResolver.resolve(siteModules);
-                var defaultPartDescriptorPromise = DefaultPartDescriptorResolver.resolve(siteModules);
-                var defaultLayoutDescriptorPromise = DefaultLayoutDescriptorResolver.resolve(siteModules);
-
-                var allPromises: Q.Promise<any>[] = [
-                    defaultPageTemplatePromise,
-                    defaultImageDescriptorPromise,
-                    defaultPartDescriptorPromise,
-                    defaultLayoutDescriptorPromise];
-
-                defaultPageTemplatePromise.done((defaultPageTemplate: PageTemplate)=> {
-                    this.defaultPageTemplate = defaultPageTemplate;
-                });
-
-                defaultImageDescriptorPromise.done((imageDescriptor: ImageDescriptor)=> {
-                    this.defaultImageDescriptor = imageDescriptor;
-                });
-
-                defaultPartDescriptorPromise.done((partDescriptor: PartDescriptor)=> {
-                    this.defaultPartDescriptor = partDescriptor;
-                });
-
-                defaultLayoutDescriptorPromise.done((layoutDescriptor: LayoutDescriptor)=> {
-                    this.defaultLayoutDescriptor = layoutDescriptor;
-                });
-
-                Q.allSettled(allPromises).then((results: Q.PromiseState<any>[])=> {
+                DefaultModelsFactory.create(<DefaultModelsFactoryConfig>{
+                    siteTemplateKey: this.siteTemplate.getKey(),
+                    contentType: this.content.getType(),
+                    modules: this.siteTemplate.getModules(),
+                }).done((defaultModels: DefaultModels) => {
+                    this.defaultModels = defaultModels;
                     this.initialized = true;
-
                     deferred.resolve(null);
                 });
             }
@@ -230,8 +200,8 @@ module app.wizard.page {
                     }
                     else if (pageTemplateChanged && !this.pageTemplate) {
 
-                        this.pageRegions = this.defaultPageTemplate.getRegions();
-                        this.pageConfig = this.defaultPageTemplate.getConfig();
+                        this.pageRegions = this.defaultModels.getPageTemplate().getRegions();
+                        this.pageConfig = this.defaultModels.getPageTemplate().getConfig();
                     }
                     else {
                         this.pageRegions = this.resolvePageRegions(content, pageTemplate);
@@ -313,7 +283,7 @@ module app.wizard.page {
         private resolvePageRegions(content: Content, pageTemplate: PageTemplate): PageRegions {
 
             if (!pageTemplate) {
-                return this.defaultPageTemplate.getRegions();
+                return this.defaultModels.getPageTemplate().getRegions();
             }
 
             if (content.isPage() && content.getPage().hasRegions()) {
@@ -327,7 +297,7 @@ module app.wizard.page {
         private resolvePageConfig(content: Content, pageTemplate: PageTemplate): RootDataSet {
 
             if (!pageTemplate) {
-                return this.defaultPageTemplate.getConfig();
+                return this.defaultModels.getPageTemplate().getConfig();
             }
 
             if (content.isPage() && content.getPage().hasConfig()) {
@@ -342,12 +312,14 @@ module app.wizard.page {
 
             var deferred = Q.defer<void>();
 
-            new GetPageDescriptorByKeyRequest(this.defaultPageTemplate.getDescriptorKey()).sendAndParse().
+            var defaultPageTemplate = this.defaultModels.getPageTemplate();
+
+            new GetPageDescriptorByKeyRequest(defaultPageTemplate.getDescriptorKey()).sendAndParse().
                 done((pageDescriptor: PageDescriptor) => {
 
-                    this.pageTemplate = this.defaultPageTemplate;
-                    this.pageConfig = this.defaultPageTemplate.getConfig();
-                    this.pageRegions = this.defaultPageTemplate.getRegions();
+                    this.pageTemplate = defaultPageTemplate;
+                    this.pageConfig = defaultPageTemplate.getConfig();
+                    this.pageRegions = defaultPageTemplate.getRegions();
                     this.pageDescriptor = pageDescriptor;
 
                     this.contextWindow.setPage(this.content, this.pageTemplate, pageDescriptor);
@@ -375,7 +347,8 @@ module app.wizard.page {
                 liveEditWindow: this.liveEditWindow,
                 liveEditJQuery: this.liveEditJQuery,
                 liveFormPanel: this,
-                contentType: this.content.getType()
+                contentType: this.content.getType(),
+                defaultModels: this.defaultModels
             });
 
             this.contextWindow.setPage(this.content, this.pageTemplate, this.pageDescriptor);
@@ -413,15 +386,15 @@ module app.wizard.page {
         }
 
         getDefaultImageDescriptor(): ImageDescriptor {
-            return this.defaultImageDescriptor;
+            return this.defaultModels.getImageDescriptor();
         }
 
         getDefaultPartDescriptor(): PartDescriptor {
-            return this.defaultPartDescriptor;
+            return this.defaultModels.getPartDescriptor();
         }
 
         getDefaultLayoutDescriptor(): LayoutDescriptor {
-            return this.defaultLayoutDescriptor;
+            return this.defaultModels.getLayoutDescriptor();
         }
 
         private onComponentSelected(pathAsString: string) {
@@ -579,10 +552,18 @@ module app.wizard.page {
             });
 
             this.liveEditJQuery(this.liveEditWindow).on('componentRemoved.liveEdit', (event, component?) => {
+
                 this.contextWindow.show();
+
                 if (component && component.getComponentPath()) {
-                    this.pageRegions.removeComponent(ComponentPath.fromString(component.getComponentPath()));
-                    this.contextWindow.clearSelection();
+
+                    var componentPath: ComponentPath = ComponentPath.fromString(component.getComponentPath());
+
+                    this.initializePageFromDefault().done(() => {
+
+                        this.pageRegions.removeComponent(componentPath);
+                        this.contextWindow.clearSelection();
+                    });
                 }
             });
             this.liveEditJQuery(this.liveEditWindow).on('componentReset.liveEdit', (event, component?) => {
@@ -655,8 +636,8 @@ module app.wizard.page {
                     var imageComponent = this.pageRegions.getImageComponent(componentPath);
                     if (imageComponent != null) {
                         imageComponent.setImage(imageId);
-                        if (this.defaultImageDescriptor) {
-                            imageComponent.setDescriptor(this.defaultImageDescriptor.getKey());
+                        if (this.defaultModels.hasImageDescriptor()) {
+                            imageComponent.setDescriptor(this.defaultModels.getImageDescriptor().getKey());
                         }
 
                         this.pageSkipReload = true;

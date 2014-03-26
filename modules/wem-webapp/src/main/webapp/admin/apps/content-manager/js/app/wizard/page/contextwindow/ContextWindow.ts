@@ -1,6 +1,7 @@
 module app.wizard.page.contextwindow {
 
     import RootDataSet = api.data.RootDataSet;
+    import DefaultModels = app.wizard.page.DefaultModels;
     import LiveFormPanel = app.wizard.page.LiveFormPanel;
     import ComponentPath = api.content.page.ComponentPath;
     import Content = api.content.Content;
@@ -28,6 +29,8 @@ module app.wizard.page.contextwindow {
         liveFormPanel:LiveFormPanel;
 
         contentType:ContentTypeName;
+
+        defaultModels:DefaultModels;
     }
 
     export class ContextWindow extends api.ui.DockedWindow {
@@ -65,7 +68,8 @@ module app.wizard.page.contextwindow {
                 liveEditWindow: this.liveEditWindow,
                 siteTemplate: config.siteTemplate,
                 liveFormPanel: this.liveFormPanel,
-                contentType: config.contentType
+                contentType: config.contentType,
+                defaultModels: config.defaultModels
             });
             this.emulatorPanel = new EmulatorPanel({
                 liveEditIFrame: this.liveEditIFrame

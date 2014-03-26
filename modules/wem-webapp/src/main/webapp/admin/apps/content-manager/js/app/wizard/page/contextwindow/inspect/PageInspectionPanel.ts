@@ -38,7 +38,7 @@ module app.wizard.page.contextwindow.inspect {
         private currentPageTemplate: PageTemplateKey;
 
         constructor(config: PageInspectionPanelConfig) {
-            super("live-edit-font-icon-page", false);
+            super();
 
             this.siteTemplateKey = config.siteTemplateKey;
 

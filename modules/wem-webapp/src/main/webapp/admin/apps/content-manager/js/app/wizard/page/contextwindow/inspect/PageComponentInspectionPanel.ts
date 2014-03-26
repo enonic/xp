@@ -2,32 +2,34 @@ module app.wizard.page.contextwindow.inspect {
 
     import RootDataSet = api.data.RootDataSet;
     import FormView = api.form.FormView;
-    import SiteTemplate = api.content.site.template.SiteTemplate;
     import PageComponent = api.content.page.PageComponent;
     import DescriptorKey = api.content.page.DescriptorKey;
     import Descriptor = api.content.page.Descriptor;
 
+    export interface PageComponentInspectionPanelConfig {
+
+        iconClass: string;
+
+    }
+
     export class PageComponentInspectionPanel<COMPONENT extends PageComponent, DESCRIPTOR extends Descriptor> extends BaseInspectionPanel {
 
-        private siteTemplate: SiteTemplate;
-        private liveFormPanel: app.wizard.page.LiveFormPanel;
+        private namesAndIcon: api.app.NamesAndIconView;
+
         private formView: FormView;
+
         private component: COMPONENT;
 
-        constructor(iconClass: string, liveFormPanel: app.wizard.page.LiveFormPanel, siteTemplate: SiteTemplate) {
-            super(iconClass);
+        constructor(config: PageComponentInspectionPanelConfig) {
+            super();
 
-            this.siteTemplate = siteTemplate;
-            this.liveFormPanel = liveFormPanel;
             this.formView = null;
-        }
 
-        getLiveFormPanel(): app.wizard.page.LiveFormPanel {
-            return this.liveFormPanel;
-        }
+            this.namesAndIcon = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().
+                setSize(api.app.NamesAndIconViewSize.medium)).
+                setIconClass(config.iconClass);
 
-        getSiteTemplate(): SiteTemplate {
-            return this.siteTemplate;
+            this.appendChild(this.namesAndIcon);
         }
 
         setComponent(component: COMPONENT) {
@@ -35,12 +37,12 @@ module app.wizard.page.contextwindow.inspect {
             this.component = component;
 
             if (this.hasDescriptor()) {
-                this.setMainName(this.getDescriptor().getDisplayName().toString());
+                this.namesAndIcon.setMainName(this.getDescriptor().getDisplayName().toString());
             }
             else {
-                this.setMainName(component.getName().toString());
+                this.namesAndIcon.setMainName(component.getName().toString());
             }
-            this.setSubName(component.getPath().toString());
+            this.namesAndIcon.setSubName(component.getPath().toString());
         }
 
         getComponent(): COMPONENT {

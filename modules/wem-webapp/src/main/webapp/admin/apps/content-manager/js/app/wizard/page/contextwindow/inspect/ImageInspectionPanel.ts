@@ -1,5 +1,6 @@
 module app.wizard.page.contextwindow.inspect {
 
+    import DefaultModels = app.wizard.page.DefaultModels;
     import LiveFormPanel = app.wizard.page.LiveFormPanel;
     import SiteTemplate = api.content.site.template.SiteTemplate;
     import ImageComponent = api.content.page.image.ImageComponent;
@@ -14,6 +15,14 @@ module app.wizard.page.contextwindow.inspect {
     import Option = api.ui.selector.Option;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
 
+    export interface ImageInspectionPanelConfig {
+
+        liveFormPanel: LiveFormPanel;
+
+        siteTemplate: SiteTemplate;
+
+        defaultModels: DefaultModels;
+    }
 
     export class ImageInspectionPanel extends PageComponentInspectionPanel<ImageComponent, ImageDescriptor> {
 
@@ -27,8 +36,10 @@ module app.wizard.page.contextwindow.inspect {
             [key: string]: ImageDescriptor;
         };
 
-        constructor(liveFormPanel: LiveFormPanel, siteTemplate: SiteTemplate) {
-            super("live-edit-font-icon-image", liveFormPanel, siteTemplate);
+        constructor(config: ImageInspectionPanelConfig) {
+            super(<PageComponentInspectionPanelConfig>{
+                iconClass: "live-edit-font-icon-image"
+            });
             this.imageDescriptors = {};
 
             var descriptorHeader = new api.dom.H6El();
@@ -37,7 +48,7 @@ module app.wizard.page.contextwindow.inspect {
             this.appendChild(descriptorHeader);
 
 
-            var imageDescriptorsRequest = new GetImageDescriptorsByModulesRequest(this.getSiteTemplate().getModules());
+            var imageDescriptorsRequest = new GetImageDescriptorsByModulesRequest(config.siteTemplate.getModules());
             var imageDescriptorLoader = new ImageDescriptorLoader(imageDescriptorsRequest);
             this.descriptorSelector = new ImageDescriptorDropdown("imageDescriptor", <ImageDescriptorDropdownConfig>{
                 loader: imageDescriptorLoader
@@ -52,7 +63,7 @@ module app.wizard.page.contextwindow.inspect {
                     this.imageDescriptors[imageDescriptor.getKey().toString()] = imageDescriptor;
                 });
                 // set default descriptor
-                this.descriptorSelector.setDescriptor(this.getLiveFormPanel().getDefaultImageDescriptor().getKey());
+                this.descriptorSelector.setDescriptor(config.defaultModels.getImageDescriptor().getKey());
             };
             imageDescriptorLoader.onLoadedData(descriptorsLoadedHandler);
 
@@ -69,9 +80,9 @@ module app.wizard.page.contextwindow.inspect {
                     this.descriptorSelected = selectedDescriptorKey;
                     if (hasDescriptorChanged) {
                         var path = this.imageComponent.getPath();
-                        var component = this.getLiveFormPanel().getLiveEditWindow().getComponentByPath(path.toString());
+                        var component = config.liveFormPanel.getLiveEditWindow().getComponentByPath(path.toString());
                         var selectedDescriptor: Descriptor = option.displayValue;
-                        this.getLiveFormPanel().setComponentDescriptor(selectedDescriptor, path, component);
+                        config.liveFormPanel.setComponentDescriptor(selectedDescriptor, path, component);
                     }
                 }
             });

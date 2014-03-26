@@ -6,17 +6,25 @@ module app.wizard.page.contextwindow.inspect {
     import LayoutComponent = api.content.page.layout.LayoutComponent;
     import GetLayoutDescriptorsByModulesRequest = api.content.page.layout.GetLayoutDescriptorsByModulesRequest;
 
+    export interface LayoutInspectionPanelConfig {
+
+        siteTemplate: SiteTemplate;
+
+    }
+
     export class LayoutInspectionPanel extends PageComponentInspectionPanel<LayoutComponent, LayoutDescriptor> {
 
         private layoutDescriptors: {
             [key: string]: LayoutDescriptor;
         };
 
-        constructor(liveFormPanel: app.wizard.page.LiveFormPanel, siteTemplate: SiteTemplate) {
-            super("live-edit-font-icon-layout", liveFormPanel, siteTemplate);
+        constructor(config: LayoutInspectionPanelConfig) {
+            super(<PageComponentInspectionPanelConfig>{
+                iconClass: "live-edit-font-icon-layout"
+            });
 
             this.layoutDescriptors = {};
-            var getLayoutDescriptorsRequest = new GetLayoutDescriptorsByModulesRequest(this.getSiteTemplate().getModules());
+            var getLayoutDescriptorsRequest = new GetLayoutDescriptorsByModulesRequest(config.siteTemplate.getModules());
             getLayoutDescriptorsRequest.sendAndParse().done((results: LayoutDescriptor[]) => {
                 results.forEach((layoutDescriptor: LayoutDescriptor) => {
                     this.layoutDescriptors[layoutDescriptor.getKey().toString()] = layoutDescriptor;

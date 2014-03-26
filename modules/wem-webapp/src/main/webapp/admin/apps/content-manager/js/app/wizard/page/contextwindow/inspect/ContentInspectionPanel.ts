@@ -4,18 +4,29 @@ module app.wizard.page.contextwindow.inspect {
 
         private content: api.content.Content;
 
+        private namesAndIcon: api.app.NamesAndIconView;
+
         constructor() {
-            super("live-edit-font-icon-content");
+            super();
+
+            this.namesAndIcon = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().
+                setSize(api.app.NamesAndIconViewSize.medium)).
+                setIconClass("live-edit-font-icon-content");
+
+            this.appendChild(this.namesAndIcon);
         }
 
         setContent(content: api.content.Content) {
+
             this.content = content;
+
             if (content) {
-                this.setMainName(content.getDisplayName());
-                this.setSubName(content.getPath().toString());
-            } else {
-                this.setMainName("[No Content given]");
-                this.setSubName("");
+                this.namesAndIcon.setMainName(content.getDisplayName());
+                this.namesAndIcon.setSubName(content.getPath().toString());
+            }
+            else {
+                this.namesAndIcon.setMainName("[No Content given]");
+                this.namesAndIcon.setSubName("");
             }
         }
 

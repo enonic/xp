@@ -6,18 +6,29 @@ module app.wizard.page.contextwindow.inspect {
 
         private region: Region;
 
+        private namesAndIcon: api.app.NamesAndIconView;
+
         constructor() {
-            super("live-edit-font-icon-region");
+            super();
+
+            this.namesAndIcon = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().
+                setSize(api.app.NamesAndIconViewSize.medium)).
+                setIconClass("live-edit-font-icon-region");
+
+            this.appendChild(this.namesAndIcon);
         }
 
         setRegion(region: Region) {
+
             this.region = region;
+
             if (region) {
-                this.setMainName(region.getName() );
-                this.setSubName(region.getPath().toString());
-            } else {
-                this.setMainName("[No  Region given]" );
-                this.setSubName("");
+                this.namesAndIcon.setMainName(region.getName() );
+                this.namesAndIcon.setSubName(region.getPath().toString());
+            }
+            else {
+                this.namesAndIcon.setMainName("[No  Region given]" );
+                this.namesAndIcon.setSubName("");
             }
         }
 
