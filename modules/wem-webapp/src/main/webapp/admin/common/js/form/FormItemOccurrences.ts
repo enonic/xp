@@ -125,6 +125,11 @@ module api.form {
             var occurrence: FormItemOccurrence<V> = this.createNewOccurrence(this, insertAtIndex);
 
             this.doAddOccurrence(occurrence);
+
+            var inputOccurrenceView = this.occurrenceViews[occurrence.getIndex()];
+            if (inputOccurrenceView) {
+                inputOccurrenceView.giveFocus();
+            }
         }
 
         addOccurrenceAfter(fromOccurrence: V) {

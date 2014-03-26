@@ -1,9 +1,9 @@
 module LiveEdit.component {
     export class ComponentPlaceholder extends Component {
-        constructor() {
+        constructor(className:string = 'live-edit-empty-component') {
             super();
-            this.addClass("live-edit-empty-component");
-            this.getEl().setData('live-edit-empty-component', "true");
+            this.addClass(className);
+            this.getEl().setData('live-edit-empty-component', 'true');
 
             $liveEdit(this.getHTMLElement()).on('componentSelect.liveEdit', (event, name?)=> {
                 this.onSelect();
@@ -15,7 +15,7 @@ module LiveEdit.component {
         }
 
         static fromComponent(type: LiveEdit.component.Type): ComponentPlaceholder {
-            console.log("creating placeholder", type);
+            console.log('creating placeholder', type);
             var placeholder: ComponentPlaceholder;
             if (type === Type.IMAGE) {
                 placeholder = new LiveEdit.component.ImagePlaceholder();
