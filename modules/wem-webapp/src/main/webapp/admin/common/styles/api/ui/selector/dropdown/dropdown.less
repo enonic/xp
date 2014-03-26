@@ -78,6 +78,7 @@
     }
 
     .slick-cell {
+      height: 100%;
       .default-slick-cell-styling();
 
       &:hover, &.active {
@@ -98,9 +99,13 @@
     .input-glow();
     width: 100%;
     min-height: 37px;
-    padding: 4px 37px 4px 10px;
+    padding: 0;
     margin: 0;
     text-align: left;
     background: white;
+
+    .option-value {
+      margin: 4px 37px 4px 10px;
+    }
   }
 }
