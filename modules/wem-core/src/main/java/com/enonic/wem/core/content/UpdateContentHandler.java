@@ -38,7 +38,6 @@ import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.entity.UpdateNodeCommand;
 import com.enonic.wem.core.index.IndexService;
 
 import static com.enonic.wem.api.content.Content.newContent;
@@ -94,13 +93,8 @@ public class UpdateContentHandler
 
         final UpdateNodeParams updateNodeParams = translator.toUpdateNodeCommand( editedContent, attachments );
 
-        final Node editedNode = UpdateNodeCommand.create().
-            session( this.context.getJcrSession() ).
-            params( updateNodeParams ).
-            indexService( this.indexService ).
-            build().
-            execute().
-            getPersistedNode();
+        final Node editedNode = nodeService.update( updateNodeParams ).getPersistedNode();
+
         final Content persistedContent = translator.fromNode( editedNode );
 
         deleteRemovedEmbeddedContent( contentBeforeChange, persistedContent );
@@ -151,7 +145,8 @@ public class UpdateContentHandler
             @Override
             public void visit( final Property property )
             {
-                final Content content = new GetContentByIdService( context, new GetContentById( property.getContentId() ), nodeService ).execute();
+                final Content content =
+                    new GetContentByIdService( context, new GetContentById( property.getContentId() ), nodeService ).execute();
 
                 if ( content != null )
                 {

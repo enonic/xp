@@ -15,10 +15,10 @@ import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.entity.CreateNodeParams;
 import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.entity.CreateNodeCommand;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.relationship.RelationshipService;
 import com.enonic.wem.core.relationship.SyncRelationshipsCommand;
@@ -31,6 +31,8 @@ public class CreateContentHandler
     private IndexService indexService;
 
     private final static Logger LOG = LoggerFactory.getLogger( CreateContentHandler.class );
+
+    private NodeService nodeService;
 
     @Override
     public void handle()
@@ -48,18 +50,9 @@ public class CreateContentHandler
 
         final CreateNodeParams createNodeParams = translator.toCreateNode( command );
 
-        final Node createdNode = CreateNodeCommand.create().
-            session( this.context.getJcrSession() ).
-            indexService( indexService ).
-            params( createNodeParams ).
-            build().
-            execute().
-            getPersistedNode();
+        final Node createdNode = nodeService.create( createNodeParams ).getPersistedNode();
 
         final Content storedContent = translator.fromNode( createdNode );
-
-        // addAttachments( builtContent, storedContent );
-        //// addRelationships( session, builtContent, storedContent );
 
         command.setResult( storedContent );
     }
@@ -145,5 +138,12 @@ public class CreateContentHandler
     public void setIndexService( final IndexService indexService )
     {
         this.indexService = indexService;
+    }
+
+
+    @Inject
+    public void setNodeService( final NodeService nodeService )
+    {
+        this.nodeService = nodeService;
     }
 }
