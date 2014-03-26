@@ -37,30 +37,6 @@ module api.form.inputtype.content.relationship {
             return true;
         }
 
-        onOccurrenceAdded(listener: (event: api.form.OccurrenceAddedEvent)=>void) {
-            throw new Error("Relationship manages occurrences self");
-        }
-
-        onOccurrenceRemoved(listener: (event: api.form.OccurrenceRemovedEvent)=>void) {
-            throw new Error("Relationship manages occurrences self");
-        }
-
-        unOccurrenceAdded(listener: (event: api.form.OccurrenceAddedEvent)=>void) {
-            throw new Error("Relationship manages occurrences self");
-        }
-
-        unOccurrenceRemoved(listener: (event: api.form.OccurrenceRemovedEvent)=>void) {
-            throw new Error("Relationship manages occurrences self");
-        }
-
-        maximumOccurrencesReached(): boolean {
-            return this.contentComboBox.maximumOccurrencesReached();
-        }
-
-        createAndAddOccurrence() {
-            throw new Error("Relationship manages occurrences self");
-        }
-
         layout(input: api.form.Input, properties: api.data.Property[]) {
 
             this.input = input;

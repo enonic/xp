@@ -197,27 +197,6 @@ module api.form.inputtype.content.image {
             return true;
         }
 
-        maximumOccurrencesReached(): boolean {
-            return this.input.getOccurrences().maximumReached(this.comboBox.countSelectedOptions());
-        }
-
-        onOccurrenceAdded(listener: (event: api.form.OccurrenceAddedEvent)=>void) {
-            throw new Error("ImageSelector manages occurrences self");
-        }
-
-        onOccurrenceRemoved(listener: (event: api.form.OccurrenceRemovedEvent)=>void) {
-            throw new Error("ImageSelector manages occurrences self");
-        }
-
-        unOccurrenceAdded(listener: (event: api.form.OccurrenceAddedEvent)=>void) {
-            throw new Error("ImageSelector manages occurrences self");
-        }
-
-        unOccurrenceRemoved(listener: (event: api.form.OccurrenceRemovedEvent)=>void) {
-            throw new Error("ImageSelector manages occurrences self");
-        }
-
-
         addEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
             this.editContentRequestListeners.push(listener);
         }

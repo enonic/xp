@@ -39,30 +39,6 @@ module api.form.inputtype.combobox {
             return true;
         }
 
-        onOccurrenceAdded(listener: (event: api.form.OccurrenceAddedEvent)=>void) {
-            throw new Error("ComboBox manages occurrences self");
-        }
-
-        onOccurrenceRemoved(listener: (event: api.form.OccurrenceRemovedEvent)=>void) {
-            throw new Error("ComboBox manages occurrences self");
-        }
-
-        unOccurrenceAdded(listener: (event: api.form.OccurrenceAddedEvent)=>void) {
-            throw new Error("ComboBox manages occurrences self");
-        }
-
-        unOccurrenceRemoved(listener: (event: api.form.OccurrenceRemovedEvent)=>void) {
-            throw new Error("ComboBox manages occurrences self");
-        }
-
-        public maximumOccurrencesReached(): boolean {
-            return this.input.getOccurrences().maximumReached(this.comboBox.countSelectedOptions());
-        }
-
-        createAndAddOccurrence() {
-            throw new Error("ComboBox manages occurrences self");
-        }
-
         layout(input: api.form.Input, properties: api.data.Property[]) {
 
             this.input = input;

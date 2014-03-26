@@ -8,7 +8,7 @@ module api.form {
 
         private parent: api.form.formitemset.FormItemSetOccurrenceView;
 
-        editContentRequestListeners: {(content: api.content.ContentSummary): void}[] = [];
+        private editContentRequestListeners: {(content: api.content.ContentSummary): void}[] = [];
 
         constructor(className: string, context: api.form.FormContext, formItem: FormItem,
                     parent: api.form.formitemset.FormItemSetOccurrenceView) {

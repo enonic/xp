@@ -72,10 +72,11 @@ module api.form.input {
 
             if (!this.inputTypeView.isManagingAdd()) {
 
-                this.inputTypeView.onOccurrenceAdded(() => {
+                var inputTypeViewNotManagingAdd:api.form.inputtype.InputTypeViewNotManagingAdd = <api.form.inputtype.InputTypeViewNotManagingAdd>this.inputTypeView;
+                inputTypeViewNotManagingAdd.onOccurrenceAdded(() => {
                     this.refresh();
                 });
-                this.inputTypeView.onOccurrenceRemoved((event: api.form.OccurrenceRemovedEvent) => {
+                inputTypeViewNotManagingAdd.onOccurrenceRemoved((event: api.form.OccurrenceRemovedEvent) => {
                     this.refresh();
 
                     if (event.getOccurrenceView() instanceof api.form.inputtype.support.InputOccurrenceView) {
@@ -87,7 +88,7 @@ module api.form.input {
                 this.addButton = new api.ui.Button("Add");
                 this.addButton.addClass("small");
                 this.addButton.onClicked((event: MouseEvent) => {
-                    this.inputTypeView.createAndAddOccurrence();
+                    inputTypeViewNotManagingAdd.createAndAddOccurrence();
                 });
 
                 this.bottomButtonRow = new api.dom.DivEl("bottom-button-row");
@@ -103,7 +104,8 @@ module api.form.input {
 
         refresh() {
             if (!this.inputTypeView.isManagingAdd()) {
-                this.addButton.setVisible(!this.inputTypeView.maximumOccurrencesReached());
+                var inputTypeViewNotManagingAdd:api.form.inputtype.InputTypeViewNotManagingAdd = <api.form.inputtype.InputTypeViewNotManagingAdd>this.inputTypeView;
+                this.addButton.setVisible(!inputTypeViewNotManagingAdd.maximumOccurrencesReached());
             }
         }
 

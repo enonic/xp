@@ -12,38 +12,9 @@ module api.form.inputtype {
 
         /*
          * Whether the InputTypeView it self is managing adding new occurrences or not.
+         * If false, then this is expected to implement interface InputTypeViewNotManagingOccurrences.
          */
         isManagingAdd():boolean;
-
-        /*
-         * Is only invoked if InputTypeView is not managing add.
-         */
-        createAndAddOccurrence();
-
-        /*
-         * Is only invoked if InputTypeView is not managing add.
-         */
-        maximumOccurrencesReached():boolean;
-
-        /*
-         * Is only invoked if InputTypeView is not managing add.
-         */
-        onOccurrenceAdded(listener: (event: api.form.OccurrenceAddedEvent)=>void);
-
-        /*
-         * Is only invoked if InputTypeView is not managing add.
-         */
-        onOccurrenceRemoved(listener: (event: api.form.OccurrenceRemovedEvent)=>void);
-
-        /*
-         * Is only invoked if InputTypeView is not managing add.
-         */
-        unOccurrenceAdded(listener: (event: api.form.OccurrenceAddedEvent)=>void);
-
-        /*
-         * Is only invoked if InputTypeView is not managing add.
-         */
-        unOccurrenceRemoved(listener: (event: api.form.OccurrenceRemovedEvent)=>void)
 
         /*
          * Invoked when input wants to edit embedded content
