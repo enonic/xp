@@ -367,19 +367,10 @@ module app.wizard.page {
                 this.contextWindow.remove();
             }
 
-            this.contextWindow = this.createContextWindow();
-
-            this.appendChild(this.contextWindow);
-
-            this.liveEditListen();
-        }
-
-        private createContextWindow(): ContextWindow {
-
             this.liveEditWindow = this.frame.getHTMLElement()["contentWindow"];
             this.liveEditJQuery = <JQueryStatic>this.liveEditWindow.$liveEdit;
 
-            var contextWindow = new ContextWindow({
+            this.contextWindow = new ContextWindow({
                 liveEditIFrame: this.frame,
                 siteTemplate: this.siteTemplate,
                 liveEditWindow: this.liveEditWindow,
@@ -388,9 +379,11 @@ module app.wizard.page {
                 contentType: this.content.getType()
             });
 
-            contextWindow.setPage(this.content, this.pageTemplate, this.pageDescriptor);
+            this.contextWindow.setPage(this.content, this.pageTemplate, this.pageDescriptor);
 
-            return contextWindow;
+            this.appendChild(this.contextWindow);
+
+            this.liveEditListen();
         }
 
         public getPageTemplate(): PageTemplateKey {
