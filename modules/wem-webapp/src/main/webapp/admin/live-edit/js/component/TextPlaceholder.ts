@@ -1,13 +1,11 @@
 module LiveEdit.component {
     export class TextPlaceholder extends ComponentPlaceholder {
 
-
         constructor() {
             this.setComponentType(new ComponentType(Type.PARAGRAPH));
-            super();
+            super('live-edit-text-component');
 
-            this.getEl().setData('live-edit-type', "paragraph");
-
+            this.getEl().setData('live-edit-type', 'paragraph');
         }
 
         onSelect() {
