@@ -27,6 +27,7 @@ module app.wizard.page {
     import LayoutComponentBuilder = api.content.page.layout.LayoutComponentBuilder;
 
     import ContextWindow = app.wizard.page.contextwindow.ContextWindow;
+    import RenderingMode = api.util.RenderingMode;
 
 
     export interface LiveFormPanelConfig {
@@ -458,7 +459,7 @@ module app.wizard.page {
 
         private loadComponent(componentPath: ComponentPath, componentPlaceholder: api.dom.Element) {
             $.ajax({
-                url: api.util.getComponentUri(this.content.getContentId().toString(), componentPath.toString(), true),
+                url: api.util.getComponentUri(this.content.getContentId().toString(), componentPath.toString(), RenderingMode.EDIT),
                 method: 'GET',
                 success: (data) => {
                     var newElement = $(data);

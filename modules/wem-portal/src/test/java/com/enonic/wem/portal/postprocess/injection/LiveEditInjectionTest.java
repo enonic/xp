@@ -10,6 +10,7 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.sun.jersey.api.core.HttpRequestContext;
 
+import com.enonic.wem.api.rendering.RenderingMode;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsHttpRequest;
 import com.enonic.wem.portal.script.lib.PortalUrlScriptBean;
@@ -43,7 +44,7 @@ public class LiveEditInjectionTest
     @Test
     public void testNoInjection()
     {
-        this.context.getRequest().setMode( "edit" );
+        this.context.getRequest().setMode( RenderingMode.EDIT );
 
         final String result1 = this.injection.inject( this.context, PostProcessInjection.Tag.HEAD_BEGIN );
         assertNull( result1 );
@@ -51,7 +52,7 @@ public class LiveEditInjectionTest
         final String result2 = this.injection.inject( this.context, PostProcessInjection.Tag.BODY_BEGIN );
         assertNull( result2 );
 
-        this.context.getRequest().setMode( "live" );
+        this.context.getRequest().setMode( RenderingMode.LIVE );
 
         final String result3 = this.injection.inject( this.context, PostProcessInjection.Tag.BODY_END );
         assertNull( result3 );
@@ -61,7 +62,7 @@ public class LiveEditInjectionTest
     public void testInjectHeadEnd()
         throws Exception
     {
-        this.context.getRequest().setMode( "edit" );
+        this.context.getRequest().setMode( RenderingMode.EDIT );
 
         final String result = this.injection.inject( this.context, PostProcessInjection.Tag.HEAD_END );
         assertNotNull( result );
@@ -72,7 +73,7 @@ public class LiveEditInjectionTest
     public void testInjectBodyEnd()
         throws Exception
     {
-        this.context.getRequest().setMode( "edit" );
+        this.context.getRequest().setMode( RenderingMode.EDIT);
 
         final String result = this.injection.inject( this.context, PostProcessInjection.Tag.BODY_END );
         assertNotNull( result );

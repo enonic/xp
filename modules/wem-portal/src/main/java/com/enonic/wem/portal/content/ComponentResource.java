@@ -14,6 +14,7 @@ import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
+import com.enonic.wem.api.rendering.RenderingMode;
 import com.enonic.wem.portal.content.page.PageComponentResolver;
 import com.enonic.wem.portal.content.page.PageRegionsResolver;
 import com.enonic.wem.portal.controller.JsContext;
@@ -21,6 +22,8 @@ import com.enonic.wem.portal.controller.JsHttpRequest;
 import com.enonic.wem.portal.rendering.Renderer;
 import com.enonic.wem.portal.rendering.RendererFactory;
 import com.enonic.wem.portal.script.lib.PortalUrlScriptBean;
+
+import static com.enonic.wem.api.rendering.RenderingMode.LIVE;
 
 @Path("{mode}/{path:.+}/_/component/{component:.+}")
 public final class ComponentResource
@@ -69,7 +72,7 @@ public final class ComponentResource
         context.setComponent( component );
 
         final JsHttpRequest request = new JsHttpRequest( this.httpContext.getRequest() );
-        request.setMode( this.mode );
+        request.setMode( RenderingMode.from( this.mode, LIVE ) );
         context.setRequest( request );
 
         final PortalUrlScriptBean portalUrlScriptBean = new PortalUrlScriptBean();

@@ -1,4 +1,11 @@
 module api.util {
+
+    export enum RenderingMode {
+        EDIT,
+        PREVIEW,
+        LIVE
+    }
+
     /**
      * Creates an URI from supplied path.
      *
@@ -29,15 +36,19 @@ module api.util {
         return api.util.getAdminUri('rest/' + path);
     }
 
-    export function getPortalUri(path: string, edit: boolean): string {
-        if (edit) {
+    export function getPortalUri(path: string, renderingMode: RenderingMode): string {
+        switch (renderingMode) {
+        case RenderingMode.EDIT:
             return api.util.getUri('portal/edit/' + path);
-        } else {
+        case RenderingMode.LIVE:
             return api.util.getUri('portal/live/' + path);
+        case RenderingMode.PREVIEW:
+            return api.util.getUri('portal/preview/' + path);
         }
+
     }
 
-    export function getComponentUri(contentId: string, componentPath: string, edit: boolean) {
-        return api.util.getPortalUri(contentId + "/_/component/" + componentPath, edit);
+    export function getComponentUri(contentId: string, componentPath: string, renderingMode: RenderingMode) {
+        return api.util.getPortalUri(contentId + "/_/component/" + componentPath, renderingMode);
     }
 }
