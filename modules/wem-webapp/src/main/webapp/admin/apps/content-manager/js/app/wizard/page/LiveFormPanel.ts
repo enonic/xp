@@ -559,11 +559,19 @@ module app.wizard.page {
 
                     var componentPath: ComponentPath = ComponentPath.fromString(component.getComponentPath());
 
-                    this.initializePageFromDefault().done(() => {
+                    if( this.pageTemplate ) {
 
                         this.pageRegions.removeComponent(componentPath);
                         this.contextWindow.clearSelection();
-                    });
+                    }
+                    else {
+                        // Make the Content a Page if it wasn't before removing
+                        this.initializePageFromDefault().done(() => {
+
+                            this.pageRegions.removeComponent(componentPath);
+                            this.contextWindow.clearSelection();
+                        });
+                    }
                 }
             });
             this.liveEditJQuery(this.liveEditWindow).on('componentReset.liveEdit', (event, component?) => {
