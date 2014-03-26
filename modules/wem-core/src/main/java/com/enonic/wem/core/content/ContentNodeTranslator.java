@@ -9,8 +9,6 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
-import com.enonic.wem.api.command.entity.CreateNode;
-import com.enonic.wem.api.command.entity.UpdateNode;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentName;
@@ -20,6 +18,7 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.entity.CreateNodeParams;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIndexConfig;
 import com.enonic.wem.api.entity.Node;
@@ -27,6 +26,7 @@ import com.enonic.wem.api.entity.NodeEditor;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
+import com.enonic.wem.api.entity.UpdateNodeParams;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.content.serializer.ThumbnailAttachmentSerializer;
@@ -52,7 +52,7 @@ public class ContentNodeTranslator
         this.client = client;
     }
 
-    public CreateNode toCreateNode( final CreateContent command )
+    public CreateNodeParams toCreateNode( final CreateContent command )
     {
         final RootDataSet contentAsData = CONTENT_SERIALIZER.toData( command );
         final EntityIndexConfig entityIndexConfig = ContentEntityIndexConfigFactory.create();
@@ -69,20 +69,18 @@ public class ContentNodeTranslator
             nodeAttachmentsBuilder.add( ThumbnailAttachmentSerializer.toAttachment( thumbnail ) );
         }
 
-        final CreateNode createNode = new CreateNode();
-        createNode.name( resolveNodeName( command.getName() ) );
-        createNode.parent( resolveParentNodePath( command.getParentContentPath() ) );
-        createNode.embed( command.isEmbed() );
-        createNode.data( contentAsData );
-        createNode.attachments( nodeAttachmentsBuilder.build() );
-
-        createNode.entityIndexConfig( entityIndexConfig );
-        return createNode;
+        return new CreateNodeParams()
+            .name( resolveNodeName( command.getName() ) )
+            .parent( resolveParentNodePath( command.getParentContentPath() ) )
+            .embed( command.isEmbed() )
+            .data( contentAsData )
+            .attachments( nodeAttachmentsBuilder.build() )
+            .entityIndexConfig( entityIndexConfig );
     }
 
-    public UpdateNode toUpdateNodeCommand( final Content content, final Attachments attachments )
+    public UpdateNodeParams toUpdateNodeCommand( final Content content, final Attachments attachments )
     {
-        return Commands.node().update().
+        return new UpdateNodeParams().
             id( EntityId.from( content.getId() ) ).
             editor( toNodeEditor( content, attachments ) );
     }

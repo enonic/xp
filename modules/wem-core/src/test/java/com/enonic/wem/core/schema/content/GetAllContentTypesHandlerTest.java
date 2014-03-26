@@ -5,15 +5,14 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.entity.GetNodesByParent;
 import com.enonic.wem.api.command.schema.content.GetAllContentTypes;
 import com.enonic.wem.api.command.schema.mixin.GetMixin;
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.GetNodesByParentParams;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.Nodes;
@@ -43,8 +42,8 @@ public class GetAllContentTypesHandlerTest
     public void setUp()
         throws Exception
     {
-        super.client = Mockito.mock( Client.class );
         super.initialize();
+
         handler = new GetAllContentTypesHandler();
         handler.setContext( this.context );
     }
@@ -73,7 +72,7 @@ public class GetAllContentTypesHandlerTest
                 build() ).
             build();
 
-        Mockito.when( client.execute( Mockito.isA( GetNodesByParent.class ) ) ).thenReturn( nodes );
+        Mockito.when( nodeService.getByParent( Mockito.isA( GetNodesByParentParams.class ) ) ).thenReturn( nodes );
 
         // Exercise:
         GetAllContentTypes command = Commands.contentType().get().all();
@@ -113,7 +112,7 @@ public class GetAllContentTypesHandlerTest
                 build() ).
             build();
 
-        Mockito.when( client.execute( Mockito.isA( GetNodesByParent.class ) ) ).thenReturn( nodes );
+        Mockito.when( nodeService.getByParent( Mockito.isA( GetNodesByParentParams.class ) ) ).thenReturn( nodes );
         Mockito.when( client.execute( Mockito.isA( GetMixin.class ) ) ).thenReturn( mixin );
 
         // Exercise:

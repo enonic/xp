@@ -4,25 +4,25 @@ package com.enonic.wem.core.content;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.command.content.DeleteContent;
+import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.index.IndexService;
 
 
 public class DeleteContentHandler
     extends CommandHandler<DeleteContent>
 {
-    private IndexService indexService;
+    private NodeService nodeService;
 
     @Override
     public void handle()
         throws Exception
     {
-        command.setResult( new DeleteContentService( this.context, this.command, this.indexService ).execute() );
+        command.setResult( new DeleteContentService( this.context, this.command, this.nodeService ).execute() );
     }
 
     @Inject
-    public void setIndexService( final IndexService indexService )
+    public void setNodeService( final NodeService nodeService )
     {
-        this.indexService = indexService;
+        this.nodeService = nodeService;
     }
 }

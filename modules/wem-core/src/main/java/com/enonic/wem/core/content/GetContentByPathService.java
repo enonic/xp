@@ -1,12 +1,14 @@
 package com.enonic.wem.core.content;
 
 import com.enonic.wem.api.command.content.GetContentByPath;
-import com.enonic.wem.api.command.entity.GetNodeByPath;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentNotFoundException;
+import com.enonic.wem.api.entity.GetNodeByPathParams;
 import com.enonic.wem.api.entity.NoNodeAtPathFoundException;
+import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodePath;
+import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.core.command.CommandContext;
-import com.enonic.wem.core.entity.GetNodeByPathService;
 
 
 public class GetContentByPathService
@@ -14,21 +16,21 @@ public class GetContentByPathService
 {
     private final GetContentByPath command;
 
-    public GetContentByPathService( final CommandContext context, final GetContentByPath command )
+    public GetContentByPathService( final CommandContext context, final GetContentByPath command, final NodeService nodeService )
     {
-        super( context );
+        super( context, nodeService );
         this.command = command;
     }
 
     public Content execute()
         throws Exception
     {
-        final GetNodeByPath getNodeByPathCommand =
-            new GetNodeByPath( ContentNodeHelper.translateContentPathToNodePath( command.getPath() ) );
+        final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( command.getPath() );
 
         try
         {
-            return translator.fromNode( new GetNodeByPathService( session, getNodeByPathCommand ).execute() );
+            final Node node = nodeService.getByPath( new GetNodeByPathParams( nodePath ) );
+            return translator.fromNode( node );
         }
         catch ( NoNodeAtPathFoundException e )
         {

@@ -6,6 +6,7 @@ import org.elasticsearch.common.Strings;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.core.command.CommandContext;
 
@@ -21,7 +22,15 @@ abstract class ContentService
 
     Client client;
 
-    protected ContentService( final CommandContext context )
+    NodeService nodeService;
+
+    protected ContentService( final CommandContext context, final NodeService nodeService )
+    {
+        this(context);
+        this.nodeService = nodeService;
+    }
+
+    protected ContentService( final CommandContext context)
     {
         this.context = context;
         this.session = context.getJcrSession();

@@ -1,14 +1,16 @@
 package com.enonic.wem.core.content.attachment;
 
+import javax.inject.Inject;
+
 import com.enonic.wem.api.command.content.attachment.GetAttachment;
-import com.enonic.wem.api.command.entity.GetNodeById;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.GetNodeByIdParams;
 import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
 import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.ContentAttachmentNodeTranslator;
-import com.enonic.wem.core.entity.GetNodeByIdService;
 
 
 public class GetAttachmentHandler
@@ -16,14 +18,17 @@ public class GetAttachmentHandler
 {
     final ContentAttachmentNodeTranslator CONTENT_ATTACHMENT_NODE_TRANSLATOR = new ContentAttachmentNodeTranslator();
 
+    private NodeService nodeService;
+
     @Override
     public void handle()
         throws Exception
     {
         try
         {
-            final Node node =
-                new GetNodeByIdService( context.getJcrSession(), new GetNodeById( EntityId.from( command.getContentId() ) ) ).execute();
+            final EntityId entityId = EntityId.from( command.getContentId() );
+            final GetNodeByIdParams params = new GetNodeByIdParams( entityId );
+            final Node node = nodeService.getById( params );
 
             final com.enonic.wem.api.entity.Attachment entityAttachment = node.attachments().getAttachment( command.getAttachmentName() );
 
@@ -42,4 +47,9 @@ public class GetAttachmentHandler
         }
     }
 
+    @Inject
+    public void setNodeService( final NodeService nodeService )
+    {
+        this.nodeService = nodeService;
+    }
 }

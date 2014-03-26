@@ -5,11 +5,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.entity.GetNodesByParent;
 import com.enonic.wem.api.command.schema.content.GetChildContentTypes;
 import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.GetNodesByParentParams;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.Nodes;
@@ -28,8 +27,8 @@ public class GetChildContentTypesHandlerTest
     public void setUp()
         throws Exception
     {
-        super.client = Mockito.mock( Client.class );
         super.initialize();
+
         handler = new GetChildContentTypesHandler();
         handler.setContext( this.context );
     }
@@ -72,7 +71,7 @@ public class GetChildContentTypesHandlerTest
             property( "builtIn", "true" ).
             build();
 
-        Mockito.when( client.execute( Mockito.isA( GetNodesByParent.class ) ) ).thenReturn(
+        Mockito.when( nodeService.getByParent( Mockito.isA( GetNodesByParentParams.class ) ) ).thenReturn(
             Nodes.from( node1, node2, node3, node4, node5 ) );
 
         // exercise
