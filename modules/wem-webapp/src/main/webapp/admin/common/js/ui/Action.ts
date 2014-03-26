@@ -12,6 +12,8 @@ module api.ui {
 
         private enabled: boolean = true;
 
+        private visible: boolean = true;
+
         private executionListeners: Function[] = [];
 
         private propertyChangedListeners: Function[] = [];
@@ -43,10 +45,7 @@ module api.ui {
 
             if (value !== this.label) {
                 this.label = value;
-
-                for (var i in this.propertyChangedListeners) {
-                    this.propertyChangedListeners[i](this);
-                }
+                this.notifyPropertyChanged();
             }
         }
 
@@ -58,10 +57,19 @@ module api.ui {
 
             if (value !== this.enabled) {
                 this.enabled = value;
+                this.notifyPropertyChanged();
+            }
+        }
 
-                for (var i in this.propertyChangedListeners) {
-                    this.propertyChangedListeners[i](this);
-                }
+        isVisible(): boolean {
+            return this.visible;
+        }
+
+        setVisible(value: boolean) {
+
+            if (value !== this.visible) {
+                this.visible = value;
+                this.notifyPropertyChanged();
             }
         }
 
@@ -73,10 +81,13 @@ module api.ui {
 
             if (value !== this.iconClass) {
                 this.iconClass = value;
+                this.notifyPropertyChanged();
+            }
+        }
 
-                for (var i in this.propertyChangedListeners) {
-                    this.propertyChangedListeners[i](this);
-                }
+        private notifyPropertyChanged() {
+            for (var i in this.propertyChangedListeners) {
+                this.propertyChangedListeners[i](this);
             }
         }
 

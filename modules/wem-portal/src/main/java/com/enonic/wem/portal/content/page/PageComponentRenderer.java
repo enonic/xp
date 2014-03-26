@@ -11,6 +11,7 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.content.page.Descriptor;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.PageComponent;
+import com.enonic.wem.api.rendering.RenderingMode;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsControllerFactory;
@@ -20,9 +21,11 @@ import com.enonic.wem.portal.rendering.Renderer;
 abstract class PageComponentRenderer
     implements Renderer<PageComponent>
 {
-    private static final String EDIT_MODE = "edit";
 
-    private static final String EMPTY_COMPONENT_HTML = "<div data-live-edit-type=\"{0}\" data-live-edit-component=\"{1}\" data-live-edit-empty-component=\"true\" class=\"live-edit-empty-component\"></div>";
+    private static final String EMPTY_COMPONENT_EDIT_MODE_HTML =
+        "<div data-live-edit-type=\"{0}\" data-live-edit-component=\"{1}\" data-live-edit-empty-component=\"true\" class=\"live-edit-empty-component\"></div>";
+
+    private static final String EMPTY_COMPONENT_PREVIEW_MODE_HTML = "<div></div>";
 
     @Inject
     protected Client client;
@@ -35,11 +38,7 @@ abstract class PageComponentRenderer
         final Descriptor descriptor = resolveDescriptor( pageComponent );
         if ( descriptor == null )
         {
-            if ( inEditMode( context ) )
-            {
-                return renderEmptyComponent( pageComponent );
-            }
-            throw new DescriptorNotFoundException( pageComponent.getDescriptor() );
+            return renderEmptyComponent( pageComponent, context );
         }
 
         // create controller
@@ -60,10 +59,40 @@ abstract class PageComponentRenderer
         }
     }
 
-    private Response renderEmptyComponent( final PageComponent pageComponent )
+    private Response renderEmptyComponent( final PageComponent pageComponent, final JsContext context )
+    {
+        final RenderingMode renderingMode = getRenderingMode( context );
+        switch ( renderingMode )
+        {
+            case EDIT:
+                return renderEmptyComponentEditMode( pageComponent );
+
+            case PREVIEW:
+                return renderEmptyComponentPreviewMode( pageComponent );
+
+            case LIVE:
+                throw new DescriptorNotFoundException( pageComponent.getDescriptor() );
+
+            default:
+                throw new DescriptorNotFoundException( pageComponent.getDescriptor() );
+        }
+    }
+
+    private Response renderEmptyComponentEditMode( final PageComponent pageComponent )
     {
         final String html =
-            MessageFormat.format( EMPTY_COMPONENT_HTML, pageComponent.getType().toString(), pageComponent.getPath().toString() );
+            MessageFormat.format( EMPTY_COMPONENT_EDIT_MODE_HTML, pageComponent.getType().toString(), pageComponent.getPath().toString() );
+
+        return Response.ok().
+            type( MediaType.TEXT_HTML_TYPE ).
+            entity( html ).
+            build();
+    }
+
+    private Response renderEmptyComponentPreviewMode( final PageComponent pageComponent )
+    {
+        final String html = MessageFormat.format( EMPTY_COMPONENT_PREVIEW_MODE_HTML, pageComponent.getType().toString(),
+                                                  pageComponent.getPath().toString() );
 
         return Response.ok().
             type( MediaType.TEXT_HTML_TYPE ).
@@ -79,9 +108,9 @@ abstract class PageComponentRenderer
 
     protected abstract Descriptor getComponentDescriptor( final DescriptorKey descriptorKey );
 
-    private boolean inEditMode( final JsContext context )
+    private RenderingMode getRenderingMode( final JsContext context )
     {
         final JsHttpRequest req = context.getRequest();
-        return req != null && EDIT_MODE.equals( req.getMode() );
+        return req == null ? RenderingMode.LIVE : req.getMode();
     }
 }

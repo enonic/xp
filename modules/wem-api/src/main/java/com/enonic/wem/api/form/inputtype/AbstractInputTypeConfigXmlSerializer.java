@@ -1,7 +1,7 @@
 package com.enonic.wem.api.form.inputtype;
 
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 public abstract class AbstractInputTypeConfigXmlSerializer<T extends InputTypeConfig>
 {

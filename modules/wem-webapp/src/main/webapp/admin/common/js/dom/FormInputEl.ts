@@ -3,6 +3,7 @@ module api.dom {
 
         constructor(tagName: string, className?: string, elHelper?: ElementHelper) {
             super(new ElementProperties().setTagName(tagName).setClassName(className).setHelper(elHelper));
+            this.addClass('form-input');
         }
 
         getValue(): string {

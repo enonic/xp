@@ -1,50 +1,64 @@
-module app.wizard.page.contextwindow.inspect{
+module app.wizard.page.contextwindow.inspect {
 
-    import SiteTemplate = api.content.site.template.SiteTemplate;
+    import RootDataSet = api.data.RootDataSet;
+    import FormView = api.form.FormView;
     import PageComponent = api.content.page.PageComponent;
     import DescriptorKey = api.content.page.DescriptorKey;
     import Descriptor = api.content.page.Descriptor;
 
+    export interface PageComponentInspectionPanelConfig {
+
+        iconClass: string;
+
+    }
+
     export class PageComponentInspectionPanel<COMPONENT extends PageComponent, DESCRIPTOR extends Descriptor> extends BaseInspectionPanel {
 
-        private siteTemplate: SiteTemplate;
-        private liveFormPanel: app.wizard.page.LiveFormPanel;
-        private formView: api.form.FormView;
+        private namesAndIcon: api.app.NamesAndIconView;
+
+        private formView: FormView;
+
         private component: COMPONENT;
 
-        constructor(iconClass: string, liveFormPanel: app.wizard.page.LiveFormPanel, siteTemplate: SiteTemplate) {
-            super(iconClass);
+        constructor(config: PageComponentInspectionPanelConfig) {
+            super();
 
-            this.siteTemplate = siteTemplate;
-            this.liveFormPanel = liveFormPanel;
             this.formView = null;
-        }
 
-        getLiveFormPanel(): app.wizard.page.LiveFormPanel {
-            return this.liveFormPanel;
-        }
+            this.namesAndIcon = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().
+                setSize(api.app.NamesAndIconViewSize.medium)).
+                setIconClass(config.iconClass);
 
-        getSiteTemplate(): SiteTemplate {
-            return this.siteTemplate;
+            this.appendChild(this.namesAndIcon);
         }
 
         setComponent(component: COMPONENT) {
 
             this.component = component;
 
-            if (component.getDescriptor()) {
-                this.setMainName(this.getDescriptor(component.getDescriptor()).getName().toString());
-            } else {
-                this.setMainName(component.getName().toString());
+            if (this.hasDescriptor()) {
+                this.namesAndIcon.setMainName(this.getDescriptor().getDisplayName().toString());
             }
-            this.setSubName(component.getName().toString());
-
-            // TODO: select descriptor (component.descriptor)
-            // TODO: display config form for selected descriptor
-
+            else {
+                this.namesAndIcon.setMainName(component.getName().toString());
+            }
+            this.namesAndIcon.setSubName(component.getPath().toString());
         }
 
-        getDescriptor(key: DescriptorKey): DESCRIPTOR   {
+        getComponent(): COMPONENT {
+            return this.component;
+        }
+
+        hasDescriptor(): boolean {
+            if (this.getDescriptor()) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+        getDescriptor(): DESCRIPTOR {
             throw new Error("To be implemented by subclasses")
         }
 
@@ -58,8 +72,8 @@ module app.wizard.page.contextwindow.inspect{
 
             var formContext = new api.form.FormContextBuilder().build();
             var form = descriptor.getConfig();
-            var config: api.data.RootDataSet = component.getConfig();
-            this.formView = new api.form.FormView(formContext, form, config);
+            var config: RootDataSet = component.getConfig();
+            this.formView = new FormView(formContext, form, config);
             this.formView.setDoOffset(false);
             this.appendChild(this.formView);
         }

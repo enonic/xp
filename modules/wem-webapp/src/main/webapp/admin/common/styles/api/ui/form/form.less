@@ -3,7 +3,7 @@
 
   .form-item {
     .clearfix();
-    margin-bottom: 15px;
+    .form-element-spacing(@form-field-spacing);
 
     .error {
       display: none;
@@ -14,42 +14,15 @@
     }
 
     &.invalid {
-
       .error {
         display: block;
       }
 
-      select, input , textarea {
+      select, input, textarea {
         .input-error();
       }
-
     }
-
-    * {
-      vertical-align: top;
-    }
-
-    .input-wrapper {
-      input, textarea {
-        width: 100%
-      }
-    }
-
-  }
-
-  .CodeMirror {
-    float: left;
-  }
-
-  fieldset {
-
-    legend {
-      width: 100%;
-      margin-bottom: 10px;
-      padding-bottom: 2px;
-      border-bottom: 1px solid @admin-medium-gray-border;
-    }
-
+    
     label {
       font-size: 12px;
       max-width: @form-label-width - 10px;
@@ -58,23 +31,34 @@
       float: left;
     }
 
-    label + input,
-    label + select,
-    label + .composite-input,
+    label + .form-input,
     label + .input-wrapper {
       margin-left: @form-label-width;
     }
 
-    select, input {
-      .input-glow();
+    .input-wrapper .form-input {
+      width: 100%;
     }
 
-    textarea {
+    select, input, textarea {
       .input-glow();
-      &.large {
-        height: 350px;
-      }
     }
+  }
+
+  fieldset {
+    min-width: 100%;
+    .form-element-spacing(@form-field-set-spacing);
+    
+    legend {
+      width: 100%;
+      margin-bottom: 10px;
+      padding-bottom: 2px;
+      border-bottom: 1px solid @admin-medium-gray-border;
+    }
+  }
+
+  .CodeMirror {
+    float: left;
   }
 }
 
@@ -87,17 +71,15 @@
 }
 
 .form-fieldset-vertical(){
-  .form fieldset {
-
+  .form .form-item {
     label {
       float: none;
       max-width: 100%;
       margin: 0 0 3px 0;
     }
 
-    label + input,
-    label + select,
-    label + .composite-input {
+    label + .form-input,
+    label + .input-wrapper {
       margin-left: 0;
     }
   }

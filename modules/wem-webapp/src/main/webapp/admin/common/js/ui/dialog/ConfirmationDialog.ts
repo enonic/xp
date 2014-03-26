@@ -28,7 +28,6 @@ module api.ui.dialog {
                     this.noCallback();
                 }
             });
-            this.addAction(this.noAction);
 
             this.yesAction = new api.ui.Action("Yes", "enter");
             this.yesAction.addExecutionListener((action: api.ui.Action) => {
@@ -37,7 +36,9 @@ module api.ui.dialog {
                     this.yesCallback();
                 }
             });
-            this.addAction(this.yesAction);
+
+            this.addAction(this.yesAction, true);
+            this.addAction(this.noAction);
 
             api.dom.Body.get().appendChild(this);
         }

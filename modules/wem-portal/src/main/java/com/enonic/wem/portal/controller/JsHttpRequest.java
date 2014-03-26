@@ -15,13 +15,15 @@ import com.sun.jersey.api.core.HttpRequestContext;
 import com.sun.jersey.api.representation.Form;
 import com.sun.jersey.core.header.QualitySourceMediaType;
 
+import com.enonic.wem.api.rendering.RenderingMode;
+
 public class JsHttpRequest
 {
     private final HttpRequestContext raw;
 
     private final MultivaluedMap<String, String> queryParameters;
 
-    private String mode;
+    private RenderingMode mode;
 
     public JsHttpRequest( final HttpRequestContext raw )
     {
@@ -39,12 +41,12 @@ public class JsHttpRequest
         return queryParameters;
     }
 
-    public String getMode()
+    public RenderingMode getMode()
     {
         return mode;
     }
 
-    public void setMode( final String mode )
+    public void setMode( final RenderingMode mode )
     {
         this.mode = mode;
     }
@@ -87,7 +89,7 @@ public class JsHttpRequest
 
     public String getPath( boolean decode )
     {
-        return this.raw.getPath(decode);
+        return this.raw.getPath( decode );
     }
 
     public List<PathSegment> getPathSegments()

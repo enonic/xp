@@ -14,12 +14,13 @@ module api.app.remove{
             super({
                 title: new api.ui.dialog.ModalDialogHeader("Delete " + modelName)
             });
-            this.setCancelAction(new CancelDeleteDialogAction());
 
             this.modelName = modelName;
 
             this.getEl().addClass("delete-dialog");
             this.appendChildToContentPanel(this.itemList);
+
+            this.setCancelAction(new CancelDeleteDialogAction());
 
             this.getCancelAction().addExecutionListener(()=> {
                 this.close();
@@ -38,7 +39,7 @@ module api.app.remove{
 
         setDeleteAction(action:api.ui.Action) {
             this.deleteAction = action;
-            this.addAction(action);
+            this.addAction(action, true, true);
         }
 
         getDeleteAction():api.ui.Action {

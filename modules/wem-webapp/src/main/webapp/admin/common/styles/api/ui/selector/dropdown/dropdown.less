@@ -1,7 +1,6 @@
 .dropdown {
   position: relative;
-  display: inline-block;
-  width: 100%;
+  display: block;
 
   .input-icon {
     position: absolute;
@@ -72,15 +71,14 @@
     .box-shadow(2px 2px 2px @admin-medium-gray-border);
     background: white;
     z-index: 5;
-  }
 
-  .options-container {
     .slick-header {
       height: 0px;
       display: none;
     }
 
     .slick-cell {
+      height: 100%;
       .default-slick-cell-styling();
 
       &:hover, &.active {
@@ -92,6 +90,22 @@
         font-style: italic;
         color: #d3d3d3;
       }
+    }
+  }
+
+  .selected-option {
+    position: relative;
+    .input-border();
+    .input-glow();
+    width: 100%;
+    min-height: 37px;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+    background: white;
+
+    .option-value {
+      margin: 4px 37px 4px 10px;
     }
   }
 }

@@ -73,7 +73,8 @@
 
         function handleClick(e, args) {
             // clicking on a row select checkbox
-            if (_grid.getColumns()[args.cell].id === _options.columnId && $(e.target).is(":checkbox")) {
+            if (_grid.getColumns()[args.cell].id === _options.columnId &&
+                (($(e.target).is("label") && $(e.target).has(":checkbox").length) || $(e.target).is(":checkbox"))) {
                 // if editing, try to commit
                 if (_grid.getEditorLock().isActive() && !_grid.getEditorLock().commitCurrentEdit()) {
                     e.preventDefault();
@@ -98,7 +99,8 @@
         }
 
         function handleHeaderClick(e, args) {
-            if (args.column.id == _options.columnId && $(e.target).is(":checkbox")) {
+            if (args.column.id == _options.columnId &&
+                (($(e.target).is("label") && $(e.target).has(":checkbox").length) || $(e.target).is(":checkbox"))) {
                 // if editing, try to commit
                 if (_grid.getEditorLock().isActive() && !_grid.getEditorLock().commitCurrentEdit()) {
                     e.preventDefault();
@@ -106,7 +108,7 @@
                     return;
                 }
 
-                if ($(e.target).is(":checked")) {
+                if ($(e.target).has(":checked").length || $(e.target).is(":checked")) {
                     var rows = [];
                     for (var i = 0; i < _grid.getDataLength(); i++) {
                         rows.push(i);
@@ -137,8 +139,8 @@
         function checkboxSelectionFormatter(row, cell, value, columnDef, dataContext) {
             if (dataContext) {
                 return _selectedRowsLookup[row]
-                    ? "<input type='checkbox' checked='checked'>"
-                    : "<input type='checkbox'>";
+                    ? "<label><input type='checkbox' checked='checked'></label>"
+                    : "<label><input type='checkbox'></label>";
             }
             return null;
         }

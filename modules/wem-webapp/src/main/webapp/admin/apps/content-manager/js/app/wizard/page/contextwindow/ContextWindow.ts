@@ -1,5 +1,7 @@
 module app.wizard.page.contextwindow {
 
+    import RootDataSet = api.data.RootDataSet;
+    import DefaultModels = app.wizard.page.DefaultModels;
     import LiveFormPanel = app.wizard.page.LiveFormPanel;
     import ComponentPath = api.content.page.ComponentPath;
     import Content = api.content.Content;
@@ -27,6 +29,8 @@ module app.wizard.page.contextwindow {
         liveFormPanel:LiveFormPanel;
 
         contentType:ContentTypeName;
+
+        defaultModels:DefaultModels;
     }
 
     export class ContextWindow extends api.ui.DockedWindow {
@@ -50,7 +54,7 @@ module app.wizard.page.contextwindow {
 
             this.addClass("context-window");
 
-            this.dragMask = new api.ui.DragMask(this.liveEditIFrame);
+            //this.dragMask = new api.ui.DragMask(this.liveEditIFrame);
 
             this.insertablesPanel = new insert.InsertablesPanel({
                 contextWindow: this,
@@ -64,7 +68,8 @@ module app.wizard.page.contextwindow {
                 liveEditWindow: this.liveEditWindow,
                 siteTemplate: config.siteTemplate,
                 liveFormPanel: this.liveFormPanel,
-                contentType: config.contentType
+                contentType: config.contentType,
+                defaultModels: config.defaultModels
             });
             this.emulatorPanel = new EmulatorPanel({
                 liveEditIFrame: this.liveEditIFrame
@@ -93,7 +98,7 @@ module app.wizard.page.contextwindow {
         enable() {
             this.removeClass("hidden");
             this.getEl().setRight("0px");
-            api.dom.Body.get().appendChild(this.dragMask);
+            //api.dom.Body.get().appendChild(this.dragMask);
         }
 
         public inspectComponent(component: PageComponent) {
@@ -121,8 +126,16 @@ module app.wizard.page.contextwindow {
             this.selectPanel(this.insertablesPanel);
         }
 
-        public getPage() : api.content.page.Page {
-            return this.inspectionPanel.getPage();
+        setPage(page: Content, pageTemplate: PageTemplate, pageDescriptor: PageDescriptor) {
+            this.inspectionPanel.setPage(page, pageTemplate, pageDescriptor);
+        }
+
+        getPageTemplate(): PageTemplateKey {
+            return this.inspectionPanel.getPageTemplate();
+        }
+
+        getPageConfig(): RootDataSet {
+            return this.inspectionPanel.getPageConfig();
         }
 
     }

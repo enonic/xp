@@ -44,6 +44,8 @@ module app.wizard {
 
         private publishAction: api.ui.Action;
 
+        private contextWindowToggler: ContextWindowToggler;
+
         constructor(params: ContentWizardPanelParams, callback: (wizard: ContentWizardPanel) => void) {
 
             console.log("ContentWizardPanel.constructor started");
@@ -81,6 +83,7 @@ module app.wizard {
                 showFormAction: actions.getShowFormAction()
             });
 
+            this.contextWindowToggler = mainToolbar.getContextWindowToggler();
             this.showLiveEditAction = actions.getShowLiveEditAction();
             this.showLiveEditAction.setEnabled(false);
 
@@ -205,7 +208,10 @@ module app.wizard {
 
             new IsRenderableRequest(persistedContent.getContentId()).sendAndParse().
                 done((renderable: boolean) => {
+                    this.showLiveEditAction.setVisible(renderable);
                     this.showLiveEditAction.setEnabled(renderable);
+                    this.previewAction.setVisible(renderable);
+                    this.contextWindowToggler.setVisible(renderable);
                 });
 
             new api.content.attachment.GetAttachmentsRequest(persistedContent.getContentId()).
@@ -296,27 +302,22 @@ module app.wizard {
 
             if (page != null && page.getTemplate() != null) {
 
-                var getPageTemplatePromise = new GetPageTemplateByKeyRequest(page.getTemplate()).
+                new GetPageTemplateByKeyRequest(page.getTemplate()).
                     setSiteTemplateKey(this.siteTemplate.getKey()).
                     sendAndParse().done((pageTemplate: PageTemplate) => {
 
-                        this.layoutLiveFormPanel(content, pageTemplate);
-                        deferred.resolve(null);
+                        this.liveFormPanel.setPage(content, pageTemplate).done(() => {
+                            deferred.resolve(null);
+                        });
                     });
             }
             else {
-                this.layoutLiveFormPanel(content, null);
-                deferred.resolve(null);
+                this.liveFormPanel.setPage(content, null).done( () => {
+                    deferred.resolve(null);
+                });
             }
 
             return deferred.promise;
-        }
-
-        private layoutLiveFormPanel(content: Content, pageTemplate: PageTemplate) {
-
-
-            this.liveFormPanel.setPage(content, pageTemplate);
-
         }
 
         persistNewItem(): Q.Promise<Content> {

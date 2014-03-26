@@ -16,12 +16,15 @@ import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
 import com.enonic.wem.api.content.site.SiteTemplateService;
+import com.enonic.wem.api.rendering.RenderingMode;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsHttpRequest;
 import com.enonic.wem.portal.exception.PortalWebException;
 import com.enonic.wem.portal.script.lib.PortalUrlScriptBean;
+
+import static com.enonic.wem.api.rendering.RenderingMode.LIVE;
 
 @Path("{mode}/{content:.+}")
 public final class ContentResource
@@ -67,7 +70,7 @@ public final class ContentResource
         context.setPageTemplate( pageTemplate );
 
         final JsHttpRequest request = new JsHttpRequest( this.httpContext.getRequest() );
-        request.setMode( this.mode );
+        request.setMode( RenderingMode.from( this.mode, LIVE ) );
         context.setRequest( request );
 
         final PortalUrlScriptBean portalUrlScriptBean = new PortalUrlScriptBean();

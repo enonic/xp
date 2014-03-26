@@ -2,9 +2,10 @@
 
   margin: 10px 0;
 
-  &.invalid {
+  /*&.invalid {
+    TODO: To be designed in a better way
     border-right: 2px solid lightcoral;
-  }
+  }*/
 
   &.valid {
 
@@ -105,7 +106,8 @@
         margin-right: 0;
       }
 
-      .input-type-view, .bottom-button-row {
+      .input-type-view,
+      .bottom-button-row {
         margin-left: 0;
       }
     }
@@ -124,12 +126,15 @@
   .form-item-set-view {
     margin-left: -10px;
     margin-right: -10px;
+
     .input-view {
       .input-label {
         max-width: 100%;
+        margin-right: 0;
       }
 
-      .input-type-view {
+      .input-type-view,
+      .bottom-button-row {
         margin-left: 0;
       }
     }

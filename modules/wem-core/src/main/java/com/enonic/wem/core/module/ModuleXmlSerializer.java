@@ -3,9 +3,9 @@ package com.enonic.wem.core.module;
 import java.io.IOException;
 import java.util.List;
 
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
 
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItem;

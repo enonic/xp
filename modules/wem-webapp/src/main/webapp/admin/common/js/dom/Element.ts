@@ -83,6 +83,12 @@ module api.dom {
                 this.setClass(properties.getClassName());
             }
             this.children = [];
+
+            this.onRemoved((event: ElementRemovedEvent) => {
+                if (this.getId()) {
+                    ElementRegistry.unregisterElement(this);
+                }
+            })
         }
 
         static fromHtmlElement(element: HTMLElement): Element {
@@ -245,31 +251,27 @@ module api.dom {
                 this.children.splice(index, 1);
                 child.getEl().remove();
                 child.setParentElement(null);
-                child.notifyRemoved(this);
+                child.notifyRemoved();
             }
         }
 
         removeChildren() {
-            var children = this.children;
-            this.children = [];
+            // copy children because it can be modified inside the loop
+            var children = this.children.slice(0);
+            // to remove text nodes etc
             this.el.setInnerHtml('');
+            this.children.length = 0;
             children.forEach((child: Element) => {
                 child.setParentElement(null);
-                child.notifyRemoved(this);
+                child.notifyRemoved();
             });
         }
 
         remove() {
-            var siblings = this.getParentElement() ? this.getParentElement().getChildren() : null;
-            if (siblings) {
-                var index = siblings.indexOf(this);
-                if (index > -1) {
-                    siblings.splice(index, 1);
-                }
+            var parent = this.getParentElement();
+            if (parent) {
+                parent.removeChild(this);
             }
-            this.getEl().remove();
-            this.setParentElement(null);
-            this.notifyRemoved(this);
         }
 
         private setParentElement(parent: Element) {

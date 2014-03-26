@@ -25,7 +25,7 @@ module app.wizard.page.contextwindow.inspect {
 
         private contentType: ContentTypeName;
 
-        private siteTemplateKey:SiteTemplateKey;
+        private siteTemplateKey: SiteTemplateKey;
 
         private pageTemplateDropdown: Dropdown<PageTemplateOption>;
 
@@ -44,7 +44,7 @@ module app.wizard.page.contextwindow.inspect {
             });
 
             var fieldSet = new api.ui.form.Fieldset();
-            fieldSet.add(new api.ui.form.FormItem(new api.ui.form.FormItemBuilder(this.pageTemplateDropdown).setLabel("Page Template")));
+            fieldSet.add(new api.ui.form.FormItemBuilder(this.pageTemplateDropdown).setLabel("Page Template").build());
             config.form.add(fieldSet);
 
             this.pageTemplateDropdown.onOptionSelected((event: OptionSelectedEvent<PageTemplateOption>) => {
@@ -88,11 +88,11 @@ module app.wizard.page.contextwindow.inspect {
             });
         }
 
-        onPageTemplateChangedListener(listener: {(changedTo: PageTemplateSummary): void;}) {
+        onPageTemplateChanged(listener: {(changedTo: PageTemplateSummary): void;}) {
             this.pageTemplateChangedListeners.push(listener);
         }
 
-        unPageTemplateChangedListener(listener: {(changedTo: PageTemplateSummary): void;}) {
+        unPageTemplateChanged(listener: {(changedTo: PageTemplateSummary): void;}) {
             this.pageTemplateChangedListeners = this.pageTemplateChangedListeners.filter(function (curr) {
                 return curr != listener;
             });

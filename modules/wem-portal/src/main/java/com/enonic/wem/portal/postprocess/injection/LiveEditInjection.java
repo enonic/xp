@@ -12,6 +12,7 @@ import com.google.common.io.Resources;
 import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.Template;
 
+import com.enonic.wem.api.rendering.RenderingMode;
 import com.enonic.wem.portal.controller.JsContext;
 
 @Singleton
@@ -31,7 +32,7 @@ public final class LiveEditInjection
     @Override
     public String inject( final JsContext context, final Tag tag )
     {
-        if ( !"edit".equalsIgnoreCase( context.getRequest().getMode() ) )
+        if ( RenderingMode.EDIT != context.getRequest().getMode() )
         {
             return null;
         }

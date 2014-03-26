@@ -1,0 +1,14 @@
+@form-width: 660px;
+@form-label-width: 120px;
+@form-field-spacing: 15px;
+@form-field-set-spacing: 35px;
+
+.form-element-spacing(@size: @form-field-spacing) {
+  &:not(:first-child) {
+    margin-top: @size;
+  }
+
+  &:not(:last-child) {
+    margin-bottom: @size;
+  }
+}

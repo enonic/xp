@@ -78,12 +78,12 @@ module app.wizard.page.contextwindow.insert {
         }
 
         onStartDrag(event, ui) {
-            this.draggingMask.show();
+            //this.draggingMask.show();
         }
 
         onDragOverIFrame(event, ui) {
 
-            this.draggingMask.hide();
+            //this.draggingMask.hide();
 
             var clone = this.liveEditJQuery(ui.draggable.clone());
 

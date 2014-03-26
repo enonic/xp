@@ -17,6 +17,7 @@ module api.ui.menu {
 
             action.onPropertyChanged((action: api.ui.Action) => {
                 this.setEnable(action.isEnabled());
+                this.setVisible(action.isVisible());
             });
         }
 

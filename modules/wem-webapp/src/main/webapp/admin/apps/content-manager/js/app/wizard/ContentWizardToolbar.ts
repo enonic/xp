@@ -13,6 +13,8 @@ module app.wizard {
 
     export class ContentWizardToolbar extends api.ui.toolbar.Toolbar {
 
+        private contextWindowToggler: ContextWindowToggler;
+
         constructor(params: ContentWizardToolbarParams) {
             super();
             super.addAction(params.saveAction);
@@ -29,10 +31,15 @@ module app.wizard {
             });
 
             super.addElement(liveEditFormToggler);
-            var contextWindowToggler = new ContextWindowToggler();
-            super.addElement(contextWindowToggler);
+            this.contextWindowToggler = new ContextWindowToggler();
+            super.addElement(this.contextWindowToggler);
 
         }
+
+        getContextWindowToggler() {
+            return this.contextWindowToggler;
+        }
+
     }
 
     export class ContextWindowToggler extends api.ui.Button {

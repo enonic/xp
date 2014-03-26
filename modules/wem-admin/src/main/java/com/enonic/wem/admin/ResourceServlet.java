@@ -2,6 +2,10 @@ package com.enonic.wem.admin;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.FileTime;
 
 import javax.inject.Singleton;
 import javax.servlet.ServletException;
@@ -24,6 +28,22 @@ public final class ResourceServlet
 
         if ( in != null )
         {
+            final long resourceLastModified = getResourceLastModified( path );
+
+            if ( resourceLastModified > 0 )
+            {
+                if ( req.getHeader( "If-Modified-Since" ) != null )
+                {
+                    final long ifModifiedSince = req.getDateHeader( "If-Modified-Since" );
+                    if ( resourceLastModified <= ifModifiedSince )
+                    {
+                        res.setStatus( HttpServletResponse.SC_NOT_MODIFIED );
+                        return;
+                    }
+                }
+                res.setDateHeader( "Last-Modified", resourceLastModified );
+            }
+
             serveResource( res, path, in );
         }
         else
@@ -53,5 +73,20 @@ public final class ResourceServlet
         }
 
         return getClass().getClassLoader().getResourceAsStream( "web/" + path );
+    }
+
+    private long getResourceLastModified( final String path )
+    {
+        final String resourceRealPath = getServletContext().getRealPath( path );
+        final Path resourcePath = Paths.get( resourceRealPath );
+        try
+        {
+            final FileTime lastModified = Files.getLastModifiedTime( resourcePath );
+            return lastModified.toMillis();
+        }
+        catch ( IOException e )
+        {
+            return 0;
+        }
     }
 }

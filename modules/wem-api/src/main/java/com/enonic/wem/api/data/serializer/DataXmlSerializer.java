@@ -2,7 +2,8 @@ package com.enonic.wem.api.data.serializer;
 
 import java.util.Iterator;
 
-import org.jdom.Element;
+import org.jdom2.Element;
+
 
 import com.google.common.base.Preconditions;
 

@@ -8,6 +8,14 @@
   position: relative;
   min-height: @defaultHeight;
   box-sizing: border-box;
+  font-family: @admin-font-family;
+
+  //Reset styles from page
+  & * {
+    font-family: @admin-font-family;
+    color: @admin-black;
+    font-weight:normal;
+  }
 
   &[data-live-edit-type] {
     &:before {
@@ -56,9 +64,12 @@
       color: #224E83;
     }
   }
+  div.image-placeholder {
+    margin: @defaultHeight/2-57px auto 0 auto;
+  }
 
   .rich-combobox {
-    margin: @defaultHeight/2-47px auto 0 auto;
+    margin: @defaultHeight/2-30px auto 0 auto;
     width:255px;
     .options-container {
       z-index: 9999999; // must override shader
@@ -66,23 +77,16 @@
     .selected-options {
       display:none !important;
     }
-    .combobox {
-      input {
-        height: 50px;
-      }
-    }
   }
 
   .combobox {
-    .input-icon {
-      top: 9px;
-      left: 9px;
-      width: 32px;
-      height: 32px;
-    }
 
     input[type="text"] {
+      font-family: @admin-font-family;
       font-size: 15px;
+      padding: 4px 37px 4px 10px;
+
+      .placeholder(1em, italic);
     }
   }
 

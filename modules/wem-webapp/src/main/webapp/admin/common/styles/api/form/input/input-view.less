@@ -1,9 +1,10 @@
 .input-view {
   .clearfix();
 
-  &.invalid {
+  /*&.invalid {
+    TODO: To be designed in a better way
     border-right: 2px solid lightcoral;
-  }
+  }*/
 
   &.valid {
 
@@ -45,7 +46,11 @@
   .bottom-button-row {
     clear: left;
     overflow: visible;    // for button glow
-    margin: 7px 0 0 @form-label-width;
+    margin: 0 0 0 @form-label-width;
+
+    button {
+      margin-top: 7px;
+    }
   }
 }
 
@@ -65,13 +70,10 @@
       margin: 0 0 3px 0;
     }
 
-    .input-type-view {
-      width: 100%;
-      margin: 0;
-    }
-
+    .input-type-view,
     .bottom-button-row {
-      margin: 0;
+      width: 100%;
+      margin-left: 0;
     }
   }
 }

@@ -3,35 +3,17 @@
   position: relative;
   overflow: visible;
 
-  & > *:not(:last-child) {
-    margin-bottom: 35px;
+  .form-element-spacing(@form-field-set-spacing);
+
+  .field-set-view, .form-item-set-view {
+    .form-element-spacing(@form-field-set-spacing);
+  }
+
+  .input-view {
+    .form-element-spacing(@form-field-spacing);
   }
 
   input, textarea {
     .input-glow();
-  }
-}
-
-.input-error(@color: @admin-input-red) {
-  border: 1px solid @color;
-
-  &:focus {
-    box-shadow: 0px 0px 5px @color;
-  }
-}
-
-.input-glow(@color: @admin-input-blue) {
-  &:hover {
-    border: 1px solid @color;
-  }
-  &:focus {
-    box-shadow: 0px 0px 5px @color;
-    border: 1px solid @color;
-  }
-}
-
-.context-window {
-  .form-view > * {
-    margin-bottom: 15px;
   }
 }

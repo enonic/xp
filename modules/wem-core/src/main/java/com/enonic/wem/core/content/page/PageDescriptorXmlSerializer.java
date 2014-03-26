@@ -2,8 +2,8 @@ package com.enonic.wem.core.content.page;
 
 import java.io.IOException;
 
-import org.jdom.Document;
-import org.jdom.JDOMException;
+import org.jdom2.Document;
+import org.jdom2.JDOMException;
 
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.support.serializer.XmlParsingException;

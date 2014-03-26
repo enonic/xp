@@ -6,21 +6,25 @@ module app.wizard.page.contextwindow.inspect {
     import PartComponent = api.content.page.part.PartComponent;
     import DescriptorKey = api.content.page.DescriptorKey;
 
+    export interface PartInspectionPanelConfig {
+
+        siteTemplate: SiteTemplate;
+    }
+
     export class PartInspectionPanel extends PageComponentInspectionPanel<PartComponent, PartDescriptor> {
 
-        private partComponent: PartComponent;
         private partDescriptors: {
             [key: string]: PartDescriptor;
         };
-        
-        constructor(liveFormPanel: app.wizard.page.LiveFormPanel, siteTemplate: SiteTemplate) {
-            super("live-edit-font-icon-part", liveFormPanel, siteTemplate);
-            this.partDescriptors = {};
-            this.initElements();
-        }
 
-        private initElements() {
-            var getPartDescriptorsRequest = new GetPartDescriptorsByModulesRequest(this.getSiteTemplate().getModules());
+        constructor(config: PartInspectionPanelConfig) {
+            super(<PageComponentInspectionPanelConfig>{
+                iconClass: "live-edit-font-icon-part"
+            });
+
+            this.partDescriptors = {};
+
+            var getPartDescriptorsRequest = new GetPartDescriptorsByModulesRequest(config.siteTemplate.getModules());
             getPartDescriptorsRequest.sendAndParse().done((results: PartDescriptor[]) => {
                 results.forEach((partDescriptor: PartDescriptor) => {
                     this.partDescriptors[partDescriptor.getKey().toString()] = partDescriptor;
@@ -28,24 +32,21 @@ module app.wizard.page.contextwindow.inspect {
             });
         }
 
-        getDescriptor(key: DescriptorKey): PartDescriptor {
-            return this.partDescriptors[key.toString()];
+        getDescriptor(): PartDescriptor {
+            if (!this.getComponent().hasDescriptor()) {
+                return null;
+            }
+            return this.partDescriptors[this.getComponent().getDescriptor().toString()];
         }
-        
+
         setPartComponent(component: PartComponent) {
             this.setComponent(component);
-            this.partComponent = component;
 
-            var descriptorKey = component.getDescriptor();
-            if (descriptorKey) {
-                var partDescriptor = this.getDescriptor(descriptorKey);
-                if (!partDescriptor) {
-                    console.warn('Part descriptor not found' + descriptorKey);
-                    return;
-                }
-                this.setupComponentForm(component, partDescriptor);
+            var partDescriptor = this.getDescriptor();
+            if (!partDescriptor) {
+                return;
             }
+            this.setupComponentForm(component, partDescriptor);
         }
-
     }
 }

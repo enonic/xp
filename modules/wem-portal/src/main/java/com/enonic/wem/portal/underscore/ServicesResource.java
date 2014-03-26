@@ -14,11 +14,14 @@ import com.sun.jersey.api.core.HttpContext;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ResourcePath;
+import com.enonic.wem.api.rendering.RenderingMode;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsControllerFactory;
 import com.enonic.wem.portal.controller.JsHttpRequest;
 import com.enonic.wem.portal.script.lib.PortalUrlScriptBean;
+
+import static com.enonic.wem.api.rendering.RenderingMode.LIVE;
 
 @Path("{mode}/{path:.+}/_/service/{module}/{service}")
 public final class ServicesResource
@@ -70,7 +73,7 @@ public final class ServicesResource
         final JsContext context = new JsContext();
 
         final JsHttpRequest request = new JsHttpRequest( this.httpContext.getRequest() );
-        request.setMode( this.mode );
+        request.setMode( RenderingMode.from( this.mode, LIVE ) );
         context.setRequest( request );
 
         final PortalUrlScriptBean portalUrlScriptBean = new PortalUrlScriptBean();
