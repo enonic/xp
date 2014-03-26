@@ -54,7 +54,7 @@ module app.wizard.page.contextwindow {
 
             this.addClass("context-window");
 
-            this.dragMask = new api.ui.DragMask(this.liveEditIFrame);
+            //this.dragMask = new api.ui.DragMask(this.liveEditIFrame);
 
             this.insertablesPanel = new insert.InsertablesPanel({
                 contextWindow: this,
@@ -98,7 +98,7 @@ module app.wizard.page.contextwindow {
         enable() {
             this.removeClass("hidden");
             this.getEl().setRight("0px");
-            api.dom.Body.get().appendChild(this.dragMask);
+            //api.dom.Body.get().appendChild(this.dragMask);
         }
 
         public inspectComponent(component: PageComponent) {
