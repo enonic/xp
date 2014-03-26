@@ -24,6 +24,8 @@ public final class ResourceServlet
 
         if ( in != null )
         {
+            res.addHeader( "Cache-Control", "max-age=300" );
+            res.addHeader( "Cache-Control", "public" );
             serveResource( res, path, in );
         }
         else
