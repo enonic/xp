@@ -14,11 +14,11 @@ module api.form {
 
         private previousValidationRecording: ValidationRecording;
 
-        constructor(context: FormContext, form: Form, contentData?: api.data.RootDataSet) {
+        constructor(context: FormContext, form: Form, rootDataSet?: api.data.RootDataSet) {
             super("form-view");
             this.context = context;
             this.form = form;
-            this.rootDataSet = contentData;
+            this.rootDataSet = rootDataSet;
 
             this.doLayout();
         }
