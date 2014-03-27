@@ -46,5 +46,5 @@ module api.form.inputtype.text {
         }
     }
 
-    api.form.input.InputTypeManager.register("HtmlArea", HtmlArea);
+    api.form.inputtype.InputTypeManager.register("HtmlArea", HtmlArea);
 }

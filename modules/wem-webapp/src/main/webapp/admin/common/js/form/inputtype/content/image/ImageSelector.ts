@@ -319,6 +319,6 @@ module api.form.inputtype.content.image {
         }
     }
 
-    api.form.input.InputTypeManager.register("ImageSelector", ImageSelector);
+    api.form.inputtype.InputTypeManager.register("ImageSelector", ImageSelector);
 
 }

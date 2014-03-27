@@ -1,5 +1,7 @@
 module api.form.input {
 
+    import InputTypeManager = api.form.inputtype.InputTypeManager;
+
     export class InputView extends api.form.FormItemView {
 
         private input: api.form.Input;

@@ -1,4 +1,4 @@
-module api.form.input {
+module api.form.inputtype {
 
     /**
      *      Class to manage input types and their visual representation
@@ -55,6 +55,6 @@ module api.form.input {
  */
 module wem {
 
-    export var inputTypes = api.form.input.InputTypeManager;
+    export var inputTypes = api.form.inputtype.InputTypeManager;
 
 }

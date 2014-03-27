@@ -146,5 +146,5 @@ module api.form.inputtype.content.relationship {
 
     }
 
-    api.form.input.InputTypeManager.register("Relationship", Relationship);
+    api.form.inputtype.InputTypeManager.register("Relationship", Relationship);
 }

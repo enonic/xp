@@ -87,5 +87,5 @@ module api.form.inputtype.content.imageupload {
         }
     }
 
-    api.form.input.InputTypeManager.register("Image", Image);
+    api.form.inputtype.InputTypeManager.register("Image", Image);
 }
