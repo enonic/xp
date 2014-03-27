@@ -13,6 +13,8 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import com.enonic.wem.api.Client;
+import com.enonic.wem.api.command.schema.mixin.GetMixinParams;
+import com.enonic.wem.api.command.schema.mixin.MixinService;
 import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.SchemaKey;
 import com.enonic.wem.api.schema.content.ContentType;
@@ -24,7 +26,6 @@ import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 import static com.enonic.wem.api.command.Commands.contentType;
-import static com.enonic.wem.api.command.Commands.mixin;
 import static com.enonic.wem.api.command.Commands.relationshipType;
 
 
@@ -36,6 +37,8 @@ public final class SchemaImageResource
 
     private SchemaImageHelper helper;
 
+    private MixinService mixinService;
+
     private Client client;
 
     @Inject
@@ -43,6 +46,12 @@ public final class SchemaImageResource
     {
         this.client = client;
         this.helper = new SchemaImageHelper( client );
+    }
+
+    @Inject
+    public void setMixinService( final MixinService mixinService )
+    {
+        this.mixinService = mixinService;
     }
 
     @GET
@@ -136,7 +145,7 @@ public final class SchemaImageResource
 
     private SchemaIcon findMixinIcon( final MixinName mixinName )
     {
-        final Mixin mixin = client.execute( mixin().get().byName( mixinName ) );
+        final Mixin mixin = mixinService.getByName( new GetMixinParams( mixinName ) );
         return mixin == null ? null : mixin.getIcon();
     }
 

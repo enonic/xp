@@ -18,12 +18,13 @@ import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.command.content.blob.GetBlob;
-import com.enonic.wem.api.command.schema.mixin.CreateMixin;
-import com.enonic.wem.api.command.schema.mixin.DeleteMixin;
+import com.enonic.wem.api.command.schema.mixin.CreateMixinParams;
+import com.enonic.wem.api.command.schema.mixin.DeleteMixinParams;
 import com.enonic.wem.api.command.schema.mixin.DeleteMixinResult;
-import com.enonic.wem.api.command.schema.mixin.GetMixin;
-import com.enonic.wem.api.command.schema.mixin.GetMixins;
-import com.enonic.wem.api.command.schema.mixin.UpdateMixin;
+import com.enonic.wem.api.command.schema.mixin.GetMixinParams;
+import com.enonic.wem.api.command.schema.mixin.GetMixinsParams;
+import com.enonic.wem.api.command.schema.mixin.MixinService;
+import com.enonic.wem.api.command.schema.mixin.UpdateMixinParams;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixinResult;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.SchemaId;
@@ -49,9 +50,9 @@ public class MixinResourceTest
 
     private static MixinName MY_MIXIN_QUALIFIED_NAME_2 = MixinName.from( "text_area_1" );
 
-    private MixinResource resource = new MixinResource();
-
     private Client client;
+
+    private MixinService mixinService;
 
     @Before
     public void setup()
@@ -63,8 +64,11 @@ public class MixinResourceTest
     protected Object getResourceInstance()
     {
         client = Mockito.mock( Client.class );
-        resource = new MixinResource();
+        mixinService = Mockito.mock( MixinService.class );
+
+        final MixinResource resource = new MixinResource();
         resource.setClient( client );
+        resource.setMixinService( mixinService );
 
         return resource;
     }
@@ -79,7 +83,7 @@ public class MixinResourceTest
             newInput().name( MY_MIXIN_QUALIFIED_NAME_1.toString() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
                 "Help text line 1" ).required( true ).build() ).build();
 
-        Mockito.when( client.execute( Mockito.isA( GetMixin.class ) ) ).thenReturn( mixin );
+        Mockito.when( mixinService.getByName( Mockito.isA( GetMixinParams.class ) ) ).thenReturn( mixin );
 
         String response = resource().path( "schema/mixin" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get( String.class );
 
@@ -95,7 +99,7 @@ public class MixinResourceTest
             newInput().name( MY_MIXIN_QUALIFIED_NAME_1.toString() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
                 "Help text line 1" ).required( true ).build() ).build();
 
-        Mockito.when( client.execute( Mockito.isA( GetMixin.class ) ) ).thenReturn( mixin );
+        Mockito.when( mixinService.getByName( Mockito.isA( GetMixinParams.class ) ) ).thenReturn( mixin );
 
         String result =
             resource().path( "schema/mixin/config" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get( String.class );
@@ -107,7 +111,7 @@ public class MixinResourceTest
     public final void test_get_mixin_not_found()
         throws Exception
     {
-        Mockito.when( client.execute( Mockito.any( GetMixin.class ) ) ).thenReturn( null );
+        Mockito.when( mixinService.getByName( Mockito.any( GetMixinParams.class ) ) ).thenReturn( null );
         try
         {
             resource().path( "schema/mixin" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get( String.class );
@@ -124,7 +128,7 @@ public class MixinResourceTest
     @Test
     public final void test_get_mixin_config_not_found()
     {
-        Mockito.when( client.execute( Mockito.any( GetMixin.class ) ) ).thenReturn( null );
+        Mockito.when( mixinService.getByName( Mockito.any( GetMixinParams.class ) ) ).thenReturn( null );
         try
         {
             resource().path( "schema/mixin/config" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get( String.class );
@@ -153,7 +157,7 @@ public class MixinResourceTest
                 TEXT_AREA.getDefaultConfig() ).label( "Text Area" ).required( true ).helpText(
                 "Help text area" ).required( true ).build() ).build();
 
-        Mockito.when( client.execute( Mockito.isA( GetMixins.class ) ) ).thenReturn( Mixins.from( mixin1, mixin2 ) );
+        Mockito.when( mixinService.getAll() ).thenReturn( Mixins.from( mixin1, mixin2 ) );
 
         String result = resource().path( "schema/mixin/list" ).get( String.class );
 
@@ -165,8 +169,8 @@ public class MixinResourceTest
         throws Exception
     {
         // setup
-        Mockito.when( client.execute( isA( GetMixins.class ) ) ).thenReturn( Mixins.empty() );
-        Mockito.when( client.execute( isA( CreateMixin.class ) ) ).thenReturn( Mixin.newMixin().
+        Mockito.when( mixinService.getByNames( isA( GetMixinsParams.class ) ) ).thenReturn( Mixins.empty() );
+        Mockito.when( mixinService.create( isA( CreateMixinParams.class ) ) ).thenReturn( Mixin.newMixin().
             id( new SchemaId( "abc" ) ).
             name( "my_set" ).
             description( "description" ).
@@ -175,7 +179,7 @@ public class MixinResourceTest
         String result = resource().path( "schema/mixin/create" ).entity( readFromFile( "create_mixin_params.json" ),
                                                                          MediaType.APPLICATION_JSON_TYPE ).post( String.class );
         assertJson( "create_mixin.json", result );
-        verify( client, times( 1 ) ).execute( isA( CreateMixin.class ) );
+        verify( mixinService, times( 1 ) ).create( isA( CreateMixinParams.class ) );
     }
 
     @Test
@@ -184,7 +188,7 @@ public class MixinResourceTest
     {
         Mixin mixin = newMixin().createdTime( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).name( "some_input" ).addFormItem(
             newInput().name( "some_input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
-        Mockito.when( client.execute( isA( CreateMixin.class ) ) ).thenThrow(
+        Mockito.when( mixinService.create( isA( CreateMixinParams.class ) ) ).thenThrow(
             new MixinAlreadyExistException( MixinName.from( "my_set" ) ) );
 
         String result = resource().path( "schema/mixin/create" ).entity( readFromFile( "create_mixin_params.json" ),
@@ -197,8 +201,8 @@ public class MixinResourceTest
         throws Exception
     {
         // setup
-        Mockito.when( client.execute( isA( GetMixins.class ) ) ).thenReturn( Mixins.empty() );
-        Mockito.when( client.execute( isA( CreateMixin.class ) ) ).thenReturn( Mixin.newMixin().
+        Mockito.when( mixinService.getByNames( isA( GetMixinsParams.class ) ) ).thenReturn( Mixins.empty() );
+        Mockito.when( mixinService.create( isA( CreateMixinParams.class ) ) ).thenReturn( Mixin.newMixin().
             id( new SchemaId( "abc" ) ).
             name( "my_set" ).
             description( "description" ).
@@ -211,7 +215,7 @@ public class MixinResourceTest
                                                                          MediaType.APPLICATION_JSON_TYPE ).post( String.class );
 
         assertJson( "create_mixin.json", result );
-        verify( client, times( 1 ) ).execute( isA( CreateMixin.class ) );
+        verify( mixinService, times( 1 ) ).create( isA( CreateMixinParams.class ) );
     }
 
     @Test
@@ -221,7 +225,7 @@ public class MixinResourceTest
         Mixin mixin = newMixin().name( "some_input" ).addFormItem(
             newInput().name( "some_input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
 
-        Mockito.when( client.execute( isA( UpdateMixin.class ) ) ).thenReturn( new UpdateMixinResult( mixin ) );
+        Mockito.when( mixinService.update( isA( UpdateMixinParams.class ) ) ).thenReturn( new UpdateMixinResult( mixin ) );
         final Blob iconBlob = Mockito.mock( Blob.class );
         Mockito.when( iconBlob.getStream() ).thenReturn( new ByteArrayInputStream( "icondata".getBytes() ) );
         Mockito.when( client.execute( isA( GetBlob.class ) ) ).thenReturn( iconBlob );
@@ -229,14 +233,14 @@ public class MixinResourceTest
         String result = resource().path( "schema/mixin/update" ).entity( readFromFile( "update_mixin_with_icon_params.json" ),
                                                                          MediaType.APPLICATION_JSON_TYPE ).post( String.class );
         assertJson( "update_mixin.json", result );
-        verify( client, times( 1 ) ).execute( isA( UpdateMixin.class ) );
+        verify( mixinService, times( 1 ) ).update( isA( UpdateMixinParams.class ) );
     }
 
     @Test
     public void test_update_mixin_not_found()
         throws Exception
     {
-        Mockito.when( client.execute( isA( UpdateMixin.class ) ) ).thenThrow( new MixinNotFoundException( MixinName.from( "my_set" ) ) );
+        Mockito.when( mixinService.update( isA( UpdateMixinParams.class ) ) ).thenThrow( new MixinNotFoundException( MixinName.from( "my_set" ) ) );
         String result = resource().path( "schema/mixin/update" ).entity( readFromFile( "create_mixin_params.json" ),
                                                                          MediaType.APPLICATION_JSON_TYPE ).post( String.class );
         assertJson( "update_mixin_not_found.json", result );
@@ -246,7 +250,7 @@ public class MixinResourceTest
     public void test_delete_single_mixin()
         throws Exception
     {
-        Mockito.when( client.execute( Mockito.isA( DeleteMixin.class ) ) ).thenReturn(
+        Mockito.when( mixinService.delete( Mockito.isA( DeleteMixinParams.class ) ) ).thenReturn(
             new DeleteMixinResult( Mixin.newMixin().name( "existing_mixin" ).build() ) );
 
         String result = resource().path( "schema/mixin/delete" ).entity( readFromFile( "delete_single_mixin_params.json" ),
@@ -258,13 +262,13 @@ public class MixinResourceTest
     public void test_delete_multiple_mixins()
         throws Exception
     {
-        Mockito.when( client.execute( Mockito.eq( new DeleteMixin().name( MixinName.from( "existing_mixin" ) ) ) ) ).thenReturn(
+        Mockito.when( mixinService.delete( Mockito.eq( new DeleteMixinParams().name( MixinName.from( "existing_mixin" ) ) ) ) ).thenReturn(
             new DeleteMixinResult( Mixin.newMixin().name( MixinName.from( "existing_mixin" ) ).build() ) );
 
-        Mockito.when( client.execute( Mockito.eq( new DeleteMixin().name( MixinName.from( "being_used_mixin" ) ) ) ) ).thenThrow(
+        Mockito.when( mixinService.delete( Mockito.eq( new DeleteMixinParams().name( MixinName.from( "being_used_mixin" ) ) ) ) ).thenThrow(
             new UnableToDeleteMixinException( MixinName.from( "not_existing_mixin" ), "Being used" ) );
 
-        Mockito.when( client.execute( Mockito.eq( new DeleteMixin().name( MixinName.from( "not_existing_mixin" ) ) ) ) ).thenThrow(
+        Mockito.when( mixinService.delete( Mockito.eq( new DeleteMixinParams().name( MixinName.from( "not_existing_mixin" ) ) ) ) ).thenThrow(
             new MixinNotFoundException( MixinName.from( "being_used_mixin" ) ) );
 
         String result = resource().path( "schema/mixin/delete" ).entity( readFromFile( "delete_multiple_mixins_params.json" ),

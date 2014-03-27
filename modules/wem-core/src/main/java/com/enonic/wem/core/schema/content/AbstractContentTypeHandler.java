@@ -3,6 +3,7 @@ package com.enonic.wem.core.schema.content;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.command.Command;
+import com.enonic.wem.api.command.schema.mixin.MixinService;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.schema.content.ContentType;
@@ -15,6 +16,8 @@ public abstract class AbstractContentTypeHandler<T extends Command>
     extends CommandHandler<T>
 {
     protected ContentTypeDao contentTypeDao;
+
+    private MixinService mixinService;
 
     protected ContentType transformMixinReferences( final ContentType contentType )
     {
@@ -30,7 +33,7 @@ public abstract class AbstractContentTypeHandler<T extends Command>
 
     private ContentTypes doTranformMixinReferences( final ContentTypes contentTypes )
     {
-        final MixinReferencesToFormItemsTransformer transformer = new MixinReferencesToFormItemsTransformer( context.getClient() );
+        final MixinReferencesToFormItemsTransformer transformer = new MixinReferencesToFormItemsTransformer( mixinService );
 
         ContentTypes.Builder transformedContentTypes = ContentTypes.newContentTypes();
         for ( final ContentType contentType : contentTypes )
@@ -75,5 +78,11 @@ public abstract class AbstractContentTypeHandler<T extends Command>
     public void setContentTypeDao( final ContentTypeDao contentTypeDao )
     {
         this.contentTypeDao = contentTypeDao;
+    }
+
+    @Inject
+    public void setMixinService( final MixinService mixinService )
+    {
+        this.mixinService = mixinService;
     }
 }

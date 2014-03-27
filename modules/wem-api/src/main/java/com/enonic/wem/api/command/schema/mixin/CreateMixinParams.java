@@ -3,15 +3,12 @@ package com.enonic.wem.api.command.schema.mixin;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItems;
 import com.enonic.wem.api.schema.SchemaIcon;
-import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 
-public final class CreateMixin
-    extends Command<Mixin>
+public final class CreateMixinParams
 {
     private MixinName name;
 
@@ -24,43 +21,43 @@ public final class CreateMixin
     private SchemaIcon schemaIcon;
 
 
-    public CreateMixin name( final MixinName name )
+    public CreateMixinParams name( final MixinName name )
     {
         this.name = name;
         return this;
     }
 
-    public CreateMixin name( final String name )
+    public CreateMixinParams name( final String name )
     {
         this.name = MixinName.from( name );
         return this;
     }
 
-    public CreateMixin formItems( final FormItems formItems )
+    public CreateMixinParams formItems( final FormItems formItems )
     {
         this.formItems = formItems;
         return this;
     }
 
-    public CreateMixin addFormItem( final FormItem formItem )
+    public CreateMixinParams addFormItem( final FormItem formItem )
     {
         this.formItems.add( formItem );
         return this;
     }
 
-    public CreateMixin displayName( final String displayName )
+    public CreateMixinParams displayName( final String displayName )
     {
         this.displayName = displayName;
         return this;
     }
 
-    public CreateMixin description( final String description )
+    public CreateMixinParams description( final String description )
     {
         this.description = description;
         return this;
     }
 
-    public CreateMixin schemaIcon( final SchemaIcon schemaIcon )
+    public CreateMixinParams schemaIcon( final SchemaIcon schemaIcon )
     {
         this.schemaIcon = schemaIcon;
         return this;
@@ -99,12 +96,12 @@ public final class CreateMixin
             return true;
         }
 
-        if ( !( o instanceof CreateMixin ) )
+        if ( !( o instanceof CreateMixinParams ) )
         {
             return false;
         }
 
-        final CreateMixin that = (CreateMixin) o;
+        final CreateMixinParams that = (CreateMixinParams) o;
         return Objects.equal( this.name, that.name ) &&
             Objects.equal( this.formItems, that.formItems ) &&
             Objects.equal( this.displayName, that.displayName ) &&
@@ -118,7 +115,6 @@ public final class CreateMixin
         return Objects.hashCode( this.name, this.formItems, this.displayName, this.description, this.schemaIcon );
     }
 
-    @Override
     public void validate()
     {
         Preconditions.checkNotNull( this.name, "name cannot be null" );

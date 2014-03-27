@@ -15,7 +15,8 @@ import com.google.common.io.Resources;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
-import com.enonic.wem.api.command.schema.mixin.GetMixins;
+import com.enonic.wem.api.command.schema.mixin.GetMixinsParams;
+import com.enonic.wem.api.command.schema.mixin.MixinService;
 import com.enonic.wem.api.command.schema.relationship.GetRelationshipType;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.SchemaIcon;
@@ -39,6 +40,8 @@ public class SchemaImageResourceTest
 
     private Client client;
 
+    private MixinService mixinService;
+
     @Before
     public void setUp()
         throws Exception
@@ -46,6 +49,9 @@ public class SchemaImageResourceTest
         this.controller = new SchemaImageResource();
         client = Mockito.mock( Client.class );
         this.controller.setClient( client );
+
+        mixinService = Mockito.mock( MixinService.class );
+        this.controller.setMixinService( mixinService );
     }
 
     @Test
@@ -222,8 +228,8 @@ public class SchemaImageResourceTest
         final List<Mixin> list = Lists.newArrayList();
         list.add( mixin );
         final Mixins result = Mixins.from( list );
-        final GetMixins command = new GetMixins().names( MixinNames.from( mixin.getName() ) );
-        Mockito.when( client.execute( command ) ).thenReturn( result );
+        final GetMixinsParams params = new GetMixinsParams().names( MixinNames.from( mixin.getName() ) );
+        Mockito.when( mixinService.getByNames( params ) ).thenReturn( result );
     }
 
     private void setupRelationshipType( final RelationshipType relationshipType )
