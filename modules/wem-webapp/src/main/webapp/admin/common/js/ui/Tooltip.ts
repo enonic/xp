@@ -164,7 +164,6 @@ module api.ui {
         }
 
         private startHideTimeout(ms?:number) {
-
             this.stopTimeout();
             var t = ms || this.hideTimeout;
             if (t > 0) {
@@ -177,10 +176,14 @@ module api.ui {
         }
 
         private startShowDelay(ms?:number) {
-
             this.stopTimeout();
             var t = ms || this.showDelay;
             if(t > 0) {
+                if (this.trigger == Tooltip.TRIGGER_MOUSE ) {
+                    // if tooltip target element becomes disabled it doesn't generate mouse leave event
+                    // so we need to check whether mouse has moved from tooltip target or not
+                    this.hideOnMouseOut();
+                }
                 this.timeoutTimer = setTimeout(() => {
                     this.show();
                 }, t);
@@ -196,13 +199,30 @@ module api.ui {
             }
         }
 
+        private hideOnMouseOut() {
+            var tooltip = this;
+            var mouseMoveListener = (event: MouseEvent) => {
+                var tooltipTargetHtmlElement = tooltip.target.getHTMLElement();
+                for (var element = event.target; element; element = (<any>element).parentNode) {
+                    if (element == tooltipTargetHtmlElement) {
+                        return;
+                    }
+                }
+
+                tooltip.startHideTimeout();
+                api.dom.Body.get().getEl().removeEventListener('mousemove', mouseMoveListener);
+            };
+
+            api.dom.Body.get().getEl().addEventListener('mousemove', mouseMoveListener);
+        }
+
         private getEventName(enter:boolean) {
             switch (this.trigger) {
             case Tooltip.TRIGGER_FOCUS:
                 return enter ? "focus" : "blur";
             case Tooltip.TRIGGER_MOUSE:
             default:
-                return enter ? "mouseover" : "mouseout";
+                return enter ? "mouseenter" : "mouseleave";
                 break;
             }
         }
