@@ -33,7 +33,7 @@ module api.form.inputtype {
             }
         }
 
-        static createView(inputTypeName:string, config?:api.form.inputtype.InputTypeViewConfig<any>):api.form.inputtype.InputTypeView {
+        static createView(inputTypeName:string, config?:InputTypeViewConfig<any>):InputTypeView {
 
             if (InputTypeManager.isRegistered(inputTypeName)) {
                 var inputType = Object.create(InputTypeManager.inputTypes[inputTypeName].prototype);
