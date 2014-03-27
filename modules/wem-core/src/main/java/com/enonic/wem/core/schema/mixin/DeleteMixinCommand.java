@@ -14,7 +14,7 @@ final class DeleteMixinCommand
 
     private DeleteMixinParams params;
 
-    public DeleteMixinResult execute()
+    DeleteMixinResult execute()
     {
         this.params.validate();
 
@@ -49,13 +49,13 @@ final class DeleteMixinCommand
 */
     }
 
-    public DeleteMixinCommand mixinDao( final MixinDao mixinDao )
+    DeleteMixinCommand mixinDao( final MixinDao mixinDao )
     {
         this.mixinDao = mixinDao;
         return this;
     }
 
-    public DeleteMixinCommand params( final DeleteMixinParams params )
+    DeleteMixinCommand params( final DeleteMixinParams params )
     {
         this.params = params;
         return this;

@@ -15,7 +15,7 @@ final class UpdateMixinCommand
 
     private UpdateMixinParams params;
 
-    public UpdateMixinResult execute()
+    UpdateMixinResult execute()
     {
         this.params.validate();
 
@@ -60,13 +60,13 @@ final class UpdateMixinCommand
         }
     }
 
-    public UpdateMixinCommand mixinDao( final MixinDao mixinDao )
+    UpdateMixinCommand mixinDao( final MixinDao mixinDao )
     {
         this.mixinDao = mixinDao;
         return this;
     }
 
-    public UpdateMixinCommand params( final UpdateMixinParams params )
+    UpdateMixinCommand params( final UpdateMixinParams params )
     {
         this.params = params;
         return this;

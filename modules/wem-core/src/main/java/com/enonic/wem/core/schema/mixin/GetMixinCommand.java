@@ -39,13 +39,13 @@ final class GetMixinCommand
         }
     }
 
-    public GetMixinCommand mixinDao( final MixinDao mixinDao )
+    GetMixinCommand mixinDao( final MixinDao mixinDao )
     {
         this.mixinDao = mixinDao;
         return this;
     }
 
-    public GetMixinCommand params( final GetMixinParams params )
+    GetMixinCommand params( final GetMixinParams params )
     {
         this.params = params;
         return this;

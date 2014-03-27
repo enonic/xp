@@ -20,7 +20,7 @@ final class GetMixinsCommand
 
     private GetMixinsParams params;
 
-    public Mixins execute()
+    Mixins execute()
     {
         this.params.validate();
 
@@ -65,13 +65,13 @@ final class GetMixinsCommand
         return mixin != null ? mixin.build() : null;
     }
 
-    public GetMixinsCommand mixinDao( final MixinDao mixinDao )
+    GetMixinsCommand mixinDao( final MixinDao mixinDao )
     {
         this.mixinDao = mixinDao;
         return this;
     }
 
-    public GetMixinsCommand params( final GetMixinsParams params )
+    GetMixinsCommand params( final GetMixinsParams params )
     {
         this.params = params;
         return this;

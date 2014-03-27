@@ -42,13 +42,13 @@ final class CreateMixinCommand
         return mixinDao.createMixin( mixin );
     }
 
-    public CreateMixinCommand mixinDao( final MixinDao mixinDao )
+    CreateMixinCommand mixinDao( final MixinDao mixinDao )
     {
         this.mixinDao = mixinDao;
         return this;
     }
 
-    public CreateMixinCommand params( final CreateMixinParams params )
+    CreateMixinCommand params( final CreateMixinParams params )
     {
         this.params = params;
         return this;
