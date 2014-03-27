@@ -1,6 +1,6 @@
 module LiveEdit.component {
     export class ComponentPlaceholder extends Component {
-        constructor(className:string = 'live-edit-empty-component') {
+        constructor(className: string = 'live-edit-empty-component') {
             super();
             this.addClass(className);
             this.getEl().setData('live-edit-empty-component', 'true');

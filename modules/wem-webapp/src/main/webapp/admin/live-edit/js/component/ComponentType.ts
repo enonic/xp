@@ -194,7 +194,7 @@ module LiveEdit.component {
             cursor: 'move',
             iconCls: 'live-edit-font-icon-paragraph',
             highlighterStyle: {
-                stroke: 'rgba(85, 85, 255, 1)',
+                stroke: 'rgba(68, 68, 68, 1)',
                 strokeDasharray: '5 5',
                 fill: 'rgba(255, 255, 255, 0)'
             },

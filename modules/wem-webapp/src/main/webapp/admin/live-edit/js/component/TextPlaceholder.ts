@@ -3,9 +3,15 @@ module LiveEdit.component {
 
         constructor() {
             this.setComponentType(new ComponentType(Type.PARAGRAPH));
-            super('live-edit-text-component');
+            super();
 
             this.getEl().setData('live-edit-type', 'paragraph');
+
+            console.log('TextPlaceholder onResized');
+            this.onResized((event: api.dom.ElementResizedEvent) => {
+                console.log('resize', event);
+            });
+
         }
 
         onSelect() {
