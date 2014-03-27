@@ -3,11 +3,9 @@ package com.enonic.wem.api.command.schema.mixin;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.schema.mixin.MixinName;
 
-public final class DeleteMixin
-    extends Command<DeleteMixinResult>
+public final class DeleteMixinParams
 {
     private MixinName mixinName;
 
@@ -16,7 +14,7 @@ public final class DeleteMixin
         return this.mixinName;
     }
 
-    public DeleteMixin name( final MixinName mixinName )
+    public DeleteMixinParams name( final MixinName mixinName )
     {
         this.mixinName = mixinName;
         return this;
@@ -30,12 +28,12 @@ public final class DeleteMixin
             return true;
         }
 
-        if ( !( o instanceof DeleteMixin ) )
+        if ( !( o instanceof DeleteMixinParams ) )
         {
             return false;
         }
 
-        final DeleteMixin that = (DeleteMixin) o;
+        final DeleteMixinParams that = (DeleteMixinParams) o;
         return Objects.equal( this.mixinName, that.mixinName );
     }
 
@@ -45,7 +43,6 @@ public final class DeleteMixin
         return Objects.hashCode( this.mixinName );
     }
 
-    @Override
     public void validate()
     {
         Preconditions.checkNotNull( this.mixinName, "mixinName cannot be null" );

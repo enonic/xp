@@ -7,7 +7,8 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.content.GetAllContentTypes;
-import com.enonic.wem.api.command.schema.mixin.GetMixin;
+import com.enonic.wem.api.command.schema.mixin.GetMixinParams;
+import com.enonic.wem.api.command.schema.mixin.MixinService;
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.RootDataSet;
@@ -36,6 +37,8 @@ public class GetAllContentTypesHandlerTest
 {
     private GetAllContentTypesHandler handler;
 
+    private MixinService mixinService;
+
     private static final FormItemsDataSerializer SERIALIZER_FOR_FORM_ITEM_TO_DATA = new FormItemsDataSerializer();
 
     @Before
@@ -44,8 +47,11 @@ public class GetAllContentTypesHandlerTest
     {
         super.initialize();
 
+        mixinService = Mockito.mock( MixinService.class );
+
         handler = new GetAllContentTypesHandler();
         handler.setContext( this.context );
+        handler.setMixinService( this.mixinService );
     }
 
     @Ignore // Does not work atm because of rewriting of client to instanticate handler
@@ -112,8 +118,8 @@ public class GetAllContentTypesHandlerTest
                 build() ).
             build();
 
+        Mockito.when( mixinService.getByName( Mockito.isA( GetMixinParams.class ) ) ).thenReturn( mixin );
         Mockito.when( nodeService.getByParent( Mockito.isA( GetNodesByParentParams.class ) ) ).thenReturn( nodes );
-        Mockito.when( client.execute( Mockito.isA( GetMixin.class ) ) ).thenReturn( mixin );
 
         // Exercise:
         GetAllContentTypes command = Commands.contentType().get().all().mixinReferencesToFormItems( true );
@@ -121,7 +127,7 @@ public class GetAllContentTypesHandlerTest
         this.handler.handle();
 
         // One invocation for each contentType with mixin-reference
-        Mockito.verify( client, Mockito.times( 1 ) ).execute( Mockito.isA( GetMixin.class ) );
+        Mockito.verify( mixinService, Mockito.times( 1 ) ).getByName( Mockito.isA( GetMixinParams.class ) );
         final ContentTypes result = command.getResult();
         assertEquals( 1, result.getSize() );
         assertNotNull( result.get( 0 ).form().getInput( "inputToBeMixedIn" ) );

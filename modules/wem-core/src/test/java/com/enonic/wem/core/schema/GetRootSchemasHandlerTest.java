@@ -7,7 +7,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.GetRootSchemas;
 import com.enonic.wem.api.command.schema.content.GetRootContentTypes;
-import com.enonic.wem.api.command.schema.mixin.GetMixins;
+import com.enonic.wem.api.command.schema.mixin.MixinService;
 import com.enonic.wem.api.command.schema.relationship.GetAllRelationshipTypes;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.inputtype.InputTypes;
@@ -34,6 +34,7 @@ public class GetRootSchemasHandlerTest
 {
     private GetRootSchemasHandler handler;
 
+    private MixinService mixinService;
 
     @Before
     public void setUp()
@@ -41,8 +42,11 @@ public class GetRootSchemasHandlerTest
     {
         super.initialize();
 
+        mixinService = Mockito.mock( MixinService.class );
+
         handler = new GetRootSchemasHandler();
         handler.setContext( this.context );
+        handler.setMixinService( this.mixinService );
     }
 
     @Test
@@ -71,7 +75,7 @@ public class GetRootSchemasHandlerTest
             build();
 
         final Mixins mixins = Mixins.from( mixin );
-        Mockito.when( client.execute( Mockito.isA( GetMixins.class ) ) ).thenReturn( mixins );
+        Mockito.when( mixinService.getAll() ).thenReturn( mixins );
 
         final RelationshipType relationshipType = newRelationshipType().
             name( "like" ).

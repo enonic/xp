@@ -2,11 +2,10 @@ package com.enonic.wem.core.schema.mixin;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.schema.mixin.CreateMixin;
-import com.enonic.wem.api.command.schema.mixin.GetMixin;
-import com.enonic.wem.api.command.schema.mixin.UpdateMixin;
+import com.enonic.wem.api.command.schema.mixin.CreateMixinParams;
+import com.enonic.wem.api.command.schema.mixin.GetMixinParams;
+import com.enonic.wem.api.command.schema.mixin.MixinService;
+import com.enonic.wem.api.command.schema.mixin.UpdateMixinParams;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.editor.SetMixinEditor;
 import com.enonic.wem.core.support.BaseInitializer;
@@ -18,6 +17,8 @@ public class MixinsInitializer
     private final MixinJsonSerializer serializer = new MixinJsonSerializer();
 
     private static final String[] DEMO_MIXINS = {"demo-mixin-address.json", "demo-mixin-norwegian-counties.json"};
+
+    private MixinService mixinService;
 
     protected MixinsInitializer()
     {
@@ -42,34 +43,34 @@ public class MixinsInitializer
 
     private void storeMixin( final Mixin mixin )
     {
-        final GetMixin getMixin = Commands.mixin().get().byName( mixin.getName() ).notFoundAsNull();
+        final GetMixinParams getMixin = new GetMixinParams( mixin.getName() ).notFoundAsNull();
 
-        final Mixin existingMixin = client.execute( getMixin );
+        final Mixin existingMixin = mixinService.getByName( getMixin );
         if ( existingMixin == null )
         {
-            final CreateMixin createMixin = Commands.mixin().create();
-            createMixin.name( mixin.getName() );
-            createMixin.displayName( mixin.getDisplayName() );
-            createMixin.formItems( mixin.getFormItems() );
-            createMixin.schemaIcon( mixin.getIcon() );
-            client.execute( createMixin );
+            final CreateMixinParams createMixin = new CreateMixinParams().
+                name( mixin.getName() ).
+                displayName( mixin.getDisplayName() ).
+                formItems( mixin.getFormItems() ).
+                schemaIcon( mixin.getIcon() );
+            mixinService.create( createMixin );
         }
         else
         {
-            final UpdateMixin updateMixin = Commands.mixin().update();
-            updateMixin.name( mixin.getName() );
-            updateMixin.editor( SetMixinEditor.newSetMixinEditor().
-                displayName( mixin.getDisplayName() ).
-                formItems( mixin.getFormItems() ).
-                icon( mixin.getIcon() ).
-                build() );
-            client.execute( updateMixin );
+            final UpdateMixinParams updateMixin = new UpdateMixinParams().
+                name( mixin.getName() ).
+                editor( SetMixinEditor.newSetMixinEditor().
+                    displayName( mixin.getDisplayName() ).
+                    formItems( mixin.getFormItems() ).
+                    icon( mixin.getIcon() ).
+                    build() );
+            mixinService.update( updateMixin );
         }
     }
 
     @Inject
-    public void setClient( final Client client )
+    public void setMixinService( final MixinService mixinService )
     {
-        this.client = client;
+        this.mixinService = mixinService;
     }
 }

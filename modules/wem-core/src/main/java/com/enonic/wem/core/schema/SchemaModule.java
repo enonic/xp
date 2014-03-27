@@ -3,6 +3,7 @@ package com.enonic.wem.core.schema;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 
+import com.enonic.wem.api.command.schema.mixin.MixinService;
 import com.enonic.wem.core.command.CommandBinder;
 import com.enonic.wem.core.initializer.InitializerTaskBinder;
 import com.enonic.wem.core.schema.content.ContentTypesInitializer;
@@ -18,12 +19,8 @@ import com.enonic.wem.core.schema.content.UpdateContentTypeHandler;
 import com.enonic.wem.core.schema.content.ValidateContentTypeHandler;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDaoImpl;
-import com.enonic.wem.core.schema.mixin.CreateMixinHandler;
-import com.enonic.wem.core.schema.mixin.DeleteMixinHandler;
-import com.enonic.wem.core.schema.mixin.GetMixinHandler;
-import com.enonic.wem.core.schema.mixin.GetMixinsHandler;
+import com.enonic.wem.core.schema.mixin.MixinServiceImpl;
 import com.enonic.wem.core.schema.mixin.MixinsInitializer;
-import com.enonic.wem.core.schema.mixin.UpdateMixinHandler;
 import com.enonic.wem.core.schema.mixin.dao.MixinDao;
 import com.enonic.wem.core.schema.mixin.dao.MixinDaoImpl;
 import com.enonic.wem.core.schema.relationship.CreateRelationshipTypeHandler;
@@ -45,6 +42,7 @@ public final class SchemaModule
         bind( RelationshipTypeDao.class ).to( RelationshipTypeDaoImpl.class ).in( Scopes.SINGLETON );
         bind( ContentTypeDao.class ).to( ContentTypeDaoImpl.class ).in( Scopes.SINGLETON );
         bind( MixinDao.class ).to( MixinDaoImpl.class ).in( Scopes.SINGLETON );
+        bind( MixinService.class ).to( MixinServiceImpl.class ).in( Scopes.SINGLETON );
 
         final InitializerTaskBinder tasks = InitializerTaskBinder.from( binder() );
         tasks.add( ContentTypesInitializer.class );
@@ -67,12 +65,6 @@ public final class SchemaModule
         commands.add( GetChildContentTypesHandler.class );
         commands.add( UpdateContentTypeHandler.class );
         commands.add( ValidateContentTypeHandler.class );
-
-        commands.add( CreateMixinHandler.class );
-        commands.add( DeleteMixinHandler.class );
-        commands.add( GetMixinHandler.class );
-        commands.add( GetMixinsHandler.class );
-        commands.add( UpdateMixinHandler.class );
 
         commands.add( CreateRelationshipTypeHandler.class );
         commands.add( DeleteRelationshipTypeHandler.class );

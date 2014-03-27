@@ -3,25 +3,23 @@ package com.enonic.wem.api.command.schema.mixin;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.editor.MixinEditor;
 
-public final class UpdateMixin
-    extends Command<UpdateMixinResult>
+public final class UpdateMixinParams
 {
     private MixinName name;
 
     private MixinEditor editor;
 
 
-    public UpdateMixin name( final MixinName value )
+    public UpdateMixinParams name( final MixinName value )
     {
         this.name = value;
         return this;
     }
 
-    public UpdateMixin editor( final MixinEditor editor )
+    public UpdateMixinParams editor( final MixinEditor editor )
     {
         this.editor = editor;
         return this;
@@ -45,12 +43,12 @@ public final class UpdateMixin
             return true;
         }
 
-        if ( !( o instanceof UpdateMixin ) )
+        if ( !( o instanceof UpdateMixinParams ) )
         {
             return false;
         }
 
-        final UpdateMixin that = (UpdateMixin) o;
+        final UpdateMixinParams that = (UpdateMixinParams) o;
         return Objects.equal( this.name, that.name ) && Objects.equal( this.editor, that.editor );
     }
 
@@ -60,7 +58,6 @@ public final class UpdateMixin
         return Objects.hashCode( this.name, this.editor );
     }
 
-    @Override
     public void validate()
     {
         Preconditions.checkNotNull( this.name, "name cannot be null" );
