@@ -17,8 +17,6 @@ module api.ui {
         }
 
         addItem<T extends api.ui.Panel>(label:string, panel:T, hidden?:boolean):number {
-
-
             var item = new api.ui.tab.TabBarItem(label);
             this.addItemArray(item);
 

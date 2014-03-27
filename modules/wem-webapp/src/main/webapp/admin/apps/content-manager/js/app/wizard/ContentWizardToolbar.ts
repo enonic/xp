@@ -65,18 +65,5 @@ module app.wizard {
                 this.setEnabled(false);
             });
         }
-
-        setActive(value: boolean) {
-            if (value) {
-                this.addClass("active");
-            }
-            else {
-                this.removeClass("active");
-            }
-        }
-
-        isActive() {
-            return this.hasClass("active");
-        }
     }
 }

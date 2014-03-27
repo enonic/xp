@@ -74,39 +74,48 @@ module app.wizard.page.contextwindow {
             });
 
             app.wizard.ToggleContextWindowEvent.on(() => {
-                if (this.hasClass("hidden")) {
+                if (!this.isEnabled()) {
                     this.enable();
                 } else {
                     this.disable();
-
                 }
+                this.updateFrameSize();
             });
+
+            $(window).resize(() => {
+                this.updateFrameSize();
+            })
 
             this.addItem("Insert", this.insertablesPanel);
             this.addItem("Settings", this.inspectionPanel);
             this.addItem("Emulator", this.emulatorPanel);
+
+            var pinButton = new PinButton(this);
+            this.appendChild(pinButton);
 
         }
 
         disable() {
             this.addClass("hidden");
             this.getEl().setRight("-290px");
-            if (this.pinned) this.liveFormPanel.resizeFrameContainer($(window).width());
         }
 
         enable() {
             this.removeClass("hidden");
             this.getEl().setRight("0px");
             api.dom.Body.get().appendChild(this.dragMask);
-            if (this.pinned) this.liveFormPanel.resizeFrameContainer($(window).width() - 280);
         }
 
         hide() {
-            if (!this.pinned) super.hide();
+            if (!this.pinned) {
+                super.hide();
+            }
         }
 
         show() {
-            if (!this.pinned) super.show();
+            if (!this.pinned) {
+                super.show();
+            }
         }
 
         public inspectComponent(component: PageComponent) {
@@ -146,5 +155,41 @@ module app.wizard.page.contextwindow {
             return this.inspectionPanel.getPageConfig();
         }
 
+        setPinned(value: boolean) {
+            this.pinned = value;
+            this.updateFrameSize();
+        }
+
+        isPinned(): boolean {
+            return this.pinned;
+        }
+
+        private isEnabled() {
+            if (this.hasClass("hidden")) {
+                return false;
+            }
+            return true;
+        }
+
+        private updateFrameSize() {
+            if (this.pinned && this.isEnabled()) {
+                this.liveFormPanel.resizeFrameContainer($(window).width() - 280);
+            } else {
+                this.liveFormPanel.resizeFrameContainer($(window).width());
+            }
+        }
+    }
+
+    export class PinButton extends api.ui.Button {
+        constructor(contextWindow: ContextWindow) {
+            super("")
+            this.addClass("pin-button icon-pushpin");
+            this.setActive(contextWindow.isPinned());
+
+            this.onClicked((event: MouseEvent) => {
+                contextWindow.setPinned(!contextWindow.isPinned());
+                this.setActive(contextWindow.isPinned());
+            });
+        }
     }
 }

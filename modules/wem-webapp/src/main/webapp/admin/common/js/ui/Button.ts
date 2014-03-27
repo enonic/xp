@@ -20,5 +20,18 @@ module api.ui {
             return !this.getEl().isDisabled();
         }
 
+        setActive(value: boolean) {
+            if (value) {
+                this.addClass("active");
+            }
+            else {
+                this.removeClass("active");
+            }
+        }
+
+        isActive() {
+            return this.hasClass("active");
+        }
+
     }
 }

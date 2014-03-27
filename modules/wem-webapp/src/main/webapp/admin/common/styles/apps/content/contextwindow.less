@@ -14,6 +14,22 @@
     color: @admin-medium-gray-font;
   }
 
+  .pin-button {
+    position: absolute;
+    right: 0;
+    top: 0;
+    background-color: transparent;
+    color: @admin-dark-gray-font;
+    padding: 10px 19px;
+    &.active {
+      color: @admin-blue-button2;
+    }
+    &:hover {
+      background-color: transparent;
+      color: @admin-black;
+    }
+  }
+
   .tab-bar {
     cursor: move;
   }
