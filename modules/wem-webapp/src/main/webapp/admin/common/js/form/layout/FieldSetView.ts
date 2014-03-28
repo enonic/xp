@@ -13,6 +13,12 @@ module api.form.layout {
             this.doLayout(dataSet);
         }
 
+        broadcastFormSizeChanged() {
+            this.formItemViews.forEach((formItemView:api.form.FormItemView) => {
+                formItemView.broadcastFormSizeChanged();
+            });
+        }
+
         getData(): api.data.Data[] {
             var dataArray: api.data.Data[] = [];
             this.formItemViews.forEach((formItemView: api.form.FormItemView) => {

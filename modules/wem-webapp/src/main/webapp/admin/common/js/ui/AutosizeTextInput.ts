@@ -29,7 +29,7 @@ module api.ui {
             this.onValueChanged((event) => this.updateSize());
 
             // Update input width according to current page size.
-            api.dom.Window.get().onResized((event: UIEvent) => this.updateSize());
+            api.dom.Window.get().onResized((event: UIEvent) => this.updateSize(), this);
         }
 
         static large(className?: string): AutosizeTextInput {

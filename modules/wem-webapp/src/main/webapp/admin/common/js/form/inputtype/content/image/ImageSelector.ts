@@ -73,8 +73,8 @@ module api.form.inputtype.content.image {
             })
         }
 
-        availableSizeChanged(newWidth:number, newHeight:number) {
-            console.log("ImageSelector.availableSizeChanged("+newWidth+"x"+newHeight+")" );
+        availableSizeChanged() {
+            console.log("ImageSelector.availableSizeChanged("+this.getEl().getWidth()+"x"+this.getEl().getWidth()+")" );
         }
 
         layout(input: api.form.Input, properties: api.data.Property[]) {
