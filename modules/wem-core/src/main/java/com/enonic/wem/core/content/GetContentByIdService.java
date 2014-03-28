@@ -1,6 +1,7 @@
 package com.enonic.wem.core.content;
 
 import com.enonic.wem.api.command.content.GetContentById;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.entity.EntityId;
@@ -16,9 +17,12 @@ public class GetContentByIdService
 {
     private final GetContentById command;
 
-    public GetContentByIdService( final CommandContext context, final GetContentById command, final NodeService nodeService )
+    public GetContentByIdService( final CommandContext context,
+                                  final GetContentById command,
+                                  final NodeService nodeService,
+                                  final ContentTypeService contentTypeService  )
     {
-        super( context, nodeService );
+        super( context, nodeService, contentTypeService );
         this.command = command;
     }
 

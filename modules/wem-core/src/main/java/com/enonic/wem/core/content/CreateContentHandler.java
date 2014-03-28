@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.ValidateContentData;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentPath;
@@ -19,7 +20,6 @@ import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.relationship.RelationshipService;
 import com.enonic.wem.core.relationship.SyncRelationshipsCommand;
 
@@ -28,7 +28,7 @@ public class CreateContentHandler
 {
     private RelationshipService relationshipService;
 
-    private IndexService indexService;
+    private ContentTypeService contentTypeService;
 
     private final static Logger LOG = LoggerFactory.getLogger( CreateContentHandler.class );
 
@@ -41,7 +41,7 @@ public class CreateContentHandler
         // TODO: Add later
         //verifyParentAllowsChildren();
 
-        ContentNodeTranslator translator = new ContentNodeTranslator( context.getClient() );
+        ContentNodeTranslator translator = new ContentNodeTranslator( context.getClient(), contentTypeService );
 
         if ( !command.isDraft() )
         {
@@ -135,11 +135,10 @@ public class CreateContentHandler
     }
 
     @Inject
-    public void setIndexService( final IndexService indexService )
+    public void setContentTypeService( final ContentTypeService contentTypeService )
     {
-        this.indexService = indexService;
+        this.contentTypeService = contentTypeService;
     }
-
 
     @Inject
     public void setNodeService( final NodeService nodeService )

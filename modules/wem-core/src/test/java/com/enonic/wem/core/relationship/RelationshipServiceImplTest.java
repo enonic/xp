@@ -11,7 +11,8 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.command.schema.content.GetContentTypes;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
+import com.enonic.wem.api.command.schema.content.GetContentTypesParams;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataPath;
@@ -43,15 +44,19 @@ public class RelationshipServiceImplTest
 
     private Client client;
 
+    private ContentTypeService contentTypeService;
+
     @Before
     public void before()
     {
         client = Mockito.mock( Client.class );
         jcrSession = Mockito.mock( Session.class );
         relationshipDao = Mockito.mock( RelationshipDao.class );
+        contentTypeService = Mockito.mock( ContentTypeService.class );
 
         relationshipService = new RelationshipServiceImpl();
         relationshipService.setRelationshipDao( relationshipDao );
+        relationshipService.setContentTypeService( contentTypeService );
     }
 
     @Test
@@ -72,7 +77,7 @@ public class RelationshipServiceImplTest
                 newInput().name( "myRelated3" ).inputType( InputTypes.RELATIONSHIP ).inputTypeConfig( inputTypeConfig ).build() ).build();
         ContentType contentType = newContentType().name( "my_type" ).form( form ).build();
 
-        Mockito.when( client.execute( Mockito.any( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
+        Mockito.when( contentTypeService.getByNames( Mockito.any( GetContentTypesParams.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
 
         // setup: content before editing
         ContentData dataBefore = new ContentData();

@@ -9,6 +9,8 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
+import com.enonic.wem.api.command.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentName;
@@ -44,12 +46,14 @@ public class ContentNodeTranslator
 
     private final ContentDataSerializer CONTENT_SERIALIZER = new ContentDataSerializer();
 
+    private ContentTypeService contentTypeService;
 
     private final Client client;
 
-    public ContentNodeTranslator( final Client client )
+    public ContentNodeTranslator( final Client client, final ContentTypeService contentTypeService )
     {
         this.client = client;
+        this.contentTypeService = contentTypeService;
     }
 
     public CreateNodeParams toCreateNode( final CreateContent command )
@@ -234,6 +238,6 @@ public class ContentNodeTranslator
 
     private ContentType getContentType( final ContentTypeName contentTypeName )
     {
-        return client.execute( Commands.contentType().get().byName().contentTypeName( contentTypeName ) );
+        return contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) );
     }
 }

@@ -4,12 +4,9 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypes;
 
-public class GetChildContentTypes
-    extends Command<ContentTypes>
+public class GetChildContentTypesParams
 {
     private ContentTypeName parentName;
 
@@ -18,7 +15,7 @@ public class GetChildContentTypes
         return parentName;
     }
 
-    public GetChildContentTypes parentName( final ContentTypeName parentName )
+    public GetChildContentTypesParams parentName( final ContentTypeName parentName )
     {
         this.parentName = parentName;
         return this;
@@ -32,12 +29,12 @@ public class GetChildContentTypes
             return true;
         }
 
-        if ( !( o instanceof GetChildContentTypes ) )
+        if ( !( o instanceof GetChildContentTypesParams ) )
         {
             return false;
         }
 
-        final GetChildContentTypes that = (GetChildContentTypes) o;
+        final GetChildContentTypesParams that = (GetChildContentTypesParams) o;
         return Objects.equals( this.parentName, that.parentName );
     }
 
@@ -47,7 +44,6 @@ public class GetChildContentTypes
         return Objects.hashCode( this.parentName );
     }
 
-    @Override
     public void validate()
     {
         Preconditions.checkNotNull( this.parentName, "Parent content type name cannot be null" );

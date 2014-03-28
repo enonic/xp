@@ -14,7 +14,8 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.schema.content.GetContentTypes;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
+import com.enonic.wem.api.command.schema.content.GetContentTypesParams;
 import com.enonic.wem.api.command.schema.mixin.GetMixinsParams;
 import com.enonic.wem.api.command.schema.mixin.MixinService;
 import com.enonic.wem.api.command.schema.relationship.GetRelationshipType;
@@ -42,6 +43,8 @@ public class SchemaImageResourceTest
 
     private MixinService mixinService;
 
+    private ContentTypeService contentTypeService;
+
     @Before
     public void setUp()
         throws Exception
@@ -52,6 +55,8 @@ public class SchemaImageResourceTest
 
         mixinService = Mockito.mock( MixinService.class );
         this.controller.setMixinService( mixinService );
+        contentTypeService = Mockito.mock( ContentTypeService.class );
+        this.controller.setContentTypeService( contentTypeService );
     }
 
     @Test
@@ -111,7 +116,7 @@ public class SchemaImageResourceTest
         throws Exception
     {
         final ContentTypes emptyContentTypes = ContentTypes.empty();
-        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn( emptyContentTypes );
+        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn( emptyContentTypes );
 
         try
         {
@@ -219,8 +224,8 @@ public class SchemaImageResourceTest
         final List<ContentType> list = Lists.newArrayList();
         list.add( contentType );
         final ContentTypes result = ContentTypes.from( list );
-        final GetContentTypes command = new GetContentTypes().contentTypeNames( ContentTypeNames.from( contentType.getName() ) );
-        Mockito.when( client.execute( command ) ).thenReturn( result );
+        final GetContentTypesParams params = new GetContentTypesParams().contentTypeNames( ContentTypeNames.from( contentType.getName() ) );
+        Mockito.when( contentTypeService.getByNames( params ) ).thenReturn( result );
     }
 
     private void setupMixin( final Mixin mixin )

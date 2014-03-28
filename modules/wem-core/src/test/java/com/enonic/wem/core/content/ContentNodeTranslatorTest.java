@@ -8,7 +8,8 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.command.content.CreateContent;
-import com.enonic.wem.api.command.schema.content.GetContentType;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
+import com.enonic.wem.api.command.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentName;
@@ -45,16 +46,18 @@ import static org.junit.Assert.*;
 public class ContentNodeTranslatorTest
 {
     private ContentNodeTranslator translator;
+    private ContentTypeService contentTypeService;
 
     @Before
     public void before()
     {
         final Client client = Mockito.mock( Client.class );
+        final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
 
         final ContentType contentType = ContentType.newContentType().name( "my-content-type" ).build();
-        Mockito.when( client.execute( Mockito.isA( GetContentType.class ) ) ).thenReturn( contentType );
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
-        translator = new ContentNodeTranslator( client );
+        translator = new ContentNodeTranslator( client, contentTypeService );
     }
 
     @Test

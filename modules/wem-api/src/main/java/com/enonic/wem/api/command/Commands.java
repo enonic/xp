@@ -8,7 +8,6 @@ import com.enonic.wem.api.command.module.ModuleCommands;
 import com.enonic.wem.api.command.relationship.RelationshipCommands;
 import com.enonic.wem.api.command.resource.ResourceCommands;
 import com.enonic.wem.api.command.schema.SchemaCommands;
-import com.enonic.wem.api.command.schema.content.ContentTypeCommands;
 import com.enonic.wem.api.command.schema.relationship.RelationshipTypeCommands;
 import com.enonic.wem.api.content.page.PageCommands;
 
@@ -23,8 +22,6 @@ public final class Commands
     private static final RelationshipCommands RELATIONSHIP_COMMANDS = new RelationshipCommands();
 
     private static final SchemaCommands SCHEMA_COMMANDS = new SchemaCommands();
-
-    private static final ContentTypeCommands CONTENT_TYPE_COMMANDS = new ContentTypeCommands();
 
     private static final RelationshipTypeCommands RELATIONSHIP_TYPE_COMMANDS = new RelationshipTypeCommands();
 
@@ -63,11 +60,6 @@ public final class Commands
     public static SchemaCommands schema()
     {
         return SCHEMA_COMMANDS;
-    }
-
-    public static ContentTypeCommands contentType()
-    {
-        return CONTENT_TYPE_COMMANDS;
     }
 
     public static RelationshipTypeCommands relationshipType()

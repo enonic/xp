@@ -1,8 +1,13 @@
 package com.enonic.wem.core.schema.content;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.WordUtils;
 
-import com.enonic.wem.api.command.schema.content.CreateContentType;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
+import com.enonic.wem.api.command.schema.content.CreateContentTypeParams;
+import com.enonic.wem.api.command.schema.content.GetContentTypeParams;
+import com.enonic.wem.api.command.schema.content.UpdateContentTypeParams;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
@@ -12,7 +17,6 @@ import com.enonic.wem.api.schema.content.editor.ContentTypeEditor;
 import com.enonic.wem.core.schema.content.serializer.ContentTypeJsonSerializer;
 import com.enonic.wem.core.support.BaseInitializer;
 
-import static com.enonic.wem.api.command.Commands.contentType;
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 import static com.enonic.wem.api.schema.content.editor.SetContentTypeEditor.newSetContentTypeEditor;
 
@@ -93,6 +97,8 @@ public class ContentTypesInitializer
 
     private final ContentTypeJsonSerializer contentTypeJsonSerializer = new ContentTypeJsonSerializer();
 
+    private ContentTypeService contentTypeService;
+
     protected ContentTypesInitializer()
     {
         super( 10, "content-types" );
@@ -128,11 +134,12 @@ public class ContentTypesInitializer
 
     private void createOrUpdate( final ContentType contentType )
     {
-        final boolean contentTypeExists =
-            client.execute( contentType().get().byName().contentTypeName( contentType.getName() ).notFoundAsNull() ) != null;
+        final GetContentTypeParams getParams = new GetContentTypeParams().contentTypeName( contentType.getName() ).notFoundAsNull();
+        final boolean contentTypeExists = contentTypeService.getByName( getParams ) != null;
+
         if ( !contentTypeExists )
         {
-            final CreateContentType createCommand = contentType().create().
+            final CreateContentTypeParams createParams = new CreateContentTypeParams().
                 name( contentType.getName() ).
                 displayName( contentType.getDisplayName() ).
                 description( contentType.getDescription() ).
@@ -144,7 +151,7 @@ public class ContentTypesInitializer
                 form( contentType.form() ).
                 schemaIcon( contentType.getIcon() ).
                 contentDisplayNameScript( contentType.getContentDisplayNameScript() );
-            client.execute( createCommand );
+            contentTypeService.create( createParams );
         }
         else
         {
@@ -157,7 +164,12 @@ public class ContentTypesInitializer
                 contentDisplayNameScript( contentType.getContentDisplayNameScript() ).
                 form( contentType.form() ).
                 build();
-            client.execute( contentType().update().contentTypeName( contentType.getName() ).editor( editor ) );
+
+            final UpdateContentTypeParams updateParams = new UpdateContentTypeParams().
+                contentTypeName( contentType.getName() ).
+                editor( editor );
+
+            contentTypeService.update( updateParams );
         }
     }
 
@@ -182,5 +194,11 @@ public class ContentTypesInitializer
                 build() ).
 
             build();
+    }
+
+    @Inject
+    public void setContentTypeService( final ContentTypeService contentTypeService )
+    {
+        this.contentTypeService = contentTypeService;
     }
 }

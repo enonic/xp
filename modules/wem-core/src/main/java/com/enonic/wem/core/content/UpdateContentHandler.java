@@ -17,6 +17,8 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.GetContentById;
 import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.ValidateContentData;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
+import com.enonic.wem.api.command.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentId;
@@ -38,7 +40,6 @@ import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.index.IndexService;
 
 import static com.enonic.wem.api.content.Content.newContent;
 
@@ -47,9 +48,9 @@ public class UpdateContentHandler
 {
     private static final String THUMBNAIL_MIME_TYPE = "image/png";
 
-    private IndexService indexService;
-
     private NodeService nodeService;
+
+    private ContentTypeService contentTypeService;
 
     private final static Logger LOG = LoggerFactory.getLogger( UpdateContentHandler.class );
 
@@ -57,10 +58,10 @@ public class UpdateContentHandler
     public void handle()
         throws Exception
     {
-        final ContentNodeTranslator translator = new ContentNodeTranslator( this.context.getClient() );
+        final ContentNodeTranslator translator = new ContentNodeTranslator( this.context.getClient(), contentTypeService );
 
         final GetContentById getContentByIdCommand = new GetContentById( command.getContentId() );
-        final Content contentBeforeChange = new GetContentByIdService( this.context, getContentByIdCommand, nodeService ).execute();
+        final Content contentBeforeChange = new GetContentByIdService( this.context, getContentByIdCommand, nodeService, contentTypeService ).execute();
 
         final Content.EditBuilder editBuilder = command.getEditor().edit( contentBeforeChange );
 
@@ -146,7 +147,7 @@ public class UpdateContentHandler
             public void visit( final Property property )
             {
                 final Content content =
-                    new GetContentByIdService( context, new GetContentById( property.getContentId() ), nodeService ).execute();
+                    new GetContentByIdService( context, new GetContentById( property.getContentId() ), nodeService, contentTypeService ).execute();
 
                 if ( content != null )
                 {
@@ -224,18 +225,18 @@ public class UpdateContentHandler
 
     private ContentType getContentType( final ContentTypeName contentTypeName )
     {
-        return context.getClient().execute( Commands.contentType().get().byName().contentTypeName( contentTypeName ) );
-    }
-
-    @Inject
-    public void setIndexService( final IndexService indexService )
-    {
-        this.indexService = indexService;
+        return contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) );
     }
 
     @Inject
     public void setNodeService( final NodeService nodeService )
     {
         this.nodeService = nodeService;
+    }
+
+    @Inject
+    public void setContentTypeService( final ContentTypeService contentTypeService )
+    {
+        this.contentTypeService = contentTypeService;
     }
 }

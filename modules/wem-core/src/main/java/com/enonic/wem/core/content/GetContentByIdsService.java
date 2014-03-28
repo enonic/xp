@@ -6,6 +6,7 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.command.content.GetContentByIds;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.Contents;
@@ -22,9 +23,12 @@ public class GetContentByIdsService
 {
     private final GetContentByIds command;
 
-    public GetContentByIdsService( final CommandContext context, final GetContentByIds command, final NodeService nodeService )
+    public GetContentByIdsService( final CommandContext context,
+                                   final GetContentByIds command,
+                                   final NodeService nodeService,
+                                   final ContentTypeService contentTypeService )
     {
-        super( context, nodeService );
+        super( context, nodeService, contentTypeService );
         this.command = command;
     }
 

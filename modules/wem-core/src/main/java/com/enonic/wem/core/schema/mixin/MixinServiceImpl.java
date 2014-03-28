@@ -2,6 +2,7 @@ package com.enonic.wem.core.schema.mixin;
 
 import javax.inject.Inject;
 
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
 import com.enonic.wem.api.command.schema.mixin.CreateMixinParams;
 import com.enonic.wem.api.command.schema.mixin.DeleteMixinParams;
 import com.enonic.wem.api.command.schema.mixin.DeleteMixinResult;
@@ -19,6 +20,8 @@ public class MixinServiceImpl
 {
     @Inject
     private MixinDao mixinDao;
+    @Inject
+    private ContentTypeService contentTypeService;
 
     @Override
     public Mixin create( final CreateMixinParams params )
@@ -35,7 +38,7 @@ public class MixinServiceImpl
     @Override
     public DeleteMixinResult delete( final DeleteMixinParams params )
     {
-        return new DeleteMixinCommand().mixinDao( this.mixinDao ).params( params ).execute();
+        return new DeleteMixinCommand().mixinDao( this.mixinDao ).contentTypeService( this.contentTypeService ).params( params ).execute();
     }
 
     @Override
