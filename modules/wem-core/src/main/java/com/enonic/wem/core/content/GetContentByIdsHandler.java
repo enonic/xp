@@ -3,6 +3,7 @@ package com.enonic.wem.core.content;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.command.content.GetContentByIds;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.Contents;
@@ -17,6 +18,9 @@ public class GetContentByIdsHandler
     @Inject
     private NodeService nodeService;
 
+    @Inject
+    private ContentTypeService contentTypeService;
+
     @Override
     public void handle()
         throws Exception
@@ -25,7 +29,7 @@ public class GetContentByIdsHandler
 
         try
         {
-            contents = new GetContentByIdsService( this.context, this.command, this.nodeService ).execute();
+            contents = new GetContentByIdsService( this.context, this.command, this.nodeService, this.contentTypeService ).execute();
         }
         catch ( NoEntityWithIdFoundException ex )
         {
@@ -34,7 +38,9 @@ public class GetContentByIdsHandler
 
         }
 
-        command.setResult( this.command.doGetCHildrenIds() ? new ChildContentIdsResolver( this.context, this.nodeService ).resolve( contents ) : contents );
+        command.setResult( this.command.doGetCHildrenIds()
+                               ? new ChildContentIdsResolver( this.context, this.nodeService, this.contentTypeService ).resolve( contents )
+                               : contents );
     }
 
 }

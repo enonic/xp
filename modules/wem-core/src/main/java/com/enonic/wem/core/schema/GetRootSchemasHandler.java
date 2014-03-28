@@ -8,6 +8,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.GetRootSchemas;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
 import com.enonic.wem.api.command.schema.mixin.MixinService;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.Schemas;
@@ -22,6 +23,8 @@ public class GetRootSchemasHandler
 {
     private MixinService mixinService;
 
+    private ContentTypeService contentTypeService;
+
     @Override
     public void handle()
         throws Exception
@@ -29,7 +32,7 @@ public class GetRootSchemasHandler
         final List<Schema> schemas = Lists.newArrayList();
 
         // ContentTypes are nested so query just the root ones
-        final ContentTypes contentTypes = context.getClient().execute( Commands.contentType().get().roots() );
+        final ContentTypes contentTypes = contentTypeService.getRoots();
         if ( contentTypes.isNotEmpty() )
         {
             schemas.addAll( contentTypes.getList() );
@@ -50,6 +53,12 @@ public class GetRootSchemasHandler
         }
 
         command.setResult( Schemas.from( schemas ) );
+    }
+
+    @Inject
+    public void setContentTypeService( final ContentTypeService contentTypeService )
+    {
+        this.contentTypeService = contentTypeService;
     }
 
     @Inject

@@ -6,7 +6,8 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.SchemaTypes;
-import com.enonic.wem.api.command.schema.content.GetAllContentTypes;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
+import com.enonic.wem.api.command.schema.content.GetAllContentTypesParams;
 import com.enonic.wem.api.command.schema.mixin.MixinService;
 import com.enonic.wem.api.command.schema.relationship.GetAllRelationshipTypes;
 import com.enonic.wem.api.form.FormItemSet;
@@ -34,6 +35,8 @@ public class GetSchemasHandlerTest
 
     private MixinService mixinService;
 
+    private ContentTypeService contentTypeService;
+
     @Before
     public void setUp()
         throws Exception
@@ -41,10 +44,12 @@ public class GetSchemasHandlerTest
         super.initialize();
 
         mixinService = Mockito.mock( MixinService.class );
+        contentTypeService = Mockito.mock( ContentTypeService.class );
 
         handler = new GetSchemasHandler();
         handler.setContext( this.context );
         handler.setMixinService( this.mixinService );
+        handler.setContentTypeService( this.contentTypeService );
     }
 
     @Test
@@ -59,7 +64,7 @@ public class GetSchemasHandlerTest
             build();
         final ContentTypes contentTypes = ContentTypes.from( contentType );
 
-        Mockito.when( client.execute( Mockito.isA( GetAllContentTypes.class ) ) ).thenReturn( contentTypes );
+        Mockito.when( contentTypeService.getAll( Mockito.isA( GetAllContentTypesParams.class ) ) ).thenReturn( contentTypes );
 
         final FormItemSet formItemSet = newFormItemSet().name( "address" ).addFormItem(
             newInput().inputType( InputTypes.TEXT_LINE ).name( "street" ).build() ).addFormItem(

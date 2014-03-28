@@ -3,12 +3,9 @@ package com.enonic.wem.api.command.schema.content;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
-import com.enonic.wem.api.schema.content.ContentTypes;
 
-public final class GetContentTypes
-    extends Command<ContentTypes>
+public final class GetContentTypesParams
 {
     private ContentTypeNames contentTypeNames;
 
@@ -19,7 +16,7 @@ public final class GetContentTypes
         return this.contentTypeNames;
     }
 
-    public GetContentTypes contentTypeNames( final ContentTypeNames contentTypeNames )
+    public GetContentTypesParams contentTypeNames( final ContentTypeNames contentTypeNames )
     {
         this.contentTypeNames = contentTypeNames;
         return this;
@@ -30,7 +27,7 @@ public final class GetContentTypes
         return mixinReferencesToFormItems;
     }
 
-    public GetContentTypes mixinReferencesToFormItems( final boolean value )
+    public GetContentTypesParams mixinReferencesToFormItems( final boolean value )
     {
         mixinReferencesToFormItems = value;
         return this;
@@ -44,12 +41,12 @@ public final class GetContentTypes
             return true;
         }
 
-        if ( !( o instanceof GetContentTypes ) )
+        if ( !( o instanceof GetContentTypesParams ) )
         {
             return false;
         }
 
-        final GetContentTypes that = (GetContentTypes) o;
+        final GetContentTypesParams that = (GetContentTypesParams) o;
         return Objects.equal( this.contentTypeNames, that.contentTypeNames );
     }
 
@@ -59,7 +56,6 @@ public final class GetContentTypes
         return Objects.hashCode( this.contentTypeNames );
     }
 
-    @Override
     public void validate()
     {
         Preconditions.checkNotNull( this.contentTypeNames, "contentTypeNames cannot be null" );

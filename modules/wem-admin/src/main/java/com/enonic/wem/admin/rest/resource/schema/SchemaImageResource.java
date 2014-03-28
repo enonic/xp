@@ -13,6 +13,8 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import com.enonic.wem.api.Client;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
+import com.enonic.wem.api.command.schema.content.GetContentTypesParams;
 import com.enonic.wem.api.command.schema.mixin.GetMixinParams;
 import com.enonic.wem.api.command.schema.mixin.MixinService;
 import com.enonic.wem.api.schema.SchemaIcon;
@@ -25,7 +27,6 @@ import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
-import static com.enonic.wem.api.command.Commands.contentType;
 import static com.enonic.wem.api.command.Commands.relationshipType;
 
 
@@ -38,6 +39,8 @@ public final class SchemaImageResource
     private SchemaImageHelper helper;
 
     private MixinService mixinService;
+
+    private ContentTypeService contentTypeService;
 
     private Client client;
 
@@ -52,6 +55,12 @@ public final class SchemaImageResource
     public void setMixinService( final MixinService mixinService )
     {
         this.mixinService = mixinService;
+    }
+
+    @Inject
+    public void setContentTypeService( final ContentTypeService contentTypeService )
+    {
+        this.contentTypeService = contentTypeService;
     }
 
     @GET
@@ -157,7 +166,9 @@ public final class SchemaImageResource
 
     private ContentType getContentType( final ContentTypeName contentTypeName )
     {
-        return client.execute( contentType().get().byNames().contentTypeNames( ContentTypeNames.from( contentTypeName ) ) ).first();
+        final GetContentTypesParams params = new GetContentTypesParams().contentTypeNames( ContentTypeNames.from( contentTypeName ) );
+
+        return contentTypeService.getByNames( params ).first();
     }
 
 }

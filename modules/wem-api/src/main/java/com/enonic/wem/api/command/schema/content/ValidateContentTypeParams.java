@@ -2,20 +2,17 @@ package com.enonic.wem.api.command.schema.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.validator.ContentTypeValidationResult;
 
-public class ValidateContentType
-    extends Command<ContentTypeValidationResult>
+public class ValidateContentTypeParams
 {
     private ContentType contentType;
 
-    public ValidateContentType()
+    public ValidateContentTypeParams()
     {
     }
 
-    public ValidateContentType contentType( final ContentType contentType )
+    public ValidateContentTypeParams contentType( final ContentType contentType )
     {
         this.contentType = contentType;
         return this;
@@ -26,7 +23,6 @@ public class ValidateContentType
         return contentType;
     }
 
-    @Override
     public void validate()
     {
         Preconditions.checkNotNull( contentType, "Content type cannot be null" );

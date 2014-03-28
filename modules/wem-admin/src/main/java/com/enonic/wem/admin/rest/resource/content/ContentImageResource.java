@@ -15,6 +15,8 @@ import javax.ws.rs.core.Response;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
+import com.enonic.wem.api.command.schema.content.GetContentTypesParams;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.attachment.Attachment;
@@ -28,7 +30,6 @@ import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleMax;
 import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleSquareFilter;
-import static com.enonic.wem.api.command.Commands.contentType;
 
 
 @Path("content/image")
@@ -38,6 +39,9 @@ public class ContentImageResource
     private ContentImageHelper helper;
 
     private Client client;
+
+    @Inject
+    private ContentTypeService contentTypeService;
 
     @Inject
     public void setClient( final Client client )
@@ -143,7 +147,9 @@ public class ContentImageResource
             return null;
         }
         final ContentTypeNames contentTypeNames = ContentTypeNames.from( contentTypeName );
-        return client.execute( contentType().get().byNames().contentTypeNames( contentTypeNames ) ).first();
+        final GetContentTypesParams params = new GetContentTypesParams().contentTypeNames( contentTypeNames );
+
+        return contentTypeService.getByNames( params ).first();
     }
 
     private Content findContent( final ContentId contentId )
