@@ -63,12 +63,11 @@ module app.wizard.page.contextwindow.inspect {
         }
 
         setupComponentForm(component: PageComponent, descriptor: Descriptor) {
-            if (this.formView || !descriptor) {
+            if (this.formView) {
                 this.removeChild(this.formView);
                 this.formView = null;
-                return;
             }
-            if (!component) {
+            if (!component || !descriptor) {
                 return;
             }
 
