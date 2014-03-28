@@ -97,11 +97,19 @@ module LiveEdit.component.mouseevent {
 //                $(window).trigger('editParagraphComponent.liveEdit', [paragraphComponent]);
 //            });
 
+            paragraphComponent.getElement().on('keydown keyup', function(event){
+//                if ((event.keyCode === 13) || (event.keyCode === 46) || (event.keyCode === 8)){
+                    $(window).trigger('editParagraphComponent.liveEdit', [paragraphComponent]);
+//                }
+            });
+
             $(window).trigger('editParagraphComponent.liveEdit', [this.selectedParagraph]);
 
             paragraphComponent.getElement().css('cursor', 'text');
             paragraphComponent.getElement().addClass('live-edit-edited-paragraph');
             paragraphComponent.getElement().removeClass('live-edit-empty-component');
+
+            $(window).trigger('editParagraphComponent.liveEdit', [paragraphComponent]);
 
             this.currentMode = ParagraphMode.EDIT;
         }
