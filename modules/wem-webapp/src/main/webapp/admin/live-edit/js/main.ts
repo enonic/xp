@@ -26,6 +26,35 @@ function initializeLiveEdit() {
     });
 }
 
+var openImageUploadDialogRequestListeners: {():void}[] = [];
+var imageUploadedListeners: {(event: api.ui.ImageUploadedEvent):void}[] = [];
+
+function onOpenImageUploadDialogRequest(listener: {():void}) {
+    openImageUploadDialogRequestListeners.push(listener);
+}
+
+function unOpenImageUploadDialogRequest(listener: {():void}) {
+    openImageUploadDialogRequestListeners = openImageUploadDialogRequestListeners.filter((currentListener: {():void}) => {
+        return listener != currentListener;
+    });
+}
+
+function onImageUploaded(listener: {(event: api.ui.ImageUploadedEvent):void}) {
+    imageUploadedListeners.push(listener);
+}
+
+function unImageUploaded(listener: {(event: api.ui.ImageUploadedEvent):void}) {
+    imageUploadedListeners = imageUploadedListeners.filter((currentListener: {(event: api.ui.ImageUploadedEvent):void}) => {
+        return listener != currentListener;
+    });
+}
+
+function notifyImageUploaded(event: api.ui.ImageUploadedEvent) {
+    imageUploadedListeners.forEach((listener: {(event: api.ui.ImageUploadedEvent):void}) => {
+        listener.call(this, event);
+    })
+}
+
 function getComponentByPath(path:string): LiveEdit.component.Component {
     return LiveEdit.component.Component.fromJQuery($('[data-live-edit-component="'+ path +'"]'));
 }

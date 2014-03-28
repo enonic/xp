@@ -2,8 +2,7 @@ module LiveEdit.component {
     export class ImagePlaceholder extends ComponentPlaceholder {
 
         private comboBox:api.content.ContentComboBox;
-        private uploadLink: api.dom.AEl;
-        private uploadDialog: api.form.inputtype.content.image.UploadDialog;
+        private uploadButton: api.ui.Button;
 
         constructor() {
             this.setComponentType(new ComponentType(Type.IMAGE));
@@ -15,22 +14,9 @@ module LiveEdit.component {
             });
 
 
-            this.uploadDialog = new api.form.inputtype.content.image.UploadDialog();
-            this.uploadDialog.onImageUploaded((event: api.ui.ImageUploadedEvent) => {
+            onImageUploaded((event: api.ui.ImageUploadedEvent) => {
                 this.createEmbeddedImageContent(event.getUploadedItem());
             });
-
-            var divEl = new api.dom.DivEl();
-            divEl.addClass("upload-new-image-button");
-            this.uploadLink = new api.dom.AEl();
-            this.uploadLink.setText('Upload new image');
-            this.uploadLink.setUrl('javascript:void');
-            this.uploadLink.onClicked(() => {
-                this.uploadDialog.open();
-            });
-            this.uploadLink.hide();
-            divEl.appendChild(this.uploadLink)
-            this.appendChild(divEl);
 
             this.getEl().setData('live-edit-type', "image");
             this.comboBox = new api.content.ContentComboBoxBuilder().
@@ -41,6 +27,15 @@ module LiveEdit.component {
             this.comboBox.hide();
             this.appendChild(this.comboBox);
 
+            this.uploadButton = new api.ui.Button("");
+            this.uploadButton.addClass("upload-button");
+            this.uploadButton.onClicked(() => {
+                openImageUploadDialogRequestListeners.forEach((listener: {():void}) => {
+                    listener.call(this);
+                });
+            });
+            this.uploadButton.hide();
+            this.appendChild(this.uploadButton);
 
             this.comboBox.addOptionSelectedListener((item) => {
                 var componentPath = this.getComponentPath();
@@ -93,14 +88,14 @@ module LiveEdit.component {
         onSelect() {
             super.onSelect();
             this.comboBox.show();
-            this.uploadLink.show();
+            this.uploadButton.show();
             this.comboBox.giveFocus();
         }
 
         onDeselect() {
             super.onDeselect();
+            this.uploadButton.hide();
             this.comboBox.hide();
-            this.uploadLink.hide();
         }
     }
 }
