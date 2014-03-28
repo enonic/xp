@@ -9,6 +9,7 @@
   min-height: @defaultHeight;
   box-sizing: border-box;
   font-family: @admin-font-family;
+  text-align: center;
 
   //Reset styles from page
   & * {
@@ -70,12 +71,29 @@
       color: #224E83;
     }
   }
-  div.image-placeholder {
-    margin: @defaultHeight/2-57px auto 0 auto;
+
+  button.upload-button {
+    .button(@admin-light-gray-font, transparent, @admin-dark-gray-font, transparent);
+    vertical-align: middle;
+    margin: @defaultHeight/2-30px auto 0 auto !important;
+    padding: 5px 10px 6px 10px !important;
+    display: inline-block;
+    box-sizing: content-box;
+    height: 24px;
+    width: 24px;
+    padding: 0;
+    margin: 0;
+    border-width: 1px;
+    border-left: none;
+    border-color: #d3d3d3;
+    background-color: #ffffff !important;
+    background: url("../../common/images/upload.png") no-repeat center;
   }
 
   .rich-combobox {
     margin: @defaultHeight/2-30px auto 0 auto;
+    vertical-align: middle;
+    display: inline-block;
     width: 255px;
     .options-container {
       z-index: 9999999; // must override shader

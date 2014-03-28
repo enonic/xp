@@ -171,7 +171,14 @@ module app.wizard.page {
                     liveEditWindow.CONFIG.baseUri = CONFIG.baseUri;
                     liveEditWindow.siteTemplate = this.siteTemplate;
                     liveEditWindow.content = this.content;
+                    liveEditWindow.onOpenImageUploadDialogRequest(()=> {
+                        var uploadDialog = new api.form.inputtype.content.image.UploadDialog();
+                        uploadDialog.onImageUploaded((event: api.ui.ImageUploadedEvent) => {
+                            liveEditWindow.notifyImageUploaded(event);
+                        });
+                        uploadDialog.open();
 
+                    })
                     this.mask.hide();
                     liveEditWindow.initializeLiveEdit();
                     deferred.resolve(null);
