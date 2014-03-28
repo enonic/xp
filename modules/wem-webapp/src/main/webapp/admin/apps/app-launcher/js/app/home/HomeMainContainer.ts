@@ -41,8 +41,13 @@ module app.home {
             this.appendChild(this.centerPanel);
         }
 
-        giveFocus() : boolean {
+        giveFocus(): boolean {
             return this.appSelector.giveFocus();
+        }
+
+        show() {
+            this.appSelector.showAppsCount();
+            super.show();
         }
     }
 

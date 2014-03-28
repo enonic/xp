@@ -72,6 +72,7 @@ module app.launcher {
         }
 
         show() {
+            this.showAppsCount();
             super.show();
             this.activateKeyBindings();
         }
@@ -91,6 +92,13 @@ module app.launcher {
 
         giveFocus(): boolean {
             return this.applicationSearchInput.giveFocus();
+        }
+
+        showAppsCount() {
+            this.apps.forEach((application: api.app.Application) => {
+                var appTile: AppTile = this.appTiles[application.getName()];
+                appTile.showCount();
+            });
         }
 
         private highlightNextAppTile() {

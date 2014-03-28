@@ -8,8 +8,6 @@ module app.launcher {
 
         private adminApplicationFrames: api.dom.DivEl;
 
-        private appIframes: {[name: string]: api.dom.IFrameEl;};
-
         private lostConnectionDetector: app.launcher.LostConnectionDetector;
 
         private router: AppRouter;
@@ -18,8 +16,6 @@ module app.launcher {
 
         constructor(mainContainer: app.home.HomeMainContainer) {
             this.homeMainContainer = mainContainer;
-            this.appIframes = {};
-
 
             this.adminApplicationFrames = new api.dom.DivEl();
             this.adminApplicationFrames.getEl().setAttribute("style", "overflow-y: hidden;");

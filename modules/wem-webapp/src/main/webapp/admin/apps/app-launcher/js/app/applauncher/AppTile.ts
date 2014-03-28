@@ -1,9 +1,10 @@
 module app.launcher {
 
     export class AppTile extends api.dom.DivEl {
-        private app:api.app.Application;
+        private app: api.app.Application;
+        private countContainer: api.dom.DivEl;
 
-        constructor(application:api.app.Application) {
+        constructor(application: api.app.Application) {
             super('app-tile');
             this.app = application;
             if (this.app.useFullSizeIcon()) {
@@ -21,16 +22,25 @@ module app.launcher {
             var nameContainer = new api.dom.DivEl('name-container');
             nameContainer.getEl().setInnerHtml(application.getName());
 
-            var countContainer = new api.dom.DivEl('tab-count-container');
-            countContainer.getEl().setInnerHtml('' + application.getOpenTabs());
-            countContainer.hide();
+            this.countContainer = new api.dom.DivEl('tab-count-container');
+            this.showCount();
 
             link.appendChild(imgContainer);
             link.appendChild(nameContainer);
-            link.appendChild(countContainer);
+            link.appendChild(this.countContainer);
             this.appendChild(link);
         }
 
+        showCount() {
+            var openTabs = this.app.getOpenTabs();
+            this.countContainer.getEl().setInnerHtml('' + openTabs);
+            this.countContainer.setVisible(openTabs > 0);
+        }
+
+        show() {
+            this.showCount();
+            super.show();
+        }
     }
 
 }

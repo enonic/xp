@@ -14,6 +14,8 @@ module api.ui.tab {
 
         private navigationItemAddedListeners: {(event: DeckPanelNavigatorEvent):void}[] = [];
 
+        private navigationItemRemovedListeners: {(event: DeckPanelNavigatorEvent):void}[] = [];
+
         private navigationItemSelectedListeners: {(event: DeckPanelNavigatorEvent):void}[] = [];
 
         private navigationItemDeselectedListeners: {(event: DeckPanelNavigatorEvent):void}[] = [];
@@ -165,6 +167,7 @@ module api.ui.tab {
                     this.setButtonLabel(newTab.getLabel());
                 }
             }
+            this.notifyTabRemovedListeners(tab);
         }
 
         private updateActiveTab(tabIndex: number) {
@@ -200,6 +203,10 @@ module api.ui.tab {
             this.navigationItemAddedListeners.push(listener);
         }
 
+        onNavigationItemRemoved(listener: (event: DeckPanelNavigatorEvent) => void) {
+            this.navigationItemRemovedListeners.push(listener);
+        }
+
         onNavigationItemSelected(listener: (event: DeckPanelNavigatorEvent) => void) {
             this.navigationItemSelectedListeners.push(listener);
         }
@@ -211,6 +218,13 @@ module api.ui.tab {
         unNavigationItemAdded(listener: (event: DeckPanelNavigatorEvent) => void) {
             this.navigationItemAddedListeners =
             this.navigationItemAddedListeners.filter((currentListener: (event: DeckPanelNavigatorEvent)=>void) => {
+                return listener != currentListener;
+            });
+        }
+
+        unNavigationItemRemoved(listener: (event: DeckPanelNavigatorEvent) => void) {
+            this.navigationItemRemovedListeners =
+            this.navigationItemRemovedListeners.filter((currentListener: (event: DeckPanelNavigatorEvent)=>void) => {
                 return listener != currentListener;
             });
         }
@@ -231,6 +245,12 @@ module api.ui.tab {
 
         private notifyTabAddedListeners(tab: TabMenuItem) {
             this.navigationItemAddedListeners.forEach((listener: (event: DeckPanelNavigatorEvent)=>void) => {
+                listener.call(this, new DeckPanelNavigatorEvent(tab));
+            });
+        }
+
+        private notifyTabRemovedListeners(tab: TabMenuItem) {
+            this.navigationItemRemovedListeners.forEach((listener: (event: DeckPanelNavigatorEvent)=>void) => {
                 listener.call(this, new DeckPanelNavigatorEvent(tab));
             });
         }

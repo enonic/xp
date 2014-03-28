@@ -49,10 +49,21 @@ module api.app {
 
             api.dom.Window.get().onResized((event: UIEvent) => this.layoutChildren());
             this.onRendered((event) => this.layoutChildren());
+
+            this.tabMenu.onNavigationItemAdded((event: api.ui.DeckPanelNavigatorEvent)=> {
+                this.updateAppOpenTabs();
+            });
+            this.tabMenu.onNavigationItemRemoved((event: api.ui.DeckPanelNavigatorEvent)=> {
+                this.updateAppOpenTabs();
+            })
         }
 
         getTabMenu(): AppBarTabMenu {
             return this.tabMenu;
+        }
+
+        private updateAppOpenTabs() {
+            this.application.setOpenTabs(this.tabMenu.countVisible());
         }
 
         private layoutChildren() {
@@ -88,7 +99,7 @@ module api.app {
                 homeEl.setInnerHtml(this.application.getShortName());
             }
         }
-    }
+   }
 
     export class LauncherButton extends api.dom.ButtonEl {
 
