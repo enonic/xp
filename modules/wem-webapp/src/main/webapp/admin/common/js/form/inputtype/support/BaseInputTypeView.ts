@@ -8,6 +8,12 @@ module api.form.inputtype.support {
 
         private inputOccurrences: InputOccurrences;
 
+        private valueAddedListeners: {(event: api.form.inputtype.ValueAddedEvent) : void}[] = [];
+
+        private valueChangedListeners: {(event: api.form.inputtype.ValueChangedEvent) : void}[] = [];
+
+        private valueRemovedListeners: {(event: api.form.inputtype.ValueRemovedEvent) : void}[] = [];
+
         private inputValidityChangedListeners: {(event: api.form.inputtype.InputValidityChangedEvent) : void}[] = [];
 
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
@@ -36,15 +42,9 @@ module api.form.inputtype.support {
                     });
                 }
             });
-
-            this.onAdded((event) => {
-                this.onOccurrenceAdded(() => {
-                    jQuery(this.getHTMLElement()).sortable("refresh");
-                });
-            });
         }
 
-        availableSizeChanged(newWidth: number, newHeight:number) {
+        availableSizeChanged(newWidth: number, newHeight: number) {
 
         }
 
@@ -117,7 +117,30 @@ module api.form.inputtype.support {
         layout(input: api.form.Input, properties: api.data.Property[]) {
 
             this.input = input;
-            this.inputOccurrences = new InputOccurrences(this, this.input, properties);
+            this.inputOccurrences = new InputOccurrences(<InputOccurrencesConfig>{
+                baseInputTypeView: this,
+                input: this.input,
+                properties: properties
+            });
+
+            this.inputOccurrences.onValueAdded((event: api.form.inputtype.ValueAddedEvent) => {
+                this.notifyValueAdded(event);
+            });
+
+            this.inputOccurrences.onValueChanged((event: api.form.inputtype.ValueChangedEvent) => {
+                this.notifyValueChanged(event);
+            });
+
+            this.inputOccurrences.onValueRemoved((event: api.form.inputtype.ValueRemovedEvent) => {
+                this.notifyValueRemoved(event);
+            });
+
+            this.onAdded((event: api.dom.ElementAddedEvent) => {
+                this.onOccurrenceAdded(() => {
+                    jQuery(this.getHTMLElement()).sortable("refresh");
+                });
+            });
+
             this.inputOccurrences.layout();
             jQuery(this.getHTMLElement()).sortable("refresh");
         }
@@ -178,8 +201,60 @@ module api.form.inputtype.support {
             throw new Error("Must be implemented by inheritor");
         }
 
+        newInitialValue(): api.data.Value {
+            throw new Error("Must be implemented by inheritor");
+        }
+
         getValue(occurrence: api.dom.Element): api.data.Value {
             throw new Error("Must be implemented by inheritor");
+        }
+
+        onValueAdded(listener: (event: api.form.inputtype.ValueAddedEvent) => void) {
+            this.valueAddedListeners.push(listener);
+        }
+
+        unValueAdded(listener: (event: api.form.inputtype.ValueAddedEvent) => void) {
+            this.valueAddedListeners.filter((currentListener: (event: api.form.inputtype.ValueAddedEvent)=>void) => {
+                return listener == currentListener;
+            });
+        }
+
+        notifyValueAdded(event: api.form.inputtype.ValueAddedEvent) {
+            this.valueAddedListeners.forEach((listener: (event: api.form.inputtype.ValueAddedEvent)=>void) => {
+                listener(event);
+            });
+        }
+
+        onValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
+            this.valueChangedListeners.push(listener);
+        }
+
+        unValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
+            this.valueChangedListeners.filter((currentListener: (event: api.form.inputtype.ValueChangedEvent)=>void) => {
+                return listener == currentListener;
+            });
+        }
+
+        private notifyValueChanged(event: api.form.inputtype.ValueChangedEvent) {
+            this.valueChangedListeners.forEach((listener: (event: api.form.inputtype.ValueChangedEvent)=>void) => {
+                listener(event);
+            });
+        }
+
+        onValueRemoved(listener: (event: api.form.inputtype.ValueRemovedEvent) => void) {
+            this.valueRemovedListeners.push(listener);
+        }
+
+        unValueRemoved(listener: (event: api.form.inputtype.ValueRemovedEvent) => void) {
+            this.valueRemovedListeners.filter((currentListener: (event: api.form.inputtype.ValueRemovedEvent)=>void) => {
+                return listener == currentListener;
+            });
+        }
+
+        private notifyValueRemoved(event: api.form.inputtype.ValueRemovedEvent) {
+            this.valueRemovedListeners.forEach((listener: (event: api.form.inputtype.ValueRemovedEvent)=>void) => {
+                listener(event);
+            });
         }
 
         addOnValueChangedListener(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {

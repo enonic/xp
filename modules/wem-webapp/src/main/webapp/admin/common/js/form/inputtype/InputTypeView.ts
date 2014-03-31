@@ -6,6 +6,8 @@ module api.form.inputtype {
 
         layout(input: api.form.Input, properties: api.data.Property[]);
 
+        newInitialValue(): api.data.Value;
+
         getValues(): api.data.Value[];
 
         getAttachments(): api.content.attachment.Attachment[];
@@ -30,6 +32,21 @@ module api.form.inputtype {
          * Returns true if focus was successfully given.
          */
         giveFocus(): boolean;
+
+        /**
+         * Note: Event must never be thrown while function layout is being executed.
+        */
+        onValueAdded(listener: (event: ValueAddedEvent) => void);
+
+        unValueAdded(listener: (event: ValueAddedEvent) => void);
+
+        onValueChanged(listener: (event: ValueChangedEvent) => void);
+
+        unValueChanged(listener: (event: ValueChangedEvent) => void);
+
+        onValueRemoved(listener: (event: ValueRemovedEvent) => void);
+
+        unValueRemoved(listener: (event: ValueRemovedEvent) => void);
 
         validate(silent: boolean) : InputValidationRecording;
 

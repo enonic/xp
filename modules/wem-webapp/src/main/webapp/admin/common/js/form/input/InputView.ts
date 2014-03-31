@@ -1,12 +1,33 @@
 module api.form.input {
 
+    import Property = api.data.Property;
+    import DataId = api.data.DataId;
+    import DataSet = api.data.DataSet;
+    import OccurrenceAddedEvent = api.form.OccurrenceAddedEvent;
+    import OccurrenceRemovedEvent = api.form.OccurrenceRemovedEvent;
+    import ValueAddedEvent = api.form.inputtype.ValueAddedEvent;
+    import ValueRemovedEvent = api.form.inputtype.ValueRemovedEvent;
+    import ValueChangedEvent = api.form.inputtype.ValueChangedEvent;
     import InputTypeManager = api.form.inputtype.InputTypeManager;
+
+    export interface InputViewConfig {
+
+        context: api.form.FormContext;
+
+        input: api.form.Input;
+
+        parent: api.form.formitemset.FormItemSetOccurrenceView;
+
+        parentDataSet: DataSet;
+    }
 
     export class InputView extends api.form.FormItemView {
 
+        private parentDataSet: api.data.DataSet;
+
         private input: api.form.Input;
 
-        private properties: api.data.Property[];
+        private properties: Property[];
 
         private inputTypeView: api.form.inputtype.InputTypeView;
 
@@ -20,11 +41,20 @@ module api.form.input {
 
         private inputTypeViewSize: number = -1;
 
-        constructor(context: api.form.FormContext, input: api.form.Input, parent: api.form.formitemset.FormItemSetOccurrenceView,
-                    properties?: api.data.Property[]) {
-            super("input-view", context, input, parent);
-            this.input = input;
-            this.properties = properties;
+        constructor(config: InputViewConfig) {
+            super(<FormItemViewConfig>{
+                className: "input-view",
+                context: config.context,
+                formItem: config.input,
+                parent: config.parent
+            });
+
+            api.util.assertNotNull(config.parentDataSet, "parentDataSet not exected to be null");
+            api.util.assertNotNull(config.input, "input not exected to be null");
+
+            this.input = config.input;
+            this.parentDataSet = config.parentDataSet;
+            this.properties = config.parentDataSet.getPropertiesByName(config.input.getName());
 
             this.doLayout();
             this.refresh();
@@ -62,7 +92,34 @@ module api.form.input {
                 this.notifyEditContentRequestListeners(content);
             });
 
+            if (this.properties.length == 0) {
+                var initialValue = this.inputTypeView.newInitialValue();
+                if (initialValue != null) {
+                    var initialProperty = new api.data.Property(this.input.getName(), new api.data.Value("", api.data.ValueTypes.STRING));
+                    this.properties.push(initialProperty);
+                    this.parentDataSet.addData(initialProperty);
+                }
+            }
+
             this.inputTypeView.layout(this.input, this.properties);
+
+            this.inputTypeView.onValueAdded((event: ValueAddedEvent) => {
+
+                var property = Property.fromNameValue(this.input.getName(), event.getValue());
+                this.parentDataSet.addData(property);
+            });
+
+            this.inputTypeView.onValueRemoved((event: ValueRemovedEvent) => {
+
+                var dataRemoved = this.parentDataSet.removeData(new DataId(this.input.getName(), event.getArrayIndex()));
+            });
+
+            this.inputTypeView.onValueChanged((event: ValueChangedEvent) => {
+
+                var dataId = new DataId(this.input.getName(), event.getArrayIndex());
+                var property: Property = this.parentDataSet.getPropertyFromDataId(dataId);
+                property.setValue(event.getNewValue());
+            });
 
             this.appendChild(this.inputTypeView.getElement());
             // TODO: Disabled for now since it causes performance slowdown when form as many InputView-s
@@ -74,7 +131,7 @@ module api.form.input {
 
             if (!this.inputTypeView.isManagingAdd()) {
 
-                var inputTypeViewNotManagingAdd:api.form.inputtype.InputTypeViewNotManagingAdd = <api.form.inputtype.InputTypeViewNotManagingAdd>this.inputTypeView;
+                var inputTypeViewNotManagingAdd: api.form.inputtype.InputTypeViewNotManagingAdd = <api.form.inputtype.InputTypeViewNotManagingAdd>this.inputTypeView;
                 inputTypeViewNotManagingAdd.onOccurrenceAdded(() => {
                     this.refresh();
                 });
@@ -106,25 +163,13 @@ module api.form.input {
 
         refresh() {
             if (!this.inputTypeView.isManagingAdd()) {
-                var inputTypeViewNotManagingAdd:api.form.inputtype.InputTypeViewNotManagingAdd = <api.form.inputtype.InputTypeViewNotManagingAdd>this.inputTypeView;
+                var inputTypeViewNotManagingAdd: api.form.inputtype.InputTypeViewNotManagingAdd = <api.form.inputtype.InputTypeViewNotManagingAdd>this.inputTypeView;
                 this.addButton.setVisible(!inputTypeViewNotManagingAdd.maximumOccurrencesReached());
             }
         }
 
-        getData(): api.data.Data[] {
-            return this.getProperties();
-        }
-
         getValue(index: number): api.data.Value {
             return this.inputTypeView.getValues()[index];
-        }
-
-        getProperties(): api.data.Property[] {
-            var properties: api.data.Property[] = [];
-            this.inputTypeView.getValues().forEach((value: api.data.Value, index: number) => {
-                properties[index] = new api.data.Property(this.input.getName(), value);
-            });
-            return properties;
         }
 
         getAttachments(): api.content.attachment.Attachment[] {
@@ -137,8 +182,6 @@ module api.form.input {
         }
 
         validate(silent: boolean = true): api.form.ValidationRecording {
-
-            //console.log("InputView[ " + this.resolveValidationRecordingPath() + " ].validate(" + silent + ")");
 
             var inputRecording = this.inputTypeView.validate(silent);
             return this.handleInputValidationRecording(inputRecording, silent);

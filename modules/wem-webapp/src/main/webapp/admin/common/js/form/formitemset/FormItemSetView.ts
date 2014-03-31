@@ -3,11 +3,22 @@ module api.form.formitemset {
     import support = api.form.inputtype.support;
     import ValidationRecording = api.form.ValidationRecording;
 
+    export interface FormItemSetViewConfig {
+
+        context: api.form.FormContext;
+
+        formItemSet: api.form.FormItemSet;
+
+        parent: FormItemSetOccurrenceView;
+
+        parentDataSet: api.data.DataSet;
+    }
+
     export class FormItemSetView extends api.form.FormItemView {
 
         private formItemSet: api.form.FormItemSet;
 
-        private dataSets: api.data.DataSet[];
+        private parentDataSet: api.data.DataSet;
 
         private occurrenceViewsContainer: api.dom.DivEl;
 
@@ -23,11 +34,15 @@ module api.form.formitemset {
 
         private previousValidationRecording: api.form.ValidationRecording;
 
-        constructor(context: api.form.FormContext, formItemSet: api.form.FormItemSet, parent: FormItemSetOccurrenceView,
-                    dataSets?: api.data.DataSet[]) {
-            super("form-item-set-view", context, formItemSet, parent);
-            this.formItemSet = formItemSet;
-            this.dataSets = dataSets != null ? dataSets : [];
+        constructor(config: FormItemSetViewConfig) {
+            super(<FormItemViewConfig> {
+                className: "form-item-set-view",
+                context: config.context,
+                formItem: config.formItemSet,
+                parent: config.parent
+            });
+            this.parentDataSet = config.parentDataSet;
+            this.formItemSet = config.formItemSet;
 
             this.addClass(this.formItemSet.getPath().getElements().length % 2 ? "even" : "odd");
 
@@ -50,7 +65,13 @@ module api.form.formitemset {
 
 
             this.formItemSetOccurrences =
-            new FormItemSetOccurrences(this.getContext(), this.occurrenceViewsContainer, formItemSet, this.getParent(), dataSets);
+            new FormItemSetOccurrences(<FormItemSetOccurrencesConfig>{
+                context: this.getContext(),
+                occurrenceViewContainer: this.occurrenceViewsContainer,
+                formItemSet: config.formItemSet,
+                parent: this.getParent(),
+                parentDataSet: this.parentDataSet
+            });
             this.formItemSetOccurrences.layout();
 
             this.validate(true);
@@ -65,6 +86,10 @@ module api.form.formitemset {
                 }
             });
             this.formItemSetOccurrences.onOccurrenceRemoved((event: api.form.OccurrenceRemovedEvent) => {
+
+                var dataId = new api.data.DataId(this.formItemSet.getName(), event.getOccurrence().getIndex());
+                this.parentDataSet.removeData(dataId);
+
                 this.refresh();
 
                 if (event.getOccurrenceView() instanceof api.form.formitemset.FormItemSetOccurrenceView) {
@@ -165,15 +190,6 @@ module api.form.formitemset {
 
         public getFormItemSetOccurrenceView(index: number): FormItemSetOccurrenceView {
             return this.formItemSetOccurrences.getFormItemSetOccurrenceView(index);
-        }
-
-        getData(): api.data.Data[] {
-            return this.getDataSets();
-        }
-
-        getDataSets(): api.data.DataSet[] {
-
-            return this.formItemSetOccurrences.getDataSets();
         }
 
         getAttachments(): api.content.attachment.Attachment[] {

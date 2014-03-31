@@ -8,6 +8,8 @@ module app.wizard {
 
         private formView: api.form.FormView;
 
+        private contentData: api.content.ContentData;
+
         private publishAction: api.ui.Action;
 
         constructor(publishAction: api.ui.Action) {
@@ -15,21 +17,15 @@ module app.wizard {
             this.publishAction = publishAction;
         }
 
-        renderNew(formContext: api.form.FormContext, form: api.form.Form) {
-            this.removeChildren();
-            this.formContext = formContext;
-            this.form = form;
-            this.layout(form, null);
-        }
-
         renderExisting(formContext: api.form.FormContext, contentData: api.content.ContentData, form: api.form.Form) {
             this.removeChildren();
             this.formContext = formContext;
             this.form = form;
+            this.contentData = contentData;
             this.layout(form, contentData);
         }
 
-        private layout(form: api.form.Form, contentData?: api.content.ContentData) {
+        private layout(form: api.form.Form, contentData: api.content.ContentData) {
 
             this.formView = new api.form.FormView(this.formContext, form, contentData);
             this.formView.addEditContentRequestListener((content: api.content.ContentSummary) => {
@@ -52,8 +48,9 @@ module app.wizard {
             return this.formView;
         }
 
-        getContentData() {
-            return this.formView.getData();
+        getContentData(): api.content.ContentData {
+
+            return this.contentData;
         }
 
         giveFocus(): boolean {

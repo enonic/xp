@@ -1,5 +1,17 @@
 module api.form {
 
+    export interface FormItemViewConfig {
+
+        className: string;
+
+        context: api.form.FormContext;
+
+        formItem: FormItem;
+
+        parent: api.form.formitemset.FormItemSetOccurrenceView;
+
+    }
+
     export class FormItemView extends api.dom.DivEl {
 
         private context: api.form.FormContext;
@@ -10,12 +22,11 @@ module api.form {
 
         private editContentRequestListeners: {(content: api.content.ContentSummary): void}[] = [];
 
-        constructor(className: string, context: api.form.FormContext, formItem: FormItem,
-                    parent: api.form.formitemset.FormItemSetOccurrenceView) {
-            super(className);
-            this.context = context;
-            this.formItem = formItem;
-            this.parent = parent;
+        constructor(config: FormItemViewConfig) {
+            super(config.className);
+            this.context = config.context;
+            this.formItem = config.formItem;
+            this.parent = config.parent;
         }
 
         getContext(): FormContext {
@@ -35,10 +46,6 @@ module api.form {
                 return this.parent.getDataPath();
             }
             return null;
-        }
-
-        getData(): api.data.Data[] {
-            throw new Error("Method needs to be implemented in inheritor");
         }
 
         /*

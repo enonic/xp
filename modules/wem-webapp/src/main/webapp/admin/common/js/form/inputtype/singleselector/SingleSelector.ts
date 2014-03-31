@@ -1,6 +1,5 @@
 module api.form.inputtype.singleselector {
 
-    import ValueChangedEvent = api.ui.ValueChangedEvent;
     import Option = api.ui.selector.Option;
     import Dropdown = api.ui.selector.dropdown.Dropdown;
     import DropdownConfig = api.ui.selector.dropdown.DropdownConfig;
@@ -31,6 +30,10 @@ module api.form.inputtype.singleselector {
             }
         }
 
+        newInitialValue(): api.data.Value {
+            return new api.data.Value("", api.data.ValueTypes.STRING);
+        }
+
         createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
 
             var name = this.getInput().getName() + "-" + index;
@@ -50,9 +53,8 @@ module api.form.inputtype.singleselector {
 
             if (SingleSelector.TYPE_RADIO == this.type) {
                 var radioGroup = <api.ui.RadioGroup>element;
-                radioGroup.onValueChanged((event: ValueChangedEvent)=> {
-                    listener(new api.form.inputtype.support.ValueChangedEvent(this.newValue(event.getOldValue()),
-                        this.newValue(event.getNewValue())));
+                radioGroup.onValueChanged((event: api.ui.ValueChangedEvent)=> {
+                    listener(new api.form.inputtype.support.ValueChangedEvent(this.newValue(event.getNewValue())));
                 });
             }
             else if (SingleSelector.TYPE_COMBOBOX == this.type) {
@@ -65,7 +67,7 @@ module api.form.inputtype.singleselector {
             }
             else if (SingleSelector.TYPE_DROPDOWN == this.type) {
                 var dropdown = <api.ui.Dropdown>element;
-                dropdown.onValueChanged((event: ValueChangedEvent) => {
+                dropdown.onValueChanged((event: api.ui.ValueChangedEvent) => {
 
                     // TODO: detect selected option changed
 

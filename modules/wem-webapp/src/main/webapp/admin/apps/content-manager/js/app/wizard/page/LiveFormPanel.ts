@@ -395,20 +395,12 @@ module app.wizard.page {
 
         public getRegions(): PageRegions {
 
-            if (!this.contextWindow) {
-                return this.content.isPage() ? this.content.getPage().getRegions() : null;
-            }
-
             return this.pageRegions;
         }
 
         public getConfig(): RootDataSet {
 
-            if (!this.contextWindow) {
-                return this.content.isPage() ? this.content.getPage().getConfig() : null;
-            }
-
-            return this.contextWindow.getPageConfig();
+            return this.pageConfig;
         }
 
         getDefaultImageDescriptor(): ImageDescriptor {
