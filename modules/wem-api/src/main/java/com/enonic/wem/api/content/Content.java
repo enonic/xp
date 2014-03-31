@@ -221,7 +221,6 @@ public final class Content
         throws IllegalEditException
     {
         IllegalEdit.check( "id", this.getId(), to.getId(), Content.class );
-        IllegalEdit.check( "draft", this.isDraft(), to.isDraft(), Content.class );
         IllegalEdit.check( "versionId", this.getVersionId(), to.getVersionId(), Content.class );
         IllegalEdit.check( "path", this.getPath(), to.getPath(), Content.class );
         IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), Content.class );
