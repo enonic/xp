@@ -61,8 +61,6 @@ module api.app.wizard {
         constructor(params: WizardPanelParams, callback: Function) {
             super("wizard-panel");
 
-            console.log("WizardPanel.constructor started");
-
             this.tabId = params.tabId;
             this.persistedItem = params.persistedItem;
             this.new = params.persistedItem == null;
@@ -113,7 +111,6 @@ module api.app.wizard {
                         this.postRenderExisting(this.persistedItem).
                             then(() => {
 
-                                console.log("WizardPanel.constructor finished");
                                 callback();
 
                             }).catch((reason) => {
@@ -134,7 +131,6 @@ module api.app.wizard {
                                 this.postRenderNew().
                                     then(()=> {
 
-                                        console.log("WizardPanel.constructor finished");
                                         callback();
 
                                     }).catch((reason) => {
@@ -151,12 +147,10 @@ module api.app.wizard {
             }
 
             this.onRendered((event: api.dom.ElementRenderedEvent) => {
-                console.log("WizardPanel rendered", this);
 
                 this.firstShow = true;
             });
             this.onShown((event: api.dom.ElementShownEvent) => {
-                console.log("WizardPanel shown", this);
 
                 if (this.firstShow) {
                     this.firstShow = false;
@@ -164,7 +158,6 @@ module api.app.wizard {
                 }
 
                 if (this.lastFocusedElement) {
-                    console.log("Last focused element was remembered: ", this.lastFocusedElement);
                     this.lastFocusedElement.focus();
                 }
             });
@@ -192,7 +185,6 @@ module api.app.wizard {
         }
 
         giveInitialFocus() {
-            console.log("WizardPanel.giveInitialFocus");
             this.header.giveFocus();
 
             this.startRememberFocus();
@@ -252,7 +244,6 @@ module api.app.wizard {
         }
 
         renderNew(): Q.Promise<void> {
-            console.log("WizardPanel.renderNew");
 
             var deferred = Q.defer<void>();
             this.renderingNew = true;
