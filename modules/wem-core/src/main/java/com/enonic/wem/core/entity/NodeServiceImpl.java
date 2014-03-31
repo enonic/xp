@@ -229,11 +229,11 @@ public class NodeServiceImpl
 
     private static class GenericConcurrencyLock<T>
     {
-        private final Map<T, WeakReference<Lock>> lockMap = new HashMap<T, WeakReference<Lock>>();
+        private final Map<T, WeakReference<Lock>> lockMap = new HashMap<>();
 
         private static <T> GenericConcurrencyLock<T> create()
         {
-            return new GenericConcurrencyLock<T>();
+            return new GenericConcurrencyLock<>();
         }
 
         Lock getLock( T key )
