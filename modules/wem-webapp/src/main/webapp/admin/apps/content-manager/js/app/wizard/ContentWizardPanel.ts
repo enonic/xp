@@ -50,8 +50,6 @@ module app.wizard {
 
         constructor(params: ContentWizardPanelParams, callback: (wizard: ContentWizardPanel) => void) {
 
-            console.log("ContentWizardPanel.constructor started");
-
             this.persistAsDraft = true;
             this.parentContent = params.parentContent;
             this.siteContent = params.site;
@@ -127,7 +125,6 @@ module app.wizard {
                 livePanel: this.liveFormPanel,
                 steps: this.createSteps(params.persistedContent)
             }, () => {
-                console.log("ContentWizardPanel.constructor finished");
                 callback(this);
             });
 
@@ -141,8 +138,6 @@ module app.wizard {
         }
 
         giveInitialFocus() {
-            //console.log("ContentWizardPanel.giveInitialFocus");
-
             var newWithoutDisplayCameScript = this.isRenderingNew() && !this.contentType.hasContentDisplayNameScript();
             var displayNameEmpty = api.util.isStringEmpty(this.getPersistedItem().getDisplayName());
             var editWithEmptyDisplayName = !this.isRenderingNew() && displayNameEmpty && !this.contentType.hasContentDisplayNameScript();
@@ -178,7 +173,6 @@ module app.wizard {
 
 
         preRenderNew(): Q.Promise<void> {
-            //console.log("ContentWizardPanel.preRenderNew");
             var deferred = Q.defer<void>();
 
             // Ensure a nameless and empty content is persisted before rendering new
@@ -191,7 +185,6 @@ module app.wizard {
         }
 
         postRenderNew(): Q.Promise<void> {
-            //console.log("ContentWizardPanel.postRenderNew");
             var deferred = Q.defer<void>();
 
             this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
@@ -203,7 +196,6 @@ module app.wizard {
         }
 
         layoutPersistedItem(persistedContent: Content): Q.Promise<void> {
-            console.log("ContentWizardPanel.layoutPersistedItem");
 
             var deferred = Q.defer<void>();
 
@@ -213,16 +205,18 @@ module app.wizard {
             var contentData: api.content.ContentData = persistedContent.getContentData();
 
             new IsRenderableRequest(persistedContent.getContentId()).sendAndParse().
-                done((renderable: boolean) => {
+                then((renderable: boolean) => {
                     this.showLiveEditAction.setVisible(renderable);
                     this.showLiveEditAction.setEnabled(renderable);
                     this.previewAction.setVisible(renderable);
                     this.contextWindowToggler.setVisible(renderable);
-                });
+                }).catch((reason) => {
+                    deferred.reject(reason);
+                }).done();
 
             new api.content.attachment.GetAttachmentsRequest(persistedContent.getContentId()).
                 sendAndParse().
-                done((attachmentsArray: api.content.attachment.Attachment[]) => {
+                then((attachmentsArray: api.content.attachment.Attachment[]) => {
 
                     var attachments = new api.content.attachment.AttachmentsBuilder().
                         addAll(attachmentsArray).
@@ -252,14 +246,18 @@ module app.wizard {
                             else {
                                 deferred.resolve(null);
                             }
-                        });
-                });
+                        }).catch((reason) => {
+                            deferred.reject(reason);
+                        }).done();
+
+                }).catch((reason) => {
+                    deferred.reject(reason);
+                }).done();
 
             return deferred.promise;
         }
 
         postRenderExisting(existing: Content): Q.Promise<void> {
-            console.log("ContentWizardPanel.postRenderExisting");
             var deferred = Q.defer<void>();
 
             this.contentWizardHeader.initNames(existing.getDisplayName(), existing.getName().toString(),
@@ -312,22 +310,29 @@ module app.wizard {
                     setSiteTemplateKey(this.siteTemplate.getKey()).
                     sendAndParse().done((pageTemplate: PageTemplate) => {
 
-                        this.liveFormPanel.setPage(content, pageTemplate).done(() => {
-                            deferred.resolve(null);
-                        });
+                        this.liveFormPanel.setPage(content, pageTemplate)
+                            .then(() => {
+                                deferred.resolve(null);
+                            }).catch((reason) => {
+                                deferred.reject(reason);
+                            }).done();
+                        ;
                     });
             }
             else {
-                this.liveFormPanel.setPage(content, null).done( () => {
-                    deferred.resolve(null);
-                });
+                this.liveFormPanel.setPage(content, null).
+                    then(() => {
+                        deferred.resolve(null);
+                    }).catch((reason) => {
+                        deferred.reject(reason);
+                    }).done();
+                ;
             }
 
             return deferred.promise;
         }
 
         persistNewItem(): Q.Promise<Content> {
-            console.log("ContentWizardPanel.persistNewItem");
 
             var deferred = Q.defer<Content>();
 
@@ -405,12 +410,10 @@ module app.wizard {
             var pageTemplateKey = this.liveFormPanel.getPageTemplate();
 
             if (content.isPage() && !pageTemplateKey) {
-                console.log("*** producePageCUDRequest: delete");
                 return new api.content.page.DeletePageRequest(content.getContentId());
             }
             else if (!content.isPage() && pageTemplateKey) {
 
-                console.log("*** producePageCUDRequest: create");
                 var createRequest = new api.content.page.CreatePageRequest(content.getContentId()).
                     setPageTemplateKey(pageTemplateKey).
                     setConfig(this.liveFormPanel.getConfig()).
@@ -419,7 +422,6 @@ module app.wizard {
             }
             else if (content.isPage() && pageTemplateKey) {
 
-                console.log("*** producePageCUDRequest: update");
                 var updatePageRequest = new api.content.page.UpdatePageRequest(content.getContentId()).
                     setPageTemplateKey(pageTemplateKey).
                     setConfig(this.liveFormPanel.getConfig()).
@@ -427,11 +429,9 @@ module app.wizard {
 
                 return updatePageRequest;
             }
-            console.log("*** producePageCUDRequest: none");
         }
 
         updatePersistedItem(): Q.Promise<Content> {
-            console.log("ContentWizardPanel.updatePersistedItem");
 
             var deferred = Q.defer<Content>();
 
