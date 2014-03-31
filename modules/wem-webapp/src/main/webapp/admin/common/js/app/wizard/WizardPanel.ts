@@ -310,28 +310,42 @@ module api.app.wizard {
             if (this.isItemPersisted()) {
                 this.new = false;
                 this.updatePersistedItem().
-                    done((persisted: T) => {
+                    then((persisted: T) => {
                         this.setPersistedItem(persisted).
-                            done(() => {
+                            then(() => {
 
                                 deferred.resolve(persisted);
-                            });
-                    });
+                            }).catch((reason) => {
+                                deferred.reject(reason);
+                            }).done();
+
+                    }).catch((reason) => {
+                        deferred.reject(reason);
+                    }).done();
             }
             else {
                 this.persistNewItem().
-                    done((persistedItem: T)=> {
+                    then((persistedItem: T)=> {
 
                         this.postPersistNewItem(persistedItem).
-                            done(()=> {
+                            then(()=> {
 
                                 this.setPersistedItem(persistedItem).
-                                    done(() => {
-                                        deferred.resolve(persistedItem);
-                                    });
-                            });
+                                    then(() => {
 
-                    });
+                                        deferred.resolve(persistedItem);
+
+                                    }).catch((reason) => {
+                                        deferred.reject(reason);
+                                    }).done();
+
+                            }).catch((reason) => {
+                                deferred.reject(reason);
+                            }).done();
+
+                    }).catch((reason) => {
+                        deferred.reject(reason);
+                    }).done();
             }
 
             this.isChanged = false;
