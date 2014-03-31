@@ -9,6 +9,8 @@ module app.wizard {
     import PageTemplate = api.content.page.PageTemplate;
     import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
     import IsRenderableRequest = api.content.page.IsRenderableRequest;
+    import WizardStep = api.app.wizard.WizardStep;
+    import WizardStepForm = api.app.wizard.WizardStepForm;
 
     export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
@@ -157,15 +159,19 @@ module app.wizard {
             this.startRememberFocus();
         }
 
-        private createSteps(content: Content): api.app.wizard.WizardStep[] {
+        private createSteps(content: Content): WizardStep[] {
 
-            var steps: api.app.wizard.WizardStep[] = [];
+            var steps: WizardStep[] = [];
 
-            steps.push(new api.app.wizard.WizardStep(this.contentType.getDisplayName(), this.contentWizardStepForm));
+            steps.push(new WizardStep(this.contentType.getDisplayName(), this.contentWizardStepForm));
 
             if (this.siteWizardStepForm != null) {
-                steps.push(new api.app.wizard.WizardStep("Site", this.siteWizardStepForm));
+                steps.push(new WizardStep("Site", this.siteWizardStepForm));
             }
+
+            steps.push(new WizardStep("Meta", new WizardStepForm()));
+            steps.push(new WizardStep("Security", new WizardStepForm()));
+            steps.push(new WizardStep("Summary", new WizardStepForm()));
 
             return steps;
         }
