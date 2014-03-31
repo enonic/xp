@@ -275,6 +275,27 @@ module api.ui.selector {
             this.grid.navigateUp();
         }
 
+        resetActiveSelection() {
+
+            if (this.grid.getActiveCell()) {
+                this.grid.resetActiveCell();
+            }
+        }
+
+        toggleRowSelection(row: number) {
+            var rows = this.grid.getSelectedRows();
+            var index = rows.indexOf(row);
+
+            if (index >= 0) {
+                rows.splice(index, 1);
+            } else {
+                rows.push(row);
+            }
+
+            this.grid.setSelectedRows(rows);
+
+        }
+
         onRowSelection(listener: (event: DropdownGridRowSelectedEvent) => void) {
             this.rowSelectionListeners.push(listener);
         }
