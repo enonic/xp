@@ -53,7 +53,6 @@ module app.wizard {
             var steps: api.app.wizard.WizardStep[] = [];
             this.siteTemplateStep = new SiteTemplateWizardStepForm();
             steps.push(new api.app.wizard.WizardStep("Site Template", this.siteTemplateStep));
-            steps.push(new api.app.wizard.WizardStep("Content", new ContentWizardStepForm()));
             steps.push(new api.app.wizard.WizardStep("Components", new ComponentsWizardStepForm()));
             steps.push(new api.app.wizard.WizardStep("Summary", new SummaryWizardStepForm()));
             return steps;
