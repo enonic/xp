@@ -34,215 +34,168 @@ public class NodeServiceImpl
     @Override
     public CreateNodeResult create( CreateNodeParams params )
     {
-        try {
-            Session session = this.jcrSessionProvider.login();
-            try
-            {
-                return CreateNodeCommand.create().
-                    params( params ).
-                    indexService( this.indexService ).
-                    session( session ).
-                    build().
-                    execute();
-            }
-            finally
-            {
-                session.logout();
-            }
-        }
-        catch ( final Exception e )
+        final Session session = getNewSession();
+        try
         {
-            throw Exceptions.newRutime( "Error creating node" ).withCause( e );
+            return CreateNodeCommand.create().
+                params( params ).
+                indexService( this.indexService ).
+                session( session ).
+                build().
+                execute();
+        }
+        finally
+        {
+            session.logout();
         }
     }
 
     @Override
     public UpdateNodeResult update( final UpdateNodeParams params )
     {
-        try {
-            Session session = this.jcrSessionProvider.login();
-            try
-            {
-                return UpdateNodeCommand.create().
-                    params( params ).
-                    indexService( this.indexService ).
-                    session( session ).
-                    build().
-                    execute();
-            }
-            finally
-            {
-                session.logout();
-            }
-        }
-        catch ( final Exception e )
+        final Session session = getNewSession();
+        try
         {
-            throw Exceptions.newRutime( "Error updating node" ).withCause( e );
+            return UpdateNodeCommand.create().
+                params( params ).
+                indexService( this.indexService ).
+                session( session ).
+                build().
+                execute();
         }
+        finally
+        {
+            session.logout();
+        }
+
     }
 
     @Override
     public boolean rename( final RenameNodeParams params )
     {
-        try {
-            Session session = this.jcrSessionProvider.login();
-            try
-            {
-                return new RenameNodeCommand().params( params ).indexService( this.indexService ).session( session ).execute();
-            }
-            finally
-            {
-                session.logout();
-            }
-        }
-        catch ( final Exception e )
+        final Session session = getNewSession();
+        try
         {
-            throw Exceptions.newRutime( "Error renaming node" ).withCause( e );
+            return new RenameNodeCommand().params( params ).indexService( this.indexService ).session( session ).execute();
+        }
+        finally
+        {
+            session.logout();
         }
     }
 
     @Override
     public Node getById( GetNodeByIdParams params )
     {
-        try {
-            Session session = this.jcrSessionProvider.login();
-            try
-            {
-                return new GetNodeByIdCommand().params( params ).session( session ).execute();
-            }
-            finally
-            {
-                session.logout();
-            }
-        }
-        catch ( final Exception e )
+        final Session session = getNewSession();
+        try
         {
-            throw Exceptions.newRutime( "Error getting node" ).withCause( e );
+            return new GetNodeByIdCommand().params( params ).session( session ).execute();
+        }
+        finally
+        {
+            session.logout();
         }
     }
 
     @Override
     public Nodes getByIds( GetNodesByIdsParams params )
     {
-        try {
-            Session session = this.jcrSessionProvider.login();
-            try
-            {
-                return new GetNodesByIdsCommand().params( params ).session( session ).execute();
-            }
-            finally
-            {
-                session.logout();
-            }
-        }
-        catch ( final Exception e )
+        final Session session = getNewSession();
+        try
         {
-            throw Exceptions.newRutime( "Error getting node" ).withCause( e );
+            return new GetNodesByIdsCommand().params( params ).session( session ).execute();
+        }
+        finally
+        {
+            session.logout();
         }
     }
 
     @Override
     public Node getByPath( GetNodeByPathParams params )
     {
-        try {
-            Session session = this.jcrSessionProvider.login();
-            try
-            {
-                return new GetNodeByPathCommand().params( params ).session( session ).execute();
-            }
-            finally
-            {
-                session.logout();
-            }
-        }
-        catch ( final Exception e )
+        final Session session = getNewSession();
+        try
         {
-            throw Exceptions.newRutime( "Error getting node" ).withCause( e );
+            return new GetNodeByPathCommand().params( params ).session( session ).execute();
+        }
+        finally
+        {
+            session.logout();
         }
     }
 
     @Override
     public Nodes getByPaths( GetNodesByPathsParams params )
     {
-        try {
-            Session session = this.jcrSessionProvider.login();
-            try
-            {
-                return new GetNodesByPathsCommand().params( params ).session( session ).execute();
-            }
-            finally
-            {
-                session.logout();
-            }
-        }
-        catch ( final Exception e )
+        final Session session = getNewSession();
+        try
         {
-            throw Exceptions.newRutime( "Error getting node" ).withCause( e );
+            return new GetNodesByPathsCommand().params( params ).session( session ).execute();
+        }
+        finally
+        {
+            session.logout();
         }
     }
 
     @Override
     public Nodes getByParent( GetNodesByParentParams params )
     {
-        try {
-            Session session = this.jcrSessionProvider.login();
-            try
-            {
-                return new GetNodesByParentCommand().params( params ).session( session ).execute();
-            }
-            finally
-            {
-                session.logout();
-            }
-        }
-        catch ( final Exception e )
+        final Session session = getNewSession();
+        try
         {
-            throw Exceptions.newRutime( "Error getting node" ).withCause( e );
+            return new GetNodesByParentCommand().params( params ).session( session ).execute();
+        }
+        finally
+        {
+            session.logout();
         }
     }
 
     @Override
     public Node deleteById( DeleteNodeByIdParams params )
     {
-        try {
-            Session session = this.jcrSessionProvider.login();
-            try
-            {
-                return new DeleteNodeByIdCommand().params( params ).indexService( this.indexService ).session( session ).execute();
-            }
-            finally
-            {
-                session.logout();
-            }
-        }
-        catch ( final Exception e )
+        final Session session = getNewSession();
+        try
         {
-            throw Exceptions.newRutime( "Error deleting node" ).withCause( e );
+            return new DeleteNodeByIdCommand().params( params ).indexService( this.indexService ).session( session ).execute();
+        }
+        finally
+        {
+            session.logout();
         }
     }
 
     @Override
     public Node deleteByPath( DeleteNodeByPathParams params )
     {
-        try {
-            Session session = this.jcrSessionProvider.login();
-            try
-            {
-                return DeleteNodeByPathCommand.create().
-                    params( params ).
-                    indexService( this.indexService ).
-                    session( session ).
-                    build().
-                    execute();
-            }
-            finally
-            {
-                session.logout();
-            }
+        final Session session = getNewSession();
+        try
+        {
+            return DeleteNodeByPathCommand.create().
+                params( params ).
+                indexService( this.indexService ).
+                session( session ).
+                build().
+                execute();
+        }
+        finally
+        {
+            session.logout();
+        }
+    }
+
+    private Session getNewSession()
+    {
+        try
+        {
+            return this.jcrSessionProvider.login();
         }
         catch ( final Exception e )
         {
-            throw Exceptions.newRutime( "Error deleting node" ).withCause( e );
+            throw Exceptions.newRutime( "Error creating new JCR session" ).withCause( e );
         }
     }
 }
