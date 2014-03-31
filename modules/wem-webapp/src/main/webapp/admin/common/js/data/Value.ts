@@ -13,8 +13,13 @@ module api.data {
             this.type = type;
         }
 
+        asObject(): Object {
+            return this.value;
+        }
+
         asString(): string {
-            return <string>this.value;
+
+            return this.type.valueToString(this);
         }
 
         isRootDataSet(): boolean {

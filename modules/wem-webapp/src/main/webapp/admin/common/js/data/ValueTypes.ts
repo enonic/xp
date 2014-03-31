@@ -17,7 +17,7 @@ module api.data {
 
         static DATE_TIME = new ValueType("DateTime");
 
-        static CONTENT_ID = new ValueType("ContentId");
+        static CONTENT_ID = new ContentIdValueType("ContentId");
 
         static LONG = new ValueType("Long");
 

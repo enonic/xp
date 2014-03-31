@@ -1,10 +1,10 @@
-module api.data{
+module api.data {
 
     export class ValueType {
 
-        private name:string;
+        private name: string;
 
-        constructor(name:string){
+        constructor(name: string) {
             this.name = name;
         }
 
@@ -12,8 +12,12 @@ module api.data{
             return this.name;
         }
 
-        equals(valueType:ValueType):boolean {
+        equals(valueType: ValueType): boolean {
             return this.name == valueType.name;
+        }
+
+        valueToString(value: Value): string {
+            return <string>value.asObject();
         }
     }
 }
