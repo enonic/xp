@@ -37,6 +37,7 @@ module api.util {
     }
 
     export function getPortalUri(path: string, renderingMode: RenderingMode): string {
+        path = escapePath(path);
         switch (renderingMode) {
         case RenderingMode.EDIT:
             return api.util.getUri('portal/edit/' + path);
@@ -51,4 +52,9 @@ module api.util {
     export function getComponentUri(contentId: string, componentPath: string, renderingMode: RenderingMode) {
         return api.util.getPortalUri(contentId + "/_/component/" + componentPath, renderingMode);
     }
+
+    export function escapePath(path: string): string {
+        return path.charAt(0) == '/' ? path.substring(1) : path;
+    }
+
 }

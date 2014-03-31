@@ -201,8 +201,6 @@ module app.wizard {
 
             var deferred = Q.defer<void>();
 
-            this.previewAction.setEnabled(persistedContent.isPage());
-
             this.formIcon.setSrc(persistedContent.getIconUrl());
             var contentData: api.content.ContentData = persistedContent.getContentData();
 
