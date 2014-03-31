@@ -335,11 +335,13 @@ module app.wizard {
                 setCreateContentRequestProducer(this.produceCreateContentRequest).
                 setCreateSiteRequestProducer(this.produceCreateSiteRequest).
                 execute().
-                done((content: Content) => {
+                then((content: Content) => {
 
                     deferred.resolve(content);
 
-                });
+                }).catch((reason) => {
+                    deferred.reject(reason);
+                }).done();
 
             return deferred.promise;
         }
@@ -439,13 +441,15 @@ module app.wizard {
                 setUpdateSiteRequestProducer(this.produceUpdateSiteRequest).
                 setPageCUDRequestProducer(this.producePageCUDRequest).
                 execute().
-                done((content: Content) => {
+                then((content: Content) => {
 
                     new api.content.ContentUpdatedEvent(content).fire();
                     api.notify.showFeedback('Content was updated!');
 
                     deferred.resolve(content);
-                });
+                }).catch((reason) => {
+                    deferred.reject(reason);
+                }).done();
 
             return deferred.promise;
         }

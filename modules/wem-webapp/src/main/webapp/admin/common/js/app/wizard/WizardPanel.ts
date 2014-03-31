@@ -108,15 +108,21 @@ module api.app.wizard {
             if (this.persistedItem != null) {
 
                 this.setPersistedItem(this.persistedItem).
-                    done(() => {
+                    then(() => {
 
                         this.postRenderExisting(this.persistedItem).
-                            done(() => {
+                            then(() => {
 
                                 console.log("WizardPanel.constructor finished");
                                 callback();
-                            });
-                    });
+
+                            }).catch((reason) => {
+                                callback();
+                            }).done();
+
+                    }).catch((reason) => {
+                        callback();
+                    }).done();
             }
             else {
                 this.preRenderNew().
@@ -130,9 +136,18 @@ module api.app.wizard {
 
                                         console.log("WizardPanel.constructor finished");
                                         callback();
-                                    });
-                            });
-                    });
+
+                                    }).catch((reason) => {
+                                        callback();
+                                    }).done();
+
+                            }).catch((reason) => {
+                                callback();
+                            }).done();
+
+                    }).catch((reason) => {
+                        callback();
+                    }).done();
             }
 
             this.onRendered((event: api.dom.ElementRenderedEvent) => {
