@@ -1,22 +1,21 @@
-module api.content{
+module api.content {
 
     export class ContentId {
 
-        private value:string;
+        private value: string;
 
-        constructor(value:string)
-        {
+        constructor(value: string) {
             if (!ContentId.isValidContentId(value)) {
                 throw new Error("Invalid content id")
             }
             this.value = value;
         }
 
-        toString():string {
+        toString(): string {
             return this.value;
         }
 
-        static isValidContentId(id:string):boolean {
+        static isValidContentId(id: string): boolean {
             return !api.util.isStringEmpty(id) && !api.util.isStringBlank(id);
         }
     }
