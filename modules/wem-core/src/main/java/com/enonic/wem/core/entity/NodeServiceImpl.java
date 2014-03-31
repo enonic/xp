@@ -1,5 +1,11 @@
 package com.enonic.wem.core.entity;
 
+import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import javax.inject.Inject;
 import javax.jcr.Session;
 
@@ -34,6 +40,9 @@ public class NodeServiceImpl
     @Override
     public CreateNodeResult create( CreateNodeParams params )
     {
+        final Lock locker = concurrencyLock.getLock( jcrSessionProvider );
+        locker.lock();
+
         final Session session = getNewSession();
         try
         {
@@ -47,12 +56,16 @@ public class NodeServiceImpl
         finally
         {
             session.logout();
+            locker.unlock();
         }
     }
 
     @Override
     public UpdateNodeResult update( final UpdateNodeParams params )
     {
+        final Lock locker = concurrencyLock.getLock( jcrSessionProvider );
+        locker.lock();
+
         final Session session = getNewSession();
         try
         {
@@ -66,6 +79,7 @@ public class NodeServiceImpl
         finally
         {
             session.logout();
+            locker.unlock();
         }
 
     }
@@ -73,6 +87,9 @@ public class NodeServiceImpl
     @Override
     public boolean rename( final RenameNodeParams params )
     {
+        final Lock locker = concurrencyLock.getLock( jcrSessionProvider );
+        locker.lock();
+
         final Session session = getNewSession();
         try
         {
@@ -81,6 +98,7 @@ public class NodeServiceImpl
         finally
         {
             session.logout();
+            locker.unlock();
         }
     }
 
@@ -157,6 +175,9 @@ public class NodeServiceImpl
     @Override
     public Node deleteById( DeleteNodeByIdParams params )
     {
+        final Lock locker = concurrencyLock.getLock( jcrSessionProvider );
+        locker.lock();
+
         final Session session = getNewSession();
         try
         {
@@ -165,12 +186,16 @@ public class NodeServiceImpl
         finally
         {
             session.logout();
+            locker.unlock();
         }
     }
 
     @Override
     public Node deleteByPath( DeleteNodeByPathParams params )
     {
+        final Lock locker = concurrencyLock.getLock( jcrSessionProvider );
+        locker.lock();
+
         final Session session = getNewSession();
         try
         {
@@ -184,6 +209,7 @@ public class NodeServiceImpl
         finally
         {
             session.logout();
+            locker.unlock();
         }
     }
 
@@ -196,6 +222,45 @@ public class NodeServiceImpl
         catch ( final Exception e )
         {
             throw Exceptions.newRutime( "Error creating new JCR session" ).withCause( e );
+        }
+    }
+
+    private static GenericConcurrencyLock<JcrSessionProvider> concurrencyLock = GenericConcurrencyLock.create();
+
+    private static class GenericConcurrencyLock<T>
+    {
+        private final Map<T, WeakReference<Lock>> lockMap = new HashMap<T, WeakReference<Lock>>();
+
+        private static <T> GenericConcurrencyLock<T> create()
+        {
+            return new GenericConcurrencyLock<T>();
+        }
+
+        Lock getLock( T key )
+        {
+            Lock lock;
+            synchronized ( lockMap )
+            {
+                lock = getLockFromMap( key );
+                if ( lock == null )
+                {
+                    lock = new ReentrantLock();
+                    WeakReference<Lock> value = new WeakReference<Lock>( lock );
+                    lockMap.put( key, value );
+                }
+            }
+
+            return lock;
+        }
+
+        private Lock getLockFromMap( T key )
+        {
+            WeakReference<Lock> weakReference = lockMap.get( key );
+            if ( weakReference == null )
+            {
+                return null;
+            }
+            return weakReference.get();
         }
     }
 }
