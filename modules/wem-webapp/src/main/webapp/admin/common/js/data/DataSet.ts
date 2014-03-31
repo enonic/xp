@@ -4,6 +4,8 @@ module api.data {
 
         private dataById: {[s:string] : Data;} = {};
 
+        private dataArray: Data[] = [];
+
         constructor(name: string) {
             super(name);
         }
@@ -25,14 +27,48 @@ module api.data {
             data.setArrayIndex(index);
             var dataId = new DataId(data.getName(), index);
             this.dataById[dataId.toString()] = data;
+            this.dataArray.push(data);
+        }
+
+        removeData(idToRemove: DataId): Data {
+
+            var dataToRemove = this.dataById[idToRemove.toString()];
+
+            api.util.assertNotNull(dataToRemove, "Data to remove [" + idToRemove + "] not found in dataById");
+
+            // Remove from map
+            delete this.dataById[idToRemove.toString()];
+
+            // Resolve index of Data to remove
+            var indexToRemove = -1;
+            this.dataArray.forEach((data: Data, index: number) => {
+                if (data.getId().toString() == idToRemove.toString()) {
+                    indexToRemove = index;
+                }
+            });
+            api.util.assert(indexToRemove > -1, "Data to remove [" + idToRemove + "] not found in dataArray");
+
+            // Remove Data from dataArray
+            this.dataArray.splice(indexToRemove, 1);
+
+            // Update the array index of the Data-s coming after...
+            var dataArray = this.getDataByName(idToRemove.getName());
+
+            for (var i = idToRemove.getArrayIndex(); i < dataArray.length; i++) {
+                var data = dataArray[i];
+                delete this.dataById[data.getId().toString()];
+                data.setArrayIndex(i);
+                this.dataById[data.getId().toString()] = data;
+            }
+
+            return dataToRemove;
         }
 
         getDataArray(): Data[] {
             var datas = [];
-            for (var i in this.dataById) {
-                var data = this.dataById[i];
+            this.dataArray.forEach((data: Data) => {
                 datas.push(data);
-            }
+            });
             return datas;
         }
 
@@ -83,15 +119,12 @@ module api.data {
 
         getPropertyFromDataPath(path: DataPath): Property {
             var data = this.getDataFromDataPath(path);
-            if (data == null) {
-                return null;
-            }
-            return data.toProperty();
+            return data ? data.toProperty() : null;
         }
 
         getPropertyFromDataId(dataId: DataId): Property {
             var data = this.getDataFromDataId(dataId);
-            return data.toProperty();
+            return data ? data.toProperty() : null;
         }
 
         getPropertiesByName(name: string): Property[] {
@@ -155,8 +188,8 @@ module api.data {
         }
 
         equals(dataSet: DataSet): boolean {
-            var dataArray1 = this.getDataArray();
-            var dataArray2 = dataSet.getDataArray();
+            var dataArray1 = this.dataArray;
+            var dataArray2 = dataSet.dataArray;
 
             if (dataArray1.length != dataArray2.length) {
                 return false;

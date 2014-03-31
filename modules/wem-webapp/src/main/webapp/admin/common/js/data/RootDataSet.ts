@@ -6,6 +6,20 @@ module api.data{
             super("");
         }
 
+        getParent(): Data {
+            return null;
+        }
+
+        getParentPath(): DataPath {
+
+            return null;
+        }
+
+        getPath(): DataPath {
+
+            return DataPath.ROOT;
+        }
+
         toJson():api.data.json.DataTypeWrapperJson[] {
 
             var dataArray:api.data.json.DataTypeWrapperJson[] = [];

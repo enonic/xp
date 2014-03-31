@@ -33,6 +33,27 @@ module api.data {
             return this.parent;
         }
 
+        getParentPath(): DataPath {
+
+            var parent = this.getParent();
+            var parentPath: DataPath;
+            if (parent) {
+                parentPath = parent.getPath();
+            }
+            else {
+                parentPath = DataPath.ROOT;
+            }
+            return parentPath;
+        }
+
+        getPath(): DataPath {
+
+            var parentPath = this.getParentPath();
+            var element = new DataPathElement(this.getName(), this.getArrayIndex());
+            var path = DataPath.fromParent(parentPath, element);
+            return path;
+        }
+
         getArrayIndex(): number {
             return this.arrayIndex;
         }
