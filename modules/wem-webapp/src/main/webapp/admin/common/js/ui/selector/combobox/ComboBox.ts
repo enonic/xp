@@ -126,6 +126,8 @@ module api.ui.selector.combobox {
             this.dropdownHandle.down();
 
             this.comboBoxDropdown.renderDropdownGrid();
+
+            $(this.input.getHTMLElement()).attr('readonly', true);
         }
 
         setEmptyDropdownText(label: string) {
@@ -138,10 +140,12 @@ module api.ui.selector.combobox {
             if (this.applySelectionsButton) {
                 this.applySelectionsButton.hide();
             }
+
+            $(this.input.getHTMLElement()).prop('readonly', false);
         }
 
         setOptions(options: Option<OPTION_DISPLAY_VALUE>[]) {
-            this.comboBoxDropdown.setOptions(options);
+            this.comboBoxDropdown.setOptions(options, this.getSelectedOptions());
         }
 
         addOption(option: Option<OPTION_DISPLAY_VALUE>) {
@@ -197,6 +201,13 @@ module api.ui.selector.combobox {
 
         selectOption(option: Option<OPTION_DISPLAY_VALUE>, silent: boolean = false) {
 
+            // already exists
+            for (var k in this.selectedOptionsCtrl.getOptions()) {
+                if (this.selectedOptionsCtrl.getOptions()[k].value === option.value) {
+                    return;
+                }
+            }
+
             var added = this.selectedOptionsCtrl.addOption(option);
             if (!added) {
                 return;
@@ -232,12 +243,18 @@ module api.ui.selector.combobox {
         }
 
         clearSelection(ignoreEmpty: boolean = false) {
-            var allOptions: Option<OPTION_DISPLAY_VALUE>[] = this.selectedOptionsCtrl.getOptions();
-            allOptions.forEach((option: Option<OPTION_DISPLAY_VALUE>) => {
-                this.selectedOptionsCtrl.removeOption(option, true);
+            var optionsMap = this.getDisplayedOptions().map((x) => { return x.value; }).join();
+
+            var selectedOptions: Option<OPTION_DISPLAY_VALUE>[] = this.selectedOptionsCtrl.getOptions();
+            selectedOptions.forEach((option: Option<OPTION_DISPLAY_VALUE>) => {
+                // removing selection only from filtered options
+                var filteredOption = optionsMap.search(option.value) >= 0 ? option : undefined;
+                if (filteredOption) {
+                    this.selectedOptionsCtrl.removeOption(option, true);
+                }
             });
 
-            this.comboBoxDropdown.markSelections(this.selectedOptionsCtrl.getOptions(), ignoreEmpty);
+            this.comboBoxDropdown.markSelections([], ignoreEmpty);
 
             this.input.openForTypingAndFocus();
 
@@ -251,6 +268,19 @@ module api.ui.selector.combobox {
             else {
                 throw new Error("Not supported yet");
             }
+        }
+
+        getDisplayedOptions(): Option<OPTION_DISPLAY_VALUE>[] {
+            var displayedOptions: Option<OPTION_DISPLAY_VALUE>[] = [];
+
+            for (var row = 0; row < this.comboBoxDropdown.getOptionCount(); row++) {
+                var option: Option<OPTION_DISPLAY_VALUE> = this.getOptionByRow(row);
+                if (option) {
+                    displayedOptions.push(option);
+                }
+            }
+
+            return displayedOptions;
         }
 
         getValue(): string {
@@ -298,6 +328,10 @@ module api.ui.selector.combobox {
                 this.setOnBlurListener();
             });
 
+            this.input.onClicked((event: MouseEvent) => {
+                $(this.input.getHTMLElement()).prop('readonly', false);
+            });
+
             this.comboBoxDropdown.onRowSelection((event: DropdownGridRowSelectedEvent) => {
                 this.selectRow(event.getRow());
             });
@@ -313,6 +347,7 @@ module api.ui.selector.combobox {
                     } else {
                         this.showDropdown();
                         this.giveFocus();
+                        this.comboBoxDropdown.navigateToFirstRowIfNotActive();
                     }
                 }
             });
@@ -329,14 +364,15 @@ module api.ui.selector.combobox {
             this.input.onValueChanged((event: api.ui.ValueChangedEvent) => {
 
                 this.notifyValueChanged(event.getOldValue(), event.getNewValue());
-                this.showDropdown();
-                this.comboBoxDropdown.nagivateToFirstRow();
+                if (this.isDropdownShown()) {
+                    this.showDropdown();
+                }
+                this.comboBoxDropdown.resetActiveSelection();
 
+                $(this.input.getHTMLElement()).attr('readonly', false);
             });
 
             this.input.onDblClicked((event: MouseEvent) => {
-
-                this.comboBoxDropdown.navigateToFirstRowIfNotActive();
 
                 if (!this.isDropdownShown()) {
                     this.showDropdown();
@@ -348,33 +384,52 @@ module api.ui.selector.combobox {
                 if (event.which == 9) { // tab
                     this.hideDropdown();
                     return;
-                }
-                else if (event.which == 16 || event.which == 17 || event.which == 18) {  // shift or ctrl or alt
+                } else if (event.which == 16 || event.which == 17 || event.which == 18) {  // shift or ctrl or alt
                     return;
                 }
-
-                this.comboBoxDropdown.navigateToFirstRowIfNotActive();
 
                 if (!this.isDropdownShown()) {
                     this.showDropdown();
+                    $(this.input.getHTMLElement()).attr('readonly', false);
                     return;
                 }
 
-                if (event.which == 38) { // up
-                    this.comboBoxDropdown.navigateToPreviousRow();
-                }
-                else if (event.which == 40) { // down
-                    this.comboBoxDropdown.navigateToNextRow();
-                }
-                else if (event.which == 13) { // enter
-                    this.selectRow(this.comboBoxDropdown.getActiveRow());
-                    this.input.getEl().setValue("");
-                }
-                else if (event.which == 27) { // esc
-                    this.hideDropdown();
+                switch (event.which) {
+                    case 38: // up
+                        if (this.comboBoxDropdown.hasActiveRow()) {
+                            this.comboBoxDropdown.navigateToPreviousRow();
+                            $(this.input.getHTMLElement()).attr('readonly', true);
+                        }
+                        event.stopPropagation();
+                        event.preventDefault();
+                        break;
+                    case 40: // down
+                        if (this.comboBoxDropdown.hasActiveRow()) {
+                            this.comboBoxDropdown.navigateToNextRow();
+                        } else {
+                            this.comboBoxDropdown.nagivateToFirstRow();
+                        }
+                        $(this.input.getHTMLElement()).attr('readonly', true);
+                        event.stopPropagation();
+                        event.preventDefault();
+                        break;
+                    case 13: // Enter
+                        this.selectRow(this.comboBoxDropdown.getActiveRow());
+                        this.input.setValue("");
+                        break;
+                    case 32: // Spacebar
+                        if ($(this.input.getHTMLElement()).attr('readonly') == 'readonly') {
+                            this.comboBoxDropdown.toggleRowSelection(this.comboBoxDropdown.getActiveRow());
+                            event.stopPropagation();
+                            event.preventDefault();
+                        }
+                        break;
+                    case 27: // Esc
+                        this.hideDropdown();
+                        break;
                 }
 
-                this.input.getHTMLElement().focus();
+                this.input.giveFocus();
             });
 
             if (this.multipleSelections) {
@@ -401,9 +456,19 @@ module api.ui.selector.combobox {
         }
 
         private handleMultipleSelectionChanged(event: DropdownGridMultipleSelectionEvent) {
+            var optionsMap = this.getDisplayedOptions().map((x) => { return x.value; }).join();
 
-            if (this.selectedOptionsCtrl.getOptions().length === event.getRows().length) {
-                var currentOptions = this.selectedOptionsCtrl.getOptions().map((x) => { return x.value; }).sort();
+            var filteredOptions: Option<OPTION_DISPLAY_VALUE>[] = [];
+            var selectedOptions: Option<OPTION_DISPLAY_VALUE>[] = this.selectedOptionsCtrl.getOptions();
+            selectedOptions.forEach((option: Option<OPTION_DISPLAY_VALUE>) => {
+                var filteredOption = optionsMap.search(option.value) >= 0 ? option : undefined;
+                if (filteredOption) {
+                    filteredOptions.push(filteredOption);
+                }
+            });
+
+            if (filteredOptions.length === event.getRows().length) {
+                var currentOptions = filteredOptions.map((x) => { return x.value; }).sort();
                 var eventOptions = [];
                 event.getRows().forEach((row: number) => {
                     eventOptions.push(this.comboBoxDropdown.getGrid().getOptionByRow(row));

@@ -65,12 +65,12 @@ module api.ui.selector.combobox {
             return this.emptyDropdown.isVisible() || this.dropdownGrid.isVisible();
         }
 
-        setOptions(options: Option<OPTION_DISPLAY_VALUE>[]) {
+        setOptions(options: Option<OPTION_DISPLAY_VALUE>[], selectedOptions: Option<OPTION_DISPLAY_VALUE>[] = []) {
 
             this.dropdownGrid.setOptions(options);
 
-            if (this.dropdownGrid.isVisible() || this.emptyDropdown.isVisible()) {
-                this.showDropdown([]);
+            if (this.isDropdownShown()) {
+                this.showDropdown(selectedOptions);
             }
         }
 
@@ -162,6 +162,14 @@ module api.ui.selector.combobox {
 
         navigateToPreviousRow() {
             this.dropdownGrid.navigateToPreviousRow();
+        }
+
+        toggleRowSelection(row: number) {
+            this.dropdownGrid.toggleRowSelection(row);
+        }
+
+        resetActiveSelection() {
+            this.dropdownGrid.resetActiveSelection();
         }
 
         applyMultipleSelection() {
