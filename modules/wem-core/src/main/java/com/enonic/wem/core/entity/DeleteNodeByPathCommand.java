@@ -7,7 +7,6 @@ import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.core.entity.dao.NodeJcrDao;
 import com.enonic.wem.core.index.IndexService;
-import com.enonic.wem.util.Exceptions;
 
 public class DeleteNodeByPathCommand
 {
@@ -27,26 +26,17 @@ public class DeleteNodeByPathCommand
     public Node execute()
     {
         this.params.validate();
-
-        try
-        {
-            return doExecute();
-        }
-        catch ( final Exception e )
-        {
-            throw Exceptions.newRutime( "Error deleting node" ).withCause( e );
-        }
+        return doExecute();
     }
 
     private Node doExecute()
-        throws Exception
     {
         final NodePath nodePath = params.getPath();
         final NodeJcrDao nodeJcrDao = new NodeJcrDao( session );
         final Node nodeToDelete = nodeJcrDao.getNodeByPath( nodePath );
 
         nodeJcrDao.deleteNodeByPath( nodePath );
-        session.save();
+        JcrSessionHelper.save( session );
 
         indexService.deleteEntity( nodeToDelete.id() );
         return nodeToDelete;
