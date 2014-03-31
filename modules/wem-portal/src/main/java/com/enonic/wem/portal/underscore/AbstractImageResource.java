@@ -12,6 +12,8 @@ import com.google.common.primitives.Ints;
 
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.wem.api.command.content.attachment.AttachmentService;
+import com.enonic.wem.api.command.content.attachment.GetAttachmentParams;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
@@ -23,7 +25,6 @@ import com.enonic.wem.core.image.filter.ImageFilter;
 import com.enonic.wem.core.image.filter.ImageFilterBuilder;
 import com.enonic.wem.portal.exception.PortalWebException;
 
-import static com.enonic.wem.api.command.Commands.attachment;
 import static com.enonic.wem.api.command.Commands.blob;
 import static com.enonic.wem.api.command.Commands.content;
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -41,6 +42,9 @@ abstract class AbstractImageResource
 
     @Inject
     ImageFilterBuilder imageFilterBuilder;
+
+    @Inject
+    AttachmentService attachmentService;
 
     abstract String getFilterParam();
 
@@ -70,7 +74,8 @@ abstract class AbstractImageResource
         // TODO : Better not found handling
         try
         {
-            return client.execute( attachment().get().contentId( contentId ).attachmentName( attachmentName ) );
+            final GetAttachmentParams params = new GetAttachmentParams().contentId( contentId ).attachmentName( attachmentName );
+            return attachmentService.get( params );
         }
         catch ( ContentNotFoundException e )
         {

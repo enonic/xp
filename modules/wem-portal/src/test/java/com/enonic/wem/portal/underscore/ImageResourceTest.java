@@ -17,7 +17,8 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.command.content.GetContentByPath;
-import com.enonic.wem.api.command.content.attachment.GetAttachment;
+import com.enonic.wem.api.command.content.attachment.AttachmentService;
+import com.enonic.wem.api.command.content.attachment.GetAttachmentParams;
 import com.enonic.wem.api.command.content.blob.GetBlob;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -45,14 +46,22 @@ public class ImageResourceTest
 
     private ImageFilterBuilder imageFilterBuilder;
 
+    private AttachmentService attachmentService;
+
     @Override
     protected Object getResourceInstance()
     {
-        client = mock( Client.class );
-        imageFilterBuilder = mock( ImageFilterBuilder.class );
         resource = new ImageResource();
+
+        client = mock( Client.class );
         resource.client = client;
+
+        imageFilterBuilder = mock( ImageFilterBuilder.class );
         resource.imageFilterBuilder = imageFilterBuilder;
+
+        attachmentService = mock( AttachmentService.class );
+        resource.attachmentService = attachmentService;
+
         return resource;
     }
 
@@ -77,7 +86,7 @@ public class ImageResourceTest
             label( "small" ).
             build();
         final byte[] imageData = ByteStreams.toByteArray( getClass().getResourceAsStream( "enonic-logo.png" ) );
-        when( client.execute( isA( GetAttachment.class ) ) ).thenReturn( attachment );
+        when( attachmentService.get( isA( GetAttachmentParams.class ) ) ).thenReturn( attachment );
         final Blob blob = new MemoryBlobRecord( blobKey, imageData );
         when( client.execute( isA( GetBlob.class ) ) ).thenReturn( blob );
 
@@ -119,7 +128,7 @@ public class ImageResourceTest
             label( "small" ).
             build();
         final byte[] imageData = ByteStreams.toByteArray( getClass().getResourceAsStream( "enonic-logo.png" ) );
-        when( client.execute( isA( GetAttachment.class ) ) ).thenReturn( attachment );
+        when( attachmentService.get( isA( GetAttachmentParams.class ) ) ).thenReturn( attachment );
         final Blob blob = new MemoryBlobRecord( blobKey, imageData );
         when( client.execute( isA( GetBlob.class ) ) ).thenReturn( blob );
         when( imageFilterBuilder.build( isA( BuilderContext.class ), isA( String.class ) ) ).thenReturn( getImageFilterBuilder() );
