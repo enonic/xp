@@ -44,7 +44,7 @@ module api.form.inputtype.support {
             });
         }
 
-        availableSizeChanged(newWidth: number, newHeight:number) {
+        availableSizeChanged() {
 
         }
 

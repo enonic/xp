@@ -15,8 +15,6 @@ module api.form.formitemset {
 
         private occurrencesCollapsed: boolean = false;
 
-        private formItemSetOccurrenceViews: api.form.formitemset.FormItemSetOccurrenceView[] = [];
-
         constructor(context: api.form.FormContext, occurrenceViewContainer: api.dom.Element, formItemSet: api.form.FormItemSet,
                     parent: FormItemSetOccurrenceView, dataSets: api.data.DataSet[]) {
             super(formItemSet, occurrenceViewContainer, formItemSet.getOccurrences());
@@ -74,23 +72,13 @@ module api.form.formitemset {
 
         createNewOccurrenceView(occurrence: FormItemSetOccurrence): FormItemSetOccurrenceView {
 
-            var formItemSetOccurrences: FormItemSetOccurrences = this;
             var dataSet: api.data.DataSet = this.dataSets != null ? this.dataSets[occurrence.getIndex()] : null;
             var newOccurrenceView: FormItemSetOccurrenceView = new FormItemSetOccurrenceView(this.context, occurrence, this.formItemSet,
                 this.parent, dataSet);
             newOccurrenceView.onRemoveButtonClicked((event: RemoveButtonClickedEvent<FormItemSetOccurrenceView>) => {
-                formItemSetOccurrences.doRemoveOccurrence(event.getView(), event.getIndex());
+                this.doRemoveOccurrence(event.getView(), event.getIndex());
             });
-            this.formItemSetOccurrenceViews.push(newOccurrenceView);
             return newOccurrenceView;
-        }
-
-        getFormItemSetOccurrenceView(index: number): FormItemSetOccurrenceView {
-            return this.formItemSetOccurrenceViews[index];
-        }
-
-        getFormItemSetOccurrenceViews(): FormItemSetOccurrenceView[] {
-            return this.formItemSetOccurrenceViews;
         }
 
         getDataSets(): api.data.DataSet[] {

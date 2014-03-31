@@ -25,8 +25,8 @@ module api.form.inputtype.content.relationship {
             this.relationshipTypeName = config.inputConfig.relationshipType;
         }
 
-        availableSizeChanged(newWidth:number, newHeight:number) {
-            console.log("Relationship.availableSizeChanged("+newWidth+"x"+newHeight+")" );
+        availableSizeChanged() {
+            console.log("Relationship.availableSizeChanged("+this.getEl().getWidth()+"x"+this.getEl().getHeight()+")" );
         }
 
         getElement(): api.dom.Element {

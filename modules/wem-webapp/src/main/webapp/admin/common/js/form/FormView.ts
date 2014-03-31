@@ -14,6 +14,8 @@ module api.form {
 
         private previousValidationRecording: ValidationRecording;
 
+        private width:number;
+
         constructor(context: FormContext, form: Form, rootDataSet?: api.data.RootDataSet) {
             super("form-view");
             this.context = context;
@@ -54,6 +56,30 @@ module api.form {
                         }
                     }
                 });
+            });
+
+            api.dom.Window.get().onResized((event: UIEvent) => this.checkSizeChanges(), this);
+            this.onShown(() => this.checkSizeChanges());
+        }
+
+        private checkSizeChanges() {
+            if (this.isVisible() && this.isSizeChanged()) {
+                this.preserveCurrentSize();
+                this.broadcastFormSizeChanged();
+            }
+        }
+
+        private preserveCurrentSize() {
+            this.width = this.getEl().getWidth();
+        }
+
+        private isSizeChanged(): boolean {
+            return this.width != this.getEl().getWidth();
+        }
+
+        private broadcastFormSizeChanged() {
+            this.formItemViews.forEach((formItemView:api.form.FormItemView) => {
+                formItemView.broadcastFormSizeChanged();
             });
         }
 
