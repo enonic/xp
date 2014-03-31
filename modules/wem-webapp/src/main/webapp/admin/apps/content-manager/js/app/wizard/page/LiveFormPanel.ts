@@ -465,6 +465,7 @@ module app.wizard.page {
             }
             if (builder) {
                 builder.setName(componentName);
+                builder.setConfig(new api.data.RootDataSet());
                 var component = builder.build();
                 var componentPath = this.pageRegions.addComponentAfter(component, regionPath, precedingComponent);
                 return component;
