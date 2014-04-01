@@ -8,6 +8,10 @@ module api.form.inputtype.text {
             super(config);
         }
 
+        newInitialValue(): api.data.Value {
+            return new api.data.Value("", api.data.ValueTypes.STRING);
+        }
+
         createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
 
             var inputEl = api.ui.TextInput.middle();
@@ -25,8 +29,7 @@ module api.form.inputtype.text {
         addOnValueChangedListener(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
             var inputEl = <api.ui.TextInput>element;
             inputEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
-                listener(new api.form.inputtype.support.ValueChangedEvent(this.newValue(event.getOldValue()),
-                    this.newValue(event.getNewValue())));
+                listener(new api.form.inputtype.support.ValueChangedEvent(this.newValue(event.getNewValue())));
             });
         }
 

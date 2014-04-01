@@ -61,8 +61,6 @@ module api.app.wizard {
         constructor(params: WizardPanelParams, callback: Function) {
             super("wizard-panel");
 
-            console.log("WizardPanel.constructor started");
-
             this.tabId = params.tabId;
             this.persistedItem = params.persistedItem;
             this.new = params.persistedItem == null;
@@ -108,15 +106,20 @@ module api.app.wizard {
             if (this.persistedItem != null) {
 
                 this.setPersistedItem(this.persistedItem).
-                    done(() => {
+                    then(() => {
 
                         this.postRenderExisting(this.persistedItem).
-                            done(() => {
+                            then(() => {
 
-                                console.log("WizardPanel.constructor finished");
                                 callback();
-                            });
-                    });
+
+                            }).catch((reason) => {
+                                callback();
+                            }).done();
+
+                    }).catch((reason) => {
+                        callback();
+                    }).done();
             }
             else {
                 this.preRenderNew().
@@ -128,20 +131,26 @@ module api.app.wizard {
                                 this.postRenderNew().
                                     then(()=> {
 
-                                        console.log("WizardPanel.constructor finished");
                                         callback();
-                                    });
-                            });
-                    });
+
+                                    }).catch((reason) => {
+                                        callback();
+                                    }).done();
+
+                            }).catch((reason) => {
+                                callback();
+                            }).done();
+
+                    }).catch((reason) => {
+                        callback();
+                    }).done();
             }
 
             this.onRendered((event: api.dom.ElementRenderedEvent) => {
-                console.log("WizardPanel rendered", this);
 
                 this.firstShow = true;
             });
             this.onShown((event: api.dom.ElementShownEvent) => {
-                console.log("WizardPanel shown", this);
 
                 if (this.firstShow) {
                     this.firstShow = false;
@@ -149,7 +158,6 @@ module api.app.wizard {
                 }
 
                 if (this.lastFocusedElement) {
-                    console.log("Last focused element was remembered: ", this.lastFocusedElement);
                     this.lastFocusedElement.focus();
                 }
             });
@@ -177,7 +185,6 @@ module api.app.wizard {
         }
 
         giveInitialFocus() {
-            console.log("WizardPanel.giveInitialFocus");
             this.header.giveFocus();
 
             this.startRememberFocus();
@@ -237,7 +244,6 @@ module api.app.wizard {
         }
 
         renderNew(): Q.Promise<void> {
-            console.log("WizardPanel.renderNew");
 
             var deferred = Q.defer<void>();
             this.renderingNew = true;
@@ -310,28 +316,42 @@ module api.app.wizard {
             if (this.isItemPersisted()) {
                 this.new = false;
                 this.updatePersistedItem().
-                    done((persisted: T) => {
+                    then((persisted: T) => {
                         this.setPersistedItem(persisted).
-                            done(() => {
+                            then(() => {
 
                                 deferred.resolve(persisted);
-                            });
-                    });
+                            }).catch((reason) => {
+                                deferred.reject(reason);
+                            }).done();
+
+                    }).catch((reason) => {
+                        deferred.reject(reason);
+                    }).done();
             }
             else {
                 this.persistNewItem().
-                    done((persistedItem: T)=> {
+                    then((persistedItem: T)=> {
 
                         this.postPersistNewItem(persistedItem).
-                            done(()=> {
+                            then(()=> {
 
                                 this.setPersistedItem(persistedItem).
-                                    done(() => {
-                                        deferred.resolve(persistedItem);
-                                    });
-                            });
+                                    then(() => {
 
-                    });
+                                        deferred.resolve(persistedItem);
+
+                                    }).catch((reason) => {
+                                        deferred.reject(reason);
+                                    }).done();
+
+                            }).catch((reason) => {
+                                deferred.reject(reason);
+                            }).done();
+
+                    }).catch((reason) => {
+                        deferred.reject(reason);
+                    }).done();
             }
 
             this.isChanged = false;

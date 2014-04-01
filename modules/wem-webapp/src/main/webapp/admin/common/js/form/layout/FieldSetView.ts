@@ -1,24 +1,32 @@
 module api.form.layout {
 
+    export interface FieldSetViewConfig {
+
+        context: api.form.FormContext;
+
+        fieldSet: api.form.FieldSet;
+
+        parent: api.form.formitemset.FormItemSetOccurrenceView;
+
+        dataSet?: api.data.DataSet;
+    }
+
     export class FieldSetView extends LayoutView {
 
         private fieldSet: api.form.FieldSet;
 
         private formItemViews: api.form.FormItemView[] = [];
 
-        constructor(context: api.form.FormContext, fieldSet: api.form.FieldSet, parent: api.form.formitemset.FormItemSetOccurrenceView, dataSet?: api.data.DataSet) {
-            super(context, fieldSet, parent, "field-set-view");
-
-            this.fieldSet = fieldSet;
-            this.doLayout(dataSet);
-        }
-
-        getData(): api.data.Data[] {
-            var dataArray: api.data.Data[] = [];
-            this.formItemViews.forEach((formItemView: api.form.FormItemView) => {
-                dataArray = dataArray.concat(formItemView.getData());
+        constructor(config: FieldSetViewConfig) {
+            super(<LayoutViewConfig>{
+                context: config.context,
+                layout: config.fieldSet,
+                parent: config.parent,
+                className: "field-set-view"
             });
-            return dataArray;
+
+            this.fieldSet = config.fieldSet;
+            this.doLayout(config.dataSet);
         }
 
         public getFormItemView(name: string): api.form.FormItemView {
@@ -91,7 +99,7 @@ module api.form.layout {
             return focusGiven;
         }
 
-        validate(silent:boolean = true) : ValidationRecording {
+        validate(silent: boolean = true): ValidationRecording {
 
             var recording = new ValidationRecording();
             this.formItemViews.forEach((formItemView: api.form.FormItemView)=> {

@@ -15,19 +15,19 @@ module LiveEdit.ui {
         }
 
         registerGlobalListeners():void {
-            $(window).on('editParagraphComponent.liveEdit', (event:JQueryEventObject, paragraphComponent) => this.activate(paragraphComponent));
-            $(window).on('leaveParagraphComponent.liveEdit', (event:JQueryEventObject, paragraphComponent) => this.deActivate(paragraphComponent));
+            $(window).on('editTextComponent.liveEdit', (event:JQueryEventObject, textComponent) => this.activate(textComponent));
+            $(window).on('leaveTextComponent.liveEdit', (event:JQueryEventObject, textComponent) => this.deActivate(textComponent));
             $(window).on('editorToolbarButtonClick.liveEdit', (event:JQueryEventObject, tag:string) => document.execCommand(tag, false, null));
         }
 
-        activate(paragraphComponent:LiveEdit.component.Component):void {
-            paragraphComponent.getElement().attr('contenteditable', true);
-            paragraphComponent.getElement().get(0).focus();
+        activate(textComponent:LiveEdit.component.Component):void {
+            textComponent.getElement().attr('contenteditable', true);
+            textComponent.getElement().get(0).focus();
         }
 
-        deActivate(paragraphComponent:LiveEdit.component.Component):void {
-            paragraphComponent.getElement().attr('contenteditable', false);
-            paragraphComponent.getElement().get(0).blur();
+        deActivate(textComponent:LiveEdit.component.Component):void {
+            textComponent.getElement().attr('contenteditable', false);
+            textComponent.getElement().get(0).blur();
         }
 
     }

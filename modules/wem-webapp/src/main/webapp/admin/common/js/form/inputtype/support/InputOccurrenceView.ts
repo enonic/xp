@@ -12,6 +12,8 @@ module api.form.inputtype.support {
 
         private requiredContractBroken: boolean;
 
+        private valueChangedListeners: {(event: api.form.inputtype.ValueChangedEvent) : void}[] = [];
+
         constructor(inputOccurrence: InputOccurrence, baseInputTypeView: BaseInputTypeView<any>, property: api.data.Property) {
             super("input-occurrence-view", inputOccurrence);
 
@@ -20,6 +22,8 @@ module api.form.inputtype.support {
             this.requiredContractBroken = baseInputTypeView.valueBreaksRequiredContract(property != null ? property.getValue() : null);
 
             baseInputTypeView.addOnValueChangedListener(inputElement, (event: api.form.inputtype.support.ValueChangedEvent) => {
+
+                this.notifyValueChanged(event.getNewValue(), this.getIndex());
 
                 var newStateOfRequiredContractBroken = baseInputTypeView.valueBreaksRequiredContract(event.getNewValue());
 
@@ -71,6 +75,23 @@ module api.form.inputtype.support {
 
         giveFocus(): boolean {
             return this.inputElement.giveFocus();
+        }
+
+        onValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
+            this.valueChangedListeners.push(listener);
+        }
+
+        unValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
+            this.valueChangedListeners.filter((currentListener: (event: api.form.inputtype.ValueChangedEvent)=>void) => {
+                return listener == currentListener;
+            });
+        }
+
+        private notifyValueChanged(newValue: api.data.Value, arrayIndex: number) {
+            var event = new api.form.inputtype.ValueChangedEvent(newValue, arrayIndex);
+            this.valueChangedListeners.forEach((listener: (event: api.form.inputtype.ValueChangedEvent)=>void) => {
+                listener(event);
+            });
         }
     }
 }

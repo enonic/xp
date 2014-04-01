@@ -76,13 +76,17 @@ module app.wizard {
                         return this.loadSiteTemplate(siteTemplateToLoad).then((loadedSiteTemplate: api.content.site.template.SiteTemplate) => {
                             this.siteTemplate = loadedSiteTemplate;
 
-                            this.newContentWizardPanelForNew().done((wizardPanel: ContentWizardPanel)=> {
+                            this.newContentWizardPanelForNew().then((wizardPanel: ContentWizardPanel)=> {
                                 deferred.resolve(wizardPanel);
-                            });
+                            }).catch((reason) => {
+                                deferred.reject(reason);
+                            }).done();
                         });
                     });
                 });
-            })
+            }).catch((reason) => {
+                deferred.reject(reason);
+            }).done();
 
             return deferred.promise;
         }
@@ -113,14 +117,18 @@ module app.wizard {
                             return this.loadSiteTemplate(templateKey).then((loadedSiteTemplate: api.content.site.template.SiteTemplate) => {
                                 this.siteTemplate = loadedSiteTemplate;
 
-                                this.newContentWizardPanelForEdit().done((wizardPanel: ContentWizardPanel)=> {
+                                this.newContentWizardPanelForEdit().then((wizardPanel: ContentWizardPanel)=> {
                                     deferred.resolve(wizardPanel);
-                                });
+                                }).catch((reason) => {
+                                    deferred.reject(reason);
+                                }).done();
                             });
                         });
                     });
                 });
-            });
+            }).catch((reason) => {
+                deferred.reject(reason);
+            }).done();
 
             return deferred.promise;
         }
@@ -129,9 +137,11 @@ module app.wizard {
 
             var deferred = Q.defer<api.content.Content>();
             new api.content.GetContentByIdRequest(this.contentId).
-                sendAndParse().done((content: api.content.Content) => {
+                sendAndParse().then((content: api.content.Content) => {
                     deferred.resolve(content);
-                });
+                }).catch((reason) => {
+                    deferred.reject(reason);
+                }).done();
             return deferred.promise;
         }
 
@@ -139,9 +149,11 @@ module app.wizard {
 
             var deferred = Q.defer<api.schema.content.ContentType>();
             new api.schema.content.GetContentTypeByNameRequest(name).
-                sendAndParse().done((contentType: api.schema.content.ContentType)=> {
+                sendAndParse().then((contentType: api.schema.content.ContentType)=> {
                     deferred.resolve(contentType);
-                });
+                }).catch((reason) => {
+                    deferred.reject(reason);
+                }).done();
             return deferred.promise;
         }
 
@@ -154,9 +166,11 @@ module app.wizard {
             }
 
             new api.content.site.GetNearestSiteRequest(contentId).
-                sendAndParse().done((site: api.content.Content)=> {
+                sendAndParse().then((site: api.content.Content)=> {
                     deferred.resolve(site);
-                });
+                }).catch((reason) => {
+                    deferred.reject(reason);
+                }).done();
 
             return deferred.promise;
         }
@@ -170,9 +184,11 @@ module app.wizard {
             }
 
             new api.content.site.template.GetSiteTemplateRequest(key).
-                sendAndParse().done((siteTemplate: api.content.site.template.SiteTemplate)=> {
+                sendAndParse().then((siteTemplate: api.content.site.template.SiteTemplate)=> {
                     deferred.resolve(siteTemplate);
-                });
+                }).catch((reason) => {
+                    deferred.reject(reason);
+                }).done();
 
             return deferred.promise;
         }
@@ -198,9 +214,11 @@ module app.wizard {
 
             new api.content.GetContentByPathRequest(this.contentToEdit.getPath().getParentPath()).
                 sendAndParse().
-                done((content: api.content.Content)=> {
+                then((content: api.content.Content)=> {
                     deferred.resolve(content);
-                });
+                }).catch((reason) => {
+                    deferred.reject(reason);
+                }).done();
 
             return deferred.promise;
         }

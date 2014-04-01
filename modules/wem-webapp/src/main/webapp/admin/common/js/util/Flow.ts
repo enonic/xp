@@ -17,10 +17,12 @@ module api.util {
             var deferred = Q.defer<RESULT>();
 
             this.doExecuteNext(context).
-                done((result: RESULT) => {
+                then((result: RESULT) => {
 
                     deferred.resolve(result);
-                });
+                }).catch((reason) => {
+                    deferred.reject(reason);
+                }).done();
 
             return deferred.promise;
         }

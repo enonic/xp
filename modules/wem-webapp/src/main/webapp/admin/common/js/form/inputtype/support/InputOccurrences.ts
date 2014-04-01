@@ -1,5 +1,15 @@
 module api.form.inputtype.support {
 
+    export interface InputOccurrencesConfig {
+
+        baseInputTypeView: BaseInputTypeView<any>;
+
+        input: api.form.Input;
+
+        properties: api.data.Property[];
+
+    }
+
     /*
      * A kind of a controller, which add/remove InputOccurrenceView-s to the BaseInputTypeView
      */
@@ -11,14 +21,28 @@ module api.form.inputtype.support {
 
         private properties: api.data.Property[];
 
-        constructor(baseInputTypeView: BaseInputTypeView<any>, input: api.form.Input, properties: api.data.Property[]) {
-            super(input, baseInputTypeView, input.getOccurrences());
+        private valueAddedListeners: {(event: api.form.inputtype.ValueAddedEvent) : void}[] = [];
 
-            this.baseInputTypeView = baseInputTypeView;
-            this.input = input;
-            this.properties = properties;
+        private valueChangedListeners: {(event: api.form.inputtype.ValueChangedEvent) : void}[] = [];
 
-            if (properties != null && properties.length > 0) {
+        private valueRemovedListeners: {(event: api.form.inputtype.ValueRemovedEvent) : void}[] = [];
+
+        constructor(config: InputOccurrencesConfig) {
+            super(<FormItemOccurrencesConfig>{
+                formItem: config.input,
+                occurrenceViewContainer: config.baseInputTypeView,
+                allowedOccurrences: config.input.getOccurrences()
+            });
+
+            this.baseInputTypeView = config.baseInputTypeView;
+            this.input = config.input;
+            this.properties = config.properties;
+
+            this.onOccurrenceRemoved((event: api.form.OccurrenceRemovedEvent) => {
+                this.notifyValueRemoved(new api.form.inputtype.ValueRemovedEvent(event.getOccurrence().getIndex()));
+            });
+
+            if (this.properties != null && this.properties.length > 0) {
                 this.constructOccurrencesForData();
             }
             else {
@@ -61,6 +85,13 @@ module api.form.inputtype.support {
             inputOccurrenceView.onRemoveButtonClicked((event: api.form.RemoveButtonClickedEvent<InputOccurrenceView>) => {
                 inputOccurrences.doRemoveOccurrence(event.getView(), event.getIndex());
             });
+
+            inputOccurrenceView.onValueChanged((event: api.form.inputtype.ValueChangedEvent) => {
+                this.notifyValueChanged(event);
+            });
+
+            this.notifyValueAdded(new api.form.inputtype.ValueAddedEvent(new api.data.Value("", api.data.ValueTypes.STRING)));
+
             return inputOccurrenceView;
         }
 
@@ -89,6 +120,54 @@ module api.form.inputtype.support {
                 }
             }
             return focusGiven;
+        }
+
+        onValueAdded(listener: (event: api.form.inputtype.ValueAddedEvent) => void) {
+            this.valueAddedListeners.push(listener);
+        }
+
+        unValueAdded(listener: (event: api.form.inputtype.ValueAddedEvent) => void) {
+            this.valueAddedListeners.filter((currentListener: (event: api.form.inputtype.ValueAddedEvent)=>void) => {
+                return listener == currentListener;
+            });
+        }
+
+        private notifyValueAdded(event: api.form.inputtype.ValueAddedEvent) {
+            this.valueAddedListeners.forEach((listener: (event: api.form.inputtype.ValueAddedEvent)=>void) => {
+                listener(event);
+            });
+        }
+
+        onValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
+            this.valueChangedListeners.push(listener);
+        }
+
+        unValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
+            this.valueChangedListeners.filter((currentListener: (event: api.form.inputtype.ValueChangedEvent)=>void) => {
+                return listener == currentListener;
+            });
+        }
+
+        private notifyValueChanged(event: api.form.inputtype.ValueChangedEvent) {
+            this.valueChangedListeners.forEach((listener: (event: api.form.inputtype.ValueChangedEvent)=>void) => {
+                listener(event);
+            });
+        }
+
+        onValueRemoved(listener: (event: api.form.inputtype.ValueRemovedEvent) => void) {
+            this.valueRemovedListeners.push(listener);
+        }
+
+        unValueRemoved(listener: (event: api.form.inputtype.ValueRemovedEvent) => void) {
+            this.valueRemovedListeners.filter((currentListener: (event: api.form.inputtype.ValueRemovedEvent)=>void) => {
+                return listener == currentListener;
+            });
+        }
+
+        private notifyValueRemoved(event: api.form.inputtype.ValueRemovedEvent) {
+            this.valueRemovedListeners.forEach((listener: (event: api.form.inputtype.ValueRemovedEvent)=>void) => {
+                listener(event);
+            });
         }
 
     }

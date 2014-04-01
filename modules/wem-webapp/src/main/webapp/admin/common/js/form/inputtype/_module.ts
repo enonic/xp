@@ -1,4 +1,7 @@
 ///<reference path='InputTypeViewConfig.ts' />
+///<reference path='ValueAddedEvent.ts' />
+///<reference path='ValueChangedEvent.ts' />
+///<reference path='ValueRemovedEvent.ts' />
 ///<reference path='InputValidationRecording.ts' />
 ///<reference path='InputValidityChangedEvent.ts' />
 ///<reference path='InputTypeView.ts' />

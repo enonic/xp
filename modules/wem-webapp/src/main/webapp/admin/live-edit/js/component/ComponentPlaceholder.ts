@@ -23,7 +23,7 @@ module LiveEdit.component {
                 placeholder = new LiveEdit.component.PartPlaceholder();
             } else if (type == Type.LAYOUT) {
                 placeholder = new LiveEdit.component.LayoutPlaceholder();
-            } else if (type == Type.PARAGRAPH) {
+            } else if (type == Type.TEXT) {
                 placeholder = new LiveEdit.component.TextPlaceholder();
             } else {
                 var emptyComponentIcon = new api.dom.DivEl();

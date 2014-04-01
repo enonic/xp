@@ -124,7 +124,7 @@ module app.wizard.page {
             console.log("LiveFormPanel.loadPageIfNotLoaded() this.needsReload = " + this.pageNeedsReload);
             var deferred = Q.defer<void>();
 
-            this.initialize().done(() => {
+            this.initialize().then(() => {
 
                 if (this.pageNeedsReload && !this.pageLoading) {
 
@@ -140,15 +140,18 @@ module app.wizard.page {
                             deferred.resolve(null);
                         });
 
-                    }).catch(()=> {
-                        console.log("Error while loading page: ", arguments);
-                        deferred.reject(arguments);
+                    }).catch((reason)=> {
+                        deferred.reject(reason);
                     }).done();
                 }
                 else {
                     deferred.resolve(null);
                 }
-            });
+
+            }).catch((reason) => {
+                deferred.reject(reason);
+            }).done();
+            ;
 
             return deferred.promise;
         }
@@ -200,7 +203,7 @@ module app.wizard.page {
 
             this.pageUrl = this.baseUrl + content.getContentId().toString();
 
-            this.initialize().done(() => {
+            this.initialize().then(() => {
 
                 if (!this.pageSkipReload) {
 
@@ -234,18 +237,22 @@ module app.wizard.page {
                     this.doLoadPage().
                         then(() => {
 
-                            this.loadPageDescriptor().done(() => {
+                            this.loadPageDescriptor().then(() => {
 
                                 this.setupContextWindow();
                                 deferred.resolve(null);
-                            });
-                        }).fail(()=> {
-                            console.log("Error while loading page: ", arguments);
-                            deferred.reject(null);
+
+                            }).catch((reason) => {
+                                deferred.reject(reason);
+                            }).done();
+                        }).catch((reason)=> {
+                            deferred.reject(reason);
                         }).done();
                 }
 
-            });
+            }).catch((reason) => {
+                deferred.reject(reason);
+            }).done();
 
             return deferred.promise;
         }
@@ -258,10 +265,12 @@ module app.wizard.page {
             }
             else {
                 new GetPageDescriptorByKeyRequest(this.pageTemplate.getDescriptorKey()).sendAndParse().
-                    done((pageDescriptor: PageDescriptor) => {
+                    then((pageDescriptor: PageDescriptor) => {
                         this.pageDescriptor = pageDescriptor;
                         deferred.resolve(null);
-                    });
+                    }).catch((reason) => {
+                        deferred.reject(reason);
+                    }).done();
             }
 
             return deferred.promise;
@@ -326,7 +335,7 @@ module app.wizard.page {
             var defaultPageTemplate = this.defaultModels.getPageTemplate();
 
             new GetPageDescriptorByKeyRequest(defaultPageTemplate.getDescriptorKey()).sendAndParse().
-                done((pageDescriptor: PageDescriptor) => {
+                then((pageDescriptor: PageDescriptor) => {
 
                     this.pageTemplate = defaultPageTemplate;
                     this.pageConfig = defaultPageTemplate.getConfig();
@@ -336,7 +345,9 @@ module app.wizard.page {
                     this.contextWindow.setPage(this.content, this.pageTemplate, pageDescriptor);
 
                     deferred.resolve(null);
-                });
+                }).catch((reason) => {
+                    deferred.reject(reason);
+                }).done();
 
             return deferred.promise;
         }
@@ -369,7 +380,7 @@ module app.wizard.page {
             this.liveEditListen();
         }
 
-        resizeFrameContainer(width:number) {
+        resizeFrameContainer(width: number) {
             this.frameContainer.getEl().setWidthPx(width);
         }
 
@@ -384,20 +395,12 @@ module app.wizard.page {
 
         public getRegions(): PageRegions {
 
-            if (!this.contextWindow) {
-                return this.content.isPage() ? this.content.getPage().getRegions() : null;
-            }
-
             return this.pageRegions;
         }
 
         public getConfig(): RootDataSet {
 
-            if (!this.contextWindow) {
-                return this.content.isPage() ? this.content.getPage().getConfig() : null;
-            }
-
-            return this.contextWindow.getPageConfig();
+            return this.pageConfig;
         }
 
         getDefaultImageDescriptor(): ImageDescriptor {
@@ -455,13 +458,14 @@ module app.wizard.page {
             case "layout":
                 builder = new LayoutComponentBuilder();
                 break;
-            case "paragraph":
-                //TODO: Implement paragraph
+            case "text":
+                //TODO: Implement text
                 builder = null;
                 break;
             }
             if (builder) {
                 builder.setName(componentName);
+                builder.setConfig(new api.data.RootDataSet());
                 var component = builder.build();
                 var componentPath = this.pageRegions.addComponentAfter(component, regionPath, precedingComponent);
                 return component;
@@ -574,7 +578,7 @@ module app.wizard.page {
 
                     var componentPath: ComponentPath = ComponentPath.fromString(component.getComponentPath());
 
-                    if( this.pageTemplate ) {
+                    if (this.pageTemplate) {
 
                         this.pageRegions.removeComponent(componentPath);
                         this.contextWindow.clearSelection();

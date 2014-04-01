@@ -1,5 +1,14 @@
 module api.form {
 
+    export interface FormItemOccurrencesConfig {
+
+        formItem: FormItem;
+
+        occurrenceViewContainer: api.dom.Element;
+
+        allowedOccurrences?: Occurrences;
+    }
+
     export class FormItemOccurrences<V extends FormItemOccurrenceView> {
 
         private occurrences: FormItemOccurrence<V>[] = [];
@@ -16,10 +25,10 @@ module api.form {
 
         private occurrenceRemovedListeners: {(event: OccurrenceRemovedEvent):void}[] = [];
 
-        constructor(formItem: FormItem, occurrenceViewContainer: api.dom.Element, allowedOccurrences?: Occurrences) {
-            this.formItem = formItem;
-            this.occurrenceViewContainer = occurrenceViewContainer;
-            this.allowedOccurrences = allowedOccurrences;
+        constructor(config: FormItemOccurrencesConfig) {
+            this.formItem = config.formItem;
+            this.occurrenceViewContainer = config.occurrenceViewContainer;
+            this.allowedOccurrences = config.allowedOccurrences;
         }
 
         getAllowedOccurrences(): Occurrences {
@@ -47,13 +56,13 @@ module api.form {
             });
         }
 
-        private notifyOccurrenceAdded(occurrence: FormItemOccurrence<V>, occurrenceView:V) {
+        private notifyOccurrenceAdded(occurrence: FormItemOccurrence<V>, occurrenceView: V) {
             this.occurrenceAddedListeners.forEach((listener: (event: OccurrenceAddedEvent)=>void)=> {
                 listener.call(this, new OccurrenceAddedEvent(occurrence, occurrenceView))
             });
         }
 
-        private notifyOccurrenceRemoved(occurrence: FormItemOccurrence<V>, occurrenceView:V) {
+        private notifyOccurrenceRemoved(occurrence: FormItemOccurrence<V>, occurrenceView: V) {
             this.occurrenceRemovedListeners.forEach((listener: (event: OccurrenceRemovedEvent)=>void)=> {
                 listener.call(this, new OccurrenceRemovedEvent(occurrence, occurrenceView))
             });
@@ -213,7 +222,7 @@ module api.form {
         }
 
         getOccurrenceViewById(elementId: string): V {
-            for (var i = 0 ; i < this.occurrenceViews.length ; i++ ) {
+            for (var i = 0; i < this.occurrenceViews.length; i++) {
                 if (this.occurrenceViews[i].getId() == elementId) {
                     return this.occurrenceViews[i];
                 }

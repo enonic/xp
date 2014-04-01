@@ -20,6 +20,12 @@ module api.form.inputtype.combobox {
 
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
 
+        private valueAddedListeners: {(event: api.form.inputtype.ValueAddedEvent) : void}[] = [];
+
+        private valueChangedListeners: {(event: api.form.inputtype.ValueChangedEvent) : void}[] = [];
+
+        private valueRemovedListeners: {(event: api.form.inputtype.ValueRemovedEvent) : void}[] = [];
+
         constructor(config: api.form.inputtype.InputTypeViewConfig<ComboBoxConfig>) {
             super("combo-box");
             this.addClass("input-type-view");
@@ -27,8 +33,8 @@ module api.form.inputtype.combobox {
             this.comboBoxConfig = config.inputConfig;
         }
 
-        availableSizeChanged(newWidth:number, newHeight:number) {
-            console.log("ComboBox.availableSizeChanged("+newWidth+"x"+newHeight+")" );
+        availableSizeChanged(newWidth: number, newHeight: number) {
+            console.log("ComboBox.availableSizeChanged(" + newWidth + "x" + newHeight + ")");
         }
 
         getElement(): api.dom.Element {
@@ -37,6 +43,10 @@ module api.form.inputtype.combobox {
 
         isManagingAdd(): boolean {
             return true;
+        }
+
+        newInitialValue(): api.data.Value {
+            return null;
         }
 
         layout(input: api.form.Input, properties: api.data.Property[]) {
@@ -74,10 +84,17 @@ module api.form.inputtype.combobox {
             comboBox.onValueChanged((event: api.ui.selector.combobox.ComboBoxValueChangedEvent<string>) => {
                 this.comboBox.setFilterArgs({searchString: event.getNewValue()});
             });
-            comboBox.onOptionSelected(() => {
+            comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<string>) => {
+
+                var value = new api.data.Value(event.getItem().displayValue, api.data.ValueTypes.STRING);
+                this.notifyValueAdded(value);
+
                 this.validate(false);
             });
             comboBox.addSelectedOptionRemovedListener((removed: api.ui.selector.combobox.SelectedOption<string>) => {
+
+                this.notifyValueRemoved(removed.getIndex());
+
                 this.validate(false);
             });
 
@@ -145,6 +162,56 @@ module api.form.inputtype.combobox {
 
             this.previousValidationRecording = recording;
             return recording;
+        }
+
+        onValueAdded(listener: (event: api.form.inputtype.ValueAddedEvent) => void) {
+            this.valueAddedListeners.push(listener);
+        }
+
+        unValueAdded(listener: (event: api.form.inputtype.ValueAddedEvent) => void) {
+            this.valueAddedListeners.filter((currentListener: (event: api.form.inputtype.ValueAddedEvent)=>void) => {
+                return listener == currentListener;
+            });
+        }
+
+        private notifyValueAdded(value: api.data.Value) {
+            var event = new api.form.inputtype.ValueAddedEvent(value);
+            this.valueAddedListeners.forEach((listener: (event: api.form.inputtype.ValueAddedEvent)=>void) => {
+                listener(event);
+            });
+        }
+
+        onValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
+            this.valueChangedListeners.push(listener);
+        }
+
+        unValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
+            this.valueChangedListeners.filter((currentListener: (event: api.form.inputtype.ValueChangedEvent)=>void) => {
+                return listener == currentListener;
+            });
+        }
+
+        private notifyValueChanged(event: api.form.inputtype.ValueChangedEvent) {
+            this.valueChangedListeners.forEach((listener: (event: api.form.inputtype.ValueChangedEvent)=>void) => {
+                listener(event);
+            });
+        }
+
+        onValueRemoved(listener: (event: api.form.inputtype.ValueRemovedEvent) => void) {
+            this.valueRemovedListeners.push(listener);
+        }
+
+        unValueRemoved(listener: (event: api.form.inputtype.ValueRemovedEvent) => void) {
+            this.valueRemovedListeners.filter((currentListener: (event: api.form.inputtype.ValueRemovedEvent)=>void) => {
+                return listener == currentListener;
+            });
+        }
+
+        private notifyValueRemoved(index: number) {
+            var event = new api.form.inputtype.ValueRemovedEvent(index);
+            this.valueRemovedListeners.forEach((listener: (event: api.form.inputtype.ValueRemovedEvent)=>void) => {
+                listener(event);
+            });
         }
 
         onValidityChanged(listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) {

@@ -51,7 +51,7 @@ module app.wizard {
             if (!this.doneHandledContent) {
 
                 this.doHandleUpdateContent(context).
-                    done(() => {
+                    then(() => {
 
                         this.doneHandledContent = true;
 
@@ -59,25 +59,33 @@ module app.wizard {
                             done((contentFromNext: api.content.Content) => {
                                 deferred.resolve(contentFromNext);
                             });
-                    });
+                    }).catch((reason) => {
+                        deferred.reject(reason);
+                    }).done();
             }
             else if (!this.doneHandledSite) {
 
                 this.doHandleUpdateSite(context).
-                    done(()=> {
+                    then(()=> {
 
                         this.doneHandledSite = true;
 
                         this.doExecuteNext(context).
-                            done((contentFromNext: api.content.Content) => {
+                            then((contentFromNext: api.content.Content) => {
                                 deferred.resolve(contentFromNext);
-                            });
-                    });
+
+                            }).catch((reason) => {
+                                deferred.reject(reason);
+                            }).done();
+
+                    }).catch((reason) => {
+                        deferred.reject(reason);
+                    }).done();
             }
             else if (!this.doneHandledPage) {
 
                 this.doHandlePage(context).
-                    done(() => {
+                    then(() => {
 
                         this.doneHandledPage = true;
 
@@ -85,7 +93,9 @@ module app.wizard {
                             done((contentFromNext: api.content.Content) => {
                                 deferred.resolve(contentFromNext);
                             });
-                    });
+                    }).catch((reason) => {
+                        deferred.reject(reason);
+                    }).done();
             }
             else {
 
@@ -101,11 +111,13 @@ module app.wizard {
 
             this.updateContentRequestProducer.call(this.getThisOfProducer()).
                 sendAndParse().
-                done((content: api.content.Content) => {
+                then((content: api.content.Content) => {
 
                     context.content = content;
                     deferred.resolve(null);
-                });
+                }).catch((reason) => {
+                    deferred.reject(reason);
+                }).done();
 
             return deferred.promise;
         }
@@ -118,11 +130,13 @@ module app.wizard {
             if (updateSiteRequest != null) {
                 updateSiteRequest.
                     sendAndParse().
-                    done((content: api.content.Content) => {
+                    then((content: api.content.Content) => {
 
                         context.content = content;
                         deferred.resolve(null);
-                    });
+                    }).catch((reason) => {
+                        deferred.reject(reason);
+                    }).done();
             }
             else {
                 deferred.resolve(null);
@@ -139,11 +153,13 @@ module app.wizard {
 
             if (createPageRequest != null) {
                 createPageRequest.sendAndParse().
-                    done((content: api.content.Content) => {
+                    then((content: api.content.Content) => {
 
                         context.content = content;
                         deferred.resolve(null);
-                    });
+                    }).catch((reason) => {
+                        deferred.reject(reason);
+                    }).done();
             }
             else {
                 deferred.resolve(null);

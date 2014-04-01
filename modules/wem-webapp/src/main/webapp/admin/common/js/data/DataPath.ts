@@ -2,9 +2,9 @@ module api.data {
 
     export class DataPath {
 
-        public static ROOT:DataPath = new DataPath([], true);
-
         private static ELEMENT_DIVIDER: string = ".";
+
+        public static ROOT: DataPath = new DataPath([], true);
 
         private absolute: boolean;
 
@@ -60,7 +60,12 @@ module api.data {
                 }
             });
             this.elements = elements;
-            this.refString = (this.absolute ? DataPath.ELEMENT_DIVIDER : "") + this.elements.join(DataPath.ELEMENT_DIVIDER);
+            if (this.elementCount() == 0) {
+                this.refString = this.absolute ? DataPath.ELEMENT_DIVIDER : "";
+            }
+            else {
+                this.refString = (this.absolute ? DataPath.ELEMENT_DIVIDER : "") + this.elements.join(DataPath.ELEMENT_DIVIDER);
+            }
         }
 
         newWithoutFirstElement(): DataPath {
@@ -115,11 +120,11 @@ module api.data {
             return this.absolute;
         }
 
-        asRelative() : DataPath {
+        asRelative(): DataPath {
             return new DataPath(this.elements, false);
         }
 
-        isRoot() : boolean {
+        isRoot(): boolean {
             return this.elementCount() == 0;
         }
 
@@ -166,6 +171,7 @@ module api.data {
         static fromDataId(dataId: DataId) {
             return new DataPathElement(dataId.getName(), dataId.getArrayIndex());
         }
+
         static fromString(str: string) {
             if (str.indexOf("[") == -1) {
                 return new DataPathElement(str, 0);

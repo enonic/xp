@@ -87,8 +87,8 @@ module api.content {
 
             this.send().then((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
                 deferred.resolve(this.fromJsonToContent(response.getResult()));
-            }).catch((response: api.rest.RequestError) => {
-                deferred.reject(null);
+            }).catch((reason) => {
+                deferred.reject(reason);
             }).done();
 
             return deferred.promise;

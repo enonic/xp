@@ -11,7 +11,6 @@ import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.core.entity.dao.CreateNodeArguments;
 import com.enonic.wem.core.entity.dao.NodeJcrDao;
 import com.enonic.wem.core.index.IndexService;
-import com.enonic.wem.util.Exceptions;
 
 import static com.enonic.wem.core.entity.dao.CreateNodeArguments.newCreateNodeArgs;
 
@@ -33,19 +32,10 @@ public class CreateNodeCommand
     public CreateNodeResult execute()
     {
         this.params.validate();
-
-        try
-        {
-            return doExecute();
-        }
-        catch ( final Exception e )
-        {
-            throw Exceptions.newRutime( "Error creating node" ).withCause( e );
-        }
+        return doExecute();
     }
 
     private CreateNodeResult doExecute()
-        throws Exception
     {
         final CreateNodeArguments createNodeArguments = newCreateNodeArgs().
             creator( UserKey.superUser() ).
@@ -59,7 +49,7 @@ public class CreateNodeCommand
 
         final NodeJcrDao nodeJcrDao = new NodeJcrDao( session );
         final Node persistedNode = nodeJcrDao.createNode( createNodeArguments );
-        session.save();
+        JcrSessionHelper.save( session );
 
         indexService.indexNode( persistedNode );
 

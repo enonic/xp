@@ -237,11 +237,11 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             }
         });
 
-        $(window).on('selectParagraphComponent.liveEdit', () => {
-            $(REGION_SELECTOR).sortable('option', 'cancel', LiveEdit.component.TypeConfiguration[LiveEdit.component.Type.PARAGRAPH].cssSelector);
+        $(window).on('selectTextComponent.liveEdit', () => {
+            $(REGION_SELECTOR).sortable('option', 'cancel', LiveEdit.component.TypeConfiguration[LiveEdit.component.Type.TEXT].cssSelector);
         });
 
-        $(window).on('leaveParagraphComponent.liveEdit', () => {
+        $(window).on('leaveTextComponent.liveEdit', () => {
             $(REGION_SELECTOR).sortable('option', 'cancel', '');
         });
     }

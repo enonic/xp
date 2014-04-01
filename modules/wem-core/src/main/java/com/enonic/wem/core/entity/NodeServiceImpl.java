@@ -1,5 +1,11 @@
 package com.enonic.wem.core.entity;
 
+import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import javax.inject.Inject;
 import javax.jcr.Session;
 
@@ -34,215 +40,227 @@ public class NodeServiceImpl
     @Override
     public CreateNodeResult create( CreateNodeParams params )
     {
-        try {
-            Session session = this.jcrSessionProvider.login();
-            try
-            {
-                return CreateNodeCommand.create().
-                    params( params ).
-                    indexService( this.indexService ).
-                    session( session ).
-                    build().
-                    execute();
-            }
-            finally
-            {
-                session.logout();
-            }
-        }
-        catch ( final Exception e )
+        final Lock locker = concurrencyLock.getLock( jcrSessionProvider );
+        locker.lock();
+
+        final Session session = getNewSession();
+        try
         {
-            throw Exceptions.newRutime( "Error creating node" ).withCause( e );
+            return CreateNodeCommand.create().
+                params( params ).
+                indexService( this.indexService ).
+                session( session ).
+                build().
+                execute();
+        }
+        finally
+        {
+            session.logout();
+            locker.unlock();
         }
     }
 
     @Override
     public UpdateNodeResult update( final UpdateNodeParams params )
     {
-        try {
-            Session session = this.jcrSessionProvider.login();
-            try
-            {
-                return UpdateNodeCommand.create().
-                    params( params ).
-                    indexService( this.indexService ).
-                    session( session ).
-                    build().
-                    execute();
-            }
-            finally
-            {
-                session.logout();
-            }
-        }
-        catch ( final Exception e )
+        final Lock locker = concurrencyLock.getLock( jcrSessionProvider );
+        locker.lock();
+
+        final Session session = getNewSession();
+        try
         {
-            throw Exceptions.newRutime( "Error updating node" ).withCause( e );
+            return UpdateNodeCommand.create().
+                params( params ).
+                indexService( this.indexService ).
+                session( session ).
+                build().
+                execute();
         }
+        finally
+        {
+            session.logout();
+            locker.unlock();
+        }
+
     }
 
     @Override
     public boolean rename( final RenameNodeParams params )
     {
-        try {
-            Session session = this.jcrSessionProvider.login();
-            try
-            {
-                return new RenameNodeCommand().params( params ).indexService( this.indexService ).session( session ).execute();
-            }
-            finally
-            {
-                session.logout();
-            }
-        }
-        catch ( final Exception e )
+        final Lock locker = concurrencyLock.getLock( jcrSessionProvider );
+        locker.lock();
+
+        final Session session = getNewSession();
+        try
         {
-            throw Exceptions.newRutime( "Error renaming node" ).withCause( e );
+            return new RenameNodeCommand().params( params ).indexService( this.indexService ).session( session ).execute();
+        }
+        finally
+        {
+            session.logout();
+            locker.unlock();
         }
     }
 
     @Override
     public Node getById( GetNodeByIdParams params )
     {
-        try {
-            Session session = this.jcrSessionProvider.login();
-            try
-            {
-                return new GetNodeByIdCommand().params( params ).session( session ).execute();
-            }
-            finally
-            {
-                session.logout();
-            }
-        }
-        catch ( final Exception e )
+        final Session session = getNewSession();
+        try
         {
-            throw Exceptions.newRutime( "Error getting node" ).withCause( e );
+            return new GetNodeByIdCommand().params( params ).session( session ).execute();
+        }
+        finally
+        {
+            session.logout();
         }
     }
 
     @Override
     public Nodes getByIds( GetNodesByIdsParams params )
     {
-        try {
-            Session session = this.jcrSessionProvider.login();
-            try
-            {
-                return new GetNodesByIdsCommand().params( params ).session( session ).execute();
-            }
-            finally
-            {
-                session.logout();
-            }
-        }
-        catch ( final Exception e )
+        final Session session = getNewSession();
+        try
         {
-            throw Exceptions.newRutime( "Error getting node" ).withCause( e );
+            return new GetNodesByIdsCommand().params( params ).session( session ).execute();
+        }
+        finally
+        {
+            session.logout();
         }
     }
 
     @Override
     public Node getByPath( GetNodeByPathParams params )
     {
-        try {
-            Session session = this.jcrSessionProvider.login();
-            try
-            {
-                return new GetNodeByPathCommand().params( params ).session( session ).execute();
-            }
-            finally
-            {
-                session.logout();
-            }
-        }
-        catch ( final Exception e )
+        final Session session = getNewSession();
+        try
         {
-            throw Exceptions.newRutime( "Error getting node" ).withCause( e );
+            return new GetNodeByPathCommand().params( params ).session( session ).execute();
+        }
+        finally
+        {
+            session.logout();
         }
     }
 
     @Override
     public Nodes getByPaths( GetNodesByPathsParams params )
     {
-        try {
-            Session session = this.jcrSessionProvider.login();
-            try
-            {
-                return new GetNodesByPathsCommand().params( params ).session( session ).execute();
-            }
-            finally
-            {
-                session.logout();
-            }
-        }
-        catch ( final Exception e )
+        final Session session = getNewSession();
+        try
         {
-            throw Exceptions.newRutime( "Error getting node" ).withCause( e );
+            return new GetNodesByPathsCommand().params( params ).session( session ).execute();
+        }
+        finally
+        {
+            session.logout();
         }
     }
 
     @Override
     public Nodes getByParent( GetNodesByParentParams params )
     {
-        try {
-            Session session = this.jcrSessionProvider.login();
-            try
-            {
-                return new GetNodesByParentCommand().params( params ).session( session ).execute();
-            }
-            finally
-            {
-                session.logout();
-            }
-        }
-        catch ( final Exception e )
+        final Session session = getNewSession();
+        try
         {
-            throw Exceptions.newRutime( "Error getting node" ).withCause( e );
+            return new GetNodesByParentCommand().params( params ).session( session ).execute();
+        }
+        finally
+        {
+            session.logout();
         }
     }
 
     @Override
     public Node deleteById( DeleteNodeByIdParams params )
     {
-        try {
-            Session session = this.jcrSessionProvider.login();
-            try
-            {
-                return new DeleteNodeByIdCommand().params( params ).indexService( this.indexService ).session( session ).execute();
-            }
-            finally
-            {
-                session.logout();
-            }
-        }
-        catch ( final Exception e )
+        final Lock locker = concurrencyLock.getLock( jcrSessionProvider );
+        locker.lock();
+
+        final Session session = getNewSession();
+        try
         {
-            throw Exceptions.newRutime( "Error deleting node" ).withCause( e );
+            return new DeleteNodeByIdCommand().params( params ).indexService( this.indexService ).session( session ).execute();
+        }
+        finally
+        {
+            session.logout();
+            locker.unlock();
         }
     }
 
     @Override
     public Node deleteByPath( DeleteNodeByPathParams params )
     {
-        try {
-            Session session = this.jcrSessionProvider.login();
-            try
-            {
-                return DeleteNodeByPathCommand.create().
-                    params( params ).
-                    indexService( this.indexService ).
-                    session( session ).
-                    build().
-                    execute();
-            }
-            finally
-            {
-                session.logout();
-            }
+        final Lock locker = concurrencyLock.getLock( jcrSessionProvider );
+        locker.lock();
+
+        final Session session = getNewSession();
+        try
+        {
+            return DeleteNodeByPathCommand.create().
+                params( params ).
+                indexService( this.indexService ).
+                session( session ).
+                build().
+                execute();
+        }
+        finally
+        {
+            session.logout();
+            locker.unlock();
+        }
+    }
+
+    private Session getNewSession()
+    {
+        try
+        {
+            return this.jcrSessionProvider.login();
         }
         catch ( final Exception e )
         {
-            throw Exceptions.newRutime( "Error deleting node" ).withCause( e );
+            throw Exceptions.newRutime( "Error creating new JCR session" ).withCause( e );
+        }
+    }
+
+    private static GenericConcurrencyLock<JcrSessionProvider> concurrencyLock = GenericConcurrencyLock.create();
+
+    private static class GenericConcurrencyLock<T>
+    {
+        private final Map<T, WeakReference<Lock>> lockMap = new HashMap<>();
+
+        private static <T> GenericConcurrencyLock<T> create()
+        {
+            return new GenericConcurrencyLock<>();
+        }
+
+        Lock getLock( T key )
+        {
+            Lock lock;
+            synchronized ( lockMap )
+            {
+                lock = getLockFromMap( key );
+                if ( lock == null )
+                {
+                    lock = new ReentrantLock();
+                    WeakReference<Lock> value = new WeakReference<Lock>( lock );
+                    lockMap.put( key, value );
+                }
+            }
+
+            return lock;
+        }
+
+        private Lock getLockFromMap( T key )
+        {
+            WeakReference<Lock> weakReference = lockMap.get( key );
+            if ( weakReference == null )
+            {
+                return null;
+            }
+            return weakReference.get();
         }
     }
 }

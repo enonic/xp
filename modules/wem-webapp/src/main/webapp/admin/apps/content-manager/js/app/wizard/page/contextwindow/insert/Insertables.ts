@@ -20,15 +20,15 @@ module app.wizard.page.contextwindow.insert {
             setDescription("Drag and drop to insert a layout component").
             setIconCls("layout");
 
-        public static PARAGRAPH: Insertable = new Insertable().
-            setName("paragraph").
-            setDisplayName("Paragraph").
-            setDescription("Drag and drop to insert a paragraph component").
-            setIconCls("paragraph");
+        public static TEXT: Insertable = new Insertable().
+            setName("text").
+            setDisplayName("Text").
+            setDescription("Drag and drop to insert a text component").
+            setIconCls("text");
 
 
         public static ALL: Insertable[] = [Insertables.IMAGE, Insertables.PART, Insertables.LAYOUT,
-            Insertables.PARAGRAPH];
+            Insertables.TEXT];
 
     }
 }

@@ -42,7 +42,7 @@ module app.wizard {
             if (!this.doneHandledContent) {
 
                 this.doHandleCreateContent(context).
-                    done(() => {
+                    then(() => {
 
                         this.doneHandledContent = true;
 
@@ -50,12 +50,14 @@ module app.wizard {
                             done((contentFromNext: api.content.Content) => {
                                 deferred.resolve(contentFromNext);
                             });
-                    });
+                    }).catch((reason) => {
+                        deferred.reject(reason);
+                    }).done();
             }
             else if (!this.doneHandledSite) {
 
                 this.doHandleCreateSite(context).
-                    done(()=> {
+                    then(()=> {
 
                         this.doneHandledSite = true;
 
@@ -63,7 +65,9 @@ module app.wizard {
                             done((contentFromNext: api.content.Content) => {
                                 deferred.resolve(contentFromNext);
                             });
-                    });
+                    }).catch((reason) => {
+                        deferred.reject(reason);
+                    }).done();
             }
             else {
 
@@ -81,11 +85,13 @@ module app.wizard {
 
                 this.createContentRequestProducer.call(this.getThisOfProducer()).
                     sendAndParse().
-                    done((content: api.content.Content) => {
+                    then((content: api.content.Content) => {
 
                         context.content = content;
                         deferred.resolve(null);
-                    });
+                    }).catch((reason) => {
+                        deferred.reject(reason);
+                    }).done();
             }
             else {
                 deferred.resolve(null);
@@ -104,11 +110,13 @@ module app.wizard {
             if (createSiteRequest != null) {
                 createSiteRequest.
                     sendAndParse().
-                    done((content: api.content.Content) => {
+                    then((content: api.content.Content) => {
 
                         context.content = content;
                         deferred.resolve(null);
-                    });
+                    }).catch((reason) => {
+                        deferred.reject(reason);
+                    }).done();
             }
             else {
                 deferred.resolve(null);

@@ -43,18 +43,23 @@ module app.wizard.site {
 
             new api.content.site.template.GetSiteTemplateRequest(site.getTemplateKey()).
                 sendAndParse().
-                done((siteTemplate: api.content.site.template.SiteTemplate) => {
+                then((siteTemplate: api.content.site.template.SiteTemplate) => {
 
                     this.templateView.setValue(siteTemplate, this.contentType);
 
                     this.loadModules(site).
-                        done((modules: api.module.Module[]) => {
+                        then((modules: api.module.Module[]) => {
 
                             this.layoutModules(modules);
 
                             deferred.resolve(null);
-                        });
-                });
+                        }).catch((reason) => {
+                            deferred.reject(reason);
+                        }).done();
+
+                }).catch((reason) => {
+                    deferred.reject(reason);
+                }).done();
 
             return deferred.promise;
         }

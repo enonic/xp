@@ -162,7 +162,7 @@ module api.form {
             return null;
         }
 
-        getOriginalData(): api.data.RootDataSet {
+        getData(): api.data.RootDataSet {
             return this.rootDataSet;
         }
 
@@ -172,18 +172,6 @@ module api.form {
                 attachments = attachments.concat(formItemView.getAttachments());
             });
             return attachments;
-        }
-
-        getData(): api.data.RootDataSet {
-            var rootDataSet = new api.data.RootDataSet();
-            this.formItemViews.forEach((formItemView: FormItemView) => {
-
-                formItemView.getData().forEach((data: api.data.Data) => {
-                    rootDataSet.addData(data)
-                });
-
-            });
-            return rootDataSet;
         }
 
         giveFocus(): boolean {

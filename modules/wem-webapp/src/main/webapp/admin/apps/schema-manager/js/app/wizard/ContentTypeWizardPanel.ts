@@ -109,7 +109,7 @@ module app.wizard {
 
             updateContentTypeRequest.
                 sendAndParse().
-                done((contentType: api.schema.content.ContentType) => {
+                then((contentType: api.schema.content.ContentType) => {
 
                     new app.wizard.ContentTypeUpdatedEvent().fire();
                     api.notify.showFeedback('Content type was saved!');
@@ -117,7 +117,9 @@ module app.wizard {
                     new api.schema.SchemaUpdatedEvent(contentType).fire();
 
                     deferred.resolve(contentType);
-                });
+                }).catch((reason) => {
+                    deferred.reject(reason);
+                }).done();
 
             return deferred.promise;
         }
@@ -129,7 +131,7 @@ module app.wizard {
             } else {
                 return !api.util.isStringsEqual(persistedContentType.getName(), this.contentTypeWizardHeader.getName())
                     || !api.util.isStringsEqual(api.util.removeCarriageChars(this.persistedConfig),
-                    api.util.removeCarriageChars(this.contentTypeForm.getFormData().xml));
+                        api.util.removeCarriageChars(this.contentTypeForm.getFormData().xml));
             }
         }
     }

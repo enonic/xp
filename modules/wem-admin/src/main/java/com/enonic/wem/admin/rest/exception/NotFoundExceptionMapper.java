@@ -18,6 +18,7 @@ public final class NotFoundExceptionMapper
     @Override
     public Response toResponse( final NotFoundException cause )
     {
+        cause.printStackTrace();
         return Response.status( Response.Status.NOT_FOUND ).type( MediaType.APPLICATION_JSON_TYPE ).entity(
             new ErrorJson( cause.getMessage() ) ).build();
     }

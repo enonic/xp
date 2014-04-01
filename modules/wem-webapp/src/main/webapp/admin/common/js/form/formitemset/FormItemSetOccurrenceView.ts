@@ -5,6 +5,19 @@ module api.form.formitemset {
     import DataSet = api.data.DataSet;
     import support = api.form.inputtype.support;
 
+    export interface FormItemSetOccurrenceViewConfig {
+
+        context: api.form.FormContext;
+
+        formItemSetOccurrence: FormItemSetOccurrence;
+
+        formItemSet: api.form.FormItemSet;
+
+        parent: FormItemSetOccurrenceView;
+
+        dataSet: DataSet
+    }
+
     export class FormItemSetOccurrenceView extends api.form.FormItemOccurrenceView {
 
         private context: api.form.FormContext;
@@ -31,15 +44,14 @@ module api.form.formitemset {
 
         private previousValidationRecording: api.form.ValidationRecording;
 
-        constructor(context: api.form.FormContext, formItemSetOccurrence: FormItemSetOccurrence, formItemSet: api.form.FormItemSet,
-                    parent: FormItemSetOccurrenceView, dataSet: DataSet) {
-            super("form-item-set-occurrence-view", formItemSetOccurrence);
-            this.context = context;
-            this.formItemSetOccurrence = formItemSetOccurrence;
-            this.formItemSet = formItemSet;
-            this.parent = parent;
-            this.constructedWithData = dataSet != null;
-            this.dataSet = dataSet;
+        constructor(config: FormItemSetOccurrenceViewConfig) {
+            super("form-item-set-occurrence-view", config.formItemSetOccurrence);
+            this.context = config.context;
+            this.formItemSetOccurrence = config.formItemSetOccurrence;
+            this.formItemSet = config.formItemSet;
+            this.parent = config.parent;
+            this.constructedWithData = config.dataSet != null;
+            this.dataSet = config.dataSet;
             this.doLayout();
             this.refresh();
         }
@@ -197,17 +209,6 @@ module api.form.formitemset {
             }
 
             return null;
-        }
-
-        getDataSet(): DataSet {
-
-            var dataSet = new DataSet(this.formItemSet.getName());
-            this.formItemViews.forEach((formItemView: api.form.FormItemView) => {
-                formItemView.getData().forEach((data: api.data.Data) => {
-                    dataSet.addData(data);
-                });
-            });
-            return dataSet;
         }
 
         getAttachments(): api.content.attachment.Attachment[] {

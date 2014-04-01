@@ -2,7 +2,7 @@ module api.rest {
 
     export class RequestError extends Response {
 
-        private statusCode:number
+        private statusCode:number;
 
         private statusText:string;
 

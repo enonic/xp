@@ -31,6 +31,14 @@ module api.form.inputtype.content.image {
 
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
 
+        private layoutInProgress: boolean;
+
+        private valueAddedListeners: {(event: api.form.inputtype.ValueAddedEvent) : void}[] = [];
+
+        private valueChangedListeners: {(event: api.form.inputtype.ValueChangedEvent) : void}[] = [];
+
+        private valueRemovedListeners: {(event: api.form.inputtype.ValueRemovedEvent) : void}[] = [];
+
         constructor(config: api.form.inputtype.InputTypeViewConfig<ImageSelectorConfig>) {
             super("image-selector");
             this.addClass("input-type-view");
@@ -73,30 +81,20 @@ module api.form.inputtype.content.image {
             })
         }
 
-        availableSizeChanged(newWidth:number, newHeight:number) {
-            console.log("ImageSelector.availableSizeChanged("+newWidth+"x"+newHeight+")" );
+        availableSizeChanged(newWidth: number, newHeight: number) {
+            console.log("ImageSelector.availableSizeChanged(" + newWidth + "x" + newHeight + ")");
+        }
+
+        newInitialValue(): api.data.Value {
+            return null;
         }
 
         layout(input: api.form.Input, properties: api.data.Property[]) {
 
+            this.layoutInProgress = true;
             this.input = input;
 
             this.comboBox = this.createComboBox(input);
-
-            if (properties != null) {
-                properties.forEach((property: api.data.Property) => {
-                    new api.content.GetContentByIdRequest(new api.content.ContentId(property.getString()))
-                        .setExpand(api.content.ContentResourceRequest.EXPAND_SUMMARY)
-                        .send()
-                        .done((jsonResponse: api.rest.JsonResponse<api.content.json.ContentSummaryJson>) => {
-                            var contentSummary = new api.content.ContentSummary(jsonResponse.getResult());
-                            this.comboBox.selectOption(<api.ui.selector.Option<api.content.ContentSummary>>{
-                                value: contentSummary.getId(),
-                                displayValue: contentSummary
-                            });
-                        });
-                });
-            }
 
             this.uploadButton = new api.ui.Button("");
             this.uploadButton.addClass("upload-button");
@@ -115,22 +113,55 @@ module api.form.inputtype.content.image {
             });
 
 
-
             var comboboxWrapper = new api.dom.DivEl("combobox-wrapper");
             comboboxWrapper.appendChild(this.comboBox);
             this.appendChild(comboboxWrapper);
-
             this.appendChild(this.uploadButton);
-
             this.appendChild(this.selectedOptionsView);
+
+            this.doLoadContent(properties).
+                then((contents: api.content.ContentSummary[]) => {
+
+                    contents.forEach((content: api.content.ContentSummary) => {
+                        this.comboBox.selectOption(<api.ui.selector.Option<api.content.ContentSummary>>{
+                            value: content.getId(),
+                            displayValue: content
+                        });
+                    });
+
+                    this.layoutInProgress = false;
+
+                }).fail(()=> {
+
+                    this.layoutInProgress = false;
+
+                }).done();
+        }
+
+        private doLoadContent(properties: api.data.Property[]): Q.Promise<api.content.ContentSummary[]> {
+
+            var deferred = Q.defer<api.content.ContentSummary[]>();
+
+            if (!properties) {
+                deferred.resolve([]);
+            }
+            else {
+                var contentIds: api.content.ContentId[] = [];
+                properties.forEach((property: api.data.Property) => {
+                    contentIds.push(new api.content.ContentId(property.getString()));
+                });
+                new api.content.GetContentSummaryByIds(contentIds).get().done((result: api.content.ContentSummary[]) => {
+                    deferred.resolve(result);
+                });
+            }
+
+            return deferred.promise;
         }
 
         getValues(): api.data.Value[] {
             var values: api.data.Value[] = [];
             this.comboBox.getSelectedOptions().forEach((option: api.ui.selector.Option<api.content.ContentSummary>) => {
-
                 var value = new api.data.Value(option.value, api.data.ValueTypes.CONTENT_ID);
-
                 values.push(value);
             });
             return values;
@@ -164,6 +195,56 @@ module api.form.inputtype.content.image {
 
             this.previousValidationRecording = recording;
             return recording;
+        }
+
+        onValueAdded(listener: (event: api.form.inputtype.ValueAddedEvent) => void) {
+            this.valueAddedListeners.push(listener);
+        }
+
+        unValueAdded(listener: (event: api.form.inputtype.ValueAddedEvent) => void) {
+            this.valueAddedListeners.filter((currentListener: (event: api.form.inputtype.ValueAddedEvent)=>void) => {
+                return listener == currentListener;
+            });
+        }
+
+        private notifyValueAdded(value: api.data.Value) {
+            var event = new api.form.inputtype.ValueAddedEvent(value);
+            this.valueAddedListeners.forEach((listener: (event: api.form.inputtype.ValueAddedEvent)=>void) => {
+                listener(event);
+            });
+        }
+
+        onValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
+            this.valueChangedListeners.push(listener);
+        }
+
+        unValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
+            this.valueChangedListeners.filter((currentListener: (event: api.form.inputtype.ValueChangedEvent)=>void) => {
+                return listener == currentListener;
+            });
+        }
+
+        private notifyValueChanged(event: api.form.inputtype.ValueChangedEvent) {
+            this.valueChangedListeners.forEach((listener: (event: api.form.inputtype.ValueChangedEvent)=>void) => {
+                listener(event);
+            });
+        }
+
+        onValueRemoved(listener: (event: api.form.inputtype.ValueRemovedEvent) => void) {
+            this.valueRemovedListeners.push(listener);
+        }
+
+        unValueRemoved(listener: (event: api.form.inputtype.ValueRemovedEvent) => void) {
+            this.valueRemovedListeners.filter((currentListener: (event: api.form.inputtype.ValueRemovedEvent)=>void) => {
+                return listener == currentListener;
+            });
+        }
+
+        private notifyValueRemoved(index: number) {
+            var event = new api.form.inputtype.ValueRemovedEvent(index);
+            this.valueRemovedListeners.forEach((listener: (event: api.form.inputtype.ValueRemovedEvent)=>void) => {
+                listener(event);
+            });
         }
 
         onValidityChanged(listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) {
@@ -241,6 +322,8 @@ module api.form.inputtype.content.image {
                     this.uploadButton.setEnabled(true);
                 }
 
+                this.notifyValueRemoved(removed.getIndex());
+
                 this.validate(false);
             });
 
@@ -250,6 +333,11 @@ module api.form.inputtype.content.image {
             comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {
                 if (this.comboBox.maximumOccurrencesReached()) {
                     this.uploadButton.setEnabled(false);
+                }
+
+                if (!this.layoutInProgress) {
+                    var value = new api.data.Value(event.getItem().displayValue.getContentId(), api.data.ValueTypes.CONTENT_ID);
+                    this.notifyValueAdded(value);
                 }
 
                 this.validate(false);

@@ -1,5 +1,18 @@
 module api.form.formitemset {
 
+    export interface FormItemSetOccurrencesConfig {
+
+        context: api.form.FormContext;
+
+        occurrenceViewContainer: api.dom.Element;
+
+        formItemSet: api.form.FormItemSet;
+
+        parent: FormItemSetOccurrenceView;
+
+        parentDataSet: api.data.DataSet;
+    }
+
     /*
      * A kind of a controller, which adds/removes FormItemSetOccurrenceView-s
      */
@@ -11,38 +24,32 @@ module api.form.formitemset {
 
         private parent: FormItemSetOccurrenceView;
 
+        private parentDataSet: api.data.DataSet;
+
         private dataSets: api.data.DataSet[];
 
         private occurrencesCollapsed: boolean = false;
 
         private formItemSetOccurrenceViews: api.form.formitemset.FormItemSetOccurrenceView[] = [];
 
-        constructor(context: api.form.FormContext, occurrenceViewContainer: api.dom.Element, formItemSet: api.form.FormItemSet,
-                    parent: FormItemSetOccurrenceView, dataSets: api.data.DataSet[]) {
-            super(formItemSet, occurrenceViewContainer, formItemSet.getOccurrences());
-            this.context = context;
-            this.formItemSet = formItemSet;
-            this.parent = parent;
-            this.dataSets = dataSets;
-            if (dataSets != null && dataSets.length > 0) {
+        constructor(config: FormItemSetOccurrencesConfig) {
+            super(<FormItemOccurrencesConfig>{
+                formItem: config.formItemSet,
+                occurrenceViewContainer: config.occurrenceViewContainer,
+                allowedOccurrences: config.formItemSet.getOccurrences()
+            });
+            this.context = config.context;
+            this.formItemSet = config.formItemSet;
+            this.parent = config.parent;
+            this.parentDataSet = config.parentDataSet;
+
+            this.dataSets = this.parentDataSet.getDataSetsByName(this.formItemSet.getName());
+
+            if (this.dataSets && this.dataSets.length > 0) {
                 this.constructOccurrencesForData();
             }
             else {
                 this.constructOccurrencesForNoData();
-            }
-        }
-
-        constructOccurrencesForNoData() {
-            if (this.getAllowedOccurrences().getMinimum() > 0) {
-
-                for (var i = 0; i < this.getAllowedOccurrences().getMinimum(); i++) {
-                    this.addOccurrence(this.createNewOccurrence(this, i));
-                }
-            }
-            else {
-                if (this.context.getShowEmptyFormItemSetOccurrences()) {
-                    this.addOccurrence(this.createNewOccurrence(this, 0));
-                }
             }
         }
 
@@ -52,6 +59,22 @@ module api.form.formitemset {
 
         getAllowedOccurrences(): api.form.Occurrences {
             return this.formItemSet.getOccurrences();
+        }
+
+        constructOccurrencesForNoData() {
+
+            var minimumOccurrences = this.getAllowedOccurrences().getMinimum();
+            if (minimumOccurrences > 0) {
+
+                for (var i = 0; i < minimumOccurrences; i++) {
+                    this.addOccurrence(this.createNewOccurrence(this, i));
+                }
+            }
+            else {
+                if (this.context.getShowEmptyFormItemSetOccurrences()) {
+                    this.addOccurrence(this.createNewOccurrence(this, 0));
+                }
+            }
         }
 
         private constructOccurrencesForData() {
@@ -75,9 +98,19 @@ module api.form.formitemset {
         createNewOccurrenceView(occurrence: FormItemSetOccurrence): FormItemSetOccurrenceView {
 
             var formItemSetOccurrences: FormItemSetOccurrences = this;
-            var dataSet: api.data.DataSet = this.dataSets != null ? this.dataSets[occurrence.getIndex()] : null;
-            var newOccurrenceView: FormItemSetOccurrenceView = new FormItemSetOccurrenceView(this.context, occurrence, this.formItemSet,
-                this.parent, dataSet);
+            var dataSet: api.data.DataSet = this.dataSets[occurrence.getIndex()];
+            if( !dataSet ) {
+                dataSet = new api.data.DataSet(this.formItemSet.getName());
+                this.dataSets.push(dataSet);
+                this.parentDataSet.addData(dataSet);
+            }
+            var newOccurrenceView = new FormItemSetOccurrenceView(<FormItemSetOccurrenceViewConfig>{
+                context: this.context,
+                formItemSetOccurrence: occurrence,
+                formItemSet: this.formItemSet,
+                parent: this.parent,
+                dataSet: dataSet
+            });
             newOccurrenceView.onRemoveButtonClicked((event: RemoveButtonClickedEvent<FormItemSetOccurrenceView>) => {
                 formItemSetOccurrences.doRemoveOccurrence(event.getView(), event.getIndex());
             });
@@ -91,15 +124,6 @@ module api.form.formitemset {
 
         getFormItemSetOccurrenceViews(): FormItemSetOccurrenceView[] {
             return this.formItemSetOccurrenceViews;
-        }
-
-        getDataSets(): api.data.DataSet[] {
-            var dataSets: api.data.DataSet[] = [];
-            this.getOccurrenceViews().forEach((occurrenceView: FormItemSetOccurrenceView) => {
-                var dataSet = occurrenceView.getDataSet();
-                dataSets.push(dataSet);
-            });
-            return dataSets;
         }
 
         getAttachments(): api.content.attachment.Attachment[] {
