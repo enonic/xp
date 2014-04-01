@@ -123,8 +123,8 @@ module app.wizard.page.contextwindow {
             this.selectPanel(this.inspectionPanel);
         }
 
-        public inspectPage(page: Content, pageTemplate: PageTemplate, pageDescriptor: PageDescriptor) {
-            this.inspectionPanel.inspectPage(page, pageTemplate, pageDescriptor);
+        public inspectPage(page: Content, pageTemplate: PageTemplate, pageDescriptor: PageDescriptor, config:api.data.RootDataSet) {
+            this.inspectionPanel.inspectPage(page, pageTemplate, pageDescriptor, config);
             this.selectPanel(this.inspectionPanel);
         }
 
@@ -143,8 +143,8 @@ module app.wizard.page.contextwindow {
             this.selectPanel(this.insertablesPanel);
         }
 
-        setPage(page: Content, pageTemplate: PageTemplate, pageDescriptor: PageDescriptor) {
-            this.inspectionPanel.setPage(page, pageTemplate, pageDescriptor);
+        setPage(page: Content, pageTemplate: PageTemplate, pageDescriptor: PageDescriptor, config:api.data.RootDataSet) {
+            this.inspectionPanel.setPage(page, pageTemplate, pageDescriptor, config);
         }
 
         getPageTemplate(): PageTemplateKey {
@@ -153,6 +153,14 @@ module app.wizard.page.contextwindow {
 
         getPageConfig(): RootDataSet {
             return this.inspectionPanel.getPageConfig();
+        }
+
+        onPageTemplateChanged(listener: {(event: inspect.PageTemplateChangedEvent): void;}) {
+            this.inspectionPanel.onPageTemplateChanged(listener);
+        }
+
+        unPageTemplateChanged(listener: {(event: inspect.PageTemplateChangedEvent): void;}) {
+            this.inspectionPanel.unPageTemplateChanged(listener);
         }
 
         setPinned(value: boolean) {

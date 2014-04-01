@@ -76,8 +76,8 @@ module app.wizard.page.contextwindow.inspect {
             this.showInspectionPanel(this.noSelectionPanel);
         }
 
-        public inspectPage(page: Content, pageTemplate: PageTemplate, pageDescriptor: PageDescriptor) {
-            this.pageInspectionPanel.setPage(page, pageTemplate, pageDescriptor);
+        public inspectPage(page: Content, pageTemplate: PageTemplate, pageDescriptor: PageDescriptor, config: api.data.RootDataSet) {
+            this.pageInspectionPanel.setPage(page, pageTemplate, pageDescriptor, config);
             this.showInspectionPanel(this.pageInspectionPanel);
         }
 
@@ -110,8 +110,8 @@ module app.wizard.page.contextwindow.inspect {
             }
         }
 
-        setPage(page: Content, pageTemplate: PageTemplate, pageDescriptor: PageDescriptor) {
-            this.pageInspectionPanel.setPage(page, pageTemplate, pageDescriptor);
+        setPage(page: Content, pageTemplate: PageTemplate, pageDescriptor: PageDescriptor, config: api.data.RootDataSet) {
+            this.pageInspectionPanel.setPage(page, pageTemplate, pageDescriptor, config);
         }
 
         getPageTemplate(): PageTemplateKey {
@@ -120,6 +120,14 @@ module app.wizard.page.contextwindow.inspect {
 
         getPageConfig(): RootDataSet {
             return this.pageInspectionPanel.getPageConfig();
+        }
+
+        onPageTemplateChanged(listener: {(event: PageTemplateChangedEvent): void;}) {
+            this.pageInspectionPanel.onPageTemplateChanged(listener);
+        }
+
+        unPageTemplateChanged(listener: {(event: PageTemplateChangedEvent): void;}) {
+            this.pageInspectionPanel.unPageTemplateChanged(listener);
         }
     }
 }

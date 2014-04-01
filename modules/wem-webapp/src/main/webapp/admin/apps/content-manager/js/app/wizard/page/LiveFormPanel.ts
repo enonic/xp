@@ -151,7 +151,6 @@ module app.wizard.page {
             }).catch((reason) => {
                 deferred.reject(reason);
             }).done();
-            ;
 
             return deferred.promise;
         }
@@ -342,7 +341,7 @@ module app.wizard.page {
                     this.pageRegions = defaultPageTemplate.getRegions();
                     this.pageDescriptor = pageDescriptor;
 
-                    this.contextWindow.setPage(this.content, this.pageTemplate, pageDescriptor);
+                    this.contextWindow.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
 
                     deferred.resolve(null);
                 }).catch((reason) => {
@@ -373,7 +372,40 @@ module app.wizard.page {
                 defaultModels: this.defaultModels
             });
 
-            this.contextWindow.setPage(this.content, this.pageTemplate, this.pageDescriptor);
+            this.contextWindow.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
+
+            this.contextWindow.onPageTemplateChanged((event: app.wizard.page.contextwindow.inspect.PageTemplateChangedEvent) => {
+
+                var selectedPageTemplate = event.getPageTemplate();
+                if (selectedPageTemplate) {
+
+                    this.pageRegions = this.resolvePageRegions(this.content, this.pageTemplate);
+                    this.pageConfig = this.resolvePageConfig(this.content, this.pageTemplate);
+
+                    new api.content.page.GetPageTemplateByKeyRequest(selectedPageTemplate.getKey()).
+                        setSiteTemplateKey(this.siteTemplate.getKey()).
+                        sendAndParse().
+                        done((pageTemplate: PageTemplate) => {
+
+                            this.pageTemplate = pageTemplate;
+
+                            new GetPageDescriptorByKeyRequest(pageTemplate.getDescriptorKey()).
+                                sendAndParse().
+                                done((pageDescriptor: PageDescriptor) => {
+
+                                    this.pageDescriptor = pageDescriptor;
+                                    this.contextWindow.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
+                                });
+                        });
+                }
+                else {
+                    this.pageTemplate = null;
+                    this.pageDescriptor = null;
+                    this.pageRegions = this.defaultModels.getPageTemplate().getRegions();
+                    this.pageConfig = this.defaultModels.getPageTemplate().getConfig();
+                    this.contextWindow.setPage(this.content, null, null, this.pageConfig);
+                }
+            });
 
             this.appendChild(this.contextWindow);
 
@@ -429,7 +461,7 @@ module app.wizard.page {
         }
 
         private onPageSelected() {
-            this.contextWindow.inspectPage(this.content, this.pageTemplate, this.pageDescriptor);
+            this.contextWindow.inspectPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
         }
 
         private onContentSelected(contentIdStr: string) {
