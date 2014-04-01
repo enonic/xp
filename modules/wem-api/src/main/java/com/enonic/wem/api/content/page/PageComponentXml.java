@@ -3,6 +3,8 @@ package com.enonic.wem.api.content.page;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.enonic.wem.api.content.page.image.ImageComponent;
 import com.enonic.wem.api.content.page.image.ImageComponentXml;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
@@ -35,8 +37,10 @@ public abstract class PageComponentXml
     public void to( final PageComponent.Builder builder )
     {
         builder.name( new ComponentName( this.name ) );
-        builder.descriptor( toDescriptorKey( this.descriptor ) );
-
+        if ( StringUtils.isNotBlank( this.descriptor ) )
+        {
+            builder.descriptor( toDescriptorKey( this.descriptor ) );
+        }
         RootDataSet config = new RootDataSet();
         if ( this.config != null )
         {
