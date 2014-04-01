@@ -29,7 +29,10 @@ public abstract class PageComponentXml
     public void from( final PageComponent partComponent )
     {
         this.name = partComponent.getName().toString();
-        this.descriptor = partComponent.getDescriptor().toString();
+        if ( partComponent.getDescriptor() != null )
+        {
+            this.descriptor = partComponent.getDescriptor().toString();
+        }
         this.config = new RootDataSetXml();
         this.config.from( partComponent.getConfig() );
     }
