@@ -14,6 +14,7 @@ module api.content.page.layout {
         constructor(loader: LayoutDescriptorLoader) {
             super(new RichComboBoxBuilder<LayoutDescriptor>().
                 setIdentifierMethod("getKey").
+                setOptionDisplayValueViewer(new LayoutDescriptorViewer()).
                 setSelectedOptionsView(new LayoutDescriptorSelectedOptionsView()).
                 setLoader(loader).
                 setMaximumOccurrences(1));
@@ -38,16 +39,6 @@ module api.content.page.layout {
             };
             this.comboBox.clearSelection();
             this.comboBox.selectOption(option);
-        }
-
-        optionFormatter(row: number, cell: number, descriptor: LayoutDescriptor, columnDef: any,
-                        dataContext: Option<LayoutDescriptor>): string {
-
-            var namesView = new api.app.NamesView()
-                .setMainName(descriptor.getDisplayName())
-                .setSubName(descriptor.getName().toString());
-
-            return namesView.toString();
         }
 
         getSelectedOptions(): Option<LayoutDescriptor>[] {
