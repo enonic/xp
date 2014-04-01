@@ -45,16 +45,15 @@
   }
 
   &[data-live-edit-type="text"] {
+    .icon-type;
     &:before {
-      content: "\e006";
+      font-family: 'icomoon' !important;
     }
     &[contenteditable="true"] {
       &:before {
         content: none;
       }
     }
-
-    background-color: transparent;
   }
 
   .upload-new-image-button {

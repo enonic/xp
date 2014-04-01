@@ -21,7 +21,6 @@
 .live-edit-font-icon-part,
 .live-edit-font-icon-layout,
 .live-edit-font-icon-image,
-.live-edit-font-icon-text,
 .live-edit-font-icon-spinner,
 .live-edit-font-icon-close,
 .live-edit-font-icon-drop-allowed,
@@ -36,6 +35,20 @@
     text-transform: none;
     line-height: 1;
     -webkit-font-smoothing: antialiased;
+}
+
+.live-edit-font-icon-text
+{
+  .icon-type;
+  font-family: 'icomoon' !important;
+  color: #555;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
 }
 
 .live-edit-font-icon-region:before {
@@ -56,9 +69,7 @@
 .live-edit-font-icon-image:before {
     content: "\e005";
 }
-.live-edit-font-icon-text:before {
-    content: "\e006";
-}
+
 .live-edit-font-icon-spinner:before {
     content: "\e007";
 }
