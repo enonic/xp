@@ -76,7 +76,8 @@
     vertical-align: middle;
     margin: @defaultHeight/2-30px auto 0 auto !important;
     padding: 0;
-    display: inline-block;
+    display: block;
+    float: right;
     box-sizing: content-box;
     height: 35px;
     width: 35px;
@@ -101,6 +102,12 @@
     }
     .selected-options {
       display: none !important;
+    }
+
+    &.image-placeholder {
+      display: block;
+      margin-right: 36px;
+      width: auto;
     }
   }
 
