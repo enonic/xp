@@ -22,7 +22,7 @@ public class EntityPatternIndexConfigJson
 
     public EntityPatternIndexConfigJson( final EntityPatternIndexConfig indexConfig )
     {
-        super( indexConfig.getAnalyzer(), indexConfig.getCollection(), indexConfig.isDecideFulltextByValueType() );
+        super( indexConfig.getAnalyzer(), indexConfig.getCollection(), indexConfig.isDecideFulltextByValueType(), indexConfig.skip() );
         this.configs = translateToJson( indexConfig.getPathIndexConfigs() );
         this.defaultConfig = new PropertyIndexConfigJson( indexConfig.getDefaultConfig() );
     }
@@ -33,9 +33,10 @@ public class EntityPatternIndexConfigJson
                                          @JsonProperty("collection") final String collection, //
                                          @JsonProperty("configs") final Set<PathIndexConfigJson> configs,  //
                                          @JsonProperty("decideFulltextByValueType") final boolean decideFulltextByValueType, //
+                                         @JsonProperty("skip") final boolean skip, //
                                          @JsonProperty("defaultConfig") final PropertyIndexConfigJson defaultConfig )
     {
-        super( analyzer, collection, decideFulltextByValueType );
+        super( analyzer, collection, decideFulltextByValueType, skip );
         this.configs = configs;
         this.defaultConfig = defaultConfig;
     }
@@ -65,13 +66,11 @@ public class EntityPatternIndexConfigJson
                 DataPath.from( config.getDataPath() ) ).build() );
         }
 
-        builder.defaultConfig( this.defaultConfig.toPropertyIndexConfig() );
-
-        builder.collection( this.getCollection() );
-
-        builder.analyzer( this.getAnalyzer() );
-
-        builder.decideFulltextByValueType( this.isDecideFulltextByValueType() );
+        builder.defaultConfig( this.defaultConfig.toPropertyIndexConfig() ).
+            collection( this.getCollection() ).
+            analyzer( this.getAnalyzer() ).
+            decideFulltextByValueType( this.isDecideFulltextByValueType() ).
+            skip( this.isSkip() );
 
         return builder.build();
     }

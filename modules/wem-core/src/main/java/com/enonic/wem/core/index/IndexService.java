@@ -110,6 +110,11 @@ public class IndexService
 
     public void indexNode( final Node node )
     {
+        if ( node.getEntityIndexConfig().skip() )
+        {
+            return;
+        }
+
         NodeIndexDocumentFactory nodeIndexDocumentFactory = new NodeIndexDocumentFactory();
 
         final Collection<IndexDocument> indexDocuments = nodeIndexDocumentFactory.create( node );
