@@ -2,6 +2,7 @@ module api.ui.selector.combobox {
 
     import Option = api.ui.selector.Option;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
+    import OptionFilterInputValueChangedEvent = api.ui.selector.OptionFilterInputValueChangedEvent;
     import DropdownHandle = api.ui.selector.DropdownHandle;
     import Viewer = api.ui.Viewer;
 
@@ -47,7 +48,7 @@ module api.ui.selector.combobox {
 
         private optionSelectedListeners: {(event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>):void}[] = [];
 
-        private valueChangedListeners: {(event: ComboBoxValueChangedEvent<OPTION_DISPLAY_VALUE>):void}[] = [];
+        private optionFilterInputValueChangedListeners: {(event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>):void}[] = [];
 
         /**
          * Indicates if combobox is currently has focus
@@ -62,7 +63,7 @@ module api.ui.selector.combobox {
             this.hideComboBoxWhenMaxReached = config.hideComboBoxWhenMaxReached;
             if (config.selectedOptionsView != null) {
                 this.selectedOptionsCtrl = new SelectedOptionsCtrl(config.selectedOptionsView,
-                    config.maximumOccurrences != null ? config.maximumOccurrences : 0);
+                        config.maximumOccurrences != null ? config.maximumOccurrences : 0);
                 this.multipleSelections = true;
             }
             if (config.iconUrl) {
@@ -243,7 +244,9 @@ module api.ui.selector.combobox {
         }
 
         clearSelection(ignoreEmpty: boolean = false) {
-            var optionsMap = this.getDisplayedOptions().map((x) => { return x.value; }).join();
+            var optionsMap = this.getDisplayedOptions().map((x) => {
+                return x.value;
+            }).join();
 
             var selectedOptions: Option<OPTION_DISPLAY_VALUE>[] = this.selectedOptionsCtrl.getOptions();
             selectedOptions.forEach((option: Option<OPTION_DISPLAY_VALUE>) => {
@@ -363,7 +366,7 @@ module api.ui.selector.combobox {
 
             this.input.onValueChanged((event: api.ui.ValueChangedEvent) => {
 
-                this.notifyValueChanged(event.getOldValue(), event.getNewValue());
+                this.notifyOptionFilterInputValueChanged(event.getOldValue(), event.getNewValue());
                 if (this.isDropdownShown()) {
                     this.showDropdown();
                 }
@@ -395,38 +398,38 @@ module api.ui.selector.combobox {
                 }
 
                 switch (event.which) {
-                    case 38: // up
-                        if (this.comboBoxDropdown.hasActiveRow()) {
-                            this.comboBoxDropdown.navigateToPreviousRow();
-                            $(this.input.getHTMLElement()).attr('readonly', true);
-                        }
-                        event.stopPropagation();
-                        event.preventDefault();
-                        break;
-                    case 40: // down
-                        if (this.comboBoxDropdown.hasActiveRow()) {
-                            this.comboBoxDropdown.navigateToNextRow();
-                        } else {
-                            this.comboBoxDropdown.nagivateToFirstRow();
-                        }
+                case 38: // up
+                    if (this.comboBoxDropdown.hasActiveRow()) {
+                        this.comboBoxDropdown.navigateToPreviousRow();
                         $(this.input.getHTMLElement()).attr('readonly', true);
+                    }
+                    event.stopPropagation();
+                    event.preventDefault();
+                    break;
+                case 40: // down
+                    if (this.comboBoxDropdown.hasActiveRow()) {
+                        this.comboBoxDropdown.navigateToNextRow();
+                    } else {
+                        this.comboBoxDropdown.nagivateToFirstRow();
+                    }
+                    $(this.input.getHTMLElement()).attr('readonly', true);
+                    event.stopPropagation();
+                    event.preventDefault();
+                    break;
+                case 13: // Enter
+                    this.selectRow(this.comboBoxDropdown.getActiveRow());
+                    this.input.setValue("");
+                    break;
+                case 32: // Spacebar
+                    if ($(this.input.getHTMLElement()).attr('readonly') == 'readonly') {
+                        this.comboBoxDropdown.toggleRowSelection(this.comboBoxDropdown.getActiveRow());
                         event.stopPropagation();
                         event.preventDefault();
-                        break;
-                    case 13: // Enter
-                        this.selectRow(this.comboBoxDropdown.getActiveRow());
-                        this.input.setValue("");
-                        break;
-                    case 32: // Spacebar
-                        if ($(this.input.getHTMLElement()).attr('readonly') == 'readonly') {
-                            this.comboBoxDropdown.toggleRowSelection(this.comboBoxDropdown.getActiveRow());
-                            event.stopPropagation();
-                            event.preventDefault();
-                        }
-                        break;
-                    case 27: // Esc
-                        this.hideDropdown();
-                        break;
+                    }
+                    break;
+                case 27: // Esc
+                    this.hideDropdown();
+                    break;
                 }
 
                 this.input.giveFocus();
@@ -456,7 +459,9 @@ module api.ui.selector.combobox {
         }
 
         private handleMultipleSelectionChanged(event: DropdownGridMultipleSelectionEvent) {
-            var optionsMap = this.getDisplayedOptions().map((x) => { return x.value; }).join();
+            var optionsMap = this.getDisplayedOptions().map((x) => {
+                return x.value;
+            }).join();
 
             var filteredOptions: Option<OPTION_DISPLAY_VALUE>[] = [];
             var selectedOptions: Option<OPTION_DISPLAY_VALUE>[] = this.selectedOptionsCtrl.getOptions();
@@ -468,12 +473,16 @@ module api.ui.selector.combobox {
             });
 
             if (filteredOptions.length === event.getRows().length) {
-                var currentOptions = filteredOptions.map((x) => { return x.value; }).sort();
+                var currentOptions = filteredOptions.map((x) => {
+                    return x.value;
+                }).sort();
                 var eventOptions = [];
                 event.getRows().forEach((row: number) => {
                     eventOptions.push(this.comboBoxDropdown.getGrid().getOptionByRow(row));
                 });
-                eventOptions = eventOptions.map((x) => { return x.value; }).sort();
+                eventOptions = eventOptions.map((x) => {
+                    return x.value;
+                }).sort();
                 if (currentOptions.join() === eventOptions.join()) {
                     this.applySelectionsButton.hide();
                     return;
@@ -533,20 +542,20 @@ module api.ui.selector.combobox {
             });
         }
 
-        onValueChanged(listener: (event: ComboBoxValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) {
-            this.valueChangedListeners.push(listener);
+        onOptionFilterInputValueChanged(listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) {
+            this.optionFilterInputValueChangedListeners.push(listener);
         }
 
-        unValueChanged(listener: (event: ComboBoxValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) {
-            this.valueChangedListeners.filter((currentListener: (event: ComboBoxValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
+        unOptionFilterInputValueChanged(listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) {
+            this.optionFilterInputValueChangedListeners.filter((currentListener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
                 return listener != currentListener;
             });
         }
 
-        private notifyValueChanged(oldValue: string, newValue: string) {
-            var event = new ComboBoxValueChangedEvent<OPTION_DISPLAY_VALUE>(oldValue, newValue,
+        private notifyOptionFilterInputValueChanged(oldValue: string, newValue: string) {
+            var event = new OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>(oldValue, newValue,
                 this.comboBoxDropdown.getGrid().getElement());
-            this.valueChangedListeners.forEach((listener: (event: ComboBoxValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
+            this.optionFilterInputValueChangedListeners.forEach((listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
                 listener(event);
             });
         }

@@ -81,7 +81,7 @@ module api.form.inputtype.combobox {
                 hideComboBoxWhenMaxReached: true
             });
 
-            comboBox.onValueChanged((event: api.ui.selector.combobox.ComboBoxValueChangedEvent<string>) => {
+            comboBox.onOptionFilterInputValueChanged((event: api.ui.selector.OptionFilterInputValueChangedEvent<string>) => {
                 this.comboBox.setFilterArgs({searchString: event.getNewValue()});
             });
             comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<string>) => {

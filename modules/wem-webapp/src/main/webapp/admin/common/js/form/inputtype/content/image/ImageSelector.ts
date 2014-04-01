@@ -327,7 +327,7 @@ module api.form.inputtype.content.image {
                 this.validate(false);
             });
 
-            comboBox.onValueChanged((event: api.ui.selector.combobox.ComboBoxValueChangedEvent<api.content.ContentSummary>) => {
+            comboBox.onOptionFilterInputValueChanged((event: api.ui.selector.OptionFilterInputValueChangedEvent<api.content.ContentSummary>) => {
                 this.loadOptions(event.getNewValue());
             });
             comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {

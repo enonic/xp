@@ -2,6 +2,7 @@ module api.ui.selector.dropdown {
 
     import Option = api.ui.selector.Option;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
+    import OptionFilterInputValueChangedEvent = api.ui.selector.OptionFilterInputValueChangedEvent;
     import DropdownHandle = api.ui.selector.DropdownHandle;
     import Viewer = api.ui.Viewer;
     import DefaultOptionDisplayValueViewer = api.ui.selector.DefaultOptionDisplayValueViewer;
@@ -40,7 +41,7 @@ module api.ui.selector.dropdown {
 
         private optionSelectedListeners: {(event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>):void}[] = [];
 
-        private valueChangedListeners: {(event: DropdownValueChangedEvent<OPTION_DISPLAY_VALUE>):void}[] = [];
+        private optionFilterInputValueChangedListeners: {(event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>):void}[] = [];
 
         /**
          * Indicates if Dropdown currently has focus
@@ -272,7 +273,7 @@ module api.ui.selector.dropdown {
 
             this.input.onValueChanged((event: api.ui.ValueChangedEvent) => {
 
-                this.notifyValueChanged(event.getOldValue(), event.getNewValue());
+                this.notifyOptionFilterInputValueChanged(event.getOldValue(), event.getNewValue());
 
                 this.dropdownDropdown.setFilterArgs({searchString: event.getNewValue()});
                 this.showDropdown();
@@ -377,20 +378,20 @@ module api.ui.selector.dropdown {
             });
         }
 
-        onValueChanged(listener: (event: DropdownValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) {
-            this.valueChangedListeners.push(listener);
+        onValueChanged(listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) {
+            this.optionFilterInputValueChangedListeners.push(listener);
         }
 
-        unValueChanged(listener: (event: DropdownValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) {
-            this.valueChangedListeners.filter((currentListener: (event: DropdownValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
+        unValueChanged(listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) {
+            this.optionFilterInputValueChangedListeners.filter((currentListener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
                 return listener != currentListener;
             })
         }
 
-        private notifyValueChanged(oldValue: string, newValue: string) {
-            var event = new DropdownValueChangedEvent<OPTION_DISPLAY_VALUE>(oldValue, newValue,
+        private notifyOptionFilterInputValueChanged(oldValue: string, newValue: string) {
+            var event = new OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>(oldValue, newValue,
                 this.dropdownDropdown.getGrid().getElement());
-            this.valueChangedListeners.forEach((listener: (event: DropdownValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
+            this.optionFilterInputValueChangedListeners.forEach((listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
                 listener(event);
             });
         }

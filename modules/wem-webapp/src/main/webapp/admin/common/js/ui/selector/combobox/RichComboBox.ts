@@ -1,6 +1,7 @@
 module api.ui.selector.combobox {
 
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
+    import OptionFilterInputValueChangedEvent = api.ui.selector.OptionFilterInputValueChangedEvent;
     import Viewer = api.ui.Viewer;
 
     export class RichComboBox<OPTION_DISPLAY_VALUE> extends api.ui.form.CompositeFormInputEl {
@@ -93,7 +94,7 @@ module api.ui.selector.combobox {
             this.comboBox.addSelectedOptionRemovedListener(()=> {
                 this.loader.search("");
             });
-            this.comboBox.onValueChanged((event: ComboBoxValueChangedEvent<OPTION_DISPLAY_VALUE>) => {
+            this.comboBox.onOptionFilterInputValueChanged((event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>) => {
                 this.loader.search(event.getNewValue());
             });
             this.comboBox.onOptionSelected((event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>) => {

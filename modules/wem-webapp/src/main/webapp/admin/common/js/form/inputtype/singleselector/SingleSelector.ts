@@ -101,7 +101,7 @@ module api.form.inputtype.singleselector {
                 comboBox.setValue(property.getString());
             }
 
-            comboBox.onValueChanged((event: api.ui.selector.combobox.ComboBoxValueChangedEvent<string>) => {
+            comboBox.onOptionFilterInputValueChanged((event: api.ui.selector.OptionFilterInputValueChangedEvent<string>) => {
                 event.getGrid().getDataView().setFilterArgs({searchString: event.getNewValue()});
                 event.getGrid().getDataView().refresh();
             });
@@ -120,7 +120,7 @@ module api.form.inputtype.singleselector {
                 for (var i = 0; i < inputConfig.options.length; i++) {
                     var option = inputConfig.options[i];
                     inputEl.addOption(option.value, option.label);
-                    var option2:Option<string> = <Option<string>>{ value: option.value, displayValue: option.label};
+                    var option2: Option<string> = <Option<string>>{ value: option.value, displayValue: option.label};
                     dropdown.addOption(option2);
                 }
             }
