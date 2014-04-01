@@ -20,14 +20,20 @@ public final class ImageComponentXml
     public void from( final ImageComponent component )
     {
         super.from( component );
-        this.image = component.getImage().toString();
+        if ( component.getImage() != null )
+        {
+            this.image = component.getImage().toString();
+        }
     }
 
     @Override
     public void to( final ImageComponent.Builder builder )
     {
         super.to( builder );
-        builder.image( ContentId.from( this.image ) );
+        if ( this.image != null )
+        {
+            builder.image( ContentId.from( this.image ) );
+        }
     }
 
     @Override

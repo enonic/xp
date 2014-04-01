@@ -691,23 +691,50 @@ module app.wizard.page {
                 (event, imageId?, componentPathAsString?: string, componentPlaceholder?) => {
 
                     componentPlaceholder.showLoadingSpinner();
+
                     var componentPath = ComponentPath.fromString(componentPathAsString);
-                    var imageComponent = this.pageRegions.getImageComponent(componentPath);
-                    if (imageComponent != null) {
-                        imageComponent.setImage(imageId);
-                        if (this.defaultModels.hasImageDescriptor()) {
-                            imageComponent.setDescriptor(this.defaultModels.getImageDescriptor().getKey());
+
+                    if (this.pageTemplate) {
+
+                        var imageComponent = this.pageRegions.getImageComponent(componentPath);
+                        if (imageComponent != null) {
+                            imageComponent.setImage(imageId);
+                            if (this.defaultModels.hasImageDescriptor()) {
+                                imageComponent.setDescriptor(this.defaultModels.getImageDescriptor().getKey());
+                            }
+
+                            this.pageSkipReload = true;
+                            this.contentWizardPanel.saveChanges().done(() => {
+                                this.pageSkipReload = false;
+                                this.loadComponent(componentPath, componentPlaceholder);
+                            })
+
                         }
-
-                        this.pageSkipReload = true;
-                        this.contentWizardPanel.saveChanges().done(() => {
-                            this.pageSkipReload = false;
-                            this.loadComponent(componentPath, componentPlaceholder);
-                        })
-
+                        else {
+                            console.log("ImageComponent to set image on not found: " + componentPath);
+                        }
                     }
                     else {
-                        console.log("ImageComponent to set image on not found: " + componentPath);
+                        this.initializePageFromDefault().done(() => {
+
+                            var imageComponent = this.pageRegions.getImageComponent(componentPath);
+                            if (imageComponent != null) {
+                                imageComponent.setImage(imageId);
+                                if (this.defaultModels.hasImageDescriptor()) {
+                                    imageComponent.setDescriptor(this.defaultModels.getImageDescriptor().getKey());
+                                }
+
+                                this.pageSkipReload = true;
+                                this.contentWizardPanel.saveChanges().done(() => {
+                                    this.pageSkipReload = false;
+                                    this.loadComponent(componentPath, componentPlaceholder);
+                                })
+
+                            }
+                            else {
+                                console.log("ImageComponent to set image on not found: " + componentPath);
+                            }
+                        });
                     }
                 });
 
