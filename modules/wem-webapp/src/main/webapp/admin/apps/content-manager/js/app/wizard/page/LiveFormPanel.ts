@@ -379,15 +379,15 @@ module app.wizard.page {
                 var selectedPageTemplate = event.getPageTemplate();
                 if (selectedPageTemplate) {
 
-                    this.pageRegions = this.resolvePageRegions(this.content, this.pageTemplate);
-                    this.pageConfig = this.resolvePageConfig(this.content, this.pageTemplate);
-
                     new api.content.page.GetPageTemplateByKeyRequest(selectedPageTemplate.getKey()).
                         setSiteTemplateKey(this.siteTemplate.getKey()).
                         sendAndParse().
                         done((pageTemplate: PageTemplate) => {
 
                             this.pageTemplate = pageTemplate;
+
+                            this.pageRegions = this.resolvePageRegions(this.content, this.pageTemplate);
+                            this.pageConfig = this.resolvePageConfig(this.content, this.pageTemplate);
 
                             new GetPageDescriptorByKeyRequest(pageTemplate.getDescriptorKey()).
                                 sendAndParse().
