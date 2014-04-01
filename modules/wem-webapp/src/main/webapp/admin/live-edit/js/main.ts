@@ -68,7 +68,7 @@ function getComponentByPath(path:string): LiveEdit.component.Component {
         new LiveEdit.component.mouseevent.Layout();
         new LiveEdit.component.mouseevent.Part();
         new LiveEdit.component.mouseevent.Image();
-        new LiveEdit.component.mouseevent.Paragraph();
+        new LiveEdit.component.mouseevent.Text();
         new LiveEdit.component.mouseevent.Content();
 
         new LiveEdit.component.helper.ComponentResizeObserver();

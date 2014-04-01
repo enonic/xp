@@ -458,8 +458,8 @@ module app.wizard.page {
             case "layout":
                 builder = new LayoutComponentBuilder();
                 break;
-            case "paragraph":
-                //TODO: Implement paragraph
+            case "text":
+                //TODO: Implement text
                 builder = null;
                 break;
             }

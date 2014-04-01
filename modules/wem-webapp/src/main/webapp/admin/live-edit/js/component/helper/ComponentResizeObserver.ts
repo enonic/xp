@@ -40,7 +40,7 @@ module LiveEdit.component.helper {
             $(window).on('selectComponent.liveEdit', (event:JQueryEventObject, component:LiveEdit.component.Component, pagePosition) => this.observe(component));
 
             $(window).on('deselectComponent.liveEdit', () => this.disconnect());
-            $(window).on('editParagraphComponent.liveEdit', (event:JQueryEventObject, component:LiveEdit.component.Component) => this.observe(component));
+            $(window).on('editTextComponent.liveEdit', (event:JQueryEventObject, component:LiveEdit.component.Component) => this.observe(component));
         }
 
     }

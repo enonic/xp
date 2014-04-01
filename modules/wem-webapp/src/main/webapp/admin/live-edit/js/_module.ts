@@ -27,7 +27,7 @@
 ///<reference path='component/mouseevent/Image.ts' />
 ///<reference path='component/mouseevent/Part.ts' />
 ///<reference path='component/mouseevent/Content.ts' />
-///<reference path='component/mouseevent/Paragraph.ts' />
+///<reference path='component/mouseevent/Text.ts' />
 
 ///<reference path='ui/Base.ts' />
 ///<reference path='ui/htmleditor/Editor.ts' />

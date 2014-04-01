@@ -27,7 +27,7 @@ module LiveEdit.component {
         LAYOUT,
         PART,
         IMAGE,
-        PARAGRAPH,
+        TEXT,
         CONTENT
     }
 
@@ -187,12 +187,12 @@ module LiveEdit.component {
             contextMenuConfig: ['parent', 'remove', 'clear']
         },
         {
-            type: LiveEdit.component.Type.PARAGRAPH,
-            typeName: 'paragraph',
-            cssSelector: '[data-live-edit-type=paragraph]',
+            type: LiveEdit.component.Type.TEXT,
+            typeName: 'text',
+            cssSelector: '[data-live-edit-type=text]',
             draggable: true,
             cursor: 'move',
-            iconCls: 'live-edit-font-icon-paragraph',
+            iconCls: 'live-edit-font-icon-text',
             highlighterStyle: {
                 stroke: 'rgba(68, 68, 68, 1)',
                 strokeDasharray: '5 5',

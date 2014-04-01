@@ -38,7 +38,7 @@ module LiveEdit.ui.contextmenu {
             $(window).on('selectComponent.liveEdit', (event:JQueryEventObject, component:LiveEdit.component.Component, pagePosition) => this.show(component, pagePosition));
             $(window).on('deselectComponent.liveEdit', () => this.hide());
             $(window).on('componentRemoved.liveEdit', () => this.hide());
-            $(window).on('editParagraphComponent.liveEdit', () => this.hide());
+            $(window).on('editTextComponent.liveEdit', () => this.hide());
             $(window).on('sortableStart.liveEdit', () => this.fadeOutAndHide());
             $(window).on('resizeBrowserWindow.liveEdit', () => this.handleWindowResize());
         }

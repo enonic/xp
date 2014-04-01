@@ -23,7 +23,7 @@ module LiveEdit.ui {
 
         registerGlobalListeners():void {
             $(window).on('selectComponent.liveEdit', (event:JQueryEventObject, component) => this.show(component));
-            $(window).on('editParagraphComponent.liveEdit', (event:JQueryEventObject, component) => this.show(component));
+            $(window).on('editTextComponent.liveEdit', (event:JQueryEventObject, component) => this.show(component));
             $(window).on('deselectComponent.liveEdit', () => this.hide());
             $(window).on('componentRemoved.liveEdit', () => this.hide());
             $(window).on('sortableStart.liveEdit', () => this.hide());

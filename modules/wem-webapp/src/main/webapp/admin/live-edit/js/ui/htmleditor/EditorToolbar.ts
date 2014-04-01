@@ -5,12 +5,12 @@ module LiveEdit.ui {
 
     export class EditorToolbar extends LiveEdit.ui.Base {
 
-        private selectedParagraph:LiveEdit.component.Component = null;
+        private selectedText:LiveEdit.component.Component = null;
 
         constructor() {
             super();
 
-            this.selectedParagraph = null;
+            this.selectedText = null;
 
             this.addView();
             this.addEvents();
@@ -18,8 +18,8 @@ module LiveEdit.ui {
         }
 
         private registerGlobalListeners():void {
-            $(window).on('editParagraphComponent.liveEdit', (event:JQueryEventObject, component) => this.show(component));
-            $(window).on('leaveParagraphComponent.liveEdit', () => this.hide());
+            $(window).on('editTextComponent.liveEdit', (event:JQueryEventObject, component) => this.show(component));
+            $(window).on('leaveTextComponent.liveEdit', () => this.hide());
             $(window).on('componentRemoved.liveEdit', () => this.hide());
             $(window).on('sortableStart.liveEdit', () => this.hide());
         }
@@ -61,14 +61,14 @@ module LiveEdit.ui {
             });
 
             $(window).scroll(() => {
-                if (this.selectedParagraph) {
+                if (this.selectedText) {
                     this.updatePosition();
                 }
             });
         }
 
         private show(component:LiveEdit.component.Component):void {
-            this.selectedParagraph = component;
+            this.selectedText = component;
 
             // For some reason. JQuery outerWidth returns a very incorrect number after show() is called.
             // Update positions before show.
@@ -78,18 +78,18 @@ module LiveEdit.ui {
         }
 
         private hide():void {
-            this.selectedParagraph = null;
+            this.selectedText = null;
             this.getEl().hide(null);
         }
 
         private updatePosition():void {
-            if (!this.selectedParagraph) {
+            if (!this.selectedText) {
                 return;
             }
 
             var defaultPosition = this.getPositionRelativeToComponentTop();
 
-            var stick = $(window).scrollTop() >= this.selectedParagraph.getElement().offset().top - 60;
+            var stick = $(window).scrollTop() >= this.selectedText.getElement().offset().top - 60;
 
             var el = this.getEl();
 
@@ -121,7 +121,7 @@ module LiveEdit.ui {
         }
 
         private getPositionRelativeToComponentTop():any {
-            var dimensions:component.ElementDimensions = this.selectedParagraph.getElementDimensions(),
+            var dimensions:component.ElementDimensions = this.selectedText.getElementDimensions(),
                 leftPos = dimensions.left + (dimensions.width / 2 - this.getEl().outerWidth() / 2),
                 topPos = dimensions.top - this.getEl().height() - 25;
 
