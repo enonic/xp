@@ -1,8 +1,9 @@
 module app.wizard.action {
 
+    import RenderingMode = api.util.RenderingMode;
+
     export class PreviewAction extends api.ui.Action {
 
-        private static dialog: api.ui.dialog.ModalDialog;
         private static preview: app.view.ContentItemPreviewPanel;
 
         constructor(wizard: app.wizard.ContentWizardPanel) {
@@ -19,31 +20,9 @@ module app.wizard.action {
         }
 
         showPreviewDialog(content: api.content.Content) {
-
-            if (!PreviewAction.dialog) {
-                var title = new api.ui.dialog.ModalDialogHeader(content.getDisplayName() + ' preview');
-                var dialogConfig = {
-                    title: title,
-                    height: 600,
-                    width: 800
-                };
-                var dialog = new api.ui.dialog.ModalDialog(dialogConfig);
-                dialog.setCancelAction(new api.ui.Action('Close', 'esc').addExecutionListener(() => {
-                    dialog.close();
-                }));
-                dialog.addClass('wizard-preview-dialog');
-                api.dom.Body.get().appendChild(dialog);
-
-                var preview = new app.view.ContentItemPreviewPanel();
-                dialog.appendChildToContentPanel(preview);
-
-                PreviewAction.dialog = dialog;
-                PreviewAction.preview = preview;
-            }
-
-            PreviewAction.preview.setItem(new api.app.view.ViewItem(content).setPath(content.getPath().toString()));
-            PreviewAction.dialog.open();
+            window.open(api.util.getPortalUri(content.getPath().toString(), RenderingMode.PREVIEW), 'preview');
         }
+
     }
 
 }

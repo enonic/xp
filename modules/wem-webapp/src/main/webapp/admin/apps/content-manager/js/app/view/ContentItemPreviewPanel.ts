@@ -31,7 +31,7 @@ module app.view {
                     var imgEl = this.image.getEl();
                     this.centerImage(imgEl.getWidth(), imgEl.getHeight(), event.getNewWidth(), event.getNewHeight());
                 }
-            })
+            });
         }
 
         private centerImage(imgWidth, imgHeight, myWidth, myHeight) {
@@ -57,7 +57,7 @@ module app.view {
                     .done((renderable: boolean) => {
                         if (renderable) {
                             this.getEl().removeClass("image-preview no-preview").addClass('page-preview');
-                            this.frame.setSrc(api.util.getPortalUri(this.escapePath(item.getPath()), RenderingMode.PREVIEW));
+                            this.frame.setSrc(api.util.getPortalUri(item.getPath(), RenderingMode.PREVIEW));
                         } else {
                             this.getEl().removeClass("image-preview page-preview").addClass('no-preview');
                             this.frame.setSrc("about:blank");
@@ -67,13 +67,5 @@ module app.view {
             }
         }
 
-
-        private escapePath(path: string): string {
-            var escapedPath = path;
-            if (escapedPath.charAt(0) == '/') {
-                escapedPath = escapedPath.substring(1);
-            }
-            return escapedPath;
-        }
     }
 }
