@@ -199,6 +199,37 @@ module api.ui.selector.combobox {
             }
         }
 
+        isSelectionChanged(): boolean {
+            var optionsMap = this.getDisplayedOptions().map((x) => { return x.value; }).join();
+            var selectedOptions: Option<OPTION_DISPLAY_VALUE>[] = this.selectedOptionsCtrl.getOptions();
+            var filteredOption = [],
+                gridOptions = [];
+            for (var k in selectedOptions) {
+                if (optionsMap.search(selectedOptions[k].value) >= 0) {
+                    filteredOption.push(selectedOptions[k].value);
+                }
+            }
+            this.comboBoxDropdown.getGrid().getElement().getSelectedRows().forEach((row: number) => {
+                gridOptions.push(this.comboBoxDropdown.getGrid().getOptionByRow(row).value);
+            });
+
+            return (filteredOption.length !== gridOptions.length) ||
+                   (filteredOption.sort().join() !== gridOptions.sort().join());
+        }
+
+        selectRowOrApplySelection(index: number) {
+
+            // fast alternative to isSelectionChanged()
+            if (this.applySelectionsButton.isVisible()) {
+                this.clearSelection(true);
+                this.comboBoxDropdown.applyMultipleSelection();
+                this.hideDropdown();
+            } else {
+                this.selectRow(index);
+                this.input.setValue("");
+            }
+        }
+
         selectOption(option: Option<OPTION_DISPLAY_VALUE>, silent: boolean = false) {
 
             // already exists
@@ -414,8 +445,7 @@ module api.ui.selector.combobox {
                         event.preventDefault();
                         break;
                     case 13: // Enter
-                        this.selectRow(this.comboBoxDropdown.getActiveRow());
-                        this.input.setValue("");
+                        this.selectRowOrApplySelection(this.comboBoxDropdown.getActiveRow());
                         break;
                     case 32: // Spacebar
                         if ($(this.input.getHTMLElement()).attr('readonly') == 'readonly') {
@@ -456,31 +486,11 @@ module api.ui.selector.combobox {
         }
 
         private handleMultipleSelectionChanged(event: DropdownGridMultipleSelectionEvent) {
-            var optionsMap = this.getDisplayedOptions().map((x) => { return x.value; }).join();
-
-            var filteredOptions: Option<OPTION_DISPLAY_VALUE>[] = [];
-            var selectedOptions: Option<OPTION_DISPLAY_VALUE>[] = this.selectedOptionsCtrl.getOptions();
-            selectedOptions.forEach((option: Option<OPTION_DISPLAY_VALUE>) => {
-                var filteredOption = optionsMap.search(option.value) >= 0 ? option : undefined;
-                if (filteredOption) {
-                    filteredOptions.push(filteredOption);
-                }
-            });
-
-            if (filteredOptions.length === event.getRows().length) {
-                var currentOptions = filteredOptions.map((x) => { return x.value; }).sort();
-                var eventOptions = [];
-                event.getRows().forEach((row: number) => {
-                    eventOptions.push(this.comboBoxDropdown.getGrid().getOptionByRow(row));
-                });
-                eventOptions = eventOptions.map((x) => { return x.value; }).sort();
-                if (currentOptions.join() === eventOptions.join()) {
-                    this.applySelectionsButton.hide();
-                    return;
-                }
+            if (this.isSelectionChanged()) {
+                this.applySelectionsButton.show();
+            } else {
+                this.applySelectionsButton.hide();
             }
-
-            this.applySelectionsButton.show();
         }
 
         /**
