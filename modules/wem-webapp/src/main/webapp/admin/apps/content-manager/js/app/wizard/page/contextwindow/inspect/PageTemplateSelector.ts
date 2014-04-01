@@ -48,7 +48,7 @@ module app.wizard.page.contextwindow.inspect {
             config.form.add(fieldSet);
 
             this.pageTemplateDropdown.onOptionSelected((event: OptionSelectedEvent<PageTemplateOption>) => {
-                var pageTemplate = event.getItem().displayValue.getPageTemplate();
+                var pageTemplate = event.getOption().displayValue.getPageTemplate();
                 this.pageTemplateToSelect = pageTemplate ? pageTemplate.getKey() : null;
                 this.notifyPageTemplateChanged(pageTemplate);
             });

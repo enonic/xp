@@ -336,7 +336,7 @@ module api.form.inputtype.content.image {
                 }
 
                 if (!this.layoutInProgress) {
-                    var value = new api.data.Value(event.getItem().displayValue.getContentId(), api.data.ValueTypes.CONTENT_ID);
+                    var value = new api.data.Value(event.getOption().displayValue.getContentId(), api.data.ValueTypes.CONTENT_ID);
                     this.notifyValueAdded(value);
                 }
 

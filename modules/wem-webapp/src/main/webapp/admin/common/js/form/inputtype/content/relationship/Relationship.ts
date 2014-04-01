@@ -65,10 +65,10 @@ module api.form.inputtype.content.relationship {
                 .setLoader(relationshipLoader)
                 .build();
 
-            this.contentComboBox.addOptionSelectedListener((item: api.ui.selector.Option<api.content.ContentSummary>) => {
+            this.contentComboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {
 
                 if (!this.layoutInProgress) {
-                    var value = new api.data.Value(item.displayValue.getContentId(), api.data.ValueTypes.CONTENT_ID);
+                    var value = new api.data.Value(event.getOption().displayValue.getContentId(), api.data.ValueTypes.CONTENT_ID);
                     this.notifyValueAdded(value);
                 }
                 this.validate(false);

@@ -540,7 +540,7 @@ module api.ui.selector.combobox {
         unValueChanged(listener: (event: ComboBoxValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) {
             this.valueChangedListeners.filter((currentListener: (event: ComboBoxValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
                 return listener != currentListener;
-            })
+            });
         }
 
         private notifyValueChanged(oldValue: string, newValue: string) {

@@ -37,10 +37,9 @@ module LiveEdit.component {
             this.uploadButton.hide();
             this.appendChild(this.uploadButton);
 
-            this.comboBox.addOptionSelectedListener((item) => {
+            this.comboBox.onOptionSelected((event:api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {
                 var componentPath = this.getComponentPath();
-                console.log(item.value, componentPath);
-                $liveEdit(window).trigger('imageComponentSetImage.liveEdit', [item.value, componentPath, this]);
+                $liveEdit(window).trigger('imageComponentSetImage.liveEdit', [event.getOption().value, componentPath, this]);
             });
         }
 

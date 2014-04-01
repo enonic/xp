@@ -86,7 +86,7 @@ module api.form.inputtype.combobox {
             });
             comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<string>) => {
 
-                var value = new api.data.Value(event.getItem().displayValue, api.data.ValueTypes.STRING);
+                var value = new api.data.Value(event.getOption().displayValue, api.data.ValueTypes.STRING);
                 this.notifyValueAdded(value);
 
                 this.validate(false);

@@ -70,7 +70,7 @@ module app.wizard.page.contextwindow.inspect {
             imageDescriptorLoader.load();
             this.descriptorSelector.onOptionSelected((event: OptionSelectedEvent<ImageDescriptor>) => {
 
-                var option: Option<ImageDescriptor> = event.getItem();
+                var option: Option<ImageDescriptor> = event.getOption();
 
                 if (this.getComponent()) {
                     var selectedDescriptorKey: DescriptorKey = option.displayValue.getKey();
