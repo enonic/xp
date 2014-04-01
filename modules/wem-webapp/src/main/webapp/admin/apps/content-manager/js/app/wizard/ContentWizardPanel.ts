@@ -164,9 +164,9 @@ module app.wizard {
                 steps.push(new WizardStep("Site", this.siteWizardStepForm));
             }
 
-            steps.push(new WizardStep("Meta", new WizardStepForm()));
-            steps.push(new WizardStep("Security", new WizardStepForm()));
-            steps.push(new WizardStep("Summary", new WizardStepForm()));
+            steps.push(new WizardStep("Meta", new MetaWizardStepForm()));
+            steps.push(new WizardStep("Security", new SecurityWizardStepForm()));
+            steps.push(new WizardStep("Summary", new SummaryWizardStepForm()));
 
             return steps;
         }
