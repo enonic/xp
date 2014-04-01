@@ -715,7 +715,16 @@ module app.wizard.page {
                 (event, descriptor?: Descriptor, componentPathAsString?: string, componentPlaceholder?) => {
 
                     var componentPath = ComponentPath.fromString(componentPathAsString);
-                    this.setComponentDescriptor(descriptor, componentPath, componentPlaceholder);
+
+                    if (this.pageTemplate) {
+                        this.setComponentDescriptor(descriptor, componentPath, componentPlaceholder);
+                    }
+                    else {
+                        this.initializePageFromDefault().done(() => {
+
+                            this.setComponentDescriptor(descriptor, componentPath, componentPlaceholder);
+                        });
+                    }
                 });
         }
     }
