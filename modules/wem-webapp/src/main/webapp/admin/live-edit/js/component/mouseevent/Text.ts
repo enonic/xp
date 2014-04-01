@@ -91,12 +91,16 @@ module LiveEdit.component.mouseevent {
         setEditMode(): void {
 
             var textComponent = this.selectedText;
-
+            $('.text-link-click-to-edit').remove();
 //            textComponent.onResized((event: api.dom.ElementResizedEvent) => {
 //                console.log('resize' , event);
 //                $(window).trigger('editTextComponent.liveEdit', [textComponent]);
 //            });
 
+            var isEmpty = !$.trim(textComponent.getElement().html()).length;
+            if (isEmpty) {
+                textComponent.appendChild(new api.dom.BrEl());
+            }
             textComponent.getElement().on('keydown keyup', function(event){
 //                if ((event.keyCode === 13) || (event.keyCode === 46) || (event.keyCode === 8)){
                     $(window).trigger('editTextComponent.liveEdit', [textComponent]);
@@ -125,8 +129,9 @@ module LiveEdit.component.mouseevent {
             textComponent.getElement().css('cursor', '');
             textComponent.getElement().removeClass('live-edit-edited-text');
 
-            var isEmpty = !$.trim(textComponent.getElement().html()).length;
-            if (isEmpty) {
+            var textContent = $.trim(textComponent.getElement().html());
+            var isBlank = !textContent.length || ('<br>'===textContent);
+            if (isBlank) {
                 textComponent.getElement().addClass('live-edit-empty-component');
             }
 
