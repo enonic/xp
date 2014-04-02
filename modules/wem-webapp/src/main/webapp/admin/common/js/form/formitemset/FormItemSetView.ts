@@ -98,7 +98,7 @@ module api.form.formitemset {
                 }
             });
 
-            this.formItemSetOccurrences.getFormItemSetOccurrenceViews().forEach((formItemSetOccurrenceView: api.form.formitemset.FormItemSetOccurrenceView)=> {
+            this.formItemSetOccurrences.getOccurrenceViews().forEach((formItemSetOccurrenceView: api.form.formitemset.FormItemSetOccurrenceView)=> {
                 formItemSetOccurrenceView.onValidityChanged((event: api.form.ValidityChangedEvent) => {
                     this.handleFormItemSetOccurrenceViewValidityChanged(event);
                 });
@@ -147,7 +147,7 @@ module api.form.formitemset {
             }
 
             var validationRecordingPath = this.resolveValidationRecordingPath();
-            var occurrenceViews = this.formItemSetOccurrences.getFormItemSetOccurrenceViews();
+            var occurrenceViews = this.formItemSetOccurrences.getOccurrenceViews();
             var numberOfValids = 0;
             occurrenceViews.forEach((occurrenceView: FormItemSetOccurrenceView) => {
                 var recordingForOccurrence = occurrenceView.getLastValidationRecording();
@@ -189,7 +189,7 @@ module api.form.formitemset {
         }
 
         public getFormItemSetOccurrenceView(index: number): FormItemSetOccurrenceView {
-            return this.formItemSetOccurrences.getFormItemSetOccurrenceView(index);
+            return this.formItemSetOccurrences.getOccurrenceViews()[index];
         }
 
         getAttachments(): api.content.attachment.Attachment[] {
@@ -208,7 +208,7 @@ module api.form.formitemset {
 
             var recording = new ValidationRecording();
 
-            var occurrenceViews = this.formItemSetOccurrences.getFormItemSetOccurrenceViews();
+            var occurrenceViews = this.formItemSetOccurrences.getOccurrenceViews();
 
             var numberOfValids = 0;
             occurrenceViews.forEach((occurrenceView: FormItemSetOccurrenceView) => {
