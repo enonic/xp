@@ -89,7 +89,7 @@ module app.wizard {
                         return this.loadSiteTemplate(siteTemplateToLoad).then((loadedSiteTemplate: SiteTemplate) => {
                             this.siteTemplate = loadedSiteTemplate;
 
-                            return this.loadDefaultModels(siteTemplateToLoad, this.contentTypeName, this.siteTemplate.getModules()).
+                            return this.loadDefaultModels(this.siteTemplate, this.contentTypeName).
                                 then((defaultModels: DefaultModels) => {
 
                                     this.defaultModels = defaultModels;
@@ -136,7 +136,7 @@ module app.wizard {
                             return this.loadSiteTemplate(templateKey).then((loadedSiteTemplate: SiteTemplate) => {
                                 this.siteTemplate = loadedSiteTemplate;
 
-                                return this.loadDefaultModels(templateKey, this.contentToEdit.getType(), this.siteTemplate.getModules()).
+                                return this.loadDefaultModels(this.siteTemplate, this.contentToEdit.getType()).
                                     then((defaultModels: DefaultModels) => {
 
                                         this.defaultModels = defaultModels;
@@ -220,16 +220,15 @@ module app.wizard {
             return deferred.promise;
         }
 
-        private loadDefaultModels(siteTemplateKey: SiteTemplateKey, contentType: ContentTypeName,
-                                  modules: ModuleKey[]): Q.Promise<DefaultModels> {
+        private loadDefaultModels(siteTemplate: SiteTemplate, contentType: ContentTypeName): Q.Promise<DefaultModels> {
 
             var deferred = Q.defer<DefaultModels>();
 
-            if (siteTemplateKey) {
+            if (siteTemplate) {
                 DefaultModelsFactory.create(<DefaultModelsFactoryConfig>{
-                    siteTemplateKey: siteTemplateKey,
+                    siteTemplateKey: siteTemplate.getKey(),
                     contentType: contentType,
-                    modules: modules
+                    modules: siteTemplate.getModules()
                 }).then((defaultModels: DefaultModels) => {
 
                     deferred.resolve(defaultModels);
