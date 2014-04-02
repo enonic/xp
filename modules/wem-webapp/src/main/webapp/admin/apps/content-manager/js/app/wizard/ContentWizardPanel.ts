@@ -181,9 +181,11 @@ module app.wizard {
 
             // Ensure a nameless and empty content is persisted before rendering new
             this.saveChanges().
-                done(() => {
+                then(() => {
                     deferred.resolve(null);
-                });
+                }).catch((reason) => {
+                    deferred.reject(reason);
+                }).done();
 
             return deferred.promise;
         }

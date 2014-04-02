@@ -66,11 +66,13 @@ module app.wizard {
 
             var deferred = Q.defer<void>();
             super.renderNew().
-                done(() => {
+                then(() => {
 
                     this.siteTemplateStep.renderNew();
                     deferred.resolve(null);
-                });
+                }).catch((reason) => {
+                    deferred.reject(reason);
+                }).done();
 
             return deferred.promise;
         }
