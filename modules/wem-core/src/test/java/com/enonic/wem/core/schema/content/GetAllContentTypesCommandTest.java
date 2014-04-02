@@ -1,22 +1,15 @@
 package com.enonic.wem.core.schema.content;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.schema.content.GetAllContentTypes;
+import com.enonic.wem.api.command.schema.content.GetAllContentTypesParams;
 import com.enonic.wem.api.command.schema.mixin.GetMixinParams;
 import com.enonic.wem.api.command.schema.mixin.MixinService;
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.GetNodesByParentParams;
-import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodeName;
-import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentType;
@@ -25,6 +18,7 @@ import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.form.FormItemsDataSerializer;
+import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 import static com.enonic.wem.api.form.Form.newForm;
 import static com.enonic.wem.api.form.Input.newInput;
@@ -32,12 +26,14 @@ import static com.enonic.wem.api.form.MixinReference.newMixinReference;
 import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
 import static org.junit.Assert.*;
 
-public class GetAllContentTypesHandlerTest
+public class GetAllContentTypesCommandTest
     extends AbstractCommandHandlerTest
 {
-    private GetAllContentTypesHandler handler;
+    private GetAllContentTypesCommand command;
 
     private MixinService mixinService;
+
+    private ContentTypeDao contentTypeDao;
 
     private static final FormItemsDataSerializer SERIALIZER_FOR_FORM_ITEM_TO_DATA = new FormItemsDataSerializer();
 
@@ -48,13 +44,11 @@ public class GetAllContentTypesHandlerTest
         super.initialize();
 
         mixinService = Mockito.mock( MixinService.class );
+        contentTypeDao = Mockito.mock( ContentTypeDao.class );
 
-        handler = new GetAllContentTypesHandler();
-        handler.setContext( this.context );
-        handler.setMixinService( this.mixinService );
+        command = new GetAllContentTypesCommand().mixinService( this.mixinService ).contentTypeDao( this.contentTypeDao );
     }
 
-    @Ignore // Does not work atm because of rewriting of client to instanticate handler
     @Test
     public void handle()
         throws Exception
@@ -63,43 +57,34 @@ public class GetAllContentTypesHandlerTest
         final String contentType1Name = "my-contenttype-1";
         final String contentType2Name = "my-contenttype-2";
 
-        final Nodes nodes = Nodes.newNodes().
-            add( Node.newNode().
-                name( NodeName.from( contentType1Name ) ).
-                id( EntityId.from( "123" ) ).
-                property( "displayName", "DisplayName" ).
-                property( "description", "Description" ).
-                build() ).
-            add( Node.newNode().
-                name( NodeName.from( contentType2Name ) ).
-                id( EntityId.from( "234" ) ).
-                property( "displayName", "DisplayName2" ).
-                property( "description", "Description2" ).
-                build() ).
-            build();
+        final String displayName1 = "DisplayName";
+        final String displayName2 = "DisplayName2";
 
-        Mockito.when( nodeService.getByParent( Mockito.isA( GetNodesByParentParams.class ) ) ).thenReturn( nodes );
+        final String description1 = "Description";
+        final String description2 = "Description2";
 
-        // Exercise:
-        GetAllContentTypes command = Commands.contentType().get().all();
-        this.handler.setCommand( command );
-        this.handler.handle();
+        final ContentTypes allContentTypes = ContentTypes.from(
+            createContentType( contentType1Name, displayName1, description1 ),
+            createContentType( contentType2Name, displayName2, description2 ) );
+        Mockito.when( contentTypeDao.getAllContentTypes() ).thenReturn( allContentTypes );
 
-        // Verify:
-        final ContentTypes result = command.getResult();
+        // exercise
+        GetAllContentTypesParams params = new GetAllContentTypesParams();
+        final ContentTypes result = this.command.params( params ).execute();
+
+        // verify
         assertEquals( 2, result.getSize() );
 
-        verifyContentType( contentType1Name, "DisplayName", "Description", result );
-        verifyContentType( contentType2Name, "DisplayName2", "Description2", result );
-
+        verifyContentType( contentType1Name, displayName1, description1, result );
+        verifyContentType( contentType2Name, displayName2, description2, result );
     }
 
-
-    @Ignore // Does not work atm because of rewriting of client to instanticate handler
     @Test
     public void handle_given_mixin()
         throws Exception
     {
+        final String contentTypeName = "my-contenttype-1";
+
         final Mixin mixin = newMixin().name( "my_mixin" ).
             addFormItem( newInput().
                 name( "inputToBeMixedIn" ).
@@ -110,25 +95,25 @@ public class GetAllContentTypesHandlerTest
         final Form form = newForm().addFormItem( newMixinReference( mixin ).name( "myMixin" ).build() ).build();
         final RootDataSet rootDataSetWithForm = createRootDataSetWithForm( form );
 
-        final Nodes nodes = Nodes.newNodes().
-            add( Node.newNode().
-                name( NodeName.from( "my-contenttype-1" ) ).
-                id( EntityId.from( "1" ) ).
-                rootDataSet( rootDataSetWithForm ).
-                build() ).
+        Mockito.when( mixinService.getByName( Mockito.isA( GetMixinParams.class ) ) ).thenReturn( mixin );
+
+        final ContentType contentType = ContentType.
+            newContentType().
+            name( contentTypeName ).
+            displayName( "displayName" ).
+            description( "description" ).
+            form( form ).
             build();
 
-        Mockito.when( mixinService.getByName( Mockito.isA( GetMixinParams.class ) ) ).thenReturn( mixin );
-        Mockito.when( nodeService.getByParent( Mockito.isA( GetNodesByParentParams.class ) ) ).thenReturn( nodes );
+        final ContentTypes allContentTypes = ContentTypes.from( contentType );
+        Mockito.when( contentTypeDao.getAllContentTypes() ).thenReturn( allContentTypes );
 
         // Exercise:
-        GetAllContentTypes command = Commands.contentType().get().all().mixinReferencesToFormItems( true );
-        this.handler.setCommand( command );
-        this.handler.handle();
+        final GetAllContentTypesParams params = new GetAllContentTypesParams().mixinReferencesToFormItems( true );
+        final ContentTypes result = this.command.params( params ).execute();
 
         // One invocation for each contentType with mixin-reference
         Mockito.verify( mixinService, Mockito.times( 1 ) ).getByName( Mockito.isA( GetMixinParams.class ) );
-        final ContentTypes result = command.getResult();
         assertEquals( 1, result.getSize() );
         assertNotNull( result.get( 0 ).form().getInput( "inputToBeMixedIn" ) );
         assertNull( result.get( 0 ).form().getFormItem( "myMixin" ) );
@@ -158,5 +143,10 @@ public class GetAllContentTypesHandlerTest
         assertEquals( contentTypeName, contentType.getName().toString() );
         assertEquals( displayName, contentType.getDisplayName() );
         assertEquals( description, contentType.getDescription() );
+    }
+
+    private ContentType createContentType( final String name, final String displayName, final String description )
+    {
+        return ContentType.newContentType().displayName( displayName ).name( name ).description( description ).build();
     }
 }

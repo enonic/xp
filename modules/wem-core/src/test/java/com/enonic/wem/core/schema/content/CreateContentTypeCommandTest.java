@@ -4,8 +4,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.command.schema.content.CreateContentType;
-import com.enonic.wem.api.command.schema.content.GetContentTypes;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
+import com.enonic.wem.api.command.schema.content.CreateContentTypeParams;
+import com.enonic.wem.api.command.schema.content.GetContentTypesParams;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
@@ -13,16 +14,17 @@ import com.enonic.wem.api.schema.content.validator.InvalidContentTypeException;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
-import static com.enonic.wem.api.command.Commands.contentType;
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 import static org.junit.Assert.*;
 
-public class CreateContentTypeHandlerTest
+public class CreateContentTypeCommandTest
     extends AbstractCommandHandlerTest
 {
-    private CreateContentTypeHandler handler;
+    private CreateContentTypeCommand command;
 
     private ContentTypeDao contentTypeDao;
+
+    private ContentTypeService contentTypeService;
 
     @Before
     public void setUp()
@@ -30,11 +32,10 @@ public class CreateContentTypeHandlerTest
     {
         super.initialize();
 
-        contentTypeDao = Mockito.mock( ContentTypeDao.class );
+        this.contentTypeDao = Mockito.mock( ContentTypeDao.class );
+        this.contentTypeService = Mockito.mock( ContentTypeService.class );
 
-        handler = new CreateContentTypeHandler();
-        handler.setContext( this.context );
-        handler.setContentTypeDao( contentTypeDao );
+        command = new CreateContentTypeCommand().contentTypeDao( this.contentTypeDao ).contentTypeService( this.contentTypeService );
     }
 
     @Test
@@ -42,10 +43,10 @@ public class CreateContentTypeHandlerTest
         throws Exception
     {
         // setup
-        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
+        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
             ContentTypes.from( ContentTypesInitializer.STRUCTURED ) );
 
-        ContentType contentType = newContentType().
+        final ContentType contentType = newContentType().
             name( "my_content_type" ).
             displayName( "My content type" ).
             description( "description" ).
@@ -53,7 +54,7 @@ public class CreateContentTypeHandlerTest
             superType( ContentTypeName.structured() ).
             build();
 
-        CreateContentType command = contentType().create().
+        final CreateContentTypeParams params = new CreateContentTypeParams().
             name( contentType.getName() ).
             displayName( contentType.getDisplayName() ).
             description( contentType.getDescription() ).
@@ -66,11 +67,9 @@ public class CreateContentTypeHandlerTest
         Mockito.when( contentTypeDao.createContentType( Mockito.isA( ContentType.class ) ) ).thenReturn( contentType );
 
         // exercise
-        this.handler.setCommand( command );
-        this.handler.handle();
+        final ContentType createdContentType = this.command.params( params ).execute();
 
         // verify
-        ContentType createdContentType = command.getResult();
         assertNotNull( createdContentType );
         assertEquals( "my_content_type", createdContentType.getName().toString() );
     }
@@ -80,10 +79,10 @@ public class CreateContentTypeHandlerTest
         throws Exception
     {
         //setup
-        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
+        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
             ContentTypes.from( ContentTypesInitializer.SHORTCUT ) );
 
-        ContentType contentType = newContentType().
+        final ContentType contentType = newContentType().
             name( "my_content_type" ).
             displayName( "Inheriting a final ContentType" ).
             displayName( "A description" ).
@@ -92,7 +91,7 @@ public class CreateContentTypeHandlerTest
             build();
 
         // exercise
-        final CreateContentType createCommand = contentType().create().
+        final CreateContentTypeParams params = new CreateContentTypeParams().
             name( contentType.getName() ).
             displayName( contentType.getDisplayName() ).
             description( contentType.getDescription() ).
@@ -103,8 +102,7 @@ public class CreateContentTypeHandlerTest
             schemaIcon( contentType.getIcon() ).
             contentDisplayNameScript( contentType.getContentDisplayNameScript() );
 
-        this.handler.setCommand( createCommand );
-        this.handler.handle();
+        this.command.params( params ).execute();
     }
 
 }

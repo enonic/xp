@@ -1,9 +1,13 @@
 package com.enonic.wem.core.content;
 
 
+import javax.inject.Inject;
+
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
+import com.enonic.wem.api.command.schema.content.GetContentTypesParams;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.schema.content.ContentType;
@@ -15,6 +19,7 @@ import com.enonic.wem.core.support.BaseInitializer;
 public class ContentInitializer
     extends BaseInitializer
 {
+    private ContentTypeService contentTypeService;
 
     protected ContentInitializer()
     {
@@ -68,7 +73,14 @@ public class ContentInitializer
 
     private ContentType getContentType( ContentTypeName name )
     {
-        return this.client.execute( Commands.contentType().get().byNames().contentTypeNames( ContentTypeNames.from( name ) ) ).first();
+        final GetContentTypesParams params = new GetContentTypesParams().contentTypeNames( ContentTypeNames.from( name ) );
+
+        return contentTypeService.getByNames( params ).first();
     }
 
+    @Inject
+    public void setContentTypeService( final ContentTypeService contentTypeService )
+    {
+        this.contentTypeService = contentTypeService;
+    }
 }

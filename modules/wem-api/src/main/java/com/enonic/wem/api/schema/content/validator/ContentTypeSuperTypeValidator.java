@@ -1,7 +1,7 @@
 package com.enonic.wem.api.schema.content.validator;
 
-import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
+import com.enonic.wem.api.command.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
@@ -9,20 +9,21 @@ import static com.enonic.wem.api.schema.content.validator.ContentTypeValidationR
 
 public class ContentTypeSuperTypeValidator
 {
-    private final Client client;
+    private final ContentTypeService contentTypeService;
 
     private final ContentTypeValidationResult.Builder resultBuilder = newContentTypeValidationResult();
 
-    public ContentTypeSuperTypeValidator( final Client client )
+    private ContentTypeSuperTypeValidator( final ContentTypeService contentTypeService )
     {
-        this.client = client;
+        this.contentTypeService = contentTypeService;
     }
 
     public void validate( final ContentTypeName contentTypeName, final ContentTypeName superTypeContentName )
     {
         if ( superTypeContentName != null )
         {
-            ContentType superType = client.execute( Commands.contentType().get().byName().contentTypeName( superTypeContentName ) );
+            final GetContentTypeParams params = new GetContentTypeParams().contentTypeName( superTypeContentName );
+            final ContentType superType = contentTypeService.getByName( params );
 
             if ( superType == null )
             {
@@ -54,17 +55,17 @@ public class ContentTypeSuperTypeValidator
 
     public static class Builder
     {
-        private Client client;
+        private ContentTypeService contentTypeService;
 
-        public Builder client( final Client value )
+        public Builder contentTypeService( final ContentTypeService contentTypeService )
         {
-            this.client = value;
+            this.contentTypeService = contentTypeService;
             return this;
         }
 
         public ContentTypeSuperTypeValidator build()
         {
-            return new ContentTypeSuperTypeValidator( client );
+            return new ContentTypeSuperTypeValidator( this.contentTypeService );
         }
     }
 

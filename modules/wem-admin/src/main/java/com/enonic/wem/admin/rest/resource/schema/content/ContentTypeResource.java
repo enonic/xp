@@ -1,5 +1,6 @@
 package com.enonic.wem.admin.rest.resource.schema.content;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -21,13 +22,15 @@ import com.enonic.wem.admin.rest.resource.schema.json.CreateOrUpdateSchemaJsonRe
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
 import com.enonic.wem.api.blob.Blob;
-import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.blob.GetBlob;
-import com.enonic.wem.api.command.schema.content.CreateContentType;
-import com.enonic.wem.api.command.schema.content.DeleteContentType;
-import com.enonic.wem.api.command.schema.content.GetAllContentTypes;
-import com.enonic.wem.api.command.schema.content.GetContentTypes;
-import com.enonic.wem.api.command.schema.content.UpdateContentType;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
+import com.enonic.wem.api.command.schema.content.CreateContentTypeParams;
+import com.enonic.wem.api.command.schema.content.DeleteContentTypeParams;
+import com.enonic.wem.api.command.schema.content.GetAllContentTypesParams;
+import com.enonic.wem.api.command.schema.content.GetContentTypeParams;
+import com.enonic.wem.api.command.schema.content.GetContentTypesParams;
+import com.enonic.wem.api.command.schema.content.UpdateContentTypeParams;
+import com.enonic.wem.api.command.schema.content.ValidateContentTypeParams;
 import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -40,23 +43,23 @@ import com.enonic.wem.api.schema.content.validator.ContentTypeValidationResult;
 import com.enonic.wem.api.support.serializer.XmlParsingException;
 import com.enonic.wem.xml.XmlSerializers;
 
-import static com.enonic.wem.api.command.Commands.contentType;
-
 @Path("schema/content")
 @Produces("application/json")
 public class ContentTypeResource
     extends AbstractResource
 {
+    private ContentTypeService contentTypeService;
+
     @GET
     public ContentTypeJson get( @QueryParam("name") final String nameAsString,
                                 @QueryParam("mixinReferencesToFormItems") final Boolean mixinReferencesToFormItems )
     {
         final ContentTypeName name = ContentTypeName.from( nameAsString );
-        final GetContentTypes getContentTypes = Commands.contentType().get().
-            byNames().contentTypeNames( ContentTypeNames.from( name ) ).
+        final GetContentTypesParams getContentTypes = new GetContentTypesParams().
+            contentTypeNames( ContentTypeNames.from( name ) ).
             mixinReferencesToFormItems( mixinReferencesToFormItems );
 
-        final ContentTypes contentTypes = client.execute( getContentTypes );
+        final ContentTypes contentTypes = contentTypeService.getByNames( getContentTypes );
         if ( contentTypes.isEmpty() )
         {
             throw new NotFoundException( String.format( "ContentTypes [%s] not found", name ) );
@@ -69,12 +72,11 @@ public class ContentTypeResource
     public ContentTypeConfigJson getConfig( @QueryParam("name") final String nameAsString )
     {
         final ContentTypeName name = ContentTypeName.from( nameAsString );
-        final GetContentTypes getContentTypes = Commands.contentType().
-            get().
-            byNames().contentTypeNames( ContentTypeNames.from( name ) ).
+        final GetContentTypesParams getContentTypes = new GetContentTypesParams().
+            contentTypeNames( ContentTypeNames.from( name ) ).
             mixinReferencesToFormItems( false );
 
-        final ContentTypes contentTypes = client.execute( getContentTypes );
+        final ContentTypes contentTypes = contentTypeService.getByNames( getContentTypes );
 
         if ( contentTypes.isEmpty() )
         {
@@ -88,9 +90,9 @@ public class ContentTypeResource
     @Path("all")
     public ContentTypeSummaryListJson all( @QueryParam("mixinReferencesToFormItems") final Boolean mixinReferencesToFormItems )
     {
-        final GetAllContentTypes getAll = Commands.contentType().get().all();
-        getAll.mixinReferencesToFormItems( mixinReferencesToFormItems );
-        final ContentTypes contentTypes = client.execute( getAll );
+        final GetAllContentTypesParams getAll = new GetAllContentTypesParams().mixinReferencesToFormItems( mixinReferencesToFormItems );
+        final ContentTypes contentTypes = contentTypeService.getAll( getAll );
+
         return new ContentTypeSummaryListJson( contentTypes );
     }
 
@@ -105,10 +107,10 @@ public class ContentTypeResource
         final SchemaDeleteJson deletionResult = new SchemaDeleteJson();
         for ( ContentTypeName contentTypeName : contentTypeNames )
         {
-            final DeleteContentType deleteContentType = Commands.contentType().delete().name( contentTypeName );
+            final DeleteContentTypeParams deleteContentType = new DeleteContentTypeParams().name( contentTypeName );
             try
             {
-                client.execute( deleteContentType );
+                contentTypeService.delete( deleteContentType );
                 deletionResult.success( contentTypeName );
             }
             catch ( ContentTypeNotFoundException | UnableToDeleteContentTypeException e )
@@ -126,13 +128,13 @@ public class ContentTypeResource
     {
         try
         {
-            final CreateContentType createContentType = json.getCreateContentType();
+            final CreateContentTypeParams createContentType = json.getCreateContentType();
             final SchemaIcon schemaIcon = getSchemaIcon( json.getIconJson() );
             if ( schemaIcon != null )
             {
                 createContentType.schemaIcon( schemaIcon );
             }
-            final ContentType created = client.execute( createContentType );
+            final ContentType created = contentTypeService.create( createContentType );
             return CreateOrUpdateSchemaJsonResult.result( new ContentTypeJson( created ) );
 
         }
@@ -175,13 +177,13 @@ public class ContentTypeResource
                 }
             };
 
-            final UpdateContentType updateContentType = contentType().update().
+            final UpdateContentTypeParams updateContentType = new UpdateContentTypeParams().
                 contentTypeName( json.getContentTypeToUpdate() ).
                 editor( editor );
 
-            client.execute( updateContentType );
-            final ContentType persistedContentType =
-                client.execute( Commands.contentType().get().byName().contentTypeName( json.getName() ) );
+            contentTypeService.update( updateContentType );
+            final GetContentTypeParams params = new GetContentTypeParams().contentTypeName( json.getName() );
+            final ContentType persistedContentType = contentTypeService.getByName( params );
 
             return CreateOrUpdateSchemaJsonResult.result( new ContentTypeJson( persistedContentType ) );
         }
@@ -207,7 +209,8 @@ public class ContentTypeResource
             throw new WebApplicationException( e );
         }
 
-        final ContentTypeValidationResult validationResult = client.execute( contentType().validate().contentType( contentType ) );
+        final ValidateContentTypeParams params = new ValidateContentTypeParams().contentType( contentType );
+        final ContentTypeValidationResult validationResult = contentTypeService.validate( params );
 
         return new ValidateContentTypeJson( validationResult, contentType );
     }
@@ -221,5 +224,11 @@ public class ContentTypeResource
             return blob == null ? null : SchemaIcon.from( blob.getStream(), iconJson.getMimeType() );
         }
         return null;
+    }
+
+    @Inject
+    public void setContentTypeService( final ContentTypeService contentTypeService )
+    {
+        this.contentTypeService = contentTypeService;
     }
 }

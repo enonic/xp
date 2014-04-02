@@ -15,11 +15,12 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.schema.content.CreateContentType;
-import com.enonic.wem.api.command.schema.content.GetAllContentTypes;
-import com.enonic.wem.api.command.schema.content.GetContentType;
-import com.enonic.wem.api.command.schema.content.GetContentTypes;
-import com.enonic.wem.api.command.schema.content.UpdateContentType;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
+import com.enonic.wem.api.command.schema.content.CreateContentTypeParams;
+import com.enonic.wem.api.command.schema.content.GetAllContentTypesParams;
+import com.enonic.wem.api.command.schema.content.GetContentTypeParams;
+import com.enonic.wem.api.command.schema.content.GetContentTypesParams;
+import com.enonic.wem.api.command.schema.content.UpdateContentTypeParams;
 import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
@@ -39,9 +40,10 @@ import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 public class ContentTypeResourceTest
     extends AbstractResourceTest
 {
-    private ContentTypeResource resource = new ContentTypeResource();
 
     private Client client;
+
+    private ContentTypeService contentTypeService;
 
     private static final ContentTypeName MY_CTY_QUALIFIED_NAME = ContentTypeName.from( "my_cty" );
 
@@ -54,8 +56,10 @@ public class ContentTypeResourceTest
     protected Object getResourceInstance()
     {
         client = Mockito.mock( Client.class );
-        resource = new ContentTypeResource();
+        contentTypeService = Mockito.mock( ContentTypeService.class );
+        final ContentTypeResource resource = new ContentTypeResource();
         resource.setClient( client );
+        resource.setContentTypeService( contentTypeService );
 
         return resource;
     }
@@ -85,7 +89,7 @@ public class ContentTypeResourceTest
                 build() ).
             build();
 
-        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
+        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
 
         // execute
         MultivaluedMap<String, String> names = new MultivaluedMapImpl();
@@ -156,7 +160,7 @@ public class ContentTypeResourceTest
             addFormItem( myMixinReference ).
             build();
 
-        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
+        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
 
         // execute
         MultivaluedMap<String, String> names = new MultivaluedMapImpl();
@@ -186,7 +190,7 @@ public class ContentTypeResourceTest
                 build() ).
             build();
 
-        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
+        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
 
         // execute
         MultivaluedMap<String, String> names = new MultivaluedMapImpl();
@@ -214,7 +218,7 @@ public class ContentTypeResourceTest
                 build() ).
             build();
 
-        Mockito.when( client.execute( Mockito.isA( GetAllContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
+        Mockito.when( contentTypeService.getAll( Mockito.isA( GetAllContentTypesParams.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
 
         // execute
         MultivaluedMap<String, String> names = new MultivaluedMapImpl();
@@ -235,12 +239,12 @@ public class ContentTypeResourceTest
     public void test_create_new_content_type()
         throws Exception
     {
-        Mockito.when( client.execute( Mockito.any( GetContentType.class ) ) ).thenReturn( null );
+        Mockito.when( contentTypeService.getByName( Mockito.any( GetContentTypeParams.class ) ) ).thenReturn( null );
         ContentType createdContentType = ContentType.newContentType().
             name( "htmlarea" ).
             superType( ContentTypeName.structured() ).
             build();
-        Mockito.when( client.execute( Mockito.any( CreateContentType.class ) ) ).thenReturn( createdContentType );
+        Mockito.when( contentTypeService.create( Mockito.any( CreateContentTypeParams.class ) ) ).thenReturn( createdContentType );
 
         String jsonString = resource().path( "schema/content/create" ).entity( readFromFile( "create_content_type.json" ),
                                                                                MediaType.APPLICATION_JSON_TYPE ).post( String.class );
@@ -252,7 +256,7 @@ public class ContentTypeResourceTest
     public void test_create_existing_content_type()
         throws Exception
     {
-        Mockito.when( client.execute( Mockito.any( GetContentType.class ) ) ).thenReturn(
+        Mockito.when( contentTypeService.getByName( Mockito.any( GetContentTypeParams.class ) ) ).thenReturn(
             ContentType.newContentType().name( "htmlarea" ).build() );
         String resultJson = resource().path( "schema/content/create" ).entity( readFromFile( "create_content_type.json" ),
                                                                                MediaType.APPLICATION_JSON_TYPE ).post( String.class );
@@ -274,8 +278,8 @@ public class ContentTypeResourceTest
     public void test_fail_to_create_new_content_type()
         throws Exception
     {
-        Mockito.when( client.execute( Mockito.any( GetContentTypes.class ) ) ).thenReturn( ContentTypes.empty() );
-        Mockito.when( client.execute( Mockito.any( CreateContentType.class ) ) ).thenThrow(
+        Mockito.when( contentTypeService.getByNames( Mockito.any( GetContentTypesParams.class ) ) ).thenReturn( ContentTypes.empty() );
+        Mockito.when( contentTypeService.create( Mockito.any( CreateContentTypeParams.class ) ) ).thenThrow(
             new RuntimeException( "Content type creation failed" ) );
         String result = resource().path( "schema/content/create" ).entity( readFromFile( "create_content_type.json" ),
                                                                            MediaType.APPLICATION_JSON_TYPE ).post( String.class );
@@ -290,7 +294,7 @@ public class ContentTypeResourceTest
             name( "htmlarea" ).
             superType( ContentTypeName.structured() ).
             build();
-        Mockito.when( client.execute( Mockito.any( GetContentType.class ) ) ).thenReturn( contentType );
+        Mockito.when( contentTypeService.getByName( Mockito.any( GetContentTypeParams.class ) ) ).thenReturn( contentType );
         String jsonString = resource().path( "schema/content/update" ).entity( readFromFile( "update_content_type.json" ),
                                                                                MediaType.APPLICATION_JSON_TYPE ).post( String.class );
         assertJson( "update_content_type_result.json", jsonString );
@@ -312,7 +316,7 @@ public class ContentTypeResourceTest
     public void test_fail_to_update_content_type()
         throws Exception
     {
-        Mockito.when( client.execute( Mockito.any( UpdateContentType.class ) ) ).thenThrow(
+        Mockito.when( contentTypeService.update( Mockito.any( UpdateContentTypeParams.class ) ) ).thenThrow(
             new RuntimeException( "Content type update failed" ) );
         String result = resource().path( "schema/content/update" ).entity( readFromFile( "update_content_type.json" ),
                                                                            MediaType.APPLICATION_JSON_TYPE ).post( String.class );

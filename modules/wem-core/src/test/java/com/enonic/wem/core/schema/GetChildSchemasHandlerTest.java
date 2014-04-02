@@ -6,7 +6,8 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.GetChildSchemas;
-import com.enonic.wem.api.command.schema.content.GetChildContentTypes;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
+import com.enonic.wem.api.command.schema.content.GetChildContentTypesParams;
 import com.enonic.wem.api.schema.Schemas;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -23,14 +24,19 @@ public class GetChildSchemasHandlerTest
 {
     private GetChildSchemasHandler handler;
 
+    private ContentTypeService contentTypeService;
+
     @Before
     public void setUp()
         throws Exception
     {
         super.initialize();
 
+        contentTypeService = Mockito.mock( ContentTypeService.class );
+
         handler = new GetChildSchemasHandler();
         handler.setContext( this.context );
+        handler.setContentTypeService( this.contentTypeService );
     }
 
     @Test
@@ -54,7 +60,7 @@ public class GetChildSchemasHandlerTest
             build();
 
         final ContentTypes contentTypes = ContentTypes.from( contentType );
-        Mockito.when( client.execute( Mockito.isA( GetChildContentTypes.class ) ) ).thenReturn( contentTypes );
+        Mockito.when( contentTypeService.getChildren( Mockito.isA( GetChildContentTypesParams.class ) ) ).thenReturn( contentTypes );
 
         // exercise
         final GetChildSchemas command = Commands.schema().getChildren().parentKey( unstructuredContentType.getSchemaKey() );

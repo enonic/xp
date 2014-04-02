@@ -6,16 +6,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.admin.json.icon.IconJson;
-import com.enonic.wem.api.command.schema.content.CreateContentType;
+import com.enonic.wem.api.command.schema.content.CreateContentTypeParams;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.xml.XmlSerializers;
 
-import static com.enonic.wem.api.command.Commands.contentType;
-
 public class ContentTypeCreateJson
 {
-    private final CreateContentType createContentType;
+    private final CreateContentTypeParams createContentType;
 
     private final IconJson iconJson;
 
@@ -32,7 +30,7 @@ public class ContentTypeCreateJson
 
         this.iconJson = iconJson;
 
-        createContentType = contentType().create().
+        createContentType = new CreateContentTypeParams().
             name( name ).
             displayName( contentType.getDisplayName() ).
             description( contentType.getDescription() ).
@@ -44,7 +42,7 @@ public class ContentTypeCreateJson
     }
 
     @JsonIgnore
-    public CreateContentType getCreateContentType()
+    public CreateContentTypeParams getCreateContentType()
     {
         return createContentType;
     }

@@ -259,7 +259,7 @@ public class ContentResource
         {
             final ContentTypeName contentTypeName = ContentTypeName.from( params.getContentTypeName() );
 
-            GetContentTypes getContentType =
+            GetContentTypesParams getContentType =
                 Commands.contentType().get().byNames().contentTypeNames( ContentTypeNames.from( contentTypeName ) );
             final ContentType contentType = client.execute( getContentType ).first();
 
