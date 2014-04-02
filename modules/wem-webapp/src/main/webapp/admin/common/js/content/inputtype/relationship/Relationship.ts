@@ -1,4 +1,4 @@
-module api.form.inputtype.content.relationship {
+module api.content.inputtype.relationship {
 
     export interface RelationshipConfig {
         relationshipType: string
@@ -35,8 +35,8 @@ module api.form.inputtype.content.relationship {
                                         new api.schema.relationshiptype.RelationshipTypeName("default");
         }
 
-        availableSizeChanged(newWidth: number, newHeight: number) {
-            console.log("Relationship.availableSizeChanged(" + newWidth + "x" + newHeight + ")");
+        availableSizeChanged() {
+            console.log("Relationship.availableSizeChanged(" + this.getEl().getWidth() + "x" + this.getEl().getWidth() + ")");
         }
 
         getElement(): api.dom.Element {
@@ -65,10 +65,10 @@ module api.form.inputtype.content.relationship {
                 .setLoader(relationshipLoader)
                 .build();
 
-            this.contentComboBox.addOptionSelectedListener((item: api.ui.selector.Option<api.content.ContentSummary>) => {
+            this.contentComboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {
 
                 if (!this.layoutInProgress) {
-                    var value = new api.data.Value(item.displayValue.getContentId(), api.data.ValueTypes.CONTENT_ID);
+                    var value = new api.data.Value(event.getOption().displayValue.getContentId(), api.data.ValueTypes.CONTENT_ID);
                     this.notifyValueAdded(value);
                 }
                 this.validate(false);

@@ -268,9 +268,11 @@ module api.app.wizard {
             this.actions.enableActionsForExisting(persistedItem);
 
             this.layoutPersistedItem(persistedItem).
-                done(() => {
+                then(() => {
                     deferred.resolve(null)
-                });
+                }).catch((reason) => {
+                    deferred.reject(reason);
+                }).done();
 
             return deferred.promise;
         }

@@ -10,11 +10,14 @@ public abstract class EntityIndexConfig
 
     private final boolean decideFulltextByValueType;
 
+    private final boolean skip;
+
     EntityIndexConfig( final Builder builder )
     {
         this.analyzer = builder.analyzer;
         this.collection = builder.collection;
         this.decideFulltextByValueType = builder.decideFulltextByValueType;
+        this.skip = builder.skip;
     }
 
     public String getAnalyzer()
@@ -27,6 +30,11 @@ public abstract class EntityIndexConfig
         return collection;
     }
 
+    public boolean skip()
+    {
+        return skip;
+    }
+
     public boolean isDecideFulltextByValueType()
     {
         return decideFulltextByValueType;
@@ -37,9 +45,7 @@ public abstract class EntityIndexConfig
         return new EntityPatternIndexConfig.Builder();
     }
 
-
     public abstract PropertyIndexConfig getPropertyIndexConfig( final DataPath dataPath );
-
 
     static class Builder<T extends Builder>
     {
@@ -47,11 +53,19 @@ public abstract class EntityIndexConfig
 
         String collection;
 
+        boolean skip = false;
+
         boolean decideFulltextByValueType = false;
 
         public T analyzer( final String analyzer )
         {
             this.analyzer = analyzer;
+            return (T) this;
+        }
+
+        public T skip( final boolean skip )
+        {
+            this.skip = skip;
             return (T) this;
         }
 

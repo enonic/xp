@@ -33,8 +33,8 @@ module api.form.inputtype.combobox {
             this.comboBoxConfig = config.inputConfig;
         }
 
-        availableSizeChanged(newWidth: number, newHeight: number) {
-            console.log("ComboBox.availableSizeChanged(" + newWidth + "x" + newHeight + ")");
+        availableSizeChanged() {
+            console.log("ComboBox.availableSizeChanged("+this.getEl().getWidth()+"x"+this.getEl().getWidth()+")" );
         }
 
         getElement(): api.dom.Element {
@@ -81,12 +81,12 @@ module api.form.inputtype.combobox {
                 hideComboBoxWhenMaxReached: true
             });
 
-            comboBox.onValueChanged((event: api.ui.selector.combobox.ComboBoxValueChangedEvent<string>) => {
+            comboBox.onOptionFilterInputValueChanged((event: api.ui.selector.OptionFilterInputValueChangedEvent<string>) => {
                 this.comboBox.setFilterArgs({searchString: event.getNewValue()});
             });
             comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<string>) => {
 
-                var value = new api.data.Value(event.getItem().displayValue, api.data.ValueTypes.STRING);
+                var value = new api.data.Value(event.getOption().displayValue, api.data.ValueTypes.STRING);
                 this.notifyValueAdded(value);
 
                 this.validate(false);

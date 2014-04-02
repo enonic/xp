@@ -19,6 +19,10 @@ import com.enonic.wem.api.content.page.PageDescriptorService;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.site.Site;
+import com.enonic.wem.api.content.site.SiteTemplate;
+import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
+import com.enonic.wem.api.content.site.SiteTemplateService;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.portal.controller.JsControllerFactory;
 import com.enonic.wem.portal.exception.PortalWebException;
 
@@ -40,6 +44,9 @@ public abstract class RenderResource
 
     @Inject
     protected PageTemplateService pageTemplateService;
+
+    @Inject
+    protected SiteTemplateService siteTemplateService;
 
     @GET
     public Response handleGet()
@@ -128,6 +135,19 @@ public abstract class RenderResource
             throw PortalWebException.notFound().message( "Page template [{0}] not found.", page.getTemplate() ).build();
         }
         return pageTemplate;
+    }
+
+    protected PageTemplate getDefaultPageTemplate( final ContentTypeName contentType, final Site site )
+    {
+        try
+        {
+            final SiteTemplate siteTemplate = this.siteTemplateService.getSiteTemplate( site.getTemplate() );
+            return siteTemplate.getDefaultPageTemplate( contentType );
+        }
+        catch ( SiteTemplateNotFoundException e )
+        {
+            return null;
+        }
     }
 
     private Content getContentByPath( final ContentPath contentPath )

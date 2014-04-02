@@ -61,10 +61,6 @@
 ///<reference path='form/_module.ts' />
 ///<reference path='form/inputtype/_module.ts' />
 ///<reference path='form/inputtype/support/_module.ts' />
-///<reference path='form/inputtype/content/_module.ts' />
-///<reference path='form/inputtype/content/imageupload/_module.ts' />
-///<reference path='form/inputtype/content/relationship/_module.ts' />
-///<reference path='form/inputtype/content/image/_module.ts' />
 ///<reference path='form/inputtype/combobox/_module.ts' />
 ///<reference path='form/inputtype/singleselector/_module.ts' />
 ///<reference path='form/inputtype/text/_module.ts' />
@@ -104,6 +100,11 @@
 ///<reference path='content/page/region/_module.ts' />
 ///<reference path='content/site/_module.ts' />
 ///<reference path='content/site/template/_module.ts' />
+///<reference path='content/inputtype/_module.ts' />
+///<reference path='content/inputtype/imageupload/_module.ts' />
+///<reference path='content/inputtype/relationship/_module.ts' />
+///<reference path='content/inputtype/image/_module.ts' />
+
 
 ///<reference path='aggregation/_module.ts' />
 

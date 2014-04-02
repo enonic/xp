@@ -12,6 +12,7 @@ import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.ValidateContentData;
+import com.enonic.wem.api.command.content.attachment.AttachmentService;
 import com.enonic.wem.api.command.schema.content.GetContentType;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -24,7 +25,6 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
-import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.relationship.RelationshipService;
 
 import static com.enonic.wem.api.content.Content.editContent;
@@ -51,11 +51,11 @@ public class UpdateContentHandlerTest
         super.initialize();
 
         relationshipService = Mockito.mock( RelationshipService.class );
-        IndexService indexService = Mockito.mock( IndexService.class );
+        AttachmentService attachmentService = Mockito.mock( AttachmentService.class );
 
         handler = new UpdateContentHandler();
         handler.setContext( this.context );
-        handler.setIndexService( indexService );
+        handler.setAttachmentService( attachmentService );
 
         Mockito.when( client.execute( isA( ValidateContentData.class ) ) ).thenReturn( DataValidationErrors.empty() );
 

@@ -19,6 +19,7 @@ import com.enonic.wem.portal.content.page.PageComponentResolver;
 import com.enonic.wem.portal.content.page.PageRegionsResolver;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsHttpRequest;
+import com.enonic.wem.portal.exception.PortalWebException;
 import com.enonic.wem.portal.rendering.Renderer;
 import com.enonic.wem.portal.rendering.RendererFactory;
 import com.enonic.wem.portal.script.lib.PortalUrlScriptBean;
@@ -48,13 +49,29 @@ public final class ComponentResource
     protected Response doHandle()
         throws Exception
     {
-        final Content content = getContent( this.contentPath, this.mode );
-        final Content siteContent = getSite( content );
-        final Page page = getPage( content );
-        final PageTemplate pageTemplate = getPageTemplate( page, siteContent.getSite() );
-
         final ComponentPath componentPath = ComponentPath.from( this.componentSelector );
-        final PageRegions pageRegions = PageRegionsResolver.resolve( page, pageTemplate );
+
+        final Content content = getContent( this.contentPath, this.mode );
+
+        final Content siteContent = getSite( content );
+        final PageTemplate pageTemplate;
+        final PageRegions pageRegions;
+        if ( !content.isPage() )
+        {
+            pageTemplate = getDefaultPageTemplate( content.getType(), siteContent.getSite() );
+            if ( pageTemplate == null )
+            {
+                throw PortalWebException.notFound().message( "Page not found." ).build();
+            }
+            pageRegions = pageTemplate.getRegions();
+        }
+        else
+        {
+            final Page page = getPage( content );
+            pageTemplate = getPageTemplate( page, siteContent.getSite() );
+            pageRegions = PageRegionsResolver.resolve( page, pageTemplate );
+        }
+
         final PageComponent component = PageComponentResolver.resolve( componentPath, pageRegions );
 
         final Renderer<PageComponent> renderer = rendererFactory.getRenderer( component );

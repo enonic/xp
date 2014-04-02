@@ -1,5 +1,8 @@
-module api.form.inputtype.content.image {
+module api.content.inputtype.image {
 
+    import ContentSummary = api.content.ContentSummary;
+    import ComboBoxConfig = api.ui.selector.combobox.ComboBoxConfig;
+    import ComboBox = api.ui.selector.combobox.ComboBox;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import LoadingDataEvent = api.util.loader.event.LoadingDataEvent;
 
@@ -13,19 +16,19 @@ module api.form.inputtype.content.image {
 
         private input: api.form.Input;
 
-        private comboBox: api.ui.selector.combobox.ComboBox<api.content.ContentSummary>;
+        private comboBox: ComboBox<ContentSummary>;
 
         private uploadButton: api.ui.Button;
 
         private selectedOptionsView: SelectedOptionsView;
 
-        private contentSummaryLoader: api.form.inputtype.content.ContentSummaryLoader;
+        private contentSummaryLoader: api.content.ContentSummaryLoader;
 
         private contentRequestsAllowed: boolean;
 
         private uploadDialog: UploadDialog;
 
-        private editContentRequestListeners: {(content: api.content.ContentSummary): void }[] = [];
+        private editContentRequestListeners: {(content: ContentSummary): void }[] = [];
 
         private inputValidityChangedListeners: {(event: api.form.inputtype.InputValidityChangedEvent) : void}[] = [];
 
@@ -44,11 +47,11 @@ module api.form.inputtype.content.image {
             this.addClass("input-type-view");
 
             this.config = config;
-            this.contentSummaryLoader = new api.form.inputtype.content.ContentSummaryLoader();
+            this.contentSummaryLoader = new api.content.ContentSummaryLoader();
             this.contentSummaryLoader.onLoadingData((event: LoadingDataEvent) => {
                 this.comboBox.setEmptyDropdownText("Searching...");
             });
-            this.contentSummaryLoader.onLoadedData((event: LoadedDataEvent<api.content.ContentSummary>) => {
+            this.contentSummaryLoader.onLoadedData((event: LoadedDataEvent<ContentSummary>) => {
                 var options = this.createOptions(event.getData());
 
                 this.comboBox.setOptions(options);
@@ -78,11 +81,11 @@ module api.form.inputtype.content.image {
             // Don't forget to clean up the modal dialog on remove
             this.onRemoved((event) => {
                 this.uploadDialog.remove();
-            })
+            });
         }
 
-        availableSizeChanged(newWidth: number, newHeight: number) {
-            console.log("ImageSelector.availableSizeChanged(" + newWidth + "x" + newHeight + ")");
+        availableSizeChanged() {
+            console.log("ImageSelector.availableSizeChanged(" + this.getEl().getWidth() + "x" + this.getEl().getWidth() + ")");
         }
 
         newInitialValue(): api.data.Value {
@@ -120,10 +123,10 @@ module api.form.inputtype.content.image {
             this.appendChild(this.selectedOptionsView);
 
             this.doLoadContent(properties).
-                then((contents: api.content.ContentSummary[]) => {
+                then((contents: ContentSummary[]) => {
 
-                    contents.forEach((content: api.content.ContentSummary) => {
-                        this.comboBox.selectOption(<api.ui.selector.Option<api.content.ContentSummary>>{
+                    contents.forEach((content: ContentSummary) => {
+                        this.comboBox.selectOption(<api.ui.selector.Option<ContentSummary>>{
                             value: content.getId(),
                             displayValue: content
                         });
@@ -138,9 +141,9 @@ module api.form.inputtype.content.image {
                 }).done();
         }
 
-        private doLoadContent(properties: api.data.Property[]): Q.Promise<api.content.ContentSummary[]> {
+        private doLoadContent(properties: api.data.Property[]): Q.Promise<ContentSummary[]> {
 
-            var deferred = Q.defer<api.content.ContentSummary[]>();
+            var deferred = Q.defer<ContentSummary[]>();
 
             if (!properties) {
                 deferred.resolve([]);
@@ -150,7 +153,7 @@ module api.form.inputtype.content.image {
                 properties.forEach((property: api.data.Property) => {
                     contentIds.push(new api.content.ContentId(property.getString()));
                 });
-                new api.content.GetContentSummaryByIds(contentIds).get().done((result: api.content.ContentSummary[]) => {
+                new api.content.GetContentSummaryByIds(contentIds).get().done((result: ContentSummary[]) => {
                     deferred.resolve(result);
                 });
             }
@@ -160,7 +163,7 @@ module api.form.inputtype.content.image {
 
         getValues(): api.data.Value[] {
             var values: api.data.Value[] = [];
-            this.comboBox.getSelectedOptions().forEach((option: api.ui.selector.Option<api.content.ContentSummary>) => {
+            this.comboBox.getSelectedOptions().forEach((option: api.ui.selector.Option<ContentSummary>) => {
                 var value = new api.data.Value(option.value, api.data.ValueTypes.CONTENT_ID);
                 values.push(value);
             });
@@ -278,26 +281,26 @@ module api.form.inputtype.content.image {
             return true;
         }
 
-        addEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
+        addEditContentRequestListener(listener: (content: ContentSummary) => void) {
             this.editContentRequestListeners.push(listener);
         }
 
-        removeEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
+        removeEditContentRequestListener(listener: (content: ContentSummary) => void) {
             this.editContentRequestListeners = this.editContentRequestListeners.filter(function (curr) {
                 return curr != listener;
             });
         }
 
-        private notifyEditContentRequestListeners(content: api.content.ContentSummary) {
+        private notifyEditContentRequestListeners(content: ContentSummary) {
             this.editContentRequestListeners.forEach((listener) => {
                 listener(content);
             })
         }
 
-        private createComboBox(input: api.form.Input): api.ui.selector.combobox.ComboBox<api.content.ContentSummary> {
+        private createComboBox(input: api.form.Input): ComboBox<ContentSummary> {
 
             this.selectedOptionsView = new SelectedOptionsView();
-            this.selectedOptionsView.addEditSelectedOptionListener((option: api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) => {
+            this.selectedOptionsView.addEditSelectedOptionListener((option: api.ui.selector.combobox.SelectedOption<ContentSummary>) => {
                 this.notifyEditContentRequestListeners(option.getOption().displayValue)
             });
 
@@ -306,18 +309,18 @@ module api.form.inputtype.content.image {
                 this.validate(false);
             });
 
-            var comboBoxConfig = <api.ui.selector.combobox.ComboBoxConfig<api.content.ContentSummary>> {
+            var comboBoxConfig = <ComboBoxConfig<ContentSummary>> {
                 rowHeight: 50,
-                optionDisplayValueViewer: new api.content.ContentSummaryViewer(),
+                optionDisplayValueViewer: new ContentSummaryViewer(),
                 selectedOptionsView: this.selectedOptionsView,
                 maximumOccurrences: input.getOccurrences().getMaximum()
             };
 
-            var comboBox = new api.ui.selector.combobox.ComboBox<api.content.ContentSummary>(input.getName(), comboBoxConfig);
+            var comboBox = new ComboBox<ContentSummary>(input.getName(), comboBoxConfig);
 
             this.loadOptions("");
 
-            comboBox.addSelectedOptionRemovedListener((removed: api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) => {
+            comboBox.addSelectedOptionRemovedListener((removed: api.ui.selector.combobox.SelectedOption<ContentSummary>) => {
                 if (!comboBox.maximumOccurrencesReached()) {
                     this.uploadButton.setEnabled(true);
                 }
@@ -327,16 +330,16 @@ module api.form.inputtype.content.image {
                 this.validate(false);
             });
 
-            comboBox.onValueChanged((event: api.ui.selector.combobox.ComboBoxValueChangedEvent<api.content.ContentSummary>) => {
+            comboBox.onOptionFilterInputValueChanged((event: api.ui.selector.OptionFilterInputValueChangedEvent<ContentSummary>) => {
                 this.loadOptions(event.getNewValue());
             });
-            comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {
+            comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<ContentSummary>) => {
                 if (this.comboBox.maximumOccurrencesReached()) {
                     this.uploadButton.setEnabled(false);
                 }
 
                 if (!this.layoutInProgress) {
-                    var value = new api.data.Value(event.getItem().displayValue.getContentId(), api.data.ValueTypes.CONTENT_ID);
+                    var value = new api.data.Value(event.getOption().displayValue.getContentId(), api.data.ValueTypes.CONTENT_ID);
                     this.notifyValueAdded(value);
                 }
 
@@ -354,9 +357,9 @@ module api.form.inputtype.content.image {
             this.contentSummaryLoader.search(searchString);
         }
 
-        private createOptions(contents: api.content.ContentSummary[]): api.ui.selector.Option<api.content.ContentSummary>[] {
-            var options: api.ui.selector.Option<api.content.ContentSummary>[] = [];
-            contents.forEach((content: api.content.ContentSummary) => {
+        private createOptions(contents: ContentSummary[]): api.ui.selector.Option<ContentSummary>[] {
+            var options: api.ui.selector.Option<ContentSummary>[] = [];
+            contents.forEach((content: ContentSummary) => {
                 options.push({
                     value: content.getId(),
                     displayValue: content

@@ -21,7 +21,7 @@ public class EntityPropertyIndexConfigJson
 
     public EntityPropertyIndexConfigJson( final EntityPropertyIndexConfig indexConfig )
     {
-        super( indexConfig.getAnalyzer(), indexConfig.getCollection(), indexConfig.isDecideFulltextByValueType() );
+        super( indexConfig.getAnalyzer(), indexConfig.getCollection(), indexConfig.isDecideFulltextByValueType(), indexConfig.skip() );
         this.propertyIndexConfigs = translateMap( indexConfig.getPropertyIndexConfigs() );
     }
 
@@ -30,10 +30,11 @@ public class EntityPropertyIndexConfigJson
     public EntityPropertyIndexConfigJson( @JsonProperty("analyzer") final String analyzer,
                                           @JsonProperty("collection") final String collection, //
                                           @JsonProperty("decideFulltextByValueType") final boolean decideFulltextByValueType, //
+                                          @JsonProperty("skip") final boolean skip, //
                                           @JsonProperty(
                                               "propertyIndexConfigs") final Map<String, PropertyIndexConfigJson> propertyIndexConfigs )
     {
-        super( analyzer, collection, decideFulltextByValueType );
+        super( analyzer, collection, decideFulltextByValueType, skip );
         this.propertyIndexConfigs = propertyIndexConfigs;
     }
 
@@ -67,6 +68,8 @@ public class EntityPropertyIndexConfigJson
         builder.analyzer( this.getAnalyzer() );
 
         builder.decideFulltextByValueType( this.isDecideFulltextByValueType() );
+
+        builder.skip( this.isSkip() );
 
         return builder.build();
     }

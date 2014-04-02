@@ -1,4 +1,4 @@
-module api.form.inputtype.content.image {
+module api.content.inputtype.image {
 
     export class ImageSelectorDialog extends api.dom.DivEl {
 

@@ -16,6 +16,8 @@ module app.wizard {
 
         siteTemplate: api.content.site.template.SiteTemplate;
 
+        defaultModels: page.DefaultModels;
+
         setAppBarTabId(value: api.app.AppBarTabId): ContentWizardPanelParams {
             this.tabId = value;
             return this;
@@ -43,6 +45,11 @@ module app.wizard {
 
         setSiteTemplate(value: api.content.site.template.SiteTemplate): ContentWizardPanelParams {
             this.siteTemplate = value;
+            return this;
+        }
+
+        setDefaultModels(value: page.DefaultModels): ContentWizardPanelParams {
+            this.defaultModels = value;
             return this;
         }
 

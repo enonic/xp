@@ -29,6 +29,12 @@ module api.form.layout {
             this.doLayout(config.dataSet);
         }
 
+        broadcastFormSizeChanged() {
+            this.formItemViews.forEach((formItemView:api.form.FormItemView) => {
+                formItemView.broadcastFormSizeChanged();
+            });
+        }
+
         public getFormItemView(name: string): api.form.FormItemView {
 
             // TODO: Performance could be improved if the views where accessible by name from a map

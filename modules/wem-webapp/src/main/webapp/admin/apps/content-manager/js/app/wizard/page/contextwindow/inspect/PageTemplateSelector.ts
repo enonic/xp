@@ -29,9 +29,11 @@ module app.wizard.page.contextwindow.inspect {
 
         private pageTemplateDropdown: Dropdown<PageTemplateOption>;
 
-        private pageTemplateChangedListeners: {(changedTo: PageTemplateSummary): void;}[] = [];
+        private pageTemplateChangedListeners: {(event: PageTemplateChangedEvent): void;}[] = [];
 
         private pageTemplateToSelect: PageTemplateKey;
+
+        private notityPageTemplateChanged: boolean;
 
         constructor(config: PageTemplateSelectorConfig) {
             super("page-template-selector-form");
@@ -47,34 +49,43 @@ module app.wizard.page.contextwindow.inspect {
             fieldSet.add(new api.ui.form.FormItemBuilder(this.pageTemplateDropdown).setLabel("Page Template").build());
             config.form.add(fieldSet);
 
+            this.notityPageTemplateChanged = true;
             this.pageTemplateDropdown.onOptionSelected((event: OptionSelectedEvent<PageTemplateOption>) => {
-                var pageTemplate = event.getItem().displayValue.getPageTemplate();
-                this.pageTemplateToSelect = pageTemplate ? pageTemplate.getKey() : null;
-                this.notifyPageTemplateChanged(pageTemplate);
+
+                if (this.notityPageTemplateChanged) {
+                    var pageTemplate = event.getOption().displayValue.getPageTemplate();
+                    this.pageTemplateToSelect = pageTemplate ? pageTemplate.getKey() : null;
+                    this.notifyPageTemplateChanged(new PageTemplateChangedEvent(pageTemplate));
+                }
             });
         }
 
         setPageTemplate(selectedPageTemplate: PageTemplateKey): Q.Promise<void> {
-
             var deferred = Q.defer<void>();
 
+            this.notityPageTemplateChanged = false;
             this.pageTemplateToSelect = selectedPageTemplate;
             this.pageTemplateDropdown.removeAllOptions();
 
             var pageTemplateOptions = new PageTemplateOptions(this.siteTemplateKey, this.contentType);
-            pageTemplateOptions.getOptions().done((options: Option<PageTemplateOption>[]) => {
-                options.forEach((option: Option<PageTemplateOption>) => {
-                    this.pageTemplateDropdown.addOption(option);
+            pageTemplateOptions.getOptions().
+                done((options: Option<PageTemplateOption>[]) => {
+
+                    options.forEach((option: Option<PageTemplateOption>) => {
+                        this.pageTemplateDropdown.addOption(option);
+                    });
+
+                    if (this.pageTemplateToSelect) {
+                        var optionToSelect = this.pageTemplateDropdown.getOptionByValue(this.pageTemplateToSelect.toString());
+                        this.pageTemplateDropdown.selectOption(optionToSelect);
+                    }
+                    else {
+                        this.pageTemplateDropdown.selectOption(PageTemplateOptions.getDefault());
+                    }
+
+                    this.notityPageTemplateChanged = true;
                 });
 
-                if (this.pageTemplateToSelect) {
-                    var optionToSelect = this.pageTemplateDropdown.getOptionByValue(this.pageTemplateToSelect.toString());
-                    this.pageTemplateDropdown.selectOption(optionToSelect);
-                }
-                else {
-                    this.pageTemplateDropdown.selectOption(PageTemplateOptions.getDefault());
-                }
-            });
 
             // Safe to resolve promise immediately?
             deferred.resolve(null);
@@ -82,19 +93,19 @@ module app.wizard.page.contextwindow.inspect {
             return deferred.promise;
         }
 
-        private notifyPageTemplateChanged(changedTo: PageTemplateSummary) {
-            this.pageTemplateChangedListeners.forEach((listener) => {
-                listener(changedTo);
-            });
-        }
-
-        onPageTemplateChanged(listener: {(changedTo: PageTemplateSummary): void;}) {
+        onPageTemplateChanged(listener: {(event: PageTemplateChangedEvent): void;}) {
             this.pageTemplateChangedListeners.push(listener);
         }
 
-        unPageTemplateChanged(listener: {(changedTo: PageTemplateSummary): void;}) {
+        unPageTemplateChanged(listener: {(event: PageTemplateChangedEvent): void;}) {
             this.pageTemplateChangedListeners = this.pageTemplateChangedListeners.filter(function (curr) {
                 return curr != listener;
+            });
+        }
+
+        private notifyPageTemplateChanged(event: PageTemplateChangedEvent) {
+            this.pageTemplateChangedListeners.forEach((listener) => {
+                listener(event);
             });
         }
     }

@@ -1,7 +1,6 @@
 package com.enonic.wem.api.command;
 
 import com.enonic.wem.api.command.content.ContentCommands;
-import com.enonic.wem.api.command.content.attachment.AttachmentCommands;
 import com.enonic.wem.api.command.content.blob.BlobCommands;
 import com.enonic.wem.api.command.content.site.SiteCommands;
 import com.enonic.wem.api.command.module.ModuleCommands;
@@ -29,8 +28,6 @@ public final class Commands
     private static final RelationshipTypeCommands RELATIONSHIP_TYPE_COMMANDS = new RelationshipTypeCommands();
 
     private static final BlobCommands BLOB_COMMANDS = new BlobCommands();
-
-    private static final AttachmentCommands ATTACHMENT_COMMANDS = new AttachmentCommands();
 
     private static final ResourceCommands RESOURCE_COMMANDS = new ResourceCommands();
 
@@ -78,11 +75,6 @@ public final class Commands
     public static BlobCommands blob()
     {
         return BLOB_COMMANDS;
-    }
-
-    public static AttachmentCommands attachment()
-    {
-        return ATTACHMENT_COMMANDS;
     }
 
     public static ResourceCommands resource()

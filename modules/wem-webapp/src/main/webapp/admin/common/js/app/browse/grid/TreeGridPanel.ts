@@ -264,7 +264,12 @@ module api.app.browse.grid {
         }
 
         deselectAll() {
-            this.getActiveList().getSelectionModel().deselectAll();
+            var activeList = this.getActiveList();
+            var plugin = <PersistentGridSelectionPlugin> activeList.getPlugin('persistentGridSelection');
+            if (plugin) {
+                plugin.clearSelection();
+            }
+            activeList.getSelectionModel().deselectAll();
         }
 
         deselectItem(keyFieldValue: any) {

@@ -56,73 +56,38 @@ module app.wizard.page.contextwindow.inspect {
 
             this.pageSelectorEl = containerForm;
             this.appendChild(containerForm);
-
-            this.pageTemplateSelector.onPageTemplateChanged((pageTemplate: PageTemplateSummary) => {
-
-                if (!pageTemplate || !pageTemplate.getKey().equals(this.currentPageTemplate)) {
-                    this.handlePageTemplateChanged(pageTemplate);
-                }
-            });
         }
 
-        private handlePageTemplateChanged(selectedPageTemplate: PageTemplateSummary) {
-
-            this.removeChild(this.formView);
-            this.formView = null;
-            this.currentPageTemplate = null;
-
-            if (selectedPageTemplate) {
-
-                var getPageTemplatePromise: Q.Promise<PageTemplate> = new GetPageTemplateByKeyRequest(selectedPageTemplate.getKey()).
-                    setSiteTemplateKey(this.siteTemplateKey).sendAndParse();
-                getPageTemplatePromise.done((pageTemplate: PageTemplate) => {
-
-                    new GetPageDescriptorByKeyRequest(pageTemplate.getDescriptorKey()).sendAndParse().
-                        done((pageDescriptor: PageDescriptor) => {
-
-                            this.pageTemplateSelector.setPageTemplate(selectedPageTemplate.getKey());
-                            this.currentPageTemplate = pageTemplate.getKey();
-
-                            this.refreshConfigForm(pageTemplate, pageDescriptor);
-                        });
-                });
-            }
-        }
-
-        setPage(content: Content, pageTemplate: PageTemplate, pageDescriptor: PageDescriptor) {
-            this.content = content;
+        setPage(content: Content, pageTemplate: PageTemplate, pageDescriptor: PageDescriptor, config: api.data.RootDataSet) {
 
             var pageTemplateKey = pageTemplate ? pageTemplate.getKey() : null;
+
+            this.content = content;
+
+
 
             this.pageTemplateSelector.setPageTemplate(pageTemplateKey);
             this.currentPageTemplate = pageTemplateKey;
 
-            this.refreshConfigForm(pageTemplate, pageDescriptor);
+            this.refreshConfigForm(pageDescriptor, config);
         }
 
-        getPageTemplate(): PageTemplateKey {
-            return this.currentPageTemplate ? this.currentPageTemplate : null;
+        onPageTemplateChanged(listener: {(event: PageTemplateChangedEvent): void;}) {
+            this.pageTemplateSelector.onPageTemplateChanged(listener);
         }
 
-        getPageConfig(): RootDataSet {
-            return this.currentPageTemplate ? this.formView.getData() : null;
+        unPageTemplateChanged(listener: {(event: PageTemplateChangedEvent): void;}) {
+            this.pageTemplateSelector.unPageTemplateChanged(listener);
         }
 
-        private refreshConfigForm(pageTemplate: PageTemplate, pageDescriptor: PageDescriptor) {
+        private refreshConfigForm(pageDescriptor: PageDescriptor, config: api.data.RootDataSet) {
 
             if (this.formView) {
                 this.removeChild(this.formView);
             }
 
-            if (!pageTemplate || !pageDescriptor) {
+            if (!pageDescriptor) {
                 return;
-            }
-
-            var config: RootDataSet;
-            if (this.content.isPage() && this.content.getPage().hasConfig()) {
-                config = this.content.getPage().getConfig();
-            } else {
-                config = pageTemplate.getConfig();
             }
 
             this.formView = new FormView(new FormContextBuilder().build(), pageDescriptor.getConfig(), config);

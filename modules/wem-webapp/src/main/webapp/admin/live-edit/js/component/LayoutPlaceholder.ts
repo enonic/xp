@@ -15,9 +15,9 @@ module LiveEdit.component {
             this.comboBox.hide();
             this.appendChild(this.comboBox);
 
-            this.comboBox.addOptionSelectedListener((item: api.ui.selector.Option<api.content.page.layout.LayoutDescriptor>) => {
+            this.comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.page.layout.LayoutDescriptor>) => {
                 var componentPath = this.getComponentPath();
-                var descriptor: api.content.page.Descriptor = item.displayValue;
+                var descriptor: api.content.page.Descriptor = event.getOption().displayValue;
                 $liveEdit(window).trigger('pageComponentSetDescriptor.liveEdit', [descriptor, componentPath, this]);
             });
         }

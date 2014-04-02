@@ -39,8 +39,6 @@ module api.form.input {
 
         private validityChangedListeners: {(event: api.form.ValidityChangedEvent) : void}[] = [];
 
-        private inputTypeViewSize: number = -1;
-
         constructor(config: InputViewConfig) {
             super(<FormItemViewConfig>{
                 className: "input-view",
@@ -122,12 +120,6 @@ module api.form.input {
             });
 
             this.appendChild(this.inputTypeView.getElement());
-            // TODO: Disabled for now since it causes performance slowdown when form as many InputView-s
-            // TODO: onResized listening should be done on FormView instead and the broadcasted to any InputViews within the FormView
-            //this.inputTypeView.getElement().onResized((event: api.dom.ElementResizedEvent) => {
-            //    this.inputTypeView.availableSizeChanged(event.getNewWidth(), event.getNewHeight());
-            //});
-
 
             if (!this.inputTypeView.isManagingAdd()) {
 
@@ -159,6 +151,12 @@ module api.form.input {
 
                 this.handleInputValidationRecording(event.getRecording(), false);
             });
+        }
+
+        broadcastFormSizeChanged() {
+            if (this.isVisible()) {
+                this.inputTypeView.availableSizeChanged();
+            }
         }
 
         refresh() {

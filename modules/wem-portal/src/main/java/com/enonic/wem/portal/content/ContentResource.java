@@ -39,9 +39,6 @@ public final class ContentResource
     @Context
     protected HttpContext httpContext;
 
-    @Inject
-    protected SiteTemplateService siteTemplateService;
-
     protected Response doHandle()
         throws Exception
     {
@@ -83,18 +80,5 @@ public final class ContentResource
         controller.context( context );
 
         return controller.execute();
-    }
-
-    private PageTemplate getDefaultPageTemplate( final ContentTypeName contentType, final Site site )
-    {
-        try
-        {
-            final SiteTemplate siteTemplate = this.siteTemplateService.getSiteTemplate( site.getTemplate() );
-            return siteTemplate.getDefaultPageTemplate( contentType );
-        }
-        catch ( SiteTemplateNotFoundException e )
-        {
-            return null;
-        }
     }
 }

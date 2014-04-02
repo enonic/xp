@@ -55,7 +55,8 @@ public class ContentNodeTranslator
     public CreateNodeParams toCreateNode( final CreateContent command )
     {
         final RootDataSet contentAsData = CONTENT_SERIALIZER.toData( command );
-        final EntityIndexConfig entityIndexConfig = ContentEntityIndexConfigFactory.create();
+
+        final EntityIndexConfig entityIndexConfig = ContentEntityIndexConfigFactory.create( command );
 
         Attachments contentAttachments = command.getAttachments();
 
@@ -69,13 +70,13 @@ public class ContentNodeTranslator
             nodeAttachmentsBuilder.add( ThumbnailAttachmentSerializer.toAttachment( thumbnail ) );
         }
 
-        return new CreateNodeParams()
-            .name( resolveNodeName( command.getName() ) )
-            .parent( resolveParentNodePath( command.getParentContentPath() ) )
-            .embed( command.isEmbed() )
-            .data( contentAsData )
-            .attachments( nodeAttachmentsBuilder.build() )
-            .entityIndexConfig( entityIndexConfig );
+        return new CreateNodeParams().
+            name( resolveNodeName( command.getName() ) ).
+            parent( resolveParentNodePath( command.getParentContentPath() ) ).
+            embed( command.isEmbed() ).
+            data( contentAsData ).
+            attachments( nodeAttachmentsBuilder.build() ).
+            entityIndexConfig( entityIndexConfig );
     }
 
     public UpdateNodeParams toUpdateNodeCommand( final Content content, final Attachments attachments )
@@ -143,7 +144,7 @@ public class ContentNodeTranslator
     {
         final RootDataSet rootDataSet = CONTENT_SERIALIZER.toData( content );
 
-        final EntityIndexConfig entityIndexConfig = ContentEntityIndexConfigFactory.create();
+        final EntityIndexConfig entityIndexConfig = ContentEntityIndexConfigFactory.create( content );
 
         return new NodeEditor()
         {

@@ -5,7 +5,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.command.content.attachment.UpdateAttachments;
+import com.enonic.wem.api.command.content.attachment.UpdateAttachmentsParams;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.attachment.Attachment;
@@ -15,7 +15,7 @@ public final class UpdateContent
     extends Command<Content>
 {
 
-    private UpdateAttachments updateAttachments;
+    private UpdateAttachmentsParams updateAttachments;
 
     private ContentEditor editor;
 
@@ -56,7 +56,7 @@ public final class UpdateContent
         return this;
     }
 
-    public UpdateContent updateAttachments( final UpdateAttachments updateAttachments )
+    public UpdateContent updateAttachments( final UpdateAttachmentsParams updateAttachments )
     {
         this.updateAttachments = updateAttachments;
         return this;
@@ -68,7 +68,7 @@ public final class UpdateContent
         return updateAttachments.getAttachments().getAttachment( attachmentName );
     }
 
-    public UpdateAttachments getUpdateAttachments()
+    public UpdateAttachmentsParams getUpdateAttachments()
     {
         return updateAttachments;
     }

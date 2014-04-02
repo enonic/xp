@@ -1,11 +1,9 @@
 module app.wizard.page.contextwindow {
 
     import RootDataSet = api.data.RootDataSet;
-    import DefaultModels = app.wizard.page.DefaultModels;
     import LiveFormPanel = app.wizard.page.LiveFormPanel;
     import ComponentPath = api.content.page.ComponentPath;
     import Content = api.content.Content;
-    import ContentTypeName = api.schema.content.ContentTypeName;
     import PageTemplateKey = api.content.page.PageTemplateKey;
     import PageTemplate = api.content.page.PageTemplate;
     import PageDescriptor = api.content.page.PageDescriptor;
@@ -13,16 +11,15 @@ module app.wizard.page.contextwindow {
     import Region = api.content.page.region.Region;
     import ImageComponent = api.content.page.image.ImageComponent;
     import ImageComponentBuilder = api.content.page.image.ImageComponentBuilder;
+    import InspectionPanel = inspect.InspectionPanel;
 
     export interface ContextWindowConfig {
         liveEditIFrame?:api.dom.IFrameEl;
         liveEditId?:string;
         liveEditWindow: any;
         liveEditJQuery: JQueryStatic;
-        siteTemplate:api.content.site.template.SiteTemplate;
         liveFormPanel:LiveFormPanel;
-        contentType:ContentTypeName;
-        defaultModels:DefaultModels;
+        inspectionPanel:InspectionPanel;
     }
 
     export class ContextWindow extends api.ui.DockedWindow {
@@ -62,13 +59,8 @@ module app.wizard.page.contextwindow {
                 draggingMask: this.dragMask //DragMask temporarily disabled
             });
 
-            this.inspectionPanel = new inspect.InspectionPanel({
-                liveEditWindow: this.liveEditWindow,
-                siteTemplate: config.siteTemplate,
-                liveFormPanel: this.liveFormPanel,
-                contentType: config.contentType,
-                defaultModels: config.defaultModels
-            });
+            this.inspectionPanel = config.inspectionPanel;
+
             this.emulatorPanel = new EmulatorPanel({
                 liveEditIFrame: this.liveEditIFrame
             });
@@ -95,6 +87,11 @@ module app.wizard.page.contextwindow {
 
         }
 
+        remove() {
+            this.dragMask.remove();
+            super.remove();
+        }
+
         disable() {
             this.addClass("hidden");
             this.getEl().setRight("-290px");
@@ -118,23 +115,8 @@ module app.wizard.page.contextwindow {
             }
         }
 
-        public inspectComponent(component: PageComponent) {
-            this.inspectionPanel.inspectComponent(component);
-            this.selectPanel(this.inspectionPanel);
-        }
-
-        public inspectPage(page: Content, pageTemplate: PageTemplate, pageDescriptor: PageDescriptor) {
-            this.inspectionPanel.inspectPage(page, pageTemplate, pageDescriptor);
-            this.selectPanel(this.inspectionPanel);
-        }
-
-        public inspectRegion(region: Region) {
-            this.inspectionPanel.inspectRegion(region);
-            this.selectPanel(this.inspectionPanel);
-        }
-
-        public inspectContent(content: Content) {
-            this.inspectionPanel.inspectContent(content);
+        public showInspectionPanel(panel: inspect.BaseInspectionPanel) {
+            this.inspectionPanel.showInspectionPanel(panel);
             this.selectPanel(this.inspectionPanel);
         }
 
@@ -143,16 +125,12 @@ module app.wizard.page.contextwindow {
             this.selectPanel(this.insertablesPanel);
         }
 
-        setPage(page: Content, pageTemplate: PageTemplate, pageDescriptor: PageDescriptor) {
-            this.inspectionPanel.setPage(page, pageTemplate, pageDescriptor);
+        onPageTemplateChanged(listener: {(event: inspect.PageTemplateChangedEvent): void;}) {
+            this.inspectionPanel.onPageTemplateChanged(listener);
         }
 
-        getPageTemplate(): PageTemplateKey {
-            return this.inspectionPanel.getPageTemplate();
-        }
-
-        getPageConfig(): RootDataSet {
-            return this.inspectionPanel.getPageConfig();
+        unPageTemplateChanged(listener: {(event: inspect.PageTemplateChangedEvent): void;}) {
+            this.inspectionPanel.unPageTemplateChanged(listener);
         }
 
         setPinned(value: boolean) {

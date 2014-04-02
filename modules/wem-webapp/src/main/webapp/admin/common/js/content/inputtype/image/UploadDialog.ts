@@ -1,4 +1,4 @@
-module api.form.inputtype.content.image {
+module api.content.inputtype.image {
 
     export class UploadDialog extends api.ui.dialog.ModalDialog {
 

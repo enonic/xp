@@ -1,5 +1,8 @@
 module app.wizard {
 
+    import WizardStep = api.app.wizard.WizardStep;
+    import WizardStepForm = api.app.wizard.WizardStepForm;
+
     export class SiteTemplateWizardPanel extends api.app.wizard.WizardPanel<api.content.site.template.SiteTemplate> {
 
         private static DEFAULT_SITE_TEMPLATE_ICON_URL: string = api.util.getAdminUri("common/images/icons/icoMoon/128x128/earth.png");
@@ -49,13 +52,13 @@ module app.wizard {
             });
         }
 
-        createSteps(): api.app.wizard.WizardStep[] {
-            var steps: api.app.wizard.WizardStep[] = [];
+        createSteps(): WizardStep[] {
+            var steps: WizardStep[] = [];
             this.siteTemplateStep = new SiteTemplateWizardStepForm();
-            steps.push(new api.app.wizard.WizardStep("Site Template", this.siteTemplateStep));
-            steps.push(new api.app.wizard.WizardStep("Content", new ContentWizardStepForm()));
-            steps.push(new api.app.wizard.WizardStep("Components", new ComponentsWizardStepForm()));
-            steps.push(new api.app.wizard.WizardStep("Summary", new SummaryWizardStepForm()));
+            steps.push(new WizardStep("Site Template", this.siteTemplateStep));
+            steps.push(new WizardStep("Content", new WizardStepForm()));
+            steps.push(new WizardStep("Components", new WizardStepForm()));
+            steps.push(new WizardStep("Summary", new WizardStepForm()));
             return steps;
         }
 
@@ -63,11 +66,13 @@ module app.wizard {
 
             var deferred = Q.defer<void>();
             super.renderNew().
-                done(() => {
+                then(() => {
 
                     this.siteTemplateStep.renderNew();
                     deferred.resolve(null);
-                });
+                }).catch((reason) => {
+                    deferred.reject(reason);
+                }).done();
 
             return deferred.promise;
         }

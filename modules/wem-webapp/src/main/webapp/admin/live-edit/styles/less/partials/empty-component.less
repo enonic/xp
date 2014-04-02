@@ -45,16 +45,15 @@
   }
 
   &[data-live-edit-type="text"] {
+    .icon-type;
     &:before {
-      content: "\e006";
+      font-family: 'icomoon' !important;
     }
     &[contenteditable="true"] {
       &:before {
         content: none;
       }
     }
-
-    background-color: transparent;
   }
 
   .upload-new-image-button {
@@ -95,6 +94,7 @@
     margin: @defaultHeight/2-30px auto 0 auto;
     vertical-align: middle;
     display: inline-block;
+    text-align: left;
     width: 255px;
     .options-container {
       z-index: 9999999; // must override shader
@@ -119,6 +119,19 @@
     &:before {
       font-size: 32px;
     }
+  }
+
+  .text-link-click-to-edit {
+    font-size: 32px;
+    font-family: Tahoma, Geneva, sans-serif;
+    position: relative;
+    vertical-align: middle;
+    margin: @defaultHeight/2-30px auto 0 auto !important;
+    padding: 0;
+    display: inline-block;
+    box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    color: #224E83;
   }
 
 }

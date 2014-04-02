@@ -30,8 +30,6 @@ module api.form.formitemset {
 
         private occurrencesCollapsed: boolean = false;
 
-        private formItemSetOccurrenceViews: api.form.formitemset.FormItemSetOccurrenceView[] = [];
-
         constructor(config: FormItemSetOccurrencesConfig) {
             super(<FormItemOccurrencesConfig>{
                 formItem: config.formItemSet,
@@ -97,7 +95,6 @@ module api.form.formitemset {
 
         createNewOccurrenceView(occurrence: FormItemSetOccurrence): FormItemSetOccurrenceView {
 
-            var formItemSetOccurrences: FormItemSetOccurrences = this;
             var dataSet: api.data.DataSet = this.dataSets[occurrence.getIndex()];
             if( !dataSet ) {
                 dataSet = new api.data.DataSet(this.formItemSet.getName());
@@ -112,18 +109,9 @@ module api.form.formitemset {
                 dataSet: dataSet
             });
             newOccurrenceView.onRemoveButtonClicked((event: RemoveButtonClickedEvent<FormItemSetOccurrenceView>) => {
-                formItemSetOccurrences.doRemoveOccurrence(event.getView(), event.getIndex());
+                this.doRemoveOccurrence(event.getView(), event.getIndex());
             });
-            this.formItemSetOccurrenceViews.push(newOccurrenceView);
             return newOccurrenceView;
-        }
-
-        getFormItemSetOccurrenceView(index: number): FormItemSetOccurrenceView {
-            return this.formItemSetOccurrenceViews[index];
-        }
-
-        getFormItemSetOccurrenceViews(): FormItemSetOccurrenceView[] {
-            return this.formItemSetOccurrenceViews;
         }
 
         getAttachments(): api.content.attachment.Attachment[] {

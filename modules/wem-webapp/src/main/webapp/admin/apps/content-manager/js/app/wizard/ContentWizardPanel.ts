@@ -106,7 +106,11 @@ module app.wizard {
             if (this.siteContent || this.createSite) {
 
                 this.liveFormPanel = new page.LiveFormPanel(<page.LiveFormPanelConfig> {
-                    contentWizardPanel: this, siteTemplate: this.siteTemplate});
+                    contentWizardPanel: this,
+                    siteTemplate: this.siteTemplate,
+                    contentType: this.contentType.getContentTypeName(),
+                    defaultModels: params.defaultModels
+                });
             }
 
             if (this.contentType.hasContentDisplayNameScript()) {
@@ -177,9 +181,11 @@ module app.wizard {
 
             // Ensure a nameless and empty content is persisted before rendering new
             this.saveChanges().
-                done(() => {
+                then(() => {
                     deferred.resolve(null);
-                });
+                }).catch((reason) => {
+                    deferred.reject(reason);
+                }).done();
 
             return deferred.promise;
         }

@@ -73,7 +73,9 @@ module LiveEdit.component.mouseevent {
 
         setSelectMode(event: JQueryEventObject): void {
 
-            this.selectedText.getElement().css('cursor', 'url(../../admin/live-edit/images/pencil.png) 0 40, text');
+            if (!this.isSelectedTextBlankOrEmpty()) {
+                this.selectedText.getElement().css('cursor', 'url(../../admin/live-edit/images/pencil.png) 0 40, text');
+            }
             this.currentMode = TextMode.SELECTED;
 
             // Make sure Chrome does not selects the text on context click
@@ -91,16 +93,17 @@ module LiveEdit.component.mouseevent {
         setEditMode(): void {
 
             var textComponent = this.selectedText;
-
+            $('.text-link-click-to-edit').remove();
 //            textComponent.onResized((event: api.dom.ElementResizedEvent) => {
 //                console.log('resize' , event);
 //                $(window).trigger('editTextComponent.liveEdit', [textComponent]);
 //            });
 
-            textComponent.getElement().on('keydown keyup', function(event){
-//                if ((event.keyCode === 13) || (event.keyCode === 46) || (event.keyCode === 8)){
-                    $(window).trigger('editTextComponent.liveEdit', [textComponent]);
-//                }
+            if (this.isSelectedTextEmpty()) {
+                textComponent.appendChild(new api.dom.BrEl());
+            }
+            textComponent.getElement().on('keydown keyup', function (event) {
+                $(window).trigger('editTextComponent.liveEdit', [textComponent]);
             });
 
             $(window).trigger('editTextComponent.liveEdit', [this.selectedText]);
@@ -125,8 +128,7 @@ module LiveEdit.component.mouseevent {
             textComponent.getElement().css('cursor', '');
             textComponent.getElement().removeClass('live-edit-edited-text');
 
-            var isEmpty = !$.trim(textComponent.getElement().html()).length;
-            if (isEmpty) {
+            if (this.isSelectedTextBlankOrEmpty()) {
                 textComponent.getElement().addClass('live-edit-empty-component');
             }
 
@@ -137,5 +139,16 @@ module LiveEdit.component.mouseevent {
             LiveEdit.component.Selection.removeSelectedAttribute();
 
         }
+
+        private isSelectedTextBlankOrEmpty(): boolean {
+            var textContent = $.trim(this.selectedText.getElement().html());
+            var isBlank = !textContent.length || ('<br>' === textContent);
+            return isBlank;
+        }
+
+        private isSelectedTextEmpty(): boolean {
+            return !$.trim(this.selectedText.getElement().html()).length;
+        }
+
     }
 }

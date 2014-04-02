@@ -1,15 +1,15 @@
 module api.ui.selector {
 
-    export class OptionSelectedEvent<T> {
+    export class OptionSelectedEvent<OPTION_DISPLAY_VALUE> {
 
-        private item: Option<T>;
+        private option: Option<OPTION_DISPLAY_VALUE>;
 
-        constructor(item: Option<T>) {
-            this.item = item;
+        constructor(option: Option<OPTION_DISPLAY_VALUE>) {
+            this.option = option;
         }
 
-        getItem(): Option<T> {
-            return this.item;
+        getOption(): Option<OPTION_DISPLAY_VALUE> {
+            return this.option;
         }
     }
 }

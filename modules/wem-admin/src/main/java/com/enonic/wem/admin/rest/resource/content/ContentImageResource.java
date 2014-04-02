@@ -15,6 +15,8 @@ import javax.ws.rs.core.Response;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.content.attachment.AttachmentService;
+import com.enonic.wem.api.command.content.attachment.GetAttachmentParams;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.attachment.Attachment;
@@ -36,6 +38,9 @@ import static com.enonic.wem.api.command.Commands.contentType;
 public class ContentImageResource
 {
     private ContentImageHelper helper;
+
+    @Inject
+    private AttachmentService attachmentService;
 
     private Client client;
 
@@ -153,6 +158,7 @@ public class ContentImageResource
 
     private Attachment findAttachment( final ContentId contentId, final String attachmentName )
     {
-        return client.execute( Commands.attachment().get().contentId( contentId ).attachmentName( attachmentName ) );
+        final GetAttachmentParams params = new GetAttachmentParams().contentId( contentId ).attachmentName( attachmentName );
+        return attachmentService.get( params );
     }
 }
