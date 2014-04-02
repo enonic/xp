@@ -23,6 +23,7 @@ public abstract class Descriptor<KEY extends DescriptorKey>
         Preconditions.checkNotNull( builder.key, "key cannot be null" );
         Preconditions.checkNotNull( builder.name, "name cannot be null" );
         Preconditions.checkNotNull( builder.config, "config cannot be null" );
+        //noinspection unchecked
         this.key = (KEY) builder.key;
         this.name = builder.name;
         this.displayName = builder.displayName;

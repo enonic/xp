@@ -103,9 +103,7 @@ module LiveEdit.component.mouseevent {
                 textComponent.appendChild(new api.dom.BrEl());
             }
             textComponent.getElement().on('keydown keyup', function (event) {
-//                if ((event.keyCode === 13) || (event.keyCode === 46) || (event.keyCode === 8)){
                 $(window).trigger('editTextComponent.liveEdit', [textComponent]);
-//                }
             });
 
             $(window).trigger('editTextComponent.liveEdit', [this.selectedText]);

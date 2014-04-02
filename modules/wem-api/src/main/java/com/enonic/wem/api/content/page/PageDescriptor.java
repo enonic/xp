@@ -10,7 +10,7 @@ import com.enonic.wem.api.module.ResourcePath;
 
 public final class PageDescriptor
 {
-    private static final ResourcePath COMPONENT_FOLDER = ResourcePath.from( "component" );
+    private static final ResourcePath PAGE_FOLDER = ResourcePath.from( "page" );
 
     private final PageDescriptorKey key;
 
@@ -43,7 +43,7 @@ public final class PageDescriptor
 
     public ModuleResourceKey getModuleResourceKey()
     {
-        final ResourcePath path = COMPONENT_FOLDER.resolve( key.getName().toString() );
+        final ResourcePath path = PAGE_FOLDER.resolve( key.getName().toString() );
         return new ModuleResourceKey( key.getModuleKey(), path );
     }
 

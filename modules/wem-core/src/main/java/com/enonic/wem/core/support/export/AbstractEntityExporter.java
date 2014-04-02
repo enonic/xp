@@ -192,6 +192,7 @@ public abstract class AbstractEntityExporter<I, O>
         Files.write( xmlFile, xml.getBytes( Charset.forName( "UTF-8" ) ) );
     }
 
+    @SuppressWarnings("EmptyTryBlock")
     private void checkValidZipFile( final Path zipFilePath )
     {
         try (final ZipFile ignored = new ZipFile( zipFilePath.toFile() ))
