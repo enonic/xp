@@ -1,8 +1,6 @@
 module app.wizard.page.contextwindow.inspect {
 
     import RootDataSet = api.data.RootDataSet;
-    import DefaultModels = app.wizard.page.DefaultModels;
-    import LiveFormPanel = app.wizard.page.LiveFormPanel;
     import SiteTemplate = api.content.site.template.SiteTemplate;
     import Content = api.content.Content;
     import ContentTypeName = api.schema.content.ContentTypeName;
@@ -17,12 +15,12 @@ module app.wizard.page.contextwindow.inspect {
 
     export interface InspectionPanelConfig {
 
-        liveEditWindow:any;
-
-        siteTemplate:SiteTemplate;
-        liveFormPanel:LiveFormPanel;
-        contentType:ContentTypeName;
-        defaultModels:DefaultModels;
+        contentInspectionPanel: ContentInspectionPanel;
+        pageInspectionPanel: PageInspectionPanel;
+        regionInspectionPanel: RegionInspectionPanel;
+        imageInspectionPanel: ImageInspectionPanel;
+        partInspectionPanel: PartInspectionPanel;
+        layoutInspectionPanel: LayoutInspectionPanel;
     }
 
     export class InspectionPanel extends api.ui.DeckPanel {
@@ -34,28 +32,17 @@ module app.wizard.page.contextwindow.inspect {
         private contentInspectionPanel: ContentInspectionPanel;
         private pageInspectionPanel: PageInspectionPanel;
         private regionInspectionPanel: RegionInspectionPanel;
-        private liveFormPanel: LiveFormPanel;
 
         constructor(config: InspectionPanelConfig) {
             super();
 
             this.noSelectionPanel = new NoSelectionInspectionPanel();
-            this.imageInspectionPanel = new ImageInspectionPanel(<ImageInspectionPanelConfig>{
-                liveFormPanel: config.liveFormPanel,
-                siteTemplate: config.siteTemplate,
-                defaultModels: config.defaultModels
-            });
-            this.partInspectionPanel = new PartInspectionPanel(<PartInspectionPanelConfig>{
-                siteTemplate: config.siteTemplate
-            });
-            this.layoutInspectionPanel = new LayoutInspectionPanel(<LayoutInspectionPanelConfig>{
-                siteTemplate: config.siteTemplate
-            });
-            this.contentInspectionPanel = new ContentInspectionPanel();
-            this.pageInspectionPanel = new PageInspectionPanel({
-                contentType: config.contentType,
-                siteTemplateKey: config.siteTemplate.getKey()});
-            this.regionInspectionPanel = new RegionInspectionPanel();
+            this.imageInspectionPanel = config.imageInspectionPanel;
+            this.partInspectionPanel = config.partInspectionPanel;
+            this.layoutInspectionPanel = config.layoutInspectionPanel;
+            this.contentInspectionPanel = config.contentInspectionPanel;
+            this.pageInspectionPanel = config.pageInspectionPanel;
+            this.regionInspectionPanel = config.regionInspectionPanel;
 
             this.addPanel(this.imageInspectionPanel);
             this.addPanel(this.partInspectionPanel);
@@ -68,58 +55,12 @@ module app.wizard.page.contextwindow.inspect {
             this.clearSelection();
         }
 
-        private showInspectionPanel(panel: api.ui.Panel) {
+        public showInspectionPanel(panel: api.ui.Panel) {
             this.showPanel(this.getPanelIndex(panel));
         }
 
         public clearSelection() {
             this.showInspectionPanel(this.noSelectionPanel);
-        }
-
-        public inspectPage(page: Content, pageTemplate: PageTemplate, pageDescriptor: PageDescriptor, config: api.data.RootDataSet) {
-            this.pageInspectionPanel.setPage(page, pageTemplate, pageDescriptor, config);
-            this.showInspectionPanel(this.pageInspectionPanel);
-        }
-
-        public inspectRegion(region: Region) {
-            this.regionInspectionPanel.setRegion(region);
-            this.showInspectionPanel(this.regionInspectionPanel);
-        }
-
-        public inspectContent(content: Content) {
-            this.contentInspectionPanel.setContent(content);
-            this.showInspectionPanel(this.contentInspectionPanel);
-        }
-
-        public inspectComponent(component: PageComponent) {
-            if (component instanceof ImageComponent) {
-                this.imageInspectionPanel.setImageComponent(<ImageComponent>component);
-                this.showInspectionPanel(this.imageInspectionPanel);
-
-            } else if (component instanceof PartComponent) {
-                this.partInspectionPanel.setPartComponent(<PartComponent>component);
-                this.showInspectionPanel(this.partInspectionPanel);
-
-            } else if (component instanceof api.content.page.layout.LayoutComponent) {
-                this.layoutInspectionPanel.setLayoutComponent(<LayoutComponent>component);
-                this.showInspectionPanel(this.layoutInspectionPanel);
-            } else {
-                if (component) {
-                    console.warn('Unsupported component in InspectionPanel', component);
-                }
-            }
-        }
-
-        setPage(page: Content, pageTemplate: PageTemplate, pageDescriptor: PageDescriptor, config: api.data.RootDataSet) {
-            this.pageInspectionPanel.setPage(page, pageTemplate, pageDescriptor, config);
-        }
-
-        getPageTemplate(): PageTemplateKey {
-            return this.pageInspectionPanel.getPageTemplate();
-        }
-
-        getPageConfig(): RootDataSet {
-            return this.pageInspectionPanel.getPageConfig();
         }
 
         onPageTemplateChanged(listener: {(event: PageTemplateChangedEvent): void;}) {

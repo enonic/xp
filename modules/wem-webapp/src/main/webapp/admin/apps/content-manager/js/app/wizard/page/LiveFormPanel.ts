@@ -4,6 +4,7 @@ module app.wizard.page {
     import PageTemplateKey = api.content.page.PageTemplateKey;
     import PageTemplate = api.content.page.PageTemplate;
     import Content = api.content.Content;
+    import ContentTypeName = api.schema.content.ContentTypeName;
     import ComponentPath = api.content.page.ComponentPath;
     import PageRegions = api.content.page.PageRegions;
     import RegionPath = api.content.page.RegionPath;
@@ -22,24 +23,42 @@ module app.wizard.page {
     import PageComponent = api.content.page.PageComponent;
     import LayoutComponent = api.content.page.layout.LayoutComponent;
     import PartComponentBuilder = api.content.page.part.PartComponentBuilder;
+    import PartComponent = api.content.page.part.PartComponent;
     import ImageComponent = api.content.page.image.ImageComponent;
     import ImageComponentBuilder = api.content.page.image.ImageComponentBuilder;
     import LayoutComponentBuilder = api.content.page.layout.LayoutComponentBuilder;
 
-    import ContextWindow = app.wizard.page.contextwindow.ContextWindow;
+    import InspectionPanelConfig = contextwindow.inspect.InspectionPanelConfig;
+    import InspectionPanel = contextwindow.inspect.InspectionPanel;
+    import ContentInspectionPanel = contextwindow.inspect.ContentInspectionPanel;
+    import PageInspectionPanel = contextwindow.inspect.PageInspectionPanel;
+    import PageInspectionPanelConfig = contextwindow.inspect.PageInspectionPanelConfig;
+    import RegionInspectionPanel = contextwindow.inspect.RegionInspectionPanel;
+    import ImageInspectionPanel = contextwindow.inspect.ImageInspectionPanel;
+    import ImageInspectionPanelConfig = contextwindow.inspect.ImageInspectionPanelConfig;
+    import PartInspectionPanel = contextwindow.inspect.PartInspectionPanel;
+    import PartInspectionPanelConfig = contextwindow.inspect.PartInspectionPanelConfig;
+    import LayoutInspectionPanel = contextwindow.inspect.LayoutInspectionPanel;
+    import LayoutInspectionPanelConfig = contextwindow.inspect.LayoutInspectionPanelConfig;
+    import ContextWindow = contextwindow.ContextWindow;
+    import ContextWindowConfig = contextwindow.ContextWindowConfig;
     import RenderingMode = api.util.RenderingMode;
 
 
     export interface LiveFormPanelConfig {
 
         siteTemplate:SiteTemplate;
+
+        contentType:ContentTypeName;
+
         contentWizardPanel:ContentWizardPanel;
+
+        defaultModels: DefaultModels;
     }
 
     export class LiveFormPanel extends api.ui.Panel {
 
         private siteTemplate: SiteTemplate;
-        private initialized: boolean;
 
         private defaultModels: DefaultModels;
 
@@ -59,6 +78,14 @@ module app.wizard.page {
 
         private pageUrl: string;
         private contextWindow: ContextWindow;
+        private inspectionPanel: InspectionPanel;
+        private contentInspectionPanel: ContentInspectionPanel;
+        private pageInspectionPanel: PageInspectionPanel;
+        private regionInspectionPanel: RegionInspectionPanel;
+        private imageInspectionPanel: ImageInspectionPanel;
+        private partInspectionPanel: PartInspectionPanel;
+        private layoutInspectionPanel: LayoutInspectionPanel;
+
         private liveEditWindow: any;
         private liveEditJQuery: JQueryStatic;
 
@@ -70,8 +97,38 @@ module app.wizard.page {
             super("live-form-panel");
             this.contentWizardPanel = config.contentWizardPanel;
             this.siteTemplate = config.siteTemplate;
+            this.defaultModels = config.defaultModels;
 
-            this.initialized = false;
+            this.contentInspectionPanel = new ContentInspectionPanel();
+            this.pageInspectionPanel = new PageInspectionPanel(<PageInspectionPanelConfig>{
+                siteTemplateKey: this.siteTemplate.getKey(),
+                contentType: config.contentType
+            });
+
+            this.regionInspectionPanel = new RegionInspectionPanel();
+
+            this.imageInspectionPanel = new ImageInspectionPanel(<ImageInspectionPanelConfig>{
+                siteTemplate: this.siteTemplate,
+                liveFormPanel: this,
+                defaultModels: config.defaultModels
+            });
+
+            this.partInspectionPanel = new PartInspectionPanel(<PartInspectionPanelConfig>{
+                siteTemplate: this.siteTemplate
+            });
+
+            this.layoutInspectionPanel = new LayoutInspectionPanel(<LayoutInspectionPanelConfig>{
+                siteTemplate: this.siteTemplate
+            });
+
+            this.inspectionPanel = new InspectionPanel(<InspectionPanelConfig>{
+                contentInspectionPanel: this.contentInspectionPanel,
+                pageInspectionPanel: this.pageInspectionPanel,
+                regionInspectionPanel: this.regionInspectionPanel,
+                imageInspectionPanel: this.imageInspectionPanel,
+                partInspectionPanel: this.partInspectionPanel,
+                layoutInspectionPanel: this.layoutInspectionPanel
+            });
 
             this.pageNeedsReload = true;
             this.pageLoading = false;
@@ -95,62 +152,32 @@ module app.wizard.page {
             });
         }
 
-        private initialize(): Q.Promise<void> {
-            var deferred = Q.defer<void>();
-
-            if (!this.initialized) {
-
-                var siteModules = this.siteTemplate.getModules();
-
-                DefaultModelsFactory.create(<DefaultModelsFactoryConfig>{
-                    siteTemplateKey: this.siteTemplate.getKey(),
-                    contentType: this.content.getType(),
-                    modules: this.siteTemplate.getModules(),
-                }).done((defaultModels: DefaultModels) => {
-                    this.defaultModels = defaultModels;
-                    this.initialized = true;
-                    deferred.resolve(null);
-                });
-            }
-            else {
-                deferred.resolve(null);
-            }
-
-            return deferred.promise;
-        }
-
         loadPageIfNotLoaded(): Q.Promise<void> {
 
             console.log("LiveFormPanel.loadPageIfNotLoaded() this.needsReload = " + this.pageNeedsReload);
             var deferred = Q.defer<void>();
 
-            this.initialize().then(() => {
+            if (this.pageNeedsReload && !this.pageLoading) {
 
-                if (this.pageNeedsReload && !this.pageLoading) {
+                this.pageLoading = true;
+                this.doLoadPage().then(()=> {
 
-                    this.pageLoading = true;
-                    this.doLoadPage().then(()=> {
+                    this.pageLoading = false;
+                    this.pageNeedsReload = false;
 
-                        this.pageLoading = false;
-                        this.pageNeedsReload = false;
+                    this.loadPageDescriptor().done(() => {
 
-                        this.loadPageDescriptor().done(() => {
+                        this.setupContextWindow();
+                        deferred.resolve(null);
+                    });
 
-                            this.setupContextWindow();
-                            deferred.resolve(null);
-                        });
-
-                    }).catch((reason)=> {
-                        deferred.reject(reason);
-                    }).done();
-                }
-                else {
-                    deferred.resolve(null);
-                }
-
-            }).catch((reason) => {
-                deferred.reject(reason);
-            }).done();
+                }).catch((reason)=> {
+                    deferred.reject(reason);
+                }).done();
+            }
+            else {
+                deferred.resolve(null);
+            }
 
             return deferred.promise;
         }
@@ -202,56 +229,50 @@ module app.wizard.page {
 
             this.pageUrl = this.baseUrl + content.getContentId().toString();
 
-            this.initialize().then(() => {
 
-                if (!this.pageSkipReload) {
+            if (!this.pageSkipReload) {
 
-                    if (pageTemplateChanged && this.pageTemplate) {
+                if (pageTemplateChanged && this.pageTemplate) {
 
-                        this.pageRegions = this.pageTemplate.getRegions();
-                        this.pageConfig = this.pageTemplate.getConfig();
-                    }
-                    else if (pageTemplateChanged && !this.pageTemplate) {
-
-                        this.pageRegions = this.defaultModels.getPageTemplate().getRegions();
-                        this.pageConfig = this.defaultModels.getPageTemplate().getConfig();
-                    }
-                    else {
-                        this.pageRegions = this.resolvePageRegions(content, pageTemplate);
-                        this.pageConfig = this.resolvePageConfig(content, pageTemplate);
-                    }
+                    this.pageRegions = this.pageTemplate.getRegions();
+                    this.pageConfig = this.pageTemplate.getConfig();
                 }
+                else if (pageTemplateChanged && !this.pageTemplate) {
 
-                if (!this.isVisible()) {
-
-                    this.pageNeedsReload = true;
-                    //console.log("LiveFormPanel.setPage() ... not visible, returning");
-                    deferred.resolve(null);
-                }
-                else if (this.pageSkipReload == true) {
-                    //console.log("LiveFormPanel.setPage() ... skipReload is true, returning");
-                    deferred.resolve(null);
+                    this.pageRegions = this.defaultModels.getPageTemplate().getRegions();
+                    this.pageConfig = this.defaultModels.getPageTemplate().getConfig();
                 }
                 else {
-                    this.doLoadPage().
-                        then(() => {
+                    this.pageRegions = this.resolvePageRegions(content, pageTemplate);
+                    this.pageConfig = this.resolvePageConfig(content, pageTemplate);
+                }
+            }
 
-                            this.loadPageDescriptor().then(() => {
+            if (!this.isVisible()) {
 
-                                this.setupContextWindow();
-                                deferred.resolve(null);
+                this.pageNeedsReload = true;
+                deferred.resolve(null);
+            }
+            else if (this.pageSkipReload == true) {
+                deferred.resolve(null);
+            }
+            else {
+                this.doLoadPage().
+                    then(() => {
 
-                            }).catch((reason) => {
-                                deferred.reject(reason);
-                            }).done();
-                        }).catch((reason)=> {
+                        this.loadPageDescriptor().then(() => {
+
+                            this.setupContextWindow();
+                            deferred.resolve(null);
+
+                        }).catch((reason) => {
                             deferred.reject(reason);
                         }).done();
-                }
+                    }).catch((reason)=> {
+                        deferred.reject(reason);
+                    }).done();
+            }
 
-            }).catch((reason) => {
-                deferred.reject(reason);
-            }).done();
 
             return deferred.promise;
         }
@@ -341,7 +362,7 @@ module app.wizard.page {
                     this.pageRegions = defaultPageTemplate.getRegions();
                     this.pageDescriptor = pageDescriptor;
 
-                    this.contextWindow.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
+                    this.pageInspectionPanel.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
 
                     deferred.resolve(null);
                 }).catch((reason) => {
@@ -362,17 +383,16 @@ module app.wizard.page {
             this.liveEditWindow = this.frame.getHTMLElement()["contentWindow"];
             this.liveEditJQuery = <JQueryStatic>this.liveEditWindow.$liveEdit;
 
-            this.contextWindow = new ContextWindow({
+            this.contextWindow = new ContextWindow(<ContextWindowConfig>{
                 liveEditIFrame: this.frame,
                 siteTemplate: this.siteTemplate,
                 liveEditWindow: this.liveEditWindow,
                 liveEditJQuery: this.liveEditJQuery,
                 liveFormPanel: this,
-                contentType: this.content.getType(),
-                defaultModels: this.defaultModels
+                inspectionPanel: this.inspectionPanel
             });
 
-            this.contextWindow.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
+            this.pageInspectionPanel.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
 
             this.contextWindow.onPageTemplateChanged((event: app.wizard.page.contextwindow.inspect.PageTemplateChangedEvent) => {
 
@@ -394,7 +414,7 @@ module app.wizard.page {
                                 done((pageDescriptor: PageDescriptor) => {
 
                                     this.pageDescriptor = pageDescriptor;
-                                    this.contextWindow.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
+                                    this.pageInspectionPanel.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
                                 });
                         });
                 }
@@ -403,7 +423,7 @@ module app.wizard.page {
                     this.pageDescriptor = null;
                     this.pageRegions = this.defaultModels.getPageTemplate().getRegions();
                     this.pageConfig = this.defaultModels.getPageTemplate().getConfig();
-                    this.contextWindow.setPage(this.content, null, null, this.pageConfig);
+                    this.pageInspectionPanel.setPage(this.content, null, null, this.pageConfig);
                 }
             });
 
@@ -418,11 +438,10 @@ module app.wizard.page {
 
         public getPageTemplate(): PageTemplateKey {
 
-            if (!this.contextWindow) {
-                return this.content.isPage() ? this.content.getPage().getTemplate() : null;
+            if(!this.pageTemplate) {
+                return null;
             }
-
-            return this.contextWindow.getPageTemplate();
+            return this.pageTemplate.getKey();
         }
 
         public getRegions(): PageRegions {
@@ -447,26 +466,44 @@ module app.wizard.page {
             return this.defaultModels.getLayoutDescriptor();
         }
 
-        private onComponentSelected(pathAsString: string) {
-            var componentPath = ComponentPath.fromString(pathAsString);
+        private inspectComponent(componentPath: ComponentPath) {
+
             var component = this.pageRegions.getComponent(componentPath);
-            this.contextWindow.inspectComponent(component);
+            api.util.assertNotNull(component, "Could not find component: " + componentPath.toString());
+
+            if (component instanceof ImageComponent) {
+                this.imageInspectionPanel.setImageComponent(<ImageComponent>component);
+                this.contextWindow.showInspectionPanel(this.imageInspectionPanel);
+            }
+            else if (component instanceof PartComponent) {
+                this.partInspectionPanel.setPartComponent(<PartComponent>component)
+                this.contextWindow.showInspectionPanel(this.partInspectionPanel);
+            }
+            else if (component instanceof LayoutComponent) {
+                this.layoutInspectionPanel.setLayoutComponent(<LayoutComponent>component)
+                this.contextWindow.showInspectionPanel(this.layoutInspectionPanel);
+            }
+            else {
+                throw new Error("PageComponent cannot be selected: " + api.util.getClassName(component));
+            }
         }
 
-        private onRegionSelected(pathAsString: string) {
-            var regionPath = RegionPath.fromString(pathAsString);
+        private inspectRegion(regionPath: RegionPath) {
+
             var region = this.pageRegions.getRegionByPath(regionPath);
 
-            this.contextWindow.inspectRegion(region);
+            this.regionInspectionPanel.setRegion(region);
+            this.contextWindow.showInspectionPanel(this.regionInspectionPanel);
         }
 
-        private onPageSelected() {
-            this.contextWindow.inspectPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
+        private inspectPage() {
+
+            this.pageInspectionPanel.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
+            this.contextWindow.showInspectionPanel(this.pageInspectionPanel);
         }
 
-        private onContentSelected(contentIdStr: string) {
-            var contentId = new api.content.ContentId(contentIdStr);
-            this.contextWindow.inspectContent(null);
+        private inspectContent(contentId: api.content.ContentId) {
+            this.contextWindow.showInspectionPanel(this.contentInspectionPanel);
         }
 
         private onComponentReset(pathAsString: string) {
@@ -583,18 +620,18 @@ module app.wizard.page {
                         }
                     }
                     if (pathAsString) {
-                        this.onComponentSelected(pathAsString);
+                        this.inspectComponent(ComponentPath.fromString(pathAsString));
                     }
                 });
 
             this.liveEditJQuery(this.liveEditWindow).on('pageSelect.liveEdit',
                 (event) => {
-                    this.onPageSelected();
+                    this.inspectPage();
                 });
 
             this.liveEditJQuery(this.liveEditWindow).on('regionSelect.liveEdit',
-                (event, regionName?) => {
-                    this.onRegionSelected(regionName);
+                (event, regionPath?: string) => {
+                    this.inspectRegion(RegionPath.fromString(regionPath));
                 });
 
             this.liveEditJQuery(this.liveEditWindow).on('deselectComponent.liveEdit', (event) => {

@@ -72,14 +72,6 @@ module app.wizard.page.contextwindow.inspect {
             this.refreshConfigForm(pageDescriptor, config);
         }
 
-        getPageTemplate(): PageTemplateKey {
-            return this.currentPageTemplate ? this.currentPageTemplate : null;
-        }
-
-        getPageConfig(): RootDataSet {
-            return this.currentPageTemplate ? this.formView.getData() : null;
-        }
-
         onPageTemplateChanged(listener: {(event: PageTemplateChangedEvent): void;}) {
             this.pageTemplateSelector.onPageTemplateChanged(listener);
         }
