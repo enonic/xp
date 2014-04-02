@@ -17,8 +17,6 @@ module app.wizard.page.contextwindow.inspect {
 
     export interface ImageInspectionPanelConfig {
 
-        liveFormPanel: LiveFormPanel;
-
         siteTemplate: SiteTemplate;
 
         defaultModels: DefaultModels;
@@ -31,6 +29,8 @@ module app.wizard.page.contextwindow.inspect {
         private descriptorSelected: DescriptorKey;
 
         private descriptorSelector: ImageDescriptorDropdown;
+
+        private imageDescriptorChangedListeners: {(event: ImageDescriptorChangedEvent): void;}[] = [];
 
         private imageDescriptors: {
             [key: string]: ImageDescriptor;
@@ -79,14 +79,30 @@ module app.wizard.page.contextwindow.inspect {
                     var hasDescriptorChanged = this.descriptorSelected && !this.descriptorSelected.equals(selectedDescriptorKey);
                     this.descriptorSelected = selectedDescriptorKey;
                     if (hasDescriptorChanged) {
-                        var path = this.imageComponent.getPath();
-                        var component = config.liveFormPanel.getLiveEditWindow().getComponentByPath(path.toString());
-                        var selectedDescriptor: Descriptor = option.displayValue;
-                        config.liveFormPanel.setComponentDescriptor(selectedDescriptor, path, component);
+                        var componentPath = this.imageComponent.getPath();
+                        var selectedDescriptor: ImageDescriptor = option.displayValue;
+                        this.notifyImageDescriptorChanged(componentPath, selectedDescriptor);
                     }
                 }
             });
             this.appendChild(this.descriptorSelector);
+        }
+
+        onImageDescriptorChanged(listener: {(event: ImageDescriptorChangedEvent): void;}) {
+            this.imageDescriptorChangedListeners.push(listener);
+        }
+
+        unImageDescriptorChanged(listener: {(event: ImageDescriptorChangedEvent): void;}) {
+            this.imageDescriptorChangedListeners = this.imageDescriptorChangedListeners.filter(function (curr) {
+                return curr != listener;
+            });
+        }
+
+        private notifyImageDescriptorChanged(componentPath: api.content.page.ComponentPath, descriptor: ImageDescriptor) {
+            var event = new ImageDescriptorChangedEvent(componentPath, descriptor);
+            this.imageDescriptorChangedListeners.forEach((listener) => {
+                listener(event);
+            });
         }
 
         getDescriptor(): ImageDescriptor {

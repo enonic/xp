@@ -17,6 +17,7 @@ module app.wizard.page {
     import ImageDescriptor = api.content.page.image.ImageDescriptor;
     import LayoutDescriptor = api.content.page.layout.LayoutDescriptor;
     import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
+    import ImageDescriptorChangedEvent = app.wizard.page.contextwindow.inspect.ImageDescriptorChangedEvent;
 
     import PageComponentBuilder = api.content.page.PageComponentBuilder;
     import ComponentName = api.content.page.ComponentName;
@@ -109,8 +110,10 @@ module app.wizard.page {
 
             this.imageInspectionPanel = new ImageInspectionPanel(<ImageInspectionPanelConfig>{
                 siteTemplate: this.siteTemplate,
-                liveFormPanel: this,
                 defaultModels: config.defaultModels
+            });
+            this.imageInspectionPanel.onImageDescriptorChanged((event: ImageDescriptorChangedEvent) => {
+                this.imageDescriptorChanged(event);
             });
 
             this.partInspectionPanel = new PartInspectionPanel(<PartInspectionPanelConfig>{
@@ -150,6 +153,12 @@ module app.wizard.page {
                     this.mask.hide();
                 }
             });
+        }
+
+        private imageDescriptorChanged(event: ImageDescriptorChangedEvent) {
+            var path = event.getComponentPath();
+            var component = this.getLiveEditWindow().getComponentByPath(path.toString());
+            this.setComponentDescriptor(event.getDescriptor(), path, component);
         }
 
         loadPageIfNotLoaded(): Q.Promise<void> {
@@ -450,7 +459,7 @@ module app.wizard.page {
 
         public getPageTemplate(): PageTemplateKey {
 
-            if(!this.pageTemplate) {
+            if (!this.pageTemplate) {
                 return null;
             }
             return this.pageTemplate.getKey();
