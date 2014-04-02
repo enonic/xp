@@ -183,6 +183,14 @@ module api.form.formitemset {
             }
         }
 
+        broadcastFormSizeChanged() {
+            this.formItemSetOccurrences.getOccurrenceViews().forEach((occurrenceView: FormItemSetOccurrenceView) => {
+                occurrenceView.getFormItemViews().forEach((formItemView:api.form.FormItemView) => {
+                    formItemView.broadcastFormSizeChanged();
+                });
+            });
+        }
+
         refresh() {
             this.collapseButton.setVisible(this.formItemSetOccurrences.getOccurrences().length > 0);
             this.addButton.setVisible(!this.formItemSetOccurrences.maximumOccurrencesReached());

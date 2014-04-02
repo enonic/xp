@@ -81,11 +81,11 @@ module api.content.inputtype.image {
             // Don't forget to clean up the modal dialog on remove
             this.onRemoved((event) => {
                 this.uploadDialog.remove();
-            })
+            });
         }
 
-        availableSizeChanged(newWidth: number, newHeight: number) {
-            console.log("ImageSelector.availableSizeChanged(" + newWidth + "x" + newHeight + ")");
+        availableSizeChanged() {
+            console.log("ImageSelector.availableSizeChanged(" + this.getEl().getWidth() + "x" + this.getEl().getWidth() + ")");
         }
 
         newInitialValue(): api.data.Value {

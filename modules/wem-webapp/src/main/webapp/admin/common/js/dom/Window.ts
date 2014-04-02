@@ -14,8 +14,12 @@ module api.dom {
             this.el = window;
         }
 
-        onResized(listener: (event: UIEvent) => void) {
+        onResized(listener: (event: UIEvent) => void, element?: api.dom.Element) {
             this.el.addEventListener("resize", listener);
+
+            if (element) {
+                element.onRemoved(() => this.unResized(listener));
+            }
         }
 
         unResized(listener: (event: UIEvent) => void) {

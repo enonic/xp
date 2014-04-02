@@ -29,6 +29,10 @@ module api.form {
             this.parent = config.parent;
         }
 
+        broadcastFormSizeChanged() {
+            //Should be implemented in child classes
+        }
+
         getContext(): FormContext {
             return this.context;
         }
