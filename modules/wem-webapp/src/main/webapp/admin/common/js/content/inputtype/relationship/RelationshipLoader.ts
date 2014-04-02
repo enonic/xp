@@ -1,4 +1,4 @@
-module api.form.inputtype.content.relationship {
+module api.content.inputtype.relationship {
 
     /**
      * Extends ContentSummaryLoader to restrict requests before allowed content types are set.
@@ -6,7 +6,7 @@ module api.form.inputtype.content.relationship {
      * then search string is preserved and request postponed.
      * After content types are set, search request is made with latest preserved search string.
      */
-    export class RelationshipLoader extends api.form.inputtype.content.ContentSummaryLoader {
+    export class RelationshipLoader extends api.content.ContentSummaryLoader {
 
         private allowedContentTypes:string[];
 

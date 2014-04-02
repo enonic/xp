@@ -5,6 +5,7 @@
 ///<reference path='ContentIdBaseItem.ts' />
 ///<reference path='ContentSummary.ts' />
 ///<reference path='ContentSummaryViewer.ts' />
+///<reference path='ContentSummaryLoader.ts' />
 ///<reference path='ContentIconUrlResolver.ts' />
 ///<reference path='ContentData.ts' />
 ///<reference path='ContentDataFactory.ts' />

@@ -1,6 +1,6 @@
 declare var plupload;
 
-module api.form.inputtype.content.imageupload {
+module api.content.inputtype.imageupload {
 
     export class Image extends api.form.inputtype.support.BaseInputTypeView<any> {
 

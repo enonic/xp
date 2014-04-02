@@ -1,4 +1,4 @@
-module api.form.inputtype.content {
+module api.content {
 
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import LoadingDataEvent = api.util.loader.event.LoadingDataEvent;

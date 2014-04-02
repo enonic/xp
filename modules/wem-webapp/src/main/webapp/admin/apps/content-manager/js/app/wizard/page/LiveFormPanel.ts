@@ -174,7 +174,7 @@ module app.wizard.page {
                     liveEditWindow.siteTemplate = this.siteTemplate;
                     liveEditWindow.content = this.content;
                     liveEditWindow.onOpenImageUploadDialogRequest(()=> {
-                        var uploadDialog = new api.form.inputtype.content.image.UploadDialog();
+                        var uploadDialog = new api.content.inputtype.image.UploadDialog();
                         uploadDialog.onImageUploaded((event: api.ui.ImageUploadedEvent) => {
                             liveEditWindow.notifyImageUploaded(event);
                         });

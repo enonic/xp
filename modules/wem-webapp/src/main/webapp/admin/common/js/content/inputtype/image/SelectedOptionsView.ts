@@ -1,4 +1,4 @@
-module api.form.inputtype.content.image {
+module api.content.inputtype.image {
 
     export class SelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<api.content.ContentSummary> {
 

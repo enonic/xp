@@ -7,7 +7,7 @@ module api.content {
             var builder:api.ui.selector.combobox.RichComboBoxBuilder<api.content.ContentSummary> = new api.ui.selector.combobox.RichComboBoxBuilder<api.content.ContentSummary>();
             builder
                 .setComboBoxName(contentComboBoxBuilder.name ? contentComboBoxBuilder.name : 'contentSelector')
-                .setLoader(contentComboBoxBuilder.loader ? contentComboBoxBuilder.loader : new api.form.inputtype.content.ContentSummaryLoader())
+                .setLoader(contentComboBoxBuilder.loader ? contentComboBoxBuilder.loader : new ContentSummaryLoader())
                 .setSelectedOptionsView(new ContentSelectedOptionsView())
                 .setMaximumOccurrences(contentComboBoxBuilder.maximumOccurrences)
                 .setOptionDisplayValueViewer(new api.content.ContentSummaryViewer());
@@ -15,7 +15,7 @@ module api.content {
             super(builder);
 
             if (contentComboBoxBuilder.allowedContentTypes) {
-                var loader = <api.form.inputtype.content.ContentSummaryLoader>this.getLoader();
+                var loader = <ContentSummaryLoader>this.getLoader();
                 loader.setAllowedContentTypes(contentComboBoxBuilder.allowedContentTypes);
             }
         }

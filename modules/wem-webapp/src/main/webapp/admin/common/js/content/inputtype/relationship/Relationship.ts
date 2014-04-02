@@ -1,4 +1,4 @@
-module api.form.inputtype.content.relationship {
+module api.content.inputtype.relationship {
 
     export interface RelationshipConfig {
         relationshipType: string
