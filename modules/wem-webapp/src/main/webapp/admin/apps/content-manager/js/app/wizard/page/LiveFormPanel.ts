@@ -454,18 +454,6 @@ module app.wizard.page {
             return this.pageConfig;
         }
 
-        getDefaultImageDescriptor(): ImageDescriptor {
-            return this.defaultModels.getImageDescriptor();
-        }
-
-        getDefaultPartDescriptor(): PartDescriptor {
-            return this.defaultModels.getPartDescriptor();
-        }
-
-        getDefaultLayoutDescriptor(): LayoutDescriptor {
-            return this.defaultModels.getLayoutDescriptor();
-        }
-
         private inspectComponent(componentPath: ComponentPath) {
 
             var component = this.pageRegions.getComponent(componentPath);
