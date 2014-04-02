@@ -35,8 +35,8 @@ module api.content.inputtype.relationship {
                                         new api.schema.relationshiptype.RelationshipTypeName("default");
         }
 
-        availableSizeChanged(newWidth: number, newHeight: number) {
-            console.log("Relationship.availableSizeChanged(" + newWidth + "x" + newHeight + ")");
+        availableSizeChanged() {
+            console.log("Relationship.availableSizeChanged(" + this.getEl().getWidth() + "x" + this.getEl().getWidth() + ")");
         }
 
         getElement(): api.dom.Element {
