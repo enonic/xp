@@ -415,6 +415,8 @@ module app.wizard.page {
 
                                     this.pageDescriptor = pageDescriptor;
                                     this.pageInspectionPanel.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
+
+                                    this.saveAndReloadPage();
                                 });
                         });
                 }
@@ -424,12 +426,22 @@ module app.wizard.page {
                     this.pageRegions = this.defaultModels.getPageTemplate().getRegions();
                     this.pageConfig = this.defaultModels.getPageTemplate().getConfig();
                     this.pageInspectionPanel.setPage(this.content, null, null, this.pageConfig);
+
+                    this.saveAndReloadPage();
                 }
             });
 
             this.appendChild(this.contextWindow);
 
             this.liveEditListen();
+        }
+
+        private saveAndReloadPage() {
+            this.pageSkipReload = true;
+            this.contentWizardPanel.saveChanges().done(() => {
+                this.pageSkipReload = false;
+                this.doLoadPage();
+            });
         }
 
         resizeFrameContainer(width: number) {
