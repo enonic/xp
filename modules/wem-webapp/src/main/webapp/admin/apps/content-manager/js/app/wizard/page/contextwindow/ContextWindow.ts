@@ -87,6 +87,11 @@ module app.wizard.page.contextwindow {
 
         }
 
+        remove() {
+            this.dragMask.remove();
+            super.remove();
+        }
+
         disable() {
             this.addClass("hidden");
             this.getEl().setRight("-290px");

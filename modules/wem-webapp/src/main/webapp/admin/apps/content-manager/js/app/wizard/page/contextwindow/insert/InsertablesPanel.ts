@@ -43,7 +43,7 @@ module app.wizard.page.contextwindow.insert {
         initComponentDraggables() {
             var components = jQuery('[data-context-window-draggable="true"]');
 
-            components.liveDraggable({
+            components.draggable({
                 zIndex: 400000,
                 cursorAt: {left: -10, top: -15},
                 appendTo: 'body',
