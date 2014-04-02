@@ -167,7 +167,7 @@ module api.ui {
             });
 
             if (this.alignmentTreshold) {
-                api.dom.Window.get().onResized((event: UIEvent) => this.updateAlignment());
+                api.dom.Window.get().onResized((event: UIEvent) => this.updateAlignment(), this);
             }
 
             this.onShown((event: api.dom.ElementShownEvent) => this.updateAlignment());
