@@ -7,18 +7,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.admin.json.content.attachment.AttachmentJson;
-import com.enonic.wem.api.command.content.attachment.UpdateAttachments;
+import com.enonic.wem.api.command.content.attachment.UpdateAttachmentsParams;
 import com.enonic.wem.api.content.ContentId;
 
 public class UpdateAttachmentsJson
 {
-    private UpdateAttachments updateAttachments;
+    private UpdateAttachmentsParams updateAttachments;
 
     @JsonCreator
     public UpdateAttachmentsJson( @JsonProperty("contentId") final String contentId, //
                                   @JsonProperty("attachments") final List<AttachmentJson> attachments )
     {
-        final UpdateAttachments.Builder builder = UpdateAttachments.newUpdateAttachments( ContentId.from( contentId ) );
+        final UpdateAttachmentsParams.Builder builder = UpdateAttachmentsParams.newUpdateAttachments( ContentId.from( contentId ) );
 
         for ( final AttachmentJson attachmentJson : attachments )
         {
@@ -29,7 +29,7 @@ public class UpdateAttachmentsJson
     }
 
     @JsonIgnore
-    public UpdateAttachments getUpdateAttachments()
+    public UpdateAttachmentsParams getUpdateAttachments()
     {
         return updateAttachments;
     }

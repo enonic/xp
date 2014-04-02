@@ -3,24 +3,21 @@ package com.enonic.wem.api.command.content.attachment;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.attachment.Attachment;
 
-public final class GetAttachment
-    extends Command<Attachment>
+public final class GetAttachmentParams
 {
     private String attachmentName;
 
     private ContentId contentId;
 
-    public GetAttachment attachmentName( final String attachmentName )
+    public GetAttachmentParams attachmentName( final String attachmentName )
     {
         this.attachmentName = attachmentName;
         return this;
     }
 
-    public GetAttachment contentId( final ContentId contentId )
+    public GetAttachmentParams contentId( final ContentId contentId )
     {
         this.contentId = contentId;
         return this;
@@ -49,7 +46,7 @@ public final class GetAttachment
             return false;
         }
 
-        final GetAttachment that = (GetAttachment) o;
+        final GetAttachmentParams that = (GetAttachmentParams) o;
 
         if ( attachmentName != null ? !attachmentName.equals( that.attachmentName ) : that.attachmentName != null )
         {
@@ -71,7 +68,6 @@ public final class GetAttachment
         return result;
     }
 
-    @Override
     public void validate()
     {
         Preconditions.checkNotNull( this.contentId, "contentId cannot be null" );

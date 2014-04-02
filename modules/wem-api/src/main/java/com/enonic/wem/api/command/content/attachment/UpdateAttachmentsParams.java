@@ -4,21 +4,19 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
 
 
-public class UpdateAttachments
-    extends Command<Attachments>
+public class UpdateAttachmentsParams
 {
     private final ContentId contentId;
 
     private final Attachments attachments;
 
 
-    private UpdateAttachments( final Builder builder )
+    private UpdateAttachmentsParams( final Builder builder )
     {
         this.contentId = builder.contentId;
         this.attachments = Attachments.from( builder.attachments );
@@ -56,16 +54,9 @@ public class UpdateAttachments
             return this;
         }
 
-        public UpdateAttachments build()
+        public UpdateAttachmentsParams build()
         {
-            return new UpdateAttachments( this );
+            return new UpdateAttachmentsParams( this );
         }
     }
-
-    @Override
-    public void validate()
-    {
-
-    }
-
 }

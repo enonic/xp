@@ -17,6 +17,8 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.GetContentById;
 import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.ValidateContentData;
+import com.enonic.wem.api.command.content.attachment.AttachmentService;
+import com.enonic.wem.api.command.content.attachment.GetAttachmentsParams;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentId;
@@ -38,7 +40,6 @@ import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.index.IndexService;
 
 import static com.enonic.wem.api.content.Content.newContent;
 
@@ -47,7 +48,7 @@ public class UpdateContentHandler
 {
     private static final String THUMBNAIL_MIME_TYPE = "image/png";
 
-    private IndexService indexService;
+    private AttachmentService attachmentService;
 
     private NodeService nodeService;
 
@@ -104,7 +105,8 @@ public class UpdateContentHandler
 
     private Attachments getCurrentAttachments( final ContentId contentId )
     {
-        return this.context.getClient().execute( Commands.attachment().getAll().contentId( contentId ) );
+        final GetAttachmentsParams params = new GetAttachmentsParams().contentId( contentId );
+        return attachmentService.getAll( params );
     }
 
     private void deleteRemovedEmbeddedContent( final Content persistedContent, final Content editedContent )
@@ -228,9 +230,9 @@ public class UpdateContentHandler
     }
 
     @Inject
-    public void setIndexService( final IndexService indexService )
+    public void setAttachmentService( final AttachmentService attachmentService )
     {
-        this.indexService = indexService;
+        this.attachmentService = attachmentService;
     }
 
     @Inject

@@ -5,16 +5,13 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.attachment.Attachments;
 
-public final class GetAttachments
-    extends Command<Attachments>
+public final class GetAttachmentsParams
 {
     private ContentId contentId;
 
-    public GetAttachments contentId( final ContentId contentId )
+    public GetAttachmentsParams contentId( final ContentId contentId )
     {
         this.contentId = contentId;
         return this;
@@ -32,12 +29,12 @@ public final class GetAttachments
         {
             return true;
         }
-        if ( !( o instanceof GetAttachments ) )
+        if ( !( o instanceof GetAttachmentsParams ) )
         {
             return false;
         }
 
-        final GetAttachments that = (GetAttachments) o;
+        final GetAttachmentsParams that = (GetAttachmentsParams) o;
         return Objects.equals( contentId, that.contentId );
     }
 
@@ -47,7 +44,6 @@ public final class GetAttachments
         return Objects.hash( contentId );
     }
 
-    @Override
     public void validate()
     {
         Preconditions.checkNotNull( this.contentId, "contentId cannot be null" );
