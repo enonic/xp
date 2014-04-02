@@ -107,41 +107,18 @@ module api.app.wizard {
 
                 this.setPersistedItem(this.persistedItem).
                     then(() => {
-
-                        this.postRenderExisting(this.persistedItem).
-                            then(() => {
-
-                                callback();
-
-                            }).catch((reason) => {
-                                callback();
-                            }).done();
-
-                    }).catch((reason) => {
+                        return this.postRenderExisting(this.persistedItem);
+                    }).finally(() => {
                         callback();
                     }).done();
             }
             else {
                 this.preRenderNew().
                     then(() => {
-
-                        this.renderNew().
-                            then(() => {
-
-                                this.postRenderNew().
-                                    then(()=> {
-
-                                        callback();
-
-                                    }).catch((reason) => {
-                                        callback();
-                                    }).done();
-
-                            }).catch((reason) => {
-                                callback();
-                            }).done();
-
-                    }).catch((reason) => {
+                        return this.renderNew();
+                    }).then(() => {
+                        return this.postRenderNew();
+                    }).finally(()=> {
                         callback();
                     }).done();
             }
@@ -337,16 +314,9 @@ module api.app.wizard {
 
                         this.postPersistNewItem(persistedItem).
                             then(()=> {
-
-                                this.setPersistedItem(persistedItem).
-                                    then(() => {
-
-                                        deferred.resolve(persistedItem);
-
-                                    }).catch((reason) => {
-                                        deferred.reject(reason);
-                                    }).done();
-
+                                return this.setPersistedItem(persistedItem);
+                            }).then(() => {
+                                deferred.resolve(persistedItem);
                             }).catch((reason) => {
                                 deferred.reject(reason);
                             }).done();
