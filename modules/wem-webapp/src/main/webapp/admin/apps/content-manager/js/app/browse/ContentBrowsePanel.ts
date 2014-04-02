@@ -47,6 +47,8 @@ module app.browse {
                 for (var i = 0; i < contents.length; i++) {
                     this.contentTreeGridPanel.removeItem(contents[i].getPath().toString());
                 }
+
+                this.contentTreeGridPanel.deselectAll();
             });
 
             api.content.ContentCreatedEvent.on((event) => {

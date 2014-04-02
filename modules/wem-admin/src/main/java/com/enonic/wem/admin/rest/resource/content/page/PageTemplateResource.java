@@ -14,6 +14,7 @@ import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateService;
@@ -82,15 +83,15 @@ public final class PageTemplateResource
     public boolean isRenderable( @QueryParam("contentId") String contentIdAsString )
     {
         final ContentId contentId = ContentId.from( contentIdAsString );
-        final Content content = client.execute( Commands.content().get().byId( contentId ) );
-        final Content nearestSite = client.execute( Commands.site().getNearestSite().content( contentId ) );
-
-        if ( nearestSite != null )
+        try
         {
-            final ContentTypeName type = content.getType();
-            final SiteTemplateKey siteTemplateKey = nearestSite.getSite().getTemplate();
-            try
+            final Content content = client.execute( Commands.content().get().byId( contentId ) );
+            final Content nearestSite = client.execute( Commands.site().getNearestSite().content( contentId ) );
+
+            if ( nearestSite != null )
             {
+                final ContentTypeName type = content.getType();
+                final SiteTemplateKey siteTemplateKey = nearestSite.getSite().getTemplate();
                 final PageTemplates pageTemplates = pageTemplateService.getBySiteTemplate( siteTemplateKey );
 
                 for ( final PageTemplate pageTemplate : pageTemplates )
@@ -101,11 +102,11 @@ public final class PageTemplateResource
                     }
                 }
             }
-            catch ( SiteTemplateNotFoundException e )
-            {
-                return false;
-            }
+            return false;
         }
-        return false;
+        catch ( SiteTemplateNotFoundException | ContentNotFoundException e )
+        {
+            return false;
+        }
     }
 }
