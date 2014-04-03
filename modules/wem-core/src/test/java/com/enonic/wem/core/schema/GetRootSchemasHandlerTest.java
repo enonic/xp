@@ -8,7 +8,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.GetRootSchemas;
 import com.enonic.wem.api.command.schema.content.ContentTypeService;
 import com.enonic.wem.api.command.schema.mixin.MixinService;
-import com.enonic.wem.api.command.schema.relationship.GetAllRelationshipTypes;
+import com.enonic.wem.api.command.schema.relationship.RelationshipTypeService;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.Schemas;
@@ -38,6 +38,8 @@ public class GetRootSchemasHandlerTest
 
     private ContentTypeService contentTypeService;
 
+    private RelationshipTypeService relationshipTypeService;
+
     @Before
     public void setUp()
         throws Exception
@@ -45,11 +47,13 @@ public class GetRootSchemasHandlerTest
         super.initialize();
 
         mixinService = Mockito.mock( MixinService.class );
+        relationshipTypeService = Mockito.mock( RelationshipTypeService.class );
         contentTypeService = Mockito.mock( ContentTypeService.class );
 
         handler = new GetRootSchemasHandler();
         handler.setContext( this.context );
         handler.setMixinService( this.mixinService );
+        handler.setRelationshipTypeService( this.relationshipTypeService );
         handler.setContentTypeService( this.contentTypeService );
     }
 
@@ -90,7 +94,7 @@ public class GetRootSchemasHandlerTest
             build();
 
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
-        Mockito.when( client.execute( Mockito.isA( GetAllRelationshipTypes.class ) ) ).thenReturn( relationshipTypes );
+        Mockito.when( relationshipTypeService.getAll() ).thenReturn( relationshipTypes );
 
         // exercise
         final GetRootSchemas command = Commands.schema().getRoots();

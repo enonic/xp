@@ -18,7 +18,8 @@ import com.enonic.wem.api.command.schema.content.ContentTypeService;
 import com.enonic.wem.api.command.schema.content.GetContentTypesParams;
 import com.enonic.wem.api.command.schema.mixin.GetMixinsParams;
 import com.enonic.wem.api.command.schema.mixin.MixinService;
-import com.enonic.wem.api.command.schema.relationship.GetRelationshipType;
+import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypeParams;
+import com.enonic.wem.api.command.schema.relationship.RelationshipTypeService;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.content.ContentType;
@@ -45,6 +46,8 @@ public class SchemaImageResourceTest
 
     private ContentTypeService contentTypeService;
 
+    private RelationshipTypeService relationshipTypeService;
+
     @Before
     public void setUp()
         throws Exception
@@ -57,6 +60,9 @@ public class SchemaImageResourceTest
         this.controller.setMixinService( mixinService );
         contentTypeService = Mockito.mock( ContentTypeService.class );
         this.controller.setContentTypeService( contentTypeService );
+
+        relationshipTypeService = Mockito.mock( RelationshipTypeService.class );
+        this.controller.setRelationshipTypeService( relationshipTypeService );
     }
 
     @Test
@@ -239,8 +245,8 @@ public class SchemaImageResourceTest
 
     private void setupRelationshipType( final RelationshipType relationshipType )
     {
-        final GetRelationshipType command = new GetRelationshipType().name( relationshipType.getName() );
-        Mockito.when( client.execute( command ) ).thenReturn( relationshipType );
+        final GetRelationshipTypeParams params = new GetRelationshipTypeParams().name( relationshipType.getName() );
+        Mockito.when( relationshipTypeService.getByName( params ) ).thenReturn( relationshipType );
     }
 
     private void assertImage( final BufferedImage image, final int size )

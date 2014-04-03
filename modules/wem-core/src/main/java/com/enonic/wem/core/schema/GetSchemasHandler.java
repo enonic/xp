@@ -7,11 +7,11 @@ import javax.inject.Inject;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.SchemaTypes;
 import com.enonic.wem.api.command.schema.content.ContentTypeService;
 import com.enonic.wem.api.command.schema.content.GetAllContentTypesParams;
 import com.enonic.wem.api.command.schema.mixin.MixinService;
+import com.enonic.wem.api.command.schema.relationship.RelationshipTypeService;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaKind;
 import com.enonic.wem.api.schema.Schemas;
@@ -25,6 +25,8 @@ public final class GetSchemasHandler
     extends CommandHandler<SchemaTypes>
 {
     private MixinService mixinService;
+
+    private RelationshipTypeService relationshipTypeService;
 
     private ContentTypeService contentTypeService;
 
@@ -48,7 +50,7 @@ public final class GetSchemasHandler
 
         if ( command.isIncludeType( SchemaKind.RELATIONSHIP_TYPE ) )
         {
-            final RelationshipTypes relationshipTypes = context.getClient().execute( Commands.relationshipType().get().all() );
+            final RelationshipTypes relationshipTypes = relationshipTypeService.getAll();
             Iterables.addAll( schemaList, relationshipTypes );
         }
 
@@ -61,6 +63,12 @@ public final class GetSchemasHandler
     public void setMixinService( final MixinService mixinService )
     {
         this.mixinService = mixinService;
+    }
+
+    @Inject
+    public void setRelationshipTypeService( final RelationshipTypeService relationshipTypeService )
+    {
+        this.relationshipTypeService = relationshipTypeService;
     }
 
     @Inject

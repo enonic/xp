@@ -5,6 +5,7 @@ import com.google.inject.Scopes;
 
 import com.enonic.wem.api.command.schema.content.ContentTypeService;
 import com.enonic.wem.api.command.schema.mixin.MixinService;
+import com.enonic.wem.api.command.schema.relationship.RelationshipTypeService;
 import com.enonic.wem.core.command.CommandBinder;
 import com.enonic.wem.core.initializer.InitializerTaskBinder;
 import com.enonic.wem.core.schema.content.ContentTypeServiceImpl;
@@ -16,13 +17,8 @@ import com.enonic.wem.core.schema.mixin.MixinServiceImpl;
 import com.enonic.wem.core.schema.mixin.MixinsInitializer;
 import com.enonic.wem.core.schema.mixin.dao.MixinDao;
 import com.enonic.wem.core.schema.mixin.dao.MixinDaoImpl;
-import com.enonic.wem.core.schema.relationship.CreateRelationshipTypeHandler;
-import com.enonic.wem.core.schema.relationship.DeleteRelationshipTypeHandler;
-import com.enonic.wem.core.schema.relationship.GetAllRelationshipTypesHandler;
-import com.enonic.wem.core.schema.relationship.GetRelationshipTypeHandler;
-import com.enonic.wem.core.schema.relationship.RelationshipTypesExistsHandler;
+import com.enonic.wem.core.schema.relationship.RelationshipTypeServiceImpl;
 import com.enonic.wem.core.schema.relationship.RelationshipTypesInitializer;
-import com.enonic.wem.core.schema.relationship.UpdateRelationshipTypeHandler;
 import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;
 import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDaoImpl;
 
@@ -37,6 +33,7 @@ public final class SchemaModule
         bind( MixinDao.class ).to( MixinDaoImpl.class ).in( Scopes.SINGLETON );
         bind( MixinService.class ).to( MixinServiceImpl.class ).in( Scopes.SINGLETON );
         bind( ContentTypeService.class ).to( ContentTypeServiceImpl.class ).in( Scopes.SINGLETON );
+        bind( RelationshipTypeService.class ).to( RelationshipTypeServiceImpl.class ).in( Scopes.SINGLETON );
 
         final InitializerTaskBinder tasks = InitializerTaskBinder.from( binder() );
         tasks.add( ContentTypesInitializer.class );
@@ -49,12 +46,5 @@ public final class SchemaModule
         commands.add( GetSchemasHandler.class );
         commands.add( GetRootSchemasHandler.class );
         commands.add( GetChildSchemasHandler.class );
-
-        commands.add( CreateRelationshipTypeHandler.class );
-        commands.add( DeleteRelationshipTypeHandler.class );
-        commands.add( GetAllRelationshipTypesHandler.class );
-        commands.add( GetRelationshipTypeHandler.class );
-        commands.add( RelationshipTypesExistsHandler.class );
-        commands.add( UpdateRelationshipTypeHandler.class );
     }
 }
