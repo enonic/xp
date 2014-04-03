@@ -1,6 +1,6 @@
 module app.wizard.action {
 
-    import RenderingMode = api.util.RenderingMode;
+    import RenderingMode = api.rendering.RenderingMode;
 
     export class PreviewAction extends api.ui.Action {
 
@@ -20,7 +20,7 @@ module app.wizard.action {
         }
 
         showPreviewDialog(content: api.content.Content) {
-            window.open(api.util.getPortalUri(content.getPath().toString(), RenderingMode.PREVIEW), 'preview');
+            window.open(api.rendering.UriHelper.getPortalUri(content.getPath().toString(), RenderingMode.PREVIEW), 'preview');
         }
 
     }

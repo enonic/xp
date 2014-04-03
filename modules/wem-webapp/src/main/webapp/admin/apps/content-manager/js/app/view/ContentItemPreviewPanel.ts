@@ -1,7 +1,7 @@
 module app.view {
 
     import IsRenderableRequest = api.content.page.IsRenderableRequest;
-    import RenderingMode = api.util.RenderingMode;
+    import RenderingMode = api.rendering.RenderingMode;
 
     export class ContentItemPreviewPanel extends api.ui.Panel {
 
@@ -57,7 +57,7 @@ module app.view {
                     .done((renderable: boolean) => {
                         if (renderable) {
                             this.getEl().removeClass("image-preview no-preview").addClass('page-preview');
-                            this.frame.setSrc(api.util.getPortalUri(item.getPath(), RenderingMode.PREVIEW));
+                            this.frame.setSrc(api.rendering.UriHelper.getPortalUri(item.getPath(), RenderingMode.PREVIEW));
                         } else {
                             this.getEl().removeClass("image-preview page-preview").addClass('no-preview');
                             this.frame.setSrc("about:blank");
