@@ -20,15 +20,12 @@ public abstract class EntityIndexConfigJson
 
     private final boolean decideFulltextByValueType;
 
-    private final boolean skip;
 
-    public EntityIndexConfigJson( final String analyzer, final String collection, final boolean decideFulltextByValueType,
-                                  final boolean skip )
+    public EntityIndexConfigJson( final String analyzer, final String collection, final boolean decideFulltextByValueType )
     {
         this.analyzer = analyzer;
         this.collection = collection;
         this.decideFulltextByValueType = decideFulltextByValueType;
-        this.skip = skip;
     }
 
 
@@ -49,10 +46,5 @@ public abstract class EntityIndexConfigJson
     public boolean isDecideFulltextByValueType()
     {
         return decideFulltextByValueType;
-    }
-
-    public boolean isSkip()
-    {
-        return skip;
     }
 }

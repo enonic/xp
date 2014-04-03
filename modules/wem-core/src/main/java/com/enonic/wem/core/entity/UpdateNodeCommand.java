@@ -62,7 +62,7 @@ public class UpdateNodeCommand
             name( edited.name() ).
             rootDataSet( edited.data() ).
             attachments( edited.attachments() ).
-
+            entityIndexConfig( edited.getEntityIndexConfig() ).
             build();
 
         final Node updatedNode = nodeJcrDao.updateNode( updateNodeArgs );

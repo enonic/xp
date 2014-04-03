@@ -60,7 +60,7 @@ public class ContentNodeTranslator
     {
         final RootDataSet contentAsData = CONTENT_SERIALIZER.toData( command );
 
-        final EntityIndexConfig entityIndexConfig = ContentEntityIndexConfigFactory.create( command );
+        final EntityIndexConfig entityIndexConfig = ContentEntityIndexConfigFactory.create();
 
         Attachments contentAttachments = command.getAttachments();
 
@@ -148,7 +148,7 @@ public class ContentNodeTranslator
     {
         final RootDataSet rootDataSet = CONTENT_SERIALIZER.toData( content );
 
-        final EntityIndexConfig entityIndexConfig = ContentEntityIndexConfigFactory.create( content );
+        final EntityIndexConfig entityIndexConfig = ContentEntityIndexConfigFactory.create();
 
         return new NodeEditor()
         {

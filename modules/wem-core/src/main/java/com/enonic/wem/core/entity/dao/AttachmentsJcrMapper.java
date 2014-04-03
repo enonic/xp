@@ -16,7 +16,7 @@ import static com.enonic.wem.api.entity.Attachment.newAttachment;
 public class AttachmentsJcrMapper
 {
 
-    private final static String ATTACHMENTS_NODE_NAME = "__att";
+    public final static String ATTACHMENTS_NODE_NAME = "__att";
 
     public static final String BLOB_KEY_PROPERTY = "blobKey";
 
