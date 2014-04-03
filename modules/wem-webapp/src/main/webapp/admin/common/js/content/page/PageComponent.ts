@@ -39,6 +39,10 @@ module api.content.page {
             return this.name;
         }
 
+        setName(name: api.content.page.ComponentName) {
+            this.name = name;
+        }
+
         hasDescriptor(): boolean {
             if (this.descriptorKey) {
                 return true;

@@ -5,8 +5,20 @@ module api.util {
         return str;
     }
 
-    export function capitalize(str) {
+    export function capitalize(str: string) {
         return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    export function formCleanString(str: string) {
+        var result:string = "",
+            ch:RegExpExecArray;
+        var regex = /[\w,-,_]+/g;
+
+        while (ch = regex.exec(str)) {
+            result += ch.toString();
+        }
+
+        return result;
     }
 
     export function isStringEmpty(str: string) {
