@@ -33,6 +33,8 @@ module LiveEdit.ui.contextmenu.menuitem {
 
             componentEl.replaceWith(emptyComponent.getHTMLElement());
             emptyComponent.init();
+
+            LiveEdit.component.Selection.handleSelect(emptyComponent.getElement()[0]);
         }
     }
 }

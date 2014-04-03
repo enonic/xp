@@ -1,2 +1,2 @@
-///<reference path='Renderable.ts' />
-///<reference path='RendererRequest.ts' />
+///<reference path='RenderingMode.ts' />
+///<reference path='UriHelper.ts' />

@@ -22,7 +22,7 @@ public class EntityPatternIndexConfigJson
 
     public EntityPatternIndexConfigJson( final EntityPatternIndexConfig indexConfig )
     {
-        super( indexConfig.getAnalyzer(), indexConfig.getCollection(), indexConfig.isDecideFulltextByValueType(), indexConfig.skip() );
+        super( indexConfig.getAnalyzer(), indexConfig.getCollection(), indexConfig.isDecideFulltextByValueType() );
         this.configs = translateToJson( indexConfig.getPathIndexConfigs() );
         this.defaultConfig = new PropertyIndexConfigJson( indexConfig.getDefaultConfig() );
     }
@@ -33,10 +33,9 @@ public class EntityPatternIndexConfigJson
                                          @JsonProperty("collection") final String collection, //
                                          @JsonProperty("configs") final Set<PathIndexConfigJson> configs,  //
                                          @JsonProperty("decideFulltextByValueType") final boolean decideFulltextByValueType, //
-                                         @JsonProperty("skip") final boolean skip, //
                                          @JsonProperty("defaultConfig") final PropertyIndexConfigJson defaultConfig )
     {
-        super( analyzer, collection, decideFulltextByValueType, skip );
+        super( analyzer, collection, decideFulltextByValueType );
         this.configs = configs;
         this.defaultConfig = defaultConfig;
     }
@@ -69,8 +68,7 @@ public class EntityPatternIndexConfigJson
         builder.defaultConfig( this.defaultConfig.toPropertyIndexConfig() ).
             collection( this.getCollection() ).
             analyzer( this.getAnalyzer() ).
-            decideFulltextByValueType( this.isDecideFulltextByValueType() ).
-            skip( this.isSkip() );
+            decideFulltextByValueType( this.isDecideFulltextByValueType() );
 
         return builder.build();
     }

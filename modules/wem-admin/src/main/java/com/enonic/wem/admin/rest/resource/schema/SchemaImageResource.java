@@ -13,8 +13,12 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import com.enonic.wem.api.Client;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
+import com.enonic.wem.api.command.schema.content.GetContentTypesParams;
 import com.enonic.wem.api.command.schema.mixin.GetMixinParams;
 import com.enonic.wem.api.command.schema.mixin.MixinService;
+import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypeParams;
+import com.enonic.wem.api.command.schema.relationship.RelationshipTypeService;
 import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.SchemaKey;
 import com.enonic.wem.api.schema.content.ContentType;
@@ -25,10 +29,6 @@ import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
-import static com.enonic.wem.api.command.Commands.contentType;
-import static com.enonic.wem.api.command.Commands.relationshipType;
-
-
 @Path("schema/image")
 @Produces("image/*")
 public final class SchemaImageResource
@@ -38,6 +38,10 @@ public final class SchemaImageResource
     private SchemaImageHelper helper;
 
     private MixinService mixinService;
+
+    private ContentTypeService contentTypeService;
+
+    private RelationshipTypeService relationshipTypeService;
 
     private Client client;
 
@@ -52,6 +56,18 @@ public final class SchemaImageResource
     public void setMixinService( final MixinService mixinService )
     {
         this.mixinService = mixinService;
+    }
+
+    @Inject
+    public void setRelationshipTypeService( final RelationshipTypeService relationshipTypeService )
+    {
+        this.relationshipTypeService = relationshipTypeService;
+    }
+
+    @Inject
+    public void setContentTypeService( final ContentTypeService contentTypeService )
+    {
+        this.contentTypeService = contentTypeService;
     }
 
     @GET
@@ -151,13 +167,16 @@ public final class SchemaImageResource
 
     private SchemaIcon findRelationshipTypeIcon( final RelationshipTypeName relationshipTypeName )
     {
-        final RelationshipType relationshipType = client.execute( relationshipType().get().byName( relationshipTypeName ) );
+        final GetRelationshipTypeParams params = new GetRelationshipTypeParams().name( relationshipTypeName );
+        final RelationshipType relationshipType = relationshipTypeService.getByName( params  );
         return relationshipType == null ? null : relationshipType.getIcon();
     }
 
     private ContentType getContentType( final ContentTypeName contentTypeName )
     {
-        return client.execute( contentType().get().byNames().contentTypeNames( ContentTypeNames.from( contentTypeName ) ) ).first();
+        final GetContentTypesParams params = new GetContentTypesParams().contentTypeNames( ContentTypeNames.from( contentTypeName ) );
+
+        return contentTypeService.getByNames( params ).first();
     }
 
 }

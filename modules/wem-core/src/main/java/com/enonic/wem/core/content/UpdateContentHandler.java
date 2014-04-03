@@ -19,6 +19,8 @@ import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.command.content.attachment.AttachmentService;
 import com.enonic.wem.api.command.content.attachment.GetAttachmentsParams;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
+import com.enonic.wem.api.command.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentId;
@@ -52,16 +54,18 @@ public class UpdateContentHandler
 
     private NodeService nodeService;
 
+    private ContentTypeService contentTypeService;
+
     private final static Logger LOG = LoggerFactory.getLogger( UpdateContentHandler.class );
 
     @Override
     public void handle()
         throws Exception
     {
-        final ContentNodeTranslator translator = new ContentNodeTranslator( this.context.getClient() );
+        final ContentNodeTranslator translator = new ContentNodeTranslator( this.context.getClient(), contentTypeService );
 
         final GetContentById getContentByIdCommand = new GetContentById( command.getContentId() );
-        final Content contentBeforeChange = new GetContentByIdService( this.context, getContentByIdCommand, nodeService ).execute();
+        final Content contentBeforeChange = new GetContentByIdService( this.context, getContentByIdCommand, nodeService, contentTypeService ).execute();
 
         final Content.EditBuilder editBuilder = command.getEditor().edit( contentBeforeChange );
 
@@ -148,7 +152,7 @@ public class UpdateContentHandler
             public void visit( final Property property )
             {
                 final Content content =
-                    new GetContentByIdService( context, new GetContentById( property.getContentId() ), nodeService ).execute();
+                    new GetContentByIdService( context, new GetContentById( property.getContentId() ), nodeService, contentTypeService ).execute();
 
                 if ( content != null )
                 {
@@ -226,7 +230,7 @@ public class UpdateContentHandler
 
     private ContentType getContentType( final ContentTypeName contentTypeName )
     {
-        return context.getClient().execute( Commands.contentType().get().byName().contentTypeName( contentTypeName ) );
+        return contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) );
     }
 
     @Inject
@@ -239,5 +243,11 @@ public class UpdateContentHandler
     public void setNodeService( final NodeService nodeService )
     {
         this.nodeService = nodeService;
+    }
+
+    @Inject
+    public void setContentTypeService( final ContentTypeService contentTypeService )
+    {
+        this.contentTypeService = contentTypeService;
     }
 }

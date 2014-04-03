@@ -6,9 +6,10 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.SchemaTypes;
-import com.enonic.wem.api.command.schema.content.GetAllContentTypes;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
+import com.enonic.wem.api.command.schema.content.GetAllContentTypesParams;
 import com.enonic.wem.api.command.schema.mixin.MixinService;
-import com.enonic.wem.api.command.schema.relationship.GetAllRelationshipTypes;
+import com.enonic.wem.api.command.schema.relationship.RelationshipTypeService;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentType;
@@ -34,6 +35,10 @@ public class GetSchemasHandlerTest
 
     private MixinService mixinService;
 
+    private ContentTypeService contentTypeService;
+
+    private RelationshipTypeService relationshipTypeService;
+
     @Before
     public void setUp()
         throws Exception
@@ -41,10 +46,14 @@ public class GetSchemasHandlerTest
         super.initialize();
 
         mixinService = Mockito.mock( MixinService.class );
+        contentTypeService = Mockito.mock( ContentTypeService.class );
+        relationshipTypeService = Mockito.mock( RelationshipTypeService.class );
 
         handler = new GetSchemasHandler();
         handler.setContext( this.context );
         handler.setMixinService( this.mixinService );
+        handler.setRelationshipTypeService( this.relationshipTypeService );
+        handler.setContentTypeService( this.contentTypeService );
     }
 
     @Test
@@ -59,7 +68,7 @@ public class GetSchemasHandlerTest
             build();
         final ContentTypes contentTypes = ContentTypes.from( contentType );
 
-        Mockito.when( client.execute( Mockito.isA( GetAllContentTypes.class ) ) ).thenReturn( contentTypes );
+        Mockito.when( contentTypeService.getAll( Mockito.isA( GetAllContentTypesParams.class ) ) ).thenReturn( contentTypes );
 
         final FormItemSet formItemSet = newFormItemSet().name( "address" ).addFormItem(
             newInput().inputType( InputTypes.TEXT_LINE ).name( "street" ).build() ).addFormItem(
@@ -79,7 +88,7 @@ public class GetSchemasHandlerTest
             addAllowedToType( ContentTypeName.from( "person" ) ).
             build();
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
-        Mockito.when( client.execute( Mockito.isA( GetAllRelationshipTypes.class ) ) ).thenReturn( relationshipTypes );
+        Mockito.when( relationshipTypeService.getAll() ).thenReturn( relationshipTypes );
 
         // exercise
         final SchemaTypes command = Commands.schema().get();
@@ -87,8 +96,6 @@ public class GetSchemasHandlerTest
         this.handler.handle();
 
         // verify
-        //  verify( contentTypeDao, times( 1 ) ).selectAll( Mockito.any( Session.class ) );
         assertEquals( 3, command.getResult().getSize() );
     }
-
 }

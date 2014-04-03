@@ -10,7 +10,8 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.command.content.blob.CreateBlob;
-import com.enonic.wem.api.command.schema.content.GetContentTypes;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
+import com.enonic.wem.api.command.schema.content.GetContentTypesParams;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
 
@@ -24,11 +25,14 @@ public class ContentTypesInitializerTest
     {
 
         Client client = Mockito.mock( Client.class );
+        ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
+
         Mockito.when( client.execute( Mockito.isA( CreateBlob.class ) ) ).thenReturn( createDummyBlob() );
-        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.empty() );
+        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn( ContentTypes.empty() );
 
         ContentTypesInitializer contentTypesInitializer = new ContentTypesInitializer();
         contentTypesInitializer.setClient( client );
+        contentTypesInitializer.setContentTypeService( contentTypeService );
         contentTypesInitializer.initialize();
 
         assertEquals( false, ContentTypesInitializer.STRUCTURED.isFinal() );

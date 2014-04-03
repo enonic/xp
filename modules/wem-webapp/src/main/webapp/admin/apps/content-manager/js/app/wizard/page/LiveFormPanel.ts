@@ -44,7 +44,7 @@ module app.wizard.page {
     import LayoutInspectionPanelConfig = contextwindow.inspect.LayoutInspectionPanelConfig;
     import ContextWindow = contextwindow.ContextWindow;
     import ContextWindowConfig = contextwindow.ContextWindowConfig;
-    import RenderingMode = api.util.RenderingMode;
+    import RenderingMode = api.rendering.RenderingMode;
 
 
     export interface LiveFormPanelConfig {
@@ -555,7 +555,7 @@ module app.wizard.page {
 
         private loadComponent(componentPath: ComponentPath, componentPlaceholder: api.dom.Element) {
             $.ajax({
-                url: api.util.getComponentUri(this.content.getContentId().toString(), componentPath.toString(), RenderingMode.EDIT),
+                url: api.rendering.UriHelper.getComponentUri(this.content.getContentId().toString(), componentPath.toString(), RenderingMode.EDIT),
                 method: 'GET',
                 success: (data) => {
                     var newElement = $(data);

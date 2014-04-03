@@ -1,9 +1,11 @@
 package com.enonic.wem.core.schema.relationship;
 
 
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.schema.relationship.CreateRelationshipType;
-import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipType;
+import javax.inject.Inject;
+
+import com.enonic.wem.api.command.schema.relationship.CreateRelationshipTypeParams;
+import com.enonic.wem.api.command.schema.relationship.RelationshipTypeService;
+import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipTypeParams;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
@@ -36,6 +38,9 @@ public class RelationshipTypesInitializer
 
     private static final RelationshipType[] SYSTEM_TYPES = {DEFAULT, PARENT, LINK, LIKE, CITATION, IMAGE};
 
+    @Inject
+    private RelationshipTypeService relationshipTypeService;
+
     protected RelationshipTypesInitializer()
     {
         super( 10, "relationship-types" );
@@ -57,11 +62,11 @@ public class RelationshipTypesInitializer
     private void createOrUpdate( final RelationshipType relationshipType )
     {
         final RelationshipTypeNames relationshipTypeNames = RelationshipTypeNames.from( relationshipType.getName() );
-        final boolean notExists = client.execute( Commands.relationshipType().exists().names( relationshipTypeNames ) ).isEmpty();
+
+        final boolean notExists = relationshipTypeService.exists( relationshipTypeNames ).isEmpty();
         if ( notExists )
         {
-            final CreateRelationshipType createCommand = Commands.relationshipType().create();
-            createCommand.
+            final CreateRelationshipTypeParams createParams = new CreateRelationshipTypeParams().
                 name( relationshipType.getName() ).
                 displayName( relationshipType.getDisplayName() ).
                 fromSemantic( relationshipType.getFromSemantic() ).
@@ -70,29 +75,29 @@ public class RelationshipTypesInitializer
                 allowedToTypes( relationshipType.getAllowedToTypes() ).
                 schemaIcon( relationshipType.getIcon() );
 
-            client.execute( createCommand );
+            relationshipTypeService.create( createParams );
         }
         else
         {
-            final UpdateRelationshipType updateCommand = Commands.relationshipType().update();
-            updateCommand.name( relationshipType.getName() );
-            updateCommand.editor( new RelationshipTypeEditor()
-            {
-                @Override
-                public RelationshipType edit( final RelationshipType relationshipType )
+            final UpdateRelationshipTypeParams updateParams = new UpdateRelationshipTypeParams().
+                name( relationshipType.getName() ).
+                editor( new RelationshipTypeEditor()
                 {
-                    return RelationshipType.newRelationshipType( relationshipType ).
-                        displayName( relationshipType.getDisplayName() ).
-                        fromSemantic( relationshipType.getFromSemantic() ).
-                        toSemantic( relationshipType.getToSemantic() ).
-                        addAllowedFromTypes( relationshipType.getAllowedFromTypes() ).
-                        addAllowedToTypes( relationshipType.getAllowedToTypes() ).
-                        icon( relationshipType.getIcon() ).
-                        build();
-                }
-            } );
+                    @Override
+                    public RelationshipType edit( final RelationshipType relationshipType )
+                    {
+                        return RelationshipType.newRelationshipType( relationshipType ).
+                            displayName( relationshipType.getDisplayName() ).
+                            fromSemantic( relationshipType.getFromSemantic() ).
+                            toSemantic( relationshipType.getToSemantic() ).
+                            addAllowedFromTypes( relationshipType.getAllowedFromTypes() ).
+                            addAllowedToTypes( relationshipType.getAllowedToTypes() ).
+                            icon( relationshipType.getIcon() ).
+                            build();
+                    }
+                } );
 
-            client.execute( updateCommand );
+            relationshipTypeService.update( updateParams );
         }
     }
 

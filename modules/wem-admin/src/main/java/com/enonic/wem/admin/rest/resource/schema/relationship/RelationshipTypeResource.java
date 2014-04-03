@@ -1,5 +1,6 @@
 package com.enonic.wem.admin.rest.resource.schema.relationship;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -19,11 +20,11 @@ import com.enonic.wem.admin.rest.resource.schema.json.CreateOrUpdateSchemaJsonRe
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
 import com.enonic.wem.api.blob.Blob;
-import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.blob.GetBlob;
-import com.enonic.wem.api.command.schema.relationship.CreateRelationshipType;
-import com.enonic.wem.api.command.schema.relationship.DeleteRelationshipType;
-import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipType;
+import com.enonic.wem.api.command.schema.relationship.CreateRelationshipTypeParams;
+import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypeParams;
+import com.enonic.wem.api.command.schema.relationship.RelationshipTypeService;
+import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipTypeParams;
 import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
@@ -38,6 +39,8 @@ import com.enonic.wem.xml.XmlSerializers;
 public class RelationshipTypeResource
     extends AbstractResource
 {
+    private RelationshipTypeService relationshipTypeService;
+
     @GET
     public RelationshipTypeJson get( @QueryParam("name") final String name )
     {
@@ -74,14 +77,15 @@ public class RelationshipTypeResource
 
     public RelationshipType fetchRelationshipType( final RelationshipTypeName name )
     {
-        return client.execute( Commands.relationshipType().get().byName( name ) );
+        final GetRelationshipTypeParams params = new GetRelationshipTypeParams().name( name );
+        return relationshipTypeService.getByName( params );
     }
 
     @GET
     @Path("list")
     public RelationshipTypeListJson list()
     {
-        final RelationshipTypes relationshipTypes = client.execute( Commands.relationshipType().get().all() );
+        final RelationshipTypes relationshipTypes = relationshipTypeService.getAll();
 
         return new RelationshipTypeListJson( relationshipTypes );
     }
@@ -97,11 +101,9 @@ public class RelationshipTypeResource
         final SchemaDeleteJson deletionResult = new SchemaDeleteJson();
         for ( RelationshipTypeName relationshipTypeName : relationshipTypeNames )
         {
-            final DeleteRelationshipType deleteCommand = Commands.relationshipType().delete().name( relationshipTypeName );
-
             try
             {
-                client.execute( deleteCommand );
+                relationshipTypeService.delete( relationshipTypeName );
                 deletionResult.success( relationshipTypeName );
             }
             catch ( RelationshipTypeNotFoundException e )
@@ -126,8 +128,7 @@ public class RelationshipTypeResource
 
             final SchemaIcon schemaIcon = getSchemaIcon( json.getIconJson() );
 
-            final CreateRelationshipType createCommand = Commands.relationshipType().create();
-            createCommand.
+            final CreateRelationshipTypeParams createCommand = new CreateRelationshipTypeParams().
                 name( json.getName() ).
                 displayName( relationshipType.getDisplayName() ).
                 description( relationshipType.getDescription() ).
@@ -137,7 +138,7 @@ public class RelationshipTypeResource
                 allowedToTypes( relationshipType.getAllowedToTypes() ).
                 schemaIcon( schemaIcon );
 
-            this.client.execute( createCommand );
+            this.relationshipTypeService.create( createCommand );
 
             return CreateOrUpdateSchemaJsonResult.result( new RelationshipTypeJson( relationshipType ) );
         }
@@ -181,11 +182,11 @@ public class RelationshipTypeResource
                 }
             };
 
-            final UpdateRelationshipType updateCommand = Commands.relationshipType().update();
-            updateCommand.name( json.getRelationshipTypeToUpdate() );
-            updateCommand.editor( editor );
+            final UpdateRelationshipTypeParams updateCommand = new UpdateRelationshipTypeParams().
+                name( json.getRelationshipTypeToUpdate() ).
+                editor( editor );
 
-            client.execute( updateCommand );
+            relationshipTypeService.update( updateCommand );
 
             return CreateOrUpdateSchemaJsonResult.result( new RelationshipTypeJson( parsed ) );
         }
@@ -203,5 +204,11 @@ public class RelationshipTypeResource
             return blob == null ? null : SchemaIcon.from( blob.getStream(), iconJson.getMimeType() );
         }
         return null;
+    }
+
+    @Inject
+    public void setRelationshipTypeService( final RelationshipTypeService relationshipTypeService )
+    {
+        this.relationshipTypeService = relationshipTypeService;
     }
 }

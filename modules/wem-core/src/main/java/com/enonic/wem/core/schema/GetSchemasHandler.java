@@ -3,14 +3,15 @@ package com.enonic.wem.core.schema;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.jcr.Session;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.SchemaTypes;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
+import com.enonic.wem.api.command.schema.content.GetAllContentTypesParams;
 import com.enonic.wem.api.command.schema.mixin.MixinService;
+import com.enonic.wem.api.command.schema.relationship.RelationshipTypeService;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaKind;
 import com.enonic.wem.api.schema.Schemas;
@@ -25,16 +26,18 @@ public final class GetSchemasHandler
 {
     private MixinService mixinService;
 
+    private RelationshipTypeService relationshipTypeService;
+
+    private ContentTypeService contentTypeService;
+
     @Override
     public void handle()
         throws Exception
     {
-        final Session session = context.getJcrSession();
-
         final List<Schema> schemaList = Lists.newArrayList();
         if ( command.isIncludeType( SchemaKind.CONTENT_TYPE ) )
         {
-            final ContentTypes contentTypes = context.getClient().execute( Commands.contentType().get().all() );
+            final ContentTypes contentTypes = contentTypeService.getAll( new GetAllContentTypesParams() );
 
             Iterables.addAll( schemaList, contentTypes );
         }
@@ -47,7 +50,7 @@ public final class GetSchemasHandler
 
         if ( command.isIncludeType( SchemaKind.RELATIONSHIP_TYPE ) )
         {
-            final RelationshipTypes relationshipTypes = context.getClient().execute( Commands.relationshipType().get().all() );
+            final RelationshipTypes relationshipTypes = relationshipTypeService.getAll();
             Iterables.addAll( schemaList, relationshipTypes );
         }
 
@@ -60,5 +63,17 @@ public final class GetSchemasHandler
     public void setMixinService( final MixinService mixinService )
     {
         this.mixinService = mixinService;
+    }
+
+    @Inject
+    public void setRelationshipTypeService( final RelationshipTypeService relationshipTypeService )
+    {
+        this.relationshipTypeService = relationshipTypeService;
+    }
+
+    @Inject
+    public void setContentTypeService( final ContentTypeService contentTypeService )
+    {
+        this.contentTypeService = contentTypeService;
     }
 }

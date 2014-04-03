@@ -9,6 +9,8 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
+import com.enonic.wem.api.command.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentName;
@@ -44,19 +46,21 @@ public class ContentNodeTranslator
 
     private final ContentDataSerializer CONTENT_SERIALIZER = new ContentDataSerializer();
 
+    private ContentTypeService contentTypeService;
 
     private final Client client;
 
-    public ContentNodeTranslator( final Client client )
+    public ContentNodeTranslator( final Client client, final ContentTypeService contentTypeService )
     {
         this.client = client;
+        this.contentTypeService = contentTypeService;
     }
 
     public CreateNodeParams toCreateNode( final CreateContent command )
     {
         final RootDataSet contentAsData = CONTENT_SERIALIZER.toData( command );
 
-        final EntityIndexConfig entityIndexConfig = ContentEntityIndexConfigFactory.create( command );
+        final EntityIndexConfig entityIndexConfig = ContentEntityIndexConfigFactory.create();
 
         Attachments contentAttachments = command.getAttachments();
 
@@ -144,7 +148,7 @@ public class ContentNodeTranslator
     {
         final RootDataSet rootDataSet = CONTENT_SERIALIZER.toData( content );
 
-        final EntityIndexConfig entityIndexConfig = ContentEntityIndexConfigFactory.create( content );
+        final EntityIndexConfig entityIndexConfig = ContentEntityIndexConfigFactory.create();
 
         return new NodeEditor()
         {
@@ -235,6 +239,6 @@ public class ContentNodeTranslator
 
     private ContentType getContentType( final ContentTypeName contentTypeName )
     {
-        return client.execute( Commands.contentType().get().byName().contentTypeName( contentTypeName ) );
+        return contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) );
     }
 }

@@ -3,7 +3,8 @@ package com.enonic.wem.core.relationship;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
+import com.enonic.wem.api.command.schema.content.GetContentTypesParams;
 import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.relationship.RelationshipKey;
 import com.enonic.wem.api.schema.content.ContentType;
@@ -16,11 +17,13 @@ public class RelationshipServiceImpl
 {
     private RelationshipDao relationshipDao;
 
+    private ContentTypeService contentTypeService;
+
     @Override
     public void syncRelationships( final SyncRelationshipsCommand command )
     {
-        final ContentType contentType = command.getClient().execute(
-            Commands.contentType().get().byNames().contentTypeNames( ContentTypeNames.from( command.getContentType() ) ) ).first();
+        final GetContentTypesParams params = new GetContentTypesParams().contentTypeNames( ContentTypeNames.from( command.getContentType() ) );
+        final ContentType contentType = contentTypeService.getByNames( params ).first();
 
         final SyncRelationships syncRelationships =
             new SyncRelationships( contentType.form(), command.getContentToUpdate(), command.getContentBeforeEditing(),
@@ -41,5 +44,11 @@ public class RelationshipServiceImpl
     public void setRelationshipDao( final RelationshipDao relationshipDao )
     {
         this.relationshipDao = relationshipDao;
+    }
+
+    @Inject
+    public void setContentTypeService( final ContentTypeService contentTypeService )
+    {
+        this.contentTypeService = contentTypeService;
     }
 }
