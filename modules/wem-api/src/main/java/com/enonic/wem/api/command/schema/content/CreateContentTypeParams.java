@@ -3,14 +3,11 @@ package com.enonic.wem.api.command.schema.content;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.schema.SchemaIcon;
-import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
-public final class CreateContentType
-    extends Command<ContentType>
+public final class CreateContentTypeParams
 {
     private ContentTypeName name;
 
@@ -40,13 +37,13 @@ public final class CreateContentType
     }
 
 
-    public CreateContentType name( final ContentTypeName name )
+    public CreateContentTypeParams name( final ContentTypeName name )
     {
         this.name = name;
         return this;
     }
 
-    public CreateContentType name( final String name )
+    public CreateContentTypeParams name( final String name )
     {
         this.name = ContentTypeName.from( name );
         return this;
@@ -57,7 +54,7 @@ public final class CreateContentType
         return displayName;
     }
 
-    public CreateContentType displayName( final String displayName )
+    public CreateContentTypeParams displayName( final String displayName )
     {
         this.displayName = displayName;
         return this;
@@ -68,7 +65,7 @@ public final class CreateContentType
         return description;
     }
 
-    public CreateContentType description( final String description )
+    public CreateContentTypeParams description( final String description )
     {
         this.description = description;
         return this;
@@ -79,7 +76,7 @@ public final class CreateContentType
         return superType;
     }
 
-    public CreateContentType superType( final ContentTypeName superType )
+    public CreateContentTypeParams superType( final ContentTypeName superType )
     {
         this.superType = superType;
         return this;
@@ -90,7 +87,7 @@ public final class CreateContentType
         return isAbstract;
     }
 
-    public CreateContentType setAbstract( final boolean isAbstract )
+    public CreateContentTypeParams setAbstract( final boolean isAbstract )
     {
         this.isAbstract = isAbstract;
         return this;
@@ -101,7 +98,7 @@ public final class CreateContentType
         return isFinal;
     }
 
-    public CreateContentType setFinal( final boolean isFinal )
+    public CreateContentTypeParams setFinal( final boolean isFinal )
     {
         this.isFinal = isFinal;
         return this;
@@ -112,7 +109,7 @@ public final class CreateContentType
         return allowChildContent;
     }
 
-    public CreateContentType allowChildContent( final boolean value )
+    public CreateContentTypeParams allowChildContent( final boolean value )
     {
         this.allowChildContent = value;
         return this;
@@ -123,7 +120,7 @@ public final class CreateContentType
         return isBuiltIn;
     }
 
-    public CreateContentType builtIn( final boolean builtIn )
+    public CreateContentTypeParams builtIn( final boolean builtIn )
     {
         isBuiltIn = builtIn;
         return this;
@@ -134,7 +131,7 @@ public final class CreateContentType
         return form;
     }
 
-    public CreateContentType form( final Form form )
+    public CreateContentTypeParams form( final Form form )
     {
         this.form = form;
         return this;
@@ -145,7 +142,7 @@ public final class CreateContentType
         return schemaIcon;
     }
 
-    public CreateContentType schemaIcon( final SchemaIcon schemaIcon )
+    public CreateContentTypeParams schemaIcon( final SchemaIcon schemaIcon )
     {
         this.schemaIcon = schemaIcon;
         return this;
@@ -156,7 +153,7 @@ public final class CreateContentType
         return contentDisplayNameScript;
     }
 
-    public CreateContentType contentDisplayNameScript( final String contentDisplayNameScript )
+    public CreateContentTypeParams contentDisplayNameScript( final String contentDisplayNameScript )
     {
         this.contentDisplayNameScript = contentDisplayNameScript;
         return this;
@@ -170,12 +167,12 @@ public final class CreateContentType
             return true;
         }
 
-        if ( !( o instanceof CreateContentType ) )
+        if ( !( o instanceof CreateContentTypeParams ) )
         {
             return false;
         }
 
-        final CreateContentType that = (CreateContentType) o;
+        final CreateContentTypeParams that = (CreateContentTypeParams) o;
         return Objects.equal( this.name, that.name ) && Objects.equal( this.displayName, that.displayName ) &&
             Objects.equal( this.superType, that.superType ) && Objects.equal( this.isAbstract, that.isAbstract ) &&
             Objects.equal( this.isFinal, that.isFinal ) && Objects.equal( this.allowChildContent, that.allowChildContent ) &&
@@ -190,7 +187,6 @@ public final class CreateContentType
         return Objects.hashCode( name, displayName, superType, isAbstract, isFinal, allowChildContent, isBuiltIn, form, schemaIcon );
     }
 
-    @Override
     public void validate()
     {
         Preconditions.checkNotNull( this.name, "name cannot be null" );

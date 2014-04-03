@@ -30,7 +30,8 @@ import com.enonic.wem.api.command.content.GetRootContent;
 import com.enonic.wem.api.command.content.RenameContent;
 import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.ValidateContentData;
-import com.enonic.wem.api.command.schema.content.GetContentTypes;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
+import com.enonic.wem.api.command.schema.content.GetContentTypesParams;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
@@ -72,12 +73,16 @@ public class ContentResourceTest
 {
     private Client client;
 
+    private ContentTypeService contentTypeService;
+
     private final String currentTime = "2013-08-23T12:55:09.162Z";
 
     @Before
     public void setup()
     {
         mockCurrentContextHttpRequest();
+
+        contentTypeService = Mockito.mock( ContentTypeService.class );
     }
 
     @After
@@ -476,7 +481,7 @@ public class ContentResourceTest
         throws Exception
     {
 
-        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
+        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
             ContentTypes.from( createContentType( "my_type" ) ) );
 
         Mockito.when( client.execute( Mockito.isA( ValidateContentData.class ) ) ).thenReturn( DataValidationErrors.empty() );
@@ -494,7 +499,7 @@ public class ContentResourceTest
         throws Exception
     {
 
-        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
+        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
             ContentTypes.from( createContentType( "my_type" ) ) );
 
         Mockito.when( client.execute( Mockito.isA( ValidateContentData.class ) ) ).thenReturn( createDataValidationErrors() );
@@ -562,7 +567,7 @@ public class ContentResourceTest
     public void create_content_exception()
         throws Exception
     {
-        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
+        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
             ContentTypes.from( createContentType( "my-type" ) ) );
 
         IllegalArgumentException e = new IllegalArgumentException( "Exception occured." );
@@ -579,7 +584,7 @@ public class ContentResourceTest
     public void create_content_success()
         throws Exception
     {
-        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
+        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
             ContentTypes.from( createContentType( "my-type" ) ) );
 
         Content content = createContent( "content-id", "content-path", "content-type" );
@@ -597,7 +602,7 @@ public class ContentResourceTest
     public void update_content_failure()
         throws Exception
     {
-        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
+        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
             ContentTypes.from( createContentType( "my-type" ) ) );
 
         Exception e = new com.enonic.wem.api.content.ContentNotFoundException( ContentId.from( "content-id" ) );
@@ -613,7 +618,7 @@ public class ContentResourceTest
     public void update_content_nothing_updated()
         throws Exception
     {
-        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
+        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
             ContentTypes.from( createContentType( "my-type" ) ) );
 
         Content content = createContent( "content-id", "content-name", "content-type" );
@@ -631,7 +636,7 @@ public class ContentResourceTest
     public void update_content_success()
         throws Exception
     {
-        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
+        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
             ContentTypes.from( createContentType( "my-type" ) ) );
 
         Content content = createContent( "content-id", "content-name", "content-type" );

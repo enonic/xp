@@ -13,7 +13,8 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.command.content.attachment.AttachmentService;
-import com.enonic.wem.api.command.schema.content.GetContentType;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
+import com.enonic.wem.api.command.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
@@ -25,7 +26,6 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
-import com.enonic.wem.core.relationship.RelationshipService;
 
 import static com.enonic.wem.api.content.Content.editContent;
 import static com.enonic.wem.api.content.Content.newContent;
@@ -41,20 +41,18 @@ public class UpdateContentHandlerTest
 
     private UpdateContentHandler handler;
 
-
-    private RelationshipService relationshipService;
-
     @Before
     public void before()
         throws Exception
     {
         super.initialize();
 
-        relationshipService = Mockito.mock( RelationshipService.class );
-        AttachmentService attachmentService = Mockito.mock( AttachmentService.class );
+        final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
+        final AttachmentService attachmentService = Mockito.mock( AttachmentService.class );
 
         handler = new UpdateContentHandler();
         handler.setContext( this.context );
+        handler.setContentTypeService( contentTypeService );
         handler.setAttachmentService( attachmentService );
 
         Mockito.when( client.execute( isA( ValidateContentData.class ) ) ).thenReturn( DataValidationErrors.empty() );
@@ -65,10 +63,8 @@ public class UpdateContentHandlerTest
             superType( ContentTypeName.structured() ).
             build();
 
-        Mockito.when( client.execute( Mockito.isA( GetContentType.class ) ) ).thenReturn( myContentType );
-
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( myContentType );
     }
-
 
     @Ignore // Rewriting content stuff to node
     @Test(expected = ContentNotFoundException.class)

@@ -3,6 +3,7 @@ package com.enonic.wem.core.content;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.command.content.GetContentByPaths;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
@@ -17,6 +18,9 @@ public class GetContentByPathsHandler
     @Inject
     private NodeService nodeService;
 
+    @Inject
+    private ContentTypeService contentTypeService;
+
     @Override
     public void handle()
         throws Exception
@@ -25,7 +29,7 @@ public class GetContentByPathsHandler
 
         try
         {
-            contents = new GetContentByPathsService( this.context, this.command, this.nodeService ).execute();
+            contents = new GetContentByPathsService( this.context, this.command, this.nodeService, this.contentTypeService ).execute();
         }
         catch ( NoNodeAtPathFoundException ex )
         {

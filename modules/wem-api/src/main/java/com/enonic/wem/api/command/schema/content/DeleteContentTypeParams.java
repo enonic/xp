@@ -4,11 +4,9 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
-public final class DeleteContentType
-    extends Command<DeleteContentTypeResult>
+public final class DeleteContentTypeParams
 {
     private ContentTypeName contentTypeName;
 
@@ -17,7 +15,7 @@ public final class DeleteContentType
         return this.contentTypeName;
     }
 
-    public DeleteContentType name( final ContentTypeName contentTypeName )
+    public DeleteContentTypeParams name( final ContentTypeName contentTypeName )
     {
         this.contentTypeName = contentTypeName;
         return this;
@@ -31,12 +29,12 @@ public final class DeleteContentType
             return true;
         }
 
-        if ( !( o instanceof DeleteContentType ) )
+        if ( !( o instanceof DeleteContentTypeParams ) )
         {
             return false;
         }
 
-        final DeleteContentType that = (DeleteContentType) o;
+        final DeleteContentTypeParams that = (DeleteContentTypeParams) o;
         return Objects.equals( this.contentTypeName, that.contentTypeName );
     }
 
@@ -46,7 +44,6 @@ public final class DeleteContentType
         return Objects.hashCode( this.contentTypeName );
     }
 
-    @Override
     public void validate()
     {
         Preconditions.checkNotNull( this.contentTypeName, "Content type name cannot be null" );

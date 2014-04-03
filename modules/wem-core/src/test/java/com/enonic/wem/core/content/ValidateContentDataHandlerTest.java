@@ -6,7 +6,8 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.ValidateContentData;
-import com.enonic.wem.api.command.schema.content.GetContentType;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
+import com.enonic.wem.api.command.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.form.FieldSet;
@@ -29,6 +30,7 @@ public class ValidateContentDataHandlerTest
 {
     private ValidateContentDataHandler handler;
 
+    private ContentTypeService contentTypeService;
 
     @Before
     public void setUp()
@@ -36,9 +38,11 @@ public class ValidateContentDataHandlerTest
     {
         super.initialize();
 
+        this.contentTypeService = Mockito.mock( ContentTypeService.class );
+
         handler = new ValidateContentDataHandler();
         handler.setContext( this.context );
-
+        handler.setContentTypeService( this.contentTypeService );
     }
 
     @Test
@@ -58,7 +62,7 @@ public class ValidateContentDataHandlerTest
                 build() ).
             build();
 
-        Mockito.when( client.execute( Mockito.isA( GetContentType.class ) ) ).thenReturn( contentType );
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
         final Content content = Content.newContent().path( "/mycontent" ).type( contentType.getName() ).build();
 
@@ -89,7 +93,7 @@ public class ValidateContentDataHandlerTest
             addFormItem( fieldSet ).
             build();
 
-        Mockito.when( client.execute( Mockito.isA( GetContentType.class ) ) ).thenReturn( contentType );
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
         final Content content = newContent().path( "/mycontent" ).type( contentType.getName() ).build();
         content.getContentData().setProperty( "mySet.myInput", new Value.String( "thing" ) );

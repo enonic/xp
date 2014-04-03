@@ -1,6 +1,7 @@
 package com.enonic.wem.core.content;
 
 import com.enonic.wem.api.command.content.GetChildContent;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.entity.GetNodesByParentParams;
 import com.enonic.wem.api.entity.NodePath;
@@ -16,9 +17,12 @@ public class GetChildContentService
 
     private boolean populateChildIds = false;
 
-    public GetChildContentService( final CommandContext context, final GetChildContent command, final NodeService nodeService )
+    public GetChildContentService( final CommandContext context,
+                                   final GetChildContent command,
+                                   final NodeService nodeService,
+                                   final ContentTypeService contentTypeService )
     {
-        super( context, nodeService );
+        super( context, nodeService, contentTypeService );
         this.command = command;
     }
 
@@ -38,7 +42,7 @@ public class GetChildContentService
 
         if ( populateChildIds )
         {
-            return new ChildContentIdsResolver( context, this.nodeService ).resolve( contents );
+            return new ChildContentIdsResolver( context, this.nodeService, this.contentTypeService ).resolve( contents );
         }
         else
         {

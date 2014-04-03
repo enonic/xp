@@ -1,9 +1,12 @@
 package com.enonic.wem.core.content;
 
+import javax.inject.Inject;
+
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.ValidateContentData;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
+import com.enonic.wem.api.command.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -15,6 +18,7 @@ import com.enonic.wem.core.command.CommandHandler;
 public final class ValidateContentDataHandler
     extends CommandHandler<ValidateContentData>
 {
+    private ContentTypeService contentTypeService;
 
     @Override
     public void handle()
@@ -22,8 +26,7 @@ public final class ValidateContentDataHandler
     {
         final ContentData contentData = command.getContentData();
         final ContentTypeName contentTypeName = command.getContentType();
-        final ContentType contentType =
-            context.getClient().execute( Commands.contentType().get().byName().contentTypeName( contentTypeName ) );
+        final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) );
 
         Preconditions.checkArgument( contentType != null, "ContentType [%s] not found", contentTypeName );
 
@@ -33,4 +36,9 @@ public final class ValidateContentDataHandler
         command.setResult( validationErrors );
     }
 
+    @Inject
+    public void setContentTypeService( final ContentTypeService contentTypeService )
+    {
+        this.contentTypeService = contentTypeService;
+    }
 }

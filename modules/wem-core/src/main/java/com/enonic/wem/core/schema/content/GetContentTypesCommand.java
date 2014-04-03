@@ -1,27 +1,36 @@
 package com.enonic.wem.core.schema.content;
 
-import com.enonic.wem.api.command.schema.content.GetContentTypes;
+import com.enonic.wem.api.command.schema.content.GetContentTypesParams;
+import com.enonic.wem.api.command.schema.mixin.MixinService;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypes;
+import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 
-public final class GetContentTypesHandler
-    extends AbstractContentTypeHandler<GetContentTypes>
+final class GetContentTypesCommand
+    extends AbstractContentTypeCommand
 {
-    @Override
-    public void handle()
-        throws Exception
+    private GetContentTypesParams params;
+
+    ContentTypes execute()
     {
-        final ContentTypes contentTypes = getContentTypes( command.getContentTypeNames() );
-        if ( !command.isMixinReferencesToFormItems() )
+        params.validate();
+
+        return doExecute();
+    }
+
+    private ContentTypes doExecute()
+    {
+        final ContentTypes contentTypes = getContentTypes( this.params.getContentTypeNames() );
+        if ( !this.params.isMixinReferencesToFormItems() )
         {
-            command.setResult( contentTypes );
+            return contentTypes;
         }
         else
         {
-            command.setResult( transformMixinReferences( contentTypes ) );
+            return transformMixinReferences( contentTypes );
         }
     }
 
@@ -42,4 +51,21 @@ public final class GetContentTypesHandler
         return contentTypes.build();
     }
 
+    GetContentTypesCommand params( final GetContentTypesParams params )
+    {
+        this.params = params;
+        return this;
+    }
+
+    GetContentTypesCommand contentTypeDao( final ContentTypeDao contentTypeDao )
+    {
+        super.contentTypeDao = contentTypeDao;
+        return this;
+    }
+
+    GetContentTypesCommand mixinService( final MixinService mixinService )
+    {
+        super.mixinService = mixinService;
+        return this;
+    }
 }

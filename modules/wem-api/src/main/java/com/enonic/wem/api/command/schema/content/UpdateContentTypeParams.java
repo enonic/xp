@@ -3,24 +3,22 @@ package com.enonic.wem.api.command.schema.content;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.editor.ContentTypeEditor;
 
-public final class UpdateContentType
-    extends Command<UpdateContentTypeResult>
+public final class UpdateContentTypeParams
 {
     private ContentTypeName name;
 
     private ContentTypeEditor editor;
 
-    public UpdateContentType contentTypeName( final ContentTypeName name )
+    public UpdateContentTypeParams contentTypeName( final ContentTypeName name )
     {
         this.name = name;
         return this;
     }
 
-    public UpdateContentType editor( final ContentTypeEditor editor )
+    public UpdateContentTypeParams editor( final ContentTypeEditor editor )
     {
         this.editor = editor;
         return this;
@@ -44,12 +42,12 @@ public final class UpdateContentType
             return true;
         }
 
-        if ( !( o instanceof UpdateContentType ) )
+        if ( !( o instanceof UpdateContentTypeParams ) )
         {
             return false;
         }
 
-        final UpdateContentType that = (UpdateContentType) o;
+        final UpdateContentTypeParams that = (UpdateContentTypeParams) o;
         return Objects.equal( this.name, that.name ) && Objects.equal( this.editor, that.editor );
     }
 
@@ -59,7 +57,6 @@ public final class UpdateContentType
         return Objects.hashCode( this.name, this.editor );
     }
 
-    @Override
     public void validate()
     {
         Preconditions.checkNotNull( this.name, "name cannot be null" );

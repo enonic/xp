@@ -1,6 +1,7 @@
 package com.enonic.wem.core.content;
 
 import com.enonic.wem.api.command.content.GetContentByPaths;
+import com.enonic.wem.api.command.schema.content.ContentTypeService;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.entity.GetNodesByPathsParams;
 import com.enonic.wem.api.entity.NodePaths;
@@ -14,9 +15,12 @@ public class GetContentByPathsService
 {
     private GetContentByPaths command;
 
-    public GetContentByPathsService( final CommandContext context, final GetContentByPaths command, final NodeService nodeService )
+    public GetContentByPathsService( final CommandContext context,
+                                     final GetContentByPaths command,
+                                     final NodeService nodeService,
+                                     final ContentTypeService contentTypeService )
     {
-        super( context, nodeService );
+        super( context, nodeService, contentTypeService );
         this.command = command;
     }
 
