@@ -424,15 +424,25 @@ module api.ui.selector.combobox {
 
                 if (!this.isDropdownShown()) {
                     this.showDropdown();
-                    $(this.input.getHTMLElement()).attr('readonly', false);
+                    if (event.which === 40) { // down
+                        this.comboBoxDropdown.nagivateToFirstRow();
+                        $(this.input.getHTMLElement()).attr('readonly', true);
+                    } else {
+                        $(this.input.getHTMLElement()).attr('readonly', false);
+                    }
                     return;
                 }
 
                 switch (event.which) {
                 case 38: // up
                     if (this.comboBoxDropdown.hasActiveRow()) {
-                        this.comboBoxDropdown.navigateToPreviousRow();
-                        $(this.input.getHTMLElement()).attr('readonly', true);
+                        if (this.comboBoxDropdown.getActiveRow() === 0) {
+                            this.comboBoxDropdown.resetActiveSelection();
+                            $(this.input.getHTMLElement()).attr('readonly', false);
+                        } else {
+                            this.comboBoxDropdown.navigateToPreviousRow();
+                            $(this.input.getHTMLElement()).attr('readonly', true);
+                        }
                     }
                     event.stopPropagation();
                     event.preventDefault();
