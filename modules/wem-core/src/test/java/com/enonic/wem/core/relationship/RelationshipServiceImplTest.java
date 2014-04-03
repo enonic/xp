@@ -11,8 +11,6 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.command.schema.content.ContentTypeService;
-import com.enonic.wem.api.command.schema.content.GetContentTypesParams;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataPath;
@@ -24,7 +22,9 @@ import com.enonic.wem.api.form.inputtype.RelationshipConfig;
 import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.ContentTypes;
+import com.enonic.wem.api.schema.content.GetContentTypesParams;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.core.relationship.dao.RelationshipDao;
 

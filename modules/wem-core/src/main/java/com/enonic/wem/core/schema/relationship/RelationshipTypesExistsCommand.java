@@ -1,7 +1,7 @@
 package com.enonic.wem.core.schema.relationship;
 
-import com.enonic.wem.api.command.schema.relationship.RelationshipTypesExistsResult;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
+import com.enonic.wem.api.schema.relationship.RelationshipTypesExistsResult;
 import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;
 
 

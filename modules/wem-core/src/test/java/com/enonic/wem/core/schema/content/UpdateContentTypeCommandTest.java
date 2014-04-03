@@ -4,18 +4,18 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.command.schema.content.ContentTypeService;
-import com.enonic.wem.api.command.schema.content.GetContentTypeParams;
-import com.enonic.wem.api.command.schema.content.GetContentTypesParams;
-import com.enonic.wem.api.command.schema.content.UpdateContentTypeParams;
-import com.enonic.wem.api.command.schema.content.UpdateContentTypeResult;
-import com.enonic.wem.api.command.schema.mixin.MixinService;
 import com.enonic.wem.api.schema.SchemaId;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.ContentTypes;
+import com.enonic.wem.api.schema.content.GetContentTypeParams;
+import com.enonic.wem.api.schema.content.GetContentTypesParams;
+import com.enonic.wem.api.schema.content.UpdateContentTypeParams;
+import com.enonic.wem.api.schema.content.UpdateContentTypeResult;
 import com.enonic.wem.api.schema.content.editor.ContentTypeEditor;
 import com.enonic.wem.api.schema.content.validator.InvalidContentTypeException;
+import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 

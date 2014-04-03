@@ -1,8 +1,8 @@
 package com.enonic.wem.core.content.attachment;
 
-import com.enonic.wem.api.command.content.attachment.GetAttachmentParams;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.attachment.Attachment;
+import com.enonic.wem.api.content.attachment.GetAttachmentParams;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.GetNodeByIdParams;
 import com.enonic.wem.api.entity.NoEntityWithIdFoundException;

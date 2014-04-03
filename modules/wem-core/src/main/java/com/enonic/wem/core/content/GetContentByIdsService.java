@@ -6,7 +6,6 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.command.content.GetContentByIds;
-import com.enonic.wem.api.command.schema.content.ContentTypeService;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.Contents;
@@ -15,6 +14,7 @@ import com.enonic.wem.api.entity.EntityIds;
 import com.enonic.wem.api.entity.GetNodesByIdsParams;
 import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.entity.Nodes;
+import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.core.command.CommandContext;
 
 

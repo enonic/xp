@@ -1,6 +1,6 @@
 package com.enonic.wem.core.schema.relationship;
 
-import com.enonic.wem.api.command.schema.relationship.DeleteRelationshipTypeResult;
+import com.enonic.wem.api.schema.relationship.DeleteRelationshipTypeResult;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;

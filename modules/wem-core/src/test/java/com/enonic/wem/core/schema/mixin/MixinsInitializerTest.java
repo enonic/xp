@@ -4,8 +4,8 @@ package com.enonic.wem.core.schema.mixin;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.command.schema.mixin.GetMixinParams;
-import com.enonic.wem.api.command.schema.mixin.MixinService;
+import com.enonic.wem.api.schema.mixin.GetMixinParams;
+import com.enonic.wem.api.schema.mixin.MixinService;
 
 public class MixinsInitializerTest
 {

@@ -3,13 +3,13 @@ package com.enonic.wem.core.schema.relationship;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.command.schema.relationship.CreateRelationshipTypeParams;
-import com.enonic.wem.api.command.schema.relationship.RelationshipTypeService;
-import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipTypeParams;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
+import com.enonic.wem.api.schema.relationship.CreateRelationshipTypeParams;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
+import com.enonic.wem.api.schema.relationship.UpdateRelationshipTypeParams;
 import com.enonic.wem.api.schema.relationship.editor.RelationshipTypeEditor;
 import com.enonic.wem.core.support.BaseInitializer;
 

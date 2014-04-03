@@ -6,18 +6,18 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.SchemaTypes;
-import com.enonic.wem.api.command.schema.content.ContentTypeService;
-import com.enonic.wem.api.command.schema.content.GetAllContentTypesParams;
-import com.enonic.wem.api.command.schema.mixin.MixinService;
-import com.enonic.wem.api.command.schema.relationship.RelationshipTypeService;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.ContentTypes;
+import com.enonic.wem.api.schema.content.GetAllContentTypesParams;
 import com.enonic.wem.api.schema.mixin.Mixin;
+import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 

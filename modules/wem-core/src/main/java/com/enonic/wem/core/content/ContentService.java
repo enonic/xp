@@ -5,10 +5,10 @@ import javax.jcr.Session;
 import org.elasticsearch.common.Strings;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.schema.content.ContentTypeService;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.entity.Nodes;
+import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.core.command.CommandContext;
 
 abstract class ContentService

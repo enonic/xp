@@ -4,12 +4,12 @@ import javax.inject.Inject;
 
 import com.enonic.wem.api.command.content.GetContentById;
 import com.enonic.wem.api.command.content.RenameContent;
-import com.enonic.wem.api.command.schema.content.ContentTypeService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.entity.RenameNodeParams;
+import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.core.command.CommandHandler;
 
 

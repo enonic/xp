@@ -3,12 +3,12 @@ package com.enonic.wem.core.content;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.command.content.GetContentByIds;
-import com.enonic.wem.api.command.schema.content.ContentTypeService;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
 import com.enonic.wem.api.entity.NodeService;
+import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.core.command.CommandHandler;
 
 

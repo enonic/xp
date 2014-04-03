@@ -2,7 +2,6 @@ package com.enonic.wem.core.content;
 
 
 import com.enonic.wem.api.command.content.DeleteContent;
-import com.enonic.wem.api.command.schema.content.ContentTypeService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.DeleteContentResult;
@@ -13,6 +12,7 @@ import com.enonic.wem.api.entity.NoNodeAtPathFoundException;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.NodeService;
+import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.core.command.CommandContext;
 
 

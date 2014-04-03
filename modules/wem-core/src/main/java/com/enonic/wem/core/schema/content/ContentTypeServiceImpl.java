@@ -2,21 +2,21 @@ package com.enonic.wem.core.schema.content;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.command.schema.content.ContentTypeService;
-import com.enonic.wem.api.command.schema.content.CreateContentTypeParams;
-import com.enonic.wem.api.command.schema.content.DeleteContentTypeParams;
-import com.enonic.wem.api.command.schema.content.DeleteContentTypeResult;
-import com.enonic.wem.api.command.schema.content.GetAllContentTypesParams;
-import com.enonic.wem.api.command.schema.content.GetChildContentTypesParams;
-import com.enonic.wem.api.command.schema.content.GetContentTypeParams;
-import com.enonic.wem.api.command.schema.content.GetContentTypesParams;
-import com.enonic.wem.api.command.schema.content.UpdateContentTypeParams;
-import com.enonic.wem.api.command.schema.content.UpdateContentTypeResult;
-import com.enonic.wem.api.command.schema.content.ValidateContentTypeParams;
-import com.enonic.wem.api.command.schema.mixin.MixinService;
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.ContentTypes;
+import com.enonic.wem.api.schema.content.CreateContentTypeParams;
+import com.enonic.wem.api.schema.content.DeleteContentTypeParams;
+import com.enonic.wem.api.schema.content.DeleteContentTypeResult;
+import com.enonic.wem.api.schema.content.GetAllContentTypesParams;
+import com.enonic.wem.api.schema.content.GetChildContentTypesParams;
+import com.enonic.wem.api.schema.content.GetContentTypeParams;
+import com.enonic.wem.api.schema.content.GetContentTypesParams;
+import com.enonic.wem.api.schema.content.UpdateContentTypeParams;
+import com.enonic.wem.api.schema.content.UpdateContentTypeResult;
+import com.enonic.wem.api.schema.content.ValidateContentTypeParams;
 import com.enonic.wem.api.schema.content.validator.ContentTypeValidationResult;
+import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 public class ContentTypeServiceImpl

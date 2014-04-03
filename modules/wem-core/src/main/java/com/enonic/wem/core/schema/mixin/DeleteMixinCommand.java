@@ -1,11 +1,11 @@
 package com.enonic.wem.core.schema.mixin;
 
-import com.enonic.wem.api.command.schema.content.ContentTypeService;
-import com.enonic.wem.api.command.schema.content.GetAllContentTypesParams;
-import com.enonic.wem.api.command.schema.mixin.DeleteMixinParams;
-import com.enonic.wem.api.command.schema.mixin.DeleteMixinResult;
-import com.enonic.wem.api.command.schema.mixin.GetMixinParams;
+import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.ContentTypes;
+import com.enonic.wem.api.schema.content.GetAllContentTypesParams;
+import com.enonic.wem.api.schema.mixin.DeleteMixinParams;
+import com.enonic.wem.api.schema.mixin.DeleteMixinResult;
+import com.enonic.wem.api.schema.mixin.GetMixinParams;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinNotFoundException;
 import com.enonic.wem.api.schema.mixin.UnableToDeleteMixinException;

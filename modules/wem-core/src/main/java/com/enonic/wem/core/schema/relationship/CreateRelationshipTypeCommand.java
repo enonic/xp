@@ -2,7 +2,7 @@ package com.enonic.wem.core.schema.relationship;
 
 import org.joda.time.DateTime;
 
-import com.enonic.wem.api.command.schema.relationship.CreateRelationshipTypeParams;
+import com.enonic.wem.api.schema.relationship.CreateRelationshipTypeParams;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;

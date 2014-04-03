@@ -1,9 +1,9 @@
 package com.enonic.wem.core.schema.content;
 
-import com.enonic.wem.api.command.schema.content.GetChildContentTypesParams;
-import com.enonic.wem.api.command.schema.mixin.MixinService;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
+import com.enonic.wem.api.schema.content.GetChildContentTypesParams;
+import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 

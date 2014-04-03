@@ -15,19 +15,19 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.schema.content.ContentTypeService;
-import com.enonic.wem.api.command.schema.content.CreateContentTypeParams;
-import com.enonic.wem.api.command.schema.content.GetAllContentTypesParams;
-import com.enonic.wem.api.command.schema.content.GetContentTypeParams;
-import com.enonic.wem.api.command.schema.content.GetContentTypesParams;
-import com.enonic.wem.api.command.schema.content.UpdateContentTypeParams;
 import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.MixinReference;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.ContentTypes;
+import com.enonic.wem.api.schema.content.CreateContentTypeParams;
+import com.enonic.wem.api.schema.content.GetAllContentTypesParams;
+import com.enonic.wem.api.schema.content.GetContentTypeParams;
+import com.enonic.wem.api.schema.content.GetContentTypesParams;
+import com.enonic.wem.api.schema.content.UpdateContentTypeParams;
 
 import static com.enonic.wem.api.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;

@@ -11,12 +11,12 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import com.enonic.wem.api.blob.Blob;
-import com.enonic.wem.api.command.content.attachment.AttachmentService;
-import com.enonic.wem.api.command.content.attachment.GetAttachmentsParams;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.attachment.Attachment;
+import com.enonic.wem.api.content.attachment.AttachmentService;
+import com.enonic.wem.api.content.attachment.GetAttachmentsParams;
 import com.enonic.wem.core.image.ImageHelper;
 import com.enonic.wem.core.image.filter.ImageFilterBuilder;
 

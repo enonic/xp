@@ -1,9 +1,9 @@
 package com.enonic.wem.api.schema.content.validator;
 
-import com.enonic.wem.api.command.schema.content.ContentTypeService;
-import com.enonic.wem.api.command.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeService;
+import com.enonic.wem.api.schema.content.GetContentTypeParams;
 
 import static com.enonic.wem.api.schema.content.validator.ContentTypeValidationResult.newContentTypeValidationResult;
 

@@ -2,11 +2,11 @@ package com.enonic.wem.core.content.attachment;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.command.content.attachment.AttachmentService;
-import com.enonic.wem.api.command.content.attachment.GetAttachmentParams;
-import com.enonic.wem.api.command.content.attachment.GetAttachmentsParams;
 import com.enonic.wem.api.content.attachment.Attachment;
+import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.Attachments;
+import com.enonic.wem.api.content.attachment.GetAttachmentParams;
+import com.enonic.wem.api.content.attachment.GetAttachmentsParams;
 import com.enonic.wem.api.entity.NodeService;
 
 public class AttachmentServiceImpl

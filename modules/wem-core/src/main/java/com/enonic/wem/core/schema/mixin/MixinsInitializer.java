@@ -2,11 +2,11 @@ package com.enonic.wem.core.schema.mixin;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.command.schema.mixin.CreateMixinParams;
-import com.enonic.wem.api.command.schema.mixin.GetMixinParams;
-import com.enonic.wem.api.command.schema.mixin.MixinService;
-import com.enonic.wem.api.command.schema.mixin.UpdateMixinParams;
+import com.enonic.wem.api.schema.mixin.CreateMixinParams;
+import com.enonic.wem.api.schema.mixin.GetMixinParams;
 import com.enonic.wem.api.schema.mixin.Mixin;
+import com.enonic.wem.api.schema.mixin.MixinService;
+import com.enonic.wem.api.schema.mixin.UpdateMixinParams;
 import com.enonic.wem.api.schema.mixin.editor.SetMixinEditor;
 import com.enonic.wem.core.support.BaseInitializer;
 

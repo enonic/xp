@@ -1,10 +1,10 @@
 package com.enonic.wem.core.schema.relationship;
 
-import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypeParams;
-import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipTypeParams;
-import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipTypeResult;
+import com.enonic.wem.api.schema.relationship.GetRelationshipTypeParams;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeAlreadyExistException;
+import com.enonic.wem.api.schema.relationship.UpdateRelationshipTypeParams;
+import com.enonic.wem.api.schema.relationship.UpdateRelationshipTypeResult;
 import com.enonic.wem.api.schema.relationship.editor.RelationshipTypeEditor;
 import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;
 

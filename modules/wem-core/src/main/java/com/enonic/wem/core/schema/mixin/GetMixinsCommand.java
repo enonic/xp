@@ -3,7 +3,7 @@ package com.enonic.wem.core.schema.mixin;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enonic.wem.api.command.schema.mixin.GetMixinsParams;
+import com.enonic.wem.api.schema.mixin.GetMixinsParams;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.MixinNames;
