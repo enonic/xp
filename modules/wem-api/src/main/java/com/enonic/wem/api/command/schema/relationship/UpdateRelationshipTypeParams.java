@@ -3,25 +3,22 @@ package com.enonic.wem.api.command.schema.relationship;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.editor.RelationshipTypeEditor;
 
-public final class UpdateRelationshipType
-    extends Command<UpdateRelationshipTypeResult>
+public final class UpdateRelationshipTypeParams
 {
     private RelationshipTypeName name;
 
     private RelationshipTypeEditor editor;
 
-
-    public UpdateRelationshipType name( final RelationshipTypeName name )
+    public UpdateRelationshipTypeParams name( final RelationshipTypeName name )
     {
         this.name = name;
         return this;
     }
 
-    public UpdateRelationshipType editor( final RelationshipTypeEditor editor )
+    public UpdateRelationshipTypeParams editor( final RelationshipTypeEditor editor )
     {
         this.editor = editor;
         return this;
@@ -45,12 +42,12 @@ public final class UpdateRelationshipType
             return true;
         }
 
-        if ( !( o instanceof UpdateRelationshipType ) )
+        if ( !( o instanceof UpdateRelationshipTypeParams ) )
         {
             return false;
         }
 
-        final UpdateRelationshipType that = (UpdateRelationshipType) o;
+        final UpdateRelationshipTypeParams that = (UpdateRelationshipTypeParams) o;
         return Objects.equal( this.name, that.name ) && Objects.equal( this.editor, that.editor );
     }
 
@@ -60,7 +57,6 @@ public final class UpdateRelationshipType
         return Objects.hashCode( this.name, this.editor );
     }
 
-    @Override
     public void validate()
     {
         Preconditions.checkNotNull( this.name, "name cannot be null" );

@@ -4,8 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.schema.relationship.GetRelationshipType;
+import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypeParams;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
@@ -16,10 +15,10 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 
-public class GetRelationshipTypeHandlerTest
+public class GetRelationshipTypeCommandTest
     extends AbstractCommandHandlerTest
 {
-    private GetRelationshipTypeHandler handler;
+    private GetRelationshipTypeCommand command;
 
     private RelationshipTypeDao relationshipTypeDao;
 
@@ -30,9 +29,8 @@ public class GetRelationshipTypeHandlerTest
         super.initialize();
 
         relationshipTypeDao = Mockito.mock( RelationshipTypeDao.class );
-        handler = new GetRelationshipTypeHandler();
-        handler.setContext( this.context );
-        handler.setRelationshipTypeDao( relationshipTypeDao );
+        command = new GetRelationshipTypeCommand();
+        command.relationshipTypeDao( relationshipTypeDao );
     }
 
     @Test
@@ -54,13 +52,13 @@ public class GetRelationshipTypeHandlerTest
             RelationshipType.newRelationshipType( relationshipType ) );
 
         // exercise
-        final GetRelationshipType command = Commands.relationshipType().get().byName( name );
+        final GetRelationshipTypeParams params = new GetRelationshipTypeParams().name( name );
 
-        this.handler.setCommand( command );
-        this.handler.handle();
+        this.command.params( params );
+        final RelationshipType result = this.command.execute();
 
         // verify
         verify( relationshipTypeDao, only() ).getRelationshipType( Mockito.eq( name ) );
-        assertNotNull( command.getResult() );
+        assertNotNull( result );
     }
 }

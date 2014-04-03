@@ -3,13 +3,11 @@ package com.enonic.wem.api.command.schema.relationship;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
-public final class CreateRelationshipType
-    extends Command<RelationshipTypeName>
+public final class CreateRelationshipTypeParams
 {
     private RelationshipTypeName name;
 
@@ -27,55 +25,55 @@ public final class CreateRelationshipType
 
     private SchemaIcon schemaIcon;
 
-    public CreateRelationshipType name( final String name )
+    public CreateRelationshipTypeParams name( final String name )
     {
         this.name = RelationshipTypeName.from( name );
         return this;
     }
 
-    public CreateRelationshipType name( final RelationshipTypeName name )
+    public CreateRelationshipTypeParams name( final RelationshipTypeName name )
     {
         this.name = name;
         return this;
     }
 
-    public CreateRelationshipType displayName( final String displayName )
+    public CreateRelationshipTypeParams displayName( final String displayName )
     {
         this.displayName = displayName;
         return this;
     }
 
-    public CreateRelationshipType description( final String description )
+    public CreateRelationshipTypeParams description( final String description )
     {
         this.description = description;
         return this;
     }
 
-    public CreateRelationshipType fromSemantic( final String fromSemantic )
+    public CreateRelationshipTypeParams fromSemantic( final String fromSemantic )
     {
         this.fromSemantic = fromSemantic;
         return this;
     }
 
-    public CreateRelationshipType toSemantic( final String toSemantic )
+    public CreateRelationshipTypeParams toSemantic( final String toSemantic )
     {
         this.toSemantic = toSemantic;
         return this;
     }
 
-    public CreateRelationshipType allowedFromTypes( final ContentTypeNames allowedFromTypes )
+    public CreateRelationshipTypeParams allowedFromTypes( final ContentTypeNames allowedFromTypes )
     {
         this.allowedFromTypes = allowedFromTypes;
         return this;
     }
 
-    public CreateRelationshipType allowedToTypes( final ContentTypeNames allowedToTypes )
+    public CreateRelationshipTypeParams allowedToTypes( final ContentTypeNames allowedToTypes )
     {
         this.allowedToTypes = allowedToTypes;
         return this;
     }
 
-    public CreateRelationshipType schemaIcon( final SchemaIcon schemaIcon )
+    public CreateRelationshipTypeParams schemaIcon( final SchemaIcon schemaIcon )
     {
         this.schemaIcon = schemaIcon;
         return this;
@@ -129,12 +127,12 @@ public final class CreateRelationshipType
             return true;
         }
 
-        if ( !( o instanceof CreateRelationshipType ) )
+        if ( !( o instanceof CreateRelationshipTypeParams ) )
         {
             return false;
         }
 
-        final CreateRelationshipType that = (CreateRelationshipType) o;
+        final CreateRelationshipTypeParams that = (CreateRelationshipTypeParams) o;
         return Objects.equal( this.name, that.name ) &&
             Objects.equal( this.displayName, that.displayName ) &&
             Objects.equal( this.description, that.description ) &&
@@ -151,7 +149,6 @@ public final class CreateRelationshipType
         return Objects.hashCode( name, displayName, description, fromSemantic, toSemantic, allowedFromTypes, allowedToTypes, schemaIcon );
     }
 
-    @Override
     public void validate()
     {
         Preconditions.checkNotNull( name, "name cannot be null" );

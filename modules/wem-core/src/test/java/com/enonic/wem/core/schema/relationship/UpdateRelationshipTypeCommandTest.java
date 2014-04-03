@@ -7,9 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.schema.relationship.GetRelationshipType;
-import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipType;
+import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipTypeParams;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
@@ -21,10 +19,10 @@ import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 
-public class UpdateRelationshipTypeHandlerTest
+public class UpdateRelationshipTypeCommandTest
     extends AbstractCommandHandlerTest
 {
-    private UpdateRelationshipTypeHandler handler;
+    private UpdateRelationshipTypeCommand command;
 
     private RelationshipTypeDao relationshipTypeDao;
 
@@ -37,9 +35,8 @@ public class UpdateRelationshipTypeHandlerTest
         super.initialize();
 
         relationshipTypeDao = Mockito.mock( RelationshipTypeDao.class );
-        handler = new UpdateRelationshipTypeHandler();
-        handler.setContext( this.context );
-        handler.setRelationshipTypeDao( relationshipTypeDao );
+        command = new UpdateRelationshipTypeCommand();
+        command.relationshipTypeDao( relationshipTypeDao );
     }
 
     @After
@@ -62,10 +59,9 @@ public class UpdateRelationshipTypeHandlerTest
             createdTime( DateTime.now() ).
             modifiedTime( DateTime.now() );
         Mockito.when( relationshipTypeDao.getRelationshipType( isA( RelationshipTypeName.class ) ) ).thenReturn( relationshipType );
-        Mockito.when( client.execute( isA( GetRelationshipType.class ) ) ).thenReturn( relationshipType.build() );
 
         // exercise
-        UpdateRelationshipType command = Commands.relationshipType().update().
+        final UpdateRelationshipTypeParams params = new UpdateRelationshipTypeParams().
             name( RelationshipTypeName.from( "like" ) ).
             editor( new RelationshipTypeEditor()
             {
@@ -77,8 +73,8 @@ public class UpdateRelationshipTypeHandlerTest
                         build();
                 }
             } );
-        this.handler.setCommand( command );
-        this.handler.handle();
+        this.command.params( params );
+        this.command.execute();
 
         // verify
         verify( relationshipTypeDao, atLeastOnce() ).updateRelationshipType( Mockito.isA( RelationshipType.class ) );

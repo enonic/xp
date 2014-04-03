@@ -3,30 +3,27 @@ package com.enonic.wem.api.command.schema.relationship;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
-public final class GetRelationshipType
-    extends Command<RelationshipType>
+public final class GetRelationshipTypeParams
 {
     private RelationshipTypeName name;
 
     private boolean notFoundAsException = false;
 
-    public GetRelationshipType name( final RelationshipTypeName value )
+    public GetRelationshipTypeParams name( final RelationshipTypeName value )
     {
         this.name = value;
         return this;
     }
 
-    public GetRelationshipType notFoundAsException()
+    public GetRelationshipTypeParams notFoundAsException()
     {
         notFoundAsException = true;
         return this;
     }
 
-    public GetRelationshipType notFoundAsNull()
+    public GetRelationshipTypeParams notFoundAsNull()
     {
         notFoundAsException = false;
         return this;
@@ -40,12 +37,12 @@ public final class GetRelationshipType
             return true;
         }
 
-        if ( !( o instanceof GetRelationshipType ) )
+        if ( !( o instanceof GetRelationshipTypeParams ) )
         {
             return false;
         }
 
-        final GetRelationshipType that = (GetRelationshipType) o;
+        final GetRelationshipTypeParams that = (GetRelationshipTypeParams) o;
         return Objects.equal( this.name, that.name );
     }
 
@@ -55,7 +52,6 @@ public final class GetRelationshipType
         return Objects.hashCode( this.name );
     }
 
-    @Override
     public void validate()
     {
         Preconditions.checkNotNull( this.name, "name cannot be null" );
