@@ -33,6 +33,10 @@ module api.content.page {
             return this.regionAndComponentList[this.regionAndComponentList.length - 1];
         }
 
+        getLevels(): ComponentPathRegionAndComponent [] {
+            return this.regionAndComponentList;
+        }
+
         getComponentName(): ComponentName {
             return this.getLastLevel().getComponentName();
         }

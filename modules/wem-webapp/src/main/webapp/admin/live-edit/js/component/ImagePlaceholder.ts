@@ -39,7 +39,8 @@ module LiveEdit.component {
 
             this.comboBox.onOptionSelected((event:api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {
                 var componentPath = this.getComponentPath();
-                $liveEdit(window).trigger('imageComponentSetImage.liveEdit', [event.getOption().value, componentPath, this]);
+                $liveEdit(window).trigger('imageComponentSetImage.liveEdit',
+                    [event.getOption().value, componentPath, this, event.getOption().displayValue.getDisplayName()]);
             });
         }
 
@@ -54,7 +55,6 @@ module LiveEdit.component {
                 setSize(uploadItem.getSize()).
                 build();
             var mimeType = uploadItem.getMimeType();
-
             new api.schema.content.GetContentTypeByNameRequest(new api.schema.content.ContentTypeName("image")).
                 sendAndParse().
                 done((contentType: api.schema.content.ContentType) => {
@@ -76,9 +76,9 @@ module LiveEdit.component {
                     createContentRequest.
                         sendAndParse().
                         done((createdContent: api.content.Content) => {
-
                             var componentPath = this.getComponentPath();
-                            $liveEdit(window).trigger('imageComponentSetImage.liveEdit', [createdContent.getId(), componentPath, this]);
+                            $liveEdit(window).trigger('imageComponentSetImage.liveEdit',
+                                [createdContent.getId(), componentPath, this, uploadItem.getName()]);
 
                         });
                 });

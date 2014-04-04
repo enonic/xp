@@ -5,8 +5,16 @@ module api.util {
         return str;
     }
 
-    export function capitalize(str) {
+    export function capitalize(str: string) {
         return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    export function capitalizeAll(str: string) {
+        return str.replace(/(?:^|\s)\S/g, function(ch) { return ch.toUpperCase(); });
+    }
+
+    export function removeInvalidChars(str: string) {
+        return str.replace(/\s/g, "");
     }
 
     export function isStringEmpty(str: string) {
