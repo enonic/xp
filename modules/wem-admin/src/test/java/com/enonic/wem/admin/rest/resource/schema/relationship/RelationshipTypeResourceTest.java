@@ -13,9 +13,9 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 import junit.framework.Assert;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.blob.Blob;
-import com.enonic.wem.api.command.content.blob.GetBlob;
+import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.schema.relationship.CreateRelationshipTypeParams;
 import com.enonic.wem.api.schema.relationship.DeleteRelationshipTypeResult;
 import com.enonic.wem.api.schema.relationship.GetRelationshipTypeParams;
@@ -39,7 +39,7 @@ public class RelationshipTypeResourceTest
 {
     private RelationshipTypeService relationshipTypeService;
 
-    private Client client;
+    private BlobService blobService;
 
     @Before
     public void setup()
@@ -52,11 +52,11 @@ public class RelationshipTypeResourceTest
     {
         final RelationshipTypeResource resource = new RelationshipTypeResource();
 
-        client = Mockito.mock( Client.class );
-        resource.setClient( client );
-
         relationshipTypeService = Mockito.mock( RelationshipTypeService.class );
         resource.setRelationshipTypeService( relationshipTypeService );
+
+        blobService = Mockito.mock( BlobService.class );
+        resource.setBlobService( blobService );
 
         return resource;
     }
@@ -213,7 +213,7 @@ public class RelationshipTypeResourceTest
         Mockito.when( relationshipTypeService.create( isA( CreateRelationshipTypeParams.class ) ) ).thenReturn( RelationshipTypeName.from( "love" ) );
         final Blob iconBlob = Mockito.mock( Blob.class );
         Mockito.when( iconBlob.getStream() ).thenReturn( new ByteArrayInputStream( "icondata".getBytes() ) );
-        Mockito.when( client.execute( isA( GetBlob.class ) ) ).thenReturn( iconBlob );
+        Mockito.when( blobService.get( isA( BlobKey.class ) ) ).thenReturn( iconBlob );
 
         resource().path( "schema/relationship/create" ).entity( readFromFile( "create_relationship_type_with_icon_params.json" ),
                                                                 MediaType.APPLICATION_JSON_TYPE ).post();

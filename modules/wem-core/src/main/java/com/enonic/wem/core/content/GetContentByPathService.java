@@ -1,5 +1,6 @@
 package com.enonic.wem.core.content;
 
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.command.content.GetContentByPath;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentNotFoundException;
@@ -20,9 +21,10 @@ public class GetContentByPathService
     public GetContentByPathService( final CommandContext context,
                                     final GetContentByPath command,
                                     final NodeService nodeService,
-                                    final ContentTypeService contentTypeService )
+                                    final ContentTypeService contentTypeService,
+                                    final BlobService blobService )
     {
-        super( context, nodeService, contentTypeService );
+        super( context, nodeService, contentTypeService, blobService );
         this.command = command;
     }
 

@@ -1,5 +1,6 @@
 package com.enonic.wem.core.content;
 
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.command.content.GetRootContent;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.entity.GetNodesByParentParams;
@@ -16,9 +17,10 @@ public class GetRootContentService
     public GetRootContentService( final CommandContext context,
                                   @SuppressWarnings("UnusedParameters") final GetRootContent command,
                                   final NodeService nodeService,
-                                  final ContentTypeService contentTypeService )
+                                  final ContentTypeService contentTypeService,
+                                  final BlobService blobService )
     {
-        super( context, nodeService,contentTypeService );
+        super( context, nodeService,contentTypeService, blobService );
     }
 
     public Contents execute()
@@ -28,6 +30,6 @@ public class GetRootContentService
         final Nodes rootNodes = nodeService.getByParent( new GetNodesByParentParams( nodePath ) );
         final Contents contents = translator.fromNodes( removeNonContentNodes( rootNodes ) );
 
-        return new ChildContentIdsResolver( this.context, this.nodeService, this.contentTypeService ).resolve( contents );
+        return new ChildContentIdsResolver( this.context, this.nodeService, this.contentTypeService, this.blobService ).resolve( contents );
     }
 }

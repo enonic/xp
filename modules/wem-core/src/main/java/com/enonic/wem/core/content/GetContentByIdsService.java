@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.command.content.GetContentByIds;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
@@ -26,9 +27,10 @@ public class GetContentByIdsService
     public GetContentByIdsService( final CommandContext context,
                                    final GetContentByIds command,
                                    final NodeService nodeService,
-                                   final ContentTypeService contentTypeService )
+                                   final ContentTypeService contentTypeService,
+                                   final BlobService blobService )
     {
-        super( context, nodeService, contentTypeService );
+        super( context, nodeService, contentTypeService, blobService );
         this.command = command;
     }
 

@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.io.InputSupplier;
 
 import com.enonic.wem.api.blob.Blob;
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.GetContentById;
 import com.enonic.wem.api.command.content.UpdateContent;
@@ -50,22 +51,25 @@ public class UpdateContentHandler
 {
     private static final String THUMBNAIL_MIME_TYPE = "image/png";
 
-    private AttachmentService attachmentService;
+    private final static Logger LOG = LoggerFactory.getLogger( UpdateContentHandler.class );
 
-    private NodeService nodeService;
+    private AttachmentService attachmentService;
 
     private ContentTypeService contentTypeService;
 
-    private final static Logger LOG = LoggerFactory.getLogger( UpdateContentHandler.class );
+    private NodeService nodeService;
+
+    private BlobService blobService;
 
     @Override
     public void handle()
         throws Exception
     {
-        final ContentNodeTranslator translator = new ContentNodeTranslator( this.context.getClient(), contentTypeService );
+        final ContentNodeTranslator translator = new ContentNodeTranslator( blobService, contentTypeService );
 
         final GetContentById getContentByIdCommand = new GetContentById( command.getContentId() );
-        final Content contentBeforeChange = new GetContentByIdService( this.context, getContentByIdCommand, nodeService, contentTypeService ).execute();
+        final Content contentBeforeChange = new GetContentByIdService(
+            this.context, getContentByIdCommand, nodeService, contentTypeService, blobService ).execute();
 
         final Content.EditBuilder editBuilder = command.getEditor().edit( contentBeforeChange );
 
@@ -152,7 +156,8 @@ public class UpdateContentHandler
             public void visit( final Property property )
             {
                 final Content content =
-                    new GetContentByIdService( context, new GetContentById( property.getContentId() ), nodeService, contentTypeService ).execute();
+                    new GetContentByIdService(
+                        context, new GetContentById( property.getContentId() ), nodeService, contentTypeService, blobService ).execute();
 
                 if ( content != null )
                 {
@@ -213,12 +218,12 @@ public class UpdateContentHandler
 
     private Thumbnail createThumbnail( final Attachment attachment )
     {
-        final Blob originalImage = context.getClient().execute( Commands.blob().get( attachment.getBlobKey() ) );
+        final Blob originalImage = blobService.get( attachment.getBlobKey() );
         final InputSupplier<ByteArrayInputStream> inputSupplier = ThumbnailFactory.resolve( originalImage );
         final Blob thumbnailBlob;
         try
         {
-            thumbnailBlob = context.getClient().execute( Commands.blob().create( inputSupplier.getInput() ) );
+            thumbnailBlob = blobService.create( inputSupplier.getInput() );
         }
         catch ( IOException e )
         {
@@ -249,5 +254,11 @@ public class UpdateContentHandler
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
+    }
+
+    @Inject
+    public void setBlobService( final BlobService blobService )
+    {
+        this.blobService = blobService;
     }
 }

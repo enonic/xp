@@ -20,7 +20,7 @@ import com.enonic.wem.admin.rest.resource.schema.json.CreateOrUpdateSchemaJsonRe
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
 import com.enonic.wem.api.blob.Blob;
-import com.enonic.wem.api.command.content.blob.GetBlob;
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.mixin.CreateMixinParams;
 import com.enonic.wem.api.schema.mixin.DeleteMixinParams;
@@ -43,6 +43,8 @@ public class MixinResource
     extends AbstractResource
 {
     private MixinService mixinService;
+
+    private BlobService blobService;
 
     @GET
     public MixinJson get( @QueryParam("name") final String name )
@@ -194,7 +196,7 @@ public class MixinResource
     {
         if ( iconJson != null )
         {
-            final Blob blob = client.execute( new GetBlob( iconJson.getThumbnail().getBlobKey() ) );
+            final Blob blob = blobService.get( iconJson.getThumbnail().getBlobKey() );
             return blob == null ? null : SchemaIcon.from( blob.getStream(), iconJson.getMimeType() );
         }
         return null;
@@ -204,5 +206,11 @@ public class MixinResource
     public void setMixinService( final MixinService mixinService )
     {
         this.mixinService = mixinService;
+    }
+
+    @Inject
+    public void setBlobService( final BlobService blobService )
+    {
+        this.blobService = blobService;
     }
 }

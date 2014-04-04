@@ -1,5 +1,6 @@
 package com.enonic.wem.core.content;
 
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.command.content.GetContentById;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentNotFoundException;
@@ -20,9 +21,10 @@ public class GetContentByIdService
     public GetContentByIdService( final CommandContext context,
                                   final GetContentById command,
                                   final NodeService nodeService,
-                                  final ContentTypeService contentTypeService  )
+                                  final ContentTypeService contentTypeService,
+                                  final BlobService blobService )
     {
-        super( context, nodeService, contentTypeService );
+        super( context, nodeService, contentTypeService, blobService );
         this.command = command;
     }
 

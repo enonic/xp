@@ -16,8 +16,8 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.command.content.GetContentByPath;
-import com.enonic.wem.api.command.content.blob.GetBlob;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
@@ -48,6 +48,8 @@ public class ImageResourceTest
 
     private AttachmentService attachmentService;
 
+    private BlobService blobService;
+
     @Override
     protected Object getResourceInstance()
     {
@@ -61,6 +63,9 @@ public class ImageResourceTest
 
         attachmentService = mock( AttachmentService.class );
         resource.attachmentService = attachmentService;
+
+        blobService = mock( BlobService.class );
+        resource.blobService = blobService;
 
         return resource;
     }
@@ -88,7 +93,7 @@ public class ImageResourceTest
         final byte[] imageData = ByteStreams.toByteArray( getClass().getResourceAsStream( "enonic-logo.png" ) );
         when( attachmentService.get( isA( GetAttachmentParams.class ) ) ).thenReturn( attachment );
         final Blob blob = new MemoryBlobRecord( blobKey, imageData );
-        when( client.execute( isA( GetBlob.class ) ) ).thenReturn( blob );
+        when( blobService.get( isA( BlobKey.class ) ) ).thenReturn( blob );
 
         resource.mode = "live";
         resource.contentPath = "path/to/content";
@@ -130,7 +135,7 @@ public class ImageResourceTest
         final byte[] imageData = ByteStreams.toByteArray( getClass().getResourceAsStream( "enonic-logo.png" ) );
         when( attachmentService.get( isA( GetAttachmentParams.class ) ) ).thenReturn( attachment );
         final Blob blob = new MemoryBlobRecord( blobKey, imageData );
-        when( client.execute( isA( GetBlob.class ) ) ).thenReturn( blob );
+        when( blobService.get( isA( BlobKey.class ) ) ).thenReturn( blob );
         when( imageFilterBuilder.build( isA( BuilderContext.class ), isA( String.class ) ) ).thenReturn( getImageFilterBuilder() );
 
         resource.mode = "live";

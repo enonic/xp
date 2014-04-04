@@ -1,5 +1,6 @@
 package com.enonic.wem.core.content;
 
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.command.content.GetChildContent;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Contents;
@@ -15,13 +16,17 @@ class ChildContentIdsResolver
 
     private final ContentTypeService contentTypeService;
 
+    private final BlobService blobService;
+
     ChildContentIdsResolver( final CommandContext context,
                              final NodeService nodeService,
-                             final ContentTypeService contentTypeService )
+                             final ContentTypeService contentTypeService,
+                             final BlobService blobService )
     {
         this.context = context;
         this.nodeService = nodeService;
         this.contentTypeService = contentTypeService;
+        this.blobService = blobService;
     }
 
     Content resolve( final Content content )
@@ -31,7 +36,8 @@ class ChildContentIdsResolver
             context,
             new GetChildContent().parentPath( content.getPath() ),
             nodeService,
-            contentTypeService ).execute();
+            contentTypeService,
+            blobService ).execute();
 
         if ( children.isNotEmpty() )
         {

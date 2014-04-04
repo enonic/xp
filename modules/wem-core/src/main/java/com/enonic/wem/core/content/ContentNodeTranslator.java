@@ -5,9 +5,8 @@ import java.io.IOException;
 
 import com.google.common.io.InputSupplier;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.blob.Blob;
-import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -48,11 +47,11 @@ public class ContentNodeTranslator
 
     private ContentTypeService contentTypeService;
 
-    private final Client client;
+    private BlobService blobService;
 
-    public ContentNodeTranslator( final Client client, final ContentTypeService contentTypeService )
+    public ContentNodeTranslator( final BlobService blobService, final ContentTypeService contentTypeService )
     {
-        this.client = client;
+        this.blobService = blobService;
         this.contentTypeService = contentTypeService;
     }
 
@@ -223,12 +222,12 @@ public class ContentNodeTranslator
 
     private Thumbnail createThumbnail( final Attachment origin )
     {
-        final Blob originalImage = client.execute( Commands.blob().get( origin.getBlobKey() ) );
+        final Blob originalImage = blobService.get( origin.getBlobKey() );
         final InputSupplier<ByteArrayInputStream> inputSupplier = ThumbnailFactory.resolve( originalImage );
         final Blob thumbnailBlob;
         try
         {
-            thumbnailBlob = client.execute( Commands.blob().create( inputSupplier.getInput() ) );
+            thumbnailBlob = blobService.create( inputSupplier.getInput() );
         }
         catch ( IOException e )
         {
