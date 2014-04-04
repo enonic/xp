@@ -6,10 +6,9 @@ import java.io.InputStream;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.api.command.content.blob.CreateBlob;
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.ContentTypes;
@@ -23,15 +22,13 @@ public class ContentTypesInitializerTest
     public void system()
         throws Exception
     {
-
-        Client client = Mockito.mock( Client.class );
         ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
+        BlobService blobService = Mockito.mock( BlobService.class );
 
-        Mockito.when( client.execute( Mockito.isA( CreateBlob.class ) ) ).thenReturn( createDummyBlob() );
+        Mockito.when( blobService.create( Mockito.isA( InputStream.class ) ) ).thenReturn( createDummyBlob() );
         Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn( ContentTypes.empty() );
 
         ContentTypesInitializer contentTypesInitializer = new ContentTypesInitializer();
-        contentTypesInitializer.setClient( client );
         contentTypesInitializer.setContentTypeService( contentTypeService );
         contentTypesInitializer.initialize();
 

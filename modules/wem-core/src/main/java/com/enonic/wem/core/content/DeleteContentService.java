@@ -1,6 +1,7 @@
 package com.enonic.wem.core.content;
 
 
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.command.content.DeleteContent;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentNotFoundException;
@@ -24,9 +25,10 @@ public class DeleteContentService
     public DeleteContentService( final CommandContext context,
                                  final DeleteContent command,
                                  final NodeService nodeService,
-                                 final ContentTypeService contentTypeService )
+                                 final ContentTypeService contentTypeService,
+                                 final BlobService blobService )
     {
-        super( context, nodeService, contentTypeService );
+        super( context, nodeService, contentTypeService, blobService );
         this.command = command;
     }
 
@@ -40,7 +42,8 @@ public class DeleteContentService
             final Node nodeToDelete = nodeService.getByPath( new GetNodeByPathParams( nodePath ) );
             final Content contentToDelete = translator.fromNode( nodeToDelete );
 
-            if ( new ChildContentIdsResolver( this.context, this.nodeService, this.contentTypeService ).resolve( contentToDelete ).hasChildren() )
+            if ( new ChildContentIdsResolver(
+                this.context, this.nodeService, this.contentTypeService, this.blobService ).resolve( contentToDelete ).hasChildren() )
             {
                 throw new UnableToDeleteContentException( command.getContentPath(), "Content has children" );
             }

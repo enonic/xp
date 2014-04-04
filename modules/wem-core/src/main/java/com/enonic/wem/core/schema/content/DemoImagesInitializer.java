@@ -2,12 +2,15 @@ package com.enonic.wem.core.schema.content;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.io.ByteStreams;
 
 import com.enonic.wem.api.blob.Blob;
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.content.ContentPath;
@@ -31,6 +34,9 @@ public class DemoImagesInitializer
         {"Big Bounce - R\u00f8d Tattoo.jpg", "Big Bounce - R\u00f8d.jpg", "Big Bounce_01.jpg", "Big Bounce_02.jpg", "Big Bounce_03.jpg",
             "Big Bounce_04.jpg", "Big Bounce_05.jpg", "Big Bounce_06.jpg", "Big Bounce_07.jpg", "Big Bounce_08.jpg", "Big Bounce_10.jpg",
             "Big Bounce_11.jpg", "Big Bounce_12.jpg"};
+
+    @Inject
+    private BlobService blobService;
 
     protected DemoImagesInitializer()
     {
@@ -76,7 +82,7 @@ public class DemoImagesInitializer
 
         final ContentData dataSet = createContentData( filteredFileName );
 
-        final Blob blob = client.execute( Commands.blob().create( ByteStreams.newInputStreamSupplier( bytes ).getInput() ) );
+        final Blob blob = blobService.create( ByteStreams.newInputStreamSupplier( bytes ).getInput() );
         final Attachment attachment = newAttachment().name( filteredFileName ).blobKey( blob.getKey() ).mimeType( "image/jpeg" ).build();
 
         final CreateContent createContent = Commands.content().create().

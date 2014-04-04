@@ -5,8 +5,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -51,13 +51,13 @@ public class ContentNodeTranslatorTest
     @Before
     public void before()
     {
-        final Client client = Mockito.mock( Client.class );
         final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
+        final BlobService blobService = Mockito.mock( BlobService.class );
 
         final ContentType contentType = ContentType.newContentType().name( "my-content-type" ).build();
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
-        translator = new ContentNodeTranslator( client, contentTypeService );
+        translator = new ContentNodeTranslator( blobService, contentTypeService );
     }
 
     @Test

@@ -12,6 +12,7 @@ import com.google.common.primitives.Ints;
 
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
@@ -25,7 +26,6 @@ import com.enonic.wem.core.image.filter.ImageFilter;
 import com.enonic.wem.core.image.filter.ImageFilterBuilder;
 import com.enonic.wem.portal.exception.PortalWebException;
 
-import static com.enonic.wem.api.command.Commands.blob;
 import static com.enonic.wem.api.command.Commands.content;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
@@ -45,6 +45,9 @@ abstract class AbstractImageResource
 
     @Inject
     AttachmentService attachmentService;
+
+    @Inject
+    BlobService blobService;
 
     abstract String getFilterParam();
 
@@ -85,7 +88,7 @@ abstract class AbstractImageResource
 
     Blob getBlob( final BlobKey blobKey )
     {
-        return client.execute( blob().get( blobKey ) );
+        return blobService.get( blobKey );
     }
 
     BufferedImage applyFilters( final BufferedImage sourceImage, final String format )

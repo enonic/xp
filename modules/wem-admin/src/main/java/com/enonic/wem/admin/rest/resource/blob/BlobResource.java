@@ -3,6 +3,7 @@ package com.enonic.wem.admin.rest.resource.blob;
 import java.io.InputStream;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -22,15 +23,15 @@ import com.enonic.wem.admin.json.JsonResult;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.blob.CreateBlob;
-import com.enonic.wem.api.command.content.blob.GetBlob;
+import com.enonic.wem.api.blob.BlobService;
 
 @Path("blob")
 @Produces(MediaType.APPLICATION_JSON)
 public final class BlobResource
     extends AbstractResource
 {
+    private BlobService blobService;
+
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Path("upload")
@@ -55,8 +56,7 @@ public final class BlobResource
     public Response getUploadedContent( @PathParam("id") final String id )
         throws Exception
     {
-        final GetBlob getBlob = Commands.blob().get( new BlobKey( id ) );
-        final Blob blob = client.execute( getBlob );
+        final Blob blob = blobService.get( new BlobKey( id ) );
         MediaType mediaType;
         try
         {
@@ -75,8 +75,7 @@ public final class BlobResource
         final String name = formDataBodyPart.getContentDisposition().getFileName();
         final String mediaType = formDataBodyPart.getMediaType().toString();
 
-        final CreateBlob createBlob = Commands.blob().create( fileInputStream );
-        final Blob blob = client.execute( createBlob );
+        final Blob blob = blobService.create( fileInputStream );
         final UploadItem item = UploadItem.newUploadItem().
             mimeType( mediaType ).
             size( blob.getLength() ).
@@ -88,4 +87,9 @@ public final class BlobResource
         items.add( item );
     }
 
+    @Inject
+    public void setBlobService( final BlobService blobService )
+    {
+        this.blobService = blobService;
+    }
 }

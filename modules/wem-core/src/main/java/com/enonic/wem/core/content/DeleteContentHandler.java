@@ -3,6 +3,7 @@ package com.enonic.wem.core.content;
 
 import javax.inject.Inject;
 
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.command.content.DeleteContent;
 import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -17,11 +18,14 @@ public class DeleteContentHandler
     @Inject
     private ContentTypeService contentTypeService;
 
+    @Inject
+    private BlobService blobService;
+
     @Override
     public void handle()
         throws Exception
     {
-        command.setResult( new DeleteContentService( this.context, this.command, this.nodeService, this.contentTypeService ).execute() );
+        command.setResult( new DeleteContentService( this.context, this.command, this.nodeService, this.contentTypeService, this.blobService ).execute() );
     }
 
     @Inject

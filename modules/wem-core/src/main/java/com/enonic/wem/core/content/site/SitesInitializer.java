@@ -2,7 +2,6 @@ package com.enonic.wem.core.content.site;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.content.Content;
@@ -64,9 +63,6 @@ import static com.enonic.wem.api.form.Input.newInput;
 public class SitesInitializer
     extends BaseInitializer
 {
-
-    private Client client;
-
     private SiteTemplateService siteTemplateService;
 
     private final static ModuleKey DEMO_MODULE_KEY = ModuleKey.from( "test-1.0.0" );
@@ -429,12 +425,6 @@ public class SitesInitializer
             form( newForm().build() ).
             contentData( new ContentData() );
         return client.execute( createContent );
-    }
-
-    @Inject
-    public void setClient( final Client client )
-    {
-        this.client = client;
     }
 
     @Inject

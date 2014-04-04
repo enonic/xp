@@ -2,6 +2,7 @@ package com.enonic.wem.core.content;
 
 import javax.inject.Inject;
 
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.command.content.GetContentById;
 import com.enonic.wem.api.command.content.RenameContent;
 import com.enonic.wem.api.content.Content;
@@ -23,6 +24,9 @@ public class RenameContentHandler
     @Inject
     private ContentTypeService contentTypeService;
 
+    @Inject
+    private BlobService blobService;
+
     @Override
     public void handle()
         throws Exception
@@ -34,7 +38,8 @@ public class RenameContentHandler
         this.context.getJcrSession().save();
 
         GetContentById getContentByIdCommand = new GetContentById( command.getContentId() );
-        final Content renamedContent = new GetContentByIdService( this.context, getContentByIdCommand, this.nodeService, this.contentTypeService ).execute();
+        final Content renamedContent = new GetContentByIdService(
+            this.context, getContentByIdCommand, this.nodeService, this.contentTypeService, this.blobService ).execute();
 
         command.setResult( renamedContent );
     }

@@ -2,6 +2,7 @@ package com.enonic.wem.core.content;
 
 import javax.inject.Inject;
 
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.command.content.GetRootContent;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.entity.NodeService;
@@ -17,11 +18,15 @@ public class GetRootContentHandler
     @Inject
     private ContentTypeService contentTypeService;
 
+    @Inject
+    private BlobService blobService;
+
     @Override
     public void handle()
         throws Exception
     {
-        final Contents contents = new GetRootContentService( this.context, this.command, this.nodeService, this.contentTypeService ).execute();
+        final Contents contents = new GetRootContentService(
+            this.context, this.command, this.nodeService, this.contentTypeService, this.blobService ).execute();
 
         command.setResult( contents );
     }

@@ -20,7 +20,7 @@ import com.enonic.wem.admin.rest.resource.schema.json.CreateOrUpdateSchemaJsonRe
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
 import com.enonic.wem.api.blob.Blob;
-import com.enonic.wem.api.command.content.blob.GetBlob;
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.relationship.CreateRelationshipTypeParams;
 import com.enonic.wem.api.schema.relationship.GetRelationshipTypeParams;
@@ -40,6 +40,8 @@ public class RelationshipTypeResource
     extends AbstractResource
 {
     private RelationshipTypeService relationshipTypeService;
+
+    private BlobService blobService;
 
     @GET
     public RelationshipTypeJson get( @QueryParam("name") final String name )
@@ -200,7 +202,7 @@ public class RelationshipTypeResource
     {
         if ( iconJson != null )
         {
-            final Blob blob = client.execute( new GetBlob( iconJson.getThumbnail().getBlobKey() ) );
+            final Blob blob = blobService.get( iconJson.getThumbnail().getBlobKey() );
             return blob == null ? null : SchemaIcon.from( blob.getStream(), iconJson.getMimeType() );
         }
         return null;
@@ -210,5 +212,11 @@ public class RelationshipTypeResource
     public void setRelationshipTypeService( final RelationshipTypeService relationshipTypeService )
     {
         this.relationshipTypeService = relationshipTypeService;
+    }
+
+    @Inject
+    public void setBlobService( final BlobService blobService )
+    {
+        this.blobService = blobService;
     }
 }

@@ -15,9 +15,9 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 import junit.framework.Assert;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.blob.Blob;
-import com.enonic.wem.api.command.content.blob.GetBlob;
+import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.SchemaId;
 import com.enonic.wem.api.schema.mixin.CreateMixinParams;
@@ -50,9 +50,9 @@ public class MixinResourceTest
 
     private static MixinName MY_MIXIN_QUALIFIED_NAME_2 = MixinName.from( "text_area_1" );
 
-    private Client client;
-
     private MixinService mixinService;
+
+    private BlobService blobService;
 
     @Before
     public void setup()
@@ -63,12 +63,12 @@ public class MixinResourceTest
     @Override
     protected Object getResourceInstance()
     {
-        client = Mockito.mock( Client.class );
         mixinService = Mockito.mock( MixinService.class );
+        blobService = Mockito.mock( BlobService.class );
 
         final MixinResource resource = new MixinResource();
-        resource.setClient( client );
         resource.setMixinService( mixinService );
+        resource.setBlobService( blobService );
 
         return resource;
     }
@@ -209,7 +209,7 @@ public class MixinResourceTest
             build() );
         final Blob iconBlob = Mockito.mock( Blob.class );
         Mockito.when( iconBlob.getStream() ).thenReturn( new ByteArrayInputStream( "icondata".getBytes() ) );
-        Mockito.when( client.execute( isA( GetBlob.class ) ) ).thenReturn( iconBlob );
+        Mockito.when( blobService.get( isA( BlobKey.class ) ) ).thenReturn( iconBlob );
 
         String result = resource().path( "schema/mixin/create" ).entity( readFromFile( "create_mixin_with_icon_params.json" ),
                                                                          MediaType.APPLICATION_JSON_TYPE ).post( String.class );
@@ -228,7 +228,7 @@ public class MixinResourceTest
         Mockito.when( mixinService.update( isA( UpdateMixinParams.class ) ) ).thenReturn( new UpdateMixinResult( mixin ) );
         final Blob iconBlob = Mockito.mock( Blob.class );
         Mockito.when( iconBlob.getStream() ).thenReturn( new ByteArrayInputStream( "icondata".getBytes() ) );
-        Mockito.when( client.execute( isA( GetBlob.class ) ) ).thenReturn( iconBlob );
+        Mockito.when( blobService.get( isA( BlobKey.class ) ) ).thenReturn( iconBlob );
 
         String result = resource().path( "schema/mixin/update" ).entity( readFromFile( "update_mixin_with_icon_params.json" ),
                                                                          MediaType.APPLICATION_JSON_TYPE ).post( String.class );

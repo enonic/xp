@@ -1,7 +1,6 @@
 package com.enonic.wem.api.command;
 
 import com.enonic.wem.api.command.content.ContentCommands;
-import com.enonic.wem.api.command.content.blob.BlobCommands;
 import com.enonic.wem.api.command.content.site.SiteCommands;
 import com.enonic.wem.api.command.module.ModuleCommands;
 import com.enonic.wem.api.command.relationship.RelationshipCommands;
@@ -20,8 +19,6 @@ public final class Commands
     private static final RelationshipCommands RELATIONSHIP_COMMANDS = new RelationshipCommands();
 
     private static final SchemaCommands SCHEMA_COMMANDS = new SchemaCommands();
-
-    private static final BlobCommands BLOB_COMMANDS = new BlobCommands();
 
     private static final ResourceCommands RESOURCE_COMMANDS = new ResourceCommands();
 
@@ -54,11 +51,6 @@ public final class Commands
     public static SchemaCommands schema()
     {
         return SCHEMA_COMMANDS;
-    }
-
-    public static BlobCommands blob()
-    {
-        return BLOB_COMMANDS;
     }
 
     public static ResourceCommands resource()

@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.blob.Blob;
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -49,6 +50,9 @@ public class ContentImageResource
     private ContentTypeService contentTypeService;
 
     @Inject
+    private BlobService blobService;
+
+    @Inject
     public void setClient( final Client client )
     {
         this.client = client;
@@ -80,7 +84,7 @@ public class ContentImageResource
 
             if ( contentThumbnail != null )
             {
-                final Blob blob = client.execute( Commands.blob().get( contentThumbnail.getBlobKey() ) );
+                final Blob blob = blobService.get( contentThumbnail.getBlobKey() );
                 if ( blob != null )
                 {
                     final BufferedImage thumbnailImage = helper.getImageFromBlob( blob, size, ScaleSquareFilter );
@@ -98,7 +102,7 @@ public class ContentImageResource
             final Attachment attachment = findAttachment( contentId, attachmentName );
             if ( attachment != null )
             {
-                final Blob blob = client.execute( Commands.blob().get( attachment.getBlobKey() ) );
+                final Blob blob = blobService.get( attachment.getBlobKey() );
                 if ( blob != null )
                 {
                     if ( thumbnail )

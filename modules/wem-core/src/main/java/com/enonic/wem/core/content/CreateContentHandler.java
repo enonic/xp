@@ -7,6 +7,7 @@ import javax.jcr.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.ValidateContentData;
@@ -26,13 +27,15 @@ import com.enonic.wem.core.relationship.SyncRelationshipsCommand;
 public class CreateContentHandler
     extends CommandHandler<CreateContent>
 {
+    private final static Logger LOG = LoggerFactory.getLogger( CreateContentHandler.class );
+
     private RelationshipService relationshipService;
 
     private ContentTypeService contentTypeService;
 
-    private final static Logger LOG = LoggerFactory.getLogger( CreateContentHandler.class );
-
     private NodeService nodeService;
+
+    private BlobService blobService;
 
     @Override
     public void handle()
@@ -41,7 +44,7 @@ public class CreateContentHandler
         // TODO: Add later
         //verifyParentAllowsChildren();
 
-        ContentNodeTranslator translator = new ContentNodeTranslator( context.getClient(), contentTypeService );
+        ContentNodeTranslator translator = new ContentNodeTranslator( this.blobService, this.contentTypeService );
 
         if ( !command.isDraft() )
         {
@@ -144,5 +147,11 @@ public class CreateContentHandler
     public void setNodeService( final NodeService nodeService )
     {
         this.nodeService = nodeService;
+    }
+
+    @Inject
+    public void setBlobService( final BlobService blobService )
+    {
+        this.blobService = blobService;
     }
 }

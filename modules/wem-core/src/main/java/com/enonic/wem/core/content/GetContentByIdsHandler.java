@@ -2,6 +2,7 @@ package com.enonic.wem.core.content;
 
 import javax.inject.Inject;
 
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.command.content.GetContentByIds;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
@@ -21,6 +22,9 @@ public class GetContentByIdsHandler
     @Inject
     private ContentTypeService contentTypeService;
 
+    @Inject
+    private BlobService blobService;
+
     @Override
     public void handle()
         throws Exception
@@ -29,7 +33,8 @@ public class GetContentByIdsHandler
 
         try
         {
-            contents = new GetContentByIdsService( this.context, this.command, this.nodeService, this.contentTypeService ).execute();
+            contents = new GetContentByIdsService(
+                this.context, this.command, this.nodeService, this.contentTypeService, this.blobService ).execute();
         }
         catch ( NoEntityWithIdFoundException ex )
         {
@@ -39,7 +44,7 @@ public class GetContentByIdsHandler
         }
 
         command.setResult( this.command.doGetCHildrenIds()
-                               ? new ChildContentIdsResolver( this.context, this.nodeService, this.contentTypeService ).resolve( contents )
+                               ? new ChildContentIdsResolver( this.context, this.nodeService, this.contentTypeService, this.blobService ).resolve( contents )
                                : contents );
     }
 
