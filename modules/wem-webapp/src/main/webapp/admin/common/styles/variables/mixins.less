@@ -72,11 +72,16 @@
   }
 }
 
+.transform (@function) {
+  -webkit-transform: @function;
+  -moz-transform: @function;
+  -ms-transform: @function;
+  -o-transform: @function;
+  transform: @function;
+}
+
 .scale (@factor) {
-  -webkit-transform: scale(@factor);
-  -moz-transform: scale(@factor);
-  -ms-transform: scale(@factor);
-  -o-transform: scale(@factor);
+  .transform(scale(@factor));
 }
 
 .ellipsis() {

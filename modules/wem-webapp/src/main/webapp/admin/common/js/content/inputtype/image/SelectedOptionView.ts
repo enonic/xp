@@ -2,9 +2,11 @@ module api.content.inputtype.image {
 
     export class SelectedOptionView extends api.ui.selector.combobox.SelectedOptionView<api.content.ContentSummary> {
 
+        private static IMAGE_SIZE: number = 270;
+
         private content:api.content.ContentSummary;
 
-        private lastInRow:boolean;
+        private icon: api.dom.ImgEl;
 
         constructor(option:api.ui.selector.Option<api.content.ContentSummary>) {
             this.content = option.displayValue;
@@ -12,30 +14,16 @@ module api.content.inputtype.image {
         }
 
         layout() {
-
-            this.getEl().setBackgroundImage("url(" + this.content.getIconUrl() + ")");
+            this.icon = new api.dom.ImgEl(this.content.getIconUrl()+"?thumbnail=false&size=" + SelectedOptionView.IMAGE_SIZE);
+            this.appendChild(this.icon);
 
             var label = new api.dom.DivEl("label");
             label.getEl().setInnerHtml(this.content.getName().toString());
             this.appendChild(label);
         }
 
-        setLastInRow(value:boolean){
-            this.lastInRow = value;
-            this.refreshUI();
-        }
-
-        isLastInRow():boolean {
-            return this.lastInRow;
-        }
-
-        private refreshUI() {
-            if( this.lastInRow ) {
-                this.addClass("last-in-row");
-            }
-            else {
-                this.removeClass("last-in-row");
-            }
+        getIcon(): api.dom.ImgEl {
+            return this.icon;
         }
     }
 }
