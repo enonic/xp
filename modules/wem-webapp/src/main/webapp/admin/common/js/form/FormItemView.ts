@@ -30,7 +30,7 @@ module api.form {
         }
 
         broadcastFormSizeChanged() {
-            //Should be implemented in child classes
+            throw new Error("Must be implemented by inheritors");
         }
 
         getContext(): FormContext {
