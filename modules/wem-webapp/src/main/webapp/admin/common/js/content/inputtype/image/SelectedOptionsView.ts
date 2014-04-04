@@ -1,18 +1,19 @@
 module api.content.inputtype.image {
 
-    export class SelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<api.content.ContentSummary> {
+    import SelectedOption = api.ui.selector.combobox.SelectedOption;
+    import ContentSummary = api.content.ContentSummary;
+
+    export class SelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<ContentSummary> {
 
         private numberOfOptionsPerRow:number = 3;
 
-        private optionCount:number = 0;
-
-        private selectedOption:api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>;
+        private editableOption:SelectedOption<ContentSummary>;
 
         private dialog:ImageSelectorDialog;
 
-        private editSelectedOptionListeners: {(option:api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>): void}[] = [];
+        private editSelectedOptionListeners: {(option:SelectedOption<ContentSummary>): void}[] = [];
 
-        private removeSelectedOptionListeners: {(option:api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>): void}[] = [];
+        private removeSelectedOptionListeners: {(option:SelectedOption<ContentSummary>): void}[] = [];
 
         constructor() {
             super();
@@ -21,123 +22,156 @@ module api.content.inputtype.image {
             this.dialog.hide();
             this.appendChild(this.dialog);
             this.dialog.addRemoveButtonClickListener(() => {
-                this.removeOptionView(this.selectedOption);
-                this.notifyRemoveSelectedOption(this.selectedOption);
+                this.removeOptionView(this.editableOption);
+                this.notifyRemoveSelectedOption(this.editableOption);
             });
             this.dialog.addEditButtonClickListener(() => {
-                this.notifyEditSelectedOption(this.selectedOption);
+                this.notifyEditSelectedOption(this.editableOption);
+            });
+
+            this.onShown((event: api.dom.ElementShownEvent) => {
+                this.updateLayout();
             });
         }
 
-        private notifyRemoveSelectedOption(option:api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) {
+        private notifyRemoveSelectedOption(option:SelectedOption<ContentSummary>) {
             this.removeSelectedOptionListeners.forEach( (listener) => {
                 listener(option);
             });
         }
 
-        addRemoveSelectedOptionListener(listener: (option:api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) => void) {
+        addRemoveSelectedOptionListener(listener: (option:SelectedOption<ContentSummary>) => void) {
             this.removeSelectedOptionListeners.push(listener);
         }
 
-        removeRemoveSelectedOptionListener(listener: (option:api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) => void) {
+        removeRemoveSelectedOptionListener(listener: (option:SelectedOption<ContentSummary>) => void) {
             this.removeSelectedOptionListeners = this.removeSelectedOptionListeners.filter(function (curr) {
                 return curr != listener;
             });
         }
 
-        private notifyEditSelectedOption(option:api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) {
+        private notifyEditSelectedOption(option:SelectedOption<ContentSummary>) {
             this.editSelectedOptionListeners.forEach( (listener) => {
                 listener(option);
             });
         }
 
-        addEditSelectedOptionListener(listener:(option:api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) => void) {
+        addEditSelectedOptionListener(listener:(option:SelectedOption<ContentSummary>) => void) {
             this.editSelectedOptionListeners.push(listener);
         }
 
-        removeEditSelectedOptionListener(listener: (option:api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) => void) {
+        removeEditSelectedOptionListener(listener: (option:SelectedOption<ContentSummary>) => void) {
             this.editSelectedOptionListeners = this.editSelectedOptionListeners.filter(function (curr) {
                 return curr != listener;
             });
         }
 
-        createSelectedOption(option:api.ui.selector.Option<api.content.ContentSummary>, index:number):api.ui.selector.combobox.SelectedOption<api.content.ContentSummary> {
+        createSelectedOption(option:api.ui.selector.Option<ContentSummary>, index:number):SelectedOption<ContentSummary> {
 
-            return new api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>(new SelectedOptionView(option), option, index);
+            return new SelectedOption<ContentSummary>(new SelectedOptionView(option), option, index);
         }
 
-        addOptionView(option:api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) {
+        addOptionView(option:SelectedOption<ContentSummary>) {
 
             this.dialog.hide();
             var optionView:SelectedOptionView = <SelectedOptionView>option.getOptionView();
 
             optionView.onClicked((event: MouseEvent) => {
-                this.selectedOption = option;
-                this.showImageSelectorDialog(option.getOption(), option.getIndex());
+                this.showImageSelectorDialog(option);
             });
-            optionView.addSelectedOptionToBeRemovedListener((optionView:api.ui.selector.combobox.SelectedOptionView<api.content.ContentSummary>) => {
+            optionView.addSelectedOptionToBeRemovedListener((optionView:SelectedOptionView) => {
                 this.removeOptionView(option);
                 this.notifyRemoveSelectedOption(option);
             });
 
             this.appendChild(optionView);
-            this.optionCount++;
-            optionView.setLastInRow(this.isLastInRow(option.getIndex()));
-
-            this.refreshStyles();
+            optionView.getIcon().onLoaded((event: UIEvent) => {
+                this.updateOptionViewLayout(optionView, this.calculateOptionHeight());
+            });
         }
 
-        removeOptionView(option:api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) {
-            super.removeOptionView(option);
-
-            this.optionCount--;
-
-            this.refreshStyles();
-        }
-
-        showImageSelectorDialog(selectedOption:api.ui.selector.Option<api.content.ContentSummary>, selectedOptionIndex:number) {
-
-            var content = selectedOption.displayValue;
-
-            this.dialog.setContent(content);
-            this.dialog.show();
+        showImageSelectorDialog(option:SelectedOption<ContentSummary>) {
 
             var selectedOptionViews = this.getSelectedOptionViews();
-
             for (var i = 0 ; i < selectedOptionViews.length ; i++) {
                 var view = <SelectedOptionView>selectedOptionViews[i];
-                var passedSelectedOption = i >= selectedOptionIndex;
-                if( view.isLastInRow() && passedSelectedOption ) {
+                var passedSelectedOption = i >= option.getIndex();
+                if( (this.isLastInRow(i) || this.isLast(i)) && passedSelectedOption ) {
                     this.dialog.insertAfterEl( view );
                     break;
                 }
             }
 
-            for (var i = 0 ; i < selectedOptionViews.length ; i++) {
-                selectedOptionViews[i].removeClass("editing");
+            if (this.editableOption) {
+                this.editableOption.getOptionView().removeClass('editing first-in-row last-in-row');
             }
-            selectedOptionViews[selectedOptionIndex].addClass("editing");
+            this.editableOption = option;
+            option.getOptionView().addClass('editing' + (this.isFirstInRow(option.getIndex()) ? ' first-in-row' : '') +
+                                            (this.isLastInRow(option.getIndex()) ? ' last-in-row':''));
+
+            this.dialog.setContent(option.getOption().displayValue);
+            if (!this.dialog.isVisible()) {
+                this.setOutsideClickListener();
+                this.dialog.show();
+                this.updateDialogLayout(this.calculateOptionHeight());
+            }
+        }
+
+        updateLayout() {
+            var optionHeight = this.calculateOptionHeight();
+            this.getSelectedOptionViews().forEach((optionView:SelectedOptionView) => {
+                this.updateOptionViewLayout(optionView, optionHeight);
+            });
+            if (this.dialog.isVisible()) {
+                this.updateDialogLayout(optionHeight);
+            }
+        }
+
+        private updateOptionViewLayout(optionView: SelectedOptionView, optionHeight: number) {
+            optionView.getEl().setHeightPx(optionHeight);
+            var iconHeight = optionView.getIcon().getEl().getHeightWithBorder();
+            if (iconHeight < optionHeight) {
+                optionView.getIcon().getEl().setMarginTop((optionHeight - iconHeight) / 2 + 'px');
+            }
+        }
+
+        private updateDialogLayout(optionHeight) {
+            this.dialog.getEl().setMarginTop(((optionHeight / 3) - 20) + 'px');
+        }
+
+        private calculateOptionHeight():number {
+            var availableWidth = this.getEl().getWidthWithMargin();
+            return Math.floor(0.3 * availableWidth);
+        }
+
+        private setOutsideClickListener() {
+            var selectedOptionsView = this;
+            var mouseClickListener = (event: MouseEvent) => {
+                var viewHtmlElement = selectedOptionsView.getHTMLElement();
+                for (var element = event.target; element; element = (<any>element).parentNode) {
+                    if (element == viewHtmlElement) {
+                        return;
+                    }
+                }
+
+                selectedOptionsView.dialog.hide();
+                selectedOptionsView.editableOption.getOptionView().removeClass('editing first-in-row last-in-row');
+                api.dom.Body.get().unClicked(mouseClickListener);
+            };
+
+            api.dom.Body.get().onClicked(mouseClickListener);
         }
 
         private isLastInRow(index:number):boolean {
-
-            if ((index + 1) == this.optionCount) {
-                // last option
-                return true;
-            }
-            else if ((index + 1) % this.numberOfOptionsPerRow == 0) {
-                // option at end of row
-                return true;
-            }
-            else {
-                return false;
-            }
+            return (index + 1) % this.numberOfOptionsPerRow == 0;
         }
 
-        private refreshStyles() {
-            this.getSelectedOptionViews().forEach((view:SelectedOptionView, index:number)=>{
-                view.setLastInRow(this.isLastInRow(index));
-            });
+        private isFirstInRow(index:number): boolean {
+            return (index + 1) % this.numberOfOptionsPerRow == 1;
+        }
+
+        private isLast(index:number):boolean {
+            return (index + 1) == this.getSelectedOptionViews().length;
         }
 
     }

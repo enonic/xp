@@ -85,7 +85,7 @@ module api.content.inputtype.image {
         }
 
         availableSizeChanged() {
-            console.log("ImageSelector.availableSizeChanged(" + this.getEl().getWidth() + "x" + this.getEl().getWidth() + ")");
+            this.selectedOptionsView.updateLayout();
         }
 
         newInitialValue(): api.data.Value {
@@ -132,33 +132,23 @@ module api.content.inputtype.image {
                         });
                     });
 
+                }).finally(()=> {
                     this.layoutInProgress = false;
-
-                }).fail(()=> {
-
-                    this.layoutInProgress = false;
-
                 }).done();
         }
 
         private doLoadContent(properties: api.data.Property[]): Q.Promise<ContentSummary[]> {
 
-            var deferred = Q.defer<ContentSummary[]>();
-
             if (!properties) {
-                deferred.resolve([]);
+                return Q(<ContentSummary[]> []);
             }
             else {
                 var contentIds: api.content.ContentId[] = [];
                 properties.forEach((property: api.data.Property) => {
                     contentIds.push(new api.content.ContentId(property.getString()));
                 });
-                new api.content.GetContentSummaryByIds(contentIds).get().done((result: ContentSummary[]) => {
-                    deferred.resolve(result);
-                });
+                return new api.content.GetContentSummaryByIds(contentIds).get();
             }
-
-            return deferred.promise;
         }
 
         getValues(): api.data.Value[] {
@@ -349,7 +339,7 @@ module api.content.inputtype.image {
             return comboBox;
         }
 
-        private loadOptions(searchString: string): Q.Promise<api.rest.Response> {
+        private loadOptions(searchString: string) {
             if (!this.contentRequestsAllowed || !this.comboBox) {
                 return;
             }
