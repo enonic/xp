@@ -3,9 +3,9 @@ package com.enonic.wem.core.schema;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 
-import com.enonic.wem.api.command.schema.content.ContentTypeService;
-import com.enonic.wem.api.command.schema.mixin.MixinService;
-import com.enonic.wem.api.command.schema.relationship.RelationshipTypeService;
+import com.enonic.wem.api.schema.content.ContentTypeService;
+import com.enonic.wem.api.schema.mixin.MixinService;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
 import com.enonic.wem.core.command.CommandBinder;
 import com.enonic.wem.core.initializer.InitializerTaskBinder;
 import com.enonic.wem.core.schema.content.ContentTypeServiceImpl;

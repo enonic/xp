@@ -2,10 +2,10 @@ package com.enonic.wem.core.schema.content;
 
 import org.joda.time.DateTime;
 
-import com.enonic.wem.api.command.schema.content.ContentTypeService;
-import com.enonic.wem.api.command.schema.content.CreateContentTypeParams;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeService;
+import com.enonic.wem.api.schema.content.CreateContentTypeParams;
 import com.enonic.wem.api.schema.content.validator.ContentTypeSuperTypeValidator;
 import com.enonic.wem.api.schema.content.validator.ContentTypeValidationResult;
 import com.enonic.wem.api.schema.content.validator.InvalidContentTypeException;

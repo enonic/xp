@@ -2,8 +2,8 @@ package com.enonic.wem.core.schema.mixin;
 
 import org.joda.time.DateTime;
 
-import com.enonic.wem.api.command.schema.mixin.CreateMixinParams;
-import com.enonic.wem.api.command.schema.mixin.GetMixinParams;
+import com.enonic.wem.api.schema.mixin.CreateMixinParams;
+import com.enonic.wem.api.schema.mixin.GetMixinParams;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinAlreadyExistException;
 import com.enonic.wem.core.schema.mixin.dao.MixinDao;

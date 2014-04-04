@@ -1,16 +1,16 @@
 package com.enonic.wem.core.schema.content;
 
-import com.enonic.wem.api.command.schema.content.ContentTypeService;
-import com.enonic.wem.api.command.schema.content.GetContentTypeParams;
-import com.enonic.wem.api.command.schema.content.UpdateContentTypeParams;
-import com.enonic.wem.api.command.schema.content.UpdateContentTypeResult;
-import com.enonic.wem.api.command.schema.mixin.MixinService;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeAlreadyExistException;
 import com.enonic.wem.api.schema.content.ContentTypeNotFoundException;
+import com.enonic.wem.api.schema.content.ContentTypeService;
+import com.enonic.wem.api.schema.content.GetContentTypeParams;
+import com.enonic.wem.api.schema.content.UpdateContentTypeParams;
+import com.enonic.wem.api.schema.content.UpdateContentTypeResult;
 import com.enonic.wem.api.schema.content.validator.ContentTypeSuperTypeValidator;
 import com.enonic.wem.api.schema.content.validator.ContentTypeValidationResult;
 import com.enonic.wem.api.schema.content.validator.InvalidContentTypeException;
+import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 

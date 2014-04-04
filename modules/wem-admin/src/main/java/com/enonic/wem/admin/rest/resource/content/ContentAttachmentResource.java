@@ -9,10 +9,10 @@ import javax.ws.rs.core.MediaType;
 
 import com.enonic.wem.admin.json.content.attachment.AttachmentListJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
-import com.enonic.wem.api.command.content.attachment.AttachmentService;
-import com.enonic.wem.api.command.content.attachment.GetAttachmentsParams;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.Attachments;
+import com.enonic.wem.api.content.attachment.GetAttachmentsParams;
 
 
 @Path("content/attachment")

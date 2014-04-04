@@ -4,15 +4,15 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.WordUtils;
 
-import com.enonic.wem.api.command.schema.content.ContentTypeService;
-import com.enonic.wem.api.command.schema.content.CreateContentTypeParams;
-import com.enonic.wem.api.command.schema.content.GetContentTypeParams;
-import com.enonic.wem.api.command.schema.content.UpdateContentTypeParams;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeService;
+import com.enonic.wem.api.schema.content.CreateContentTypeParams;
+import com.enonic.wem.api.schema.content.GetContentTypeParams;
+import com.enonic.wem.api.schema.content.UpdateContentTypeParams;
 import com.enonic.wem.api.schema.content.editor.ContentTypeEditor;
 import com.enonic.wem.core.schema.content.serializer.ContentTypeJsonSerializer;
 import com.enonic.wem.core.support.BaseInitializer;

@@ -4,10 +4,10 @@ package com.enonic.wem.api.form;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.command.schema.mixin.GetMixinParams;
-import com.enonic.wem.api.command.schema.mixin.MixinService;
 import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.schema.mixin.GetMixinParams;
 import com.enonic.wem.api.schema.mixin.Mixin;
+import com.enonic.wem.api.schema.mixin.MixinService;
 
 import static com.enonic.wem.api.form.Form.newForm;
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;

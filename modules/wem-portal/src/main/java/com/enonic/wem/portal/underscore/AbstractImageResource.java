@@ -12,13 +12,13 @@ import com.google.common.primitives.Ints;
 
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.api.command.content.attachment.AttachmentService;
-import com.enonic.wem.api.command.content.attachment.GetAttachmentParams;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.attachment.Attachment;
+import com.enonic.wem.api.content.attachment.AttachmentService;
+import com.enonic.wem.api.content.attachment.GetAttachmentParams;
 import com.enonic.wem.core.image.ImageHelper;
 import com.enonic.wem.core.image.filter.BuilderContext;
 import com.enonic.wem.core.image.filter.ImageFilter;

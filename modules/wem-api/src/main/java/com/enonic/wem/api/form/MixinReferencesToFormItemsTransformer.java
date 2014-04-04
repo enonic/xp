@@ -3,9 +3,9 @@ package com.enonic.wem.api.form;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enonic.wem.api.command.schema.mixin.GetMixinParams;
-import com.enonic.wem.api.command.schema.mixin.MixinService;
+import com.enonic.wem.api.schema.mixin.GetMixinParams;
 import com.enonic.wem.api.schema.mixin.Mixin;
+import com.enonic.wem.api.schema.mixin.MixinService;
 
 public class MixinReferencesToFormItemsTransformer
 {

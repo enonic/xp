@@ -1,11 +1,11 @@
 package com.enonic.wem.core.schema.mixin;
 
-import com.enonic.wem.api.command.schema.mixin.GetMixinParams;
-import com.enonic.wem.api.command.schema.mixin.UpdateMixinParams;
-import com.enonic.wem.api.command.schema.mixin.UpdateMixinResult;
+import com.enonic.wem.api.schema.mixin.GetMixinParams;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinAlreadyExistException;
 import com.enonic.wem.api.schema.mixin.MixinNotFoundException;
+import com.enonic.wem.api.schema.mixin.UpdateMixinParams;
+import com.enonic.wem.api.schema.mixin.UpdateMixinResult;
 import com.enonic.wem.core.schema.mixin.dao.MixinDao;
 
 

@@ -3,8 +3,8 @@ package com.enonic.wem.core.schema.mixin;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.command.schema.mixin.CreateMixinParams;
 import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.schema.mixin.CreateMixinParams;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.schema.mixin.dao.MixinDao;

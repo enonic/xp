@@ -4,7 +4,7 @@ import javax.inject.Singleton;
 
 import com.google.inject.AbstractModule;
 
-import com.enonic.wem.api.command.content.attachment.AttachmentService;
+import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.core.command.CommandBinder;
 import com.enonic.wem.core.content.attachment.AttachmentServiceImpl;
 import com.enonic.wem.core.initializer.InitializerTaskBinder;

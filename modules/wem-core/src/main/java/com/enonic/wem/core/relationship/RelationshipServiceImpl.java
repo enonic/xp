@@ -3,12 +3,12 @@ package com.enonic.wem.core.relationship;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.command.schema.content.ContentTypeService;
-import com.enonic.wem.api.command.schema.content.GetContentTypesParams;
 import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.relationship.RelationshipKey;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeService;
+import com.enonic.wem.api.schema.content.GetContentTypesParams;
 import com.enonic.wem.core.relationship.dao.RelationshipDao;
 
 

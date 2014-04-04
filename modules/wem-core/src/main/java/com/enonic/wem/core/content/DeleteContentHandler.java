@@ -4,8 +4,8 @@ package com.enonic.wem.core.content;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.command.content.DeleteContent;
-import com.enonic.wem.api.command.schema.content.ContentTypeService;
 import com.enonic.wem.api.entity.NodeService;
+import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.core.command.CommandHandler;
 
 

@@ -1,7 +1,6 @@
 package com.enonic.wem.core.content;
 
 import com.enonic.wem.api.command.content.GetContentById;
-import com.enonic.wem.api.command.schema.content.ContentTypeService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.entity.EntityId;
@@ -9,6 +8,7 @@ import com.enonic.wem.api.entity.GetNodeByIdParams;
 import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeService;
+import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.util.Exceptions;
 
