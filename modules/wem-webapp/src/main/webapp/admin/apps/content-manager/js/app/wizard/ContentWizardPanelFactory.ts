@@ -7,9 +7,9 @@ module app.wizard {
     import ContentType = api.schema.content.ContentType;
     import SiteTemplateKey = api.content.site.template.SiteTemplateKey;
     import SiteTemplate = api.content.site.template.SiteTemplate;
-    import DefaultModels = page.DefaultModels;
-    import DefaultModelsFactoryConfig = page.DefaultModelsFactoryConfig;
-    import DefaultModelsFactory = page.DefaultModelsFactory;
+    import DefaultModels = app.wizard.page.DefaultModels;
+    import DefaultModelsFactoryConfig = app.wizard.page.DefaultModelsFactoryConfig;
+    import DefaultModelsFactory = app.wizard.page.DefaultModelsFactory;
 
     export class ContentWizardPanelFactory {
 

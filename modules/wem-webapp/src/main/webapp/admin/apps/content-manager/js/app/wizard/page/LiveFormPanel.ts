@@ -30,20 +30,20 @@ module app.wizard.page {
     import ImageComponentBuilder = api.content.page.image.ImageComponentBuilder;
     import LayoutComponentBuilder = api.content.page.layout.LayoutComponentBuilder;
 
-    import InspectionPanelConfig = contextwindow.inspect.InspectionPanelConfig;
-    import InspectionPanel = contextwindow.inspect.InspectionPanel;
-    import ContentInspectionPanel = contextwindow.inspect.ContentInspectionPanel;
-    import PageInspectionPanel = contextwindow.inspect.PageInspectionPanel;
-    import PageInspectionPanelConfig = contextwindow.inspect.PageInspectionPanelConfig;
-    import RegionInspectionPanel = contextwindow.inspect.RegionInspectionPanel;
-    import ImageInspectionPanel = contextwindow.inspect.ImageInspectionPanel;
-    import ImageInspectionPanelConfig = contextwindow.inspect.ImageInspectionPanelConfig;
-    import PartInspectionPanel = contextwindow.inspect.PartInspectionPanel;
-    import PartInspectionPanelConfig = contextwindow.inspect.PartInspectionPanelConfig;
-    import LayoutInspectionPanel = contextwindow.inspect.LayoutInspectionPanel;
-    import LayoutInspectionPanelConfig = contextwindow.inspect.LayoutInspectionPanelConfig;
-    import ContextWindow = contextwindow.ContextWindow;
-    import ContextWindowConfig = contextwindow.ContextWindowConfig;
+    import InspectionPanelConfig = app.wizard.page.contextwindow.inspect.InspectionPanelConfig;
+    import InspectionPanel = app.wizard.page.contextwindow.inspect.InspectionPanel;
+    import ContentInspectionPanel = app.wizard.page.contextwindow.inspect.ContentInspectionPanel;
+    import PageInspectionPanel = app.wizard.page.contextwindow.inspect.PageInspectionPanel;
+    import PageInspectionPanelConfig = app.wizard.page.contextwindow.inspect.PageInspectionPanelConfig;
+    import RegionInspectionPanel = app.wizard.page.contextwindow.inspect.RegionInspectionPanel;
+    import ImageInspectionPanel = app.wizard.page.contextwindow.inspect.ImageInspectionPanel;
+    import ImageInspectionPanelConfig = app.wizard.page.contextwindow.inspect.ImageInspectionPanelConfig;
+    import PartInspectionPanel = app.wizard.page.contextwindow.inspect.PartInspectionPanel;
+    import PartInspectionPanelConfig = app.wizard.page.contextwindow.inspect.PartInspectionPanelConfig;
+    import LayoutInspectionPanel = app.wizard.page.contextwindow.inspect.LayoutInspectionPanel;
+    import LayoutInspectionPanelConfig = app.wizard.page.contextwindow.inspect.LayoutInspectionPanelConfig;
+    import ContextWindow = app.wizard.page.contextwindow.ContextWindow;
+    import ContextWindowConfig = app.wizard.page.contextwindow.ContextWindowConfig;
     import RenderingMode = api.rendering.RenderingMode;
 
 
