@@ -584,7 +584,7 @@ module app.wizard.page {
 
             var newComponentEl = this.liveEditWindow.getComponentByPath(componentPath);
             var newComponentName = this.pageRegions.ensureUniqueComponentName(component.getPath().getRegionPath(),
-                    new ComponentName(api.util.capitalize(api.util.formCleanString(name))));
+                    new ComponentName(api.util.formCleanString(api.util.capitalizeAll(name))));
             component.setName(newComponentName);
             var levels = component.getPath().getLevels();
             levels[levels.length - 1] = new ComponentPathRegionAndComponent(levels[levels.length - 1].getRegionName(), newComponentName);

@@ -9,6 +9,10 @@ module api.util {
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
+    export function capitalizeAll(str: string) {
+        return str.replace(/(?:^|\s)\S/g, function(ch) { return ch.toUpperCase(); });
+    }
+
     export function formCleanString(str: string) {
         var result:string = "",
             ch:RegExpExecArray;
