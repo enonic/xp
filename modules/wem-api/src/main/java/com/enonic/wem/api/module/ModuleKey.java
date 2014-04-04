@@ -6,7 +6,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class ModuleKey
 {
-    static final String SEPARATOR = "-";
+    public final static ModuleKey SYSTEM = ModuleKey.from( ModuleName.from( "system" ), ModuleVersion.from( 0, 0, 0 ) );
+
+    private static final String SEPARATOR = "-";
 
     private final ModuleName name;
 
@@ -58,6 +60,11 @@ public final class ModuleKey
     public String toString()
     {
         return refString;
+    }
+
+    public boolean isSystem()
+    {
+        return this.equals( SYSTEM );
     }
 
     public static ModuleKey from( final ModuleName name, final ModuleVersion version )
