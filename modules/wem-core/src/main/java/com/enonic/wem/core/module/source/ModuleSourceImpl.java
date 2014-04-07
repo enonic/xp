@@ -53,7 +53,7 @@ public final class ModuleSourceImpl
             return Resources.asByteSource( this.resolvedUrl );
         }
 
-        throw new SourceNotFoundException( getUri() + " does not exist" );
+        throw new SourceNotFoundException( this.key );
     }
 
     @Override
