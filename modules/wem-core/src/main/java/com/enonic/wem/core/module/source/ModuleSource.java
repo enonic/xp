@@ -12,6 +12,8 @@ public interface ModuleSource
 
     public ModuleResourceKey getKey();
 
+    public boolean exists();
+
     public URL getResolvedUrl();
 
     public ByteSource getBytes();

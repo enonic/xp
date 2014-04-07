@@ -3,7 +3,6 @@ package com.enonic.wem.core.module.source;
 import java.io.IOException;
 import java.net.URL;
 
-import com.google.common.base.Throwables;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
 
@@ -35,6 +34,12 @@ public final class ModuleSourceImpl
     }
 
     @Override
+    public boolean exists()
+    {
+        return this.resolvedUrl != null;
+    }
+
+    @Override
     public URL getResolvedUrl()
     {
         return this.resolvedUrl;
@@ -43,19 +48,29 @@ public final class ModuleSourceImpl
     @Override
     public ByteSource getBytes()
     {
-        return Resources.asByteSource( this.resolvedUrl );
+        if ( this.resolvedUrl != null )
+        {
+            return Resources.asByteSource( this.resolvedUrl );
+        }
+
+        throw new SourceNotFoundException( getUri() + " does not exist" );
     }
 
     @Override
     public long getTimestamp()
     {
+        if ( this.resolvedUrl == null )
+        {
+            return 0;
+        }
+
         try
         {
             return this.resolvedUrl.openConnection().getLastModified();
         }
         catch ( final IOException e )
         {
-            throw Throwables.propagate( e );
+            return 0;
         }
     }
 
