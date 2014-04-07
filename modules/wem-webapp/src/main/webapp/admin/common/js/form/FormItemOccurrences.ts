@@ -137,6 +137,11 @@ module api.form {
 
             var inputOccurrenceView = this.occurrenceViews[occurrence.getIndex()];
             if (inputOccurrenceView) {
+                if (inputOccurrenceView instanceof inputtype.support.InputOccurrenceView) {
+                    var input = <inputtype.support.InputOccurrenceView>
+                                <FormItemOccurrenceView> inputOccurrenceView;
+                    input.getInputElement().getEl().setValue("");
+                }
                 inputOccurrenceView.giveFocus();
             }
         }
