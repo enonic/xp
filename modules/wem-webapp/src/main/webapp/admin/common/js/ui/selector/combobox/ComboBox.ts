@@ -414,7 +414,6 @@ module api.ui.selector.combobox {
             });
 
             this.onKeyDown(this.handleKeyDown.bind(this));
-//            this.input.onKeyDown(this.handleKeyDown.bind(this));
 
             if (this.multipleSelections) {
                 this.selectedOptionsCtrl.addSelectedOptionRemovedListener(
