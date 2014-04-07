@@ -292,7 +292,7 @@ public class DataSet
     {
         DataPath.Element.checkName( dataName );
         DataArray array = arrayByDataName.get( dataName );
-        return array != null ? array.asList() : null;
+        return array != null ? array.asList() : new ArrayList<Data>();
     }
 
     public boolean hasData( final String dataId )
