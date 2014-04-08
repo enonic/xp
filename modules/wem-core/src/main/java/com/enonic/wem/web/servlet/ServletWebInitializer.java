@@ -17,9 +17,9 @@ final class ServletWebInitializer
     {
         context.addListener( new RequestContextListener() );
 
-        final FilterRegistration.Dynamic reg = context.addFilter( "etag", new ShallowEtagFilter() );
+//        final FilterRegistration.Dynamic reg = context.addFilter( "etag", new ShallowEtagFilter() );
 
-        final EnumSet<DispatcherType> dispatcherTypes = EnumSet.allOf( DispatcherType.class );
-        reg.addMappingForUrlPatterns( dispatcherTypes, false, "/admin/*" );
+//        final EnumSet<DispatcherType> dispatcherTypes = EnumSet.allOf( DispatcherType.class );
+//        reg.addMappingForUrlPatterns( dispatcherTypes, false, "/admin/*" );
     }
 }
