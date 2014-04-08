@@ -254,6 +254,15 @@ module api.dom {
             return this.setTop(value + "px");
         }
 
+        setBottom(value: string): ElementHelper {
+            this.el.style.bottom = value;
+            return this;
+        }
+
+        setBottomPx(value: number): ElementHelper {
+            return this.setBottom(value + "px");
+        }
+
         setLeftPx(value: number): ElementHelper {
             return this.setLeft(value + "px");
         }

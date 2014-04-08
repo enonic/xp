@@ -1,63 +1,65 @@
 module api.notify {
 
     export class NotifyOpts {
-        message:string;
-        backgroundColor:string;
-        listeners:Object[];
-    }
+        message: string;
+        type: string;
+        listeners: {():void}[];
+        autoHide: boolean;
 
-    export function buildOpts(message:Message):NotifyOpts {
-        var opts = new NotifyOpts();
-
-        if (message.getType() == Type.ERROR) {
-            opts.backgroundColor = 'red';
-        }
-        else if (message.getType() == Type.WARNING) {
-            opts.backgroundColor = 'orange';
-        }
-        else if (message.getType() == Type.ACTION) {
-            opts.backgroundColor = '#669c34';
-        }
-
-        createHtmlMessage(message, opts);
-        addListeners(message, opts);
-
-        return opts;
-    }
-
-    function addListeners(message:Message, opts:NotifyOpts) {
-        opts.listeners = [];
-        var actions = message.getActions();
-
-        for (var i = 0; i < actions.length; i++) {
-            opts.listeners.push({
-                fn: actions[i].getHandler(),
-                delegate: 'notify.action_' + i,
-                stopEvent: true
-            });
-        }
-    }
-
-    function createHtmlMessage(message:Message, opts:NotifyOpts) {
-        var actions = message.getActions();
-        opts.message = '<span>' + message.getText() + '</span>';
-
-        if (actions.length > 0) {
-            var linkHtml = '<span style="float: right; margin-left: 30px;">';
+        addListeners(message: Message) {
+            this.listeners = [];
+            var actions = message.getActions();
 
             for (var i = 0; i < actions.length; i++) {
-                if ((i > 0) && (i == (actions.length - 1))) {
-                    linkHtml += ' or ';
-                } else if (i > 0) {
-                    linkHtml += ', ';
+                /*opts.listeners.push({
+                 fn: actions[i].getHandler(),
+                 delegate: 'notify.action_' + i,
+                 stopEvent: true
+                 });*/
+                this.listeners.push(actions[i].getHandler())
+            }
+        }
+
+        createHtmlMessage(message: Message) {
+            var actions = message.getActions();
+            this.message = '<span>' + message.getText() + '</span>';
+
+            if (actions.length > 0) {
+                var linkHtml = '<span style="float: right; margin-left: 30px;">';
+
+                for (var i = 0; i < actions.length; i++) {
+                    if ((i > 0) && (i == (actions.length - 1))) {
+                        linkHtml += ' or ';
+                    } else if (i > 0) {
+                        linkHtml += ', ';
+                    }
+
+                    linkHtml += '<a href="#" class="notify.action_"' + i + '">';
+                    linkHtml += actions[i].getName() + "</a>";
                 }
 
-                linkHtml += '<a href="#" class="notify.action_"' + i + '">';
-                linkHtml += actions[i].getName() + "</a>";
+                linkHtml += '</span>';
+                this.message = linkHtml + this.message;
+            }
+        }
+
+        static buildOpts(message: Message): NotifyOpts {
+            var opts = new NotifyOpts();
+            opts.autoHide = message.getAutoHide();
+            if (message.getType() == Type.ERROR) {
+                opts.type = 'error';
+            }
+            else if (message.getType() == Type.WARNING) {
+                opts.type = 'warning';
+            }
+            else if (message.getType() == Type.ACTION) {
+                opts.type = 'action';
             }
 
-            linkHtml += '</span>';
-            opts.message = linkHtml + opts.message;
+            opts.createHtmlMessage(message);
+            opts.addListeners(message);
+
+            return opts;
         }
     }
 }
