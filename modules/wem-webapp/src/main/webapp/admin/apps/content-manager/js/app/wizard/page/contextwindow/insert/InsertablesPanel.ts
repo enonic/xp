@@ -48,7 +48,7 @@ module app.wizard.page.contextwindow.insert {
                     return $('<div id="live-edit-drag-helper" class="live-edit-font-icon-drop-allowed live-edit-font-icon-drop-not-allowed" style="width: 48px; height: 48px; position: absolute; z-index: 400000;" data-live-edit-drop-allowed="false"></div>');
                 },
                 scope: 'component',
-                start: (event, ui) => {
+                start: (event:Event, ui:JQueryUI.DroppableEventUIParam) => {
                     this.onStartDrag(event, ui);
                 },
                 stop: () => {
@@ -56,18 +56,14 @@ module app.wizard.page.contextwindow.insert {
                 }
             });
 
-            this.liveEditPage.onLoaded(() => {
-
-                jQuery(this.liveEditPage.getIFrame().getHTMLElement()).droppable({
-                    tolerance: 'pointer',
-                    addClasses: false,
-                    accept: '.comp',
-                    scope: 'component',
-                    over: (event, ui) => {
-                        this.onDragOverIFrame(event, ui);
-                    }
-                });
-
+            jQuery(this.liveEditPage.getIFrame().getHTMLElement()).droppable({
+                tolerance: 'pointer',
+                addClasses: false,
+                accept: '.comp',
+                scope: 'component',
+                over: (event:Event, ui:JQueryUI.DroppableEventUIParam) => {
+                    this.onDragOverIFrame(event, ui);
+                }
             });
 
             this.liveEditPage.onSortableStop(() => {
@@ -85,30 +81,30 @@ module app.wizard.page.contextwindow.insert {
             jQuery('[data-context-window-draggable="true"]').simulate('mouseup');
         }
 
-        private onStartDrag(event, ui) {
+        private onStartDrag(event:Event, ui:JQueryUI.DroppableEventUIParam) {
             this.liveEditPage.showDragMask();
         }
 
-        private onDragOverIFrame(event, ui) {
+        private onDragOverIFrame(event:Event, ui:JQueryUI.DroppableEventUIParam) {
 
             this.liveEditPage.hideDragMask();
 
             var liveEditJQuery = this.liveEditPage.getLiveEditJQuery();
-            var clone = liveEditJQuery(ui.draggable.clone());
+            var clonedDragable = liveEditJQuery(ui.draggable.clone());
 
-            clone.css({
+            clonedDragable.css({
                 'position': 'absolute',
                 'z-index': '5100000',
                 'top': '-1000px'
             });
 
-            liveEditJQuery('body').append(clone);
+            liveEditJQuery('body').append(clonedDragable);
 
             ui.helper.hide(null);
 
-            this.liveEditPage.createDraggable(clone);
+            this.liveEditPage.createDraggable(clonedDragable);
 
-            clone.simulate('mousedown');
+            clonedDragable.simulate('mousedown');
 
             this.contextWindow.hide();
         }

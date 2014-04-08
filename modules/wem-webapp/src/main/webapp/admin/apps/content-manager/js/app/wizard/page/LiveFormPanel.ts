@@ -201,6 +201,12 @@ module app.wizard.page {
             this.setComponentDescriptor(event.getDescriptor(), path, component);
         }
 
+        remove() {
+
+            this.liveEditPage.remove();
+            super.remove();
+        }
+
         loadPageIfNotLoaded(): Q.Promise<void> {
 
             console.log("LiveFormPanel.loadPageIfNotLoaded() this.needsReload = " + this.pageNeedsReload);
@@ -415,21 +421,15 @@ module app.wizard.page {
 
             this.liveEditPage.onPageSelected((event: PageSelectedEvent) => {
 
-                console.log("LiveFormPanel.liveEditPage.onPageSelected");
-
                 this.inspectPage();
             });
 
             this.liveEditPage.onRegionSelected((event: RegionSelectedEvent) => {
 
-                console.log("LiveFormPanel.liveEditPage.onRegionSelected");
-
                 this.inspectRegion(event.getPath());
             });
 
             this.liveEditPage.onPageComponentSelected((event: PageComponentSelectedEvent) => {
-
-                console.log("LiveFormPanel.liveEditPage.onPageComponentSelected");
 
                 if (event.isComponentEmpty()) {
                     this.contextWindow.hide();
@@ -443,15 +443,11 @@ module app.wizard.page {
 
             this.liveEditPage.onDeselect((event: DeselectEvent) => {
 
-                console.log("LiveFormPanel.liveEditPage.onDeselect");
-
                 this.contextWindow.show();
                 this.contextWindow.clearSelection();
             });
 
             this.liveEditPage.onComponentRemoved((event: ComponentRemovedEvent) => {
-
-                console.log("LiveFormPanel.liveEditPage.onComponentRemoved");
 
                 this.contextWindow.show();
 
@@ -473,8 +469,6 @@ module app.wizard.page {
 
             this.liveEditPage.onComponentReset((event: ComponentResetEvent) => {
 
-                console.log("LiveFormPanel.liveEditPage.onComponentReset");
-
                 var component = this.pageRegions.getComponent(event.getPath());
                 if (component) {
                     component.setDescriptor(null);
@@ -483,14 +477,10 @@ module app.wizard.page {
 
             this.liveEditPage.onSortableStart((event: SortableStartEvent) => {
 
-                console.log("LiveFormPanel.liveEditPage.onSortableStart");
-
                 this.contextWindow.hide();
             });
 
             this.liveEditPage.onSortableStop((event: SortableStopEvent) => {
-
-                console.log("LiveFormPanel.liveEditPage.onSortableStop");
 
                 if (event.getPath()) {
 
@@ -505,8 +495,6 @@ module app.wizard.page {
 
             this.liveEditPage.onSortableUpdate((event: SortableUpdateEvent) => {
 
-                console.log("LiveFormPanel.liveEditPage.onSortableUpdate");
-
                 var newPath = this.pageRegions.moveComponent(event.getComponentPath(), event.getRegion(), event.getPrecedingComponent());
                 if (newPath) {
                     event.getComponent().setComponentPath(newPath.toString());
@@ -514,8 +502,6 @@ module app.wizard.page {
             });
 
             this.liveEditPage.onPageComponentAdded((event: PageComponentAddedEvent) => {
-
-                console.log("LiveFormPanel.liveEditPage.onPageComponentAdded");
 
                 if (!this.pageTemplate) {
                     this.initializePageFromDefault().done(() => {
@@ -538,8 +524,6 @@ module app.wizard.page {
 
             this.liveEditPage.onSetImageComponentImage((event: SetImageComponentImageEvent) => {
 
-                console.log("LiveFormPanel.liveEditPage.onSetImageComponentImage");
-
                 (<any>event.getComponentPlaceholder()).showLoadingSpinner(); // TODO: Remove any
 
                 if (this.pageTemplate) {
@@ -557,8 +541,6 @@ module app.wizard.page {
             });
 
             this.liveEditPage.onSetPageComponentDescriptor((event: SetPageComponentDescriptorEvent) => {
-
-                console.log("LiveFormPanel.liveEditPage.onSetPageComponentDescriptor");
 
                 if (this.pageTemplate) {
                     this.setComponentDescriptor(event.getDescriptor(), event.getPath(), event.getComponentPlaceholder());

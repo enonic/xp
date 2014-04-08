@@ -73,6 +73,7 @@ module app.wizard.page {
 
             this.liveEditIFrame = new api.dom.IFrameEl("live-edit-frame");
             this.loadMask = new api.ui.LoadMask(this.liveEditIFrame);
+            this.dragMask = new api.ui.DragMask(this.liveEditIFrame);
 
             ShowContentFormEvent.on(() => {
                 if (this.loadMask.isVisible()) {
@@ -130,12 +131,9 @@ module app.wizard.page {
             this.dragMask.hide();
         }
 
-        public removeDragMask() {
+        public remove() {
             this.dragMask.remove();
-        }
-
-        public appendDragMaskToBody() {
-            api.dom.Body.get().appendChild(this.dragMask);
+            this.loadMask.remove();
         }
 
         public load(content: Content): Q.Promise<void> {
@@ -171,10 +169,6 @@ module app.wizard.page {
 
                     this.liveEditWindow = liveEditWindow;
                     this.liveEditJQuery = <JQueryStatic>this.liveEditWindow.$liveEdit;
-                    if( this.dragMask ) {
-                        this.dragMask.remove();
-                    }
-                    this.dragMask = new api.ui.DragMask(this.liveEditIFrame);
 
                     this.listenToPage();
                     this.notifyLoaded();

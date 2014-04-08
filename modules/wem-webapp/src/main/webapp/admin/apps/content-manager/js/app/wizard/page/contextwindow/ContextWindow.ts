@@ -80,11 +80,6 @@ module app.wizard.page.contextwindow {
 
         }
 
-        remove() {
-            this.liveEditPage.removeDragMask();
-            super.remove();
-        }
-
         disable() {
             this.addClass("hidden");
             this.getEl().setRight("-290px");
@@ -93,7 +88,6 @@ module app.wizard.page.contextwindow {
         enable() {
             this.removeClass("hidden");
             this.getEl().setRight("0px");
-            this.liveEditPage.appendDragMaskToBody();
         }
 
         hide() {
