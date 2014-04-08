@@ -143,8 +143,9 @@ module api.notify {
             notifyDiv.hide();
 
             // set notification style
-            notifyDiv.addClass(opts.type);
-            //notifyDiv.setBackgroundColor(opts.backgroundColor);
+            if (opts.type) {
+                notifyDiv.addClass(opts.type);
+            }
 
             return notifyDiv;
         }
