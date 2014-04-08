@@ -11,6 +11,7 @@ module app.wizard.page.contextwindow {
     import Region = api.content.page.region.Region;
     import ImageComponent = api.content.page.image.ImageComponent;
     import ImageComponentBuilder = api.content.page.image.ImageComponentBuilder;
+    import BaseInspectionPanel = app.wizard.page.contextwindow.inspect.BaseInspectionPanel;
     import InspectionPanel = app.wizard.page.contextwindow.inspect.InspectionPanel;
     import InsertablesPanel = app.wizard.page.contextwindow.insert.InsertablesPanel;
 
@@ -105,7 +106,7 @@ module app.wizard.page.contextwindow {
             }
         }
 
-        public showInspectionPanel(panel: inspect.BaseInspectionPanel) {
+        public showInspectionPanel(panel: BaseInspectionPanel) {
             this.inspectionPanel.showInspectionPanel(panel);
             this.selectPanel(this.inspectionPanel);
         }
