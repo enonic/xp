@@ -2,14 +2,10 @@ module app.wizard.page.contextwindow.insert {
 
     export interface ComponentTypesPanelConfig {
 
-        contextWindow: ContextWindow;
-
         liveEditPage: app.wizard.page.LiveEditPage;
     }
 
     export class InsertablesPanel extends api.ui.Panel {
-
-        private contextWindow: ContextWindow;
 
         private liveEditPage: app.wizard.page.LiveEditPage;
 
@@ -17,10 +13,11 @@ module app.wizard.page.contextwindow.insert {
 
         private insertablesDataView: api.ui.grid.DataView<Insertable>;
 
+        private hideContextWindowRequestListeners: {(): void;}[] = [];
+
         constructor(config: ComponentTypesPanelConfig) {
             super("insertables-panel");
             this.liveEditPage = config.liveEditPage;
-            this.contextWindow = config.contextWindow;
 
             this.insertablesDataView = new api.ui.grid.DataView<Insertable>();
             this.insertablesGrid = new InsertablesGrid(this.insertablesDataView, {draggableRows: true, rowClass: "comp"});
@@ -106,7 +103,23 @@ module app.wizard.page.contextwindow.insert {
 
             clonedDragable.simulate('mousedown');
 
-            this.contextWindow.hide();
+            this.notifyHideContextWindowRequest();
+        }
+
+        onHideContextWindowRequest(listener: {(): void;}) {
+            this.hideContextWindowRequestListeners.push(listener);
+        }
+
+        unHideContextWindowRequest(listener: {(): void;}) {
+            this.hideContextWindowRequestListeners = this.hideContextWindowRequestListeners.filter(function (curr) {
+                return curr != listener;
+            });
+        }
+
+        private notifyHideContextWindowRequest() {
+            this.hideContextWindowRequestListeners.forEach((listener) => {
+                listener();
+            });
         }
     }
 }

@@ -11,20 +11,27 @@ module app.wizard.page.contextwindow {
     import Region = api.content.page.region.Region;
     import ImageComponent = api.content.page.image.ImageComponent;
     import ImageComponentBuilder = api.content.page.image.ImageComponentBuilder;
-    import InspectionPanel = inspect.InspectionPanel;
+    import InspectionPanel = app.wizard.page.contextwindow.inspect.InspectionPanel;
+    import InsertablesPanel = app.wizard.page.contextwindow.insert.InsertablesPanel;
 
     export interface ContextWindowConfig {
 
         liveEditPage: app.wizard.page.LiveEditPage;
+
         liveFormPanel:LiveFormPanel;
+
         inspectionPanel:InspectionPanel;
+
+        emulatorPanel:EmulatorPanel;
+
+        insertablesPanel:InsertablesPanel;
     }
 
     export class ContextWindow extends api.ui.DockedWindow {
 
-        private insertablesPanel: insert.InsertablesPanel;
+        private insertablesPanel: InsertablesPanel;
 
-        private inspectionPanel: inspect.InspectionPanel;
+        private inspectionPanel: InspectionPanel;
 
         private emulatorPanel: EmulatorPanel;
 
@@ -35,27 +42,23 @@ module app.wizard.page.contextwindow {
         private pinned: boolean;
 
         constructor(config: ContextWindowConfig) {
+            super();
+
             this.pinned = true;
             this.liveEditPage = config.liveEditPage;
             this.liveFormPanel = config.liveFormPanel;
+            this.inspectionPanel = config.inspectionPanel;
+            this.emulatorPanel = config.emulatorPanel;
+            this.insertablesPanel = config.insertablesPanel;
 
-            super();
+            this.addClass("context-window");
 
             if (this.pinned) {
                 this.liveFormPanel.resizeFrameContainer($(window).width() - 280);
             }
 
-            this.addClass("context-window");
-
-            this.insertablesPanel = new insert.InsertablesPanel({
-                contextWindow: this,
-                liveEditPage: this.liveEditPage
-            });
-
-            this.inspectionPanel = config.inspectionPanel;
-
-            this.emulatorPanel = new EmulatorPanel({
-                liveEditPage: this.liveEditPage
+            this.insertablesPanel.onHideContextWindowRequest(() => {
+                this.hide();
             });
 
             app.wizard.ToggleContextWindowEvent.on(() => {

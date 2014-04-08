@@ -45,6 +45,8 @@ module app.wizard.page {
     import LayoutInspectionPanelConfig = app.wizard.page.contextwindow.inspect.LayoutInspectionPanelConfig;
     import ContextWindow = app.wizard.page.contextwindow.ContextWindow;
     import ContextWindowConfig = app.wizard.page.contextwindow.ContextWindowConfig;
+    import EmulatorPanel = app.wizard.page.contextwindow.EmulatorPanel;
+    import InsertablesPanel = app.wizard.page.contextwindow.insert.InsertablesPanel;
     import RenderingMode = api.rendering.RenderingMode;
 
 
@@ -79,6 +81,8 @@ module app.wizard.page {
 
         private pageUrl: string;
         private contextWindow: ContextWindow;
+        private emulatorPanel: EmulatorPanel;
+        private insertablesPanel: InsertablesPanel;
         private inspectionPanel: InspectionPanel;
         private contentInspectionPanel: ContentInspectionPanel;
         private pageInspectionPanel: PageInspectionPanel;
@@ -139,6 +143,14 @@ module app.wizard.page {
                 layoutInspectionPanel: this.layoutInspectionPanel
             });
 
+            this.emulatorPanel = new EmulatorPanel({
+                liveEditPage: this.liveEditPage
+            });
+
+            this.insertablesPanel = new InsertablesPanel({
+                liveEditPage: this.liveEditPage
+            });
+
             this.frameContainer = new api.ui.Panel("frame-container");
             this.appendChild(this.frameContainer);
             this.frameContainer.appendChild(this.liveEditPage.getIFrame());
@@ -150,7 +162,9 @@ module app.wizard.page {
             this.contextWindow = new ContextWindow(<ContextWindowConfig>{
                 liveEditPage: this.liveEditPage,
                 liveFormPanel: this,
-                inspectionPanel: this.inspectionPanel
+                inspectionPanel: this.inspectionPanel,
+                emulatorPanel: this.emulatorPanel,
+                insertablesPanel: this.insertablesPanel
             });
 
             this.appendChild(this.contextWindow);
