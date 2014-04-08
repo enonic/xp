@@ -474,15 +474,12 @@ module app.wizard {
             updateContentRequest.setUpdateAttachments(updateAttachments);
 
             if (this.iconUploadItem) {
-                var attachment = new api.content.attachment.AttachmentBuilder().
+                var thumbnail = new api.content.ThumbnailBuilder().
                     setBlobKey(this.iconUploadItem.getBlobKey()).
-                    setAttachmentName(new api.content.attachment.AttachmentName('_thumb.png')).
                     setMimeType(this.iconUploadItem.getMimeType()).
                     setSize(this.iconUploadItem.getSize()).
                     build();
-
-                var updateAttachments = api.content.UpdateAttachments.create(contentId, [attachment]);
-                updateContentRequest.setUpdateAttachments(updateAttachments);
+                updateContentRequest.setThumbnail(thumbnail);
             }
 
             return updateContentRequest;

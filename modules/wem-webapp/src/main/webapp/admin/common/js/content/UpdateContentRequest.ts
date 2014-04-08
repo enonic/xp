@@ -18,6 +18,8 @@ module api.content {
 
         private updateAttachments: api.content.UpdateAttachments;
 
+        private thumbnail: api.content.Thumbnail;
+
         constructor(id: string) {
             super();
             this.id = id;
@@ -27,6 +29,10 @@ module api.content {
 
         setUpdateAttachments(updateAttachments: api.content.UpdateAttachments) {
             this.updateAttachments = updateAttachments;
+        }
+
+        setThumbnail(thumbnail: api.content.Thumbnail) {
+            this.thumbnail = thumbnail;
         }
 
         setId(id: string): UpdateContentRequest {
@@ -73,7 +79,8 @@ module api.content {
                 form: this.form.toJson(),
                 contentData: this.contentData.toJson(),
                 displayName: this.displayName,
-                updateAttachments: this.updateAttachments.toJson()
+                updateAttachments: this.updateAttachments.toJson(),
+                thumbnail: this.thumbnail? this.thumbnail.toJson() : undefined
             };
         }
 

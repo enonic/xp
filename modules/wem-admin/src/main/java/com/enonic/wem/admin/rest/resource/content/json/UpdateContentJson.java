@@ -25,6 +25,8 @@ public class UpdateContentJson
 
     private UpdateAttachmentsJson updateAttachments;
 
+    private ThumbnailJson thumbnail;
+
     private String draft;
 
     public boolean isDraft()
@@ -105,5 +107,15 @@ public class UpdateContentJson
     public void setUpdateAttachments( final UpdateAttachmentsJson updateAttachments )
     {
         this.updateAttachments = updateAttachments;
+    }
+
+    public ThumbnailJson getThumbnail()
+    {
+        return thumbnail;
+    }
+
+    public void setThumbnail( final ThumbnailJson thumbnail )
+    {
+        this.thumbnail = thumbnail;
     }
 }

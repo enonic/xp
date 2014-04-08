@@ -10,6 +10,8 @@
 ///<reference path='ContentData.ts' />
 ///<reference path='ContentDataFactory.ts' />
 ///<reference path='Content.ts' />
+///<reference path='Thumbnail.ts' />
+///<reference path='ThumbnailJson.ts' />
 
 ///<reference path='ContentResourceRequest.ts' />
 ///<reference path='GetContentByIdRequest.ts' />

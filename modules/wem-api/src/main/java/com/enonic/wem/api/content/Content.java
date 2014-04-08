@@ -228,7 +228,6 @@ public final class Content
         IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), Content.class );
         IllegalEdit.check( "modifier", this.getModifier(), to.getModifier(), Content.class );
         IllegalEdit.check( "owner", this.getOwner(), to.getOwner(), Content.class );
-        IllegalEdit.check( "thumbnail", this.getThumbnail(), to.getThumbnail(), Content.class );
     }
 
     @Override
@@ -393,6 +392,13 @@ public final class Content
         {
             changes.recordChange( newPossibleChange( "page" ).from( this.original.getPage() ).to( page ).build() );
             this.page = page;
+            return this;
+        }
+
+        public EditBuilder thumbnail( final Thumbnail thumbnail )
+        {
+            changes.recordChange( newPossibleChange( "thumbnail" ).from( this.original.getThumbnail() ).to( thumbnail ).build() );
+            this.thumbnail = thumbnail;
             return this;
         }
 

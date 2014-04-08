@@ -68,8 +68,11 @@ final class UpdateContentCommand
 
         editedContent = newContent( editedContent ).modifier( this.params.getModifier() ).build();
 
-        final Thumbnail thumbnail = resolveThumbnail( editedContent );
-        editedContent = newContent( editedContent ).thumbnail( thumbnail ).build();
+        final Thumbnail mediaThumbnail = resolveMediaThumbnail( editedContent );
+        if ( mediaThumbnail != null )
+        {
+            editedContent = newContent( editedContent ).thumbnail( mediaThumbnail ).build();
+        }
 
         final Attachments attachments;
 
@@ -158,7 +161,7 @@ final class UpdateContentCommand
         }
     }
 
-    private Thumbnail resolveThumbnail( final Content content )
+    private Thumbnail resolveMediaThumbnail( final Content content )
     {
         final ContentType contentType = getContentType( content.getType() );
 

@@ -293,11 +293,16 @@ public class ContentResource
                 @Override
                 public Content.EditBuilder edit( final Content toBeEdited )
                 {
-                    return editContent( toBeEdited ).
+                    Content.EditBuilder editContentBuilder = editContent( toBeEdited ).
                         form( json.getForm().getForm() ).
                         contentData( contentData ).
                         draft( json.isDraft() ).
                         displayName( json.getDisplayName() );
+                    if ( json.getThumbnail() != null )
+                    {
+                        editContentBuilder = editContentBuilder.thumbnail( json.getThumbnail().getThumbnail() );
+                    }
+                    return editContentBuilder;
                 }
             } );
 
