@@ -33,8 +33,6 @@ module app.wizard.page.contextwindow.inspect {
 
         private pageTemplateToSelect: PageTemplateKey;
 
-        private notityPageTemplateChanged: boolean;
-
         constructor(config: PageTemplateSelectorConfig) {
             super("page-template-selector-form");
             this.contentType = config.contentType;
@@ -49,24 +47,6 @@ module app.wizard.page.contextwindow.inspect {
             fieldSet.add(new api.ui.form.FormItemBuilder(this.pageTemplateDropdown).setLabel("Page Template").build());
             config.form.add(fieldSet);
 
-            this.notityPageTemplateChanged = true;
-            this.pageTemplateDropdown.onOptionSelected((event: OptionSelectedEvent<PageTemplateOption>) => {
-
-                if (this.notityPageTemplateChanged) {
-                    var pageTemplate = event.getOption().displayValue.getPageTemplate();
-                    this.pageTemplateToSelect = pageTemplate ? pageTemplate.getKey() : null;
-                    this.notifyPageTemplateChanged(new PageTemplateChangedEvent(pageTemplate));
-                }
-            });
-        }
-
-        setPageTemplate(selectedPageTemplate: PageTemplateKey): Q.Promise<void> {
-            var deferred = Q.defer<void>();
-
-            this.notityPageTemplateChanged = false;
-            this.pageTemplateToSelect = selectedPageTemplate;
-            this.pageTemplateDropdown.removeAllOptions();
-
             var pageTemplateOptions = new PageTemplateOptions(this.siteTemplateKey, this.contentType);
             pageTemplateOptions.getOptions().
                 done((options: Option<PageTemplateOption>[]) => {
@@ -74,23 +54,31 @@ module app.wizard.page.contextwindow.inspect {
                     options.forEach((option: Option<PageTemplateOption>) => {
                         this.pageTemplateDropdown.addOption(option);
                     });
-
-                    if (this.pageTemplateToSelect) {
-                        var optionToSelect = this.pageTemplateDropdown.getOptionByValue(this.pageTemplateToSelect.toString());
-                        this.pageTemplateDropdown.selectOption(optionToSelect);
-                    }
-                    else {
-                        this.pageTemplateDropdown.selectOption(PageTemplateOptions.getDefault());
-                    }
-
-                    this.notityPageTemplateChanged = true;
                 });
 
 
-            // Safe to resolve promise immediately?
-            deferred.resolve(null);
+            this.pageTemplateDropdown.onOptionSelected((event: OptionSelectedEvent<PageTemplateOption>) => {
 
-            return deferred.promise;
+                var pageTemplate = event.getOption().displayValue.getPageTemplate();
+                var pageTemplateKey = pageTemplate ? pageTemplate.getKey() : null;
+                var selectedValueChanged: boolean = !((this.pageTemplateToSelect === null && pageTemplateKey === null) ||
+                                                      (this.pageTemplateToSelect && this.pageTemplateToSelect.equals(pageTemplateKey)));
+                if (selectedValueChanged) {
+                    this.pageTemplateToSelect = pageTemplateKey;
+                    this.notifyPageTemplateChanged(new PageTemplateChangedEvent(pageTemplate));
+                }
+            });
+        }
+
+        setPageTemplate(selectedPageTemplate: PageTemplateKey): void {
+            this.pageTemplateToSelect = selectedPageTemplate;
+
+            if (this.pageTemplateToSelect) {
+                var optionToSelect = this.pageTemplateDropdown.getOptionByValue(this.pageTemplateToSelect.toString());
+                this.pageTemplateDropdown.selectOption(optionToSelect);
+            } else {
+                this.pageTemplateDropdown.selectOption(PageTemplateOptions.getDefault());
+            }
         }
 
         onPageTemplateChanged(listener: {(event: PageTemplateChangedEvent): void;}) {
