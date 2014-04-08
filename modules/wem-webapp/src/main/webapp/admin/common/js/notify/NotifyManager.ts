@@ -1,127 +1,113 @@
 module api.notify {
 
-    var space:number = 3;
-
-    var lifetime:number = 5000;
-
-    var slideDuration:number = 1000;
-
-    var templates = {
-        manager: new Ext.Template(
-            '<div class="admin-notification-container">',
-            '   <div class="admin-notification-wrapper"></div>',
-            '</div>'
-        ),
-
-        notify: new Ext.Template(
-            '<div class="admin-notification" style="height: 0; opacity: 0;">',
-            '   <div class="admin-notification-inner">',
-            '       <a class="admin-notification-remove" href="#">X</a>',
-            '       <div class="admin-notification-content">{message}</div>',
-            '   </div>',
-            '</div>'
-        )
-    };
-
     export class NotifyManager {
 
-        private timers:Object = {};
+        private static instance: NotifyManager;
 
-        private el:any;
+        private space: number = 3;
+
+        private lifetime: number = 5000;
+
+        private slideDuration: number = 1000;
+
+        private timers: Object = {};
+
+        private el: NotificationContainer;
+
+        private registry: Object = {};
 
         constructor() {
-            // Create template
-            var template = templates.manager;
+            this.el = new NotificationContainer();
+            api.dom.Body.get().appendChild(this.el);
 
-            // render manager template to document body
-            var node = template.append(Ext.getBody(), {});
-            this.el = Ext.get(node);
-
-            // align the element (TODO: Should be placed in CSS)
-            this.el.setStyle('bottom', 0);
-            this.getWrapperEl().setStyle({ margin: 'auto' });
+            this.el.getEl().setBottomPx(0);
         }
 
-        private getWrapperEl():any {
-            return this.el.first('.admin-notification-wrapper');
+        showFeedback(message: string, autoHide: boolean = true): string {
+            var feedback = Message.newInfo(message, autoHide);
+            return this.notify(feedback);
         }
 
-        notify(message:Message) {
-            var opts = buildOpts(message);
-            this.doNotify(opts);
+        showError(message: string, autoHide: boolean = true): string {
+            var error = Message.newError(message, autoHide);
+            return this.notify(error)
         }
 
-        private doNotify(opts:NotifyOpts) {
+        showWarning(message: string, autoHide: boolean = true): string {
+            var warning = Message.newWarning(message, autoHide);
+            return this.notify(warning);
+        }
+
+        notify(message: Message): string {
+            var opts = NotifyOpts.buildOpts(message);
+            return this.doNotify(opts);
+        }
+
+        hide(messageId: string) {
+            if (this.registry[messageId]) {
+                this.remove(this.registry[messageId]);
+                delete this.registry[messageId];
+            }
+        }
+
+        private doNotify(opts: NotifyOpts): string {
 
             var notificationEl = this.renderNotification(opts);
-            var height = getInnerEl(notificationEl).getHeight();
-
+            this.registry[notificationEl.getEl().getId()] = notificationEl;
             this.setListeners(notificationEl, opts);
 
-            notificationEl.animate({
-                duration: slideDuration,
-                to: {
-                    height: height + space,
-                    opacity: 1
+            $(notificationEl.getHTMLElement()).animate({
+                    height: 'toggle'
                 },
-                callback: () => {
-                    this.timers[notificationEl.id] = {
-                        remainingTime: lifetime
-                    };
+                this.slideDuration,
+                () => {
+                    if (opts.autoHide) {
+                        this.timers[notificationEl.getEl().getId()] = {
+                            remainingTime: this.lifetime
+                        };
 
-                    this.startTimer(notificationEl);
-                }
-            });
+                        this.startTimer(notificationEl);
+                    }
+                });
+            return notificationEl.getEl().getId();
         }
 
-        private setListeners(el:any, opts:NotifyOpts) {
-            el.on({
-                'click': {
-                    fn: () => {
-                        this.remove(el);
-                    },
-                    // TODO: Click to close?
-                    // delegate: '.admin-notification-remove',
-                    stopEvent: true
-                },
-                'mouseover': () => {
-                    this.stopTimer(el);
-                },
-                'mouseleave': () => {
-                    this.startTimer(el);
-                }
+        private setListeners(el: NotificationMessage, opts: NotifyOpts) {
+            el.onClicked(()=> {
+                this.remove(el);
+                return false;
+            });
+            el.onMouseEnter(()=> {
+                this.stopTimer(el);
+            });
+            el.onMouseLeave(()=> {
+                this.startTimer(el)
             });
 
             if (opts.listeners) {
-                Ext.each(opts.listeners, (listener) => {
-                    el.on({
-                        'click': listener
-                    });
+                opts.listeners.forEach((listener)=> {
+                    el.onClicked(listener);
                 });
             }
         }
 
-        private remove(el:any) {
+        private remove(el: NotificationMessage) {
             if (!el) {
                 return;
             }
 
-            el.animate({
-                duration: slideDuration,
-                to: {
-                    height: 0,
-                    opacity: 0
-                },
-                callback: () => {
-                    Ext.removeNode(el.dom);
-                }
-            });
+            $(el.getHTMLElement()).animate({
+                    height: 'hide'
+                }, this.slideDuration, 'linear',
+                () => {
+                    this.el.getWrapper().removeChild(el);
+                });
 
-            delete this.timers[el.id];
+            delete this.timers[el.getEl().getId()];
         }
 
-        private startTimer(el:any) {
-            var timer = this.timers[el.id];
+        private startTimer(el: NotificationMessage) {
+            var timer = this.timers[el.getEl().getId()];
 
             if (!timer) {
                 return;
@@ -136,8 +122,8 @@ module api.notify {
             timer.startTime = Date.now();
         }
 
-        private stopTimer(el:any) {
-            var timer = this.timers[el.id];
+        private stopTimer(el: NotificationMessage) {
+            var timer = this.timers[el.getEl().getId()];
 
             if (!timer || !timer.id) {
                 return;
@@ -148,32 +134,28 @@ module api.notify {
             timer.remainingTime -= Date.now() - timer.startTime;
         }
 
-        private renderNotification(opts:NotifyOpts):any {
+        private renderNotification(opts: NotifyOpts): NotificationMessage {
             var style = {};
 
             // create notification DOM element
-            var template = templates.notify;
-            var notificationEl = template.append(this.getWrapperEl(), opts, true);
+            var notifyDiv = new NotificationMessage(opts.message);
+            this.el.getWrapper().appendChild(notifyDiv);
+            notifyDiv.hide();
 
             // set notification style
-            if (opts.backgroundColor) {
-                style['backgroundColor'] = opts.backgroundColor;
+            notifyDiv.addClass(opts.type);
+            //notifyDiv.setBackgroundColor(opts.backgroundColor);
+
+            return notifyDiv;
+        }
+
+        static get(): NotifyManager {
+            if (!NotifyManager.instance) {
+                NotifyManager.instance = new NotifyManager();
             }
 
-            style['marginTop'] = space + 'px';
-            getInnerEl(notificationEl).setStyle(style);
-
-            return notificationEl;
+            return NotifyManager.instance;
         }
     }
 
-    function getInnerEl(notificationEl):any {
-        return notificationEl.down('.admin-notification-inner');
-    }
-
-    var manager = new NotifyManager();
-
-    export function sendNotification(message:Message) {
-        manager.notify(message);
-    }
 }

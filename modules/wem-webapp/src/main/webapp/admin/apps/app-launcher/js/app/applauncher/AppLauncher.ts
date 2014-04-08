@@ -27,9 +27,14 @@ module app.launcher {
             this.appManager.onShowLauncher(()=> {
                 this.showLauncherScreen();
             });
+            var messageId;
             this.appManager.onConnectionLost(()=> {
-                new api.notify.showError("Lost connection to server - Please wait until connection is restored");
+                messageId = api.notify.showError("Lost connection to server - Please wait until connection is restored", false);
             });
+
+            this.appManager.onConnectionRestored(() => {
+                api.notify.NotifyManager.get().hide(messageId);
+            })
             this.lostConnectionDetector = new app.launcher.LostConnectionDetector();
             if (CONFIG.baseUri.search('localhost') == -1) {
                 this.lostConnectionDetector.startPolling();

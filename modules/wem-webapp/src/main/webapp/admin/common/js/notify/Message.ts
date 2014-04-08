@@ -8,68 +8,70 @@ module api.notify {
     }
 
     export class Action {
-        private name:string;
-        private handler:Function;
+        private name: string;
+        private handler: {():void};
 
-        constructor(name:string, handler:Function) {
+        constructor(name: string, handler: {():void}) {
             this.name = name;
             this.handler = handler;
         }
 
-        getName():string {
+        getName(): string {
             return this.name;
         }
 
-        getHandler():Function {
+        getHandler(): {():void} {
             return this.handler;
         }
     }
 
     export class Message {
-        private type:Type;
-        private text:string;
-        private actions:Action[];
+        private type: Type;
+        private text: string;
+        private actions: Action[];
+        private autoHide: boolean;
 
-        constructor(type:Type, text:string) {
+        constructor(type: Type, text: string, autoHide: boolean = true) {
             this.type = type;
             this.text = text;
             this.actions = [];
+            this.autoHide = autoHide;
         }
 
-        getType():Type {
+        getType(): Type {
             return this.type;
         }
 
-        getText():string {
+        getText(): string {
             return this.text;
         }
 
-        getActions():Action[] {
+        getActions(): Action[] {
             return this.actions;
         }
 
-        addAction(name:string, handler:() => void) {
+        getAutoHide(): boolean {
+            return this.autoHide;
+        }
+
+        addAction(name: string, handler: () => void) {
             this.actions.push(new Action(name, handler));
         }
 
-        send() {
-            sendNotification(this);
+        static newInfo(text: string, autoHide: boolean = true): Message {
+            return new Message(Type.INFO, text, autoHide);
         }
-    }
 
-    export function newInfo(text:string):Message {
-        return new Message(Type.INFO, text);
-    }
+        static newError(text: string, autoHide: boolean = true): Message {
+            return new Message(Type.ERROR, text, autoHide);
+        }
 
-    export function newError(text:string):Message {
-        return new Message(Type.ERROR, text);
-    }
+        static newWarning(text: string, autoHide: boolean = true): Message {
+            return new Message(Type.WARNING, text, autoHide);
+        }
 
-    export function newWarning(text:string):Message {
-        return new Message(Type.WARNING, text);
-    }
-
-    export function newAction(text:string):Message {
-        return new Message(Type.ACTION, text);
+        static newAction(text: string, autoHide: boolean = true): Message {
+            return new Message(Type.ACTION, text, autoHide);
+        }
     }
 }

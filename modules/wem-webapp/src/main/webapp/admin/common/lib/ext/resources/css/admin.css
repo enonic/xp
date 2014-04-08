@@ -2332,43 +2332,43 @@ h1, h2, h3, h4, h5, h6 {
 
 /* line 11, ../sass/admin/css/_core.scss */
 h1 {
-    font-size: 34px ;
+    font-size: 34px;
     line-height: 40px;
 }
 
 /* line 16, ../sass/admin/css/_core.scss */
 h2 {
-    font-size: 30px ;
+    font-size: 30px;
     line-height: 40px;
 }
 
 /* line 21, ../sass/admin/css/_core.scss */
 h3 {
-    font-size: 26px ;
+    font-size: 26px;
     line-height: 40px;
 }
 
 /* line 26, ../sass/admin/css/_core.scss */
 h4 {
-    font-size: 22px ;
+    font-size: 22px;
     line-height: 20px;
 }
 
 /* line 31, ../sass/admin/css/_core.scss */
 h5 {
-    font-size: 18px ;
+    font-size: 18px;
     line-height: 20px;
 }
 
 /* line 36, ../sass/admin/css/_core.scss */
 h6 {
-    font-size: 14px ;
+    font-size: 14px;
     line-height: 16px;
 }
 
 /* line 41, ../sass/admin/css/_core.scss */
 p {
-    margin: 0 0 10px ;
+    margin: 0 0 10px;
 }
 
 /* line 45, ../sass/admin/css/_core.scss */
@@ -4217,54 +4217,6 @@ div.admin-load-mask .admin-load-text {
     top: -2px;
     font-size: 11px;
     font-style: normal;
-}
-
-/* line 1, ../sass/admin/css/_notification-manager.scss */
-.admin-notification-container {
-    position: fixed;
-    z-index: 500000;
-    width: 100%;
-}
-
-/* line 7, ../sass/admin/css/_notification-manager.scss */
-.admin-notification-wrapper {
-    margin: auto;
-    width: 800px;
-}
-
-/* line 12, ../sass/admin/css/_notification-manager.scss */
-.admin-notification {
-    overflow: hidden;
-    color: white;
-    font-size: 1.2em;
-}
-
-/* line 18, ../sass/admin/css/_notification-manager.scss */
-.admin-notification-inner {
-    padding: 10px 0;
-    background-color: #4294DE;
-}
-
-/* line 22, ../sass/admin/css/_notification-manager.scss */
-.admin-notification-inner a {
-    color: white;
-}
-
-/* line 27, ../sass/admin/css/_notification-manager.scss */
-.admin-notification-remove {
-    float: right;
-    width: 10px;
-    margin-right: 10px;
-    text-align: center;
-    text-decoration: none;
-    font-weight: bolder;
-    color: white;
-}
-
-/* line 37, ../sass/admin/css/_notification-manager.scss */
-.admin-notification-content {
-    margin-right: 20px;
-    padding: 0 30px;
 }
 
 /* line 1, ../sass/admin/css/_context-menu.scss */
