@@ -5,25 +5,25 @@ module app.wizard.page.contextwindow.insert {
         public static IMAGE: Insertable = new Insertable().
             setName("image").
             setDisplayName("Image").
-            setDescription("Drag and drop to insert an image component").
+            setDescription("Upload or use existing images").
             setIconCls("image");
 
         public static PART: Insertable = new Insertable().
             setName("part").
             setDisplayName("Part").
-            setDescription("Drag and drop to insert a part component").
+            setDescription("Advanced components").
             setIconCls("part");
 
         public static LAYOUT: Insertable = new Insertable().
             setName("layout").
             setDisplayName("Layout").
-            setDescription("Drag and drop to insert a layout component").
+            setDescription("Customize page layout").
             setIconCls("layout");
 
         public static TEXT: Insertable = new Insertable().
             setName("text").
             setDisplayName("Text").
-            setDescription("Drag and drop to insert a text component").
+            setDescription("Write directly on the page").
             setIconCls("text");
 
 

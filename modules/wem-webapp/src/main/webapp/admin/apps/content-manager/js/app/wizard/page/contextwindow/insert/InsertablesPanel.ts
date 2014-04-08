@@ -19,6 +19,10 @@ module app.wizard.page.contextwindow.insert {
             super("insertables-panel");
             this.liveEditPage = config.liveEditPage;
 
+            var topDescription = new api.dom.PEl();
+            topDescription.getEl().setInnerHtml('Drag and drop components into the page');
+            this.appendChild(topDescription);
+
             this.insertablesDataView = new api.ui.grid.DataView<Insertable>();
             this.insertablesGrid = new InsertablesGrid(this.insertablesDataView, {draggableRows: true, rowClass: "comp"});
 

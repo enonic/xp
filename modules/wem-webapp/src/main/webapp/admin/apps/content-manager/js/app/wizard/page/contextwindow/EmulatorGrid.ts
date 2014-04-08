@@ -35,8 +35,7 @@ module app.wizard.page.contextwindow {
             title.getEl().setInnerHtml(data.name);
 
             var subtitle = new api.dom.H6El();
-            subtitle.getEl().setInnerHtml(data.width + " &times; " + data.height + " " + data.device_type);
-
+            subtitle.getEl().setInnerHtml(data.width + " &times; " + data.height);
             rowEl.appendChild(icon);
             rowEl.appendChild(title);
             rowEl.appendChild(subtitle);
