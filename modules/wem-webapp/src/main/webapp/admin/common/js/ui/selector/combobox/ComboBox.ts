@@ -128,7 +128,7 @@ module api.ui.selector.combobox {
 
             this.comboBoxDropdown.renderDropdownGrid();
 
-            $(this.input.getHTMLElement()).prop('readonly', true);
+            this.input.getEl().setAttribute('readonly', 'readonly');
         }
 
         setEmptyDropdownText(label: string) {
@@ -142,7 +142,7 @@ module api.ui.selector.combobox {
                 this.applySelectionsButton.hide();
             }
 
-            $(this.input.getHTMLElement()).prop('readonly', false);
+            this.input.getEl().removeAttribute('readonly');
         }
 
         setOptions(options: Option<OPTION_DISPLAY_VALUE>[]) {
@@ -363,7 +363,7 @@ module api.ui.selector.combobox {
             });
 
             this.input.onClicked((event: MouseEvent) => {
-                $(this.input.getHTMLElement()).prop('readonly', false);
+                this.input.getEl().removeAttribute('readonly');
             });
 
             this.comboBoxDropdown.onRowSelection((event: DropdownGridRowSelectedEvent) => {
@@ -403,7 +403,7 @@ module api.ui.selector.combobox {
                 }
                 this.comboBoxDropdown.resetActiveSelection();
 
-                $(this.input.getHTMLElement()).prop('readonly', false);
+                this.input.getEl().removeAttribute('readonly');
             });
 
             this.input.onDblClicked((event: MouseEvent) => {
@@ -436,9 +436,9 @@ module api.ui.selector.combobox {
                 this.showDropdown();
                 if (event.which === 40) { // down
                     this.comboBoxDropdown.nagivateToFirstRow();
-                    $(this.input.getHTMLElement()).prop('readonly', true);
+                    this.input.getEl().setAttribute('readonly', 'readonly');
                 } else {
-                    $(this.input.getHTMLElement()).prop('readonly', false);
+                    this.input.getEl().removeAttribute('readonly');
                 }
                 return;
             }
@@ -448,10 +448,10 @@ module api.ui.selector.combobox {
                 if (this.comboBoxDropdown.hasActiveRow()) {
                     if (this.comboBoxDropdown.getActiveRow() === 0) {
                         this.comboBoxDropdown.resetActiveSelection();
-                        $(this.input.getHTMLElement()).prop('readonly', false);
+                        this.input.getEl().removeAttribute('readonly');
                     } else {
                         this.comboBoxDropdown.navigateToPreviousRow();
-                        $(this.input.getHTMLElement()).prop('readonly', true);
+                        this.input.getEl().setAttribute('readonly', 'readonly');
                     }
                 }
                 event.stopPropagation();
@@ -463,7 +463,7 @@ module api.ui.selector.combobox {
                 } else {
                     this.comboBoxDropdown.nagivateToFirstRow();
                 }
-                $(this.input.getHTMLElement()).prop('readonly', true);
+                this.input.getEl().setAttribute('readonly', 'readonly');
                 event.stopPropagation();
                 event.preventDefault();
                 break;
@@ -471,8 +471,14 @@ module api.ui.selector.combobox {
                 this.selectRowOrApplySelection(this.comboBoxDropdown.getActiveRow());
                 break;
             case 32: // Spacebar
-                if ($(this.input.getHTMLElement()).prop('readonly')) {
+                if (this.input.getEl().getAttribute('readonly')) {
                     this.comboBoxDropdown.toggleRowSelection(this.comboBoxDropdown.getActiveRow());
+                    event.stopPropagation();
+                    event.preventDefault();
+                }
+                break;
+            case 8:
+                if (this.input.getEl().getAttribute('readonly')) {
                     event.stopPropagation();
                     event.preventDefault();
                 }
@@ -487,11 +493,17 @@ module api.ui.selector.combobox {
         }
 
         private focusOnInput(focus?: boolean) {
-            var isReadOnly = $(this.input.getHTMLElement()).prop('readonly');
+            var isReadOnly = !!this.input.getEl().getAttribute('readonly');
             focus = focus || isReadOnly;
             this.input.giveFocus();
             if (focus) {
-                $(this.input.getHTMLElement()).prop('readonly', !isReadOnly).prop('readonly', isReadOnly);
+                if (isReadOnly) {
+                    this.input.getEl().removeAttribute('readonly');
+                    this.input.getEl().setAttribute('readonly', 'readonly');
+                } else {
+                    this.input.getEl().setAttribute('readonly', 'readonly');
+                    this.input.getEl().removeAttribute('readonly');
+                }
             }
         }
 
@@ -511,7 +523,6 @@ module api.ui.selector.combobox {
         }
 
         private handleMultipleSelectionChanged(event: DropdownGridMultipleSelectionEvent) {
-            $(this.input.getHTMLElement()).prop('readonly', true);
             this.focusOnInput();
             if (this.isSelectionChanged()) {
                 this.applySelectionsButton.show();
