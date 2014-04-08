@@ -2,7 +2,7 @@ module app.wizard.page.contextwindow {
 
     export interface EmulatorPanelConfig {
 
-        liveEditIFrame: api.dom.IFrameEl;
+        liveEditPage: app.wizard.page.LiveEditPage;
     }
 
     export class EmulatorPanel extends api.ui.Panel {
@@ -10,12 +10,12 @@ module app.wizard.page.contextwindow {
         private dataView: api.ui.grid.DataView<any>;
         private grid: EmulatorGrid;
 
-        private liveEditIFrame: api.dom.IFrameEl;
+        private liveEditPage: app.wizard.page.LiveEditPage;
 
         constructor(config: EmulatorPanelConfig) {
             super("emulator-panel");
 
-            this.liveEditIFrame = config.liveEditIFrame;
+            this.liveEditPage = config.liveEditPage;
 
             var text = new api.dom.PEl();
             text.getEl().setInnerHtml("Emulate different client's physical sizes");
@@ -29,20 +29,21 @@ module app.wizard.page.contextwindow {
 
             // Using jQuery since grid.setOnClick fires event twice, bug in slickgrid
             jQuery(this.getHTMLElement()).on("click", ".grid-row", (event: JQueryEventObject) => {
+
                 var width = jQuery(event.currentTarget).children('div').data("width");
                 var height = jQuery(event.currentTarget).children('div').data("height");
                 var type = jQuery(event.currentTarget).children('div').data("device.type");
-                this.liveEditIFrame.getEl().setWidth(width);
-                this.liveEditIFrame.getEl().setHeight(height);
+
+                this.liveEditPage.setWidth(width);
+                this.liveEditPage.setHeight(height);
             });
 
             jQuery(this.getHTMLElement()).on("click", ".rotate", (event: JQueryEventObject) => {
-                event.stopPropagation();
-                var width = this.liveEditIFrame.getEl().getWidth();
-                var height = this.liveEditIFrame.getEl().getHeight();
 
-                this.liveEditIFrame.getEl().setHeight(width + "px");
-                this.liveEditIFrame.getEl().setWidth(height + "px");
+                event.stopPropagation();
+
+                this.liveEditPage.setHeightPx(this.liveEditPage.getHeight());
+                this.liveEditPage.setWidthPx(this.liveEditPage.getWidth());
             });
         }
 

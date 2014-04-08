@@ -4,6 +4,7 @@ module app.wizard.page {
     import PageTemplateKey = api.content.page.PageTemplateKey;
     import PageTemplate = api.content.page.PageTemplate;
     import Content = api.content.Content;
+    import ContentId = api.content.ContentId;
     import ContentTypeName = api.schema.content.ContentTypeName;
     import ComponentPath = api.content.page.ComponentPath;
     import ComponentPathRegionAndComponent = api.content.page.ComponentPathRegionAndComponent;
@@ -75,8 +76,6 @@ module app.wizard.page {
 
         private pageSkipReload: boolean;
         private frameContainer: api.ui.Panel;
-        private frame: api.dom.IFrameEl;
-        private baseUrl: string;
 
         private pageUrl: string;
         private contextWindow: ContextWindow;
@@ -88,18 +87,24 @@ module app.wizard.page {
         private partInspectionPanel: PartInspectionPanel;
         private layoutInspectionPanel: LayoutInspectionPanel;
 
-        private liveEditWindow: any;
-        private liveEditJQuery: JQueryStatic;
-
         private contentWizardPanel: ContentWizardPanel;
 
-        private mask: api.ui.LoadMask;
+        private liveEditPage: LiveEditPage;
 
         constructor(config: LiveFormPanelConfig) {
             super("live-form-panel");
             this.contentWizardPanel = config.contentWizardPanel;
             this.siteTemplate = config.siteTemplate;
             this.defaultModels = config.defaultModels;
+
+            this.pageNeedsReload = true;
+            this.pageLoading = false;
+            this.pageSkipReload = false;
+
+            this.liveEditPage = new LiveEditPage(<LiveEditPageConfig>{
+                liveFormPanel: this,
+                siteTemplate: this.siteTemplate
+            });
 
             this.contentInspectionPanel = new ContentInspectionPanel();
             this.pageInspectionPanel = new PageInspectionPanel(<PageInspectionPanelConfig>{
@@ -134,31 +139,65 @@ module app.wizard.page {
                 layoutInspectionPanel: this.layoutInspectionPanel
             });
 
-            this.pageNeedsReload = true;
-            this.pageLoading = false;
-            this.pageSkipReload = false;
-
-            this.baseUrl = api.util.getUri("portal/edit/");
-
             this.frameContainer = new api.ui.Panel("frame-container");
             this.appendChild(this.frameContainer);
-            this.frame = new api.dom.IFrameEl("live-edit-frame");
-            this.frameContainer.appendChild(this.frame);
+            this.frameContainer.appendChild(this.liveEditPage.getIFrame());
 
-            this.mask = new api.ui.LoadMask(this.frame);
             // append it here in order for the context window to be above
-            this.appendChild(this.mask);
+            this.appendChild(this.liveEditPage.getLoadMask());
 
-            ShowContentFormEvent.on(() => {
-                if (this.mask.isVisible()) {
-                    this.mask.hide();
+
+            this.contextWindow = new ContextWindow(<ContextWindowConfig>{
+                liveEditPage: this.liveEditPage,
+                liveFormPanel: this,
+                inspectionPanel: this.inspectionPanel
+            });
+
+            this.appendChild(this.contextWindow);
+
+            this.pageInspectionPanel.onPageTemplateChanged((event: app.wizard.page.contextwindow.inspect.PageTemplateChangedEvent) => {
+
+                var selectedPageTemplate = event.getPageTemplate();
+                if (selectedPageTemplate) {
+
+                    new api.content.page.GetPageTemplateByKeyRequest(selectedPageTemplate.getKey()).
+                        setSiteTemplateKey(this.siteTemplate.getKey()).
+                        sendAndParse().
+                        done((pageTemplate: PageTemplate) => {
+
+                            this.pageTemplate = pageTemplate;
+
+                            this.pageRegions = this.resolvePageRegions(this.content, this.pageTemplate);
+                            this.pageConfig = this.resolvePageConfig(this.content, this.pageTemplate);
+
+                            new GetPageDescriptorByKeyRequest(pageTemplate.getDescriptorKey()).
+                                sendAndParse().
+                                done((pageDescriptor: PageDescriptor) => {
+
+                                    this.pageDescriptor = pageDescriptor;
+                                    this.pageInspectionPanel.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
+
+                                    this.saveAndReloadPage();
+                                });
+                        });
+                }
+                else {
+                    this.pageTemplate = null;
+                    this.pageDescriptor = null;
+                    this.pageRegions = this.defaultModels.getPageTemplate().getRegions();
+                    this.pageConfig = this.defaultModels.getPageTemplate().getConfig();
+                    this.pageInspectionPanel.setPage(this.content, null, null, this.pageConfig);
+
+                    this.saveAndReloadPage();
                 }
             });
+
+            this.liveEditListen();
         }
 
         private imageDescriptorChanged(event: ImageDescriptorChangedEvent) {
             var path = event.getComponentPath();
-            var component = this.getLiveEditWindow().getComponentByPath(path.toString());
+            var component = this.liveEditPage.getComponentByPath(path);
             this.setComponentDescriptor(event.getDescriptor(), path, component);
         }
 
@@ -170,14 +209,13 @@ module app.wizard.page {
             if (this.pageNeedsReload && !this.pageLoading) {
 
                 this.pageLoading = true;
-                this.doLoadPage().then(()=> {
+                this.liveEditPage.load(this.content).then(()=> {
 
                     this.pageLoading = false;
                     this.pageNeedsReload = false;
 
                     this.loadPageDescriptor().done(() => {
 
-                        this.setupContextWindow();
                         deferred.resolve(null);
                     });
 
@@ -192,41 +230,6 @@ module app.wizard.page {
             return deferred.promise;
         }
 
-
-        private doLoadPage(): Q.Promise<void> {
-
-            console.log("LiveFormPanel.doLoad() ... url: " + this.pageUrl);
-            api.util.assertNotNull(this.pageUrl, "No page to load");
-
-            this.mask.show();
-            this.frame.setSrc(this.pageUrl);
-
-            var deferred = Q.defer<void>();
-            this.frame.onLoaded((event: UIEvent) => {
-                var liveEditWindow = this.frame.getHTMLElement()["contentWindow"];
-                if (liveEditWindow && liveEditWindow.$liveEdit && typeof(liveEditWindow.initializeLiveEdit) === "function") {
-                    // Give loaded page same CONFIG.baseUri as in admin
-                    liveEditWindow.CONFIG = {};
-                    liveEditWindow.CONFIG.baseUri = CONFIG.baseUri;
-                    liveEditWindow.siteTemplate = this.siteTemplate;
-                    liveEditWindow.content = this.content;
-                    liveEditWindow.onOpenImageUploadDialogRequest(()=> {
-                        var uploadDialog = new api.content.inputtype.image.UploadDialog();
-                        uploadDialog.onImageUploaded((event: api.ui.ImageUploadedEvent) => {
-                            liveEditWindow.notifyImageUploaded(event);
-                        });
-                        uploadDialog.open();
-
-                    })
-                    this.mask.hide();
-                    liveEditWindow.initializeLiveEdit();
-                    deferred.resolve(null);
-                }
-            });
-
-            return deferred.promise;
-        }
-
         setPage(content: Content, pageTemplate: PageTemplate): Q.Promise<void> {
 
             var deferred = Q.defer<void>();
@@ -236,9 +239,6 @@ module app.wizard.page {
             this.content = content;
             var pageTemplateChanged = this.resolvePageTemplateChanged(pageTemplate);
             this.pageTemplate = pageTemplate;
-
-            this.pageUrl = this.baseUrl + content.getContentId().toString();
-
 
             if (!this.pageSkipReload) {
 
@@ -267,12 +267,11 @@ module app.wizard.page {
                 deferred.resolve(null);
             }
             else {
-                this.doLoadPage().
+                this.liveEditPage.load(this.content).
                     then(() => {
 
                         this.loadPageDescriptor().then(() => {
 
-                            this.setupContextWindow();
                             deferred.resolve(null);
 
                         }).catch((reason) => {
@@ -382,75 +381,11 @@ module app.wizard.page {
             return deferred.promise;
         }
 
-        private setupContextWindow() {
-
-            if (this.contextWindow) {
-                // Have to remove previous ContextWindow to avoid two
-                // TODO: ContextWindow should be resued with new values instead
-                this.contextWindow.remove();
-            }
-
-            this.liveEditWindow = this.frame.getHTMLElement()["contentWindow"];
-            this.liveEditJQuery = <JQueryStatic>this.liveEditWindow.$liveEdit;
-
-            this.contextWindow = new ContextWindow(<ContextWindowConfig>{
-                liveEditIFrame: this.frame,
-                siteTemplate: this.siteTemplate,
-                liveEditWindow: this.liveEditWindow,
-                liveEditJQuery: this.liveEditJQuery,
-                liveFormPanel: this,
-                inspectionPanel: this.inspectionPanel
-            });
-
-            this.pageInspectionPanel.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
-
-            this.contextWindow.onPageTemplateChanged((event: app.wizard.page.contextwindow.inspect.PageTemplateChangedEvent) => {
-
-                var selectedPageTemplate = event.getPageTemplate();
-                if (selectedPageTemplate) {
-
-                    new api.content.page.GetPageTemplateByKeyRequest(selectedPageTemplate.getKey()).
-                        setSiteTemplateKey(this.siteTemplate.getKey()).
-                        sendAndParse().
-                        done((pageTemplate: PageTemplate) => {
-
-                            this.pageTemplate = pageTemplate;
-
-                            this.pageRegions = this.resolvePageRegions(this.content, this.pageTemplate);
-                            this.pageConfig = this.resolvePageConfig(this.content, this.pageTemplate);
-
-                            new GetPageDescriptorByKeyRequest(pageTemplate.getDescriptorKey()).
-                                sendAndParse().
-                                done((pageDescriptor: PageDescriptor) => {
-
-                                    this.pageDescriptor = pageDescriptor;
-                                    this.pageInspectionPanel.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
-
-                                    this.saveAndReloadPage();
-                                });
-                        });
-                }
-                else {
-                    this.pageTemplate = null;
-                    this.pageDescriptor = null;
-                    this.pageRegions = this.defaultModels.getPageTemplate().getRegions();
-                    this.pageConfig = this.defaultModels.getPageTemplate().getConfig();
-                    this.pageInspectionPanel.setPage(this.content, null, null, this.pageConfig);
-
-                    this.saveAndReloadPage();
-                }
-            });
-
-            this.appendChild(this.contextWindow);
-
-            this.liveEditListen();
-        }
-
         private saveAndReloadPage() {
             this.pageSkipReload = true;
             this.contentWizardPanel.saveChanges().done(() => {
                 this.pageSkipReload = false;
-                this.doLoadPage();
+                this.liveEditPage.load(this.content);
             });
         }
 
@@ -476,48 +411,165 @@ module app.wizard.page {
             return this.pageConfig;
         }
 
-        private inspectComponent(componentPath: ComponentPath) {
-            var component = this.pageRegions.getComponent(componentPath);
-            api.util.assertNotNull(component, "Could not find component: " + componentPath.toString());
+        private liveEditListen() {
 
-            if (component instanceof ImageComponent) {
-                this.imageInspectionPanel.setImageComponent(<ImageComponent>component);
-                this.contextWindow.showInspectionPanel(this.imageInspectionPanel);
-            }
-            else if (component instanceof PartComponent) {
-                this.partInspectionPanel.setPartComponent(<PartComponent>component)
-                this.contextWindow.showInspectionPanel(this.partInspectionPanel);
-            }
-            else if (component instanceof LayoutComponent) {
-                this.layoutInspectionPanel.setLayoutComponent(<LayoutComponent>component)
-                this.contextWindow.showInspectionPanel(this.layoutInspectionPanel);
-            }
-            else {
-                throw new Error("PageComponent cannot be selected: " + api.util.getClassName(component));
-            }
-        }
+            this.liveEditPage.onPageSelected((event: PageSelectedEvent) => {
 
-        private inspectRegion(regionPath: RegionPath) {
+                console.log("LiveFormPanel.liveEditPage.onPageSelected");
 
-            var region = this.pageRegions.getRegionByPath(regionPath);
+                this.inspectPage();
+            });
 
-            this.regionInspectionPanel.setRegion(region);
-            this.contextWindow.showInspectionPanel(this.regionInspectionPanel);
-        }
+            this.liveEditPage.onRegionSelected((event: RegionSelectedEvent) => {
 
-        private inspectPage() {
+                console.log("LiveFormPanel.liveEditPage.onRegionSelected");
 
-            this.pageInspectionPanel.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
-            this.contextWindow.showInspectionPanel(this.pageInspectionPanel);
-        }
+                this.inspectRegion(event.getPath());
+            });
 
-        private inspectContent(contentId: api.content.ContentId) {
-            this.contextWindow.showInspectionPanel(this.contentInspectionPanel);
-        }
+            this.liveEditPage.onPageComponentSelected((event: PageComponentSelectedEvent) => {
 
-        private onComponentReset(pathAsString: string) {
-            var componentPath = ComponentPath.fromString(pathAsString);
-            this.pageRegions.getComponent(componentPath).setDescriptor(null);
+                console.log("LiveFormPanel.liveEditPage.onPageComponentSelected");
+
+                if (event.isComponentEmpty()) {
+                    this.contextWindow.hide();
+                }
+                else {
+                    this.contextWindow.show();
+                }
+
+                this.inspectComponent(event.getPath());
+            });
+
+            this.liveEditPage.onDeselect((event: DeselectEvent) => {
+
+                console.log("LiveFormPanel.liveEditPage.onDeselect");
+
+                this.contextWindow.show();
+                this.contextWindow.clearSelection();
+            });
+
+            this.liveEditPage.onComponentRemoved((event: ComponentRemovedEvent) => {
+
+                console.log("LiveFormPanel.liveEditPage.onComponentRemoved");
+
+                this.contextWindow.show();
+
+                if (this.pageTemplate) {
+
+                    this.pageRegions.removeComponent(event.getPath());
+                    this.contextWindow.clearSelection();
+                }
+                else {
+                    // Make the Content a Page if it wasn't before removing
+                    this.initializePageFromDefault().done(() => {
+
+                        this.pageRegions.removeComponent(event.getPath());
+                        this.contextWindow.clearSelection();
+                    });
+                }
+
+            });
+
+            this.liveEditPage.onComponentReset((event: ComponentResetEvent) => {
+
+                console.log("LiveFormPanel.liveEditPage.onComponentReset");
+
+                var component = this.pageRegions.getComponent(event.getPath());
+                if (component) {
+                    component.setDescriptor(null);
+                }
+            });
+
+            this.liveEditPage.onSortableStart((event: SortableStartEvent) => {
+
+                console.log("LiveFormPanel.liveEditPage.onSortableStart");
+
+                this.contextWindow.hide();
+            });
+
+            this.liveEditPage.onSortableStop((event: SortableStopEvent) => {
+
+                console.log("LiveFormPanel.liveEditPage.onSortableStop");
+
+                if (event.getPath()) {
+
+                    if (!event.isEmpty()) {
+                        this.contextWindow.show();
+                    }
+                }
+                else {
+                    this.contextWindow.show();
+                }
+            });
+
+            this.liveEditPage.onSortableUpdate((event: SortableUpdateEvent) => {
+
+                console.log("LiveFormPanel.liveEditPage.onSortableUpdate");
+
+                var newPath = this.pageRegions.moveComponent(event.getComponentPath(), event.getRegion(), event.getPrecedingComponent());
+                if (newPath) {
+                    event.getComponent().setComponentPath(newPath.toString());
+                }
+            });
+
+            this.liveEditPage.onPageComponentAdded((event: PageComponentAddedEvent) => {
+
+                console.log("LiveFormPanel.liveEditPage.onPageComponentAdded");
+
+                if (!this.pageTemplate) {
+                    this.initializePageFromDefault().done(() => {
+
+                        var component = this.addComponent(event.getType(), event.getRegion(), event.getPrecedingComponent());
+                        if (component) {
+                            event.getElement().getEl().setData("live-edit-component", component.getPath().toString());
+                        }
+                        event.getElement().getEl().setData("live-edit-type", event.getType());
+                    });
+                }
+                else {
+                    var component = this.addComponent(event.getType(), event.getRegion(), event.getPrecedingComponent());
+                    if (component) {
+                        event.getElement().getEl().setData("live-edit-component", component.getPath().toString());
+                    }
+                    event.getElement().getEl().setData("live-edit-type", event.getType());
+                }
+            });
+
+            this.liveEditPage.onSetImageComponentImage((event: SetImageComponentImageEvent) => {
+
+                console.log("LiveFormPanel.liveEditPage.onSetImageComponentImage");
+
+                (<any>event.getComponentPlaceholder()).showLoadingSpinner(); // TODO: Remove any
+
+                if (this.pageTemplate) {
+
+                    this.setImageComponentImage(event.getPath(), event.getImage(), event.getComponentPlaceholder(), event.getImageName());
+                }
+                else {
+                    this.initializePageFromDefault().done(() => {
+
+                        this.setImageComponentImage(event.getPath(), event.getImage(), event.getComponentPlaceholder(),
+                            event.getImageName());
+                    });
+                }
+
+            });
+
+            this.liveEditPage.onSetPageComponentDescriptor((event: SetPageComponentDescriptorEvent) => {
+
+                console.log("LiveFormPanel.liveEditPage.onSetPageComponentDescriptor");
+
+                if (this.pageTemplate) {
+                    this.setComponentDescriptor(event.getDescriptor(), event.getPath(), event.getComponentPlaceholder());
+                }
+                else {
+                    this.initializePageFromDefault().done(() => {
+
+                        this.setComponentDescriptor(event.getDescriptor(), event.getPath(), event.getComponentPlaceholder());
+                    });
+                }
+            });
         }
 
         private addComponent(componentType: string, regionPath: RegionPath, precedingComponent: ComponentPath): PageComponent {
@@ -553,52 +605,47 @@ module app.wizard.page {
             }
         }
 
-        private loadComponent(componentPath: ComponentPath, componentPlaceholder: api.dom.Element) {
-            $.ajax({
-                url: api.rendering.UriHelper.getComponentUri(this.content.getContentId().toString(), componentPath.toString(), RenderingMode.EDIT),
-                method: 'GET',
-                success: (data) => {
-                    var newElement = $(data);
-                    $(componentPlaceholder.getHTMLElement()).replaceWith(newElement);
-                    this.liveEditWindow.LiveEdit.component.Selection.deselect();
-
-                    this.liveEditWindow.LiveEdit.PlaceholderCreator.renderEmptyRegionPlaceholders();
-
-                    var comp = this.liveEditWindow.getComponentByPath(componentPath);
-                    this.liveEditWindow.LiveEdit.component.Selection.handleSelect(comp.getHTMLElement(), null, true);
-
-                    this.liveEditJQuery(this.liveEditWindow).trigger("componentLoaded.liveEdit", [comp]);
-                }
-            });
+        private inspectContent(contentId: api.content.ContentId) {
+            this.contextWindow.showInspectionPanel(this.contentInspectionPanel);
         }
 
-        private updateComponentName(name: string, componentPath: ComponentPath, isForced?: boolean) {
-            var component = this.pageRegions.getComponent(componentPath),
-                type = this.liveEditWindow.getComponentByPath(componentPath).getEl().getData("live-edit-type");
+        private inspectPage() {
 
-            if (!component || (!isForced && type == "image")) {
-                return;
-            }
-
-            var removedComponent = this.pageRegions.removeComponent(componentPath);
-
-            var newComponentEl = this.liveEditWindow.getComponentByPath(componentPath);
-            var newComponentName = this.pageRegions.ensureUniqueComponentName(component.getPath().getRegionPath(),
-                    new ComponentName(api.util.removeInvalidChars(api.util.capitalizeAll(name))));
-            component.setName(newComponentName);
-            var levels = component.getPath().getLevels();
-            levels[levels.length - 1] = new ComponentPathRegionAndComponent(levels[levels.length - 1].getRegionName(), newComponentName);
-            component.setPath(new ComponentPath(levels));
-            newComponentEl.getEl().setData("live-edit-component", component.getPath().toString());
-
-            if (removedComponent) {
-                this.pageRegions.addComponentAfter(removedComponent, component.getPath().getRegionPath(),
-                    ComponentPath.fromString(newComponentEl.getPrecedingComponentPath()));
-            }
-
+            this.pageInspectionPanel.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
+            this.contextWindow.showInspectionPanel(this.pageInspectionPanel);
         }
 
-        setComponentDescriptor(descriptor: Descriptor, componentPath: ComponentPath, componentPlaceholder) {
+        private inspectRegion(regionPath: RegionPath) {
+
+            var region = this.pageRegions.getRegionByPath(regionPath);
+
+            this.regionInspectionPanel.setRegion(region);
+            this.contextWindow.showInspectionPanel(this.regionInspectionPanel);
+        }
+
+        private inspectComponent(componentPath: ComponentPath) {
+
+            var component = this.pageRegions.getComponent(componentPath);
+            api.util.assertNotNull(component, "Could not find component: " + componentPath.toString());
+
+            if (component instanceof ImageComponent) {
+                this.imageInspectionPanel.setImageComponent(<ImageComponent>component);
+                this.contextWindow.showInspectionPanel(this.imageInspectionPanel);
+            }
+            else if (component instanceof PartComponent) {
+                this.partInspectionPanel.setPartComponent(<PartComponent>component)
+                this.contextWindow.showInspectionPanel(this.partInspectionPanel);
+            }
+            else if (component instanceof LayoutComponent) {
+                this.layoutInspectionPanel.setLayoutComponent(<LayoutComponent>component)
+                this.contextWindow.showInspectionPanel(this.layoutInspectionPanel);
+            }
+            else {
+                throw new Error("PageComponent cannot be selected: " + api.util.getClassName(component));
+            }
+        }
+
+        private setComponentDescriptor(descriptor: Descriptor, componentPath: ComponentPath, componentPlaceholder) {
             var component = this.pageRegions.getComponent(componentPath);
             if (!component || !descriptor) {
                 return;
@@ -609,7 +656,7 @@ module app.wizard.page {
 
             this.contextWindow.hide();
 
-            componentPlaceholder.showLoadingSpinner();
+            (<any>componentPlaceholder).showLoadingSpinner(); // TODO: Remove any-casting - or why is'nt this done in LiveEdit?
             component.setDescriptor(descriptor.getKey());
 
             // use of "instanceof" does not work because the descriptor object has been created in another frame
@@ -628,6 +675,57 @@ module app.wizard.page {
             });
         }
 
+        private updateComponentName(name: string, componentPath: ComponentPath, isForced?: boolean) {
+
+            var component = this.pageRegions.getComponent(componentPath),
+                type = this.liveEditPage.getComponentByPath(componentPath).getEl().getData("live-edit-type");
+
+            if (!component || (!isForced && type == "image")) {
+                return;
+            }
+
+            var removedComponent = this.pageRegions.removeComponent(componentPath);
+
+            var newComponentEl = this.liveEditPage.getComponentByPath(componentPath);
+            var newComponentName = this.pageRegions.ensureUniqueComponentName(component.getPath().getRegionPath(),
+                new ComponentName(api.util.removeInvalidChars(api.util.capitalizeAll(name))));
+            component.setName(newComponentName);
+            var levels = component.getPath().getLevels();
+            levels[levels.length - 1] = new ComponentPathRegionAndComponent(levels[levels.length - 1].getRegionName(), newComponentName);
+            component.setPath(new ComponentPath(levels));
+            newComponentEl.getEl().setData("live-edit-component", component.getPath().toString());
+
+            if (removedComponent) {
+                this.pageRegions.addComponentAfter(removedComponent, component.getPath().getRegionPath(),
+                    ComponentPath.fromString(newComponentEl.getPrecedingComponentPath()));
+            }
+
+        }
+
+        private setImageComponentImage(componentPath: ComponentPath, image: ContentId, componentPlaceholder: api.dom.Element,
+                                       imageName?: string) {
+
+            var imageComponent = this.pageRegions.getImageComponent(componentPath);
+            if (imageComponent != null) {
+                imageComponent.setImage(image);
+                if (this.defaultModels.hasImageDescriptor()) {
+                    imageComponent.setDescriptor(this.defaultModels.getImageDescriptor().getKey());
+                }
+                this.updateComponentName(imageName, componentPath, true);
+                componentPath = imageComponent.getPath();
+
+                this.pageSkipReload = true;
+                this.contentWizardPanel.saveChanges().done(() => {
+                    this.pageSkipReload = false;
+                    this.loadComponent(componentPath, componentPlaceholder);
+                })
+
+            }
+            else {
+                console.log("ImageComponent to set image on not found: " + componentPath);
+            }
+        }
+
         private addLayoutRegions(layoutComponent: LayoutComponent, layoutDescriptor: LayoutDescriptor) {
             var layoutRegionsBuilder = new api.content.page.layout.LayoutRegionsBuilder();
             layoutDescriptor.getRegions().forEach(function (regionDescriptor: RegionDescriptor) {
@@ -642,198 +740,8 @@ module app.wizard.page {
             layoutComponent.setLayoutRegions(layoutRegionsBuilder.build());
         }
 
-        getLiveEditWindow() {
-            return this.liveEditWindow;
-        }
-
-        private liveEditListen() {
-
-            this.liveEditJQuery(this.liveEditWindow).on('componentSelect.liveEdit',
-                (event, pathAsString?, component?) => {
-                    if (component) {
-                        if (component.isEmpty()) {
-                            this.contextWindow.hide();
-                        } else {
-                            this.contextWindow.show();
-                        }
-                    }
-                    if (pathAsString) {
-
-                        this.inspectComponent(ComponentPath.fromString(pathAsString));
-                    }
-                });
-
-            this.liveEditJQuery(this.liveEditWindow).on('pageSelect.liveEdit',
-                (event) => {
-                    this.inspectPage();
-                });
-
-            this.liveEditJQuery(this.liveEditWindow).on('regionSelect.liveEdit',
-                (event, regionPath?: string) => {
-                    this.inspectRegion(RegionPath.fromString(regionPath));
-                });
-
-            this.liveEditJQuery(this.liveEditWindow).on('deselectComponent.liveEdit', (event) => {
-                this.contextWindow.show();
-                this.contextWindow.clearSelection();
-            });
-
-            this.liveEditJQuery(this.liveEditWindow).on('componentRemoved.liveEdit', (event, component?) => {
-
-                this.contextWindow.show();
-
-                if (component && component.getComponentPath()) {
-
-                    var componentPath: ComponentPath = ComponentPath.fromString(component.getComponentPath());
-
-                    if (this.pageTemplate) {
-
-                        this.pageRegions.removeComponent(componentPath);
-                        this.contextWindow.clearSelection();
-                    }
-                    else {
-                        // Make the Content a Page if it wasn't before removing
-                        this.initializePageFromDefault().done(() => {
-
-                            this.pageRegions.removeComponent(componentPath);
-                            this.contextWindow.clearSelection();
-                        });
-                    }
-                }
-            });
-            this.liveEditJQuery(this.liveEditWindow).on('componentReset.liveEdit', (event, component?) => {
-                if (component) {
-                    this.contextWindow.clearSelection();
-                    this.onComponentReset(component.getComponentPath());
-                }
-            });
-            this.liveEditJQuery(this.liveEditWindow).on('sortableStop.liveEdit', (event, component?) => {
-                if (component) {
-                    if (!component.isEmpty()) {
-                        this.contextWindow.show();
-                    }
-                } else {
-                    this.contextWindow.show();
-                }
-            });
-            this.liveEditJQuery(this.liveEditWindow).on('sortableStart.liveEdit', (event) => {
-                this.contextWindow.hide();
-            });
-            this.liveEditJQuery(this.liveEditWindow).on('sortableUpdate.liveEdit', (event, componentEl?) => {
-
-                if (componentEl) {
-                    var componentPath = ComponentPath.fromString(componentEl.getComponentPath());
-                    var afterComponentPath = ComponentPath.fromString(componentEl.getPrecedingComponentPath());
-                    var regionPath = RegionPath.fromString(componentEl.getRegionName());
-                    var newPath = this.pageRegions.moveComponent(componentPath, regionPath, afterComponentPath);
-                    if (newPath) {
-                        componentEl.setComponentPath(newPath.toString());
-                    }
-                }
-            });
-
-
-            this.liveEditJQuery(this.liveEditWindow).on('componentAdded.liveEdit',
-                (event, componentEl?, regionPathAsString?: string, precedingComponentPathAsString?: string) => {
-
-                    var componentType = componentEl.getComponentType().getName();
-                    var regionPath = RegionPath.fromString(regionPathAsString);
-
-                    var preceedingComponentPath: ComponentPath = null;
-                    if (precedingComponentPathAsString) {
-                        preceedingComponentPath = ComponentPath.fromString(precedingComponentPathAsString);
-                    }
-
-                    if (!this.pageTemplate) {
-                        this.initializePageFromDefault().done(() => {
-
-                            var component = this.addComponent(componentType, regionPath, preceedingComponentPath);
-                            if (component) {
-                                componentEl.getEl().setData("live-edit-component", component.getPath().toString());
-                            }
-                            componentEl.getEl().setData("live-edit-type", componentType);
-                        });
-                    }
-                    else {
-                        var component = this.addComponent(componentType, regionPath, preceedingComponentPath);
-                        if (component) {
-                            componentEl.getEl().setData("live-edit-component", component.getPath().toString());
-                        }
-                        componentEl.getEl().setData("live-edit-type", componentType);
-                    }
-                });
-
-            this.liveEditJQuery(this.liveEditWindow).on('imageComponentSetImage.liveEdit',
-                (event, imageId?, componentPathAsString?: string, componentPlaceholder?, imageName?: string) => {
-
-                    componentPlaceholder.showLoadingSpinner();
-
-                    var componentPath = ComponentPath.fromString(componentPathAsString);
-                    var component = this.pageRegions.getComponent(componentPath);
-
-                    if (this.pageTemplate) {
-
-                        var imageComponent = this.pageRegions.getImageComponent(componentPath);
-                        if (imageComponent != null) {
-                            imageComponent.setImage(imageId);
-                            if (this.defaultModels.hasImageDescriptor()) {
-                                imageComponent.setDescriptor(this.defaultModels.getImageDescriptor().getKey());
-                            }
-                            this.updateComponentName(imageName, componentPath, true);
-                            componentPath = component.getPath();
-
-                            this.pageSkipReload = true;
-                            this.contentWizardPanel.saveChanges().done(() => {
-                                this.pageSkipReload = false;
-                                this.loadComponent(componentPath, componentPlaceholder);
-                            })
-
-                        }
-                        else {
-                            console.log("ImageComponent to set image on not found: " + componentPath);
-                        }
-                    }
-                    else {
-                        this.initializePageFromDefault().done(() => {
-
-                            var imageComponent = this.pageRegions.getImageComponent(componentPath);
-                            if (imageComponent != null) {
-                                imageComponent.setImage(imageId);
-                                if (this.defaultModels.hasImageDescriptor()) {
-                                    imageComponent.setDescriptor(this.defaultModels.getImageDescriptor().getKey());
-                                }
-                                this.updateComponentName(imageName, componentPath, true);
-                                componentPath = component.getPath();
-
-                                this.pageSkipReload = true;
-                                this.contentWizardPanel.saveChanges().done(() => {
-                                    this.pageSkipReload = false;
-                                    this.loadComponent(componentPath, componentPlaceholder);
-                                })
-
-                            }
-                            else {
-                                console.log("ImageComponent to set image on not found: " + componentPath);
-                            }
-                        });
-                    }
-                });
-
-            this.liveEditJQuery(this.liveEditWindow).on('pageComponentSetDescriptor.liveEdit',
-                (event, descriptor?: Descriptor, componentPathAsString?: string, componentPlaceholder?) => {
-
-                    var componentPath = ComponentPath.fromString(componentPathAsString);
-
-                    if (this.pageTemplate) {
-                        this.setComponentDescriptor(descriptor, componentPath, componentPlaceholder);
-                    }
-                    else {
-                        this.initializePageFromDefault().done(() => {
-
-                            this.setComponentDescriptor(descriptor, componentPath, componentPlaceholder);
-                        });
-                    }
-                });
+        private loadComponent(componentPath: ComponentPath, componentPlaceholder: api.dom.Element) {
+            this.liveEditPage.loadComponent(componentPath, componentPlaceholder, this.content);
         }
     }
 }

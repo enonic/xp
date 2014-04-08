@@ -3,31 +3,24 @@ module app.wizard.page.contextwindow.insert {
     export interface ComponentTypesPanelConfig {
 
         contextWindow: ContextWindow;
-        liveEditIFrame: api.dom.IFrameEl;
-        liveEditWindow: any;
-        liveEditJQuery: JQueryStatic;
-        draggingMask: api.ui.DragMask;
+
+        liveEditPage: app.wizard.page.LiveEditPage;
     }
 
     export class InsertablesPanel extends api.ui.Panel {
 
         private contextWindow: ContextWindow;
-        private liveEditIFrame: api.dom.IFrameEl;
-        private liveEditWindow: any;
-        private liveEditJQuery: JQueryStatic;
-        private draggingMask: api.ui.DragMask;
+
+        private liveEditPage: app.wizard.page.LiveEditPage;
 
         private insertablesGrid: InsertablesGrid;
+
         private insertablesDataView: api.ui.grid.DataView<Insertable>;
 
         constructor(config: ComponentTypesPanelConfig) {
             super("insertables-panel");
-
+            this.liveEditPage = config.liveEditPage;
             this.contextWindow = config.contextWindow;
-            this.liveEditIFrame = config.liveEditIFrame;
-            this.liveEditWindow = config.liveEditWindow;
-            this.liveEditJQuery = config.liveEditJQuery;
-            this.draggingMask = config.draggingMask;
 
             this.insertablesDataView = new api.ui.grid.DataView<Insertable>();
             this.insertablesGrid = new InsertablesGrid(this.insertablesDataView, {draggableRows: true, rowClass: "comp"});
@@ -63,31 +56,41 @@ module app.wizard.page.contextwindow.insert {
                 }
             });
 
-            jQuery(this.liveEditIFrame.getHTMLElement()).droppable({
-                tolerance: 'pointer',
-                addClasses: false,
-                accept: '.comp',
-                scope: 'component',
-                over: (event, ui) => {
-                    this.onDragOverIFrame(event, ui);
-                }
+            this.liveEditPage.onLoaded(() => {
+
+                jQuery(this.liveEditPage.getIFrame().getHTMLElement()).droppable({
+                    tolerance: 'pointer',
+                    addClasses: false,
+                    accept: '.comp',
+                    scope: 'component',
+                    over: (event, ui) => {
+                        this.onDragOverIFrame(event, ui);
+                    }
+                });
+
             });
 
-            this.liveEditJQuery(this.liveEditWindow).on('sortableUpdate.liveEdit sortableStop.liveEdit draggableStop.liveEdit',
-                (event: JQueryEventObject) => {
-                    jQuery('[data-context-window-draggable="true"]').simulate('mouseup');
-                });
+            this.liveEditPage.onSortableStop(() => {
+                jQuery('[data-context-window-draggable="true"]').simulate('mouseup');
+            });
+            this.liveEditPage.onSortableUpdate(() => {
+                jQuery('[data-context-window-draggable="true"]').simulate('mouseup');
+            });
+            this.liveEditPage.onDragableStop(() => {
+                jQuery('[data-context-window-draggable="true"]').simulate('mouseup');
+            });
         }
 
-        onStartDrag(event, ui) {
-            this.draggingMask.show();
+        private onStartDrag(event, ui) {
+            this.liveEditPage.showDragMask();
         }
 
-        onDragOverIFrame(event, ui) {
+        private onDragOverIFrame(event, ui) {
 
-            this.draggingMask.hide();
+            this.liveEditPage.hideDragMask();
 
-            var clone = this.liveEditJQuery(ui.draggable.clone());
+            var liveEditJQuery = this.liveEditPage.getLiveEditJQuery();
+            var clone = liveEditJQuery(ui.draggable.clone());
 
             clone.css({
                 'position': 'absolute',
@@ -95,11 +98,11 @@ module app.wizard.page.contextwindow.insert {
                 'top': '-1000px'
             });
 
-            this.liveEditJQuery('body').append(clone);
+            liveEditJQuery('body').append(clone);
 
             ui.helper.hide(null);
 
-            this.liveEditWindow.LiveEdit.component.dragdropsort.DragDropSort.createJQueryUiDraggable(clone);
+            this.liveEditPage.createDraggable(clone);
 
             clone.simulate('mousedown');
 

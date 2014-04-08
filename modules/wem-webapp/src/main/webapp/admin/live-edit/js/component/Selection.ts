@@ -17,7 +17,11 @@ module LiveEdit.component {
             if (Selection.getType(element) == "page") {
                 $(element).trigger('pageSelect.liveEdit');
             } else if (Selection.getType(element) == "region") {
-                $(element).trigger('regionSelect.liveEdit', element.getAttribute(Selection.REGION_ATTR));
+
+                var regionPath = element.getAttribute(Selection.REGION_ATTR);
+                if (regionPath && regionPath.length > 0) {
+                    $(element).trigger('regionSelect.liveEdit', regionPath);
+                }
             } else if (Selection.getType(element) == "component") {
                 $(element).trigger('componentSelect.liveEdit', [ element.getAttribute(Selection.COMPONENT_ATTR), component ]);
             }

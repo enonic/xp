@@ -14,10 +14,8 @@ module app.wizard.page.contextwindow {
     import InspectionPanel = inspect.InspectionPanel;
 
     export interface ContextWindowConfig {
-        liveEditIFrame?:api.dom.IFrameEl;
-        liveEditId?:string;
-        liveEditWindow: any;
-        liveEditJQuery: JQueryStatic;
+
+        liveEditPage: app.wizard.page.LiveEditPage;
         liveFormPanel:LiveFormPanel;
         inspectionPanel:InspectionPanel;
     }
@@ -25,20 +23,20 @@ module app.wizard.page.contextwindow {
     export class ContextWindow extends api.ui.DockedWindow {
 
         private insertablesPanel: insert.InsertablesPanel;
+
         private inspectionPanel: inspect.InspectionPanel;
+
         private emulatorPanel: EmulatorPanel;
-        private liveEditWindow: any;
-        private liveEditJQuery: JQueryStatic;
-        private dragMask: api.ui.DragMask;
-        private liveEditIFrame: api.dom.IFrameEl;
+
+        private liveEditPage: app.wizard.page.LiveEditPage;
+
         private liveFormPanel: LiveFormPanel;
+
         private pinned: boolean;
 
         constructor(config: ContextWindowConfig) {
             this.pinned = true;
-            this.liveEditIFrame = config.liveEditIFrame;
-            this.liveEditJQuery = config.liveEditJQuery;
-            this.liveEditWindow = config.liveEditWindow;
+            this.liveEditPage = config.liveEditPage;
             this.liveFormPanel = config.liveFormPanel;
 
             super();
@@ -49,20 +47,15 @@ module app.wizard.page.contextwindow {
 
             this.addClass("context-window");
 
-            this.dragMask = new api.ui.DragMask(this.liveEditIFrame);
-
             this.insertablesPanel = new insert.InsertablesPanel({
                 contextWindow: this,
-                liveEditIFrame: this.liveEditIFrame,
-                liveEditWindow: this.liveEditWindow,
-                liveEditJQuery: this.liveEditJQuery,
-                draggingMask: this.dragMask //DragMask temporarily disabled
+                liveEditPage: this.liveEditPage
             });
 
             this.inspectionPanel = config.inspectionPanel;
 
             this.emulatorPanel = new EmulatorPanel({
-                liveEditIFrame: this.liveEditIFrame
+                liveEditPage: this.liveEditPage
             });
 
             app.wizard.ToggleContextWindowEvent.on(() => {
@@ -88,7 +81,7 @@ module app.wizard.page.contextwindow {
         }
 
         remove() {
-            this.dragMask.remove();
+            this.liveEditPage.removeDragMask();
             super.remove();
         }
 
@@ -100,7 +93,7 @@ module app.wizard.page.contextwindow {
         enable() {
             this.removeClass("hidden");
             this.getEl().setRight("0px");
-            api.dom.Body.get().appendChild(this.dragMask);
+            this.liveEditPage.appendDragMaskToBody();
         }
 
         hide() {
@@ -123,14 +116,6 @@ module app.wizard.page.contextwindow {
         public clearSelection() {
             this.inspectionPanel.clearSelection();
             this.selectPanel(this.insertablesPanel);
-        }
-
-        onPageTemplateChanged(listener: {(event: inspect.PageTemplateChangedEvent): void;}) {
-            this.inspectionPanel.onPageTemplateChanged(listener);
-        }
-
-        unPageTemplateChanged(listener: {(event: inspect.PageTemplateChangedEvent): void;}) {
-            this.inspectionPanel.unPageTemplateChanged(listener);
         }
 
         setPinned(value: boolean) {
