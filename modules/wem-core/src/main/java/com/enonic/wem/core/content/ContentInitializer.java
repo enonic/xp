@@ -4,9 +4,9 @@ package com.enonic.wem.core.content;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.ContentService;
+import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -21,6 +21,8 @@ public class ContentInitializer
 {
     private ContentTypeService contentTypeService;
 
+    private ContentService contentService;
+
     protected ContentInitializer()
     {
         super( 15, "content" );
@@ -30,41 +32,41 @@ public class ContentInitializer
     public void initialize()
         throws Exception
     {
-        ContentPath bildeArkivPath = client.execute( createFolder().
+        ContentPath bildeArkivPath = contentService.create( createFolder().
             name( "bildearkiv" ).
             parent( ContentPath.ROOT ).
             displayName( "BildeArkiv" ) ).getPath();
 
-        client.execute( createFolder().
+        contentService.create( createFolder().
             name( "misc" ).
             parent( bildeArkivPath ).
             displayName( "Misc" ) ).getPath();
 
-        client.execute( createFolder().
+        contentService.create( createFolder().
             name( "people" ).
             parent( bildeArkivPath ).
             displayName( "People" ) ).getPath();
 
-        ContentPath trampolinerPath = client.execute( createFolder().
+        ContentPath trampolinerPath = contentService.create( createFolder().
             name( "trampoliner" ).
             parent( bildeArkivPath ).
             displayName( "Trampoliner" ) ).getPath();
 
-        client.execute( createFolder().
+        contentService.create( createFolder().
             name( "jumping-jack-big-bounce" ).
             parent( trampolinerPath ).
             displayName( "Jumping Jack - Big Bounce" ) ).getPath();
 
-        client.execute( createFolder().
+        contentService.create( createFolder().
             name( "jumping-jack-pop" ).
             parent( trampolinerPath ).
             displayName( "Jumping Jack - Pop" ).
             contentType( ContentTypeName.folder() ) ).getPath();
     }
 
-    private CreateContent createFolder()
+    private CreateContentParams createFolder()
     {
-        return Commands.content().create().
+        return new CreateContentParams().
             owner( AccountKey.anonymous() ).
             contentData( new ContentData() ).
             form( getContentType( ContentTypeName.folder() ).form() ).
@@ -82,5 +84,11 @@ public class ContentInitializer
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
+    }
+
+    @Inject
+    public void setContentService( final ContentService contentService )
+    {
+        this.contentService = contentService;
     }
 }

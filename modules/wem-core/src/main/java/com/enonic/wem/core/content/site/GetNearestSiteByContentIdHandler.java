@@ -1,22 +1,23 @@
 package com.enonic.wem.core.content.site;
 
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.GetContentById;
-import com.enonic.wem.api.command.content.GetContentByPath;
+import javax.inject.Inject;
+
 import com.enonic.wem.api.command.content.site.GetNearestSiteByContentId;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.core.command.CommandHandler;
 
 public class GetNearestSiteByContentIdHandler
     extends CommandHandler<GetNearestSiteByContentId>
 {
+    private ContentService contentService;
+
     @Override
     public void handle()
         throws Exception
     {
-        final GetContentById getContent = Commands.content().get().byId( command.getContent() );
-        final Content content = context.getClient().execute( getContent );
+        final Content content = contentService.getById( command.getContent() );
 
         if ( content.isSite() )
         {
@@ -39,8 +40,7 @@ public class GetNearestSiteByContentIdHandler
             return null;
         }
 
-        final GetContentByPath getContent = Commands.content().get().byPath( contentPath );
-        final Content content = context.getClient().execute( getContent );
+        final Content content = contentService.getByPath( contentPath );
 
         if ( content.isSite() )
         {
@@ -51,5 +51,11 @@ public class GetNearestSiteByContentIdHandler
             final ContentPath parentPath = content.getParentPath();
             return returnIfSiteOrTryParent( parentPath );
         }
+    }
+
+    @Inject
+    public void setContentService( final ContentService contentService )
+    {
+        this.contentService = contentService;
     }
 }

@@ -1,9 +1,11 @@
 package com.enonic.wem.core.content.page;
 
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.UpdateContent;
+import javax.inject.Inject;
+
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentNotFoundException;
+import com.enonic.wem.api.content.ContentService;
+import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageNotFoundException;
@@ -15,11 +17,14 @@ import static com.enonic.wem.api.content.Content.editContent;
 public class UpdatePageHandler
     extends CommandHandler<UpdatePage>
 {
+    @Inject
+    private ContentService contentService;
+
     @Override
     public void handle()
         throws Exception
     {
-        final Content content = context.getClient().execute( Commands.content().get().byId( command.getContent() ) );
+        final Content content = contentService.getById( command.getContent() );
 
         if ( content == null )
         {
@@ -36,7 +41,7 @@ public class UpdatePageHandler
         {
             final Page editedPage = editBuilder.build();
 
-            final UpdateContent updateContent = Commands.content().update().
+            final UpdateContentParams params = new UpdateContentParams().
                 contentId( command.getContent() ).
                 editor( new ContentEditor()
                 {
@@ -47,10 +52,10 @@ public class UpdatePageHandler
                     }
                 } );
 
-            context.getClient().execute( updateContent );
+            contentService.update( params );
         }
 
-        final Content updatedContent = context.getClient().execute( Commands.content().get().byId( command.getContent() ) );
+        final Content updatedContent = contentService.getById( command.getContent() );
 
         command.setResult( updatedContent );
     }

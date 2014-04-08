@@ -1,8 +1,10 @@
 package com.enonic.wem.core.content.page;
 
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.UpdateContent;
+import javax.inject.Inject;
+
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentService;
+import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.page.CreatePage;
 import com.enonic.wem.api.content.page.Page;
@@ -14,6 +16,9 @@ import static com.enonic.wem.api.content.page.Page.newPage;
 public class CreatePageHandler
     extends CommandHandler<CreatePage>
 {
+    @Inject
+    private ContentService contentService;
+
     @Override
     public void handle()
         throws Exception
@@ -24,7 +29,7 @@ public class CreatePageHandler
             regions( command.getRegions() ).
             build();
 
-        final UpdateContent updateContent = Commands.content().update().
+        final UpdateContentParams params = new UpdateContentParams().
             contentId( command.getContent() ).
             editor( new ContentEditor()
             {
@@ -35,7 +40,7 @@ public class CreatePageHandler
                 }
             } );
 
-        final Content updatedContent = context.getClient().execute( updateContent );
+        final Content updatedContent = contentService.update( params );
         command.setResult( updatedContent );
     }
 }

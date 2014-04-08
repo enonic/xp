@@ -1,31 +1,31 @@
 package com.enonic.wem.core.content;
 
 import com.enonic.wem.api.blob.BlobService;
-import com.enonic.wem.api.command.content.GetChildContent;
+import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.entity.GetNodesByParentParams;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.schema.content.ContentTypeService;
-import com.enonic.wem.core.command.CommandContext;
 
 
-public class GetChildContentService
-    extends ContentService
+final class GetChildContentService
+    extends AbstractContentCommand
 {
-    private final GetChildContent command;
+    private final ContentPath contentPath;
 
     private boolean populateChildIds = false;
 
-    public GetChildContentService( final CommandContext context,
-                                   final GetChildContent command,
-                                   final NodeService nodeService,
-                                   final ContentTypeService contentTypeService,
-                                   final BlobService blobService )
+    GetChildContentService( final ContentPath contentPath,
+                            final NodeService nodeService,
+                            final ContentTypeService contentTypeService,
+                            final BlobService blobService )
     {
-        super( context, nodeService, contentTypeService, blobService );
-        this.command = command;
+        this.contentPath = contentPath;
+        super.nodeService = nodeService;
+        super.contentTypeService = contentTypeService;
+        super.blobService = blobService;
     }
 
     GetChildContentService populateChildIds( boolean value )
@@ -34,17 +34,16 @@ public class GetChildContentService
         return this;
     }
 
-    public Contents execute()
-        throws Exception
+    Contents execute()
     {
-        final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( command.getParentPath() );
+        final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( this.contentPath );
 
         final Nodes nodes = nodeService.getByParent( new GetNodesByParentParams( nodePath ) );
-        final Contents contents = translator.fromNodes( removeNonContentNodes( nodes ) );
+        final Contents contents = getTranslator().fromNodes( removeNonContentNodes( nodes ) );
 
         if ( populateChildIds )
         {
-            return new ChildContentIdsResolver( context, this.nodeService, this.contentTypeService, this.blobService ).resolve( contents );
+            return new ChildContentIdsResolver( this.nodeService, this.contentTypeService, this.blobService ).resolve( contents );
         }
         else
         {

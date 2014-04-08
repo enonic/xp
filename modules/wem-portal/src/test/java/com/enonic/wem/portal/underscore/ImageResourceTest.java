@@ -12,15 +12,14 @@ import org.junit.Test;
 import com.google.common.io.ByteStreams;
 import com.sun.jersey.api.client.ClientResponse;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobService;
-import com.enonic.wem.api.command.content.GetContentByPath;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.GetAttachmentParams;
@@ -42,21 +41,18 @@ public class ImageResourceTest
 {
     private ImageResource resource;
 
-    private Client client;
-
     private ImageFilterBuilder imageFilterBuilder;
 
     private AttachmentService attachmentService;
 
     private BlobService blobService;
 
+    private ContentService contentService;
+
     @Override
     protected Object getResourceInstance()
     {
         resource = new ImageResource();
-
-        client = mock( Client.class );
-        resource.client = client;
 
         imageFilterBuilder = mock( ImageFilterBuilder.class );
         resource.imageFilterBuilder = imageFilterBuilder;
@@ -66,6 +62,9 @@ public class ImageResourceTest
 
         blobService = mock( BlobService.class );
         resource.blobService = blobService;
+
+        contentService = mock( ContentService.class );
+        resource.contentService = contentService;
 
         return resource;
     }
@@ -81,8 +80,10 @@ public class ImageResourceTest
     public void getImageFound()
         throws Exception
     {
-        Content content = createContent( "content-id", "path/to/content", "image" );
-        when( client.execute( isA( GetContentByPath.class ) ) ).thenReturn( content );
+        final ContentPath contentPath = ContentPath.from( "path/to/content" );
+        final Content content = createContent( "content-id", contentPath, "image" );
+        when( contentService.getByPath( contentPath ) ).thenReturn( content );
+
         final BlobKey blobKey = new BlobKey( "<blobkey-1>" );
         final Attachment attachment = newAttachment().
             blobKey( blobKey ).
@@ -108,7 +109,7 @@ public class ImageResourceTest
     public void getImageNotFound()
         throws Exception
     {
-        when( client.execute( isA( GetContentByPath.class ) ) ).thenReturn( null );
+        when( contentService.getByPath( ContentPath.from( "path/to/content" ) ) ).thenReturn( null );
 
         resource.mode = "live";
         resource.contentPath = "path/to/content";
@@ -123,8 +124,10 @@ public class ImageResourceTest
     public void getImageWithFilter()
         throws Exception
     {
-        Content content = createContent( "content-id", "path/to/content", "image" );
-        when( client.execute( isA( GetContentByPath.class ) ) ).thenReturn( content );
+        final ContentPath contentPath = ContentPath.from( "path/to/content" );
+        final Content content = createContent( "content-id", contentPath, "image" );
+        when( contentService.getByPath( contentPath ) ).thenReturn( content );
+
         final BlobKey blobKey = new BlobKey( "<blobkey-1>" );
         final Attachment attachment = newAttachment().
             blobKey( blobKey ).
@@ -160,11 +163,11 @@ public class ImageResourceTest
         };
     }
 
-    private Content createContent( final String id, final String name, final String contentTypeName )
+    private Content createContent( final String id, final ContentPath contentPath, final String contentTypeName )
     {
         return Content.newContent().
             id( ContentId.from( id ) ).
-            path( ContentPath.from( name ) ).
+            path( contentPath ).
             createdTime( DateTime.now() ).
             owner( UserKey.from( "myStore:me" ) ).
             displayName( "My Content" ).

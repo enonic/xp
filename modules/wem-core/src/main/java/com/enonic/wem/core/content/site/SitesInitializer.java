@@ -3,10 +3,11 @@ package com.enonic.wem.core.content.site;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.ContentService;
+import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.CreatePageDescriptorParams;
@@ -63,8 +64,6 @@ import static com.enonic.wem.api.form.Input.newInput;
 public class SitesInitializer
     extends BaseInitializer
 {
-    private SiteTemplateService siteTemplateService;
-
     private final static ModuleKey DEMO_MODULE_KEY = ModuleKey.from( "test-1.0.0" );
 
     private static final ComponentDescriptorName LANDING_PAGE_DESCRIPTOR_NAME = new ComponentDescriptorName( "landing-page" );
@@ -103,13 +102,19 @@ public class SitesInitializer
 
     private Content intranetSite;
 
+    private SiteTemplateService siteTemplateService;
+
     @Inject
     protected ModuleService moduleService;
 
     @Inject
     protected PartDescriptorService partDescriptorService;
+
     @Inject
     protected PageDescriptorService pageDescriptorService;
+
+    @Inject
+    private ContentService contentService;
 
     protected SitesInitializer()
     {
@@ -417,14 +422,14 @@ public class SitesInitializer
 
     private Content createSiteContent( final String name, final String displayName )
     {
-        final CreateContent createContent = Commands.content().create().
+        final CreateContentParams createContent = new CreateContentParams().
             name( name ).
             parent( ContentPath.ROOT ).
             displayName( displayName ).
             contentType( ContentTypeName.page() ).
             form( newForm().build() ).
             contentData( new ContentData() );
-        return client.execute( createContent );
+        return contentService.create( createContent );
     }
 
     @Inject

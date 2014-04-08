@@ -21,18 +21,16 @@ public class GetChildContentTypesCommandTest
 
     private ContentTypeDao contentTypeDao;
 
-    private MixinService mixinService;
-
     @Before
     public void setUp()
         throws Exception
     {
         super.initialize();
 
-        this.mixinService = Mockito.mock( MixinService.class );
+        final MixinService mixinService = Mockito.mock( MixinService.class );
         this.contentTypeDao = Mockito.mock( ContentTypeDao.class );
 
-        command = new GetChildContentTypesCommand().contentTypeDao( this.contentTypeDao ).mixinService( this.mixinService );
+        command = new GetChildContentTypesCommand().contentTypeDao( this.contentTypeDao ).mixinService( mixinService );
     }
 
     @Test

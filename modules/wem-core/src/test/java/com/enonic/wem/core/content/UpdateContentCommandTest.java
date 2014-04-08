@@ -10,12 +10,13 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.command.content.UpdateContent;
-import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.ContentService;
+import com.enonic.wem.api.content.UpdateContentParams;
+import com.enonic.wem.api.content.ValidateContentData;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditor;
@@ -25,37 +26,33 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
-import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 
 import static com.enonic.wem.api.content.Content.editContent;
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 import static org.mockito.Matchers.isA;
 
-public class UpdateContentHandlerTest
-    extends AbstractCommandHandlerTest
+public class UpdateContentCommandTest
 {
     private static final DateTime CREATED_TIME = new DateTime( 2013, 1, 1, 12, 0, 0, 0 );
 
     private static final DateTime UPDATED_TIME = new DateTime( 2013, 1, 1, 13, 0, 0, 0 );
 
-    private UpdateContentHandler handler;
+    private UpdateContentCommand command;
 
     @Before
     public void before()
         throws Exception
     {
-        super.initialize();
-
         final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
         final AttachmentService attachmentService = Mockito.mock( AttachmentService.class );
+        final ContentService contentService = Mockito.mock( ContentService.class );
 
-        handler = new UpdateContentHandler();
-        handler.setContext( this.context );
-        handler.setContentTypeService( contentTypeService );
-        handler.setAttachmentService( attachmentService );
+        command = new UpdateContentCommand();
+        command.contentTypeService( contentTypeService );
+        command.attachmentService( attachmentService );
 
-        Mockito.when( client.execute( isA( ValidateContentData.class ) ) ).thenReturn( DataValidationErrors.empty() );
+        Mockito.when( contentService.validate( isA( ValidateContentData.class ) ) ).thenReturn( DataValidationErrors.empty() );
 
         final ContentTypeName myContentTypeName = ContentTypeName.from( "my_content_type" );
         final ContentType myContentType = newContentType().
@@ -80,7 +77,7 @@ public class UpdateContentHandlerTest
         final ContentData unchangedContentData = new ContentData();
         unchangedContentData.add( new Property.String( "myData", "aaa" ) );
 
-        UpdateContent command = new UpdateContent().
+        UpdateContentParams params = new UpdateContentParams().
             modifier( AccountKey.superUser() ).
             contentId( ContentId.from( "mycontent" ) ).
             editor( new ContentEditor()
@@ -93,8 +90,7 @@ public class UpdateContentHandlerTest
             } );
 
         // exercise
-        this.handler.setCommand( command );
-        handler.handle();
+        this.command.execute();
     }
 
 
@@ -114,7 +110,7 @@ public class UpdateContentHandlerTest
         final ContentData unchangedContentData = new ContentData();
         unchangedContentData.add( new Property.String( "myData", "aaa" ) );
 
-        UpdateContent command = new UpdateContent().
+        UpdateContentParams params = new UpdateContentParams().
             modifier( AccountKey.superUser() ).
             contentId( existingContent.getId() ).
             editor( new ContentEditor()
@@ -127,8 +123,7 @@ public class UpdateContentHandlerTest
             } );
 
         // exercise
-        this.handler.setCommand( command );
-        handler.handle();
+        this.command.execute();
 
         // verify
     }
@@ -149,7 +144,7 @@ public class UpdateContentHandlerTest
         final ContentData changedContentData = new ContentData();
         changedContentData.add( new Property.String( "myData", "bbb" ) );
 
-        UpdateContent command = new UpdateContent().
+        UpdateContentParams params = new UpdateContentParams().
             modifier( AccountKey.superUser() ).
             contentId( existingContent.getId() ).
             editor( new ContentEditor()
@@ -162,8 +157,7 @@ public class UpdateContentHandlerTest
             } );
 
         // exercise
-        this.handler.setCommand( command );
-        handler.handle();
+        this.command.execute();
 
         // verify
         Content storedContent = newContent( createContent( existingContentData ) ).

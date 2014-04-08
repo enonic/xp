@@ -15,12 +15,11 @@ import org.mockito.Mockito;
 import com.google.common.base.Charsets;
 import com.sun.jersey.api.client.ClientResponse;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.command.content.GetContentByPath;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.module.ModuleResourceKey;
@@ -41,11 +40,9 @@ public class PublicResourceTest
 
     private ModuleResourcePathResolver modulePathResolver;
 
-    private ModuleKeyResolverService moduleKeyResolverService;
-
     private ModuleKeyResolver moduleKeyResolver;
 
-    private Client client;
+    private ContentService contentService;
 
     private Path tempDir;
 
@@ -53,13 +50,13 @@ public class PublicResourceTest
     protected Object getResourceInstance()
     {
         modulePathResolver = Mockito.mock( ModuleResourcePathResolver.class );
-        moduleKeyResolverService = Mockito.mock( ModuleKeyResolverService.class );
+        final ModuleKeyResolverService moduleKeyResolverService = Mockito.mock( ModuleKeyResolverService.class );
         moduleKeyResolver = Mockito.mock( ModuleKeyResolver.class );
-        client = Mockito.mock( Client.class );
+        contentService = Mockito.mock( ContentService.class );
         when( moduleKeyResolverService.forContent( isA( ContentPath.class ) ) ).thenReturn( moduleKeyResolver );
         resource = new PublicResource();
         resource.modulePathResolver = modulePathResolver;
-        resource.client = client;
+//        resource.contentService = contentService;
         resource.moduleKeyResolverService = moduleKeyResolverService;
         return resource;
     }
@@ -86,8 +83,10 @@ public class PublicResourceTest
         final Path filePath = tempDir.resolve( "main.css" );
         Files.write( filePath, "p {color:red;}".getBytes( Charsets.UTF_8 ) );
         when( modulePathResolver.resolveResourcePath( isA( ModuleResourceKey.class ) ) ).thenReturn( filePath );
-        Content content = createContent( "content-id", "path/to/content", "content-type" );
-        when( client.execute( Mockito.isA( GetContentByPath.class ) ) ).thenReturn( content );
+
+        final ContentPath contentPath = ContentPath.from( "path/to/content" );
+        final Content content = createContent( "content-id", contentPath, "content-type" );
+        when( contentService.getByPath( contentPath ) ).thenReturn( content );
 
         resource.mode = "live";
         resource.contentPath = "content";
@@ -108,8 +107,10 @@ public class PublicResourceTest
         final Path filePath = tempDir.resolve( "main.css" );
         Files.write( filePath, "p {color:red;}".getBytes( Charsets.UTF_8 ) );
         when( modulePathResolver.resolveResourcePath( isA( ModuleResourceKey.class ) ) ).thenReturn( filePath );
-        Content content = createContent( "content-id", "path/to/content", "content-type" );
-        when( client.execute( Mockito.isA( GetContentByPath.class ) ) ).thenReturn( content );
+
+        final ContentPath contentPath = ContentPath.from( "path/to/content" );
+        final Content content = createContent( "content-id", contentPath, "content-type" );
+        when( contentService.getByPath( contentPath ) ).thenReturn( content );
         when( moduleKeyResolver.resolve( ModuleName.from( "demo" ) ) ).thenReturn( ModuleKey.from( "demo-1.0.0" ) );
 
         resource.mode = "live";
@@ -130,8 +131,10 @@ public class PublicResourceTest
     {
         final Path filePath = tempDir.resolve( "main.css" );
         when( modulePathResolver.resolveResourcePath( isA( ModuleResourceKey.class ) ) ).thenReturn( filePath );
-        Content content = createContent( "content-id", "path/to/content", "content-type" );
-        when( client.execute( Mockito.isA( GetContentByPath.class ) ) ).thenReturn( content );
+
+        final ContentPath contentPath = ContentPath.from( "path/to/content" );
+        final Content content = createContent( "content-id", contentPath, "content-type" );
+        when( contentService.getByPath( contentPath ) ).thenReturn( content );
 
         resource.mode = "live";
         resource.contentPath = "content";
@@ -149,8 +152,10 @@ public class PublicResourceTest
     {
         final Path filePath = tempDir.resolve( "main.css" );
         when( modulePathResolver.resolveResourcePath( isA( ModuleResourceKey.class ) ) ).thenReturn( filePath );
-        Content content = createContent( "content-id", "path/to/content", "content-type" );
-        when( client.execute( Mockito.isA( GetContentByPath.class ) ) ).thenReturn( content );
+
+        final ContentPath contentPath = ContentPath.from( "path/to/content" );
+        final Content content = createContent( "content-id", contentPath, "content-type" );
+        when( contentService.getByPath( contentPath ) ).thenReturn( content );
 
         resource.mode = "live";
         resource.contentPath = "content";
@@ -168,7 +173,7 @@ public class PublicResourceTest
     {
         final Path filePath = tempDir.resolve( "main.css" );
         when( modulePathResolver.resolveResourcePath( isA( ModuleResourceKey.class ) ) ).thenReturn( filePath );
-        when( client.execute( Mockito.isA( GetContentByPath.class ) ) ).thenReturn( null );
+        when( contentService.getByPath( ContentPath.from( "content" ) ) ).thenReturn( null );
 
         resource.mode = "live";
         resource.contentPath = "content";
@@ -180,11 +185,11 @@ public class PublicResourceTest
         assertEquals( 404, resp.getStatus() );
     }
 
-    private Content createContent( final String id, final String name, final String contentTypeName )
+    private Content createContent( final String id, final ContentPath contentPath, final String contentTypeName )
     {
         return Content.newContent().
             id( ContentId.from( id ) ).
-            path( ContentPath.from( name ) ).
+            path( contentPath ).
             createdTime( DateTime.now() ).
             owner( UserKey.from( "myStore:me" ) ).
             displayName( "My Content" ).

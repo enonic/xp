@@ -1,15 +1,11 @@
-package com.enonic.wem.api.command.content;
+package com.enonic.wem.api.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 
 public class ValidateContentData
-    extends Command<DataValidationErrors>
-
 {
     private ContentData contentData;
 
@@ -37,7 +33,6 @@ public class ValidateContentData
         return this;
     }
 
-    @Override
     public void validate()
     {
         Preconditions.checkNotNull( contentData, "contentData cannot be null" );

@@ -4,9 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ValidateContentData;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.FormItemSet;
@@ -16,7 +15,6 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
-import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.form.FieldSet.newFieldSet;
@@ -25,10 +23,9 @@ import static com.enonic.wem.api.form.Input.newInput;
 import static org.junit.Assert.*;
 
 
-public class ValidateContentDataHandlerTest
-    extends AbstractCommandHandlerTest
+public class ValidateContentDataCommandTest
 {
-    private ValidateContentDataHandler handler;
+    private ValidateContentDataCommand command;
 
     private ContentTypeService contentTypeService;
 
@@ -36,13 +33,10 @@ public class ValidateContentDataHandlerTest
     public void setUp()
         throws Exception
     {
-        super.initialize();
-
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
 
-        handler = new ValidateContentDataHandler();
-        handler.setContext( this.context );
-        handler.setContentTypeService( this.contentTypeService );
+        command = new ValidateContentDataCommand();
+        command.contentTypeService( this.contentTypeService );
     }
 
     @Test
@@ -67,13 +61,10 @@ public class ValidateContentDataHandlerTest
         final Content content = Content.newContent().path( "/mycontent" ).type( contentType.getName() ).build();
 
         // exercise
-        final ValidateContentData command =
-            Commands.content().validate().contentData( content.getContentData() ).contentType( contentType.getName() );
-        this.handler.setCommand( command );
-        this.handler.handle();
+        final ValidateContentData data = new ValidateContentData().contentData( content.getContentData() ).contentType( contentType.getName() );
 
         // test
-        final DataValidationErrors result = command.getResult();
+        final DataValidationErrors result = this.command.data( data ).execute();
         assertTrue( result.hasErrors() );
         assertEquals( 1, result.size() );
 
@@ -99,13 +90,10 @@ public class ValidateContentDataHandlerTest
         content.getContentData().setProperty( "mySet.myInput", new Value.String( "thing" ) );
 
         // exercise
-        final ValidateContentData command =
-            Commands.content().validate().contentData( content.getContentData() ).contentType( contentType.getName() );
-        this.handler.setCommand( command );
-        this.handler.handle();
+        final ValidateContentData data = new ValidateContentData().contentData( content.getContentData() ).contentType( contentType.getName() );
 
         // test
-        final DataValidationErrors result = command.getResult();
+        final DataValidationErrors result = this.command.data( data ).execute();
         assertFalse( result.hasErrors() );
         assertEquals( 0, result.size() );
 

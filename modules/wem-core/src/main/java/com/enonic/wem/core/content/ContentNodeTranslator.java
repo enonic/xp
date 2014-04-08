@@ -7,12 +7,12 @@ import com.google.common.io.InputSupplier;
 
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobService;
-import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.thumb.Thumbnail;
@@ -55,18 +55,18 @@ public class ContentNodeTranslator
         this.contentTypeService = contentTypeService;
     }
 
-    public CreateNodeParams toCreateNode( final CreateContent command )
+    public CreateNodeParams toCreateNode( final CreateContentParams params )
     {
-        final RootDataSet contentAsData = CONTENT_SERIALIZER.toData( command );
+        final RootDataSet contentAsData = CONTENT_SERIALIZER.toData( params );
 
         final EntityIndexConfig entityIndexConfig = ContentEntityIndexConfigFactory.create();
 
-        Attachments contentAttachments = command.getAttachments();
+        Attachments contentAttachments = params.getAttachments();
 
         final com.enonic.wem.api.entity.Attachments.Builder nodeAttachmentsBuilder = com.enonic.wem.api.entity.Attachments.builder().
             addAll( CONTENT_ATTACHMENT_NODE_TRANSLATOR.toNodeAttachments( contentAttachments ) );
 
-        final Thumbnail thumbnail = resolveThumbnailAttachment( command );
+        final Thumbnail thumbnail = resolveThumbnailAttachment( params );
 
         if ( thumbnail != null )
         {
@@ -74,9 +74,9 @@ public class ContentNodeTranslator
         }
 
         return new CreateNodeParams().
-            name( resolveNodeName( command.getName() ) ).
-            parent( resolveParentNodePath( command.getParentContentPath() ) ).
-            embed( command.isEmbed() ).
+            name( resolveNodeName( params.getName() ) ).
+            parent( resolveParentNodePath( params.getParentContentPath() ) ).
+            embed( params.isEmbed() ).
             data( contentAsData ).
             attachments( nodeAttachmentsBuilder.build() ).
             entityIndexConfig( entityIndexConfig );
@@ -197,9 +197,9 @@ public class ContentNodeTranslator
         return NodePath.newPath( CONTENTS_ROOT_PATH ).elements( parentContentPath.toString() ).build();
     }
 
-    private Thumbnail resolveThumbnailAttachment( final CreateContent command )
+    private Thumbnail resolveThumbnailAttachment( final CreateContentParams params )
     {
-        final ContentType contentType = getContentType( command.getContentType() );
+        final ContentType contentType = getContentType( params.getContentType() );
         if ( contentType.getSuperType() == null )
         {
             return null;
@@ -207,10 +207,10 @@ public class ContentNodeTranslator
 
         if ( contentType.getSuperType().isMedia() )
         {
-            Attachment mediaAttachment = command.getAttachment( command.getName().toString() );
+            Attachment mediaAttachment = params.getAttachment( params.getName().toString() );
             if ( mediaAttachment == null )
             {
-                mediaAttachment = command.getAttachments().first();
+                mediaAttachment = params.getAttachments().first();
             }
             if ( mediaAttachment != null )
             {

@@ -1,40 +1,32 @@
 package com.enonic.wem.core.content;
 
 import com.enonic.wem.api.blob.BlobService;
-import com.enonic.wem.api.command.content.GetChildContent;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.schema.content.ContentTypeService;
-import com.enonic.wem.core.command.CommandContext;
 
-class ChildContentIdsResolver
+final class ChildContentIdsResolver
 {
-    private final CommandContext context;
-
     private final NodeService nodeService;
 
     private final ContentTypeService contentTypeService;
 
     private final BlobService blobService;
 
-    ChildContentIdsResolver( final CommandContext context,
-                             final NodeService nodeService,
+    ChildContentIdsResolver( final NodeService nodeService,
                              final ContentTypeService contentTypeService,
                              final BlobService blobService )
     {
-        this.context = context;
         this.nodeService = nodeService;
         this.contentTypeService = contentTypeService;
         this.blobService = blobService;
     }
 
     Content resolve( final Content content )
-        throws Exception
     {
         final Contents children = new GetChildContentService(
-            context,
-            new GetChildContent().parentPath( content.getPath() ),
+            content.getPath(),
             nodeService,
             contentTypeService,
             blobService ).execute();
@@ -55,7 +47,6 @@ class ChildContentIdsResolver
     }
 
     Contents resolve( final Contents contents )
-        throws Exception
     {
         final Contents.Builder builder = new Contents.Builder();
 

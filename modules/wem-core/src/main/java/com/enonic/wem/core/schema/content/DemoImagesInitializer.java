@@ -11,9 +11,9 @@ import com.google.common.io.ByteStreams;
 
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobService;
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.ContentService;
+import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Property;
@@ -37,6 +37,9 @@ public class DemoImagesInitializer
 
     @Inject
     private BlobService blobService;
+
+    @Inject
+    private ContentService contentService;
 
     protected DemoImagesInitializer()
     {
@@ -85,7 +88,7 @@ public class DemoImagesInitializer
         final Blob blob = blobService.create( ByteStreams.newInputStreamSupplier( bytes ).getInput() );
         final Attachment attachment = newAttachment().name( filteredFileName ).blobKey( blob.getKey() ).mimeType( "image/jpeg" ).build();
 
-        final CreateContent createContent = Commands.content().create().
+        final CreateContentParams params = new CreateContentParams().
             contentType( ContentTypeName.imageMedia() ).
             form( ContentTypesInitializer.MEDIA_IMAGE_FORM ).
             displayName( displayName ).
@@ -93,7 +96,7 @@ public class DemoImagesInitializer
             parent( parent ).
             contentData( dataSet ).
             attachments( attachment );
-        client.execute( createContent ).getId();
+        contentService.create( params ).getId();
     }
 
     private ContentData createContentData( final String attachmentName )

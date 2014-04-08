@@ -3,6 +3,7 @@ package com.enonic.wem.admin.rest.resource.content;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -30,32 +31,27 @@ import com.enonic.wem.admin.rest.resource.content.json.AbstractContentQueryResul
 import com.enonic.wem.admin.rest.resource.content.json.ContentNameJson;
 import com.enonic.wem.admin.rest.resource.content.json.ContentQueryJson;
 import com.enonic.wem.admin.rest.resource.content.json.CreateContentJson;
-import com.enonic.wem.admin.rest.resource.content.json.DeleteContentParams;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentResultJson;
 import com.enonic.wem.admin.rest.resource.content.json.UpdateAttachmentsJson;
-import com.enonic.wem.admin.rest.resource.content.json.UpdateContentParams;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.DeleteContent;
-import com.enonic.wem.api.command.content.FindContent;
-import com.enonic.wem.api.command.content.GenerateContentName;
-import com.enonic.wem.api.command.content.GetChildContent;
-import com.enonic.wem.api.command.content.GetContentByIds;
 import com.enonic.wem.api.command.content.GetContentVersion;
-import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
+import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.content.DeleteContentResult;
+import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
+import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditor;
-import com.enonic.wem.api.content.query.ContentQuery;
 import com.enonic.wem.api.content.query.ContentQueryResult;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
 
@@ -73,6 +69,8 @@ public class ContentResource
 
     private final String EXPAND_NONE = "none";
 
+    private ContentService contentService;
+
     @GET
     public ContentIdJson getById( @QueryParam("id") final String idParam, @QueryParam("version") final Long versionParam,
                                   @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expandParam )
@@ -82,7 +80,7 @@ public class ContentResource
         final Content content;
         if ( versionParam == null )
         {
-            content = client.execute( Commands.content().get().byId( id ) );
+            content = contentService.getById( id );
         }
         else
         {
@@ -120,7 +118,7 @@ public class ContentResource
         final ContentPath path = ContentPath.from( pathParam );
         if ( versionParam == null )
         {
-            content = client.execute( Commands.content().get().byPath( path ) );
+            content = contentService.getByPath( path );
         }
         else
         {
@@ -157,16 +155,15 @@ public class ContentResource
         final Contents contents;
         if ( StringUtils.isEmpty( parentIdParam ) )
         {
-            contents = client.execute( Commands.content().getRoots() );
+            contents = contentService.getRoots();
         }
         else
         {
-            final Contents parentContents = client.execute( Commands.content().get().byIds( ContentIds.from( parentIdParam ) ) );
+            final Contents parentContents = contentService.getByIds( ContentIds.from( parentIdParam ), false );
 
             if ( parentContents.isNotEmpty() )
             {
-                final GetChildContent getChildContent = Commands.content().getChildren().parentPath( parentContents.first().getPath() );
-                contents = client.execute( getChildContent );
+                contents = contentService.getChildren( parentContents.first().getPath() );
             }
             else
             {
@@ -196,12 +193,11 @@ public class ContentResource
         final Contents contents;
         if ( StringUtils.isEmpty( parentPathParam ) )
         {
-            contents = client.execute( Commands.content().getRoots() );
+            contents = contentService.getRoots();
         }
         else
         {
-            final GetChildContent getChildContent = Commands.content().getChildren().parentPath( ContentPath.from( parentPathParam ) );
-            contents = client.execute( getChildContent );
+            contents = contentService.getChildren( ContentPath.from( parentPathParam ) );
         }
 
         if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
@@ -223,18 +219,9 @@ public class ContentResource
     @Consumes(MediaType.APPLICATION_JSON)
     public AbstractContentQueryResultJson query( final ContentQueryJson contentQueryJson )
     {
-        final ContentQuery contentQuery = contentQueryJson.getContentQuery();
-
-        final FindContent findContent = Commands.content().find().query( contentQuery );
-
-        final ContentQueryResult contentQueryResult = this.client.execute( findContent );
-
+        final ContentQueryResult contentQueryResult = contentService.find( contentQueryJson.getContentQuery() );
         final boolean getChildrenIds = !Expand.NONE.matches( contentQueryJson.getExpand() );
-
-        final GetContentByIds getContents =
-            Commands.content().get().byIds( ContentIds.from( contentQueryResult.getContentIds() ) ).setGetChildrenIds( getChildrenIds );
-
-        final Contents contents = this.client.execute( getContents );
+        final Contents contents = contentService.getByIds( ContentIds.from( contentQueryResult.getContentIds() ), getChildrenIds );
 
         return ContentQueryResultJsonFactory.create( contentQueryResult, contents, contentQueryJson.getExpand() );
     }
@@ -243,9 +230,7 @@ public class ContentResource
     @Path("generateName")
     public ContentNameJson generateName( @QueryParam("displayName") final String displayNameParam )
     {
-        final GenerateContentName generateContentName = Commands.content().generateContentName().displayName( displayNameParam );
-
-        final String generatedContentName = client.execute( generateContentName );
+        final String generatedContentName = contentService.generateContentName( displayNameParam );
 
         return new ContentNameJson( generatedContentName );
     }
@@ -278,7 +263,7 @@ public class ContentResource
 
     @POST
     @Path("delete")
-    public DeleteContentResultJson delete( final DeleteContentParams params )
+    public DeleteContentResultJson delete( final com.enonic.wem.admin.rest.resource.content.json.DeleteContentParams params )
     {
         final ContentPaths contentsToDelete = ContentPaths.from( params.getContentPaths() );
 
@@ -286,13 +271,13 @@ public class ContentResource
 
         for ( final ContentPath contentToDelete : contentsToDelete )
         {
-            final DeleteContent deleteContent = Commands.content().delete();
+            final DeleteContentParams deleteContent = new DeleteContentParams();
             deleteContent.deleter( AccountKey.anonymous() );
             deleteContent.contentPath( contentToDelete );
 
             try
             {
-                final DeleteContentResult deleteResult = client.execute( deleteContent );
+                final DeleteContentResult deleteResult = contentService.delete( deleteContent );
                 jsonResult.addSuccess( contentToDelete );
             }
             catch ( ContentNotFoundException | UnableToDeleteContentException e )
@@ -308,19 +293,19 @@ public class ContentResource
     @Path("create")
     public ContentJson create( final CreateContentJson params )
     {
-        final Content persistedContent = client.execute( params.getCreateContent() );
+        final Content persistedContent = contentService.create( params.getCreateContent() );
         return new ContentJson( persistedContent );
     }
 
     @POST
     @Path("update")
-    public ContentJson update( final UpdateContentParams params )
+    public ContentJson update( final com.enonic.wem.admin.rest.resource.content.json.UpdateContentParams params )
     {
         final ContentData contentData = parseContentData( params.getContentData() );
 
         final UpdateAttachmentsJson updateAttachments = params.getUpdateAttachments();
 
-        final UpdateContent updateContent = Commands.content().update().
+        final UpdateContentParams updateParams = new UpdateContentParams().
             contentId( params.getContentId() ).
             modifier( AccountKey.anonymous() ).
             updateAttachments( params.getUpdateAttachments() != null ? params.getUpdateAttachments().getUpdateAttachments() : null ).
@@ -337,15 +322,17 @@ public class ContentResource
                 }
             } );
 
-        final Content updatedContent = client.execute( updateContent );
+        final Content updatedContent = contentService.update( updateParams );
         if ( params.getContentName().equals( updatedContent.getName() ) )
         {
             return new ContentJson( updatedContent );
         }
 
-        final Content renamedContent = client.execute( Commands.content().rename().
+        final RenameContentParams renameParams = new RenameContentParams().
             contentId( params.getContentId() ).
-            newName( params.getContentName() ) );
+            newName( params.getContentName() );
+        final Content renamedContent = contentService.rename( renameParams );
+
         return new ContentJson( renamedContent );
     }
 
@@ -373,4 +360,9 @@ public class ContentResource
         return attachments;
     }
 
+    @Inject
+    public void setContentService( final ContentService contentService )
+    {
+        this.contentService = contentService;
+    }
 }

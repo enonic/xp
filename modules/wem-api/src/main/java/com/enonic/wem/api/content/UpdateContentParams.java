@@ -1,20 +1,15 @@
-package com.enonic.wem.api.command.content;
+package com.enonic.wem.api.content;
 
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.UpdateAttachmentsParams;
 import com.enonic.wem.api.content.editor.ContentEditor;
 
-public final class UpdateContent
-    extends Command<Content>
+public final class UpdateContentParams
 {
-
     private UpdateAttachmentsParams updateAttachments;
 
     private ContentEditor editor;
@@ -33,13 +28,13 @@ public final class UpdateContent
         return modifier;
     }
 
-    public UpdateContent editor( final ContentEditor editor )
+    public UpdateContentParams editor( final ContentEditor editor )
     {
         this.editor = editor;
         return this;
     }
 
-    public UpdateContent contentId( final ContentId contentId )
+    public UpdateContentParams contentId( final ContentId contentId )
     {
         this.contentId = contentId;
         return this;
@@ -50,13 +45,13 @@ public final class UpdateContent
         return contentId;
     }
 
-    public UpdateContent modifier( final UserKey modifier )
+    public UpdateContentParams modifier( final UserKey modifier )
     {
         this.modifier = modifier;
         return this;
     }
 
-    public UpdateContent updateAttachments( final UpdateAttachmentsParams updateAttachments )
+    public UpdateContentParams updateAttachments( final UpdateAttachmentsParams updateAttachments )
     {
         this.updateAttachments = updateAttachments;
         return this;
@@ -73,7 +68,6 @@ public final class UpdateContent
         return updateAttachments;
     }
 
-    @Override
     public void validate()
     {
         Preconditions.checkNotNull( this.contentId, "contentId cannot be null" );
