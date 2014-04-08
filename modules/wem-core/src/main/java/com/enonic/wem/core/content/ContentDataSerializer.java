@@ -1,7 +1,7 @@
 package com.enonic.wem.core.content;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.CreateContentParams2;
+import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.RootDataSet;
@@ -114,7 +114,7 @@ public class ContentDataSerializer
         return builder;
     }
 
-    RootDataSet toData( final CreateContentParams2 params )
+    RootDataSet toData( final CreateContentParams params )
     {
         final RootDataSet contentAsData = new RootDataSet();
 

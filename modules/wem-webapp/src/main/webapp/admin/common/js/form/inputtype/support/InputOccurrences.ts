@@ -39,15 +39,37 @@ module api.form.inputtype.support {
             this.properties = config.properties;
 
             this.onOccurrenceRemoved((event: api.form.OccurrenceRemovedEvent) => {
-                this.notifyValueRemoved(new api.form.inputtype.ValueRemovedEvent(event.getOccurrence().getIndex()));
+                this.handleOccurrenceRemoved(event.getOccurrence().getIndex());
             });
 
-            if (this.properties != null && this.properties.length > 0) {
+            if (this.properties.length > 0) {
                 this.constructOccurrencesForData();
             }
             else {
                 this.constructOccurrencesForNoData();
             }
+        }
+
+        private handleOccurrenceAdded(value: api.data.Value) {
+
+            var property = new api.data.Property(this.input.getName(), value);
+            this.properties.push(property);
+
+            this.notifyValueAdded(new api.form.inputtype.ValueAddedEvent(value));
+        }
+
+        private handleOccurrenceRemoved(index: number) {
+
+            this.properties.splice(index, 1);
+
+            this.notifyValueRemoved(new api.form.inputtype.ValueRemovedEvent(index));
+        }
+
+        private handleOccurrenceChanged(event: api.form.inputtype.ValueChangedEvent) {
+
+            this.properties[event.getArrayIndex()].setValue(event.getNewValue());
+
+            this.notifyValueChanged(event);
         }
 
         getInput(): api.form.Input {
@@ -87,10 +109,10 @@ module api.form.inputtype.support {
             });
 
             inputOccurrenceView.onValueChanged((event: api.form.inputtype.ValueChangedEvent) => {
-                this.notifyValueChanged(event);
+                this.handleOccurrenceChanged(event);
             });
 
-            this.notifyValueAdded(new api.form.inputtype.ValueAddedEvent(new api.data.Value("", api.data.ValueTypes.STRING)));
+            this.handleOccurrenceAdded(new api.data.Value("", api.data.ValueTypes.STRING));
 
             return inputOccurrenceView;
         }

@@ -6,7 +6,7 @@ import javax.inject.Inject;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.api.content.CreateContentParams2;
+import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -64,9 +64,9 @@ public class ContentInitializer
             contentType( ContentTypeName.folder() ) ).getPath();
     }
 
-    private CreateContentParams2 createFolder()
+    private CreateContentParams createFolder()
     {
-        return new CreateContentParams2().
+        return new CreateContentParams().
             owner( AccountKey.anonymous() ).
             contentData( new ContentData() ).
             form( getContentType( ContentTypeName.folder() ).form() ).

@@ -10,7 +10,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.api.content.CreateContentParams2;
+import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.content.DeleteContentResult;
 import com.enonic.wem.api.content.RenameContentParams;
@@ -109,7 +109,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Content create( final CreateContentParams2 params )
+    public Content create( final CreateContentParams params )
     {
         return new CreateContentCommand().
             nodeService( this.nodeService ).

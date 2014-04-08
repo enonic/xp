@@ -26,7 +26,7 @@ import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.api.content.CreateContentParams2;
+import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.content.DeleteContentResult;
 import com.enonic.wem.api.content.RenameContentParams;
@@ -582,7 +582,7 @@ public class ContentResourceTest
 
         IllegalArgumentException e = new IllegalArgumentException( "Exception occured." );
 
-        Mockito.when( contentService.create( Mockito.isA( CreateContentParams2.class ) ) ).thenThrow( e );
+        Mockito.when( contentService.create( Mockito.isA( CreateContentParams.class ) ) ).thenThrow( e );
 
         resource().path( "content/create" ).
             entity( readFromFile( "create_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
@@ -598,7 +598,7 @@ public class ContentResourceTest
             ContentTypes.from( createContentType( "my-type" ) ) );
 
         Content content = createContent( "content-id", "content-path", "content-type" );
-        Mockito.when( contentService.create( Mockito.isA( CreateContentParams2.class ) ) ).thenReturn( content );
+        Mockito.when( contentService.create( Mockito.isA( CreateContentParams.class ) ) ).thenReturn( content );
 
         String jsonString = resource().path( "content/create" ).
             entity( readFromFile( "create_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).

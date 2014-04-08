@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentDataValidationException;
-import com.enonic.wem.api.content.CreateContentParams2;
+import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.entity.CreateNodeParams;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
@@ -16,7 +16,7 @@ final class CreateContentCommand
 {
     private final static Logger LOG = LoggerFactory.getLogger( CreateContentCommand.class );
 
-    private CreateContentParams2 params;
+    private CreateContentParams params;
 
     Content execute()
     {
@@ -38,7 +38,7 @@ final class CreateContentCommand
         return getTranslator().fromNode( createdNode );
     }
 
-    private void validateContentData( final CreateContentParams2 contentParams )
+    private void validateContentData( final CreateContentParams contentParams )
     {
         final DataValidationErrors dataValidationErrors = validate( contentParams.getContentType(), contentParams.getContentData() );
 
@@ -52,7 +52,7 @@ final class CreateContentCommand
         }
     }
 
-    CreateContentCommand params( final CreateContentParams2 params )
+    CreateContentCommand params( final CreateContentParams params )
     {
         this.params = params;
         return this;

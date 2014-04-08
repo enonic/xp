@@ -13,7 +13,7 @@ import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.api.content.CreateContentParams2;
+import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Property;
@@ -88,7 +88,7 @@ public class DemoImagesInitializer
         final Blob blob = blobService.create( ByteStreams.newInputStreamSupplier( bytes ).getInput() );
         final Attachment attachment = newAttachment().name( filteredFileName ).blobKey( blob.getKey() ).mimeType( "image/jpeg" ).build();
 
-        final CreateContentParams2 params = new CreateContentParams2().
+        final CreateContentParams params = new CreateContentParams().
             contentType( ContentTypeName.imageMedia() ).
             form( ContentTypesInitializer.MEDIA_IMAGE_FORM ).
             displayName( displayName ).

@@ -14,7 +14,7 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
-public final class CreateContentParams2
+public final class CreateContentParams
 {
     private Form form;
 
@@ -36,73 +36,73 @@ public final class CreateContentParams2
 
     private Map<String, Attachment> attachments = Maps.newHashMap();
 
-    public CreateContentParams2 contentType( final ContentTypeName value )
+    public CreateContentParams contentType( final ContentTypeName value )
     {
         this.contentType = value;
         return this;
     }
 
-    public CreateContentParams2 parent( final ContentPath parentContentPath )
+    public CreateContentParams parent( final ContentPath parentContentPath )
     {
         this.parentContentPath = parentContentPath;
         return this;
     }
 
-    public CreateContentParams2 embed( final boolean value )
+    public CreateContentParams embed( final boolean value )
     {
         this.embed = value;
         return this;
     }
 
-    public CreateContentParams2 form( final Form value )
+    public CreateContentParams form( final Form value )
     {
         this.form = value;
         return this;
     }
 
-    public CreateContentParams2 contentData( final ContentData value )
+    public CreateContentParams contentData( final ContentData value )
     {
         this.contentData = value;
         return this;
     }
 
-    public CreateContentParams2 owner( final UserKey owner )
+    public CreateContentParams owner( final UserKey owner )
     {
         this.owner = owner;
         return this;
     }
 
-    public CreateContentParams2 displayName( final String displayName )
+    public CreateContentParams displayName( final String displayName )
     {
         this.displayName = displayName;
         return this;
     }
 
-    public CreateContentParams2 name( final String name )
+    public CreateContentParams name( final String name )
     {
         this.name = ContentName.from( name );
         return this;
     }
 
-    public CreateContentParams2 name( final ContentName name )
+    public CreateContentParams name( final ContentName name )
     {
         this.name = name;
         return this;
     }
 
-    public CreateContentParams2 draft()
+    public CreateContentParams draft()
     {
         this.draft = true;
         return this;
     }
 
-    public CreateContentParams2 draft( final boolean value )
+    public CreateContentParams draft( final boolean value )
     {
         this.draft = value;
         return this;
     }
 
-    public CreateContentParams2 attachments( final Attachment... attachments )
+    public CreateContentParams attachments( final Attachment... attachments )
     {
         for ( Attachment attachment : attachments )
         {
@@ -118,7 +118,7 @@ public final class CreateContentParams2
         return this;
     }
 
-    public CreateContentParams2 attachments( final Iterable<Attachment> attachments )
+    public CreateContentParams attachments( final Iterable<Attachment> attachments )
     {
         return attachments( Iterables.toArray( attachments, Attachment.class ) );
     }

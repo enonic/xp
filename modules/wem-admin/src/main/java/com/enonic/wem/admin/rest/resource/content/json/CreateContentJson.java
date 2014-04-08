@@ -12,7 +12,7 @@ import com.enonic.wem.admin.json.data.DataJson;
 import com.enonic.wem.admin.json.form.FormJson;
 import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.CreateContentParams2;
+import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
@@ -20,7 +20,7 @@ public class CreateContentJson
 {
     private List<AttachmentJson> attachments;
 
-    final CreateContentParams2 createContent;
+    final CreateContentParams createContent;
 
     @JsonCreator
     CreateContentJson( @JsonProperty("draft") final String draft, @JsonProperty("name") final String name,
@@ -30,7 +30,7 @@ public class CreateContentJson
                        @JsonProperty("attachments") final List<AttachmentJson> attachmentJsonList )
     {
 
-        this.createContent = new CreateContentParams2();
+        this.createContent = new CreateContentParams();
         this.createContent.draft( Boolean.valueOf( draft ) );
         this.createContent.embed( embed );
         this.createContent.name( ContentName.from( name ) );
@@ -53,7 +53,7 @@ public class CreateContentJson
     }
 
     @JsonIgnore
-    public CreateContentParams2 getCreateContent()
+    public CreateContentParams getCreateContent()
     {
         return createContent;
     }

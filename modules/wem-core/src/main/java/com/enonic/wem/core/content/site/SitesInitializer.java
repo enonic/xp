@@ -7,7 +7,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.api.content.CreateContentParams2;
+import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.CreatePageDescriptorParams;
@@ -422,7 +422,7 @@ public class SitesInitializer
 
     private Content createSiteContent( final String name, final String displayName )
     {
-        final CreateContentParams2 createContent = new CreateContentParams2().
+        final CreateContentParams createContent = new CreateContentParams().
             name( name ).
             parent( ContentPath.ROOT ).
             displayName( displayName ).
