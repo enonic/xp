@@ -1,6 +1,6 @@
 module api.util {
 
-    var MAX_NEST_LEVEL = 5;
+    var MAX_NEST_LEVEL = 7;
     var ALLOWED_PACKAGES = ['api', 'app'];
 
     export function getClassName(instance) {
@@ -23,8 +23,8 @@ module api.util {
         var value, path, nestLevel = nestLevel || 1;
         for (var key in obj) {
             if (obj.hasOwnProperty(key)) {
-                if (nestLevel == 1 && ALLOWED_PACKAGES.length > 0 && ALLOWED_PACKAGES.indexOf(key) < 0) {
-                    // look into allowed top level packaged only
+                if (nestLevel == 1 && ALLOWED_PACKAGES.length > 0 && ALLOWED_PACKAGES.indexOf(key) < 0 || nestLevel > MAX_NEST_LEVEL) {
+                    // look into allowed top level packaged only or up to max nest level
                     continue;
                 }
                 value = obj[key];
@@ -32,7 +32,7 @@ module api.util {
                     // skip nulls and recursive values
                     continue;
                 }
-                if (typeof value === 'object' && nestLevel < MAX_NEST_LEVEL) {
+                if (typeof value === 'object') {
                     path = findPath(value, node, nestLevel + 1);
                     if (path) {
                         return key + "." + path;
