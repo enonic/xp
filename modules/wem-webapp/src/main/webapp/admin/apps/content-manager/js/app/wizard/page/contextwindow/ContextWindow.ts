@@ -119,6 +119,7 @@ module app.wizard.page.contextwindow {
         setPinned(value: boolean) {
             this.pinned = value;
             this.updateFrameSize();
+            !value ? this.addClass("unpinned") : this.removeClass("unpinned");
         }
 
         isPinned(): boolean {
