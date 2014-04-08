@@ -71,40 +71,43 @@ module app.wizard {
 
 
             this.loadContentType(this.contentTypeName).then((loadedContentType: ContentType) => {
+
                 this.contentType = loadedContentType;
+                return this.loadParentContent();
 
-                return this.loadParentContent().then((loadedParentContent: Content) => {
-                    this.parentContent = loadedParentContent;
+            }).then((loadedParentContent: Content) => {
 
-                    var parentContentId = loadedParentContent != null ? loadedParentContent.getContentId() : null;
+                this.parentContent = loadedParentContent;
+                return this.loadSite(loadedParentContent ? loadedParentContent.getContentId() : null);
 
-                    return this.loadSite(parentContentId).then((loadedSite: Content) => {
-                        this.siteContent = loadedSite;
+            }).then((loadedSite: Content) => {
 
-                        var siteTemplateToLoad: SiteTemplateKey = this.siteTemplateKey;
-                        if (siteTemplateToLoad == null && this.siteContent) {
-                            siteTemplateToLoad = this.siteContent.getSite().getTemplateKey();
-                        }
+                this.siteContent = loadedSite;
+                var siteTemplateToLoad: SiteTemplateKey = this.siteTemplateKey;
+                if (!siteTemplateToLoad && this.siteContent) {
+                    siteTemplateToLoad = this.siteContent.getSite().getTemplateKey();
+                }
 
-                        return this.loadSiteTemplate(siteTemplateToLoad).then((loadedSiteTemplate: SiteTemplate) => {
-                            this.siteTemplate = loadedSiteTemplate;
+                return this.loadSiteTemplate(siteTemplateToLoad);
 
-                            return this.loadDefaultModels(this.siteTemplate, this.contentTypeName).
-                                then((defaultModels: DefaultModels) => {
+            }).then((loadedSiteTemplate: SiteTemplate) => {
 
-                                    this.defaultModels = defaultModels;
+                this.siteTemplate = loadedSiteTemplate;
+                return this.loadDefaultModels(this.siteTemplate, this.contentTypeName);
 
-                                    this.newContentWizardPanelForNew().then((wizardPanel: ContentWizardPanel)=> {
-                                        deferred.resolve(wizardPanel);
-                                    }).catch((reason) => {
-                                        deferred.reject(reason);
-                                    }).done();
-                                });
-                        });
-                    });
-                });
+            }).then((defaultModels: DefaultModels) => {
+
+                this.defaultModels = defaultModels;
+                return this.newContentWizardPanelForNew();
+
+            }).then((wizardPanel: ContentWizardPanel)=> {
+
+                deferred.resolve(wizardPanel);
+
             }).catch((reason) => {
+
                 deferred.reject(reason);
+
             }).done();
 
             return deferred.promise;
@@ -117,161 +120,95 @@ module app.wizard {
             var deferred = Q.defer<ContentWizardPanel>();
 
             this.loadContentToEdit().then((loadedContentToEdit: Content) => {
+
                 this.contentToEdit = loadedContentToEdit;
+                return this.loadContentType(this.contentToEdit.getType());
 
-                return this.loadContentType(this.contentToEdit.getType()).then((loadedContentType: ContentType) => {
-                    this.contentType = loadedContentType;
+            }).then((loadedContentType: ContentType) => {
 
-                    return this.loadParentContent().then((loadedParentContent: Content) => {
-                        this.parentContent = loadedParentContent;
+                this.contentType = loadedContentType;
+                return this.loadParentContent();
 
-                        return this.loadSite(this.contentId).then((loadedSite: Content) => {
+            }).then((loadedParentContent: Content) => {
 
-                            var templateKey: SiteTemplateKey;
-                            if (loadedSite && loadedSite.getSite()) {
-                                this.siteContent = loadedSite;
-                                templateKey = this.siteContent.getSite().getTemplateKey();
-                            }
+                this.parentContent = loadedParentContent;
+                return this.loadSite(this.contentId);
 
-                            return this.loadSiteTemplate(templateKey).then((loadedSiteTemplate: SiteTemplate) => {
-                                this.siteTemplate = loadedSiteTemplate;
+            }).then((loadedSite: Content) => {
 
-                                return this.loadDefaultModels(this.siteTemplate, this.contentToEdit.getType()).
-                                    then((defaultModels: DefaultModels) => {
+                var templateKey: SiteTemplateKey;
+                if (loadedSite && loadedSite.getSite()) {
+                    this.siteContent = loadedSite;
+                    templateKey = this.siteContent.getSite().getTemplateKey();
+                }
+                return this.loadSiteTemplate(templateKey);
 
-                                        this.defaultModels = defaultModels;
+            }).then((loadedSiteTemplate: SiteTemplate) => {
 
-                                        this.newContentWizardPanelForEdit().
-                                            then((wizardPanel: ContentWizardPanel)=> {
-                                                deferred.resolve(wizardPanel);
+                this.siteTemplate = loadedSiteTemplate;
+                return this.loadDefaultModels(this.siteTemplate, this.contentToEdit.getType());
 
-                                            }).catch((reason) => {
-                                                deferred.reject(reason);
-                                            }).done();
-                                    });
-                            });
-                        });
-                    });
-                });
+            }).then((defaultModels: DefaultModels) => {
+
+                this.defaultModels = defaultModels;
+                return this.newContentWizardPanelForEdit();
+
+            }).then((wizardPanel: ContentWizardPanel)=> {
+
+                deferred.resolve(wizardPanel);
+
             }).catch((reason) => {
+
                 deferred.reject(reason);
+
             }).done();
 
             return deferred.promise;
         }
 
         private loadContentToEdit(): Q.Promise<Content> {
-
-            var deferred = Q.defer<Content>();
-            new api.content.GetContentByIdRequest(this.contentId).
-                sendAndParse().then((content: Content) => {
-                    deferred.resolve(content);
-                }).catch((reason) => {
-                    deferred.reject(reason);
-                }).done();
-            return deferred.promise;
+            return new api.content.GetContentByIdRequest(this.contentId).sendAndParse();
         }
 
         private loadContentType(name: ContentTypeName): Q.Promise<ContentType> {
-
-            var deferred = Q.defer<ContentType>();
-            new api.schema.content.GetContentTypeByNameRequest(name).
-                sendAndParse().then((contentType: ContentType)=> {
-                    deferred.resolve(contentType);
-                }).catch((reason) => {
-                    deferred.reject(reason);
-                }).done();
-            return deferred.promise;
+            return new api.schema.content.GetContentTypeByNameRequest(name).sendAndParse();
         }
 
         private loadSite(contentId: ContentId): Q.Promise<Content> {
-            var deferred = Q.defer<Content>();
-
-            if (contentId == null) {
-                deferred.resolve(null);
-                return deferred.promise;
-            }
-
-            new api.content.site.GetNearestSiteRequest(contentId).
-                sendAndParse().then((site: Content)=> {
-                    deferred.resolve(site);
-                }).catch((reason) => {
-                    deferred.reject(reason);
-                }).done();
-
-            return deferred.promise;
+            return contentId ? new api.content.site.GetNearestSiteRequest(contentId).sendAndParse() : Q<Content>(null);
         }
 
         private loadSiteTemplate(key: SiteTemplateKey): Q.Promise<SiteTemplate> {
-            var deferred = Q.defer<SiteTemplate>();
-
-            if (key == null) {
-                deferred.resolve(null);
-                return deferred.promise;
-            }
-
-            new api.content.site.template.GetSiteTemplateRequest(key).
-                sendAndParse().then((siteTemplate: SiteTemplate)=> {
-                    deferred.resolve(siteTemplate);
-                }).catch((reason) => {
-                    deferred.reject(reason);
-                }).done();
-
-            return deferred.promise;
+            return key ? new api.content.site.template.GetSiteTemplateRequest(key).sendAndParse() : Q<SiteTemplate>(null);
         }
 
         private loadDefaultModels(siteTemplate: SiteTemplate, contentType: ContentTypeName): Q.Promise<DefaultModels> {
 
-            var deferred = Q.defer<DefaultModels>();
-
             if (siteTemplate) {
-                DefaultModelsFactory.create(<DefaultModelsFactoryConfig>{
+                return DefaultModelsFactory.create(<DefaultModelsFactoryConfig>{
                     siteTemplateKey: siteTemplate.getKey(),
                     contentType: contentType,
                     modules: siteTemplate.getModules()
-                }).then((defaultModels: DefaultModels) => {
-
-                    deferred.resolve(defaultModels);
-
-                }).catch((reason) => {
-                    deferred.reject(reason)
-                }).done();
+                });
             }
             else {
-                deferred.resolve(null);
+                return Q<DefaultModels>(null);
             }
-
-            return deferred.promise;
         }
 
         private loadParentContent(): Q.Promise<Content> {
 
-            var deferred = Q.defer<Content>();
-
             if (this.parentContent != null) {
-                deferred.resolve(this.parentContent);
-                return deferred.promise;
+                return Q(this.parentContent);
             }
             else if (!this.creatingForNew && !this.contentToEdit.hasParent()) {
-
-                deferred.resolve(null);
-                return deferred.promise;
+                return  Q<Content>(null);
             }
             else if (this.creatingForNew && this.parentContent == null) {
-
-                deferred.resolve(null);
-                return deferred.promise;
+                return  Q<Content>(null);
             }
 
-            new api.content.GetContentByPathRequest(this.contentToEdit.getPath().getParentPath()).
-                sendAndParse().
-                then((content: Content)=> {
-                    deferred.resolve(content);
-                }).catch((reason) => {
-                    deferred.reject(reason);
-                }).done();
-
-            return deferred.promise;
+            return new api.content.GetContentByPathRequest(this.contentToEdit.getPath().getParentPath()).sendAndParse();
         }
 
         private newContentWizardPanelForNew(): Q.Promise<app.wizard.ContentWizardPanel> {
