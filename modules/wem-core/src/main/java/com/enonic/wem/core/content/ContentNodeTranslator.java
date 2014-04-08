@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.api.content.CreateContentParams;
+import com.enonic.wem.api.content.CreateContentParams2;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.thumb.Thumbnail;
@@ -55,7 +55,7 @@ public class ContentNodeTranslator
         this.contentTypeService = contentTypeService;
     }
 
-    public CreateNodeParams toCreateNode( final CreateContentParams params )
+    public CreateNodeParams toCreateNode( final CreateContentParams2 params )
     {
         final RootDataSet contentAsData = CONTENT_SERIALIZER.toData( params );
 
@@ -197,7 +197,7 @@ public class ContentNodeTranslator
         return NodePath.newPath( CONTENTS_ROOT_PATH ).elements( parentContentPath.toString() ).build();
     }
 
-    private Thumbnail resolveThumbnailAttachment( final CreateContentParams params )
+    private Thumbnail resolveThumbnailAttachment( final CreateContentParams2 params )
     {
         final ContentType contentType = getContentType( params.getContentType() );
         if ( contentType.getSuperType() == null )

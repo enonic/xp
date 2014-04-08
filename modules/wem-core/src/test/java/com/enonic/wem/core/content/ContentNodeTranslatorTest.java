@@ -11,7 +11,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.CreateContentParams;
+import com.enonic.wem.api.content.CreateContentParams2;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.data.ContentData;
@@ -65,7 +65,7 @@ public class ContentNodeTranslatorTest
     {
         final DataSet rootDataSet = RootDataSet.newDataSet().set( "test", "testValue", ValueTypes.STRING ).build();
 
-        final CreateContentParams mycontent = new CreateContentParams().
+        final CreateContentParams2 mycontent = new CreateContentParams2().
             name( "mycontent" ).
             parent( ContentPath.ROOT ).
             contentType( ContentTypeName.from( "my-content-type" ) ).
@@ -85,7 +85,7 @@ public class ContentNodeTranslatorTest
     {
         final DataSet rootDataSet = RootDataSet.newDataSet().set( "test", "testValue", ValueTypes.STRING ).build();
 
-        final CreateContentParams mycontent = new CreateContentParams().
+        final CreateContentParams2 mycontent = new CreateContentParams2().
             name( "mycontent" ).
             parent( ContentPath.ROOT ).
             contentType( ContentTypeName.from( "my-content-type" ) ).
@@ -117,7 +117,7 @@ public class ContentNodeTranslatorTest
 
         final Form form = Form.newForm().addFormItems( formItemSet.getFormItems() ).build();
 
-        final CreateContentParams mycontent = new CreateContentParams().
+        final CreateContentParams2 mycontent = new CreateContentParams2().
             name( "mycontent" ).
             parent( ContentPath.ROOT ).
             contentType( ContentTypeName.from( "my-content-type" ) ).

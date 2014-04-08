@@ -18,7 +18,7 @@ public interface ContentService
 
     Contents getChildren( ContentPath parentPath );
 
-    Content create( CreateContentParams params );
+    Content create( CreateContentParams2 params );
 
     Content update( UpdateContentParams params );
 
