@@ -2,23 +2,23 @@ module api.ui {
 
     export class CodeAreaBuilder {
 
-        name:string;
+        name: string;
 
-        mode:string;
+        mode: string;
 
-        lineNumbers:boolean;
+        lineNumbers: boolean;
 
-        public setName(value:string) : CodeAreaBuilder {
+        public setName(value: string): CodeAreaBuilder {
             this.name = value;
             return this;
         }
 
-        public setMode(value:string) : CodeAreaBuilder {
+        public setMode(value: string): CodeAreaBuilder {
             this.mode = value;
             return this;
         }
 
-        public setLineNumbers(value:boolean) : CodeAreaBuilder {
+        public setLineNumbers(value: boolean): CodeAreaBuilder {
             this.lineNumbers = value;
             return this;
         }
@@ -38,7 +38,7 @@ module api.ui {
 
         private mode: string;
 
-        constructor(builder:CodeAreaBuilder) {
+        constructor(builder: CodeAreaBuilder) {
             this.textArea = new TextArea(builder.name);
 
             super(this.textArea);
@@ -57,14 +57,9 @@ module api.ui {
                 this.codeMirror.refresh();
             });
 
-            this.onRendered((event) => {
-                console.log("CodeMirror rendered");
+            this.onShown((event) => {
                 this.codeMirror.refresh();
             });
-
-            this.onRemoved((event) => {
-                console.log("CodeMirror removed");
-            })
         }
 
         setValue(value: string) {
