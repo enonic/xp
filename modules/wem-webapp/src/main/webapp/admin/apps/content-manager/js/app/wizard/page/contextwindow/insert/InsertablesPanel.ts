@@ -71,14 +71,18 @@ module app.wizard.page.contextwindow.insert {
             });
 
             this.liveEditPage.onSortableStop(() => {
-                jQuery('[data-context-window-draggable="true"]').simulate('mouseup');
+                this.simulateMouseUpForDraggable();
             });
             this.liveEditPage.onSortableUpdate(() => {
-                jQuery('[data-context-window-draggable="true"]').simulate('mouseup');
+                this.simulateMouseUpForDraggable();
             });
             this.liveEditPage.onDragableStop(() => {
-                jQuery('[data-context-window-draggable="true"]').simulate('mouseup');
+                this.simulateMouseUpForDraggable();
             });
+        }
+
+        private simulateMouseUpForDraggable() {
+            jQuery('[data-context-window-draggable="true"]').simulate('mouseup');
         }
 
         private onStartDrag(event, ui) {
