@@ -10,6 +10,9 @@
 ///<reference path='RegionInspectionPanel.ts' />
 
 ///<reference path='PageTemplateChangedEvent.ts' />
+///<reference path='PageTemplateOption.ts' />
+///<reference path='PageTemplateOptionViewer.ts' />
+///<reference path='PageTemplateOptions.ts' />
 ///<reference path='PageTemplateSelector.ts' />
 ///<reference path='PageInspectionPanel.ts' />
 

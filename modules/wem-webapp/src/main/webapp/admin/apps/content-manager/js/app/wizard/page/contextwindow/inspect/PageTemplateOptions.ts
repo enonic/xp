@@ -1,4 +1,4 @@
-module app.wizard.page {
+module app.wizard.page.contextwindow.inspect {
 
     import ContentTypeName = api.schema.content.ContentTypeName;
     import SiteTemplateKey = api.content.site.template.SiteTemplateKey;

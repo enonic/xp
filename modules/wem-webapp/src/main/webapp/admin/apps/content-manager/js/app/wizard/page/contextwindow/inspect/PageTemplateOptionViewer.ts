@@ -1,4 +1,4 @@
-module app.wizard.page {
+module app.wizard.page.contextwindow.inspect {
 
     export class PageTemplateOptionViewer extends api.ui.Viewer<PageTemplateOption> {
 
