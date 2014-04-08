@@ -8,7 +8,7 @@ public interface ContentService
 {
     Content getById( ContentId id );
 
-    Contents getByIds( ContentIds ids, boolean getChildrenIds );
+    Contents getByIds( GetContentByIdsParams params );
 
     Content getByPath( ContentPath path );
 

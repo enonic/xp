@@ -31,11 +31,11 @@ import com.enonic.wem.admin.rest.resource.content.json.AbstractContentQueryResul
 import com.enonic.wem.admin.rest.resource.content.json.ContentNameJson;
 import com.enonic.wem.admin.rest.resource.content.json.ContentQueryJson;
 import com.enonic.wem.admin.rest.resource.content.json.CreateContentJson;
+import com.enonic.wem.admin.rest.resource.content.json.DeleteContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentResultJson;
 import com.enonic.wem.admin.rest.resource.content.json.UpdateAttachmentsJson;
+import com.enonic.wem.admin.rest.resource.content.json.UpdateContentJson;
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.GetContentVersion;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
@@ -46,6 +46,7 @@ import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.content.DeleteContentResult;
+import com.enonic.wem.api.content.GetContentByIdsParams;
 import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.api.content.UpdateContentParams;
@@ -53,7 +54,6 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.query.ContentQueryResult;
-import com.enonic.wem.api.content.versioning.ContentVersionId;
 
 import static com.enonic.wem.api.content.Content.editContent;
 
@@ -72,24 +72,12 @@ public class ContentResource
     private ContentService contentService;
 
     @GET
-    public ContentIdJson getById( @QueryParam("id") final String idParam, @QueryParam("version") final Long versionParam,
+    public ContentIdJson getById( @QueryParam("id") final String idParam,
                                   @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expandParam )
     {
 
         final ContentId id = ContentId.from( idParam );
-        final Content content;
-        if ( versionParam == null )
-        {
-            content = contentService.getById( id );
-        }
-        else
-        {
-            final GetContentVersion getContentVersion = Commands.content().getVersion().
-                contentId( id ).
-                version( ContentVersionId.of( versionParam ) );
-
-            content = client.execute( getContentVersion );
-        }
+        final Content content = contentService.getById( id );
 
         if ( content == null )
         {
@@ -111,23 +99,10 @@ public class ContentResource
 
     @GET
     @Path("bypath")
-    public ContentIdJson getByPath( @QueryParam("path") final String pathParam, @QueryParam("version") final Long versionParam,
+    public ContentIdJson getByPath( @QueryParam("path") final String pathParam,
                                     @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expandParam )
     {
-        final Content content;
-        final ContentPath path = ContentPath.from( pathParam );
-        if ( versionParam == null )
-        {
-            content = contentService.getByPath( path );
-        }
-        else
-        {
-            final GetContentVersion getContentVersion = Commands.content().getVersion().
-                contentPath( path ).
-                version( ContentVersionId.of( versionParam ) );
-
-            content = client.execute( getContentVersion );
-        }
+        final Content content = contentService.getByPath( ContentPath.from( pathParam ) );
 
         if ( content == null )
         {
@@ -159,7 +134,8 @@ public class ContentResource
         }
         else
         {
-            final Contents parentContents = contentService.getByIds( ContentIds.from( parentIdParam ), false );
+            final GetContentByIdsParams params = new GetContentByIdsParams( ContentIds.from( parentIdParam ) );
+            final Contents parentContents = contentService.getByIds( params );
 
             if ( parentContents.isNotEmpty() )
             {
@@ -221,7 +197,10 @@ public class ContentResource
     {
         final ContentQueryResult contentQueryResult = contentService.find( contentQueryJson.getContentQuery() );
         final boolean getChildrenIds = !Expand.NONE.matches( contentQueryJson.getExpand() );
-        final Contents contents = contentService.getByIds( ContentIds.from( contentQueryResult.getContentIds() ), getChildrenIds );
+        final GetContentByIdsParams params = new GetContentByIdsParams(
+            ContentIds.from( contentQueryResult.getContentIds() ) )
+            .setGetChildrenIds( getChildrenIds );
+        final Contents contents = contentService.getByIds( params );
 
         return ContentQueryResultJsonFactory.create( contentQueryResult, contents, contentQueryJson.getExpand() );
     }
@@ -263,9 +242,9 @@ public class ContentResource
 
     @POST
     @Path("delete")
-    public DeleteContentResultJson delete( final com.enonic.wem.admin.rest.resource.content.json.DeleteContentParams params )
+    public DeleteContentResultJson delete( final DeleteContentJson json )
     {
-        final ContentPaths contentsToDelete = ContentPaths.from( params.getContentPaths() );
+        final ContentPaths contentsToDelete = ContentPaths.from( json.getContentPaths() );
 
         final DeleteContentResultJson jsonResult = new DeleteContentResultJson();
 
@@ -299,38 +278,38 @@ public class ContentResource
 
     @POST
     @Path("update")
-    public ContentJson update( final com.enonic.wem.admin.rest.resource.content.json.UpdateContentParams params )
+    public ContentJson update( final UpdateContentJson json )
     {
-        final ContentData contentData = parseContentData( params.getContentData() );
+        final ContentData contentData = parseContentData( json.getContentData() );
 
-        final UpdateAttachmentsJson updateAttachments = params.getUpdateAttachments();
+        final UpdateAttachmentsJson updateAttachments = json.getUpdateAttachments();
 
         final UpdateContentParams updateParams = new UpdateContentParams().
-            contentId( params.getContentId() ).
+            contentId( json.getContentId() ).
             modifier( AccountKey.anonymous() ).
-            updateAttachments( params.getUpdateAttachments() != null ? params.getUpdateAttachments().getUpdateAttachments() : null ).
+            updateAttachments( json.getUpdateAttachments() != null ? json.getUpdateAttachments().getUpdateAttachments() : null ).
             editor( new ContentEditor()
             {
                 @Override
                 public Content.EditBuilder edit( final Content toBeEdited )
                 {
                     return editContent( toBeEdited ).
-                        form( params.getForm().getForm() ).
+                        form( json.getForm().getForm() ).
                         contentData( contentData ).
-                        draft( params.isDraft() ).
-                        displayName( params.getDisplayName() );
+                        draft( json.isDraft() ).
+                        displayName( json.getDisplayName() );
                 }
             } );
 
         final Content updatedContent = contentService.update( updateParams );
-        if ( params.getContentName().equals( updatedContent.getName() ) )
+        if ( json.getContentName().equals( updatedContent.getName() ) )
         {
             return new ContentJson( updatedContent );
         }
 
         final RenameContentParams renameParams = new RenameContentParams().
-            contentId( params.getContentId() ).
-            newName( params.getContentName() );
+            contentId( json.getContentId() ).
+            newName( json.getContentName() );
         final Content renamedContent = contentService.rename( renameParams );
 
         return new ContentJson( renamedContent );

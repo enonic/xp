@@ -5,7 +5,6 @@ import javax.inject.Inject;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentService;
@@ -13,6 +12,7 @@ import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.content.DeleteContentResult;
+import com.enonic.wem.api.content.GetContentByIdsParams;
 import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.ValidateContentData;
@@ -54,14 +54,13 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Contents getByIds( final ContentIds ids, final boolean getChildrenIds )
+    public Contents getByIds( final GetContentByIdsParams params )
     {
         return new GetContentByIdsCommand().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
-            contentIds( ids ).
-            getChildrenIds( getChildrenIds ).
+            params( params ).
             execute();
     }
 
