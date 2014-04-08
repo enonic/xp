@@ -461,7 +461,7 @@ module app.wizard.page {
                 this.contextWindow.clearSelection();
             });
 
-            this.liveEditPage.onComponentRemoved((event: ComponentRemovedEvent) => {
+            this.liveEditPage.onPageComponentRemoved((event: PageComponentRemovedEvent) => {
 
                 this.contextWindow.show();
 
@@ -481,7 +481,7 @@ module app.wizard.page {
 
             });
 
-            this.liveEditPage.onComponentReset((event: ComponentResetEvent) => {
+            this.liveEditPage.onPageComponentReset((event: PageComponentResetEvent) => {
 
                 var component = this.pageRegions.getComponent(event.getPath());
                 if (component) {
@@ -536,7 +536,7 @@ module app.wizard.page {
                 }
             });
 
-            this.liveEditPage.onSetImageComponentImage((event: SetImageComponentImageEvent) => {
+            this.liveEditPage.onImageComponentSetImage((event: ImageComponentSetImageEvent) => {
 
                 (<any>event.getComponentPlaceholder()).showLoadingSpinner(); // TODO: Remove any
 
@@ -554,7 +554,7 @@ module app.wizard.page {
 
             });
 
-            this.liveEditPage.onSetPageComponentDescriptor((event: SetPageComponentDescriptorEvent) => {
+            this.liveEditPage.onPageComponentSetDescriptor((event: PageComponentSetDescriptorEvent) => {
 
                 if (this.pageTemplate) {
                     this.setComponentDescriptor(event.getDescriptor(), event.getPath(), event.getComponentPlaceholder());

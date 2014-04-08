@@ -2,7 +2,7 @@ module app.wizard.page {
 
     import ComponentPath = api.content.page.ComponentPath;
 
-    export class ComponentResetEvent {
+    export class PageComponentResetEvent {
 
         private path: ComponentPath;
 

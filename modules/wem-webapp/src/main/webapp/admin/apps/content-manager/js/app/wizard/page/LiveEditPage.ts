@@ -57,13 +57,13 @@ module app.wizard.page {
 
         private pageComponentAddedListeners: {(event: PageComponentAddedEvent): void;}[] = [];
 
-        private setImageComponentImageListeners: {(event: SetImageComponentImageEvent): void;}[] = [];
+        private imageComponentSetImageListeners: {(event: ImageComponentSetImageEvent): void;}[] = [];
 
-        private setPageComponentDescriptorListeners: {(event: SetPageComponentDescriptorEvent): void;}[] = [];
+        private pageComponentSetDescriptorListeners: {(event: PageComponentSetDescriptorEvent): void;}[] = [];
 
-        private componentRemovedListeners: {(event: ComponentRemovedEvent): void;}[] = [];
+        private pageComponentRemovedListeners: {(event: PageComponentRemovedEvent): void;}[] = [];
 
-        private componentResetListeners: {(event: ComponentResetEvent): void;}[] = [];
+        private pageComponentResetListeners: {(event: PageComponentResetEvent): void;}[] = [];
 
         constructor(config: LiveEditPageConfig) {
 
@@ -210,24 +210,20 @@ module app.wizard.page {
 
             this.liveEditJQuery(this.liveEditWindow).on('draggableStart.liveEdit', (event) => {
 
-                console.log("LiveEditPage: draggableStart.liveEdit");
                 this.notifyDragableStart();
             });
 
             this.liveEditJQuery(this.liveEditWindow).on('draggableStop.liveEdit', (event) => {
-                console.log("LiveEditPage: draggableStop.liveEdit");
+
                 this.notifyDragableStop();
             });
 
             this.liveEditJQuery(this.liveEditWindow).on('sortableStart.liveEdit', (event) => {
 
-                console.log("LiveEditPage: sortableStart.liveEdit");
                 this.notifySortableStart();
             });
 
             this.liveEditJQuery(this.liveEditWindow).on('sortableStop.liveEdit', (event, component?) => {
-
-                console.log("LiveEditPage: sortableStop.liveEdit");
 
                 if (component) {
                     var componentPath = ComponentPath.fromString(component.getComponentPath());
@@ -240,8 +236,6 @@ module app.wizard.page {
 
             this.liveEditJQuery(this.liveEditWindow).on('sortableUpdate.liveEdit', (event, component?) => {
 
-                console.log("LiveEditPage: sortableUpdate.liveEdit");
-
                 if (component) {
                     var componentPath = ComponentPath.fromString(component.getComponentPath());
                     var precedingComponent = ComponentPath.fromString(component.getPrecedingComponentPath());
@@ -253,14 +247,11 @@ module app.wizard.page {
 
             this.liveEditJQuery(this.liveEditWindow).on('pageSelect.liveEdit', (event) => {
 
-                console.log("LiveEditPage: pageSelect.liveEdit");
 
                 this.notifyPageSelected();
             });
 
             this.liveEditJQuery(this.liveEditWindow).on('regionSelect.liveEdit', (event, regionPathAsString?: string) => {
-
-                console.log("LiveEditPage: regionSelect.liveEdit");
 
                 var regionPath = RegionPath.fromString(regionPathAsString);
                 this.notifyRegionSelected(regionPath);
@@ -268,8 +259,6 @@ module app.wizard.page {
             });
 
             this.liveEditJQuery(this.liveEditWindow).on('componentSelect.liveEdit', (event, pathAsString?, component?) => {
-
-                console.log("LiveEditPage: componentSelect.liveEdit");
 
                 if (pathAsString) {
                     var componentPath = ComponentPath.fromString(pathAsString);
@@ -279,15 +268,11 @@ module app.wizard.page {
 
             this.liveEditJQuery(this.liveEditWindow).on('deselectComponent.liveEdit', (event) => {
 
-                console.log("LiveEditPage: deselectComponent.liveEdit");
-
                 this.notifyDeselect();
             });
 
             this.liveEditJQuery(this.liveEditWindow).on('componentAdded.liveEdit',
                 (event, componentEl?, regionPathAsString?: string, precedingComponentPathAsString?: string) => {
-
-                    console.log("LiveEditPage: componentAdded.liveEdit");
 
                     var componentType = componentEl.getComponentType().getName();
                     var region = RegionPath.fromString(regionPathAsString);
@@ -302,38 +287,30 @@ module app.wizard.page {
 
             this.liveEditJQuery(this.liveEditWindow).on('componentRemoved.liveEdit', (event, component?) => {
 
-                console.log("LiveEditPage: componentRemoved.liveEdit");
-
                 var componentPath: ComponentPath = ComponentPath.fromString(component.getComponentPath());
-                this.notifyComponentRemoved(componentPath);
+                this.notifyPageComponentRemoved(componentPath);
             });
 
             this.liveEditJQuery(this.liveEditWindow).on('componentReset.liveEdit', (event, component?) => {
 
-                console.log("LiveEditPage: componentReset.liveEdit");
-
                 var componentPath: ComponentPath = ComponentPath.fromString(component.getComponentPath());
-                this.notifyComponentReset(componentPath);
+                this.notifyPageComponentReset(componentPath);
             });
 
             this.liveEditJQuery(this.liveEditWindow).on('imageComponentSetImage.liveEdit',
                 (event, imageId?: ContentId, componentPathAsString?: string, componentPlaceholder?: api.dom.Element,
                  imageName?: string) => {
 
-                    console.log("LiveEditPage: imageComponentSetImage.liveEdit");
-
                     var componentPath = ComponentPath.fromString(componentPathAsString);
 
-                    this.notifySetImageComponentImage(componentPath, imageId, componentPlaceholder, !imageName ? null : imageName);
+                    this.notifyImageComponentSetImage(componentPath, imageId, componentPlaceholder, !imageName ? null : imageName);
                 });
 
             this.liveEditJQuery(this.liveEditWindow).on('pageComponentSetDescriptor.liveEdit',
                 (event, descriptor?: Descriptor, componentPathAsString?: string, componentPlaceholder?) => {
 
-                    console.log("LiveEditPage: pageComponentSetDescriptor.liveEdit");
-
                     var componentPath = ComponentPath.fromString(componentPathAsString);
-                    this.notifySetPageComponentDescriptor(componentPath, descriptor, componentPlaceholder);
+                    this.notifyPageComponentSetDescriptor(componentPath, descriptor, componentPlaceholder);
                 });
         }
 
@@ -523,71 +500,71 @@ module app.wizard.page {
             });
         }
 
-        onSetImageComponentImage(listener: {(event: SetImageComponentImageEvent): void;}) {
-            this.setImageComponentImageListeners.push(listener);
+        onImageComponentSetImage(listener: {(event: ImageComponentSetImageEvent): void;}) {
+            this.imageComponentSetImageListeners.push(listener);
         }
 
-        unSetImageComponentImage(listener: {(event: SetImageComponentImageEvent): void;}) {
-            this.setImageComponentImageListeners = this.setImageComponentImageListeners.filter(function (curr) {
+        unImageComponentSetImage(listener: {(event: ImageComponentSetImageEvent): void;}) {
+            this.imageComponentSetImageListeners = this.imageComponentSetImageListeners.filter(function (curr) {
                 return curr != listener;
             });
         }
 
-        private notifySetImageComponentImage(path: ComponentPath, image: ContentId, componentPlaceholder: api.dom.Element,
+        private notifyImageComponentSetImage(path: ComponentPath, image: ContentId, componentPlaceholder: api.dom.Element,
                                              imageName: string) {
-            var event = new SetImageComponentImageEvent(path, image, componentPlaceholder, imageName);
-            this.setImageComponentImageListeners.forEach((listener) => {
+            var event = new ImageComponentSetImageEvent(path, image, componentPlaceholder, imageName);
+            this.imageComponentSetImageListeners.forEach((listener) => {
                 listener(event);
             });
         }
 
-        onSetPageComponentDescriptor(listener: {(event: SetPageComponentDescriptorEvent): void;}) {
-            this.setPageComponentDescriptorListeners.push(listener);
+        onPageComponentSetDescriptor(listener: {(event: PageComponentSetDescriptorEvent): void;}) {
+            this.pageComponentSetDescriptorListeners.push(listener);
         }
 
-        unSetPageComponentDescriptor(listener: {(event: SetPageComponentDescriptorEvent): void;}) {
-            this.setPageComponentDescriptorListeners = this.setPageComponentDescriptorListeners.filter(function (curr) {
+        unPageComponentSetDescriptor(listener: {(event: PageComponentSetDescriptorEvent): void;}) {
+            this.pageComponentSetDescriptorListeners = this.pageComponentSetDescriptorListeners.filter(function (curr) {
                 return curr != listener;
             });
         }
 
-        private notifySetPageComponentDescriptor(path: ComponentPath, descriptor: Descriptor, componentPlaceholder: api.dom.Element) {
-            var event = new SetPageComponentDescriptorEvent(path, descriptor, componentPlaceholder);
-            this.setPageComponentDescriptorListeners.forEach((listener) => {
+        private notifyPageComponentSetDescriptor(path: ComponentPath, descriptor: Descriptor, componentPlaceholder: api.dom.Element) {
+            var event = new PageComponentSetDescriptorEvent(path, descriptor, componentPlaceholder);
+            this.pageComponentSetDescriptorListeners.forEach((listener) => {
                 listener(event);
             });
         }
 
-        onComponentReset(listener: {(event: ComponentResetEvent): void;}) {
-            this.componentResetListeners.push(listener);
+        onPageComponentReset(listener: {(event: PageComponentResetEvent): void;}) {
+            this.pageComponentResetListeners.push(listener);
         }
 
-        unComponentReset(listener: {(event: ComponentResetEvent): void;}) {
-            this.componentResetListeners = this.componentResetListeners.filter(function (curr) {
+        unPageComponentReset(listener: {(event: PageComponentResetEvent): void;}) {
+            this.pageComponentResetListeners = this.pageComponentResetListeners.filter(function (curr) {
                 return curr != listener;
             });
         }
 
-        private notifyComponentReset(path: ComponentPath) {
-            var event = new ComponentResetEvent(path);
-            this.componentResetListeners.forEach((listener) => {
+        private notifyPageComponentReset(path: ComponentPath) {
+            var event = new PageComponentResetEvent(path);
+            this.pageComponentResetListeners.forEach((listener) => {
                 listener(event);
             });
         }
 
-        onComponentRemoved(listener: {(event: ComponentRemovedEvent): void;}) {
-            this.componentRemovedListeners.push(listener);
+        onPageComponentRemoved(listener: {(event: PageComponentRemovedEvent): void;}) {
+            this.pageComponentRemovedListeners.push(listener);
         }
 
-        unComponentRemoved(listener: {(event: ComponentRemovedEvent): void;}) {
-            this.componentRemovedListeners = this.componentRemovedListeners.filter(function (curr) {
+        unPageComponentRemoved(listener: {(event: PageComponentRemovedEvent): void;}) {
+            this.pageComponentRemovedListeners = this.pageComponentRemovedListeners.filter(function (curr) {
                 return curr != listener;
             });
         }
 
-        private notifyComponentRemoved(path: ComponentPath) {
-            var event = new ComponentRemovedEvent(path);
-            this.componentRemovedListeners.forEach((listener) => {
+        private notifyPageComponentRemoved(path: ComponentPath) {
+            var event = new PageComponentRemovedEvent(path);
+            this.pageComponentRemovedListeners.forEach((listener) => {
                 listener(event);
             });
         }

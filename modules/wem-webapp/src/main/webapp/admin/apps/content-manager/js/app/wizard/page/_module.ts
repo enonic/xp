@@ -14,10 +14,11 @@
 ///<reference path='PageComponentSelectedEvent.ts' />
 ///<reference path='DeselectEvent.ts' />
 ///<reference path='PageComponentAddedEvent.ts' />
-///<reference path='SetPageComponentDescriptorEvent.ts' />
-///<reference path='SetImageComponentImageEvent.ts' />
-///<reference path='ComponentRemovedEvent.ts' />
-///<reference path='ComponentResetEvent.ts' />
+///<reference path='PageComponentSetDescriptorEvent.ts' />
+///<reference path='PageComponentRemovedEvent.ts' />
+///<reference path='PageComponentResetEvent.ts' />
+///<reference path='ImageComponentSetImageEvent.ts' />
+
 ///<reference path='LiveEditPage.ts' />
 
 ///<reference path='LiveFormPanel.ts' />

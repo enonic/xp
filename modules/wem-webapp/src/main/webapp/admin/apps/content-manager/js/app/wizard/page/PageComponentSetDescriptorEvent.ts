@@ -3,7 +3,7 @@ module app.wizard.page {
     import ComponentPath = api.content.page.ComponentPath;
     import Descriptor = api.content.page.Descriptor;
 
-    export class SetPageComponentDescriptorEvent {
+    export class PageComponentSetDescriptorEvent {
 
         private path: ComponentPath;
 

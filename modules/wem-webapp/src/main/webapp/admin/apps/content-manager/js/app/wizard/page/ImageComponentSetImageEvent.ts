@@ -3,7 +3,7 @@ module app.wizard.page {
     import ComponentPath = api.content.page.ComponentPath;
     import ContentId = api.content.ContentId;
 
-    export class SetImageComponentImageEvent {
+    export class ImageComponentSetImageEvent {
 
         private path: ComponentPath;
 

@@ -2,7 +2,7 @@ module app.wizard.page {
 
     import ComponentPath = api.content.page.ComponentPath;
 
-    export class ComponentRemovedEvent {
+    export class PageComponentRemovedEvent {
 
         private path: ComponentPath;
 
