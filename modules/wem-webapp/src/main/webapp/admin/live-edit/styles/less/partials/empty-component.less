@@ -74,7 +74,7 @@
   button.upload-button {
     .button(@admin-light-gray-font, transparent, @admin-dark-gray-font, transparent);
     vertical-align: middle;
-    margin: @defaultHeight/2-30px auto 0 auto !important;
+    margin: 0 auto 0 auto !important;
     padding: 0;
     display: block;
     float: right;
@@ -94,9 +94,11 @@
   .rich-combobox {
     margin: @defaultHeight/2-30px auto 0 auto;
     vertical-align: middle;
-    display: inline-block;
+    display: block;
     text-align: left;
-    width: 255px;
+    width: auto;
+    max-width: 540px;
+
     .options-container {
       z-index: 9999999; // must override shader
     }
@@ -109,6 +111,13 @@
       margin-right: 36px;
       width: auto;
     }
+  }
+
+  .image-placeholder-selector {
+    margin-right: auto;
+    margin-left: auto;
+    width: auto;
+    max-width: 540px;
   }
 
   .combobox {

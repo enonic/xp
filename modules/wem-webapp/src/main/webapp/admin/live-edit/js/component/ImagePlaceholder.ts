@@ -18,6 +18,7 @@ module LiveEdit.component {
                 this.createEmbeddedImageContent(event.getUploadedItem());
             });
 
+            var comboUploadButtonDiv = new api.dom.DivEl('image-placeholder-selector');
             this.uploadButton = new api.ui.Button("");
             this.uploadButton.addClass("upload-button");
             this.uploadButton.onClicked(() => {
@@ -26,7 +27,7 @@ module LiveEdit.component {
                 });
             });
             this.uploadButton.hide();
-            this.appendChild(this.uploadButton);
+            comboUploadButtonDiv.appendChild(this.uploadButton);
 
             this.getEl().setData('live-edit-type', "image");
             this.comboBox = new api.content.ContentComboBoxBuilder().
@@ -35,7 +36,8 @@ module LiveEdit.component {
                 build();
             this.comboBox.addClass('image-placeholder');
             this.comboBox.hide();
-            this.appendChild(this.comboBox);
+            comboUploadButtonDiv.appendChild(this.comboBox);
+            this.appendChild(comboUploadButtonDiv);
 
             this.comboBox.onOptionSelected((event:api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {
                 var componentPath = this.getComponentPath();
