@@ -7,11 +7,11 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobService;
-import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.data.ContentData;
@@ -46,7 +46,6 @@ import static org.junit.Assert.*;
 public class ContentNodeTranslatorTest
 {
     private ContentNodeTranslator translator;
-    private ContentTypeService contentTypeService;
 
     @Before
     public void before()
@@ -66,7 +65,7 @@ public class ContentNodeTranslatorTest
     {
         final DataSet rootDataSet = RootDataSet.newDataSet().set( "test", "testValue", ValueTypes.STRING ).build();
 
-        final CreateContent mycontent = new CreateContent().
+        final CreateContentParams mycontent = new CreateContentParams().
             name( "mycontent" ).
             parent( ContentPath.ROOT ).
             contentType( ContentTypeName.from( "my-content-type" ) ).
@@ -86,7 +85,7 @@ public class ContentNodeTranslatorTest
     {
         final DataSet rootDataSet = RootDataSet.newDataSet().set( "test", "testValue", ValueTypes.STRING ).build();
 
-        final CreateContent mycontent = new CreateContent().
+        final CreateContentParams mycontent = new CreateContentParams().
             name( "mycontent" ).
             parent( ContentPath.ROOT ).
             contentType( ContentTypeName.from( "my-content-type" ) ).
@@ -118,7 +117,7 @@ public class ContentNodeTranslatorTest
 
         final Form form = Form.newForm().addFormItems( formItemSet.getFormItems() ).build();
 
-        final CreateContent mycontent = new CreateContent().
+        final CreateContentParams mycontent = new CreateContentParams().
             name( "mycontent" ).
             parent( ContentPath.ROOT ).
             contentType( ContentTypeName.from( "my-content-type" ) ).

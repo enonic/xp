@@ -15,6 +15,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
+import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateService;
@@ -31,6 +32,9 @@ public final class PageTemplateResource
 {
     @Inject
     protected PageTemplateService pageTemplateService;
+
+    @Inject
+    private ContentService contentService;
 
     @GET
     public PageTemplateJson getByKey( @QueryParam("siteTemplateKey") final String siteTemplateKeyAsString,
@@ -85,7 +89,7 @@ public final class PageTemplateResource
         final ContentId contentId = ContentId.from( contentIdAsString );
         try
         {
-            final Content content = client.execute( Commands.content().get().byId( contentId ) );
+            final Content content = contentService.getById( contentId );
             final Content nearestSite = client.execute( Commands.site().getNearestSite().content( contentId ) );
 
             if ( nearestSite != null )

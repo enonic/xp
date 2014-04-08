@@ -1,7 +1,7 @@
 package com.enonic.wem.core.content;
 
-import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.RootDataSet;
@@ -114,23 +114,23 @@ public class ContentDataSerializer
         return builder;
     }
 
-    RootDataSet toData( final CreateContent command )
+    RootDataSet toData( final CreateContentParams params )
     {
         final RootDataSet contentAsData = new RootDataSet();
 
-        addPropertyIfNotNull( contentAsData, DRAFT, command.isDraft() );
-        addPropertyIfNotNull( contentAsData, DISPLAY_NAME, command.getDisplayName() );
-        addPropertyIfNotNull( contentAsData, CONTENT_TYPE, command.getContentType() );
-        addPropertyIfNotNull( contentAsData, EMBEDDED, command.isEmbed() );
+        addPropertyIfNotNull( contentAsData, DRAFT, params.isDraft() );
+        addPropertyIfNotNull( contentAsData, DISPLAY_NAME, params.getDisplayName() );
+        addPropertyIfNotNull( contentAsData, CONTENT_TYPE, params.getContentType() );
+        addPropertyIfNotNull( contentAsData, EMBEDDED, params.isEmbed() );
 
-        if ( command.getContentData() != null )
+        if ( params.getContentData() != null )
         {
-            contentAsData.add( command.getContentData().toDataSet( ContentDataSerializer.CONTENT_DATA ) );
+            contentAsData.add( params.getContentData().toDataSet( ContentDataSerializer.CONTENT_DATA ) );
         }
 
-        if ( command.getForm() != null )
+        if ( params.getForm() != null )
         {
-            contentAsData.add( FORM_SERIALIZER.toData( command.getForm() ) );
+            contentAsData.add( FORM_SERIALIZER.toData( params.getForm() ) );
         }
 
         return contentAsData;

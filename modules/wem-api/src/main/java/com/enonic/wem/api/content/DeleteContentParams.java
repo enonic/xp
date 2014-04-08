@@ -1,15 +1,11 @@
-package com.enonic.wem.api.command.content;
+package com.enonic.wem.api.content;
 
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.DeleteContentResult;
 
-public final class DeleteContent
-    extends Command<DeleteContentResult>
+public final class DeleteContentParams
 {
     private ContentPath contentPath;
 
@@ -20,7 +16,7 @@ public final class DeleteContent
         return deleter;
     }
 
-    public DeleteContent contentPath( final ContentPath contentPath )
+    public DeleteContentParams contentPath( final ContentPath contentPath )
     {
         this.contentPath = contentPath;
         return this;
@@ -31,13 +27,12 @@ public final class DeleteContent
         return contentPath;
     }
 
-    public DeleteContent deleter( final AccountKey deleter )
+    public DeleteContentParams deleter( final AccountKey deleter )
     {
         this.deleter = deleter;
         return this;
     }
 
-    @Override
     public void validate()
     {
         Preconditions.checkNotNull( this.contentPath, "ContentPath cannot be null" );
@@ -50,12 +45,12 @@ public final class DeleteContent
         {
             return true;
         }
-        if ( !( o instanceof DeleteContent ) )
+        if ( !( o instanceof DeleteContentParams ) )
         {
             return false;
         }
 
-        final DeleteContent that = (DeleteContent) o;
+        final DeleteContentParams that = (DeleteContentParams) o;
 
         if ( !contentPath.equals( that.contentPath ) )
         {

@@ -17,6 +17,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.GetAttachmentParams;
@@ -26,7 +27,6 @@ import com.enonic.wem.core.image.filter.ImageFilter;
 import com.enonic.wem.core.image.filter.ImageFilterBuilder;
 import com.enonic.wem.portal.exception.PortalWebException;
 
-import static com.enonic.wem.api.command.Commands.content;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
@@ -49,6 +49,9 @@ abstract class AbstractImageResource
     @Inject
     BlobService blobService;
 
+    @Inject
+    ContentService contentService;
+
     abstract String getFilterParam();
 
     abstract String getQualityParam();
@@ -58,7 +61,7 @@ abstract class AbstractImageResource
 
     Content getContent( final ContentPath contentPath )
     {
-        final Content content = client.execute( content().get().byPath( contentPath ) );
+        final Content content = contentService.getByPath( contentPath );
         if ( content != null )
         {
             return content;
@@ -69,7 +72,7 @@ abstract class AbstractImageResource
 
     Content getContent( final ContentId contentId )
     {
-        return client.execute( content().get().byId( contentId ) );
+        return contentService.getById( contentId );
     }
 
     Attachment getAttachment( final ContentId contentId, final String attachmentName )

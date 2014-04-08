@@ -1,0 +1,43 @@
+package com.enonic.wem.core.content;
+
+import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentNotFoundException;
+import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.GetNodeByIdParams;
+import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
+import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.util.Exceptions;
+
+
+final class GetContentByIdCommand
+    extends AbstractContentCommand<GetContentByIdCommand>
+{
+    private ContentId contentId;
+
+    Content execute()
+    {
+        final EntityId entityId = EntityId.from( contentId.toString() );
+
+        try
+        {
+            final GetNodeByIdParams params = new GetNodeByIdParams( entityId );
+            final Node node = nodeService.getById( params );
+            return getTranslator().fromNode( node );
+        }
+        catch ( NoEntityWithIdFoundException e )
+        {
+            throw new ContentNotFoundException( contentId );
+        }
+        catch ( Exception e )
+        {
+            throw Exceptions.newRutime( "Error getting node" ).withCause( e );
+        }
+    }
+
+    GetContentByIdCommand contentId( final ContentId id )
+    {
+        this.contentId = id;
+        return this;
+    }
+}

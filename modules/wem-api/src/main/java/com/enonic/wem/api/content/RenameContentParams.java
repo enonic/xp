@@ -1,32 +1,26 @@
-package com.enonic.wem.api.command.content;
+package com.enonic.wem.api.content;
 
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentName;
-
-public final class RenameContent
-    extends Command<Content>
+public final class RenameContentParams
 {
     private ContentId contentId;
 
     private ContentName newName;
 
-    public RenameContent()
+    public RenameContentParams()
     {
     }
 
-    public RenameContent contentId( final ContentId contentId )
+    public RenameContentParams contentId( final ContentId contentId )
     {
         this.contentId = contentId;
         return this;
     }
 
-    public RenameContent newName( final ContentName newName )
+    public RenameContentParams newName( final ContentName newName )
     {
         this.newName = newName;
         return this;
@@ -50,12 +44,12 @@ public final class RenameContent
             return true;
         }
 
-        if ( !( o instanceof RenameContent ) )
+        if ( !( o instanceof RenameContentParams ) )
         {
             return false;
         }
 
-        final RenameContent that = (RenameContent) o;
+        final RenameContentParams that = (RenameContentParams) o;
         return Objects.equal( this.contentId, that.contentId ) && Objects.equal( this.newName, that.newName );
     }
 
@@ -65,7 +59,6 @@ public final class RenameContent
         return Objects.hashCode( this.contentId, this.newName );
     }
 
-    @Override
     public void validate()
     {
         Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );

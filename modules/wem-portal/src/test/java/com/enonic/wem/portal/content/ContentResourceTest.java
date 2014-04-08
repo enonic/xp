@@ -22,11 +22,11 @@ import com.sun.jersey.api.core.HttpRequestContext;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.command.content.GetContentByPath;
 import com.enonic.wem.api.command.content.site.GetNearestSiteByContentId;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageDescriptor;
@@ -94,6 +94,7 @@ public class ContentResourceTest
         contentResource.contentSelector = "content";
         contentResource.client = mock( Client.class );
         contentResource.httpContext = mock( HttpContext.class );
+        contentResource.contentService = mock( ContentService.class );
 
         final PageDescriptorService pageDescriptorServiceMock = mock( PageDescriptorService.class );
         final PageTemplateService pageTemplateServiceMock = mock( PageTemplateService.class );
@@ -158,7 +159,7 @@ public class ContentResourceTest
 
         when( pageTemplateServiceMock.getByKey( Mockito.eq( PageTemplateKey.from( "mymodule|my-page" ) ),
                                                 Mockito.eq( (SiteTemplateKey) null ) ) ).thenReturn( createPageTemplate() );
-        when( contentResource.client.execute( isA( GetContentByPath.class ) ) ).thenReturn(
+        when( contentResource.contentService.getByPath( ContentPath.from( "content" ) ) ).thenReturn(
             createPage( "id", "content", "contenttypename" ) );
         when( contentResource.client.execute( isA( GetNearestSiteByContentId.class ) ) ).thenReturn(
             createSite( "id", "site", "contenttypename" ) );

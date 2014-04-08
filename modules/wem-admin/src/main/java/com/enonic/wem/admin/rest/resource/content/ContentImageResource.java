@@ -15,9 +15,9 @@ import javax.ws.rs.core.Response;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobService;
-import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.GetAttachmentParams;
@@ -53,6 +53,9 @@ public class ContentImageResource
     private BlobService blobService;
 
     @Inject
+    private ContentService contentService;
+
+    @Inject
     public void setClient( final Client client )
     {
         this.client = client;
@@ -72,7 +75,7 @@ public class ContentImageResource
         }
 
         final ContentId contentId = ContentId.from( contentIdAsString );
-        final Content content = findContent( contentId );
+        final Content content = contentService.getById( contentId );
         if ( content == null )
         {
             throw new WebApplicationException( Response.Status.NOT_FOUND );
@@ -159,11 +162,6 @@ public class ContentImageResource
         final GetContentTypesParams params = new GetContentTypesParams().contentTypeNames( contentTypeNames );
 
         return contentTypeService.getByNames( params ).first();
-    }
-
-    private Content findContent( final ContentId contentId )
-    {
-        return client.execute( Commands.content().get().byId( contentId ) );
     }
 
     private Attachment findAttachment( final ContentId contentId, final String attachmentName )

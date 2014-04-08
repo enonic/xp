@@ -7,10 +7,10 @@ import javax.inject.Inject;
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
@@ -27,6 +27,9 @@ final class ModuleKeyResolverServiceImpl
 
     @Inject
     protected Client client;
+
+    @Inject
+    private ContentService contentService;
 
     @Override
     public ModuleKeyResolver forContent( final Content content )
@@ -78,7 +81,7 @@ final class ModuleKeyResolverServiceImpl
 
     private Content getContent( final ContentPath contentPath )
     {
-        return client.execute( Commands.content().get().byPath( contentPath ) );
+        return contentService.getByPath( contentPath );
     }
 
     private SiteTemplate getSiteTemplate( final SiteTemplateKey siteTemplateKey )

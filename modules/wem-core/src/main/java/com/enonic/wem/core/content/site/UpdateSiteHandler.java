@@ -1,10 +1,12 @@
 package com.enonic.wem.core.content.site;
 
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.UpdateContent;
+import javax.inject.Inject;
+
 import com.enonic.wem.api.command.content.site.UpdateSite;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentNotFoundException;
+import com.enonic.wem.api.content.ContentService;
+import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.site.SiteNotFoundException;
@@ -15,11 +17,14 @@ import static com.enonic.wem.api.content.Content.editContent;
 public class UpdateSiteHandler
     extends CommandHandler<UpdateSite>
 {
+    @Inject
+    private ContentService contentService;
+
     @Override
     public void handle()
         throws Exception
     {
-        final Content content = context.getClient().execute( Commands.content().get().byId( command.getContent() ) );
+        final Content content = contentService.getById( command.getContent() );
 
         if ( content == null )
         {
@@ -36,7 +41,7 @@ public class UpdateSiteHandler
         {
             final Site editedSite = editBuilder.build();
 
-            final UpdateContent updateContent = Commands.content().update().
+            final UpdateContentParams updateContent = new UpdateContentParams().
                 contentId( command.getContent() ).
                 editor( new ContentEditor()
                 {
@@ -47,10 +52,10 @@ public class UpdateSiteHandler
                     }
                 } );
 
-            context.getClient().execute( updateContent );
+            contentService.update( updateContent );
         }
 
-        final Content updatedContent = context.getClient().execute( Commands.content().get().byId( command.getContent() ) );
+        final Content updatedContent = contentService.getById( command.getContent() );
 
         command.setResult( updatedContent );
     }

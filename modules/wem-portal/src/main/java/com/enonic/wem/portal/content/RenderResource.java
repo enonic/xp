@@ -12,6 +12,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
@@ -25,8 +26,6 @@ import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.portal.controller.JsControllerFactory;
 import com.enonic.wem.portal.exception.PortalWebException;
-
-import static com.enonic.wem.api.command.Commands.content;
 
 
 public abstract class RenderResource
@@ -47,6 +46,9 @@ public abstract class RenderResource
 
     @Inject
     protected SiteTemplateService siteTemplateService;
+
+    @Inject
+    protected ContentService contentService;
 
     @GET
     public Response handleGet()
@@ -154,7 +156,7 @@ public abstract class RenderResource
     {
         try
         {
-            return this.client.execute( content().get().byPath( contentPath ) );
+            return this.contentService.getByPath( contentPath );
         }
         catch ( ContentNotFoundException e )
         {
@@ -166,7 +168,7 @@ public abstract class RenderResource
     {
         try
         {
-            return this.client.execute( content().get().byId( contentId ) );
+            return this.contentService.getById( contentId );
         }
         catch ( ContentNotFoundException e )
         {
