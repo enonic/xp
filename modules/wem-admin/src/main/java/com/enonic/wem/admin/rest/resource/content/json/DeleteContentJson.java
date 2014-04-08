@@ -3,7 +3,7 @@ package com.enonic.wem.admin.rest.resource.content.json;
 
 import java.util.Set;
 
-public class DeleteContentParams
+public class DeleteContentJson
 {
     private Set<String> contentPaths;
 

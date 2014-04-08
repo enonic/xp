@@ -1,6 +1,5 @@
 package com.enonic.wem.api.command;
 
-import com.enonic.wem.api.command.content.ContentCommands;
 import com.enonic.wem.api.command.content.site.SiteCommands;
 import com.enonic.wem.api.command.module.ModuleCommands;
 import com.enonic.wem.api.command.relationship.RelationshipCommands;
@@ -10,8 +9,6 @@ import com.enonic.wem.api.content.page.PageCommands;
 
 public final class Commands
 {
-    private static final ContentCommands CONTENT_COMMANDS = new ContentCommands();
-
     private static final SiteCommands SITE_COMMANDS = new SiteCommands();
 
     private static final PageCommands PAGE_COMMANDS = new PageCommands();
@@ -26,11 +23,6 @@ public final class Commands
 
     private Commands()
     {
-    }
-
-    public static ContentCommands content()
-    {
-        return CONTENT_COMMANDS;
     }
 
     public static SiteCommands site()
