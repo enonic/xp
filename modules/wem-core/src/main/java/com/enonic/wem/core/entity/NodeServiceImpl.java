@@ -9,21 +9,17 @@ import java.util.concurrent.locks.ReentrantLock;
 import javax.inject.Inject;
 import javax.jcr.Session;
 
-import com.enonic.wem.api.command.entity.CreateNodeResult;
-import com.enonic.wem.api.command.entity.UpdateNodeResult;
 import com.enonic.wem.api.entity.CreateNodeParams;
-import com.enonic.wem.api.entity.DeleteNodeByIdParams;
-import com.enonic.wem.api.entity.DeleteNodeByPathParams;
-import com.enonic.wem.api.entity.GetNodeByIdParams;
-import com.enonic.wem.api.entity.GetNodeByPathParams;
-import com.enonic.wem.api.entity.GetNodesByIdsParams;
-import com.enonic.wem.api.entity.GetNodesByParentParams;
-import com.enonic.wem.api.entity.GetNodesByPathsParams;
+import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.EntityIds;
 import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodePath;
+import com.enonic.wem.api.entity.NodePaths;
 import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.entity.RenameNodeParams;
 import com.enonic.wem.api.entity.UpdateNodeParams;
+import com.enonic.wem.core.entity.dao.NodeJcrDao;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.jcr.provider.JcrSessionProvider;
 import com.enonic.wem.util.Exceptions;
@@ -38,7 +34,7 @@ public class NodeServiceImpl
     private JcrSessionProvider jcrSessionProvider;
 
     @Override
-    public CreateNodeResult create( CreateNodeParams params )
+    public Node create( final CreateNodeParams params )
     {
         final Lock locker = concurrencyLock.getLock( jcrSessionProvider );
         locker.lock();
@@ -61,7 +57,7 @@ public class NodeServiceImpl
     }
 
     @Override
-    public UpdateNodeResult update( final UpdateNodeParams params )
+    public Node update( final UpdateNodeParams params )
     {
         final Lock locker = concurrencyLock.getLock( jcrSessionProvider );
         locker.lock();
@@ -85,7 +81,7 @@ public class NodeServiceImpl
     }
 
     @Override
-    public boolean rename( final RenameNodeParams params )
+    public Node rename( final RenameNodeParams params )
     {
         final Lock locker = concurrencyLock.getLock( jcrSessionProvider );
         locker.lock();
@@ -103,12 +99,12 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node getById( GetNodeByIdParams params )
+    public Node getById( final EntityId id )
     {
         final Session session = getNewSession();
         try
         {
-            return new GetNodeByIdCommand().params( params ).session( session ).execute();
+            return new NodeJcrDao( session ).getNodeById( id );
         }
         finally
         {
@@ -117,12 +113,12 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Nodes getByIds( GetNodesByIdsParams params )
+    public Nodes getByIds( final EntityIds ids )
     {
         final Session session = getNewSession();
         try
         {
-            return new GetNodesByIdsCommand().params( params ).session( session ).execute();
+            return new GetNodesByIdsCommand().entityIds( ids ).session( session ).execute();
         }
         finally
         {
@@ -131,12 +127,12 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node getByPath( GetNodeByPathParams params )
+    public Node getByPath( final NodePath path )
     {
         final Session session = getNewSession();
         try
         {
-            return new GetNodeByPathCommand().params( params ).session( session ).execute();
+            return new NodeJcrDao( session ).getNodeByPath( path );
         }
         finally
         {
@@ -145,12 +141,12 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Nodes getByPaths( GetNodesByPathsParams params )
+    public Nodes getByPaths( final NodePaths paths )
     {
         final Session session = getNewSession();
         try
         {
-            return new GetNodesByPathsCommand().params( params ).session( session ).execute();
+            return new GetNodesByPathsCommand().nodePaths( paths ).session( session ).execute();
         }
         finally
         {
@@ -159,12 +155,12 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Nodes getByParent( GetNodesByParentParams params )
+    public Nodes getByParent( final NodePath parent )
     {
         final Session session = getNewSession();
         try
         {
-            return new GetNodesByParentCommand().params( params ).session( session ).execute();
+            return new NodeJcrDao( session ).getNodesByParentPath( parent );
         }
         finally
         {
@@ -173,7 +169,7 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node deleteById( DeleteNodeByIdParams params )
+    public Node deleteById( final EntityId id )
     {
         final Lock locker = concurrencyLock.getLock( jcrSessionProvider );
         locker.lock();
@@ -181,7 +177,7 @@ public class NodeServiceImpl
         final Session session = getNewSession();
         try
         {
-            return new DeleteNodeByIdCommand().params( params ).indexService( this.indexService ).session( session ).execute();
+            return new DeleteNodeByIdCommand().entityId( id ).indexService( this.indexService ).session( session ).execute();
         }
         finally
         {
@@ -191,7 +187,7 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node deleteByPath( DeleteNodeByPathParams params )
+    public Node deleteByPath( final NodePath path )
     {
         final Lock locker = concurrencyLock.getLock( jcrSessionProvider );
         locker.lock();
@@ -200,7 +196,7 @@ public class NodeServiceImpl
         try
         {
             return DeleteNodeByPathCommand.create().
-                params( params ).
+                nodePath( path ).
                 indexService( this.indexService ).
                 session( session ).
                 build().

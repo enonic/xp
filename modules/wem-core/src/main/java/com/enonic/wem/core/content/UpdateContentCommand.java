@@ -24,7 +24,6 @@ import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyVisitor;
 import com.enonic.wem.api.data.type.ValueTypes;
-import com.enonic.wem.api.entity.DeleteNodeByPathParams;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.UpdateNodeParams;
@@ -86,7 +85,7 @@ final class UpdateContentCommand
 
         final UpdateNodeParams updateNodeParams = getTranslator().toUpdateNodeCommand( editedContent, attachments );
 
-        final Node editedNode = this.nodeService.update( updateNodeParams ).getPersistedNode();
+        final Node editedNode = this.nodeService.update( updateNodeParams );
 
         final Content persistedContent = getTranslator().fromNode( editedNode );
 
@@ -113,8 +112,7 @@ final class UpdateContentCommand
             {
                 final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( embeddedContentBeforeEdit.getPath() );
 
-                final DeleteNodeByPathParams params = new DeleteNodeByPathParams( nodePath );
-                this.nodeService.deleteByPath( params );
+                this.nodeService.deleteByPath( nodePath );
             }
         }
     }

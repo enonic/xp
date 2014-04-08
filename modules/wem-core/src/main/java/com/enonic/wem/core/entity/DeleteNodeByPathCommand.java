@@ -4,7 +4,6 @@ import javax.jcr.Session;
 
 import org.elasticsearch.common.Strings;
 
-import com.enonic.wem.api.entity.DeleteNodeByPathParams;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
@@ -12,30 +11,23 @@ import com.enonic.wem.core.entity.dao.AttachmentsJcrMapper;
 import com.enonic.wem.core.entity.dao.NodeJcrDao;
 import com.enonic.wem.core.index.IndexService;
 
-public class DeleteNodeByPathCommand
+final class DeleteNodeByPathCommand
 {
     private IndexService indexService;
 
     private Session session;
 
-    private DeleteNodeByPathParams params;
+    private NodePath nodePath;
 
-    public DeleteNodeByPathCommand( final Builder builder )
+    DeleteNodeByPathCommand( final Builder builder )
     {
         this.indexService = builder.indexService;
         this.session = builder.session;
-        this.params = builder.params;
+        this.nodePath = builder.nodePath;
     }
 
-    public Node execute()
+    Node execute()
     {
-        this.params.validate();
-        return doExecute();
-    }
-
-    private Node doExecute()
-    {
-        final NodePath nodePath = params.getPath();
         final NodeJcrDao nodeJcrDao = new NodeJcrDao( session );
         final Node nodeToDelete = nodeJcrDao.getNodeByPath( nodePath );
 
@@ -66,38 +58,38 @@ public class DeleteNodeByPathCommand
         }
     }
 
-    public static Builder create()
+    static Builder create()
     {
         return new Builder();
     }
 
-    public static class Builder
+    static class Builder
     {
         private IndexService indexService;
 
         private Session session;
 
-        private DeleteNodeByPathParams params;
+        private NodePath nodePath;
 
-        public Builder indexService( final IndexService indexService )
+        Builder indexService( final IndexService indexService )
         {
             this.indexService = indexService;
             return this;
         }
 
-        public Builder session( final Session session )
+        Builder session( final Session session )
         {
             this.session = session;
             return this;
         }
 
-        public Builder params( final DeleteNodeByPathParams params )
+        Builder nodePath( final NodePath nodePath )
         {
-            this.params = params;
+            this.nodePath = nodePath;
             return this;
         }
 
-        public DeleteNodeByPathCommand build()
+        DeleteNodeByPathCommand build()
         {
             return new DeleteNodeByPathCommand( this );
         }

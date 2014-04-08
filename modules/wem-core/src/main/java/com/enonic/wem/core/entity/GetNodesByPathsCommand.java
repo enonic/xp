@@ -3,35 +3,28 @@ package com.enonic.wem.core.entity;
 
 import javax.jcr.Session;
 
-import com.enonic.wem.api.entity.GetNodesByPathsParams;
 import com.enonic.wem.api.entity.NoNodeAtPathFoundException;
 import com.enonic.wem.api.entity.NodePath;
+import com.enonic.wem.api.entity.NodePaths;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.core.entity.dao.NodeJcrDao;
 
 import static com.enonic.wem.api.entity.Nodes.newNodes;
 
-public class GetNodesByPathsCommand
+final class GetNodesByPathsCommand
 {
-    private GetNodesByPathsParams params;
+    private NodePaths nodePaths;
 
     private Session session;
 
     private boolean failWithExceptionAtNoNodeFound = true;
 
-    public Nodes execute()
-    {
-        this.params.validate();
-
-        return doExecute();
-    }
-
-    private Nodes doExecute()
+    Nodes execute()
     {
         final NodeJcrDao nodeJcrDao = new NodeJcrDao( session );
 
         final Nodes.Builder nodes = newNodes();
-        for ( final NodePath path : params.getPaths() )
+        for ( final NodePath path : this.nodePaths )
         {
             try
             {
@@ -49,19 +42,19 @@ public class GetNodesByPathsCommand
         return nodes.build();
     }
 
-    public GetNodesByPathsCommand failWithExceptionAtNoNodeFound( final boolean value )
+    GetNodesByPathsCommand failWithExceptionAtNoNodeFound( final boolean value )
     {
         this.failWithExceptionAtNoNodeFound = value;
         return this;
     }
 
-    public GetNodesByPathsCommand params( final GetNodesByPathsParams params )
+    GetNodesByPathsCommand nodePaths( final NodePaths nodePaths )
     {
-        this.params = params;
+        this.nodePaths = nodePaths;
         return this;
     }
 
-    public GetNodesByPathsCommand session( final Session session )
+    GetNodesByPathsCommand session( final Session session )
     {
         this.session = session;
         return this;

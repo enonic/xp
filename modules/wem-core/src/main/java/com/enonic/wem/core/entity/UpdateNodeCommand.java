@@ -3,7 +3,6 @@ package com.enonic.wem.core.entity;
 
 import javax.jcr.Session;
 
-import com.enonic.wem.api.command.entity.UpdateNodeResult;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.UpdateNodeParams;
 import com.enonic.wem.core.entity.dao.NodeJcrDao;
@@ -13,7 +12,7 @@ import com.enonic.wem.util.Exceptions;
 
 import static com.enonic.wem.core.entity.dao.UpdateNodeArgs.newUpdateItemArgs;
 
-public class UpdateNodeCommand
+final class UpdateNodeCommand
 {
     private IndexService indexService;
 
@@ -28,7 +27,7 @@ public class UpdateNodeCommand
         this.params = builder.params;
     }
 
-    public UpdateNodeResult execute()
+    Node execute()
     {
         this.params.validate();
 
@@ -42,7 +41,7 @@ public class UpdateNodeCommand
         }
     }
 
-    private UpdateNodeResult doExecute()
+    private Node doExecute()
         throws Exception
     {
         final NodeJcrDao nodeJcrDao = new NodeJcrDao( session );
@@ -51,7 +50,7 @@ public class UpdateNodeCommand
         final Node.EditBuilder editBuilder = params.getEditor().edit( beforeChange );
         if ( !editBuilder.isChanges() )
         {
-            return new UpdateNodeResult( beforeChange );
+            return beforeChange;
         }
 
         final Node edited = editBuilder.build();
@@ -70,15 +69,15 @@ public class UpdateNodeCommand
 
         indexService.indexNode( updatedNode );
 
-        return new UpdateNodeResult( updatedNode );
+        return updatedNode;
     }
 
-    public static Builder create()
+    static Builder create()
     {
         return new Builder();
     }
 
-    public static class Builder
+    static class Builder
     {
         private IndexService indexService;
 
@@ -86,25 +85,25 @@ public class UpdateNodeCommand
 
         private UpdateNodeParams params;
 
-        public Builder indexService( final IndexService indexService )
+        Builder indexService( final IndexService indexService )
         {
             this.indexService = indexService;
             return this;
         }
 
-        public Builder session( final Session session )
+        Builder session( final Session session )
         {
             this.session = session;
             return this;
         }
 
-        public Builder params( final UpdateNodeParams params )
+        Builder params( final UpdateNodeParams params )
         {
             this.params = params;
             return this;
         }
 
-        public UpdateNodeCommand build()
+        UpdateNodeCommand build()
         {
             return new UpdateNodeCommand( this );
         }

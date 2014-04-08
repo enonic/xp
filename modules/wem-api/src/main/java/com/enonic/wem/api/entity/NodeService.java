@@ -1,27 +1,24 @@
 package com.enonic.wem.api.entity;
 
-import com.enonic.wem.api.command.entity.CreateNodeResult;
-import com.enonic.wem.api.command.entity.UpdateNodeResult;
-
 public interface NodeService
 {
-    CreateNodeResult create( CreateNodeParams params );
+    Node create( CreateNodeParams params );
 
-    UpdateNodeResult update( UpdateNodeParams params );
+    Node update( UpdateNodeParams params );
 
-    boolean rename( RenameNodeParams params );
+    Node rename( RenameNodeParams params );
 
-    Node getById( GetNodeByIdParams params );
+    Node getById( EntityId id );
 
-    Nodes getByIds( GetNodesByIdsParams params );
+    Nodes getByIds( EntityIds ids );
 
-    Node getByPath( GetNodeByPathParams params );
+    Node getByPath( NodePath path );
 
-    Nodes getByPaths( GetNodesByPathsParams params );
+    Nodes getByPaths( NodePaths paths );
 
-    Nodes getByParent( GetNodesByParentParams params );
+    Nodes getByParent( NodePath parent );
 
-    Node deleteById( DeleteNodeByIdParams params );
+    Node deleteById( EntityId id );
 
-    Node deleteByPath( DeleteNodeByPathParams params );
+    Node deleteByPath( NodePath path );
 }
