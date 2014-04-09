@@ -1,28 +1,23 @@
 package com.enonic.wem.core.content.page;
 
-import javax.inject.Inject;
-
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.editor.ContentEditor;
-import com.enonic.wem.api.content.page.DeletePage;
-import com.enonic.wem.core.command.CommandHandler;
 
 import static com.enonic.wem.api.content.Content.editContent;
 
-public class DeletePageHandler
-    extends CommandHandler<DeletePage>
+final class DeletePageCommand
 {
-    @Inject
     private ContentService contentService;
 
-    @Override
-    public void handle()
-        throws Exception
+    private ContentId contentId;
+
+    public Content execute()
     {
         final UpdateContentParams params = new UpdateContentParams().
-            contentId( command.getContent() ).
+            contentId( this.contentId ).
             editor( new ContentEditor()
             {
                 @Override
@@ -32,7 +27,18 @@ public class DeletePageHandler
                 }
             } );
 
-        final Content updatedContent = contentService.update( params );
-        command.setResult( updatedContent );
+        return this.contentService.update( params );
+    }
+
+    public DeletePageCommand contentId( ContentId contentId )
+    {
+        this.contentId = contentId;
+        return this;
+    }
+
+    public DeletePageCommand contentService( final ContentService contentService )
+    {
+        this.contentService = contentService;
+        return this;
     }
 }

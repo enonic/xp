@@ -6,6 +6,7 @@ import com.google.inject.AbstractModule;
 
 import com.enonic.wem.api.content.page.PageComponentService;
 import com.enonic.wem.api.content.page.PageDescriptorService;
+import com.enonic.wem.api.content.page.PageService;
 import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.page.image.ImageDescriptorService;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;
@@ -31,11 +32,9 @@ public class PageModule
         bind( PageDescriptorService.class ).to( PageDescriptorServiceImpl.class ).in( Singleton.class );
         bind( PageTemplateService.class ).to( PageTemplateServiceImpl.class ).in( Singleton.class );
         bind( PageComponentService.class ).to( PageComponentServiceImpl.class ).in( Singleton.class );
+        bind( PageService.class ).to( PageServiceImpl.class ).in( Singleton.class );
 
         final CommandBinder commands = CommandBinder.from( binder() );
-        commands.add( CreatePageHandler.class );
-        commands.add( UpdatePageHandler.class );
-        commands.add( DeletePageHandler.class );
 
         commands.add( GetPageTemplateByKeyHandler.class );
         commands.add( GetPageTemplatesBySiteTemplateHandler.class );

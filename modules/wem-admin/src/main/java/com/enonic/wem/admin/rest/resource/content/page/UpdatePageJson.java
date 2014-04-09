@@ -15,19 +15,19 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageEditor;
 import com.enonic.wem.api.content.page.PageTemplateKey;
-import com.enonic.wem.api.content.page.UpdatePage;
+import com.enonic.wem.api.content.page.UpdatePageParams;
 
 import static com.enonic.wem.api.content.page.Page.editPage;
 
 public class UpdatePageJson
 {
-    private final UpdatePage updatePage;
+    private final UpdatePageParams updatePage;
 
     @JsonCreator
     public UpdatePageJson( @JsonProperty("contentId") final String contentId, @JsonProperty("template") final String pageTemplateKey,
                            @JsonProperty("config") final List<DataJson> config, final @JsonProperty("regions") List<RegionJson> regions )
     {
-        this.updatePage = new UpdatePage().
+        this.updatePage = new UpdatePageParams().
             content( ContentId.from( contentId ) ).
             editor( new PageEditor()
             {
@@ -43,7 +43,7 @@ public class UpdatePageJson
     }
 
     @JsonIgnore
-    public UpdatePage getUpdatePage()
+    public UpdatePageParams getUpdatePage()
     {
         return updatePage;
     }

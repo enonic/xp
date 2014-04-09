@@ -12,18 +12,18 @@ import com.enonic.wem.admin.json.content.page.region.RegionJson;
 import com.enonic.wem.admin.json.data.DataJson;
 import com.enonic.wem.admin.json.data.RootDataSetJson;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.page.CreatePage;
+import com.enonic.wem.api.content.page.CreatePageParams;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 
 public class CreatePageJson
 {
-    private final CreatePage createPage;
+    private final CreatePageParams createPage;
 
     @JsonCreator
     public CreatePageJson( final @JsonProperty("contentId") String contentId, final @JsonProperty("template") String pageTemplateKey,
                            final @JsonProperty("config") List<DataJson> config, final @JsonProperty("regions") List<RegionJson> regions )
     {
-        this.createPage = new CreatePage().
+        this.createPage = new CreatePageParams().
             content( ContentId.from( contentId ) ).
             pageTemplate( PageTemplateKey.from( pageTemplateKey ) ).
             config( config != null ? new RootDataSetJson( config ).getRootDataSet() : null ).
@@ -31,7 +31,7 @@ public class CreatePageJson
     }
 
     @JsonIgnore
-    public CreatePage getCreatePage()
+    public CreatePageParams getCreatePage()
     {
         return createPage;
     }

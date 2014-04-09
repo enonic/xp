@@ -1,13 +1,9 @@
 package com.enonic.wem.api.content.page;
 
-
-import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.RootDataSet;
 
-public class CreatePage
-    extends Command<Content>
+public final class CreatePageParams
 {
     private ContentId content;
 
@@ -17,33 +13,28 @@ public class CreatePage
 
     private RootDataSet config;
 
-    public CreatePage content( ContentId value )
+    public CreatePageParams content( ContentId value )
     {
         this.content = value;
         return this;
     }
 
-    public CreatePage pageTemplate( PageTemplateKey value )
+    public CreatePageParams pageTemplate( PageTemplateKey value )
     {
         this.pageTemplate = value;
         return this;
     }
 
-    public CreatePage regions( PageRegions value )
+    public CreatePageParams regions( PageRegions value )
     {
         this.regions = value;
         return this;
     }
 
-    public CreatePage config( RootDataSet value )
+    public CreatePageParams config( RootDataSet value )
     {
         this.config = value;
         return this;
-    }
-
-    @Override
-    public void validate()
-    {
     }
 
     public ContentId getContent()

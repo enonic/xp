@@ -7,16 +7,16 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.page.CreatePage;
+import com.enonic.wem.api.content.page.CreatePageParams;
 import com.enonic.wem.api.content.page.Page;
+import com.enonic.wem.api.content.page.PageService;
 import com.enonic.wem.api.content.page.PageTemplateKey;
-import com.enonic.wem.api.content.page.UpdatePage;
+import com.enonic.wem.api.content.page.UpdatePageParams;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
@@ -27,7 +27,7 @@ import static com.enonic.wem.api.content.page.PageRegions.newPageRegions;
 public class PageResourceTest
     extends AbstractResourceTest
 {
-    private Client client;
+    private PageService pageService;
 
     @Before
     public void setup()
@@ -38,9 +38,10 @@ public class PageResourceTest
     @Override
     protected Object getResourceInstance()
     {
-        client = Mockito.mock( Client.class );
+        this.pageService = Mockito.mock( PageService.class );
+
         final PageResource resource = new PageResource();
-        resource.setClient( client );
+        resource.pageService = pageService;
 
         return resource;
     }
@@ -51,7 +52,7 @@ public class PageResourceTest
     {
         Content content = createPage( "content-id", "content-name", "content-type" );
 
-        Mockito.when( client.execute( Mockito.isA( UpdatePage.class ) ) ).thenReturn( content );
+        Mockito.when( this.pageService.update( Mockito.isA( UpdatePageParams.class ) ) ).thenReturn( content );
 
         String jsonString = resource().path( "content/page/update" ).
             entity( readFromFile( "update_page_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
@@ -66,7 +67,8 @@ public class PageResourceTest
     {
         Content content = createPage( "content-id", "content-name", "content-type" );
 
-        Mockito.when( client.execute( Mockito.isA( UpdatePage.class ) ) ).thenThrow( new ContentNotFoundException( content.getId() ) );
+        Mockito.when( this.pageService.update( Mockito.isA( UpdatePageParams.class ) ) ).thenThrow(
+            new ContentNotFoundException( content.getId() ) );
 
         String jsonString = resource().path( "content/page/update" ).
             entity( readFromFile( "update_page_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
@@ -81,7 +83,7 @@ public class PageResourceTest
     {
         Content content = createPage( "content-id", "content-name", "content-type" );
 
-        Mockito.when( client.execute( Mockito.isA( CreatePage.class ) ) ).thenReturn( content );
+        Mockito.when( this.pageService.create( Mockito.isA( CreatePageParams.class ) ) ).thenReturn( content );
 
         String jsonString = resource().path( "content/page/create" ).
             entity( readFromFile( "update_page_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
