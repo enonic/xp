@@ -301,18 +301,6 @@ public final class Module
             return this;
         }
 
-        public Builder removeFileEntry( final String entryName )
-        {
-            this.moduleDirectoryEntry.remove( entryName );
-            return this;
-        }
-
-        public Builder removeFileEntries()
-        {
-            this.moduleDirectoryEntry.removeAll();
-            return this;
-        }
-
         public Module build()
         {
             return new Module( this );

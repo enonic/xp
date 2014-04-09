@@ -3,7 +3,6 @@
 ///<reference path='ModuleResourceKey.ts' />
 ///<reference path='ModuleSummary.ts' />
 ///<reference path='Module.ts' />
-///<reference path='ModuleFileEntry.ts' />
 ///<reference path='ModuleResourceRequest.ts' />
 ///<reference path='DeleteModuleRequest.ts' />
 ///<reference path='GetModuleRequest.ts' />

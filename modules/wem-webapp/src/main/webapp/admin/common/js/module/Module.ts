@@ -8,8 +8,6 @@ module api.module {
 
         private contentTypeDependencies: api.schema.content.ContentTypeName[] = [];
 
-        private moduleDirectoryEntry: api.module.ModuleFileEntry;
-
         private minSystemVersion: string;
 
         private maxSystemVersion: string;
@@ -44,8 +42,6 @@ module api.module {
                     this.contentTypeDependencies.push(new api.schema.content.ContentTypeName(dependency));
                 });
             }
-
-            this.moduleDirectoryEntry = new api.module.ModuleFileEntry(json.moduleDirectoryEntry);
         }
 
         getForm():api.form.Form {
@@ -66,10 +62,6 @@ module api.module {
 
         getContentTypeDependencies(): api.schema.content.ContentTypeName[] {
             return this.contentTypeDependencies;
-        }
-
-        getModuleDirectoryEntry(): api.module.ModuleFileEntry {
-            return this.moduleDirectoryEntry;
         }
     }
 }

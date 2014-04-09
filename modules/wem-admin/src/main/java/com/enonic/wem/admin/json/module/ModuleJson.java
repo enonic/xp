@@ -16,8 +16,6 @@ public class ModuleJson
 
     private final ImmutableList<String> contentTypeDependencies;
 
-    private final ModuleFileEntryJson moduleDirectoryEntry;
-
     public ModuleJson( final Module module )
     {
         super( module );
@@ -37,9 +35,6 @@ public class ModuleJson
             cBuilder.add( contentTypeName.toString() );
         }
         this.contentTypeDependencies = cBuilder.build();
-
-        this.moduleDirectoryEntry =
-            module.getModuleDirectoryEntry() != null ? new ModuleFileEntryJson( module.getModuleDirectoryEntry() ) : null;
     }
 
     public FormJson getConfig()
@@ -55,11 +50,6 @@ public class ModuleJson
     public ImmutableList<String> getContentTypeDependencies()
     {
         return contentTypeDependencies;
-    }
-
-    public ModuleFileEntryJson getModuleDirectoryEntry()
-    {
-        return moduleDirectoryEntry;
     }
 
     public String getMinSystemVersion()

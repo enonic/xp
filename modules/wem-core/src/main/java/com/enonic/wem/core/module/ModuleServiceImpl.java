@@ -2,8 +2,6 @@ package com.enonic.wem.core.module;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.module.CreateModuleParams;
-import com.enonic.wem.api.module.CreateModuleResourceParams;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
@@ -57,22 +55,9 @@ public final class ModuleServiceImpl
     }
 
     @Override
-    public Module createModule( final CreateModuleParams params )
-    {
-        return new CreateModuleCommand().params( params ).moduleExporter( this.moduleExporter ).systemConfig( this.systemConfig ).execute();
-    }
-
-    @Override
     public Resource getResource( final ModuleResourceKey key )
         throws ModuleNotFoundException, ResourceNotFoundException
     {
         return new GetModuleResourceCommand().key( key ).moduleResourcePathResolver( this.moduleResourcePathResolver ).execute();
-    }
-
-    @Override
-    public Resource createResource( final CreateModuleResourceParams params )
-        throws ModuleNotFoundException, ResourceNotFoundException
-    {
-        return new CreateModuleResourceCommand().params( params ).moduleResourcePathResolver( this.moduleResourcePathResolver ).execute();
     }
 }

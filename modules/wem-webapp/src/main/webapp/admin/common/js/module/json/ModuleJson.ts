@@ -8,8 +8,6 @@ module api.module.json{
 
         contentTypeDependencies: string[];
 
-        moduleDirectoryEntry: api.module.json.ModuleFileEntryJson;
-
         minSystemVersion: string;
 
         maxSystemVersion: string;

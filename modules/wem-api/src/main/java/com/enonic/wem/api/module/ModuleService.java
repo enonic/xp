@@ -15,12 +15,6 @@ public interface ModuleService
     Module deleteModule( ModuleKey key )
         throws ModuleNotFoundException;
 
-    Module createModule( CreateModuleParams params );
-
     Resource getResource( ModuleResourceKey key )
         throws ModuleNotFoundException, ResourceNotFoundException;
-
-    Resource createResource( CreateModuleResourceParams params )
-        throws ModuleNotFoundException, ResourceNotFoundException;
-
 }

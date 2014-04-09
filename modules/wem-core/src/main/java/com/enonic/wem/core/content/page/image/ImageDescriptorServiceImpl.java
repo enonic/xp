@@ -2,7 +2,6 @@ package com.enonic.wem.core.content.page.image;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.content.page.image.CreateImageDescriptorParams;
 import com.enonic.wem.api.content.page.image.ImageDescriptor;
 import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
 import com.enonic.wem.api.content.page.image.ImageDescriptorNotFoundException;
@@ -17,12 +16,6 @@ public final class ImageDescriptorServiceImpl
 {
     @Inject
     protected ModuleService moduleService;
-
-    @Override
-    public ImageDescriptor create( final CreateImageDescriptorParams params )
-    {
-        return new CreateImageDescriptorCommand().params( params ).moduleService( this.moduleService ).execute();
-    }
 
     @Override
     public ImageDescriptor getImageDescriptor( final ImageDescriptorKey key )
