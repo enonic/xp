@@ -14,7 +14,7 @@ module api.app.browse {
 
             this.addPanel(this.itemsSelectionPanel);
             this.addPanel(this.itemStatisticsPanel);
-            this.showPanel(0);
+            this.showPanelByIndex(0);
         }
 
         createItemStatisticsPanel(): api.app.view.ItemStatisticsPanel<M> {
@@ -33,10 +33,10 @@ module api.app.browse {
         updateDisplayedPanel() {
             var selectedItems = this.getItems();
             if (selectedItems.length == 1) {
-                this.showPanel(1);
+                this.showPanelByIndex(1);
                 this.itemStatisticsPanel.setItem(selectedItems[0].toViewItem());
             } else {
-                this.showPanel(0);
+                this.showPanelByIndex(0);
             }
         }
 

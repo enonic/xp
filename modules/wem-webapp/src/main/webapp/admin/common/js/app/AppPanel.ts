@@ -23,7 +23,7 @@ module api.app {
 
         showHomePanel() {
             if (this.getPanelShownIndex() != 0) {
-                this.showPanel(0);
+                this.showPanelByIndex(0);
             }
         }
 

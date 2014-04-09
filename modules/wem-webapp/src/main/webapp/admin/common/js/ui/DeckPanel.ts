@@ -94,7 +94,7 @@ module api.ui {
             }
             else if (panelToRemove == this.getPanelShown()) {
                 // show either panel that has the same index now or the last panel
-                this.showPanel(Math.min(index, this.getSize() - 1));
+                this.showPanelByIndex(Math.min(index, this.getSize() - 1));
             }
 
             return index;
@@ -107,7 +107,14 @@ module api.ui {
             return true;
         }
 
-        showPanel(index: number) {
+        showPanel(panel: Panel) {
+            var index = this.getPanelIndex(panel);
+            if( index > -1 ) {
+                this.showPanelByIndex(index);
+            }
+        }
+
+        showPanelByIndex(index: number) {
             var previousPanel = this.getPanelShown();
             var panelToShow = this.getPanel(index);
 

@@ -57,7 +57,7 @@ module app.create {
                 this.closeAndFireEventFromSiteTemplate(event.getItem());
             });
             this.deckPanel.addNavigablePanelToBack(this.templatesTab, this.templatesList);
-            this.deckPanel.showPanel(0);
+            this.deckPanel.showPanelByIndex(0);
             tabBar.selectNavigationItem(0);
 
             var rightColumn = new api.dom.DivEl("column column-right");

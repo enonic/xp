@@ -60,7 +60,7 @@ module api.app.browse {
                 this.treeSwapperDeckPanel = new api.ui.DeckPanel();
                 this.treeSwapperDeckPanel.addPanel(this.browseItemPanel);
                 this.treeSwapperDeckPanel.addPanel(this.gridPanel2);
-                this.treeSwapperDeckPanel.showPanel(0);
+                this.treeSwapperDeckPanel.showPanelByIndex(0);
 
                 this.gridAndDetailSplitPanel = new api.ui.SplitPanelBuilder(this.gridAndToolbarContainer, this.treeSwapperDeckPanel)
                     .setAlignmentTreshold(BrowsePanel.SPLIT_PANEL_ALIGNMENT_TRESHOLD).build();
@@ -117,10 +117,10 @@ module api.app.browse {
 
         toggleShowingNewGrid() {
             if (this.treeSwapperDeckPanel.getPanelShownIndex() == 0) {
-                this.treeSwapperDeckPanel.showPanel(1);
+                this.treeSwapperDeckPanel.showPanelByIndex(1);
             }
             else {
-                this.treeSwapperDeckPanel.showPanel(0);
+                this.treeSwapperDeckPanel.showPanelByIndex(0);
             }
         }
 

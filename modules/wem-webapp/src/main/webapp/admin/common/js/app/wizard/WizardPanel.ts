@@ -74,7 +74,7 @@ module api.app.wizard {
 
             this.backPanel = new api.ui.DeckPanel("wizard-back-panel");
             this.backPanel.addPanel(this.formPanel);
-            this.backPanel.showPanel(0);
+            this.backPanel.showPanelByIndex(0);
 
             this.appendChild(this.mainToolbar);
             this.appendChild(this.backPanel);
@@ -175,11 +175,11 @@ module api.app.wizard {
         }
 
         showPanel(panel: api.ui.Panel) {
-            this.backPanel.showPanel(this.backPanel.getPanelIndex(panel));
+            this.backPanel.showPanelByIndex(this.backPanel.getPanelIndex(panel));
         }
 
         showMainPanel() {
-            this.backPanel.showPanel(0);
+            this.backPanel.showPanelByIndex(0);
         }
 
         getTabId(): api.app.AppBarTabId {
@@ -204,7 +204,7 @@ module api.app.wizard {
                 this.stepPanels.addNavigablePanelToBack(step.getTabBarItem(), step.getPanel());
                 // Ensure first step is shown
                 if (index == 0) {
-                    this.stepPanels.showPanel(0);
+                    this.stepPanels.showPanelByIndex(0);
                 }
             });
         }

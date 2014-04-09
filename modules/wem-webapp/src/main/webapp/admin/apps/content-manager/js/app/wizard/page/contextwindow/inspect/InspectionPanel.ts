@@ -52,11 +52,11 @@ module app.wizard.page.contextwindow.inspect {
             this.addPanel(this.pageInspectionPanel);
             this.addPanel(this.noSelectionPanel);
 
-            this.clearSelection();
+            this.showPanelByIndex(this.getPanelIndex(this.pageInspectionPanel));
         }
 
         public showInspectionPanel(panel: api.ui.Panel) {
-            this.showPanel(this.getPanelIndex(panel));
+            this.showPanelByIndex(this.getPanelIndex(panel));
         }
 
         public clearSelection() {

@@ -12,7 +12,7 @@ module api.ui {
             this.navigator = navigator;
 
             navigator.onNavigationItemSelected((event: DeckPanelNavigatorEvent) => {
-                this.showPanel(event.getTabItem().getIndex());
+                this.showPanelByIndex(event.getTabItem().getIndex());
             });
         }
 

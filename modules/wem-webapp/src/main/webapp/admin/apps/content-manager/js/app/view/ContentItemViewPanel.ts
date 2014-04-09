@@ -71,9 +71,9 @@ module app.view {
             this.previewMode = enabled;
             // refresh the view
             if (enabled) {
-                this.deckPanel.showPanel(this.previewPanelIndex);
+                this.deckPanel.showPanelByIndex(this.previewPanelIndex);
             } else {
-                this.deckPanel.showPanel(this.statisticsPanelIndex);
+                this.deckPanel.showPanelByIndex(this.statisticsPanelIndex);
             }
         }
 
