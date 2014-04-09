@@ -3,6 +3,7 @@ package com.enonic.wem.api.module;
 import com.google.common.base.Preconditions;
 import com.google.common.io.Files;
 
+// TODO: Rename to ResourceKey
 public final class ModuleFileKey
 {
     private final String uri;
