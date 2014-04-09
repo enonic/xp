@@ -11,7 +11,6 @@ import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.Modules;
-import com.enonic.wem.api.module.UpdateModuleParams;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceNotFoundException;
 import com.enonic.wem.core.config.SystemConfig;
@@ -61,14 +60,6 @@ public final class ModuleServiceImpl
     public Module createModule( final CreateModuleParams params )
     {
         return new CreateModuleCommand().params( params ).moduleExporter( this.moduleExporter ).systemConfig( this.systemConfig ).execute();
-    }
-
-    @Override
-    public boolean updateModule( final UpdateModuleParams params )
-        throws ModuleNotFoundException
-    {
-        return new UpdateModuleCommand().params( params ).moduleExporter( this.moduleExporter ).systemConfig(
-            this.systemConfig ).moduleResourcePathResolver( this.moduleResourcePathResolver ).execute();
     }
 
     @Override

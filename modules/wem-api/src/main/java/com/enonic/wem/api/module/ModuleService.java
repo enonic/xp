@@ -17,9 +17,6 @@ public interface ModuleService
 
     Module createModule( CreateModuleParams params );
 
-    boolean updateModule( UpdateModuleParams params )
-        throws ModuleNotFoundException;
-
     Resource getResource( ModuleResourceKey key )
         throws ModuleNotFoundException, ResourceNotFoundException;
 
