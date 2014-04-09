@@ -67,7 +67,7 @@ module api.util.loader {
             this.searchString = searchString;
             if (this.results) {
                 var filtered = this.results.filter(this.filterFn, this);
-                this.notifyLoadedData(this.results);
+                this.notifyLoadedData(filtered);
             }
         }
 

@@ -8,7 +8,7 @@ module api.content.page.layout {
 
         filterFn(descriptor:LayoutDescriptor)
         {
-            return descriptor.getDisplayName().toString().indexOf(this.getSearchString().toLowerCase()) != -1;
+            return descriptor.getDisplayName().toString().toLowerCase().indexOf(this.getSearchString().toLowerCase()) != -1;
         }
 
     }

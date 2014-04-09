@@ -10,7 +10,7 @@ module api.content.page.image {
         }
 
         filterFn(descriptor: ImageDescriptor) {
-            return descriptor.getDisplayName().toString().indexOf(this.getSearchString().toLowerCase()) != -1;
+            return descriptor.getDisplayName().toString().toLowerCase().indexOf(this.getSearchString().toLowerCase()) != -1;
         }
 
 
