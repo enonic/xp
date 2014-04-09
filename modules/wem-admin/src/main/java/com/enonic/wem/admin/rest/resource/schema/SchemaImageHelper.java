@@ -3,7 +3,6 @@ package com.enonic.wem.admin.rest.resource.schema;
 import java.awt.image.BufferedImage;
 
 import com.enonic.wem.admin.rest.resource.BaseImageHelper;
-import com.enonic.wem.api.Client;
 
 final class SchemaImageHelper
     extends BaseImageHelper
@@ -12,9 +11,8 @@ final class SchemaImageHelper
 
     private final BufferedImage defaultRelationshipTypeImage;
 
-    public SchemaImageHelper( final Client client )
+    public SchemaImageHelper()
     {
-        super( client );
         defaultMixinImage = loadDefaultImage( "mixin" );
         defaultRelationshipTypeImage = loadDefaultImage( "relationshiptype" );
     }

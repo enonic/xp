@@ -1,7 +1,5 @@
 package com.enonic.wem.admin.jsp;
 
-import java.io.OutputStream;
-
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletResponse;
 

@@ -9,7 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.ContentData;
@@ -42,14 +41,11 @@ public class RelationshipServiceImplTest
 
     private Session jcrSession;
 
-    private Client client;
-
     private ContentTypeService contentTypeService;
 
     @Before
     public void before()
     {
-        client = Mockito.mock( Client.class );
         jcrSession = Mockito.mock( Session.class );
         relationshipDao = Mockito.mock( RelationshipDao.class );
         contentTypeService = Mockito.mock( ContentTypeService.class );
@@ -92,7 +88,6 @@ public class RelationshipServiceImplTest
 
         // exercise
         SyncRelationshipsCommand command = new SyncRelationshipsCommand();
-        command.client( client );
         command.jcrSession( jcrSession );
         command.contentType( ContentTypeName.from( "my_relations" ) );
         command.contentToUpdate( ContentId.from( "1" ) );

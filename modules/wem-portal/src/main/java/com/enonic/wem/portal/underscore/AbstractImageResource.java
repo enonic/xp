@@ -20,7 +20,6 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
-import com.enonic.wem.api.content.attachment.GetAttachmentParams;
 import com.enonic.wem.core.image.ImageHelper;
 import com.enonic.wem.core.image.filter.BuilderContext;
 import com.enonic.wem.core.image.filter.ImageFilter;
@@ -80,8 +79,7 @@ abstract class AbstractImageResource
         // TODO : Better not found handling
         try
         {
-            final GetAttachmentParams params = new GetAttachmentParams().contentId( contentId ).attachmentName( attachmentName );
-            return attachmentService.get( params );
+            return attachmentService.get( contentId, attachmentName );
         }
         catch ( ContentNotFoundException e )
         {

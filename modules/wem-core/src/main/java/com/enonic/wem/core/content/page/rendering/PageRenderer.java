@@ -34,7 +34,7 @@ public final class PageRenderer
 
     public PageRenderer( final Client client, final Context context )
     {
-        super( client, context );
+        super( context );
         this.controllerFactory = new ControllerFactory( client );
     }
 
