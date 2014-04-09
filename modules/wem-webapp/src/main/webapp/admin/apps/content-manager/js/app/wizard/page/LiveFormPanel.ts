@@ -236,6 +236,9 @@ module app.wizard.page {
 
                     this.loadPageDescriptor().done(() => {
 
+                        this.contextWindow.showInspectionPanel(this.pageInspectionPanel);
+                        this.pageInspectionPanel.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
+
                         deferred.resolve(null);
                     });
 

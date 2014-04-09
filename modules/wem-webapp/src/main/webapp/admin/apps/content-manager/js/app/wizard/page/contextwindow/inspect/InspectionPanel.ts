@@ -52,7 +52,7 @@ module app.wizard.page.contextwindow.inspect {
             this.addPanel(this.pageInspectionPanel);
             this.addPanel(this.noSelectionPanel);
 
-            this.showPanelByIndex(this.getPanelIndex(this.pageInspectionPanel));
+            this.showPanel(this.pageInspectionPanel);
         }
 
         public showInspectionPanel(panel: api.ui.Panel) {
