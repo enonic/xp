@@ -7,7 +7,6 @@ module api.content.page.part {
         }
 
         filterFn(descriptor: PartDescriptor) {
-            console.log("filtering part descriptors", arguments);
             return descriptor.getDisplayName().toString().toLowerCase().indexOf(this.getSearchString().toLowerCase()) != -1;
         }
 
