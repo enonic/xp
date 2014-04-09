@@ -9,6 +9,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.content.GetContentByIdsParams;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
 import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
@@ -18,9 +19,7 @@ import com.enonic.wem.api.entity.Nodes;
 final class GetContentByIdsCommand
     extends AbstractContentCommand<GetContentByIdsCommand>
 {
-    private ContentIds contentIds;
-
-    private boolean getChildrenIds;
+    private GetContentByIdsParams params;
 
     Contents execute()
     {
@@ -36,14 +35,14 @@ final class GetContentByIdsCommand
             throw new ContentNotFoundException( contentId );
         }
 
-        return this.getChildrenIds
+        return this.params.doGetChildrenIds()
             ? new ChildContentIdsResolver( this.nodeService, this.contentTypeService, this.blobService ).resolve( contents )
             : contents;
     }
 
     private Contents doExecute()
     {
-        final EntityIds entityIds = getAsEntityIds( contentIds );
+        final EntityIds entityIds = getAsEntityIds( this.params.getIds() );
         final Nodes nodes = nodeService.getByIds( entityIds );
 
         return getTranslator().fromNodes( nodes );
@@ -63,15 +62,9 @@ final class GetContentByIdsCommand
         return EntityIds.from( entityIds );
     }
 
-    GetContentByIdsCommand contentIds( final ContentIds ids )
+    GetContentByIdsCommand params( final GetContentByIdsParams params )
     {
-        this.contentIds = ids;
-        return this;
-    }
-
-    GetContentByIdsCommand getChildrenIds( final boolean getChildrenIds )
-    {
-        this.getChildrenIds = getChildrenIds;
+        this.params = params;
         return this;
     }
 }
