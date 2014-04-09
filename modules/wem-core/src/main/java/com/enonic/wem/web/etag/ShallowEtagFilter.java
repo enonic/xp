@@ -73,7 +73,7 @@ public final class ShallowEtagFilter
 
     private String generateETagHeaderValue( final byte[] bytes )
     {
-        return Hashing.md5().hashBytes( bytes ).toString();
+        return "\"" + Hashing.md5().hashBytes( bytes ).toString() + "\"";
     }
 
 }

@@ -83,16 +83,16 @@ public final class SchemaImageResource
         if ( icon == null && schemaKey.isMixin() )
         {
             final BufferedImage defaultMixinImage = helper.getDefaultMixinImage( size );
-            return Response.ok( defaultMixinImage, DEFAULT_MIME_TYPE ).header( "Cache-Control", "max-age=259200" ).build();
+            return Response.ok( defaultMixinImage, DEFAULT_MIME_TYPE ).build();
         }
         else if ( icon == null && schemaKey.isRelationshipType() )
         {
             final BufferedImage defaultRelationshipTypeImage = helper.getDefaultRelationshipTypeImage( size );
-            return Response.ok( defaultRelationshipTypeImage, DEFAULT_MIME_TYPE ).header( "Cache-Control", "max-age=259200" ).build();
+            return Response.ok( defaultRelationshipTypeImage, DEFAULT_MIME_TYPE ).build();
         }
         else if ( icon != null )
         {
-            return Response.ok( helper.resizeImage( icon.asInputStream(), size ), icon.getMimeType() ).header( "Cache-Control", "max-age=259200" ).build();
+            return Response.ok( helper.resizeImage( icon.asInputStream(), size ), icon.getMimeType() ).build();
         }
         else
         {
