@@ -33,7 +33,7 @@ final class CreateContentCommand
         }
 
         final CreateNodeParams createNodeParams = getTranslator().toCreateNode( this.params );
-        final Node createdNode = nodeService.create( createNodeParams ).getPersistedNode();
+        final Node createdNode = nodeService.create( createNodeParams );
 
         return getTranslator().fromNode( createdNode );
     }

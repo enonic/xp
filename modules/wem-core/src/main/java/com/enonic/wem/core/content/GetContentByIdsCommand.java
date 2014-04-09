@@ -11,7 +11,6 @@ import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
-import com.enonic.wem.api.entity.GetNodesByIdsParams;
 import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
 import com.enonic.wem.api.entity.Nodes;
 
@@ -45,7 +44,7 @@ final class GetContentByIdsCommand
     private Contents doExecute()
     {
         final EntityIds entityIds = getAsEntityIds( contentIds );
-        final Nodes nodes = nodeService.getByIds( new GetNodesByIdsParams( entityIds ) );
+        final Nodes nodes = nodeService.getByIds( entityIds );
 
         return getTranslator().fromNodes( nodes );
     }

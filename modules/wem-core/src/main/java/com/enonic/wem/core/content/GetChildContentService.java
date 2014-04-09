@@ -3,7 +3,6 @@ package com.enonic.wem.core.content;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.api.entity.GetNodesByParentParams;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.entity.Nodes;
@@ -38,7 +37,7 @@ final class GetChildContentService
     {
         final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( this.contentPath );
 
-        final Nodes nodes = nodeService.getByParent( new GetNodesByParentParams( nodePath ) );
+        final Nodes nodes = nodeService.getByParent( nodePath );
         final Contents contents = getTranslator().fromNodes( removeNonContentNodes( nodes ) );
 
         if ( populateChildIds )

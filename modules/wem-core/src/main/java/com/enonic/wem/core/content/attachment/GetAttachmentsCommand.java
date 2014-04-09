@@ -5,7 +5,6 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.attachment.GetAttachmentsParams;
 import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.GetNodeByIdParams;
 import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeService;
@@ -33,7 +32,7 @@ final class GetAttachmentsCommand
         try
         {
             final EntityId entityId = EntityId.from( params.getContentId() );
-            final Node node = nodeService.getById( new GetNodeByIdParams( entityId ) );
+            final Node node = nodeService.getById( entityId );
             final Attachments.Builder attachmentsBuilder = Attachments.builder();
 
             for ( com.enonic.wem.api.entity.Attachment entityAttachment : node.attachments() )

@@ -4,7 +4,6 @@ package com.enonic.wem.core.entity;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.command.entity.CreateNodeResult;
 import com.enonic.wem.api.entity.Attachments;
 import com.enonic.wem.api.entity.CreateNodeParams;
 import com.enonic.wem.api.entity.Node;
@@ -14,7 +13,7 @@ import com.enonic.wem.core.index.IndexService;
 
 import static com.enonic.wem.core.entity.dao.CreateNodeArguments.newCreateNodeArgs;
 
-public class CreateNodeCommand
+final class CreateNodeCommand
 {
     private IndexService indexService;
 
@@ -29,13 +28,14 @@ public class CreateNodeCommand
         this.params = builder.params;
     }
 
-    public CreateNodeResult execute()
+    Node execute()
     {
         this.params.validate();
+
         return doExecute();
     }
 
-    private CreateNodeResult doExecute()
+    private Node doExecute()
     {
         final CreateNodeArguments createNodeArguments = newCreateNodeArgs().
             creator( UserKey.superUser() ).
@@ -53,15 +53,15 @@ public class CreateNodeCommand
 
         indexService.indexNode( persistedNode );
 
-        return new CreateNodeResult( persistedNode );
+        return persistedNode;
     }
 
-    public static Builder create()
+    static Builder create()
     {
         return new Builder();
     }
 
-    public static class Builder
+    static class Builder
     {
         private IndexService indexService;
 
@@ -69,25 +69,25 @@ public class CreateNodeCommand
 
         private CreateNodeParams params;
 
-        public Builder indexService( final IndexService indexService )
+        Builder indexService( final IndexService indexService )
         {
             this.indexService = indexService;
             return this;
         }
 
-        public Builder session( final Session session )
+        Builder session( final Session session )
         {
             this.session = session;
             return this;
         }
 
-        public Builder params( final CreateNodeParams params )
+        Builder params( final CreateNodeParams params )
         {
             this.params = params;
             return this;
         }
 
-        public CreateNodeCommand build()
+        CreateNodeCommand build()
         {
             return new CreateNodeCommand( this );
         }
