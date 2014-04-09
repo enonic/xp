@@ -410,6 +410,7 @@ module api.ui.selector.combobox {
 
                 if (!this.isDropdownShown()) {
                     this.showDropdown();
+                    this.input.getEl().removeAttribute('readonly');
                 }
             });
 
