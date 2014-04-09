@@ -3,7 +3,6 @@ package com.enonic.wem.core.content.page.part;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.content.page.part.CreatePartDescriptorParams;
 import com.enonic.wem.api.content.page.part.GetPartDescriptor;
 import com.enonic.wem.api.content.page.part.GetPartDescriptorsByModules;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
@@ -22,11 +21,6 @@ public class PartDescriptorServiceImpl
     {
         final GetPartDescriptor command = new GetPartDescriptor( key );
         return client.execute( command );
-    }
-
-    public PartDescriptor create( final CreatePartDescriptorParams params )
-    {
-        return client.execute( params );
     }
 
     public PartDescriptors getByModules( final ModuleKeys moduleKeys )

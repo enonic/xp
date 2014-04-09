@@ -6,9 +6,4 @@ public final class ModuleCommands
     {
         return new GetModuleResource();
     }
-
-    public CreateModuleResource createResource()
-    {
-        return new CreateModuleResource();
-    }
 }

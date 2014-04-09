@@ -6,7 +6,5 @@ public interface LayoutDescriptorService
 {
     LayoutDescriptor getByKey( final LayoutDescriptorKey key );
 
-    LayoutDescriptor create( final CreateLayoutDescriptorParams params );
-
     LayoutDescriptors getByModules( final ModuleKeys moduleKeys );
 }

@@ -12,11 +12,9 @@ import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;
 import com.enonic.wem.api.content.page.part.PartDescriptorService;
 import com.enonic.wem.core.command.CommandBinder;
 import com.enonic.wem.core.content.page.image.ImageDescriptorServiceImpl;
-import com.enonic.wem.core.content.page.layout.CreateLayoutDescriptorHandler;
 import com.enonic.wem.core.content.page.layout.GetLayoutDescriptorHandler;
 import com.enonic.wem.core.content.page.layout.GetLayoutDescriptorsByModulesHandler;
 import com.enonic.wem.core.content.page.layout.LayoutDescriptorServiceImpl;
-import com.enonic.wem.core.content.page.part.CreatePartDescriptorHandler;
 import com.enonic.wem.core.content.page.part.GetPartDescriptorHandler;
 import com.enonic.wem.core.content.page.part.GetPartDescriptorsByModulesHandler;
 import com.enonic.wem.core.content.page.part.PartDescriptorServiceImpl;
@@ -41,13 +39,10 @@ public class PageModule
 
         commands.add( GetPageTemplateByKeyHandler.class );
         commands.add( GetPageTemplatesBySiteTemplateHandler.class );
-        commands.add( UpdatePageTemplateHandler.class );
 
-        commands.add( CreatePartDescriptorHandler.class );
         commands.add( GetLayoutDescriptorHandler.class );
         commands.add( GetPartDescriptorHandler.class );
         commands.add( GetPartDescriptorsByModulesHandler.class );
         commands.add( GetLayoutDescriptorsByModulesHandler.class );
-        commands.add( CreateLayoutDescriptorHandler.class );
     }
 }
