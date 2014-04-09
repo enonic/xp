@@ -6,6 +6,8 @@ module api.ui.selector {
 
         displayValue:T;
 
+        indices?: string[];
+
     }
 
 }

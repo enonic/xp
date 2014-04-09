@@ -41,7 +41,16 @@ module app.wizard.page.contextwindow.inspect {
 
                 pageTemplates.forEach((pageTemplate: PageTemplateSummary, index: number) => {
 
-                    var option = {value: pageTemplate.getKey().toString(), displayValue: new PageTemplateOption(pageTemplate)};
+                    var indices:string[] = [];
+                    indices.push( pageTemplate.getName().toString() );
+                    indices.push( pageTemplate.getDisplayName() );
+                    indices.push( pageTemplate.getDescriptorKey().toString() );
+
+                    var option = {
+                        value: pageTemplate.getKey().toString(),
+                        displayValue: new PageTemplateOption(pageTemplate),
+                        indices: indices
+                    };
                     options.push(option);
                 });
 

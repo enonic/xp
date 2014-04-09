@@ -17,7 +17,7 @@ module api.ui.selector.dropdown {
 
         optionDisplayValueViewer?: Viewer<OPTION_DISPLAY_VALUE>;
 
-        filter?: (item: OPTION_DISPLAY_VALUE, args: any) => boolean;
+        filter?: (item: Option<OPTION_DISPLAY_VALUE>, args: any) => boolean;
 
         dataIdProperty?:string;
 
@@ -66,17 +66,20 @@ module api.ui.selector.dropdown {
 
             this.dropdownHandle = new DropdownHandle();
             this.appendChild(this.dropdownHandle);
-
+            var filter = this.defaultFilter;
+            if (config.filter) {
+                filter = config.filter;
+            }
             this.dropdownDropdown = new DropdownDropdown(<DropdownDropdownConfig<OPTION_DISPLAY_VALUE>>{
                 maxHeight: 200,
                 width: this.input.getEl().getWidth(),
                 optionFormatter: config.optionFormatter,
                 optionDisplayValueViewer: config.optionDisplayValueViewer,
-                filter: config.filter || this.defaultFilter,
+                filter: filter,
                 rowHeight: config.rowHeight,
                 dataIdProperty: config.dataIdProperty
             });
-            if (!config.filter) {
+            if (filter) {
                 this.dropdownDropdown.setFilterArgs({searchString: ""});
             }
 
@@ -114,8 +117,21 @@ module api.ui.selector.dropdown {
                 return true;
             }
 
-            if (option.displayValue.toString().toLowerCase().indexOf(lowerCasedSearchString) > -1) {
+            var displayVaueAsString = option.displayValue.toString();
+            if (displayVaueAsString.toLowerCase().indexOf(lowerCasedSearchString) > -1) {
                 return true;
+            }
+
+            var indices = option.indices;
+            if (indices && indices.length > 0) {
+                for (var i = 0; i < indices.length; i++) {
+                    var index = indices[i];
+                    if (index) {
+                        if (index.toLocaleLowerCase().indexOf(lowerCasedSearchString) > -1) {
+                            return true;
+                        }
+                    }
+                }
             }
 
             return false;

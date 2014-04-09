@@ -24,9 +24,16 @@ module api.content.page.image {
 
                 var descriptors: ImageDescriptor[] = event.getData();
                 descriptors.forEach((descriptor: ImageDescriptor) => {
+
+                    var indices: string[] = [];
+                    indices.push(descriptor.getDisplayName());
+                    indices.push(descriptor.getName().toString());
+
                     var option = <Option<ImageDescriptor>>{
                         value: descriptor.getKey().toString(),
-                        displayValue: descriptor};
+                        displayValue: descriptor,
+                        indices: indices
+                    };
 
                     this.addOption(option);
                 });
