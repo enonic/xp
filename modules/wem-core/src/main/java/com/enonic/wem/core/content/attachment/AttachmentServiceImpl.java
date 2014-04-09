@@ -2,11 +2,10 @@ package com.enonic.wem.core.content.attachment;
 
 import javax.inject.Inject;
 
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.Attachments;
-import com.enonic.wem.api.content.attachment.GetAttachmentParams;
-import com.enonic.wem.api.content.attachment.GetAttachmentsParams;
 import com.enonic.wem.api.entity.NodeService;
 
 public class AttachmentServiceImpl
@@ -16,14 +15,18 @@ public class AttachmentServiceImpl
     private NodeService nodeService;
 
     @Override
-    public Attachment get( final GetAttachmentParams params )
+    public Attachment get( final ContentId contentId, final String attachmentName )
     {
-        return new GetAttachmentCommand().params( params ).nodeService( nodeService ).execute();
+        return new GetAttachmentCommand().
+            contentId( contentId ).
+            attachmentName( attachmentName ).
+            nodeService( nodeService ).
+            execute();
     }
 
     @Override
-    public Attachments getAll( final GetAttachmentsParams params )
+    public Attachments getAll( final ContentId contentId )
     {
-        return new GetAttachmentsCommand().params( params ).nodeService( nodeService ).execute();
+        return new GetAttachmentsCommand().contentId( contentId ).nodeService( nodeService ).execute();
     }
 }

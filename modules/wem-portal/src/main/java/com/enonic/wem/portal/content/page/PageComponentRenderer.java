@@ -7,7 +7,6 @@ import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.content.page.Descriptor;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.PageComponent;
@@ -26,9 +25,6 @@ abstract class PageComponentRenderer
         "<div data-live-edit-type=\"{0}\" data-live-edit-component=\"{1}\" data-live-edit-empty-component=\"true\" class=\"live-edit-empty-component\"></div>";
 
     private static final String EMPTY_COMPONENT_PREVIEW_MODE_HTML = "<div></div>";
-
-    @Inject
-    protected Client client;
 
     @Inject
     protected JsControllerFactory controllerFactory;

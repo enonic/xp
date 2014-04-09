@@ -13,7 +13,6 @@ import org.mockito.Mockito;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.content.ContentType;
@@ -38,9 +37,7 @@ import static org.junit.Assert.*;
 
 public class SchemaImageResourceTest
 {
-    private SchemaImageResource controller;
-
-    private Client client;
+    private SchemaImageResource resource;
 
     private MixinService mixinService;
 
@@ -52,17 +49,16 @@ public class SchemaImageResourceTest
     public void setUp()
         throws Exception
     {
-        this.controller = new SchemaImageResource();
-        client = Mockito.mock( Client.class );
-        this.controller.setClient( client );
+        this.resource = new SchemaImageResource();
 
         mixinService = Mockito.mock( MixinService.class );
-        this.controller.setMixinService( mixinService );
+        this.resource.setMixinService( mixinService );
+
         contentTypeService = Mockito.mock( ContentTypeService.class );
-        this.controller.setContentTypeService( contentTypeService );
+        this.resource.setContentTypeService( contentTypeService );
 
         relationshipTypeService = Mockito.mock( RelationshipTypeService.class );
-        this.controller.setRelationshipTypeService( relationshipTypeService );
+        this.resource.setRelationshipTypeService( relationshipTypeService );
     }
 
     @Test
@@ -81,7 +77,7 @@ public class SchemaImageResourceTest
         setupContentType( contentType );
 
         // exercise
-        final Response response = this.controller.getSchemaIcon( "ContentType:my_content_type", 20 );
+        final Response response = this.resource.getSchemaIcon( "ContentType:my_content_type", 20 );
         final BufferedImage contentTypeIcon = (BufferedImage) response.getEntity();
 
         // verify
@@ -110,7 +106,7 @@ public class SchemaImageResourceTest
         setupContentType( contentType );
 
         // exercise
-        final Response response = this.controller.getSchemaIcon( "ContentType:my_content_type", 20 );
+        final Response response = this.resource.getSchemaIcon( "ContentType:my_content_type", 20 );
         final BufferedImage contentTypeIcon = (BufferedImage) response.getEntity();
 
         // verify
@@ -127,7 +123,7 @@ public class SchemaImageResourceTest
         try
         {
             // exercise
-            this.controller.getSchemaIcon( "ContentType:my_content_type", 10 );
+            this.resource.getSchemaIcon( "ContentType:my_content_type", 10 );
         }
         catch ( WebApplicationException e )
         {
@@ -153,7 +149,7 @@ public class SchemaImageResourceTest
         setupMixin( mixin );
 
         // exercise
-        final Response response = this.controller.getSchemaIcon( "Mixin:postal_code", 20 );
+        final Response response = this.resource.getSchemaIcon( "Mixin:postal_code", 20 );
         final BufferedImage mixinIcon = (BufferedImage) response.getEntity();
 
         // verify
@@ -172,7 +168,7 @@ public class SchemaImageResourceTest
         setupMixin( mixin );
 
         // exercise
-        final Response response = this.controller.getSchemaIcon( "Mixin:postal_code", 20 );
+        final Response response = this.resource.getSchemaIcon( "Mixin:postal_code", 20 );
         final BufferedImage mixinIcon = (BufferedImage) response.getEntity();
 
         // verify
@@ -197,7 +193,7 @@ public class SchemaImageResourceTest
         setupRelationshipType( relationshipType );
 
         // exercise
-        final Response response = this.controller.getSchemaIcon( "RelationshipType:like", 20 );
+        final Response response = this.resource.getSchemaIcon( "RelationshipType:like", 20 );
         final BufferedImage mixinIcon = (BufferedImage) response.getEntity();
 
         // verify
@@ -218,7 +214,7 @@ public class SchemaImageResourceTest
         setupRelationshipType( relationshipType );
 
         // exercise
-        final Response response = this.controller.getSchemaIcon( "RelationshipType:like", 20 );
+        final Response response = this.resource.getSchemaIcon( "RelationshipType:like", 20 );
         final BufferedImage mixinIcon = (BufferedImage) response.getEntity();
 
         // verify

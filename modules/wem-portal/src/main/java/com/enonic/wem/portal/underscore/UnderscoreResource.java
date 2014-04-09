@@ -2,7 +2,6 @@ package com.enonic.wem.portal.underscore;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleName;
@@ -13,9 +12,6 @@ import com.enonic.wem.portal.exception.PortalWebException;
 
 public abstract class UnderscoreResource
 {
-    @Inject
-    protected Client client;
-
     @Inject
     protected ModuleResourcePathResolver modulePathResolver;
 

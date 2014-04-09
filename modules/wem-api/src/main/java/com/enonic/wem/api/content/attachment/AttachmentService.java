@@ -1,8 +1,10 @@
 package com.enonic.wem.api.content.attachment;
 
+import com.enonic.wem.api.content.ContentId;
+
 public interface AttachmentService
 {
-    Attachment get( GetAttachmentParams params );
+    Attachment get( ContentId contentId, String attachmentName );
 
-    Attachments getAll( GetAttachmentsParams params );
+    Attachments getAll( ContentId contentId );
 }
