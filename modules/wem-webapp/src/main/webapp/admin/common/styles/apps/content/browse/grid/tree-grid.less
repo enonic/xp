@@ -1,11 +1,16 @@
 .admin-tree .admin-tree-thumbnail.site .overlay,
 .admin-grid .admin-grid-thumbnail.site .overlay {
-    color: black;
-    background-color: orangered;
+  right: 8px;
+  padding: 0 5px;
+  line-height: 16px;
+  border-radius: 10px;
+  background: @admin-blue;
+  font-size: 12px;
 
-    &:before {
-      content: "S";
-    }
+  &:before {
+    content: "S";
+    vertical-align: middle;
+  }
 }
 
 .content-type-list {
@@ -15,21 +20,22 @@
 
     .overlay {
       position: absolute;
-      top: 5px;
-      left: 35px;
+      top: 0;
+      left: 23px;
       color: white;
-      line-height: 12px;
-      padding: 3px;
+      line-height: 16px;
+      padding: 0 5px;
+      border-radius: 10px;
     }
 
     &.site {
 
       .overlay {
-        color: black;
-        background-color: orangered;
+        background: @admin-blue;
 
         &:before {
           content: "S";
+          vertical-align: middle;
         }
       }
     }
