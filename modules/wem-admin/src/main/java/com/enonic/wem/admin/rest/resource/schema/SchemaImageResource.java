@@ -12,7 +12,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.SchemaKey;
 import com.enonic.wem.api.schema.content.ContentType;
@@ -35,22 +34,13 @@ public final class SchemaImageResource
 {
     public static final String DEFAULT_MIME_TYPE = "image/png";
 
-    private SchemaImageHelper helper;
+    private static final SchemaImageHelper helper = new SchemaImageHelper();
 
     private MixinService mixinService;
 
     private ContentTypeService contentTypeService;
 
     private RelationshipTypeService relationshipTypeService;
-
-    private Client client;
-
-    @Inject
-    public void setClient( final Client client )
-    {
-        this.client = client;
-        this.helper = new SchemaImageHelper( client );
-    }
 
     @Inject
     public void setMixinService( final MixinService mixinService )

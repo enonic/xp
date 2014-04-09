@@ -16,7 +16,6 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
-import com.enonic.wem.api.content.attachment.GetAttachmentsParams;
 import com.enonic.wem.core.image.ImageHelper;
 import com.enonic.wem.core.image.filter.ImageFilterBuilder;
 
@@ -102,8 +101,7 @@ public final class ImageByIdResource
         // TODO : Better not found handling
         try
         {
-            final GetAttachmentsParams params = new GetAttachmentsParams().contentId( contentId );
-            return attachmentService.getAll( params ).first();
+            return attachmentService.getAll( contentId ).first();
         }
         catch ( ContentNotFoundException e )
         {

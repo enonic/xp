@@ -7,19 +7,11 @@ import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.core.image.filter.effect.ScaleSquareFilter;
 
 public abstract class BaseImageHelper
 {
-    protected final Client client;
-
-    protected BaseImageHelper( final Client client )
-    {
-        this.client = client;
-    }
-
     protected BufferedImage toBufferedImage( final byte[] data )
     {
         try

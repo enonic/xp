@@ -22,7 +22,6 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
-import com.enonic.wem.api.content.attachment.GetAttachmentParams;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.blobstore.memory.MemoryBlobRecord;
 import com.enonic.wem.core.image.filter.BuilderContext;
@@ -92,7 +91,7 @@ public class ImageResourceTest
             label( "small" ).
             build();
         final byte[] imageData = ByteStreams.toByteArray( getClass().getResourceAsStream( "enonic-logo.png" ) );
-        when( attachmentService.get( isA( GetAttachmentParams.class ) ) ).thenReturn( attachment );
+        when( attachmentService.get( isA( ContentId.class ), isA( String.class ) ) ).thenReturn( attachment );
         final Blob blob = new MemoryBlobRecord( blobKey, imageData );
         when( blobService.get( isA( BlobKey.class ) ) ).thenReturn( blob );
 
@@ -136,7 +135,7 @@ public class ImageResourceTest
             label( "small" ).
             build();
         final byte[] imageData = ByteStreams.toByteArray( getClass().getResourceAsStream( "enonic-logo.png" ) );
-        when( attachmentService.get( isA( GetAttachmentParams.class ) ) ).thenReturn( attachment );
+        when( attachmentService.get( isA( ContentId.class ), isA( String.class ) ) ).thenReturn( attachment );
         final Blob blob = new MemoryBlobRecord( blobKey, imageData );
         when( blobService.get( isA( BlobKey.class ) ) ).thenReturn( blob );
         when( imageFilterBuilder.build( isA( BuilderContext.class ), isA( String.class ) ) ).thenReturn( getImageFilterBuilder() );

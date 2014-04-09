@@ -1,8 +1,8 @@
 package com.enonic.wem.core.content.attachment;
 
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.content.attachment.GetAttachmentParams;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.GetNodeByIdParams;
 import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
@@ -17,23 +17,18 @@ final class GetAttachmentCommand
 
     private NodeService nodeService;
 
-    private GetAttachmentParams params;
+    private String attachmentName;
+
+    private ContentId contentId;
 
     Attachment execute()
     {
-        params.validate();
-
-        return doExecute();
-    }
-
-    private Attachment doExecute()
-    {
         try
         {
-            final EntityId entityId = EntityId.from( params.getContentId() );
+            final EntityId entityId = EntityId.from( this.contentId );
             final Node node = nodeService.getById( new GetNodeByIdParams( entityId ) );
 
-            final com.enonic.wem.api.entity.Attachment entityAttachment = node.attachments().getAttachment( params.getAttachmentName() );
+            final com.enonic.wem.api.entity.Attachment entityAttachment = node.attachments().getAttachment( this.attachmentName );
             if ( entityAttachment != null )
             {
                 return CONTENT_ATTACHMENT_NODE_TRANSLATOR.toContentAttachment( entityAttachment );
@@ -45,7 +40,7 @@ final class GetAttachmentCommand
         }
         catch ( NoEntityWithIdFoundException e )
         {
-            throw new ContentNotFoundException( params.getContentId() );
+            throw new ContentNotFoundException( this.contentId );
         }
     }
 
@@ -55,9 +50,15 @@ final class GetAttachmentCommand
         return this;
     }
 
-    GetAttachmentCommand params( final GetAttachmentParams params )
+    GetAttachmentCommand attachmentName( final String attachmentName )
     {
-        this.params = params;
+        this.attachmentName = attachmentName;
+        return this;
+    }
+
+    GetAttachmentCommand contentId( final ContentId contentId )
+    {
+        this.contentId = contentId;
         return this;
     }
 }
