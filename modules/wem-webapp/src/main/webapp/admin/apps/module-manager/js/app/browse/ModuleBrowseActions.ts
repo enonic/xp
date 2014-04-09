@@ -8,27 +8,6 @@ module app.browse {
 
     }
 
-    export class ImportModuleAction extends api.ui.Action {
-
-        constructor() {
-            super("Import");
-            this.addExecutionListener(() => {
-                new ImportModuleEvent().fire();
-            });
-        }
-    }
-
-    export class ExportModuleAction extends BaseModuleBrowseAction {
-
-        constructor() {
-            super("Export");
-            this.setEnabled(false);
-            this.addExecutionListener(() => {
-                new ExportModuleEvent().fire();
-            });
-        }
-    }
-
     export class DeleteModuleAction extends BaseModuleBrowseAction {
 
         constructor() {
@@ -43,8 +22,6 @@ module app.browse {
 
     export class ModuleBrowseActions {
 
-        public IMPORT_MODULE:api.ui.Action;
-        public EXPORT_MODULE:api.ui.Action;
         public DELETE_MODULE:api.ui.Action;
 
         private allActions:api.ui.Action[] = [];
@@ -62,11 +39,9 @@ module app.browse {
 
         constructor() {
 
-            this.IMPORT_MODULE = new ImportModuleAction();
             this.DELETE_MODULE = new DeleteModuleAction();
-            this.EXPORT_MODULE = new ExportModuleAction();
 
-            this.allActions.push(this.IMPORT_MODULE, this.DELETE_MODULE, this.EXPORT_MODULE);
+            this.allActions.push(this.DELETE_MODULE);
 
             ModuleBrowseActions.INSTANCE = this;
         }
@@ -77,9 +52,7 @@ module app.browse {
 
         updateActionsEnabledState(modules:any[]) {
             var modulesSelected = modules.length;
-            this.IMPORT_MODULE.setEnabled( true );
             this.DELETE_MODULE.setEnabled( modulesSelected > 0 );
-            this.EXPORT_MODULE.setEnabled( modulesSelected === 1 );
         }
 
     }

@@ -4,8 +4,6 @@ module app.browse {
 
         constructor(actions:ModuleBrowseActions) {
             super();
-            super.addAction(actions.IMPORT_MODULE);
-            super.addAction(actions.EXPORT_MODULE);
             super.addAction(actions.DELETE_MODULE);
         }
     }

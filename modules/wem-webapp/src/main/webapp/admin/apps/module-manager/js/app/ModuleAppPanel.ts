@@ -20,37 +20,6 @@ module app {
                 this.getAppBarTabMenu().deselectNavigationItem();
             });
 
-            var moduleUploader = new app.imp.ModuleUploader();
-            var dialog = new api.ui.dialog.UploadDialog(
-                "Module Importer", "Modules will be imported in application", moduleUploader
-            );
-            moduleUploader.onFinishUpload((resp:api.module.InstallModuleResponse)=> {
-                var modules = resp.getModules();
-                if (modules.length > 0) {
-                    api.notify.showFeedback('Module \'' + modules.map((modl:api.module.Module) => {console.log(modl); return modl.getDisplayName()} ).join(', ') + '\' was installed');
-                }
-                new api.module.ModuleImportedEvent().fire();
-                dialog.close();
-            });
-            moduleUploader.onError((resp:api.rest.RequestError)=> {
-                api.notify.showError('Invalid Module file');
-                dialog.close();
-            });
-
-            app.browse.ImportModuleEvent.on(() => {
-                dialog.open();
-            });
-
-            app.browse.ExportModuleEvent.on(() => {
-                var selection = components.gridPanel.getSelection()[0];
-                var moduleSelected = api.module.ModuleSummary.fromExtModel(selection);
-                var moduleKey: api.module.ModuleKey = moduleSelected.getModuleKey();
-                var exportModule = new api.module.ExportModuleRequest(moduleKey);
-                var moduleExportUrl = exportModule.getRequestPath().toString() + '?moduleKey=' + moduleKey.toString();
-                console.log('Download module file from: ' + moduleExportUrl);
-                window.location.href = moduleExportUrl;
-            });
-
         }
 
     }

@@ -27,11 +27,6 @@ module app.browse {
                 filterPanel: undefined
             });
 
-            api.module.ModuleImportedEvent.on((event: api.module.ModuleImportedEvent) => {
-                this.setRefreshNeeded(true);
-                this.refreshFilterAndGrid();
-            });
-
             api.module.ModuleDeletedEvent.on((event: api.module.ModuleDeletedEvent) => {
                 var moduleKey = event.getModuleKey();
                 this.moduleTreeGridPanel.removeItem(moduleKey.toString());

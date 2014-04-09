@@ -13,27 +13,6 @@ module app.browse {
         }
     }
 
-
-    export class ImportModuleEvent extends BaseModuleModelEvent {
-        constructor() {
-            super('importModule', null);
-        }
-
-        static on(handler:(event:ImportModuleEvent) => void) {
-            api.event.onEvent('importModule', handler);
-        }
-    }
-
-    export class ExportModuleEvent extends BaseModuleModelEvent {
-        constructor() {
-            super('exportModule', null);
-        }
-
-        static on(handler:(event:ExportModuleEvent) => void) {
-            api.event.onEvent('exportModule', handler);
-        }
-    }
-
     export class DeleteModulePromptEvent extends BaseModuleModelEvent {
 
         constructor(moduleModel:api.module.ModuleSummary) {
