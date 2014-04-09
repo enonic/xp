@@ -173,6 +173,10 @@ module api.ui.selector {
             return this.gridData.getLength() > 0;
         }
 
+        getSelectedOptionCount(): number {
+            return this.grid.getSelectedRows().length;
+        }
+
         getOptionCount(): number {
             return this.gridData.getLength();
         }
@@ -282,18 +286,21 @@ module api.ui.selector {
             }
         }
 
-        toggleRowSelection(row: number) {
+        toggleRowSelection(row: number, isMaximumReached: boolean = false) {
             var rows = this.grid.getSelectedRows();
+            var oldRows = rows.join();
             var index = rows.indexOf(row);
 
             if (index >= 0) {
                 rows.splice(index, 1);
-            } else {
+            } else if (!isMaximumReached) {
                 rows.push(row);
             }
 
-            this.grid.setSelectedRows(rows);
-
+            // update on changes only
+            if (oldRows !== rows.join()) {
+                this.grid.setSelectedRows(rows);
+            }
         }
 
         onRowSelection(listener: (event: DropdownGridRowSelectedEvent) => void) {
