@@ -1,28 +1,23 @@
 package com.enonic.wem.core.content.site;
 
-import javax.inject.Inject;
-
-import com.enonic.wem.api.command.content.site.DeleteSite;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.editor.ContentEditor;
-import com.enonic.wem.core.command.CommandHandler;
 
 import static com.enonic.wem.api.content.Content.editContent;
 
-public class DeleteSiteHandler
-    extends CommandHandler<DeleteSite>
+final class DeleteSiteCommand
 {
-    @Inject
+    private ContentId contentId;
+
     private ContentService contentService;
 
-    @Override
-    public void handle()
-        throws Exception
+    public Content execute()
     {
         final UpdateContentParams params = new UpdateContentParams().
-            contentId( command.getContent() ).
+            contentId( this.contentId ).
             editor( new ContentEditor()
             {
                 @Override
@@ -32,10 +27,20 @@ public class DeleteSiteHandler
                 }
             } );
 
-        contentService.update( params );
+        this.contentService.update( params );
 
-        final Content updatedContent = contentService.getById( command.getContent() );
+        return this.contentService.getById( this.contentId );
+    }
 
-        command.setResult( updatedContent );
+    public DeleteSiteCommand contentId( final ContentId contentId )
+    {
+        this.contentId = contentId;
+        return this;
+    }
+
+    public DeleteSiteCommand contentService( final ContentService contentService )
+    {
+        this.contentService = contentService;
+        return this;
     }
 }

@@ -8,23 +8,22 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.admin.json.content.site.ModuleConfigJson;
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.site.UpdateSite;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.site.SiteEditor;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
+import com.enonic.wem.api.content.site.UpdateSiteParams;
 
 public class UpdateSiteJson
 {
-    private final UpdateSite updateSite;
+    private final UpdateSiteParams updateSite;
 
     @SuppressWarnings("UnusedDeclaration")
     @JsonCreator
     UpdateSiteJson( @JsonProperty("contentId") String content, @JsonProperty("siteTemplateKey") final String siteTemplate,
                     @JsonProperty("moduleConfigs") final List<ModuleConfigJson> moduleConfigs )
     {
-        this.updateSite = Commands.site().update().
+        this.updateSite = new UpdateSiteParams().
             content( ContentId.from( content ) ).
             editor( new SiteEditor()
             {
@@ -39,7 +38,7 @@ public class UpdateSiteJson
     }
 
     @JsonIgnore
-    UpdateSite getUpdateSite()
+    UpdateSiteParams getUpdateSite()
     {
         return this.updateSite;
     }

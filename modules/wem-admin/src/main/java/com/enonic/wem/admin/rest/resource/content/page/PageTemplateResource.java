@@ -11,7 +11,6 @@ import javax.ws.rs.core.MediaType;
 import com.enonic.wem.admin.json.content.page.PageTemplateJson;
 import com.enonic.wem.admin.json.content.page.PageTemplateListJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
-import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
@@ -21,6 +20,7 @@ import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.page.PageTemplateSpec;
 import com.enonic.wem.api.content.page.PageTemplates;
+import com.enonic.wem.api.content.site.SiteService;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -35,6 +35,9 @@ public final class PageTemplateResource
 
     @Inject
     private ContentService contentService;
+
+    @Inject
+    protected SiteService siteService;
 
     @GET
     public PageTemplateJson getByKey( @QueryParam("siteTemplateKey") final String siteTemplateKeyAsString,
@@ -90,7 +93,7 @@ public final class PageTemplateResource
         try
         {
             final Content content = contentService.getById( contentId );
-            final Content nearestSite = client.execute( Commands.site().getNearestSite().content( contentId ) );
+            final Content nearestSite = this.siteService.getNearestSite( contentId );
 
             if ( nearestSite != null )
             {

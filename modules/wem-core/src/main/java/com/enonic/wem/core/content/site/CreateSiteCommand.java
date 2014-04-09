@@ -1,34 +1,29 @@
 package com.enonic.wem.core.content.site;
 
-import javax.inject.Inject;
-
-import com.enonic.wem.api.command.content.site.CreateSite;
+import com.enonic.wem.api.content.site.CreateSiteParams;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.site.Site;
-import com.enonic.wem.core.command.CommandHandler;
 
 import static com.enonic.wem.api.content.Content.editContent;
 
-public class CreateSiteHandler
-    extends CommandHandler<CreateSite>
+final class CreateSiteCommand
 {
-    @Inject
+    private CreateSiteParams params;
+
     private ContentService contentService;
 
-    @Override
-    public void handle()
-        throws Exception
+    public Content execute()
     {
         final Site site = Site.newSite().
-            template( command.getTemplate() ).
-            moduleConfigs( command.getModuleConfigs() ).
+            template( this.params.getTemplate() ).
+            moduleConfigs( this.params.getModuleConfigs() ).
             build();
 
         final UpdateContentParams params = new UpdateContentParams().
-            contentId( command.getContent() ).
+            contentId( this.params.getContent() ).
             editor( new ContentEditor()
             {
                 @Override
@@ -38,7 +33,18 @@ public class CreateSiteHandler
                 }
             } );
 
-        final Content updatedContent = contentService.update( params );
-        command.setResult( updatedContent );
+        return this.contentService.update( params );
+    }
+
+    public CreateSiteCommand params( final CreateSiteParams params )
+    {
+        this.params = params;
+        return this;
+    }
+
+    public CreateSiteCommand contentService( final ContentService contentService )
+    {
+        this.contentService = contentService;
+        return this;
     }
 }

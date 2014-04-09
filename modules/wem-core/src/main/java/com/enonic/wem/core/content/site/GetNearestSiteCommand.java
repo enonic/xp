@@ -1,32 +1,26 @@
 package com.enonic.wem.core.content.site;
 
-import javax.inject.Inject;
-
-import com.enonic.wem.api.command.content.site.GetNearestSiteByContentId;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.core.command.CommandHandler;
 
-public class GetNearestSiteByContentIdHandler
-    extends CommandHandler<GetNearestSiteByContentId>
+final class GetNearestSiteCommand
 {
+    private ContentId contentId;
+
     private ContentService contentService;
 
-    @Override
-    public void handle()
-        throws Exception
+    public Content execute()
     {
-        final Content content = contentService.getById( command.getContent() );
+        final Content content = contentService.getById( this.contentId );
 
         if ( content.isSite() )
         {
-            command.setResult( content );
+            return content;
         }
-        else
-        {
-            command.setResult( returnIfSiteOrTryParent( content.getParentPath() ) );
-        }
+
+        return returnIfSiteOrTryParent( content.getParentPath() );
     }
 
     private Content returnIfSiteOrTryParent( final ContentPath contentPath )
@@ -40,7 +34,7 @@ public class GetNearestSiteByContentIdHandler
             return null;
         }
 
-        final Content content = contentService.getByPath( contentPath );
+        final Content content = this.contentService.getByPath( contentPath );
 
         if ( content.isSite() )
         {
@@ -53,9 +47,15 @@ public class GetNearestSiteByContentIdHandler
         }
     }
 
-    @Inject
-    public void setContentService( final ContentService contentService )
+    public GetNearestSiteCommand contentId( final ContentId contentId )
+    {
+        this.contentId = contentId;
+        return this;
+    }
+
+    public GetNearestSiteCommand contentService( final ContentService contentService )
     {
         this.contentService = contentService;
+        return this;
     }
 }

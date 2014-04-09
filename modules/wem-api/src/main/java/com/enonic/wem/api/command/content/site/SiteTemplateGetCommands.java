@@ -20,9 +20,4 @@ public class SiteTemplateGetCommands
     {
         return new GetSiteTemplateByKeys( keys );
     }
-
-    public DeleteSite delete()
-    {
-        return new DeleteSite();
-    }
 }

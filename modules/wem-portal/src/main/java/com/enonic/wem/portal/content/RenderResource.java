@@ -7,7 +7,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.core.Response;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
@@ -20,6 +19,7 @@ import com.enonic.wem.api.content.page.PageDescriptorService;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.site.Site;
+import com.enonic.wem.api.content.site.SiteService;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
 import com.enonic.wem.api.content.site.SiteTemplateService;
@@ -50,6 +50,9 @@ public abstract class RenderResource
     @Inject
     protected ContentService contentService;
 
+    @Inject
+    protected SiteService siteService;
+
     @GET
     public Response handleGet()
         throws Exception
@@ -76,7 +79,7 @@ public abstract class RenderResource
 
     protected Content getSite( final Content content )
     {
-        final Content siteContent = client.execute( Commands.site().getNearestSite().content( content.getId() ) );
+        final Content siteContent = this.siteService.getNearestSite( content.getId() );
         if ( siteContent == null )
         {
             throw new SiteNotFoundException( content.getPath() );

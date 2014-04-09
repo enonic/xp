@@ -22,7 +22,6 @@ import com.sun.jersey.api.core.HttpRequestContext;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.command.content.site.GetNearestSiteByContentId;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
@@ -37,6 +36,7 @@ import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateName;
 import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.site.Site;
+import com.enonic.wem.api.content.site.SiteService;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
@@ -95,6 +95,7 @@ public class ContentResourceTest
         contentResource.client = mock( Client.class );
         contentResource.httpContext = mock( HttpContext.class );
         contentResource.contentService = mock( ContentService.class );
+        contentResource.siteService = mock( SiteService.class );
 
         final PageDescriptorService pageDescriptorServiceMock = mock( PageDescriptorService.class );
         final PageTemplateService pageTemplateServiceMock = mock( PageTemplateService.class );
@@ -161,8 +162,10 @@ public class ContentResourceTest
                                                 Mockito.eq( (SiteTemplateKey) null ) ) ).thenReturn( createPageTemplate() );
         when( contentResource.contentService.getByPath( ContentPath.from( "content" ) ) ).thenReturn(
             createPage( "id", "content", "contenttypename" ) );
-        when( contentResource.client.execute( isA( GetNearestSiteByContentId.class ) ) ).thenReturn(
+
+        when( contentResource.siteService.getNearestSite( isA( ContentId.class ) ) ).thenReturn(
             createSite( "id", "site", "contenttypename" ) );
+
         when( pageDescriptorServiceMock.getByKey( isA( PageDescriptorKey.class ) ) ).thenReturn( createDescriptor() );
 
         final Response response = contentResource.handleGet();

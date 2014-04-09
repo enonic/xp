@@ -4,25 +4,23 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.site.DeleteSite;
 import com.enonic.wem.api.content.ContentId;
 
 public class DeleteSiteJson
 {
-    private final DeleteSite deleteSite;
+    private final ContentId contentId;
 
     @SuppressWarnings("UnusedDeclaration")
     @JsonCreator
     DeleteSiteJson( @JsonProperty("contentId") String contentId )
     {
-        this.deleteSite = Commands.site().delete().content( ContentId.from( contentId ) );
+        this.contentId = ContentId.from( contentId );
     }
 
     @JsonIgnore
-    DeleteSite getDeleteSite()
+    ContentId getDeleteSite()
     {
-        return this.deleteSite;
+        return this.contentId;
     }
 
 }

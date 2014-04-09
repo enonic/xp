@@ -1,14 +1,9 @@
-package com.enonic.wem.api.command.content.site;
+package com.enonic.wem.api.content.site;
 
 
-import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.site.ModuleConfigs;
-import com.enonic.wem.api.content.site.SiteTemplateKey;
 
-public class CreateSite
-    extends Command<Content>
+public final class CreateSiteParams
 {
     private ContentId content;
 
@@ -16,28 +11,22 @@ public class CreateSite
 
     private ModuleConfigs moduleConfigs;
 
-    public CreateSite content( final ContentId value )
+    public CreateSiteParams content( final ContentId value )
     {
         this.content = value;
         return this;
     }
 
-    public CreateSite template( final SiteTemplateKey value )
+    public CreateSiteParams template( final SiteTemplateKey value )
     {
         this.template = value;
         return this;
     }
 
-    public CreateSite moduleConfigs( final ModuleConfigs value )
+    public CreateSiteParams moduleConfigs( final ModuleConfigs value )
     {
         this.moduleConfigs = value;
         return this;
-    }
-
-    @Override
-    public void validate()
-    {
-
     }
 
     public ContentId getContent()

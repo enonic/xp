@@ -1,5 +1,6 @@
 package com.enonic.wem.admin.rest.resource.content.site;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -7,25 +8,26 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.enonic.wem.admin.json.content.ContentJson;
-import com.enonic.wem.admin.rest.resource.AbstractResource;
-import com.enonic.wem.api.command.content.site.CreateSite;
-import com.enonic.wem.api.command.content.site.DeleteSite;
-import com.enonic.wem.api.command.content.site.GetNearestSiteByContentId;
-import com.enonic.wem.api.command.content.site.UpdateSite;
+import com.enonic.wem.api.content.site.CreateSiteParams;
+import com.enonic.wem.api.content.site.UpdateSiteParams;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.site.SiteService;
 
 @Path("content/site")
 @Produces(MediaType.APPLICATION_JSON)
-public class SiteResource
-    extends AbstractResource
+public final class SiteResource
 {
+    @Inject
+    protected SiteService siteService;
+
     @POST
     @Path("create")
     @Consumes(MediaType.APPLICATION_JSON)
     public ContentJson create( final CreateSiteJson createSiteJson )
     {
-        final CreateSite createSiteCommand = createSiteJson.getCreateSite();
-        final Content updatedContent = client.execute( createSiteCommand );
+        final CreateSiteParams createSiteCommand = createSiteJson.getCreateSite();
+        final Content updatedContent = this.siteService.create( createSiteCommand );
 
         return new ContentJson( updatedContent );
     }
@@ -35,8 +37,8 @@ public class SiteResource
     @Consumes(MediaType.APPLICATION_JSON)
     public ContentJson update( final UpdateSiteJson updateSiteJson )
     {
-        final UpdateSite updateSiteCommand = updateSiteJson.getUpdateSite();
-        final Content updatedContent = client.execute( updateSiteCommand );
+        final UpdateSiteParams updateSiteCommand = updateSiteJson.getUpdateSite();
+        final Content updatedContent = this.siteService.update( updateSiteCommand );
 
         return new ContentJson( updatedContent );
     }
@@ -46,8 +48,8 @@ public class SiteResource
     @Consumes(MediaType.APPLICATION_JSON)
     public ContentJson delete( final DeleteSiteJson deleteSiteJson )
     {
-        final DeleteSite deleteSiteCommand = deleteSiteJson.getDeleteSite();
-        final Content deletedContent = client.execute( deleteSiteCommand );
+        final ContentId deleteSiteCommand = deleteSiteJson.getDeleteSite();
+        final Content deletedContent = this.siteService.delete( deleteSiteCommand );
 
         return new ContentJson( deletedContent );
     }
@@ -57,8 +59,8 @@ public class SiteResource
     @Consumes(MediaType.APPLICATION_JSON)
     public ContentJson getNearest( final GetNearestSiteJson params )
     {
-        final GetNearestSiteByContentId command = params.getGetNearestSiteByContentId();
-        final Content nearestSite = client.execute( command );
+        final ContentId contentId = params.getGetNearestSiteByContentId();
+        final Content nearestSite = this.siteService.getNearestSite( contentId );
         if ( nearestSite != null )
         {
             return new ContentJson( nearestSite );

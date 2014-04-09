@@ -4,22 +4,18 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.site.GetNearestSiteByContentId;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
-import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 
 import static org.junit.Assert.*;
 
-public class GetNearestSiteByContentIdHandlerTest
-    extends AbstractCommandHandlerTest
+public class GetNearestSiteCommandTest
 {
-    private GetNearestSiteByContentIdHandler handler;
+    private GetNearestSiteCommand command;
 
     private ContentService contentService;
 
@@ -27,13 +23,10 @@ public class GetNearestSiteByContentIdHandlerTest
     public void setUp()
         throws Exception
     {
-        super.initialize();
+        this.contentService = Mockito.mock( ContentService.class );
 
-        contentService = Mockito.mock( ContentService.class );
-
-        handler = new GetNearestSiteByContentIdHandler();
-        handler.setContext( this.context );
-        handler.setContentService( this.contentService );
+        this.command = new GetNearestSiteCommand();
+        this.command.contentService( this.contentService );
     }
 
     @Test
@@ -43,13 +36,11 @@ public class GetNearestSiteByContentIdHandlerTest
         final ContentId contentId = ContentId.from( "aaa" );
 
         final Content content = Content.newContent().path( "/mycontent" ).id( contentId ).site( createSite() ).build();
-        Mockito.when( contentService.getById( contentId ) ).thenReturn( content );
+        Mockito.when( this.contentService.getById( contentId ) ).thenReturn( content );
 
-        final GetNearestSiteByContentId command = Commands.site().getNearestSite().content( contentId );
-        handler.setCommand( command );
-        handler.handle();
+        this.command.contentId( contentId );
 
-        assertEquals( content, command.getResult() );
+        assertEquals( content, this.command.execute() );
     }
 
     @Test
@@ -60,16 +51,14 @@ public class GetNearestSiteByContentIdHandlerTest
         final ContentPath parentPath = ContentPath.from( "/aaa" );
 
         final Content content = Content.newContent().id( contentId ).name( "name" ).parentPath( parentPath ).build();
-        Mockito.when( contentService.getById( contentId ) ).thenReturn( content );
+        Mockito.when( this.contentService.getById( contentId ) ).thenReturn( content );
 
         final Content parent = Content.newContent().path( "/mycontent" ).id( ContentId.from( "bbb" ) ).site( createSite() ).build();
-        Mockito.when( contentService.getByPath( parentPath ) ).thenReturn( parent );
+        Mockito.when( this.contentService.getByPath( parentPath ) ).thenReturn( parent );
 
-        final GetNearestSiteByContentId command = Commands.site().getNearestSite().content( contentId );
-        handler.setCommand( command );
-        handler.handle();
+        this.command.contentId( contentId );
 
-        assertEquals( parent, command.getResult() );
+        assertEquals( parent, this.command.execute() );
     }
 
     @Test
@@ -79,18 +68,16 @@ public class GetNearestSiteByContentIdHandlerTest
         final ContentId contentId = ContentId.from( "aaa" );
 
         final Content content = Content.newContent().id( contentId ).name( "name" ).parentPath( ContentPath.from( "/aaa" ) ).build();
-        Mockito.when( contentService.getById( contentId ) ).thenReturn( content );
+        Mockito.when( this.contentService.getById( contentId ) ).thenReturn( content );
 
         final Content parent =
             Content.newContent().id( ContentId.from( "bbb" ) ).name( "renome" ).parentPath( ContentPath.from( "/bbb" ) ).build();
         final Content parentOfParent = Content.newContent().path( "/mycontent" ).id( ContentId.from( "ccc" ) ).site( createSite() ).build();
-        Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).thenReturn( parent ).thenReturn( parentOfParent );
+        Mockito.when( this.contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).thenReturn( parent ).thenReturn( parentOfParent );
 
-        final GetNearestSiteByContentId command = Commands.site().getNearestSite().content( contentId );
-        handler.setCommand( command );
-        handler.handle();
+        this.command.contentId( contentId );
 
-        assertEquals( parentOfParent, command.getResult() );
+        assertEquals( parentOfParent, this.command.execute() );
     }
 
     @Test
@@ -99,17 +86,15 @@ public class GetNearestSiteByContentIdHandlerTest
     {
         final ContentId contentId = ContentId.from( "aaa" );
         final Content content = Content.newContent().id( contentId ).name( "name" ).parentPath( ContentPath.from( "/aaa" ) ).build();
-        Mockito.when( contentService.getById( contentId ) ).thenReturn( content );
+        Mockito.when( this.contentService.getById( contentId ) ).thenReturn( content );
 
         final ContentPath contentPath = ContentPath.from( "/mycontent" );
         final Content parent = Content.newContent().path( contentPath ).id( ContentId.from( "bbb" ) ).site( null ).build();
-        Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).thenReturn( parent );
+        Mockito.when( this.contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).thenReturn( parent );
 
-        final GetNearestSiteByContentId command = Commands.site().getNearestSite().content( contentId );
-        handler.setCommand( command );
-        handler.handle();
+        this.command.contentId( contentId );
 
-        assertNull( command.getResult() );
+        assertNull( this.command.execute() );
     }
 
     private Site createSite()

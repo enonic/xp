@@ -12,6 +12,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.site.Site;
+import com.enonic.wem.api.content.site.SiteService;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.module.ModuleKey;
@@ -30,6 +31,9 @@ final class ModuleKeyResolverServiceImpl
 
     @Inject
     private ContentService contentService;
+
+    @Inject
+    protected SiteService siteService;
 
     @Override
     public ModuleKeyResolver forContent( final Content content )
@@ -75,7 +79,7 @@ final class ModuleKeyResolverServiceImpl
 
     private Site resolveSite( final ContentId contentId )
     {
-        final Content siteContent = client.execute( site().getNearestSite().content( contentId ) );
+        final Content siteContent = this.siteService.getNearestSite( contentId );
         return siteContent != null ? siteContent.getSite() : null;
     }
 
