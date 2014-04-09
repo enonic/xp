@@ -19,12 +19,9 @@ module api.util.loader {
 
         private loadingDataListeners: {(event: LoadingDataEvent):void}[] = [];
 
-        constructor(request: api.rest.ResourceRequest<JSON>, autoLoad: boolean = true) {
+        constructor(request: api.rest.ResourceRequest<JSON>) {
             this.isLoading = false;
             this.setRequest(request);
-            if (autoLoad) {
-                this.load();
-            }
         }
 
         sendRequest(): Q.Promise<OBJECT[]> {

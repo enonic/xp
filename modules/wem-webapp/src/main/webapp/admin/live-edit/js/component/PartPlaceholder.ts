@@ -15,6 +15,7 @@ module LiveEdit.component {
             var request = new api.content.page.part.GetPartDescriptorsByModulesRequest(siteTemplate.getModules());
             var loader = new api.content.page.part.PartDescriptorLoader(request);
             this.comboBox = new api.content.page.part.PartDescriptorComboBox(loader);
+            loader.load();
             this.comboBox.hide();
             this.appendChild(this.comboBox);
 

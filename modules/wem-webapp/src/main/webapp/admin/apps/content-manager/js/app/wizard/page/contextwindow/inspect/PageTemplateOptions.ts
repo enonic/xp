@@ -56,6 +56,7 @@ module app.wizard.page.contextwindow.inspect {
 
                 deferred.resolve(options);
             });
+            loader.load();
             return deferred.promise;
         }
     }

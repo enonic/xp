@@ -12,6 +12,7 @@ module LiveEdit.component {
             var request = new api.content.page.layout.GetLayoutDescriptorsByModulesRequest(siteTemplate.getModules());
             var loader = new api.content.page.layout.LayoutDescriptorLoader(request);
             this.comboBox = new api.content.page.layout.LayoutDescriptorComboBox(loader);
+            loader.load();
             this.comboBox.hide();
             this.appendChild(this.comboBox);
 

@@ -13,8 +13,7 @@ module api.content {
             this.contentQuery = new api.content.query.ContentQuery();
             var contentRequest = new api.content.ContentQueryRequest<api.content.json.ContentSummaryJson,api.content.ContentSummary>(this.contentQuery).
                 setExpand(api.rest.Expand.SUMMARY);
-            super(contentRequest, false);
-            this.loading(false);
+            super(contentRequest);
         }
 
         setAllowedContentTypes(contentTypes: string[]) {

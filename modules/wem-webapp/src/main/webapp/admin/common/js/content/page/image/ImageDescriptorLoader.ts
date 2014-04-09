@@ -6,7 +6,7 @@ module api.content.page.image {
     export class ImageDescriptorLoader extends api.util.loader.BaseLoader<ImageDescriptorsJson, ImageDescriptor> {
 
         constructor(request: ImageDescriptorsResourceRequest) {
-           super(request, false);
+           super(request);
         }
 
         filterFn(descriptor: ImageDescriptor) {
