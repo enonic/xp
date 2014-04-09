@@ -4,8 +4,12 @@ module api.module {
     {
         constructor()
         {
-            var builder:api.ui.selector.combobox.RichComboBoxBuilder<api.module.ModuleSummary> = new api.ui.selector.combobox.RichComboBoxBuilder<api.module.ModuleSummary>();
-            builder.setComboBoxName("moduleSelector" ).setLoader(new api.module.ModuleLoader() ).setSelectedOptionsView(new ModuleSelectedOptionsView());
+            var builder = new api.ui.selector.combobox.RichComboBoxBuilder<api.module.ModuleSummary>();
+            builder.
+                setComboBoxName("moduleSelector" ).
+                setLoader(new api.module.ModuleLoader() ).
+                setSelectedOptionsView(new ModuleSelectedOptionsView()).
+                setDelayedInputValueChangedHandling(500);
             super(builder);
         }
 

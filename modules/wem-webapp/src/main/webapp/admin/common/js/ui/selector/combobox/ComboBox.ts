@@ -26,6 +26,8 @@ module api.ui.selector.combobox {
 
         dataIdProperty?:string;
 
+        delayedInputValueChangedHandling?: number
+
     }
 
     export class ComboBox<OPTION_DISPLAY_VALUE> extends api.dom.FormInputEl {
@@ -37,6 +39,12 @@ module api.ui.selector.combobox {
         private applySelectionsButton: api.ui.Button;
 
         private input: ComboBoxOptionFilterInput;
+
+        private delayedInputValueChangedHandling;
+
+        private delayedHandleInputValueChangedFnCall: api.util.loader.DelayedFunctionCall;
+
+        private preservedInputValueChangedEvent: api.ui.ValueChangedEvent;
 
         private multipleSelections: boolean = false;
 
@@ -73,6 +81,10 @@ module api.ui.selector.combobox {
 
             this.input = new ComboBoxOptionFilterInput();
             this.appendChild(this.input);
+
+            this.delayedInputValueChangedHandling = config.delayedInputValueChangedHandling || 0;
+            this.delayedHandleInputValueChangedFnCall = new api.util.loader.DelayedFunctionCall(this.handleInputValueChanged, this,
+                this.delayedInputValueChangedHandling);
 
             this.dropdownHandle = new DropdownHandle();
             this.appendChild(this.dropdownHandle);
@@ -201,7 +213,9 @@ module api.ui.selector.combobox {
         }
 
         isSelectionChanged(): boolean {
-            var optionsMap = this.getDisplayedOptions().map((x) => { return x.value; }).join();
+            var optionsMap = this.getDisplayedOptions().map((x) => {
+                return x.value;
+            }).join();
             var selectedOptions: Option<OPTION_DISPLAY_VALUE>[] = this.selectedOptionsCtrl.getOptions();
             var filteredOption = [],
                 gridOptions = [];
@@ -351,8 +365,10 @@ module api.ui.selector.combobox {
         maximumSelectionsReached(): boolean {
             if (this.selectedOptionsCtrl && this.selectedOptionsCtrl.getMaximumOccurrences() !== 0) {
 
-                var totalSelected:number = this.comboBoxDropdown.getSelectedOptionCount();
-                var optionsMap = this.getDisplayedOptions().map((x) => { return x.value; }).join();
+                var totalSelected: number = this.comboBoxDropdown.getSelectedOptionCount();
+                var optionsMap = this.getDisplayedOptions().map((x) => {
+                    return x.value;
+                }).join();
                 var selectedOptions: Option<OPTION_DISPLAY_VALUE>[] = this.selectedOptionsCtrl.getOptions();
                 for (var k in selectedOptions) {
                     if (optionsMap.search(selectedOptions[k].value) < 0) {
@@ -416,13 +432,13 @@ module api.ui.selector.combobox {
 
             this.input.onValueChanged((event: api.ui.ValueChangedEvent) => {
 
-                this.notifyOptionFilterInputValueChanged(event.getOldValue(), event.getNewValue());
-                if (this.isDropdownShown()) {
-                    this.showDropdown();
+                this.preservedInputValueChangedEvent = event;
+                if (this.delayedInputValueChangedHandling == 0) {
+                    this.handleInputValueChanged();
                 }
-                this.comboBoxDropdown.resetActiveSelection();
-
-                this.input.getEl().removeAttribute('readonly');
+                else {
+                    this.delayedHandleInputValueChangedFnCall.delayCall();
+                }
             });
 
             this.input.onDblClicked((event: MouseEvent) => {
@@ -440,6 +456,22 @@ module api.ui.selector.combobox {
                     (removedOption: SelectedOption<OPTION_DISPLAY_VALUE>) => {
                         this.handleSelectedOptionRemoved(removedOption);
                     });
+            }
+        }
+
+        private handleInputValueChanged() {
+
+            if (this.preservedInputValueChangedEvent) {
+
+                this.notifyOptionFilterInputValueChanged(this.preservedInputValueChangedEvent.getOldValue(),
+                    this.preservedInputValueChangedEvent.getNewValue());
+
+                if (this.isDropdownShown()) {
+                    this.showDropdown();
+                }
+                this.comboBoxDropdown.resetActiveSelection();
+
+                this.input.getEl().removeAttribute('readonly');
             }
         }
 

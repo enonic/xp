@@ -27,7 +27,7 @@ module api.util.loader {
             }
         }
 
-        doRequest(): Q.Promise<OBJECT[]> {
+        sendRequest(): Q.Promise<OBJECT[]> {
             var deferred = Q.defer<OBJECT[]>();
 
             this.request.sendAndParse().done((results: OBJECT[]) => {
@@ -40,7 +40,7 @@ module api.util.loader {
         load(): void {
             this.isLoading = true;
             this.notifyLoadingData();
-            this.doRequest().done((results: OBJECT[]) => {
+            this.sendRequest().done((results: OBJECT[]) => {
                 this.results = results;
                 this.isLoading = false;
                 this.notifyLoadedData(results);

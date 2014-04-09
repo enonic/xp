@@ -20,6 +20,8 @@ module api.ui.selector.combobox {
 
         maximumOccurrences: number;
 
+        private delayedInputValueChangedHandling: number;
+
         private optionDisplayValueViewer:Viewer<OPTION_DISPLAY_VALUE>;
 
         private loadingListeners: {():void;}[];
@@ -29,9 +31,15 @@ module api.ui.selector.combobox {
         private optionSelectedListeners: {(event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>):void;}[];
 
         constructor(config: RichComboBoxBuilder<OPTION_DISPLAY_VALUE>) {
+
+            this.loadedListeners = [];
+            this.loadingListeners = [];
+            this.optionSelectedListeners = [];
+
             this.identifierMethod = config.identifierMethod;
 
             this.comboBoxView = new api.dom.DivEl();
+            this.delayedInputValueChangedHandling = config.delayedInputValueChangedHandling;
             this.selectedOptionsView = config.selectedOptionsView;
             this.selectedOptionsView.hide();
             this.maximumOccurrences = config.maximumOccurrences;
@@ -42,10 +50,6 @@ module api.ui.selector.combobox {
             }
 
             super(this.comboBox, this.selectedOptionsView);
-
-            this.loadedListeners = [];
-            this.loadingListeners = [];
-            this.optionSelectedListeners = [];
 
             this.addClass('rich-combobox');
         }
@@ -139,7 +143,8 @@ module api.ui.selector.combobox {
                 optionFormatter: this.optionFormatter,
                 selectedOptionsView: this.selectedOptionsView,
                 optionDisplayValueViewer: this.optionDisplayValueViewer,
-                hideComboBoxWhenMaxReached: true
+                hideComboBoxWhenMaxReached: true,
+                delayedInputValueChangedHandling: this.delayedInputValueChangedHandling
             };
         }
 
@@ -220,6 +225,8 @@ module api.ui.selector.combobox {
 
         optionDisplayValueViewer: Viewer<T>;
 
+        delayedInputValueChangedHandling: number;
+
         setComboBoxName(comboBoxName: string): RichComboBoxBuilder<T> {
             this.comboBoxName = comboBoxName;
             return this;
@@ -229,7 +236,6 @@ module api.ui.selector.combobox {
             this.identifierMethod = identifierMethod;
             return this;
         }
-
 
         setLoader(loader: api.util.loader.BaseLoader<api.item.ItemJson, T>): RichComboBoxBuilder<T> {
             this.loader = loader;
@@ -248,6 +254,11 @@ module api.ui.selector.combobox {
 
         setOptionDisplayValueViewer(value: Viewer<T>): RichComboBoxBuilder<T> {
             this.optionDisplayValueViewer = value;
+            return this;
+        }
+
+        setDelayedInputValueChangedHandling(value: number): RichComboBoxBuilder<T> {
+            this.delayedInputValueChangedHandling = value;
             return this;
         }
 

@@ -5,14 +5,11 @@ module api.module {
 
     export class ModuleLoader extends api.util.loader.BaseLoader<api.module.ModuleListResult, api.module.ModuleSummary> {
 
-        private delayedFunctionCall: api.util.loader.DelayedFunctionCall;
-
         private preservedSearchString: string;
 
         constructor(delay: number = 500) {
             this.loading(false);
             super(new ListModuleRequest(), false);
-            this.delayedFunctionCall = new api.util.loader.DelayedFunctionCall(this.load, this, delay);
         }
 
         search(searchString: string) {
@@ -22,14 +19,14 @@ module api.module {
                 return;
             }
 
-            this.delayedFunctionCall.delayCall();
+            this.load();
         }
 
         load() {
             this.loading(true)
             this.notifyLoadingData();
 
-            this.doRequest()
+            this.sendRequest()
                 .done((modules: api.module.ModuleSummary[]) => {
 
                     this.loading(false);

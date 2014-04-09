@@ -7,13 +7,10 @@ module api.content {
 
         private preservedSearchString: string;
 
-        private delayedFunctionCall: api.util.loader.DelayedFunctionCall;
-
         private contentQuery: api.content.query.ContentQuery;
 
         constructor(delay: number = 500) {
             this.contentQuery = new api.content.query.ContentQuery();
-            this.delayedFunctionCall = new api.util.loader.DelayedFunctionCall(this.load, this, delay);
             var contentRequest = new api.content.ContentQueryRequest<api.content.json.ContentSummaryJson,api.content.ContentSummary>(this.contentQuery).
                 setExpand(api.rest.Expand.SUMMARY);
             super(contentRequest, false);
@@ -39,7 +36,7 @@ module api.content {
             var queryExpr: api.query.expr.QueryExpr = new api.query.expr.QueryExpr(fulltextExpression);
             this.contentQuery.setQueryExpr(queryExpr)
 
-            this.delayedFunctionCall.delayCall();
+            this.load();
         }
 
 
@@ -48,19 +45,19 @@ module api.content {
             this.loading(true);
             this.notifyLoadingData();
 
-            this.doRequest().done((contents: api.content.ContentSummary[]) => {
+            this.sendRequest().done((contents: api.content.ContentSummary[]) => {
 
-                    this.loading(false);
+                this.loading(false);
                 this.notifyLoadedData(contents);
                 if (this.preservedSearchString) {
-                        this.search(this.preservedSearchString);
-                        this.preservedSearchString = null;
-                    }
+                    this.search(this.preservedSearchString);
+                    this.preservedSearchString = null;
+                }
 
-                });
+            });
         }
 
-        doRequest(): Q.Promise<api.content.ContentSummary[]> {
+        sendRequest(): Q.Promise<api.content.ContentSummary[]> {
             var deferred = Q.defer<api.content.ContentSummary[]>();
 
             this.getRequest().sendAndParse().done((queryResult: api.content.ContentQueryResult<api.content.ContentSummary,api.content.json.ContentSummaryJson>) => {

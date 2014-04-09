@@ -2,15 +2,15 @@ module api.content {
 
     export class ContentComboBox extends api.ui.selector.combobox.RichComboBox<api.content.ContentSummary> {
 
-        constructor(contentComboBoxBuilder:ContentComboBoxBuilder)
-        {
-            var builder:api.ui.selector.combobox.RichComboBoxBuilder<api.content.ContentSummary> = new api.ui.selector.combobox.RichComboBoxBuilder<api.content.ContentSummary>();
+        constructor(contentComboBoxBuilder: ContentComboBoxBuilder) {
+            var builder: api.ui.selector.combobox.RichComboBoxBuilder<api.content.ContentSummary> = new api.ui.selector.combobox.RichComboBoxBuilder<api.content.ContentSummary>();
             builder
                 .setComboBoxName(contentComboBoxBuilder.name ? contentComboBoxBuilder.name : 'contentSelector')
                 .setLoader(contentComboBoxBuilder.loader ? contentComboBoxBuilder.loader : new ContentSummaryLoader())
                 .setSelectedOptionsView(new ContentSelectedOptionsView())
                 .setMaximumOccurrences(contentComboBoxBuilder.maximumOccurrences)
-                .setOptionDisplayValueViewer(new api.content.ContentSummaryViewer());
+                .setOptionDisplayValueViewer(new api.content.ContentSummaryViewer())
+                .setDelayedInputValueChangedHandling(500);
 
             super(builder);
 
@@ -23,31 +23,29 @@ module api.content {
 
     export class ContentSelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<api.content.ContentSummary> {
 
-        createSelectedOption(option:api.ui.selector.Option<api.content.ContentSummary>, index:number):api.ui.selector.combobox.SelectedOption<api.content.ContentSummary> {
-            var optionView = new ContentSelectedOptionView( option );
-            return new api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>( optionView, option, index);
+        createSelectedOption(option: api.ui.selector.Option<api.content.ContentSummary>,
+                             index: number): api.ui.selector.combobox.SelectedOption<api.content.ContentSummary> {
+            var optionView = new ContentSelectedOptionView(option);
+            return new api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>(optionView, option, index);
         }
     }
 
     export class ContentSelectedOptionView extends api.ui.selector.combobox.RichSelectedOptionView<api.content.ContentSummary> {
 
 
-        constructor(option:api.ui.selector.Option<api.content.ContentSummary>) {
+        constructor(option: api.ui.selector.Option<api.content.ContentSummary>) {
             super(option);
         }
 
-        resolveIconUrl(content:api.content.ContentSummary):string
-        {
+        resolveIconUrl(content: api.content.ContentSummary): string {
             return content.getIconUrl();
         }
 
-        resolveTitle(content:api.content.ContentSummary):string
-        {
+        resolveTitle(content: api.content.ContentSummary): string {
             return content.getDisplayName().toString();
         }
 
-        resolveSubTitle(content:api.content.ContentSummary):string
-        {
+        resolveSubTitle(content: api.content.ContentSummary): string {
             return content.getPath().toString();
         }
 
@@ -55,35 +53,35 @@ module api.content {
 
     export class ContentComboBoxBuilder {
 
-        name:string;
+        name: string;
 
-        maximumOccurrences:number = 0;
+        maximumOccurrences: number = 0;
 
-        loader:api.util.loader.BaseLoader<api.schema.SchemaJson, api.content.ContentSummary>;
+        loader: api.util.loader.BaseLoader<api.schema.SchemaJson, api.content.ContentSummary>;
 
-        allowedContentTypes:string[];
+        allowedContentTypes: string[];
 
-        setName(value:string):ContentComboBoxBuilder {
+        setName(value: string): ContentComboBoxBuilder {
             this.name = value;
             return this;
         }
 
-        setMaximumOccurrences(maximumOccurrences:number):ContentComboBoxBuilder {
+        setMaximumOccurrences(maximumOccurrences: number): ContentComboBoxBuilder {
             this.maximumOccurrences = maximumOccurrences;
             return this;
         }
 
-        setLoader(loader:api.util.loader.BaseLoader<api.schema.SchemaJson, api.content.ContentSummary>):ContentComboBoxBuilder {
+        setLoader(loader: api.util.loader.BaseLoader<api.schema.SchemaJson, api.content.ContentSummary>): ContentComboBoxBuilder {
             this.loader = loader;
             return this;
         }
 
-        setAllowedContentTypes(allowedTypes:string[]):ContentComboBoxBuilder {
+        setAllowedContentTypes(allowedTypes: string[]): ContentComboBoxBuilder {
             this.allowedContentTypes = allowedTypes;
             return this;
         }
 
-        build():ContentComboBox {
+        build(): ContentComboBox {
             return new ContentComboBox(this);
         }
 
