@@ -9,7 +9,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
-public class UpdateContentParams
+public class UpdateContentJson
 {
     private ContentId contentId;
 
