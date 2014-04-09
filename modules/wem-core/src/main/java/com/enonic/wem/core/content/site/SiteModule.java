@@ -6,7 +6,6 @@ import com.google.inject.AbstractModule;
 
 import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.core.command.CommandBinder;
-import com.enonic.wem.core.initializer.InitializerTaskBinder;
 
 public class SiteModule
     extends AbstractModule
@@ -14,7 +13,6 @@ public class SiteModule
     @Override
     protected void configure()
     {
-        InitializerTaskBinder.from( binder() ).add( SitesInitializer.class );
         bind( SiteTemplateService.class ).to( SiteTemplateServiceImpl.class ).in( Singleton.class );
 
         final CommandBinder commands = CommandBinder.from( binder() );
