@@ -5,16 +5,15 @@ module api.content {
 
     export class ContentSummaryLoader extends api.util.loader.BaseLoader<api.content.json.ContentSummaryJson,api.content.ContentSummary> {
 
-
         private preservedSearchString: string;
 
-        private loaderHelper: api.util.loader.LoaderHelper;
+        private delayedFunctionCall: api.util.loader.DelayedFunctionCall;
 
         private contentQuery: api.content.query.ContentQuery;
 
         constructor(delay: number = 500) {
             this.contentQuery = new api.content.query.ContentQuery();
-            this.loaderHelper = new api.util.loader.LoaderHelper(this.load, this, delay);
+            this.delayedFunctionCall = new api.util.loader.DelayedFunctionCall(this.load, this, delay);
             var contentRequest = new api.content.ContentQueryRequest<api.content.json.ContentSummaryJson,api.content.ContentSummary>(this.contentQuery).
                 setExpand(api.rest.Expand.SUMMARY);
             super(contentRequest, false);
@@ -30,6 +29,7 @@ module api.content {
         }
 
         search(searchString: string) {
+
             if (this.loading()) {
                 this.preservedSearchString = searchString;
                 return;
@@ -38,11 +38,13 @@ module api.content {
             var fulltextExpression: api.query.expr.Expression = api.query.FulltextSearchExpressionFactory.create(searchString);
             var queryExpr: api.query.expr.QueryExpr = new api.query.expr.QueryExpr(fulltextExpression);
             this.contentQuery.setQueryExpr(queryExpr)
-            this.loaderHelper.search(searchString);
+
+            this.delayedFunctionCall.delayCall();
         }
 
 
         load() {
+
             this.loading(true);
             this.notifyLoadingData();
 
