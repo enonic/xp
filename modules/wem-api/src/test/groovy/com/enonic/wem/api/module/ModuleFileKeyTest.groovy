@@ -66,4 +66,30 @@ class ModuleFileKeyTest
         then:
         thrown( IllegalArgumentException )
     }
+
+    def "test (#key1) #op (#key2)"()
+    {
+        expect:
+        ModuleFileKey.from( key1 ).equals( ModuleFileKey.from( key2 ) ) == flag
+
+        where:
+        key1                  | key2                  | flag  | op
+        "mymodule-1.0.0:/"    | "mymodule-1.0.0:/"    | true  | "equals"
+        "mymodule-1.0.0:"     | "mymodule-1.0.0:/"    | true  | "equals"
+        "mymodule-1.0.0:/a/b" | "mymodule-1.0.0:/a/b" | true  | "equals"
+        "mymodule-1.0.0:/a"   | "mymodule-1.0.0:/a/b" | false | "not equals"
+        "mymodule-1.0.0:/a/b" | "mymodule-1.1.0:/a/b" | false | "not equals"
+    }
+
+    def "test hash code"()
+    {
+        given:
+        def key1 = ModuleFileKey.from( "mymodule-1.0.0:/a/b" )
+        def key2 = ModuleFileKey.from( "mymodule-1.0.0:/a/b" )
+        def key3 = ModuleFileKey.from( "mymodule-1.0.0:/a" )
+
+        expect:
+        key1.hashCode() == key2.hashCode()
+        key1.hashCode() != key3.hashCode()
+    }
 }

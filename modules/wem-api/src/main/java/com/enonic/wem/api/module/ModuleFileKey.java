@@ -55,6 +55,18 @@ public final class ModuleFileKey
         return getUri();
     }
 
+    @Override
+    public boolean equals( final Object o )
+    {
+        return ( o instanceof ModuleFileKey ) && ( this.uri.equals( ( (ModuleFileKey) o ).uri ) );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return this.uri.hashCode();
+    }
+
     private static String normalizePath( final String path )
     {
         return Files.simplifyPath( "/" + path );
