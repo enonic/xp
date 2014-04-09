@@ -2,7 +2,7 @@
   position: relative;
 
   .combobox-wrapper {
-    margin-right: 44px;
+    margin-right: 36px;
   }
 
   .combobox {
@@ -132,15 +132,15 @@
 
   .upload-button {
     .button(@admin-light-gray-font, transparent, @admin-dark-gray-font, transparent);
-    box-sizing: content-box;
-    vertical-align: top;
-    height: 24px;
-    width: 24px;
+    .box-sizing(content-box);
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 35px;
+    width: 35px;
     padding: 0;
     margin: 0;
-    position: absolute;
-    top: 7px;
-    right: 0px;
+    vertical-align: top;
     background: url("../images/upload.png") no-repeat center;
   }
 
