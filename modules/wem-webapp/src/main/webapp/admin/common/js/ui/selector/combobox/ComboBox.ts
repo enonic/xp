@@ -221,7 +221,7 @@ module api.ui.selector.combobox {
         selectRowOrApplySelection(index: number) {
 
             // fast alternative to isSelectionChanged()
-            if (this.applySelectionsButton.isVisible()) {
+            if (this.applySelectionsButton && this.applySelectionsButton.isVisible()) {
                 this.clearSelection(true);
                 this.comboBoxDropdown.applyMultipleSelection();
                 this.hideDropdown();
@@ -339,11 +339,30 @@ module api.ui.selector.combobox {
             }
         }
 
+        // Checks added occurrences
         maximumOccurrencesReached(): boolean {
             api.util.assert(this.multipleSelections,
                 "No point of calling maximumOccurrencesReached when no multiple selections are enabled");
 
             return this.selectedOptionsCtrl.maximumOccurrencesReached();
+        }
+
+        // Checks selected and added occurrences (with filtering)
+        maximumSelectionsReached(): boolean {
+            if (this.selectedOptionsCtrl && this.selectedOptionsCtrl.getMaximumOccurrences() !== 0) {
+
+                var totalSelected:number = this.comboBoxDropdown.getSelectedOptionCount();
+                var optionsMap = this.getDisplayedOptions().map((x) => { return x.value; }).join();
+                var selectedOptions: Option<OPTION_DISPLAY_VALUE>[] = this.selectedOptionsCtrl.getOptions();
+                for (var k in selectedOptions) {
+                    if (optionsMap.search(selectedOptions[k].value) < 0) {
+                        totalSelected++;
+                    }
+                }
+                return this.selectedOptionsCtrl.getMaximumOccurrences() <= totalSelected;
+            } else {
+                return false;
+            }
         }
 
         setInputIconUrl(iconUrl: string) {
@@ -410,6 +429,7 @@ module api.ui.selector.combobox {
 
                 if (!this.isDropdownShown()) {
                     this.showDropdown();
+                    this.input.getEl().removeAttribute('readonly');
                 }
             });
 
@@ -471,8 +491,8 @@ module api.ui.selector.combobox {
                 this.selectRowOrApplySelection(this.comboBoxDropdown.getActiveRow());
                 break;
             case 32: // Spacebar
-                if (this.input.getEl().getAttribute('readonly')) {
-                    this.comboBoxDropdown.toggleRowSelection(this.comboBoxDropdown.getActiveRow());
+                if (this.input.getEl().getAttribute('readonly') && this.applySelectionsButton) {
+                    this.comboBoxDropdown.toggleRowSelection(this.comboBoxDropdown.getActiveRow(), this.maximumSelectionsReached());
                     event.stopPropagation();
                     event.preventDefault();
                 }

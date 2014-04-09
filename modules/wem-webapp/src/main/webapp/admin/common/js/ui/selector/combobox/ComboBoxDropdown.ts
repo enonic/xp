@@ -82,6 +82,10 @@ module api.ui.selector.combobox {
             return this.dropdownGrid.hasOptions();
         }
 
+        getSelectedOptionCount(): number {
+            return this.dropdownGrid.getSelectedOptionCount();
+        }
+
         getOptionCount(): number {
             return this.dropdownGrid.getOptionCount();
         }
@@ -164,8 +168,8 @@ module api.ui.selector.combobox {
             this.dropdownGrid.navigateToPreviousRow();
         }
 
-        toggleRowSelection(row: number) {
-            this.dropdownGrid.toggleRowSelection(row);
+        toggleRowSelection(row: number, isMaximumReached: boolean = false) {
+            this.dropdownGrid.toggleRowSelection(row, isMaximumReached);
         }
 
         resetActiveSelection() {

@@ -27,6 +27,10 @@ module api.ui.selector.combobox {
             return this.count() >= this.maximumOccurrences;
         }
 
+        getMaximumOccurrences():number {
+            return this.maximumOccurrences;
+        }
+
         getOptions():api.ui.selector.Option<T>[] {
             return this.selectedOptions.getOptions();
         }
