@@ -60,7 +60,7 @@ module app {
             }
             else {
                 this.mask.show();
-                tabMenuItem = new api.app.AppBarTabMenuItem("New " + contentTypeSummary.getDisplayName(), tabId);
+                tabMenuItem = new api.app.AppBarTabMenuItem("[New " + contentTypeSummary.getDisplayName() + "]", tabId);
 
                 var contentWizardPanelFactory = new app.wizard.ContentWizardPanelFactory().
                     setAppBarTabId(tabId).

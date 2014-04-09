@@ -52,7 +52,7 @@ module app {
 
             app.browse.event.NewTemplateEvent.on((event: app.browse.event.NewTemplateEvent) => {
                 var tabId = api.app.AppBarTabId.forNew('new-site-template-wizard');
-                var tabMenuItem = new api.app.AppBarTabMenuItem("New Site Template ", tabId);
+                var tabMenuItem = new api.app.AppBarTabMenuItem("[New Site Template]", tabId);
                 var wizard = new app.wizard.SiteTemplateWizardPanel(tabId);
                 this.addWizardPanel(tabMenuItem, wizard);
             });

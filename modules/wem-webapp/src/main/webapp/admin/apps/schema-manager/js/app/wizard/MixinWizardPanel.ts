@@ -2,7 +2,7 @@ module app.wizard {
 
     export class MixinWizardPanel extends api.app.wizard.WizardPanel<api.schema.mixin.Mixin> {
 
-        public static NEW_WIZARD_HEADER = "new mixin";
+        public static NEW_WIZARD_HEADER = "New Mixin";
 
         private formIcon: api.app.wizard.FormIcon;
 

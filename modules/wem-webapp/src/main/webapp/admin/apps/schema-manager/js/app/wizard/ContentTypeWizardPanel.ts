@@ -2,7 +2,7 @@ module app.wizard {
 
     export class ContentTypeWizardPanel extends api.app.wizard.WizardPanel<api.schema.content.ContentType> {
 
-        public static NEW_WIZARD_HEADER = "new content type";
+        public static NEW_WIZARD_HEADER = "New Content Type";
 
         private formIcon: api.app.wizard.FormIcon;
 
