@@ -303,7 +303,8 @@ module api.content.inputtype.image {
                 rowHeight: 50,
                 optionDisplayValueViewer: new ContentSummaryViewer(),
                 selectedOptionsView: this.selectedOptionsView,
-                maximumOccurrences: input.getOccurrences().getMaximum()
+                maximumOccurrences: input.getOccurrences().getMaximum(),
+                delayedInputValueChangedHandling: 500
             };
 
             var comboBox = new ComboBox<ContentSummary>(input.getName(), comboBoxConfig);

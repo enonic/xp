@@ -1,4 +1,4 @@
-module api.util.loader {
+module api.util {
 
     export class DelayedFunctionCall {
 

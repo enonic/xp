@@ -5,6 +5,7 @@ module api.ui.selector.combobox {
     import OptionFilterInputValueChangedEvent = api.ui.selector.OptionFilterInputValueChangedEvent;
     import DropdownHandle = api.ui.selector.DropdownHandle;
     import Viewer = api.ui.Viewer;
+    import DelayedFunctionCall = api.util.DelayedFunctionCall;
 
     export interface ComboBoxConfig<T> {
 
@@ -42,7 +43,7 @@ module api.ui.selector.combobox {
 
         private delayedInputValueChangedHandling;
 
-        private delayedHandleInputValueChangedFnCall: api.util.loader.DelayedFunctionCall;
+        private delayedHandleInputValueChangedFnCall: DelayedFunctionCall;
 
         private preservedInputValueChangedEvent: api.ui.ValueChangedEvent;
 
@@ -83,7 +84,7 @@ module api.ui.selector.combobox {
             this.appendChild(this.input);
 
             this.delayedInputValueChangedHandling = config.delayedInputValueChangedHandling || 0;
-            this.delayedHandleInputValueChangedFnCall = new api.util.loader.DelayedFunctionCall(this.handleInputValueChanged, this,
+            this.delayedHandleInputValueChangedFnCall = new DelayedFunctionCall(this.handleInputValueChanged, this,
                 this.delayedInputValueChangedHandling);
 
             this.dropdownHandle = new DropdownHandle();

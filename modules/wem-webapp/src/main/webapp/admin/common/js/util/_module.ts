@@ -7,3 +7,4 @@
 ///<reference path='ClassHelper.ts'/>
 ///<reference path='DateHelper.ts' />
 ///<reference path='Flow.ts' />
+///<reference path='DelayedFunctionCall.ts' />
