@@ -18,7 +18,6 @@ import com.enonic.wem.core.initializer.InitializerModule;
 import com.enonic.wem.core.jcr.JcrModule;
 import com.enonic.wem.core.module.ModuleModule;
 import com.enonic.wem.core.relationship.RelationshipModule;
-import com.enonic.wem.core.resource.ResourceModule;
 import com.enonic.wem.core.schema.SchemaModule;
 
 public final class CoreModule
@@ -43,7 +42,6 @@ public final class CoreModule
         install( new RelationshipModule() );
         install( new SchemaModule() );
         install( new IndexModule() );
-        install( new ResourceModule() );
         install( new ModuleModule() );
 
         install( new HazelcastModule() );

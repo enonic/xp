@@ -1,11 +1,13 @@
 package com.enonic.wem.core.content.page.layout;
 
-import com.enonic.wem.api.command.module.GetModuleResource;
+import javax.inject.Inject;
+
 import com.enonic.wem.api.content.page.layout.GetLayoutDescriptor;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorNotFoundException;
 import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceNotFoundException;
 import com.enonic.wem.core.command.CommandHandler;
@@ -15,6 +17,9 @@ import com.enonic.wem.xml.XmlSerializers;
 public class GetLayoutDescriptorHandler
     extends CommandHandler<GetLayoutDescriptor>
 {
+    @Inject
+    protected ModuleService moduleService;
+
     @Override
     public void handle()
         throws Exception
@@ -24,7 +29,7 @@ public class GetLayoutDescriptorHandler
             final LayoutDescriptorKey key = this.command.getKey();
 
             final ModuleResourceKey moduleResourceKey = DescriptorKeyToModuleResourceKey.translate( key );
-            final Resource resource = context.getClient().execute( new GetModuleResource().resourceKey( moduleResourceKey ) );
+            final Resource resource = this.moduleService.getResource( moduleResourceKey );
 
             final String descriptorXml = resource.readAsString();
             final LayoutDescriptor.Builder builder = LayoutDescriptor.newLayoutDescriptor();
