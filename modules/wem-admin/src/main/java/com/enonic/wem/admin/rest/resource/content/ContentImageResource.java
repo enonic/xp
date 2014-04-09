@@ -12,7 +12,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
@@ -20,7 +19,6 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
-import com.enonic.wem.api.content.attachment.GetAttachmentParams;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.data.Property;
@@ -39,12 +37,10 @@ import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.Imag
 @Produces("image/*")
 public class ContentImageResource
 {
-    private ContentImageHelper helper;
+    private static final ContentImageHelper helper = new ContentImageHelper();
 
     @Inject
     private AttachmentService attachmentService;
-
-    private Client client;
 
     @Inject
     private ContentTypeService contentTypeService;
@@ -54,13 +50,6 @@ public class ContentImageResource
 
     @Inject
     private ContentService contentService;
-
-    @Inject
-    public void setClient( final Client client )
-    {
-        this.client = client;
-        this.helper = new ContentImageHelper( client );
-    }
 
     @GET
     @Path("{contentId}")
@@ -102,7 +91,7 @@ public class ContentImageResource
         if ( contentType.isImageMedia() )
         {
             final String attachmentName = getImageAttachmentName( content );
-            final Attachment attachment = findAttachment( contentId, attachmentName );
+            final Attachment attachment = attachmentService.get( contentId, attachmentName );
             if ( attachment != null )
             {
                 final Blob blob = blobService.get( attachment.getBlobKey() );
@@ -162,11 +151,5 @@ public class ContentImageResource
         final GetContentTypesParams params = new GetContentTypesParams().contentTypeNames( contentTypeNames );
 
         return contentTypeService.getByNames( params ).first();
-    }
-
-    private Attachment findAttachment( final ContentId contentId, final String attachmentName )
-    {
-        final GetAttachmentParams params = new GetAttachmentParams().contentId( contentId ).attachmentName( attachmentName );
-        return attachmentService.get( params );
     }
 }

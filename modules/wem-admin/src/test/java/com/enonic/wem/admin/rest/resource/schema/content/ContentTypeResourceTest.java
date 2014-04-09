@@ -14,7 +14,6 @@ import com.acme.DummyCustomInputType;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
@@ -40,9 +39,6 @@ import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 public class ContentTypeResourceTest
     extends AbstractResourceTest
 {
-
-    private Client client;
-
     private ContentTypeService contentTypeService;
 
     private static final ContentTypeName MY_CTY_QUALIFIED_NAME = ContentTypeName.from( "my_cty" );
@@ -55,10 +51,8 @@ public class ContentTypeResourceTest
     @Override
     protected Object getResourceInstance()
     {
-        client = Mockito.mock( Client.class );
-        contentTypeService = Mockito.mock( ContentTypeService.class );
         final ContentTypeResource resource = new ContentTypeResource();
-        resource.setClient( client );
+        contentTypeService = Mockito.mock( ContentTypeService.class );
         resource.setContentTypeService( contentTypeService );
 
         return resource;

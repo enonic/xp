@@ -3,15 +3,12 @@ package com.enonic.wem.core.relationship;
 
 import javax.jcr.Session;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public class SyncRelationshipsCommand
 {
-    private Client client;
-
     private Session jcrSession;
 
     private ContentTypeName contentType;
@@ -21,12 +18,6 @@ public class SyncRelationshipsCommand
     private ContentData contentBeforeEditing;
 
     private ContentData contentAfterEditing;
-
-    public SyncRelationshipsCommand client( final Client value )
-    {
-        this.client = value;
-        return this;
-    }
 
     public SyncRelationshipsCommand jcrSession( final Session value )
     {
@@ -56,11 +47,6 @@ public class SyncRelationshipsCommand
     {
         this.contentAfterEditing = value;
         return this;
-    }
-
-    public Client getClient()
-    {
-        return client;
     }
 
     public Session getJcrSession()

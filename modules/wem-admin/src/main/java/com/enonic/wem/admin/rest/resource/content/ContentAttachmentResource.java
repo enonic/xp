@@ -12,7 +12,6 @@ import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.Attachments;
-import com.enonic.wem.api.content.attachment.GetAttachmentsParams;
 
 
 @Path("content/attachment")
@@ -28,7 +27,7 @@ public class ContentAttachmentResource
     public AttachmentListJson getAttachments( @QueryParam("contentId") final String contentIdAsString )
     {
         final ContentId contentId = ContentId.from( contentIdAsString );
-        final Attachments attachments = attachmentService.getAll( new GetAttachmentsParams().contentId( contentId ) );
+        final Attachments attachments = attachmentService.getAll( contentId );
         return new AttachmentListJson( attachments );
     }
 

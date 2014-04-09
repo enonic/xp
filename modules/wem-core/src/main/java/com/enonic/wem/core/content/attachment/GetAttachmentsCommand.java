@@ -1,9 +1,9 @@
 package com.enonic.wem.core.content.attachment;
 
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
-import com.enonic.wem.api.content.attachment.GetAttachmentsParams;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
 import com.enonic.wem.api.entity.Node;
@@ -14,24 +14,17 @@ import com.enonic.wem.core.content.serializer.ThumbnailAttachmentSerializer;
 
 final class GetAttachmentsCommand
 {
-    final ContentAttachmentNodeTranslator CONTENT_ATTACHMENT_NODE_TRANSLATOR = new ContentAttachmentNodeTranslator();
+    private static final ContentAttachmentNodeTranslator CONTENT_ATTACHMENT_NODE_TRANSLATOR = new ContentAttachmentNodeTranslator();
 
     private NodeService nodeService;
 
-    private GetAttachmentsParams params;
+    private ContentId contentId;
 
     Attachments execute()
     {
-        params.validate();
-
-        return doExecute();
-    }
-
-    private Attachments doExecute()
-    {
         try
         {
-            final EntityId entityId = EntityId.from( params.getContentId() );
+            final EntityId entityId = EntityId.from( this.contentId );
             final Node node = nodeService.getById( entityId );
             final Attachments.Builder attachmentsBuilder = Attachments.builder();
 
@@ -51,7 +44,7 @@ final class GetAttachmentsCommand
         }
         catch ( NoEntityWithIdFoundException e )
         {
-            throw new ContentNotFoundException( params.getContentId() );
+            throw new ContentNotFoundException( this.contentId );
         }
     }
 
@@ -61,9 +54,9 @@ final class GetAttachmentsCommand
         return this;
     }
 
-    GetAttachmentsCommand params( final GetAttachmentsParams params )
+    GetAttachmentsCommand contentId( final ContentId contentId )
     {
-        this.params = params;
+        this.contentId = contentId;
         return this;
     }
 }

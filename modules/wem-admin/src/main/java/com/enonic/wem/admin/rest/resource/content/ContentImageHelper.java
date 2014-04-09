@@ -3,7 +3,6 @@ package com.enonic.wem.admin.rest.resource.content;
 import java.awt.image.BufferedImage;
 
 import com.enonic.wem.admin.rest.resource.BaseImageHelper;
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.core.image.filter.effect.ScaleMaxFilter;
 import com.enonic.wem.core.image.filter.effect.ScaleSquareFilter;
@@ -15,11 +14,6 @@ final class ContentImageHelper
     {
         ScaleSquareFilter,
         ScaleMax
-    }
-
-    public ContentImageHelper( final Client client )
-    {
-        super( client );
     }
 
     public BufferedImage getImageFromBlob( final Blob blob, final int size, final ImageFilter imageFilter )

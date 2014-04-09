@@ -18,7 +18,6 @@ import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.Attachments;
-import com.enonic.wem.api.content.attachment.GetAttachmentsParams;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.data.Property;
@@ -80,7 +79,7 @@ final class UpdateContentCommand
         }
         else
         {
-            attachments = getCurrentAttachments( this.params.getContentId() );
+            attachments = attachmentService.getAll( this.params.getContentId() );
         }
 
         final UpdateNodeParams updateNodeParams = getTranslator().toUpdateNodeCommand( editedContent, attachments );
@@ -92,12 +91,6 @@ final class UpdateContentCommand
         deleteRemovedEmbeddedContent( contentBeforeChange, persistedContent );
 
         return persistedContent;
-    }
-
-    private Attachments getCurrentAttachments( final ContentId contentId )
-    {
-        final GetAttachmentsParams params = new GetAttachmentsParams().contentId( contentId );
-        return attachmentService.getAll( params );
     }
 
     private void deleteRemovedEmbeddedContent( final Content persistedContent, final Content editedContent )
