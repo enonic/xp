@@ -5,12 +5,12 @@ public interface SiteTemplateService
 {
     SiteTemplates getSiteTemplates();
 
-    SiteTemplate createSiteTemplate( CreateSiteTemplateParam param );
+    SiteTemplate createSiteTemplate( CreateSiteTemplateParams param );
 
     SiteTemplate getSiteTemplate( SiteTemplateKey key )
         throws SiteTemplateNotFoundException;
 
-    SiteTemplate updateSiteTemplate( UpdateSiteTemplateParam param )
+    SiteTemplate updateSiteTemplate( UpdateSiteTemplateParams param )
         throws SiteTemplateNotFoundException;
 
     void deleteSiteTemplate( SiteTemplateKey key )

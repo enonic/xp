@@ -11,13 +11,13 @@ import com.enonic.wem.admin.json.schema.content.ContentTypeFilterJson;
 import com.enonic.wem.api.content.site.SetSiteTemplateEditor;
 import com.enonic.wem.api.content.site.SiteTemplateEditor;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
-import com.enonic.wem.api.content.site.UpdateSiteTemplateParam;
+import com.enonic.wem.api.content.site.UpdateSiteTemplateParams;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public class UpdateSiteTemplateJson
 {
-    final UpdateSiteTemplateParam updateSiteTemplate;
+    final UpdateSiteTemplateParams updateSiteTemplate;
 
     @JsonCreator
     UpdateSiteTemplateJson( @JsonProperty("siteTemplateKey") final String siteTemplateKey,
@@ -37,13 +37,13 @@ public class UpdateSiteTemplateJson
             rootContentType( ContentTypeName.from( rootContentType ) ).
             build();
 
-        this.updateSiteTemplate = new UpdateSiteTemplateParam().
+        this.updateSiteTemplate = new UpdateSiteTemplateParams().
             key( SiteTemplateKey.from( siteTemplateKey ) ).
             editor( editor );
     }
 
     @JsonIgnore
-    public UpdateSiteTemplateParam getCommand()
+    public UpdateSiteTemplateParams getCommand()
     {
         return updateSiteTemplate;
     }

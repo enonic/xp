@@ -11,7 +11,7 @@ import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.schema.content.ContentTypeFilter;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
-public final class CreateSiteTemplateParam
+public final class CreateSiteTemplateParams
 {
     private SiteTemplateName name;
 
@@ -33,9 +33,9 @@ public final class CreateSiteTemplateParam
 
     private List<PageTemplate> templates = Lists.newArrayList();
 
-    public static CreateSiteTemplateParam fromSiteTemplate( final SiteTemplate siteTemplate )
+    public static CreateSiteTemplateParams fromSiteTemplate( final SiteTemplate siteTemplate )
     {
-        final CreateSiteTemplateParam createSiteTemplate = new CreateSiteTemplateParam().
+        final CreateSiteTemplateParams createSiteTemplate = new CreateSiteTemplateParams().
             name( siteTemplate.getName() ).
             version( siteTemplate.getVersion() ).
             displayName( siteTemplate.getDisplayName() ).
@@ -52,79 +52,79 @@ public final class CreateSiteTemplateParam
         return createSiteTemplate;
     }
 
-    public CreateSiteTemplateParam siteTemplateKey( final SiteTemplateKey key )
+    public CreateSiteTemplateParams siteTemplateKey( final SiteTemplateKey key )
     {
         this.name( key.getName() );
         this.version( key.getVersion() );
         return this;
     }
 
-    public CreateSiteTemplateParam name( final String name )
+    public CreateSiteTemplateParams name( final String name )
     {
         return this.name( new SiteTemplateName( name ) );
     }
 
-    public CreateSiteTemplateParam name( final SiteTemplateName name )
+    public CreateSiteTemplateParams name( final SiteTemplateName name )
     {
         this.name = name;
         return this;
     }
 
-    public CreateSiteTemplateParam version( final SiteTemplateVersion version )
+    public CreateSiteTemplateParams version( final SiteTemplateVersion version )
     {
         this.version = version;
         return this;
     }
 
-    public CreateSiteTemplateParam displayName( final String displayName )
+    public CreateSiteTemplateParams displayName( final String displayName )
     {
         this.displayName = displayName;
         return this;
     }
 
-    public CreateSiteTemplateParam description( final String description )
+    public CreateSiteTemplateParams description( final String description )
     {
         this.description = description;
         return this;
     }
 
-    public CreateSiteTemplateParam url( final String url )
+    public CreateSiteTemplateParams url( final String url )
     {
         this.url = url;
         return this;
     }
 
-    public CreateSiteTemplateParam vendor( final Vendor vendor )
+    public CreateSiteTemplateParams vendor( final Vendor vendor )
     {
         this.vendor = vendor;
         return this;
     }
 
-    public CreateSiteTemplateParam modules( final ModuleKeys modules )
+    public CreateSiteTemplateParams modules( final ModuleKeys modules )
     {
         this.modules = modules;
         return this;
     }
 
-    public CreateSiteTemplateParam contentTypeFilter( final ContentTypeFilter contentTypeFilter )
+    public CreateSiteTemplateParams contentTypeFilter( final ContentTypeFilter contentTypeFilter )
     {
         this.contentTypeFilter = contentTypeFilter;
         return this;
     }
 
-    public CreateSiteTemplateParam rootContentType( final ContentTypeName rootContentType )
+    public CreateSiteTemplateParams rootContentType( final ContentTypeName rootContentType )
     {
         this.rootContentType = rootContentType;
         return this;
     }
 
-    public CreateSiteTemplateParam addPageTemplate( final PageTemplate template )
+    public CreateSiteTemplateParams addPageTemplate( final PageTemplate template )
     {
         this.templates.add( template );
         return this;
     }
 
-    public CreateSiteTemplateParam addPageTemplates( final PageTemplates templates )
+    public CreateSiteTemplateParams addPageTemplates( final PageTemplates templates )
     {
         this.templates.addAll( templates.getList() );
         return this;

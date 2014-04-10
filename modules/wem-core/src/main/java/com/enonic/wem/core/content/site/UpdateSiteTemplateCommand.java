@@ -10,13 +10,13 @@ import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateEditor;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
-import com.enonic.wem.api.content.site.UpdateSiteTemplateParam;
+import com.enonic.wem.api.content.site.UpdateSiteTemplateParams;
 import com.enonic.wem.core.config.SystemConfig;
 import com.enonic.wem.util.Exceptions;
 
 final class UpdateSiteTemplateCommand
 {
-    private UpdateSiteTemplateParam param;
+    private UpdateSiteTemplateParams param;
 
     private SystemConfig systemConfig;
 
@@ -98,7 +98,7 @@ final class UpdateSiteTemplateCommand
         return this;
     }
 
-    public UpdateSiteTemplateCommand param( final UpdateSiteTemplateParam param )
+    public UpdateSiteTemplateCommand param( final UpdateSiteTemplateParams param )
     {
         this.param = param;
         return this;

@@ -3,13 +3,13 @@ package com.enonic.wem.core.content.site;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.content.site.CreateSiteTemplateParam;
+import com.enonic.wem.api.content.site.CreateSiteTemplateParams;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
 import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.content.site.SiteTemplates;
-import com.enonic.wem.api.content.site.UpdateSiteTemplateParam;
+import com.enonic.wem.api.content.site.UpdateSiteTemplateParams;
 import com.enonic.wem.core.config.SystemConfig;
 
 public final class SiteTemplateServiceImpl
@@ -31,7 +31,7 @@ public final class SiteTemplateServiceImpl
     }
 
     @Override
-    public SiteTemplate createSiteTemplate( final CreateSiteTemplateParam param )
+    public SiteTemplate createSiteTemplate( final CreateSiteTemplateParams param )
     {
         return new CreateSiteTemplateCommand().
             param( param ).
@@ -41,7 +41,7 @@ public final class SiteTemplateServiceImpl
     }
 
     @Override
-    public SiteTemplate updateSiteTemplate( final UpdateSiteTemplateParam param )
+    public SiteTemplate updateSiteTemplate( final UpdateSiteTemplateParams param )
         throws SiteTemplateNotFoundException
     {
         return new UpdateSiteTemplateCommand().

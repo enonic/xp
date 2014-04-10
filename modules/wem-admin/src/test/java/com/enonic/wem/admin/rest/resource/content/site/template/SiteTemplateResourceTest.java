@@ -28,14 +28,14 @@ import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
-import com.enonic.wem.api.content.site.CreateSiteTemplateParam;
+import com.enonic.wem.api.content.site.CreateSiteTemplateParams;
 import com.enonic.wem.api.content.site.NoSiteTemplateExistsException;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
 import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.content.site.SiteTemplates;
-import com.enonic.wem.api.content.site.UpdateSiteTemplateParam;
+import com.enonic.wem.api.content.site.UpdateSiteTemplateParams;
 import com.enonic.wem.api.content.site.Vendor;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleKey;
@@ -247,13 +247,13 @@ public class SiteTemplateResourceTest
             addPageTemplate( pageTemplate ).
             build();
 
-        Mockito.when( this.siteTemplateService.createSiteTemplate( Mockito.isA( CreateSiteTemplateParam.class ) ) ).thenAnswer( new Answer()
+        Mockito.when( this.siteTemplateService.createSiteTemplate( Mockito.isA( CreateSiteTemplateParams.class ) ) ).thenAnswer( new Answer()
         {
             @Override
             public Object answer( final InvocationOnMock invocation )
                 throws Throwable
             {
-                final CreateSiteTemplateParam command = (CreateSiteTemplateParam) invocation.getArguments()[0];
+                final CreateSiteTemplateParams command = (CreateSiteTemplateParams) invocation.getArguments()[0];
                 assertEquals( "Demo site template", command.getDescription() );
                 assertEquals( "Blueman Site Template", command.getDisplayName() );
                 assertEquals( "www.enonic.com", command.getUrl() );
@@ -314,13 +314,13 @@ public class SiteTemplateResourceTest
             addPageTemplate( pageTemplate ).
             build();
 
-        Mockito.when( this.siteTemplateService.updateSiteTemplate( Mockito.isA( UpdateSiteTemplateParam.class ) ) ).thenAnswer( new Answer()
+        Mockito.when( this.siteTemplateService.updateSiteTemplate( Mockito.isA( UpdateSiteTemplateParams.class ) ) ).thenAnswer( new Answer()
         {
             @Override
             public Object answer( final InvocationOnMock invocation )
                 throws Throwable
             {
-                final UpdateSiteTemplateParam command = (UpdateSiteTemplateParam) invocation.getArguments()[0];
+                final UpdateSiteTemplateParams command = (UpdateSiteTemplateParams) invocation.getArguments()[0];
                 assertEquals( SiteTemplateKey.from( "blueman-1.0.0" ), command.getKey() );
 
                 return siteTemplate;
@@ -351,7 +351,7 @@ public class SiteTemplateResourceTest
         throws Exception
     {
         final SiteTemplate siteTemplate = createSiteTemplate();
-        Mockito.when( siteTemplateService.createSiteTemplate( Mockito.isA( CreateSiteTemplateParam.class ) ) ).thenReturn( siteTemplate );
+        Mockito.when( siteTemplateService.createSiteTemplate( Mockito.isA( CreateSiteTemplateParams.class ) ) ).thenReturn( siteTemplate );
 
         final SiteTemplateExporter siteTemplateExporter = new SiteTemplateExporter();
         final Path exportedSiteTemplateFile = siteTemplateExporter.exportToZip( siteTemplate, tempDir );

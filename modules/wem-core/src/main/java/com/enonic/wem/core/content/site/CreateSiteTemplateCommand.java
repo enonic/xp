@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import com.enonic.wem.api.content.page.PageTemplate;
-import com.enonic.wem.api.content.site.CreateSiteTemplateParam;
+import com.enonic.wem.api.content.site.CreateSiteTemplateParams;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.core.config.SystemConfig;
@@ -13,7 +13,7 @@ import com.enonic.wem.util.Exceptions;
 
 final class CreateSiteTemplateCommand
 {
-    private CreateSiteTemplateParam param;
+    private CreateSiteTemplateParams param;
 
     private SystemConfig systemConfig;
 
@@ -72,7 +72,7 @@ final class CreateSiteTemplateCommand
         return this;
     }
 
-    public CreateSiteTemplateCommand param( final CreateSiteTemplateParam param )
+    public CreateSiteTemplateCommand param( final CreateSiteTemplateParams param )
     {
         this.param = param;
         return this;

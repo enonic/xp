@@ -28,13 +28,13 @@ import com.enonic.wem.admin.rest.resource.content.site.template.json.DeleteSiteT
 import com.enonic.wem.admin.rest.resource.content.site.template.json.ListSiteTemplateJson;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.ListTemplateItemJson;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.UpdateSiteTemplateJson;
-import com.enonic.wem.api.content.site.CreateSiteTemplateParam;
+import com.enonic.wem.api.content.site.CreateSiteTemplateParams;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
 import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.content.site.SiteTemplates;
-import com.enonic.wem.api.content.site.UpdateSiteTemplateParam;
+import com.enonic.wem.api.content.site.UpdateSiteTemplateParams;
 import com.enonic.wem.core.content.site.SiteTemplateExporter;
 
 @javax.ws.rs.Path("content/site/template")
@@ -88,7 +88,7 @@ public final class SiteTemplateResource
     @Consumes(MediaType.APPLICATION_JSON)
     public SiteTemplateJson create( final CreateSiteTemplateJson params )
     {
-        final CreateSiteTemplateParam command = params.getCommand();
+        final CreateSiteTemplateParams command = params.getCommand();
         final SiteTemplate siteTemplate = this.siteTemplateService.createSiteTemplate( command );
 
         return new SiteTemplateJson( siteTemplate );
@@ -99,7 +99,7 @@ public final class SiteTemplateResource
     @Consumes(MediaType.APPLICATION_JSON)
     public SiteTemplateJson update( final UpdateSiteTemplateJson params )
     {
-        final UpdateSiteTemplateParam command = params.getCommand();
+        final UpdateSiteTemplateParams command = params.getCommand();
         final SiteTemplate siteTemplate = this.siteTemplateService.updateSiteTemplate( command );
 
         return new SiteTemplateJson( siteTemplate );
@@ -134,7 +134,7 @@ public final class SiteTemplateResource
 
             importedSiteTemplate = siteTemplateImporter.importFromZip( tempZipFile ).build();
 
-            final CreateSiteTemplateParam createSiteTemplate = CreateSiteTemplateParam.fromSiteTemplate( importedSiteTemplate );
+            final CreateSiteTemplateParams createSiteTemplate = CreateSiteTemplateParams.fromSiteTemplate( importedSiteTemplate );
             final SiteTemplate createdSiteTemplate = siteTemplateService.createSiteTemplate( createSiteTemplate );
 
             return new SiteTemplateSummaryJson( createdSiteTemplate );

@@ -1,6 +1,6 @@
 package com.enonic.wem.core.content.site
 
-import com.enonic.wem.api.content.site.CreateSiteTemplateParam
+import com.enonic.wem.api.content.site.CreateSiteTemplateParams
 import com.enonic.wem.api.content.site.SiteTemplateVersion
 import com.enonic.wem.api.content.site.Vendor
 import com.enonic.wem.api.module.ModuleKeys
@@ -32,7 +32,7 @@ class SiteTemplateServiceImpl_getSiteTemplatesTest
         def vendor = Vendor.newVendor().name( "Enonic" ).url( "http://enonic.net" ).build();
         def moduleKeys = ModuleKeys.from( "foomodule-1.0.0" );
         def filter = newContentFilter().defaultDeny().allowContentType( ContentTypeName.from( "page" ) ).build();
-        def createSiteTemplateParam = new CreateSiteTemplateParam().
+        def createSiteTemplateParam = new CreateSiteTemplateParams().
             name( name ).
             version( SiteTemplateVersion.from( 1, 2, 0 ) ).
             displayName( "Intranet template" ).

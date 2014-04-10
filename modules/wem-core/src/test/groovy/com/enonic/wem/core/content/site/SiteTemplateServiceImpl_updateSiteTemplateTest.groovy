@@ -17,7 +17,7 @@ class SiteTemplateServiceImpl_updateSiteTemplateTest
         given:
         def template = createSiteTemplate();
         def editor = SetSiteTemplateEditor.newEditor().description( "new description" ).build();
-        def createSiteTemplateParam = new UpdateSiteTemplateParam().
+        def createSiteTemplateParam = new UpdateSiteTemplateParams().
             key( SiteTemplateKey.from( "mysitetemplate-1.0.0" ) ).
             editor( editor );
 
