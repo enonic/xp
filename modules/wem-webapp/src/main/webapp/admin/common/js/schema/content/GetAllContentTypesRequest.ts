@@ -36,8 +36,8 @@ module api.schema.content {
                         array.push(this.fromJsonToContentTypeSummary(contentTypeJson));
                     });
                     deferred.resolve(array);
-                }).catch((response: api.rest.RequestError) => {
-                    deferred.reject(null);
+                }).catch((reason: api.rest.RequestError) => {
+                    deferred.reject(reason);
                 }).done();
 
             return deferred.promise;
