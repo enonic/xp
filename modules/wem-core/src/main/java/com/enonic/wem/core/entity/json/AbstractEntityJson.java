@@ -66,31 +66,37 @@ public abstract class AbstractEntityJson
         return null;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public String getId()
     {
         return id;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public DateTime getCreatedTime()
     {
         return createdTime;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public DateTime getModifiedTime()
     {
         return modifiedTime;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public RootDataSetJson getData()
     {
         return data;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public EntityIndexConfigJson getEntityIndexConfig()
     {
         return entityIndexConfig;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public AttachmentsJson getAttachments()
     {
         return attachments;

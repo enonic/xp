@@ -1,5 +1,6 @@
 package com.enonic.wem.core.entity.json;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import com.enonic.wem.api.entity.Entity;
 
@@ -12,5 +13,11 @@ public class EntityJson
     {
         super( entity );
         this.entity = entity;
+    }
+
+    @JsonIgnore
+    public Entity getEntity()
+    {
+        return entity;
     }
 }

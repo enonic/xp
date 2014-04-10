@@ -78,26 +78,31 @@ public class NodeJson
         this.creator = node.creator() != null ? node.creator().getQualifiedName() : null;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public String getName()
     {
         return name;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public String getParent()
     {
         return parent;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public String getPath()
     {
         return path;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public String getModifier()
     {
         return modifier;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public String getCreator()
     {
         return creator;

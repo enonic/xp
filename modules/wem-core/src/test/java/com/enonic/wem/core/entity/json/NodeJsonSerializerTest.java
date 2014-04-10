@@ -22,7 +22,6 @@ import static org.junit.Assert.*;
 
 public class NodeJsonSerializerTest
 {
-
     @Test
     public void serialize_deserialize()
         throws Exception
