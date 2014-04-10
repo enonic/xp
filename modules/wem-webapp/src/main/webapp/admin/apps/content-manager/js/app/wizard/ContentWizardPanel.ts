@@ -111,6 +111,8 @@ module app.wizard {
                     contentType: this.contentType.getContentTypeName(),
                     defaultModels: params.defaultModels
                 });
+
+                this.formIcon.addClass("site");
             }
 
             if (this.contentType.hasContentDisplayNameScript()) {
