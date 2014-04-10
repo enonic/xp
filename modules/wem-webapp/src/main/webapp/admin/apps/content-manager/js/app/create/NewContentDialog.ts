@@ -72,6 +72,11 @@ module app.create {
             this.input.onValueChanged((event: api.ui.ValueChangedEvent) => {
                 this.filterList();
             });
+            this.input.onKeyUp((event: KeyboardEvent) => {
+                if (event.keyCode === 27) {
+                    this.getCancelAction().execute();
+                }
+            });
 
             this.contentFacet.onClicked((event: MouseEvent) => {
                 this.contentFacet.hasClass('active') ? this.contentFacet.removeClass('active') : this.contentFacet.setClass('active');
