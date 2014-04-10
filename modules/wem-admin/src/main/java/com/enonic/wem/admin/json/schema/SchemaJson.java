@@ -64,7 +64,7 @@ public class SchemaJson
         this.description = schema.getDescription();
         this.createdTime = schema.getCreatedTime();
         this.modifiedTime = schema.getModifiedTime();
-        this.iconUrl = SchemaIconUrlResolver.resolve( schema.getSchemaKey() );
+        this.iconUrl = SchemaIconUrlResolver.resolve( schema );
         this.hasChildren = schema.hasChildren();
     }
 

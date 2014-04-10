@@ -10,6 +10,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 
 import com.enonic.wem.api.schema.SchemaIcon;
@@ -66,6 +67,9 @@ public final class SchemaImageResource
                                    @QueryParam("size") @DefaultValue("128") final int size )
         throws Exception
     {
+        final CacheControl cacheControl = new CacheControl();
+        cacheControl.setMaxAge( 3600 );
+
         final SchemaKey schemaKey = SchemaKey.from( schemaKeyAsString );
 
         final SchemaIcon icon = resolveSchemaIcon( schemaKey );
@@ -73,16 +77,16 @@ public final class SchemaImageResource
         if ( icon == null && schemaKey.isMixin() )
         {
             final BufferedImage defaultMixinImage = helper.getDefaultMixinImage( size );
-            return Response.ok( defaultMixinImage, DEFAULT_MIME_TYPE ).build();
+            return Response.ok( defaultMixinImage, DEFAULT_MIME_TYPE ).cacheControl( cacheControl ).build();
         }
         else if ( icon == null && schemaKey.isRelationshipType() )
         {
             final BufferedImage defaultRelationshipTypeImage = helper.getDefaultRelationshipTypeImage( size );
-            return Response.ok( defaultRelationshipTypeImage, DEFAULT_MIME_TYPE ).build();
+            return Response.ok( defaultRelationshipTypeImage, DEFAULT_MIME_TYPE ).cacheControl( cacheControl ).build();
         }
         else if ( icon != null )
         {
-            return Response.ok( helper.resizeImage( icon.asInputStream(), size ), icon.getMimeType() ).build();
+            return Response.ok( helper.resizeImage( icon.asInputStream(), size ), icon.getMimeType() ).cacheControl( cacheControl ).build();
         }
         else
         {
@@ -158,7 +162,7 @@ public final class SchemaImageResource
     private SchemaIcon findRelationshipTypeIcon( final RelationshipTypeName relationshipTypeName )
     {
         final GetRelationshipTypeParams params = new GetRelationshipTypeParams().name( relationshipTypeName );
-        final RelationshipType relationshipType = relationshipTypeService.getByName( params  );
+        final RelationshipType relationshipType = relationshipTypeService.getByName( params );
         return relationshipType == null ? null : relationshipType.getIcon();
     }
 
