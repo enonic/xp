@@ -124,11 +124,11 @@ module api.form.formitemset {
             return attachments;
         }
 
-        toggleOccurences(show: boolean) {
+        showOccurences(show: boolean) {
             var views = <FormItemSetOccurrenceView[]>this.getOccurrenceViews();
             this.occurrencesCollapsed = !show;
             views.forEach((formItemSetOccurenceView: FormItemSetOccurrenceView) => {
-                formItemSetOccurenceView.toggleContainer(show);
+                formItemSetOccurenceView.showContainer(show);
             });
         }
 

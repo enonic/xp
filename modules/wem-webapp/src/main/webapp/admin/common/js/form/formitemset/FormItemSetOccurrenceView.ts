@@ -221,7 +221,7 @@ module api.form.formitemset {
             return attachments;
         }
 
-        toggleContainer(show: boolean) {
+        showContainer(show: boolean) {
             if (show) {
                 this.formItemSetOccurrencesContainer.show();
             } else {

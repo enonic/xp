@@ -120,10 +120,10 @@ module api.form.formitemset {
             this.collapseButton.onClicked((event: MouseEvent) => {
                 if (this.formItemSetOccurrences.isCollapsed()) {
                     this.collapseButton.setText("Collapse");
-                    this.formItemSetOccurrences.toggleOccurences(true);
+                    this.formItemSetOccurrences.showOccurences(true);
                 } else {
                     this.collapseButton.setText("Expand");
-                    this.formItemSetOccurrences.toggleOccurences(false);
+                    this.formItemSetOccurrences.showOccurences(false);
                 }
 
             });
