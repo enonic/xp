@@ -11,7 +11,6 @@ import com.enonic.wem.core.entity.EntityPropertyIndexConfigJson;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
 @JsonSubTypes({@JsonSubTypes.Type(value = EntityPatternIndexConfigJson.class, name = "patternConfig"),
                   @JsonSubTypes.Type(value = EntityPropertyIndexConfigJson.class, name = "propertyConfig")})
-
 public abstract class EntityIndexConfigJson
 {
     private final String analyzer;
@@ -20,14 +19,12 @@ public abstract class EntityIndexConfigJson
 
     private final boolean decideFulltextByValueType;
 
-
     public EntityIndexConfigJson( final String analyzer, final String collection, final boolean decideFulltextByValueType )
     {
         this.analyzer = analyzer;
         this.collection = collection;
         this.decideFulltextByValueType = decideFulltextByValueType;
     }
-
 
     public abstract EntityIndexConfig toEntityIndexConfig();
 

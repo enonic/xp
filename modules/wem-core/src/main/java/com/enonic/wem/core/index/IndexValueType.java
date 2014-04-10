@@ -15,7 +15,9 @@ public enum IndexValueType
 
     GEO_POINT( "_geopoint" ),
 
-    STRING( "" );
+    STRING( "" ),
+
+    NODE( "" );
 
     public static final String INDEX_VALUE_TYPE_SEPARATOR = ".";
 

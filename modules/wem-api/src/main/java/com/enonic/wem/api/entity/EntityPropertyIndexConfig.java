@@ -48,6 +48,7 @@ public class EntityPropertyIndexConfig
         }
 
         final EntityPropertyIndexConfig that = (EntityPropertyIndexConfig) o;
+
         return Objects.equals( this.getAnalyzer(), that.getAnalyzer() ) &&
             Objects.equals( this.propertyIndexConfigs, that.propertyIndexConfigs );
     }

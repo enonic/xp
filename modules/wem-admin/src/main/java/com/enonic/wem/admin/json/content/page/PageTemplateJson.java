@@ -6,10 +6,10 @@ import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.admin.json.content.page.region.PageRegionsJson;
 import com.enonic.wem.admin.json.content.page.region.RegionJson;
-import com.enonic.wem.admin.json.data.DataJson;
-import com.enonic.wem.admin.json.data.RootDataSetJson;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.core.data.json.DataJson;
+import com.enonic.wem.core.data.json.RootDataSetJson;
 
 
 public class PageTemplateJson
@@ -27,7 +27,7 @@ public class PageTemplateJson
         this.regionsJson = new PageRegionsJson( template.getRegions() );
         this.configJson = new RootDataSetJson( template.getConfig() );
         ImmutableList.Builder<String> canRenderBuilder = new ImmutableList.Builder<>();
-        for ( ContentTypeName contentTypeName : template.getCanRender(  ) )
+        for ( ContentTypeName contentTypeName : template.getCanRender() )
         {
             canRenderBuilder.add( contentTypeName.toString() );
         }

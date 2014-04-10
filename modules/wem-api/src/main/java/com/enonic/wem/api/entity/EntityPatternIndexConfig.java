@@ -83,4 +83,42 @@ public class EntityPatternIndexConfig
 
     }
 
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        if ( !super.equals( o ) )
+        {
+            return false;
+        }
+
+        final EntityPatternIndexConfig that = (EntityPatternIndexConfig) o;
+
+        if ( defaultConfig != null ? !defaultConfig.equals( that.defaultConfig ) : that.defaultConfig != null )
+        {
+            return false;
+        }
+        if ( pathIndexConfigs != null ? !pathIndexConfigs.equals( that.pathIndexConfigs ) : that.pathIndexConfigs != null )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = super.hashCode();
+        result = 31 * result + ( pathIndexConfigs != null ? pathIndexConfigs.hashCode() : 0 );
+        result = 31 * result + ( defaultConfig != null ? defaultConfig.hashCode() : 0 );
+        return result;
+    }
 }

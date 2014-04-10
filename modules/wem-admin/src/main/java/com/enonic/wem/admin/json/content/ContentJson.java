@@ -4,10 +4,10 @@ import java.util.List;
 
 import com.enonic.wem.admin.json.content.page.PageJson;
 import com.enonic.wem.admin.json.content.site.SiteJson;
-import com.enonic.wem.admin.json.data.DataJson;
-import com.enonic.wem.admin.json.data.DataSetJson;
 import com.enonic.wem.admin.json.form.FormJson;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.core.data.json.DataJson;
+import com.enonic.wem.core.data.json.DataSetJson;
 
 @SuppressWarnings("UnusedDeclaration")
 public final class ContentJson

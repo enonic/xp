@@ -12,11 +12,13 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.EntityIndexConfig;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.PropertyIndexConfig;
+import com.enonic.wem.core.entity.json.NodeJsonSerializer;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.index.document.IndexDocumentItemFactory;
 import com.enonic.wem.core.index.document.IndexDocumentItemPath;
+import com.enonic.wem.core.index.document.IndexDocumentNodeItem;
 
 
 public class NodeIndexDocumentFactory
@@ -24,6 +26,10 @@ public class NodeIndexDocumentFactory
     protected static final IndexDocumentItemPath CREATED_TIME_PROPERTY = IndexDocumentItemPath.from( "createdTime" );
 
     protected static final IndexDocumentItemPath NAME_PROPERTY = IndexDocumentItemPath.from( "name" );
+
+    public static final String ENTITY_KEY = "_entity";
+
+    public static final IndexDocumentItemPath ENTITY_PROPERTY = IndexDocumentItemPath.from( ENTITY_KEY );
 
     protected static final IndexDocumentItemPath CREATOR_PROPERTY_PATH = IndexDocumentItemPath.from( "creator" );
 
@@ -78,10 +84,16 @@ public class NodeIndexDocumentFactory
 
         final IndexDocumentItemFactory indexDocumentItemFactory = new IndexDocumentItemFactory( true );
 
+        addNode( node, builder );
         addNodeMetaData( node, builder, indexDocumentItemFactory );
         addNodeProperties( node, builder, indexDocumentItemFactory );
 
         return builder.build();
+    }
+
+    private void addNode( final Node node, final IndexDocument.Builder builder )
+    {
+        builder.addEntry( new IndexDocumentNodeItem( ENTITY_PROPERTY, NodeJsonSerializer.toString( node ) ) );
     }
 
     private void addNodeMetaData( final Node node, final IndexDocument.Builder builder, final IndexDocumentItemFactory factory )

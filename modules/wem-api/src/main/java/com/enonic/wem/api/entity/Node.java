@@ -287,4 +287,58 @@ public final class Node
             return new Node( baseBuilder );
         }
     }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        if ( !super.equals( o ) )
+        {
+            return false;
+        }
+
+        final Node node = (Node) o;
+
+        if ( creator != null ? !creator.equals( node.creator ) : node.creator != null )
+        {
+            return false;
+        }
+        if ( modifier != null ? !modifier.equals( node.modifier ) : node.modifier != null )
+        {
+            return false;
+        }
+        if ( name != null ? !name.equals( node.name ) : node.name != null )
+        {
+            return false;
+        }
+        if ( parent != null ? !parent.equals( node.parent ) : node.parent != null )
+        {
+            return false;
+        }
+        if ( path != null ? !path.equals( node.path ) : node.path != null )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + ( parent != null ? parent.hashCode() : 0 );
+        result = 31 * result + ( path != null ? path.hashCode() : 0 );
+        result = 31 * result + ( modifier != null ? modifier.hashCode() : 0 );
+        result = 31 * result + ( creator != null ? creator.hashCode() : 0 );
+        return result;
+    }
 }

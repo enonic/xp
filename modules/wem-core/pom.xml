@@ -77,7 +77,11 @@
       <artifactId>filters</artifactId>
       <version>2.0.235-1</version>
     </dependency>
-
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-joda</artifactId>
+      <version>2.2.2</version>
+    </dependency>
     <!--dependency>
       <groupId>nl.captcha</groupId>
       <artifactId>simplecaptcha</artifactId>

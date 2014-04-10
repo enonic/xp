@@ -10,12 +10,12 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.enonic.wem.admin.json.content.page.image.ImageComponentJson;
 import com.enonic.wem.admin.json.content.page.layout.LayoutComponentJson;
 import com.enonic.wem.admin.json.content.page.part.PartComponentJson;
-import com.enonic.wem.admin.json.data.DataJson;
-import com.enonic.wem.admin.json.data.RootDataSetJson;
 import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.image.ImageComponent;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.part.PartComponent;
+import com.enonic.wem.core.data.json.DataJson;
+import com.enonic.wem.core.data.json.RootDataSetJson;
 
 @SuppressWarnings("UnusedDeclaration")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)

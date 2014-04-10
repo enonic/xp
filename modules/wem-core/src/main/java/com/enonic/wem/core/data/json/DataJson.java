@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.json.data;
+package com.enonic.wem.core.data.json;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;

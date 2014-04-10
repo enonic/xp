@@ -18,8 +18,7 @@ public class JsonHelper
         objectMapper = new ObjectMapper();
         objectMapper.enable( MapperFeature.SORT_PROPERTIES_ALPHABETICALLY );
         objectMapper.disable( SerializationFeature.FAIL_ON_EMPTY_BEANS );
-        objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
-
+        objectWriter = objectMapper.writer();
     }
 
 

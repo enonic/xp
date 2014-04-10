@@ -346,4 +346,59 @@ public class Entity
             return (B) this;
         }
     }
+
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final Entity entity = (Entity) o;
+
+        if ( attachments != null ? !attachments.equals( entity.attachments ) : entity.attachments != null )
+        {
+            return false;
+        }
+        if ( createdTime != null ? !createdTime.toInstant().equals( entity.createdTime.toInstant() ) : entity.createdTime != null )
+        {
+            return false;
+        }
+        if ( data != null ? !data.equals( entity.data ) : entity.data != null )
+        {
+            return false;
+        }
+        if ( entityIndexConfig != null ? !entityIndexConfig.equals( entity.entityIndexConfig ) : entity.entityIndexConfig != null )
+        {
+            return false;
+        }
+        if ( id != null ? !id.equals( entity.id ) : entity.id != null )
+        {
+            return false;
+        }
+        if ( modifiedTime != null ? !modifiedTime.toInstant().equals( entity.modifiedTime.toInstant() ) : entity.modifiedTime != null )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + ( createdTime != null ? createdTime.hashCode() : 0 );
+        result = 31 * result + ( data != null ? data.hashCode() : 0 );
+        result = 31 * result + ( modifiedTime != null ? modifiedTime.hashCode() : 0 );
+        result = 31 * result + ( entityIndexConfig != null ? entityIndexConfig.hashCode() : 0 );
+        result = 31 * result + ( attachments != null ? attachments.hashCode() : 0 );
+        return result;
+    }
 }

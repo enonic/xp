@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.json.data;
+package com.enonic.wem.core.data.json;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -26,6 +26,8 @@ public class IndexService
 {
     private final static Logger LOG = LoggerFactory.getLogger( IndexService.class );
 
+    private final NodeIndexDocumentFactory nodeIndexDocumentFactory = new NodeIndexDocumentFactory();
+
     private ElasticsearchIndexServiceImpl elasticsearchIndexService;
 
     private IndexMappingProvider indexMappingProvider;
@@ -110,8 +112,6 @@ public class IndexService
 
     public void indexNode( final Node node )
     {
-        NodeIndexDocumentFactory nodeIndexDocumentFactory = new NodeIndexDocumentFactory();
-
         final Collection<IndexDocument> indexDocuments = nodeIndexDocumentFactory.create( node );
         elasticsearchIndexService.indexDocuments( indexDocuments );
     }

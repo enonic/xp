@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.json.data;
+package com.enonic.wem.core.data.json;
 
 
 import java.io.IOException;

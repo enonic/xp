@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.json.data;
+package com.enonic.wem.core.data.json;
 
 import java.util.List;
 
@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data.type.ValueType;
 import com.enonic.wem.api.data.type.ValueTypes;
 
 public class PropertyJson
@@ -21,14 +23,22 @@ public class PropertyJson
         this.property = property;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     @JsonCreator
     public PropertyJson( @JsonProperty("name") final String name, @JsonProperty("type") final String type,
                          @JsonProperty(value = "value") final String value, @JsonProperty(value = "set") final List<DataJson> set )
     {
-        super( new Property( name, ValueTypes.parseByName( type ).newValue(
-            value != null ? value : RootDataSetJson.dataJsonListToRootDataSet( set ) ) ) );
+        super( newProperty( type, name, value, set ) );
         this.property = getData();
     }
+
+    private static Property newProperty( final String type, final String name, final String stringValue, final List<DataJson> set )
+    {
+        ValueType valueType = ValueTypes.parseByName( type );
+        Value value = valueType.newValue( stringValue != null ? stringValue : RootDataSetJson.dataJsonListToRootDataSet( set ) );
+        return valueType.newProperty( name, value );
+    }
+
 
     public String getType()
     {

@@ -9,13 +9,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.admin.json.content.page.region.PageRegionsJson;
 import com.enonic.wem.admin.json.content.page.region.RegionJson;
-import com.enonic.wem.admin.json.data.DataJson;
-import com.enonic.wem.admin.json.data.RootDataSetJson;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageEditor;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.UpdatePageParams;
+import com.enonic.wem.core.data.json.DataJson;
+import com.enonic.wem.core.data.json.RootDataSetJson;
 
 import static com.enonic.wem.api.content.page.Page.editPage;
 

@@ -3,11 +3,11 @@ package com.enonic.wem.admin.rest.resource.content.json;
 
 import java.util.List;
 
-import com.enonic.wem.admin.json.data.DataJson;
 import com.enonic.wem.admin.json.form.FormJson;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.core.data.json.DataJson;
 
 public class UpdateContentJson
 {

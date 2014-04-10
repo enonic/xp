@@ -8,13 +8,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.admin.json.content.attachment.AttachmentJson;
-import com.enonic.wem.admin.json.data.DataJson;
 import com.enonic.wem.admin.json.form.FormJson;
 import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.core.data.json.DataJson;
 
 public class CreateContentJson
 {

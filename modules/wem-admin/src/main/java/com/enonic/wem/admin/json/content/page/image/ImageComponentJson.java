@@ -7,13 +7,12 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.admin.json.content.page.PageComponentJson;
-import com.enonic.wem.admin.json.data.DataJson;
-import com.enonic.wem.admin.json.data.RootDataSetJson;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.image.ImageComponent;
-import com.enonic.wem.api.content.page.image.ImageDescriptor;
 import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
+import com.enonic.wem.core.data.json.DataJson;
+import com.enonic.wem.core.data.json.RootDataSetJson;
 
 import static com.enonic.wem.api.content.page.image.ImageComponent.newImageComponent;
 

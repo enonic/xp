@@ -8,11 +8,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.wem.admin.json.data.DataJson;
-import com.enonic.wem.admin.json.data.RootDataSetJson;
 import com.enonic.wem.api.content.site.ModuleConfig;
 import com.enonic.wem.api.content.site.ModuleConfigs;
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.core.data.json.DataJson;
+import com.enonic.wem.core.data.json.RootDataSetJson;
 
 public class ModuleConfigJson
 {

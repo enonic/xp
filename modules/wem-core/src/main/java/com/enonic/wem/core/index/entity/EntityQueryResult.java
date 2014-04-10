@@ -19,7 +19,6 @@ public class EntityQueryResult
 
     private final float maxScore;
 
-
     private final Aggregations aggregations;
 
     private EntityQueryResult( final Builder builder )
