@@ -10,17 +10,16 @@ import org.mockito.Mockito;
 import com.sun.jersey.api.client.UniformInterfaceException;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
-import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.relationship.CreateRelationship;
-import com.enonic.wem.api.command.relationship.GetRelationships;
-import com.enonic.wem.api.command.relationship.UpdateRelationship;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.relationship.CreateRelationshipParams;
+import com.enonic.wem.api.relationship.RelationshipId;
 import com.enonic.wem.api.relationship.RelationshipKey;
 import com.enonic.wem.api.relationship.RelationshipNotFoundException;
+import com.enonic.wem.api.relationship.RelationshipService;
 import com.enonic.wem.api.relationship.Relationships;
 import com.enonic.wem.api.relationship.UpdateRelationshipFailureException;
+import com.enonic.wem.api.relationship.UpdateRelationshipParams;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
-import com.enonic.wem.core.relationship.dao.RelationshipIdFactory;
 
 import static com.enonic.wem.api.relationship.Relationship.newRelationship;
 import static com.enonic.wem.api.relationship.UpdateRelationshipFailureException.newUpdateRelationshipsResult;
@@ -29,7 +28,7 @@ import static org.mockito.Matchers.isA;
 public class RelationshipResourceTest
     extends AbstractResourceTest
 {
-    private Client client;
+    private RelationshipService relationshipService;
 
     @Before
     public void setup()
@@ -47,7 +46,7 @@ public class RelationshipResourceTest
             type( RelationshipTypeName.DEFAULT ).
             build() );
 
-        Mockito.when( client.execute( isA( GetRelationships.class ) ) ).thenReturn( relationships );
+        Mockito.when( this.relationshipService.getAll( isA( ContentId.class ) ) ).thenReturn( relationships );
 
         String result = resource().path( "relationship" ).queryParam( "fromContent", "111" ).get( String.class );
 
@@ -66,7 +65,7 @@ public class RelationshipResourceTest
             type( RelationshipTypeName.DEFAULT ).
             build() );
 
-        Mockito.when( client.execute( isA( GetRelationships.class ) ) ).thenReturn( relationships );
+        Mockito.when( this.relationshipService.getAll( isA( ContentId.class ) ) ).thenReturn( relationships );
 
         String result = resource().path( "relationship" ).queryParam( "fromContent", "111" ).get( String.class );
 
@@ -77,7 +76,14 @@ public class RelationshipResourceTest
     public void create()
         throws Exception
     {
-        Mockito.when( client.execute( isA( CreateRelationship.class ) ) ).thenReturn( RelationshipIdFactory.from( "111" ) );
+        Mockito.when( this.relationshipService.create( isA( CreateRelationshipParams.class ) ) ).thenReturn( new RelationshipId()
+        {
+            @Override
+            public String toString()
+            {
+                return "111";
+            }
+        } );
 
         String result = resource().path( "relationship/create" ).
             entity( readFromFile( "create_relationship_params.json" ), MediaType.APPLICATION_JSON_TYPE ).post( String.class );
@@ -89,8 +95,6 @@ public class RelationshipResourceTest
     public void update_success()
         throws Exception
     {
-        Mockito.when( client.execute( isA( UpdateRelationship.class ) ) ).thenReturn( null );
-
         String result = resource().path( "relationship/update" ).entity( readFromFile( "update_relationship_params.json" ),
                                                                          MediaType.APPLICATION_JSON_TYPE ).post( String.class );
 
@@ -110,12 +114,12 @@ public class RelationshipResourceTest
         UpdateRelationshipFailureException exception = newUpdateRelationshipsResult().relationshipKey( relationshipKey ).failure(
             new RelationshipNotFoundException( relationshipKey ) ).build();
 
-        Mockito.when( client.execute( isA( UpdateRelationship.class ) ) ).thenThrow( exception );
+        Mockito.doThrow( exception ).when( this.relationshipService ).update( isA( UpdateRelationshipParams.class ) );
 
         try
         {
-            String result = resource().path( "relationship/update" ).entity( readFromFile( "update_relationship_params.json" ),
-                                                                             MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+            resource().path( "relationship/update" ).entity( readFromFile( "update_relationship_params.json" ),
+                                                             MediaType.APPLICATION_JSON_TYPE ).post( String.class );
             Assert.assertFalse( "Exception should've been thrown by this time", true );
         }
         catch ( UniformInterfaceException e )
@@ -124,17 +128,18 @@ public class RelationshipResourceTest
             Assert.assertEquals(
                 "Failed to update Relationship [RelationshipKey{fromContent=123, toContent=321, type=like, managingData=null}]:\n" +
                     "Failure #1: Relationship [RelationshipKey{fromContent=123, toContent=321, type=like, managingData=null}] was not found\n",
-                e.getResponse().getEntity( String.class ) );
+                e.getResponse().getEntity( String.class )
+            );
         }
     }
 
     @Override
     protected Object getResourceInstance()
     {
-        client = Mockito.mock( Client.class );
-        final RelationshipResource resource = new RelationshipResource();
-        resource.setClient( client );
+        this.relationshipService = Mockito.mock( RelationshipService.class );
 
+        final RelationshipResource resource = new RelationshipResource();
+        resource.relationshipService = relationshipService;
         return resource;
     }
 }

@@ -1,20 +1,16 @@
-package com.enonic.wem.api.command.relationship;
-
+package com.enonic.wem.api.relationship;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.relationship.RelationshipKey;
 import com.enonic.wem.api.relationship.editor.RelationshipEditor;
 
-public class UpdateRelationship
-    extends Command
+public final class UpdateRelationshipParams
 {
     private RelationshipKey relationshipKey;
 
     private RelationshipEditor editor;
 
-    public UpdateRelationship relationshipKey( final RelationshipKey value )
+    public UpdateRelationshipParams relationshipKey( final RelationshipKey value )
     {
         this.relationshipKey = value;
         return this;
@@ -35,7 +31,6 @@ public class UpdateRelationship
         return editor;
     }
 
-    @Override
     public void validate()
     {
         Preconditions.checkNotNull( relationshipKey, "relationshipKey cannot be null" );

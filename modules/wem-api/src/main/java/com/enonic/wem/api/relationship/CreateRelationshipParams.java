@@ -1,5 +1,4 @@
-package com.enonic.wem.api.command.relationship;
-
+package com.enonic.wem.api.relationship;
 
 import java.util.Map;
 import java.util.Objects;
@@ -7,13 +6,10 @@ import java.util.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.relationship.RelationshipId;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
-public class CreateRelationship
-    extends Command<RelationshipId>
+public final class CreateRelationshipParams
 {
     private RelationshipTypeName type;
 
@@ -28,7 +24,7 @@ public class CreateRelationship
         return type;
     }
 
-    public CreateRelationship type( final RelationshipTypeName type )
+    public CreateRelationshipParams type( final RelationshipTypeName type )
     {
         this.type = type;
         return this;
@@ -39,7 +35,7 @@ public class CreateRelationship
         return fromContent;
     }
 
-    public CreateRelationship fromContent( final ContentId fromContent )
+    public CreateRelationshipParams fromContent( final ContentId fromContent )
     {
         this.fromContent = fromContent;
         return this;
@@ -50,19 +46,19 @@ public class CreateRelationship
         return toContent;
     }
 
-    public CreateRelationship toContent( final ContentId toContent )
+    public CreateRelationshipParams toContent( final ContentId toContent )
     {
         this.toContent = toContent;
         return this;
     }
 
-    public CreateRelationship property( final String key, final String value )
+    public CreateRelationshipParams property( final String key, final String value )
     {
         this.properties.put( key, value );
         return this;
     }
 
-    public CreateRelationship property( final Map<String, String> map )
+    public CreateRelationshipParams property( final Map<String, String> map )
     {
         for ( Map.Entry<String, String> entry : map.entrySet() )
         {
@@ -78,7 +74,6 @@ public class CreateRelationship
         return properties;
     }
 
-    @Override
     public void validate()
     {
         Preconditions.checkNotNull( type, "type cannot be null" );
@@ -98,7 +93,7 @@ public class CreateRelationship
             return false;
         }
 
-        final CreateRelationship that = (CreateRelationship) o;
+        final CreateRelationshipParams that = (CreateRelationshipParams) o;
 
         return Objects.equals( fromContent, that.fromContent ) &&
             Objects.equals( toContent, that.toContent ) &&

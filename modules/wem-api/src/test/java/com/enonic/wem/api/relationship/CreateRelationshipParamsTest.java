@@ -1,14 +1,13 @@
-package com.enonic.wem.api.command.relationship;
+package com.enonic.wem.api.relationship;
 
 
 import org.junit.Test;
 
-import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.support.AbstractEqualsTest;
 
-public class CreateRelationshipTest
+public class CreateRelationshipParamsTest
 {
     @Test
     public void equals()
@@ -24,8 +23,7 @@ public class CreateRelationshipTest
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                return new Object[]{
-                    createRelationship( RelationshipTypeName.PARENT, ContentId.from( "1" ), ContentId.from( "2" ), "val1" ),
+                return new Object[]{createRelationship( RelationshipTypeName.PARENT, ContentId.from( "1" ), ContentId.from( "2" ), "val1" ),
                     createRelationship( RelationshipTypeName.LIKE, ContentId.from( "3" ), ContentId.from( "2" ), "val1" ),
                     createRelationship( RelationshipTypeName.LIKE, ContentId.from( "1" ), ContentId.from( "3" ), "val1" ),
                     createRelationship( RelationshipTypeName.LIKE, ContentId.from( "1" ), ContentId.from( "2" ), "otherValue" ),};
@@ -46,10 +44,10 @@ public class CreateRelationshipTest
         equalsTest.assertEqualsAndHashCodeContract();
     }
 
-    private CreateRelationship createRelationship( RelationshipTypeName type, ContentId fromContent, ContentId toContent,
-                                                   String propValule )
+    private CreateRelationshipParams createRelationship( RelationshipTypeName type, ContentId fromContent, ContentId toContent,
+                                                         String propValule )
     {
-        CreateRelationship command = Commands.relationship().create();
+        CreateRelationshipParams command = new CreateRelationshipParams();
         command.fromContent( fromContent );
         command.toContent( toContent );
         command.type( type );

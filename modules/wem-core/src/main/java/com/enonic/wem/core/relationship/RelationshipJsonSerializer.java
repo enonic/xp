@@ -16,7 +16,7 @@ import com.enonic.wem.api.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.api.support.serializer.JsonParsingException;
 import com.enonic.wem.api.support.serializer.JsonSerializerUtil;
 
-public class RelationshipJsonSerializer
+public final class RelationshipJsonSerializer
     extends AbstractJsonSerializer<Relationship>
 {
     private boolean includeCreator;
