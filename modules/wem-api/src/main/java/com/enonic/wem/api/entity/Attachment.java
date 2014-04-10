@@ -86,5 +86,47 @@ public final class Attachment
         }
     }
 
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
 
+        final Attachment that = (Attachment) o;
+
+        if ( size != that.size )
+        {
+            return false;
+        }
+        if ( blobKey != null ? !blobKey.equals( that.blobKey ) : that.blobKey != null )
+        {
+            return false;
+        }
+        if ( mimeType != null ? !mimeType.equals( that.mimeType ) : that.mimeType != null )
+        {
+            return false;
+        }
+        if ( name != null ? !name.equals( that.name ) : that.name != null )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (int) ( size ^ ( size >>> 32 ) );
+        result = 31 * result + ( mimeType != null ? mimeType.hashCode() : 0 );
+        result = 31 * result + ( blobKey != null ? blobKey.hashCode() : 0 );
+        return result;
+    }
 }

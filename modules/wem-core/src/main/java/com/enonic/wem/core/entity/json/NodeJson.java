@@ -40,10 +40,10 @@ public class NodeJson
                      @JsonProperty("createdTime") final DateTime createdTime, //
                      @JsonProperty("data") final RootDataSetJson data, //
                      @JsonProperty("modifiedTime") final DateTime modifiedTime, //
-                     @JsonProperty("entityIndexConfig") final EntityIndexConfigJson entityIndexConfig )
+                     @JsonProperty("entityIndexConfig") final EntityIndexConfigJson entityIndexConfig,
+                     @JsonProperty("attachments") final AttachmentsJson attachments )
     {
-
-        super( id, createdTime, data, modifiedTime, entityIndexConfig );
+        super( id, createdTime, data, modifiedTime, entityIndexConfig, attachments );
 
         this.name = name;
         this.parent = parent;
@@ -62,14 +62,15 @@ public class NodeJson
             parent( parent != null ? NodePath.newPath( parent ).build() : null ).
             rootDataSet( data.getRootDataSet() ).
             entityIndexConfig( entityIndexConfig.toEntityIndexConfig() ).
+            attachments( attachments.getAttachments() ).
             build();
     }
 
     public NodeJson( final Node node )
     {
         super( node );
-        this.node = node;
 
+        this.node = node;
         this.name = node.name() != null ? node.name().toString() : null;
         this.parent = node.parent() != null ? node.parent().toString() : null;
         this.path = node.path() != null ? node.path().toString() : null;

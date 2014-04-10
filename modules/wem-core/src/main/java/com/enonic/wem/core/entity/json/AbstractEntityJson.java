@@ -29,17 +29,17 @@ public abstract class AbstractEntityJson
 
     protected EntityIndexConfigJson entityIndexConfig;
 
-    //protected final Attachments attachments;
-
+    private AttachmentsJson attachments;
 
     protected AbstractEntityJson( final String id, final DateTime createdTime, final RootDataSetJson data, final DateTime modifiedTime,
-                                  final EntityIndexConfigJson entityIndexConfig )
+                                  final EntityIndexConfigJson entityIndexConfig, final AttachmentsJson attachments )
     {
         this.id = id;
         this.createdTime = createdTime;
         this.data = data;
         this.modifiedTime = modifiedTime;
         this.entityIndexConfig = entityIndexConfig;
+        this.attachments = attachments;
     }
 
     protected AbstractEntityJson( final Entity entity )
@@ -49,6 +49,7 @@ public abstract class AbstractEntityJson
         this.modifiedTime = entity.getModifiedTime();
         this.data = new RootDataSetJson( entity.data() );
         this.entityIndexConfig = createEntityIndexConfig( entity.getEntityIndexConfig() );
+        this.attachments = new AttachmentsJson( entity.attachments() );
     }
 
     private EntityIndexConfigJson createEntityIndexConfig( final EntityIndexConfig indexConfig )
@@ -88,5 +89,10 @@ public abstract class AbstractEntityJson
     public EntityIndexConfigJson getEntityIndexConfig()
     {
         return entityIndexConfig;
+    }
+
+    public AttachmentsJson getAttachments()
+    {
+        return attachments;
     }
 }

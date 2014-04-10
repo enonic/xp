@@ -5,9 +5,12 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 
 import com.enonic.wem.api.account.UserKey;
+import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.entity.Attachment;
+import com.enonic.wem.api.entity.Attachments;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityPropertyIndexConfig;
 import com.enonic.wem.api.entity.Node;
@@ -46,9 +49,16 @@ public class NodeJsonSerializerTest
                 addPropertyIndexConfig( "mypath", PropertyIndexConfig.INDEXALL_PROPERTY_CONFIG ).
                 build() ).
             rootDataSet( rootDataSet ).
+            attachments( Attachments.from( Attachment.
+                newAttachment().
+                name( "attachment" ).
+                blobKey( new BlobKey( "1234" ) ).
+                mimeType( "mimetype" ).
+                build() ) ).
             build();
 
         final String serializedNode = NodeJsonSerializer.toString( node );
+
         final Node deSerializedNode = NodeJsonSerializer.toNode( serializedNode );
 
         assertEquals( node, deSerializedNode );
