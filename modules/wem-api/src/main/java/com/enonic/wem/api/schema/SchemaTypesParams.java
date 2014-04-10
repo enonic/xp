@@ -4,10 +4,7 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Set;
 
-import com.enonic.wem.api.command.Command;
-
 public final class SchemaTypesParams
-    extends Command<Schemas>
 {
     private EnumSet<SchemaKind> schemaKinds;
 
@@ -33,11 +30,5 @@ public final class SchemaTypesParams
     public boolean isIncludeType( final SchemaKind schemaKind )
     {
         return schemaKinds.contains( schemaKind );
-    }
-
-    @Override
-    public void validate()
-    {
-        // nothing to validate
     }
 }

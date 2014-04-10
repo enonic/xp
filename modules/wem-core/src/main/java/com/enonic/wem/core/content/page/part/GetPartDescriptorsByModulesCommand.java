@@ -2,10 +2,9 @@ package com.enonic.wem.core.content.page.part;
 
 import java.io.IOException;
 
-import javax.inject.Inject;
+import com.google.common.base.Throwables;
 
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
-import com.enonic.wem.api.content.page.part.GetPartDescriptorsByModules;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartDescriptorService;
@@ -16,28 +15,30 @@ import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.Modules;
 import com.enonic.wem.api.module.ResourcePath;
-import com.enonic.wem.core.command.CommandHandler;
 
-public class GetPartDescriptorsByModulesHandler
-    extends CommandHandler<GetPartDescriptorsByModules>
+final class GetPartDescriptorsByModulesCommand
 {
     private static final ResourcePath COMPONENT_FOLDER = ResourcePath.from( "component" );
 
     private static final ResourcePath PART_DESCRIPTOR_XML = ResourcePath.from( "part.xml" );
 
+    private ModuleKeys moduleKeys;
+
     private ModuleService moduleService;
 
     private PartDescriptorService partDescriptorService;
 
-    @Override
-    public void handle()
-        throws Exception
+    public PartDescriptors execute()
     {
-        final ModuleKeys moduleKeys = this.command.getModuleKeys();
-        final Modules modules = moduleService.getModules( moduleKeys );
-
-        final PartDescriptors partDescriptors = getPartDescriptorsFromModules( modules );
-        command.setResult( partDescriptors );
+        try
+        {
+            final Modules modules = this.moduleService.getModules( this.moduleKeys );
+            return getPartDescriptorsFromModules( modules );
+        }
+        catch ( final IOException e )
+        {
+            throw Throwables.propagate( e );
+        }
     }
 
     private PartDescriptors getPartDescriptorsFromModules( final Modules modules )
@@ -70,15 +71,21 @@ public class GetPartDescriptorsByModulesHandler
         return partDescriptors.build();
     }
 
-    @Inject
-    public void setModuleService( final ModuleService moduleService )
+    public GetPartDescriptorsByModulesCommand moduleKeys( final ModuleKeys moduleKeys )
     {
-        this.moduleService = moduleService;
+        this.moduleKeys = moduleKeys;
+        return this;
     }
 
-    @Inject
-    public void setPartDescriptorService( final PartDescriptorService partDescriptorService )
+    public GetPartDescriptorsByModulesCommand moduleService( final ModuleService moduleService )
+    {
+        this.moduleService = moduleService;
+        return this;
+    }
+
+    public GetPartDescriptorsByModulesCommand partDescriptorService( final PartDescriptorService partDescriptorService )
     {
         this.partDescriptorService = partDescriptorService;
+        return this;
     }
 }

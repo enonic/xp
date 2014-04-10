@@ -2,30 +2,30 @@ package com.enonic.wem.core.content.page.part;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.Client;
-import com.enonic.wem.api.content.page.part.GetPartDescriptor;
-import com.enonic.wem.api.content.page.part.GetPartDescriptorsByModules;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartDescriptorService;
 import com.enonic.wem.api.content.page.part.PartDescriptors;
 import com.enonic.wem.api.module.ModuleKeys;
+import com.enonic.wem.api.module.ModuleService;
 
-public class PartDescriptorServiceImpl
+public final class PartDescriptorServiceImpl
     implements PartDescriptorService
 {
     @Inject
-    private Client client;
+    protected ModuleService moduleService;
+
+    @Inject
+    protected PartDescriptorService partDescriptorService;
 
     public PartDescriptor getByKey( final PartDescriptorKey key )
     {
-        final GetPartDescriptor command = new GetPartDescriptor( key );
-        return client.execute( command );
+        return new GetPartDescriptorCommand().moduleService( this.moduleService ).key( key ).execute();
     }
 
     public PartDescriptors getByModules( final ModuleKeys moduleKeys )
     {
-        final GetPartDescriptorsByModules command = new GetPartDescriptorsByModules( moduleKeys );
-        return client.execute( command );
+        return new GetPartDescriptorsByModulesCommand().moduleService( this.moduleService ).partDescriptorService(
+            this.partDescriptorService ).moduleKeys( moduleKeys ).execute();
     }
 }

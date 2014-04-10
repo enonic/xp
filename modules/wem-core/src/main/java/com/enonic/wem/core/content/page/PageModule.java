@@ -14,8 +14,6 @@ import com.enonic.wem.api.content.page.part.PartDescriptorService;
 import com.enonic.wem.core.command.CommandBinder;
 import com.enonic.wem.core.content.page.image.ImageDescriptorServiceImpl;
 import com.enonic.wem.core.content.page.layout.LayoutDescriptorServiceImpl;
-import com.enonic.wem.core.content.page.part.GetPartDescriptorHandler;
-import com.enonic.wem.core.content.page.part.GetPartDescriptorsByModulesHandler;
 import com.enonic.wem.core.content.page.part.PartDescriptorServiceImpl;
 
 public class PageModule
@@ -36,8 +34,5 @@ public class PageModule
 
         commands.add( GetPageTemplateByKeyHandler.class );
         commands.add( GetPageTemplatesBySiteTemplateHandler.class );
-
-        commands.add( GetPartDescriptorHandler.class );
-        commands.add( GetPartDescriptorsByModulesHandler.class );
     }
 }
