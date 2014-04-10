@@ -155,6 +155,15 @@ module api.dom {
             return this;
         }
 
+        toggleClass(className: string): api.dom.Element {
+            if (this.hasClass(className)) {
+                this.removeClass(className);
+            } else {
+                this.addClass(className);
+            }
+            return this;
+        }
+
         hasClass(className: string): boolean {
             return this.el.hasClass(className);
         }
