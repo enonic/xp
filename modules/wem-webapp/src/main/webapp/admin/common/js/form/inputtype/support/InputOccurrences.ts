@@ -76,7 +76,10 @@ module api.form.inputtype.support {
                 return;
             }
 
-            this.properties[event.getArrayIndex()].setValue(event.getNewValue());
+            var property = this.properties[event.getArrayIndex()];
+            if (property) {
+                property.setValue(event.getNewValue());
+            }
 
             this.notifyValueChanged(event);
         }
