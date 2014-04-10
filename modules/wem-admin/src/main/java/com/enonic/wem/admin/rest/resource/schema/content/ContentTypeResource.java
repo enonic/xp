@@ -17,7 +17,6 @@ import com.enonic.wem.admin.json.icon.IconJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeConfigJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeSummaryListJson;
-import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.schema.json.CreateOrUpdateSchemaJsonResult;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
@@ -46,7 +45,6 @@ import com.enonic.wem.xml.XmlSerializers;
 @Path("schema/content")
 @Produces("application/json")
 public class ContentTypeResource
-    extends AbstractResource
 {
     private ContentTypeService contentTypeService;
 

@@ -8,7 +8,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import com.enonic.wem.admin.json.module.ModuleJson;
-import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.module.json.ListModuleJson;
 import com.enonic.wem.admin.rest.resource.module.json.ModuleDeleteParams;
 import com.enonic.wem.api.module.Module;
@@ -18,8 +17,7 @@ import com.enonic.wem.api.module.Modules;
 
 @javax.ws.rs.Path("module")
 @Produces(MediaType.APPLICATION_JSON)
-public class ModuleResource
-    extends AbstractResource
+public final class ModuleResource
 {
     @Inject
     protected ModuleService moduleService;

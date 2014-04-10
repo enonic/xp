@@ -9,14 +9,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.enonic.wem.admin.json.country.CountryListJson;
-import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.core.country.Country;
 import com.enonic.wem.core.country.CountryService;
 
 @Path("util/country")
 @Produces(MediaType.APPLICATION_JSON)
 public class CountryResource
-    extends AbstractResource
 {
     private CountryService countryService;
 
@@ -24,9 +22,7 @@ public class CountryResource
     public CountryListJson list()
     {
         final Collection<Country> countries = this.countryService.getCountries();
-        final CountryListJson result = new CountryListJson( countries );
-
-        return result;
+        return new CountryListJson( countries );
     }
 
     @Inject

@@ -1,15 +1,11 @@
 package com.enonic.wem.core.support;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 
-import javax.inject.Inject;
-
 import org.apache.commons.io.IOUtils;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.core.initializer.InitializerTask;
 
@@ -17,8 +13,6 @@ public abstract class BaseInitializer
     extends InitializerTask
 {
     private static final String FILE_SEPARATOR = "/";
-
-    protected Client client;
 
     private String metaInfFolderBasePath;
 
@@ -59,11 +53,5 @@ public abstract class BaseInitializer
         {
             throw new RuntimeException( "Failed to load icon file: " + filePath, e );
         }
-    }
-
-    @Inject
-    public void setClient( final Client client )
-    {
-        this.client = client;
     }
 }

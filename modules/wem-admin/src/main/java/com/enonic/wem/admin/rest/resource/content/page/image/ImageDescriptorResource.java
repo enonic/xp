@@ -11,7 +11,6 @@ import javax.ws.rs.core.MediaType;
 
 import com.enonic.wem.admin.json.content.page.image.ImageDescriptorJson;
 import com.enonic.wem.admin.json.content.page.image.ImageDescriptorsJson;
-import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.api.content.page.image.ImageDescriptor;
 import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
 import com.enonic.wem.api.content.page.image.ImageDescriptorService;
@@ -20,7 +19,6 @@ import com.enonic.wem.api.content.page.image.ImageDescriptors;
 @Path("content/page/image/descriptor")
 @Produces(MediaType.APPLICATION_JSON)
 public class ImageDescriptorResource
-    extends AbstractResource
 {
     @Inject
     protected ImageDescriptorService imageDescriptorService;

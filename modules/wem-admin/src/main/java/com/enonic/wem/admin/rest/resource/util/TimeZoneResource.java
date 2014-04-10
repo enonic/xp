@@ -11,13 +11,11 @@ import javax.ws.rs.core.MediaType;
 import org.joda.time.DateTimeZone;
 
 import com.enonic.wem.admin.json.time.TimeZoneListJson;
-import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.core.time.TimeZoneService;
 
 @Path("util/timezone")
 @Produces(MediaType.APPLICATION_JSON)
 public class TimeZoneResource
-    extends AbstractResource
 {
     private TimeZoneService timezoneService;
 

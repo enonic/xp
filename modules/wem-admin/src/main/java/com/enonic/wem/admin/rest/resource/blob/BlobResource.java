@@ -20,7 +20,6 @@ import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataMultiPart;
 
 import com.enonic.wem.admin.json.JsonResult;
-import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobService;
@@ -28,7 +27,6 @@ import com.enonic.wem.api.blob.BlobService;
 @Path("blob")
 @Produces(MediaType.APPLICATION_JSON)
 public final class BlobResource
-    extends AbstractResource
 {
     private BlobService blobService;
 

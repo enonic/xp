@@ -13,7 +13,6 @@ import org.mockito.Mockito;
 import com.google.common.io.ByteSource;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
@@ -113,11 +112,9 @@ public class ModuleResourceTest
     @Override
     protected Object getResourceInstance()
     {
-        final Client client = Mockito.mock( Client.class );
         moduleService = Mockito.mock( ModuleService.class );
 
         final ModuleResource resource = new ModuleResource();
-        resource.setClient( client );
         resource.moduleService = moduleService;
 
         return resource;

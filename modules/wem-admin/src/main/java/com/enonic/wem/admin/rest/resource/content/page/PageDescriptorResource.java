@@ -8,7 +8,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import com.enonic.wem.admin.json.content.page.PageDescriptorJson;
-import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageDescriptorService;
@@ -16,7 +15,6 @@ import com.enonic.wem.api.content.page.PageDescriptorService;
 @Path("content/page/descriptor")
 @Produces(MediaType.APPLICATION_JSON)
 public class PageDescriptorResource
-    extends AbstractResource
 {
     @Inject
     protected PageDescriptorService pageDescriptorService;

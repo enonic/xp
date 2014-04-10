@@ -5,14 +5,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import com.enonic.wem.admin.json.system.SystemInfoJson;
-import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.Version;
+import com.enonic.wem.admin.json.system.SystemInfoJson;
 
 @Path("util/system_info")
 @Produces(MediaType.APPLICATION_JSON)
 public final class SystemInfoResource
-    extends AbstractResource
 {
     @GET
     public SystemInfoJson get()

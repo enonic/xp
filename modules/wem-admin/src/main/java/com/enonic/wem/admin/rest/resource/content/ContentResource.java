@@ -26,7 +26,6 @@ import com.enonic.wem.admin.json.content.ContentSummaryJson;
 import com.enonic.wem.admin.json.content.ContentSummaryListJson;
 import com.enonic.wem.admin.json.content.attachment.AttachmentJson;
 import com.enonic.wem.admin.json.data.DataJson;
-import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.content.json.AbstractContentQueryResultJson;
 import com.enonic.wem.admin.rest.resource.content.json.ContentNameJson;
 import com.enonic.wem.admin.rest.resource.content.json.ContentQueryJson;
@@ -61,7 +60,6 @@ import static com.enonic.wem.api.content.Content.editContent;
 @Path("content")
 @Produces(MediaType.APPLICATION_JSON)
 public class ContentResource
-    extends AbstractResource
 {
     private final String EXPAND_FULL = "full";
 
@@ -197,9 +195,8 @@ public class ContentResource
     {
         final ContentQueryResult contentQueryResult = contentService.find( contentQueryJson.getContentQuery() );
         final boolean getChildrenIds = !Expand.NONE.matches( contentQueryJson.getExpand() );
-        final GetContentByIdsParams params = new GetContentByIdsParams(
-            ContentIds.from( contentQueryResult.getContentIds() ) )
-            .setGetChildrenIds( getChildrenIds );
+        final GetContentByIdsParams params =
+            new GetContentByIdsParams( ContentIds.from( contentQueryResult.getContentIds() ) ).setGetChildrenIds( getChildrenIds );
         final Contents contents = contentService.getByIds( params );
 
         return ContentQueryResultJsonFactory.create( contentQueryResult, contents, contentQueryJson.getExpand() );

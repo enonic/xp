@@ -10,7 +10,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import com.enonic.wem.admin.json.content.ContentJson;
-import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.CreatePageParams;

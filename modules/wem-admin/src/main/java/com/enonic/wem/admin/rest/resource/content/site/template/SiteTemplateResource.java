@@ -23,7 +23,6 @@ import com.sun.jersey.multipart.FormDataParam;
 
 import com.enonic.wem.admin.json.content.site.SiteTemplateJson;
 import com.enonic.wem.admin.json.content.site.SiteTemplateSummaryJson;
-import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.CreateSiteTemplateJson;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.DeleteSiteTemplateJson;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.ListSiteTemplateJson;
@@ -41,7 +40,6 @@ import com.enonic.wem.core.content.site.SiteTemplateExporter;
 @javax.ws.rs.Path("content/site/template")
 @Produces(MediaType.APPLICATION_JSON)
 public final class SiteTemplateResource
-    extends AbstractResource
 {
     private SiteTemplateService siteTemplateService;
 

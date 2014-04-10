@@ -4,7 +4,6 @@ import com.google.inject.AbstractModule;
 
 import com.enonic.wem.core.blob.BlobModule;
 import com.enonic.wem.core.blobstore.BlobStoreModule;
-import com.enonic.wem.core.client.ClientModule;
 import com.enonic.wem.core.config.ConfigModule;
 import com.enonic.wem.core.content.ContentModule;
 import com.enonic.wem.core.content.page.PageModule;
@@ -32,7 +31,6 @@ public final class CoreModule
         install( new ConfigModule() );
         install( new JcrModule() );
         install( new InitializerModule() );
-        install( new ClientModule() );
         install( new BlobStoreModule() );
         install( new EntityModule() );
         install( new BlobModule() );

@@ -20,7 +20,6 @@ import com.google.inject.util.Providers;
 import com.sun.jersey.api.core.HttpContext;
 import com.sun.jersey.api.core.HttpRequestContext;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -92,7 +91,6 @@ public class ContentResourceTest
 
         final ContentResource contentResource = new ContentResource();
         contentResource.contentSelector = "content";
-        contentResource.client = mock( Client.class );
         contentResource.httpContext = mock( HttpContext.class );
         contentResource.contentService = mock( ContentService.class );
         contentResource.siteService = mock( SiteService.class );

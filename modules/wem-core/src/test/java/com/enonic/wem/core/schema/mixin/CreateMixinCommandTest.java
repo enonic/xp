@@ -6,14 +6,12 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.mixin.CreateMixinParams;
 import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.schema.mixin.dao.MixinDao;
 
 import static com.enonic.wem.api.form.Input.newInput;
 import static org.junit.Assert.*;
 
 public class CreateMixinCommandTest
-    extends AbstractCommandHandlerTest
 {
     @Test
     public void createMixin()

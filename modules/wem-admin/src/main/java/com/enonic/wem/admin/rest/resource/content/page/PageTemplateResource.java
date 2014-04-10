@@ -10,7 +10,6 @@ import javax.ws.rs.core.MediaType;
 
 import com.enonic.wem.admin.json.content.page.PageTemplateJson;
 import com.enonic.wem.admin.json.content.page.PageTemplateListJson;
-import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
@@ -28,7 +27,6 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 @javax.ws.rs.Path("content/page/template")
 @Produces(MediaType.APPLICATION_JSON)
 public final class PageTemplateResource
-    extends AbstractResource
 {
     @Inject
     protected PageTemplateService pageTemplateService;

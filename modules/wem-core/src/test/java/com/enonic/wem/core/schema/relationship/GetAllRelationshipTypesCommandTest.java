@@ -6,7 +6,6 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
-import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;
 
 import static org.junit.Assert.*;
@@ -14,7 +13,6 @@ import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 
 public class GetAllRelationshipTypesCommandTest
-    extends AbstractCommandHandlerTest
 {
     @Test
     public void getAllRelationshipTypes()

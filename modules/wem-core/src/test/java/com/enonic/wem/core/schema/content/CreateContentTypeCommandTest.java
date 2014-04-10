@@ -11,14 +11,12 @@ import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.CreateContentTypeParams;
 import com.enonic.wem.api.schema.content.GetContentTypesParams;
 import com.enonic.wem.api.schema.content.validator.InvalidContentTypeException;
-import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 import static org.junit.Assert.*;
 
 public class CreateContentTypeCommandTest
-    extends AbstractCommandHandlerTest
 {
     private CreateContentTypeCommand command;
 
@@ -30,8 +28,6 @@ public class CreateContentTypeCommandTest
     public void setUp()
         throws Exception
     {
-        super.initialize();
-
         this.contentTypeDao = Mockito.mock( ContentTypeDao.class );
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
 

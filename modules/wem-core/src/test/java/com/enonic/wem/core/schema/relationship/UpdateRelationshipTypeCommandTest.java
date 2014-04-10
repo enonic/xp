@@ -12,7 +12,6 @@ import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.UpdateRelationshipTypeParams;
 import com.enonic.wem.api.schema.relationship.editor.RelationshipTypeEditor;
-import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;
 
 import static org.mockito.Matchers.isA;
@@ -20,7 +19,6 @@ import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 
 public class UpdateRelationshipTypeCommandTest
-    extends AbstractCommandHandlerTest
 {
     private UpdateRelationshipTypeCommand command;
 
@@ -31,8 +29,6 @@ public class UpdateRelationshipTypeCommandTest
         throws Exception
     {
         DateTimeUtils.setCurrentMillisFixed( new DateTime( 2012, 1, 1, 12, 0, 0 ).getMillis() );
-
-        super.initialize();
 
         relationshipTypeDao = Mockito.mock( RelationshipTypeDao.class );
         command = new UpdateRelationshipTypeCommand();

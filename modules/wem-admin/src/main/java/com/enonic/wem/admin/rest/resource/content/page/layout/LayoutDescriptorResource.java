@@ -11,7 +11,6 @@ import javax.ws.rs.core.MediaType;
 
 import com.enonic.wem.admin.json.content.page.layout.LayoutDescriptorJson;
 import com.enonic.wem.admin.json.content.page.layout.LayoutDescriptorsJson;
-import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;
@@ -20,7 +19,6 @@ import com.enonic.wem.api.content.page.layout.LayoutDescriptors;
 @Path("content/page/layout/descriptor")
 @Produces(MediaType.APPLICATION_JSON)
 public class LayoutDescriptorResource
-    extends AbstractResource
 {
     @Inject
     protected LayoutDescriptorService layoutDescriptorService;
@@ -30,8 +28,7 @@ public class LayoutDescriptorResource
     {
         final LayoutDescriptorKey key = LayoutDescriptorKey.from( layoutDescriptorKey );
         final LayoutDescriptor descriptor = layoutDescriptorService.getByKey( key );
-        final LayoutDescriptorJson json = new LayoutDescriptorJson( descriptor );
-        return json;
+        return new LayoutDescriptorJson( descriptor );
     }
 
     @POST

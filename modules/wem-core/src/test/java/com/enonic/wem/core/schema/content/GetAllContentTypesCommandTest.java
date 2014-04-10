@@ -16,7 +16,6 @@ import com.enonic.wem.api.schema.content.GetAllContentTypesParams;
 import com.enonic.wem.api.schema.mixin.GetMixinParams;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinService;
-import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.form.FormItemsDataSerializer;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
@@ -27,7 +26,6 @@ import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
 import static org.junit.Assert.*;
 
 public class GetAllContentTypesCommandTest
-    extends AbstractCommandHandlerTest
 {
     private GetAllContentTypesCommand command;
 
@@ -41,8 +39,6 @@ public class GetAllContentTypesCommandTest
     public void setUp()
         throws Exception
     {
-        super.initialize();
-
         mixinService = Mockito.mock( MixinService.class );
         contentTypeDao = Mockito.mock( ContentTypeDao.class );
 
@@ -63,9 +59,8 @@ public class GetAllContentTypesCommandTest
         final String description1 = "Description";
         final String description2 = "Description2";
 
-        final ContentTypes allContentTypes = ContentTypes.from(
-            createContentType( contentType1Name, displayName1, description1 ),
-            createContentType( contentType2Name, displayName2, description2 ) );
+        final ContentTypes allContentTypes = ContentTypes.from( createContentType( contentType1Name, displayName1, description1 ),
+                                                                createContentType( contentType2Name, displayName2, description2 ) );
         Mockito.when( contentTypeDao.getAllContentTypes() ).thenReturn( allContentTypes );
 
         // exercise
@@ -136,7 +131,8 @@ public class GetAllContentTypesCommandTest
         return rootDataSet;
     }
 
-    private void verifyContentType( final String contentTypeName, final String displayName, final String description, final ContentTypes result )
+    private void verifyContentType( final String contentTypeName, final String displayName, final String description,
+                                    final ContentTypes result )
     {
         final ContentType contentType = result.getContentType( ContentTypeName.from( contentTypeName ) );
         assertNotNull( contentType );

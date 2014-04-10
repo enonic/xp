@@ -15,7 +15,6 @@ import com.enonic.wem.admin.json.icon.IconJson;
 import com.enonic.wem.admin.json.schema.mixin.MixinConfigJson;
 import com.enonic.wem.admin.json.schema.mixin.MixinJson;
 import com.enonic.wem.admin.json.schema.mixin.MixinListJson;
-import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.schema.json.CreateOrUpdateSchemaJsonResult;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
@@ -40,7 +39,6 @@ import com.enonic.wem.core.schema.mixin.MixinXmlSerializer;
 @Path("schema/mixin")
 @Produces(MediaType.APPLICATION_JSON)
 public class MixinResource
-    extends AbstractResource
 {
     private MixinService mixinService;
 

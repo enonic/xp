@@ -6,7 +6,6 @@ import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.core.Response;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
@@ -31,9 +30,6 @@ import com.enonic.wem.portal.exception.PortalWebException;
 public abstract class RenderResource
 {
     private static final String EDIT_MODE = "edit";
-
-    @Inject
-    protected Client client;
 
     @Inject
     protected JsControllerFactory controllerFactory;

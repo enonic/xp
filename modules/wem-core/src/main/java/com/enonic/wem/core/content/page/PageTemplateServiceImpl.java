@@ -2,9 +2,6 @@ package com.enonic.wem.core.content.page;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.Client;
-import com.enonic.wem.api.content.page.GetPageTemplateByKey;
-import com.enonic.wem.api.content.page.GetPageTemplatesBySiteTemplate;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateService;
@@ -14,19 +11,16 @@ import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
-public class PageTemplateServiceImpl
+public final class PageTemplateServiceImpl
     implements PageTemplateService
 {
-    @Inject
-    private Client client;
-
     @Inject
     protected SiteTemplateService siteTemplateService;
 
     public PageTemplate getByKey( final PageTemplateKey pageTemplateKey, final SiteTemplateKey siteTemplateKey )
     {
-        final GetPageTemplateByKey command = new GetPageTemplateByKey().key( pageTemplateKey ).siteTemplateKey( siteTemplateKey );
-        return client.execute( command );
+        return new GetPageTemplateByKeyCommand().pageTemplateKey( pageTemplateKey ).siteTemplateKey( siteTemplateKey ).siteTemplateService(
+            this.siteTemplateService ).execute();
     }
 
     @Override
@@ -38,7 +32,6 @@ public class PageTemplateServiceImpl
 
     public PageTemplates getBySiteTemplate( final SiteTemplateKey siteTemplateKey )
     {
-        final GetPageTemplatesBySiteTemplate command = new GetPageTemplatesBySiteTemplate().siteTemplate( siteTemplateKey );
-        return client.execute( command );
+        return this.siteTemplateService.getSiteTemplate( siteTemplateKey ).getPageTemplates();
     }
 }

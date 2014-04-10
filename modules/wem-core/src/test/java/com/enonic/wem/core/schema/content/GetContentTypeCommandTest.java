@@ -9,13 +9,11 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.mixin.MixinService;
-import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 import static org.junit.Assert.*;
 
 public class GetContentTypeCommandTest
-    extends AbstractCommandHandlerTest
 {
     private GetContentTypeCommand command;
 
@@ -27,8 +25,6 @@ public class GetContentTypeCommandTest
     public void setUp()
         throws Exception
     {
-        super.initialize();
-
         this.mixinService = Mockito.mock( MixinService.class );
         this.contentTypeDao = Mockito.mock( ContentTypeDao.class );
 

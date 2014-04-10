@@ -24,7 +24,6 @@ import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataMultiPart;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageTemplate;
@@ -62,12 +61,8 @@ public class SiteTemplateResourceTest
     @Override
     protected Object getResourceInstance()
     {
-
-        final Client client = Mockito.mock( Client.class );
         siteTemplateService = Mockito.mock( SiteTemplateService.class );
         SiteTemplateResource resource = new SiteTemplateResource();
-
-        resource.setClient( client );
         resource.setSiteTemplateService( siteTemplateService );
 
         return resource;

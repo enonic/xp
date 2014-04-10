@@ -8,7 +8,6 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.relationship.GetRelationshipTypeParams;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
-import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;
 
 import static org.junit.Assert.*;
@@ -16,7 +15,6 @@ import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 
 public class GetRelationshipTypeCommandTest
-    extends AbstractCommandHandlerTest
 {
     private GetRelationshipTypeCommand command;
 
@@ -26,8 +24,6 @@ public class GetRelationshipTypeCommandTest
     public void setUp()
         throws Exception
     {
-        super.initialize();
-
         relationshipTypeDao = Mockito.mock( RelationshipTypeDao.class );
         command = new GetRelationshipTypeCommand();
         command.relationshipTypeDao( relationshipTypeDao );

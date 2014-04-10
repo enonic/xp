@@ -11,7 +11,6 @@ import javax.ws.rs.core.MediaType;
 
 import com.enonic.wem.admin.json.content.page.part.PartDescriptorJson;
 import com.enonic.wem.admin.json.content.page.part.PartDescriptorsJson;
-import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartDescriptorService;
@@ -20,7 +19,6 @@ import com.enonic.wem.api.content.page.part.PartDescriptors;
 @Path("content/page/part/descriptor")
 @Produces(MediaType.APPLICATION_JSON)
 public class PartDescriptorResource
-    extends AbstractResource
 {
     @Inject
     protected PartDescriptorService partDescriptorService;
@@ -30,8 +28,7 @@ public class PartDescriptorResource
     {
         final PartDescriptorKey key = PartDescriptorKey.from( partDescriptorKey );
         final PartDescriptor descriptor = partDescriptorService.getByKey( key );
-        final PartDescriptorJson json = new PartDescriptorJson( descriptor );
-        return json;
+        return new PartDescriptorJson( descriptor );
     }
 
     @POST

@@ -16,7 +16,6 @@ import com.enonic.wem.api.schema.content.UpdateContentTypeResult;
 import com.enonic.wem.api.schema.content.editor.ContentTypeEditor;
 import com.enonic.wem.api.schema.content.validator.InvalidContentTypeException;
 import com.enonic.wem.api.schema.mixin.MixinService;
-import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
@@ -24,7 +23,6 @@ import static com.enonic.wem.api.schema.content.editor.SetContentTypeEditor.newS
 import static junit.framework.Assert.assertEquals;
 
 public class UpdateContentTypeCommandTest
-    extends AbstractCommandHandlerTest
 {
     private UpdateContentTypeCommand command;
 
@@ -38,8 +36,6 @@ public class UpdateContentTypeCommandTest
     public void setUp()
         throws Exception
     {
-        super.initialize();
-
         this.mixinService = Mockito.mock( MixinService.class );
         this.contentTypeDao = Mockito.mock( ContentTypeDao.class );
         this.contentTypeService = Mockito.mock( ContentTypeService.class );

@@ -15,7 +15,6 @@ import com.enonic.wem.admin.json.icon.IconJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeConfigJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeListJson;
-import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.schema.json.CreateOrUpdateSchemaJsonResult;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
@@ -37,7 +36,6 @@ import com.enonic.wem.xml.XmlSerializers;
 @Path("schema/relationship")
 @Produces(MediaType.APPLICATION_JSON)
 public class RelationshipTypeResource
-    extends AbstractResource
 {
     private RelationshipTypeService relationshipTypeService;
 

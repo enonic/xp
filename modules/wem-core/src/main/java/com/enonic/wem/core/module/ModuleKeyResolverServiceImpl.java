@@ -6,7 +6,6 @@ import javax.inject.Inject;
 
 import com.google.common.collect.ImmutableMap;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
@@ -24,9 +23,6 @@ final class ModuleKeyResolverServiceImpl
     implements ModuleKeyResolverService
 {
     private static final ModuleKeyResolver EMPTY_RESOLVER = new ModuleKeyResolverImpl( Collections.<ModuleName, ModuleKey>emptyMap() );
-
-    @Inject
-    protected Client client;
 
     @Inject
     private ContentService contentService;

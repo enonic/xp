@@ -2,7 +2,6 @@ package com.enonic.wem.admin;
 
 import com.google.inject.AbstractModule;
 
-import com.enonic.wem.admin.jsp.LiveEditHelper;
 import com.enonic.wem.web.WebInitializerBinder;
 
 public final class AdminModule
@@ -12,6 +11,5 @@ public final class AdminModule
     protected void configure()
     {
         WebInitializerBinder.from( binder() ).add( AdminWebInitializer.class );
-        requestStaticInjection( LiveEditHelper.class );
     }
 }

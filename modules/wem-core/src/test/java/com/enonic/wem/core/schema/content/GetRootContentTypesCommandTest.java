@@ -8,13 +8,11 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.mixin.MixinService;
-import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 import static junit.framework.Assert.assertEquals;
 
 public class GetRootContentTypesCommandTest
-    extends AbstractCommandHandlerTest
 {
     private GetRootContentTypesCommand command;
 
@@ -26,8 +24,6 @@ public class GetRootContentTypesCommandTest
     public void setUp()
         throws Exception
     {
-        super.initialize();
-
         this.mixinService = Mockito.mock( MixinService.class );
         this.contentTypeDao = Mockito.mock( ContentTypeDao.class );
 
