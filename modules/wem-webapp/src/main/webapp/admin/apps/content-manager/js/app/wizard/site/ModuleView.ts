@@ -13,9 +13,10 @@ module app.wizard.site {
             this.siteModule = theModule;
             this.moduleConfig = moduleConfig;
 
-            var headerEl = new api.dom.H6El();
-            headerEl.setText(theModule.getDisplayName());
-            this.appendChild(headerEl);
+            var header = new api.dom.DivEl('header');
+            header.appendChild(new api.dom.ImgEl(api.util.getAdminUri('common/images/icons/icoMoon/32x32/puzzle.png')));
+            header.appendChild(new api.dom.H6El().setText(theModule.getDisplayName()));
+            this.appendChild(header);
 
             this.formView = new api.form.FormView(context, theModule.getForm(), moduleConfig ? moduleConfig.getConfig() : undefined);
             this.formView.setDoOffset(false);
