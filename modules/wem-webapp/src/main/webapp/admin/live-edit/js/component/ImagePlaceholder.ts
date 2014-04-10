@@ -1,7 +1,7 @@
 module LiveEdit.component {
     export class ImagePlaceholder extends ComponentPlaceholder {
 
-        private comboBox:api.content.ContentComboBox;
+        private comboBox: api.content.ContentComboBox;
         private uploadButton: api.ui.Button;
 
         constructor() {
@@ -27,7 +27,6 @@ module LiveEdit.component {
                 });
             });
             this.uploadButton.hide();
-            comboUploadButtonDiv.appendChild(this.uploadButton);
 
             this.getEl().setData('live-edit-type', "image");
             this.comboBox = new api.content.ContentComboBoxBuilder().
@@ -36,10 +35,12 @@ module LiveEdit.component {
                 build();
             this.comboBox.addClass('image-placeholder');
             this.comboBox.hide();
+
             comboUploadButtonDiv.appendChild(this.comboBox);
+            comboUploadButtonDiv.appendChild(this.uploadButton);
             this.appendChild(comboUploadButtonDiv);
 
-            this.comboBox.onOptionSelected((event:api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {
+            this.comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {
                 var componentPath = this.getComponentPath();
                 $liveEdit(window).trigger('imageComponentSetImage.liveEdit',
                     [event.getOption().value, componentPath, this, event.getOption().displayValue.getDisplayName()]);
