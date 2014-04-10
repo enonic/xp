@@ -8,7 +8,7 @@ module api.content.page.layout {
             super();
             this.namesAndIconView = new api.app.NamesAndIconViewBuilder().
                 setSize(api.app.NamesAndIconViewSize.small).build();
-            this.namesAndIconView.setIconClass('live-edit-font-icon-layout live-edit-combo-font-icon');
+            this.namesAndIconView.setIconClass('icon-insert-template icon-large');
             this.appendChild(this.namesAndIconView);
         }
 

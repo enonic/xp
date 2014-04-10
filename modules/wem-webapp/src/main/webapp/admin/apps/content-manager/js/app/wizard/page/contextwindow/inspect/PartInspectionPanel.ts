@@ -19,7 +19,7 @@ module app.wizard.page.contextwindow.inspect {
 
         constructor(config: PartInspectionPanelConfig) {
             super(<PageComponentInspectionPanelConfig>{
-                iconClass: "live-edit-font-icon-part"
+                iconClass: "live-edit-font-icon-part icon-xlarge"
             });
 
             this.partDescriptors = {};

@@ -28,7 +28,9 @@ module api.app {
         constructor(builder: NamesAndIconViewBuilder) {
             super("names-and-icon-view");
             var sizeClassName: string = NamesAndIconViewSize[builder.size];
-            this.addClass(sizeClassName);
+            if (builder.size) {
+                this.addClass(sizeClassName);
+            }
 
             this.iconImageEl = new api.dom.ImgEl(null,"icon");
             this.appendChild(this.iconImageEl);

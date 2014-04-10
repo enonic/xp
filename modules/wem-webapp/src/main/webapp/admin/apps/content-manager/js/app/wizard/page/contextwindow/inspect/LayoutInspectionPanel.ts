@@ -20,7 +20,7 @@ module app.wizard.page.contextwindow.inspect {
 
         constructor(config: LayoutInspectionPanelConfig) {
             super(<PageComponentInspectionPanelConfig>{
-                iconClass: "live-edit-font-icon-layout"
+                iconClass: "live-edit-font-icon-layout icon-xlarge"
             });
 
             this.layoutDescriptors = {};

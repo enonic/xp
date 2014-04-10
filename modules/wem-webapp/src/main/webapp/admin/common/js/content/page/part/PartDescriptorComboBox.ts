@@ -66,7 +66,7 @@ module api.content.page.part {
 
         layout() {
             var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
-            namesAndIconView.setIconUrl(api.util.getAdminUri('common/images/icons/icoMoon/32x32/puzzle.png'))
+            namesAndIconView.setIconClass("icon-puzzle icon-medium")
                 .setMainName(this.descriptor.getDisplayName())
                 .setSubName(this.descriptor.getName().toString());
 

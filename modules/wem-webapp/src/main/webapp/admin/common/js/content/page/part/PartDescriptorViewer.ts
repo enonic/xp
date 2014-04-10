@@ -6,9 +6,8 @@ module api.content.page.part {
 
         constructor() {
             super();
-            this.namesAndIconView = new api.app.NamesAndIconViewBuilder().
-                setSize(api.app.NamesAndIconViewSize.small).build();
-            this.namesAndIconView.setIconUrl(api.util.getAdminUri('common/images/icons/icoMoon/32x32/puzzle.png'));
+            this.namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build()
+                .setIconClass("icon-puzzle icon-large");
             this.appendChild(this.namesAndIconView);
         }
 

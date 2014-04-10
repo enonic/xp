@@ -38,7 +38,7 @@ module app.wizard.page.contextwindow.inspect {
 
         constructor(config: ImageInspectionPanelConfig) {
             super(<PageComponentInspectionPanelConfig>{
-                iconClass: "live-edit-font-icon-image"
+                iconClass: "live-edit-font-icon-image icon-xlarge"
             });
             this.imageDescriptors = {};
 

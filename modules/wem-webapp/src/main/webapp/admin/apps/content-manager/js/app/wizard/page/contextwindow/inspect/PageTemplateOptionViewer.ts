@@ -11,9 +11,6 @@ module app.wizard.page.contextwindow.inspect {
         constructor() {
             super();
 
-            this.defaultPageTemplateIconUrl = api.util.getAdminUri('common/images/icons/icoMoon/32x32/wand.png');
-            this.pageTemplateIconUrl = api.util.getAdminUri('common/images/icons/icoMoon/32x32/newspaper.png');
-
             this.namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
             this.appendChild(this.namesAndIconView);
         }
@@ -26,13 +23,13 @@ module app.wizard.page.contextwindow.inspect {
                 this.namesAndIconView.
                     setMainName(pageTemplate.getDisplayName()).
                     setSubName(pageTemplate.getDescriptorKey().toString()).
-                    setIconUrl(this.pageTemplateIconUrl);
+                    setIconClass("icon-newspaper icon-large");
             }
             else {
                 this.namesAndIconView.
                     setMainName("Auto").
                     setSubName("Page Template automatically chosen").
-                    setIconUrl(this.defaultPageTemplateIconUrl);
+                    setIconClass("icon-wand icon-large");
             }
         }
 
