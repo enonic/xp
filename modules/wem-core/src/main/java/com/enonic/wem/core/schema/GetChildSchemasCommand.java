@@ -1,39 +1,40 @@
 package com.enonic.wem.core.schema;
 
-import javax.inject.Inject;
-
-import com.enonic.wem.api.command.schema.GetChildSchemas;
+import com.enonic.wem.api.schema.SchemaKey;
 import com.enonic.wem.api.schema.Schemas;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.GetChildContentTypesParams;
-import com.enonic.wem.core.command.CommandHandler;
 
-
-public class GetChildSchemasHandler
-    extends CommandHandler<GetChildSchemas>
+final class GetChildSchemasCommand
 {
+    private SchemaKey parentKey;
+
     private ContentTypeService contentTypeService;
 
-    @Override
-    public void handle()
-        throws Exception
+    public Schemas execute()
     {
         // Get child contentTypes
-        final ContentTypeName contentTypeName = ContentTypeName.from( command.getParentKey().getLocalName() );
+        final ContentTypeName contentTypeName = ContentTypeName.from( this.parentKey.getLocalName() );
         final GetChildContentTypesParams params = new GetChildContentTypesParams().parentName( contentTypeName );
-        final ContentTypes contentTypes = contentTypeService.getChildren( params );
+        final ContentTypes contentTypes = this.contentTypeService.getChildren( params );
 
         // RelationshipTypes are not nested so there cannot be child ones
         // Mixins are not nested so there cannot be child ones
 
-        command.setResult( Schemas.from( contentTypes ) );
+        return Schemas.from( contentTypes );
     }
 
-    @Inject
-    public void setContentTypeService( final ContentTypeService contentTypeService )
+    public GetChildSchemasCommand parentKey( final SchemaKey parentKey )
+    {
+        this.parentKey = parentKey;
+        return this;
+    }
+
+    public GetChildSchemasCommand contentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
+        return this;
     }
 }

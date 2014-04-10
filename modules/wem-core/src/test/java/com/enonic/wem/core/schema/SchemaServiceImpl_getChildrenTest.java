@@ -1,47 +1,23 @@
 package com.enonic.wem.core.schema;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.schema.GetChildSchemas;
 import com.enonic.wem.api.schema.Schemas;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.GetChildContentTypesParams;
-import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
-
-public class GetChildSchemasHandlerTest
-    extends AbstractCommandHandlerTest
+public class SchemaServiceImpl_getChildrenTest
+    extends AbstractSchemaServiceImplTest
 {
-    private GetChildSchemasHandler handler;
-
-    private ContentTypeService contentTypeService;
-
-    @Before
-    public void setUp()
-        throws Exception
-    {
-        super.initialize();
-
-        contentTypeService = Mockito.mock( ContentTypeService.class );
-
-        handler = new GetChildSchemasHandler();
-        handler.setContext( this.context );
-        handler.setContentTypeService( this.contentTypeService );
-    }
-
     @Test
     public void getChildSchemas()
-        throws Exception
     {
         // setup
         final ContentType unstructuredContentType = newContentType().
@@ -60,18 +36,14 @@ public class GetChildSchemasHandlerTest
             build();
 
         final ContentTypes contentTypes = ContentTypes.from( contentType );
-        Mockito.when( contentTypeService.getChildren( Mockito.isA( GetChildContentTypesParams.class ) ) ).thenReturn( contentTypes );
+        Mockito.when( this.contentTypeService.getChildren( Mockito.isA( GetChildContentTypesParams.class ) ) ).thenReturn( contentTypes );
 
         // exercise
-        final GetChildSchemas command = Commands.schema().getChildren().parentKey( unstructuredContentType.getSchemaKey() );
-        this.handler.setCommand( command );
-        this.handler.handle();
+        final Schemas schemas = this.schemaService.getChildren( unstructuredContentType.getSchemaKey() );
 
         // verify
-        Schemas schemas = command.getResult();
         assertEquals( 1, schemas.getSize() );
         assertTrue( schemas.get( 0 ).getSchemaKey().isContentType() );
         assertEquals( "my_content_type", schemas.get( 0 ).getName().toString() );
     }
-
 }

@@ -1,31 +1,29 @@
-package com.enonic.wem.api.command.schema;
+package com.enonic.wem.api.schema;
 
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Set;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.schema.SchemaKind;
-import com.enonic.wem.api.schema.Schemas;
 
-public final class SchemaTypes
+public final class SchemaTypesParams
     extends Command<Schemas>
 {
     private EnumSet<SchemaKind> schemaKinds;
 
-    public SchemaTypes()
+    public SchemaTypesParams()
     {
         schemaKinds = EnumSet.allOf( SchemaKind.class );
     }
 
-    public SchemaTypes includeTypes( final SchemaKind... schemaKinds )
+    public SchemaTypesParams includeTypes( final SchemaKind... schemaKinds )
     {
         this.schemaKinds.clear();
         this.schemaKinds.addAll( Arrays.asList( schemaKinds ) );
         return this;
     }
 
-    public SchemaTypes includeTypes( final Set<SchemaKind> schemaKinds )
+    public SchemaTypesParams includeTypes( final Set<SchemaKind> schemaKinds )
     {
         this.schemaKinds.clear();
         this.schemaKinds.addAll( schemaKinds );

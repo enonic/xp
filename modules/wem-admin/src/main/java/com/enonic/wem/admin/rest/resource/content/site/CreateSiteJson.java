@@ -8,9 +8,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.admin.json.content.site.ModuleConfigJson;
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.content.site.CreateSiteParams;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.site.CreateSiteParams;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 
 public class CreateSiteJson
@@ -19,8 +18,7 @@ public class CreateSiteJson
 
     @SuppressWarnings("UnusedDeclaration")
     @JsonCreator
-    CreateSiteJson( @JsonProperty("contentId") String contentId,
-                    @JsonProperty("siteTemplateKey") String siteTemplateKey,
+    CreateSiteJson( @JsonProperty("contentId") String contentId, @JsonProperty("siteTemplateKey") String siteTemplateKey,
                     @JsonProperty("moduleConfigs") List<ModuleConfigJson> moduleConfigs )
     {
         this.createSite = new CreateSiteParams().

@@ -1,25 +1,18 @@
 package com.enonic.wem.core.schema;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.schema.GetRootSchemas;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.Schemas;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
-import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.form.Input.newInput;
@@ -28,35 +21,9 @@ import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
 import static com.enonic.wem.api.schema.relationship.RelationshipType.newRelationshipType;
 import static junit.framework.Assert.assertEquals;
 
-
-public class GetRootSchemasHandlerTest
-    extends AbstractCommandHandlerTest
+public class SchemaServiceImpl_getRootTest
+    extends AbstractSchemaServiceImplTest
 {
-    private GetRootSchemasHandler handler;
-
-    private MixinService mixinService;
-
-    private ContentTypeService contentTypeService;
-
-    private RelationshipTypeService relationshipTypeService;
-
-    @Before
-    public void setUp()
-        throws Exception
-    {
-        super.initialize();
-
-        mixinService = Mockito.mock( MixinService.class );
-        relationshipTypeService = Mockito.mock( RelationshipTypeService.class );
-        contentTypeService = Mockito.mock( ContentTypeService.class );
-
-        handler = new GetRootSchemasHandler();
-        handler.setContext( this.context );
-        handler.setMixinService( this.mixinService );
-        handler.setRelationshipTypeService( this.relationshipTypeService );
-        handler.setContentTypeService( this.contentTypeService );
-    }
-
     @Test
     public void getRootSchemas()
         throws Exception
@@ -71,7 +38,7 @@ public class GetRootSchemasHandlerTest
             build();
 
         final ContentTypes contentTypes = ContentTypes.from( unstructuredContentType );
-        Mockito.when( contentTypeService.getRoots() ).thenReturn( contentTypes );
+        Mockito.when( this.contentTypeService.getRoots() ).thenReturn( contentTypes );
 
         final FormItemSet formItemSet = newFormItemSet().
             name( "address" ).
@@ -83,7 +50,7 @@ public class GetRootSchemasHandlerTest
             build();
 
         final Mixins mixins = Mixins.from( mixin );
-        Mockito.when( mixinService.getAll() ).thenReturn( mixins );
+        Mockito.when( this.mixinService.getAll() ).thenReturn( mixins );
 
         final RelationshipType relationshipType = newRelationshipType().
             name( "like" ).
@@ -94,16 +61,12 @@ public class GetRootSchemasHandlerTest
             build();
 
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
-        Mockito.when( relationshipTypeService.getAll() ).thenReturn( relationshipTypes );
+        Mockito.when( this.relationshipTypeService.getAll() ).thenReturn( relationshipTypes );
 
         // exercise
-        final GetRootSchemas command = Commands.schema().getRoots();
-        this.handler.setCommand( command );
-        this.handler.handle();
+        final Schemas schemas = this.schemaService.getRoot();
 
         // verify
-        Schemas schemas = command.getResult();
         assertEquals( 3, schemas.getSize() );
     }
-
 }

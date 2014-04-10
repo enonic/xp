@@ -8,12 +8,11 @@ import org.mockito.Mockito;
 import com.sun.jersey.api.client.UniformInterfaceException;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
-import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.schema.GetChildSchemas;
-import com.enonic.wem.api.command.schema.GetRootSchemas;
-import com.enonic.wem.api.command.schema.SchemaTypes;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.schema.SchemaKey;
+import com.enonic.wem.api.schema.SchemaService;
+import com.enonic.wem.api.schema.SchemaTypesParams;
 import com.enonic.wem.api.schema.Schemas;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.mixin.Mixin;
@@ -24,8 +23,7 @@ import static org.junit.Assert.*;
 public class SchemaResourceTest
     extends AbstractResourceTest
 {
-
-    private Client client;
+    private SchemaService schemaService;
 
     private final String currentTime = "2013-08-23T12:55:09.162Z";
 
@@ -40,7 +38,8 @@ public class SchemaResourceTest
         return Mixin.newMixin().name( displayName.toLowerCase() ).displayName( displayName ).description( "M description" ).createdTime(
             DateTime.parse( currentTime ) ).modifiedTime( DateTime.parse( currentTime ) ).addFormItem(
             Input.newInput().name( displayName.toLowerCase() ).inputType( InputTypes.TEXT_AREA ).inputTypeConfig(
-                InputTypes.TEXT_AREA.getDefaultConfig() ).build() ).build();
+                InputTypes.TEXT_AREA.getDefaultConfig() ).build()
+        ).build();
     }
 
     private ContentType createContentType( String name )
@@ -68,7 +67,7 @@ public class SchemaResourceTest
         throws Exception
     {
         Schemas schemas = createSchemaList();
-        Mockito.when( client.execute( Mockito.isA( SchemaTypes.class ) ) ).thenReturn( schemas );
+        Mockito.when( this.schemaService.getTypes( Mockito.isA( SchemaTypesParams.class ) ) ).thenReturn( schemas );
 
         String json = resource().path( "schema/find" ).queryParam( "search", "" ).get( String.class );
         assertJson( "schema_by_empty_query.json", json );
@@ -97,12 +96,10 @@ public class SchemaResourceTest
     public void searchSchemaByTypes()
         throws Exception
     {
-        final SchemaResource schemaResource = new SchemaResource();
-        schemaResource.setClient( client );
         ContentType contentType = createContentType( "contenttype" );
         Mixin mixin = createMixin( "mixin" );
         Schemas schemas = Schemas.from( contentType, mixin );
-        Mockito.when( client.execute( Mockito.isA( SchemaTypes.class ) ) ).thenReturn( schemas );
+        Mockito.when( this.schemaService.getTypes( Mockito.isA( SchemaTypesParams.class ) ) ).thenReturn( schemas );
 
         String json = resource().path( "schema/find" ).queryParam( "search", "" ).queryParam( "types", "mixin" ).queryParam( "types",
                                                                                                                              "content_type" ).get(
@@ -116,7 +113,7 @@ public class SchemaResourceTest
         throws Exception
     {
         Schemas schemas = createSchemaList();
-        Mockito.when( client.execute( Mockito.isA( GetRootSchemas.class ) ) ).thenReturn( schemas );
+        Mockito.when( this.schemaService.getRoot() ).thenReturn( schemas );
 
         String json = resource().path( "schema/list" ).get( String.class );
 
@@ -128,7 +125,7 @@ public class SchemaResourceTest
         throws Exception
     {
         Schemas schemas = Schemas.from( createContentType( "contenttype" ) );
-        Mockito.when( client.execute( Mockito.isA( GetChildSchemas.class ) ) ).thenReturn( schemas );
+        Mockito.when( this.schemaService.getChildren( Mockito.isA( SchemaKey.class ) ) ).thenReturn( schemas );
 
         String json = resource().path( "schema/list" ).queryParam( "parentKey", "ContentType:parent" ).get( String.class );
 
@@ -139,7 +136,7 @@ public class SchemaResourceTest
     public void listEmptyChildSchemas()
         throws Exception
     {
-        Mockito.when( client.execute( Mockito.isA( GetChildSchemas.class ) ) ).thenReturn( Schemas.empty() );
+        Mockito.when( this.schemaService.getChildren( Mockito.isA( SchemaKey.class ) ) ).thenReturn( Schemas.empty() );
 
         String json = resource().path( "schema/list" ).queryParam( "parentKey", "ContentType:parent" ).get( String.class );
         assertEquals( "[]", json );
@@ -148,9 +145,10 @@ public class SchemaResourceTest
     @Override
     protected Object getResourceInstance()
     {
-        client = Mockito.mock( Client.class );
+        this.schemaService = Mockito.mock( SchemaService.class );
+
         final SchemaResource resource = new SchemaResource();
-        resource.setClient( client );
+        resource.schemaService = this.schemaService;
         return resource;
     }
 }

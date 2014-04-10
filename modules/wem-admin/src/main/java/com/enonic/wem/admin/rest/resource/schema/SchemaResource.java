@@ -20,23 +20,21 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
 import com.enonic.wem.admin.json.schema.SchemaJson;
-import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.schema.GetChildSchemas;
-import com.enonic.wem.api.command.schema.SchemaTypes;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaKey;
 import com.enonic.wem.api.schema.SchemaKind;
+import com.enonic.wem.api.schema.SchemaService;
+import com.enonic.wem.api.schema.SchemaTypesParams;
 import com.enonic.wem.api.schema.Schemas;
 
-import static com.enonic.wem.api.command.Commands.schema;
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
 
 @Path("schema")
 @Produces(MediaType.APPLICATION_JSON)
-public class SchemaResource
+public final class SchemaResource
 {
-    private Client client;
+    @Inject
+    protected SchemaService schemaService;
 
     @GET
     @Path("list")
@@ -45,12 +43,11 @@ public class SchemaResource
         final Schemas schemas;
         if ( StringUtils.isEmpty( parentName ) )
         {
-            schemas = client.execute( Commands.schema().getRoots() );
+            schemas = this.schemaService.getRoot();
         }
         else
         {
-            final GetChildSchemas getSchemas = Commands.schema().getChildren().parentKey( SchemaKey.from( parentName ) );
-            schemas = client.execute( getSchemas );
+            schemas = this.schemaService.getChildren( SchemaKey.from( parentName ) );
         }
 
         final List<Schema> sortedSchemas = Ordering.from( CASE_INSENSITIVE_ORDER ).onResultOf( new Function<Schema, String>()
@@ -85,13 +82,13 @@ public class SchemaResource
             throw new InvalidSchemaTypeException( "Invalid parameter 'types': " + types );
         }
 
-        final SchemaTypes command = schema().get();
+        final SchemaTypesParams command = new SchemaTypesParams();
         if ( !typesToInclude.isEmpty() )
         {
             command.includeTypes( typesToInclude );
         }
 
-        Schemas schemas = client.execute( command );
+        Schemas schemas = this.schemaService.getTypes( command );
         if ( !moduleNamesFilter.isEmpty() || !searchFilter.isEmpty() )
         {
             schemas = filter( schemas, moduleNamesFilter, searchFilter );
@@ -139,11 +136,5 @@ public class SchemaResource
     private boolean matchesModuleFilter( final Schema schema, final Set<String> moduleNamesFilter )
     {
         return true; // moduleNamesFilter.isEmpty() || moduleNamesFilter.contains( schema.getModuleName().toString() );
-    }
-
-    @Inject
-    public void setClient( Client client )
-    {
-        this.client = client;
     }
 }

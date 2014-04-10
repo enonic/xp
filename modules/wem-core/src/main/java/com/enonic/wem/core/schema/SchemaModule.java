@@ -3,10 +3,10 @@ package com.enonic.wem.core.schema;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 
+import com.enonic.wem.api.schema.SchemaService;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
-import com.enonic.wem.core.command.CommandBinder;
 import com.enonic.wem.core.initializer.InitializerTaskBinder;
 import com.enonic.wem.core.schema.content.ContentTypeServiceImpl;
 import com.enonic.wem.core.schema.content.ContentTypesInitializer;
@@ -34,17 +34,12 @@ public final class SchemaModule
         bind( MixinService.class ).to( MixinServiceImpl.class ).in( Scopes.SINGLETON );
         bind( ContentTypeService.class ).to( ContentTypeServiceImpl.class ).in( Scopes.SINGLETON );
         bind( RelationshipTypeService.class ).to( RelationshipTypeServiceImpl.class ).in( Scopes.SINGLETON );
+        bind( SchemaService.class ).to( SchemaServiceImpl.class ).in( Scopes.SINGLETON );
 
         final InitializerTaskBinder tasks = InitializerTaskBinder.from( binder() );
         tasks.add( ContentTypesInitializer.class );
         tasks.add( MixinsInitializer.class );
         tasks.add( RelationshipTypesInitializer.class );
         tasks.add( DemoImagesInitializer.class );
-
-        final CommandBinder commands = CommandBinder.from( binder() );
-
-        commands.add( GetSchemasHandler.class );
-        commands.add( GetRootSchemasHandler.class );
-        commands.add( GetChildSchemasHandler.class );
     }
 }
