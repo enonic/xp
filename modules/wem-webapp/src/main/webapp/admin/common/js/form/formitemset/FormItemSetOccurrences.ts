@@ -135,5 +135,9 @@ module api.form.formitemset {
         isCollapsed(): boolean {
             return this.occurrencesCollapsed;
         }
+
+        ocurrencesReordered( occurrencesIndexes:number[] ) {
+
+        }
     }
 }

@@ -37,9 +37,7 @@ module api.form.inputtype.support {
                         occurrence.setIndex(index);
                     });
 
-                    this.inputOccurrences.sortOccurrences((a: InputOccurrence, b: InputOccurrence) => {
-                        return a.getIndex() - b.getIndex();
-                    });
+                    this.inputOccurrences.reorderOccurrencesAccordingToNewIndexOrder();
                 }
             });
         }

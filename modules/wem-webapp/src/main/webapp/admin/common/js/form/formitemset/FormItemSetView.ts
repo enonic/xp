@@ -185,7 +185,7 @@ module api.form.formitemset {
 
         broadcastFormSizeChanged() {
             this.formItemSetOccurrences.getOccurrenceViews().forEach((occurrenceView: FormItemSetOccurrenceView) => {
-                occurrenceView.getFormItemViews().forEach((formItemView:api.form.FormItemView) => {
+                occurrenceView.getFormItemViews().forEach((formItemView: api.form.FormItemView) => {
                     formItemView.broadcastFormSizeChanged();
                 });
             });
@@ -320,9 +320,7 @@ module api.form.formitemset {
                 occurrence.setIndex(index);
             });
 
-            this.formItemSetOccurrences.sortOccurrences((a: FormItemSetOccurrence, b: FormItemSetOccurrence) => {
-                return a.getIndex() - b.getIndex();
-            });
+            this.formItemSetOccurrences.reorderOccurrencesAccordingToNewIndexOrder();
         }
 
         private resolveOccurrencesInOrderAccordingToDOM(): FormItemSetOccurrence[] {
