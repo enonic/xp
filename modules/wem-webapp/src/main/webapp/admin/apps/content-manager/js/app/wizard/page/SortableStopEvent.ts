@@ -8,9 +8,12 @@ module app.wizard.page {
 
         private empty: boolean;
 
-        constructor(path: ComponentPath, empty:boolean) {
+        private component: any; // LiveEdit.component.Component
+
+        constructor(path: ComponentPath, empty:boolean, component:any) {
             this.path = path;
             this.empty = empty;
+            this.component = component;
         }
 
         getPath(): ComponentPath {
@@ -19,6 +22,10 @@ module app.wizard.page {
 
         isEmpty(): boolean {
             return this.empty;
+        }
+
+        getComponent(): any {
+            return this.component;
         }
     }
 }

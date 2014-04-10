@@ -206,6 +206,12 @@ module app.wizard.page {
             return this.liveEditWindow.getComponentByPath(path.toString());
         }
 
+        public selectComponent(path: api.content.page.ComponentPath): void {
+            var comp = this.getComponentByPath(path);
+            var element: HTMLElement = comp.getHTMLElement();
+            this.liveEditJQuery(element).trigger('selectComponent.liveEdit', [comp, null]);
+        }
+
         public listenToPage() {
 
             this.liveEditJQuery(this.liveEditWindow).on('draggableStart.liveEdit', (event) => {
@@ -227,10 +233,10 @@ module app.wizard.page {
 
                 if (component) {
                     var componentPath = ComponentPath.fromString(component.getComponentPath());
-                    this.notifySortableStop(componentPath, component.isEmpty());
+                    this.notifySortableStop(componentPath, component.isEmpty(), component);
                 }
                 else {
-                    this.notifySortableStop(null, false);
+                    this.notifySortableStop(null, false, null);
                 }
             });
 
@@ -408,8 +414,8 @@ module app.wizard.page {
             });
         }
 
-        private notifySortableStop(component: ComponentPath, isEmpty: boolean) {
-            var event = new SortableStopEvent(component, isEmpty);
+        private notifySortableStop(componentPath: ComponentPath, isEmpty: boolean, component: any) {
+            var event = new SortableStopEvent(componentPath, isEmpty, component);
             this.sortableStopListeners.forEach((listener) => {
                 listener(event);
             });

@@ -504,6 +504,10 @@ module app.wizard.page {
                     if (!event.isEmpty()) {
                         this.contextWindow.show();
                     }
+
+                    if (event.getComponent().isSelected()) {
+                        this.liveEditPage.selectComponent(event.getPath());
+                    }
                 }
                 else {
                     this.contextWindow.show();
