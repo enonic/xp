@@ -22,7 +22,7 @@ final class UpdateSiteTemplateCommand
 
     private SiteTemplateExporter siteTemplateExporter;
 
-    public boolean execute()
+    public SiteTemplate execute()
     {
         this.param.validate();
 
@@ -36,7 +36,7 @@ final class UpdateSiteTemplateCommand
         }
     }
 
-    private boolean doExecute()
+    private SiteTemplate doExecute()
         throws IOException
     {
         final SiteTemplateKey key = this.param.getKey();
@@ -51,11 +51,11 @@ final class UpdateSiteTemplateCommand
         final SiteTemplate editedSiteTemplate = editor.edit( persistedSiteTemplate );
         if ( ( editedSiteTemplate == null ) || ( editedSiteTemplate == persistedSiteTemplate ) )
         {
-            return false;
+            return persistedSiteTemplate;
         }
         persistSiteTemplate( editedSiteTemplate );
 
-        return true;
+        return editedSiteTemplate;
     }
 
     private void persistSiteTemplate( final SiteTemplate siteTemplate )

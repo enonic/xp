@@ -8,17 +8,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Iterables;
 
 import com.enonic.wem.admin.json.schema.content.ContentTypeFilterJson;
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.site.UpdateSiteTemplate;
 import com.enonic.wem.api.content.site.SetSiteTemplateEditor;
 import com.enonic.wem.api.content.site.SiteTemplateEditor;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
+import com.enonic.wem.api.content.site.UpdateSiteTemplateParam;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public class UpdateSiteTemplateJson
 {
-    final UpdateSiteTemplate updateSiteTemplate;
+    final UpdateSiteTemplateParam updateSiteTemplate;
 
     @JsonCreator
     UpdateSiteTemplateJson( @JsonProperty("siteTemplateKey") final String siteTemplateKey,
@@ -38,13 +37,13 @@ public class UpdateSiteTemplateJson
             rootContentType( ContentTypeName.from( rootContentType ) ).
             build();
 
-        this.updateSiteTemplate = Commands.site().template().update().
+        this.updateSiteTemplate = new UpdateSiteTemplateParam().
             key( SiteTemplateKey.from( siteTemplateKey ) ).
             editor( editor );
     }
 
     @JsonIgnore
-    public UpdateSiteTemplate getCommand()
+    public UpdateSiteTemplateParam getCommand()
     {
         return updateSiteTemplate;
     }

@@ -8,14 +8,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Iterables;
 
 import com.enonic.wem.admin.json.schema.content.ContentTypeFilterJson;
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.site.CreateSiteTemplate;
+import com.enonic.wem.api.content.site.CreateSiteTemplateParam;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public class CreateSiteTemplateJson
 {
-    final CreateSiteTemplate createSiteTemplate;
+    final CreateSiteTemplateParam createSiteTemplate;
 
     @JsonCreator
     CreateSiteTemplateJson( @JsonProperty("displayName") final String displayName, @JsonProperty("description") final String description,
@@ -24,7 +23,7 @@ public class CreateSiteTemplateJson
                             @JsonProperty("contentTypeFilter") final ContentTypeFilterJson filterJson,
                             @JsonProperty("rootContentType") final String rootContentType )
     {
-        this.createSiteTemplate = Commands.site().template().create().
+        this.createSiteTemplate = new CreateSiteTemplateParam().
             displayName( displayName ).
             description( description ).
             url( url ).
@@ -35,7 +34,7 @@ public class CreateSiteTemplateJson
     }
 
     @JsonIgnore
-    public CreateSiteTemplate getCommand()
+    public CreateSiteTemplateParam getCommand()
     {
         return createSiteTemplate;
     }

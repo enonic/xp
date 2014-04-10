@@ -2,26 +2,34 @@ package com.enonic.wem.core.content.site;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.nio.file.Files;
 
-import javax.inject.Inject;
-
-import com.enonic.wem.api.command.content.site.GetAllSiteTemplates;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplates;
-import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.config.SystemConfig;
+import com.enonic.wem.util.Exceptions;
 
-public class GetAllSiteTemplatesHandler
-    extends CommandHandler<GetAllSiteTemplates>
+final class GetSiteTemplatesCommand
 {
     private SystemConfig systemConfig;
 
     private SiteTemplateExporter siteTemplateExporter;
 
-    @Override
-    public void handle()
-        throws Exception
+    public SiteTemplates execute()
+    {
+        try
+        {
+            return doExecute();
+        }
+        catch ( IOException e )
+        {
+            throw Exceptions.newRutime( "Error retrieving site templates" ).withCause( e );
+        }
+    }
+
+    private SiteTemplates doExecute()
+        throws IOException
     {
         final File templatesDir = systemConfig.getTemplatesDir().toFile();
         File[] allTemplateDirs = templatesDir.listFiles( new FileFilter()
@@ -40,18 +48,18 @@ public class GetAllSiteTemplatesHandler
             templatesBuilder.add( siteTemplate );
         }
 
-        command.setResult( templatesBuilder.build() );
+        return templatesBuilder.build();
     }
 
-    @Inject
-    public void setSystemConfig( final SystemConfig systemConfig )
+    public GetSiteTemplatesCommand systemConfig( final SystemConfig systemConfig )
     {
         this.systemConfig = systemConfig;
+        return this;
     }
 
-    @Inject
-    public void setSiteTemplateExporter( final SiteTemplateExporter siteTemplateExporter )
+    public GetSiteTemplatesCommand siteTemplateExporter( final SiteTemplateExporter siteTemplateExporter )
     {
         this.siteTemplateExporter = siteTemplateExporter;
+        return this;
     }
 }

@@ -25,11 +25,6 @@ import com.sun.jersey.multipart.FormDataMultiPart;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.content.site.CreateSiteTemplate;
-import com.enonic.wem.api.command.content.site.DeleteSiteTemplate;
-import com.enonic.wem.api.command.content.site.GetAllSiteTemplates;
-import com.enonic.wem.api.command.content.site.GetSiteTemplateByKey;
-import com.enonic.wem.api.command.content.site.UpdateSiteTemplate;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageTemplate;
@@ -41,6 +36,7 @@ import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
 import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.content.site.SiteTemplates;
+import com.enonic.wem.api.content.site.UpdateSiteTemplateParam;
 import com.enonic.wem.api.content.site.Vendor;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleKey;
@@ -59,9 +55,6 @@ import static org.junit.Assert.*;
 public class SiteTemplateResourceTest
     extends AbstractResourceTest
 {
-
-    private Client client;
-
     private SiteTemplateService siteTemplateService;
 
     private Path tempDir;
@@ -70,7 +63,7 @@ public class SiteTemplateResourceTest
     protected Object getResourceInstance()
     {
 
-        client = Mockito.mock( Client.class );
+        final Client client = Mockito.mock( Client.class );
         siteTemplateService = Mockito.mock( SiteTemplateService.class );
         SiteTemplateResource resource = new SiteTemplateResource();
 
@@ -108,7 +101,7 @@ public class SiteTemplateResourceTest
         final SiteTemplate siteTemplate = createSiteTemplate();
         final SiteTemplates siteTemplates = SiteTemplates.from( siteTemplate );
 
-        Mockito.when( client.execute( Mockito.isA( GetAllSiteTemplates.class ) ) ).thenReturn( siteTemplates );
+        Mockito.when( this.siteTemplateService.getSiteTemplates() ).thenReturn( siteTemplates );
 
         String resultJson = resource().path( "content/site/template/list" ).get( String.class );
 
@@ -122,7 +115,7 @@ public class SiteTemplateResourceTest
         final SiteTemplate siteTemplate = createSiteTemplate();
         final SiteTemplates siteTemplates = SiteTemplates.from( siteTemplate );
 
-        Mockito.when( client.execute( Mockito.isA( GetAllSiteTemplates.class ) ) ).thenReturn( siteTemplates );
+        Mockito.when( this.siteTemplateService.getSiteTemplates() ).thenReturn( siteTemplates );
 
         String resultJson = resource().path( "content/site/template/tree" ).get( String.class );
 
@@ -148,8 +141,6 @@ public class SiteTemplateResourceTest
     public void testDeleteSiteTemplate()
         throws Exception
     {
-        Mockito.when( client.execute( Mockito.isA( DeleteSiteTemplate.class ) ) ).thenReturn(
-            SiteTemplateKey.from( "sitetemplate-1.0.0" ) );
         String response = resource().path( "content/site/template/delete" ).entity( readFromFile( "delete_site_template_params.json" ),
                                                                                     MediaType.APPLICATION_JSON_TYPE ).post( String.class );
         assertJson( "delete_site_template_success.json", response );
@@ -159,8 +150,8 @@ public class SiteTemplateResourceTest
     public void testDeleteNonExistingSiteTemplate()
         throws Exception
     {
-        Mockito.when( client.execute( Mockito.isA( DeleteSiteTemplate.class ) ) ).thenThrow(
-            new NoSiteTemplateExistsException( SiteTemplateKey.from( "sitetemplate-1.0.0" ) ) );
+        Mockito.doThrow( new NoSiteTemplateExistsException( SiteTemplateKey.from( "sitetemplate-1.0.0" ) ) ).when(
+            this.siteTemplateService ).deleteSiteTemplate( Mockito.isA( SiteTemplateKey.class ) );
         String response = resource().path( "content/site/template/delete" ).entity( readFromFile( "delete_site_template_params.json" ),
                                                                                     MediaType.APPLICATION_JSON_TYPE ).post( String.class );
         assertJson( "delete_site_template_failure.json", response );
@@ -196,7 +187,7 @@ public class SiteTemplateResourceTest
             addPageTemplate( pageTemplate ).
             build();
 
-        Mockito.when( client.execute( Mockito.isA( GetSiteTemplateByKey.class ) ) ).thenReturn( siteTemplate );
+        Mockito.when( siteTemplateService.getSiteTemplate( Mockito.isA( SiteTemplateKey.class ) ) ).thenReturn( siteTemplate );
         String response = resource().
             path( "content/site/template" ).
             queryParam( "siteTemplateKey", siteTemplate.getKey().toString() ).
@@ -209,7 +200,7 @@ public class SiteTemplateResourceTest
         throws Exception
     {
         final SiteTemplateKey siteTemplate = SiteTemplateKey.from( "blueman-1.0.0" );
-        Mockito.when( client.execute( Mockito.isA( GetSiteTemplateByKey.class ) ) ).thenThrow(
+        Mockito.when( siteTemplateService.getSiteTemplate( Mockito.isA( SiteTemplateKey.class ) ) ).thenThrow(
             new SiteTemplateNotFoundException( siteTemplate ) );
         resource().
             path( "content/site/template" ).
@@ -261,13 +252,13 @@ public class SiteTemplateResourceTest
             addPageTemplate( pageTemplate ).
             build();
 
-        Mockito.when( client.execute( Mockito.isA( CreateSiteTemplate.class ) ) ).thenAnswer( new Answer()
+        Mockito.when( this.siteTemplateService.createSiteTemplate( Mockito.isA( CreateSiteTemplateParam.class ) ) ).thenAnswer( new Answer()
         {
             @Override
             public Object answer( final InvocationOnMock invocation )
                 throws Throwable
             {
-                final CreateSiteTemplate command = (CreateSiteTemplate) invocation.getArguments()[0];
+                final CreateSiteTemplateParam command = (CreateSiteTemplateParam) invocation.getArguments()[0];
                 assertEquals( "Demo site template", command.getDescription() );
                 assertEquals( "Blueman Site Template", command.getDisplayName() );
                 assertEquals( "www.enonic.com", command.getUrl() );
@@ -328,13 +319,13 @@ public class SiteTemplateResourceTest
             addPageTemplate( pageTemplate ).
             build();
 
-        Mockito.when( client.execute( Mockito.isA( UpdateSiteTemplate.class ) ) ).thenAnswer( new Answer()
+        Mockito.when( this.siteTemplateService.updateSiteTemplate( Mockito.isA( UpdateSiteTemplateParam.class ) ) ).thenAnswer( new Answer()
         {
             @Override
             public Object answer( final InvocationOnMock invocation )
                 throws Throwable
             {
-                final UpdateSiteTemplate command = (UpdateSiteTemplate) invocation.getArguments()[0];
+                final UpdateSiteTemplateParam command = (UpdateSiteTemplateParam) invocation.getArguments()[0];
                 assertEquals( SiteTemplateKey.from( "blueman-1.0.0" ), command.getKey() );
 
                 return siteTemplate;
@@ -387,7 +378,7 @@ public class SiteTemplateResourceTest
         throws Exception
     {
         final SiteTemplate siteTemplate = createSiteTemplate();
-        Mockito.when( client.execute( Mockito.isA( GetSiteTemplateByKey.class ) ) ).thenReturn( siteTemplate );
+        Mockito.when( siteTemplateService.getSiteTemplate( Mockito.isA( SiteTemplateKey.class ) ) ).thenReturn( siteTemplate );
 
         final WebResource webResource = resource().
             path( "content/site/template/export" ).

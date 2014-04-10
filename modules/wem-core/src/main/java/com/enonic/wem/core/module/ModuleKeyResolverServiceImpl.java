@@ -15,11 +15,10 @@ import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.site.SiteService;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
+import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleName;
-
-import static com.enonic.wem.api.command.Commands.site;
 
 final class ModuleKeyResolverServiceImpl
     implements ModuleKeyResolverService
@@ -34,6 +33,9 @@ final class ModuleKeyResolverServiceImpl
 
     @Inject
     protected SiteService siteService;
+
+    @Inject
+    protected SiteTemplateService siteTemplateService;
 
     @Override
     public ModuleKeyResolver forContent( final Content content )
@@ -90,6 +92,6 @@ final class ModuleKeyResolverServiceImpl
 
     private SiteTemplate getSiteTemplate( final SiteTemplateKey siteTemplateKey )
     {
-        return client.execute( site().template().get().byKey( siteTemplateKey ) );
+        return this.siteTemplateService.getSiteTemplate( siteTemplateKey );
     }
 }

@@ -3,7 +3,6 @@ package com.enonic.wem.core.content.page;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.content.site.GetSiteTemplateByKey;
 import com.enonic.wem.api.content.page.GetPageTemplateByKey;
 import com.enonic.wem.api.content.page.GetPageTemplatesBySiteTemplate;
 import com.enonic.wem.api.content.page.PageTemplate;
@@ -12,6 +11,7 @@ import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.page.PageTemplates;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
+import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public class PageTemplateServiceImpl
@@ -19,6 +19,9 @@ public class PageTemplateServiceImpl
 {
     @Inject
     private Client client;
+
+    @Inject
+    protected SiteTemplateService siteTemplateService;
 
     public PageTemplate getByKey( final PageTemplateKey pageTemplateKey, final SiteTemplateKey siteTemplateKey )
     {
@@ -29,7 +32,7 @@ public class PageTemplateServiceImpl
     @Override
     public PageTemplate getDefault( final SiteTemplateKey siteTemplateKey, final ContentTypeName contentType )
     {
-        final SiteTemplate siteTemplate = client.execute( new GetSiteTemplateByKey( siteTemplateKey ) );
+        final SiteTemplate siteTemplate = this.siteTemplateService.getSiteTemplate( siteTemplateKey );
         return siteTemplate.getDefaultPageTemplate( contentType );
     }
 

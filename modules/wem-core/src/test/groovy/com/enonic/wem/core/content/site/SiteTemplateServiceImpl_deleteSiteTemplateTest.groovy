@@ -3,30 +3,30 @@ package com.enonic.wem.core.content.site
 import com.enonic.wem.api.content.page.PageDescriptorKey
 import com.enonic.wem.api.content.page.PageTemplate
 import com.enonic.wem.api.content.page.PageTemplateKey
-import com.enonic.wem.api.content.site.*
+import com.enonic.wem.api.content.site.SiteTemplate
+import com.enonic.wem.api.content.site.SiteTemplateKey
+import com.enonic.wem.api.content.site.Vendor
 import com.enonic.wem.api.module.ModuleKeys
 import com.enonic.wem.api.schema.content.ContentTypeName
 
+import java.nio.file.Files
+
 import static com.enonic.wem.api.schema.content.ContentTypeFilter.newContentFilter
 
-class SiteTemplateServiceImpl_updateSiteTemplateTest
+class SiteTemplateServiceImpl_deleteSiteTemplateTest
     extends AbstractSiteTemplateServiceTest
 {
-    def "update site template"()
+    def "delete site template"()
     {
         given:
-        def template = createSiteTemplate();
-        def editor = SetSiteTemplateEditor.newEditor().description( "new description" ).build();
-        def createSiteTemplateParam = new UpdateSiteTemplateParam().
-            key( SiteTemplateKey.from( "mysitetemplate-1.0.0" ) ).
-            editor( editor );
+        def template = createSiteTemplate().build();
+        assert Files.exists( this.templatesDir.resolve( template.getKey().toString() ) );
 
         when:
-        def result = this.service.updateSiteTemplate( createSiteTemplateParam );
+        this.service.deleteSiteTemplate( template.getKey() );
 
         then:
-        result != null;
-        result != template;
+        !Files.exists( this.templatesDir.resolve( template.getKey().toString() ) );
     }
 
     def createSiteTemplate()

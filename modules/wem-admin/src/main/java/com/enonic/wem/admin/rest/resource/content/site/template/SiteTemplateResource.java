@@ -29,17 +29,13 @@ import com.enonic.wem.admin.rest.resource.content.site.template.json.DeleteSiteT
 import com.enonic.wem.admin.rest.resource.content.site.template.json.ListSiteTemplateJson;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.ListTemplateItemJson;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.UpdateSiteTemplateJson;
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.site.CreateSiteTemplate;
-import com.enonic.wem.api.command.content.site.DeleteSiteTemplate;
-import com.enonic.wem.api.command.content.site.GetSiteTemplateByKey;
-import com.enonic.wem.api.command.content.site.UpdateSiteTemplate;
 import com.enonic.wem.api.content.site.CreateSiteTemplateParam;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
 import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.content.site.SiteTemplates;
+import com.enonic.wem.api.content.site.UpdateSiteTemplateParam;
 import com.enonic.wem.core.content.site.SiteTemplateExporter;
 
 @javax.ws.rs.Path("content/site/template")
@@ -55,7 +51,7 @@ public final class SiteTemplateResource
     @javax.ws.rs.Path("list")
     public ListSiteTemplateJson listSiteTemplate()
     {
-        SiteTemplates siteTemplates = client.execute( Commands.site().template().get().all() );
+        SiteTemplates siteTemplates = this.siteTemplateService.getSiteTemplates();
         return new ListSiteTemplateJson( siteTemplates );
     }
 
@@ -65,7 +61,7 @@ public final class SiteTemplateResource
     {
         if ( Strings.isNullOrEmpty( parentIdParam ) )
         {
-            SiteTemplates siteTemplates = client.execute( Commands.site().template().get().all() );
+            SiteTemplates siteTemplates = this.siteTemplateService.getSiteTemplates();
             return new ListTemplateItemJson( siteTemplates );
         }
         else
@@ -81,12 +77,11 @@ public final class SiteTemplateResource
     @Consumes(MediaType.APPLICATION_JSON)
     public HashMap<String, String> deleteSiteTemplate( final DeleteSiteTemplateJson params )
     {
-        final DeleteSiteTemplate command = Commands.site().template().delete( params.getKey() );
-
-        final SiteTemplateKey siteTemplateKey = client.execute( command );
+        final SiteTemplateKey key = params.getKey();
+        this.siteTemplateService.deleteSiteTemplate( key );
 
         final HashMap<String, String> map = new HashMap<>();
-        map.put( "result", siteTemplateKey.toString() );
+        map.put( "result", key.toString() );
         return map;
     }
 
@@ -95,8 +90,8 @@ public final class SiteTemplateResource
     @Consumes(MediaType.APPLICATION_JSON)
     public SiteTemplateJson create( final CreateSiteTemplateJson params )
     {
-        final CreateSiteTemplate command = params.getCommand();
-        final SiteTemplate siteTemplate = client.execute( command );
+        final CreateSiteTemplateParam command = params.getCommand();
+        final SiteTemplate siteTemplate = this.siteTemplateService.createSiteTemplate( command );
 
         return new SiteTemplateJson( siteTemplate );
     }
@@ -106,8 +101,8 @@ public final class SiteTemplateResource
     @Consumes(MediaType.APPLICATION_JSON)
     public SiteTemplateJson update( final UpdateSiteTemplateJson params )
     {
-        final UpdateSiteTemplate command = params.getCommand();
-        final SiteTemplate siteTemplate = client.execute( command );
+        final UpdateSiteTemplateParam command = params.getCommand();
+        final SiteTemplate siteTemplate = this.siteTemplateService.updateSiteTemplate( command );
 
         return new SiteTemplateJson( siteTemplate );
     }
@@ -117,7 +112,7 @@ public final class SiteTemplateResource
     {
         final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( siteTemplateKeyParam );
 
-        final SiteTemplate siteTemplate = client.execute( Commands.site().template().get().byKey( siteTemplateKey ) );
+        final SiteTemplate siteTemplate = this.siteTemplateService.getSiteTemplate( siteTemplateKey );
         return new SiteTemplateJson( siteTemplate );
     }
 
@@ -170,11 +165,11 @@ public final class SiteTemplateResource
             return Response.status( Response.Status.BAD_REQUEST ).build();
         }
 
-        final GetSiteTemplateByKey getSiteTemplate = Commands.site().template().get().byKey( siteTemplateKey );
         final SiteTemplate siteTemplate;
+
         try
         {
-            siteTemplate = client.execute( getSiteTemplate );
+            siteTemplate = this.siteTemplateService.getSiteTemplate( siteTemplateKey );
         }
         catch ( SiteTemplateNotFoundException e )
         {
