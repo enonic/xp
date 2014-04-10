@@ -7,6 +7,7 @@ module api.app.wizard {
         private uploader;
         private img: api.dom.ImgEl;
         private progress: api.ui.ProgressBar;
+        private overlay: api.dom.SpanEl;
 
         private uploadStartedListeners: {():void}[] = [];
 
@@ -22,14 +23,17 @@ module api.app.wizard {
             super("form-icon");
             var el = this.getEl();
 
-            var img = this.img = new api.dom.ImgEl(this.iconUrl);
+            this.img = new api.dom.ImgEl(this.iconUrl);
 
-            el.appendChild(img.getHTMLElement());
+            el.appendChild(this.img.getHTMLElement());
 
             if (this.uploadUrl) {
                 this.progress = new api.ui.ProgressBar();
                 el.appendChild(this.progress.getHTMLElement());
             }
+
+            this.overlay = new api.dom.SpanEl("overlay");
+            el.appendChild(this.overlay.getHTMLElement());
 
             this.onRendered((event) => {
                 if (!this.uploader && this.uploadUrl) {

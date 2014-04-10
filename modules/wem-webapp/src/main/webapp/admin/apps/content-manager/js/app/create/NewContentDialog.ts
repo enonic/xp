@@ -63,7 +63,7 @@ module app.create {
             var rightColumn = new api.dom.DivEl("column column-right");
             this.appendChildToContentPanel(rightColumn);
 
-            this.recentList = new RecentContentTypesList("content-type-list");
+            this.recentList = new RecentContentTypesList("content-type-list", true);
 
             var dropzone = new api.dom.DivEl("dropzone");
             // id needed for plupload to init
