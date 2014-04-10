@@ -94,6 +94,10 @@ module api.ui {
             return this;
         }
 
+        selectText() {
+            (<HTMLInputElement>this.getHTMLElement()).select();
+        }
+
         onValueChanged(listener: (event: ValueChangedEvent)=>void) {
             this.valueChangedListeners.push(listener);
         }

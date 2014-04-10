@@ -13,7 +13,7 @@ module app.create {
         private deckPanel: api.ui.NavigatedDeckPanel;
         private templatesTab: api.ui.tab.TabBarItem;
         private contentTab: api.ui.tab.TabBarItem;
-        private input: api.dom.InputEl;
+        private input: api.ui.TextInput;
 
         constructor() {
             this.contentDialogTitle = new NewContentDialogTitle("What do you want to create?", "");
@@ -112,6 +112,11 @@ module app.create {
             }
 
             super.show();
+            var valueOnShow = this.input.getValue();
+            if (valueOnShow !== '') {
+                this.input.selectText();
+            }
+            this.input.giveFocus();
 
             ContentTypes.load((contentTypes: ContentTypes)=> {
 
@@ -125,6 +130,10 @@ module app.create {
 
                     this.templatesTab.setLabel("Sites (" + siteTemplates.length + ")");
                     this.templatesList.setSiteTemplates(siteTemplates, contentTypes);
+
+                    if (valueOnShow !== '') {
+                        this.filterList(valueOnShow);
+                    }
                 });
             });
 
