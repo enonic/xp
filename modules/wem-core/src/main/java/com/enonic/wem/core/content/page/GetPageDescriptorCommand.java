@@ -1,7 +1,5 @@
 package com.enonic.wem.core.content.page;
 
-import java.io.IOException;
-
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageDescriptorNotFoundException;
@@ -9,10 +7,9 @@ import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceNotFoundException;
-import com.enonic.wem.util.Exceptions;
 import com.enonic.wem.xml.XmlSerializers;
 
-class GetPageDescriptorCommand
+final class GetPageDescriptorCommand
 {
     private PageDescriptorKey key;
 
@@ -35,10 +32,6 @@ class GetPageDescriptorCommand
         catch ( ResourceNotFoundException e )
         {
             throw new PageDescriptorNotFoundException( this.key, e );
-        }
-        catch ( IOException e )
-        {
-            throw Exceptions.newRutime( "Error retrieving page descriptor [{0}]", this.key ).withCause( e );
         }
     }
 

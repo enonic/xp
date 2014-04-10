@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Objects;
+import com.google.common.base.Throwables;
 import com.google.common.io.ByteSource;
 
 public final class Resource
@@ -46,9 +47,15 @@ public final class Resource
     }
 
     public String readAsString()
-        throws IOException
     {
-        return this.byteSource.asCharSource( Charsets.UTF_8 ).read();
+        try
+        {
+            return this.byteSource.asCharSource( Charsets.UTF_8 ).read();
+        }
+        catch ( final IOException e )
+        {
+            throw Throwables.propagate( e );
+        }
     }
 
     @Override
@@ -61,14 +68,6 @@ public final class Resource
             add( "size", size < 0 ? "unknown" : size ).
             omitNullValues().
             toString();
-    }
-
-    public boolean contentEquals( final Resource other )
-        throws IOException
-    {
-        final ByteSource byteSource1 = this.byteSource;
-        final ByteSource byteSource2 = other.byteSource;
-        return ( byteSource1 == byteSource2 ) || ( byteSource1 != null && byteSource1.contentEquals( byteSource2 ) );
     }
 
     public static Builder newResource()

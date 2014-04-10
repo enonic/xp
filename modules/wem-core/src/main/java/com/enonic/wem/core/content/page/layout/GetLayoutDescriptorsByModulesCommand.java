@@ -2,10 +2,9 @@ package com.enonic.wem.core.content.page.layout;
 
 import java.io.IOException;
 
-import javax.inject.Inject;
+import com.google.common.base.Throwables;
 
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
-import com.enonic.wem.api.content.page.layout.GetLayoutDescriptorsByModules;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;
@@ -16,28 +15,30 @@ import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.Modules;
 import com.enonic.wem.api.module.ResourcePath;
-import com.enonic.wem.core.command.CommandHandler;
 
-public class GetLayoutDescriptorsByModulesHandler
-    extends CommandHandler<GetLayoutDescriptorsByModules>
+final class GetLayoutDescriptorsByModulesCommand
 {
     private static final ResourcePath COMPONENT_FOLDER = ResourcePath.from( "component" );
 
     private static final ResourcePath LAYOUT_DESCRIPTOR_XML = ResourcePath.from( "layout.xml" );
 
+    private ModuleKeys moduleKeys;
+
     private ModuleService moduleService;
 
     private LayoutDescriptorService layoutDescriptorService;
 
-    @Override
-    public void handle()
-        throws Exception
+    public LayoutDescriptors execute()
     {
-        final ModuleKeys moduleKeys = this.command.getModuleKeys();
-        final Modules modules = moduleService.getModules( moduleKeys );
-
-        final LayoutDescriptors layoutDescriptors = getLayoutDescriptorsFromModules( modules );
-        command.setResult( layoutDescriptors );
+        try
+        {
+            final Modules modules = this.moduleService.getModules( this.moduleKeys );
+            return getLayoutDescriptorsFromModules( modules );
+        }
+        catch ( final IOException e )
+        {
+            throw Throwables.propagate( e );
+        }
     }
 
     private LayoutDescriptors getLayoutDescriptorsFromModules( final Modules modules )
@@ -70,15 +71,21 @@ public class GetLayoutDescriptorsByModulesHandler
         return layoutDescriptors.build();
     }
 
-    @Inject
-    public void setModuleService( final ModuleService moduleService )
+    public GetLayoutDescriptorsByModulesCommand moduleKeys( final ModuleKeys moduleKeys )
     {
-        this.moduleService = moduleService;
+        this.moduleKeys = moduleKeys;
+        return this;
     }
 
-    @Inject
-    public void setLayoutDescriptorService( final LayoutDescriptorService layoutDescriptorService )
+    public GetLayoutDescriptorsByModulesCommand moduleService( final ModuleService moduleService )
+    {
+        this.moduleService = moduleService;
+        return this;
+    }
+
+    public GetLayoutDescriptorsByModulesCommand layoutDescriptorService( final LayoutDescriptorService layoutDescriptorService )
     {
         this.layoutDescriptorService = layoutDescriptorService;
+        return this;
     }
 }
