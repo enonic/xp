@@ -6,11 +6,21 @@ module app.browse {
 
         private toolbar: SchemaBrowseToolbar;
 
+        private schemaTreeGridPanelMask: api.ui.LoadMask;
+
         constructor() {
             var treeGridContextMenu = new app.browse.SchemaTreeGridContextMenu();
             var treeGridPanel = components.gridPanel = new SchemaTreeGridPanel({
                 contextMenu: treeGridContextMenu
             });
+
+            this.schemaTreeGridPanelMask = new api.ui.LoadMask(treeGridPanel);
+            treeGridPanel.onRendered((event: api.dom.ElementRenderedEvent) => {
+                this.schemaTreeGridPanelMask.show();
+            })
+            treeGridPanel.onTreeGridStoreLoaded(() => {
+                this.schemaTreeGridPanelMask.hide();
+            })
 
             this.browseActions = SchemaBrowseActions.init(treeGridPanel);
             treeGridContextMenu.setActions(this.browseActions);
