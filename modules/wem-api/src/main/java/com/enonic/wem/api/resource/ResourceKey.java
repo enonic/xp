@@ -1,10 +1,11 @@
-package com.enonic.wem.api.module;
+package com.enonic.wem.api.resource;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.Files;
 
-// TODO: Rename to ResourceKey
-public final class ModuleFileKey
+import com.enonic.wem.api.module.ModuleKey;
+
+public final class ResourceKey
 {
     private final String uri;
 
@@ -12,7 +13,7 @@ public final class ModuleFileKey
 
     private final String path;
 
-    private ModuleFileKey( final ModuleKey module, final String path )
+    private ResourceKey( final ModuleKey module, final String path )
     {
         this.module = module;
         this.path = normalizePath( path );
@@ -34,6 +35,17 @@ public final class ModuleFileKey
         return this.path;
     }
 
+    public String getName()
+    {
+        if ( isRoot() )
+        {
+            return "";
+        }
+
+        final int pos = this.path.lastIndexOf( '/' );
+        return this.path.substring( pos + 1 );
+    }
+
     public String getExtension()
     {
         final int pos = this.path.lastIndexOf( '.' );
@@ -50,6 +62,11 @@ public final class ModuleFileKey
         return this.path.equals( "/" );
     }
 
+    public ResourceKey resolve( final String relPath )
+    {
+        return new ResourceKey( this.module, this.path + "/" + relPath );
+    }
+
     @Override
     public String toString()
     {
@@ -59,7 +76,7 @@ public final class ModuleFileKey
     @Override
     public boolean equals( final Object o )
     {
-        return ( o instanceof ModuleFileKey ) && ( this.uri.equals( ( (ModuleFileKey) o ).uri ) );
+        return ( o instanceof ResourceKey ) && ( this.uri.equals( ( (ResourceKey) o ).uri ) );
     }
 
     @Override
@@ -73,7 +90,7 @@ public final class ModuleFileKey
         return Files.simplifyPath( "/" + path );
     }
 
-    public static ModuleFileKey from( final String uri )
+    public static ResourceKey from( final String uri )
     {
         Preconditions.checkNotNull( uri );
 
@@ -83,11 +100,11 @@ public final class ModuleFileKey
         return from( ModuleKey.from( uri.substring( 0, pos ) ), uri.substring( pos + 1 ) );
     }
 
-    public static ModuleFileKey from( final ModuleKey module, final String path )
+    public static ResourceKey from( final ModuleKey module, final String path )
     {
         Preconditions.checkNotNull( module );
         Preconditions.checkNotNull( path );
 
-        return new ModuleFileKey( module, path );
+        return new ResourceKey( module, path );
     }
 }

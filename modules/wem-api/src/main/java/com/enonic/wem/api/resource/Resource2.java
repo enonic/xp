@@ -3,44 +3,52 @@ package com.enonic.wem.api.resource;
 import java.io.IOException;
 
 import com.google.common.base.Charsets;
-import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
 import com.google.common.io.ByteSource;
 
-public final class Resource
+public final class Resource2
 {
-    private final String name;
+    private final ResourceKey key;
 
     private final ByteSource byteSource;
 
-    private final String postfix;
+    private final long timestamp;
 
-    private final long size;
-
-    private Resource( final Builder builder )
+    private Resource2( final Builder builder )
     {
-        this.name = builder.name;
+        this.key = builder.key;
         this.byteSource = builder.byteSource;
-        this.postfix = builder.postfix;
-        this.size = builder.size;
+        this.timestamp = builder.timestamp;
+    }
+
+    public ResourceKey getKey()
+    {
+        return this.key;
     }
 
     public long getSize()
     {
-        return size;
+        try
+        {
+            return this.byteSource.size();
+        }
+        catch ( final IOException e )
+        {
+            throw Throwables.propagate( e );
+        }
     }
 
-    public String getName()
+    public long getTimestamp()
     {
-        return name;
+        return this.timestamp;
     }
 
     public ByteSource getByteSource()
     {
-        return byteSource;
+        return this.byteSource;
     }
 
-    public String readAsString()
+    public String getAsString()
     {
         try
         {
@@ -52,53 +60,38 @@ public final class Resource
         }
     }
 
-    @Override
-    public String toString()
-    {
-        return Objects.toStringHelper( this ).
-            add( "name", name ).
-            add( "byteSource", byteSource ).
-            add( "postfix", postfix ).
-            add( "size", size < 0 ? "unknown" : size ).
-            omitNullValues().
-            toString();
-    }
-
     public static Builder newResource()
     {
         return new Builder();
     }
 
-    public static Builder copyOf( final Resource resource )
+    public static Builder copyOf( final Resource2 resource )
     {
         return new Builder( resource );
     }
 
     public static class Builder
     {
-        private String name;
+        private ResourceKey key;
 
         private ByteSource byteSource;
 
-        private String postfix;
-
-        private long size = -1;
+        private long timestamp = 0;
 
         private Builder()
         {
         }
 
-        private Builder( final Resource resource )
+        private Builder( final Resource2 resource )
         {
-            this.name = resource.name;
+            this.key = resource.key;
             this.byteSource = resource.byteSource;
-            this.postfix = resource.postfix;
-            this.size = resource.size;
+            this.timestamp = resource.timestamp;
         }
 
-        public Builder name( final String name )
+        public Builder key( final ResourceKey key )
         {
-            this.name = name;
+            this.key = key;
             return this;
         }
 
@@ -114,16 +107,15 @@ public final class Resource
             return this;
         }
 
-        public Builder size( final long size )
+        public Builder timestamp( final long timestamp )
         {
-            this.size = size;
+            this.timestamp = timestamp;
             return this;
         }
 
-        public Resource build()
+        public Resource2 build()
         {
-            return new Resource( this );
+            return new Resource2( this );
         }
     }
-
 }
