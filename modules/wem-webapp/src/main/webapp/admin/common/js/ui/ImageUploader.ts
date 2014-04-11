@@ -79,7 +79,7 @@ module api.ui {
             this.appendChild(this.cancelBtn);
 
             this.resetBtn = new api.ui.Button('');
-            this.resetBtn.addClass('icon-close2 icon-xlarge reset');
+            this.resetBtn.addClass('icon-close2 icon-large reset');
             this.resetBtn.setVisible(this.buttonsVisible);
             this.resetBtn.onClicked((event: MouseEvent) => {
                 this.reset();
