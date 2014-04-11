@@ -23,8 +23,7 @@ class SiteTemplateServiceImpl_getSiteTemplatesTest
         then:
         result != null;
         !result.isEmpty();
-        result.get( 0 ).getName().toString() == "intranet";
-        result.get( 1 ).getName().toString() == "other";
+        result.getSize() == 2
     }
 
     def createSiteTemplate( String name )
