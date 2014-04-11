@@ -2,7 +2,7 @@
   background-color: black;
   opacity: 0.5;
   display: none;
-  z-index: 30000;
+  z-index: 3000002;
 
   .mask-splash {
     position: absolute;
@@ -34,24 +34,25 @@
       line-height: 55px;    // equal to that of the dots animation
     }
   }
-}
 
-.body-mask {
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  bottom: 0;
-}
+  &.body-mask {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 300000;
+  }
 
-.load-mask {
-  position: absolute;
-  background-color: white;
-}
+  &.load-mask {
+    position: absolute;
+    background-color: white;
+  }
 
-.drag-mask {
-  position: absolute;
-  top: 0;
-  left: 0;
-  background-color: white;
+  &.drag-mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: white;
+  }
 }
