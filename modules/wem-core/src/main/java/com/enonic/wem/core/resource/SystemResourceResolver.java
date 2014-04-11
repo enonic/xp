@@ -2,6 +2,9 @@ package com.enonic.wem.core.resource;
 
 import java.net.URL;
 
+import com.google.common.base.Throwables;
+import com.google.common.io.Resources;
+
 import com.enonic.wem.api.resource.Resource2;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceKeys;
@@ -24,7 +27,23 @@ final class SystemResourceResolver
             return null;
         }
 
-        return new Resource2Impl( key, url );
+        final Resource2.Builder builder = Resource2.newResource();
+        builder.byteSource( Resources.asByteSource( url ) );
+        builder.timestamp( getTimestamp( url ) );
+        builder.key( key );
+        return builder.build();
+    }
+
+    private long getTimestamp( final URL url )
+    {
+        try
+        {
+            return url.openConnection().getLastModified();
+        }
+        catch ( final Exception e )
+        {
+            throw Throwables.propagate( e );
+        }
     }
 
     @Override

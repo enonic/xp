@@ -4,8 +4,8 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
+import com.google.common.io.Files;
 
 import com.enonic.wem.api.resource.Resource2;
 import com.enonic.wem.api.resource.ResourceKey;
@@ -26,14 +26,11 @@ final class ModuleResourceResolver
             return null;
         }
 
-        try
-        {
-            return new Resource2Impl( key, path.toURI().toURL() );
-        }
-        catch ( final Exception e )
-        {
-            throw Throwables.propagate( e );
-        }
+        final Resource2.Builder builder = Resource2.newResource();
+        builder.byteSource( Files.asByteSource( path ) );
+        builder.timestamp( path.lastModified() );
+        builder.key( key );
+        return builder.build();
     }
 
     @Override
