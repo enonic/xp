@@ -40,13 +40,15 @@
     width: 100%;
   }
 
-  .tab-bar {
+  .content-type-facet {
     margin: 10px 0;
 
-    .tab-bar-item {
+    span {
       cursor: pointer;
       color: #888;
       padding: 10px 20px 10px 0;
+      margin: 0;
+      min-width: 0;
       font-size: 14px;
       display: inline-block;
 
@@ -54,10 +56,6 @@
         color: orangered;
       }
     }
-  }
-
-  .deck-panel {
-    height: 268px;
   }
 
   .dropzone {
@@ -71,8 +69,8 @@
     vertical-align: middle;
   }
 
-  .site-template-list,
-  .content-type-list {
+  .content-types-list {
+    height: 268px;
     overflow-y: auto;
     overflow-x: hidden;
 
@@ -83,35 +81,32 @@
       line-height: 0.9em;
       padding-left:10px
     }
-  }
 
-  .site-template-list-item,
-  .content-type-list-item {
-    position: relative;
-    cursor: pointer;
-    padding: 5px;
+    .content-types-list-item {
+      position: relative;
+      cursor: pointer;
+      padding: 5px;
 
-    .icon-label {
-      left: 21px;
-      padding: 2px 6px;
-      line-height: 16px;
-      border-radius: 10px;
-      background: @admin-blue;
-      color: white;
-      font-size: 14px;
-      font-family: @admin-font-family;
+      .icon-label {
+        left: 23px;
+        padding: 0 5px;
+        line-height: 16px;
+        border-radius: 10px;
+        background: @admin-blue;
+        color: white;
+        font-size: 14px;
+        font-family: @admin-font-family;
 
-      &:before {
-        content: "S";
+        &:before {
+          content: "S";
+        }
+      }
+
+      &:hover {
+        background-color: #ebebeb;
       }
     }
-
-    &:hover {
-      background-color: #ebebeb;
-    }
-
   }
-
 
   .column {
     height: 100%;
@@ -125,7 +120,7 @@
       margin-left: 4%;
       width: 36%;
 
-      .content-type-list {
+      .content-types-list {
         height: 270px;
 
         h4 {

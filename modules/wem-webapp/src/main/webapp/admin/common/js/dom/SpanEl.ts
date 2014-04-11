@@ -6,8 +6,9 @@ module api.dom {
             super(new ElementProperties().setTagName("span").setClassName(className));
         }
 
-        setHtml(html:string) {
+        setHtml(html:string): SpanEl {
             this.getEl().setInnerHtml(html);
+            return this;
         }
     }
 }
