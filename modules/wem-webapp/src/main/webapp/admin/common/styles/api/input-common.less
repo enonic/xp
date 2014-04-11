@@ -17,7 +17,12 @@
 
 .input-glow(@color: @admin-input-blue) {
   &:hover {
-    border: 1px solid @color;
+    &:not([disabled]) {
+      border: 1px solid @color;
+    }
+    &[disabled] {
+      border: 1px solid greyscale(@color);
+    }
   }
   &:focus {
     box-shadow: 0px 0px 5px @color;

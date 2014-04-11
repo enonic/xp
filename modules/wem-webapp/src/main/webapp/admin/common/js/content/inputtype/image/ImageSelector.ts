@@ -97,9 +97,21 @@ module api.content.inputtype.image {
             this.layoutInProgress = true;
             this.input = input;
 
+            var comboboxWrapper = new api.dom.DivEl("combobox-wrapper");
+
             this.comboBox = this.createComboBox(input);
+            comboboxWrapper.appendChild(this.comboBox);
+            this.comboBox.onHidden((event: api.dom.ElementHiddenEvent) => {
+                // hidden on max occurences reached
+                this.uploadButton.hide();
+            });
+            this.comboBox.onShown((event: api.dom.ElementShownEvent) => {
+                // shown on occurences between min and max
+                this.uploadButton.show();
+            })
 
             this.uploadButton = new api.ui.Button("");
+            comboboxWrapper.appendChild(this.uploadButton);
             this.uploadButton.addClass("upload-button");
             this.uploadButton.onClicked((event: MouseEvent) => {
                 var inputMaximum = input.getOccurrences().getMaximum();
@@ -115,11 +127,7 @@ module api.content.inputtype.image {
                 this.uploadDialog.open();
             });
 
-
-            var comboboxWrapper = new api.dom.DivEl("combobox-wrapper");
-            comboboxWrapper.appendChild(this.comboBox);
             this.appendChild(comboboxWrapper);
-            this.appendChild(this.uploadButton);
             this.appendChild(this.selectedOptionsView);
 
             this.doLoadContent(properties).
@@ -301,6 +309,7 @@ module api.content.inputtype.image {
 
             var comboBoxConfig = <ComboBoxConfig<ContentSummary>> {
                 rowHeight: 50,
+                hideComboBoxWhenMaxReached: true,
                 optionDisplayValueViewer: new ContentSummaryViewer(),
                 selectedOptionsView: this.selectedOptionsView,
                 maximumOccurrences: input.getOccurrences().getMaximum(),
@@ -312,28 +321,19 @@ module api.content.inputtype.image {
             this.loadOptions("");
 
             comboBox.addSelectedOptionRemovedListener((removed: api.ui.selector.combobox.SelectedOption<ContentSummary>) => {
-                if (!comboBox.maximumOccurrencesReached()) {
-                    this.uploadButton.setEnabled(true);
-                }
-
                 this.notifyValueRemoved(removed.getIndex());
-
                 this.validate(false);
             });
 
             comboBox.onOptionFilterInputValueChanged((event: api.ui.selector.OptionFilterInputValueChangedEvent<ContentSummary>) => {
                 this.loadOptions(event.getNewValue());
             });
-            comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<ContentSummary>) => {
-                if (this.comboBox.maximumOccurrencesReached()) {
-                    this.uploadButton.setEnabled(false);
-                }
 
+            comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<ContentSummary>) => {
                 if (!this.layoutInProgress) {
                     var value = new api.data.Value(event.getOption().displayValue.getContentId(), api.data.ValueTypes.CONTENT_ID);
                     this.notifyValueAdded(value);
                 }
-
                 this.validate(false);
             });
 
