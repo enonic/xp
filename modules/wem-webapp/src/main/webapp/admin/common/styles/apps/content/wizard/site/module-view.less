@@ -1,14 +1,30 @@
 .module-view {
+  padding: 10px;
+  background-color: @admin-light-gray-bg;
 
-  h6 {
-    margin: 20px 0 5px 11px;
-    color: darkred;
-    line-height: 0.8em;
+  .form-element-spacing(15px);
+
+  .header {
+    overflow: hidden;
+    margin: 0 0 10px;
+
+    i {
+      display: block;
+      float: left;
+    }
+
+    h6 {
+      font-size: 22px;
+      line-height: 30px;
+      margin-left: 40px;
+      .ellipsis;
+    }
   }
 
   .form-view {
-    border: 1px solid lightgray;
-    padding: 17px 10px 10px 10px;
+    padding: 15px 10px;
+    margin: 0;
+    background-color: @admin-white;
   }
 
 }
