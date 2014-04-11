@@ -22,7 +22,7 @@ module api.ui {
         private cancelBtn: api.ui.Button;
         private image: api.dom.ImgEl;
         private imageBox: api.dom.DivEl;
-        private resetBtn: api.dom.AEl;
+        private resetBtn: api.ui.Button;
 
         private multiSelection: boolean;
         private buttonsVisible: boolean;
@@ -64,6 +64,9 @@ module api.ui {
             this.imageBox = new api.dom.DivEl();
             this.imageBox.addClass('image-box');
             this.image = new api.dom.ImgEl();
+            this.image.onClicked(() => {
+                this.image.toggleClass('selected')
+            })
             this.imageBox.appendChild(this.image);
             this.appendChild(this.imageBox);
 
@@ -75,14 +78,24 @@ module api.ui {
             });
             this.appendChild(this.cancelBtn);
 
-            this.resetBtn = new api.dom.AEl();
-            this.resetBtn.addClass('reset');
-            this.resetBtn.setText('Replace');
-            this.resetBtn.setUrl('#');
+            this.resetBtn = new api.ui.Button('');
+            this.resetBtn.addClass('icon-close2 icon-xlarge reset');
             this.resetBtn.setVisible(this.buttonsVisible);
             this.resetBtn.onClicked((event: MouseEvent) => {
                 this.reset();
             });
+            KeyBindings.get().bindKeys([
+                new KeyBinding('del', () => {
+                    if (this.image.hasClass('selected')) {
+                        this.reset()
+                    }
+                }),
+                new KeyBinding('backspace', () => {
+                    if (this.image.hasClass('selected')) {
+                        this.reset()
+                    }
+                })
+            ])
             this.imageBox.appendChild(this.resetBtn);
 
             //Image toolbar stub buttons
@@ -160,6 +173,7 @@ module api.ui {
             this.setImageVisible(false);
             this.setDropzoneVisible(true);
             this.setValue(null);
+            this.image.removeClass('selected');
             this.notifyImageReset();
         }
 

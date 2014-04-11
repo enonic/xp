@@ -24,21 +24,17 @@
 
   }
 
-  img {
-    width: 100%;
-  }
-
   .image-box:hover img {
     border-color: darken(@admin-input-blue, 10%);
-    .box-shadow(0px 0px 10px darken(@admin-input-blue, 10%));
   }
 
   .image-box {
-    .reset {
-      float: right;
-    }
+
+    position: relative;
+
 
     button {
+      .button(#555, transparent);
       box-sizing: content-box;
       vertical-align: top;
       height: 24px;
@@ -47,8 +43,28 @@
       margin: 7px 10px 7px 0px;
       border: none;
       cursor: pointer;
-      background-color: transparent;
-      color: #555;
+
+      &.reset {
+        .button(white, #A6A9A8);
+        .box-shadow(0px 0px 5px darken(#A6A9A8, 10%));
+        position: absolute;
+        padding: 0;
+        border-radius: 16px;
+        top: 3px;
+        right: 3px;
+        width: 32px;
+        height: 32px;
+      }
+    }
+
+    img {
+      width: 100%;
+      border: 1px solid transparent;
+    }
+
+    img.selected {
+      border-color: darken(@admin-input-blue, 10%);
+      .box-shadow(0px 0px 10px darken(@admin-input-blue, 10%));
     }
   }
 
