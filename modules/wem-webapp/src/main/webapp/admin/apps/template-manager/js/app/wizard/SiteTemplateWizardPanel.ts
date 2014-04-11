@@ -64,17 +64,12 @@ module app.wizard {
 
         renderNew(): Q.Promise<void> {
 
-            var deferred = Q.defer<void>();
-            super.renderNew().
-                then(() => {
+            return super.renderNew().
+                then(():void => {
 
                     this.siteTemplateStep.renderNew();
-                    deferred.resolve(null);
-                }).catch((reason) => {
-                    deferred.reject(reason);
-                }).done();
 
-            return deferred.promise;
+                });
         }
 
         layoutPersistedItem(siteTemplate: api.content.site.template.SiteTemplate): Q.Promise<void> {
