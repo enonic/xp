@@ -6,10 +6,10 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.BasePath2;
+import com.enonic.wem.api.BasePath;
 
 public class NodePath
-    extends BasePath2<NodePath,NodePath.Element,NodePath.Builder>
+    extends BasePath<NodePath,NodePath.Element,NodePath.Builder>
 {
     public final static NodePath ROOT = new NodePath( "/" );
 
@@ -114,7 +114,7 @@ public class NodePath
     }
 
     public static class Element
-        extends BasePath2.Element
+        extends BasePath.Element
     {
         public Element( final String name )
         {
@@ -123,7 +123,7 @@ public class NodePath
     }
 
     public static class Builder
-        extends BasePath2.Builder<Builder,NodePath>
+        extends BasePath.Builder<Builder,NodePath>
     {
         public Builder()
         {

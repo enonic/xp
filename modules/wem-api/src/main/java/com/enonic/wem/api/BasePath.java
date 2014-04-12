@@ -10,7 +10,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 
-public abstract class BasePath2<PATH extends BasePath2, ELEMENT extends BasePath2.Element, BUILDER extends BasePath2.Builder>
+public abstract class BasePath<PATH extends BasePath, ELEMENT extends BasePath.Element, BUILDER extends BasePath.Builder>
 {
     private static final char DEFAULT_ELEMENT_DIVIDER = '/';
 
@@ -24,7 +24,7 @@ public abstract class BasePath2<PATH extends BasePath2, ELEMENT extends BasePath
 
     private final String refString;
 
-    public BasePath2( final Builder builder )
+    public BasePath( final Builder builder )
     {
         this.elementDivider = builder.elementDivider != null ? builder.elementDivider : DEFAULT_ELEMENT_DIVIDER;
         this.absolute = builder.absolute;
@@ -65,7 +65,7 @@ public abstract class BasePath2<PATH extends BasePath2, ELEMENT extends BasePath
         return this.trailingDivider;
     }
 
-    public BasePath2<PATH, ELEMENT, BUILDER> trimTrailingDivider()
+    public BasePath<PATH, ELEMENT, BUILDER> trimTrailingDivider()
     {
         return newBuilder( (PATH) this ).trailingDivider( false ).build();
     }
@@ -117,7 +117,7 @@ public abstract class BasePath2<PATH extends BasePath2, ELEMENT extends BasePath
         return pathElements;
     }
 
-    public <T extends BasePath2> T removeFromBeginning( final T path )
+    public <T extends BasePath> T removeFromBeginning( final T path )
     {
         Preconditions.checkState( this.elementCount() >= path.elementCount(),
                                   "No point in trying to remove [" + path.toString() + "] from [" + this.toString() + "]" );
@@ -179,12 +179,12 @@ public abstract class BasePath2<PATH extends BasePath2, ELEMENT extends BasePath
         {
             return true;
         }
-        if ( !( o instanceof BasePath2 ) )
+        if ( !( o instanceof BasePath ) )
         {
             return false;
         }
 
-        final BasePath2 path = (BasePath2) o;
+        final BasePath path = (BasePath) o;
         return Objects.equals( absolute, path.absolute ) &&
             Objects.equals( elementDivider, path.elementDivider ) &&
             Objects.equals( trailingDivider, path.trailingDivider ) &&
@@ -244,7 +244,7 @@ public abstract class BasePath2<PATH extends BasePath2, ELEMENT extends BasePath
 
     protected abstract Builder<BUILDER, PATH> newBuilder( PATH source );
 
-    public static abstract class Builder<B extends Builder, P extends BasePath2>
+    public static abstract class Builder<B extends Builder, P extends BasePath>
     {
         private Character elementDivider;
 
@@ -256,7 +256,7 @@ public abstract class BasePath2<PATH extends BasePath2, ELEMENT extends BasePath
 
         private ImmutableList.Builder<Element> elementListBuilder = new ImmutableList.Builder<>();
 
-        public Builder( final BasePath2 source )
+        public Builder( final BasePath source )
         {
             Preconditions.checkNotNull( source, "source to build copy from not given" );
             this.elementDivider = source.elementDivider;
