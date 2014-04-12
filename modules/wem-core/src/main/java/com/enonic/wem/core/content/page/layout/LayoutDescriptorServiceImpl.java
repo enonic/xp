@@ -15,9 +15,6 @@ public final class LayoutDescriptorServiceImpl
     @Inject
     protected ModuleService moduleService;
 
-    @Inject
-    protected LayoutDescriptorService layoutDescriptorService;
-
     public LayoutDescriptor getByKey( final LayoutDescriptorKey key )
     {
         return new GetLayoutDescriptorCommand().key( key ).moduleService( this.moduleService ).execute();
@@ -25,7 +22,6 @@ public final class LayoutDescriptorServiceImpl
 
     public LayoutDescriptors getByModules( final ModuleKeys moduleKeys )
     {
-        return new GetLayoutDescriptorsByModulesCommand().moduleService( this.moduleService ).layoutDescriptorService(
-            this.layoutDescriptorService ).moduleKeys( moduleKeys ).execute();
+        return new GetLayoutDescriptorsByModulesCommand().moduleService( this.moduleService ).moduleKeys( moduleKeys ).execute();
     }
 }
