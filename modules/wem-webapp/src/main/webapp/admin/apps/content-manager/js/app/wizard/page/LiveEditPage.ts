@@ -138,8 +138,6 @@ module app.wizard.page {
 
         public load(content: Content): Q.Promise<void> {
 
-            var deferred = Q.defer<void>();
-
             var url = this.baseUrl + content.getContentId().toString();
 
             this.loadMask.show();
@@ -172,9 +170,9 @@ module app.wizard.page {
 
                     this.listenToPage();
                     this.notifyLoaded();
-
-                    deferred.resolve(null);
                 }
+
+                deferred.resolve(null);
             });
 
             return deferred.promise;

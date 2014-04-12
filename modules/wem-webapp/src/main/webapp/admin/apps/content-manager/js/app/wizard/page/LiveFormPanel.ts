@@ -224,38 +224,31 @@ module app.wizard.page {
         loadPageIfNotLoaded(): Q.Promise<void> {
 
             console.log("LiveFormPanel.loadPageIfNotLoaded() this.needsReload = " + this.pageNeedsReload);
-            var deferred = Q.defer<void>();
-
             if (this.pageNeedsReload && !this.pageLoading) {
 
                 this.pageLoading = true;
-                this.liveEditPage.load(this.content).then(()=> {
+                return this.liveEditPage.load(this.content).then(()=> {
 
                     this.pageLoading = false;
                     this.pageNeedsReload = false;
 
-                    this.loadPageDescriptor().done(() => {
+                    return this.loadPageDescriptor();
 
-                        this.contextWindow.showInspectionPanel(this.pageInspectionPanel);
-                        this.pageInspectionPanel.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
+                }).then(():void => {
 
-                        deferred.resolve(null);
-                    });
+                    this.contextWindow.showInspectionPanel(this.pageInspectionPanel);
+                    this.pageInspectionPanel.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
 
-                }).catch((reason)=> {
-                    deferred.reject(reason);
-                }).done();
+                });
             }
             else {
+                var deferred = Q.defer<void>();
                 deferred.resolve(null);
+                return deferred.promise;
             }
-
-            return deferred.promise;
         }
 
         setPage(content: Content, pageTemplate: PageTemplate): Q.Promise<void> {
-
-            var deferred = Q.defer<void>();
 
             api.util.assertNotNull(content, "Expected content not be null");
 
@@ -282,50 +275,37 @@ module app.wizard.page {
             }
 
             if (!this.isVisible()) {
-
                 this.pageNeedsReload = true;
+                var deferred = Q.defer<void>();
                 deferred.resolve(null);
+                return deferred.promise;
             }
             else if (this.pageSkipReload == true) {
+                var deferred = Q.defer<void>();
                 deferred.resolve(null);
+                return deferred.promise;
             }
             else {
-                this.liveEditPage.load(this.content).
+                return this.liveEditPage.load(this.content).
                     then(() => {
-
-                        this.loadPageDescriptor().then(() => {
-
-                            deferred.resolve(null);
-
-                        }).catch((reason) => {
-                            deferred.reject(reason);
-                        }).done();
-                    }).catch((reason)=> {
-                        deferred.reject(reason);
-                    }).done();
+                        return this.loadPageDescriptor();
+                    });
             }
-
-
-            return deferred.promise;
         }
 
         private loadPageDescriptor(): Q.Promise<void> {
 
-            var deferred = Q.defer<void>();
             if (!this.pageTemplate) {
+                var deferred = Q.defer<void>();
                 deferred.resolve(null);
+                return deferred.promise;
             }
             else {
-                new GetPageDescriptorByKeyRequest(this.pageTemplate.getDescriptorKey()).sendAndParse().
-                    then((pageDescriptor: PageDescriptor) => {
+                return new GetPageDescriptorByKeyRequest(this.pageTemplate.getDescriptorKey()).sendAndParse().
+                    then((pageDescriptor: PageDescriptor): void => {
                         this.pageDescriptor = pageDescriptor;
-                        deferred.resolve(null);
-                    }).catch((reason) => {
-                        deferred.reject(reason);
-                    }).done();
+                    });
             }
-
-            return deferred.promise;
         }
 
         private resolvePageTemplateChanged(pageTemplate: PageTemplate) {
@@ -382,12 +362,10 @@ module app.wizard.page {
 
         private initializePageFromDefault(): Q.Promise<void> {
 
-            var deferred = Q.defer<void>();
-
             var defaultPageTemplate = this.defaultModels.getPageTemplate();
 
-            new GetPageDescriptorByKeyRequest(defaultPageTemplate.getDescriptorKey()).sendAndParse().
-                then((pageDescriptor: PageDescriptor) => {
+            return new GetPageDescriptorByKeyRequest(defaultPageTemplate.getDescriptorKey()).sendAndParse().
+                then((pageDescriptor: PageDescriptor):void => {
 
                     this.pageTemplate = defaultPageTemplate;
                     this.pageConfig = defaultPageTemplate.getConfig();
@@ -396,12 +374,7 @@ module app.wizard.page {
 
                     this.pageInspectionPanel.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
 
-                    deferred.resolve(null);
-                }).catch((reason) => {
-                    deferred.reject(reason);
-                }).done();
-
-            return deferred.promise;
+                });
         }
 
         private saveAndReloadPage() {

@@ -110,22 +110,18 @@ module api.content.inputtype.relationship {
 
         private doLoadContent(properties: api.data.Property[]): Q.Promise<api.content.ContentSummary[]> {
 
-            var deferred = Q.defer<api.content.ContentSummary[]>();
-
             if (!properties) {
-                deferred.resolve([]);
+                return Q<api.content.ContentSummary[]>([]);
             }
             else {
-                var contentIds: api.content.ContentId[] = [];
-                properties.forEach((property: api.data.Property) => {
-                    contentIds.push(new api.content.ContentId(property.getString()));
+                var contentIds = properties.map((property: api.data.Property) => {
+                    return new api.content.ContentId(property.getString());
                 });
-                new api.content.GetContentSummaryByIds(contentIds).get().done((result: api.content.ContentSummary[]) => {
-                    deferred.resolve(result);
-                });
+                return new api.content.GetContentSummaryByIds(contentIds).get().
+                    then((result: api.content.ContentSummary[]) => {
+                        return result;
+                    });
             }
-
-            return deferred.promise;
         }
 
         getValues(): api.data.Value[] {

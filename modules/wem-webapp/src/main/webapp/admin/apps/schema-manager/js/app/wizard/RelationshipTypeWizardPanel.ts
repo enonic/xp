@@ -68,8 +68,6 @@ module app.wizard {
 
         layoutPersistedItem(persistedRelationshipType: RelationshipType): Q.Promise<void> {
 
-            var deferred = Q.defer<void>();
-
             this.relationShipTypeWizardHeader.setName(persistedRelationshipType.getName());
             this.formIcon.setSrc(persistedRelationshipType.getIconUrl());
             this.persistedRelationshipType = persistedRelationshipType;
@@ -83,8 +81,6 @@ module app.wizard {
         }
 
         persistNewItem(): Q.Promise<RelationshipType> {
-
-            var deferred = Q.defer<RelationshipType>();
 
             var formData = this.relationshipTypeForm.getFormData();
             var newName = new RelationshipTypeName(this.relationShipTypeWizardHeader.getName());
@@ -103,8 +99,6 @@ module app.wizard {
         }
 
         updatePersistedItem(): Q.Promise<RelationshipType> {
-
-            var deferred = Q.defer<RelationshipType>();
 
             var formData = this.relationshipTypeForm.getFormData();
             var newName = new RelationshipTypeName(this.relationShipTypeWizardHeader.getName());
