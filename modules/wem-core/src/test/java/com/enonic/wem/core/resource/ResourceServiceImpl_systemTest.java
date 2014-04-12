@@ -25,7 +25,7 @@ public class ResourceServiceImpl_systemTest
         final File workDir = this.temporaryFolder.newFolder( "work" );
         final ClassLoader classLoader = new URLClassLoader( new URL[]{workDir.toURI().toURL()}, null );
 
-        this.resourceService = new ResourceServiceImpl( classLoader );
+        this.resourceService = new ResourceServiceImpl( null, classLoader );
 
         writeFile( workDir, "system/a/b.txt", "a/b.txt" );
         writeFile( workDir, "system/a/c.txt", "a/c.txt" );

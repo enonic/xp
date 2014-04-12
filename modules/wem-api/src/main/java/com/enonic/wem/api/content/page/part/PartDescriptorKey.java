@@ -5,6 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.resource.ResourceKey;
 
 public final class PartDescriptorKey
     extends DescriptorKey
@@ -24,5 +25,11 @@ public final class PartDescriptorKey
         final String moduleKey = StringUtils.substringBefore( partDescriptorKey, SEPARATOR );
         final String descriptorName = StringUtils.substringAfter( partDescriptorKey, SEPARATOR );
         return new PartDescriptorKey( ModuleKey.from( moduleKey ), new ComponentDescriptorName( descriptorName ) );
+    }
+
+    @Override
+    public ResourceKey toResourceKey()
+    {
+        return ResourceKey.from( getModuleKey(), "component/" + getName().toString() + "/part.xml" );
     }
 }

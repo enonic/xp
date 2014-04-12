@@ -7,30 +7,27 @@ import com.enonic.wem.api.content.page.image.ImageDescriptor;
 import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
 import com.enonic.wem.api.content.page.image.ImageDescriptors;
 import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleFileEntry;
-import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.Modules;
-import com.enonic.wem.api.module.ResourcePath;
-import com.enonic.wem.api.resource.Resource;
-import com.enonic.wem.core.content.page.DescriptorKeyToModuleResourceKey;
+import com.enonic.wem.api.resource.Resource2;
+import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.resource.ResourceKeys;
+import com.enonic.wem.api.resource.ResourceService;
 import com.enonic.wem.xml.XmlSerializers;
 
-abstract class AbstractGetImageDescriptorCommand
+abstract class AbstractGetImageDescriptorCommand<T extends AbstractGetImageDescriptorCommand>
 {
-    private static final ResourcePath COMPONENT_FOLDER = ResourcePath.from( "component" );
-
-    private static final ResourcePath IMAGE_DESCRIPTOR_XML = ResourcePath.from( "image.xml" );
-
     protected ModuleService moduleService;
 
-    protected ImageDescriptor getImageDescriptor( final ImageDescriptorKey key )
+    protected ResourceService resourceService;
+
+    protected final ImageDescriptor getImageDescriptor( final ImageDescriptorKey key )
         throws IOException
     {
-        final ModuleResourceKey moduleResourceKey = DescriptorKeyToModuleResourceKey.translate( key );
-        final Resource resource = this.moduleService.getResource( moduleResourceKey );
+        final ResourceKey resourceKey = key.toResourceKey();
+        final Resource2 resource = this.resourceService.getResource( resourceKey );
 
-        final String descriptorXml = resource.readAsString();
+        final String descriptorXml = resource.getAsString();
         final ImageDescriptor.Builder builder = ImageDescriptor.newImageDescriptor();
         XmlSerializers.imageDescriptor().parse( descriptorXml ).to( builder );
         builder.name( key.getName() ).key( key );
@@ -38,21 +35,19 @@ abstract class AbstractGetImageDescriptorCommand
         return builder.build();
     }
 
-    protected ImageDescriptors getImageDescriptorsFromModules( final Modules modules )
+    protected final ImageDescriptors getImageDescriptorsFromModules( final Modules modules )
         throws IOException
     {
         final ImageDescriptors.Builder imageDescriptors = ImageDescriptors.newImageDescriptors();
-        for ( Module module : modules )
+        for ( final Module module : modules )
         {
-            final ModuleFileEntry root = module.getModuleDirectoryEntry();
-            if ( root == null || !root.contains( COMPONENT_FOLDER ) )
+            final ResourceKey componentFolder = ResourceKey.from( module.getModuleKey(), "component" );
+            final ResourceKeys descriptorFolders = this.resourceService.getChildren( componentFolder );
+
+            for ( final ResourceKey descriptorFolder : descriptorFolders )
             {
-                continue;
-            }
-            final ModuleFileEntry componentFolder = root.getEntry( COMPONENT_FOLDER );
-            for ( ModuleFileEntry descriptorFolder : componentFolder )
-            {
-                if ( descriptorFolder.contains( IMAGE_DESCRIPTOR_XML ) )
+                final ResourceKey descriptorFile = descriptorFolder.resolve( "image.xml" );
+                if ( this.resourceService.hasResource( descriptorFile ) )
                 {
                     final ComponentDescriptorName descriptorName = new ComponentDescriptorName( descriptorFolder.getName() );
                     final ImageDescriptorKey key = ImageDescriptorKey.from( module.getModuleKey(), descriptorName );
@@ -68,4 +63,17 @@ abstract class AbstractGetImageDescriptorCommand
         return imageDescriptors.build();
     }
 
+    @SuppressWarnings("unchecked")
+    public final T moduleService( final ModuleService moduleService )
+    {
+        this.moduleService = moduleService;
+        return (T) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public final T resourceService( final ResourceService resourceService )
+    {
+        this.resourceService = resourceService;
+        return (T) this;
+    }
 }

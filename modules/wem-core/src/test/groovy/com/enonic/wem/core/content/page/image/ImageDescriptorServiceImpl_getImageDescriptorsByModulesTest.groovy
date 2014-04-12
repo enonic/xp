@@ -10,12 +10,12 @@ class ImageDescriptorServiceImpl_getImageDescriptorsByModulesTest
     def "get image descriptors by modules multiple"()
     {
         given:
-        def modules = createModules( "foomodule-1.0.0", "barmodules-1.0.0" );
+        def modules = createModules( "foomodule-1.0.0", "barmodule-1.0.0" );
         createImageDescriptor( "foomodule-1.0.0:foomodule-image-descr", "barmodule-1.0.0:barmodule-image-descr" );
-        this.service.moduleService.getModules( ModuleKeys.from( "foomodule-1.0.0", "barmodules-1.0.0" ) ) >> modules;
+        this.service.moduleService.getModules( ModuleKeys.from( "foomodule-1.0.0", "barmodule-1.0.0" ) ) >> modules;
 
         when:
-        def result = this.service.getImageDescriptorsByModules( ModuleKeys.from( "foomodule-1.0.0", "barmodules-1.0.0" ) );
+        def result = this.service.getImageDescriptorsByModules( ModuleKeys.from( "foomodule-1.0.0", "barmodule-1.0.0" ) );
 
         then: result != null && result.getSize() == 2
     }
@@ -23,7 +23,7 @@ class ImageDescriptorServiceImpl_getImageDescriptorsByModulesTest
     def "get image descriptors by modules single"()
     {
         given:
-        def modules = createModules( "foomodule-1.0.0", "barmodules-1.0.0" );
+        def modules = createModules( "foomodule-1.0.0", "barmodule-1.0.0" );
         createImageDescriptor( "foomodule-1.0.0:foomodule-image-descr" );
         def mod = Modules.from( modules.getModule( ModuleKey.from( "foomodule-1.0.0" ) ) )
         this.service.moduleService.getModules( ModuleKeys.from( "foomodule-1.0.0" ) ) >> mod;

@@ -36,15 +36,10 @@ final class ModuleResourceResolver
     @Override
     public ResourceKeys getChildren( final ResourceKey parentKey )
     {
+        final List<ResourceKey> keys = Lists.newArrayList();
         final File path = findPath( parentKey );
-        if ( !path.isDirectory() )
-        {
-            return ResourceKeys.empty();
-        }
 
         final File[] children = path.listFiles();
-        final List<ResourceKey> keys = Lists.newArrayList();
-
         if ( children != null )
         {
             for ( final File child : children )

@@ -15,16 +15,17 @@ public final class ResourceServiceImpl
 {
     private final ClassLoader classLoader;
 
-    @Inject
-    protected SystemConfig systemConfig;
+    protected final SystemConfig systemConfig;
 
-    public ResourceServiceImpl()
+    @Inject
+    public ResourceServiceImpl( final SystemConfig systemConfig )
     {
-        this( null );
+        this( systemConfig, null );
     }
 
-    public ResourceServiceImpl( final ClassLoader classLoader )
+    public ResourceServiceImpl( final SystemConfig systemConfig, final ClassLoader classLoader )
     {
+        this.systemConfig = systemConfig;
         this.classLoader = classLoader != null ? classLoader : this.getClass().getClassLoader();
     }
 

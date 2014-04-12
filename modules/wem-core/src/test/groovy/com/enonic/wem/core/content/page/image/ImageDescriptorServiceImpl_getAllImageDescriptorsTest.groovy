@@ -6,7 +6,7 @@ class ImageDescriptorServiceImpl_getAllImageDescriptorsTest
     def "get all image descriptors multiple"()
     {
         given:
-        createModules( "foomodule-1.0.0", "barmodules-1.0.0"  );
+        createModules( "foomodule-1.0.0", "barmodule-1.0.0"  );
         createImageDescriptor( "foomodule-1.0.0:foomodule-image-descr" ,  "barmodule-1.0.0:barmodule-image-descr"  );
 
         when:

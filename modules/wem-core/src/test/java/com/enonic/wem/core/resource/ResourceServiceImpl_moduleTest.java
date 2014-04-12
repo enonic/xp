@@ -28,8 +28,7 @@ public class ResourceServiceImpl_moduleTest
         final SystemConfig config = Mockito.mock( SystemConfig.class );
         Mockito.when( config.getModulesDir() ).thenReturn( modulesDir.toPath() );
 
-        this.resourceService = new ResourceServiceImpl();
-        this.resourceService.systemConfig = config;
+        this.resourceService = new ResourceServiceImpl( config );
 
         writeFile( modulesDir, "mymodule-1.0.0/a/b.txt", "a/b.txt" );
         writeFile( modulesDir, "mymodule-1.0.0/a/c.txt", "a/c.txt" );

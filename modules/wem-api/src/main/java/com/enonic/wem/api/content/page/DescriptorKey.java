@@ -3,6 +3,7 @@ package com.enonic.wem.api.content.page;
 import java.util.Objects;
 
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.resource.ResourceKey;
 
 public abstract class DescriptorKey
 {
@@ -46,6 +47,8 @@ public abstract class DescriptorKey
     {
         return descriptorType;
     }
+
+    public abstract ResourceKey toResourceKey();
 
     @Override
     public boolean equals( final Object o )

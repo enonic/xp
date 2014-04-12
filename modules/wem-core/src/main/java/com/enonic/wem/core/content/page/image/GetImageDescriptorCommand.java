@@ -10,7 +10,7 @@ import com.enonic.wem.api.resource.ResourceNotFoundException;
 import com.enonic.wem.util.Exceptions;
 
 final class GetImageDescriptorCommand
-    extends AbstractGetImageDescriptorCommand
+    extends AbstractGetImageDescriptorCommand<GetImageDescriptorCommand>
 {
     private ImageDescriptorKey key;
 
@@ -33,12 +33,6 @@ final class GetImageDescriptorCommand
     public GetImageDescriptorCommand key( final ImageDescriptorKey key )
     {
         this.key = key;
-        return this;
-    }
-
-    public GetImageDescriptorCommand moduleService( final ModuleService moduleService )
-    {
-        this.moduleService = moduleService;
         return this;
     }
 }

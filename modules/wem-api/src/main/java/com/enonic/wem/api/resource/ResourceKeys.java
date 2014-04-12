@@ -27,11 +27,6 @@ public final class ResourceKeys
         return new ResourceKeys( ImmutableList.copyOf( keys ) );
     }
 
-    public static ResourceKeys from( final Collection<? extends ResourceKey> keys )
-    {
-        return new ResourceKeys( ImmutableList.copyOf( keys ) );
-    }
-
     public static ResourceKeys from( final String... keys )
     {
         return new ResourceKeys( parseKeys( keys ) );

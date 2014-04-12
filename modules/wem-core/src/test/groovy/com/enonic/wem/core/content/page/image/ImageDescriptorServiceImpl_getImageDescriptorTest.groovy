@@ -1,7 +1,7 @@
 package com.enonic.wem.core.content.page.image
 
 class ImageDescriptorServiceImpl_getImageDescriptorTest
-        extends AbstractImageDescriptorServiceTest
+    extends AbstractImageDescriptorServiceTest
 {
     def "get image descriptor"()
     {

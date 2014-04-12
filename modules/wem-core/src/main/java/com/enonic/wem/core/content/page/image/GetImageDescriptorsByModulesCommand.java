@@ -4,12 +4,11 @@ import java.io.IOException;
 
 import com.enonic.wem.api.content.page.image.ImageDescriptors;
 import com.enonic.wem.api.module.ModuleKeys;
-import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.Modules;
 import com.enonic.wem.util.Exceptions;
 
 final class GetImageDescriptorsByModulesCommand
-    extends AbstractGetImageDescriptorCommand
+    extends AbstractGetImageDescriptorCommand<GetImageDescriptorsByModulesCommand>
 {
     private ModuleKeys moduleKeys;
 
@@ -28,14 +27,8 @@ final class GetImageDescriptorsByModulesCommand
     private ImageDescriptors doExecute()
         throws IOException
     {
-        final Modules modules = this.moduleService.getModules(this.moduleKeys);
+        final Modules modules = this.moduleService.getModules( this.moduleKeys );
         return getImageDescriptorsFromModules( modules );
-    }
-
-    public GetImageDescriptorsByModulesCommand moduleService( final ModuleService moduleService )
-    {
-        this.moduleService = moduleService;
-        return this;
     }
 
     public GetImageDescriptorsByModulesCommand modules( final ModuleKeys moduleKeys )

@@ -8,7 +8,7 @@ import com.enonic.wem.api.module.Modules;
 import com.enonic.wem.util.Exceptions;
 
 final class GetAllImageDescriptorsCommand
-    extends AbstractGetImageDescriptorCommand
+    extends AbstractGetImageDescriptorCommand<GetAllImageDescriptorsCommand>
 {
 
     public ImageDescriptors execute()
@@ -28,11 +28,5 @@ final class GetAllImageDescriptorsCommand
     {
         final Modules modules = this.moduleService.getAllModules();
         return getImageDescriptorsFromModules( modules );
-    }
-
-    public GetAllImageDescriptorsCommand moduleService( final ModuleService moduleService )
-    {
-        this.moduleService = moduleService;
-        return this;
     }
 }

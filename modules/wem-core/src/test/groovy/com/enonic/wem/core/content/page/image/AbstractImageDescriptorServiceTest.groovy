@@ -2,8 +2,13 @@ package com.enonic.wem.core.content.page.image
 
 import com.enonic.wem.api.content.page.image.ImageDescriptorKey
 import com.enonic.wem.api.module.*
-import com.enonic.wem.api.resource.Resource
+import com.enonic.wem.api.resource.ResourceKey
+import com.enonic.wem.core.config.SystemConfig
+import com.enonic.wem.core.resource.ResourceServiceImpl
+import com.google.common.base.Charsets
 import com.google.common.io.ByteSource
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
 import static com.enonic.wem.api.module.ModuleFileEntry.newModuleDirectory
@@ -11,30 +16,42 @@ import static com.enonic.wem.api.module.ModuleFileEntry.newModuleDirectory
 abstract class AbstractImageDescriptorServiceTest
     extends Specification
 {
+    @Rule
+    def TemporaryFolder temporaryFolder = new TemporaryFolder()
+
     def ImageDescriptorServiceImpl service
 
     def setup()
     {
-        this.service = new ImageDescriptorServiceImpl()
+        def config = Mock( SystemConfig.class )
+        config.getModulesDir() >> this.temporaryFolder.getRoot().toPath()
 
+        this.service = new ImageDescriptorServiceImpl()
         this.service.moduleService = Mock( ModuleService.class )
+        this.service.resourceService = new ResourceServiceImpl( config )
     }
 
-    def createImageDescriptor( final String... keys )
+    def ImageDescriptorKey[] createImageDescriptor( final String... keys )
     {
-        def resources = [];
         def descriptorKeys = [];
         for ( key in keys )
         {
             def descriptorKey = ImageDescriptorKey.from( key )
             def descriptorXml = "<image-component><display-name>" + descriptorKey.getName().toString() +
                 "</display-name></image-component>";
-            def resource = Resource.newResource().name( "image.xml" ).stringValue( descriptorXml ).build();
-            resources.add( resource );
+
+            createResouce( descriptorKey.toResourceKey(), descriptorXml );
             descriptorKeys.add( descriptorKey );
         }
-        this.service.moduleService.getResource( _ ) >>> resources;
+
         return descriptorKeys;
+    }
+
+    def void createResouce( final ResourceKey key, final String content )
+    {
+        def file = new File( this.temporaryFolder.getRoot(), key.getModule().toString() + key.getPath() )
+        file.getParentFile().mkdirs()
+        ByteSource.wrap( content.getBytes( Charsets.UTF_8 ) ).copyTo( new FileOutputStream( file ) )
     }
 
     def Module createModule( final String moduleKey )
@@ -64,5 +81,4 @@ abstract class AbstractImageDescriptorServiceTest
         this.service.moduleService.getAllModules() >> modules
         return modules;
     }
-
 }
