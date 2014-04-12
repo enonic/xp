@@ -1,7 +1,5 @@
 package com.enonic.wem.core.content.page.part;
 
-import java.io.IOException;
-
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
@@ -22,7 +20,6 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
     protected ResourceService resourceService;
 
     protected final PartDescriptor getDescriptor( final PartDescriptorKey key )
-        throws IOException
     {
         final ResourceKey resourceKey = key.toResourceKey();
         final Resource2 resource = this.resourceService.getResource( resourceKey );
@@ -36,7 +33,6 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
     }
 
     protected final PartDescriptors getDescriptorsFromModules( final Modules modules )
-        throws IOException
     {
         final PartDescriptors.Builder partDescriptors = PartDescriptors.newPartDescriptors();
         for ( final Module module : modules )

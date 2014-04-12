@@ -1,7 +1,5 @@
 package com.enonic.wem.core.content.page.image;
 
-import java.io.IOException;
-
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.image.ImageDescriptor;
 import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
@@ -22,7 +20,6 @@ abstract class AbstractGetImageDescriptorCommand<T extends AbstractGetImageDescr
     protected ResourceService resourceService;
 
     protected final ImageDescriptor getImageDescriptor( final ImageDescriptorKey key )
-        throws IOException
     {
         final ResourceKey resourceKey = key.toResourceKey();
         final Resource2 resource = this.resourceService.getResource( resourceKey );
@@ -36,7 +33,6 @@ abstract class AbstractGetImageDescriptorCommand<T extends AbstractGetImageDescr
     }
 
     protected final ImageDescriptors getImageDescriptorsFromModules( final Modules modules )
-        throws IOException
     {
         final ImageDescriptors.Builder imageDescriptors = ImageDescriptors.newImageDescriptors();
         for ( final Module module : modules )

@@ -1,7 +1,5 @@
 package com.enonic.wem.core.content.page.layout;
 
-import java.io.IOException;
-
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
@@ -22,7 +20,6 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
     protected ResourceService resourceService;
 
     protected final LayoutDescriptor getDescriptor( final LayoutDescriptorKey key )
-        throws IOException
     {
         final ResourceKey resourceKey = key.toResourceKey();
         final Resource2 resource = this.resourceService.getResource( resourceKey );
@@ -36,7 +33,6 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
     }
 
     protected final LayoutDescriptors getDescriptorsFromModules( final Modules modules )
-        throws IOException
     {
         final LayoutDescriptors.Builder layoutDescriptors = LayoutDescriptors.newLayoutDescriptors();
         for ( final Module module : modules )
