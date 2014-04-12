@@ -2,9 +2,9 @@ package com.enonic.wem.core.content.page.layout
 
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey
 import com.enonic.wem.api.module.*
-import com.enonic.wem.api.resource.Resource
 import com.enonic.wem.api.resource.ResourceKey
 import com.enonic.wem.core.config.SystemConfig
+import com.enonic.wem.core.resource.ResourceServiceImpl
 import com.google.common.base.Charsets
 import com.google.common.io.ByteSource
 import org.junit.Rule
@@ -28,22 +28,22 @@ abstract class AbstractLayoutDescriptorServiceTest
 
         this.service = new LayoutDescriptorServiceImpl()
         this.service.moduleService = Mock( ModuleService.class )
+        this.service.resourceService = new ResourceServiceImpl( config )
     }
 
     def LayoutDescriptorKey[] createDescriptor( final String... keys )
     {
-        def resources = [];
         def descriptorKeys = [];
         for ( key in keys )
         {
             def descriptorKey = LayoutDescriptorKey.from( key )
             def descriptorXml = "<layout-component><display-name>" + descriptorKey.getName().toString() +
                 "</display-name></layout-component>";
-            def resource = Resource.newResource().name( "layout.xml" ).stringValue( descriptorXml ).build();
-            resources.add( resource );
+
+            createResouce( descriptorKey.toResourceKey(), descriptorXml );
             descriptorKeys.add( descriptorKey );
         }
-        this.service.moduleService.getResource( _ ) >>> resources;
+
         return descriptorKeys;
     }
 
