@@ -1,10 +1,10 @@
-package com.enonic.wem.core.content.page.image
+package com.enonic.wem.core.content.page.part
 
-import com.enonic.wem.api.content.page.image.ImageDescriptorKey
+import com.enonic.wem.api.content.page.part.PartDescriptorKey
 import com.enonic.wem.api.module.*
+import com.enonic.wem.api.resource.Resource
 import com.enonic.wem.api.resource.ResourceKey
 import com.enonic.wem.core.config.SystemConfig
-import com.enonic.wem.core.resource.ResourceServiceImpl
 import com.google.common.base.Charsets
 import com.google.common.io.ByteSource
 import org.junit.Rule
@@ -13,37 +13,36 @@ import spock.lang.Specification
 
 import static com.enonic.wem.api.module.ModuleFileEntry.newModuleDirectory
 
-abstract class AbstractImageDescriptorServiceTest
+abstract class AbstractPartDescriptorServiceTest
     extends Specification
 {
     @Rule
     def TemporaryFolder temporaryFolder = new TemporaryFolder()
 
-    def ImageDescriptorServiceImpl service
+    def PartDescriptorServiceImpl service
 
     def setup()
     {
         def config = Mock( SystemConfig.class )
         config.getModulesDir() >> this.temporaryFolder.getRoot().toPath()
 
-        this.service = new ImageDescriptorServiceImpl()
+        this.service = new PartDescriptorServiceImpl()
         this.service.moduleService = Mock( ModuleService.class )
-        this.service.resourceService = new ResourceServiceImpl( config )
     }
 
-    def ImageDescriptorKey[] createDescriptor( final String... keys )
+    def PartDescriptorKey[] createDescriptor( final String... keys )
     {
+        def resources = [];
         def descriptorKeys = [];
         for ( key in keys )
         {
-            def descriptorKey = ImageDescriptorKey.from( key )
-            def descriptorXml = "<image-component><display-name>" + descriptorKey.getName().toString() +
-                "</display-name></image-component>";
-
-            createResouce( descriptorKey.toResourceKey(), descriptorXml );
+            def descriptorKey = PartDescriptorKey.from( key )
+            def descriptorXml = "<part-component><display-name>" + descriptorKey.getName().toString() + "</display-name></part-component>";
+            def resource = Resource.newResource().name( "part.xml" ).stringValue( descriptorXml ).build();
+            resources.add( resource );
             descriptorKeys.add( descriptorKey );
         }
-
+        this.service.moduleService.getResource( _ ) >>> resources;
         return descriptorKeys;
     }
 
@@ -56,9 +55,9 @@ abstract class AbstractImageDescriptorServiceTest
 
     def Module createModule( final String moduleKey )
     {
-        def descriptorName = ModuleKey.from( moduleKey ).getName().toString() + "-image-descr";
+        def descriptorName = ModuleKey.from( moduleKey ).getName().toString() + "-part-descr";
         final ModuleFileEntry componentDir = newModuleDirectory( "component" ).
-            addEntry( newModuleDirectory( descriptorName ).addFile( "image.xml", ByteSource.wrap( "xml".getBytes() ) ) ).
+            addEntry( newModuleDirectory( descriptorName ).addFile( "part.xml", ByteSource.wrap( "xml".getBytes() ) ) ).
             build();
         def module = Module.newModule().
             moduleKey( ModuleKey.from( moduleKey ) ).

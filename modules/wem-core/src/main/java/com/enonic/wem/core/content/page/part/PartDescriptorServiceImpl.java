@@ -25,7 +25,6 @@ public final class PartDescriptorServiceImpl
 
     public PartDescriptors getByModules( final ModuleKeys moduleKeys )
     {
-        return new GetPartDescriptorsByModulesCommand().moduleService( this.moduleService ).partDescriptorService(
-            this.partDescriptorService ).moduleKeys( moduleKeys ).execute();
+        return new GetPartDescriptorsByModulesCommand().moduleService( this.moduleService ).moduleKeys( moduleKeys ).execute();
     }
 }

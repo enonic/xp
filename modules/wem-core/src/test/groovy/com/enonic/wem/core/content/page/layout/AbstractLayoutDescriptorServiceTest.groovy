@@ -30,7 +30,7 @@ abstract class AbstractLayoutDescriptorServiceTest
         this.service.moduleService = Mock( ModuleService.class )
     }
 
-    def LayoutDescriptorKey[] createLayoutDescriptor( final String... keys )
+    def LayoutDescriptorKey[] createDescriptor( final String... keys )
     {
         def resources = [];
         def descriptorKeys = [];

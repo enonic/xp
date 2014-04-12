@@ -11,7 +11,7 @@ class ImageDescriptorServiceImpl_getImageDescriptorsByModuleTest
     {
         given:
         def modules = createModules( "foomodule-1.0.0", "barmodules-1.0.0" );
-        createImageDescriptor( "foomodule-1.0.0:foomodule-image-descr" );
+        createDescriptor( "foomodule-1.0.0:foomodule-image-descr" );
         def mod = Modules.from( modules.getModule( ModuleKey.from( "foomodule-1.0.0" ) ) )
         this.service.moduleService.getModules( ModuleKeys.from( "foomodule-1.0.0" ) ) >> mod;
 

@@ -6,7 +6,7 @@ class LayoutDescriptorServiceImpl_getByKeyTest
     def "get layout descriptor"()
     {
         given:
-        def key = createLayoutDescriptor( "foomodule-1.0.0:layout-descr" ).first();
+        def key = createDescriptor( "foomodule-1.0.0:layout-descr" ).first();
 
         when:
         def result = this.service.getByKey( key );

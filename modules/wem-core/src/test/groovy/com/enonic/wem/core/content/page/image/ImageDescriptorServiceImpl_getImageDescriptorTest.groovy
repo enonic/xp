@@ -6,7 +6,7 @@ class ImageDescriptorServiceImpl_getImageDescriptorTest
     def "get image descriptor"()
     {
         given:
-        def key = createImageDescriptor( "foomodule-1.0.0:image-descr" ).first();
+        def key = createDescriptor( "foomodule-1.0.0:image-descr" ).first();
 
         when:
         def result = this.service.getImageDescriptor( key );
