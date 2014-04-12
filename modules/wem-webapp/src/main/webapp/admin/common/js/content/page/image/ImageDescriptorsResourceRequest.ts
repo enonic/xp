@@ -13,15 +13,9 @@ module api.content.page.image {
 
         sendAndParse(): Q.Promise<ImageDescriptor[]> {
 
-            var deferred = Q.defer<ImageDescriptor[]>();
-
-            this.send().then((response: api.rest.JsonResponse<ImageDescriptorsJson>) => {
-                deferred.resolve(this.fromJsonToImageDescriptors(response.getResult()));
-            }).catch((response: api.rest.RequestError) => {
-                deferred.reject(null);
-            }).done();
-
-            return deferred.promise;
+            return this.send().then((response: api.rest.JsonResponse<ImageDescriptorsJson>) => {
+                return this.fromJsonToImageDescriptors(response.getResult());
+            });
         }
     }
 }

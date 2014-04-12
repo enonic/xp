@@ -43,15 +43,9 @@ module api.schema.mixin {
 
         sendAndParse(): Q.Promise<Mixin> {
 
-            var deferred = Q.defer<Mixin>();
-
-            this.send().then((response: api.rest.JsonResponse<api.schema.mixin.json.MixinJson>) => {
-                deferred.resolve(this.fromJsonToMixin(response.getResult()));
-            }).catch((response: api.rest.RequestError) => {
-                    deferred.reject(null);
-                }).done();
-
-            return deferred.promise;
+            return this.send().then((response: api.rest.JsonResponse<api.schema.mixin.json.MixinJson>) => {
+                return this.fromJsonToMixin(response.getResult());
+            });
         }
 
     }

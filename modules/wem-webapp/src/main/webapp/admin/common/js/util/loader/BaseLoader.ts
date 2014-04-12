@@ -25,13 +25,7 @@ module api.util.loader {
         }
 
         sendRequest(): Q.Promise<OBJECT[]> {
-            var deferred = Q.defer<OBJECT[]>();
-
-            this.request.sendAndParse().done((results: OBJECT[]) => {
-                deferred.resolve(results);
-            });
-
-            return deferred.promise;
+            return this.request.sendAndParse();
         }
 
         load(): void {

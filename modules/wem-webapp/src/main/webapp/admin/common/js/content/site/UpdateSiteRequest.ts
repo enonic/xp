@@ -40,19 +40,9 @@ module api.content.site {
 
         sendAndParse(): Q.Promise<api.content.Content> {
 
-            var deferred = Q.defer<api.content.Content>();
-
-            this.send().then((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
-                var siteContent = null;
-                if( !response.isBlank() ) {
-                    siteContent = this.fromJsonToContent(response.getResult());
-                }
-                deferred.resolve(siteContent);
-            }).catch((response: api.rest.RequestError) => {
-                    deferred.reject(null);
-                }).done();
-
-            return deferred.promise;
+            return this.send().then((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
+                return response.isBlank() ? null : this.fromJsonToContent(response.getResult());
+            });
         }
     }
 }

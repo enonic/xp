@@ -30,22 +30,9 @@ module api.schema.relationshiptype {
 
         sendAndParse(): Q.Promise<RelationshipType> {
 
-            var deferred = Q.defer<RelationshipType>();
-
-            this.send().then((response: api.rest.JsonResponse<api.schema.relationshiptype.json.RelationshipTypeJson>) => {
-                    var json = response.getJson();
-                    if ( json.result ) {
-                        deferred.resolve(this.fromJsonToReleationshipType(response.getResult()));
-                    } else if ( json.error ) {
-                        deferred.reject(new api.rest.RequestError(null, null, null, json.error.msg));
-                    } else {
-                        deferred.reject(null);
-                    }
-                }).catch((response: api.rest.RequestError) => {
-                    deferred.reject(null);
-                }).done();
-
-            return deferred.promise;
+            return this.send().then((response: api.rest.JsonResponse<api.schema.relationshiptype.json.RelationshipTypeJson>) => {
+                return this.fromJsonToReleationshipType(response.getResult());
+            });
         }
     }
 }

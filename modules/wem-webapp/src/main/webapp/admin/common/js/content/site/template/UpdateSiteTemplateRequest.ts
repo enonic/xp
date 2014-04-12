@@ -75,16 +75,9 @@ module api.content.site.template {
 
         sendAndParse(): Q.Promise<api.content.site.template.SiteTemplate> {
 
-            var deferred = Q.defer<api.content.site.template.SiteTemplate>();
-
-            this.send().
-                then((response: api.rest.JsonResponse<api.content.site.template.SiteTemplateJson>) => {
-                    deferred.resolve(this.fromJsonToSiteTemplate(response.getResult()));
-                }).catch((response: api.rest.RequestError) => {
-                    deferred.reject(null);
-                }).done();
-
-            return deferred.promise;
+            return this.send().then((response: api.rest.JsonResponse<api.content.site.template.SiteTemplateJson>) => {
+                return this.fromJsonToSiteTemplate(response.getResult());
+            });
         }
     }
 }

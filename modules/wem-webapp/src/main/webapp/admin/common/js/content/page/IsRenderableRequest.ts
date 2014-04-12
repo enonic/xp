@@ -27,15 +27,9 @@ module api.content.page {
 
         sendAndParse(): Q.Promise<boolean> {
 
-            var deferred = Q.defer<boolean>();
-
-            this.send().then((response: api.rest.JsonResponse<boolean>) => {
-                deferred.resolve(response.getResult());
-            }).catch((response: api.rest.RequestError) => {
-                deferred.reject(null);
-            }).done();
-
-            return deferred.promise;
+            return this.send().then((response: api.rest.JsonResponse<boolean>) => {
+                return response.getResult();
+            });
         }
     }
 }

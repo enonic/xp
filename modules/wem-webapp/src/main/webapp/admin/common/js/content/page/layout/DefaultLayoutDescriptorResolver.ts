@@ -6,17 +6,10 @@ module api.content.page.layout {
 
         static resolve(moduleKeys: ModuleKey[]) : Q.Promise<LayoutDescriptor> {
 
-            var d = Q.defer<LayoutDescriptor>();
-            new GetLayoutDescriptorsByModulesRequest(moduleKeys).
-                sendAndParse().done((descriptors: LayoutDescriptor[]) => {
-                    if (descriptors.length == 0) {
-                        d.resolve(null);
-                    }
-                    else {
-                        d.resolve(descriptors[0]);
-                    }
+            return new GetLayoutDescriptorsByModulesRequest(moduleKeys).
+                sendAndParse().then((descriptors: LayoutDescriptor[]) => {
+                    return descriptors[0];
                 });
-            return d.promise;
         }
     }
 }

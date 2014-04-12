@@ -13,15 +13,9 @@ module api.content.page.layout {
 
         sendAndParse(): Q.Promise<LayoutDescriptor[]> {
 
-            var deferred = Q.defer<LayoutDescriptor[]>();
-
-            this.send().then((response: api.rest.JsonResponse<LayoutDescriptorsJson>) => {
-                deferred.resolve(this.fromJsonToLayoutDescriptors(response.getResult()));
-            }).catch((response: api.rest.RequestError) => {
-                deferred.reject(null);
-            }).done();
-
-            return deferred.promise;
+            return this.send().then((response: api.rest.JsonResponse<LayoutDescriptorsJson>) => {
+                return this.fromJsonToLayoutDescriptors(response.getResult());
+            });
         }
     }
 }

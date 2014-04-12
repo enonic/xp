@@ -57,13 +57,10 @@ module api.content {
         }
 
         sendRequest(): Q.Promise<api.content.ContentSummary[]> {
-            var deferred = Q.defer<api.content.ContentSummary[]>();
-
-            this.getRequest().sendAndParse().done((queryResult: api.content.ContentQueryResult<api.content.ContentSummary,api.content.json.ContentSummaryJson>) => {
-                deferred.resolve(queryResult.getContents());
-            });
-
-            return deferred.promise;
+            return this.getRequest().sendAndParse().
+                then((queryResult: api.content.ContentQueryResult<api.content.ContentSummary,api.content.json.ContentSummaryJson>) => {
+                    return queryResult.getContents();
+                });
         }
 
         private createContentTypeNames(names: string[]): api.schema.content.ContentTypeName[] {
