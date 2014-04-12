@@ -10,8 +10,7 @@ import javax.ws.rs.core.Response;
 import com.google.common.net.MediaType;
 
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleResourceKey;
-import com.enonic.wem.api.module.ResourcePath;
+import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.portal.exception.PortalWebException;
 import com.enonic.wem.util.MediaTypes;
 
@@ -19,8 +18,6 @@ import com.enonic.wem.util.MediaTypes;
 public final class PublicResource
     extends UnderscoreResource
 {
-    protected static final ResourcePath PUBLIC_PATH = ResourcePath.from( "public" );
-
     @PathParam("mode")
     protected String mode;
 
@@ -37,8 +34,7 @@ public final class PublicResource
     public Response getResource()
     {
         final ModuleKey moduleKey = resolveModule( this.contentPath, this.moduleName );
-        final ResourcePath resourcePath = PUBLIC_PATH.resolve( resourceName );
-        final ModuleResourceKey moduleResource = new ModuleResourceKey( moduleKey, resourcePath );
+        final ResourceKey moduleResource = ResourceKey.from( moduleKey, "public/" + resourceName );
         final java.nio.file.Path resourceFileSystemPath = modulePathResolver.resolveResourcePath( moduleResource );
 
         if ( Files.isRegularFile( resourceFileSystemPath ) )

@@ -8,8 +8,7 @@ import javax.inject.Inject;
 import org.mozilla.javascript.Context;
 
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleResourceKey;
-import com.enonic.wem.api.module.ResourcePath;
+import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.core.module.ModuleResourcePathResolver;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.script.helper.ScriptHelper;
@@ -52,7 +51,7 @@ public final class ContextScriptBean
 
     public Path resolveFile( final String name )
     {
-        final ModuleResourceKey key = new ModuleResourceKey( this.module, ResourcePath.from( name ) );
+        final ResourceKey key = ResourceKey.from( this.module, name );
         final Path path = this.pathResolver.resolveResourcePath( key );
 
         if ( Files.isRegularFile( path ) )

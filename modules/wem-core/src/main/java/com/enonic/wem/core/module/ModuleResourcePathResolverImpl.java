@@ -6,8 +6,7 @@ import java.nio.file.Path;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleResourceKey;
-import com.enonic.wem.api.module.ResourcePath;
+import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.core.config.SystemConfig;
 
 public final class ModuleResourcePathResolverImpl
@@ -29,16 +28,9 @@ public final class ModuleResourcePathResolverImpl
     }
 
     @Override
-    public Path resolveResourcePath( final ModuleResourceKey moduleResource )
+    public Path resolveResourcePath( final ResourceKey key )
     {
-        final Path moduleDir = resolveModulePath( moduleResource.getModuleKey() );
-
-        final ResourcePath resourcePath = moduleResource.getPath();
-        Path fullPath = moduleDir;
-        for ( String pathEl : resourcePath )
-        {
-            fullPath = fullPath.resolve( pathEl );
-        }
-        return fullPath;
+        final Path moduleDir = resolveModulePath( key.getModule() );
+        return moduleDir.resolve( key.getPath().substring( 1 ) );
     }
 }

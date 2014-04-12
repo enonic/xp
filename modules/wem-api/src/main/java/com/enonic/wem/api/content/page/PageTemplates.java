@@ -13,7 +13,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.support.AbstractImmutableEntityList;
 
 public final class PageTemplates
@@ -21,23 +20,15 @@ public final class PageTemplates
 {
     private final ImmutableMap<PageTemplateName, PageTemplate> templatesByName;
 
-    private final ImmutableMap<ResourcePath, PageTemplate> templatesByPath;
-
     private PageTemplates( final ImmutableList<PageTemplate> list )
     {
         super( sort( list ) );
         this.templatesByName = Maps.uniqueIndex( list, new ToNameFunction() );
-        this.templatesByPath = Maps.uniqueIndex( list, new ToPathFunction() );
     }
 
     public PageTemplate getTemplate( final PageTemplateName name )
     {
         return this.templatesByName.get( name );
-    }
-
-    public PageTemplate getTemplate( final ResourcePath path )
-    {
-        return this.templatesByPath.get( path );
     }
 
     public PageTemplates filter( final PageTemplateSpec spec )
@@ -100,16 +91,6 @@ public final class PageTemplates
         public PageTemplateName apply( final PageTemplate value )
         {
             return value.getName();
-        }
-    }
-
-    private final static class ToPathFunction
-        implements Function<PageTemplate, ResourcePath>
-    {
-        @Override
-        public ResourcePath apply( final PageTemplate value )
-        {
-            return value.getPath();
         }
     }
 

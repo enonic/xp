@@ -4,17 +4,12 @@ package com.enonic.wem.api.content.page;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 public final class PageTemplate
 {
     private final PageTemplateKey key;
-
-    private final ResourcePath parentPath;
-
-    private final ResourcePath path;
 
     private final String displayName;
 
@@ -29,8 +24,6 @@ public final class PageTemplate
     private PageTemplate( final Builder builder )
     {
         this.key = resolveKey( builder );
-        this.parentPath = builder.parentPath;
-        this.path = ResourcePath.from( this.parentPath, this.key.getTemplateName().toString() );
         this.displayName = builder.displayName;
         this.descriptor = builder.descriptor;
         this.config = builder.config;
@@ -60,16 +53,6 @@ public final class PageTemplate
     public PageTemplateName getName()
     {
         return this.key.getTemplateName();
-    }
-
-    public ResourcePath getParentPath()
-    {
-        return parentPath;
-    }
-
-    public ResourcePath getPath()
-    {
-        return path;
     }
 
     public String getDisplayName()
@@ -119,8 +102,6 @@ public final class PageTemplate
 
     public static class Builder
     {
-        private ResourcePath parentPath = ResourcePath.root();
-
         private PageTemplateKey key;
 
         private PageTemplateName name;
@@ -141,7 +122,6 @@ public final class PageTemplate
 
         private Builder( final PageTemplate source )
         {
-            this.parentPath = source.parentPath;
             this.key = source.key;
             this.displayName = source.displayName;
             this.descriptor = source.descriptor;
@@ -171,12 +151,6 @@ public final class PageTemplate
         public Builder name( final String name )
         {
             this.name = PageTemplateName.from( name );
-            return this;
-        }
-
-        public Builder parentPath( final ResourcePath parentPath )
-        {
-            this.parentPath = parentPath;
             return this;
         }
 
