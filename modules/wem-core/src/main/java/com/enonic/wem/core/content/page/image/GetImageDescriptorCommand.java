@@ -3,7 +3,7 @@ package com.enonic.wem.core.content.page.image;
 import com.enonic.wem.api.content.page.image.ImageDescriptor;
 import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
 import com.enonic.wem.api.content.page.image.ImageDescriptorNotFoundException;
-import com.enonic.wem.api.resource.ResourceNotFoundException;
+import com.enonic.wem.api.resource.Resource2NotFoundException;
 
 final class GetImageDescriptorCommand
     extends AbstractGetImageDescriptorCommand<GetImageDescriptorCommand>
@@ -16,7 +16,7 @@ final class GetImageDescriptorCommand
         {
             return getImageDescriptor( this.key );
         }
-        catch ( ResourceNotFoundException e )
+        catch ( Resource2NotFoundException e )
         {
             throw new ImageDescriptorNotFoundException( this.key, e );
         }

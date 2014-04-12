@@ -3,7 +3,7 @@ package com.enonic.wem.core.content.page.part;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartDescriptorNotFoundException;
-import com.enonic.wem.api.resource.ResourceNotFoundException;
+import com.enonic.wem.api.resource.Resource2NotFoundException;
 
 final class GetPartDescriptorCommand
     extends AbstractGetPartDescriptorCommand<GetPartDescriptorCommand>
@@ -16,7 +16,7 @@ final class GetPartDescriptorCommand
         {
             return getDescriptor( this.key );
         }
-        catch ( ResourceNotFoundException e )
+        catch ( Resource2NotFoundException e )
         {
             throw new PartDescriptorNotFoundException( this.key, e );
         }

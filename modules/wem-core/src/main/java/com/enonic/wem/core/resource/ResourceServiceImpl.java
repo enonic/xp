@@ -6,7 +6,6 @@ import com.enonic.wem.api.resource.Resource2;
 import com.enonic.wem.api.resource.Resource2NotFoundException;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceKeys;
-import com.enonic.wem.api.resource.ResourceNotFoundException;
 import com.enonic.wem.api.resource.ResourceService;
 import com.enonic.wem.core.config.SystemConfig;
 
@@ -37,7 +36,7 @@ public final class ResourceServiceImpl
 
     @Override
     public Resource2 getResource( final ResourceKey key )
-        throws ResourceNotFoundException
+        throws Resource2NotFoundException
     {
         final Resource2 resource = resolve( key );
         if ( resource != null )

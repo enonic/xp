@@ -4,8 +4,8 @@ import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageDescriptorNotFoundException;
 import com.enonic.wem.api.resource.Resource2;
+import com.enonic.wem.api.resource.Resource2NotFoundException;
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.api.resource.ResourceNotFoundException;
 import com.enonic.wem.api.resource.ResourceService;
 import com.enonic.wem.xml.XmlSerializers;
 
@@ -21,7 +21,7 @@ final class GetPageDescriptorCommand
         {
             return getDescriptor( this.key );
         }
-        catch ( ResourceNotFoundException e )
+        catch ( Resource2NotFoundException e )
         {
             throw new PageDescriptorNotFoundException( this.key, e );
         }
