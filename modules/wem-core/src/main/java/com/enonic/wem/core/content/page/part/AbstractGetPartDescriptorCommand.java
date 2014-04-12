@@ -7,30 +7,27 @@ import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartDescriptors;
 import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleFileEntry;
-import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.Modules;
-import com.enonic.wem.api.module.ResourcePath;
-import com.enonic.wem.api.resource.Resource;
-import com.enonic.wem.core.content.page.DescriptorKeyToModuleResourceKey;
+import com.enonic.wem.api.resource.Resource2;
+import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.resource.ResourceKeys;
+import com.enonic.wem.api.resource.ResourceService;
 import com.enonic.wem.xml.XmlSerializers;
 
 abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescriptorCommand>
 {
-    private static final ResourcePath COMPONENT_FOLDER = ResourcePath.from( "component" );
-
-    private static final ResourcePath PART_DESCRIPTOR_XML = ResourcePath.from( "part.xml" );
-
     protected ModuleService moduleService;
+
+    protected ResourceService resourceService;
 
     protected final PartDescriptor getDescriptor( final PartDescriptorKey key )
         throws IOException
     {
-        final ModuleResourceKey moduleResourceKey = DescriptorKeyToModuleResourceKey.translate( key );
-        final Resource resource = this.moduleService.getResource( moduleResourceKey );
+        final ResourceKey resourceKey = key.toResourceKey();
+        final Resource2 resource = this.resourceService.getResource( resourceKey );
 
-        final String descriptorXml = resource.readAsString();
+        final String descriptorXml = resource.getAsString();
         final PartDescriptor.Builder builder = PartDescriptor.newPartDescriptor();
         XmlSerializers.partDescriptor().parse( descriptorXml ).to( builder );
         builder.name( key.getName() ).key( key );
@@ -42,17 +39,15 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
         throws IOException
     {
         final PartDescriptors.Builder partDescriptors = PartDescriptors.newPartDescriptors();
-        for ( Module module : modules )
+        for ( final Module module : modules )
         {
-            final ModuleFileEntry root = module.getModuleDirectoryEntry();
-            if ( root == null || !root.contains( COMPONENT_FOLDER ) )
+            final ResourceKey componentFolder = ResourceKey.from( module.getModuleKey(), "component" );
+            final ResourceKeys descriptorFolders = this.resourceService.getChildren( componentFolder );
+
+            for ( final ResourceKey descriptorFolder : descriptorFolders )
             {
-                continue;
-            }
-            final ModuleFileEntry componentFolder = root.getEntry( COMPONENT_FOLDER );
-            for ( ModuleFileEntry descriptorFolder : componentFolder )
-            {
-                if ( descriptorFolder.contains( PART_DESCRIPTOR_XML ) )
+                final ResourceKey descriptorFile = descriptorFolder.resolve( "part.xml" );
+                if ( this.resourceService.hasResource( descriptorFile ) )
                 {
                     final ComponentDescriptorName descriptorName = new ComponentDescriptorName( descriptorFolder.getName() );
                     final PartDescriptorKey key = PartDescriptorKey.from( module.getModuleKey(), descriptorName );
@@ -72,6 +67,13 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
     public final T moduleService( final ModuleService moduleService )
     {
         this.moduleService = moduleService;
+        return (T) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public final T resourceService( final ResourceService resourceService )
+    {
+        this.resourceService = resourceService;
         return (T) this;
     }
 }

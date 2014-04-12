@@ -1,7 +1,10 @@
 package com.enonic.wem.core.content.page.layout
 
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey
-import com.enonic.wem.api.module.*
+import com.enonic.wem.api.module.Module
+import com.enonic.wem.api.module.ModuleKey
+import com.enonic.wem.api.module.ModuleService
+import com.enonic.wem.api.module.Modules
 import com.enonic.wem.api.resource.ResourceKey
 import com.enonic.wem.core.config.SystemConfig
 import com.enonic.wem.core.resource.ResourceServiceImpl
@@ -10,8 +13,6 @@ import com.google.common.io.ByteSource
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
-
-import static com.enonic.wem.api.module.ModuleFileEntry.newModuleDirectory
 
 abstract class AbstractLayoutDescriptorServiceTest
     extends Specification
@@ -56,14 +57,9 @@ abstract class AbstractLayoutDescriptorServiceTest
 
     def Module createModule( final String moduleKey )
     {
-        def descriptorName = ModuleKey.from( moduleKey ).getName().toString() + "-layout-descr";
-        final ModuleFileEntry componentDir = newModuleDirectory( "component" ).
-            addEntry( newModuleDirectory( descriptorName ).addFile( "layout.xml", ByteSource.wrap( "xml".getBytes() ) ) ).
-            build();
         def module = Module.newModule().
             moduleKey( ModuleKey.from( moduleKey ) ).
             displayName( moduleKey.toUpperCase() ).
-            addFileEntry( componentDir ).
             build();
 
         this.service.moduleService.getModule( ModuleKey.from( moduleKey ) ) >> module
