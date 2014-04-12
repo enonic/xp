@@ -4,8 +4,8 @@ public interface ResourceService
 {
     public boolean hasResource( ResourceKey key );
 
-    public Resource2 getResource( ResourceKey key )
-        throws Resource2NotFoundException;
+    public Resource getResource( ResourceKey key )
+        throws ResourceNotFoundException;
 
     public ResourceKeys getChildren( ResourceKey parent );
 }

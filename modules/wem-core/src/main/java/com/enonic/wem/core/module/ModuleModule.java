@@ -5,8 +5,6 @@ import javax.inject.Singleton;
 import com.google.inject.AbstractModule;
 
 import com.enonic.wem.api.module.ModuleService;
-import com.enonic.wem.core.module.source.SourceResolver;
-import com.enonic.wem.core.module.source.SourceResolverImpl;
 
 public final class ModuleModule
     extends AbstractModule
@@ -15,6 +13,5 @@ public final class ModuleModule
     protected void configure()
     {
         bind( ModuleService.class ).to( ModuleServiceImpl.class ).in( Singleton.class );
-        bind( SourceResolver.class ).to( SourceResolverImpl.class ).in( Singleton.class );
     }
 }

@@ -7,8 +7,8 @@ import java.net.URLClassLoader;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.resource.Resource2;
-import com.enonic.wem.api.resource.Resource2NotFoundException;
+import com.enonic.wem.api.resource.Resource;
+import com.enonic.wem.api.resource.ResourceNotFoundException;
 import com.enonic.wem.api.resource.ResourceKey;
 
 import static org.junit.Assert.*;
@@ -39,7 +39,7 @@ public class ResourceServiceImpl_systemTest
         final ResourceKey key = ResourceKey.from( "system-0.0.0:/a/b.txt" );
         assertTrue( this.resourceService.hasResource( key ) );
 
-        final Resource2 resource = this.resourceService.getResource( key );
+        final Resource resource = this.resourceService.getResource( key );
         assertNotNull( resource );
         assertEquals( key, resource.getKey() );
         assertEquals( 7, resource.getSize() );
@@ -60,13 +60,13 @@ public class ResourceServiceImpl_systemTest
         final ResourceKey key = ResourceKey.from( "system-0.0.0:/a" );
         assertTrue( this.resourceService.hasResource( key ) );
 
-        final Resource2 resource = this.resourceService.getResource( key );
+        final Resource resource = this.resourceService.getResource( key );
         assertNotNull( resource );
         assertEquals( key, resource.getKey() );
         assertTrue( resource.getTimestamp() > 0 );
     }
 
-    @Test(expected = Resource2NotFoundException.class)
+    @Test(expected = ResourceNotFoundException.class)
     public void testGetResource_notFound()
     {
         final ResourceKey key = ResourceKey.from( "system-0.0.0:/not/exists.txt" );

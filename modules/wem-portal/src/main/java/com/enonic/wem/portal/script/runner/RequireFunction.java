@@ -15,8 +15,7 @@ import org.mozilla.javascript.TopLevel;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleResourceKey;
-import com.enonic.wem.api.module.ResourcePath;
+import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.portal.script.compiler.ScriptCompiler;
 import com.enonic.wem.portal.script.loader.ScriptLoader;
 import com.enonic.wem.portal.script.loader.ScriptSource;
@@ -104,7 +103,7 @@ final class RequireFunction
         }
 
         final ModuleKey currentModule = this.mainSource.getModule();
-        final ModuleResourceKey key = new ModuleResourceKey( currentModule, ResourcePath.from( name ) );
+        final ResourceKey key = ResourceKey.from( currentModule, name );
 
         final ScriptSource source = this.scriptLoader.load( key );
         if ( source != null )

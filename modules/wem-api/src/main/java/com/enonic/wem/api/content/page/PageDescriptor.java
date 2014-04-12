@@ -5,13 +5,10 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.page.region.RegionDescriptors;
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.module.ModuleResourceKey;
-import com.enonic.wem.api.module.ResourcePath;
+import com.enonic.wem.api.resource.ResourceKey;
 
 public final class PageDescriptor
 {
-    private static final ResourcePath PAGE_FOLDER = ResourcePath.from( "page" );
-
     private final PageDescriptorKey key;
 
     private final String displayName;
@@ -41,10 +38,9 @@ public final class PageDescriptor
         return this.key.getName();
     }
 
-    public ModuleResourceKey getModuleResourceKey()
+    public ResourceKey getResourceKey()
     {
-        final ResourcePath path = PAGE_FOLDER.resolve( key.getName().toString() );
-        return new ModuleResourceKey( key.getModuleKey(), path );
+        return ResourceKey.from( key.getModuleKey(), "page/" + key.getName().toString() );
     }
 
     public String getDisplayName()

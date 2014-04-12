@@ -3,13 +3,10 @@ package com.enonic.wem.api.content.page;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.module.ModuleResourceKey;
-import com.enonic.wem.api.module.ResourcePath;
+import com.enonic.wem.api.resource.ResourceKey;
 
 public abstract class Descriptor<KEY extends DescriptorKey>
 {
-    private static final ResourcePath COMPONENT_FOLDER = ResourcePath.from( "component" );
-
     private final KEY key;
 
     private final ComponentDescriptorName name;
@@ -50,10 +47,9 @@ public abstract class Descriptor<KEY extends DescriptorKey>
         return config;
     }
 
-    public ModuleResourceKey getComponentPath()
+    public ResourceKey getComponentPath()
     {
-        final ResourcePath path = COMPONENT_FOLDER.resolve( key.getName().toString() );
-        return new ModuleResourceKey( key.getModuleKey(), path );
+        return ResourceKey.from( key.getModuleKey(), "component/" + key.getName().toString() );
     }
 
     public abstract static class BaseDescriptorBuilder<T extends Descriptor.BaseDescriptorBuilder, KEY>

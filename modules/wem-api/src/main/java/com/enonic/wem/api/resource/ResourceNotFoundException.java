@@ -2,12 +2,12 @@ package com.enonic.wem.api.resource;
 
 import com.enonic.wem.api.NotFoundException;
 
-public final class Resource2NotFoundException
+public final class ResourceNotFoundException
     extends NotFoundException
 {
     private final ResourceKey key;
 
-    public Resource2NotFoundException( final ResourceKey key )
+    public ResourceNotFoundException( final ResourceKey key )
     {
         super( "Resource [{0}] was not found", key.toString() );
         this.key = key;

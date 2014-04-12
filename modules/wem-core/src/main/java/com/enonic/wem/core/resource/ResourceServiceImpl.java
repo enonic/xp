@@ -2,8 +2,8 @@ package com.enonic.wem.core.resource;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.resource.Resource2;
-import com.enonic.wem.api.resource.Resource2NotFoundException;
+import com.enonic.wem.api.resource.Resource;
+import com.enonic.wem.api.resource.ResourceNotFoundException;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceKeys;
 import com.enonic.wem.api.resource.ResourceService;
@@ -35,16 +35,16 @@ public final class ResourceServiceImpl
     }
 
     @Override
-    public Resource2 getResource( final ResourceKey key )
-        throws Resource2NotFoundException
+    public Resource getResource( final ResourceKey key )
+        throws ResourceNotFoundException
     {
-        final Resource2 resource = resolve( key );
+        final Resource resource = resolve( key );
         if ( resource != null )
         {
             return resource;
         }
 
-        throw new Resource2NotFoundException( key );
+        throw new ResourceNotFoundException( key );
     }
 
     private ResourceResolver createResolver( final ResourceKey key )
@@ -65,7 +65,7 @@ public final class ResourceServiceImpl
         return createResolver( parent ).getChildren( parent );
     }
 
-    private Resource2 resolve( final ResourceKey key )
+    private Resource resolve( final ResourceKey key )
     {
         return createResolver( key ).resolve( key );
     }

@@ -7,7 +7,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
-import com.enonic.wem.api.resource.Resource2;
+import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceKeys;
 import com.enonic.wem.core.config.SystemConfig;
@@ -18,7 +18,7 @@ final class ModuleResourceResolver
     private SystemConfig systemConfig;
 
     @Override
-    public Resource2 resolve( final ResourceKey key )
+    public Resource resolve( final ResourceKey key )
     {
         final File path = findPath( key );
         if ( !path.isFile() )
@@ -26,7 +26,7 @@ final class ModuleResourceResolver
             return null;
         }
 
-        final Resource2.Builder builder = Resource2.newResource();
+        final Resource.Builder builder = Resource.newResource();
         builder.byteSource( Files.asByteSource( path ) );
         builder.timestamp( path.lastModified() );
         builder.key( key );

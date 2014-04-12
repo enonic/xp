@@ -6,8 +6,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.resource.Resource2;
-import com.enonic.wem.api.resource.Resource2NotFoundException;
+import com.enonic.wem.api.resource.Resource;
+import com.enonic.wem.api.resource.ResourceNotFoundException;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceKeys;
 import com.enonic.wem.core.config.SystemConfig;
@@ -43,7 +43,7 @@ public class ResourceServiceImpl_moduleTest
         final ResourceKey key = ResourceKey.from( "mymodule-1.0.0:/a/b.txt" );
         assertTrue( this.resourceService.hasResource( key ) );
 
-        final Resource2 resource = this.resourceService.getResource( key );
+        final Resource resource = this.resourceService.getResource( key );
         assertNotNull( resource );
         assertEquals( key, resource.getKey() );
         assertEquals( 7, resource.getSize() );
@@ -66,7 +66,7 @@ public class ResourceServiceImpl_moduleTest
         assertTrue( keys2.contains( ResourceKey.from( "mymodule-1.0.0:/a/c" ) ) );
     }
 
-    @Test(expected = Resource2NotFoundException.class)
+    @Test(expected = ResourceNotFoundException.class)
     public void testGetResource_notFound()
     {
         final ResourceKey key1 = ResourceKey.from( "mymodule-1.0.0:/a" );

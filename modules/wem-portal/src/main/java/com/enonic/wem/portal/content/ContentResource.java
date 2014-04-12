@@ -70,7 +70,7 @@ public final class ContentResource
         context.setPortalUrlScriptBean( portalUrlScriptBean );
 
         final JsController controller = this.controllerFactory.newController();
-        controller.scriptDir( pageDescriptor.getModuleResourceKey() );
+        controller.scriptDir( pageDescriptor.getResourceKey() );
         controller.context( context );
 
         return controller.execute();

@@ -5,7 +5,7 @@ import java.net.URL;
 import com.google.common.base.Throwables;
 import com.google.common.io.Resources;
 
-import com.enonic.wem.api.resource.Resource2;
+import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceKeys;
 
@@ -17,7 +17,7 @@ final class SystemResourceResolver
     private ClassLoader classLoader;
 
     @Override
-    public Resource2 resolve( final ResourceKey key )
+    public Resource resolve( final ResourceKey key )
     {
         final String path = getPath( key );
         final URL url = this.classLoader.getResource( path );
@@ -27,7 +27,7 @@ final class SystemResourceResolver
             return null;
         }
 
-        final Resource2.Builder builder = Resource2.newResource();
+        final Resource.Builder builder = Resource.newResource();
         builder.byteSource( Resources.asByteSource( url ) );
         builder.timestamp( getTimestamp( url ) );
         builder.key( key );

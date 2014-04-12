@@ -7,7 +7,7 @@ import com.enonic.wem.api.content.page.image.ImageDescriptors;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.Modules;
-import com.enonic.wem.api.resource.Resource2;
+import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceKeys;
 import com.enonic.wem.api.resource.ResourceService;
@@ -22,7 +22,7 @@ abstract class AbstractGetImageDescriptorCommand<T extends AbstractGetImageDescr
     protected final ImageDescriptor getImageDescriptor( final ImageDescriptorKey key )
     {
         final ResourceKey resourceKey = key.toResourceKey();
-        final Resource2 resource = this.resourceService.getResource( resourceKey );
+        final Resource resource = this.resourceService.getResource( resourceKey );
 
         final String descriptorXml = resource.getAsString();
         final ImageDescriptor.Builder builder = ImageDescriptor.newImageDescriptor();

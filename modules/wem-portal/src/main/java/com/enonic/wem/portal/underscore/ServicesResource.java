@@ -12,9 +12,8 @@ import javax.ws.rs.core.Response;
 import com.sun.jersey.api.core.HttpContext;
 
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleResourceKey;
-import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.rendering.RenderingMode;
+import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsControllerFactory;
@@ -81,8 +80,7 @@ public final class ServicesResource
 
         final JsController controller = this.controllerFactory.newController();
 
-        final ResourcePath localPath = ResourcePath.from( "service/" + this.serviceName );
-        controller.scriptDir( new ModuleResourceKey( moduleKey, localPath ) );
+        controller.scriptDir( ResourceKey.from( moduleKey, "service/" + this.serviceName ) );
         controller.context( context );
 
         return controller.execute();

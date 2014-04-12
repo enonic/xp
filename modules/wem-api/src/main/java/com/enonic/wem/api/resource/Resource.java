@@ -7,7 +7,7 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
 import com.google.common.io.ByteSource;
 
-public final class Resource2
+public final class Resource
 {
     private final ResourceKey key;
 
@@ -15,7 +15,7 @@ public final class Resource2
 
     private final long timestamp;
 
-    private Resource2( final Builder builder )
+    private Resource( final Builder builder )
     {
         this.key = builder.key;
         this.byteSource = builder.byteSource;
@@ -66,7 +66,7 @@ public final class Resource2
         return new Builder();
     }
 
-    public static Builder copyOf( final Resource2 resource )
+    public static Builder copyOf( final Resource resource )
     {
         return new Builder( resource );
     }
@@ -83,7 +83,7 @@ public final class Resource2
         {
         }
 
-        private Builder( final Resource2 resource )
+        private Builder( final Resource resource )
         {
             this.key = resource.key;
             this.byteSource = resource.byteSource;
@@ -114,9 +114,9 @@ public final class Resource2
             return this;
         }
 
-        public Resource2 build()
+        public Resource build()
         {
-            return new Resource2( this );
+            return new Resource( this );
         }
     }
 }
