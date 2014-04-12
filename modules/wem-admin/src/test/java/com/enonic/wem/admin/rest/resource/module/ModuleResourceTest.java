@@ -10,23 +10,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.google.common.io.ByteSource;
-
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleFileEntry;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
-
-import static com.enonic.wem.api.module.ModuleFileEntry.newFileEntry;
-import static com.enonic.wem.api.module.ModuleFileEntry.newModuleDirectory;
 
 public class ModuleResourceTest
     extends AbstractResourceTest
@@ -75,13 +69,6 @@ public class ModuleResourceTest
 
     private Module createModule()
     {
-        final ModuleFileEntry publicDir = newModuleDirectory( "public" ).
-            addEntry( newFileEntry( "file1.txt", ByteSource.wrap( "some data".getBytes() ) ) ).
-            build();
-        final ModuleFileEntry templatesDir = newModuleDirectory( "templates" ).
-            addEntry( newFileEntry( "template1.txt", ByteSource.wrap( "some more data".getBytes() ) ) ).
-            build();
-
         final Form config = Form.newForm().
             addFormItem( Input.newInput().name( "some-name" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
@@ -103,9 +90,6 @@ public class ModuleResourceTest
             addModuleDependencies( requiredModules ).
             addContentTypeDependencies( requiredCtypes ).
             config( config ).
-            addFileEntry( publicDir ).
-            addFileEntry( templatesDir ).
-            addFileEntry( newModuleDirectory( "emptydir" ).build() ).
             build();
     }
 

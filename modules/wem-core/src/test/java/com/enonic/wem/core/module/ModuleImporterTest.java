@@ -9,21 +9,16 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.io.ByteSource;
-
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleFileEntry;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
-import static com.enonic.wem.api.module.ModuleFileEntry.newFileEntry;
-import static com.enonic.wem.api.module.ModuleFileEntry.newModuleDirectory;
 import static org.junit.Assert.*;
 
 public class ModuleImporterTest
@@ -39,15 +34,9 @@ public class ModuleImporterTest
 
     @After
     public void deleteTempDir()
+        throws Exception
     {
-        try
-        {
-            FileUtils.deleteDirectory( tempDir.toFile() );
-        }
-        catch ( IOException e )
-        {
-            e.printStackTrace();
-        }
+        FileUtils.deleteDirectory( tempDir.toFile() );
     }
 
     @Test
@@ -64,18 +53,6 @@ public class ModuleImporterTest
         assertEquals( "testmodule", importedModule.getName().toString() );
         assertEquals( "1.0.0", importedModule.getVersion().toString() );
         assertEquals( "module display name", importedModule.getDisplayName() );
-//        assertEquals("module-info", importedModule.getInfo());
-        // TODO verify properties in XML, after implementing ModuleXmlSerializer
-        assertEquals( "public", importedModule.getModuleDirectoryEntry().getEntry( "public" ).getName() );
-        assertEquals( "templates", importedModule.getModuleDirectoryEntry().getEntry( "templates" ).getName() );
-        assertTrue( importedModule.getModuleDirectoryEntry().getEntry( "public/file1.txt" ).isFile() );
-        assertTrue( importedModule.getModuleDirectoryEntry().getEntry( "templates/template1.txt" ).isFile() );
-
-        assertArrayEquals( "some more data".getBytes(), importedModule.getModuleDirectoryEntry().getEntry(
-            "templates/template1.txt" ).getResource().getByteSource().read() );
-        assertArrayEquals( "some data".getBytes(),
-                           importedModule.getModuleDirectoryEntry().getEntry( "public/file1.txt" ).getResource().getByteSource().read() );
-
     }
 
     @Test
@@ -91,28 +68,10 @@ public class ModuleImporterTest
         assertEquals( "testmodule", importedModule.getName().toString() );
         assertEquals( "1.0.0", importedModule.getVersion().toString() );
         assertEquals( "module display name", importedModule.getDisplayName() );
-//        assertEquals("module-info", importedModule.getInfo());
-        // TODO verify properties in XML, after implementing ModuleXmlSerializer
-        assertEquals( "public", importedModule.getModuleDirectoryEntry().getEntry( "public" ).getName() );
-        assertEquals( "templates", importedModule.getModuleDirectoryEntry().getEntry( "templates" ).getName() );
-        assertTrue( importedModule.getModuleDirectoryEntry().getEntry( "public/file1.txt" ).isFile() );
-        assertTrue( importedModule.getModuleDirectoryEntry().getEntry( "templates/template1.txt" ).isFile() );
-
-        assertArrayEquals( "some more data".getBytes(), importedModule.getModuleDirectoryEntry().getEntry(
-            "templates/template1.txt" ).getResource().getByteSource().read() );
-        assertArrayEquals( "some data".getBytes(),
-                           importedModule.getModuleDirectoryEntry().getEntry( "public/file1.txt" ).getResource().getByteSource().read() );
     }
 
     private Module createModule()
     {
-        final ModuleFileEntry publicDir = newModuleDirectory( "public" ).
-            addEntry( newFileEntry( "file1.txt", ByteSource.wrap( "some data".getBytes() ) ) ).
-            build();
-        final ModuleFileEntry templatesDir = newModuleDirectory( "templates" ).
-            addEntry( newFileEntry( "template1.txt", ByteSource.wrap( "some more data".getBytes() ) ) ).
-            build();
-
         final Form config = Form.newForm().
             addFormItem( Input.newInput().name( "some-name" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
@@ -134,9 +93,6 @@ public class ModuleImporterTest
             addModuleDependencies( requiredModules ).
             addContentTypeDependencies( requiredCtypes ).
             config( config ).
-            addFileEntry( publicDir ).
-            addFileEntry( templatesDir ).
-            addFileEntry( newModuleDirectory( "emptydir" ).build() ).
             build();
         return module;
     }

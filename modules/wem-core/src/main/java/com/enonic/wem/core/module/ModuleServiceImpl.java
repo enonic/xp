@@ -6,11 +6,8 @@ import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleNotFoundException;
-import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.Modules;
-import com.enonic.wem.api.resource.Resource;
-import com.enonic.wem.api.resource.ResourceNotFoundException;
 import com.enonic.wem.core.config.SystemConfig;
 
 public final class ModuleServiceImpl
@@ -52,12 +49,5 @@ public final class ModuleServiceImpl
     public Modules getAllModules()
     {
         return new GetAllModulesCommand().moduleExporter( this.moduleExporter ).systemConfig( this.systemConfig ).execute();
-    }
-
-    @Override
-    public Resource getResource( final ModuleResourceKey key )
-        throws ModuleNotFoundException, ResourceNotFoundException
-    {
-        return new GetModuleResourceCommand().key( key ).moduleResourcePathResolver( this.moduleResourcePathResolver ).execute();
     }
 }

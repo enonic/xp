@@ -31,8 +31,6 @@ public final class Module
 
     private final Form config;
 
-    private final ModuleFileEntry moduleDirectoryEntry;
-
     private final ModuleVersion minSystemVersion;
 
     private final ModuleVersion maxSystemVersion;
@@ -44,7 +42,6 @@ public final class Module
     private Module( final Module.Builder builder )
     {
         Preconditions.checkNotNull( builder.moduleKey, "moduleKey must be specified" );
-        builder.moduleDirectoryEntry.name( builder.moduleKey.toString() );
 
         this.moduleKey = builder.moduleKey;
         this.displayName = builder.displayName;
@@ -57,7 +54,6 @@ public final class Module
         this.moduleDependencies = ModuleKeys.from( builder.moduleDependencies );
         this.contentTypeDependencies = ContentTypeNames.from( builder.contentTypeDependencies );
         this.config = builder.config == null ? null : builder.config.copy();
-        this.moduleDirectoryEntry = builder.moduleDirectoryEntry.build();
     }
 
     public ModuleKey getKey()
@@ -130,11 +126,6 @@ public final class Module
         return contentTypeDependencies;
     }
 
-    public ModuleFileEntry getModuleDirectoryEntry()
-    {
-        return moduleDirectoryEntry;
-    }
-
     @Override
     public String toString()
     {
@@ -150,7 +141,6 @@ public final class Module
             add( "maxSystemVersion", maxSystemVersion ).
             add( "moduleDependencies", moduleDependencies ).
             add( "contentTypeDependencies", contentTypeDependencies ).
-            add( "directoryEntry", moduleDirectoryEntry ).
             omitNullValues().
             toString();
     }
@@ -189,11 +179,8 @@ public final class Module
 
         private Form config;
 
-        private final ModuleFileEntry.Builder moduleDirectoryEntry;
-
         private Builder()
         {
-            this.moduleDirectoryEntry = ModuleFileEntry.newModuleDirectory( "" );
         }
 
         private Builder( final Module source )
@@ -209,7 +196,6 @@ public final class Module
             this.moduleDependencies.addAll( source.moduleDependencies.getList() );
             this.contentTypeDependencies.addAll( source.contentTypeDependencies.getSet() );
             this.config = source.config;
-            this.moduleDirectoryEntry = ModuleFileEntry.copyOf( source.moduleDirectoryEntry );
         }
 
         public Builder moduleKey( final ModuleKey moduleKey )
@@ -290,21 +276,9 @@ public final class Module
             return this;
         }
 
-        public ModuleFileEntry.Builder getModuleDirectoryEntry()
-        {
-            return this.moduleDirectoryEntry;
-        }
-
-        public Builder addFileEntry( final ModuleFileEntry resourcesRoot )
-        {
-            this.moduleDirectoryEntry.addEntry( resourcesRoot );
-            return this;
-        }
-
         public Module build()
         {
             return new Module( this );
         }
     }
-
 }

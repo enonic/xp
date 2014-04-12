@@ -1,10 +1,7 @@
 package com.enonic.wem.api.resource;
 
-import java.io.IOException;
-
 import com.google.common.base.Charsets;
 import com.google.common.base.Objects;
-import com.google.common.base.Throwables;
 import com.google.common.io.ByteSource;
 
 public final class Resource
@@ -38,18 +35,6 @@ public final class Resource
     public ByteSource getByteSource()
     {
         return byteSource;
-    }
-
-    public String readAsString()
-    {
-        try
-        {
-            return this.byteSource.asCharSource( Charsets.UTF_8 ).read();
-        }
-        catch ( final IOException e )
-        {
-            throw Throwables.propagate( e );
-        }
     }
 
     @Override
