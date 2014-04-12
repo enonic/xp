@@ -205,22 +205,20 @@ module app.wizard {
 
         layoutPersistedItem(persistedContent: Content): Q.Promise<void> {
 
-            var deferred = Q.defer<void>();
-
             this.formIcon.setSrc(persistedContent.getIconUrl());
             var contentData: api.content.ContentData = persistedContent.getContentData();
 
             new IsRenderableRequest(persistedContent.getContentId()).sendAndParse().
-                then((renderable: boolean) => {
+                then((renderable: boolean):void => {
                     this.showLiveEditAction.setVisible(renderable);
                     this.showLiveEditAction.setEnabled(renderable);
                     this.previewAction.setVisible(renderable);
                     this.contextWindowToggler.setVisible(renderable);
                 }).catch((reason) => {
-                    deferred.reject(reason);
+                    api.notify.Message.newWarning(reason.toString());
                 }).done();
 
-            new api.content.attachment.GetAttachmentsRequest(persistedContent.getContentId()).
+            return new api.content.attachment.GetAttachmentsRequest(persistedContent.getContentId()).
                 sendAndParse().
                 then((attachmentsArray: api.content.attachment.Attachment[]) => {
 
@@ -239,28 +237,16 @@ module app.wizard {
                     // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
                     this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
 
-                    this.doRenderExistingSite(persistedContent, formContext)
+                    return this.doRenderExistingSite(persistedContent, formContext)
                         .then(() => {
 
                             if (this.liveFormPanel) {
-                                this.doRenderExistingPage(persistedContent, this.siteContent, formContext).
-                                    then(() => {
-
-                                        deferred.resolve(null);
-                                    });
+                                return this.doRenderExistingPage(persistedContent, this.siteContent, formContext);
                             }
-                            else {
-                                deferred.resolve(null);
-                            }
-                        }).catch((reason) => {
-                            deferred.reject(reason);
-                        }).done();
 
-                }).catch((reason) => {
-                    deferred.reject(reason);
-                }).done();
+                        });
 
-            return deferred.promise;
+                });
         }
 
         postRenderExisting(existing: Content): Q.Promise<void> {
@@ -276,85 +262,47 @@ module app.wizard {
 
         private doRenderExistingSite(content: Content, formContext: api.form.FormContext): Q.Promise<void> {
 
-            var deferred = Q.defer<void>();
-
             if (this.siteWizardStepForm != null && content.getSite()) {
-                this.siteWizardStepForm.renderExisting(formContext, content.getSite(), this.contentType).
-                    done(() => {
-                        deferred.resolve(null);
-                    });
+                return this.siteWizardStepForm.renderExisting(formContext, content.getSite(), this.contentType);
             }
             else {
+                var deferred = Q.defer<void>();
                 deferred.resolve(null);
+                return deferred.promise;
             }
-
-            return deferred.promise;
         }
 
         private doRenderExistingPage(content: Content, siteContent: Content, formContext: api.form.FormContext): Q.Promise<void> {
 
-            var deferred = Q.defer<void>();
-
-            this.layout(content, siteContent).
-                done(() => {
-                    deferred.resolve(null);
-                });
-
-
-            return deferred.promise;
+            return this.layout(content, siteContent);
         }
 
         private layout(content: Content, siteContent: Content): Q.Promise<void> {
-
-            var deferred = Q.defer<void>();
 
             var page: Page = content.getPage();
 
             if (page != null && page.getTemplate() != null) {
 
-                new GetPageTemplateByKeyRequest(page.getTemplate()).
+                return new GetPageTemplateByKeyRequest(page.getTemplate()).
                     setSiteTemplateKey(this.siteTemplate.getKey()).
-                    sendAndParse().done((pageTemplate: PageTemplate) => {
+                    sendAndParse().
+                    then((pageTemplate: PageTemplate) => {
 
-                        this.liveFormPanel.setPage(content, pageTemplate)
-                            .then(() => {
-                                deferred.resolve(null);
-                            }).catch((reason) => {
-                                deferred.reject(reason);
-                            }).done();
-                        ;
+                        return this.liveFormPanel.setPage(content, pageTemplate);
+
                     });
             }
             else {
-                this.liveFormPanel.setPage(content, null).
-                    then(() => {
-                        deferred.resolve(null);
-                    }).catch((reason) => {
-                        deferred.reject(reason);
-                    }).done();
-                ;
+                return this.liveFormPanel.setPage(content, null);
             }
-
-            return deferred.promise;
         }
 
         persistNewItem(): Q.Promise<Content> {
 
-            var deferred = Q.defer<Content>();
-
-            new PersistNewContentRoutine(this).
+            return new PersistNewContentRoutine(this).
                 setCreateContentRequestProducer(this.produceCreateContentRequest).
                 setCreateSiteRequestProducer(this.produceCreateSiteRequest).
-                execute().
-                then((content: Content) => {
-
-                    deferred.resolve(content);
-
-                }).catch((reason) => {
-                    deferred.reject(reason);
-                }).done();
-
-            return deferred.promise;
+                execute();
         }
 
         postPersistNewItem(persistedContent: Content): Q.Promise<void> {
@@ -439,10 +387,7 @@ module app.wizard {
 
         updatePersistedItem(): Q.Promise<Content> {
 
-            var deferred = Q.defer<Content>();
-
-
-            new UpdatePersistedContentRoutine(this).
+            return new UpdatePersistedContentRoutine(this).
                 setUpdateContentRequestProducer(this.produceUpdateContentRequest).
                 setUpdateSiteRequestProducer(this.produceUpdateSiteRequest).
                 setPageCUDRequestProducer(this.producePageCUDRequest).
@@ -452,12 +397,8 @@ module app.wizard {
                     new api.content.ContentUpdatedEvent(content).fire();
                     api.notify.showFeedback('Content was updated!');
 
-                    deferred.resolve(content);
-                }).catch((reason) => {
-                    deferred.reject(reason);
-                }).done();
-
-            return deferred.promise;
+                    return content;
+                });
         }
 
         private produceUpdateContentRequest(content: Content): api.content.UpdateContentRequest {
@@ -550,10 +491,7 @@ module app.wizard {
         showLiveEdit() {
 
             super.showPanel(this.liveFormPanel);
-            this.liveFormPanel.loadPageIfNotLoaded().
-                done(() => {
-
-                });
+            this.liveFormPanel.loadPageIfNotLoaded().done();
         }
 
         showWizard() {

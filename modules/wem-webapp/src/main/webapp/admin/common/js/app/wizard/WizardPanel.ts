@@ -221,7 +221,6 @@ module api.app.wizard {
         }
 
         renderNew(): Q.Promise<void> {
-
             var deferred = Q.defer<void>();
             this.renderingNew = true;
             this.actions.enableActionsForNew();
@@ -238,20 +237,11 @@ module api.app.wizard {
 
         private setPersistedItem(persistedItem: T): Q.Promise<void> {
 
-            var deferred = Q.defer<void>();
-
             this.renderingNew = false;
             this.persistedItem = persistedItem;
             this.actions.enableActionsForExisting(persistedItem);
 
-            this.layoutPersistedItem(persistedItem).
-                then(() => {
-                    deferred.resolve(null)
-                }).catch((reason) => {
-                    deferred.reject(reason);
-                }).done();
-
-            return deferred.promise;
+            return this.layoutPersistedItem(persistedItem);
         }
 
         layoutPersistedItem(persistedItem: T): Q.Promise<void> {
@@ -264,7 +254,6 @@ module api.app.wizard {
         postRenderExisting(existing: T): Q.Promise<void> {
             // To be overridden by inheritors - if extra work is needed at end of setPersistedItem
             var deferred = Q.defer<void>();
-
             deferred.resolve(null);
             return deferred.promise;
         }
@@ -290,45 +279,31 @@ module api.app.wizard {
 
         saveChanges(): Q.Promise<T> {
 
-            var deferred = Q.defer<T>();
-
             if (this.isItemPersisted()) {
                 this.new = false;
-                this.updatePersistedItem().
+                return this.updatePersistedItem().
                     then((persisted: T) => {
-                        this.setPersistedItem(persisted).
-                            then(() => {
 
-                                deferred.resolve(persisted);
-                            }).catch((reason) => {
-                                deferred.reject(reason);
-                            }).done();
+                        this.isChanged = false;
+                        return this.setPersistedItem(persisted).
+                            then(() => persisted);
 
-                    }).catch((reason) => {
-                        deferred.reject(reason);
-                    }).done();
+                    });
             }
             else {
-                this.persistNewItem().
+                return this.persistNewItem().
                     then((persistedItem: T)=> {
 
-                        this.postPersistNewItem(persistedItem).
+                        this.isChanged = false;
+                        return this.postPersistNewItem(persistedItem).
                             then(()=> {
+
                                 return this.setPersistedItem(persistedItem);
-                            }).then(() => {
-                                deferred.resolve(persistedItem);
-                            }).catch((reason) => {
-                                deferred.reject(reason);
-                            }).done();
 
-                    }).catch((reason) => {
-                        deferred.reject(reason);
-                    }).done();
+                            }).then(() => persistedItem);
+
+                    });
             }
-
-            this.isChanged = false;
-
-            return deferred.promise;
         }
 
         /*
@@ -341,7 +316,6 @@ module api.app.wizard {
         postPersistNewItem(persistedItem: T): Q.Promise<void> {
             // To be overridden by inheritors - if extra work is needed at end of persistNewItem
             var deferred = Q.defer<void>();
-
             deferred.resolve(null);
             return deferred.promise;
         }

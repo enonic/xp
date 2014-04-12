@@ -56,32 +56,25 @@ module app.wizard {
 
         layoutPersistedItem(persistedContentType: api.schema.content.ContentType): Q.Promise<void> {
 
-            var deferred = Q.defer<void>();
-
             this.contentTypeWizardHeader.setName(persistedContentType.getName());
             this.formIcon.setSrc(persistedContentType.getIconUrl());
 
-            new api.schema.content.GetContentTypeConfigByNameRequest(persistedContentType.getContentTypeName()).send().
-                done((response: api.rest.JsonResponse <api.schema.content.GetContentTypeConfigResult>) => {
+            return new api.schema.content.GetContentTypeConfigByNameRequest(persistedContentType.getContentTypeName()).send().
+                then((response: api.rest.JsonResponse <api.schema.content.GetContentTypeConfigResult>):void => {
                     this.contentTypeForm.setFormData({"xml": response.getResult().contentTypeXml});
                     this.persistedConfig = response.getResult().contentTypeXml || "";
-                    deferred.resolve(null);
                 });
-
-            return deferred.promise;
         }
 
         persistNewItem(): Q.Promise<api.schema.content.ContentType> {
-
-            var deferred = Q.defer<api.schema.content.ContentType>();
 
             var formData = this.contentTypeForm.getFormData();
             var createContentTypeRequest = new api.schema.content.CreateContentTypeRequest(this.contentTypeWizardHeader.getName(),
                 formData.xml,
                 this.contentTypeIcon);
-            createContentTypeRequest.
+            return createContentTypeRequest.
                 sendAndParse().
-                done((contentType: api.schema.content.ContentType) => {
+                then((contentType: api.schema.content.ContentType) => {
 
                     this.getTabId().changeToEditMode(contentType.getKey());
                     new app.wizard.ContentTypeCreatedEvent().fire();
@@ -89,16 +82,12 @@ module app.wizard {
 
                     new api.schema.SchemaCreatedEvent(contentType).fire();
 
-                    deferred.resolve(contentType);
+                    return contentType;
 
                 });
-
-            return deferred.promise;
         }
 
         updatePersistedItem(): Q.Promise<api.schema.content.ContentType> {
-
-            var deferred = Q.defer<api.schema.content.ContentType>();
 
             var formData = this.contentTypeForm.getFormData();
             var newName = new api.schema.content.ContentTypeName(this.contentTypeWizardHeader.getName());
@@ -107,7 +96,7 @@ module app.wizard {
                 formData.xml,
                 this.contentTypeIcon);
 
-            updateContentTypeRequest.
+            return updateContentTypeRequest.
                 sendAndParse().
                 then((contentType: api.schema.content.ContentType) => {
 
@@ -116,12 +105,9 @@ module app.wizard {
 
                     new api.schema.SchemaUpdatedEvent(contentType).fire();
 
-                    deferred.resolve(contentType);
-                }).catch((reason) => {
-                    deferred.reject(reason);
-                }).done();
+                    return contentType;
 
-            return deferred.promise;
+                });
         }
 
         hasUnsavedChanges(): boolean {

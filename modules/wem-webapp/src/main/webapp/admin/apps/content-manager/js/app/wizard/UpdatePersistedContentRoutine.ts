@@ -46,126 +46,90 @@ module app.wizard {
 
         doExecuteNext(context: UpdatePersistedContentRoutineContext): Q.Promise<api.content.Content> {
 
-            var deferred = Q.defer<api.content.Content>();
-
             if (!this.doneHandledContent) {
 
-                this.doHandleUpdateContent(context).
+                return this.doHandleUpdateContent(context).
                     then(() => {
 
                         this.doneHandledContent = true;
+                        return this.doExecuteNext(context);
 
-                        this.doExecuteNext(context).
-                            done((contentFromNext: api.content.Content) => {
-                                deferred.resolve(contentFromNext);
-                            });
-                    }).catch((reason) => {
-                        deferred.reject(reason);
-                    }).done();
+                    });
             }
             else if (!this.doneHandledSite) {
 
-                this.doHandleUpdateSite(context).
+                return this.doHandleUpdateSite(context).
                     then(()=> {
 
                         this.doneHandledSite = true;
+                        return this.doExecuteNext(context);
 
-                        this.doExecuteNext(context).
-                            then((contentFromNext: api.content.Content) => {
-                                deferred.resolve(contentFromNext);
-
-                            }).catch((reason) => {
-                                deferred.reject(reason);
-                            }).done();
-
-                    }).catch((reason) => {
-                        deferred.reject(reason);
-                    }).done();
+                    });
             }
             else if (!this.doneHandledPage) {
 
-                this.doHandlePage(context).
+                return this.doHandlePage(context).
                     then(() => {
 
                         this.doneHandledPage = true;
+                        return this.doExecuteNext(context);
 
-                        this.doExecuteNext(context).
-                            done((contentFromNext: api.content.Content) => {
-                                deferred.resolve(contentFromNext);
-                            });
-                    }).catch((reason) => {
-                        deferred.reject(reason);
-                    }).done();
+                    });
             }
             else {
 
-                deferred.resolve(context.content);
+                return Q(context.content);
             }
-
-            return deferred.promise;
         }
 
         private doHandleUpdateContent(context: UpdatePersistedContentRoutineContext): Q.Promise<void> {
 
-            var deferred = Q.defer<void>();
-
-            this.updateContentRequestProducer.call(this.getThisOfProducer()).
+            return this.updateContentRequestProducer.call(this.getThisOfProducer()).
                 sendAndParse().
-                then((content: api.content.Content) => {
+                then((content: api.content.Content):void => {
 
                     context.content = content;
-                    deferred.resolve(null);
-                }).catch((reason) => {
-                    deferred.reject(reason);
-                }).done();
 
-            return deferred.promise;
+                });
         }
 
         private doHandleUpdateSite(context: UpdatePersistedContentRoutineContext): Q.Promise<void> {
 
-            var deferred = Q.defer<void>();
-
             var updateSiteRequest = this.updateSiteRequestProducer.call(this.getThisOfProducer(), context.content);
             if (updateSiteRequest != null) {
-                updateSiteRequest.
+                return updateSiteRequest.
                     sendAndParse().
-                    then((content: api.content.Content) => {
+                    then((content: api.content.Content):void => {
 
                         context.content = content;
-                        deferred.resolve(null);
-                    }).catch((reason) => {
-                        deferred.reject(reason);
-                    }).done();
+
+                    });
             }
             else {
+                var deferred = Q.defer<void>();
                 deferred.resolve(null);
+                return deferred.promise;
             }
-
-            return deferred.promise;
         }
 
         private doHandlePage(context: UpdatePersistedContentRoutineContext): Q.Promise<void> {
 
-            var deferred = Q.defer<void>();
-
             var createPageRequest = this.pageCUDRequestProducer.call(this.getThisOfProducer(), context.content);
 
             if (createPageRequest != null) {
-                createPageRequest.sendAndParse().
-                    then((content: api.content.Content) => {
+                return createPageRequest
+                    .sendAndParse().
+                    then((content: api.content.Content):void => {
 
                         context.content = content;
-                        deferred.resolve(null);
-                    }).catch((reason) => {
-                        deferred.reject(reason);
-                    }).done();
+
+                    });
             }
             else {
+                var deferred = Q.defer<void>();
                 deferred.resolve(null);
+                return deferred.promise;
             }
-
-            return deferred.promise;
         }
 
     }
