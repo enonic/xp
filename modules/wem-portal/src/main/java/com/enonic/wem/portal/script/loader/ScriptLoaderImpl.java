@@ -29,7 +29,7 @@ public final class ScriptLoaderImpl
     public ScriptSource load( final ResourceKey key )
     {
         Path path = this.pathResolver.resolveModulePath( key.getModule() );
-        path = path.resolve( key.getPath() );
+        path = path.resolve( key.getPath().substring( 1 ) );
 
         if ( !Files.isRegularFile( path ) )
         {
