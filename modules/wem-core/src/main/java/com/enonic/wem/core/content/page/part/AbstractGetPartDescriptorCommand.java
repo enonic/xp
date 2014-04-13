@@ -1,5 +1,11 @@
 package com.enonic.wem.core.content.page.part;
 
+import java.util.Collection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import com.google.common.base.Function;
+
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
@@ -15,6 +21,8 @@ import com.enonic.wem.xml.XmlSerializers;
 
 abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescriptorCommand>
 {
+    private final static Pattern PATTERN = Pattern.compile( "/component/([^/]+)/part.xml" );
+
     protected ModuleService moduleService;
 
     protected ResourceService resourceService;
@@ -38,20 +46,29 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
         for ( final Module module : modules )
         {
             final ResourceKey componentFolder = ResourceKey.from( module.getModuleKey(), "component" );
-            final ResourceKeys descriptorFolders = this.resourceService.getChildren( componentFolder );
-
-            for ( final ResourceKey descriptorFolder : descriptorFolders )
+            final ResourceKeys children = this.resourceService.getChildren( componentFolder );
+            final Collection<String> componentNames = children.transform( new Function<ResourceKey, String>()
             {
-                final ResourceKey descriptorFile = descriptorFolder.resolve( "part.xml" );
-                if ( this.resourceService.hasResource( descriptorFile ) )
+                public String apply( final ResourceKey input )
                 {
-                    final ComponentDescriptorName descriptorName = new ComponentDescriptorName( descriptorFolder.getName() );
-                    final PartDescriptorKey key = PartDescriptorKey.from( module.getModuleKey(), descriptorName );
-                    final PartDescriptor partDescriptor = getDescriptor( key );
-                    if ( partDescriptor != null )
+                    final Matcher matcher = PATTERN.matcher( input.getPath() );
+                    if ( matcher.matches() )
                     {
-                        partDescriptors.add( partDescriptor );
+                        return matcher.group( 1 );
                     }
+
+                    return null;
+                }
+            } );
+
+            for ( final String componentName : componentNames )
+            {
+                final ComponentDescriptorName descriptorName = new ComponentDescriptorName( componentName );
+                final PartDescriptorKey key = PartDescriptorKey.from( module.getModuleKey(), descriptorName );
+                final PartDescriptor partDescriptor = getDescriptor( key );
+                if ( partDescriptor != null )
+                {
+                    partDescriptors.add( partDescriptor );
                 }
             }
         }

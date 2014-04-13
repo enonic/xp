@@ -37,18 +37,28 @@ final class ModuleResourceResolver
     public ResourceKeys getChildren( final ResourceKey parentKey )
     {
         final List<ResourceKey> keys = Lists.newArrayList();
-        final File path = findPath( parentKey );
+        findChildren( keys, parentKey );
+        return ResourceKeys.from( keys );
+    }
 
-        final File[] children = path.listFiles();
-        if ( children != null )
+    private void findChildren( final List<ResourceKey> keys, final ResourceKey parentKey )
+    {
+        final File file = findPath( parentKey );
+        if ( file.isFile() )
         {
-            for ( final File child : children )
-            {
-                keys.add( parentKey.resolve( child.getName() ) );
-            }
+            keys.add( parentKey );
         }
 
-        return ResourceKeys.from( keys );
+        final File[] children = file.listFiles();
+        if ( children == null )
+        {
+            return;
+        }
+
+        for ( final File child : children )
+        {
+            findChildren( keys, parentKey.resolve( child.getName() ) );
+        }
     }
 
     private File findPath( final ResourceKey key )

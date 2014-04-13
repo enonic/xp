@@ -1,5 +1,11 @@
 package com.enonic.wem.core.content.page.image;
 
+import java.util.Collection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import com.google.common.base.Function;
+
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.image.ImageDescriptor;
 import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
@@ -15,6 +21,8 @@ import com.enonic.wem.xml.XmlSerializers;
 
 abstract class AbstractGetImageDescriptorCommand<T extends AbstractGetImageDescriptorCommand>
 {
+    private final static Pattern PATTERN = Pattern.compile( "/component/([^/]+)/image.xml" );
+
     protected ModuleService moduleService;
 
     protected ResourceService resourceService;
@@ -38,20 +46,29 @@ abstract class AbstractGetImageDescriptorCommand<T extends AbstractGetImageDescr
         for ( final Module module : modules )
         {
             final ResourceKey componentFolder = ResourceKey.from( module.getModuleKey(), "component" );
-            final ResourceKeys descriptorFolders = this.resourceService.getChildren( componentFolder );
-
-            for ( final ResourceKey descriptorFolder : descriptorFolders )
+            final ResourceKeys children = this.resourceService.getChildren( componentFolder );
+            final Collection<String> componentNames = children.transform( new Function<ResourceKey, String>()
             {
-                final ResourceKey descriptorFile = descriptorFolder.resolve( "image.xml" );
-                if ( this.resourceService.hasResource( descriptorFile ) )
+                public String apply( final ResourceKey input )
                 {
-                    final ComponentDescriptorName descriptorName = new ComponentDescriptorName( descriptorFolder.getName() );
-                    final ImageDescriptorKey key = ImageDescriptorKey.from( module.getModuleKey(), descriptorName );
-                    final ImageDescriptor imageDescriptor = getImageDescriptor( key );
-                    if ( imageDescriptor != null )
+                    final Matcher matcher = PATTERN.matcher( input.getPath() );
+                    if ( matcher.matches() )
                     {
-                        imageDescriptors.add( imageDescriptor );
+                        return matcher.group( 1 );
                     }
+
+                    return null;
+                }
+            } );
+
+            for ( final String componentName : componentNames )
+            {
+                final ComponentDescriptorName descriptorName = new ComponentDescriptorName( componentName );
+                final ImageDescriptorKey key = ImageDescriptorKey.from( module.getModuleKey(), descriptorName );
+                final ImageDescriptor imageDescriptor = getImageDescriptor( key );
+                if ( imageDescriptor != null )
+                {
+                    imageDescriptors.add( imageDescriptor );
                 }
             }
         }

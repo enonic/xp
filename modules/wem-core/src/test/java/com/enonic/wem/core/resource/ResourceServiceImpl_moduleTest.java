@@ -63,7 +63,7 @@ public class ResourceServiceImpl_moduleTest
         assertNotNull( keys2 );
         assertFalse( keys2.isEmpty() );
         assertEquals( 3, keys2.getSize() );
-        assertTrue( keys2.contains( ResourceKey.from( "mymodule-1.0.0:/a/c" ) ) );
+        assertTrue( keys2.contains( ResourceKey.from( "mymodule-1.0.0:/a/c/d.txt" ) ) );
     }
 
     @Test(expected = ResourceNotFoundException.class)

@@ -3,6 +3,7 @@ package com.enonic.wem.api.resource;
 import java.util.Collection;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -15,6 +16,12 @@ public final class ResourceKeys
     private ResourceKeys( final ImmutableList<ResourceKey> list )
     {
         super( list );
+    }
+
+    public <T> Collection<T> transform( final Function<ResourceKey, T> function )
+    {
+        final Collection<T> values = Collections2.transform( this.list, function );
+        return Collections2.filter( values, Predicates.notNull() );
     }
 
     public static ResourceKeys from( final ResourceKey... keys )
