@@ -41,6 +41,7 @@ module app.launcher {
         doPoll() {
             var xhr = new XMLHttpRequest();
             xhr.open('GET', api.util.getRestUri('status'));
+            xhr.timeout = this.pollIntervalMs;
             xhr.onreadystatechange = () => {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
