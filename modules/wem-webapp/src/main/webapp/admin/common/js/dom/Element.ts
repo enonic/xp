@@ -11,6 +11,7 @@ module api.dom {
         }
 
         setTagName(name: string): ElementProperties {
+            api.util.assert(!api.util.isStringEmpty(name), 'Tag name shouldn\'t be empty');
             this.tagName = name;
             return this;
         }
@@ -146,11 +147,13 @@ module api.dom {
         }
 
         setClass(className: string): api.dom.Element {
+            api.util.assert(!api.util.isStringEmpty(className), 'Class name shouldn\'t be empty');
             this.el.setClass(className);
             return this;
         }
 
         addClass(className: string): api.dom.Element {
+            api.util.assert(!api.util.isStringEmpty(className), 'Class name shouldn\'t be empty');
             this.el.addClass(className);
             return this;
         }
@@ -169,6 +172,7 @@ module api.dom {
         }
 
         removeClass(className: string): api.dom.Element {
+            api.util.assert(!api.util.isStringEmpty(className), 'Class name shouldn\'t be empty');
             this.el.removeClass(className);
             return this;
         }
@@ -213,11 +217,13 @@ module api.dom {
         }
 
         prependChild(child: api.dom.Element) {
+            api.util.assertNotNull(child, 'Child shouldn\'t be null');
             this.el.getHTMLElement().insertBefore(child.getHTMLElement(), this.el.getHTMLElement().firstChild);
             this.insert(child, this, 0);
         }
 
         insertAfterEl(existingEl: Element) {
+            api.util.assertNotNull(existingEl, 'Existing element shouldn\'t be null');
             this.el.insertAfterEl(existingEl);
             var parent = existingEl.getParentElement();
             var index = parent.getChildren().indexOf(existingEl) + 1;
@@ -225,6 +231,7 @@ module api.dom {
         }
 
         insertBeforeEl(existingEl: Element) {
+            api.util.assertNotNull(existingEl, 'Existing element shouldn\'t be null');
             this.el.insertBeforeEl(existingEl);
             var parent = existingEl.getParentElement();
             var index = parent.getChildren().indexOf(existingEl);
@@ -232,6 +239,7 @@ module api.dom {
         }
 
         wrapWithElement(wrapperElement: Element) {
+            api.util.assertNotNull(wrapperElement, 'Wrapper element shouldn\'t be null');
             var parent = this.getParentElement();
             if (!parent) {
                 return;
@@ -246,6 +254,8 @@ module api.dom {
         }
 
         private insert(child: Element, parent: Element, index: number) {
+            api.util.assertNotNull(child, 'Child element shouldn\'t be null');
+            api.util.assertNotNull(parent, 'Parent element shouldn\'t be null');
             child.setParentElement(parent);
             parent.getChildren().splice(index, 0, child);
             if (parent.isRendered()) {
