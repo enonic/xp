@@ -481,7 +481,7 @@ module api.ui.selector.combobox {
             if (event.which == 9) { // tab
                 this.hideDropdown();
                 return;
-            } else if (event.which == 16 || event.which == 17 || event.which == 18) {  // shift or ctrl or alt
+            } else if (event.which == 16 || event.which == 17 || event.which == 18 || event.which == 91) {  // shift or ctrl or alt or super
                 return;
             }
 
