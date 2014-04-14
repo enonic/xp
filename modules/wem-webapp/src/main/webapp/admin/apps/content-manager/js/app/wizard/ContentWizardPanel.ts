@@ -112,6 +112,9 @@ module app.wizard {
                     defaultModels: params.defaultModels
                 });
 
+            }
+
+            if (this.siteWizardStepForm) {
                 this.formIcon.addClass("site");
             }
 
