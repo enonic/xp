@@ -134,6 +134,7 @@ module app.wizard {
                 livePanel: this.liveFormPanel,
                 steps: this.createSteps(params.persistedContent)
             }, () => {
+                this.addClass("content-wizard-panel");
                 callback(this);
             });
 
