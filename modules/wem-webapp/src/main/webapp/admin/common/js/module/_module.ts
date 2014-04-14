@@ -11,4 +11,5 @@
 ///<reference path='ModuleListResult.ts' />
 ///<reference path='ModuleLoader.ts' />
 ///<reference path='ModuleLoaderListener.ts' />
+///<reference path='ModuleSummaryViewer.ts' />
 ///<reference path='ModuleComboBox.ts' />

@@ -11,10 +11,6 @@ module api.ui.selector.combobox {
 
         iconUrl?: string;
 
-        rowHeight?: number;
-
-        optionFormatter?: (row: number, cell: number, value: T, columnDef: any, dataContext: Slick.SlickData) => string;
-
         optionDisplayValueViewer?: Viewer<T>;
 
         selectedOptionsView: SelectedOptionsView<T>;
@@ -100,10 +96,8 @@ module api.ui.selector.combobox {
             this.comboBoxDropdown = new ComboBoxDropdown(<ComboBoxDropdownConfig<OPTION_DISPLAY_VALUE>>{
                 maxHeight: 200,
                 width: this.input.getEl().getWidth(),
-                optionFormatter: config.optionFormatter,
                 optionDisplayValueViewer: config.optionDisplayValueViewer,
                 filter: config.filter,
-                rowHeight: config.rowHeight,
                 dataIdProperty: config.dataIdProperty,
                 multipleSelections: (this.multipleSelections && (config.maximumOccurrences != 1))
             });

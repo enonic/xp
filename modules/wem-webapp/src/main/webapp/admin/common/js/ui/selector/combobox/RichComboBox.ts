@@ -131,16 +131,9 @@ module api.ui.selector.combobox {
             return options;
         }
 
-        optionFormatter(row: number, cell: number, itemInst: OPTION_DISPLAY_VALUE, columnDef: any, dataContext: api.ui.selector.Option<OPTION_DISPLAY_VALUE>): string {
-
-            return "";
-        }
-
         createConfig(): api.ui.selector.combobox.ComboBoxConfig<OPTION_DISPLAY_VALUE> {
             return  {
-                rowHeight: 50,
                 maximumOccurrences: this.maximumOccurrences,
-                optionFormatter: this.optionFormatter,
                 selectedOptionsView: this.selectedOptionsView,
                 optionDisplayValueViewer: this.optionDisplayValueViewer,
                 hideComboBoxWhenMaxReached: true,
