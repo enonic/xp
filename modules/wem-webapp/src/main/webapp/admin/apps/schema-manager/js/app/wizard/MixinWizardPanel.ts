@@ -56,27 +56,21 @@ module app.wizard {
 
         layoutPersistedItem(persistedMixin: api.schema.mixin.Mixin): Q.Promise<void> {
 
-            var deferred = Q.defer<void>();
-
             this.mixinWizardHeader.setName(persistedMixin.getName());
             this.formIcon.setSrc(persistedMixin.getIconUrl());
 
-            new api.schema.mixin.GetMixinConfigByNameRequest(persistedMixin.getMixinName()).
+            return new api.schema.mixin.GetMixinConfigByNameRequest(persistedMixin.getMixinName()).
                 send().
-                done((response: api.rest.JsonResponse<api.schema.mixin.GetMixinConfigResult>) => {
+                then((response: api.rest.JsonResponse<api.schema.mixin.GetMixinConfigResult>):void => {
 
                     this.mixinForm.render();
                     this.mixinForm.setFormData({"xml": response.getResult().mixinXml});
                     this.persistedConfig = response.getResult().mixinXml || "";
-                    deferred.resolve(null)
-                });
 
-            return deferred.promise;
+                });
         }
 
         persistNewItem(): Q.Promise<api.schema.mixin.Mixin> {
-
-            var deferred = Q.defer<api.schema.mixin.Mixin>();
 
             var formData = this.mixinForm.getFormData();
 
@@ -85,24 +79,20 @@ module app.wizard {
                 setConfig(formData.xml).
                 setIcon(this.mixinIcon);
 
-            createRequest.
+            return createRequest.
                 sendAndParse().
-                done((mixin: api.schema.mixin.Mixin) => {
+                then((mixin: api.schema.mixin.Mixin) => {
 
                     this.getTabId().changeToEditMode(mixin.getKey());
                     api.notify.showFeedback('Mixin was created!');
 
                     new api.schema.SchemaCreatedEvent(mixin).fire();
 
-                    deferred.resolve(mixin);
+                    return mixin;
                 });
-
-            return deferred.promise;
         }
 
         updatePersistedItem(): Q.Promise<api.schema.mixin.Mixin> {
-
-            var deferred = Q.defer<api.schema.mixin.Mixin>();
 
             var formData = this.mixinForm.getFormData();
 
@@ -112,18 +102,15 @@ module app.wizard {
                 setConfig(formData.xml).
                 setIcon(this.mixinIcon);
 
-            updateRequest.
+            return updateRequest.
                 sendAndParse().
-                done((mixin: api.schema.mixin.Mixin) => {
+                then((mixin: api.schema.mixin.Mixin) => {
 
                     api.notify.showFeedback('Mixin was updated!');
-
                     new api.schema.SchemaUpdatedEvent(mixin).fire();
 
-                    deferred.resolve(mixin);
+                    return mixin;
                 });
-
-            return deferred.promise;
         }
 
         hasUnsavedChanges(): boolean {

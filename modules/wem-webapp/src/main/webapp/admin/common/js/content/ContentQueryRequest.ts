@@ -35,9 +35,7 @@ module api.content {
 
         sendAndParse(): Q.Promise<ContentQueryResult<CONTENT,CONTENT_JSON>> {
 
-            var deferred = Q.defer<ContentQueryResult<CONTENT,CONTENT_JSON>>();
-
-            this.send().
+            return this.send().
                 then((response: api.rest.JsonResponse<json.ContentQueryResultJson<CONTENT_JSON>>) => {
 
                     var responseResult: json.ContentQueryResultJson<CONTENT_JSON> = response.getResult();
@@ -46,28 +44,24 @@ module api.content {
 
                     var contentsAsJson: json.ContentIdBaseItemJson[] = responseResult.contents;
 
+                    var contentQueryResult: ContentQueryResult<CONTENT, CONTENT_JSON>;
+
                     if (this.expand == api.rest.Expand.NONE) {
 
                         var contentIdBaseItems: CONTENT[] = <any[]> this.fromJsonToContentIdBaseItemArray(contentsAsJson);
-                        var contentQueryResult = new ContentQueryResult<CONTENT,CONTENT_JSON>(contentIdBaseItems, aggregations, <CONTENT_JSON[]>contentsAsJson);
-                        deferred.resolve(contentQueryResult);
+                        contentQueryResult = new ContentQueryResult<CONTENT,CONTENT_JSON>(contentIdBaseItems, aggregations, <CONTENT_JSON[]>contentsAsJson);
                     }
                     else if (this.expand == api.rest.Expand.SUMMARY) {
                         var contentSummaries: CONTENT[] = <any[]> this.fromJsonToContentSummaryArray(<json.ContentSummaryJson[]>contentsAsJson);
-                        var contentQueryResult = new ContentQueryResult<CONTENT,CONTENT_JSON>(contentSummaries, aggregations, <CONTENT_JSON[]>contentsAsJson);
-                        deferred.resolve(contentQueryResult);
+                        contentQueryResult = new ContentQueryResult<CONTENT,CONTENT_JSON>(contentSummaries, aggregations, <CONTENT_JSON[]>contentsAsJson);
                     }
                     else {
                         var contents: CONTENT[] = <any[]>this.fromJsonToContentArray(<json.ContentJson[]>contentsAsJson);
-                        var contentQueryResult = new ContentQueryResult<CONTENT,CONTENT_JSON>(contents, aggregations, <CONTENT_JSON[]>contentsAsJson);
-                        deferred.resolve(contentQueryResult);
+                        contentQueryResult = new ContentQueryResult<CONTENT,CONTENT_JSON>(contents, aggregations, <CONTENT_JSON[]>contentsAsJson);
                     }
 
-                }).catch((response: api.rest.RequestError) => {
-                    deferred.reject(null);
-                }).done();
-
-            return deferred.promise;
+                    return contentQueryResult;
+                });
         }
 
 

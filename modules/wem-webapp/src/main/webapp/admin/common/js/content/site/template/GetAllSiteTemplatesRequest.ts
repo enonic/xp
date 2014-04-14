@@ -17,16 +17,9 @@ module api.content.site.template {
 
         sendAndParse(): Q.Promise<api.content.site.template.SiteTemplateSummary[]> {
 
-            var deferred = Q.defer<api.content.site.template.SiteTemplateSummary[]>();
-
-            this.send().
-                then((response: api.rest.JsonResponse<api.content.site.template.SiteTemplateSummaryListJson>) => {
-                deferred.resolve(this.fromJsonArrayToSiteTemplateSummaryArray(response.getResult().siteTemplates));
-            }).catch((response: api.rest.RequestError) => {
-                    deferred.reject(null);
-                }).done();
-
-            return deferred.promise;
+            return this.send().then((response: api.rest.JsonResponse<api.content.site.template.SiteTemplateSummaryListJson>) => {
+                return this.fromJsonArrayToSiteTemplateSummaryArray(response.getResult().siteTemplates);
+            });
         }
     }
 }

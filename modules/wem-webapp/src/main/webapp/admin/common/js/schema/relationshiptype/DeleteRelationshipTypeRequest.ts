@@ -34,15 +34,9 @@ module api.schema.relationshiptype {
 
         sendAndParse(): Q.Promise<api.schema.SchemaDeleteResult> {
 
-            var deferred = Q.defer<api.schema.SchemaDeleteResult>();
-
-            this.send().then((response:api.rest.JsonResponse<api.schema.SchemaDeleteJson>) => {
-                deferred.resolve(this.fromJsonToDeleteResult(response.getResult()));
-            }).catch((response:api.rest.RequestError) => {
-                deferred.reject(null);
-            }).done();
-
-            return deferred.promise;
+            return this.send().then((response:api.rest.JsonResponse<api.schema.SchemaDeleteJson>) => {
+                return this.fromJsonToDeleteResult(response.getResult());
+            });
         }
 
         fromJsonToDeleteResult(json:api.schema.SchemaDeleteJson): api.schema.SchemaDeleteResult {

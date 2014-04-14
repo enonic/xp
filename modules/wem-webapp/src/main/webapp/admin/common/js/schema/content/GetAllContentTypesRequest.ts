@@ -26,21 +26,11 @@ module api.schema.content {
 
         sendAndParse(): Q.Promise<api.schema.content.ContentTypeSummary[]> {
 
-            var deferred = Q.defer<api.schema.content.ContentTypeSummary[]>();
-
-            this.send().
-                then((response: api.rest.JsonResponse<api.schema.content.json.ContentTypeSummaryListJson>) => {
-
-                    var array:api.schema.content.ContentTypeSummary[] = [];
-                    response.getResult().contentTypes.forEach((contentTypeJson:api.schema.content.json.ContentTypeSummaryJson) => {
-                        array.push(this.fromJsonToContentTypeSummary(contentTypeJson));
-                    });
-                    deferred.resolve(array);
-                }).catch((reason: api.rest.RequestError) => {
-                    deferred.reject(reason);
-                }).done();
-
-            return deferred.promise;
+            return this.send().then((response: api.rest.JsonResponse<api.schema.content.json.ContentTypeSummaryListJson>) => {
+                return response.getResult().contentTypes.map((contentTypeJson:api.schema.content.json.ContentTypeSummaryJson) => {
+                    return this.fromJsonToContentTypeSummary(contentTypeJson);
+                });
+            });
         }
     }
 }

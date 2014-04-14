@@ -13,15 +13,9 @@ module api.content.page.part {
 
         sendAndParse(): Q.Promise<PartDescriptor[]> {
 
-            var deferred = Q.defer<PartDescriptor[]>();
-
-            this.send().then((response: api.rest.JsonResponse<PartDescriptorsJson>) => {
-                deferred.resolve(this.fromJsonToPartDescriptors(response.getResult()));
-            }).catch((response: api.rest.RequestError) => {
-                deferred.reject(null);
-            }).done();
-
-            return deferred.promise;
+            return this.send().then((response: api.rest.JsonResponse<PartDescriptorsJson>) => {
+                return this.fromJsonToPartDescriptors(response.getResult());
+            });
         }
     }
 }

@@ -18,15 +18,9 @@ module api.module {
 
         sendAndParse(): Q.Promise<api.module.ModuleSummary[]> {
 
-            var deferred = Q.defer<api.module.ModuleSummary[]>();
-
-            this.send().
-                done((response: api.rest.JsonResponse<ModuleListResult>) => {
-
-                deferred.resolve(ModuleSummary.fromJsonArray(response.getResult().modules));
+            return this.send().then((response: api.rest.JsonResponse<ModuleListResult>) => {
+                return ModuleSummary.fromJsonArray(response.getResult().modules);
             });
-
-            return deferred.promise;
         }
     }
 }

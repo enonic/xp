@@ -30,8 +30,6 @@ module app.wizard.site {
         public renderExisting(context: api.form.FormContext, site: api.content.site.Site,
                               contentType: api.schema.content.ContentType): Q.Promise<void> {
 
-            var deferred = Q.defer<void>();
-
             this.formContext = context;
             this.contentType = contentType;
 
@@ -41,27 +39,18 @@ module app.wizard.site {
                 this.moduleConfigsByKey[moduleConfigs[i].getModuleKey().toString()] = moduleConfigs[i];
             }
 
-            new api.content.site.template.GetSiteTemplateRequest(site.getTemplateKey()).
+            return new api.content.site.template.GetSiteTemplateRequest(site.getTemplateKey()).
                 sendAndParse().
                 then((siteTemplate: api.content.site.template.SiteTemplate) => {
 
                     this.templateView.setValue(siteTemplate, this.contentType);
+                    return this.loadModules(site);
 
-                    this.loadModules(site).
-                        then((modules: api.module.Module[]) => {
+                }).then((modules: api.module.Module[]):void => {
 
-                            this.layoutModules(modules);
+                    this.layoutModules(modules);
 
-                            deferred.resolve(null);
-                        }).catch((reason) => {
-                            deferred.reject(reason);
-                        }).done();
-
-                }).catch((reason) => {
-                    deferred.reject(reason);
-                }).done();
-
-            return deferred.promise;
+                });
         }
 
         public getTemplateKey(): api.content.site.template.SiteTemplateKey {
@@ -79,25 +68,19 @@ module app.wizard.site {
 
         private loadModules(site: api.content.site.Site): Q.Promise<api.module.Module[]> {
 
-            var deferred = Q.defer<api.module.Module[]>();
+            var moduleRequestPromises = site.getModuleConfigs().map((moduleConfig: api.content.site.ModuleConfig) => {
+                return new api.module.GetModuleRequest(moduleConfig.getModuleKey()).sendAndParse();
+            });
 
-            var moduleConfigs: api.content.site.ModuleConfig[] = site.getModuleConfigs();
-
-            var moduleRequestPromises: Q.Promise<api.module.Module>[] = [];
-            for (var i = 0; i < moduleConfigs.length; i++) {
-                var requestPromise: Q.Promise<api.module.Module> = new api.module.GetModuleRequest(moduleConfigs[i].getModuleKey()).sendAndParse();
-                moduleRequestPromises.push(requestPromise);
-            }
-            Q.allSettled(moduleRequestPromises).then((results: Q.PromiseState<api.module.Module>[])=> {
+            return Q.allSettled(moduleRequestPromises).then((results: Q.PromiseState<api.module.Module>[])=> {
                 var modules: api.module.Module[] = [];
                 results.forEach((result: Q.PromiseState<api.module.Module>)=> {
                     if (result.state == "fulfilled") {
                         modules.push(result.value);
                     }
                 });
-                deferred.resolve(modules);
+                return modules;
             });
-            return deferred.promise;
         }
 
         private layoutModules(modules: api.module.Module[]) {

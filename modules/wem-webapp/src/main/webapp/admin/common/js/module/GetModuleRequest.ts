@@ -22,15 +22,9 @@ module api.module {
 
         sendAndParse(): Q.Promise<api.module.Module> {
 
-            var deferred = Q.defer<api.module.Module>();
-
-            this.send().
-                done((response: api.rest.JsonResponse<api.module.json.ModuleJson>) => {
-
-                deferred.resolve(this.fromJsonToModule(response.getResult()));
+            return this.send().then((response: api.rest.JsonResponse<api.module.json.ModuleJson>) => {
+                return this.fromJsonToModule(response.getResult());
             });
-
-            return deferred.promise;
         }
     }
 }

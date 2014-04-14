@@ -26,18 +26,11 @@ module api.content.page {
 
         sendAndParse(): Q.Promise<api.content.page.PageTemplate> {
 
-            var deferred = Q.defer<api.content.page.PageTemplate>();
+            return this.send().then((response: api.rest.JsonResponse<api.content.page.PageTemplateJson>) => {
 
-            this.send().
-                then((response: api.rest.JsonResponse<api.content.page.PageTemplateJson>) => {
-
-                    deferred.resolve(this.fromJsonToPageTemplate(response.getResult()));
+                    return this.fromJsonToPageTemplate(response.getResult());
                     
-                }).catch((response: api.rest.RequestError) => {
-                    deferred.reject(null);
-                }).done();
-
-            return deferred.promise;
+                });
         }
     }
 }

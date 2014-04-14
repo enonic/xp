@@ -13,18 +13,7 @@ module api.util {
         }
 
         public doExecute(context:CONTEXT): Q.Promise<RESULT> {
-
-            var deferred = Q.defer<RESULT>();
-
-            this.doExecuteNext(context).
-                then((result: RESULT) => {
-
-                    deferred.resolve(result);
-                }).catch((reason) => {
-                    deferred.reject(reason);
-                }).done();
-
-            return deferred.promise;
+            return this.doExecuteNext(context);
         }
 
         doExecuteNext(context:CONTEXT): Q.Promise<RESULT> {

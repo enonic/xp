@@ -22,15 +22,9 @@ module api.content.page {
 
         sendAndParse(): Q.Promise<api.content.page.PageDescriptor> {
 
-            var deferred = Q.defer<api.content.page.PageDescriptor>();
-
-            this.send().then((response: api.rest.JsonResponse<api.content.page.PageDescriptorJson>) => {
-                deferred.resolve(this.fromJsonToPageDescriptor(response.getResult()));
-            }).catch((response: api.rest.RequestError) => {
-                    deferred.reject(null);
-                }).done();
-
-            return deferred.promise;
+            return this.send().then((response: api.rest.JsonResponse<api.content.page.PageDescriptorJson>) => {
+                return this.fromJsonToPageDescriptor(response.getResult());
+            });
         }
     }
 }

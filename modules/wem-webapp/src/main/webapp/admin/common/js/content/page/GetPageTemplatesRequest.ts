@@ -22,21 +22,11 @@ module api.content.page {
 
         sendAndParse(): Q.Promise<api.content.page.PageTemplateSummary[]> {
 
-            var deferred = Q.defer<api.content.page.PageTemplateSummary[]>();
-
-            this.send().
-                then((response: api.rest.JsonResponse<api.content.page.PageTemplateSummaryListJson>) => {
-                var array:api.content.page.PageTemplateSummary[] = [];
-                response.getResult().templates.forEach((templateJson:api.content.page.PageTemplateSummaryJson) => {
-                    array.push(this.fromJsonToPageTemplateSummary(templateJson));
+            return this.send().then((response: api.rest.JsonResponse<api.content.page.PageTemplateSummaryListJson>) => {
+                return response.getResult().templates.map((templateJson:api.content.page.PageTemplateSummaryJson) => {
+                    return this.fromJsonToPageTemplateSummary(templateJson);
                 });
-
-                deferred.resolve(array);
-            }).catch((response: api.rest.RequestError) => {
-                    deferred.reject(null);
-                }).done();
-
-            return deferred.promise;
+            });
         }
     }
 }

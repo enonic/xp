@@ -26,8 +26,6 @@ module app.wizard.page {
 
         static create(config: DefaultModelsFactoryConfig): Q.Promise<DefaultModels> {
 
-            var deferred = Q.defer<DefaultModels>();
-
             var defaultPageTemplatePromise = new GetDefaultPageTemplateRequest(config.siteTemplateKey, config.contentType).sendAndParse();
             var defaultImageDescriptorPromise = DefaultImageDescriptorResolver.resolve(config.modules);
             var defaultPartDescriptorPromise = DefaultPartDescriptorResolver.resolve(config.modules);
@@ -39,32 +37,18 @@ module app.wizard.page {
                 defaultPartDescriptorPromise,
                 defaultLayoutDescriptorPromise];
 
+            return Q.all(allPromises).
+                spread<DefaultModels>((pageTemplate: PageTemplate, imageDescriptor: ImageDescriptor,
+                                       partDescriptor: PartDescriptor, layoutDescriptor: LayoutDescriptor) => {
 
-            var defaultModelsConfig: DefaultModelsConfig = <DefaultModelsConfig>{};
-
-            defaultPageTemplatePromise.done((pageTemplate: PageTemplate)=> {
-                defaultModelsConfig.pageTemplate = pageTemplate;
-            });
-
-            defaultImageDescriptorPromise.done((imageDescriptor: ImageDescriptor)=> {
-                defaultModelsConfig.imageDescriptor = imageDescriptor;
-            });
-
-            defaultPartDescriptorPromise.done((partDescriptor: PartDescriptor)=> {
-                defaultModelsConfig.partDescriptor = partDescriptor;
-            });
-
-            defaultLayoutDescriptorPromise.done((layoutDescriptor: LayoutDescriptor)=> {
-                defaultModelsConfig.layoutDescriptor = layoutDescriptor;
-            });
-
-            Q.allSettled(allPromises).then((results: Q.PromiseState<any>[])=> {
-
-                var defaultModels = new DefaultModels(defaultModelsConfig);
-                deferred.resolve(defaultModels);
-            });
-
-            return deferred.promise;
+                    var defaultModelsConfig: DefaultModelsConfig = <DefaultModelsConfig>{
+                        pageTemplate: pageTemplate,
+                        imageDescriptor: imageDescriptor,
+                        partDescriptor: partDescriptor,
+                        layoutDescriptor: layoutDescriptor
+                    };
+                    return new DefaultModels(defaultModelsConfig);
+                });
         }
     }
 }

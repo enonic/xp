@@ -37,92 +37,67 @@ module app.wizard {
 
         doExecuteNext(context: PersistedNewContentRoutineContext): Q.Promise<api.content.Content> {
 
-            var deferred = Q.defer<api.content.Content>();
-
             if (!this.doneHandledContent) {
 
-                this.doHandleCreateContent(context).
+                return this.doHandleCreateContent(context).
                     then(() => {
 
                         this.doneHandledContent = true;
+                        return this.doExecuteNext(context);
 
-                        this.doExecuteNext(context).
-                            done((contentFromNext: api.content.Content) => {
-                                deferred.resolve(contentFromNext);
-                            });
-                    }).catch((reason) => {
-                        deferred.reject(reason);
-                    }).done();
+                    });
             }
             else if (!this.doneHandledSite) {
 
-                this.doHandleCreateSite(context).
+                return this.doHandleCreateSite(context).
                     then(()=> {
 
                         this.doneHandledSite = true;
+                        return this.doExecuteNext(context);
 
-                        this.doExecuteNext(context).
-                            done((contentFromNext: api.content.Content) => {
-                                deferred.resolve(contentFromNext);
-                            });
-                    }).catch((reason) => {
-                        deferred.reject(reason);
-                    }).done();
+                    });
             }
             else {
-
-                deferred.resolve(context.content);
+                return Q(context.content);
             }
-
-            return deferred.promise;
         }
 
         private doHandleCreateContent(context: PersistedNewContentRoutineContext): Q.Promise<void> {
 
-            var deferred = Q.defer<void>();
-
             if (this.createContentRequestProducer != undefined) {
 
-                this.createContentRequestProducer.call(this.getThisOfProducer()).
+                return this.createContentRequestProducer.call(this.getThisOfProducer()).
                     sendAndParse().
-                    then((content: api.content.Content) => {
+                    then((content: api.content.Content):void => {
 
                         context.content = content;
-                        deferred.resolve(null);
-                    }).catch((reason) => {
-                        deferred.reject(reason);
-                    }).done();
+
+                    });
             }
             else {
-                deferred.resolve(null);
+                var deferred = Q.defer<void>();
+                deferred.resolve(null)
+                return deferred.promise;
             }
-
-            return deferred.promise;
         }
 
         private doHandleCreateSite(context: PersistedNewContentRoutineContext): Q.Promise<void> {
 
-            var deferred = Q.defer<void>();
-
-            var createSiteRequest = null;
-
-            createSiteRequest = this.createSiteRequestProducer.call(this.getThisOfProducer(), context.content);
+            var createSiteRequest = this.createSiteRequestProducer.call(this.getThisOfProducer(), context.content);
             if (createSiteRequest != null) {
-                createSiteRequest.
+                return createSiteRequest.
                     sendAndParse().
-                    then((content: api.content.Content) => {
+                    then((content: api.content.Content):void => {
 
                         context.content = content;
-                        deferred.resolve(null);
-                    }).catch((reason) => {
-                        deferred.reject(reason);
-                    }).done();
+
+                    });
             }
             else {
-                deferred.resolve(null);
+                var deferred = Q.defer<void>();
+                deferred.resolve(null)
+                return deferred.promise;
             }
-
-            return deferred.promise;
         }
     }
 }

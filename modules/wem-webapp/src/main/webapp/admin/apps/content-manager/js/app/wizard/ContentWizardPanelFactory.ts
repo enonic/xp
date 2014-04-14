@@ -67,10 +67,7 @@ module app.wizard {
 
             this.creatingForNew = true;
 
-            var deferred = Q.defer<ContentWizardPanel>();
-
-
-            this.loadContentType(this.contentTypeName).then((loadedContentType: ContentType) => {
+            return this.loadContentType(this.contentTypeName).then((loadedContentType: ContentType) => {
 
                 this.contentType = loadedContentType;
                 return this.loadParentContent();
@@ -100,26 +97,14 @@ module app.wizard {
                 this.defaultModels = defaultModels;
                 return this.newContentWizardPanelForNew();
 
-            }).then((wizardPanel: ContentWizardPanel)=> {
-
-                deferred.resolve(wizardPanel);
-
-            }).catch((reason) => {
-
-                deferred.reject(reason);
-
-            }).done();
-
-            return deferred.promise;
+            });
         }
 
         createForEdit(): Q.Promise<ContentWizardPanel> {
 
             this.creatingForNew = false;
 
-            var deferred = Q.defer<ContentWizardPanel>();
-
-            this.loadContentToEdit().then((loadedContentToEdit: Content) => {
+            return this.loadContentToEdit().then((loadedContentToEdit: Content) => {
 
                 this.contentToEdit = loadedContentToEdit;
                 return this.loadContentType(this.contentToEdit.getType());
@@ -153,17 +138,7 @@ module app.wizard {
                 this.defaultModels = defaultModels;
                 return this.newContentWizardPanelForEdit();
 
-            }).then((wizardPanel: ContentWizardPanel)=> {
-
-                deferred.resolve(wizardPanel);
-
-            }).catch((reason) => {
-
-                deferred.reject(reason);
-
-            }).done();
-
-            return deferred.promise;
+            });
         }
 
         private loadContentToEdit(): Q.Promise<Content> {

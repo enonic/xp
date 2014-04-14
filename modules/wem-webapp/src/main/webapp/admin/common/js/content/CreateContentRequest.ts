@@ -110,17 +110,12 @@ module api.content {
 
         sendAndParse(): Q.Promise<Content> {
 
-            var deferred = Q.defer<Content>();
-
-            this.send().
+            return this.send().
                 then((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
 
-                    deferred.resolve(this.fromJsonToContent(response.getResult()));
-                }).catch((reason) => {
-                    deferred.reject(reason);
-                }).done();
+                    return this.fromJsonToContent(response.getResult());
 
-            return deferred.promise;
+                });
         }
 
     }
