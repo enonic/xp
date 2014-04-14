@@ -87,7 +87,8 @@ module app.browse {
                                '</div>';
 
             var activeListType = this.getActiveList().getItemId();
-            return Ext.String.format(nameTemplate, activeListType, content.iconUrl, value, content.path);
+            var iconUrl = content.iconUrl + '?thumbnail=false&size=64';
+            return Ext.String.format(nameTemplate, activeListType, iconUrl, value, content.path);
         }
 
         private statusRenderer() {

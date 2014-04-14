@@ -19,11 +19,22 @@
     position: relative;
     overflow: hidden;
 
-    .icon {
+    .wrapper {
+
       height: @size;
       width: @size;
-      margin-right:@icon-names-gap;
+      margin-right: @icon-names-gap;
       float: left;
+      line-height: @size - 2px;
+      vertical-align: middle;
+      text-align: center;
+
+      .icon {
+        max-width: 100%;
+        max-height: 100%;
+        margin: auto;
+        vertical-align: middle;
+      }
     }
 
     .names-view {
