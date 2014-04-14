@@ -8,14 +8,9 @@ module api.ui.selector {
 
         width: number;
 
-        optionFormatter: (row: number, cell: number, value: OPTION_DISPLAY_VALUE, columnDef: any,
-                          dataContext: Option<OPTION_DISPLAY_VALUE>) => string;
-
         optionDisplayValueViewer?: Viewer<OPTION_DISPLAY_VALUE>;
 
         filter: (item: Option<OPTION_DISPLAY_VALUE>, args: any) => boolean;
-
-        rowHeight?: number;
 
         dataIdProperty?:string;
 
@@ -34,14 +29,9 @@ module api.ui.selector {
 
         private dataIdProperty: string;
 
-        private optionFormatter: (row: number, cell: number, value: OPTION_DISPLAY_VALUE, columnDef: any,
-                                  dataContext: Option<OPTION_DISPLAY_VALUE>) => string;
-
         private optionDisplayValueViewer: Viewer<OPTION_DISPLAY_VALUE>;
 
         private filter: (item: Option<OPTION_DISPLAY_VALUE>, args: any) => boolean;
-
-        private rowHeight: number;
 
         private rowSelectionListeners: {(event: DropdownGridRowSelectedEvent):void}[];
 
@@ -53,30 +43,18 @@ module api.ui.selector {
             this.rowSelectionListeners = [];
             this.multipleSelectionListeners = [];
             this.maxHeight = config.maxHeight || 200;
-            this.optionFormatter = config.optionFormatter;
-            this.optionDisplayValueViewer = config.optionDisplayValueViewer ? config.optionDisplayValueViewer : !config.optionFormatter ? new DefaultOptionDisplayValueViewer() : undefined ;
+            this.optionDisplayValueViewer = config.optionDisplayValueViewer || new DefaultOptionDisplayValueViewer();
             this.filter = config.filter;
-            this.rowHeight = this.optionDisplayValueViewer ? this.optionDisplayValueViewer.getPreferredHeight() : config.rowHeight || 34;
-            this.dataIdProperty = config.dataIdProperty;
+            this.dataIdProperty = config.dataIdProperty || "value";
             this.maxHeight = config.maxHeight;
             this.width = config.width;
             this.multipleSelections = config.multipleSelections || false;
 
-            if (!config.optionDisplayValueViewer && !config.optionFormatter) {
-                this.optionDisplayValueViewer = new DefaultOptionDisplayValueViewer();
-            }
-
-            var columnFormatter;
-            if (this.optionDisplayValueViewer) {
-                columnFormatter =
+            var columnFormatter =
                 (row: number, cell: number, value: OPTION_DISPLAY_VALUE, columnDef: any, dataContext: Option<OPTION_DISPLAY_VALUE>) => {
                     this.optionDisplayValueViewer.setObject(value);
                     return this.optionDisplayValueViewer.toString();
                 };
-            }
-            else {
-                columnFormatter = this.optionFormatter
-            }
 
             var columns: api.ui.grid.GridColumn<Option<OPTION_DISPLAY_VALUE>>[] = [
                 {
@@ -92,10 +70,10 @@ module api.ui.selector {
                 enableColumnReorder: false,
                 fullWidthRows: true,
                 forceFitColumns: true,
-                rowHeight: this.rowHeight,
+                rowHeight: this.optionDisplayValueViewer.getPreferredHeight(),
                 checkableRows: this.multipleSelections,
                 multiSelect: this.multipleSelections,
-                dataIdProperty: config.dataIdProperty ? config.dataIdProperty : "value"
+                dataIdProperty: this.dataIdProperty
             };
 
             this.gridData = new api.ui.grid.DataView<Option<OPTION_DISPLAY_VALUE>>();
@@ -209,7 +187,7 @@ module api.ui.selector {
         adjustGridHeight() {
 
             var gridEl = this.grid.getEl();
-            var rowsHeight = this.getOptionCount() * this.rowHeight;
+            var rowsHeight = this.getOptionCount() * this.optionDisplayValueViewer.getPreferredHeight();
 
             if (rowsHeight < this.maxHeight) {
                 var borderWidth = gridEl.getBorderTopWidth() + gridEl.getBorderBottomWidth();

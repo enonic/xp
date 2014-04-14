@@ -11,10 +11,6 @@ module api.ui.selector.dropdown {
 
         iconUrl?: string;
 
-        rowHeight?: number;
-
-        optionFormatter?: (row: number, cell: number, value: OPTION_DISPLAY_VALUE, columnDef: any, dataContext: Slick.SlickData) => string;
-
         optionDisplayValueViewer?: Viewer<OPTION_DISPLAY_VALUE>;
 
         filter?: (item: Option<OPTION_DISPLAY_VALUE>, args: any) => boolean;
@@ -73,10 +69,8 @@ module api.ui.selector.dropdown {
             this.dropdownDropdown = new DropdownDropdown(<DropdownDropdownConfig<OPTION_DISPLAY_VALUE>>{
                 maxHeight: 200,
                 width: this.input.getEl().getWidth(),
-                optionFormatter: config.optionFormatter,
                 optionDisplayValueViewer: config.optionDisplayValueViewer,
                 filter: filter,
-                rowHeight: config.rowHeight,
                 dataIdProperty: config.dataIdProperty
             });
             if (filter) {

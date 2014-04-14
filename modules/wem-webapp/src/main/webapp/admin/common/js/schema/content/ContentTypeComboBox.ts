@@ -7,20 +7,9 @@ module api.schema.content {
             super(new api.ui.selector.combobox.RichComboBoxBuilder<ContentTypeSummary>()
                 .setLoader(loader)
                 .setSelectedOptionsView(new ContentTypeSelectedOptionsView())
+                .setOptionDisplayValueViewer(new ContentTypeSummaryViewer())
                 .setMaximumOccurrences(maximumOccurrences));
             loader.load();
-        }
-
-        optionFormatter(row: number, cell: number, content: ContentTypeSummary, columnDef: any,
-                        dataContext: api.ui.selector.Option<ContentTypeSummary>): string {
-            var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
-
-            namesAndIconView
-                .setIconUrl(content.getIconUrl())
-                .setMainName(content.getDisplayName())
-                .setSubName(content.getKey());
-
-            return namesAndIconView.toString();
         }
 
     }

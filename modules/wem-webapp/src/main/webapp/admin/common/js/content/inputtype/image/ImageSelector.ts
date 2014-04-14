@@ -308,7 +308,6 @@ module api.content.inputtype.image {
             });
 
             var comboBoxConfig = <ComboBoxConfig<ContentSummary>> {
-                rowHeight: 50,
                 hideComboBoxWhenMaxReached: true,
                 optionDisplayValueViewer: new ContentSummaryViewer(),
                 selectedOptionsView: this.selectedOptionsView,

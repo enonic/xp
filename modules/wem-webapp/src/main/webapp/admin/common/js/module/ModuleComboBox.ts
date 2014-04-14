@@ -9,19 +9,9 @@ module api.module {
                 setComboBoxName("moduleSelector" ).
                 setLoader(new api.module.ModuleLoader() ).
                 setSelectedOptionsView(new ModuleSelectedOptionsView()).
+                setOptionDisplayValueViewer(new ModuleSummaryViewer()).
                 setDelayedInputValueChangedHandling(500);
             super(builder);
-        }
-
-        optionFormatter(row:number, cell:number, moduleInst:api.module.ModuleSummary, columnDef:any, dataContext:api.ui.selector.Option<api.module.ModuleSummary>):string {
-            var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize( api.app.NamesAndIconViewSize.small ).build();
-
-            namesAndIconView.
-                setIconUrl(api.util.getAdminUri("common/images/icons/icoMoon/32x32/puzzle.png")).
-                setMainName(moduleInst.getDisplayName()).
-                setSubName(moduleInst.getUrl());
-
-            return namesAndIconView.toString();
         }
     }
 
