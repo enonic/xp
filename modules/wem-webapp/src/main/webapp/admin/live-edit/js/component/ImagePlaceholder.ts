@@ -29,9 +29,14 @@ module LiveEdit.component {
             this.uploadButton.hide();
 
             this.getEl().setData('live-edit-type', "image");
+
+            var imageLoader = new api.content.ContentSummaryLoader();
+            var allowedContentTypes = ["image"];
+            imageLoader.setAllowedContentTypes(allowedContentTypes);
             this.comboBox = new api.content.ContentComboBoxBuilder().
                 setMaximumOccurrences(1).
-                setAllowedContentTypes(["image"]).
+                setAllowedContentTypes(allowedContentTypes).
+                setLoader(imageLoader).
                 build();
             this.comboBox.addClass('image-placeholder');
             this.comboBox.hide();
