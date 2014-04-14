@@ -82,7 +82,6 @@ module api.form.inputtype.singleselector {
 
             var selectedOptionsView = new api.ui.selector.combobox.SelectedOptionsView<string>();
             var comboBox = new api.ui.selector.combobox.ComboBox<string>(name, {
-                rowHeight: 24,
                 filter: this.comboboxFilter,
                 selectedOptionsView: selectedOptionsView,
                 maximumOccurrences: 1,

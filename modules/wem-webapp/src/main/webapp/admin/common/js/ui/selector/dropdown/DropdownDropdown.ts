@@ -11,14 +11,9 @@ module api.ui.selector.dropdown {
 
         width: number;
 
-        optionFormatter: (row: number, cell: number, value: OPTION_DISPLAY_VALUE, columnDef: any,
-                          dataContext: api.ui.selector.Option<OPTION_DISPLAY_VALUE>) => string;
-
         optionDisplayValueViewer?: Viewer<OPTION_DISPLAY_VALUE>;
 
         filter: (item: Option<OPTION_DISPLAY_VALUE>, args: any) => boolean;
-
-        rowHeight?: number;
 
         dataIdProperty?:string;
     }
@@ -32,10 +27,8 @@ module api.ui.selector.dropdown {
             this.dropdownGrid = new DropdownGrid<OPTION_DISPLAY_VALUE>(<DropdownGridConfig<OPTION_DISPLAY_VALUE>>{
                 maxHeight: config.maxHeight,
                 width: config.width,
-                optionFormatter: config.optionFormatter,
                 optionDisplayValueViewer: config.optionDisplayValueViewer,
                 filter: config.filter,
-                rowHeight: config.rowHeight,
                 dataIdProperty: config.dataIdProperty
             });
         }

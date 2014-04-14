@@ -39,8 +39,7 @@ module app.wizard.page.contextwindow.inspect {
             this.siteTemplateKey = config.siteTemplateKey;
 
             this.pageTemplateDropdown = new Dropdown<PageTemplateOption>("pageTemplate", <DropdownConfig<PageTemplateOption>>{
-                optionDisplayValueViewer: new PageTemplateOptionViewer(),
-                rowHeight: 50
+                optionDisplayValueViewer: new PageTemplateOptionViewer()
             });
 
             var fieldSet = new api.ui.form.Fieldset();
