@@ -199,9 +199,9 @@ module app.create {
         }
 
         private compareListItems(item1: NewContentDialogListItem, item2: NewContentDialogListItem): number {
-            if (item1.getDisplayName() > item2.getDisplayName()) {
+            if (item1.getDisplayName().toLowerCase() > item2.getDisplayName().toLowerCase()) {
                 return 1;
-            } else if (item1.getDisplayName() < item2.getDisplayName()) {
+            } else if (item1.getDisplayName().toLowerCase() < item2.getDisplayName().toLowerCase()) {
                 return -1;
             } else if (item1.getName() > item2.getName()) {
                 return 1;
