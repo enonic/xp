@@ -101,8 +101,7 @@ module api.form.formitemset {
             if (!dataSet) {
                 dataSet = new api.data.DataSet(this.formItemSet.getName());
                 this.parentDataSet.addData(dataSet);
-                console.log("FormItemSetOccurrences.createNewOccurrenceView() added dataset to parentDataSet: " +
-                            dataSet.getPath().toString());
+
             }
             var newOccurrenceView = new FormItemSetOccurrenceView(<FormItemSetOccurrenceViewConfig>{
                 context: this.context,
@@ -111,8 +110,7 @@ module api.form.formitemset {
                 parent: this.parent,
                 dataSet: dataSet
             });
-            console.log("FormItemSetOccurrences.createNewOccurrenceView() created occurrence view: " +
-                        newOccurrenceView.getDataSet().getPath().toString());
+
             newOccurrenceView.onRemoveButtonClicked((event: RemoveButtonClickedEvent<FormItemSetOccurrenceView>) => {
                 this.doRemoveOccurrence(event.getView(), event.getIndex());
             });
@@ -141,41 +139,23 @@ module api.form.formitemset {
             return this.occurrencesCollapsed;
         }
 
-        reorderOccurrences(occurrencesIndexes: number[]) {
+        reorderOccurrences(changedOccurrenceIndexes: number[]) {
 
             var occurrenceViews: FormItemSetOccurrenceView[] = this.getOccurrenceViews();
-            console.log("FormItemSetOccurrences.swapOccurrences");
-            occurrenceViews.forEach((view: FormItemSetOccurrenceView, index: number) => {
-                console.log("view[" + index + "] :" + view.getDataPath().toString());
-                console.log("view[" + index + "].dataSet: " + this.dataSetToString(view.getDataSet()))
-            });
 
             var dataSets = this.getDataSets();
-            var arrays: any[] = [];
-            occurrencesIndexes.forEach((i: number) => {
+            var dataArraysByChangedIndexes: any[] = [];
+            changedOccurrenceIndexes.forEach((i: number) => {
                 var view = occurrenceViews[i];
                 var viewDataSet = view.getDataSet();
-                var viewDataArray = viewDataSet.getDataArray();
-                arrays[i] = viewDataArray;
+                dataArraysByChangedIndexes[i] = viewDataSet.getDataArray();
 
-                //viewDataSet.setArrayIndex(view.getOccurrence().getIndex());
-
+                view.setDataSet(dataSets[i]);
             });
 
-            arrays.forEach((array: api.data.Data[], index: number) => {
+            dataArraysByChangedIndexes.forEach((array: api.data.Data[], index: number) => {
                 dataSets[index].setData(array);
             });
-
-
-            dataSets.forEach((dataSet: api.data.DataSet, index: number) => {
-                console.log("dataSet[" + index + "] after change: " + this.dataSetToString(dataSet));
-            });
-        }
-
-        dataSetToString(dataSet: api.data.DataSet): string {
-            var s = "";
-            s += dataSet.getPath() + ": " + dataSet.getProperty("myText").getString();
-            return s;
         }
     }
 }

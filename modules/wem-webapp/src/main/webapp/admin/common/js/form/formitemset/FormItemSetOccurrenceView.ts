@@ -56,6 +56,10 @@ module api.form.formitemset {
             this.refresh();
         }
 
+        setDataSet(value: DataSet) {
+            this.dataSet = value;
+        }
+
         getDataPath(): DataPath {
 
             // TODO: Replace with just getting DataPath from this.dataSet?

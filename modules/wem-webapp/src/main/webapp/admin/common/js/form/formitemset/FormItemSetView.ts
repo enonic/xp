@@ -317,9 +317,7 @@ module api.form.formitemset {
             var occurrenceOrderAccordingToDOM = this.resolveOccurrencesInOrderAccordingToDOM();
 
             // Update index of each occurrence
-            console.log("Reordering FormItemOccurences according to DOM ...");
             occurrenceOrderAccordingToDOM.forEach((occurrence: FormItemSetOccurrence, index: number) => {
-                console.log("[" + index + "] = " + occurrence.getIndex() + " > " + index);
                 occurrence.setIndex(index);
             });
 
