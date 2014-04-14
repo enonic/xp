@@ -47,6 +47,7 @@ module api.form.formitemset {
             this.addClass(this.formItemSet.getPath().getElements().length % 2 ? "even" : "odd");
 
             this.occurrenceViewsContainer = new api.dom.DivEl("occurrence-views-container");
+
             jQuery(this.occurrenceViewsContainer.getHTMLElement()).sortable({
                 revert: false,
                 containment: this.getHTMLElement(),
@@ -58,8 +59,8 @@ module api.form.formitemset {
                 handle: '.drag-control',
                 placeholder: 'form-item-set-drop-target-placeholder',
                 helper: (event, helper) => this.createDnDHelper(),
-                start: (event, ui) => this.handleDnDStart(event, ui),
-                update: (event, ui) => this.handleDnDUpdate(event, ui)
+                start: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDStart(event, ui),
+                update: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDUpdate(event, ui)
             });
             this.appendChild(this.occurrenceViewsContainer);
 
@@ -307,16 +308,18 @@ module api.form.formitemset {
             return div.toString();
         }
 
-        private handleDnDStart(event: JQueryEventObject, ui): void {
+        private handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
             ui.placeholder.html("Drop form item set here");
         }
 
-        private handleDnDUpdate(event: JQueryEventObject, ui) {
+        private handleDnDUpdate(event: Event, ui: JQueryUI.SortableUIParams) {
 
             var occurrenceOrderAccordingToDOM = this.resolveOccurrencesInOrderAccordingToDOM();
 
             // Update index of each occurrence
+            console.log("Reordering FormItemOccurences according to DOM ...");
             occurrenceOrderAccordingToDOM.forEach((occurrence: FormItemSetOccurrence, index: number) => {
+                console.log("[" + index + "] = " + occurrence.getIndex() + " > " + index);
                 occurrence.setIndex(index);
             });
 

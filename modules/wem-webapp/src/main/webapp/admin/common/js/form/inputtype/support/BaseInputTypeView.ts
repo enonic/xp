@@ -28,7 +28,7 @@ module api.form.inputtype.support {
                 containment: 'parent',
                 handle: '.drag-control',
                 tolerance: 'pointer',
-                update: (event, ui) => {
+                update: (event: Event, ui: JQueryUI.SortableUIParams) => {
 
                     var occurrenceOrderAccordingToDOM = this.resolveOccurrencesInOrderAccordingToDOM();
 

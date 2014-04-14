@@ -58,6 +58,7 @@ module api.form.formitemset {
 
         getDataPath(): DataPath {
 
+            // TODO: Replace with just getting DataPath from this.dataSet?
             var parent: DataPath = this.parent != null ? this.parent.getDataPath() : null;
             if (parent == null) {
                 return DataPath.fromPathElement(DataPathElement.fromDataId(this.formItemSetOccurrence.getDataId()));
@@ -65,6 +66,10 @@ module api.form.formitemset {
             else {
                 return DataPath.fromParent(parent, DataPathElement.fromDataId(this.formItemSetOccurrence.getDataId()));
             }
+        }
+
+        getDataSet(): DataSet {
+            return this.dataSet;
         }
 
         private doLayout() {
@@ -270,13 +275,13 @@ module api.form.formitemset {
         private notifyValidityChanged(event: api.form.ValidityChangedEvent) {
 
             /*console.log("FormItemSetOccurrenceView " + event.getOrigin().toString() + " validity changed: ");
-            if (event.getRecording().isValid()) {
-                console.log(" valid! ");
-            }
-            else {
-                console.log(" invalid: ");
-                event.getRecording().print();
-            }*/
+             if (event.getRecording().isValid()) {
+             console.log(" valid! ");
+             }
+             else {
+             console.log(" invalid: ");
+             event.getRecording().print();
+             }*/
 
             this.validityChangedListeners.forEach((listener: (event: api.form.ValidityChangedEvent)=>void) => {
                 listener(event);

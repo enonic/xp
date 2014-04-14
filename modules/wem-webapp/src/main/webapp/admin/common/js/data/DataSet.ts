@@ -30,6 +30,19 @@ module api.data {
             this.dataArray.push(data);
         }
 
+        setData(dataArray: Data[]) {
+
+            var newDataById: {[s:string] : Data;} = {};
+            dataArray.forEach((data: Data, index: number) => {
+                data.setParent(this);
+                data.setArrayIndex(index);
+                newDataById[data.getId().toString()] = data;
+            });
+
+            this.dataArray = dataArray;
+            this.dataById = newDataById;
+        }
+
         removeData(idToRemove: DataId): Data {
 
             var dataToRemove = this.dataById[idToRemove.toString()];
@@ -151,6 +164,11 @@ module api.data {
                 return null;
             }
             return data.toDataSet();
+        }
+
+        getDataSetFromDataId(dataId: DataId): DataSet {
+            var data = this.getDataFromDataId(dataId);
+            return data ? data.toDataSet() : null;
         }
 
         getDataSets(): DataSet[] {

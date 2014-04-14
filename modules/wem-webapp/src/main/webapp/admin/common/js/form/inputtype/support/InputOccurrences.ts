@@ -51,7 +51,7 @@ module api.form.inputtype.support {
         }
 
         private handleOccurrenceAdded(value: api.data.Value) {
-            if( this.isLayingOut() ) {
+            if (this.isLayingOut()) {
                 return;
             }
 
@@ -62,7 +62,7 @@ module api.form.inputtype.support {
         }
 
         private handleOccurrenceRemoved(index: number) {
-            if( this.isLayingOut() ) {
+            if (this.isLayingOut()) {
                 return;
             }
 
@@ -72,7 +72,7 @@ module api.form.inputtype.support {
         }
 
         private handleOccurrenceChanged(event: api.form.inputtype.ValueChangedEvent) {
-            if( this.isLayingOut() ) {
+            if (this.isLayingOut()) {
                 return;
             }
 
@@ -84,7 +84,7 @@ module api.form.inputtype.support {
             this.notifyValueChanged(event);
         }
 
-        ocurrencesReordered( occurrenceIndexes:number[] ) {
+        reorderOccurrences(occurrenceIndexes: number[]) {
 
             var values = this.getValues();
 
