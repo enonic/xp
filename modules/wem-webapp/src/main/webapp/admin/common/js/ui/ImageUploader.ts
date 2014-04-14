@@ -64,8 +64,13 @@ module api.ui {
             this.imageBox = new api.dom.DivEl();
             this.imageBox.addClass('image-box');
             this.image = new api.dom.ImgEl();
-            this.image.onClicked(() => {
-                this.image.toggleClass('selected')
+
+            api.dom.Body.get().onClicked((event: MouseEvent) => {
+                if (event.target == this.image.getHTMLElement()) {
+                    this.image.toggleClass('selected')
+                } else {
+                    this.image.removeClass('selected');
+                }
             })
             this.imageBox.appendChild(this.image);
             this.appendChild(this.imageBox);
@@ -87,12 +92,14 @@ module api.ui {
             KeyBindings.get().bindKeys([
                 new KeyBinding('del', () => {
                     if (this.image.hasClass('selected')) {
-                        this.reset()
+                        this.reset();
+                        return false;
                     }
                 }),
                 new KeyBinding('backspace', () => {
                     if (this.image.hasClass('selected')) {
-                        this.reset()
+                        this.reset();
+                        return false;
                     }
                 })
             ])
