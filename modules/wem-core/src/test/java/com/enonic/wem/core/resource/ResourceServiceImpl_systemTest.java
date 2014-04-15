@@ -45,6 +45,7 @@ public class ResourceServiceImpl_systemTest
         assertEquals( 7, resource.getSize() );
         assertNotNull( resource.getByteSource() );
         assertEquals( "a/b.txt", resource.readAsString() );
+        assertEquals( "a/b.txt", resource.readLines().get( 0 ) );
         assertTrue( resource.getTimestamp() > 0 );
     }
 
