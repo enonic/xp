@@ -1,9 +1,8 @@
 package com.enonic.wem.api.exception;
 
 
-import com.enonic.wem.api.exception.BaseException;
-
-public abstract class NotFoundException extends BaseException
+public abstract class NotFoundException
+    extends BaseException
 {
     public NotFoundException( final String message )
     {
