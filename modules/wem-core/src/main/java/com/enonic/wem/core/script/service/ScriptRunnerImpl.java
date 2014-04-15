@@ -13,6 +13,7 @@ import com.google.common.collect.Maps;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceService;
+import com.enonic.wem.core.script.ScriptContext;
 import com.enonic.wem.core.script.ScriptException;
 import com.enonic.wem.core.script.ScriptRunner;
 import com.enonic.wem.core.script.compiler.ScriptCompiler;
@@ -30,9 +31,12 @@ final class ScriptRunnerImpl
 
     private ResourceKey resourceKey;
 
+    private final ScriptContext scriptContext;
+
     public ScriptRunnerImpl()
     {
         this.binding = Maps.newHashMap();
+        this.scriptContext = new ScriptContext();
     }
 
     @Override
@@ -53,11 +57,14 @@ final class ScriptRunnerImpl
     public void execute()
     {
         final Resource resource = this.resourceService.getResource( this.resourceKey );
+        this.scriptContext.enter( this.resourceKey );
+
         final Context context = Context.enter();
 
         try
         {
             initializeScope();
+            installRequire();
             setObjectsToScope();
 
             final Script script = this.compiler.compile( context, resource );
@@ -70,6 +77,7 @@ final class ScriptRunnerImpl
         finally
         {
             Context.exit();
+            this.scriptContext.exit();
         }
     }
 
@@ -103,5 +111,14 @@ final class ScriptRunnerImpl
         }
 
         return builder.build();
+    }
+
+    private void installRequire()
+    {
+        final RequireFunction function = new RequireFunction();
+        function.scriptCompiler = this.compiler;
+        function.scriptContext = this.scriptContext;
+        function.resourceService = this.resourceService;
+        function.install( this.scope );
     }
 }

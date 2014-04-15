@@ -1,2 +1,1 @@
-test.assert(require('./a').foo() == 1, 'transitive');
-test.print('DONE');
+test.assertTrue(require('./a').foo() == 1, 'transitive');

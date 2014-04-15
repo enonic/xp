@@ -12,26 +12,27 @@ public class RequireJsTest
     }
 
     // @Test
+    // Failes right now. Will try rhino's own require implementation.
     public void testCyclic()
     {
-        // execTest( "require/cyclic/test" );
+        execTest( "require-1.0.0:/cyclic/test.js" );
     }
 
-    // @Test
+    @Test
     public void testMissing()
     {
-        // execTest( "require/missing/test" );
+        execTest( "require-1.0.0:/missing/test.js" );
     }
 
-    // @Test
+    @Test
     public void testRelative()
     {
-        // execTest( "require/relative/test" );
+        execTest( "require-1.0.0:/relative/test.js" );
     }
 
-    // @Test
+    @Test
     public void testTransitive()
     {
-        // execTest( "require/transitive/test" );
+        execTest( "require-1.0.0:/transitive/test.js" );
     }
 }

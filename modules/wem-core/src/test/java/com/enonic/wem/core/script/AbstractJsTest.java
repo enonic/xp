@@ -51,5 +51,15 @@ public abstract class AbstractJsTest
         {
             Assert.assertTrue( message, value );
         }
+
+        public void assertEquals( final String expected, final String value )
+        {
+            Assert.assertEquals( expected, value );
+        }
+
+        public void fail( final String message )
+        {
+            Assert.fail( message );
+        }
     }
 }

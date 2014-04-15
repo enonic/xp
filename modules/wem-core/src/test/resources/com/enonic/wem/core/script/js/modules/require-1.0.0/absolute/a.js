@@ -1,3 +1,3 @@
 exports.foo = function () {
-    return require('require/absolute/b');
+    return require('/absolute/b');
 };
