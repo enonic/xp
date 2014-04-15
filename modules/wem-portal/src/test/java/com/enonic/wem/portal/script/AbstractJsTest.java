@@ -1,8 +1,10 @@
-package com.enonic.wem.core.script;
+package com.enonic.wem.portal.script;
 
 import org.junit.Before;
 
 import junit.framework.Assert;
+
+import com.enonic.wem.portal.script.runner.ScriptRunnerImpl;
 
 public abstract class AbstractJsTest
 {
@@ -13,6 +15,9 @@ public abstract class AbstractJsTest
 
     protected final void execTest( final String path )
     {
+        final ScriptRunnerImpl runner = new ScriptRunnerImpl();
+        
+        runner.execute();
     }
 
     public final class TestUtils

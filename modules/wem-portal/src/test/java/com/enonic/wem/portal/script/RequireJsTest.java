@@ -1,4 +1,4 @@
-package com.enonic.wem.core.script;
+package com.enonic.wem.portal.script;
 
 import org.junit.Test;
 
