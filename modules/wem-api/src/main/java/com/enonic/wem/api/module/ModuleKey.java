@@ -6,7 +6,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class ModuleKey
 {
-    public final static ModuleKey SYSTEM = ModuleKey.from( ModuleName.from( "system" ), ModuleVersion.from( 0, 0, 0 ) );
+    public final static ModuleKey SYSTEM = ModuleKey.from( ModuleName.SYSTEM, ModuleVersion.from( 0, 0, 0 ) );
 
     private static final String SEPARATOR = "-";
 

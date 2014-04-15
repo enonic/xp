@@ -4,8 +4,9 @@ import javax.inject.Inject;
 
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleKeyResolver;
 import com.enonic.wem.api.module.ModuleName;
-import com.enonic.wem.core.module.ModuleKeyResolver;
+import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.core.module.ModuleKeyResolverService;
 import com.enonic.wem.core.module.ModuleResourcePathResolver;
 import com.enonic.wem.portal.exception.PortalWebException;
@@ -34,13 +35,14 @@ public abstract class UnderscoreResource
 
     private ModuleKey resolveModuleFromSite( final ContentPath contentPath, final String moduleName )
     {
-        final ModuleKeyResolver moduleKeyResolver = this.moduleKeyResolverService.forContent( contentPath );
-        final ModuleKey key = moduleKeyResolver.resolve( ModuleName.from( moduleName ) );
-        if ( key != null )
+        try
         {
-            return key;
+            final ModuleKeyResolver moduleKeyResolver = this.moduleKeyResolverService.forContent( contentPath );
+            return moduleKeyResolver.resolve( ModuleName.from( moduleName ) );
         }
-
-        throw PortalWebException.notFound().message( "Module [{0}] not found for path [{1}].", moduleName, contentPath ).build();
+        catch ( final ModuleNotFoundException e )
+        {
+            throw PortalWebException.notFound().message( e.getMessage() ).build();
+        }
     }
 }
