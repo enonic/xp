@@ -130,7 +130,7 @@ module api.content.inputtype.image {
         private updateOptionViewLayout(optionView: SelectedOptionView, optionHeight: number) {
             optionView.getEl().setHeightPx(optionHeight);
             var iconHeight = optionView.getIcon().getEl().getHeightWithBorder();
-            if (iconHeight < optionHeight) {
+            if (iconHeight < optionHeight && iconHeight !== 0) {
                 optionView.getIcon().getEl().setMarginTop((optionHeight - iconHeight) / 2 + 'px');
             }
         }

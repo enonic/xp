@@ -1,14 +1,32 @@
-.admin-tree .admin-tree-thumbnail.site .overlay,
-.admin-grid .admin-grid-thumbnail.site .overlay {
-  right: 6px;
-  padding: 2px 6px;
-  line-height: 16px;
-  border-radius: 10px;
-  background: @admin-blue;
-  font-size: 14px;
+.admin-grid .admin-grid-thumbnail,
+.admin-tree .admin-tree-thumbnail {
+  width: 32px;
+  height: 32px;
+  margin: 0 15px 0 10px;
+  line-height: 30px;
+  vertical-align: middle;
+  text-align: center;
 
-  &:before {
-    content: "S";
+  img {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    margin: auto;
+    vertical-align: middle;
+  }
+
+  &.site .overlay {
+    right: -9px;
+    padding: 2px 6px;
+    line-height: 16px;
+    border-radius: 10px;
+    background: @admin-blue;
+    font-size: 14px;
+
+    &:before {
+      content: "S";
+    }
   }
 }
 

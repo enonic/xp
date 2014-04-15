@@ -15,11 +15,13 @@
         color: #d3d3d3;
       }
 
-      .icon {
-        float: left;
+      .wrapper {
         width: 32px;
         height: 32px;
-        border: 1px @admin-medium-gray-border solid;
+
+        .icon {
+          border: 1px @admin-medium-gray-border solid;
+        }
       }
 
       .content-summary {
@@ -68,7 +70,9 @@
 
       img {
         display: block;
-        width: 100%;
+        max-height: 100%;
+        max-width: 100%;
+        margin: auto;
       }
 
       .label {
