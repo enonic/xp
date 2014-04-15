@@ -1,30 +1,29 @@
-module api.form.formitemset {
+module api.form {
 
     import DataPath = api.data.DataPath;
     import DataPathElement = api.data.DataPathElement;
     import DataSet = api.data.DataSet;
-    import support = api.form.inputtype.support;
 
     export interface FormItemSetOccurrenceViewConfig {
 
-        context: api.form.FormContext;
+        context: FormContext;
 
         formItemSetOccurrence: FormItemSetOccurrence;
 
-        formItemSet: api.form.FormItemSet;
+        formItemSet: FormItemSet;
 
         parent: FormItemSetOccurrenceView;
 
         dataSet: DataSet
     }
 
-    export class FormItemSetOccurrenceView extends api.form.FormItemOccurrenceView {
+    export class FormItemSetOccurrenceView extends FormItemOccurrenceView {
 
-        private context: api.form.FormContext;
+        private context: FormContext;
 
         private formItemSetOccurrence: FormItemSetOccurrence;
 
-        private formItemSet: api.form.FormItemSet;
+        private formItemSet: FormItemSet;
 
         private removeButton: api.dom.AEl;
 
@@ -36,13 +35,13 @@ module api.form.formitemset {
 
         private dataSet: DataSet;
 
-        private formItemViews: api.form.FormItemView[] = [];
+        private formItemViews: FormItemView[] = [];
 
         private formItemSetOccurrencesContainer: api.dom.DivEl;
 
-        private validityChangedListeners: {(event: api.form.ValidityChangedEvent) : void}[] = [];
+        private validityChangedListeners: {(event: ValidityChangedEvent) : void}[] = [];
 
-        private previousValidationRecording: api.form.ValidationRecording;
+        private previousValidationRecording: ValidationRecording;
 
         constructor(config: FormItemSetOccurrenceViewConfig) {
             super("form-item-set-occurrence-view", config.formItemSetOccurrence);
@@ -90,7 +89,7 @@ module api.form.formitemset {
             this.appendChild(this.formItemSetOccurrencesContainer);
 
 
-            this.formItemViews = new api.form.FormItemLayer().
+            this.formItemViews = new FormItemLayer().
                 setFormContext(this.context).
                 setFormItems(this.formItemSet.getFormItems()).
                 setParentElement(this.formItemSetOccurrencesContainer).
@@ -99,8 +98,8 @@ module api.form.formitemset {
 
             this.validate(true);
 
-            this.formItemViews.forEach((formItemView: api.form.FormItemView) => {
-                formItemView.onValidityChanged((event: api.form.ValidityChangedEvent) => {
+            this.formItemViews.forEach((formItemView: FormItemView) => {
+                formItemView.onValidityChanged((event: ValidityChangedEvent) => {
 
                     var previousValidState = this.previousValidationRecording.isValid();
                     if (event.isValid()) {
@@ -111,14 +110,14 @@ module api.form.formitemset {
                     }
 
                     if (previousValidState != this.previousValidationRecording.isValid()) {
-                        this.notifyValidityChanged(new api.form.ValidityChangedEvent(this.previousValidationRecording,
+                        this.notifyValidityChanged(new ValidityChangedEvent(this.previousValidationRecording,
                             this.resolveValidationRecordingPath()));
                     }
                 });
             });
         }
 
-        getFormItemViews(): api.form.FormItemView[] {
+        getFormItemViews(): FormItemView[] {
             return this.formItemViews;
         }
 
@@ -171,16 +170,16 @@ module api.form.formitemset {
             return formItemSetOccurrenceView.getValueAtPath(path.newWithoutFirstElement());
         }
 
-        public getInputView(name: string): api.form.input.InputView {
+        public getInputView(name: string): InputView {
 
             var formItemView = this.getFormItemView(name);
             if (formItemView == null) {
                 return null;
             }
-            if (!(formItemView instanceof api.form.input.InputView)) {
+            if (!(formItemView instanceof InputView)) {
                 throw new Error("Found a FormItemView with name [" + name + "], but it was not an InputView");
             }
-            return <api.form.input.InputView>formItemView;
+            return <InputView>formItemView;
         }
 
         public getFormItemSetView(name: string): FormItemSetView {
@@ -195,7 +194,7 @@ module api.form.formitemset {
             return <FormItemSetView>formItemView;
         }
 
-        public getFormItemView(name: string): api.form.FormItemView {
+        public getFormItemView(name: string): FormItemView {
 
             // TODO: Performance could be improved if the views where accessible by name from a map
 
@@ -209,8 +208,8 @@ module api.form.formitemset {
             // FormItemView not found - look inside FieldSet-s
             for (var i = 0; i < this.formItemViews.length; i++) {
                 var curr = this.formItemViews[i];
-                if (curr instanceof api.form.layout.FieldSetView) {
-                    var view = (<api.form.layout.FieldSetView>curr).getFormItemView(name);
+                if (curr instanceof FieldSetView) {
+                    var view = (<FieldSetView>curr).getFormItemView(name);
                     if (view != null) {
                         return view;
                     }
@@ -222,7 +221,7 @@ module api.form.formitemset {
 
         getAttachments(): api.content.attachment.Attachment[] {
             var attachments: api.content.attachment.Attachment[] = [];
-            this.formItemViews.forEach((formItemView: api.form.FormItemView) => {
+            this.formItemViews.forEach((formItemView: FormItemView) => {
                 formItemView.getAttachments().forEach((attachment: api.content.attachment.Attachment) => {
                     attachments.push(attachment);
                 });
@@ -238,20 +237,20 @@ module api.form.formitemset {
             }
         }
 
-        private resolveValidationRecordingPath(): api.form.ValidationRecordingPath {
-            return new api.form.ValidationRecordingPath(this.getDataPath(), null);
+        private resolveValidationRecordingPath(): ValidationRecordingPath {
+            return new ValidationRecordingPath(this.getDataPath(), null);
         }
 
-        getLastValidationRecording(): api.form.ValidationRecording {
+        getLastValidationRecording(): ValidationRecording {
             return this.previousValidationRecording;
         }
 
-        validate(silent: boolean = true): api.form.ValidationRecording {
+        validate(silent: boolean = true): ValidationRecording {
 
             //console.log("FormItemSetOccurrenceView[ " + this.resolveValidationRecordingPath() + " ].validate(" + silent + ")");
 
-            var allRecordings = new api.form.ValidationRecording();
-            this.formItemViews.forEach((formItemView: api.form.FormItemView) => {
+            var allRecordings = new ValidationRecording();
+            this.formItemViews.forEach((formItemView: FormItemView) => {
                 var currRecording = formItemView.validate(silent);
                 allRecordings.flatten(currRecording);
 
@@ -259,24 +258,24 @@ module api.form.formitemset {
 
             if (!silent) {
                 if (allRecordings.validityChanged(this.previousValidationRecording)) {
-                    this.notifyValidityChanged(new api.form.ValidityChangedEvent(allRecordings, this.resolveValidationRecordingPath()));
+                    this.notifyValidityChanged(new ValidityChangedEvent(allRecordings, this.resolveValidationRecordingPath()));
                 }
             }
             this.previousValidationRecording = allRecordings;
             return allRecordings;
         }
 
-        onValidityChanged(listener: (event: api.form.ValidityChangedEvent)=>void) {
+        onValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
             this.validityChangedListeners.push(listener);
         }
 
-        unValidityChanged(listener: (event: api.form.ValidityChangedEvent)=>void) {
-            this.validityChangedListeners.filter((currentListener: (event: api.form.ValidityChangedEvent)=>void) => {
+        unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
+            this.validityChangedListeners.filter((currentListener: (event: ValidityChangedEvent)=>void) => {
                 return listener == currentListener;
             });
         }
 
-        private notifyValidityChanged(event: api.form.ValidityChangedEvent) {
+        private notifyValidityChanged(event: ValidityChangedEvent) {
 
             /*console.log("FormItemSetOccurrenceView " + event.getOrigin().toString() + " validity changed: ");
              if (event.getRecording().isValid()) {
@@ -287,7 +286,7 @@ module api.form.formitemset {
              event.getRecording().print();
              }*/
 
-            this.validityChangedListeners.forEach((listener: (event: api.form.ValidityChangedEvent)=>void) => {
+            this.validityChangedListeners.forEach((listener: (event: ValidityChangedEvent)=>void) => {
                 listener(event);
             });
         }

@@ -4,20 +4,20 @@ module api.form {
 
         private context: FormContext;
 
-        private formItems: api.form.FormItem[];
+        private formItems: FormItem[];
 
         private parentEl: api.dom.Element;
 
         private formItemViews: FormItemView[] = [];
 
-        private parent: api.form.formitemset.FormItemSetOccurrenceView;
+        private parent: FormItemSetOccurrenceView;
 
         setFormContext(context: FormContext): FormItemLayer {
             this.context = context;
             return this;
         }
 
-        setFormItems(formItems: api.form.FormItem[]): FormItemLayer {
+        setFormItems(formItems: FormItem[]): FormItemLayer {
             this.formItems = formItems;
             return this;
         }
@@ -27,7 +27,7 @@ module api.form {
             return this;
         }
 
-        setParent(value: api.form.formitemset.FormItemSetOccurrenceView): FormItemLayer {
+        setParent(value: FormItemSetOccurrenceView): FormItemLayer {
             this.parent = value;
             return this;
         }
@@ -47,7 +47,7 @@ module api.form {
                 if (formItem instanceof FormItemSet) {
 
                     var formItemSet: FormItemSet = <FormItemSet>formItem;
-                    var formItemSetView = new api.form.formitemset.FormItemSetView(<api.form.formitemset.FormItemSetViewConfig>{
+                    var formItemSetView = new FormItemSetView(<FormItemSetViewConfig>{
                         context: this.context,
                         formItemSet: formItemSet,
                         parent: this.parent,
@@ -60,7 +60,7 @@ module api.form {
                 else if (formItem instanceof FieldSet) {
 
                     var fieldSet: FieldSet = <FieldSet>formItem;
-                    var fieldSetView = new api.form.layout.FieldSetView(<api.form.layout.FieldSetViewConfig>{
+                    var fieldSetView = new FieldSetView(<FieldSetViewConfig>{
                         context: this.context,
                         fieldSet: fieldSet,
                         parent: this.parent,
@@ -74,7 +74,7 @@ module api.form {
 
                     var input: Input = <Input>formItem;
 
-                    var inputView = new api.form.input.InputView(<api.form.input.InputViewConfig>{
+                    var inputView = new InputView(<InputViewConfig>{
                         context: this.context,
                         input: input,
                         parent: this.parent,

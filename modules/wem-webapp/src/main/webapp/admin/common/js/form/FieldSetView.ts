@@ -1,21 +1,21 @@
-module api.form.layout {
+module api.form {
 
     export interface FieldSetViewConfig {
 
-        context: api.form.FormContext;
+        context: FormContext;
 
-        fieldSet: api.form.FieldSet;
+        fieldSet: FieldSet;
 
-        parent: api.form.formitemset.FormItemSetOccurrenceView;
+        parent: FormItemSetOccurrenceView;
 
         dataSet?: api.data.DataSet;
     }
 
     export class FieldSetView extends LayoutView {
 
-        private fieldSet: api.form.FieldSet;
+        private fieldSet: FieldSet;
 
-        private formItemViews: api.form.FormItemView[] = [];
+        private formItemViews: FormItemView[] = [];
 
         constructor(config: FieldSetViewConfig) {
             super(<LayoutViewConfig>{
@@ -30,12 +30,12 @@ module api.form.layout {
         }
 
         broadcastFormSizeChanged() {
-            this.formItemViews.forEach((formItemView:api.form.FormItemView) => {
+            this.formItemViews.forEach((formItemView:FormItemView) => {
                 formItemView.broadcastFormSizeChanged();
             });
         }
 
-        public getFormItemView(name: string): api.form.FormItemView {
+        public getFormItemView(name: string): FormItemView {
 
             // TODO: Performance could be improved if the views where accessible by name from a map
 
@@ -68,7 +68,7 @@ module api.form.layout {
             var wrappingDiv = new api.dom.DivEl("field-set-container");
             this.appendChild(wrappingDiv);
 
-            this.formItemViews = new api.form.FormItemLayer().
+            this.formItemViews = new FormItemLayer().
                 setFormContext(this.getContext()).
                 setFormItems(this.fieldSet.getFormItems()).
                 setParentElement(wrappingDiv).
@@ -108,7 +108,7 @@ module api.form.layout {
         validate(silent: boolean = true): ValidationRecording {
 
             var recording = new ValidationRecording();
-            this.formItemViews.forEach((formItemView: api.form.FormItemView)=> {
+            this.formItemViews.forEach((formItemView: FormItemView)=> {
                 var currRecording = formItemView.validate(silent);
                 recording.flatten(currRecording);
             });
@@ -118,13 +118,13 @@ module api.form.layout {
 
         onValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
 
-            this.formItemViews.forEach((formItemView: api.form.FormItemView)=> {
+            this.formItemViews.forEach((formItemView: FormItemView)=> {
                 formItemView.onValidityChanged(listener);
             });
         }
 
         unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
-            this.formItemViews.forEach((formItemView: api.form.FormItemView)=> {
+            this.formItemViews.forEach((formItemView: FormItemView)=> {
                 formItemView.unValidityChanged(listener);
             });
         }

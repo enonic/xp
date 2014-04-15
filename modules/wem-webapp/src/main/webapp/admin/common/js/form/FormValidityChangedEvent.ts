@@ -2,9 +2,9 @@ module api.form {
 
     export class FormValidityChangedEvent extends FormEvent {
 
-        private recording: api.form.ValidationRecording;
+        private recording: ValidationRecording;
 
-        constructor(recording?: api.form.ValidationRecording) {
+        constructor(recording?: ValidationRecording) {
             super();
             this.recording = recording;
         }
@@ -13,7 +13,7 @@ module api.form {
             return this.recording.isValid();
         }
 
-        getRecording(): api.form.ValidationRecording {
+        getRecording(): ValidationRecording {
             return this.recording;
         }
     }

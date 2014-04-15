@@ -1,22 +1,19 @@
-module api.form.formitemset {
-
-    import support = api.form.inputtype.support;
-    import ValidationRecording = api.form.ValidationRecording;
+module api.form {
 
     export interface FormItemSetViewConfig {
 
-        context: api.form.FormContext;
+        context: FormContext;
 
-        formItemSet: api.form.FormItemSet;
+        formItemSet: FormItemSet;
 
         parent: FormItemSetOccurrenceView;
 
         parentDataSet: api.data.DataSet;
     }
 
-    export class FormItemSetView extends api.form.FormItemView {
+    export class FormItemSetView extends FormItemView {
 
-        private formItemSet: api.form.FormItemSet;
+        private formItemSet: FormItemSet;
 
         private parentDataSet: api.data.DataSet;
 
@@ -30,9 +27,9 @@ module api.form.formitemset {
 
         private collapseButton: api.dom.AEl;
 
-        private validityChangedListeners: {(event: api.form.ValidityChangedEvent) : void}[] = [];
+        private validityChangedListeners: {(event: ValidityChangedEvent) : void}[] = [];
 
-        private previousValidationRecording: api.form.ValidationRecording;
+        private previousValidationRecording: ValidationRecording;
 
         constructor(config: FormItemSetViewConfig) {
             super(<FormItemViewConfig> {
@@ -76,31 +73,31 @@ module api.form.formitemset {
             this.formItemSetOccurrences.layout();
 
             this.validate(true);
-            this.formItemSetOccurrences.onOccurrenceAdded((event: api.form.OccurrenceAddedEvent) => {
+            this.formItemSetOccurrences.onOccurrenceAdded((event: OccurrenceAddedEvent) => {
                 this.refresh();
 
-                if (event.getOccurrenceView() instanceof api.form.formitemset.FormItemSetOccurrenceView) {
-                    var addedFormItemSetOccurrenceView = <api.form.formitemset.FormItemSetOccurrenceView>event.getOccurrenceView();
-                    addedFormItemSetOccurrenceView.onValidityChanged((event: api.form.ValidityChangedEvent) => {
+                if (event.getOccurrenceView() instanceof FormItemSetOccurrenceView) {
+                    var addedFormItemSetOccurrenceView = <FormItemSetOccurrenceView>event.getOccurrenceView();
+                    addedFormItemSetOccurrenceView.onValidityChanged((event: ValidityChangedEvent) => {
                         this.handleFormItemSetOccurrenceViewValidityChanged(event);
                     });
                 }
             });
-            this.formItemSetOccurrences.onOccurrenceRemoved((event: api.form.OccurrenceRemovedEvent) => {
+            this.formItemSetOccurrences.onOccurrenceRemoved((event: OccurrenceRemovedEvent) => {
 
                 var dataId = new api.data.DataId(this.formItemSet.getName(), event.getOccurrence().getIndex());
                 this.parentDataSet.removeData(dataId);
 
                 this.refresh();
 
-                if (event.getOccurrenceView() instanceof api.form.formitemset.FormItemSetOccurrenceView) {
+                if (event.getOccurrenceView() instanceof FormItemSetOccurrenceView) {
                     // force validate, since FormItemSet might have become invalid
                     this.validate(false);
                 }
             });
 
-            this.formItemSetOccurrences.getOccurrenceViews().forEach((formItemSetOccurrenceView: api.form.formitemset.FormItemSetOccurrenceView)=> {
-                formItemSetOccurrenceView.onValidityChanged((event: api.form.ValidityChangedEvent) => {
+            this.formItemSetOccurrences.getOccurrenceViews().forEach((formItemSetOccurrenceView: FormItemSetOccurrenceView)=> {
+                formItemSetOccurrenceView.onValidityChanged((event: ValidityChangedEvent) => {
                     this.handleFormItemSetOccurrenceViewValidityChanged(event);
                 });
             });
@@ -134,7 +131,7 @@ module api.form.formitemset {
             this.refresh();
         }
 
-        private handleFormItemSetOccurrenceViewValidityChanged(event: api.form.ValidityChangedEvent) {
+        private handleFormItemSetOccurrenceViewValidityChanged(event: ValidityChangedEvent) {
 
             if (!this.previousValidationRecording) {
                 return; // skip handling if not previousValidationRecording is not set
@@ -179,14 +176,14 @@ module api.form.formitemset {
             }
 
             if (previousValidState != this.previousValidationRecording.isValid()) {
-                this.notifyValidityChanged(new api.form.ValidityChangedEvent(this.previousValidationRecording,
+                this.notifyValidityChanged(new ValidityChangedEvent(this.previousValidationRecording,
                     this.resolveValidationRecordingPath()));
             }
         }
 
         broadcastFormSizeChanged() {
             this.formItemSetOccurrences.getOccurrenceViews().forEach((occurrenceView: FormItemSetOccurrenceView) => {
-                occurrenceView.getFormItemViews().forEach((formItemView: api.form.FormItemView) => {
+                occurrenceView.getFormItemViews().forEach((formItemView: FormItemView) => {
                     formItemView.broadcastFormSizeChanged();
                 });
             });
@@ -205,9 +202,9 @@ module api.form.formitemset {
             return this.formItemSetOccurrences.getAttachments();
         }
 
-        private resolveValidationRecordingPath(): api.form.ValidationRecordingPath {
+        private resolveValidationRecordingPath(): ValidationRecordingPath {
 
-            return new api.form.ValidationRecordingPath(this.getParentDataPath(), this.formItemSet.getName());
+            return new ValidationRecordingPath(this.getParentDataPath(), this.formItemSet.getName());
         }
 
         validate(silent: boolean = true): ValidationRecording {
@@ -237,7 +234,7 @@ module api.form.formitemset {
 
             if (!silent) {
                 if (recording.validityChanged(this.previousValidationRecording)) {
-                    this.notifyValidityChanged(new api.form.ValidityChangedEvent(recording, validationRecordingPath));
+                    this.notifyValidityChanged(new ValidityChangedEvent(recording, validationRecordingPath));
                 }
             }
 
@@ -255,17 +252,17 @@ module api.form.formitemset {
             return recording;
         }
 
-        onValidityChanged(listener: (event: api.form.ValidityChangedEvent)=>void) {
+        onValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
             this.validityChangedListeners.push(listener);
         }
 
-        unValidityChanged(listener: (event: api.form.ValidityChangedEvent)=>void) {
-            this.validityChangedListeners.filter((currentListener: (event: api.form.ValidityChangedEvent)=>void) => {
+        unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
+            this.validityChangedListeners.filter((currentListener: (event: ValidityChangedEvent)=>void) => {
                 return listener == currentListener;
             });
         }
 
-        private notifyValidityChanged(event: api.form.ValidityChangedEvent) {
+        private notifyValidityChanged(event: ValidityChangedEvent) {
 
             /*console.log("FormItemSetView[ " + event.getOrigin().toString() + " ] validity changed");
              if (event.getRecording().isValid()) {
@@ -276,7 +273,7 @@ module api.form.formitemset {
              event.getRecording().print();
              }*/
 
-            this.validityChangedListeners.forEach((listener: (event: api.form.ValidityChangedEvent)=>void) => {
+            this.validityChangedListeners.forEach((listener: (event: ValidityChangedEvent)=>void) => {
                 listener(event);
             });
         }
@@ -285,7 +282,7 @@ module api.form.formitemset {
 
             var focusGiven = false;
             if (this.formItemSetOccurrences.getOccurrenceViews().length > 0) {
-                var views: api.form.FormItemOccurrenceView[] = this.formItemSetOccurrences.getOccurrenceViews();
+                var views: FormItemOccurrenceView[] = this.formItemSetOccurrences.getOccurrenceViews();
                 for (var i = 0; i < views.length; i++) {
                     if (views[i].giveFocus()) {
                         focusGiven = true;

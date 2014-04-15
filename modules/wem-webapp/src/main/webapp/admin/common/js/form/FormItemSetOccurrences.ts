@@ -1,12 +1,12 @@
-module api.form.formitemset {
+module api.form {
 
     export interface FormItemSetOccurrencesConfig {
 
-        context: api.form.FormContext;
+        context: FormContext;
 
         occurrenceViewContainer: api.dom.Element;
 
-        formItemSet: api.form.FormItemSet;
+        formItemSet: FormItemSet;
 
         parent: FormItemSetOccurrenceView;
 
@@ -16,11 +16,11 @@ module api.form.formitemset {
     /*
      * A kind of a controller, which adds/removes FormItemSetOccurrenceView-s
      */
-    export class FormItemSetOccurrences extends api.form.FormItemOccurrences<FormItemSetOccurrenceView> {
+    export class FormItemSetOccurrences extends FormItemOccurrences<FormItemSetOccurrenceView> {
 
-        private context: api.form.FormContext;
+        private context: FormContext;
 
-        private formItemSet: api.form.FormItemSet;
+        private formItemSet: FormItemSet;
 
         private parent: FormItemSetOccurrenceView;
 
@@ -52,11 +52,11 @@ module api.form.formitemset {
             return this.parentDataSet.getDataSetsByName(this.formItemSet.getName());
         }
 
-        getFormItemSet(): api.form.FormItemSet {
+        getFormItemSet(): FormItemSet {
             return this.formItemSet;
         }
 
-        getAllowedOccurrences(): api.form.Occurrences {
+        getAllowedOccurrences(): Occurrences {
             return this.formItemSet.getOccurrences();
         }
 
@@ -89,8 +89,8 @@ module api.form.formitemset {
             }
         }
 
-        createNewOccurrence(formItemOccurrences: api.form.FormItemOccurrences<FormItemSetOccurrenceView>,
-                            insertAtIndex: number): api.form.FormItemOccurrence<FormItemSetOccurrenceView> {
+        createNewOccurrence(formItemOccurrences: FormItemOccurrences<FormItemSetOccurrenceView>,
+                            insertAtIndex: number): FormItemOccurrence<FormItemSetOccurrenceView> {
             return new FormItemSetOccurrence(<FormItemSetOccurrences>formItemOccurrences, insertAtIndex)
         }
 

@@ -1,10 +1,10 @@
-module api.form.formitemset {
+module api.form {
 
     export class FormItemSetLabel extends api.dom.DivEl {
 
-        private formItemSet:api.form.FormItemSet;
+        private formItemSet:FormItemSet;
 
-        constructor(formItemSet:api.form.FormItemSet) {
+        constructor(formItemSet:FormItemSet) {
             super("form-item-set-label");
 
             this.formItemSet = formItemSet;

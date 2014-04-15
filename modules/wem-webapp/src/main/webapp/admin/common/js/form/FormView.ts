@@ -35,7 +35,7 @@ module api.form {
 
             this.formItemViews.forEach((formItemView: FormItemView) => {
 
-                formItemView.onValidityChanged((event: api.form.ValidityChangedEvent) => {
+                formItemView.onValidityChanged((event: ValidityChangedEvent) => {
 
                     if (!this.previousValidationRecording) {
                         this.previousValidationRecording = event.getRecording();
@@ -78,7 +78,7 @@ module api.form {
         }
 
         private broadcastFormSizeChanged() {
-            this.formItemViews.forEach((formItemView:api.form.FormItemView) => {
+            this.formItemViews.forEach((formItemView:FormItemView) => {
                 formItemView.broadcastFormSizeChanged();
             });
         }
@@ -139,28 +139,28 @@ module api.form {
             return formItemSetOccurrenceView.getValueAtPath(path.newWithoutFirstElement());
         }
 
-        public getInputView(name: string): api.form.input.InputView {
+        public getInputView(name: string): InputView {
 
             var formItemView = this.getFormItemView(name);
             if (formItemView == null) {
                 return null;
             }
-            if (!(formItemView instanceof api.form.input.InputView)) {
+            if (!(formItemView instanceof InputView)) {
                 throw new Error("Found a FormItemView with name [" + name + "], but it was not an InputView");
             }
-            return <api.form.input.InputView>formItemView;
+            return <InputView>formItemView;
         }
 
-        public getFormItemSetView(name: string): api.form.formitemset.FormItemSetView {
+        public getFormItemSetView(name: string): FormItemSetView {
 
             var formItemView = this.getFormItemView(name);
             if (formItemView == null) {
                 return null;
             }
-            if (!(formItemView instanceof api.form.formitemset.FormItemSetView)) {
+            if (!(formItemView instanceof FormItemSetView)) {
                 throw new Error("Found a FormItemView with name [" + name + "], but it was not an FormItemSetView");
             }
-            return <api.form.formitemset.FormItemSetView>formItemView;
+            return <FormItemSetView>formItemView;
         }
 
         public getFormItemView(name: string): FormItemView {
@@ -177,8 +177,8 @@ module api.form {
             // FormItemView not found - look inside FieldSet-s
             for (var i = 0; i < this.formItemViews.length; i++) {
                 var curr = this.formItemViews[i];
-                if (curr instanceof api.form.layout.FieldSetView) {
-                    var view = (<api.form.layout.FieldSetView>curr).getFormItemView(name);
+                if (curr instanceof FieldSetView) {
+                    var view = (<FieldSetView>curr).getFormItemView(name);
                     if (view != null) {
                         return view;
                     }

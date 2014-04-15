@@ -1,22 +1,16 @@
-module api.form.input {
+module api.form {
 
     import Property = api.data.Property;
     import DataId = api.data.DataId;
     import DataSet = api.data.DataSet;
-    import OccurrenceAddedEvent = api.form.OccurrenceAddedEvent;
-    import OccurrenceRemovedEvent = api.form.OccurrenceRemovedEvent;
-    import ValueAddedEvent = api.form.inputtype.ValueAddedEvent;
-    import ValueRemovedEvent = api.form.inputtype.ValueRemovedEvent;
-    import ValueChangedEvent = api.form.inputtype.ValueChangedEvent;
-    import InputTypeManager = api.form.inputtype.InputTypeManager;
 
     export interface InputViewConfig {
 
-        context: api.form.FormContext;
+        context: FormContext;
 
-        input: api.form.Input;
+        input: Input;
 
-        parent: api.form.formitemset.FormItemSetOccurrenceView;
+        parent: FormItemSetOccurrenceView;
 
         parentDataSet: DataSet;
     }
@@ -25,7 +19,7 @@ module api.form.input {
 
         private parentDataSet: api.data.DataSet;
 
-        private input: api.form.Input;
+        private input: Input;
 
         private properties: Property[];
 
@@ -35,9 +29,9 @@ module api.form.input {
 
         private addButton: api.ui.Button;
 
-        private previousValidityRecording: api.form.ValidationRecording;
+        private previousValidityRecording: ValidationRecording;
 
-        private validityChangedListeners: {(event: api.form.ValidityChangedEvent) : void}[] = [];
+        private validityChangedListeners: {(event: ValidityChangedEvent) : void}[] = [];
 
         constructor(config: InputViewConfig) {
             super(<FormItemViewConfig>{
@@ -69,7 +63,7 @@ module api.form.input {
 
             var inputType: api.form.InputTypeName = this.input.getInputType();
 
-            if (InputTypeManager.isRegistered(inputType.getName())) {
+            if (inputtype.InputTypeManager.isRegistered(inputType.getName())) {
                 var inputTypeConfig = this.input.getInputTypeConfig();
                 var inputTypeViewConfig = <api.form.inputtype.InputTypeViewConfig<any>> {
                     contentId: this.getContext().getContentId(),
@@ -79,11 +73,11 @@ module api.form.input {
                     attachments: this.getContext().getAttachments()
                 };
 
-                this.inputTypeView = InputTypeManager.createView(inputType.getName(), inputTypeViewConfig);
+                this.inputTypeView = inputtype.InputTypeManager.createView(inputType.getName(), inputTypeViewConfig);
             }
             else {
                 console.log("Input type [" + inputType.getName() + "] needs to be registered first.");
-                this.inputTypeView = InputTypeManager.createView("NoInputTypeFound");
+                this.inputTypeView = inputtype.InputTypeManager.createView("NoInputTypeFound");
             }
 
             this.inputTypeView.addEditContentRequestListener((content: api.content.ContentSummary) => {
@@ -101,18 +95,18 @@ module api.form.input {
 
             this.inputTypeView.layout(this.input, this.properties);
 
-            this.inputTypeView.onValueAdded((event: ValueAddedEvent) => {
+            this.inputTypeView.onValueAdded((event: inputtype.ValueAddedEvent) => {
 
                 var property = Property.fromNameValue(this.input.getName(), event.getValue());
                 this.parentDataSet.addData(property);
             });
 
-            this.inputTypeView.onValueRemoved((event: ValueRemovedEvent) => {
+            this.inputTypeView.onValueRemoved((event: inputtype.ValueRemovedEvent) => {
 
                 var dataRemoved = this.parentDataSet.removeData(new DataId(this.input.getName(), event.getArrayIndex()));
             });
 
-            this.inputTypeView.onValueChanged((event: ValueChangedEvent) => {
+            this.inputTypeView.onValueChanged((event: inputtype.ValueChangedEvent) => {
 
                 var dataId = new DataId(this.input.getName(), event.getArrayIndex());
                 var property: Property = this.parentDataSet.getPropertyFromDataId(dataId);
@@ -174,21 +168,21 @@ module api.form.input {
             return this.inputTypeView.getAttachments();
         }
 
-        private resolveValidationRecordingPath(): api.form.ValidationRecordingPath {
+        private resolveValidationRecordingPath(): ValidationRecordingPath {
 
-            return new api.form.ValidationRecordingPath(this.getParentDataPath(), this.input.getName());
+            return new ValidationRecordingPath(this.getParentDataPath(), this.input.getName());
         }
 
-        validate(silent: boolean = true): api.form.ValidationRecording {
+        validate(silent: boolean = true): ValidationRecording {
 
             var inputRecording = this.inputTypeView.validate(silent);
             return this.handleInputValidationRecording(inputRecording, silent);
         }
 
         private handleInputValidationRecording(inputRecording: api.form.inputtype.InputValidationRecording,
-                                               silent: boolean = true): api.form.ValidationRecording {
+                                               silent: boolean = true): ValidationRecording {
 
-            var recording = new api.form.ValidationRecording();
+            var recording = new ValidationRecording();
             var validationRecordingPath = this.resolveValidationRecordingPath();
 
             if (inputRecording.isMinimumOccurrenesBreached()) {
@@ -222,17 +216,17 @@ module api.form.input {
             return this.inputTypeView.giveFocus();
         }
 
-        onValidityChanged(listener: (event: api.form.ValidityChangedEvent)=>void) {
+        onValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
             this.validityChangedListeners.push(listener);
         }
 
-        unValidityChanged(listener: (event: api.form.ValidityChangedEvent)=>void) {
-            this.validityChangedListeners.filter((currentListener: (event: api.form.ValidityChangedEvent)=>void) => {
+        unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
+            this.validityChangedListeners.filter((currentListener: (event: ValidityChangedEvent)=>void) => {
                 return listener == currentListener;
             });
         }
 
-        private notifyFormValidityChanged(event: api.form.ValidityChangedEvent) {
+        private notifyFormValidityChanged(event: ValidityChangedEvent) {
 
             /*console.log("InputView[ " + event.getOrigin().toString() + " ] validity changed");
              if (event.getRecording().isValid()) {
@@ -243,7 +237,7 @@ module api.form.input {
              event.getRecording().print();
              }*/
 
-            this.validityChangedListeners.forEach((listener: (event: api.form.ValidityChangedEvent)=>void) => {
+            this.validityChangedListeners.forEach((listener: (event: ValidityChangedEvent)=>void) => {
                 listener(event);
             });
         }

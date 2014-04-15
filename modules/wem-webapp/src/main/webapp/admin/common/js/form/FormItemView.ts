@@ -4,21 +4,21 @@ module api.form {
 
         className: string;
 
-        context: api.form.FormContext;
+        context: FormContext;
 
         formItem: FormItem;
 
-        parent: api.form.formitemset.FormItemSetOccurrenceView;
+        parent: FormItemSetOccurrenceView;
 
     }
 
     export class FormItemView extends api.dom.DivEl {
 
-        private context: api.form.FormContext;
+        private context: FormContext;
 
         private formItem: FormItem;
 
-        private parent: api.form.formitemset.FormItemSetOccurrenceView;
+        private parent: FormItemSetOccurrenceView;
 
         private editContentRequestListeners: {(content: api.content.ContentSummary): void}[] = [];
 
@@ -41,7 +41,7 @@ module api.form {
             return this.formItem;
         }
 
-        getParent(): api.form.formitemset.FormItemSetOccurrenceView {
+        getParent(): FormItemSetOccurrenceView {
             return this.parent;
         }
 
@@ -59,10 +59,10 @@ module api.form {
             return [];
         }
 
-        validate(silent: boolean = true): api.form.ValidationRecording {
+        validate(silent: boolean = true): ValidationRecording {
 
             // Default method to avoid having to implement method in Layout-s.
-            return new api.form.ValidationRecording();
+            return new ValidationRecording();
         }
 
         giveFocus(): boolean {

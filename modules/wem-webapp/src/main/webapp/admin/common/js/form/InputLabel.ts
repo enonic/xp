@@ -1,10 +1,10 @@
-module api.form.input {
+module api.form {
 
     export class InputLabel extends api.dom.DivEl {
 
-        private input:api.form.Input;
+        private input:Input;
 
-        constructor(input:api.form.Input) {
+        constructor(input:Input) {
             super("input-label");
 
             this.input = input;

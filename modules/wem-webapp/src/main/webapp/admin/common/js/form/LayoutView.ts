@@ -1,19 +1,19 @@
-module api.form.layout {
+module api.form {
 
     export interface LayoutViewConfig {
 
-        context: api.form.FormContext;
+        context: FormContext;
 
-        layout:api.form.Layout;
+        layout:Layout;
 
-        parent: api.form.formitemset.FormItemSetOccurrenceView;
+        parent: FormItemSetOccurrenceView;
 
         className:string
     }
 
-    export class LayoutView extends api.form.FormItemView {
+    export class LayoutView extends FormItemView {
 
-        private layout: api.form.Layout;
+        private layout: Layout;
 
         constructor(config: LayoutViewConfig) {
             super(<FormItemViewConfig>{
