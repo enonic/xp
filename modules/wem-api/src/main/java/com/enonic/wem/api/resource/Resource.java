@@ -2,6 +2,7 @@ package com.enonic.wem.api.resource;
 
 
 import java.io.IOException;
+import java.util.List;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
@@ -49,11 +50,23 @@ public final class Resource
         return this.byteSource;
     }
 
-    public String getAsString()
+    public String readAsString()
     {
         try
         {
             return this.byteSource.asCharSource( Charsets.UTF_8 ).read();
+        }
+        catch ( final IOException e )
+        {
+            throw Throwables.propagate( e );
+        }
+    }
+
+    public List<String> readLines()
+    {
+        try
+        {
+            return this.byteSource.asCharSource( Charsets.UTF_8 ).readLines();
         }
         catch ( final IOException e )
         {

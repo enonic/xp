@@ -48,7 +48,7 @@ public class ResourceServiceImpl_moduleTest
         assertEquals( key, resource.getKey() );
         assertEquals( 7, resource.getSize() );
         assertNotNull( resource.getByteSource() );
-        assertEquals( "a/b.txt", resource.getAsString() );
+        assertEquals( "a/b.txt", resource.readAsString() );
         assertTrue( resource.getTimestamp() > 0 );
     }
 

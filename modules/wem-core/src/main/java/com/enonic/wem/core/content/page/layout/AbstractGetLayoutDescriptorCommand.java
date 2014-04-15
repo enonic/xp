@@ -32,7 +32,7 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
         final ResourceKey resourceKey = key.toResourceKey();
         final Resource resource = this.resourceService.getResource( resourceKey );
 
-        final String descriptorXml = resource.getAsString();
+        final String descriptorXml = resource.readAsString();
         final LayoutDescriptor.Builder builder = LayoutDescriptor.newLayoutDescriptor();
         XmlSerializers.layoutDescriptor().parse( descriptorXml ).to( builder );
         builder.name( key.getName() ).key( key );

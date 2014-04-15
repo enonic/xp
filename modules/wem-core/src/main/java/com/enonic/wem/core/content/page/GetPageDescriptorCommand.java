@@ -32,7 +32,7 @@ final class GetPageDescriptorCommand
         final ResourceKey resourceKey = key.toResourceKey();
         final Resource resource = this.resourceService.getResource( resourceKey );
 
-        final String descriptorXml = resource.getAsString();
+        final String descriptorXml = resource.readAsString();
         final PageDescriptor.Builder builder = PageDescriptor.newPageDescriptor();
         XmlSerializers.pageDescriptor().parse( descriptorXml ).to( builder );
         builder.key( key );

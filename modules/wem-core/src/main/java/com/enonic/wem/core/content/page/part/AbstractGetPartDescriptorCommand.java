@@ -32,7 +32,7 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
         final ResourceKey resourceKey = key.toResourceKey();
         final Resource resource = this.resourceService.getResource( resourceKey );
 
-        final String descriptorXml = resource.getAsString();
+        final String descriptorXml = resource.readAsString();
         final PartDescriptor.Builder builder = PartDescriptor.newPartDescriptor();
         XmlSerializers.partDescriptor().parse( descriptorXml ).to( builder );
         builder.name( key.getName() ).key( key );
