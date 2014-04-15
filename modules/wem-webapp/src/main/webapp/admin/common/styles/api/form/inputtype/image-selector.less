@@ -54,9 +54,13 @@
       padding: 0;
       margin: 10px 4.716981132% 20px 0;
       cursor: pointer;
+      border: 1px solid #d3d3d3;
+      background-color: #ffffff;
 
       &.editing {
+        border: none;
         .scale(1.66667);
+        .box-shadow(0px 0px 10px darken(@admin-input-blue, 10%));
         z-index: 100;
 
         &.first-in-row {
@@ -65,6 +69,10 @@
 
         &.last-in-row {
           .transform(scale(1.66667) translate(-20%));;
+        }
+
+        &:hover .label {
+          display: none;
         }
       }
 
