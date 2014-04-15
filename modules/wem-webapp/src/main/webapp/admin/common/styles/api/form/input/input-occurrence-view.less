@@ -27,11 +27,13 @@
   }
 
   .remove-button {
+    &:extend(.icon);
+    .icon-close;
+
     .order(3);
 
     float: right;
     width: 20px;
-    .icon-close;
     text-decoration: none;
     cursor: pointer;
   }

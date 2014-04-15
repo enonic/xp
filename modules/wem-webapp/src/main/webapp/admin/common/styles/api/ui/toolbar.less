@@ -15,12 +15,14 @@
   }
 
   .fold {
+    &:extend(.icon);
+    .icon-arrow-down;
+
     width: 10px;
     height: @toolbar-height;
     line-height: @toolbar-height;
     padding: 0 17px;
     text-align: center;
-    .icon-arrow-down;
     .box-sizing(content-box);
 
     .dropdown {
