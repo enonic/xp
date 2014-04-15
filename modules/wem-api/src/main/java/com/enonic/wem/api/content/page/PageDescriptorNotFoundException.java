@@ -1,7 +1,7 @@
 package com.enonic.wem.api.content.page;
 
 
-import com.enonic.wem.api.NotFoundException;
+import com.enonic.wem.api.exception.NotFoundException;
 
 public class PageDescriptorNotFoundException
     extends NotFoundException

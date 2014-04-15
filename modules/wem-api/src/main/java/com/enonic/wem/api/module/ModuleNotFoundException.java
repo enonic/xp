@@ -1,7 +1,6 @@
 package com.enonic.wem.api.module;
 
-import com.enonic.wem.api.NotFoundException;
-import com.enonic.wem.api.exception.BaseException;
+import com.enonic.wem.api.exception.NotFoundException;
 
 public class ModuleNotFoundException
     extends NotFoundException

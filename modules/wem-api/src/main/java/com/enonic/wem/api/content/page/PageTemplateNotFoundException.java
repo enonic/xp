@@ -1,7 +1,6 @@
 package com.enonic.wem.api.content.page;
 
-import com.enonic.wem.api.NotFoundException;
-import com.enonic.wem.api.exception.BaseException;
+import com.enonic.wem.api.exception.NotFoundException;
 
 public final class PageTemplateNotFoundException
     extends NotFoundException

@@ -2,9 +2,8 @@ package com.enonic.wem.api.content.site;
 
 import java.text.MessageFormat;
 
-import com.enonic.wem.api.NotFoundException;
+import com.enonic.wem.api.exception.NotFoundException;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.exception.BaseException;
 
 public final class SiteNotFoundException
     extends NotFoundException

@@ -4,7 +4,7 @@ import java.text.MessageFormat;
 
 import com.google.common.base.Joiner;
 
-import com.enonic.wem.api.NotFoundException;
+import com.enonic.wem.api.exception.NotFoundException;
 
 public final class ContentNotFoundException
     extends NotFoundException

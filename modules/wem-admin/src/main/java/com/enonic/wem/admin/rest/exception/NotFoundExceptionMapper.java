@@ -6,7 +6,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import com.enonic.wem.admin.rest.resource.ErrorJson;
-import com.enonic.wem.api.NotFoundException;
+import com.enonic.wem.api.exception.NotFoundException;
 
 @Provider
 public final class NotFoundExceptionMapper

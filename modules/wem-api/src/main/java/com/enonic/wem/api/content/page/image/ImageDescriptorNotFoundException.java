@@ -1,7 +1,7 @@
 package com.enonic.wem.api.content.page.image;
 
 
-import com.enonic.wem.api.NotFoundException;
+import com.enonic.wem.api.exception.NotFoundException;
 
 public class ImageDescriptorNotFoundException
     extends NotFoundException

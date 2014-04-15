@@ -1,6 +1,6 @@
 package com.enonic.wem.api.content.page.part;
 
-import com.enonic.wem.api.NotFoundException;
+import com.enonic.wem.api.exception.NotFoundException;
 
 
 public class PartDescriptorNotFoundException
