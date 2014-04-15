@@ -321,14 +321,16 @@
 }
 
 .live-edit-font-icon-drop-allowed {
-  transform: scale(.8);
-  background-color: #558e28;
+  &:extend(.icon);
   .icon-checkmark;
 
+  background-color: #558e28;
 }
 .live-edit-font-icon-drop-not-allowed {
-  background-color: #d90b00;
+  &:extend(.icon);
   .icon-blocked;
+
+  background-color: #d90b00;
 }
 
 .live-edit-component-padding {

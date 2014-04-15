@@ -46,7 +46,7 @@ module app.wizard.page.contextwindow.insert {
                 distance: 10,
                 addClasses: false,
                 helper: () => {
-                    return $('<div id="live-edit-drag-helper" class="live-edit-font-icon-drop-allowed live-edit-font-icon-drop-not-allowed" style="width: 48px; height: 48px; position: absolute; z-index: 400000;" data-live-edit-drop-allowed="false"></div>');
+                    return $('<div id="live-edit-drag-helper" class="live-edit-font-icon-drop-not-allowed" style="width: 48px; height: 48px; position: absolute; z-index: 400000;" data-live-edit-drop-allowed="false"></div>');
                 },
                 scope: 'component',
                 start: (event:Event, ui:JQueryUI.DroppableEventUIParam) => {
