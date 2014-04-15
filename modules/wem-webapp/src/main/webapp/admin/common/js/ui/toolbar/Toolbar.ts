@@ -2,7 +2,7 @@ module api.ui.toolbar {
 
     export class Toolbar extends api.dom.DivEl implements api.ui.ActionContainer {
 
-        private fold: Fold;
+        private fold: FoldButton;
 
         private hasGreedySpacer: boolean;
 
@@ -11,8 +11,7 @@ module api.ui.toolbar {
         constructor() {
             super("toolbar");
 
-            this.fold = new Fold();
-            this.fold.addClass("pull-right").hide();
+            this.fold = new FoldButton();
             this.appendChild(this.fold);
 
             api.dom.Window.get().onResized((event: UIEvent) => this.foldOrExpand(), this);
@@ -48,36 +47,41 @@ module api.ui.toolbar {
             }
 
             var toolbarWidth = this.getEl().getWidth();
-            if (toolbarWidth <= this.getDisplayedButtonsWidth()) {
+            if (toolbarWidth < this.getVisibleButtonsWidth()) {
+
                 do {
-                    var buttonToHide = this.getLastRightButton() || this.getLastLeftButton();
+                    var buttonToHide = this.getLastLeftButton();
                     if (!buttonToHide) {
                         return;
                     }
+                    var buttonWidth = buttonToHide.getEl().getWidthWithBorder();
                     this.removeChild(buttonToHide);
-                    this.fold.push(buttonToHide);
-                    this.fold.show();
-                } while (toolbarWidth <= this.getDisplayedButtonsWidth());
-            } else if (!this.fold.isEmpty()) {
-                do {
-                    var buttonToShow = this.fold.pop();
-                    buttonToShow.getEl().setVisibility('hidden');
-                    buttonToShow.hasClass('pull-right') ? buttonToShow.insertAfterEl(this.fold) : buttonToShow.insertBeforeEl(this.fold);
-                    if (toolbarWidth <= this.getDisplayedButtonsWidth()) {
-                        this.removeChild(buttonToShow);
-                        this.fold.push(buttonToShow);
-                        buttonToShow.getEl().setVisibility('visible');
-                        return;
+                    this.fold.push(buttonToHide, buttonWidth);
+                    console.log('Folding button', buttonToHide);
+
+                    if (!this.fold.isVisible()) {
+                        this.fold.show();
                     }
-                    buttonToShow.getEl().setVisibility('visible');
-                } while (!this.fold.isEmpty());
-                this.fold.hide();
+                } while (toolbarWidth <= this.getVisibleButtonsWidth());
+
+            } else {
+
+                while (!this.fold.isEmpty() && (this.getVisibleButtonsWidth() + this.fold.getNextButtonWidth() < toolbarWidth)) {
+
+                    var buttonToShow = this.fold.pop();
+                    buttonToShow.insertBeforeEl(this.fold);
+                    console.log('Unfolding button', buttonToShow);
+
+                    if (this.fold.isEmpty()) {
+                        this.fold.hide();
+                    }
+                }
             }
         }
 
-        private getDisplayedButtonsWidth(): number {
+        private getVisibleButtonsWidth(): number {
             return this.getChildren().reduce((totalWidth: number, element: api.dom.Element) => {
-                return totalWidth + element.getEl().getMarginLeft() + element.getEl().getWidth() + element.getEl().getMarginRight();
+                return totalWidth + ( element.isVisible() ? element.getEl().getWidthWithMargin() : 0 );
             }, 0);
         }
 

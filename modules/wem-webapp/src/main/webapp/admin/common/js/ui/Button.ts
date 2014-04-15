@@ -33,5 +33,13 @@ module api.ui {
             return this.hasClass("active");
         }
 
+        setLabel(label: string) {
+            this.labelEl.getEl().setInnerHtml(label);
+        }
+
+        getLabel(): string {
+            return this.labelEl.getEl().getInnerHtml();
+        }
+
     }
 }
