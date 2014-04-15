@@ -3,18 +3,25 @@ package com.enonic.wem.core.script.service;
 import java.util.Map;
 
 import org.mozilla.javascript.Context;
+import org.mozilla.javascript.RhinoException;
+import org.mozilla.javascript.Script;
+import org.mozilla.javascript.ScriptStackElement;
+import org.mozilla.javascript.Scriptable;
 
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceService;
+import com.enonic.wem.core.script.ScriptException;
 import com.enonic.wem.core.script.ScriptRunner;
 import com.enonic.wem.core.script.compiler.ScriptCompiler;
 
 final class ScriptRunnerImpl
     implements ScriptRunner
 {
+    private Scriptable scope;
+
     protected ResourceService resourceService;
 
     protected ScriptCompiler compiler;
@@ -22,8 +29,6 @@ final class ScriptRunnerImpl
     private final Map<String, Object> binding;
 
     private ResourceKey resourceKey;
-
-    private Resource resource;
 
     public ScriptRunnerImpl()
     {
@@ -47,9 +52,56 @@ final class ScriptRunnerImpl
     @Override
     public void execute()
     {
-        this.resource = this.resourceService.getResource( this.resourceKey );
-
+        final Resource resource = this.resourceService.getResource( this.resourceKey );
         final Context context = Context.enter();
 
+        try
+        {
+            initializeScope();
+            setObjectsToScope();
+
+            final Script script = this.compiler.compile( context, resource );
+            script.exec( context, this.scope );
+        }
+        catch ( final RhinoException e )
+        {
+            throw createError( e );
+        }
+        finally
+        {
+            Context.exit();
+        }
+    }
+
+    private void setObjectsToScope()
+    {
+        for ( final Map.Entry<String, Object> entry : this.binding.entrySet() )
+        {
+            this.scope.put( entry.getKey(), this.scope, Context.javaToJS( entry.getValue(), this.scope ) );
+        }
+    }
+
+    private void initializeScope()
+    {
+        final Context context = Context.getCurrentContext();
+        this.scope = context.initStandardObjects();
+    }
+
+    private ScriptException createError( final RhinoException cause )
+    {
+        final String name = cause.sourceName();
+
+        final ScriptException.Builder builder = ScriptException.newBuilder();
+        builder.cause( cause );
+        builder.lineNumber( cause.lineNumber() );
+        builder.resource( ResourceKey.from( name ) );
+        builder.message( cause.details() );
+
+        for ( final ScriptStackElement elem : cause.getScriptStack() )
+        {
+            builder.callLine( elem.fileName, elem.lineNumber );
+        }
+
+        return builder.build();
     }
 }

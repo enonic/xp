@@ -2,6 +2,8 @@ package com.enonic.wem.core.script.service;
 
 import javax.inject.Inject;
 
+import org.mozilla.javascript.ContextFactory;
+
 import com.enonic.wem.api.resource.ResourceService;
 import com.enonic.wem.core.script.ScriptRunner;
 import com.enonic.wem.core.script.ScriptService;
@@ -10,11 +12,14 @@ import com.enonic.wem.core.script.compiler.ScriptCompiler;
 public final class ScriptServiceImpl
     implements ScriptService
 {
-    @Inject
-    protected ResourceService resourceService;
+    private ResourceService resourceService;
 
-    @Inject
-    protected ScriptCompiler compiler;
+    private ScriptCompiler compiler;
+
+    static
+    {
+        ContextFactory.initGlobal( new RhinoContextFactory() );
+    }
 
     @Override
     public ScriptRunner newRunner()
@@ -23,5 +28,17 @@ public final class ScriptServiceImpl
         runner.compiler = this.compiler;
         runner.resourceService = this.resourceService;
         return runner;
+    }
+
+    @Inject
+    public void setResourceService( final ResourceService resourceService )
+    {
+        this.resourceService = resourceService;
+    }
+
+    @Inject
+    public void setCompiler( final ScriptCompiler compiler )
+    {
+        this.compiler = compiler;
     }
 }
