@@ -14,7 +14,6 @@ public class ContentQueryHit
         this.contentId = contentId;
     }
 
-
     public float getScore()
     {
         return score;

@@ -537,10 +537,12 @@ public class ContentResourceTest
     public void delete_content_failure()
         throws Exception
     {
-        Mockito.when( contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "/one" ) ) ) ) ).thenThrow(
+        Mockito.when(
+            contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "/one" ) ) ) ) ).thenThrow(
             new ContentNotFoundException( ContentPath.from( "one" ) ) );
 
-        Mockito.when( contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "/two" ) ) ) ) ).thenThrow(
+        Mockito.when(
+            contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "/two" ) ) ) ) ).thenThrow(
             new UnableToDeleteContentException( ContentPath.from( "two" ), "Some reason" ) );
 
         String jsonString = resource().path( "content/delete" ).
@@ -554,7 +556,8 @@ public class ContentResourceTest
     public void delete_content_both()
         throws Exception
     {
-        Mockito.when( contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "one" ) ) ) ) ).thenReturn(
+        Mockito.when(
+            contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "one" ) ) ) ) ).thenReturn(
             new DeleteContentResult( newContent().parentPath( ContentPath.ROOT ).name( "one" ).build() ) );
 
         Mockito.when( contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "two" ) ) ) ) ).thenThrow(

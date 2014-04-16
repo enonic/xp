@@ -1,43 +1,40 @@
-package com.enonic.wem.core.index.entity;
+package com.enonic.wem.core.index.node;
 
 import java.util.Set;
-
-import org.elasticsearch.search.SearchHit;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.aggregation.Aggregations;
 
-public class EntityQueryResult
+public final class QueryResult
 {
-    private final ImmutableSet<EntityQueryResultEntry> entries;
+    protected ImmutableSet<QueryResultEntry> entries;
 
-    private final long totalHits;
+    protected final long totalHits;
 
-    private final long hits;
+    protected final long hits;
 
-    private final float maxScore;
+    protected final float maxScore;
+
+    public ImmutableSet<QueryResultEntry> getEntries()
+    {
+        return entries;
+    }
 
     private final Aggregations aggregations;
 
-    private EntityQueryResult( final Builder builder )
+    private QueryResult( final Builder builder )
     {
         this.entries = ImmutableSet.copyOf( builder.entries );
+
         this.totalHits = builder.totalHits;
+
         this.hits = builder.hits;
+
         this.maxScore = builder.maxScore;
+
         this.aggregations = builder.aggregations;
-    }
-
-    public static Builder newResult()
-    {
-        return new Builder();
-    }
-
-    public ImmutableSet<EntityQueryResultEntry> getEntries()
-    {
-        return entries;
     }
 
     public long getTotalHits()
@@ -60,9 +57,14 @@ public class EntityQueryResult
         return aggregations;
     }
 
-    public static class Builder
+    public static Builder newQueryResult()
     {
-        private Set<EntityQueryResultEntry> entries = Sets.newLinkedHashSet();
+        return new Builder();
+    }
+
+    public static final class Builder
+    {
+        private Set<QueryResultEntry> entries = Sets.newHashSet();
 
         private long totalHits;
 
@@ -71,11 +73,6 @@ public class EntityQueryResult
         private float maxScore;
 
         private Aggregations aggregations;
-
-        public EntityQueryResult build()
-        {
-            return new EntityQueryResult( this );
-        }
 
         public Builder totalHits( final long totalHits )
         {
@@ -95,13 +92,9 @@ public class EntityQueryResult
             return this;
         }
 
-        public Builder addEntries( final SearchHit[] hits )
+        public Builder addEntry( final QueryResultEntry entry )
         {
-            for ( final SearchHit hit : hits )
-            {
-                entries.add( new EntityQueryResultEntry( hit.score(), hit.id() ) );
-            }
-
+            this.entries.add( entry );
             return this;
         }
 
@@ -109,6 +102,11 @@ public class EntityQueryResult
         {
             this.aggregations = aggregations;
             return this;
+        }
+
+        public QueryResult build()
+        {
+            return new QueryResult( this );
         }
     }
 

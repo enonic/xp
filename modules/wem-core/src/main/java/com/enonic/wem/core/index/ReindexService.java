@@ -50,7 +50,10 @@ public class ReindexService
 
             LOG.info( "Reindex Node: " + node.name() );
 
-            indexService.indexNode( node );
+            if ( !node.name().toString().startsWith( "__" ) )
+            {
+                indexService.indexNode( node );
+            }
 
             reindexNodes( nodeJcrDao.getNodesByParentPath( node.path() ), nodeJcrDao );
         }

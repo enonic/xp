@@ -135,8 +135,7 @@ public class IndexServiceImplTest
     private IndexMappingProvider setUpIndexMappingMock()
     {
         final IndexMappingProvider indexMappingProvider = Mockito.mock( IndexMappingProvider.class );
-        List<IndexMapping> indexMappings =
-            Lists.newArrayList( new IndexMapping( Index.NODB, IndexType.NODE.getIndexTypeName(), "Testings 1234" ) );
+        List<IndexMapping> indexMappings = Lists.newArrayList( new IndexMapping( Index.NODB, IndexType.NODE.getName(), "Testings 1234" ) );
         Mockito.when( indexMappingProvider.getMappingsForIndex( Index.NODB ) ).thenReturn( indexMappings );
         return indexMappingProvider;
     }

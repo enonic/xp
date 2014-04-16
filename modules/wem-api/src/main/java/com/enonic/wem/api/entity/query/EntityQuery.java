@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.query.aggregation.AggregationQuery;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.expr.QueryExpr;
@@ -14,6 +15,8 @@ import com.enonic.wem.api.query.filter.Filter;
 public class EntityQuery
 {
     private final QueryExpr query;
+
+    private final ImmutableSet<EntityId> ids;
 
     private final ImmutableSet<Filter> filters;
 
@@ -36,9 +39,10 @@ public class EntityQuery
         this.size = builder.size;
         this.from = builder.from;
         this.aggregationQueries = ImmutableSet.copyOf( builder.aggregationQueries );
+        this.ids = ImmutableSet.copyOf( builder.ids );
     }
 
-    public static Builder newQuery()
+    public static Builder newEntityQuery()
     {
         return new Builder();
     }
@@ -80,7 +84,7 @@ public class EntityQuery
         return aggregationQueries;
     }
 
-    public static class Builder<T>
+    public static class Builder<T extends Builder>
     {
         private QueryExpr query;
 
@@ -90,53 +94,67 @@ public class EntityQuery
 
         private Set<AggregationQuery> aggregationQueries = Sets.newHashSet();
 
+        private Set<EntityId> ids = Sets.newHashSet();
+
         private int from = 0;
 
         private int size = 10;
 
-        public Builder query( final QueryExpr query )
+        @SuppressWarnings("unchecked")
+        public T query( final QueryExpr query )
         {
             this.query = query;
-            return this;
+            return (T) this;
         }
 
-        public Builder addFilter( final Filter filter )
+        @SuppressWarnings("unchecked")
+        public T addId( final EntityId id )
+        {
+            this.ids.add( id );
+            return (T) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public T addFilter( final Filter filter )
         {
             this.filters.add( filter );
-            return this;
+            return (T) this;
         }
 
-        public Builder addQueryFilter( final Filter queryFilter )
+        @SuppressWarnings("unchecked")
+        public T addQueryFilter( final Filter queryFilter )
         {
             this.queryFilters.add( queryFilter );
-            return this;
+            return (T) this;
         }
 
-        public Builder addQueryFilters( final Set<Filter> queryFilters )
+        @SuppressWarnings("unchecked")
+        public T addQueryFilters( final Set<Filter> queryFilters )
         {
             this.queryFilters.addAll( queryFilters );
-            return this;
+            return (T) this;
         }
 
-
-        public Builder from( final int from )
+        @SuppressWarnings("unchecked")
+        public T from( final int from )
         {
             this.from = from;
-            return this;
+            return (T) this;
         }
 
-        public Builder size( final int size )
+        @SuppressWarnings("unchecked")
+        public T size( final int size )
         {
             this.size = size;
-            return this;
+            return (T) this;
         }
 
-        public Builder addAggregationQueries( final Set<AggregationQuery> aggregationQueries )
+        @SuppressWarnings("unchecked")
+        public T addAggregationQueries( final Set<AggregationQuery> aggregationQueries )
         {
             this.aggregationQueries.addAll( aggregationQueries );
-            return this;
+            return (T) this;
         }
-
 
         public EntityQuery build()
         {

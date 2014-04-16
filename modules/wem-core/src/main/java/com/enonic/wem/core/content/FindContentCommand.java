@@ -5,33 +5,34 @@ import com.google.common.collect.ImmutableSet;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.query.ContentQuery;
 import com.enonic.wem.api.content.query.ContentQueryResult;
-import com.enonic.wem.api.entity.query.EntityQuery;
-import com.enonic.wem.core.index.entity.EntityQueryResult;
-import com.enonic.wem.core.index.entity.EntityQueryResultEntry;
-import com.enonic.wem.core.index.entity.EntityQueryService;
+import com.enonic.wem.api.entity.query.NodeQuery;
+import com.enonic.wem.core.index.node.NodeQueryService;
+import com.enonic.wem.core.index.node.QueryResult;
+import com.enonic.wem.core.index.node.QueryResultEntry;
 
 final class FindContentCommand
 {
-    private ContentQueryEntityQueryTranslator translator = new ContentQueryEntityQueryTranslator();
+    private ContentQueryNodeQueryTranslator translator = new ContentQueryNodeQueryTranslator();
 
-    private EntityQueryService entityQueryService;
+    private NodeQueryService nodeQueryService;
 
     private ContentQuery contentQuery;
 
     ContentQueryResult execute()
     {
-        final EntityQuery entityQuery = translator.translate( this.contentQuery );
-        final EntityQueryResult entityQueryResult = entityQueryService.find( entityQuery );
+        final NodeQuery entityQuery = translator.translate( this.contentQuery );
 
-        return translateToContentIndexQueryResult( entityQueryResult );
+        final QueryResult queryResult = nodeQueryService.find( entityQuery );
+
+        return translateToContentIndexQueryResult( queryResult );
     }
 
-    private ContentQueryResult translateToContentIndexQueryResult( final EntityQueryResult result )
+    private ContentQueryResult translateToContentIndexQueryResult( final QueryResult result )
     {
         final ContentQueryResult.Builder builder = ContentQueryResult.newResult( result.getTotalHits() );
-        final ImmutableSet<EntityQueryResultEntry> entries = result.getEntries();
+        final ImmutableSet<QueryResultEntry> entries = result.getEntries();
 
-        for ( final EntityQueryResultEntry entry : entries )
+        for ( final QueryResultEntry entry : entries )
         {
             builder.addContentHit( ContentId.from( entry.getId() ), entry.getScore() );
         }
@@ -41,9 +42,9 @@ final class FindContentCommand
         return builder.build();
     }
 
-    FindContentCommand entityQueryService( final EntityQueryService entityQueryService )
+    FindContentCommand nodeQueryService( final NodeQueryService entityQueryService )
     {
-        this.entityQueryService = entityQueryService;
+        this.nodeQueryService = entityQueryService;
         return this;
     }
 

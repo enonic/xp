@@ -20,7 +20,7 @@ class EntityQueryTranslatorTest
     {
         given:
         EntityQueryTranslator entityQueryTranslator = new EntityQueryTranslator()
-        EntityQuery entityQuery = EntityQuery.newQuery().query( QueryParser.parse( "myField >= 1" ) ).build()
+        EntityQuery entityQuery = EntityQuery.newEntityQuery().query( QueryParser.parse( "myField >= 1" ) ).build()
 
         when:
         def translatedQuery = entityQueryTranslator.translate( entityQuery )
@@ -45,7 +45,7 @@ class EntityQueryTranslatorTest
             add( new Value.String( "mySecondValue" ) ).
             build()
 
-        EntityQuery entityQuery = EntityQuery.newQuery().addFilter( queryFilter ).build();
+        EntityQuery entityQuery = EntityQuery.newEntityQuery().addFilter( queryFilter ).build();
 
         when:
         def translatedQuery = entityQueryTranslator.translate( entityQuery )
@@ -63,7 +63,7 @@ class EntityQueryTranslatorTest
     {
         given:
         EntityQueryTranslator entityQueryTranslator = new EntityQueryTranslator();
-        EntityQuery entityQuery = EntityQuery.newQuery().query( QueryParser.parse( "myField >= 1 ORDER BY myField DESC" ) ).build();
+        EntityQuery entityQuery = EntityQuery.newEntityQuery().query( QueryParser.parse( "myField >= 1 ORDER BY myField DESC" ) ).build();
 
         when:
         def translatedQuery = entityQueryTranslator.translate( entityQuery )
@@ -81,7 +81,7 @@ class EntityQueryTranslatorTest
     {
         given:
         EntityQueryTranslator entityQueryTranslator = new EntityQueryTranslator();
-        EntityQuery entityQuery = EntityQuery.newQuery().query(
+        EntityQuery entityQuery = EntityQuery.newEntityQuery().query(
             QueryParser.parse( "myField >= 1 ORDER BY geoDistance('myField', '-70,-50') ASC" ) ).build();
 
         when:
@@ -103,7 +103,7 @@ class EntityQueryTranslatorTest
         def expected = this.getClass().getResource( "big_ugly_do_it_all_query.json" ).text
         def EntityQueryTranslator entityQueryTranslator = new EntityQueryTranslator();
         def EntityQuery.Builder builder = EntityQuery.
-            newQuery().
+            newEntityQuery().
             query( QueryParser.parse(
                 "myField >= 1 AND fulltext('myField', 'myPhrase', 'OR') ORDER BY geoDistance('myField', '-70,-50') ASC, myField DESC" ) )
 

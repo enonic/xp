@@ -14,6 +14,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.core.entity.index.NodeIndexDocumentFactory;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 
@@ -109,6 +110,7 @@ public class ElasticsearchQuery
     public SearchSourceBuilder toSearchSourceBuilder()
     {
         SearchSourceBuilder builder = new SearchSourceBuilder().
+            field( NodeIndexDocumentFactory.ENTITY_KEY ).
             query( this.getQuery() ).
             from( this.getFrom() ).
             size( this.getSize() ).

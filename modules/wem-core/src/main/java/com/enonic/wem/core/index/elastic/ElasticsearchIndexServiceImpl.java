@@ -13,27 +13,32 @@ import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsReques
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.index.query.IdsQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.core.entity.index.NodeIndexDocumentFactory;
 import com.enonic.wem.core.index.DeleteDocument;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexException;
 import com.enonic.wem.core.index.IndexStatus;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.document.IndexDocument;
-import com.enonic.wem.core.index.entity.EntityQueryResult;
-import com.enonic.wem.core.index.entity.EntityQueryResultFactory;
 
 
 public class ElasticsearchIndexServiceImpl
@@ -49,8 +54,6 @@ public class ElasticsearchIndexServiceImpl
     public static final TimeValue CLUSTER_NOWAIT_TIMEOUT = TimeValue.timeValueSeconds( 1 );
 
     private IndexSettingsBuilder indexSettingsBuilder;
-
-    private EntityQueryResultFactory entityQueryResultFactory = new EntityQueryResultFactory();
 
     @Override
     public IndexStatus getIndexStatus( final Index index, final boolean waitForStatusYellow )
@@ -84,7 +87,7 @@ public class ElasticsearchIndexServiceImpl
             final IndexRequest req = Requests.indexRequest().
                 id( id ).
                 index( index.getName() ).
-                type( indexType.getIndexTypeName() ).
+                type( indexType.getName() ).
                 source( xContentBuilder ).
                 refresh( indexDocument.doRefreshOnStore() );
 
@@ -97,8 +100,7 @@ public class ElasticsearchIndexServiceImpl
     public void delete( final DeleteDocument deleteDocument )
     {
         DeleteRequest deleteRequest =
-            new DeleteRequest( deleteDocument.getIndex().getName(), deleteDocument.getIndexType().getIndexTypeName(),
-                               deleteDocument.getId() );
+            new DeleteRequest( deleteDocument.getIndex().getName(), deleteDocument.getIndexType().getName(), deleteDocument.getId() );
 
         try
         {
@@ -107,7 +109,7 @@ public class ElasticsearchIndexServiceImpl
         catch ( ElasticsearchException e )
         {
             throw new IndexException( "Failed to delete from index " + deleteDocument.getIndex() + " of type " +
-                                          deleteDocument.getIndexType().getIndexTypeName() + " with id " + deleteDocument.getId(), e );
+                                          deleteDocument.getIndexType().getName() + " with id " + deleteDocument.getId(), e );
         }
     }
 
@@ -157,20 +159,21 @@ public class ElasticsearchIndexServiceImpl
     }
 
     @Override
-    public EntityQueryResult search( final ElasticsearchQuery elasticsearchQuery )
+    public SearchResponse search( final ElasticsearchQuery elasticsearchQuery )
     {
         final SearchSourceBuilder searchSource = elasticsearchQuery.toSearchSourceBuilder();
 
-        System.out.println( searchSource.toString() );
+        // System.out.println( searchSource.toString() );
 
         final SearchRequest searchRequest = Requests.
             searchRequest( elasticsearchQuery.getIndex().getName() ).
-            types( elasticsearchQuery.getIndexType().getIndexTypeName() ).
+            types( elasticsearchQuery.getIndexType().getName() ).
             source( searchSource );
 
         final SearchResponse searchResponse = doSearchRequest( searchRequest );
 
-        return entityQueryResultFactory.create( searchResponse );
+        return searchResponse;
+
     }
 
     private SearchResponse doSearchRequest( SearchRequest searchRequest )
@@ -205,6 +208,60 @@ public class ElasticsearchIndexServiceImpl
         }
 
         return clusterHealthResponse;
+    }
+
+    @Override
+    public SearchResponse get( final ByIdsQuery byIdsQuery )
+    {
+        final IdsQueryBuilder idsQueryBuilder = new IdsQueryBuilder();
+
+        for ( final IndexDocumentId indexDocumentId : byIdsQuery.getIndexDocumentIds() )
+        {
+            idsQueryBuilder.addIds( indexDocumentId.getId() );
+        }
+
+        return doSearchRequest( byIdsQuery, idsQueryBuilder );
+    }
+
+    @Override
+    public GetResponse get( final ByIdQuery byIdQuery )
+    {
+        final GetRequest getRequest = new GetRequest( byIdQuery.index() ).
+            type( byIdQuery.indexType() ).
+            id( byIdQuery.getId() ).
+            fields( NodeIndexDocumentFactory.ENTITY_KEY );
+
+        return client.get( getRequest ).actionGet();
+    }
+
+    public SearchResponse get( final ByPathQuery byPathQuery )
+    {
+        final TermQueryBuilder pathQuery = new TermQueryBuilder( NodeIndexDocumentFactory.PATH_KEY, byPathQuery.getPath() );
+
+        return doSearchRequest( byPathQuery, pathQuery );
+    }
+
+    public SearchResponse get( final ByParentPathQuery byParentPathQuery )
+    {
+        final TermQueryBuilder pathQuery = new TermQueryBuilder( NodeIndexDocumentFactory.PARENT_PATH_KEY, byParentPathQuery.getPath() );
+
+        return doSearchRequest( byParentPathQuery, pathQuery );
+    }
+
+    private SearchResponse doSearchRequest( final AbstractByQuery byQuery, final QueryBuilder queryBuilder )
+    {
+        final SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch( byQuery.index() ).
+            setTypes( byQuery.indexType() ).
+            setQuery( queryBuilder ).
+            setFrom( 0 ).
+            setSize( byQuery.size() ).
+            addField( NodeIndexDocumentFactory.ENTITY_KEY );
+
+        final SearchResponse searchResponse = searchRequestBuilder.
+            execute().
+            actionGet();
+
+        return searchResponse;
     }
 
     @Inject

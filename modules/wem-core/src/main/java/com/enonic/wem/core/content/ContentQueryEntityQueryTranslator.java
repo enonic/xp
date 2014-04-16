@@ -13,8 +13,17 @@ public class ContentQueryEntityQueryTranslator
 {
     public EntityQuery translate( final ContentQuery contentQuery )
     {
-        final EntityQuery.Builder entityQueryBuilder = EntityQuery.newQuery().
-            query( contentQuery.getQueryExpr() ).
+        final EntityQuery.Builder entityQueryBuilder = EntityQuery.newEntityQuery();
+
+        doTranslateEntityQueryProperties( contentQuery, entityQueryBuilder );
+
+        return entityQueryBuilder.build();
+    }
+
+
+    protected void doTranslateEntityQueryProperties( final ContentQuery contentQuery, final EntityQuery.Builder builder )
+    {
+        builder.query( contentQuery.getQueryExpr() ).
             from( contentQuery.getFrom() ).
             size( contentQuery.getSize() ).
             addAggregationQueries( contentQuery.getAggregationQueries() ).
@@ -31,12 +40,11 @@ public class ContentQueryEntityQueryTranslator
                 contentTypeFilterBuilder.add( new Value.String( contentTypeName.toString() ) );
             }
 
-            entityQueryBuilder.addQueryFilter( contentTypeFilterBuilder.build() );
+            builder.addQueryFilter( contentTypeFilterBuilder.build() );
         }
 
-        addCollectionFilter( entityQueryBuilder );
+        addCollectionFilter( builder );
 
-        return entityQueryBuilder.build();
     }
 
     private void addCollectionFilter( final EntityQuery.Builder entityQueryBuilder )

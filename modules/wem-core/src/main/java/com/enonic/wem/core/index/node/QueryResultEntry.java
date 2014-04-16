@@ -1,12 +1,12 @@
-package com.enonic.wem.core.index.entity;
+package com.enonic.wem.core.index.node;
 
-public class EntityQueryResultEntry
+public class QueryResultEntry
 {
     private final float score;
 
     private final String id;
 
-    public EntityQueryResultEntry( final float score, final String id )
+    protected QueryResultEntry( final float score, final String id )
     {
         this.score = score;
         this.id = id;
@@ -21,4 +21,5 @@ public class EntityQueryResultEntry
     {
         return id;
     }
+
 }

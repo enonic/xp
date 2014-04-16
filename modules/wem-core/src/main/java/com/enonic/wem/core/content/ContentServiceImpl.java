@@ -22,7 +22,7 @@ import com.enonic.wem.api.content.query.ContentQueryResult;
 import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
-import com.enonic.wem.core.index.entity.EntityQueryService;
+import com.enonic.wem.core.index.node.NodeQueryService;
 
 public class ContentServiceImpl
     implements ContentService
@@ -40,7 +40,7 @@ public class ContentServiceImpl
     private AttachmentService attachmentService;
 
     @Inject
-    private EntityQueryService entityQueryService;
+    private NodeQueryService nodeQueryService;
 
     @Override
     public Content getById( final ContentId id )
@@ -144,7 +144,10 @@ public class ContentServiceImpl
     @Override
     public DataValidationErrors validate( final ValidateContentData data )
     {
-        return new ValidateContentDataCommand().contentTypeService( this.contentTypeService ).data( data ).execute();
+        return new ValidateContentDataCommand().
+            contentTypeService( this.contentTypeService ).
+            data( data ).
+            execute();
     }
 
     @Override
@@ -161,7 +164,10 @@ public class ContentServiceImpl
     @Override
     public ContentQueryResult find( final ContentQuery contentQuery )
     {
-        return new FindContentCommand().entityQueryService( this.entityQueryService ).contentQuery( contentQuery ).execute();
+        return new FindContentCommand().
+            contentQuery( contentQuery ).
+            nodeQueryService( this.nodeQueryService ).
+            execute();
     }
 
     @Override

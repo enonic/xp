@@ -15,7 +15,7 @@ public class EntityQueryTest
     public void build()
         throws Exception
     {
-        final EntityQuery entityQuery = EntityQuery.newQuery().
+        final EntityQuery entityQuery = EntityQuery.newEntityQuery().
             addFilter( FieldFilter.newValueQueryFilter().
                 fieldName( "myField" ).
                 add( new Value.String( "test1" ), new Value.String( "test2" ) ).

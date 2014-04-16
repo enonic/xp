@@ -19,6 +19,7 @@ import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.entity.RenameNodeParams;
 import com.enonic.wem.api.entity.UpdateNodeParams;
+import com.enonic.wem.core.entity.dao.NodeElasticsearchDao;
 import com.enonic.wem.core.entity.dao.NodeJcrDao;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.jcr.provider.JcrSessionProvider;
@@ -32,6 +33,9 @@ public class NodeServiceImpl
 
     @Inject
     private JcrSessionProvider jcrSessionProvider;
+
+    @Inject
+    private NodeElasticsearchDao nodeElasticsearchDao;
 
     @Override
     public Node create( final CreateNodeParams params )
@@ -101,29 +105,18 @@ public class NodeServiceImpl
     @Override
     public Node getById( final EntityId id )
     {
-        final Session session = getNewSession();
-        try
-        {
-            return new NodeJcrDao( session ).getNodeById( id );
-        }
-        finally
-        {
-            session.logout();
-        }
+        return nodeElasticsearchDao.getById( id );
     }
 
     @Override
     public Nodes getByIds( final EntityIds ids )
     {
-        final Session session = getNewSession();
-        try
-        {
-            return new GetNodesByIdsCommand().entityIds( ids ).session( session ).execute();
-        }
-        finally
-        {
-            session.logout();
-        }
+
+        return new GetNodesByIdsCommand().
+            entityIds( ids ).
+            nodeElasticsearchDao( nodeElasticsearchDao ).
+            execute();
+
     }
 
     @Override
@@ -157,15 +150,11 @@ public class NodeServiceImpl
     @Override
     public Nodes getByParent( final NodePath parent )
     {
-        final Session session = getNewSession();
-        try
-        {
-            return new NodeJcrDao( session ).getNodesByParentPath( parent );
-        }
-        finally
-        {
-            session.logout();
-        }
+        //return new NodeJcrDao( session ).getNodesByParentPath( parent );
+
+        return nodeElasticsearchDao.getByParent( parent );
+
+
     }
 
     @Override

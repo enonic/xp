@@ -2,11 +2,13 @@ package com.enonic.wem.core.index.elastic;
 
 import java.util.Collection;
 
+import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.search.SearchResponse;
+
 import com.enonic.wem.core.index.DeleteDocument;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexStatus;
 import com.enonic.wem.core.index.document.IndexDocument;
-import com.enonic.wem.core.index.entity.EntityQueryResult;
 
 public interface ElasticsearchIndexService
 {
@@ -22,7 +24,15 @@ public interface ElasticsearchIndexService
 
     public void delete( final DeleteDocument deleteDocument );
 
-    public EntityQueryResult search( final ElasticsearchQuery elasticsearchQuery );
+    public SearchResponse search( final ElasticsearchQuery elasticsearchQuery );
 
     public void deleteIndex( final Index index );
+
+    public SearchResponse get( final ByIdsQuery indexDocumentIds );
+
+    public GetResponse get( final ByIdQuery byIdQuery );
+
+    public SearchResponse get( final ByPathQuery byPathQuery );
+
+    public SearchResponse get( final ByParentPathQuery byParentPathQuery );
 }

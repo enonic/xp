@@ -9,7 +9,7 @@ public enum IndexType
     CONTENT,
     BINARIES;
 
-    public String getIndexTypeName()
+    public String getName()
     {
         return this.name().toLowerCase();
     }

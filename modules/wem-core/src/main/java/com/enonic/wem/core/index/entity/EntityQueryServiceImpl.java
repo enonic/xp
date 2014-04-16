@@ -1,32 +1,19 @@
 package com.enonic.wem.core.index.entity;
 
-import javax.inject.Inject;
-
 import com.enonic.wem.api.entity.query.EntityQuery;
-import com.enonic.wem.core.index.elastic.ElasticsearchIndexService;
 import com.enonic.wem.core.index.elastic.ElasticsearchQuery;
+import com.enonic.wem.core.index.node.QueryService;
 import com.enonic.wem.core.index.query.EntityQueryTranslator;
 
 public class EntityQueryServiceImpl
-    implements EntityQueryService
+    extends QueryService<EntityQuery>
 {
     private EntityQueryTranslator translator = new EntityQueryTranslator();
 
-    private ElasticsearchIndexService elasticsearchIndexService;
-
     @Override
-    public EntityQueryResult find( final EntityQuery entityQuery )
+    protected ElasticsearchQuery translateQuery( final EntityQuery query )
     {
-        final ElasticsearchQuery query = translator.translate( entityQuery );
-
-        final EntityQueryResult result = elasticsearchIndexService.search( query );
-
-        return result;
+        return translator.translate( query );
     }
 
-    @Inject
-    public void setElasticsearchIndexService( final ElasticsearchIndexService elasticsearchIndexService )
-    {
-        this.elasticsearchIndexService = elasticsearchIndexService;
-    }
 }

@@ -194,9 +194,11 @@ public class ContentResource
     public AbstractContentQueryResultJson query( final ContentQueryJson contentQueryJson )
     {
         final ContentQueryResult contentQueryResult = contentService.find( contentQueryJson.getContentQuery() );
+
         final boolean getChildrenIds = !Expand.NONE.matches( contentQueryJson.getExpand() );
-        final GetContentByIdsParams params =
-            new GetContentByIdsParams( ContentIds.from( contentQueryResult.getContentIds() ) ).setGetChildrenIds( getChildrenIds );
+        final GetContentByIdsParams params = new GetContentByIdsParams( ContentIds.from( contentQueryResult.getContentIds() ) ).
+            setGetChildrenIds( getChildrenIds );
+
         final Contents contents = contentService.getByIds( params );
 
         return ContentQueryResultJsonFactory.create( contentQueryResult, contents, contentQueryJson.getExpand() );

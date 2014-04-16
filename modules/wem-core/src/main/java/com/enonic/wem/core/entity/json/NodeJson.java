@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.api.account.UserKey;
+import com.enonic.wem.api.entity.Attachments;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeName;
@@ -62,7 +63,7 @@ public class NodeJson
             parent( parent != null ? NodePath.newPath( parent ).build() : null ).
             rootDataSet( data.getRootDataSet() ).
             entityIndexConfig( entityIndexConfig.toEntityIndexConfig() ).
-            attachments( attachments.getAttachments() ).
+            attachments( attachments != null ? attachments.getAttachments() : Attachments.empty() ).
             build();
     }
 
