@@ -29,7 +29,7 @@ final class DeleteModuleCommand
 
         try
         {
-            final Module.Builder moduleBuilder = this.moduleExporter.importFromDirectory( moduleDir );
+            final ModuleBuilder moduleBuilder = this.moduleExporter.importFromDirectory( moduleDir );
             final Module module = moduleBuilder == null ? null : moduleBuilder.build();
             FileUtils.deleteDirectory( moduleDir.toFile() );
             return module;

@@ -76,7 +76,7 @@ public final class ModuleXmlSerializer
 
     }
 
-    public void toModule( final String xml, final Module.Builder moduleBuilder )
+    public void toModule( final String xml, final ModuleBuilder moduleBuilder )
         throws XmlParsingException
     {
         try
@@ -90,7 +90,7 @@ public final class ModuleXmlSerializer
         }
     }
 
-    private void parse( final Element moduleEl, final Module.Builder moduleBuilder )
+    private void parse( final Element moduleEl, final ModuleBuilder moduleBuilder )
         throws IOException
     {
         final String displayName = moduleEl.getChildText( "display-name" );

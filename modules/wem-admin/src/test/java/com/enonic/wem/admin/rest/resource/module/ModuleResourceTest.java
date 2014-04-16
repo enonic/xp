@@ -21,6 +21,7 @@ import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
+import com.enonic.wem.core.module.ModuleBuilder;
 
 public class ModuleResourceTest
     extends AbstractResourceTest
@@ -76,7 +77,7 @@ public class ModuleResourceTest
         final ContentTypeNames requiredCtypes = ContentTypeNames.from( "ctype1", "ctype2", "ctype3" );
         final ModuleKeys requiredModules = ModuleKeys.from( ModuleKey.from( "modA-1.0.0" ), ModuleKey.from( "modB-1.0.0" ) );
 
-        return Module.newModule().
+        return ModuleBuilder.newModule().
             moduleKey( ModuleKey.from( "testmodule-1.0.0" ) ).
             displayName( "module display name" ).
             info( "module-info" ).

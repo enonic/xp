@@ -35,7 +35,7 @@ public class ModuleXmlSerializerTest
     {
 
         String xml = loadTestXml( "serialized-module.xml" );
-        Module.Builder module = Module.newModule().moduleKey( ModuleKey.from( "mymodule-1.0.0" ) );
+        ModuleBuilder module = ModuleBuilder.newModule().moduleKey( ModuleKey.from( "mymodule-1.0.0" ) );
         moduleSerializer.toModule( xml, module );
         assertEquals( createModule().toString(), module.build().toString() );
     }
@@ -52,7 +52,7 @@ public class ModuleXmlSerializerTest
     public void testXmlModuleDeserializationWithEmptyDeps()
     {
         String xml = loadTestXml( "serialized-module-empty-deps.xml" );
-        Module.Builder moduleBuilder = Module.newModule().moduleKey( ModuleKey.from( "mymodule-1.0.0" ) );
+        ModuleBuilder moduleBuilder = ModuleBuilder.newModule().moduleKey( ModuleKey.from( "mymodule-1.0.0" ) );
         moduleSerializer.toModule( xml, moduleBuilder );
         Module module = moduleBuilder.build();
         assertEquals( module.getModuleDependencies().getSize(), 0 );
@@ -62,7 +62,7 @@ public class ModuleXmlSerializerTest
     @Test(expected = XmlParsingException.class)
     public void testBadXmlModuleSerialization()
     {
-        moduleSerializer.toModule( "<module><display-name/>", Module.newModule() );
+        moduleSerializer.toModule( "<module><display-name/>", ModuleBuilder.newModule() );
     }
 
     private Module createModule()
@@ -73,7 +73,7 @@ public class ModuleXmlSerializerTest
 
         final ContentTypeNames requiredCtypes = ContentTypeNames.from( "ctype1", "ctype2", "ctype3" );
         final ModuleKeys requiredModules = ModuleKeys.from( ModuleKey.from( "modA-1.0.0" ), ModuleKey.from( "modB-1.0.0" ) );
-        return Module.newModule().
+        return ModuleBuilder.newModule().
             moduleKey( ModuleKey.from( "mymodule-1.0.0" ) ).
             displayName( "module display name" ).
             info( "module-info" ).

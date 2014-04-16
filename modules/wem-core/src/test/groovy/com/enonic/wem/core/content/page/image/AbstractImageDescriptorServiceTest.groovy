@@ -5,6 +5,7 @@ import com.enonic.wem.api.module.Module
 import com.enonic.wem.api.module.ModuleKey
 import com.enonic.wem.api.module.ModuleService
 import com.enonic.wem.api.module.Modules
+import com.enonic.wem.core.module.ModuleBuilder
 import com.enonic.wem.core.resource.MockResourceService
 import spock.lang.Specification
 
@@ -42,7 +43,7 @@ abstract class AbstractImageDescriptorServiceTest
 
     def Module createModule( final String moduleKey )
     {
-        def module = Module.newModule().
+        def module = ModuleBuilder.newModule().
             moduleKey( ModuleKey.from( moduleKey ) ).
             displayName( moduleKey.toUpperCase() ).
             build();

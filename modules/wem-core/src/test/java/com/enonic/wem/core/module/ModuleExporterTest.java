@@ -75,7 +75,7 @@ public class ModuleExporterTest
         final ContentTypeNames requiredCtypes = ContentTypeNames.from( "ctype1", "ctype2", "ctype3" );
         final ModuleKeys requiredModules = ModuleKeys.from( ModuleKey.from( "modA-1.0.0" ), ModuleKey.from( "modB-1.0.0" ) );
 
-        final Module module = Module.newModule().
+        final Module module = ModuleBuilder.newModule().
             moduleKey( ModuleKey.from( "testmodule-1.0.0" ) ).
             displayName( "module display name" ).
             info( "module-info" ).

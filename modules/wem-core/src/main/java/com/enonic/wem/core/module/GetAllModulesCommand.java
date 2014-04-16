@@ -40,7 +40,7 @@ final class GetAllModulesCommand
             {
                 if ( Files.isDirectory( moduleDir ) )
                 {
-                    final Module.Builder builder = this.moduleExporter.importFromDirectory( moduleDir );
+                    final ModuleBuilder builder = this.moduleExporter.importFromDirectory( moduleDir );
                     if ( builder != null )
                     {
                         modules.add( builder.build() );

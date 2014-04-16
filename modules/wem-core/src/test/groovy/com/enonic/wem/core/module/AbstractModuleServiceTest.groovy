@@ -1,6 +1,5 @@
 package com.enonic.wem.core.module
 
-import com.enonic.wem.api.module.Module
 import com.enonic.wem.api.module.ModuleKey
 import com.enonic.wem.api.module.ModuleVersion
 import com.enonic.wem.core.config.SystemConfig
@@ -36,9 +35,9 @@ abstract class AbstractModuleServiceTest
         this.service.systemConfig.getModulesDir() >> this.modulesDir
     }
 
-    def Module.Builder buildModule( final String key )
+    def ModuleBuilder buildModule( final String key )
     {
-        return Module.newModule().
+        return ModuleBuilder.newModule().
             moduleKey( ModuleKey.from( key ) ).
             displayName( "module display name" ).
             info( "module-info" ).
@@ -49,7 +48,7 @@ abstract class AbstractModuleServiceTest
             maxSystemVersion( ModuleVersion.from( 6, 0, 0 ) )
     }
 
-    def Module.Builder createModule( final String name )
+    def ModuleBuilder createModule( final String name )
     {
         def moduleDir = this.modulesDir.resolve( name )
         Files.createDirectories( moduleDir.resolve( "config" ) );
@@ -68,7 +67,7 @@ abstract class AbstractModuleServiceTest
     {
         def moduleDir = this.modulesDir.resolve( moduleName )
         Files.createDirectories( moduleDir.resolve( resourcePath ).getParent() );
-        Files.write( moduleDir.resolve( resourcePath ) , data.getBytes() );
+        Files.write( moduleDir.resolve( resourcePath ), data.getBytes() );
     }
 
 }
