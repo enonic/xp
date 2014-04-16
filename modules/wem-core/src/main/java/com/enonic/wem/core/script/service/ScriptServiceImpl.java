@@ -18,7 +18,7 @@ public final class ScriptServiceImpl
 
     static
     {
-//        ContextFactory.initGlobal( new RhinoContextFactory() );
+        ContextFactory.initGlobal( new RhinoContextFactory() );
     }
 
     @Override

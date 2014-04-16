@@ -16,10 +16,9 @@ import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.resource.ResourceKeyResolver;
 import com.enonic.wem.api.resource.ResourceService;
-import com.enonic.wem.core.script.ScriptContext;
 import com.enonic.wem.core.script.compiler.ScriptCompiler;
-import com.enonic.wem.core.script.resolver.ScriptResolver;
 
 final class RequireFunction
     extends BaseFunction
@@ -30,7 +29,7 @@ final class RequireFunction
 
     protected ScriptCompiler scriptCompiler;
 
-    protected ScriptContext scriptContext;
+    protected ScriptContextImpl scriptContext;
 
     public RequireFunction()
     {
@@ -83,10 +82,12 @@ final class RequireFunction
 
     private Resource resolveSource( final Context cx, final Scriptable scope, final String name )
     {
+        final String jsName = name.endsWith( ".js" ) ? name : ( name + ".js" );
+
         try
         {
-            final ScriptResolver resolver = this.scriptContext.getResolver();
-            final ResourceKey resourceKey = resolver.resolveScript( name );
+            final ResourceKeyResolver resolver = this.scriptContext.getResourceKeyResolver();
+            final ResourceKey resourceKey = resolver.resolve( this.scriptContext.getResourceKey(), jsName );
             return this.resourceService.getResource( resourceKey );
         }
         catch ( final Exception e )

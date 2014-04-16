@@ -22,16 +22,16 @@ public abstract class AbstractJsTest
 
     @Before
     public final void setup()
+        throws Exception
     {
         this.scriptService = new ScriptServiceImpl();
         this.scriptService.setCompiler( new ScriptCompilerImpl( new ScriptCacheImpl() ) );
 
-        final File modulesDir = new File( getClass().getResource( "js/modules" ).getFile() );
+        final File modulesDir = new File( getClass().getResource( "/modules" ).getFile() );
         final SystemConfig systemConfig = Mockito.mock( SystemConfig.class );
         Mockito.when( systemConfig.getModulesDir() ).thenReturn( modulesDir.toPath() );
 
-        final URL jsUrl = getClass().getResource( "js" );
-        final ClassLoader systemClassLoader = new URLClassLoader( new URL[]{jsUrl} );
+        final ClassLoader systemClassLoader = new URLClassLoader( new URL[]{new File( modulesDir, "system" ).toURI().toURL()} );
 
         final ResourceServiceImpl resourceService = new ResourceServiceImpl( systemConfig, systemClassLoader );
         this.scriptService.setResourceService( resourceService );

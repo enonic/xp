@@ -1,44 +1,14 @@
 package com.enonic.wem.core.script;
 
-import java.util.Stack;
-
+import com.enonic.wem.api.module.ModuleKeyResolver;
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.core.script.resolver.ScriptResolver;
-import com.enonic.wem.core.script.resolver.ScriptResolverImpl;
+import com.enonic.wem.api.resource.ResourceKeyResolver;
 
-public final class ScriptContext
+public interface ScriptContext
 {
-    private final static ThreadLocal<ScriptContext> CONTEXT = new ThreadLocal<>();
+    public ResourceKey getResourceKey();
 
-    private final Stack<ResourceKey> resourceKey;
+    public ModuleKeyResolver getModuleKeyResolver();
 
-    public ScriptContext()
-    {
-        this.resourceKey = new Stack<>();
-    }
-
-    public ScriptResolver getResolver()
-    {
-        return new ScriptResolverImpl( this.resourceKey.peek(), null );
-    }
-
-    public void enter( final ResourceKey resourceKey )
-    {
-        CONTEXT.set( this );
-        this.resourceKey.push( resourceKey );
-    }
-
-    public void exit()
-    {
-        this.resourceKey.pop();
-        if ( this.resourceKey.isEmpty() )
-        {
-            CONTEXT.remove();
-        }
-    }
-
-    public static ScriptContext current()
-    {
-        return CONTEXT.get();
-    }
+    public ResourceKeyResolver getResourceKeyResolver();
 }

@@ -3,8 +3,6 @@ package com.enonic.wem.portal.script.runner;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.mozilla.javascript.ContextFactory;
-
 import com.enonic.wem.core.module.ModuleResourcePathResolver;
 import com.enonic.wem.portal.script.compiler.ScriptCompiler;
 import com.enonic.wem.portal.script.lib.ContextScriptBean;
@@ -28,11 +26,6 @@ public class ScriptRunnerFactoryImpl
 
     @Inject
     protected Provider<ContextScriptBean> contextServiceBeans;
-
-    static
-    {
-        ContextFactory.initGlobal( new RhinoContextFactory() );
-    }
 
     @Override
     public ScriptRunner newRunner()

@@ -10,10 +10,11 @@ import org.mozilla.javascript.Scriptable;
 
 import com.google.common.collect.Maps;
 
+import com.enonic.wem.api.module.ModuleKeyResolver;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.resource.ResourceKeyResolver;
 import com.enonic.wem.api.resource.ResourceService;
-import com.enonic.wem.core.script.ScriptContext;
 import com.enonic.wem.core.script.ScriptException;
 import com.enonic.wem.core.script.ScriptRunner;
 import com.enonic.wem.core.script.compiler.ScriptCompiler;
@@ -31,12 +32,14 @@ final class ScriptRunnerImpl
 
     private ResourceKey resourceKey;
 
-    private final ScriptContext scriptContext;
+    private final ScriptContextImpl scriptContext;
+
+    private ModuleKeyResolver moduleKeyResolver;
 
     public ScriptRunnerImpl()
     {
         this.binding = Maps.newHashMap();
-        this.scriptContext = new ScriptContext();
+        this.scriptContext = new ScriptContextImpl();
     }
 
     @Override
@@ -56,19 +59,15 @@ final class ScriptRunnerImpl
     @Override
     public void execute()
     {
-        final Resource resource = this.resourceService.getResource( this.resourceKey );
-        this.scriptContext.enter( this.resourceKey );
-
         final Context context = Context.enter();
+
+        this.scriptContext.moduleKeyResolver = this.moduleKeyResolver;
+        this.scriptContext.resourceKeyResolver = new ResourceKeyResolver( this.moduleKeyResolver );
+        this.scriptContext.enter( this.resourceKey );
 
         try
         {
-            initializeScope();
-            installRequire();
-            setObjectsToScope();
-
-            final Script script = this.compiler.compile( context, resource );
-            script.exec( context, this.scope );
+            doExecute( context );
         }
         catch ( final RhinoException e )
         {
@@ -79,6 +78,18 @@ final class ScriptRunnerImpl
             Context.exit();
             this.scriptContext.exit();
         }
+    }
+
+    private void doExecute( final Context context )
+    {
+        final Resource resource = this.resourceService.getResource( this.resourceKey );
+
+        initializeScope();
+        installRequire();
+        setObjectsToScope();
+
+        final Script script = this.compiler.compile( context, resource );
+        script.exec( context, this.scope );
     }
 
     private void setObjectsToScope()
@@ -120,5 +131,12 @@ final class ScriptRunnerImpl
         function.scriptContext = this.scriptContext;
         function.resourceService = this.resourceService;
         function.install( this.scope );
+    }
+
+    @Override
+    public ScriptRunner moduleKeyResolver( final ModuleKeyResolver moduleKeyResolver )
+    {
+        this.moduleKeyResolver = moduleKeyResolver;
+        return this;
     }
 }
