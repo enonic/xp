@@ -209,7 +209,7 @@ module app.wizard {
 
         layoutPersistedItem(persistedContent: Content): Q.Promise<void> {
 
-            this.formIcon.setSrc(persistedContent.getIconUrl());
+            this.formIcon.setSrc(persistedContent.getIconUrl() + '?crop=false');
             var contentData: api.content.ContentData = persistedContent.getContentData();
 
             new IsRenderableRequest(persistedContent.getContentId()).sendAndParse().

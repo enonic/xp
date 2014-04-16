@@ -26,9 +26,9 @@ module api.ui.selector.combobox {
 
         layout()
         {
-            var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize( api.app.NamesAndIconViewSize.small ).build();
+            var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
             namesAndIconView
-                .setIconUrl(this.resolveIconUrl(this.optionDisplayValue))
+                .setIconUrl(this.resolveIconUrl(this.optionDisplayValue) + '?crop=false')
                 .setMainName(this.resolveTitle(this.optionDisplayValue))
                 .setSubName(this.resolveSubTitle(this.optionDisplayValue));
 
