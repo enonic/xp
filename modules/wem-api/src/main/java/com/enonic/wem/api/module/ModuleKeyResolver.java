@@ -28,11 +28,6 @@ public final class ModuleKeyResolver
     public ModuleKey resolve( final ModuleName name )
         throws ModuleNotFoundException
     {
-        if ( name.isSystem() )
-        {
-            return ModuleKey.SYSTEM;
-        }
-
         final ModuleKey key = this.map.get( name );
         if ( key != null )
         {

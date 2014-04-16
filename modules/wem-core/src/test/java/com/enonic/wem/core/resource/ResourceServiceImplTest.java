@@ -1,23 +1,39 @@
 package com.enonic.wem.core.resource;
 
 import java.io.File;
+import java.io.FileOutputStream;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.ByteSource;
+
 import com.enonic.wem.api.resource.Resource;
-import com.enonic.wem.api.resource.ResourceNotFoundException;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceKeys;
+import com.enonic.wem.api.resource.ResourceNotFoundException;
 import com.enonic.wem.core.config.SystemConfig;
 
 import static org.junit.Assert.*;
 
-public class ResourceServiceImpl_moduleTest
-    extends AbstractResourceServiceImplTest
+public class ResourceServiceImplTest
 {
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
     private ResourceServiceImpl resourceService;
+
+    private void writeFile( final File dir, final String path, final String value )
+        throws Exception
+    {
+        final File file = new File( dir, path );
+        file.getParentFile().mkdirs();
+        ByteSource.wrap( value.getBytes( Charsets.UTF_8 ) ).copyTo( new FileOutputStream( file ) );
+    }
 
     @Before
     public void setup()

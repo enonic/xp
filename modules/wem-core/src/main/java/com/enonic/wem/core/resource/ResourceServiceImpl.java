@@ -1,6 +1,13 @@
 package com.enonic.wem.core.resource;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.util.List;
+
 import javax.inject.Inject;
+
+import com.google.common.collect.Lists;
+import com.google.common.io.Files;
 
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
@@ -10,44 +17,59 @@ import com.enonic.wem.core.config.SystemConfig;
 public final class ResourceServiceImpl
     extends AbstractResourceService
 {
-    private final ClassLoader classLoader;
-
     protected final SystemConfig systemConfig;
 
     @Inject
     public ResourceServiceImpl( final SystemConfig systemConfig )
     {
-        this( systemConfig, null );
-    }
-
-    public ResourceServiceImpl( final SystemConfig systemConfig, final ClassLoader classLoader )
-    {
         this.systemConfig = systemConfig;
-        this.classLoader = classLoader != null ? classLoader : this.getClass().getClassLoader();
-    }
-
-    private ResourceResolver createResolver( final ResourceKey key )
-    {
-        if ( key.getModule().isSystem() )
-        {
-            return new SystemResourceResolver().classLoader( this.classLoader );
-        }
-        else
-        {
-            return new ModuleResourceResolver().systemConfig( this.systemConfig );
-        }
-    }
-
-
-    @Override
-    public ResourceKeys getChildren( final ResourceKey parent )
-    {
-        return createResolver( parent ).getChildren( parent );
     }
 
     @Override
     protected Resource resolve( final ResourceKey key )
     {
-        return createResolver( key ).resolve( key );
+        final File path = findPath( key );
+        if ( !path.isFile() )
+        {
+            return null;
+        }
+
+        return new ResourceImpl( key ).
+            byteSource( Files.asByteSource( path ) ).
+            timestamp( path.lastModified() );
+    }
+
+    @Override
+    public ResourceKeys getChildren( final ResourceKey parentKey )
+    {
+        final List<ResourceKey> keys = Lists.newArrayList();
+        findChildren( keys, parentKey );
+        return ResourceKeys.from( keys );
+    }
+
+    private void findChildren( final List<ResourceKey> keys, final ResourceKey parentKey )
+    {
+        final File file = findPath( parentKey );
+        if ( file.isFile() )
+        {
+            keys.add( parentKey );
+        }
+
+        final File[] children = file.listFiles();
+        if ( children == null )
+        {
+            return;
+        }
+
+        for ( final File child : children )
+        {
+            findChildren( keys, parentKey.resolve( child.getName() ) );
+        }
+    }
+
+    private File findPath( final ResourceKey key )
+    {
+        final Path modulePath = this.systemConfig.getModulesDir().resolve( key.getModule().toString() );
+        return modulePath.resolve( key.getPath().substring( 1 ) ).toFile();
     }
 }

@@ -1,31 +1,31 @@
 package com.enonic.wem.core.script.service;
 
 import javax.inject.Inject;
-
-import org.mozilla.javascript.ContextFactory;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 
 import com.enonic.wem.api.resource.ResourceService;
 import com.enonic.wem.core.script.ScriptRunner;
 import com.enonic.wem.core.script.ScriptService;
-import com.enonic.wem.core.script.compiler.ScriptCompiler;
 
 public final class ScriptServiceImpl
     implements ScriptService
 {
+    private final ScriptEngine scriptEngine;
+
     private ResourceService resourceService;
 
-    private ScriptCompiler compiler;
-
-    static
+    public ScriptServiceImpl()
     {
-        ContextFactory.initGlobal( new RhinoContextFactory() );
+        final ScriptEngineManager engineManager = new ScriptEngineManager();
+        this.scriptEngine = engineManager.getEngineByExtension( "js" );
     }
 
     @Override
     public ScriptRunner newRunner()
     {
         final ScriptRunnerImpl runner = new ScriptRunnerImpl();
-        runner.compiler = this.compiler;
+        runner.scriptEngine = this.scriptEngine;
         runner.resourceService = this.resourceService;
         return runner;
     }
@@ -34,11 +34,5 @@ public final class ScriptServiceImpl
     public void setResourceService( final ResourceService resourceService )
     {
         this.resourceService = resourceService;
-    }
-
-    @Inject
-    public void setCompiler( final ScriptCompiler compiler )
-    {
-        this.compiler = compiler;
     }
 }

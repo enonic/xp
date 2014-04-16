@@ -41,7 +41,8 @@ public final class MockResourceService
 
     public void addResource( final ResourceKey key, final String content )
     {
-        final Resource resource = Resource.newResource().stringValue( content ).key( key ).build();
+        final ResourceImpl resource = new ResourceImpl( key ).
+            stringValue( content );
         this.map.put( key, resource );
     }
 }

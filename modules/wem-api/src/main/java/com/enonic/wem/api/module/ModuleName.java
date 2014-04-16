@@ -1,20 +1,12 @@
 package com.enonic.wem.api.module;
 
-
 public final class ModuleName
 {
-    public final static ModuleName SYSTEM = ModuleName.from( "system" );
-
     private final String name;
 
     private ModuleName( final String name )
     {
         this.name = name;
-    }
-
-    public boolean isSystem()
-    {
-        return this.equals( SYSTEM );
     }
 
     @Override
