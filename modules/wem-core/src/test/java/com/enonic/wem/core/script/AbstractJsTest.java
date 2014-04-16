@@ -57,9 +57,9 @@ public abstract class AbstractJsTest
             Assert.assertEquals( expected, value );
         }
 
-        public void fail( final String message )
+        public void println( final String message )
         {
-            Assert.fail( message );
+            System.out.println( message );
         }
     }
 }

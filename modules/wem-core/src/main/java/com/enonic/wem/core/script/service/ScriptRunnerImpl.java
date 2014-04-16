@@ -4,14 +4,14 @@ import java.util.Map;
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.RhinoException;
-import org.mozilla.javascript.Script;
 import org.mozilla.javascript.ScriptStackElement;
 import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.commonjs.module.Require;
+import org.mozilla.javascript.commonjs.module.RequireBuilder;
 
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.module.ModuleKeyResolver;
-import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceKeyResolver;
 import com.enonic.wem.api.resource.ResourceService;
@@ -82,14 +82,15 @@ final class ScriptRunnerImpl
 
     private void doExecute( final Context context )
     {
-        final Resource resource = this.resourceService.getResource( this.resourceKey );
-
         initializeScope();
-        installRequire();
         setObjectsToScope();
 
-        final Script script = this.compiler.compile( context, resource );
+        final Require require = installRequire( context );
+        require.requireMain( context, this.resourceKey.toString() );
+
+        /*final Script script = this.compiler.compile( context, resource );
         script.exec( context, this.scope );
+        */
     }
 
     private void setObjectsToScope()
@@ -124,13 +125,28 @@ final class ScriptRunnerImpl
         return builder.build();
     }
 
-    private void installRequire()
+    private Require installRequire( final Context context )
     {
+        final ScriptProviderImpl provider = new ScriptProviderImpl();
+        provider.scriptContext = this.scriptContext;
+        provider.resourceService = this.resourceService;
+        provider.scriptCompiler = this.compiler;
+
+        final RequireBuilder builder = new RequireBuilder();
+        builder.setModuleScriptProvider( provider );
+        builder.setSandboxed( false );
+
+        final Require require = builder.createRequire( context, this.scope );
+        require.install( this.scope );
+        return require;
+
+        /*
         final RequireFunction function = new RequireFunction();
         function.scriptCompiler = this.compiler;
         function.scriptContext = this.scriptContext;
         function.resourceService = this.resourceService;
         function.install( this.scope );
+        */
     }
 
     @Override

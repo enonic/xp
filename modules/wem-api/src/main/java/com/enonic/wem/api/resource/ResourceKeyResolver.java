@@ -18,7 +18,7 @@ public final class ResourceKeyResolver
         final int pos = name.indexOf( ':' );
         if ( pos >= 0 )
         {
-            return resolveResource( name.substring( pos ), name.substring( pos + 1 ) );
+            return resolveResource( name.substring( 0, pos ), name.substring( pos + 1 ) );
         }
 
         if ( name.startsWith( "./" ) || name.startsWith( "../" ) )

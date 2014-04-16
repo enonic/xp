@@ -11,17 +11,11 @@ public class RequireJsTest
         execTest( "require-1.0.0:/absolute/test.js" );
     }
 
-    // @Test
+    @Test
     // Failes right now. Will try rhino's own require implementation.
     public void testCyclic()
     {
         execTest( "require-1.0.0:/cyclic/test.js" );
-    }
-
-    @Test
-    public void testMissing()
-    {
-        execTest( "require-1.0.0:/missing/test.js" );
     }
 
     @Test
