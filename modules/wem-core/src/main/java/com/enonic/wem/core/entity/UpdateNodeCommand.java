@@ -1,11 +1,10 @@
 package com.enonic.wem.core.entity;
 
 
-import javax.jcr.Session;
-
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.UpdateNodeParams;
-import com.enonic.wem.core.entity.dao.NodeJcrDao;
+import com.enonic.wem.core.entity.dao.NodeElasticsearchDao;
 import com.enonic.wem.core.entity.dao.UpdateNodeArgs;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.util.Exceptions;
@@ -16,14 +15,14 @@ final class UpdateNodeCommand
 {
     private IndexService indexService;
 
-    private Session session;
+    private NodeElasticsearchDao nodeElasticsearchDao;
 
     private UpdateNodeParams params;
 
     private UpdateNodeCommand( final Builder builder )
     {
         this.indexService = builder.indexService;
-        this.session = builder.session;
+        this.nodeElasticsearchDao = builder.nodeElasticsearchDao;
         this.params = builder.params;
     }
 
@@ -37,15 +36,14 @@ final class UpdateNodeCommand
         }
         catch ( final Exception e )
         {
-            throw Exceptions.newRutime( "Error updating node" ).withCause( e );
+            throw Exceptions.newRutime( "Error updating node " + params.getId() ).withCause( e );
         }
     }
 
     private Node doExecute()
         throws Exception
     {
-        final NodeJcrDao nodeJcrDao = new NodeJcrDao( session );
-        final Node beforeChange = nodeJcrDao.getNodeById( params.getId() );
+        final Node beforeChange = nodeElasticsearchDao.getById( params.getId() );
 
         final Node.EditBuilder editBuilder = params.getEditor().edit( beforeChange );
         if ( !editBuilder.isChanges() )
@@ -57,6 +55,7 @@ final class UpdateNodeCommand
         beforeChange.checkIllegalEdit( edited );
 
         final UpdateNodeArgs updateNodeArgs = newUpdateItemArgs().
+            updater( UserKey.superUser() ).
             nodeToUpdate( params.getId() ).
             name( edited.name() ).
             rootDataSet( edited.data() ).
@@ -64,8 +63,7 @@ final class UpdateNodeCommand
             entityIndexConfig( edited.getEntityIndexConfig() ).
             build();
 
-        final Node updatedNode = nodeJcrDao.updateNode( updateNodeArgs );
-        session.save();
+        final Node updatedNode = nodeElasticsearchDao.update( updateNodeArgs );
 
         indexService.indexNode( updatedNode );
 
@@ -81,7 +79,7 @@ final class UpdateNodeCommand
     {
         private IndexService indexService;
 
-        private Session session;
+        private NodeElasticsearchDao nodeElasticsearchDao;
 
         private UpdateNodeParams params;
 
@@ -91,9 +89,9 @@ final class UpdateNodeCommand
             return this;
         }
 
-        Builder session( final Session session )
+        Builder nodeElasticsearchDao( final NodeElasticsearchDao session )
         {
-            this.session = session;
+            this.nodeElasticsearchDao = session;
             return this;
         }
 

@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.search.SearchResponse;
 
+import com.enonic.wem.core.entity.dao.NodeStorageDocument;
 import com.enonic.wem.core.index.DeleteDocument;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexStatus;
@@ -14,13 +15,15 @@ public interface ElasticsearchIndexService
 {
     public IndexStatus getIndexStatus( final Index index, final boolean waitForStatusYellow );
 
-    public boolean indexExists( Index index );
+    public boolean indexExists( final Index index );
 
-    public void createIndex( Index index );
+    public void createIndex( final Index index );
 
-    public void putMapping( IndexMapping indexMapping );
+    public void putMapping( final IndexMapping indexMapping );
 
-    public void indexDocuments( Collection<IndexDocument> indexDocuments );
+    public void indexDocuments( final Collection<IndexDocument> indexDocuments );
+
+    public String storeDocument( final NodeStorageDocument nodeStorageDocument );
 
     public void delete( final DeleteDocument deleteDocument );
 

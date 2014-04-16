@@ -2,12 +2,15 @@ package com.enonic.wem.core.entity.dao;
 
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.search.SearchResponse;
+import org.joda.time.DateTime;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
 import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.NodePaths;
 import com.enonic.wem.api.entity.Nodes;
@@ -26,15 +29,112 @@ public class NodeElasticsearchDao
     @Inject
     private ElasticsearchIndexService elasticsearchIndexService;
 
-    private final static Index index = Index.NODB;
+    public Node create( final CreateNodeArguments createNodeArguments )
+    {
+        Preconditions.checkNotNull( createNodeArguments.parent(), "Path of parent Node must be specified" );
+        Preconditions.checkArgument( createNodeArguments.parent().isAbsolute(),
+                                     "Path to parent Node must be absolute: " + createNodeArguments.parent() );
 
-    private final static IndexType indexType = IndexType.NODE;
+        final DateTime now = DateTime.now();
+
+        final Node newNode = Node.newNode().
+            id( new EntityId() ).
+            createdTime( now ).
+            modifiedTime( now ).
+            creator( createNodeArguments.creator() ).
+            modifier( createNodeArguments.creator() ).
+            parent( createNodeArguments.parent() ).
+            name( NodeName.from( createNodeArguments.name() ) ).
+            rootDataSet( createNodeArguments.rootDataSet() ).
+            attachments( createNodeArguments.attachments() ).
+            entityIndexConfig( createNodeArguments.entityIndexConfig() ).
+            build();
+
+        final NodeStorageDocument nodeStorageDocument = NodeStorageDocumentFactory.create( newNode );
+
+        elasticsearchIndexService.storeDocument( nodeStorageDocument );
+
+        return newNode;
+    }
+
+    public Node update( final UpdateNodeArgs updateNodeArguments )
+    {
+        Preconditions.checkNotNull( updateNodeArguments.nodeToUpdate(), "nodeToUpdate must be specified" );
+
+        final Node persistedNode = getById( updateNodeArguments.nodeToUpdate() );
+
+        final DateTime now = DateTime.now();
+
+        // TODO: Should'nt new Node(Node) Handle THIS?!
+
+        final Node.Builder updateNodeBuilder = Node.newNode( persistedNode ).
+            id( persistedNode.id() ).
+            parent( persistedNode.parent() ).
+            name( persistedNode.name() ).
+            creator( persistedNode.creator() ).
+            createdTime( persistedNode.getCreatedTime() ).
+            modifiedTime( now ).
+            modifier( updateNodeArguments.updater() ).
+            rootDataSet( updateNodeArguments.rootDataSet() ).
+            // TODO: Fix attachments
+                attachments( persistedNode.attachments() ).
+            entityIndexConfig( updateNodeArguments.entityIndexConfig() != null
+                                   ? updateNodeArguments.entityIndexConfig()
+                                   : persistedNode.getEntityIndexConfig() );
+
+
+         /*
+        attachmentsJcrMapper.synchronizeJcr( updateNodeArgs.attachments(), jcrNode );
+        */
+
+        final Node updatedNode = updateNodeBuilder.build();
+
+        final NodeStorageDocument nodeStorageDocument = NodeStorageDocumentFactory.update( updatedNode );
+
+        elasticsearchIndexService.storeDocument( nodeStorageDocument );
+
+        return updatedNode;
+    }
+
+
+    public boolean move( final MoveNodeArguments moveNodeArguments )
+    {
+        final Node persistedNode = getById( moveNodeArguments.nodeToMove() );
+
+        if ( persistedNode.path().equals( moveNodeArguments.path() ) )
+        {
+            return false;
+        }
+
+        final DateTime now = DateTime.now();
+
+        final Node movedNode = Node.newNode( persistedNode ).
+            id( persistedNode.id() ).
+            name( moveNodeArguments.name() ).
+            parent( moveNodeArguments.path().getParentPath() ).
+            creator( persistedNode.creator() ).
+            createdTime( persistedNode.getCreatedTime() ).
+            modifiedTime( now ).
+            modifier( moveNodeArguments.updater() ).
+            rootDataSet( persistedNode.data() ).
+            attachments( persistedNode.attachments() ).
+            entityIndexConfig( moveNodeArguments.getEntityIndexConfig() != null
+                                   ? moveNodeArguments.getEntityIndexConfig()
+                                   : persistedNode.getEntityIndexConfig() ).
+            build();
+
+        final NodeStorageDocument nodeStorageDocument = NodeStorageDocumentFactory.update( movedNode );
+
+        elasticsearchIndexService.storeDocument( nodeStorageDocument );
+
+        return true;
+    }
 
     public Node getById( final EntityId entityId )
     {
         final GetResponse getResponse = elasticsearchIndexService.get( ByIdQuery.byId( entityId.toString() ).
-            index( index ).
-            indexType( indexType ).
+            index( Index.STORE ).
+            indexType( IndexType.ENTITY ).
             build() );
 
         if ( !getResponse.isExists() )
@@ -54,8 +154,8 @@ public class NodeElasticsearchDao
 
         final ByIdsQuery.Builder builder = ByIdsQuery.
             byIds().
-            index( index ).
-            indexType( indexType );
+            index( Index.STORE ).
+            indexType( IndexType.ENTITY );
 
         for ( final EntityId entityId : entityIds )
         {
@@ -72,8 +172,8 @@ public class NodeElasticsearchDao
     public Node getByPath( final NodePath path )
     {
         final SearchResponse searchResponse = elasticsearchIndexService.get( ByPathQuery.byPath( path.toString() ).
-            index( index ).
-            indexType( indexType ).
+            index( Index.STORE ).
+            indexType( IndexType.ENTITY ).
             build() );
 
         verifyGetResult( searchResponse, 1, 1 );
@@ -87,8 +187,8 @@ public class NodeElasticsearchDao
     {
         final SearchResponse searchResponse = elasticsearchIndexService.get( ByPathsQuery.byPaths().
             setPaths( paths ).
-            index( index ).
-            indexType( indexType ).
+            index( Index.STORE ).
+            indexType( IndexType.ENTITY ).
             build() );
 
         verifyGetResult( searchResponse, paths.getSize(), paths.getSize() );
@@ -100,8 +200,8 @@ public class NodeElasticsearchDao
     public Nodes getByParent( final NodePath parent )
     {
         final SearchResponse searchResponse = elasticsearchIndexService.get( ByParentPathQuery.byParentPath( parent.toString() ).
-            index( index ).
-            indexType( indexType ).
+            index( Index.STORE ).
+            indexType( IndexType.ENTITY ).
             build() );
 
         verifyGetResult( searchResponse, null, null );

@@ -1,14 +1,12 @@
 package com.enonic.wem.core.entity;
 
 
-import javax.jcr.Session;
-
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.entity.Attachments;
 import com.enonic.wem.api.entity.CreateNodeParams;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.core.entity.dao.CreateNodeArguments;
-import com.enonic.wem.core.entity.dao.NodeJcrDao;
+import com.enonic.wem.core.entity.dao.NodeElasticsearchDao;
 import com.enonic.wem.core.index.IndexService;
 
 import static com.enonic.wem.core.entity.dao.CreateNodeArguments.newCreateNodeArgs;
@@ -19,12 +17,12 @@ final class CreateNodeCommand
 
     private CreateNodeParams params;
 
-    private Session session;
+    private NodeElasticsearchDao nodeElasticsearchDao;
 
     private CreateNodeCommand( final Builder builder )
     {
         this.indexService = builder.indexService;
-        this.session = builder.session;
+        this.nodeElasticsearchDao = builder.nodeElasticsearchDao;
         this.params = builder.params;
     }
 
@@ -47,9 +45,7 @@ final class CreateNodeCommand
             embed( params.isEmbed() ).
             build();
 
-        final NodeJcrDao nodeJcrDao = new NodeJcrDao( session );
-        final Node persistedNode = nodeJcrDao.createNode( createNodeArguments );
-        JcrSessionHelper.save( session );
+        final Node persistedNode = nodeElasticsearchDao.create( createNodeArguments );
 
         indexService.indexNode( persistedNode );
 
@@ -65,7 +61,7 @@ final class CreateNodeCommand
     {
         private IndexService indexService;
 
-        private Session session;
+        private NodeElasticsearchDao nodeElasticsearchDao;
 
         private CreateNodeParams params;
 
@@ -75,9 +71,9 @@ final class CreateNodeCommand
             return this;
         }
 
-        Builder session( final Session session )
+        Builder nodeElasticsearchDao( final NodeElasticsearchDao nodeElasticsearchDao )
         {
-            this.session = session;
+            this.nodeElasticsearchDao = nodeElasticsearchDao;
             return this;
         }
 

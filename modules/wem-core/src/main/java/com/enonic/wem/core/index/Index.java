@@ -2,7 +2,8 @@ package com.enonic.wem.core.index;
 
 public enum Index
 {
-    NODB( "nodb" );
+    NODB( "nodb" ),
+    STORE( "store" );
 
     private final String name;
 

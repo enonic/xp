@@ -9,7 +9,6 @@ import org.elasticsearch.search.SearchHits;
 
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.Nodes;
-import com.enonic.wem.core.entity.index.NodeIndexDocumentFactory;
 import com.enonic.wem.core.entity.json.NodeJsonSerializer;
 
 public class ElasticsearchResponseNodeTranslator
@@ -39,7 +38,7 @@ public class ElasticsearchResponseNodeTranslator
 
     public static Node toNode( final GetResponse getResponse )
     {
-        final GetField field = getResponse.getField( NodeIndexDocumentFactory.ENTITY_KEY );
+        final GetField field = getResponse.getField( NodeStorageDocumentFactory.ENTITY );
 
         if ( field == null )
         {
@@ -52,7 +51,7 @@ public class ElasticsearchResponseNodeTranslator
 
     private static SearchHitField getSerializedData( final SearchHit hit )
     {
-        final SearchHitField serializedData = hit.field( NodeIndexDocumentFactory.ENTITY_KEY );
+        final SearchHitField serializedData = hit.field( NodeStorageDocumentFactory.ENTITY );
 
         if ( serializedData == null )
         {

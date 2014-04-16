@@ -231,7 +231,6 @@ public final class Node
         public Builder( final Node node )
         {
             super( node );
-
         }
 
         public Builder( final EntityId id, final NodeName name )

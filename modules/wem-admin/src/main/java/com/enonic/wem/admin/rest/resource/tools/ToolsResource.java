@@ -38,9 +38,11 @@ public final class ToolsResource
     {
         this.indexService.deleteIndex( Index.NODB );
         this.indexService.createIndex( Index.NODB );
+        this.indexService.deleteIndex( Index.STORE );
+        this.indexService.createIndex( Index.STORE );
 
         this.startupInitializer.initialize( true );
-        this.indexService.reIndex( Index.NODB );
+        //this.indexService.reIndex( Index.NODB );
         return "Done.";
     }
 

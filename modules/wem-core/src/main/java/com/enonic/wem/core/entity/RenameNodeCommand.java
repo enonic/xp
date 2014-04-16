@@ -1,14 +1,14 @@
 package com.enonic.wem.core.entity;
 
-import javax.jcr.Session;
-
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.RenameNodeParams;
-import com.enonic.wem.core.entity.dao.NodeJcrDao;
+import com.enonic.wem.core.entity.dao.MoveNodeArguments;
+import com.enonic.wem.core.entity.dao.NodeElasticsearchDao;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.util.Exceptions;
 
@@ -18,7 +18,7 @@ final class RenameNodeCommand
 
     private IndexService indexService;
 
-    private Session session;
+    private NodeElasticsearchDao nodeElasticsearchDao;
 
     Node execute()
     {
@@ -37,9 +37,8 @@ final class RenameNodeCommand
     private Node doExecute()
         throws Exception
     {
-        final NodeJcrDao nodeJcrDao = new NodeJcrDao( session );
         final EntityId entityId = params.getEntityId();
-        final Node existingNode = nodeJcrDao.getNodeById( entityId );
+        final Node existingNode = nodeElasticsearchDao.getById( entityId );
 
         if ( existingNode == null )
         {
@@ -47,10 +46,19 @@ final class RenameNodeCommand
             throw new ContentNotFoundException( contentId );
         }
 
-        nodeJcrDao.moveNode( existingNode.path().asAbsolute(), new NodePath( existingNode.parent().asAbsolute(), params.getNodeName() ) );
-        session.save();
+        final NodePath newPath = new NodePath( existingNode.parent().asAbsolute(), params.getNodeName() );
 
-        final Node renamedNode = nodeJcrDao.getNodeById( entityId );
+        final MoveNodeArguments moveNodeArguments = MoveNodeArguments.newMoveNode().
+            name( params.getNodeName() ).
+            path( newPath ).
+            updater( UserKey.superUser() ).
+            nodeToMove( params.getEntityId() ).
+            build();
+
+        nodeElasticsearchDao.move( moveNodeArguments );
+
+        final Node renamedNode = nodeElasticsearchDao.getById( params.getEntityId() );
+
         this.indexService.indexNode( renamedNode );
 
         return renamedNode;
@@ -68,9 +76,9 @@ final class RenameNodeCommand
         return this;
     }
 
-    RenameNodeCommand session( final Session session )
+    RenameNodeCommand nodeElasticsearchDao( final NodeElasticsearchDao nodeElasticsearchDao )
     {
-        this.session = session;
+        this.nodeElasticsearchDao = nodeElasticsearchDao;
         return this;
     }
 }

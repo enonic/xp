@@ -45,6 +45,7 @@ public class IndexService
     protected void doStart()
         throws Exception
     {
+        doInitializeStoreIndex();
         doInitializeNoDbIndex();
     }
 
@@ -64,6 +65,22 @@ public class IndexService
             }
         }
     }
+
+    private void doInitializeStoreIndex()
+        throws Exception
+    {
+        elasticsearchIndexService.getIndexStatus( Index.STORE, true );
+
+        if ( !indexExists( Index.STORE ) )
+        {
+            createIndex( Index.STORE );
+
+            if ( doReindexOnEmptyIndex )
+            {
+            }
+        }
+    }
+
 
     @Override
     protected void doStop()

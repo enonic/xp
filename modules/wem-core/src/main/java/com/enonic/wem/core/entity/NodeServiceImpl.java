@@ -39,66 +39,33 @@ public class NodeServiceImpl
     @Override
     public Node create( final CreateNodeParams params )
     {
-        final Lock locker = concurrencyLock.getLock( jcrSessionProvider );
-        locker.lock();
-
-        final Session session = getNewSession();
-        try
-        {
-            return CreateNodeCommand.create().
-                params( params ).
-                indexService( this.indexService ).
-                session( session ).
-                build().
-                execute();
-        }
-        finally
-        {
-            session.logout();
-            locker.unlock();
-        }
+        return CreateNodeCommand.create().
+            params( params ).
+            indexService( this.indexService ).
+            nodeElasticsearchDao( this.nodeElasticsearchDao ).
+            build().
+            execute();
     }
 
     @Override
     public Node update( final UpdateNodeParams params )
     {
-        final Lock locker = concurrencyLock.getLock( jcrSessionProvider );
-        locker.lock();
-
-        final Session session = getNewSession();
-        try
-        {
-            return UpdateNodeCommand.create().
-                params( params ).
-                indexService( this.indexService ).
-                session( session ).
-                build().
-                execute();
-        }
-        finally
-        {
-            session.logout();
-            locker.unlock();
-        }
-
+        return UpdateNodeCommand.create().
+            params( params ).
+            indexService( this.indexService ).
+            nodeElasticsearchDao( this.nodeElasticsearchDao ).
+            build().
+            execute();
     }
 
     @Override
     public Node rename( final RenameNodeParams params )
     {
-        final Lock locker = concurrencyLock.getLock( jcrSessionProvider );
-        locker.lock();
-
-        final Session session = getNewSession();
-        try
-        {
-            return new RenameNodeCommand().params( params ).indexService( this.indexService ).session( session ).execute();
-        }
-        finally
-        {
-            session.logout();
-            locker.unlock();
-        }
+        return new RenameNodeCommand().
+            params( params ).
+            indexService( this.indexService ).
+            nodeElasticsearchDao( this.nodeElasticsearchDao ).
+            execute();
     }
 
     @Override

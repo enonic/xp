@@ -42,6 +42,7 @@ public class NodeJsonSerializer
         }
         catch ( IOException e )
         {
+            System.out.println( serialized );
             throw new NodeJsonSerializerException( "Failed to deserialize Node", e );
         }
     }

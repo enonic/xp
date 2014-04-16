@@ -16,6 +16,7 @@ import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -33,7 +34,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.core.entity.index.NodeIndexDocumentFactory;
+import com.enonic.wem.core.entity.dao.NodeStorageDocument;
+import com.enonic.wem.core.entity.dao.NodeStorageDocumentFactory;
 import com.enonic.wem.core.index.DeleteDocument;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexException;
@@ -50,7 +52,7 @@ public class ElasticsearchIndexServiceImpl
     private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchIndexServiceImpl.class );
 
     // TODO: As properties
-    private final TimeValue WAIT_FOR_YELLOW_TIMEOUT = TimeValue.timeValueSeconds( 10 );
+    private final TimeValue WAIT_FOR_YELLOW_TIMEOUT = TimeValue.timeValueSeconds( 1 );
 
     public static final TimeValue CLUSTER_NOWAIT_TIMEOUT = TimeValue.timeValueSeconds( 1 );
 
@@ -96,6 +98,24 @@ public class ElasticsearchIndexServiceImpl
         }
     }
 
+    @Override
+    public String storeDocument( final NodeStorageDocument nodeStorageDocument )
+    {
+        final IndexRequest req = Requests.indexRequest().
+            index( nodeStorageDocument.getIndex().getName() ).
+            type( nodeStorageDocument.getIndexType().getName() ).
+            source( XContentBuilderFactory.create( nodeStorageDocument ) ).
+            refresh( true );
+
+        if ( nodeStorageDocument.getId() != null )
+        {
+            req.id( nodeStorageDocument.getId() );
+        }
+
+        final IndexResponse indexResponse = this.client.index( req ).actionGet();
+
+        return indexResponse.getId();
+    }
 
     @Override
     public void delete( final DeleteDocument deleteDocument )
@@ -230,28 +250,28 @@ public class ElasticsearchIndexServiceImpl
         final GetRequest getRequest = new GetRequest( byIdQuery.index() ).
             type( byIdQuery.indexType() ).
             id( byIdQuery.getId() ).
-            fields( NodeIndexDocumentFactory.ENTITY_KEY );
+            fields( NodeStorageDocumentFactory.ENTITY );
 
         return client.get( getRequest ).actionGet();
     }
 
     public SearchResponse get( final ByPathQuery byPathQuery )
     {
-        final TermQueryBuilder termQueryBuilder = new TermQueryBuilder( NodeIndexDocumentFactory.PATH_KEY, byPathQuery.getPath() );
+        final TermQueryBuilder termQueryBuilder = new TermQueryBuilder( NodeStorageDocumentFactory.PATH, byPathQuery.getPath() );
 
         return doSearchRequest( byPathQuery, termQueryBuilder );
     }
 
     public SearchResponse get( final ByPathsQuery byPathsQuery )
     {
-        final TermsQueryBuilder termsQueryBuilder = new TermsQueryBuilder( NodeIndexDocumentFactory.PATH_KEY, byPathsQuery.getPaths() );
+        final TermsQueryBuilder termsQueryBuilder = new TermsQueryBuilder( NodeStorageDocumentFactory.PATH, byPathsQuery.getPaths() );
 
         return doSearchRequest( byPathsQuery, termsQueryBuilder );
     }
 
     public SearchResponse get( final ByParentPathQuery byParentPathQuery )
     {
-        final TermQueryBuilder pathQuery = new TermQueryBuilder( NodeIndexDocumentFactory.PARENT_PATH_KEY, byParentPathQuery.getPath() );
+        final TermQueryBuilder pathQuery = new TermQueryBuilder( NodeStorageDocumentFactory.PARENT_PATH, byParentPathQuery.getPath() );
 
         return doSearchRequest( byParentPathQuery, pathQuery );
     }
@@ -263,7 +283,7 @@ public class ElasticsearchIndexServiceImpl
             setQuery( queryBuilder ).
             setFrom( 0 ).
             setSize( byQuery.size() ).
-            addField( NodeIndexDocumentFactory.ENTITY_KEY );
+            addField( NodeStorageDocumentFactory.ENTITY );
 
         final SearchResponse searchResponse = searchRequestBuilder.
             execute().

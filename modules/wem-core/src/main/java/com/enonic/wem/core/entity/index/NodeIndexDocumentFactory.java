@@ -64,7 +64,7 @@ public class NodeIndexDocumentFactory
         fulltextEnabled( false ).
         build();
 
-    public Collection<IndexDocument> create( final Node node )
+    public static Collection<IndexDocument> create( final Node node )
     {
         node.validateForIndexing();
 
@@ -75,7 +75,7 @@ public class NodeIndexDocumentFactory
         return indexDocuments;
     }
 
-    private IndexDocument createDataDocument( final Node node )
+    private static IndexDocument createDataDocument( final Node node )
     {
         final EntityIndexConfig entityIndexConfig = node.getEntityIndexConfig();
 
@@ -95,12 +95,12 @@ public class NodeIndexDocumentFactory
         return builder.build();
     }
 
-    private void addNode( final Node node, final IndexDocument.Builder builder )
+    private static void addNode( final Node node, final IndexDocument.Builder builder )
     {
         builder.addEntry( new IndexDocumentNodeItem( ENTITY_PROPERTY, NodeJsonSerializer.toString( node ) ) );
     }
 
-    private void addNodeMetaData( final Node node, final IndexDocument.Builder builder, final IndexDocumentItemFactory factory )
+    private static void addNodeMetaData( final Node node, final IndexDocument.Builder builder, final IndexDocumentItemFactory factory )
     {
 
         if ( node.name() != null )
@@ -147,7 +147,7 @@ public class NodeIndexDocumentFactory
 
     }
 
-    private void addNodeProperties( final Node node, final IndexDocument.Builder builder, final IndexDocumentItemFactory factory )
+    private static void addNodeProperties( final Node node, final IndexDocument.Builder builder, final IndexDocumentItemFactory factory )
     {
         PropertyVisitor visitor = new PropertyVisitor()
         {

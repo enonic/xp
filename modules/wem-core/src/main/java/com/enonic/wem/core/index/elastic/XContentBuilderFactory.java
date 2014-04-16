@@ -11,6 +11,8 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
+import com.enonic.wem.core.entity.dao.NodeStorageDocument;
+import com.enonic.wem.core.entity.dao.NodeStorageDocumentEntry;
 import com.enonic.wem.core.index.IndexConstants;
 import com.enonic.wem.core.index.IndexException;
 import com.enonic.wem.core.index.document.AbstractIndexDocumentItem;
@@ -22,6 +24,26 @@ public class XContentBuilderFactory
     private XContentBuilderFactory()
     {
     }
+
+    public static XContentBuilder create( final NodeStorageDocument storageDocument )
+    {
+        try
+        {
+            final XContentBuilder builder = startBuilder();
+            for ( final NodeStorageDocumentEntry entry : storageDocument.getEntries() )
+            {
+                builder.field( entry.getFieldName(), entry.getValue() );
+            }
+            endBuilder( builder );
+            return builder;
+        }
+        catch ( Exception e )
+        {
+            throw new IndexException( "Failed to build xContent for indexSource", e );
+        }
+
+    }
+
 
     public static XContentBuilder create( final IndexDocument indexDocument )
     {
