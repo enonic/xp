@@ -20,7 +20,6 @@ import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.entity.RenameNodeParams;
 import com.enonic.wem.api.entity.UpdateNodeParams;
 import com.enonic.wem.core.entity.dao.NodeElasticsearchDao;
-import com.enonic.wem.core.entity.dao.NodeJcrDao;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.jcr.provider.JcrSessionProvider;
 import com.enonic.wem.util.Exceptions;
@@ -111,50 +110,25 @@ public class NodeServiceImpl
     @Override
     public Nodes getByIds( final EntityIds ids )
     {
-
-        return new GetNodesByIdsCommand().
-            entityIds( ids ).
-            nodeElasticsearchDao( nodeElasticsearchDao ).
-            execute();
-
+        return nodeElasticsearchDao.getByIds( ids );
     }
 
     @Override
     public Node getByPath( final NodePath path )
     {
-        final Session session = getNewSession();
-        try
-        {
-            return new NodeJcrDao( session ).getNodeByPath( path );
-        }
-        finally
-        {
-            session.logout();
-        }
+        return nodeElasticsearchDao.getByPath( path );
     }
 
     @Override
     public Nodes getByPaths( final NodePaths paths )
     {
-        final Session session = getNewSession();
-        try
-        {
-            return new GetNodesByPathsCommand().nodePaths( paths ).session( session ).execute();
-        }
-        finally
-        {
-            session.logout();
-        }
+        return nodeElasticsearchDao.getByPaths( paths );
     }
 
     @Override
     public Nodes getByParent( final NodePath parent )
     {
-        //return new NodeJcrDao( session ).getNodesByParentPath( parent );
-
         return nodeElasticsearchDao.getByParent( parent );
-
-
     }
 
     @Override

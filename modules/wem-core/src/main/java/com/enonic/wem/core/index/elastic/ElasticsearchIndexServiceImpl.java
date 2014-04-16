@@ -26,6 +26,7 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.index.query.IdsQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.TermQueryBuilder;
+import org.elasticsearch.index.query.TermsQueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -236,9 +237,16 @@ public class ElasticsearchIndexServiceImpl
 
     public SearchResponse get( final ByPathQuery byPathQuery )
     {
-        final TermQueryBuilder pathQuery = new TermQueryBuilder( NodeIndexDocumentFactory.PATH_KEY, byPathQuery.getPath() );
+        final TermQueryBuilder termQueryBuilder = new TermQueryBuilder( NodeIndexDocumentFactory.PATH_KEY, byPathQuery.getPath() );
 
-        return doSearchRequest( byPathQuery, pathQuery );
+        return doSearchRequest( byPathQuery, termQueryBuilder );
+    }
+
+    public SearchResponse get( final ByPathsQuery byPathsQuery )
+    {
+        final TermsQueryBuilder termsQueryBuilder = new TermsQueryBuilder( NodeIndexDocumentFactory.PATH_KEY, byPathsQuery.getPaths() );
+
+        return doSearchRequest( byPathsQuery, termsQueryBuilder );
     }
 
     public SearchResponse get( final ByParentPathQuery byParentPathQuery )

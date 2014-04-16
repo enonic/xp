@@ -34,5 +34,7 @@ public interface ElasticsearchIndexService
 
     public SearchResponse get( final ByPathQuery byPathQuery );
 
+    public SearchResponse get( final ByPathsQuery byPathsQuery );
+
     public SearchResponse get( final ByParentPathQuery byParentPathQuery );
 }
