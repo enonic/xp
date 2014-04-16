@@ -19,7 +19,7 @@ module LiveEdit.component {
             });
 
             var comboUploadButtonDiv = new api.dom.DivEl('image-placeholder-selector');
-            this.uploadButton = new api.ui.Button("");
+            this.uploadButton = new api.ui.Button();
             this.uploadButton.addClass("upload-button");
             this.uploadButton.onClicked(() => {
                 openImageUploadDialogRequestListeners.forEach((listener: {():void}) => {

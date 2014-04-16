@@ -3,9 +3,19 @@
   margin: 0;
   cursor: pointer;
   background-color: @bg;
-  color: @color;
   border: 1px solid transparent;
   outline: none;
+
+  span {
+    color: @color;
+    line-height: 24px;
+    font-size: 14px;
+    font-family: @admin-font-family;
+  }
+
+  &:before {
+    color: @color; // updates icons color
+  }
 
   &:disabled {
     opacity: 0.5;
@@ -13,8 +23,11 @@
   }
 
   &:hover:not(:disabled) {
-    color: @hoverColor;
     background-color: @hoverBg;
+
+    &:before, span {
+      color: @hoverColor;
+    }
   }
 
   &:focus:not(:disabled) {
@@ -23,18 +36,12 @@
   }
 
   &.active:not(:disabled) {
-    color: @admin-blue-button2;
+
+    &:before, span {
+      color: @admin-blue-button2;
+    }
   }
 
-  &:before {
-    float: left;  // for the icons to display inline
-  }
-
-  .label {
-    line-height: 24px;
-    font-size: 14px;
-    font-family: @admin-font-family;
-  }
 }
 
 .button {
@@ -55,4 +62,17 @@
       font-size: 16px;
     }
   }
+}
+
+.close-button {
+  .button(white, #A6A9A8);
+  .box-shadow(0px 1px 3px #000);
+  .box-sizing(content-box); // for firefox to center the icon
+  .border-radius(15px);
+  position: absolute;
+  padding: 0;
+  top: 3px;
+  right: 3px;
+  width: 30px;
+  height: 30px;
 }

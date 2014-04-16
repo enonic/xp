@@ -29,11 +29,9 @@
   }
 
   .image-box {
-
     position: relative;
 
-
-    button {
+    .tool-button {
       .button(@admin-dark-gray, transparent);
       box-sizing: content-box;
       vertical-align: top;
@@ -43,19 +41,6 @@
       margin: 7px 10px 7px 0px;
       border: none;
       cursor: pointer;
-
-      &.reset {
-        .button(white, #A6A9A8);
-        .box-shadow(0px 1px 3px #000);
-        .box-sizing(content-box); // for firefox to center the icon
-        position: absolute;
-        padding: 0;
-        border-radius: 15px;
-        top: 3px;
-        right: 3px;
-        width: 30px;
-        height: 30px;
-      }
     }
 
     img {

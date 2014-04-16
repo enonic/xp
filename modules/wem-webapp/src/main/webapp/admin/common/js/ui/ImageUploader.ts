@@ -22,7 +22,7 @@ module api.ui {
         private cancelBtn: api.ui.Button;
         private image: api.dom.ImgEl;
         private imageBox: api.dom.DivEl;
-        private resetBtn: api.ui.Button;
+        private closeBtn: api.ui.Button;
 
         private multiSelection: boolean;
         private buttonsVisible: boolean;
@@ -83,10 +83,9 @@ module api.ui {
             });
             this.appendChild(this.cancelBtn);
 
-            this.resetBtn = new api.ui.Button('');
-            this.resetBtn.addClass('icon-close2 icon-large reset');
-            this.resetBtn.setVisible(this.buttonsVisible);
-            this.resetBtn.onClicked((event: MouseEvent) => {
+            this.closeBtn = new api.ui.CloseButton();
+            this.closeBtn.setVisible(this.buttonsVisible);
+            this.closeBtn.onClicked((event: MouseEvent) => {
                 this.reset();
             });
             KeyBindings.get().bindKeys([
@@ -103,22 +102,22 @@ module api.ui {
                     }
                 })
             ])
-            this.imageBox.appendChild(this.resetBtn);
+            this.imageBox.appendChild(this.closeBtn);
 
             //Image toolbar stub buttons
             //TODO: should be replaced with working buttons later
-            var btn1 = new api.ui.Button('');
-            btn1.addClass("icon-crop2 icon-large");
-            var btn2 = new api.ui.Button('');
-            btn2.addClass("icon-rotate icon-large");
-            var btn3 = new api.ui.Button('');
-            btn3.addClass("icon-rotate2 icon-large");
-            var btn4 = new api.ui.Button('');
-            btn4.addClass("icon-flip icon-large");
-            var btn5 = new api.ui.Button('');
-            btn5.addClass("icon-flip2 icon-large");
-            var btn6 = new api.ui.Button('');
-            btn6.addClass("icon-palette icon-large");
+            var btn1 = new api.ui.Button();
+            btn1.addClass("tool-button icon-crop2 icon-large");
+            var btn2 = new api.ui.Button();
+            btn2.addClass("tool-button icon-rotate icon-large");
+            var btn3 = new api.ui.Button();
+            btn3.addClass("tool-button icon-rotate2 icon-large");
+            var btn4 = new api.ui.Button();
+            btn4.addClass("tool-button icon-flip icon-large");
+            var btn5 = new api.ui.Button();
+            btn5.addClass("tool-button icon-flip2 icon-large");
+            var btn6 = new api.ui.Button();
+            btn6.addClass("tool-button icon-palette icon-large");
 
             this.imageBox.appendChild(btn1).appendChild(btn2).appendChild(btn3).appendChild(btn4).appendChild(btn5).appendChild(btn6);
             //End of stub
@@ -198,7 +197,7 @@ module api.ui {
 
         private setImageVisible(visible: boolean) {
             this.imageBox.setVisible(visible);
-            this.resetBtn.setVisible(visible && this.buttonsVisible);
+            this.closeBtn.setVisible(visible && this.buttonsVisible);
         }
 
         private initUploader(elId: string) {

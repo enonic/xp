@@ -110,7 +110,7 @@ module api.content.inputtype.image {
                 this.uploadButton.show();
             })
 
-            this.uploadButton = new api.ui.Button("");
+            this.uploadButton = new api.ui.Button();
             comboboxWrapper.appendChild(this.uploadButton);
             this.uploadButton.addClass("upload-button");
             this.uploadButton.onClicked((event: MouseEvent) => {
