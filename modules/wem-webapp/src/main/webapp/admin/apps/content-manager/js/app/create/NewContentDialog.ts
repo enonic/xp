@@ -173,7 +173,7 @@ module app.create {
 
                 }).catch((reason: any) => {
 
-                    api.notify.Message.newError(reason.toString());
+                    api.notify.showError(reason.toString());
 
                 }).finally(() => {
 

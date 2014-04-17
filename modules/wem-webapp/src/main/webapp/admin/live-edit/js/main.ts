@@ -39,6 +39,12 @@ function unOpenImageUploadDialogRequest(listener: {():void}) {
     });
 }
 
+function notifyOpenImageUploadDialogListeners() {
+    openImageUploadDialogRequestListeners.forEach((listener: {():void}) => {
+        listener();
+    });
+}
+
 function onImageUploaded(listener: {(event: api.ui.ImageUploadedEvent):void}) {
     imageUploadedListeners.push(listener);
 }
@@ -51,8 +57,8 @@ function unImageUploaded(listener: {(event: api.ui.ImageUploadedEvent):void}) {
 
 function notifyImageUploaded(event: api.ui.ImageUploadedEvent) {
     imageUploadedListeners.forEach((listener: {(event: api.ui.ImageUploadedEvent):void}) => {
-        listener.call(this, event);
-    })
+        listener(event);
+    });
 }
 
 function getComponentByPath(path: string): LiveEdit.component.Component {

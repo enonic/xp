@@ -153,14 +153,15 @@ module app.wizard.page {
                     liveEditWindow.CONFIG.baseUri = CONFIG.baseUri;
                     liveEditWindow.siteTemplate = this.siteTemplate;
                     liveEditWindow.content = content;
-                    liveEditWindow.onOpenImageUploadDialogRequest(()=> {
+                    liveEditWindow.onOpenImageUploadDialogRequest(() => {
                         var uploadDialog = new UploadDialog();
                         uploadDialog.onImageUploaded((event: ImageUploadedEvent) => {
                             liveEditWindow.notifyImageUploaded(event);
+                            uploadDialog.close();
+                            uploadDialog.remove();
                         });
                         uploadDialog.open();
-
-                    })
+                    });
                     this.loadMask.hide();
 
                     liveEditWindow.initializeLiveEdit();
@@ -301,13 +302,23 @@ module app.wizard.page {
                 this.notifyPageComponentReset(componentPath);
             });
 
+            var liveEditPageWindow = window;
             this.liveEditJQuery(this.liveEditWindow).on('imageComponentSetImage.liveEdit',
-                (event, imageId?: ContentId, componentPathAsString?: string, componentPlaceholder?: api.dom.Element,
-                 imageName?: string) => {
+                (event, params?: {
+                    imageId?: ContentId;
+                    componentPathAsString?: string;
+                    componentPlaceholder?: api.dom.Element;
+                    imageName?: string;
+                    errorMessage?: string;
+                }) => {
 
-                    var componentPath = ComponentPath.fromString(componentPathAsString);
+                    if (!params.errorMessage) {
+                        var componentPath = ComponentPath.fromString(params.componentPathAsString);
+                        this.notifyImageComponentSetImage(componentPath, params.imageId, params.componentPlaceholder, !params.imageName ? null : params.imageName);
+                    } else {
+                        api.notify.showError(params.errorMessage);
+                    }
 
-                    this.notifyImageComponentSetImage(componentPath, imageId, componentPlaceholder, !imageName ? null : imageName);
                 });
 
             this.liveEditJQuery(this.liveEditWindow).on('pageComponentSetDescriptor.liveEdit',
