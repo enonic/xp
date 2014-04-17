@@ -17,11 +17,24 @@
   .fold-button {
     height: @toolbar-height;
     line-height: @toolbar-height;
-    padding: 0 17px;
+    padding: 0 27px 0 17px;
     text-align: center;
     overflow: visible;
     display: none;
     position: relative; // for the dropdown to position itself
+
+    &:after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      width: 0;
+      height: 0;
+      margin: -2px 0 0 -4px;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 6px solid @admin-dark-gray;
+    }
 
     .dropdown {
       display: none;
