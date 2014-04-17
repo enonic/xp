@@ -34,14 +34,15 @@ module api.content.inputtype.image {
                 this.notifyEditButtonClicked();
             });
 
-
-            this.removeButton = new api.ui.Button("Remove");
+            /*
+             this.removeButton = new api.ui.Button("Remove");
             this.removeButton.addClass("remove");
             buttonsBar.appendChild(this.removeButton);
             this.removeButton.onClicked((event: MouseEvent) => {
                 this.hide();
                 this.notifyRemoveButtonClicked();
             });
+             */
 
             this.appendChild(buttonsBar);
 

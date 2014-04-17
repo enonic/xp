@@ -21,10 +21,12 @@ module api.content.inputtype.image {
             this.dialog = new ImageSelectorDialog();
             this.dialog.hide();
             this.appendChild(this.dialog);
-            this.dialog.addRemoveButtonClickListener(() => {
+            /*
+             this.dialog.addRemoveButtonClickListener(() => {
                 this.removeOptionView(this.editableOption);
                 this.notifyRemoveSelectedOption(this.editableOption);
             });
+             */
             this.dialog.addEditButtonClickListener(() => {
                 this.notifyEditSelectedOption(this.editableOption);
             });
