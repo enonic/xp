@@ -43,9 +43,7 @@ abstract class AbstractModuleServiceTest
             info( "module-info" ).
             url( "http://enonic.net" ).
             vendorName( "Enonic" ).
-            vendorUrl( "https://www.enonic.com" ).
-            minSystemVersion( ModuleVersion.from( 5, 0, 0 ) ).
-            maxSystemVersion( ModuleVersion.from( 6, 0, 0 ) )
+            vendorUrl( "https://www.enonic.com" )
     }
 
     def ModuleBuilder createModule( final String name )

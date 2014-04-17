@@ -2,7 +2,6 @@ package com.enonic.wem.api.module;
 
 import com.enonic.wem.api.Identity;
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 public interface Module
     extends Identity<ModuleKey, ModuleName>
@@ -26,12 +25,4 @@ public interface Module
     public String getVendorUrl();
 
     public Form getConfig();
-
-    public ModuleVersion getMinSystemVersion();
-
-    public ModuleVersion getMaxSystemVersion();
-
-    public ModuleKeys getModuleDependencies();
-
-    public ContentTypeNames getContentTypeDependencies();
 }

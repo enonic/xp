@@ -6,10 +6,8 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.module.ModuleVersion;
-import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 final class ModuleImpl
     implements Module
@@ -28,14 +26,6 @@ final class ModuleImpl
 
     private final Form config;
 
-    private final ModuleVersion minSystemVersion;
-
-    private final ModuleVersion maxSystemVersion;
-
-    private final ModuleKeys moduleDependencies;
-
-    private final ContentTypeNames contentTypeDependencies;
-
     public ModuleImpl( final ModuleBuilder builder )
     {
         Preconditions.checkNotNull( builder.moduleKey, "moduleKey must be specified" );
@@ -46,10 +36,6 @@ final class ModuleImpl
         this.url = builder.url;
         this.vendorName = builder.vendorName;
         this.vendorUrl = builder.vendorUrl;
-        this.minSystemVersion = builder.minSystemVersion;
-        this.maxSystemVersion = builder.maxSystemVersion;
-        this.moduleDependencies = ModuleKeys.from( builder.moduleDependencies );
-        this.contentTypeDependencies = ContentTypeNames.from( builder.contentTypeDependencies );
         this.config = builder.config == null ? null : builder.config.copy();
     }
 
@@ -103,26 +89,6 @@ final class ModuleImpl
         return config;
     }
 
-    public ModuleVersion getMinSystemVersion()
-    {
-        return minSystemVersion;
-    }
-
-    public ModuleVersion getMaxSystemVersion()
-    {
-        return maxSystemVersion;
-    }
-
-    public ModuleKeys getModuleDependencies()
-    {
-        return moduleDependencies;
-    }
-
-    public ContentTypeNames getContentTypeDependencies()
-    {
-        return contentTypeDependencies;
-    }
-
     @Override
     public String toString()
     {
@@ -134,10 +100,6 @@ final class ModuleImpl
             add( "vendorName", vendorName ).
             add( "vendorUrl", vendorUrl ).
             add( "config", config ).
-            add( "minSystemVersion", minSystemVersion ).
-            add( "maxSystemVersion", maxSystemVersion ).
-            add( "moduleDependencies", moduleDependencies ).
-            add( "contentTypeDependencies", contentTypeDependencies ).
             omitNullValues().
             toString();
     }
