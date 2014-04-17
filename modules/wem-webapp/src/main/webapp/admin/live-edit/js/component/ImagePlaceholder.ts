@@ -14,29 +14,27 @@ module LiveEdit.component {
             });
 
 
-            onImageUploaded((event: api.ui.ImageUploadedEvent) => {
-                this.createEmbeddedImageContent(event.getUploadedItem());
-            });
+            var imageUploadHandler = (event: api.ui.ImageUploadedEvent) => {
+                if (this.getHTMLElement().parentElement) {
+                    this.createEmbeddedImageContent(event.getUploadedItem());
+                } else {
+                    unImageUploaded(imageUploadHandler);
+                }
+            };
+            onImageUploaded(imageUploadHandler);
 
             var comboUploadButtonDiv = new api.dom.DivEl('image-placeholder-selector');
             this.uploadButton = new api.ui.Button();
             this.uploadButton.addClass("upload-button");
-            this.uploadButton.onClicked(() => {
-                openImageUploadDialogRequestListeners.forEach((listener: {():void}) => {
-                    listener.call(this);
-                });
-            });
+            this.uploadButton.onClicked(() => notifyOpenImageUploadDialogListeners());
             this.uploadButton.hide();
 
             this.getEl().setData('live-edit-type', "image");
 
-            var imageLoader = new api.content.ContentSummaryLoader();
-            var allowedContentTypes = ["image"];
-            imageLoader.setAllowedContentTypes(allowedContentTypes);
             this.comboBox = new api.content.ContentComboBoxBuilder().
                 setMaximumOccurrences(1).
-                setAllowedContentTypes(allowedContentTypes).
-                setLoader(imageLoader).
+                setAllowedContentTypes(["image"]).
+                setLoader(new api.content.ContentSummaryLoader()).
                 build();
             this.comboBox.addClass('image-placeholder');
             this.comboBox.hide();
@@ -46,30 +44,37 @@ module LiveEdit.component {
             this.appendChild(comboUploadButtonDiv);
 
             this.comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {
-                var componentPath = this.getComponentPath();
-                $liveEdit(window).trigger('imageComponentSetImage.liveEdit',
-                    [event.getOption().value, componentPath, this, event.getOption().displayValue.getDisplayName()]);
+
+                $liveEdit(window).trigger('imageComponentSetImage.liveEdit', [{
+                    imageId: event.getOption().value,
+                    componentPathAsString: this.getComponentPath(),
+                    componentPlaceholder: this,
+                    imageName: event.getOption().displayValue.getDisplayName()
+                }]);
+
             });
         }
 
 
         private createEmbeddedImageContent(uploadItem: api.ui.UploadItem) {
 
-            var attachmentName = new api.content.attachment.AttachmentName(uploadItem.getName());
-            var attachment = new api.content.attachment.AttachmentBuilder().
-                setBlobKey(uploadItem.getBlobKey()).
-                setAttachmentName(attachmentName).
-                setMimeType(uploadItem.getMimeType()).
-                setSize(uploadItem.getSize()).
-                build();
-            var mimeType = uploadItem.getMimeType();
             new api.schema.content.GetContentTypeByNameRequest(new api.schema.content.ContentTypeName("image")).
                 sendAndParse().
-                done((contentType: api.schema.content.ContentType) => {
+                then((contentType: api.schema.content.ContentType) => {
+
+                    var attachmentName = new api.content.attachment.AttachmentName(uploadItem.getName());
+
+                    var attachment = new api.content.attachment.AttachmentBuilder().
+                        setBlobKey(uploadItem.getBlobKey()).
+                        setAttachmentName(attachmentName).
+                        setMimeType(uploadItem.getMimeType()).
+                        setSize(uploadItem.getSize()).
+                        build();
 
                     var contentData = new api.content.image.ImageContentDataFactory().
                         setImage(attachmentName).
-                        setMimeType(mimeType).create();
+                        setMimeType(uploadItem.getMimeType()).
+                        create();
 
                     var createContentRequest = new api.content.CreateContentRequest().
                         setDraft(false).
@@ -81,15 +86,24 @@ module LiveEdit.component {
                         setForm(contentType.getForm()).
                         setContentData(contentData).
                         addAttachment(attachment);
-                    createContentRequest.
-                        sendAndParse().
-                        done((createdContent: api.content.Content) => {
-                            var componentPath = this.getComponentPath();
-                            $liveEdit(window).trigger('imageComponentSetImage.liveEdit',
-                                [createdContent.getId(), componentPath, this, uploadItem.getName()]);
 
-                        });
-                });
+                    return createContentRequest.sendAndParse();
+
+                }).then((createdContent: api.content.Content) => {
+
+                    $liveEdit(window).trigger('imageComponentSetImage.liveEdit', [{
+                        imageId: createdContent.getId(),
+                        componentPathAsString: this.getComponentPath(),
+                        componentPlaceholder: this,
+                        imageName: uploadItem.getName()
+                    }]);
+
+                }).catch((reason) => {
+
+                    console.log("Exception in ImagePlaceholder.createEmbeddedImageContent(): %o", reason);
+                    $liveEdit(window).trigger('imageComponentSetImage.liveEdit', [{errorMessage: reason.message}]);
+
+                }).done();
         }
 
         onSelect() {
