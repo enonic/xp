@@ -13,15 +13,9 @@ module LiveEdit.component {
                 e.stopPropagation();
             });
 
-
-            var imageUploadHandler = (event: api.ui.ImageUploadedEvent) => {
-                if (this.getHTMLElement().parentElement) {
-                    this.createEmbeddedImageContent(event.getUploadedItem());
-                } else {
-                    unImageUploaded(imageUploadHandler);
-                }
-            };
+            var imageUploadHandler = (event: api.ui.ImageUploadedEvent) => this.createEmbeddedImageContent(event.getUploadedItem());
             onImageUploaded(imageUploadHandler);
+            this.onRemoved((event: api.dom.ElementRemovedEvent) => unImageUploaded(imageUploadHandler));
 
             var comboUploadButtonDiv = new api.dom.DivEl('image-placeholder-selector');
             this.uploadButton = new api.ui.Button();
@@ -45,6 +39,9 @@ module LiveEdit.component {
 
             this.comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {
 
+                this.uploadButton.hide();
+                this.showLoadingSpinner();
+
                 $liveEdit(window).trigger('imageComponentSetImage.liveEdit', [{
                     imageId: event.getOption().value,
                     componentPathAsString: this.getComponentPath(),
@@ -57,6 +54,8 @@ module LiveEdit.component {
 
 
         private createEmbeddedImageContent(uploadItem: api.ui.UploadItem) {
+
+            this.showLoadingSpinner();
 
             new api.schema.content.GetContentTypeByNameRequest(new api.schema.content.ContentTypeName("image")).
                 sendAndParse().
@@ -100,8 +99,11 @@ module LiveEdit.component {
 
                 }).catch((reason) => {
 
-                    console.log("Exception in ImagePlaceholder.createEmbeddedImageContent(): %o", reason);
-                    $liveEdit(window).trigger('imageComponentSetImage.liveEdit', [{errorMessage: reason.message}]);
+                    $liveEdit(window).trigger('imageComponentSetImage.liveEdit', [{
+                        errorMessage: reason.message
+                    }]);
+
+                    this.hideLoadingSpinner();
 
                 }).done();
         }
