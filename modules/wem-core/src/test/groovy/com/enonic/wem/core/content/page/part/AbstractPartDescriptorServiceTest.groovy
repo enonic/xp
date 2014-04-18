@@ -42,7 +42,7 @@ abstract class AbstractPartDescriptorServiceTest
 
     def Module createModule( final String moduleKey )
     {
-        def module = ModuleBuilder.newModule().
+        def module = new ModuleBuilder().
             moduleKey( ModuleKey.from( moduleKey ) ).
             displayName( moduleKey.toUpperCase() ).
             build();

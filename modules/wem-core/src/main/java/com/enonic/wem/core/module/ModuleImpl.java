@@ -4,7 +4,6 @@ import java.net.URL;
 import java.util.Set;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.module.Module;
@@ -15,32 +14,19 @@ import com.enonic.wem.api.module.ModuleVersion;
 final class ModuleImpl
     implements Module
 {
-    private final ModuleKey moduleKey;
+    protected ModuleKey moduleKey;
 
-    private final String displayName;
+    protected String displayName;
 
-    private final String info;
+    protected String info;
 
-    private final String url;
+    protected String url;
 
-    private final String vendorName;
+    protected String vendorName;
 
-    private final String vendorUrl;
+    protected String vendorUrl;
 
-    private final Form config;
-
-    public ModuleImpl( final ModuleBuilder builder )
-    {
-        Preconditions.checkNotNull( builder.moduleKey, "moduleKey must be specified" );
-
-        this.moduleKey = builder.moduleKey;
-        this.displayName = builder.displayName;
-        this.info = builder.info;
-        this.url = builder.url;
-        this.vendorName = builder.vendorName;
-        this.vendorUrl = builder.vendorUrl;
-        this.config = builder.config == null ? null : builder.config.copy();
-    }
+    protected Form config;
 
     public ModuleKey getKey()
     {

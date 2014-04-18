@@ -19,7 +19,7 @@ public class ModuleImplTest
             addFormItem( Input.newInput().name( "some-name" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
 
-        final Module module = ModuleBuilder.newModule().
+        final Module module = new ModuleBuilder().
             moduleKey( ModuleKey.from( "mymodule-1.0.0" ) ).
             displayName( "module display name" ).
             info( "module-info" ).

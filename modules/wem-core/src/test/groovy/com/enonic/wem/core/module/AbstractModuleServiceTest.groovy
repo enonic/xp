@@ -37,7 +37,7 @@ abstract class AbstractModuleServiceTest
 
     def ModuleBuilder buildModule( final String key )
     {
-        return ModuleBuilder.newModule().
+        return new ModuleBuilder().
             moduleKey( ModuleKey.from( key ) ).
             displayName( "module display name" ).
             info( "module-info" ).

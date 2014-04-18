@@ -6,73 +6,57 @@ import com.enonic.wem.api.module.ModuleKey;
 
 public final class ModuleBuilder
 {
-    protected ModuleKey moduleKey;
+    private final ModuleImpl module;
 
-    protected String displayName;
-
-    protected String info;
-
-    protected String url;
-
-    protected String vendorName;
-
-    protected String vendorUrl;
-
-    protected Form config;
-
-    private ModuleBuilder()
+    public ModuleBuilder()
     {
-    }
-
-    public static ModuleBuilder newModule()
-    {
-        return new ModuleBuilder();
+        this.module = new ModuleImpl();
     }
 
     public ModuleBuilder moduleKey( final ModuleKey moduleKey )
     {
-        this.moduleKey = moduleKey;
+        this.module.moduleKey = moduleKey;
         return this;
     }
 
     public ModuleBuilder displayName( final String displayName )
     {
-        this.displayName = displayName;
+        this.module.displayName = displayName;
         return this;
     }
 
     public ModuleBuilder info( final String info )
     {
-        this.info = info;
+        this.module.info = info;
         return this;
     }
 
     public ModuleBuilder url( final String url )
     {
-        this.url = url;
+        this.module.url = url;
         return this;
     }
 
     public ModuleBuilder vendorName( final String vendorName )
     {
-        this.vendorName = vendorName;
+        this.module.vendorName = vendorName;
         return this;
     }
 
     public ModuleBuilder vendorUrl( final String vendorUrl )
     {
-        this.vendorUrl = vendorUrl;
+        this.module.vendorUrl = vendorUrl;
         return this;
     }
 
     public ModuleBuilder config( final Form config )
     {
-        this.config = config;
+        this.module.config = config;
         return this;
     }
 
     public Module build()
     {
-        return new ModuleImpl( this );
+        return this.module;
     }
 }

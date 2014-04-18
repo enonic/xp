@@ -25,7 +25,7 @@ public class ModuleExporter
         throws IOException
     {
         final ModuleKey moduleKey = ModuleKey.from( resolveId( directoryPath ) );
-        final ModuleBuilder moduleBuilder = ModuleBuilder.newModule().moduleKey( moduleKey );
+        final ModuleBuilder moduleBuilder = new ModuleBuilder().moduleKey( moduleKey );
 
         xmlSerializer.toModule( xml, moduleBuilder );
 

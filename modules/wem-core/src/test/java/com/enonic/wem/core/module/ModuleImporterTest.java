@@ -57,7 +57,7 @@ public class ModuleImporterTest
             addFormItem( Input.newInput().name( "some-name" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
 
-        return ModuleBuilder.newModule().
+        return new ModuleBuilder().
             moduleKey( ModuleKey.from( "testmodule-1.0.0" ) ).
             displayName( "module display name" ).
             info( "module-info" ).

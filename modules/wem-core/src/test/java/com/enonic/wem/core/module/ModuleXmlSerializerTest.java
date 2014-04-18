@@ -31,7 +31,7 @@ public class ModuleXmlSerializerTest
     {
 
         String xml = loadTestXml( "serialized-module.xml" );
-        ModuleBuilder module = ModuleBuilder.newModule().moduleKey( ModuleKey.from( "mymodule-1.0.0" ) );
+        ModuleBuilder module = new ModuleBuilder().moduleKey( ModuleKey.from( "mymodule-1.0.0" ) );
         moduleSerializer.toModule( xml, module );
         assertEquals( createModule().toString(), module.build().toString() );
     }
@@ -47,7 +47,7 @@ public class ModuleXmlSerializerTest
     @Test(expected = XmlParsingException.class)
     public void testBadXmlModuleSerialization()
     {
-        moduleSerializer.toModule( "<module><display-name/>", ModuleBuilder.newModule() );
+        moduleSerializer.toModule( "<module><display-name/>", new ModuleBuilder() );
     }
 
     private Module createModule()
@@ -56,7 +56,7 @@ public class ModuleXmlSerializerTest
             addFormItem( Input.newInput().name( "some-name" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
 
-        return ModuleBuilder.newModule().
+        return new ModuleBuilder().
             moduleKey( ModuleKey.from( "mymodule-1.0.0" ) ).
             displayName( "module display name" ).
             info( "module-info" ).
