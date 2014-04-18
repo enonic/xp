@@ -43,7 +43,7 @@
         </executions>
         <configuration>
           <schemaIncludes>
-            <include>**/*.xsd</include>
+            <include>**/model.xsd</include>
           </schemaIncludes>
         </configuration>
       </plugin>
