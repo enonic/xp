@@ -15,6 +15,8 @@ module api.content.inputtype.image {
 
         private removeSelectedOptionListeners: {(option: SelectedOption<ContentSummary>): void}[] = [];
 
+        private mouseClickListener:{(MouseEvent): void};
+
         constructor() {
             super();
 
@@ -70,7 +72,11 @@ module api.content.inputtype.image {
             var optionView: SelectedOptionView = <SelectedOptionView>option.getOptionView();
 
             optionView.onClicked((event: MouseEvent) => {
-                this.showImageSelectorDialog(option);
+                if (this.dialog.isVisible()) {
+                    this.hideImageSelectorDialog();
+                } else {
+                    this.showImageSelectorDialog(option);
+                }
             });
             optionView.addSelectedOptionToBeRemovedListener((optionView: SelectedOptionView) => {
                 this.removeOptionView(option);
@@ -137,9 +143,15 @@ module api.content.inputtype.image {
             return Math.floor(0.3 * availableWidth);
         }
 
+        private hideImageSelectorDialog() {
+            this.dialog.hide();
+            this.editableOption.getOptionView().removeClass('editing first-in-row last-in-row');
+            api.dom.Body.get().unClicked(this.mouseClickListener);
+        }
+
         private setOutsideClickListener() {
             var selectedOptionsView = this;
-            var mouseClickListener = (event: MouseEvent) => {
+            this.mouseClickListener = (event: MouseEvent) => {
                 var viewHtmlElement = selectedOptionsView.getHTMLElement();
                 for (var element = event.target; element; element = (<any>element).parentNode) {
                     if (element == viewHtmlElement) {
@@ -147,12 +159,10 @@ module api.content.inputtype.image {
                     }
                 }
 
-                selectedOptionsView.dialog.hide();
-                selectedOptionsView.editableOption.getOptionView().removeClass('editing first-in-row last-in-row');
-                api.dom.Body.get().unClicked(mouseClickListener);
+                selectedOptionsView.hideImageSelectorDialog();
             };
 
-            api.dom.Body.get().onClicked(mouseClickListener);
+            api.dom.Body.get().onClicked(this.mouseClickListener);
         }
 
         private isLastInRow(index: number): boolean {
