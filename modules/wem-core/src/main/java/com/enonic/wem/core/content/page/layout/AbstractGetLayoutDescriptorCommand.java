@@ -45,7 +45,7 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
         final LayoutDescriptors.Builder layoutDescriptors = LayoutDescriptors.newLayoutDescriptors();
         for ( final Module module : modules )
         {
-            final ResourceKey componentFolder = ResourceKey.from( module.getModuleKey(), "component" );
+            final ResourceKey componentFolder = ResourceKey.from( module.getKey(), "component" );
             final ResourceKeys children = this.resourceService.getChildren( componentFolder );
             final Collection<String> componentNames = children.transform( new Function<ResourceKey, String>()
             {
@@ -64,7 +64,7 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
             for ( final String componentName : componentNames )
             {
                 final ComponentDescriptorName descriptorName = new ComponentDescriptorName( componentName );
-                final LayoutDescriptorKey key = LayoutDescriptorKey.from( module.getModuleKey(), descriptorName );
+                final LayoutDescriptorKey key = LayoutDescriptorKey.from( module.getKey(), descriptorName );
                 final LayoutDescriptor layoutDescriptor = getDescriptor( key );
                 if ( layoutDescriptor != null )
                 {

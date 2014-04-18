@@ -44,12 +44,7 @@ final class ModuleImpl
 
     public ModuleKey getKey()
     {
-        return getModuleKey();
-    }
-
-    public ModuleKey getModuleKey()
-    {
-        return moduleKey;
+        return this.moduleKey;
     }
 
     public ModuleName getName()

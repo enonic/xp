@@ -11,8 +11,6 @@ public interface Module
 {
     public ModuleKey getKey();
 
-    public ModuleKey getModuleKey();
-
     public ModuleName getName();
 
     public ModuleVersion getVersion();

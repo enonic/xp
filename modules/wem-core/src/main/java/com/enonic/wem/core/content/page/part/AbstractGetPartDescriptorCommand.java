@@ -45,7 +45,7 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
         final PartDescriptors.Builder partDescriptors = PartDescriptors.newPartDescriptors();
         for ( final Module module : modules )
         {
-            final ResourceKey componentFolder = ResourceKey.from( module.getModuleKey(), "component" );
+            final ResourceKey componentFolder = ResourceKey.from( module.getKey(), "component" );
             final ResourceKeys children = this.resourceService.getChildren( componentFolder );
             final Collection<String> componentNames = children.transform( new Function<ResourceKey, String>()
             {
@@ -64,7 +64,7 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
             for ( final String componentName : componentNames )
             {
                 final ComponentDescriptorName descriptorName = new ComponentDescriptorName( componentName );
-                final PartDescriptorKey key = PartDescriptorKey.from( module.getModuleKey(), descriptorName );
+                final PartDescriptorKey key = PartDescriptorKey.from( module.getKey(), descriptorName );
                 final PartDescriptor partDescriptor = getDescriptor( key );
                 if ( partDescriptor != null )
                 {

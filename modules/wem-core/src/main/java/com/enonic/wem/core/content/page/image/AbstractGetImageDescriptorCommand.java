@@ -45,7 +45,7 @@ abstract class AbstractGetImageDescriptorCommand<T extends AbstractGetImageDescr
         final ImageDescriptors.Builder imageDescriptors = ImageDescriptors.newImageDescriptors();
         for ( final Module module : modules )
         {
-            final ResourceKey componentFolder = ResourceKey.from( module.getModuleKey(), "component" );
+            final ResourceKey componentFolder = ResourceKey.from( module.getKey(), "component" );
             final ResourceKeys children = this.resourceService.getChildren( componentFolder );
             final Collection<String> componentNames = children.transform( new Function<ResourceKey, String>()
             {
@@ -64,7 +64,7 @@ abstract class AbstractGetImageDescriptorCommand<T extends AbstractGetImageDescr
             for ( final String componentName : componentNames )
             {
                 final ComponentDescriptorName descriptorName = new ComponentDescriptorName( componentName );
-                final ImageDescriptorKey key = ImageDescriptorKey.from( module.getModuleKey(), descriptorName );
+                final ImageDescriptorKey key = ImageDescriptorKey.from( module.getKey(), descriptorName );
                 final ImageDescriptor imageDescriptor = getImageDescriptor( key );
                 if ( imageDescriptor != null )
                 {

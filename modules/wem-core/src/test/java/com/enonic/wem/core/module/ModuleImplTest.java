@@ -29,7 +29,7 @@ public class ModuleImplTest
             config( config ).
             build();
 
-        assertEquals( "mymodule-1.0.0", module.getModuleKey().toString() );
+        assertEquals( "mymodule-1.0.0", module.getKey().toString() );
         assertEquals( "module display name", module.getDisplayName() );
         assertEquals( "module-info", module.getInfo() );
         assertEquals( "http://enonic.net", module.getUrl() );

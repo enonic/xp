@@ -21,7 +21,7 @@ public class ModuleSummaryJson
 
     public String getKey()
     {
-        return module.getModuleKey().toString();
+        return module.getKey().toString();
     }
 
     public String getName()

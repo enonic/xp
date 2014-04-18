@@ -45,22 +45,7 @@ public class ModuleImporterTest
         final Module importedModule = new ModuleExporter().importFromDirectory( exportedModuleDir ).build();
 
         assertNotNull( importedModule );
-        assertEquals( "testmodule-1.0.0", importedModule.getModuleKey().toString() );
-        assertEquals( "testmodule", importedModule.getName().toString() );
-        assertEquals( "1.0.0", importedModule.getVersion().toString() );
-        assertEquals( "module display name", importedModule.getDisplayName() );
-    }
-
-    @Test
-    public void testImportModuleFromZip()
-        throws Exception
-    {
-        final Module module = createModule();
-        final Path exportedModuleZip = new ModuleExporter().exportToZip( module, tempDir );
-
-        final Module importedModule = new ModuleExporter().importFromZip( exportedModuleZip ).build();
-
-        assertEquals( "testmodule-1.0.0", importedModule.getModuleKey().toString() );
+        assertEquals( "testmodule-1.0.0", importedModule.getKey().toString() );
         assertEquals( "testmodule", importedModule.getName().toString() );
         assertEquals( "1.0.0", importedModule.getVersion().toString() );
         assertEquals( "module display name", importedModule.getDisplayName() );
