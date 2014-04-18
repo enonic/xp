@@ -219,7 +219,7 @@ module app.wizard {
                     this.previewAction.setVisible(renderable);
                     this.contextWindowToggler.setVisible(renderable);
                 }).catch((reason) => {
-                    api.notify.Message.newWarning(reason.toString());
+                    api.notify.showWarning(reason.toString());
                 }).done();
 
             return new api.content.attachment.GetAttachmentsRequest(persistedContent.getContentId()).

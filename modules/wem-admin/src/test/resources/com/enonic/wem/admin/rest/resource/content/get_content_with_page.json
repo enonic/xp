@@ -18,6 +18,7 @@
     "iconUrl": "http://localhost/admin/rest/content/image/aaa",
     "id": "aaa",
     "isDraft": false,
+    "isEmbedded": false,
     "isPage": true,
     "isRoot": true,
     "isSite": false,

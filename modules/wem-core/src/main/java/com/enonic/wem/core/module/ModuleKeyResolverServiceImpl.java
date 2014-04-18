@@ -1,10 +1,6 @@
 package com.enonic.wem.core.module;
 
-import java.util.Collections;
-
 import javax.inject.Inject;
-
-import com.google.common.collect.ImmutableMap;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -15,15 +11,12 @@ import com.enonic.wem.api.content.site.SiteService;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateService;
-import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleKeyResolver;
 import com.enonic.wem.api.module.ModuleKeys;
-import com.enonic.wem.api.module.ModuleName;
 
 final class ModuleKeyResolverServiceImpl
     implements ModuleKeyResolverService
 {
-    private static final ModuleKeyResolver EMPTY_RESOLVER = new ModuleKeyResolverImpl( Collections.<ModuleName, ModuleKey>emptyMap() );
-
     @Inject
     private ContentService contentService;
 
@@ -39,18 +32,11 @@ final class ModuleKeyResolverServiceImpl
         final SiteTemplate siteTemplate = findSiteTemplate( content );
         if ( siteTemplate == null )
         {
-            return EMPTY_RESOLVER;
+            return ModuleKeyResolver.empty();
         }
 
         final ModuleKeys siteModules = siteTemplate.getModules();
-
-        final ImmutableMap.Builder<ModuleName, ModuleKey> moduleTable = ImmutableMap.builder();
-        for ( ModuleKey moduleKey : siteModules )
-        {
-            moduleTable.put( moduleKey.getName(), moduleKey );
-        }
-
-        return new ModuleKeyResolverImpl( moduleTable.build() );
+        return ModuleKeyResolver.from( siteModules );
     }
 
     @Override
@@ -59,7 +45,7 @@ final class ModuleKeyResolverServiceImpl
         final Content content = getContent( contentPath );
         if ( content == null )
         {
-            return EMPTY_RESOLVER;
+            return ModuleKeyResolver.empty();
         }
 
         return forContent( content );

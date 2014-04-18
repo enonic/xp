@@ -38,10 +38,5 @@ public abstract class AbstractResourceTest
         ServletRequestHolder.setRequest( req );
     }
 
-    private void configure( final DefaultResourceConfig config )
-    {
-        config.getSingletons().add( getResourceInstance() );
-    }
-
-    protected abstract Object getResourceInstance();
+    protected abstract void configure( DefaultResourceConfig config );
 }

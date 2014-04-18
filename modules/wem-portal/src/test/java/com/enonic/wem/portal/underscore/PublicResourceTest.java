@@ -1,6 +1,5 @@
 package com.enonic.wem.portal.underscore;
 
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,6 +13,7 @@ import org.mockito.Mockito;
 
 import com.google.common.base.Charsets;
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.core.DefaultResourceConfig;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
@@ -21,10 +21,9 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleName;
+import com.enonic.wem.api.module.ModuleKeyResolver;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.core.module.ModuleKeyResolver;
 import com.enonic.wem.core.module.ModuleKeyResolverService;
 import com.enonic.wem.core.module.ModuleResourcePathResolver;
 import com.enonic.wem.portal.AbstractResourceTest;
@@ -40,25 +39,23 @@ public class PublicResourceTest
 
     private ModuleResourcePathResolver modulePathResolver;
 
-    private ModuleKeyResolver moduleKeyResolver;
-
     private ContentService contentService;
 
     private Path tempDir;
 
     @Override
-    protected Object getResourceInstance()
+    protected void configure( final DefaultResourceConfig config )
     {
         modulePathResolver = Mockito.mock( ModuleResourcePathResolver.class );
         final ModuleKeyResolverService moduleKeyResolverService = Mockito.mock( ModuleKeyResolverService.class );
-        moduleKeyResolver = Mockito.mock( ModuleKeyResolver.class );
+        final ModuleKeyResolver moduleKeyResolver = ModuleKeyResolver.from( ModuleKey.from( "demo-1.0.0" ) );
         contentService = Mockito.mock( ContentService.class );
         when( moduleKeyResolverService.forContent( isA( ContentPath.class ) ) ).thenReturn( moduleKeyResolver );
         resource = new PublicResource();
         resource.modulePathResolver = modulePathResolver;
-//        resource.contentService = contentService;
         resource.moduleKeyResolverService = moduleKeyResolverService;
-        return resource;
+
+        config.getSingletons().add( resource );
     }
 
     @Before
@@ -111,7 +108,6 @@ public class PublicResourceTest
         final ContentPath contentPath = ContentPath.from( "path/to/content" );
         final Content content = createContent( "content-id", contentPath, "content-type" );
         when( contentService.getByPath( contentPath ) ).thenReturn( content );
-        when( moduleKeyResolver.resolve( ModuleName.from( "demo" ) ) ).thenReturn( ModuleKey.from( "demo-1.0.0" ) );
 
         resource.mode = "live";
         resource.contentPath = "content";

@@ -7,15 +7,6 @@
     <name>Enonic</name>
     <url>https://www.enonic.com</url>
   </vendor>
-  <dependencies system-min-version="5.0.0" system-max-version="6.0.0">
-    <module>modulefoo-1.0.0</module>
-    <module>modA-1.0.0</module>
-    <module>modB-1.0.0</module>
-    <content-type>article</content-type>
-    <content-type>ctype1</content-type>
-    <content-type>ctype2</content-type>
-    <content-type>ctype3</content-type>
-  </dependencies>
   <form name="config">
     <input type="TextLine" name="some-name">
       <label/>
@@ -27,5 +18,3 @@
     </input>
   </form>
 </module>
-
-

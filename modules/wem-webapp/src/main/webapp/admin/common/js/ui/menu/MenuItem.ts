@@ -13,15 +13,15 @@ module api.ui.menu {
                     this.action.execute();
                 }
             });
-            this.setEnable(action.isEnabled());
+            this.setEnabled(action.isEnabled());
 
             action.onPropertyChanged((action: api.ui.Action) => {
-                this.setEnable(action.isEnabled());
+                this.setEnabled(action.isEnabled());
                 this.setVisible(action.isVisible());
             });
         }
 
-        setEnable(value:boolean) {
+        setEnabled(value: boolean) {
             var el = this.getEl();
             el.setDisabled(!value);
             if (value) {

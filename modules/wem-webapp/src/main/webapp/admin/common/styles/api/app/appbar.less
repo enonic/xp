@@ -2,12 +2,14 @@
   text-align: center;
   height: 44px;
   padding: 6px;
-  //.linear-gradient(left, @admin-black, @admin-dark-gray);
   background-color:rgba(0,0,0,0.8);
   overflow: hidden;
   .box-sizing(border-box);
 
   .launcher-button {
+    &:extend(.icon);
+    .icon-grid;
+
     float: left;
     width: 24px;
     height: 24px;
@@ -15,9 +17,8 @@
     margin: 4px;
     border: 0 none;
     background-color: transparent;
-    color:white;
+    color: white;
     font-size:24px;
-    .icon-grid;
     cursor: pointer;
   }
 

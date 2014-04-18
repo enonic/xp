@@ -1,2 +1,2 @@
 ///<reference path='Toolbar.ts' />
-///<reference path='Fold.ts' />
+///<reference path='FoldButton.ts' />

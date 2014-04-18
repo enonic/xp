@@ -24,6 +24,8 @@ module api.content.json {
 
         isPage:boolean;
 
+        isEmbedded:boolean;
+
         draft:boolean;
 
     }

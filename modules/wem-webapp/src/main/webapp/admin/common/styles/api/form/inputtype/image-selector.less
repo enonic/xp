@@ -74,6 +74,10 @@
         &:hover .label {
           display: none;
         }
+
+        .close-button {
+          .scale(0.6); // 0.6 * 1.66667 = 1 to keep the close button same size
+        }
       }
 
       img {
@@ -83,11 +87,11 @@
         margin: auto;
       }
 
-      .label {
+      > .label {
         display: none;
       }
 
-      &:hover .label {
+      &:hover > .label {
         display: block;
         position: absolute;
         width: 100%;
@@ -167,17 +171,17 @@
       color: @admin-dark-gray-font;
 
       .selected-option {
-        width:135px;
-        height:135px;
-        margin:10px 15px 10px 0;
+        width: 135px;
+        height: 135px;
+        margin: 10px 15px 10px 0;
 
         &.last-in-row {
-          margin-right:0px;
+          margin-right: 0px;
         }
 
         &.editing {
           .scale(1.5);
-          top:auto;
+          top: auto;
           background-color: @admin-blue-button2;
         }
       }

@@ -9,11 +9,9 @@ import com.google.common.collect.Maps;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceKeys;
-import com.enonic.wem.api.resource.ResourceNotFoundException;
-import com.enonic.wem.api.resource.ResourceService;
 
 public final class MockResourceService
-    implements ResourceService
+    extends AbstractResourceService
 {
     private final Map<ResourceKey, Resource> map;
 
@@ -23,22 +21,9 @@ public final class MockResourceService
     }
 
     @Override
-    public boolean hasResource( final ResourceKey key )
+    protected Resource resolve( final ResourceKey key )
     {
-        return this.map.get( key ) != null;
-    }
-
-    @Override
-    public Resource getResource( final ResourceKey key )
-        throws ResourceNotFoundException
-    {
-        final Resource resource = this.map.get( key );
-        if ( resource != null )
-        {
-            return resource;
-        }
-
-        throw new ResourceNotFoundException( key );
+        return this.map.get( key );
     }
 
     @Override
@@ -56,7 +41,8 @@ public final class MockResourceService
 
     public void addResource( final ResourceKey key, final String content )
     {
-        final Resource resource = Resource.newResource().stringValue( content ).key( key ).build();
+        final ResourceImpl resource = new ResourceImpl( key ).
+            stringValue( content );
         this.map.put( key, resource );
     }
 }

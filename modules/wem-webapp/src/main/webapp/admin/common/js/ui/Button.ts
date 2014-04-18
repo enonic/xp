@@ -2,13 +2,15 @@ module api.ui {
 
     export class Button extends api.dom.ButtonEl {
 
-        private labelEl:api.dom.SpanEl;
+        private labelEl: api.dom.SpanEl;
 
-        constructor(label:string) {
+        constructor(label?: string) {
             super("button");
 
-            this.labelEl = new api.dom.SpanEl("label");
-            this.labelEl.getEl().setInnerHtml(label);
+            this.labelEl = new api.dom.SpanEl();
+            if (label) {
+                this.labelEl.getEl().setInnerHtml(label);
+            }
             this.appendChild(this.labelEl);
         }
 
@@ -33,5 +35,12 @@ module api.ui {
             return this.hasClass("active");
         }
 
+        setLabel(label: string) {
+            this.labelEl.getEl().setInnerHtml(label);
+        }
+
+        getLabel(): string {
+            return this.labelEl.getEl().getInnerHtml();
+        }
     }
 }

@@ -3,7 +3,7 @@
 
   background-color: @admin-light-gray-bg;
   height: @toolbar-height;
-  overflow: visible;      // for the button glow
+  overflow: visible; // for the button glow
 
   .button {
     .button(@admin-light-gray-font, transparent, @admin-dark-gray-font, transparent);
@@ -14,41 +14,47 @@
     margin: 11px 7px;
   }
 
-  .fold {
-    width: 10px;
+  .fold-button {
     height: @toolbar-height;
     line-height: @toolbar-height;
-    padding: 0 17px;
+    padding: 0 27px 0 17px;
     text-align: center;
-    .icon-arrow-down;
-    .box-sizing(content-box);
+    overflow: visible;
+    display: none;
+    position: relative; // for the dropdown to position itself
+
+    &:after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      width: 0;
+      height: 0;
+      margin: -2px 0 0 -4px;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 6px solid @admin-dark-gray;
+    }
 
     .dropdown {
       display: none;
       position: absolute;
       top: @toolbar-height;
-      right: 0;
+      left: 0;
       z-index: 1000;
       padding: 0 10px;
       background-color: @admin-light-gray-bg;
-      .box-shadow(-1px 1px 2px 0px rgba(0,0,0,0.3));
+      .box-shadow(-1px 1px 2px 0px rgba(0, 0, 0, 0.3));
 
       & > * {
         display: block;
-        margin-left: auto;
+        margin-left: 0;
         margin-right: 0;
-      }
-
-      button {
-        padding-right: 0;
-      }
-
-      .pull-right {
-        float: none;
       }
     }
 
-    &:hover .dropdown {
+    &:hover .dropdown,
+    &:focus .dropdown {
       display: block;
     }
   }

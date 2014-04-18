@@ -19,6 +19,7 @@ import com.enonic.wem.core.module.ModuleModule;
 import com.enonic.wem.core.relationship.RelationshipModule;
 import com.enonic.wem.core.resource.ResourceModule;
 import com.enonic.wem.core.schema.SchemaModule;
+import com.enonic.wem.core.script.ScriptModule;
 
 public final class CoreModule
     extends AbstractModule
@@ -43,6 +44,7 @@ public final class CoreModule
         install( new IndexModule() );
         install( new ModuleModule() );
         install( new ResourceModule() );
+        install( new ScriptModule() );
 
         install( new HazelcastModule() );
     }

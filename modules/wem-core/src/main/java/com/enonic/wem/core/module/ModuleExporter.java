@@ -10,7 +10,7 @@ import com.enonic.wem.core.support.export.XMLFilename;
 
 @XMLFilename("module.xml")
 public class ModuleExporter
-    extends AbstractEntityExporter<Module, Module.Builder>
+    extends AbstractEntityExporter<Module, ModuleBuilder>
 {
     private final ModuleXmlSerializer xmlSerializer = new ModuleXmlSerializer();
 
@@ -21,11 +21,11 @@ public class ModuleExporter
     }
 
     @Override
-    protected Module.Builder fromXMLString( final String xml, final Path directoryPath )
+    protected ModuleBuilder fromXMLString( final String xml, final Path directoryPath )
         throws IOException
     {
         final ModuleKey moduleKey = ModuleKey.from( resolveId( directoryPath ) );
-        final Module.Builder moduleBuilder = Module.newModule().moduleKey( moduleKey );
+        final ModuleBuilder moduleBuilder = ModuleBuilder.newModule().moduleKey( moduleKey );
 
         xmlSerializer.toModule( xml, moduleBuilder );
 

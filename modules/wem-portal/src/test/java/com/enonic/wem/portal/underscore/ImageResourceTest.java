@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import com.google.common.io.ByteStreams;
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.core.DefaultResourceConfig;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.blob.Blob;
@@ -49,7 +50,7 @@ public class ImageResourceTest
     private ContentService contentService;
 
     @Override
-    protected Object getResourceInstance()
+    protected void configure( final DefaultResourceConfig config )
     {
         resource = new ImageResource();
 
@@ -65,7 +66,7 @@ public class ImageResourceTest
         contentService = mock( ContentService.class );
         resource.contentService = contentService;
 
-        return resource;
+        config.getSingletons().add( resource );
     }
 
     @Before

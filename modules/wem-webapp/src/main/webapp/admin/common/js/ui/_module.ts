@@ -22,6 +22,7 @@
 ///<reference path='ProgressBar.ts' />
 ///<reference path='Button.ts' />
 ///<reference path='ActionButton.ts' />
+///<reference path='CloseButton.ts' />
 ///<reference path='ToggleSlide.ts' />
 ///<reference path='PanelNavigationItem.ts' />
 ///<reference path='DeckPanelNavigator.ts' />

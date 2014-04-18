@@ -24,6 +24,7 @@ public class ContentSummaryJson
 
     private final boolean isPage;
 
+    private final boolean isEmbedded;
 
     public ContentSummaryJson( Content content )
     {
@@ -32,6 +33,7 @@ public class ContentSummaryJson
         this.iconUrl = ContentImageIconUrlResolver.resolve( content );
         this.isSite = content.isSite();
         this.isPage = content.isPage();
+        this.isEmbedded = this.content.isEmbedded();
         this.editable = ( !this.content.isEmbedded() );
         this.deletable = !this.content.hasChildren() && ( !this.content.isEmbedded() );
     }
@@ -109,6 +111,11 @@ public class ContentSummaryJson
     public boolean getIsPage()
     {
         return isPage;
+    }
+
+    public boolean getIsEmbedded()
+    {
+        return isEmbedded;
     }
 
     @Override

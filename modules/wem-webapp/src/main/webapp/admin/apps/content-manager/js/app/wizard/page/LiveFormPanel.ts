@@ -177,22 +177,21 @@ module app.wizard.page {
                     new api.content.page.GetPageTemplateByKeyRequest(selectedPageTemplate.getKey()).
                         setSiteTemplateKey(this.siteTemplate.getKey()).
                         sendAndParse().
-                        done((pageTemplate: PageTemplate) => {
+                        then((pageTemplate: PageTemplate) => {
 
                             this.pageTemplate = pageTemplate;
 
                             this.pageRegions = this.resolvePageRegions(this.content, this.pageTemplate);
                             this.pageConfig = this.resolvePageConfig(this.content, this.pageTemplate);
 
-                            new GetPageDescriptorByKeyRequest(pageTemplate.getDescriptorKey()).
-                                sendAndParse().
-                                done((pageDescriptor: PageDescriptor) => {
+                            return new GetPageDescriptorByKeyRequest(pageTemplate.getDescriptorKey()).sendAndParse();
 
-                                    this.pageDescriptor = pageDescriptor;
-                                    this.pageInspectionPanel.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
+                        }).done((pageDescriptor: PageDescriptor) => {
 
-                                    this.saveAndReloadPage();
-                                });
+                            this.pageDescriptor = pageDescriptor;
+                            this.pageInspectionPanel.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
+
+                            this.saveAndReloadPage();
                         });
                 }
                 else {
