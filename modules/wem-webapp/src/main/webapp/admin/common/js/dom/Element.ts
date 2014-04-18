@@ -290,6 +290,9 @@ module api.dom {
             var parent = this.getParentElement();
             if (parent) {
                 parent.removeChild(this);
+            } else {
+                this.getEl().remove();
+                this.notifyRemoved();
             }
         }
 

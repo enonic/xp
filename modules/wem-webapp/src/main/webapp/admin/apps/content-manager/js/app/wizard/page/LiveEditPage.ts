@@ -188,6 +188,8 @@ module app.wizard.page {
                 success: (data) => {
                     var newElement = $(data);
                     $(componentPlaceholder.getHTMLElement()).replaceWith(newElement);
+                    componentPlaceholder.remove();
+
                     this.liveEditWindow.LiveEdit.component.Selection.deselect();
 
                     this.liveEditWindow.LiveEdit.PlaceholderCreator.renderEmptyRegionPlaceholders();

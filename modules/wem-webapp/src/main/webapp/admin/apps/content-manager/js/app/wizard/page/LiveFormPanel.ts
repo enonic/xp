@@ -517,8 +517,6 @@ module app.wizard.page {
 
             this.liveEditPage.onImageComponentSetImage((event: ImageComponentSetImageEvent) => {
 
-                (<any>event.getComponentPlaceholder()).showLoadingSpinner(); // TODO: Remove any
-
                 if (this.pageTemplate) {
 
                     this.setImageComponentImage(event.getPath(), event.getImage(), event.getComponentPlaceholder(), event.getImageName());
@@ -697,7 +695,7 @@ module app.wizard.page {
 
             }
             else {
-                console.log("ImageComponent to set image on not found: " + componentPath);
+                api.notify.showWarning("ImageComponent to set image on not found: " + componentPath);
             }
         }
 
