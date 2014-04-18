@@ -40,7 +40,6 @@ public final class ModuleXmlSerializer
     private void generate( final Module module, final Element moduleEl )
     {
         moduleEl.addContent( new Element( "display-name" ).setText( module.getDisplayName() ) );
-        moduleEl.addContent( new Element( "info" ).setText( module.getInfo() ) );
         moduleEl.addContent( new Element( "url" ).setText( module.getUrl() ) );
 
         Element vendor = new Element( "vendor" );
@@ -77,7 +76,6 @@ public final class ModuleXmlSerializer
         final String displayName = moduleEl.getChildText( "display-name" );
         moduleBuilder.
             displayName( displayName ).
-            info( moduleEl.getChildText( "info" ) ).
             url( moduleEl.getChildText( "url" ) ).
             vendorName( moduleEl.getChild( "vendor" ).getChildText( "name" ) ).
             vendorUrl( moduleEl.getChild( "vendor" ).getChildText( "url" ) );

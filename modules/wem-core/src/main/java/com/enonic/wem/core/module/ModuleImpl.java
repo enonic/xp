@@ -18,8 +18,6 @@ final class ModuleImpl
 
     protected String displayName;
 
-    protected String info;
-
     protected String url;
 
     protected String vendorName;
@@ -46,11 +44,6 @@ final class ModuleImpl
     public String getDisplayName()
     {
         return displayName;
-    }
-
-    public String getInfo()
-    {
-        return info;
     }
 
     public String getUrl()
@@ -91,7 +84,6 @@ final class ModuleImpl
         return Objects.toStringHelper( this ).
             add( "moduleKey", moduleKey ).
             add( "displayName", displayName ).
-            add( "info", info ).
             add( "url", url ).
             add( "vendorName", vendorName ).
             add( "vendorUrl", vendorUrl ).

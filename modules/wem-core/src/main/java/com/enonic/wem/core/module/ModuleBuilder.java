@@ -25,12 +25,6 @@ public final class ModuleBuilder
         return this;
     }
 
-    public ModuleBuilder info( final String info )
-    {
-        this.module.info = info;
-        return this;
-    }
-
     public ModuleBuilder url( final String url )
     {
         this.module.url = url;

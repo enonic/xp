@@ -22,7 +22,6 @@ public class ModuleImplTest
         final Module module = new ModuleBuilder().
             moduleKey( ModuleKey.from( "mymodule-1.0.0" ) ).
             displayName( "module display name" ).
-            info( "module-info" ).
             url( "http://enonic.net" ).
             vendorName( "Enonic" ).
             vendorUrl( "https://www.enonic.com" ).
@@ -31,7 +30,6 @@ public class ModuleImplTest
 
         assertEquals( "mymodule-1.0.0", module.getKey().toString() );
         assertEquals( "module display name", module.getDisplayName() );
-        assertEquals( "module-info", module.getInfo() );
         assertEquals( "http://enonic.net", module.getUrl() );
         assertEquals( "Enonic", module.getVendorName() );
         assertEquals( "https://www.enonic.com", module.getVendorUrl() );

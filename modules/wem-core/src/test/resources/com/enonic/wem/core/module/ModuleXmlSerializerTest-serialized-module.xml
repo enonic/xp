@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module>
   <display-name>module display name</display-name>
-  <info>module-info</info>
   <url>http://enonic.net</url>
   <vendor>
     <name>Enonic</name>

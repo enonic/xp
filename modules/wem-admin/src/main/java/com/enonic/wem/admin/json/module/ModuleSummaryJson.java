@@ -39,11 +39,6 @@ public class ModuleSummaryJson
         return module.getDisplayName();
     }
 
-    public String getInfo()
-    {
-        return module.getInfo();
-    }
-
     public String getUrl()
     {
         return module.getUrl();

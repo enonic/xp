@@ -59,7 +59,6 @@ public class ModuleXmlSerializerTest
         return new ModuleBuilder().
             moduleKey( ModuleKey.from( "mymodule-1.0.0" ) ).
             displayName( "module display name" ).
-            info( "module-info" ).
             url( "http://enonic.net" ).
             vendorName( "Enonic" ).
             vendorUrl( "https://www.enonic.com" ).

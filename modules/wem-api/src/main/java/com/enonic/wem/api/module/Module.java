@@ -17,8 +17,6 @@ public interface Module
 
     public String getDisplayName();
 
-    public String getInfo();
-
     public String getUrl();
 
     public String getVendorName();

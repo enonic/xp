@@ -1,7 +1,6 @@
 package com.enonic.wem.core.module
 
 import com.enonic.wem.api.module.ModuleKey
-import com.enonic.wem.api.module.ModuleVersion
 import com.enonic.wem.core.config.SystemConfig
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
@@ -40,7 +39,6 @@ abstract class AbstractModuleServiceTest
         return new ModuleBuilder().
             moduleKey( ModuleKey.from( key ) ).
             displayName( "module display name" ).
-            info( "module-info" ).
             url( "http://enonic.net" ).
             vendorName( "Enonic" ).
             vendorUrl( "https://www.enonic.com" )
