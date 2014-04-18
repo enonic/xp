@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+            xmlns="http://enonic.com/wem/schema/module"
+            targetNamespace="http://enonic.com/wem/schema/module"
+            elementFormDefault="qualified" jaxb:version="2.1">
+
+  <xsd:annotation>
+    <xsd:appinfo>
+      <jaxb:schemaBindings>
+        <jaxb:package name="com.enonic.wem.xml.module"/>
+        <jaxb:nameXmlTransform>
+          <jaxb:typeName prefix="Xml"/>
+        </jaxb:nameXmlTransform>
+      </jaxb:schemaBindings>
+    </xsd:appinfo>
+  </xsd:annotation>
+
+  <xsd:complexType name="module">
+    <xsd:all>
+      <xsd:element name="name" type="xsd:string"/>
+      <xsd:element name="version" type="xsd:string"/>
+      <xsd:element name="display-name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="vendor" type="vendor" minOccurs="0" maxOccurs="1"/>
+    </xsd:all>
+  </xsd:complexType>
+
+  <xsd:complexType name="vendor">
+    <xsd:all>
+      <xsd:element name="name" type="xsd:string"/>
+      <xsd:element name="url" type="xsd:string"/>
+    </xsd:all>
+  </xsd:complexType>
+
+  <xsd:element name="module" type="module"/>
+
+</xsd:schema>
