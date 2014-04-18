@@ -1,5 +1,8 @@
 package com.enonic.wem.api.module;
 
+import java.net.URL;
+import java.util.Set;
+
 import com.enonic.wem.api.Identity;
 import com.enonic.wem.api.form.Form;
 
@@ -25,4 +28,8 @@ public interface Module
     public String getVendorUrl();
 
     public Form getConfig();
+
+    public URL getResource( String path );
+
+    public Set<String> getResourcePaths();
 }

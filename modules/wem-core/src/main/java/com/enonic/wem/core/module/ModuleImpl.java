@@ -1,5 +1,8 @@
 package com.enonic.wem.core.module;
 
+import java.net.URL;
+import java.util.Set;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
@@ -87,6 +90,18 @@ final class ModuleImpl
     public Form getConfig()
     {
         return config;
+    }
+
+    @Override
+    public URL getResource( final String path )
+    {
+        return null;
+    }
+
+    @Override
+    public Set<String> getResourcePaths()
+    {
+        return null;
     }
 
     @Override
