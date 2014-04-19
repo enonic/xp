@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<features name="wem-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.2.0">
+
+  <feature name="wem-core" version="${project.version}" description="Enonic WEM core feature">
+  </feature>
+
+  <feature name="wem-portal" version="${project.version}" description="Enonic WEM portal feature">
+    <feature>wem-core</feature>
+  </feature>
+
+  <feature name="wem-admin" version="${project.version}" description="Enonic WEM admin feature">
+    <feature>wem-portal</feature>
+  </feature>
+
+</features>

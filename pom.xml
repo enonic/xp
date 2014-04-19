@@ -28,6 +28,7 @@
     <module>modules/wem-admin</module>
     <module>modules/wem-portal</module>
     <module>modules/wem-boot</module>
+    <module>modules/wem-karaf</module>
     <module>modules/wem-webapp</module>
     <module>modules/wem-runner</module>
     <module>modules/wem-itest</module>
