@@ -8,16 +8,16 @@ import com.google.common.base.Throwables;
 import com.google.common.io.Files;
 
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.module.ModuleResourceKey;
 
 public class ScriptSourceImpl
     implements ScriptSource
 {
     private final Path path;
 
-    private final ResourceKey key;
+    private final ModuleResourceKey key;
 
-    public ScriptSourceImpl( final ResourceKey key, final Path path )
+    public ScriptSourceImpl( final ModuleResourceKey key, final Path path )
     {
         this.path = path;
         this.key = key;
@@ -61,7 +61,7 @@ public class ScriptSourceImpl
     }
 
     @Override
-    public ResourceKey getResource()
+    public ModuleResourceKey getResource()
     {
         return this.key;
     }

@@ -8,7 +8,7 @@ import javax.ws.rs.core.Response;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.portal.exception.PortalWebException;
 import com.enonic.wem.portal.postprocess.PostProcessor;
 import com.enonic.wem.portal.script.loader.ScriptSource;
@@ -21,7 +21,7 @@ final class JsControllerImpl
 
     private final ScriptRunner runner;
 
-    private ResourceKey scriptDir;
+    private ModuleResourceKey scriptDir;
 
     private JsContext context;
 
@@ -33,7 +33,7 @@ final class JsControllerImpl
     }
 
     @Override
-    public JsController scriptDir( final ResourceKey dir )
+    public JsController scriptDir( final ModuleResourceKey dir )
     {
         this.scriptDir = dir;
         return this;
@@ -70,7 +70,7 @@ final class JsControllerImpl
 
     private ScriptSource findScript( final String method )
     {
-        final ResourceKey key = this.scriptDir.resolve( method.toLowerCase() + ".js" );
+        final ModuleResourceKey key = this.scriptDir.resolve( method.toLowerCase() + ".js" );
         return this.runner.getLoader().load( key );
     }
 

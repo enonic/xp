@@ -5,16 +5,16 @@ import com.enonic.wem.api.exception.NotFoundException;
 public final class ResourceNotFoundException
     extends NotFoundException
 {
-    private final ResourceKey key;
+    private final ResourceReference ref;
 
-    public ResourceNotFoundException( final ResourceKey key )
+    public ResourceNotFoundException( final ResourceReference ref )
     {
-        super( "Resource [{0}] was not found", key.toString() );
-        this.key = key;
+        super( "Resource [{0}] was not found", ref.getUri() );
+        this.ref = ref;
     }
 
-    public ResourceKey getResource()
+    public ResourceReference getResource()
     {
-        return this.key;
+        return this.ref;
     }
 }

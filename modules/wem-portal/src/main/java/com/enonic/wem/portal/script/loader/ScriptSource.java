@@ -3,7 +3,7 @@ package com.enonic.wem.portal.script.loader;
 import java.nio.file.Path;
 
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.module.ModuleResourceKey;
 
 public interface ScriptSource
 {
@@ -17,5 +17,5 @@ public interface ScriptSource
 
     public ModuleKey getModule();
 
-    public ResourceKey getResource();
+    public ModuleResourceKey getResource();
 }

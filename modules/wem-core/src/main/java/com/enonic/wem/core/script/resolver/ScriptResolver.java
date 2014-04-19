@@ -1,12 +1,12 @@
 package com.enonic.wem.core.script.resolver;
 
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.module.ModuleResourceKey;
 
 public interface ScriptResolver
 {
-    public ResourceKey getResource();
+    public ModuleResourceKey getResource();
 
-    public ResourceKey resolveScript( String name );
+    public ModuleResourceKey resolveScript( String name );
 
-    public ResourceKey resolveResource( String name );
+    public ModuleResourceKey resolveResource( String name );
 }

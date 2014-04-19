@@ -15,8 +15,8 @@ import com.enonic.wem.api.content.page.layout.LayoutDescriptors;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.Modules;
+import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.resource.Resource;
-import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceService;
 import com.enonic.wem.xml.XmlSerializers;
 
@@ -30,7 +30,7 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
 
     protected final LayoutDescriptor getDescriptor( final LayoutDescriptorKey key )
     {
-        final ResourceKey resourceKey = key.toResourceKey();
+        final ModuleResourceKey resourceKey = key.toResourceKey();
         final Resource resource = this.resourceService.getResource( resourceKey );
 
         final String descriptorXml = resource.readAsString();

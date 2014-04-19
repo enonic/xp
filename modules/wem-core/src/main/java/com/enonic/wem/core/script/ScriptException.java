@@ -7,12 +7,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.exception.BaseException;
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.module.ModuleResourceKey;
 
 public final class ScriptException
     extends BaseException
 {
-    private final ResourceKey resource;
+    private final ModuleResourceKey resource;
 
     private final int lineNumber;
 
@@ -32,7 +32,7 @@ public final class ScriptException
         this.callStack = ImmutableList.copyOf( builder.callStack );
     }
 
-    public ResourceKey getResource()
+    public ModuleResourceKey getResource()
     {
         return this.resource;
     }
@@ -73,7 +73,7 @@ public final class ScriptException
 
         private Throwable cause;
 
-        private ResourceKey resource;
+        private ModuleResourceKey resource;
 
         private int lineNumber;
 
@@ -97,7 +97,7 @@ public final class ScriptException
             return this;
         }
 
-        public Builder resource( final ResourceKey resource )
+        public Builder resource( final ModuleResourceKey resource )
         {
             this.resource = resource;
             return this;

@@ -4,7 +4,7 @@ import org.junit.Before;
 
 import junit.framework.Assert;
 
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.core.script.service.ScriptServiceImpl;
 
 public abstract class AbstractJsTest
@@ -33,7 +33,7 @@ public abstract class AbstractJsTest
     protected final void execTest( final String path )
     {
         final ScriptRunner runner = this.scriptService.newRunner();
-        runner.source( ResourceKey.from( path ) );
+        runner.source( ModuleResourceKey.from( path ) );
         runner.binding( "test", new TestUtils() );
         runner.execute();
     }

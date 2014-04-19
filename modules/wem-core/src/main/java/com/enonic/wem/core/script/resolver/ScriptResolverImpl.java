@@ -3,29 +3,29 @@ package com.enonic.wem.core.script.resolver;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeyResolver;
 import com.enonic.wem.api.module.ModuleName;
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.module.ModuleResourceKey;
 
 public final class ScriptResolverImpl
     implements ScriptResolver
 {
-    private final ResourceKey resourceKey;
+    private final ModuleResourceKey resourceKey;
 
     private final ModuleKeyResolver moduleKeyResolver;
 
-    public ScriptResolverImpl( final ResourceKey resourceKey, final ModuleKeyResolver moduleKeyResolver )
+    public ScriptResolverImpl( final ModuleResourceKey resourceKey, final ModuleKeyResolver moduleKeyResolver )
     {
         this.resourceKey = resourceKey;
         this.moduleKeyResolver = moduleKeyResolver;
     }
 
     @Override
-    public ResourceKey getResource()
+    public ModuleResourceKey getResource()
     {
         return this.resourceKey;
     }
 
     @Override
-    public ResourceKey resolveScript( final String name )
+    public ModuleResourceKey resolveScript( final String name )
     {
         if ( name.endsWith( ".js" ) )
         {
@@ -36,7 +36,7 @@ public final class ScriptResolverImpl
     }
 
     @Override
-    public ResourceKey resolveResource( final String name )
+    public ModuleResourceKey resolveResource( final String name )
     {
         final int pos = name.indexOf( ':' );
         if ( pos >= 0 )
@@ -46,13 +46,13 @@ public final class ScriptResolverImpl
 
         if ( name.startsWith( "/" ) )
         {
-            return ResourceKey.from( getResource().getModule(), name );
+            return ModuleResourceKey.from( getResource().getModule(), name );
         }
 
         return this.resourceKey.resolve( "../" + name );
     }
 
-    private ResourceKey resolveResource( final String module, final String path )
+    private ModuleResourceKey resolveResource( final String module, final String path )
     {
         try
         {
@@ -64,12 +64,12 @@ public final class ScriptResolverImpl
         }
     }
 
-    private ResourceKey resolveResource( final ModuleKey moduleKey, final String path )
+    private ModuleResourceKey resolveResource( final ModuleKey moduleKey, final String path )
     {
-        return ResourceKey.from( moduleKey, path );
+        return ModuleResourceKey.from( moduleKey, path );
     }
 
-    private ResourceKey resolveResource( final ModuleName moduleName, final String path )
+    private ModuleResourceKey resolveResource( final ModuleName moduleName, final String path )
     {
         final ModuleKey moduleKey = this.moduleKeyResolver.resolve( moduleName );
         return resolveResource( moduleKey, path );

@@ -3,25 +3,25 @@ package com.enonic.wem.core.script.service;
 import java.util.Stack;
 
 import com.enonic.wem.api.module.ModuleKeyResolver;
-import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.api.resource.ResourceKeyResolver;
+import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.module.ModuleResourceKeyResolver;
 import com.enonic.wem.core.script.ScriptContext;
 
 final class ScriptContextImpl
     implements ScriptContext
 {
-    private final Stack<ResourceKey> resourceKeys;
+    private final Stack<ModuleResourceKey> resourceKeys;
 
     protected ModuleKeyResolver moduleKeyResolver;
 
-    protected ResourceKeyResolver resourceKeyResolver;
+    protected ModuleResourceKeyResolver resourceKeyResolver;
 
     public ScriptContextImpl()
     {
         this.resourceKeys = new Stack<>();
     }
 
-    public void enter( final ResourceKey resourceKey )
+    public void enter( final ModuleResourceKey resourceKey )
     {
         this.resourceKeys.push( resourceKey );
     }
@@ -32,7 +32,7 @@ final class ScriptContextImpl
     }
 
     @Override
-    public ResourceKey getResourceKey()
+    public ModuleResourceKey getResourceKey()
     {
         return this.resourceKeys.peek();
     }
@@ -44,7 +44,7 @@ final class ScriptContextImpl
     }
 
     @Override
-    public ResourceKeyResolver getResourceKeyResolver()
+    public ModuleResourceKeyResolver getResourceKeyResolver()
     {
         return this.resourceKeyResolver;
     }

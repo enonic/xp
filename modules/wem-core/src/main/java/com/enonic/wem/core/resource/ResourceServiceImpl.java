@@ -7,8 +7,9 @@ import javax.inject.Inject;
 
 import com.google.common.io.Files;
 
+import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.resource.Resource;
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.resource.ResourceReference;
 import com.enonic.wem.core.config.SystemConfig;
 
 public final class ResourceServiceImpl
@@ -23,7 +24,7 @@ public final class ResourceServiceImpl
     }
 
     @Override
-    protected Resource resolve( final ResourceKey key )
+    protected Resource resolve( final ModuleResourceKey key )
     {
         final File path = findPath( key );
         if ( !path.isFile() )
@@ -36,9 +37,15 @@ public final class ResourceServiceImpl
             timestamp( path.lastModified() );
     }
 
-    private File findPath( final ResourceKey key )
+    private File findPath( final ModuleResourceKey key )
     {
         final Path modulePath = this.systemConfig.getModulesDir().resolve( key.getModule().toString() );
         return modulePath.resolve( key.getPath().substring( 1 ) ).toFile();
+    }
+
+    @Override
+    protected Resource resolve( final ResourceReference ref )
+    {
+        return null;
     }
 }

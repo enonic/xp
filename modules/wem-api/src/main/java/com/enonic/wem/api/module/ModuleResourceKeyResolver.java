@@ -1,19 +1,20 @@
-package com.enonic.wem.api.resource;
+package com.enonic.wem.api.module;
 
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeyResolver;
 import com.enonic.wem.api.module.ModuleName;
+import com.enonic.wem.api.module.ModuleResourceKey;
 
-public final class ResourceKeyResolver
+public final class ModuleResourceKeyResolver
 {
     private final ModuleKeyResolver moduleKeyResolver;
 
-    public ResourceKeyResolver( final ModuleKeyResolver moduleKeyResolver )
+    public ModuleResourceKeyResolver( final ModuleKeyResolver moduleKeyResolver )
     {
         this.moduleKeyResolver = moduleKeyResolver;
     }
 
-    public ResourceKey resolve( final ResourceKey parent, final String name )
+    public ModuleResourceKey resolve( final ModuleResourceKey parent, final String name )
     {
         final int pos = name.indexOf( ':' );
         if ( pos >= 0 )
@@ -26,10 +27,10 @@ public final class ResourceKeyResolver
             return parent.resolve( "../" + name );
         }
 
-        return ResourceKey.from( parent.getModule(), name );
+        return ModuleResourceKey.from( parent.getModule(), name );
     }
 
-    private ResourceKey resolveResource( final String module, final String path )
+    private ModuleResourceKey resolveResource( final String module, final String path )
     {
         try
         {
@@ -41,12 +42,12 @@ public final class ResourceKeyResolver
         }
     }
 
-    private ResourceKey resolveResource( final ModuleKey moduleKey, final String path )
+    private ModuleResourceKey resolveResource( final ModuleKey moduleKey, final String path )
     {
-        return ResourceKey.from( moduleKey, path );
+        return ModuleResourceKey.from( moduleKey, path );
     }
 
-    private ResourceKey resolveResource( final ModuleName moduleName, final String path )
+    private ModuleResourceKey resolveResource( final ModuleName moduleName, final String path )
     {
         final ModuleKey moduleKey = this.moduleKeyResolver.resolve( moduleName );
         return resolveResource( moduleKey, path );

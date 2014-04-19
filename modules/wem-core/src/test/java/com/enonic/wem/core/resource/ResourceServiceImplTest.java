@@ -12,9 +12,8 @@ import org.mockito.Mockito;
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 
+import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.resource.Resource;
-import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.api.resource.ResourceKeys;
 import com.enonic.wem.api.resource.ResourceNotFoundException;
 import com.enonic.wem.core.config.SystemConfig;
 
@@ -56,7 +55,7 @@ public class ResourceServiceImplTest
     public void testGetResource()
         throws Exception
     {
-        final ResourceKey key = ResourceKey.from( "mymodule-1.0.0:/a/b.txt" );
+        final ModuleResourceKey key = ModuleResourceKey.from( "mymodule-1.0.0:/a/b.txt" );
         assertTrue( this.resourceService.hasResource( key ) );
 
         final Resource resource = this.resourceService.getResource( key );
@@ -72,10 +71,10 @@ public class ResourceServiceImplTest
     @Test(expected = ResourceNotFoundException.class)
     public void testGetResource_notFound()
     {
-        final ResourceKey key1 = ResourceKey.from( "mymodule-1.0.0:/a" );
+        final ModuleResourceKey key1 = ModuleResourceKey.from( "mymodule-1.0.0:/a" );
         assertFalse( this.resourceService.hasResource( key1 ) );
 
-        final ResourceKey key2 = ResourceKey.from( "mymodule-1.0.0:/not/exists.txt" );
+        final ModuleResourceKey key2 = ModuleResourceKey.from( "mymodule-1.0.0:/not/exists.txt" );
         assertFalse( this.resourceService.hasResource( key2 ) );
 
         this.resourceService.getResource( key2 );

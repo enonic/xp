@@ -13,7 +13,7 @@ import com.sun.jersey.api.core.HttpContext;
 
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.rendering.RenderingMode;
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsControllerFactory;
@@ -80,7 +80,7 @@ public final class ServicesResource
 
         final JsController controller = this.controllerFactory.newController();
 
-        controller.scriptDir( ResourceKey.from( moduleKey, "service/" + this.serviceName ) );
+        controller.scriptDir( ModuleResourceKey.from( moduleKey, "service/" + this.serviceName ) );
         controller.context( context );
 
         return controller.execute();

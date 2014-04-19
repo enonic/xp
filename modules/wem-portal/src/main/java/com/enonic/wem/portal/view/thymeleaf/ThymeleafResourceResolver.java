@@ -8,7 +8,7 @@ import java.nio.file.Path;
 import org.thymeleaf.TemplateProcessingParameters;
 import org.thymeleaf.resourceresolver.IResourceResolver;
 
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.core.module.ModuleResourcePathResolver;
 
 final class ThymeleafResourceResolver
@@ -30,7 +30,7 @@ final class ThymeleafResourceResolver
     @Override
     public InputStream getResourceAsStream( final TemplateProcessingParameters params, final String resourceName )
     {
-        final ResourceKey key = ResourceKey.from( resourceName );
+        final ModuleResourceKey key = ModuleResourceKey.from( resourceName );
         final Path path = this.pathResolver.resolveResourcePath( key );
 
         if ( !Files.isRegularFile( path ) )

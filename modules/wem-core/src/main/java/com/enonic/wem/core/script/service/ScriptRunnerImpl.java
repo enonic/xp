@@ -6,8 +6,8 @@ import javax.script.ScriptEngine;
 
 import com.google.common.collect.Maps;
 
+import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.resource.Resource;
-import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceService;
 import com.enonic.wem.core.script.ScriptRunner;
 
@@ -20,7 +20,7 @@ final class ScriptRunnerImpl
 
     private final Map<String, Object> binding;
 
-    private ResourceKey resourceKey;
+    private ModuleResourceKey resourceKey;
 
     public ScriptRunnerImpl()
     {
@@ -28,7 +28,7 @@ final class ScriptRunnerImpl
     }
 
     @Override
-    public ScriptRunner source( final ResourceKey source )
+    public ScriptRunner source( final ModuleResourceKey source )
     {
         this.resourceKey = source;
         return this;
