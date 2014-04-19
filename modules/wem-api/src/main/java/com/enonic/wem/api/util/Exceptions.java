@@ -1,4 +1,4 @@
-package com.enonic.wem.util;
+package com.enonic.wem.api.util;
 
 import java.text.MessageFormat;
 

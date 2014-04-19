@@ -3,7 +3,7 @@ package com.enonic.wem.api.content.page.region;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.enonic.wem.xml.XmlObject;
+import com.enonic.wem.api.xml.XmlObject;
 
 @XmlRootElement(name = "regions")
 public final class RegionDescriptorXml

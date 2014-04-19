@@ -57,7 +57,7 @@ import com.enonic.wem.portal.script.runner.ScriptRunner;
 import com.enonic.wem.portal.script.runner.ScriptRunnerFactoryImpl;
 import com.enonic.wem.portal.script.runner.ScriptRunnerImpl;
 import com.enonic.wem.web.servlet.ServletRequestHolder;
-import com.enonic.wem.xml.XmlSerializers;
+import com.enonic.wem.api.xml.XmlSerializers;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.isA;

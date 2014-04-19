@@ -1,4 +1,4 @@
-package com.enonic.wem;
+package com.enonic.wem.api;
 
 import java.util.Properties;
 

@@ -2,8 +2,8 @@ package com.enonic.wem.api.form;
 
 import org.junit.Test;
 
-import com.enonic.wem.xml.BaseXmlSerializerTest;
-import com.enonic.wem.xml.XmlSerializers;
+import com.enonic.wem.api.xml.BaseXmlSerializerTest;
+import com.enonic.wem.api.xml.XmlSerializers;
 
 import static com.enonic.wem.api.form.MixinReference.newMixinReference;
 import static junit.framework.Assert.assertEquals;

@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 import org.w3c.dom.Element;
 
 import com.enonic.wem.api.form.inputtype.ConfigXml;
-import com.enonic.wem.xml.XmlSerializers;
+import com.enonic.wem.api.xml.XmlSerializers;
 
 public class ConfigXmlAdapter
     extends XmlAdapter<Object, ConfigXml>

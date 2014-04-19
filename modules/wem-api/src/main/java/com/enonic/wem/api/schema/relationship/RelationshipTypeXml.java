@@ -11,7 +11,7 @@ import com.google.common.collect.Iterables;
 
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
-import com.enonic.wem.xml.XmlObject;
+import com.enonic.wem.api.xml.XmlObject;
 
 @XmlRootElement(name = "relationship-type")
 public class RelationshipTypeXml

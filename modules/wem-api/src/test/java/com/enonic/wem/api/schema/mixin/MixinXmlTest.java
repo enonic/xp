@@ -6,8 +6,8 @@ import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Layout;
 import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.xml.BaseXmlSerializerTest;
-import com.enonic.wem.xml.XmlSerializers;
+import com.enonic.wem.api.xml.BaseXmlSerializerTest;
+import com.enonic.wem.api.xml.XmlSerializers;
 
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.form.Input.newInput;

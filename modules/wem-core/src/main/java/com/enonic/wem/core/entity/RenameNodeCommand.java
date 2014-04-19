@@ -10,7 +10,7 @@ import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.RenameNodeParams;
 import com.enonic.wem.core.entity.dao.NodeJcrDao;
 import com.enonic.wem.core.index.IndexService;
-import com.enonic.wem.util.Exceptions;
+import com.enonic.wem.api.util.Exceptions;
 
 final class RenameNodeCommand
 {

@@ -14,7 +14,7 @@ import com.enonic.wem.api.form.FormItemSetXml;
 import com.enonic.wem.api.form.FormItemXml;
 import com.enonic.wem.api.form.FormItemXmlHelper;
 import com.enonic.wem.api.form.InputXml;
-import com.enonic.wem.xml.XmlObject;
+import com.enonic.wem.api.xml.XmlObject;
 
 @XmlRootElement(name = "mixin")
 public class MixinXml

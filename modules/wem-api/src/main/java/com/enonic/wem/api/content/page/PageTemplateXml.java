@@ -13,7 +13,7 @@ import com.enonic.wem.api.data.DataSetXml;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
-import com.enonic.wem.xml.XmlObject;
+import com.enonic.wem.api.xml.XmlObject;
 
 import static com.enonic.wem.api.content.page.PageRegions.newPageRegions;
 

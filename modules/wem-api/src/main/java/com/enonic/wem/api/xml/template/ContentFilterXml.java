@@ -1,4 +1,4 @@
-package com.enonic.wem.xml.template;
+package com.enonic.wem.api.xml.template;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.schema.content.ContentTypeFilter;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.xml.XmlObject;
+import com.enonic.wem.api.xml.XmlObject;
 
 public final class ContentFilterXml
     implements XmlObject<ContentTypeFilter, ContentTypeFilter.Builder>

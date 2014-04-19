@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.page.region.RegionDescriptorXml;
 import com.enonic.wem.api.content.page.region.RegionDescriptors;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormXml;
-import com.enonic.wem.xml.XmlObject;
+import com.enonic.wem.api.xml.XmlObject;
 
 @XmlRootElement(name = "page-component")
 public final class PageDescriptorXml

@@ -12,7 +12,7 @@ import com.google.common.net.MediaType;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.portal.exception.PortalWebException;
-import com.enonic.wem.util.MediaTypes;
+import com.enonic.wem.api.util.MediaTypes;
 
 @Path("{mode}/{path:.+}/_/public/{module}/{resource:.+}")
 public final class PublicResource

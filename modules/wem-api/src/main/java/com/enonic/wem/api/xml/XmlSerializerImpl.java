@@ -1,4 +1,4 @@
-package com.enonic.wem.xml;
+package com.enonic.wem.api.xml;
 
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -12,8 +12,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-
-import com.enonic.wem.api.xml.XmlException;
 
 final class XmlSerializerImpl<X extends XmlObject>
     implements XmlSerializer<X>

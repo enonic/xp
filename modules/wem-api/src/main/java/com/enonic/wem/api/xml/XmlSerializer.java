@@ -1,4 +1,4 @@
-package com.enonic.wem.xml;
+package com.enonic.wem.api.xml;
 
 import org.w3c.dom.Node;
 

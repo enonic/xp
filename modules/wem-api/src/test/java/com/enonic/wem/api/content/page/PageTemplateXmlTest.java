@@ -16,8 +16,8 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
-import com.enonic.wem.xml.BaseXmlSerializerTest;
-import com.enonic.wem.xml.XmlSerializers;
+import com.enonic.wem.api.xml.BaseXmlSerializerTest;
+import com.enonic.wem.api.xml.XmlSerializers;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;

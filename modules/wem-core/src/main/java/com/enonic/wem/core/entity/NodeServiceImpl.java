@@ -22,7 +22,7 @@ import com.enonic.wem.api.entity.UpdateNodeParams;
 import com.enonic.wem.core.entity.dao.NodeJcrDao;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.jcr.provider.JcrSessionProvider;
-import com.enonic.wem.util.Exceptions;
+import com.enonic.wem.api.util.Exceptions;
 
 public class NodeServiceImpl
     implements NodeService

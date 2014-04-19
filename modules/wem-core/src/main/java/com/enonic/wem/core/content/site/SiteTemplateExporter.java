@@ -15,7 +15,7 @@ import com.enonic.wem.api.content.site.SiteTemplateXml;
 import com.enonic.wem.core.support.export.AbstractEntityExporter;
 import com.enonic.wem.core.support.export.EntityExporters;
 import com.enonic.wem.core.support.export.XMLFilename;
-import com.enonic.wem.xml.XmlSerializers;
+import com.enonic.wem.api.xml.XmlSerializers;
 
 @XMLFilename("site.xml")
 public class SiteTemplateExporter

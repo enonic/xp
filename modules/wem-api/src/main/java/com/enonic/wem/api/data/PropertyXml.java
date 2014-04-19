@@ -12,7 +12,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.data.type.ValueType;
 import com.enonic.wem.api.data.type.ValueTypes;
-import com.enonic.wem.xml.XmlObject;
+import com.enonic.wem.api.xml.XmlObject;
 
 @XmlRootElement(name = "property")
 public final class PropertyXml

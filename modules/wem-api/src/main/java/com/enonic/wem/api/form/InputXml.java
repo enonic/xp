@@ -17,8 +17,8 @@ import com.enonic.wem.api.form.inputtype.RelationshipConfig;
 import com.enonic.wem.api.form.inputtype.RelationshipConfigXml;
 import com.enonic.wem.api.form.inputtype.SingleSelectorConfig;
 import com.enonic.wem.api.form.inputtype.SingleSelectorConfigXml;
-import com.enonic.wem.xml.XmlObject;
-import com.enonic.wem.xml.XmlSerializers;
+import com.enonic.wem.api.xml.XmlObject;
+import com.enonic.wem.api.xml.XmlSerializers;
 
 @XmlRootElement(name = "input")
 public final class InputXml

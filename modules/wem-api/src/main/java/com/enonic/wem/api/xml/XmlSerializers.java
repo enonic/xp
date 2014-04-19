@@ -1,4 +1,4 @@
-package com.enonic.wem.xml;
+package com.enonic.wem.api.xml;
 
 import com.enonic.wem.api.content.page.PageDescriptorXml;
 import com.enonic.wem.api.content.page.PageTemplateXml;

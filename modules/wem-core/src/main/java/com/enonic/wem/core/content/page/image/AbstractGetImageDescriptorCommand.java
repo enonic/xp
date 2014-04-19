@@ -18,7 +18,7 @@ import com.enonic.wem.api.module.Modules;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceService;
-import com.enonic.wem.xml.XmlSerializers;
+import com.enonic.wem.api.xml.XmlSerializers;
 
 abstract class AbstractGetImageDescriptorCommand<T extends AbstractGetImageDescriptorCommand>
 {

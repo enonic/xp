@@ -2,7 +2,7 @@ package com.enonic.wem.admin.json.schema.relationship;
 
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeXml;
-import com.enonic.wem.xml.XmlSerializers;
+import com.enonic.wem.api.xml.XmlSerializers;
 
 public class RelationshipTypeConfigJson
 {

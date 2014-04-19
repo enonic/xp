@@ -13,7 +13,7 @@ import com.enonic.wem.api.content.page.PageComponentXml;
 import com.enonic.wem.api.content.page.image.ImageComponentXml;
 import com.enonic.wem.api.content.page.layout.LayoutComponentXml;
 import com.enonic.wem.api.content.page.part.PartComponentXml;
-import com.enonic.wem.xml.XmlObject;
+import com.enonic.wem.api.xml.XmlObject;
 
 @XmlRootElement(name = "region")
 public final class RegionXml

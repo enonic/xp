@@ -8,7 +8,7 @@ import com.enonic.wem.api.entity.UpdateNodeParams;
 import com.enonic.wem.core.entity.dao.NodeJcrDao;
 import com.enonic.wem.core.entity.dao.UpdateNodeArgs;
 import com.enonic.wem.core.index.IndexService;
-import com.enonic.wem.util.Exceptions;
+import com.enonic.wem.api.util.Exceptions;
 
 import static com.enonic.wem.core.entity.dao.UpdateNodeArgs.newUpdateItemArgs;
 
