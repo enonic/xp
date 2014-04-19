@@ -6,6 +6,4 @@ public interface ResourceService
 
     public Resource getResource( ResourceKey key )
         throws ResourceNotFoundException;
-
-    public ResourceKeys getChildren( ResourceKey parent );
 }

@@ -69,20 +69,6 @@ public class ResourceServiceImplTest
         assertTrue( resource.getTimestamp() > 0 );
     }
 
-    @Test
-    public void testGetChildren()
-    {
-        final ResourceKeys keys1 = this.resourceService.getChildren( ResourceKey.from( "mymodule-1.0.0:/not/found" ) );
-        assertNotNull( keys1 );
-        assertTrue( keys1.isEmpty() );
-
-        final ResourceKeys keys2 = this.resourceService.getChildren( ResourceKey.from( "mymodule-1.0.0:/a" ) );
-        assertNotNull( keys2 );
-        assertFalse( keys2.isEmpty() );
-        assertEquals( 3, keys2.getSize() );
-        assertTrue( keys2.contains( ResourceKey.from( "mymodule-1.0.0:/a/c/d.txt" ) ) );
-    }
-
     @Test(expected = ResourceNotFoundException.class)
     public void testGetResource_notFound()
     {

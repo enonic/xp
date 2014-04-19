@@ -1,9 +1,12 @@
 package com.enonic.wem.core.module;
 
+import java.io.File;
 import java.net.URL;
 import java.util.Set;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Throwables;
+import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.module.Module;
@@ -25,6 +28,8 @@ final class ModuleImpl
     protected String vendorUrl;
 
     protected Form config;
+
+    protected File moduleDir;
 
     public ModuleKey getKey()
     {
@@ -69,13 +74,47 @@ final class ModuleImpl
     @Override
     public URL getResource( final String path )
     {
-        return null;
+        final File file = new File( this.moduleDir, path );
+        if ( !file.isFile() )
+        {
+            return null;
+        }
+
+        try
+        {
+            return file.toURI().toURL();
+        }
+        catch ( final Exception e )
+        {
+            throw Throwables.propagate( e );
+        }
     }
 
     @Override
     public Set<String> getResourcePaths()
     {
-        return null;
+        final Set<String> set = Sets.newHashSet();
+        findResourcePaths( set, this.moduleDir );
+        return set;
+    }
+
+    private void findResourcePaths( final Set<String> set, final File file )
+    {
+        if ( file.isFile() )
+        {
+            set.add( file.toString().substring( this.moduleDir.toString().length() + 1 ) );
+        }
+
+        final File[] children = file.listFiles();
+        if ( children == null )
+        {
+            return;
+        }
+
+        for ( final File child : children )
+        {
+            findResourcePaths( set, child );
+        }
     }
 
     @Override

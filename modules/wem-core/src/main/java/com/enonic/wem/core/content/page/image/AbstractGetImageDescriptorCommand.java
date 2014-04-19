@@ -1,10 +1,12 @@
 package com.enonic.wem.core.content.page.image;
 
 import java.util.Collection;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.image.ImageDescriptor;
@@ -15,13 +17,12 @@ import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.Modules;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.api.resource.ResourceKeys;
 import com.enonic.wem.api.resource.ResourceService;
 import com.enonic.wem.xml.XmlSerializers;
 
 abstract class AbstractGetImageDescriptorCommand<T extends AbstractGetImageDescriptorCommand>
 {
-    private final static Pattern PATTERN = Pattern.compile( "/component/([^/]+)/image.xml" );
+    private final static Pattern PATTERN = Pattern.compile( "component/([^/]+)/image.xml" );
 
     protected ModuleService moduleService;
 
@@ -45,13 +46,12 @@ abstract class AbstractGetImageDescriptorCommand<T extends AbstractGetImageDescr
         final ImageDescriptors.Builder imageDescriptors = ImageDescriptors.newImageDescriptors();
         for ( final Module module : modules )
         {
-            final ResourceKey componentFolder = ResourceKey.from( module.getKey(), "component" );
-            final ResourceKeys children = this.resourceService.getChildren( componentFolder );
-            final Collection<String> componentNames = children.transform( new Function<ResourceKey, String>()
+            final Set<String> resources = module.getResourcePaths();
+            final Collection<String> componentNames = Collections2.transform( resources, new Function<String, String>()
             {
-                public String apply( final ResourceKey input )
+                public String apply( final String input )
                 {
-                    final Matcher matcher = PATTERN.matcher( input.getPath() );
+                    final Matcher matcher = PATTERN.matcher( input );
                     if ( matcher.matches() )
                     {
                         return matcher.group( 1 );

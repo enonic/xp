@@ -1,5 +1,7 @@
 package com.enonic.wem.core.module;
 
+import java.io.File;
+
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
@@ -46,6 +48,12 @@ public final class ModuleBuilder
     public ModuleBuilder config( final Form config )
     {
         this.module.config = config;
+        return this;
+    }
+
+    public ModuleBuilder moduleDir( final File moduleDir )
+    {
+        this.module.moduleDir = moduleDir;
         return this;
     }
 
