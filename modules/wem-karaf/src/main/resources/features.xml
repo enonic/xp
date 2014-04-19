@@ -1,7 +1,27 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <features name="wem-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.2.0">
 
+  <feature name="wem-api" version="${project.version}" description="Enonic WEM API feature">
+
+    <!-- Required libraries -->
+    <bundle>mvn:com.enonic.osgi.bundles/jdom/2.0.5</bundle>
+    <bundle>mvn:com.fasterxml.jackson.core/jackson-core/2.2.2</bundle>
+    <bundle>mvn:com.fasterxml.jackson.core/jackson-databind/2.2.2</bundle>
+    <bundle>mvn:com.fasterxml.jackson.core/jackson-annotations/2.2.2</bundle>
+    <bundle>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-smile/2.2.2</bundle>
+    <bundle>mvn:com.google.guava/guava/16.0.1</bundle>
+    <bundle>mvn:commons-lang/commons-lang/2.4</bundle>
+    <bundle>mvn:com.enonic.osgi.bundles/jparsec/2.0.1</bundle>
+    <bundle>mvn:joda-time/joda-time/2.1</bundle>
+    <bundle>mvn:org.joda/joda-convert/1.2</bundle>
+
+    <!-- WEM API artifact -->
+    <bundle>mvn:com.enonic.wem/wem-api/${project.version}</bundle>
+
+  </feature>
+
   <feature name="wem-core" version="${project.version}" description="Enonic WEM core feature">
+    <feature>wem-api</feature>
   </feature>
 
   <feature name="wem-portal" version="${project.version}" description="Enonic WEM portal feature">
