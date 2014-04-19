@@ -120,7 +120,6 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Import-Package>*;resolution:=optional</Import-Package>
             <Private-Package/>
           </instructions>
         </configuration>
