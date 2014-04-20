@@ -4,53 +4,55 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.enonic.wem.portal.script.SourceException;
-import com.enonic.wem.core.web.mvc.FreeMarkerView;
 
 public final class ExceptionRenderer
 {
-    private final FreeMarkerView view;
+    private final static ExceptionTemplate TEMPLATE = new ExceptionTemplate();
 
     private Response.StatusType status;
 
+    private final StatusErrorInfo info;
+
     public ExceptionRenderer()
     {
-        this.view = FreeMarkerView.template( "portalError.ftl" );
+        this.info = new StatusErrorInfo();
     }
 
     public ExceptionRenderer status( final Response.StatusType status )
     {
         this.status = status;
-        this.view.put( "status", this.status );
+        this.info.statusCode( this.status.getStatusCode() );
         return this;
     }
 
     public ExceptionRenderer title( final String value )
     {
-        this.view.put( "title", value );
+        this.info.title( value );
         return this;
     }
 
     public ExceptionRenderer description( final String value )
     {
-        this.view.put( "description", value );
+        this.info.description( value );
         return this;
     }
 
     public ExceptionRenderer exception( final Throwable e )
     {
-        this.view.put( "exception", new ExceptionInfo( e ) );
+        this.info.cause( new CauseInfo( e ) );
         return this;
     }
 
     public ExceptionRenderer sourceError( final SourceException error )
     {
-        final ScriptSourceInfo info = new ScriptSourceInfo( error );
-        this.view.put( "source", info );
+        this.info.source( new SourceInfo( error ) );
+        this.info.callStack( new CallStackInfo( error ) );
         return this;
     }
 
     public Response render()
     {
-        return Response.status( this.status ).entity( view ).type( MediaType.TEXT_HTML_TYPE ).build();
+        final String str = TEMPLATE.render( this.info );
+        return Response.status( this.status ).entity( str ).type( MediaType.TEXT_HTML_TYPE ).build();
     }
 }

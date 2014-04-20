@@ -4,20 +4,18 @@ import java.io.IOException;
 import java.util.List;
 
 import com.google.common.base.Charsets;
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
 import com.enonic.wem.portal.script.SourceException;
 
-public final class ScriptSourceInfo
+final class SourceInfo
 {
     private final static int NUM_DELTA_LINES = 3;
 
     private final SourceException error;
 
-    public ScriptSourceInfo( final SourceException error )
+    public SourceInfo( final SourceException error )
     {
         this.error = error;
     }
@@ -32,17 +30,24 @@ public final class ScriptSourceInfo
         return this.error.getLineNumber();
     }
 
-    public int getFromLine()
-    {
-        return Math.max( 0, getLine() - NUM_DELTA_LINES ) + 1;
-    }
-
-    public List<String> getLines()
-        throws IOException
+    public List<LineInfo> getLines()
+        throws Exception
     {
         final List<String> allLines = getAllLines();
         final List<String> subList = sliceLines( allLines );
-        return Lists.newArrayList( Collections2.transform( subList, new TabToSpaces() ) );
+
+        final int errorLine = getLine();
+        int currentLine = Math.max( 0, getLine() - NUM_DELTA_LINES ) + 1;
+
+        final List<LineInfo> list = Lists.newArrayList();
+        for ( final String line : subList )
+        {
+            final String str = line.replaceAll( "\t", "    " );
+            list.add( new LineInfo( currentLine, str, ( errorLine == currentLine ) ) );
+            currentLine++;
+        }
+
+        return list;
     }
 
     private List<String> getAllLines()
@@ -56,20 +61,5 @@ public final class ScriptSourceInfo
         final int firstLine = Math.max( 0, getLine() - NUM_DELTA_LINES );
         final int lastLine = Math.min( all.size(), getLine() + NUM_DELTA_LINES );
         return all.subList( firstLine, lastLine );
-    }
-
-    public List<String> getCallStack()
-    {
-        return this.error.getCallStack();
-    }
-
-    private final class TabToSpaces
-        implements Function<String, String>
-    {
-        @Override
-        public String apply( final String input )
-        {
-            return input.replaceAll( "\t", "    " );
-        }
     }
 }
