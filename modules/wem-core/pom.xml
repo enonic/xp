@@ -34,6 +34,11 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>wem-guice</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>wem-xml</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -93,19 +98,14 @@
       <version>1.7R4</version>
     </dependency>
     <dependency>
-      <groupId>org.sonatype.sisu</groupId>
-      <artifactId>sisu-guice</artifactId>
-      <version>3.1.9</version>
-    </dependency>
-    <dependency>
-      <groupId>org.sonatype.sisu.inject</groupId>
+      <groupId>com.google.inject.extensions</groupId>
       <artifactId>guice-multibindings</artifactId>
-      <version>3.1.9</version>
+      <version>3.0</version>
     </dependency>
     <dependency>
-      <groupId>org.sonatype.sisu.inject</groupId>
+      <groupId>com.google.inject.extensions</groupId>
       <artifactId>guice-servlet</artifactId>
-      <version>3.1.9</version>
+      <version>3.0</version>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
