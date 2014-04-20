@@ -10,7 +10,6 @@ import com.enonic.wem.core.content.page.PageModule;
 import com.enonic.wem.core.content.site.SiteModule;
 import com.enonic.wem.core.entity.EntityModule;
 import com.enonic.wem.core.event.EventModule;
-import com.enonic.wem.core.hazelcast.HazelcastModule;
 import com.enonic.wem.core.home.HomeModule;
 import com.enonic.wem.core.index.IndexModule;
 import com.enonic.wem.core.initializer.InitializerModule;
@@ -28,7 +27,6 @@ public final class CoreModule
     protected void configure()
     {
         install( new EventModule() );
-
         install( new HomeModule() );
         install( new ConfigModule() );
         install( new JcrModule() );
@@ -45,7 +43,5 @@ public final class CoreModule
         install( new ModuleModule() );
         install( new ResourceModule() );
         install( new ScriptModule() );
-
-        install( new HazelcastModule() );
     }
 }
