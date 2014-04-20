@@ -4,7 +4,7 @@ import com.google.common.hash.Hashing;
 
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaIcon;
-import com.enonic.wem.web.servlet.ServletRequestUrlHelper;
+import com.enonic.wem.core.web.servlet.ServletRequestUrlHelper;
 
 public final class SchemaIconUrlResolver
 {

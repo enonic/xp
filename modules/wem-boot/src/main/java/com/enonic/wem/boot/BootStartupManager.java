@@ -7,7 +7,7 @@ import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 
 import com.enonic.wem.core.lifecycle.LifecycleService;
-import com.enonic.wem.web.WebInitializer;
+import com.enonic.wem.core.web.WebInitializer;
 
 @Singleton
 final class BootStartupManager

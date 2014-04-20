@@ -4,7 +4,7 @@ import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 
-import com.enonic.wem.web.WebInitializer;
+import com.enonic.wem.core.web.WebInitializer;
 
 public final class PortalWebInitializer
     implements WebInitializer

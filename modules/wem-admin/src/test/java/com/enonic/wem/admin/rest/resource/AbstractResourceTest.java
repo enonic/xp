@@ -23,7 +23,7 @@ import junit.framework.Assert;
 import com.enonic.wem.admin.json.ObjectMapperHelper;
 import com.enonic.wem.admin.rest.provider.JsonObjectProvider;
 import com.enonic.wem.admin.rest.provider.JsonSerializableProvider;
-import com.enonic.wem.web.servlet.ServletRequestHolder;
+import com.enonic.wem.core.web.servlet.ServletRequestHolder;
 
 import static org.junit.Assert.*;
 

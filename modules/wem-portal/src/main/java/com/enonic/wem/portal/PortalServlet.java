@@ -14,8 +14,8 @@ import com.enonic.wem.portal.underscore.ImageByIdResource;
 import com.enonic.wem.portal.underscore.ImageResource;
 import com.enonic.wem.portal.underscore.PublicResource;
 import com.enonic.wem.portal.underscore.ServicesResource;
-import com.enonic.wem.web.jaxrs.JaxRsServlet;
-import com.enonic.wem.web.mvc.FreeMarkerViewWriter;
+import com.enonic.wem.core.web.jaxrs.JaxRsServlet;
+import com.enonic.wem.core.web.mvc.FreeMarkerViewWriter;
 
 @Singleton
 public final class PortalServlet

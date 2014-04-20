@@ -14,7 +14,7 @@ import com.enonic.wem.api.rendering.RenderingMode;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsHttpRequest;
 import com.enonic.wem.portal.script.lib.PortalUrlScriptBean;
-import com.enonic.wem.web.servlet.ServletRequestHolder;
+import com.enonic.wem.core.web.servlet.ServletRequestHolder;
 
 import static org.junit.Assert.*;
 

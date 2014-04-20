@@ -4,7 +4,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.enonic.wem.portal.script.SourceException;
-import com.enonic.wem.web.mvc.FreeMarkerView;
+import com.enonic.wem.core.web.mvc.FreeMarkerView;
 
 public final class ExceptionRenderer
 {

@@ -35,7 +35,7 @@ import com.enonic.wem.admin.rest.resource.ui.BackgroundImageResource;
 import com.enonic.wem.admin.rest.resource.util.CountryResource;
 import com.enonic.wem.admin.rest.resource.util.LocaleResource;
 import com.enonic.wem.admin.rest.resource.util.TimeZoneResource;
-import com.enonic.wem.web.jaxrs.JaxRsServlet;
+import com.enonic.wem.core.web.jaxrs.JaxRsServlet;
 
 @Singleton
 public final class RestServlet

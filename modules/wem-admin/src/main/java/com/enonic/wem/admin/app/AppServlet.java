@@ -15,7 +15,7 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
-import com.enonic.wem.web.servlet.ServletRequestUrlHelper;
+import com.enonic.wem.core.web.servlet.ServletRequestUrlHelper;
 
 @Singleton
 public final class AppServlet
