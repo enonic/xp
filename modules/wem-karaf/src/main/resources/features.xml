@@ -37,24 +37,33 @@
 
   </feature>
 
-  <feature name="wem-core" version="${project.version}" description="Enonic WEM core feature">
+  <feature name="wem-core" version="${project.version}" description="Enonic WEM Core Feature">
 
     <!-- Required features -->
     <feature>wem-guice</feature>
 
+    <!-- WEM Core artifact -->
+    <bundle>mvn:com.enonic.wem/wem-core/${project.version}</bundle>
+
   </feature>
 
-  <feature name="wem-portal" version="${project.version}" description="Enonic WEM portal feature">
+  <feature name="wem-portal" version="${project.version}" description="Enonic WEM Portal Feature">
 
     <!-- Required features -->
     <feature>wem-core</feature>
 
+    <!-- WEM Portal artifact -->
+    <bundle>mvn:com.enonic.wem/wem-portal/${project.version}</bundle>
+
   </feature>
 
-  <feature name="wem-admin" version="${project.version}" description="Enonic WEM admin feature">
+  <feature name="wem-admin" version="${project.version}" description="Enonic WEM Admin Feature">
 
     <!-- Required features -->
-    <feature>wem-core</feature>
+    <feature>wem-portal</feature>
+
+    <!-- WEM Admin artifact -->
+    <bundle>mvn:com.enonic.wem/wem-admin/${project.version}</bundle>
 
   </feature>
 

@@ -121,6 +121,7 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
+            <Import-Package>*</Import-Package>
             <Private-Package/>
           </instructions>
         </configuration>
