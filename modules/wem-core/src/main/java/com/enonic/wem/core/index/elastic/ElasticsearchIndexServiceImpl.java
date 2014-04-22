@@ -13,6 +13,7 @@ import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsReques
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -118,14 +119,15 @@ public class ElasticsearchIndexServiceImpl
     }
 
     @Override
-    public void delete( final DeleteDocument deleteDocument )
+    public boolean delete( final DeleteDocument deleteDocument )
     {
         DeleteRequest deleteRequest =
             new DeleteRequest( deleteDocument.getIndex().getName(), deleteDocument.getIndexType().getName(), deleteDocument.getId() );
 
         try
         {
-            this.client.delete( deleteRequest ).actionGet();
+            final DeleteResponse deleteResponse = this.client.delete( deleteRequest ).actionGet();
+            return deleteResponse.isFound();
         }
         catch ( ElasticsearchException e )
         {

@@ -25,7 +25,7 @@ public interface ElasticsearchIndexService
 
     public String storeDocument( final NodeStorageDocument nodeStorageDocument );
 
-    public void delete( final DeleteDocument deleteDocument );
+    public boolean delete( final DeleteDocument deleteDocument );
 
     public SearchResponse search( final ElasticsearchQuery elasticsearchQuery );
 

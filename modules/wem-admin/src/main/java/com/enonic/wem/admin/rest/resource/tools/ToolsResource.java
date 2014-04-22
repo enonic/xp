@@ -52,7 +52,7 @@ public final class ToolsResource
     public String reIndexData( @QueryParam("redirect") final String redirect )
         throws Exception
     {
-        this.indexService.reIndex( Index.NODB );
+        //  this.indexService.reIndex( Index.NODB );
         return "Done.";
     }
 }

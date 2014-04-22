@@ -32,8 +32,9 @@ final class DeleteContentCommand
             final Node nodeToDelete = nodeService.getByPath( nodePath );
             final Content contentToDelete = getTranslator().fromNode( nodeToDelete );
 
-            if ( new ChildContentIdsResolver(
-                this.nodeService, this.contentTypeService, this.blobService ).resolve( contentToDelete ).hasChildren() )
+            if ( new ChildContentIdsResolver( this.nodeService, this.contentTypeService, this.blobService ).
+                resolve( contentToDelete ).
+                hasChildren() )
             {
                 throw new UnableToDeleteContentException( this.params.getContentPath(), "Content has children" );
             }

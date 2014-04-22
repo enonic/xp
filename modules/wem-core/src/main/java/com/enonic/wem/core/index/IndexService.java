@@ -60,7 +60,7 @@ public class IndexService
 
             if ( doReindexOnEmptyIndex )
             {
-                reindexService.reindexContent();
+                //        reindexService.reindexContent();
                 // TODO: Reindex stuff here
             }
         }
@@ -74,10 +74,6 @@ public class IndexService
         if ( !indexExists( Index.STORE ) )
         {
             createIndex( Index.STORE );
-
-            if ( doReindexOnEmptyIndex )
-            {
-            }
         }
     }
 
@@ -175,7 +171,7 @@ public class IndexService
             }
         }
 
-        this.reindexService.reindexContent();
-        this.reindexService.reindexContent();
+        //   this.reindexService.reindexContent();
+        //     this.reindexService.reindexContent();
     }
 }

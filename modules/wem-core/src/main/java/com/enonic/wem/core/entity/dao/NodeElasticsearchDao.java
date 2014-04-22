@@ -14,6 +14,7 @@ import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.NodePaths;
 import com.enonic.wem.api.entity.Nodes;
+import com.enonic.wem.core.index.DeleteDocument;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.elastic.ByIdQuery;
@@ -207,6 +208,37 @@ public class NodeElasticsearchDao
         verifyGetResult( searchResponse, null, null );
 
         return ElasticsearchResponseNodeTranslator.toNodes( searchResponse );
+    }
+
+    public Node deleteById( final EntityId entityId )
+    {
+        final Node nodeToDelete = this.getById( entityId );
+
+        doDeleteNodeWithChildren( nodeToDelete );
+
+        return nodeToDelete;
+    }
+
+    public Node deleteByPath( final NodePath nodePath )
+    {
+        final Node nodeToDelete = this.getByPath( nodePath );
+
+        doDeleteNodeWithChildren( nodeToDelete );
+
+        return nodeToDelete;
+    }
+
+    private boolean doDeleteNodeWithChildren( final Node nodeToDelete )
+    {
+        final Nodes children = this.getByParent( nodeToDelete.path() );
+
+        for ( final Node child : children )
+        {
+            elasticsearchIndexService.delete( new DeleteDocument( Index.STORE, IndexType.ENTITY, child.id().toString() ) );
+
+        }
+
+        return elasticsearchIndexService.delete( new DeleteDocument( Index.STORE, IndexType.ENTITY, nodeToDelete.id().toString() ) );
     }
 
     public void verifyGetResult( final SearchResponse searchResponse, final Integer min, final Integer max )

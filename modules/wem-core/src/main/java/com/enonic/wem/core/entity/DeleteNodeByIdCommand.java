@@ -1,48 +1,54 @@
 package com.enonic.wem.core.entity;
 
-import javax.jcr.Session;
-
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.core.entity.dao.NodeJcrDao;
-import com.enonic.wem.core.index.IndexService;
 
 final class DeleteNodeByIdCommand
+    extends AbstractDeleteNodeCommand
 {
-    private IndexService indexService;
+    private final EntityId entityId;
 
-    private Session session;
-
-    private EntityId entityId;
+    DeleteNodeByIdCommand( final Builder builder )
+    {
+        super( builder );
+        this.entityId = builder.entityId;
+    }
 
     Node execute()
     {
-        final NodeJcrDao nodeJcrDao = new NodeJcrDao( session );
-        final Node nodeToDelete = nodeJcrDao.getNodeById( entityId );
+        final Node nodeToDelete = nodeElasticsearchDao.getById( this.entityId );
 
-        nodeJcrDao.deleteNodeById( entityId );
-        JcrSessionHelper.save( session );
+        doDeleteChildIndexDocuments( nodeToDelete );
+
+        final Node deletedNode = nodeElasticsearchDao.deleteById( entityId );
 
         indexService.deleteEntity( entityId );
 
-        return nodeToDelete;
+        return deletedNode;
     }
 
-    DeleteNodeByIdCommand indexService( final IndexService indexService )
+    static Builder create()
     {
-        this.indexService = indexService;
-        return this;
+        return new Builder();
     }
 
-    DeleteNodeByIdCommand entityId( final EntityId entityId )
+    static class Builder
+        extends AbstractDeleteNodeCommand.Builder<Builder>
     {
-        this.entityId = entityId;
-        return this;
+
+        private EntityId entityId;
+
+        public DeleteNodeByIdCommand build()
+        {
+            return new DeleteNodeByIdCommand( this );
+        }
+
+        public Builder entityId( final EntityId entityId )
+        {
+            this.entityId = entityId;
+            return this;
+        }
     }
 
-    DeleteNodeByIdCommand session( final Session session )
-    {
-        this.session = session;
-        return this;
-    }
+
 }
