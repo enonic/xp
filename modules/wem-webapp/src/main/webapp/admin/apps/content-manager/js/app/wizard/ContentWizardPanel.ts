@@ -209,7 +209,7 @@ module app.wizard {
 
         layoutPersistedItem(persistedContent: Content): Q.Promise<void> {
 
-            this.formIcon.setSrc(persistedContent.getIconUrl());
+            this.formIcon.setSrc(persistedContent.getIconUrl() + '?crop=false');
             var contentData: api.content.ContentData = persistedContent.getContentData();
 
             new IsRenderableRequest(persistedContent.getContentId()).sendAndParse().
@@ -219,7 +219,7 @@ module app.wizard {
                     this.previewAction.setVisible(renderable);
                     this.contextWindowToggler.setVisible(renderable);
                 }).catch((reason) => {
-                    api.notify.Message.newWarning(reason.toString());
+                    api.notify.showWarning(reason.toString());
                 }).done();
 
             return new api.content.attachment.GetAttachmentsRequest(persistedContent.getContentId()).

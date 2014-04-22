@@ -7,7 +7,7 @@ import com.enonic.wem.portal.rendering.RenderingModule;
 import com.enonic.wem.portal.script.ScriptModule;
 import com.enonic.wem.portal.view.ViewModule;
 import com.enonic.wem.portal.xslt.saxon.SaxonXsltModule;
-import com.enonic.wem.web.WebInitializerBinder;
+import com.enonic.wem.core.web.WebInitializerBinder;
 
 public final class PortalModule
     extends AbstractModule

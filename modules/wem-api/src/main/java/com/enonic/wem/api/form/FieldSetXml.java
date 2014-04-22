@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.enonic.wem.xml.XmlObject;
+import com.enonic.wem.api.xml.XmlObject;
 
 @XmlRootElement(name = "field-set")
 public final class FieldSetXml

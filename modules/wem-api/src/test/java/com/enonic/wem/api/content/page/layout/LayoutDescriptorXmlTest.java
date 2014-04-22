@@ -3,8 +3,8 @@ package com.enonic.wem.api.content.page.layout;
 import org.junit.Test;
 
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.xml.BaseXmlSerializerTest;
-import com.enonic.wem.xml.XmlSerializers;
+import com.enonic.wem.api.xml.BaseXmlSerializerTest;
+import com.enonic.wem.api.xml.XmlSerializers;
 
 import static com.enonic.wem.api.content.page.region.RegionDescriptor.newRegionDescriptor;
 import static com.enonic.wem.api.content.page.region.RegionDescriptors.newRegionDescriptors;

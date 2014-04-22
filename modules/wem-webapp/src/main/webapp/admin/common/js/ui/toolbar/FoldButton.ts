@@ -6,7 +6,7 @@ module api.ui.toolbar {
         private widthCache: number[] = [];
 
         constructor() {
-            super("More...");
+            super("More");
             this.addClass('fold-button');
 
             this.dropdown = new api.dom.DivEl('dropdown');
@@ -27,6 +27,10 @@ module api.ui.toolbar {
 
         getNextButtonWidth(): number {
             return this.widthCache[0];
+        }
+
+        getButtonsCount(): number {
+            return this.dropdown.getChildren().length;
         }
 
         isEmpty(): boolean {

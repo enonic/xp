@@ -1,10 +1,12 @@
 package com.enonic.wem.core.content.page.layout;
 
 import java.util.Collection;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
@@ -13,15 +15,14 @@ import com.enonic.wem.api.content.page.layout.LayoutDescriptors;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.Modules;
+import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.resource.Resource;
-import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.api.resource.ResourceKeys;
 import com.enonic.wem.api.resource.ResourceService;
-import com.enonic.wem.xml.XmlSerializers;
+import com.enonic.wem.api.xml.XmlSerializers;
 
 abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDescriptorCommand>
 {
-    private final static Pattern PATTERN = Pattern.compile( "/component/([^/]+)/layout.xml" );
+    private final static Pattern PATTERN = Pattern.compile( "component/([^/]+)/layout.xml" );
 
     protected ModuleService moduleService;
 
@@ -29,7 +30,7 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
 
     protected final LayoutDescriptor getDescriptor( final LayoutDescriptorKey key )
     {
-        final ResourceKey resourceKey = key.toResourceKey();
+        final ModuleResourceKey resourceKey = key.toResourceKey();
         final Resource resource = this.resourceService.getResource( resourceKey );
 
         final String descriptorXml = resource.readAsString();
@@ -45,13 +46,12 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
         final LayoutDescriptors.Builder layoutDescriptors = LayoutDescriptors.newLayoutDescriptors();
         for ( final Module module : modules )
         {
-            final ResourceKey componentFolder = ResourceKey.from( module.getModuleKey(), "component" );
-            final ResourceKeys children = this.resourceService.getChildren( componentFolder );
-            final Collection<String> componentNames = children.transform( new Function<ResourceKey, String>()
+            final Set<String> resources = module.getResourcePaths();
+            final Collection<String> componentNames = Collections2.transform( resources, new Function<String, String>()
             {
-                public String apply( final ResourceKey input )
+                public String apply( final String input )
                 {
-                    final Matcher matcher = PATTERN.matcher( input.getPath() );
+                    final Matcher matcher = PATTERN.matcher( input );
                     if ( matcher.matches() )
                     {
                         return matcher.group( 1 );
@@ -63,8 +63,12 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
 
             for ( final String componentName : componentNames )
             {
+                if ( componentName == null )
+                {
+                    continue;
+                }
                 final ComponentDescriptorName descriptorName = new ComponentDescriptorName( componentName );
-                final LayoutDescriptorKey key = LayoutDescriptorKey.from( module.getModuleKey(), descriptorName );
+                final LayoutDescriptorKey key = LayoutDescriptorKey.from( module.getKey(), descriptorName );
                 final LayoutDescriptor layoutDescriptor = getDescriptor( key );
                 if ( layoutDescriptor != null )
                 {

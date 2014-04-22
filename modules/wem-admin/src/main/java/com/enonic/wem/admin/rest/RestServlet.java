@@ -21,7 +21,6 @@ import com.enonic.wem.admin.rest.resource.content.page.layout.LayoutDescriptorRe
 import com.enonic.wem.admin.rest.resource.content.page.part.PartDescriptorResource;
 import com.enonic.wem.admin.rest.resource.content.site.SiteResource;
 import com.enonic.wem.admin.rest.resource.content.site.template.SiteTemplateResource;
-import com.enonic.wem.admin.rest.resource.jcr.GetNodesResource;
 import com.enonic.wem.admin.rest.resource.module.ModuleResource;
 import com.enonic.wem.admin.rest.resource.relationship.RelationshipResource;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageResource;
@@ -35,7 +34,7 @@ import com.enonic.wem.admin.rest.resource.ui.BackgroundImageResource;
 import com.enonic.wem.admin.rest.resource.util.CountryResource;
 import com.enonic.wem.admin.rest.resource.util.LocaleResource;
 import com.enonic.wem.admin.rest.resource.util.TimeZoneResource;
-import com.enonic.wem.web.jaxrs.JaxRsServlet;
+import com.enonic.wem.core.web.jaxrs.JaxRsServlet;
 
 @Singleton
 public final class RestServlet
@@ -50,7 +49,6 @@ public final class RestServlet
         addClass( BackgroundImageResource.class );
         addClass( ContentImageResource.class );
         addClass( ContentAttachmentResource.class );
-        addClass( GetNodesResource.class );
         addClass( BlobResource.class );
         addClass( AuthResource.class );
         addClass( ToolsResource.class );

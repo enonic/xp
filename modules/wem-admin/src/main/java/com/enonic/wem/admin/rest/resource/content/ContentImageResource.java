@@ -28,6 +28,7 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypesParams;
+import com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter;
 
 import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleMax;
 import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleSquareFilter;
@@ -55,7 +56,8 @@ public class ContentImageResource
     @Path("{contentId}")
     public Response getContentImage( @PathParam("contentId") final String contentIdAsString,
                                      @QueryParam("size") @DefaultValue("128") final int size,
-                                     @QueryParam("thumbnail") @DefaultValue("true") final boolean thumbnail )
+                                     @QueryParam("thumbnail") @DefaultValue("true") final boolean thumbnail,
+                                     @QueryParam("crop") @DefaultValue("true") final boolean crop)
         throws Exception
     {
         if ( contentIdAsString == null )
@@ -79,7 +81,8 @@ public class ContentImageResource
                 final Blob blob = blobService.get( contentThumbnail.getBlobKey() );
                 if ( blob != null )
                 {
-                    final BufferedImage thumbnailImage = helper.getImageFromBlob( blob, size, ScaleSquareFilter );
+                    ImageFilter filter = crop ? ScaleSquareFilter : ScaleMax;
+                    final BufferedImage thumbnailImage = helper.getImageFromBlob( blob, size, filter );
                     return Response.ok( thumbnailImage, contentThumbnail.getMimeType() ).build();
                 }
             }

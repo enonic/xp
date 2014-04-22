@@ -3,13 +3,9 @@ package com.enonic.wem.api.module;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
 
 public class ModuleKeyTest
 {
-
     @Test
     public void testCreateModuleVersion()
     {
@@ -45,23 +41,5 @@ public class ModuleKeyTest
         assertEquals( "mymodule-3.2.1", moduleVersionString );
         assertEquals( moduleKey, parsedModuleVerison );
         assertEquals( moduleKey.toString(), parsedModuleVerison.toString() );
-    }
-
-    @Test
-    public void testSystemModule()
-    {
-        final ModuleKey system = ModuleKey.SYSTEM;
-
-        assertNotNull( system );
-        assertEquals( "system", system.getName().toString() );
-        assertEquals( "0.0.0", system.getVersion().toString() );
-    }
-
-    @Test
-    public void testIsSystemModule()
-    {
-        assertTrue( ModuleKey.SYSTEM.isSystem() );
-        assertFalse( ModuleKey.from( "system-1.1.1" ).isSystem() );
-        assertFalse( ModuleKey.from( "test-1.1.1" ).isSystem() );
     }
 }

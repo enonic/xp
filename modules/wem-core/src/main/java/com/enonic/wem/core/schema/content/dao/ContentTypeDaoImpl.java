@@ -19,7 +19,7 @@ import com.enonic.wem.api.schema.content.ContentTypeXml;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.core.config.SystemConfig;
 import com.enonic.wem.core.schema.SchemaIconDao;
-import com.enonic.wem.xml.XmlSerializers;
+import com.enonic.wem.api.xml.XmlSerializers;
 
 import static com.enonic.wem.api.schema.content.ContentTypes.newContentTypes;
 import static java.nio.file.Files.isDirectory;

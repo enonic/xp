@@ -90,7 +90,7 @@ module api.data {
         }
 
         equals(data: Data): boolean {
-            return this.name == data.getName() && this.arrayIndex == data.getArrayIndex();
+            return this.name == data.name && this.arrayIndex == data.arrayIndex;
         }
     }
 

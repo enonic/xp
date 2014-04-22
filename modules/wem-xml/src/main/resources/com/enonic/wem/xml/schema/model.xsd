@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+            elementFormDefault="qualified" jaxb:version="2.1">
+
+  <xsd:annotation>
+    <xsd:appinfo>
+      <jaxb:schemaBindings>
+        <jaxb:package name="com.enonic.wem.xml.model"/>
+        <jaxb:nameXmlTransform>
+          <jaxb:typeName prefix="Xml"/>
+        </jaxb:nameXmlTransform>
+      </jaxb:schemaBindings>
+    </xsd:appinfo>
+  </xsd:annotation>
+
+  <xsd:include schemaLocation="form.xsd"/>
+  <xsd:include schemaLocation="module.xsd"/>
+
+</xsd:schema>

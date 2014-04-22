@@ -8,7 +8,7 @@ import java.nio.file.Files;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplates;
 import com.enonic.wem.core.config.SystemConfig;
-import com.enonic.wem.util.Exceptions;
+import com.enonic.wem.api.util.Exceptions;
 
 final class GetSiteTemplatesCommand
 {

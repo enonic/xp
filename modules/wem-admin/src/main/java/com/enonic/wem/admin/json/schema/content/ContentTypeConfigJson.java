@@ -2,7 +2,7 @@ package com.enonic.wem.admin.json.schema.content;
 
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeXml;
-import com.enonic.wem.xml.XmlSerializers;
+import com.enonic.wem.api.xml.XmlSerializers;
 
 public class ContentTypeConfigJson
 {

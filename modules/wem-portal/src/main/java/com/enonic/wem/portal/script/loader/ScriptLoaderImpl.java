@@ -5,7 +5,7 @@ import java.nio.file.Path;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.core.module.ModuleResourcePathResolver;
 
 public final class ScriptLoaderImpl
@@ -22,11 +22,11 @@ public final class ScriptLoaderImpl
     @Override
     public ScriptSource load( final String name )
     {
-        return load( ResourceKey.from( name ) );
+        return load( ModuleResourceKey.from( name ) );
     }
 
     @Override
-    public ScriptSource load( final ResourceKey key )
+    public ScriptSource load( final ModuleResourceKey key )
     {
         Path path = this.pathResolver.resolveModulePath( key.getModule() );
         path = path.resolve( key.getPath().substring( 1 ) );

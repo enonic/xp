@@ -9,8 +9,8 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.web.servlet.ServletRequestHolder;
-import com.enonic.wem.web.servlet.ServletRequestUrlHelper;
+import com.enonic.wem.core.web.servlet.ServletRequestHolder;
+import com.enonic.wem.core.web.servlet.ServletRequestUrlHelper;
 
 import static org.junit.Assert.*;
 

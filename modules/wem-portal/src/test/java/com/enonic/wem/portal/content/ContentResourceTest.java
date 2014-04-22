@@ -41,7 +41,7 @@ import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.portal.controller.JsControllerFactoryImpl;
@@ -56,8 +56,8 @@ import com.enonic.wem.portal.script.loader.ScriptSourceImpl;
 import com.enonic.wem.portal.script.runner.ScriptRunner;
 import com.enonic.wem.portal.script.runner.ScriptRunnerFactoryImpl;
 import com.enonic.wem.portal.script.runner.ScriptRunnerImpl;
-import com.enonic.wem.web.servlet.ServletRequestHolder;
-import com.enonic.wem.xml.XmlSerializers;
+import com.enonic.wem.core.web.servlet.ServletRequestHolder;
+import com.enonic.wem.api.xml.XmlSerializers;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.isA;
@@ -106,8 +106,8 @@ public class ContentResourceTest
         IOUtils.copy( new ByteArrayInputStream( script.getBytes() ), new FileOutputStream( path.toFile() ) );
 
         final ScriptLoader myScriptLoader = mock( ScriptLoader.class );
-        when( myScriptLoader.load( isA( ResourceKey.class ) ) ).thenReturn(
-            new ScriptSourceImpl( ResourceKey.from( "mainmodule-1.0.0:/components/landing-page.xml" ), path ) );
+        when( myScriptLoader.load( isA( ModuleResourceKey.class ) ) ).thenReturn(
+            new ScriptSourceImpl( ModuleResourceKey.from( "mainmodule-1.0.0:/components/landing-page.xml" ), path ) );
 
         final JsControllerFactoryImpl jsControllerFactory = new JsControllerFactoryImpl();
 

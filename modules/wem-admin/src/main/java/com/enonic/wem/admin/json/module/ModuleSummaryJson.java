@@ -21,7 +21,7 @@ public class ModuleSummaryJson
 
     public String getKey()
     {
-        return module.getModuleKey().toString();
+        return module.getKey().toString();
     }
 
     public String getName()
@@ -37,11 +37,6 @@ public class ModuleSummaryJson
     public String getDisplayName()
     {
         return module.getDisplayName();
-    }
-
-    public String getInfo()
-    {
-        return module.getInfo();
     }
 
     public String getUrl()

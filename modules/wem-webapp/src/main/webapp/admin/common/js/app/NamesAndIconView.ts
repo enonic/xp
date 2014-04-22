@@ -73,7 +73,7 @@ module api.app {
 
         setIconUrl(value: string): NamesAndIconView
         {
-            this.iconImageEl.setSrc(value + '?thumbnail=false&size=64');
+            this.iconImageEl.setSrc(value);
             this.iconDivEl.hide();
             this.iconImageEl.show();
             return this;

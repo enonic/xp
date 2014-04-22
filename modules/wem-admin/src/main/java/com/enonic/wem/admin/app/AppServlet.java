@@ -1,6 +1,7 @@
 package com.enonic.wem.admin.app;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Map;
 
 import javax.inject.Singleton;
@@ -10,12 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.Maps;
+import com.samskivert.mustache.Template;
 
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-
-import com.enonic.wem.web.servlet.ServletRequestUrlHelper;
+import com.enonic.wem.core.mustache.MustacheCompiler;
+import com.enonic.wem.core.web.servlet.ServletRequestUrlHelper;
 
 @Singleton
 public final class AppServlet
@@ -23,14 +22,14 @@ public final class AppServlet
 {
     private final static String DEFAULT_APP_NAME = "app-launcher";
 
-    private Configuration config;
+    private Template template;
 
     @Override
     public void init()
         throws ServletException
     {
-        this.config = new Configuration();
-        this.config.setServletContextForTemplateLoading( getServletContext(), "/WEB-INF/views" );
+        final URL url = getClass().getResource( "app.html" );
+        this.template = MustacheCompiler.getInstance().compile( url );
     }
 
     @Override
@@ -46,29 +45,13 @@ public final class AppServlet
     {
         final String baseUrl = ServletRequestUrlHelper.createUrl( "" );
 
-        final Map<String, String> model = Maps.newHashMap();
+        final Map<String, Object> model = Maps.newHashMap();
         model.put( "app", app != null ? app : DEFAULT_APP_NAME );
         model.put( "baseUrl", baseUrl );
 
-        try
-        {
-            resp.setContentType( "text/html" );
-            resp.setCharacterEncoding( "UTF-8" );
-
-            final Template template = this.config.getTemplate( "app.ftl" );
-            template.process( model, resp.getWriter() );
-        }
-        catch ( final TemplateException e )
-        {
-            handleError( resp, e );
-        }
-    }
-
-    private void handleError( final HttpServletResponse resp, final TemplateException e )
-        throws IOException
-    {
-        resp.setContentType( "text/plain" );
+        resp.setContentType( "text/html" );
         resp.setCharacterEncoding( "UTF-8" );
-        e.printStackTrace( resp.getWriter() );
+
+        this.template.execute( model, resp.getWriter() );
     }
 }

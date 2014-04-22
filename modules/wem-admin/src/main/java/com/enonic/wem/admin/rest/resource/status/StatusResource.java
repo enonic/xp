@@ -5,7 +5,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import com.enonic.wem.Version;
+import com.enonic.wem.api.Version;
 
 @Path("status")
 public final class StatusResource

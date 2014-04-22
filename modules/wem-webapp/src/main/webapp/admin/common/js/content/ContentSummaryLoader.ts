@@ -65,17 +65,7 @@ module api.content {
 
         private createContentTypeNames(names: string[]): api.schema.content.ContentTypeName[] {
 
-            var contentTypeNames: api.schema.content.ContentTypeName[] = [];
-
-            if (names == null) {
-                return contentTypeNames;
-            }
-
-            names.forEach((name: string) => {
-                contentTypeNames.push(new api.schema.content.ContentTypeName(name));
-            });
-
-            return contentTypeNames;
+            return (names || []).map((name: string) => new api.schema.content.ContentTypeName(name));
         }
 
     }

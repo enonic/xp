@@ -9,7 +9,7 @@ import com.enonic.wem.api.content.site.CreateSiteTemplateParams;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.core.config.SystemConfig;
-import com.enonic.wem.util.Exceptions;
+import com.enonic.wem.api.util.Exceptions;
 
 final class CreateSiteTemplateCommand
 {

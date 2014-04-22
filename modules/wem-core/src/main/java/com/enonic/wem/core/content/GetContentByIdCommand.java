@@ -6,7 +6,7 @@ import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
 import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.util.Exceptions;
+import com.enonic.wem.api.util.Exceptions;
 
 
 final class GetContentByIdCommand

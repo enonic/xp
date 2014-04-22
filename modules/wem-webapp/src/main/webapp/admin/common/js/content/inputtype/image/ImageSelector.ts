@@ -110,7 +110,7 @@ module api.content.inputtype.image {
                 this.uploadButton.show();
             })
 
-            this.uploadButton = new api.ui.Button("");
+            this.uploadButton = new api.ui.Button();
             comboboxWrapper.appendChild(this.uploadButton);
             this.uploadButton.addClass("upload-button");
             this.uploadButton.onClicked((event: MouseEvent) => {
@@ -151,21 +151,15 @@ module api.content.inputtype.image {
                 return Q(<ContentSummary[]> []);
             }
             else {
-                var contentIds: api.content.ContentId[] = [];
-                properties.forEach((property: api.data.Property) => {
-                    contentIds.push(new api.content.ContentId(property.getString()));
-                });
+                var contentIds = properties.map((property: api.data.Property) => new api.content.ContentId(property.getString()));
                 return new api.content.GetContentSummaryByIds(contentIds).get();
             }
         }
 
         getValues(): api.data.Value[] {
-            var values: api.data.Value[] = [];
-            this.comboBox.getSelectedOptions().forEach((option: api.ui.selector.Option<ContentSummary>) => {
-                var value = new api.data.Value(option.value, api.data.ValueTypes.CONTENT_ID);
-                values.push(value);
+            return this.comboBox.getSelectedOptions().map((option: api.ui.selector.Option<ContentSummary>) => {
+                return new api.data.Value(option.value, api.data.ValueTypes.CONTENT_ID);
             });
-            return values;
         }
 
         getAttachments(): api.content.attachment.Attachment[] {
@@ -292,7 +286,7 @@ module api.content.inputtype.image {
         private notifyEditContentRequestListeners(content: ContentSummary) {
             this.editContentRequestListeners.forEach((listener) => {
                 listener(content);
-            })
+            });
         }
 
         private createComboBox(input: api.form.Input): ComboBox<ContentSummary> {
@@ -348,34 +342,33 @@ module api.content.inputtype.image {
         }
 
         private createOptions(contents: ContentSummary[]): api.ui.selector.Option<ContentSummary>[] {
-            var options: api.ui.selector.Option<ContentSummary>[] = [];
-            contents.forEach((content: ContentSummary) => {
-                options.push({
+            return contents.map((content: ContentSummary) => {
+                return {
                     value: content.getId(),
                     displayValue: content
-                });
+                };
             });
-            return options;
         }
 
         private createEmbeddedImageContent(uploadItem: api.ui.UploadItem) {
 
-            var attachmentName = new api.content.attachment.AttachmentName(uploadItem.getName());
-            var attachment = new api.content.attachment.AttachmentBuilder().
-                setBlobKey(uploadItem.getBlobKey()).
-                setAttachmentName(attachmentName).
-                setMimeType(uploadItem.getMimeType()).
-                setSize(uploadItem.getSize()).
-                build();
-            var mimeType = uploadItem.getMimeType();
-
             new api.schema.content.GetContentTypeByNameRequest(new api.schema.content.ContentTypeName("image")).
                 sendAndParse().
-                done((contentType: api.schema.content.ContentType) => {
+                then((contentType: api.schema.content.ContentType) => {
+
+                    var attachmentName = new api.content.attachment.AttachmentName(uploadItem.getName());
+
+                    var attachment = new api.content.attachment.AttachmentBuilder().
+                        setBlobKey(uploadItem.getBlobKey()).
+                        setAttachmentName(attachmentName).
+                        setMimeType(uploadItem.getMimeType()).
+                        setSize(uploadItem.getSize()).
+                        build();
 
                     var contentData = new api.content.image.ImageContentDataFactory().
                         setImage(attachmentName).
-                        setMimeType(mimeType).create();
+                        setMimeType(uploadItem.getMimeType()).
+                        create();
 
                     var createContentRequest = new api.content.CreateContentRequest().
                         setDraft(false).
@@ -387,16 +380,21 @@ module api.content.inputtype.image {
                         setForm(contentType.getForm()).
                         setContentData(contentData).
                         addAttachment(attachment);
-                    createContentRequest.
-                        sendAndParse().
-                        done((createdContent: api.content.Content) => {
 
-                            this.comboBox.selectOption({
-                                value: createdContent.getId(),
-                                displayValue: createdContent
-                            });
-                        });
-                });
+                    return createContentRequest.sendAndParse();
+
+                }).then((createdContent: api.content.Content) => {
+
+                    this.comboBox.selectOption({
+                        value: createdContent.getId(),
+                        displayValue: createdContent
+                    });
+
+                }).catch((reason) => {
+
+                    api.notify.showError(reason.toString());
+
+                }).done();
         }
     }
 

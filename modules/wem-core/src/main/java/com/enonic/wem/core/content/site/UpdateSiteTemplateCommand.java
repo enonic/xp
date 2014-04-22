@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
 import com.enonic.wem.api.content.site.UpdateSiteTemplateParams;
 import com.enonic.wem.core.config.SystemConfig;
-import com.enonic.wem.util.Exceptions;
+import com.enonic.wem.api.util.Exceptions;
 
 final class UpdateSiteTemplateCommand
 {

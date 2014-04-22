@@ -1,7 +1,7 @@
 package com.enonic.wem.portal.script.lib;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.web.servlet.ServletRequestUrlHelper;
+import com.enonic.wem.core.web.servlet.ServletRequestUrlHelper;
 
 public final class PortalUrlScriptBean
 {

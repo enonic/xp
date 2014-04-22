@@ -49,48 +49,49 @@ module api.ui.toolbar {
             var toolbarWidth = this.getEl().getWidth();
             if (toolbarWidth < this.getVisibleButtonsWidth()) {
 
-                do {
-                    var buttonToHide = this.getLastLeftButton();
-                    if (!buttonToHide) {
-                        return;
-                    }
+                while (toolbarWidth <= this.getVisibleButtonsWidth() && this.getNextFoldableButton()) {
+
+                    var buttonToHide = this.getNextFoldableButton();
                     var buttonWidth = buttonToHide.getEl().getWidthWithBorder();
+
                     this.removeChild(buttonToHide);
                     this.fold.push(buttonToHide, buttonWidth);
-                    console.log('Folding button', buttonToHide);
 
                     if (!this.fold.isVisible()) {
                         this.fold.show();
                     }
-                } while (toolbarWidth <= this.getVisibleButtonsWidth());
+                }
 
             } else {
-
-                while (!this.fold.isEmpty() && (this.getVisibleButtonsWidth() + this.fold.getNextButtonWidth() < toolbarWidth)) {
+                // if fold has 1 child left then subtract fold button width because it will be hidden
+                while (!this.fold.isEmpty() &&
+                       (this.getVisibleButtonsWidth(this.fold.getButtonsCount() > 1) + this.fold.getNextButtonWidth() < toolbarWidth)) {
 
                     var buttonToShow = this.fold.pop();
                     buttonToShow.insertBeforeEl(this.fold);
-                    console.log('Unfolding button', buttonToShow);
 
                     if (this.fold.isEmpty()) {
                         this.fold.hide();
                     }
                 }
             }
+
+            this.fold.setLabel(this.getFoldableButtons().length == 0 ? 'Actions' : 'More');
         }
 
-        private getVisibleButtonsWidth(): number {
+        private getVisibleButtonsWidth(includeFold: boolean = true): number {
             return this.getChildren().reduce((totalWidth: number, element: api.dom.Element) => {
-                return totalWidth + ( element.isVisible() ? element.getEl().getWidthWithMargin() : 0 );
+                return totalWidth + ( element.isVisible() && (includeFold || element != this.fold) ?
+                                      element.getEl().getWidthWithMargin() : 0 );
             }, 0);
         }
 
-        private getLastLeftButton(): api.dom.Element {
+        private getNextFoldableButton(): api.dom.Element {
             return this.getChildren()[this.getChildren().indexOf(this.fold) - 1];
         }
 
-        private getLastRightButton(): api.dom.Element {
-            return this.getChildren()[this.getChildren().indexOf(this.fold) + 1];
+        private getFoldableButtons(): api.dom.Element[] {
+            return this.getChildren().slice(0, this.getChildren().indexOf(this.fold));
         }
 
     }

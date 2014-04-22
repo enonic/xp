@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.PageComponentXml;
-import com.enonic.wem.xml.XmlObject;
+import com.enonic.wem.api.xml.XmlObject;
 
 @XmlRootElement(name = "part-component")
 public final class PartComponentXml

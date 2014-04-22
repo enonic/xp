@@ -10,9 +10,9 @@ import javax.ws.rs.core.Response;
 import com.google.common.net.MediaType;
 
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.portal.exception.PortalWebException;
-import com.enonic.wem.util.MediaTypes;
+import com.enonic.wem.api.util.MediaTypes;
 
 @Path("{mode}/{path:.+}/_/public/{module}/{resource:.+}")
 public final class PublicResource
@@ -34,7 +34,7 @@ public final class PublicResource
     public Response getResource()
     {
         final ModuleKey moduleKey = resolveModule( this.contentPath, this.moduleName );
-        final ResourceKey moduleResource = ResourceKey.from( moduleKey, "public/" + resourceName );
+        final ModuleResourceKey moduleResource = ModuleResourceKey.from( moduleKey, "public/" + resourceName );
         final java.nio.file.Path resourceFileSystemPath = modulePathResolver.resolveResourcePath( moduleResource );
 
         if ( Files.isRegularFile( resourceFileSystemPath ) )

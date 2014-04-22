@@ -4,11 +4,11 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.module.ModuleResourceKey;
 
 public final class RenderViewSpec
 {
-    private ResourceKey view;
+    private ModuleResourceKey view;
 
     private final Map<String, Object> params;
 
@@ -21,10 +21,10 @@ public final class RenderViewSpec
 
     public RenderViewSpec view( final String view )
     {
-        return view( ResourceKey.from( view ) );
+        return view( ModuleResourceKey.from( view ) );
     }
 
-    public RenderViewSpec view( final ResourceKey view )
+    public RenderViewSpec view( final ModuleResourceKey view )
     {
         this.view = view;
         return this;
@@ -48,7 +48,7 @@ public final class RenderViewSpec
         return this;
     }
 
-    public ResourceKey getView()
+    public ModuleResourceKey getView()
     {
         return this.view;
     }

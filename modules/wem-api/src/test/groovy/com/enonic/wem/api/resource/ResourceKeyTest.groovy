@@ -1,6 +1,7 @@
 package com.enonic.wem.api.resource
 
 import com.enonic.wem.api.module.ModuleKey
+import com.enonic.wem.api.module.ModuleResourceKey
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -11,7 +12,7 @@ class ResourceKeyTest
     def "test from uri (#input)"()
     {
         given:
-        def key = ResourceKey.from( input )
+        def key = ModuleResourceKey.from( input )
 
         expect:
         key != null
@@ -38,7 +39,7 @@ class ResourceKeyTest
     {
         given:
         def module = ModuleKey.from( "mymodule-1.0.0" )
-        def key = ResourceKey.from( module, input )
+        def key = ModuleResourceKey.from( module, input )
 
         expect:
         key != null
@@ -63,7 +64,7 @@ class ResourceKeyTest
     def "test invalid uri"()
     {
         when:
-        ResourceKey.from( "test" );
+        ModuleResourceKey.from( "test" );
 
         then:
         thrown( IllegalArgumentException )
@@ -72,7 +73,7 @@ class ResourceKeyTest
     def "test (#key1) #op (#key2)"()
     {
         expect:
-        ResourceKey.from( key1 ).equals( ResourceKey.from( key2 ) ) == flag
+        ModuleResourceKey.from( key1 ).equals( ModuleResourceKey.from( key2 ) ) == flag
 
         where:
         key1                  | key2                  | flag  | op
@@ -86,9 +87,9 @@ class ResourceKeyTest
     def "test hash code"()
     {
         given:
-        def key1 = ResourceKey.from( "mymodule-1.0.0:/a/b" )
-        def key2 = ResourceKey.from( "mymodule-1.0.0:/a/b" )
-        def key3 = ResourceKey.from( "mymodule-1.0.0:/a" )
+        def key1 = ModuleResourceKey.from( "mymodule-1.0.0:/a/b" )
+        def key2 = ModuleResourceKey.from( "mymodule-1.0.0:/a/b" )
+        def key3 = ModuleResourceKey.from( "mymodule-1.0.0:/a" )
 
         expect:
         key1.hashCode() == key2.hashCode()
@@ -98,7 +99,7 @@ class ResourceKeyTest
     def "test resolve (#path) from (#uri)"()
     {
         given:
-        def key1 = ResourceKey.from( uri )
+        def key1 = ModuleResourceKey.from( uri )
         def key2 = key1.resolve( path )
 
         expect:

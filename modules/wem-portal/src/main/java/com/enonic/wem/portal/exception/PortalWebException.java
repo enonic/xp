@@ -6,7 +6,7 @@ import java.util.Arrays;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import com.enonic.wem.web.jaxrs.ExtendedStatus;
+import com.enonic.wem.core.web.jaxrs.ExtendedStatus;
 
 public final class PortalWebException
     extends WebApplicationException

@@ -1,6 +1,5 @@
 package com.enonic.wem.api.resource;
 
-
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -12,7 +11,7 @@ import com.enonic.wem.api.exception.BaseException;
 public final class ResourceProblemException
     extends BaseException
 {
-    private final ResourceKey resource;
+    private final ResourceReference resource;
 
     private final int lineNumber;
 
@@ -32,7 +31,7 @@ public final class ResourceProblemException
         this.callStack = ImmutableList.copyOf( builder.callStack );
     }
 
-    public ResourceKey getResource()
+    public ResourceReference getResource()
     {
         return this.resource;
     }
@@ -73,7 +72,7 @@ public final class ResourceProblemException
 
         private Throwable cause;
 
-        private ResourceKey resource;
+        private ResourceReference resource;
 
         private int lineNumber;
 
@@ -97,7 +96,7 @@ public final class ResourceProblemException
             return this;
         }
 
-        public Builder resource( final ResourceKey resource )
+        public Builder resource( final ResourceReference resource )
         {
             this.resource = resource;
             return this;

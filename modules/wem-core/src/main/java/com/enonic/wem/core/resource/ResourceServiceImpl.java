@@ -1,53 +1,51 @@
 package com.enonic.wem.core.resource;
 
+import java.io.File;
+import java.nio.file.Path;
+
 import javax.inject.Inject;
 
+import com.google.common.io.Files;
+
+import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.resource.Resource;
-import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.api.resource.ResourceKeys;
+import com.enonic.wem.api.resource.ResourceReference;
 import com.enonic.wem.core.config.SystemConfig;
 
 public final class ResourceServiceImpl
     extends AbstractResourceService
 {
-    private final ClassLoader classLoader;
-
     protected final SystemConfig systemConfig;
 
     @Inject
     public ResourceServiceImpl( final SystemConfig systemConfig )
     {
-        this( systemConfig, null );
-    }
-
-    public ResourceServiceImpl( final SystemConfig systemConfig, final ClassLoader classLoader )
-    {
         this.systemConfig = systemConfig;
-        this.classLoader = classLoader != null ? classLoader : this.getClass().getClassLoader();
-    }
-
-    private ResourceResolver createResolver( final ResourceKey key )
-    {
-        if ( key.getModule().isSystem() )
-        {
-            return new SystemResourceResolver().classLoader( this.classLoader );
-        }
-        else
-        {
-            return new ModuleResourceResolver().systemConfig( this.systemConfig );
-        }
-    }
-
-
-    @Override
-    public ResourceKeys getChildren( final ResourceKey parent )
-    {
-        return createResolver( parent ).getChildren( parent );
     }
 
     @Override
-    protected Resource resolve( final ResourceKey key )
+    protected Resource resolve( final ModuleResourceKey key )
     {
-        return createResolver( key ).resolve( key );
+        final File path = findPath( key );
+        if ( !path.isFile() )
+        {
+            return null;
+        }
+
+        return new ResourceImpl( key ).
+            byteSource( Files.asByteSource( path ) ).
+            timestamp( path.lastModified() );
+    }
+
+    private File findPath( final ModuleResourceKey key )
+    {
+        final Path modulePath = this.systemConfig.getModulesDir().resolve( key.getModule().toString() );
+        return modulePath.resolve( key.getPath().substring( 1 ) ).toFile();
+    }
+
+    @Override
+    protected Resource resolve( final ResourceReference ref )
+    {
+        return null;
     }
 }

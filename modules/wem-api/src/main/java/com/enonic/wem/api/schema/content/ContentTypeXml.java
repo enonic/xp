@@ -7,7 +7,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormXml;
-import com.enonic.wem.xml.XmlObject;
+import com.enonic.wem.api.xml.XmlObject;
 
 @XmlRootElement(name = "type")
 public class ContentTypeXml

@@ -31,7 +31,7 @@ import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 import com.enonic.wem.api.schema.relationship.UpdateRelationshipTypeParams;
 import com.enonic.wem.api.schema.relationship.editor.RelationshipTypeEditor;
-import com.enonic.wem.xml.XmlSerializers;
+import com.enonic.wem.api.xml.XmlSerializers;
 
 @Path("schema/relationship")
 @Produces(MediaType.APPLICATION_JSON)

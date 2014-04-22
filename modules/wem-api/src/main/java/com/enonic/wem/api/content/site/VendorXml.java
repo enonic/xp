@@ -2,7 +2,7 @@ package com.enonic.wem.api.content.site;
 
 import javax.xml.bind.annotation.XmlElement;
 
-import com.enonic.wem.xml.XmlObject;
+import com.enonic.wem.api.xml.XmlObject;
 
 public final class VendorXml
     implements XmlObject<Vendor, Vendor.Builder>

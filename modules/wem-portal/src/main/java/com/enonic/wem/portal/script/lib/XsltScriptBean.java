@@ -23,7 +23,7 @@ import com.enonic.wem.api.content.page.AbstractRegions;
 import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.layout.LayoutRegions;
 import com.enonic.wem.api.content.page.region.Region;
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.script.SourceException;
 import com.enonic.wem.portal.xml.DomBuilder;
@@ -148,7 +148,7 @@ public final class XsltScriptBean
         return null;
     }
 
-    private ResourceKey findResourceKey( final Path path )
+    private ModuleResourceKey findResourceKey( final Path path )
     {
         final ContextScriptBean service = ContextScriptBean.get();
 
@@ -156,7 +156,7 @@ public final class XsltScriptBean
         final Path modulePath = service.getModulePath().toAbsolutePath();
 
         final String name = filePath.toString().substring( modulePath.toString().length() + 1 );
-        return ResourceKey.from( service.getModule(), name );
+        return ModuleResourceKey.from( service.getModule(), name );
     }
 
     private Document createContextDoc()

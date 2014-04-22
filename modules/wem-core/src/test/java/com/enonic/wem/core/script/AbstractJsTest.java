@@ -1,19 +1,10 @@
 package com.enonic.wem.core.script;
 
-import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
-
 import org.junit.Before;
-import org.mockito.Mockito;
 
 import junit.framework.Assert;
 
-import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.core.config.SystemConfig;
-import com.enonic.wem.core.resource.ResourceServiceImpl;
-import com.enonic.wem.core.script.compiler.ScriptCacheImpl;
-import com.enonic.wem.core.script.compiler.ScriptCompilerImpl;
+import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.core.script.service.ScriptServiceImpl;
 
 public abstract class AbstractJsTest
@@ -24,6 +15,7 @@ public abstract class AbstractJsTest
     public final void setup()
         throws Exception
     {
+        /*
         this.scriptService = new ScriptServiceImpl();
         this.scriptService.setCompiler( new ScriptCompilerImpl( new ScriptCacheImpl() ) );
 
@@ -35,12 +27,13 @@ public abstract class AbstractJsTest
 
         final ResourceServiceImpl resourceService = new ResourceServiceImpl( systemConfig, systemClassLoader );
         this.scriptService.setResourceService( resourceService );
+        */
     }
 
     protected final void execTest( final String path )
     {
         final ScriptRunner runner = this.scriptService.newRunner();
-        runner.source( ResourceKey.from( path ) );
+        runner.source( ModuleResourceKey.from( path ) );
         runner.binding( "test", new TestUtils() );
         runner.execute();
     }

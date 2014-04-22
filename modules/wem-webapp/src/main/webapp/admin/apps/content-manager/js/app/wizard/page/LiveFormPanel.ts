@@ -177,22 +177,21 @@ module app.wizard.page {
                     new api.content.page.GetPageTemplateByKeyRequest(selectedPageTemplate.getKey()).
                         setSiteTemplateKey(this.siteTemplate.getKey()).
                         sendAndParse().
-                        done((pageTemplate: PageTemplate) => {
+                        then((pageTemplate: PageTemplate) => {
 
                             this.pageTemplate = pageTemplate;
 
                             this.pageRegions = this.resolvePageRegions(this.content, this.pageTemplate);
                             this.pageConfig = this.resolvePageConfig(this.content, this.pageTemplate);
 
-                            new GetPageDescriptorByKeyRequest(pageTemplate.getDescriptorKey()).
-                                sendAndParse().
-                                done((pageDescriptor: PageDescriptor) => {
+                            return new GetPageDescriptorByKeyRequest(pageTemplate.getDescriptorKey()).sendAndParse();
 
-                                    this.pageDescriptor = pageDescriptor;
-                                    this.pageInspectionPanel.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
+                        }).done((pageDescriptor: PageDescriptor) => {
 
-                                    this.saveAndReloadPage();
-                                });
+                            this.pageDescriptor = pageDescriptor;
+                            this.pageInspectionPanel.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
+
+                            this.saveAndReloadPage();
                         });
                 }
                 else {
@@ -234,7 +233,7 @@ module app.wizard.page {
 
                     return this.loadPageDescriptor();
 
-                }).then(():void => {
+                }).then((): void => {
 
                     this.contextWindow.showInspectionPanel(this.pageInspectionPanel);
                     this.pageInspectionPanel.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
@@ -253,24 +252,17 @@ module app.wizard.page {
             api.util.assertNotNull(content, "Expected content not be null");
 
             this.content = content;
-            var pageTemplateChanged = this.resolvePageTemplateChanged(pageTemplate);
             this.pageTemplate = pageTemplate;
 
             if (!this.pageSkipReload) {
 
-                if (pageTemplateChanged && this.pageTemplate) {
-
-                    this.pageRegions = this.pageTemplate.getRegions();
-                    this.pageConfig = this.pageTemplate.getConfig();
+                if (!this.content.isPage()) {
+                    // Nothing to set
                 }
-                else if (pageTemplateChanged && !this.pageTemplate) {
+                else if (!this.pageRegions && this.content.isPage()) {
 
-                    this.pageRegions = this.defaultModels.getPageTemplate().getRegions();
-                    this.pageConfig = this.defaultModels.getPageTemplate().getConfig();
-                }
-                else {
-                    this.pageRegions = this.resolvePageRegions(content, pageTemplate);
-                    this.pageConfig = this.resolvePageConfig(content, pageTemplate);
+                    this.pageRegions = content.getPage().getRegions();
+                    this.pageConfig = content.getPage().getConfig();
                 }
             }
 
@@ -308,35 +300,7 @@ module app.wizard.page {
             }
         }
 
-        private resolvePageTemplateChanged(pageTemplate: PageTemplate) {
-
-            if (this.pageTemplate == undefined) {
-                // initially pageTemplate is not changed
-                return false;
-            }
-
-            if (!pageTemplate && this.pageTemplate == null) {
-                return false;
-            }
-            else if (!pageTemplate && this.pageTemplate != null) {
-                return true;
-            }
-            else if (pageTemplate && this.pageTemplate == null) {
-                return true;
-            }
-            else if (this.pageTemplate.getKey().toString() != pageTemplate.getKey().toString()) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-
         private resolvePageRegions(content: Content, pageTemplate: PageTemplate): PageRegions {
-
-            if (!pageTemplate) {
-                return this.defaultModels.getPageTemplate().getRegions();
-            }
 
             if (content.isPage() && content.getPage().hasRegions()) {
                 return content.getPage().getRegions();
@@ -347,10 +311,6 @@ module app.wizard.page {
         }
 
         private resolvePageConfig(content: Content, pageTemplate: PageTemplate): RootDataSet {
-
-            if (!pageTemplate) {
-                return this.defaultModels.getPageTemplate().getConfig();
-            }
 
             if (content.isPage() && content.getPage().hasConfig()) {
                 return content.getPage().getConfig();
@@ -365,7 +325,7 @@ module app.wizard.page {
             var defaultPageTemplate = this.defaultModels.getPageTemplate();
 
             return new GetPageDescriptorByKeyRequest(defaultPageTemplate.getDescriptorKey()).sendAndParse().
-                then((pageDescriptor: PageDescriptor):void => {
+                then((pageDescriptor: PageDescriptor): void => {
 
                     this.pageTemplate = defaultPageTemplate;
                     this.pageConfig = defaultPageTemplate.getConfig();
@@ -517,8 +477,6 @@ module app.wizard.page {
             });
 
             this.liveEditPage.onImageComponentSetImage((event: ImageComponentSetImageEvent) => {
-
-                (<any>event.getComponentPlaceholder()).showLoadingSpinner(); // TODO: Remove any
 
                 if (this.pageTemplate) {
 
@@ -698,7 +656,7 @@ module app.wizard.page {
 
             }
             else {
-                console.log("ImageComponent to set image on not found: " + componentPath);
+                api.notify.showWarning("ImageComponent to set image on not found: " + componentPath);
             }
         }
 

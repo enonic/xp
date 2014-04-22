@@ -10,7 +10,7 @@ import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.LowLevelAppDescriptor;
 import com.sun.jersey.test.framework.spi.container.inmemory.InMemoryTestContainerFactory;
 
-import com.enonic.wem.web.servlet.ServletRequestHolder;
+import com.enonic.wem.core.web.servlet.ServletRequestHolder;
 
 public abstract class AbstractResourceTest
     extends JerseyTest

@@ -23,10 +23,13 @@
 
   <modules>
     <module>modules/wem-api</module>
+    <module>modules/wem-xml</module>
+    <module>modules/wem-guice</module>
     <module>modules/wem-core</module>
     <module>modules/wem-admin</module>
     <module>modules/wem-portal</module>
     <module>modules/wem-boot</module>
+    <module>modules/wem-karaf</module>
     <module>modules/wem-webapp</module>
     <module>modules/wem-runner</module>
     <module>modules/wem-itest</module>
@@ -110,6 +113,18 @@
             <version>2.1.8</version>
           </dependency>
         </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>2.4.0</version>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Import-Package>*</Import-Package>
+            <Private-Package/>
+          </instructions>
+        </configuration>
       </plugin>
     </plugins>
   </build>

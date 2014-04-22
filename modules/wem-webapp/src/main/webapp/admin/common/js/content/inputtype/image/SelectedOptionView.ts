@@ -4,26 +4,33 @@ module api.content.inputtype.image {
 
         private static IMAGE_SIZE: number = 270;
 
-        private content:api.content.ContentSummary;
+        private content: api.content.ContentSummary;
 
         private icon: api.dom.ImgEl;
 
-        constructor(option:api.ui.selector.Option<api.content.ContentSummary>) {
+        constructor(option: api.ui.selector.Option<api.content.ContentSummary>) {
             this.content = option.displayValue;
             super(option);
         }
 
         layout() {
-            this.icon = new api.dom.ImgEl(this.content.getIconUrl()+"?thumbnail=false&size=" + SelectedOptionView.IMAGE_SIZE);
+            this.icon = new api.dom.ImgEl(this.content.getIconUrl() + "?thumbnail=false&size=" + SelectedOptionView.IMAGE_SIZE);
             this.appendChild(this.icon);
 
             var label = new api.dom.DivEl("label");
             label.getEl().setInnerHtml(this.content.getName().toString());
             this.appendChild(label);
+
+            var closeBtn = new api.ui.CloseButton();
+            closeBtn.onClicked((event: MouseEvent) => {
+                this.notifySelectedOptionToBeRemoved();
+            });
+            this.appendChild(closeBtn);
         }
 
         getIcon(): api.dom.ImgEl {
             return this.icon;
         }
+
     }
 }

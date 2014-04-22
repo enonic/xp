@@ -4,6 +4,7 @@ import javax.inject.Singleton;
 
 import com.sun.jersey.api.core.ResourceConfig;
 
+import com.enonic.wem.core.web.jaxrs.JaxRsServlet;
 import com.enonic.wem.portal.content.ComponentResource;
 import com.enonic.wem.portal.content.ContentResource;
 import com.enonic.wem.portal.exception.mapper.DefaultExceptionMapper;
@@ -14,8 +15,6 @@ import com.enonic.wem.portal.underscore.ImageByIdResource;
 import com.enonic.wem.portal.underscore.ImageResource;
 import com.enonic.wem.portal.underscore.PublicResource;
 import com.enonic.wem.portal.underscore.ServicesResource;
-import com.enonic.wem.web.jaxrs.JaxRsServlet;
-import com.enonic.wem.web.mvc.FreeMarkerViewWriter;
 
 @Singleton
 public final class PortalServlet
@@ -31,7 +30,6 @@ public final class PortalServlet
         addClass( ImageResource.class );
         addClass( ImageByIdResource.class );
         addClass( ServicesResource.class );
-        addClass( FreeMarkerViewWriter.class );
         addClass( SourceExceptionMapper.class );
         addClass( PortalWebExceptionMapper.class );
         addClass( DefaultExceptionMapper.class );

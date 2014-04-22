@@ -14,6 +14,8 @@ module LiveEdit.component {
         elementDimensions: ElementDimensions;
         selectedAsParent: boolean;
 
+        private mask: api.ui.LoadMask;
+
         constructor(element?: HTMLElement) {
             this.selectedAsParent = false;
             var props = new api.dom.ElementProperties();
@@ -28,6 +30,9 @@ module LiveEdit.component {
             if (!this.componentType) {
                 this.setComponentType(new LiveEdit.component.ComponentType(this.resolveComponentTypeEnum()));
             }
+
+            this.mask = new api.ui.LoadMask(this);
+            this.appendChild(this.mask);
         }
 
         public static fromJQuery(element: JQuery): Component {
@@ -129,7 +134,11 @@ module LiveEdit.component {
         }
 
         showLoadingSpinner() {
-            var spinner = new LoadingOverlay(this);
+            this.mask.show();
+        }
+
+        hideLoadingSpinner() {
+            this.mask.hide();
         }
 
         private getDimensionsFromElement(): ElementDimensions {

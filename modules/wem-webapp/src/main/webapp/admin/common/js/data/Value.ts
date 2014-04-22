@@ -40,7 +40,7 @@ module api.data {
         }
 
         equals(value: Value): boolean {
-            return this.value == value.value && this.type.toString() == value.getType().toString();
+            return this.value == value.value && this.type.toString() == value.type.toString();
         }
     }
 }

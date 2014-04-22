@@ -13,8 +13,8 @@ import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.schema.content.ContentTypeFilter;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.xml.XmlObject;
-import com.enonic.wem.xml.template.ContentFilterXml;
+import com.enonic.wem.api.xml.XmlObject;
+import com.enonic.wem.api.xml.template.ContentFilterXml;
 
 
 @XmlRootElement(name = "site-template")

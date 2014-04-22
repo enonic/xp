@@ -9,7 +9,7 @@ import org.apache.commons.io.FileUtils;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleNotFoundException;
-import com.enonic.wem.util.Exceptions;
+import com.enonic.wem.api.util.Exceptions;
 
 final class DeleteModuleCommand
 {
@@ -29,7 +29,7 @@ final class DeleteModuleCommand
 
         try
         {
-            final Module.Builder moduleBuilder = this.moduleExporter.importFromDirectory( moduleDir );
+            final ModuleBuilder moduleBuilder = this.moduleExporter.importFromDirectory( moduleDir );
             final Module module = moduleBuilder == null ? null : moduleBuilder.build();
             FileUtils.deleteDirectory( moduleDir.toFile() );
             return module;

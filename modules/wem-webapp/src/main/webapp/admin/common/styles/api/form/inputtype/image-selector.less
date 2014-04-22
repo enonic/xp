@@ -54,9 +54,13 @@
       padding: 0;
       margin: 10px 4.716981132% 20px 0;
       cursor: pointer;
+      border: 1px solid #d3d3d3;
+      background-color: #ffffff;
 
       &.editing {
+        border: none;
         .scale(1.66667);
+        .box-shadow(0px 0px 10px darken(@admin-input-blue, 10%));
         z-index: 100;
 
         &.first-in-row {
@@ -65,6 +69,14 @@
 
         &.last-in-row {
           .transform(scale(1.66667) translate(-20%));;
+        }
+
+        &:hover .label {
+          display: none;
+        }
+
+        .close-button {
+          .scale(0.6); // 0.6 * 1.66667 = 1 to keep the close button same size
         }
       }
 
@@ -75,11 +87,11 @@
         margin: auto;
       }
 
-      .label {
+      > .label {
         display: none;
       }
 
-      &:hover .label {
+      &:hover > .label {
         display: block;
         position: absolute;
         width: 100%;
@@ -159,17 +171,17 @@
       color: @admin-dark-gray-font;
 
       .selected-option {
-        width:135px;
-        height:135px;
-        margin:10px 15px 10px 0;
+        width: 135px;
+        height: 135px;
+        margin: 10px 15px 10px 0;
 
         &.last-in-row {
-          margin-right:0px;
+          margin-right: 0px;
         }
 
         &.editing {
           .scale(1.5);
-          top:auto;
+          top: auto;
           background-color: @admin-blue-button2;
         }
       }

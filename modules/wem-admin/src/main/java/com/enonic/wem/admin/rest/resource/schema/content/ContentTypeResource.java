@@ -40,7 +40,7 @@ import com.enonic.wem.api.schema.content.ValidateContentTypeParams;
 import com.enonic.wem.api.schema.content.editor.ContentTypeEditor;
 import com.enonic.wem.api.schema.content.validator.ContentTypeValidationResult;
 import com.enonic.wem.api.support.serializer.XmlParsingException;
-import com.enonic.wem.xml.XmlSerializers;
+import com.enonic.wem.api.xml.XmlSerializers;
 
 @Path("schema/content")
 @Produces("application/json")

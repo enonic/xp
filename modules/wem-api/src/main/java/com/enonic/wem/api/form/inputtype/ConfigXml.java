@@ -2,7 +2,7 @@ package com.enonic.wem.api.form.inputtype;
 
 import org.w3c.dom.Element;
 
-import com.enonic.wem.xml.XmlObject;
+import com.enonic.wem.api.xml.XmlObject;
 
 public class ConfigXml<I extends InputTypeConfig, O>
     implements XmlObject<I, O>

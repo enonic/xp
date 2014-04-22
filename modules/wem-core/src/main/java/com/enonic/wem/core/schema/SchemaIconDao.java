@@ -13,7 +13,7 @@ import com.google.common.net.MediaType;
 
 import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.schema.SchemaIcon;
-import com.enonic.wem.util.MediaTypes;
+import com.enonic.wem.api.util.MediaTypes;
 
 public final class SchemaIconDao
 {

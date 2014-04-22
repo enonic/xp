@@ -5,8 +5,8 @@ import org.junit.Test;
 
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
-import com.enonic.wem.xml.BaseXmlSerializerTest;
-import com.enonic.wem.xml.XmlSerializers;
+import com.enonic.wem.api.xml.BaseXmlSerializerTest;
+import com.enonic.wem.api.xml.XmlSerializers;
 
 import static com.enonic.wem.api.schema.relationship.RelationshipType.newRelationshipType;
 import static junit.framework.Assert.assertEquals;

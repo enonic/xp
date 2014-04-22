@@ -1,50 +1,52 @@
-module api.content{
+module api.content {
 
     export class ContentSummary extends ContentIdBaseItem implements api.node.Node {
 
-        private id:string;
+        private id: string;
 
-        private name:ContentName;
+        private name: ContentName;
 
-        private displayName:string;
+        private displayName: string;
 
-        private path:ContentPath;
+        private path: ContentPath;
 
-        private root:boolean;
+        private root: boolean;
 
-        private children:boolean;
+        private children: boolean;
 
-        private type:api.schema.content.ContentTypeName;
+        private type: api.schema.content.ContentTypeName;
 
-        private iconUrl:string;
+        private iconUrl: string;
 
-        private modifier:string;
+        private modifier: string;
 
-        private owner:string;
+        private owner: string;
 
-        private site:boolean;
+        private site: boolean;
 
-        private page:boolean;
+        private page: boolean;
 
-        private draft:boolean;
+        private embedded: boolean;
 
-        private createdTime:Date;
+        private draft: boolean;
 
-        private modifiedTime:Date;
+        private createdTime: Date;
 
-        private deletable:boolean;
+        private modifiedTime: Date;
 
-        private editable:boolean;
+        private deletable: boolean;
 
-        static fromJsonArray(jsonArray:api.content.json.ContentSummaryJson[]):ContentSummary[] {
-            var array:ContentSummary[] = [];
-            jsonArray.forEach((json:api.content.json.ContentSummaryJson) => {
+        private editable: boolean;
+
+        static fromJsonArray(jsonArray: api.content.json.ContentSummaryJson[]): ContentSummary[] {
+            var array: ContentSummary[] = [];
+            jsonArray.forEach((json: api.content.json.ContentSummaryJson) => {
                 array.push(new ContentSummary(json));
             });
             return array;
         }
 
-        constructor(json:api.content.json.ContentSummaryJson) {
+        constructor(json: api.content.json.ContentSummaryJson) {
             super(json);
             this.name = ContentName.fromString(json.name);
             this.displayName = json.displayName;
@@ -57,6 +59,7 @@ module api.content{
             this.owner = json.owner;
             this.site = json.isSite;
             this.page = json.isPage;
+            this.embedded = json.isEmbedded;
             this.draft = json.draft;
 
             this.id = json.id;
@@ -66,75 +69,79 @@ module api.content{
             this.editable = json.editable;
         }
 
-        getName():ContentName {
+        getName(): ContentName {
             return this.name;
         }
 
-        getDisplayName():string {
+        getDisplayName(): string {
             return this.displayName;
         }
 
-        hasParent():boolean {
+        hasParent(): boolean {
             return this.path.hasParentContent();
         }
 
-        getPath():ContentPath {
+        getPath(): ContentPath {
             return this.path;
         }
 
-        isRoot():boolean {
+        isRoot(): boolean {
             return this.root;
         }
 
-        hasChildren():boolean {
+        hasChildren(): boolean {
             return this.children;
         }
 
-        getType():api.schema.content.ContentTypeName {
+        getType(): api.schema.content.ContentTypeName {
             return this.type;
         }
 
-        getIconUrl():string {
+        getIconUrl(): string {
             return this.iconUrl;
         }
 
-        getOwner():string {
+        getOwner(): string {
             return this.owner;
         }
 
-        getModifier():string {
+        getModifier(): string {
             return this.modifier;
         }
 
-        isSite():boolean {
+        isSite(): boolean {
             return this.site;
         }
 
-        isPage():boolean {
+        isPage(): boolean {
             return this.page;
         }
 
-        isDraft():boolean {
+        isEmbedded(): boolean {
+            return this.embedded;
+        }
+
+        isDraft(): boolean {
             return this.draft;
         }
 
-        getId():string {
+        getId(): string {
             return this.id;
         }
 
-        getCreatedTime():Date {
+        getCreatedTime(): Date {
             return this.createdTime;
         }
 
-        getModifiedTime():Date {
+        getModifiedTime(): Date {
             return this.modifiedTime;
         }
 
-        isDeletable():boolean {
+        isDeletable(): boolean {
             return this.deletable;
         }
 
-        isEditable():boolean {
+        isEditable(): boolean {
             return this.editable;
         }
     }

@@ -22,7 +22,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeyResolver;
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.module.ModuleKeyResolverService;
 import com.enonic.wem.core.module.ModuleResourcePathResolver;
@@ -79,7 +79,7 @@ public class PublicResourceTest
     {
         final Path filePath = tempDir.resolve( "main.css" );
         Files.write( filePath, "p {color:red;}".getBytes( Charsets.UTF_8 ) );
-        when( modulePathResolver.resolveResourcePath( isA( ResourceKey.class ) ) ).thenReturn( filePath );
+        when( modulePathResolver.resolveResourcePath( isA( ModuleResourceKey.class ) ) ).thenReturn( filePath );
 
         final ContentPath contentPath = ContentPath.from( "path/to/content" );
         final Content content = createContent( "content-id", contentPath, "content-type" );
@@ -103,7 +103,7 @@ public class PublicResourceTest
     {
         final Path filePath = tempDir.resolve( "main.css" );
         Files.write( filePath, "p {color:red;}".getBytes( Charsets.UTF_8 ) );
-        when( modulePathResolver.resolveResourcePath( isA( ResourceKey.class ) ) ).thenReturn( filePath );
+        when( modulePathResolver.resolveResourcePath( isA( ModuleResourceKey.class ) ) ).thenReturn( filePath );
 
         final ContentPath contentPath = ContentPath.from( "path/to/content" );
         final Content content = createContent( "content-id", contentPath, "content-type" );
@@ -126,7 +126,7 @@ public class PublicResourceTest
         throws Exception
     {
         final Path filePath = tempDir.resolve( "main.css" );
-        when( modulePathResolver.resolveResourcePath( isA( ResourceKey.class ) ) ).thenReturn( filePath );
+        when( modulePathResolver.resolveResourcePath( isA( ModuleResourceKey.class ) ) ).thenReturn( filePath );
 
         final ContentPath contentPath = ContentPath.from( "path/to/content" );
         final Content content = createContent( "content-id", contentPath, "content-type" );
@@ -147,7 +147,7 @@ public class PublicResourceTest
         throws Exception
     {
         final Path filePath = tempDir.resolve( "main.css" );
-        when( modulePathResolver.resolveResourcePath( isA( ResourceKey.class ) ) ).thenReturn( filePath );
+        when( modulePathResolver.resolveResourcePath( isA( ModuleResourceKey.class ) ) ).thenReturn( filePath );
 
         final ContentPath contentPath = ContentPath.from( "path/to/content" );
         final Content content = createContent( "content-id", contentPath, "content-type" );
@@ -168,7 +168,7 @@ public class PublicResourceTest
         throws Exception
     {
         final Path filePath = tempDir.resolve( "main.css" );
-        when( modulePathResolver.resolveResourcePath( isA( ResourceKey.class ) ) ).thenReturn( filePath );
+        when( modulePathResolver.resolveResourcePath( isA( ModuleResourceKey.class ) ) ).thenReturn( filePath );
         when( contentService.getByPath( ContentPath.from( "content" ) ) ).thenReturn( null );
 
         resource.mode = "live";

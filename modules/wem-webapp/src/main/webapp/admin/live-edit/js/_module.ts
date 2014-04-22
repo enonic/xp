@@ -16,7 +16,6 @@
 ///<reference path='component/TextPlaceholder.ts' />
 ///<reference path='component/helper/DragHelper.ts' />
 ///<reference path='component/helper/ComponentResizeObserver.ts' />
-///<reference path='component/LoadingOverlay.ts' />
 ///<reference path='component/Selection.ts' />
 
 

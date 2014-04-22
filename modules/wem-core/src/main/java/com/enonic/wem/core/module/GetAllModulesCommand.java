@@ -10,7 +10,7 @@ import java.util.List;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.Modules;
 import com.enonic.wem.core.config.SystemConfig;
-import com.enonic.wem.util.Exceptions;
+import com.enonic.wem.api.util.Exceptions;
 
 final class GetAllModulesCommand
 {
@@ -40,7 +40,7 @@ final class GetAllModulesCommand
             {
                 if ( Files.isDirectory( moduleDir ) )
                 {
-                    final Module.Builder builder = this.moduleExporter.importFromDirectory( moduleDir );
+                    final ModuleBuilder builder = this.moduleExporter.importFromDirectory( moduleDir );
                     if ( builder != null )
                     {
                         modules.add( builder.build() );
