@@ -8,6 +8,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
@@ -40,9 +41,14 @@ public class ModuleImporterTest
         throws Exception
     {
         final Module module = createModule();
-        final Path exportedModuleDir = new ModuleExporter().exportToDirectory( module, tempDir );
+        final ModuleExporter exporter = new ModuleExporter();
 
-        final Module importedModule = new ModuleExporter().importFromDirectory( exportedModuleDir ).build();
+        exporter.pathResolver = Mockito.mock( ModuleResourcePathResolver.class );
+
+        final Path exportedModuleDir = exporter.exportToDirectory( module, tempDir );
+        Mockito.when( exporter.pathResolver.resolveModulePath( module.getKey() ) ).thenReturn( exportedModuleDir );
+
+        final Module importedModule = exporter.importFromDirectory( exportedModuleDir ).build();
 
         assertNotNull( importedModule );
         assertEquals( "testmodule-1.0.0", importedModule.getKey().toString() );
