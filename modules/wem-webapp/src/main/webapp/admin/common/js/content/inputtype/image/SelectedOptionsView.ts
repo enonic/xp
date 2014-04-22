@@ -23,6 +23,13 @@ module api.content.inputtype.image {
             this.dialog = new ImageSelectorDialog();
             this.dialog.hide();
             this.appendChild(this.dialog);
+            
+            jQuery(this.getHTMLElement()).sortable({
+                containment: this.getHTMLElement(),
+                cursor: 'move',
+                tolerance: 'pointer',
+                update: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDUpdate()
+            });
 
             this.onShown((event: api.dom.ElementShownEvent) => {
                 this.updateLayout();
@@ -86,6 +93,7 @@ module api.content.inputtype.image {
             this.appendChild(optionView);
             optionView.getIcon().onLoaded((event: UIEvent) => {
                 this.updateOptionViewLayout(optionView, this.calculateOptionHeight());
+                jQuery(this.getHTMLElement()).sortable("refresh");
             });
         }
 
@@ -114,6 +122,8 @@ module api.content.inputtype.image {
                 this.dialog.show();
                 this.updateDialogLayout(this.calculateOptionHeight());
             }
+
+            jQuery(this.getHTMLElement()).sortable("disable");
         }
 
         updateLayout() {
@@ -146,6 +156,8 @@ module api.content.inputtype.image {
         private hideImageSelectorDialog() {
             this.dialog.hide();
             this.editableOption.getOptionView().removeClass('editing first-in-row last-in-row');
+            jQuery(this.getHTMLElement()).sortable("enable");
+            
             api.dom.Body.get().unClicked(this.mouseClickListener);
         }
 
@@ -175,6 +187,24 @@ module api.content.inputtype.image {
 
         private isLast(index: number): boolean {
             return (index + 1) == this.getSelectedOptionViews().length;
+        }
+
+        private handleDnDUpdate() {
+            var optionViews = this.getSelectedOptions().getOptionViews();
+            var orderedOptions: SelectedOptionView[] = [];
+
+            var domChildren = this.getHTMLElement().children;
+            for (var i = 0; i < domChildren.length; i++) {
+                var domChild = <HTMLElement> domChildren[i];
+                var childEl = optionViews.filter((optionView: SelectedOptionView) => (optionView.getHTMLElement() == domChild))[0];
+                if (childEl) {
+                    orderedOptions.push(<SelectedOptionView>childEl);
+                }
+            }
+
+            orderedOptions.forEach((view: SelectedOptionView, index: number) => {
+                this.getSelectedOptions().getByView(view).setIndex(index);
+            });
         }
 
     }

@@ -12,6 +12,10 @@ module api.ui.selector.combobox {
             this.selectedOptions = value;
         }
 
+        getSelectedOptions(): SelectedOptions<T> {
+            return this.selectedOptions;
+        }
+
         getSelectedOptionViews(): SelectedOptionView<T>[] {
             return this.selectedOptions.getOptionViews();
         }
