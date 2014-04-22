@@ -48,6 +48,9 @@ import com.enonic.wem.core.index.document.IndexDocument;
 public class ElasticsearchIndexServiceImpl
     implements ElasticsearchIndexService
 {
+
+    public static final boolean DEFAULT_REFRESH = true;
+
     private Client client;
 
     private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchIndexServiceImpl.class );
@@ -106,7 +109,7 @@ public class ElasticsearchIndexServiceImpl
             index( nodeStorageDocument.getIndex().getName() ).
             type( nodeStorageDocument.getIndexType().getName() ).
             source( XContentBuilderFactory.create( nodeStorageDocument ) ).
-            refresh( true );
+            refresh( DEFAULT_REFRESH );
 
         if ( nodeStorageDocument.getId() != null )
         {
@@ -121,8 +124,10 @@ public class ElasticsearchIndexServiceImpl
     @Override
     public boolean delete( final DeleteDocument deleteDocument )
     {
-        DeleteRequest deleteRequest =
-            new DeleteRequest( deleteDocument.getIndex().getName(), deleteDocument.getIndexType().getName(), deleteDocument.getId() );
+        DeleteRequest deleteRequest = new DeleteRequest( deleteDocument.getIndexName() ).
+            type( deleteDocument.getIndexTypeName() ).
+            id( deleteDocument.getId() ).
+            refresh( DEFAULT_REFRESH );
 
         try
         {
@@ -131,8 +136,8 @@ public class ElasticsearchIndexServiceImpl
         }
         catch ( ElasticsearchException e )
         {
-            throw new IndexException( "Failed to delete from index " + deleteDocument.getIndex() + " of type " +
-                                          deleteDocument.getIndexType().getName() + " with id " + deleteDocument.getId(), e );
+            throw new IndexException( "Failed to delete from index " + deleteDocument.getIndexName() + " of type " +
+                                          deleteDocument.getIndexTypeName() + " with id " + deleteDocument.getId(), e );
         }
     }
 

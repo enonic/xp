@@ -15,14 +15,14 @@ public class DeleteDocument
         this.id = id;
     }
 
-    public Index getIndex()
+    public String getIndexName()
     {
-        return index;
+        return index.getName();
     }
 
-    public IndexType getIndexType()
+    public String getIndexTypeName()
     {
-        return indexType;
+        return indexType.getName();
     }
 
     public String getId()
