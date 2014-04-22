@@ -59,6 +59,8 @@ module api.form {
                 start: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDStart(event, ui),
                 update: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDUpdate(event, ui)
             });
+            jQuery(this.occurrenceViewsContainer.getHTMLElement()).disableSelection();
+
             this.appendChild(this.occurrenceViewsContainer);
 
 
@@ -75,6 +77,7 @@ module api.form {
             this.validate(true);
             this.formItemSetOccurrences.onOccurrenceAdded((event: OccurrenceAddedEvent) => {
                 this.refresh();
+                jQuery(this.occurrenceViewsContainer.getHTMLElement()).sortable("refresh");
 
                 if (event.getOccurrenceView() instanceof FormItemSetOccurrenceView) {
                     var addedFormItemSetOccurrenceView = <FormItemSetOccurrenceView>event.getOccurrenceView();
