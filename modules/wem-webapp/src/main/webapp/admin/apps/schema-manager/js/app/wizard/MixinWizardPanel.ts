@@ -57,7 +57,7 @@ module app.wizard {
         layoutPersistedItem(persistedMixin: api.schema.mixin.Mixin): Q.Promise<void> {
 
             this.mixinWizardHeader.setName(persistedMixin.getName());
-            this.formIcon.setSrc(persistedMixin.getIconUrl());
+            this.formIcon.setSrc(persistedMixin.getIconUrl() + '?crop=false');
 
             return new api.schema.mixin.GetMixinConfigByNameRequest(persistedMixin.getMixinName()).
                 send().

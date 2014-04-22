@@ -14,7 +14,7 @@ module api.content {
             super.setObject(content);
             this.namesAndIconView.setMainName(content.getDisplayName()).
                 setSubName(content.getPath().toString()).
-                setIconUrl(content.getIconUrl());
+                setIconUrl(content.getIconUrl() + '?crop=false');
         }
 
         getPreferredHeight(): number {

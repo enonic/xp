@@ -57,7 +57,7 @@ module app.wizard {
         layoutPersistedItem(persistedContentType: api.schema.content.ContentType): Q.Promise<void> {
 
             this.contentTypeWizardHeader.setName(persistedContentType.getName());
-            this.formIcon.setSrc(persistedContentType.getIconUrl());
+            this.formIcon.setSrc(persistedContentType.getIconUrl() + '?crop=false');
 
             return new api.schema.content.GetContentTypeConfigByNameRequest(persistedContentType.getContentTypeName()).send().
                 then((response: api.rest.JsonResponse <api.schema.content.GetContentTypeConfigResult>):void => {

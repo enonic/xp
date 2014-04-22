@@ -69,7 +69,7 @@ module app.wizard {
         layoutPersistedItem(persistedRelationshipType: RelationshipType): Q.Promise<void> {
 
             this.relationShipTypeWizardHeader.setName(persistedRelationshipType.getName());
-            this.formIcon.setSrc(persistedRelationshipType.getIconUrl());
+            this.formIcon.setSrc(persistedRelationshipType.getIconUrl() + '?crop=false');
             this.persistedRelationshipType = persistedRelationshipType;
 
             return new GetRelationshipTypeConfigByNameRequest(persistedRelationshipType.getRelationshiptypeName()).send().
