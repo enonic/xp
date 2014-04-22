@@ -63,6 +63,10 @@ abstract class AbstractGetImageDescriptorCommand<T extends AbstractGetImageDescr
 
             for ( final String componentName : componentNames )
             {
+                if ( componentName == null )
+                {
+                    continue;
+                }
                 final ComponentDescriptorName descriptorName = new ComponentDescriptorName( componentName );
                 final ImageDescriptorKey key = ImageDescriptorKey.from( module.getKey(), descriptorName );
                 final ImageDescriptor imageDescriptor = getImageDescriptor( key );

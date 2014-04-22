@@ -63,6 +63,10 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
 
             for ( final String componentName : componentNames )
             {
+                if ( componentName == null )
+                {
+                    continue;
+                }
                 final ComponentDescriptorName descriptorName = new ComponentDescriptorName( componentName );
                 final LayoutDescriptorKey key = LayoutDescriptorKey.from( module.getKey(), descriptorName );
                 final LayoutDescriptor layoutDescriptor = getDescriptor( key );

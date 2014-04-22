@@ -63,6 +63,10 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
 
             for ( final String componentName : componentNames )
             {
+                if ( componentName == null )
+                {
+                    continue;
+                }
                 final ComponentDescriptorName descriptorName = new ComponentDescriptorName( componentName );
                 final PartDescriptorKey key = PartDescriptorKey.from( module.getKey(), descriptorName );
                 final PartDescriptor partDescriptor = getDescriptor( key );
