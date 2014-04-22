@@ -1,14 +1,20 @@
 module app.wizard {
 
+    import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
+    import Form = api.form.Form;
+    import FormContext = api.form.FormContext;
+    import FormView = api.form.FormView;
+    import ContentData = api.content.ContentData;
+
     export class ContentWizardStepForm extends api.app.wizard.WizardStepForm {
 
-        private formContext: api.form.FormContext;
+        private formContext: FormContext;
 
-        private form: api.form.Form;
+        private form: Form;
 
-        private formView: api.form.FormView;
+        private formView: FormView;
 
-        private contentData: api.content.ContentData;
+        private contentData: ContentData;
 
         private publishAction: api.ui.Action;
 
@@ -17,17 +23,35 @@ module app.wizard {
             this.publishAction = publishAction;
         }
 
-        renderExisting(formContext: api.form.FormContext, contentData: api.content.ContentData, form: api.form.Form) {
-            this.removeChildren();
-            this.formContext = formContext;
-            this.form = form;
-            this.contentData = contentData;
-            this.layout(form, contentData);
+        renderExisting(formContext: FormContext, contentData: ContentData, form: Form) {
+
+            if (!this.contentData) {
+                this.formContext = formContext;
+                this.form = form;
+                this.contentData = contentData;
+                this.layout(form, contentData);
+            }
+            else {
+                if (!this.contentData.equals(contentData)) {
+                    ConfirmationDialog.get().
+                        setQuestion("Received content data differs from what you have. Would you like to load changes from server?").
+                        setYesCallback(() => {
+
+                            this.formContext = formContext;
+                            this.form = form;
+                            this.contentData = contentData;
+                            this.layout(form, contentData);
+                        }).
+                        setNoCallback(() => {
+
+                        }).show();
+                }
+            }
         }
 
-        private layout(form: api.form.Form, contentData: api.content.ContentData) {
+        private layout(form: Form, contentData: ContentData) {
 
-            this.formView = new api.form.FormView(this.formContext, form, contentData);
+            this.formView = new FormView(this.formContext, form, contentData);
             this.formView.addEditContentRequestListener((content: api.content.ContentSummary) => {
                 new app.browse.EditContentEvent([content]).fire();
             });
@@ -40,15 +64,15 @@ module app.wizard {
             });
         }
 
-        getForm(): api.form.Form {
+        getForm(): Form {
             return this.form;
         }
 
-        getFormView(): api.form.FormView {
+        getFormView(): FormView {
             return this.formView;
         }
 
-        getContentData(): api.content.ContentData {
+        getContentData(): ContentData {
 
             return this.contentData;
         }
