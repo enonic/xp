@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 
+import com.enonic.wem.api.entity.Attachments;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
 import com.enonic.wem.api.entity.Node;
@@ -77,16 +78,10 @@ public class NodeElasticsearchDao
             modifiedTime( now ).
             modifier( updateNodeArguments.updater() ).
             rootDataSet( updateNodeArguments.rootDataSet() ).
-            // TODO: Fix attachments
-                attachments( persistedNode.attachments() ).
+            attachments( syncronizeAttachments( updateNodeArguments, persistedNode ) ).
             entityIndexConfig( updateNodeArguments.entityIndexConfig() != null
                                    ? updateNodeArguments.entityIndexConfig()
                                    : persistedNode.getEntityIndexConfig() );
-
-
-         /*
-        attachmentsJcrMapper.synchronizeJcr( updateNodeArgs.attachments(), jcrNode );
-        */
 
         final Node updatedNode = updateNodeBuilder.build();
 
@@ -97,6 +92,19 @@ public class NodeElasticsearchDao
         return updatedNode;
     }
 
+    private Attachments syncronizeAttachments( final UpdateNodeArgs updateNodeArgs, final Node persistedNode )
+    {
+
+        final Attachments persistedAttachments = persistedNode.attachments();
+
+        if ( updateNodeArgs.attachments() == null )
+        {
+            return persistedAttachments;
+        }
+
+        return updateNodeArgs.attachments();
+
+    }
 
     public boolean move( final MoveNodeArguments moveNodeArguments )
     {
