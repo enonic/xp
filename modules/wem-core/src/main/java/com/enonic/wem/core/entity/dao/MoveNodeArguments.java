@@ -14,7 +14,7 @@ public class MoveNodeArguments
 
     private final NodeName name;
 
-    private final NodePath path;
+    private final NodePath parentPath;
 
 
     private final EntityIndexConfig entityIndexConfig;
@@ -24,7 +24,7 @@ public class MoveNodeArguments
         this.updater = builder.updater;
         this.entityIndexConfig = builder.entityIndexConfig;
         this.name = builder.name;
-        this.path = builder.path;
+        this.parentPath = builder.parentPath;
         this.nodeToMove = builder.nodeToUpdate;
     }
 
@@ -43,9 +43,9 @@ public class MoveNodeArguments
         return name;
     }
 
-    public NodePath path()
+    public NodePath parentPath()
     {
-        return path;
+        return parentPath;
     }
 
     public EntityIndexConfig getEntityIndexConfig()
@@ -66,7 +66,7 @@ public class MoveNodeArguments
 
         private NodeName name;
 
-        private NodePath path;
+        private NodePath parentPath;
 
         private EntityIndexConfig entityIndexConfig;
 
@@ -89,9 +89,9 @@ public class MoveNodeArguments
             return this;
         }
 
-        public Builder path( final NodePath path )
+        public Builder parentPath( final NodePath parentPath )
         {
-            this.path = path;
+            this.parentPath = parentPath;
             return this;
         }
 

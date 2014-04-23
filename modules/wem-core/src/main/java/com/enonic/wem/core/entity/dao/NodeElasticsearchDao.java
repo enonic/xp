@@ -102,7 +102,7 @@ public class NodeElasticsearchDao
     {
         final Node persistedNode = getById( moveNodeArguments.nodeToMove() );
 
-        if ( persistedNode.path().equals( moveNodeArguments.path() ) )
+        if ( persistedNode.path().equals( new NodePath( moveNodeArguments.parentPath(), moveNodeArguments.name() ) ) )
         {
             return false;
         }
@@ -112,7 +112,7 @@ public class NodeElasticsearchDao
         final Node movedNode = Node.newNode( persistedNode ).
             id( persistedNode.id() ).
             name( moveNodeArguments.name() ).
-            parent( moveNodeArguments.path().getParentPath() ).
+            parent( moveNodeArguments.parentPath() ).
             creator( persistedNode.creator() ).
             createdTime( persistedNode.getCreatedTime() ).
             modifiedTime( now ).
