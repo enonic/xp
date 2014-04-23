@@ -65,6 +65,8 @@ module app.wizard.page {
 
         private pageComponentResetListeners: {(event: PageComponentResetEvent): void;}[] = [];
 
+        private pageComponentDuplicatedListeners: {(event: PageComponentDuplicatedEvent): void;}[] = [];
+
         constructor(config: LiveEditPageConfig) {
 
             this.baseUrl = api.util.getUri("portal/edit/");
@@ -252,7 +254,6 @@ module app.wizard.page {
 
             this.liveEditJQuery(this.liveEditWindow).on('pageSelect.liveEdit', (event) => {
 
-
                 this.notifyPageSelected();
             });
 
@@ -263,6 +264,7 @@ module app.wizard.page {
 
             });
 
+            this.liveEditJQuery(this.liveEditWindow).off('componentSelect.liveEdit');
             this.liveEditJQuery(this.liveEditWindow).on('componentSelect.liveEdit', (event, pathAsString?, component?) => {
 
                 if (pathAsString) {
@@ -276,6 +278,7 @@ module app.wizard.page {
                 this.notifyDeselect();
             });
 
+            this.liveEditJQuery(this.liveEditWindow).off('componentAdded.liveEdit');
             this.liveEditJQuery(this.liveEditWindow).on('componentAdded.liveEdit',
                 (event, componentEl?, regionPathAsString?: string, precedingComponentPathAsString?: string) => {
 
@@ -300,6 +303,16 @@ module app.wizard.page {
 
                 var componentPath: ComponentPath = ComponentPath.fromString(component.getComponentPath());
                 this.notifyPageComponentReset(componentPath);
+            });
+
+            this.liveEditJQuery(this.liveEditWindow).off('componentDuplicated.liveEdit');
+            this.liveEditJQuery(this.liveEditWindow).on('componentDuplicated.liveEdit', (event, component?, placeholder?) => {
+
+                var componentType = component.getComponentType().getName();
+                var region: RegionPath = RegionPath.fromString(component.getRegionName());
+                var componentPath: ComponentPath = ComponentPath.fromString(component.getComponentPath());
+
+                this.notifyPageComponentDuplicated(component, placeholder, componentType, region, componentPath);
             });
 
             var liveEditPageWindow = window;
@@ -580,6 +593,23 @@ module app.wizard.page {
         private notifyPageComponentRemoved(path: ComponentPath) {
             var event = new PageComponentRemovedEvent(path);
             this.pageComponentRemovedListeners.forEach((listener) => {
+                listener(event);
+            });
+        }
+
+        onPageComponentDuplicated(listener: {(event: PageComponentDuplicatedEvent): void;}) {
+            this.pageComponentDuplicatedListeners.push(listener);
+        }
+
+        unPageComponentDuplicated(listener: {(event: PageComponentDuplicatedEvent): void;}) {
+            this.pageComponentDuplicatedListeners = this.pageComponentDuplicatedListeners.filter(function (curr) {
+                return curr != listener;
+            });
+        }
+
+        private notifyPageComponentDuplicated(element: api.dom.Element, placeholder: api.dom.Element, type: string, region: RegionPath, path: ComponentPath) {
+            var event = new PageComponentDuplicatedEvent(element, placeholder, type, region, path);
+            this.pageComponentDuplicatedListeners.forEach((listener) => {
                 listener(event);
             });
         }

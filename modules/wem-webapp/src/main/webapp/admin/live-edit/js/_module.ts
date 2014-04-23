@@ -49,6 +49,7 @@
 ///<reference path='ui/contextmenu/menuitem/EmptyRegionMenuItem.ts' />
 ///<reference path='ui/contextmenu/menuitem/ViewMenuItem.ts' />
 ///<reference path='ui/contextmenu/menuitem/RemoveMenuItem.ts' />
+///<reference path='ui/contextmenu/menuitem/DuplicateMenuItem.ts' />
 
 ///<reference path='component/dragdropsort/DragDropSort.ts' />
 

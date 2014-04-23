@@ -15,6 +15,7 @@
 ///<reference path='PageComponentRemovedEvent.ts' />
 ///<reference path='PageComponentResetEvent.ts' />
 ///<reference path='ImageComponentSetImageEvent.ts' />
+///<reference path='PageComponentDuplicatedEvent.ts' />
 
 ///<reference path='LiveEditPage.ts' />
 
