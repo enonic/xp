@@ -17,7 +17,8 @@ module api.content.page.part {
                 setOptionDisplayValueViewer(new PartDescriptorViewer()).
                 setSelectedOptionsView(new PartDescriptorSelectedOptionsView()).
                 setLoader(loader).
-                setMaximumOccurrences(1));
+                setMaximumOccurrences(1).
+                setNextInputFocusWhenMaxReached(false));
         }
 
         setDescriptor(key: DescriptorKey) {

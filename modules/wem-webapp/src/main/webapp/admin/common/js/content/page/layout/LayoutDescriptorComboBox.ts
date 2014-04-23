@@ -17,7 +17,8 @@ module api.content.page.layout {
                 setOptionDisplayValueViewer(new LayoutDescriptorViewer()).
                 setSelectedOptionsView(new LayoutDescriptorSelectedOptionsView()).
                 setLoader(loader).
-                setMaximumOccurrences(1));
+                setMaximumOccurrences(1).
+                setNextInputFocusWhenMaxReached(false));
         }
 
         setDescriptor(key: DescriptorKey) {

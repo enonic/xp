@@ -231,7 +231,7 @@ module api.ui.selector.dropdown {
         selectOption(option: Option<OPTION_DISPLAY_VALUE>, silent: boolean = false) {
 
             this.dropdownDropdown.markSelections([option]);
-            api.dom.FormEl.moveFocuseToNextFocusable(this.input);
+            api.dom.FormEl.moveFocusToNextFocusable(this.input);
             if (!silent) {
                 this.notifyOptionSelected(option);
             }

@@ -20,7 +20,7 @@ module api.dom {
             this.getEl().removeEventListener("submit", listener);
         }
 
-        static moveFocuseToNextFocusable(input:InputEl) {
+        static moveFocusToNextFocusable(input:InputEl) {
             var focusableElements:NodeList = document.querySelectorAll("input, button, select");
 
             // find index of current input
