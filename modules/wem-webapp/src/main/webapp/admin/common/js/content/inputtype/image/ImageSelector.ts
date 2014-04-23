@@ -292,12 +292,16 @@ module api.content.inputtype.image {
         private createComboBox(input: api.form.Input): ComboBox<ContentSummary> {
 
             this.selectedOptionsView = new SelectedOptionsView();
-            this.selectedOptionsView.addEditSelectedOptionListener((option: api.ui.selector.combobox.SelectedOption<ContentSummary>) => {
-                this.notifyEditContentRequestListeners(option.getOption().displayValue)
+            this.selectedOptionsView.addEditSelectedOptionsListener((options: api.ui.selector.combobox.SelectedOption<ContentSummary>[]) => {
+                options.forEach((option: api.ui.selector.combobox.SelectedOption<ContentSummary>) => {
+                    this.notifyEditContentRequestListeners(option.getOption().displayValue);
+                });
             });
 
-            this.selectedOptionsView.addRemoveSelectedOptionListener((option) => {
-                this.comboBox.removeSelectedOption(option.getOption());
+            this.selectedOptionsView.addRemoveSelectedOptionsListener((options: api.ui.selector.combobox.SelectedOption<ContentSummary>[]) => {
+                options.forEach((option: api.ui.selector.combobox.SelectedOption<ContentSummary>) => {
+                    this.comboBox.removeSelectedOption(option.getOption());
+                });
                 this.validate(false);
             });
 

@@ -4,4 +4,5 @@
 ///<reference path='ImageSelector.ts' />
 ///<reference path='UploadDialogCancelAction.ts' />
 ///<reference path='UploadDialog.ts' />
+///<reference path='SelectionToolbar.ts' />
 

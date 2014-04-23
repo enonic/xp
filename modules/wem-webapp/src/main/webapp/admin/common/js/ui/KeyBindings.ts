@@ -39,7 +39,7 @@ module api.ui {
             }
         }
 
-        private bindKey(binding: KeyBinding) {
+        public bindKey(binding: KeyBinding) {
             if (binding.isGlobal()) {
                 Mousetrap.bindGlobal(binding.getCombination(), binding.getCallback(), binding.getAction());
             } else {
@@ -61,7 +61,7 @@ module api.ui {
             }
         }
 
-        private unbindKey(binding: KeyBinding) {
+        public unbindKey(binding: KeyBinding) {
 
             Mousetrap.unbind(binding.getCombination());
             delete this.activeBindings[binding.getCombination()];

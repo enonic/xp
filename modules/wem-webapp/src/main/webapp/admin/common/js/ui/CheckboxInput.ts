@@ -42,6 +42,10 @@ module api.ui {
             return this;
         }
 
+        toggleChecked() {
+            this.setChecked(!this.isChecked());
+        }
+
         isChecked(): boolean {
             return this.getHTMLElement()["checked"];
         }
