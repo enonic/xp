@@ -29,6 +29,10 @@ module api.rest {
         }
 
         getResult():T {
+            if( !this.hasResult() ) {
+                return null;
+            }
+
             if( this.json.result ) {
                 return <T>this.json.result;
             }

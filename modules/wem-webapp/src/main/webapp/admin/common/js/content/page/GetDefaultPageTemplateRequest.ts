@@ -28,9 +28,13 @@ module api.content.page {
 
             return this.send().then((response: api.rest.JsonResponse<api.content.page.PageTemplateJson>) => {
 
+                if (response.hasResult()) {
                     return this.fromJsonToPageTemplate(response.getResult());
-                    
-                });
+                }
+                else {
+                    return null;
+                }
+            });
         }
     }
 }
