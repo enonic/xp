@@ -2,7 +2,7 @@ module app.browse {
 
     export class BaseModuleBrowseAction extends api.ui.Action {
 
-        constructor(label:string, shortcut?:string) {
+        constructor(label: string, shortcut?: string) {
             super(label, shortcut);
         }
 
@@ -13,8 +13,8 @@ module app.browse {
         constructor() {
             super("Delete");
             this.setEnabled(false);
-            this.addExecutionListener(() => {
-                var moduleModel:api.module.ModuleSummary = api.module.ModuleSummary.fromExtModel(components.gridPanel.getSelection()[0]);
+            this.onExecuted(() => {
+                var moduleModel: api.module.ModuleSummary = api.module.ModuleSummary.fromExtModel(components.gridPanel.getSelection()[0]);
                 new DeleteModulePromptEvent(moduleModel).fire();
             });
         }
@@ -22,18 +22,18 @@ module app.browse {
 
     export class ModuleBrowseActions {
 
-        public DELETE_MODULE:api.ui.Action;
+        public DELETE_MODULE: api.ui.Action;
 
-        private allActions:api.ui.Action[] = [];
+        private allActions: api.ui.Action[] = [];
 
-        private static INSTANCE:ModuleBrowseActions;
+        private static INSTANCE: ModuleBrowseActions;
 
-        static init():ModuleBrowseActions {
+        static init(): ModuleBrowseActions {
             new ModuleBrowseActions();
             return ModuleBrowseActions.INSTANCE;
         }
 
-        static get():ModuleBrowseActions {
+        static get(): ModuleBrowseActions {
             return ModuleBrowseActions.INSTANCE;
         }
 
@@ -46,13 +46,13 @@ module app.browse {
             ModuleBrowseActions.INSTANCE = this;
         }
 
-        getAllActions():api.ui.Action[] {
+        getAllActions(): api.ui.Action[] {
             return this.allActions;
         }
 
-        updateActionsEnabledState(modules:any[]) {
+        updateActionsEnabledState(modules: any[]) {
             var modulesSelected = modules.length;
-            this.DELETE_MODULE.setEnabled( modulesSelected > 0 );
+            this.DELETE_MODULE.setEnabled(modulesSelected > 0);
         }
 
     }

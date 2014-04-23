@@ -80,8 +80,8 @@ module api.form {
                 this.inputTypeView = inputtype.InputTypeManager.createView("NoInputTypeFound");
             }
 
-            this.inputTypeView.addEditContentRequestListener((content: api.content.ContentSummary) => {
-                this.notifyEditContentRequestListeners(content);
+            this.inputTypeView.onEditContentRequest((content: api.content.ContentSummary) => {
+                this.notifyEditContentRequested(content);
             });
 
             if (this.properties.length == 0) {

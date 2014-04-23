@@ -21,7 +21,7 @@ module app.browse {
         constructor(treeGridPanel: api.app.browse.grid.TreeGridPanel) {
             super("New", "mod+alt+n");
             this.setEnabled(true);
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
                 var extModelsToContentSummaries: api.content.ContentSummary[] = this.extModelsToContentSummaries(treeGridPanel.getSelection());
                 new ShowNewContentDialogEvent(extModelsToContentSummaries.length > 0 ? extModelsToContentSummaries[0] : null).fire();
             });
@@ -33,7 +33,7 @@ module app.browse {
         constructor(treeGridPanel: api.app.browse.grid.TreeGridPanel) {
             super("Open", "mod+o");
             this.setEnabled(false);
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
                 new ViewContentEvent(this.extModelsToContentSummaries(treeGridPanel.getSelection())).fire();
             });
         }
@@ -44,7 +44,7 @@ module app.browse {
         constructor(treeGridPanel: api.app.browse.grid.TreeGridPanel) {
             super("Edit", "f4");
             this.setEnabled(false);
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
                 var content = this.extModelsToContentSummaries(treeGridPanel.getSelection());
                 new EditContentEvent(content).fire();
             });
@@ -56,7 +56,7 @@ module app.browse {
         constructor(treeGridPanel: api.app.browse.grid.TreeGridPanel) {
             super("Delete", "mod+del");
             this.setEnabled(false);
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
                 new ContentDeletePromptEvent(this.extModelsToContentSummaries(treeGridPanel.getSelection())).fire();
             });
         }
@@ -67,7 +67,7 @@ module app.browse {
         constructor(treeGridPanel: api.app.browse.grid.TreeGridPanel) {
             super("Duplicate");
             this.setEnabled(false);
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
                 new DuplicateContentEvent(this.extModelsToContentSummaries(treeGridPanel.getSelection())).fire();
             });
         }
@@ -78,7 +78,7 @@ module app.browse {
         constructor(treeGridPanel: api.app.browse.grid.TreeGridPanel) {
             super("Move");
             this.setEnabled(false);
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
                 new MoveContentEvent(this.extModelsToContentSummaries(treeGridPanel.getSelection())).fire();
             });
         }
@@ -90,7 +90,7 @@ module app.browse {
             super("PREVIEW");
 
             this.setEnabled(false);
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
                 new ShowPreviewEvent(this.extModelsToContentSummaries(treeGridPanel.getSelection())).fire();
             });
         }
@@ -102,7 +102,7 @@ module app.browse {
             super("DETAILS");
 
             this.setEnabled(true);
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
                 new ShowDetailsEvent(this.extModelsToContentSummaries(treeGridPanel.getSelection())).fire();
             })
         }
@@ -113,7 +113,7 @@ module app.browse {
         constructor() {
             super("NG", "mod+i");
             this.setEnabled(true);
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
                 new ShowNewContentGridEvent().fire();
             });
         }

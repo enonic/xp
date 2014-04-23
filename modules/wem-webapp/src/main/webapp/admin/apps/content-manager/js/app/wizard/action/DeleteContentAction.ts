@@ -2,9 +2,9 @@ module app.wizard.action {
 
     export class DeleteContentAction extends api.ui.Action {
 
-        constructor(wizardPanel:api.app.wizard.WizardPanel<api.content.Content>) {
+        constructor(wizardPanel: api.app.wizard.WizardPanel<api.content.Content>) {
             super("Delete", "mod+del");
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
                 api.ui.dialog.ConfirmationDialog.get()
                     .setQuestion("Are you sure you want to delete this content?")
                     .setNoCallback(null)
@@ -13,7 +13,7 @@ module app.wizard.action {
                         new api.content.DeleteContentRequest()
                             .addContentPath(wizardPanel.getPersistedItem().getPath())
                             .send()
-                            .done((jsonResponse:api.rest.JsonResponse<any>) => {
+                            .done((jsonResponse: api.rest.JsonResponse<any>) => {
                                 var json = jsonResponse.getJson();
 
                                 if (json.successes && json.successes.length > 0) {

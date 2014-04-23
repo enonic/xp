@@ -80,7 +80,7 @@ module api.content.inputtype.imageupload {
             }
         }
 
-        addOnValueChangedListener(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
+        onOccurrenceValueChanged(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
 
             var imageUploader = <api.ui.ImageUploader>element;
             imageUploader.onImageUploaded((event: api.ui.ImageUploadedEvent) => {

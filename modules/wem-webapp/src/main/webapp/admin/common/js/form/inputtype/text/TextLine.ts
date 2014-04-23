@@ -29,7 +29,7 @@ module api.form.inputtype.text {
         availableSizeChanged() {
         }
 
-        addOnValueChangedListener(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
+        onOccurrenceValueChanged(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
             var inputEl = <api.ui.TextInput>element;
             inputEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
                 listener(new api.form.inputtype.support.ValueChangedEvent(this.newValue(event.getNewValue())));

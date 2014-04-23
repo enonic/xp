@@ -5,7 +5,7 @@ module api.app.wizard {
         constructor(wizardPanel: WizardPanel<any>) {
             super("Save", "mod+s", true);
 
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
 
                 this.setEnabled(false);
 

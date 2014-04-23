@@ -4,7 +4,7 @@ module app.browse.action {
         constructor() {
             super("Duplicate");
             this.setEnabled(false);
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
                 console.log("duplicate template action");
             });
         }

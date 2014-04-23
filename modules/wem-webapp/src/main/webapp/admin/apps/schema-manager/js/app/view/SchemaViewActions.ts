@@ -2,10 +2,10 @@ module app.view {
 
     export class EditSchemaAction extends api.ui.Action {
 
-        constructor(panel:api.app.view.ItemViewPanel<api.schema.Schema>) {
+        constructor(panel: api.app.view.ItemViewPanel<api.schema.Schema>) {
             super("Edit");
 
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
                 new app.browse.EditSchemaEvent([panel.getItem().getModel()]).fire();
             });
         }
@@ -13,9 +13,9 @@ module app.view {
 
     export class DeleteSchemaAction extends api.ui.Action {
 
-        constructor(panel:api.app.view.ItemViewPanel<api.schema.Schema>) {
+        constructor(panel: api.app.view.ItemViewPanel<api.schema.Schema>) {
             super("Delete", "mod+del");
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
                 api.ui.dialog.ConfirmationDialog.get()
                     .setQuestion("Are you sure you want to delete this schema?")
                     .setNoCallback(null)
@@ -34,7 +34,7 @@ module app.view {
                         }
 
                         if (request) {
-                            request.send().done((jsonResponse:api.rest.JsonResponse<api.schema.SchemaDeleteJson>) => {
+                            request.send().done((jsonResponse: api.rest.JsonResponse<api.schema.SchemaDeleteJson>) => {
                                 var json = jsonResponse.getResult();
 
                                 if (json.successes.length > 0) {
@@ -51,10 +51,10 @@ module app.view {
 
     export class CloseSchemaAction extends api.ui.Action {
 
-        constructor(panel:api.ui.Panel, checkCanRemovePanel:boolean = true) {
+        constructor(panel: api.ui.Panel, checkCanRemovePanel: boolean = true) {
             super("Close");
 
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
                 new app.browse.CloseSchemaEvent(panel, checkCanRemovePanel).fire();
             });
         }

@@ -52,7 +52,7 @@ module app.wizard {
         private layout(form: Form, contentData: ContentData) {
 
             this.formView = new FormView(this.formContext, form, contentData);
-            this.formView.addEditContentRequestListener((content: api.content.ContentSummary) => {
+            this.formView.onEditContentRequest((content: api.content.ContentSummary) => {
                 new app.browse.EditContentEvent([content]).fire();
             });
 

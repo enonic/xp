@@ -2,9 +2,9 @@ module api.ui.dialog {
 
     export class UploadDialog extends api.ui.dialog.ModalDialog {
 
-        private uploader:UploadDialogUploaderEl;
+        private uploader: UploadDialogUploaderEl;
 
-        constructor(title:string, description: string, uploaderEl:UploadDialogUploaderEl) {
+        constructor(title: string, description: string, uploaderEl: UploadDialogUploaderEl) {
             super({
                 title: new api.ui.dialog.ModalDialogHeader(title)
             });
@@ -19,7 +19,7 @@ module api.ui.dialog {
             this.appendChildToContentPanel(<any>this.uploader);
 
             this.setCancelAction(new UploadDialogCancelAction());
-            this.getCancelAction().addExecutionListener((action:UploadDialogCancelAction) => {
+            this.getCancelAction().onExecuted((action: UploadDialogCancelAction) => {
                 this.uploader.stop();
                 this.uploader.reset();
                 this.close();

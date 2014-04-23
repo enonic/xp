@@ -49,7 +49,7 @@ module api.form.inputtype.singleselector {
             return null;
         }
 
-        addOnValueChangedListener(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
+        onOccurrenceValueChanged(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
 
             if (SingleSelector.TYPE_RADIO == this.type) {
                 var radioGroup = <api.ui.RadioGroup>element;

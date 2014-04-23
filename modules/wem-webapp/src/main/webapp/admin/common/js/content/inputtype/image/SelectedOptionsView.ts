@@ -30,10 +30,10 @@ module api.content.inputtype.image {
 
             this.toolbar = new SelectionToolbar();
             this.toolbar.hide();
-            this.toolbar.addEditClickListener(() => {
+            this.toolbar.onEditClicked(() => {
                 this.notifyEditSelectedOptions(this.selection);
             });
-            this.toolbar.addRemoveClickListener(() => {
+            this.toolbar.onRemoveClicked(() => {
                 this.notifyRemoveSelectedOptions(this.selection);
                 // clear the selection;
                 this.selection.length = 0;
@@ -53,11 +53,11 @@ module api.content.inputtype.image {
             });
         }
 
-        addRemoveSelectedOptionsListener(listener: (option: SelectedOption<ContentSummary>[]) => void) {
+        onRemoveSelectedOptions(listener: (option: SelectedOption<ContentSummary>[]) => void) {
             this.removeSelectedOptionsListeners.push(listener);
         }
 
-        removeRemoveSelectedOptionsListener(listener: (option: SelectedOption<ContentSummary>[]) => void) {
+        unRemoveSelectedOptions(listener: (option: SelectedOption<ContentSummary>[]) => void) {
             this.removeSelectedOptionsListeners = this.removeSelectedOptionsListeners.filter(function (curr) {
                 return curr != listener;
             });
@@ -69,11 +69,11 @@ module api.content.inputtype.image {
             });
         }
 
-        addEditSelectedOptionsListener(listener: (option: SelectedOption<ContentSummary>[]) => void) {
+        onEditSelectedOptions(listener: (option: SelectedOption<ContentSummary>[]) => void) {
             this.editSelectedOptionsListeners.push(listener);
         }
 
-        removeEditSelectedOptionsListener(listener: (option: SelectedOption<ContentSummary>[]) => void) {
+        unEditSelectedOptions(listener: (option: SelectedOption<ContentSummary>[]) => void) {
             this.editSelectedOptionsListeners = this.editSelectedOptionsListeners.filter(function (curr) {
                 return curr != listener;
             });
@@ -98,7 +98,7 @@ module api.content.inputtype.image {
                     this.activateKeyListeners(true);
                 }
             });
-            optionView.addCheckListener((view: SelectedOptionView, checked: boolean) => {
+            optionView.onChecked((view: SelectedOptionView, checked: boolean) => {
                 if (checked) {
                     this.selection.push(option);
                 } else {

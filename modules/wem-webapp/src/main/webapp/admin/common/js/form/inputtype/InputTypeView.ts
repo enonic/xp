@@ -21,12 +21,12 @@ module api.form.inputtype {
         /*
          * Invoked when input wants to edit embedded content
          */
-        addEditContentRequestListener(listener: (content: api.content.ContentSummary) => void);
+        onEditContentRequest(listener: (content: api.content.ContentSummary) => void);
 
         /*
          * Invoked when input wants to edit embedded content
          */
-        removeEditContentRequestListener(listener: (content: api.content.ContentSummary) => void);
+        unEditContentRequest(listener: (content: api.content.ContentSummary) => void);
 
         /*
          * Returns true if focus was successfully given.
@@ -35,7 +35,7 @@ module api.form.inputtype {
 
         /**
          * Note: Event must never be thrown while function layout is being executed.
-        */
+         */
         onValueAdded(listener: (event: ValueAddedEvent) => void);
 
         unValueAdded(listener: (event: ValueAddedEvent) => void);

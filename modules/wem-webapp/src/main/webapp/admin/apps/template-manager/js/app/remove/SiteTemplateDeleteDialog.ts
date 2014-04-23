@@ -9,7 +9,7 @@ module app.remove {
 
             this.setDeleteAction(new SiteTemplateDeleteDialogAction());
 
-            this.getDeleteAction().addExecutionListener(() => {
+            this.getDeleteAction().onExecuted(() => {
                 var key = this.siteTemplateToDelete.getSiteTemplateKey();
                 var deleteRequest = new api.content.site.template.DeleteSiteTemplateRequest(key);
                 deleteRequest.send().then((resp: api.rest.JsonResponse<any>) => {
@@ -18,8 +18,8 @@ module app.remove {
                     new api.content.site.template.SiteTemplateDeletedEvent(api.content.site.template.SiteTemplateKey.fromString(respJson.result)).fire();
                     this.close();
                 }).catch(() => {
-                        this.close();
-                    }).done();
+                    this.close();
+                }).done();
             });
         }
 

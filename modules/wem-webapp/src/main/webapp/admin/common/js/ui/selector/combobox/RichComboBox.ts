@@ -22,7 +22,7 @@ module api.ui.selector.combobox {
 
         private delayedInputValueChangedHandling: number;
 
-        private optionDisplayValueViewer:Viewer<OPTION_DISPLAY_VALUE>;
+        private optionDisplayValueViewer: Viewer<OPTION_DISPLAY_VALUE>;
 
         private loadingListeners: {():void;}[];
 
@@ -98,7 +98,7 @@ module api.ui.selector.combobox {
         }
 
         private setupLoader() {
-            this.comboBox.addSelectedOptionRemovedListener(()=> {
+            this.comboBox.onSelectedOptionRemoved(()=> {
                 this.loader.search("");
             });
             this.comboBox.onOptionFilterInputValueChanged((event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>) => {
@@ -150,7 +150,7 @@ module api.ui.selector.combobox {
             this.setupLoader();
         }
 
-        getLoader():api.util.loader.BaseLoader<api.item.ItemJson, OPTION_DISPLAY_VALUE> {
+        getLoader(): api.util.loader.BaseLoader<api.item.ItemJson, OPTION_DISPLAY_VALUE> {
             return this.loader;
         }
 
@@ -158,8 +158,8 @@ module api.ui.selector.combobox {
             this.comboBox.setInputIconUrl(url);
         }
 
-        addSelectedOptionRemovedListener(listener: {(option: SelectedOption<OPTION_DISPLAY_VALUE>):void;}) {
-            this.comboBox.addSelectedOptionRemovedListener(listener);
+        onSelectedOptionRemoved(listener: {(option: SelectedOption<OPTION_DISPLAY_VALUE>):void;}) {
+            this.comboBox.onSelectedOptionRemoved(listener);
         }
 
         onOptionSelected(listener: {(event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>): void;}) {
@@ -178,23 +178,28 @@ module api.ui.selector.combobox {
             });
         }
 
-        addLoadingListener(listener: {(): void;}) {
-            this.loadingListeners.push(listener);
-        }
-
-        addLoadedListener(listener: {(items: OPTION_DISPLAY_VALUE[]): void;}) {
-            this.loadedListeners.push(listener);
-        }
-
-        removeLoadedListener(listenerToBeRemoved: {(items: OPTION_DISPLAY_VALUE[]): void;}) {
-            var index = this.loadedListeners.indexOf(listenerToBeRemoved);
-            this.loadedListeners.splice(index, 1);
-        }
-
         private notifyLoading() {
             this.loadingListeners.forEach((listener) => {
                 listener();
             });
+        }
+
+        onLoading(listener: {(): void;}) {
+            this.loadingListeners.push(listener);
+        }
+
+        unLoading(listener: {(): void;}) {
+            var index = this.loadedListeners.indexOf(listener);
+            this.loadedListeners.splice(index, 1);
+        }
+
+        onLoaded(listener: {(items: OPTION_DISPLAY_VALUE[]): void;}) {
+            this.loadedListeners.push(listener);
+        }
+
+        unLoaded(listenerToBeRemoved: {(items: OPTION_DISPLAY_VALUE[]): void;}) {
+            var index = this.loadedListeners.indexOf(listenerToBeRemoved);
+            this.loadedListeners.splice(index, 1);
         }
 
         private notifyLoaded(items: OPTION_DISPLAY_VALUE[]) {

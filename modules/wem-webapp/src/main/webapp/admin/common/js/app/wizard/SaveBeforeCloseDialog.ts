@@ -22,20 +22,20 @@ module api.app.wizard {
             this.appendChildToContentPanel(message);
 
             this.yesAction.setMnemonic("y");
-            this.yesAction.addExecutionListener(() => {
+            this.yesAction.onExecuted(() => {
                 this.doSaveAndClose();
             });
             this.addAction(this.yesAction, true);
 
             this.noAction.setMnemonic("n");
-            this.noAction.addExecutionListener(() => {
+            this.noAction.onExecuted(() => {
                 this.doCloseWithoutSaveCheck();
             });
             this.addAction(this.noAction);
 
             this.setCancelAction(new api.ui.Action('Cancel', 'esc'));
             this.getCancelAction().setMnemonic("c");
-            this.getCancelAction().addExecutionListener(() => {
+            this.getCancelAction().onExecuted(() => {
                 this.close();
             });
         }

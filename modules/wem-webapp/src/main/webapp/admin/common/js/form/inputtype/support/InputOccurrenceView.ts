@@ -21,7 +21,7 @@ module api.form.inputtype.support {
 
             this.requiredContractBroken = baseInputTypeView.valueBreaksRequiredContract(property != null ? property.getValue() : null);
 
-            baseInputTypeView.addOnValueChangedListener(inputElement, (event: api.form.inputtype.support.ValueChangedEvent) => {
+            baseInputTypeView.onOccurrenceValueChanged(inputElement, (event: api.form.inputtype.support.ValueChangedEvent) => {
 
                 this.notifyValueChanged(event.getNewValue(), this.getIndex());
 

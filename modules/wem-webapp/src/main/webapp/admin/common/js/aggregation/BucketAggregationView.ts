@@ -45,8 +45,8 @@ module api.aggregation {
 
         private addBucket(bucketView: api.aggregation.BucketView) {
             this.appendChild(bucketView);
-            bucketView.addSelectionChangeListener((event: api.aggregation.BucketViewSelectionChangedEvent) => {
-                    this.notifyBucketViewSelectionChangedEvent(event);
+            bucketView.onSelectionChanged((event: api.aggregation.BucketViewSelectionChangedEvent) => {
+                    this.notifyBucketViewSelectionChanged(event);
                 }
             );
             this.bucketViews.push(bucketView);

@@ -73,7 +73,7 @@ module api.content.page.part {
 
             var removeButtonEl = new api.dom.AEl("remove");
             removeButtonEl.onClicked((event: MouseEvent) => {
-                this.notifySelectedOptionToBeRemoved();
+                this.notifySelectedOptionRemoveRequested();
 
                 event.stopPropagation();
                 event.preventDefault();

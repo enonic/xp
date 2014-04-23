@@ -4,7 +4,7 @@ module app.wizard.action {
 
         constructor() {
             super("Duplicate");
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
                 // TODO
             });
         }

@@ -69,17 +69,17 @@ module api.form {
             return false;
         }
 
-        addEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
+        onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
             this.editContentRequestListeners.push(listener);
         }
 
-        removeEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
+        unEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
             this.editContentRequestListeners = this.editContentRequestListeners.filter(function (curr) {
                 return curr != listener;
             });
         }
 
-        notifyEditContentRequestListeners(content: api.content.ContentSummary) {
+        notifyEditContentRequested(content: api.content.ContentSummary) {
             this.editContentRequestListeners.forEach((listener) => {
                 listener(content);
             })

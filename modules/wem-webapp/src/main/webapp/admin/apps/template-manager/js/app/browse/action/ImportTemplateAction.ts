@@ -3,7 +3,7 @@ module app.browse.action {
 
         constructor() {
             super("Import");
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
                 new app.browse.event.ImportTemplateEvent().fire();
             });
         }

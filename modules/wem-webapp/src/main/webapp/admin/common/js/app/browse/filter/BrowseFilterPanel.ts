@@ -17,7 +17,7 @@ module api.app.browse.filter {
             this.addClass('filter-panel');
 
             this.searchField = new TextSearchField('Search');
-            this.searchField.addValueChangedListener(() => {
+            this.searchField.onValueChanged(() => {
                 this.search(this.searchField);
             });
 
@@ -32,7 +32,7 @@ module api.app.browse.filter {
             if (groupViews != null) {
                 groupViews.forEach((aggregationGroupView: api.aggregation.AggregationGroupView) => {
 
-                        aggregationGroupView.addBucketViewSelectionChangedEventListener((event: api.aggregation.BucketViewSelectionChangedEvent) => {
+                        aggregationGroupView.onBucketViewSelectionChanged((event: api.aggregation.BucketViewSelectionChangedEvent) => {
                             this.search(event.getBucketView());
                         });
 

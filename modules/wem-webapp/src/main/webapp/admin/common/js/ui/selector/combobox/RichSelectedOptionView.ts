@@ -2,30 +2,26 @@ module api.ui.selector.combobox {
 
     export class RichSelectedOptionView<T extends api.item.Item> extends api.ui.selector.combobox.SelectedOptionView<T> {
 
-        private optionDisplayValue:T;
+        private optionDisplayValue: T;
 
-        constructor(option:api.ui.selector.Option<T>) {
+        constructor(option: api.ui.selector.Option<T>) {
             this.optionDisplayValue = option.displayValue;
             super(option);
         }
 
-        resolveIconUrl(content:T):string
-        {
+        resolveIconUrl(content: T): string {
             return "";
         }
 
-        resolveTitle(content:T):string
-        {
+        resolveTitle(content: T): string {
             return "";
         }
 
-        resolveSubTitle(content:T):string
-        {
+        resolveSubTitle(content: T): string {
             return "";
         }
 
-        layout()
-        {
+        layout() {
             var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
             namesAndIconView
                 .setIconUrl(this.resolveIconUrl(this.optionDisplayValue) + '?crop=false')
@@ -33,8 +29,8 @@ module api.ui.selector.combobox {
                 .setSubName(this.resolveSubTitle(this.optionDisplayValue));
 
             var removeButton = new api.dom.AEl("remove");
-            removeButton.onClicked((event:Event) => {
-                this.notifySelectedOptionToBeRemoved();
+            removeButton.onClicked((event: Event) => {
+                this.notifySelectedOptionRemoveRequested();
 
                 event.stopPropagation();
                 event.preventDefault();

@@ -14,7 +14,7 @@ module api.form {
 
         private previousValidationRecording: ValidationRecording;
 
-        private width:number;
+        private width: number;
 
         constructor(context: FormContext, form: Form, rootDataSet?: api.data.RootDataSet) {
             super("form-view");
@@ -78,7 +78,7 @@ module api.form {
         }
 
         private broadcastFormSizeChanged() {
-            this.formItemViews.forEach((formItemView:FormItemView) => {
+            this.formItemViews.forEach((formItemView: FormItemView) => {
                 formItemView.broadcastFormSizeChanged();
             });
         }
@@ -213,15 +213,15 @@ module api.form {
             return focusGiven;
         }
 
-        addEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
+        onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
             this.formItemViews.forEach((formItemView: FormItemView) => {
-                formItemView.addEditContentRequestListener(listener);
+                formItemView.onEditContentRequest(listener);
             });
         }
 
-        removeEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
+        unEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
             this.formItemViews.forEach((formItemView: FormItemView) => {
-                formItemView.removeEditContentRequestListener(listener);
+                formItemView.unEditContentRequest(listener);
             });
         }
 
@@ -251,9 +251,9 @@ module api.form {
             })
         }
 
-        private notifyEditContentRequestListeners(content: api.content.ContentSummary) {
+        private notifyEditContentRequested(content: api.content.ContentSummary) {
             this.formItemViews.forEach((formItemView: FormItemView) => {
-                formItemView.notifyEditContentRequestListeners(content);
+                formItemView.notifyEditContentRequested(content);
             })
         }
 

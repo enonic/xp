@@ -48,7 +48,7 @@ module api.content.inputtype.image {
             });
         }
 
-        addCheckListener(listener: {(option: SelectedOptionView, checked: boolean): void;}) {
+        onChecked(listener: {(option: SelectedOptionView, checked: boolean): void;}) {
             this.selectionChangeListeners.push(listener);
         }
 

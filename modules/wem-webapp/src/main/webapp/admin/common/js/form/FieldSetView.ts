@@ -30,7 +30,7 @@ module api.form {
         }
 
         broadcastFormSizeChanged() {
-            this.formItemViews.forEach((formItemView:FormItemView) => {
+            this.formItemViews.forEach((formItemView: FormItemView) => {
                 formItemView.broadcastFormSizeChanged();
             });
         }
@@ -76,17 +76,17 @@ module api.form {
                 layout(dataSet);
         }
 
-        addEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
-            super.addEditContentRequestListener(listener);
+        onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
+            super.onEditContentRequest(listener);
             this.formItemViews.forEach((formItemView: FormItemView) => {
-                formItemView.addEditContentRequestListener(listener);
+                formItemView.onEditContentRequest(listener);
             });
         }
 
-        removeEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
-            super.removeEditContentRequestListener(listener);
+        unEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
+            super.unEditContentRequest(listener);
             this.formItemViews.forEach((formItemView: FormItemView) => {
-                formItemView.removeEditContentRequestListener(listener);
+                formItemView.unEditContentRequest(listener);
             });
         }
 

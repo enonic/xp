@@ -33,7 +33,7 @@ module app.create {
             this.appendChildToContentPanel(this.schemaTypesList);
 
             this.setCancelAction(new CancelNewDialogAction());
-            this.getCancelAction().addExecutionListener(()=> {
+            this.getCancelAction().onExecuted(()=> {
                 this.close();
             });
 

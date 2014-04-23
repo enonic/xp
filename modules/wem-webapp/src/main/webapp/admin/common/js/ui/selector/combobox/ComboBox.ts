@@ -456,7 +456,7 @@ module api.ui.selector.combobox {
             this.onKeyDown(this.handleKeyDown.bind(this));
 
             if (this.multipleSelections) {
-                this.selectedOptionsCtrl.addSelectedOptionRemovedListener(
+                this.selectedOptionsCtrl.onSelectedOptionRemoved(
                     (removedOption: SelectedOption<OPTION_DISPLAY_VALUE>) => {
                         this.handleSelectedOptionRemoved(removedOption);
                     });
@@ -611,7 +611,7 @@ module api.ui.selector.combobox {
                 combobox.hideDropdown();
                 combobox.active = false;
                 api.dom.Body.get().getEl().removeEventListener('click', hideDropdownOnBlur);
-            }
+            };
 
             // set callback function on document body if combobox wasn't marked as active
             if (!this.active) {
@@ -655,12 +655,12 @@ module api.ui.selector.combobox {
             });
         }
 
-        addSelectedOptionRemovedListener(listener: {(removed: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
-            this.selectedOptionsCtrl.addSelectedOptionRemovedListener(listener);
+        onSelectedOptionRemoved(listener: {(removed: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
+            this.selectedOptionsCtrl.onSelectedOptionRemoved(listener);
         }
 
-        removeSelectedOptionRemovedListener(listener: {(removed: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
-            this.selectedOptionsCtrl.removeSelectedOptionRemovedListener(listener);
+        unSelectedOptionRemoved(listener: {(removed: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
+            this.selectedOptionsCtrl.unSelectedOptionRemoved(listener);
         }
     }
 

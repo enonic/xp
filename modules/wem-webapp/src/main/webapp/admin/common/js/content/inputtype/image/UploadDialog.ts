@@ -32,7 +32,7 @@ module api.content.inputtype.image {
             this.appendChildToContentPanel(this.uploader);
 
             this.setCancelAction(new UploadDialogCancelAction());
-            this.getCancelAction().addExecutionListener((action: UploadDialogCancelAction) => {
+            this.getCancelAction().onExecuted((action: UploadDialogCancelAction) => {
                 this.uploader.stop();
                 this.uploader.reset();
                 this.close();

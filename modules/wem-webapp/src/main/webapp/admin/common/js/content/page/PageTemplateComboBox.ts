@@ -31,14 +31,14 @@ module api.content.page {
         }
 
         layout() {
-            var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize( api.app.NamesAndIconViewSize.small ).build();
-            namesAndIconView.setIconClass( "icon-newspaper icon-large" )
-                .setMainName( this.pageTemplate.getDisplayName() )
-                .setSubName( this.pageTemplate.getDescriptorKey().toString() );
+            var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
+            namesAndIconView.setIconClass("icon-newspaper icon-large")
+                .setMainName(this.pageTemplate.getDisplayName())
+                .setSubName(this.pageTemplate.getDescriptorKey().toString());
 
             var removeButtonEl = new api.dom.AEl("remove");
             removeButtonEl.onClicked((event: MouseEvent) => {
-                this.notifySelectedOptionToBeRemoved();
+                this.notifySelectedOptionRemoveRequested();
 
                 event.stopPropagation();
                 event.preventDefault();

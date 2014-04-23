@@ -2,9 +2,9 @@ module app.view {
 
     export class EditContentAction extends api.ui.Action {
 
-        constructor(panel:api.app.view.ItemViewPanel<api.content.ContentSummary>) {
+        constructor(panel: api.app.view.ItemViewPanel<api.content.ContentSummary>) {
             super("Edit");
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
                 new app.browse.EditContentEvent([panel.getItem().getModel()]).fire();
             });
         }
@@ -12,10 +12,10 @@ module app.view {
 
     export class DeleteContentAction extends api.ui.Action {
 
-        constructor(itemViewPanel:api.app.view.ItemViewPanel<api.content.ContentSummary>) {
+        constructor(itemViewPanel: api.app.view.ItemViewPanel<api.content.ContentSummary>) {
             super("Delete", "mod+del");
 
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
 
                 var contentToDelete = itemViewPanel.getItem().getModel();
 
@@ -27,7 +27,7 @@ module app.view {
                         new api.content.DeleteContentRequest()
                             .addContentPath(contentToDelete.getPath())
                             .send()
-                            .done((jsonResponse:api.rest.JsonResponse<api.content.DeleteContentResult>) => {
+                            .done((jsonResponse: api.rest.JsonResponse<api.content.DeleteContentResult>) => {
                                 var result = jsonResponse.getResult();
                                 if (result.successes && result.successes.length > 0) {
                                     var path = result.successes[0].path;
@@ -44,10 +44,10 @@ module app.view {
 
     export class CloseContentAction extends api.ui.Action {
 
-        constructor(panel:api.ui.Panel, checkCanRemovePanel:boolean = true) {
+        constructor(panel: api.ui.Panel, checkCanRemovePanel: boolean = true) {
             super("Close", "mod+f4");
 
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
                 new app.browse.CloseContentEvent(panel, checkCanRemovePanel).fire();
             });
         }

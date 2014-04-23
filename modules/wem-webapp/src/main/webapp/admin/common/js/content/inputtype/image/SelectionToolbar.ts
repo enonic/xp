@@ -46,11 +46,11 @@ module api.content.inputtype.image {
             });
         }
 
-        addEditClickListener(listener: {(): void;}) {
+        onEditClicked(listener: {(): void;}) {
             this.editClickListeners.push(listener);
         }
 
-        removeEditClickListener(listener: {(): void;}) {
+        unEditClicked(listener: {(): void;}) {
             this.editClickListeners = this.editClickListeners.filter(function (curr) {
                 return curr != listener;
             });
@@ -62,11 +62,11 @@ module api.content.inputtype.image {
             });
         }
 
-        addRemoveClickListener(listener: {(): void;}) {
+        onRemoveClicked(listener: {(): void;}) {
             this.removeClickListeners.push(listener);
         }
 
-        removeRemoveClickListener(listener: {(): void;}) {
+        unRemoveClicked(listener: {(): void;}) {
             this.removeClickListeners = this.removeClickListeners.filter(function (curr) {
                 return curr != listener;
             });

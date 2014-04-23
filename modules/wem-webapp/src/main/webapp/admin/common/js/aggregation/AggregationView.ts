@@ -58,17 +58,17 @@ module api.aggregation {
         }
 
 
-        addBucketViewSelectionChangedEventListener(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
+        onBucketViewSelectionChanged(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
             this.bucketSelectionChangedListeners.push(listener);
         }
 
-        removeBucketViewSelectionChangedEventListener(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
+        unBucketViewSelectionChanged(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
             this.bucketSelectionChangedListeners = this.bucketSelectionChangedListeners.filter(function (curr) {
                 return curr != listener;
             });
         }
 
-        notifyBucketViewSelectionChangedEvent(event: api.aggregation.BucketViewSelectionChangedEvent) {
+        notifyBucketViewSelectionChanged(event: api.aggregation.BucketViewSelectionChangedEvent) {
 
             this.bucketSelectionChangedListeners.forEach((listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) => {
                 listener(event);

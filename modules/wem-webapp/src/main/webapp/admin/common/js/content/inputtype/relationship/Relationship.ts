@@ -74,14 +74,14 @@ module api.content.inputtype.relationship {
                 this.validate(false);
             });
 
-            this.contentComboBox.addSelectedOptionRemovedListener((removed: api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) => {
+            this.contentComboBox.onSelectedOptionRemoved((removed: api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) => {
 
                 this.notifyValueRemoved(removed.getIndex());
                 this.validate(false);
             });
 
 
-            new api.schema.relationshiptype.GetRelationshipTypeByNameRequest(this.relationshipTypeName) .
+            new api.schema.relationshiptype.GetRelationshipTypeByNameRequest(this.relationshipTypeName).
                 sendAndParse().
                 done((relationshipType: api.schema.relationshiptype.RelationshipType) => {
 
@@ -236,11 +236,11 @@ module api.content.inputtype.relationship {
             return !api.content.ContentId.isValidContentId(value.asString());
         }
 
-        addEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
+        onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
             // Have to use stub here because it doesn't extend BaseIntputTypeView
         }
 
-        removeEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
+        unEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
             // Have to use stub here because it doesn't extend BaseIntputTypeView
         }
 
