@@ -121,6 +121,16 @@ module api.form {
             return this.formItemViews;
         }
 
+        giveFocus() {
+            var focusGiven = false;
+            this.getFormItemViews().forEach((formItemView: FormItemView) => {
+                if (!focusGiven && formItemView.giveFocus()) {
+                    focusGiven = true;
+                }
+            });
+            return focusGiven;
+        }
+
         refresh() {
 
             if (!this.formItemSetOccurrence.oneAndOnly()) {
