@@ -156,7 +156,7 @@ module LiveEdit.component {
                 strokeDasharray: '5 5',
                 fill: 'rgba(100, 12, 36, 0)'
             },
-            contextMenuConfig: ['parent', 'remove', 'clear']
+            contextMenuConfig: ['parent', 'remove', 'clear', 'duplicate']
         },
         {
             type: LiveEdit.component.Type.PART,
@@ -170,7 +170,7 @@ module LiveEdit.component {
                 strokeDasharray: '5 5',
                 fill: 'rgba(255, 255, 255, 0)'
             },
-            contextMenuConfig: ['parent', 'remove', 'clear']
+            contextMenuConfig: ['parent', 'remove', 'clear', 'duplicate']
         },
         {
             type: LiveEdit.component.Type.IMAGE,
@@ -184,7 +184,7 @@ module LiveEdit.component {
                 strokeDasharray: '5 5',
                 fill: 'rgba(255, 255, 255, 0)'
             },
-            contextMenuConfig: ['parent', 'remove', 'clear']
+            contextMenuConfig: ['parent', 'remove', 'clear', 'duplicate']
         },
         {
             type: LiveEdit.component.Type.TEXT,
@@ -198,7 +198,7 @@ module LiveEdit.component {
                 strokeDasharray: '5 5',
                 fill: 'rgba(255, 255, 255, 0)'
             },
-            contextMenuConfig: ['parent', 'edit', 'remove', 'clear']
+            contextMenuConfig: ['parent', 'edit', 'remove', 'clear', 'duplicate']
         },
         {
             type: LiveEdit.component.Type.CONTENT,

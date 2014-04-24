@@ -103,6 +103,7 @@ module LiveEdit.ui.contextmenu {
             this.menuItems.push(new menuItem.ViewMenuItem(this));
             this.menuItems.push(new menuItem.EditMenuItem(this));
             this.menuItems.push(new menuItem.RemoveMenuItem(this));
+            this.menuItems.push(new menuItem.DuplicateMenuItem(this));
 
             var i,
                 menuItemsPlaceholder:JQuery = this.getMenuItemsPlaceholderElement();
