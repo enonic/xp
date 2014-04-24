@@ -54,8 +54,6 @@ module api.app.browse {
             this.gridAndToolbarContainer.appendChild(this.browseToolbar);
             this.gridAndToolbarContainer.appendChild(this.treeGridPanel);
 
-            var windowSize = api.dom.Body.get().getEl().getWidthWithMargin();
-
             if (this.gridPanel2 != null) {
                 this.treeSwapperDeckPanel = new api.ui.DeckPanel();
                 this.treeSwapperDeckPanel.addPanel(this.browseItemPanel);
