@@ -15,7 +15,7 @@ module api.app.browse {
 
     export class BrowsePanel<M> extends api.ui.Panel implements api.ui.ActionContainer {
 
-        private static SPLIT_PANEL_ALIGNMENT_TRESHOLD: number = 1240;
+        private static SPLIT_PANEL_ALIGNMENT_TRESHOLD: number = 1180;
 
         private browseToolbar: api.ui.toolbar.Toolbar;
 
