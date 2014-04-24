@@ -1,4 +1,3 @@
-
 # Enonic WEM Community Edition
 
 Welcome to the home of Enonic WEM Community Edition. Here you will find all source code for the product.
@@ -34,7 +33,7 @@ This software is licensed under AGPL 3.0 license. See full license terms [here](
 read [NOTICE.txt](https://github.com/enonic/cms-ce/raw/master/modules/cms-distro/src/resources/NOTICE.txt).
 
 	Enonic CMS
-	Copyright (C) 2000-2012 Enonic AS.
+	Copyright (C) 2000-2014 Enonic AS.
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU Affero General Public License as
