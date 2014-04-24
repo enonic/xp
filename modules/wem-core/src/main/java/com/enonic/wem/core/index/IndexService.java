@@ -32,8 +32,6 @@ public class IndexService
 
     private IndexMappingProvider indexMappingProvider;
 
-    private ReindexService reindexService;
-
     private boolean doReindexOnEmptyIndex = true;
 
     public IndexService()
@@ -149,29 +147,5 @@ public class IndexService
     public void setIndexMappingProvider( final IndexMappingProvider indexMappingProvider )
     {
         this.indexMappingProvider = indexMappingProvider;
-    }
-
-    @Inject
-    public void setReindexService( final ReindexService reindexService )
-    {
-        this.reindexService = reindexService;
-    }
-
-    public void reIndex( final Index... indices )
-        throws Exception
-    {
-        for ( final Index index : indices )
-        {
-            elasticsearchIndexService.getIndexStatus( index, true );
-
-            if ( !indexExists( index ) )
-            {
-                createIndex( index );
-                elasticsearchIndexService.getIndexStatus( index, true );
-            }
-        }
-
-        //   this.reindexService.reindexContent();
-        //     this.reindexService.reindexContent();
     }
 }

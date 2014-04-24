@@ -4,12 +4,13 @@ import org.elasticsearch.common.Strings;
 
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.Nodes;
-import com.enonic.wem.core.entity.dao.AttachmentsJcrMapper;
 import com.enonic.wem.core.entity.dao.NodeElasticsearchDao;
 import com.enonic.wem.core.index.IndexService;
 
 public abstract class AbstractDeleteNodeCommand
 {
+    private final static String ATTACHMENTS_NODE_NAME = "__att";
+
     protected IndexService indexService;
 
     protected NodeElasticsearchDao nodeElasticsearchDao;
@@ -28,7 +29,7 @@ public abstract class AbstractDeleteNodeCommand
         {
             final String nodeName = child.name().toString();
 
-            final boolean isAttachmentNode = Strings.startsWithIgnoreCase( nodeName, AttachmentsJcrMapper.ATTACHMENTS_NODE_NAME );
+            final boolean isAttachmentNode = Strings.startsWithIgnoreCase( nodeName, ATTACHMENTS_NODE_NAME );
             if ( !isAttachmentNode )
             {
                 indexService.deleteEntity( child.id() );

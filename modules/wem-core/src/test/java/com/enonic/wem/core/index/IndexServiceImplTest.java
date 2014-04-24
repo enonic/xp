@@ -109,29 +109,6 @@ public class IndexServiceImplTest
         Mockito.verify( elasticsearchIndexService, Mockito.never() ).putMapping( Mockito.isA( IndexMapping.class ) );
     }
 
-    @Test
-    public void testInitializeIndex_reindex_on_create()
-        throws Exception
-    {
-        final ElasticsearchIndexServiceImpl elasticsearchIndexService = Mockito.mock( ElasticsearchIndexServiceImpl.class );
-        Mockito.when( elasticsearchIndexService.getIndexStatus( Index.NODB, true ) ).thenReturn( IndexStatus.YELLOW );
-        Mockito.when( elasticsearchIndexService.indexExists( Index.NODB ) ).thenReturn( false );
-        indexService.setDoReindexOnEmptyIndex( true );
-
-        final ReindexService reindexService = Mockito.mock( ReindexService.class );
-        indexService.setReindexService( reindexService );
-
-        final IndexMappingProvider indexMappingProvider = setUpIndexMappingMock();
-
-        indexService.setIndexMappingProvider( indexMappingProvider );
-
-        indexService.setElasticsearchIndexService( elasticsearchIndexService );
-
-        indexService.start();
-
-        Mockito.verify( elasticsearchIndexService, Mockito.times( 1 ) ).createIndex( Index.NODB );
-    }
-
     private IndexMappingProvider setUpIndexMappingMock()
     {
         final IndexMappingProvider indexMappingProvider = Mockito.mock( IndexMappingProvider.class );

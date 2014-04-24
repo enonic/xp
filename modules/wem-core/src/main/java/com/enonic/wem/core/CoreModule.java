@@ -13,7 +13,6 @@ import com.enonic.wem.core.event.EventModule;
 import com.enonic.wem.core.home.HomeModule;
 import com.enonic.wem.core.index.IndexModule;
 import com.enonic.wem.core.initializer.InitializerModule;
-import com.enonic.wem.core.jcr.JcrModule;
 import com.enonic.wem.core.module.ModuleModule;
 import com.enonic.wem.core.relationship.RelationshipModule;
 import com.enonic.wem.core.resource.ResourceModule;
@@ -29,7 +28,6 @@ public final class CoreModule
         install( new EventModule() );
         install( new HomeModule() );
         install( new ConfigModule() );
-        install( new JcrModule() );
         install( new InitializerModule() );
         install( new BlobStoreModule() );
         install( new EntityModule() );

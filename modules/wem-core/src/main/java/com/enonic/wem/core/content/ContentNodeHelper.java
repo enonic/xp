@@ -4,13 +4,13 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.NodePaths;
-import com.enonic.wem.core.entity.dao.NodeJcrDao;
+import com.enonic.wem.core.entity.dao.NodeElasticsearchDao;
 
 public class ContentNodeHelper
 {
     public static NodePath translateContentPathToNodePath( final ContentPath contentPath )
     {
-        return new NodePath( NodeJcrDao.CONTENT_ROOT_NODE_NAME + "/" + contentPath.toString() ).asAbsolute();
+        return new NodePath( NodeElasticsearchDao.CONTENT_ROOT_NODE_NAME + "/" + contentPath.toString() ).asAbsolute();
     }
 
     public static NodePaths translateContentPathsToNodePaths( final ContentPaths contentPaths )

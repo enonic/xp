@@ -3,7 +3,6 @@ package com.enonic.wem.admin.rest.resource.tools;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 
 import com.google.inject.Inject;
 
@@ -41,18 +40,7 @@ public final class ToolsResource
         this.indexService.deleteIndex( Index.STORE );
         this.indexService.createIndex( Index.STORE );
 
-        this.startupInitializer.initialize( true );
-        //this.indexService.reIndex( Index.NODB );
-        return "Done.";
-    }
-
-    @GET
-    @Path("reIndexData")
-    @Produces("text/plain")
-    public String reIndexData( @QueryParam("redirect") final String redirect )
-        throws Exception
-    {
-        //  this.indexService.reIndex( Index.NODB );
+        this.startupInitializer.initialize();
         return "Done.";
     }
 }

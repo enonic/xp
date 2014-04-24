@@ -1,10 +1,9 @@
 package com.enonic.wem.admin.json.content.attachment;
 
-import org.h2.util.StringUtils;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Strings;
 
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.content.attachment.Attachment;
@@ -21,7 +20,7 @@ public class AttachmentJson
     {
         this.attachment = Attachment.newAttachment().
             blobKey( new BlobKey( blobKeyAsString ) ).
-            size( StringUtils.isNullOrEmpty( sizeAsString ) ? 0 : Long.valueOf( sizeAsString ) ).
+            size( Strings.isNullOrEmpty( sizeAsString ) ? 0 : Long.valueOf( sizeAsString ) ).
             name( attachmentNameAsString ).
             mimeType( mimeType ).
             build();
