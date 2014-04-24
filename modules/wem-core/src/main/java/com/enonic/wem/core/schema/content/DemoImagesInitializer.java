@@ -18,6 +18,7 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.core.content.ContentInitializer;
 import com.enonic.wem.core.support.BaseInitializer;
 
 import static com.enonic.wem.api.content.attachment.Attachment.newAttachment;
@@ -56,12 +57,17 @@ public class DemoImagesInitializer
     private void createImages()
         throws IOException
     {
-        final ContentPath folderImagesBig = ContentPath.from( "bildearkiv/trampoliner/jumping-jack-big-bounce" );
+        final ContentPath folderImagesBig = ContentPath.from( ContentInitializer.IMAGE_ARCHIVE_PATH_ELEMENT + "/" +
+                                                                  ContentInitializer.TRAMPOLINE_PATH_ELEMENT + "/" +
+                                                                  ContentInitializer.JUMPING_JACK_BIG_BOUNCE_PATH_ELEMENT );
+
         for ( String fileName : FOLDER_IMAGES_BIG )
         {
             createImageContent( folderImagesBig, fileName, StringUtils.substringBefore( fileName, "." ) );
         }
-        final ContentPath folderImagesPop = ContentPath.from( "bildearkiv/trampoliner/jumping-jack-pop" );
+        final ContentPath folderImagesPop = ContentPath.from( ContentInitializer.IMAGE_ARCHIVE_PATH_ELEMENT + "/" +
+                                                                  ContentInitializer.TRAMPOLINE_PATH_ELEMENT + "/" +
+                                                                  ContentInitializer.JUMPING_JACK_POP_PATH_ELEMENT );
         for ( String fileName : FOLDER_IMAGES_POP )
         {
             createImageContent( folderImagesPop, fileName, StringUtils.substringBefore( fileName, "." ) );

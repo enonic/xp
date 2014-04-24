@@ -19,6 +19,15 @@ import com.enonic.wem.core.support.BaseInitializer;
 public class ContentInitializer
     extends BaseInitializer
 {
+
+    public static final String IMAGE_ARCHIVE_PATH_ELEMENT = "imagearchive";
+
+    public static final String TRAMPOLINE_PATH_ELEMENT = "trampoliner";
+
+    public static final String JUMPING_JACK_BIG_BOUNCE_PATH_ELEMENT = "jumping-jack-big-bounce";
+
+    public static final String JUMPING_JACK_POP_PATH_ELEMENT = "jumping-jack-pop";
+
     private ContentTypeService contentTypeService;
 
     private ContentService contentService;
@@ -33,7 +42,7 @@ public class ContentInitializer
         throws Exception
     {
         ContentPath imageArchivePath = contentService.create( createFolder().
-            name( "imagearchive" ).
+            name( IMAGE_ARCHIVE_PATH_ELEMENT ).
             parent( ContentPath.ROOT ).
             displayName( "Image Archive" ) ).getPath();
 
@@ -48,17 +57,17 @@ public class ContentInitializer
             displayName( "People" ) ).getPath();
 
         ContentPath trampolinerPath = contentService.create( createFolder().
-            name( "trampoliner" ).
+            name( TRAMPOLINE_PATH_ELEMENT ).
             parent( imageArchivePath ).
             displayName( "Trampoliner" ) ).getPath();
 
         contentService.create( createFolder().
-            name( "jumping-jack-big-bounce" ).
+            name( JUMPING_JACK_BIG_BOUNCE_PATH_ELEMENT ).
             parent( trampolinerPath ).
             displayName( "Jumping Jack - Big Bounce" ) ).getPath();
 
         contentService.create( createFolder().
-            name( "jumping-jack-pop" ).
+            name( JUMPING_JACK_POP_PATH_ELEMENT ).
             parent( trampolinerPath ).
             displayName( "Jumping Jack - Pop" ).
             contentType( ContentTypeName.folder() ) ).getPath();
