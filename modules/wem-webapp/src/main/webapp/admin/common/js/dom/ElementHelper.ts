@@ -405,5 +405,9 @@ module api.dom {
             this.el.focus();
         }
 
+        blur() {
+            this.el.blur();
+        }
+
     }
 }

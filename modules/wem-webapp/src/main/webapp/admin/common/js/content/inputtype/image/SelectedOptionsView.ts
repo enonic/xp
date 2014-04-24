@@ -89,15 +89,47 @@ module api.content.inputtype.image {
             this.dialog.hide();
             var optionView: SelectedOptionView = <SelectedOptionView>option.getOptionView();
 
+            optionView.onMouseDown((event: MouseEvent) => {
+                if (this.activeOption && option.getIndex() === this.activeOption.getIndex()) {
+                    event.preventDefault();
+                }
+                event.stopPropagation();
+            });
+
             optionView.onClicked((event: MouseEvent) => {
                 if (this.dialog.isVisible()) {
                     this.hideImageSelectorDialog();
                     this.activateKeyListeners(false);
+                    optionView.getCheckbox().giveBlur();
                 } else {
-                    this.showImageSelectorDialog(option);
-                    this.activateKeyListeners(true);
+                    optionView.getCheckbox().giveFocus();
                 }
             });
+
+            optionView.getCheckbox().onKeyDown((event: KeyboardEvent) => {
+                switch (event.which) {
+                case 9: // Tab
+                    if (this.isFirstInRow(option.getIndex()) || this.isLast(option.getIndex())) {
+                        this.hideImageSelectorDialog();
+                        this.activateKeyListeners(false);
+                    }
+                    break;
+                case 8: // Backspace
+                    optionView.getCheckbox().setChecked(false);
+                    this.removeOptionViewAndRefocus(option);
+                    event.preventDefault();
+                    break;
+                case 46: // Delete
+                    optionView.getCheckbox().setChecked(false);
+                    this.removeOptionViewAndRefocus(option);
+                    break;
+                case 13: // Enter
+                    this.notifyEditSelectedOptions([option]);
+                    break;
+                }
+                event.stopPropagation();
+            });
+
             optionView.onChecked((view: SelectedOptionView, checked: boolean) => {
                 if (checked) {
                     this.selection.push(option);
@@ -111,11 +143,32 @@ module api.content.inputtype.image {
                 this.updateSelectionToolbarLayout();
             });
 
+            optionView.onFocused((view: SelectedOptionView, focused: boolean) => {
+                if (focused) {
+                    this.showImageSelectorDialog(option);
+                    this.activateKeyListeners(true);
+                }
+            });
+
             optionView.getIcon().onLoaded((event: UIEvent) => {
                 this.updateOptionViewLayout(optionView, this.calculateOptionHeight());
             });
 
             optionView.insertBeforeEl(this.toolbar);
+        }
+
+        private removeOptionViewAndRefocus(option: SelectedOption<ContentSummary>) {
+            var index = this.isLast(option.getIndex()) ?
+                (this.isFirst(option.getIndex()) ? -1 : option.getIndex() - 1) :
+                option.getIndex();
+
+            this.removeOptionView(option);
+            this.notifyRemoveSelectedOptions([option]);
+            this.hideImageSelectorDialog();
+
+            if (index > -1) {
+                (<SelectedOptionView>this.getSelectedOptionViews()[index]).getCheckbox().giveFocus();
+            }
         }
 
         private activateKeyListeners(activate: boolean) {
@@ -199,27 +252,29 @@ module api.content.inputtype.image {
         }
 
         private setOutsideClickListener() {
-            var selectedOptionsView = this;
             this.mouseClickListener = (event: MouseEvent) => {
-                var viewHtmlElement = selectedOptionsView.getHTMLElement();
                 for (var element = event.target; element; element = (<any>element).parentNode) {
-                    if (element == viewHtmlElement) {
+                    if (element == this.getHTMLElement()) {
                         return;
                     }
                 }
-
-                selectedOptionsView.hideImageSelectorDialog();
+                this.hideImageSelectorDialog();
+                this.activateKeyListeners(false);
             };
 
             api.dom.Body.get().onClicked(this.mouseClickListener);
+        }
+
+        private isFirstInRow(index: number): boolean {
+            return index % this.numberOfOptionsPerRow == 0;
         }
 
         private isLastInRow(index: number): boolean {
             return index % this.numberOfOptionsPerRow == 2;
         }
 
-        private isFirstInRow(index: number): boolean {
-            return index % this.numberOfOptionsPerRow == 0;
+        private isFirst(index: number): boolean {
+            return index == 0;
         }
 
         private isLast(index: number): boolean {
