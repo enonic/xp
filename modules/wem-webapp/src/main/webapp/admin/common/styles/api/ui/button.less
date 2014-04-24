@@ -1,8 +1,16 @@
+.button-background(@bg: @form-button-bg, @hoverBg: lighten(@bg, 10%)) {
+  background-color: @bg;
+
+  &:hover:not(:disabled) {
+    background-color: @hoverBg;
+  }
+}
+
 .button(@color: @form-button-font, @bg: @form-button-bg, @hoverColor: @color, @hoverBg: lighten(@bg, 10%)) {
+  .button-background(@bg, @hoverBg);
   padding: 1px 19px 1px 19px;
   margin: 0;
   cursor: pointer;
-  background-color: @bg;
   border: 1px solid transparent;
   outline: none;
 
@@ -23,7 +31,6 @@
   }
 
   &:hover:not(:disabled) {
-    background-color: @hoverBg;
 
     &:before, span {
       color: @hoverColor;
@@ -61,6 +68,14 @@
     .label {
       font-size: 16px;
     }
+  }
+
+  &.green {
+    .button-background(green);
+  }
+
+  &.red {
+    .button-background(#C92606);
   }
 }
 

@@ -7,15 +7,19 @@ module api.content.inputtype.image {
 
         private numberOfOptionsPerRow: number = 3;
 
-        private editableOption: SelectedOption<ContentSummary>;
+        private activeOption: SelectedOption<ContentSummary>;
+
+        private selection: SelectedOption<ContentSummary>[] = [];
+
+        private toolbar: SelectionToolbar;
 
         private dialog: ImageSelectorDialog;
 
-        private editSelectedOptionListeners: {(option: SelectedOption<ContentSummary>): void}[] = [];
+        private editSelectedOptionsListeners: {(option: SelectedOption<ContentSummary>[]): void}[] = [];
 
-        private removeSelectedOptionListeners: {(option: SelectedOption<ContentSummary>): void}[] = [];
+        private removeSelectedOptionsListeners: {(option: SelectedOption<ContentSummary>[]): void}[] = [];
 
-        private mouseClickListener:{(MouseEvent): void};
+        private mouseClickListener: {(MouseEvent): void};
 
         constructor() {
             super();
@@ -24,39 +28,53 @@ module api.content.inputtype.image {
             this.dialog.hide();
             this.appendChild(this.dialog);
 
+            this.toolbar = new SelectionToolbar();
+            this.toolbar.hide();
+            this.toolbar.onEditClicked(() => {
+                this.notifyEditSelectedOptions(this.selection);
+            });
+            this.toolbar.onRemoveClicked(() => {
+                this.notifyRemoveSelectedOptions(this.selection);
+                // clear the selection;
+                this.selection.length = 0;
+                this.updateSelectionToolbarLayout();
+
+            });
+            this.appendChild(this.toolbar);
+
             this.onShown((event: api.dom.ElementShownEvent) => {
                 this.updateLayout();
             });
         }
 
-        private notifyRemoveSelectedOption(option: SelectedOption<ContentSummary>) {
-            this.removeSelectedOptionListeners.forEach((listener) => {
+        private notifyRemoveSelectedOptions(option: SelectedOption<ContentSummary>[]) {
+            this.removeSelectedOptionsListeners.forEach((listener) => {
                 listener(option);
             });
         }
 
-        addRemoveSelectedOptionListener(listener: (option: SelectedOption<ContentSummary>) => void) {
-            this.removeSelectedOptionListeners.push(listener);
+        onRemoveSelectedOptions(listener: (option: SelectedOption<ContentSummary>[]) => void) {
+            this.removeSelectedOptionsListeners.push(listener);
         }
 
-        removeRemoveSelectedOptionListener(listener: (option: SelectedOption<ContentSummary>) => void) {
-            this.removeSelectedOptionListeners = this.removeSelectedOptionListeners.filter(function (curr) {
+        unRemoveSelectedOptions(listener: (option: SelectedOption<ContentSummary>[]) => void) {
+            this.removeSelectedOptionsListeners = this.removeSelectedOptionsListeners.filter(function (curr) {
                 return curr != listener;
             });
         }
 
-        private notifyEditSelectedOption(option: SelectedOption<ContentSummary>) {
-            this.editSelectedOptionListeners.forEach((listener) => {
+        private notifyEditSelectedOptions(option: SelectedOption<ContentSummary>[]) {
+            this.editSelectedOptionsListeners.forEach((listener) => {
                 listener(option);
             });
         }
 
-        addEditSelectedOptionListener(listener: (option: SelectedOption<ContentSummary>) => void) {
-            this.editSelectedOptionListeners.push(listener);
+        onEditSelectedOptions(listener: (option: SelectedOption<ContentSummary>[]) => void) {
+            this.editSelectedOptionsListeners.push(listener);
         }
 
-        removeEditSelectedOptionListener(listener: (option: SelectedOption<ContentSummary>) => void) {
-            this.editSelectedOptionListeners = this.editSelectedOptionListeners.filter(function (curr) {
+        unEditSelectedOptions(listener: (option: SelectedOption<ContentSummary>[]) => void) {
+            this.editSelectedOptionsListeners = this.editSelectedOptionsListeners.filter(function (curr) {
                 return curr != listener;
             });
         }
@@ -74,22 +92,45 @@ module api.content.inputtype.image {
             optionView.onClicked((event: MouseEvent) => {
                 if (this.dialog.isVisible()) {
                     this.hideImageSelectorDialog();
+                    this.activateKeyListeners(false);
                 } else {
                     this.showImageSelectorDialog(option);
+                    this.activateKeyListeners(true);
                 }
             });
-            optionView.addSelectedOptionToBeRemovedListener((optionView: SelectedOptionView) => {
-                this.removeOptionView(option);
-                this.notifyRemoveSelectedOption(option);
+            optionView.onChecked((view: SelectedOptionView, checked: boolean) => {
+                if (checked) {
+                    this.selection.push(option);
+                } else {
+                    var index = this.selection.indexOf(option);
+                    if (index > -1) {
+                        this.selection.splice(index, 1);
+                    }
+                }
+
+                this.updateSelectionToolbarLayout();
             });
 
-            this.appendChild(optionView);
             optionView.getIcon().onLoaded((event: UIEvent) => {
                 this.updateOptionViewLayout(optionView, this.calculateOptionHeight());
             });
+
+            optionView.insertBeforeEl(this.toolbar);
         }
 
-        showImageSelectorDialog(option: SelectedOption<ContentSummary>) {
+        private activateKeyListeners(activate: boolean) {
+            var binding = new api.ui.KeyBinding("space", (event: ExtendedKeyboardEvent, combo: string) => {
+                (<SelectedOptionView>this.activeOption.getOptionView()).toggleChecked();
+                event.preventDefault();
+            });
+            if (activate) {
+                api.ui.KeyBindings.get().bindKey(binding);
+            } else {
+                api.ui.KeyBindings.get().unbindKey(binding);
+            }
+        }
+
+        private showImageSelectorDialog(option: SelectedOption<ContentSummary>) {
 
             var selectedOptionViews = this.getSelectedOptionViews();
             for (var i = 0; i < selectedOptionViews.length; i++) {
@@ -101,10 +142,10 @@ module api.content.inputtype.image {
                 }
             }
 
-            if (this.editableOption) {
-                this.editableOption.getOptionView().removeClass('editing first-in-row last-in-row');
+            if (this.activeOption) {
+                this.activeOption.getOptionView().removeClass('editing first-in-row last-in-row');
             }
-            this.editableOption = option;
+            this.activeOption = option;
             option.getOptionView().addClass('editing' + (this.isFirstInRow(option.getIndex()) ? ' first-in-row' : '') +
                                             (this.isLastInRow(option.getIndex()) ? ' last-in-row' : ''));
 
@@ -138,6 +179,14 @@ module api.content.inputtype.image {
             this.dialog.getEl().setMarginTop(((optionHeight / 3) - 20) + 'px');
         }
 
+        private updateSelectionToolbarLayout() {
+            var showToolbar = this.selection.length > 0;
+            this.toolbar.setVisible(showToolbar);
+            if (showToolbar) {
+                this.toolbar.setSelectionCount(this.selection.length);
+            }
+        }
+
         private calculateOptionHeight(): number {
             var availableWidth = this.getEl().getWidthWithMargin();
             return Math.floor(0.3 * availableWidth);
@@ -145,7 +194,7 @@ module api.content.inputtype.image {
 
         private hideImageSelectorDialog() {
             this.dialog.hide();
-            this.editableOption.getOptionView().removeClass('editing first-in-row last-in-row');
+            this.activeOption.getOptionView().removeClass('editing first-in-row last-in-row');
             api.dom.Body.get().unClicked(this.mouseClickListener);
         }
 
@@ -166,15 +215,15 @@ module api.content.inputtype.image {
         }
 
         private isLastInRow(index: number): boolean {
-            return (index + 1) % this.numberOfOptionsPerRow == 0;
+            return index % this.numberOfOptionsPerRow == 2;
         }
 
         private isFirstInRow(index: number): boolean {
-            return (index + 1) % this.numberOfOptionsPerRow == 1;
+            return index % this.numberOfOptionsPerRow == 0;
         }
 
         private isLast(index: number): boolean {
-            return (index + 1) == this.getSelectedOptionViews().length;
+            return index == this.getSelectedOptionViews().length - 1;
         }
 
     }

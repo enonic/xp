@@ -35,7 +35,7 @@ module api.content.page {
                     return null;
                 }
             }
-            console.log(this.regionByName);
+
             return component.getPath();
         }
 

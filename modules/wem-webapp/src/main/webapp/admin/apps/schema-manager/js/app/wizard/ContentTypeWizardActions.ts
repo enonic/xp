@@ -4,7 +4,7 @@ module app.wizard {
 
         constructor() {
             super("Duplicate");
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
                 // TODO
             });
         }
@@ -12,9 +12,9 @@ module app.wizard {
 
     export class DeleteContentTypeAction extends api.ui.Action {
 
-        constructor(wizardPanel:api.app.wizard.WizardPanel<api.schema.content.ContentType>) {
+        constructor(wizardPanel: api.app.wizard.WizardPanel<api.schema.content.ContentType>) {
             super("Delete", "mod+del");
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
                 api.ui.dialog.ConfirmationDialog.get()
                     .setQuestion("Are you sure you want to delete this content type?")
                     .setNoCallback(null)
@@ -23,7 +23,7 @@ module app.wizard {
                         new api.schema.content.DeleteContentTypeRequest()
                             .addName(wizardPanel.getPersistedItem().getContentTypeName())
                             .send()
-                            .done((jsonResponse:api.rest.JsonResponse<api.schema.SchemaDeleteJson>) => {
+                            .done((jsonResponse: api.rest.JsonResponse<api.schema.SchemaDeleteJson>) => {
                                 var json = jsonResponse.getResult();
 
                                 if (json.successes && json.successes.length > 0) {
@@ -41,16 +41,16 @@ module app.wizard {
 
     export class ContentTypeWizardActions implements api.app.wizard.WizardActions<api.schema.content.ContentType> {
 
-        private save:api.ui.Action;
+        private save: api.ui.Action;
 
-        private close:api.ui.Action;
+        private close: api.ui.Action;
 
-        private delete:api.ui.Action;
+        private delete: api.ui.Action;
 
-        private duplicate:api.ui.Action;
+        private duplicate: api.ui.Action;
 
 
-        constructor(wizardPanel:api.app.wizard.WizardPanel<api.schema.content.ContentType>) {
+        constructor(wizardPanel: api.app.wizard.WizardPanel<api.schema.content.ContentType>) {
             this.save = new api.app.wizard.SaveAction(wizardPanel);
             this.duplicate = new DuplicateContentTypeAction();
             this.delete = new DeleteContentTypeAction(wizardPanel);
@@ -58,15 +58,15 @@ module app.wizard {
         }
 
         enableActionsForNew() {
-            this.save.setEnabled( true );
-            this.duplicate.setEnabled( false );
-            this.delete.setEnabled( false )
+            this.save.setEnabled(true);
+            this.duplicate.setEnabled(false);
+            this.delete.setEnabled(false)
         }
 
-        enableActionsForExisting(existing:api.schema.content.ContentType) {
-            this.save.setEnabled( existing.isEditable() );
-            this.duplicate.setEnabled( true );
-            this.delete.setEnabled( existing.isDeletable() );
+        enableActionsForExisting(existing: api.schema.content.ContentType) {
+            this.save.setEnabled(existing.isEditable());
+            this.duplicate.setEnabled(true);
+            this.delete.setEnabled(existing.isDeletable());
         }
 
         getDeleteAction() {

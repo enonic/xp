@@ -31,6 +31,10 @@ module app.wizard.page {
     import ImageComponentBuilder = api.content.page.image.ImageComponentBuilder;
     import LayoutComponentBuilder = api.content.page.layout.LayoutComponentBuilder;
 
+    import GetPartDescriptorsByModulesRequest = api.content.page.part.GetPartDescriptorsByModulesRequest;
+    import GetImageDescriptorsByModulesRequest = api.content.page.image.GetImageDescriptorsByModulesRequest;
+    import GetLayoutDescriptorsByModulesRequest = api.content.page.layout.GetLayoutDescriptorsByModulesRequest;
+
     import InspectionPanelConfig = app.wizard.page.contextwindow.inspect.InspectionPanelConfig;
     import InspectionPanel = app.wizard.page.contextwindow.inspect.InspectionPanel;
     import ContentInspectionPanel = app.wizard.page.contextwindow.inspect.ContentInspectionPanel;
@@ -48,7 +52,6 @@ module app.wizard.page {
     import EmulatorPanel = app.wizard.page.contextwindow.EmulatorPanel;
     import InsertablesPanel = app.wizard.page.contextwindow.insert.InsertablesPanel;
     import RenderingMode = api.rendering.RenderingMode;
-
 
     export interface LiveFormPanelConfig {
 
@@ -387,7 +390,6 @@ module app.wizard.page {
                 else {
                     this.contextWindow.show();
                 }
-
                 this.inspectComponent(event.getPath());
             });
 
@@ -504,12 +506,167 @@ module app.wizard.page {
                     });
                 }
             });
+
+            this.liveEditPage.onPageComponentDuplicated((event: PageComponentDuplicatedEvent) => {
+
+                this.duplicateComponent(event.getType(), event.getRegion(), event.getPath(), event.getPath())
+                    .done((component: PageComponent) => {
+                        this.pageSkipReload = true;
+                        this.contentWizardPanel.saveChanges().done(() => {
+                            this.pageSkipReload = false;
+                            this.loadComponent(component.getPath(), event.getPlaceholder());
+                        });
+                    });
+            });
         }
 
-        private addComponent(componentType: string, regionPath: RegionPath, precedingComponent: ComponentPath): PageComponent {
+        private duplicateComponent(componentType: string, regionPath: RegionPath, precedingPath: ComponentPath, originPath: ComponentPath): Q.Promise<PageComponent> {
+            switch (componentType) {
+            case "image":
+                return this.duplicateImageComponent(componentType, regionPath, precedingPath, originPath);
+            case "part":
+                return this.duplicatePartComponent(componentType, regionPath, precedingPath, originPath);
+            case "layout":
+                return this.duplicateLayoutComponent(componentType, regionPath, precedingPath, originPath);
+            case "text":
+                return this.duplicateTextComponent(componentType, regionPath, precedingPath, originPath);
+            }
+        }
 
-            var componentName = this.pageRegions.ensureUniqueComponentName(regionPath,
-                new ComponentName(api.util.capitalize(componentType)));
+        private duplicateImageComponent(componentType: string, regionPath: RegionPath, precedingPath: ComponentPath, originPath: ComponentPath): Q.Promise<PageComponent> {
+
+            var deferred = Q.defer<PageComponent>();
+
+            var originComponent:ImageComponent = this.pageRegions.getImageComponent(originPath),
+                component:ImageComponent = <ImageComponent>this.addComponent(componentType, regionPath, precedingPath, originComponent.getName().toString());
+
+
+            if (component != null && originComponent != null) {
+                component.setImage(originComponent.getImage());
+                if (this.defaultModels.hasImageDescriptor()) {
+                    component.setDescriptor(this.defaultModels.getImageDescriptor().getKey());
+                }
+
+                deferred.resolve(component);
+            } else {
+                deferred.reject(null);
+            }
+
+            return deferred.promise;
+        }
+
+        private duplicatePartComponent(componentType: string, regionPath: RegionPath, precedingPath: ComponentPath, originPath: ComponentPath): Q.Promise<PageComponent> {
+
+            var deferred = Q.defer<PageComponent>();
+
+            var component:PageComponent,
+                originComponent:PageComponent = this.pageRegions.getComponent(originPath),
+                getDescriptorsRequest = new GetPartDescriptorsByModulesRequest(this.siteTemplate.getModules());
+
+            var originDescriptorName:string = originComponent.getDescriptor().getName().toString();
+
+            return getDescriptorsRequest.sendAndParse().then((results:Descriptor[]): Q.Promise<PageComponent> => {
+                var componentDescriptor:Descriptor;
+                for (var key in results) {
+                    if (results[key].getName().toString() === originDescriptorName) {
+                        componentDescriptor = results[key];
+                        break;
+                    }
+                }
+
+                if (componentDescriptor) {
+                    component = this.addComponent(componentType, regionPath, precedingPath, componentDescriptor.getName().toString());
+                    this.setComponentDescriptorLocally(componentDescriptor, component.getPath());
+                    deferred.resolve(component);
+                } else {
+                    deferred.reject(null);
+                }
+                return deferred.promise;
+            });
+        }
+
+        // TODO: TextComponent is not implemented yet. Update, when the implementation is ready.
+        private duplicateTextComponent(componentType: string, regionPath: RegionPath, precedingPath: ComponentPath, originPath: ComponentPath): Q.Promise<PageComponent> {
+
+            var deferred = Q.defer<PageComponent>();
+
+            var component:PageComponent = this.addComponent(componentType, regionPath, precedingPath/*, name*/);
+            var originComponent:PageComponent = this.pageRegions.getComponent(originPath),
+                getDescriptorsRequest;
+
+            return deferred.promise;
+        }
+
+        private duplicateLayoutComponent(componentType: string, regionPath: RegionPath, precedingPath: ComponentPath, originPath: ComponentPath): Q.Promise<PageComponent> {
+
+            var deferred = Q.defer<PageComponent>();
+
+            var component:LayoutComponent,
+                originComponent:LayoutComponent = this.pageRegions.getLayoutComponent(originPath),
+                originDescriptorName:string = originComponent.getDescriptor().getName().toString(),
+                getDescriptorsRequest = new GetLayoutDescriptorsByModulesRequest(this.siteTemplate.getModules()),
+                componentDescriptor:Descriptor;
+
+            return getDescriptorsRequest.sendAndParse().then((results:Descriptor[]): Q.Promise<PageComponent> => {
+                for (var key in results) {
+                    if (results[key].getName().toString() === originDescriptorName) {
+                        componentDescriptor = results[key];
+                        break;
+                    }
+                }
+
+                if (componentDescriptor) {
+                    component = <LayoutComponent>this.addComponent(componentType, regionPath, precedingPath, componentDescriptor.getName().toString())
+                    this.setComponentDescriptorLocally(componentDescriptor, component.getPath());
+                    deferred.resolve(null);
+                } else {
+                    deferred.reject(null);
+                }
+
+                return deferred.promise;
+
+            }).then((resolvedComponent:PageComponent): Q.Promise<PageComponent> => {
+                originComponent.getLayoutRegions().getRegions().forEach((region:api.content.page.region.Region, index) => {
+                    var presceding:ComponentPath = null;
+                    var regionPath = component.getLayoutRegions().getRegions()[index].getPath();
+
+                    region.getComponents().forEach((pageComponent:PageComponent)=> {
+                        var componentType = "";
+                        if (pageComponent instanceof ImageComponent) {
+                            componentType = "image";
+                        } else if (pageComponent instanceof PartComponent) {
+                            componentType = "part";
+                        } else if (pageComponent instanceof LayoutComponent) {
+                            componentType = "layout";
+                        } /*else if (pageComponent instanceof TextComponent) {
+                            componentType = "text";
+                        }*/
+
+                        deferred.promise = deferred.promise.then((resolvedComponent:PageComponent): Q.Promise<PageComponent> => {
+                            return this.duplicateComponent(componentType, regionPath, resolvedComponent ? resolvedComponent.getPath() : null, pageComponent.getPath());
+                        });
+                    });
+                });
+
+                return deferred.promise;
+            }).then((): Q.Promise<PageComponent> => {
+                var defer = Q.defer<PageComponent>();
+                defer.resolve(component);
+
+                deferred.promise = deferred.promise.then((resolvedComponent:PageComponent) => {
+                    return defer.promise;
+                });
+
+                return deferred.promise;
+            });
+
+
+        }
+
+        private addComponent(componentType: string, regionPath: RegionPath, precedingComponent: ComponentPath, wantedName?:string): PageComponent {
+
+            wantedName = api.util.capitalize(api.util.removeInvalidChars(wantedName || componentType));
+            var componentName = this.pageRegions.ensureUniqueComponentName(regionPath, new ComponentName(wantedName));
 
             var builder: PageComponentBuilder<PageComponent>;
             switch (componentType) {
@@ -523,7 +680,7 @@ module app.wizard.page {
                 builder = new LayoutComponentBuilder();
                 break;
             case "text":
-                //TODO: Implement text
+                // TODO: Implement text
                 builder = null;
                 break;
             }
@@ -609,6 +766,25 @@ module app.wizard.page {
             });
         }
 
+        private setComponentDescriptorLocally(descriptor: Descriptor, componentPath: ComponentPath) {
+            var component = this.pageRegions.getComponent(componentPath);
+            if (!component || !descriptor) {
+                return;
+            }
+
+            componentPath = component.getPath();
+            component.setDescriptor(descriptor.getKey());
+
+            // use of "instanceof" does not work because the descriptor object has been created in another frame
+            var isLayoutDescriptor = (descriptor instanceof LayoutDescriptor) ||
+                (<any>descriptor).constructor.name === 'LayoutDescriptor';
+            if (isLayoutDescriptor) {
+                var layoutDescriptor = <LayoutDescriptor> descriptor;
+                var layoutComponent = <LayoutComponent>component;
+                this.addLayoutRegions(layoutComponent, layoutDescriptor);
+            }
+        }
+
         private updateComponentName(name: string, componentPath: ComponentPath, isForced?: boolean) {
 
             var component = this.pageRegions.getComponent(componentPath),
@@ -617,9 +793,7 @@ module app.wizard.page {
             if (!component || (!isForced && type == "image")) {
                 return;
             }
-
             var removedComponent = this.pageRegions.removeComponent(componentPath);
-
             var newComponentEl = this.liveEditPage.getComponentByPath(componentPath);
             var newComponentName = this.pageRegions.ensureUniqueComponentName(component.getPath().getRegionPath(),
                 new ComponentName(api.util.removeInvalidChars(api.util.capitalizeAll(name))));

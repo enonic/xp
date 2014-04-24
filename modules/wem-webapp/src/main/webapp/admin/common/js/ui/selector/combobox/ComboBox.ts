@@ -21,9 +21,11 @@ module api.ui.selector.combobox {
 
         hideComboBoxWhenMaxReached?:boolean;
 
+        setNextInputFocusWhenMaxReached?: boolean;
+
         dataIdProperty?:string;
 
-        delayedInputValueChangedHandling?: number
+        delayedInputValueChangedHandling?: number;
 
     }
 
@@ -51,6 +53,8 @@ module api.ui.selector.combobox {
 
         private hideComboBoxWhenMaxReached: boolean;
 
+        private setNextInputFocusWhenMaxReached: boolean = true;
+
         private optionSelectedListeners: {(event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>):void}[] = [];
 
         private optionFilterInputValueChangedListeners: {(event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>):void}[] = [];
@@ -66,6 +70,9 @@ module api.ui.selector.combobox {
             this.getEl().setAttribute("name", name);
 
             this.hideComboBoxWhenMaxReached = config.hideComboBoxWhenMaxReached;
+            if (config.setNextInputFocusWhenMaxReached !== undefined) {
+                this.setNextInputFocusWhenMaxReached = config.setNextInputFocusWhenMaxReached;
+            }
             if (config.selectedOptionsView != null) {
                 this.selectedOptionsCtrl = new SelectedOptionsCtrl(config.selectedOptionsView,
                         config.maximumOccurrences != null ? config.maximumOccurrences : 0);
@@ -260,7 +267,9 @@ module api.ui.selector.combobox {
 
             if (this.maximumOccurrencesReached()) {
                 this.input.setMaximumReached();
-                api.dom.FormEl.moveFocuseToNextFocusable(this.input);
+                if (this.setNextInputFocusWhenMaxReached) {
+                    api.dom.FormEl.moveFocusToNextFocusable(this.input);
+                }
                 this.dropdownHandle.setEnabled(false);
             }
             if (!silent) {
@@ -447,7 +456,7 @@ module api.ui.selector.combobox {
             this.onKeyDown(this.handleKeyDown.bind(this));
 
             if (this.multipleSelections) {
-                this.selectedOptionsCtrl.addSelectedOptionRemovedListener(
+                this.selectedOptionsCtrl.onSelectedOptionRemoved(
                     (removedOption: SelectedOption<OPTION_DISPLAY_VALUE>) => {
                         this.handleSelectedOptionRemoved(removedOption);
                     });
@@ -602,7 +611,7 @@ module api.ui.selector.combobox {
                 combobox.hideDropdown();
                 combobox.active = false;
                 api.dom.Body.get().getEl().removeEventListener('click', hideDropdownOnBlur);
-            }
+            };
 
             // set callback function on document body if combobox wasn't marked as active
             if (!this.active) {
@@ -646,12 +655,12 @@ module api.ui.selector.combobox {
             });
         }
 
-        addSelectedOptionRemovedListener(listener: {(removed: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
-            this.selectedOptionsCtrl.addSelectedOptionRemovedListener(listener);
+        onSelectedOptionRemoved(listener: {(removed: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
+            this.selectedOptionsCtrl.onSelectedOptionRemoved(listener);
         }
 
-        removeSelectedOptionRemovedListener(listener: {(removed: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
-            this.selectedOptionsCtrl.removeSelectedOptionRemovedListener(listener);
+        unSelectedOptionRemoved(listener: {(removed: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
+            this.selectedOptionsCtrl.unSelectedOptionRemoved(listener);
         }
     }
 

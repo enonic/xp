@@ -22,7 +22,7 @@ module api.ui.dialog {
             this.appendChildToContentPanel(this.questionEl);
 
             this.noAction = new api.ui.Action("No", "esc");
-            this.noAction.addExecutionListener((action: api.ui.Action) => {
+            this.noAction.onExecuted((action: api.ui.Action) => {
                 this.close();
                 if (this.noCallback) {
                     this.noCallback();
@@ -30,7 +30,7 @@ module api.ui.dialog {
             });
 
             this.yesAction = new api.ui.Action("Yes", "enter");
-            this.yesAction.addExecutionListener((action: api.ui.Action) => {
+            this.yesAction.onExecuted((action: api.ui.Action) => {
                 this.close();
                 if (this.yesCallback) {
                     this.yesCallback();

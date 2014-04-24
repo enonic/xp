@@ -100,13 +100,13 @@ module api.aggregation {
             });
         }
 
-        removeSelectionChangedListener(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
+        unSelectionChanged(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
             this.selectionChangedListeners = this.selectionChangedListeners.filter(function (curr) {
                 return curr != listener;
             });
         }
 
-        addSelectionChangeListener(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
+        onSelectionChanged(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
             this.selectionChangedListeners.push(listener);
         }
 

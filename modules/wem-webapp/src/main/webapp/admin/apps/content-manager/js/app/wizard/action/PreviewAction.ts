@@ -8,7 +8,7 @@ module app.wizard.action {
 
         constructor(wizard: app.wizard.ContentWizardPanel) {
             super("Preview");
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
                     if (wizard.hasUnsavedChanges()) {
                         wizard.setPersistAsDraft(false);
                         wizard.updatePersistedItem().done(this.showPreviewDialog);

@@ -98,7 +98,7 @@ module app.create {
                 this.closeAndFireEventFromContentType(event.getItem());
             });
 
-            this.getCancelAction().addExecutionListener(()=> this.close());
+            this.getCancelAction().onExecuted(()=> this.close());
         }
 
         private closeAndFireEventFromContentType(item: NewContentDialogListItem) {
@@ -183,13 +183,13 @@ module app.create {
                 }).done();
         }
 
-        private createListItems(contentTypes: ContentTypeSummary[], siteTemplates: SiteTemplateSummary[]):NewContentDialogListItem[] {
+        private createListItems(contentTypes: ContentTypeSummary[], siteTemplates: SiteTemplateSummary[]): NewContentDialogListItem[] {
             var contentTypesByName: {[name: string]: ContentTypeSummary} = {};
-            contentTypes.forEach((contentType:ContentTypeSummary) => {
+            contentTypes.forEach((contentType: ContentTypeSummary) => {
                 contentTypesByName[contentType.getName()] = contentType;
             });
 
-            var items:NewContentDialogListItem[] = [];
+            var items: NewContentDialogListItem[] = [];
             contentTypes.forEach((contentType: ContentTypeSummary) => {
                 items.push(NewContentDialogListItem.fromContentType(contentType))
             });

@@ -5,7 +5,7 @@ module api.app {
         constructor() {
             super('Start');
 
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
                 new ShowAppLauncherEvent().fire();
             });
         }
@@ -16,7 +16,7 @@ module api.app {
         constructor() {
             super('Browse');
 
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
                 new ShowAppBrowsePanelEvent().fire();
             });
         }
@@ -24,9 +24,9 @@ module api.app {
 
     export class AppBarActions {
 
-        public static SHOW_APP_LAUNCHER:api.ui.Action = new ShowAppLauncherAction();
+        public static SHOW_APP_LAUNCHER: api.ui.Action = new ShowAppLauncherAction();
 
-        public static SHOW_APP_BROWSE_PANEL:api.ui.Action = new ShowAppBrowsePanelAction();
+        public static SHOW_APP_BROWSE_PANEL: api.ui.Action = new ShowAppBrowsePanelAction();
     }
 
 }

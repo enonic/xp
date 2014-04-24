@@ -91,7 +91,7 @@ module api.form.inputtype.combobox {
 
                 this.validate(false);
             });
-            comboBox.addSelectedOptionRemovedListener((removed: api.ui.selector.combobox.SelectedOption<string>) => {
+            comboBox.onSelectedOptionRemoved((removed: api.ui.selector.combobox.SelectedOption<string>) => {
 
                 this.notifyValueRemoved(removed.getIndex());
 
@@ -130,11 +130,11 @@ module api.form.inputtype.combobox {
             }
         }
 
-        addEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
+        onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
             // Have to use stub here because it doesn't extend BaseIntputTypeView
         }
 
-        removeEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
+        unEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
             // Have to use stub here because it doesn't extend BaseIntputTypeView
         }
 

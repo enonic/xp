@@ -255,7 +255,7 @@ module api.form.inputtype.support {
             });
         }
 
-        addOnValueChangedListener(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
+        onOccurrenceValueChanged(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
             throw new Error("Must be implemented by inheritor");
         }
 
@@ -266,11 +266,11 @@ module api.form.inputtype.support {
             return false;
         }
 
-        addEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
+        onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
             // Adapter for InputTypeView method, to be implemented on demand in inheritors
         }
 
-        removeEditContentRequestListener(listener: (content: api.content.ContentSummary) => void) {
+        unEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
             // Adapter for InputTypeView method, to be implemented on demand in inheritors
         }
     }

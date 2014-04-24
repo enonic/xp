@@ -13,7 +13,7 @@ module api.aggregation {
         addAggregationGroupView(aggregationGroupView: api.aggregation.AggregationGroupView) {
             this.appendChild(aggregationGroupView);
 
-            aggregationGroupView.addBucketViewSelectionChangedEventListener((event: api.aggregation.BucketViewSelectionChangedEvent) => {
+            aggregationGroupView.onBucketViewSelectionChanged((event: api.aggregation.BucketViewSelectionChangedEvent) => {
 
                 if (event.getNewValue()) {
                     this.lastSelectedGroupView = event.getBucketView().getParentAggregationView().getParentGroupView();

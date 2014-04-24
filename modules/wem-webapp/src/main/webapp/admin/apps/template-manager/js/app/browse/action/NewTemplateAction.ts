@@ -4,7 +4,7 @@ module app.browse.action {
 
         constructor() {
             super("New");
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
                 new app.browse.event.NewTemplateEvent().fire();
             });
         }

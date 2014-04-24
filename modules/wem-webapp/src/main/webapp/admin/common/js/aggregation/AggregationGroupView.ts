@@ -26,8 +26,8 @@ module api.aggregation {
         private addAggregationView(aggregationView: api.aggregation.AggregationView) {
             this.appendChild(aggregationView);
 
-            aggregationView.addBucketViewSelectionChangedEventListener((event: api.aggregation.BucketViewSelectionChangedEvent) => {
-                    this.notifyBucketViewSelectionChangedEventChanged(event);
+            aggregationView.onBucketViewSelectionChanged((event: api.aggregation.BucketViewSelectionChangedEvent) => {
+                    this.notifyBucketViewSelectionChanged(event);
                 }
             );
 
@@ -89,17 +89,17 @@ module api.aggregation {
             });
         }
 
-        addBucketViewSelectionChangedEventListener(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
+        onBucketViewSelectionChanged(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
             this.bucketSelectionChangedListeners.push(listener);
         }
 
-        removeBucketViewSelectionChangedEventListener(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
+        unBucketViewSelectionChanged(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
             this.bucketSelectionChangedListeners = this.bucketSelectionChangedListeners.filter(function (curr) {
                 return curr != listener;
             });
         }
 
-        notifyBucketViewSelectionChangedEventChanged(event: api.aggregation.BucketViewSelectionChangedEvent) {
+        notifyBucketViewSelectionChanged(event: api.aggregation.BucketViewSelectionChangedEvent) {
 
             this.bucketSelectionChangedListeners.forEach((listener: (event: BucketViewSelectionChangedEvent) => void) => {
                 listener(event);

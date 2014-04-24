@@ -79,6 +79,10 @@ public final class PageTemplateResource
         final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( siteTemplateKeyAsString );
         final ContentTypeName contentTypeName = ContentTypeName.from( contentTypeNameAsString );
         final PageTemplate pageTemplate = pageTemplateService.getDefault( siteTemplateKey, contentTypeName );
+        if ( pageTemplate == null )
+        {
+            return null;
+        }
         return new PageTemplateJson( pageTemplate );
     }
 

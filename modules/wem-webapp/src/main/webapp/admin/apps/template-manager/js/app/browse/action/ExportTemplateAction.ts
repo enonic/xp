@@ -4,7 +4,7 @@ module app.browse.action {
         constructor() {
             super("Export");
             this.setEnabled(false);
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
                 var selection = components.gridPanel.getSelection()[0];
                 var template = app.browse.TemplateSummary.fromExtModel(selection);
                 new app.browse.event.ExportTemplateEvent(template).fire();

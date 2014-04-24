@@ -5,7 +5,7 @@ module app.browse.action {
         constructor() {
             super("Edit");
             this.setEnabled(false);
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
                 var selection = components.gridPanel.getSelection();
                 var template = app.browse.TemplateSummary.fromExtModelArray(selection);
                 new app.browse.event.EditTemplateEvent(template).fire();

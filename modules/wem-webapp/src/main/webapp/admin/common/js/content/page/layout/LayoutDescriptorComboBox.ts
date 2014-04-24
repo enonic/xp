@@ -17,7 +17,8 @@ module api.content.page.layout {
                 setOptionDisplayValueViewer(new LayoutDescriptorViewer()).
                 setSelectedOptionsView(new LayoutDescriptorSelectedOptionsView()).
                 setLoader(loader).
-                setMaximumOccurrences(1));
+                setMaximumOccurrences(1).
+                setNextInputFocusWhenMaxReached(false));
         }
 
         setDescriptor(key: DescriptorKey) {
@@ -72,7 +73,7 @@ module api.content.page.layout {
 
             var removeButtonEl = new api.dom.AEl("remove");
             removeButtonEl.onClicked((event: MouseEvent) => {
-                this.notifySelectedOptionToBeRemoved();
+                this.notifySelectedOptionRemoveRequested();
 
                 event.stopPropagation();
                 event.preventDefault();

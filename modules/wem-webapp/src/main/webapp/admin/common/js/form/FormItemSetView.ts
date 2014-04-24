@@ -59,7 +59,6 @@ module api.form {
                 start: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDStart(event, ui),
                 update: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDUpdate(event, ui)
             });
-            jQuery(this.occurrenceViewsContainer.getHTMLElement()).disableSelection();
 
             this.appendChild(this.occurrenceViewsContainer);
 

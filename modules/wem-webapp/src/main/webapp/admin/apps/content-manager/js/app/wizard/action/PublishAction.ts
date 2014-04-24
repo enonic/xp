@@ -2,12 +2,12 @@ module app.wizard.action {
 
     export class PublishAction extends api.ui.Action {
 
-        constructor(wizard:app.wizard.ContentWizardPanel) {
+        constructor(wizard: app.wizard.ContentWizardPanel) {
             super("Publish");
 
             this.setEnabled(false);
 
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
 
                 wizard.setPersistAsDraft(false);
 
@@ -15,8 +15,8 @@ module app.wizard.action {
 
                 wizard.updatePersistedItem().
                     finally(()=> {
-                    this.setEnabled(true);
-                });
+                        this.setEnabled(true);
+                    });
             });
         }
     }

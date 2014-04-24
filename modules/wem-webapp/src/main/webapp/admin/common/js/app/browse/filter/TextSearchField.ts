@@ -40,7 +40,7 @@ module api.app.browse.filter {
             this.getEl().setAttribute('placeholder', placeholder);
         }
 
-        addValueChangedListener(listener: () => void) {
+        onValueChanged(listener: () => void) {
             this.valueChangedListeners.push(listener);
         }
 

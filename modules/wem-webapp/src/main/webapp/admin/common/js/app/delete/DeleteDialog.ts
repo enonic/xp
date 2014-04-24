@@ -1,16 +1,16 @@
-module api.app.remove{
+module api.app.remove {
 
     export class DeleteDialog extends api.ui.dialog.ModalDialog {
 
-        private modelName:string;
+        private modelName: string;
 
-        private deleteAction:api.ui.Action;
+        private deleteAction: api.ui.Action;
 
-        private deleteItems:DeleteItem[];
+        private deleteItems: DeleteItem[];
 
-        private itemList:DeleteDialogItemList = new DeleteDialogItemList();
+        private itemList: DeleteDialogItemList = new DeleteDialogItemList();
 
-        constructor(modelName:string) {
+        constructor(modelName: string) {
             super({
                 title: new api.ui.dialog.ModalDialogHeader("Delete " + modelName)
             });
@@ -22,7 +22,7 @@ module api.app.remove{
 
             this.setCancelAction(new CancelDeleteDialogAction());
 
-            this.getCancelAction().addExecutionListener(()=> {
+            this.getCancelAction().onExecuted(()=> {
                 this.close();
             })
         }
@@ -37,16 +37,16 @@ module api.app.remove{
             this.remove();
         }
 
-        setDeleteAction(action:api.ui.Action) {
+        setDeleteAction(action: api.ui.Action) {
             this.deleteAction = action;
             this.addAction(action, true, true);
         }
 
-        getDeleteAction():api.ui.Action {
+        getDeleteAction(): api.ui.Action {
             return this.deleteAction;
         }
 
-        setDeleteItems(deleteItems:DeleteItem[]) {
+        setDeleteItems(deleteItems: DeleteItem[]) {
             this.deleteItems = deleteItems;
 
             this.itemList.clear();
@@ -59,7 +59,7 @@ module api.app.remove{
             }
 
             for (var i in this.deleteItems) {
-                var deleteItem:DeleteItem = this.deleteItems[i];
+                var deleteItem: DeleteItem = this.deleteItems[i];
                 // TODO: created and add DeleteDialogItemList
                 this.itemList.appendChild(new DeleteDialogItemComponent(deleteItem));
             }
@@ -85,7 +85,7 @@ module api.app.remove{
     }
 
     class DeleteDialogItemComponent extends api.dom.DivEl {
-        constructor(deleteItem:DeleteItem) {
+        constructor(deleteItem: DeleteItem) {
             super();
             this.getEl().addClass("item");
 

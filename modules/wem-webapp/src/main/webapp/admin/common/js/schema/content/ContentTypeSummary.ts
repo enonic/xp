@@ -48,7 +48,7 @@ module api.schema.content{
         }
 
         hasContentDisplayNameScript(): boolean {
-            return this.contentDisplayNameScript != null;
+            return !api.util.isStringBlank(this.contentDisplayNameScript);
         }
 
         getContentDisplayNameScript():string {

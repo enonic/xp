@@ -45,9 +45,9 @@ module app.wizard {
                         break;
                     }
                 }
-                this.rootContentTypeComboBox.removeLoadedListener(setRootContentTypesListener);
+                this.rootContentTypeComboBox.unLoaded(setRootContentTypesListener);
             };
-            this.rootContentTypeComboBox.addLoadedListener(setRootContentTypesListener);
+            this.rootContentTypeComboBox.onLoaded(setRootContentTypesListener);
 
             var setModulesListener = (modules: api.module.ModuleSummary[]) => {
                 siteTemplate.getModules().forEach((moduleKey: api.module.ModuleKey) => {
@@ -60,9 +60,9 @@ module app.wizard {
                         }
                     }
                 });
-                this.moduleComboBox.removeLoadedListener(setModulesListener);
+                this.moduleComboBox.unLoaded(setModulesListener);
             };
-            this.moduleComboBox.addLoadedListener(setModulesListener);
+            this.moduleComboBox.onLoaded(setModulesListener);
         }
 
 

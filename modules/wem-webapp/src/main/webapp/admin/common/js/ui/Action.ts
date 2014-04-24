@@ -120,8 +120,15 @@ module api.ui {
             }
         }
 
-        addExecutionListener(listener: (action: Action) => void): Action {
+        onExecuted(listener: (action: Action) => void): Action {
             this.executionListeners.push(listener);
+            return this;
+        }
+
+        unExecuted(listener: (action: Action) => void): Action {
+            this.executionListeners = this.executionListeners.filter((curr) => {
+                return curr != listener;
+            });
             return this;
         }
 

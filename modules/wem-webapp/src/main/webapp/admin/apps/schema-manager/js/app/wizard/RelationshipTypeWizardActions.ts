@@ -1,10 +1,10 @@
-    module app.wizard {
+module app.wizard {
 
     export class DuplicateRelationshipTypeAction extends api.ui.Action {
 
         constructor() {
             super("Duplicate");
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
                 // TODO
             });
         }
@@ -12,9 +12,9 @@
 
     export class DeleteRelationshipTypeAction extends api.ui.Action {
 
-        constructor(wizardPanel:api.app.wizard.WizardPanel<api.schema.relationshiptype.RelationshipType>) {
+        constructor(wizardPanel: api.app.wizard.WizardPanel<api.schema.relationshiptype.RelationshipType>) {
             super("Delete", "mod+del");
-            this.addExecutionListener(() => {
+            this.onExecuted(() => {
                 api.ui.dialog.ConfirmationDialog.get()
                     .setQuestion("Are you sure you want to delete this content type?")
                     .setNoCallback(null)
@@ -23,7 +23,7 @@
                         new api.schema.relationshiptype.DeleteRelationshipTypeRequest()
                             .addName(wizardPanel.getPersistedItem().getRelationshiptypeName())
                             .send()
-                            .done((jsonResponse:api.rest.JsonResponse<api.schema.SchemaDeleteJson>) => {
+                            .done((jsonResponse: api.rest.JsonResponse<api.schema.SchemaDeleteJson>) => {
                                 var json = jsonResponse.getResult();
 
                                 if (json.successes && json.successes.length > 0) {
@@ -41,16 +41,16 @@
 
     export class RelationshipTypeWizardActions implements api.app.wizard.WizardActions<api.schema.relationshiptype.RelationshipType> {
 
-        private save:api.ui.Action;
+        private save: api.ui.Action;
 
-        private close:api.ui.Action;
+        private close: api.ui.Action;
 
-        private delete:api.ui.Action;
+        private delete: api.ui.Action;
 
-        private duplicate:api.ui.Action;
+        private duplicate: api.ui.Action;
 
 
-        constructor(wizardPanel:api.app.wizard.WizardPanel<api.schema.relationshiptype.RelationshipType>) {
+        constructor(wizardPanel: api.app.wizard.WizardPanel<api.schema.relationshiptype.RelationshipType>) {
             this.save = new api.app.wizard.SaveAction(wizardPanel);
             this.duplicate = new DuplicateRelationshipTypeAction();
             this.delete = new DeleteRelationshipTypeAction(wizardPanel);
@@ -58,15 +58,15 @@
         }
 
         enableActionsForNew() {
-            this.save.setEnabled( true );
-            this.duplicate.setEnabled( false );
-            this.delete.setEnabled( false )
+            this.save.setEnabled(true);
+            this.duplicate.setEnabled(false);
+            this.delete.setEnabled(false)
         }
 
-        enableActionsForExisting(existing:api.schema.relationshiptype.RelationshipType) {
-            this.save.setEnabled( existing.isEditable() );
-            this.duplicate.setEnabled( true );
-            this.delete.setEnabled( existing.isDeletable() );
+        enableActionsForExisting(existing: api.schema.relationshiptype.RelationshipType) {
+            this.save.setEnabled(existing.isEditable());
+            this.duplicate.setEnabled(true);
+            this.delete.setEnabled(existing.isDeletable());
         }
 
         getDeleteAction() {
