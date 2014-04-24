@@ -32,24 +32,24 @@ public class ContentInitializer
     public void initialize()
         throws Exception
     {
-        ContentPath bildeArkivPath = contentService.create( createFolder().
-            name( "bildearkiv" ).
+        ContentPath imageArchivePath = contentService.create( createFolder().
+            name( "imagearchive" ).
             parent( ContentPath.ROOT ).
-            displayName( "BildeArkiv" ) ).getPath();
+            displayName( "Image Archive" ) ).getPath();
 
         contentService.create( createFolder().
             name( "misc" ).
-            parent( bildeArkivPath ).
+            parent( imageArchivePath ).
             displayName( "Misc" ) ).getPath();
 
         contentService.create( createFolder().
             name( "people" ).
-            parent( bildeArkivPath ).
+            parent( imageArchivePath ).
             displayName( "People" ) ).getPath();
 
         ContentPath trampolinerPath = contentService.create( createFolder().
             name( "trampoliner" ).
-            parent( bildeArkivPath ).
+            parent( imageArchivePath ).
             displayName( "Trampoliner" ) ).getPath();
 
         contentService.create( createFolder().
