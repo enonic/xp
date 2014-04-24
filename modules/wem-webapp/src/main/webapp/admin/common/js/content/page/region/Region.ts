@@ -76,7 +76,7 @@ module api.content.page.region {
         private nameAlreadyInUse(name: api.content.page.ComponentName) {
 
             var exisiting = this.componentByName[name.toString()];
-            return !exisiting ? false :true;
+            return !exisiting ? false : true;
         }
 
         /*
@@ -201,6 +201,16 @@ module api.content.page.region {
         pageComponents: api.content.page.PageComponent[] = [];
 
         path: api.content.page.RegionPath;
+
+        constructor(source?: Region) {
+            if (source) {
+                this.name = source.getName();
+                this.path = source.getPath();
+                source.getComponents().forEach((component: api.content.page.PageComponent) => {
+                    this.pageComponents.push(component);
+                });
+            }
+        }
 
         public setName(value: string): RegionBuilder {
             this.name = value;
