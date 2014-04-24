@@ -35,7 +35,7 @@ public class ContentSummaryJson
         this.isPage = content.isPage();
         this.isEmbedded = this.content.isEmbedded();
         this.editable = ( !this.content.isEmbedded() );
-        this.deletable = !this.content.hasChildren() && ( !this.content.isEmbedded() );
+        this.deletable = true;
     }
 
     public String getIconUrl()
