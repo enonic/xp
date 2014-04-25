@@ -35,6 +35,13 @@
     <module>modules/wem-itest</module>
   </modules>
 
+  <scm>
+    <connection>scm:git:ssh://github.com/enonic/wem-ce.git</connection>
+    <developerConnection>scm:git:ssh://github.com/enonic/wem-ce.git</developerConnection>
+    <url>https://github.com/enonic/wem-ce</url>
+    <tag>HEAD</tag>
+  </scm>
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
