@@ -1,48 +1,61 @@
-module api.form{
+module api.form {
 
-    export class FormItem {
+    export class FormItem implements api.Equitable {
 
-        private name:string;
+        private name: string;
 
-        private parent:FormItem;
+        private parent: FormItem;
 
-        constructor(name:string) {
+        constructor(name: string) {
             this.name = name;
         }
 
-        setParent(parent:FormItem) {
-            if( !(parent instanceof FormItemSet || parent instanceof FieldSet) ) {
+        setParent(parent: FormItem) {
+            if (!(parent instanceof FormItemSet || parent instanceof FieldSet)) {
                 throw new Error("A parent FormItem must either be a FormItemSet or a FieldSet");
             }
 
             this.parent = parent;
         }
 
-        getName():string {
+        getName(): string {
             return this.name;
         }
 
-        getPath():FormItemPath {
+        getPath(): FormItemPath {
             return this.resolvePath();
         }
 
-        private resolvePath():FormItemPath{
-            return FormItemPath.fromParent( this.resolveParentPath(), FormItemPathElement.fromString(this.name) );
+        private resolvePath(): FormItemPath {
+            return FormItemPath.fromParent(this.resolveParentPath(), FormItemPathElement.fromString(this.name));
         }
 
-        private resolveParentPath():FormItemPath {
+        private resolveParentPath(): FormItemPath {
 
-            if ( this.parent == null )
-            {
+            if (this.parent == null) {
                 return FormItemPath.ROOT;
             }
-            else
-            {
+            else {
                 return this.parent.getPath();
             }
         }
 
-        public toFormItemJson():api.form.json.FormItemTypeWrapperJson {
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof FormItem)) {
+                return false;
+            }
+
+            var other = <FormItem>o;
+
+            if (!api.EquitableHelper.stringEquals(this.name, other.name)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        public toFormItemJson(): api.form.json.FormItemTypeWrapperJson {
 
             if (this instanceof Input) {
                 return (<Input>this).toInputJson();
@@ -58,10 +71,10 @@ module api.form{
             }
         }
 
-        public static formItemsToJson(formItems:FormItem[]):api.form.json.FormItemTypeWrapperJson[] {
+        public static formItemsToJson(formItems: FormItem[]): api.form.json.FormItemTypeWrapperJson[] {
 
-            var formItemArray:api.form.json.FormItemTypeWrapperJson[] = [];
-            formItems.forEach((formItem:FormItem) => {
+            var formItemArray: api.form.json.FormItemTypeWrapperJson[] = [];
+            formItems.forEach((formItem: FormItem) => {
                 formItemArray.push(formItem.toFormItemJson());
             });
             return formItemArray;

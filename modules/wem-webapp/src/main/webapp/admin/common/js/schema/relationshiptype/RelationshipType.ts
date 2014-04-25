@@ -1,42 +1,112 @@
 module api.schema.relationshiptype {
 
-    export class RelationshipType extends api.schema.Schema {
+    export class RelationshipType extends api.schema.Schema implements api.Equitable {
 
-        private fromSemantic:string;
+        private fromSemantic: string;
 
-        private toSemantic:string;
+        private toSemantic: string;
 
-        private allowedFromTypes:string[];
+        private allowedFromTypes: string[];
 
-        private allowedToTypes:string[];
+        private allowedToTypes: string[];
 
-        constructor(relationshipTypeJson:api.schema.relationshiptype.json.RelationshipTypeJson) {
-            super(relationshipTypeJson);
+        constructor(builder: RelationshipTypeBuilder) {
+            super(builder);
+            this.fromSemantic = builder.fromSemantic;
+            this.toSemantic = builder.toSemantic;
+            this.allowedFromTypes = builder.allowedFromTypes;
+            this.allowedToTypes = builder.allowedToTypes;
+        }
+
+        getRelationshiptypeName(): RelationshipTypeName {
+            return new RelationshipTypeName(this.getName());
+        }
+
+        getFromSemantic(): string {
+            return this.fromSemantic;
+        }
+
+        getToSemantic(): string {
+            return this.toSemantic;
+        }
+
+        getAllowedFromTypes(): string[] {
+            return this.allowedFromTypes;
+        }
+
+        getAllowedToTypes(): string[] {
+            return this.allowedToTypes;
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof RelationshipType)) {
+                return false;
+            }
+
+            if (!super.equals(o)) {
+                return false;
+            }
+
+            var other = <RelationshipType>o;
+
+            if (!EquitableHelper.stringEquals(this.fromSemantic, other.fromSemantic)) {
+                return false;
+            }
+
+            if (!EquitableHelper.stringEquals(this.toSemantic, other.toSemantic)) {
+                return false;
+            }
+
+            if (!EquitableHelper.stringArrayEquals(this.allowedFromTypes, other.allowedFromTypes)) {
+                return false;
+            }
+
+            if (!EquitableHelper.stringArrayEquals(this.allowedToTypes, other.allowedToTypes)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        static fromJson(json: api.schema.relationshiptype.json.RelationshipTypeJson): RelationshipType {
+            return new RelationshipTypeBuilder().fromRelationshipTypeJson(json).build();
+        }
+    }
+
+    export class RelationshipTypeBuilder extends api.schema.SchemaBuilder {
+
+        fromSemantic: string;
+
+        toSemantic: string;
+
+        allowedFromTypes: string[];
+
+        allowedToTypes: string[];
+
+        constructor(source?: RelationshipType) {
+            if (source) {
+                super(source);
+                this.fromSemantic = source.getFromSemantic();
+                this.toSemantic = source.getToSemantic();
+                this.allowedFromTypes = source.getAllowedFromTypes();
+                this.allowedToTypes = source.getAllowedToTypes();
+            }
+        }
+
+        fromRelationshipTypeJson(relationshipTypeJson: api.schema.relationshiptype.json.RelationshipTypeJson): RelationshipTypeBuilder {
+
+            super.fromSchemaJson(relationshipTypeJson);
+
             this.fromSemantic = relationshipTypeJson.fromSemantic;
             this.toSemantic = relationshipTypeJson.toSemantic;
             this.allowedFromTypes = relationshipTypeJson.allowedFromTypes;
             this.allowedToTypes = relationshipTypeJson.allowedToTypes;
+            return this;
         }
 
-        getRelationshiptypeName():RelationshipTypeName {
-            return new RelationshipTypeName(this.getName());
+        build(): RelationshipType {
+            return new RelationshipType(this);
         }
-
-        getFromSemantic():string {
-            return this.fromSemantic;
-        }
-
-        getToSemantic():string {
-            return this.toSemantic;
-        }
-
-        getAllowedFromTypes():string[] {
-            return this.allowedFromTypes;
-        }
-
-        getAllowedToTypes():string[] {
-            return this.allowedToTypes;
-        }
-
     }
 }

@@ -1,6 +1,6 @@
 module api.content.page.layout {
 
-    export class LayoutComponent extends api.content.page.PageComponent {
+    export class LayoutComponent extends api.content.page.PageComponent implements api.Equitable {
 
         private regions: LayoutRegions;
 
@@ -32,6 +32,25 @@ module api.content.page.layout {
             return <api.content.page.PageComponentTypeWrapperJson> {
                 LayoutComponent: json
             };
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof LayoutComponent)) {
+                return false;
+            }
+
+            var other = <LayoutComponent>o;
+
+            if (!super.equals(o)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.equals(this.regions, other.regions)) {
+                return false;
+            }
+
+            return true;
         }
     }
 

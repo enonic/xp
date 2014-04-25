@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export class ComponentPath {
+    export class ComponentPath implements api.Equitable {
 
         private static DIVIDER = "/";
 
@@ -76,9 +76,26 @@ module api.content.page {
             return this.refString;
         }
 
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof ComponentPath)) {
+                return false;
+            }
+
+            var other = <ComponentPath>o;
+
+            if (!api.EquitableHelper.stringEquals(this.refString, other.refString)) {
+                return false;
+            }
+
+            return true;
+        }
+
         public static fromString(str: string): ComponentPath {
 
-            if (!str) return null;
+            if (!str) {
+                return null;
+            }
 
             var elements: string[] = str.split(ComponentPath.DIVIDER);
             elements = api.util.removeEmptyStringElements(elements);

@@ -1,6 +1,6 @@
 module api.content.page.part {
 
-    export class PartComponent extends api.content.page.PageComponent {
+    export class PartComponent extends api.content.page.PageComponent implements api.Equitable {
 
         constructor(builder: PartComponentBuilder) {
             super(builder);
@@ -12,6 +12,19 @@ module api.content.page.part {
             return <api.content.page.PageComponentTypeWrapperJson> {
                 PartComponent: json
             };
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof PartComponent)) {
+                return false;
+            }
+
+            if (!super.equals(o)) {
+                return false;
+            }
+
+            return true;
         }
     }
 

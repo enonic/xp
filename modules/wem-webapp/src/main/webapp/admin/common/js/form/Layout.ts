@@ -1,12 +1,12 @@
-module api.form{
+module api.form {
 
     export class Layout extends FormItem {
 
-        constructor(name:string) {
+        constructor(name: string) {
             super(name);
         }
 
-        public toLayoutJson():api.form.json.FormItemTypeWrapperJson {
+        public toLayoutJson(): api.form.json.FormItemTypeWrapperJson {
 
             if (this instanceof FieldSet) {
                 return (<FieldSet>this).toFieldSetJson();
@@ -14,6 +14,15 @@ module api.form{
             else {
                 throw new Error("Unsupported Layout: " + this);
             }
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof Layout)) {
+                return false;
+            }
+
+            return super.equals(o);
         }
     }
 }

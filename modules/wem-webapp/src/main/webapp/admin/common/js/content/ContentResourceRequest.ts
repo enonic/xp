@@ -18,7 +18,7 @@ module api.content {
         }
 
         fromJsonToContent(json: json.ContentJson): Content {
-            return new Content(json);
+            return Content.fromJson(json);
         }
 
         fromJsonToContentArray(json: json.ContentJson[]): Content[] {
@@ -32,7 +32,7 @@ module api.content {
         }
 
         fromJsonToContentSummary(json: json.ContentSummaryJson): ContentSummary {
-            return new ContentSummary(json);
+            return ContentSummary.fromJson(json);
         }
 
         fromJsonToContentSummaryArray(json: json.ContentSummaryJson[]): ContentSummary[] {
@@ -46,7 +46,7 @@ module api.content {
         }
 
         fromJsonToContentIdBaseItem(json: json.ContentIdBaseItemJson): ContentIdBaseItem {
-            return new ContentIdBaseItem(json);
+            return ContentIdBaseItem.fromJson(json);
         }
 
         fromJsonToContentIdBaseItemArray(jsonArray: json.ContentIdBaseItemJson[]): ContentIdBaseItem[] {

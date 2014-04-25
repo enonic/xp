@@ -1,6 +1,6 @@
 module api.content {
 
-    export class ContentPath {
+    export class ContentPath implements api.Equitable {
 
         private static ELEMENT_DIVIDER: string = "/";
 
@@ -18,7 +18,7 @@ module api.content {
                 path = path.substr(1);
                 elements = path.split(ContentPath.ELEMENT_DIVIDER);
             }
-            else if( path == "/" ) {
+            else if (path == "/") {
                 elements = [];
             }
 
@@ -55,6 +55,21 @@ module api.content {
                 }
             });
             return new ContentPath(parentElemements);
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof ContentPath)) {
+                return false;
+            }
+
+            var other = <ContentPath>o;
+
+            if (!api.EquitableHelper.stringEquals(this.refString, other.refString)) {
+                return false;
+            }
+
+            return true;
         }
 
         toString() {

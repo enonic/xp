@@ -1,6 +1,6 @@
 module api.content.page.image {
 
-    export class ImageComponent extends api.content.page.PageComponent {
+    export class ImageComponent extends api.content.page.PageComponent implements api.Equitable {
 
         private image: api.content.ContentId;
 
@@ -27,6 +27,25 @@ module api.content.page.image {
             return <api.content.page.PageComponentTypeWrapperJson> {
                 ImageComponent: json
             };
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof ImageComponent)) {
+                return false;
+            }
+
+            var other = <ImageComponent>o;
+
+            if (!super.equals(o)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.equals(this.image, other.image)) {
+                return false;
+            }
+
+            return true;
         }
     }
 

@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export class PageTemplateKey {
+    export class PageTemplateKey implements api.Equitable {
 
         public static SEPARATOR: string = "|";
 
@@ -39,8 +39,19 @@ module api.content.page {
             return this.refString;
         }
 
-        equals(other: PageTemplateKey) {
-            return other && (this.refString === other.refString);
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof PageTemplateKey)) {
+                return false;
+            }
+
+            var other = <PageTemplateKey>o;
+
+            if (!api.EquitableHelper.stringEquals(this.refString, other.refString)) {
+                return false;
+            }
+
+            return true;
         }
     }
 }

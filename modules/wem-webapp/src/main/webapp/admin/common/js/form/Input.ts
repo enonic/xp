@@ -1,36 +1,36 @@
-module api.form{
+module api.form {
 
-    export class Input extends FormItem {
+    export class Input extends FormItem implements api.Equitable {
 
-        private inputType:InputTypeName;
+        private inputType: InputTypeName;
 
-        private label:string;
+        private label: string;
 
-        private immutable:boolean;
+        private immutable: boolean;
 
-        private occurrences:Occurrences;
+        private occurrences: Occurrences;
 
-        private indexed:boolean;
+        private indexed: boolean;
 
-        private customText:string;
+        private customText: string;
 
-        private validationRegex:string;
+        private validationRegex: string;
 
-        private helpText:string;
+        private helpText: string;
 
-        private inputTypeConfig:any;
+        private inputTypeConfig: any;
 
-        constructor(name:string) {
+        constructor(name: string) {
             super(name);
         }
 
-        static fromJson(json:api.form.json.InputJson):Input {
+        static fromJson(json: api.form.json.InputJson): Input {
             var input = new Input(json.name);
             input.setFromJson(json);
             return input;
         }
 
-        private setFromJson(json:api.form.json.InputJson) {
+        private setFromJson(json: api.form.json.InputJson) {
             this.inputType = InputTypeName.parseInputTypeName(json.inputType.name);
             this.label = json.label;
             this.immutable = json.immutable;
@@ -42,63 +42,114 @@ module api.form{
             this.inputTypeConfig = json.config;
         }
 
-        getInputType():InputTypeName {
+        getInputType(): InputTypeName {
             return this.inputType;
         }
 
-        getLabel():string {
+        getLabel(): string {
             return this.label;
         }
 
-        isImmutable():boolean {
+        isImmutable(): boolean {
             return this.immutable;
         }
 
-        getOccurrences():Occurrences {
+        getOccurrences(): Occurrences {
             return this.occurrences;
         }
 
-        isIndexed():boolean {
+        isIndexed(): boolean {
             return this.indexed;
         }
 
-        getCustomText():string {
+        getCustomText(): string {
             return this.customText;
         }
 
-        getValidationRegex():string {
+        getValidationRegex(): string {
             return this.validationRegex;
         }
 
-        getHelpText():string {
+        getHelpText(): string {
             return this.helpText;
         }
 
-        getInputTypeConfig():any {
+        getInputTypeConfig(): any {
             return this.inputTypeConfig;
         }
 
-        setInputType(inputTypeName:InputTypeName) {
+        setInputType(inputTypeName: InputTypeName) {
             this.inputType = inputTypeName;
         }
 
-        setOccurences(minimum:number, maximum:number) {
+        setOccurences(minimum: number, maximum: number) {
             this.occurrences = new Occurrences({"maximum": maximum, "minimum": minimum})
         }
 
-        public toInputJson():api.form.json.FormItemTypeWrapperJson {
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof Input)) {
+                return false;
+            }
+
+            if (!super.equals(o)) {
+                return false;
+            }
+
+            var other = <Input>o;
+
+            if (!api.EquitableHelper.equals(this.inputType, other.inputType)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.stringEquals(this.label, other.label)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.booleanEquals(this.immutable, other.immutable)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.equals(this.occurrences, other.occurrences)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.booleanEquals(this.indexed, other.indexed)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.stringEquals(this.customText, other.customText)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.stringEquals(this.validationRegex, other.validationRegex)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.stringEquals(this.helpText, other.helpText)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.anyEquals(this.inputTypeConfig, other.inputTypeConfig)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        public toInputJson(): api.form.json.FormItemTypeWrapperJson {
 
             return <api.form.json.FormItemTypeWrapperJson>{Input: <api.form.json.InputJson>{
                 name: this.getName(),
-                customText : this.getCustomText(),
-                helpText : this.getHelpText(),
-                immutable : this.isImmutable(),
-                indexed : this.isIndexed(),
-                label : this.getLabel(),
-                occurrences : this.getOccurrences().toJson(),
-                validationRegexp : this.getValidationRegex(),
-                inputType : this.getInputType().toJson(),
-                config : this.getInputTypeConfig()
+                customText: this.getCustomText(),
+                helpText: this.getHelpText(),
+                immutable: this.isImmutable(),
+                indexed: this.isIndexed(),
+                label: this.getLabel(),
+                occurrences: this.getOccurrences().toJson(),
+                validationRegexp: this.getValidationRegex(),
+                inputType: this.getInputType().toJson(),
+                config: this.getInputTypeConfig()
             }};
         }
     }

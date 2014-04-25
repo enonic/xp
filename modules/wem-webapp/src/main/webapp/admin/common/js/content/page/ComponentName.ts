@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export class ComponentName {
+    export class ComponentName implements api.Equitable {
 
         private static COUNT_DELIMITER: string = "-";
 
@@ -29,12 +29,23 @@ module api.content.page {
             return new ComponentName(newValue);
         }
 
-        public equals(other:ComponentName) {
-            return this.value == other.value;
-        }
-
         public toString(): string {
             return this.value;
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof ComponentName)) {
+                return false;
+            }
+
+            var other = <ComponentName>o;
+
+            if (!api.EquitableHelper.stringEquals(this.value, other.value)) {
+                return false;
+            }
+
+            return true;
         }
     }
 }

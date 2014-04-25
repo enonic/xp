@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export class PageComponent {
+    export class PageComponent implements api.Equitable {
 
         private name: ComponentName;
 
@@ -79,6 +79,37 @@ module api.content.page {
                 "descriptor": this.descriptorKey != null ? this.descriptorKey.toString() : null,
                 "config": this.config != null ? this.config.toJson() : null
             };
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof PageComponent)) {
+                return false;
+            }
+
+            var other = <PageComponent>o;
+
+            if (!api.EquitableHelper.equals(this.name, other.name)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.equals(this.region, other.region)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.equals(this.path, other.path)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.equals(this.descriptorKey, other.descriptorKey)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.equals(this.config, other.config)) {
+                return false;
+            }
+
+            return true;
         }
     }
 

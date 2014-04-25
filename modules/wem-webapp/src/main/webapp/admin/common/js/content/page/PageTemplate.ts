@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export class PageTemplate extends PageTemplateSummary {
+    export class PageTemplate extends PageTemplateSummary implements api.Equitable {
 
         private regions: PageRegions;
 
@@ -31,10 +31,37 @@ module api.content.page {
             return this.canRender;
         }
 
-        isCanRender(pattern:api.schema.content.ContentTypeName): boolean {
-            return this.canRender.some((name:api.schema.content.ContentTypeName)=> {
+        isCanRender(pattern: api.schema.content.ContentTypeName): boolean {
+            return this.canRender.some((name: api.schema.content.ContentTypeName)=> {
                 return name.equals(pattern);
             });
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof PageTemplate)) {
+                return false;
+            }
+
+            if (!super.equals(o)) {
+                return false;
+            }
+
+            var other = <PageTemplate>o;
+
+            if (!api.EquitableHelper.equals(this.regions, other.regions)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.equals(this.config, other.config)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.arrayEquals(this.canRender, other.canRender)) {
+                return false;
+            }
+
+            return true;
         }
     }
 

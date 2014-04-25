@@ -1,11 +1,11 @@
 module api.content {
 
-    export class ContentUnnamed extends ContentName {
+    export class ContentUnnamed extends ContentName implements api.Equitable {
 
         constructor(name: string) {
             super(name);
             api.util.assert(name.indexOf(ContentName.UNNAMED_PREFIX) == 0,
-                "An UnnamedContent must start with [" + ContentName.UNNAMED_PREFIX + "]: " + name);
+                    "An UnnamedContent must start with [" + ContentName.UNNAMED_PREFIX + "]: " + name);
         }
 
         isUnnamed(): boolean {
@@ -14,6 +14,19 @@ module api.content {
 
         toString(): string {
             return "";
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof ContentUnnamed)) {
+                return false;
+            }
+
+            if (!super.equals(o)) {
+                return false;
+            }
+
+            return true;
         }
 
         toStringIncludingHidden() {

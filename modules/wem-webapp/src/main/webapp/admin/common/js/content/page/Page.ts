@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export class Page {
+    export class Page implements api.Equitable {
 
         private template: PageTemplateKey;
 
@@ -36,6 +36,27 @@ module api.content.page {
 
         getConfig(): api.data.RootDataSet {
             return this.config;
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof Page)) {
+                return false;
+            }
+
+            var other = <Page>o;
+
+            if (!api.EquitableHelper.equals(this.template, other.template)) {
+                return false;
+            }
+            if (!api.EquitableHelper.equals(this.regions, other.regions)) {
+                return false;
+            }
+            if (!api.EquitableHelper.equals(this.config, other.config)) {
+                return false;
+            }
+
+            return true;
         }
     }
 

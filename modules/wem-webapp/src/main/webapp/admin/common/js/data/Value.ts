@@ -1,6 +1,6 @@
 module api.data {
 
-    export class Value {
+    export class Value implements api.Equitable {
 
         private value: Object;
 
@@ -39,8 +39,23 @@ module api.data {
             this.value = value;
         }
 
-        equals(value: Value): boolean {
-            return this.value == value.value && this.type.toString() == value.type.toString();
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof Value)) {
+                return false;
+            }
+
+            var other = <Value>o;
+
+            if (!api.EquitableHelper.objectEquals(this.value, other.value)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.equals(this.type, other.type)) {
+                return false;
+            }
+
+            return true;
         }
     }
 }

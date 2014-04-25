@@ -1,6 +1,6 @@
 module api.schema {
 
-    export class SchemaKind {
+    export class SchemaKind implements api.Equitable {
 
         public static CONTENT_TYPE = new SchemaKind("ContentType");
 
@@ -10,17 +10,17 @@ module api.schema {
 
         public static MIXIN = new SchemaKind("Mixin");
 
-        private name:string;
+        private name: string;
 
-        static fromString(str:string):SchemaKind{
+        static fromString(str: string): SchemaKind {
 
-            if( SchemaKind.CONTENT_TYPE.nameEquals(str) || SchemaKind.CONTENT_TYPE_SUMMARY.nameEquals(str) ) {
+            if (SchemaKind.CONTENT_TYPE.nameEquals(str) || SchemaKind.CONTENT_TYPE_SUMMARY.nameEquals(str)) {
                 return SchemaKind.CONTENT_TYPE;
             }
-            else if( SchemaKind.RELATIONSHIP_TYPE.nameEquals(str) ) {
+            else if (SchemaKind.RELATIONSHIP_TYPE.nameEquals(str)) {
                 return SchemaKind.RELATIONSHIP_TYPE;
             }
-            else if( SchemaKind.MIXIN.nameEquals(str) ) {
+            else if (SchemaKind.MIXIN.nameEquals(str)) {
                 return SchemaKind.MIXIN;
             }
             else {
@@ -28,20 +28,31 @@ module api.schema {
             }
         }
 
-        constructor( name:string ){
+        constructor(name: string) {
             this.name = name;
         }
 
-        nameEquals(str:string) {
+        nameEquals(str: string) {
             return str == this.name;
         }
 
-        toString():string {
+        toString(): string {
             return this.name;
         }
 
-        equals(obj:any):boolean {
-            return (obj instanceof SchemaKind) && (this.nameEquals((<SchemaKind> obj).name));
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof SchemaKind)) {
+                return false;
+            }
+
+            var other = <SchemaKind>o;
+
+            if (!api.EquitableHelper.stringEquals(this.name, other.name)) {
+                return false;
+            }
+
+            return true;
         }
     }
 

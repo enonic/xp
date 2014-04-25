@@ -1,20 +1,20 @@
 module api.module {
 
-    export class ModuleResourceRequest<T> extends api.rest.ResourceRequest<T>{
+    export class ModuleResourceRequest<T> extends api.rest.ResourceRequest<T> {
 
-        private resourcePath:api.rest.Path;
+        private resourcePath: api.rest.Path;
 
         constructor() {
             super();
             this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "module");
         }
 
-        getResourcePath():api.rest.Path {
+        getResourcePath(): api.rest.Path {
             return this.resourcePath;
         }
 
-        fromJsonToModule(json:api.module.json.ModuleJson):Module {
-            return new Module(json);
+        fromJsonToModule(json: api.module.json.ModuleJson): Module {
+            return Module.fromJson(json);
         }
     }
 }

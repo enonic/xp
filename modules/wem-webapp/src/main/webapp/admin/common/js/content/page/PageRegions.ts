@@ -1,9 +1,18 @@
 module api.content.page {
 
-    export class PageRegions extends AbstractRegions {
+    export class PageRegions extends AbstractRegions implements api.Equitable {
 
         constructor(builder: PageRegionsBuilder) {
             super(builder.regions);
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof PageRegions)) {
+                return false;
+            }
+
+            return super.equals(o);
         }
     }
 

@@ -1,6 +1,9 @@
 // require ExtJs as long as it is used for implementation
 ///<reference path='lib/ExtJs.d.ts' />
 
+///<reference path='Equitable.ts' />
+///<reference path='EquitableHelper.ts' />
+
 ///<reference path='Name.ts' />
 
 ///<reference path='plugin/_module.ts' />

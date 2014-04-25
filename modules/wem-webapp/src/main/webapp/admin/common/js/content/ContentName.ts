@@ -1,6 +1,6 @@
 module api.content {
 
-    export class ContentName extends api.Name {
+    export class ContentName extends api.Name implements api.Equitable {
 
         public static UNNAMED_PREFIX: string = "__unnamed__";
 
@@ -16,6 +16,19 @@ module api.content {
         toUnnamed(): ContentUnnamed {
             api.util.assert(this instanceof ContentUnnamed, "this is not a ContentUnnamed");
             return <ContentUnnamed>this;
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof ContentName)) {
+                return false;
+            }
+
+            if (!super.equals(o)) {
+                return false;
+            }
+
+            return true;
         }
 
         public static fromString(str: string) {

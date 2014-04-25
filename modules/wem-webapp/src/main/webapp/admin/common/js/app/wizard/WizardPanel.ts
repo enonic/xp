@@ -23,17 +23,17 @@ module api.app.wizard {
         split?:boolean;
     }
 
-    export class WizardPanel<T> extends api.ui.Panel implements api.ui.Closeable, api.ui.ActionContainer {
+    export class WizardPanel<EQUITABLE extends api.Equitable> extends api.ui.Panel implements api.ui.Closeable, api.ui.ActionContainer {
 
         private tabId: api.app.AppBarTabId;
 
-        private persistedItem: T;
+        private persistedItem: EQUITABLE;
 
         private mainToolbar: api.ui.toolbar.Toolbar;
 
         private stepToolbar: api.ui.toolbar.Toolbar;
 
-        private actions: WizardActions<T>;
+        private actions: WizardActions<EQUITABLE>;
 
         private header: WizardHeader;
 
@@ -245,7 +245,7 @@ module api.app.wizard {
             return deferred.promise;
         }
 
-        private setPersistedItem(persistedItem: T): Q.Promise<void> {
+        private setPersistedItem(persistedItem: EQUITABLE): Q.Promise<void> {
 
             this.renderingNew = false;
             this.persistedItem = persistedItem;
@@ -254,21 +254,21 @@ module api.app.wizard {
             return this.layoutPersistedItem(persistedItem);
         }
 
-        layoutPersistedItem(persistedItem: T): Q.Promise<void> {
+        layoutPersistedItem(persistedItem: EQUITABLE): Q.Promise<void> {
 
             var deferred = Q.defer<void>();
             deferred.resolve(null);
             return deferred.promise;
         }
 
-        postRenderExisting(existing: T): Q.Promise<void> {
+        postRenderExisting(existing: EQUITABLE): Q.Promise<void> {
             // To be overridden by inheritors - if extra work is needed at end of setPersistedItem
             var deferred = Q.defer<void>();
             deferred.resolve(null);
             return deferred.promise;
         }
 
-        getPersistedItem(): T {
+        getPersistedItem(): EQUITABLE {
             return this.persistedItem;
         }
 
@@ -287,12 +287,12 @@ module api.app.wizard {
             new api.app.wizard.SaveBeforeCloseDialog(this).open();
         }
 
-        saveChanges(): Q.Promise<T> {
+        saveChanges(): Q.Promise<EQUITABLE> {
 
             if (this.isItemPersisted()) {
                 this.persisted = false;
                 return this.updatePersistedItem().
-                    then((persisted: T) => {
+                    then((persisted: EQUITABLE) => {
 
                         this.isChanged = false;
                         return this.setPersistedItem(persisted).
@@ -302,7 +302,7 @@ module api.app.wizard {
             }
             else {
                 return this.persistNewItem().
-                    then((persistedItem: T)=> {
+                    then((persistedItem: EQUITABLE)=> {
 
                         this.isChanged = false;
                         return this.postPersistNewItem(persistedItem).
@@ -319,11 +319,11 @@ module api.app.wizard {
         /*
          * Override this method in specific wizard to do actual persisting of new item.
          */
-        persistNewItem(): Q.Promise<T> {
+        persistNewItem(): Q.Promise<EQUITABLE> {
             throw new Error("Must be overriden by inheritor");
         }
 
-        postPersistNewItem(persistedItem: T): Q.Promise<void> {
+        postPersistNewItem(persistedItem: EQUITABLE): Q.Promise<void> {
             // To be overridden by inheritors - if extra work is needed at end of persistNewItem
             var deferred = Q.defer<void>();
             deferred.resolve(null);
@@ -333,7 +333,7 @@ module api.app.wizard {
         /*
          * Override this method in specific wizard to do actual update of item.
          */
-        updatePersistedItem(): Q.Promise<T> {
+        updatePersistedItem(): Q.Promise<EQUITABLE> {
             throw new Error("Must be overriden by inheritor");
         }
 

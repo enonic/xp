@@ -1,6 +1,6 @@
 module api.content.site {
 
-    export class Site {
+    export class Site implements api.Equitable {
 
         private templateKey: api.content.site.template.SiteTemplateKey;
 
@@ -22,6 +22,25 @@ module api.content.site {
 
         getModuleConfigs(): ModuleConfig[] {
             return this.moduleConfigs;
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof Site)) {
+                return false;
+            }
+
+            var other = <Site>o;
+
+            if (!api.EquitableHelper.equals(this.templateKey, other.templateKey)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.arrayEquals(this.moduleConfigs, other.moduleConfigs)) {
+                return false;
+            }
+
+            return true;
         }
     }
 }

@@ -2,7 +2,7 @@ module api.content.site.template {
 
     import PageTemplateKey = api.content.page.PageTemplateKey;
 
-    export class SiteTemplateSummary extends api.item.BaseItem {
+    export class SiteTemplateSummary extends api.item.BaseItem implements api.Equitable {
 
         private name: string;
 
@@ -26,41 +26,20 @@ module api.content.site.template {
 
         private pageTemplateKeys: PageTemplateKey[];
 
-        constructor(json: api.content.site.template.SiteTemplateSummaryJson) {
-            super(json);
-            this.name = json.name;
-            this.displayName = json.name;
-            this.vendor = new api.content.site.Vendor(json.vendor);
-            for (var i = 0; i < json.modules.length; i++) {
-                this.modules.push(api.module.ModuleKey.fromString(json.modules[i]));
-            }
-            this.rootContentType = new api.schema.content.ContentTypeName(json.rootContentType);
-            this.version = json.version;
-            this.url = json.url;
-            this.key = SiteTemplateKey.fromString(json.key);
-            this.description = json.description;
+        constructor(builder: SiteTemplateSummaryBuilder) {
+            super(builder);
 
-            this.contentTypeFilter = new api.schema.content.ContentTypeFilterBuilder().
-                fromJson(json.contentTypeFilter).
-                build();
-
-            this.pageTemplateKeys = [];
-            json.pageTemplateKeys.forEach((key: string) => {
-                this.pageTemplateKeys.push(PageTemplateKey.fromString(key));
-            });
-
-        }
-
-        static fromExtModel(model: Ext_data_Model): SiteTemplateSummary {
-            return new SiteTemplateSummary(<api.content.site.template.SiteTemplateSummaryJson>model.raw);
-        }
-
-        static fromExtModelArray(modelArray: Ext_data_Model[]): SiteTemplateSummary[] {
-            var array: SiteTemplateSummary[] = [];
-            modelArray.forEach((model: Ext_data_Model) => {
-                array.push(SiteTemplateSummary.fromExtModel(model));
-            });
-            return array;
+            this.name = builder.name;
+            this.displayName = builder.name;
+            this.vendor = builder.vendor;
+            this.modules = builder.modules;
+            this.rootContentType = builder.rootContentType;
+            this.version = builder.version;
+            this.url = builder.url;
+            this.key = builder.key;
+            this.description = builder.description;
+            this.contentTypeFilter = builder.contentTypeFilter;
+            this.pageTemplateKeys = builder.pageTemplateKeys;
         }
 
         getKey(): SiteTemplateKey {
@@ -99,13 +78,148 @@ module api.content.site.template {
             return this.description;
         }
 
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof SiteTemplateSummary)) {
+                return false;
+            }
+
+            if (!super.equals(o)) {
+                return false;
+            }
+
+            var other = <SiteTemplateSummary>o;
+
+            if (!api.EquitableHelper.stringEquals(this.name, other.name)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.stringEquals(this.displayName, other.displayName)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.equals(this.vendor, other.vendor)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.equals(this.rootContentType, other.rootContentType)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.stringEquals(this.version, other.version)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.stringEquals(this.url, other.url)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.equals(this.key, other.key)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.stringEquals(this.description, other.description)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.equals(this.contentTypeFilter, other.contentTypeFilter)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.arrayEquals(this.modules, other.modules)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.arrayEquals(this.pageTemplateKeys, other.pageTemplateKeys)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        static fromJson(json: api.content.site.template.SiteTemplateSummaryJson): SiteTemplateSummary {
+            return new SiteTemplateSummaryBuilder().fromSiteTemplateSummaryJson(json).build();
+        }
+
         static fromJsonArray(jsonArray: api.content.site.template.SiteTemplateSummaryJson[]): SiteTemplateSummary[] {
             var array: SiteTemplateSummary[] = [];
 
             jsonArray.forEach((json: api.content.site.template.SiteTemplateSummaryJson) => {
-                array.push(new SiteTemplateSummary(json));
+                array.push(new SiteTemplateSummaryBuilder().
+                    fromSiteTemplateSummaryJson(json).
+                    build());
             });
             return array;
+        }
+
+        static fromExtModel(model: Ext_data_Model): SiteTemplateSummary {
+            return new SiteTemplateSummaryBuilder().
+                fromSiteTemplateSummaryJson(<api.content.site.template.SiteTemplateSummaryJson>model.raw).
+                build();
+        }
+
+        static fromExtModelArray(modelArray: Ext_data_Model[]): SiteTemplateSummary[] {
+            var array: SiteTemplateSummary[] = [];
+            modelArray.forEach((model: Ext_data_Model) => {
+                array.push(SiteTemplateSummary.fromExtModel(model));
+            });
+            return array;
+        }
+    }
+
+    export class SiteTemplateSummaryBuilder extends api.item.BaseItemBuilder {
+
+        name: string;
+
+        displayName: string;
+
+        vendor: api.content.site.Vendor;
+
+        modules: api.module.ModuleKey[] = [];
+
+        rootContentType: api.schema.content.ContentTypeName;
+
+        version: string;
+
+        url: string;
+
+        key: SiteTemplateKey;
+
+        description: string;
+
+        contentTypeFilter: api.schema.content.ContentTypeFilter;
+
+        pageTemplateKeys: PageTemplateKey[];
+
+        fromSiteTemplateSummaryJson(json: api.content.site.template.SiteTemplateSummaryJson): SiteTemplateSummaryBuilder {
+
+            super.fromBaseItemJson(json);
+
+            this.name = json.name;
+            this.displayName = json.name;
+            this.vendor = new api.content.site.Vendor(json.vendor);
+            for (var i = 0; i < json.modules.length; i++) {
+                this.modules.push(api.module.ModuleKey.fromString(json.modules[i]));
+            }
+            this.rootContentType = new api.schema.content.ContentTypeName(json.rootContentType);
+            this.version = json.version;
+            this.url = json.url;
+            this.key = SiteTemplateKey.fromString(json.key);
+            this.description = json.description;
+
+            this.contentTypeFilter = new api.schema.content.ContentTypeFilterBuilder().
+                fromJson(json.contentTypeFilter).
+                build();
+
+            this.pageTemplateKeys = [];
+            json.pageTemplateKeys.forEach((key: string) => {
+                this.pageTemplateKeys.push(PageTemplateKey.fromString(key));
+            });
+            return this;
+        }
+
+        build(): SiteTemplateSummary {
+            return new SiteTemplateSummary(this);
         }
     }
 }

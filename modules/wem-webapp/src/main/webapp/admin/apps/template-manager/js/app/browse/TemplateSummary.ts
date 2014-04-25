@@ -19,27 +19,13 @@ module app.browse {
 
         private siteTemplateKey: api.content.site.template.SiteTemplateKey;
 
-        constructor(json: api.content.site.template.TemplateSummaryJson) {
-            super(json);
-            this.name = json.name;
-            this.displayName = json.name;
-            this.key = json.key;
-            this.type = TemplateType[json.templateType.toUpperCase()];
-            if (this.type === TemplateType.SITE) {
-                this.siteTemplateKey = api.content.site.template.SiteTemplateKey.fromString(this.key);
-            }
-        }
-
-        static fromExtModel(model: Ext_data_Model): TemplateSummary {
-            return new TemplateSummary(<api.content.site.template.TemplateSummaryJson>model.raw);
-        }
-
-        static fromExtModelArray(modelArray: Ext_data_Model[]): TemplateSummary[] {
-            var array: TemplateSummary[] = [];
-            modelArray.forEach((model: Ext_data_Model) => {
-                array.push(TemplateSummary.fromExtModel(model));
-            });
-            return array;
+        constructor(builder: TemplateSummaryBuilder) {
+            super(builder);
+            this.name = builder.name;
+            this.displayName = builder.name;
+            this.key = builder.key;
+            this.type = builder.type;
+            this.siteTemplateKey = builder.siteTemplateKey;
         }
 
         getKey(): string {
@@ -66,5 +52,49 @@ module app.browse {
             return this.type === TemplateType.SITE;
         }
 
+        static fromJson(json: api.content.site.template.TemplateSummaryJson): TemplateSummary {
+            return new TemplateSummaryBuilder().fromTemplateSummaryJson(json).build();
+        }
+
+        static fromExtModel(model: Ext_data_Model): TemplateSummary {
+            return TemplateSummary.fromJson(<api.content.site.template.TemplateSummaryJson>model.raw);
+        }
+
+        static fromExtModelArray(modelArray: Ext_data_Model[]): TemplateSummary[] {
+            var array: TemplateSummary[] = [];
+            modelArray.forEach((model: Ext_data_Model) => {
+                array.push(TemplateSummary.fromExtModel(model));
+            });
+            return array;
+        }
+    }
+
+    export class TemplateSummaryBuilder extends api.item.BaseItemBuilder {
+
+        name: string;
+
+        displayName: string;
+
+        key: string;
+
+        type: TemplateType;
+
+        siteTemplateKey: api.content.site.template.SiteTemplateKey;
+
+        fromTemplateSummaryJson(json: api.content.site.template.TemplateSummaryJson): TemplateSummaryBuilder {
+            super.fromBaseItemJson(json, "key");
+            this.name = json.name;
+            this.displayName = json.name;
+            this.key = json.key;
+            this.type = TemplateType[json.templateType.toUpperCase()];
+            if (this.type === TemplateType.SITE) {
+                this.siteTemplateKey = api.content.site.template.SiteTemplateKey.fromString(this.key);
+            }
+            return this;
+        }
+
+        build(): TemplateSummary {
+            return new TemplateSummary(this);
+        }
     }
 }

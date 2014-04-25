@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export class AbstractRegions {
+    export class AbstractRegions implements api.Equitable {
 
         private regionByName: {[s:string] : region.Region;} = {};
 
@@ -105,7 +105,7 @@ module api.content.page {
                 return null;
             }
             api.util.assert(component instanceof image.ImageComponent,
-                "PageComponent [" + component.getPath().toString() + "] not an ImageComponent: " + api.util.getClassName(component));
+                    "PageComponent [" + component.getPath().toString() + "] not an ImageComponent: " + api.util.getClassName(component));
 
             return <image.ImageComponent>component;
         }
@@ -117,7 +117,7 @@ module api.content.page {
                 return null;
             }
             api.util.assert(component instanceof layout.LayoutComponent,
-                "PageComponent [" + component.getPath().toString() + "] not an LayoutComponent: " + api.util.getClassName(component));
+                    "PageComponent [" + component.getPath().toString() + "] not an LayoutComponent: " + api.util.getClassName(component));
 
             return <layout.LayoutComponent>component;
         }
@@ -155,6 +155,25 @@ module api.content.page {
                 regionJsons.push(region.toJson());
             });
             return regionJsons;
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof AbstractRegions)) {
+                return false;
+            }
+
+            var other = <AbstractRegions>o;
+
+
+            var thisRegions = this.getRegions();
+            var otherRegions = other.getRegions();
+
+            if (!api.EquitableHelper.arrayEquals(thisRegions, otherRegions)) {
+                return false;
+            }
+
+            return true;
         }
     }
 

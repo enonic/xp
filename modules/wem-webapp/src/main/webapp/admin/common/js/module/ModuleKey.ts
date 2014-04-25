@@ -1,6 +1,6 @@
 module api.module {
 
-    export class ModuleKey {
+    export class ModuleKey implements api.Equitable {
 
         private static SEPARATOR: string = "-";
 
@@ -40,8 +40,19 @@ module api.module {
             return this.refString;
         }
 
-        equals(moduleKey: ModuleKey): boolean {
-            return this.toString() == moduleKey.toString();
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof ModuleKey)) {
+                return false;
+            }
+
+            var other = <ModuleKey>o;
+
+            if (!api.EquitableHelper.stringEquals(this.refString, other.refString)) {
+                return false;
+            }
+
+            return true;
         }
 
         static toStringArray(keys: ModuleKey[]): string[] {

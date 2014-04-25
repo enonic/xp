@@ -1,6 +1,6 @@
 module api.content.site {
 
-    export class ModuleConfig {
+    export class ModuleConfig implements api.Equitable {
 
         private moduleKey: api.module.ModuleKey;
 
@@ -29,31 +29,50 @@ module api.content.site {
                 config: this.config.toJson()
             }
         }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof ModuleConfig)) {
+                return false;
+            }
+
+            var other = <ModuleConfig>o;
+
+            if (!api.EquitableHelper.equals(this.moduleKey, other.moduleKey)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.equals(this.config, other.config)) {
+                return false;
+            }
+
+            return true;
+        }
     }
 
-    export class ModuleConfigBuilder{
+    export class ModuleConfigBuilder {
 
         moduleKey: api.module.ModuleKey;
 
         config: api.data.RootDataSet;
 
-        setFromJson(moduleConfigJson: api.content.site.ModuleConfigJson):ModuleConfigBuilder {
+        setFromJson(moduleConfigJson: api.content.site.ModuleConfigJson): ModuleConfigBuilder {
             this.moduleKey = api.module.ModuleKey.fromString(moduleConfigJson.moduleKey);
             this.config = api.data.DataFactory.createRootDataSet(moduleConfigJson.config);
             return this;
         }
 
-        setModuleKey(value:api.module.ModuleKey):ModuleConfigBuilder {
+        setModuleKey(value: api.module.ModuleKey): ModuleConfigBuilder {
             this.moduleKey = value;
             return this;
         }
 
-        setConfig(value:api.data.RootDataSet):ModuleConfigBuilder {
+        setConfig(value: api.data.RootDataSet): ModuleConfigBuilder {
             this.config = value;
             return this;
         }
 
-        build():ModuleConfig {
+        build(): ModuleConfig {
             return new ModuleConfig(this);
         }
     }

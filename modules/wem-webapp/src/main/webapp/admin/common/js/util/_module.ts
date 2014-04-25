@@ -1,4 +1,5 @@
 ///<reference path='Assert.ts'/>
+///<reference path='ArrayHelper.ts' />
 ///<reference path='BasePath.ts' />
 ///<reference path='UriHelper.ts' />
 ///<reference path='StringHelper.ts' />

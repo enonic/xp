@@ -1,17 +1,66 @@
-module api.schema.content{
+module api.schema.content {
 
-    export class ContentType extends ContentTypeSummary {
+    export class ContentType extends ContentTypeSummary implements api.Equitable {
 
-        private form:api.form.Form;
+        private form: api.form.Form;
 
-        constructor(json:api.schema.content.json.ContentTypeJson) {
-            super(json);
-            this.form = api.form.FormItemFactory.createForm(json.form);
+        constructor(builder: ContentTypeBuilder) {
+            super(builder);
+            this.form = builder.form;
         }
 
-        getForm():api.form.Form {
+        getForm(): api.form.Form {
             return this.form;
         }
 
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof ContentType)) {
+                return false;
+            }
+
+            if (!super.equals(o)) {
+                return false;
+            }
+
+            var other = <ContentType>o;
+
+            if (!EquitableHelper.equals(this.form, other.form)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        static fromJson(json: api.schema.content.json.ContentTypeJson): ContentType {
+            return new ContentTypeBuilder().fromContentTypeJson(json).build();
+        }
+    }
+
+    export class ContentTypeBuilder extends ContentTypeSummaryBuilder {
+
+        form: api.form.Form;
+
+        constructor(source?: ContentType) {
+            if (source) {
+                super(source);
+                this.form = source.getForm();
+            }
+        }
+
+        fromContentTypeJson(json: api.schema.content.json.ContentTypeJson): ContentTypeBuilder {
+            super.fromContentTypeSummaryJson(json);
+            this.form = api.form.FormItemFactory.createForm(json.form);
+            return this;
+        }
+
+        setForm(value: api.form.Form): ContentTypeSummaryBuilder {
+            this.form = value;
+            return this;
+        }
+
+        build(): ContentType {
+            return new ContentType(this);
+        }
     }
 }

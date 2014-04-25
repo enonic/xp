@@ -1,6 +1,6 @@
 module api.content.page.region {
 
-    export class Region {
+    export class Region implements api.Equitable {
 
         private name: string;
 
@@ -191,6 +191,29 @@ module api.content.page.region {
                 name: this.name,
                 components: componentJsons
             };
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof Region)) {
+                return false;
+            }
+
+            var other = <Region>o;
+
+            if (!api.EquitableHelper.stringEquals(this.name, other.name)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.equals(this.path, other.path)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.arrayEquals(this.pageComponents, other.pageComponents)) {
+                return false;
+            }
+
+            return true;
         }
     }
 

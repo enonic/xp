@@ -1,43 +1,111 @@
-module api.item{
+module api.item {
 
-    export class BaseItem implements Item {
+    export class BaseItem implements Item, api.Equitable {
 
-        private id:string;
+        private id: string;
 
-        private createdTime:Date;
+        private createdTime: Date;
 
-        private modifiedTime:Date;
+        private modifiedTime: Date;
 
-        private deletable:boolean;
+        private deletable: boolean;
 
-        private editable:boolean;
+        private editable: boolean;
 
-        constructor(json:ItemJson, idProperty:string = 'id') {
-            this.id = json[idProperty];
-            this.createdTime = new Date(json.createdTime);
-            this.modifiedTime = new Date(json.modifiedTime);
-            this.deletable = json.deletable;
-            this.editable = json.editable;
+        constructor(builder: BaseItemBuilder) {
+            this.id = builder.id;
+            this.createdTime = builder.createdTime;
+            this.modifiedTime = builder.modifiedTime;
+            this.deletable = builder.deletable;
+            this.editable = builder.editable;
         }
 
-        getId():string {
+        getId(): string {
             return this.id;
         }
 
-        getCreatedTime():Date {
+        getCreatedTime(): Date {
             return this.createdTime;
         }
 
-        getModifiedTime():Date {
+        getModifiedTime(): Date {
             return this.modifiedTime;
         }
 
-        isDeletable():boolean {
+        isDeletable(): boolean {
             return this.deletable;
         }
 
-        isEditable():boolean {
+        isEditable(): boolean {
             return this.editable;
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof BaseItem)) {
+                return false;
+            }
+
+            var other = <BaseItem>o;
+
+            if (!EquitableHelper.stringEquals(this.id, other.id)) {
+                return false;
+            }
+
+            if (!EquitableHelper.dateEquals(this.createdTime, other.createdTime)) {
+                return false;
+            }
+
+            if (!EquitableHelper.dateEquals(this.modifiedTime, other.modifiedTime)) {
+                return false;
+            }
+
+            if (!EquitableHelper.booleanEquals(this.deletable, other.deletable)) {
+                return false;
+            }
+
+            if (!EquitableHelper.booleanEquals(this.editable, other.editable)) {
+                return false;
+            }
+
+            return true;
+        }
+    }
+
+    export class BaseItemBuilder {
+
+        id: string;
+
+        createdTime: Date;
+
+        modifiedTime: Date;
+
+        deletable: boolean;
+
+        editable: boolean;
+
+        constructor(source?: BaseItem) {
+            if (source) {
+                this.id = source.getId();
+                this.createdTime = source.getCreatedTime();
+                this.modifiedTime = source.getModifiedTime();
+                this.deletable = source.isDeletable();
+                this.editable = source.isEditable();
+            }
+        }
+
+        fromBaseItemJson(json: ItemJson, idProperty: string = 'id'): BaseItemBuilder {
+
+            this.id = json[idProperty];
+            this.createdTime = json.createdTime ? new Date(json.createdTime) : null;
+            this.modifiedTime = json.modifiedTime ? new Date(json.modifiedTime) : null;
+            this.deletable = json.deletable;
+            this.editable = json.editable;
+            return this;
+        }
+
+        build(): BaseItem {
+            return new BaseItem(this);
         }
     }
 

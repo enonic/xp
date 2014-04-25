@@ -1,30 +1,88 @@
 module api.schema.mixin {
 
-    export class Mixin extends api.schema.Schema {
+    export class Mixin extends api.schema.Schema implements api.Equitable {
 
-        private schemaKey:string;
+        private schemaKey: string;
 
-        private formItems:api.form.FormItem[];
+        private formItems: api.form.FormItem[];
 
-        constructor(mixinJson:api.schema.mixin.json.MixinJson) {
-            super(mixinJson);
-            this.formItems = [];
-            mixinJson.items.forEach((formItemJson:api.form.json.FormItemJson) => {
-                this.formItems.push(api.form.FormItemFactory.createFormItem(formItemJson));
-            });
-            this.schemaKey = "mixin:" + this.getName();
+        constructor(builder: MixinBuilder) {
+            super(builder);
+            this.formItems = builder.formItems;
+            this.schemaKey = builder.schemaKey;
         }
 
         getMixinName(): MixinName {
             return new MixinName(this.getName());
         }
 
-        getFormItems():api.form.FormItem[] {
+        getFormItems(): api.form.FormItem[] {
             return this.formItems;
         }
 
-        getSchemaKey():string {
+        getSchemaKey(): string {
             return this.schemaKey;
         }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof Mixin)) {
+                return false;
+            }
+
+            if (!super.equals(o)) {
+                return false;
+            }
+
+            var other = <Mixin>o;
+
+
+            if (!api.EquitableHelper.stringEquals(this.schemaKey, other.schemaKey)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.arrayEquals(this.formItems, other.formItems)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        static fromJson(json: api.schema.mixin.json.MixinJson): Mixin {
+            return new MixinBuilder().fromMixinJson(json).build();
+        }
+
+    }
+
+    export class MixinBuilder extends api.schema.SchemaBuilder {
+
+        schemaKey: string;
+
+        formItems: api.form.FormItem[];
+
+        constructor(source?: Mixin) {
+            super(source);
+            if (source) {
+                this.schemaKey = source.getSchemaKey();
+                this.formItems = source.getFormItems();
+            }
+        }
+
+        fromMixinJson(mixinJson: api.schema.mixin.json.MixinJson): MixinBuilder {
+
+            super.fromSchemaJson(mixinJson);
+
+            this.formItems = [];
+            mixinJson.items.forEach((formItemJson: api.form.json.FormItemJson) => {
+                this.formItems.push(api.form.FormItemFactory.createFormItem(formItemJson));
+            });
+            this.schemaKey = "mixin:" + this.name;
+            return this;
+        }
+
+        build(): Mixin {
+            return new Mixin(this);
+        }
+
     }
 }

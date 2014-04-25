@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export class RegionPath {
+    export class RegionPath implements api.Equitable {
 
         private static DIVIDER = "/";
 
@@ -37,6 +37,21 @@ module api.content.page {
 
         public toString(): string {
             return this.refString;
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof RegionPath)) {
+                return false;
+            }
+
+            var other = <RegionPath>o;
+
+            if (!api.EquitableHelper.stringEquals(this.refString, other.refString)) {
+                return false;
+            }
+
+            return true;
         }
 
         public static fromString(str: string): RegionPath {

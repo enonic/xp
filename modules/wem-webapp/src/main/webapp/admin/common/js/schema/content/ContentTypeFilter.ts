@@ -2,7 +2,7 @@ module api.schema.content {
 
     import ContentTypeName = api.schema.content.ContentTypeName;
 
-    export class ContentTypeFilter {
+    export class ContentTypeFilter implements api.Equitable {
 
         private allow: ContentTypeName[];
 
@@ -35,6 +35,25 @@ module api.schema.content {
             });
 
             return json;
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof ContentTypeFilter)) {
+                return false;
+            }
+
+            var other = <ContentTypeFilter>o;
+
+            if (!api.EquitableHelper.arrayEquals(this.allow, other.allow)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.arrayEquals(this.deny, other.deny)) {
+                return false;
+            }
+
+            return true;
         }
     }
 

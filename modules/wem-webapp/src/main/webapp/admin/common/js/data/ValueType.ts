@@ -1,6 +1,6 @@
 module api.data {
 
-    export class ValueType {
+    export class ValueType implements api.Equitable {
 
         private name: string;
 
@@ -12,12 +12,23 @@ module api.data {
             return this.name;
         }
 
-        equals(valueType: ValueType): boolean {
-            return this.name == valueType.name;
-        }
-
         valueToString(value: Value): string {
             return <string>value.asObject();
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof ValueType)) {
+                return false;
+            }
+
+            var other = <ValueType>o;
+
+            if (!api.EquitableHelper.stringEquals(this.name, other.name)) {
+                return false;
+            }
+
+            return true;
         }
     }
 }

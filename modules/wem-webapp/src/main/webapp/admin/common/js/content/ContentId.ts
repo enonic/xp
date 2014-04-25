@@ -1,6 +1,6 @@
 module api.content {
 
-    export class ContentId {
+    export class ContentId implements api.Equitable {
 
         private value: string;
 
@@ -13,6 +13,21 @@ module api.content {
 
         toString(): string {
             return this.value;
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof ContentId)) {
+                return false;
+            }
+
+            var other = <ContentId>o;
+
+            if (!api.EquitableHelper.stringEquals(this.value, other.value)) {
+                return false;
+            }
+
+            return true;
         }
 
         static isValidContentId(id: string): boolean {

@@ -1,6 +1,6 @@
 module api.content.page.layout {
 
-    export class LayoutRegions extends api.content.page.AbstractRegions {
+    export class LayoutRegions extends api.content.page.AbstractRegions implements api.Equitable {
 
         constructor(builder: LayoutRegionsBuilder) {
 
@@ -9,6 +9,15 @@ module api.content.page.layout {
 
         mergeRegions(descriptorRegions: api.content.page.region.RegionDescriptor[], parentComponentPath: ComponentPath): LayoutRegions {
             return new LayoutRegionsMerger().merge(this, descriptorRegions, parentComponentPath);
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof LayoutRegions)) {
+                return false;
+            }
+
+            return super.equals(o);
         }
     }
 

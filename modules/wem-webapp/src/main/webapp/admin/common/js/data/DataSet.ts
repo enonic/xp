@@ -1,6 +1,6 @@
 module api.data {
 
-    export class DataSet extends Data {
+    export class DataSet extends Data implements api.Equitable {
 
         private dataById: {[s:string] : Data;} = {};
 
@@ -205,21 +205,20 @@ module api.data {
             }};
         }
 
-        equals(dataSet: DataSet): boolean {
-            var dataArray1 = this.dataArray;
-            var dataArray2 = dataSet.dataArray;
+        equals(o: api.Equitable): boolean {
 
-            if (dataArray1.length != dataArray2.length) {
+            if (!(o instanceof DataSet)) {
                 return false;
             }
 
-            for (var i = 0; i < dataArray1.length; i++) {
-                var data1 = dataArray1[i];
-                var data2 = dataSet.getData(data1.getId().toString());
+            if (!super.equals(o)) {
+                return false;
+            }
 
-                if (!data1.equals(data2)) {
-                    return false;
-                }
+            var other = <DataSet>o;
+
+            if (!api.EquitableHelper.arrayEquals(this.dataArray, other.dataArray)) {
+                return false;
             }
 
             return true;

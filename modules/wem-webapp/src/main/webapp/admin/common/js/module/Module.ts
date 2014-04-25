@@ -12,20 +12,67 @@ module api.module {
 
         private maxSystemVersion: string;
 
+        constructor(builder: ModuleBuilder) {
+            super(builder);
+
+            this.config = builder.config;
+            this.moduleDependencies = builder.moduleDependencies;
+            this.contentTypeDependencies = builder.contentTypeDependencies;
+            this.minSystemVersion = builder.minSystemVersion;
+            this.maxSystemVersion = builder.maxSystemVersion;
+        }
+
+        getForm(): api.form.Form {
+            return this.config;
+        }
+
+        getMinSystemVersion(): string {
+            return this.minSystemVersion;
+        }
+
+        getMaxSystemVersion(): string {
+            return this.maxSystemVersion;
+        }
+
+        getModuleDependencies(): api.module.ModuleKey[] {
+            return this.moduleDependencies;
+        }
+
+        getContentTypeDependencies(): api.schema.content.ContentTypeName[] {
+            return this.contentTypeDependencies;
+        }
+
         static fromExtModel(model:Ext_data_Model):Module {
-            return new api.module.Module(<api.module.json.ModuleJson>model.raw);
+            return Module.fromJson(<api.module.json.ModuleJson>model.raw);
+        }
+
+        static fromJson(json: api.module.json.ModuleJson): Module {
+            return new ModuleBuilder().fromJson(json).build();
         }
 
         static fromJsonArray(jsonArray:api.module.json.ModuleJson[]):Module[] {
             var array:Module[] = [];
             jsonArray.forEach((json:api.module.json.ModuleJson) => {
-                array.push(new Module(json));
+                array.push(Module.fromJson(json));
             });
             return array;
         }
+    }
 
-        constructor(json:api.module.json.ModuleJson){
-            super(json);
+    export class ModuleBuilder extends ModuleSummaryBuilder {
+
+        config: api.form.Form;
+
+        moduleDependencies: api.module.ModuleKey[] = [];
+
+        contentTypeDependencies: api.schema.content.ContentTypeName[] = [];
+
+        minSystemVersion: string;
+
+        maxSystemVersion: string;
+
+        fromJson(json: api.module.json.ModuleJson): ModuleBuilder {
+            super.fromJson(json);
 
             this.config = json.config != null ? new api.form.Form(json.config) : null;
             this.minSystemVersion = json.minSystemVersion;
@@ -42,26 +89,12 @@ module api.module {
                     this.contentTypeDependencies.push(new api.schema.content.ContentTypeName(dependency));
                 });
             }
+
+            return this;
         }
 
-        getForm():api.form.Form {
-            return this.config;
-        }
-
-        getMinSystemVersion():string {
-            return this.minSystemVersion;
-        }
-
-        getMaxSystemVersion():string {
-            return this.maxSystemVersion;
-        }
-
-        getModuleDependencies(): api.module.ModuleKey[] {
-            return this.moduleDependencies;
-        }
-
-        getContentTypeDependencies(): api.schema.content.ContentTypeName[] {
-            return this.contentTypeDependencies;
+        build(): Module {
+            return new Module(this);
         }
     }
 }

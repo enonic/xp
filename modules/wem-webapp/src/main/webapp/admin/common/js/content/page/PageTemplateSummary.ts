@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export class PageTemplateSummary {
+    export class PageTemplateSummary implements api.Equitable {
 
         private key: PageTemplateKey;
 
@@ -29,6 +29,29 @@ module api.content.page {
 
         getDescriptorKey(): DescriptorKey {
             return this.descriptorKey;
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof PageTemplateSummary)) {
+                return false;
+            }
+
+            var other = <PageTemplateSummary>o;
+
+            if (!api.EquitableHelper.equals(this.key, other.key)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.stringEquals(this.displayName, other.displayName)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.equals(this.descriptorKey, other.descriptorKey)) {
+                return false;
+            }
+
+            return true;
         }
 
         static fromJsonArray(jsonArray: PageTemplateSummaryJson[]): PageTemplateSummary[] {

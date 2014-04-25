@@ -1,21 +1,21 @@
-module api.content.site{
+module api.content.site {
 
-    export class Vendor {
+    export class Vendor implements api.Equitable {
 
-        private name:string;
+        private name: string;
 
-        private url:string;
+        private url: string;
 
-        constructor( json:api.content.site.VendorJson ){
+        constructor(json: api.content.site.VendorJson) {
             this.name = json.name;
             this.url = json.url;
         }
 
-        getName():string{
+        getName(): string {
             return this.name;
         }
 
-        getUrl():string{
+        getUrl(): string {
             return this.url;
         }
 
@@ -26,6 +26,25 @@ module api.content.site{
             };
 
             return json;
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof Vendor)) {
+                return false;
+            }
+
+            var other = <Vendor>o;
+
+            if (!api.EquitableHelper.stringEquals(this.name, other.name)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.stringEquals(this.url, other.url)) {
+                return false;
+            }
+
+            return true;
         }
     }
 }

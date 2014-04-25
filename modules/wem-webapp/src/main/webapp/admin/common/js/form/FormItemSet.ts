@@ -1,22 +1,22 @@
-module api.form{
+module api.form {
 
     export class FormItemSet extends FormItem {
 
-        private label:string;
+        private label: string;
 
-        private formItems:FormItem[] = [];
+        private formItems: FormItem[] = [];
 
-        private formItemByName:{[name:string] : FormItem; } = {};
+        private formItemByName: {[name:string] : FormItem; } = {};
 
-        private immutable:boolean;
+        private immutable: boolean;
 
-        private occurrences:Occurrences;
+        private occurrences: Occurrences;
 
-        private customText:string;
+        private customText: string;
 
-        private helpText:string;
+        private helpText: string;
 
-        constructor(formItemSetJson:api.form.json.FormItemSetJson) {
+        constructor(formItemSetJson: api.form.json.FormItemSetJson) {
             super(formItemSetJson.name);
             this.label = formItemSetJson.label;
             this.immutable = formItemSetJson.immutable;
@@ -25,13 +25,13 @@ module api.form{
             this.helpText = formItemSetJson.helpText;
 
             if (formItemSetJson.items != null) {
-                formItemSetJson.items.forEach((formItemJson:api.form.json.FormItemJson) => {
-                    this.addFormItem( FormItemFactory.createFormItem(formItemJson) );
+                formItemSetJson.items.forEach((formItemJson: api.form.json.FormItemJson) => {
+                    this.addFormItem(FormItemFactory.createFormItem(formItemJson));
                 });
             }
         }
 
-        addFormItem(formItem:FormItem) {
+        addFormItem(formItem: FormItem) {
             if (this.formItemByName[name]) {
                 throw new Error("FormItem already added: " + name);
             }
@@ -40,49 +40,89 @@ module api.form{
             this.formItems.push(formItem);
         }
 
-        getFormItems():FormItem[] {
+        getFormItems(): FormItem[] {
             return this.formItems;
         }
 
-        getFormItemByName(name:string):FormItem {
+        getFormItemByName(name: string): FormItem {
             return this.formItemByName[name];
         }
 
-        getInputByName(name:string):Input {
+        getInputByName(name: string): Input {
             return <Input>this.formItemByName[name];
         }
 
-        getLabel():string {
+        getLabel(): string {
             return this.label;
         }
 
-        isImmutable():boolean {
+        isImmutable(): boolean {
             return this.immutable;
         }
 
-        getCustomText():string {
+        getCustomText(): string {
             return this.customText;
         }
 
-        getHelpText():string {
+        getHelpText(): string {
             return this.helpText;
         }
 
-        getOccurrences():Occurrences {
+        getOccurrences(): Occurrences {
             return this.occurrences;
         }
 
-        public toFormItemSetJson():api.form.json.FormItemTypeWrapperJson {
+        public toFormItemSetJson(): api.form.json.FormItemTypeWrapperJson {
 
             return <api.form.json.FormItemTypeWrapperJson>{FormItemSet: <api.form.json.FormItemSetJson>{
                 name: this.getName(),
-                customText : this.getCustomText(),
-                helpText : this.getHelpText(),
-                immutable : this.isImmutable(),
-                items : FormItem.formItemsToJson(this.getFormItems()),
-                label : this.getLabel(),
-                occurrences : this.getOccurrences().toJson(),
+                customText: this.getCustomText(),
+                helpText: this.getHelpText(),
+                immutable: this.isImmutable(),
+                items: FormItem.formItemsToJson(this.getFormItems()),
+                label: this.getLabel(),
+                occurrences: this.getOccurrences().toJson(),
             }};
         }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof FormItemSet)) {
+                return false;
+            }
+
+            if (!super.equals(o)) {
+                return false;
+            }
+
+            var other = <FormItemSet>o;
+
+            if (!api.EquitableHelper.stringEquals(this.label, other.label)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.booleanEquals(this.immutable, other.immutable)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.equals(this.occurrences, other.occurrences)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.stringEquals(this.customText, other.customText)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.stringEquals(this.helpText, other.helpText)) {
+                return false;
+            }
+
+            if (!api.EquitableHelper.arrayEquals(this.formItems, other.formItems)) {
+                return false;
+            }
+
+            return true;
+        }
+
     }
 }

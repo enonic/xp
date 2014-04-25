@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export class DescriptorKey {
+    export class DescriptorKey implements api.Equitable {
 
         private static SEPARATOR = ":";
 
@@ -8,40 +8,51 @@ module api.content.page {
 
         private name: DescriptorName;
 
-        private refString:string;
+        private refString: string;
 
-        public static fromString(str:string):DescriptorKey{
-            var sepIndex:number = str.indexOf(DescriptorKey.SEPARATOR);
-            if( sepIndex == -1 ) {
+        public static fromString(str: string): DescriptorKey {
+            var sepIndex: number = str.indexOf(DescriptorKey.SEPARATOR);
+            if (sepIndex == -1) {
                 throw new Error("DescriptorKey must contain separator '" + DescriptorKey.SEPARATOR + "':" + str);
             }
 
             var moduleKey = str.substring(0, sepIndex);
-            var name = str.substring(sepIndex+1, str.length);
+            var name = str.substring(sepIndex + 1, str.length);
 
             return new DescriptorKey(api.module.ModuleKey.fromString(moduleKey), new DescriptorName(name));
         }
 
-        constructor(moduleKey:api.module.ModuleKey, name: DescriptorName) {
+        constructor(moduleKey: api.module.ModuleKey, name: DescriptorName) {
             this.moduleKey = moduleKey;
             this.name = name;
-            this.refString = moduleKey.toString() + DescriptorKey.SEPARATOR  + name.toString();
+            this.refString = moduleKey.toString() + DescriptorKey.SEPARATOR + name.toString();
         }
 
-        getModuleKey():api.module.ModuleKey {
+        getModuleKey(): api.module.ModuleKey {
             return this.moduleKey;
         }
 
-        getName():DescriptorName {
+        getName(): DescriptorName {
             return this.name;
         }
 
-        toString():string {
+        toString(): string {
             return this.refString;
         }
 
-        equals(other: DescriptorKey) {
-            return other && (this.refString === other.refString);
+        equals(o: api.Equitable): boolean {
+
+            if (!(o instanceof DescriptorKey)) {
+                return false;
+            }
+
+            var other = <DescriptorKey>o;
+
+            if (!api.EquitableHelper.stringEquals(this.refString, other.refString)) {
+                return false;
+            }
+
+            return true;
         }
     }
 }

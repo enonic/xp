@@ -9,7 +9,7 @@ module app.browse {
         extModelsToContentSummaries(models: Ext_data_Model[]): api.content.ContentSummary[] {
             var summaries: api.content.ContentSummary[] = [];
             for (var i = 0; i < models.length; i++) {
-                summaries.push(new api.content.ContentSummary(<api.content.json.ContentSummaryJson>models[i].data))
+                summaries.push(api.content.ContentSummary.fromJson(<api.content.json.ContentSummaryJson>models[i].data))
             }
             return summaries;
         }

@@ -94,7 +94,7 @@ module app.browse {
 
             var summaries: api.content.ContentSummary[] = [];
             for (var i = 0; i < models.length; i++) {
-                summaries.push(new api.content.ContentSummary(<api.content.json.ContentSummaryJson>models[i].data))
+                summaries.push(api.content.ContentSummary.fromJson(<api.content.json.ContentSummaryJson>models[i].data))
             }
             return summaries;
         }
@@ -103,7 +103,7 @@ module app.browse {
 
             var browseItems: api.app.browse.BrowseItem<api.content.ContentSummary>[] = [];
             models.forEach((model: Ext_data_Model) => {
-                var content = new api.content.ContentSummary(<api.content.json.ContentSummaryJson>model.data);
+                var content = api.content.ContentSummary.fromJson(<api.content.json.ContentSummaryJson>model.data);
                 var item = new api.app.browse.BrowseItem<api.content.ContentSummary>(content).
                     setDisplayName(model.data['displayName']).
                     setPath(model.data['path']).
