@@ -32,6 +32,7 @@
     <module>modules/wem-webapp</module>
     <module>modules/wem-runner</module>
     <module>modules/wem-itest</module>
+    <module>modules/launcher</module>
   </modules>
 
   <dependencies>
