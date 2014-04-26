@@ -1,47 +1,36 @@
 package com.enonic.wem.launcher.home;
 
 import java.io.File;
-import java.util.Map;
-import java.util.Properties;
 
 import com.google.common.base.Strings;
 
 import com.enonic.wem.launcher.SharedConstants;
+import com.enonic.wem.launcher.util.SystemProperties;
 
 public final class HomeResolver
     implements SharedConstants
 {
-    private final Properties systemProperties;
+    private final SystemProperties systemProperties;
 
-    public HomeResolver()
+    public HomeResolver( final SystemProperties systemProperties )
     {
-        this.systemProperties = new Properties();
+        this.systemProperties = systemProperties;
     }
 
-    public void addSystemProperties( final Properties props )
+    public HomeDir resolve()
     {
-        this.systemProperties.putAll( props );
-    }
-
-    public void addSystemProperties( final Map<String, String> map )
-    {
-        this.systemProperties.putAll( map );
-    }
-
-    public File resolve()
-    {
-        return validatePath( resolvePath() );
+        return new HomeDir( validatePath( resolvePath() ) );
     }
 
     private String resolvePath()
     {
-        String path = this.systemProperties.getProperty( HOME_PROP );
+        String path = this.systemProperties.get( HOME_PROP );
         if ( !Strings.isNullOrEmpty( path ) )
         {
             return path;
         }
 
-        path = this.systemProperties.getProperty( HOME_ENV );
+        path = this.systemProperties.getEnv( HOME_ENV );
         if ( !Strings.isNullOrEmpty( path ) )
         {
             return path;

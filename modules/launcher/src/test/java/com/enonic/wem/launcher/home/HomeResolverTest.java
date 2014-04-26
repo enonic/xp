@@ -1,12 +1,13 @@
 package com.enonic.wem.launcher.home;
 
 import java.io.File;
-import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import com.enonic.wem.launcher.util.SystemProperties;
 
 import static org.junit.Assert.*;
 
@@ -55,11 +56,15 @@ public class HomeResolverTest
     {
         assertTrue( this.validHomeDir.exists() );
 
-        final File homeDir = resolve( this.validHomeDir.getAbsolutePath(), null );
+        final HomeDir homeDir = resolve( null, this.validHomeDir.getAbsolutePath() );
         assertNotNull( homeDir );
-        assertTrue( homeDir.exists() );
-        assertTrue( homeDir.isDirectory() );
-        assertEquals( this.validHomeDir, homeDir );
+        assertEquals( this.validHomeDir.getAbsoluteFile().toString(), homeDir.toString() );
+
+        final File homeDirFile = homeDir.toFile();
+        assertNotNull( homeDirFile );
+        assertTrue( homeDirFile.exists() );
+        assertTrue( homeDirFile.isDirectory() );
+        assertEquals( this.validHomeDir, homeDirFile );
     }
 
     @Test
@@ -67,16 +72,20 @@ public class HomeResolverTest
     {
         assertTrue( this.validHomeDir.exists() );
 
-        final File homeDir = resolve( null, this.validHomeDir.getAbsolutePath() );
+        final HomeDir homeDir = resolve( null, this.validHomeDir.getAbsolutePath() );
         assertNotNull( homeDir );
-        assertTrue( homeDir.exists() );
-        assertTrue( homeDir.isDirectory() );
-        assertEquals( this.validHomeDir, homeDir );
+        assertEquals( this.validHomeDir.getAbsoluteFile().toString(), homeDir.toString() );
+
+        final File homeDirFile = homeDir.toFile();
+        assertNotNull( homeDirFile );
+        assertTrue( homeDirFile.exists() );
+        assertTrue( homeDirFile.isDirectory() );
+        assertEquals( this.validHomeDir, homeDirFile );
     }
 
-    private File resolve( final String propValue, final String envValue )
+    private HomeDir resolve( final String propValue, final String envValue )
     {
-        final Properties props = new Properties();
+        final SystemProperties props = new SystemProperties();
 
         if ( propValue != null )
         {
@@ -85,11 +94,10 @@ public class HomeResolverTest
 
         if ( envValue != null )
         {
-            props.put( "WEM_HOME", envValue );
+            props.putEnv( "WEM_HOME", envValue );
         }
 
-        final HomeResolver resolver = new HomeResolver();
-        resolver.addSystemProperties( props );
+        final HomeResolver resolver = new HomeResolver( props );
         return resolver.resolve();
     }
 }
