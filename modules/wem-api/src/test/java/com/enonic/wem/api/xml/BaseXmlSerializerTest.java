@@ -1,13 +1,17 @@
 package com.enonic.wem.api.xml;
 
+import java.io.StringReader;
 import java.net.URL;
+
+import org.jdom2.Document;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import static org.junit.Assert.*;
-import static org.xmlmatchers.XmlMatchers.isEquivalentTo;
-import static org.xmlmatchers.transform.XmlConverters.the;
 
 public abstract class BaseXmlSerializerTest
 {
@@ -19,20 +23,25 @@ public abstract class BaseXmlSerializerTest
         {
             throw new IllegalArgumentException( "Resource file [" + fileName + "] not found" );
         }
-        return Resources.toString( url, Charsets.UTF_8 );
+
+        final String xml = Resources.toString( url, Charsets.UTF_8 );
+        return normalizeXml( xml );
     }
 
     protected final void assertXml( final String expectedFileName, final String actualSerialization )
         throws Exception
     {
         final String expectedXml = readFromFile( expectedFileName );
-        try
-        {
-            assertThat( "Serialization not as expected", the( actualSerialization ), isEquivalentTo( the( expectedXml ) ) );
-        }
-        catch ( AssertionError e )
-        {
-            assertEquals( "Serialization not as expected", actualSerialization, expectedXml );
-        }
+        assertEquals( expectedXml, normalizeXml( actualSerialization ) );
+    }
+
+    private String normalizeXml( final String xml )
+        throws Exception
+    {
+        final SAXBuilder parser = new SAXBuilder();
+        final Document doc = parser.build( new StringReader( xml ) );
+
+        final XMLOutputter outputter = new XMLOutputter( Format.getPrettyFormat() );
+        return outputter.outputString( doc );
     }
 }
