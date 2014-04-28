@@ -10,6 +10,8 @@ module api.content.inputtype.image {
 
         private selectionChangeListeners: {(option: SelectedOptionView, checked: boolean): void;}[] = [];
 
+        private focusChangeListeners: {(option: SelectedOptionView, focused: boolean): void;}[] = [];
+
         constructor(option: api.ui.selector.Option<api.content.ContentSummary>) {
             super(option);
         }
@@ -24,18 +26,37 @@ module api.content.inputtype.image {
             this.appendChild(label);
 
             this.check = new api.ui.CheckboxInput();
+
             this.check.onClicked((event: MouseEvent) => {
                 // swallow event to prevent scaling when clicked on checkbox
                 event.stopPropagation();
             });
+
+            this.check.onMouseDown((event: MouseEvent) => {
+                // swallow event and prevent checkbox focus on click
+                event.stopPropagation();
+                event.preventDefault();
+            })
+
             this.check.onValueChanged((event: api.ui.ValueChangedEvent) => {
                 this.notifyChecked(event.getNewValue() == 'true');
+            });
+
+            this.check.onFocus(() => {
+                this.notifyFocused(true);
+            });
+            this.check.onBlur(() => {
+                this.notifyFocused(false);
             });
             this.appendChild(this.check);
         }
 
         getIcon(): api.dom.ImgEl {
             return this.icon;
+        }
+
+        getCheckbox(): api.ui.CheckboxInput {
+            return this.check;
         }
 
         toggleChecked() {
@@ -52,9 +73,26 @@ module api.content.inputtype.image {
             this.selectionChangeListeners.push(listener);
         }
 
-        removeCheckListener(listener: {(option: SelectedOptionView, checked: boolean): void;}) {
+        unChecked(listener: {(option: SelectedOptionView, checked: boolean): void;}) {
             this.selectionChangeListeners = this.selectionChangeListeners.filter(function (curr) {
                 return curr != listener;
+            });
+        }
+
+        // both focus nad blur events
+        onFocused(listener: {(option: SelectedOptionView, focused: boolean): void;}) {
+            this.focusChangeListeners.push(listener);
+        }
+
+        unFocused(listener: {(option: SelectedOptionView, focused: boolean): void;}) {
+            this.focusChangeListeners = this.focusChangeListeners.filter(function (curr) {
+                return curr != listener;
+            });
+        }
+
+        notifyFocused(focused: boolean) {
+            this.focusChangeListeners.forEach((listener) => {
+                listener(this, focused);
             });
         }
 

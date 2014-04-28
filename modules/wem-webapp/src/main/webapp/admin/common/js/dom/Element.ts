@@ -206,6 +206,22 @@ module api.dom {
             return gotFocus;
         }
 
+        giveBlur(): boolean {
+            if (!this.isVisible()) {
+                return false;
+            }
+            if (this.el.isDisabled()) {
+                return false;
+            }
+            this.el.blur();
+            var gotBlur: boolean = document.activeElement != this.el.getHTMLElement();
+            if (!gotBlur) {
+                console.log("Element.giveBlur(): Failed to give blur to Element: class = " + api.util.getClassName(this) + ", id = " +
+                    this.getId());
+            }
+            return gotBlur;
+        }
+
         getHTMLElement(): HTMLElement {
             return this.el.getHTMLElement();
         }
@@ -554,6 +570,22 @@ module api.dom {
 
         unKeyPressed(listener: (event: KeyboardEvent) => void) {
             this.getEl().removeEventListener("keypress", listener);
+        }
+
+        onFocus(listener: (event: FocusEvent) => void) {
+            this.getEl().addEventListener("focus", listener);
+        }
+
+        unFocus(listener: (event: FocusEvent) => void) {
+            this.getEl().removeEventListener("focus", listener);
+        }
+
+        onBlur(listener: (event: FocusEvent) => void) {
+            this.getEl().addEventListener("blur", listener);
+        }
+
+        unBlur(listener: (event: FocusEvent) => void) {
+            this.getEl().removeEventListener("blur", listener);
         }
     }
 }
