@@ -43,20 +43,18 @@ public class ConfigPropertiesTest
         props.put( "key2", "value2 ${key1}" );
         props.put( "key3", "${key1} value3 ${key2}" );
 
-        final ConfigProperties interpolated = props.interpolate();
-        Assert.assertNotSame( props, interpolated );
-        Assert.assertEquals( props.size(), interpolated.size() );
-
-        Assert.assertEquals( "value1", interpolated.get( "key1" ) );
-        Assert.assertEquals( "value2 value1", interpolated.get( "key2" ) );
-        Assert.assertEquals( "value1 value3 value2 value1", interpolated.get( "key3" ) );
+        props.interpolate();
+        Assert.assertEquals( "value1", props.get( "key1" ) );
+        Assert.assertEquals( "value2 value1", props.get( "key2" ) );
+        Assert.assertEquals( "value1 value3 value2 value1", props.get( "key3" ) );
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testInterpolate_errorLoop()
     {
         final ConfigProperties props = new ConfigProperties();
         props.put( "key1", "value1 ${key1}" );
+        Assert.assertEquals( 1, props.size() );
 
         props.interpolate();
         Assert.fail( "Should throw exception" );

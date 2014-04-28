@@ -47,7 +47,7 @@ public final class Launcher
         final ConfigLoader loader = new ConfigLoader( this.homeDir );
         this.configuration = loader.load();
         this.configuration.putAll( this.systemProperties );
-        this.configuration = this.configuration.interpolate();
+        this.configuration.interpolate();
 
         // Put this into system.properties as soon as it's stable
         this.configuration.put( "org.osgi.framework.startlevel.beginning", "3" );
@@ -134,7 +134,7 @@ public final class Launcher
     public static void main( final String... args )
         throws Exception
     {
-        System.setProperty( "wem.home", "/Users/srs/development/cms-homes/wem-home" );
-        new Launcher().start();
+        /*System.setProperty( "wem.home", "/Users/srs/development/cms-homes/wem-home" );
+        new Launcher().start();*/
     }
 }

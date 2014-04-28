@@ -3,8 +3,7 @@ package com.enonic.wem.launcher.config;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.text.StrLookup;
-import org.apache.commons.lang.text.StrSubstitutor;
+import org.apache.felix.utils.properties.InterpolationHelper;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
@@ -24,26 +23,9 @@ public final class ConfigProperties
         super.putAll( Maps.transformValues( map, new TrimFunction() ) );
     }
 
-    private ConfigProperties transform( final Function<String, String> function )
+    public void interpolate()
     {
-        final ConfigProperties props = new ConfigProperties();
-        props.putAll( Maps.transformValues( this, function ) );
-        return props;
-    }
-
-    public ConfigProperties interpolate()
-    {
-        final StrLookup lookup = StrLookup.mapLookup( this );
-        final StrSubstitutor substitutor = new StrSubstitutor( lookup );
-
-        return transform( new Function<String, String>()
-        {
-            @Override
-            public String apply( final String input )
-            {
-                return substitutor.replace( input );
-            }
-        } );
+        InterpolationHelper.performSubstitution( this );
     }
 
     private final class TrimFunction
