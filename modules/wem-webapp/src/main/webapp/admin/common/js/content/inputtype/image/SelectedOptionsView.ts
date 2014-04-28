@@ -89,17 +89,9 @@ module api.content.inputtype.image {
             this.dialog.hide();
             var optionView: SelectedOptionView = <SelectedOptionView>option.getOptionView();
 
-            optionView.onMouseDown((event: MouseEvent) => {
-                if (this.activeOption && option.getIndex() === this.activeOption.getIndex()) {
-                    event.preventDefault();
-                }
-                event.stopPropagation();
-            });
-
             optionView.onClicked((event: MouseEvent) => {
                 if (this.dialog.isVisible()) {
                     this.hideImageSelectorDialog();
-                    this.activateKeyListeners(false);
                     optionView.getCheckbox().giveBlur();
                 } else {
                     optionView.getCheckbox().giveFocus();
@@ -111,7 +103,6 @@ module api.content.inputtype.image {
                 case 9: // Tab
                     if (this.isFirstInRow(option.getIndex()) || this.isLast(option.getIndex())) {
                         this.hideImageSelectorDialog();
-                        this.activateKeyListeners(false);
                     }
                     break;
                 case 8: // Backspace
@@ -143,10 +134,9 @@ module api.content.inputtype.image {
                 this.updateSelectionToolbarLayout();
             });
 
-            optionView.onFocused((view: SelectedOptionView, focused: boolean) => {
-                if (focused) {
+            optionView.onFocusChanged((view: SelectedOptionView, event: FocusChangedEvent) => {
+                if (event.isFocused()) {
                     this.showImageSelectorDialog(option);
-                    this.activateKeyListeners(true);
                 }
             });
 
@@ -168,18 +158,6 @@ module api.content.inputtype.image {
 
             if (index > -1) {
                 (<SelectedOptionView>this.getSelectedOptionViews()[index]).getCheckbox().giveFocus();
-            }
-        }
-
-        private activateKeyListeners(activate: boolean) {
-            var binding = new api.ui.KeyBinding("space", (event: ExtendedKeyboardEvent, combo: string) => {
-                (<SelectedOptionView>this.activeOption.getOptionView()).toggleChecked();
-                event.preventDefault();
-            });
-            if (activate) {
-                api.ui.KeyBindings.get().bindKey(binding);
-            } else {
-                api.ui.KeyBindings.get().unbindKey(binding);
             }
         }
 
@@ -259,7 +237,6 @@ module api.content.inputtype.image {
                     }
                 }
                 this.hideImageSelectorDialog();
-                this.activateKeyListeners(false);
             };
 
             api.dom.Body.get().onClicked(this.mouseClickListener);
