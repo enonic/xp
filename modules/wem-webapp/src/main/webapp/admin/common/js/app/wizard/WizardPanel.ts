@@ -56,7 +56,7 @@ module api.app.wizard {
 
         private stepNavigatorAndToolbarContainer: api.dom.DivEl;
 
-        private isPersisted: boolean;
+        private persisted: boolean;
 
         private splitPanel: api.ui.SplitPanel;
 
@@ -69,7 +69,7 @@ module api.app.wizard {
 
             this.tabId = params.tabId;
             this.persistedItem = params.persistedItem;
-            this.isPersisted = params.persistedItem == null;
+            this.persisted = params.persistedItem == null;
             this.header = params.header;
             this.mainToolbar = params.mainToolbar;
             this.stepToolbar = params.stepToolbar;
@@ -158,11 +158,9 @@ module api.app.wizard {
             this.lastWidth = $(window).width();
         }
 
-        isNew(): boolean {
-            return this.isPersisted;
+        isPersisted(): boolean {
+            return this.persisted;
         }
-
-
 
         updateStickyToolbar() {
             var scrollTop = $('.form-panel').scrollTop();
@@ -292,7 +290,7 @@ module api.app.wizard {
         saveChanges(): Q.Promise<T> {
 
             if (this.isItemPersisted()) {
-                this.isPersisted = false;
+                this.persisted = false;
                 return this.updatePersistedItem().
                     then((persisted: T) => {
 

@@ -151,7 +151,6 @@ module app.wizard {
             });
 
 
-
         }
 
         giveInitialFocus() {
@@ -220,7 +219,7 @@ module app.wizard {
             var contentData: api.content.ContentData = persistedContent.getContentData();
 
             new IsRenderableRequest(persistedContent.getContentId()).sendAndParse().
-                then((renderable: boolean):void => {
+                then((renderable: boolean): void => {
                     this.showLiveEditAction.setVisible(renderable);
                     this.showLiveEditAction.setEnabled(renderable);
                     this.previewAction.setVisible(renderable);
@@ -241,7 +240,7 @@ module app.wizard {
                         setParentContent(this.parentContent).
                         setPersistedContent(persistedContent).
                         setAttachments(attachments).
-                        setShowEmptyFormItemSetOccurrences(this.isNew()).
+                        setShowEmptyFormItemSetOccurrences(this.isPersisted()).
                         build();
 
                     this.contentWizardStepForm.renderExisting(formContext, contentData, persistedContent.getForm());
@@ -500,7 +499,6 @@ module app.wizard {
         }
 
         showLiveEdit() {
-
 
 
         }
