@@ -6,13 +6,17 @@ module api.content.page.layout {
 
             super(builder.regions);
         }
+
+        mergeRegions(descriptorRegions: api.content.page.region.RegionDescriptor[], parentComponentPath: ComponentPath): LayoutRegions {
+            return new LayoutRegionsMerger().merge(this, descriptorRegions, parentComponentPath);
+        }
     }
 
     export class LayoutRegionsBuilder {
 
         regions: api.content.page.region.Region[] = [];
 
-        fromJson(regionsJson: api.content.page.region.RegionJson[], layoutComponent:ComponentPath): LayoutRegionsBuilder {
+        fromJson(regionsJson: api.content.page.region.RegionJson[], layoutComponent: ComponentPath): LayoutRegionsBuilder {
 
             regionsJson.forEach((regionJson: api.content.page.region.RegionJson) => {
 

@@ -9,8 +9,6 @@ module app.wizard.page {
     import ComponentPath = api.content.page.ComponentPath;
     import ComponentPathRegionAndComponent = api.content.page.ComponentPathRegionAndComponent;
     import PageRegions = api.content.page.PageRegions;
-    import Region = api.content.page.region.Region;
-    import RegionBuilder = api.content.page.region.RegionBuilder;
     import RegionPath = api.content.page.RegionPath;
     import RootDataSet = api.data.RootDataSet;
 
@@ -20,6 +18,7 @@ module app.wizard.page {
     import PartDescriptor = api.content.page.part.PartDescriptor;
     import ImageDescriptor = api.content.page.image.ImageDescriptor;
     import LayoutDescriptor = api.content.page.layout.LayoutDescriptor;
+    import LayoutRegions = api.content.page.layout.LayoutRegions;
     import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
     import ImageDescriptorChangedEvent = app.wizard.page.contextwindow.inspect.ImageDescriptorChangedEvent;
     import LayoutDescriptorChangedEvent = app.wizard.page.contextwindow.inspect.LayoutDescriptorChangedEvent;
@@ -849,82 +848,10 @@ module app.wizard.page {
             }
         }
 
-        /**
-         * Add regions defined in layoutDescriptor to layoutComponent.
-         *
-         * Merge the components of regions existing in layoutComponent, distribute them in the regions of the new layoutDescriptor according to following rules:
-         *  - If a region with the same name exists on the target layout: move components from source into region with the same name
-         *  - If a region with the same name does not exists, but exists a region with the same position (index) on target: move components to target region with the same position
-         *  - If a region with the same name or position (index) cannot be found on target: move components in the last region of target
-         *
-         */
         private addLayoutRegions(layoutComponent: LayoutComponent, layoutDescriptor: LayoutDescriptor) {
-            var layoutDescriptorRegions: RegionDescriptor[] = layoutDescriptor.getRegions();
-            var layoutComponentRegions: Region[] = layoutComponent.getLayoutRegions().getRegions();
-
-            // support tables for merging regions
-            var targetRegionsByName: { [regionName: string]: Region; } = {};
-            var targetRegionsNameByPosition: { [key: number]: string; } = {};
-            var sourceRegionsPositionByName: { [regionName: string]: number; } = {};
-
-            layoutDescriptorRegions.forEach((regionDescriptor: RegionDescriptor, idx: number) => {
-                var regionName = regionDescriptor.getName();
-                var regionPath = new RegionPath(layoutComponent.getPath(), regionName);
-                var layoutRegion = new api.content.page.region.RegionBuilder().
-                    setName(regionName).
-                    setPath(regionPath).
-                    build();
-                targetRegionsByName[regionName] = layoutRegion;
-                targetRegionsNameByPosition[idx] = regionName;
-            });
-            layoutComponentRegions.forEach((region: Region, idx: number) => {
-                sourceRegionsPositionByName[region.getName()] = idx;
-            });
-
-            // merge components from regions that already exist in target layout descriptor
-            layoutComponentRegions.forEach((region: Region) => {
-                var regionName = region.getName();
-                if (targetRegionsByName[regionName]) {
-                    var targetRegion = targetRegionsByName[regionName];
-                    var updatedRegion: Region = this.addComponents(region, targetRegion);
-                    targetRegionsByName[ regionName] = updatedRegion;
-                }
-            });
-
-            // merge components from regions that are missing in target layout descriptor
-            var lastRegionName = layoutDescriptorRegions[layoutDescriptorRegions.length - 1].getName();
-            layoutComponentRegions.forEach((region: Region) => {
-                var regionName = region.getName();
-                if (!targetRegionsByName[regionName]) {
-                    var sourceRegionPos: number = sourceRegionsPositionByName[regionName];
-                    // insert region components in region with the same position in target, or in last region if there are less regions in target
-                    var targetRegionName = targetRegionsNameByPosition[sourceRegionPos] || lastRegionName;
-                    var targetRegion: Region = targetRegionsByName[targetRegionName];
-
-                    var updatedRegion: Region = this.addComponents(region, targetRegion);
-                    targetRegionsByName[targetRegionName] = updatedRegion;
-                }
-            });
-
-            var layoutRegionsBuilder = new api.content.page.layout.LayoutRegionsBuilder();
-            // add merged regions to layoutComponent, in the same order as they were in target layoutDescriptor
-            layoutDescriptorRegions.forEach(function (regionDescriptor: RegionDescriptor) {
-                var layoutRegion = targetRegionsByName[regionDescriptor.getName()];
-                layoutRegionsBuilder.addRegion(layoutRegion);
-            });
-            layoutComponent.setLayoutRegions(layoutRegionsBuilder.build());
-        }
-
-        private addComponents(fromRegion: Region, toRegion: Region): Region {
-            if (fromRegion.getComponents().length === 0) {
-                return toRegion;
-            }
-
-            var result: RegionBuilder = new RegionBuilder(toRegion);
-            fromRegion.getComponents().forEach(function (component: PageComponent) {
-                result.addComponent(component)
-            });
-            return result.build();
+            var sourceRegions: LayoutRegions = layoutComponent.getLayoutRegions();
+            var mergedRegions: LayoutRegions = sourceRegions.mergeRegions(layoutDescriptor.getRegions(), layoutComponent.getPath());
+            layoutComponent.setLayoutRegions(mergedRegions);
         }
 
         private loadComponent(componentPath: ComponentPath, componentPlaceholder: api.dom.Element) {
