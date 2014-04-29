@@ -54,6 +54,10 @@ module app.browse.filter {
             });
 
             this.onSearch(this.searchFacets);
+
+            api.content.ContentDeletedEvent.on(() => {
+                this.search();
+            });
         }
 
         private loadAndSetContentTypeDisplayNames(aggregationGroupView: AggregationGroupView) {
