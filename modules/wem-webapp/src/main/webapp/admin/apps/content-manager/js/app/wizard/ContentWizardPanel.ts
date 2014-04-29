@@ -132,7 +132,8 @@ module app.wizard {
                 header: this.contentWizardHeader,
                 actions: actions,
                 livePanel: this.liveFormPanel,
-                steps: this.createSteps(params.persistedContent)
+                steps: this.createSteps(params.persistedContent),
+                split: true
             }, () => {
                 this.addClass("content-wizard-panel");
                 callback(this);
@@ -144,7 +145,13 @@ module app.wizard {
                 } else {
                     app.Router.setHash("new/" + this.contentType.getName());
                 }
+                if (this.liveFormPanel) {
+                    this.liveFormPanel.loadPageIfNotLoaded();
+                }
             });
+
+
+
         }
 
         giveInitialFocus() {
@@ -494,12 +501,12 @@ module app.wizard {
 
         showLiveEdit() {
 
-            super.showPanel(this.liveFormPanel);
-            this.liveFormPanel.loadPageIfNotLoaded().done();
+
+
         }
 
         showWizard() {
-            super.showMainPanel();
+
         }
     }
 

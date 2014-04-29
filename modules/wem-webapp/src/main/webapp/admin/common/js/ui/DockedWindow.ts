@@ -11,6 +11,7 @@ module api.ui {
 
             this.navigator = new api.ui.tab.TabBar();
             this.deck = new api.ui.NavigatedDeckPanel(this.navigator);
+            this.deck.setDoOffset(false);
 
             this.appendChild(this.navigator);
             this.appendChild(this.deck);

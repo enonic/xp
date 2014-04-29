@@ -125,7 +125,7 @@ module api.ui {
             this.firstPanel = builder.getFirstPanel();
             this.secondPanel = builder.getSecondPanel();
             if (builder.isFirstPanelFixed()) {
-                this.setFirstPanelSize(builder.getFirstPanelSize());
+                this.setFirstPanelSize(builder.getFirstPanelSize(), true);
             } else {
                 this.setSecondPanelSize(builder.getSecondPanelSize());
             }
@@ -228,17 +228,21 @@ module api.ui {
             this.distribute();
         }
 
-        setFirstPanelSize(size: string) {
+        setFirstPanelSize(size: string, fixed?:boolean) {
             this.firstPanelSize = size;
             this.secondPanelSize = "100% - " + size;
-            this.fixedPanel = this.firstPanel;
+            if (fixed) {
+                this.fixedPanel = this.firstPanel;
+            }
             this.pixelSize = size.indexOf('%') == -1;
         }
 
-        setSecondPanelSize(size: string) {
+        setSecondPanelSize(size: string, fixed?:boolean) {
             this.firstPanelSize = "100% - " + size;
             this.secondPanelSize = size;
-            this.fixedPanel = this.secondPanel;
+            if (fixed) {
+                this.fixedPanel = this.secondPanel;
+            }
             this.pixelSize = size.indexOf('%') == -1;
         }
 

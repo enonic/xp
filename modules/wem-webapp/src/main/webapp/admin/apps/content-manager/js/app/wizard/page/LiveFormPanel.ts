@@ -360,8 +360,12 @@ module app.wizard.page {
             });
         }
 
-        resizeFrameContainer(width: number) {
-            this.frameContainer.getEl().setWidthPx(width);
+        updateFrameContainerSize(contextWindowPinned:boolean, contextWindowWidth?:number) {
+            if (contextWindowPinned && contextWindowWidth) {
+                this.frameContainer.getEl().setWidth("calc(100% - " + (contextWindowWidth-1) + "px)");
+            } else {
+                this.frameContainer.getEl().setWidth("100%");
+            }
         }
 
         public getPageTemplate(): PageTemplateKey {

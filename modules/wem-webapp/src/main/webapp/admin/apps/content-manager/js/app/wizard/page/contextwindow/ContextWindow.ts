@@ -54,10 +54,6 @@ module app.wizard.page.contextwindow {
 
             this.addClass("context-window");
 
-            if (this.pinned) {
-                this.liveFormPanel.resizeFrameContainer($(window).width() - 280);
-            }
-
             this.insertablesPanel.onHideContextWindowRequest(() => {
                 this.hide();
             });
@@ -81,6 +77,12 @@ module app.wizard.page.contextwindow {
 
             var pinButton = new PinButton(this);
             this.appendChild(pinButton);
+
+            this.onShown(() => {
+                if (this.pinned) {
+                    this.liveFormPanel.updateFrameContainerSize(true, this.getEl().getWidth());
+                }
+            });
 
         }
 
@@ -127,24 +129,18 @@ module app.wizard.page.contextwindow {
         }
 
         private isEnabled() {
-            if (this.hasClass("hidden")) {
-                return false;
-            }
-            return true;
+            return !this.hasClass("hidden");
+
         }
 
         private updateFrameSize() {
-            if (this.pinned && this.isEnabled()) {
-                this.liveFormPanel.resizeFrameContainer($(window).width() - 280);
-            } else {
-                this.liveFormPanel.resizeFrameContainer($(window).width());
-            }
+            this.liveFormPanel.updateFrameContainerSize((this.pinned && this.isEnabled()), this.getEl().getWidth());
         }
     }
 
     export class PinButton extends api.ui.Button {
         constructor(contextWindow: ContextWindow) {
-            super("")
+            super("");
             this.addClass("pin-button icon-pushpin");
             this.setActive(contextWindow.isPinned());
 

@@ -19,6 +19,8 @@ module api.app.wizard {
         livePanel?:api.ui.Panel;
 
         steps:api.app.wizard.WizardStep[];
+
+        split?:boolean;
     }
 
     export class WizardPanel<T> extends api.ui.Panel implements api.ui.Closeable, api.ui.ActionContainer {
@@ -48,22 +50,26 @@ module api.app.wizard {
 
         private closedListeners: {(event: WizardClosedEvent):void}[] = [];
 
-        private backPanel: api.ui.DeckPanel;
-
         private formPanel: api.ui.Panel;
 
         private lastFocusedElement: JQuery;
 
         private stepNavigatorAndToolbarContainer: api.dom.DivEl;
 
-        private new: boolean;
+        private isPersisted: boolean;
+
+        private splitPanel: api.ui.SplitPanel;
+
+        private splitPanelThreshold:number = 960;
+
+        private lastWidth:number;
 
         constructor(params: WizardPanelParams, callback: Function) {
             super("wizard-panel");
 
             this.tabId = params.tabId;
             this.persistedItem = params.persistedItem;
-            this.new = params.persistedItem == null;
+            this.isPersisted = params.persistedItem == null;
             this.header = params.header;
             this.mainToolbar = params.mainToolbar;
             this.stepToolbar = params.stepToolbar;
@@ -72,12 +78,17 @@ module api.app.wizard {
             this.formPanel = new api.ui.Panel("form-panel");
             $(this.formPanel.getHTMLElement()).scroll(() => this.updateStickyToolbar());
 
-            this.backPanel = new api.ui.DeckPanel("wizard-back-panel");
-            this.backPanel.addPanel(this.formPanel);
-            this.backPanel.showPanelByIndex(0);
-
             this.appendChild(this.mainToolbar);
-            this.appendChild(this.backPanel);
+            if (params.split && params.livePanel) {
+                this.splitPanel = new api.ui.SplitPanelBuilder(this.formPanel, params.livePanel)
+                                    .setAlignment(api.ui.SplitPanelAlignment.VERTICAL)
+                                    .build();
+                this.updateSplitPanel();
+                this.appendChild(this.splitPanel);
+            } else {
+                this.appendChild(this.formPanel);
+            }
+
 
             var aboveStepPanels = new api.dom.DivEl();
             this.formPanel.appendChild(aboveStepPanels);
@@ -86,6 +97,7 @@ module api.app.wizard {
 
             aboveStepPanels.appendChild(this.header);
 
+            var container = new api.dom.DivEl("test-container");
             this.stepNavigatorAndToolbarContainer = new api.dom.DivEl("wizard-step-navigator-and-toolbar");
             this.stepNavigator = new WizardStepNavigator();
             if (this.stepToolbar) {
@@ -96,10 +108,6 @@ module api.app.wizard {
 
             this.stepPanels = new WizardStepDeckPanel(this.stepNavigator);
             this.formPanel.appendChild(this.stepPanels);
-
-            if (params.livePanel) {
-                this.backPanel.addPanel(params.livePanel);
-            }
 
             this.setSteps(params.steps);
 
@@ -138,11 +146,23 @@ module api.app.wizard {
                     this.lastFocusedElement.focus();
                 }
             });
+            api.dom.Window.get().onResized((event: UIEvent) => {
+                if (!event.srcElement.nodeName) {
+                    var currentWidth = $(window).width();
+                    if (!((this.lastWidth > this.splitPanelThreshold && currentWidth > this.splitPanelThreshold) || (this.lastWidth <= this.splitPanelThreshold && currentWidth <= this.splitPanelThreshold))) {
+                        this.updateSplitPanel();
+                    }
+                    this.lastWidth = currentWidth;
+                }
+            }, this);
+            this.lastWidth = $(window).width();
         }
 
         isNew(): boolean {
-            return this.new;
+            return this.isPersisted;
         }
+
+
 
         updateStickyToolbar() {
             var scrollTop = $('.form-panel').scrollTop();
@@ -172,14 +192,6 @@ module api.app.wizard {
                 e.stopPropagation();
                 this.lastFocusedElement = jQuery(e.target);
             });
-        }
-
-        showPanel(panel: api.ui.Panel) {
-            this.backPanel.showPanelByIndex(this.backPanel.getPanelIndex(panel));
-        }
-
-        showMainPanel() {
-            this.backPanel.showPanelByIndex(0);
         }
 
         getTabId(): api.app.AppBarTabId {
@@ -280,7 +292,7 @@ module api.app.wizard {
         saveChanges(): Q.Promise<T> {
 
             if (this.isItemPersisted()) {
-                this.new = false;
+                this.isPersisted = false;
                 return this.updatePersistedItem().
                     then((persisted: T) => {
 
@@ -362,6 +374,16 @@ module api.app.wizard {
             this.closedListeners = this.closedListeners.filter((currentListener: (event: WizardClosedEvent)=>void) => {
                 return currentListener != listener;
             });
+        }
+
+        private updateSplitPanel() {
+            if ($(window).width() > this.splitPanelThreshold) {
+                this.splitPanel.setFirstPanelSize("30%");
+            } else {
+                this.splitPanel.setFirstPanelSize("100%");
+            }
+
+            this.splitPanel.distribute();
         }
 
         private notifyClosed() {

@@ -4,6 +4,7 @@ module api.app.wizard {
 
         constructor(navigator:WizardStepNavigator) {
             super(navigator, "wizard-step-deck-panel");
+            this.setDoOffset(false);
         }
 
     }
