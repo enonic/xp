@@ -11,7 +11,7 @@
   </parent>
 
   <groupId>com.enonic.wem.platforms</groupId>
-  <artifactId>parent</artifactId>
+  <artifactId>platforms</artifactId>
   <packaging>pom</packaging>
   <name>Enonic WEM Platforms</name>
 
