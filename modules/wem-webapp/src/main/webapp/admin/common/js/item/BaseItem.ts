@@ -42,29 +42,29 @@ module api.item {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof BaseItem)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, BaseItem)) {
                 return false;
             }
 
             var other = <BaseItem>o;
 
-            if (!EquitableHelper.stringEquals(this.id, other.id)) {
+            if (!ObjectHelper.stringEquals(this.id, other.id)) {
                 return false;
             }
 
-            if (!EquitableHelper.dateEquals(this.createdTime, other.createdTime)) {
+            if (!ObjectHelper.dateEquals(this.createdTime, other.createdTime)) {
                 return false;
             }
 
-            if (!EquitableHelper.dateEquals(this.modifiedTime, other.modifiedTime)) {
+            if (!ObjectHelper.dateEquals(this.modifiedTime, other.modifiedTime)) {
                 return false;
             }
 
-            if (!EquitableHelper.booleanEquals(this.deletable, other.deletable)) {
+            if (!ObjectHelper.booleanEquals(this.deletable, other.deletable)) {
                 return false;
             }
 
-            if (!EquitableHelper.booleanEquals(this.editable, other.editable)) {
+            if (!ObjectHelper.booleanEquals(this.editable, other.editable)) {
                 return false;
             }
 

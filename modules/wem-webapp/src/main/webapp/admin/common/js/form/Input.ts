@@ -88,7 +88,7 @@ module api.form {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof Input)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Input)) {
                 return false;
             }
 
@@ -98,39 +98,39 @@ module api.form {
 
             var other = <Input>o;
 
-            if (!api.EquitableHelper.equals(this.inputType, other.inputType)) {
+            if (!api.ObjectHelper.equals(this.inputType, other.inputType)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.stringEquals(this.label, other.label)) {
+            if (!api.ObjectHelper.stringEquals(this.label, other.label)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.booleanEquals(this.immutable, other.immutable)) {
+            if (!api.ObjectHelper.booleanEquals(this.immutable, other.immutable)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.equals(this.occurrences, other.occurrences)) {
+            if (!api.ObjectHelper.equals(this.occurrences, other.occurrences)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.booleanEquals(this.indexed, other.indexed)) {
+            if (!api.ObjectHelper.booleanEquals(this.indexed, other.indexed)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.stringEquals(this.customText, other.customText)) {
+            if (!api.ObjectHelper.stringEquals(this.customText, other.customText)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.stringEquals(this.validationRegex, other.validationRegex)) {
+            if (!api.ObjectHelper.stringEquals(this.validationRegex, other.validationRegex)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.stringEquals(this.helpText, other.helpText)) {
+            if (!api.ObjectHelper.stringEquals(this.helpText, other.helpText)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.anyEquals(this.inputTypeConfig, other.inputTypeConfig)) {
+            if (!api.ObjectHelper.anyEquals(this.inputTypeConfig, other.inputTypeConfig)) {
                 return false;
             }
 

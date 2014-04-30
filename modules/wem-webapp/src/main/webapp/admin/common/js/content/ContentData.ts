@@ -1,6 +1,6 @@
 module api.content {
 
-    export class ContentData extends api.data.RootDataSet {
+    export class ContentData extends api.data.RootDataSet implements api.Cloneable {
 
         constructor() {
             super();
@@ -13,6 +13,15 @@ module api.content {
             }
 
             return super.equals(o);
+        }
+
+        clone(): ContentData {
+
+            var clone = new ContentData();
+            this.getDataArray().forEach((data: api.data.Data) => {
+                clone.addData(data.clone());
+            });
+            return clone;
         }
     }
 }

@@ -1,5 +1,7 @@
 module app.wizard.site {
 
+    import SiteTemplate = api.content.site.template.SiteTemplate;
+
     export class SiteWizardStepForm extends api.app.wizard.WizardStepForm {
 
         private formContext: api.form.FormContext;
@@ -8,23 +10,22 @@ module app.wizard.site {
 
         private moduleConfigsByKey: api.content.site.ModuleConfig[];
 
+        private siteTemplate: SiteTemplate;
+
         private templateView: TemplateView;
 
         private moduleViewsContainer: api.dom.DivEl;
 
         private moduleViews: ModuleView[] = [];
 
-        constructor() {
+        constructor(siteTemplate: SiteTemplate) {
             super("site-wizard-step-form");
 
+            this.siteTemplate = siteTemplate;
             this.templateView = new TemplateView();
             this.appendChild(this.templateView);
             this.moduleViewsContainer = new api.dom.DivEl();
             this.appendChild(this.moduleViewsContainer);
-        }
-
-        public renderNew() {
-            //TODO
         }
 
         public renderExisting(context: api.form.FormContext, site: api.content.site.Site,
@@ -39,22 +40,17 @@ module app.wizard.site {
                 this.moduleConfigsByKey[moduleConfigs[i].getModuleKey().toString()] = moduleConfigs[i];
             }
 
-            return new api.content.site.template.GetSiteTemplateRequest(site.getTemplateKey()).
-                sendAndParse().
-                then((siteTemplate: api.content.site.template.SiteTemplate) => {
+            this.templateView.setValue(this.siteTemplate, this.contentType);
 
-                    this.templateView.setValue(siteTemplate, this.contentType);
-                    return this.loadModules(site);
-
-                }).then((modules: api.module.Module[]):void => {
+            return this.loadModules(site).
+                then((modules: api.module.Module[]): void => {
 
                     this.layoutModules(modules);
-
                 });
         }
 
         public getTemplateKey(): api.content.site.template.SiteTemplateKey {
-            return this.templateView.getSiteTemplateKey();
+            return this.siteTemplate.getKey();
         }
 
         public getModuleConfigs(): api.content.site.ModuleConfig[] {

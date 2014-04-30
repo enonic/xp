@@ -25,28 +25,10 @@ module app.wizard {
 
         renderExisting(formContext: FormContext, contentData: ContentData, form: Form) {
 
-            if (!this.contentData) {
-                this.formContext = formContext;
-                this.form = form;
-                this.contentData = contentData;
-                this.layout(form, contentData);
-            }
-            else {
-                if (!this.contentData.equals(contentData)) {
-                    ConfirmationDialog.get().
-                        setQuestion("Received content data differs from what you have. Would you like to load changes from server?").
-                        setYesCallback(() => {
-
-                            this.formContext = formContext;
-                            this.form = form;
-                            this.contentData = contentData;
-                            this.layout(form, contentData);
-                        }).
-                        setNoCallback(() => {
-
-                        }).show();
-                }
-            }
+            this.formContext = formContext;
+            this.form = form;
+            this.contentData = contentData;
+            this.layout(form, contentData);
         }
 
         private layout(form: Form, contentData: ContentData) {

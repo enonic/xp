@@ -14,13 +14,13 @@ module api.content {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof ContentSummary)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ContentSummary)) {
                 return false;
             }
 
             var other = <ContentIdBaseItem>o;
 
-            if (!api.EquitableHelper.equals(this.contentId, other.contentId)) {
+            if (!api.ObjectHelper.equals(this.contentId, other.contentId)) {
                 return false;
             }
 

@@ -1,6 +1,6 @@
 module api.data {
 
-    export class DataSet extends Data implements api.Equitable {
+    export class DataSet extends Data implements api.Equitable, api.Cloneable {
 
         private dataById: {[s:string] : Data;} = {};
 
@@ -207,7 +207,7 @@ module api.data {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof DataSet)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, DataSet)) {
                 return false;
             }
 
@@ -217,11 +217,26 @@ module api.data {
 
             var other = <DataSet>o;
 
-            if (!api.EquitableHelper.arrayEquals(this.dataArray, other.dataArray)) {
+            if (!api.ObjectHelper.arrayEquals(this.dataArray, other.dataArray)) {
                 return false;
             }
 
             return true;
+        }
+
+        clone(): DataSet {
+
+            var clone = new DataSet(this.getName());
+            clone.setArrayIndex(this.getArrayIndex());
+            clone.setParent(this.getParent());
+
+            this.dataArray.forEach((data: Data) => {
+                var dataClone = data.clone();
+                clone.dataArray.push(dataClone);
+                clone.dataById[dataClone.getId().toString()] = data;
+            });
+
+            return clone;
         }
 
     }

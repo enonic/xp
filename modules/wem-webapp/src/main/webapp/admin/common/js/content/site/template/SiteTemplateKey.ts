@@ -42,13 +42,13 @@ module api.content.site.template {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof SiteTemplateKey)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, SiteTemplateKey)) {
                 return false;
             }
 
             var other = <SiteTemplateKey>o;
 
-            if (!api.EquitableHelper.stringEquals(this.refString, other.refString)) {
+            if (!api.ObjectHelper.stringEquals(this.refString, other.refString)) {
                 return false;
             }
 

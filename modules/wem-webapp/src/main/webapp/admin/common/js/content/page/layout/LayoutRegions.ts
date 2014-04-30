@@ -1,6 +1,6 @@
 module api.content.page.layout {
 
-    export class LayoutRegions extends api.content.page.AbstractRegions implements api.Equitable {
+    export class LayoutRegions extends api.content.page.AbstractRegions implements api.Equitable, api.Cloneable {
 
         constructor(builder: LayoutRegionsBuilder) {
 
@@ -19,11 +19,23 @@ module api.content.page.layout {
 
             return super.equals(o);
         }
+
+        clone(): LayoutRegions {
+            return new LayoutRegionsBuilder(this).build();
+        }
     }
 
     export class LayoutRegionsBuilder {
 
         regions: api.content.page.region.Region[] = [];
+
+        constructor(source?: LayoutRegions) {
+            if (source) {
+                source.getRegions().forEach((region: api.content.page.region.Region) => {
+                    this.regions.push(region.clone());
+                });
+            }
+        }
 
         fromJson(regionsJson: api.content.page.region.RegionJson[], layoutComponent: ComponentPath): LayoutRegionsBuilder {
 

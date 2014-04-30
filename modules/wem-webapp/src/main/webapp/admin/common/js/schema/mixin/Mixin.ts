@@ -26,7 +26,7 @@ module api.schema.mixin {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof Mixin)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Mixin)) {
                 return false;
             }
 
@@ -37,11 +37,11 @@ module api.schema.mixin {
             var other = <Mixin>o;
 
 
-            if (!api.EquitableHelper.stringEquals(this.schemaKey, other.schemaKey)) {
+            if (!api.ObjectHelper.stringEquals(this.schemaKey, other.schemaKey)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.arrayEquals(this.formItems, other.formItems)) {
+            if (!api.ObjectHelper.arrayEquals(this.formItems, other.formItems)) {
                 return false;
             }
 

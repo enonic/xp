@@ -159,7 +159,7 @@ module api.content.page {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof AbstractRegions)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, AbstractRegions)) {
                 return false;
             }
 
@@ -169,7 +169,7 @@ module api.content.page {
             var thisRegions = this.getRegions();
             var otherRegions = other.getRegions();
 
-            if (!api.EquitableHelper.arrayEquals(thisRegions, otherRegions)) {
+            if (!api.ObjectHelper.arrayEquals(thisRegions, otherRegions)) {
                 return false;
             }
 

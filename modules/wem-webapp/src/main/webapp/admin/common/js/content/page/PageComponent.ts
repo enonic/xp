@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export class PageComponent implements api.Equitable {
+    export class PageComponent implements api.Equitable, api.Cloneable {
 
         private name: ComponentName;
 
@@ -68,6 +68,10 @@ module api.content.page {
             return this.config;
         }
 
+        getRegion(): RegionPath {
+            return this.region;
+        }
+
         toJson(): api.content.page.PageComponentTypeWrapperJson {
             throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
         }
@@ -83,33 +87,37 @@ module api.content.page {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof PageComponent)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, PageComponent)) {
                 return false;
             }
 
             var other = <PageComponent>o;
 
-            if (!api.EquitableHelper.equals(this.name, other.name)) {
+            if (!api.ObjectHelper.equals(this.name, other.name)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.equals(this.region, other.region)) {
+            if (!api.ObjectHelper.equals(this.region, other.region)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.equals(this.path, other.path)) {
+            if (!api.ObjectHelper.equals(this.path, other.path)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.equals(this.descriptorKey, other.descriptorKey)) {
+            if (!api.ObjectHelper.equals(this.descriptorKey, other.descriptorKey)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.equals(this.config, other.config)) {
+            if (!api.ObjectHelper.equals(this.config, other.config)) {
                 return false;
             }
 
             return true;
+        }
+
+        clone(): PageComponent {
+            throw new Error("Must be implemented by inheritors");
         }
     }
 

@@ -6,6 +6,10 @@ module api.data {
             super(name);
         }
 
+        newValue(value: string): Value {
+            return new Value(new api.content.ContentId(value), this);
+        }
+
         valueToString(value: Value): string {
             return (<api.content.ContentId>value.asObject()).toString();
         }

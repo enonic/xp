@@ -1,6 +1,17 @@
 module api {
 
-    export class EquitableHelper {
+    export class ObjectHelper {
+
+        static iFrameSafeInstanceOf(obj: any, fn: Function): boolean {
+            if (!obj) {
+                return false;
+            }
+
+            if (obj instanceof fn) {
+                return true;
+            }
+            return obj.constructor.name === (<any>fn).name;
+        }
 
         static equals(a: Equitable, b: Equitable) {
 
@@ -34,7 +45,7 @@ module api {
             }
 
             for (var i = 0; i < arrayA.length; i++) {
-                if (!EquitableHelper.equals(arrayA[i], arrayB[i])) {
+                if (!ObjectHelper.equals(arrayA[i], arrayB[i])) {
                     return false;
                 }
             }
@@ -74,7 +85,7 @@ module api {
             }
 
             for (var i = 0; i < arrayA.length; i++) {
-                if (!EquitableHelper.stringEquals(arrayA[i], arrayB[i])) {
+                if (!ObjectHelper.stringEquals(arrayA[i], arrayB[i])) {
                     return false;
                 }
             }

@@ -4,29 +4,6 @@ module api.data {
 
         private value: Value;
 
-        static fromJson(json) {
-
-            var valueType: ValueType = ValueTypes.fromName(json.type);
-            var value;
-            if (valueType == ValueTypes.DATA) {
-                var rootDataSet = DataFactory.createRootDataSet(<api.data.json.DataJson[]>json.set);
-                value = new Value(rootDataSet, valueType);
-            }
-            else {
-                value = new Value(json.value, valueType);
-            }
-
-            return new Property(json.name, value);
-        }
-
-        static fromStrings(name: string, valueAsString: string, type: string) {
-            return new Property(name, new Value(valueAsString, ValueTypes.fromName(type)));
-        }
-
-        static fromNameValue(name: string, value: Value) {
-            return new Property(name, value);
-        }
-
         constructor(name: string, value: Value) {
             api.util.assertNotNull(value, "value of a Property cannot be null");
             super(name);
@@ -61,7 +38,7 @@ module api.data {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof Property)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Property)) {
                 return false;
             }
 
@@ -71,11 +48,42 @@ module api.data {
 
             var other = <Property>o;
 
-            if (!api.EquitableHelper.equals(this.value, other.value)) {
+            if (!api.ObjectHelper.equals(this.value, other.value)) {
                 return false;
             }
 
             return true;
+        }
+
+        clone(): Property {
+
+            var clone = new Property(this.getName(), this.value.clone());
+            clone.setArrayIndex(this.getArrayIndex());
+            clone.setParent(this.getParent());
+            return  clone;
+        }
+
+        static fromJson(json: api.data.json.PropertyJson) {
+
+            var valueType: ValueType = ValueTypes.fromName(json.type);
+            var value;
+            if (valueType == ValueTypes.DATA) {
+                var rootDataSet = DataFactory.createRootDataSet(<api.data.json.DataJson[]>json.set);
+                value = new Value(rootDataSet, valueType);
+            }
+            else {
+                value = valueType.newValue(json.value);
+            }
+
+            return new Property(json.name, value);
+        }
+
+        static fromStrings(name: string, valueAsString: string, type: string) {
+            return new Property(name, new Value(valueAsString, ValueTypes.fromName(type)));
+        }
+
+        static fromNameValue(name: string, value: Value) {
+            return new Property(name, value);
         }
     }
 }

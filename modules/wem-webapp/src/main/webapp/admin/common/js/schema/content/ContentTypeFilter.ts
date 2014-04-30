@@ -39,17 +39,17 @@ module api.schema.content {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof ContentTypeFilter)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ContentTypeFilter)) {
                 return false;
             }
 
             var other = <ContentTypeFilter>o;
 
-            if (!api.EquitableHelper.arrayEquals(this.allow, other.allow)) {
+            if (!api.ObjectHelper.arrayEquals(this.allow, other.allow)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.arrayEquals(this.deny, other.deny)) {
+            if (!api.ObjectHelper.arrayEquals(this.deny, other.deny)) {
                 return false;
             }
 

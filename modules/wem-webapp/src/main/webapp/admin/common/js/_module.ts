@@ -2,7 +2,8 @@
 ///<reference path='lib/ExtJs.d.ts' />
 
 ///<reference path='Equitable.ts' />
-///<reference path='EquitableHelper.ts' />
+///<reference path='Cloneable.ts' />
+///<reference path='ObjectHelper.ts' />
 
 ///<reference path='Name.ts' />
 

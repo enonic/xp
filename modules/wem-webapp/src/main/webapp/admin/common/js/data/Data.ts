@@ -1,6 +1,6 @@
 module api.data {
 
-    export class Data implements api.Equitable {
+    export class Data implements api.Equitable, api.Cloneable {
 
         private name: string;
 
@@ -29,7 +29,7 @@ module api.data {
             return this.name;
         }
 
-        getParent(): Data {
+        getParent(): DataSet {
             return this.parent;
         }
 
@@ -91,20 +91,25 @@ module api.data {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof Data)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Data)) {
                 return false;
             }
 
             var other = <Data>o;
 
-            if (!api.EquitableHelper.stringEquals(this.name, other.name)) {
+            if (!api.ObjectHelper.stringEquals(this.name, other.name)) {
                 return false;
             }
-            if (!api.EquitableHelper.numberEquals(this.arrayIndex, other.arrayIndex)) {
+            if (!api.ObjectHelper.numberEquals(this.arrayIndex, other.arrayIndex)) {
                 return false;
             }
 
             return true;
+        }
+
+        clone(): Data {
+
+            throw new Error("Must be implemented by inheritors");
         }
     }
 

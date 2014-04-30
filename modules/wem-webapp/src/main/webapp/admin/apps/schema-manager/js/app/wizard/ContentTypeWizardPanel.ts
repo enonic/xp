@@ -1,5 +1,7 @@
 module app.wizard {
 
+    import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
+
     export class ContentTypeWizardPanel extends api.app.wizard.WizardPanel<api.schema.content.ContentType> {
 
         public static NEW_WIZARD_HEADER = "New Content Type";
@@ -14,8 +16,14 @@ module app.wizard {
 
         private contentTypeForm: app.wizard.ContentTypeForm;
 
+        /**
+         * Whether constructor is being currently executed or not.
+         */
+        private constructing: boolean;
+
         constructor(tabId: api.app.AppBarTabId, persistedContentType: api.schema.content.ContentType,
                     callback: (wizard: ContentTypeWizardPanel) => void) {
+            this.constructing = true;
             this.contentTypeWizardHeader = new api.app.wizard.WizardHeaderWithName();
             var defaultFormIconUrl = new api.schema.content.ContentTypeIconUrlResolver().resolveDefault();
             this.formIcon = new api.app.wizard.FormIcon(defaultFormIconUrl, "Click to upload icon",
@@ -50,20 +58,63 @@ module app.wizard {
                 header: this.contentTypeWizardHeader,
                 steps: steps
             }, () => {
+                this.constructing = false;
                 callback(this);
             });
         }
 
         layoutPersistedItem(persistedContentType: api.schema.content.ContentType): Q.Promise<void> {
 
-            this.contentTypeWizardHeader.setName(persistedContentType.getName());
             this.formIcon.setSrc(persistedContentType.getIconUrl() + '?crop=false');
 
+            if (!this.constructing) {
+
+                var deferred = Q.defer<void>();
+
+                var viewedItemBuilder = new api.schema.content.ContentTypeBuilder(persistedContentType);
+                viewedItemBuilder.setName(this.contentTypeWizardHeader.getName());
+                var viewedItem = viewedItemBuilder.build();
+                if (viewedItem.equals(persistedContentType)) {
+
+                    // Do nothing
+                    deferred.resolve(null);
+                    return deferred.promise;
+                }
+                else {
+                    ConfirmationDialog.get().
+                        setQuestion("Received ContentType from server differs from what you have. Would you like to load changes from server?").
+                        setYesCallback(() => {
+
+                            this.doLayoutPersistedItem(persistedContentType);
+                        }).
+                        setNoCallback(() => {
+                            // Do nothing...
+                        }).show();
+
+                    deferred.resolve(null);
+                    return deferred.promise;
+                }
+            }
+            else {
+                return this.doLayoutPersistedItem(persistedContentType);
+            }
+        }
+
+        private doLayoutPersistedItem(persistedContentType: api.schema.content.ContentType): Q.Promise<void> {
+
+            this.contentTypeWizardHeader.setName(persistedContentType.getName());
+
             return new api.schema.content.GetContentTypeConfigByNameRequest(persistedContentType.getContentTypeName()).send().
-                then((response: api.rest.JsonResponse <api.schema.content.GetContentTypeConfigResult>):void => {
+                then((response: api.rest.JsonResponse <api.schema.content.GetContentTypeConfigResult>): void => {
                     this.contentTypeForm.setFormData({"xml": response.getResult().contentTypeXml});
                     this.persistedConfig = response.getResult().contentTypeXml || "";
                 });
+        }
+
+        saveChanges(): Q.Promise<api.schema.content.ContentType> {
+            var formData = this.contentTypeForm.getFormData();
+            this.persistedConfig = formData.xml;
+            return super.saveChanges();
         }
 
         persistNewItem(): Q.Promise<api.schema.content.ContentType> {

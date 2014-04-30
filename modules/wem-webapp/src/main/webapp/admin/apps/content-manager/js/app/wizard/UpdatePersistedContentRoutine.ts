@@ -1,50 +1,51 @@
 module app.wizard {
 
+    import Content = api.content.Content;
+    import PageCUDRequest = api.content.page.PageCUDRequest;
+    import CreatePageRequest = api.content.page.CreatePageRequest;
+    import UpdatePageRequest = api.content.page.UpdatePageRequest;
+    import DeletePageRequest = api.content.page.DeletePageRequest;
+    import UpdateSiteRequest = api.content.site.UpdateSiteRequest;
+
     export class UpdatePersistedContentRoutineContext {
 
-        content: api.content.Content = null;
+        content: Content = null;
     }
 
-    export class UpdatePersistedContentRoutine extends api.util.Flow<api.content.Content,UpdatePersistedContentRoutineContext> {
+    export class UpdatePersistedContentRoutine extends api.util.Flow<Content,UpdatePersistedContentRoutineContext> {
 
-        private updateContentRequestProducer: {(content: api.content.Content) : api.content.UpdateContentRequest; };
+        private persistedContent: Content;
+
+        private viewedContent: Content;
+
+        private updateContentRequestProducer: {(content: Content, viewedContent: Content) : api.content.UpdateContentRequest; };
 
         private doneHandledContent = false;
 
-        private updateSiteRequestProducer: {(content: api.content.Content) : api.content.site.UpdateSiteRequest; };
-
         private doneHandledSite = false;
-
-        private pageCUDRequestProducer: {(content: api.content.Content) : api.content.page.PageCUDRequest; };
 
         private doneHandledPage = false;
 
-        constructor(thisOfProducer: ContentWizardPanel) {
+        constructor(thisOfProducer: any, persistedContent: Content, viewedContent: Content) {
             super(thisOfProducer);
+            this.persistedContent = persistedContent;
+            this.viewedContent = viewedContent;
         }
 
-        public setUpdateContentRequestProducer(producer: {(content: api.content.Content) : api.content.UpdateContentRequest; }): UpdatePersistedContentRoutine {
+        public setUpdateContentRequestProducer(producer: {(content: Content,
+                                                           viewedContent: Content) : api.content.UpdateContentRequest; }): UpdatePersistedContentRoutine {
             this.updateContentRequestProducer = producer;
             return this;
         }
 
-        public setUpdateSiteRequestProducer(producer: {(content: api.content.Content) : api.content.site.UpdateSiteRequest; }): UpdatePersistedContentRoutine {
-            this.updateSiteRequestProducer = producer;
-            return this;
-        }
-
-        public setPageCUDRequestProducer(producer: {(content: api.content.Content) : api.content.page.PageCUDRequest; }): UpdatePersistedContentRoutine {
-            this.pageCUDRequestProducer = producer;
-            return this;
-        }
-
-        public execute(): Q.Promise<api.content.Content> {
+        public execute(): Q.Promise<Content> {
 
             var context = new UpdatePersistedContentRoutineContext();
+            context.content = this.persistedContent;
             return this.doExecute(context);
         }
 
-        doExecuteNext(context: UpdatePersistedContentRoutineContext): Q.Promise<api.content.Content> {
+        doExecuteNext(context: UpdatePersistedContentRoutineContext): Q.Promise<Content> {
 
             if (!this.doneHandledContent) {
 
@@ -84,9 +85,9 @@ module app.wizard {
 
         private doHandleUpdateContent(context: UpdatePersistedContentRoutineContext): Q.Promise<void> {
 
-            return this.updateContentRequestProducer.call(this.getThisOfProducer()).
+            return this.updateContentRequestProducer.call(this.getThisOfProducer(), context.content, this.viewedContent).
                 sendAndParse().
-                then((content: api.content.Content):void => {
+                then((content: Content): void => {
 
                     context.content = content;
 
@@ -95,11 +96,11 @@ module app.wizard {
 
         private doHandleUpdateSite(context: UpdatePersistedContentRoutineContext): Q.Promise<void> {
 
-            var updateSiteRequest = this.updateSiteRequestProducer.call(this.getThisOfProducer(), context.content);
+            var updateSiteRequest = this.produceUpdateSiteRequest(context.content, this.viewedContent);
             if (updateSiteRequest != null) {
                 return updateSiteRequest.
                     sendAndParse().
-                    then((content: api.content.Content):void => {
+                    then((content: Content): void => {
 
                         context.content = content;
 
@@ -112,14 +113,27 @@ module app.wizard {
             }
         }
 
+        private produceUpdateSiteRequest(persistedContent: Content, viewedContent: Content): UpdateSiteRequest {
+
+            if (!viewedContent.isSite()) {
+                return null;
+            }
+
+            var viewedSite = viewedContent.getSite();
+
+            return new UpdateSiteRequest(persistedContent.getId()).
+                setSiteTemplateKey(viewedSite.getTemplateKey()).
+                setModuleConfigs(viewedSite.getModuleConfigs());
+        }
+
         private doHandlePage(context: UpdatePersistedContentRoutineContext): Q.Promise<void> {
 
-            var createPageRequest = this.pageCUDRequestProducer.call(this.getThisOfProducer(), context.content);
+            var pageCUDRequest = this.producePageCUDRequest(context.content, this.viewedContent);
 
-            if (createPageRequest != null) {
-                return createPageRequest
+            if (pageCUDRequest != null) {
+                return pageCUDRequest
                     .sendAndParse().
-                    then((content: api.content.Content):void => {
+                    then((content: Content): void => {
 
                         context.content = content;
 
@@ -129,6 +143,30 @@ module app.wizard {
                 var deferred = Q.defer<void>();
                 deferred.resolve(null);
                 return deferred.promise;
+            }
+        }
+
+        private producePageCUDRequest(persistedContent: Content, viewedContent: Content): PageCUDRequest {
+
+            if (persistedContent.isPage() && !viewedContent.isPage()) {
+
+                return new DeletePageRequest(persistedContent.getContentId());
+            }
+            else if (!persistedContent.isPage() && viewedContent.isPage()) {
+
+                var viewedPage = viewedContent.getPage();
+                return new CreatePageRequest(persistedContent.getContentId()).
+                    setPageTemplateKey(viewedPage.getTemplate()).
+                    setConfig(viewedPage.getConfig()).
+                    setRegions(viewedPage.getRegions());
+            }
+            else if (persistedContent.isPage() && viewedContent.isPage()) {
+
+                var viewedPage = viewedContent.getPage();
+                return new UpdatePageRequest(persistedContent.getContentId()).
+                    setPageTemplateKey((viewedPage.getTemplate())).
+                    setConfig(viewedPage.getConfig()).
+                    setRegions(viewedPage.getRegions());
             }
         }
 

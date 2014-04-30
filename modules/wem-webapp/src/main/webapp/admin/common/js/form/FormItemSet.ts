@@ -87,7 +87,7 @@ module api.form {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof FormItemSet)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, FormItemSet)) {
                 return false;
             }
 
@@ -97,27 +97,27 @@ module api.form {
 
             var other = <FormItemSet>o;
 
-            if (!api.EquitableHelper.stringEquals(this.label, other.label)) {
+            if (!api.ObjectHelper.stringEquals(this.label, other.label)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.booleanEquals(this.immutable, other.immutable)) {
+            if (!api.ObjectHelper.booleanEquals(this.immutable, other.immutable)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.equals(this.occurrences, other.occurrences)) {
+            if (!api.ObjectHelper.equals(this.occurrences, other.occurrences)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.stringEquals(this.customText, other.customText)) {
+            if (!api.ObjectHelper.stringEquals(this.customText, other.customText)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.stringEquals(this.helpText, other.helpText)) {
+            if (!api.ObjectHelper.stringEquals(this.helpText, other.helpText)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.arrayEquals(this.formItems, other.formItems)) {
+            if (!api.ObjectHelper.arrayEquals(this.formItems, other.formItems)) {
                 return false;
             }
 

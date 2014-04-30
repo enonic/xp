@@ -359,9 +359,9 @@ module app.wizard.page {
             });
         }
 
-        updateFrameContainerSize(contextWindowPinned:boolean, contextWindowWidth?:number) {
+        updateFrameContainerSize(contextWindowPinned: boolean, contextWindowWidth?: number) {
             if (contextWindowPinned && contextWindowWidth) {
-                this.frameContainer.getEl().setWidth("calc(100% - " + (contextWindowWidth-1) + "px)");
+                this.frameContainer.getEl().setWidth("calc(100% - " + (contextWindowWidth - 1) + "px)");
             } else {
                 this.frameContainer.getEl().setWidth("100%");
             }
@@ -535,7 +535,8 @@ module app.wizard.page {
             });
         }
 
-        private duplicateComponent(componentType: string, regionPath: RegionPath, precedingPath: ComponentPath, originPath: ComponentPath): Q.Promise<PageComponent> {
+        private duplicateComponent(componentType: string, regionPath: RegionPath, precedingPath: ComponentPath,
+                                   originPath: ComponentPath): Q.Promise<PageComponent> {
             switch (componentType) {
             case "image":
                 return this.duplicateImageComponent(componentType, regionPath, precedingPath, originPath);
@@ -548,12 +549,14 @@ module app.wizard.page {
             }
         }
 
-        private duplicateImageComponent(componentType: string, regionPath: RegionPath, precedingPath: ComponentPath, originPath: ComponentPath): Q.Promise<PageComponent> {
+        private duplicateImageComponent(componentType: string, regionPath: RegionPath, precedingPath: ComponentPath,
+                                        originPath: ComponentPath): Q.Promise<PageComponent> {
 
             var deferred = Q.defer<PageComponent>();
 
-            var originComponent:ImageComponent = this.pageRegions.getImageComponent(originPath),
-                component:ImageComponent = <ImageComponent>this.addComponent(componentType, regionPath, precedingPath, originComponent.getName().toString());
+            var originComponent: ImageComponent = this.pageRegions.getImageComponent(originPath),
+                component: ImageComponent = <ImageComponent>this.addComponent(componentType, regionPath, precedingPath,
+                    originComponent.getName().toString());
 
 
             if (component != null && originComponent != null) {
@@ -570,18 +573,19 @@ module app.wizard.page {
             return deferred.promise;
         }
 
-        private duplicatePartComponent(componentType: string, regionPath: RegionPath, precedingPath: ComponentPath, originPath: ComponentPath): Q.Promise<PageComponent> {
+        private duplicatePartComponent(componentType: string, regionPath: RegionPath, precedingPath: ComponentPath,
+                                       originPath: ComponentPath): Q.Promise<PageComponent> {
 
             var deferred = Q.defer<PageComponent>();
 
-            var component:PageComponent,
-                originComponent:PageComponent = this.pageRegions.getComponent(originPath),
+            var component: PageComponent,
+                originComponent: PageComponent = this.pageRegions.getComponent(originPath),
                 getDescriptorsRequest = new GetPartDescriptorsByModulesRequest(this.siteTemplate.getModules());
 
-            var originDescriptorName:string = originComponent.getDescriptor().getName().toString();
+            var originDescriptorName: string = originComponent.getDescriptor().getName().toString();
 
-            return getDescriptorsRequest.sendAndParse().then((results:Descriptor[]): Q.Promise<PageComponent> => {
-                var componentDescriptor:Descriptor;
+            return getDescriptorsRequest.sendAndParse().then((results: Descriptor[]): Q.Promise<PageComponent> => {
+                var componentDescriptor: Descriptor;
                 for (var key in results) {
                     if (results[key].getName().toString() === originDescriptorName) {
                         componentDescriptor = results[key];
@@ -601,28 +605,30 @@ module app.wizard.page {
         }
 
         // TODO: TextComponent is not implemented yet. Update, when the implementation is ready.
-        private duplicateTextComponent(componentType: string, regionPath: RegionPath, precedingPath: ComponentPath, originPath: ComponentPath): Q.Promise<PageComponent> {
+        private duplicateTextComponent(componentType: string, regionPath: RegionPath, precedingPath: ComponentPath,
+                                       originPath: ComponentPath): Q.Promise<PageComponent> {
 
             var deferred = Q.defer<PageComponent>();
 
-            var component:PageComponent = this.addComponent(componentType, regionPath, precedingPath/*, name*/);
-            var originComponent:PageComponent = this.pageRegions.getComponent(originPath),
+            var component: PageComponent = this.addComponent(componentType, regionPath, precedingPath/*, name*/);
+            var originComponent: PageComponent = this.pageRegions.getComponent(originPath),
                 getDescriptorsRequest;
 
             return deferred.promise;
         }
 
-        private duplicateLayoutComponent(componentType: string, regionPath: RegionPath, precedingPath: ComponentPath, originPath: ComponentPath): Q.Promise<PageComponent> {
+        private duplicateLayoutComponent(componentType: string, regionPath: RegionPath, precedingPath: ComponentPath,
+                                         originPath: ComponentPath): Q.Promise<PageComponent> {
 
             var deferred = Q.defer<PageComponent>();
 
-            var component:LayoutComponent,
-                originComponent:LayoutComponent = this.pageRegions.getLayoutComponent(originPath),
-                originDescriptorName:string = originComponent.getDescriptor().getName().toString(),
+            var component: LayoutComponent,
+                originComponent: LayoutComponent = this.pageRegions.getLayoutComponent(originPath),
+                originDescriptorName: string = originComponent.getDescriptor().getName().toString(),
                 getDescriptorsRequest = new GetLayoutDescriptorsByModulesRequest(this.siteTemplate.getModules()),
-                componentDescriptor:Descriptor;
+                componentDescriptor: Descriptor;
 
-            return getDescriptorsRequest.sendAndParse().then((results:Descriptor[]): Q.Promise<PageComponent> => {
+            return getDescriptorsRequest.sendAndParse().then((results: Descriptor[]): Q.Promise<PageComponent> => {
                 for (var key in results) {
                     if (results[key].getName().toString() === originDescriptorName) {
                         componentDescriptor = results[key];
@@ -631,7 +637,8 @@ module app.wizard.page {
                 }
 
                 if (componentDescriptor) {
-                    component = <LayoutComponent>this.addComponent(componentType, regionPath, precedingPath, componentDescriptor.getName().toString())
+                    component =
+                    <LayoutComponent>this.addComponent(componentType, regionPath, precedingPath, componentDescriptor.getName().toString())
                     this.setComponentDescriptorLocally(componentDescriptor, component.getPath());
                     deferred.resolve(null);
                 } else {
@@ -640,12 +647,12 @@ module app.wizard.page {
 
                 return deferred.promise;
 
-            }).then((resolvedComponent:PageComponent): Q.Promise<PageComponent> => {
-                originComponent.getLayoutRegions().getRegions().forEach((region:api.content.page.region.Region, index) => {
-                    var presceding:ComponentPath = null;
+            }).then((resolvedComponent: PageComponent): Q.Promise<PageComponent> => {
+                originComponent.getLayoutRegions().getRegions().forEach((region: api.content.page.region.Region, index) => {
+                    var presceding: ComponentPath = null;
                     var regionPath = component.getLayoutRegions().getRegions()[index].getPath();
 
-                    region.getComponents().forEach((pageComponent:PageComponent)=> {
+                    region.getComponents().forEach((pageComponent: PageComponent)=> {
                         var componentType = "";
                         if (pageComponent instanceof ImageComponent) {
                             componentType = "image";
@@ -653,12 +660,14 @@ module app.wizard.page {
                             componentType = "part";
                         } else if (pageComponent instanceof LayoutComponent) {
                             componentType = "layout";
-                        } /*else if (pageComponent instanceof TextComponent) {
-                            componentType = "text";
-                        }*/
+                        }
+                        /*else if (pageComponent instanceof TextComponent) {
+                         componentType = "text";
+                         }*/
 
-                        deferred.promise = deferred.promise.then((resolvedComponent:PageComponent): Q.Promise<PageComponent> => {
-                            return this.duplicateComponent(componentType, regionPath, resolvedComponent ? resolvedComponent.getPath() : null, pageComponent.getPath());
+                        deferred.promise = deferred.promise.then((resolvedComponent: PageComponent): Q.Promise<PageComponent> => {
+                            return this.duplicateComponent(componentType, regionPath,
+                                resolvedComponent ? resolvedComponent.getPath() : null, pageComponent.getPath());
                         });
                     });
                 });
@@ -668,7 +677,7 @@ module app.wizard.page {
                 var defer = Q.defer<PageComponent>();
                 defer.resolve(component);
 
-                deferred.promise = deferred.promise.then((resolvedComponent:PageComponent) => {
+                deferred.promise = deferred.promise.then((resolvedComponent: PageComponent) => {
                     return defer.promise;
                 });
 
@@ -678,7 +687,8 @@ module app.wizard.page {
 
         }
 
-        private addComponent(componentType: string, regionPath: RegionPath, precedingComponent: ComponentPath, wantedName?:string): PageComponent {
+        private addComponent(componentType: string, regionPath: RegionPath, precedingComponent: ComponentPath,
+                             wantedName?: string): PageComponent {
 
             wantedName = api.util.capitalize(api.util.removeInvalidChars(wantedName || componentType));
             var componentName = this.pageRegions.ensureUniqueComponentName(regionPath, new ComponentName(wantedName));
@@ -766,8 +776,8 @@ module app.wizard.page {
             component.setDescriptor(descriptor.getKey());
 
             // use of "instanceof" does not work because the descriptor object has been created in another frame
-            var isLayoutDescriptor = (descriptor instanceof LayoutDescriptor) ||
-                                     (<any>descriptor).constructor.name === 'LayoutDescriptor';
+            var isLayoutDescriptor = api.ObjectHelper.iFrameSafeInstanceOf(descriptor, LayoutDescriptor);
+
             if (isLayoutDescriptor) {
                 var layoutDescriptor = <LayoutDescriptor> descriptor;
                 var layoutComponent = <LayoutComponent>component;
@@ -791,7 +801,7 @@ module app.wizard.page {
 
             // use of "instanceof" does not work because the descriptor object has been created in another frame
             var isLayoutDescriptor = (descriptor instanceof LayoutDescriptor) ||
-                (<any>descriptor).constructor.name === 'LayoutDescriptor';
+                                     (<any>descriptor).constructor.name === 'LayoutDescriptor';
             if (isLayoutDescriptor) {
                 var layoutDescriptor = <LayoutDescriptor> descriptor;
                 var layoutComponent = <LayoutComponent>component;

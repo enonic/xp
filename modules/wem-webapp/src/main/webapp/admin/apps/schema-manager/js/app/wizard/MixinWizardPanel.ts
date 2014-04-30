@@ -1,5 +1,7 @@
 module app.wizard {
 
+    import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
+
     export class MixinWizardPanel extends api.app.wizard.WizardPanel<api.schema.mixin.Mixin> {
 
         public static NEW_WIZARD_HEADER = "New Mixin";
@@ -14,8 +16,14 @@ module app.wizard {
 
         private mixinForm: MixinForm;
 
+        /**
+         * Whether constructor is being currently executed or not.
+         */
+        private constructing: boolean;
+
         constructor(tabId: api.app.AppBarTabId, persistedMixin: api.schema.mixin.Mixin, callback: (wizard: MixinWizardPanel) => void) {
 
+            this.constructing = true;
             this.mixinWizardHeader = new api.app.wizard.WizardHeaderWithName();
             this.formIcon = new api.app.wizard.FormIcon(new api.schema.mixin.MixinIconUrlResolver().resolveDefault(),
                 "Click to upload icon", api.util.getRestUri("blob/upload"));
@@ -50,24 +58,68 @@ module app.wizard {
                 header: this.mixinWizardHeader,
                 steps: steps
             }, () => {
+
+                this.constructing = false;
                 callback(this);
             });
         }
 
         layoutPersistedItem(persistedMixin: api.schema.mixin.Mixin): Q.Promise<void> {
 
-            this.mixinWizardHeader.setName(persistedMixin.getName());
             this.formIcon.setSrc(persistedMixin.getIconUrl() + '?crop=false');
+
+            if (!this.constructing) {
+
+                var deferred = Q.defer<void>();
+
+                var viewedMixinBuilder = new api.schema.mixin.MixinBuilder(persistedMixin);
+                viewedMixinBuilder.setName(this.mixinWizardHeader.getName());
+                var viewedItem = viewedMixinBuilder.build();
+                if (viewedItem.equals(persistedMixin)) {
+
+                    // Do nothing, since viewed data equals persisted data
+                    deferred.resolve(null);
+                    return deferred.promise;
+                }
+                else {
+                    ConfirmationDialog.get().
+                        setQuestion("Received Mixin from server differs from what you have. Would you like to load changes from server?").
+                        setYesCallback(() => {
+
+                            this.doLayoutPersistedItem(persistedMixin);
+                        }).
+                        setNoCallback(() => {
+                            // Do nothing...
+                        }).show();
+
+                    deferred.resolve(null);
+                    return deferred.promise;
+                }
+            }
+            else {
+                return this.doLayoutPersistedItem(persistedMixin);
+            }
+        }
+
+        doLayoutPersistedItem(persistedMixin: api.schema.mixin.Mixin): Q.Promise<void> {
+
+            this.mixinWizardHeader.setName(persistedMixin.getName());
 
             return new api.schema.mixin.GetMixinConfigByNameRequest(persistedMixin.getMixinName()).
                 send().
-                then((response: api.rest.JsonResponse<api.schema.mixin.GetMixinConfigResult>):void => {
+                then((response: api.rest.JsonResponse<api.schema.mixin.GetMixinConfigResult>): void => {
 
                     this.mixinForm.render();
                     this.mixinForm.setFormData({"xml": response.getResult().mixinXml});
                     this.persistedConfig = response.getResult().mixinXml || "";
 
                 });
+        }
+
+        saveChanges(): Q.Promise<api.schema.mixin.Mixin> {
+            var formData = this.mixinForm.getFormData();
+            this.persistedConfig = formData.xml;
+            return super.saveChanges();
         }
 
         persistNewItem(): Q.Promise<api.schema.mixin.Mixin> {
@@ -120,7 +172,7 @@ module app.wizard {
             } else {
                 return !api.util.isStringsEqual(persistedMixin.getName(), this.mixinWizardHeader.getName())
                     || !api.util.isStringsEqual(api.util.removeCarriageChars(this.persistedConfig),
-                    api.util.removeCarriageChars(this.mixinForm.getFormData().xml));
+                        api.util.removeCarriageChars(this.mixinForm.getFormData().xml));
             }
         }
     }

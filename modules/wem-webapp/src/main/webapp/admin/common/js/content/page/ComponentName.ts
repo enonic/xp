@@ -35,13 +35,13 @@ module api.content.page {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof ComponentName)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ComponentName)) {
                 return false;
             }
 
             var other = <ComponentName>o;
 
-            if (!api.EquitableHelper.stringEquals(this.value, other.value)) {
+            if (!api.ObjectHelper.stringEquals(this.value, other.value)) {
                 return false;
             }
 

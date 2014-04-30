@@ -80,7 +80,7 @@ module api.content.site.template {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof SiteTemplateSummary)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, SiteTemplateSummary)) {
                 return false;
             }
 
@@ -90,47 +90,47 @@ module api.content.site.template {
 
             var other = <SiteTemplateSummary>o;
 
-            if (!api.EquitableHelper.stringEquals(this.name, other.name)) {
+            if (!api.ObjectHelper.stringEquals(this.name, other.name)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.stringEquals(this.displayName, other.displayName)) {
+            if (!api.ObjectHelper.stringEquals(this.displayName, other.displayName)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.equals(this.vendor, other.vendor)) {
+            if (!api.ObjectHelper.equals(this.vendor, other.vendor)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.equals(this.rootContentType, other.rootContentType)) {
+            if (!api.ObjectHelper.equals(this.rootContentType, other.rootContentType)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.stringEquals(this.version, other.version)) {
+            if (!api.ObjectHelper.stringEquals(this.version, other.version)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.stringEquals(this.url, other.url)) {
+            if (!api.ObjectHelper.stringEquals(this.url, other.url)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.equals(this.key, other.key)) {
+            if (!api.ObjectHelper.equals(this.key, other.key)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.stringEquals(this.description, other.description)) {
+            if (!api.ObjectHelper.stringEquals(this.description, other.description)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.equals(this.contentTypeFilter, other.contentTypeFilter)) {
+            if (!api.ObjectHelper.equals(this.contentTypeFilter, other.contentTypeFilter)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.arrayEquals(this.modules, other.modules)) {
+            if (!api.ObjectHelper.arrayEquals(this.modules, other.modules)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.arrayEquals(this.pageTemplateKeys, other.pageTemplateKeys)) {
+            if (!api.ObjectHelper.arrayEquals(this.pageTemplateKeys, other.pageTemplateKeys)) {
                 return false;
             }
 

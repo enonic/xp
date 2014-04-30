@@ -40,7 +40,7 @@ module api.schema.relationshiptype {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof RelationshipType)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, RelationshipType)) {
                 return false;
             }
 
@@ -50,19 +50,19 @@ module api.schema.relationshiptype {
 
             var other = <RelationshipType>o;
 
-            if (!EquitableHelper.stringEquals(this.fromSemantic, other.fromSemantic)) {
+            if (!ObjectHelper.stringEquals(this.fromSemantic, other.fromSemantic)) {
                 return false;
             }
 
-            if (!EquitableHelper.stringEquals(this.toSemantic, other.toSemantic)) {
+            if (!ObjectHelper.stringEquals(this.toSemantic, other.toSemantic)) {
                 return false;
             }
 
-            if (!EquitableHelper.stringArrayEquals(this.allowedFromTypes, other.allowedFromTypes)) {
+            if (!ObjectHelper.stringArrayEquals(this.allowedFromTypes, other.allowedFromTypes)) {
                 return false;
             }
 
-            if (!EquitableHelper.stringArrayEquals(this.allowedToTypes, other.allowedToTypes)) {
+            if (!ObjectHelper.stringArrayEquals(this.allowedToTypes, other.allowedToTypes)) {
                 return false;
             }
 

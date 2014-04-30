@@ -42,13 +42,13 @@ module api.module {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof ModuleKey)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ModuleKey)) {
                 return false;
             }
 
             var other = <ModuleKey>o;
 
-            if (!api.EquitableHelper.stringEquals(this.refString, other.refString)) {
+            if (!api.ObjectHelper.stringEquals(this.refString, other.refString)) {
                 return false;
             }
 

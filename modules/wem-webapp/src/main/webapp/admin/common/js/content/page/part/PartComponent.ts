@@ -1,6 +1,6 @@
 module api.content.page.part {
 
-    export class PartComponent extends api.content.page.PageComponent implements api.Equitable {
+    export class PartComponent extends api.content.page.PageComponent implements api.Equitable, api.Cloneable {
 
         constructor(builder: PartComponentBuilder) {
             super(builder);
@@ -26,9 +26,25 @@ module api.content.page.part {
 
             return true;
         }
+
+        clone(): PartComponent {
+            return new PartComponentBuilder(this).build();
+        }
     }
 
     export class PartComponentBuilder extends api.content.page.PageComponentBuilder<PartComponent> {
+
+        constructor(source?: PartComponent) {
+
+            super();
+
+            if (source) {
+                this.name = source.getName();
+                this.descriptor = source.getDescriptor();
+                this.region = source.getRegion();
+                this.config = source.getConfig() ? source.getConfig().clone() : null;
+            }
+        }
 
         public fromJson(json: PartComponentJson, regionPath: RegionPath): PartComponentBuilder {
 

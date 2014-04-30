@@ -54,17 +54,17 @@ module api.form {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof Occurrences)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Occurrences)) {
                 return false;
             }
 
             var other = <Occurrences>o;
 
-            if (!api.EquitableHelper.numberEquals(this.minimum, other.minimum)) {
+            if (!api.ObjectHelper.numberEquals(this.minimum, other.minimum)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.numberEquals(this.maximum, other.maximum)) {
+            if (!api.ObjectHelper.numberEquals(this.maximum, other.maximum)) {
                 return false;
             }
 

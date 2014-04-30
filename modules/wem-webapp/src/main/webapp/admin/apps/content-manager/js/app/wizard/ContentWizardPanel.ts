@@ -1,16 +1,35 @@
 module app.wizard {
 
+    import RootDataSet = api.data.RootDataSet;
+    import FormView = api.form.FormView;
+    import FormContext = api.form.FormContext;
     import Content = api.content.Content;
+    import ContentBuilder = api.content.ContentBuilder;
+    import ThumbnailBuilder = api.content.ThumbnailBuilder;
     import ContentId = api.content.ContentId;
     import ContentName = api.content.ContentName;
+    import CreateContentRequest = api.content.CreateContentRequest;
+    import UpdateContentRequest = api.content.UpdateContentRequest;
+    import UpdateAttachments = api.content.UpdateAttachments;
     import Page = api.content.page.Page;
+    import PageBuilder = api.content.page.PageBuilder;
+    import Site = api.content.site.Site;
+    import SiteBuilder = api.content.site.SiteBuilder;
+    import CreateSiteRequest = api.content.site.CreateSiteRequest;
     import ContentType = api.schema.content.ContentType;
     import SiteTemplate = api.content.site.template.SiteTemplate;
     import PageTemplate = api.content.page.PageTemplate;
     import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
     import IsRenderableRequest = api.content.page.IsRenderableRequest;
+
+    import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
+    import FormIcon = api.app.wizard.FormIcon;
+    import WizardHeaderWithDisplayNameAndName = api.app.wizard.WizardHeaderWithDisplayNameAndName;
+    import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
     import WizardStep = api.app.wizard.WizardStep;
     import WizardStepForm = api.app.wizard.WizardStepForm;
+    import UploadFinishedEvent = api.app.wizard.UploadFinishedEvent;
+
 
     export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
@@ -20,11 +39,11 @@ module app.wizard {
 
         private contentType: ContentType;
 
-        private formIcon: api.app.wizard.FormIcon;
+        private formIcon: FormIcon;
 
-        private contentWizardHeader: api.app.wizard.WizardHeaderWithDisplayNameAndName;
+        private contentWizardHeader: WizardHeaderWithDisplayNameAndName;
 
-        private siteWizardStepForm: app.wizard.site.SiteWizardStepForm;
+        private siteWizardStepForm: site.SiteWizardStepForm;
 
         private contentWizardStepForm: ContentWizardStepForm;
 
@@ -48,21 +67,28 @@ module app.wizard {
 
         private contextWindowToggler: ContextWindowToggler;
 
+        /**
+         * Whether constructor is being currently executed or not.
+         */
+        private constructing: boolean;
+
         constructor(params: ContentWizardPanelParams, callback: (wizard: ContentWizardPanel) => void) {
+
+            this.constructing = true;
 
             this.persistAsDraft = true;
             this.parentContent = params.parentContent;
             this.siteContent = params.site;
             this.contentType = params.contentType;
             this.displayNameScriptExecutor = new DisplayNameScriptExecutor();
-            this.contentWizardHeader = new api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder().
+            this.contentWizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().
                 setDisplayNameGenerator(this.displayNameScriptExecutor).
                 build();
             var iconUrl = api.content.ContentIconUrlResolver.default();
-            this.formIcon = new api.app.wizard.FormIcon(iconUrl, "Click to upload icon",
+            this.formIcon = new FormIcon(iconUrl, "Click to upload icon",
                 api.util.getRestUri("blob/upload"));
 
-            this.formIcon.onUploadFinished((event: api.app.wizard.UploadFinishedEvent) => {
+            this.formIcon.onUploadFinished((event: UploadFinishedEvent) => {
 
                 this.iconUploadItem = event.getUploadItem();
                 this.formIcon.setSrc(api.util.getRestUri('blob/' + this.iconUploadItem.getBlobKey()));
@@ -96,7 +122,7 @@ module app.wizard {
             this.createSite = params.createSite;
             this.siteTemplate = params.siteTemplate;
             if (this.createSite || params.persistedContent != null && params.persistedContent.isSite()) {
-                this.siteWizardStepForm = new app.wizard.site.SiteWizardStepForm();
+                this.siteWizardStepForm = new app.wizard.site.SiteWizardStepForm(this.siteTemplate);
             }
             else {
                 this.siteWizardStepForm = null;
@@ -123,7 +149,6 @@ module app.wizard {
                 this.displayNameScriptExecutor.setScript(this.contentType.getContentDisplayNameScript());
             }
 
-
             super({
                 tabId: params.tabId,
                 persistedItem: params.persistedContent,
@@ -132,25 +157,27 @@ module app.wizard {
                 header: this.contentWizardHeader,
                 actions: actions,
                 livePanel: this.liveFormPanel,
-                steps: this.createSteps(params.persistedContent),
+                steps: this.createSteps(),
                 split: true
             }, () => {
+
                 this.addClass("content-wizard-panel");
+
+                this.onShown((event: api.dom.ElementShownEvent) => {
+                    if (this.getPersistedItem()) {
+                        app.Router.setHash("edit/" + this.getPersistedItem().getId());
+                    } else {
+                        app.Router.setHash("new/" + this.contentType.getName());
+                    }
+                    if (this.liveFormPanel) {
+                        this.liveFormPanel.loadPageIfNotLoaded();
+                    }
+                });
+
+                this.constructing = false;
+
                 callback(this);
             });
-
-            this.onShown((event) => {
-                if (this.getPersistedItem()) {
-                    app.Router.setHash("edit/" + this.getPersistedItem().getId());
-                } else {
-                    app.Router.setHash("new/" + this.contentType.getName());
-                }
-                if (this.liveFormPanel) {
-                    this.liveFormPanel.loadPageIfNotLoaded();
-                }
-            });
-
-
         }
 
         giveInitialFocus() {
@@ -170,7 +197,7 @@ module app.wizard {
             this.startRememberFocus();
         }
 
-        private createSteps(content: Content): WizardStep[] {
+        private createSteps(): WizardStep[] {
 
             var steps: WizardStep[] = [];
 
@@ -216,19 +243,61 @@ module app.wizard {
         layoutPersistedItem(persistedContent: Content): Q.Promise<void> {
 
             this.formIcon.setSrc(persistedContent.getIconUrl() + '?crop=false');
-            var contentData: api.content.ContentData = persistedContent.getContentData();
 
-            new IsRenderableRequest(persistedContent.getContentId()).sendAndParse().
+            if (!this.constructing) {
+
+                var deferred = Q.defer<void>();
+
+                var viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent)).build();
+                if (viewedContent.equals(persistedContent)) {
+
+                    // Do nothing, since viewed data equals persisted data
+                    deferred.resolve(null);
+                    return deferred.promise;
+                }
+                else {
+                    ConfirmationDialog.get().
+                        setQuestion("Received Content from server differs from what you have. Would you like to load changes from server?").
+                        setYesCallback(() => {
+
+                            this.doLayoutPersistedItem(persistedContent.clone());
+                        }).
+                        setNoCallback(() => {
+                            // Do nothing...
+                        }).show();
+
+
+                    deferred.resolve(null);
+                    return deferred.promise;
+                }
+            }
+            else {
+                return this.doLayoutPersistedItem(persistedContent.clone());
+            }
+        }
+
+        private doLayoutPersistedItem(content: Content): Q.Promise<void> {
+
+            var contentData = content.getContentData();
+
+            this.showLiveEditAction.setVisible(false);
+            this.showLiveEditAction.setEnabled(false);
+            this.previewAction.setVisible(false);
+            this.contextWindowToggler.setVisible(false);
+
+            new IsRenderableRequest(content.getContentId()).sendAndParse().
                 then((renderable: boolean): void => {
+
                     this.showLiveEditAction.setVisible(renderable);
                     this.showLiveEditAction.setEnabled(renderable);
                     this.previewAction.setVisible(renderable);
                     this.contextWindowToggler.setVisible(renderable);
+
                 }).catch((reason) => {
                     api.notify.showWarning(reason.toString());
                 }).done();
 
-            return new api.content.attachment.GetAttachmentsRequest(persistedContent.getContentId()).
+            return new api.content.attachment.GetAttachmentsRequest(content.getContentId()).
                 sendAndParse().
                 then((attachmentsArray: api.content.attachment.Attachment[]) => {
 
@@ -238,20 +307,20 @@ module app.wizard {
 
                     var formContext = new api.form.FormContextBuilder().
                         setParentContent(this.parentContent).
-                        setPersistedContent(persistedContent).
+                        setPersistedContent(content).
                         setAttachments(attachments).
                         setShowEmptyFormItemSetOccurrences(this.isPersisted()).
                         build();
 
-                    this.contentWizardStepForm.renderExisting(formContext, contentData, persistedContent.getForm());
+                    this.contentWizardStepForm.renderExisting(formContext, contentData, content.getForm());
                     // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
                     this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
 
-                    return this.doRenderExistingSite(persistedContent, formContext)
+                    return this.doRenderExistingSite(content, formContext)
                         .then(() => {
 
                             if (this.liveFormPanel) {
-                                return this.doRenderExistingPage(persistedContent, this.siteContent, formContext);
+                                return this.doRenderExistingPage(content);
                             }
 
                         });
@@ -270,7 +339,7 @@ module app.wizard {
             return deferred.promise;
         }
 
-        private doRenderExistingSite(content: Content, formContext: api.form.FormContext): Q.Promise<void> {
+        private doRenderExistingSite(content: Content, formContext: FormContext): Q.Promise<void> {
 
             if (this.siteWizardStepForm != null && content.getSite()) {
                 return this.siteWizardStepForm.renderExisting(formContext, content.getSite(), this.contentType);
@@ -282,12 +351,12 @@ module app.wizard {
             }
         }
 
-        private doRenderExistingPage(content: Content, siteContent: Content, formContext: api.form.FormContext): Q.Promise<void> {
+        private doRenderExistingPage(content: Content): Q.Promise<void> {
 
-            return this.layout(content, siteContent);
+            return this.layout(content);
         }
 
-        private layout(content: Content, siteContent: Content): Q.Promise<void> {
+        private layout(content: Content): Q.Promise<void> {
 
             var page: Page = content.getPage();
 
@@ -326,13 +395,13 @@ module app.wizard {
             return deferred.promise;
         }
 
-        private produceCreateContentRequest(): api.content.CreateContentRequest {
+        private produceCreateContentRequest(): CreateContentRequest {
 
             var contentData = new api.content.ContentData();
 
             var parentPath = this.parentContent != null ? this.parentContent.getPath() : api.content.ContentPath.ROOT;
 
-            var createRequest = new api.content.CreateContentRequest().
+            var createRequest = new CreateContentRequest().
                 setDraft(this.persistAsDraft).
                 setName(api.content.ContentUnnamed.newUnnamed()).
                 setParent(parentPath).
@@ -344,7 +413,7 @@ module app.wizard {
             return createRequest;
         }
 
-        private produceCreateSiteRequest(content: Content): api.content.site.CreateSiteRequest {
+        private produceCreateSiteRequest(content: Content): CreateSiteRequest {
 
             if (!this.createSite) {
                 return null;
@@ -354,53 +423,24 @@ module app.wizard {
             this.siteTemplate.getModules().forEach((moduleKey: api.module.ModuleKey) => {
                 var moduleConfig = new api.content.site.ModuleConfigBuilder().
                     setModuleKey(moduleKey).
-                    setConfig(new api.data.RootDataSet()).
+                    setConfig(new RootDataSet()).
                     build();
                 moduleConfigs.push(moduleConfig);
             });
 
-            return new api.content.site.CreateSiteRequest(content.getId())
+            return new CreateSiteRequest(content.getId())
                 .setSiteTemplateKey(this.siteTemplate.getKey())
                 .setModuleConfigs(moduleConfigs);
 
         }
 
-        private producePageCUDRequest(content: Content): api.content.page.PageCUDRequest {
-
-            if (!this.siteTemplate) {
-                return null;
-            }
-
-            var pageTemplateKey = this.liveFormPanel.getPageTemplate();
-
-            if (content.isPage() && !pageTemplateKey) {
-                return new api.content.page.DeletePageRequest(content.getContentId());
-            }
-            else if (!content.isPage() && pageTemplateKey) {
-
-                var createRequest = new api.content.page.CreatePageRequest(content.getContentId()).
-                    setPageTemplateKey(pageTemplateKey).
-                    setConfig(this.liveFormPanel.getConfig()).
-                    setRegions(this.liveFormPanel.getRegions());
-                return createRequest;
-            }
-            else if (content.isPage() && pageTemplateKey) {
-
-                var updatePageRequest = new api.content.page.UpdatePageRequest(content.getContentId()).
-                    setPageTemplateKey(pageTemplateKey).
-                    setConfig(this.liveFormPanel.getConfig()).
-                    setRegions(this.liveFormPanel.getRegions());
-
-                return updatePageRequest;
-            }
-        }
-
         updatePersistedItem(): Q.Promise<Content> {
 
-            return new UpdatePersistedContentRoutine(this).
+            var persistedContent = this.getPersistedItem();
+            var viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent)).build();
+
+            return new UpdatePersistedContentRoutine(this, persistedContent, viewedContent).
                 setUpdateContentRequestProducer(this.produceUpdateContentRequest).
-                setUpdateSiteRequestProducer(this.produceUpdateSiteRequest).
-                setPageCUDRequestProducer(this.producePageCUDRequest).
                 execute().
                 then((content: Content) => {
 
@@ -411,23 +451,24 @@ module app.wizard {
                 });
         }
 
-        private produceUpdateContentRequest(content: Content): api.content.UpdateContentRequest {
+        private produceUpdateContentRequest(persistedContent: Content, viewedContent: Content): UpdateContentRequest {
 
-            var updateContentRequest: api.content.UpdateContentRequest = new api.content.UpdateContentRequest(this.getPersistedItem().getId()).
+            var persistedContent = this.getPersistedItem();
+
+            var updateContentRequest = new UpdateContentRequest(this.getPersistedItem().getId()).
                 setDraft(this.persistAsDraft).
-                setContentName(this.resolveContentNameForUpdateReuest()).
-                setContentType(this.contentType.getContentTypeName()).
-                setDisplayName(this.contentWizardHeader.getDisplayName()).
-                setForm(this.contentWizardStepForm.getForm()).
-                setContentData(this.contentWizardStepForm.getContentData());
+                setContentType(persistedContent.getType()).
+                setForm(persistedContent.getForm()).
+                setContentName(viewedContent.getName()).
+                setDisplayName(viewedContent.getDisplayName()).
+                setContentData(viewedContent.getContentData());
 
-            var contentId: ContentId = new ContentId(this.getPersistedItem().getId());
-            var updateAttachments: api.content.UpdateAttachments =
-                api.content.UpdateAttachments.create(contentId, this.contentWizardStepForm.getFormView().getAttachments());
+            var updateAttachments = UpdateAttachments.create(persistedContent.getContentId(),
+                this.contentWizardStepForm.getFormView().getAttachments());
             updateContentRequest.setUpdateAttachments(updateAttachments);
 
             if (this.iconUploadItem) {
-                var thumbnail = new api.content.ThumbnailBuilder().
+                var thumbnail = new ThumbnailBuilder().
                     setBlobKey(this.iconUploadItem.getBlobKey()).
                     setMimeType(this.iconUploadItem.getMimeType()).
                     setSize(this.iconUploadItem.getSize()).
@@ -438,29 +479,18 @@ module app.wizard {
             return updateContentRequest;
         }
 
-        private produceUpdateSiteRequest(content: Content): api.content.site.UpdateSiteRequest {
-
-            if (this.siteWizardStepForm == null) {
-                return null;
-            }
-
-            return new api.content.site.UpdateSiteRequest(content.getId()).
-                setSiteTemplateKey(this.siteWizardStepForm.getTemplateKey()).
-                setModuleConfigs(this.siteWizardStepForm.getModuleConfigs());
-        }
-
         hasUnsavedChanges(): boolean {
             var persistedContent: Content = this.getPersistedItem();
             if (persistedContent == undefined) {
                 return true;
             } else {
-                return !api.util.isStringsEqual(persistedContent.getDisplayName(), this.contentWizardHeader.getDisplayName())
-                           || !api.util.isStringsEqual(persistedContent.getName().toString(), this.contentWizardHeader.getName().toString())
-                    || !persistedContent.getContentData().equals(this.contentWizardStepForm.getContentData());
+
+                var viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent)).build();
+                return !viewedContent.equals(persistedContent);
             }
         }
 
-        private enableDisplayNameScriptExecution(formView: api.form.FormView) {
+        private enableDisplayNameScriptExecution(formView: FormView) {
 
             if (this.displayNameScriptExecutor.hasScript()) {
 
@@ -473,6 +503,46 @@ module app.wizard {
             }
         }
 
+        private assembleViewedContent(viewedContentBuilder: ContentBuilder): ContentBuilder {
+
+            viewedContentBuilder.setName(this.resolveContentNameForUpdateReuest());
+            viewedContentBuilder.setDisplayName(this.contentWizardHeader.getDisplayName());
+            viewedContentBuilder.setData(this.contentWizardStepForm.getContentData());
+            viewedContentBuilder.setForm(this.contentWizardStepForm.getForm());
+            viewedContentBuilder.setSite(this.assembleViewedSite());
+            viewedContentBuilder.setPage(this.assembleViewedPage());
+            return viewedContentBuilder;
+        }
+
+        private assembleViewedPage(): Page {
+
+            if (!this.liveFormPanel) {
+                return null;
+            }
+
+            var pageTemplateKey = this.liveFormPanel.getPageTemplate();
+            if (!pageTemplateKey) {
+                return null;
+            }
+
+            var viewedPageBuilder = new PageBuilder();
+            viewedPageBuilder.setTemplate(pageTemplateKey);
+            viewedPageBuilder.setConfig(this.liveFormPanel.getConfig());
+            viewedPageBuilder.setRegions(this.liveFormPanel.getRegions());
+            return viewedPageBuilder.build();
+        }
+
+        private assembleViewedSite(): Site {
+
+            if (!this.siteWizardStepForm) {
+                return null;
+            }
+            var viewedSiteBuilder = new SiteBuilder();
+            viewedSiteBuilder.setTemplateKey(this.siteWizardStepForm.getTemplateKey());
+            viewedSiteBuilder.setModuleConfigs(this.siteWizardStepForm.getModuleConfigs());
+            return viewedSiteBuilder.build();
+        }
+
         private resolveContentNameForUpdateReuest(): ContentName {
             if (api.util.isStringEmpty(this.contentWizardHeader.getName()) && this.getPersistedItem().getName().isUnnamed()) {
                 return this.getPersistedItem().getName();
@@ -482,24 +552,11 @@ module app.wizard {
             }
         }
 
-        getParentContent(): Content {
-            return this.parentContent;
-        }
-
-        getContentType(): ContentType {
-            return this.contentType;
-        }
-
-        getSiteTemplate(): SiteTemplate {
-            return this.siteTemplate;
-        }
-
         setPersistAsDraft(draft: boolean) {
             this.persistAsDraft = draft;
         }
 
         showLiveEdit() {
-
 
         }
 

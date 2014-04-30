@@ -42,13 +42,13 @@ module api.schema {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof SchemaKind)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, SchemaKind)) {
                 return false;
             }
 
             var other = <SchemaKind>o;
 
-            if (!api.EquitableHelper.stringEquals(this.name, other.name)) {
+            if (!api.ObjectHelper.stringEquals(this.name, other.name)) {
                 return false;
             }
 

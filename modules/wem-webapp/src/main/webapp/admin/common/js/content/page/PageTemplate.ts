@@ -39,7 +39,7 @@ module api.content.page {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof PageTemplate)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, PageTemplate)) {
                 return false;
             }
 
@@ -49,15 +49,15 @@ module api.content.page {
 
             var other = <PageTemplate>o;
 
-            if (!api.EquitableHelper.equals(this.regions, other.regions)) {
+            if (!api.ObjectHelper.equals(this.regions, other.regions)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.equals(this.config, other.config)) {
+            if (!api.ObjectHelper.equals(this.config, other.config)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.arrayEquals(this.canRender, other.canRender)) {
+            if (!api.ObjectHelper.arrayEquals(this.canRender, other.canRender)) {
                 return false;
             }
 

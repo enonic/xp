@@ -59,13 +59,13 @@ module api.content {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof ContentPath)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ContentPath)) {
                 return false;
             }
 
             var other = <ContentPath>o;
 
-            if (!api.EquitableHelper.stringEquals(this.refString, other.refString)) {
+            if (!api.ObjectHelper.stringEquals(this.refString, other.refString)) {
                 return false;
             }
 

@@ -139,7 +139,7 @@ module api.content {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof ContentSummary)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ContentSummary)) {
                 return false;
             }
 
@@ -149,58 +149,58 @@ module api.content {
 
             var other = <ContentSummary>o;
 
-            if (!api.EquitableHelper.stringEquals(this.id, other.id)) {
+            if (!api.ObjectHelper.stringEquals(this.id, other.id)) {
                 return false;
             }
-            if (!api.EquitableHelper.equals(this.name, other.name)) {
+            if (!api.ObjectHelper.equals(this.name, other.name)) {
                 return false;
             }
-            if (!api.EquitableHelper.stringEquals(this.displayName, other.displayName)) {
+            if (!api.ObjectHelper.stringEquals(this.displayName, other.displayName)) {
                 return false;
             }
-            if (!api.EquitableHelper.equals(this.path, other.path)) {
+            if (!api.ObjectHelper.equals(this.path, other.path)) {
                 return false;
             }
-            if (!api.EquitableHelper.booleanEquals(this.root, other.root)) {
+            if (!api.ObjectHelper.booleanEquals(this.root, other.root)) {
                 return false;
             }
-            if (!api.EquitableHelper.booleanEquals(this.children, other.children)) {
+            if (!api.ObjectHelper.booleanEquals(this.children, other.children)) {
                 return false;
             }
-            if (!api.EquitableHelper.equals(this.type, other.type)) {
+            if (!api.ObjectHelper.equals(this.type, other.type)) {
                 return false;
             }
-            if (!api.EquitableHelper.stringEquals(this.iconUrl, other.iconUrl)) {
+            if (!api.ObjectHelper.stringEquals(this.iconUrl, other.iconUrl)) {
                 return false;
             }
-            if (!api.EquitableHelper.stringEquals(this.modifier, other.modifier)) {
+            if (!api.ObjectHelper.stringEquals(this.modifier, other.modifier)) {
                 return false;
             }
-            if (!api.EquitableHelper.stringEquals(this.owner, other.owner)) {
+            if (!api.ObjectHelper.stringEquals(this.owner, other.owner)) {
                 return false;
             }
-            if (!api.EquitableHelper.booleanEquals(this.site, other.site)) {
+            if (!api.ObjectHelper.booleanEquals(this.site, other.site)) {
                 return false;
             }
-            if (!api.EquitableHelper.booleanEquals(this.page, other.page)) {
+            if (!api.ObjectHelper.booleanEquals(this.page, other.page)) {
                 return false;
             }
-            if (!api.EquitableHelper.booleanEquals(this.embedded, other.embedded)) {
+            if (!api.ObjectHelper.booleanEquals(this.embedded, other.embedded)) {
                 return false;
             }
-            if (!api.EquitableHelper.booleanEquals(this.draft, other.draft)) {
+            if (!api.ObjectHelper.booleanEquals(this.draft, other.draft)) {
                 return false;
             }
-            if (!api.EquitableHelper.dateEquals(this.createdTime, other.createdTime)) {
+            if (!api.ObjectHelper.dateEquals(this.createdTime, other.createdTime)) {
                 return false;
             }
-            if (!api.EquitableHelper.dateEquals(this.modifiedTime, other.modifiedTime)) {
+            if (!api.ObjectHelper.dateEquals(this.modifiedTime, other.modifiedTime)) {
                 return false;
             }
-            if (!api.EquitableHelper.booleanEquals(this.deletable, other.deletable)) {
+            if (!api.ObjectHelper.booleanEquals(this.deletable, other.deletable)) {
                 return false;
             }
-            if (!api.EquitableHelper.booleanEquals(this.editable, other.editable)) {
+            if (!api.ObjectHelper.booleanEquals(this.editable, other.editable)) {
                 return false;
             }
             return true;
@@ -306,6 +306,26 @@ module api.content {
             this.deletable = json.deletable;
             this.editable = json.editable;
 
+            return this;
+        }
+
+        setDraft(value: boolean): ContentSummaryBuilder {
+            this.draft = value;
+            return this;
+        }
+
+        setName(value: ContentName): ContentSummaryBuilder {
+            this.name = value;
+            return this;
+        }
+
+        setType(value: api.schema.content.ContentTypeName): ContentSummaryBuilder {
+            this.type = value;
+            return this;
+        }
+
+        setDisplayName(value: string): ContentSummaryBuilder {
+            this.displayName = value;
             return this;
         }
 

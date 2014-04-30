@@ -1,6 +1,6 @@
 module api.content.page.layout {
 
-    export class LayoutComponent extends api.content.page.PageComponent implements api.Equitable {
+    export class LayoutComponent extends api.content.page.PageComponent implements api.Equitable, api.Cloneable {
 
         private regions: LayoutRegions;
 
@@ -36,7 +36,7 @@ module api.content.page.layout {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof LayoutComponent)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, LayoutComponent)) {
                 return false;
             }
 
@@ -46,17 +46,35 @@ module api.content.page.layout {
                 return false;
             }
 
-            if (!api.EquitableHelper.equals(this.regions, other.regions)) {
+            if (!api.ObjectHelper.equals(this.regions, other.regions)) {
                 return false;
             }
 
             return true;
+        }
+
+        clone(): LayoutComponent {
+            return new LayoutComponentBuilder(this).build();
         }
     }
 
     export class LayoutComponentBuilder extends api.content.page.PageComponentBuilder<LayoutComponent> {
 
         regions: LayoutRegions;
+
+        constructor(source?: LayoutComponent) {
+
+            super();
+
+            if (source) {
+                this.regions = source.getLayoutRegions().clone();
+
+                this.name = source.getName();
+                this.descriptor = source.getDescriptor();
+                this.region = source.getRegion();
+                this.config = source.getConfig() ? source.getConfig().clone() : null;
+            }
+        }
 
         public fromJson(json: LayoutComponentJson, regionPath: RegionPath): LayoutComponentBuilder {
 

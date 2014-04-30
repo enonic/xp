@@ -42,12 +42,14 @@ module LiveEdit.component {
                 this.uploadButton.hide();
                 this.showLoadingSpinner();
 
-                $liveEdit(window).trigger('imageComponentSetImage.liveEdit', [{
-                    imageId: event.getOption().value,
-                    componentPathAsString: this.getComponentPath(),
-                    componentPlaceholder: this,
-                    imageName: event.getOption().displayValue.getDisplayName()
-                }]);
+                $liveEdit(window).trigger('imageComponentSetImage.liveEdit', [
+                    {
+                        imageId: event.getOption().displayValue.getContentId(),
+                        componentPathAsString: this.getComponentPath(),
+                        componentPlaceholder: this,
+                        imageName: event.getOption().displayValue.getDisplayName()
+                    }
+                ]);
 
             });
         }
@@ -90,18 +92,22 @@ module LiveEdit.component {
 
                 }).then((createdContent: api.content.Content) => {
 
-                    $liveEdit(window).trigger('imageComponentSetImage.liveEdit', [{
-                        imageId: createdContent.getId(),
-                        componentPathAsString: this.getComponentPath(),
-                        componentPlaceholder: this,
-                        imageName: uploadItem.getName()
-                    }]);
+                    $liveEdit(window).trigger('imageComponentSetImage.liveEdit', [
+                        {
+                            imageId: createdContent.getId(),
+                            componentPathAsString: this.getComponentPath(),
+                            componentPlaceholder: this,
+                            imageName: uploadItem.getName()
+                        }
+                    ]);
 
                 }).catch((reason) => {
 
-                    $liveEdit(window).trigger('imageComponentSetImage.liveEdit', [{
-                        errorMessage: reason.message
-                    }]);
+                    $liveEdit(window).trigger('imageComponentSetImage.liveEdit', [
+                        {
+                            errorMessage: reason.message
+                        }
+                    ]);
 
                     this.hideLoadingSpinner();
 

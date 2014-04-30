@@ -14,13 +14,13 @@ module api.schema.content {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof ContentTypeName)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ContentTypeName)) {
                 return false;
             }
 
             var other = <ContentTypeName>o;
 
-            if (!api.EquitableHelper.stringEquals(this.value, other.value)) {
+            if (!api.ObjectHelper.stringEquals(this.value, other.value)) {
                 return false;
             }
 

@@ -42,13 +42,13 @@ module api.content.page {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof DescriptorKey)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, DescriptorKey)) {
                 return false;
             }
 
             var other = <DescriptorKey>o;
 
-            if (!api.EquitableHelper.stringEquals(this.refString, other.refString)) {
+            if (!api.ObjectHelper.stringEquals(this.refString, other.refString)) {
                 return false;
             }
 

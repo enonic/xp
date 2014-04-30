@@ -41,13 +41,13 @@ module api.content.page {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof PageTemplateKey)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, PageTemplateKey)) {
                 return false;
             }
 
             var other = <PageTemplateKey>o;
 
-            if (!api.EquitableHelper.stringEquals(this.refString, other.refString)) {
+            if (!api.ObjectHelper.stringEquals(this.refString, other.refString)) {
                 return false;
             }
 

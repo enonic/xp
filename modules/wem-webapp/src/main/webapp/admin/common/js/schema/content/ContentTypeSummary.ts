@@ -65,7 +65,7 @@ module api.schema.content {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof ContentTypeSummary)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ContentTypeSummary)) {
                 return false;
             }
 
@@ -75,27 +75,27 @@ module api.schema.content {
 
             var other = <ContentTypeSummary>o;
 
-            if (!EquitableHelper.booleanEquals(this.allowChildContent, other.allowChildContent)) {
+            if (!ObjectHelper.booleanEquals(this.allowChildContent, other.allowChildContent)) {
                 return false;
             }
 
-            if (!EquitableHelper.booleanEquals(this.abstract, other.abstract)) {
+            if (!ObjectHelper.booleanEquals(this.abstract, other.abstract)) {
                 return false;
             }
 
-            if (!EquitableHelper.equals(this.superType, other.superType)) {
+            if (!ObjectHelper.equals(this.superType, other.superType)) {
                 return false;
             }
 
-            if (!EquitableHelper.stringEquals(this.contentDisplayNameScript, other.contentDisplayNameScript)) {
+            if (!ObjectHelper.stringEquals(this.contentDisplayNameScript, other.contentDisplayNameScript)) {
                 return false;
             }
 
-            if (!EquitableHelper.stringEquals(this.modifier, other.modifier)) {
+            if (!ObjectHelper.stringEquals(this.modifier, other.modifier)) {
                 return false;
             }
 
-            if (!EquitableHelper.stringEquals(this.owner, other.owner)) {
+            if (!ObjectHelper.stringEquals(this.owner, other.owner)) {
                 return false;
             }
 

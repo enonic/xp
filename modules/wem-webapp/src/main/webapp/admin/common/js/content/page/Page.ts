@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export class Page implements api.Equitable {
+    export class Page implements api.Equitable, api.Cloneable {
 
         private template: PageTemplateKey;
 
@@ -40,23 +40,28 @@ module api.content.page {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof Page)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Page)) {
                 return false;
             }
 
             var other = <Page>o;
 
-            if (!api.EquitableHelper.equals(this.template, other.template)) {
+            if (!api.ObjectHelper.equals(this.template, other.template)) {
                 return false;
             }
-            if (!api.EquitableHelper.equals(this.regions, other.regions)) {
+            if (!api.ObjectHelper.equals(this.regions, other.regions)) {
                 return false;
             }
-            if (!api.EquitableHelper.equals(this.config, other.config)) {
+            if (!api.ObjectHelper.equals(this.config, other.config)) {
                 return false;
             }
 
             return true;
+        }
+
+        clone(): Page {
+
+            return new PageBuilder(this).build();
         }
     }
 
@@ -67,6 +72,14 @@ module api.content.page {
         regions: PageRegions;
 
         config: api.data.RootDataSet;
+
+        constructor(source?: Page) {
+            if (source) {
+                this.template = source.getTemplate();
+                this.regions = source.getRegions() ? source.getRegions().clone() : null;
+                this.config = source.getConfig() ? source.getConfig().clone() : null;
+            }
+        }
 
         public fromJson(json: api.content.page.PageJson): PageBuilder {
             this.setTemplate(PageTemplateKey.fromString(json.template));

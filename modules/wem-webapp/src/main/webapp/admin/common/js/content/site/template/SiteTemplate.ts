@@ -12,7 +12,7 @@ module api.content.site.template {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof SiteTemplate)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, SiteTemplate)) {
                 return false;
             }
 
@@ -22,7 +22,7 @@ module api.content.site.template {
 
             var other = <SiteTemplate>o;
 
-            if (!api.EquitableHelper.arrayEquals(this.pageTemplates, other.pageTemplates)) {
+            if (!api.ObjectHelper.arrayEquals(this.pageTemplates, other.pageTemplates)) {
                 return false;
             }
 

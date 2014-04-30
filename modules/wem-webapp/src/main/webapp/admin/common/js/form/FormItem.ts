@@ -42,13 +42,13 @@ module api.form {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof FormItem)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, FormItem)) {
                 return false;
             }
 
             var other = <FormItem>o;
 
-            if (!api.EquitableHelper.stringEquals(this.name, other.name)) {
+            if (!api.ObjectHelper.stringEquals(this.name, other.name)) {
                 return false;
             }
 

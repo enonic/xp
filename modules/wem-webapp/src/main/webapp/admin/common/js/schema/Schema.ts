@@ -50,7 +50,7 @@ module api.schema {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof Schema)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Schema)) {
                 return false;
             }
 
@@ -60,23 +60,23 @@ module api.schema {
 
             var other = <Schema>o;
 
-            if (!EquitableHelper.stringEquals(this.key, other.key)) {
+            if (!ObjectHelper.stringEquals(this.key, other.key)) {
                 return false;
             }
 
-            if (!EquitableHelper.stringEquals(this.name, other.name)) {
+            if (!ObjectHelper.stringEquals(this.name, other.name)) {
                 return false;
             }
 
-            if (!EquitableHelper.stringEquals(this.displayName, other.displayName)) {
+            if (!ObjectHelper.stringEquals(this.displayName, other.displayName)) {
                 return false;
             }
 
-            if (!EquitableHelper.stringEquals(this.iconUrl, other.iconUrl)) {
+            if (!ObjectHelper.stringEquals(this.iconUrl, other.iconUrl)) {
                 return false;
             }
 
-            if (!EquitableHelper.equals(this.kind, other.kind)) {
+            if (!ObjectHelper.equals(this.kind, other.kind)) {
                 return false;
             }
 

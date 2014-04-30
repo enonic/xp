@@ -52,17 +52,17 @@ module api.form {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof InputTypeName)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, InputTypeName)) {
                 return false;
             }
 
             var other = <InputTypeName>o;
 
-            if (!api.EquitableHelper.booleanEquals(this.custom, other.custom)) {
+            if (!api.ObjectHelper.booleanEquals(this.custom, other.custom)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.stringEquals(this.name, other.name)) {
+            if (!api.ObjectHelper.stringEquals(this.name, other.name)) {
                 return false;
             }
 

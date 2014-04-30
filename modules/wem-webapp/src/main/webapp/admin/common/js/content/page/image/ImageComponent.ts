@@ -1,6 +1,6 @@
 module api.content.page.image {
 
-    export class ImageComponent extends api.content.page.PageComponent implements api.Equitable {
+    export class ImageComponent extends api.content.page.PageComponent implements api.Equitable, api.Cloneable {
 
         private image: api.content.ContentId;
 
@@ -31,7 +31,7 @@ module api.content.page.image {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof ImageComponent)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ImageComponent)) {
                 return false;
             }
 
@@ -41,17 +41,35 @@ module api.content.page.image {
                 return false;
             }
 
-            if (!api.EquitableHelper.equals(this.image, other.image)) {
+            if (!api.ObjectHelper.equals(this.image, other.image)) {
                 return false;
             }
 
             return true;
+        }
+
+        clone(): ImageComponent {
+            return new ImageComponentBuilder(this).build();
         }
     }
 
     export class ImageComponentBuilder extends api.content.page.PageComponentBuilder<ImageComponent> {
 
         image: api.content.ContentId;
+
+        constructor(source?: ImageComponent) {
+
+            super();
+
+            if (source) {
+                this.image = source.getImage();
+
+                this.name = source.getName();
+                this.descriptor = source.getDescriptor();
+                this.region = source.getRegion();
+                this.config = source.getConfig() ? source.getConfig().clone() : null;
+            }
+        }
 
         public fromJson(json: ImageComponentJson, regionPath: RegionPath): ImageComponentBuilder {
 

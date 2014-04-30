@@ -1,6 +1,6 @@
 module api.content.page.region {
 
-    export class Region implements api.Equitable {
+    export class Region implements api.Equitable, api.Cloneable {
 
         private name: string;
 
@@ -195,25 +195,29 @@ module api.content.page.region {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof Region)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Region)) {
                 return false;
             }
 
             var other = <Region>o;
 
-            if (!api.EquitableHelper.stringEquals(this.name, other.name)) {
+            if (!api.ObjectHelper.stringEquals(this.name, other.name)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.equals(this.path, other.path)) {
+            if (!api.ObjectHelper.equals(this.path, other.path)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.arrayEquals(this.pageComponents, other.pageComponents)) {
+            if (!api.ObjectHelper.arrayEquals(this.pageComponents, other.pageComponents)) {
                 return false;
             }
 
             return true;
+        }
+
+        clone(): Region {
+            return new RegionBuilder(this).build();
         }
     }
 
@@ -230,7 +234,7 @@ module api.content.page.region {
                 this.name = source.getName();
                 this.path = source.getPath();
                 source.getComponents().forEach((component: api.content.page.PageComponent) => {
-                    this.pageComponents.push(component);
+                    this.pageComponents.push(component.clone());
                 });
             }
         }

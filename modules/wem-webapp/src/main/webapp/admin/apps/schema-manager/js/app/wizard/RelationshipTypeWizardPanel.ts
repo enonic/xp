@@ -7,6 +7,7 @@ module app.wizard {
     import GetRelationshipTypeConfigByNameRequest = api.schema.relationshiptype.GetRelationshipTypeConfigByNameRequest;
     import CreateRelationshipTypeRequest = api.schema.relationshiptype.CreateRelationshipTypeRequest;
     import UpdateRelationshipTypeRequest = api.schema.relationshiptype.UpdateRelationshipTypeRequest;
+    import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
 
     export class RelationshipTypeWizardPanel extends api.app.wizard.WizardPanel<api.schema.relationshiptype.RelationshipType> {
 
@@ -20,12 +21,17 @@ module app.wizard {
 
         private relationshipTypeForm: RelationshipTypeForm;
 
-        private persistedRelationshipType: RelationshipType;
-
         private persistedConfig: string;
+
+        /**
+         * Whether constructor is being currently executed or not.
+         */
+        private constructing: boolean;
 
         constructor(tabId: api.app.AppBarTabId, persistedRelationshipType: RelationshipType,
                     callback: (wizard: RelationshipTypeWizardPanel) => void) {
+
+            this.constructing = true;
             this.relationShipTypeWizardHeader = new api.app.wizard.WizardHeaderWithName();
             this.formIcon = new api.app.wizard.FormIcon(new RelationshipTypeIconUrlResolver().resolveDefault(),
                 "Click to upload icon",
@@ -62,22 +68,65 @@ module app.wizard {
                 header: this.relationShipTypeWizardHeader,
                 steps: steps
             }, () => {
+
+                this.constructing = false;
                 callback(this);
             });
         }
 
         layoutPersistedItem(persistedRelationshipType: RelationshipType): Q.Promise<void> {
 
-            this.relationShipTypeWizardHeader.setName(persistedRelationshipType.getName());
             this.formIcon.setSrc(persistedRelationshipType.getIconUrl() + '?crop=false');
-            this.persistedRelationshipType = persistedRelationshipType;
+
+            if (!this.constructing) {
+
+                var deferred = Q.defer<void>();
+
+                var viewedRelationshipTypeBuilder = new api.schema.relationshiptype.RelationshipTypeBuilder(persistedRelationshipType);
+                viewedRelationshipTypeBuilder.setName(this.relationShipTypeWizardHeader.getName());
+                var viewedItem = viewedRelationshipTypeBuilder.build();
+                if (viewedItem.equals(persistedRelationshipType)) {
+
+                    // Do nothing
+                    deferred.resolve(null);
+                    return deferred.promise;
+                }
+                else {
+                    ConfirmationDialog.get().
+                        setQuestion("Received RelationshipType from server differs from what you have. Would you like to load changes from server?").
+                        setYesCallback(() => {
+
+                            this.doLayoutPersistedItem(persistedRelationshipType);
+                        }).
+                        setNoCallback(() => {
+                            // Do nothing...
+                        }).show();
+
+                    deferred.resolve(null);
+                    return deferred.promise;
+                }
+            }
+            else {
+                return this.doLayoutPersistedItem(persistedRelationshipType);
+            }
+        }
+
+        private doLayoutPersistedItem(persistedRelationshipType: RelationshipType): Q.Promise<void> {
+
+            this.relationShipTypeWizardHeader.setName(persistedRelationshipType.getName());
 
             return new GetRelationshipTypeConfigByNameRequest(persistedRelationshipType.getRelationshiptypeName()).send().
-                then((response: api.rest.JsonResponse <api.schema.relationshiptype.GetRelationshipTypeConfigResult>):void => {
+                then((response: api.rest.JsonResponse <api.schema.relationshiptype.GetRelationshipTypeConfigResult>): void => {
 
                     this.relationshipTypeForm.setFormData({"xml": response.getResult().relationshipTypeXml});
                     this.persistedConfig = response.getResult().relationshipTypeXml || "";
                 });
+        }
+
+        saveChanges(): Q.Promise<RelationshipType> {
+            var formData = this.relationshipTypeForm.getFormData();
+            this.persistedConfig = formData.xml;
+            return super.saveChanges();
         }
 
         persistNewItem(): Q.Promise<RelationshipType> {
@@ -123,7 +172,7 @@ module app.wizard {
             } else {
                 return !api.util.isStringsEqual(persistedRelationshipType.getName(), this.relationShipTypeWizardHeader.getName())
                     || !api.util.isStringsEqual(api.util.removeCarriageChars(this.persistedConfig),
-                    api.util.removeCarriageChars(this.relationshipTypeForm.getFormData().xml));
+                        api.util.removeCarriageChars(this.relationshipTypeForm.getFormData().xml));
             }
         }
     }

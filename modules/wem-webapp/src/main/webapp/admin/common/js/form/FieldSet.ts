@@ -40,7 +40,7 @@ module api.form {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof FieldSet)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, FieldSet)) {
                 return false;
             }
 
@@ -50,11 +50,11 @@ module api.form {
 
             var other = <FieldSet>o;
 
-            if (!api.EquitableHelper.stringEquals(this.label, other.label)) {
+            if (!api.ObjectHelper.stringEquals(this.label, other.label)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.arrayEquals(this.formItems, other.formItems)) {
+            if (!api.ObjectHelper.arrayEquals(this.formItems, other.formItems)) {
                 return false;
             }
 

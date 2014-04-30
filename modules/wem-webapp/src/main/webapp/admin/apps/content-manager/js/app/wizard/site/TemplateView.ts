@@ -19,10 +19,6 @@ module app.wizard.site {
                 setSubName(siteTemplate.getDescription()).
                 setIconUrl(this.contentType.getIconUrl());
         }
-
-        getSiteTemplateKey(): api.content.site.template.SiteTemplateKey {
-            return this.siteTemplate.getKey();
-        }
     }
 
 }

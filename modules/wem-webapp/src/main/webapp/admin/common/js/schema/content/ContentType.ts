@@ -15,7 +15,7 @@ module api.schema.content {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof ContentType)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ContentType)) {
                 return false;
             }
 
@@ -25,7 +25,7 @@ module api.schema.content {
 
             var other = <ContentType>o;
 
-            if (!EquitableHelper.equals(this.form, other.form)) {
+            if (!ObjectHelper.equals(this.form, other.form)) {
                 return false;
             }
 

@@ -16,15 +16,19 @@ module api.data {
             return <string>value.asObject();
         }
 
+        newValue(value: string) {
+            return new Value(value, this);
+        }
+
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof ValueType)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ValueType)) {
                 return false;
             }
 
             var other = <ValueType>o;
 
-            if (!api.EquitableHelper.stringEquals(this.name, other.name)) {
+            if (!api.ObjectHelper.stringEquals(this.name, other.name)) {
                 return false;
             }
 

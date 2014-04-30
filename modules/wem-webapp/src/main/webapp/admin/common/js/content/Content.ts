@@ -1,6 +1,6 @@
 module api.content {
 
-    export class Content extends ContentSummary implements api.Equitable {
+    export class Content extends ContentSummary implements api.Equitable, api.Cloneable {
 
         private data: api.content.ContentData;
 
@@ -37,7 +37,7 @@ module api.content {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof Content)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Content)) {
                 return false;
             }
 
@@ -47,23 +47,27 @@ module api.content {
 
             var other = <Content>o;
 
-            if (!api.EquitableHelper.equals(this.data, other.data)) {
+            if (!api.ObjectHelper.equals(this.data, other.data)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.equals(this.form, other.form)) {
+            if (!api.ObjectHelper.equals(this.form, other.form)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.equals(this.pageObj, other.pageObj)) {
+            if (!api.ObjectHelper.equals(this.pageObj, other.pageObj)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.equals(this.siteObj, other.siteObj)) {
+            if (!api.ObjectHelper.equals(this.siteObj, other.siteObj)) {
                 return false;
             }
 
             return true;
+        }
+
+        clone(): Content {
+            return new ContentBuilder(this).build();
         }
 
         static fromJson(json: api.content.json.ContentJson): Content {
@@ -85,10 +89,16 @@ module api.content {
             super(source);
             if (source) {
 
-                this.data = source.getContentData();
+                this.data = source.getContentData() ? source.getContentData().clone() : null;
                 this.form = source.getForm();
-                this.siteObj = source.getSite();
-                this.pageObj = source.getPage();
+                this.siteObj = source.getSite() ? source.getSite().clone() : null;
+                if (this.siteObj) {
+                    this.site = true;
+                }
+                this.pageObj = source.getPage() ? source.getPage().clone() : null;
+                if (this.pageObj) {
+
+                }
             }
         }
 
@@ -100,12 +110,36 @@ module api.content {
             this.form = json.form != null ? new api.form.Form(json.form) : null;
 
             if (this.site) {
-                this.siteObj = new api.content.site.Site(json.site);
+                this.siteObj = api.content.site.Site.fromJson(json.site);
+                this.site = true;
             }
             if (this.page) {
                 this.pageObj = new api.content.page.PageBuilder().fromJson(json.page).build();
+                this.page = true;
             }
 
+            return this;
+        }
+
+        setData(value: ContentData): ContentBuilder {
+            this.data = value;
+            return this;
+        }
+
+        setForm(value: api.form.Form): ContentBuilder {
+            this.form = value;
+            return this;
+        }
+
+        setSite(value: api.content.site.Site): ContentBuilder {
+            this.siteObj = value;
+            this.site = value ? true : false;
+            return this;
+        }
+
+        setPage(value: api.content.page.Page): ContentBuilder {
+            this.pageObj = value;
+            this.page = value ? true : false;
             return this;
         }
 

@@ -17,13 +17,13 @@ module api.content {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof ContentId)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ContentId)) {
                 return false;
             }
 
             var other = <ContentId>o;
 
-            if (!api.EquitableHelper.stringEquals(this.value, other.value)) {
+            if (!api.ObjectHelper.stringEquals(this.value, other.value)) {
                 return false;
             }
 

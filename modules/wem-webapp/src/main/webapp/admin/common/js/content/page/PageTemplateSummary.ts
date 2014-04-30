@@ -33,21 +33,21 @@ module api.content.page {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof PageTemplateSummary)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, PageTemplateSummary)) {
                 return false;
             }
 
             var other = <PageTemplateSummary>o;
 
-            if (!api.EquitableHelper.equals(this.key, other.key)) {
+            if (!api.ObjectHelper.equals(this.key, other.key)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.stringEquals(this.displayName, other.displayName)) {
+            if (!api.ObjectHelper.stringEquals(this.displayName, other.displayName)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.equals(this.descriptorKey, other.descriptorKey)) {
+            if (!api.ObjectHelper.equals(this.descriptorKey, other.descriptorKey)) {
                 return false;
             }
 

@@ -1,12 +1,12 @@
 module api.data {
 
-    export class RootDataSet extends api.data.DataSet implements api.Equitable {
+    export class RootDataSet extends api.data.DataSet implements api.Equitable, api.Cloneable {
 
         constructor() {
             super("");
         }
 
-        getParent(): Data {
+        getParent(): DataSet {
             return null;
         }
 
@@ -37,6 +37,17 @@ module api.data {
             }
 
             return super.equals(o);
+        }
+
+        clone(): RootDataSet {
+
+            var clone = new RootDataSet();
+            clone.setArrayIndex(this.getArrayIndex());
+            clone.setParent(this.getParent());
+            this.getDataArray().forEach((data: Data) => {
+                clone.addData(data.clone());
+            });
+            return clone;
         }
     }
 }

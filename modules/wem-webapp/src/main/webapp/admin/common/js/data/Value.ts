@@ -1,6 +1,6 @@
 module api.data {
 
-    export class Value implements api.Equitable {
+    export class Value implements api.Equitable, api.Cloneable {
 
         private value: Object;
 
@@ -41,21 +41,26 @@ module api.data {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof Value)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Value)) {
                 return false;
             }
 
             var other = <Value>o;
 
-            if (!api.EquitableHelper.objectEquals(this.value, other.value)) {
+            if (!api.ObjectHelper.objectEquals(this.value, other.value)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.equals(this.type, other.type)) {
+            if (!api.ObjectHelper.equals(this.type, other.type)) {
                 return false;
             }
 
             return true;
+        }
+
+        clone(): Value {
+
+            return new Value(this.value, this.type);
         }
     }
 }

@@ -30,17 +30,17 @@ module api.content.site {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof Vendor)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Vendor)) {
                 return false;
             }
 
             var other = <Vendor>o;
 
-            if (!api.EquitableHelper.stringEquals(this.name, other.name)) {
+            if (!api.ObjectHelper.stringEquals(this.name, other.name)) {
                 return false;
             }
 
-            if (!api.EquitableHelper.stringEquals(this.url, other.url)) {
+            if (!api.ObjectHelper.stringEquals(this.url, other.url)) {
                 return false;
             }
 
