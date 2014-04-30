@@ -37,4 +37,14 @@
 
   </feature>
 
+  <feature name="wem-xml" version="${project.version}" description="Enonic WEM Xml Feature">
+
+    <!-- Required features -->
+    <feature>wem-api</feature>
+
+    <!-- WEM Guice artifact -->
+    <bundle>mvn:com.enonic.wem/wem-xml/${project.version}</bundle>
+
+  </feature>
+
 </features>
