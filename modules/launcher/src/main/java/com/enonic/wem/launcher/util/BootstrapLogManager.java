@@ -39,15 +39,6 @@ public class BootstrapLogManager
         this.handler = null;
     }
 
-    public static synchronized Handler getDefaultHandler()
-    {
-        if ( instance == null )
-        {
-            throw new IllegalStateException( "Properties must be set before calling getDefaultHandler" );
-        }
-        return instance.getDefaultHandlerInternal();
-    }
-
     public static void setProperties( Properties configProps )
     {
         setProperties( configProps, null );
@@ -56,26 +47,6 @@ public class BootstrapLogManager
     public static void setProperties( Properties configProps, String log4jConfigPath )
     {
         instance = new BootstrapLogManager( configProps, log4jConfigPath );
-    }
-
-    private Handler getDefaultHandlerInternal()
-    {
-        if ( handler != null )
-        {
-            return handler;
-        }
-
-        String filename = getLogFilePath();
-        filename = InterpolationHelper.substVars( filename, LOG4J_APPENDER_FILE, null, configProps );
-        File logFile = new File( filename );
-        try
-        {
-            return new SimpleFileHandler( logFile );
-        }
-        catch ( IOException e )
-        {
-            throw new RuntimeException( e.getMessage(), e );
-        }
     }
 
     private Properties loadPaxLoggingConfig()

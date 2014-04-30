@@ -1,26 +1,25 @@
 package com.enonic.wem.launcher;
 
-import java.io.File;
+import java.util.List;
+import java.util.ServiceLoader;
+import java.util.logging.Logger;
 
 import org.apache.felix.framework.Felix;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleEvent;
-import org.osgi.framework.BundleListener;
-import org.osgi.framework.startlevel.BundleStartLevel;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.startlevel.FrameworkStartLevel;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.launcher.config.ConfigLoader;
 import com.enonic.wem.launcher.config.ConfigProperties;
 import com.enonic.wem.launcher.home.HomeDir;
 import com.enonic.wem.launcher.home.HomeResolver;
+import com.enonic.wem.launcher.provision.ProvisionActivator;
 import com.enonic.wem.launcher.util.BannerBuilder;
 import com.enonic.wem.launcher.util.SystemProperties;
 
 public final class Launcher
+    implements SharedConstants
 {
     private final SystemProperties systemProperties;
 
@@ -48,9 +47,6 @@ public final class Launcher
         this.configuration = loader.load();
         this.configuration.putAll( this.systemProperties );
         this.configuration.interpolate();
-
-        // Put this into system.properties as soon as it's stable
-        this.configuration.put( "org.osgi.framework.startlevel.beginning", "3" );
     }
 
     private void printBanner()
@@ -60,6 +56,12 @@ public final class Launcher
 
     private void createFramework()
     {
+        /*
+        final Map<String, Object> map = Maps.newHashMap();
+        map.putAll( this.configuration );
+        map.put( SYSTEMBUNDLE_ACTIVATORS_PROP, getActivators() );
+        */
+
         this.felix = new Felix( this.configuration );
     }
 
@@ -71,70 +73,35 @@ public final class Launcher
         loadConfiguration();
         createFramework();
 
+        this.felix.init();
         this.felix.start();
 
-        this.felix.getBundleContext().addBundleListener( new BundleListener()
-        {
-            @Override
-            public void bundleChanged( final BundleEvent event )
-            {
-                System.out.println( " -> " + event );
-            }
-        } );
+        final FrameworkStartLevel sl = this.felix.adapt( FrameworkStartLevel.class );
+        sl.setInitialBundleStartLevel( 1 );
+        sl.setStartLevel( 1 );
 
-        installBundles();
+        new ProvisionActivator().start( this.felix.getBundleContext() );
 
-        for ( final Bundle bundle : this.felix.getBundleContext().getBundles() )
-        {
-            System.out.println( bundle.getSymbolicName() + " - " + ( bundle.getState() == Bundle.ACTIVE ) );
-        }
-
+        sl.setStartLevel( 20 );
         this.felix.stop();
+        this.felix.waitForStop( 0 );
     }
 
-    private void installBundles()
-        throws Exception
+    private List<BundleActivator> getActivators()
     {
-        installBundle( "org.apache.felix/org.apache.felix.configadmin/1.8.0", 5 );
-        installBundle( "org.ops4j.pax.logging/pax-logging-api/1.7.2", 5 );
-        installBundle( "org.ops4j.pax.logging/pax-logging-service/1.7.2", 5 );
-        // installBundle( "org.apache.felix/org.apache.felix.fileinstall/3.4.0", 5 );
-        installBundle( "org.ops4j.pax.url/pax-url-aether/2.0.0", 5 );
-    }
-
-    private File mavenGavToFile( final String gav )
-    {
-        final Iterable<String> it = Splitter.on( '/' ).omitEmptyStrings().trimResults().split( gav );
-        return mavenGavToFile( Iterables.toArray( it, String.class ) );
-    }
-
-    private File mavenGavToFile( final String[] gav )
-    {
-        Preconditions.checkArgument( gav.length == 3, "GAV shoud have 3 parts" );
-        final File bundlesDir = new File( "/Users/srs/.m2/repository" );
-
-        final File groupDir = new File( bundlesDir, gav[0].replace( '.', '/' ) );
-        final File artifactDir = new File( groupDir, gav[1] );
-        final File versionDir = new File( artifactDir, gav[2] );
-
-        return new File( versionDir, gav[1] + "-" + gav[2] + ".jar" );
-    }
-
-    private void installBundle( final String name, final int startLevel )
-        throws Exception
-    {
-        final BundleContext context = this.felix.getBundleContext();
-        final File file = mavenGavToFile( name );
-
-        final Bundle bundle = context.installBundle( file.toURI().toString() );
-        bundle.adapt( BundleStartLevel.class ).setStartLevel( startLevel );
-        bundle.start();
+        final ServiceLoader<BundleActivator> services = ServiceLoader.load( BundleActivator.class );
+        return ImmutableList.copyOf( services );
     }
 
     public static void main( final String... args )
         throws Exception
     {
-        /*System.setProperty( "wem.home", "/Users/srs/development/cms-homes/wem-home" );
-        new Launcher().start();*/
+        System.setProperty( "wem.home", "/Users/srs/development/cms-homes/wem-home" );
+        System.setProperty( "karaf.startLocalConsole", "true" );
+
+        for ( int i = 0; i < 10; i++ )
+        {
+            new Launcher().start();
+        }
     }
 }
