@@ -78,10 +78,6 @@ module api.data {
             return new Property(json.name, value);
         }
 
-        static fromStrings(name: string, valueAsString: string, type: string) {
-            return new Property(name, new Value(valueAsString, ValueTypes.fromName(type)));
-        }
-
         static fromNameValue(name: string, value: Value) {
             return new Property(name, value);
         }

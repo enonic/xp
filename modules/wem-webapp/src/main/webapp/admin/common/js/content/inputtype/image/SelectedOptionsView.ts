@@ -309,7 +309,7 @@ module api.content.inputtype.image {
             oldIndexes.forEach((index: number, arrayPosition: number) => {
                 if (index != arrayPosition) {
                     var option = this.getSelectedOptions().getSelectedOption(arrayPosition).getOption();
-                    var value = new api.data.Value(option.value, api.data.ValueTypes.CONTENT_ID);
+                    var value = new api.data.Value(option.displayValue.getContentId(), api.data.ValueTypes.CONTENT_ID);
                     var event = new ValueChangedEvent(value, arrayPosition);
                     this.notifyValueChanged(event);
                 }

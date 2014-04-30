@@ -122,7 +122,7 @@ module app.wizard {
             this.createSite = params.createSite;
             this.siteTemplate = params.siteTemplate;
             if (this.createSite || params.persistedContent != null && params.persistedContent.isSite()) {
-                this.siteWizardStepForm = new app.wizard.site.SiteWizardStepForm(this.siteTemplate);
+                this.siteWizardStepForm = new app.wizard.site.SiteWizardStepForm(this.siteTemplate, this.contentType);
             }
             else {
                 this.siteWizardStepForm = null;
@@ -342,7 +342,7 @@ module app.wizard {
         private doRenderExistingSite(content: Content, formContext: FormContext): Q.Promise<void> {
 
             if (this.siteWizardStepForm != null && content.getSite()) {
-                return this.siteWizardStepForm.renderExisting(formContext, content.getSite(), this.contentType);
+                return this.siteWizardStepForm.renderExisting(formContext, content.getSite());
             }
             else {
                 var deferred = Q.defer<void>();

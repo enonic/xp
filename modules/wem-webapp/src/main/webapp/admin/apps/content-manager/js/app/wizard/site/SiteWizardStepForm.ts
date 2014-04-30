@@ -1,38 +1,36 @@
 module app.wizard.site {
 
     import SiteTemplate = api.content.site.template.SiteTemplate;
+    import ContentType = api.schema.content.ContentType;
+    import Site = api.content.site.Site;
 
     export class SiteWizardStepForm extends api.app.wizard.WizardStepForm {
 
         private formContext: api.form.FormContext;
 
-        private contentType: api.schema.content.ContentType;
-
         private moduleConfigsByKey: api.content.site.ModuleConfig[];
 
         private siteTemplate: SiteTemplate;
 
-        private templateView: TemplateView;
+        private siteTemplateView: SiteTemplateView;
 
         private moduleViewsContainer: api.dom.DivEl;
 
         private moduleViews: ModuleView[] = [];
 
-        constructor(siteTemplate: SiteTemplate) {
+        constructor(siteTemplate: SiteTemplate, contentType: ContentType) {
             super("site-wizard-step-form");
 
             this.siteTemplate = siteTemplate;
-            this.templateView = new TemplateView();
-            this.appendChild(this.templateView);
+            this.siteTemplateView = new SiteTemplateView(contentType);
+            this.appendChild(this.siteTemplateView);
             this.moduleViewsContainer = new api.dom.DivEl();
             this.appendChild(this.moduleViewsContainer);
         }
 
-        public renderExisting(context: api.form.FormContext, site: api.content.site.Site,
-                              contentType: api.schema.content.ContentType): Q.Promise<void> {
+        public renderExisting(context: api.form.FormContext, site: Site): Q.Promise<void> {
 
             this.formContext = context;
-            this.contentType = contentType;
 
             this.moduleConfigsByKey = [];
             var moduleConfigs: api.content.site.ModuleConfig[] = site.getModuleConfigs();
@@ -40,7 +38,7 @@ module app.wizard.site {
                 this.moduleConfigsByKey[moduleConfigs[i].getModuleKey().toString()] = moduleConfigs[i];
             }
 
-            this.templateView.setValue(this.siteTemplate, this.contentType);
+            this.siteTemplateView.setValue(this.siteTemplate);
 
             return this.loadModules(site).
                 then((modules: api.module.Module[]): void => {
@@ -62,7 +60,7 @@ module app.wizard.site {
             return moduleConfigs;
         }
 
-        private loadModules(site: api.content.site.Site): Q.Promise<api.module.Module[]> {
+        private loadModules(site: Site): Q.Promise<api.module.Module[]> {
 
             var moduleRequestPromises = site.getModuleConfigs().map((moduleConfig: api.content.site.ModuleConfig) => {
                 return new api.module.GetModuleRequest(moduleConfig.getModuleKey()).sendAndParse();
