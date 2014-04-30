@@ -216,11 +216,13 @@ module api.ui {
 
             if (this.isHorizontal()) {
                 this.removeClass("vertical");
+                this.addClass("horizontal");
                 this.firstPanel.getEl().setWidth(null);
                 this.secondPanel.getEl().setWidth(null);
                 this.splitter.getEl().setHeightPx(this.splitterThickness).setWidth(null).setLeft(null);
             } else {
                 this.addClass("vertical");
+                this.removeClass("horizontal");
                 this.firstPanel.getEl().setHeight(null);
                 this.secondPanel.getEl().setHeight(null);
                 this.splitter.getEl().setWidthPx(this.splitterThickness).setHeight(null);
