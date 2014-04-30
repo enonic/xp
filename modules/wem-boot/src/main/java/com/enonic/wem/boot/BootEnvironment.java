@@ -1,12 +1,18 @@
 package com.enonic.wem.boot;
 
-import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.api.Version;
 import com.enonic.wem.core.home.HomeDir;
 import com.enonic.wem.core.home.HomeResolver;
+
+import static com.google.common.base.StandardSystemProperty.JAVA_VENDOR;
+import static com.google.common.base.StandardSystemProperty.JAVA_VERSION;
+import static com.google.common.base.StandardSystemProperty.JAVA_VM_NAME;
+import static com.google.common.base.StandardSystemProperty.OS_ARCH;
+import static com.google.common.base.StandardSystemProperty.OS_NAME;
+import static com.google.common.base.StandardSystemProperty.OS_VERSION;
 
 final class BootEnvironment
 {
@@ -68,18 +74,12 @@ final class BootEnvironment
 
     private String getFormattedJvmInfo()
     {
-        final StringBuilder str = new StringBuilder();
-        str.append( SystemUtils.JAVA_RUNTIME_NAME ).append( " " ).append( SystemUtils.JAVA_RUNTIME_VERSION ).append( " (" ).append(
-            SystemUtils.JAVA_VENDOR ).append( ")" );
-        return str.toString();
+        return String.format( "%s %s (%s)", JAVA_VM_NAME.value(), JAVA_VERSION.value(), JAVA_VENDOR.value() );
     }
 
     private String getFormattedOsInfo()
     {
-        final StringBuilder str = new StringBuilder();
-        str.append( SystemUtils.OS_NAME ).append( " " ).append( SystemUtils.OS_VERSION ).append( " (" ).append(
-            SystemUtils.OS_ARCH ).append( ")" );
-        return str.toString();
+        return String.format( "%s %s (%s)", OS_NAME.value(), OS_VERSION.value(), OS_ARCH.value() );
     }
 
     private void setSystemProperties()
