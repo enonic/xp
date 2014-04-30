@@ -56,4 +56,20 @@ module api.util {
         });
         return filteredElements;
     }
+
+    export function substringBetween(str: string, left: string, right: string) {
+        if ((typeof str === "undefined") || (str === null) || (typeof left === "undefined") || (left === null) ||
+            (typeof right === "undefined") || (right === null)) {
+            return '';
+        }
+        var start = str.indexOf(left);
+        if (start !== -1) {
+            var end = str.indexOf(right, start + left.length);
+            if (end !== -1) {
+                return str.substring(start + left.length, end);
+            }
+        }
+        return '';
+    }
+
 }
