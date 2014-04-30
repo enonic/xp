@@ -11,7 +11,7 @@
   </parent>
 
   <artifactId>wem-xml</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Enonic WEM Xml</name>
 
   <dependencies>
@@ -39,15 +39,6 @@
           <schemaIncludes>
             <include>**/model.xsd</include>
           </schemaIncludes>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <configuration>
-          <instructions>
-            <Export-Package>com.enonic.wem.xml.*</Export-Package>
-          </instructions>
         </configuration>
       </plugin>
     </plugins>

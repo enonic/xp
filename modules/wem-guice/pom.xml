@@ -11,7 +11,7 @@
   </parent>
 
   <artifactId>wem-guice</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Enonic WEM Guice</name>
 
   <dependencies>
@@ -29,12 +29,6 @@
       <groupId>com.google.inject.extensions</groupId>
       <artifactId>guice-multibindings</artifactId>
       <version>3.0</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>guice</artifactId>
-          <groupId>com.google.inject</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.ops4j</groupId>
@@ -43,19 +37,5 @@
     </dependency>
   </dependencies>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <configuration>
-          <instructions>
-            <Export-Package>com.enonic.wem.guice.*</Export-Package>
-          </instructions>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-
 </project>
-        
+
