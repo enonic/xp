@@ -305,6 +305,10 @@ module api.content.inputtype.image {
                 this.validate(false);
             });
 
+            this.selectedOptionsView.onValueChanged((event: api.form.inputtype.ValueChangedEvent) => {
+                this.notifyValueChanged(event);
+            });
+
             var comboBoxConfig = <ComboBoxConfig<ContentSummary>> {
                 hideComboBoxWhenMaxReached: true,
                 optionDisplayValueViewer: new ContentSummaryViewer(),

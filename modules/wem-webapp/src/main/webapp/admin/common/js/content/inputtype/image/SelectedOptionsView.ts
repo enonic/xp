@@ -2,6 +2,7 @@ module api.content.inputtype.image {
 
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import ContentSummary = api.content.ContentSummary;
+    import ValueChangedEvent = api.form.inputtype.ValueChangedEvent;
 
     export class SelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<ContentSummary> {
 
@@ -19,6 +20,8 @@ module api.content.inputtype.image {
 
         private removeSelectedOptionsListeners: {(option: SelectedOption<ContentSummary>[]): void}[] = [];
 
+        private valueChangedListeners: {(event: ValueChangedEvent) : void}[] = [];
+
         private mouseClickListener: {(MouseEvent): void};
 
         constructor() {
@@ -27,6 +30,13 @@ module api.content.inputtype.image {
             this.dialog = new ImageSelectorDialog();
             this.dialog.hide();
             this.appendChild(this.dialog);
+
+            jQuery(this.getHTMLElement()).sortable({
+                containment: this.getHTMLElement(),
+                cursor: 'move',
+                tolerance: 'pointer',
+                update: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDUpdate()
+            });
 
             this.toolbar = new SelectionToolbar();
             this.toolbar.hide();
@@ -142,6 +152,7 @@ module api.content.inputtype.image {
 
             optionView.getIcon().onLoaded((event: UIEvent) => {
                 this.updateOptionViewLayout(optionView, this.calculateOptionHeight());
+                jQuery(this.getHTMLElement()).sortable("refresh");
             });
 
             optionView.insertBeforeEl(this.toolbar);
@@ -186,6 +197,8 @@ module api.content.inputtype.image {
                 this.dialog.show();
                 this.updateDialogLayout(this.calculateOptionHeight());
             }
+
+            jQuery(this.getHTMLElement()).sortable("disable");
         }
 
         updateLayout() {
@@ -226,6 +239,8 @@ module api.content.inputtype.image {
         private hideImageSelectorDialog() {
             this.dialog.hide();
             this.activeOption.getOptionView().removeClass('editing first-in-row last-in-row');
+            jQuery(this.getHTMLElement()).sortable("enable");
+
             api.dom.Body.get().unClicked(this.mouseClickListener);
         }
 
@@ -258,6 +273,64 @@ module api.content.inputtype.image {
             return index == this.getSelectedOptionViews().length - 1;
         }
 
+        private handleDnDUpdate() {
+            var orderedOptions = this.resolveViewsInOrderAccordingToDOM();
+
+            orderedOptions.forEach((view: SelectedOptionView, index: number) => {
+                this.getSelectedOptions().getByView(view).setIndex(index);
+            });
+
+            this.reorderOptionsAccordingToNewIndexes();
+        }
+
+        private resolveViewsInOrderAccordingToDOM(): SelectedOptionView[] {
+            var orderedOptions: SelectedOptionView[] = [];
+
+            var optionViews = this.getSelectedOptions().getOptionViews();
+
+            var domChildren = this.getHTMLElement().children;
+            for (var i = 0; i < domChildren.length; i++) {
+                var domChild = <HTMLElement> domChildren[i];
+                var childEl = optionViews.filter((optionView: SelectedOptionView) => (optionView.getHTMLElement() == domChild))[0];
+                if (childEl) {
+                    orderedOptions.push(<SelectedOptionView>childEl);
+                }
+            }
+
+            return orderedOptions;
+        }
+
+        private reorderOptionsAccordingToNewIndexes() {
+
+            var oldIndexes = this.getSelectedOptions().getIndexes();
+
+            this.getSelectedOptions().reorderAccordingToIndexes();
+
+            oldIndexes.forEach((index: number, arrayPosition: number) => {
+                if (index != arrayPosition) {
+                    var option = this.getSelectedOptions().getSelectedOption(arrayPosition).getOption();
+                    var value = new api.data.Value(option.value, api.data.ValueTypes.CONTENT_ID);
+                    var event = new ValueChangedEvent(value, arrayPosition);
+                    this.notifyValueChanged(event);
+                }
+            });
+        }
+
+        onValueChanged(listener: (event: ValueChangedEvent) => void) {
+            this.valueChangedListeners.push(listener);
+        }
+
+        unValueChanged(listener: (event: ValueChangedEvent) => void) {
+            this.valueChangedListeners.filter((currentListener: (event: ValueChangedEvent)=>void) => {
+                return listener == currentListener;
+            });
+        }
+
+        private notifyValueChanged(event: ValueChangedEvent) {
+            this.valueChangedListeners.forEach((listener: (event: ValueChangedEvent)=>void) => {
+                listener(event);
+            });
+        }
     }
 
 }

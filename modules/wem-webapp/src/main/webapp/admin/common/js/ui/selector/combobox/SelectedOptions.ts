@@ -13,43 +13,27 @@ module api.ui.selector.combobox {
         }
 
         getOptions():api.ui.selector.Option<T>[] {
-            var options:api.ui.selector.Option<T>[] = [];
-            this.list.forEach( (selectedOption:SelectedOption<T>) => {
-                options.push(selectedOption.getOption());
-            } );
-            return options;
+            return this.list.map( (selectedOption:SelectedOption<T>) => selectedOption.getOption() );
         }
 
         getOptionViews():SelectedOptionView<T>[] {
-            var options:SelectedOptionView<T>[] = [];
-            this.list.forEach( (selectedOption:SelectedOption<T>) => {
-                options.push(selectedOption.getOptionView());
-            } );
-            return options;
+            return this.list.map( (selectedOption:SelectedOption<T>) => selectedOption.getOptionView() );
         }
 
         add(selectedOption:SelectedOption<T>) {
             this.list.push(selectedOption);
         }
 
-        getByView(view:SelectedOptionView<T>) {
-
-            for(var i = 0; i < this.list.length; i++) {
-                if( this.list[i].getOptionView() == view ) {
-                    return this.list[i];
-                }
-            }
-            return null;
+        getByView(view:SelectedOptionView<T>): SelectedOption<T> {
+            return this.list.filter((selectedOption: SelectedOption<T>) => {
+                return selectedOption.getOptionView() == view;
+            })[0];
         }
 
         getByOption(option:api.ui.selector.Option<T>):SelectedOption<T> {
-
-            for(var i = 0; i < this.list.length; i++) {
-                if( this.list[i].getOption() == option ) {
-                    return this.list[i];
-                }
-            }
-            return null;
+            return this.list.filter((selectedOption: SelectedOption<T>) => {
+                return selectedOption.getOption() == option;
+            })[0];
         }
 
         remove(selectedOption:SelectedOption<T>) {
@@ -57,6 +41,16 @@ module api.ui.selector.combobox {
             this.list = this.list.filter( (option:SelectedOption<T>) => {
                 return option.getOption().value != selectedOption.getOption().value;
             });
+        }
+
+        reorderAccordingToIndexes() {
+            this.list.sort((a: SelectedOption<T>, b: SelectedOption<T>) => {
+                return a.getIndex() - b.getIndex();
+            });
+        }
+
+        getIndexes(): number[] {
+            return this.list.map((option: SelectedOption<T>) => option.getIndex());
         }
     }
 }
