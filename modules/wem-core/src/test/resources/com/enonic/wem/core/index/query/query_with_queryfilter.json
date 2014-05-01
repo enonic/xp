@@ -16,7 +16,7 @@
         },
         "filter": {
             "terms": {
-                "myfield": ["myValue", "mySecondValue"]
+                "myfield": ["myValue1", "myValue2"]
             }
         }
     }

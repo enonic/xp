@@ -40,8 +40,8 @@ class QueryBuilderFactoryTest
 
         def queryFilter = Filter.newValueQueryFilter().
             fieldName( "myField" ).
-            add( new Value.String( "myValue" ) ).
-            add( new Value.String( "mySecondValue" ) ).
+            add( new Value.String( "myValue1" ) ).
+            add( new Value.String( "myValue2" ) ).
             build()
 
         Set<Filter> queryFilters = Sets.newHashSet();
@@ -55,35 +55,4 @@ class QueryBuilderFactoryTest
         then:
         cleanString( expected ) == cleanString( builtQuery.toString() )
     }
-
-    @Ignore // Since the order of the two filters are random goddamnit!
-    def "create query with two queryfilters"()
-    {
-        given:
-        QueryBuilderFactory factory = new QueryBuilderFactory();
-        def expected = this.getClass().getResource( "query_with_2_queryfilters.json" ).text
-
-        def queryFilter1 = Filter.newValueQueryFilter().
-            fieldName( "myField" ).
-            add( new Value.String( "myValue" ) ).
-            add( new Value.String( "mySecondValue" ) ).
-            build()
-
-        def queryFilter2 = Filter.newExistsFilter( "myField" )
-
-        Set<Filter> queryFilters = Sets.newHashSet();
-        queryFilters.add( queryFilter1 );
-        queryFilters.add( queryFilter2 );
-
-        def query = QueryParser.parse( "not( myField > 1) " )
-
-        when:
-        def builtQuery = factory.create( query, ImmutableSet.copyOf( queryFilters ) )
-
-        then:
-
-        cleanString( expected ) == cleanString( builtQuery.toString() )
-    }
-
-
 }
