@@ -10,7 +10,6 @@ import org.codehaus.jparsec.Terminals;
 import org.codehaus.jparsec.Tokens;
 import org.codehaus.jparsec.functors.Binary;
 import org.codehaus.jparsec.functors.Unary;
-import org.codehaus.jparsec.misc.Mapper;
 import org.codehaus.jparsec.pattern.Patterns;
 
 import com.enonic.wem.api.query.expr.CompareExpr;
@@ -106,7 +105,7 @@ final class QueryGrammar
 
     private Parser<?> term( final String term )
     {
-        return Mapper._( this.terminals.token( term ) );
+        return this.terminals.token( term ).map( QueryMapper.skip() );
     }
 
     private Parser<FieldExpr> parseField()

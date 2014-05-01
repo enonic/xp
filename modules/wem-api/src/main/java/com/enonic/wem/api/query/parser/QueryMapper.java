@@ -26,179 +26,84 @@ final class QueryMapper
 {
     public static Map<String, ValueExpr> stringValueExpr()
     {
-        return new Map<String, ValueExpr>()
-        {
-            @Override
-            public ValueExpr map( final String value )
-            {
-                return ValueExpr.string( value );
-            }
-        };
+        return ValueExpr::string;
     }
 
     public static Map<String, ValueExpr> numberValueExpr()
     {
-        return new Map<String, ValueExpr>()
-        {
-            @Override
-            public ValueExpr map( final String value )
-            {
-                final Double number = Double.parseDouble( value );
-                return ValueExpr.number( number );
-            }
+        return value -> {
+            final Double number = Double.parseDouble( value );
+            return ValueExpr.number( number );
         };
     }
 
     public static Map2<ConstraintExpr, List<OrderExpr>, QueryExpr> queryExpr()
     {
-        return new Map2<ConstraintExpr, List<OrderExpr>, QueryExpr>()
-        {
-            @Override
-            public QueryExpr map( final ConstraintExpr constraint, final List<OrderExpr> orderList )
-            {
-                return new QueryExpr( constraint, orderList );
-            }
-        };
+        return QueryExpr::new;
     }
 
     public static Map<String, FieldExpr> fieldExpr()
     {
-        return new Map<String, FieldExpr>()
-        {
-            @Override
-            public FieldExpr map( final String value )
-            {
-                return new FieldExpr( value );
-            }
-        };
+        return FieldExpr::new;
     }
 
     public static Map<String, Tokens.Fragment> fragment( final String tag )
     {
-        return new Map<String, Tokens.Fragment>()
-        {
-            public Tokens.Fragment map( final String from )
-            {
-                return Tokens.fragment( from, tag );
-            }
-        };
+        return from -> Tokens.fragment( from, tag );
     }
 
     public static Unary<ConstraintExpr> notExpr()
     {
-        return new Unary<ConstraintExpr>()
-        {
-            @Override
-            public ConstraintExpr map( final ConstraintExpr expr )
-            {
-                return new NotExpr( expr );
-            }
-        };
+        return NotExpr::new;
     }
 
     public static Binary<ConstraintExpr> andExpr()
     {
-        return new Binary<ConstraintExpr>()
-        {
-            public ConstraintExpr map( final ConstraintExpr left, final ConstraintExpr right )
-            {
-                return LogicalExpr.and( left, right );
-            }
-        };
+        return LogicalExpr::and;
     }
 
     public static Binary<ConstraintExpr> orExpr()
     {
-        return new Binary<ConstraintExpr>()
-        {
-            public ConstraintExpr map( final ConstraintExpr left, final ConstraintExpr right )
-            {
-                return LogicalExpr.or( left, right );
-            }
-        };
+        return LogicalExpr::or;
     }
 
     public static Map3<FieldExpr, CompareExpr.Operator, ValueExpr, CompareExpr> compareValueExpr()
     {
-        return new Map3<FieldExpr, CompareExpr.Operator, ValueExpr, CompareExpr>()
-        {
-            @Override
-            public CompareExpr map( final FieldExpr field, final CompareExpr.Operator operator, final ValueExpr value )
-            {
-                return CompareExpr.create( field, operator, value );
-            }
-        };
+        return CompareExpr::create;
     }
 
     public static Map3<FieldExpr, CompareExpr.Operator, List<ValueExpr>, CompareExpr> compareValuesExpr()
     {
-        return new Map3<FieldExpr, CompareExpr.Operator, List<ValueExpr>, CompareExpr>()
-        {
-            @Override
-            public CompareExpr map( final FieldExpr field, final CompareExpr.Operator operator, final List<ValueExpr> value )
-            {
-                return CompareExpr.create( field, operator, value );
-            }
-        };
+        return CompareExpr::create;
     }
 
     public static Map2<String, List<ValueExpr>, FunctionExpr> functionExpr()
     {
-        return new Map2<String, List<ValueExpr>, FunctionExpr>()
-        {
-            @Override
-            public FunctionExpr map( final String name, final List<ValueExpr> args )
-            {
-                return new FunctionExpr( name, args );
-            }
-        };
+        return FunctionExpr::new;
     }
 
     public static Map<FunctionExpr, DynamicConstraintExpr> dynamicConstraintExpr()
     {
-        return new Map<FunctionExpr, DynamicConstraintExpr>()
-        {
-            @Override
-            public DynamicConstraintExpr map( final FunctionExpr function )
-            {
-                return new DynamicConstraintExpr( function );
-            }
-        };
+        return DynamicConstraintExpr::new;
     }
 
     public static Map2<FieldExpr, OrderExpr.Direction, FieldOrderExpr> fieldOrderExpr()
     {
-        return new Map2<FieldExpr, OrderExpr.Direction, FieldOrderExpr>()
-        {
-            @Override
-            public FieldOrderExpr map( final FieldExpr field, final OrderExpr.Direction direction )
-            {
-                return new FieldOrderExpr( field, direction );
-            }
-        };
+        return FieldOrderExpr::new;
     }
 
     public static Map2<FunctionExpr, OrderExpr.Direction, DynamicOrderExpr> dynamicOrderExpr()
     {
-        return new Map2<FunctionExpr, OrderExpr.Direction, DynamicOrderExpr>()
-        {
-            @Override
-            public DynamicOrderExpr map( final FunctionExpr function, final OrderExpr.Direction direction )
-            {
-                return new DynamicOrderExpr( function, direction );
-            }
-        };
+        return DynamicOrderExpr::new;
     }
 
     public static Map<FunctionExpr, ValueExpr> executeValueFunction()
     {
-        return new Map<FunctionExpr, ValueExpr>()
-        {
-            @Override
-            public ValueExpr map( final FunctionExpr function )
-            {
-                return StaticFunctions.execute( function );
-            }
-        };
+        return StaticFunctions::execute;
+    }
+
+    public static Unary<Object> skip()
+    {
+        return v -> v;
     }
 }
