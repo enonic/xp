@@ -22,25 +22,25 @@ public class ValueTest
             @Override
             public Object getObjectX()
             {
-                return new Value.String( "aaa" );
+                return Value.newString( "aaa" );
             }
 
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                return new Object[]{new Value.String( "bbb" ), new Value.HtmlPart( "aaa" )};
+                return new Object[]{Value.newString( "bbb" ), new Value.HtmlPart( "aaa" )};
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                return new Value.String( "aaa" );
+                return Value.newString( "aaa" );
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                return new Value.String( "aaa" );
+                return Value.newString( "aaa" );
             }
         };
         equalsTest.assertEqualsAndHashCodeContract();
@@ -49,7 +49,7 @@ public class ValueTest
     @Test
     public void isJavaType()
     {
-        assertTrue( new Value.String( "Some text" ).isJavaType( String.class ) );
+        assertTrue( Value.newString( "Some text" ).isJavaType( String.class ) );
         assertTrue( new Value.Boolean( false ).isJavaType( Boolean.class ));
         assertTrue( new Value.DateMidnight( org.joda.time.DateMidnight.now() ).isJavaType( org.joda.time.DateMidnight.class ) );
     }
@@ -84,20 +84,20 @@ public class ValueTest
     @Test(expected = InconvertibleValueException.class)
     public void convert_non_numeric_string_double()
     {
-        new Value.String( "test" ).asDouble();
+        Value.newString( "test" ).asDouble();
     }
 
     @Test
     public void convert_numeric_string_double()
     {
-        Double doubleValue = new Value.String( "123" ).asDouble();
+        Double doubleValue = Value.newString( "123" ).asDouble();
         assertEquals( 123.0, doubleValue );
     }
 
     @Test
     public void convert_numeric_string_with_point_double()
     {
-        Double doubleValue = new Value.String( "123.5" ).asDouble();
+        Double doubleValue = Value.newString( "123.5" ).asDouble();
         assertEquals( 123.5, doubleValue );
     }
 
@@ -105,7 +105,7 @@ public class ValueTest
     public void data()
     {
         RootDataSet data = new RootDataSet();
-        data.setProperty( "myProperty", new Value.String( "A" ) );
+        data.setProperty( "myProperty", Value.newString( "A" ) );
 
         Value value = new Value.Data( data );
         assertTrue( data.valueEquals( value.getData() ) );
@@ -125,7 +125,7 @@ public class ValueTest
         Value value = new Value.Data( dataAsString );
 
         RootDataSet expectedData = new RootDataSet();
-        expectedData.setProperty( "myProp", new Value.String( "a" ) );
+        expectedData.setProperty( "myProp", Value.newString( "a" ) );
         assertTrue( expectedData.valueEquals( value.getData() ) );
     }
 

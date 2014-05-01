@@ -37,7 +37,7 @@ public class ContentQueryEntityQueryTranslator
 
             for ( final ContentTypeName contentTypeName : contentTypeNames )
             {
-                contentTypeFilterBuilder.add( new Value.String( contentTypeName.toString() ) );
+                contentTypeFilterBuilder.add( Value.newString( contentTypeName.toString() ) );
             }
 
             builder.addQueryFilter( contentTypeFilterBuilder.build() );
@@ -51,7 +51,7 @@ public class ContentQueryEntityQueryTranslator
     {
         entityQueryBuilder.addQueryFilter( Filter.newValueQueryFilter().
             fieldName( IndexConstants.COLLECTION_FIELD ).
-            add( new Value.String( IndexConstants.CONTENT_COLLECTION_NAME ) ).
+            add( Value.newString( IndexConstants.CONTENT_COLLECTION_NAME ) ).
             build() );
     }
 

@@ -9,7 +9,7 @@ public class DateMidnight
 {
     DateMidnight( int key )
     {
-        super( key, JavaTypeConverter.DateMidnight.GET );
+        super( key, JavaTypeConverters.DATE_MIDNIGHT );
     }
 
     @Override

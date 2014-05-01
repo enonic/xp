@@ -27,8 +27,6 @@ public class NodeIndexDocumentFactory
 
     public static final String ENTITY_KEY = "_entity";
 
-    public static final IndexDocumentItemPath ENTITY_PROPERTY = IndexDocumentItemPath.from( ENTITY_KEY );
-
     protected static final IndexDocumentItemPath CREATOR_PROPERTY_PATH = IndexDocumentItemPath.from( "creator" );
 
     protected static final IndexDocumentItemPath MODIFIED_TIME_PROPERTY_PATH = IndexDocumentItemPath.from( "modifiedTime" );
@@ -97,7 +95,7 @@ public class NodeIndexDocumentFactory
 
         if ( node.name() != null )
         {
-            final Value.String nameValue = new Value.String( node.name().toString() );
+            final Value<String> nameValue = Value.newString( node.name().toString() );
             builder.addEntries( factory.create( NAME_PROPERTY, nameValue, namePropertyIndexConfig ) );
         }
 
@@ -109,7 +107,7 @@ public class NodeIndexDocumentFactory
 
         if ( node.getCreator() != null )
         {
-            builder.addEntries( factory.create( CREATOR_PROPERTY_PATH, new Value.String( node.getCreator().getQualifiedName() ),
+            builder.addEntries( factory.create( CREATOR_PROPERTY_PATH, Value.newString( node.getCreator().getQualifiedName() ),
                                                 metadataPropertyIndexConfig ) );
         }
 
@@ -121,20 +119,20 @@ public class NodeIndexDocumentFactory
 
         if ( node.getModifier() != null )
         {
-            builder.addEntries( factory.create( MODIFIER_PROPERTY_PATH, new Value.String( node.getModifier().getQualifiedName() ),
+            builder.addEntries( factory.create( MODIFIER_PROPERTY_PATH, Value.newString( node.getModifier().getQualifiedName() ),
                                                 metadataPropertyIndexConfig ) );
         }
 
         if ( node.path() != null )
         {
             builder.addEntries(
-                factory.create( PATH_PROPERTY_PATH, new Value.String( node.path().toString() ), metadataPropertyIndexConfig ) );
+                factory.create( PATH_PROPERTY_PATH, Value.newString( node.path().toString() ), metadataPropertyIndexConfig ) );
         }
 
         if ( node.parent() != null )
         {
             builder.addEntries(
-                factory.create( PARENT_PROPERTY_PATH, new Value.String( node.parent().toString() ), metadataPropertyIndexConfig ) );
+                factory.create( PARENT_PROPERTY_PATH, Value.newString( node.parent().toString() ), metadataPropertyIndexConfig ) );
         }
 
     }

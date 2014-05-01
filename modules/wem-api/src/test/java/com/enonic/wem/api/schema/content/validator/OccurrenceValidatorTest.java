@@ -41,8 +41,8 @@ public class OccurrenceValidatorTest
     {
         contentType.form().addFormItem( newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).maximumOccurrences( 1 ).build() );
         Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getContentData().setProperty( "myInput[0]", new Value.String( "1" ) );
-        content.getContentData().setProperty( "myInput[1]", new Value.String( "2" ) );
+        content.getContentData().setProperty( "myInput[0]", Value.newString( "1" ) );
+        content.getContentData().setProperty( "myInput[1]", Value.newString( "2" ) );
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getContentData() );
@@ -56,9 +56,9 @@ public class OccurrenceValidatorTest
     {
         contentType.form().addFormItem( newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).maximumOccurrences( 2 ).build() );
         Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getContentData().setProperty( "myInput[0]", new Value.String( "1" ) );
-        content.getContentData().setProperty( "myInput[1]", new Value.String( "2" ) );
-        content.getContentData().setProperty( "myInput[2]", new Value.String( "3" ) );
+        content.getContentData().setProperty( "myInput[0]", Value.newString( "1" ) );
+        content.getContentData().setProperty( "myInput[1]", Value.newString( "2" ) );
+        content.getContentData().setProperty( "myInput[2]", Value.newString( "3" ) );
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getContentData() );
@@ -72,7 +72,7 @@ public class OccurrenceValidatorTest
     {
         contentType.form().addFormItem( newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).required( true ).build() );
         Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getContentData().setProperty( "myInput", new Value.String( "value" ) );
+        content.getContentData().setProperty( "myInput", Value.newString( "value" ) );
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getContentData() );
@@ -95,7 +95,7 @@ public class OccurrenceValidatorTest
     {
         contentType.form().addFormItem( newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).minimumOccurrences( 1 ).build() );
         Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getContentData().setProperty( "myInput", new Value.String( "" ) );
+        content.getContentData().setProperty( "myInput", Value.newString( "" ) );
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getContentData() );
@@ -108,7 +108,7 @@ public class OccurrenceValidatorTest
     {
         contentType.form().addFormItem( newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).minimumOccurrences( 2 ).build() );
         Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getContentData().setProperty( "myInput", new Value.String( "value" ) );
+        content.getContentData().setProperty( "myInput", Value.newString( "value" ) );
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getContentData() );
@@ -122,8 +122,8 @@ public class OccurrenceValidatorTest
     {
         contentType.form().addFormItem( newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).minimumOccurrences( 3 ).build() );
         Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getContentData().setProperty( "myInput[0]", new Value.String( "value 1" ) );
-        content.getContentData().setProperty( "myInput[1]", new Value.String( "value 2" ) );
+        content.getContentData().setProperty( "myInput[0]", Value.newString( "value 1" ) );
+        content.getContentData().setProperty( "myInput[1]", Value.newString( "value 2" ) );
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getContentData() );
@@ -137,8 +137,8 @@ public class OccurrenceValidatorTest
     {
         contentType.form().addFormItem( newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).minimumOccurrences( 2 ).build() );
         Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getContentData().setProperty( "myInput[0]", new Value.String( "value 1" ) );
-        content.getContentData().setProperty( "myInput[1]", new Value.String( "" ) );
+        content.getContentData().setProperty( "myInput[0]", Value.newString( "value 1" ) );
+        content.getContentData().setProperty( "myInput[1]", Value.newString( "" ) );
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getContentData() );
@@ -183,7 +183,7 @@ public class OccurrenceValidatorTest
         FieldSet myLayout = newFieldSet().label( "My layout" ).name( "myLayout" ).addFormItem( mySet ).build();
         contentType.form().addFormItem( myLayout );
         Content content = newContent().path( MY_CONTENT_PATH ).build();
-        content.getContentData().setProperty( "mySet.myInput", new Value.String( "" ) );
+        content.getContentData().setProperty( "mySet.myInput", Value.newString( "" ) );
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getContentData() );
@@ -198,7 +198,7 @@ public class OccurrenceValidatorTest
         FormItemSet mySet = newFormItemSet().name( "mySet" ).required( true ).addFormItem( myInput ).build();
         contentType.form().addFormItem( mySet );
         Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getContentData().setProperty( "mySet.myInput", new Value.String( "" ) );
+        content.getContentData().setProperty( "mySet.myInput", Value.newString( "" ) );
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getContentData() );
@@ -215,7 +215,7 @@ public class OccurrenceValidatorTest
 
         contentType.form().addFormItem( myRequiredSet );
         Content content = newContent().path( MY_CONTENT_PATH ).build();
-        content.getContentData().setProperty( "mySet.myRequiredInput", new Value.String( "" ) );
+        content.getContentData().setProperty( "mySet.myRequiredInput", Value.newString( "" ) );
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getContentData() );
@@ -231,7 +231,7 @@ public class OccurrenceValidatorTest
         contentType.form().addFormItem( newFormItemSet().name( "mySet" ).required( true ).addFormItem(
             newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() ).build() );
         Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getContentData().setProperty( "mySet.myInput", new Value.String( "value" ) );
+        content.getContentData().setProperty( "mySet.myInput", Value.newString( "value" ) );
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getContentData() );
@@ -275,7 +275,7 @@ public class OccurrenceValidatorTest
         contentType.form().addFormItem(
             newInput().name( "myOtherRequiredInput" ).inputType( InputTypes.TEXT_LINE ).required( true ).build() );
         Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getContentData().setProperty( "mySet.myUnrequiredData", new Value.String( "1" ) );
+        content.getContentData().setProperty( "mySet.myUnrequiredData", Value.newString( "1" ) );
 
         assertEquals( "mySet.myRequiredInput", mySet.getInput( "myRequiredInput" ).getPath().toString() );
 
@@ -303,7 +303,7 @@ public class OccurrenceValidatorTest
         FormItemSet mySet = newFormItemSet().name( "mySet" ).required( false ).addFormItem( myInput ).build();
         contentType.form().addFormItem( mySet );
         Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getContentData().setProperty( "myData", new Value.String( "1" ) );
+        content.getContentData().setProperty( "myData", Value.newString( "1" ) );
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getContentData() );
@@ -318,8 +318,8 @@ public class OccurrenceValidatorTest
         FormItemSet mySet = newFormItemSet().name( "mySet" ).required( false ).multiple( true ).addFormItem( myInput ).build();
         contentType.form().addFormItem( mySet );
         Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getContentData().setProperty( "mySet[0].myRequiredInput", new Value.String( "1" ) );
-        content.getContentData().setProperty( "mySet[1].myRequiredInput", new Value.String( "" ) );
+        content.getContentData().setProperty( "mySet[0].myRequiredInput", Value.newString( "1" ) );
+        content.getContentData().setProperty( "mySet[1].myRequiredInput", Value.newString( "" ) );
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getContentData() );
@@ -345,11 +345,11 @@ public class OccurrenceValidatorTest
 
         Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
 
-        content.getContentData().setProperty( "name", new Value.String( "Thomas" ) );
-        content.getContentData().setProperty( "crimes[0].description", new Value.String( "Stole tomatoes from neighbour" ) );
-        content.getContentData().setProperty( "crimes[0].year", new Value.String( "1989" ) );
-        content.getContentData().setProperty( "crimes[1].description", new Value.String( "Stole a chocolate from the Matbua shop" ) );
-        content.getContentData().setProperty( "crimes[1].year", new Value.String( "1990" ) );
+        content.getContentData().setProperty( "name", Value.newString( "Thomas" ) );
+        content.getContentData().setProperty( "crimes[0].description", Value.newString( "Stole tomatoes from neighbour" ) );
+        content.getContentData().setProperty( "crimes[0].year", Value.newString( "1989" ) );
+        content.getContentData().setProperty( "crimes[1].description", Value.newString( "Stole a chocolate from the Matbua shop" ) );
+        content.getContentData().setProperty( "crimes[1].year", Value.newString( "1990" ) );
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getContentData() );

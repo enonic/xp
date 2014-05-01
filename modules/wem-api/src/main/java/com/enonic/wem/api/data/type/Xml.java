@@ -9,7 +9,7 @@ public class Xml
 {
     Xml( int key )
     {
-        super( key, JavaTypeConverter.String.GET );
+        super( key, JavaTypeConverters.STRING );
     }
 
     @Override

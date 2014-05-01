@@ -73,8 +73,8 @@ public class DataJsonTest
         throws IOException
     {
         RootDataSet dataPropertyValue = new RootDataSet();
-        dataPropertyValue.setProperty( "a", new Value.String( "1" ) );
-        dataPropertyValue.setProperty( "b", new Value.String( "2" ) );
+        dataPropertyValue.setProperty( "a", Value.newString( "1" ) );
+        dataPropertyValue.setProperty( "b", Value.newString( "2" ) );
         RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.setProperty( "mydata", new Value.Data( dataPropertyValue ) );
         RootDataSetJson rootDataSetJson = new RootDataSetJson( rootDataSet );

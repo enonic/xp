@@ -108,7 +108,7 @@ public class ContentDataSerializer
 
         if ( dataSet.hasData( DRAFT ) )
         {
-            builder.draft( new Boolean( dataSet.getProperty( DRAFT ).getString() ) );
+            builder.draft( Boolean.parseBoolean( dataSet.getProperty( DRAFT ).getString() ) );
         }
 
         return builder;
@@ -140,7 +140,7 @@ public class ContentDataSerializer
     {
         if ( value != null )
         {
-            rootDataSet.setProperty( propertyName, new Value.String( value.toString() ) );
+            rootDataSet.setProperty( propertyName, Value.newString( value.toString() ) );
         }
     }
 }

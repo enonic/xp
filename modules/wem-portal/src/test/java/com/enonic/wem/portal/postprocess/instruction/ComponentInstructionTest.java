@@ -109,7 +109,7 @@ public class ComponentInstructionTest
     private Content createPage( final String id, final String name, final String contentTypeName )
     {
         final RootDataSet rootDataSet = new RootDataSet();
-        final Property dataSet = new Property( "property1", new Value.String( "value1" ) );
+        final Property dataSet = new Property( "property1", Value.newString( "value1" ) );
         rootDataSet.add( dataSet );
 
         final Region region = newRegion().
@@ -141,7 +141,7 @@ public class ComponentInstructionTest
     {
         RootDataSet rootDataSet = new RootDataSet();
 
-        Property dataSet = new Property( "property1", new Value.String( "value1" ) );
+        Property dataSet = new Property( "property1", Value.newString( "value1" ) );
         rootDataSet.add( dataSet );
 
         Page page = Page.newPage().
@@ -166,14 +166,7 @@ public class ComponentInstructionTest
     private RendererFactory newRendererFactory( final String renderResult )
     {
         final RendererFactory rendererFactory = mock( RendererFactory.class );
-        final Renderer<Renderable> renderer = new Renderer<Renderable>()
-        {
-            @Override
-            public Response render( final Renderable component, final JsContext context )
-            {
-                return Response.ok( renderResult ).build();
-            }
-        };
+        final Renderer<Renderable> renderer = ( component, context ) -> Response.ok( renderResult ).build();
         when( rendererFactory.getRenderer( isA( Renderable.class ) ) ).thenReturn( renderer );
         return rendererFactory;
     }

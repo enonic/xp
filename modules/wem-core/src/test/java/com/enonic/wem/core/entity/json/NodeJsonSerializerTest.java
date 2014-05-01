@@ -31,7 +31,7 @@ public class NodeJsonSerializerTest
         RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.setProperty( DataPath.from( "a.b.c" ), new Value.Double( 2.0 ) );
         rootDataSet.setProperty( DataPath.from( "b" ), new Value.DateMidnight( DateMidnight.now() ) );
-        rootDataSet.setProperty( DataPath.from( "c" ), new Value.String( "runar" ) );
+        rootDataSet.setProperty( DataPath.from( "c" ), Value.newString( "runar" ) );
         // This will not work atm since JodaTime does not equal datetime with different time-zones
         //rootDataSet.setProperty( DataPath.from( "c" ), new Value.DateTime( DateTime.now() ) );
 

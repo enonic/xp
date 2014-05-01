@@ -150,7 +150,7 @@ public class SiteResourceTest
     {
         RootDataSet rootDataSet = new RootDataSet();
 
-        Property dataSet = new Property( "property1", new Value.String( "value1" ) );
+        Property dataSet = new Property( "property1", Value.newString( "value1" ) );
         rootDataSet.add( dataSet );
 
         ModuleConfig moduleConfig = ModuleConfig.newModuleConfig().
@@ -180,7 +180,7 @@ public class SiteResourceTest
     {
         RootDataSet rootDataSet = new RootDataSet();
 
-        Property dataSet = new Property( "property1", new Value.String( "value1" ) );
+        Property dataSet = new Property( "property1", Value.newString( "value1" ) );
         rootDataSet.add( dataSet );
 
         return Content.newContent().

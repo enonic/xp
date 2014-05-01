@@ -18,7 +18,7 @@ public class EntityQueryTest
         final EntityQuery entityQuery = EntityQuery.newEntityQuery().
             addFilter( FieldFilter.newValueQueryFilter().
                 fieldName( "myField" ).
-                add( new Value.String( "test1" ), new Value.String( "test2" ) ).
+                add( Value.newString( "test1" ), Value.newString( "test2" ) ).
                 build() ).
             addFilter( FieldFilter.newContentTypeFilter().
                 add( "myContentTypeId", "myOtherContentTypeId" ).

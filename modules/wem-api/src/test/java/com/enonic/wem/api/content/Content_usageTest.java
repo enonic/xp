@@ -32,7 +32,7 @@ public class Content_usageTest
         DataSet dataSet = new ContentData();
 
         // exercise
-        dataSet.setProperty( "myText", new Value.String( "abc" ) );
+        dataSet.setProperty( "myText", Value.newString( "abc" ) );
         dataSet.setProperty( "myNum", new Value.Long( 123 ) );
         dataSet.setProperty( "myDate", new Value.DateMidnight( new org.joda.time.DateMidnight( 2013, 1, 13 ) ) );
         dataSet.setProperty( "myDec", new Value.Double( 123.123 ) );
@@ -52,7 +52,7 @@ public class Content_usageTest
         DataSet dataSet = new ContentData();
 
         // exercise
-        dataSet.setProperty( "myText", new Value.String( "aaa" ), new Value.String( "bbb" ), new Value.String( "ccc" ) );
+        dataSet.setProperty( "myText", Value.newString( "aaa" ), Value.newString( "bbb" ), Value.newString( "ccc" ) );
 
         // verify
         assertEquals( "aaa", dataSet.getProperty( "myText" ).getString( 0 ) );
@@ -66,7 +66,7 @@ public class Content_usageTest
         DataSet dataSet = new ContentData();
 
         // exercise
-        dataSet.setProperty( "mySet.myText", new Value.String( "abc" ) );
+        dataSet.setProperty( "mySet.myText", Value.newString( "abc" ) );
         dataSet.setProperty( "mySet.myNum", new Value.Long( 123 ) );
         dataSet.setProperty( "mySet.myDate", new Value.DateMidnight( new org.joda.time.DateMidnight( 2013, 1, 13 ) ) );
         dataSet.setProperty( "mySet.myDec", new Value.Double( 123.123 ) );
@@ -164,7 +164,7 @@ public class Content_usageTest
         DataSet dataSet = new ContentData();
 
         // exercise
-        dataSet.addProperty( "myText", new Value.String( "abc" ) );
+        dataSet.addProperty( "myText", Value.newString( "abc" ) );
         dataSet.addProperty( "myNum", new Value.Long( 123 ) );
         dataSet.addProperty( "myDec", new Value.Double( 123.123 ) );
         dataSet.addProperty( "myDate", new Value.DateMidnight( new org.joda.time.DateMidnight( 2013, 1, 13 ) ) );
@@ -190,7 +190,7 @@ public class Content_usageTest
         ContentData contentData = new ContentData();
 
         // exercise
-        contentData.addProperty( "mySet.myText", new Value.String( "abc" ) );
+        contentData.addProperty( "mySet.myText", Value.newString( "abc" ) );
         contentData.addProperty( "mySet.myNum", new Value.Long( 123 ) );
         contentData.addProperty( "mySet.myDec", new Value.Double( 123.123 ) );
         contentData.addProperty( "mySet.myDate", new Value.DateMidnight( new org.joda.time.DateMidnight( 2013, 1, 13 ) ) );
@@ -360,12 +360,12 @@ public class Content_usageTest
 
         ContentData contentData = new ContentData();
         contentData.setProperty( "invoiceDate", new Value.DateMidnight( invoice.invoiceDate.toDateMidnight() ) );
-        contentData.setProperty( "recipient", new Value.String( invoice.recipient ) );
+        contentData.setProperty( "recipient", Value.newString( invoice.recipient ) );
 
         for ( InvoiceLine line : invoice.lines )
         {
             DataSet invoiceLine = new DataSet( "invoiceLine" );
-            invoiceLine.setProperty( "text", new Value.String( line.text ) );
+            invoiceLine.setProperty( "text", Value.newString( line.text ) );
             invoiceLine.setProperty( "money", myNewValue( line.money ) );
             contentData.add( invoiceLine );
         }

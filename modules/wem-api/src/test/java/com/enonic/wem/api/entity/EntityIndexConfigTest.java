@@ -27,7 +27,7 @@ public class EntityIndexConfigTest
         final PropertyIndexConfig propertyIndexConfig =
             PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).nGramEnabled( true ).fulltextEnabled( true ).build();
 
-        final Property myProperty = new Property( "test", new Value.String( "testValue" ) );
+        final Property myProperty = new Property( "test", Value.newString( "testValue" ) );
 
         final EntityPropertyIndexConfig indexConfig =
             EntityPropertyIndexConfig.newEntityIndexConfig().addPropertyIndexConfig( myProperty, propertyIndexConfig ).build();

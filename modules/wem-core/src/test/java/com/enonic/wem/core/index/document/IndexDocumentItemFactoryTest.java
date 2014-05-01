@@ -87,7 +87,7 @@ public class IndexDocumentItemFactoryTest
     public void fulltext_by_type()
         throws Exception
     {
-        Property property = new Property( "myStringProp", new Value.String( "myStringValue" ) );
+        Property property = new Property( "myStringProp", Value.newString( "myStringValue" ) );
 
         PropertyIndexConfig propertyIndexConfig =
             PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).nGramEnabled( false ).build();

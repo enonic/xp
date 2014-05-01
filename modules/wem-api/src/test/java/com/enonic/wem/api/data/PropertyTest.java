@@ -105,7 +105,7 @@ public class PropertyTest
     public void data()
     {
         RootDataSet data = new RootDataSet();
-        data.setProperty( "myProperty", new Value.String( "A" ) );
+        data.setProperty( "myProperty", Value.newString( "A" ) );
 
         Property property = new Property.Data( "myData", data );
         assertTrue( data.valueEquals( property.getData() ) );

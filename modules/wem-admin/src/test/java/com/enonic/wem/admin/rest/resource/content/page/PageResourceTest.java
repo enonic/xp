@@ -96,7 +96,7 @@ public class PageResourceTest
     {
         RootDataSet rootDataSet = new RootDataSet();
 
-        Property dataSet = new Property( "property1", new Value.String( "value1" ) );
+        Property dataSet = new Property( "property1", Value.newString( "value1" ) );
         rootDataSet.add( dataSet );
 
         Page page = Page.newPage().

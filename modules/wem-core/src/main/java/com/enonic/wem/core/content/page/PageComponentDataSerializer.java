@@ -29,10 +29,10 @@ public abstract class PageComponentDataSerializer<TO_DATA_INPUT extends PageComp
 
     protected void applyPageComponentToData( final PageComponent component, final DataSet asData )
     {
-        asData.setProperty( "name", new Value.String( component.getName().toString() ) );
+        asData.setProperty( "name", Value.newString( component.getName().toString() ) );
         if ( component.getDescriptor() != null )
         {
-            asData.setProperty( "template", new Value.String( component.getDescriptor().toString() ) );
+            asData.setProperty( "template", Value.newString( component.getDescriptor().toString() ) );
         }
 
         if ( component.hasConfig() )

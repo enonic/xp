@@ -69,7 +69,7 @@ public class FormItemDataSerializer
     private DataSet serializeInput( final Input input )
     {
         final DataSet inputType = new DataSet( "inputType" );
-        inputType.setProperty( "name", new Value.String( input.getInputType().getName() ) );
+        inputType.setProperty( "name", Value.newString( input.getInputType().getName() ) );
 
         final DataSet.Builder inputBuilder = newDataSet().name( "Input" );
         inputBuilder.set( "name", input.getName(), ValueTypes.STRING );

@@ -9,7 +9,7 @@ public class Long
 {
     Long( int key )
     {
-        super( key, JavaTypeConverter.Long.GET );
+        super( key, JavaTypeConverters.LONG );
     }
 
     @Override

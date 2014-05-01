@@ -104,8 +104,8 @@ public class ContentResourceTest
 
         final ContentData aContentData = aContent.getContentData();
 
-        aContentData.setProperty( "myArray[0]", new Value.String( "arrayValue1" ) );
-        aContentData.setProperty( "myArray[1]", new Value.String( "arrayValue2" ) );
+        aContentData.setProperty( "myArray[0]", Value.newString( "arrayValue1" ) );
+        aContentData.setProperty( "myArray[1]", Value.newString( "arrayValue2" ) );
 
         aContentData.setProperty( "mySetWithArray.myArray[0]", new Value.Double( 3.14159 ) );
         aContentData.setProperty( "mySetWithArray.myArray[1]", new Value.Double( 1.333 ) );
@@ -202,8 +202,8 @@ public class ContentResourceTest
 
         final ContentData aContentData = aContent.getContentData();
 
-        aContentData.setProperty( "myArray[0]", new Value.String( "arrayValue1" ) );
-        aContentData.setProperty( "myArray[1]", new Value.String( "arrayValue2" ) );
+        aContentData.setProperty( "myArray[0]", Value.newString( "arrayValue1" ) );
+        aContentData.setProperty( "myArray[1]", Value.newString( "arrayValue2" ) );
 
         aContentData.setProperty( "mySetWithArray.myArray[0]", new Value.Double( 3.14159 ) );
         aContentData.setProperty( "mySetWithArray.myArray[1]", new Value.Double( 1.333 ) );
@@ -233,7 +233,7 @@ public class ContentResourceTest
         content = newContent( content ).site( site ).build();
 
         ContentData contentData = content.getContentData();
-        contentData.setProperty( "myProperty", new Value.String( "myValue" ) );
+        contentData.setProperty( "myProperty", Value.newString( "myValue" ) );
 
         Mockito.when( contentService.getById( ContentId.from( "aaa" ) ) ).thenReturn( content );
 
@@ -247,7 +247,7 @@ public class ContentResourceTest
         throws Exception
     {
         RootDataSet componentConfig = new RootDataSet();
-        componentConfig.setProperty( "my-prop", new Value.String( "value" ) );
+        componentConfig.setProperty( "my-prop", Value.newString( "value" ) );
 
         PartComponent component = PartComponent.newPartComponent().
             name( "my-component" ).
@@ -265,7 +265,7 @@ public class ContentResourceTest
             build();
 
         RootDataSet pageConfig = new RootDataSet();
-        pageConfig.setProperty( "background-color", new Value.String( "blue" ) );
+        pageConfig.setProperty( "background-color", Value.newString( "blue" ) );
         Page page = Page.newPage().
             template( PageTemplateKey.from( "mymodule|mypagetemplate" ) ).
             regions( regions ).
@@ -276,7 +276,7 @@ public class ContentResourceTest
         content = newContent( content ).page( page ).build();
 
         ContentData contentData = content.getContentData();
-        contentData.setProperty( "myProperty", new Value.String( "myValue" ) );
+        contentData.setProperty( "myProperty", Value.newString( "myValue" ) );
 
         Mockito.when( contentService.getById( ContentId.from( "aaa" ) ) ).thenReturn( content );
 
@@ -330,8 +330,8 @@ public class ContentResourceTest
 
         final ContentData aContentData = aContent.getContentData();
 
-        aContentData.setProperty( "myArray[0]", new Value.String( "arrayValue1" ) );
-        aContentData.setProperty( "myArray[1]", new Value.String( "arrayValue2" ) );
+        aContentData.setProperty( "myArray[0]", Value.newString( "arrayValue1" ) );
+        aContentData.setProperty( "myArray[1]", Value.newString( "arrayValue2" ) );
 
         aContentData.setProperty( "mySetWithArray.myArray[0]", new Value.Double( 3.14159 ) );
         aContentData.setProperty( "mySetWithArray.myArray[1]", new Value.Double( 1.333 ) );

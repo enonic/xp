@@ -60,7 +60,7 @@ public final class ValueExpr
 
     public static ValueExpr string( final String value )
     {
-        return new ValueExpr( new Value.String( value ) );
+        return new ValueExpr( Value.newString( value ) );
     }
 
     public static ValueExpr number( final Number value )

@@ -27,7 +27,7 @@ final class Xml
     @Override
     public Value newValue( final String value )
     {
-        return new Value.String( value );
+        return Value.newString( value );
     }
 
     @Override

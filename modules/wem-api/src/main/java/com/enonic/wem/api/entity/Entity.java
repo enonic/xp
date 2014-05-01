@@ -143,7 +143,7 @@ public class Entity
         {
             if ( value != null )
             {
-                this.data.setProperty( path, new Value.String( value ) );
+                this.data.setProperty( path, Value.newString( value ) );
                 changes.recordChange( newPossibleChange( "data" ).from( this.originalEntity.data() ).to( this.data ).build() );
             }
             return getThisBuilder();
@@ -276,7 +276,7 @@ public class Entity
         {
             if ( value != null )
             {
-                this.data.setProperty( path, new Value.String( value ) );
+                this.data.setProperty( path, Value.newString( value ) );
             }
             return getThisBuilder();
         }

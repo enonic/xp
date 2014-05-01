@@ -32,7 +32,7 @@ public class PageTemplateXmlTest
     {
         RootDataSet partInHeaderConfig = new RootDataSet();
         partInHeaderConfig.setProperty( "width", new Value.Long( 500 ) );
-        partInHeaderConfig.setProperty( "caption", new Value.String( "So sweet!" ) );
+        partInHeaderConfig.setProperty( "caption", Value.newString( "So sweet!" ) );
 
         Region region = Region.newRegion().
             name( "my-region" ).
@@ -46,8 +46,8 @@ public class PageTemplateXmlTest
 
         RootDataSet pageTemplateConfig = new RootDataSet();
         pageTemplateConfig.addProperty( "pause", new Value.Long( 10000 ) );
-        pageTemplateConfig.addProperty( "thing.first", new Value.String( "one" ) );
-        pageTemplateConfig.addProperty( "thing.second", new Value.String( "two" ) );
+        pageTemplateConfig.addProperty( "thing.first", Value.newString( "one" ) );
+        pageTemplateConfig.addProperty( "thing.second", Value.newString( "two" ) );
 
         PageTemplate pageTemplate = PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( "mainmodule|main-page" ) ).
@@ -72,7 +72,7 @@ public class PageTemplateXmlTest
     {
         RootDataSet partInHeaderConfig = new RootDataSet();
         partInHeaderConfig.setProperty( "width", new Value.Long( 500 ) );
-        partInHeaderConfig.setProperty( "caption", new Value.String( "So sweet!" ) );
+        partInHeaderConfig.setProperty( "caption", Value.newString( "So sweet!" ) );
 
         Region region = Region.newRegion().
             name( "my-region" ).
@@ -86,8 +86,8 @@ public class PageTemplateXmlTest
 
         RootDataSet pageTemplateConfig = new RootDataSet();
         pageTemplateConfig.addProperty( "pause", new Value.Long( 10000 ) );
-        pageTemplateConfig.addProperty( "thing.first", new Value.String( "one" ) );
-        pageTemplateConfig.addProperty( "thing.second", new Value.String( "two" ) );
+        pageTemplateConfig.addProperty( "thing.first", Value.newString( "one" ) );
+        pageTemplateConfig.addProperty( "thing.second", Value.newString( "two" ) );
 
         PageTemplate pageTemplate = PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( "mainmodule|main-page" ) ).

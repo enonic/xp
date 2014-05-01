@@ -22,11 +22,6 @@ public class RegionDataSerializer
 
     private final PageComponentsDataSerializer componentsSerializer = new PageComponentsDataSerializer();
 
-    public RegionDataSerializer( final String dataSetName )
-    {
-        this.dataSetName = dataSetName;
-    }
-
     public RegionDataSerializer()
     {
         this.dataSetName = "region";
@@ -35,7 +30,7 @@ public class RegionDataSerializer
     public DataSet toData( final Region region )
     {
         final DataSet asData = new DataSet( dataSetName );
-        asData.setProperty( NAME, new Value.String( region.getName() ) );
+        asData.setProperty( NAME, Value.newString( region.getName() ) );
 
         final DataSet componentsDataSet = new DataSet( COMPONENTS );
         componentsDataSet.addAll( componentsSerializer.toData( region.getComponents() ) );

@@ -69,7 +69,7 @@ public class ContentTest
     public void array_getting_data_from_array_of_size_one()
     {
         DataSet dataSet = new ContentData();
-        dataSet.setProperty( "array[0]", new Value.String( "First" ) );
+        dataSet.setProperty( "array[0]", Value.newString( "First" ) );
 
         assertEquals( "First", dataSet.getProperty( "array" ).getObject() );
         assertEquals( "First", dataSet.getProperty( "array[0]" ).getObject() );
@@ -79,8 +79,8 @@ public class ContentTest
     public void array_getting_entries_from_array_of_size_two()
     {
         ContentData contentData = new ContentData();
-        contentData.setProperty( "array[0]", new Value.String( "First" ) );
-        contentData.setProperty( "array[1]", new Value.String( "Second" ) );
+        contentData.setProperty( "array[0]", Value.newString( "First" ) );
+        contentData.setProperty( "array[1]", Value.newString( "Second" ) );
 
         Property array = contentData.getProperty( "array" );
         assertEquals( "First", array.getObject() );
@@ -114,9 +114,9 @@ public class ContentTest
     public void array_getting_entries_from_array_of_size_three()
     {
         ContentData contentData = new ContentData();
-        contentData.setProperty( "array[0]", new Value.String( "First" ) );
-        contentData.setProperty( "array[1]", new Value.String( "Second" ) );
-        contentData.setProperty( "array[2]", new Value.String( "Third" ) );
+        contentData.setProperty( "array[0]", Value.newString( "First" ) );
+        contentData.setProperty( "array[1]", Value.newString( "Second" ) );
+        contentData.setProperty( "array[2]", Value.newString( "Third" ) );
 
         assertEquals( "First", contentData.getProperty( "array" ).getObject() );
         assertEquals( "First", contentData.getProperty( "array[0]" ).getObject() );
@@ -130,9 +130,9 @@ public class ContentTest
     public void array_overwriting_does_not_create_array()
     {
         ContentData contentData = new ContentData();
-        contentData.setProperty( "noArray", new Value.String( "First" ) );
-        contentData.setProperty( "noArray", new Value.String( "Second" ) );
-        contentData.setProperty( "noArray", new Value.String( "Third" ) );
+        contentData.setProperty( "noArray", Value.newString( "First" ) );
+        contentData.setProperty( "noArray", Value.newString( "Second" ) );
+        contentData.setProperty( "noArray", Value.newString( "Third" ) );
 
         assertEquals( "Third", contentData.getProperty( "noArray" ).getObject() );
     }
@@ -141,9 +141,9 @@ public class ContentTest
     public void array_setData_assigning_same_array_element_a_second_time_ovewrites_the_first_value()
     {
         ContentData contentData = new ContentData();
-        contentData.setProperty( "array[0]", new Value.String( "First" ) );
-        contentData.setProperty( "array[1]", new Value.String( "Second" ) );
-        contentData.setProperty( "array[1]", new Value.String( "Second again" ) );
+        contentData.setProperty( "array[0]", Value.newString( "First" ) );
+        contentData.setProperty( "array[1]", Value.newString( "Second" ) );
+        contentData.setProperty( "array[1]", Value.newString( "Second again" ) );
 
         assertEquals( "First", contentData.getProperty( "array[0]" ).getObject() );
         assertEquals( "Second again", contentData.getProperty( "array[1]" ).getObject() );
@@ -154,8 +154,8 @@ public class ContentTest
     public void array_setData_setting_second_data_with_same_path_at_index_1_creates_array_of_size_2()
     {
         ContentData contentData = new ContentData();
-        contentData.setProperty( "myArray", new Value.String( "First" ) );
-        contentData.setProperty( "myArray[1]", new Value.String( "Second" ) );
+        contentData.setProperty( "myArray", Value.newString( "First" ) );
+        contentData.setProperty( "myArray[1]", Value.newString( "Second" ) );
 
         assertEquals( true, contentData.getProperty( "myArray" ).isArray() );
         assertEquals( 2, contentData.getProperty( "myArray" ).getArray().size() );
@@ -168,8 +168,8 @@ public class ContentTest
     public void array_setData_array_within_set()
     {
         ContentData contentData = new ContentData();
-        contentData.setProperty( "set.myArray[0]", new Value.String( "First" ) );
-        contentData.setProperty( "set.myArray[1]", new Value.String( "Second" ) );
+        contentData.setProperty( "set.myArray[0]", Value.newString( "First" ) );
+        contentData.setProperty( "set.myArray[1]", Value.newString( "Second" ) );
 
         assertEquals( "First", contentData.getProperty( "set.myArray[0]" ).getObject() );
         assertEquals( "Second", contentData.getProperty( "set.myArray[1]" ).getObject() );
@@ -182,8 +182,8 @@ public class ContentTest
     public void array_setData_array_of_set_within_set()
     {
         ContentData contentData = new ContentData();
-        contentData.setProperty( "company.address[0].street", new Value.String( "Kirkegata 1-3" ) );
-        contentData.setProperty( "company.address[1].street", new Value.String( "Sonsteli" ) );
+        contentData.setProperty( "company.address[0].street", Value.newString( "Kirkegata 1-3" ) );
+        contentData.setProperty( "company.address[1].street", Value.newString( "Sonsteli" ) );
 
         assertEquals( "Kirkegata 1-3", contentData.getProperty( "company.address[0].street" ).getString() );
         assertEquals( "Sonsteli", contentData.getProperty( "company.address[1].street" ).getString() );
@@ -216,8 +216,8 @@ public class ContentTest
     public void array_set()
     {
         ContentData contentData = new ContentData();
-        contentData.setProperty( "set[0].myText", new Value.String( "First" ) );
-        contentData.setProperty( "set[1].myText", new Value.String( "Second" ) );
+        contentData.setProperty( "set[0].myText", Value.newString( "First" ) );
+        contentData.setProperty( "set[1].myText", Value.newString( "Second" ) );
 
         assertEquals( "First", contentData.getProperty( "set.myText" ).getObject() );
         assertEquals( "First", contentData.getProperty( "set[0].myText" ).getObject() );
@@ -237,10 +237,10 @@ public class ContentTest
     public void array_set2()
     {
         ContentData contentData = new ContentData();
-        contentData.setProperty( "set[0].myText", new Value.String( "First" ) );
-        contentData.setProperty( "set[0].myOther", new Value.String( "First other" ) );
-        contentData.setProperty( "set[1].myText", new Value.String( "Second" ) );
-        contentData.setProperty( "set[1].myOther", new Value.String( "Second other" ) );
+        contentData.setProperty( "set[0].myText", Value.newString( "First" ) );
+        contentData.setProperty( "set[0].myOther", Value.newString( "First other" ) );
+        contentData.setProperty( "set[1].myText", Value.newString( "Second" ) );
+        contentData.setProperty( "set[1].myOther", Value.newString( "Second other" ) );
 
         assertEquals( "First", contentData.getProperty( "set[0].myText" ).getObject() );
         assertEquals( "First other", contentData.getProperty( "set[0].myOther" ).getObject() );
@@ -261,7 +261,7 @@ public class ContentTest
 
         // TODO: Are'nt tags best stored as an array? A global mixin multiple textline?
         Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getContentData().setProperty( "myTags", new Value.String( "A line of text" ) );
+        content.getContentData().setProperty( "myTags", Value.newString( "A line of text" ) );
 
         assertEquals( "A line of text", content.getContentData().getProperty( "myTags" ).getObject() );
     }
@@ -272,7 +272,7 @@ public class ContentTest
         contentType.form().addFormItem( newInput().name( "myPhone" ).inputType( InputTypes.PHONE ).required( true ).build() );
 
         Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getContentData().setProperty( "myPhone", new Value.String( "98327891" ) );
+        content.getContentData().setProperty( "myPhone", Value.newString( "98327891" ) );
 
         assertEquals( "98327891", content.getContentData().getProperty( "myPhone" ).getObject() );
     }
@@ -289,9 +289,9 @@ public class ContentTest
 
         Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         ContentData contentData = content.getContentData();
-        contentData.setProperty( "name", new Value.String( "Ola Nordmann" ) );
-        contentData.setProperty( "personalia.eyeColour", new Value.String( "Blue" ) );
-        contentData.setProperty( "personalia.hairColour", new Value.String( "Blonde" ) );
+        contentData.setProperty( "name", Value.newString( "Ola Nordmann" ) );
+        contentData.setProperty( "personalia.eyeColour", Value.newString( "Blue" ) );
+        contentData.setProperty( "personalia.hairColour", Value.newString( "Blonde" ) );
 
         assertEquals( "Ola Nordmann", contentData.getProperty( "name" ).getObject() );
         assertEquals( "Blue", contentData.getProperty( "personalia.eyeColour" ).getObject() );
@@ -312,13 +312,13 @@ public class ContentTest
 
         Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         ContentData contentData = content.getContentData();
-        contentData.setProperty( "name", new Value.String( "Norske" ) );
-        contentData.setProperty( "personalia[0].name", new Value.String( "Ola Nordmann" ) );
-        contentData.setProperty( "personalia[0].eyeColour", new Value.String( "Blue" ) );
-        contentData.setProperty( "personalia[0].hairColour", new Value.String( "Blonde" ) );
-        contentData.setProperty( "personalia[1].name", new Value.String( "Kari Trestakk" ) );
-        contentData.setProperty( "personalia[1].eyeColour", new Value.String( "Green" ) );
-        contentData.setProperty( "personalia[1].hairColour", new Value.String( "Brown" ) );
+        contentData.setProperty( "name", Value.newString( "Norske" ) );
+        contentData.setProperty( "personalia[0].name", Value.newString( "Ola Nordmann" ) );
+        contentData.setProperty( "personalia[0].eyeColour", Value.newString( "Blue" ) );
+        contentData.setProperty( "personalia[0].hairColour", Value.newString( "Blonde" ) );
+        contentData.setProperty( "personalia[1].name", Value.newString( "Kari Trestakk" ) );
+        contentData.setProperty( "personalia[1].eyeColour", Value.newString( "Green" ) );
+        contentData.setProperty( "personalia[1].hairColour", Value.newString( "Brown" ) );
 
         assertEquals( "Norske", contentData.getProperty( "name" ).getObject() );
         assertEquals( "Ola Nordmann", contentData.getProperty( "personalia[0].name" ).getObject() );
@@ -334,16 +334,16 @@ public class ContentTest
     {
         Content content = newContent().path( MY_CONTENT_PATH ).build();
         ContentData contentData = content.getContentData();
-        contentData.setProperty( "firstName", new Value.String( "Thomas" ) );
+        contentData.setProperty( "firstName", Value.newString( "Thomas" ) );
         contentData.setProperty( "description", new Value.HtmlPart( "Grew up in Noetteveien" ) );
-        contentData.setProperty( "child[0].name", new Value.String( "Joachim" ) );
-        contentData.setProperty( "child[0].age", new Value.String( "9" ) );
-        contentData.setProperty( "child[0].features.eyeColour", new Value.String( "Blue" ) );
-        contentData.setProperty( "child[0].features.hairColour", new Value.String( "Blonde" ) );
-        contentData.setProperty( "child[1].name", new Value.String( "Madeleine" ) );
-        contentData.setProperty( "child[1].age", new Value.String( "7" ) );
-        contentData.setProperty( "child[1].features.eyeColour", new Value.String( "Brown" ) );
-        contentData.setProperty( "child[1].features.hairColour", new Value.String( "Black" ) );
+        contentData.setProperty( "child[0].name", Value.newString( "Joachim" ) );
+        contentData.setProperty( "child[0].age", Value.newString( "9" ) );
+        contentData.setProperty( "child[0].features.eyeColour", Value.newString( "Blue" ) );
+        contentData.setProperty( "child[0].features.hairColour", Value.newString( "Blonde" ) );
+        contentData.setProperty( "child[1].name", Value.newString( "Madeleine" ) );
+        contentData.setProperty( "child[1].age", Value.newString( "7" ) );
+        contentData.setProperty( "child[1].features.eyeColour", Value.newString( "Brown" ) );
+        contentData.setProperty( "child[1].features.hairColour", Value.newString( "Black" ) );
 
         assertEquals( "Thomas", contentData.getProperty( "firstName" ).getObject() );
         assertEquals( ValueTypes.STRING, contentData.getProperty( "firstName" ).getValueType() );
@@ -363,14 +363,14 @@ public class ContentTest
     {
         Content content = newContent().path( MY_CONTENT_PATH ).build();
         ContentData contentData = content.getContentData();
-        contentData.setProperty( "child[0].name", new Value.String( "Joachim" ) );
-        contentData.setProperty( "child[0].age", new Value.String( "9" ) );
-        contentData.setProperty( "child[0].features.eyeColour", new Value.String( "Blue" ) );
-        contentData.setProperty( "child[0].features.hairColour", new Value.String( "Blonde" ) );
-        contentData.setProperty( "child[1].name", new Value.String( "Madeleine" ) );
-        contentData.setProperty( "child[1].age", new Value.String( "7" ) );
-        contentData.setProperty( "child[1].features.eyeColour", new Value.String( "Brown" ) );
-        contentData.setProperty( "child[1].features.hairColour", new Value.String( "Black" ) );
+        contentData.setProperty( "child[0].name", Value.newString( "Joachim" ) );
+        contentData.setProperty( "child[0].age", Value.newString( "9" ) );
+        contentData.setProperty( "child[0].features.eyeColour", Value.newString( "Blue" ) );
+        contentData.setProperty( "child[0].features.hairColour", Value.newString( "Blonde" ) );
+        contentData.setProperty( "child[1].name", Value.newString( "Madeleine" ) );
+        contentData.setProperty( "child[1].age", Value.newString( "7" ) );
+        contentData.setProperty( "child[1].features.eyeColour", Value.newString( "Brown" ) );
+        contentData.setProperty( "child[1].features.hairColour", Value.newString( "Black" ) );
 
         DataSet child0 = contentData.getData( "child[0]" ).toDataSet();
         assertEquals( "Joachim", child0.getProperty( "name" ).getObject() );
@@ -397,14 +397,14 @@ public class ContentTest
 
         Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         ContentData contentData = content.getContentData();
-        contentData.setProperty( "child[0].name", new Value.String( "Joachim" ) );
-        contentData.setProperty( "child[0].age", new Value.String( "9" ) );
-        contentData.setProperty( "child[0].features.eyeColour", new Value.String( "Blue" ) );
-        contentData.setProperty( "child[0].features.hairColour", new Value.String( "Blonde" ) );
-        contentData.setProperty( "child[1].name", new Value.String( "Madeleine" ) );
-        contentData.setProperty( "child[1].age", new Value.String( "7" ) );
-        contentData.setProperty( "child[1].features.eyeColour", new Value.String( "Brown" ) );
-        contentData.setProperty( "child[1].features.hairColour", new Value.String( "Black" ) );
+        contentData.setProperty( "child[0].name", Value.newString( "Joachim" ) );
+        contentData.setProperty( "child[0].age", Value.newString( "9" ) );
+        contentData.setProperty( "child[0].features.eyeColour", Value.newString( "Blue" ) );
+        contentData.setProperty( "child[0].features.hairColour", Value.newString( "Blonde" ) );
+        contentData.setProperty( "child[1].name", Value.newString( "Madeleine" ) );
+        contentData.setProperty( "child[1].age", Value.newString( "7" ) );
+        contentData.setProperty( "child[1].features.eyeColour", Value.newString( "Brown" ) );
+        contentData.setProperty( "child[1].features.hairColour", Value.newString( "Black" ) );
 
         DataSet child0 = contentData.getData( "child[0]" ).toDataSet();
         assertEquals( "Joachim", child0.getProperty( "name" ).getObject() );
@@ -423,9 +423,9 @@ public class ContentTest
         // setup
         Content content = newContent().path( MY_CONTENT_PATH ).build();
         ContentData contentData = content.getContentData();
-        contentData.setProperty( "name", new Value.String( "Thomas" ) );
-        contentData.setProperty( "personalia.eyeColour", new Value.String( "Blue" ) );
-        contentData.setProperty( "personalia.hairColour", new Value.String( "Blonde" ) );
+        contentData.setProperty( "name", Value.newString( "Thomas" ) );
+        contentData.setProperty( "personalia.eyeColour", Value.newString( "Blue" ) );
+        contentData.setProperty( "personalia.hairColour", Value.newString( "Blonde" ) );
 
         assertEquals( ValueTypes.STRING, contentData.getProperty( "personalia.eyeColour" ).getValueType() );
         assertEquals( "Blue", contentData.getProperty( "personalia.eyeColour" ).getObject() );
@@ -450,12 +450,12 @@ public class ContentTest
 
         // exercise
         ContentData contentData = content.getContentData();
-        contentData.setProperty( "name", new Value.String( "Ola Norman" ) );
-        contentData.setProperty( "eyeColour", new Value.String( "Blue" ) );
-        contentData.setProperty( "hairColour", new Value.String( "Blonde" ) );
-        contentData.setProperty( "tattoo[0]", new Value.String( "Skull on left arm" ) );
-        contentData.setProperty( "tattoo[1]", new Value.String( "Mothers name on right arm" ) );
-        contentData.setProperty( "scar[0]", new Value.String( "Chin" ) );
+        contentData.setProperty( "name", Value.newString( "Ola Norman" ) );
+        contentData.setProperty( "eyeColour", Value.newString( "Blue" ) );
+        contentData.setProperty( "hairColour", Value.newString( "Blonde" ) );
+        contentData.setProperty( "tattoo[0]", Value.newString( "Skull on left arm" ) );
+        contentData.setProperty( "tattoo[1]", Value.newString( "Mothers name on right arm" ) );
+        contentData.setProperty( "scar[0]", Value.newString( "Chin" ) );
 
         // verify
         assertEquals( "Ola Norman", contentData.getProperty( "name" ).getString() );
@@ -471,7 +471,7 @@ public class ContentTest
     {
         // setup
         Content content = newContent().path( MY_CONTENT_PATH ).build();
-        content.getContentData().setProperty( "myData", new Value.String( "Value 1" ) );
+        content.getContentData().setProperty( "myData", Value.newString( "Value 1" ) );
 
         // exercise
         try

@@ -15,7 +15,7 @@ public class GenericQueryFilterTest
         throws Exception
     {
         final GenericValueFilter genericValueQueryFilter = GenericValueFilter.newValueQueryFilter().
-            add( new Value.String( "test" ), new Value.String( "test2" ) ).
+            add( Value.newString( "test" ), Value.newString( "test2" ) ).
             fieldName( "myField" ).
             build();
 

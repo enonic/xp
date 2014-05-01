@@ -11,7 +11,7 @@ public class EntityId
 
     EntityId( int key )
     {
-        super( key, JavaTypeConverter.EntityId.GET );
+        super( key, JavaTypeConverters.ENTITY_ID );
     }
 
     @Override

@@ -6,7 +6,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.data.serializer.RootDataSetJsonSerializer;
 import com.enonic.wem.api.data.type.InconvertibleValueException;
-import com.enonic.wem.api.data.type.JavaTypeConverter;
+import com.enonic.wem.api.data.type.JavaTypeConverters;
 import com.enonic.wem.api.data.type.ValueOfUnexpectedClassException;
 import com.enonic.wem.api.data.type.ValueType;
 import com.enonic.wem.api.data.type.ValueTypes;
@@ -15,7 +15,7 @@ import com.enonic.wem.api.form.InvalidValueException;
 /**
  * A generic holder for the value of a Property.
  */
-public abstract class Value<T>
+public class Value<T>
 {
     private final ValueType type;
 
@@ -30,6 +30,11 @@ public abstract class Value<T>
         this.type = type;
         this.object = value;
         type.checkValidity( this );
+    }
+
+    public boolean isStringType()
+    {
+        return this.object instanceof String;
     }
 
     public boolean isDateType()
@@ -70,10 +75,10 @@ public abstract class Value<T>
      *
      * @throws ClassCastException if value is not of type String.
      */
-    public java.lang.String getString()
+    public String getString()
         throws ClassCastException
     {
-        return (java.lang.String) object;
+        return (String) object;
     }
 
     /**
@@ -158,13 +163,13 @@ public abstract class Value<T>
      *
      * @throws com.enonic.wem.api.data.type.InconvertibleValueException if value is not convertible to String.
      */
-    public java.lang.String asString()
+    public String asString()
         throws InconvertibleValueException
     {
-        final java.lang.String converted = JavaTypeConverter.String.GET.convertFrom( object );
-        if ( object != null && converted == null )
+        final String converted = JavaTypeConverters.STRING.convertFrom( object );
+        if ( converted == null )
         {
-            throw new InconvertibleValueException( object, JavaTypeConverter.String.GET );
+            throw new InconvertibleValueException( object, JavaTypeConverters.STRING );
         }
         return converted;
     }
@@ -177,10 +182,10 @@ public abstract class Value<T>
     public com.enonic.wem.api.content.ContentId asContentId()
         throws InconvertibleValueException
     {
-        final com.enonic.wem.api.content.ContentId converted = JavaTypeConverter.ContentId.GET.convertFrom( object );
-        if ( object != null && converted == null )
+        final com.enonic.wem.api.content.ContentId converted = JavaTypeConverters.CONTENT_ID.convertFrom( object );
+        if ( converted == null )
         {
-            throw new InconvertibleValueException( object, JavaTypeConverter.ContentId.GET );
+            throw new InconvertibleValueException( object, JavaTypeConverters.CONTENT_ID );
         }
         return converted;
     }
@@ -193,10 +198,10 @@ public abstract class Value<T>
     public com.enonic.wem.api.entity.EntityId asEntityId()
         throws InconvertibleValueException
     {
-        final com.enonic.wem.api.entity.EntityId converted = JavaTypeConverter.EntityId.GET.convertFrom( object );
-        if ( object != null && converted == null )
+        final com.enonic.wem.api.entity.EntityId converted = JavaTypeConverters.ENTITY_ID.convertFrom( object );
+        if ( converted == null )
         {
-            throw new InconvertibleValueException( object, JavaTypeConverter.EntityId.GET );
+            throw new InconvertibleValueException( object, JavaTypeConverters.ENTITY_ID );
         }
         return converted;
     }
@@ -209,10 +214,10 @@ public abstract class Value<T>
     public java.lang.Long asLong()
         throws InconvertibleValueException
     {
-        final java.lang.Long converted = JavaTypeConverter.Long.GET.convertFrom( object );
-        if ( object != null && converted == null )
+        final java.lang.Long converted = JavaTypeConverters.LONG.convertFrom( object );
+        if ( converted == null )
         {
-            throw new InconvertibleValueException( object, JavaTypeConverter.Long.GET );
+            throw new InconvertibleValueException( object, JavaTypeConverters.LONG );
         }
         return converted;
     }
@@ -225,10 +230,10 @@ public abstract class Value<T>
     public java.lang.Boolean asBoolean()
         throws InconvertibleValueException
     {
-        final java.lang.Boolean converted = JavaTypeConverter.Boolean.GET.convertFrom( object );
-        if ( object != null && converted == null )
+        final java.lang.Boolean converted = JavaTypeConverters.BOOLEAN.convertFrom( object );
+        if ( converted == null )
         {
-            throw new InconvertibleValueException( object, JavaTypeConverter.Boolean.GET );
+            throw new InconvertibleValueException( object, JavaTypeConverters.BOOLEAN );
         }
         return converted;
     }
@@ -243,11 +248,11 @@ public abstract class Value<T>
     {
         final java.lang.Double converted;
 
-        converted = JavaTypeConverter.Double.GET.convertFrom( object );
+        converted = JavaTypeConverters.DOUBLE.convertFrom( object );
 
         if ( converted == null )
         {
-            throw new InconvertibleValueException( object, JavaTypeConverter.Double.GET );
+            throw new InconvertibleValueException( object, JavaTypeConverters.DOUBLE );
         }
 
         return converted;
@@ -261,10 +266,10 @@ public abstract class Value<T>
     public org.joda.time.DateMidnight asDateMidnight()
         throws InconvertibleValueException
     {
-        final org.joda.time.DateMidnight converted = JavaTypeConverter.DateMidnight.GET.convertFrom( object );
-        if ( object != null && converted == null )
+        final org.joda.time.DateMidnight converted = JavaTypeConverters.DATE_MIDNIGHT.convertFrom( object );
+        if ( converted == null )
         {
-            throw new InconvertibleValueException( object, JavaTypeConverter.DateMidnight.GET );
+            throw new InconvertibleValueException( object, JavaTypeConverters.DATE_MIDNIGHT );
         }
         return converted;
     }
@@ -277,10 +282,10 @@ public abstract class Value<T>
     public org.joda.time.DateTime asDateTime()
         throws InconvertibleValueException
     {
-        final org.joda.time.DateTime converted = JavaTypeConverter.DateTime.GET.convertFrom( object );
-        if ( object != null && converted == null )
+        final org.joda.time.DateTime converted = JavaTypeConverters.DATE_TIME.convertFrom( object );
+        if ( converted == null )
         {
-            throw new InconvertibleValueException( object, JavaTypeConverter.DateTime.GET );
+            throw new InconvertibleValueException( object, JavaTypeConverters.DATE_TIME );
         }
         return converted;
     }
@@ -309,12 +314,12 @@ public abstract class Value<T>
     }
 
     @Override
-    public java.lang.String toString()
+    public String toString()
     {
-        return java.lang.String.valueOf( object );
+        return String.valueOf( object );
     }
 
-    public Property newProperty( final java.lang.String name )
+    public Property newProperty( final String name )
     {
         return getType().newProperty( name, this );
     }
@@ -334,7 +339,7 @@ public abstract class Value<T>
 
         public DateMidnight( final java.lang.String value )
         {
-            super( ValueTypes.DATE_MIDNIGHT, JavaTypeConverter.DateMidnight.GET.convertFromString( value ) );
+            super( ValueTypes.DATE_MIDNIGHT, JavaTypeConverters.DATE_MIDNIGHT.convertFromString( value ) );
         }
     }
 
@@ -353,7 +358,7 @@ public abstract class Value<T>
 
         public DateTime( final java.lang.String value )
         {
-            super( ValueTypes.DATE_TIME, JavaTypeConverter.DateTime.GET.convertFromString( value ) );
+            super( ValueTypes.DATE_TIME, JavaTypeConverters.DATE_TIME.convertFromString( value ) );
         }
     }
 
@@ -405,18 +410,9 @@ public abstract class Value<T>
         }
     }
 
-    public static final class String
-        extends Value<java.lang.String>
+    public static Value<java.lang.String> newString( final java.lang.String value )
     {
-        public String( final java.lang.String value )
-        {
-            super( ValueTypes.STRING, value );
-        }
-
-        public String( final int value )
-        {
-            super( ValueTypes.STRING, java.lang.String.valueOf( value ) );
-        }
+        return new Value<>( ValueTypes.STRING, value );
     }
 
     public static final class Xml

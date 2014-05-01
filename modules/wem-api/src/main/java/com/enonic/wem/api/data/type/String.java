@@ -9,13 +9,13 @@ public class String
 {
     String( int key )
     {
-        super( key, JavaTypeConverter.String.GET );
+        super( key, JavaTypeConverters.STRING );
     }
 
     @Override
     public Value newValue( final Object value )
     {
-        return new Value.String( convert( value ) );
+        return Value.newString( convert( value ) );
     }
 
     @Override

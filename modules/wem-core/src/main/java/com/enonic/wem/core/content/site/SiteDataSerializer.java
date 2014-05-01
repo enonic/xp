@@ -34,14 +34,14 @@ public class SiteDataSerializer
     {
         final DataSet siteDataSet = new DataSet( dataSetName );
 
-        siteDataSet.addProperty( SITE_TEMPLATE, new Value.String( site.getTemplate().toString() ) );
+        siteDataSet.addProperty( SITE_TEMPLATE, Value.newString( site.getTemplate().toString() ) );
         final DataSet moduleConfigs = new DataSet( SITE_MODULE_CONFIGS );
 
         for ( ModuleConfig moduleConfig : site.getModuleConfigs() )
         {
             final DataSet moduleConfigDataSet = new DataSet( SITE_MODULE_CONFIG );
 
-            moduleConfigDataSet.setProperty( SITE_MODULE, new Value.String( moduleConfig.getModule().toString() ) );
+            moduleConfigDataSet.setProperty( SITE_MODULE, Value.newString( moduleConfig.getModule().toString() ) );
             moduleConfigDataSet.add( moduleConfig.getConfig().toDataSet( SITE_CONFIG ) );
 
             moduleConfigs.add( moduleConfigDataSet );

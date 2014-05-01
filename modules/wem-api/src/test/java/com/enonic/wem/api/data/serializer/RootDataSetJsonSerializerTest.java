@@ -34,7 +34,7 @@ public class RootDataSetJsonSerializerTest
     public void single_property()
     {
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setProperty( "myProp", new Value.String( "a" ) );
+        rootDataSet.setProperty( "myProp", Value.newString( "a" ) );
         String serialized = serializer.toString( rootDataSet );
         assertSerializedResult( "property_single", serialized );
     }
@@ -43,9 +43,9 @@ public class RootDataSetJsonSerializerTest
     public void property_array()
     {
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.addProperty( "myProp", new Value.String( "a" ) );
-        rootDataSet.addProperty( "myProp", new Value.String( "b" ) );
-        rootDataSet.addProperty( "myProp", new Value.String( "c" ) );
+        rootDataSet.addProperty( "myProp", Value.newString( "a" ) );
+        rootDataSet.addProperty( "myProp", Value.newString( "b" ) );
+        rootDataSet.addProperty( "myProp", Value.newString( "c" ) );
         String serialized = serializer.toString( rootDataSet );
         assertSerializedResult( "property_array", serialized );
     }
@@ -55,7 +55,7 @@ public class RootDataSetJsonSerializerTest
     {
         RootDataSet rootDataSet = new RootDataSet();
         DataSet dataSet = new DataSet( "mySet" );
-        dataSet.addProperty( "myProp", new Value.String( "a" ) );
+        dataSet.addProperty( "myProp", Value.newString( "a" ) );
         rootDataSet.add( dataSet );
         String serialized = serializer.toString( rootDataSet );
         assertSerializedResult( "dataSet_single", serialized );
@@ -66,10 +66,10 @@ public class RootDataSetJsonSerializerTest
     {
         RootDataSet rootDataSet = new RootDataSet();
         DataSet dataSet1 = new DataSet( "mySet" );
-        dataSet1.addProperty( "myProp", new Value.String( "a" ) );
+        dataSet1.addProperty( "myProp", Value.newString( "a" ) );
         rootDataSet.add( dataSet1 );
         DataSet dataSet2 = new DataSet( "mySet" );
-        dataSet2.addProperty( "myProp", new Value.String( "b" ) );
+        dataSet2.addProperty( "myProp", Value.newString( "b" ) );
         rootDataSet.add( dataSet2 );
         String serialized = serializer.toString( rootDataSet );
         assertSerializedResult( "dataSet_array", serialized );
@@ -79,7 +79,7 @@ public class RootDataSetJsonSerializerTest
     public void property_with_DataSet()
     {
         RootDataSet regionMain = new RootDataSet();
-        regionMain.setProperty( "a", new Value.String( "1" ) );
+        regionMain.setProperty( "a", Value.newString( "1" ) );
 
         RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.addProperty( "regionMain", new Value.Data( regionMain ) );

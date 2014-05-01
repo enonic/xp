@@ -8,7 +8,7 @@ public class Double
 {
     Double( int key )
     {
-        super( key, JavaTypeConverter.Double.GET );
+        super( key, JavaTypeConverters.DOUBLE );
     }
 
     @Override

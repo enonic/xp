@@ -9,7 +9,7 @@ public class DateTime
 {
     DateTime( int key )
     {
-        super( key, JavaTypeConverter.DateTime.GET );
+        super( key, JavaTypeConverters.DATE_TIME );
     }
 
     @Override

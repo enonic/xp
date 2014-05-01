@@ -350,7 +350,7 @@ public class Property
 
         public Boolean( final java.lang.String name, final java.lang.String value )
         {
-            super (name, new Value.String( value ));
+            super (name, Value.newString( value ));
         }
 
         public Boolean( final java.lang.String name, final Value value )
@@ -422,7 +422,7 @@ public class Property
     {
         public String( final java.lang.String name, final java.lang.String value )
         {
-            super( name, new Value.String( value ) );
+            super( name, Value.newString( value ) );
         }
 
         public String( final java.lang.String name, final Value value )

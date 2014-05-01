@@ -8,7 +8,7 @@ public class ContentId
 {
     ContentId( int key )
     {
-        super( key, JavaTypeConverter.ContentId.GET );
+        super( key, JavaTypeConverters.CONTENT_ID );
     }
 
     @Override

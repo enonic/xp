@@ -9,7 +9,7 @@ public class Data
 {
     Data( int key )
     {
-        super( key, JavaTypeConverter.Data.GET );
+        super( key, JavaTypeConverters.DATA );
     }
 
     @Override

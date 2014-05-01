@@ -21,7 +21,7 @@ class ContentPropertyIndexConfigVisitorTest
         def ContentPropertyIndexConfigVisitor visitor = new ContentPropertyIndexConfigVisitor( builder );
         def ContentData contentData = new ContentData();
 
-        def Property myProperty = contentData.addProperty( path, new Value.String( "doesNotMatter" ) );
+        def Property myProperty = contentData.addProperty( path, Value.newString( "doesNotMatter" ) );
         visitor.visit( myProperty );
         def PropertyIndexConfig config = builder.build().getPropertyIndexConfig( DataPath.from( path ) )
 

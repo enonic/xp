@@ -87,7 +87,7 @@ public class ValidateContentDataCommandTest
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
         final Content content = newContent().path( "/mycontent" ).type( contentType.getName() ).build();
-        content.getContentData().setProperty( "mySet.myInput", new Value.String( "thing" ) );
+        content.getContentData().setProperty( "mySet.myInput", Value.newString( "thing" ) );
 
         // exercise
         final ValidateContentData data = new ValidateContentData().contentData( content.getContentData() ).contentType( contentType.getName() );

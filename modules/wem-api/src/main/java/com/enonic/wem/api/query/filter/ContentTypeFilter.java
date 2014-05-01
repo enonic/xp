@@ -23,7 +23,7 @@ public class ContentTypeFilter
         {
             for ( final String contentTypeId : contentTypeIds )
             {
-                this.contentTypeIds.add( new Value.String( contentTypeId ) );
+                this.contentTypeIds.add( Value.newString( contentTypeId ) );
             }
 
             return this;

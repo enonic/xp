@@ -5,7 +5,6 @@ import com.enonic.wem.api.query.filter.Filter
 import com.enonic.wem.api.query.parser.QueryParser
 import com.google.common.collect.ImmutableSet
 import com.google.common.collect.Sets
-import spock.lang.Ignore
 import spock.lang.Unroll
 
 class QueryBuilderFactoryTest
@@ -40,8 +39,8 @@ class QueryBuilderFactoryTest
 
         def queryFilter = Filter.newValueQueryFilter().
             fieldName( "myField" ).
-            add( new Value.String( "myValue1" ) ).
-            add( new Value.String( "myValue2" ) ).
+            add( Value.newString( "myValue1" ) ).
+            add( Value.newString( "myValue2" ) ).
             build()
 
         Set<Filter> queryFilters = Sets.newHashSet();

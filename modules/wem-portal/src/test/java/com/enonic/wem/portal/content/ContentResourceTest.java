@@ -44,6 +44,8 @@ import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
+import com.enonic.wem.api.xml.XmlSerializers;
+import com.enonic.wem.core.web.servlet.ServletRequestHolder;
 import com.enonic.wem.portal.controller.JsControllerFactoryImpl;
 import com.enonic.wem.portal.controller.JsHttpRequest;
 import com.enonic.wem.portal.postprocess.PostProcessor;
@@ -56,8 +58,6 @@ import com.enonic.wem.portal.script.loader.ScriptSourceImpl;
 import com.enonic.wem.portal.script.runner.ScriptRunner;
 import com.enonic.wem.portal.script.runner.ScriptRunnerFactoryImpl;
 import com.enonic.wem.portal.script.runner.ScriptRunnerImpl;
-import com.enonic.wem.core.web.servlet.ServletRequestHolder;
-import com.enonic.wem.api.xml.XmlSerializers;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.isA;
@@ -176,7 +176,7 @@ public class ContentResourceTest
     {
         RootDataSet rootDataSet = new RootDataSet();
 
-        Property dataSet = new Property( "property1", new Value.String( "value1" ) );
+        Property dataSet = new Property( "property1", Value.newString( "value1" ) );
         rootDataSet.add( dataSet );
 
         Page page = Page.newPage().
@@ -199,7 +199,7 @@ public class ContentResourceTest
     {
         RootDataSet rootDataSet = new RootDataSet();
 
-        Property dataSet = new Property( "property1", new Value.String( "value1" ) );
+        Property dataSet = new Property( "property1", Value.newString( "value1" ) );
         rootDataSet.add( dataSet );
 
         Page page = Page.newPage().

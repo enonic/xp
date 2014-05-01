@@ -1,6 +1,5 @@
 package com.enonic.wem.api.data.type;
 
-import java.lang.*;
 import java.lang.String;
 
 import com.enonic.wem.api.data.Property;
@@ -11,7 +10,7 @@ public class Boolean
 {
     Boolean( int key )
     {
-        super( key, JavaTypeConverter.Boolean.GET );
+        super( key, JavaTypeConverters.BOOLEAN );
     }
 
     @Override

@@ -49,12 +49,12 @@ public class RootDataSetTest
     {
         RootDataSet rootA = new RootDataSet();
         DataSet setA = new DataSet( "a" );
-        setA.setProperty( "p1", new Value.String( "v1" ) );
+        setA.setProperty( "p1", Value.newString( "v1" ) );
         rootA.add( setA );
 
         RootDataSet rootB = new RootDataSet();
         DataSet setB = new DataSet( "a" );
-        setB.setProperty( "p1", new Value.String( "v1" ) );
+        setB.setProperty( "p1", Value.newString( "v1" ) );
         rootB.add( setB );
 
         assertTrue( rootA.valueEquals( rootB ) );
@@ -65,12 +65,12 @@ public class RootDataSetTest
     {
         RootDataSet rootA = new RootDataSet();
         DataSet setA = new DataSet( "a" );
-        setA.setProperty( "p1", new Value.String( "v1" ) );
+        setA.setProperty( "p1", Value.newString( "v1" ) );
         rootA.add( setA );
 
         RootDataSet rootB = new RootDataSet();
         DataSet setB = new DataSet( "b" );
-        setB.setProperty( "p1", new Value.String( "v1" ) );
+        setB.setProperty( "p1", Value.newString( "v1" ) );
         rootB.add( setB );
 
         assertFalse( rootA.valueEquals( rootB ) );
@@ -81,12 +81,12 @@ public class RootDataSetTest
     {
         RootDataSet rootA = new RootDataSet();
         DataSet setA = new DataSet( "a" );
-        setA.setProperty( "p1", new Value.String( "v1" ) );
+        setA.setProperty( "p1", Value.newString( "v1" ) );
         rootA.add( setA );
 
         RootDataSet rootB = new RootDataSet();
         DataSet setB = new DataSet( "a" );
-        setB.setProperty( "p1", new Value.String( "v2" ) );
+        setB.setProperty( "p1", Value.newString( "v2" ) );
         rootB.add( setB );
 
         assertFalse( rootA.valueEquals( rootB ) );

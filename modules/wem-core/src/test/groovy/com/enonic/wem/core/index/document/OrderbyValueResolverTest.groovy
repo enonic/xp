@@ -50,7 +50,7 @@ class OrderbyValueResolverTest extends Specification
     {
         def unsorted = Lists.newArrayList()
         values.each {
-            value -> unsorted.add( OrderbyValueResolver.getOrderbyValue( new Value.String( value ) ) ); }
+            value -> unsorted.add( OrderbyValueResolver.getOrderbyValue( Value.newString( value ) ) ); }
         return unsorted
     }
 

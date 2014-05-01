@@ -49,7 +49,7 @@ public class NodeBuilderTest
         final Property testProperty = myNode.property( "testPath" );
 
         assertNotNull( testProperty );
-        assertTrue( testProperty.getValue() instanceof Value.String );
+        assertTrue( testProperty.getValue().isStringType() );
     }
 
     @Test
@@ -111,8 +111,6 @@ public class NodeBuilderTest
             parent( NodePath.ROOT ).
             path( "test" ).
             build();
-
-        final NodePath path = myNode.path();
 
         assertEquals( "test/my-name", myNode.path().toString() );
     }
