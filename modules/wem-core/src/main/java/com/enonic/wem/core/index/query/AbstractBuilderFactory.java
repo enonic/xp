@@ -5,7 +5,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.data.type.GeoPoint;
+import com.enonic.wem.api.data.type.GeoPointType;
 
 public class AbstractBuilderFactory
 {
@@ -23,8 +23,8 @@ public class AbstractBuilderFactory
 
         if ( value.isGeoPoint() )
         {
-            final double latitude = GeoPoint.getLatitude( value.asString() );
-            final double longitude = GeoPoint.getLongitude( value.asString() );
+            final double latitude = GeoPointType.getLatitude( value.asString() );
+            final double longitude = GeoPointType.getLongitude( value.asString() );
 
             return new org.elasticsearch.common.geo.GeoPoint( latitude, longitude );
         }

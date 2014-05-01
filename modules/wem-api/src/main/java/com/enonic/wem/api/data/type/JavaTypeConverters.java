@@ -18,13 +18,13 @@ public final class JavaTypeConverters
 
     private final static RootDataSetJsonSerializer DATA_SERIALIZER = new RootDataSetJsonSerializer();
 
-    public final static JavaTypeConverter<java.lang.String> STRING = newString();
+    public final static JavaTypeConverter<String> STRING = newString();
 
     public final static JavaTypeConverter<java.lang.Long> LONG = newLong();
 
     public final static JavaTypeConverter<java.lang.Double> DOUBLE = newDouble();
 
-    public final static JavaTypeConverter<java.lang.Boolean> BOOLEAN = newBoolean();
+    public final static JavaTypeConverter<Boolean> BOOLEAN = newBoolean();
 
     public final static JavaTypeConverter<RootDataSet> DATA = newData();
 
@@ -36,16 +36,16 @@ public final class JavaTypeConverters
 
     public final static JavaTypeConverter<org.joda.time.DateMidnight> DATE_MIDNIGHT = newDateMidnight();
 
-    private static JavaTypeConverter<java.lang.String> newString()
+    private static JavaTypeConverter<String> newString()
     {
-        return new JavaTypeConverter<java.lang.String>( java.lang.String.class )
+        return new JavaTypeConverter<String>( String.class )
         {
             @Override
-            public java.lang.String convertFrom( final Object value )
+            public String convertFrom( final Object value )
             {
-                if ( value instanceof java.lang.String )
+                if ( value instanceof String )
                 {
-                    return (java.lang.String) value;
+                    return (String) value;
                 }
                 else if ( value instanceof java.lang.Long )
                 {
@@ -55,7 +55,7 @@ public final class JavaTypeConverters
                 {
                     return value.toString();
                 }
-                else if ( value instanceof java.lang.Boolean )
+                else if ( value instanceof Boolean )
                 {
                     return value.toString();
                 }
@@ -86,7 +86,7 @@ public final class JavaTypeConverters
             }
 
             @Override
-            public java.lang.String convertFromString( final java.lang.String value )
+            public String convertFromString( final String value )
             {
                 return value;
             }
@@ -104,9 +104,9 @@ public final class JavaTypeConverters
                 {
                     return (java.lang.Long) value;
                 }
-                else if ( value instanceof java.lang.String )
+                else if ( value instanceof String )
                 {
-                    return new java.lang.Long( (java.lang.String) value );
+                    return new java.lang.Long( (String) value );
                 }
                 else if ( value instanceof java.lang.Integer )
                 {
@@ -123,7 +123,7 @@ public final class JavaTypeConverters
             }
 
             @Override
-            public java.lang.Long convertFromString( final java.lang.String value )
+            public java.lang.Long convertFromString( final String value )
             {
                 return new java.lang.Long( value );
             }
@@ -141,11 +141,11 @@ public final class JavaTypeConverters
                 {
                     return (java.lang.Double) value;
                 }
-                else if ( value instanceof java.lang.String )
+                else if ( value instanceof String )
                 {
                     try
                     {
-                        return java.lang.Double.parseDouble( (java.lang.String) value );
+                        return java.lang.Double.parseDouble( (String) value );
                     }
                     catch ( NumberFormatException e )
                     {
@@ -163,36 +163,36 @@ public final class JavaTypeConverters
             }
 
             @Override
-            public java.lang.Double convertFromString( final java.lang.String value )
+            public java.lang.Double convertFromString( final String value )
             {
                 return new java.lang.Double( value );
             }
         };
     }
 
-    private static JavaTypeConverter<java.lang.Boolean> newBoolean()
+    private static JavaTypeConverter<Boolean> newBoolean()
     {
-        return new JavaTypeConverter<java.lang.Boolean>( java.lang.Boolean.class )
+        return new JavaTypeConverter<Boolean>( Boolean.class )
         {
             @Override
-            public java.lang.Boolean convertFrom( final Object value )
+            public Boolean convertFrom( final Object value )
             {
-                if ( value instanceof java.lang.Boolean )
+                if ( value instanceof Boolean )
                 {
-                    return (java.lang.Boolean) value;
+                    return (Boolean) value;
                 }
-                else if ( value instanceof java.lang.String )
+                else if ( value instanceof String )
                 {
-                    return java.lang.Boolean.parseBoolean( (java.lang.String) value );
+                    return Boolean.parseBoolean( (String) value );
                 }
 
                 return null;
             }
 
             @Override
-            public java.lang.Boolean convertFromString( final java.lang.String value )
+            public Boolean convertFromString( final String value )
             {
-                return java.lang.Boolean.parseBoolean( value );
+                return Boolean.parseBoolean( value );
             }
         };
     }
@@ -208,9 +208,9 @@ public final class JavaTypeConverters
                 {
                     return (com.enonic.wem.api.data.RootDataSet) value;
                 }
-                else if ( value instanceof java.lang.String )
+                else if ( value instanceof String )
                 {
-                    return DATA_SERIALIZER.parse( (java.lang.String) value );
+                    return DATA_SERIALIZER.parse( (String) value );
                 }
                 else
                 {
@@ -219,7 +219,7 @@ public final class JavaTypeConverters
             }
 
             @Override
-            public com.enonic.wem.api.data.RootDataSet convertFromString( final java.lang.String value )
+            public com.enonic.wem.api.data.RootDataSet convertFromString( final String value )
             {
                 return DATA_SERIALIZER.parse( value );
             }
@@ -237,9 +237,9 @@ public final class JavaTypeConverters
                 {
                     return (com.enonic.wem.api.content.ContentId) value;
                 }
-                else if ( value instanceof java.lang.String )
+                else if ( value instanceof String )
                 {
-                    return com.enonic.wem.api.content.ContentId.from( (java.lang.String) value );
+                    return com.enonic.wem.api.content.ContentId.from( (String) value );
                 }
                 else
                 {
@@ -248,7 +248,7 @@ public final class JavaTypeConverters
             }
 
             @Override
-            public com.enonic.wem.api.content.ContentId convertFromString( final java.lang.String value )
+            public com.enonic.wem.api.content.ContentId convertFromString( final String value )
             {
                 return com.enonic.wem.api.content.ContentId.from( value );
             }
@@ -266,9 +266,9 @@ public final class JavaTypeConverters
                 {
                     return (com.enonic.wem.api.entity.EntityId) value;
                 }
-                else if ( value instanceof java.lang.String )
+                else if ( value instanceof String )
                 {
-                    return com.enonic.wem.api.entity.EntityId.from( (java.lang.String) value );
+                    return com.enonic.wem.api.entity.EntityId.from( (String) value );
                 }
                 else
                 {
@@ -277,7 +277,7 @@ public final class JavaTypeConverters
             }
 
             @Override
-            public com.enonic.wem.api.entity.EntityId convertFromString( final java.lang.String value )
+            public com.enonic.wem.api.entity.EntityId convertFromString( final String value )
             {
                 return com.enonic.wem.api.entity.EntityId.from( value );
             }
@@ -301,9 +301,9 @@ public final class JavaTypeConverters
                     {
                         return (org.joda.time.DateTime) value;
                     }
-                    else if ( value instanceof java.lang.String )
+                    else if ( value instanceof String )
                     {
-                        return DATE_TIME_FORMATTER.parseDateTime( (java.lang.String) value ).toDateTime();
+                        return DATE_TIME_FORMATTER.parseDateTime( (String) value ).toDateTime();
                     }
                     else if ( value instanceof java.lang.Long )
                     {
@@ -321,7 +321,7 @@ public final class JavaTypeConverters
             }
 
             @Override
-            public org.joda.time.DateTime convertFromString( final java.lang.String value )
+            public org.joda.time.DateTime convertFromString( final String value )
             {
                 return DATE_TIME_FORMATTER.parseDateTime( value );
             }
@@ -339,9 +339,9 @@ public final class JavaTypeConverters
                 {
                     return (org.joda.time.DateMidnight) value;
                 }
-                else if ( value instanceof java.lang.String )
+                else if ( value instanceof String )
                 {
-                    return DATE_MIDNIGHT_FORMATTER.parseDateTime( (java.lang.String) value ).toDateMidnight();
+                    return DATE_MIDNIGHT_FORMATTER.parseDateTime( (String) value ).toDateMidnight();
                 }
                 else if ( value instanceof java.lang.Long )
                 {
@@ -354,7 +354,7 @@ public final class JavaTypeConverters
             }
 
             @Override
-            public org.joda.time.DateMidnight convertFromString( final java.lang.String value )
+            public org.joda.time.DateMidnight convertFromString( final String value )
             {
                 return DATE_MIDNIGHT_FORMATTER.parseDateTime( value ).toDateMidnight();
             }

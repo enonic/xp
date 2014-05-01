@@ -6,9 +6,8 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.data.type.HtmlPart;
 import com.enonic.wem.api.data.type.ValueType;
-import com.enonic.wem.api.data.type.Xml;
+import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.entity.PropertyIndexConfig;
 import com.enonic.wem.core.index.IndexConstants;
 
@@ -106,9 +105,9 @@ public class IndexDocumentItemFactory
 
     private boolean isTextField( final ValueType valueType )
     {
-        return valueType instanceof com.enonic.wem.api.data.type.String ||
-            valueType instanceof HtmlPart ||
-            valueType instanceof Xml;
+        return ( valueType == ValueTypes.STRING ) ||
+            ( valueType == ValueTypes.HTML_PART ) ||
+            ( valueType == ValueTypes.XML );
     }
 
     private IndexDocumentOrderbyItem createOrderbyItemType( final IndexDocumentItemPath path, final Value propertyValue )

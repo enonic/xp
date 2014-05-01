@@ -16,16 +16,16 @@ public abstract class ValueType<T>
 {
     private final int key;
 
-    private final java.lang.String name;
+    private final String name;
 
     private final Class classType;
 
     private final JavaTypeConverter<T> javaTypeConverter;
 
-    public ValueType( final int key, final JavaTypeConverter<T> javaTypeConverter )
+    public ValueType( final int key, final String name, final JavaTypeConverter<T> javaTypeConverter )
     {
         this.key = key;
-        this.name = this.getClass().getSimpleName();
+        this.name = name;
         this.classType = javaTypeConverter.getClass();
         this.javaTypeConverter = javaTypeConverter;
     }
@@ -56,7 +56,6 @@ public abstract class ValueType<T>
      *
      * @param value the value to check the validity of
      * @throws ValueOfUnexpectedClassException
-     *
      * @throws InvalidValueException
      */
     public void checkValidity( final Value value )
@@ -103,15 +102,6 @@ public abstract class ValueType<T>
     {
         Preconditions.checkNotNull( value, "Cannot check the type of a value that is null" );
         return javaTypeConverter.isInstance( value.getObject() );
-    }
-
-    public void checkValueIsOfExpectedClass( final Property property )
-        throws ValueOfUnexpectedClassException
-    {
-        if ( !isObjectOfExpectedClass( ( property.getObject() ) ) )
-        {
-            throw new ValueOfUnexpectedClassException( javaTypeConverter, property );
-        }
     }
 
     public void checkValueIsOfExpectedClass( final Value value )

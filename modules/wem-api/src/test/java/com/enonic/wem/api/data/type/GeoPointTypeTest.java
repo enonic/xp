@@ -9,18 +9,18 @@ import com.enonic.wem.api.form.InvalidValueException;
 import static org.junit.Assert.*;
 
 
-public class GeoPointTest
+public class GeoPointTypeTest
 {
     @Test
     public void getLatitude()
     {
-        assertEquals( 59.913869, GeoPoint.getLatitude( "59.913869,10.752245" ), 0 );
+        assertEquals( 59.913869, GeoPointType.getLatitude( "59.913869,10.752245" ), 0 );
     }
 
     @Test
     public void getLongitude()
     {
-        assertEquals( 10.752245, GeoPoint.getLongitude( "59.913869,10.752245" ), 0 );
+        assertEquals( 10.752245, GeoPointType.getLongitude( "59.913869,10.752245" ), 0 );
     }
 
     @Test
@@ -43,6 +43,4 @@ public class GeoPointTest
             assertEquals( "Invalid value: longitude not within range from -180.0 to 180.0: 90.0,180.2", e.getMessage() );
         }
     }
-
-
 }
