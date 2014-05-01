@@ -2,10 +2,10 @@
     "failures": [ ],
     "successes": [
         {
-            "path": "/two"
+            "path": "/one"
         },
         {
-            "path": "/one"
+            "path": "/two"
         }
     ]
 }

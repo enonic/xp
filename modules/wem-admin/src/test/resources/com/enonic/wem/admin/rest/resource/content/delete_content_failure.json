@@ -1,12 +1,12 @@
 {
     "failures": [
         {
-            "path": "/two",
-            "reason": "Not able to delete content with path [/two]: Some reason"
-        },
-        {
             "path": "/one",
             "reason": "Content with path [/one] was not found"
+        },
+        {
+            "path": "/two",
+            "reason": "Not able to delete content with path [/two]: Some reason"
         }
     ],
     "successes": [ ]
