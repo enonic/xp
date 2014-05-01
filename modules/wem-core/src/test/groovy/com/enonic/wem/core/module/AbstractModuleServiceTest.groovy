@@ -4,6 +4,7 @@ import com.enonic.wem.api.module.ModuleKey
 import com.enonic.wem.core.config.SystemConfig
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import org.mockito.Mockito
 import spock.lang.Specification
 
 import java.nio.file.Files
@@ -23,15 +24,15 @@ abstract class AbstractModuleServiceTest
     {
         this.service = new ModuleServiceImpl()
 
-        this.service.systemConfig = Mock( SystemConfig.class )
-        this.service.moduleExporter = Mock( ModuleExporter.class )
+        this.service.systemConfig = Mockito.mock( SystemConfig.class )
+        this.service.moduleExporter = Mockito.mock( ModuleExporter.class )
         this.service.moduleResourcePathResolver = new ModuleResourcePathResolverImpl( this.service.systemConfig )
 
         def tempDir = this.folder.newFolder().toPath()
         this.modulesDir = tempDir.resolve( "modules" )
         Files.createDirectory( this.modulesDir )
 
-        this.service.systemConfig.getModulesDir() >> this.modulesDir
+        Mockito.when( this.service.systemConfig.getModulesDir() ).thenReturn( this.modulesDir )
     }
 
     def ModuleBuilder buildModule( final String key )
@@ -44,12 +45,13 @@ abstract class AbstractModuleServiceTest
             vendorUrl( "https://www.enonic.com" )
     }
 
-    def ModuleBuilder createModule( final String name )
+    def createModule( final String name )
     {
         def moduleDir = this.modulesDir.resolve( name )
         Files.createDirectories( moduleDir.resolve( "config" ) );
         def fooModule = buildModule( name );
-        this.service.moduleExporter.importFromDirectory( moduleDir ) >> fooModule
+
+        Mockito.when( this.service.moduleExporter.importFromDirectory( moduleDir ) ).thenReturn( fooModule )
     }
 
     def createModules( final String... names )
