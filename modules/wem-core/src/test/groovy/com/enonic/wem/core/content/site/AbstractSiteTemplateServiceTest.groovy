@@ -4,13 +4,14 @@ import com.enonic.wem.api.content.site.SiteTemplate
 import com.enonic.wem.core.config.SystemConfig
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import org.mockito.Mockito
 import spock.lang.Specification
 
 import java.nio.file.Files
 import java.nio.file.Path
 
 abstract class AbstractSiteTemplateServiceTest
-        extends Specification
+    extends Specification
 {
     @Rule
     def TemporaryFolder folder = new TemporaryFolder()
@@ -23,14 +24,14 @@ abstract class AbstractSiteTemplateServiceTest
     {
         this.service = new SiteTemplateServiceImpl()
 
-        this.service.systemConfig = Mock( SystemConfig.class );
-        this.service.siteTemplateExporter = Mock( SiteTemplateExporter.class );
+        this.service.systemConfig = Mockito.mock( SystemConfig.class );
+        this.service.siteTemplateExporter = Mockito.mock( SiteTemplateExporter.class );
 
         def tempDir = this.folder.newFolder().toPath();
         this.templatesDir = tempDir.resolve( "templates" );
         Files.createDirectory( this.templatesDir );
 
-        this.service.systemConfig.getTemplatesDir() >> this.templatesDir
+        Mockito.when( this.service.systemConfig.getTemplatesDir() ).thenReturn( this.templatesDir )
     }
 
     def SiteTemplate createSiteTemplate( SiteTemplate.Builder siteTemplateBuilder )
@@ -39,7 +40,7 @@ abstract class AbstractSiteTemplateServiceTest
         def templateDir = this.templatesDir.resolve( siteTemplate.getKey().toString() );
         Files.createDirectories( templateDir );
 
-        this.service.siteTemplateExporter.importFromDirectory( templateDir ) >> siteTemplateBuilder;
+        Mockito.when( this.service.siteTemplateExporter.importFromDirectory( templateDir ) ).thenReturn( siteTemplateBuilder );
         return siteTemplate;
     }
 }
