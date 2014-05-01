@@ -110,6 +110,7 @@
               <keywords>true</keywords>
               <version>false</version>
               <author>false</author>
+              <failOnError>false</failOnError>
               <links>
                 <link>http://docs.oracle.com/javase/7/docs/api/</link>
                 <link>http://www.jdom.org/docs/apidocs/</link>
