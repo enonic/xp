@@ -246,8 +246,8 @@ public class DataSetTest
         dataSet.add( new Property.String( "myData", "2" ) );
 
         Iterator<String> dataNames = dataSet.dataNames().iterator();
-        assertEquals( "myData", dataNames.next() );
         assertEquals( "myOtherData", dataNames.next() );
+        assertEquals( "myData", dataNames.next() );
         assertEquals( false, dataNames.hasNext() );
     }
 
