@@ -3,6 +3,7 @@ package com.enonic.wem.api.content.page.part;
 
 import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.PageComponent;
+import com.enonic.wem.api.content.page.PageComponentType;
 import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.RootDataSet;
 
@@ -15,15 +16,15 @@ public final class PartComponent
         super( builder );
     }
 
-    @Override
-    public Type getType()
-    {
-        return Type.PART;
-    }
-
     public static Builder newPartComponent()
     {
         return new Builder();
+    }
+
+    @Override
+    public PageComponentType getType()
+    {
+        return PageComponentType.PART;
     }
 
     public static class Builder

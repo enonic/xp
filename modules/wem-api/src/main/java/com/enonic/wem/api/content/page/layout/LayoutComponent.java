@@ -3,6 +3,7 @@ package com.enonic.wem.api.content.page.layout;
 import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.ComponentPath;
 import com.enonic.wem.api.content.page.PageComponent;
+import com.enonic.wem.api.content.page.PageComponentType;
 import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.RootDataSet;
 
@@ -18,10 +19,15 @@ public final class LayoutComponent
         this.regions = builder.regions;
     }
 
-    @Override
-    public Type getType()
+    public static Builder newLayoutComponent()
     {
-        return Type.LAYOUT;
+        return new Builder();
+    }
+
+    @Override
+    public PageComponentType getType()
+    {
+        return PageComponentType.LAYOUT;
     }
 
     @Override
@@ -39,11 +45,6 @@ public final class LayoutComponent
     public LayoutRegions getRegions()
     {
         return regions;
-    }
-
-    public static Builder newLayoutComponent()
-    {
-        return new Builder();
     }
 
     public PageComponent getComponent( final ComponentPath path )

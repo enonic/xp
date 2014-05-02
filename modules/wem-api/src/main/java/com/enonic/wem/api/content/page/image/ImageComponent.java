@@ -4,6 +4,7 @@ package com.enonic.wem.api.content.page.image;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.PageComponent;
+import com.enonic.wem.api.content.page.PageComponentType;
 import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.RootDataSet;
 
@@ -19,20 +20,20 @@ public class ImageComponent
         this.image = builder.image;
     }
 
-    @Override
-    public Type getType()
+    public static Builder newImageComponent()
     {
-        return Type.IMAGE;
+        return new Builder();
+    }
+
+    @Override
+    public PageComponentType getType()
+    {
+        return PageComponentType.IMAGE;
     }
 
     public ContentId getImage()
     {
         return image;
-    }
-
-    public static Builder newImageComponent()
-    {
-        return new Builder();
     }
 
     public static class Builder

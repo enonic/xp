@@ -12,11 +12,11 @@ import com.enonic.wem.api.rendering.Component;
 public abstract class PageComponent<DESCRIPTOR_KEY extends DescriptorKey>
     implements Component
 {
-    private ComponentName name;
-
     private final DESCRIPTOR_KEY descriptor;
 
     private final RootDataSet config;
+
+    private ComponentName name;
 
     private ComponentPath path;
 
@@ -28,7 +28,7 @@ public abstract class PageComponent<DESCRIPTOR_KEY extends DescriptorKey>
         this.config = properties.config;
     }
 
-    public abstract Type getType();
+    public abstract PageComponentType getType();
 
 
     public ComponentName getName()
@@ -36,14 +36,14 @@ public abstract class PageComponent<DESCRIPTOR_KEY extends DescriptorKey>
         return name;
     }
 
-    public void setPath( final ComponentPath path )
-    {
-        this.path = path;
-    }
-
     public ComponentPath getPath()
     {
         return path;
+    }
+
+    public void setPath( final ComponentPath path )
+    {
+        this.path = path;
     }
 
     public DESCRIPTOR_KEY getDescriptor()
@@ -59,28 +59,6 @@ public abstract class PageComponent<DESCRIPTOR_KEY extends DescriptorKey>
     public RootDataSet getConfig()
     {
         return config;
-    }
-
-    public static enum Type
-    {
-        IMAGE( "image", ImageComponent.class ),
-        PART( "part", PartComponent.class ),
-        LAYOUT( "layout", LayoutComponent.class );
-
-        private Class clazz;
-
-        private String shortName;
-
-        Type( final String shortName, final Class clazz )
-        {
-            this.shortName = shortName;
-            this.clazz = clazz;
-        }
-
-        public String toString()
-        {
-            return shortName;
-        }
     }
 
     public static class Properties<DESCRIPTOR_KEY extends DescriptorKey>
