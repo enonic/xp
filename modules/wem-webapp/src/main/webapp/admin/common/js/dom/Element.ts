@@ -217,7 +217,7 @@ module api.dom {
             var gotBlur: boolean = document.activeElement != this.el.getHTMLElement();
             if (!gotBlur) {
                 console.log("Element.giveBlur(): Failed to give blur to Element: class = " + api.util.getClassName(this) + ", id = " +
-                    this.getId());
+                            this.getId());
             }
             return gotBlur;
         }
@@ -330,6 +330,35 @@ module api.dom {
 
         getFirstChild(): Element {
             return this.children[0];
+        }
+
+        getNextElement(): Element {
+            var nextSiblingHtmlElement = this.getHTMLElement().nextElementSibling;
+            if (!nextSiblingHtmlElement) {
+                return null;
+            }
+            return Element.fromHtmlElement(<HTMLElement>nextSiblingHtmlElement);
+        }
+
+        getPreviousElement(): Element {
+            var previousSiblingHtmlElement = this.getHTMLElement().previousElementSibling;
+            if (!previousSiblingHtmlElement) {
+                return null;
+            }
+            return Element.fromHtmlElement(<HTMLElement>previousSiblingHtmlElement);
+        }
+
+        /**
+         * Returns the index of this element among it's siblings. Returns 0 if first or only child.
+         */
+        getSiblingIndex(): number {
+
+            var i = 0;
+            var prev: HTMLElement = this.getHTMLElement();
+            while ((prev = <HTMLElement>prev.previousSibling) != null) {
+                i++;
+            }
+            return i;
         }
 
         toString(): string {
