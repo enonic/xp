@@ -1,9 +1,7 @@
 package com.enonic.wem.api.data.type;
 
-
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.form.InvalidValueException;
 
@@ -92,12 +90,6 @@ public abstract class ValueType<T>
         return name;
     }
 
-    public boolean isObjectOfExpectedClass( final Object object )
-    {
-        Preconditions.checkNotNull( object, "Cannot check the type of a object that is null" );
-        return javaTypeConverter.isInstance( object );
-    }
-
     public boolean isValueOfExpectedClass( final Value value )
     {
         Preconditions.checkNotNull( value, "Cannot check the type of a value that is null" );
@@ -129,16 +121,5 @@ public abstract class ValueType<T>
         return javaTypeConverter.convertFromString( object );
     }
 
-    public Property newProperty( final java.lang.String name, final Object valueObj )
-    {
-        final Value value = newValue( valueObj );
-        return newProperty( name, value );
-    }
-
     public abstract Value newValue( Object value );
-
-    public final Property newProperty( final java.lang.String name, final Value value )
-    {
-        return Property.newProperty( name, value );
-    }
 }

@@ -92,12 +92,12 @@ public class PropertyJsonSerializer
                 final Data data = dataSerializer.parse( dataIt.next() );
                 rootDataSet.add( data );
             }
-            return valueType.newProperty( name, rootDataSet );
+            return Property.newProperty( name, valueType.newValue( rootDataSet ) );
         }
         else
         {
             final JsonNode valueNode = dataNode.get( DATA_VALUE );
-            return valueType.newProperty( name, valueNode.textValue() );
+            return Property.newProperty( name, valueType.newValue( valueNode.textValue() ) );
         }
     }
 }

@@ -91,7 +91,7 @@ public class DataSet
         }
         else
         {
-            final Property property = value.newProperty( dataPath.getFirstElement().getName() );
+            final Property property = Property.newProperty( dataPath.getFirstElement().getName(), value );
             doAdd( property );
             return property;
         }
@@ -179,10 +179,11 @@ public class DataSet
             {
                 throw new IllegalArgumentException(
                     "Property [" + dataId + "] expected to be given a successive index [" + expectedIndex + "]: " +
-                        dataId.getIndex() );
+                        dataId.getIndex()
+                );
             }
 
-            final Property newProperty = value.newProperty( dataId.getName() );
+            final Property newProperty = Property.newProperty( dataId.getName(), value );
             newProperty.setParent( this );
             newProperty.setArrayIndex( dataId.getIndex() );
 
@@ -656,7 +657,8 @@ public class DataSet
 
         public Builder set( final String name, final Object value, final ValueType propertyType )
         {
-            dataList.add( propertyType.newProperty( name, value ) );
+            final Value valueObject = propertyType.newValue( value );
+            dataList.add( Property.newProperty( name, valueObject ) );
             return this;
         }
 

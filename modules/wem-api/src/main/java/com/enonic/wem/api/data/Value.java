@@ -323,11 +323,6 @@ public final class Value
         return String.valueOf( object );
     }
 
-    public Property newProperty( final String name )
-    {
-        return getType().newProperty( name, this );
-    }
-
     public static Value newDateTime( final DateTime value )
     {
         return new Value( ValueTypes.DATE_TIME, value );

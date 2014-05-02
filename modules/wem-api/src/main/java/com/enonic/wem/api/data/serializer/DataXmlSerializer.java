@@ -4,7 +4,6 @@ import java.util.Iterator;
 
 import org.jdom2.Element;
 
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.data.Data;
@@ -88,7 +87,7 @@ public final class DataXmlSerializer
         {
             final ValueType type = ValueTypes.parseByName( typeAsString );
             Preconditions.checkNotNull( type, "type was null" );
-            parentDataSet.add( type.newProperty( name, dataEl.getText() ) );
+            parentDataSet.add( Property.newProperty( name, type.newValue( dataEl.getText() ) ) );
         }
     }
 }

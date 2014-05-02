@@ -36,7 +36,7 @@ public class PropertyJson
     {
         ValueType valueType = ValueTypes.parseByName( type );
         Value value = valueType.newValue( stringValue != null ? stringValue : RootDataSetJson.dataJsonListToRootDataSet( set ) );
-        return valueType.newProperty( name, value );
+        return Property.newProperty( name, value );
     }
 
 

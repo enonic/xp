@@ -66,7 +66,7 @@ public final class PropertyXml
                     final RootDataSetValueXml rootDataSetValueXml = (RootDataSetValueXml) value;
                     final RootDataSet valueRootDataSet = new RootDataSet();
                     rootDataSetValueXml.to( valueRootDataSet );
-                    final Property property = valueType.newProperty( this.name, valueRootDataSet );
+                    final Property property = Property.newProperty( this.name, valueType.newValue( valueRootDataSet ) );
                     output.add( property );
                     found = true;
                 }
@@ -74,7 +74,7 @@ public final class PropertyXml
         }
         else
         {
-            final Property property = valueType.newProperty( this.name, this.values.get( 0 ) );
+            final Property property = Property.newProperty( this.name, valueType.newValue( this.values.get( 0 ) ) );
             output.add( property );
         }
     }
