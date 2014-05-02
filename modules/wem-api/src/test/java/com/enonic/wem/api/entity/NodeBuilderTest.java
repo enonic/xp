@@ -6,6 +6,7 @@ import org.junit.Test;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 
 import static org.junit.Assert.*;
@@ -49,7 +50,7 @@ public class NodeBuilderTest
         final Property testProperty = myNode.property( "testPath" );
 
         assertNotNull( testProperty );
-        assertTrue( testProperty.getValue().isStringType() );
+        assertTrue( testProperty.getValue().isString() );
     }
 
     @Test
@@ -66,7 +67,7 @@ public class NodeBuilderTest
         final Property testProperty = myNode.property( "testPath" );
 
         assertNotNull( testProperty );
-        assertTrue( testProperty.getValue() instanceof Value.Long );
+        assertTrue( testProperty.getValue().getType() == ValueTypes.LONG );
     }
 
     @Test
@@ -83,7 +84,7 @@ public class NodeBuilderTest
         final Property testProperty = myNode.property( "testPath" );
 
         assertNotNull( testProperty );
-        assertTrue( testProperty.getValue() instanceof Value.DateTime );
+        assertTrue( testProperty.getValue().getType() == ValueTypes.DATE_TIME );
     }
 
     @Test
@@ -94,13 +95,13 @@ public class NodeBuilderTest
         final Node myNode = Node.newNode().
             name( NodeName.from( "my-node" ) ).
             parent( NodePath.ROOT ).
-            property( "testPath", new Value.GeoPoint( "79,80" ) ).
+            property( "testPath", Value.newGeoPoint( "79,80" ) ).
             build();
 
         final Property testProperty = myNode.property( "testPath" );
 
         assertNotNull( testProperty );
-        assertTrue( testProperty.getValue() instanceof Value.GeoPoint );
+        assertTrue( testProperty.getValue().getType() == ValueTypes.GEO_POINT );
     }
 
     @Test

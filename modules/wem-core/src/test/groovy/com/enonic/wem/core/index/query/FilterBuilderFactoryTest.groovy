@@ -32,8 +32,8 @@ class FilterBuilderFactoryTest
         given:
         def queryFilter = FieldFilter.newValueQueryFilter().
             fieldName( "myField" ).
-            add( new Value.Double( 1.0 ) ).
-            add( new Value.Double( 2.0 ) ).
+            add( Value.newDouble( 1.0 ) ).
+            add( Value.newDouble( 2.0 ) ).
             build()
         def expected = this.getClass().getResource( "filter_values_number.json" ).text
         FilterBuilderFactory factory = new FilterBuilderFactory();

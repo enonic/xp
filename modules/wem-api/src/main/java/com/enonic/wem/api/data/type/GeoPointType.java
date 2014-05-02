@@ -25,7 +25,7 @@ public final class GeoPointType
     @Override
     public Value newValue( final Object value )
     {
-        return new Value.GeoPoint( convert( value ) );
+        return Value.newGeoPoint( convert( value ) );
     }
 
     @Override

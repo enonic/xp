@@ -226,7 +226,7 @@ public class ContentResourceTest
         final ModuleKey module = ModuleKey.from( "mymodule-1.0.0" );
 
         final RootDataSet pageTemplateConfig = new RootDataSet();
-        pageTemplateConfig.addProperty( "pause", new Value.Long( 10000 ) );
+        pageTemplateConfig.addProperty( "pause", Value.newLong( 10000 ) );
 
         return PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( module.getName(), new PageTemplateName( "my-page" ) ) ).

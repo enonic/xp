@@ -107,8 +107,8 @@ public class ContentResourceTest
         aContentData.setProperty( "myArray[0]", Value.newString( "arrayValue1" ) );
         aContentData.setProperty( "myArray[1]", Value.newString( "arrayValue2" ) );
 
-        aContentData.setProperty( "mySetWithArray.myArray[0]", new Value.Double( 3.14159 ) );
-        aContentData.setProperty( "mySetWithArray.myArray[1]", new Value.Double( 1.333 ) );
+        aContentData.setProperty( "mySetWithArray.myArray[0]", Value.newDouble( 3.14159 ) );
+        aContentData.setProperty( "mySetWithArray.myArray[1]", Value.newDouble( 1.333 ) );
 
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).thenReturn( aContent );
 
@@ -124,10 +124,10 @@ public class ContentResourceTest
         final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
 
         final ContentData aContentData = aContent.getContentData();
-        aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
+        aContentData.setProperty( "myProperty", Value.newDateTime( DateTime.parse( this.currentTime ) ) );
 
-        aContentData.setProperty( "mySet.setProperty1", new Value.Long( 1 ) );
-        aContentData.setProperty( "mySet.setProperty2", new Value.Long( 2 ) );
+        aContentData.setProperty( "mySet.setProperty1", Value.newLong( 1 ) );
+        aContentData.setProperty( "mySet.setProperty2", Value.newLong( 2 ) );
 
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).thenReturn( aContent );
 
@@ -161,10 +161,10 @@ public class ContentResourceTest
         final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
 
         final ContentData aContentData = aContent.getContentData();
-        aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
+        aContentData.setProperty( "myProperty", Value.newDateTime( DateTime.parse( this.currentTime ) ) );
 
-        aContentData.setProperty( "mySet.setProperty1", new Value.Long( 1 ) );
-        aContentData.setProperty( "mySet.setProperty2", new Value.Long( 2 ) );
+        aContentData.setProperty( "mySet.setProperty1", Value.newLong( 1 ) );
+        aContentData.setProperty( "mySet.setProperty2", Value.newLong( 2 ) );
 
         Mockito.when( contentService.getByPath( Mockito.eq( ContentPath.from( "/my_a_content" ) ) ) ).thenReturn( aContent );
 
@@ -205,8 +205,8 @@ public class ContentResourceTest
         aContentData.setProperty( "myArray[0]", Value.newString( "arrayValue1" ) );
         aContentData.setProperty( "myArray[1]", Value.newString( "arrayValue2" ) );
 
-        aContentData.setProperty( "mySetWithArray.myArray[0]", new Value.Double( 3.14159 ) );
-        aContentData.setProperty( "mySetWithArray.myArray[1]", new Value.Double( 1.333 ) );
+        aContentData.setProperty( "mySetWithArray.myArray[0]", Value.newDouble( 3.14159 ) );
+        aContentData.setProperty( "mySetWithArray.myArray[1]", Value.newDouble( 1.333 ) );
 
         Mockito.when( contentService.getById( ContentId.from( "aaa" ) ) ).thenReturn( aContent );
 
@@ -220,7 +220,7 @@ public class ContentResourceTest
         throws Exception
     {
         RootDataSet moduleConfigConfig = new RootDataSet();
-        moduleConfigConfig.setProperty( "A", new Value.Long( 1 ) );
+        moduleConfigConfig.setProperty( "A", Value.newLong( 1 ) );
         ModuleConfig moduleConfig = ModuleConfig.newModuleConfig().
             module( ModuleKey.from( "mymodule-1.0.0" ) ).
             config( moduleConfigConfig ).
@@ -292,10 +292,10 @@ public class ContentResourceTest
         final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
 
         final ContentData aContentData = aContent.getContentData();
-        aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
+        aContentData.setProperty( "myProperty", Value.newDateTime( DateTime.parse( this.currentTime ) ) );
 
-        aContentData.setProperty( "mySet.setProperty1", new Value.Long( 1 ) );
-        aContentData.setProperty( "mySet.setProperty2", new Value.Long( 2 ) );
+        aContentData.setProperty( "mySet.setProperty1", Value.newLong( 1 ) );
+        aContentData.setProperty( "mySet.setProperty2", Value.newLong( 2 ) );
 
         Mockito.when( contentService.getById( ContentId.from( "aaa" ) ) ).thenReturn( aContent );
 
@@ -333,8 +333,8 @@ public class ContentResourceTest
         aContentData.setProperty( "myArray[0]", Value.newString( "arrayValue1" ) );
         aContentData.setProperty( "myArray[1]", Value.newString( "arrayValue2" ) );
 
-        aContentData.setProperty( "mySetWithArray.myArray[0]", new Value.Double( 3.14159 ) );
-        aContentData.setProperty( "mySetWithArray.myArray[1]", new Value.Double( 1.333 ) );
+        aContentData.setProperty( "mySetWithArray.myArray[0]", Value.newDouble( 3.14159 ) );
+        aContentData.setProperty( "mySetWithArray.myArray[1]", Value.newDouble( 1.333 ) );
 
         Mockito.when( contentService.getById( Mockito.eq( ContentId.from( "aaa" ) ) ) ).thenReturn( aContent );
 

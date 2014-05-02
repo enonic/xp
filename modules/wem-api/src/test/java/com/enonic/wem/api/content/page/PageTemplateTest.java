@@ -17,7 +17,7 @@ public class PageTemplateTest
     public void pageTemplate()
     {
         RootDataSet pageTemplateConfig = new RootDataSet();
-        pageTemplateConfig.addProperty( "pause", new Value.Long( 10000 ) );
+        pageTemplateConfig.addProperty( "pause", Value.newLong( 10000 ) );
 
         PageTemplate pageTemplate = PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( "mainmodule|main-page" ) ).

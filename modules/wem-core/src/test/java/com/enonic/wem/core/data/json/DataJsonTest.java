@@ -48,10 +48,10 @@ public class DataJsonTest
         throws IOException
     {
         DataSet dataSet = new DataSet( "mySet" );
-        dataSet.setProperty( "Long", new Value.Long( 1 ) );
-        dataSet.setProperty( "Double", new Value.Double( 1.1 ) );
-        dataSet.setProperty( "DateMidnight", new Value.DateMidnight( new DateMidnight( 2012, 12, 12 ) ) );
-        dataSet.setProperty( "HtmlPart", new Value.HtmlPart( "<div></div>" ) );
+        dataSet.setProperty( "Long", Value.newLong( 1 ) );
+        dataSet.setProperty( "Double", Value.newDouble( 1.1 ) );
+        dataSet.setProperty( "DateMidnight", Value.newDateMidnight( new DateMidnight( 2012, 12, 12 ) ) );
+        dataSet.setProperty( "HtmlPart", Value.newHtmlPart( "<div></div>" ) );
         DataSetJson dataSetJson = new DataSetJson( dataSet );
 
         // serialize from object
@@ -76,7 +76,7 @@ public class DataJsonTest
         dataPropertyValue.setProperty( "a", Value.newString( "1" ) );
         dataPropertyValue.setProperty( "b", Value.newString( "2" ) );
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setProperty( "mydata", new Value.Data( dataPropertyValue ) );
+        rootDataSet.setProperty( "mydata", Value.newData( dataPropertyValue ) );
         RootDataSetJson rootDataSetJson = new RootDataSetJson( rootDataSet );
 
         // serialize from object

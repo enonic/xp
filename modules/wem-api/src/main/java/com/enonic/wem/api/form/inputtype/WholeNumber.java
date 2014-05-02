@@ -28,7 +28,7 @@ final class WholeNumber
     @Override
     public Value newValue( final String value )
     {
-        return new Value.Long( ValueTypes.LONG.convert( value ) );
+        return Value.newLong( ValueTypes.LONG.convert( value ) );
     }
 
     @Override

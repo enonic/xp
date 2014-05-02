@@ -102,7 +102,7 @@ public class NodeIndexDocumentFactory
         if ( node.getCreatedTime() != null )
         {
             builder.addEntries(
-                factory.create( CREATED_TIME_PROPERTY, new Value.DateTime( node.getCreatedTime() ), metadataPropertyIndexConfig ) );
+                factory.create( CREATED_TIME_PROPERTY, Value.newDateTime( node.getCreatedTime() ), metadataPropertyIndexConfig ) );
         }
 
         if ( node.getCreator() != null )
@@ -114,7 +114,7 @@ public class NodeIndexDocumentFactory
         if ( node.getModifiedTime() != null )
         {
             builder.addEntries(
-                factory.create( MODIFIED_TIME_PROPERTY_PATH, new Value.DateTime( node.getModifiedTime() ), metadataPropertyIndexConfig ) );
+                factory.create( MODIFIED_TIME_PROPERTY_PATH, Value.newDateTime( node.getModifiedTime() ), metadataPropertyIndexConfig ) );
         }
 
         if ( node.getModifier() != null )

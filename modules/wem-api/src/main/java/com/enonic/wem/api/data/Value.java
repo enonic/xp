@@ -2,14 +2,18 @@ package com.enonic.wem.api.data;
 
 import java.util.Objects;
 
+import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
+
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.data.serializer.RootDataSetJsonSerializer;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.type.InconvertibleValueException;
 import com.enonic.wem.api.data.type.JavaTypeConverters;
 import com.enonic.wem.api.data.type.ValueOfUnexpectedClassException;
 import com.enonic.wem.api.data.type.ValueType;
 import com.enonic.wem.api.data.type.ValueTypes;
+import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.form.InvalidValueException;
 
 /**
@@ -32,29 +36,29 @@ public class Value<T>
         type.checkValidity( this );
     }
 
-    public boolean isStringType()
+    public boolean isString()
     {
-        return this.object instanceof String;
+        return this.type == ValueTypes.STRING;
     }
 
     public boolean isDateType()
     {
-        return ( this instanceof DateTime || this instanceof DateMidnight );
+        return ( this.type == ValueTypes.DATE_TIME ) || ( this.type == ValueTypes.DATE_MIDNIGHT );
     }
 
     public boolean isNumericType()
     {
-        return ( this instanceof Double || this instanceof Long );
+        return ( this.object instanceof Number );
     }
 
     public boolean isGeoPoint()
     {
-        return this instanceof GeoPoint;
+        return this.type == ValueTypes.GEO_POINT;
     }
 
-    public boolean isJavaType( Class javaType )
+    public boolean isJavaType( final Class javaType )
     {
-        return javaType.isInstance( object );
+        return javaType.isInstance( this.object );
     }
 
     public ValueType getType()
@@ -86,10 +90,10 @@ public class Value<T>
      *
      * @throws ClassCastException if value is not of type Long.
      */
-    public java.lang.Long getLong()
+    public Long getLong()
         throws ClassCastException
     {
-        return (java.lang.Long) object;
+        return (Long) object;
     }
 
     /**
@@ -97,10 +101,10 @@ public class Value<T>
      *
      * @throws ClassCastException if value is not of type Double.
      */
-    public java.lang.Boolean getBoolean()
+    public Boolean getBoolean()
         throws ClassCastException
     {
-        return (java.lang.Boolean) object;
+        return (Boolean) object;
     }
 
     /**
@@ -108,10 +112,10 @@ public class Value<T>
      *
      * @throws ClassCastException if value is not of type Double.
      */
-    public java.lang.Double getDouble()
+    public Double getDouble()
         throws ClassCastException
     {
-        return (java.lang.Double) object;
+        return (Double) object;
     }
 
     /**
@@ -122,7 +126,7 @@ public class Value<T>
     public org.joda.time.DateMidnight getDate()
         throws ClassCastException
     {
-        return (org.joda.time.DateMidnight) object;
+        return (DateMidnight) object;
     }
 
     /**
@@ -133,7 +137,7 @@ public class Value<T>
     public com.enonic.wem.api.content.ContentId getContentId()
         throws ClassCastException
     {
-        return (com.enonic.wem.api.content.ContentId) object;
+        return (ContentId) object;
     }
 
     /**
@@ -144,7 +148,7 @@ public class Value<T>
     public com.enonic.wem.api.data.RootDataSet getData()
         throws ClassCastException
     {
-        return (com.enonic.wem.api.data.RootDataSet) object;
+        return (RootDataSet) object;
     }
 
     /**
@@ -155,7 +159,7 @@ public class Value<T>
     public com.enonic.wem.api.entity.EntityId getEntityId()
         throws ClassCastException
     {
-        return (com.enonic.wem.api.entity.EntityId) object;
+        return (EntityId) object;
     }
 
     /**
@@ -182,7 +186,7 @@ public class Value<T>
     public com.enonic.wem.api.content.ContentId asContentId()
         throws InconvertibleValueException
     {
-        final com.enonic.wem.api.content.ContentId converted = JavaTypeConverters.CONTENT_ID.convertFrom( object );
+        final ContentId converted = JavaTypeConverters.CONTENT_ID.convertFrom( object );
         if ( converted == null )
         {
             throw new InconvertibleValueException( object, JavaTypeConverters.CONTENT_ID );
@@ -195,10 +199,10 @@ public class Value<T>
      *
      * @throws InconvertibleValueException if value is not convertible to com.enonic.wem.api.entity.EntityId.
      */
-    public com.enonic.wem.api.entity.EntityId asEntityId()
+    public EntityId asEntityId()
         throws InconvertibleValueException
     {
-        final com.enonic.wem.api.entity.EntityId converted = JavaTypeConverters.ENTITY_ID.convertFrom( object );
+        final EntityId converted = JavaTypeConverters.ENTITY_ID.convertFrom( object );
         if ( converted == null )
         {
             throw new InconvertibleValueException( object, JavaTypeConverters.ENTITY_ID );
@@ -211,10 +215,10 @@ public class Value<T>
      *
      * @throws InconvertibleValueException if value is not convertible to Long.
      */
-    public java.lang.Long asLong()
+    public Long asLong()
         throws InconvertibleValueException
     {
-        final java.lang.Long converted = JavaTypeConverters.LONG.convertFrom( object );
+        final Long converted = JavaTypeConverters.LONG.convertFrom( object );
         if ( converted == null )
         {
             throw new InconvertibleValueException( object, JavaTypeConverters.LONG );
@@ -227,10 +231,10 @@ public class Value<T>
      *
      * @throws InconvertibleValueException if value is not convertible to Boolean.
      */
-    public java.lang.Boolean asBoolean()
+    public Boolean asBoolean()
         throws InconvertibleValueException
     {
-        final java.lang.Boolean converted = JavaTypeConverters.BOOLEAN.convertFrom( object );
+        final Boolean converted = JavaTypeConverters.BOOLEAN.convertFrom( object );
         if ( converted == null )
         {
             throw new InconvertibleValueException( object, JavaTypeConverters.BOOLEAN );
@@ -243,10 +247,10 @@ public class Value<T>
      *
      * @throws InconvertibleValueException if value is not convertible to Double.
      */
-    public java.lang.Double asDouble()
+    public Double asDouble()
         throws InconvertibleValueException
     {
-        final java.lang.Double converted;
+        final Double converted;
 
         converted = JavaTypeConverters.DOUBLE.convertFrom( object );
 
@@ -263,10 +267,10 @@ public class Value<T>
      *
      * @throws InconvertibleValueException if value is not convertible to org.joda.time.DateMidnight.
      */
-    public org.joda.time.DateMidnight asDateMidnight()
+    public DateMidnight asDateMidnight()
         throws InconvertibleValueException
     {
-        final org.joda.time.DateMidnight converted = JavaTypeConverters.DATE_MIDNIGHT.convertFrom( object );
+        final DateMidnight converted = JavaTypeConverters.DATE_MIDNIGHT.convertFrom( object );
         if ( converted == null )
         {
             throw new InconvertibleValueException( object, JavaTypeConverters.DATE_MIDNIGHT );
@@ -279,10 +283,10 @@ public class Value<T>
      *
      * @throws InconvertibleValueException if value is not convertible to org.joda.time.DateTime.
      */
-    public org.joda.time.DateTime asDateTime()
+    public DateTime asDateTime()
         throws InconvertibleValueException
     {
-        final org.joda.time.DateTime converted = JavaTypeConverters.DATE_TIME.convertFrom( object );
+        final DateTime converted = JavaTypeConverters.DATE_TIME.convertFrom( object );
         if ( converted == null )
         {
             throw new InconvertibleValueException( object, JavaTypeConverters.DATE_TIME );
@@ -324,165 +328,113 @@ public class Value<T>
         return getType().newProperty( name, this );
     }
 
-    public static final class DateMidnight
-        extends Value<org.joda.time.DateMidnight>
+    public static Value<DateTime> newDateTime( final DateTime value )
     {
-        public DateMidnight( final org.joda.time.DateMidnight value )
-        {
-            super( ValueTypes.DATE_MIDNIGHT, value );
-        }
-
-        public DateMidnight( final org.joda.time.DateTime value )
-        {
-            super( ValueTypes.DATE_MIDNIGHT, value.toDateMidnight() );
-        }
-
-        public DateMidnight( final java.lang.String value )
-        {
-            super( ValueTypes.DATE_MIDNIGHT, JavaTypeConverters.DATE_MIDNIGHT.convertFromString( value ) );
-        }
+        return new Value<>( ValueTypes.DATE_TIME, value );
     }
 
-    public static final class DateTime
-        extends Value<org.joda.time.DateTime>
+    public static Value<DateTime> newDateTime( final DateMidnight value )
     {
-        public DateTime( final org.joda.time.DateTime value )
-        {
-            super( ValueTypes.DATE_TIME, value );
-        }
-
-        public DateTime( final org.joda.time.DateMidnight value )
-        {
-            super( ValueTypes.DATE_TIME, value.toDateTime() );
-        }
-
-        public DateTime( final java.lang.String value )
-        {
-            super( ValueTypes.DATE_TIME, JavaTypeConverters.DATE_TIME.convertFromString( value ) );
-        }
+        return newDateTime( value.toDateTime() );
     }
 
-    public static final class Long
-        extends Value<java.lang.Long>
+    public static Value<DateTime> newDateTime( final String value )
     {
-        public Long( final java.lang.Long value )
-        {
-            super( ValueTypes.LONG, value );
-        }
-
-        public Long( final Integer value )
-        {
-            super( ValueTypes.LONG, java.lang.Long.valueOf( value ) );
-        }
-
-        public Long( final Short value )
-        {
-            super( ValueTypes.LONG, java.lang.Long.valueOf( value ) );
-        }
-
+        return newDateTime( JavaTypeConverters.DATE_TIME.convertFromString( value ) );
     }
 
-    public static final class Boolean
-        extends Value<java.lang.Boolean>
+    public static Value<DateMidnight> newDateMidnight( final DateMidnight value )
     {
-        public Boolean( final java.lang.Boolean value )
-        {
-            super( ValueTypes.BOOLEAN, value );
-        }
-
-        public Boolean( final java.lang.String value )
-        {
-            super( ValueTypes.BOOLEAN, java.lang.Boolean.parseBoolean( value ) );
-        }
+        return new Value<>( ValueTypes.DATE_MIDNIGHT, value );
     }
 
-    public static final class Double
-        extends Value<java.lang.Double>
+    public static Value<DateMidnight> newDateMidnight( final DateTime value )
     {
-        public Double( final java.lang.Double value )
-        {
-            super( ValueTypes.DOUBLE, value );
-        }
-
-        public Double( final Float value )
-        {
-            super( ValueTypes.DOUBLE, java.lang.Double.valueOf( value ) );
-        }
+        return newDateMidnight( value.toDateMidnight() );
     }
 
-    public static Value<java.lang.String> newString( final java.lang.String value )
+    public static Value<DateMidnight> newDateMidnight( final String value )
+    {
+        return newDateMidnight( JavaTypeConverters.DATE_MIDNIGHT.convertFromString( value ) );
+    }
+
+    public static Value<Long> newLong( final String value )
+    {
+        return newLong( Long.parseLong( value ) );
+    }
+
+    public static Value<Long> newLong( final Number value )
+    {
+        return new Value<>( ValueTypes.LONG, value.longValue() );
+    }
+
+    public static Value<Boolean> newBoolean( final String value )
+    {
+        return newBoolean( Boolean.parseBoolean( value ) );
+    }
+
+    public static Value<Boolean> newBoolean( final Boolean value )
+    {
+        return new Value<>( ValueTypes.BOOLEAN, value );
+    }
+
+    public static Value<Double> newDouble( final String value )
+    {
+        return newDouble( Double.parseDouble( value ) );
+    }
+
+    public static Value<Double> newDouble( final Number value )
+    {
+        return new Value<>( ValueTypes.DOUBLE, value.doubleValue() );
+    }
+
+    public static Value<String> newString( final String value )
     {
         return new Value<>( ValueTypes.STRING, value );
     }
 
-    public static final class Xml
-        extends Value<java.lang.String>
+    public static Value<String> newXml( final String value )
     {
-        public Xml( final java.lang.String value )
-        {
-            super( ValueTypes.XML, value );
-        }
+        return new Value<>( ValueTypes.XML, value );
     }
 
-    public static final class HtmlPart
-        extends Value<java.lang.String>
+    public static Value<String> newHtmlPart( final String value )
     {
-        public HtmlPart( final java.lang.String value )
-        {
-            super( ValueTypes.HTML_PART, value );
-        }
+        return new Value<>( ValueTypes.HTML_PART, value );
     }
 
-    public static final class GeoPoint
-        extends Value<java.lang.String>
+    public static Value<String> newGeoPoint( final String value )
     {
-        public GeoPoint( final java.lang.String value )
-        {
-            super( ValueTypes.GEO_POINT, value );
-        }
+        return new Value<>( ValueTypes.GEO_POINT, value );
     }
 
-    public static final class ContentId
-        extends Value<com.enonic.wem.api.content.ContentId>
+    public static Value<ContentId> newContentId( final ContentId value )
     {
-        public ContentId( final com.enonic.wem.api.content.ContentId value )
-        {
-            super( ValueTypes.CONTENT_ID, value );
-        }
-
-        public ContentId( final java.lang.String value )
-        {
-            super( ValueTypes.CONTENT_ID, com.enonic.wem.api.content.ContentId.from( value ) );
-        }
+        return new Value<>( ValueTypes.CONTENT_ID, value );
     }
 
-    public static final class EntityId
-        extends Value<com.enonic.wem.api.entity.EntityId>
+    public static Value<ContentId> newContentId( final String value )
     {
-        public EntityId( final com.enonic.wem.api.entity.EntityId value )
-        {
-            super( ValueTypes.ENTITY_ID, value );
-        }
-
-        public EntityId( final java.lang.String value )
-        {
-            super( ValueTypes.ENTITY_ID, com.enonic.wem.api.entity.EntityId.from( value ) );
-        }
+        return newContentId( ContentId.from( value ) );
     }
 
-    public static final class Data
-        extends Value<com.enonic.wem.api.data.RootDataSet>
+    public static Value<EntityId> newEntityId( final EntityId value )
     {
-        private final static RootDataSetJsonSerializer DATA_SERIALIZER = new RootDataSetJsonSerializer();
+        return new Value<>( ValueTypes.ENTITY_ID, value );
+    }
 
-        public Data( final com.enonic.wem.api.data.RootDataSet value )
-        {
-            super( ValueTypes.DATA, value );
-        }
+    public static Value<EntityId> newEntityId( final String value )
+    {
+        return newEntityId( EntityId.from( value ) );
+    }
 
-        public Data( final java.lang.String value )
-        {
-            super( ValueTypes.DATA, DATA_SERIALIZER.parse( value ) );
-        }
+    public static Value<RootDataSet> newData( final String value )
+    {
+        return newData( JavaTypeConverters.DATA.convertFromString( value ) );
+    }
+
+    public static Value<RootDataSet> newData( final RootDataSet value )
+    {
+        return new Value<>( ValueTypes.DATA, value );
     }
 }

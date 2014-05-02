@@ -33,7 +33,7 @@ public class GeoPointTypeTest
         // exercise
         try
         {
-            contentData.setProperty( "myGeographicCoordinate", new Value.GeoPoint( "90.0,180.2" ) );
+            contentData.setProperty( "myGeographicCoordinate", Value.newGeoPoint( "90.0,180.2" ) );
             fail( "Expected Exception" );
         }
         catch ( Exception e )

@@ -28,7 +28,7 @@ final class DecimalNumber
     @Override
     public Value newValue( final String value )
     {
-        return new Value.Double( ValueTypes.DOUBLE.convert( value ) );
+        return Value.newDouble( ValueTypes.DOUBLE.convert( value ) );
     }
 
     @Override

@@ -31,7 +31,7 @@ public class PageTemplateXmlTest
         throws Exception
     {
         RootDataSet partInHeaderConfig = new RootDataSet();
-        partInHeaderConfig.setProperty( "width", new Value.Long( 500 ) );
+        partInHeaderConfig.setProperty( "width", Value.newLong( 500 ) );
         partInHeaderConfig.setProperty( "caption", Value.newString( "So sweet!" ) );
 
         Region region = Region.newRegion().
@@ -45,7 +45,7 @@ public class PageTemplateXmlTest
         PageRegions regions = PageRegions.newPageRegions().add( region ).build();
 
         RootDataSet pageTemplateConfig = new RootDataSet();
-        pageTemplateConfig.addProperty( "pause", new Value.Long( 10000 ) );
+        pageTemplateConfig.addProperty( "pause", Value.newLong( 10000 ) );
         pageTemplateConfig.addProperty( "thing.first", Value.newString( "one" ) );
         pageTemplateConfig.addProperty( "thing.second", Value.newString( "two" ) );
 
@@ -71,7 +71,7 @@ public class PageTemplateXmlTest
         throws Exception
     {
         RootDataSet partInHeaderConfig = new RootDataSet();
-        partInHeaderConfig.setProperty( "width", new Value.Long( 500 ) );
+        partInHeaderConfig.setProperty( "width", Value.newLong( 500 ) );
         partInHeaderConfig.setProperty( "caption", Value.newString( "So sweet!" ) );
 
         Region region = Region.newRegion().
@@ -85,7 +85,7 @@ public class PageTemplateXmlTest
         PageRegions regions = PageRegions.newPageRegions().add( region ).build();
 
         RootDataSet pageTemplateConfig = new RootDataSet();
-        pageTemplateConfig.addProperty( "pause", new Value.Long( 10000 ) );
+        pageTemplateConfig.addProperty( "pause", Value.newLong( 10000 ) );
         pageTemplateConfig.addProperty( "thing.first", Value.newString( "one" ) );
         pageTemplateConfig.addProperty( "thing.second", Value.newString( "two" ) );
 

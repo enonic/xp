@@ -21,7 +21,7 @@ public class ComponentsTest
     public void page()
     {
         RootDataSet pageConfig = new RootDataSet();
-        pageConfig.addProperty( "pause", new Value.Long( 200 ) );
+        pageConfig.addProperty( "pause", Value.newLong( 200 ) );
 
         Page page = newPage().
             template( PageTemplateKey.from( "mainmodule|pageTemplateName" ) ).
@@ -37,7 +37,7 @@ public class ComponentsTest
     public void part()
     {
         RootDataSet partConfig = new RootDataSet();
-        partConfig.addProperty( "width", new Value.Long( 150 ) );
+        partConfig.addProperty( "width", Value.newLong( 150 ) );
 
         PartComponent partComponent = newPartComponent().
             name( "my-part" ).
@@ -54,7 +54,7 @@ public class ComponentsTest
     public void layout()
     {
         RootDataSet layoutConfig = new RootDataSet();
-        layoutConfig.addProperty( "columns", new Value.Long( 2 ) );
+        layoutConfig.addProperty( "columns", Value.newLong( 2 ) );
 
         LayoutComponent layoutComponent = newLayoutComponent().
             name( "my-template" ).

@@ -35,7 +35,7 @@ final class ImageSelector
     @Override
     public Value newValue( final String value )
     {
-        return new Value.ContentId( ValueTypes.CONTENT_ID.convert( value ) );
+        return Value.newContentId( ValueTypes.CONTENT_ID.convert( value ) );
     }
 
     @Override

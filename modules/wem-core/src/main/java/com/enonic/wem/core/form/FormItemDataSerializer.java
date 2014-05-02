@@ -187,8 +187,8 @@ public class FormItemDataSerializer
     private DataSet serializeOccurrences( Occurrences occurrences )
     {
         final DataSet dataSet = new DataSet( "occurrences" );
-        dataSet.setProperty( "minimum", new Value.Long( occurrences.getMinimum() ) );
-        dataSet.setProperty( "maximum", new Value.Long( occurrences.getMaximum() ) );
+        dataSet.setProperty( "minimum", Value.newLong( occurrences.getMinimum() ) );
+        dataSet.setProperty( "maximum", Value.newLong( occurrences.getMaximum() ) );
         return dataSet;
     }
 

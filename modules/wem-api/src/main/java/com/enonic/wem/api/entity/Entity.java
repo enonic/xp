@@ -153,7 +153,7 @@ public class Entity
         {
             if ( value != null )
             {
-                this.data.setProperty( path, new Value.Long( value ) );
+                this.data.setProperty( path, Value.newLong( value ) );
                 changes.recordChange( newPossibleChange( "data" ).from( this.originalEntity.data() ).to( this.data ).build() );
             }
             return getThisBuilder();
@@ -163,7 +163,7 @@ public class Entity
         {
             if ( value != null )
             {
-                this.data.setProperty( path, new Value.DateTime( value ) );
+                this.data.setProperty( path, Value.newDateTime( value ) );
                 changes.recordChange( newPossibleChange( "data" ).from( this.originalEntity.data() ).to( this.data ).build() );
             }
             return getThisBuilder();
@@ -285,7 +285,7 @@ public class Entity
         {
             if ( value != null )
             {
-                this.data.setProperty( path, new Value.Long( value ) );
+                this.data.setProperty( path, Value.newLong( value ) );
             }
             return getThisBuilder();
         }
@@ -294,7 +294,7 @@ public class Entity
         {
             if ( value != null )
             {
-                this.data.setProperty( path, new Value.DateTime( value ) );
+                this.data.setProperty( path, Value.newDateTime( value ) );
             }
             return getThisBuilder();
         }

@@ -82,7 +82,7 @@ public class RootDataSetJsonSerializerTest
         regionMain.setProperty( "a", Value.newString( "1" ) );
 
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.addProperty( "regionMain", new Value.Data( regionMain ) );
+        rootDataSet.addProperty( "regionMain", Value.newData( regionMain ) );
 
         String serialized = serializer.toString( rootDataSet );
         assertSerializedResult( "property_with_DataSet", serializer.toString( rootDataSet ) );

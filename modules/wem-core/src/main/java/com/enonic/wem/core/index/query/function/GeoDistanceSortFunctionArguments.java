@@ -40,7 +40,7 @@ public class GeoDistanceSortFunctionArguments
 
         try
         {
-            new Value.GeoPoint( locationArgument.toString() );
+            Value.newGeoPoint( locationArgument.toString() );
 
             this.latitude = GeoPointType.getLatitude( locationArgument.asString() );
             this.longitude = GeoPointType.getLongitude( locationArgument.asString() );

@@ -65,16 +65,16 @@ public final class ValueExpr
 
     public static ValueExpr number( final Number value )
     {
-        return new ValueExpr( new Value.Double( value.doubleValue() ) );
+        return new ValueExpr( Value.newDouble( value.doubleValue() ) );
     }
 
     public static ValueExpr dateTime( final String value )
     {
-        return new ValueExpr( new Value.DateTime( value ) );
+        return new ValueExpr( Value.newDateTime( value ) );
     }
 
     public static ValueExpr geoPoint( final String value )
     {
-        return new ValueExpr( new Value.GeoPoint( value ) );
+        return new ValueExpr( Value.newGeoPoint( value ) );
     }
 }

@@ -87,8 +87,10 @@ public class XContentBuilderFactoryTest
             addEntry( new IndexDocumentNumberItem( IndexDocumentItemPath.from( "myNumericField" ), 2.0 ) ).
             addEntry( new IndexDocumentDateItem( IndexDocumentItemPath.from( "myDateField" ), DateTime.now() ) ).
             addEntry( new IndexDocumentDateItem( IndexDocumentItemPath.from( "myDateField" ), DateTime.now() ) ).
-            addEntry( new IndexDocumentGeoPointItem( IndexDocumentItemPath.from( "myGeoPoint" ), new Value.GeoPoint( "80,80" ) ) ).
-            addEntry( new IndexDocumentGeoPointItem( IndexDocumentItemPath.from( "myGeoPoint" ), new Value.GeoPoint( "81,81" ) ) ).
+            addEntry(
+                new IndexDocumentGeoPointItem( IndexDocumentItemPath.from( "myGeoPoint" ), Value.newGeoPoint( "80,80" ).toString() ) ).
+            addEntry(
+                new IndexDocumentGeoPointItem( IndexDocumentItemPath.from( "myGeoPoint" ), Value.newGeoPoint( "81,81" ).toString() ) ).
             build();
 
         final XContentBuilder xContentBuilder = XContentBuilderFactory.create( indexDocument );

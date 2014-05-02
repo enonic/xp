@@ -52,10 +52,10 @@ public class SiteTemplateTest
     public void siteTemplateWithResources()
     {
         final RootDataSet partTemplateConfig = new RootDataSet();
-        partTemplateConfig.addProperty( "width", new Value.Long( 200 ) );
+        partTemplateConfig.addProperty( "width", Value.newLong( 200 ) );
 
         final RootDataSet pageTemplateConfig = new RootDataSet();
-        pageTemplateConfig.addProperty( "pause", new Value.Long( 10000 ) );
+        pageTemplateConfig.addProperty( "pause", Value.newLong( 10000 ) );
 
         final PageTemplate pageTemplate = PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( "mainmodule.0|main-page" ) ).

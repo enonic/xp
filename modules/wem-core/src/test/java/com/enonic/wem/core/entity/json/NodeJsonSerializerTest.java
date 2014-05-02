@@ -26,11 +26,11 @@ public class NodeJsonSerializerTest
     public void serialize_deserialize()
         throws Exception
     {
-        DateTime modifiedDateTime = new DateTime( 2013, 01, 02, 03, 04, 05 );
+        DateTime modifiedDateTime = new DateTime( 2013, 1, 2, 3, 4, 5 );
 
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setProperty( DataPath.from( "a.b.c" ), new Value.Double( 2.0 ) );
-        rootDataSet.setProperty( DataPath.from( "b" ), new Value.DateMidnight( DateMidnight.now() ) );
+        rootDataSet.setProperty( DataPath.from( "a.b.c" ), Value.newDouble( 2.0 ) );
+        rootDataSet.setProperty( DataPath.from( "b" ), Value.newDateMidnight( DateMidnight.now() ) );
         rootDataSet.setProperty( DataPath.from( "c" ), Value.newString( "runar" ) );
         // This will not work atm since JodaTime does not equal datetime with different time-zones
         //rootDataSet.setProperty( DataPath.from( "c" ), new Value.DateTime( DateTime.now() ) );

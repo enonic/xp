@@ -27,7 +27,7 @@ final class GeoLocation
     @Override
     public Value newValue( final String value )
     {
-        return new Value.GeoPoint( value );
+        return Value.newGeoPoint( value );
     }
 
     @Override

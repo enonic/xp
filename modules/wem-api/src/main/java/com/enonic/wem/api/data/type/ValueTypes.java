@@ -86,7 +86,7 @@ public final class ValueTypes
             @Override
             public Value newValue( final Object value )
             {
-                return new Value.Boolean( convert( value ) );
+                return Value.newBoolean( convert( value ) );
             }
 
             @Override
@@ -122,7 +122,7 @@ public final class ValueTypes
             @Override
             public Value newValue( final Object value )
             {
-                return new Value.Data( convert( value ) );
+                return Value.newData( convert( value ) );
             }
 
             @Override
@@ -140,7 +140,7 @@ public final class ValueTypes
             @Override
             public Value newValue( final Object value )
             {
-                return new Value.HtmlPart( convert( value ) );
+                return Value.newHtmlPart( convert( value ) );
             }
 
             @Override
@@ -158,7 +158,7 @@ public final class ValueTypes
             @Override
             public Value newValue( final Object value )
             {
-                return new Value.Double( convert( value ) );
+                return Value.newDouble( convert( value ) );
             }
 
             @Override
@@ -176,7 +176,7 @@ public final class ValueTypes
             @Override
             public Value newValue( final Object value )
             {
-                return new Value.Long( convert( value ) );
+                return Value.newLong( convert( value ) );
             }
 
             @Override
@@ -194,7 +194,7 @@ public final class ValueTypes
             @Override
             public Value newValue( final Object value )
             {
-                return new Value.Xml( convert( value ) );
+                return Value.newXml( convert( value ) );
             }
 
             @Override
@@ -212,7 +212,7 @@ public final class ValueTypes
             @Override
             public Value newValue( final Object value )
             {
-                return new Value.DateMidnight( convert( value ) );
+                return Value.newDateMidnight( convert( value ) );
             }
 
             @Override
@@ -230,7 +230,7 @@ public final class ValueTypes
             @Override
             public Value newValue( final Object value )
             {
-                return new Value.DateMidnight( convert( value ) );
+                return Value.newDateMidnight( convert( value ) );
             }
 
             @Override
@@ -248,7 +248,7 @@ public final class ValueTypes
             @Override
             public Value newValue( final Object value )
             {
-                return new Value.ContentId( convert( value ) );
+                return Value.newContentId( convert( value ) );
             }
 
             @Override
@@ -266,7 +266,7 @@ public final class ValueTypes
             @Override
             public Value newValue( final Object value )
             {
-                return new Value.EntityId( convert( value ) );
+                return Value.newEntityId( convert( value ) );
             }
 
             @Override

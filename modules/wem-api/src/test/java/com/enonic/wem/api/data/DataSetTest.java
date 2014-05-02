@@ -413,7 +413,7 @@ public class DataSetTest
         DataSet dataSet = new ContentData();
 
         // exercise
-        dataSet.setProperty( "myData", new Value.Long( 123 ) );
+        dataSet.setProperty( "myData", Value.newLong( 123 ) );
 
         // verify
         assertEquals( new Long( 123 ), dataSet.getProperty( "myData" ).getLong() );
@@ -440,8 +440,8 @@ public class DataSetTest
     public void getProperty_given_equal_values_at_successive_indexes_then_property_has_successive_indexes()
     {
         DataSet dataSet = new ContentData();
-        Value.Long value1 = new Value.Long( 0 );
-        Value.Long value2 = new Value.Long( 0 );
+        Value<Long> value1 = Value.newLong( 0 );
+        Value<Long> value2 = Value.newLong( 0 );
         dataSet.setProperty( "mySet.prop", value1 );
         dataSet.setProperty( "mySet.prop[1]", value2 );
 

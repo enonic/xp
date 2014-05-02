@@ -23,7 +23,7 @@ final class Date
     @Override
     public Value newValue( final String value )
     {
-        return new Value.DateMidnight( ValueTypes.DATE_MIDNIGHT.convert( value ) );
+        return Value.newDateMidnight( ValueTypes.DATE_MIDNIGHT.convert( value ) );
     }
 
     @Override

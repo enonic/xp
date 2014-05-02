@@ -1,6 +1,7 @@
 package com.enonic.wem.api.data;
 
 
+import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
@@ -28,7 +29,7 @@ public class ValueTest
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                return new Object[]{Value.newString( "bbb" ), new Value.HtmlPart( "aaa" )};
+                return new Object[]{Value.newString( "bbb" ), Value.newHtmlPart( "aaa" )};
             }
 
             @Override
@@ -50,8 +51,8 @@ public class ValueTest
     public void isJavaType()
     {
         assertTrue( Value.newString( "Some text" ).isJavaType( String.class ) );
-        assertTrue( new Value.Boolean( false ).isJavaType( Boolean.class ));
-        assertTrue( new Value.DateMidnight( org.joda.time.DateMidnight.now() ).isJavaType( org.joda.time.DateMidnight.class ) );
+        assertTrue( Value.newBoolean( false ).isJavaType( Boolean.class ) );
+        assertTrue( Value.newDateMidnight( DateMidnight.now() ).isJavaType( DateMidnight.class ) );
     }
 
     @Test
@@ -59,24 +60,24 @@ public class ValueTest
     {
         ContentId value = ContentId.from( "abc" );
 
-        assertSame( value, new Value.ContentId( value ).getContentId() );
-        assertEquals( value, new Value.ContentId( "abc" ).getContentId() );
+        assertSame( value, Value.newContentId( value ).getContentId() );
+        assertEquals( value, Value.newContentId( "abc" ).getContentId() );
     }
 
     @Test
     public void construct_Date()
     {
-        org.joda.time.DateMidnight value = new org.joda.time.DateMidnight( 2013, 1, 1 );
+        DateMidnight value = new org.joda.time.DateMidnight( 2013, 1, 1 );
 
-        assertSame( value, new Value.DateMidnight( value ).getDate() );
-        assertEquals( value, new Value.DateMidnight( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).getDate() );
-        assertEquals( value, new Value.DateMidnight( "2013-1-1" ).getDate() );
+        assertSame( value, Value.newDateMidnight( value ).getDate() );
+        assertEquals( value, Value.newDateMidnight( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).getDate() );
+        assertEquals( value, Value.newDateMidnight( "2013-1-1" ).getDate() );
     }
 
     @Test
     public void construct_Boolean()
     {
-        Boolean value = new Value.Boolean( true ).asBoolean();
+        Boolean value = Value.newBoolean( true ).asBoolean();
 
         assertEquals( true, value.booleanValue() );
     }
@@ -107,7 +108,7 @@ public class ValueTest
         RootDataSet data = new RootDataSet();
         data.setProperty( "myProperty", Value.newString( "A" ) );
 
-        Value value = new Value.Data( data );
+        Value value = Value.newData( data );
         assertTrue( data.valueEquals( value.getData() ) );
     }
 
@@ -122,7 +123,7 @@ public class ValueTest
             "    }\n" +
             "]";
 
-        Value value = new Value.Data( dataAsString );
+        Value value = Value.newData( dataAsString );
 
         RootDataSet expectedData = new RootDataSet();
         expectedData.setProperty( "myProp", Value.newString( "a" ) );

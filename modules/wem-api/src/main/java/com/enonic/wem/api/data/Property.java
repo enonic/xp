@@ -243,7 +243,7 @@ public class Property
     {
         public ContentId( final java.lang.String name, final com.enonic.wem.api.content.ContentId value )
         {
-            super( name, new Value.ContentId( value ) );
+            super( name, Value.newContentId( value ) );
         }
 
         public ContentId( final java.lang.String name, final Value value )
@@ -267,7 +267,7 @@ public class Property
     {
         public EntityId( final java.lang.String name, final com.enonic.wem.api.entity.EntityId value )
         {
-            super( name, new Value.EntityId( value ) );
+            super( name, Value.newEntityId( value ) );
         }
 
         public EntityId( final java.lang.String name, final Value value )
@@ -296,7 +296,7 @@ public class Property
 
         public GeographicCoordinate( final java.lang.String name, final java.lang.String value )
         {
-            super( name, new Value.GeoPoint( value ) );
+            super( name, Value.newGeoPoint( value ) );
         }
 
         GeographicCoordinate( final GeographicCoordinate source )
@@ -316,12 +316,12 @@ public class Property
     {
         public Date( final java.lang.String name, final org.joda.time.DateMidnight value )
         {
-            super( name, new Value.DateMidnight( value ) );
+            super( name, Value.newDateMidnight( value ) );
         }
 
         public Date( final java.lang.String name, final java.lang.String value )
         {
-            super( name, new Value.DateMidnight( value ) );
+            super( name, Value.newDateMidnight( value ) );
         }
 
         public Date( final java.lang.String name, final Value value )
@@ -345,12 +345,12 @@ public class Property
     {
         public Boolean( final java.lang.String name, final java.lang.Boolean value )
         {
-            super( name, new Value.Boolean( value ) );
+            super( name, Value.newBoolean( value ) );
         }
 
         public Boolean( final java.lang.String name, final java.lang.String value )
         {
-            super (name, Value.newString( value ));
+            super( name, Value.newString( value ) );
         }
 
         public Boolean( final java.lang.String name, final Value value )
@@ -374,7 +374,7 @@ public class Property
     {
         public Double( final java.lang.String name, final java.lang.Double value )
         {
-            super( name, new Value.Double( value ) );
+            super( name, Value.newDouble( value ) );
         }
 
         public Double( final java.lang.String name, final Value value )
@@ -398,7 +398,7 @@ public class Property
     {
         public HtmlPart( final java.lang.String name, final java.lang.String value )
         {
-            super( name, new Value.HtmlPart( value ) );
+            super( name, Value.newHtmlPart( value ) );
         }
 
         public HtmlPart( final java.lang.String name, final Value value )
@@ -447,12 +447,12 @@ public class Property
     {
         public Long( final java.lang.String name, final java.lang.Long value )
         {
-            super( name, new Value.Long( value ) );
+            super( name, Value.newLong( value ) );
         }
 
         public Long( final java.lang.String name, final Integer value )
         {
-            super( name, new Value.Long( value ) );
+            super( name, Value.newLong( value ) );
         }
 
         public Long( final java.lang.String name, final Value value )
@@ -476,7 +476,7 @@ public class Property
     {
         public Xml( final java.lang.String name, final java.lang.String value )
         {
-            super( name, new Value.Xml( value ) );
+            super( name, Value.newXml( value ) );
         }
 
         public Xml( final java.lang.String name, final Value value )
@@ -500,7 +500,7 @@ public class Property
     {
         public Data( final java.lang.String name, final com.enonic.wem.api.data.RootDataSet value )
         {
-            super( name, new Value.Data( value ) );
+            super( name, Value.newData( value ) );
         }
 
         public Data( final java.lang.String name, final Value value )

@@ -1,15 +1,13 @@
 package com.enonic.wem.core.index.elastic.indexsource
 
-import com.enonic.wem.api.data.Value
 import com.enonic.wem.core.index.document.*
 import com.enonic.wem.core.index.elastic.IndexFieldNameResolver
 import org.joda.time.DateTime
 import spock.lang.Specification
 import spock.lang.Unroll
 
-
 class IndexFieldNameResolverTest
-        extends Specification
+    extends Specification
 {
     @Unroll
     def "resolve name for item-type #item.getIndexBaseType()"()
@@ -18,14 +16,14 @@ class IndexFieldNameResolverTest
         resolvedName == IndexFieldNameResolver.resolve( item )
 
         where:
-        item                                                                                                  | resolvedName
-        new IndexDocumentStringItem( IndexDocumentItemPath.from( "a.b.c" ), "myString" )                      | "a_b_c"
-        new IndexDocumentNumberItem( IndexDocumentItemPath.from( "a.b.c" ), 1 )                               | "a_b_c._number"
-        new IndexDocumentAnalyzedItem( IndexDocumentItemPath.from( "a.b.c" ), "myString" )                    | "a_b_c._analyzed"
-        new IndexDocumentNGramItem( IndexDocumentItemPath.from( "a.b.c" ), "myString" ) | "a_b_c._ngram"
-        new IndexDocumentGeoPointItem( IndexDocumentItemPath.from( "a.b.c" ), new Value.GeoPoint( "80,80" ) ) | "a_b_c._geopoint"
-        new IndexDocumentOrderbyItem( IndexDocumentItemPath.from( "a.b.c" ), "orderBy" )                      | "a_b_c._orderby"
-        new IndexDocumentDateItem( IndexDocumentItemPath.from( "a.b.c" ), DateTime.now() )                    | "a_b_c._datetime"
+        item                                                                               | resolvedName
+        new IndexDocumentStringItem( IndexDocumentItemPath.from( "a.b.c" ), "myString" )   | "a_b_c"
+        new IndexDocumentNumberItem( IndexDocumentItemPath.from( "a.b.c" ), 1 )            | "a_b_c._number"
+        new IndexDocumentAnalyzedItem( IndexDocumentItemPath.from( "a.b.c" ), "myString" ) | "a_b_c._analyzed"
+        new IndexDocumentNGramItem( IndexDocumentItemPath.from( "a.b.c" ), "myString" )    | "a_b_c._ngram"
+        new IndexDocumentGeoPointItem( IndexDocumentItemPath.from( "a.b.c" ), "80,80" )    | "a_b_c._geopoint"
+        new IndexDocumentOrderbyItem( IndexDocumentItemPath.from( "a.b.c" ), "orderBy" )   | "a_b_c._orderby"
+        new IndexDocumentDateItem( IndexDocumentItemPath.from( "a.b.c" ), DateTime.now() ) | "a_b_c._datetime"
     }
 
     @Unroll
@@ -33,7 +31,7 @@ class IndexFieldNameResolverTest
     {
         expect:
         resolvedName ==
-                IndexFieldNameResolver.resolve( new IndexDocumentStringItem( IndexDocumentItemPath.from( pathAsString ), "myValue" ) )
+            IndexFieldNameResolver.resolve( new IndexDocumentStringItem( IndexDocumentItemPath.from( pathAsString ), "myValue" ) )
 
         where:
         pathAsString | resolvedName

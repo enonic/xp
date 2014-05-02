@@ -19,7 +19,7 @@ public class ImageComponentDataSerializer
         applyPageComponentToData( component, asData );
         if ( component.getImage() != null )
         {
-            asData.addProperty( "image", new Value.ContentId( component.getImage() ) );
+            asData.addProperty( "image", Value.newContentId( component.getImage() ) );
         }
         return asData;
     }

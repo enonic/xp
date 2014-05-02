@@ -101,10 +101,10 @@ public class SiteTemplateExporterTest
         final ModuleKey module = ModuleKey.from( "mymodule-1.0.0" );
 
         final RootDataSet partTemplateConfig = new RootDataSet();
-        partTemplateConfig.addProperty( "width", new Value.Long( 200 ) );
+        partTemplateConfig.addProperty( "width", Value.newLong( 200 ) );
 
         final RootDataSet pageTemplateConfig = new RootDataSet();
-        pageTemplateConfig.addProperty( "pause", new Value.Long( 10000 ) );
+        pageTemplateConfig.addProperty( "pause", Value.newLong( 10000 ) );
 
         final PageTemplate pageTemplate = PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( module.getName(), new PageTemplateName( "my-page" ) ) ).
@@ -116,10 +116,10 @@ public class SiteTemplateExporterTest
             build();
 
         final RootDataSet layoutTemplateConfig = new RootDataSet();
-        layoutTemplateConfig.addProperty( "columns", new Value.Long( 3 ) );
+        layoutTemplateConfig.addProperty( "columns", Value.newLong( 3 ) );
 
         final RootDataSet imageTemplateConfig = new RootDataSet();
-        imageTemplateConfig.addProperty( "width", new Value.Long( 3000 ) );
+        imageTemplateConfig.addProperty( "width", Value.newLong( 3000 ) );
 
         final ContentTypeFilter contentTypeFilter =
             newContentFilter().defaultDeny().allowContentTypes( ContentTypeNames.from( "com.enonic.intranet", "system.folder" ) ).build();

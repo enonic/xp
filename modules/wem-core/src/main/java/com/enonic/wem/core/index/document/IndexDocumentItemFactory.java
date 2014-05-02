@@ -138,7 +138,7 @@ public class IndexDocumentItemFactory
 
     private IndexDocumentGeoPointItem createGeoPointItemType( final IndexDocumentItemPath path, final Value propertyValue )
     {
-        return new IndexDocumentGeoPointItem( path, (Value.GeoPoint) propertyValue );
+        return new IndexDocumentGeoPointItem( path, propertyValue.asString() );
     }
 
     private IndexDocumentStringItem createStringItemType( final IndexDocumentItemPath path, final Value propertyValue )

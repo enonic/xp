@@ -6,10 +6,11 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 @Unroll
-class OrderbyValueResolverTest extends Specification
+class OrderbyValueResolverTest
+    extends Specification
 {
 
-    def "orderby for null-value"( )
+    def "orderby for null-value"()
     {
         when:
         def orderByValue = OrderbyValueResolver.getOrderbyValue( null );
@@ -18,7 +19,7 @@ class OrderbyValueResolverTest extends Specification
         orderByValue == null
     }
 
-    def "orderBy-values with #comment is string-sortable"( )
+    def "orderBy-values with #comment is string-sortable"()
     {
         expect:
         valueList.sort() == sortedList
@@ -27,30 +28,28 @@ class OrderbyValueResolverTest extends Specification
         comment    | valueList                                                                  | sortedList
         "string"   | createOrderByValues( "b", "a", "d", "c" )                                  | createOrderByValues( "a", "b", "c", "d" )
         "double"   | createOrderByValues( 12, 0, 100, 10, 2 )                                   | createOrderByValues( 0, 2, 10, 12, 100 )
-        "datetime" | createDateTimeOrderByValue( "2001-01-02T00:00:00", "2001-01-01T00:00:00" ) | createDateTimeOrderByValue( "2001-01-01T00:00:00", "2001-01-02T00:00:00" )
+        "datetime" | createDateTimeOrderByValue( "2001-01-02T00:00:00", "2001-01-01T00:00:00" ) |
+            createDateTimeOrderByValue( "2001-01-01T00:00:00", "2001-01-02T00:00:00" )
     }
 
     def createDateTimeOrderByValue( String... values )
     {
         def unsorted = Lists.newArrayList()
-        values.each {
-            value -> unsorted.add( OrderbyValueResolver.getOrderbyValue( new Value.DateTime( value ) ) ); }
+        values.each { value -> unsorted.add( OrderbyValueResolver.getOrderbyValue( Value.newDateTime( value ) ) ); }
         return unsorted
     }
 
     def createOrderByValues( Double... values )
     {
         def unsorted = Lists.newArrayList()
-        values.each {
-            value -> unsorted.add( OrderbyValueResolver.getOrderbyValue( new Value.Double( value ) ) ); }
+        values.each { value -> unsorted.add( OrderbyValueResolver.getOrderbyValue( Value.newDouble( value ) ) ); }
         return unsorted
     }
 
     def createOrderByValues( String... values )
     {
         def unsorted = Lists.newArrayList()
-        values.each {
-            value -> unsorted.add( OrderbyValueResolver.getOrderbyValue( Value.newString( value ) ) ); }
+        values.each { value -> unsorted.add( OrderbyValueResolver.getOrderbyValue( Value.newString( value ) ) ); }
         return unsorted
     }
 

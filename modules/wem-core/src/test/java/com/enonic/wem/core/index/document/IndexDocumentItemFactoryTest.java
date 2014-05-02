@@ -70,7 +70,7 @@ public class IndexDocumentItemFactoryTest
     public void geopoint_property()
         throws Exception
     {
-        Property property = new Property( "myGeoPoint", new Value.GeoPoint( "41.12,-71.34" ) );
+        Property property = new Property( "myGeoPoint", Value.newGeoPoint( "41.12,-71.34" ) );
 
         PropertyIndexConfig propertyIndexConfig =
             PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).nGramEnabled( false ).build();

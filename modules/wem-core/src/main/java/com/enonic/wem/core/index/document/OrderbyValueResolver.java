@@ -3,6 +3,7 @@ package com.enonic.wem.core.index.document;
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.core.index.IndexFormats;
 
 class OrderbyValueResolver
@@ -32,12 +33,12 @@ class OrderbyValueResolver
     private static String getNumericOrderBy( Value value )
     {
 
-        if ( value instanceof Value.Double )
+        if ( value.getType() == ValueTypes.DOUBLE )
         {
             return doubleToPrefixCoded( value.asDouble() );
         }
 
-        if ( value instanceof Value.Long )
+        if ( value.getType() == ValueTypes.LONG )
         {
             return longToPrefixCoded( value.asLong() );
         }

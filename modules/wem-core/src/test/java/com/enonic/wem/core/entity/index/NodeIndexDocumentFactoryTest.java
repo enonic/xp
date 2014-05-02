@@ -147,8 +147,8 @@ public class NodeIndexDocumentFactoryTest
         throws Exception
     {
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.addProperty( DataPath.from( "a.b.c" ), new Value.Double( 2.0 ) );
-        rootDataSet.setProperty( DataPath.from( "a.b.d" ), new Value.DateMidnight( DateMidnight.now() ) );
+        rootDataSet.addProperty( DataPath.from( "a.b.c" ), Value.newDouble( 2.0 ) );
+        rootDataSet.setProperty( DataPath.from( "a.b.d" ), Value.newDateMidnight( DateMidnight.now() ) );
 
         Node node = Node.newNode().
             id( EntityId.from( "myId" ) ).
@@ -168,8 +168,8 @@ public class NodeIndexDocumentFactoryTest
         throws Exception
     {
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.addProperty( DataPath.from( "a.b.c" ), new Value.Double( 2.0 ) );
-        rootDataSet.addProperty( DataPath.from( "a.b.c" ), new Value.Double( 3.0 ) );
+        rootDataSet.addProperty( DataPath.from( "a.b.c" ), Value.newDouble( 2.0 ) );
+        rootDataSet.addProperty( DataPath.from( "a.b.c" ), Value.newDouble( 3.0 ) );
 
         Node node = Node.newNode().
             id( EntityId.from( "myId" ) ).

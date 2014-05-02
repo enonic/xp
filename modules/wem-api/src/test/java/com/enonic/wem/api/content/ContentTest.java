@@ -1,6 +1,7 @@
 package com.enonic.wem.api.content;
 
 
+import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -335,7 +336,7 @@ public class ContentTest
         Content content = newContent().path( MY_CONTENT_PATH ).build();
         ContentData contentData = content.getContentData();
         contentData.setProperty( "firstName", Value.newString( "Thomas" ) );
-        contentData.setProperty( "description", new Value.HtmlPart( "Grew up in Noetteveien" ) );
+        contentData.setProperty( "description", Value.newHtmlPart( "Grew up in Noetteveien" ) );
         contentData.setProperty( "child[0].name", Value.newString( "Joachim" ) );
         contentData.setProperty( "child[0].age", Value.newString( "9" ) );
         contentData.setProperty( "child[0].features.eyeColour", Value.newString( "Blue" ) );
@@ -476,7 +477,7 @@ public class ContentTest
         // exercise
         try
         {
-            content.getContentData().setProperty( "myData[1]", new Value.DateMidnight( new org.joda.time.DateMidnight( 2000, 1, 1 ) ) );
+            content.getContentData().setProperty( "myData[1]", Value.newDateMidnight( new DateMidnight( 2000, 1, 1 ) ) );
             fail( "Expected exception" );
         }
         catch ( Exception e )
