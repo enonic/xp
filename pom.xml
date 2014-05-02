@@ -24,6 +24,7 @@
   <modules>
     <module>modules</module>
     <module>platforms</module>
+    <module>itests</module>
   </modules>
 
   <dependencies>

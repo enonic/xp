@@ -10,21 +10,10 @@
     <version>5.0.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>modules</artifactId>
+  <groupId>com.enonic.wem.itests</groupId>
+  <artifactId>itests</artifactId>
   <packaging>pom</packaging>
-  <name>Enonic WEM Modules</name>
-
-  <modules>
-    <module>wem-api</module>
-    <module>wem-xml</module>
-    <module>wem-guice</module>
-    <module>wem-core</module>
-    <module>wem-admin</module>
-    <module>wem-portal</module>
-    <module>wem-boot</module>
-    <module>wem-webapp</module>
-    <module>wem-runner</module>
-  </modules>
+  <name>Enonic WEM Integration Tests</name>
 
 </project>
         
