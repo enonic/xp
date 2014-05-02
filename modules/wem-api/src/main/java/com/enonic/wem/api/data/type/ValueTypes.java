@@ -182,7 +182,7 @@ public final class ValueTypes
             @Override
             public Value newValue( final Object value )
             {
-                return Value.newDateMidnight( convert( value ) );
+                return Value.newDateTime( convert( value ) );
             }
         };
     }
