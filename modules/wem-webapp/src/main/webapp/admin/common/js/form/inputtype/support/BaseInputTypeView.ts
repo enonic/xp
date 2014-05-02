@@ -18,6 +18,11 @@ module api.form.inputtype.support {
 
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
 
+        /**
+         * The index of child Data being dragged.
+         */
+        private draggingIndex: number;
+
         constructor(config: api.form.inputtype.InputTypeViewConfig<CONFIG>, className?: string) {
             super("input-type-view" + ( className ? " " + className : ""));
             api.util.assertNotNull(config, "config cannt be null");
@@ -28,18 +33,33 @@ module api.form.inputtype.support {
                 containment: 'parent',
                 handle: '.drag-control',
                 tolerance: 'pointer',
-                update: (event: Event, ui: JQueryUI.SortableUIParams) => {
-
-                    var occurrenceOrderAccordingToDOM = this.resolveOccurrencesInOrderAccordingToDOM();
-
-                    // Update index of each occurrence
-                    occurrenceOrderAccordingToDOM.forEach((occurrence: InputOccurrence, index: number) => {
-                        occurrence.setIndex(index);
-                    });
-
-                    this.inputOccurrences.reorderOccurrencesAccordingToNewIndexOrder();
-                }
+                start: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDStart(event, ui),
+                update: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDUpdate(event, ui)
             });
+        }
+
+        private handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
+
+            var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
+            this.draggingIndex = draggedElement.getSiblingIndex();
+
+            ui.placeholder.html("Drop form item set here");
+        }
+
+        private handleDnDUpdate(event: Event, ui: JQueryUI.SortableUIParams) {
+
+            if (this.draggingIndex >= 0) {
+                var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
+                var draggedToIndex = draggedElement.getSiblingIndex();
+                this.handleMovedOccurrence(this.draggingIndex, draggedToIndex);
+            }
+
+            this.draggingIndex = -1;
+        }
+
+        private handleMovedOccurrence(index: number, destinationIndex: number) {
+
+            this.inputOccurrences.moveOccurrence(index, destinationIndex);
         }
 
         availableSizeChanged() {
@@ -48,20 +68,6 @@ module api.form.inputtype.support {
 
         public getConfig(): api.form.inputtype.InputTypeViewConfig<CONFIG> {
             return this.config;
-        }
-
-        private resolveOccurrencesInOrderAccordingToDOM(): InputOccurrence[] {
-
-            var childCount = this.getHTMLElement().children.length;
-            var occurrenceOrderAccordingToDOM: InputOccurrence[] = [];
-            for (var i = 0; i < childCount; i++) {
-                var child: Element = this.getHTMLElement().children[i];
-                occurrenceOrderAccordingToDOM[i] = this.inputOccurrences.getOccurrences().filter((occ: InputOccurrence) => {
-                    return occ.getDataId().toString() == child.getAttribute('data-dataid');
-                })[0];
-            }
-
-            return occurrenceOrderAccordingToDOM;
         }
 
         getElement(): api.dom.Element {

@@ -31,6 +31,11 @@ module api.form {
 
         private previousValidationRecording: ValidationRecording;
 
+        /**
+         * The index of child Data being dragged.
+         */
+        private draggingIndex: number;
+
         constructor(config: FormItemSetViewConfig) {
             super(<FormItemViewConfig> {
                 className: "form-item-set-view",
@@ -308,35 +313,30 @@ module api.form {
         }
 
         private handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
+
+            var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
+            api.util.assert(draggedElement.hasClass("form-item-set-occurrence-view"));
+            this.draggingIndex = draggedElement.getSiblingIndex();
+
             ui.placeholder.html("Drop form item set here");
         }
 
         private handleDnDUpdate(event: Event, ui: JQueryUI.SortableUIParams) {
 
-            var occurrenceOrderAccordingToDOM = this.resolveOccurrencesInOrderAccordingToDOM();
+            if (this.draggingIndex >= 0) {
+                var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
+                api.util.assert(draggedElement.hasClass("form-item-set-occurrence-view"));
+                var draggedToIndex = draggedElement.getSiblingIndex();
 
-            // Update index of each occurrence
-            occurrenceOrderAccordingToDOM.forEach((occurrence: FormItemSetOccurrence, index: number) => {
-                occurrence.setIndex(index);
-            });
-
-            this.formItemSetOccurrences.reorderOccurrencesAccordingToNewIndexOrder();
-        }
-
-        private resolveOccurrencesInOrderAccordingToDOM(): FormItemSetOccurrence[] {
-            var occurrencesInOrderAccordingToDOM: FormItemSetOccurrence[] = [];
-
-            var formItemSetViewChildren = this.occurrenceViewsContainer.getHTMLElement().children;
-            for (var i = 0; i < formItemSetViewChildren.length; i++) {
-                var child = <HTMLElement> formItemSetViewChildren[i];
-                var occurrenceView = this.formItemSetOccurrences.getOccurrenceViewById(child.id);
-                if (occurrenceView) {
-                    occurrencesInOrderAccordingToDOM.push(<FormItemSetOccurrence> occurrenceView.getOccurrence());
-                }
+                this.handleMovedOccurrence(this.draggingIndex, draggedToIndex);
             }
 
-            return occurrencesInOrderAccordingToDOM;
+            this.draggingIndex = -1;
         }
 
+        private handleMovedOccurrence(index: number, destinationIndex: number) {
+
+            this.formItemSetOccurrences.moveOccurrence(index, destinationIndex);
+        }
     }
 }

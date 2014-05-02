@@ -84,12 +84,14 @@ module api.form.inputtype.support {
             this.notifyValueChanged(event);
         }
 
-        reorderOccurrences(changedOccurrenceIndexes: number[]) {
+        moveOccurrence(index: number, destinationIndex: number) {
+
+            super.moveOccurrence(index, destinationIndex);
 
             var values = this.getValues();
 
-            changedOccurrenceIndexes.forEach((index: number) => {
-
+            // Send ValueChangedEvent for all indexes (TODO: send only for those indexes affected by the move)
+            values.forEach((property: api.data.Value, index: number) => {
                 var newValue = values[index];
                 var event = new api.form.inputtype.ValueChangedEvent(newValue, index);
                 this.notifyValueChanged(event);

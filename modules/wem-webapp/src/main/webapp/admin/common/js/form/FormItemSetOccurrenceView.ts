@@ -139,8 +139,6 @@ module api.form {
                 this.label.removeClass("drag-control");
             }
 
-            this.getEl().setData("dataId", this.formItemSetOccurrence.getDataId().toString());
-
             this.removeButton.setVisible(this.formItemSetOccurrence.showRemoveButton());
         }
 

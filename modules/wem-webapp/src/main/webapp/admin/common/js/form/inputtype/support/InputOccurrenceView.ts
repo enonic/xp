@@ -61,8 +61,6 @@ module api.form.inputtype.support {
             else {
                 this.addClass("multiple-occurrence").removeClass("single-occurrence");
             }
-
-            this.getEl().setData("dataId", this.inputOccurrence.getDataId().toString());
         }
 
         getIndex(): number {

@@ -139,23 +139,11 @@ module api.form {
             return this.occurrencesCollapsed;
         }
 
-        reorderOccurrences(changedOccurrenceIndexes: number[]) {
+        moveOccurrence(index: number, destinationIndex: number) {
 
-            var occurrenceViews: FormItemSetOccurrenceView[] = this.getOccurrenceViews();
+            super.moveOccurrence(index, destinationIndex);
 
-            var dataSets = this.getDataSets();
-            var dataArraysByChangedIndexes: any[] = [];
-            changedOccurrenceIndexes.forEach((i: number) => {
-                var view = occurrenceViews[i];
-                var viewDataSet = view.getDataSet();
-                dataArraysByChangedIndexes[i] = viewDataSet.getDataArray();
-
-                view.setDataSet(dataSets[i]);
-            });
-
-            dataArraysByChangedIndexes.forEach((array: api.data.Data[], index: number) => {
-                dataSets[index].setData(array);
-            });
+            this.parentDataSet.moveData(index, destinationIndex);
         }
     }
 }

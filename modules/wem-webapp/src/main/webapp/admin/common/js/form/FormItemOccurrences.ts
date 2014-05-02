@@ -214,36 +214,19 @@ module api.form {
             return this.occurrences.length;
         }
 
-        reorderOccurrencesAccordingToNewIndexOrder() {
 
-            // reorder occurrences accoring to index
-            this.occurrences.sort((a: FormItemOccurrence<V>, b: FormItemOccurrence<V>) => {
-                return a.getIndex() - b.getIndex();
-            });
+        moveOccurrence(index: number, destinationIndex: number) {
 
-            var changedIndexOrder: number[] = [];
-            this.occurrenceViews.forEach((view: FormItemOccurrenceView) => {
-                changedIndexOrder.push(view.getIndex());
-            });
-
-            this.occurrenceViews.sort((a: FormItemOccurrenceView, b: FormItemOccurrenceView)=> {
-                return a.getIndex() - b.getIndex();
-            });
-
-            var reorderedOccurrences: number[] = [];
-            for (var i = 0; i < this.occurrenceViews.length; i++) {
-                if (changedIndexOrder[i] != i) {
-                    reorderedOccurrences.push(i);
-                }
+            // move FormItemSetOccurrence
+            api.util.ArrayHelper.moveElement(index, destinationIndex, this.occurrences);
+            // update FormItemSetOccurrence indexes
+            for (var i = 0; i < this.occurrences.length; i++) {
+                this.occurrences[i].setIndex(i);
             }
 
-            this.reorderOccurrences(reorderedOccurrences);
+            // move FormItemOccurrenceView
+            api.util.ArrayHelper.moveElement(index, destinationIndex, this.occurrenceViews);
 
-            this.refreshOccurrenceViews();
-        }
-
-        reorderOccurrences(reorderedOccurrences: number[]) {
-            throw new Error("Must be implemented by inheritors");
         }
 
         getOccurrences(): FormItemOccurrence<V>[] {
