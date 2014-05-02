@@ -35,7 +35,7 @@ public class IndexDocumentItemFactoryTest
     public void int_property()
         throws Exception
     {
-        Property property = new Property.Long( "myDoubleField", 123L );
+        Property property = Property.newLong( "myDoubleField", 123L );
 
         PropertyIndexConfig propertyIndexConfig =
             PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).nGramEnabled( false ).build();

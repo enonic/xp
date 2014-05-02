@@ -11,12 +11,12 @@ public class XmlTest
     @Test(expected = BreaksRequiredContractException.class)
     public void checkBreaksRequiredContract_throws_exception_when_value_is_empty_string()
     {
-        new Xml().checkBreaksRequiredContract( new Property.Xml( "myXml", "" ) );
+        new Xml().checkBreaksRequiredContract( Property.newXml( "myXml", "" ) );
     }
 
     @Test(expected = BreaksRequiredContractException.class)
     public void checkBreaksRequiredContract_throws_exception_when_value_is_blank_string()
     {
-        new Xml().checkBreaksRequiredContract( new Property.Xml( "myXml", "  " ) );
+        new Xml().checkBreaksRequiredContract( Property.newXml( "myXml", "  " ) );
     }
 }

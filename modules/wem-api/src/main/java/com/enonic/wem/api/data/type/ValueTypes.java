@@ -9,7 +9,6 @@ import org.joda.time.DateTime;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.EntityId;
@@ -88,12 +87,6 @@ public final class ValueTypes
             {
                 return Value.newBoolean( convert( value ) );
             }
-
-            @Override
-            public Property newProperty( final String name, final Value value )
-            {
-                return new Property.Boolean( name, value );
-            }
         };
     }
 
@@ -105,12 +98,6 @@ public final class ValueTypes
             public Value newValue( final Object value )
             {
                 return Value.newString( convert( value ) );
-            }
-
-            @Override
-            public Property newProperty( final String name, final Value value )
-            {
-                return new Property.String( name, value );
             }
         };
     }
@@ -124,12 +111,6 @@ public final class ValueTypes
             {
                 return Value.newData( convert( value ) );
             }
-
-            @Override
-            public Property newProperty( final java.lang.String name, final Value value )
-            {
-                return new Property.String( name, value );
-            }
         };
     }
 
@@ -141,12 +122,6 @@ public final class ValueTypes
             public Value newValue( final Object value )
             {
                 return Value.newHtmlPart( convert( value ) );
-            }
-
-            @Override
-            public Property newProperty( final java.lang.String name, final Value value )
-            {
-                return new Property.HtmlPart( name, value );
             }
         };
     }
@@ -160,12 +135,6 @@ public final class ValueTypes
             {
                 return Value.newDouble( convert( value ) );
             }
-
-            @Override
-            public Property newProperty( final java.lang.String name, final Value value )
-            {
-                return new Property.Double( name, value );
-            }
         };
     }
 
@@ -177,12 +146,6 @@ public final class ValueTypes
             public Value newValue( final Object value )
             {
                 return Value.newLong( convert( value ) );
-            }
-
-            @Override
-            public Property newProperty( final java.lang.String name, final Value value )
-            {
-                return new Property.Long( name, value );
             }
         };
     }
@@ -196,12 +159,6 @@ public final class ValueTypes
             {
                 return Value.newXml( convert( value ) );
             }
-
-            @Override
-            public Property newProperty( final java.lang.String name, final Value value )
-            {
-                return new Property.Xml( name, value );
-            }
         };
     }
 
@@ -213,12 +170,6 @@ public final class ValueTypes
             public Value newValue( final Object value )
             {
                 return Value.newDateMidnight( convert( value ) );
-            }
-
-            @Override
-            public Property newProperty( final java.lang.String name, final Value value )
-            {
-                return new Property.Date( name, value );
             }
         };
     }
@@ -232,12 +183,6 @@ public final class ValueTypes
             {
                 return Value.newDateMidnight( convert( value ) );
             }
-
-            @Override
-            public Property newProperty( final java.lang.String name, final Value value )
-            {
-                return new Property.Date( name, value );
-            }
         };
     }
 
@@ -250,12 +195,6 @@ public final class ValueTypes
             {
                 return Value.newContentId( convert( value ) );
             }
-
-            @Override
-            public Property newProperty( final java.lang.String name, final Value value )
-            {
-                return new Property.ContentId( name, value );
-            }
         };
     }
 
@@ -267,12 +206,6 @@ public final class ValueTypes
             public Value newValue( final Object value )
             {
                 return Value.newEntityId( convert( value ) );
-            }
-
-            @Override
-            public Property newProperty( final String name, final Value value )
-            {
-                return new Property.EntityId( name, value );
             }
         };
     }

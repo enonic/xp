@@ -13,6 +13,7 @@ import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data.type.ValueTypes;
 
 import static com.enonic.wem.api.data.DataSet.newDataSet;
 import static com.enonic.wem.api.data.type.ValueTypes.DATE_MIDNIGHT;
@@ -87,7 +88,7 @@ public class Content_usageTest
 
         // exercise
         dataSet.add( new Property.String( "myText", "abc" ) );
-        dataSet.add( new Property.Long( "myNum", 123L ) );
+        dataSet.add( Property.newLong( "myNum", 123L ) );
         dataSet.add( new Property.Double( "myDec", 123.123 ) );
         dataSet.add( new Property.Date( "myDate", new org.joda.time.DateMidnight( 2013, 1, 13 ) ) );
         dataSet.add( new Property.HtmlPart( "myHtml", "<p>abc</p>" ) );
@@ -99,11 +100,11 @@ public class Content_usageTest
         assertEquals( DOUBLE, dataSet.getProperty( "myDec" ).getValueType() );
         assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getValueType() );
 
-        assertTrue( dataSet.getProperty( "myText" ) instanceof Property.String );
-        assertTrue( dataSet.getProperty( "myNum" ) instanceof Property.Long );
-        assertTrue( dataSet.getProperty( "myDec" ) instanceof Property.Double );
+        assertTrue( dataSet.getProperty( "myText" ).getValueType() == ValueTypes.STRING );
+        assertTrue( dataSet.getProperty( "myNum" ).getValueType() == ValueTypes.LONG );
+        assertTrue( dataSet.getProperty( "myDec" ).getValueType() == ValueTypes.DOUBLE );
         assertTrue( dataSet.getProperty( "myDate" ) instanceof Property.Date );
-        assertTrue( dataSet.getProperty( "myHtml" ) instanceof Property.HtmlPart );
+        assertTrue( dataSet.getProperty( "myHtml" ).getValueType() == ValueTypes.HTML_PART );
     }
 
     @Test
@@ -113,7 +114,7 @@ public class Content_usageTest
 
         // exercise
         dataSet.add( new Property.String( "myText", "abc" ) );
-        dataSet.add( new Property.Long( "myNum", 123L ) );
+        dataSet.add( Property.newLong( "myNum", 123L ) );
         dataSet.add( new Property.Double( "myDec", 123.123 ) );
         dataSet.add( new Property.Date( "myDate", new DateMidnight( 2013, 1, 13 ) ) );
         dataSet.add( new Property.HtmlPart( "myHtml", "<p>abc</p>" ) );
@@ -125,11 +126,11 @@ public class Content_usageTest
         assertEquals( DOUBLE, dataSet.getProperty( "myDec" ).getValueType() );
         assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getValueType() );
 
-        assertTrue( dataSet.getProperty( "myText" ) instanceof Property.String );
-        assertTrue( dataSet.getProperty( "myNum" ) instanceof Property.Long );
-        assertTrue( dataSet.getProperty( "myDec" ) instanceof Property.Double );
+        assertTrue( dataSet.getProperty( "myText" ).getValueType() == ValueTypes.STRING );
+        assertTrue( dataSet.getProperty( "myNum" ).getValueType() == ValueTypes.LONG );
+        assertTrue( dataSet.getProperty( "myDec" ).getValueType() == ValueTypes.DOUBLE );
         assertTrue( dataSet.getProperty( "myDate" ) instanceof Property.Date );
-        assertTrue( dataSet.getProperty( "myHtml" ) instanceof Property.HtmlPart );
+        assertTrue( dataSet.getProperty( "myHtml" ).getValueType() == ValueTypes.HTML_PART );
     }
 
     @Test
@@ -139,7 +140,7 @@ public class Content_usageTest
 
         // exercise
         dataSet.add( new Property.String( "myText", "abc" ) );
-        dataSet.add( new Property.Long( "myNum", 123L ) );
+        dataSet.add( Property.newLong( "myNum", 123L ) );
         dataSet.add( new Property.Double( "myDec", 123.123 ) );
         dataSet.add( new Property.Date( "myDate", new DateMidnight( 2013, 1, 13 ) ) );
         dataSet.add( new Property.HtmlPart( "myHtml", "<p>abc</p>" ) );
@@ -151,11 +152,11 @@ public class Content_usageTest
         assertEquals( DOUBLE, dataSet.getProperty( "myDec" ).getValueType() );
         assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getValueType() );
 
-        assertTrue( dataSet.getProperty( "myText" ) instanceof Property.String );
-        assertTrue( dataSet.getProperty( "myNum" ) instanceof Property.Long );
-        assertTrue( dataSet.getProperty( "myDec" ) instanceof Property.Double );
+        assertTrue( dataSet.getProperty( "myText" ).getValueType() == ValueTypes.STRING );
+        assertTrue( dataSet.getProperty( "myNum" ).getValueType() == ValueTypes.LONG );
+        assertTrue( dataSet.getProperty( "myDec" ).getValueType() == ValueTypes.DOUBLE );
         assertTrue( dataSet.getProperty( "myDate" ) instanceof Property.Date );
-        assertTrue( dataSet.getProperty( "myHtml" ) instanceof Property.HtmlPart );
+        assertTrue( dataSet.getProperty( "myHtml" ).getValueType() == ValueTypes.HTML_PART );
     }
 
     @Test
@@ -177,11 +178,11 @@ public class Content_usageTest
         assertEquals( DOUBLE, dataSet.getProperty( "myDec" ).getValueType() );
         assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getValueType() );
 
-        assertTrue( dataSet.getProperty( "myText" ) instanceof Property.String );
-        assertTrue( dataSet.getProperty( "myNum" ) instanceof Property.Long );
-        assertTrue( dataSet.getProperty( "myDec" ) instanceof Property.Double );
-        assertTrue( dataSet.getProperty( "myDate" ) instanceof Property.Date );
-        assertTrue( dataSet.getProperty( "myHtml" ) instanceof Property.HtmlPart );
+        assertTrue( dataSet.getProperty( "myText" ).getValueType() == ValueTypes.STRING );
+        assertTrue( dataSet.getProperty( "myNum" ).getValueType() == ValueTypes.LONG );
+        assertTrue( dataSet.getProperty( "myDec" ).getValueType() == ValueTypes.DOUBLE );
+        assertTrue( dataSet.getProperty( "myDate" ).getValueType() == ValueTypes.DATE_MIDNIGHT );
+        assertTrue( dataSet.getProperty( "myHtml" ).getValueType() == ValueTypes.HTML_PART );
     }
 
     @Test
@@ -221,7 +222,7 @@ public class Content_usageTest
     {
         DataSet dataSet = new ContentData();
         dataSet.add( new Property.String( "myText", "abc" ) );
-        dataSet.add( new Property.Long( "myNum", 123L ) );
+        dataSet.add( Property.newLong( "myNum", 123L ) );
         dataSet.add( new Property.Double( "myDec", 123.123 ) );
         dataSet.add( new Property.Date( "myDate", new DateMidnight( 2013, 1, 13 ) ) );
         dataSet.add( new Property.HtmlPart( "myHtml", "<p>abc</p>" ) );

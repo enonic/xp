@@ -442,62 +442,19 @@ public class Property
 
     }
 
-    public final static class Long
-        extends Property
-    {
-        public Long( final java.lang.String name, final java.lang.Long value )
-        {
-            super( name, Value.newLong( value ) );
-        }
-
-        public Long( final java.lang.String name, final Integer value )
-        {
-            super( name, Value.newLong( value ) );
-        }
-
-        public Long( final java.lang.String name, final Value value )
-        {
-            super( name, value );
-        }
-
-        Long( final Long source )
-        {
-            super( source );
-        }
-
-        public Long copy()
-        {
-            return new Long( this );
-        }
-    }
-
     public static Property newProperty( final java.lang.String name, final Value value )
     {
         return new Property( name, value );
     }
 
-    public static final class Xml
-        extends Property
+    public static Property newXml( final java.lang.String name, final java.lang.String value )
     {
-        public Xml( final java.lang.String name, final java.lang.String value )
-        {
-            super( name, Value.newXml( value ) );
-        }
+        return newProperty( name, Value.newXml( value ) );
+    }
 
-        public Xml( final java.lang.String name, final Value value )
-        {
-            super( name, value );
-        }
-
-        Xml( final Xml source )
-        {
-            super( source );
-        }
-
-        public Xml copy()
-        {
-            return new Xml( this );
-        }
+    public static Property newLong( final java.lang.String name, final Number value )
+    {
+        return newProperty( name, Value.newLong( value ) );
     }
 
     public static final class Data

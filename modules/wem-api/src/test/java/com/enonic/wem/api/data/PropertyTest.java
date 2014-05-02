@@ -48,7 +48,7 @@ public class PropertyTest
     public void valueEquals()
     {
         assertTrue( new Property.String( "myProperty", "MyValue" ).equals( new Property.String( "myProperty", "MyValue" ) ) );
-        assertFalse( new Property.String( "myProperty", "MyValue" ).valueEquals( new Property.Xml( "myProperty", "MyValue" ) ) );
+        assertFalse( new Property.String( "myProperty", "MyValue" ).valueEquals( Property.newXml( "myProperty", "MyValue" ) ) );
         assertFalse( new Property.String( "myProperty", "MyValue" ).valueEquals( new Property.String( "myProperty", "AnotherValue" ) ) );
     }
 
@@ -63,7 +63,7 @@ public class PropertyTest
     @Test
     public void getDouble_given_value_as_long()
     {
-        Property property = new Property.Long( "myNumber", 2 );
+        Property property = Property.newLong( "myNumber", 2 );
         assertEquals( Double.class, property.getDouble().getClass() );
         assertEquals( 2.0, property.getDouble() );
     }
@@ -77,7 +77,7 @@ public class PropertyTest
     @Test
     public void getLong_given_value_as_long()
     {
-        Property property = new Property.Long( "myNumber", 1l );
+        Property property = Property.newLong( "myNumber", 1l );
         assertEquals( new Long( 1 ), property.getLong() );
     }
 

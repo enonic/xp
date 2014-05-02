@@ -137,5 +137,8 @@ public abstract class ValueType<T>
 
     public abstract Value newValue( Object value );
 
-    public abstract Property newProperty( final java.lang.String name, final Value value );
+    public final Property newProperty( final java.lang.String name, final Value value )
+    {
+        return Property.newProperty( name, value );
+    }
 }

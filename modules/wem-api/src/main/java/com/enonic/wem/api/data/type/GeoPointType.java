@@ -2,7 +2,6 @@ package com.enonic.wem.api.data.type;
 
 import java.util.StringTokenizer;
 
-import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.form.InvalidValueException;
 
@@ -26,12 +25,6 @@ public final class GeoPointType
     public Value newValue( final Object value )
     {
         return Value.newGeoPoint( convert( value ) );
-    }
-
-    @Override
-    public Property newProperty( final java.lang.String name, final Value value )
-    {
-        return new Property.GeographicCoordinate( name, value );
     }
 
     @Override
