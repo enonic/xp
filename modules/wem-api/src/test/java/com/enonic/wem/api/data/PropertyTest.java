@@ -19,26 +19,26 @@ public class PropertyTest
             @Override
             public Object getObjectX()
             {
-                return new Property.String( "myData", "aaa" );
+                return Property.newString( "myData", "aaa" );
             }
 
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                return new Object[]{new Property.String( "myData", "bbb" ), new Property.String( "myOtherData", "aaa" ),
-                    new Property.HtmlPart( "myData", "aaa" )};
+                return new Object[]{Property.newString( "myData", "bbb" ), Property.newString( "myOtherData", "aaa" ),
+                    Property.newHtmlPart( "myData", "aaa" )};
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                return new Property.String( "myData", "aaa" );
+                return Property.newString( "myData", "aaa" );
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                return new Property.String( "myData", "aaa" );
+                return Property.newString( "myData", "aaa" );
             }
         };
         equalsTest.assertEqualsAndHashCodeContract();
@@ -47,15 +47,15 @@ public class PropertyTest
     @Test
     public void valueEquals()
     {
-        assertTrue( new Property.String( "myProperty", "MyValue" ).equals( new Property.String( "myProperty", "MyValue" ) ) );
-        assertFalse( new Property.String( "myProperty", "MyValue" ).valueEquals( Property.newXml( "myProperty", "MyValue" ) ) );
-        assertFalse( new Property.String( "myProperty", "MyValue" ).valueEquals( new Property.String( "myProperty", "AnotherValue" ) ) );
+        assertTrue( Property.newString( "myProperty", "MyValue" ).equals( Property.newString( "myProperty", "MyValue" ) ) );
+        assertFalse( Property.newString( "myProperty", "MyValue" ).valueEquals( Property.newXml( "myProperty", "MyValue" ) ) );
+        assertFalse( Property.newString( "myProperty", "MyValue" ).valueEquals( Property.newString( "myProperty", "AnotherValue" ) ) );
     }
 
     @Test
     public void getBoolean_given_value_as_string()
     {
-        Property property = new Property.Boolean( "mySwitch", "true" );
+        Property property = Property.newBoolean( "mySwitch", true );
         assertEquals( Boolean.class, property.getBoolean().getClass() );
         assertEquals( true, property.getBoolean().booleanValue() );
     }
@@ -71,7 +71,7 @@ public class PropertyTest
     @Test(expected = IllegalArgumentException.class)
     public void given_invalid_value_when_build_then_exception_is_thrown()
     {
-        new Property.Date( "myDate", "2012.31.08" );
+        Property.newDateMidnight( "myDate", "2012.31.08" );
     }
 
     @Test
@@ -84,21 +84,21 @@ public class PropertyTest
     @Test
     public void getLong_given_value_as_decimal_number()
     {
-        Property property = new Property.Double( "myNumber", 1.1 );
+        Property property = Property.newDouble( "myNumber", 1.1 );
         assertEquals( new Long( 1 ), property.getLong() );
     }
 
     @Test
     public void getLong_given_value_as_string()
     {
-        Property property = new Property.String( "myText", "1" );
+        Property property = Property.newString( "myText", "1" );
         assertEquals( new Long( 1 ), property.getLong() );
     }
 
     @Test
     public void geographicalCoordinate()
     {
-        assertEquals( "90,123", new Property.GeographicCoordinate( "myGeo", "90,123" ).getString() );
+        assertEquals( "90,123", Property.newGeoPoint( "myGeo", "90,123" ).getString() );
     }
 
     @Test
@@ -107,7 +107,7 @@ public class PropertyTest
         RootDataSet data = new RootDataSet();
         data.setProperty( "myProperty", Value.newString( "A" ) );
 
-        Property property = new Property.Data( "myData", data );
+        Property property = Property.newData( "myData", data );
         assertTrue( data.valueEquals( property.getData() ) );
     }
 }

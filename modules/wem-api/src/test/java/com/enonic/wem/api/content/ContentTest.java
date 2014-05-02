@@ -95,8 +95,8 @@ public class ContentTest
     @Test
     public void array()
     {
-        Property first = new Property.String( "array", "First" );
-        Property second = new Property.String( "array", "Second" );
+        Property first = Property.newString( "array", "First" );
+        Property second = Property.newString( "array", "Second" );
 
         ContentData contentData = new ContentData();
         contentData.add( first );
@@ -196,10 +196,10 @@ public class ContentTest
     public void add_array_of_set_within_set()
     {
         DataSet address1 = newDataSet().name( "address" ).build();
-        address1.add( new Property.String( "street", "Kirkegata 1-3" ) );
+        address1.add( Property.newString( "street", "Kirkegata 1-3" ) );
 
         DataSet address2 = newDataSet().name( "address" ).build();
-        address2.add( new Property.String( "street", "Sonsteli" ) );
+        address2.add( Property.newString( "street", "Sonsteli" ) );
 
         DataSet company = newDataSet().name( "company" ).build();
         company.add( address1 );

@@ -27,7 +27,7 @@ public class DataJsonTest
     public void deserialize_serialization_of_Property()
         throws IOException
     {
-        PropertyJson propertyJson = new PropertyJson( new Property.String( "A", "1" ) );
+        PropertyJson propertyJson = new PropertyJson( Property.newString( "A", "1" ) );
 
         // serialize from object
         String expectedSerialization = jsonTestHelper.objectToString( propertyJson );

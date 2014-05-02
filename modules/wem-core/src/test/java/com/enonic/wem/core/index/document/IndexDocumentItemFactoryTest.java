@@ -18,7 +18,7 @@ public class IndexDocumentItemFactoryTest
     public void double_property()
         throws Exception
     {
-        Property property = new Property.Double( "myDoubleField", 123.0 );
+        Property property = Property.newDouble( "myDoubleField", 123.0 );
 
         PropertyIndexConfig propertyIndexConfig =
             PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).nGramEnabled( false ).build();
@@ -52,7 +52,7 @@ public class IndexDocumentItemFactoryTest
     public void date_property()
         throws Exception
     {
-        Property property = new Property.Date( "myDateField", DateTime.now().toDateMidnight() );
+        Property property = Property.newDateMidnight( "myDateField", DateTime.now().toDateMidnight() );
 
         final IndexDocumentItemFactory factory = new IndexDocumentItemFactory( false );
 

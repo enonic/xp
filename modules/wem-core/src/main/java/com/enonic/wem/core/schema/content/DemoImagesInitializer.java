@@ -108,8 +108,8 @@ public class DemoImagesInitializer
     private ContentData createContentData( final String attachmentName )
     {
         final ContentData dataSet = new ContentData();
-        dataSet.add( new Property.String( "mimeType", "image/png" ) );
-        dataSet.add( new Property.String( "image", attachmentName ) );
+        dataSet.add( Property.newString( "mimeType", "image/png" ) );
+        dataSet.add( Property.newString( "image", attachmentName ) );
         return dataSet;
     }
 

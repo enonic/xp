@@ -29,12 +29,12 @@ public class PropertyVisitorTest
             }
         };
         ContentData contentData = new ContentData();
-        contentData.add( new Property.String( "myText", "abc" ) );
-        contentData.add( new Property.Date( "myDate", DateMidnight.now() ) );
+        contentData.add( Property.newString( "myText", "abc" ) );
+        contentData.add( Property.newDateMidnight( "myDate", DateMidnight.now() ) );
 
         DataSet mySet = DataSet.newDataSet().name( "mySet" ).build();
-        mySet.add( new Property.String( "myText", "abc" ) );
-        mySet.add( new Property.Date( "myDate", DateMidnight.now() ) );
+        mySet.add( Property.newString( "myText", "abc" ) );
+        mySet.add( Property.newDateMidnight( "myDate", DateMidnight.now() ) );
         contentData.add( mySet );
 
         propertyVisitor.traverse( contentData );
@@ -62,12 +62,12 @@ public class PropertyVisitorTest
         propertyVisitor.restrictType( ValueTypes.STRING );
 
         ContentData contentData = new ContentData();
-        contentData.add( new Property.String( "myText", "abc" ) );
-        contentData.add( new Property.Date( "myDate", DateMidnight.now() ) );
+        contentData.add( Property.newString( "myText", "abc" ) );
+        contentData.add( Property.newDateMidnight( "myDate", DateMidnight.now() ) );
 
         DataSet mySet = DataSet.newDataSet().name( "mySet" ).build();
-        mySet.add( new Property.String( "myText", "abc" ) );
-        mySet.add( new Property.Date( "myDate", DateMidnight.now() ) );
+        mySet.add( Property.newString( "myText", "abc" ) );
+        mySet.add( Property.newDateMidnight( "myDate", DateMidnight.now() ) );
         contentData.add( mySet );
 
         propertyVisitor.traverse( contentData );

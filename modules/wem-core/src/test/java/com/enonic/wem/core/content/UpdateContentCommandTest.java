@@ -72,10 +72,10 @@ public class UpdateContentCommandTest
         DateTimeUtils.setCurrentMillisFixed( UPDATED_TIME.getMillis() );
 
         ContentData existingContentData = new ContentData();
-        existingContentData.add( new Property.String( "myData", "aaa" ) );
+        existingContentData.add( Property.newString( "myData", "aaa" ) );
 
         final ContentData unchangedContentData = new ContentData();
-        unchangedContentData.add( new Property.String( "myData", "aaa" ) );
+        unchangedContentData.add( Property.newString( "myData", "aaa" ) );
 
         UpdateContentParams params = new UpdateContentParams().
             modifier( AccountKey.superUser() ).
@@ -103,12 +103,12 @@ public class UpdateContentCommandTest
         DateTimeUtils.setCurrentMillisFixed( UPDATED_TIME.getMillis() );
 
         ContentData existingContentData = new ContentData();
-        existingContentData.add( new Property.String( "myData", "aaa" ) );
+        existingContentData.add( Property.newString( "myData", "aaa" ) );
 
         Content existingContent = createContent( existingContentData );
 
         final ContentData unchangedContentData = new ContentData();
-        unchangedContentData.add( new Property.String( "myData", "aaa" ) );
+        unchangedContentData.add( Property.newString( "myData", "aaa" ) );
 
         UpdateContentParams params = new UpdateContentParams().
             modifier( AccountKey.superUser() ).
@@ -137,12 +137,12 @@ public class UpdateContentCommandTest
         DateTimeUtils.setCurrentMillisFixed( UPDATED_TIME.getMillis() );
 
         ContentData existingContentData = new ContentData();
-        existingContentData.add( new Property.String( "myData", "aaa" ) );
+        existingContentData.add( Property.newString( "myData", "aaa" ) );
 
         Content existingContent = createContent( existingContentData );
 
         final ContentData changedContentData = new ContentData();
-        changedContentData.add( new Property.String( "myData", "bbb" ) );
+        changedContentData.add( Property.newString( "myData", "bbb" ) );
 
         UpdateContentParams params = new UpdateContentParams().
             modifier( AccountKey.superUser() ).

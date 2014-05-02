@@ -123,7 +123,7 @@ public final class Value
      *
      * @throws ClassCastException if value is not of type org.joda.time.DateMidnight.
      */
-    public org.joda.time.DateMidnight getDate()
+    public DateMidnight getDate()
         throws ClassCastException
     {
         return (DateMidnight) object;
@@ -134,7 +134,7 @@ public final class Value
      *
      * @throws ClassCastException if value is not of type com.enonic.wem.api.content.ContentId.
      */
-    public com.enonic.wem.api.content.ContentId getContentId()
+    public ContentId getContentId()
         throws ClassCastException
     {
         return (ContentId) object;
@@ -145,7 +145,7 @@ public final class Value
      *
      * @throws ClassCastException if value is not of type com.enonic.wem.api.data.RootDataSet.
      */
-    public com.enonic.wem.api.data.RootDataSet getData()
+    public RootDataSet getData()
         throws ClassCastException
     {
         return (RootDataSet) object;
@@ -156,7 +156,7 @@ public final class Value
      *
      * @throws ClassCastException if value is not of type com.enonic.wem.api.entity.EntityId.
      */
-    public com.enonic.wem.api.entity.EntityId getEntityId()
+    public EntityId getEntityId()
         throws ClassCastException
     {
         return (EntityId) object;
@@ -183,7 +183,7 @@ public final class Value
      *
      * @throws InconvertibleValueException if value is not convertible to com.enonic.wem.api.content.ContentId.
      */
-    public com.enonic.wem.api.content.ContentId asContentId()
+    public ContentId asContentId()
         throws InconvertibleValueException
     {
         final ContentId converted = JavaTypeConverters.CONTENT_ID.convertFrom( object );

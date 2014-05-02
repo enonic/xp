@@ -662,7 +662,7 @@ public class ContentResourceTest
         List<DataValidationError> errors = new ArrayList<>( 2 );
 
         Input input = Input.newInput().name( "myInput" ).inputType( InputTypes.PHONE ).required( true ).maximumOccurrences( 3 ).build();
-        Property property = new Property.String( "myProperty", "myValue" );
+        Property property = Property.newString( "myProperty", "myValue" );
 
         errors.add( new MaximumOccurrencesValidationError( input, 5 ) );
         errors.add( new MissingRequiredValueValidationError( input, property ) );

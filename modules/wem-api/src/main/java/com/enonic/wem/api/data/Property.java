@@ -2,10 +2,15 @@ package com.enonic.wem.api.data;
 
 import java.util.Objects;
 
+import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
+
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.type.InconvertibleValueException;
 import com.enonic.wem.api.data.type.ValueType;
+import com.enonic.wem.api.entity.EntityId;
 
 public class Property
     extends Data<Property>
@@ -18,7 +23,7 @@ public class Property
         this.value = source.value;
     }
 
-    public Property( final java.lang.String name, final Value value )
+    public Property( final String name, final Value value )
     {
         super( name );
         Preconditions.checkNotNull( value, "value cannot be null" );
@@ -58,19 +63,19 @@ public class Property
         return value.getObject();
     }
 
-    public java.lang.String getString()
+    public String getString()
         throws InconvertibleValueException
     {
         return value.asString();
     }
 
-    public com.enonic.wem.api.content.ContentId getContentId()
+    public ContentId getContentId()
         throws InconvertibleValueException
     {
         return value.asContentId();
     }
 
-    public com.enonic.wem.api.entity.EntityId getEntityId()
+    public EntityId getEntityId()
         throws InconvertibleValueException
     {
         return value.asEntityId();
@@ -81,25 +86,25 @@ public class Property
      *
      * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a String.
      */
-    public java.lang.String getString( final int arrayIndex )
+    public String getString( final int arrayIndex )
         throws InconvertibleValueException
     {
         return getArray().getValue( arrayIndex ).asString();
     }
 
-    public com.enonic.wem.api.content.ContentId getContentId( final int arrayIndex )
+    public ContentId getContentId( final int arrayIndex )
         throws InconvertibleValueException
     {
         return getArray().getValue( arrayIndex ).asContentId();
     }
 
-    public com.enonic.wem.api.entity.EntityId getEntityId( final int arrayIndex )
+    public EntityId getEntityId( final int arrayIndex )
         throws InconvertibleValueException
     {
         return getArray().getValue( arrayIndex ).asEntityId();
     }
 
-    public java.lang.Long getLong()
+    public Long getLong()
         throws InconvertibleValueException
     {
         return value.asLong();
@@ -110,19 +115,19 @@ public class Property
      *
      * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a Long.
      */
-    public java.lang.Long getLong( final int arrayIndex )
+    public Long getLong( final int arrayIndex )
         throws InconvertibleValueException
     {
         return getArray().getValue( arrayIndex ).asLong();
     }
 
-    public java.lang.Boolean getBoolean()
+    public Boolean getBoolean()
         throws InconvertibleValueException
     {
         return value.asBoolean();
     }
 
-    public java.lang.Double getDouble()
+    public Double getDouble()
         throws InconvertibleValueException
     {
         return value.asDouble();
@@ -133,13 +138,13 @@ public class Property
      *
      * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a Double.
      */
-    public java.lang.Double getDouble( final int arrayIndex )
+    public Double getDouble( final int arrayIndex )
         throws InconvertibleValueException
     {
         return getArray().getValue( arrayIndex ).asDouble();
     }
 
-    public org.joda.time.DateMidnight getDateMidnight()
+    public DateMidnight getDateMidnight()
         throws InconvertibleValueException
     {
         return value.asDateMidnight();
@@ -150,13 +155,13 @@ public class Property
      *
      * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a org.joda.time.DateMidnight.
      */
-    public org.joda.time.DateMidnight getDateMidnight( final int arrayIndex )
+    public DateMidnight getDateMidnight( final int arrayIndex )
         throws InconvertibleValueException
     {
         return getArray().getValue( arrayIndex ).asDateMidnight();
     }
 
-    public org.joda.time.DateTime getDateTime()
+    public DateTime getDateTime()
         throws InconvertibleValueException
     {
         return value.asDateTime();
@@ -167,7 +172,7 @@ public class Property
      *
      * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a org.joda.time.DateTime.
      */
-    public org.joda.time.DateTime getDateTime( final int arrayIndex )
+    public DateTime getDateTime( final int arrayIndex )
         throws InconvertibleValueException
     {
         return getArray().getValue( arrayIndex ).asDateTime();
@@ -178,7 +183,7 @@ public class Property
      *
      * @see com.enonic.wem.api.data.Value#getData()
      */
-    public com.enonic.wem.api.data.RootDataSet getData( final int arrayIndex )
+    public RootDataSet getData( final int arrayIndex )
         throws ClassCastException
     {
         return getArray().getValue( arrayIndex ).getData();
@@ -187,7 +192,7 @@ public class Property
     /**
      * @see com.enonic.wem.api.data.Value#getData()
      */
-    public com.enonic.wem.api.data.RootDataSet getData()
+    public RootDataSet getData()
         throws ClassCastException
     {
         return value.getData();
@@ -229,7 +234,7 @@ public class Property
     }
 
     @Override
-    public java.lang.String toString()
+    public String toString()
     {
         final com.google.common.base.Objects.ToStringHelper s = com.google.common.base.Objects.toStringHelper( this );
         s.add( "name", getName() );
@@ -238,246 +243,88 @@ public class Property
         return s.toString();
     }
 
-    public final static class ContentId
-        extends Property
-    {
-        public ContentId( final java.lang.String name, final com.enonic.wem.api.content.ContentId value )
-        {
-            super( name, Value.newContentId( value ) );
-        }
-
-        public ContentId( final java.lang.String name, final Value value )
-        {
-            super( name, value );
-        }
-
-        ContentId( final ContentId source )
-        {
-            super( source );
-        }
-
-        public ContentId copy()
-        {
-            return new ContentId( this );
-        }
-    }
-
-    public final static class EntityId
-        extends Property
-    {
-        public EntityId( final java.lang.String name, final com.enonic.wem.api.entity.EntityId value )
-        {
-            super( name, Value.newEntityId( value ) );
-        }
-
-        public EntityId( final java.lang.String name, final Value value )
-        {
-            super( name, value );
-        }
-
-        EntityId( final EntityId source )
-        {
-            super( source );
-        }
-
-        public EntityId copy()
-        {
-            return new EntityId( this );
-        }
-    }
-
-    public static class GeographicCoordinate
-        extends Property
-    {
-        public GeographicCoordinate( final java.lang.String name, final Value value )
-        {
-            super( name, value );
-        }
-
-        public GeographicCoordinate( final java.lang.String name, final java.lang.String value )
-        {
-            super( name, Value.newGeoPoint( value ) );
-        }
-
-        GeographicCoordinate( final GeographicCoordinate source )
-        {
-            super( source );
-        }
-
-        public GeographicCoordinate copy()
-        {
-            return new GeographicCoordinate( this );
-        }
-    }
-
-
-    public final static class Date
-        extends Property
-    {
-        public Date( final java.lang.String name, final org.joda.time.DateMidnight value )
-        {
-            super( name, Value.newDateMidnight( value ) );
-        }
-
-        public Date( final java.lang.String name, final java.lang.String value )
-        {
-            super( name, Value.newDateMidnight( value ) );
-        }
-
-        public Date( final java.lang.String name, final Value value )
-        {
-            super( name, value );
-        }
-
-        Date( final Date source )
-        {
-            super( source );
-        }
-
-        public Date copy()
-        {
-            return new Date( this );
-        }
-    }
-
-    public final static class Boolean
-        extends Property
-    {
-        public Boolean( final java.lang.String name, final java.lang.Boolean value )
-        {
-            super( name, Value.newBoolean( value ) );
-        }
-
-        public Boolean( final java.lang.String name, final java.lang.String value )
-        {
-            super( name, Value.newString( value ) );
-        }
-
-        public Boolean( final java.lang.String name, final Value value )
-        {
-            super( name, value );
-        }
-
-        Boolean( final Boolean source )
-        {
-            super( source );
-        }
-
-        public Boolean copy()
-        {
-            return new Boolean( this );
-        }
-    }
-
-    public final static class Double
-        extends Property
-    {
-        public Double( final java.lang.String name, final java.lang.Double value )
-        {
-            super( name, Value.newDouble( value ) );
-        }
-
-        public Double( final java.lang.String name, final Value value )
-        {
-            super( name, value );
-        }
-
-        Double( final Double source )
-        {
-            super( source );
-        }
-
-        public Double copy()
-        {
-            return new Double( this );
-        }
-    }
-
-    public static final class HtmlPart
-        extends Property
-    {
-        public HtmlPart( final java.lang.String name, final java.lang.String value )
-        {
-            super( name, Value.newHtmlPart( value ) );
-        }
-
-        public HtmlPart( final java.lang.String name, final Value value )
-        {
-            super( name, value );
-        }
-
-        HtmlPart( final HtmlPart source )
-        {
-            super( source );
-        }
-
-        public HtmlPart copy()
-        {
-            return new HtmlPart( this );
-        }
-    }
-
-    public final static class String
-        extends Property
-    {
-        public String( final java.lang.String name, final java.lang.String value )
-        {
-            super( name, Value.newString( value ) );
-        }
-
-        public String( final java.lang.String name, final Value value )
-        {
-            super( name, value );
-        }
-
-        String( final String source )
-        {
-            super( source );
-        }
-
-        public String copy()
-        {
-            return new String( this );
-        }
-
-    }
-
-    public static Property newProperty( final java.lang.String name, final Value value )
+    public static Property newProperty( final String name, final Value value )
     {
         return new Property( name, value );
     }
 
-    public static Property newXml( final java.lang.String name, final java.lang.String value )
+    public static Property newGeoPoint( final String name, final String value )
+    {
+        return newProperty( name, Value.newGeoPoint( value ) );
+    }
+
+    public static Property newDateTime( final String name, final String value )
+    {
+        return newProperty( name, Value.newDateTime( value ) );
+    }
+
+    public static Property newDateTime( final String name, final DateTime value )
+    {
+        return newProperty( name, Value.newDateTime( value ) );
+    }
+
+    public static Property newDateMidnight( final String name, final String value )
+    {
+        return newProperty( name, Value.newDateMidnight( value ) );
+    }
+
+    public static Property newDateMidnight( final String name, final DateMidnight value )
+    {
+        return newProperty( name, Value.newDateMidnight( value ) );
+    }
+
+    public static Property newContentId( final String name, final String value )
+    {
+        return newProperty( name, Value.newContentId( value ) );
+    }
+
+    public static Property newContentId( final String name, final ContentId value )
+    {
+        return newProperty( name, Value.newContentId( value ) );
+    }
+
+    public static Property newEntityId( final String name, final String value )
+    {
+        return newProperty( name, Value.newEntityId( value ) );
+    }
+
+    public static Property newEntityId( final String name, final EntityId value )
+    {
+        return newProperty( name, Value.newEntityId( value ) );
+    }
+
+    public static Property newHtmlPart( final String name, final String value )
+    {
+        return newProperty( name, Value.newHtmlPart( value ) );
+    }
+
+    public static Property newDouble( final String name, final Number value )
+    {
+        return newProperty( name, Value.newDouble( value ) );
+    }
+
+    public static Property newBoolean( final String name, final Boolean value )
+    {
+        return newProperty( name, Value.newBoolean( value ) );
+    }
+
+    public static Property newString( final String name, final String value )
+    {
+        return newProperty( name, Value.newString( value ) );
+    }
+
+    public static Property newXml( final String name, final String value )
     {
         return newProperty( name, Value.newXml( value ) );
     }
 
-    public static Property newLong( final java.lang.String name, final Number value )
+    public static Property newLong( final String name, final Number value )
     {
         return newProperty( name, Value.newLong( value ) );
     }
 
-    public static final class Data
-        extends Property
+    public static Property newData( final String name, final RootDataSet value )
     {
-        public Data( final java.lang.String name, final com.enonic.wem.api.data.RootDataSet value )
-        {
-            super( name, Value.newData( value ) );
-        }
-
-        public Data( final java.lang.String name, final Value value )
-        {
-            super( name, value );
-        }
-
-        Data( final Data source )
-        {
-            super( source );
-        }
-
-        public Data copy()
-        {
-            return new Data( this );
-        }
+        return newProperty( name, Value.newData( value ) );
     }
 }

@@ -88,8 +88,8 @@ public class EntityIndexConfigTest
     @Test
     public void array_values_gets_one_config_and_that_is_the_last_given()
     {
-        Property myArray1 = new Property.String( "myArray", "1" );
-        Property myArray2 = new Property.String( "myArray", "2" );
+        Property myArray1 = Property.newString( "myArray", "1" );
+        Property myArray2 = Property.newString( "myArray", "2" );
 
         final EntityPropertyIndexConfig indexConfig = EntityPropertyIndexConfig.
             newEntityIndexConfig().
