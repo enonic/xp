@@ -16,15 +16,12 @@ public class ContentSummaryJson
 
     private final String iconUrl;
 
-    private final boolean editable;
-
     private final boolean deletable;
 
     private final boolean isSite;
 
     private final boolean isPage;
 
-    private final boolean isEmbedded;
 
     public ContentSummaryJson( Content content )
     {
@@ -33,8 +30,6 @@ public class ContentSummaryJson
         this.iconUrl = ContentImageIconUrlResolver.resolve( content );
         this.isSite = content.isSite();
         this.isPage = content.isPage();
-        this.isEmbedded = this.content.isEmbedded();
-        this.editable = ( !this.content.isEmbedded() );
         this.deletable = true;
     }
 
@@ -113,15 +108,10 @@ public class ContentSummaryJson
         return isPage;
     }
 
-    public boolean getIsEmbedded()
-    {
-        return isEmbedded;
-    }
-
     @Override
     public boolean getEditable()
     {
-        return editable;
+        return true;
     }
 
     @Override

@@ -20,10 +20,6 @@ public final class ContentPath
 
     private final String refString;
 
-    private static final String EMBEDDED = "__embedded";
-
-    private final boolean pathToEmbeddedContent;
-
     private ContentPath( final Builder builder )
     {
         Preconditions.checkNotNull( builder.elements );
@@ -41,32 +37,6 @@ public final class ContentPath
             this.refString = ELEMENT_DIVIDER + Joiner.on( ELEMENT_DIVIDER ).join( elements );
         }
 
-        pathToEmbeddedContent = resolveIsPathToEmbeddedContent();
-    }
-
-    private boolean resolveIsPathToEmbeddedContent()
-    {
-        for ( int i = 0; i < elements.size(); i++ )
-        {
-            final String pathElement = elements.get( i );
-            if ( EMBEDDED.equals( pathElement ) )
-            {
-                final boolean firstElement = i == 0;
-                if ( firstElement )
-                {
-                    throw new IllegalArgumentException( "Expected a path to a Content before the embedded marker: " + refString );
-                }
-
-                // TODO: Verify remove this check with jørund
-                //final boolean moreThanOneElementAfterEmbeddedMarker = this.elements.size() - i > 2;
-                // if ( moreThanOneElementAfterEmbeddedMarker )
-                //  {
-                //      throw new IllegalArgumentException( "Expected only one element after the embedded marker: " + refString );
-                //  }
-                return true;
-            }
-        }
-        return false;
     }
 
     public String getElement( final int index )
@@ -77,11 +47,6 @@ public final class ContentPath
     public boolean isRoot()
     {
         return this.elements.isEmpty();
-    }
-
-    public boolean isPathToEmbeddedContent()
-    {
-        return pathToEmbeddedContent;
     }
 
     public int elementCount()
@@ -171,22 +136,13 @@ public final class ContentPath
 
     private LinkedList<String> newListOfParentElements()
     {
-        if ( isPathToEmbeddedContent() )
+
+        final LinkedList<String> newElements = Lists.newLinkedList( this.elements );
+        if ( !newElements.isEmpty() )
         {
-            final LinkedList<String> newElements = Lists.newLinkedList( this.elements );
             newElements.removeLast();
-            newElements.removeLast();
-            return newElements;
         }
-        else
-        {
-            final LinkedList<String> newElements = Lists.newLinkedList( this.elements );
-            if ( !newElements.isEmpty() )
-            {
-                newElements.removeLast();
-            }
-            return newElements;
-        }
+        return newElements;
     }
 
     public static ContentPath from( final String path )

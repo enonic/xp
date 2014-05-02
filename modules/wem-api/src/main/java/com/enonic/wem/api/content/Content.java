@@ -27,8 +27,6 @@ public final class Content
 {
     private final boolean draft;
 
-    private final boolean embedded;
-
     private final String displayName;
 
     private final ContentTypeName type;
@@ -80,7 +78,6 @@ public final class Content
         }
 
         this.draft = builder.draft;
-        this.embedded = builder.embedded;
         this.displayName = builder.displayName;
         this.type = builder.type;
         this.name = builder.name;
@@ -114,11 +111,6 @@ public final class Content
     public boolean isRoot()
     {
         return this.path.elementCount() == 1;
-    }
-
-    public boolean isEmbedded()
-    {
-        return this.embedded;
     }
 
     public ContentTypeName getType()
@@ -236,7 +228,6 @@ public final class Content
         final Objects.ToStringHelper s = Objects.toStringHelper( this );
         s.add( "id", id );
         s.add( "draft", draft );
-        s.add( "embedded", embedded );
         s.add( "path", path );
         s.add( "version", versionId );
         s.add( "displayName", displayName );
@@ -267,8 +258,6 @@ public final class Content
     static abstract class BaseBuilder
     {
         boolean draft;
-
-        boolean embedded;
 
         ContentPath parentPath;
 
@@ -465,12 +454,6 @@ public final class Content
         public Builder draft( final boolean draft )
         {
             this.draft = draft;
-            return this;
-        }
-
-        public Builder embedded( final boolean embedded )
-        {
-            this.embedded = embedded;
             return this;
         }
 

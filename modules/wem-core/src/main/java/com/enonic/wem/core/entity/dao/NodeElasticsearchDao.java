@@ -28,8 +28,6 @@ import com.enonic.wem.core.index.elastic.IndexDocumentId;
 
 public class NodeElasticsearchDao
 {
-    public static final String EMBEDDED_NODE_ROOT_PATH = "__embedded";
-
     public static final String CONTENT_ROOT_NODE_NAME = "content";
 
     public static final NodePath CONTENT_ROOT_NODE = NodePath.newNodePath( NodePath.ROOT, CONTENT_ROOT_NODE_NAME ).build();

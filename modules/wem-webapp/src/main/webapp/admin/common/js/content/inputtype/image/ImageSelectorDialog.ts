@@ -25,9 +25,7 @@ module api.content.inputtype.image {
         }
 
         private refreshUI() {
-            var path: string = this.content.isEmbedded()
-                ? this.content.getPath().toString().replace(/\/[\s\S]+\/__embedded/, './__embedded')
-                : this.content.getPath().toString();
+            var path: string = this.content.getPath().toString();
             this.nameEl.getEl().setInnerHtml(this.content.getName().toString());
             this.pathEl.getEl().setInnerHtml(path);
         }

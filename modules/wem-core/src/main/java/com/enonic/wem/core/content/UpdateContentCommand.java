@@ -7,7 +7,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.io.InputSupplier;
 
 import com.enonic.wem.api.blob.Blob;
@@ -18,11 +17,7 @@ import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.Attachments;
-import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.thumb.Thumbnail;
-import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.PropertyVisitor;
-import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.UpdateNodeParams;
@@ -91,26 +86,7 @@ final class UpdateContentCommand
 
         final Content persistedContent = getTranslator().fromNode( editedNode );
 
-        deleteRemovedEmbeddedContent( contentBeforeChange, persistedContent );
-
         return persistedContent;
-    }
-
-    private void deleteRemovedEmbeddedContent( final Content persistedContent, final Content editedContent )
-    {
-        final Map<ContentId, Content> embeddedContentsBeforeEdit = resolveEmbeddedContent( persistedContent.getContentData() );
-        final Map<ContentId, Content> embeddedContentsToKeep = resolveEmbeddedContent( editedContent.getContentData() );
-
-        // delete embedded contents not longer to keep
-        for ( Content embeddedContentBeforeEdit : embeddedContentsBeforeEdit.values() )
-        {
-            if ( !embeddedContentsToKeep.containsKey( embeddedContentBeforeEdit.getId() ) )
-            {
-                final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( embeddedContentBeforeEdit.getPath() );
-
-                this.nodeService.deleteByPath( nodePath );
-            }
-        }
     }
 
     private void validateEditedContent( final Content persistedContent, final Content edited )
@@ -121,30 +97,6 @@ final class UpdateContentCommand
         {
             validateContentData( edited );
         }
-    }
-
-    private ImmutableMap<ContentId, Content> resolveEmbeddedContent( final ContentData contentData )
-    {
-        final ImmutableMap.Builder<ContentId, Content> embeddedContent = new ImmutableMap.Builder<>();
-        new PropertyVisitor()
-        {
-            @Override
-            public void visit( final Property property )
-            {
-                final Content content = getContent( property.getContentId() );
-
-                if ( content != null )
-                {
-                    if ( content.isEmbedded() )
-                    {
-                        embeddedContent.put( content.getId(), content );
-                    }
-                }
-
-            }
-        }.restrictType( ValueTypes.CONTENT_ID ).traverse( contentData );
-
-        return embeddedContent.build();
     }
 
     private void validateContentData( final Content modifiedContent )

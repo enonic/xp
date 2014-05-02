@@ -60,13 +60,6 @@ public class ContentTest
     }
 
     @Test
-    public void isEmbedded()
-    {
-        Content content = Content.newContent().path( MY_CONTENT_PATH ).embedded( true ).build();
-        assertEquals( true, content.isEmbedded() );
-    }
-
-    @Test
     public void array_getting_data_from_array_of_size_one()
     {
         DataSet dataSet = new ContentData();

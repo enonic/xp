@@ -26,8 +26,6 @@ module api.content {
 
         private page: boolean;
 
-        private embedded: boolean;
-
         private draft: boolean;
 
         private createdTime: Date;
@@ -51,7 +49,6 @@ module api.content {
             this.owner = builder.owner;
             this.site = builder.site;
             this.page = builder.page;
-            this.embedded = builder.embedded;
             this.draft = builder.draft;
 
             this.id = builder.id;
@@ -107,10 +104,6 @@ module api.content {
 
         isPage(): boolean {
             return this.page;
-        }
-
-        isEmbedded(): boolean {
-            return this.embedded;
         }
 
         isDraft(): boolean {
@@ -185,9 +178,6 @@ module api.content {
             if (!api.ObjectHelper.booleanEquals(this.page, other.page)) {
                 return false;
             }
-            if (!api.ObjectHelper.booleanEquals(this.embedded, other.embedded)) {
-                return false;
-            }
             if (!api.ObjectHelper.booleanEquals(this.draft, other.draft)) {
                 return false;
             }
@@ -245,8 +235,6 @@ module api.content {
 
         page: boolean;
 
-        embedded: boolean;
-
         draft: boolean;
 
         createdTime: Date;
@@ -272,7 +260,6 @@ module api.content {
                 this.owner = source.getOwner();
                 this.site = source.isSite();
                 this.page = source.isPage();
-                this.embedded = source.isEmbedded();
                 this.draft = source.isDraft();
                 this.createdTime = source.getCreatedTime();
                 this.modifiedTime = source.getModifiedTime();
@@ -296,7 +283,6 @@ module api.content {
             this.owner = json.owner;
             this.site = json.isSite;
             this.page = json.isPage;
-            this.embedded = json.isEmbedded;
             this.draft = json.draft;
 
             this.id = json.id;

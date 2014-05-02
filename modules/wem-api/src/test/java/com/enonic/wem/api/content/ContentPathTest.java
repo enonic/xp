@@ -61,14 +61,6 @@ public class ContentPathTest
     }
 
     @Test
-    public void getParentPath_when_embedded()
-        throws Exception
-    {
-        assertEquals( ContentPath.from( "/parent" ), ContentPath.from( "/parent/__embedded/myEmbedded" ).getParentPath() );
-        assertEquals( ContentPath.from( "/parent/parent" ), ContentPath.from( "/parent/parent/__embedded/myEmbedded" ).getParentPath() );
-    }
-
-    @Test
     public void isRoot()
         throws Exception
     {
@@ -113,25 +105,4 @@ public class ContentPathTest
         assertEquals( null, ContentPath.from( "/" ).getName() );
     }
 
-    @Test
-    public void isPathToEmbeddedContent()
-        throws Exception
-    {
-        assertEquals( true, ContentPath.from( "/parent/__embedded/myEmbedded" ).isPathToEmbeddedContent() );
-        assertEquals( false, ContentPath.from( "/parent/child" ).isPathToEmbeddedContent() );
-    }
-
-    @Test
-    public void given_no_name_for_embedded_content_then_no_exception_is_thrown()
-        throws Exception
-    {
-        ContentPath.from( "/parent/__embedded/" ).isPathToEmbeddedContent();
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void isPathToEmbeddedContent_given_no_content_before_embedded_marker_then_exception_is_thrown()
-        throws Exception
-    {
-        ContentPath.from( "/__embedded/one/two" );
-    }
 }

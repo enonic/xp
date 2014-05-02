@@ -10,7 +10,6 @@
     "iconUrl": "http://localhost/admin/rest/content/image/content-id",
     "id": "content-id",
     "isDraft": false,
-    "isEmbedded": false,
     "isPage": true,
     "isRoot": true,
     "isSite": false,
