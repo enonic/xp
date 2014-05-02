@@ -79,7 +79,7 @@ public class PropertyJsonSerializer
     {
         final String name = JsonSerializerUtil.getStringValue( DATA_NAME, dataNode );
 
-        final ValueType valueType = ValueTypes.parseByName( JsonSerializerUtil.getStringValue( DATA_TYPE, dataNode, null ) );
+        final ValueType valueType = ValueTypes.getByName( JsonSerializerUtil.getStringValue( DATA_TYPE, dataNode, null ) );
         Preconditions.checkNotNull( valueType, "valueType was null" );
 
         if ( valueType.equals( ValueTypes.DATA ) )

@@ -54,7 +54,7 @@ public final class PropertyXml
     @Override
     public void to( final DataSet output )
     {
-        final ValueType valueType = ValueTypes.parseByName( this.type );
+        final ValueType valueType = ValueTypes.getByName( this.type );
         if ( valueType.equals( ValueTypes.DATA ) )
         {
             boolean found = false;

@@ -69,12 +69,12 @@ public final class ValueTypes
         Preconditions.checkState( previous == null, "ValueType already registered: " + valueType.getName() );
     }
 
-    public static ValueType parseByKey( int key )
+    public static ValueType getByKey( final int key )
     {
         return typesByKey.get( key );
     }
 
-    public static ValueType parseByName( java.lang.String name )
+    public static ValueType getByName( final String name )
     {
         return typesByName.get( name );
     }

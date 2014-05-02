@@ -34,7 +34,7 @@ public class PropertyJson
 
     private static Property newProperty( final String type, final String name, final String stringValue, final List<DataJson> set )
     {
-        ValueType valueType = ValueTypes.parseByName( type );
+        ValueType valueType = ValueTypes.getByName( type );
         Value value = valueType.newValue( stringValue != null ? stringValue : RootDataSetJson.dataJsonListToRootDataSet( set ) );
         return Property.newProperty( name, value );
     }

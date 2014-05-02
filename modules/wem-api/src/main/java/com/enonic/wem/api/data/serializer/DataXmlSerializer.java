@@ -85,7 +85,7 @@ public final class DataXmlSerializer
         }
         else
         {
-            final ValueType type = ValueTypes.parseByName( typeAsString );
+            final ValueType type = ValueTypes.getByName( typeAsString );
             Preconditions.checkNotNull( type, "type was null" );
             parentDataSet.add( Property.newProperty( name, type.newValue( dataEl.getText() ) ) );
         }
