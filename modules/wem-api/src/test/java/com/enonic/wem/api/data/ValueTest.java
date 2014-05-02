@@ -60,8 +60,8 @@ public class ValueTest
     {
         ContentId value = ContentId.from( "abc" );
 
-        assertSame( value, Value.newContentId( value ).getContentId() );
-        assertEquals( value, Value.newContentId( "abc" ).getContentId() );
+        assertSame( value, Value.newContentId( value ).asContentId() );
+        assertEquals( value, Value.newContentId( "abc" ).asContentId() );
     }
 
     @Test
@@ -69,9 +69,9 @@ public class ValueTest
     {
         DateMidnight value = new org.joda.time.DateMidnight( 2013, 1, 1 );
 
-        assertSame( value, Value.newDateMidnight( value ).getDate() );
-        assertEquals( value, Value.newDateMidnight( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).getDate() );
-        assertEquals( value, Value.newDateMidnight( "2013-1-1" ).getDate() );
+        assertSame( value, Value.newDateMidnight( value ).asDateMidnight() );
+        assertEquals( value, Value.newDateMidnight( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).asDateMidnight() );
+        assertEquals( value, Value.newDateMidnight( "2013-1-1" ).asDateMidnight() );
     }
 
     @Test
@@ -109,7 +109,7 @@ public class ValueTest
         data.setProperty( "myProperty", Value.newString( "A" ) );
 
         Value value = Value.newData( data );
-        assertTrue( data.valueEquals( value.getData() ) );
+        assertTrue( data.valueEquals( value.asData() ) );
     }
 
     @Test
@@ -127,7 +127,7 @@ public class ValueTest
 
         RootDataSet expectedData = new RootDataSet();
         expectedData.setProperty( "myProp", Value.newString( "a" ) );
-        assertTrue( expectedData.valueEquals( value.getData() ) );
+        assertTrue( expectedData.valueEquals( value.asData() ) );
     }
 
 }

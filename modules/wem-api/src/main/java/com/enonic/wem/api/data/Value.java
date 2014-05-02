@@ -70,91 +70,12 @@ public final class Value
     }
 
     /**
-     * Attempts to return value as String using casting.
-     *
-     * @throws ClassCastException if value is not of type String.
+     * Attempts to return value as RootDataSet, using best effort converting if value is not of type RootDataSet.
      */
-    public String getString()
+    public RootDataSet asData()
         throws ClassCastException
     {
-        return (String) object;
-    }
-
-    /**
-     * Attempts to return value as Long using casting.
-     *
-     * @throws ClassCastException if value is not of type Long.
-     */
-    public Long getLong()
-        throws ClassCastException
-    {
-        return (Long) object;
-    }
-
-    /**
-     * Attempts to return value as Boolean using casting.
-     *
-     * @throws ClassCastException if value is not of type Double.
-     */
-    public Boolean getBoolean()
-        throws ClassCastException
-    {
-        return (Boolean) object;
-    }
-
-    /**
-     * Attempts to return value as Double using casting.
-     *
-     * @throws ClassCastException if value is not of type Double.
-     */
-    public Double getDouble()
-        throws ClassCastException
-    {
-        return (Double) object;
-    }
-
-    /**
-     * Attempts to return value as org.joda.time.DateMidnight using casting.
-     *
-     * @throws ClassCastException if value is not of type org.joda.time.DateMidnight.
-     */
-    public DateMidnight getDate()
-        throws ClassCastException
-    {
-        return (DateMidnight) object;
-    }
-
-    /**
-     * Attempts to return value as com.enonic.wem.api.content.ContentId using casting.
-     *
-     * @throws ClassCastException if value is not of type com.enonic.wem.api.content.ContentId.
-     */
-    public ContentId getContentId()
-        throws ClassCastException
-    {
-        return (ContentId) object;
-    }
-
-    /**
-     * Attempts to return value as com.enonic.wem.api.data.RootDataSet using casting.
-     *
-     * @throws ClassCastException if value is not of type com.enonic.wem.api.data.RootDataSet.
-     */
-    public RootDataSet getData()
-        throws ClassCastException
-    {
-        return (RootDataSet) object;
-    }
-
-    /**
-     * Attempts to return value as com.enonic.wem.api.entity.EntityId using casting.
-     *
-     * @throws ClassCastException if value is not of type com.enonic.wem.api.entity.EntityId.
-     */
-    public EntityId getEntityId()
-        throws ClassCastException
-    {
-        return (EntityId) object;
+        return ValueTypes.DATA.convert( object );
     }
 
     /**

@@ -53,7 +53,7 @@ public class PropertyJsonSerializer
         dataObj.put( DATA_TYPE, property.getValueType().getName() );
         if ( property.getValueType().equals( ValueTypes.DATA ) )
         {
-            final RootDataSet rootDataSet = property.getValue().getData();
+            final RootDataSet rootDataSet = property.getValue().asData();
             final ArrayNode dataArrayNode = dataObj.arrayNode();
             for ( Data data : rootDataSet )
             {

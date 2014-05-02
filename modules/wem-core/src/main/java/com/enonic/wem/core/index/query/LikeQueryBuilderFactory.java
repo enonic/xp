@@ -15,6 +15,6 @@ public class LikeQueryBuilderFactory
         final String queryFieldName = IndexQueryFieldNameResolver.resolveStringFieldName( compareExpr.getField().getName() );
         final Value value = compareExpr.getFirstValue().getValue();
 
-        return QueryBuilders.wildcardQuery( queryFieldName, value.getString() );
+        return QueryBuilders.wildcardQuery( queryFieldName, value.asString() );
     }
 }

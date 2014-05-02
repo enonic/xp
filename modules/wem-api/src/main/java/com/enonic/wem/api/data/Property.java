@@ -155,21 +155,21 @@ public final class Property
     /**
      * Returns the value of the Property at the given array index.
      *
-     * @see com.enonic.wem.api.data.Value#getData()
+     * @see com.enonic.wem.api.data.Value#asData()
      */
     public RootDataSet getData( final int arrayIndex )
         throws ClassCastException
     {
-        return getArray().getValue( arrayIndex ).getData();
+        return getArray().getValue( arrayIndex ).asData();
     }
 
     /**
-     * @see com.enonic.wem.api.data.Value#getData()
+     * @see com.enonic.wem.api.data.Value#asData()
      */
     public RootDataSet getData()
         throws ClassCastException
     {
-        return value.getData();
+        return value.asData();
     }
 
     @Override

@@ -63,7 +63,7 @@ public class PropertyJson
     {
         if ( property.getValue().getType().equals( ValueTypes.DATA ) )
         {
-            final RootDataSet rootDataSet = property.getValue().getData();
+            final RootDataSet rootDataSet = property.getValue().asData();
             final RootDataSetJson rootDataSetJson = new RootDataSetJson( rootDataSet );
             return rootDataSetJson.getSet();
         }
