@@ -13,7 +13,7 @@ public class LikeQueryBuilderFactory
     public QueryBuilder create( final CompareExpr compareExpr )
     {
         final String queryFieldName = IndexQueryFieldNameResolver.resolveStringFieldName( compareExpr.getField().getName() );
-        final Value<?> value = compareExpr.getFirstValue().getValue();
+        final Value value = compareExpr.getFirstValue().getValue();
 
         return QueryBuilders.wildcardQuery( queryFieldName, value.getString() );
     }

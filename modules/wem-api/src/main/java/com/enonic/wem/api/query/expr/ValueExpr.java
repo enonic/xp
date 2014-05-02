@@ -7,14 +7,14 @@ import com.enonic.wem.api.data.type.ValueTypes;
 public final class ValueExpr
     implements Expression
 {
-    private final Value<?> value;
+    private final Value value;
 
-    private ValueExpr( final Value<?> value )
+    private ValueExpr( final Value value )
     {
         this.value = value;
     }
 
-    public Value<?> getValue()
+    public Value getValue()
     {
         return this.value;
     }

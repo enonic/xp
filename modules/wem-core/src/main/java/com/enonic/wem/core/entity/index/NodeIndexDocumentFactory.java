@@ -95,7 +95,7 @@ public class NodeIndexDocumentFactory
 
         if ( node.name() != null )
         {
-            final Value<String> nameValue = Value.newString( node.name().toString() );
+            final Value nameValue = Value.newString( node.name().toString() );
             builder.addEntries( factory.create( NAME_PROPERTY, nameValue, namePropertyIndexConfig ) );
         }
 

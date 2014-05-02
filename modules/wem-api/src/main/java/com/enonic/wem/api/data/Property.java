@@ -471,6 +471,11 @@ public class Property
         }
     }
 
+    public static Property newProperty( final java.lang.String name, final Value value )
+    {
+        return new Property( name, value );
+    }
+
     public static final class Xml
         extends Property
     {

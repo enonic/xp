@@ -13,11 +13,11 @@ public class TermQueryBuilderFactory
     {
         final String queryFieldName = IndexQueryFieldNameResolver.resolve( compareExpr );
 
-        final Value<?> value = compareExpr.getFirstValue().getValue();
+        final Value value = compareExpr.getFirstValue().getValue();
         return QueryBuilders.termQuery( queryFieldName, getValueAsType( value ) );
     }
 
-    public QueryBuilder create( final String fieldName, final Value<?> value )
+    public QueryBuilder create( final String fieldName, final Value value )
     {
         return QueryBuilders.termQuery( fieldName, getValueAsType( value ) );
     }

@@ -19,13 +19,13 @@ import com.enonic.wem.api.form.InvalidValueException;
 /**
  * A generic holder for the value of a Property.
  */
-public class Value<T>
+public final class Value
 {
     private final ValueType type;
 
     private final Object object;
 
-    private Value( final ValueType type, final T value )
+    private Value( final ValueType type, final Object value )
         throws ValueOfUnexpectedClassException, InvalidValueException
     {
         Preconditions.checkNotNull( type, "type cannot be null" );
@@ -328,113 +328,113 @@ public class Value<T>
         return getType().newProperty( name, this );
     }
 
-    public static Value<DateTime> newDateTime( final DateTime value )
+    public static Value newDateTime( final DateTime value )
     {
-        return new Value<>( ValueTypes.DATE_TIME, value );
+        return new Value( ValueTypes.DATE_TIME, value );
     }
 
-    public static Value<DateTime> newDateTime( final DateMidnight value )
+    public static Value newDateTime( final DateMidnight value )
     {
         return newDateTime( value.toDateTime() );
     }
 
-    public static Value<DateTime> newDateTime( final String value )
+    public static Value newDateTime( final String value )
     {
         return newDateTime( JavaTypeConverters.DATE_TIME.convertFromString( value ) );
     }
 
-    public static Value<DateMidnight> newDateMidnight( final DateMidnight value )
+    public static Value newDateMidnight( final DateMidnight value )
     {
-        return new Value<>( ValueTypes.DATE_MIDNIGHT, value );
+        return new Value( ValueTypes.DATE_MIDNIGHT, value );
     }
 
-    public static Value<DateMidnight> newDateMidnight( final DateTime value )
+    public static Value newDateMidnight( final DateTime value )
     {
         return newDateMidnight( value.toDateMidnight() );
     }
 
-    public static Value<DateMidnight> newDateMidnight( final String value )
+    public static Value newDateMidnight( final String value )
     {
         return newDateMidnight( JavaTypeConverters.DATE_MIDNIGHT.convertFromString( value ) );
     }
 
-    public static Value<Long> newLong( final String value )
+    public static Value newLong( final String value )
     {
         return newLong( Long.parseLong( value ) );
     }
 
-    public static Value<Long> newLong( final Number value )
+    public static Value newLong( final Number value )
     {
-        return new Value<>( ValueTypes.LONG, value.longValue() );
+        return new Value( ValueTypes.LONG, value.longValue() );
     }
 
-    public static Value<Boolean> newBoolean( final String value )
+    public static Value newBoolean( final String value )
     {
         return newBoolean( Boolean.parseBoolean( value ) );
     }
 
-    public static Value<Boolean> newBoolean( final Boolean value )
+    public static Value newBoolean( final Boolean value )
     {
-        return new Value<>( ValueTypes.BOOLEAN, value );
+        return new Value( ValueTypes.BOOLEAN, value );
     }
 
-    public static Value<Double> newDouble( final String value )
+    public static Value newDouble( final String value )
     {
         return newDouble( Double.parseDouble( value ) );
     }
 
-    public static Value<Double> newDouble( final Number value )
+    public static Value newDouble( final Number value )
     {
-        return new Value<>( ValueTypes.DOUBLE, value.doubleValue() );
+        return new Value( ValueTypes.DOUBLE, value.doubleValue() );
     }
 
-    public static Value<String> newString( final String value )
+    public static Value newString( final String value )
     {
-        return new Value<>( ValueTypes.STRING, value );
+        return new Value( ValueTypes.STRING, value );
     }
 
-    public static Value<String> newXml( final String value )
+    public static Value newXml( final String value )
     {
-        return new Value<>( ValueTypes.XML, value );
+        return new Value( ValueTypes.XML, value );
     }
 
-    public static Value<String> newHtmlPart( final String value )
+    public static Value newHtmlPart( final String value )
     {
-        return new Value<>( ValueTypes.HTML_PART, value );
+        return new Value( ValueTypes.HTML_PART, value );
     }
 
-    public static Value<String> newGeoPoint( final String value )
+    public static Value newGeoPoint( final String value )
     {
-        return new Value<>( ValueTypes.GEO_POINT, value );
+        return new Value( ValueTypes.GEO_POINT, value );
     }
 
-    public static Value<ContentId> newContentId( final ContentId value )
+    public static Value newContentId( final ContentId value )
     {
-        return new Value<>( ValueTypes.CONTENT_ID, value );
+        return new Value( ValueTypes.CONTENT_ID, value );
     }
 
-    public static Value<ContentId> newContentId( final String value )
+    public static Value newContentId( final String value )
     {
         return newContentId( ContentId.from( value ) );
     }
 
-    public static Value<EntityId> newEntityId( final EntityId value )
+    public static Value newEntityId( final EntityId value )
     {
-        return new Value<>( ValueTypes.ENTITY_ID, value );
+        return new Value( ValueTypes.ENTITY_ID, value );
     }
 
-    public static Value<EntityId> newEntityId( final String value )
+    public static Value newEntityId( final String value )
     {
         return newEntityId( EntityId.from( value ) );
     }
 
-    public static Value<RootDataSet> newData( final String value )
+    public static Value newData( final String value )
     {
         return newData( JavaTypeConverters.DATA.convertFromString( value ) );
     }
 
-    public static Value<RootDataSet> newData( final RootDataSet value )
+    public static Value newData( final RootDataSet value )
     {
-        return new Value<>( ValueTypes.DATA, value );
+        return new Value( ValueTypes.DATA, value );
     }
 }

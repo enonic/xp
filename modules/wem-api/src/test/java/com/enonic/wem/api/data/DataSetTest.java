@@ -440,8 +440,8 @@ public class DataSetTest
     public void getProperty_given_equal_values_at_successive_indexes_then_property_has_successive_indexes()
     {
         DataSet dataSet = new ContentData();
-        Value<Long> value1 = Value.newLong( 0 );
-        Value<Long> value2 = Value.newLong( 0 );
+        Value value1 = Value.newLong( 0 );
+        Value value2 = Value.newLong( 0 );
         dataSet.setProperty( "mySet.prop", value1 );
         dataSet.setProperty( "mySet.prop[1]", value2 );
 

@@ -36,7 +36,7 @@ public class GeoDistanceSortFunctionArguments
 
     private void setLocation( final List<ValueExpr> arguments )
     {
-        final Value<?> locationArgument = arguments.get( LOCATION_POSITION ).getValue();
+        final Value locationArgument = arguments.get( LOCATION_POSITION ).getValue();
 
         try
         {
