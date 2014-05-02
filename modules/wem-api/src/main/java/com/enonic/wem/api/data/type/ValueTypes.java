@@ -41,7 +41,7 @@ public final class ValueTypes
 
     private static final Map<Integer, ValueType> typesByKey = new HashMap<>();
 
-    private static final Map<java.lang.String, ValueType> typesByName = new HashMap<>();
+    private static final Map<String, ValueType> typesByName = new HashMap<>();
 
     static
     {
