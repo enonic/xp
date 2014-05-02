@@ -222,82 +222,62 @@ public final class Property
         return new Property( name, value );
     }
 
-    public static Property newGeoPoint( final String name, final String value )
+    public static Property newGeoPoint( final String name, final Object value )
     {
         return newProperty( name, Value.newGeoPoint( value ) );
     }
 
-    public static Property newDateTime( final String name, final String value )
+    public static Property newDateTime( final String name, final Object value )
     {
         return newProperty( name, Value.newDateTime( value ) );
     }
 
-    public static Property newDateTime( final String name, final DateTime value )
-    {
-        return newProperty( name, Value.newDateTime( value ) );
-    }
-
-    public static Property newDateMidnight( final String name, final String value )
+    public static Property newDateMidnight( final String name, final Object value )
     {
         return newProperty( name, Value.newDateMidnight( value ) );
     }
 
-    public static Property newDateMidnight( final String name, final DateMidnight value )
-    {
-        return newProperty( name, Value.newDateMidnight( value ) );
-    }
-
-    public static Property newContentId( final String name, final String value )
+    public static Property newContentId( final String name, final Object value )
     {
         return newProperty( name, Value.newContentId( value ) );
     }
 
-    public static Property newContentId( final String name, final ContentId value )
-    {
-        return newProperty( name, Value.newContentId( value ) );
-    }
-
-    public static Property newEntityId( final String name, final String value )
+    public static Property newEntityId( final String name, final Object value )
     {
         return newProperty( name, Value.newEntityId( value ) );
     }
 
-    public static Property newEntityId( final String name, final EntityId value )
-    {
-        return newProperty( name, Value.newEntityId( value ) );
-    }
-
-    public static Property newHtmlPart( final String name, final String value )
+    public static Property newHtmlPart( final String name, final Object value )
     {
         return newProperty( name, Value.newHtmlPart( value ) );
     }
 
-    public static Property newDouble( final String name, final Number value )
+    public static Property newDouble( final String name, final Object value )
     {
         return newProperty( name, Value.newDouble( value ) );
     }
 
-    public static Property newBoolean( final String name, final Boolean value )
+    public static Property newBoolean( final String name, final Object value )
     {
         return newProperty( name, Value.newBoolean( value ) );
     }
 
-    public static Property newString( final String name, final String value )
+    public static Property newString( final String name, final Object value )
     {
         return newProperty( name, Value.newString( value ) );
     }
 
-    public static Property newXml( final String name, final String value )
+    public static Property newXml( final String name, final Object value )
     {
         return newProperty( name, Value.newXml( value ) );
     }
 
-    public static Property newLong( final String name, final Number value )
+    public static Property newLong( final String name, final Object value )
     {
         return newProperty( name, Value.newLong( value ) );
     }
 
-    public static Property newData( final String name, final RootDataSet value )
+    public static Property newData( final String name, final Object value )
     {
         return newProperty( name, Value.newData( value ) );
     }
