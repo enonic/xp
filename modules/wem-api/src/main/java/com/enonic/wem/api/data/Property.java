@@ -8,16 +8,15 @@ import org.joda.time.DateTime;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.data.type.InconvertibleValueException;
 import com.enonic.wem.api.data.type.ValueType;
 import com.enonic.wem.api.entity.EntityId;
 
-public class Property
+public final class Property
     extends Data<Property>
 {
     private Value value;
 
-    Property( final Property source )
+    private Property( final Property source )
     {
         super( source );
         this.value = source.value;
@@ -64,116 +63,91 @@ public class Property
     }
 
     public String getString()
-        throws InconvertibleValueException
     {
         return value.asString();
     }
 
     public ContentId getContentId()
-        throws InconvertibleValueException
     {
         return value.asContentId();
     }
 
     public EntityId getEntityId()
-        throws InconvertibleValueException
     {
         return value.asEntityId();
     }
 
     /**
      * Returns the value of the Property at the given array index as a String.
-     *
-     * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a String.
      */
     public String getString( final int arrayIndex )
-        throws InconvertibleValueException
     {
         return getArray().getValue( arrayIndex ).asString();
     }
 
     public ContentId getContentId( final int arrayIndex )
-        throws InconvertibleValueException
     {
         return getArray().getValue( arrayIndex ).asContentId();
     }
 
     public EntityId getEntityId( final int arrayIndex )
-        throws InconvertibleValueException
     {
         return getArray().getValue( arrayIndex ).asEntityId();
     }
 
     public Long getLong()
-        throws InconvertibleValueException
     {
         return value.asLong();
     }
 
     /**
      * Returns the value at of the Property at the given array index as a Long.
-     *
-     * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a Long.
      */
     public Long getLong( final int arrayIndex )
-        throws InconvertibleValueException
     {
         return getArray().getValue( arrayIndex ).asLong();
     }
 
     public Boolean getBoolean()
-        throws InconvertibleValueException
     {
         return value.asBoolean();
     }
 
     public Double getDouble()
-        throws InconvertibleValueException
     {
         return value.asDouble();
     }
 
     /**
      * Returns the value at of the Property at the given array index as a Double.
-     *
-     * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a Double.
      */
     public Double getDouble( final int arrayIndex )
-        throws InconvertibleValueException
     {
         return getArray().getValue( arrayIndex ).asDouble();
     }
 
     public DateMidnight getDateMidnight()
-        throws InconvertibleValueException
     {
         return value.asDateMidnight();
     }
 
     /**
      * Returns the value at of the Property at the given array index as a DateMidnight.
-     *
-     * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a org.joda.time.DateMidnight.
      */
     public DateMidnight getDateMidnight( final int arrayIndex )
-        throws InconvertibleValueException
     {
         return getArray().getValue( arrayIndex ).asDateMidnight();
     }
 
     public DateTime getDateTime()
-        throws InconvertibleValueException
     {
         return value.asDateTime();
     }
 
     /**
      * Returns the value at of the Property at the given array index as a DateTime.
-     *
-     * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a org.joda.time.DateTime.
      */
     public DateTime getDateTime( final int arrayIndex )
-        throws InconvertibleValueException
     {
         return getArray().getValue( arrayIndex ).asDateTime();
     }

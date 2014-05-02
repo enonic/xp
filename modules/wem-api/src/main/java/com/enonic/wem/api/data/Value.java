@@ -8,13 +8,9 @@ import org.joda.time.DateTime;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.data.type.InconvertibleValueException;
-import com.enonic.wem.api.data.type.JavaTypeConverters;
-import com.enonic.wem.api.data.type.ValueOfUnexpectedClassException;
 import com.enonic.wem.api.data.type.ValueType;
 import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.form.InvalidValueException;
 
 /**
  * A generic holder for the value of a Property.
@@ -26,7 +22,6 @@ public final class Value
     private final Object object;
 
     private Value( final ValueType type, final Object value )
-        throws ValueOfUnexpectedClassException, InvalidValueException
     {
         Preconditions.checkNotNull( type, "type cannot be null" );
         Preconditions.checkNotNull( value, "value cannot be null" );
@@ -164,134 +159,66 @@ public final class Value
 
     /**
      * Attempts to return value as String, using best effort converting if value is not of type String.
-     *
-     * @throws com.enonic.wem.api.data.type.InconvertibleValueException if value is not convertible to String.
      */
     public String asString()
-        throws InconvertibleValueException
     {
-        final String converted = JavaTypeConverters.STRING.convertFrom( object );
-        if ( converted == null )
-        {
-            throw new InconvertibleValueException( object, JavaTypeConverters.STRING );
-        }
-        return converted;
+        return ValueTypes.STRING.convert( object );
     }
 
     /**
      * Attempts to return value as com.enonic.wem.api.content.ContentId, using best effort converting if value is not of type com.enonic.wem.api.content.ContentId.
-     *
-     * @throws InconvertibleValueException if value is not convertible to com.enonic.wem.api.content.ContentId.
      */
     public ContentId asContentId()
-        throws InconvertibleValueException
     {
-        final ContentId converted = JavaTypeConverters.CONTENT_ID.convertFrom( object );
-        if ( converted == null )
-        {
-            throw new InconvertibleValueException( object, JavaTypeConverters.CONTENT_ID );
-        }
-        return converted;
+        return ValueTypes.CONTENT_ID.convert( object );
     }
 
     /**
      * Attempts to return value as com.enonic.wem.api.entity.EntityId, using best effort converting if value is not of type com.enonic.wem.api.entity.EntityId.
-     *
-     * @throws InconvertibleValueException if value is not convertible to com.enonic.wem.api.entity.EntityId.
      */
     public EntityId asEntityId()
-        throws InconvertibleValueException
     {
-        final EntityId converted = JavaTypeConverters.ENTITY_ID.convertFrom( object );
-        if ( converted == null )
-        {
-            throw new InconvertibleValueException( object, JavaTypeConverters.ENTITY_ID );
-        }
-        return converted;
+        return ValueTypes.ENTITY_ID.convert( object );
     }
 
     /**
      * Attempts to return value as Long, using best effort converting if value is not of type Long.
-     *
-     * @throws InconvertibleValueException if value is not convertible to Long.
      */
     public Long asLong()
-        throws InconvertibleValueException
     {
-        final Long converted = JavaTypeConverters.LONG.convertFrom( object );
-        if ( converted == null )
-        {
-            throw new InconvertibleValueException( object, JavaTypeConverters.LONG );
-        }
-        return converted;
+        return ValueTypes.LONG.convert( object );
     }
 
     /**
      * Attempts to return value as Boolean, using best effort converting if value is not of type Boolean.
-     *
-     * @throws InconvertibleValueException if value is not convertible to Boolean.
      */
     public Boolean asBoolean()
-        throws InconvertibleValueException
     {
-        final Boolean converted = JavaTypeConverters.BOOLEAN.convertFrom( object );
-        if ( converted == null )
-        {
-            throw new InconvertibleValueException( object, JavaTypeConverters.BOOLEAN );
-        }
-        return converted;
+        return ValueTypes.BOOLEAN.convert( object );
     }
 
     /**
      * Attempts to return value as Double, using best effort converting if value is not of type Double.
-     *
-     * @throws InconvertibleValueException if value is not convertible to Double.
      */
     public Double asDouble()
-        throws InconvertibleValueException
     {
-        final Double converted;
-
-        converted = JavaTypeConverters.DOUBLE.convertFrom( object );
-
-        if ( converted == null )
-        {
-            throw new InconvertibleValueException( object, JavaTypeConverters.DOUBLE );
-        }
-
-        return converted;
+        return ValueTypes.DOUBLE.convert( object );
     }
 
     /**
      * Attempts to return value as org.joda.time.DateMidnight, using best effort converting if value is not of type org.joda.time.DateMidnight.
-     *
-     * @throws InconvertibleValueException if value is not convertible to org.joda.time.DateMidnight.
      */
     public DateMidnight asDateMidnight()
-        throws InconvertibleValueException
     {
-        final DateMidnight converted = JavaTypeConverters.DATE_MIDNIGHT.convertFrom( object );
-        if ( converted == null )
-        {
-            throw new InconvertibleValueException( object, JavaTypeConverters.DATE_MIDNIGHT );
-        }
-        return converted;
+        return ValueTypes.DATE_MIDNIGHT.convert( object );
     }
 
     /**
      * Attempts to return value as org.joda.time.DateTime, using best effort converting if value is not of type org.joda.time.DateTime.
-     *
-     * @throws InconvertibleValueException if value is not convertible to org.joda.time.DateTime.
      */
     public DateTime asDateTime()
-        throws InconvertibleValueException
     {
-        final DateTime converted = JavaTypeConverters.DATE_TIME.convertFrom( object );
-        if ( converted == null )
-        {
-            throw new InconvertibleValueException( object, JavaTypeConverters.DATE_TIME );
-        }
-        return converted;
+        return ValueTypes.DATE_TIME.convert( object );
     }
 
     @Override
@@ -335,7 +262,7 @@ public final class Value
 
     public static Value newDateTime( final String value )
     {
-        return newDateTime( JavaTypeConverters.DATE_TIME.convertFromString( value ) );
+        return newDateTime( ValueTypes.DATE_TIME.convert( value ) );
     }
 
     public static Value newDateMidnight( final DateMidnight value )
@@ -350,7 +277,7 @@ public final class Value
 
     public static Value newDateMidnight( final String value )
     {
-        return newDateMidnight( JavaTypeConverters.DATE_MIDNIGHT.convertFromString( value ) );
+        return newDateMidnight( ValueTypes.DATE_MIDNIGHT.convert( value ) );
     }
 
     public static Value newLong( final String value )
@@ -425,7 +352,7 @@ public final class Value
 
     public static Value newData( final String value )
     {
-        return newData( JavaTypeConverters.DATA.convertFromString( value ) );
+        return newData( ValueTypes.DATA.convert( value ) );
     }
 
     public static Value newData( final RootDataSet value )

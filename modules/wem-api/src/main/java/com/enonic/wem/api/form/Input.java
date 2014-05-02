@@ -6,8 +6,6 @@ import java.util.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.type.InvalidPropertyTypeException;
-import com.enonic.wem.api.data.type.ValueOfUnexpectedClassException;
 import com.enonic.wem.api.form.inputtype.InputType;
 import com.enonic.wem.api.form.inputtype.InputTypeConfig;
 
@@ -120,7 +118,6 @@ public final class Input
     }
 
     public void checkValidityAccordingToInputTypeConfig( final Property property )
-        throws InvalidValueException
     {
         if ( inputTypeConfig != null )
         {
@@ -153,20 +150,11 @@ public final class Input
 
             checkValidityAccordingToInputTypeConfig( property );
         }
-        catch ( InvalidValueException e )
-        {
-            throw new InvalidDataException( property, e );
-        }
-        catch ( InvalidPropertyTypeException e )
-        {
-            throw new InvalidDataException( property, e );
-        }
-        catch ( ValueOfUnexpectedClassException e )
+        catch ( Exception e )
         {
             throw new InvalidDataException( property, e );
         }
     }
-
 
     @Override
     public Input copy()

@@ -6,7 +6,7 @@ import org.joda.time.format.DateTimeFormatterBuilder;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.serializer.RootDataSetJsonSerializer;
 
-public final class JavaTypeConverters
+final class JavaTypeConverters
 {
     private final static DateTimeFormatter DATE_MIDNIGHT_FORMATTER = new DateTimeFormatterBuilder().
         appendYear( 4, 4 ).appendLiteral( "-" ).appendMonthOfYear( 2 ).appendLiteral( "-" ).appendDayOfMonth( 2 ).toFormatter();

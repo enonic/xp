@@ -29,7 +29,6 @@ public final class GeoPointType
 
     @Override
     public void checkValidity( final Value value )
-        throws ValueOfUnexpectedClassException, InvalidValueException
     {
         super.checkValidity( value );
 

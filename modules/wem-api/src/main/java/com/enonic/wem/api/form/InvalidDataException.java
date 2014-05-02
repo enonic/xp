@@ -2,33 +2,13 @@ package com.enonic.wem.api.form;
 
 
 import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.type.InvalidPropertyTypeException;
-import com.enonic.wem.api.data.type.ValueOfUnexpectedClassException;
 
 public class InvalidDataException
     extends RuntimeException
 {
     private Property property;
 
-    public InvalidDataException( final Property property, final InvalidPropertyTypeException e )
-    {
-        super( buildMessage( property ), e );
-        this.property = property;
-    }
-
-    public InvalidDataException( final Property property, final ValueOfUnexpectedClassException e )
-    {
-        super( buildMessage( property ), e );
-        this.property = property;
-    }
-
-    public InvalidDataException( final Property property, final BreaksRegexValidationException e )
-    {
-        super( buildMessage( property ), e );
-        this.property = property;
-    }
-
-    public InvalidDataException( final Property property, final InvalidValueException e )
+    public InvalidDataException( final Property property, final Throwable e )
     {
         super( buildMessage( property ), e );
         this.property = property;

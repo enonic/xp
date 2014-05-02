@@ -6,7 +6,7 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.data.type.InconvertibleValueException;
+import com.enonic.wem.api.data.type.ValueTypeException;
 import com.enonic.wem.api.support.AbstractEqualsTest;
 
 import static junit.framework.Assert.assertEquals;
@@ -82,7 +82,7 @@ public class ValueTest
         assertEquals( true, value.booleanValue() );
     }
 
-    @Test(expected = InconvertibleValueException.class)
+    @Test(expected = ValueTypeException.class)
     public void convert_non_numeric_string_double()
     {
         Value.newString( "test" ).asDouble();

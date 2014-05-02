@@ -3,7 +3,6 @@ package com.enonic.wem.api.data.type;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.form.InvalidValueException;
 
 /**
  * ValueTypes should only be created when:
@@ -33,7 +32,7 @@ public abstract class ValueType<T>
         return key;
     }
 
-    public java.lang.String getName()
+    public String getName()
     {
         return name;
     }
@@ -53,11 +52,8 @@ public abstract class ValueType<T>
      * Can be overridden by concrete classes to do extensive validation.
      *
      * @param value the value to check the validity of
-     * @throws ValueOfUnexpectedClassException
-     * @throws InvalidValueException
      */
     public void checkValidity( final Value value )
-        throws ValueOfUnexpectedClassException, InvalidValueException
     {
         checkValueIsOfExpectedClass( value );
     }
@@ -93,15 +89,15 @@ public abstract class ValueType<T>
     public boolean isValueOfExpectedClass( final Value value )
     {
         Preconditions.checkNotNull( value, "Cannot check the type of a value that is null" );
-        return javaTypeConverter.isInstance( value.getObject() );
+        return this.javaTypeConverter.isInstance( value.getObject() );
     }
 
     public void checkValueIsOfExpectedClass( final Value value )
-        throws ValueOfUnexpectedClassException
     {
         if ( !isValueOfExpectedClass( value ) )
         {
-            throw new ValueOfUnexpectedClassException( javaTypeConverter, value );
+            throw new ValueTypeException( "Value object is not of expected class. Expected [%s], got [%s]", getClassType(),
+                                          value.getType().getClassType() );
         }
     }
 
@@ -110,15 +106,21 @@ public abstract class ValueType<T>
      */
     public T convert( final Object object )
     {
-        return javaTypeConverter.convertFrom( object );
+        final T value = this.javaTypeConverter.convertFrom( object );
+        if ( value != null )
+        {
+            return value;
+        }
+
+        throw new ValueTypeException( "Value of type [%s] cannot be converted to [%s]", object.getClass(), getName() );
     }
 
     /**
      * Attempts to convert given java.lang.String to this type.
      */
-    public T convert( final java.lang.String object )
+    public T convert( final String object )
     {
-        return javaTypeConverter.convertFromString( object );
+        return this.javaTypeConverter.convertFromString( object );
     }
 
     public abstract Value newValue( Object value );

@@ -1,6 +1,6 @@
 package com.enonic.wem.api.data.type;
 
-public abstract class JavaTypeConverter<T>
+abstract class JavaTypeConverter<T>
 {
     private final Class<T> type;
 
