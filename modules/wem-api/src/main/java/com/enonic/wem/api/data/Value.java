@@ -29,7 +29,6 @@ public final class Value
         Preconditions.checkArgument( !( value instanceof Value ), "The value of a Value cannot be: " + value.getClass() );
         this.type = type;
         this.object = value;
-        type.checkValidity( this );
     }
 
     public boolean isString()

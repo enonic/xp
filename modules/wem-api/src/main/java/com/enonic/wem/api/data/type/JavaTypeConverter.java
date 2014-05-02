@@ -14,17 +14,12 @@ abstract class JavaTypeConverter<T>
         return this.type;
     }
 
-    public final boolean isInstance( final Object value )
-    {
-        return this.type.isInstance( value );
-    }
-
     public abstract T convertFrom( Object value );
 
     public abstract T convertFromString( String value );
 
     @Override
-    public final java.lang.String toString()
+    public final String toString()
     {
         return this.type.getSimpleName();
     }

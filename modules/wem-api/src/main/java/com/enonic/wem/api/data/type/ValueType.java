@@ -1,7 +1,5 @@
 package com.enonic.wem.api.data.type;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.wem.api.data.Value;
 
 /**
@@ -42,17 +40,6 @@ public abstract class ValueType<T>
         return classType;
     }
 
-    /**
-     * Checks by default if given property's value is of correct Java class.
-     * Can be overridden by concrete classes to do extensive validation.
-     *
-     * @param value the value to check the validity of
-     */
-    public void checkValidity( final Value value )
-    {
-        checkValueIsOfExpectedClass( value );
-    }
-
     @Override
     public final boolean equals( final Object o )
     {
@@ -79,21 +66,6 @@ public abstract class ValueType<T>
     public final String toString()
     {
         return name;
-    }
-
-    public final boolean isValueOfExpectedClass( final Value value )
-    {
-        Preconditions.checkNotNull( value, "Cannot check the type of a value that is null" );
-        return this.javaTypeConverter.isInstance( value.getObject() );
-    }
-
-    public final void checkValueIsOfExpectedClass( final Value value )
-    {
-        if ( !isValueOfExpectedClass( value ) )
-        {
-            throw new ValueTypeException( "Value object is not of expected class. Expected [%s], got [%s]", getClassType(),
-                                          value.getType().getClassType() );
-        }
     }
 
     /**
