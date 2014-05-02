@@ -14,7 +14,7 @@ public class GeoLocationTest
     public void newValue()
     {
         Value value = new GeoLocation().newValue( "59.913869,10.752245" );
-        assertEquals( "59.913869,10.752245", value.getString() );
+        assertEquals( "59.913869,10.752245", value.asString() );
         assertEquals( ValueTypes.GEO_POINT, value.getType() );
     }
 }

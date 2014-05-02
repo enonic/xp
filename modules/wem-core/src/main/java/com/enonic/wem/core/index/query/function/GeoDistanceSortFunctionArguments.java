@@ -3,8 +3,8 @@ package com.enonic.wem.core.index.query.function;
 import java.util.List;
 
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.data.type.GeoPointType;
 import com.enonic.wem.api.query.expr.ValueExpr;
+import com.enonic.wem.api.util.GeoPoint;
 
 public class GeoDistanceSortFunctionArguments
     extends AbstractFunctionArguments
@@ -40,10 +40,9 @@ public class GeoDistanceSortFunctionArguments
 
         try
         {
-            Value.newGeoPoint( locationArgument.toString() );
-
-            this.latitude = GeoPointType.getLatitude( locationArgument.asString() );
-            this.longitude = GeoPointType.getLongitude( locationArgument.asString() );
+            final GeoPoint geoPoint = locationArgument.asGeoPoint();
+            this.latitude = geoPoint.getLatitude();
+            this.longitude = geoPoint.getLongitude();
         }
         catch ( Exception e )
         {

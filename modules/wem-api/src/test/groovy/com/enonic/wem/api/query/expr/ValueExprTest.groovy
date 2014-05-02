@@ -5,7 +5,7 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 class ValueExprTest
-        extends Specification
+    extends Specification
 {
     @Unroll
     def "test quote for string (#value)"()
@@ -64,7 +64,7 @@ class ValueExprTest
 
         expect:
         expr != null
-        expr.toString() == "geoPoint('11,22')"
+        expr.toString() == "geoPoint('11.0,22.0')"
         expr.getValue().getType() == ValueTypes.GEO_POINT
     }
 }

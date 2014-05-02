@@ -98,7 +98,7 @@ public class PropertyTest
     @Test
     public void geographicalCoordinate()
     {
-        assertEquals( "90,123", Property.newGeoPoint( "myGeo", "90,123" ).getString() );
+        assertEquals( "90.0,123.0", Property.newGeoPoint( "myGeo", "90,123" ).getString() );
     }
 
     @Test

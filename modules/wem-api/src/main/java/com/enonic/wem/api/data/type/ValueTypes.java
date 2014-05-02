@@ -12,6 +12,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.util.GeoPoint;
 
 public final class ValueTypes
 {
@@ -33,7 +34,7 @@ public final class ValueTypes
 
     public static final ValueType<Double> DOUBLE = newDouble();
 
-    public static final ValueType<String> GEO_POINT = new GeoPointType();
+    public static final ValueType<GeoPoint> GEO_POINT = newGeoPoint();
 
     public static final ValueType<EntityId> ENTITY_ID = newEntityId();
 
@@ -206,6 +207,18 @@ public final class ValueTypes
             public Value newValue( final Object value )
             {
                 return Value.newEntityId( convert( value ) );
+            }
+        };
+    }
+
+    private static ValueType<GeoPoint> newGeoPoint()
+    {
+        return new ValueType<GeoPoint>( 10, "GeoPoint", JavaTypeConverters.GEO_POINT )
+        {
+            @Override
+            public Value newValue( final Object value )
+            {
+                return Value.newGeoPoint( convert( value ) );
             }
         };
     }

@@ -11,6 +11,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.type.ValueType;
 import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.util.GeoPoint;
 
 /**
  * A generic holder for the value of a Property.
@@ -221,6 +222,11 @@ public final class Value
         return ValueTypes.DATE_TIME.convert( object );
     }
 
+    public GeoPoint asGeoPoint()
+    {
+        return ValueTypes.GEO_POINT.convert( object );
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -326,6 +332,11 @@ public final class Value
     }
 
     public static Value newGeoPoint( final String value )
+    {
+        return newGeoPoint( ValueTypes.GEO_POINT.convert( value ) );
+    }
+
+    public static Value newGeoPoint( final GeoPoint value )
     {
         return new Value( ValueTypes.GEO_POINT, value );
     }

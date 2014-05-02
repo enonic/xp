@@ -21,7 +21,7 @@ abstract class JavaTypeConverter<T>
 
     public abstract T convertFrom( Object value );
 
-    public abstract T convertFromString( java.lang.String value );
+    public abstract T convertFromString( String value );
 
     @Override
     public final java.lang.String toString()

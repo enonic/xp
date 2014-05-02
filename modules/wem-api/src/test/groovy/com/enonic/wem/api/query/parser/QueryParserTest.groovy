@@ -81,7 +81,7 @@ class QueryParserTest
 
         where:
         query = "a = geoPoint('1,1')"
-        expected = "a = geoPoint('1,1')"
+        expected = "a = geoPoint('1.0,1.0')"
     }
 
     def "test dateTime function"()

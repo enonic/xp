@@ -27,24 +27,19 @@ public abstract class ValueType<T>
         this.javaTypeConverter = javaTypeConverter;
     }
 
-    public int getKey()
+    public final int getKey()
     {
         return key;
     }
 
-    public String getName()
+    public final String getName()
     {
         return name;
     }
 
-    public Class getClassType()
+    public final Class getClassType()
     {
         return classType;
-    }
-
-    public JavaTypeConverter getJavaTypeConverter()
-    {
-        return this.javaTypeConverter;
     }
 
     /**
@@ -59,7 +54,7 @@ public abstract class ValueType<T>
     }
 
     @Override
-    public boolean equals( final Object o )
+    public final boolean equals( final Object o )
     {
         if ( this == o )
         {
@@ -75,24 +70,24 @@ public abstract class ValueType<T>
     }
 
     @Override
-    public int hashCode()
+    public final int hashCode()
     {
         return key;
     }
 
     @Override
-    public java.lang.String toString()
+    public final String toString()
     {
         return name;
     }
 
-    public boolean isValueOfExpectedClass( final Value value )
+    public final boolean isValueOfExpectedClass( final Value value )
     {
         Preconditions.checkNotNull( value, "Cannot check the type of a value that is null" );
         return this.javaTypeConverter.isInstance( value.getObject() );
     }
 
-    public void checkValueIsOfExpectedClass( final Value value )
+    public final void checkValueIsOfExpectedClass( final Value value )
     {
         if ( !isValueOfExpectedClass( value ) )
         {
@@ -104,21 +99,34 @@ public abstract class ValueType<T>
     /**
      * Attempts to convert given object to this type.
      */
-    public T convert( final Object object )
+    public final T convert( final Object object )
     {
-        final T value = this.javaTypeConverter.convertFrom( object );
-        if ( value != null )
+        try
         {
-            return value;
+            final T value = this.javaTypeConverter.convertFrom( object );
+            if ( value != null )
+            {
+                return value;
+            }
+        }
+        catch ( final Exception e )
+        {
+            throw convertError( object, e.getMessage() );
         }
 
-        throw new ValueTypeException( "Value of type [%s] cannot be converted to [%s]", object.getClass(), getName() );
+        throw convertError( object, null );
+    }
+
+    private ValueTypeException convertError( final Object value, final String reason )
+    {
+        final String message = "Value of type [%s] cannot be converted to [%s]" + ( ( reason != null ) ? ": %s" : "" );
+        throw new ValueTypeException( message, value.getClass().getName(), getName(), reason );
     }
 
     /**
      * Attempts to convert given java.lang.String to this type.
      */
-    public T convert( final String object )
+    public final T convert( final String object )
     {
         return this.javaTypeConverter.convertFromString( object );
     }
