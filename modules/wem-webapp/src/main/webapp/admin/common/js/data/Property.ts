@@ -63,6 +63,13 @@ module api.data {
             return  clone;
         }
 
+        prettyPrint(indent?: string) {
+            var thisIndent = indent ? indent : "";
+            var idAsString = this.getId().toString();
+            var valueAsString = this.getValue().asString();
+            console.log(thisIndent + idAsString + ": " + valueAsString);
+        }
+
         static fromJson(json: api.data.json.PropertyJson) {
 
             var valueType: ValueType = ValueTypes.fromName(json.type);

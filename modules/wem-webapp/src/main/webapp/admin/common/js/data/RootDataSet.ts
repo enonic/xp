@@ -49,5 +49,17 @@ module api.data {
             });
             return clone;
         }
+
+        prettyPrint(indent?: string) {
+
+            var thisIndent = indent ? indent : "";
+            console.log(thisIndent + "{");
+
+            this.getDataArray().forEach((data: Data) => {
+                data.prettyPrint(thisIndent + "  ");
+            });
+
+            console.log(thisIndent + "}");
+        }
     }
 }

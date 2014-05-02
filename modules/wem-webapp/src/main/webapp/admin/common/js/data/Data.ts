@@ -111,6 +111,10 @@ module api.data {
 
             throw new Error("Must be implemented by inheritors");
         }
+
+        prettyPrint(indent?: string) {
+            throw new Error("Must be implemented by inheritors");
+        }
     }
 
 }

@@ -43,6 +43,14 @@ module api.data {
             this.dataById = newDataById;
         }
 
+        moveData(index: number, destinationIndex: number) {
+
+            api.util.ArrayHelper.moveElement(index, destinationIndex, this.dataArray);
+            this.dataArray.forEach((data: Data, index: number) => {
+                data.setArrayIndex(index);
+            });
+        }
+
         removeData(idToRemove: DataId): Data {
 
             var dataToRemove = this.dataById[idToRemove.toString()];
@@ -237,6 +245,19 @@ module api.data {
             });
 
             return clone;
+        }
+
+        prettyPrint(indent?: string) {
+            var thisIndent = indent ? indent : "";
+
+            console.log(thisIndent + this.getId().toString() + "{");
+
+            this.getDataArray().forEach((data: Data) => {
+                data.prettyPrint(thisIndent + "  ");
+            });
+
+
+            console.log(thisIndent + "}");
         }
 
     }
