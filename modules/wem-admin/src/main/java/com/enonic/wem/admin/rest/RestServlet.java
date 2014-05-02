@@ -31,9 +31,6 @@ import com.enonic.wem.admin.rest.resource.schema.relationship.RelationshipTypeRe
 import com.enonic.wem.admin.rest.resource.status.StatusResource;
 import com.enonic.wem.admin.rest.resource.tools.ToolsResource;
 import com.enonic.wem.admin.rest.resource.ui.BackgroundImageResource;
-import com.enonic.wem.admin.rest.resource.util.CountryResource;
-import com.enonic.wem.admin.rest.resource.util.LocaleResource;
-import com.enonic.wem.admin.rest.resource.util.TimeZoneResource;
 import com.enonic.wem.core.web.jaxrs.JaxRsServlet;
 
 @Singleton
@@ -67,10 +64,6 @@ public final class RestServlet
         addClass( ContentTypeResource.class );
 
         addClass( ModuleResource.class );
-
-        addClass( CountryResource.class );
-        addClass( TimeZoneResource.class );
-        addClass( LocaleResource.class );
 
         addClass( SiteTemplateResource.class );
         addClass( PageTemplateResource.class );
