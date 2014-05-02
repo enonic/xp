@@ -44,307 +44,231 @@ final class JavaTypeConverters
 
     public final static JavaTypeConverter<GeoPoint> GEO_POINT = newGeoPoint();
 
+    private static String convertToString( final Object value )
+    {
+        if ( value instanceof String )
+        {
+            return (String) value;
+        }
+        else if ( value instanceof DateTime )
+        {
+            return DATE_TIME_FORMATTER.print( (DateTime) value );
+        }
+        else if ( value instanceof DateMidnight )
+        {
+            return DATE_MIDNIGHT_FORMATTER.print( (DateMidnight) value );
+        }
+        else if ( value instanceof RootDataSet )
+        {
+            return DATA_SERIALIZER.serializeToString( (RootDataSet) value );
+        }
+        else
+        {
+            return value.toString();
+        }
+    }
+
+    private static Long convertToLong( final Object value )
+    {
+        if ( value instanceof Number )
+        {
+            return ( (Number) value ).longValue();
+        }
+        else if ( value instanceof String )
+        {
+            return new Long( (String) value );
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    private static Double convertToDouble( final Object value )
+    {
+        if ( value instanceof Number )
+        {
+            return ( (Number) value ).doubleValue();
+        }
+        else if ( value instanceof String )
+        {
+            return new Double( (String) value );
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    private static Boolean convertToBoolean( final Object value )
+    {
+        if ( value instanceof Boolean )
+        {
+            return (Boolean) value;
+        }
+        else if ( value instanceof String )
+        {
+            return Boolean.parseBoolean( (String) value );
+        }
+
+        return null;
+    }
+
+    private static RootDataSet convertToData( final Object value )
+    {
+        if ( value instanceof RootDataSet )
+        {
+            return (RootDataSet) value;
+        }
+        else if ( value instanceof String )
+        {
+            return DATA_SERIALIZER.parse( (String) value );
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    private static ContentId convertToContentId( final Object value )
+    {
+        if ( value instanceof ContentId )
+        {
+            return (ContentId) value;
+        }
+        else if ( value instanceof String )
+        {
+            return ContentId.from( (String) value );
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    private static EntityId convertToEntityId( final Object value )
+    {
+        if ( value instanceof EntityId )
+        {
+            return (EntityId) value;
+        }
+        else if ( value instanceof String )
+        {
+            return EntityId.from( (String) value );
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    private static DateTime convertToDateTime( final Object value )
+    {
+        if ( value instanceof BaseDateTime )
+        {
+            return ( (BaseDateTime) value ).toDateTime();
+        }
+        else if ( value instanceof String )
+        {
+            return DATE_TIME_FORMATTER.parseDateTime( (String) value ).toDateTime();
+        }
+        else if ( value instanceof Number )
+        {
+            return new DateTime( ( (Number) value ).longValue() );
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    private static DateMidnight convertToDateMidnight( final Object value )
+    {
+        if ( value instanceof DateMidnight )
+        {
+            return (DateMidnight) value;
+        }
+        if ( value instanceof DateTime )
+        {
+            return new DateMidnight( value );
+        }
+        else if ( value instanceof String )
+        {
+            return DATE_MIDNIGHT_FORMATTER.parseDateTime( (String) value ).toDateMidnight();
+        }
+        else if ( value instanceof Number )
+        {
+            return new DateMidnight( ( (Number) value ).longValue() );
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    private static GeoPoint convertToGeoPoint( final Object value )
+    {
+        if ( value instanceof GeoPoint )
+        {
+            return (GeoPoint) value;
+        }
+        else if ( value instanceof String )
+        {
+            return GeoPoint.from( (String) value );
+        }
+        else
+        {
+            return null;
+        }
+    }
+
     private static JavaTypeConverter<String> newString()
     {
-        return new JavaTypeConverter<String>( String.class )
-        {
-            @Override
-            public String convertFrom( final Object value )
-            {
-                if ( value instanceof String )
-                {
-                    return (String) value;
-                }
-                else if ( value instanceof DateTime )
-                {
-                    return DATE_TIME_FORMATTER.print( (DateTime) value );
-                }
-                else if ( value instanceof DateMidnight )
-                {
-                    return DATE_MIDNIGHT_FORMATTER.print( (DateMidnight) value );
-                }
-                else if ( value instanceof RootDataSet )
-                {
-                    return DATA_SERIALIZER.serializeToString( (RootDataSet) value );
-                }
-                else
-                {
-                    return value.toString();
-                }
-            }
-
-            @Override
-            public String convertFromString( final String value )
-            {
-                return value;
-            }
-        };
+        return new JavaTypeConverter<>( String.class, JavaTypeConverters::convertToString );
     }
 
     private static JavaTypeConverter<Long> newLong()
     {
-        return new JavaTypeConverter<Long>( Long.class )
-        {
-            @Override
-            public Long convertFrom( final Object value )
-            {
-                if ( value instanceof Number )
-                {
-                    return ( (Number) value ).longValue();
-                }
-                else if ( value instanceof String )
-                {
-                    return new Long( (String) value );
-                }
-                else
-                {
-                    return null;
-                }
-            }
-
-            @Override
-            public Long convertFromString( final String value )
-            {
-                return new Long( value );
-            }
-        };
+        return new JavaTypeConverter<>( Long.class, JavaTypeConverters::convertToLong );
     }
 
     private static JavaTypeConverter<Double> newDouble()
     {
-        return new JavaTypeConverter<Double>( Double.class )
-        {
-            @Override
-            public Double convertFrom( final Object value )
-            {
-                if ( value instanceof Number )
-                {
-                    return ( (Number) value ).doubleValue();
-                }
-                else if ( value instanceof String )
-                {
-                    return new Double( (String) value );
-                }
-                else
-                {
-                    return null;
-                }
-            }
-
-            @Override
-            public Double convertFromString( final String value )
-            {
-                return new Double( value );
-            }
-        };
+        return new JavaTypeConverter<>( Double.class, JavaTypeConverters::convertToDouble );
     }
 
     private static JavaTypeConverter<Boolean> newBoolean()
     {
-        return new JavaTypeConverter<Boolean>( Boolean.class )
-        {
-            @Override
-            public Boolean convertFrom( final Object value )
-            {
-                if ( value instanceof Boolean )
-                {
-                    return (Boolean) value;
-                }
-                else if ( value instanceof String )
-                {
-                    return Boolean.parseBoolean( (String) value );
-                }
-
-                return null;
-            }
-
-            @Override
-            public Boolean convertFromString( final String value )
-            {
-                return Boolean.parseBoolean( value );
-            }
-        };
+        return new JavaTypeConverter<>( Boolean.class, JavaTypeConverters::convertToBoolean );
     }
 
     private static JavaTypeConverter<RootDataSet> newData()
     {
-        return new JavaTypeConverter<RootDataSet>( RootDataSet.class )
-        {
-            @Override
-            public RootDataSet convertFrom( final Object value )
-            {
-                if ( value instanceof RootDataSet )
-                {
-                    return (RootDataSet) value;
-                }
-                else if ( value instanceof String )
-                {
-                    return DATA_SERIALIZER.parse( (String) value );
-                }
-                else
-                {
-                    return null;
-                }
-            }
-
-            @Override
-            public RootDataSet convertFromString( final String value )
-            {
-                return DATA_SERIALIZER.parse( value );
-            }
-        };
+        return new JavaTypeConverter<>( RootDataSet.class, JavaTypeConverters::convertToData );
     }
 
     private static JavaTypeConverter<ContentId> newContentId()
     {
-        return new JavaTypeConverter<ContentId>( ContentId.class )
-        {
-            @Override
-            public ContentId convertFrom( final Object value )
-            {
-                if ( value instanceof ContentId )
-                {
-                    return (ContentId) value;
-                }
-                else if ( value instanceof String )
-                {
-                    return ContentId.from( (String) value );
-                }
-                else
-                {
-                    return null;
-                }
-            }
-
-            @Override
-            public ContentId convertFromString( final String value )
-            {
-                return ContentId.from( value );
-            }
-        };
+        return new JavaTypeConverter<>( ContentId.class, JavaTypeConverters::convertToContentId );
     }
 
     private static JavaTypeConverter<EntityId> newEntityId()
     {
-        return new JavaTypeConverter<EntityId>( EntityId.class )
-        {
-            @Override
-            public EntityId convertFrom( final Object value )
-            {
-                if ( value instanceof EntityId )
-                {
-                    return (EntityId) value;
-                }
-                else if ( value instanceof String )
-                {
-                    return EntityId.from( (String) value );
-                }
-                else
-                {
-                    return null;
-                }
-            }
-
-            @Override
-            public EntityId convertFromString( final String value )
-            {
-                return EntityId.from( value );
-            }
-        };
+        return new JavaTypeConverter<>( EntityId.class, JavaTypeConverters::convertToEntityId );
     }
 
     private static JavaTypeConverter<DateTime> newDateTime()
     {
-        return new JavaTypeConverter<DateTime>( DateTime.class )
-        {
-            @Override
-            public DateTime convertFrom( final Object value )
-            {
-                if ( value instanceof BaseDateTime )
-                {
-                    return ( (BaseDateTime) value ).toDateTime();
-                }
-                else if ( value instanceof String )
-                {
-                    return DATE_TIME_FORMATTER.parseDateTime( (String) value ).toDateTime();
-                }
-                else if ( value instanceof Number )
-                {
-                    return new DateTime( ( (Number) value ).longValue() );
-                }
-                else
-                {
-                    return null;
-                }
-            }
-
-            @Override
-            public DateTime convertFromString( final String value )
-            {
-                return DATE_TIME_FORMATTER.parseDateTime( value );
-            }
-        };
+        return new JavaTypeConverter<>( DateTime.class, JavaTypeConverters::convertToDateTime );
     }
 
     private static JavaTypeConverter<DateMidnight> newDateMidnight()
     {
-        return new JavaTypeConverter<DateMidnight>( DateMidnight.class )
-        {
-            @Override
-            public DateMidnight convertFrom( final Object value )
-            {
-                if ( value instanceof DateMidnight )
-                {
-                    return (DateMidnight) value;
-                }
-                else if ( value instanceof String )
-                {
-                    return DATE_MIDNIGHT_FORMATTER.parseDateTime( (String) value ).toDateMidnight();
-                }
-                else if ( value instanceof Number )
-                {
-                    return new DateMidnight( ( (Number) value ).longValue() );
-                }
-                else
-                {
-                    return null;
-                }
-            }
-
-            @Override
-            public DateMidnight convertFromString( final String value )
-            {
-                return DATE_MIDNIGHT_FORMATTER.parseDateTime( value ).toDateMidnight();
-            }
-        };
+        return new JavaTypeConverter<>( DateMidnight.class, JavaTypeConverters::convertToDateMidnight );
     }
 
     private static JavaTypeConverter<GeoPoint> newGeoPoint()
     {
-        return new JavaTypeConverter<GeoPoint>( GeoPoint.class )
-        {
-            @Override
-            public GeoPoint convertFrom( final Object value )
-            {
-                if ( value instanceof GeoPoint )
-                {
-                    return (GeoPoint) value;
-                }
-                else if ( value instanceof String )
-                {
-                    return GeoPoint.from( (String) value );
-                }
-                else
-                {
-                    return null;
-                }
-            }
-
-            @Override
-            public GeoPoint convertFromString( final String value )
-            {
-                return GeoPoint.from( value );
-            }
-        };
+        return new JavaTypeConverter<>( GeoPoint.class, JavaTypeConverters::convertToGeoPoint );
     }
 }

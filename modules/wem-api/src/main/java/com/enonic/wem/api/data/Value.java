@@ -176,118 +176,68 @@ public final class Value
         return String.valueOf( object );
     }
 
-    public static Value newDateTime( final DateTime value )
+    public static Value newValue( final ValueType type, final Object value )
     {
-        return new Value( ValueTypes.DATE_TIME, value );
+        return new Value( type, type.convert( value ) );
     }
 
-    public static Value newDateTime( final DateMidnight value )
+    public static Value newDateTime( final Object value )
     {
-        return newDateTime( value.toDateTime() );
+        return newValue( ValueTypes.DATE_TIME, value );
     }
 
-    public static Value newDateTime( final String value )
+    public static Value newDateMidnight( final Object value )
     {
-        return newDateTime( ValueTypes.DATE_TIME.convert( value ) );
+        return newValue( ValueTypes.DATE_MIDNIGHT, value );
     }
 
-    public static Value newDateMidnight( final DateMidnight value )
+    public static Value newLong( final Object value )
     {
-        return new Value( ValueTypes.DATE_MIDNIGHT, value );
+        return newValue( ValueTypes.LONG, value );
     }
 
-    public static Value newDateMidnight( final DateTime value )
+    public static Value newBoolean( final Object value )
     {
-        return newDateMidnight( value.toDateMidnight() );
+        return newValue( ValueTypes.BOOLEAN, value );
     }
 
-    public static Value newDateMidnight( final String value )
+    public static Value newDouble( final Object value )
     {
-        return newDateMidnight( ValueTypes.DATE_MIDNIGHT.convert( value ) );
+        return newValue( ValueTypes.DOUBLE, value );
     }
 
-    public static Value newLong( final String value )
+    public static Value newString( final Object value )
     {
-        return newLong( Long.parseLong( value ) );
+        return newValue( ValueTypes.STRING, value );
     }
 
-    public static Value newLong( final Number value )
+    public static Value newXml( final Object value )
     {
-        return new Value( ValueTypes.LONG, value.longValue() );
+        return newValue( ValueTypes.XML, value );
     }
 
-    public static Value newBoolean( final String value )
+    public static Value newHtmlPart( final Object value )
     {
-        return newBoolean( Boolean.parseBoolean( value ) );
+        return newValue( ValueTypes.HTML_PART, value );
     }
 
-    public static Value newBoolean( final Boolean value )
+    public static Value newGeoPoint( final Object value )
     {
-        return new Value( ValueTypes.BOOLEAN, value );
+        return newValue( ValueTypes.GEO_POINT, value );
     }
 
-    public static Value newDouble( final String value )
+    public static Value newContentId( final Object value )
     {
-        return newDouble( Double.parseDouble( value ) );
+        return newValue( ValueTypes.CONTENT_ID, value );
     }
 
-    public static Value newDouble( final Number value )
+    public static Value newEntityId( final Object value )
     {
-        return new Value( ValueTypes.DOUBLE, value.doubleValue() );
+        return newValue( ValueTypes.ENTITY_ID, value );
     }
 
-    public static Value newString( final String value )
+    public static Value newData( final Object value )
     {
-        return new Value( ValueTypes.STRING, value );
-    }
-
-    public static Value newXml( final String value )
-    {
-        return new Value( ValueTypes.XML, value );
-    }
-
-    public static Value newHtmlPart( final String value )
-    {
-        return new Value( ValueTypes.HTML_PART, value );
-    }
-
-    public static Value newGeoPoint( final String value )
-    {
-        return newGeoPoint( ValueTypes.GEO_POINT.convert( value ) );
-    }
-
-    public static Value newGeoPoint( final GeoPoint value )
-    {
-        return new Value( ValueTypes.GEO_POINT, value );
-    }
-
-    public static Value newContentId( final ContentId value )
-    {
-        return new Value( ValueTypes.CONTENT_ID, value );
-    }
-
-    public static Value newContentId( final String value )
-    {
-        return newContentId( ContentId.from( value ) );
-    }
-
-    public static Value newEntityId( final EntityId value )
-    {
-        return new Value( ValueTypes.ENTITY_ID, value );
-    }
-
-    public static Value newEntityId( final String value )
-    {
-        return newEntityId( EntityId.from( value ) );
-    }
-
-    public static Value newData( final String value )
-    {
-        return newData( ValueTypes.DATA.convert( value ) );
-    }
-
-    public static Value newData( final RootDataSet value )
-    {
-        return new Value( ValueTypes.DATA, value );
+        return newValue( ValueTypes.DATA, value );
     }
 }

@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.ValueType;
 import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.support.serializer.AbstractJsonSerializer;
@@ -92,12 +93,12 @@ public class PropertyJsonSerializer
                 final Data data = dataSerializer.parse( dataIt.next() );
                 rootDataSet.add( data );
             }
-            return Property.newProperty( name, valueType.newValue( rootDataSet ) );
+            return Property.newProperty( name, Value.newValue( valueType, rootDataSet ) );
         }
         else
         {
             final JsonNode valueNode = dataNode.get( DATA_VALUE );
-            return Property.newProperty( name, valueType.newValue( valueNode.textValue() ) );
+            return Property.newProperty( name, Value.newValue( valueType, valueNode.textValue() ) );
         }
     }
 }

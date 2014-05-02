@@ -10,7 +10,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.util.GeoPoint;
 
@@ -81,145 +80,61 @@ public final class ValueTypes
 
     private static ValueType<Boolean> newBoolean()
     {
-        return new ValueType<Boolean>( 12, "Boolean", JavaTypeConverters.BOOLEAN )
-        {
-            @Override
-            public Value newValue( final Object value )
-            {
-                return Value.newBoolean( convert( value ) );
-            }
-        };
+        return new ValueTypeImpl<>( 12, "Boolean", JavaTypeConverters.BOOLEAN );
     }
 
     private static ValueType<String> newString()
     {
-        return new ValueType<String>( 1, "String", JavaTypeConverters.STRING )
-        {
-            @Override
-            public Value newValue( final Object value )
-            {
-                return Value.newString( convert( value ) );
-            }
-        };
+        return new ValueTypeImpl<>( 1, "String", JavaTypeConverters.STRING );
     }
 
     private static ValueType<RootDataSet> newData()
     {
-        return new ValueType<RootDataSet>( 0, "Data", JavaTypeConverters.DATA )
-        {
-            @Override
-            public Value newValue( final Object value )
-            {
-                return Value.newData( convert( value ) );
-            }
-        };
+        return new ValueTypeImpl<>( 0, "Data", JavaTypeConverters.DATA );
     }
 
     private static ValueType<String> newHtmlPart()
     {
-        return new ValueType<String>( 3, "HtmlPart", JavaTypeConverters.STRING )
-        {
-            @Override
-            public Value newValue( final Object value )
-            {
-                return Value.newHtmlPart( convert( value ) );
-            }
-        };
+        return new ValueTypeImpl<>( 3, "HtmlPart", JavaTypeConverters.STRING );
     }
 
     private static ValueType<Double> newDouble()
     {
-        return new ValueType<Double>( 9, "Double", JavaTypeConverters.DOUBLE )
-        {
-            @Override
-            public Value newValue( final Object value )
-            {
-                return Value.newDouble( convert( value ) );
-            }
-        };
+        return new ValueTypeImpl<>( 9, "Double", JavaTypeConverters.DOUBLE );
     }
 
     private static ValueType<Long> newLong()
     {
-        return new ValueType<Long>( 8, "Long", JavaTypeConverters.LONG )
-        {
-            @Override
-            public Value newValue( final Object value )
-            {
-                return Value.newLong( convert( value ) );
-            }
-        };
+        return new ValueTypeImpl<>( 8, "Long", JavaTypeConverters.LONG );
     }
 
     private static ValueType<String> newXml()
     {
-        return new ValueType<String>( 4, "Xml", JavaTypeConverters.STRING )
-        {
-            @Override
-            public Value newValue( final Object value )
-            {
-                return Value.newXml( convert( value ) );
-            }
-        };
+        return new ValueTypeImpl<>( 4, "Xml", JavaTypeConverters.STRING );
     }
 
     private static ValueType<DateMidnight> newDateMidnight()
     {
-        return new ValueType<DateMidnight>( 5, "DateMidnight", JavaTypeConverters.DATE_MIDNIGHT )
-        {
-            @Override
-            public Value newValue( final Object value )
-            {
-                return Value.newDateMidnight( convert( value ) );
-            }
-        };
+        return new ValueTypeImpl<>( 5, "DateMidnight", JavaTypeConverters.DATE_MIDNIGHT );
     }
 
     private static ValueType<DateTime> newDateTime()
     {
-        return new ValueType<DateTime>( 6, "DateTime", JavaTypeConverters.DATE_TIME )
-        {
-            @Override
-            public Value newValue( final Object value )
-            {
-                return Value.newDateTime( convert( value ) );
-            }
-        };
+        return new ValueTypeImpl<>( 6, "DateTime", JavaTypeConverters.DATE_TIME );
     }
 
     private static ValueType<ContentId> newContentId()
     {
-        return new ValueType<ContentId>( 7, "ContentId", JavaTypeConverters.CONTENT_ID )
-        {
-            @Override
-            public Value newValue( final Object value )
-            {
-                return Value.newContentId( convert( value ) );
-            }
-        };
+        return new ValueTypeImpl<>( 7, "ContentId", JavaTypeConverters.CONTENT_ID );
     }
 
     private static ValueType<EntityId> newEntityId()
     {
-        return new ValueType<EntityId>( 11, "EntityId", JavaTypeConverters.ENTITY_ID )
-        {
-            @Override
-            public Value newValue( final Object value )
-            {
-                return Value.newEntityId( convert( value ) );
-            }
-        };
+        return new ValueTypeImpl<>( 11, "EntityId", JavaTypeConverters.ENTITY_ID );
     }
 
     private static ValueType<GeoPoint> newGeoPoint()
     {
-        return new ValueType<GeoPoint>( 10, "GeoPoint", JavaTypeConverters.GEO_POINT )
-        {
-            @Override
-            public Value newValue( final Object value )
-            {
-                return Value.newGeoPoint( convert( value ) );
-            }
-        };
+        return new ValueTypeImpl<>( 10, "GeoPoint", JavaTypeConverters.GEO_POINT );
     }
 }

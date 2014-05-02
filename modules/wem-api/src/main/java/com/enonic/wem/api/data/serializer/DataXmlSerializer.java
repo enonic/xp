@@ -10,6 +10,7 @@ import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.ValueType;
 import com.enonic.wem.api.data.type.ValueTypes;
 
@@ -87,7 +88,7 @@ public final class DataXmlSerializer
         {
             final ValueType type = ValueTypes.getByName( typeAsString );
             Preconditions.checkNotNull( type, "type was null" );
-            parentDataSet.add( Property.newProperty( name, type.newValue( dataEl.getText() ) ) );
+            parentDataSet.add( Property.newProperty( name, Value.newValue( type, dataEl.getText() ) ) );
         }
     }
 }

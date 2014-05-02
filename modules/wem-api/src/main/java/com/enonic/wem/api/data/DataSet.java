@@ -657,7 +657,7 @@ public class DataSet
 
         public Builder set( final String name, final Object value, final ValueType propertyType )
         {
-            final Value valueObject = propertyType.newValue( value );
+            final Value valueObject = Value.newValue( propertyType, value );
             dataList.add( Property.newProperty( name, valueObject ) );
             return this;
         }

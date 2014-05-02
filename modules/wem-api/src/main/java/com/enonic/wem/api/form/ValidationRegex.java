@@ -22,7 +22,7 @@ public class ValidationRegex
     public void checkValidity( final Property property )
         throws BreaksRegexValidationException
     {
-        if ( !( property.getValueType().getClassType().equals( java.lang.String.class ) ) )
+        if ( !( property.getValueType().getJavaType().equals( java.lang.String.class ) ) )
         {
             return;
         }

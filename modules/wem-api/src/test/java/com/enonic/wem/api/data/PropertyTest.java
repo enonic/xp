@@ -3,6 +3,7 @@ package com.enonic.wem.api.data;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.data.type.ValueTypeException;
 import com.enonic.wem.api.support.AbstractEqualsTest;
 
 import static junit.framework.Assert.assertEquals;
@@ -68,7 +69,7 @@ public class PropertyTest
         assertEquals( 2.0, property.getDouble() );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = ValueTypeException.class)
     public void given_invalid_value_when_build_then_exception_is_thrown()
     {
         Property.newDateMidnight( "myDate", "2012.31.08" );
