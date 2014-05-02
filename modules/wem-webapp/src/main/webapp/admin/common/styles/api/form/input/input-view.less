@@ -30,6 +30,12 @@
     float: left;
     max-width: @form-label-width - 10px;
     margin-right: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    .label {
+      white-space: nowrap;
+    }
 
     .required {
       &:after {

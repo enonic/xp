@@ -10,7 +10,11 @@ module api.form {
             this.input = input;
 
             var nodes:Node[] = [];
-            nodes.push(document.createTextNode(input.getLabel()));
+
+            var label = new api.dom.SpanEl("label");
+            label.getEl().setInnerHtml(input.getLabel());
+            label.getEl().setAttribute('title', input.getLabel());
+            nodes.push(label.getHTMLElement());
 
             if( input.getOccurrences().required() ) {
                 nodes.push( document.createTextNode(" ") );
