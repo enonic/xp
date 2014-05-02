@@ -75,7 +75,7 @@ module api.content.inputtype.image {
 
             this.uploadDialog = new UploadDialog();
             this.uploadDialog.onImageUploaded((event: api.ui.ImageUploadedEvent) => {
-                this.createEmbeddedImageContent(event.getUploadedItem());
+                this.createImageContent(event.getUploadedItem());
             });
 
             // Don't forget to clean up the modal dialog on remove
@@ -358,7 +358,7 @@ module api.content.inputtype.image {
             });
         }
 
-        private createEmbeddedImageContent(uploadItem: api.ui.UploadItem) {
+        private createImageContent(uploadItem: api.ui.UploadItem) {
 
             new api.schema.content.GetContentTypeByNameRequest(new api.schema.content.ContentTypeName("image")).
                 sendAndParse().
@@ -381,7 +381,6 @@ module api.content.inputtype.image {
                     var createContentRequest = new api.content.CreateContentRequest().
                         setDraft(false).
                         setParent(this.config.contentPath).
-                        setEmbed(true).
                         setName(api.content.ContentName.fromString(api.content.ContentName.ensureValidContentName(attachmentName.toString()))).
                         setContentType(contentType.getContentTypeName()).
                         setDisplayName(attachmentName.toString()).

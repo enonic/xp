@@ -14,7 +14,7 @@ module api.content.inputtype.image {
             this.getEl().addClass("upload-dialog");
 
             var description = new api.dom.PEl();
-            description.getEl().setInnerHtml("Images uploaded will be embedded directly in this content, you may move them to the library later if desired");
+            description.getEl().setInnerHtml("Images uploaded will be added as children to this content, you may move them later if desired");
             this.appendChildToContentPanel(description);
 
             var uploaderConfig = {

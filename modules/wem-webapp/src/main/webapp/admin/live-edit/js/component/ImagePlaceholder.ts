@@ -13,7 +13,7 @@ module LiveEdit.component {
                 e.stopPropagation();
             });
 
-            var imageUploadHandler = (event: api.ui.ImageUploadedEvent) => this.createEmbeddedImageContent(event.getUploadedItem());
+            var imageUploadHandler = (event: api.ui.ImageUploadedEvent) => this.createImageContent(event.getUploadedItem());
             onImageUploaded(imageUploadHandler);
             this.onRemoved((event: api.dom.ElementRemovedEvent) => unImageUploaded(imageUploadHandler));
 
@@ -55,7 +55,7 @@ module LiveEdit.component {
         }
 
 
-        private createEmbeddedImageContent(uploadItem: api.ui.UploadItem) {
+        private createImageContent(uploadItem: api.ui.UploadItem) {
 
             this.showLoadingSpinner();
 
@@ -80,7 +80,6 @@ module LiveEdit.component {
                     var createContentRequest = new api.content.CreateContentRequest().
                         setDraft(false).
                         setParent(content.getPath()).
-                        setEmbed(true).
                         setName(api.content.ContentName.fromString(api.content.ContentName.ensureValidContentName(attachmentName.toString()))).
                         setContentType(contentType.getContentTypeName()).
                         setDisplayName(attachmentName.toString()).
