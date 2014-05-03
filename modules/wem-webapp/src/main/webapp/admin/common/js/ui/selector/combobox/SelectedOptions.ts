@@ -43,14 +43,11 @@ module api.ui.selector.combobox {
             });
         }
 
-        reorderAccordingToIndexes() {
-            this.list.sort((a: SelectedOption<T>, b: SelectedOption<T>) => {
-                return a.getIndex() - b.getIndex();
-            });
-        }
+        moveOccurrence(formIndex: number, toIndex: number) {
 
-        getIndexes(): number[] {
-            return this.list.map((option: SelectedOption<T>) => option.getIndex());
+            api.util.ArrayHelper.moveElement(formIndex, toIndex, this.list);
+
+            this.list.forEach((selectedOption: SelectedOption<T>, index: number) => selectedOption.setIndex(index));
         }
     }
 }

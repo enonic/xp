@@ -157,9 +157,7 @@ module api.content.inputtype.image {
         }
 
         getValues(): api.data.Value[] {
-            return this.comboBox.getSelectedOptions().map((option: api.ui.selector.Option<ContentSummary>) => {
-                return new api.data.Value(option.value, api.data.ValueTypes.CONTENT_ID);
-            });
+            return this.selectedOptionsView.getValues();
         }
 
         getAttachments(): api.content.attachment.Attachment[] {

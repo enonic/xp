@@ -84,17 +84,18 @@ module api.form.inputtype.support {
             this.notifyValueChanged(event);
         }
 
-        moveOccurrence(index: number, destinationIndex: number) {
+        moveOccurrence(fromIndex: number, toIndex: number) {
 
-            super.moveOccurrence(index, destinationIndex);
+            super.moveOccurrence(fromIndex, toIndex);
 
             var values = this.getValues();
 
-            // Send ValueChangedEvent for all indexes (TODO: send only for those indexes affected by the move)
-            values.forEach((property: api.data.Value, index: number) => {
-                var newValue = values[index];
-                var event = new api.form.inputtype.ValueChangedEvent(newValue, index);
-                this.notifyValueChanged(event);
+            // Send ValueChangedEvent for those indexes affected by the move
+            values.forEach((value: api.data.Value, index: number) => {
+                if (Math.min(fromIndex, toIndex) <= index && index <= Math.max(fromIndex, toIndex)) {
+                    var event = new api.form.inputtype.ValueChangedEvent(value, index);
+                    this.notifyValueChanged(event);
+                }
             });
         }
 
