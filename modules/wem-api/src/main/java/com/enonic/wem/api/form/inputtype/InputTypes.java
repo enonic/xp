@@ -76,7 +76,7 @@ public final class InputTypes
             register( inputType );
         }
 
-        registerDefaultInputType( ValueTypes.DATE_MIDNIGHT, DATE );
+        registerDefaultInputType( ValueTypes.LOCAL_DATE, DATE );
         registerDefaultInputType( ValueTypes.STRING, TEXT_AREA );
         registerDefaultInputType( ValueTypes.XML, XML );
         registerDefaultInputType( ValueTypes.LONG, WHOLE_NUMBER );

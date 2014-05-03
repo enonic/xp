@@ -2,7 +2,7 @@ package com.enonic.wem.core.index.document;
 
 import java.util.Set;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.junit.Test;
 
 import com.enonic.wem.api.data.Property;
@@ -13,7 +13,6 @@ import static org.junit.Assert.*;
 
 public class IndexDocumentItemFactoryTest
 {
-
     @Test
     public void double_property()
         throws Exception
@@ -52,7 +51,7 @@ public class IndexDocumentItemFactoryTest
     public void date_property()
         throws Exception
     {
-        Property property = Property.newDateMidnight( "myDateField", DateTime.now().toDateMidnight() );
+        Property property = Property.newLocalDate( "myDateField", LocalDate.now() );
 
         final IndexDocumentItemFactory factory = new IndexDocumentItemFactory( false );
 

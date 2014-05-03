@@ -72,7 +72,7 @@ public class PropertyTest
     @Test(expected = ValueTypeException.class)
     public void given_invalid_value_when_build_then_exception_is_thrown()
     {
-        Property.newDateMidnight( "myDate", "2012.31.08" );
+        Property.newLocalDate( "myDate", "2012.31.08" );
     }
 
     @Test

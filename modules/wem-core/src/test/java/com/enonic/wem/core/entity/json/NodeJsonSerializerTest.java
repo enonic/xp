@@ -1,7 +1,7 @@
 package com.enonic.wem.core.entity.json;
 
-import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.junit.Test;
 
 import com.enonic.wem.api.account.UserKey;
@@ -30,7 +30,7 @@ public class NodeJsonSerializerTest
 
         RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.setProperty( DataPath.from( "a.b.c" ), Value.newDouble( 2.0 ) );
-        rootDataSet.setProperty( DataPath.from( "b" ), Value.newDateMidnight( DateMidnight.now() ) );
+        rootDataSet.setProperty( DataPath.from( "b" ), Value.newLocalDate( LocalDate.now() ) );
         rootDataSet.setProperty( DataPath.from( "c" ), Value.newString( "runar" ) );
         // This will not work atm since JodaTime does not equal datetime with different time-zones
         //rootDataSet.setProperty( DataPath.from( "c" ), new Value.DateTime( DateTime.now() ) );

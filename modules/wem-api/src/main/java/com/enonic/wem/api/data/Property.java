@@ -2,8 +2,8 @@ package com.enonic.wem.api.data;
 
 import java.util.Objects;
 
-import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import com.google.common.base.Preconditions;
 
@@ -126,17 +126,17 @@ public final class Property
         return getArray().getValue( arrayIndex ).asDouble();
     }
 
-    public DateMidnight getDateMidnight()
+    public LocalDate getLocalDate()
     {
-        return value.asDateMidnight();
+        return value.asLocalDate();
     }
 
     /**
      * Returns the value at of the Property at the given array index as a DateMidnight.
      */
-    public DateMidnight getDateMidnight( final int arrayIndex )
+    public LocalDate getLocalDate( final int arrayIndex )
     {
-        return getArray().getValue( arrayIndex ).asDateMidnight();
+        return getArray().getValue( arrayIndex ).asLocalDate();
     }
 
     public DateTime getDateTime()
@@ -232,9 +232,9 @@ public final class Property
         return newProperty( name, Value.newDateTime( value ) );
     }
 
-    public static Property newDateMidnight( final String name, final Object value )
+    public static Property newLocalDate( final String name, final Object value )
     {
-        return newProperty( name, Value.newDateMidnight( value ) );
+        return newProperty( name, Value.newLocalDate( value ) );
     }
 
     public static Property newContentId( final String name, final Object value )

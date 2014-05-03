@@ -1,7 +1,7 @@
 package com.enonic.wem.api.data.type;
 
-import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.joda.time.base.BaseDateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
@@ -14,7 +14,7 @@ import com.enonic.wem.api.util.GeoPoint;
 
 final class JavaTypeConverters
 {
-    private final static DateTimeFormatter DATE_MIDNIGHT_FORMATTER = new DateTimeFormatterBuilder().
+    private final static DateTimeFormatter LOCAL_DATE_FORMATTER = new DateTimeFormatterBuilder().
         appendYear( 4, 4 ).appendLiteral( "-" ).appendMonthOfYear( 2 ).appendLiteral( "-" ).appendDayOfMonth( 2 ).toFormatter();
 
     private final static DateTimeFormatter DATE_TIME_FORMATTER = new DateTimeFormatterBuilder().
@@ -40,7 +40,7 @@ final class JavaTypeConverters
 
     public final static JavaTypeConverter<DateTime> DATE_TIME = newDateTime();
 
-    public final static JavaTypeConverter<DateMidnight> DATE_MIDNIGHT = newDateMidnight();
+    public final static JavaTypeConverter<LocalDate> LOCAL_DATE = newLocalDate();
 
     public final static JavaTypeConverter<GeoPoint> GEO_POINT = newGeoPoint();
 
@@ -54,9 +54,9 @@ final class JavaTypeConverters
         {
             return DATE_TIME_FORMATTER.print( (DateTime) value );
         }
-        else if ( value instanceof DateMidnight )
+        else if ( value instanceof LocalDate )
         {
-            return DATE_MIDNIGHT_FORMATTER.print( (DateMidnight) value );
+            return LOCAL_DATE_FORMATTER.print( (LocalDate) value );
         }
         else if ( value instanceof RootDataSet )
         {
@@ -168,13 +168,13 @@ final class JavaTypeConverters
         {
             return ( (BaseDateTime) value ).toDateTime();
         }
+        if ( value instanceof LocalDate )
+        {
+            return ( (LocalDate) value ).toDateTimeAtStartOfDay();
+        }
         else if ( value instanceof String )
         {
             return DATE_TIME_FORMATTER.parseDateTime( (String) value ).toDateTime();
-        }
-        else if ( value instanceof Number )
-        {
-            return new DateTime( ( (Number) value ).longValue() );
         }
         else
         {
@@ -182,23 +182,19 @@ final class JavaTypeConverters
         }
     }
 
-    private static DateMidnight convertToDateMidnight( final Object value )
+    private static LocalDate convertToLocalDate( final Object value )
     {
-        if ( value instanceof DateMidnight )
+        if ( value instanceof LocalDate )
         {
-            return (DateMidnight) value;
+            return (LocalDate) value;
         }
         if ( value instanceof DateTime )
         {
-            return new DateMidnight( value );
+            return new LocalDate( value );
         }
         else if ( value instanceof String )
         {
-            return DATE_MIDNIGHT_FORMATTER.parseDateTime( (String) value ).toDateMidnight();
-        }
-        else if ( value instanceof Number )
-        {
-            return new DateMidnight( ( (Number) value ).longValue() );
+            return LOCAL_DATE_FORMATTER.parseLocalDate( (String) value );
         }
         else
         {
@@ -262,9 +258,9 @@ final class JavaTypeConverters
         return new JavaTypeConverter<>( DateTime.class, JavaTypeConverters::convertToDateTime );
     }
 
-    private static JavaTypeConverter<DateMidnight> newDateMidnight()
+    private static JavaTypeConverter<LocalDate> newLocalDate()
     {
-        return new JavaTypeConverter<>( DateMidnight.class, JavaTypeConverters::convertToDateMidnight );
+        return new JavaTypeConverter<>( LocalDate.class, JavaTypeConverters::convertToLocalDate );
     }
 
     private static JavaTypeConverter<GeoPoint> newGeoPoint()

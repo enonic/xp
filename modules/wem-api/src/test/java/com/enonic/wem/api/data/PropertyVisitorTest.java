@@ -1,10 +1,9 @@
 package com.enonic.wem.api.data;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
-import org.joda.time.DateMidnight;
+import org.joda.time.LocalDate;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.data.ContentData;
@@ -14,7 +13,6 @@ import static junit.framework.Assert.assertEquals;
 
 public class PropertyVisitorTest
 {
-
     @Test
     public void traverse()
     {
@@ -30,11 +28,11 @@ public class PropertyVisitorTest
         };
         ContentData contentData = new ContentData();
         contentData.add( Property.newString( "myText", "abc" ) );
-        contentData.add( Property.newDateMidnight( "myDate", DateMidnight.now() ) );
+        contentData.add( Property.newLocalDate( "myDate", LocalDate.now() ) );
 
         DataSet mySet = DataSet.newDataSet().name( "mySet" ).build();
         mySet.add( Property.newString( "myText", "abc" ) );
-        mySet.add( Property.newDateMidnight( "myDate", DateMidnight.now() ) );
+        mySet.add( Property.newLocalDate( "myDate", LocalDate.now() ) );
         contentData.add( mySet );
 
         propertyVisitor.traverse( contentData );
@@ -63,11 +61,11 @@ public class PropertyVisitorTest
 
         ContentData contentData = new ContentData();
         contentData.add( Property.newString( "myText", "abc" ) );
-        contentData.add( Property.newDateMidnight( "myDate", DateMidnight.now() ) );
+        contentData.add( Property.newLocalDate( "myDate", LocalDate.now() ) );
 
         DataSet mySet = DataSet.newDataSet().name( "mySet" ).build();
         mySet.add( Property.newString( "myText", "abc" ) );
-        mySet.add( Property.newDateMidnight( "myDate", DateMidnight.now() ) );
+        mySet.add( Property.newLocalDate( "myDate", LocalDate.now() ) );
         contentData.add( mySet );
 
         propertyVisitor.traverse( contentData );

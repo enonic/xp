@@ -1,8 +1,8 @@
 package com.enonic.wem.api.data;
 
 
-import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentId;
@@ -52,7 +52,7 @@ public class ValueTest
     {
         assertTrue( Value.newString( "Some text" ).isJavaType( String.class ) );
         assertTrue( Value.newBoolean( false ).isJavaType( Boolean.class ) );
-        assertTrue( Value.newDateMidnight( DateMidnight.now() ).isJavaType( DateMidnight.class ) );
+        assertTrue( Value.newLocalDate( LocalDate.now() ).isJavaType( LocalDate.class ) );
     }
 
     @Test
@@ -67,11 +67,11 @@ public class ValueTest
     @Test
     public void construct_Date()
     {
-        DateMidnight value = new org.joda.time.DateMidnight( 2013, 1, 1 );
+        LocalDate value = new LocalDate( 2013, 1, 1 );
 
-        assertSame( value, Value.newDateMidnight( value ).asDateMidnight() );
-        assertEquals( value, Value.newDateMidnight( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).asDateMidnight() );
-        assertEquals( value, Value.newDateMidnight( "2013-1-1" ).asDateMidnight() );
+        assertSame( value, Value.newLocalDate( value ).asLocalDate() );
+        assertEquals( value, Value.newLocalDate( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).asLocalDate() );
+        assertEquals( value, Value.newLocalDate( "2013-1-1" ).asLocalDate() );
     }
 
     @Test

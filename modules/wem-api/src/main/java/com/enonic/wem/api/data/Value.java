@@ -2,8 +2,8 @@ package com.enonic.wem.api.data;
 
 import java.util.Objects;
 
-import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import com.google.common.base.Preconditions;
 
@@ -38,7 +38,7 @@ public final class Value
 
     public boolean isDateType()
     {
-        return ( this.type == ValueTypes.DATE_TIME ) || ( this.type == ValueTypes.DATE_MIDNIGHT );
+        return ( this.type == ValueTypes.DATE_TIME ) || ( this.type == ValueTypes.LOCAL_DATE );
     }
 
     public boolean isNumericType()
@@ -129,9 +129,9 @@ public final class Value
     /**
      * Attempts to return value as org.joda.time.DateMidnight, using best effort converting if value is not of type org.joda.time.DateMidnight.
      */
-    public DateMidnight asDateMidnight()
+    public LocalDate asLocalDate()
     {
-        return ValueTypes.DATE_MIDNIGHT.convert( object );
+        return ValueTypes.LOCAL_DATE.convert( object );
     }
 
     /**
@@ -186,9 +186,9 @@ public final class Value
         return newValue( ValueTypes.DATE_TIME, value );
     }
 
-    public static Value newDateMidnight( final Object value )
+    public static Value newLocalDate( final Object value )
     {
-        return newValue( ValueTypes.DATE_MIDNIGHT, value );
+        return newValue( ValueTypes.LOCAL_DATE, value );
     }
 
     public static Value newLong( final Object value )

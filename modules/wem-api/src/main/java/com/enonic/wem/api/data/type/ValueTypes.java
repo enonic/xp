@@ -3,8 +3,8 @@ package com.enonic.wem.api.data.type;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import com.google.common.base.Preconditions;
 
@@ -23,7 +23,7 @@ public final class ValueTypes
 
     public static final ValueType<String> XML = newXml();
 
-    public static final ValueType<DateMidnight> DATE_MIDNIGHT = newDateMidnight();
+    public static final ValueType<LocalDate> LOCAL_DATE = newLocalDate();
 
     public static final ValueType<DateTime> DATE_TIME = newDateTime();
 
@@ -49,7 +49,7 @@ public final class ValueTypes
         register( STRING );
         register( HTML_PART );
         register( XML );
-        register( DATE_MIDNIGHT );
+        register( LOCAL_DATE );
         register( DATE_TIME );
         register( CONTENT_ID );
         register( LONG );
@@ -113,9 +113,9 @@ public final class ValueTypes
         return new ValueTypeImpl<>( 4, "Xml", JavaTypeConverters.STRING );
     }
 
-    private static ValueType<DateMidnight> newDateMidnight()
+    private static ValueType<LocalDate> newLocalDate()
     {
-        return new ValueTypeImpl<>( 5, "DateMidnight", JavaTypeConverters.DATE_MIDNIGHT );
+        return new ValueTypeImpl<>( 5, "LocalDate", JavaTypeConverters.LOCAL_DATE );
     }
 
     private static ValueType<DateTime> newDateTime()

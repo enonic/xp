@@ -4,6 +4,7 @@ package com.enonic.wem.core.data.json;
 import java.io.IOException;
 
 import org.joda.time.DateMidnight;
+import org.joda.time.LocalDate;
 import org.junit.Test;
 
 import com.enonic.wem.api.data.DataSet;
@@ -50,7 +51,7 @@ public class DataJsonTest
         DataSet dataSet = new DataSet( "mySet" );
         dataSet.setProperty( "Long", Value.newLong( 1 ) );
         dataSet.setProperty( "Double", Value.newDouble( 1.1 ) );
-        dataSet.setProperty( "DateMidnight", Value.newDateMidnight( new DateMidnight( 2012, 12, 12 ) ) );
+        dataSet.setProperty( "DateMidnight", Value.newLocalDate( new LocalDate( 2012, 12, 12 ) ) );
         dataSet.setProperty( "HtmlPart", Value.newHtmlPart( "<div></div>" ) );
         DataSetJson dataSetJson = new DataSetJson( dataSet );
 

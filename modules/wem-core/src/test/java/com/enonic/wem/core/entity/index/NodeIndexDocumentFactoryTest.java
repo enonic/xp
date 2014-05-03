@@ -3,8 +3,8 @@ package com.enonic.wem.core.entity.index;
 import java.util.Collection;
 import java.util.Set;
 
-import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.junit.Test;
 
 import com.google.common.collect.Sets;
@@ -29,8 +29,6 @@ import static org.junit.Assert.*;
 
 public class NodeIndexDocumentFactoryTest
 {
-    private NodeIndexDocumentFactory factory = new NodeIndexDocumentFactory();
-
     @Test
     public void validate_given_no_id_then_exception()
         throws Exception
@@ -40,7 +38,7 @@ public class NodeIndexDocumentFactoryTest
 
         try
         {
-            factory.create( node );
+            NodeIndexDocumentFactory.create( node );
         }
         catch ( NullPointerException e )
         {
@@ -58,7 +56,7 @@ public class NodeIndexDocumentFactoryTest
             id( EntityId.from( "abc" ) ).
             build();
 
-        final Collection<IndexDocument> indexDocuments = factory.create( node );
+        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node );
 
         assertNotNull( indexDocuments );
     }
@@ -71,7 +69,7 @@ public class NodeIndexDocumentFactoryTest
             id( EntityId.from( "abc" ) ).
             build();
 
-        final Collection<IndexDocument> indexDocuments = factory.create( node );
+        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node );
 
         assertNotNull( indexDocuments );
         assertNotNull( getIndexDocumentOfType( indexDocuments, IndexType.NODE ) );
@@ -90,7 +88,7 @@ public class NodeIndexDocumentFactoryTest
                 build() ).
             build();
 
-        final Collection<IndexDocument> indexDocuments = factory.create( node );
+        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node );
 
         final IndexDocument indexDocument = getIndexDocumentOfType( indexDocuments, IndexType.NODE );
 
@@ -103,7 +101,7 @@ public class NodeIndexDocumentFactoryTest
     {
         final String myAnalyzerName = "myAnalyzer";
 
-        DateTime modifiedDateTime = new DateTime( 2013, 01, 02, 03, 04, 05 );
+        DateTime modifiedDateTime = new DateTime( 2013, 1, 2, 3, 4, 5 );
 
         Node node = Node.newNode().
             id( EntityId.from( "myId" ) ).
@@ -118,7 +116,7 @@ public class NodeIndexDocumentFactoryTest
                 build() ).
             build();
 
-        final Collection<IndexDocument> indexDocuments = factory.create( node );
+        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node );
 
         final IndexDocument indexDocument = getIndexDocumentOfType( indexDocuments, IndexType.NODE );
 
@@ -148,14 +146,14 @@ public class NodeIndexDocumentFactoryTest
     {
         RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.addProperty( DataPath.from( "a.b.c" ), Value.newDouble( 2.0 ) );
-        rootDataSet.setProperty( DataPath.from( "a.b.d" ), Value.newDateMidnight( DateMidnight.now() ) );
+        rootDataSet.setProperty( DataPath.from( "a.b.d" ), Value.newLocalDate( LocalDate.now() ) );
 
         Node node = Node.newNode().
             id( EntityId.from( "myId" ) ).
             rootDataSet( rootDataSet ).
             build();
 
-        final Collection<IndexDocument> indexDocuments = factory.create( node );
+        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node );
 
         final IndexDocument indexDocument = getIndexDocumentOfType( indexDocuments, IndexType.NODE );
 
@@ -176,7 +174,7 @@ public class NodeIndexDocumentFactoryTest
             rootDataSet( rootDataSet ).
             build();
 
-        final Collection<IndexDocument> indexDocuments = factory.create( node );
+        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node );
 
         assertTrue( indexDocuments.iterator().hasNext() );
         final IndexDocument next = indexDocuments.iterator().next();
