@@ -20,7 +20,7 @@
     padding: 0 27px 0 17px;
     text-align: center;
     overflow: visible;
-    display: none;
+    display: inline-block;
     position: relative; // for the dropdown to position itself
 
     &:after {
@@ -39,7 +39,7 @@
     .dropdown {
       display: none;
       position: absolute;
-      top: @toolbar-height;
+      margin-top: -1px;
       left: 0;
       z-index: 1000;
       padding: 0 10px;
@@ -54,7 +54,9 @@
     }
 
     &:hover .dropdown,
-    &:focus .dropdown {
+    &:focus .dropdown,
+    .dropdown:hover,
+    .dropdown:focus {
       display: block;
     }
   }

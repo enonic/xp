@@ -1,13 +1,17 @@
 module api.ui.toolbar {
 
-    export class FoldButton extends api.ui.Button {
+    export class FoldButton extends api.dom.DivEl {
 
+        private span: api.dom.SpanEl;
         private dropdown: api.dom.DivEl;
         private widthCache: number[] = [];
 
         constructor() {
-            super("More");
-            this.addClass('fold-button');
+            super('button fold-button');
+
+            this.span = new api.dom.SpanEl();
+            this.span.setHtml("More");
+            this.appendChild(this.span);
 
             this.dropdown = new api.dom.DivEl('dropdown');
             this.appendChild(this.dropdown);
@@ -23,6 +27,10 @@ module api.ui.toolbar {
             this.dropdown.removeChild(top);
             this.widthCache.shift();
             return top;
+        }
+
+        setLabel(label: string) {
+            this.span.setHtml(label);
         }
 
         getNextButtonWidth(): number {
