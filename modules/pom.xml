@@ -20,7 +20,6 @@
 
   <modules>
     <module>wem-api</module>
-    <module>wem-xml</module>
     <module>wem-guice</module>
     <module>wem-core</module>
     <module>wem-admin</module>

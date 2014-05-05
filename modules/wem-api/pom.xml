@@ -12,7 +12,7 @@
   </parent>
 
   <artifactId>wem-api</artifactId>
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
   <name>Enonic WEM Api</name>
 
   <dependencies>
@@ -67,6 +67,23 @@
     </resources>
     <plugins>
       <plugin>
+        <groupId>org.jvnet.jaxb2.maven2</groupId>
+        <artifactId>maven-jaxb2-plugin</artifactId>
+        <version>0.9.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <schemaIncludes>
+            <include>**/model.xsd</include>
+          </schemaIncludes>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <executions>
@@ -86,7 +103,7 @@
               *;resolution:=optional
             </Import-Package>
             <Embed-Dependency>
-              *;scope=compile
+              *;scope=compile;artifactId=!slf4j-api
             </Embed-Dependency>
             <_exportcontents>
               com.enonic.wem.api.*,

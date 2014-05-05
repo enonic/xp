@@ -1,4 +1,4 @@
-package com.enonic.wem.xml;
+package com.enonic.wem.api.xml;
 
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -9,16 +9,13 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import com.enonic.wem.api.xml.XmlException;
-import com.enonic.wem.xml.model.ObjectFactory;
-
 public final class XmlBeanHelper
 {
     private final JAXBContext context;
 
     public XmlBeanHelper()
     {
-        this.context = createContext( ObjectFactory.class );
+        this.context = createContext();
     }
 
     public <X> X parse( final String value )
@@ -61,11 +58,11 @@ public final class XmlBeanHelper
         }
     }
 
-    private JAXBContext createContext( final Class<?> factoryClass )
+    private static JAXBContext createContext()
     {
         try
         {
-            return JAXBContext.newInstance( factoryClass );
+            return JAXBContext.newInstance( "com.enonic.wem.api.xml.model" );
         }
         catch ( final JAXBException e )
         {
@@ -78,7 +75,7 @@ public final class XmlBeanHelper
         return new XmlBeanHelper();
     }
 
-    private XmlException handleException( final JAXBException cause )
+    private static XmlException handleException( final JAXBException cause )
     {
         return new XmlException( cause, cause.getMessage() );
     }
