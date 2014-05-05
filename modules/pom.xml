@@ -40,6 +40,7 @@
         <configuration>
           <instructions>
             <Embed-Transitive>true</Embed-Transitive>
+            <Embed-Directory>META-INF/lib</Embed-Directory>
           </instructions>
         </configuration>
       </plugin>
