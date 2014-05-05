@@ -44,21 +44,6 @@
       <version>1.0.1</version>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-jdk14</artifactId>
-      <version>1.7.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
-      <version>1.7.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>log4j-over-slf4j</artifactId>
-      <version>1.7.2</version>
-    </dependency>
-    <dependency>
       <groupId>com.jhlabs</groupId>
       <artifactId>filters</artifactId>
       <version>2.0.235-1</version>
@@ -77,11 +62,6 @@
       <groupId>com.google.inject.extensions</groupId>
       <artifactId>guice-servlet</artifactId>
       <version>3.0</version>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>3.0.1</version>
     </dependency>
     <dependency>
       <groupId>com.sun.jersey</groupId>

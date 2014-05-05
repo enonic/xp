@@ -64,6 +64,18 @@
       <version>0.7-groovy-2.0</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.2</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>3.0.1</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>
