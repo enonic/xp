@@ -6,11 +6,11 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.admin.json.ItemJson;
-import com.enonic.wem.admin.json.schema.content.ContentTypeFilterJson;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.VendorJson;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.schema.content.ContentTypeFilterJson;
 
 
 @SuppressWarnings("UnusedDeclaration")
@@ -19,11 +19,11 @@ public class SiteTemplateSummaryJson
 {
     protected final SiteTemplate siteTemplate;
 
-    private ContentTypeFilterJson contentTypeFilterJson;
-
     private final boolean editable;
 
     private final boolean deletable;
+
+    private ContentTypeFilterJson contentTypeFilterJson;
 
     public SiteTemplateSummaryJson( final SiteTemplate siteTemplate )
     {

@@ -4,12 +4,12 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.wem.admin.json.content.page.region.PageRegionsJson;
-import com.enonic.wem.admin.json.content.page.region.RegionJson;
 import com.enonic.wem.api.content.page.PageTemplate;
+import com.enonic.wem.api.content.page.region.PageRegionsJson;
+import com.enonic.wem.api.content.page.region.RegionJson;
+import com.enonic.wem.api.data.DataJson;
+import com.enonic.wem.api.data.RootDataSetJson;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.core.data.json.DataJson;
-import com.enonic.wem.core.data.json.RootDataSetJson;
 
 
 public class PageTemplateJson

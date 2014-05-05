@@ -12,6 +12,8 @@ public class ImageComponent
     extends PageComponent<ImageDescriptorKey>
     implements RegionPlaceableComponent
 {
+    private final static ImageComponentType type = new ImageComponentType();
+
     private ContentId image;
 
     public ImageComponent( final Builder builder )
@@ -28,7 +30,7 @@ public class ImageComponent
     @Override
     public PageComponentType getType()
     {
-        return PageComponentType.IMAGE;
+        return ImageComponent.type;
     }
 
     public ContentId getImage()

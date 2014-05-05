@@ -11,6 +11,8 @@ public final class LayoutComponent
     extends PageComponent<LayoutDescriptorKey>
     implements RegionPlaceableComponent
 {
+    private final static LayoutComponentType type = new LayoutComponentType();
+
     private LayoutRegions regions;
 
     public LayoutComponent( final Builder builder )
@@ -27,7 +29,7 @@ public final class LayoutComponent
     @Override
     public PageComponentType getType()
     {
-        return PageComponentType.LAYOUT;
+        return LayoutComponent.type;
     }
 
     @Override

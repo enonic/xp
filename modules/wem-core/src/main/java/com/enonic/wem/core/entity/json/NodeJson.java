@@ -12,7 +12,7 @@ import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.core.data.json.RootDataSetJson;
+import com.enonic.wem.api.data.RootDataSetJson;
 import com.enonic.wem.core.entity.relationship.EntityIndexConfigJson;
 
 public class NodeJson

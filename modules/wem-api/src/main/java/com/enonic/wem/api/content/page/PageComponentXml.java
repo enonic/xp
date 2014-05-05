@@ -5,12 +5,6 @@ import javax.xml.bind.annotation.XmlElement;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.enonic.wem.api.content.page.image.ImageComponent;
-import com.enonic.wem.api.content.page.image.ImageComponentXml;
-import com.enonic.wem.api.content.page.layout.LayoutComponent;
-import com.enonic.wem.api.content.page.layout.LayoutComponentXml;
-import com.enonic.wem.api.content.page.part.PartComponent;
-import com.enonic.wem.api.content.page.part.PartComponentXml;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.RootDataSetXml;
 
@@ -26,15 +20,25 @@ public abstract class PageComponentXml
     @XmlElement(name = "config", required = true)
     private RootDataSetXml config;
 
-    public void from( final PageComponent partComponent )
+    public static PageComponent fromXml( final PageComponentXml componentXml )
     {
-        this.name = partComponent.getName().toString();
-        if ( partComponent.getDescriptor() != null )
+        return componentXml.toPageComponent();
+    }
+
+    public static PageComponentXml toXml( final PageComponent component )
+    {
+        return component.getType().toXml( component );
+    }
+
+    public void from( final PageComponent component )
+    {
+        this.name = component.getName().toString();
+        if ( component.getDescriptor() != null )
         {
-            this.descriptor = partComponent.getDescriptor().toString();
+            this.descriptor = component.getDescriptor().toString();
         }
         this.config = new RootDataSetXml();
-        this.config.from( partComponent.getConfig() );
+        this.config.from( component.getConfig() );
     }
 
     public void to( final PageComponent.Builder builder )
@@ -54,60 +58,5 @@ public abstract class PageComponentXml
 
     protected abstract DescriptorKey toDescriptorKey( String s );
 
-    public static PageComponent fromXml( final PageComponentXml componentXml )
-    {
-        if ( componentXml instanceof ImageComponentXml )
-        {
-            ImageComponentXml imageComponentXml = (ImageComponentXml) componentXml;
-            ImageComponent.Builder imageComponent = ImageComponent.newImageComponent();
-            imageComponentXml.to( imageComponent );
-            return imageComponent.build();
-        }
-        else if ( componentXml instanceof PartComponentXml )
-        {
-            PartComponentXml partComponentXml = (PartComponentXml) componentXml;
-            PartComponent.Builder partComponent = PartComponent.newPartComponent();
-            partComponentXml.to( partComponent );
-            return partComponent.build();
-        }
-        else if ( componentXml instanceof LayoutComponentXml )
-        {
-            LayoutComponentXml layoutComponentXml = (LayoutComponentXml) componentXml;
-            LayoutComponent.Builder layoutComponent = LayoutComponent.newLayoutComponent();
-            layoutComponentXml.to( layoutComponent );
-            return layoutComponent.build();
-        }
-        else
-        {
-            throw new UnsupportedOperationException(
-                "Creating PageComponent from [" + componentXml.getClass().getName() + "] not supported" );
-        }
-    }
-
-    public static PageComponentXml toXml( final PageComponent component )
-    {
-        if ( component instanceof ImageComponent )
-        {
-            ImageComponentXml componentXml = new ImageComponentXml();
-            componentXml.from( (ImageComponent) component );
-            return componentXml;
-        }
-        else if ( component instanceof PartComponent )
-        {
-            PartComponentXml componentXml = new PartComponentXml();
-            componentXml.from( (PartComponent) component );
-            return componentXml;
-        }
-        else if ( component instanceof LayoutComponent )
-        {
-            LayoutComponentXml componentXml = new LayoutComponentXml();
-            componentXml.from( (LayoutComponent) component );
-            return componentXml;
-        }
-        else
-        {
-            throw new UnsupportedOperationException(
-                "Creating PageComponentXml from [" + component.getClass().getName() + "] not supported" );
-        }
-    }
+    protected abstract PageComponent toPageComponent();
 }

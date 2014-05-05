@@ -52,7 +52,7 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.query.ContentQueryResult;
-import com.enonic.wem.core.data.json.DataJson;
+import com.enonic.wem.api.data.DataJson;
 
 import static com.enonic.wem.api.content.Content.editContent;
 

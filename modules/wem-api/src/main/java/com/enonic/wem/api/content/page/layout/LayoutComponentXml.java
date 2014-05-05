@@ -8,11 +8,13 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.enonic.wem.api.content.page.DescriptorKey;
+import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.PageComponentXml;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.page.region.RegionXml;
 import com.enonic.wem.api.xml.XmlObject;
 
+import static com.enonic.wem.api.content.page.layout.LayoutComponent.newLayoutComponent;
 import static com.enonic.wem.api.content.page.layout.LayoutRegions.newLayoutRegions;
 
 @XmlRootElement(name = "layout-component")
@@ -59,5 +61,13 @@ public final class LayoutComponentXml
     protected DescriptorKey toDescriptorKey( final String s )
     {
         return LayoutDescriptorKey.from( s );
+    }
+
+    @Override
+    protected PageComponent toPageComponent()
+    {
+        LayoutComponent.Builder builder = newLayoutComponent();
+        to( builder );
+        return builder.build();
     }
 }

@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.enonic.wem.core.data.json.DataJson;
+import com.enonic.wem.api.data.DataJson;
 
 @XmlRootElement
 public class ValidateContentParams

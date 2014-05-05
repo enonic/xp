@@ -1,6 +1,6 @@
 package com.enonic.wem.admin.json.module;
 
-import com.enonic.wem.admin.json.form.FormJson;
+import com.enonic.wem.api.form.FormJson;
 import com.enonic.wem.api.module.Module;
 
 public class ModuleJson

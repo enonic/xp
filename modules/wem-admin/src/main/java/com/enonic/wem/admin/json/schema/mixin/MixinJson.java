@@ -5,10 +5,10 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.admin.json.ItemJson;
-import com.enonic.wem.admin.json.form.FormItemJson;
-import com.enonic.wem.admin.json.form.FormItemJsonFactory;
 import com.enonic.wem.admin.json.schema.SchemaJson;
 import com.enonic.wem.api.form.FormItem;
+import com.enonic.wem.api.form.FormItemJson;
+import com.enonic.wem.api.form.FormItemJsonFactory;
 import com.enonic.wem.api.schema.mixin.Mixin;
 
 public class MixinJson

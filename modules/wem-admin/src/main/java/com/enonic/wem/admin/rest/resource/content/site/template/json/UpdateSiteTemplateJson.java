@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Iterables;
 
-import com.enonic.wem.admin.json.schema.content.ContentTypeFilterJson;
+import com.enonic.wem.api.schema.content.ContentTypeFilterJson;
 import com.enonic.wem.api.content.site.SetSiteTemplateEditor;
 import com.enonic.wem.api.content.site.SiteTemplateEditor;
 import com.enonic.wem.api.content.site.SiteTemplateKey;

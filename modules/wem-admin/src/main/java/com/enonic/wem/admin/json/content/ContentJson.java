@@ -2,12 +2,12 @@ package com.enonic.wem.admin.json.content;
 
 import java.util.List;
 
-import com.enonic.wem.admin.json.content.page.PageJson;
 import com.enonic.wem.admin.json.content.site.SiteJson;
-import com.enonic.wem.admin.json.form.FormJson;
+import com.enonic.wem.api.content.page.PageJson;
+import com.enonic.wem.api.form.FormJson;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.core.data.json.DataJson;
-import com.enonic.wem.core.data.json.DataSetJson;
+import com.enonic.wem.api.data.DataJson;
+import com.enonic.wem.api.data.DataSetJson;
 
 @SuppressWarnings("UnusedDeclaration")
 public final class ContentJson

@@ -21,8 +21,8 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.core.AbstractSerializerTest;
-import com.enonic.wem.core.form.inputtype.InputTypeExtensions;
-import com.enonic.wem.core.form.inputtype.InputTypeResolver;
+import com.enonic.wem.api.form.inputtype.InputTypeExtensions;
+import com.enonic.wem.api.form.inputtype.InputTypeResolver;
 
 import static com.enonic.wem.api.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
@@ -38,13 +38,13 @@ import static org.junit.Assert.*;
 public abstract class AbstractContentTypeSerializerTest
     extends AbstractSerializerTest
 {
-    private ContentTypeSerializer serializer;
+    private static final DummyCustomInputType MY_TYPE = new DummyCustomInputType();
 
-    abstract ContentTypeSerializer getSerializer();
+    private ContentTypeSerializer serializer;
 
     private ContentType contentTypeWithAllFormItemTypes;
 
-    private static final DummyCustomInputType MY_TYPE = new DummyCustomInputType();
+    abstract ContentTypeSerializer getSerializer();
 
     @Before
     public void before()

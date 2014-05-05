@@ -21,7 +21,7 @@ import com.enonic.wem.api.form.Occurrences;
 import com.enonic.wem.api.form.inputtype.InputType;
 import com.enonic.wem.api.form.inputtype.InputTypeConfig;
 import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;
-import com.enonic.wem.core.form.inputtype.InputTypeResolver;
+import com.enonic.wem.api.form.inputtype.InputTypeResolver;
 
 import static com.enonic.wem.api.data.DataSet.newDataSet;
 import static com.enonic.wem.api.form.FieldSet.newFieldSet;

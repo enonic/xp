@@ -9,7 +9,7 @@ import com.enonic.wem.api.entity.Entity;
 import com.enonic.wem.api.entity.EntityIndexConfig;
 import com.enonic.wem.api.entity.EntityPatternIndexConfig;
 import com.enonic.wem.api.entity.EntityPropertyIndexConfig;
-import com.enonic.wem.core.data.json.RootDataSetJson;
+import com.enonic.wem.api.data.RootDataSetJson;
 import com.enonic.wem.core.entity.EntityPatternIndexConfigJson;
 import com.enonic.wem.core.entity.EntityPropertyIndexConfigJson;
 import com.enonic.wem.core.entity.relationship.EntityIndexConfigJson;

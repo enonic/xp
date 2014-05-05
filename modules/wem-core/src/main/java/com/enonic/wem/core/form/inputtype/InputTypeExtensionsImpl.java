@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 
 import com.enonic.wem.api.form.inputtype.InputType;
 import com.enonic.wem.api.form.inputtype.InputTypeExtension;
+import com.enonic.wem.api.form.inputtype.InputTypeExtensions;
 import com.enonic.wem.core.plugin.ext.ExtensionPoint;
 
 public class InputTypeExtensionsImpl
@@ -14,14 +15,14 @@ public class InputTypeExtensionsImpl
 
     private final LinkedHashMap<String, InputType> inputTypeByName = new LinkedHashMap<>();
 
-    public static InputTypeExtensionsImpl get()
-    {
-        return instance;
-    }
-
     public InputTypeExtensionsImpl()
     {
         super( InputTypeExtension.class );
+    }
+
+    public static InputTypeExtensionsImpl get()
+    {
+        return instance;
     }
 
     public InputType getInputType( final String name )

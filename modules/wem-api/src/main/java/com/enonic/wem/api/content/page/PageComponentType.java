@@ -1,29 +1,31 @@
 package com.enonic.wem.api.content.page;
 
-import com.enonic.wem.api.content.page.image.ImageComponent;
-import com.enonic.wem.api.content.page.layout.LayoutComponent;
-import com.enonic.wem.api.content.page.part.PartComponent;
+import java.util.ArrayList;
+import java.util.List;
 
-
-public enum PageComponentType
+public abstract class PageComponentType<T extends PageComponent>
 {
-    IMAGE( "image", ImageComponent.class ),
-    PART( "part", PartComponent.class ),
-    LAYOUT( "layout", LayoutComponent.class ),
-    TEXT( "text", LayoutComponent.class );
-
-    private Class clazz;
+    private final static List<PageComponentType> all = new ArrayList<>();
 
     private String shortName;
 
-    PageComponentType( final String shortName, final Class clazz )
+    public PageComponentType( final String shortName )
     {
         this.shortName = shortName;
-        this.clazz = clazz;
+        register( this );
     }
+
+    public static void register( final PageComponentType type )
+    {
+        all.add( type );
+    }
+
+    public abstract PageComponentXml toXml( final PageComponent component );
 
     public String toString()
     {
         return shortName;
     }
+
+    public abstract PageComponentJson toJson( final T component );
 }

@@ -10,9 +10,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.api.content.site.ModuleConfig;
 import com.enonic.wem.api.content.site.ModuleConfigs;
+import com.enonic.wem.api.data.DataJson;
+import com.enonic.wem.api.data.RootDataSetJson;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.core.data.json.DataJson;
-import com.enonic.wem.core.data.json.RootDataSetJson;
 
 public class ModuleConfigJson
 {
@@ -37,6 +37,18 @@ public class ModuleConfigJson
         this.configAsJson = new RootDataSetJson( moduleConfig.getConfig() );
     }
 
+    public static ModuleConfigs toModuleConfigs( final Collection<ModuleConfigJson> moduleConfigs )
+    {
+        final List<ModuleConfig> list = new ArrayList<>();
+
+        for ( final ModuleConfigJson moduleConfigJson : moduleConfigs )
+        {
+            list.add( moduleConfigJson.getModuleConfig() );
+        }
+
+        return ModuleConfigs.from( list );
+    }
+
     public String getModuleKey()
     {
         return moduleConfig.getModule().toString();
@@ -51,18 +63,6 @@ public class ModuleConfigJson
     public ModuleConfig getModuleConfig()
     {
         return moduleConfig;
-    }
-
-    public static ModuleConfigs toModuleConfigs( final Collection<ModuleConfigJson> moduleConfigs )
-    {
-        final List<ModuleConfig> list = new ArrayList<>();
-
-        for ( final ModuleConfigJson moduleConfigJson : moduleConfigs )
-        {
-            list.add( moduleConfigJson.getModuleConfig() );
-        }
-
-        return ModuleConfigs.from( list );
     }
 
 

@@ -8,19 +8,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.admin.json.content.attachment.AttachmentJson;
-import com.enonic.wem.admin.json.form.FormJson;
+import com.enonic.wem.api.form.FormJson;
 import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.core.data.json.DataJson;
+import com.enonic.wem.api.data.DataJson;
 
 public class CreateContentJson
 {
-    private List<AttachmentJson> attachments;
-
     final CreateContentParams createContent;
+
+    private List<AttachmentJson> attachments;
 
     @JsonCreator
     CreateContentJson( @JsonProperty("draft") final String draft, @JsonProperty("name") final String name,

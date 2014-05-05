@@ -6,8 +6,12 @@ import java.io.IOException;
 import org.junit.Test;
 
 import com.enonic.wem.api.form.FieldSet;
+import com.enonic.wem.api.form.FieldSetJson;
+import com.enonic.wem.api.form.FormItemJson;
 import com.enonic.wem.api.form.FormItemSet;
+import com.enonic.wem.api.form.FormItemSetJson;
 import com.enonic.wem.api.form.Input;
+import com.enonic.wem.api.form.InputJson;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.support.JsonTestHelper;
 

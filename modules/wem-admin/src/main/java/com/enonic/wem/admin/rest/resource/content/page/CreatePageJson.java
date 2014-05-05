@@ -7,13 +7,13 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.wem.admin.json.content.page.region.PageRegionsJson;
-import com.enonic.wem.admin.json.content.page.region.RegionJson;
+import com.enonic.wem.api.content.page.region.PageRegionsJson;
+import com.enonic.wem.api.content.page.region.RegionJson;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.CreatePageParams;
 import com.enonic.wem.api.content.page.PageTemplateKey;
-import com.enonic.wem.core.data.json.DataJson;
-import com.enonic.wem.core.data.json.RootDataSetJson;
+import com.enonic.wem.api.data.DataJson;
+import com.enonic.wem.api.data.RootDataSetJson;
 
 public class CreatePageJson
 {

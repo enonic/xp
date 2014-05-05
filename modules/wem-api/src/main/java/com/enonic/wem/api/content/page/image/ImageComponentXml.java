@@ -5,8 +5,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.DescriptorKey;
+import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.PageComponentXml;
 import com.enonic.wem.api.xml.XmlObject;
+
+import static com.enonic.wem.api.content.page.image.ImageComponent.newImageComponent;
 
 @XmlRootElement(name = "image-component")
 public final class ImageComponentXml
@@ -40,5 +43,13 @@ public final class ImageComponentXml
     protected DescriptorKey toDescriptorKey( final String s )
     {
         return ImageDescriptorKey.from( s );
+    }
+
+    @Override
+    protected PageComponent toPageComponent()
+    {
+        ImageComponent.Builder builder = newImageComponent();
+        to( builder );
+        return builder.build();
     }
 }
