@@ -2,6 +2,7 @@ module api.content.inputtype.image {
 
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import ContentSummary = api.content.ContentSummary;
+    import Value = api.data.Value;
     import ValueChangedEvent = api.form.inputtype.ValueChangedEvent;
 
     export class SelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<ContentSummary> {
@@ -24,18 +25,22 @@ module api.content.inputtype.image {
 
         private mouseClickListener: {(MouseEvent): void};
 
+        /**
+         * The index of child Data being dragged.
+         */
+        private draggingIndex: number;
+
         constructor() {
             super();
 
             this.dialog = new ImageSelectorDialog();
-            this.dialog.hide();
-            this.appendChild(this.dialog);
 
             jQuery(this.getHTMLElement()).sortable({
                 containment: this.getHTMLElement(),
                 cursor: 'move',
                 tolerance: 'pointer',
-                update: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDUpdate()
+                start: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDStart(event, ui),
+                update: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDUpdate(event, ui)
             });
 
             this.toolbar = new SelectionToolbar();
@@ -96,7 +101,7 @@ module api.content.inputtype.image {
 
         addOptionView(option: SelectedOption<ContentSummary>) {
 
-            this.dialog.hide();
+            this.dialog.remove();
             var optionView: SelectedOptionView = <SelectedOptionView>option.getOptionView();
 
             optionView.onClicked((event: MouseEvent) => {
@@ -192,11 +197,8 @@ module api.content.inputtype.image {
                                             (this.isLastInRow(option.getIndex()) ? ' last-in-row' : ''));
 
             this.dialog.setContent(option.getOption().displayValue);
-            if (!this.dialog.isVisible()) {
-                this.setOutsideClickListener();
-                this.dialog.show();
-                this.updateDialogLayout(this.calculateOptionHeight());
-            }
+            this.setOutsideClickListener();
+            this.updateDialogLayout(this.calculateOptionHeight());
 
             jQuery(this.getHTMLElement()).sortable("disable");
         }
@@ -237,7 +239,7 @@ module api.content.inputtype.image {
         }
 
         private hideImageSelectorDialog() {
-            this.dialog.hide();
+            this.dialog.remove();
             this.activeOption.getOptionView().removeClass('editing first-in-row last-in-row');
             jQuery(this.getHTMLElement()).sortable("enable");
 
@@ -273,46 +275,37 @@ module api.content.inputtype.image {
             return index == this.getSelectedOptionViews().length - 1;
         }
 
-        private handleDnDUpdate() {
-            var orderedOptions = this.resolveViewsInOrderAccordingToDOM();
+        private handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
 
-            orderedOptions.forEach((view: SelectedOptionView, index: number) => {
-                this.getSelectedOptions().getByView(view).setIndex(index);
-            });
-
-            this.reorderOptionsAccordingToNewIndexes();
+            var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
+            this.draggingIndex = draggedElement.getSiblingIndex();
         }
 
-        private resolveViewsInOrderAccordingToDOM(): SelectedOptionView[] {
-            var orderedOptions: SelectedOptionView[] = [];
+        private handleDnDUpdate(event: Event, ui: JQueryUI.SortableUIParams) {
 
-            var optionViews = this.getSelectedOptions().getOptionViews();
-
-            var domChildren = this.getHTMLElement().children;
-            for (var i = 0; i < domChildren.length; i++) {
-                var domChild = <HTMLElement> domChildren[i];
-                var childEl = optionViews.filter((optionView: SelectedOptionView) => (optionView.getHTMLElement() == domChild))[0];
-                if (childEl) {
-                    orderedOptions.push(<SelectedOptionView>childEl);
-                }
+            if (this.draggingIndex >= 0) {
+                var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
+                var draggedToIndex = draggedElement.getSiblingIndex();
+                this.handleMovedOccurrence(this.draggingIndex, draggedToIndex);
             }
 
-            return orderedOptions;
+            this.draggingIndex = -1;
         }
 
-        private reorderOptionsAccordingToNewIndexes() {
+        private handleMovedOccurrence(fromIndex: number, toIndex: number) {
 
-            var oldIndexes = this.getSelectedOptions().getIndexes();
+            this.getSelectedOptions().moveOccurrence(fromIndex, toIndex);
 
-            this.getSelectedOptions().reorderAccordingToIndexes();
-
-            oldIndexes.forEach((index: number, arrayPosition: number) => {
-                if (index != arrayPosition) {
-                    var option = this.getSelectedOptions().getSelectedOption(arrayPosition).getOption();
-                    var value = new api.data.Value(option.displayValue.getContentId(), api.data.ValueTypes.CONTENT_ID);
-                    var event = new ValueChangedEvent(value, arrayPosition);
-                    this.notifyValueChanged(event);
+            this.getValues().forEach((value: Value, index: number) => {
+                if (Math.min(fromIndex, toIndex) <= index && index <= Math.max(fromIndex, toIndex)) {
+                    this.notifyValueChanged(new ValueChangedEvent(value, index));
                 }
+            });
+        }
+
+        getValues(): Value[] {
+            return this.getSelectedOptions().getOptions().map((option: api.ui.selector.Option<ContentSummary>) => {
+                return new Value(option.value, api.data.ValueTypes.CONTENT_ID);
             });
         }
 

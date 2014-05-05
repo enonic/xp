@@ -215,17 +215,17 @@ module api.form {
         }
 
 
-        moveOccurrence(index: number, destinationIndex: number) {
+        moveOccurrence(fromIndex: number, toIndex: number) {
 
             // move FormItemSetOccurrence
-            api.util.ArrayHelper.moveElement(index, destinationIndex, this.occurrences);
+            api.util.ArrayHelper.moveElement(fromIndex, toIndex, this.occurrences);
             // update FormItemSetOccurrence indexes
-            for (var i = 0; i < this.occurrences.length; i++) {
-                this.occurrences[i].setIndex(i);
-            }
+            this.occurrences.forEach((occurrence: FormItemOccurrence<V>, index: number) => {
+                occurrence.setIndex(index);
+            });
 
             // move FormItemOccurrenceView
-            api.util.ArrayHelper.moveElement(index, destinationIndex, this.occurrenceViews);
+            api.util.ArrayHelper.moveElement(fromIndex, toIndex, this.occurrenceViews);
 
         }
 

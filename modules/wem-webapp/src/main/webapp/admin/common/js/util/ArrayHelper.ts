@@ -4,13 +4,13 @@ module api.util {
 
         static moveElement(oldIndex: number, newIndex: number, array: any[]) {
 
+            var element = array.splice(oldIndex, 1)[0];
             if (newIndex >= array.length) {
-                var k = newIndex - array.length;
-                while ((k--) + 1) {
-                    array.push(undefined);
-                }
+                array[newIndex] = element;
+            } else {
+                array.splice(newIndex, 0, element);
             }
-            array.splice(newIndex, 0, array.splice(oldIndex, 1)[0]);
+
         }
     }
 
