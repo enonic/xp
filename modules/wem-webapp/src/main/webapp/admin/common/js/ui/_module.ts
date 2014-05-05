@@ -34,7 +34,7 @@
 ///<reference path='RadioGroup.ts' />
 ///<reference path='TextInput.ts' />
 ///<reference path='AutosizeTextInput.ts' />
-///<reference path='CheckboxInput.ts' />
+///<reference path='Checkbox.ts' />
 
 ///<reference path='PasswordInput.ts' />
 ///<reference path='TextArea.ts' />

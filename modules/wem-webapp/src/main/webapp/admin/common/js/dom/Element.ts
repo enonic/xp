@@ -557,7 +557,7 @@ module api.dom {
             this.getEl().addEventListener("mousedown", listener);
         }
 
-        UnMouseDown(listener: (event: MouseEvent) => void) {
+        unMouseDown(listener: (event: MouseEvent) => void) {
             this.getEl().removeEventListener("mousedown", listener);
         }
 

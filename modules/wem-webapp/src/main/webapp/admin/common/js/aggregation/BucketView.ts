@@ -4,9 +4,7 @@ module api.aggregation {
 
         private bucket: api.aggregation.Bucket;
 
-        private checkbox: api.ui.CheckboxInput;
-
-        private label: api.dom.LabelEl;
+        private checkbox: api.ui.Checkbox;
 
         private parentAggregationView: api.aggregation.AggregationView;
 
@@ -22,7 +20,7 @@ module api.aggregation {
             this.parentAggregationView = parentAggregationView;
             this.displayName = displayName;
 
-            this.checkbox = new api.ui.CheckboxInput();
+            this.checkbox = new api.ui.Checkbox(this.resolveLabelValue());
 
             if (select) {
                 this.checkbox.setChecked(true, true);
@@ -32,9 +30,6 @@ module api.aggregation {
                 this.notifySelectionChanged(eval(event.getOldValue()), eval(event.getNewValue()));
             });
             this.appendChild(this.checkbox);
-
-            this.label = new api.dom.LabelEl(this.resolveLabelValue(), this.checkbox);
-            this.appendChild(this.label);
 
             this.updateUI();
         }
@@ -54,7 +49,7 @@ module api.aggregation {
         }
 
         private updateLabel(): void {
-            this.label.setValue(this.resolveLabelValue());
+            this.checkbox.setLabel(this.resolveLabelValue());
         }
 
         getBucket(): api.aggregation.Bucket {
@@ -80,7 +75,7 @@ module api.aggregation {
 
         private updateUI() {
 
-            this.label.setValue(this.resolveLabelValue());
+            this.updateLabel();
 
             if (this.bucket.getDocCount() > 0 || this.isSelected()) {
                 this.show();

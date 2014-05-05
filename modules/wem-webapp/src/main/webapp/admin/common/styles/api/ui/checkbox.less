@@ -1,0 +1,28 @@
+.checkbox {
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    label {
+      color: #000 !important;
+    }
+  }
+
+  label {
+    color: #777 !important;
+    background-image: url("../images/admin-unchecked.gif");
+    background-repeat: no-repeat;
+    padding-left: 20px;
+    white-space: nowrap;
+  }
+
+  input[type="checkbox"] {
+    left: -100px;
+    position: absolute;
+
+    &:checked + label {
+      background-image: url("../images/admin-checked.gif");
+      color: #333 !important;
+    }
+  }
+}

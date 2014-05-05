@@ -6,7 +6,7 @@ module api.content.inputtype.image {
 
         private icon: api.dom.ImgEl;
 
-        private check: api.ui.CheckboxInput;
+        private check: api.ui.Checkbox;
 
         private selectionChangeListeners: {(option: SelectedOptionView, checked: boolean): void;}[] = [];
 
@@ -25,7 +25,7 @@ module api.content.inputtype.image {
             label.getEl().setInnerHtml(content.getName().toString());
             this.appendChild(label);
 
-            this.check = new api.ui.CheckboxInput();
+            this.check = new api.ui.Checkbox();
 
             this.check.onClicked((event: MouseEvent) => {
                 // swallow event to prevent scaling when clicked on checkbox
@@ -42,9 +42,6 @@ module api.content.inputtype.image {
                 this.notifyChecked(event.getNewValue() == 'true');
             });
 
-            this.check.onFocus(() => {
-                this.notifyFocusChanged(new FocusChangedEvent(true));
-            });
             this.appendChild(this.check);
         }
 
@@ -52,7 +49,7 @@ module api.content.inputtype.image {
             return this.icon;
         }
 
-        getCheckbox(): api.ui.CheckboxInput {
+        getCheckbox(): api.ui.Checkbox {
             return this.check;
         }
 
@@ -73,23 +70,6 @@ module api.content.inputtype.image {
         unChecked(listener: {(option: SelectedOptionView, checked: boolean): void;}) {
             this.selectionChangeListeners = this.selectionChangeListeners.filter(function (curr) {
                 return curr != listener;
-            });
-        }
-
-        // both focus nad blur events
-        onFocusChanged(listener: {(option: SelectedOptionView, event: FocusChangedEvent): void;}) {
-            this.focusChangeListeners.push(listener);
-        }
-
-        unFocusChanged(listener: {(option: SelectedOptionView, event: FocusChangedEvent): void;}) {
-            this.focusChangeListeners = this.focusChangeListeners.filter(function (curr) {
-                return curr != listener;
-            });
-        }
-
-        notifyFocusChanged(event: FocusChangedEvent) {
-            this.focusChangeListeners.forEach((listener) => {
-                listener(this, event);
             });
         }
 

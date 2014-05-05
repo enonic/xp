@@ -109,6 +109,7 @@ module api.content.inputtype.image {
                     this.hideImageSelectorDialog();
                     optionView.getCheckbox().giveBlur();
                 } else {
+                    this.showImageSelectorDialog(option);
                     optionView.getCheckbox().giveFocus();
                 }
             });
@@ -147,12 +148,6 @@ module api.content.inputtype.image {
                 }
 
                 this.updateSelectionToolbarLayout();
-            });
-
-            optionView.onFocusChanged((view: SelectedOptionView, event: FocusChangedEvent) => {
-                if (event.isFocused()) {
-                    this.showImageSelectorDialog(option);
-                }
             });
 
             optionView.getIcon().onLoaded((event: UIEvent) => {
