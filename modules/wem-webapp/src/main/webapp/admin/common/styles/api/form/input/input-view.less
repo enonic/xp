@@ -33,8 +33,21 @@
     overflow: hidden;
     text-overflow: ellipsis;
 
+    .wrapper.required {
+      padding: 0 15px 0 0;
+      &:after {
+        position: absolute;
+        content:'\00a0*';
+        color: red;
+      }
+    }
+
     .label {
+      display: inline-block;
+      overflow: hidden;
       white-space: nowrap;
+      text-overflow: ellipsis;
+      max-width: 100%;
     }
 
     .required {

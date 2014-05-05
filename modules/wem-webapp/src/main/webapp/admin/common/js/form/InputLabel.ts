@@ -9,19 +9,17 @@ module api.form {
 
             this.input = input;
 
-            var nodes:Node[] = [];
-
-            var label = new api.dom.SpanEl("label");
+            var wrapper = new api.dom.DivEl("wrapper");
+            var label = new api.dom.DivEl("label");
             label.getEl().setInnerHtml(input.getLabel());
             label.getEl().setAttribute('title', input.getLabel());
-            nodes.push(label.getHTMLElement());
+            wrapper.getEl().appendChild(label.getHTMLElement());
 
             if( input.getOccurrences().required() ) {
-                nodes.push( document.createTextNode(" ") );
-                var requiredMarker = new api.dom.SpanEl("required");
-                nodes.push( requiredMarker.getHTMLElement() );
+                wrapper.addClass("required");
             }
-            this.getEl().appendChildren(nodes);
+
+            this.getEl().appendChild(wrapper.getHTMLElement());
         }
     }
 }
