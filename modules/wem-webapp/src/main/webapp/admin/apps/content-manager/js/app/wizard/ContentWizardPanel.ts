@@ -170,7 +170,10 @@ module app.wizard {
                         app.Router.setHash("new/" + this.contentType.getName());
                     }
                     if (this.liveFormPanel) {
-                        this.liveFormPanel.loadPageIfNotLoaded();
+                        this.liveFormPanel.loadPageIfNotLoaded().then(() => {
+                            // Return focus to wizard, since dropbox in live edit steales it
+                            this.giveInitialFocus();
+                        });
                     }
                 });
 
