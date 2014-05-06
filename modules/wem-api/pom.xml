@@ -104,6 +104,8 @@
               !org.jaxen.*,
               !net.sf.cglib.*,
               !sun.*,
+              !org.apache.tools.*,
+              !org.codehaus.*,
               *
             </Import-Package>
             <Embed-Dependency>
