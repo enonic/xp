@@ -21,7 +21,7 @@ module LiveEdit.ui.contextmenu.menuitem {
         private onEmptyComponent() {
             var selectedComponent = this.menu.selectedComponent;
             var componentEl: JQuery = selectedComponent.getElement();
-            var component = LiveEdit.component.Component.fromJQuery(componentEl);
+            var component = LiveEdit.component.Component.fromJQuery(componentEl, false);
 
             LiveEdit.component.Selection.deselect();
 
