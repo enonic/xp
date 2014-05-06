@@ -23,6 +23,7 @@
     <module>wem-guice</module>
     <module>wem-core</module>
     <module>wem-admin</module>
+    <module>wem-admin-ui</module>
     <module>wem-portal</module>
     <module>wem-boot</module>
     <module>wem-webapp</module>
