@@ -6,7 +6,6 @@ import com.google.inject.servlet.ServletModule;
 import com.enonic.wem.admin.AdminModule;
 import com.enonic.wem.core.CoreModule;
 import com.enonic.wem.portal.PortalModule;
-import com.enonic.wem.core.web.WebModule;
 
 final class BootModule
     extends AbstractModule
@@ -16,7 +15,6 @@ final class BootModule
     {
         install( new ServletModule() );
         install( new CoreModule() );
-        install( new WebModule() );
         install( new AdminModule() );
         install( new PortalModule() );
     }

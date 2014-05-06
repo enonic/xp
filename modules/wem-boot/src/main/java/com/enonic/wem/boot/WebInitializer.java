@@ -1,25 +1,35 @@
-package com.enonic.wem.admin;
+package com.enonic.wem.boot;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 
+import com.enonic.wem.admin.ResourceServlet;
 import com.enonic.wem.admin.app.AppServlet;
 import com.enonic.wem.admin.rest.RestServlet;
-import com.enonic.wem.core.web.WebInitializer;
+import com.enonic.wem.core.web.servlet.RequestContextListener;
+import com.enonic.wem.portal.PortalServlet;
 
-public final class AdminWebInitializer
-    implements WebInitializer
+@Singleton
+final class WebInitializer
 {
-    private RestServlet restServlet;
+    @Inject
+    protected RestServlet restServlet;
 
-    private ResourceServlet resourceServlet;
+    @Inject
+    protected ResourceServlet resourceServlet;
 
-    private AppServlet appServlet;
+    @Inject
+    protected AppServlet appServlet;
 
-    @Override
+    @Inject
+    protected PortalServlet portalServlet;
+
     public void initialize( final ServletContext context )
     {
+        context.addListener( new RequestContextListener() );
+
         final ServletRegistration.Dynamic resourceServlet = context.addServlet( "resource", this.resourceServlet );
         resourceServlet.setLoadOnStartup( 2 );
         resourceServlet.addMapping( "/" );
@@ -31,23 +41,9 @@ public final class AdminWebInitializer
         final ServletRegistration.Dynamic appServlet = context.addServlet( "app", this.appServlet );
         appServlet.setLoadOnStartup( 4 );
         appServlet.addMapping( "/admin" );
-    }
 
-    @Inject
-    public void setRestServlet( final RestServlet restServlet )
-    {
-        this.restServlet = restServlet;
-    }
-
-    @Inject
-    public void setResourceServlet( final ResourceServlet resourceServlet )
-    {
-        this.resourceServlet = resourceServlet;
-    }
-
-    @Inject
-    public void setAppServlet( final AppServlet appServlet )
-    {
-        this.appServlet = appServlet;
+        final ServletRegistration.Dynamic portalServlet = context.addServlet( "portal", this.portalServlet );
+        portalServlet.setLoadOnStartup( 4 );
+        portalServlet.addMapping( "/portal/*" );
     }
 }
