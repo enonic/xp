@@ -9,26 +9,14 @@ import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.RootDataSetXml;
 
 
-public abstract class PageComponentXml
+public abstract class AbstractDescriptorBasedPageComponentXml
+    extends AbstractPageComponentXml
 {
-    @XmlAttribute(name = "name", required = true)
-    String name;
-
     @XmlAttribute(name = "descriptor", required = false)
     String descriptor;
 
     @XmlElement(name = "config", required = true)
     private RootDataSetXml config;
-
-    public static PageComponent fromXml( final PageComponentXml componentXml )
-    {
-        return componentXml.toPageComponent();
-    }
-
-    public static PageComponentXml toXml( final PageComponent component )
-    {
-        return component.getType().toXml( component );
-    }
 
     public void from( final PageComponent component )
     {
@@ -41,7 +29,7 @@ public abstract class PageComponentXml
         this.config.from( component.getConfig() );
     }
 
-    public void to( final PageComponent.Builder builder )
+    public void to( final AbstractDescriptorBasedPageComponent.Builder builder )
     {
         builder.name( new ComponentName( this.name ) );
         if ( StringUtils.isNotBlank( this.descriptor ) )
@@ -58,5 +46,4 @@ public abstract class PageComponentXml
 
     protected abstract DescriptorKey toDescriptorKey( String s );
 
-    protected abstract PageComponent toPageComponent();
 }

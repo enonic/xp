@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.enonic.wem.api.content.page.AbstractDescriptorBasedPageComponent;
 import com.enonic.wem.api.content.page.Descriptor;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.PageComponent;
@@ -17,8 +18,8 @@ import com.enonic.wem.portal.controller.JsControllerFactory;
 import com.enonic.wem.portal.controller.JsHttpRequest;
 import com.enonic.wem.portal.rendering.Renderer;
 
-abstract class PageComponentRenderer
-    implements Renderer<PageComponent>
+abstract class DescriptorBasedPageComponentRenderer
+    implements Renderer<AbstractDescriptorBasedPageComponent>
 {
 
     private static final String EMPTY_COMPONENT_EDIT_MODE_HTML =
@@ -29,7 +30,7 @@ abstract class PageComponentRenderer
     @Inject
     protected JsControllerFactory controllerFactory;
 
-    public Response render( final PageComponent pageComponent, final JsContext context )
+    public Response render( final AbstractDescriptorBasedPageComponent pageComponent, final JsContext context )
     {
         final Descriptor descriptor = resolveDescriptor( pageComponent );
         if ( descriptor == null )
@@ -55,7 +56,7 @@ abstract class PageComponentRenderer
         }
     }
 
-    private Response renderEmptyComponent( final PageComponent pageComponent, final JsContext context )
+    private Response renderEmptyComponent( final AbstractDescriptorBasedPageComponent pageComponent, final JsContext context )
     {
         final RenderingMode renderingMode = getRenderingMode( context );
         switch ( renderingMode )
@@ -74,7 +75,7 @@ abstract class PageComponentRenderer
         }
     }
 
-    private Response renderEmptyComponentEditMode( final PageComponent pageComponent )
+    private Response renderEmptyComponentEditMode( final AbstractDescriptorBasedPageComponent pageComponent )
     {
         final String html =
             MessageFormat.format( EMPTY_COMPONENT_EDIT_MODE_HTML, pageComponent.getType().toString(), pageComponent.getPath().toString() );
@@ -85,7 +86,7 @@ abstract class PageComponentRenderer
             build();
     }
 
-    private Response renderEmptyComponentPreviewMode( final PageComponent pageComponent )
+    private Response renderEmptyComponentPreviewMode( final AbstractDescriptorBasedPageComponent pageComponent )
     {
         final String html = MessageFormat.format( EMPTY_COMPONENT_PREVIEW_MODE_HTML, pageComponent.getType().toString(),
                                                   pageComponent.getPath().toString() );
@@ -96,7 +97,7 @@ abstract class PageComponentRenderer
             build();
     }
 
-    private Descriptor resolveDescriptor( final PageComponent pageComponent )
+    private Descriptor resolveDescriptor( final AbstractDescriptorBasedPageComponent pageComponent )
     {
         final DescriptorKey descriptorKey = pageComponent.getDescriptor();
         return descriptorKey == null ? null : getComponentDescriptor( descriptorKey );

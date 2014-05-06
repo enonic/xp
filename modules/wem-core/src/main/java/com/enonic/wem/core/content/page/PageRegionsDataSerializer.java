@@ -4,7 +4,7 @@ import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;
-import com.enonic.wem.core.content.page.region.RegionDataSerializer;
+import com.enonic.wem.api.content.page.region.RegionDataSerializer;
 
 import static com.enonic.wem.api.content.page.PageRegions.newPageRegions;
 

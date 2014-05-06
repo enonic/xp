@@ -15,7 +15,7 @@
   </can-render>
   <regions>
     <region name="my-region">
-      <part-component name="PartInHeader" descriptor="demo-1.0.0:my-part-template">
+      <part-component descriptor="demo-1.0.0:my-part-template" name="PartInHeader">
       <config>
           <width type="Long">500</width>
           <caption type="String">So sweet!</caption>

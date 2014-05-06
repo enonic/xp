@@ -1,13 +1,12 @@
-package com.enonic.wem.core.content.page.region;
+package com.enonic.wem.api.content.page.region;
 
 
 import com.enonic.wem.api.content.page.PageComponent;
-import com.enonic.wem.api.content.page.region.Region;
+import com.enonic.wem.api.content.page.PageComponentsDataSerializer;
 import com.enonic.wem.api.data.DataId;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;
-import com.enonic.wem.core.content.page.PageComponentsDataSerializer;
 
 import static com.enonic.wem.api.content.page.region.Region.newRegion;
 

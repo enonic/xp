@@ -33,8 +33,6 @@ public final class CoreModule
         install( new EntityModule() );
         install( new BlobModule() );
         install( new ContentModule() );
-        install( new SiteModule() );
-        install( new PageModule() );
         install( new RelationshipModule() );
         install( new SchemaModule() );
         install( new IndexModule() );

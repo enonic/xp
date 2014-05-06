@@ -9,7 +9,7 @@ import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
 import com.enonic.wem.api.content.page.image.ImageDescriptorService;
 
 public final class ImageRenderer
-    extends PageComponentRenderer
+    extends DescriptorBasedPageComponentRenderer
 {
     @Inject
     protected ImageDescriptorService imageDescriptorService;

@@ -2,16 +2,16 @@ package com.enonic.wem.api.content.page.part;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.enonic.wem.api.content.page.AbstractDescriptorBasedPageComponentXml;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.PageComponent;
-import com.enonic.wem.api.content.page.PageComponentXml;
 import com.enonic.wem.api.xml.XmlObject;
 
 import static com.enonic.wem.api.content.page.part.PartComponent.newPartComponent;
 
 @XmlRootElement(name = "part-component")
 public final class PartComponentXml
-    extends PageComponentXml
+    extends AbstractDescriptorBasedPageComponentXml
     implements XmlObject<PartComponent, PartComponent.Builder>
 {
 
@@ -34,7 +34,7 @@ public final class PartComponentXml
     }
 
     @Override
-    protected PageComponent toPageComponent()
+    public PageComponent toPageComponent()
     {
         PartComponent.Builder builder = newPartComponent();
         to( builder );

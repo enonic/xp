@@ -8,8 +8,11 @@ import com.enonic.wem.api.content.page.PageComponentService;
 import com.enonic.wem.api.content.page.PageDescriptorService;
 import com.enonic.wem.api.content.page.PageService;
 import com.enonic.wem.api.content.page.PageTemplateService;
+import com.enonic.wem.api.content.page.image.ImageComponentType;
 import com.enonic.wem.api.content.page.image.ImageDescriptorService;
+import com.enonic.wem.api.content.page.layout.LayoutComponentType;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;
+import com.enonic.wem.api.content.page.part.PartComponentType;
 import com.enonic.wem.api.content.page.part.PartDescriptorService;
 import com.enonic.wem.core.content.page.image.ImageDescriptorServiceImpl;
 import com.enonic.wem.core.content.page.layout.LayoutDescriptorServiceImpl;
@@ -21,6 +24,11 @@ public class PageModule
     @Override
     protected void configure()
     {
+        // Ensure all component types are instantiated once, so that they get registered in PageComponentType
+        new ImageComponentType();
+        new PartComponentType();
+        new LayoutComponentType();
+
         bind( ImageDescriptorService.class ).to( ImageDescriptorServiceImpl.class ).in( Singleton.class );
         bind( LayoutDescriptorService.class ).to( LayoutDescriptorServiceImpl.class ).in( Singleton.class );
         bind( PartDescriptorService.class ).to( PartDescriptorServiceImpl.class ).in( Singleton.class );

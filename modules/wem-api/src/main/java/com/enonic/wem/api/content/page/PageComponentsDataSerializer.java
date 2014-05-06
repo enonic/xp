@@ -1,11 +1,10 @@
-package com.enonic.wem.core.content.page;
+package com.enonic.wem.api.content.page;
 
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.support.serializer.AbstractDataListSerializer;

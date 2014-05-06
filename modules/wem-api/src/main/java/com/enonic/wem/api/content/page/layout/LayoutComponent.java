@@ -1,5 +1,6 @@
 package com.enonic.wem.api.content.page.layout;
 
+import com.enonic.wem.api.content.page.AbstractDescriptorBasedPageComponent;
 import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.ComponentPath;
 import com.enonic.wem.api.content.page.PageComponent;
@@ -8,7 +9,7 @@ import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.RootDataSet;
 
 public final class LayoutComponent
-    extends PageComponent<LayoutDescriptorKey>
+    extends AbstractDescriptorBasedPageComponent<LayoutDescriptorKey>
     implements RegionPlaceableComponent
 {
     private final static LayoutComponentType type = new LayoutComponentType();
@@ -55,7 +56,7 @@ public final class LayoutComponent
     }
 
     public static class Builder
-        extends PageComponent.Builder<LayoutDescriptorKey>
+        extends AbstractDescriptorBasedPageComponent.Builder<LayoutDescriptorKey>
     {
         private LayoutRegions regions;
 

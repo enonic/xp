@@ -1,21 +1,24 @@
 package com.enonic.wem.api.content.page.part;
 
 
+import com.enonic.wem.api.content.page.AbstractPageComponentXml;
 import com.enonic.wem.api.content.page.PageComponent;
+import com.enonic.wem.api.content.page.PageComponentDataSerializer;
 import com.enonic.wem.api.content.page.PageComponentJson;
 import com.enonic.wem.api.content.page.PageComponentType;
-import com.enonic.wem.api.content.page.PageComponentXml;
 
 public final class PartComponentType
     extends PageComponentType<PartComponent>
 {
+    private static final PartComponentDataSerializer dataSerializer = new PartComponentDataSerializer();
+
     public PartComponentType()
     {
-        super( "part" );
+        super( "part", PartComponent.class );
     }
 
     @Override
-    public PageComponentXml toXml( final PageComponent component )
+    public AbstractPageComponentXml toXml( final PageComponent component )
     {
         PartComponentXml componentXml = new PartComponentXml();
         componentXml.from( (PartComponent) component );
@@ -26,5 +29,11 @@ public final class PartComponentType
     public PageComponentJson toJson( final PartComponent component )
     {
         return new PartComponentJson( component );
+    }
+
+    @Override
+    public PageComponentDataSerializer getDataSerializer()
+    {
+        return dataSerializer;
     }
 }

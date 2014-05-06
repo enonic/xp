@@ -4,5 +4,5 @@ import com.enonic.wem.api.module.ModuleKey;
 
 public interface PageComponentService
 {
-    PageComponent<? extends DescriptorKey> getByName( final ModuleKey module, final ComponentName name );
+    AbstractDescriptorBasedPageComponent<? extends DescriptorKey> getByName( final ModuleKey module, final ComponentName name );
 }

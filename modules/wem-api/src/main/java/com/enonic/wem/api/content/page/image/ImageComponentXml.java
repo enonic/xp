@@ -4,16 +4,16 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.page.AbstractDescriptorBasedPageComponentXml;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.PageComponent;
-import com.enonic.wem.api.content.page.PageComponentXml;
 import com.enonic.wem.api.xml.XmlObject;
 
 import static com.enonic.wem.api.content.page.image.ImageComponent.newImageComponent;
 
 @XmlRootElement(name = "image-component")
 public final class ImageComponentXml
-    extends PageComponentXml
+    extends AbstractDescriptorBasedPageComponentXml
     implements XmlObject<ImageComponent, ImageComponent.Builder>
 {
     @XmlAttribute(name = "image", required = true)
@@ -46,7 +46,7 @@ public final class ImageComponentXml
     }
 
     @Override
-    protected PageComponent toPageComponent()
+    public PageComponent toPageComponent()
     {
         ImageComponent.Builder builder = newImageComponent();
         to( builder );

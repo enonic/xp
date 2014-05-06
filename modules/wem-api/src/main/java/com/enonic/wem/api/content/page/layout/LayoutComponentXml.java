@@ -7,9 +7,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.enonic.wem.api.content.page.AbstractDescriptorBasedPageComponentXml;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.PageComponent;
-import com.enonic.wem.api.content.page.PageComponentXml;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.page.region.RegionXml;
 import com.enonic.wem.api.xml.XmlObject;
@@ -19,7 +19,7 @@ import static com.enonic.wem.api.content.page.layout.LayoutRegions.newLayoutRegi
 
 @XmlRootElement(name = "layout-component")
 public final class LayoutComponentXml
-    extends PageComponentXml
+    extends AbstractDescriptorBasedPageComponentXml
     implements XmlObject<LayoutComponent, LayoutComponent.Builder>
 {
     @XmlElement(name = "region")
@@ -64,7 +64,7 @@ public final class LayoutComponentXml
     }
 
     @Override
-    protected PageComponent toPageComponent()
+    public PageComponent toPageComponent()
     {
         LayoutComponent.Builder builder = newLayoutComponent();
         to( builder );

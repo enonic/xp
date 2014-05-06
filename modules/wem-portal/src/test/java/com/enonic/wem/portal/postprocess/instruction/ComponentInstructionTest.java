@@ -10,7 +10,6 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.page.ComponentName;
-import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.PageComponentService;
@@ -71,7 +70,7 @@ public class ComponentInstructionTest
         final RendererFactory rendererFactory = newRendererFactory( "<b>part content</b>" );
         final PageComponentService pageComponentService = Mockito.mock( PageComponentService.class );
 
-        final PageComponent<? extends DescriptorKey> component = createPartComponent();
+        final PageComponent component = createPartComponent();
         doReturn( component ).when( pageComponentService ).getByName( isA( ModuleKey.class ), isA( ComponentName.class ) );
         final ComponentInstruction instruction = new ComponentInstruction( rendererFactory, pageComponentService );
 
@@ -98,7 +97,7 @@ public class ComponentInstructionTest
             build();
     }
 
-    private PageComponent<? extends DescriptorKey> createPartComponent()
+    private PageComponent createPartComponent()
     {
         return newPartComponent().
             name( "myPartComponent" ).

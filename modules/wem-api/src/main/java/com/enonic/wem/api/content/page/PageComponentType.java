@@ -1,26 +1,27 @@
 package com.enonic.wem.api.content.page;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
 
 public abstract class PageComponentType<T extends PageComponent>
 {
-    private final static List<PageComponentType> all = new ArrayList<>();
+    private final static LinkedHashMap<String, PageComponentType> bySimpleClassName = new LinkedHashMap<>();
 
     private String shortName;
 
-    public PageComponentType( final String shortName )
+
+    public PageComponentType( final String shortName, final Class clazz )
     {
         this.shortName = shortName;
-        register( this );
+        bySimpleClassName.put( clazz.getSimpleName(), this );
     }
 
-    public static void register( final PageComponentType type )
+    public static PageComponentType bySimpleClassName( final String simpleClassName )
     {
-        all.add( type );
+
+        return bySimpleClassName.get( simpleClassName );
     }
 
-    public abstract PageComponentXml toXml( final PageComponent component );
+    public abstract AbstractPageComponentXml toXml( final PageComponent component );
 
     public String toString()
     {
@@ -28,4 +29,8 @@ public abstract class PageComponentType<T extends PageComponent>
     }
 
     public abstract PageComponentJson toJson( final T component );
+
+    public abstract PageComponentDataSerializer getDataSerializer();
+
+
 }

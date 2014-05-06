@@ -1,13 +1,11 @@
-package com.enonic.wem.core.content.page.image;
+package com.enonic.wem.api.content.page.image;
 
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.image.ImageComponent;
-import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
+import com.enonic.wem.api.content.page.PageComponentDataSerializer;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.core.content.page.PageComponentDataSerializer;
 
 public class ImageComponentDataSerializer
     extends PageComponentDataSerializer<ImageComponent, ImageComponent>

@@ -1,11 +1,9 @@
-package com.enonic.wem.core.content.page.layout;
+package com.enonic.wem.api.content.page.layout;
 
 
 import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.layout.LayoutComponent;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.data.DataSet;
-import com.enonic.wem.core.content.page.PageComponentDataSerializer;
+import com.enonic.wem.api.content.page.PageComponentDataSerializer;
 
 public class LayoutComponentDataSerializer
     extends PageComponentDataSerializer<LayoutComponent, LayoutComponent>

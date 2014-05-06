@@ -7,6 +7,8 @@ import com.google.inject.AbstractModule;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.core.content.attachment.AttachmentServiceImpl;
+import com.enonic.wem.core.content.page.PageModule;
+import com.enonic.wem.core.content.site.SiteModule;
 import com.enonic.wem.core.initializer.InitializerTaskBinder;
 
 public final class ContentModule
@@ -20,5 +22,8 @@ public final class ContentModule
 
         final InitializerTaskBinder tasks = InitializerTaskBinder.from( binder() );
         tasks.add( ContentInitializer.class );
+
+        install( new SiteModule() );
+        install( new PageModule() );
     }
 }

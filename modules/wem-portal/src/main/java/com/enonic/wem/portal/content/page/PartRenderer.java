@@ -9,7 +9,7 @@ import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartDescriptorService;
 
 public final class PartRenderer
-    extends PageComponentRenderer
+    extends DescriptorBasedPageComponentRenderer
 {
     @Inject
     protected PartDescriptorService partDescriptorService;

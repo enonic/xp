@@ -8,8 +8,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.enonic.wem.api.content.page.AbstractPageComponentXml;
 import com.enonic.wem.api.content.page.PageComponent;
-import com.enonic.wem.api.content.page.PageComponentXml;
 import com.enonic.wem.api.content.page.image.ImageComponentXml;
 import com.enonic.wem.api.content.page.layout.LayoutComponentXml;
 import com.enonic.wem.api.content.page.part.PartComponentXml;
@@ -25,7 +25,7 @@ public final class RegionXml
     @XmlElements({@XmlElement(name = "part-component", type = PartComponentXml.class),
                      @XmlElement(name = "image-component", type = ImageComponentXml.class),
                      @XmlElement(name = "layout-component", type = LayoutComponentXml.class)})
-    private List<PageComponentXml> components = new ArrayList<>();
+    private List<AbstractPageComponentXml> components = new ArrayList<>();
 
     @Override
     public void from( final Region region )
@@ -34,7 +34,7 @@ public final class RegionXml
         this.components = new ArrayList<>();
         for ( PageComponent component : region.getComponents() )
         {
-            this.components.add( PageComponentXml.toXml( component ) );
+            this.components.add( component.getType().toXml( component ) );
         }
     }
 
@@ -43,9 +43,9 @@ public final class RegionXml
     {
         builder.name( this.name );
 
-        for ( PageComponentXml componentXml : components )
+        for ( AbstractPageComponentXml componentXml : components )
         {
-            builder.add( PageComponentXml.fromXml( componentXml ) );
+            builder.add( componentXml.toPageComponent() );
         }
     }
 }
