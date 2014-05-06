@@ -1,5 +1,5 @@
-var srcDir = 'src/main/webapp/admin';
-var targetDir = 'target/main/webapp/admin';
+var srcDir = 'src/main/resources/web/admin';
+var targetDir = 'target/main/resources/web/admin';
 
 module.exports = {
 

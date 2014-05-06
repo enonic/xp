@@ -1,9 +1,9 @@
 
-# WebApp Module
+# Admin UI Module
 
-This module contains all frontend source and WAR packaging.
+This module contains all frontend source.
 
-## Building the Client
+## Building the UI
 
 For now, we are using Grunt for building javascript sources. Please install Grunt (grunt-cli) in NPM before using it.
 After installing Grunt, run the following command to install Grunt dependencies:

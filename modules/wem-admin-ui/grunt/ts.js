@@ -1,4 +1,4 @@
-var baseDir = 'src/main/webapp/admin';
+var baseDir = 'src/main/resources/web/admin';
 
 module.exports = {
 
