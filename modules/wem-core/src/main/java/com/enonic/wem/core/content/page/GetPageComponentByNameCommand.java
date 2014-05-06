@@ -3,6 +3,7 @@ package com.enonic.wem.core.content.page;
 
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.ComponentName;
+import com.enonic.wem.api.content.page.DescriptorBasedPageComponent;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.AbstractDescriptorBasedPageComponent;
 import com.enonic.wem.api.content.page.image.ImageComponent;
@@ -34,7 +35,7 @@ class GetPageComponentByNameCommand
 
     private LayoutDescriptorService layoutDescriptorService;
 
-    public AbstractDescriptorBasedPageComponent<? extends DescriptorKey> execute()
+    public DescriptorBasedPageComponent execute()
     {
         final ComponentDescriptorName componentDescriptorName = new ComponentDescriptorName( name.toString() );
 

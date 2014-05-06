@@ -5,16 +5,17 @@ import com.enonic.wem.api.data.RootDataSet;
 
 public abstract class AbstractDescriptorBasedPageComponent<DESCRIPTOR_KEY extends DescriptorKey>
     extends AbstractPageComponent
+    implements DescriptorBasedPageComponent
 {
     private final DESCRIPTOR_KEY descriptor;
 
     private final RootDataSet config;
 
-    protected AbstractDescriptorBasedPageComponent( final Properties<DESCRIPTOR_KEY> properties )
+    protected AbstractDescriptorBasedPageComponent( final Builder<DESCRIPTOR_KEY> builder )
     {
-        super( properties );
-        this.descriptor = properties.descrpitor;
-        this.config = properties.config;
+        super( builder );
+        this.descriptor = builder.descrpitor;
+        this.config = builder.config;
     }
 
     public DESCRIPTOR_KEY getDescriptor()
@@ -32,17 +33,13 @@ public abstract class AbstractDescriptorBasedPageComponent<DESCRIPTOR_KEY extend
         return config;
     }
 
-    public static class Properties<DESCRIPTOR_KEY extends DescriptorKey>
-        extends AbstractPageComponent.Properties
+    public static class Builder<DESCRIPTOR_KEY extends DescriptorKey>
+        extends AbstractPageComponent.Builder
     {
         protected DESCRIPTOR_KEY descrpitor;
 
         protected RootDataSet config;
-    }
 
-    public static class Builder<DESCRIPTOR_KEY extends DescriptorKey>
-        extends Properties<DESCRIPTOR_KEY>
-    {
         protected Builder()
         {
             this.config = RootDataSet.newDataSet().build().toRootDataSet();

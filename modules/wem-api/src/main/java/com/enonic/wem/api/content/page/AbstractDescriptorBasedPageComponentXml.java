@@ -18,7 +18,7 @@ public abstract class AbstractDescriptorBasedPageComponentXml
     @XmlElement(name = "config", required = true)
     private RootDataSetXml config;
 
-    public void from( final PageComponent component )
+    public void from( final DescriptorBasedPageComponent component )
     {
         this.name = component.getName().toString();
         if ( component.getDescriptor() != null )

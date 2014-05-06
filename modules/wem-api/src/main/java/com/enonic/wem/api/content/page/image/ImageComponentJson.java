@@ -7,8 +7,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.page.AbstractDescriptorBasedPageComponentJson;
 import com.enonic.wem.api.content.page.ComponentName;
-import com.enonic.wem.api.content.page.PageComponentJson;
 import com.enonic.wem.api.data.DataJson;
 import com.enonic.wem.api.data.RootDataSetJson;
 
@@ -16,7 +16,7 @@ import static com.enonic.wem.api.content.page.image.ImageComponent.newImageCompo
 
 @SuppressWarnings("UnusedDeclaration")
 public class ImageComponentJson
-    extends PageComponentJson<ImageComponent>
+    extends AbstractDescriptorBasedPageComponentJson<ImageComponent>
 {
     private final ImageComponent image;
 

@@ -17,7 +17,7 @@ public class PageComponentsDataSerializer
         final List<Data> dataList = new ArrayList<>( components.size() );
         for ( final PageComponent component : components )
         {
-            final PageComponentDataSerializer pageComponentDataSerializer = PageComponentDataSerializer.get( component );
+            final AbstractPageComponentDataSerializer pageComponentDataSerializer = component.getType().getDataSerializer();
             dataList.add( pageComponentDataSerializer.toData( component ) );
         }
         return dataList;
@@ -29,7 +29,8 @@ public class PageComponentsDataSerializer
         for ( final Data componentAsData : asData )
         {
             final DataSet componentAsDataSet = componentAsData.toDataSet();
-            final PageComponentDataSerializer pageComponentDataSerializer = PageComponentDataSerializer.get( componentAsDataSet );
+            final AbstractPageComponentDataSerializer pageComponentDataSerializer =
+                PageComponentType.bySimpleClassName( componentAsDataSet.getName() ).getDataSerializer();
             final PageComponent component = pageComponentDataSerializer.fromData( componentAsDataSet );
             componentList.add( component );
         }

@@ -1,14 +1,10 @@
 package com.enonic.wem.api.content.page.layout;
 
 
-import com.enonic.wem.api.content.page.AbstractPageComponentXml;
-import com.enonic.wem.api.content.page.PageComponent;
-import com.enonic.wem.api.content.page.PageComponentDataSerializer;
-import com.enonic.wem.api.content.page.PageComponentJson;
-import com.enonic.wem.api.content.page.PageComponentType;
+import com.enonic.wem.api.content.page.DescriptorBasedPageComponentType;
 
 public final class LayoutComponentType
-    extends PageComponentType<LayoutComponent>
+    extends DescriptorBasedPageComponentType<LayoutComponent>
 {
     private static final LayoutComponentDataSerializer dataSerializer = new LayoutComponentDataSerializer();
 
@@ -18,21 +14,21 @@ public final class LayoutComponentType
     }
 
     @Override
-    public AbstractPageComponentXml toXml( final PageComponent component )
+    public LayoutComponentXml toXml( final LayoutComponent component )
     {
         LayoutComponentXml componentXml = new LayoutComponentXml();
-        componentXml.from( (LayoutComponent) component );
+        componentXml.from( component );
         return componentXml;
     }
 
     @Override
-    public PageComponentJson toJson( final LayoutComponent component )
+    public LayoutComponentJson toJson( final LayoutComponent component )
     {
         return new LayoutComponentJson( component );
     }
 
     @Override
-    public PageComponentDataSerializer getDataSerializer()
+    public LayoutComponentDataSerializer getDataSerializer()
     {
         return dataSerializer;
     }

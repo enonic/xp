@@ -2,11 +2,11 @@ package com.enonic.wem.api.content.page.part;
 
 
 import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.PageComponentDataSerializer;
+import com.enonic.wem.api.content.page.AbstractDescriptorBasedPageComponentDataSerializer;
 import com.enonic.wem.api.data.DataSet;
 
 public class PartComponentDataSerializer
-    extends PageComponentDataSerializer<PartComponent, PartComponent>
+    extends AbstractDescriptorBasedPageComponentDataSerializer<PartComponent, PartComponent>
 {
 
     public DataSet toData( final PartComponent component )
@@ -24,7 +24,7 @@ public class PartComponentDataSerializer
     }
 
     @Override
-    protected DescriptorKey toDescriptorkey( final String s )
+    protected DescriptorKey toDescriptorKey( final String s )
     {
         return PartDescriptorKey.from( s );
     }

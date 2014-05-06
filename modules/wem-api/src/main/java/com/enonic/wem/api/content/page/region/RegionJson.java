@@ -8,22 +8,23 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.enonic.wem.api.content.page.AbstractPageComponentJson;
 import com.enonic.wem.api.content.page.PageComponent;
-import com.enonic.wem.api.content.page.PageComponentJson;
 
 @SuppressWarnings("UnusedDeclaration")
 public class RegionJson
 {
     private final Region region;
 
-    private final List<PageComponentJson> components = new ArrayList<>();
+    private final List<AbstractPageComponentJson> components = new ArrayList<>();
 
     @JsonCreator
-    public RegionJson( @JsonProperty("name") final String name, @JsonProperty("components") final List<PageComponentJson> componentJsons )
+    public RegionJson( @JsonProperty("name") final String name,
+                       @JsonProperty("components") final List<AbstractPageComponentJson> componentJsons )
     {
         final Region.Builder builder = Region.newRegion();
         builder.name( name );
-        for ( final PageComponentJson componentJson : componentJsons )
+        for ( final AbstractPageComponentJson componentJson : componentJsons )
         {
             builder.add( componentJson.getComponent() );
         }
@@ -35,7 +36,7 @@ public class RegionJson
         this.region = region;
         for ( PageComponent component : region.getComponents() )
         {
-            this.components.add( PageComponentJson.fromPageComponent( component ) );
+            this.components.add( AbstractPageComponentJson.fromPageComponent( component ) );
         }
     }
 
@@ -44,7 +45,7 @@ public class RegionJson
         return region.getName();
     }
 
-    public List<PageComponentJson> getComponents()
+    public List<AbstractPageComponentJson> getComponents()
     {
         return this.components;
     }

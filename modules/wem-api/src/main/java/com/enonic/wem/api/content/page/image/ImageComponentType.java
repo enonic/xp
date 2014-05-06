@@ -1,14 +1,10 @@
 package com.enonic.wem.api.content.page.image;
 
 
-import com.enonic.wem.api.content.page.AbstractPageComponentXml;
-import com.enonic.wem.api.content.page.PageComponent;
-import com.enonic.wem.api.content.page.PageComponentDataSerializer;
-import com.enonic.wem.api.content.page.PageComponentJson;
-import com.enonic.wem.api.content.page.PageComponentType;
+import com.enonic.wem.api.content.page.DescriptorBasedPageComponentType;
 
 public final class ImageComponentType
-    extends PageComponentType<ImageComponent>
+    extends DescriptorBasedPageComponentType<ImageComponent>
 {
     private static final ImageComponentDataSerializer dataSerializer = new ImageComponentDataSerializer();
 
@@ -18,21 +14,21 @@ public final class ImageComponentType
     }
 
     @Override
-    public AbstractPageComponentXml toXml( final PageComponent component )
+    public ImageComponentXml toXml( final ImageComponent component )
     {
         ImageComponentXml componentXml = new ImageComponentXml();
-        componentXml.from( (ImageComponent) component );
+        componentXml.from( component );
         return componentXml;
     }
 
     @Override
-    public PageComponentJson toJson( final ImageComponent component )
+    public ImageComponentJson toJson( final ImageComponent component )
     {
         return new ImageComponentJson( component );
     }
 
     @Override
-    public PageComponentDataSerializer getDataSerializer()
+    public ImageComponentDataSerializer getDataSerializer()
     {
         return dataSerializer;
     }

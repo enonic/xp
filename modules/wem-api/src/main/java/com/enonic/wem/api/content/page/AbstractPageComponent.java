@@ -12,7 +12,7 @@ public abstract class AbstractPageComponent
 
     private ComponentPath path;
 
-    protected AbstractPageComponent( final Properties properties )
+    protected AbstractPageComponent( final Builder properties )
     {
         Preconditions.checkNotNull( properties.name, "name cannot be null" );
         this.name = properties.name;
@@ -36,14 +36,10 @@ public abstract class AbstractPageComponent
         this.path = path;
     }
 
-    public static class Properties
+    public static class Builder
     {
         protected ComponentName name;
-    }
 
-    public static class Builder
-        extends Properties
-    {
         public Builder name( ComponentName value )
         {
             this.name = value;

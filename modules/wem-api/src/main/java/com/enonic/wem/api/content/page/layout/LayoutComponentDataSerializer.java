@@ -3,10 +3,10 @@ package com.enonic.wem.api.content.page.layout;
 
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.data.DataSet;
-import com.enonic.wem.api.content.page.PageComponentDataSerializer;
+import com.enonic.wem.api.content.page.AbstractDescriptorBasedPageComponentDataSerializer;
 
 public class LayoutComponentDataSerializer
-    extends PageComponentDataSerializer<LayoutComponent, LayoutComponent>
+    extends AbstractDescriptorBasedPageComponentDataSerializer<LayoutComponent, LayoutComponent>
 {
     public static final String LAYOUT_REGIONS = "regions";
 
@@ -35,7 +35,7 @@ public class LayoutComponentDataSerializer
     }
 
     @Override
-    protected DescriptorKey toDescriptorkey( final String s )
+    protected DescriptorKey toDescriptorKey( final String s )
     {
         return LayoutDescriptorKey.from( s );
     }

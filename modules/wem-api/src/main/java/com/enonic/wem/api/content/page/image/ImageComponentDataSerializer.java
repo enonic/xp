@@ -3,12 +3,12 @@ package com.enonic.wem.api.content.page.image;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.PageComponentDataSerializer;
+import com.enonic.wem.api.content.page.AbstractDescriptorBasedPageComponentDataSerializer;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Value;
 
 public class ImageComponentDataSerializer
-    extends PageComponentDataSerializer<ImageComponent, ImageComponent>
+    extends AbstractDescriptorBasedPageComponentDataSerializer<ImageComponent, ImageComponent>
 {
 
     public DataSet toData( final ImageComponent component )
@@ -34,7 +34,7 @@ public class ImageComponentDataSerializer
     }
 
     @Override
-    protected DescriptorKey toDescriptorkey( final String s )
+    protected DescriptorKey toDescriptorKey( final String s )
     {
         return ImageDescriptorKey.from( s );
     }

@@ -1,6 +1,5 @@
 package com.enonic.wem.api.content.page;
 
-import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.rendering.Renderable;
 
 public interface PageComponent
@@ -9,10 +8,6 @@ public interface PageComponent
     ComponentName getName();
 
     PageComponentType getType();
-
-    RootDataSet getConfig();
-
-    DescriptorKey getDescriptor();
 
     ComponentPath getPath();
 
