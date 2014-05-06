@@ -14,7 +14,7 @@ function isUserLoggedIn(): boolean {
     return dummyCookie === 'true';
 }
 
-window.onload = () => {
+function startApplication() {
     var userLoggedIn = isUserLoggedIn();
 
     var appInfoPanel = new app.launcher.AppInfo();
@@ -65,7 +65,7 @@ window.onload = () => {
     api.dom.Body.get().appendChild(homeMainContainer);
     var router = new app.launcher.AppRouter(applications, appLauncher);
     appLauncher.setRouter(router);
-};
+}
 
 function getApplication(id: string): api.app.Application {
     return app.launcher.Applications.getAppById(id);

@@ -24,5 +24,17 @@
 <script type="text/javascript" src="{{baseUrl}}/admin/common/js/_all.js"></script>
 <script type="text/javascript" src="{{baseUrl}}/admin/apps/{{app}}/js/_all.js"></script>
 
+<!-- Start the app -->
+<script type="text/javascript">
+    window.onload = function () {
+        try {
+            startApplication();
+            console.info("'{{app}}' application started.");
+        } catch (e) {
+            console.error("Could not start the '{{app}}' application", e);
+        }
+    }
+</script>
+
 </body>
 </html>

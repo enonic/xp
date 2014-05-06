@@ -7,7 +7,7 @@ module components {
     export var gridPanel: app.browse.TemplateTreeGridPanel;
 }
 
-window.onload = () => {
+function startApplication() {
     var application:api.app.Application = api.app.Application.getApplication();
     var appBar = new api.app.AppBar(application);
     var appPanel = new app.TemplateAppPanel(appBar);
@@ -33,4 +33,4 @@ window.onload = () => {
             }
         }
     }
-};
+}

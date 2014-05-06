@@ -2,7 +2,7 @@ declare var Ext:Ext_Packages;
 declare var Admin;
 declare var CONFIG;
 
-window.onload = () => {
+function startApplication() {
     var application:api.app.Application = api.app.Application.getApplication();
     var appBar = new api.app.AppBar(application);
     var appPanel = new app.ModuleAppPanel(appBar);
@@ -28,7 +28,7 @@ window.onload = () => {
             }
         }
     }
-};
+}
 
 module components {
     export var detailPanel:app.browse.ModuleBrowseItemPanel;
