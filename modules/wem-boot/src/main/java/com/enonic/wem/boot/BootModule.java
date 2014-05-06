@@ -1,7 +1,6 @@
 package com.enonic.wem.boot;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.servlet.ServletModule;
 
 import com.enonic.wem.admin.AdminModule;
 import com.enonic.wem.core.CoreModule;
@@ -13,7 +12,6 @@ final class BootModule
     @Override
     protected void configure()
     {
-        install( new ServletModule() );
         install( new CoreModule() );
         install( new AdminModule() );
         install( new PortalModule() );

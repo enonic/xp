@@ -10,17 +10,14 @@ import com.enonic.wem.core.lifecycle.LifecycleService;
 final class BootStartupManager
 {
     @Inject
-    protected ServletContext servletContext;
-
-    @Inject
     protected WebInitializer initializer;
 
     @Inject
     protected LifecycleService lifecycleService;
 
-    public void start()
+    public void start( final ServletContext servletContext )
     {
-        this.initializer.initialize( this.servletContext );
+        this.initializer.initialize( servletContext );
         this.lifecycleService.startAll();
     }
 
