@@ -52,6 +52,7 @@ public final class ResourceServlet
             return in;
         }
 
-        return getClass().getClassLoader().getResourceAsStream( "web/" + path );
+        final String resourcePath = "web" + ( path.startsWith( "/" ) ? path : ( "/" + path ) );
+        return getClass().getClassLoader().getResourceAsStream( resourcePath );
     }
 }
