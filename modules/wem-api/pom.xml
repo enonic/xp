@@ -113,6 +113,7 @@
               commons-lang,
               jackson-*,
               jparsec,
+              cglib-nodep,
               jdom2
             </Embed-Dependency>
             <_exportcontents>
