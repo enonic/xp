@@ -27,6 +27,7 @@ import com.enonic.wem.core.index.elastic.ElasticsearchIndexService;
 import com.enonic.wem.core.index.elastic.IndexDocumentId;
 
 public class NodeElasticsearchDao
+    implements NodeDao
 {
     public static final String CONTENT_ROOT_NODE_NAME = "content";
 
