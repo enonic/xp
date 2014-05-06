@@ -12,14 +12,19 @@
   </parent>
 
   <artifactId>wem-guice</artifactId>
-  <packaging>jar</packaging>
+  <packaging>${packaging.type}</packaging>
   <name>Enonic WEM Guice</name>
 
   <dependencies>
     <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.core</artifactId>
-      <version>5.0.0</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.google.inject.extensions</groupId>
@@ -30,23 +35,46 @@
       <groupId>org.ops4j</groupId>
       <artifactId>peaberry</artifactId>
       <version>1.3</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>org.apache.servicemix.bundles.aopalliance</artifactId>
+          <groupId>org.apache.servicemix.bundles</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>org.apache.servicemix.bundles.javax-inject</artifactId>
+          <groupId>org.apache.servicemix.bundles</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 
-  <!--build>
+  <build>
     <plugins>
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Export-Package>com.enonic.wem.guice.*</Export-Package>
+            <Import-Package>
+              !com.google.inject.*,
+              !javax.inject.*,
+              !org.aopalliance.*,
+              *
+            </Import-Package>
+            <Embed-Dependency>
+              *;scope=compile
+            </Embed-Dependency>
+            <_exportcontents>
+              javax.inject.*;version=1.0.0,
+              org.aopalliance.*;version=1.0.0,
+              !com.google.inject.internal.*,
+              com.enonic.wem.guice.*
+            </_exportcontents>
           </instructions>
         </configuration>
       </plugin>
     </plugins>
-  </build-->
+  </build>
 
 </project>
 

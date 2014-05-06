@@ -38,6 +38,7 @@
         <version>2.4.0</version>
         <extensions>true</extensions>
         <configuration>
+          <excludeDependencies>*;scope=provided</excludeDependencies>
           <instructions>
             <Embed-Transitive>true</Embed-Transitive>
             <Embed-Directory>META-INF/lib</Embed-Directory>

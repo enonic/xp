@@ -17,6 +17,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.jdom</groupId>
       <artifactId>jdom2</artifactId>
       <version>2.0.5</version>
@@ -109,14 +114,7 @@
               *
             </Import-Package>
             <Embed-Dependency>
-              guava,
-              joda-time,
-              joda-convert,
-              commons-lang,
-              jackson-*,
-              jparsec,
-              cglib-nodep,
-              jdom2
+              *;scope=compile
             </Embed-Dependency>
             <_exportcontents>
               org.jdom2.*;version=2.0.5,
