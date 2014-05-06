@@ -102,7 +102,7 @@ final class ModuleImpl
     {
         if ( file.isFile() )
         {
-            set.add( file.toString().substring( this.moduleDir.toString().length() + 1 ) );
+            set.add( normalizedRelativePath( file ) );
         }
 
         final File[] children = file.listFiles();
@@ -115,6 +115,14 @@ final class ModuleImpl
         {
             findResourcePaths( set, child );
         }
+    }
+
+    private String normalizedRelativePath( final File file )
+    {
+        final String fileStr = file.toString();
+        final String moduleDirStr = this.moduleDir.toString();
+        final String relative = fileStr.substring( moduleDirStr.length() + 1 );
+        return relative.replace( File.separatorChar, '/' );
     }
 
     @Override
