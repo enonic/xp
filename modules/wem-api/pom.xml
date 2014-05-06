@@ -98,25 +98,31 @@
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
-          <excludeDependencies>*;scope=provided|runtime</excludeDependencies>
           <instructions>
             <Import-Package>
-              *;resolution:=optional
+              !com.google.common.*,
+              !org.jaxen.*,
+              !net.sf.cglib.*,
+              !sun.*,
+              *
             </Import-Package>
-            <Conditional-Package>
-            com.enonic.wem.api.*
-            </Conditional-Package>
             <Embed-Dependency>
-              *;inline=false
+              guava,
+              joda-time,
+              joda-convert,
+              commons-lang,
+              jackson-*,
+              jparsec,
+              jdom2
             </Embed-Dependency>
             <_exportcontents>
-              com.enonic.wem.api.*,
               org.jdom2.*;version=2.0.5,
               com.google.common.*,
               org.apache.commons.lang.*,
               org.joda.time.*;version=2.3,
               org.joda.convert.*;version=1.2,
-              com.fasterxml.jackson.*
+              com.fasterxml.jackson.*,
+              com.enonic.wem.api.*
             </_exportcontents>
           </instructions>
         </configuration>
