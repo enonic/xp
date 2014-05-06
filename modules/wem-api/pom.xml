@@ -12,7 +12,7 @@
   </parent>
 
   <artifactId>wem-api</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>${packaging.type}</packaging>
   <name>Enonic WEM Api</name>
 
   <dependencies>
@@ -98,12 +98,16 @@
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
+          <excludeDependencies>*;scope=provided|runtime</excludeDependencies>
           <instructions>
             <Import-Package>
               *;resolution:=optional
             </Import-Package>
+            <Conditional-Package>
+            com.enonic.wem.api.*
+            </Conditional-Package>
             <Embed-Dependency>
-              *;scope=compile;artifactId=!slf4j-api
+              *;inline=false
             </Embed-Dependency>
             <_exportcontents>
               com.enonic.wem.api.*,

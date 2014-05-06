@@ -15,7 +15,7 @@
   <name>Enonic WEM Modules</name>
 
   <properties>
-    <osgi.activator/>
+    <packaging.type>jar</packaging.type>
   </properties>
 
   <modules>
@@ -45,6 +45,15 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>osgi</id>
+      <properties>
+        <packaging.type>bundle</packaging.type>
+      </properties>
+    </profile>
+  </profiles>
 
 </project>
         
