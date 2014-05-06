@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.logging.LogManager;
 
 import org.apache.catalina.Context;
+import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.catalina.webresources.StandardRoot;
 
@@ -60,7 +61,7 @@ final class Runner
         throws Exception
     {
         final String docBase = new File( "./modules/wem-webapp/src/main/webapp" ).getAbsolutePath();
-        // final File generatedDir = new File( "./modules/wem-webapp/target/main/webapp" );
+        final File webResources = new File( "./modules/wem-admin-ui/src/main/resources/web" );
 
         this.tomcat.setPort( 8080 );
         this.tomcat.setHostname( "localhost" );
@@ -73,12 +74,10 @@ final class Runner
         final StandardRoot standardRoot = new StandardRoot( context );
         context.setResources( standardRoot );
 
-        /*
-        if ( generatedDir.isDirectory() )
+        if ( webResources.isDirectory() )
         {
-            standardRoot.createWebResourceSet( WebResourceRoot.ResourceSetType.PRE, "/", generatedDir.getAbsolutePath(), null, "/" );
+            standardRoot.createWebResourceSet( WebResourceRoot.ResourceSetType.PRE, "/", webResources.getAbsolutePath(), null, "/" );
         }
-        */
     }
 
     private void doStart()
