@@ -16,7 +16,7 @@ module LiveEdit.component {
 
         private mask: api.ui.LoadMask;
 
-        constructor(element?: HTMLElement) {
+        constructor(element?: HTMLElement, dummy?: boolean) {
             this.selectedAsParent = false;
             var props = new api.dom.ElementProperties();
             props.setGenerateId(false);
@@ -31,16 +31,18 @@ module LiveEdit.component {
                 this.setComponentType(new LiveEdit.component.ComponentType(this.resolveComponentTypeEnum()));
             }
 
-            this.mask = new api.ui.LoadMask(this);
-            this.appendChild(this.mask);
+            if (!dummy) {
+                this.mask = new api.ui.LoadMask(this);
+                this.appendChild(this.mask);
+            }
         }
 
-        public static fromJQuery(element: JQuery): Component {
-            return  new Component(element.get(0));
+        public static fromJQuery(element: JQuery, dummy: boolean = true): Component {
+            return new Component(element.get(0), dummy);
         }
 
-        public static fromElement(element: HTMLElement): Component {
-            return new Component(element);
+        public static fromElement(element: HTMLElement, dummy: boolean = true): Component {
+            return new Component(element, dummy);
         }
 
         getRegionName():string {

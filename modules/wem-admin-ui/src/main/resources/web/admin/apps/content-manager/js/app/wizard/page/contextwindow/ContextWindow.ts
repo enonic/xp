@@ -40,12 +40,17 @@ module app.wizard.page.contextwindow {
 
         private liveFormPanel: LiveFormPanel;
 
+        private pinButton: PinButton;
+
         private pinned: boolean;
+
+        private dynamicPinning: boolean;
 
         constructor(config: ContextWindowConfig) {
             super();
 
             this.pinned = true;
+            this.dynamicPinning = true;
             this.liveEditPage = config.liveEditPage;
             this.liveFormPanel = config.liveFormPanel;
             this.inspectionPanel = config.inspectionPanel;
@@ -69,18 +74,18 @@ module app.wizard.page.contextwindow {
 
             $(window).resize(() => {
                 this.updateFrameSize();
-            })
+            });
 
             this.addItem("Insert", this.insertablesPanel);
             this.addItem("Settings", this.inspectionPanel);
             this.addItem("Emulator", this.emulatorPanel);
 
-            var pinButton = new PinButton(this);
-            this.appendChild(pinButton);
+            this.pinButton = new PinButton(this);
+            this.appendChild(this.pinButton);
 
             this.onShown(() => {
                 if (this.pinned) {
-                    this.liveFormPanel.updateFrameContainerSize(true, this.getEl().getWidth());
+                    this.updateFrameSize();
                 }
             });
 
@@ -128,6 +133,10 @@ module app.wizard.page.contextwindow {
             return this.pinned;
         }
 
+        setDynamicPinning(value: boolean) {
+            this.dynamicPinning = value;
+        }
+
         private isEnabled() {
             return !this.hasClass("hidden");
 
@@ -135,6 +144,14 @@ module app.wizard.page.contextwindow {
 
         private updateFrameSize() {
             this.liveFormPanel.updateFrameContainerSize((this.pinned && this.isEnabled()), this.getEl().getWidth());
+            // TODO: Replace 1380 with ENUM, when the specification will be ready.
+            if (this.dynamicPinning) {
+                var pinningRequired:boolean = this.liveFormPanel.getEl().getWidth() > 1380;
+                if (pinningRequired != this.isPinned()) {
+                    this.setPinned(pinningRequired);
+                    this.pinButton.setActive(pinningRequired);
+                }
+            }
         }
     }
 
@@ -145,6 +162,7 @@ module app.wizard.page.contextwindow {
             this.setActive(contextWindow.isPinned());
 
             this.onClicked((event: MouseEvent) => {
+                contextWindow.setDynamicPinning(false);
                 contextWindow.setPinned(!contextWindow.isPinned());
                 this.setActive(contextWindow.isPinned());
             });

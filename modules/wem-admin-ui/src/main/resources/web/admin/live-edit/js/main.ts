@@ -62,7 +62,7 @@ function notifyImageUploaded(event: api.ui.ImageUploadedEvent) {
 }
 
 function getComponentByPath(path: string): LiveEdit.component.Component {
-    return LiveEdit.component.Component.fromJQuery($('[data-live-edit-component="' + path + '"]'));
+    return LiveEdit.component.Component.fromJQuery($('[data-live-edit-component="' + path + '"]'), false);
 }
 
 (function ($) {
