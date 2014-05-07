@@ -22,7 +22,7 @@ final class DeleteNodeByPathCommand
 
         this.nodeDao.deleteByPath( nodePath );
 
-        this.indexService.deleteEntity( nodeToDelete.id() );
+        this.indexService.delete( nodeToDelete.id() );
 
         return nodeToDelete;
     }

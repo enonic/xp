@@ -33,7 +33,7 @@ public class ElasticsearchNodeDao
     implements NodeDao
 {
     @Inject
-    private ElasticsearchService elasticsearchService;
+    private ElasticsearchDao elasticsearchDao;
 
     public Node create( final CreateNodeArguments createNodeArguments )
     {
@@ -58,7 +58,7 @@ public class ElasticsearchNodeDao
 
         final NodeStorageDocument nodeStorageDocument = NodeStorageDocumentFactory.create( newNode );
 
-        elasticsearchService.store( nodeStorageDocument );
+        elasticsearchDao.store( nodeStorageDocument );
 
         return newNode;
     }
@@ -91,7 +91,7 @@ public class ElasticsearchNodeDao
 
         final NodeStorageDocument nodeStorageDocument = NodeStorageDocumentFactory.update( updatedNode );
 
-        elasticsearchService.store( nodeStorageDocument );
+        elasticsearchDao.store( nodeStorageDocument );
 
         return updatedNode;
     }
@@ -138,14 +138,14 @@ public class ElasticsearchNodeDao
 
         final NodeStorageDocument nodeStorageDocument = NodeStorageDocumentFactory.update( movedNode );
 
-        elasticsearchService.store( nodeStorageDocument );
+        elasticsearchDao.store( nodeStorageDocument );
 
         return true;
     }
 
     public Node getById( final EntityId entityId )
     {
-        final GetResponse getResponse = elasticsearchService.get( ByIdQuery.byId( entityId.toString() ).
+        final GetResponse getResponse = elasticsearchDao.get( ByIdQuery.byId( entityId.toString() ).
             index( Index.STORE ).
             indexType( IndexType.ENTITY ).
             build() );
@@ -175,7 +175,7 @@ public class ElasticsearchNodeDao
             builder.add( new DocumentId( entityId.toString() ) );
         }
 
-        final SearchResponse searchResponse = elasticsearchService.get( builder.build() );
+        final SearchResponse searchResponse = elasticsearchDao.get( builder.build() );
 
         verifyGetResult( searchResponse, entityIds.getSize(), entityIds.getSize() );
 
@@ -184,7 +184,7 @@ public class ElasticsearchNodeDao
 
     public Node getByPath( final NodePath path )
     {
-        final SearchResponse searchResponse = elasticsearchService.get( ByPathQuery.byPath( path.toString() ).
+        final SearchResponse searchResponse = elasticsearchDao.get( ByPathQuery.byPath( path.toString() ).
             index( Index.STORE ).
             indexType( IndexType.ENTITY ).
             build() );
@@ -198,7 +198,7 @@ public class ElasticsearchNodeDao
 
     public Nodes getByPaths( final NodePaths paths )
     {
-        final SearchResponse searchResponse = elasticsearchService.get( ByPathsQuery.byPaths().
+        final SearchResponse searchResponse = elasticsearchDao.get( ByPathsQuery.byPaths().
             setPaths( paths ).
             index( Index.STORE ).
             indexType( IndexType.ENTITY ).
@@ -212,7 +212,7 @@ public class ElasticsearchNodeDao
 
     public Nodes getByParent( final NodePath parent )
     {
-        final SearchResponse searchResponse = elasticsearchService.get( ByParentPathQuery.byParentPath( parent.toString() ).
+        final SearchResponse searchResponse = elasticsearchDao.get( ByParentPathQuery.byParentPath( parent.toString() ).
             index( Index.STORE ).
             indexType( IndexType.ENTITY ).
             build() );
@@ -246,11 +246,11 @@ public class ElasticsearchNodeDao
 
         for ( final Node child : children )
         {
-            elasticsearchService.delete( new DeleteDocument( Index.STORE, IndexType.ENTITY, child.id().toString() ) );
+            elasticsearchDao.delete( new DeleteDocument( Index.STORE, IndexType.ENTITY, child.id().toString() ) );
 
         }
 
-        return elasticsearchService.delete( new DeleteDocument( Index.STORE, IndexType.ENTITY, nodeToDelete.id().toString() ) );
+        return elasticsearchDao.delete( new DeleteDocument( Index.STORE, IndexType.ENTITY, nodeToDelete.id().toString() ) );
     }
 
     public void verifyGetResult( final SearchResponse searchResponse, final Integer min, final Integer max )

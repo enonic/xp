@@ -22,7 +22,7 @@ final class DeleteNodeByIdCommand
 
         final Node deletedNode = nodeDao.deleteById( entityId );
 
-        indexService.deleteEntity( entityId );
+        indexService.delete( entityId );
 
         return deletedNode;
     }

@@ -65,7 +65,7 @@ final class UpdateNodeCommand
 
         final Node updatedNode = nodeDao.update( updateNodeArgs );
 
-        indexService.indexNode( updatedNode );
+        indexService.index( updatedNode );
 
         return updatedNode;
     }

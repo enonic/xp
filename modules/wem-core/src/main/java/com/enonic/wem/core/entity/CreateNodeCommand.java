@@ -47,7 +47,7 @@ final class CreateNodeCommand
 
         final Node persistedNode = nodeDao.create( createNodeArguments );
 
-        indexService.indexNode( persistedNode );
+        indexService.index( persistedNode );
 
         return persistedNode;
     }

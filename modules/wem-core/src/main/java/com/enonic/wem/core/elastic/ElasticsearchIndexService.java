@@ -6,16 +6,29 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.elasticsearch.indices.IndexAlreadyExistsException;
+import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
+import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
+import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.common.unit.TimeValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.core.entity.index.NodeIndexDocumentFactory;
 import com.enonic.wem.core.index.DeleteDocument;
 import com.enonic.wem.core.index.Index;
+import com.enonic.wem.core.index.IndexException;
 import com.enonic.wem.core.index.IndexService;
+import com.enonic.wem.core.index.IndexStatus;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.lifecycle.LifecycleBean;
@@ -30,11 +43,17 @@ public class ElasticsearchIndexService
 
     private final NodeIndexDocumentFactory nodeIndexDocumentFactory = new NodeIndexDocumentFactory();
 
-    private ElasticsearchService elasticsearchService;
+    private ElasticsearchDao elasticsearchDao;
 
     private IndexMappingProvider indexMappingProvider;
 
-    private boolean doReindexOnEmptyIndex = true;
+    private final TimeValue WAIT_FOR_YELLOW_TIMEOUT = TimeValue.timeValueSeconds( 1 );
+
+    public static final TimeValue CLUSTER_NOWAIT_TIMEOUT = TimeValue.timeValueSeconds( 1 );
+
+    private IndexSettingsBuilder indexSettingsBuilder;
+
+    private Client client;
 
     public ElasticsearchIndexService()
     {
@@ -49,27 +68,28 @@ public class ElasticsearchIndexService
         doInitializeNoDbIndex();
     }
 
+    @Override
+    protected void doStop()
+        throws Exception
+    {
+        this.client.close();
+    }
+
     private void doInitializeNoDbIndex()
         throws Exception
     {
-        elasticsearchService.getIndexStatus( Index.NODB, true );
+        getIndexStatus( Index.NODB, true );
 
         if ( !indexExists( Index.NODB ) )
         {
             createIndex( Index.NODB );
-
-            if ( doReindexOnEmptyIndex )
-            {
-                //        reindexService.reindexContent();
-                // TODO: Reindex stuff here
-            }
         }
     }
 
     private void doInitializeStoreIndex()
         throws Exception
     {
-        elasticsearchService.getIndexStatus( Index.STORE, true );
+        getIndexStatus( Index.STORE, true );
 
         if ( !indexExists( Index.STORE ) )
         {
@@ -77,32 +97,70 @@ public class ElasticsearchIndexService
         }
     }
 
-
-    @Override
-    protected void doStop()
-        throws Exception
+    private IndexStatus getIndexStatus( final Index index, final boolean waitForStatusYellow )
     {
-        // Do nothing
+        final ClusterHealthResponse clusterHealth = getClusterHealth( index, waitForStatusYellow );
+
+        LOG.info( "Cluster in state: " + clusterHealth.getStatus().toString() );
+
+        return IndexStatus.valueOf( clusterHealth.getStatus().name() );
+    }
+
+    private ClusterHealthResponse getClusterHealth( Index index, boolean waitForYellow )
+    {
+        ClusterHealthRequest request = new ClusterHealthRequest( index.getName() );
+
+        if ( waitForYellow )
+        {
+            request.waitForYellowStatus().timeout( WAIT_FOR_YELLOW_TIMEOUT );
+        }
+        else
+        {
+            request.timeout( CLUSTER_NOWAIT_TIMEOUT );
+        }
+
+        final ClusterHealthResponse clusterHealthResponse = this.client.admin().cluster().health( request ).actionGet();
+
+        if ( clusterHealthResponse.isTimedOut() )
+        {
+            LOG.warn( "ElasticSearch cluster health timed out" );
+        }
+        else
+        {
+            LOG.trace( "ElasticSearch cluster health: Status " + clusterHealthResponse.getStatus().name() + "; " +
+                           clusterHealthResponse.getNumberOfNodes() + " nodes; " + clusterHealthResponse.getActiveShards() +
+                           " active shards." );
+        }
+
+        return clusterHealthResponse;
     }
 
     private boolean indexExists( final Index index )
     {
-        return elasticsearchService.indexExists( index );
+        final IndicesExistsResponse exists =
+            this.client.admin().indices().exists( new IndicesExistsRequest( index.getName() ) ).actionGet();
+        return exists.isExists();
     }
 
-    public void createIndex( final Index index )
+    public void createIndex( Index index )
     {
+        LOG.debug( "creating index: " + index.getName() );
+
+        CreateIndexRequest createIndexRequest = new CreateIndexRequest( index.getName() );
+        createIndexRequest.settings( indexSettingsBuilder.buildIndexSettings() );
+
         try
         {
-            elasticsearchService.createIndex( index );
+            client.admin().indices().create( createIndexRequest ).actionGet();
         }
-        catch ( IndexAlreadyExistsException e )
+        catch ( ElasticsearchException e )
         {
-            LOG.warn( "Tried to create index " + index + ", but index already exists, skipping" );
-            return;
+            throw new IndexException( "Failed to create index:" + index, e );
         }
 
         applyMappings( index );
+
+        LOG.info( "Created index: " + index );
     }
 
     private void applyMappings( final Index index )
@@ -111,38 +169,71 @@ public class ElasticsearchIndexService
 
         for ( IndexMapping indexMapping : allIndexMappings )
         {
-            elasticsearchService.putMapping( indexMapping );
+            doPutMapping( indexMapping );
         }
+    }
+
+    private void doPutMapping( final IndexMapping indexMapping )
+    {
+        final Index index = indexMapping.getIndex();
+        final String indexType = indexMapping.getIndexType();
+        final String source = indexMapping.getSource();
+
+        Preconditions.checkNotNull( index );
+        Preconditions.checkNotNull( indexType );
+        Preconditions.checkNotNull( source );
+
+        PutMappingRequest mappingRequest = new PutMappingRequest( index.getName() ).type( indexType ).source( source );
+
+        try
+        {
+            this.client.admin().indices().putMapping( mappingRequest ).actionGet();
+        }
+        catch ( ElasticsearchException e )
+        {
+            throw new IndexException( "Failed to apply mapping to index: " + index, e );
+        }
+
+        LOG.info( "Mapping for index " + index + ", index-type: " + indexType + " deleted" );
     }
 
     public void deleteIndex( final Index... indexes )
     {
         for ( final Index index : indexes )
         {
-            elasticsearchService.deleteIndex( index );
+            doDeleteIndex( index );
         }
     }
 
-    public void indexNode( final Node node )
+    private void doDeleteIndex( final Index index )
+    {
+        final DeleteIndexRequest req = new DeleteIndexRequest( index.getName() );
+
+        try
+        {
+            client.admin().indices().delete( req ).actionGet();
+        }
+        catch ( ElasticsearchException e )
+        {
+            throw new IndexException( "Failed to delete index:" + index.getName(), e );
+        }
+    }
+
+    public void index( final Node node )
     {
         final Collection<IndexDocument> indexDocuments = nodeIndexDocumentFactory.create( node );
-        elasticsearchService.indexDocuments( indexDocuments );
+        elasticsearchDao.store( indexDocuments );
     }
 
-    public void deleteEntity( final EntityId entityId )
+    public void delete( final EntityId entityId )
     {
-        elasticsearchService.delete( new DeleteDocument( Index.NODB, IndexType.NODE, entityId.toString() ) );
-    }
-
-    public void setDoReindexOnEmptyIndex( final boolean doReindexOnEmptyIndex )
-    {
-        this.doReindexOnEmptyIndex = doReindexOnEmptyIndex;
+        elasticsearchDao.delete( new DeleteDocument( Index.NODB, IndexType.NODE, entityId.toString() ) );
     }
 
     @Inject
-    public void setElasticsearchService( final ElasticsearchService elasticsearchService )
+    public void setElasticsearchDao( final ElasticsearchDao elasticsearchDao )
     {
-        this.elasticsearchService = elasticsearchService;
+        this.elasticsearchDao = elasticsearchDao;
     }
 
     @Inject
@@ -150,4 +241,18 @@ public class ElasticsearchIndexService
     {
         this.indexMappingProvider = indexMappingProvider;
     }
+
+    @Inject
+    public void setClient( final Client client )
+    {
+        this.client = client;
+    }
+
+    @Inject
+    public void setIndexSettingsBuilder( final IndexSettingsBuilder indexSettingsBuilder )
+    {
+        this.indexSettingsBuilder = indexSettingsBuilder;
+    }
+
+
 }

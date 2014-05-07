@@ -85,7 +85,7 @@ final class RenameNodeCommand
 
         final Node movedNode = nodeDao.getById( id );
 
-        indexService.indexNode( movedNode );
+        indexService.index( movedNode );
 
         return movedNode;
     }

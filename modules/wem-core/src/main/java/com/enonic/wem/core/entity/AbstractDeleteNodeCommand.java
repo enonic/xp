@@ -32,7 +32,7 @@ public abstract class AbstractDeleteNodeCommand
             final boolean isAttachmentNode = Strings.startsWithIgnoreCase( nodeName, ATTACHMENTS_NODE_NAME );
             if ( !isAttachmentNode )
             {
-                indexService.deleteEntity( child.id() );
+                indexService.delete( child.id() );
                 doDeleteChildIndexDocuments( child );
             }
         }

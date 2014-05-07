@@ -64,8 +64,8 @@ public class DeleteNodeByPathCommandTest
         deleteNode.execute();
 
         verify( elasticsearchNodeDao ).deleteByPath( nodeToDelete.path() );
-        verify( indexService ).deleteEntity( nodeToDelete.id() );
-        verify( indexService ).deleteEntity( childNode.id() );
+        verify( indexService ).delete( nodeToDelete.id() );
+        verify( indexService ).delete( childNode.id() );
     }
 
     private void setupMocks( final Node nodeToDelete, final Node childNode )

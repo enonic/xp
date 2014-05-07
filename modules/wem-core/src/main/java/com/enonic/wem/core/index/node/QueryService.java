@@ -5,12 +5,12 @@ import javax.inject.Inject;
 import org.elasticsearch.action.search.SearchResponse;
 
 import com.enonic.wem.api.entity.query.EntityQuery;
-import com.enonic.wem.core.elastic.ElasticsearchService;
+import com.enonic.wem.core.elastic.ElasticsearchDao;
 import com.enonic.wem.core.elastic.ElasticsearchQuery;
 
 public abstract class QueryService<Q extends EntityQuery>
 {
-    private ElasticsearchService elasticsearchService;
+    private ElasticsearchDao elasticsearchDao;
 
     protected abstract ElasticsearchQuery translateQuery( final Q query );
 
@@ -20,7 +20,7 @@ public abstract class QueryService<Q extends EntityQuery>
     {
         final ElasticsearchQuery elasticsearchQuery = translateQuery( query );
 
-        final SearchResponse searchResponse = elasticsearchService.search( elasticsearchQuery );
+        final SearchResponse searchResponse = elasticsearchDao.search( elasticsearchQuery );
 
         return translateResult( searchResponse );
     }
@@ -31,9 +31,9 @@ public abstract class QueryService<Q extends EntityQuery>
     }
 
     @Inject
-    public void setElasticsearchService( final ElasticsearchService elasticsearchService )
+    public void setElasticsearchDao( final ElasticsearchDao elasticsearchDao )
     {
-        this.elasticsearchService = elasticsearchService;
+        this.elasticsearchDao = elasticsearchDao;
     }
 
 }
