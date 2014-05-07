@@ -74,6 +74,11 @@ module app.browse {
                 this.browseActions.updateActionsEnabledState(contentSummaries);
             });
 
+            this.contentTreeGridPanel.onTreeGridItemDoubleClicked((event: api.app.browse.grid.TreeGridItemDoubleClickedEvent) => {
+                var contentSummaries = this.extModelsToContentSummaries([event.getClickedModel()]);
+                new app.browse.EditContentEvent(contentSummaries).fire();
+            });
+
             ShowNewContentGridEvent.on(() => {
                 super.toggleShowingNewGrid();
             });

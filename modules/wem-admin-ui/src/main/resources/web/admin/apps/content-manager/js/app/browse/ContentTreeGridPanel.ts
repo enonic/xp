@@ -30,9 +30,6 @@ module app.browse {
                 this.refresh();
             });
 
-            this.onTreeGridItemDoubleClicked((event: api.app.browse.grid.TreeGridItemDoubleClickedEvent) => {
-                new app.browse.EditContentEvent([<any>event.getClickedModel()]).fire();
-            });
         }
 
         private createColumns() {

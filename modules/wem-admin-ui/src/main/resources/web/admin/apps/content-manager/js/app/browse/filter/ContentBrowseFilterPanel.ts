@@ -65,7 +65,7 @@ module app.browse.filter {
             var displayNameMap: string[] = [];
 
             var mask: api.ui.LoadMask = new api.ui.LoadMask(this);
-            aggregationGroupView.onShown((event: api.dom.ElementShownEvent) => {
+            aggregationGroupView.onRendered((event: api.dom.ElementRenderedEvent) => {
                 mask.show();
             });
 
