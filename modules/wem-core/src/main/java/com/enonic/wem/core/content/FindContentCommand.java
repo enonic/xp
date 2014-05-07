@@ -6,15 +6,15 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.query.ContentQuery;
 import com.enonic.wem.api.content.query.ContentQueryResult;
 import com.enonic.wem.api.entity.query.NodeQuery;
-import com.enonic.wem.core.index.query.NodeQueryService;
 import com.enonic.wem.core.index.query.QueryResult;
 import com.enonic.wem.core.index.query.QueryResultEntry;
+import com.enonic.wem.core.index.query.QueryService;
 
 final class FindContentCommand
 {
     private ContentQueryNodeQueryTranslator translator = new ContentQueryNodeQueryTranslator();
 
-    private NodeQueryService nodeQueryService;
+    private QueryService queryService;
 
     private ContentQuery contentQuery;
 
@@ -22,7 +22,7 @@ final class FindContentCommand
     {
         final NodeQuery entityQuery = translator.translate( this.contentQuery );
 
-        final QueryResult queryResult = nodeQueryService.find( entityQuery );
+        final QueryResult queryResult = queryService.find( entityQuery );
 
         return translateToContentIndexQueryResult( queryResult );
     }
@@ -42,9 +42,9 @@ final class FindContentCommand
         return builder.build();
     }
 
-    FindContentCommand nodeQueryService( final NodeQueryService entityQueryService )
+    FindContentCommand queryService( final QueryService queryService )
     {
-        this.nodeQueryService = entityQueryService;
+        this.queryService = queryService;
         return this;
     }
 
