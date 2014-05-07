@@ -4,26 +4,26 @@ import org.elasticsearch.common.Strings;
 
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.Nodes;
-import com.enonic.wem.core.entity.dao.NodeElasticsearchDao;
-import com.enonic.wem.core.index.IndexService;
+import com.enonic.wem.core.elastic.ElasticsearchIndexService;
+import com.enonic.wem.core.entity.dao.NodeDao;
 
 public abstract class AbstractDeleteNodeCommand
 {
     private final static String ATTACHMENTS_NODE_NAME = "__att";
 
-    protected IndexService indexService;
+    protected ElasticsearchIndexService indexService;
 
-    protected NodeElasticsearchDao nodeElasticsearchDao;
+    protected NodeDao nodeDao;
 
     protected AbstractDeleteNodeCommand( final Builder builder )
     {
         this.indexService = builder.indexService;
-        this.nodeElasticsearchDao = builder.nodeElasticsearchDao;
+        this.nodeDao = builder.nodeDao;
     }
 
     protected void doDeleteChildIndexDocuments( final Node node )
     {
-        final Nodes childrenNodes = nodeElasticsearchDao.getByParent( node.path() );
+        final Nodes childrenNodes = nodeDao.getByParent( node.path() );
 
         for ( final Node child : childrenNodes )
         {
@@ -40,21 +40,21 @@ public abstract class AbstractDeleteNodeCommand
 
     protected static class Builder<B extends Builder>
     {
-        private IndexService indexService;
+        private ElasticsearchIndexService indexService;
 
-        private NodeElasticsearchDao nodeElasticsearchDao;
+        private NodeDao nodeDao;
 
         @SuppressWarnings("unchecked")
-        B indexService( final IndexService indexService )
+        B indexService( final ElasticsearchIndexService indexService )
         {
             this.indexService = indexService;
             return (B) this;
         }
 
         @SuppressWarnings("unchecked")
-        B nodeElasticsearchDao( final NodeElasticsearchDao nodeElasticsearchDao )
+        B nodeDao( final NodeDao nodeDao )
         {
-            this.nodeElasticsearchDao = nodeElasticsearchDao;
+            this.nodeDao = nodeDao;
             return (B) this;
         }
     }

@@ -34,37 +34,37 @@ public class CreateNodeArguments
         this.embed = builder.embed;
     }
 
-    UserKey creator()
+    public UserKey creator()
     {
         return this.creator;
     }
 
-    NodePath parent()
+    public NodePath parent()
     {
         return this.parent;
     }
 
-    String name()
+    public String name()
     {
         return this.name;
     }
 
-    RootDataSet rootDataSet()
+    public RootDataSet rootDataSet()
     {
         return this.rootDataSet;
     }
 
-    Attachments attachments()
+    public Attachments attachments()
     {
         return this.attachments;
     }
 
-    boolean embed()
+    public boolean embed()
     {
         return this.embed;
     }
 
-    EntityIndexConfig entityIndexConfig()
+    public EntityIndexConfig entityIndexConfig()
     {
         return this.entityIndexConfig;
     }

@@ -12,46 +12,46 @@ import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.entity.RenameNodeParams;
 import com.enonic.wem.api.entity.UpdateNodeParams;
-import com.enonic.wem.core.entity.dao.NodeElasticsearchDao;
-import com.enonic.wem.core.index.IndexService;
+import com.enonic.wem.core.elastic.ElasticsearchIndexService;
+import com.enonic.wem.core.entity.dao.NodeDao;
 
 public class NodeServiceImpl
     implements NodeService
 {
     @Inject
-    private IndexService indexService;
+    private ElasticsearchIndexService indexService;
 
     @Inject
-    private NodeElasticsearchDao nodeElasticsearchDao;
+    private NodeDao nodeDao;
 
     @Override
     public Node getById( final EntityId id )
     {
-        return nodeElasticsearchDao.getById( id );
+        return nodeDao.getById( id );
     }
 
     @Override
     public Nodes getByIds( final EntityIds ids )
     {
-        return nodeElasticsearchDao.getByIds( ids );
+        return nodeDao.getByIds( ids );
     }
 
     @Override
     public Node getByPath( final NodePath path )
     {
-        return nodeElasticsearchDao.getByPath( path );
+        return nodeDao.getByPath( path );
     }
 
     @Override
     public Nodes getByPaths( final NodePaths paths )
     {
-        return nodeElasticsearchDao.getByPaths( paths );
+        return nodeDao.getByPaths( paths );
     }
 
     @Override
     public Nodes getByParent( final NodePath parent )
     {
-        return nodeElasticsearchDao.getByParent( parent );
+        return nodeDao.getByParent( parent );
     }
 
     @Override
@@ -60,7 +60,7 @@ public class NodeServiceImpl
         return CreateNodeCommand.create().
             params( params ).
             indexService( this.indexService ).
-            nodeElasticsearchDao( this.nodeElasticsearchDao ).
+            nodeDao( this.nodeDao ).
             build().
             execute();
     }
@@ -71,7 +71,7 @@ public class NodeServiceImpl
         return UpdateNodeCommand.create().
             params( params ).
             indexService( this.indexService ).
-            nodeElasticsearchDao( this.nodeElasticsearchDao ).
+            nodeDao( this.nodeDao ).
             build().
             execute();
     }
@@ -82,7 +82,7 @@ public class NodeServiceImpl
         return new RenameNodeCommand().
             params( params ).
             indexService( this.indexService ).
-            nodeElasticsearchDao( this.nodeElasticsearchDao ).
+            nodeDao( this.nodeDao ).
             execute();
     }
 
@@ -92,7 +92,7 @@ public class NodeServiceImpl
         return DeleteNodeByIdCommand.create().
             entityId( id ).
             indexService( this.indexService ).
-            nodeElasticsearchDao( this.nodeElasticsearchDao ).
+            nodeDao( this.nodeDao ).
             build().
             execute();
     }
@@ -103,7 +103,7 @@ public class NodeServiceImpl
         return DeleteNodeByPathCommand.create().
             nodePath( path ).
             indexService( this.indexService ).
-            nodeElasticsearchDao( this.nodeElasticsearchDao ).
+            nodeDao( this.nodeDao ).
             build().
             execute();
 
