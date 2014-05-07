@@ -178,12 +178,12 @@ module api.ui {
             var initialPos = 0;
             this.dragListener = (e: MouseEvent) => {
                 if (this.isHorizontal()) {
-                    if (this.validateDragOffset(initialPos - e.clientY)) {
+                    if (this.splitterWithinBoundaries(initialPos - e.clientY)) {
                         this.splitterPosition = e.clientY;
                         this.ghostDragger.getEl().setTopPx(e.clientY - this.getEl().getOffsetTop());
                     }
                 } else {
-                    if (this.validateDragOffset(initialPos - e.clientX)) {
+                    if (this.splitterWithinBoundaries(initialPos - e.clientX)) {
                         this.splitterPosition = e.clientX;
                         this.ghostDragger.getEl().setLeftPx(e.clientX - this.getEl().getOffsetLeft());
                     }
@@ -249,7 +249,7 @@ module api.ui {
             this.fireResizeEvent();
         }
 
-        private validateDragOffset(offset: number) {
+        private splitterWithinBoundaries(offset: number) {
             var firstPanelSize = this.isHorizontal() ? this.firstPanel.getEl().getHeight() : this.firstPanel.getEl().getWidth();
             var secondPanelSize = this.isHorizontal() ? this.secondPanel.getEl().getHeight() : this.secondPanel.getEl().getWidth();
 
