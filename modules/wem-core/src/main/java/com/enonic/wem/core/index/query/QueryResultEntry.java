@@ -1,4 +1,4 @@
-package com.enonic.wem.core.index.node;
+package com.enonic.wem.core.index.query;
 
 public class QueryResultEntry
 {

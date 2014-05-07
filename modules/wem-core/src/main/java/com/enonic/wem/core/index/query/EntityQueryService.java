@@ -1,11 +1,9 @@
-package com.enonic.wem.core.index.entity;
+package com.enonic.wem.core.index.query;
 
 import com.enonic.wem.api.entity.query.EntityQuery;
 import com.enonic.wem.core.elastic.ElasticsearchQuery;
-import com.enonic.wem.core.index.node.QueryService;
-import com.enonic.wem.core.index.query.EntityQueryTranslator;
 
-public class EntityQueryServiceImpl
+public class EntityQueryService
     extends QueryService<EntityQuery>
 {
     private EntityQueryTranslator translator = new EntityQueryTranslator();

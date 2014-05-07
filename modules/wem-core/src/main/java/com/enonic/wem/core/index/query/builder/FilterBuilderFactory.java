@@ -1,4 +1,4 @@
-package com.enonic.wem.core.index.query;
+package com.enonic.wem.core.index.query.builder;
 
 import java.util.List;
 import java.util.Set;
@@ -19,6 +19,7 @@ import com.enonic.wem.api.query.filter.ExistsFilter;
 import com.enonic.wem.api.query.filter.Filter;
 import com.enonic.wem.api.query.filter.RangeFilter;
 import com.enonic.wem.api.query.filter.ValueFilter;
+import com.enonic.wem.core.index.query.IndexQueryFieldNameResolver;
 
 public class FilterBuilderFactory
     extends AbstractBuilderFactory

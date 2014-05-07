@@ -22,7 +22,7 @@ import com.enonic.wem.api.content.query.ContentQueryResult;
 import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
-import com.enonic.wem.core.index.node.NodeQueryService;
+import com.enonic.wem.core.index.query.NodeQueryService;
 
 public class ContentServiceImpl
     implements ContentService

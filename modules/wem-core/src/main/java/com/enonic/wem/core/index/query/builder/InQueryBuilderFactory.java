@@ -1,4 +1,4 @@
-package com.enonic.wem.core.index.query;
+package com.enonic.wem.core.index.query.builder;
 
 import java.util.List;
 
@@ -8,6 +8,8 @@ import org.elasticsearch.index.query.QueryBuilders;
 
 import com.enonic.wem.api.query.expr.CompareExpr;
 import com.enonic.wem.api.query.expr.ValueExpr;
+import com.enonic.wem.core.index.query.IndexQueryBuilderException;
+import com.enonic.wem.core.index.query.IndexQueryFieldNameResolver;
 
 public class InQueryBuilderFactory
 {

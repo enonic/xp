@@ -3,6 +3,7 @@ package com.enonic.wem.core.index.query
 import com.enonic.wem.api.query.expr.CompareExpr
 import com.enonic.wem.api.query.expr.FieldExpr
 import com.enonic.wem.api.query.expr.ValueExpr
+import com.enonic.wem.core.index.query.builder.InQueryBuilderFactory
 import org.elasticsearch.index.query.QueryBuilder
 
 class InQueryBuilderFactoryTest

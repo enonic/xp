@@ -3,6 +3,7 @@ package com.enonic.wem.core.index.query
 import com.enonic.wem.api.data.Value
 import com.enonic.wem.api.query.filter.Filter
 import com.enonic.wem.api.query.parser.QueryParser
+import com.enonic.wem.core.index.query.builder.QueryBuilderFactory
 import com.google.common.collect.ImmutableSet
 import com.google.common.collect.Sets
 import spock.lang.Unroll

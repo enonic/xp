@@ -1,4 +1,4 @@
-package com.enonic.wem.core.index.node;
+package com.enonic.wem.core.index.query;
 
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.SearchHit;

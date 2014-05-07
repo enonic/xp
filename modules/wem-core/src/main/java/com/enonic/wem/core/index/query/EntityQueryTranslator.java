@@ -5,6 +5,9 @@ import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.elastic.ElasticsearchQuery;
 import com.enonic.wem.core.index.query.aggregation.AggregationBuilderFactory;
+import com.enonic.wem.core.index.query.builder.FilterBuilderFactory;
+import com.enonic.wem.core.index.query.builder.QueryBuilderFactory;
+import com.enonic.wem.core.index.query.builder.SortBuilderFactory;
 
 public class EntityQueryTranslator
 {

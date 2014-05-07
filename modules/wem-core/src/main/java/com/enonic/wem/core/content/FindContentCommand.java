@@ -6,9 +6,9 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.query.ContentQuery;
 import com.enonic.wem.api.content.query.ContentQueryResult;
 import com.enonic.wem.api.entity.query.NodeQuery;
-import com.enonic.wem.core.index.node.NodeQueryService;
-import com.enonic.wem.core.index.node.QueryResult;
-import com.enonic.wem.core.index.node.QueryResultEntry;
+import com.enonic.wem.core.index.query.NodeQueryService;
+import com.enonic.wem.core.index.query.QueryResult;
+import com.enonic.wem.core.index.query.QueryResultEntry;
 
 final class FindContentCommand
 {

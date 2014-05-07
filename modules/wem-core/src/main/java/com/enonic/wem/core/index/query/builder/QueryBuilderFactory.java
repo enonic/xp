@@ -1,4 +1,4 @@
-package com.enonic.wem.core.index.query;
+package com.enonic.wem.core.index.query.builder;
 
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilteredQueryBuilder;

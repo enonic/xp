@@ -1,4 +1,4 @@
-package com.enonic.wem.core.index.query;
+package com.enonic.wem.core.index.query.builder;
 
 import java.util.Collection;
 import java.util.Set;
@@ -12,6 +12,7 @@ import com.google.common.collect.Sets;
 import com.enonic.wem.api.query.expr.DynamicOrderExpr;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
+import com.enonic.wem.core.index.query.IndexQueryFieldNameResolver;
 import com.enonic.wem.core.index.query.function.DynamicSortBuilderFactory;
 
 public class SortBuilderFactory

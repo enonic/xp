@@ -1,8 +1,9 @@
-package com.enonic.wem.core.index.query;
+package com.enonic.wem.core.index.query.builder;
 
 import org.elasticsearch.index.query.QueryBuilder;
 
 import com.enonic.wem.api.query.expr.CompareExpr;
+import com.enonic.wem.core.index.query.IndexQueryFieldNameResolver;
 
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 

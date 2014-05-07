@@ -1,6 +1,7 @@
 package com.enonic.wem.core.index.query
 
 import com.enonic.wem.api.query.expr.*
+import com.enonic.wem.core.index.query.builder.SortBuilderFactory
 import com.google.common.collect.Sets
 import org.elasticsearch.search.sort.FieldSortBuilder
 import org.elasticsearch.search.sort.GeoDistanceSortBuilder
