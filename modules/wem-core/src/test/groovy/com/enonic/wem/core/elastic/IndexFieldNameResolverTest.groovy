@@ -1,4 +1,4 @@
-package com.enonic.wem.core.elastic.indexsource
+package com.enonic.wem.core.elastic
 
 import com.enonic.wem.core.index.document.*
 import com.enonic.wem.core.elastic.FieldNameResolver

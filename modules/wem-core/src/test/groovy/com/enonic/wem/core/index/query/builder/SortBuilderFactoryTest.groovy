@@ -1,4 +1,4 @@
-package com.enonic.wem.core.index.query
+package com.enonic.wem.core.index.query.builder
 
 import com.enonic.wem.api.query.expr.*
 import com.enonic.wem.core.index.query.builder.SortBuilderFactory

@@ -6,6 +6,7 @@ import com.enonic.wem.api.query.filter.Filter
 import com.enonic.wem.api.query.parser.QueryParser
 import com.enonic.wem.core.index.Index
 import com.enonic.wem.core.index.IndexType
+import com.enonic.wem.core.index.query.builder.BaseTestBuilderFactory
 import org.elasticsearch.index.query.MatchAllQueryBuilder
 import org.elasticsearch.index.query.RangeQueryBuilder
 import org.elasticsearch.index.query.TermsFilterBuilder

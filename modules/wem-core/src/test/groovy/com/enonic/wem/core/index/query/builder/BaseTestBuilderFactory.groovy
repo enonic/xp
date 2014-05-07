@@ -1,4 +1,4 @@
-package com.enonic.wem.core.index.query
+package com.enonic.wem.core.index.query.builder
 
 import org.elasticsearch.common.Strings
 import org.elasticsearch.common.xcontent.ToXContent

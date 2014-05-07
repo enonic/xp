@@ -1,10 +1,9 @@
-package com.enonic.wem.core.index.query
+package com.enonic.wem.core.index.query.builder
 
 import com.enonic.wem.api.data.Value
 import com.enonic.wem.api.query.filter.BooleanFilter
 import com.enonic.wem.api.query.filter.ExistsFilter
 import com.enonic.wem.api.query.filter.FieldFilter
-import com.enonic.wem.core.index.query.builder.FilterBuilderFactory
 import org.elasticsearch.index.query.FilterBuilder
 
 class FilterBuilderFactoryTest

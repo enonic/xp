@@ -3,7 +3,7 @@ package com.enonic.wem.core.index.query.aggregation
 import com.enonic.wem.api.query.aggregation.DateRange
 import com.enonic.wem.api.query.aggregation.NumericRange
 import com.enonic.wem.api.query.aggregation.RangeAggregationQuery
-import com.enonic.wem.core.index.query.BaseTestBuilderFactory
+import com.enonic.wem.core.index.query.builder.BaseTestBuilderFactory
 import org.elasticsearch.common.xcontent.ToXContent
 import org.elasticsearch.common.xcontent.XContentBuilder
 import org.elasticsearch.common.xcontent.XContentFactory

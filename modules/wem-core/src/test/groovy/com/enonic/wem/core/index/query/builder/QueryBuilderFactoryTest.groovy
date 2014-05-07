@@ -1,9 +1,8 @@
-package com.enonic.wem.core.index.query
+package com.enonic.wem.core.index.query.builder
 
 import com.enonic.wem.api.data.Value
 import com.enonic.wem.api.query.filter.Filter
 import com.enonic.wem.api.query.parser.QueryParser
-import com.enonic.wem.core.index.query.builder.QueryBuilderFactory
 import com.google.common.collect.ImmutableSet
 import com.google.common.collect.Sets
 import spock.lang.Unroll
@@ -29,7 +28,7 @@ class QueryBuilderFactoryTest
         query                                           | fileContainingExpectedJson
         "not( myField > 1) "                            | "not_range.json"
         "not( not( myField > 1  ))"                     | "not_not_range.json"
-        "fulltext('myField', 'my search phrase', 'OR')" | "function/fulltext_3_args.json"
+        "fulltext('myField', 'my search phrase', 'OR')" | "fulltext_3_args.json"
     }
 
     def "create query with queryfilter"()

@@ -1,9 +1,8 @@
-package com.enonic.wem.core.index.query
+package com.enonic.wem.core.index.query.builder
 
 import com.enonic.wem.api.query.expr.CompareExpr
 import com.enonic.wem.api.query.expr.FieldExpr
 import com.enonic.wem.api.query.expr.ValueExpr
-import com.enonic.wem.core.index.query.builder.TermQueryBuilderFactory
 import org.elasticsearch.index.query.QueryBuilder
 
 class TermQueryBuilderFactoryTest
