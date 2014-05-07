@@ -14,6 +14,7 @@ import com.enonic.wem.api.content.page.layout.LayoutComponentType;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;
 import com.enonic.wem.api.content.page.part.PartComponentType;
 import com.enonic.wem.api.content.page.part.PartDescriptorService;
+import com.enonic.wem.api.content.page.text.TextComponentType;
 import com.enonic.wem.core.content.page.image.ImageDescriptorServiceImpl;
 import com.enonic.wem.core.content.page.layout.LayoutDescriptorServiceImpl;
 import com.enonic.wem.core.content.page.part.PartDescriptorServiceImpl;
@@ -28,6 +29,7 @@ public class PageModule
         new ImageComponentType();
         new PartComponentType();
         new LayoutComponentType();
+        new TextComponentType();
 
         bind( ImageDescriptorService.class ).to( ImageDescriptorServiceImpl.class ).in( Singleton.class );
         bind( LayoutDescriptorService.class ).to( LayoutDescriptorServiceImpl.class ).in( Singleton.class );
