@@ -81,6 +81,7 @@ module api.app.wizard {
             this.appendChild(this.mainToolbar);
             if (params.split && params.livePanel) {
                 this.splitPanel = new api.ui.SplitPanelBuilder(this.formPanel, params.livePanel)
+                    .setFirstPanelMinSize(280)
                                     .setAlignment(api.ui.SplitPanelAlignment.VERTICAL)
                                     .build();
                 this.updateSplitPanel();
