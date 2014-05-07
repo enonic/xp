@@ -38,14 +38,14 @@ module app.browse.filter {
             var contentTypeAggregation: AggregationGroupView = new AggregationGroupView(
                 ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME,
                 ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_DISPLAY_NAME);
-            this.loadAndSetContentTypeDisplayNames(contentTypeAggregation);
-
 
             var lastModifiedAggregation: AggregationGroupView = new AggregationGroupView(
                 ContentBrowseFilterPanel.LAST_MODIFIED_AGGREGATION_NAME,
                 ContentBrowseFilterPanel.LAST_MODIFIED_AGGREGATION_DISPLAY_NAME);
 
             super(null, [contentTypeAggregation, lastModifiedAggregation]);
+
+            this.loadAndSetContentTypeDisplayNames(contentTypeAggregation);
 
             this.resetFacets(true);
 
@@ -64,6 +64,11 @@ module app.browse.filter {
 
             var displayNameMap: string[] = [];
 
+            var mask: api.ui.LoadMask = new api.ui.LoadMask(this);
+            aggregationGroupView.onShown((event: api.dom.ElementShownEvent) => {
+                mask.show();
+            });
+
             var request = new api.schema.content.GetAllContentTypesRequest();
             request.sendAndParse().done((contentTypes: api.schema.content.ContentTypeSummary[]) => {
 
@@ -76,7 +81,7 @@ module app.browse.filter {
                         aggregationView.setDisplayNamesMap(displayNameMap);
                     }
                 });
-
+                mask.hide();
             });
         }
 
