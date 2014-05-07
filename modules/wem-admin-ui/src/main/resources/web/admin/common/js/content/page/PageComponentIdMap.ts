@@ -2,19 +2,21 @@ module api.content.page {
 
     export class PageComponentIdMap {
 
-        private map: {[id: string]: ComponentPath2} = {};
+        private idToPathMap: {[id: string]: ComponentPath2} = {};
+        private pathToIdMap: {[path: string]: number} = {};
 
         add(path: ComponentPath2, id:number) {
-            api.util.assert(!this.map [id], "A PageComponentIdMap can only contain unique id's: " + id);
-            this.map[id] = path;
+            api.util.assert(!this.idToPathMap[id], "A PageComponentIdMap can only contain unique id's: " + id);
+            this.idToPathMap[id] = path;
+            this.pathToIdMap[path.toString()] = id;
         }
 
         getPaths(): ComponentPath2[] {
             var paths: ComponentPath2[] = [];
 
-            for (var id in this.map) {
-                if (this.map.hasOwnProperty(id)) {
-                    paths.push(this.map[id]);
+            for (var id in this.idToPathMap) {
+                if (this.idToPathMap.hasOwnProperty(id)) {
+                    paths.push(this.idToPathMap[id]);
                 }
             }
 
@@ -23,13 +25,7 @@ module api.content.page {
 
         getIdByPath(path: ComponentPath2): number {
 
-            for (var id in this.map) {
-                if (this.map.hasOwnProperty(id) && path.equals(this.map[id])) {
-                    return parseInt(id);
-                }
-            }
-
-            return null;
+            return this.pathToIdMap[path.toString()];
         }
 
     }
