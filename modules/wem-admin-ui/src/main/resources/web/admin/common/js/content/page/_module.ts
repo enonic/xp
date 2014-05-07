@@ -28,6 +28,7 @@
 ///<reference path='RegionPath.ts' />
 ///<reference path='AbstractRegions.ts' />
 ///<reference path='PageRegions.ts' />
+///<reference path='PageComponentIdMap.ts' />
 
 ///<reference path='PageTemplateSummary.ts' />
 ///<reference path='PageTemplate.ts' />
