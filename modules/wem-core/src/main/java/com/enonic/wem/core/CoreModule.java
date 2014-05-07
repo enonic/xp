@@ -6,7 +6,7 @@ import com.enonic.wem.core.blob.BlobModule;
 import com.enonic.wem.core.blobstore.BlobStoreModule;
 import com.enonic.wem.core.config.ConfigModule;
 import com.enonic.wem.core.content.ContentModule;
-import com.enonic.wem.core.elastic.ElasticsearchModule;
+import com.enonic.wem.core.elasticsearch.ElasticsearchModule;
 import com.enonic.wem.core.entity.EntityModule;
 import com.enonic.wem.core.event.EventModule;
 import com.enonic.wem.core.home.HomeModule;

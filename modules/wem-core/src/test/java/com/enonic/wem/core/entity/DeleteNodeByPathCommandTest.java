@@ -10,8 +10,8 @@ import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
-import com.enonic.wem.core.elastic.ElasticsearchIndexService;
-import com.enonic.wem.core.elastic.ElasticsearchNodeDao;
+import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
+import com.enonic.wem.core.elasticsearch.ElasticsearchNodeDao;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;

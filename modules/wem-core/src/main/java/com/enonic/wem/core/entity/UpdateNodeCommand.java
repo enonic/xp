@@ -4,7 +4,7 @@ package com.enonic.wem.core.entity;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.UpdateNodeParams;
-import com.enonic.wem.core.elastic.ElasticsearchIndexService;
+import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.entity.dao.UpdateNodeArgs;
 import com.enonic.wem.api.util.Exceptions;

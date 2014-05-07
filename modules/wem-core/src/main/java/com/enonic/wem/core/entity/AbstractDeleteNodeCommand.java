@@ -4,7 +4,7 @@ import org.elasticsearch.common.Strings;
 
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.Nodes;
-import com.enonic.wem.core.elastic.ElasticsearchIndexService;
+import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.core.entity.dao.NodeDao;
 
 public abstract class AbstractDeleteNodeCommand

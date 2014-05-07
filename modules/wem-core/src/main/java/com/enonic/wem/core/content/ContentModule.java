@@ -9,7 +9,7 @@ import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.core.content.attachment.AttachmentServiceImpl;
 import com.enonic.wem.core.content.page.PageModule;
 import com.enonic.wem.core.content.site.SiteModule;
-import com.enonic.wem.core.elastic.ElasticsearchQueryService;
+import com.enonic.wem.core.elasticsearch.ElasticsearchQueryService;
 import com.enonic.wem.core.index.query.QueryService;
 import com.enonic.wem.core.initializer.InitializerTaskBinder;
 

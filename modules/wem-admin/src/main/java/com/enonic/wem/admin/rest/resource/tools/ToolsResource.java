@@ -6,7 +6,7 @@ import javax.ws.rs.Produces;
 
 import com.google.inject.Inject;
 
-import com.enonic.wem.core.elastic.ElasticsearchIndexService;
+import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.initializer.StartupInitializer;
 

@@ -5,8 +5,8 @@ import javax.inject.Singleton;
 import com.google.inject.AbstractModule;
 
 import com.enonic.wem.api.entity.NodeService;
-import com.enonic.wem.core.elastic.ElasticsearchIndexService;
-import com.enonic.wem.core.elastic.ElasticsearchNodeDao;
+import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
+import com.enonic.wem.core.elasticsearch.ElasticsearchNodeDao;
 import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.index.IndexService;
 
