@@ -1,38 +1,38 @@
 module api.ui {
 
     /**
-     * A DeckPanel with PanelNavigationItem-s.
+     * A DeckPanel with NavigationItem-s.
      */
     export class NavigatedDeckPanel extends DeckPanel {
 
-        private navigator: api.ui.DeckPanelNavigator;
+        private navigator: api.ui.Navigator;
 
-        constructor(navigator: DeckPanelNavigator, className?: string) {
+        constructor(navigator: Navigator, className?: string) {
             super(className);
             this.navigator = navigator;
 
-            navigator.onNavigationItemSelected((event: DeckPanelNavigatorEvent) => {
-                this.showPanelByIndex(event.getTabItem().getIndex());
+            navigator.onNavigationItemSelected((event: NavigatorEvent) => {
+                this.showPanelByIndex(event.getItem().getIndex());
             });
         }
 
-        getSelectedNavigationItem(): PanelNavigationItem {
+        getSelectedNavigationItem(): NavigationItem {
             return this.navigator.getSelectedNavigationItem();
         }
 
-        addNavigablePanelToFront(item: PanelNavigationItem, panel: Panel) {
+        addNavigablePanelToFront(item: NavigationItem, panel: Panel) {
             this.navigator.addNavigationItem(item);
             super.addPanel(panel);
 
             this.selectPanel(item);
         }
 
-        addNavigablePanelToBack(item: PanelNavigationItem, panel: Panel) {
+        addNavigablePanelToBack(item: NavigationItem, panel: Panel) {
             this.navigator.addNavigationItem(item);
             super.addPanel(panel);
         }
 
-        selectPanel(item: PanelNavigationItem) {
+        selectPanel(item: NavigationItem) {
             this.selectPanelFromIndex(item.getIndex());
         }
 
@@ -44,7 +44,7 @@ module api.ui {
         removePanel(panel: Panel, checkCanRemovePanel: boolean = true): number {
 
             var panelIndex: number = this.getPanelIndex(panel);
-            var navigationItem: api.ui.PanelNavigationItem = this.navigator.getNavigationItem(panelIndex);
+            var navigationItem: api.ui.NavigationItem = this.navigator.getNavigationItem(panelIndex);
             var removedPanelAtIndex = super.removePanel(panel, checkCanRemovePanel);
             var removed: boolean = removedPanelAtIndex !== -1;
 

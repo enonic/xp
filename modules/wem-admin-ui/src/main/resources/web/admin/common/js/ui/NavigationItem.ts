@@ -1,6 +1,6 @@
 module api.ui {
 
-    export interface PanelNavigationItem {
+    export interface NavigationItem {
 
         getIndex():number;
 

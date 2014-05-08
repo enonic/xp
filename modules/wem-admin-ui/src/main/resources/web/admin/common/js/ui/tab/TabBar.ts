@@ -1,14 +1,14 @@
 module api.ui.tab {
 
-    export class TabBar extends api.dom.UlEl implements api.ui.DeckPanelNavigator {
+    export class TabBar extends api.dom.UlEl implements api.ui.Navigator {
 
         private tabs: TabBarItem[] = [];
 
         private selectedIndex: number = -1;
 
-        private navigationItemAddedListeners: {(event: DeckPanelNavigatorEvent):void}[] = [];
+        private navigationItemAddedListeners: {(event: NavigatorEvent):void}[] = [];
 
-        private navigationItemSelectedListeners: {(event: DeckPanelNavigatorEvent):void}[] = [];
+        private navigationItemSelectedListeners: {(event: NavigatorEvent):void}[] = [];
 
         constructor(className?: string) {
             super("tab-bar" + (className ? " " + className : ""));
@@ -98,45 +98,45 @@ module api.ui.tab {
             return this.tabs;
         }
 
-        onNavigationItemAdded(listener: (event: DeckPanelNavigatorEvent) => void) {
+        onNavigationItemAdded(listener: (event: NavigatorEvent) => void) {
             this.navigationItemAddedListeners.push(listener);
         }
 
-        onNavigationItemSelected(listener: (event: DeckPanelNavigatorEvent) => void) {
+        onNavigationItemSelected(listener: (event: NavigatorEvent) => void) {
             this.navigationItemSelectedListeners.push(listener);
         }
 
-        onNavigationItemDeselected(listener: (event: DeckPanelNavigatorEvent) => void) {
+        onNavigationItemDeselected(listener: (event: NavigatorEvent) => void) {
             //Not used here
         }
 
-        unNavigationItemAdded(listener: (event: DeckPanelNavigatorEvent) => void) {
+        unNavigationItemAdded(listener: (event: NavigatorEvent) => void) {
             this.navigationItemAddedListeners =
-            this.navigationItemAddedListeners.filter((currentListener: (event: DeckPanelNavigatorEvent)=>void) => {
+            this.navigationItemAddedListeners.filter((currentListener: (event: NavigatorEvent)=>void) => {
                 return listener != currentListener;
             });
         }
 
-        unNavigationItemSelected(listener: (event: DeckPanelNavigatorEvent) => void) {
+        unNavigationItemSelected(listener: (event: NavigatorEvent) => void) {
             this.navigationItemSelectedListeners =
-            this.navigationItemSelectedListeners.filter((currentListener: (event: DeckPanelNavigatorEvent)=>void) => {
+            this.navigationItemSelectedListeners.filter((currentListener: (event: NavigatorEvent)=>void) => {
                 return listener != currentListener;
             });
         }
 
-        unNavigationItemDeselected(listener: (event: DeckPanelNavigatorEvent) => void) {
+        unNavigationItemDeselected(listener: (event: NavigatorEvent) => void) {
             //Not used here
         }
 
         private notifyTabAddedListeners(tab: TabBarItem) {
-            this.navigationItemAddedListeners.forEach((listener: (event: DeckPanelNavigatorEvent)=>void) => {
-                listener.call(this, new DeckPanelNavigatorEvent(tab));
+            this.navigationItemAddedListeners.forEach((listener: (event: NavigatorEvent)=>void) => {
+                listener.call(this, new NavigatorEvent(tab));
             });
         }
 
         private notifyTabShownListeners(tab: TabBarItem) {
-            this.navigationItemSelectedListeners.forEach((listener: (event: DeckPanelNavigatorEvent)=>void) => {
-                listener.call(this, new DeckPanelNavigatorEvent(tab));
+            this.navigationItemSelectedListeners.forEach((listener: (event: NavigatorEvent)=>void) => {
+                listener.call(this, new NavigatorEvent(tab));
             });
         }
     }
