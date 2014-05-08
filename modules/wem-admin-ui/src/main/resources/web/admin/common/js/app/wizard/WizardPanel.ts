@@ -83,6 +83,9 @@ module api.app.wizard {
                                     .setAlignment(api.ui.SplitPanelAlignment.VERTICAL)
                                     .build();
                 this.updateSplitPanel();
+                this.splitPanel.onResized((event: api.dom.ElementResizedEvent) => {
+                    this.updateStickyToolbar();
+                });
                 this.appendChild(this.splitPanel);
             } else {
                 this.appendChild(this.formPanel);
@@ -144,11 +147,6 @@ module api.app.wizard {
                 if (this.lastFocusedElement) {
                     this.lastFocusedElement.focus();
                 }
-            });
-
-            this.splitPanel.onResized((event: api.dom.ElementResizedEvent) => {
-
-                this.updateStickyToolbar();
             });
 
             api.dom.Window.get().onResized((event: UIEvent) => {

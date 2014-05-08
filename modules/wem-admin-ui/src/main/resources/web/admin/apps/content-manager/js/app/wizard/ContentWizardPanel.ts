@@ -162,7 +162,9 @@ module app.wizard {
             }, () => {
 
                 this.addClass("content-wizard-panel");
-                this.getSplitPanel().addClass("prerendered");
+                if (this.getSplitPanel()) {
+                    this.getSplitPanel().addClass("prerendered");
+                }
 
                 this.onShown((event: api.dom.ElementShownEvent) => {
                     if (this.getPersistedItem()) {
