@@ -7,8 +7,10 @@ module app.wizard.page {
     import RegionPath = api.content.page.RegionPath;
     import ComponentPath = api.content.page.ComponentPath;
     import UploadDialog = api.content.inputtype.image.UploadDialog;
-    import ImageUploadedEvent = api.ui.ImageUploadedEvent;
     import RenderingMode = api.rendering.RenderingMode;
+    import NewPageComponentIdMapEvent = api.content.page.NewPageComponentIdMapEvent;
+    import OpenImageUploadDialogEvent = api.content.page.image.OpenImageUploadDialogEvent;
+    import ImageUploadedEvent = api.content.page.image.ImageUploadedEvent;
 
     export interface LiveEditPageConfig {
 
@@ -151,27 +153,18 @@ module app.wizard.page {
                 var liveEditWindow = this.liveEditIFrame.getHTMLElement()["contentWindow"];
                 if (liveEditWindow && liveEditWindow.$liveEdit && typeof(liveEditWindow.initializeLiveEdit) === "function") {
                     // Give loaded page same CONFIG.baseUri as in admin
-                    liveEditWindow.CONFIG = {};
-                    liveEditWindow.CONFIG.baseUri = CONFIG.baseUri;
+                    liveEditWindow.CONFIG = { baseUri: CONFIG.baseUri };
                     liveEditWindow.siteTemplate = this.siteTemplate;
                     liveEditWindow.content = content;
-                    liveEditWindow.onOpenImageUploadDialogRequest(() => {
-                        var uploadDialog = new UploadDialog();
-                        uploadDialog.onImageUploaded((event: ImageUploadedEvent) => {
-                            liveEditWindow.notifyImageUploaded(event);
-                            uploadDialog.close();
-                            uploadDialog.remove();
-                        });
-                        uploadDialog.open();
-                    });
-                    this.loadMask.hide();
 
-                    liveEditWindow.initializeLiveEdit();
+                    this.loadMask.hide();
 
                     this.liveEditWindow = liveEditWindow;
                     this.liveEditJQuery = <JQueryStatic>this.liveEditWindow.$liveEdit;
 
                     this.listenToPage();
+
+                    liveEditWindow.initializeLiveEdit();
                     this.notifyLoaded();
                 }
 
@@ -216,6 +209,20 @@ module app.wizard.page {
         }
 
         public listenToPage() {
+
+            NewPageComponentIdMapEvent.on((event: NewPageComponentIdMapEvent) => {
+                console.log('PageComponentIdMap: %o', event.getMap());
+            }, this.liveEditWindow);
+
+            OpenImageUploadDialogEvent.on(() => {
+                var uploadDialog = new UploadDialog();
+                uploadDialog.onImageUploaded((event: api.ui.ImageUploadedEvent) => {
+                    new ImageUploadedEvent(event.getUploadedItem()).fire(this.liveEditWindow);
+                    uploadDialog.close();
+                    uploadDialog.remove();
+                });
+                uploadDialog.open();
+            }, this.liveEditWindow);
 
             this.liveEditJQuery(this.liveEditWindow).on('draggableStart.liveEdit', (event) => {
 
