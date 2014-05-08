@@ -13,4 +13,38 @@
       margin-top: 0px;
     }
   }
+
+  .split-panel {
+
+    &.prerendered {
+      .form-panel {
+        width: 100% !important;
+      }
+      .splitter, .live-form-panel {
+        width: 0;
+        visibility: hidden;
+      }
+    }
+
+    &.toggle-form {
+      .form-panel {
+        width: 100% !important;
+      }
+      .splitter, .live-form-panel {
+        display: none;
+      }
+    }
+
+    &.toggle-live {
+
+      @media (max-width: 960px) {
+        .live-form-panel {
+          width: 100% !important;
+        }
+        .splitter, .form-panel {
+          display: none;
+        }
+      }
+    }
+  }
 }

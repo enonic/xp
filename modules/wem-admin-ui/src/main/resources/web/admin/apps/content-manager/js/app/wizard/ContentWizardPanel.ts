@@ -162,6 +162,7 @@ module app.wizard {
             }, () => {
 
                 this.addClass("content-wizard-panel");
+                this.getSplitPanel().addClass("prerendered");
 
                 this.onShown((event: api.dom.ElementShownEvent) => {
                     if (this.getPersistedItem()) {
@@ -557,11 +558,15 @@ module app.wizard {
         }
 
         showLiveEdit() {
-
+            this.getSplitPanel().addClass("toggle-live");
+            this.getSplitPanel().removeClass("toggle-form prerendered");
+            this.updateStickyToolbar();
         }
 
         showWizard() {
-
+            this.getSplitPanel().addClass("toggle-form");
+            this.getSplitPanel().removeClass("toggle-live prerendered");
+            this.updateStickyToolbar();
         }
     }
 
