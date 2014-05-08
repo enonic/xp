@@ -272,8 +272,9 @@ module app.wizard.page {
 
             if (!this.pageSkipReload) {
 
-                if (!this.content.isPage()) {
-                    // Nothing to set
+                if (!this.pageRegions && !this.content.isPage()) {
+                    this.pageRegions = this.defaultModels.getPageTemplate().getRegions();
+                    this.pageConfig = this.defaultModels.getPageTemplate().getConfig();
                 }
                 else if (!this.pageRegions && this.content.isPage()) {
 
