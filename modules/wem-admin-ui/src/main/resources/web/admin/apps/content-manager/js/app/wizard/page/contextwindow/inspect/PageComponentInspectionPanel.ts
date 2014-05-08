@@ -3,8 +3,6 @@ module app.wizard.page.contextwindow.inspect {
     import RootDataSet = api.data.RootDataSet;
     import FormView = api.form.FormView;
     import PageComponent = api.content.page.PageComponent;
-    import DescriptorKey = api.content.page.DescriptorKey;
-    import Descriptor = api.content.page.Descriptor;
 
     export interface PageComponentInspectionPanelConfig {
 
@@ -12,18 +10,14 @@ module app.wizard.page.contextwindow.inspect {
 
     }
 
-    export class PageComponentInspectionPanel<COMPONENT extends PageComponent, DESCRIPTOR extends Descriptor> extends BaseInspectionPanel {
+    export class PageComponentInspectionPanel<COMPONENT extends PageComponent> extends BaseInspectionPanel {
 
         private namesAndIcon: api.app.NamesAndIconView;
-
-        private formView: FormView;
 
         private component: COMPONENT;
 
         constructor(config: PageComponentInspectionPanelConfig) {
             super();
-
-            this.formView = null;
 
             this.namesAndIcon = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().
                 setSize(api.app.NamesAndIconViewSize.medium)).
@@ -36,47 +30,16 @@ module app.wizard.page.contextwindow.inspect {
 
             this.component = component;
 
-            if (this.hasDescriptor()) {
-                this.namesAndIcon.setMainName(this.getDescriptor().getDisplayName().toString());
-            }
-            else {
-                this.namesAndIcon.setMainName(component.getName().toString());
-            }
+            this.namesAndIcon.setMainName(component.getName().toString());
             this.namesAndIcon.setSubName(component.getPath().toString());
+        }
+
+        setMainName(value: string) {
+            this.namesAndIcon.setMainName(value);
         }
 
         getComponent(): COMPONENT {
             return this.component;
-        }
-
-        hasDescriptor(): boolean {
-            if (this.getDescriptor()) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-
-        getDescriptor(): DESCRIPTOR {
-            throw new Error("To be implemented by subclasses")
-        }
-
-        setupComponentForm(component: PageComponent, descriptor: Descriptor) {
-            if (this.formView) {
-                this.removeChild(this.formView);
-                this.formView = null;
-            }
-            if (!component || !descriptor) {
-                return;
-            }
-
-            var formContext = new api.form.FormContextBuilder().build();
-            var form = descriptor.getConfig();
-            var config: RootDataSet = component.getConfig();
-            this.formView = new FormView(formContext, form, config);
-            this.formView.setDoOffset(false);
-            this.appendChild(this.formView);
         }
     }
 }

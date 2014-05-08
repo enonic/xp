@@ -22,7 +22,7 @@ module app.wizard.page.contextwindow.inspect {
         defaultModels: DefaultModels;
     }
 
-    export class ImageInspectionPanel extends PageComponentInspectionPanel<ImageComponent, ImageDescriptor> {
+    export class ImageInspectionPanel extends DescriptorBasedPageComponentInspectionPanel<ImageComponent, ImageDescriptor> {
 
         private imageComponent: ImageComponent;
 
@@ -63,7 +63,9 @@ module app.wizard.page.contextwindow.inspect {
                     this.imageDescriptors[imageDescriptor.getKey().toString()] = imageDescriptor;
                 });
                 // set default descriptor
-                this.descriptorSelector.setDescriptor(config.defaultModels.getImageDescriptor().getKey());
+                if (config.defaultModels.getImageDescriptor()) {
+                    this.descriptorSelector.setDescriptor(config.defaultModels.getImageDescriptor().getKey());
+                }
             };
             imageDescriptorLoader.onLoadedData(descriptorsLoadedHandler);
 

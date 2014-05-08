@@ -1,6 +1,6 @@
 module api.content.page.part {
 
-    export class PartComponent extends api.content.page.PageComponent implements api.Equitable, api.Cloneable {
+    export class PartComponent extends api.content.page.DescriptorBasedPageComponent implements api.Equitable, api.Cloneable {
 
         constructor(builder: PartComponentBuilder) {
             super(builder);
@@ -20,11 +20,7 @@ module api.content.page.part {
                 return false;
             }
 
-            if (!super.equals(o)) {
-                return false;
-            }
-
-            return true;
+            return super.equals(o);
         }
 
         clone(): PartComponent {
@@ -32,7 +28,7 @@ module api.content.page.part {
         }
     }
 
-    export class PartComponentBuilder extends api.content.page.PageComponentBuilder<PartComponent> {
+    export class PartComponentBuilder extends api.content.page.DescriptorBasedPageComponentBuilder<PartComponent> {
 
         constructor(source?: PartComponent) {
 

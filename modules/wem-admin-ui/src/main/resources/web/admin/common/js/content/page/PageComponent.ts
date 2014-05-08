@@ -8,15 +8,9 @@ module api.content.page {
 
         private path: ComponentPath;
 
-        private descriptorKey: DescriptorKey;
-
-        private config: api.data.RootDataSet;
-
         constructor(builder?: PageComponentBuilder<any>) {
             if (builder != undefined) {
                 this.name = builder.name;
-                this.descriptorKey = builder.descriptor;
-                this.config = builder.config;
                 this.region = builder.region;
                 if (this.region && this.name) {
                     this.path = ComponentPath.fromRegionPathAndComponentName(this.region, this.name);
@@ -43,29 +37,8 @@ module api.content.page {
             this.name = name;
         }
 
-        hasDescriptor(): boolean {
-            if (this.descriptorKey) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
+        reset() {
 
-        getDescriptor(): DescriptorKey {
-            return this.descriptorKey;
-        }
-
-        setDescriptor(key: DescriptorKey) {
-            this.descriptorKey = key;
-        }
-
-        setConfig(value: api.data.RootDataSet) {
-            this.config = value;
-        }
-
-        getConfig(): api.data.RootDataSet {
-            return this.config;
         }
 
         getRegion(): RegionPath {
@@ -79,9 +52,7 @@ module api.content.page {
         toPageComponentJson(): PageComponentJson {
 
             return {
-                "name": this.name.toString(),
-                "descriptor": this.descriptorKey != null ? this.descriptorKey.toString() : null,
-                "config": this.config != null ? this.config.toJson() : null
+                "name": this.name.toString()
             };
         }
 
@@ -105,14 +76,6 @@ module api.content.page {
                 return false;
             }
 
-            if (!api.ObjectHelper.equals(this.descriptorKey, other.descriptorKey)) {
-                return false;
-            }
-
-            if (!api.ObjectHelper.equals(this.config, other.config)) {
-                return false;
-            }
-
             return true;
         }
 
@@ -125,24 +88,10 @@ module api.content.page {
 
         name: api.content.page.ComponentName;
 
-        descriptor: DescriptorKey;
-
-        config: api.data.RootDataSet;
-
         region: RegionPath;
 
         public setName(value: api.content.page.ComponentName): PageComponentBuilder<COMPONENT> {
             this.name = value;
-            return this;
-        }
-
-        public setDescriptor(value: DescriptorKey): PageComponentBuilder<COMPONENT> {
-            this.descriptor = value;
-            return this;
-        }
-
-        public setConfig(value: api.data.RootDataSet): PageComponentBuilder<COMPONENT> {
-            this.config = value;
             return this;
         }
 

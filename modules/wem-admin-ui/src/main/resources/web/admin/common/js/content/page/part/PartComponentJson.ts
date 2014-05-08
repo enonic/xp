@@ -1,9 +1,6 @@
 module api.content.page.part {
 
-    export interface PartComponentJson extends api.content.page.PageComponentJson {
+    export interface PartComponentJson extends api.content.page.DescriptorBasedPageComponentJson {
 
-        name:string;
-
-        config:api.data.json.DataTypeWrapperJson[];
     }
 }

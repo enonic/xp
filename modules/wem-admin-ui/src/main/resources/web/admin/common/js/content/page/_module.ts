@@ -1,5 +1,6 @@
 ///<reference path='DescriptorJson.ts' />
 ///<reference path='PageComponentJson.ts' />
+///<reference path='DescriptorBasedPageComponentJson.ts' />
 ///<reference path='PageComponentTypeWrapperJson.ts' />
 
 ///<reference path='PageDescriptorJson.ts' />
@@ -25,6 +26,8 @@
 ///<reference path='ComponentPath2.ts' />
 ///<reference path='PageComponent.ts' />
 ///<reference path='PageComponentFactory.ts' />
+///<reference path='DescriptorBasedPageComponent.ts' />
+
 ///<reference path='RegionPath.ts' />
 ///<reference path='AbstractRegions.ts' />
 ///<reference path='PageRegions.ts' />
