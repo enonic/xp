@@ -27,6 +27,7 @@
 ///<reference path='PageComponent.ts' />
 ///<reference path='PageComponentFactory.ts' />
 ///<reference path='DescriptorBasedPageComponent.ts' />
+///<reference path='NewPageComponentIdMapEvent.ts' />
 
 ///<reference path='RegionPath.ts' />
 ///<reference path='AbstractRegions.ts' />

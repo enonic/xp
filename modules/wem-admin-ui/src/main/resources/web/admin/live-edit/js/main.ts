@@ -24,41 +24,10 @@ function initializeLiveEdit() {
         newEl.setComponentPath(path);
         $(element).replaceWith(newEl.getHTMLElement());
     });
-}
 
-var openImageUploadDialogRequestListeners: {():void}[] = [];
-var imageUploadedListeners: {(event: api.ui.ImageUploadedEvent):void}[] = [];
-
-function onOpenImageUploadDialogRequest(listener: {():void}) {
-    openImageUploadDialogRequestListeners.push(listener);
-}
-
-function unOpenImageUploadDialogRequest(listener: {():void}) {
-    openImageUploadDialogRequestListeners = openImageUploadDialogRequestListeners.filter((currentListener: {():void}) => {
-        return listener != currentListener;
-    });
-}
-
-function notifyOpenImageUploadDialogListeners() {
-    openImageUploadDialogRequestListeners.forEach((listener: {():void}) => {
-        listener();
-    });
-}
-
-function onImageUploaded(listener: {(event: api.ui.ImageUploadedEvent):void}) {
-    imageUploadedListeners.push(listener);
-}
-
-function unImageUploaded(listener: {(event: api.ui.ImageUploadedEvent):void}) {
-    imageUploadedListeners = imageUploadedListeners.filter((currentListener: {(event: api.ui.ImageUploadedEvent):void}) => {
-        return listener != currentListener;
-    });
-}
-
-function notifyImageUploaded(event: api.ui.ImageUploadedEvent) {
-    imageUploadedListeners.forEach((listener: {(event: api.ui.ImageUploadedEvent):void}) => {
-        listener(event);
-    });
+    var map = new api.content.page.PageComponentIdMap();
+    map.add(api.content.page.ComponentPath2.fromString('region[0]/image[0]'), 1);
+    new api.content.page.NewPageComponentIdMapEvent(map).fire();
 }
 
 function getComponentByPath(path: string): LiveEdit.component.Component {
