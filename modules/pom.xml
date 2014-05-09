@@ -14,10 +14,6 @@
   <packaging>pom</packaging>
   <name>Enonic WEM Modules</name>
 
-  <properties>
-    <packaging.type>jar</packaging.type>
-  </properties>
-
   <modules>
     <module>wem-api</module>
     <module>wem-guice</module>
@@ -47,15 +43,6 @@
       </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <id>osgi</id>
-      <properties>
-        <packaging.type>bundle</packaging.type>
-      </properties>
-    </profile>
-  </profiles>
 
 </project>
         
