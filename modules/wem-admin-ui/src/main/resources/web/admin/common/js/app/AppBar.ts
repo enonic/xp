@@ -50,10 +50,10 @@ module api.app {
             api.dom.Window.get().onResized((event: UIEvent) => this.layoutChildren(), this);
             this.onRendered((event) => this.layoutChildren());
 
-            this.tabMenu.onNavigationItemAdded((event: api.ui.DeckPanelNavigatorEvent)=> {
+            this.tabMenu.onNavigationItemAdded((event: api.ui.NavigatorEvent)=> {
                 this.updateAppOpenTabs();
             });
-            this.tabMenu.onNavigationItemRemoved((event: api.ui.DeckPanelNavigatorEvent)=> {
+            this.tabMenu.onNavigationItemRemoved((event: api.ui.NavigatorEvent)=> {
                 this.updateAppOpenTabs();
             })
         }
@@ -78,7 +78,7 @@ module api.app {
             var tabAvailableWidth = fullWidth - homeElRightEdge - userEl.getWidthWithMargin();
 
             var tabEl = this.tabMenu.getEl();
-            tabEl.setWidth('auto').setWidth(tabEl.getWidthWithMargin() > tabAvailableWidth ? tabAvailableWidth+'px' : 'auto');
+            tabEl.setWidth('auto').setWidth(tabEl.getWidthWithMargin() > tabAvailableWidth ? tabAvailableWidth + 'px' : 'auto');
 
             var centerLeftEdge = (fullWidth - tabEl.getWidth()) / 2;
             tabEl.setLeftPx(Math.max(homeElRightEdge, centerLeftEdge));
@@ -99,7 +99,7 @@ module api.app {
                 homeEl.setInnerHtml(this.application.getShortName());
             }
         }
-   }
+    }
 
     export class LauncherButton extends api.dom.ButtonEl {
 

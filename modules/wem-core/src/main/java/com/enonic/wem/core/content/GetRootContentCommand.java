@@ -3,14 +3,13 @@ package com.enonic.wem.core.content;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
-import com.enonic.wem.core.entity.dao.NodeElasticsearchDao;
 
 final class GetRootContentCommand
     extends AbstractContentCommand<GetRootContentCommand>
 {
     Contents execute()
     {
-        final NodePath nodePath = NodeElasticsearchDao.CONTENT_ROOT_NODE.asAbsolute();
+        final NodePath nodePath = ContentNodeHelper.CONTENT_ROOT_NODE.asAbsolute();
         final Nodes rootNodes = nodeService.getByParent( nodePath );
         final Contents contents = getTranslator().fromNodes( removeNonContentNodes( rootNodes ) );
 

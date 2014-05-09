@@ -1,4 +1,8 @@
 module LiveEdit.component {
+
+    import ImageUploadedEvent = api.content.page.image.ImageUploadedEvent;
+    import OpenImageUploadDialogEvent = api.content.page.image.OpenImageUploadDialogEvent;
+
     export class ImagePlaceholder extends ComponentPlaceholder {
 
         private comboBox: api.content.ContentComboBox;
@@ -13,14 +17,14 @@ module LiveEdit.component {
                 e.stopPropagation();
             });
 
-            var imageUploadHandler = (event: api.ui.ImageUploadedEvent) => this.createImageContent(event.getUploadedItem());
-            onImageUploaded(imageUploadHandler);
-            this.onRemoved((event: api.dom.ElementRemovedEvent) => unImageUploaded(imageUploadHandler));
+            var imageUploadHandler = (event: ImageUploadedEvent) => this.createImageContent(event.getUploadedItem());
+            ImageUploadedEvent.on(imageUploadHandler);
+            this.onRemoved((event: api.dom.ElementRemovedEvent) => ImageUploadedEvent.un(imageUploadHandler));
 
             var comboUploadButtonDiv = new api.dom.DivEl('image-placeholder-selector');
             this.uploadButton = new api.ui.Button();
             this.uploadButton.addClass("upload-button");
-            this.uploadButton.onClicked(() => notifyOpenImageUploadDialogListeners());
+            this.uploadButton.onClicked(() => new OpenImageUploadDialogEvent().fire());
             this.uploadButton.hide();
 
             this.getEl().setData('live-edit-type', "image");

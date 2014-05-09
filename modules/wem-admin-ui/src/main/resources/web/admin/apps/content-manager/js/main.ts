@@ -9,7 +9,7 @@ module components {
     export var detailPanel: app.browse.ContentBrowseItemPanel;
 }
 
-window.onload = () => {
+function startApplication() {
     var application:api.app.Application = api.app.Application.getApplication();
 
     var appBar = new api.app.AppBar(application);
@@ -53,7 +53,7 @@ window.onload = () => {
             }
         }
     }
-};
+}
 
 function route(path: api.rest.Path) {
     var action = path.getElement(0);

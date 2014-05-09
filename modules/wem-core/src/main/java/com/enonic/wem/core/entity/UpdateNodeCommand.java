@@ -4,25 +4,25 @@ package com.enonic.wem.core.entity;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.UpdateNodeParams;
-import com.enonic.wem.core.entity.dao.NodeElasticsearchDao;
+import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
+import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.entity.dao.UpdateNodeArgs;
-import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.api.util.Exceptions;
 
 import static com.enonic.wem.core.entity.dao.UpdateNodeArgs.newUpdateItemArgs;
 
 final class UpdateNodeCommand
 {
-    private IndexService indexService;
+    private ElasticsearchIndexService indexService;
 
-    private NodeElasticsearchDao nodeElasticsearchDao;
+    private NodeDao nodeDao;
 
     private UpdateNodeParams params;
 
     private UpdateNodeCommand( final Builder builder )
     {
         this.indexService = builder.indexService;
-        this.nodeElasticsearchDao = builder.nodeElasticsearchDao;
+        this.nodeDao = builder.nodeDao;
         this.params = builder.params;
     }
 
@@ -43,7 +43,7 @@ final class UpdateNodeCommand
     private Node doExecute()
         throws Exception
     {
-        final Node beforeChange = nodeElasticsearchDao.getById( params.getId() );
+        final Node beforeChange = nodeDao.getById( params.getId() );
 
         final Node.EditBuilder editBuilder = params.getEditor().edit( beforeChange );
         if ( !editBuilder.isChanges() )
@@ -63,9 +63,9 @@ final class UpdateNodeCommand
             entityIndexConfig( edited.getEntityIndexConfig() ).
             build();
 
-        final Node updatedNode = nodeElasticsearchDao.update( updateNodeArgs );
+        final Node updatedNode = nodeDao.update( updateNodeArgs );
 
-        indexService.indexNode( updatedNode );
+        indexService.index( updatedNode );
 
         return updatedNode;
     }
@@ -77,21 +77,21 @@ final class UpdateNodeCommand
 
     static class Builder
     {
-        private IndexService indexService;
+        private ElasticsearchIndexService indexService;
 
-        private NodeElasticsearchDao nodeElasticsearchDao;
+        private NodeDao nodeDao;
 
         private UpdateNodeParams params;
 
-        Builder indexService( final IndexService indexService )
+        Builder indexService( final ElasticsearchIndexService indexService )
         {
             this.indexService = indexService;
             return this;
         }
 
-        Builder nodeElasticsearchDao( final NodeElasticsearchDao session )
+        Builder nodeDao( final NodeDao session )
         {
-            this.nodeElasticsearchDao = session;
+            this.nodeDao = session;
             return this;
         }
 

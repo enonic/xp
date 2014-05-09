@@ -16,13 +16,13 @@ final class DeleteNodeByPathCommand
 
     Node execute()
     {
-        final Node nodeToDelete = nodeElasticsearchDao.getByPath( this.nodePath );
+        final Node nodeToDelete = nodeDao.getByPath( this.nodePath );
 
         doDeleteChildIndexDocuments( nodeToDelete );
 
-        this.nodeElasticsearchDao.deleteByPath( nodePath );
+        this.nodeDao.deleteByPath( nodePath );
 
-        this.indexService.deleteEntity( nodeToDelete.id() );
+        this.indexService.delete( nodeToDelete.id() );
 
         return nodeToDelete;
     }

@@ -5,7 +5,7 @@ module api.ui.tab {
         removeText?:string;
     }
 
-    export class TabMenuItem extends api.dom.LiEl implements api.ui.PanelNavigationItem {
+    export class TabMenuItem extends api.dom.LiEl implements api.ui.NavigationItem {
 
         private tabIndex: number;
 

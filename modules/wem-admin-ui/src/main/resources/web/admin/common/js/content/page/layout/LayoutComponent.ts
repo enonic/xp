@@ -1,6 +1,6 @@
 module api.content.page.layout {
 
-    export class LayoutComponent extends api.content.page.PageComponent implements api.Equitable, api.Cloneable {
+    export class LayoutComponent extends api.content.page.DescriptorBasedPageComponent implements api.Equitable, api.Cloneable {
 
         private regions: LayoutRegions;
 
@@ -58,7 +58,7 @@ module api.content.page.layout {
         }
     }
 
-    export class LayoutComponentBuilder extends api.content.page.PageComponentBuilder<LayoutComponent> {
+    export class LayoutComponentBuilder extends api.content.page.DescriptorBasedPageComponentBuilder<LayoutComponent> {
 
         regions: LayoutRegions;
 

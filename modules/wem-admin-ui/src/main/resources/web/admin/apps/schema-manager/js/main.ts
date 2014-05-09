@@ -15,7 +15,7 @@ module components {
     export var schemaDeleteDialog:app.remove.SchemaDeleteDialog;
 }
 
-window.onload = () => {
+function startApplication() {
     var application:api.app.Application = api.app.Application.getApplication();
     var appBar = new api.app.AppBar(application);
     var appPanel = new app.SchemaAppPanel(appBar);
@@ -35,4 +35,4 @@ window.onload = () => {
             }
         }
     }
-};
+}

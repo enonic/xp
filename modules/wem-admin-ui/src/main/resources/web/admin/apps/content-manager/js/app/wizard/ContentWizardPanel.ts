@@ -162,6 +162,9 @@ module app.wizard {
             }, () => {
 
                 this.addClass("content-wizard-panel");
+                if (this.getSplitPanel()) {
+                    this.getSplitPanel().addClass("prerendered");
+                }
 
                 this.onShown((event: api.dom.ElementShownEvent) => {
                     if (this.getPersistedItem()) {
@@ -447,6 +450,7 @@ module app.wizard {
                     new api.content.ContentUpdatedEvent(content).fire();
                     api.notify.showFeedback('Content was updated!');
 
+                    this.liveFormPanel.contentSaved();
                     return content;
                 });
         }
@@ -557,11 +561,15 @@ module app.wizard {
         }
 
         showLiveEdit() {
-
+            this.getSplitPanel().addClass("toggle-live");
+            this.getSplitPanel().removeClass("toggle-form prerendered");
+            this.updateStickyToolbar();
         }
 
         showWizard() {
-
+            this.getSplitPanel().addClass("toggle-form");
+            this.getSplitPanel().removeClass("toggle-live prerendered");
+            this.updateStickyToolbar();
         }
     }
 

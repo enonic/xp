@@ -20,8 +20,8 @@ module app.view {
             this.addNavigablePanel(new api.ui.tab.TabMenuItem("Version History"), new api.ui.Panel());
             this.addNavigablePanel(new api.ui.tab.TabMenuItem("SEO"), new api.ui.Panel());
 
-            this.getTabMenu().onNavigationItemSelected((event: api.ui.DeckPanelNavigatorEvent) => {
-                this.onTabSelected(event.getTabItem());
+            this.getTabMenu().onNavigationItemSelected((event: api.ui.NavigatorEvent) => {
+                this.onTabSelected(event.getItem());
             });
 
             var firstShowListener = (event: api.dom.ElementShownEvent) => {
@@ -38,7 +38,7 @@ module app.view {
             }
         }
 
-        private onTabSelected(item: api.ui.PanelNavigationItem) {
+        private onTabSelected(item: api.ui.NavigationItem) {
             if (item.getIndex() == 0) {
                 this.getHeader().hide();
                 if (this.getBrowseItem()) {

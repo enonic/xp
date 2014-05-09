@@ -20,7 +20,7 @@ module LiveEdit.ui {
             $(window).on('mouseOutComponent.liveEdit', ()                   => this.hide());
             $(window).on('sortableStart.liveEdit', ()                       => this.hide());
             $(window).on('componentRemoved.liveEdit', ()                    => this.hide());
-            $(window).on('editTextComponent.liveEdit', ()              => this.hide());
+            $(window).on('editTextComponent.liveEdit', ()                   => this.hide());
             $(window).on('resizeBrowserWindow.liveEdit', ()                 => this.handleWindowResize());
 
             // The component should be re-selected after drag'n drop

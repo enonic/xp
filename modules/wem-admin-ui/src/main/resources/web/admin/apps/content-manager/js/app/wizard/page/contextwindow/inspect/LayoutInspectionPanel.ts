@@ -18,7 +18,7 @@ module app.wizard.page.contextwindow.inspect {
 
     }
 
-    export class LayoutInspectionPanel extends PageComponentInspectionPanel<LayoutComponent, LayoutDescriptor> {
+    export class LayoutInspectionPanel extends DescriptorBasedPageComponentInspectionPanel<LayoutComponent, LayoutDescriptor> {
 
         private layoutComponent: LayoutComponent;
 
@@ -98,7 +98,7 @@ module app.wizard.page.contextwindow.inspect {
                 listener(event);
             });
         }
-        
+
         getDescriptor(): LayoutDescriptor {
             if (!this.getComponent().hasDescriptor()) {
                 return null;

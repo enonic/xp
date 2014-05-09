@@ -10,8 +10,8 @@ import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
-import com.enonic.wem.core.entity.dao.NodeElasticsearchDao;
-import com.enonic.wem.core.index.IndexService;
+import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
+import com.enonic.wem.core.elasticsearch.ElasticsearchNodeDao;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -20,17 +20,17 @@ import static org.mockito.Mockito.when;
 public class DeleteNodeByPathCommandTest
 {
 
-    private NodeElasticsearchDao nodeElasticsearchDao;
+    private ElasticsearchNodeDao elasticsearchNodeDao;
 
-    private IndexService indexService;
+    private ElasticsearchIndexService indexService;
 
     @Before
     public void setUp()
         throws Exception
     {
-        this.nodeElasticsearchDao = mock( NodeElasticsearchDao.class );
+        this.elasticsearchNodeDao = mock( ElasticsearchNodeDao.class );
 
-        this.indexService = mock( IndexService.class );
+        this.indexService = mock( ElasticsearchIndexService.class );
     }
 
     @Test
@@ -57,32 +57,32 @@ public class DeleteNodeByPathCommandTest
 
         final DeleteNodeByPathCommand deleteNode = DeleteNodeByPathCommand.create().
             nodePath( nodeToDelete.path() ).
-            nodeElasticsearchDao( this.nodeElasticsearchDao ).
+            nodeDao( this.elasticsearchNodeDao ).
             indexService( this.indexService ).
             build();
 
         deleteNode.execute();
 
-        verify( nodeElasticsearchDao ).deleteByPath( nodeToDelete.path() );
-        verify( indexService ).deleteEntity( nodeToDelete.id() );
-        verify( indexService ).deleteEntity( childNode.id() );
+        verify( elasticsearchNodeDao ).deleteByPath( nodeToDelete.path() );
+        verify( indexService ).delete( nodeToDelete.id() );
+        verify( indexService ).delete( childNode.id() );
     }
 
     private void setupMocks( final Node nodeToDelete, final Node childNode )
     {
-        when( this.nodeElasticsearchDao.getByPath( nodeToDelete.path() ) ).
+        when( this.elasticsearchNodeDao.getByPath( nodeToDelete.path() ) ).
             thenReturn( nodeToDelete );
 
-        when( this.nodeElasticsearchDao.getByParent( nodeToDelete.path() ) ).
+        when( this.elasticsearchNodeDao.getByParent( nodeToDelete.path() ) ).
             thenReturn( Nodes.from( childNode ) );
 
-        when( this.nodeElasticsearchDao.getByParent( childNode.path() ) ).
+        when( this.elasticsearchNodeDao.getByParent( childNode.path() ) ).
             thenReturn( Nodes.empty() );
 
-        when( this.nodeElasticsearchDao.deleteById( nodeToDelete.id() ) ).
+        when( this.elasticsearchNodeDao.deleteById( nodeToDelete.id() ) ).
             thenReturn( nodeToDelete );
 
-        when( this.nodeElasticsearchDao.deleteById( childNode.id() ) ).
+        when( this.elasticsearchNodeDao.deleteById( childNode.id() ) ).
             thenReturn( nodeToDelete );
     }
 }

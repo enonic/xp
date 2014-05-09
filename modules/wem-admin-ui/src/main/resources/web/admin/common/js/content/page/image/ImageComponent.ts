@@ -1,6 +1,6 @@
 module api.content.page.image {
 
-    export class ImageComponent extends api.content.page.PageComponent implements api.Equitable, api.Cloneable {
+    export class ImageComponent extends api.content.page.DescriptorBasedPageComponent implements api.Equitable, api.Cloneable {
 
         private image: api.content.ContentId;
 
@@ -53,7 +53,7 @@ module api.content.page.image {
         }
     }
 
-    export class ImageComponentBuilder extends api.content.page.PageComponentBuilder<ImageComponent> {
+    export class ImageComponentBuilder extends api.content.page.DescriptorBasedPageComponentBuilder<ImageComponent> {
 
         image: api.content.ContentId;
 

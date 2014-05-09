@@ -6,8 +6,7 @@ import com.enonic.wem.core.blob.BlobModule;
 import com.enonic.wem.core.blobstore.BlobStoreModule;
 import com.enonic.wem.core.config.ConfigModule;
 import com.enonic.wem.core.content.ContentModule;
-import com.enonic.wem.core.content.page.PageModule;
-import com.enonic.wem.core.content.site.SiteModule;
+import com.enonic.wem.core.elasticsearch.ElasticsearchModule;
 import com.enonic.wem.core.entity.EntityModule;
 import com.enonic.wem.core.event.EventModule;
 import com.enonic.wem.core.home.HomeModule;
@@ -35,6 +34,7 @@ public final class CoreModule
         install( new ContentModule() );
         install( new RelationshipModule() );
         install( new SchemaModule() );
+        install( new ElasticsearchModule() );
         install( new IndexModule() );
         install( new ModuleModule() );
         install( new ResourceModule() );

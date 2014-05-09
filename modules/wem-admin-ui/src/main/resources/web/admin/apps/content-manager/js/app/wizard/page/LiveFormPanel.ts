@@ -26,6 +26,8 @@ module app.wizard.page {
     import PageComponentBuilder = api.content.page.PageComponentBuilder;
     import ComponentName = api.content.page.ComponentName;
     import PageComponent = api.content.page.PageComponent;
+    import DescriptorBasedPageComponent = api.content.page.DescriptorBasedPageComponent;
+    import DescriptorBasedPageComponentBuilder = api.content.page.DescriptorBasedPageComponentBuilder;
     import LayoutComponent = api.content.page.layout.LayoutComponent;
     import PartComponentBuilder = api.content.page.part.PartComponentBuilder;
     import PartComponent = api.content.page.part.PartComponent;
@@ -270,8 +272,9 @@ module app.wizard.page {
 
             if (!this.pageSkipReload) {
 
-                if (!this.content.isPage()) {
-                    // Nothing to set
+                if (!this.pageRegions && !this.content.isPage()) {
+                    this.pageRegions = this.defaultModels.getPageTemplate().getRegions();
+                    this.pageConfig = this.defaultModels.getPageTemplate().getConfig();
                 }
                 else if (!this.pageRegions && this.content.isPage()) {
 
@@ -294,6 +297,20 @@ module app.wizard.page {
             else {
                 return this.liveEditPage.load(this.content).
                     then(() => {
+                        return this.loadPageDescriptor();
+                    });
+            }
+        }
+
+        /**
+         * Called by ContentWizardPanel when content is saved.
+         */
+        contentSaved() {
+
+            if (!this.pageSkipReload) {
+                // Reload page to show changes
+                this.liveEditPage.load(this.content).
+                    done(() => {
                         return this.loadPageDescriptor();
                     });
             }
@@ -438,7 +455,7 @@ module app.wizard.page {
 
                 var component = this.pageRegions.getComponent(event.getPath());
                 if (component) {
-                    component.setDescriptor(null);
+                    component.reset();
                 }
             });
 
@@ -578,9 +595,9 @@ module app.wizard.page {
 
             var deferred = Q.defer<PageComponent>();
 
-            var component: PageComponent,
-                originComponent: PageComponent = this.pageRegions.getComponent(originPath),
-                getDescriptorsRequest = new GetPartDescriptorsByModulesRequest(this.siteTemplate.getModules());
+            var component: PageComponent;
+            var originComponent: DescriptorBasedPageComponent = <DescriptorBasedPageComponent>this.pageRegions.getComponent(originPath);
+            var getDescriptorsRequest = new GetPartDescriptorsByModulesRequest(this.siteTemplate.getModules());
 
             var originDescriptorName: string = originComponent.getDescriptor().getName().toString();
 
@@ -711,7 +728,9 @@ module app.wizard.page {
             }
             if (builder) {
                 builder.setName(componentName);
-                builder.setConfig(new api.data.RootDataSet());
+                if (builder instanceof DescriptorBasedPageComponentBuilder) {
+                    (<DescriptorBasedPageComponentBuilder>builder).setConfig(new RootDataSet());
+                }
                 var component = builder.build();
                 this.pageRegions.addComponentAfter(component, regionPath, precedingComponent);
                 return component;
@@ -762,7 +781,7 @@ module app.wizard.page {
         }
 
         private setComponentDescriptor(descriptor: Descriptor, componentPath: ComponentPath, componentPlaceholder) {
-            var component = this.pageRegions.getComponent(componentPath);
+            var component: DescriptorBasedPageComponent = <DescriptorBasedPageComponent>this.pageRegions.getComponent(componentPath);
             if (!component || !descriptor) {
                 return;
             }
@@ -792,7 +811,7 @@ module app.wizard.page {
         }
 
         private setComponentDescriptorLocally(descriptor: Descriptor, componentPath: ComponentPath) {
-            var component = this.pageRegions.getComponent(componentPath);
+            var component: DescriptorBasedPageComponent = <DescriptorBasedPageComponent>this.pageRegions.getComponent(componentPath);
             if (!component || !descriptor) {
                 return;
             }

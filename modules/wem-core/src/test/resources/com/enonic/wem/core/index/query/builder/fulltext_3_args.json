@@ -1,0 +1,7 @@
+{
+    "simple_query_string": {
+        "query": "mysearchphrase",
+        "fields": ["myfield._analyzed"],
+        "default_operator": "or"
+    }
+}

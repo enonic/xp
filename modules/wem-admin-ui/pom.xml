@@ -46,7 +46,7 @@
         <executions>
           <execution>
             <id>npmInstall</id>
-            <phase>prepare-package</phase>
+            <phase>generate-sources</phase>
             <goals>
               <goal>exec</goal>
             </goals>
@@ -59,7 +59,7 @@
           </execution>
           <execution>
             <id>gruntAll</id>
-            <phase>prepare-package</phase>
+            <phase>generate-sources</phase>
             <goals>
               <goal>exec</goal>
             </goals>

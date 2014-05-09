@@ -4,7 +4,7 @@ module api.ui.tab {
         removable?:boolean;
     }
 
-    export class TabBarItem extends api.dom.LiEl implements api.ui.PanelNavigationItem {
+    export class TabBarItem extends api.dom.LiEl implements api.ui.NavigationItem {
 
         private label: string;
 

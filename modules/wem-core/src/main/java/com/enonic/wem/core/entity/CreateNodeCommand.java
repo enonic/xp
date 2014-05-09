@@ -6,7 +6,7 @@ import com.enonic.wem.api.entity.Attachments;
 import com.enonic.wem.api.entity.CreateNodeParams;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.core.entity.dao.CreateNodeArguments;
-import com.enonic.wem.core.entity.dao.NodeElasticsearchDao;
+import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.index.IndexService;
 
 import static com.enonic.wem.core.entity.dao.CreateNodeArguments.newCreateNodeArgs;
@@ -17,12 +17,12 @@ final class CreateNodeCommand
 
     private CreateNodeParams params;
 
-    private NodeElasticsearchDao nodeElasticsearchDao;
+    private NodeDao nodeDao;
 
     private CreateNodeCommand( final Builder builder )
     {
         this.indexService = builder.indexService;
-        this.nodeElasticsearchDao = builder.nodeElasticsearchDao;
+        this.nodeDao = builder.nodeDao;
         this.params = builder.params;
     }
 
@@ -45,9 +45,9 @@ final class CreateNodeCommand
             embed( params.isEmbed() ).
             build();
 
-        final Node persistedNode = nodeElasticsearchDao.create( createNodeArguments );
+        final Node persistedNode = nodeDao.create( createNodeArguments );
 
-        indexService.indexNode( persistedNode );
+        indexService.index( persistedNode );
 
         return persistedNode;
     }
@@ -61,7 +61,7 @@ final class CreateNodeCommand
     {
         private IndexService indexService;
 
-        private NodeElasticsearchDao nodeElasticsearchDao;
+        private NodeDao nodeDao;
 
         private CreateNodeParams params;
 
@@ -71,9 +71,9 @@ final class CreateNodeCommand
             return this;
         }
 
-        Builder nodeElasticsearchDao( final NodeElasticsearchDao nodeElasticsearchDao )
+        Builder nodeDao( final NodeDao nodeDao )
         {
-            this.nodeElasticsearchDao = nodeElasticsearchDao;
+            this.nodeDao = nodeDao;
             return this;
         }
 

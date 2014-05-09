@@ -24,8 +24,8 @@
 ///<reference path='ActionButton.ts' />
 ///<reference path='CloseButton.ts' />
 ///<reference path='ToggleSlide.ts' />
-///<reference path='PanelNavigationItem.ts' />
-///<reference path='DeckPanelNavigator.ts' />
+///<reference path='NavigationItem.ts' />
+///<reference path='Navigator.ts' />
 ///<reference path='NavigatedDeckPanel.ts' />
 ///<reference path='FloatingWindow.ts' />
 ///<reference path='NavigableFloatingWindow.ts' />
@@ -41,5 +41,5 @@
 ///<reference path='CodeArea.ts' />
 ///<reference path='UploadItem.ts' />
 ///<reference path='ImageUploader.ts' />
-///<reference path='DeckPanelNavigatorEvent.ts' />
+///<reference path='NavigatorEvent.ts' />
 ///<reference path='ImageUploadedEvent.ts' />

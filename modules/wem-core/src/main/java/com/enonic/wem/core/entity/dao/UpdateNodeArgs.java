@@ -22,7 +22,7 @@ public class UpdateNodeArgs
 
     private final EntityIndexConfig entityIndexConfig;
 
-    UpdateNodeArgs( Builder builder )
+    public UpdateNodeArgs( Builder builder )
     {
         this.updater = builder.updater;
         this.nodeToUpdate = builder.nodeToUpdate;
@@ -32,32 +32,32 @@ public class UpdateNodeArgs
         this.entityIndexConfig = builder.entityIndexConfig;
     }
 
-    UserKey updater()
+    public UserKey updater()
     {
         return updater;
     }
 
-    EntityId nodeToUpdate()
+    public EntityId nodeToUpdate()
     {
         return nodeToUpdate;
     }
 
-    NodeName name()
+    public NodeName name()
     {
         return name;
     }
 
-    RootDataSet rootDataSet()
+    public RootDataSet rootDataSet()
     {
         return rootDataSet;
     }
 
-    Attachments attachments()
+    public Attachments attachments()
     {
         return attachments;
     }
 
-    EntityIndexConfig entityIndexConfig()
+    public EntityIndexConfig entityIndexConfig()
     {
         return entityIndexConfig;
     }

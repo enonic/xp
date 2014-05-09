@@ -1,5 +1,6 @@
 ///<reference path='BaseInspectionPanel.ts' />
 ///<reference path='PageComponentInspectionPanel.ts' />
+///<reference path='DescriptorBasedPageComponentInspectionPanel.ts' />
 ///<reference path='NoSelectionInspectionPanel.ts' />
 ///<reference path='ImageDescriptorChangedEvent.ts' />
 ///<reference path='ImageInspectionPanel.ts' />

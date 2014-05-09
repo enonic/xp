@@ -16,13 +16,13 @@ final class DeleteNodeByIdCommand
 
     Node execute()
     {
-        final Node nodeToDelete = nodeElasticsearchDao.getById( this.entityId );
+        final Node nodeToDelete = nodeDao.getById( this.entityId );
 
         doDeleteChildIndexDocuments( nodeToDelete );
 
-        final Node deletedNode = nodeElasticsearchDao.deleteById( entityId );
+        final Node deletedNode = nodeDao.deleteById( entityId );
 
-        indexService.deleteEntity( entityId );
+        indexService.delete( entityId );
 
         return deletedNode;
     }

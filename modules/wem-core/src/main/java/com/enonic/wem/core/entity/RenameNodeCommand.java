@@ -8,18 +8,18 @@ import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.entity.RenameNodeParams;
 import com.enonic.wem.api.util.Exceptions;
+import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.core.entity.dao.MoveNodeArguments;
-import com.enonic.wem.core.entity.dao.NodeElasticsearchDao;
+import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
-import com.enonic.wem.core.index.IndexService;
 
 final class RenameNodeCommand
 {
     private RenameNodeParams params;
 
-    private IndexService indexService;
+    private ElasticsearchIndexService indexService;
 
-    private NodeElasticsearchDao nodeElasticsearchDao;
+    private NodeDao nodeDao;
 
     Node execute()
     {
@@ -39,14 +39,14 @@ final class RenameNodeCommand
         throws Exception
     {
         final EntityId entityId = params.getEntityId();
-        final Node nodeToBeRenamed = nodeElasticsearchDao.getById( entityId );
+        final Node nodeToBeRenamed = nodeDao.getById( entityId );
 
         if ( nodeToBeRenamed == null )
         {
             throw new NodeNotFoundException( "Node with id " + entityId + " not found" );
         }
 
-        final Nodes children = nodeElasticsearchDao.getByParent( nodeToBeRenamed.path() );
+        final Nodes children = nodeDao.getByParent( nodeToBeRenamed.path() );
 
         final NodePath parentPath = nodeToBeRenamed.parent().asAbsolute();
 
@@ -63,7 +63,7 @@ final class RenameNodeCommand
         {
             final Node movedNode = doMoveNode( newParentPath, node.name(), node.id() );
 
-            final Nodes children = nodeElasticsearchDao.getByParent( node.path() );
+            final Nodes children = nodeDao.getByParent( node.path() );
 
             if ( children != null && children.isNotEmpty() )
             {
@@ -81,11 +81,11 @@ final class RenameNodeCommand
             nodeToMove( id ).
             build();
 
-        nodeElasticsearchDao.move( moveChildArgument );
+        nodeDao.move( moveChildArgument );
 
-        final Node movedNode = nodeElasticsearchDao.getById( id );
+        final Node movedNode = nodeDao.getById( id );
 
-        indexService.indexNode( movedNode );
+        indexService.index( movedNode );
 
         return movedNode;
     }
@@ -96,15 +96,15 @@ final class RenameNodeCommand
         return this;
     }
 
-    RenameNodeCommand indexService( final IndexService indexService )
+    RenameNodeCommand indexService( final ElasticsearchIndexService indexService )
     {
         this.indexService = indexService;
         return this;
     }
 
-    RenameNodeCommand nodeElasticsearchDao( final NodeElasticsearchDao nodeElasticsearchDao )
+    RenameNodeCommand nodeDao( final NodeDao nodeDao )
     {
-        this.nodeElasticsearchDao = nodeElasticsearchDao;
+        this.nodeDao = nodeDao;
         return this;
     }
 }

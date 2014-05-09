@@ -62,8 +62,6 @@ module api.app.wizard {
 
         private splitPanelThreshold:number = 960;
 
-        private lastWidth:number;
-
         constructor(params: WizardPanelParams, callback: Function) {
             super("wizard-panel");
 
@@ -81,9 +79,13 @@ module api.app.wizard {
             this.appendChild(this.mainToolbar);
             if (params.split && params.livePanel) {
                 this.splitPanel = new api.ui.SplitPanelBuilder(this.formPanel, params.livePanel)
+                                    .setFirstPanelMinSize(280)
                                     .setAlignment(api.ui.SplitPanelAlignment.VERTICAL)
                                     .build();
                 this.updateSplitPanel();
+                this.splitPanel.onResized((event: api.dom.ElementResizedEvent) => {
+                    this.updateStickyToolbar();
+                });
                 this.appendChild(this.splitPanel);
             } else {
                 this.appendChild(this.formPanel);
@@ -146,16 +148,13 @@ module api.app.wizard {
                     this.lastFocusedElement.focus();
                 }
             });
+
             api.dom.Window.get().onResized((event: UIEvent) => {
+
                 if (!event.srcElement.nodeName) {
-                    var currentWidth = $(window).width();
-                    if (!((this.lastWidth > this.splitPanelThreshold && currentWidth > this.splitPanelThreshold) || (this.lastWidth <= this.splitPanelThreshold && currentWidth <= this.splitPanelThreshold))) {
-                        this.updateSplitPanel();
-                    }
-                    this.lastWidth = currentWidth;
+                    this.updateStickyToolbar();
                 }
             }, this);
-            this.lastWidth = $(window).width();
         }
 
         isPersisted(): boolean {
@@ -374,13 +373,14 @@ module api.app.wizard {
             });
         }
 
+        getSplitPanel(): api.ui.SplitPanel {
+            return this.splitPanel;
+        }
+
         private updateSplitPanel() {
             if ($(window).width() > this.splitPanelThreshold) {
                 this.splitPanel.setFirstPanelSize("30%");
-            } else {
-                this.splitPanel.setFirstPanelSize("100%");
             }
-
             this.splitPanel.distribute();
         }
 

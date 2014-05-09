@@ -12,7 +12,6 @@ import com.enonic.wem.core.index.IndexType;
 
 public class IndexDocument
 {
-
     private final EntityId id;
 
     private final IndexType indexType;

@@ -11,7 +11,7 @@ module app.wizard.page.contextwindow.inspect {
         siteTemplate: SiteTemplate;
     }
 
-    export class PartInspectionPanel extends PageComponentInspectionPanel<PartComponent, PartDescriptor> {
+    export class PartInspectionPanel extends DescriptorBasedPageComponentInspectionPanel<PartComponent, PartDescriptor> {
 
         private partDescriptors: {
             [key: string]: PartDescriptor;

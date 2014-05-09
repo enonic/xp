@@ -225,13 +225,13 @@ module api.ui.selector.dropdown {
             var option = this.getOptionByRow(index);
             if (option != null) {
                 this.selectOption(option);
+                api.dom.FormEl.moveFocusToNextFocusable(this.input);
             }
         }
 
         selectOption(option: Option<OPTION_DISPLAY_VALUE>, silent: boolean = false) {
 
             this.dropdownDropdown.markSelections([option]);
-            api.dom.FormEl.moveFocusToNextFocusable(this.input);
             if (!silent) {
                 this.notifyOptionSelected(option);
             }
