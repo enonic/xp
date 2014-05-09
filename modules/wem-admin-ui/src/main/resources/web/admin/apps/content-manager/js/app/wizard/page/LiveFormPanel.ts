@@ -302,6 +302,20 @@ module app.wizard.page {
             }
         }
 
+        /**
+         * Called by ContentWizardPanel when content is saved.
+         */
+        contentSaved() {
+
+            if (!this.pageSkipReload) {
+                // Reload page to show changes
+                this.liveEditPage.load(this.content).
+                    done(() => {
+                        return this.loadPageDescriptor();
+                    });
+            }
+        }
+
         private loadPageDescriptor(): Q.Promise<void> {
 
             if (!this.pageTemplate) {
