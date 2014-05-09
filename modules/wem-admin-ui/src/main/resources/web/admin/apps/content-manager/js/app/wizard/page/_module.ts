@@ -19,4 +19,6 @@
 
 ///<reference path='LiveEditPage.ts' />
 
+///<reference path='PageComponentNameChanger.ts' />
+///<reference path='PageComponentSetDescriptorCommand.ts' />
 ///<reference path='LiveFormPanel.ts' />
