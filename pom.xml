@@ -13,7 +13,7 @@
   <groupId>com.enonic.wem</groupId>
   <artifactId>wem-ce</artifactId>
   <packaging>pom</packaging>
-  <name>Enonic WEM</name>
+  <name>Enonic WEM Parent</name>
   <version>5.0.0-SNAPSHOT</version>
 
   <properties>
@@ -22,9 +22,17 @@
   </properties>
 
   <modules>
-    <module>modules</module>
-    <module>platforms</module>
-    <module>itests</module>
+    <module>modules/wem-api</module>
+    <module>modules/wem-guice</module>
+    <module>modules/wem-core</module>
+    <module>modules/wem-admin</module>
+    <module>modules/wem-admin-ui</module>
+    <module>modules/wem-portal</module>
+    <module>modules/wem-boot</module>
+    <module>modules/wem-webapp</module>
+    <module>modules/wem-runner</module>
+    <module>modules/wem-karaf</module>
+    <module>modules/wem-itests</module>
   </modules>
 
   <dependencies>
@@ -124,6 +132,19 @@
             <version>2.1.8</version>
           </dependency>
         </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>2.4.0</version>
+        <extensions>true</extensions>
+        <configuration>
+          <excludeDependencies>*;scope=provided</excludeDependencies>
+          <instructions>
+            <Embed-Transitive>true</Embed-Transitive>
+            <Embed-Directory>META-INF/lib</Embed-Directory>
+          </instructions>
+        </configuration>
       </plugin>
     </plugins>
   </build>
