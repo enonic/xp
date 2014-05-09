@@ -13,7 +13,15 @@ module api.event {
         }
 
         fire(contextWindow: Window = window) {
-            api.event.fireEvent2(this, contextWindow);
+            EventBus2.fireEvent(this, contextWindow);
+        }
+
+        static bind(name: string, handler: (event: Event2) => void, contextWindow: Window = window) {
+            EventBus2.onEvent(name, handler, contextWindow);
+        }
+
+        static unbind(name: string, handler: (event: Event2) => void, contextWindow: Window = window) {
+            EventBus2.unEvent2(name, handler, contextWindow);
         }
     }
 

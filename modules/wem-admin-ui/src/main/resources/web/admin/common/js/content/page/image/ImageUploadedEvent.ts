@@ -1,6 +1,8 @@
 module api.content.page.image {
 
-    export class ImageUploadedEvent extends api.event.Event2 {
+    import Event2 = api.event.Event2;
+
+    export class ImageUploadedEvent extends Event2 {
 
         private uploadedItem: api.ui.UploadItem;
 
@@ -14,11 +16,11 @@ module api.content.page.image {
         }
 
         static on(handler: (event: ImageUploadedEvent) => void, contextWindow: Window = window) {
-            api.event.onEvent2('imageUploadedEvent.liveEdit', handler, contextWindow);
+            Event2.bind('imageUploadedEvent.liveEdit', handler, contextWindow);
         }
 
         static un(handler: (event: ImageUploadedEvent) => void, contextWindow: Window = window) {
-            api.event.unEvent2('imageUploadedEvent.liveEdit', handler, contextWindow);
+            Event2.unbind('imageUploadedEvent.liveEdit', handler, contextWindow);
         }
     }
 }
