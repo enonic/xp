@@ -126,13 +126,17 @@
 <div id="analytics-chart" style="height: 200px;"></div>
 <script type="text/javascript">
   window.onresize = function () {
-    clearGraph();
-    drawGraph();
+      if(Morris) {
+        clearGraph();
+        drawGraph();
+      }
   }
 
   window.onload = function () {
-    clearGraph();
-    drawGraph();
+      if(Morris) {
+        clearGraph();
+        drawGraph();
+      }
   }
 
   function clearGraph() {
