@@ -5,10 +5,10 @@
 
     <!-- Required libraries -->
     <bundle>mvn:com.enonic.osgi.bundles/jdom/2.0.5_1</bundle>
-    <bundle>mvn:com.fasterxml.jackson.core/jackson-core/2.2.2</bundle>
-    <bundle>mvn:com.fasterxml.jackson.core/jackson-annotations/2.2.2</bundle>
-    <bundle>mvn:com.fasterxml.jackson.core/jackson-databind/2.2.2</bundle>
-    <bundle>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-smile/2.2.2</bundle>
+    <bundle>mvn:com.fasterxml.jackson.core/jackson-core/2.2.1</bundle>
+    <bundle>mvn:com.fasterxml.jackson.core/jackson-annotations/2.2.1</bundle>
+    <bundle>mvn:com.fasterxml.jackson.core/jackson-databind/2.2.1</bundle>
+    <bundle>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-smile/2.2.1</bundle>
     <bundle>mvn:com.google.guava/guava/16.0.1</bundle>
     <bundle>mvn:commons-lang/commons-lang/2.4</bundle>
     <bundle>mvn:com.enonic.osgi.bundles/jparsec/2.1.0_1</bundle>
@@ -45,7 +45,7 @@
 
     <!-- Required libraries -->
     <bundle>mvn:commons-io/commons-io/2.4</bundle>
-    <bundle>mvn:com.fasterxml.jackson.datatype/jackson-datatype-joda/2.2.2</bundle>
+    <bundle>mvn:com.fasterxml.jackson.datatype/jackson-datatype-joda/2.2.1</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.rhino/1.7R4_1</bundle>
     <bundle>mvn:com.samskivert/jmustache/1.9</bundle>
     <bundle>mvn:com.enonic.osgi.bundles/jhlabs-filters/2.0.235_1</bundle>
@@ -56,8 +56,25 @@
     <bundle>mvn:com.sun.jersey/jersey-server/1.17.1</bundle>
     <bundle>mvn:com.sun.jersey/jersey-servlet/1.17.1</bundle>
 
-    <!-- WEM Guice artifact -->
+    <!-- WEM Core artifact -->
     <bundle>mvn:com.enonic.wem/wem-core/${project.version}</bundle>
+
+  </feature>
+
+  <feature name="wem-admin" version="${project.version}" description="Enonic WEM Admin Feature">
+
+    <!-- Required features -->
+    <feature>wem-core</feature>
+
+    <!-- Required libraries -->
+    <bundle>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-base/2.2.1</bundle>
+    <bundle>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider/2.2.1</bundle>
+    <bundle>mvn:commons-fileupload/commons-fileupload/1.2.2</bundle>
+    <bundle>mvn:org.jvnet/mimepull/1.6</bundle>
+    <bundle>mvn:com.sun.jersey.contribs/jersey-multipart/1.17.1</bundle>
+
+    <!-- WEM Admin artifact -->
+    <bundle>mvn:com.enonic.wem/wem-admin/${project.version}</bundle>
 
   </feature>
 
