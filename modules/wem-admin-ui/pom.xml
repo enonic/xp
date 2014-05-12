@@ -12,8 +12,10 @@
   </parent>
 
   <artifactId>wem-admin-ui</artifactId>
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
   <name>Enonic WEM Admin UI</name>
+
+  <!-- TODO: Add as fragment to com.enonic.wem.admin -->
 
   <properties>
     <npm.exec>npm</npm.exec>

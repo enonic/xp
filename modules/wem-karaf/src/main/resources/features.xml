@@ -78,4 +78,30 @@
 
   </feature>
 
+  <feature name="wem-admin-ui" version="${project.version}" description="Enonic WEM Admin UI Feature">
+
+    <!-- Required features -->
+    <feature>wem-admin</feature>
+
+    <!-- WEM Admin UI artifact -->
+    <bundle>mvn:com.enonic.wem/wem-admin-ui/${project.version}</bundle>
+
+  </feature>
+
+  <feature name="wem-portal" version="${project.version}" description="Enonic WEM Portal Feature">
+
+    <!-- Required features -->
+    <feature>wem-core</feature>
+
+    <!-- Required libraries -->
+    <bundle>mvn:com.google.code.gson/gson/2.2.4</bundle>
+    <bundle>mvn:com.enonic.osgi.bundles/saxon-he/9.5.1_1</bundle>
+    <bundle>mvn:org.jsoup/jsoup/1.7.3</bundle>
+    <bundle>mvn:com.enonic.osgi.bundles/attoparser/1.3.0_1</bundle>
+
+    <!-- WEM Portal artifact -->
+    <bundle>mvn:com.enonic.wem/wem-portal/${project.version}</bundle>
+
+  </feature>
+
 </features>
