@@ -104,4 +104,16 @@
 
   </feature>
 
+  <feature name="wem-all" version="${project.version}" description="Enonic WEM Boot Feature">
+
+    <!-- Required features -->
+    <feature>wem-admin</feature>
+    <feature>wem-admin-ui</feature>
+    <feature>wem-portal</feature>
+
+    <!-- WEM Boot artifact -->
+    <bundle>mvn:com.enonic.wem/wem-boot/${project.version}</bundle>
+
+  </feature>
+
 </features>

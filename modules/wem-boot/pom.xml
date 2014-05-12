@@ -11,7 +11,7 @@
   </parent>
 
   <artifactId>wem-boot</artifactId>
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
   <name>Enonic WEM Boot</name>
 
   <dependencies>
@@ -45,7 +45,32 @@
       <artifactId>log4j-over-slf4j</artifactId>
       <version>1.7.2</version>
     </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <configuration>
+          <instructions>
+            <Bundle-Activator>
+              com.enonic.wem.boot.BootActivator
+            </Bundle-Activator>
+            <Export-Package/>
+            <Private-Package>
+              com.enonic.wem.boot.*
+            </Private-Package>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
         
