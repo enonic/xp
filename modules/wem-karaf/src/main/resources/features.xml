@@ -4,15 +4,15 @@
   <feature name="wem-api" version="${project.version}" description="Enonic WEM API Feature">
 
     <!-- Required libraries -->
-    <bundle>mvn:com.enonic.osgi.bundles/jdom/2.0.5</bundle>
+    <bundle>mvn:com.enonic.osgi.bundles/jdom/2.0.5_1</bundle>
     <bundle>mvn:com.fasterxml.jackson.core/jackson-core/2.2.2</bundle>
-    <bundle>mvn:com.fasterxml.jackson.core/jackson-databind/2.2.2</bundle>
     <bundle>mvn:com.fasterxml.jackson.core/jackson-annotations/2.2.2</bundle>
+    <bundle>mvn:com.fasterxml.jackson.core/jackson-databind/2.2.2</bundle>
     <bundle>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-smile/2.2.2</bundle>
     <bundle>mvn:com.google.guava/guava/16.0.1</bundle>
     <bundle>mvn:commons-lang/commons-lang/2.4</bundle>
-    <bundle>mvn:com.enonic.osgi.bundles/jparsec/2.0.1</bundle>
-    <bundle>mvn:joda-time/joda-time/2.1</bundle>
+    <bundle>mvn:com.enonic.osgi.bundles/jparsec/2.1.0_1</bundle>
+    <bundle>mvn:joda-time/joda-time/2.3</bundle>
     <bundle>mvn:org.joda/joda-convert/1.2</bundle>
 
     <!-- WEM API artifact -->
@@ -26,24 +26,38 @@
     <feature>wem-api</feature>
 
     <!-- Required libraries -->
-    <bundle>mvn:org.ops4j/peaberry/1.3</bundle>
-    <bundle>mvn:com.google.inject.extensions/guice-multibindings/3.0</bundle>
-    <bundle>mvn:com.google.inject/guice/3.0</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aopalliance/1.0_6</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.javax-inject/1_2</bundle>
+    <bundle>mvn:com.google.inject.extensions/guice-multibindings/3.0</bundle>
+    <bundle>mvn:com.google.inject/guice/3.0</bundle>
+    <bundle>mvn:org.ops4j/peaberry/1.3</bundle>
 
     <!-- WEM Guice artifact -->
     <bundle>mvn:com.enonic.wem/wem-guice/${project.version}</bundle>
 
   </feature>
 
-  <feature name="wem-xml" version="${project.version}" description="Enonic WEM Xml Feature">
+  <feature name="wem-core" version="${project.version}" description="Enonic WEM Core Feature">
 
     <!-- Required features -->
-    <feature>wem-api</feature>
+    <feature>wem-guice</feature>
+    <feature>http-whiteboard</feature>
+
+    <!-- Required libraries -->
+    <bundle>mvn:commons-io/commons-io/2.4</bundle>
+    <bundle>mvn:com.fasterxml.jackson.datatype/jackson-datatype-joda/2.2.2</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.rhino/1.7R4_1</bundle>
+    <bundle>mvn:com.samskivert/jmustache/1.9</bundle>
+    <bundle>mvn:com.enonic.osgi.bundles/jhlabs-filters/2.0.235_1</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.lucene/4.7.0_1</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.lucene-analyzers-common/4.7.0_1</bundle>
+    <bundle>mvn:com.enonic.osgi.bundles/elasticsearch/1.0.1_1</bundle>
+    <bundle>mvn:com.sun.jersey/jersey-core/1.17.1</bundle>
+    <bundle>mvn:com.sun.jersey/jersey-server/1.17.1</bundle>
+    <bundle>mvn:com.sun.jersey/jersey-servlet/1.17.1</bundle>
 
     <!-- WEM Guice artifact -->
-    <bundle>mvn:com.enonic.wem/wem-xml/${project.version}</bundle>
+    <bundle>mvn:com.enonic.wem/wem-core/${project.version}</bundle>
 
   </feature>
 

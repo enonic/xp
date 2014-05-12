@@ -141,6 +141,7 @@
         <configuration>
           <excludeDependencies>*;scope=provided</excludeDependencies>
           <instructions>
+            <Import-Package>*</Import-Package>
             <Embed-Transitive>true</Embed-Transitive>
             <Embed-Directory>META-INF/lib</Embed-Directory>
           </instructions>

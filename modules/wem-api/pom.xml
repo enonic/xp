@@ -12,7 +12,7 @@
   </parent>
 
   <artifactId>wem-api</artifactId>
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
   <name>Enonic WEM Api</name>
 
   <dependencies>
@@ -22,9 +22,9 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jdom</groupId>
-      <artifactId>jdom2</artifactId>
-      <version>2.0.5</version>
+      <groupId>com.enonic.osgi.bundles</groupId>
+      <artifactId>jdom</artifactId>
+      <version>2.0.5_1</version>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>
@@ -57,9 +57,9 @@
       <version>2.2.2</version>
     </dependency>
     <dependency>
-      <groupId>org.jparsec</groupId>
+      <groupId>com.enonic.osgi.bundles</groupId>
       <artifactId>jparsec</artifactId>
-      <version>2.1</version>
+      <version>2.1.0_1</version>
     </dependency>
   </dependencies>
 
@@ -104,27 +104,9 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
           <instructions>
-            <Import-Package>
-              !com.google.common.*,
-              !org.jaxen.*,
-              !net.sf.cglib.*,
-              !sun.*,
-              !org.apache.tools.*,
-              !org.codehaus.*,
-              *
-            </Import-Package>
-            <Embed-Dependency>
-              *;scope=compile
-            </Embed-Dependency>
-            <_exportcontents>
-              org.jdom2.*;version=2.0.5,
-              com.google.common.*,
-              org.apache.commons.lang.*,
-              org.joda.time.*;version=2.3,
-              org.joda.convert.*;version=1.2,
-              com.fasterxml.jackson.*,
+            <Export-Package>
               com.enonic.wem.api.*
-            </_exportcontents>
+            </Export-Package>
           </instructions>
         </configuration>
       </plugin>
