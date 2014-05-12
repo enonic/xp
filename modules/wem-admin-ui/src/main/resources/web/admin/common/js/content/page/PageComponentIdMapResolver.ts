@@ -29,7 +29,7 @@ module api.content.page {
             var children = parent.getChildren();
             children.forEach((element: api.dom.Element) => {
                 var type = element.getEl().getData("live-edit-type");
-                if (!api.util.isStringBlank(type) && type == "region") {
+                if (type == "region") {
 
                     this.parsePageComponents(element, new RegionPath2(null, regionIndex++));
                 }
@@ -43,12 +43,9 @@ module api.content.page {
             var children = parent.getChildren();
             children.forEach((element: api.dom.Element) => {
                 var type = element.getEl().getData("live-edit-type");
-                if (!api.util.isStringBlank(type)) {
-                    if (type == "part") {
-                        var path = ComponentPath2.fromRegionPathAndComponentIndex(region, componentIndex++);
-                        this.map.add(path, currCounter++)
-                    }
-                    // TODO:
+                if (PageComponentType.byShortName(type)) {
+                    var path = ComponentPath2.fromRegionPathAndComponentIndex(region, componentIndex++);
+                    this.map.add(path, currCounter++);
                 }
             });
             this.counter = currCounter;

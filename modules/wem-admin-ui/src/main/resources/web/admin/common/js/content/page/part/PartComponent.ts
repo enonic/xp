@@ -28,6 +28,8 @@ module api.content.page.part {
         }
     }
 
+    PageComponentType.register('part', PartComponent);
+
     export class PartComponentBuilder extends api.content.page.DescriptorBasedPageComponentBuilder<PartComponent> {
 
         constructor(source?: PartComponent) {
