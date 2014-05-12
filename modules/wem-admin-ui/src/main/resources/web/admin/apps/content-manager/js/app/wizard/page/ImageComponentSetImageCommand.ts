@@ -1,13 +1,7 @@
 module app.wizard.page {
 
     import ContentId = api.content.ContentId;
-    import DescriptorBasedPageComponent = api.content.page.DescriptorBasedPageComponent;
-    import LayoutComponent = api.content.page.layout.LayoutComponent;
-    import LayoutRegions = api.content.page.layout.LayoutRegions;
-    import LayoutDescriptor = api.content.page.layout.LayoutDescriptor;
     import ComponentPath = api.content.page.ComponentPath;
-    import ComponentPathRegionAndComponent = api.content.page.ComponentPathRegionAndComponent;
-    import ComponentName = api.content.page.ComponentName;
     import PageRegions = api.content.page.PageRegions;
 
     export class ImageComponentSetImageCommand {
