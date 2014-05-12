@@ -14,7 +14,7 @@ import com.enonic.wem.core.index.IndexException;
 
 public class IndexMappingProvider
 {
-    private final static String PREFIX = "META-INF/index/mapping/";
+    private final static String PREFIX = "/META-INF/index/mapping/";
 
     private final static String[] MAPPING_FILES = { //
         PREFIX + "nodb-node-mapping.json", //
@@ -60,7 +60,7 @@ public class IndexMappingProvider
         }
 
         final String indexType = parts[1];
-        final URL url = Resources.getResource( mappingFile );
+        final URL url = Resources.getResource( getClass(), mappingFile );
         final String mapping = Resources.toString( url, Charsets.UTF_8 );
 
         return new IndexMapping( index, indexType, mapping );

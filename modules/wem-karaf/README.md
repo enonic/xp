@@ -33,16 +33,10 @@ following command:
 
 To install a WEM feature, issue the install feature command:
 
-    feature:install wem-core
+    feature:install wem
 
 To list all avaliable features, just run the following command:
 
     feature:list
 
-We have defined the following set of WEM features:
-
-* wem-api
-* wem-core
-* wem-portal
-* wem-admin
 

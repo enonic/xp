@@ -38,10 +38,6 @@ final class WebInitializer
         restServlet.setLoadOnStartup( 3 );
         restServlet.addMapping( "/admin/rest/*" );
 
-        final ServletRegistration.Dynamic appServlet = context.addServlet( "app", this.appServlet );
-        appServlet.setLoadOnStartup( 4 );
-        appServlet.addMapping( "/admin" );
-
         final ServletRegistration.Dynamic portalServlet = context.addServlet( "portal", this.portalServlet );
         portalServlet.setLoadOnStartup( 4 );
         portalServlet.addMapping( "/portal/*" );

@@ -14,7 +14,7 @@ import com.enonic.wem.core.index.IndexException;
 
 public class IndexSettingsSourceProvider
 {
-    private final static String PREFIX = "META-INF/index/settings/";
+    private final static String PREFIX = "/META-INF/index/settings/";
 
     private final static String[] SETTING_FILES = { //
         PREFIX + "nodb-analyzer-settings.json" //
@@ -28,7 +28,7 @@ public class IndexSettingsSourceProvider
             final String settingsFileContent;
             try
             {
-                final URL url = Resources.getResource( settingFile );
+                final URL url = Resources.getResource( getClass(), settingFile );
                 settingsFileContent = Resources.toString( url, Charsets.UTF_8 );
             }
             catch ( IOException e )

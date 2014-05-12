@@ -75,6 +75,15 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <configuration>
+          <instructions>
+            <Fragment-Host>com.enonic.wem.admin</Fragment-Host>
+          </instructions>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
