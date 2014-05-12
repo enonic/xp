@@ -529,18 +529,25 @@ module app.wizard.page {
 
             this.liveEditPage.onImageComponentSetImage((event: ImageComponentSetImageEvent) => {
 
-                if (this.pageTemplate) {
+                var command = new ImageComponentSetImageCommand().
+                    setDefaultModels(this.defaultModels).
+                    setPageRegions(this.pageRegions).
+                    setComponentPath(event.getPath()).
+                    setImage(event.getImage()).
+                    setUIComponent(event.getComponentPlaceholder()).
+                    setImageName(event.getImageName());
 
-                    this.setImageComponentImage(event.getPath(), event.getImage(), event.getComponentPlaceholder(), event.getImageName());
+                if (this.pageTemplate) {
+                    var newComponentPath = command.execute();
+                    this.saveAndReloadOnlyPageComponent(newComponentPath, event.getComponentPlaceholder());
                 }
                 else {
                     this.initializePageFromDefault().done(() => {
 
-                        this.setImageComponentImage(event.getPath(), event.getImage(), event.getComponentPlaceholder(),
-                            event.getImageName());
+                        var newComponentPath = command.execute();
+                        this.saveAndReloadOnlyPageComponent(newComponentPath, event.getComponentPlaceholder());
                     });
                 }
-
             });
 
             this.liveEditPage.onPageComponentSetDescriptor((event: PageComponentSetDescriptorEvent) => {
@@ -820,31 +827,6 @@ module app.wizard.page {
                 var layoutDescriptor = <LayoutDescriptor> descriptor;
                 var layoutComponent = <LayoutComponent>component;
                 this.addLayoutRegions(layoutComponent, layoutDescriptor);
-            }
-        }
-
-        private setImageComponentImage(componentPath: ComponentPath, image: ContentId, componentPlaceholder: api.dom.Element,
-                                       imageName?: string) {
-
-            var imageComponent = this.pageRegions.getImageComponent(componentPath);
-            if (imageComponent != null) {
-                imageComponent.setImage(image);
-                if (this.defaultModels.hasImageDescriptor()) {
-                    imageComponent.setDescriptor(this.defaultModels.getImageDescriptor().getKey());
-                }
-
-                new PageComponentNameChanger().
-                    setPageRegions(this.pageRegions).
-                    setComponentPath(componentPath).
-                    setUIComponent(componentPlaceholder).
-                    changeTo(imageName);
-
-                componentPath = imageComponent.getPath();
-
-                this.saveAndReloadOnlyPageComponent(componentPath, componentPlaceholder);
-            }
-            else {
-                api.notify.showWarning("ImageComponent to set image on not found: " + componentPath);
             }
         }
 
