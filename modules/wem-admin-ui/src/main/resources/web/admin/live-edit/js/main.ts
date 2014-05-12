@@ -25,8 +25,8 @@ function initializeLiveEdit() {
         $(element).replaceWith(newEl.getHTMLElement());
     });
 
-    var map = new api.content.page.PageComponentIdMap();
-    map.add(api.content.page.ComponentPath2.fromString('region[0]/image[0]'), 1);
+    var body = api.dom.Body.getAndLoadExistingChildren();
+    var map = new api.content.page.PageComponentIdMapResolver(body).resolve();
     new api.content.page.NewPageComponentIdMapEvent(map).fire();
 }
 

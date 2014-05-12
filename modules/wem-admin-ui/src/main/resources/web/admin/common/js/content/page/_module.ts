@@ -30,9 +30,11 @@
 ///<reference path='NewPageComponentIdMapEvent.ts' />
 
 ///<reference path='RegionPath.ts' />
+///<reference path='RegionPath2.ts' />
 ///<reference path='AbstractRegions.ts' />
 ///<reference path='PageRegions.ts' />
 ///<reference path='PageComponentIdMap.ts' />
+///<reference path='PageComponentIdMapResolver.ts' />
 
 ///<reference path='PageTemplateSummary.ts' />
 ///<reference path='PageTemplate.ts' />

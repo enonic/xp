@@ -5,6 +5,7 @@ module api.content.page {
         private map: {[id: string]: ComponentPath2} = {};
 
         add(path: ComponentPath2, id:number) {
+            api.util.assert(!this.map [id], "A PageComponentIdMap can only contain unique id's: " + id);
             this.map[id] = path;
         }
 

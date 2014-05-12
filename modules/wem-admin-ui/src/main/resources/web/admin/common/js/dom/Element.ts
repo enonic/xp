@@ -6,6 +6,7 @@ module api.dom {
         private generateId: boolean;
         private className: string;
         private helper: ElementHelper;
+        private loadExistingChildren: boolean;
 
         constructor() {
         }
@@ -29,6 +30,15 @@ module api.dom {
         setHelper(helper: ElementHelper): ElementProperties {
             this.helper = helper;
             return this;
+        }
+
+        setLoadExistingChildren(value: boolean): ElementProperties {
+            this.loadExistingChildren = value;
+            return this;
+        }
+
+        isLoadExistingChildren(): boolean {
+            return this.loadExistingChildren;
         }
 
         getTagName(): string {
@@ -66,9 +76,13 @@ module api.dom {
         private resizedListeners: {(event: ElementResizedEvent) : void}[] = [];
 
         constructor(properties: ElementProperties) {
+            this.children = [];
             this.rendered = false;
             if (properties.getHelper()) {
                 this.el = properties.getHelper();
+                if (properties.isLoadExistingChildren()) {
+                    this.loadExistingChildren();
+                }
             } else if (properties.getTagName()) {
                 this.el = ElementHelper.fromName(properties.getTagName());
             } else {
@@ -83,8 +97,6 @@ module api.dom {
             if (properties.getClassName()) {
                 this.setClass(properties.getClassName());
             }
-            this.children = [];
-
             this.onRemoved((event: ElementRemovedEvent) => {
                 if (this.getId()) {
                     ElementRegistry.unregisterElement(this);
@@ -92,8 +104,14 @@ module api.dom {
             })
         }
 
-        static fromHtmlElement(element: HTMLElement): Element {
-            return new Element(new ElementProperties().setHelper(new ElementHelper(element)));
+        private loadExistingChildren() {
+
+            var children = this.getHTMLElement().children;
+            for (var i = 0; i < children.length; i++) {
+                var child = children[i];
+                var childAsElement = api.dom.Element.fromHtmlElement(<HTMLElement>child, true);
+                this.children.push(childAsElement);
+            }
         }
 
         init() {
@@ -615,6 +633,12 @@ module api.dom {
 
         unBlur(listener: (event: FocusEvent) => void) {
             this.getEl().removeEventListener("blur", listener);
+        }
+
+        static fromHtmlElement(element: HTMLElement, loadExistingChildren: boolean = false): Element {
+            return new Element(new ElementProperties().
+                setHelper(new ElementHelper(element)).
+                setLoadExistingChildren(loadExistingChildren));
         }
     }
 }
