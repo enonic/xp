@@ -5,6 +5,7 @@ module app.wizard.page {
     import ContentId = api.content.ContentId;
     import Descriptor = api.content.page.Descriptor;
     import RegionPath = api.content.page.RegionPath;
+    import PageComponentType = api.content.page.PageComponentType;
     import ComponentPath = api.content.page.ComponentPath;
     import UploadDialog = api.content.inputtype.image.UploadDialog;
     import RenderingMode = api.rendering.RenderingMode;
@@ -295,7 +296,7 @@ module app.wizard.page {
             this.liveEditJQuery(this.liveEditWindow).on('componentAdded.liveEdit',
                 (event, componentEl?, regionPathAsString?: string, precedingComponentPathAsString?: string) => {
 
-                    var componentType = componentEl.getComponentType().getName();
+                    var componentType = PageComponentType.byShortName(componentEl.getComponentType().getName());
                     var region = RegionPath.fromString(regionPathAsString);
 
                     var preceedingComponent: ComponentPath = null;
@@ -535,7 +536,8 @@ module app.wizard.page {
             });
         }
 
-        private notifyPageComponentAdded(type: string, region: RegionPath, precedingComponent: ComponentPath, element: api.dom.Element) {
+        private notifyPageComponentAdded(type: PageComponentType, region: RegionPath, precedingComponent: ComponentPath,
+                                         element: api.dom.Element) {
             var event = new PageComponentAddedEvent(element, type, region, precedingComponent);
             this.pageComponentAddedListeners.forEach((listener) => {
                 listener(event);

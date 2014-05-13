@@ -11,6 +11,7 @@
 ///<reference path='PageComponentSelectedEvent.ts' />
 ///<reference path='DeselectEvent.ts' />
 ///<reference path='PageComponentAddedEvent.ts' />
+///<reference path='PageComponentAddedCommand.ts' />
 ///<reference path='PageComponentSetDescriptorEvent.ts' />
 ///<reference path='PageComponentRemovedEvent.ts' />
 ///<reference path='PageComponentResetEvent.ts' />

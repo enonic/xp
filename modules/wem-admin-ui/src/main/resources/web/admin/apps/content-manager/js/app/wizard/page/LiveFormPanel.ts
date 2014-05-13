@@ -495,7 +495,9 @@ module app.wizard.page {
 
             this.liveEditPage.onSortableUpdate((event: SortableUpdateEvent) => {
 
-                var newPath = this.pageRegions.moveComponent(event.getComponentPath(), event.getRegion(), event.getPrecedingComponent());
+                var newPath = this.pageRegions.moveComponent(event.getComponentPath(), event.getRegion(),
+                    event.getPrecedingComponent().getComponentName());
+
                 if (newPath) {
                     event.getComponent().setComponentPath(newPath.toString());
                 }
@@ -503,22 +505,21 @@ module app.wizard.page {
 
             this.liveEditPage.onPageComponentAdded((event: PageComponentAddedEvent) => {
 
+                var command = new PageComponentAddedCommand().
+                    setPageRegions(this.pageRegions).
+                    setType(event.getType()).
+                    setRegion(event.getRegion()).
+                    setPrecedingComponent(event.getPrecedingComponent() ? event.getPrecedingComponent().getComponentName() : null).
+                    setUIComponent(event.getElement());
+
                 if (!this.pageTemplate) {
                     this.initializePageFromDefault().done(() => {
 
-                        var component = this.addComponent(event.getType(), event.getRegion(), event.getPrecedingComponent());
-                        if (component) {
-                            event.getElement().getEl().setData("live-edit-component", component.getPath().toString());
-                        }
-                        event.getElement().getEl().setData("live-edit-type", event.getType());
+                        command.execute();
                     });
                 }
                 else {
-                    var component = this.addComponent(event.getType(), event.getRegion(), event.getPrecedingComponent());
-                    if (component) {
-                        event.getElement().getEl().setData("live-edit-component", component.getPath().toString());
-                    }
-                    event.getElement().getEl().setData("live-edit-type", event.getType());
+                    command.execute();
                 }
             });
 
@@ -577,29 +578,6 @@ module app.wizard.page {
             });
         }
 
-        private addComponent(componentType: string, regionPath: RegionPath, precedingComponent: ComponentPath,
-                             wantedName?: string): PageComponent {
-
-            wantedName = api.util.capitalize(api.util.removeInvalidChars(wantedName || componentType));
-            var componentName = this.pageRegions.ensureUniqueComponentName(regionPath, new ComponentName(wantedName));
-
-            var pageComponentType = PageComponentType.byShortName(componentType);
-
-            var builder = pageComponentType.newComponentBuilder();
-            if (builder) {
-                builder.setName(componentName);
-                if (builder instanceof DescriptorBasedPageComponentBuilder) {
-                    (<DescriptorBasedPageComponentBuilder>builder).setConfig(new RootDataSet());
-                }
-                var component = builder.build();
-                this.pageRegions.addComponentAfter(component, regionPath, precedingComponent);
-                return component;
-            }
-            else {
-                return null;
-            }
-        }
-
         private inspectContent(contentId: api.content.ContentId) {
             this.contextWindow.showInspectionPanel(this.contentInspectionPanel);
         }
@@ -619,6 +597,7 @@ module app.wizard.page {
         }
 
         private inspectComponent(componentPath: ComponentPath) {
+            api.util.assertNotNull(componentPath, "componentPath cannot be null");
 
             var component = this.pageRegions.getComponent(componentPath);
             api.util.assertNotNull(component, "Could not find component: " + componentPath.toString());

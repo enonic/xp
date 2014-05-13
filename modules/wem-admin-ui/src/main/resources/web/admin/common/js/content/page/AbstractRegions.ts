@@ -36,7 +36,7 @@ module api.content.page {
          *  Add component after precedingComponent in given region. Returns null if region was not found.
          *  Adds component first in region if preceding component is null.
          */
-        addComponentAfter(component: PageComponent, regionPath: RegionPath, precedingComponent: ComponentPath): ComponentPath {
+        addComponentAfter(component: PageComponent, regionPath: RegionPath, precedingComponent: ComponentName): ComponentPath {
 
             var region = this.getRegionByPath(regionPath);
             if (region == null) {
@@ -47,7 +47,7 @@ module api.content.page {
                 region.addComponentAfter(component, null);
             }
             else {
-                var index = region.addComponentAfter(component, precedingComponent.getLastLevel().getComponentName());
+                var index = region.addComponentAfter(component, precedingComponent);
                 if (index == -1) {
                     return null;
                 }
@@ -56,9 +56,9 @@ module api.content.page {
             return component.getPath();
         }
 
-        moveComponent(componentPath: ComponentPath, toRegion: RegionPath, precedingComponent: ComponentPath): ComponentPath {
+        moveComponent(componentToMove: ComponentPath, toRegion: RegionPath, precedingComponent: ComponentName): ComponentPath {
 
-            var component = this.removeComponent(componentPath);
+            var component = this.removeComponent(componentToMove);
             if (component) {
                 return this.addComponentAfter(component, toRegion, precedingComponent);
             } else {

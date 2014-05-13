@@ -39,21 +39,12 @@ module app.wizard.page {
             api.util.assertNotNull(this.uiComponent, "uiComponent cannot be null");
 
             var component = this.pageRegions.getComponent(this.componentPath);
-            var type = this.uiComponent.getEl().getData("live-edit-type");
 
-            var removedComponent = this.pageRegions.removeComponent(this.componentPath);
             var newComponentName = this.pageRegions.ensureUniqueComponentName(component.getPath().getRegionPath(),
                 new ComponentName(api.util.removeInvalidChars(api.util.capitalizeAll(name))));
-            component.setName(newComponentName);
-            var levels = component.getPath().getLevels();
-            levels[levels.length - 1] = new ComponentPathRegionAndComponent(levels[levels.length - 1].getRegionName(), newComponentName);
-            component.setName(new ComponentPath(levels).getComponentName());
-            this.uiComponent.getEl().setData("live-edit-component", component.getPath().toString());
 
-            if (removedComponent) {
-                this.pageRegions.addComponentAfter(removedComponent, component.getPath().getRegionPath(),
-                    ComponentPath.fromString(this.uiComponent.getPrecedingComponentPath()));
-            }
+            component.setName(newComponentName);
+            this.uiComponent.getEl().setData("live-edit-component", component.getPath().toString());
         }
     }
 }

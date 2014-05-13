@@ -4,8 +4,15 @@ module api.content.page {
 
         private static shortNameToInstance: {[shortName: string]: PageComponentType} = {};
 
+        private shortName: string;
+
         constructor(shortName: string) {
             PageComponentType.shortNameToInstance[shortName] = this;
+            this.shortName = shortName;
+        }
+
+        getShortName(): string {
+            return this.shortName;
         }
 
         newComponentBuilder(): PageComponentBuilder<PageComponent> {

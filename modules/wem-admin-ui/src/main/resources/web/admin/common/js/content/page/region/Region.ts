@@ -6,32 +6,12 @@ module api.content.page.region {
 
         private pageComponents: api.content.page.PageComponent[] = [];
 
-        private componentByName: {[s:string] : api.content.page.PageComponent;} = {};
-
         private parent: api.content.page.ComponentPath;
 
         constructor(builder: RegionBuilder) {
             this.name = builder.name;
             this.parent = builder.parent;
             this.pageComponents = builder.pageComponents;
-
-            this.pageComponents.forEach((c: api.content.page.PageComponent)=> {
-                if (c instanceof api.content.page.image.ImageComponent) {
-                    var imageComponent = <api.content.page.image.ImageComponent>c;
-                    this.componentByName[imageComponent.getName().toString()] = imageComponent;
-                }
-                else if (c instanceof api.content.page.part.PartComponent) {
-                    var partComponent = <api.content.page.part.PartComponent>c;
-                    this.componentByName[partComponent.getName().toString()] = partComponent;
-                }
-                else if (c instanceof api.content.page.layout.LayoutComponent) {
-                    var layoutComponent = <api.content.page.layout.LayoutComponent>c;
-                    this.componentByName[layoutComponent.getName().toString()] = layoutComponent;
-                }
-                else {
-                    throw new Error("Unsupported component for Region: " + api.util.getClassName(c));
-                }
-            });
         }
 
         getName(): string {
@@ -62,7 +42,7 @@ module api.content.page.region {
 
             var duplicateCounter = numberOfDuplicates + 1;
             var possibleNewName = wantedName.createDuplicate(duplicateCounter);
-            while (this.nameAlreadyInUse(possibleNewName)) {
+            while (this.hasComponentWithName(possibleNewName)) {
                 possibleNewName = wantedName.createDuplicate(++duplicateCounter);
             }
 
@@ -78,12 +58,6 @@ module api.content.page.region {
                 }
             });
             return count;
-        }
-
-        private nameAlreadyInUse(name: api.content.page.ComponentName) {
-
-            var exisiting = this.componentByName[name.toString()];
-            return !exisiting ? false : true;
         }
 
         duplicateComponent(name: ComponentName): PageComponent {
@@ -115,7 +89,7 @@ module api.content.page.region {
             var count = this.countNumberOfDuplicates(nameWithoutCountPostFix);
             var possibleNewName = nameWithoutCountPostFix.createDuplicate(count + 1);
 
-            while (this.nameAlreadyInUse(possibleNewName)) {
+            while (this.hasComponentWithName(possibleNewName)) {
                 possibleNewName = nameOfSource.createDuplicate(++count);
             }
 
@@ -141,7 +115,6 @@ module api.content.page.region {
             }
 
             component.setParent(this.getPath());
-            this.componentByName[component.getName().toString()] = component;
 
             if (precedingIndex == -1) {
                 this.pageComponents.splice(0, 0, component);
@@ -160,7 +133,6 @@ module api.content.page.region {
             }
 
             this.pageComponents.splice(this.getComponentIndex(component.getName()), 1);
-            delete this.componentByName[component.getName().toString()];
 
             return component;
         }
@@ -177,7 +149,9 @@ module api.content.page.region {
         }
 
         hasComponentWithName(name: ComponentName) {
-            return this.componentByName[name.toString()] != undefined;
+            return this.pageComponents.some((component: api.content.page.PageComponent) => {
+                return component.getName().equals(name);
+            });
         }
 
         getComponents(): api.content.page.PageComponent[] {
@@ -189,34 +163,13 @@ module api.content.page.region {
         }
 
         getComponentByName(name: api.content.page.ComponentName): api.content.page.PageComponent {
-            return this.componentByName[name.toString()];
-        }
-
-        getImageComponent(name: api.content.page.ComponentName): api.content.page.image.ImageComponent {
-            var c = this.getComponentByName(name);
-
-            var message = "Expected component [" + name.toString() + "] to be an api.content.page.image.ImageComponent: " +
-                          api.util.getClassName(c);
-            api.util.assert(c instanceof api.content.page.image.ImageComponent, message);
-            return <api.content.page.image.ImageComponent>c;
-        }
-
-        getLayoutComponent(name: api.content.page.ComponentName): api.content.page.layout.LayoutComponent {
-            var c = this.getComponentByName(name);
-
-            var message = "Expected component [" + name.toString() + "] to be a api.content.page.layout.LayoutComponent: " +
-                          api.util.getClassName(c);
-            api.util.assert(c instanceof api.content.page.layout.LayoutComponent, message);
-            return <api.content.page.layout.LayoutComponent>c;
-        }
-
-        getPartComponent(name: api.content.page.ComponentName): api.content.page.part.PartComponent {
-            var c = this.getComponentByName(name);
-
-            var message = "Expected component [" + name.toString() + "] to be a api.content.page.part.PartComponent: " +
-                          api.util.getClassName(c);
-            api.util.assert(c instanceof api.content.page.part.PartComponent, message);
-            return <api.content.page.part.PartComponent>c;
+            var found: api.content.page.PageComponent = null;
+            this.pageComponents.forEach((pageComponent: api.content.page.PageComponent) => {
+                if (pageComponent.getName().equals(name)) {
+                    found = pageComponent;
+                }
+            });
+            return found;
         }
 
         toJson(): RegionJson {

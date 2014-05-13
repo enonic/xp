@@ -1,19 +1,20 @@
 module app.wizard.page {
 
     import ComponentPath = api.content.page.ComponentPath;
+    import PageComponentType = api.content.page.PageComponentType;
     import RegionPath = api.content.page.RegionPath;
 
     export class PageComponentAddedEvent {
 
-        private element:api.dom.Element;
+        private element: api.dom.Element;
 
-        private type: string;
+        private type: PageComponentType;
 
         private region: RegionPath;
 
         private precedingComponent: ComponentPath;
 
-        constructor(element:api.dom.Element, type: string, region: RegionPath, precedingComponent: ComponentPath) {
+        constructor(element: api.dom.Element, type: PageComponentType, region: RegionPath, precedingComponent: ComponentPath) {
             this.element = element;
             this.type = type;
             this.region = region;
@@ -24,7 +25,7 @@ module app.wizard.page {
             return this.element;
         }
 
-        getType(): string {
+        getType(): PageComponentType {
             return this.type;
         }
 
