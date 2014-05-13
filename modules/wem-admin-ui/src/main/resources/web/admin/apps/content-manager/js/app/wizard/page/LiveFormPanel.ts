@@ -23,14 +23,12 @@ module app.wizard.page {
     import PageComponentBuilder = api.content.page.PageComponentBuilder;
     import ComponentName = api.content.page.ComponentName;
     import PageComponent = api.content.page.PageComponent;
+    import PageComponentType = api.content.page.PageComponentType;
     import DescriptorBasedPageComponent = api.content.page.DescriptorBasedPageComponent;
     import DescriptorBasedPageComponentBuilder = api.content.page.DescriptorBasedPageComponentBuilder;
     import LayoutComponent = api.content.page.layout.LayoutComponent;
-    import PartComponentBuilder = api.content.page.part.PartComponentBuilder;
     import PartComponent = api.content.page.part.PartComponent;
     import ImageComponent = api.content.page.image.ImageComponent;
-    import ImageComponentBuilder = api.content.page.image.ImageComponentBuilder;
-    import LayoutComponentBuilder = api.content.page.layout.LayoutComponentBuilder;
 
     import GetPartDescriptorsByModulesRequest = api.content.page.part.GetPartDescriptorsByModulesRequest;
     import GetImageDescriptorsByModulesRequest = api.content.page.image.GetImageDescriptorsByModulesRequest;
@@ -586,22 +584,9 @@ module app.wizard.page {
             wantedName = api.util.capitalize(api.util.removeInvalidChars(wantedName || componentType));
             var componentName = this.pageRegions.ensureUniqueComponentName(regionPath, new ComponentName(wantedName));
 
-            var builder: PageComponentBuilder<PageComponent>;
-            switch (componentType) {
-            case "image":
-                builder = new ImageComponentBuilder();
-                break;
-            case "part":
-                builder = new PartComponentBuilder();
-                break;
-            case "layout":
-                builder = new LayoutComponentBuilder();
-                break;
-            case "text":
-                // TODO: Implement text
-                builder = null;
-                break;
-            }
+            var pageComponentType = PageComponentType.byShortName(componentType);
+
+            var builder = pageComponentType.newComponentBuilder();
             if (builder) {
                 builder.setName(componentName);
                 if (builder instanceof DescriptorBasedPageComponentBuilder) {

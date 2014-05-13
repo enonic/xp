@@ -3,6 +3,7 @@
 ///<reference path='ImageComponentJson.ts' />
 ///<reference path='ImageDescriptor.ts' />
 ///<reference path='ImageComponent.ts' />
+///<reference path='ImageComponentType.ts' />
 ///<reference path='ImageDescriptorResourceRequest.ts' />
 ///<reference path='ImageDescriptorsResourceRequest.ts' />
 ///<reference path='GetImageDescriptorByKeyRequest.ts' />

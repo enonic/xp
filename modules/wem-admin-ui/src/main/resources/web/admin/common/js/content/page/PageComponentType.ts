@@ -2,14 +2,18 @@ module api.content.page {
 
     export class PageComponentType {
 
-        private static shortNameToClass: {[shortName: string]: Function} = {};
+        private static shortNameToInstance: {[shortName: string]: PageComponentType} = {};
 
-        static register(shortName: string, clazz: Function) {
-            PageComponentType.shortNameToClass[shortName] = clazz;
+        constructor(shortName: string) {
+            PageComponentType.shortNameToInstance[shortName] = this;
         }
 
-        static byShortName(shortName: string): Function {
-            return PageComponentType.shortNameToClass[shortName];
+        newComponentBuilder(): PageComponentBuilder<PageComponent> {
+            throw new Error("Must be implemented by inheritors");
+        }
+
+        static byShortName(shortName: string): PageComponentType {
+            return PageComponentType.shortNameToInstance[shortName];
         }
     }
 

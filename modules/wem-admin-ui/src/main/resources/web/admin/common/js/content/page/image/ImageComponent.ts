@@ -53,8 +53,6 @@ module api.content.page.image {
         }
     }
 
-    PageComponentType.register('image', ImageComponent);
-
     export class ImageComponentBuilder extends api.content.page.DescriptorBasedPageComponentBuilder<ImageComponent> {
 
         image: api.content.ContentId;

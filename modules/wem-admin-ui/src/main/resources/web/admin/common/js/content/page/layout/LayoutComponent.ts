@@ -64,8 +64,6 @@ module api.content.page.layout {
         }
     }
 
-    PageComponentType.register('layout', LayoutComponent);
-
     export class LayoutComponentBuilder extends api.content.page.DescriptorBasedPageComponentBuilder<LayoutComponent> {
 
         regions: LayoutRegions;

@@ -3,6 +3,7 @@
 ///<reference path='PartDescriptorsJson.ts' />
 ///<reference path='PartDescriptor.ts' />
 ///<reference path='PartComponent.ts' />
+///<reference path='PartComponentType.ts' />
 ///<reference path='PartDescriptorViewer.ts' />
 ///<reference path='PartDescriptorComboBox.ts' />
 ///<reference path='PartDescriptorLoader.ts' />
