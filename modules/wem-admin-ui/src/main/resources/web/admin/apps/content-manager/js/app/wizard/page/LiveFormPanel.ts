@@ -81,7 +81,6 @@ module app.wizard.page {
         private pageSkipReload: boolean;
         private frameContainer: api.ui.Panel;
 
-        private pageUrl: string;
         private contextWindow: ContextWindow;
         private emulatorPanel: EmulatorPanel;
         private insertablesPanel: InsertablesPanel;
