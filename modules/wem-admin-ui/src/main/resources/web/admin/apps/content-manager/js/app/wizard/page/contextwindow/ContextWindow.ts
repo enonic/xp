@@ -46,6 +46,18 @@ module app.wizard.page.contextwindow {
 
         private dynamicPinning: boolean;
 
+        private splitter: api.dom.DivEl;
+
+        private ghostDragger: api.dom.DivEl;
+
+        private mask: api.ui.DragMask;
+
+        private actualWidth: number;
+
+        private minWidth: number = 280;
+
+        private parentMinWidth: number = 15;
+
         constructor(config: ContextWindowConfig) {
             super();
 
@@ -58,6 +70,9 @@ module app.wizard.page.contextwindow {
             this.insertablesPanel = config.insertablesPanel;
 
             this.addClass("context-window");
+
+            this.ghostDragger = new api.dom.DivEl("ghost-dragger");
+            this.splitter = new api.dom.DivEl("splitter");
 
             this.insertablesPanel.onHideContextWindowRequest(() => {
                 this.hide();
@@ -76,6 +91,7 @@ module app.wizard.page.contextwindow {
                 this.updateFrameSize();
             });
 
+            this.appendChild(this.splitter);
             this.addItem("Insert", this.insertablesPanel);
             this.addItem("Settings", this.inspectionPanel);
             this.addItem("Emulator", this.emulatorPanel);
@@ -88,7 +104,62 @@ module app.wizard.page.contextwindow {
                     this.updateFrameSize();
                 }
             });
+            this.onRendered(() => {
+                this.initializeResizable();
+            })
 
+        }
+
+        private initializeResizable() {
+            var initialPos = 0;
+            var splitterPosition = 0;
+            var parent = this.getParentElement();
+            this.actualWidth = this.getEl().getWidth();
+            this.mask = new api.ui.DragMask(parent);
+
+            var dragListener = (e: MouseEvent) => {
+                if (this.splitterWithinBoundaries(initialPos - e.clientX)) {
+                    splitterPosition = e.clientX;
+                    this.ghostDragger.getEl().setLeftPx(e.clientX - this.getEl().getOffsetLeft());
+                }
+            };
+
+            this.splitter.onMouseDown((e: MouseEvent) => {
+                e.preventDefault();
+                initialPos = e.clientX;
+                this.startDrag(dragListener);
+            });
+
+            this.mask.onMouseUp((e: MouseEvent) => {
+                this.actualWidth = this.getEl().getWidth() + initialPos - splitterPosition;
+                this.stopDrag(dragListener);
+                this.throwResizeEvent();
+            })
+        }
+
+        private splitterWithinBoundaries(offset: number) {
+            var newWidth = this.actualWidth + offset;
+            return (newWidth >= this.minWidth) && (newWidth <= this.getParentElement().getEl().getWidth() - this.parentMinWidth);
+        }
+
+        private startDrag(dragListener: {(e: MouseEvent):void}) {
+            this.mask.show();
+            this.mask.onMouseMove(dragListener);
+            this.ghostDragger.insertBeforeEl(this.splitter);
+            this.ghostDragger.getEl().setLeftPx(this.splitter.getEl().getOffsetLeftRelativeToParent()).setTop(null);
+        }
+
+        private stopDrag(dragListener: {(e: MouseEvent):void}) {
+            this.mask.unMouseMove(dragListener);
+            this.mask.hide();
+            this.getEl().setWidthPx(this.actualWidth);
+            this.removeChild(this.ghostDragger);
+        }
+
+        private throwResizeEvent() {
+            var event = document.createEvent('Event');
+            event.initEvent('resize', true, true);
+            this.getHTMLElement().dispatchEvent(event);
         }
 
         disable() {
@@ -143,10 +214,10 @@ module app.wizard.page.contextwindow {
         }
 
         private updateFrameSize() {
-            this.liveFormPanel.updateFrameContainerSize((this.pinned && this.isEnabled()), this.getEl().getWidth());
+            this.liveFormPanel.updateFrameContainerSize((this.pinned && this.isEnabled()), this.actualWidth || this.getEl().getWidth());
             // TODO: Replace 1380 with ENUM, when the specification will be ready.
             if (this.dynamicPinning) {
-                var pinningRequired:boolean = this.liveFormPanel.getEl().getWidth() > 1380;
+                var pinningRequired: boolean = this.liveFormPanel.getEl().getWidth() > 1380;
                 if (pinningRequired != this.isPinned()) {
                     this.setPinned(pinningRequired);
                     this.pinButton.setActive(pinningRequired);

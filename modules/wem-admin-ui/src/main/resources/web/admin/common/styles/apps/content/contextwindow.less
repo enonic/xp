@@ -5,6 +5,27 @@
   -o-transition: all 0.5s ease-in-out;
   transition: all 0.5s ease-in-out;
 
+  .splitter {
+    position: relative;
+    width: 5px;
+    height: 100%;
+    float: left;
+    background-color: #d3d3d3;
+    cursor: ew-resize;
+    .noSelect();
+  }
+
+  .ghost-dragger {
+    height: 100%;
+    background-color: @admin-dark-gray;
+    opacity: 0.5;
+    position: absolute;
+    z-index: 1000;
+    cursor: ew-resize;
+    width: 5px;
+    .noSelect();
+  }
+
   input.search {
     margin: 15px;
     padding: 5px 3px;
@@ -15,7 +36,12 @@
   }
 
   .tab-bar {
+    position: absolute;
+    left: 5px;
     cursor: move;
+  }
+  .deck-panel {
+    margin-left: 5px;
   }
   .slick-viewport {
     overflow-y: auto !important;
