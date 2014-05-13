@@ -115,7 +115,7 @@ module api.content.page {
 
         public static fromRegionPathAndComponentIndex(regionPath: RegionPath2, componentIndex: number): ComponentPath2 {
 
-            var componentPathAsString = regionPath.toString() + "/" + componentIndex;
+            var componentPathAsString = regionPath.toString() + "/" + ComponentPath2.COMPONENT_INDEX + "[" + componentIndex + "]";
             return ComponentPath2.fromString(componentPathAsString);
         }
     }
