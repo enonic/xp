@@ -10,17 +10,33 @@ module api.content.page {
             this.value = value;
         }
 
+        public hasCountPostfix(): boolean {
+
+            var countDelimiterIndex = this.value.lastIndexOf(ComponentName.COUNT_DELIMITER);
+            return countDelimiterIndex > 0 && countDelimiterIndex <= this.value.length - 2;
+        }
+
+        public removeCountPostfix(): ComponentName {
+
+            if (!this.hasCountPostfix()) {
+                return this;
+            }
+
+            var nameWithoutCountPostfix = this.value.substring(0, this.value.lastIndexOf(ComponentName.COUNT_DELIMITER));
+            return new ComponentName(nameWithoutCountPostfix);
+        }
+
         public isDuplicateOf(other: ComponentName): boolean {
             if (this.value == other.value) {
                 return true;
             }
 
-            if (!(this.value.lastIndexOf(ComponentName.COUNT_DELIMITER) > 0)) {
+            if (!this.hasCountPostfix()) {
                 return false;
             }
 
-            var nameWithoutCountPostfix = this.value.substring(0, this.value.lastIndexOf(ComponentName.COUNT_DELIMITER));
-            return nameWithoutCountPostfix == other.toString();
+            var nameWithoutCountPostfix = this.removeCountPostfix();
+            return nameWithoutCountPostfix.equals(other);
         }
 
         public createDuplicate(count: number): ComponentName {

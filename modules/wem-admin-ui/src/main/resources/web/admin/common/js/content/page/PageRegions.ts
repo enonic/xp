@@ -36,11 +36,11 @@ module api.content.page {
 
             regionsJson.forEach((regionJson: api.content.page.region.RegionJson) => {
 
-                var regionPath = new RegionPath(null, regionJson.name);
-
                 var regionBuilder = new region.RegionBuilder().
                     setName(regionJson.name).
-                    setPath(regionPath);
+                    setParent(null);
+
+                var regionPath = new RegionPath(null, regionJson.name);
 
                 regionJson.components.forEach((componentJson: api.content.page.PageComponentTypeWrapperJson) => {
                     var pageComponent = PageComponentFactory.createFromJson(componentJson, regionPath);

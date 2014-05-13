@@ -82,10 +82,9 @@ module api.content.page.layout {
 
             layoutDescriptorRegions.forEach((regionDescriptor: RegionDescriptor, idx: number) => {
                 var regionName = regionDescriptor.getName();
-                var regionPath = new RegionPath(parentComponentPath, regionName);
                 var layoutRegion = new api.content.page.region.RegionBuilder().
                     setName(regionName).
-                    setPath(regionPath).
+                    setParent(parentComponentPath).
                     build();
                 this.targetRegionsByName[regionName] = layoutRegion;
                 this.targetRegionsNameByPosition[idx] = regionName;

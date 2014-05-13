@@ -47,7 +47,7 @@ module app.wizard.page {
             component.setName(newComponentName);
             var levels = component.getPath().getLevels();
             levels[levels.length - 1] = new ComponentPathRegionAndComponent(levels[levels.length - 1].getRegionName(), newComponentName);
-            component.setPath(new ComponentPath(levels));
+            component.setName(new ComponentPath(levels).getComponentName());
             this.uiComponent.getEl().setData("live-edit-component", component.getPath().toString());
 
             if (removedComponent) {

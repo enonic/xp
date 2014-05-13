@@ -22,4 +22,5 @@
 ///<reference path='PageComponentNameChanger.ts' />
 ///<reference path='PageComponentSetDescriptorCommand.ts' />
 ///<reference path='ImageComponentSetImageCommand.ts' />
+///<reference path='PageComponentDuplicateCommand.ts' />
 ///<reference path='LiveFormPanel.ts' />

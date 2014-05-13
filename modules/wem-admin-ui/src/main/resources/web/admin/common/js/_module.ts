@@ -100,6 +100,7 @@
 ///<reference path='content/page/image/_module.ts' />
 ///<reference path='content/page/layout/_module.ts' />
 ///<reference path='content/page/part/_module.ts' />
+///<reference path='content/page/text/_module.ts' />
 ///<reference path='content/site/_module.ts' />
 ///<reference path='content/site/template/_module.ts' />
 ///<reference path='content/inputtype/_module.ts' />

@@ -5,9 +5,7 @@ module app.wizard.page {
 
     export class PageComponentDuplicatedEvent {
 
-        private element:api.dom.Element;
-
-        private placeholder:api.dom.Element;
+        private placeholder: api.dom.Element;
 
         private type: string;
 
@@ -15,16 +13,11 @@ module app.wizard.page {
 
         private path: ComponentPath;
 
-        constructor(element:api.dom.Element, placeholder:api.dom.Element, type: string, region: RegionPath, path: ComponentPath) {
-            this.element = element;
+        constructor(placeholder: api.dom.Element, type: string, region: RegionPath, path: ComponentPath) {
             this.placeholder = placeholder;
             this.type = type;
             this.region = region;
             this.path = path;
-        }
-
-        getElement(): api.dom.Element {
-            return this.element;
         }
 
         getPlaceholder() {

@@ -86,19 +86,19 @@ module app.wizard.page {
             });
         }
 
-        public setWidth(value:string) {
+        public setWidth(value: string) {
             this.liveEditIFrame.getEl().setWidth(value);
         }
 
-        public setWidthPx(value:number) {
+        public setWidthPx(value: number) {
             this.liveEditIFrame.getEl().setWidthPx(value);
         }
 
-        public setHeight(value:string) {
+        public setHeight(value: string) {
             this.liveEditIFrame.getEl().setHeight(value);
         }
 
-        public setHeightPx(value:number) {
+        public setHeightPx(value: number) {
             this.liveEditIFrame.getEl().setHeightPx(value);
         }
 
@@ -175,6 +175,10 @@ module app.wizard.page {
         }
 
         public loadComponent(componentPath: ComponentPath, componentPlaceholder: api.dom.Element, content: api.content.Content) {
+
+            api.util.assertNotNull(componentPath, "componentPath cannot be null");
+            api.util.assertNotNull(componentPlaceholder, "componentPlaceholder cannot be null");
+            api.util.assertNotNull(content, "content cannot be null");
 
             $.ajax({
                 url: api.rendering.UriHelper.getComponentUri(content.getContentId().toString(), componentPath.toString(),
@@ -321,7 +325,7 @@ module app.wizard.page {
                 var region: RegionPath = RegionPath.fromString(component.getRegionName());
                 var componentPath: ComponentPath = ComponentPath.fromString(component.getComponentPath());
 
-                this.notifyPageComponentDuplicated(component, placeholder, componentType, region, componentPath);
+                this.notifyPageComponentDuplicated(placeholder, componentType, region, componentPath);
             });
 
             var liveEditPageWindow = window;
@@ -336,7 +340,8 @@ module app.wizard.page {
 
                     if (!params.errorMessage) {
                         var componentPath = ComponentPath.fromString(params.componentPathAsString);
-                        this.notifyImageComponentSetImage(componentPath, params.imageId, params.componentPlaceholder, !params.imageName ? null : params.imageName);
+                        this.notifyImageComponentSetImage(componentPath, params.imageId, params.componentPlaceholder,
+                            !params.imageName ? null : params.imageName);
                     } else {
                         api.notify.showError(params.errorMessage);
                     }
@@ -616,8 +621,8 @@ module app.wizard.page {
             });
         }
 
-        private notifyPageComponentDuplicated(element: api.dom.Element, placeholder: api.dom.Element, type: string, region: RegionPath, path: ComponentPath) {
-            var event = new PageComponentDuplicatedEvent(element, placeholder, type, region, path);
+        private notifyPageComponentDuplicated(placeholder: api.dom.Element, type: string, region: RegionPath, path: ComponentPath) {
+            var event = new PageComponentDuplicatedEvent(placeholder, type, region, path);
             this.pageComponentDuplicatedListeners.forEach((listener) => {
                 listener(event);
             });

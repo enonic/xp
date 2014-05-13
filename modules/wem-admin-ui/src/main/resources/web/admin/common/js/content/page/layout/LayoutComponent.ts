@@ -25,6 +25,12 @@ module api.content.page.layout {
             this.regions = value;
         }
 
+        setName(name: api.content.page.ComponentName) {
+            super.setName(name);
+
+            this.regions.setParent(this.getPath());
+        }
+
         public toJson(): api.content.page.PageComponentTypeWrapperJson {
             var json: LayoutComponentJson = <LayoutComponentJson>super.toPageComponentJson();
             json.regions = this.regions.toJson();
@@ -73,7 +79,7 @@ module api.content.page.layout {
 
                 this.name = source.getName();
                 this.descriptor = source.getDescriptor();
-                this.region = source.getRegion();
+                this.parent = source.getParent();
                 this.config = source.getConfig() ? source.getConfig().clone() : null;
             }
         }
@@ -86,7 +92,7 @@ module api.content.page.layout {
             var componentName = new api.content.page.ComponentName(json.name);
             this.setName(componentName);
             this.setConfig(api.data.DataFactory.createRootDataSet(json.config));
-            this.setRegion(regionPath);
+            this.setParent(regionPath);
 
             var componentPath = ComponentPath.fromRegionPathAndComponentName(regionPath, componentName);
 

@@ -15,6 +15,23 @@ module api.content.page {
             });
         }
 
+        setParent(path: ComponentPath) {
+
+            this.getRegions().forEach((region: api.content.page.region.Region) => {
+                region.setParent(path);
+            });
+        }
+
+        duplicateComponent(path: ComponentPath): PageComponent {
+
+            var region = this.getRegionByPath(path.getRegionPath());
+            if (!region) {
+                return null;
+            }
+
+            return region.duplicateComponent(path.getComponentName());
+        }
+
         /*
          *  Add component after precedingComponent in given region. Returns null if region was not found.
          *  Adds component first in region if preceding component is null.

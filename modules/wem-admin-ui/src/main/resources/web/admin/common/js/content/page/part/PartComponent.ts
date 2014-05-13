@@ -39,7 +39,7 @@ module api.content.page.part {
             if (source) {
                 this.name = source.getName();
                 this.descriptor = source.getDescriptor();
-                this.region = source.getRegion();
+                this.parent = source.getParent();
                 this.config = source.getConfig() ? source.getConfig().clone() : null;
             }
         }
@@ -51,7 +51,7 @@ module api.content.page.part {
             }
             this.setName(new api.content.page.ComponentName(json.name));
             this.setConfig(api.data.DataFactory.createRootDataSet(json.config));
-            this.setRegion(regionPath);
+            this.setParent(regionPath);
             return this;
         }
 

@@ -1,101 +1,93 @@
-module api.content.page.image {
+module api.content.page.text {
 
     export class TextComponent extends api.content.page.PageComponent implements api.Equitable, api.Cloneable {
 
-        private image: api.content.ContentId;
+        private text: string;
 
-        constructor(builder?: ImageComponentBuilder) {
+        constructor(builder?: TextComponentBuilder) {
             super(builder);
             if (builder) {
-                this.image = builder.image;
+                this.text = builder.text;
             }
         }
 
-        getImage(): api.content.ContentId {
-            return this.image;
+        getText(): string {
+            return this.text;
         }
 
-        setImage(value: api.content.ContentId) {
-            this.image = value;
+        setText(value: string) {
+            this.text = value;
         }
 
         toJson(): api.content.page.PageComponentTypeWrapperJson {
 
-            var json: ImageComponentJson = <ImageComponentJson>super.toPageComponentJson();
-            json.image = this.image != null ? this.image.toString() : null;
+            var json: TextComponentJson = <TextComponentJson>super.toPageComponentJson();
+            json.text = this.text != null ? this.text : null;
 
             return <api.content.page.PageComponentTypeWrapperJson> {
-                ImageComponent: json
+                TextComponent: json
             };
         }
 
         equals(o: api.Equitable): boolean {
 
-            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ImageComponent)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, TextComponent)) {
                 return false;
             }
 
-            var other = <ImageComponent>o;
+            var other = <TextComponent>o;
 
             if (!super.equals(o)) {
                 return false;
             }
 
-            if (!api.ObjectHelper.equals(this.image, other.image)) {
+            if (!api.ObjectHelper.stringEquals(this.text, other.text)) {
                 return false;
             }
 
             return true;
         }
 
-        clone(): ImageComponent {
-            return new ImageComponentBuilder(this).build();
+        clone(): TextComponent {
+            return new TextComponentBuilder(this).build();
         }
     }
 
-    export class ImageComponentBuilder extends api.content.page.PageComponentBuilder<ImageComponent> {
+    export class TextComponentBuilder extends api.content.page.PageComponentBuilder<TextComponent> {
 
-        image: api.content.ContentId;
+        text: string;
 
-        constructor(source?: ImageComponent) {
+        constructor(source?: TextComponent) {
 
             super();
 
             if (source) {
-                this.image = source.getImage();
+                this.text = source.getText();
 
                 this.name = source.getName();
-                this.descriptor = source.getDescriptor();
-                this.region = source.getRegion();
-                this.config = source.getConfig() ? source.getConfig().clone() : null;
+                this.parent = source.getParent();
             }
         }
 
-        public fromJson(json: ImageComponentJson, regionPath: RegionPath): ImageComponentBuilder {
+        public fromJson(json: TextComponentJson, regionPath: RegionPath): TextComponentBuilder {
 
-            if (json.image) {
-                this.setImage(new api.content.ContentId(json.image));
+            if (json.text) {
+                this.setText(json.text);
             }
 
             this.setName(new api.content.page.ComponentName(json.name));
-
-            if (json.descriptor) {
-                this.setDescriptor(api.content.page.DescriptorKey.fromString(json.descriptor));
-            }
-
-            this.setConfig(api.data.DataFactory.createRootDataSet(json.config));
-            this.setRegion(regionPath);
+            this.setParent(regionPath);
 
             return this;
         }
 
-        public setImage(value: api.content.ContentId): ImageComponentBuilder {
-            this.image = value;
+        public setText(value: string): TextComponentBuilder {
+            this.text = value;
             return this;
         }
 
-        public build(): ImageComponent {
-            return new ImageComponent(this);
+        public build(): TextComponent {
+            return new TextComponent(this);
         }
     }
 }

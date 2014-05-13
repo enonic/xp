@@ -4,29 +4,21 @@ module api.content.page {
 
         private name: ComponentName;
 
-        private region: RegionPath;
-
-        private path: ComponentPath;
+        private parent: RegionPath;
 
         constructor(builder?: PageComponentBuilder<any>) {
             if (builder != undefined) {
                 this.name = builder.name;
-                this.region = builder.region;
-                if (this.region && this.name) {
-                    this.path = ComponentPath.fromRegionPathAndComponentName(this.region, this.name);
-                }
+                this.parent = builder.parent;
             }
         }
 
-        setPath(path: ComponentPath) {
-            this.path = path;
-            if (path != null) {
-                this.region = path.getRegionPath();
-            }
+        setParent(path: RegionPath) {
+            this.parent = path;
         }
 
         getPath(): ComponentPath {
-            return this.path;
+            return ComponentPath.fromRegionPathAndComponentName(this.parent, this.name);
         }
 
         getName(): api.content.page.ComponentName {
@@ -41,8 +33,8 @@ module api.content.page {
 
         }
 
-        getRegion(): RegionPath {
-            return this.region;
+        getParent(): RegionPath {
+            return this.parent;
         }
 
         toJson(): api.content.page.PageComponentTypeWrapperJson {
@@ -68,11 +60,7 @@ module api.content.page {
                 return false;
             }
 
-            if (!api.ObjectHelper.equals(this.region, other.region)) {
-                return false;
-            }
-
-            if (!api.ObjectHelper.equals(this.path, other.path)) {
+            if (!api.ObjectHelper.equals(this.parent, other.parent)) {
                 return false;
             }
 
@@ -88,15 +76,15 @@ module api.content.page {
 
         name: api.content.page.ComponentName;
 
-        region: RegionPath;
+        parent: RegionPath;
 
         public setName(value: api.content.page.ComponentName): PageComponentBuilder<COMPONENT> {
             this.name = value;
             return this;
         }
 
-        public setRegion(value: api.content.page.RegionPath): PageComponentBuilder<COMPONENT> {
-            this.region = value;
+        public setParent(value: api.content.page.RegionPath): PageComponentBuilder<COMPONENT> {
+            this.parent = value;
             return this;
         }
 

@@ -1,4 +1,4 @@
-module api.content.page.part {
+module api.content.page.text {
 
     export interface TextComponentJson extends api.content.page.PageComponentJson {
 
