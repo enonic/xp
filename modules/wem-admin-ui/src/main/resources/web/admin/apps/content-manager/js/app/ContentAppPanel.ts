@@ -33,7 +33,7 @@ module app {
             });
 
             app.browse.CloseContentEvent.on((event) => {
-                this.removePanel(event.getPanel(), event.isCheckCanRemovePanel());
+                this.removeNavigablePanel(event.getPanel(), event.isCheckCanRemovePanel());
             });
         }
 

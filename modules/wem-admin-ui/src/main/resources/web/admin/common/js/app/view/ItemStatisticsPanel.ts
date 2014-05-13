@@ -2,13 +2,13 @@ module api.app.view {
 
     export class ItemStatisticsPanel<M> extends api.ui.Panel {
 
-        private browseItem:ViewItem<M>;
+        private browseItem: ViewItem<M>;
 
-        private header:ItemStatisticsHeader<M>;
+        private header: ItemStatisticsHeader<M>;
 
-        private tabMenu:api.ui.tab.TabMenu;
+        private tabMenu: api.ui.tab.TabMenu;
 
-        private deckPanel:api.ui.NavigatedDeckPanel;
+        private deckPanel: api.ui.NavigatedDeckPanel;
 
         constructor() {
             super();
@@ -42,17 +42,17 @@ module api.app.view {
             return this.deckPanel;
         }
 
-        setItem(item:api.app.view.ViewItem<M>) {
+        setItem(item: api.app.view.ViewItem<M>) {
             this.browseItem = item;
             this.header.setItem(item);
         }
 
-        addNavigablePanel(tab:api.ui.tab.TabMenuItem, panel: api.ui.Panel) {
+        addNavigablePanel(tab: api.ui.tab.TabMenuItem, panel: api.ui.Panel) {
             this.tabMenu.show();
-            this.deckPanel.addNavigablePanelToBack(tab, panel);
+            this.deckPanel.addNavigablePanel(tab, panel);
         }
 
-        showPanel(index:number) {
+        showPanel(index: number) {
             this.tabMenu.selectNavigationItem(index);
         }
     }

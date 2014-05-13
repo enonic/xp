@@ -49,13 +49,15 @@ module app {
                 } else {
                     switch (schemaKind) {
                     case api.schema.SchemaKind.CONTENT_TYPE:
-                        tabMenuItem = new api.app.AppBarTabMenuItem("[" + app.wizard.ContentTypeWizardPanel.NEW_WIZARD_HEADER + "]", tabId, true);
+                        tabMenuItem =
+                        new api.app.AppBarTabMenuItem("[" + app.wizard.ContentTypeWizardPanel.NEW_WIZARD_HEADER + "]", tabId, true);
                         new app.wizard.ContentTypeWizardPanel(tabId, null, (wizard: app.wizard.ContentTypeWizardPanel) => {
                             this.addWizardPanel(tabMenuItem, wizard);
                         });
                         break;
                     case api.schema.SchemaKind.RELATIONSHIP_TYPE:
-                        tabMenuItem = new api.app.AppBarTabMenuItem("[" + app.wizard.RelationshipTypeWizardPanel.NEW_WIZARD_HEADER + "]", tabId, true);
+                        tabMenuItem =
+                        new api.app.AppBarTabMenuItem("[" + app.wizard.RelationshipTypeWizardPanel.NEW_WIZARD_HEADER + "]", tabId, true);
                         new app.wizard.RelationshipTypeWizardPanel(tabId, null, (wizard: app.wizard.RelationshipTypeWizardPanel) => {
                             this.addWizardPanel(tabMenuItem, wizard);
                         });
@@ -78,6 +80,7 @@ module app {
                     var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                     var self = this;
+
                     function removeViewTabMenuItem() {
                         var viewTabId = api.app.AppBarTabId.forView(schema.getId());
                         var viewTabMenuItem = self.getAppBarTabMenu().getNavigationItemById(viewTabId);
@@ -184,7 +187,7 @@ module app {
             });
 
             app.browse.CloseSchemaEvent.on((event) => {
-                this.removePanel(event.getPanel(), event.isCheckCanRemovePanel());
+                this.removeNavigablePanel(event.getPanel(), event.isCheckCanRemovePanel());
             });
         }
 

@@ -39,7 +39,7 @@ module api.app.wizard {
 
         private stepNavigator: WizardStepNavigator;
 
-        private stepPanels: api.app.wizard.WizardStepDeckPanel;
+        private stepPanels: api.app.wizard.WizardStepsPanel;
 
         // TODO: @alb - Value is set to 'changed' by default to see SaveChangesBeforeCloseDialog behavior.
         private isChanged: boolean = true;
@@ -60,7 +60,7 @@ module api.app.wizard {
 
         private splitPanel: api.ui.SplitPanel;
 
-        private splitPanelThreshold:number = 960;
+        private splitPanelThreshold: number = 960;
 
         constructor(params: WizardPanelParams, callback: Function) {
             super("wizard-panel");
@@ -79,9 +79,9 @@ module api.app.wizard {
             this.appendChild(this.mainToolbar);
             if (params.split && params.livePanel) {
                 this.splitPanel = new api.ui.SplitPanelBuilder(this.formPanel, params.livePanel)
-                                    .setFirstPanelMinSize(280)
-                                    .setAlignment(api.ui.SplitPanelAlignment.VERTICAL)
-                                    .build();
+                    .setFirstPanelMinSize(280)
+                    .setAlignment(api.ui.SplitPanelAlignment.VERTICAL)
+                    .build();
                 this.updateSplitPanel();
                 this.splitPanel.onResized((event: api.dom.ElementResizedEvent) => {
                     this.updateStickyToolbar();
@@ -108,7 +108,7 @@ module api.app.wizard {
             this.stepNavigatorAndToolbarContainer.appendChild(this.stepNavigator);
             aboveStepPanels.appendChild(this.stepNavigatorAndToolbarContainer);
 
-            this.stepPanels = new WizardStepDeckPanel(this.stepNavigator);
+            this.stepPanels = new WizardStepsPanel(this.stepNavigator);
             this.formPanel.appendChild(this.stepPanels);
 
             this.setSteps(params.steps);
@@ -210,7 +210,7 @@ module api.app.wizard {
         private setSteps(steps: api.app.wizard.WizardStep[]) {
 
             steps.forEach((step: api.app.wizard.WizardStep, index: number) => {
-                this.stepPanels.addNavigablePanelToBack(step.getTabBarItem(), step.getPanel());
+                this.stepPanels.addNavigablePanel(step.getTabBarItem(), step.getPanel());
                 // Ensure first step is shown
                 if (index == 0) {
                     this.stepPanels.showPanelByIndex(0);

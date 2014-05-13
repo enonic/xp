@@ -20,38 +20,31 @@ module api.ui {
             return this.navigator.getSelectedNavigationItem();
         }
 
-        addNavigablePanelToFront(item: NavigationItem, panel: Panel) {
+        addNavigablePanel(item: NavigationItem, panel: Panel, select?: boolean) {
             this.navigator.addNavigationItem(item);
-            super.addPanel(panel);
-
-            this.selectPanel(item);
-        }
-
-        addNavigablePanelToBack(item: NavigationItem, panel: Panel) {
-            this.navigator.addNavigationItem(item);
-            super.addPanel(panel);
+            var index = super.addPanel(panel);
+            if (select) {
+                this.selectPanel(item);
+            }
+            return index;
         }
 
         selectPanel(item: NavigationItem) {
-            this.selectPanelFromIndex(item.getIndex());
+            this.selectPanelByIndex(item.getIndex());
         }
 
-        selectPanelFromIndex(index: number) {
+        selectPanelByIndex(index: number) {
             this.navigator.selectNavigationItem(index);
             // panel will be shown because of the selected navigator listener in constructor
         }
 
-        removePanel(panel: Panel, checkCanRemovePanel: boolean = true): number {
-
-            var panelIndex: number = this.getPanelIndex(panel);
-            var navigationItem: api.ui.NavigationItem = this.navigator.getNavigationItem(panelIndex);
-            var removedPanelAtIndex = super.removePanel(panel, checkCanRemovePanel);
-            var removed: boolean = removedPanelAtIndex !== -1;
-
-            if (removed) {
+        removeNavigablePanel(panel: Panel, checkCanRemovePanel: boolean = true): number {
+            var removedPanelIndex = super.removePanel(panel, checkCanRemovePanel);
+            if (removedPanelIndex > -1) {
+                var navigationItem: api.ui.NavigationItem = this.navigator.getNavigationItem(removedPanelIndex);
                 this.navigator.removeNavigationItem(navigationItem);
             }
-            return removedPanelAtIndex;
+            return removedPanelIndex;
         }
     }
 }

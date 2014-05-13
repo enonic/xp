@@ -6,7 +6,7 @@
 ///<reference path='WizardHeader.ts' />
 ///<reference path='WizardHeaderWithDisplayNameAndName.ts' />
 ///<reference path='WizardHeaderWithName.ts' />
-///<reference path='WizardStepDeckPanel.ts' />
+///<reference path='WizardStepsPanel.ts' />
 ///<reference path='WizardStepNavigator.ts' />
 ///<reference path='WizardStep.ts' />
 ///<reference path='WizardStepForm.ts' />

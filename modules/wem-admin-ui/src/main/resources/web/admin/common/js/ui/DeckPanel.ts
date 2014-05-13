@@ -78,11 +78,7 @@ module api.ui {
 
             var index: number = this.getPanelIndex(panelToRemove);
 
-            if (index < 0) {
-                return -1;
-            }
-
-            if (checkCanRemovePanel && !this.canRemovePanel(panelToRemove)) {
+            if (index < 0 || checkCanRemovePanel && !this.canRemovePanel(panelToRemove)) {
                 return -1;
             }
 
@@ -109,7 +105,7 @@ module api.ui {
 
         showPanel(panel: Panel) {
             var index = this.getPanelIndex(panel);
-            if( index > -1 ) {
+            if (index > -1) {
                 this.showPanelByIndex(index);
             }
         }
@@ -128,7 +124,7 @@ module api.ui {
 
             panelToShow.show();
             this.panelShown = panelToShow;
-            this.notifyPanelShown(panelToShow, this.getPanelIndex(panelToShow), previousPanel);
+            this.notifyPanelShown(panelToShow, index, previousPanel);
         }
 
         onPanelShown(listener: (event: PanelShownEvent)=>void) {

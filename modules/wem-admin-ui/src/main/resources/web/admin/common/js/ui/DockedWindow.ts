@@ -1,9 +1,9 @@
 module api.ui {
     export class DockedWindow extends api.dom.DivEl {
 
-        private deck:api.ui.NavigatedDeckPanel;
-        private navigator:api.ui.tab.TabBar;
-        private items:any[] = [];
+        private deck: api.ui.NavigatedDeckPanel;
+        private navigator: api.ui.tab.TabBar;
+        private items: any[] = [];
 
 
         constructor() {
@@ -16,30 +16,28 @@ module api.ui {
             this.appendChild(this.deck);
         }
 
-        addItem<T extends api.ui.Panel>(label:string, panel:T, hidden?:boolean):number {
+        addItem<T extends api.ui.Panel>(label: string, panel: T, hidden?: boolean): number {
             var item = new api.ui.tab.TabBarItem(label);
             this.addItemArray(item);
 
-            (this.items.length == 1)
-                ? this.deck.addNavigablePanelToFront(item, panel)
-                : this.deck.addNavigablePanelToBack(item, panel);
+            this.deck.addNavigablePanel(item, panel, this.items.length == 1);
 
             return this.deck.getPanelIndex(panel);
         }
 
-        selectPanel<T extends api.ui.Panel>(panel:T) {
-            this.deck.selectPanelFromIndex(this.deck.getPanelIndex(panel));
+        selectPanel<T extends api.ui.Panel>(panel: T) {
+            this.deck.selectPanelByIndex(this.deck.getPanelIndex(panel));
         }
 
-        getNavigator():api.ui.tab.TabBar {
+        getNavigator(): api.ui.tab.TabBar {
             return this.navigator;
         }
 
-        getDeck():api.ui.DeckPanel {
+        getDeck(): api.ui.DeckPanel {
             return this.deck;
         }
 
-        private addItemArray(item:any) {
+        private addItemArray(item: any) {
             this.items.push(item);
         }
 

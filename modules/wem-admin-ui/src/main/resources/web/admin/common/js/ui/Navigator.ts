@@ -8,7 +8,7 @@ module api.ui {
 
         getNavigationItem(index: number):NavigationItem;
 
-        selectNavigationItem(index: number);
+        selectNavigationItem(index: number, silent?: boolean);
 
         getSelectedNavigationItem():NavigationItem;
 

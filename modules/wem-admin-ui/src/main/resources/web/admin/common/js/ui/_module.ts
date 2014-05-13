@@ -12,6 +12,7 @@
 ///<reference path='Panel.ts' />
 ///<reference path='PanelShownEvent.ts' />
 ///<reference path='DeckPanel.ts' />
+///<reference path='PanelStrip.ts' />
 ///<reference path='Mask.ts' />
 ///<reference path='BodyMask.ts' />
 ///<reference path='LoadMask.ts' />
@@ -27,6 +28,7 @@
 ///<reference path='NavigationItem.ts' />
 ///<reference path='Navigator.ts' />
 ///<reference path='NavigatedDeckPanel.ts' />
+///<reference path='NavigatedPanelStrip.ts' />
 ///<reference path='FloatingWindow.ts' />
 ///<reference path='NavigableFloatingWindow.ts' />
 ///<reference path='DockedWindow.ts' />

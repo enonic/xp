@@ -50,26 +50,26 @@ module api.app {
         }
 
         addViewPanel(tabMenuItem: AppBarTabMenuItem, viewPanel: api.app.view.ItemViewPanel<M>) {
-            super.addNavigablePanelToFront(tabMenuItem, viewPanel);
+            super.addNavigablePanel(tabMenuItem, viewPanel, true);
 
             tabMenuItem.onClosed(() => {
                 viewPanel.close();
             });
 
             viewPanel.onClosed((event: api.app.view.ItemViewClosedEvent<M>) => {
-                this.removePanel(event.getView(), false);
+                this.removeNavigablePanel(event.getView(), false);
             });
         }
 
         addWizardPanel(tabMenuItem: AppBarTabMenuItem, wizardPanel: api.app.wizard.WizardPanel<any>) {
-            super.addNavigablePanelToFront(tabMenuItem, wizardPanel);
+            super.addNavigablePanel(tabMenuItem, wizardPanel, true);
 
             tabMenuItem.onClosed(() => {
                 wizardPanel.close();
             });
 
             wizardPanel.onClosed((event: api.app.wizard.WizardClosedEvent) => {
-                this.removePanel(event.getWizard(), false);
+                this.removeNavigablePanel(event.getWizard(), false);
             });
         }
 

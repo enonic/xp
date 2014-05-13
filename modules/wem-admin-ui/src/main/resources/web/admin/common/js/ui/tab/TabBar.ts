@@ -14,7 +14,7 @@ module api.ui.tab {
             super("tab-bar" + (className ? " " + className : ""));
         }
 
-        addNavigationItem(tab: TabBarItem) {
+        addNavigationItem(tab: TabBarItem, silent?: boolean) {
             var newLength = this.tabs.push(tab);
             tab.setIndex(newLength - 1);
 
@@ -24,7 +24,9 @@ module api.ui.tab {
                 this.selectNavigationItem(event.getTab().getIndex());
             });
 
-            this.notifyTabAddedListeners(tab);
+            if (!silent) {
+                this.notifyTabAddedListeners(tab);
+            }
         }
 
         removeNavigationItem(tab: TabBarItem) {
@@ -53,7 +55,7 @@ module api.ui.tab {
             tab.remove();
         }
 
-        selectNavigationItem(index: number) {
+        selectNavigationItem(index: number, silent?: boolean) {
             if (index < 0 || index >= this.getSize() || this.selectedIndex == index) {
                 return;
             }
@@ -63,7 +65,9 @@ module api.ui.tab {
             var selectedTab = this.getSelectedNavigationItem();
             selectedTab.setActive(true);
 
-            this.notifyTabShownListeners(selectedTab);
+            if (!silent) {
+                this.notifyTabShownListeners(selectedTab);
+            }
         }
 
         deselectNavigationItem() {
