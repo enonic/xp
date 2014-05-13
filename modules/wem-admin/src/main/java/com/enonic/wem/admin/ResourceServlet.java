@@ -3,7 +3,6 @@ package com.enonic.wem.admin;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,32 +11,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.io.ByteStreams;
 
-import com.enonic.wem.admin.app.AppServlet;
-
 @Singleton
 public final class ResourceServlet
     extends HttpServlet
 {
-    @Inject
-    protected AppServlet appServlet;
-
     @Override
     protected void doGet( final HttpServletRequest req, final HttpServletResponse res )
         throws ServletException, IOException
     {
         final String path = req.getRequestURI().substring( req.getContextPath().length() );
-        if ( path.equals( "/admin" ) )
-        {
-            res.sendRedirect( req.getRequestURI() + "/" );
-            return;
-        }
-
-        if ( path.equals( "/admin/" ) )
-        {
-            this.appServlet.handleGet( req, res );
-            return;
-        }
-
         final InputStream in = findResource( path );
 
         if ( in != null )
