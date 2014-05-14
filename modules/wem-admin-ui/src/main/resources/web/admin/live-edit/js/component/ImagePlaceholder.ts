@@ -1,7 +1,7 @@
 module LiveEdit.component {
 
-    import ImageUploadedEvent = api.content.page.image.ImageUploadedEvent;
-    import OpenImageUploadDialogEvent = api.content.page.image.OpenImageUploadDialogEvent;
+    import ImageUploadedEvent = api.livedit.ImageUploadedEvent;
+    import OpenImageUploadDialogEvent = api.livedit.OpenImageUploadDialogEvent;
 
     export class ImagePlaceholder extends ComponentPlaceholder {
 

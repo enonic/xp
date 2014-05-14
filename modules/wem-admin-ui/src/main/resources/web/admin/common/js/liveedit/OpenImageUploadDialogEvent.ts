@@ -1,4 +1,4 @@
-module api.content.page.image {
+module api.livedit {
 
     import Event2 = api.event.Event2;
 

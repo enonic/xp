@@ -9,9 +9,9 @@ module app.wizard.page {
     import ComponentPath = api.content.page.ComponentPath;
     import UploadDialog = api.content.inputtype.image.UploadDialog;
     import RenderingMode = api.rendering.RenderingMode;
-    import NewPageComponentIdMapEvent = api.content.page.NewPageComponentIdMapEvent;
-    import OpenImageUploadDialogEvent = api.content.page.image.OpenImageUploadDialogEvent;
-    import ImageUploadedEvent = api.content.page.image.ImageUploadedEvent;
+    import NewPageComponentIdMapEvent = api.liveedit.NewPageComponentIdMapEvent;
+    import OpenImageUploadDialogEvent = api.livedit.OpenImageUploadDialogEvent;
+    import ImageUploadedEvent = api.livedit.ImageUploadedEvent;
 
     export interface LiveEditPageConfig {
 

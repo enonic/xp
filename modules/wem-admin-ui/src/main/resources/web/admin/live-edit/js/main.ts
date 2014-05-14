@@ -26,8 +26,8 @@ function initializeLiveEdit() {
     });
 
     var body = api.dom.Body.getAndLoadExistingChildren();
-    var map = new api.content.page.PageComponentIdMapResolver(body).resolve();
-    new api.content.page.NewPageComponentIdMapEvent(map).fire();
+    var map = new api.liveedit.PageComponentIdMapResolver(body).resolve();
+    new api.liveedit.NewPageComponentIdMapEvent(map).fire();
 }
 
 function getComponentByPath(path: string): LiveEdit.component.Component {

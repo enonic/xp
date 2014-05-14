@@ -12,5 +12,3 @@
 ///<reference path='ImageDescriptorLoader.ts' />
 ///<reference path='ImageDescriptorViewer.ts' />
 ///<reference path='ImageDescriptorDropdown.ts' />
-///<reference path='OpenImageUploadDialogEvent.ts' />
-///<reference path='ImageUploadedEvent.ts' />

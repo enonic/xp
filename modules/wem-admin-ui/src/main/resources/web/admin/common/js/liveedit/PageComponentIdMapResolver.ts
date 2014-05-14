@@ -1,6 +1,9 @@
-module api.content.page {
+module api.liveedit {
 
     import Body = api.dom.Body;
+    import PageComponentType = api.content.page.PageComponentType;
+    import ComponentPath2 = api.content.page.ComponentPath2;
+    import RegionPath2 = api.content.page.RegionPath2;
 
     export class PageComponentIdMapResolver {
 

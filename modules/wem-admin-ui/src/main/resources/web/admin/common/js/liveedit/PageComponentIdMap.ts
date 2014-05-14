@@ -1,4 +1,6 @@
-module api.content.page {
+module api.liveedit {
+
+    import ComponentPath2 = api.content.page.ComponentPath2;
 
     export class PageComponentIdMap {
 

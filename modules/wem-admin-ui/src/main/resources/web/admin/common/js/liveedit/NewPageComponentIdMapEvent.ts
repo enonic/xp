@@ -1,7 +1,6 @@
-module api.content.page {
+module api.liveedit {
 
     import Event2 = api.event.Event2;
-    import PageComponentIdMap = api.content.page.PageComponentIdMap;
 
     export class NewPageComponentIdMapEvent extends Event2 {
 
