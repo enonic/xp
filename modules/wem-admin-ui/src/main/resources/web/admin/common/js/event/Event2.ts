@@ -4,8 +4,8 @@ module api.event {
 
         private name: string;
 
-        constructor(name: string) {
-            this.name = name;
+        constructor(name?: string) {
+            this.name = name || api.util.getFullName(this);
         }
 
         getName(): string {
@@ -20,7 +20,7 @@ module api.event {
             EventBus2.onEvent(name, handler, contextWindow);
         }
 
-        static unbind(name: string, handler: (event: Event2) => void, contextWindow: Window = window) {
+        static unbind(name: string, handler?: (event: Event2) => void, contextWindow: Window = window) {
             EventBus2.unEvent2(name, handler, contextWindow);
         }
     }

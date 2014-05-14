@@ -1,5 +1,7 @@
 module LiveEdit.ui {
 
+    import SortableStartEvent = api.liveedit.SortableStartEvent;
+
     // Uses
     var $ = $liveEdit;
 
@@ -21,7 +23,7 @@ module LiveEdit.ui {
             $(window).on('editTextComponent.liveEdit', (event:JQueryEventObject, component) => this.show(component));
             $(window).on('leaveTextComponent.liveEdit', () => this.hide());
             $(window).on('componentRemoved.liveEdit', () => this.hide());
-            $(window).on('sortableStart.liveEdit', () => this.hide());
+            SortableStartEvent.on(() => this.hide());
         }
 
         private addView():void {

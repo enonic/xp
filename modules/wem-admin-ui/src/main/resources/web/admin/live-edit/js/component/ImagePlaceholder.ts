@@ -1,7 +1,8 @@
 module LiveEdit.component {
 
-    import ImageUploadedEvent = api.livedit.ImageUploadedEvent;
-    import OpenImageUploadDialogEvent = api.livedit.OpenImageUploadDialogEvent;
+    import ImageUploadedEvent = api.liveedit.ImageUploadedEvent;
+    import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
+    import ImageSetEvent = api.liveedit.ImageSetEvent
 
     export class ImagePlaceholder extends ComponentPlaceholder {
 
@@ -24,7 +25,7 @@ module LiveEdit.component {
             var comboUploadButtonDiv = new api.dom.DivEl('image-placeholder-selector');
             this.uploadButton = new api.ui.Button();
             this.uploadButton.addClass("upload-button");
-            this.uploadButton.onClicked(() => new OpenImageUploadDialogEvent().fire());
+            this.uploadButton.onClicked(() => new ImageOpenUploadDialogEvent().fire());
             this.uploadButton.hide();
 
             this.getEl().setData('live-edit-type', "image");
@@ -46,14 +47,12 @@ module LiveEdit.component {
                 this.uploadButton.hide();
                 this.showLoadingSpinner();
 
-                $liveEdit(window).trigger('imageComponentSetImage.liveEdit', [
-                    {
-                        imageId: event.getOption().displayValue.getContentId(),
-                        componentPathAsString: this.getComponentPath(),
-                        componentPlaceholder: this,
-                        imageName: event.getOption().displayValue.getDisplayName()
-                    }
-                ]);
+                new ImageSetEvent().
+                    setImageId(event.getOption().displayValue.getContentId()).
+                    setComponentPath(this.getComponentPath()).
+                    setComponentPlaceholder(this).
+                    setName(event.getOption().displayValue.getDisplayName()).
+                    fire();
 
             });
         }
@@ -95,22 +94,18 @@ module LiveEdit.component {
 
                 }).then((createdContent: api.content.Content) => {
 
-                    $liveEdit(window).trigger('imageComponentSetImage.liveEdit', [
-                        {
-                            imageId: createdContent.getId(),
-                            componentPathAsString: this.getComponentPath(),
-                            componentPlaceholder: this,
-                            imageName: uploadItem.getName()
-                        }
-                    ]);
+                    new ImageSetEvent().
+                        setImageId(createdContent.getContentId()).
+                        setComponentPath(this.getComponentPath()).
+                        setComponentPlaceholder(this).
+                        setName(uploadItem.getName()).
+                        fire();
 
                 }).catch((reason) => {
 
-                    $liveEdit(window).trigger('imageComponentSetImage.liveEdit', [
-                        {
-                            errorMessage: reason.message
-                        }
-                    ]);
+                    new ImageSetEvent().
+                        setErrorMessage(reason.message).
+                        fire();
 
                     this.hideLoadingSpinner();
 

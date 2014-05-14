@@ -1,5 +1,9 @@
 module LiveEdit.component {
 
+    import PageSelectEvent = api.liveedit.PageSelectEvent;
+    import RegionSelectEvent = api.liveedit.RegionSelectEvent;
+    import ComponentSelectEvent = api.liveedit.ComponentSelectEvent;
+
     // Uses
     var $ = $liveEdit;
 
@@ -15,15 +19,15 @@ module LiveEdit.component {
             var component = Component.fromElement(element);
 
             if (Selection.getType(element) == "page") {
-                $(element).trigger('pageSelect.liveEdit');
+                new PageSelectEvent().fire();
             } else if (Selection.getType(element) == "region") {
 
                 var regionPath = element.getAttribute(Selection.REGION_ATTR);
                 if (regionPath && regionPath.length > 0) {
-                    $(element).trigger('regionSelect.liveEdit', regionPath);
+                    new RegionSelectEvent(regionPath).fire();
                 }
             } else if (Selection.getType(element) == "component") {
-                $(element).trigger('componentSelect.liveEdit', [ element.getAttribute(Selection.COMPONENT_ATTR), component ]);
+                new ComponentSelectEvent(element.getAttribute(Selection.COMPONENT_ATTR), component).fire();
             }
 
             this.setSelectionAttributeOnElement($(element));
