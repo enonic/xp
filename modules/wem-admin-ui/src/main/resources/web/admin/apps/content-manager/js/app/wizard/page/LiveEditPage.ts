@@ -322,7 +322,7 @@ module app.wizard.page {
             this.liveEditJQuery(this.liveEditWindow).off('componentDuplicated.liveEdit');
             this.liveEditJQuery(this.liveEditWindow).on('componentDuplicated.liveEdit', (event, component?, placeholder?) => {
 
-                var componentType = component.getComponentType().getName();
+                var componentType = PageComponentType.byShortName(component.getComponentType().getName());
                 var region: RegionPath = RegionPath.fromString(component.getRegionName());
                 var componentPath: ComponentPath = ComponentPath.fromString(component.getComponentPath());
 
@@ -434,8 +434,9 @@ module app.wizard.page {
             });
         }
 
-        private notifySortableUpdate(componentPath: ComponentPath, component: any, region: RegionPath, precedingComponent: ComponentPath) {
-            var event = new SortableUpdateEvent(componentPath, component, region, precedingComponent);
+        private notifySortableUpdate(componentPath: ComponentPath, view: api.dom.Element, region: RegionPath,
+                                     precedingComponent: ComponentPath) {
+            var event = new SortableUpdateEvent(componentPath, view, region, precedingComponent);
             this.sortableUpdateListeners.forEach((listener) => {
                 listener(event);
             });
@@ -623,7 +624,8 @@ module app.wizard.page {
             });
         }
 
-        private notifyPageComponentDuplicated(placeholder: api.dom.Element, type: string, region: RegionPath, path: ComponentPath) {
+        private notifyPageComponentDuplicated(placeholder: api.dom.Element, type: PageComponentType, region: RegionPath,
+                                              path: ComponentPath) {
             var event = new PageComponentDuplicatedEvent(placeholder, type, region, path);
             this.pageComponentDuplicatedListeners.forEach((listener) => {
                 listener(event);

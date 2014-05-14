@@ -9,12 +9,12 @@ module app.wizard.page {
 
         private descriptor: Descriptor;
 
-        private componentPlaceholder: api.dom.Element;
+        private componentView: api.dom.Element;
 
-        constructor(path: ComponentPath, descriptor: Descriptor, componentPlaceholder: api.dom.Element) {
+        constructor(path: ComponentPath, descriptor: Descriptor, componentView: api.dom.Element) {
             this.path = path;
             this.descriptor = descriptor;
-            this.componentPlaceholder = componentPlaceholder;
+            this.componentView = componentView;
         }
 
         getPath(): ComponentPath {
@@ -25,8 +25,8 @@ module app.wizard.page {
             return this.descriptor;
         }
 
-        getComponentPlaceholder() : api.dom.Element {
-            return this.componentPlaceholder;
+        getComponentView(): api.dom.Element {
+            return this.componentView;
         }
     }
 }

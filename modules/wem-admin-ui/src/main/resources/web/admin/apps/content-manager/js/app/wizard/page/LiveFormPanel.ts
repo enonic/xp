@@ -128,7 +128,7 @@ module app.wizard.page {
 
                 var uiComponent = this.liveEditPage.getComponentByPath(event.getComponentPath());
                 var command = new PageComponentSetDescriptorCommand().
-                    setUIComponent(uiComponent).
+                    setComponentView(uiComponent).
                     setPageRegions(this.pageRegions).
                     setComponentPath(event.getComponentPath()).
                     setDescriptor(event.getDescriptor());
@@ -148,7 +148,7 @@ module app.wizard.page {
 
                 var uiComponent = this.liveEditPage.getComponentByPath(event.getComponentPath());
                 var command = new PageComponentSetDescriptorCommand().
-                    setUIComponent(uiComponent).
+                    setComponentView(uiComponent).
                     setPageRegions(this.pageRegions).
                     setComponentPath(event.getComponentPath()).
                     setDescriptor(event.getDescriptor());
@@ -499,7 +499,7 @@ module app.wizard.page {
                     event.getPrecedingComponent().getComponentName());
 
                 if (newPath) {
-                    event.getComponent().setComponentPath(newPath.toString());
+                    event.getComponentView().setComponentPath(newPath.toString());
                 }
             });
 
@@ -510,7 +510,7 @@ module app.wizard.page {
                     setType(event.getType()).
                     setRegion(event.getRegion()).
                     setPrecedingComponent(event.getPrecedingComponent() ? event.getPrecedingComponent().getComponentName() : null).
-                    setUIComponent(event.getElement());
+                    setComponentView(event.getElement());
 
                 if (!this.pageTemplate) {
                     this.initializePageFromDefault().done(() => {
@@ -530,18 +530,18 @@ module app.wizard.page {
                     setPageRegions(this.pageRegions).
                     setComponentPath(event.getPath()).
                     setImage(event.getImage()).
-                    setUIComponent(event.getComponentPlaceholder()).
+                    setComponentView(event.getComponentView()).
                     setImageName(event.getImageName());
 
                 if (this.pageTemplate) {
                     var newComponentPath = command.execute();
-                    this.saveAndReloadOnlyPageComponent(newComponentPath, event.getComponentPlaceholder());
+                    this.saveAndReloadOnlyPageComponent(newComponentPath, event.getComponentView());
                 }
                 else {
                     this.initializePageFromDefault().done(() => {
 
                         var newComponentPath = command.execute();
-                        this.saveAndReloadOnlyPageComponent(newComponentPath, event.getComponentPlaceholder());
+                        this.saveAndReloadOnlyPageComponent(newComponentPath, event.getComponentView());
                     });
                 }
             });
@@ -549,20 +549,20 @@ module app.wizard.page {
             this.liveEditPage.onPageComponentSetDescriptor((event: PageComponentSetDescriptorEvent) => {
 
                 var command = new PageComponentSetDescriptorCommand().
-                    setUIComponent(event.getComponentPlaceholder()).
+                    setComponentView(event.getComponentView()).
                     setPageRegions(this.pageRegions).
                     setComponentPath(event.getPath()).
                     setDescriptor(event.getDescriptor());
 
                 if (this.pageTemplate) {
                     var newComponentPath = command.execute();
-                    this.saveAndReloadOnlyPageComponent(newComponentPath, event.getComponentPlaceholder());
+                    this.saveAndReloadOnlyPageComponent(newComponentPath, event.getComponentView());
                 }
                 else {
                     this.initializePageFromDefault().done(() => {
 
                         var newComponentPath = command.execute();
-                        this.saveAndReloadOnlyPageComponent(newComponentPath, event.getComponentPlaceholder());
+                        this.saveAndReloadOnlyPageComponent(newComponentPath, event.getComponentView());
                     });
                 }
             });
@@ -574,7 +574,7 @@ module app.wizard.page {
                     setPathToSource(event.getPath()).
                     execute();
 
-                this.saveAndReloadOnlyPageComponent(newPageComponent.getPath(), event.getPlaceholder());
+                this.saveAndReloadOnlyPageComponent(newPageComponent.getPath(), event.getComponentView());
             });
         }
 

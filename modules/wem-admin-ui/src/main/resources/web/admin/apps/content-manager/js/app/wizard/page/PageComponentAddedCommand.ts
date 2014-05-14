@@ -19,7 +19,7 @@ module app.wizard.page {
 
         private pageRegions: PageRegions;
 
-        private uiComponent: api.dom.Element;
+        private componentView: api.dom.Element;
 
         setPageRegions(value: PageRegions): PageComponentAddedCommand {
             this.pageRegions = value;
@@ -41,8 +41,8 @@ module app.wizard.page {
             return this;
         }
 
-        setUIComponent(value: api.dom.Element): PageComponentAddedCommand {
-            this.uiComponent = value;
+        setComponentView(value: api.dom.Element): PageComponentAddedCommand {
+            this.componentView = value;
             return this;
         }
 
@@ -51,9 +51,9 @@ module app.wizard.page {
             var component = this.addComponent();
 
             if (component) {
-                this.uiComponent.getEl().setData("live-edit-component", component.getPath().toString());
+                this.componentView.getEl().setData("live-edit-component", component.getPath().toString());
             }
-            this.uiComponent.getEl().setData("live-edit-type", this.type.getShortName());
+            this.componentView.getEl().setData("live-edit-type", this.type.getShortName());
 
             return component;
         }

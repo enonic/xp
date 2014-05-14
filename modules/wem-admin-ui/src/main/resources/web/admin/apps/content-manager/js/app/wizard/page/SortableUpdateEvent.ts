@@ -7,15 +7,15 @@ module app.wizard.page {
 
         private componentPath: ComponentPath;
 
-        private component: any;
+        private componentView: any;
 
         private region: RegionPath;
 
         private precedingComponent: ComponentPath;
 
-        constructor(componentPath: ComponentPath, component:any, region: RegionPath, precedingComponent: ComponentPath) {
+        constructor(componentPath: ComponentPath, componentView: any, region: RegionPath, precedingComponent: ComponentPath) {
             this.componentPath = componentPath;
-            this.component = component;
+            this.componentView = componentView;
             this.region = region;
             this.precedingComponent = precedingComponent;
         }
@@ -24,8 +24,8 @@ module app.wizard.page {
             return this.componentPath;
         }
 
-        getComponent(): any {
-            return this.component;
+        getComponentView(): any {
+            return this.componentView;
         }
 
         getRegion(): RegionPath {

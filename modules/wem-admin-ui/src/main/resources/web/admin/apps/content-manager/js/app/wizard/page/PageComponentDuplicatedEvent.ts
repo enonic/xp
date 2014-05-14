@@ -2,29 +2,30 @@ module app.wizard.page {
 
     import RegionPath = api.content.page.RegionPath;
     import ComponentPath = api.content.page.ComponentPath;
+    import PageComponentType = api.content.page.PageComponentType;
 
     export class PageComponentDuplicatedEvent {
 
-        private placeholder: api.dom.Element;
+        private componentView: api.dom.Element;
 
-        private type: string;
+        private type: PageComponentType;
 
         private region: RegionPath;
 
         private path: ComponentPath;
 
-        constructor(placeholder: api.dom.Element, type: string, region: RegionPath, path: ComponentPath) {
-            this.placeholder = placeholder;
+        constructor(componentView: api.dom.Element, type: PageComponentType, region: RegionPath, path: ComponentPath) {
+            this.componentView = componentView;
             this.type = type;
             this.region = region;
             this.path = path;
         }
 
-        getPlaceholder() {
-            return this.placeholder;
+        getComponentView() {
+            return this.componentView;
         }
 
-        getType(): string {
+        getType(): PageComponentType {
             return this.type;
         }
 

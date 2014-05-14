@@ -9,14 +9,14 @@ module app.wizard.page {
 
         private image: ContentId;
 
-        private componentPlaceholder: api.dom.Element;
+        private componentView: api.dom.Element;
 
-        private imageName:string;
+        private imageName: string;
 
-        constructor(path: ComponentPath, image: ContentId, componentPlaceholder: api.dom.Element, imageName:string) {
+        constructor(path: ComponentPath, image: ContentId, componentView: api.dom.Element, imageName: string) {
             this.path = path;
             this.image = image;
-            this.componentPlaceholder = componentPlaceholder;
+            this.componentView = componentView;
             this.imageName = imageName;
         }
 
@@ -28,11 +28,11 @@ module app.wizard.page {
             return this.image;
         }
 
-        getComponentPlaceholder() : api.dom.Element {
-            return this.componentPlaceholder;
+        getComponentView(): api.dom.Element {
+            return this.componentView;
         }
 
-        getImageName() : string {
+        getImageName(): string {
             return this.imageName;
         }
     }

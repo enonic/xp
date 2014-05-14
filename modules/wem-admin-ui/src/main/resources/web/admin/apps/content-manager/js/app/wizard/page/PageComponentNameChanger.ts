@@ -16,15 +16,15 @@ module app.wizard.page {
 
         private componentPath: ComponentPath;
 
-        private uiComponent: any;
+        private componentView: any;
 
         setPageRegions(value: PageRegions): PageComponentNameChanger {
             this.pageRegions = value;
             return this;
         }
 
-        setUIComponent(value: any): PageComponentNameChanger {
-            this.uiComponent = value;
+        setComponentView(value: any): PageComponentNameChanger {
+            this.componentView = value;
             return this;
         }
 
@@ -36,7 +36,7 @@ module app.wizard.page {
         changeTo(name: string) {
             api.util.assertNotNull(this.pageRegions, "pageRegions cannot be null");
             api.util.assertNotNull(this.componentPath, "componentPath cannot be null");
-            api.util.assertNotNull(this.uiComponent, "uiComponent cannot be null");
+            api.util.assertNotNull(this.componentView, "uiComponent cannot be null");
 
             var component = this.pageRegions.getComponent(this.componentPath);
 
@@ -44,7 +44,7 @@ module app.wizard.page {
                 new ComponentName(api.util.removeInvalidChars(api.util.capitalizeAll(name))));
 
             component.setName(newComponentName);
-            this.uiComponent.getEl().setData("live-edit-component", component.getPath().toString());
+            this.componentView.getEl().setData("live-edit-component", component.getPath().toString());
         }
     }
 }
