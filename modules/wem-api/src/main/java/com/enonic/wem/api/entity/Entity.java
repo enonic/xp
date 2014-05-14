@@ -1,6 +1,6 @@
 package com.enonic.wem.api.entity;
 
-import org.joda.time.DateTime;
+import org.joda.time.Instant;
 
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
@@ -15,11 +15,11 @@ public class Entity
 {
     protected final EntityId id;
 
-    protected final DateTime createdTime;
+    protected final Instant createdTime;
 
     protected final RootDataSet data;
 
-    protected final DateTime modifiedTime;
+    protected final Instant modifiedTime;
 
     protected final EntityIndexConfig entityIndexConfig;
 
@@ -58,12 +58,12 @@ public class Entity
         return id;
     }
 
-    public DateTime getCreatedTime()
+    public Instant getCreatedTime()
     {
         return createdTime;
     }
 
-    public DateTime getModifiedTime()
+    public Instant getModifiedTime()
     {
         return modifiedTime;
     }
@@ -97,9 +97,9 @@ public class Entity
     {
         EntityId id;
 
-        DateTime createdTime;
+        Instant createdTime;
 
-        DateTime modifiedTime;
+        Instant modifiedTime;
 
         RootDataSet data = new RootDataSet();
 
@@ -159,11 +159,11 @@ public class Entity
             return getThisBuilder();
         }
 
-        public B property( final String path, final DateTime value )
+        public B property( final String path, final Instant value )
         {
             if ( value != null )
             {
-                this.data.setProperty( path, Value.newDateTime( value ) );
+                this.data.setProperty( path, Value.newInstant( value ) );
                 changes.recordChange( newPossibleChange( "data" ).from( this.originalEntity.data() ).to( this.data ).build() );
             }
             return getThisBuilder();
@@ -260,13 +260,13 @@ public class Entity
             return getThisBuilder();
         }
 
-        public B createdTime( final DateTime value )
+        public B createdTime( final Instant value )
         {
             this.createdTime = value;
             return getThisBuilder();
         }
 
-        public B modifiedTime( final DateTime value )
+        public B modifiedTime( final Instant value )
         {
             this.modifiedTime = value;
             return getThisBuilder();
@@ -290,11 +290,11 @@ public class Entity
             return getThisBuilder();
         }
 
-        public B property( final String path, final DateTime value )
+        public B property( final String path, final Instant value )
         {
             if ( value != null )
             {
-                this.data.setProperty( path, Value.newDateTime( value ) );
+                this.data.setProperty( path, Value.newInstant( value ) );
             }
             return getThisBuilder();
         }

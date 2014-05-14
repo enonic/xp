@@ -84,7 +84,7 @@ class QueryParserTest
         expected = "a = geoPoint('1.0,1.0')"
     }
 
-    def "test dateTime function"()
+    def "test instant function"()
     {
         given:
         def expr = QueryParser.parse( query )
@@ -94,8 +94,8 @@ class QueryParserTest
         expr.toString() == expected
 
         where:
-        query                                 | expected
-        "a = dateTime('2013-11-11T22:22:22')" | "a = dateTime('2013-11-11T22:22:22')"
+        query                                     | expected
+        "a = instant('2013-11-11T22:22:22.000Z')" | "a = instant('2013-11-11T22:22:22.000Z')"
     }
 
     def "test NOT expression"()

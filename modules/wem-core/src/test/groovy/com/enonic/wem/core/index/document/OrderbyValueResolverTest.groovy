@@ -28,14 +28,14 @@ class OrderbyValueResolverTest
         comment    | valueList                                                                  | sortedList
         "string"   | createOrderByValues( "b", "a", "d", "c" )                                  | createOrderByValues( "a", "b", "c", "d" )
         "double"   | createOrderByValues( 12, 0, 100, 10, 2 )                                   | createOrderByValues( 0, 2, 10, 12, 100 )
-        "datetime" | createDateTimeOrderByValue( "2001-01-02T00:00:00", "2001-01-01T00:00:00" ) |
-            createDateTimeOrderByValue( "2001-01-01T00:00:00", "2001-01-02T00:00:00" )
+        "datetime" | createInstantOrderByValue( "2001-01-02T00:00:00.000Z", "2001-01-01T00:00:00.000Z" ) |
+            createInstantOrderByValue( "2001-01-01T00:00:00.000Z", "2001-01-02T00:00:00.000Z" )
     }
 
-    def createDateTimeOrderByValue( String... values )
+    def createInstantOrderByValue( String... values )
     {
         def unsorted = Lists.newArrayList()
-        values.each { value -> unsorted.add( OrderbyValueResolver.getOrderbyValue( Value.newDateTime( value ) ) ); }
+        values.each { value -> unsorted.add( OrderbyValueResolver.getOrderbyValue( Value.newInstant( value ) ) ); }
         return unsorted
     }
 

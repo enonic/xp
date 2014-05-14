@@ -3,7 +3,7 @@ package com.enonic.wem.api.relationship;
 
 import java.util.Map;
 
-import org.joda.time.DateTime;
+import org.joda.time.Instant;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
@@ -22,11 +22,11 @@ public final class Relationship
 {
     private final RelationshipId id;
 
-    private final DateTime createdTime;
+    private final Instant createdTime;
 
     private final UserKey creator;
 
-    private final DateTime modifiedTime;
+    private final Instant modifiedTime;
 
     private final UserKey modifier;
 
@@ -67,7 +67,7 @@ public final class Relationship
         return RelationshipKey.from( type, fromContent, managingData, toContent );
     }
 
-    public DateTime getCreatedTime()
+    public Instant getCreatedTime()
     {
         return createdTime;
     }
@@ -77,7 +77,7 @@ public final class Relationship
         return creator;
     }
 
-    public DateTime getModifiedTime()
+    public Instant getModifiedTime()
     {
         return modifiedTime;
     }
@@ -151,7 +151,7 @@ public final class Relationship
 
         private UserKey creator;
 
-        private DateTime createdTime;
+        private Instant createdTime;
 
         private RelationshipTypeName type;
 
@@ -165,7 +165,7 @@ public final class Relationship
 
         private UserKey modifier;
 
-        private DateTime modifiedTime;
+        private Instant modifiedTime;
 
         private Builder( final Relationship relationship )
         {
@@ -210,7 +210,7 @@ public final class Relationship
             return this;
         }
 
-        public Builder createdTime( DateTime value )
+        public Builder createdTime( Instant value )
         {
             this.createdTime = value;
             return this;
@@ -222,7 +222,7 @@ public final class Relationship
             return this;
         }
 
-        public Builder modifiedTime( DateTime value )
+        public Builder modifiedTime( Instant value )
         {
             this.modifiedTime = value;
             return this;

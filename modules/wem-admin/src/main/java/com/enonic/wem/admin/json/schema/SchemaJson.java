@@ -1,6 +1,6 @@
 package com.enonic.wem.admin.json.schema;
 
-import org.joda.time.DateTime;
+import org.joda.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -32,9 +32,9 @@ public class SchemaJson
 
     private final String description;
 
-    private final DateTime createdTime;
+    private final Instant createdTime;
 
-    private final DateTime modifiedTime;
+    private final Instant modifiedTime;
 
     private final String iconUrl;
 
@@ -88,12 +88,12 @@ public class SchemaJson
         return description;
     }
 
-    public DateTime getCreatedTime()
+    public Instant getCreatedTime()
     {
         return createdTime;
     }
 
-    public DateTime getModifiedTime()
+    public Instant getModifiedTime()
     {
         return modifiedTime;
     }

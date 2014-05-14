@@ -1,6 +1,6 @@
 package com.enonic.wem.core.schema.relationship;
 
-import org.joda.time.DateTime;
+import org.joda.time.Instant;
 
 import com.enonic.wem.api.schema.relationship.CreateRelationshipTypeParams;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
@@ -25,7 +25,7 @@ final class CreateRelationshipTypeCommand
 
     private RelationshipTypeName doExecute()
     {
-        final DateTime currentTime = DateTime.now();
+        final Instant currentTime = Instant.now();
 
         final RelationshipType.Builder builder = newRelationshipType();
         builder.name( params.getName() );

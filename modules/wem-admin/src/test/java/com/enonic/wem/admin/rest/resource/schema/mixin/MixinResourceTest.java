@@ -78,7 +78,7 @@ public class MixinResourceTest
         throws Exception
     {
         Mixin mixin = Mixin.newMixin().
-            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ) ).
+            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ).toInstant() ).
             name( MY_MIXIN_QUALIFIED_NAME_1.toString() ).addFormItem(
             newInput().name( MY_MIXIN_QUALIFIED_NAME_1.toString() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
                 "Help text line 1" ).required( true ).build() ).build();
@@ -94,7 +94,7 @@ public class MixinResourceTest
     public final void test_get_mixin_config()
         throws Exception
     {
-        Mixin mixin = Mixin.newMixin().createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ) ).name(
+        Mixin mixin = Mixin.newMixin().createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ).toInstant() ).name(
             MY_MIXIN_QUALIFIED_NAME_1.toString() ).addFormItem(
             newInput().name( MY_MIXIN_QUALIFIED_NAME_1.toString() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
                 "Help text line 1" ).required( true ).build() ).build();
@@ -146,16 +146,16 @@ public class MixinResourceTest
     public final void test_list_mixins()
         throws Exception
     {
-        Mixin mixin1 = Mixin.newMixin().createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ) ).name(
+        Mixin mixin1 = Mixin.newMixin().createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ).toInstant() ).name(
             MY_MIXIN_QUALIFIED_NAME_1.toString() ).addFormItem(
             newInput().name( MY_MIXIN_QUALIFIED_NAME_1.toString() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
                 "Help text line 1" ).required( true ).build() ).build();
 
-        Mixin mixin2 = Mixin.newMixin().createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ) ).name(
+        Mixin mixin2 = Mixin.newMixin().createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ).toInstant() ).name(
             MY_MIXIN_QUALIFIED_NAME_2.toString() ).addFormItem(
             newInput().name( MY_MIXIN_QUALIFIED_NAME_2.toString() ).inputType( TEXT_AREA ).inputTypeConfig(
-                TEXT_AREA.getDefaultConfig() ).label( "Text Area" ).required( true ).helpText(
-                "Help text area" ).required( true ).build() ).build();
+                TEXT_AREA.getDefaultConfig() ).label( "Text Area" ).required( true ).helpText( "Help text area" ).required(
+                true ).build() ).build();
 
         Mockito.when( mixinService.getAll() ).thenReturn( Mixins.from( mixin1, mixin2 ) );
 
@@ -186,7 +186,7 @@ public class MixinResourceTest
     public void test_create_mixin_already_exists()
         throws Exception
     {
-        Mixin mixin = newMixin().createdTime( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).name( "some_input" ).addFormItem(
+        Mixin mixin = newMixin().createdTime( new DateTime( 2013, 1, 1, 12, 0, 0 ).toInstant() ).name( "some_input" ).addFormItem(
             newInput().name( "some_input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
         Mockito.when( mixinService.create( isA( CreateMixinParams.class ) ) ).thenThrow(
             new MixinAlreadyExistException( MixinName.from( "my_set" ) ) );
@@ -240,7 +240,8 @@ public class MixinResourceTest
     public void test_update_mixin_not_found()
         throws Exception
     {
-        Mockito.when( mixinService.update( isA( UpdateMixinParams.class ) ) ).thenThrow( new MixinNotFoundException( MixinName.from( "my_set" ) ) );
+        Mockito.when( mixinService.update( isA( UpdateMixinParams.class ) ) ).thenThrow(
+            new MixinNotFoundException( MixinName.from( "my_set" ) ) );
         String result = resource().path( "schema/mixin/update" ).entity( readFromFile( "create_mixin_params.json" ),
                                                                          MediaType.APPLICATION_JSON_TYPE ).post( String.class );
         assertJson( "update_mixin_not_found.json", result );
@@ -268,7 +269,8 @@ public class MixinResourceTest
         Mockito.when( mixinService.delete( Mockito.eq( new DeleteMixinParams().name( MixinName.from( "being_used_mixin" ) ) ) ) ).thenThrow(
             new UnableToDeleteMixinException( MixinName.from( "not_existing_mixin" ), "Being used" ) );
 
-        Mockito.when( mixinService.delete( Mockito.eq( new DeleteMixinParams().name( MixinName.from( "not_existing_mixin" ) ) ) ) ).thenThrow(
+        Mockito.when(
+            mixinService.delete( Mockito.eq( new DeleteMixinParams().name( MixinName.from( "not_existing_mixin" ) ) ) ) ).thenThrow(
             new MixinNotFoundException( MixinName.from( "being_used_mixin" ) ) );
 
         String result = resource().path( "schema/mixin/delete" ).entity( readFromFile( "delete_multiple_mixins_params.json" ),

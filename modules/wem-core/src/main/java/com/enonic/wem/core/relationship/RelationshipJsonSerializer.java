@@ -69,7 +69,7 @@ public final class RelationshipJsonSerializer
         }
         if ( includeCreatedTime )
         {
-            JsonSerializerUtil.setDateTimeValue( "createdTime", relationship.getCreatedTime(), objectNode );
+            JsonSerializerUtil.setInstantValue( "createdTime", relationship.getCreatedTime(), objectNode );
         }
         if ( includeModifier )
         {
@@ -77,7 +77,7 @@ public final class RelationshipJsonSerializer
         }
         if ( includeModifiedTime )
         {
-            JsonSerializerUtil.setDateTimeValue( "modifiedTime", relationship.getModifiedTime(), objectNode );
+            JsonSerializerUtil.setInstantValue( "modifiedTime", relationship.getModifiedTime(), objectNode );
         }
         objectNode.put( "type", relationship.getType().toString() );
         objectNode.put( "fromContent", relationship.getFromContent().toString() );
@@ -128,7 +128,7 @@ public final class RelationshipJsonSerializer
         }
         if ( includeCreatedTime )
         {
-            builder.createdTime( JsonSerializerUtil.getDateTimeValue( "createdTime", relationshipNode ) );
+            builder.createdTime( JsonSerializerUtil.getInstantValue( "createdTime", relationshipNode ) );
         }
         if ( includeModifier )
         {
@@ -136,7 +136,7 @@ public final class RelationshipJsonSerializer
         }
         if ( includeModifiedTime )
         {
-            builder.modifiedTime( JsonSerializerUtil.getDateTimeValue( "modifiedTime", relationshipNode ) );
+            builder.modifiedTime( JsonSerializerUtil.getInstantValue( "modifiedTime", relationshipNode ) );
         }
         builder.type( RelationshipTypeName.from( JsonSerializerUtil.getStringValue( "type", relationshipNode ) ) );
         builder.fromContent( ContentId.from( JsonSerializerUtil.getStringValue( "fromContent", relationshipNode ) ) );

@@ -1,15 +1,15 @@
 package com.enonic.wem.core.entity.json;
 
-import org.joda.time.DateTime;
+import org.joda.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import com.enonic.wem.api.data.RootDataSetJson;
 import com.enonic.wem.api.entity.Entity;
 import com.enonic.wem.api.entity.EntityIndexConfig;
 import com.enonic.wem.api.entity.EntityPatternIndexConfig;
 import com.enonic.wem.api.entity.EntityPropertyIndexConfig;
-import com.enonic.wem.api.data.RootDataSetJson;
 import com.enonic.wem.core.entity.EntityPatternIndexConfigJson;
 import com.enonic.wem.core.entity.EntityPropertyIndexConfigJson;
 import com.enonic.wem.core.entity.relationship.EntityIndexConfigJson;
@@ -21,17 +21,17 @@ public abstract class AbstractEntityJson
 {
     protected String id;
 
-    protected DateTime createdTime;
+    protected Instant createdTime;
 
     protected RootDataSetJson data;
 
-    protected DateTime modifiedTime;
+    protected Instant modifiedTime;
 
     protected EntityIndexConfigJson entityIndexConfig;
 
     private AttachmentsJson attachments;
 
-    protected AbstractEntityJson( final String id, final DateTime createdTime, final RootDataSetJson data, final DateTime modifiedTime,
+    protected AbstractEntityJson( final String id, final Instant createdTime, final RootDataSetJson data, final Instant modifiedTime,
                                   final EntityIndexConfigJson entityIndexConfig, final AttachmentsJson attachments )
     {
         this.id = id;
@@ -73,13 +73,13 @@ public abstract class AbstractEntityJson
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public DateTime getCreatedTime()
+    public Instant getCreatedTime()
     {
         return createdTime;
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public DateTime getModifiedTime()
+    public Instant getModifiedTime()
     {
         return modifiedTime;
     }

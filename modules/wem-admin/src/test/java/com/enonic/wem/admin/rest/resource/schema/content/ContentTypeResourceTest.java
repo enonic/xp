@@ -71,7 +71,7 @@ public class ContentTypeResourceTest
         // setup
         final ContentType contentType = newContentType().
             name( MY_CTY_QUALIFIED_NAME ).
-            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ) ).
+            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ).toInstant() ).
             superType( ContentTypeName.unstructured() ).
             displayName( "My ContentType" ).
             description( "My description" ).
@@ -83,7 +83,8 @@ public class ContentTypeResourceTest
                 build() ).
             build();
 
-        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
+        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
+            ContentTypes.from( contentType ) );
 
         // execute
         MultivaluedMap<String, String> names = new MultivaluedMapImpl();
@@ -144,7 +145,7 @@ public class ContentTypeResourceTest
             build();
 
         ContentType contentType = newContentType().
-            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ) ).
+            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ).toInstant() ).
             name( MY_CTY_QUALIFIED_NAME ).
             superType( ContentTypeName.unstructured() ).
             addFormItem( myTextLine ).
@@ -154,7 +155,8 @@ public class ContentTypeResourceTest
             addFormItem( myMixinReference ).
             build();
 
-        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
+        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
+            ContentTypes.from( contentType ) );
 
         // execute
         MultivaluedMap<String, String> names = new MultivaluedMapImpl();
@@ -173,7 +175,7 @@ public class ContentTypeResourceTest
     {
         // setup
         final ContentType contentType = newContentType().
-            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).
+            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0 ).toInstant() ).
             name( MY_CTY_QUALIFIED_NAME ).
             superType( ContentTypeName.unstructured() ).
             addFormItem( newInput().
@@ -184,7 +186,8 @@ public class ContentTypeResourceTest
                 build() ).
             build();
 
-        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
+        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
+            ContentTypes.from( contentType ) );
 
         // execute
         MultivaluedMap<String, String> names = new MultivaluedMapImpl();
@@ -201,7 +204,7 @@ public class ContentTypeResourceTest
     {
         // setup
         final ContentType contentType = newContentType().
-            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ) ).
+            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ).toInstant() ).
             name( MY_CTY_QUALIFIED_NAME ).
             superType( ContentTypeName.unstructured() ).
             addFormItem( newInput().
@@ -212,7 +215,8 @@ public class ContentTypeResourceTest
                 build() ).
             build();
 
-        Mockito.when( contentTypeService.getAll( Mockito.isA( GetAllContentTypesParams.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
+        Mockito.when( contentTypeService.getAll( Mockito.isA( GetAllContentTypesParams.class ) ) ).thenReturn(
+            ContentTypes.from( contentType ) );
 
         // execute
         MultivaluedMap<String, String> names = new MultivaluedMapImpl();

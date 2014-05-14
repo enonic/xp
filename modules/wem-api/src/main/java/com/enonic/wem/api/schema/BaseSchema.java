@@ -1,7 +1,7 @@
 package com.enonic.wem.api.schema;
 
 
-import org.joda.time.DateTime;
+import org.joda.time.Instant;
 
 import com.google.common.base.Preconditions;
 
@@ -18,9 +18,9 @@ public abstract class BaseSchema<T extends SchemaName>
 
     final String description;
 
-    final DateTime createdTime;
+    final Instant createdTime;
 
-    final DateTime modifiedTime;
+    final Instant modifiedTime;
 
     final UserKey creator;
 
@@ -61,12 +61,12 @@ public abstract class BaseSchema<T extends SchemaName>
         return description;
     }
 
-    public DateTime getCreatedTime()
+    public Instant getCreatedTime()
     {
         return createdTime;
     }
 
-    public DateTime getModifiedTime()
+    public Instant getModifiedTime()
     {
         return modifiedTime;
     }
@@ -96,9 +96,9 @@ public abstract class BaseSchema<T extends SchemaName>
 
         private String description;
 
-        private DateTime createdTime;
+        private Instant createdTime;
 
-        private DateTime modifiedTime;
+        private Instant modifiedTime;
 
         private UserKey creator;
 
@@ -154,13 +154,13 @@ public abstract class BaseSchema<T extends SchemaName>
             return getThis();
         }
 
-        public T createdTime( DateTime value )
+        public T createdTime( Instant value )
         {
             this.createdTime = value;
             return getThis();
         }
 
-        public T modifiedTime( DateTime value )
+        public T modifiedTime( Instant value )
         {
             this.modifiedTime = value;
             return getThis();

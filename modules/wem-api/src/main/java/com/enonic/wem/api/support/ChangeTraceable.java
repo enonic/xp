@@ -1,15 +1,15 @@
 package com.enonic.wem.api.support;
 
 
-import org.joda.time.DateTime;
+import org.joda.time.Instant;
 
 import com.enonic.wem.api.account.UserKey;
 
 public interface ChangeTraceable
 {
-    public DateTime getCreatedTime();
+    public Instant getCreatedTime();
 
-    public DateTime getModifiedTime();
+    public Instant getModifiedTime();
 
     public UserKey getCreator();
 

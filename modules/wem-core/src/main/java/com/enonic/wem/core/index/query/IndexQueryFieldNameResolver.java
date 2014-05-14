@@ -48,7 +48,7 @@ public class IndexQueryFieldNameResolver
 
     public static String resolveDateTimeFieldName( final String queryFieldName )
     {
-        return appendIndexValueType( IndexFieldNameNormalizer.normalize( queryFieldName ), IndexValueType.DATETIME );
+        return appendIndexValueType( IndexFieldNameNormalizer.normalize( queryFieldName ), IndexValueType.INSTANT );
     }
 
     public static String resolveAnalyzedFieldName( final String queryFieldName )
@@ -75,7 +75,7 @@ public class IndexQueryFieldNameResolver
     {
         if ( value.isDateType() )
         {
-            return appendIndexValueType( baseFieldName, IndexValueType.DATETIME );
+            return appendIndexValueType( baseFieldName, IndexValueType.INSTANT );
         }
 
         if ( value.isNumericType() )

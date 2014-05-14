@@ -2,30 +2,30 @@ package com.enonic.wem.core.index.document;
 
 import java.util.Date;
 
-import org.joda.time.DateTime;
+import org.joda.time.Instant;
 
 import com.enonic.wem.core.index.IndexValueType;
 
 public class IndexDocumentDateItem
     extends AbstractIndexDocumentItem<Date>
 {
-    private final DateTime dateTime;
+    private final Instant instant;
 
-    public IndexDocumentDateItem( final IndexDocumentItemPath path, final DateTime dateTime )
+    public IndexDocumentDateItem( final IndexDocumentItemPath path, final Instant instant )
     {
         super( path );
-        this.dateTime = dateTime;
+        this.instant = instant;
     }
 
     @Override
     public IndexValueType getIndexBaseType()
     {
-        return IndexValueType.DATETIME;
+        return IndexValueType.INSTANT;
     }
 
     @Override
     public Date getValue()
     {
-        return dateTime.toDate();
+        return instant.toDate();
     }
 }

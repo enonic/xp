@@ -1,10 +1,12 @@
 package com.enonic.wem.api.data.type;
 
 import org.joda.time.DateTime;
+import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 import org.joda.time.base.BaseDateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
+import org.joda.time.format.ISODateTimeFormat;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.RootDataSet;
@@ -38,7 +40,7 @@ final class JavaTypeConverters
 
     public final static JavaTypeConverter<EntityId> ENTITY_ID = newEntityId();
 
-    public final static JavaTypeConverter<DateTime> DATE_TIME = newDateTime();
+    public final static JavaTypeConverter<Instant> INSTANT = newInstant();
 
     public final static JavaTypeConverter<LocalDate> LOCAL_DATE = newLocalDate();
 
@@ -162,19 +164,23 @@ final class JavaTypeConverters
         }
     }
 
-    private static DateTime convertToDateTime( final Object value )
+    private static Instant convertToInstant( final Object value )
     {
         if ( value instanceof BaseDateTime )
         {
-            return ( (BaseDateTime) value ).toDateTime();
+            return ( (BaseDateTime) value ).toInstant();
         }
         if ( value instanceof LocalDate )
         {
-            return ( (LocalDate) value ).toDateTimeAtStartOfDay();
+            return ( (LocalDate) value ).toDateTimeAtStartOfDay().toInstant();
+        }
+        if ( value instanceof Instant )
+        {
+            return ( (Instant) value );
         }
         else if ( value instanceof String )
         {
-            return DATE_TIME_FORMATTER.parseDateTime( (String) value ).toDateTime();
+            return ISODateTimeFormat.dateTimeParser().withZoneUTC().parseDateTime( (String) value ).toInstant();
         }
         else
         {
@@ -253,9 +259,9 @@ final class JavaTypeConverters
         return new JavaTypeConverter<>( EntityId.class, JavaTypeConverters::convertToEntityId );
     }
 
-    private static JavaTypeConverter<DateTime> newDateTime()
+    private static JavaTypeConverter<Instant> newInstant()
     {
-        return new JavaTypeConverter<>( DateTime.class, JavaTypeConverters::convertToDateTime );
+        return new JavaTypeConverter<>( Instant.class, JavaTypeConverters::convertToInstant );
     }
 
     private static JavaTypeConverter<LocalDate> newLocalDate()

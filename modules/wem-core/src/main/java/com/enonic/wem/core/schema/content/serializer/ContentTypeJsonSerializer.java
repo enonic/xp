@@ -55,11 +55,11 @@ public class ContentTypeJsonSerializer
 
         if ( includeCreatedTime )
         {
-            JsonSerializerUtil.setDateTimeValue( "createdTime", contentType.getCreatedTime(), objectNode );
+            JsonSerializerUtil.setInstantValue( "createdTime", contentType.getCreatedTime(), objectNode );
         }
         if ( includeModifiedTime )
         {
-            JsonSerializerUtil.setDateTimeValue( "modifiedTime", contentType.getModifiedTime(), objectNode );
+            JsonSerializerUtil.setInstantValue( "modifiedTime", contentType.getModifiedTime(), objectNode );
         }
         if ( contentType.form() == null )
         {
@@ -99,11 +99,11 @@ public class ContentTypeJsonSerializer
         builder.allowChildContent( JsonSerializerUtil.getBooleanValue( "allowChildContent", contentTypeNode, true ) );
         if ( includeCreatedTime )
         {
-            builder.createdTime( JsonSerializerUtil.getDateTimeValue( "createdTime", contentTypeNode ) );
+            builder.createdTime( JsonSerializerUtil.getInstantValue( "createdTime", contentTypeNode ) );
         }
         if ( includeModifiedTime )
         {
-            builder.modifiedTime( JsonSerializerUtil.getDateTimeValue( "modifiedTime", contentTypeNode ) );
+            builder.modifiedTime( JsonSerializerUtil.getInstantValue( "modifiedTime", contentTypeNode ) );
         }
 
         try

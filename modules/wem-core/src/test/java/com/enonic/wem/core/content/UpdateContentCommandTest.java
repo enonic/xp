@@ -3,6 +3,7 @@ package com.enonic.wem.core.content;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
+import org.joda.time.Instant;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -34,9 +35,9 @@ import static org.mockito.Matchers.isA;
 
 public class UpdateContentCommandTest
 {
-    private static final DateTime CREATED_TIME = new DateTime( 2013, 1, 1, 12, 0, 0, 0 );
+    private static final Instant CREATED_TIME = new DateTime( 2013, 1, 1, 12, 0, 0, 0 ).toInstant();
 
-    private static final DateTime UPDATED_TIME = new DateTime( 2013, 1, 1, 13, 0, 0, 0 );
+    private static final Instant UPDATED_TIME = new DateTime( 2013, 1, 1, 13, 0, 0, 0 ).toInstant();
 
     private UpdateContentCommand command;
 

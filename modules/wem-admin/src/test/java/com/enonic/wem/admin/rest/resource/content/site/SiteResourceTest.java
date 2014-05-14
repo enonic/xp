@@ -166,10 +166,10 @@ public class SiteResourceTest
         return Content.newContent().
             id( ContentId.from( id ) ).
             path( ContentPath.from( name ) ).
-            createdTime( DateTime.parse( this.currentTime ) ).
+            createdTime( DateTime.parse( this.currentTime ).toInstant() ).
             owner( UserKey.from( "myStore:me" ) ).
             displayName( "My Content" ).
-            modifiedTime( DateTime.parse( this.currentTime ) ).
+            modifiedTime( DateTime.parse( this.currentTime ).toInstant() ).
             modifier( UserKey.superUser() ).
             type( ContentTypeName.from( contentTypeName ) ).
             site( site ).
@@ -186,10 +186,10 @@ public class SiteResourceTest
         return Content.newContent().
             id( ContentId.from( id ) ).
             path( ContentPath.from( name ) ).
-            createdTime( DateTime.parse( this.currentTime ) ).
+            createdTime( DateTime.parse( this.currentTime ).toInstant() ).
             owner( UserKey.from( "myStore:me" ) ).
             displayName( "My Content" ).
-            modifiedTime( DateTime.parse( this.currentTime ) ).
+            modifiedTime( DateTime.parse( this.currentTime ).toInstant() ).
             modifier( UserKey.superUser() ).
             type( ContentTypeName.from( contentTypeName ) ).
             site( null ).
