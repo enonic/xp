@@ -46,7 +46,7 @@ module api.liveedit {
                 var type = element.getEl().getData("live-edit-type");
                 if (PageComponentType.byShortName(type)) {
                     var path = ComponentPath2.fromRegionPathAndComponentIndex(region, componentIndex++);
-                    this.map.add(path, this.counter++);
+                    this.map.add(path, PageComponentId.fromNumber(this.counter++));
                     if (type == 'layout') {
                         this.parseRegions(element, path);
                     }

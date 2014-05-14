@@ -1,3 +1,4 @@
+///<reference path='PageComponentId.ts' />
 ///<reference path='PageComponentIdMap.ts' />
 ///<reference path='PageComponentIdMapResolver.ts' />
 ///<reference path='NewPageComponentIdMapEvent.ts' />
