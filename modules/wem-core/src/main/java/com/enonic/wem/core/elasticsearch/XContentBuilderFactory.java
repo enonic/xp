@@ -16,12 +16,15 @@ import com.enonic.wem.core.index.IndexException;
 import com.enonic.wem.core.index.document.AbstractIndexDocumentItem;
 import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.index.document.IndexDocumentOrderbyItem;
+import com.enonic.wem.core.workspace.WorkspaceDocument;
 
 public class XContentBuilderFactory
 {
+
     private XContentBuilderFactory()
     {
     }
+
 
     static XContentBuilder create( final NodeStorageDocument storageDocument )
     {

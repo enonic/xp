@@ -4,10 +4,10 @@ package com.enonic.wem.core.entity;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.UpdateNodeParams;
+import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.entity.dao.UpdateNodeArgs;
-import com.enonic.wem.api.util.Exceptions;
 
 import static com.enonic.wem.core.entity.dao.UpdateNodeArgs.newUpdateItemArgs;
 
@@ -43,7 +43,7 @@ final class UpdateNodeCommand
     private Node doExecute()
         throws Exception
     {
-        final Node beforeChange = nodeDao.getById( params.getId() );
+        final Node beforeChange = nodeDao.getById( params.getId(), params.getWorkspace() );
 
         final Node.EditBuilder editBuilder = params.getEditor().edit( beforeChange );
         if ( !editBuilder.isChanges() )

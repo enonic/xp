@@ -30,7 +30,7 @@ import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 
 public class ElasticsearchNodeDao
-    implements NodeDao
+   // implements NodeDao
 {
     @Inject
     private ElasticsearchDao elasticsearchDao;

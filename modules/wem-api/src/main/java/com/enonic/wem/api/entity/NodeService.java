@@ -8,17 +8,17 @@ public interface NodeService
 
     Node rename( RenameNodeParams params );
 
-    Node getById( EntityId id );
+    Node getById( EntityId id, Workspace workspace );
 
-    Nodes getByIds( EntityIds ids );
+    Nodes getByIds( EntityIds ids, Workspace workspace );
 
-    Node getByPath( NodePath path );
+    Node getByPath( NodePath path, Workspace workspace );
 
-    Nodes getByPaths( NodePaths paths );
+    Nodes getByPaths( NodePaths paths, Workspace workspace);
 
-    Nodes getByParent( NodePath parent );
+    Nodes getByParent( NodePath parent, Workspace workspace );
 
-    Node deleteById( EntityId id );
+    Node deleteById( EntityId id, Workspace workspace );
 
-    Node deleteByPath( NodePath path );
+    Node deleteByPath( NodePath path, Workspace workspace );
 }

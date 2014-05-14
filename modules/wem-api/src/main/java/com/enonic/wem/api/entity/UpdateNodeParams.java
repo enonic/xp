@@ -8,9 +8,12 @@ public class UpdateNodeParams
 
     private NodeEditor editor;
 
-    public UpdateNodeParams id( final EntityId value )
+    private Workspace workspace;
+
+    public UpdateNodeParams id( final EntityId value, final Workspace workspace )
     {
         this.id = value;
+        this.workspace = workspace;
         return this;
     }
 
@@ -24,6 +27,7 @@ public class UpdateNodeParams
     {
         Preconditions.checkNotNull( this.id, "id cannot be null" );
         Preconditions.checkNotNull( this.editor, "editor cannot be null" );
+        Preconditions.checkNotNull( this.workspace, "workspace cannot be null" );
     }
 
     public EntityId getId()
@@ -34,5 +38,10 @@ public class UpdateNodeParams
     public NodeEditor getEditor()
     {
         return editor;
+    }
+
+    public Workspace getWorkspace()
+    {
+        return workspace;
     }
 }

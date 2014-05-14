@@ -1,0 +1,39 @@
+{
+    "node": {
+        "_all": {
+            "enabled": false
+        },
+        "_source": {
+            "enabled": true
+        },
+        "date_detection": false,
+        "numeric_detection": false,
+        "properties": {
+            "entityId": {
+                "type": "string",
+                "store": "true",
+                "index": "not_analyzed"
+            },
+            "blobKey": {
+                "type": "string",
+                "store": "true",
+                "index": "not_analyzed"
+            },
+            "workspace": {
+                "type": "string",
+                "store": "false",
+                "index": "not_analyzed"
+            },
+            "path": {
+                "type": "string",
+                "store": "false",
+                "index": "not_analyzed"
+            },
+            "parentPath": {
+                "type": "string",
+                "store": "false",
+                "index": "not_analyzed"
+            }
+        }
+    }
+}

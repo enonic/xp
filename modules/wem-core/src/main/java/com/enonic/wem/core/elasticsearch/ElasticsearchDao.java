@@ -17,6 +17,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.IdsQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.TermQueryBuilder;
@@ -40,6 +41,11 @@ public class ElasticsearchDao
     public static final boolean DEFAULT_REFRESH = true;
 
     private Client client;
+
+    public void store( final IndexRequest indexRequest )
+    {
+        this.client.index( indexRequest ).actionGet();
+    }
 
     public void store( Collection<IndexDocument> indexDocuments )
     {
@@ -123,6 +129,29 @@ public class ElasticsearchDao
     }
 
 
+    public SearchResponse get( final QueryMetaData queryMetaData, final QueryBuilder queryBuilder )
+    {
+        final SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch( queryMetaData.getIndex() ).
+            setTypes( queryMetaData.getIndexType() ).
+            setQuery( queryBuilder ).
+            setFrom( queryMetaData.getFrom() ).
+            setSize( queryMetaData.getSize() );
+
+        if ( queryMetaData.hasFields() )
+        {
+            searchRequestBuilder.addFields( queryMetaData.getFields() );
+        }
+
+        return doSearchRequest( searchRequestBuilder );
+    }
+
+    private SearchResponse doSearchRequest( final SearchRequestBuilder searchRequestBuilder )
+    {
+        return searchRequestBuilder.
+            execute().
+            actionGet();
+    }
+
     public SearchResponse get( final ByIdsQuery byIdsQuery )
     {
         final IdsQueryBuilder idsQueryBuilder = new IdsQueryBuilder();
@@ -135,7 +164,7 @@ public class ElasticsearchDao
         return doSearchRequest( byIdsQuery, idsQueryBuilder );
     }
 
-    public GetResponse get( final ByIdQuery byIdQuery )
+ public GetResponse get( final ByIdQuery byIdQuery )
     {
         final GetRequest getRequest = new GetRequest( byIdQuery.index() ).
             type( byIdQuery.indexType() ).

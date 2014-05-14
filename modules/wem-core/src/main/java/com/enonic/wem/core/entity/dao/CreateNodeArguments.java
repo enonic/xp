@@ -6,6 +6,7 @@ import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.entity.Attachments;
 import com.enonic.wem.api.entity.EntityIndexConfig;
 import com.enonic.wem.api.entity.NodePath;
+import com.enonic.wem.api.entity.Workspace;
 
 public class CreateNodeArguments
 {
@@ -21,6 +22,8 @@ public class CreateNodeArguments
 
     private final EntityIndexConfig entityIndexConfig;
 
+    private final Workspace workspace;
+
     private final boolean embed;
 
     CreateNodeArguments( Builder builder )
@@ -32,6 +35,7 @@ public class CreateNodeArguments
         this.attachments = builder.attachments;
         this.entityIndexConfig = builder.entityIndexConfig;
         this.embed = builder.embed;
+        this.workspace = builder.workspace;
     }
 
     public UserKey creator()
@@ -69,6 +73,11 @@ public class CreateNodeArguments
         return this.entityIndexConfig;
     }
 
+    public Workspace workspace()
+    {
+        return this.workspace;
+    }
+
     public static Builder newCreateNodeArgs()
     {
         return new Builder();
@@ -87,6 +96,8 @@ public class CreateNodeArguments
         private Attachments attachments = Attachments.empty();
 
         private EntityIndexConfig entityIndexConfig;
+
+        private Workspace workspace;
 
         private boolean embed = false;
 
@@ -130,6 +141,12 @@ public class CreateNodeArguments
         public Builder embed( final boolean embed )
         {
             this.embed = embed;
+            return this;
+        }
+
+        public Builder workspace( final Workspace workspace )
+        {
+            this.workspace = workspace;
             return this;
         }
 

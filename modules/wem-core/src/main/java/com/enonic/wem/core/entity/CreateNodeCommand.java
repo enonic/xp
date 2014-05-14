@@ -43,6 +43,7 @@ final class CreateNodeCommand
             attachments( params.getAttachments() != null ? params.getAttachments() : Attachments.empty() ).
             entityIndexConfig( params.getEntityIndexConfig() ).
             embed( params.isEmbed() ).
+            workspace( params.getWorkspace() ).
             build();
 
         final Node persistedNode = nodeDao.create( createNodeArguments );

@@ -10,6 +10,7 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.entity.Nodes;
+import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
@@ -71,18 +72,18 @@ abstract class AbstractContentCommand<T extends AbstractContentCommand>
     T nodeService( final NodeService nodeService )
     {
         this.nodeService = nodeService;
-        return (T)this;
+        return (T) this;
     }
 
     T contentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
-        return (T)this;
+        return (T) this;
     }
 
     T blobService( final BlobService blobService )
     {
         this.blobService = blobService;
-        return (T)this;
+        return (T) this;
     }
 }

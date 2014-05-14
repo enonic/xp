@@ -2,7 +2,6 @@ package com.enonic.wem.core.content;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,15 +10,14 @@ import com.google.common.io.InputSupplier;
 
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentDataValidationException;
-import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.UpdateNodeParams;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -80,7 +78,7 @@ final class UpdateContentCommand
             attachments = attachmentService.getAll( this.params.getContentId() );
         }
 
-        final UpdateNodeParams updateNodeParams = getTranslator().toUpdateNodeCommand( editedContent, attachments );
+        final UpdateNodeParams updateNodeParams = getTranslator().toUpdateNodeCommand( editedContent, ContentConstants.DEFAULT_WORKSPACE, attachments );
 
         final Node editedNode = this.nodeService.update( updateNodeParams );
 
