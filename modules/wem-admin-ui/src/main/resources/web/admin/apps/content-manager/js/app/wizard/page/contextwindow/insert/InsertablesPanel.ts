@@ -2,12 +2,12 @@ module app.wizard.page.contextwindow.insert {
 
     export interface ComponentTypesPanelConfig {
 
-        liveEditPage: app.wizard.page.LiveEditPage;
+        liveEditPage: app.wizard.page.LiveEditPageProxy;
     }
 
     export class InsertablesPanel extends api.ui.Panel {
 
-        private liveEditPage: app.wizard.page.LiveEditPage;
+        private liveEditPage: app.wizard.page.LiveEditPageProxy;
 
         private insertablesGrid: InsertablesGrid;
 

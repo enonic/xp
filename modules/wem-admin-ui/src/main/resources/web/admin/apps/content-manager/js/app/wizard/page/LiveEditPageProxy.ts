@@ -30,7 +30,7 @@ module app.wizard.page {
         siteTemplate: SiteTemplate;
     }
 
-    export class LiveEditPage {
+    export class LiveEditPageProxy {
 
         private baseUrl: string;
 

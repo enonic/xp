@@ -10,7 +10,7 @@
 ///<reference path='PageComponentResetEvent.ts' />
 ///<reference path='PageComponentDuplicatedEvent.ts' />
 
-///<reference path='LiveEditPage.ts' />
+///<reference path='LiveEditPageProxy.ts' />
 
 ///<reference path='PageComponentNameChanger.ts' />
 ///<reference path='PageComponentSetDescriptorCommand.ts' />

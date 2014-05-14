@@ -101,7 +101,7 @@ module app.wizard.page {
 
         private contentWizardPanel: ContentWizardPanel;
 
-        private liveEditPage: LiveEditPage;
+        private liveEditPage: LiveEditPageProxy;
 
         constructor(config: LiveFormPanelConfig) {
             super("live-form-panel");
@@ -113,7 +113,7 @@ module app.wizard.page {
             this.pageLoading = false;
             this.pageSkipReload = false;
 
-            this.liveEditPage = new LiveEditPage(<LiveEditPageConfig>{
+            this.liveEditPage = new LiveEditPageProxy(<LiveEditPageConfig>{
                 liveFormPanel: this,
                 siteTemplate: this.siteTemplate
             });

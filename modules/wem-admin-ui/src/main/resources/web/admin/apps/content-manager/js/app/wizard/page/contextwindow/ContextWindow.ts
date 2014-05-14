@@ -17,7 +17,7 @@ module app.wizard.page.contextwindow {
 
     export interface ContextWindowConfig {
 
-        liveEditPage: app.wizard.page.LiveEditPage;
+        liveEditPage: app.wizard.page.LiveEditPageProxy;
 
         liveFormPanel:LiveFormPanel;
 
@@ -36,7 +36,7 @@ module app.wizard.page.contextwindow {
 
         private emulatorPanel: EmulatorPanel;
 
-        private liveEditPage: app.wizard.page.LiveEditPage;
+        private liveEditPage: app.wizard.page.LiveEditPageProxy;
 
         private liveFormPanel: LiveFormPanel;
 
