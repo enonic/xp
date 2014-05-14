@@ -607,11 +607,11 @@ module app.wizard.page {
                 this.contextWindow.showInspectionPanel(this.imageInspectionPanel);
             }
             else if (component instanceof PartComponent) {
-                this.partInspectionPanel.setPartComponent(<PartComponent>component)
+                this.partInspectionPanel.setPartComponent(<PartComponent>component);
                 this.contextWindow.showInspectionPanel(this.partInspectionPanel);
             }
             else if (component instanceof LayoutComponent) {
-                this.layoutInspectionPanel.setLayoutComponent(<LayoutComponent>component)
+                this.layoutInspectionPanel.setLayoutComponent(<LayoutComponent>component);
                 this.contextWindow.showInspectionPanel(this.layoutInspectionPanel);
             }
             else {
