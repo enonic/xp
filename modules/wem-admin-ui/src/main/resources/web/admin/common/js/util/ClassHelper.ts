@@ -3,19 +3,27 @@ module api.util {
     var MAX_NEST_LEVEL = 7;
     var ALLOWED_PACKAGES = ['api', 'app'];
 
-    export function getClassName(instance) {
-        var funcNameRegex = /function (.+)\(/;
-        var results = (funcNameRegex).exec(instance["constructor"].toString());
-        return (results && results.length > 1) ? results[1] : "";
+    export function getFunctionName(func): string {
+        if (func.name) {
+            return func.name;
+        } else {
+            var funcNameRegex = /function (.+)\(/;
+            var results = (funcNameRegex).exec(func.toString());
+            return (results && results.length > 1) ? results[1] : "";
+        }
     }
 
-    export function getModuleName(instance) {
+    export function getClassName(instance): string {
+        return getFunctionName(instance["constructor"]);
+    }
+
+    export function getModuleName(instance): string {
         var fullName = getFullName(instance);
         return fullName ? fullName.substr(0, fullName.lastIndexOf(".")) : "";
     }
 
-    export function getFullName(instance) {
-        var className = getClassName(instance);
+    export function getFullName(instance): string {
+        var className = (typeof instance === 'function') ? getFunctionName(instance) : getClassName(instance);
         return findPath(window, className) || "";
     }
 
@@ -37,8 +45,12 @@ module api.util {
                     if (path) {
                         return key + "." + path;
                     }
-                } else if (typeof value === 'function' && value.name == node) {
-                    return value.name;
+                } else if (typeof value === 'function') {
+                    var funcName = getFunctionName(value);
+                    if (funcName == node) {
+                        return funcName;
+                    }
+
                 }
             }
         }

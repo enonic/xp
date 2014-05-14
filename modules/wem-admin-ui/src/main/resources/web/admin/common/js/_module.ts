@@ -126,4 +126,6 @@
 
 ///<reference path='system/_module.ts' />
 
+///<reference path='liveedit/_module.ts' />
+
 ///<reference path='main.ts' />

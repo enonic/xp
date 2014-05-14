@@ -52,6 +52,13 @@ module app.wizard.page {
     import InsertablesPanel = app.wizard.page.contextwindow.insert.InsertablesPanel;
     import RenderingMode = api.rendering.RenderingMode;
 
+    import SortableStartEvent = api.liveedit.SortableStartEvent;
+    import SortableStopEvent = api.liveedit.SortableStopEvent;
+    import SortableUpdateEvent = api.liveedit.SortableUpdateEvent;
+    import PageSelectEvent = api.liveedit.PageSelectEvent;
+    import RegionSelectEvent = api.liveedit.RegionSelectEvent;
+    import ImageSetEvent = api.liveedit.ImageSetEvent;
+
     export interface LiveFormPanelConfig {
 
         siteTemplate:SiteTemplate;
@@ -416,12 +423,12 @@ module app.wizard.page {
 
         private liveEditListen() {
 
-            this.liveEditPage.onPageSelected((event: PageSelectedEvent) => {
+            this.liveEditPage.onPageSelected((event: PageSelectEvent) => {
 
                 this.inspectPage();
             });
 
-            this.liveEditPage.onRegionSelected((event: RegionSelectedEvent) => {
+            this.liveEditPage.onRegionSelected((event: RegionSelectEvent) => {
 
                 this.inspectRegion(event.getPath());
             });
@@ -499,7 +506,7 @@ module app.wizard.page {
                     event.getPrecedingComponent().getComponentName());
 
                 if (newPath) {
-                    event.getComponentView().setComponentPath(newPath.toString());
+                    event.getComponent().setComponentPath(newPath.toString());
                 }
             });
 
@@ -523,27 +530,20 @@ module app.wizard.page {
                 }
             });
 
-            this.liveEditPage.onImageComponentSetImage((event: ImageComponentSetImageEvent) => {
+            this.liveEditPage.onImageComponentSetImage((event: ImageSetEvent) => {
 
                 var command = new ImageComponentSetImageCommand().
                     setDefaultModels(this.defaultModels).
                     setPageRegions(this.pageRegions).
-                    setComponentPath(event.getPath()).
-                    setImage(event.getImage()).
-                    setComponentView(event.getComponentView()).
+                    setComponentPath(event.getComponentPath()).
+                    setImage(event.getImageId()).
+                    setComponentView(event.getComponentPlaceholder()).
                     setImageName(event.getImageName());
 
-                if (this.pageTemplate) {
+                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).done(() => {
                     var newComponentPath = command.execute();
-                    this.saveAndReloadOnlyPageComponent(newComponentPath, event.getComponentView());
-                }
-                else {
-                    this.initializePageFromDefault().done(() => {
-
-                        var newComponentPath = command.execute();
-                        this.saveAndReloadOnlyPageComponent(newComponentPath, event.getComponentView());
-                    });
-                }
+                    this.saveAndReloadOnlyPageComponent(newComponentPath, event.getComponentPlaceholder());
+                });
             });
 
             this.liveEditPage.onPageComponentSetDescriptor((event: PageComponentSetDescriptorEvent) => {

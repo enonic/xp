@@ -21,15 +21,22 @@ module api.event {
             contextWindow.addEventListener(eventName, customEventHandler);
         }
 
-        static unEvent2(eventName: string, handler: (event: api.event.Event2) => void, contextWindow: Window = window) {
-            var customEventHandler: (customEvent: any) => void;
-            this.handlersMap[eventName] = this.handlersMap[eventName].filter((entry: HandlersMapEntry) => {
-                if (entry.apiEventHandler === handler) {
-                    customEventHandler = entry.customEventHandler;
-                }
-                return entry.apiEventHandler != handler;
-            });
-            contextWindow.removeEventListener(eventName, customEventHandler);
+        static unEvent2(eventName: string, handler?: (event: api.event.Event2) => void, contextWindow: Window = window) {
+            if (handler) {
+                var customEventHandler: (customEvent: any) => void;
+                this.handlersMap[eventName] = this.handlersMap[eventName].filter((entry: HandlersMapEntry) => {
+                    if (entry.apiEventHandler === handler) {
+                        customEventHandler = entry.customEventHandler;
+                    }
+                    return entry.apiEventHandler != handler;
+                });
+                contextWindow.removeEventListener(eventName, customEventHandler);
+            } else {
+                (this.handlersMap[eventName] || []).forEach((entry: HandlersMapEntry) => {
+                    contextWindow.removeEventListener(eventName, entry.customEventHandler);
+                });
+                this.handlersMap[eventName] = [];
+            }
         }
 
         static fireEvent(apiEventObj: api.event.Event2, contextWindow: Window = window) {
