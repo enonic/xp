@@ -7,9 +7,9 @@ module api.liveedit {
 
         private regionPath: RegionPath;
 
-        constructor(regionPathAsString: string) {
+        constructor(regionPath: api.content.page.RegionPath) {
             super();
-            this.regionPath = RegionPath.fromString(regionPathAsString);
+            this.regionPath = regionPath;
         }
 
         getPath(): RegionPath {

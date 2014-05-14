@@ -13,7 +13,7 @@ module app.wizard.page {
     import NewPageComponentIdMapEvent = api.liveedit.NewPageComponentIdMapEvent;
     import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
     import ImageUploadedEvent = api.liveedit.ImageUploadedEvent;
-    import ImageSetEvent = api.liveedit.ImageSetEvent;
+    import ImageSetEvent = api.liveedit.ImageComponentSetImageEvent;
     import DraggableStartEvent = api.liveedit.DraggableStartEvent;
     import DraggableStopEvent = api.liveedit.DraggableStopEvent;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
@@ -21,7 +21,7 @@ module app.wizard.page {
     import SortableUpdateEvent = api.liveedit.SortableUpdateEvent;
     import PageSelectEvent = api.liveedit.PageSelectEvent;
     import RegionSelectEvent = api.liveedit.RegionSelectEvent;
-    import ComponentSelectEvent = api.liveedit.ComponentSelectEvent;
+    import ComponentSelectEvent = api.liveedit.PageComponentSelectEvent;
 
     export interface LiveEditPageConfig {
 
@@ -256,7 +256,7 @@ module app.wizard.page {
             }, this.liveEditWindow);
 
             SortableUpdateEvent.on((event: SortableUpdateEvent) => {
-                if (event.getComponent()) {
+                if (event.getComponentView()) {
                     this.notifySortableUpdate(event);
                 }
             }, this.liveEditWindow);
@@ -271,9 +271,8 @@ module app.wizard.page {
 
             ComponentSelectEvent.un();
             ComponentSelectEvent.on((event: ComponentSelectEvent) => {
-                if (event.getPathAsString()) {
-                    var componentPath = ComponentPath.fromString(event.getPathAsString());
-                    this.notifyPageComponentSelected(componentPath, event.getComponent().isEmpty());
+                if (event.getPath()) {
+                    this.notifyPageComponentSelected(event.getPath(), event.getComponentView().isEmpty());
                 }
             }, this.liveEditWindow);
 

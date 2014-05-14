@@ -2,7 +2,7 @@ module LiveEdit.component {
 
     import ImageUploadedEvent = api.liveedit.ImageUploadedEvent;
     import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
-    import ImageSetEvent = api.liveedit.ImageSetEvent
+    import ImageSetEvent = api.liveedit.ImageComponentSetImageEvent
 
     export class ImagePlaceholder extends ComponentPlaceholder {
 
@@ -50,7 +50,7 @@ module LiveEdit.component {
                 new ImageSetEvent().
                     setImageId(event.getOption().displayValue.getContentId()).
                     setComponentPath(this.getComponentPath()).
-                    setComponentPlaceholder(this).
+                    setComponentView(this).
                     setName(event.getOption().displayValue.getDisplayName()).
                     fire();
 
@@ -97,7 +97,7 @@ module LiveEdit.component {
                     new ImageSetEvent().
                         setImageId(createdContent.getContentId()).
                         setComponentPath(this.getComponentPath()).
-                        setComponentPlaceholder(this).
+                        setComponentView(this).
                         setName(uploadItem.getName()).
                         fire();
 

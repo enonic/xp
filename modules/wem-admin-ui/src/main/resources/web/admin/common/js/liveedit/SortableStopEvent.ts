@@ -5,29 +5,29 @@ module api.liveedit {
 
     export class SortableStopEvent extends Event2 {
 
-        private component: any; // LiveEdit.component.Component
+        private componentView: any;
 
-        private path: ComponentPath;
+        private componentPath: ComponentPath;
 
         private empty: boolean;
 
-        constructor(component:any) {
+        constructor(componentView:any) {
             super();
-            this.component = component;
-            this.path = component ? ComponentPath.fromString(component.getComponentPath()) : null;
-            this.empty = component ? component.isEmpty() : false;
+            this.componentView = componentView;
+            this.componentPath = componentView ? ComponentPath.fromString(componentView.getComponentPath()) : null;
+            this.empty = componentView ? componentView.isEmpty() : false;
         }
 
-        getPath(): ComponentPath {
-            return this.path;
+        getComponentPath(): ComponentPath {
+            return this.componentPath;
         }
 
         isEmpty(): boolean {
             return this.empty;
         }
 
-        getComponent(): any {
-            return this.component;
+        getComponentView(): any {
+            return this.componentView;
         }
 
         static on(handler: (event: SortableStopEvent) => void, contextWindow: Window = window) {

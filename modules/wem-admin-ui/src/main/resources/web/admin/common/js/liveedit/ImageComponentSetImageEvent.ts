@@ -4,39 +4,39 @@ module api.liveedit {
     import ContentId = api.content.ContentId;
     import ComponentPath = api.content.page.ComponentPath;
 
-    export class ImageSetEvent extends Event2 {
+    export class ImageComponentSetImageEvent extends Event2 {
 
         private id: ContentId;
 
         private path: ComponentPath;
 
-        private componentPlaceholder: any;
+        private componentView: any;
 
         private imageName: string;
 
         private errorMessage: string;
 
-        setImageId(id: ContentId):ImageSetEvent {
+        setImageId(id: ContentId):ImageComponentSetImageEvent {
             this.id = id;
             return this;
         }
 
-        setComponentPath(path: string): ImageSetEvent {
+        setComponentPath(path: string): ImageComponentSetImageEvent {
             this.path = ComponentPath.fromString(path);
             return this;
         }
 
-        setComponentPlaceholder(placeholder: any): ImageSetEvent {
-            this.componentPlaceholder = placeholder;
+        setComponentView(placeholder: any): ImageComponentSetImageEvent {
+            this.componentView = placeholder;
             return this;
         }
 
-        setName(name: string): ImageSetEvent {
+        setName(name: string): ImageComponentSetImageEvent {
             this.imageName = name;
             return this;
         }
 
-        setErrorMessage(message: string): ImageSetEvent {
+        setErrorMessage(message: string): ImageComponentSetImageEvent {
             this.errorMessage = message;
             return this;
         }
@@ -49,8 +49,8 @@ module api.liveedit {
             return this.path;
         }
 
-        getComponentPlaceholder(): any {
-            return this.componentPlaceholder;
+        getComponentView(): any {
+            return this.componentView;
         }
 
         getImageName(): string {
@@ -61,11 +61,11 @@ module api.liveedit {
             return this.errorMessage;
         }
 
-        static on(handler: (event: ImageSetEvent) => void, contextWindow: Window = window) {
+        static on(handler: (event: ImageComponentSetImageEvent) => void, contextWindow: Window = window) {
             Event2.bind(api.util.getFullName(this), handler, contextWindow);
         }
 
-        static un(handler: (event: ImageSetEvent) => void, contextWindow: Window = window) {
+        static un(handler: (event: ImageComponentSetImageEvent) => void, contextWindow: Window = window) {
             Event2.unbind(api.util.getFullName(this), handler, contextWindow);
         }
     }

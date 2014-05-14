@@ -1,6 +1,6 @@
 module LiveEdit.component {
 
-    import ComponentSelectEvent = api.liveedit.ComponentSelectEvent;
+    import ComponentSelectEvent = api.liveedit.PageComponentSelectEvent;
 
     export class ComponentPlaceholder extends Component {
         constructor(className: string = 'live-edit-empty-component') {

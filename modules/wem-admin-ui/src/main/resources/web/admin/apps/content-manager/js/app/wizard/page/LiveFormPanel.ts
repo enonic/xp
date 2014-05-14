@@ -57,7 +57,7 @@ module app.wizard.page {
     import SortableUpdateEvent = api.liveedit.SortableUpdateEvent;
     import PageSelectEvent = api.liveedit.PageSelectEvent;
     import RegionSelectEvent = api.liveedit.RegionSelectEvent;
-    import ImageSetEvent = api.liveedit.ImageSetEvent;
+    import ImageSetEvent = api.liveedit.ImageComponentSetImageEvent;
 
     export interface LiveFormPanelConfig {
 
@@ -485,14 +485,14 @@ module app.wizard.page {
 
             this.liveEditPage.onSortableStop((event: SortableStopEvent) => {
 
-                if (event.getPath()) {
+                if (event.getComponentPath()) {
 
                     if (!event.isEmpty()) {
                         this.contextWindow.show();
                     }
 
-                    if (event.getComponent().isSelected()) {
-                        this.liveEditPage.selectComponent(event.getPath());
+                    if (event.getComponentView().isSelected()) {
+                        this.liveEditPage.selectComponent(event.getComponentPath());
                     }
                 }
                 else {
@@ -506,7 +506,7 @@ module app.wizard.page {
                     event.getPrecedingComponent().getComponentName());
 
                 if (newPath) {
-                    event.getComponent().setComponentPath(newPath.toString());
+                    event.getComponentView().setComponentPath(newPath.toString());
                 }
             });
 
@@ -537,12 +537,12 @@ module app.wizard.page {
                     setPageRegions(this.pageRegions).
                     setComponentPath(event.getComponentPath()).
                     setImage(event.getImageId()).
-                    setComponentView(event.getComponentPlaceholder()).
+                    setComponentView(event.getComponentView()).
                     setImageName(event.getImageName());
 
                 Q(!this.pageTemplate ? this.initializePageFromDefault() : null).done(() => {
                     var newComponentPath = command.execute();
-                    this.saveAndReloadOnlyPageComponent(newComponentPath, event.getComponentPlaceholder());
+                    this.saveAndReloadOnlyPageComponent(newComponentPath, event.getComponentView());
                 });
             });
 
