@@ -2,6 +2,7 @@ package com.enonic.wem.core.schema.relationship;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
+import org.joda.time.Instant;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,8 +53,8 @@ public class UpdateRelationshipTypeCommandTest
             toSemantic( "liked by" ).
             addAllowedFromType( ContentTypeName.from( "person" ) ).
             addAllowedToType( ContentTypeName.from( "person" ) ).
-            createdTime( DateTime.now() ).
-            modifiedTime( DateTime.now() );
+            createdTime( Instant.now() ).
+            modifiedTime( Instant.now() );
         Mockito.when( relationshipTypeDao.getRelationshipType( isA( RelationshipTypeName.class ) ) ).thenReturn( relationshipType );
 
         // exercise

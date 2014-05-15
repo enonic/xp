@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.apache.commons.io.FileUtils;
-import org.joda.time.DateTime;
+import org.joda.time.Instant;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -186,10 +186,10 @@ public class PublicResourceTest
         return Content.newContent().
             id( ContentId.from( id ) ).
             path( contentPath ).
-            createdTime( DateTime.now() ).
+            createdTime( Instant.now() ).
             owner( UserKey.from( "myStore:me" ) ).
             displayName( "My Content" ).
-            modifiedTime( DateTime.now() ).
+            modifiedTime( Instant.now() ).
             modifier( UserKey.superUser() ).
             type( ContentTypeName.from( contentTypeName ) ).
             build();

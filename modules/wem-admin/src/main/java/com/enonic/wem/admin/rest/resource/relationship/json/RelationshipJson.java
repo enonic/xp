@@ -2,7 +2,7 @@ package com.enonic.wem.admin.rest.resource.relationship.json;
 
 import java.util.Map;
 
-import org.joda.time.DateTime;
+import org.joda.time.Instant;
 
 import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.api.account.UserKey;
@@ -39,12 +39,12 @@ public class RelationshipJson
         return ( this.model.getManagingData() != null ) ? this.model.getManagingData().toString() : null;
     }
 
-    public DateTime getCreatedTime()
+    public Instant getCreatedTime()
     {
         return model.getCreatedTime();
     }
 
-    public DateTime getModifiedTime()
+    public Instant getModifiedTime()
     {
         return model.getModifiedTime();
     }

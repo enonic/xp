@@ -4,6 +4,7 @@ package com.enonic.wem.core.relationship;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.DateTimeZone;
+import org.joda.time.Instant;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,7 +24,7 @@ import static org.junit.Assert.*;
 public class RelationshipJsonSerializerTest
     extends AbstractSerializerTest
 {
-    private static final DateTime NOW = new DateTime( 2013, 1, 1, 12, 0, DateTimeZone.UTC );
+    private static final Instant NOW = new DateTime( 2013, 1, 1, 12, 0, DateTimeZone.UTC ).toInstant();
 
     @Before
     public void before()

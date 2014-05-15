@@ -1,6 +1,6 @@
 package com.enonic.wem.core.schema.mixin;
 
-import org.joda.time.DateTime;
+import org.joda.time.Instant;
 
 import com.enonic.wem.api.schema.mixin.CreateMixinParams;
 import com.enonic.wem.api.schema.mixin.GetMixinParams;
@@ -36,7 +36,7 @@ final class CreateMixinCommand
             displayName( params.getDisplayName() ).
             icon( params.getSchemaIcon() ).
             formItems( params.getFormItems() ).
-            createdTime( DateTime.now() ).
+            createdTime( Instant.now() ).
             build();
 
         return mixinDao.createMixin( mixin );

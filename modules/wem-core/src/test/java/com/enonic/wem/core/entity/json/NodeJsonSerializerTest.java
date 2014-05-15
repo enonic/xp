@@ -1,6 +1,7 @@
 package com.enonic.wem.core.entity.json;
 
 import org.joda.time.DateTime;
+import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 
@@ -26,7 +27,7 @@ public class NodeJsonSerializerTest
     public void serialize_deserialize()
         throws Exception
     {
-        DateTime modifiedDateTime = new DateTime( 2013, 1, 2, 3, 4, 5 );
+        Instant modifiedDateTime = new DateTime( 2013, 1, 2, 3, 4, 5 ).toInstant();
 
         RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.setProperty( DataPath.from( "a.b.c" ), Value.newDouble( 2.0 ) );
@@ -39,7 +40,7 @@ public class NodeJsonSerializerTest
             id( EntityId.from( "myId" ) ).
             parent( NodePath.ROOT ).
             name( NodeName.from( "my-name" ) ).
-            createdTime( DateTime.now() ).
+            createdTime( Instant.now() ).
             creator( UserKey.from( "test:creator" ) ).
             modifier( UserKey.from( "test:modifier" ).asUser() ).
             modifiedTime( modifiedDateTime ).

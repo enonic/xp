@@ -2,7 +2,7 @@ package com.enonic.wem.core.elasticsearch;
 
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.search.SearchResponse;
-import org.joda.time.DateTime;
+import org.joda.time.Instant;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
@@ -41,7 +41,7 @@ public class ElasticsearchNodeDao
         Preconditions.checkArgument( createNodeArguments.parent().isAbsolute(),
                                      "Path to parent Node must be absolute: " + createNodeArguments.parent() );
 
-        final DateTime now = DateTime.now();
+        final Instant now = Instant.now();
 
         final Node newNode = Node.newNode().
             id( new EntityId() ).
@@ -69,7 +69,7 @@ public class ElasticsearchNodeDao
 
         final Node persistedNode = getById( updateNodeArguments.nodeToUpdate() );
 
-        final DateTime now = DateTime.now();
+        final Instant now = Instant.now();
 
         // TODO: Should'nt new Node(Node) Handle THIS?!
 
@@ -119,7 +119,7 @@ public class ElasticsearchNodeDao
             return false;
         }
 
-        final DateTime now = DateTime.now();
+        final Instant now = Instant.now();
 
         final Node movedNode = Node.newNode( persistedNode ).
             id( persistedNode.id() ).

@@ -20,9 +20,9 @@ public class RelationshipTest
         final Relationship.Builder relationBuilder = Relationship.newRelationship();
         relationBuilder.fromContent( ContentId.from( "a" ) );
         relationBuilder.toContent( ContentId.from( "b" ) );
-        relationBuilder.createdTime( DateTime.parse( "2012-01-01T12:00:00" ) );
+        relationBuilder.createdTime( DateTime.parse( "2012-01-01T12:00:00" ).toInstant() );
         relationBuilder.creator( UserKey.from( "myStore:myUser" ) );
-        relationBuilder.modifiedTime( DateTime.parse( "2012-01-01T12:00:00" ) );
+        relationBuilder.modifiedTime( DateTime.parse( "2012-01-01T12:00:00" ).toInstant() );
         relationBuilder.modifier( UserKey.from( "myStore:myUser" ) );
         relationBuilder.type( RelationshipTypeName.from( "like" ) );
         relationBuilder.property( "stars", "4" );
@@ -34,9 +34,9 @@ public class RelationshipTest
         assertEquals( "a", relationship.getFromContent().toString() );
         assertEquals( "b", relationship.getToContent().toString() );
         assertEquals( "myUser", relationship.getCreator().getLocalName() );
-        assertEquals( DateTime.parse( "2012-01-01T12:00:00" ), relationship.getCreatedTime() );
+        assertEquals( DateTime.parse( "2012-01-01T12:00:00" ).toInstant(), relationship.getCreatedTime() );
         assertEquals( "myUser", relationship.getModifier().getLocalName() );
-        assertEquals( DateTime.parse( "2012-01-01T12:00:00" ), relationship.getModifiedTime() );
+        assertEquals( DateTime.parse( "2012-01-01T12:00:00" ).toInstant(), relationship.getModifiedTime() );
         assertEquals( "like", relationship.getType().toString() );
         assertEquals( "4", relationship.getProperty( "stars" ) );
     }

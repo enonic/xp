@@ -3,7 +3,7 @@ package com.enonic.wem.api.data.type;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.joda.time.DateTime;
+import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 
 import com.google.common.base.Preconditions;
@@ -25,7 +25,8 @@ public final class ValueTypes
 
     public static final ValueType<LocalDate> LOCAL_DATE = newLocalDate();
 
-    public static final ValueType<DateTime> DATE_TIME = newDateTime();
+    //public static final ValueType<DateTime> DATE_TIME = newDateTime();
+    public static final ValueType<Instant> INSTANT = newInstant();
 
     public static final ValueType<ContentId> CONTENT_ID = newContentId();
 
@@ -50,7 +51,8 @@ public final class ValueTypes
         register( HTML_PART );
         register( XML );
         register( LOCAL_DATE );
-        register( DATE_TIME );
+        //register( DATE_TIME );
+        register( INSTANT );
         register( CONTENT_ID );
         register( LONG );
         register( DOUBLE );
@@ -118,9 +120,14 @@ public final class ValueTypes
         return new ValueTypeImpl<>( 5, "LocalDate", JavaTypeConverters.LOCAL_DATE );
     }
 
-    private static ValueType<DateTime> newDateTime()
+//    private static ValueType<DateTime> newDateTime()
+//    {
+//        return new ValueTypeImpl<>( 6, "DateTime", JavaTypeConverters.DATE_TIME );
+//    }
+
+    private static ValueType<Instant> newInstant()
     {
-        return new ValueTypeImpl<>( 6, "DateTime", JavaTypeConverters.DATE_TIME );
+        return new ValueTypeImpl<>( 6, "Instant", JavaTypeConverters.INSTANT );
     }
 
     private static ValueType<ContentId> newContentId()

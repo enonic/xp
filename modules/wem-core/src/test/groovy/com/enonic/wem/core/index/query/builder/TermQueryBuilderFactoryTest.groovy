@@ -6,7 +6,7 @@ import com.enonic.wem.api.query.expr.ValueExpr
 import org.elasticsearch.index.query.QueryBuilder
 
 class TermQueryBuilderFactoryTest
-        extends BaseTestBuilderFactory
+    extends BaseTestBuilderFactory
 {
     def "compare eq string"()
     {
@@ -42,7 +42,7 @@ class TermQueryBuilderFactoryTest
 
         when:
         final QueryBuilder query = builder.create(
-                CompareExpr.eq( new FieldExpr( "myField" ), ValueExpr.dateTime( "2013-11-29T09:42:00" ) ) );
+            CompareExpr.eq( new FieldExpr( "myField" ), ValueExpr.instant( "2013-11-29T09:42:00.000Z" ) ) );
 
         then:
         cleanString( expected ) == cleanString( query.toString() )
@@ -57,7 +57,7 @@ class TermQueryBuilderFactoryTest
 
         when:
         final QueryBuilder query = builder.create(
-                CompareExpr.eq( new FieldExpr( "myField" ), ValueExpr.geoPoint( "59.9127300,10.746090" ) ) );
+            CompareExpr.eq( new FieldExpr( "myField" ), ValueExpr.geoPoint( "59.9127300,10.746090" ) ) );
 
         then:
         cleanString( expected ) == cleanString( query.toString() )

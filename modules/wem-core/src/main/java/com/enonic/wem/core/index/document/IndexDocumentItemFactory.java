@@ -120,7 +120,7 @@ public class IndexDocumentItemFactory
     {
         if ( propertyValue.isDateType() )
         {
-            indexDocumentItems.add( createDateItemType( path, propertyValue ) );
+            indexDocumentItems.add( createInstantType( path, propertyValue ) );
         }
 
         if ( propertyValue.isNumericType() )
@@ -151,9 +151,14 @@ public class IndexDocumentItemFactory
         return new IndexDocumentNumberItem( path, propertyValue.asDouble() );
     }
 
-    private IndexDocumentDateItem createDateItemType( final IndexDocumentItemPath path, final Value propertyValue )
+//    private IndexDocumentDateItem createDateItemType( final IndexDocumentItemPath path, final Value propertyValue )
+//    {
+//        return new IndexDocumentDateItem( path, propertyValue.asDateTime() );
+//    }
+
+    private IndexDocumentDateItem createInstantType( final IndexDocumentItemPath path, final Value propertyValue )
     {
-        return new IndexDocumentDateItem( path, propertyValue.asDateTime() );
+        return new IndexDocumentDateItem( path, propertyValue.asInstant() );
     }
 
 }

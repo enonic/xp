@@ -1,7 +1,7 @@
 package com.enonic.wem.admin.json;
 
 
-import org.joda.time.DateTime;
+import org.joda.time.Instant;
 
 public interface ChangeTraceableJson
 {
@@ -9,7 +9,7 @@ public interface ChangeTraceableJson
 
     public String getModifier();
 
-    public DateTime getModifiedTime();
+    public Instant getModifiedTime();
 
-    public DateTime getCreatedTime();
+    public Instant getCreatedTime();
 }

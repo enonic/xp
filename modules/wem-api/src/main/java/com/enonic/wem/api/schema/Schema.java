@@ -1,7 +1,7 @@
 package com.enonic.wem.api.schema;
 
 
-import org.joda.time.DateTime;
+import org.joda.time.Instant;
 
 import com.enonic.wem.api.support.ChangeTraceable;
 
@@ -16,9 +16,9 @@ public interface Schema
 
     String getDescription();
 
-    DateTime getCreatedTime();
+    Instant getCreatedTime();
 
-    DateTime getModifiedTime();
+    Instant getModifiedTime();
 
     boolean hasChildren();
 

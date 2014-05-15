@@ -36,22 +36,21 @@ public class SchemaResourceTest
     private Mixin createMixin( String displayName )
     {
         return Mixin.newMixin().name( displayName.toLowerCase() ).displayName( displayName ).description( "M description" ).createdTime(
-            DateTime.parse( currentTime ) ).modifiedTime( DateTime.parse( currentTime ) ).addFormItem(
+            DateTime.parse( currentTime ).toInstant() ).modifiedTime( DateTime.parse( currentTime ).toInstant() ).addFormItem(
             Input.newInput().name( displayName.toLowerCase() ).inputType( InputTypes.TEXT_AREA ).inputTypeConfig(
-                InputTypes.TEXT_AREA.getDefaultConfig() ).build()
-        ).build();
+                InputTypes.TEXT_AREA.getDefaultConfig() ).build() ).build();
     }
 
     private ContentType createContentType( String name )
     {
-        return ContentType.newContentType().name( name ).createdTime( DateTime.parse( currentTime ) ).modifiedTime(
-            DateTime.parse( currentTime ) ).description( "CT description" ).build();
+        return ContentType.newContentType().name( name ).createdTime( DateTime.parse( currentTime ).toInstant() ).modifiedTime(
+            DateTime.parse( currentTime ).toInstant() ).description( "CT description" ).build();
     }
 
     private RelationshipType createRelationshipType( String name )
     {
-        return RelationshipType.newRelationshipType().name( name ).createdTime( DateTime.parse( currentTime ) ).modifiedTime(
-            DateTime.parse( currentTime ) ).description( "RT description" ).build();
+        return RelationshipType.newRelationshipType().name( name ).createdTime( DateTime.parse( currentTime ).toInstant() ).modifiedTime(
+            DateTime.parse( currentTime ).toInstant() ).description( "RT description" ).build();
     }
 
     private Schemas createSchemaList()

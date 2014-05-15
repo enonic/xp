@@ -49,12 +49,12 @@ class ValueExprTest
     def "test dateTime value"()
     {
         given:
-        def expr = ValueExpr.dateTime( '2013-11-11T22:22:22' )
+        def expr = ValueExpr.instant( '2013-11-11T22:22:22.000Z' )
 
         expect:
         expr != null
-        expr.toString() == "dateTime('2013-11-11T22:22:22')"
-        expr.getValue().getType() == ValueTypes.DATE_TIME
+        expr.toString() == "instant('2013-11-11T22:22:22.000Z')"
+        expr.getValue().getType() == ValueTypes.INSTANT
     }
 
     def "test geoPoint value"()

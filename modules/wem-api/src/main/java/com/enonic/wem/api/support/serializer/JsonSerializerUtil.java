@@ -1,7 +1,7 @@
 package com.enonic.wem.api.support.serializer;
 
 
-import org.joda.time.DateTime;
+import org.joda.time.Instant;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -31,19 +31,19 @@ public class JsonSerializerUtil
         return subNode.isNull() ? defaultValue : subNode.intValue();
     }
 
-    public static void setDateTimeValue( String fieldName, DateTime dateTime, ObjectNode node )
+    public static void setInstantValue( String fieldName, Instant instant, ObjectNode node )
     {
-        if ( dateTime == null )
+        if ( instant == null )
         {
             node.putNull( fieldName );
         }
         else
         {
-            node.put( fieldName, isoDateTimeFormatter.print( dateTime ) );
+            node.put( fieldName, isoDateTimeFormatter.print( instant ) );
         }
     }
 
-    public static DateTime getDateTimeValue( String fieldName, JsonNode node )
+    public static Instant getInstantValue( String fieldName, JsonNode node )
     {
         JsonNode subNode = node.get( fieldName );
         if ( subNode == null )
@@ -54,7 +54,7 @@ public class JsonSerializerUtil
         {
             return null;
         }
-        return isoDateTimeFormatter.parseDateTime( subNode.textValue() );
+        return isoDateTimeFormatter.parseDateTime( subNode.textValue() ).toInstant();
     }
 
     public static String getStringValue( String fieldName, JsonNode node, String defaultValue )

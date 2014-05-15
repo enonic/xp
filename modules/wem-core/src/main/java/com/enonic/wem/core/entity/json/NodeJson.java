@@ -1,18 +1,18 @@
 package com.enonic.wem.core.entity.json;
 
-import org.joda.time.DateTime;
+import org.joda.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.api.account.UserKey;
+import com.enonic.wem.api.data.RootDataSetJson;
 import com.enonic.wem.api.entity.Attachments;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.data.RootDataSetJson;
 import com.enonic.wem.core.entity.relationship.EntityIndexConfigJson;
 
 public class NodeJson
@@ -38,9 +38,9 @@ public class NodeJson
                      @JsonProperty("modifier") final String modifier, //
                      @JsonProperty("creator") final String creator, //
                      @JsonProperty("id") final String id, //
-                     @JsonProperty("createdTime") final DateTime createdTime, //
+                     @JsonProperty("createdTime") final Instant createdTime, //
                      @JsonProperty("data") final RootDataSetJson data, //
-                     @JsonProperty("modifiedTime") final DateTime modifiedTime, //
+                     @JsonProperty("modifiedTime") final Instant modifiedTime, //
                      @JsonProperty("entityIndexConfig") final EntityIndexConfigJson entityIndexConfig,
                      @JsonProperty("attachments") final AttachmentsJson attachments )
     {

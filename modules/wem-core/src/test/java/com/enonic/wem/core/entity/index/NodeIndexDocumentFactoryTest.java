@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 
@@ -101,13 +102,13 @@ public class NodeIndexDocumentFactoryTest
     {
         final String myAnalyzerName = "myAnalyzer";
 
-        DateTime modifiedDateTime = new DateTime( 2013, 1, 2, 3, 4, 5 );
+        Instant modifiedDateTime = new DateTime( 2013, 1, 2, 3, 4, 5 ).toInstant();
 
         Node node = Node.newNode().
             id( EntityId.from( "myId" ) ).
             parent( NodePath.ROOT ).
             name( NodeName.from( "my-name" ) ).
-            createdTime( DateTime.now() ).
+            createdTime( Instant.now() ).
             creator( UserKey.from( "test:creator" ) ).
             modifier( UserKey.from( "test:modifier" ).asUser() ).
             modifiedTime( modifiedDateTime ).
@@ -125,7 +126,7 @@ public class NodeIndexDocumentFactoryTest
         assertEquals( IndexType.NODE, indexDocument.getIndexType() );
 
         final AbstractIndexDocumentItem createdTimeItem =
-            getItemWithName( indexDocument, NodeIndexDocumentFactory.CREATED_TIME_PROPERTY, IndexValueType.DATETIME );
+            getItemWithName( indexDocument, NodeIndexDocumentFactory.CREATED_TIME_PROPERTY, IndexValueType.INSTANT );
 
         assertEquals( node.getCreatedTime().toDate(), createdTimeItem.getValue() );
 
@@ -158,7 +159,7 @@ public class NodeIndexDocumentFactoryTest
         final IndexDocument indexDocument = getIndexDocumentOfType( indexDocuments, IndexType.NODE );
 
         assertNotNull( getItemWithName( indexDocument, IndexDocumentItemPath.from( "a_b_c" ), IndexValueType.NUMBER ) );
-        assertNotNull( getItemWithName( indexDocument, IndexDocumentItemPath.from( "a_b_d" ), IndexValueType.DATETIME ) );
+        assertNotNull( getItemWithName( indexDocument, IndexDocumentItemPath.from( "a_b_d" ), IndexValueType.INSTANT ) );
     }
 
     @Test
