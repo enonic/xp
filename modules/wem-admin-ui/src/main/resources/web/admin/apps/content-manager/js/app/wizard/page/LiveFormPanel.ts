@@ -403,6 +403,10 @@ module app.wizard.page {
             }
         }
 
+        public getFrameContainer() {
+            return this.frameContainer;
+        }
+
         public getPageTemplate(): PageTemplateKey {
 
             if (!this.pageTemplate) {

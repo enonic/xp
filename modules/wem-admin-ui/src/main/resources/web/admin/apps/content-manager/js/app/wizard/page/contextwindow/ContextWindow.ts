@@ -11,6 +11,7 @@ module app.wizard.page.contextwindow {
     import Region = api.content.page.region.Region;
     import ImageComponent = api.content.page.image.ImageComponent;
     import ImageComponentBuilder = api.content.page.image.ImageComponentBuilder;
+    import ResponsiveManager = api.ui.ResponsiveManager;
     import BaseInspectionPanel = app.wizard.page.contextwindow.inspect.BaseInspectionPanel;
     import InspectionPanel = app.wizard.page.contextwindow.inspect.InspectionPanel;
     import InsertablesPanel = app.wizard.page.contextwindow.insert.InsertablesPanel;
@@ -87,9 +88,8 @@ module app.wizard.page.contextwindow {
                 this.updateFrameSize();
             });
 
-            $(window).resize(() => {
-                this.updateFrameSize();
-            });
+            ResponsiveManager.onAvailableSizeChanged(this, this.updateFrameSize.bind(this));
+            ResponsiveManager.onAvailableSizeChanged(this.liveFormPanel, this.updateFrameSize.bind(this));
 
             this.appendChild(this.splitter);
             this.addItem("Insert", this.insertablesPanel);
@@ -154,6 +154,7 @@ module app.wizard.page.contextwindow {
             this.mask.hide();
             this.getEl().setWidthPx(this.actualWidth);
             this.removeChild(this.ghostDragger);
+            ResponsiveManager.fireResizeEvent();
         }
 
         private throwResizeEvent() {
@@ -215,7 +216,6 @@ module app.wizard.page.contextwindow {
 
         private updateFrameSize() {
             this.liveFormPanel.updateFrameContainerSize((this.pinned && this.isEnabled()), this.actualWidth || this.getEl().getWidth());
-            // TODO: Replace 1380 with ENUM, when the specification will be ready.
             if (this.dynamicPinning) {
                 var pinningRequired: boolean = this.liveFormPanel.getEl().getWidth() > 1380;
                 if (pinningRequired != this.isPinned()) {
