@@ -5,7 +5,7 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import com.enonic.wem.core.index.IndexException;
 import com.enonic.wem.core.workspace.WorkspaceDocument;
 
-public class WorkspaceXContentBuilderFactory
+class WorkspaceXContentBuilderFactory
     extends AbstractXContentBuilderFactor
 {
     public static final String BLOBKEY_FIELD_NAME = "blobKey";
@@ -24,11 +24,11 @@ public class WorkspaceXContentBuilderFactory
         {
             final XContentBuilder builder = startBuilder();
 
-            builder.field( BLOBKEY_FIELD_NAME, workspaceDocument.getBlobKey().toString() );
-            builder.field( WORKSPACE_FIELD_NAME, workspaceDocument.getWorkspace().getName() );
-            builder.field( ENTITY_ID_FIELD_NAME, workspaceDocument.getEntityId() );
-            builder.field( PATH_FIELD_NAME, workspaceDocument.getPath() );
-            builder.field( PARENT_PATH_FIELD_NAME, workspaceDocument.getParentPath() );
+            addField( builder, BLOBKEY_FIELD_NAME, workspaceDocument.getBlobKey().toString() );
+            addField( builder, WORKSPACE_FIELD_NAME, workspaceDocument.getWorkspaceName() );
+            addField( builder, ENTITY_ID_FIELD_NAME, workspaceDocument.getEntityId() );
+            addField( builder, PATH_FIELD_NAME, workspaceDocument.getPath() );
+            addField( builder, PARENT_PATH_FIELD_NAME, workspaceDocument.getParentPath() );
 
             endBuilder( builder );
             return builder;

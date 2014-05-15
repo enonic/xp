@@ -84,7 +84,7 @@ final class RenameNodeCommand
             nodeToMove( id ).
             build();
 
-        nodeDao.move( moveChildArgument );
+        nodeDao.move( moveChildArgument, this.workspace );
 
         final Node movedNode = nodeDao.getById( id, this.workspace );
 

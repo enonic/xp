@@ -1,5 +1,6 @@
 package com.enonic.wem.core.entity;
 
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Workspace;
@@ -9,13 +10,12 @@ final class DeleteNodeByPathCommand
 {
     private final NodePath nodePath;
 
-    private final Workspace workspace;
+    private final Workspace workspace = ContentConstants.DEFAULT_WORKSPACE;
 
     DeleteNodeByPathCommand( final Builder builder )
     {
         super( builder );
         this.nodePath = builder.nodePath;
-        this.workspace = builder.workspace;
     }
 
     Node execute()
@@ -24,7 +24,7 @@ final class DeleteNodeByPathCommand
 
         doDeleteChildIndexDocuments( nodeToDelete, this.workspace );
 
-        this.nodeDao.deleteByPath( nodePath, this.workspace );
+        this.nodeDao.deleteById( nodeToDelete.id(), this.workspace );
 
         this.indexService.delete( nodeToDelete.id() );
 
@@ -41,17 +41,9 @@ final class DeleteNodeByPathCommand
     {
         private NodePath nodePath;
 
-        private Workspace workspace;
-
         Builder nodePath( final NodePath nodePath )
         {
             this.nodePath = nodePath;
-            return this;
-        }
-
-        Builder workspace( final Workspace workspace )
-        {
-            this.workspace = workspace;
             return this;
         }
 

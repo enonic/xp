@@ -16,7 +16,6 @@ import com.enonic.wem.core.index.IndexException;
 import com.enonic.wem.core.index.document.AbstractIndexDocumentItem;
 import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.index.document.IndexDocumentOrderbyItem;
-import com.enonic.wem.core.workspace.WorkspaceDocument;
 
 public class XContentBuilderFactory
 {
@@ -24,27 +23,6 @@ public class XContentBuilderFactory
     private XContentBuilderFactory()
     {
     }
-
-
-    static XContentBuilder create( final NodeStorageDocument storageDocument )
-    {
-        try
-        {
-            final XContentBuilder builder = startBuilder();
-            for ( final NodeStorageDocumentEntry entry : storageDocument.getEntries() )
-            {
-                builder.field( entry.getFieldName(), entry.getValue() );
-            }
-            endBuilder( builder );
-            return builder;
-        }
-        catch ( Exception e )
-        {
-            throw new IndexException( "Failed to build xContent for indexSource", e );
-        }
-
-    }
-
 
     static XContentBuilder create( final IndexDocument indexDocument )
     {

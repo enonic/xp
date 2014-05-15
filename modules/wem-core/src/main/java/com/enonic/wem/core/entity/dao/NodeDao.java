@@ -10,25 +10,22 @@ import com.enonic.wem.api.entity.Workspace;
 
 public interface NodeDao
 {
-    public Node create( final CreateNodeArguments createNodeArguments );
+    public Node create( CreateNodeArguments createNodeArguments );
 
-    public Node update( final UpdateNodeArgs updateNodeArguments );
+    public Node update( UpdateNodeArgs updateNodeArguments, Workspace workspace );
 
-    public boolean move( final MoveNodeArguments moveNodeArguments );
+    public boolean move( MoveNodeArguments moveNodeArguments, Workspace workspace );
 
-    public Node getById( final EntityId entityId, final Workspace workspace );
+    public Node getById( EntityId entityId, Workspace workspace );
 
-    public Nodes getByIds( final EntityIds entityIds, final Workspace workspace );
+    public Nodes getByIds( EntityIds entityIds, Workspace workspace );
 
-    public Node getByPath( final NodePath path, final Workspace workspace );
+    public Node getByPath( NodePath path, Workspace workspace );
 
-    public Nodes getByPaths( final NodePaths paths, final Workspace workspace );
+    public Nodes getByPaths( NodePaths paths, Workspace workspace );
 
-    public Nodes getByParent( final NodePath parent, final Workspace workspace );
+    public Nodes getByParent( NodePath parent, Workspace workspace );
 
-    public Node deleteById( final EntityId entityId, final Workspace workspace );
-
-    public Node deleteByPath( final NodePath nodePath, final Workspace workspace );
-
+    public Node deleteById( EntityId entityId, Workspace workspace );
 
 }

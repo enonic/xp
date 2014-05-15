@@ -63,7 +63,7 @@ final class UpdateNodeCommand
             entityIndexConfig( edited.getEntityIndexConfig() ).
             build();
 
-        final Node updatedNode = nodeDao.update( updateNodeArgs );
+        final Node updatedNode = nodeDao.update( updateNodeArgs, params.getWorkspace() );
 
         indexService.index( updatedNode );
 

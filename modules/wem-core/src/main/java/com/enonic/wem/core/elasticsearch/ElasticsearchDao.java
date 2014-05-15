@@ -10,26 +10,15 @@ import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.IdsQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.TermQueryBuilder;
-import org.elasticsearch.index.query.TermsQueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
-import com.enonic.wem.core.elasticsearch.store.AbstractByQuery;
-import com.enonic.wem.core.elasticsearch.store.ByIdQuery;
-import com.enonic.wem.core.elasticsearch.store.ByIdsQuery;
-import com.enonic.wem.core.elasticsearch.store.ByParentPathQuery;
-import com.enonic.wem.core.elasticsearch.store.ByPathQuery;
-import com.enonic.wem.core.elasticsearch.store.ByPathsQuery;
 import com.enonic.wem.core.index.DeleteDocument;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexException;
@@ -38,7 +27,7 @@ import com.enonic.wem.core.index.document.IndexDocument;
 
 public class ElasticsearchDao
 {
-    public static final boolean DEFAULT_REFRESH = true;
+    private static final boolean DEFAULT_REFRESH = true;
 
     private Client client;
 
@@ -68,23 +57,12 @@ public class ElasticsearchDao
         }
     }
 
-    public String store( final NodeStorageDocument nodeStorageDocument )
+    public boolean delete( final DeleteRequest deleteRequest )
     {
-        final IndexRequest req = Requests.indexRequest().
-            index( nodeStorageDocument.getIndex().getName() ).
-            type( nodeStorageDocument.getIndexType().getName() ).
-            source( XContentBuilderFactory.create( nodeStorageDocument ) ).
-            refresh( DEFAULT_REFRESH );
-
-        if ( nodeStorageDocument.getId() != null )
-        {
-            req.id( nodeStorageDocument.getId() );
-        }
-
-        final IndexResponse indexResponse = this.client.index( req ).actionGet();
-
-        return indexResponse.getId();
+        final DeleteResponse deleteResponse = this.client.delete( deleteRequest ).actionGet();
+        return deleteResponse.isFound();
     }
+
 
     public boolean delete( final DeleteDocument deleteDocument )
     {
@@ -117,17 +95,13 @@ public class ElasticsearchDao
             types( elasticsearchQuery.getIndexType().getName() ).
             source( searchSource );
 
-        final SearchResponse searchResponse = doSearchRequest( searchRequest );
-
-        return searchResponse;
-
+        return doSearchRequest( searchRequest );
     }
 
     private SearchResponse doSearchRequest( SearchRequest searchRequest )
     {
         return this.client.search( searchRequest ).actionGet();
     }
-
 
     public SearchResponse get( final QueryMetaData queryMetaData, final QueryBuilder queryBuilder )
     {
@@ -145,70 +119,27 @@ public class ElasticsearchDao
         return doSearchRequest( searchRequestBuilder );
     }
 
+    public GetResponse get( final QueryMetaData queryMetaData, final String id )
+    {
+
+        final GetRequest getRequest = new GetRequest( queryMetaData.getIndex() ).
+            type( queryMetaData.getIndexType() ).
+            id( id );
+
+        if ( queryMetaData.hasFields() )
+        {
+            getRequest.fields( queryMetaData.getFields() );
+        }
+
+        return client.get( getRequest ).actionGet();
+    }
+
+
     private SearchResponse doSearchRequest( final SearchRequestBuilder searchRequestBuilder )
     {
         return searchRequestBuilder.
             execute().
             actionGet();
-    }
-
-    public SearchResponse get( final ByIdsQuery byIdsQuery )
-    {
-        final IdsQueryBuilder idsQueryBuilder = new IdsQueryBuilder();
-
-        for ( final DocumentId documentId : byIdsQuery.getDocumentIds() )
-        {
-            idsQueryBuilder.addIds( documentId.getId() );
-        }
-
-        return doSearchRequest( byIdsQuery, idsQueryBuilder );
-    }
-
- public GetResponse get( final ByIdQuery byIdQuery )
-    {
-        final GetRequest getRequest = new GetRequest( byIdQuery.index() ).
-            type( byIdQuery.indexType() ).
-            id( byIdQuery.getId() ).
-            fields( NodeStorageDocumentFactory.ENTITY );
-
-        return client.get( getRequest ).actionGet();
-    }
-
-    public SearchResponse get( final ByPathQuery byPathQuery )
-    {
-        final TermQueryBuilder termQueryBuilder = new TermQueryBuilder( NodeStorageDocumentFactory.PATH, byPathQuery.getPath() );
-
-        return doSearchRequest( byPathQuery, termQueryBuilder );
-    }
-
-    public SearchResponse get( final ByPathsQuery byPathsQuery )
-    {
-        final TermsQueryBuilder termsQueryBuilder = new TermsQueryBuilder( NodeStorageDocumentFactory.PATH, byPathsQuery.getPaths() );
-
-        return doSearchRequest( byPathsQuery, termsQueryBuilder );
-    }
-
-    public SearchResponse get( final ByParentPathQuery byParentPathQuery )
-    {
-        final TermQueryBuilder pathQuery = new TermQueryBuilder( NodeStorageDocumentFactory.PARENT_PATH, byParentPathQuery.getPath() );
-
-        return doSearchRequest( byParentPathQuery, pathQuery );
-    }
-
-    private SearchResponse doSearchRequest( final AbstractByQuery byQuery, final QueryBuilder queryBuilder )
-    {
-        final SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch( byQuery.index() ).
-            setTypes( byQuery.indexType() ).
-            setQuery( queryBuilder ).
-            setFrom( 0 ).
-            setSize( byQuery.size() ).
-            addField( NodeStorageDocumentFactory.ENTITY );
-
-        final SearchResponse searchResponse = searchRequestBuilder.
-            execute().
-            actionGet();
-
-        return searchResponse;
     }
 
     @Inject

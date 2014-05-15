@@ -3,10 +3,10 @@ package com.enonic.wem.core.elasticsearch;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 
-public abstract class AbstractXContentBuilderFactor
+abstract class AbstractXContentBuilderFactor
 {
 
-    protected static XContentBuilder startBuilder()
+    static XContentBuilder startBuilder()
         throws Exception
     {
         final XContentBuilder result = XContentFactory.jsonBuilder();
@@ -15,7 +15,7 @@ public abstract class AbstractXContentBuilderFactor
         return result;
     }
 
-    protected static void addField( XContentBuilder result, String name, Object value )
+    static void addField( XContentBuilder result, String name, Object value )
         throws Exception
     {
         if ( value == null )
@@ -31,7 +31,7 @@ public abstract class AbstractXContentBuilderFactor
     }
 
 
-    protected static void endBuilder( final XContentBuilder contentBuilder )
+    static void endBuilder( final XContentBuilder contentBuilder )
         throws Exception
     {
         contentBuilder.endObject();

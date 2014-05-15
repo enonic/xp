@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 public class DeleteNodeByPathCommandTest
 {
 
-    public static final Workspace TEST_WORKSPACE = new Workspace( "test" );
+    public static final Workspace TEST_WORKSPACE = new Workspace( "stage" );
 
     private NodeDao nodeDao;
 
@@ -67,7 +67,7 @@ public class DeleteNodeByPathCommandTest
 
         deleteNode.execute();
 
-        verify( nodeDao ).deleteByPath( nodeToDelete.path(), TEST_WORKSPACE );
+        verify( nodeDao ).deleteById( nodeToDelete.id(), TEST_WORKSPACE );
         verify( indexService ).delete( nodeToDelete.id() );
         verify( indexService ).delete( childNode.id() );
     }

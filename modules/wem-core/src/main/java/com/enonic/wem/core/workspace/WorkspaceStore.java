@@ -2,7 +2,7 @@ package com.enonic.wem.core.workspace;
 
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobKeys;
-import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.core.workspace.query.WorkspaceDeleteQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceIdsQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceParentQuery;
@@ -13,7 +13,7 @@ public interface WorkspaceStore
 {
     public void store( final WorkspaceDocument workspaceDocument );
 
-    public Node delete( final WorkspaceDeleteDocument deleteDocument );
+    public void delete( final WorkspaceDeleteQuery query );
 
     public BlobKey getById( final WorkspaceIdQuery query );
 

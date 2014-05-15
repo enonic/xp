@@ -84,6 +84,7 @@ public class NodeServiceImpl
             params( params ).
             indexService( this.indexService ).
             nodeDao( this.nodeDao ).
+            workspace( params.getWorkspace() ).
             execute();
     }
 

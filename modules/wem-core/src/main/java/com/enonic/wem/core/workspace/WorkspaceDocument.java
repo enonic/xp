@@ -57,9 +57,9 @@ public class WorkspaceDocument
         this.parentPath = parentPath;
     }
 
-    public Workspace getWorkspace()
+    public String getWorkspaceName()
     {
-        return workspace;
+        return workspace.getName();
     }
 
     public void setWorkspace( final Workspace workspace )
