@@ -14,6 +14,10 @@ module api.dom {
             this.el = window;
         }
 
+        getHTMLElement() {
+            return this.el;
+        }
+
         onResized(listener: (event: UIEvent) => void, element?: api.dom.Element) {
             this.el.addEventListener("resize", listener);
 
