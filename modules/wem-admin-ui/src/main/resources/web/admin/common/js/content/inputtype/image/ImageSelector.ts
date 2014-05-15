@@ -401,6 +401,22 @@ module api.content.inputtype.image {
 
                 }).done();
         }
+
+        onFocus(listener: (event: FocusEvent) => void) {
+            this.comboBox.onFocus(listener);
+        }
+
+        unFocus(listener: (event: FocusEvent) => void) {
+            this.comboBox.unFocus(listener);
+        }
+
+        onBlur(listener: (event: FocusEvent) => void) {
+            this.comboBox.onBlur(listener);
+        }
+
+        unBlur(listener: (event: FocusEvent) => void) {
+            this.comboBox.unBlur(listener);
+        }
     }
 
     api.form.inputtype.InputTypeManager.register("ImageSelector", ImageSelector);

@@ -35,6 +35,12 @@ module app.wizard {
 
             this.formView = new FormView(this.formContext, form, contentData);
             this.formView.setDoOffset(false);
+            this.formView.onFocus((event) => {
+                this.notifyFocused(event);
+            });
+            this.formView.onBlur((event) => {
+                this.notifyBlurred(event);
+            });
             this.formView.onEditContentRequest((content: api.content.ContentSummary) => {
                 new app.browse.EditContentEvent([content]).fire();
             });

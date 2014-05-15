@@ -27,6 +27,10 @@ module api.form {
 
         private occurrenceRemovedListeners: {(event: OccurrenceRemovedEvent):void}[] = [];
 
+        private focusListeners: {(event: FocusEvent): void}[] = [];
+
+        private blurListeners: {(event: FocusEvent): void}[] = [];
+
         constructor(config: FormItemOccurrencesConfig) {
             this.formItem = config.formItem;
             this.occurrenceViewContainer = config.occurrenceViewContainer;
@@ -107,6 +111,8 @@ module api.form {
 
                 this.occurrences.forEach((occurrence: FormItemOccurrence<V>) => {
                     var occurrenceView: V = this.createNewOccurrenceView(occurrence);
+                    occurrenceView.onFocus((event: FocusEvent) => this.notifyFocused(event));
+                    occurrenceView.onBlur((event: FocusEvent) => this.notifyBlurred(event));
                     this.occurrenceViews.push(occurrenceView);
                     this.occurrenceViewContainer.appendChild(occurrenceView);
                 });
@@ -152,9 +158,43 @@ module api.form {
             this.doAddOccurrence(occurrence);
 
             var occurenceView = this.occurrenceViews[occurrence.getIndex()];
+            occurenceView.onFocus((event: FocusEvent) => this.notifyFocused(event));
+            occurenceView.onBlur((event: FocusEvent) => this.notifyBlurred(event));
             if (occurenceView) {
                 occurenceView.giveFocus();
             }
+        }
+
+        onFocus(listener: (event: FocusEvent) => void) {
+            this.focusListeners.push(listener);
+        }
+
+        unFocus(listener: (event: FocusEvent) => void) {
+            this.focusListeners = this.focusListeners.filter((curr) => {
+                return curr !== listener;
+            })
+        }
+
+        onBlur(listener: (event: FocusEvent) => void) {
+            this.blurListeners.push(listener);
+        }
+
+        unBlur(listener: (event: FocusEvent) => void) {
+            this.blurListeners = this.blurListeners.filter((curr) => {
+                return curr != listener;
+            })
+        }
+
+        private notifyFocused(event: FocusEvent) {
+            this.focusListeners.forEach((listener) => {
+                listener(event);
+            })
+        }
+
+        private notifyBlurred(event: FocusEvent) {
+            this.blurListeners.forEach((listener) => {
+                listener(event);
+            })
         }
 
         addOccurrenceAfter(fromOccurrence: V) {

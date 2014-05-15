@@ -56,5 +56,13 @@ module api.form.inputtype {
 
         availableSizeChanged();
 
+        onFocus(listener: (event: FocusEvent) => void);
+
+        unFocus(listener: (event: FocusEvent) => void);
+
+        onBlur(listener: (event: FocusEvent) => void);
+
+        unBlur(listener: (event: FocusEvent) => void);
+
     }
 }

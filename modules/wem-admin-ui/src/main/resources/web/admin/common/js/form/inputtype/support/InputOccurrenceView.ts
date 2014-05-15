@@ -91,5 +91,21 @@ module api.form.inputtype.support {
                 listener(event);
             });
         }
+
+        onFocus(listener: (event: FocusEvent) => void) {
+            this.inputElement.onFocus(listener);
+        }
+
+        unFocus(listener: (event: FocusEvent) => void) {
+            this.inputElement.unFocus(listener);
+        }
+
+        onBlur(listener: (event: FocusEvent) => void) {
+            this.inputElement.onBlur(listener);
+        }
+
+        unBlur(listener: (event: FocusEvent) => void) {
+            this.inputElement.unBlur(listener);
+        }
     }
 }

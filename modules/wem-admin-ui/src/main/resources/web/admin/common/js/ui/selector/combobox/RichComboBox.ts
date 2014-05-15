@@ -211,6 +211,23 @@ module api.ui.selector.combobox {
         giveFocus(): boolean {
             return this.comboBox.giveFocus();
         }
+
+        onFocus(listener: (event: FocusEvent) => void) {
+            this.comboBox.onFocus(listener);
+        }
+
+        unFocus(listener: (event: FocusEvent) => void) {
+            this.comboBox.unFocus(listener);
+        }
+
+        onBlur(listener: (event: FocusEvent) => void) {
+            this.comboBox.onBlur(listener);
+        }
+
+        unBlur(listener: (event: FocusEvent) => void) {
+            this.comboBox.unBlur(listener);
+        }
+
     }
 
     export class RichComboBoxBuilder<T> {
