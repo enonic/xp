@@ -213,7 +213,7 @@ public class ElasticsearchIndexService
         }
         catch ( ElasticsearchException e )
         {
-            throw new IndexException( "Failed to delete index:" + index.getName(), e );
+            LOG.warn( "Failed to delte index " + index.getName() );
         }
     }
 
