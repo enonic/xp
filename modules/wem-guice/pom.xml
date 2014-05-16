@@ -12,7 +12,7 @@
   </parent>
 
   <artifactId>wem-guice</artifactId>
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
   <name>Enonic WEM Guice</name>
 
   <dependencies>

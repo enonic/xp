@@ -12,7 +12,7 @@
   </parent>
 
   <artifactId>wem-api</artifactId>
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
   <name>Enonic WEM Api</name>
 
   <dependencies>

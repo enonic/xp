@@ -12,7 +12,7 @@
   </parent>
 
   <artifactId>wem-portal</artifactId>
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
   <name>Enonic WEM Portal</name>
 
   <dependencies>
