@@ -85,7 +85,7 @@ public class NodeBuilderTest
         final Property testProperty = myNode.property( "testPath" );
 
         assertNotNull( testProperty );
-        assertTrue( testProperty.getValue().getType() == ValueTypes.INSTANT );
+        assertTrue( testProperty.getValue().getType() == ValueTypes.DATE_TIME );
     }
 
     @Test

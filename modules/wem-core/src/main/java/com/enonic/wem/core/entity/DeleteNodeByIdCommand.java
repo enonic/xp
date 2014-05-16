@@ -16,11 +16,11 @@ final class DeleteNodeByIdCommand
 
     Node execute()
     {
-        final Node nodeToDelete = nodeDao.getById( this.entityId );
+        final Node nodeToDelete = nodeDao.getById( this.entityId, this.workspace );
 
-        doDeleteChildIndexDocuments( nodeToDelete );
+        doDeleteChildIndexDocuments( nodeToDelete, this.workspace );
 
-        final Node deletedNode = nodeDao.deleteById( entityId );
+        final Node deletedNode = nodeDao.deleteById( entityId, this.workspace );
 
         indexService.delete( entityId );
 

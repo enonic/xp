@@ -3,8 +3,7 @@ package com.enonic.wem.core.index;
 public enum IndexValueType
 {
 
-    //DATETIME( "_datetime" ),
-    INSTANT( "_instant" ),
+    DATETIME( "_datetime" ),
 
     NUMBER( "_number" ),
 

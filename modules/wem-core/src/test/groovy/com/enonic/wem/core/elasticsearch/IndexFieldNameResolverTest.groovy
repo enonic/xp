@@ -22,7 +22,7 @@ class IndexFieldNameResolverTest
         new IndexDocumentNGramItem( IndexDocumentItemPath.from( "a.b.c" ), "myString" )    | "a_b_c._ngram"
         new IndexDocumentGeoPointItem( IndexDocumentItemPath.from( "a.b.c" ), "80,80" )    | "a_b_c._geopoint"
         new IndexDocumentOrderbyItem( IndexDocumentItemPath.from( "a.b.c" ), "orderBy" )   | "a_b_c._orderby"
-        new IndexDocumentDateItem( IndexDocumentItemPath.from( "a.b.c" ), Instant.now() ) | "a_b_c._instant"
+        new IndexDocumentDateItem( IndexDocumentItemPath.from( "a.b.c" ), Instant.now() ) | "a_b_c._datetime"
     }
 
     @Unroll

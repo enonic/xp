@@ -126,7 +126,7 @@ public class NodeIndexDocumentFactoryTest
         assertEquals( IndexType.NODE, indexDocument.getIndexType() );
 
         final AbstractIndexDocumentItem createdTimeItem =
-            getItemWithName( indexDocument, NodeIndexDocumentFactory.CREATED_TIME_PROPERTY, IndexValueType.INSTANT );
+            getItemWithName( indexDocument, NodeIndexDocumentFactory.CREATED_TIME_PROPERTY, IndexValueType.DATETIME );
 
         assertEquals( node.getCreatedTime().toDate(), createdTimeItem.getValue() );
 
@@ -159,7 +159,7 @@ public class NodeIndexDocumentFactoryTest
         final IndexDocument indexDocument = getIndexDocumentOfType( indexDocuments, IndexType.NODE );
 
         assertNotNull( getItemWithName( indexDocument, IndexDocumentItemPath.from( "a_b_c" ), IndexValueType.NUMBER ) );
-        assertNotNull( getItemWithName( indexDocument, IndexDocumentItemPath.from( "a_b_d" ), IndexValueType.INSTANT ) );
+        assertNotNull( getItemWithName( indexDocument, IndexDocumentItemPath.from( "a_b_d" ), IndexValueType.DATETIME ) );
     }
 
     @Test

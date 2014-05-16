@@ -8,6 +8,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
@@ -152,7 +153,7 @@ public class ContentNodeTranslatorTest
             mimeType( "image/png" ).
             build() );
 
-        final UpdateNodeParams updateNode = translator.toUpdateNodeCommand( content, attachments );
+        final UpdateNodeParams updateNode = translator.toUpdateNodeCommand( content, ContentConstants.DEFAULT_WORKSPACE, attachments );
 
         final Node node = Node.newNode().build();
 

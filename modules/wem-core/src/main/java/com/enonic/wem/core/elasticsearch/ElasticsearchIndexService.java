@@ -41,8 +41,6 @@ public class ElasticsearchIndexService
 {
     private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchIndexService.class );
 
-    private final NodeIndexDocumentFactory nodeIndexDocumentFactory = new NodeIndexDocumentFactory();
-
     private ElasticsearchDao elasticsearchDao;
 
     private IndexMappingProvider indexMappingProvider;
@@ -215,13 +213,13 @@ public class ElasticsearchIndexService
         }
         catch ( ElasticsearchException e )
         {
-            throw new IndexException( "Failed to delete index:" + index.getName(), e );
+            LOG.warn( "Failed to delte index " + index.getName() );
         }
     }
 
     public void index( final Node node )
     {
-        final Collection<IndexDocument> indexDocuments = nodeIndexDocumentFactory.create( node );
+        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node );
         elasticsearchDao.store( indexDocuments );
     }
 

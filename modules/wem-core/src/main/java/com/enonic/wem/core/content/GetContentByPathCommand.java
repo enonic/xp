@@ -1,6 +1,7 @@
 package com.enonic.wem.core.content;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.entity.NoNodeAtPathFoundException;
@@ -18,7 +19,7 @@ final class GetContentByPathCommand
 
         try
         {
-            final Node node = nodeService.getByPath( nodePath );
+            final Node node = nodeService.getByPath( nodePath, ContentConstants.DEFAULT_WORKSPACE );
             return getTranslator().fromNode( node );
         }
         catch ( NoNodeAtPathFoundException e )

@@ -3,7 +3,8 @@ package com.enonic.wem.core.index;
 public enum Index
 {
     NODB( "nodb" ),
-    STORE( "store" );
+    STORE( "store" ),
+    WORKSPACE( "workspace" );
 
     private final String name;
 

@@ -54,7 +54,7 @@ class ValueExprTest
         expect:
         expr != null
         expr.toString() == "instant('2013-11-11T22:22:22.000Z')"
-        expr.getValue().getType() == ValueTypes.INSTANT
+        expr.getValue().getType() == ValueTypes.DATE_TIME
     }
 
     def "test geoPoint value"()

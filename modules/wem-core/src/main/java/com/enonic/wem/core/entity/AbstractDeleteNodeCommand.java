@@ -4,6 +4,7 @@ import org.elasticsearch.common.Strings;
 
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.Nodes;
+import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.core.entity.dao.NodeDao;
 
@@ -11,19 +12,22 @@ public abstract class AbstractDeleteNodeCommand
 {
     private final static String ATTACHMENTS_NODE_NAME = "__att";
 
-    protected ElasticsearchIndexService indexService;
+    protected final ElasticsearchIndexService indexService;
 
-    protected NodeDao nodeDao;
+    protected final NodeDao nodeDao;
+
+    protected final Workspace workspace;
 
     protected AbstractDeleteNodeCommand( final Builder builder )
     {
         this.indexService = builder.indexService;
         this.nodeDao = builder.nodeDao;
+        this.workspace = builder.workspace;
     }
 
-    protected void doDeleteChildIndexDocuments( final Node node )
+    protected void doDeleteChildIndexDocuments( final Node node, final Workspace workspace )
     {
-        final Nodes childrenNodes = nodeDao.getByParent( node.path() );
+        final Nodes childrenNodes = nodeDao.getByParent( node.path(), workspace );
 
         for ( final Node child : childrenNodes )
         {
@@ -33,7 +37,7 @@ public abstract class AbstractDeleteNodeCommand
             if ( !isAttachmentNode )
             {
                 indexService.delete( child.id() );
-                doDeleteChildIndexDocuments( child );
+                doDeleteChildIndexDocuments( child, workspace );
             }
         }
     }
@@ -43,6 +47,8 @@ public abstract class AbstractDeleteNodeCommand
         private ElasticsearchIndexService indexService;
 
         private NodeDao nodeDao;
+
+        protected Workspace workspace;
 
         @SuppressWarnings("unchecked")
         B indexService( final ElasticsearchIndexService indexService )
@@ -55,6 +61,13 @@ public abstract class AbstractDeleteNodeCommand
         B nodeDao( final NodeDao nodeDao )
         {
             this.nodeDao = nodeDao;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        B workspace( final Workspace workspace )
+        {
+            this.workspace = workspace;
             return (B) this;
         }
     }

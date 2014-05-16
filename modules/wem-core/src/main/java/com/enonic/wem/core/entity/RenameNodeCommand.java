@@ -7,6 +7,7 @@ import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.entity.RenameNodeParams;
+import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.core.entity.dao.MoveNodeArguments;
@@ -20,6 +21,8 @@ final class RenameNodeCommand
     private ElasticsearchIndexService indexService;
 
     private NodeDao nodeDao;
+
+    private Workspace workspace;
 
     Node execute()
     {
@@ -39,14 +42,14 @@ final class RenameNodeCommand
         throws Exception
     {
         final EntityId entityId = params.getEntityId();
-        final Node nodeToBeRenamed = nodeDao.getById( entityId );
+        final Node nodeToBeRenamed = nodeDao.getById( entityId, this.workspace );
 
         if ( nodeToBeRenamed == null )
         {
             throw new NodeNotFoundException( "Node with id " + entityId + " not found" );
         }
 
-        final Nodes children = nodeDao.getByParent( nodeToBeRenamed.path() );
+        final Nodes children = nodeDao.getByParent( nodeToBeRenamed.path(), this.workspace );
 
         final NodePath parentPath = nodeToBeRenamed.parent().asAbsolute();
 
@@ -63,7 +66,7 @@ final class RenameNodeCommand
         {
             final Node movedNode = doMoveNode( newParentPath, node.name(), node.id() );
 
-            final Nodes children = nodeDao.getByParent( node.path() );
+            final Nodes children = nodeDao.getByParent( node.path(), this.workspace );
 
             if ( children != null && children.isNotEmpty() )
             {
@@ -81,9 +84,9 @@ final class RenameNodeCommand
             nodeToMove( id ).
             build();
 
-        nodeDao.move( moveChildArgument );
+        nodeDao.move( moveChildArgument, this.workspace );
 
-        final Node movedNode = nodeDao.getById( id );
+        final Node movedNode = nodeDao.getById( id, this.workspace );
 
         indexService.index( movedNode );
 
@@ -107,4 +110,11 @@ final class RenameNodeCommand
         this.nodeDao = nodeDao;
         return this;
     }
+
+    RenameNodeCommand workspace( final Workspace workspace )
+    {
+        this.workspace = workspace;
+        return this;
+    }
+
 }

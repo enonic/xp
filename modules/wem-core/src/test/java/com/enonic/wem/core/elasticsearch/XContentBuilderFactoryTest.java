@@ -102,7 +102,7 @@ public class XContentBuilderFactoryTest
         final Collection<Object> numericObjectValue = getObjectValue( "mynumericfield._number", objectMap );
         assertEquals( 2, numericObjectValue.size() );
 
-        final Collection<Object> dateObjectValue = getObjectValue( "mydatefield._instant", objectMap );
+        final Collection<Object> dateObjectValue = getObjectValue( "mydatefield._datetime", objectMap );
         assertEquals( 2, dateObjectValue.size() );
 
         final Collection<Object> geoPointObjectValue = getObjectValue( "mygeopoint._geopoint", objectMap );

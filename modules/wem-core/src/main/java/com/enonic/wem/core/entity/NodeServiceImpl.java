@@ -12,6 +12,7 @@ import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.entity.RenameNodeParams;
 import com.enonic.wem.api.entity.UpdateNodeParams;
+import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.core.entity.dao.NodeDao;
 
@@ -25,33 +26,33 @@ public class NodeServiceImpl
     private NodeDao nodeDao;
 
     @Override
-    public Node getById( final EntityId id )
+    public Node getById( final EntityId id, final Workspace workspace )
     {
-        return nodeDao.getById( id );
+        return nodeDao.getById( id, workspace );
     }
 
     @Override
-    public Nodes getByIds( final EntityIds ids )
+    public Nodes getByIds( final EntityIds ids, final Workspace workspace )
     {
-        return nodeDao.getByIds( ids );
+        return nodeDao.getByIds( ids, workspace );
     }
 
     @Override
-    public Node getByPath( final NodePath path )
+    public Node getByPath( final NodePath path, final Workspace workspace )
     {
-        return nodeDao.getByPath( path );
+        return nodeDao.getByPath( path, workspace );
     }
 
     @Override
-    public Nodes getByPaths( final NodePaths paths )
+    public Nodes getByPaths( final NodePaths paths, final Workspace workspace )
     {
-        return nodeDao.getByPaths( paths );
+        return nodeDao.getByPaths( paths, workspace );
     }
 
     @Override
-    public Nodes getByParent( final NodePath parent )
+    public Nodes getByParent( final NodePath parent, final Workspace workspace )
     {
-        return nodeDao.getByParent( parent );
+        return nodeDao.getByParent( parent, workspace );
     }
 
     @Override
@@ -83,11 +84,12 @@ public class NodeServiceImpl
             params( params ).
             indexService( this.indexService ).
             nodeDao( this.nodeDao ).
+            workspace( params.getWorkspace() ).
             execute();
     }
 
     @Override
-    public Node deleteById( final EntityId id )
+    public Node deleteById( final EntityId id, final Workspace workspace )
     {
         return DeleteNodeByIdCommand.create().
             entityId( id ).
@@ -98,7 +100,7 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node deleteByPath( final NodePath path )
+    public Node deleteByPath( final NodePath path, final Workspace workspace )
     {
         return DeleteNodeByPathCommand.create().
             nodePath( path ).

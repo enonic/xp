@@ -38,7 +38,7 @@ public final class Value
 
     public boolean isDateType()
     {
-        return ( this.type == ValueTypes.INSTANT ) || ( this.type == ValueTypes.LOCAL_DATE );
+        return ( this.type == ValueTypes.DATE_TIME ) || ( this.type == ValueTypes.LOCAL_DATE );
     }
 
     public boolean isNumericType()
@@ -139,7 +139,7 @@ public final class Value
      */
     public Instant asInstant()
     {
-        return ValueTypes.INSTANT.convert( object );
+        return ValueTypes.DATE_TIME.convert( object );
     }
 
     public GeoPoint asGeoPoint()
@@ -183,7 +183,7 @@ public final class Value
 
     public static Value newInstant( final Object value )
     {
-        return newValue( ValueTypes.INSTANT, value );
+        return newValue( ValueTypes.DATE_TIME, value );
     }
 
     public static Value newLocalDate( final Object value )
