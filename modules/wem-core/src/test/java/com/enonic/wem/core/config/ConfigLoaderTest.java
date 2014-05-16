@@ -89,14 +89,14 @@ public class ConfigLoaderTest
     {
         setupClassPathProperties();
 
-        final Properties props = this.configLoader.load();
+        final ConfigProperties props = this.configLoader.load();
         Assert.assertNotNull( props );
         Assert.assertEquals( 5, props.size() );
-        Assert.assertEquals( this.homeDir.toString(), props.getProperty( "cms.home" ) );
-        Assert.assertEquals( this.homeDir.toURI().toString(), props.getProperty( "cms.home.uri" ) );
-        Assert.assertEquals( "classpath.value", props.getProperty( "classpath.param" ) );
-        Assert.assertEquals( "classpath", props.getProperty( "override" ) );
-        Assert.assertEquals( "classpath.value ${system.param}", props.getProperty( "interpolate" ) );
+        Assert.assertEquals( this.homeDir.toString(), props.get( "cms.home" ) );
+        Assert.assertEquals( this.homeDir.toURI().toString(), props.get( "cms.home.uri" ) );
+        Assert.assertEquals( "classpath.value", props.get( "classpath.param" ) );
+        Assert.assertEquals( "classpath", props.get( "override" ) );
+        Assert.assertEquals( "classpath.value ${system.param}", props.get( "interpolate" ) );
     }
 
     @Test
@@ -106,15 +106,15 @@ public class ConfigLoaderTest
         setupClassPathProperties();
         setupHomeProperties();
 
-        final Properties props = this.configLoader.load();
+        final ConfigProperties props = this.configLoader.load();
         Assert.assertNotNull( props );
         Assert.assertEquals( 6, props.size() );
-        Assert.assertEquals( this.homeDir.toString(), props.getProperty( "cms.home" ) );
-        Assert.assertEquals( this.homeDir.toURI().toString(), props.getProperty( "cms.home.uri" ) );
-        Assert.assertEquals( "home.value", props.getProperty( "home.param" ) );
-        Assert.assertEquals( "classpath.value", props.getProperty( "classpath.param" ) );
-        Assert.assertEquals( "home", props.getProperty( "override" ) );
-        Assert.assertEquals( "home.value ${system.param}", props.getProperty( "interpolate" ) );
+        Assert.assertEquals( this.homeDir.toString(), props.get( "cms.home" ) );
+        Assert.assertEquals( this.homeDir.toURI().toString(), props.get( "cms.home.uri" ) );
+        Assert.assertEquals( "home.value", props.get( "home.param" ) );
+        Assert.assertEquals( "classpath.value", props.get( "classpath.param" ) );
+        Assert.assertEquals( "home", props.get( "override" ) );
+        Assert.assertEquals( "home.value ${system.param}", props.get( "interpolate" ) );
     }
 
     @Test
@@ -124,13 +124,13 @@ public class ConfigLoaderTest
         setupSystemProperties();
         setupClassPathProperties();
 
-        final Properties props = this.configLoader.load();
+        final ConfigProperties props = this.configLoader.load();
         Assert.assertNotNull( props );
         Assert.assertEquals( 5, props.size() );
-        Assert.assertEquals( this.homeDir.toString(), props.getProperty( "cms.home" ) );
-        Assert.assertEquals( this.homeDir.toURI().toString(), props.getProperty( "cms.home.uri" ) );
-        Assert.assertEquals( "classpath.value", props.getProperty( "classpath.param" ) );
-        Assert.assertEquals( "classpath", props.getProperty( "override" ) );
-        Assert.assertEquals( "classpath.value system.value", props.getProperty( "interpolate" ) );
+        Assert.assertEquals( this.homeDir.toString(), props.get( "cms.home" ) );
+        Assert.assertEquals( this.homeDir.toURI().toString(), props.get( "cms.home.uri" ) );
+        Assert.assertEquals( "classpath.value", props.get( "classpath.param" ) );
+        Assert.assertEquals( "classpath", props.get( "override" ) );
+        Assert.assertEquals( "classpath.value system.value", props.get( "interpolate" ) );
     }
 }

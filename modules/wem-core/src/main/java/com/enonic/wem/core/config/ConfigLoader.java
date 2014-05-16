@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 
 import com.enonic.wem.core.home.HomeDir;
 
@@ -62,9 +63,10 @@ public final class ConfigLoader
         props.putAll( loadCmsProperties() );
         props.putAll( this.homeDir.toProperties() );
 
-        final ConfigProperties config = new ConfigProperties();
-        config.putAll( interpolate( props, this.systemProperties ) );
+        final Properties interpolated = interpolate( props, this.systemProperties );
 
+        final ConfigProperties config = new ConfigPropertiesImpl();
+        config.putAll( Maps.fromProperties( interpolated ) );
         return config;
     }
 

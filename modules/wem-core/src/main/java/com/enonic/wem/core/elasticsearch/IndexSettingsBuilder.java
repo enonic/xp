@@ -47,7 +47,7 @@ public class IndexSettingsBuilder
 
     private Map<String, String> getIndexConfigPropertiesMap()
     {
-        return configProperties.getSubMap( new Predicate<String>()
+        return configProperties.getSubConfig( new Predicate<String>()
         {
             @Override
             public boolean apply( final String input )

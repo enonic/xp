@@ -33,7 +33,7 @@ final class NodeSettingsBuilder
     private void checkClusterSettings( final ImmutableSettings.Builder settings )
     {
         final Boolean local = getAsBoolean( settings.get( "node.local" ), null );
-        final Boolean clusterEnabled = getAsBoolean( configProperties.getProperty( "cms.cluster.enabled" ), false );
+        final Boolean clusterEnabled = getAsBoolean( configProperties.get( "cms.cluster.enabled" ), false );
 
         if ( local == null )
         {
@@ -61,7 +61,7 @@ final class NodeSettingsBuilder
 
     private Map<String, String> getNodePropertyMap()
     {
-        return configProperties.getSubMap( new Predicate<String>()
+        return configProperties.getSubConfig( new Predicate<String>()
         {
             @Override
             public boolean apply( final String input )
