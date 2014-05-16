@@ -41,8 +41,6 @@ public class ElasticsearchIndexService
 {
     private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchIndexService.class );
 
-    private final NodeIndexDocumentFactory nodeIndexDocumentFactory = new NodeIndexDocumentFactory();
-
     private ElasticsearchDao elasticsearchDao;
 
     private IndexMappingProvider indexMappingProvider;
@@ -221,7 +219,7 @@ public class ElasticsearchIndexService
 
     public void index( final Node node )
     {
-        final Collection<IndexDocument> indexDocuments = nodeIndexDocumentFactory.create( node );
+        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node );
         elasticsearchDao.store( indexDocuments );
     }
 

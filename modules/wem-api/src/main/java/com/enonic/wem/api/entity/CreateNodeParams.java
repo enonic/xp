@@ -1,5 +1,7 @@
 package com.enonic.wem.api.entity;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.data.RootDataSet;
 
 public class CreateNodeParams
@@ -13,6 +15,8 @@ public class CreateNodeParams
     private Attachments attachments;
 
     private EntityIndexConfig entityIndexConfig;
+
+    private Workspace workspace;
 
     private boolean embed;
 
@@ -58,6 +62,17 @@ public class CreateNodeParams
         return this;
     }
 
+    public CreateNodeParams workspace( final Workspace workspace )
+    {
+        this.workspace = workspace;
+        return this;
+    }
+
+    public Workspace getWorkspace()
+    {
+        return workspace;
+    }
+
     public String getName()
     {
         return name;
@@ -90,6 +105,6 @@ public class CreateNodeParams
 
     public void validate()
     {
-
+        Preconditions.checkNotNull( workspace );
     }
 }

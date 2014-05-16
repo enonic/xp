@@ -1,6 +1,7 @@
 package com.enonic.wem.core.content;
 
 import com.enonic.wem.api.blob.BlobService;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.entity.NodePath;
@@ -37,7 +38,7 @@ final class GetChildContentService
     {
         final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( this.contentPath );
 
-        final Nodes nodes = nodeService.getByParent( nodePath );
+        final Nodes nodes = nodeService.getByParent( nodePath, ContentConstants.DEFAULT_WORKSPACE );
         final Contents contents = getTranslator().fromNodes( removeNonContentNodes( nodes ) );
 
         if ( populateChildIds )

@@ -2,6 +2,7 @@ package com.enonic.wem.core.content;
 
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.content.DeleteContentResult;
@@ -28,7 +29,7 @@ final class DeleteContentCommand
 
         try
         {
-            final Node deletedNode = nodeService.deleteByPath( nodePath );
+            final Node deletedNode = nodeService.deleteByPath( nodePath, ContentConstants.DEFAULT_WORKSPACE);
 
             final Content deletedContent = getTranslator().fromNode( deletedNode );
 

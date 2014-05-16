@@ -1,6 +1,5 @@
 package com.enonic.wem.core.elasticsearch;
 
-import java.util.Collection;
 import java.util.Set;
 
 import org.elasticsearch.index.query.FilterBuilder;
@@ -21,7 +20,7 @@ import com.enonic.wem.core.index.IndexType;
 public class ElasticsearchQuery
 {
 
-    public static final int DEFAULT_SIZE = 10;
+    private static final int DEFAULT_SIZE = 10;
 
     private final QueryBuilder query;
 
@@ -87,17 +86,17 @@ public class ElasticsearchQuery
         return new Builder();
     }
 
-    public int getFrom()
+    int getFrom()
     {
         return from;
     }
 
-    public int getSize()
+    int getSize()
     {
         return size;
     }
 
-    public boolean doExplain()
+    boolean doExplain()
     {
         return explain;
     }
@@ -200,22 +199,6 @@ public class ElasticsearchQuery
             return this;
         }
 
-        public Builder addFacet( final FacetBuilder facetBuilder )
-        {
-            this.facetBuilders.add( facetBuilder );
-            return this;
-        }
-
-        public Builder addFacets( final Collection<FacetBuilder> facetBuilders )
-        {
-            if ( facetBuilders != null )
-            {
-                this.facetBuilders.addAll( facetBuilders );
-            }
-
-            return this;
-        }
-
         public Builder indexType( final IndexType indexType )
         {
             this.indexType = indexType;
@@ -243,12 +226,6 @@ public class ElasticsearchQuery
         public Builder size( final int size )
         {
             this.size = size;
-            return this;
-        }
-
-        public Builder explain( final boolean explain )
-        {
-            this.explain = explain;
             return this;
         }
 

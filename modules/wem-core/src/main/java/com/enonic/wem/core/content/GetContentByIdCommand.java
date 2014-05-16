@@ -1,6 +1,7 @@
 package com.enonic.wem.core.content;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.entity.EntityId;
@@ -20,7 +21,7 @@ final class GetContentByIdCommand
 
         try
         {
-            final Node node = nodeService.getById( entityId );
+            final Node node = nodeService.getById( entityId, ContentConstants.DEFAULT_WORKSPACE);
             return getTranslator().fromNode( node );
         }
         catch ( NoEntityWithIdFoundException e )

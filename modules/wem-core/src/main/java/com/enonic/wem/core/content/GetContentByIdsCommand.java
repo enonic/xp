@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentNotFoundException;
@@ -43,7 +44,7 @@ final class GetContentByIdsCommand
     private Contents doExecute()
     {
         final EntityIds entityIds = getAsEntityIds( this.params.getIds() );
-        final Nodes nodes = nodeService.getByIds( entityIds );
+        final Nodes nodes = nodeService.getByIds( entityIds, ContentConstants.DEFAULT_WORKSPACE);
 
         return getTranslator().fromNodes( nodes );
     }

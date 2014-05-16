@@ -19,29 +19,10 @@ import com.enonic.wem.core.index.document.IndexDocumentOrderbyItem;
 
 public class XContentBuilderFactory
 {
+
     private XContentBuilderFactory()
     {
     }
-
-    static XContentBuilder create( final NodeStorageDocument storageDocument )
-    {
-        try
-        {
-            final XContentBuilder builder = startBuilder();
-            for ( final NodeStorageDocumentEntry entry : storageDocument.getEntries() )
-            {
-                builder.field( entry.getFieldName(), entry.getValue() );
-            }
-            endBuilder( builder );
-            return builder;
-        }
-        catch ( Exception e )
-        {
-            throw new IndexException( "Failed to build xContent for indexSource", e );
-        }
-
-    }
-
 
     static XContentBuilder create( final IndexDocument indexDocument )
     {

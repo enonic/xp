@@ -95,7 +95,7 @@ public abstract class BasePath<PATH extends BasePath, ELEMENT extends BasePath.E
         return elements.get( index ).toString();
     }
 
-    protected ELEMENT getLastElement()
+    public ELEMENT getLastElement()
     {
         return elements.get( elements.size() - 1 );
     }
