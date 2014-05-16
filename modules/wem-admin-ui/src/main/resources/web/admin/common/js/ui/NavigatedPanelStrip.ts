@@ -33,10 +33,11 @@ module api.ui {
             if (scrollTop == 0) {
                 // select first element if we are in the beginning
                 return 0;
-            } else if (scrollTop + this.getEl().getHeight() == this.getHTMLElement().scrollHeight) {
-                // select last element if we are in the very end
-                return this.getSize() - 1;
             }
+            /* else if (scrollTop + this.getEl().getHeight() == this.getHTMLElement().scrollHeight) {
+             // select last element if we are in the very end
+             return this.getSize() - 1;
+             }*/
             for (var i = 0; i < this.getSize(); i++) {
                 panelEl = this.getPanel(i).getEl();
                 panelOffset = scrollTop + panelEl.getOffsetToParent().top;
@@ -55,7 +56,10 @@ module api.ui {
         addNavigablePanel(item: NavigationItem, panel: Panel, select?: boolean): number {
             this.navigator.addNavigationItem(item);
             var index = super.addPanel(panel);
-
+            // select corresponding step on focus
+            panel.onFocus((event: FocusEvent) => {
+                this.navigator.selectNavigationItem(item.getIndex(), true);
+            });
             if (select) {
                 this.selectPanel(item);
             }

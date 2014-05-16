@@ -1,6 +1,6 @@
 package com.enonic.wem.core.entity;
 
-import org.joda.time.DateTime;
+import org.joda.time.Instant;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -43,7 +43,7 @@ public class DeleteNodeByPathCommandTest
         final Node nodeToDelete = Node.newNode().
             id( EntityId.from( "parent-id" ) ).
             creator( UserKey.superUser() ).
-            createdTime( DateTime.now() ).
+            createdTime( Instant.now() ).
             name( NodeName.from( "mynode" ) ).
             parent( NodePath.ROOT ).
             build();
@@ -51,7 +51,7 @@ public class DeleteNodeByPathCommandTest
         final Node childNode = Node.newNode().
             id( EntityId.from( "child-id" ) ).
             creator( UserKey.superUser() ).
-            createdTime( DateTime.now() ).
+            createdTime( Instant.now() ).
             name( NodeName.from( "childnode" ) ).
             parent( nodeToDelete.path() ).
             build();

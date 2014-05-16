@@ -9,9 +9,19 @@ module app.wizard.page {
     import ComponentPath = api.content.page.ComponentPath;
     import UploadDialog = api.content.inputtype.image.UploadDialog;
     import RenderingMode = api.rendering.RenderingMode;
+
     import NewPageComponentIdMapEvent = api.liveedit.NewPageComponentIdMapEvent;
-    import OpenImageUploadDialogEvent = api.livedit.OpenImageUploadDialogEvent;
-    import ImageUploadedEvent = api.livedit.ImageUploadedEvent;
+    import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
+    import ImageUploadedEvent = api.liveedit.ImageUploadedEvent;
+    import ImageSetEvent = api.liveedit.ImageComponentSetImageEvent;
+    import DraggableStartEvent = api.liveedit.DraggableStartEvent;
+    import DraggableStopEvent = api.liveedit.DraggableStopEvent;
+    import SortableStartEvent = api.liveedit.SortableStartEvent;
+    import SortableStopEvent = api.liveedit.SortableStopEvent;
+    import SortableUpdateEvent = api.liveedit.SortableUpdateEvent;
+    import PageSelectEvent = api.liveedit.PageSelectEvent;
+    import RegionSelectEvent = api.liveedit.RegionSelectEvent;
+    import ComponentSelectEvent = api.liveedit.PageComponentSelectEvent;
 
     export interface LiveEditPageConfig {
 
@@ -20,7 +30,7 @@ module app.wizard.page {
         siteTemplate: SiteTemplate;
     }
 
-    export class LiveEditPage {
+    export class LiveEditPageProxy {
 
         private baseUrl: string;
 
@@ -40,9 +50,9 @@ module app.wizard.page {
 
         private loadedListeners: {(): void;}[] = [];
 
-        private dragableStartListeners: {(event: DragableStartEvent): void;}[] = [];
+        private draggableStartListeners: {(event: DraggableStartEvent): void;}[] = [];
 
-        private dragableStopListeners: {(event: DragableStopEvent): void;}[] = [];
+        private draggableStopListeners: {(event: DraggableStopEvent): void;}[] = [];
 
         private sortableStartListeners: {(event: SortableStartEvent): void;}[] = [];
 
@@ -50,9 +60,9 @@ module app.wizard.page {
 
         private sortableStopListeners: {(event: SortableStopEvent): void;}[] = [];
 
-        private pageSelectedListeners: {(event: PageSelectedEvent): void;}[] = [];
+        private pageSelectedListeners: {(event: PageSelectEvent): void;}[] = [];
 
-        private regionSelectedListeners: {(event: RegionSelectedEvent): void;}[] = [];
+        private regionSelectedListeners: {(event: RegionSelectEvent): void;}[] = [];
 
         private pageComponentSelectedListeners: {(event: PageComponentSelectedEvent): void;}[] = [];
 
@@ -60,7 +70,7 @@ module app.wizard.page {
 
         private pageComponentAddedListeners: {(event: PageComponentAddedEvent): void;}[] = [];
 
-        private imageComponentSetImageListeners: {(event: ImageComponentSetImageEvent): void;}[] = [];
+        private imageComponentSetImageListeners: {(event: ImageSetEvent): void;}[] = [];
 
         private pageComponentSetDescriptorListeners: {(event: PageComponentSetDescriptorEvent): void;}[] = [];
 
@@ -219,7 +229,7 @@ module app.wizard.page {
                 console.log('PageComponentIdMap: %o', event.getMap());
             }, this.liveEditWindow);
 
-            OpenImageUploadDialogEvent.on(() => {
+            ImageOpenUploadDialogEvent.on(() => {
                 var uploadDialog = new UploadDialog();
                 uploadDialog.onImageUploaded((event: api.ui.ImageUploadedEvent) => {
                     new ImageUploadedEvent(event.getUploadedItem()).fire(this.liveEditWindow);
@@ -229,63 +239,42 @@ module app.wizard.page {
                 uploadDialog.open();
             }, this.liveEditWindow);
 
-            this.liveEditJQuery(this.liveEditWindow).on('draggableStart.liveEdit', (event) => {
+            DraggableStartEvent.on((event: DraggableStartEvent) => {
+                this.notifyDraggableStart(event);
+            }, this.liveEditWindow);
 
-                this.notifyDragableStart();
-            });
+            DraggableStopEvent.on((event: DraggableStopEvent) => {
+                this.notifyDraggableStop(event);
+            }, this.liveEditWindow);
 
-            this.liveEditJQuery(this.liveEditWindow).on('draggableStop.liveEdit', (event) => {
+            SortableStartEvent.on((event: SortableStartEvent) => {
+                this.notifySortableStart(event);
+            }, this.liveEditWindow);
 
-                this.notifyDragableStop();
-            });
+            SortableStopEvent.on((event: SortableStopEvent) => {
+                this.notifySortableStop(event);
+            }, this.liveEditWindow);
 
-            this.liveEditJQuery(this.liveEditWindow).on('sortableStart.liveEdit', (event) => {
-
-                this.notifySortableStart();
-            });
-
-            this.liveEditJQuery(this.liveEditWindow).on('sortableStop.liveEdit', (event, component?) => {
-
-                if (component) {
-                    var componentPath = ComponentPath.fromString(component.getComponentPath());
-                    this.notifySortableStop(componentPath, component.isEmpty(), component);
+            SortableUpdateEvent.on((event: SortableUpdateEvent) => {
+                if (event.getComponentView()) {
+                    this.notifySortableUpdate(event);
                 }
-                else {
-                    this.notifySortableStop(null, false, null);
+            }, this.liveEditWindow);
+
+            PageSelectEvent.on((event: PageSelectEvent) => {
+                this.notifyPageSelected(event);
+            }, this.liveEditWindow);
+
+            RegionSelectEvent.on((event: RegionSelectEvent) => {
+                this.notifyRegionSelected(event);
+            }, this.liveEditWindow);
+
+            ComponentSelectEvent.un();
+            ComponentSelectEvent.on((event: ComponentSelectEvent) => {
+                if (event.getPath()) {
+                    this.notifyPageComponentSelected(event.getPath(), event.getComponentView().isEmpty());
                 }
-            });
-
-            this.liveEditJQuery(this.liveEditWindow).on('sortableUpdate.liveEdit', (event, component?) => {
-
-                if (component) {
-                    var componentPath = ComponentPath.fromString(component.getComponentPath());
-                    var precedingComponent = ComponentPath.fromString(component.getPrecedingComponentPath());
-                    var region = RegionPath.fromString(component.getRegionName());
-
-                    this.notifySortableUpdate(componentPath, component, region, precedingComponent);
-                }
-            });
-
-            this.liveEditJQuery(this.liveEditWindow).on('pageSelect.liveEdit', (event) => {
-
-                this.notifyPageSelected();
-            });
-
-            this.liveEditJQuery(this.liveEditWindow).on('regionSelect.liveEdit', (event, regionPathAsString?: string) => {
-
-                var regionPath = RegionPath.fromString(regionPathAsString);
-                this.notifyRegionSelected(regionPath);
-
-            });
-
-            this.liveEditJQuery(this.liveEditWindow).off('componentSelect.liveEdit');
-            this.liveEditJQuery(this.liveEditWindow).on('componentSelect.liveEdit', (event, pathAsString?, component?) => {
-
-                if (pathAsString) {
-                    var componentPath = ComponentPath.fromString(pathAsString);
-                    this.notifyPageComponentSelected(componentPath, component.isEmpty());
-                }
-            });
+            }, this.liveEditWindow);
 
             this.liveEditJQuery(this.liveEditWindow).on('deselectComponent.liveEdit', (event) => {
 
@@ -329,25 +318,14 @@ module app.wizard.page {
                 this.notifyPageComponentDuplicated(placeholder, componentType, region, componentPath);
             });
 
-            var liveEditPageWindow = window;
-            this.liveEditJQuery(this.liveEditWindow).on('imageComponentSetImage.liveEdit',
-                (event, params?: {
-                    imageId?: ContentId;
-                    componentPathAsString?: string;
-                    componentPlaceholder?: api.dom.Element;
-                    imageName?: string;
-                    errorMessage?: string;
-                }) => {
+            ImageSetEvent.on((event: ImageSetEvent) => {
+                if (!event.getErrorMessage()) {
+                    this.notifyImageComponentSetImage(event);
+                } else {
+                    api.notify.showError(event.getErrorMessage());
+                }
+            }, this.liveEditWindow);
 
-                    if (!params.errorMessage) {
-                        var componentPath = ComponentPath.fromString(params.componentPathAsString);
-                        this.notifyImageComponentSetImage(componentPath, params.imageId, params.componentPlaceholder,
-                            !params.imageName ? null : params.imageName);
-                    } else {
-                        api.notify.showError(params.errorMessage);
-                    }
-
-                });
 
             this.liveEditJQuery(this.liveEditWindow).on('pageComponentSetDescriptor.liveEdit',
                 (event, descriptor?: Descriptor, componentPathAsString?: string, componentPlaceholder?) => {
@@ -373,55 +351,40 @@ module app.wizard.page {
             });
         }
 
-        onDragableStart(listener: {(event: DragableStartEvent): void;}) {
-            this.dragableStartListeners.push(listener);
+        onDraggableStart(listener: {(event: DraggableStartEvent): void;}) {
+            this.draggableStartListeners.push(listener);
         }
 
-        unDragableStart(listener: {(event: DragableStartEvent): void;}) {
-            this.dragableStartListeners = this.dragableStartListeners.filter(function (curr) {
-                return curr != listener;
-            });
+        unDraggableStart(listener: {(event: DraggableStartEvent): void;}) {
+            this.draggableStartListeners = this.draggableStartListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyDragableStart() {
-            var event = new DragableStartEvent();
-            this.dragableStartListeners.forEach((listener) => {
-                listener(event);
-            });
+        private notifyDraggableStart(event: DraggableStartEvent) {
+            this.draggableStartListeners.forEach((listener) => listener(event));
         }
 
-        onDragableStop(listener: {(event: DragableStopEvent): void;}) {
-            this.dragableStopListeners.push(listener);
+        onDraggableStop(listener: {(event: DraggableStopEvent): void;}) {
+            this.draggableStopListeners.push(listener);
         }
 
-        unDragableStop(listener: {(event: DragableStopEvent): void;}) {
-            this.dragableStopListeners = this.dragableStopListeners.filter(function (curr) {
-                return curr != listener;
-            });
+        unDraggableStop(listener: {(event: DraggableStopEvent): void;}) {
+            this.draggableStopListeners = this.draggableStopListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyDragableStop() {
-            var event = new DragableStopEvent();
-            this.dragableStopListeners.forEach((listener) => {
-                listener(event);
-            });
+        private notifyDraggableStop(event: DraggableStopEvent) {
+            this.draggableStopListeners.forEach((listener) => listener(event));
         }
 
-        onSortableStart(listener: {(event: SortableStartEvent): void;}) {
+        onSortableStart(listener: (event: SortableStartEvent) => void) {
             this.sortableStartListeners.push(listener);
         }
 
-        unSortableStart(listener: {(event: SortableStartEvent): void;}) {
-            this.sortableStartListeners = this.sortableStartListeners.filter(function (curr) {
-                return curr != listener;
-            });
+        unSortableStart(listener: (event: SortableStartEvent) => void) {
+            this.sortableStartListeners = this.sortableStartListeners.filter((curr) => (curr != listener));
         }
 
-        private notifySortableStart() {
-            var event = new SortableStartEvent();
-            this.sortableStartListeners.forEach((listener) => {
-                listener(event);
-            });
+        private notifySortableStart(event: SortableStartEvent) {
+            this.sortableStartListeners.forEach((listener) => listener(event));
         }
 
         onSortableUpdate(listener: {(event: SortableUpdateEvent): void;}) {
@@ -429,17 +392,11 @@ module app.wizard.page {
         }
 
         unSortableUpdate(listener: {(event: SortableUpdateEvent): void;}) {
-            this.sortableUpdateListeners = this.sortableUpdateListeners.filter(function (curr) {
-                return curr != listener;
-            });
+            this.sortableUpdateListeners = this.sortableUpdateListeners.filter((curr) => (curr != listener));
         }
 
-        private notifySortableUpdate(componentPath: ComponentPath, view: api.dom.Element, region: RegionPath,
-                                     precedingComponent: ComponentPath) {
-            var event = new SortableUpdateEvent(componentPath, view, region, precedingComponent);
-            this.sortableUpdateListeners.forEach((listener) => {
-                listener(event);
-            });
+        private notifySortableUpdate(event: SortableUpdateEvent) {
+            this.sortableUpdateListeners.forEach((listener) => listener(event));
         }
 
         onSortableStop(listener: {(event: SortableStopEvent): void;}) {
@@ -447,50 +404,35 @@ module app.wizard.page {
         }
 
         unSortableStop(listener: {(event: SortableStopEvent): void;}) {
-            this.sortableStopListeners = this.sortableStopListeners.filter(function (curr) {
-                return curr != listener;
-            });
+            this.sortableStopListeners = this.sortableStopListeners.filter((curr) => (curr != listener));
         }
 
-        private notifySortableStop(componentPath: ComponentPath, isEmpty: boolean, component: any) {
-            var event = new SortableStopEvent(componentPath, isEmpty, component);
-            this.sortableStopListeners.forEach((listener) => {
-                listener(event);
-            });
+        private notifySortableStop(event: SortableStopEvent) {
+            this.sortableStopListeners.forEach((listener) => listener(event));
         }
 
-        onPageSelected(listener: {(event: PageSelectedEvent): void;}) {
+        onPageSelected(listener: (event: PageSelectEvent) => void) {
             this.pageSelectedListeners.push(listener);
         }
 
-        unPageSelected(listener: {(event: PageSelectedEvent): void;}) {
-            this.pageSelectedListeners = this.pageSelectedListeners.filter(function (curr) {
-                return curr != listener;
-            });
+        unPageSelected(listener: (event: PageSelectEvent) => void) {
+            this.pageSelectedListeners = this.pageSelectedListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyPageSelected() {
-            var event = new PageSelectedEvent();
-            this.pageSelectedListeners.forEach((listener) => {
-                listener(event);
-            });
+        private notifyPageSelected(event: PageSelectEvent) {
+            this.pageSelectedListeners.forEach((listener) => listener(event));
         }
 
-        onRegionSelected(listener: {(event: RegionSelectedEvent): void;}) {
+        onRegionSelected(listener: {(event: RegionSelectEvent): void;}) {
             this.regionSelectedListeners.push(listener);
         }
 
-        unRegionSelected(listener: {(event: RegionSelectedEvent): void;}) {
-            this.regionSelectedListeners = this.regionSelectedListeners.filter(function (curr) {
-                return curr != listener;
-            });
+        unRegionSelected(listener: {(event: RegionSelectEvent): void;}) {
+            this.regionSelectedListeners = this.regionSelectedListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyRegionSelected(path: RegionPath) {
-            var event = new RegionSelectedEvent(path);
-            this.regionSelectedListeners.forEach((listener) => {
-                listener(event);
-            });
+        private notifyRegionSelected(event: RegionSelectEvent) {
+            this.regionSelectedListeners.forEach((listener) => listener(event));
         }
 
         onPageComponentSelected(listener: {(event: PageComponentSelectedEvent): void;}) {
@@ -545,22 +487,16 @@ module app.wizard.page {
             });
         }
 
-        onImageComponentSetImage(listener: {(event: ImageComponentSetImageEvent): void;}) {
+        onImageComponentSetImage(listener: {(event: ImageSetEvent): void;}) {
             this.imageComponentSetImageListeners.push(listener);
         }
 
-        unImageComponentSetImage(listener: {(event: ImageComponentSetImageEvent): void;}) {
-            this.imageComponentSetImageListeners = this.imageComponentSetImageListeners.filter(function (curr) {
-                return curr != listener;
-            });
+        unImageComponentSetImage(listener: {(event: ImageSetEvent): void;}) {
+            this.imageComponentSetImageListeners = this.imageComponentSetImageListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyImageComponentSetImage(path: ComponentPath, image: ContentId, componentPlaceholder: api.dom.Element,
-                                             imageName: string) {
-            var event = new ImageComponentSetImageEvent(path, image, componentPlaceholder, imageName);
-            this.imageComponentSetImageListeners.forEach((listener) => {
-                listener(event);
-            });
+        private notifyImageComponentSetImage(event: ImageSetEvent) {
+            this.imageComponentSetImageListeners.forEach((listener) => listener(event));
         }
 
         onPageComponentSetDescriptor(listener: {(event: PageComponentSetDescriptorEvent): void;}) {

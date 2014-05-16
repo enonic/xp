@@ -1,6 +1,6 @@
 package com.enonic.wem.core.schema.content;
 
-import org.joda.time.DateTime;
+import org.joda.time.Instant;
 
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -44,7 +44,7 @@ final class CreateContentTypeCommand
             setFinal( params.isFinal() ).
             displayName( params.getDisplayName() ).
             icon( params.getSchemaIcon() ).
-            createdTime( DateTime.now() ).
+            createdTime( Instant.now() ).
             build();
 
         return this.contentTypeDao.createContentType( contentType );

@@ -13,7 +13,7 @@ public class AbstractBuilderFactory
     {
         if ( value.isDateType() )
         {
-            return value.asDateTime();
+            return value.asInstant();
         }
 
         if ( value.isNumericType() )

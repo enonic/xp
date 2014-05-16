@@ -8,7 +8,7 @@ import org.elasticsearch.common.collect.Tuple;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentHelper;
 import org.elasticsearch.common.xcontent.XContentType;
-import org.joda.time.DateTime;
+import org.joda.time.Instant;
 import org.junit.Test;
 
 import com.enonic.wem.api.data.Value;
@@ -84,8 +84,8 @@ public class XContentBuilderFactoryTest
             addEntry( new IndexDocumentStringItem( IndexDocumentItemPath.from( "myField" ), "myValue2" ) ).
             addEntry( new IndexDocumentNumberItem( IndexDocumentItemPath.from( "myNumericField" ), 1.0 ) ).
             addEntry( new IndexDocumentNumberItem( IndexDocumentItemPath.from( "myNumericField" ), 2.0 ) ).
-            addEntry( new IndexDocumentDateItem( IndexDocumentItemPath.from( "myDateField" ), DateTime.now() ) ).
-            addEntry( new IndexDocumentDateItem( IndexDocumentItemPath.from( "myDateField" ), DateTime.now() ) ).
+            addEntry( new IndexDocumentDateItem( IndexDocumentItemPath.from( "myDateField" ), Instant.now() ) ).
+            addEntry( new IndexDocumentDateItem( IndexDocumentItemPath.from( "myDateField" ), Instant.now() ) ).
             addEntry(
                 new IndexDocumentGeoPointItem( IndexDocumentItemPath.from( "myGeoPoint" ), Value.newGeoPoint( "80,80" ).toString() ) ).
             addEntry(
@@ -102,7 +102,7 @@ public class XContentBuilderFactoryTest
         final Collection<Object> numericObjectValue = getObjectValue( "mynumericfield._number", objectMap );
         assertEquals( 2, numericObjectValue.size() );
 
-        final Collection<Object> dateObjectValue = getObjectValue( "mydatefield._datetime", objectMap );
+        final Collection<Object> dateObjectValue = getObjectValue( "mydatefield._instant", objectMap );
         assertEquals( 2, dateObjectValue.size() );
 
         final Collection<Object> geoPointObjectValue = getObjectValue( "mygeopoint._geopoint", objectMap );

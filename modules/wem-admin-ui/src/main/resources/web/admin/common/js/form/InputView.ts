@@ -241,5 +241,21 @@ module api.form {
                 listener(event);
             });
         }
+
+        onFocus(listener: (event: FocusEvent) => void) {
+            this.inputTypeView.onFocus(listener);
+        }
+
+        unFocus(listener: (event: FocusEvent) => void) {
+            this.inputTypeView.unFocus(listener);
+        }
+
+        onBlur(listener: (event: FocusEvent) => void) {
+            this.inputTypeView.onBlur(listener);
+        }
+
+        unBlur(listener: (event: FocusEvent) => void) {
+            this.inputTypeView.unBlur(listener);
+        }
     }
 }

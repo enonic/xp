@@ -149,6 +149,23 @@ module api.form.inputtype.support {
             jQuery(this.getHTMLElement()).sortable("refresh");
         }
 
+
+        onFocus(listener: (event: FocusEvent) => void) {
+            this.inputOccurrences.onFocus(listener);
+        }
+
+        unFocus(listener: (event: FocusEvent) => void) {
+            this.inputOccurrences.unFocus(listener);
+        }
+
+        onBlur(listener: (event: FocusEvent) => void) {
+            this.inputOccurrences.onBlur(listener);
+        }
+
+        unBlur(listener: (event: FocusEvent) => void) {
+            this.inputOccurrences.unBlur(listener);
+        }
+
         getValues(): api.data.Value[] {
 
             return this.inputOccurrences.getValues();

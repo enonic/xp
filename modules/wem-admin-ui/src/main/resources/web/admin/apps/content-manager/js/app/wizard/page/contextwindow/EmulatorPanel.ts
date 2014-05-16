@@ -2,7 +2,7 @@ module app.wizard.page.contextwindow {
 
     export interface EmulatorPanelConfig {
 
-        liveEditPage: app.wizard.page.LiveEditPage;
+        liveEditPage: app.wizard.page.LiveEditPageProxy;
     }
 
     export class EmulatorPanel extends api.ui.Panel {
@@ -10,7 +10,7 @@ module app.wizard.page.contextwindow {
         private dataView: api.ui.grid.DataView<any>;
         private grid: EmulatorGrid;
 
-        private liveEditPage: app.wizard.page.LiveEditPage;
+        private liveEditPage: app.wizard.page.LiveEditPageProxy;
 
         constructor(config: EmulatorPanelConfig) {
             super("emulator-panel");

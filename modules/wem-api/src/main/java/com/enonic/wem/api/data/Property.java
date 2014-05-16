@@ -2,7 +2,7 @@ package com.enonic.wem.api.data;
 
 import java.util.Objects;
 
-import org.joda.time.DateTime;
+import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 
 import com.google.common.base.Preconditions;
@@ -139,17 +139,14 @@ public final class Property
         return getArray().getValue( arrayIndex ).asLocalDate();
     }
 
-    public DateTime getDateTime()
+    public Instant getInstant( final int arrayIndex )
     {
-        return value.asDateTime();
+        return getArray().getValue( arrayIndex ).asInstant();
     }
 
-    /**
-     * Returns the value at of the Property at the given array index as a DateTime.
-     */
-    public DateTime getDateTime( final int arrayIndex )
+    public Instant getInstant()
     {
-        return getArray().getValue( arrayIndex ).asDateTime();
+        return value.asInstant();
     }
 
     /**
@@ -227,9 +224,9 @@ public final class Property
         return newProperty( name, Value.newGeoPoint( value ) );
     }
 
-    public static Property newDateTime( final String name, final Object value )
+    public static Property newInstant( final String name, final Object value )
     {
-        return newProperty( name, Value.newDateTime( value ) );
+        return newProperty( name, Value.newInstant( value ) );
     }
 
     public static Property newLocalDate( final String name, final Object value )

@@ -1,4 +1,4 @@
-module api.livedit {
+module api.liveedit {
 
     import Event2 = api.event.Event2;
 
@@ -7,7 +7,7 @@ module api.livedit {
         private uploadedItem: api.ui.UploadItem;
 
         constructor(uploadedItem: api.ui.UploadItem) {
-            super('imageUploadedEvent.liveEdit');
+            super();
             this.uploadedItem = uploadedItem;
         }
 
@@ -16,11 +16,11 @@ module api.livedit {
         }
 
         static on(handler: (event: ImageUploadedEvent) => void, contextWindow: Window = window) {
-            Event2.bind('imageUploadedEvent.liveEdit', handler, contextWindow);
+            Event2.bind(api.util.getFullName(this), handler, contextWindow);
         }
 
         static un(handler: (event: ImageUploadedEvent) => void, contextWindow: Window = window) {
-            Event2.unbind('imageUploadedEvent.liveEdit', handler, contextWindow);
+            Event2.unbind(api.util.getFullName(this), handler, contextWindow);
         }
     }
 }

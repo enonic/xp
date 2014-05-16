@@ -28,9 +28,9 @@ public final class ValueExpr
             return this.value.asString();
         }
 
-        if ( type == ValueTypes.DATE_TIME )
+        if ( type == ValueTypes.INSTANT )
         {
-            return typecastFunction( "dateTime", this.value.asString() );
+            return typecastFunction( "instant", this.value.asString() );
         }
 
         if ( type == ValueTypes.GEO_POINT )
@@ -68,9 +68,9 @@ public final class ValueExpr
         return new ValueExpr( Value.newDouble( value.doubleValue() ) );
     }
 
-    public static ValueExpr dateTime( final String value )
+    public static ValueExpr instant( final String value )
     {
-        return new ValueExpr( Value.newDateTime( value ) );
+        return new ValueExpr( Value.newInstant( value ) );
     }
 
     public static ValueExpr geoPoint( final String value )

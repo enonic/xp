@@ -3,7 +3,7 @@ package com.enonic.wem.core.content.serializer;
 
 import java.util.Iterator;
 
-import org.joda.time.DateTime;
+import org.joda.time.Instant;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -388,7 +388,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void content_serialize_parse_serialize_roundTrip()
     {
-        final DateTime time = DateTime.now();
+        final Instant time = Instant.now();
         final Content content = newContent().
             type( ContentTypeName.from( "my_type" ) ).
             createdTime( time ).

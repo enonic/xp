@@ -19,10 +19,10 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.api.support.serializer.JsonFactoryHolder;
 
-import static com.enonic.wem.api.support.serializer.JsonSerializerUtil.getDateTimeValue;
+import static com.enonic.wem.api.support.serializer.JsonSerializerUtil.getInstantValue;
 import static com.enonic.wem.api.support.serializer.JsonSerializerUtil.getStringValue;
 import static com.enonic.wem.api.support.serializer.JsonSerializerUtil.getUserKeyValue;
-import static com.enonic.wem.api.support.serializer.JsonSerializerUtil.setDateTimeValue;
+import static com.enonic.wem.api.support.serializer.JsonSerializerUtil.setInstantValue;
 
 public class ContentJsonSerializer
     extends AbstractJsonSerializer<Content>
@@ -55,8 +55,8 @@ public class ContentJsonSerializer
         jsonContent.put( "creator", content.getCreator() != null ? content.getCreator().toString() : null );
         jsonContent.put( "modifier", content.getModifier() != null ? content.getModifier().toString() : null );
         jsonContent.put( "isRoot", content.getPath().isRoot() );
-        setDateTimeValue( "modifiedTime", content.getModifiedTime(), jsonContent );
-        setDateTimeValue( "createdTime", content.getCreatedTime(), jsonContent );
+        setInstantValue( "modifiedTime", content.getModifiedTime(), jsonContent );
+        setInstantValue( "createdTime", content.getCreatedTime(), jsonContent );
 
         jsonContent.put( "data", contentDataSerializer.serialize( content.getContentData() ) );
         return jsonContent;
@@ -120,8 +120,8 @@ public class ContentJsonSerializer
         contentBuilder.owner( getUserKeyValue( "owner", contentNode ) );
         contentBuilder.creator( getUserKeyValue( "creator", contentNode ) );
         contentBuilder.modifier( getUserKeyValue( "modifier", contentNode ) );
-        contentBuilder.modifiedTime( getDateTimeValue( "modifiedTime", contentNode ) );
-        contentBuilder.createdTime( getDateTimeValue( "createdTime", contentNode ) );
+        contentBuilder.modifiedTime( getInstantValue( "modifiedTime", contentNode ) );
+        contentBuilder.createdTime( getInstantValue( "createdTime", contentNode ) );
 
         final ContentData contentData = contentDataSerializer.parse( contentNode.get( "data" ) );
         contentBuilder.contentData( contentData );

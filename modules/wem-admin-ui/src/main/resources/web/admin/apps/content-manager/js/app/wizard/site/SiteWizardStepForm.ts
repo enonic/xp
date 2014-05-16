@@ -90,6 +90,13 @@ module app.wizard.site {
                 var moduleView = new ModuleView(this.formContext, theModule,
                     this.moduleConfigsByKey[theModule.getModuleKey().toString()]);
 
+                moduleView.onFocus((event: FocusEvent) => {
+                    this.notifyFocused(event);
+                });
+                moduleView.onBlur((event: FocusEvent) => {
+                    this.notifyBlurred(event);
+                });
+
                 this.moduleViewsContainer.appendChild(moduleView);
                 this.moduleViews.push(moduleView);
             });

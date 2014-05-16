@@ -28,6 +28,22 @@ module app.wizard.site {
             this.moduleConfig.setConfig(config);
             return this.moduleConfig;
         }
+
+        onFocus(listener: (event: FocusEvent) => void) {
+            this.formView.onFocus(listener);
+        }
+
+        unFocus(listener: (event: FocusEvent) => void) {
+            this.formView.unFocus(listener);
+        }
+
+        onBlur(listener: (event: FocusEvent) => void) {
+            this.formView.onBlur(listener);
+        }
+
+        unBlur(listener: (event: FocusEvent) => void) {
+            this.formView.unBlur(listener);
+        }
     }
 
 }

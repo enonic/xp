@@ -1,13 +1,14 @@
 module LiveEdit.component {
+
+    import ComponentSelectEvent = api.liveedit.PageComponentSelectEvent;
+
     export class ComponentPlaceholder extends Component {
         constructor(className: string = 'live-edit-empty-component') {
             super();
             this.addClass(className);
             this.getEl().setData('live-edit-empty-component', 'true');
 
-            $liveEdit(this.getHTMLElement()).on('componentSelect.liveEdit', (event, name?)=> {
-                this.onSelect();
-            });
+            ComponentSelectEvent.on((event: ComponentSelectEvent) => this.onSelect());
 
             $liveEdit(window).on('componentDeselect.liveEdit', (event, name?)=> {
                 this.onDeselect();

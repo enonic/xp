@@ -23,12 +23,12 @@ public class RangeFilterJson
 
         if ( !Strings.isNullOrEmpty( from ) )
         {
-            builder.from( Value.newDateTime( DateTimeFormatter.parse( from ) ) );
+            builder.from( Value.newInstant( DateTimeFormatter.parse( from ) ) );
         }
 
         if ( !Strings.isNullOrEmpty( to ) )
         {
-            builder.to( Value.newDateTime( DateTimeFormatter.parse( to ) ) );
+            builder.to( Value.newInstant( DateTimeFormatter.parse( to ) ) );
         }
 
         this.rangeFilter = builder.build();

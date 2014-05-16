@@ -16,6 +16,10 @@ module api.form {
 
         private width: number;
 
+        private focusListeners: {(event: FocusEvent):void}[] = [];
+
+        private blurListeners: {(event: FocusEvent):void}[] = [];
+
         constructor(context: FormContext, form: Form, rootDataSet?: api.data.RootDataSet) {
             super("form-view");
             this.context = context;
@@ -34,6 +38,14 @@ module api.form {
                 layout(this.rootDataSet);
 
             this.formItemViews.forEach((formItemView: FormItemView) => {
+
+                formItemView.onFocus((event: FocusEvent) => {
+                    this.notifyFocused(event);
+                });
+
+                formItemView.onBlur((event: FocusEvent) => {
+                    this.notifyBlurred(event);
+                });
 
                 formItemView.onValidityChanged((event: ValidityChangedEvent) => {
 
@@ -257,5 +269,36 @@ module api.form {
             })
         }
 
+        onFocus(listener: (event: FocusEvent) => void) {
+            this.focusListeners.push(listener);
+        }
+
+        unFocus(listener: (event: FocusEvent) => void) {
+            this.focusListeners = this.focusListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        onBlur(listener: (event: FocusEvent) => void) {
+            this.blurListeners.push(listener);
+        }
+
+        unBlur(listener: (event: FocusEvent) => void) {
+            this.blurListeners = this.blurListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        private notifyFocused(event: FocusEvent) {
+            this.focusListeners.forEach((listener) => {
+                listener(event);
+            })
+        }
+
+        private notifyBlurred(event: FocusEvent) {
+            this.blurListeners.forEach((listener) => {
+                listener(event);
+            })
+        }
     }
 }

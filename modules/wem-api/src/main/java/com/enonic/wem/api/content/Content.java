@@ -1,6 +1,6 @@
 package com.enonic.wem.api.content;
 
-import org.joda.time.DateTime;
+import org.joda.time.Instant;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
@@ -43,9 +43,9 @@ public final class Content
 
     private final ContentData contentData;
 
-    private final DateTime createdTime;
+    private final Instant createdTime;
 
-    private final DateTime modifiedTime;
+    private final Instant modifiedTime;
 
     private final UserKey creator;
 
@@ -133,12 +133,12 @@ public final class Content
         return displayName;
     }
 
-    public DateTime getCreatedTime()
+    public Instant getCreatedTime()
     {
         return createdTime;
     }
 
-    public DateTime getModifiedTime()
+    public Instant getModifiedTime()
     {
         return modifiedTime;
     }
@@ -275,9 +275,9 @@ public final class Content
 
         UserKey owner;
 
-        DateTime createdTime;
+        Instant createdTime;
 
-        DateTime modifiedTime;
+        Instant modifiedTime;
 
         UserKey creator;
 
@@ -499,13 +499,13 @@ public final class Content
             return this;
         }
 
-        public Builder createdTime( final DateTime createdTime )
+        public Builder createdTime( final Instant createdTime )
         {
             this.createdTime = createdTime;
             return this;
         }
 
-        public Builder modifiedTime( final DateTime modifiedTime )
+        public Builder modifiedTime( final Instant modifiedTime )
         {
             this.modifiedTime = modifiedTime;
             return this;

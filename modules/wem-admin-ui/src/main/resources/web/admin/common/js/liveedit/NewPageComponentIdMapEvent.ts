@@ -7,7 +7,7 @@ module api.liveedit {
         private map: PageComponentIdMap;
 
         constructor(map: PageComponentIdMap) {
-            super('newPageComponentIdMapEvent.liveEdit');
+            super();
             this.map = map;
         }
 
@@ -16,11 +16,11 @@ module api.liveedit {
         }
 
         static on(handler: (event: NewPageComponentIdMapEvent) => void, contextWindow: Window = window) {
-            api.event.Event2.bind('newPageComponentIdMapEvent.liveEdit', handler, contextWindow);
+            Event2.bind(api.util.getFullName(this), handler, contextWindow);
         }
 
         static un(handler: (event: NewPageComponentIdMapEvent) => void, contextWindow: Window = window) {
-            api.event.Event2.unbind('newPageComponentIdMapEvent.liveEdit', handler, contextWindow);
+            Event2.unbind(api.util.getFullName(this), handler, contextWindow);
         }
     }
 }

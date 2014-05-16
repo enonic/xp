@@ -6,6 +6,12 @@
 
 module LiveEdit.component.dragdropsort.DragDropSort {
 
+    import DraggableStartEvent = api.liveedit.DraggableStartEvent;
+    import DraggableStopEvent = api.liveedit.DraggableStopEvent;
+    import SortableStartEvent = api.liveedit.SortableStartEvent;
+    import SortableStopEvent = api.liveedit.SortableStopEvent;
+    import SortableUpdateEvent = api.liveedit.SortableUpdateEvent;
+
     // Uses
     var $ = $liveEdit;
 
@@ -102,11 +108,11 @@ module LiveEdit.component.dragdropsort.DragDropSort {
                 return LiveEdit.component.helper.DragHelper.createDragHelperHtml();
             },
             start: (event, ui) => {
-                $(window).trigger('draggableStart.liveEdit', [event, ui]);
+                new DraggableStartEvent().fire();
                 _isDragging = true;
             },
             stop: (event, ui) => {
-                $(window).trigger('draggableStop.liveEdit', [event, ui]);
+                new DraggableStopEvent().fire();
                 _isDragging = false;
             }
         });
@@ -134,7 +140,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
         refreshSortable();
 
-        $(window).trigger('sortableStart.liveEdit', [event, ui]);
+        new SortableStartEvent().fire();
     }
 
     function handleDragOver(event: JQueryEventObject, ui): void {
@@ -177,7 +183,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         var component = LiveEdit.component.Component.fromJQuery(ui.item);
 
         if (component.hasComponentPath()) {
-            $(window).trigger('sortableUpdate.liveEdit', [ component ]);
+            new SortableUpdateEvent(component).fire();
         }
     }
 
@@ -201,7 +207,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
         var wasSelectedOnDragStart = component.getElement().data('live-edit-selected-on-drag-start');
 
-        $(window).trigger('sortableStop.liveEdit', [component]);
+        new SortableStopEvent(component).fire();
 
         component.getElement().removeData('live-edit-selected-on-drag-start');
     }

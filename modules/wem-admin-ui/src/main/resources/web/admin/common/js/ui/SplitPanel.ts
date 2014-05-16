@@ -216,8 +216,13 @@ module api.ui {
                 var splitPanelSize = this.isHorizontal() ? this.getEl().getHeight() : this.getEl().getWidth();
                 api.util.assert(this.firstPanelMinSize + this.secondPanelMinSize <= splitPanelSize,
                     "warning: total sum of first and second panel minimum sizes exceed total split panel size");
-                this.updateAlignment()
+                this.updateAlignment();
             });
+
+            // Add all elements, needed to be tracked
+            ResponsiveManager.onAvailableSizeChanged(this);
+            ResponsiveManager.onAvailableSizeChanged(this.firstPanel);
+            ResponsiveManager.onAvailableSizeChanged(this.secondPanel);
         }
 
         private startDrag() {
@@ -246,7 +251,7 @@ module api.ui {
 
             this.isFirstPanelFixed() ? this.setFirstPanelSize(fixedPanelSize) : this.setSecondPanelSize(fixedPanelSize);
             this.distribute();
-            this.fireResizeEvent();
+            ResponsiveManager.fireResizeEvent();
         }
 
         private splitterWithinBoundaries(offset: number) {
@@ -319,12 +324,8 @@ module api.ui {
                                                   "px)").setHeight(null);
                 this.splitter.getEl().setLeft("calc(" + this.firstPanelSize + " - " + this.splitterThickness / 2 + "px)");
             }
-        }
 
-        private fireResizeEvent() {
-            var event = document.createEvent('Event');
-            event.initEvent('resize', true, true);
-            this.getHTMLElement().dispatchEvent(event);
+            ResponsiveManager.fireResizeEvent();
         }
 
         isHorizontal() {

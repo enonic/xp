@@ -338,5 +338,21 @@ module api.form {
 
             this.formItemSetOccurrences.moveOccurrence(index, destinationIndex);
         }
+
+        onFocus(listener: (event: FocusEvent) => void) {
+            this.formItemSetOccurrences.onFocus(listener);
+        }
+
+        unFocus(listener: (event: FocusEvent) => void) {
+            this.formItemSetOccurrences.unFocus(listener);
+        }
+
+        onBlur(listener: (event: FocusEvent) => void) {
+            this.formItemSetOccurrences.onBlur(listener);
+        }
+
+        unBlur(listener: (event: FocusEvent) => void) {
+            this.formItemSetOccurrences.unBlur(listener);
+        }
     }
 }

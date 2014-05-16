@@ -1,6 +1,7 @@
 package com.enonic.wem.api.entity;
 
 import org.joda.time.DateTime;
+import org.joda.time.Instant;
 import org.junit.Test;
 
 import com.enonic.wem.api.account.UserKey;
@@ -78,13 +79,13 @@ public class NodeBuilderTest
         final Node myNode = Node.newNode().
             name( NodeName.from( "my-node" ) ).
             parent( NodePath.ROOT ).
-            property( "testPath", DateTime.now() ).
+            property( "testPath", Instant.now() ).
             build();
 
         final Property testProperty = myNode.property( "testPath" );
 
         assertNotNull( testProperty );
-        assertTrue( testProperty.getValue().getType() == ValueTypes.DATE_TIME );
+        assertTrue( testProperty.getValue().getType() == ValueTypes.INSTANT );
     }
 
     @Test
@@ -126,11 +127,11 @@ public class NodeBuilderTest
         final Node myNode = Node.newNode().
             name( NodeName.from( "my-name" ) ).
             parent( NodePath.ROOT ).
-            modifiedTime( dateTime ).
-            createdTime( dateTime ).
+            modifiedTime( dateTime.toInstant() ).
+            createdTime( dateTime.toInstant() ).
             creator( UserKey.from( "test:creator" ) ).
             modifier( UserKey.from( "test:modifier" ) ).
-            modifiedTime( dateTime ).
+            modifiedTime( dateTime.toInstant() ).
             path( "test" ).
             build();
 

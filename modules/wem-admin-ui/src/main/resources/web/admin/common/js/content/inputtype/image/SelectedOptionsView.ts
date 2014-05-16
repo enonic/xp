@@ -137,6 +137,15 @@ module api.content.inputtype.image {
                 event.stopPropagation();
             });
 
+            optionView.getCheckbox().onFocus((event: FocusEvent) => {
+                this.showImageSelectorDialog(option);
+            });
+
+            optionView.getCheckbox().onClicked((event: MouseEvent) => {
+                optionView.getCheckbox().setChecked(!optionView.getCheckbox().isChecked());
+                event.preventDefault();
+            });
+
             optionView.onChecked((view: SelectedOptionView, checked: boolean) => {
                 if (checked) {
                     this.selection.push(option);

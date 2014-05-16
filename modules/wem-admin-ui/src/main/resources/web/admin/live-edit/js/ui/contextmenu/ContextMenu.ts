@@ -1,5 +1,7 @@
 module LiveEdit.ui.contextmenu {
 
+    import SortableStartEvent = api.liveedit.SortableStartEvent;
+
     // Uses
     var $ = $liveEdit;
 
@@ -39,7 +41,7 @@ module LiveEdit.ui.contextmenu {
             $(window).on('deselectComponent.liveEdit', () => this.hide());
             $(window).on('componentRemoved.liveEdit', () => this.hide());
             $(window).on('editTextComponent.liveEdit', () => this.hide());
-            $(window).on('sortableStart.liveEdit', () => this.fadeOutAndHide());
+            SortableStartEvent.on(() => this.fadeOutAndHide());
             $(window).on('resizeBrowserWindow.liveEdit', () => this.handleWindowResize());
         }
 

@@ -244,6 +244,22 @@ module api.content.inputtype.relationship {
             // Have to use stub here because it doesn't extend BaseIntputTypeView
         }
 
+        onFocus(listener: (event: FocusEvent) => void) {
+            this.contentComboBox.onFocus(listener);
+        }
+
+        unFocus(listener: (event: FocusEvent) => void) {
+            this.contentComboBox.unFocus(listener);
+        }
+
+        onBlur(listener: (event: FocusEvent) => void) {
+            this.contentComboBox.onBlur(listener);
+        }
+
+        unBlur(listener: (event: FocusEvent) => void) {
+            this.contentComboBox.unBlur(listener);
+        }
+
     }
 
     api.form.inputtype.InputTypeManager.register("Relationship", Relationship);

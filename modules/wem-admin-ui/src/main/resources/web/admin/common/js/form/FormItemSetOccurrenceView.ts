@@ -298,6 +298,30 @@ module api.form {
                 listener(event);
             });
         }
+
+        onFocus(listener: (event: FocusEvent) => void) {
+            this.formItemViews.forEach((formItemView) => {
+                formItemView.onFocus(listener);
+            });
+        }
+
+        unFocus(listener: (event: FocusEvent) => void) {
+            this.formItemViews.forEach((formItemView) => {
+                formItemView.unFocus(listener);
+            });
+        }
+
+        onBlur(listener: (event: FocusEvent) => void) {
+            this.formItemViews.forEach((formItemView) => {
+                formItemView.onBlur(listener);
+            });
+        }
+
+        unBlur(listener: (event: FocusEvent) => void) {
+            this.formItemViews.forEach((formItemView) => {
+                formItemView.unBlur(listener);
+            });
+        }
     }
 
 }

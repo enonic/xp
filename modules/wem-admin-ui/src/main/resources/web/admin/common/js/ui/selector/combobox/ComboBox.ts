@@ -662,6 +662,22 @@ module api.ui.selector.combobox {
         unSelectedOptionRemoved(listener: {(removed: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
             this.selectedOptionsCtrl.unSelectedOptionRemoved(listener);
         }
+
+        onFocus(listener: (event: FocusEvent) => void) {
+            this.input.onFocus(listener);
+        }
+
+        unFocus(listener: (event: FocusEvent) => void) {
+            this.input.unFocus(listener);
+        }
+
+        onBlur(listener: (event: FocusEvent) => void) {
+            this.input.onBlur(listener);
+        }
+
+        unBlur(listener: (event: FocusEvent) => void) {
+            this.input.unBlur(listener);
+        }
     }
 
 }

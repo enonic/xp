@@ -1,5 +1,7 @@
 module LiveEdit.component.mouseevent {
 
+    import SortableUpdateEvent = api.liveedit.SortableUpdateEvent;
+
     // Uses
     var $ = $liveEdit;
 
@@ -21,7 +23,12 @@ module LiveEdit.component.mouseevent {
         private registerGlobalListeners():void {
 
             // fixme: this does not belongs here.
-            $(window).on('sortableUpdate.liveEdit sortableOver.liveEdit componentRemoved.liveEdit', () => {
+            $(window).on('sortableOver.liveEdit componentRemoved.liveEdit', () => {
+                LiveEdit.PlaceholderCreator.renderEmptyRegionPlaceholders();
+            });
+
+            // fixme: this does not belongs here.
+            SortableUpdateEvent.on(() => {
                 LiveEdit.PlaceholderCreator.renderEmptyRegionPlaceholders();
             });
         }

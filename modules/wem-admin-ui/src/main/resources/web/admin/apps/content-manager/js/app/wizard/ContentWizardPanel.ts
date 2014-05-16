@@ -23,6 +23,7 @@ module app.wizard {
     import IsRenderableRequest = api.content.page.IsRenderableRequest;
 
     import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
+    import ResponsiveManager = api.ui.ResponsiveManager;
     import FormIcon = api.app.wizard.FormIcon;
     import WizardHeaderWithDisplayNameAndName = api.app.wizard.WizardHeaderWithDisplayNameAndName;
     import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
@@ -563,12 +564,14 @@ module app.wizard {
         showLiveEdit() {
             this.getSplitPanel().addClass("toggle-live");
             this.getSplitPanel().removeClass("toggle-form prerendered");
+            ResponsiveManager.fireResizeEvent();
             this.updateStickyToolbar();
         }
 
         showWizard() {
             this.getSplitPanel().addClass("toggle-form");
             this.getSplitPanel().removeClass("toggle-live prerendered");
+            ResponsiveManager.fireResizeEvent();
             this.updateStickyToolbar();
         }
     }

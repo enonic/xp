@@ -39,8 +39,8 @@ public class SetContentTypeEditorTest
             superType( ContentTypeName.unstructured() ).
             setAbstract( true ).
             setFinal( false ).
-            createdTime( TIME1 ).
-            modifiedTime( TIME2 ).
+            createdTime( TIME1.toInstant() ).
+            modifiedTime( TIME2.toInstant() ).
             addFormItem( newInput().name( "title" ).inputType( InputTypes.TEXT_LINE ).build() ).
             addFormItem( formItemSet ).
             icon( SchemaIcon.from( "ABC".getBytes(), "image/png" ) ).
@@ -75,8 +75,8 @@ public class SetContentTypeEditorTest
             superType( ContentTypeName.unstructured() ).
             setAbstract( true ).
             setFinal( true ).
-            createdTime( TIME1 ).
-            modifiedTime( TIME2 ).
+            createdTime( TIME1.toInstant() ).
+            modifiedTime( TIME2.toInstant() ).
             addFormItem( newInput().name( "title" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
 

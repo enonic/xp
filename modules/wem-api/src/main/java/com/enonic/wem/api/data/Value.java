@@ -2,7 +2,7 @@ package com.enonic.wem.api.data;
 
 import java.util.Objects;
 
-import org.joda.time.DateTime;
+import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 
 import com.google.common.base.Preconditions;
@@ -38,7 +38,7 @@ public final class Value
 
     public boolean isDateType()
     {
-        return ( this.type == ValueTypes.DATE_TIME ) || ( this.type == ValueTypes.LOCAL_DATE );
+        return ( this.type == ValueTypes.INSTANT ) || ( this.type == ValueTypes.LOCAL_DATE );
     }
 
     public boolean isNumericType()
@@ -135,11 +135,11 @@ public final class Value
     }
 
     /**
-     * Attempts to return value as org.joda.time.DateTime, using best effort converting if value is not of type org.joda.time.DateTime.
+     * Attempts to return value as org.joda.time.Instant, using best effort converting if value is not of type org.joda.time.Instant.
      */
-    public DateTime asDateTime()
+    public Instant asInstant()
     {
-        return ValueTypes.DATE_TIME.convert( object );
+        return ValueTypes.INSTANT.convert( object );
     }
 
     public GeoPoint asGeoPoint()
@@ -181,9 +181,9 @@ public final class Value
         return new Value( type, type.convert( value ) );
     }
 
-    public static Value newDateTime( final Object value )
+    public static Value newInstant( final Object value )
     {
-        return newValue( ValueTypes.DATE_TIME, value );
+        return newValue( ValueTypes.INSTANT, value );
     }
 
     public static Value newLocalDate( final Object value )
