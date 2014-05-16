@@ -98,9 +98,15 @@
 }
 
 @media (max-width: 720px) {
+  .form-item-set-view-inputs();
+}
 
+._0-240, ._240-360, ._360-540, ._540-720 {
+  .form-item-set-view-inputs();
+}
+
+.form-item-set-view-inputs() {
   .form-item-set-view {
-
     .input-view {
 
       .input-label {
@@ -120,7 +126,7 @@
   .form-item-set-view-small();
 }
 
-.context-window {
+.context-window, ._0-240, ._240-360, ._360-540 {
   .form-item-set-view-small();
 }
 

@@ -122,7 +122,19 @@
   }
 }
 
+._0-240, ._240-360, ._360-540, ._540-720, ._720-960 {
+  .wizard-panel .wizard-back-panel .wizard-step-navigator-and-toolbar {
+    padding-left: 0;
+  }
+}
+
 @media (min-width: 720px) and (max-width: 960px) {
+  .wizard-panel .wizard-back-panel .wizard-step-deck-panel {
+    left: 25px;
+  }
+}
+
+._720-960 {
   .wizard-panel .wizard-back-panel .wizard-step-deck-panel {
     left: 25px;
   }
@@ -135,7 +147,22 @@
   }
 }
 
+._540-720 {
+  .wizard-panel .wizard-back-panel .wizard-step-deck-panel {
+    left: 25px;
+    right: 25px;
+  }
+}
+
+._0-240, ._240-360, ._360-540 {
+  .wizard-back-panel();
+}
+
 @media (max-width: 540px) {
+  .wizard-back-panel();
+}
+
+.wizard-back-panel() {
   .wizard-panel .wizard-back-panel {
     .wizard-step-deck-panel {
       left: 10px;
