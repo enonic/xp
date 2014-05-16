@@ -20,7 +20,7 @@ public class IndexDocumentDateItem
     @Override
     public IndexValueType getIndexBaseType()
     {
-        return IndexValueType.INSTANT;
+        return IndexValueType.DATETIME;
     }
 
     @Override

@@ -28,7 +28,7 @@ public final class ValueExpr
             return this.value.asString();
         }
 
-        if ( type == ValueTypes.INSTANT )
+        if ( type == ValueTypes.DATE_TIME )
         {
             return typecastFunction( "instant", this.value.asString() );
         }

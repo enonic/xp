@@ -40,7 +40,7 @@ final class JavaTypeConverters
 
     public final static JavaTypeConverter<EntityId> ENTITY_ID = newEntityId();
 
-    public final static JavaTypeConverter<Instant> INSTANT = newInstant();
+    public final static JavaTypeConverter<Instant> DATE_TIME = newInstant();
 
     public final static JavaTypeConverter<LocalDate> LOCAL_DATE = newLocalDate();
 
