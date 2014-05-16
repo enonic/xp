@@ -84,6 +84,12 @@
       <artifactId>jersey-servlet</artifactId>
       <version>1.17.1</version>
     </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>1.7.5</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -122,6 +128,9 @@
               asm,
               spatial4j
             </Embed-Dependency>
+            <Bundle-Activator>
+              com.enonic.wem.core.Activator
+            </Bundle-Activator>
           </instructions>
         </configuration>
       </plugin>

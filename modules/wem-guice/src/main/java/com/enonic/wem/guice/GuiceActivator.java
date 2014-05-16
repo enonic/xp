@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ops4j.peaberry.Export;
+import org.ops4j.peaberry.Import;
 import org.ops4j.peaberry.Peaberry;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -27,12 +28,18 @@ public abstract class GuiceActivator
 
     private List<Export<?>> exports;
 
+    protected final BundleContext getContext()
+    {
+        return this.context;
+    }
+
     @Override
     public final void start( final BundleContext context )
         throws Exception
     {
         this.context = context;
         startModule();
+        doStart();
     }
 
     @Override
@@ -42,6 +49,7 @@ public abstract class GuiceActivator
         try
         {
             stopModule();
+            doStop();
         }
         finally
         {
@@ -79,9 +87,18 @@ public abstract class GuiceActivator
 
     private void stopModule()
     {
-        for ( final Export<?> export : this.exports )
-        {
-            export.unget();
-        }
+        this.exports.forEach( Import::unget );
+    }
+
+    protected void doStart()
+        throws Exception
+    {
+        // Do nothing. Override to implement custom logic.
+    }
+
+    protected void doStop()
+        throws Exception
+    {
+        // Do nothing. Override to implement custom logic.
     }
 }

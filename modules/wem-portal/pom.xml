@@ -74,6 +74,9 @@
               javassist,
               ognl
             </Embed-Dependency>
+            <Bundle-Activator>
+              com.enonic.wem.portal.Activator
+            </Bundle-Activator>
           </instructions>
         </configuration>
       </plugin>
