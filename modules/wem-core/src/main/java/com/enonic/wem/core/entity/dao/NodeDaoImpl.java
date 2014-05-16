@@ -3,7 +3,8 @@ package com.enonic.wem.core.entity.dao;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import org.joda.time.DateTime;
+
+import org.joda.time.Instant;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteStreams;
@@ -73,7 +74,7 @@ public class NodeDaoImpl
         Preconditions.checkArgument( createNodeArguments.parent().isAbsolute(),
                                      "Path to parent Node must be absolute: " + createNodeArguments.parent() );
 
-        final DateTime now = DateTime.now();
+        final Instant now = Instant.now();
 
         return Node.newNode().
             id( new EntityId() ).
@@ -174,7 +175,7 @@ public class NodeDaoImpl
             return false;
         }
 
-        final DateTime now = DateTime.now();
+        final Instant now = Instant.now();
 
         final Node movedNode = Node.newNode( persistedNode ).
             id( persistedNode.id() ).
@@ -207,7 +208,7 @@ public class NodeDaoImpl
 
         final Node persistedNode = this.getById( updateNodeArguments.nodeToUpdate(), workspace );
 
-        final DateTime now = DateTime.now();
+        final Instant now = Instant.now();
 
         // TODO: Should'nt new Node(Node) Handle THIS?!
 
