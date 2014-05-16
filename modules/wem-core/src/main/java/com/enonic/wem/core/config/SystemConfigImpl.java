@@ -16,7 +16,7 @@ final class SystemConfigImpl
     @Override
     public File getHomeDir()
     {
-        return new File( this.config.getProperty( "cms.home" ) );
+        return new File( this.config.get( "cms.home" ) );
     }
 
     @Override

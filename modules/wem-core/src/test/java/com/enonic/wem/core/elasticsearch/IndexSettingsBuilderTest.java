@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.core.config.ConfigProperties;
+import com.enonic.wem.core.config.ConfigPropertiesImpl;
 
 import static org.junit.Assert.*;
 
@@ -36,7 +37,7 @@ public class IndexSettingsBuilderTest
         IndexSettingsBuilder indexSettingsBuilder = new IndexSettingsBuilder();
         indexSettingsBuilder.setIndexSettingsSourceProvider( indexSettingsSourceProvider );
 
-        ConfigProperties configProperties = new ConfigProperties();
+        ConfigProperties configProperties = new ConfigPropertiesImpl();
         configProperties.put( "cms.elasticsearch.index.myProperty", "myPropertyValue" );
         configProperties.put( "cms.elasticsearch.myNotIndexProperty", "myNotIndexPropertyValue" );
         indexSettingsBuilder.setConfigProperties( configProperties );
