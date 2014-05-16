@@ -14,7 +14,7 @@ module api.dom {
             this.el = window;
         }
 
-        getHTMLElement() {
+        getHTMLElement(): HTMLElement {
             return this.el;
         }
 
