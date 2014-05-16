@@ -142,12 +142,12 @@ public class ElasticsearchWorkspaceStore
 
         if ( value == null )
         {
-            throw new IllegalArgumentException( "Field " + BLOBKEY_FIELD_NAME + " not found on node with id " +
-                                                    query.getEntityIdAsString() +
-                                                    " in workspace " + query.getWorkspaceName() );
+            throw new RuntimeException( "Field " + BLOBKEY_FIELD_NAME + " not found on node with id " +
+                                            query.getEntityIdAsString() +
+                                            " in workspace " + query.getWorkspaceName() );
         }
 
-        return new BlobKey( (String) value );
+        return new BlobKey( value.toString() );
     }
 
     @Override
@@ -179,9 +179,9 @@ public class ElasticsearchWorkspaceStore
 
         if ( fieldValues.size() < expectedHits )
         {
-            throw new IllegalArgumentException( "Field " + BLOBKEY_FIELD_NAME + " not found on one or more nodes with ids " +
-                                                    query.getEntityIdsAsStrings() +
-                                                    " in workspace " + query.getWorkspaceName() );
+            throw new RuntimeException( "Field " + BLOBKEY_FIELD_NAME + " not found on one or more nodes with ids " +
+                                            query.getEntityIdsAsStrings() +
+                                            " in workspace " + query.getWorkspaceName() );
         }
 
         return fieldValuesToBlobKeys( fieldValues );
@@ -210,12 +210,12 @@ public class ElasticsearchWorkspaceStore
 
         if ( value == null )
         {
-            throw new IllegalArgumentException( "Field " + BLOBKEY_FIELD_NAME + " not found on node with path " +
-                                                    query.getNodePathAsString() +
-                                                    " in workspace " + query.getWorkspaceName() );
+            throw new RuntimeException( "Field " + BLOBKEY_FIELD_NAME + " not found on node with path " +
+                                            query.getNodePathAsString() +
+                                            " in workspace " + query.getWorkspaceName() );
         }
 
-        return new BlobKey( (String) value );
+        return new BlobKey( value.toString() );
     }
 
     @Override

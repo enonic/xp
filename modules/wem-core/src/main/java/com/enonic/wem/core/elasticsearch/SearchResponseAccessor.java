@@ -20,7 +20,7 @@ public class SearchResponseAccessor
 
         if ( numberOfHits > 1 )
         {
-            throw new RuntimeException( "Expected at most 1 hit, got " + numberOfHits );
+            throw new IllegalArgumentException( "Expected at most 1 hit, got " + numberOfHits );
         }
 
         return null;
