@@ -31,6 +31,7 @@ public class LifecycleServiceImplTest
             @Override
             protected void configure()
             {
+                install( new LifecycleModule() );
                 bind( LifecycleTestingBean.class ).annotatedWith( Names.named( "bean1" ) ).toInstance( bean1 );
                 bind( LifecycleTestingBean.class ).annotatedWith( Names.named( "bean2" ) ).toInstance( bean2 );
             }
