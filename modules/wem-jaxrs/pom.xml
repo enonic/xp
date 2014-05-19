@@ -11,32 +11,50 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>wem-guice</artifactId>
+  <artifactId>wem-jaxrs</artifactId>
   <packaging>bundle</packaging>
-  <name>Enonic WEM Guice</name>
+  <name>Enonic WEM JaxRs</name>
+
+  <properties>
+    <jersey.version>2.8</jersey.version>
+  </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.core</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>com.google.inject.extensions</groupId>
-      <artifactId>guice-multibindings</artifactId>
-      <version>3.0</version>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.ops4j</groupId>
-      <artifactId>peaberry</artifactId>
-      <version>1.3</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>wem-guice</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.core</groupId>
+      <artifactId>jersey-server</artifactId>
+      <version>${jersey.version}</version>
       <exclusions>
         <exclusion>
-          <artifactId>org.apache.servicemix.bundles.aopalliance</artifactId>
-          <groupId>org.apache.servicemix.bundles</groupId>
+          <artifactId>javax.inject</artifactId>
+          <groupId>org.glassfish.hk2.external</groupId>
         </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.containers</groupId>
+      <artifactId>jersey-container-servlet</artifactId>
+      <version>${jersey.version}</version>
+      <exclusions>
         <exclusion>
-          <artifactId>org.apache.servicemix.bundles.javax-inject</artifactId>
-          <groupId>org.apache.servicemix.bundles</groupId>
+          <artifactId>javax.inject</artifactId>
+          <groupId>org.glassfish.hk2.external</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -50,25 +68,16 @@
         <configuration>
           <instructions>
             <Bundle-Activator>
-              org.ops4j.peaberry.osgi.Activator
+              com.enonic.wem.jaxrs.internal.Activator
             </Bundle-Activator>
             <_exportcontents>
-              com.enonic.wem.guice.*,
-              javax.inject.*;version=1.0.0,
-              org.aopalliance.*;version=1.0.0,
-              org.ops4j.peaberry.*;version=1.3.0,
-              com.google.inject.*;version=3.0.0
+              javax.ws.rs.*
             </_exportcontents>
             <Import-Package>
-              !com.google.inject.*,
-              *
+              *;resolution:=optional
             </Import-Package>
             <Embed-Dependency>
-              guice,
-              guice-*,
-              peaberry,
-              javax.inject,
-              aopalliance
+              *;scope=compile
             </Embed-Dependency>
           </instructions>
         </configuration>

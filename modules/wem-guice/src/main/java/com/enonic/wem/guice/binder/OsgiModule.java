@@ -5,13 +5,8 @@ import com.google.inject.AbstractModule;
 public abstract class OsgiModule
     extends AbstractModule
 {
-    protected final <T> ExportBuilder<T> exportService( final Class<T> type )
+    protected final <T> ServiceBuilder<T> service( final Class<T> type )
     {
-        return new ExportBuilderImpl<>( binder(), type );
-    }
-
-    protected final <T> ImportBuilder<T> importService( final Class<T> type )
-    {
-        return new ImportBuilderImpl<>( binder(), type );
+        return new ServiceBuilderImpl<>( binder(), type );
     }
 }

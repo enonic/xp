@@ -11,8 +11,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
 
-import com.enonic.wem.core.BootEnvironment;
-
 public final class BootContextListener
     implements ServletContextListener
 {

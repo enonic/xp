@@ -16,11 +16,11 @@ public final class Activator
     {
         install( new PortalModule() );
 
-        importService( PageComponentService.class ).toSingle();
-        importService( ModuleResourcePathResolver.class ).toSingle();
-        importService( ImageDescriptorService.class ).toSingle();
-        importService( LayoutDescriptorService.class ).toSingle();
-        importService( PartDescriptorService.class ).toSingle();
-        importService( ContentService.class ).toSingle();
+        service( PageComponentService.class ).importSingle();
+        service( ModuleResourcePathResolver.class ).importSingle();
+        service( ImageDescriptorService.class ).importSingle();
+        service( LayoutDescriptorService.class ).importSingle();
+        service( PartDescriptorService.class ).importSingle();
+        service( ContentService.class ).importSingle();
     }
 }

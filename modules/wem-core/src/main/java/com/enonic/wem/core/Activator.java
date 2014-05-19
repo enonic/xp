@@ -32,14 +32,14 @@ public final class Activator
         install( new CoreModule() );
 
         // Export needed services
-        exportService( ModuleResourcePathResolver.class ).to( ModuleResourcePathResolver.class );
-        exportService( PageComponentService.class ).to( PageComponentService.class );
-        exportService( ImageDescriptorService.class ).to( ImageDescriptorService.class );
-        exportService( LayoutDescriptorService.class ).to( LayoutDescriptorService.class );
-        exportService( PartDescriptorService.class ).to( PartDescriptorService.class );
-        exportService( ContentService.class ).to( ContentService.class );
-        exportService( ConfigProperties.class ).to( ConfigProperties.class );
-        exportService( SystemConfig.class ).to( SystemConfig.class );
+        service( ModuleResourcePathResolver.class ).export();
+        service( PageComponentService.class ).export();
+        service( ImageDescriptorService.class ).export();
+        service( LayoutDescriptorService.class ).export();
+        service( PartDescriptorService.class ).export();
+        service( ContentService.class ).export();
+        service( ConfigProperties.class ).export();
+        service( SystemConfig.class ).export();
     }
 
     @Override
