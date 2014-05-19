@@ -90,9 +90,4 @@ final class JaxRsResourceConfig
     {
         getProperties().put( name, value );
     }
-
-    public void addSingleton( final Object type )
-    {
-        getSingletons().add( type );
-    }
 }

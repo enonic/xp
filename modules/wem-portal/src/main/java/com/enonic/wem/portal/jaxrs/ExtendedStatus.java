@@ -1,4 +1,4 @@
-package com.enonic.wem.core.web.jaxrs;
+package com.enonic.wem.portal.jaxrs;
 
 import java.util.Set;
 

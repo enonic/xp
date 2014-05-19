@@ -6,7 +6,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import com.enonic.wem.portal.exception.renderer.ExceptionRenderer;
-import com.enonic.wem.core.web.jaxrs.ExtendedStatus;
+import com.enonic.wem.portal.jaxrs.ExtendedStatus;
 
 @Provider
 public final class WebApplicationExceptionMapper
