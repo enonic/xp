@@ -43,16 +43,6 @@ public abstract class JaxRsServlet
         this.config.addClass( type );
     }
 
-    protected final void addSingleton( final Class<?> type )
-    {
-        addSingleton( this.injector.getInstance( type ) );
-    }
-
-    protected final void addSingleton( final Object type )
-    {
-        this.config.addSingleton( type );
-    }
-
     protected final void setFeature( final String name, final boolean flag )
     {
         this.config.setFeature( name, flag );
@@ -71,4 +61,3 @@ public abstract class JaxRsServlet
 
     protected abstract void configure();
 }
-

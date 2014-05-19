@@ -8,15 +8,15 @@ import com.enonic.wem.core.config.ConfigModule;
 import com.enonic.wem.core.content.ContentModule;
 import com.enonic.wem.core.elasticsearch.ElasticsearchModule;
 import com.enonic.wem.core.entity.EntityModule;
-import com.enonic.wem.core.event.EventModule;
 import com.enonic.wem.core.home.HomeModule;
+import com.enonic.wem.core.image.ImageModule;
 import com.enonic.wem.core.index.IndexModule;
 import com.enonic.wem.core.initializer.InitializerModule;
+import com.enonic.wem.core.lifecycle.LifecycleModule;
 import com.enonic.wem.core.module.ModuleModule;
 import com.enonic.wem.core.relationship.RelationshipModule;
 import com.enonic.wem.core.resource.ResourceModule;
 import com.enonic.wem.core.schema.SchemaModule;
-import com.enonic.wem.core.script.ScriptModule;
 
 public final class CoreModule
     extends AbstractModule
@@ -24,7 +24,6 @@ public final class CoreModule
     @Override
     protected void configure()
     {
-        install( new EventModule() );
         install( new HomeModule() );
         install( new ConfigModule() );
         install( new InitializerModule() );
@@ -38,6 +37,7 @@ public final class CoreModule
         install( new IndexModule() );
         install( new ModuleModule() );
         install( new ResourceModule() );
-        install( new ScriptModule() );
+        install( new LifecycleModule() );
+        install( new ImageModule() );
     }
 }

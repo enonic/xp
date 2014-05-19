@@ -14,5 +14,7 @@ public final class ModuleModule
     {
         bind( ModuleResourcePathResolver.class ).to( ModuleResourcePathResolverImpl.class ).in( Singleton.class );
         bind( ModuleService.class ).to( ModuleServiceImpl.class ).in( Singleton.class );
+        bind( ModuleKeyResolverService.class ).to( ModuleKeyResolverServiceImpl.class );
+        bind( ModuleResourcePathResolver.class ).to( ModuleResourcePathResolverImpl.class );
     }
 }

@@ -1,15 +1,16 @@
 package com.enonic.wem.core.module;
 
-
 import java.nio.file.Path;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.core.config.SystemConfig;
 
-public final class ModuleResourcePathResolverImpl
+@Singleton
+final class ModuleResourcePathResolverImpl
     implements ModuleResourcePathResolver
 {
     private final SystemConfig systemConfig;

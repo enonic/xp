@@ -9,7 +9,7 @@ module api.ui {
         constructor(minRange:number, maxRange?:number, rangeClass?:string) {
             this.minRange = minRange;
             this.maxRange = maxRange || 0;
-            this.rangeClass = rangeClass || (minRange + "-" + maxRange);
+            this.rangeClass = rangeClass || ("_" + minRange + "-" + maxRange);
         }
 
         getMinimumRange(): number {

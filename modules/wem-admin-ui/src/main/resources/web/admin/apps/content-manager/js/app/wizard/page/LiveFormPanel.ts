@@ -403,7 +403,7 @@ module app.wizard.page {
             }
         }
 
-        public getFrameContainer() {
+        public getFrameContainer(): api.ui.Panel {
             return this.frameContainer;
         }
 

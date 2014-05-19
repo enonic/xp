@@ -1,6 +1,7 @@
 package com.enonic.wem.core.module;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -14,6 +15,7 @@ import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.module.ModuleKeyResolver;
 import com.enonic.wem.api.module.ModuleKeys;
 
+@Singleton
 final class ModuleKeyResolverServiceImpl
     implements ModuleKeyResolverService
 {

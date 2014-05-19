@@ -66,7 +66,7 @@
   .form-fieldset-vertical();
 }
 
-.context-window {
+.context-window, ._0-240, ._240-360, ._360-540, ._540-720 {
   .form-fieldset-vertical();
 }
 
@@ -86,7 +86,12 @@
 }
 
 @media (max-width: 540px) {
+  .form {
+    margin: 0 10px;
+  }
+}
 
+._0-240, ._240-360, ._360-540 {
   .form {
     margin: 0 10px;
   }

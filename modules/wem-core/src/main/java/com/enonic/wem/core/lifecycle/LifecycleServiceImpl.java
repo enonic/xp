@@ -9,7 +9,7 @@ import com.google.inject.Binding;
 import com.google.inject.Injector;
 
 @Singleton
-public final class LifecycleServiceImpl
+final class LifecycleServiceImpl
     implements LifecycleService
 {
     private final Multimap<RunLevel, LifecycleBean> map;
