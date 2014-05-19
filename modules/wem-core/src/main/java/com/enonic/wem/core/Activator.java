@@ -9,6 +9,8 @@ import com.enonic.wem.api.content.page.PageComponentService;
 import com.enonic.wem.api.content.page.image.ImageDescriptorService;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;
 import com.enonic.wem.api.content.page.part.PartDescriptorService;
+import com.enonic.wem.core.config.ConfigProperties;
+import com.enonic.wem.core.config.SystemConfig;
 import com.enonic.wem.core.home.HomeDir;
 import com.enonic.wem.core.lifecycle.LifecycleService;
 import com.enonic.wem.core.module.ModuleResourcePathResolver;
@@ -36,6 +38,8 @@ public final class Activator
         exportService( LayoutDescriptorService.class ).to( LayoutDescriptorService.class );
         exportService( PartDescriptorService.class ).to( PartDescriptorService.class );
         exportService( ContentService.class ).to( ContentService.class );
+        exportService( ConfigProperties.class ).to( ConfigProperties.class );
+        exportService( SystemConfig.class ).to( SystemConfig.class );
     }
 
     @Override

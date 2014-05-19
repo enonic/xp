@@ -11,6 +11,7 @@ import org.ops4j.peaberry.util.TypeLiterals;
 import com.google.inject.Binder;
 import com.google.inject.TypeLiteral;
 import com.google.inject.binder.ScopedBindingBuilder;
+import com.google.inject.name.Names;
 
 final class ExportBuilderImpl<T>
     implements ExportBuilder<T>
@@ -46,7 +47,8 @@ final class ExportBuilderImpl<T>
     public ScopedBindingBuilder to( final Class<? extends T> type )
     {
         final ExportProvider<? extends T> provider = Peaberry.service( type ).attributes( this.properties ).export();
-        return this.binder.bind( this.type ).toProvider( provider );
+        System.out.println( "Binding from " + this.type + " (" + Names.named( type.getName() ) + ")" );
+        return this.binder.bind( this.type ).annotatedWith( Names.named( type.getName() ) ).toProvider( provider );
     }
 
     @Override
