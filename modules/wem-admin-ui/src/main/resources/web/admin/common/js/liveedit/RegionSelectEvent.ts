@@ -20,7 +20,7 @@ module api.liveedit {
             return this.regionPath;
         }
 
-        getPageItemView(): RegionView {
+        getRegionView(): RegionView {
             return this.pageItemView;
         }
 
