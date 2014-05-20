@@ -11,7 +11,7 @@ module LiveEdit {
 
             var html:string;
 
-            var componentInfoText:string = component.getComponentType().getName() + ': ' +  component.getComponentName();
+            var componentInfoText: string = component.getType().getShortName() + ': ' + component.getComponentName();
 
             html = 'Drop component here' +
                    '<div style="font-size: 11px;">' + componentInfoText + '</div>';
@@ -45,7 +45,7 @@ module LiveEdit {
 
             var html:string;
 
-            var componentTypeInfoText:string = regionComponent.getComponentType().getName() +': '+ regionComponent.getComponentName();
+            var componentTypeInfoText: string = regionComponent.getType().getShortName() + ': ' + regionComponent.getComponentName();
 
             html = '<div class="live-edit-empty-region-placeholder">' +
                    '    <div>Drag components here</div>' +
