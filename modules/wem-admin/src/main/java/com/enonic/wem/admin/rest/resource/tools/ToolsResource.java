@@ -6,19 +6,19 @@ import javax.ws.rs.Produces;
 
 import com.google.inject.Inject;
 
-import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.core.index.Index;
+import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.initializer.StartupInitializer;
 
 @Path("tools")
 public final class ToolsResource
 {
-    private ElasticsearchIndexService indexService;
+    private IndexService indexService;
 
     private StartupInitializer startupInitializer;
 
     @Inject
-    public void setIndexService( final ElasticsearchIndexService indexService )
+    public void setIndexService( final IndexService indexService )
     {
         this.indexService = indexService;
     }
