@@ -178,6 +178,14 @@ module app.wizard {
                     }
                 });
 
+                ResponsiveManager.onAvailableSizeChanged(this, () => {
+                    this.updateStickyToolbar()
+                });
+
+                this.onRemoved((event) => {
+                    ResponsiveManager.unAvailableSizeChanged(this);
+                });
+
                 this.constructing = false;
 
                 callback(this);
@@ -565,14 +573,12 @@ module app.wizard {
             this.getSplitPanel().addClass("toggle-live");
             this.getSplitPanel().removeClass("toggle-form prerendered");
             ResponsiveManager.fireResizeEvent();
-            this.updateStickyToolbar();
         }
 
         showWizard() {
             this.getSplitPanel().addClass("toggle-form");
             this.getSplitPanel().removeClass("toggle-live prerendered");
             ResponsiveManager.fireResizeEvent();
-            this.updateStickyToolbar();
         }
     }
 

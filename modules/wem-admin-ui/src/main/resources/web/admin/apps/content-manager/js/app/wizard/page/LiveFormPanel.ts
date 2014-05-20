@@ -27,6 +27,7 @@ module app.wizard.page {
     import DescriptorBasedPageComponent = api.content.page.DescriptorBasedPageComponent;
     import DescriptorBasedPageComponentBuilder = api.content.page.DescriptorBasedPageComponentBuilder;
     import LayoutComponent = api.content.page.layout.LayoutComponent;
+    import TextComponent = api.content.page.text.TextComponent;
     import PartComponent = api.content.page.part.PartComponent;
     import ImageComponent = api.content.page.image.ImageComponent;
 
@@ -52,12 +53,20 @@ module app.wizard.page {
     import InsertablesPanel = app.wizard.page.contextwindow.insert.InsertablesPanel;
     import RenderingMode = api.rendering.RenderingMode;
 
+    import ItemView = api.liveedit.ItemView;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import SortableStopEvent = api.liveedit.SortableStopEvent;
     import SortableUpdateEvent = api.liveedit.SortableUpdateEvent;
     import PageSelectEvent = api.liveedit.PageSelectEvent;
     import RegionSelectEvent = api.liveedit.RegionSelectEvent;
-    import ImageSetEvent = api.liveedit.ImageComponentSetImageEvent;
+    import ImageComponentSetImageEvent = api.liveedit.image.ImageComponentSetImageEvent;
+    import PageComponentSelectEvent = api.liveedit.PageComponentSelectEvent;
+    import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
+    import PageComponentAddedEvent = api.liveedit.PageComponentAddedEvent;
+    import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
+    import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
+    import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
+    import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
 
     export interface LiveFormPanelConfig {
 
@@ -113,7 +122,7 @@ module app.wizard.page {
             this.pageLoading = false;
             this.pageSkipReload = false;
 
-            this.liveEditPage = new LiveEditPageProxy(<LiveEditPageConfig>{
+            this.liveEditPage = new LiveEditPageProxy(<LiveEditPageProxyConfig>{
                 liveFormPanel: this,
                 siteTemplate: this.siteTemplate
             });
@@ -135,7 +144,7 @@ module app.wizard.page {
 
                 var uiComponent = this.liveEditPage.getComponentByPath(event.getComponentPath());
                 var command = new PageComponentSetDescriptorCommand().
-                    setComponentView(uiComponent).
+                    setItemView(uiComponent).
                     setPageRegions(this.pageRegions).
                     setComponentPath(event.getComponentPath()).
                     setDescriptor(event.getDescriptor());
@@ -155,7 +164,7 @@ module app.wizard.page {
 
                 var uiComponent = this.liveEditPage.getComponentByPath(event.getComponentPath());
                 var command = new PageComponentSetDescriptorCommand().
-                    setComponentView(uiComponent).
+                    setItemView(uiComponent).
                     setPageRegions(this.pageRegions).
                     setComponentPath(event.getComponentPath()).
                     setDescriptor(event.getDescriptor());
@@ -302,10 +311,7 @@ module app.wizard.page {
                 return deferred.promise;
             }
             else {
-                return this.liveEditPage.load(this.content).
-                    then(() => {
-                        return this.loadPageDescriptor();
-                    });
+                return this.liveEditPage.load(this.content).then(() => this.loadPageDescriptor());
             }
         }
 
@@ -316,10 +322,7 @@ module app.wizard.page {
 
             if (!this.pageSkipReload) {
                 // Reload page to show changes
-                this.liveEditPage.load(this.content).
-                    done(() => {
-                        return this.loadPageDescriptor();
-                    });
+                this.liveEditPage.load(this.content).then(() => this.loadPageDescriptor());
             }
         }
 
@@ -383,15 +386,21 @@ module app.wizard.page {
             });
         }
 
-        private saveAndReloadOnlyPageComponent(componentPath: ComponentPath, componentUI: any) {
+        private saveAndReloadOnlyPageComponent(componentPath: ComponentPath, itemView: ItemView) {
+
+            if (!componentPath) {
+                console.log("adsfasf");
+            }
+            api.util.assertNotNull(componentPath, "componentPath cannot be null");
+            api.util.assertNotNull(itemView, "componentPath cannot be null");
 
             this.pageSkipReload = true;
             this.contentWizardPanel.saveChanges().
                 done(() => {
                     this.pageSkipReload = false;
-                    componentUI.showLoadingSpinner();
+                    (<any>itemView).showLoadingSpinner();
 
-                    this.liveEditPage.loadComponent(componentPath, componentUI, this.content);
+                    this.liveEditPage.loadComponent(componentPath, itemView, this.content);
                 });
         }
 
@@ -437,7 +446,7 @@ module app.wizard.page {
                 this.inspectRegion(event.getPath());
             });
 
-            this.liveEditPage.onPageComponentSelected((event: PageComponentSelectedEvent) => {
+            this.liveEditPage.onPageComponentSelected((event: PageComponentSelectEvent) => {
 
                 if (event.isComponentEmpty()) {
                     this.contextWindow.hide();
@@ -448,29 +457,20 @@ module app.wizard.page {
                 this.inspectComponent(event.getPath());
             });
 
-            this.liveEditPage.onDeselect((event: DeselectEvent) => {
+            this.liveEditPage.onDeselect((event: PageComponentDeselectEvent) => {
 
                 this.contextWindow.show();
                 this.contextWindow.clearSelection();
             });
 
-            this.liveEditPage.onPageComponentRemoved((event: PageComponentRemovedEvent) => {
+            this.liveEditPage.onPageComponentRemoved((event: PageComponentRemoveEvent) => {
 
                 this.contextWindow.show();
 
-                if (this.pageTemplate) {
-
+                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).done(() => {
                     this.pageRegions.removeComponent(event.getPath());
                     this.contextWindow.clearSelection();
-                }
-                else {
-                    // Make the Content a Page if it wasn't before removing
-                    this.initializePageFromDefault().done(() => {
-
-                        this.pageRegions.removeComponent(event.getPath());
-                        this.contextWindow.clearSelection();
-                    });
-                }
+                });
 
             });
 
@@ -495,7 +495,7 @@ module app.wizard.page {
                         this.contextWindow.show();
                     }
 
-                    if (event.getComponentView().isSelected()) {
+                    if (event.getItemView().isSelected()) {
                         this.liveEditPage.selectComponent(event.getComponentPath());
                     }
                 }
@@ -506,11 +506,12 @@ module app.wizard.page {
 
             this.liveEditPage.onSortableUpdate((event: SortableUpdateEvent) => {
 
-                var newPath = this.pageRegions.moveComponent(event.getComponentPath(), event.getRegion(),
-                    event.getPrecedingComponent().getComponentName());
+                var precedingComponent = event.getPrecedingComponent();
+                var precedingComponentName = precedingComponent ? precedingComponent.getComponentName() : null;
+                var newPath = this.pageRegions.moveComponent(event.getComponentPath(), event.getRegion(), precedingComponentName);
 
                 if (newPath) {
-                    event.getComponentView().setComponentPath(newPath.toString());
+                    event.getComponentView().setComponentPath(newPath);
                 }
             });
 
@@ -521,20 +522,14 @@ module app.wizard.page {
                     setType(event.getType()).
                     setRegion(event.getRegion()).
                     setPrecedingComponent(event.getPrecedingComponent() ? event.getPrecedingComponent().getComponentName() : null).
-                    setComponentView(event.getElement());
+                    setComponentView(event.getComponent());
 
-                if (!this.pageTemplate) {
-                    this.initializePageFromDefault().done(() => {
-
-                        command.execute();
-                    });
-                }
-                else {
+                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).done(() => {
                     command.execute();
-                }
+                });
             });
 
-            this.liveEditPage.onImageComponentSetImage((event: ImageSetEvent) => {
+            this.liveEditPage.onImageComponentSetImage((event: ImageComponentSetImageEvent) => {
 
                 var command = new ImageComponentSetImageCommand().
                     setDefaultModels(this.defaultModels).
@@ -553,32 +548,27 @@ module app.wizard.page {
             this.liveEditPage.onPageComponentSetDescriptor((event: PageComponentSetDescriptorEvent) => {
 
                 var command = new PageComponentSetDescriptorCommand().
-                    setComponentView(event.getComponentView()).
+                    setItemView(event.getItemView()).
                     setPageRegions(this.pageRegions).
                     setComponentPath(event.getPath()).
                     setDescriptor(event.getDescriptor());
 
-                if (this.pageTemplate) {
+                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).done(() => {
                     var newComponentPath = command.execute();
-                    this.saveAndReloadOnlyPageComponent(newComponentPath, event.getComponentView());
-                }
-                else {
-                    this.initializePageFromDefault().done(() => {
-
-                        var newComponentPath = command.execute();
-                        this.saveAndReloadOnlyPageComponent(newComponentPath, event.getComponentView());
-                    });
-                }
+                    if (newComponentPath) {
+                        this.saveAndReloadOnlyPageComponent(newComponentPath, event.getItemView());
+                    }
+                });
             });
 
-            this.liveEditPage.onPageComponentDuplicated((event: PageComponentDuplicatedEvent) => {
+            this.liveEditPage.onPageComponentDuplicated((event: PageComponentDuplicateEvent) => {
 
                 var newPageComponent = new PageComponentDuplicateCommand().
                     setPageRegions(this.pageRegions).
                     setPathToSource(event.getPath()).
                     execute();
 
-                this.saveAndReloadOnlyPageComponent(newPageComponent.getPath(), event.getComponentView());
+                this.saveAndReloadOnlyPageComponent(newPageComponent.getPath(), event.getItemView());
             });
         }
 
@@ -606,17 +596,20 @@ module app.wizard.page {
             var component = this.pageRegions.getComponent(componentPath);
             api.util.assertNotNull(component, "Could not find component: " + componentPath.toString());
 
-            if (component instanceof ImageComponent) {
+            if (api.ObjectHelper.iFrameSafeInstanceOf(component, ImageComponent)) {
                 this.imageInspectionPanel.setImageComponent(<ImageComponent>component);
                 this.contextWindow.showInspectionPanel(this.imageInspectionPanel);
             }
-            else if (component instanceof PartComponent) {
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(component, PartComponent)) {
                 this.partInspectionPanel.setPartComponent(<PartComponent>component);
                 this.contextWindow.showInspectionPanel(this.partInspectionPanel);
             }
-            else if (component instanceof LayoutComponent) {
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(component, LayoutComponent)) {
                 this.layoutInspectionPanel.setLayoutComponent(<LayoutComponent>component);
                 this.contextWindow.showInspectionPanel(this.layoutInspectionPanel);
+            }
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(component, TextComponent)) {
+
             }
             else {
                 throw new Error("PageComponent cannot be selected: " + api.util.getClassName(component));

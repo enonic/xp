@@ -1,5 +1,7 @@
 module LiveEdit.component.mouseevent {
 
+    import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
+
     // Uses
     var $ = $liveEdit;
 
@@ -32,9 +34,9 @@ module LiveEdit.component.mouseevent {
         }
 
         registerGlobalListeners(): void {
-            $(window).on('clickShader.liveEdit deselectComponent.liveEdit', () => {
-                this.leaveEditMode();
-            });
+            $(window).on('clickShader.liveEdit', () => this.leaveEditMode());
+
+            PageComponentDeselectEvent.on(() => this.leaveEditMode());
         }
 
         // Override base attachClickEvent

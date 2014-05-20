@@ -1,4 +1,4 @@
-module api.liveedit {
+module api.liveedit.image {
 
     import Event2 = api.event.Event2;
     import ContentId = api.content.ContentId;
@@ -16,13 +16,13 @@ module api.liveedit {
 
         private errorMessage: string;
 
-        setImageId(id: ContentId):ImageComponentSetImageEvent {
+        setImageId(id: ContentId): ImageComponentSetImageEvent {
             this.id = id;
             return this;
         }
 
-        setComponentPath(path: string): ImageComponentSetImageEvent {
-            this.path = ComponentPath.fromString(path);
+        setComponentPath(path: ComponentPath): ImageComponentSetImageEvent {
+            this.path = path;
             return this;
         }
 

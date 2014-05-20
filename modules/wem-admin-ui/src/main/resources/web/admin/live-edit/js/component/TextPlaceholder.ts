@@ -1,11 +1,14 @@
 module LiveEdit.component {
+
+    import LayoutItemType = api.liveedit.layout.LayoutItemType;
+
     export class TextPlaceholder extends ComponentPlaceholder {
 
         private clickToEditLink: api.dom.AEl;
 
         constructor() {
             this.setComponentType(new ComponentType(Type.TEXT));
-            super();
+            super(LayoutItemType.get());
 
             this.getEl().setData('live-edit-type', 'text');
 
@@ -49,6 +52,6 @@ module LiveEdit.component {
             }
 
             super.onDeselect();
-         }
+        }
     }
 }

@@ -3,6 +3,7 @@ module api.content.inputtype.image {
     import ContentSummary = api.content.ContentSummary;
     import ComboBoxConfig = api.ui.selector.combobox.ComboBoxConfig;
     import ComboBox = api.ui.selector.combobox.ComboBox;
+    import ResponsiveManager = api.ui.ResponsiveManager;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import LoadingDataEvent = api.util.loader.event.LoadingDataEvent;
 
@@ -78,9 +79,14 @@ module api.content.inputtype.image {
                 this.createImageContent(event.getUploadedItem());
             });
 
+            ResponsiveManager.onAvailableSizeChanged(this, () => {
+                this.availableSizeChanged();
+            });
+
             // Don't forget to clean up the modal dialog on remove
             this.onRemoved((event) => {
                 this.uploadDialog.remove();
+                ResponsiveManager.unAvailableSizeChanged(this);
             });
         }
 

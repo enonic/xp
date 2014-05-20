@@ -1,14 +1,15 @@
 module LiveEdit.component {
 
-    import ComponentSelectEvent = api.liveedit.PageComponentSelectEvent;
+    import ItemType = api.liveedit.ItemType;
+    import PageComponentSelectEvent = api.liveedit.PageComponentSelectEvent;
 
     export class ComponentPlaceholder extends Component {
-        constructor(className: string = 'live-edit-empty-component') {
-            super();
+        constructor(type: ItemType, className: string = 'live-edit-empty-component') {
+            super(type);
             this.addClass(className);
             this.getEl().setData('live-edit-empty-component', 'true');
 
-            ComponentSelectEvent.on((event: ComponentSelectEvent) => this.onSelect());
+            PageComponentSelectEvent.on(() => this.onSelect());
 
             $liveEdit(window).on('componentDeselect.liveEdit', (event, name?)=> {
                 this.onDeselect();
@@ -29,7 +30,9 @@ module LiveEdit.component {
             } else {
                 var emptyComponentIcon = new api.dom.DivEl();
                 emptyComponentIcon.addClass('live-edit-empty-component-icon');
-                placeholder = new ComponentPlaceholder();
+                var typeAsString: string = LiveEdit.component.Type[type];
+                typeAsString = typeAsString.toLowerCase();
+                placeholder = new ComponentPlaceholder(ItemType.byShortName(typeAsString));
                 placeholder.appendChild(emptyComponentIcon);
             }
             return placeholder;

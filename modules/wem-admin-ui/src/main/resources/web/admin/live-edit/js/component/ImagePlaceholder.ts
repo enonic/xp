@@ -2,7 +2,8 @@ module LiveEdit.component {
 
     import ImageUploadedEvent = api.liveedit.ImageUploadedEvent;
     import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
-    import ImageSetEvent = api.liveedit.ImageComponentSetImageEvent
+    import ImageComponentSetImageEvent = api.liveedit.image.ImageComponentSetImageEvent
+    import ImageItemType = api.liveedit.image.ImageItemType;
 
     export class ImagePlaceholder extends ComponentPlaceholder {
 
@@ -11,7 +12,7 @@ module LiveEdit.component {
 
         constructor() {
             this.setComponentType(new ComponentType(Type.IMAGE));
-            super();
+            super(ImageItemType.get());
 
             $(this.getHTMLElement()).on('click', 'input', (e) => {
                 $(e.currentTarget).focus();
@@ -47,7 +48,7 @@ module LiveEdit.component {
                 this.uploadButton.hide();
                 this.showLoadingSpinner();
 
-                new ImageSetEvent().
+                new ImageComponentSetImageEvent().
                     setImageId(event.getOption().displayValue.getContentId()).
                     setComponentPath(this.getComponentPath()).
                     setComponentView(this).
@@ -94,7 +95,7 @@ module LiveEdit.component {
 
                 }).then((createdContent: api.content.Content) => {
 
-                    new ImageSetEvent().
+                    new ImageComponentSetImageEvent().
                         setImageId(createdContent.getContentId()).
                         setComponentPath(this.getComponentPath()).
                         setComponentView(this).
@@ -103,7 +104,7 @@ module LiveEdit.component {
 
                 }).catch((reason) => {
 
-                    new ImageSetEvent().
+                    new ImageComponentSetImageEvent().
                         setErrorMessage(reason.message).
                         fire();
 

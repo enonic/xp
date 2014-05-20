@@ -11,6 +11,8 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import SortableStopEvent = api.liveedit.SortableStopEvent;
     import SortableUpdateEvent = api.liveedit.SortableUpdateEvent;
+    import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
+    import PageComponentAddedEvent = api.liveedit.PageComponentAddedEvent;
 
     // Uses
     var $ = $liveEdit;
@@ -82,7 +84,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 //        });
     }
 
-    function updateScrollSensitivity(selector): void{
+    function updateScrollSensitivity(selector): void {
         var scrollSensitivity = calculateScrollSensitivity();
         $(selector).sortable('option', 'scrollSensitivity', scrollSensitivity);
     }
@@ -228,8 +230,12 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             // Remove it now so the auto selection is properly aligned.
             removePaddingFromLayoutComponent();
 
-            $(window).trigger('componentAdded.liveEdit',
-                [emptyComponent, emptyComponent.getRegionName(), emptyComponent.getPrecedingComponentPath()]);
+            var region = emptyComponent.getParentRegion();
+            new PageComponentAddedEvent().
+                setComponent(emptyComponent).
+                setRegion(region.getRegionName()).
+                setPrecedingComponent(emptyComponent.getPrecedingComponentPath()).
+                fire();
             LiveEdit.component.Selection.handleSelect(emptyComponent.getHTMLElement());
         }
     }
@@ -249,7 +255,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     function registerGlobalListeners(): void {
-        $(window).on('deselectComponent.liveEdit', () => {
+        PageComponentDeselectEvent.on(() => {
             if (LiveEdit.DomHelper.supportsTouch() && !_isDragging) {
                 disableDragDrop();
             }

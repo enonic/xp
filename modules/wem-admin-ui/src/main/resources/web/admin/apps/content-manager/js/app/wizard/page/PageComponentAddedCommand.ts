@@ -65,7 +65,7 @@ module app.wizard.page {
 
             var builder = this.type.newComponentBuilder();
             builder.setName(componentName);
-            if (builder instanceof DescriptorBasedPageComponentBuilder) {
+            if (api.ObjectHelper.iFrameSafeInstanceOf(builder, DescriptorBasedPageComponentBuilder)) {
                 (<DescriptorBasedPageComponentBuilder>builder).setConfig(new RootDataSet());
             }
             var component = builder.build();

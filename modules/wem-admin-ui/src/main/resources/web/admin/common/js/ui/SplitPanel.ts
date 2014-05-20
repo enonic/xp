@@ -223,6 +223,12 @@ module api.ui {
             ResponsiveManager.onAvailableSizeChanged(this);
             ResponsiveManager.onAvailableSizeChanged(this.firstPanel);
             ResponsiveManager.onAvailableSizeChanged(this.secondPanel);
+
+            this.onRemoved((event) => {
+                ResponsiveManager.unAvailableSizeChanged(this);
+                ResponsiveManager.unAvailableSizeChanged(this.firstPanel);
+                ResponsiveManager.unAvailableSizeChanged(this.secondPanel);
+            });
         }
 
         private startDrag() {
@@ -251,7 +257,6 @@ module api.ui {
 
             this.isFirstPanelFixed() ? this.setFirstPanelSize(fixedPanelSize) : this.setSecondPanelSize(fixedPanelSize);
             this.distribute();
-            ResponsiveManager.fireResizeEvent();
         }
 
         private splitterWithinBoundaries(offset: number) {

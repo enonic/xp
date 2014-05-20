@@ -38,5 +38,11 @@ module api.ui {
             customEvent.initEvent('availablesizechange', false, true); // No bubbling
             ResponsiveManager.window.getHTMLElement().dispatchEvent(customEvent);
         }
+
+        static getWindow(): api.dom.Window {
+            return ResponsiveManager.window;
+        }
     }
+
+    ResponsiveManager.onAvailableSizeChanged(api.dom.Body.get());
 }

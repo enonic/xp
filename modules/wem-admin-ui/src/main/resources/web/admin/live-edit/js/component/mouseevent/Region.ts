@@ -1,5 +1,6 @@
 module LiveEdit.component.mouseevent {
 
+    import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
     import SortableUpdateEvent = api.liveedit.SortableUpdateEvent;
 
     // Uses
@@ -23,14 +24,15 @@ module LiveEdit.component.mouseevent {
         private registerGlobalListeners():void {
 
             // fixme: this does not belongs here.
-            $(window).on('sortableOver.liveEdit componentRemoved.liveEdit', () => {
+            $(window).on('sortableOver.liveEdit', () => {
                 LiveEdit.PlaceholderCreator.renderEmptyRegionPlaceholders();
             });
 
             // fixme: this does not belongs here.
-            SortableUpdateEvent.on(() => {
-                LiveEdit.PlaceholderCreator.renderEmptyRegionPlaceholders();
-            });
+            PageComponentRemoveEvent.on(() => LiveEdit.PlaceholderCreator.renderEmptyRegionPlaceholders());
+
+            // fixme: this does not belongs here.
+            SortableUpdateEvent.on(() => LiveEdit.PlaceholderCreator.renderEmptyRegionPlaceholders());
         }
 
     }
