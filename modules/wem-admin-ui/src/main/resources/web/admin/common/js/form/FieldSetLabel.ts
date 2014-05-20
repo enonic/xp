@@ -10,6 +10,7 @@ module api.form {
             this.fieldSet = fieldSet;
 
             this.getEl().setInnerHtml(this.fieldSet.getLabel());
+            this.getEl().setAttribute("title", this.fieldSet.getLabel());
         }
     }
 }

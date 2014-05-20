@@ -30,29 +30,20 @@
       .form-panel {
         width: 100% !important;
       }
-      .splitter, .live-form-panel {
+      & > .splitter, .live-form-panel {
         display: none;
       }
     }
 
     &.toggle-live {
-
-      @media (max-width: 960px) {
-        .split-screen();
-      }
-
-      ._0-240, ._240-360, ._360-540, ._540-720, ._720-960 {
-        .split-screen();
+      &._0-240, &._240-360, &._360-540, &._540-720, &._720-960 {
+        .live-form-panel {
+          width: 100% !important;
+        }
+        & > .splitter, .form-panel {
+          display: none;
+        }
       }
     }
-  }
-}
-
-.split-screen() {
-  .live-form-panel {
-    width: 100% !important;
-  }
-  .splitter, .form-panel {
-    display: none;
   }
 }

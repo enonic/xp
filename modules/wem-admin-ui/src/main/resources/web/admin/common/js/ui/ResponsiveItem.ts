@@ -57,9 +57,8 @@ module api.ui {
                 this.element.getEl().removeClass(this.rangeSize.getRangeClass());
                 this.fitToRange(); // update rangeSize
                 this.element.getEl().addClass(this.rangeSize.getRangeClass());
-
-                this.handle();     // Additional handler
             }
+            this.handle();         // Additional handler
         }
     }
 }
