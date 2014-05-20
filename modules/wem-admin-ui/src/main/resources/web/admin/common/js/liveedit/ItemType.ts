@@ -22,6 +22,7 @@ module api.liveedit {
         }
 
         toPageComponentType(): PageComponentType {
+            api.util.assert(this.isPageComponentType(), "Not support when ItemType is not a PageComponentType");
             return PageComponentType.byShortName(this.shortName);
         }
 
@@ -41,7 +42,9 @@ module api.liveedit {
         }
 
         static byShortName(shortName: string): ItemType {
-            return ItemType.shortNameToInstance[shortName];
+            var itemType = ItemType.shortNameToInstance[shortName];
+            api.util.assertNotNull(itemType, "Unknown ItemType: " + shortName);
+            return  itemType;
         }
 
         static fromJQuery(element: JQuery): ItemType {
