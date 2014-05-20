@@ -18,6 +18,7 @@ import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
 import com.enonic.wem.core.config.ConfigProperties;
+import com.enonic.wem.core.initializer.StartupInitializer;
 import com.enonic.wem.guice.GuiceActivator;
 
 public final class Activator
@@ -47,6 +48,7 @@ public final class Activator
         service( ImageDescriptorService.class ).importSingle();
         service( LayoutDescriptorService.class ).importSingle();
         service( PartDescriptorService.class ).importSingle();
+        service( StartupInitializer.class ).importSingle();
 
         // Export services
         service( ResourceServlet.class ).attribute( "alias", "/" ).export();

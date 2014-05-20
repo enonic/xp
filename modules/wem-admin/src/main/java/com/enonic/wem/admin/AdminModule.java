@@ -31,6 +31,7 @@ import com.enonic.wem.admin.rest.resource.schema.content.ContentTypeResource;
 import com.enonic.wem.admin.rest.resource.schema.mixin.MixinResource;
 import com.enonic.wem.admin.rest.resource.schema.relationship.RelationshipTypeResource;
 import com.enonic.wem.admin.rest.resource.status.StatusResource;
+import com.enonic.wem.admin.rest.resource.tools.ToolsResource;
 import com.enonic.wem.admin.rest.resource.ui.BackgroundImageResource;
 
 public final class AdminModule
@@ -47,7 +48,7 @@ public final class AdminModule
         bind( ContentAttachmentResource.class ).in( Singleton.class );
         bind( BlobResource.class ).in( Singleton.class );
         bind( AuthResource.class ).in( Singleton.class );
-        // bind( ToolsResource.class ).in( Singleton.class );
+        bind( ToolsResource.class ).in( Singleton.class );
         bind( StatusResource.class ).in( Singleton.class );
 
         bind( RelationshipResource.class ).in( Singleton.class );

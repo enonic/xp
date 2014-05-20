@@ -12,7 +12,6 @@ public final class ModuleModule
     @Override
     protected void configure()
     {
-        bind( ModuleResourcePathResolver.class ).to( ModuleResourcePathResolverImpl.class ).in( Singleton.class );
         bind( ModuleService.class ).to( ModuleServiceImpl.class ).in( Singleton.class );
         bind( ModuleKeyResolverService.class ).to( ModuleKeyResolverServiceImpl.class );
         bind( ModuleResourcePathResolver.class ).to( ModuleResourcePathResolverImpl.class );
