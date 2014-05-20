@@ -30,13 +30,13 @@ final class AppHtmlHandler
         throws ServletException, IOException
     {
         final String app = req.getParameter( "app" );
-        render( app, resp );
+        render( app, req, resp );
     }
 
-    private void render( final String app, final HttpServletResponse resp )
+    private void render( final String app, final HttpServletRequest req, final HttpServletResponse resp )
         throws IOException
     {
-        final String baseUrl = ServletRequestUrlHelper.createUrl( "" );
+        final String baseUrl = ServletRequestUrlHelper.createUrl( req, "" );
 
         final Map<String, Object> model = Maps.newHashMap();
         model.put( "app", app != null ? app : DEFAULT_APP_NAME );

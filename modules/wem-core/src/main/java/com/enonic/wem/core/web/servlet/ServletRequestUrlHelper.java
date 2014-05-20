@@ -15,7 +15,7 @@ public final class ServletRequestUrlHelper
         return createUrl( ServletRequestHolder.getRequest(), path );
     }
 
-    private static String createUrl( final HttpServletRequest req, final String path )
+    public static String createUrl( final HttpServletRequest req, final String path )
     {
         final StringBuilder str = new StringBuilder();
 

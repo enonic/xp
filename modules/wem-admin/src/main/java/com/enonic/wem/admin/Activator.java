@@ -1,6 +1,7 @@
 package com.enonic.wem.admin;
 
 import com.enonic.wem.admin.app.MainServlet;
+import com.enonic.wem.admin.rest.RestServlet;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.attachment.AttachmentService;
@@ -53,5 +54,6 @@ public final class Activator
 
         // Export services
         service( MainServlet.class ).attribute( "alias", "/*" ).export();
+        service( RestServlet.class ).attribute( "alias", "/admin/rest/*" ).export();
     }
 }
