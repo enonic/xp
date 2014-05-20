@@ -4,6 +4,8 @@
 
 ///<reference path='ItemType.ts' />
 ///<reference path='RegionItemType.ts' />
+///<reference path='PageItemType.ts' />
+///<reference path='ContentItemType.ts' />
 ///<reference path='ItemView.ts' />
 ///<reference path='RegionView.ts' />
 ///<reference path='PageView.ts' />
