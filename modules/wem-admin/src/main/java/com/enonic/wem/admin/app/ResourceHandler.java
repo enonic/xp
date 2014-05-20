@@ -1,22 +1,25 @@
-package com.enonic.wem.admin;
+package com.enonic.wem.admin.app;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.inject.Singleton;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.io.ByteStreams;
 
-@Singleton
-public final class ResourceServlet
-    extends HttpServlet
+final class ResourceHandler
 {
-    @Override
-    protected void doGet( final HttpServletRequest req, final HttpServletResponse res )
+    private final ServletContext servletContext;
+
+    public ResourceHandler( final ServletContext servletContext )
+    {
+        this.servletContext = servletContext;
+    }
+
+    public void handle( final HttpServletRequest req, final HttpServletResponse res )
         throws ServletException, IOException
     {
         final String path = req.getRequestURI().substring( req.getContextPath().length() );
@@ -35,7 +38,7 @@ public final class ResourceServlet
     private void serveResource( final HttpServletResponse res, final String path, final InputStream in )
         throws IOException
     {
-        res.setContentType( getServletContext().getMimeType( path ) );
+        res.setContentType( this.servletContext.getMimeType( path ) );
         ByteStreams.copy( in, res.getOutputStream() );
     }
 
@@ -46,7 +49,7 @@ public final class ResourceServlet
             return findResource( path + "index.html" );
         }
 
-        final InputStream in = getServletContext().getResourceAsStream( path );
+        final InputStream in = this.servletContext.getResourceAsStream( path );
         if ( in != null )
         {
             return in;

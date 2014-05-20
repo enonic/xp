@@ -23,7 +23,6 @@ public final class DefaultExceptionMapper
     public Response toResponse( final Throwable cause )
     {
         LOG.warn( cause.getMessage(), cause );
-        cause.printStackTrace();
         return Response.status( Response.Status.INTERNAL_SERVER_ERROR ).type( MediaType.APPLICATION_JSON_TYPE ).entity(
             new ErrorJson( cause.getMessage() ) ).build();
     }
