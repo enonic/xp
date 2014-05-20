@@ -1,6 +1,8 @@
 module LiveEdit.component {
 
     import ItemType = api.liveedit.ItemType;
+    import PageItemType = api.liveedit.PageItemType;
+    import RegionItemType = api.liveedit.RegionItemType;
 
     export interface ElementDimensions {
         top: number;
@@ -35,12 +37,14 @@ module LiveEdit.component {
         }
 
         getComponentName(): string {
-            if (this.getComponentType().getType() == Type.PAGE) {
+            if (this.getType() == PageItemType.get()) {
                 return content ? content.getDisplayName() : '[No Name]';
-            } else if (this.getComponentType().getType() == Type.REGION) {
+            }
+            else if (this.getType() == RegionItemType.get()) {
                 var regionPath = this.getEl().getData('live-edit-region');
                 return regionPath ? regionPath.substring(regionPath.lastIndexOf('/') + 1) : '[No Name]';
-            } else {
+            }
+            else {
                 var path = this.getComponentPath();
                 return path ? path.getComponentName().toString() : '[No Name]';
             }
@@ -69,10 +73,6 @@ module LiveEdit.component {
 
         setSelectedAsParent(value: boolean) {
             this.selectedAsParent = value;
-        }
-
-        isSelectedAsParent(): boolean {
-            return this.selectedAsParent;
         }
 
         private resolveComponentTypeEnum(): LiveEdit.component.Type {
