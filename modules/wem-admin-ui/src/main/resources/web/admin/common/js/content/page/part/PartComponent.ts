@@ -16,7 +16,7 @@ module api.content.page.part {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof PartComponent)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, PartComponent)) {
                 return false;
             }
 
