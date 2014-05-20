@@ -6,28 +6,13 @@ import javax.ws.rs.Produces;
 
 import com.google.inject.Inject;
 
-import com.enonic.wem.core.index.Index;
-import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.initializer.StartupInitializer;
 
 @Path("tools")
 public final class ToolsResource
 {
-    private IndexService indexService;
-
-    private StartupInitializer startupInitializer;
-
     @Inject
-    public void setIndexService( final IndexService indexService )
-    {
-        this.indexService = indexService;
-    }
-
-    @Inject
-    public void setStartupInitializer( final StartupInitializer startupInitializer )
-    {
-        this.startupInitializer = startupInitializer;
-    }
+    protected StartupInitializer startupInitializer;
 
     @GET
     @Path("cleanData")
@@ -35,14 +20,7 @@ public final class ToolsResource
     public String cleanData()
         throws Exception
     {
-        this.indexService.deleteIndex( Index.NODB );
-        this.indexService.createIndex( Index.NODB );
-        this.indexService.deleteIndex( Index.STORE );
-        this.indexService.createIndex( Index.STORE );
-        this.indexService.deleteIndex( Index.WORKSPACE );
-        this.indexService.createIndex( Index.WORKSPACE );
-
-        this.startupInitializer.initialize();
+        this.startupInitializer.initialize( true );
         return "Done.";
     }
 }

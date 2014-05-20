@@ -9,6 +9,6 @@ public final class InitializerModule
     @Override
     protected void configure()
     {
-        bind( StartupInitializer.class ).in( Scopes.SINGLETON );
+        bind( StartupInitializer.class ).to( StartupInitializerImpl.class ).in( Scopes.SINGLETON );
     }
 }
