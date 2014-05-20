@@ -53,9 +53,10 @@ module api.app.wizard {
         private doSaveAndClose() {
 
             this.close();
-            this.wizardPanel.saveChanges().done(() => {
-                this.wizardPanel.close(true);
-            });
+            this.wizardPanel.saveChanges().
+                then(() => this.wizardPanel.close(true)).
+                catch((reason: any) => api.notify.showError(reason.toString())).
+                done();
         }
 
         private doCloseWithoutSaveCheck() {

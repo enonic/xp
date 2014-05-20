@@ -459,7 +459,10 @@ module app.wizard {
                     new api.content.ContentUpdatedEvent(content).fire();
                     api.notify.showFeedback('Content was updated!');
 
-                    this.liveFormPanel.contentSaved();
+                    if (this.liveFormPanel) {
+                        this.liveFormPanel.contentSaved();
+                    }
+
                     return content;
                 });
         }

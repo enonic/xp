@@ -11,7 +11,10 @@ module app.wizard.action {
             this.onExecuted(() => {
                     if (wizard.hasUnsavedChanges()) {
                         wizard.setPersistAsDraft(false);
-                        wizard.updatePersistedItem().done(this.showPreviewDialog);
+                        wizard.updatePersistedItem().
+                            then(this.showPreviewDialog).
+                            catch((reason: any) => api.notify.showError(reason.toString())).
+                            done();
                     } else {
                         this.showPreviewDialog(wizard.getPersistedItem());
                     }
