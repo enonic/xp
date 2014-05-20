@@ -24,7 +24,7 @@ module LiveEdit.ui.contextmenu.menuitem {
 
         private onDuplicateComponent() {
             var component = this.menu.selectedComponent;
-            var placeholder = LiveEdit.component.ComponentPlaceholder.fromComponent(LiveEdit.component.Type[component.getComponentType().getName().toUpperCase()]);
+            var placeholder = LiveEdit.component.ComponentPlaceholder.fromComponent(LiveEdit.component.Type[component.getType().getShortName().toUpperCase()]);
             placeholder.getEl().insertAfterEl(component);
             placeholder.init();
             placeholder.showLoadingSpinner();
