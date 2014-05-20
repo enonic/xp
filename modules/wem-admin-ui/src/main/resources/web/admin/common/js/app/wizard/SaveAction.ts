@@ -10,9 +10,9 @@ module api.app.wizard {
                 this.setEnabled(false);
 
                 wizardPanel.saveChanges().
-                    finally(() => {
-                        this.setEnabled(true);
-                    });
+                    catch((reason: any) => api.notify.showError(reason.toString())).
+                    finally(() => this.setEnabled(true)).
+                    done();
             });
         }
     }

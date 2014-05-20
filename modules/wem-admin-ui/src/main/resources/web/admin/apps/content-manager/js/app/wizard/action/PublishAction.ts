@@ -14,9 +14,9 @@ module app.wizard.action {
                 this.setEnabled(false);
 
                 wizard.updatePersistedItem().
-                    finally(()=> {
-                        this.setEnabled(true);
-                    });
+                    catch((reason: any) => api.notify.showError(reason.toString())).
+                    finally(() => this.setEnabled(true)).
+                    done();
             });
         }
     }

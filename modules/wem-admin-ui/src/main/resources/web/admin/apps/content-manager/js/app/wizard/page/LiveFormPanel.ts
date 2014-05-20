@@ -380,10 +380,13 @@ module app.wizard.page {
 
         private saveAndReloadPage() {
             this.pageSkipReload = true;
-            this.contentWizardPanel.saveChanges().done(() => {
-                this.pageSkipReload = false;
-                this.liveEditPage.load(this.content);
-            });
+            this.contentWizardPanel.saveChanges().
+                then(() => {
+                    this.pageSkipReload = false;
+                    this.liveEditPage.load(this.content);
+                }).
+                catch((reason: any) => api.notify.showError(reason.toString())).
+                done();
         }
 
         private saveAndReloadOnlyPageComponent(componentPath: ComponentPath, itemView: ItemView) {
@@ -396,12 +399,14 @@ module app.wizard.page {
 
             this.pageSkipReload = true;
             this.contentWizardPanel.saveChanges().
-                done(() => {
+                then(() => {
                     this.pageSkipReload = false;
                     (<any>itemView).showLoadingSpinner();
 
                     this.liveEditPage.loadComponent(componentPath, itemView, this.content);
-                });
+                }).
+                catch((reason: any) => api.notify.showError(reason.toString())).
+                done();
         }
 
         updateFrameContainerSize(contextWindowPinned: boolean, contextWindowWidth?: number) {
