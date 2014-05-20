@@ -1,6 +1,7 @@
 .wizard-step-form {
 
-  width: @form-width;
+  max-width: @form-width;
+  overflow: visible;
 
   h3 {
     margin-top: 20px;
@@ -9,15 +10,8 @@
 
 }
 
-@media (max-width: 720px) {
-  .wizard-step-form-size();
-}
-
 ._0-240, ._240-360, ._360-540, ._540-720  {
-  .wizard-step-form-size();
-}
-
-.wizard-step-form-size() {
-  width: 100%;
-  min-width: 300px;
+  .wizard-step-form {
+    width: 100%;
+  }
 }

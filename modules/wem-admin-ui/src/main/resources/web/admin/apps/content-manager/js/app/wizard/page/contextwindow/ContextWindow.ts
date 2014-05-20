@@ -88,8 +88,12 @@ module app.wizard.page.contextwindow {
                 this.updateFrameSize();
             });
 
-            ResponsiveManager.onAvailableSizeChanged(this, this.updateFrameSize.bind(this));
-            ResponsiveManager.onAvailableSizeChanged(this.liveFormPanel, this.updateFrameSize.bind(this));
+            ResponsiveManager.onAvailableSizeChanged(this, () => {
+                this.updateFrameSize();
+            });
+            ResponsiveManager.onAvailableSizeChanged(this.liveFormPanel, () => {
+                this.updateFrameSize();
+            });
 
             this.appendChild(this.splitter);
             this.addItem("Insert", this.insertablesPanel);
@@ -104,9 +108,15 @@ module app.wizard.page.contextwindow {
                     this.updateFrameSize();
                 }
             });
+
             this.onRendered(() => {
                 this.initializeResizable();
-            })
+            });
+
+            this.onRemoved((event) => {
+                ResponsiveManager.unAvailableSizeChanged(this);
+                ResponsiveManager.unAvailableSizeChanged(this.liveFormPanel);
+            });
 
         }
 
@@ -127,14 +137,17 @@ module app.wizard.page.contextwindow {
             this.splitter.onMouseDown((e: MouseEvent) => {
                 e.preventDefault();
                 initialPos = e.clientX;
+                splitterPosition = e.clientX;
                 this.startDrag(dragListener);
             });
 
             this.mask.onMouseUp((e: MouseEvent) => {
                 this.actualWidth = this.getEl().getWidth() + initialPos - splitterPosition;
                 this.stopDrag(dragListener);
-                this.throwResizeEvent();
-            })
+                ResponsiveManager.fireResizeEvent();
+            });
+
+
         }
 
         private splitterWithinBoundaries(offset: number) {
@@ -150,17 +163,10 @@ module app.wizard.page.contextwindow {
         }
 
         private stopDrag(dragListener: {(e: MouseEvent):void}) {
+            this.getEl().setWidthPx(this.actualWidth);
             this.mask.unMouseMove(dragListener);
             this.mask.hide();
-            this.getEl().setWidthPx(this.actualWidth);
             this.removeChild(this.ghostDragger);
-            ResponsiveManager.fireResizeEvent();
-        }
-
-        private throwResizeEvent() {
-            var event = document.createEvent('Event');
-            event.initEvent('resize', true, true);
-            this.getHTMLElement().dispatchEvent(event);
         }
 
         disable() {
@@ -217,7 +223,9 @@ module app.wizard.page.contextwindow {
         private updateFrameSize() {
             this.liveFormPanel.updateFrameContainerSize((this.pinned && this.isEnabled()), this.actualWidth || this.getEl().getWidth());
             if (this.dynamicPinning) {
-                var pinningRequired: boolean = this.liveFormPanel.getEl().getWidth() > 1380;
+                var liveFormPanelWidth = this.liveFormPanel.getEl().getWidth();
+
+                var pinningRequired: boolean = liveFormPanelWidth > 1380 && (liveFormPanelWidth - this.actualWidth) > 960;
                 if (pinningRequired != this.isPinned()) {
                     this.setPinned(pinningRequired);
                     this.pinButton.setActive(pinningRequired);
