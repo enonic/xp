@@ -16,19 +16,12 @@ module LiveEdit.component {
         elementDimensions: ElementDimensions;
         selectedAsParent: boolean;
 
-        private mask: api.ui.LoadMask;
-
         constructor(type: ItemType, element?: HTMLElement, dummy?: boolean) {
             this.selectedAsParent = false;
-            super(type, element);
+            super(type, element, dummy);
             this.setElementDimensions(this.getDimensionsFromElement());
             if (!this.componentType) {
                 this.setComponentType(new LiveEdit.component.ComponentType(this.resolveComponentTypeEnum()));
-            }
-
-            if (!dummy) {
-                this.mask = new api.ui.LoadMask(this);
-                this.appendChild(this.mask);
             }
         }
 
@@ -91,14 +84,6 @@ module LiveEdit.component {
 
             var type = this.getEl().getData('liveEditType');
             return type;
-        }
-
-        showLoadingSpinner() {
-            this.mask.show();
-        }
-
-        hideLoadingSpinner() {
-            this.mask.hide();
         }
 
         private getDimensionsFromElement(): ElementDimensions {

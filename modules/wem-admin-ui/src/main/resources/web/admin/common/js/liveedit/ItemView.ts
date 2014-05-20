@@ -6,7 +6,9 @@ module api.liveedit {
 
         private type: ItemType;
 
-        constructor(type: ItemType, element?: HTMLElement) {
+        private loadMask: api.ui.LoadMask;
+
+        constructor(type: ItemType, element?: HTMLElement, dummy?: boolean) {
 
             this.type = type;
 
@@ -20,6 +22,10 @@ module api.liveedit {
             }
             super(props);
 
+            if (!dummy) {
+                this.loadMask = new api.ui.LoadMask(this);
+                this.appendChild(this.loadMask);
+            }
         }
 
         getType(): ItemType {
@@ -74,6 +80,14 @@ module api.liveedit {
 
             var asString = previousElement.getEl().getData('live-edit-component');
             return api.content.page.ComponentPath.fromString(asString);
+        }
+
+        showLoadingSpinner() {
+            this.loadMask.show();
+        }
+
+        hideLoadingSpinner() {
+            this.loadMask.hide();
         }
     }
 }
