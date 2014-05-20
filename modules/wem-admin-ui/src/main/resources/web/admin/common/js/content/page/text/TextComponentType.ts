@@ -5,7 +5,7 @@ module api.content.page.text {
     export class TextComponentType extends PageComponentType {
 
         constructor() {
-            super("layout");
+            super("text");
         }
 
         newComponentBuilder(): TextComponentBuilder {
