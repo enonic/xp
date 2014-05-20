@@ -1,5 +1,7 @@
 module LiveEdit.ui.contextmenu.menuitem {
 
+    import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
+
     // Uses
     var $ = $liveEdit;
 
@@ -25,7 +27,7 @@ module LiveEdit.ui.contextmenu.menuitem {
 
             $('[data-live-edit-type]', region).remove();
 
-            $(window).trigger('componentRemoved.liveEdit', [this.menu.selectedComponent]);
+            new PageComponentRemoveEvent(this.menu.selectedComponent.getComponentPath()).fire();
         }
     }
 }

@@ -10,10 +10,10 @@ module api.liveedit {
 
         private pageItemView: ItemView;
 
-        constructor(path: ComponentPath, componentView: ItemView) {
+        constructor(path: ComponentPath, itemView: ItemView) {
             super();
             this.path = path;
-            this.pageItemView = componentView;
+            this.pageItemView = itemView;
         }
 
         getPath(): ComponentPath {
@@ -22,6 +22,10 @@ module api.liveedit {
 
         getItemView(): ItemView {
             return this.pageItemView;
+        }
+
+        isComponentEmpty(): boolean {
+            return this.pageItemView.isEmpty();
         }
 
         static on(handler: (event: PageComponentSelectEvent) => void, contextWindow: Window = window) {

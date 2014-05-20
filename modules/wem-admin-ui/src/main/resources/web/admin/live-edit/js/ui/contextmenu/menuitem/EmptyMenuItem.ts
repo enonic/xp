@@ -1,5 +1,8 @@
 module LiveEdit.ui.contextmenu.menuitem {
 
+    import ComponentPath = api.content.page.ComponentPath;
+    import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
+
     // Uses
     var $ = $liveEdit;
 
@@ -24,8 +27,7 @@ module LiveEdit.ui.contextmenu.menuitem {
             var component = LiveEdit.component.Component.fromJQuery(componentEl, false);
 
             LiveEdit.component.Selection.deselect();
-
-            $(window).trigger('componentReset.liveEdit', [selectedComponent]);
+            new PageComponentResetEvent(selectedComponent.getComponentPath()).fire();
 
             var type = selectedComponent.getComponentType().getType();
             var emptyComponent = LiveEdit.component.ComponentPlaceholder.fromComponent(type);

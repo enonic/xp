@@ -1,7 +1,7 @@
 module LiveEdit.component {
 
     import ItemType = api.liveedit.ItemType;
-    import ComponentSelectEvent = api.liveedit.PageComponentSelectEvent;
+    import PageComponentSelectEvent = api.liveedit.PageComponentSelectEvent;
 
     export class ComponentPlaceholder extends Component {
         constructor(type: ItemType, className: string = 'live-edit-empty-component') {
@@ -9,7 +9,7 @@ module LiveEdit.component {
             this.addClass(className);
             this.getEl().setData('live-edit-empty-component', 'true');
 
-            ComponentSelectEvent.on((event: ComponentSelectEvent) => this.onSelect());
+            PageComponentSelectEvent.on(() => this.onSelect());
 
             $liveEdit(window).on('componentDeselect.liveEdit', (event, name?)=> {
                 this.onDeselect();

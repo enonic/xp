@@ -1,4 +1,7 @@
 module LiveEdit.component.helper {
+
+    import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
+
     // Uses
     var $ = $liveEdit;
 
@@ -39,7 +42,7 @@ module LiveEdit.component.helper {
         private registerGlobalListeners():void {
             $(window).on('selectComponent.liveEdit', (event:JQueryEventObject, component:LiveEdit.component.Component, pagePosition) => this.observe(component));
 
-            $(window).on('deselectComponent.liveEdit', () => this.disconnect());
+            PageComponentDeselectEvent.on(() => this.disconnect());
             $(window).on('editTextComponent.liveEdit', (event:JQueryEventObject, component:LiveEdit.component.Component) => this.observe(component));
         }
 

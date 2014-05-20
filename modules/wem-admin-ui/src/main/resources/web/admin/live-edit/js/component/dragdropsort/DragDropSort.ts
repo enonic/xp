@@ -11,6 +11,8 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import SortableStopEvent = api.liveedit.SortableStopEvent;
     import SortableUpdateEvent = api.liveedit.SortableUpdateEvent;
+    import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
+    import PageComponentAddedEvent = api.liveedit.PageComponentAddedEvent;
 
     // Uses
     var $ = $liveEdit;
@@ -229,8 +231,11 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             removePaddingFromLayoutComponent();
 
             var region = emptyComponent.getParentRegion();
-            $(window).trigger('componentAdded.liveEdit',
-                [emptyComponent, region.getRegionName(), emptyComponent.getPrecedingComponentPath()]);
+            new PageComponentAddedEvent().
+                setComponent(emptyComponent).
+                setRegion(region.getRegionName()).
+                setPrecedingComponent(emptyComponent.getPrecedingComponentPath()).
+                fire();
             LiveEdit.component.Selection.handleSelect(emptyComponent.getHTMLElement());
         }
     }
@@ -250,7 +255,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     function registerGlobalListeners(): void {
-        $(window).on('deselectComponent.liveEdit', () => {
+        PageComponentDeselectEvent.on(() => {
             if (LiveEdit.DomHelper.supportsTouch() && !_isDragging) {
                 disableDragDrop();
             }

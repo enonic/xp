@@ -19,5 +19,9 @@
 ///<reference path='PageSelectEvent.ts' />
 ///<reference path='RegionSelectEvent.ts' />
 ///<reference path='PageComponentSelectEvent.ts' />
-///<reference path='ComponentDeselectEvent.ts' />
-
+///<reference path='PageComponentDeselectEvent.ts' />
+///<reference path='PageComponentAddedEvent.ts' />
+///<reference path='PageComponentRemoveEvent.ts' />
+///<reference path='PageComponentResetEvent.ts' />
+///<reference path='PageComponentDuplicateEvent.ts' />
+///<reference path='PageComponentSetDescriptorEvent.ts' />
