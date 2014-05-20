@@ -66,7 +66,7 @@ module LiveEdit.ui {
 
         private show(component:LiveEdit.component.Component):void {
             this.selectedComponent = component;
-            if (component.getComponentType().getType() === LiveEdit.component.Type.PAGE) {
+            if (component.getType().equals(api.liveedit.PageItemType.get())) {
                 this.showForPage();
             } else {
                 this.showForComponent(component);

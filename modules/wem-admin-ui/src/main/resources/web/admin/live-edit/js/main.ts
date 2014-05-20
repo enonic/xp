@@ -63,7 +63,7 @@ function getComponentByPath(path: string): LiveEdit.component.Component {
 
         //TODO: move this somewhere logical
         $(window).on('componentLoaded.liveEdit', (event, component: LiveEdit.component.Component) => {
-            if (component.getComponentType().getType() == LiveEdit.component.Type.LAYOUT) {
+            if (component.getType() == api.liveedit.layout.LayoutItemType.get()) {
                 LiveEdit.component.dragdropsort.DragDropSort.createSortableLayout(component);
             }
         })

@@ -58,7 +58,7 @@ module LiveEdit.ui {
             this.selectedComponent = component;
 
             // Highlighter should not be shown when type page is selected
-            if (component.getComponentType().getType() == LiveEdit.component.Type.PAGE) {
+            if (component.getType().equals(api.liveedit.PageItemType.get())) {
                 this.hide();
                 return;
             }
