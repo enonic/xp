@@ -9,7 +9,7 @@ module api.liveedit {
         private loadMask: api.ui.LoadMask;
 
         constructor(type: ItemType, element?: HTMLElement, dummy?: boolean) {
-
+            api.util.assertNotNull(type, "type cannot be null");
             this.type = type;
 
             var props = new api.dom.ElementProperties();
