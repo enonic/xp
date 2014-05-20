@@ -1,5 +1,7 @@
 module LiveEdit.component {
 
+    import ComponentPath = api.content.page.ComponentPath;
+    import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
     import LayoutItemType = api.liveedit.layout.LayoutItemType;
 
     export class LayoutPlaceholder extends ComponentPlaceholder {
@@ -22,7 +24,7 @@ module LiveEdit.component {
             this.comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.page.layout.LayoutDescriptor>) => {
                 var componentPath = this.getComponentPath();
                 var descriptor: api.content.page.Descriptor = event.getOption().displayValue;
-                $liveEdit(window).trigger('pageComponentSetDescriptor.liveEdit', [descriptor, componentPath, this]);
+                new PageComponentSetDescriptorEvent(componentPath, descriptor, this).fire();
             });
         }
 

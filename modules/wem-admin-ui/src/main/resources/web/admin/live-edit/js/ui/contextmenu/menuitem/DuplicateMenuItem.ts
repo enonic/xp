@@ -1,5 +1,7 @@
 module LiveEdit.ui.contextmenu.menuitem {
 
+    import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
+
     // Uses
     var $ = $liveEdit;
 
@@ -26,7 +28,7 @@ module LiveEdit.ui.contextmenu.menuitem {
             placeholder.getEl().insertAfterEl(component);
             placeholder.init();
             placeholder.showLoadingSpinner();
-            $(window).trigger('componentDuplicated.liveEdit', [component, placeholder]);
+            new PageComponentDuplicateEvent(component, placeholder).fire();
             LiveEdit.component.Selection.handleSelect(placeholder.getHTMLElement());
         }
     }

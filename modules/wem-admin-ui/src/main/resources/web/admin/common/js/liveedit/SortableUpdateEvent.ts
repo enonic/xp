@@ -6,7 +6,7 @@ module api.liveedit {
 
     export class SortableUpdateEvent extends Event2 {
 
-        private componentView: ItemView;
+        private itemView: ItemView;
 
         private componentPath: ComponentPath;
 
@@ -19,7 +19,7 @@ module api.liveedit {
 
             super();
 
-            this.componentView = itemView;
+            this.itemView = itemView;
             this.componentPath = itemView.getComponentPath();
 
             var region = itemView.getParentRegion();
@@ -28,7 +28,7 @@ module api.liveedit {
         }
 
         getComponentView(): ItemView {
-            return this.componentView;
+            return this.itemView;
         }
 
         getComponentPath(): ComponentPath {

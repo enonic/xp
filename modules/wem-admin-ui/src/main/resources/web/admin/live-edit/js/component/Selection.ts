@@ -3,7 +3,8 @@ module LiveEdit.component {
     import ComponentPath = api.content.page.ComponentPath;
     import PageSelectEvent = api.liveedit.PageSelectEvent;
     import RegionSelectEvent = api.liveedit.RegionSelectEvent;
-    import ComponentSelectEvent = api.liveedit.PageComponentSelectEvent;
+    import PageComponentSelectEvent = api.liveedit.PageComponentSelectEvent;
+    import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
     import RegionView = api.liveedit.RegionView;
 
     // Uses
@@ -33,8 +34,8 @@ module LiveEdit.component {
                 }
             }
             else if (Selection.getType(element) == "component") {
-
-                new ComponentSelectEvent(ComponentPath.fromString(element.getAttribute(Selection.COMPONENT_ATTR)), component).fire();
+                
+                new PageComponentSelectEvent(ComponentPath.fromString(element.getAttribute(Selection.COMPONENT_ATTR)), component).fire();
             }
 
             this.setSelectionAttributeOnElement($(element));

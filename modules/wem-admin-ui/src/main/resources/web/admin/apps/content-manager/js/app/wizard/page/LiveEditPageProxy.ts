@@ -22,7 +22,13 @@ module app.wizard.page {
     import SortableUpdateEvent = api.liveedit.SortableUpdateEvent;
     import PageSelectEvent = api.liveedit.PageSelectEvent;
     import RegionSelectEvent = api.liveedit.RegionSelectEvent;
-    import ComponentSelectEvent = api.liveedit.PageComponentSelectEvent;
+    import PageComponentSelectEvent = api.liveedit.PageComponentSelectEvent;
+    import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
+    import PageComponentAddedEvent = api.liveedit.PageComponentAddedEvent;
+    import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
+    import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
+    import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
+    import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
 
     export interface LiveEditPageProxyConfig {
 
@@ -65,9 +71,9 @@ module app.wizard.page {
 
         private regionSelectedListeners: {(event: RegionSelectEvent): void;}[] = [];
 
-        private pageComponentSelectedListeners: {(event: PageComponentSelectedEvent): void;}[] = [];
+        private pageComponentSelectedListeners: {(event: PageComponentSelectEvent): void;}[] = [];
 
-        private deselectListeners: {(event: DeselectEvent): void;}[] = [];
+        private deselectListeners: {(event: PageComponentDeselectEvent): void;}[] = [];
 
         private pageComponentAddedListeners: {(event: PageComponentAddedEvent): void;}[] = [];
 
@@ -75,11 +81,11 @@ module app.wizard.page {
 
         private pageComponentSetDescriptorListeners: {(event: PageComponentSetDescriptorEvent): void;}[] = [];
 
-        private pageComponentRemovedListeners: {(event: PageComponentRemovedEvent): void;}[] = [];
+        private pageComponentRemovedListeners: {(event: PageComponentRemoveEvent): void;}[] = [];
 
         private pageComponentResetListeners: {(event: PageComponentResetEvent): void;}[] = [];
 
-        private pageComponentDuplicatedListeners: {(event: PageComponentDuplicatedEvent): void;}[] = [];
+        private pageComponentDuplicatedListeners: {(event: PageComponentDuplicateEvent): void;}[] = [];
 
         constructor(config: LiveEditPageProxyConfig) {
 
@@ -169,12 +175,13 @@ module app.wizard.page {
                     liveEditWindow.siteTemplate = this.siteTemplate;
                     liveEditWindow.content = content;
 
+                    this.liveEditJQuery = <JQueryStatic>liveEditWindow.$liveEdit;
+                    if (this.liveEditWindow != liveEditWindow) {
+                        this.liveEditWindow = liveEditWindow;
+                        this.listenToPage();
+                    }
+
                     this.loadMask.hide();
-
-                    this.liveEditWindow = liveEditWindow;
-                    this.liveEditJQuery = <JQueryStatic>this.liveEditWindow.$liveEdit;
-
-                    this.listenToPage();
 
                     liveEditWindow.initializeLiveEdit();
                     this.notifyLoaded();
@@ -270,49 +277,34 @@ module app.wizard.page {
                 this.notifyRegionSelected(event);
             }, this.liveEditWindow);
 
-            ComponentSelectEvent.un();
-            ComponentSelectEvent.on((event: ComponentSelectEvent) => {
+            PageComponentSelectEvent.un(null, this.liveEditWindow);
+            PageComponentSelectEvent.on((event: PageComponentSelectEvent) => {
                 if (event.getPath()) {
-                    this.notifyPageComponentSelected(event.getPath(), event.getItemView().isEmpty());
+                    this.notifyPageComponentSelected(event);
                 }
             }, this.liveEditWindow);
 
-            this.liveEditJQuery(this.liveEditWindow).on('deselectComponent.liveEdit', (event) => {
+            PageComponentDeselectEvent.on((event: PageComponentDeselectEvent) => {
+                this.notifyDeselect(event);
+            }, this.liveEditWindow);
 
-                this.notifyDeselect();
-            });
+            PageComponentAddedEvent.un(null, this.liveEditWindow);
+            PageComponentAddedEvent.on((event: PageComponentAddedEvent) => {
+                this.notifyPageComponentAdded(event);
+            }, this.liveEditWindow);
 
-            this.liveEditJQuery(this.liveEditWindow).off('componentAdded.liveEdit');
-            this.liveEditJQuery(this.liveEditWindow).on('componentAdded.liveEdit',
-                (event, itemView?: ItemView, regionPathAsString?: string, preceedingComponent?: ComponentPath) => {
+            PageComponentRemoveEvent.on((event: PageComponentRemoveEvent) => {
+                this.notifyPageComponentRemoved(event);
+            }, this.liveEditWindow);
 
-                    var componentType = itemView.getType().toPageComponentType();
-                    var region = RegionPath.fromString(regionPathAsString);
-                    this.notifyPageComponentAdded(componentType, region, preceedingComponent, itemView);
-                });
+            PageComponentResetEvent.on((event: PageComponentResetEvent) => {
+                this.notifyPageComponentReset(event);
+            }, this.liveEditWindow);
 
-            this.liveEditJQuery(this.liveEditWindow).on('componentRemoved.liveEdit', (event, itemView?: ItemView) => {
-
-                var componentPath: ComponentPath = itemView.getComponentPath();
-                this.notifyPageComponentRemoved(componentPath);
-            });
-
-            this.liveEditJQuery(this.liveEditWindow).on('componentReset.liveEdit', (event, itemView?: ItemView) => {
-
-                var componentPath: ComponentPath = itemView.getComponentPath();
-                this.notifyPageComponentReset(componentPath);
-            });
-
-            this.liveEditJQuery(this.liveEditWindow).off('componentDuplicated.liveEdit');
-            this.liveEditJQuery(this.liveEditWindow).on('componentDuplicated.liveEdit',
-                (event, originItemView?: ItemView, duplicationItemView?: ItemView) => {
-
-                    var componentType = originItemView.getType().toPageComponentType();
-                    var region: RegionPath = originItemView.getParentRegion().getRegionPath();
-                    var componentPath: ComponentPath = originItemView.getComponentPath();
-
-                    this.notifyPageComponentDuplicated(duplicationItemView, componentType, region, componentPath);
-                });
+            PageComponentDuplicateEvent.un(null, this.liveEditWindow);
+            PageComponentDuplicateEvent.on((event: PageComponentDuplicateEvent) => {
+                this.notifyPageComponentDuplicated(event);
+            }, this.liveEditWindow);
 
             ImageComponentSetImageEvent.on((event: ImageComponentSetImageEvent) => {
                 if (!event.getErrorMessage()) {
@@ -322,12 +314,9 @@ module app.wizard.page {
                 }
             }, this.liveEditWindow);
 
-
-            this.liveEditJQuery(this.liveEditWindow).on('pageComponentSetDescriptor.liveEdit',
-                (event: JQueryEventObject, descriptor?: Descriptor, componentPath?: ComponentPath, itemView?: ItemView) => {
-
-                    this.notifyPageComponentSetDescriptor(componentPath, descriptor, itemView);
-                });
+            PageComponentSetDescriptorEvent.on((event: PageComponentSetDescriptorEvent) => {
+                this.notifyPageComponentSetDescriptor(event);
+            }, this.liveEditWindow);
         }
 
         onLoaded(listener: {(): void;}) {
@@ -430,38 +419,28 @@ module app.wizard.page {
             this.regionSelectedListeners.forEach((listener) => listener(event));
         }
 
-        onPageComponentSelected(listener: {(event: PageComponentSelectedEvent): void;}) {
+        onPageComponentSelected(listener: {(event: PageComponentSelectEvent): void;}) {
             this.pageComponentSelectedListeners.push(listener);
         }
 
-        unPageComponentSelected(listener: {(event: PageComponentSelectedEvent): void;}) {
-            this.pageComponentSelectedListeners = this.pageComponentSelectedListeners.filter(function (curr) {
-                return curr != listener;
-            });
+        unPageComponentSelected(listener: {(event: PageComponentSelectEvent): void;}) {
+            this.pageComponentSelectedListeners = this.pageComponentSelectedListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyPageComponentSelected(path: ComponentPath, isEmpty: boolean) {
-            var event = new PageComponentSelectedEvent(path, isEmpty);
-            this.pageComponentSelectedListeners.forEach((listener) => {
-                listener(event);
-            });
+        private notifyPageComponentSelected(event: PageComponentSelectEvent) {
+            this.pageComponentSelectedListeners.forEach((listener) => listener(event));
         }
 
-        onDeselect(listener: {(event: DeselectEvent): void;}) {
+        onDeselect(listener: {(event: PageComponentDeselectEvent): void;}) {
             this.deselectListeners.push(listener);
         }
 
-        unDeselect(listener: {(event: DeselectEvent): void;}) {
-            this.deselectListeners = this.deselectListeners.filter(function (curr) {
-                return curr != listener;
-            });
+        unDeselect(listener: {(event: PageComponentDeselectEvent): void;}) {
+            this.deselectListeners = this.deselectListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyDeselect() {
-            var event = new DeselectEvent();
-            this.deselectListeners.forEach((listener) => {
-                listener(event);
-            });
+        private notifyDeselect(event: PageComponentDeselectEvent) {
+            this.deselectListeners.forEach((listener) => listener(event));
         }
 
         onPageComponentAdded(listener: {(event: PageComponentAddedEvent): void;}) {
@@ -469,17 +448,11 @@ module app.wizard.page {
         }
 
         unPageComponentAdded(listener: {(event: PageComponentAddedEvent): void;}) {
-            this.pageComponentAddedListeners = this.pageComponentAddedListeners.filter(function (curr) {
-                return curr != listener;
-            });
+            this.pageComponentAddedListeners = this.pageComponentAddedListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyPageComponentAdded(type: PageComponentType, region: RegionPath, precedingComponent: ComponentPath,
-                                         element: api.dom.Element) {
-            var event = new PageComponentAddedEvent(element, type, region, precedingComponent);
-            this.pageComponentAddedListeners.forEach((listener) => {
-                listener(event);
-            });
+        private notifyPageComponentAdded(event: PageComponentAddedEvent) {
+            this.pageComponentAddedListeners.forEach((listener) => listener(event));
         }
 
         onImageComponentSetImage(listener: {(event: ImageComponentSetImageEvent): void;}) {
@@ -499,16 +472,11 @@ module app.wizard.page {
         }
 
         unPageComponentSetDescriptor(listener: {(event: PageComponentSetDescriptorEvent): void;}) {
-            this.pageComponentSetDescriptorListeners = this.pageComponentSetDescriptorListeners.filter(function (curr) {
-                return curr != listener;
-            });
+            this.pageComponentSetDescriptorListeners = this.pageComponentSetDescriptorListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyPageComponentSetDescriptor(path: ComponentPath, descriptor: Descriptor, itemView: ItemView) {
-            var event = new PageComponentSetDescriptorEvent(path, descriptor, itemView);
-            this.pageComponentSetDescriptorListeners.forEach((listener) => {
-                listener(event);
-            });
+        private notifyPageComponentSetDescriptor(event: PageComponentSetDescriptorEvent) {
+            this.pageComponentSetDescriptorListeners.forEach((listener) => listener(event));
         }
 
         onPageComponentReset(listener: {(event: PageComponentResetEvent): void;}) {
@@ -516,51 +484,35 @@ module app.wizard.page {
         }
 
         unPageComponentReset(listener: {(event: PageComponentResetEvent): void;}) {
-            this.pageComponentResetListeners = this.pageComponentResetListeners.filter(function (curr) {
-                return curr != listener;
-            });
+            this.pageComponentResetListeners = this.pageComponentResetListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyPageComponentReset(path: ComponentPath) {
-            var event = new PageComponentResetEvent(path);
-            this.pageComponentResetListeners.forEach((listener) => {
-                listener(event);
-            });
+        private notifyPageComponentReset(event: PageComponentResetEvent) {
+            this.pageComponentResetListeners.forEach((listener) => listener(event));
         }
 
-        onPageComponentRemoved(listener: {(event: PageComponentRemovedEvent): void;}) {
+        onPageComponentRemoved(listener: {(event: PageComponentRemoveEvent): void;}) {
             this.pageComponentRemovedListeners.push(listener);
         }
 
-        unPageComponentRemoved(listener: {(event: PageComponentRemovedEvent): void;}) {
-            this.pageComponentRemovedListeners = this.pageComponentRemovedListeners.filter(function (curr) {
-                return curr != listener;
-            });
+        unPageComponentRemoved(listener: {(event: PageComponentRemoveEvent): void;}) {
+            this.pageComponentRemovedListeners = this.pageComponentRemovedListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyPageComponentRemoved(path: ComponentPath) {
-            var event = new PageComponentRemovedEvent(path);
-            this.pageComponentRemovedListeners.forEach((listener) => {
-                listener(event);
-            });
+        private notifyPageComponentRemoved(event: PageComponentRemoveEvent) {
+            this.pageComponentRemovedListeners.forEach((listener) => listener(event));
         }
 
-        onPageComponentDuplicated(listener: {(event: PageComponentDuplicatedEvent): void;}) {
+        onPageComponentDuplicated(listener: {(event: PageComponentDuplicateEvent): void;}) {
             this.pageComponentDuplicatedListeners.push(listener);
         }
 
-        unPageComponentDuplicated(listener: {(event: PageComponentDuplicatedEvent): void;}) {
-            this.pageComponentDuplicatedListeners = this.pageComponentDuplicatedListeners.filter(function (curr) {
-                return curr != listener;
-            });
+        unPageComponentDuplicated(listener: {(event: PageComponentDuplicateEvent): void;}) {
+            this.pageComponentDuplicatedListeners = this.pageComponentDuplicatedListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyPageComponentDuplicated(itemView: ItemView, type: PageComponentType, region: RegionPath,
-                                              path: ComponentPath) {
-            var event = new PageComponentDuplicatedEvent(itemView, type, region, path);
-            this.pageComponentDuplicatedListeners.forEach((listener) => {
-                listener(event);
-            });
+        private notifyPageComponentDuplicated(event: PageComponentDuplicateEvent) {
+            this.pageComponentDuplicatedListeners.forEach((listener) => listener(event));
         }
 
     }
