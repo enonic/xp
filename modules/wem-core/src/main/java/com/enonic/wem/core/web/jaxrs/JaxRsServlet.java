@@ -43,6 +43,11 @@ public abstract class JaxRsServlet
         this.config.addClass( type );
     }
 
+    protected final void addSingleton( final Class<?> type )
+    {
+        this.config.addSingleton( this.injector.getInstance( type ) );
+    }
+
     protected final void setFeature( final String name, final boolean flag )
     {
         this.config.setFeature( name, flag );

@@ -40,41 +40,41 @@ public final class RestServlet
     @Override
     protected void configure()
     {
-        addClass( JsonObjectProvider.class );
-        addClass( JsonSerializableProvider.class );
+        addSingleton( JsonObjectProvider.class );
+        addSingleton( JsonSerializableProvider.class );
 
-        addClass( BackgroundImageResource.class );
-        addClass( ContentImageResource.class );
-        addClass( ContentAttachmentResource.class );
-        addClass( BlobResource.class );
-        addClass( AuthResource.class );
-        addClass( ToolsResource.class );
-        addClass( StatusResource.class );
+        addSingleton( BackgroundImageResource.class );
+        addSingleton( ContentImageResource.class );
+        addSingleton( ContentAttachmentResource.class );
+        addSingleton( BlobResource.class );
+        addSingleton( AuthResource.class );
+        addSingleton( ToolsResource.class );
+        addSingleton( StatusResource.class );
 
-        addClass( RelationshipResource.class );
-        addClass( RelationshipTypeResource.class );
+        addSingleton( RelationshipResource.class );
+        addSingleton( RelationshipTypeResource.class );
 
-        addClass( ContentResource.class );
-        addClass( PageResource.class );
-        addClass( SiteResource.class );
+        addSingleton( ContentResource.class );
+        addSingleton( PageResource.class );
+        addSingleton( SiteResource.class );
 
-        addClass( SchemaResource.class );
-        addClass( SchemaImageResource.class );
-        addClass( MixinResource.class );
-        addClass( ContentTypeResource.class );
+        addSingleton( SchemaResource.class );
+        addSingleton( SchemaImageResource.class );
+        addSingleton( MixinResource.class );
+        addSingleton( ContentTypeResource.class );
 
-        addClass( ModuleResource.class );
+        addSingleton( ModuleResource.class );
 
-        addClass( SiteTemplateResource.class );
-        addClass( PageTemplateResource.class );
-        addClass( PageDescriptorResource.class );
-        addClass( ImageDescriptorResource.class );
-        addClass( PartDescriptorResource.class );
-        addClass( LayoutDescriptorResource.class );
+        addSingleton( SiteTemplateResource.class );
+        addSingleton( PageTemplateResource.class );
+        addSingleton( PageDescriptorResource.class );
+        addSingleton( ImageDescriptorResource.class );
+        addSingleton( PartDescriptorResource.class );
+        addSingleton( LayoutDescriptorResource.class );
 
-        addClass( DefaultExceptionMapper.class );
-        addClass( IllegalArgumentExceptionMapper.class );
-        addClass( JsonMappingExceptionMapper.class );
-        addClass( NotFoundExceptionMapper.class );
+        addSingleton( DefaultExceptionMapper.class );
+        addSingleton( IllegalArgumentExceptionMapper.class );
+        addSingleton( JsonMappingExceptionMapper.class );
+        addSingleton( NotFoundExceptionMapper.class );
     }
 }
