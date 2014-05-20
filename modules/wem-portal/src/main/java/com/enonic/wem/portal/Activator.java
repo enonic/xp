@@ -38,5 +38,7 @@ public final class Activator
         service( BlobService.class ).importSingle();
         service( ImageFilterBuilder.class ).importSingle();
         service( ModuleKeyResolverService.class ).importSingle();
+
+        service( PortalServlet.class ).attribute( "alias", "/portal/*" ).export();
     }
 }
