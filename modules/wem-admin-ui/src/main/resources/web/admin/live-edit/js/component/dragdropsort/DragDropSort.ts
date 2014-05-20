@@ -152,7 +152,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
         var isDraggingOverLayoutComponent = ui.placeholder.closest(LAYOUT_SELECTOR).length > 0;
 
-        if (component.getComponentType().getType() === LiveEdit.component.Type.LAYOUT && isDraggingOverLayoutComponent) {
+        if (component.getType().equals(api.liveedit.layout.LayoutItemType.get()) && isDraggingOverLayoutComponent) {
             LiveEdit.component.helper.DragHelper.updateStatusIcon(false);
             ui.placeholder.hide();
         } else {
@@ -196,7 +196,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
         removePaddingFromLayoutComponent();
 
-        var draggedItemIsLayoutComponent = component.getComponentType().getType() === LiveEdit.component.Type.LAYOUT,
+        var draggedItemIsLayoutComponent = component.getType().equals(api.liveedit.layout.LayoutItemType.get()),
             targetComponentIsInLayoutComponent = $(event.target).closest(LAYOUT_SELECTOR).length > 0;
 
         if (draggedItemIsLayoutComponent && targetComponentIsInLayoutComponent) {
