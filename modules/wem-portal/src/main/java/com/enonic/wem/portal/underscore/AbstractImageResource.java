@@ -27,7 +27,6 @@ import com.enonic.wem.core.image.filter.ImageFilterBuilder;
 import com.enonic.wem.portal.exception.PortalWebException;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.substringAfterLast;
 
@@ -38,6 +37,15 @@ abstract class AbstractImageResource
     private final static int DEFAULT_BACKGROUND = 0x00FFFFFF;
 
     private final static int DEFAULT_QUALITY = 85;
+
+    public interface Params
+    {
+        String getFilterParam();
+
+        String getQualityParam();
+
+        String getBackgroundColorParam();
+    }
 
     @Inject
     ImageFilterBuilder imageFilterBuilder;
@@ -50,13 +58,6 @@ abstract class AbstractImageResource
 
     @Inject
     ContentService contentService;
-
-    abstract String getFilterParam();
-
-    abstract String getQualityParam();
-
-    abstract String getBackgroundColorParam();
-
 
     Content getContent( final ContentPath contentPath )
     {
@@ -92,9 +93,9 @@ abstract class AbstractImageResource
         return blobService.get( blobKey );
     }
 
-    BufferedImage applyFilters( final BufferedImage sourceImage, final String format )
+    BufferedImage applyFilters( final Params params, final BufferedImage sourceImage, final String format )
     {
-        final String filter = getFilterParam();
+        final String filter = params.getFilterParam();
         if ( isNullOrEmpty( filter ) )
         {
             return sourceImage;
@@ -105,7 +106,7 @@ abstract class AbstractImageResource
 
         if ( !ImageHelper.supportsAlphaChannel( format ) )
         {
-            return ImageHelper.removeAlphaChannel( targetImage, getBackgroundColor() );
+            return ImageHelper.removeAlphaChannel( targetImage, getBackgroundColor( params ) );
         }
         else
         {
@@ -130,32 +131,20 @@ abstract class AbstractImageResource
         return substringAfterLast( fileName, "." ).toLowerCase();
     }
 
-    String getFormat( final String fileName, final String defaultFormat )
+    int resolveQuality( final Params paras )
     {
-        if ( isNotBlank( fileName ) && fileName.contains( "." ) )
-        {
-
-            return substringAfterLast( fileName, "." ).toLowerCase();
-        }
-        else
-        {
-            return defaultFormat;
-        }
-    }
-
-    int resolveQuality()
-    {
-        if ( isNullOrEmpty( getQualityParam() ) )
+        final String qualityParam = paras.getQualityParam();
+        if ( isNullOrEmpty( qualityParam ) )
         {
             return DEFAULT_QUALITY;
         }
-        final Integer value = Ints.tryParse( getQualityParam() );
+        final Integer value = Ints.tryParse( qualityParam );
         return ( value >= 0 ) && ( value <= 100 ) ? value : DEFAULT_QUALITY;
     }
 
-    private int getBackgroundColor()
+    private int getBackgroundColor( final Params params )
     {
-        String value = getBackgroundColorParam();
+        String value = params.getBackgroundColorParam();
         if ( isNotEmpty( value ) )
         {
             if ( value.startsWith( "0x" ) )

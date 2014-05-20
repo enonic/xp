@@ -5,8 +5,7 @@ import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 
-import com.enonic.wem.admin.ResourceServlet;
-import com.enonic.wem.admin.app.AppServlet;
+import com.enonic.wem.admin.app.MainServlet;
 import com.enonic.wem.admin.rest.RestServlet;
 import com.enonic.wem.core.web.servlet.RequestContextListener;
 import com.enonic.wem.portal.PortalServlet;
@@ -18,10 +17,7 @@ final class WebInitializer
     protected RestServlet restServlet;
 
     @Inject
-    protected ResourceServlet resourceServlet;
-
-    @Inject
-    protected AppServlet appServlet;
+    protected MainServlet mainServlet;
 
     @Inject
     protected PortalServlet portalServlet;
@@ -30,17 +26,13 @@ final class WebInitializer
     {
         context.addListener( new RequestContextListener() );
 
-        final ServletRegistration.Dynamic resourceServlet = context.addServlet( "resource", this.resourceServlet );
-        resourceServlet.setLoadOnStartup( 2 );
-        resourceServlet.addMapping( "/" );
+        final ServletRegistration.Dynamic mainServlet = context.addServlet( "main", this.mainServlet );
+        mainServlet.setLoadOnStartup( 2 );
+        mainServlet.addMapping( "/*" );
 
         final ServletRegistration.Dynamic restServlet = context.addServlet( "rest", this.restServlet );
         restServlet.setLoadOnStartup( 3 );
         restServlet.addMapping( "/admin/rest/*" );
-
-        final ServletRegistration.Dynamic appServlet = context.addServlet( "app", this.appServlet );
-        appServlet.setLoadOnStartup( 4 );
-        appServlet.addMapping( "/admin" );
 
         final ServletRegistration.Dynamic portalServlet = context.addServlet( "portal", this.portalServlet );
         portalServlet.setLoadOnStartup( 4 );

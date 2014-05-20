@@ -24,15 +24,16 @@ public final class PortalServlet
     protected void configure()
     {
         setFeature( ResourceConfig.FEATURE_DISABLE_WADL, true );
-        addClass( ContentResource.class );
-        addClass( ComponentResource.class );
-        addClass( PublicResource.class );
-        addClass( ImageResource.class );
-        addClass( ImageByIdResource.class );
-        addClass( ServicesResource.class );
-        addClass( SourceExceptionMapper.class );
-        addClass( PortalWebExceptionMapper.class );
-        addClass( DefaultExceptionMapper.class );
-        addClass( WebApplicationExceptionMapper.class );
+
+        addSingleton( ImageResource.class );
+        addSingleton( ImageByIdResource.class );
+        addSingleton( PublicResource.class );
+        addSingleton( ContentResource.class );
+        addSingleton( ComponentResource.class );
+        addSingleton( ServicesResource.class );
+        addSingleton( SourceExceptionMapper.class );
+        addSingleton( PortalWebExceptionMapper.class );
+        addSingleton( DefaultExceptionMapper.class );
+        addSingleton( WebApplicationExceptionMapper.class );
     }
 }

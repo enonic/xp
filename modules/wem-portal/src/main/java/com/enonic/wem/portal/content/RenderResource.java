@@ -1,10 +1,6 @@
 package com.enonic.wem.portal.content;
 
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.OPTIONS;
-import javax.ws.rs.POST;
-import javax.ws.rs.core.Response;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -48,30 +44,6 @@ public abstract class RenderResource
 
     @Inject
     protected SiteService siteService;
-
-    @GET
-    public Response handleGet()
-        throws Exception
-    {
-        return doHandle();
-    }
-
-    @POST
-    public Response handlePost()
-        throws Exception
-    {
-        return doHandle();
-    }
-
-    @OPTIONS
-    public Response handleOptions()
-        throws Exception
-    {
-        return doHandle();
-    }
-
-    abstract protected Response doHandle()
-        throws Exception;
 
     protected Content getSite( final Content content )
     {

@@ -85,10 +85,10 @@ public class PublicResourceTest
         final Content content = createContent( "content-id", contentPath, "content-type" );
         when( contentService.getByPath( contentPath ) ).thenReturn( content );
 
-        resource.mode = "live";
-        resource.contentPath = "content";
-        resource.moduleName = "demo-1.0.0";
-        resource.resourceName = "css/main.css";
+        // resource.mode = "live";
+        // resource.contentPath = "content";
+        // resource.moduleName = "demo-1.0.0";
+        // resource.resourceName = "css/main.css";
         final ClientResponse resp =
             resource().path( "/portal/live/path/to/content/_/public/demo-1.0.0/css/main.css" ).get( ClientResponse.class );
 
@@ -109,10 +109,10 @@ public class PublicResourceTest
         final Content content = createContent( "content-id", contentPath, "content-type" );
         when( contentService.getByPath( contentPath ) ).thenReturn( content );
 
-        resource.mode = "live";
-        resource.contentPath = "content";
-        resource.moduleName = "demo";
-        resource.resourceName = "css/main.css";
+        // resource.mode = "live";
+        // resource.contentPath = "content";
+        // resource.moduleName = "demo";
+        // resource.resourceName = "css/main.css";
         final ClientResponse resp =
             resource().path( "/portal/live/path/to/content/_/public/demo/css/main.css" ).get( ClientResponse.class );
 
@@ -132,10 +132,10 @@ public class PublicResourceTest
         final Content content = createContent( "content-id", contentPath, "content-type" );
         when( contentService.getByPath( contentPath ) ).thenReturn( content );
 
-        resource.mode = "live";
-        resource.contentPath = "content";
-        resource.moduleName = "demo-1.0.0";
-        resource.resourceName = "css/main.css";
+        // resource.mode = "live";
+        // resource.contentPath = "content";
+        // resource.moduleName = "demo-1.0.0";
+        // resource.resourceName = "css/main.css";
         final ClientResponse resp =
             resource().path( "/portal/live/path/to/content/_/public/demo-1.0.0/css/main.css" ).get( ClientResponse.class );
 
@@ -153,10 +153,10 @@ public class PublicResourceTest
         final Content content = createContent( "content-id", contentPath, "content-type" );
         when( contentService.getByPath( contentPath ) ).thenReturn( content );
 
-        resource.mode = "live";
-        resource.contentPath = "content";
-        resource.moduleName = "demo-1-2-3";
-        resource.resourceName = "css/main.css";
+        // resource.mode = "live";
+        // resource.contentPath = "content";
+        // resource.moduleName = "demo-1-2-3";
+        // resource.resourceName = "css/main.css";
         final ClientResponse resp =
             resource().path( "/portal/live/path/to/content/_/public/demo-1.0.0/css/main.css" ).get( ClientResponse.class );
 
@@ -171,10 +171,10 @@ public class PublicResourceTest
         when( modulePathResolver.resolveResourcePath( isA( ModuleResourceKey.class ) ) ).thenReturn( filePath );
         when( contentService.getByPath( ContentPath.from( "content" ) ) ).thenReturn( null );
 
-        resource.mode = "live";
-        resource.contentPath = "content";
-        resource.moduleName = "demo-1-2-3";
-        resource.resourceName = "css/main.css";
+        // resource.mode = "live";
+        // resource.contentPath = "content";
+        // resource.moduleName = "demo-1-2-3";
+        // resource.resourceName = "css/main.css";
         final ClientResponse resp =
             resource().path( "/portal/live/path/to/content/_/public/demo-1.0.0/css/main.css" ).get( ClientResponse.class );
 

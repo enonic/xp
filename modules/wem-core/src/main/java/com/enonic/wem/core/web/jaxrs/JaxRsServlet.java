@@ -35,12 +35,12 @@ public abstract class JaxRsServlet
     protected void initiate( final ResourceConfig rc, final WebApplication wa )
     {
         configure();
-        wa.initiate( rc, new JaxRsGuiceBridge( this.injector ) );
+        wa.initiate( rc );
     }
 
-    protected final void addClass( final Class<?> type )
+    protected final void addSingleton( final Class<?> type )
     {
-        this.config.addClass( type );
+        this.config.addSingleton( this.injector.getInstance( type ) );
     }
 
     protected final void setFeature( final String name, final boolean flag )

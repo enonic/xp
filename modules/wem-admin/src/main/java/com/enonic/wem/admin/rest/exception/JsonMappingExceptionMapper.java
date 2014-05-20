@@ -22,8 +22,6 @@ public final class JsonMappingExceptionMapper
     public Response toResponse( final JsonMappingException cause )
     {
         LOG.error( cause.getMessage(), cause );
-        cause.printStackTrace();
-
         return Response.status( Response.Status.INTERNAL_SERVER_ERROR ).type( MediaType.APPLICATION_JSON_TYPE ).entity(
             new ErrorJson( cause.getMessage() ) ).build();
     }

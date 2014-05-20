@@ -90,8 +90,6 @@ public class ContentResourceTest
         when( requestContext.getMethod() ).thenReturn( "method" );
 
         final ContentResource contentResource = new ContentResource();
-        contentResource.contentSelector = "content";
-        contentResource.httpContext = mock( HttpContext.class );
         contentResource.contentService = mock( ContentService.class );
         contentResource.siteService = mock( SiteService.class );
 
@@ -154,8 +152,6 @@ public class ContentResourceTest
 
         contentResource.controllerFactory = jsControllerFactory;
 
-        when( contentResource.httpContext.getRequest() ).thenReturn( requestContext );
-
         when( pageTemplateServiceMock.getByKey( Mockito.eq( PageTemplateKey.from( "mymodule|my-page" ) ),
                                                 Mockito.eq( (SiteTemplateKey) null ) ) ).thenReturn( createPageTemplate() );
         when( contentResource.contentService.getByPath( ContentPath.from( "content" ) ) ).thenReturn(
@@ -166,7 +162,12 @@ public class ContentResourceTest
 
         when( pageDescriptorServiceMock.getByKey( isA( PageDescriptorKey.class ) ) ).thenReturn( createDescriptor() );
 
-        final Response response = contentResource.handleGet();
+        final ContentResource.Request req = new ContentResource.Request();
+        req.contentSelector = "content";
+        req.httpContext = mock( HttpContext.class );
+        when( req.httpContext.getRequest() ).thenReturn( requestContext );
+
+        final Response response = contentResource.handleGet( req );
         assertEquals( 200, response.getStatus() );
 
         assertEquals( "/path", console.line );

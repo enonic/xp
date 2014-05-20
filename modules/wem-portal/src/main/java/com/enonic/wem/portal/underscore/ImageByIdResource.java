@@ -10,6 +10,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
+import com.sun.jersey.api.core.InjectParam;
+
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -25,23 +27,45 @@ import static org.apache.commons.lang.StringUtils.substringAfterLast;
 public final class ImageByIdResource
     extends AbstractImageResource
 {
-    @PathParam("mode")
-    protected String mode;
+    public final class Request
+        implements Params
+    {
+        @PathParam("mode")
+        protected String mode;
 
-    @PathParam("contextualContent")
-    protected String contextualContentAsString;
+        @PathParam("contextualContent")
+        protected String contextualContentAsString;
 
-    @PathParam("id")
-    protected String imageContentIdAsString;
+        @PathParam("id")
+        protected String imageContentIdAsString;
 
-    @QueryParam("filter")
-    protected String filter;
+        @QueryParam("filter")
+        protected String filter;
 
-    @QueryParam("background")
-    protected String backgroundColor;
+        @QueryParam("background")
+        protected String backgroundColor;
 
-    @QueryParam("quality")
-    protected String quality;
+        @QueryParam("quality")
+        protected String quality;
+
+        @Override
+        public String getFilterParam()
+        {
+            return this.filter;
+        }
+
+        @Override
+        public String getQualityParam()
+        {
+            return this.quality;
+        }
+
+        @Override
+        public String getBackgroundColorParam()
+        {
+            return this.backgroundColor;
+        }
+    }
 
     @Inject
     protected ImageFilterBuilder imageFilterBuilder;
@@ -49,29 +73,11 @@ public final class ImageByIdResource
     @Inject
     protected AttachmentService attachmentService;
 
-    @Override
-    String getFilterParam()
-    {
-        return this.filter;
-    }
-
-    @Override
-    String getQualityParam()
-    {
-        return quality;
-    }
-
-    @Override
-    String getBackgroundColorParam()
-    {
-        return backgroundColor;
-    }
-
     @GET
-    public Response getResource()
+    public Response getResource( @InjectParam final Request request )
         throws IOException
     {
-        final ContentId imageContentId = ContentId.from( imageContentIdAsString );
+        final ContentId imageContentId = ContentId.from( request.imageContentIdAsString );
         final Content imageContent = getContent( imageContentId );
 
         final Attachment attachment = getAttachment( imageContent.getId() );
@@ -89,9 +95,9 @@ public final class ImageByIdResource
 
         final String format = resolveFormat( attachment );
 
-        final BufferedImage image = applyFilters( contentImage, format );
+        final BufferedImage image = applyFilters( request, contentImage, format );
 
-        byte[] imageData = ImageHelper.writeImage( image, format, resolveQuality() );
+        byte[] imageData = ImageHelper.writeImage( image, format, resolveQuality( request ) );
 
         return Response.ok( imageData, attachment.getMimeType() ).build();
     }

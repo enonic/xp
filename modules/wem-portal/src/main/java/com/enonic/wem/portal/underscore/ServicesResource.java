@@ -10,10 +10,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import com.sun.jersey.api.core.HttpContext;
+import com.sun.jersey.api.core.InjectParam;
 
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.rendering.RenderingMode;
 import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.rendering.RenderingMode;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsControllerFactory;
@@ -26,17 +27,20 @@ import static com.enonic.wem.api.rendering.RenderingMode.LIVE;
 public final class ServicesResource
     extends UnderscoreResource
 {
-    @PathParam("mode")
-    protected String mode;
+    public final class Request
+    {
+        @PathParam("mode")
+        public String mode;
 
-    @PathParam("path")
-    protected String contentPath;
+        @PathParam("path")
+        public String contentPath;
 
-    @PathParam("module")
-    protected String moduleName;
+        @PathParam("module")
+        public String moduleName;
 
-    @PathParam("service")
-    protected String serviceName;
+        @PathParam("service")
+        public String serviceName;
+    }
 
     @Context
     protected HttpContext httpContext;
@@ -45,42 +49,42 @@ public final class ServicesResource
     protected JsControllerFactory controllerFactory;
 
     @GET
-    public Response handleGet()
+    public Response handleGet( @InjectParam Request request )
         throws Exception
     {
-        return doHandle();
+        return doHandle( request );
     }
 
     @POST
-    public Response handlePost()
+    public Response handlePost( @InjectParam Request request )
         throws Exception
     {
-        return doHandle();
+        return doHandle( request );
     }
 
     @OPTIONS
-    public Response handleOptions()
+    public Response handleOptions( @InjectParam Request request )
         throws Exception
     {
-        return doHandle();
+        return doHandle( request );
     }
 
-    private Response doHandle()
+    private Response doHandle( final Request request )
         throws Exception
     {
-        final ModuleKey moduleKey = resolveModule( this.contentPath, this.moduleName );
+        final ModuleKey moduleKey = resolveModule( request.contentPath, request.moduleName );
         final JsContext context = new JsContext();
 
-        final JsHttpRequest request = new JsHttpRequest( this.httpContext.getRequest() );
-        request.setMode( RenderingMode.from( this.mode, LIVE ) );
-        context.setRequest( request );
+        final JsHttpRequest jsRequest = new JsHttpRequest( this.httpContext.getRequest() );
+        jsRequest.setMode( RenderingMode.from( request.mode, LIVE ) );
+        context.setRequest( jsRequest );
 
         final PortalUrlScriptBean portalUrlScriptBean = new PortalUrlScriptBean();
         context.setPortalUrlScriptBean( portalUrlScriptBean );
 
         final JsController controller = this.controllerFactory.newController();
 
-        controller.scriptDir( ModuleResourceKey.from( moduleKey, "service/" + this.serviceName ) );
+        controller.scriptDir( ModuleResourceKey.from( moduleKey, "service/" + request.serviceName ) );
         controller.context( context );
 
         return controller.execute();

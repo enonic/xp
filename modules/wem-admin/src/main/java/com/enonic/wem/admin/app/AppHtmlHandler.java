@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 
-import javax.inject.Singleton;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -16,24 +14,19 @@ import com.samskivert.mustache.Template;
 import com.enonic.wem.core.mustache.MustacheCompiler;
 import com.enonic.wem.core.web.servlet.ServletRequestUrlHelper;
 
-@Singleton
-public final class AppServlet
-    extends HttpServlet
+final class AppHtmlHandler
 {
     private final static String DEFAULT_APP_NAME = "app-launcher";
 
-    private Template template;
+    private final Template template;
 
-    @Override
-    public void init()
-        throws ServletException
+    public AppHtmlHandler()
     {
         final URL url = getClass().getResource( "app.html" );
         this.template = MustacheCompiler.getInstance().compile( url );
     }
 
-    @Override
-    protected void doGet( final HttpServletRequest req, final HttpServletResponse resp )
+    public void handle( final HttpServletRequest req, final HttpServletResponse resp )
         throws ServletException, IOException
     {
         final String app = req.getParameter( "app" );
