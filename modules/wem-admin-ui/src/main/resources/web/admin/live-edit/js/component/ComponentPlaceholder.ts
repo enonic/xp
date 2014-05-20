@@ -17,7 +17,6 @@ module LiveEdit.component {
         }
 
         static fromComponent(type: LiveEdit.component.Type): ComponentPlaceholder {
-            console.log('creating placeholder', type);
             var placeholder: ComponentPlaceholder;
             if (type === Type.IMAGE) {
                 placeholder = new LiveEdit.component.ImagePlaceholder();
