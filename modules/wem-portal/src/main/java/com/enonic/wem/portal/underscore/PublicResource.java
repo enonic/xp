@@ -8,33 +8,37 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import com.google.common.net.MediaType;
+import com.sun.jersey.api.core.InjectParam;
 
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleResourceKey;
-import com.enonic.wem.portal.exception.PortalWebException;
 import com.enonic.wem.api.util.MediaTypes;
+import com.enonic.wem.portal.exception.PortalWebException;
 
 @Path("{mode}/{path:.+}/_/public/{module}/{resource:.+}")
 public final class PublicResource
     extends UnderscoreResource
 {
-    @PathParam("mode")
-    protected String mode;
+    public final class Request
+    {
+        @PathParam("mode")
+        public String mode;
 
-    @PathParam("path")
-    protected String contentPath;
+        @PathParam("path")
+        public String contentPath;
 
-    @PathParam("module")
-    protected String moduleName;
+        @PathParam("module")
+        public String moduleName;
 
-    @PathParam("resource")
-    protected String resourceName;
+        @PathParam("resource")
+        public String resourceName;
+    }
 
     @GET
-    public Response getResource()
+    public Response getResource( @InjectParam final Request request )
     {
-        final ModuleKey moduleKey = resolveModule( this.contentPath, this.moduleName );
-        final ModuleResourceKey moduleResource = ModuleResourceKey.from( moduleKey, "public/" + resourceName );
+        final ModuleKey moduleKey = resolveModule( request.contentPath, request.moduleName );
+        final ModuleResourceKey moduleResource = ModuleResourceKey.from( moduleKey, "public/" + request.resourceName );
         final java.nio.file.Path resourceFileSystemPath = modulePathResolver.resolveResourcePath( moduleResource );
 
         if ( Files.isRegularFile( resourceFileSystemPath ) )

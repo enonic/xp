@@ -1,12 +1,16 @@
 package com.enonic.wem.portal.content;
 
 import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.OPTIONS;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import com.sun.jersey.api.core.HttpContext;
+import com.sun.jersey.api.core.InjectParam;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.page.ComponentPath;
@@ -30,28 +34,51 @@ import static com.enonic.wem.api.rendering.RenderingMode.LIVE;
 public final class ComponentResource
     extends RenderResource
 {
-    @PathParam("mode")
-    protected String mode;
+    public final class Request
+    {
+        @PathParam("mode")
+        protected String mode;
 
-    @PathParam("path")
-    protected String contentPath;
+        @PathParam("path")
+        protected String contentPath;
 
-    @PathParam("component")
-    protected String componentSelector;
+        @PathParam("component")
+        protected String componentSelector;
+
+        @Context
+        protected HttpContext httpContext;
+    }
+
+    @GET
+    public Response handleGet( @InjectParam final Request request )
+        throws Exception
+    {
+        return doHandle( request );
+    }
+
+    @POST
+    public Response handlePost( @InjectParam final Request request )
+        throws Exception
+    {
+        return doHandle( request );
+    }
+
+    @OPTIONS
+    public Response handleOptions( @InjectParam final Request request )
+        throws Exception
+    {
+        return doHandle( request );
+    }
 
     @Inject
     protected RendererFactory rendererFactory;
 
-    @Context
-    protected HttpContext httpContext;
-
-    @Override
-    protected Response doHandle()
+    private Response doHandle( final Request request )
         throws Exception
     {
-        final ComponentPath componentPath = ComponentPath.from( this.componentSelector );
+        final ComponentPath componentPath = ComponentPath.from( request.componentSelector );
 
-        final Content content = getContent( this.contentPath, this.mode );
+        final Content content = getContent( request.contentPath, request.mode );
 
         final Content siteContent = getSite( content );
         final PageTemplate pageTemplate;
@@ -76,11 +103,11 @@ public final class ComponentResource
 
         final Renderer<PageComponent> renderer = rendererFactory.getRenderer( component );
 
-        final JsContext context = createContext( content, component, siteContent, pageTemplate );
+        final JsContext context = createContext( request, content, component, siteContent, pageTemplate );
         return renderer.render( component, context );
     }
 
-    private JsContext createContext( final Content content, final PageComponent component, final Content siteContent,
+    private JsContext createContext( final Request request, final Content content, final PageComponent component, final Content siteContent,
                                      final PageTemplate pageTemplate )
     {
         final JsContext context = new JsContext();
@@ -88,9 +115,9 @@ public final class ComponentResource
         context.setSiteContent( siteContent );
         context.setComponent( component );
 
-        final JsHttpRequest request = new JsHttpRequest( this.httpContext.getRequest() );
-        request.setMode( RenderingMode.from( this.mode, LIVE ) );
-        context.setRequest( request );
+        final JsHttpRequest jsRequest = new JsHttpRequest( request.httpContext.getRequest() );
+        jsRequest.setMode( RenderingMode.from( request.mode, LIVE ) );
+        context.setRequest( jsRequest );
 
         final PortalUrlScriptBean portalUrlScriptBean = new PortalUrlScriptBean();
         portalUrlScriptBean.setContentPath( content.getPath().toString() );
@@ -99,5 +126,4 @@ public final class ComponentResource
 
         return context;
     }
-
 }

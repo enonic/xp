@@ -1,11 +1,15 @@
 package com.enonic.wem.portal.content;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.OPTIONS;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import com.sun.jersey.api.core.HttpContext;
+import com.sun.jersey.api.core.InjectParam;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.page.Page;
@@ -24,19 +28,43 @@ import static com.enonic.wem.api.rendering.RenderingMode.LIVE;
 public final class ContentResource
     extends RenderResource
 {
-    @PathParam("mode")
-    protected String mode;
+    public final static class Request
+    {
+        @PathParam("mode")
+        public String mode;
 
-    @PathParam("content")
-    protected String contentSelector;
+        @PathParam("content")
+        public String contentSelector;
 
-    @Context
-    protected HttpContext httpContext;
+        @Context
+        public HttpContext httpContext;
+    }
 
-    protected Response doHandle()
+    @GET
+    public Response handleGet( @InjectParam final Request request )
         throws Exception
     {
-        final Content content = getContent( this.contentSelector, this.mode );
+        return doHandle( request );
+    }
+
+    @POST
+    public Response handlePost( @InjectParam final Request request )
+        throws Exception
+    {
+        return doHandle( request );
+    }
+
+    @OPTIONS
+    public Response handleOptions( @InjectParam final Request request )
+        throws Exception
+    {
+        return doHandle( request );
+    }
+
+    private Response doHandle( final Request request )
+        throws Exception
+    {
+        final Content content = getContent( request.contentSelector, request.mode );
         final Content siteContent = getSite( content );
 
         final PageTemplate pageTemplate;
@@ -60,9 +88,9 @@ public final class ContentResource
         context.setSiteContent( siteContent );
         context.setPageTemplate( pageTemplate );
 
-        final JsHttpRequest request = new JsHttpRequest( this.httpContext.getRequest() );
-        request.setMode( RenderingMode.from( this.mode, LIVE ) );
-        context.setRequest( request );
+        final JsHttpRequest jsRequest = new JsHttpRequest( request.httpContext.getRequest() );
+        jsRequest.setMode( RenderingMode.from( request.mode, LIVE ) );
+        context.setRequest( jsRequest );
 
         final PortalUrlScriptBean portalUrlScriptBean = new PortalUrlScriptBean();
         portalUrlScriptBean.setContentPath( content.getPath().toString() );
