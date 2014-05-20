@@ -20,28 +20,28 @@ module LiveEdit.ui {
             this.registerGlobalListeners();
         }
 
-        private registerGlobalListeners():void {
+        private registerGlobalListeners(): void {
             $(window).on('selectComponent.liveEdit', () => this.hide());
         }
 
-        private addView():void {
-            var html:string = '<div class="live-edit-tool-tip" style="top:-5000px; left:-5000px;">' +
-                              '    <span class="live-edit-tool-tip-name-text"></span>' +
-                              '    <span class="live-edit-tool-tip-type-text"></span> ' +
-                              '</div>';
+        private addView(): void {
+            var html: string = '<div class="live-edit-tool-tip" style="top:-5000px; left:-5000px;">' +
+                               '    <span class="live-edit-tool-tip-name-text"></span>' +
+                               '    <span class="live-edit-tool-tip-type-text"></span> ' +
+                               '</div>';
 
             this.createHtmlFromString(html);
             this.appendTo($('body'));
         }
 
-        private setText(component:LiveEdit.component.Component):void {
-            var tooltip:JQuery = this.getEl();
+        private setText(component: LiveEdit.component.Component): void {
+            var tooltip: JQuery = this.getEl();
 
-            tooltip.children('.live-edit-tool-tip-type-text').text(component.getComponentType().getName());
+            tooltip.children('.live-edit-tool-tip-type-text').text(component.getType().getShortName());
             tooltip.children('.live-edit-tool-tip-name-text').text(component.getComponentName());
         }
 
-        private attachEventListeners():void {
+        private attachEventListeners(): void {
             $(document).on('mousemove', '[data-live-edit-type]', (event) => {
 
                 // fixme: Use PubSub instead of calling DragDrop object.
@@ -60,7 +60,7 @@ module LiveEdit.ui {
             });
 
             $(document).on('mouseover', '[data-live-edit-type]', (event) => {
-                var component:LiveEdit.component.Component = LiveEdit.component.Component.fromJQuery($(event.target).closest('[data-live-edit-type]'));
+                var component: LiveEdit.component.Component = LiveEdit.component.Component.fromJQuery($(event.target).closest('[data-live-edit-type]'));
 
                 this.setText(component);
 
@@ -72,12 +72,12 @@ module LiveEdit.ui {
             });
 
             /*$(document).on('mouseleave', () => {
-                console.log("mouseout", arguments);
-                this.hide()
-            });*/
+             console.log("mouseout", arguments);
+             this.hide()
+             });*/
         }
 
-        private getPositionFromEvent(event:JQueryEventObject) {
+        private getPositionFromEvent(event: JQueryEventObject) {
             var pageX = event.pageX,
                 pageY = event.pageY,
                 x = pageX + this.OFFSET_X,
@@ -99,7 +99,7 @@ module LiveEdit.ui {
             };
         }
 
-        private hide():void {
+        private hide(): void {
             this.getEl().css({
                 top: '-5000px',
                 left: '-5000px'
