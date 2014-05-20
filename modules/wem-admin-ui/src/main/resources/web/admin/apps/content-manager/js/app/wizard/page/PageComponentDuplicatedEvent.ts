@@ -3,10 +3,11 @@ module app.wizard.page {
     import RegionPath = api.content.page.RegionPath;
     import ComponentPath = api.content.page.ComponentPath;
     import PageComponentType = api.content.page.PageComponentType;
+    import ItemView = api.liveedit.ItemView;
 
     export class PageComponentDuplicatedEvent {
 
-        private componentView: api.dom.Element;
+        private itemView: ItemView;
 
         private type: PageComponentType;
 
@@ -14,15 +15,15 @@ module app.wizard.page {
 
         private path: ComponentPath;
 
-        constructor(componentView: api.dom.Element, type: PageComponentType, region: RegionPath, path: ComponentPath) {
-            this.componentView = componentView;
+        constructor(itemView: ItemView, type: PageComponentType, region: RegionPath, path: ComponentPath) {
+            this.itemView = itemView;
             this.type = type;
             this.region = region;
             this.path = path;
         }
 
-        getComponentView() {
-            return this.componentView;
+        getItemView(): ItemView {
+            return this.itemView;
         }
 
         getType(): PageComponentType {

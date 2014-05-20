@@ -5,16 +5,16 @@ module api.liveedit {
 
     export class SortableStopEvent extends Event2 {
 
-        private componentView: any;
+        private componentView: ItemView;
 
         private componentPath: ComponentPath;
 
         private empty: boolean;
 
-        constructor(componentView:any) {
+        constructor(componentView: ItemView) {
             super();
             this.componentView = componentView;
-            this.componentPath = componentView ? ComponentPath.fromString(componentView.getComponentPath()) : null;
+            this.componentPath = componentView ? componentView.getComponentPath() : null;
             this.empty = componentView ? componentView.isEmpty() : false;
         }
 
@@ -26,7 +26,7 @@ module api.liveedit {
             return this.empty;
         }
 
-        getComponentView(): any {
+        getComponentView(): ItemView {
             return this.componentView;
         }
 

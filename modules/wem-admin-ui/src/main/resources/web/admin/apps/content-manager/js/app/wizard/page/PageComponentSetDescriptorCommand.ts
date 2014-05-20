@@ -9,10 +9,11 @@ module app.wizard.page {
     import ComponentPathRegionAndComponent = api.content.page.ComponentPathRegionAndComponent;
     import ComponentName = api.content.page.ComponentName;
     import PageRegions = api.content.page.PageRegions;
+    import ItemView = api.liveedit.ItemView;
 
     export class PageComponentSetDescriptorCommand {
 
-        private componentView: any;
+        private itemView: ItemView;
 
         private pageRegions: PageRegions;
 
@@ -20,8 +21,8 @@ module app.wizard.page {
 
         private componentPath: ComponentPath;
 
-        setComponentView(value: any): PageComponentSetDescriptorCommand {
-            this.componentView = value;
+        setItemView(value: ItemView): PageComponentSetDescriptorCommand {
+            this.itemView = value;
             return this;
         }
 
@@ -41,23 +42,24 @@ module app.wizard.page {
         }
 
         execute(): ComponentPath {
-            api.util.assertNotNull(this.componentView, "uiComponent cannot be null");
+            api.util.assertNotNull(this.itemView, "itemView cannot be null");
             api.util.assertNotNull(this.pageRegions, "pageRegions cannot be null");
             api.util.assertNotNull(this.descriptor, "descriptor cannot be null");
             api.util.assertNotNull(this.componentPath, "componentPath cannot be null");
 
             var component: DescriptorBasedPageComponent = <DescriptorBasedPageComponent>this.pageRegions.getComponent(this.componentPath);
             if (!component || !this.descriptor) {
-                return;
+                return null;
             }
 
             new PageComponentNameChanger().
                 setPageRegions(this.pageRegions).
                 setComponentPath(this.componentPath).
-                setComponentView(this.componentView).
+                setComponentView(this.itemView).
                 changeTo(this.descriptor.getName().toString());
 
-            this.componentPath = component.getPath();
+            var newPath = component.getPath();
+            api.util.assertNotNull(newPath, "Did not expect new path for PageComponent to be null");
 
             component.setDescriptor(this.descriptor.getKey());
 
@@ -69,7 +71,7 @@ module app.wizard.page {
                 this.addLayoutRegions(layoutComponent, layoutDescriptor);
             }
 
-            return this.componentPath;
+            return newPath;
         }
 
         private addLayoutRegions(layoutComponent: LayoutComponent, layoutDescriptor: LayoutDescriptor) {

@@ -1,11 +1,14 @@
 module LiveEdit.component {
+
+    import LayoutItemType = api.liveedit.layout.LayoutItemType;
+
     export class LayoutPlaceholder extends ComponentPlaceholder {
 
-        private comboBox:api.content.page.layout.LayoutDescriptorComboBox;
+        private comboBox: api.content.page.layout.LayoutDescriptorComboBox;
 
         constructor() {
             this.setComponentType(new ComponentType(Type.LAYOUT));
-            super();
+            super(LayoutItemType.get());
 
             this.getEl().setData('live-edit-type', "layout");
 

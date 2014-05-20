@@ -11,7 +11,7 @@ function initializeLiveEdit() {
     //TODO: Maybe move/make more generic
     $('[data-live-edit-empty-component="true"]').each((index, element) => {
         var type = $(element).data('live-edit-type');
-        var path = $(element).data('live-edit-component');
+        var path: string = $(element).data('live-edit-component');
         console.log("found empty component", type, path);
         var newEl;
         if (type === "image") {
@@ -21,7 +21,7 @@ function initializeLiveEdit() {
         } else if (type === "layout") {
             newEl = new LiveEdit.component.LayoutPlaceholder();
         }
-        newEl.setComponentPath(path);
+        newEl.setComponentPath(api.content.page.ComponentPath.fromString(path));
         $(element).replaceWith(newEl.getHTMLElement());
     });
 

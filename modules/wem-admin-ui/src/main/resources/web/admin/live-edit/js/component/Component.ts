@@ -1,5 +1,7 @@
 module LiveEdit.component {
 
+    import ItemType = api.liveedit.ItemType;
+
     export interface ElementDimensions {
         top: number;
         left: number;
@@ -7,7 +9,7 @@ module LiveEdit.component {
         height: number;
     }
 
-    export class Component extends api.dom.Element {
+    export class Component extends api.liveedit.ItemView {
 
         element: JQuery;
         componentType: ComponentType;
@@ -16,16 +18,9 @@ module LiveEdit.component {
 
         private mask: api.ui.LoadMask;
 
-        constructor(element?: HTMLElement, dummy?: boolean) {
+        constructor(type: ItemType, element?: HTMLElement, dummy?: boolean) {
             this.selectedAsParent = false;
-            var props = new api.dom.ElementProperties();
-            props.setGenerateId(false);
-            if (element) {
-                props.setHelper(new api.dom.ElementHelper(element));
-            } else {
-                props.setTagName("div");
-            }
-            super(props);
+            super(type, element);
             this.setElementDimensions(this.getDimensionsFromElement());
             if (!this.componentType) {
                 this.setComponentType(new LiveEdit.component.ComponentType(this.resolveComponentTypeEnum()));
@@ -38,20 +33,12 @@ module LiveEdit.component {
         }
 
         public static fromJQuery(element: JQuery, dummy: boolean = true): Component {
-            return new Component(element.get(0), dummy);
+            return new Component(ItemType.fromJQuery(element), element.get(0), dummy);
         }
 
         public static fromElement(element: HTMLElement, dummy: boolean = true): Component {
-            return new Component(element, dummy);
-        }
-
-        getRegionName():string {
-            var regionEl = api.dom.Element.fromHtmlElement($liveEdit(this.getElement()).parents('[data-live-edit-region]'));
-            return regionEl.getEl().getData('live-edit-region');
-        }
-
-        setComponentPath(path:string) {
-            this.getEl().setData('live-edit-component', path);
+            var itemType = ItemType.fromHTMLElement(element);
+            return new Component(itemType, element, dummy);
         }
 
         getComponentName(): string {
@@ -62,21 +49,8 @@ module LiveEdit.component {
                 return regionPath ? regionPath.substring(regionPath.lastIndexOf('/') + 1) : '[No Name]';
             } else {
                 var path = this.getComponentPath();
-                return path ? path.substring(path.lastIndexOf('/') + 1) : '[No Name]';
+                return path ? path.getComponentName().toString() : '[No Name]';
             }
-        }
-
-        getComponentPath(): string {
-            return this.getEl().getData('live-edit-component');
-        }
-
-        getPrecedingComponentPath(): string {
-            var previousComponent = api.dom.Element.fromHtmlElement($liveEdit(this.getHTMLElement()).prevAll('[data-live-edit-component]')[0]);
-            return previousComponent.getEl().getData("live-edit-component");
-        }
-
-        getItemId(): number {
-            return parseInt(this.getEl().getData("itemid"));
         }
 
         getElement(): JQuery {
@@ -100,22 +74,6 @@ module LiveEdit.component {
             return this.componentType;
         }
 
-        hasComponentPath(): boolean {
-            if (this.getElement().data('live-edit-component')) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        isEmpty(): boolean {
-            return this.getElement().attr('data-live-edit-empty-component') == 'true';
-        }
-
-        isSelected(): boolean {
-            return this.getElement().attr('data-live-edit-selected') == 'true';
-        }
-
         setSelectedAsParent(value: boolean) {
             this.selectedAsParent = value;
         }
@@ -131,7 +89,7 @@ module LiveEdit.component {
 
         private getComponentTypeNameFromElement(): string {
 
-            var type =  this.getEl().getData('liveEditType');
+            var type = this.getEl().getData('liveEditType');
             return type;
         }
 

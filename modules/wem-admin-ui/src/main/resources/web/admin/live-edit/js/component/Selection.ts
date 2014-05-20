@@ -4,6 +4,7 @@ module LiveEdit.component {
     import PageSelectEvent = api.liveedit.PageSelectEvent;
     import RegionSelectEvent = api.liveedit.RegionSelectEvent;
     import ComponentSelectEvent = api.liveedit.PageComponentSelectEvent;
+    import RegionView = api.liveedit.RegionView;
 
     // Uses
     var $ = $liveEdit;
@@ -25,9 +26,10 @@ module LiveEdit.component {
             }
             else if (Selection.getType(element) == "region") {
 
+                var regionView = RegionView.fromHTMLElement(element);
                 var regionPath = element.getAttribute(Selection.REGION_ATTR);
                 if (regionPath && regionPath.length > 0) {
-                    new RegionSelectEvent(api.content.page.RegionPath.fromString(regionPath)).fire();
+                    new RegionSelectEvent(api.content.page.RegionPath.fromString(regionPath), regionView).fire();
                 }
             }
             else if (Selection.getType(element) == "component") {

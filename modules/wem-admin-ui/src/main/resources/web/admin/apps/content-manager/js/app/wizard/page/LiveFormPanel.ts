@@ -27,6 +27,7 @@ module app.wizard.page {
     import DescriptorBasedPageComponent = api.content.page.DescriptorBasedPageComponent;
     import DescriptorBasedPageComponentBuilder = api.content.page.DescriptorBasedPageComponentBuilder;
     import LayoutComponent = api.content.page.layout.LayoutComponent;
+    import TextComponent = api.content.page.text.TextComponent;
     import PartComponent = api.content.page.part.PartComponent;
     import ImageComponent = api.content.page.image.ImageComponent;
 
@@ -52,12 +53,13 @@ module app.wizard.page {
     import InsertablesPanel = app.wizard.page.contextwindow.insert.InsertablesPanel;
     import RenderingMode = api.rendering.RenderingMode;
 
+    import ItemView = api.liveedit.ItemView;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import SortableStopEvent = api.liveedit.SortableStopEvent;
     import SortableUpdateEvent = api.liveedit.SortableUpdateEvent;
     import PageSelectEvent = api.liveedit.PageSelectEvent;
     import RegionSelectEvent = api.liveedit.RegionSelectEvent;
-    import ImageSetEvent = api.liveedit.ImageComponentSetImageEvent;
+    import ImageComponentSetImageEvent = api.liveedit.image.ImageComponentSetImageEvent;
 
     export interface LiveFormPanelConfig {
 
@@ -113,7 +115,7 @@ module app.wizard.page {
             this.pageLoading = false;
             this.pageSkipReload = false;
 
-            this.liveEditPage = new LiveEditPageProxy(<LiveEditPageConfig>{
+            this.liveEditPage = new LiveEditPageProxy(<LiveEditPageProxyConfig>{
                 liveFormPanel: this,
                 siteTemplate: this.siteTemplate
             });
@@ -135,7 +137,7 @@ module app.wizard.page {
 
                 var uiComponent = this.liveEditPage.getComponentByPath(event.getComponentPath());
                 var command = new PageComponentSetDescriptorCommand().
-                    setComponentView(uiComponent).
+                    setItemView(uiComponent).
                     setPageRegions(this.pageRegions).
                     setComponentPath(event.getComponentPath()).
                     setDescriptor(event.getDescriptor());
@@ -155,7 +157,7 @@ module app.wizard.page {
 
                 var uiComponent = this.liveEditPage.getComponentByPath(event.getComponentPath());
                 var command = new PageComponentSetDescriptorCommand().
-                    setComponentView(uiComponent).
+                    setItemView(uiComponent).
                     setPageRegions(this.pageRegions).
                     setComponentPath(event.getComponentPath()).
                     setDescriptor(event.getDescriptor());
@@ -383,15 +385,21 @@ module app.wizard.page {
             });
         }
 
-        private saveAndReloadOnlyPageComponent(componentPath: ComponentPath, componentUI: any) {
+        private saveAndReloadOnlyPageComponent(componentPath: ComponentPath, itemView: ItemView) {
+
+            if (!componentPath) {
+                console.log("adsfasf");
+            }
+            api.util.assertNotNull(componentPath, "componentPath cannot be null");
+            api.util.assertNotNull(itemView, "componentPath cannot be null");
 
             this.pageSkipReload = true;
             this.contentWizardPanel.saveChanges().
                 done(() => {
                     this.pageSkipReload = false;
-                    componentUI.showLoadingSpinner();
+                    (<any>itemView).showLoadingSpinner();
 
-                    this.liveEditPage.loadComponent(componentPath, componentUI, this.content);
+                    this.liveEditPage.loadComponent(componentPath, itemView, this.content);
                 });
         }
 
@@ -506,11 +514,12 @@ module app.wizard.page {
 
             this.liveEditPage.onSortableUpdate((event: SortableUpdateEvent) => {
 
-                var newPath = this.pageRegions.moveComponent(event.getComponentPath(), event.getRegion(),
-                    event.getPrecedingComponent().getComponentName());
+                var precedingComponent = event.getPrecedingComponent();
+                var precedingComponentName = precedingComponent ? precedingComponent.getComponentName() : null;
+                var newPath = this.pageRegions.moveComponent(event.getComponentPath(), event.getRegion(), precedingComponentName);
 
                 if (newPath) {
-                    event.getComponentView().setComponentPath(newPath.toString());
+                    event.getComponentView().setComponentPath(newPath);
                 }
             });
 
@@ -534,7 +543,7 @@ module app.wizard.page {
                 }
             });
 
-            this.liveEditPage.onImageComponentSetImage((event: ImageSetEvent) => {
+            this.liveEditPage.onImageComponentSetImage((event: ImageComponentSetImageEvent) => {
 
                 var command = new ImageComponentSetImageCommand().
                     setDefaultModels(this.defaultModels).
@@ -553,20 +562,24 @@ module app.wizard.page {
             this.liveEditPage.onPageComponentSetDescriptor((event: PageComponentSetDescriptorEvent) => {
 
                 var command = new PageComponentSetDescriptorCommand().
-                    setComponentView(event.getComponentView()).
+                    setItemView(event.getComponentView()).
                     setPageRegions(this.pageRegions).
                     setComponentPath(event.getPath()).
                     setDescriptor(event.getDescriptor());
 
                 if (this.pageTemplate) {
                     var newComponentPath = command.execute();
-                    this.saveAndReloadOnlyPageComponent(newComponentPath, event.getComponentView());
+                    if (newComponentPath) {
+                        this.saveAndReloadOnlyPageComponent(newComponentPath, event.getComponentView());
+                    }
                 }
                 else {
                     this.initializePageFromDefault().done(() => {
 
                         var newComponentPath = command.execute();
-                        this.saveAndReloadOnlyPageComponent(newComponentPath, event.getComponentView());
+                        if (newComponentPath) {
+                            this.saveAndReloadOnlyPageComponent(newComponentPath, event.getComponentView());
+                        }
                     });
                 }
             });
@@ -578,7 +591,7 @@ module app.wizard.page {
                     setPathToSource(event.getPath()).
                     execute();
 
-                this.saveAndReloadOnlyPageComponent(newPageComponent.getPath(), event.getComponentView());
+                this.saveAndReloadOnlyPageComponent(newPageComponent.getPath(), event.getItemView());
             });
         }
 
@@ -606,17 +619,20 @@ module app.wizard.page {
             var component = this.pageRegions.getComponent(componentPath);
             api.util.assertNotNull(component, "Could not find component: " + componentPath.toString());
 
-            if (component instanceof ImageComponent) {
+            if (api.ObjectHelper.iFrameSafeInstanceOf(component, ImageComponent)) {
                 this.imageInspectionPanel.setImageComponent(<ImageComponent>component);
                 this.contextWindow.showInspectionPanel(this.imageInspectionPanel);
             }
-            else if (component instanceof PartComponent) {
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(component, PartComponent)) {
                 this.partInspectionPanel.setPartComponent(<PartComponent>component);
                 this.contextWindow.showInspectionPanel(this.partInspectionPanel);
             }
-            else if (component instanceof LayoutComponent) {
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(component, LayoutComponent)) {
                 this.layoutInspectionPanel.setLayoutComponent(<LayoutComponent>component);
                 this.contextWindow.showInspectionPanel(this.layoutInspectionPanel);
+            }
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(component, TextComponent)) {
+
             }
             else {
                 throw new Error("PageComponent cannot be selected: " + api.util.getClassName(component));

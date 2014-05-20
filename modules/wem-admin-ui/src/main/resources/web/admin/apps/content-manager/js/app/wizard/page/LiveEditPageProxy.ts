@@ -10,10 +10,11 @@ module app.wizard.page {
     import UploadDialog = api.content.inputtype.image.UploadDialog;
     import RenderingMode = api.rendering.RenderingMode;
 
+    import ItemView = api.liveedit.ItemView;
     import NewPageComponentIdMapEvent = api.liveedit.NewPageComponentIdMapEvent;
     import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
     import ImageUploadedEvent = api.liveedit.ImageUploadedEvent;
-    import ImageSetEvent = api.liveedit.ImageComponentSetImageEvent;
+    import ImageComponentSetImageEvent = api.liveedit.image.ImageComponentSetImageEvent;
     import DraggableStartEvent = api.liveedit.DraggableStartEvent;
     import DraggableStopEvent = api.liveedit.DraggableStopEvent;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
@@ -23,7 +24,7 @@ module app.wizard.page {
     import RegionSelectEvent = api.liveedit.RegionSelectEvent;
     import ComponentSelectEvent = api.liveedit.PageComponentSelectEvent;
 
-    export interface LiveEditPageConfig {
+    export interface LiveEditPageProxyConfig {
 
         liveFormPanel: LiveFormPanel;
 
@@ -70,7 +71,7 @@ module app.wizard.page {
 
         private pageComponentAddedListeners: {(event: PageComponentAddedEvent): void;}[] = [];
 
-        private imageComponentSetImageListeners: {(event: ImageSetEvent): void;}[] = [];
+        private imageComponentSetImageListeners: {(event: ImageComponentSetImageEvent): void;}[] = [];
 
         private pageComponentSetDescriptorListeners: {(event: PageComponentSetDescriptorEvent): void;}[] = [];
 
@@ -80,7 +81,7 @@ module app.wizard.page {
 
         private pageComponentDuplicatedListeners: {(event: PageComponentDuplicatedEvent): void;}[] = [];
 
-        constructor(config: LiveEditPageConfig) {
+        constructor(config: LiveEditPageProxyConfig) {
 
             this.baseUrl = api.util.getUri("portal/edit/");
             this.liveFormPanel = config.liveFormPanel;
@@ -185,7 +186,7 @@ module app.wizard.page {
             return deferred.promise;
         }
 
-        public loadComponent(componentPath: ComponentPath, componentPlaceholder: api.dom.Element, content: api.content.Content) {
+        public loadComponent(componentPath: ComponentPath, componentPlaceholder: ItemView, content: api.content.Content) {
 
             api.util.assertNotNull(componentPath, "componentPath cannot be null");
             api.util.assertNotNull(componentPlaceholder, "componentPlaceholder cannot be null");
@@ -272,7 +273,7 @@ module app.wizard.page {
             ComponentSelectEvent.un();
             ComponentSelectEvent.on((event: ComponentSelectEvent) => {
                 if (event.getPath()) {
-                    this.notifyPageComponentSelected(event.getPath(), event.getComponentView().isEmpty());
+                    this.notifyPageComponentSelected(event.getPath(), event.getItemView().isEmpty());
                 }
             }, this.liveEditWindow);
 
@@ -283,42 +284,37 @@ module app.wizard.page {
 
             this.liveEditJQuery(this.liveEditWindow).off('componentAdded.liveEdit');
             this.liveEditJQuery(this.liveEditWindow).on('componentAdded.liveEdit',
-                (event, componentEl?, regionPathAsString?: string, precedingComponentPathAsString?: string) => {
+                (event, itemView?: ItemView, regionPathAsString?: string, preceedingComponent?: ComponentPath) => {
 
-                    var componentType = PageComponentType.byShortName(componentEl.getComponentType().getName());
+                    var componentType = itemView.getType().toPageComponentType();
                     var region = RegionPath.fromString(regionPathAsString);
-
-                    var preceedingComponent: ComponentPath = null;
-                    if (precedingComponentPathAsString) {
-                        preceedingComponent = ComponentPath.fromString(precedingComponentPathAsString);
-                    }
-
-                    this.notifyPageComponentAdded(componentType, region, preceedingComponent, componentEl);
+                    this.notifyPageComponentAdded(componentType, region, preceedingComponent, itemView);
                 });
 
-            this.liveEditJQuery(this.liveEditWindow).on('componentRemoved.liveEdit', (event, component?) => {
+            this.liveEditJQuery(this.liveEditWindow).on('componentRemoved.liveEdit', (event, itemView?: ItemView) => {
 
-                var componentPath: ComponentPath = ComponentPath.fromString(component.getComponentPath());
+                var componentPath: ComponentPath = itemView.getComponentPath();
                 this.notifyPageComponentRemoved(componentPath);
             });
 
-            this.liveEditJQuery(this.liveEditWindow).on('componentReset.liveEdit', (event, component?) => {
+            this.liveEditJQuery(this.liveEditWindow).on('componentReset.liveEdit', (event, itemView?: ItemView) => {
 
-                var componentPath: ComponentPath = ComponentPath.fromString(component.getComponentPath());
+                var componentPath: ComponentPath = itemView.getComponentPath();
                 this.notifyPageComponentReset(componentPath);
             });
 
             this.liveEditJQuery(this.liveEditWindow).off('componentDuplicated.liveEdit');
-            this.liveEditJQuery(this.liveEditWindow).on('componentDuplicated.liveEdit', (event, component?, placeholder?) => {
+            this.liveEditJQuery(this.liveEditWindow).on('componentDuplicated.liveEdit',
+                (event, originItemView?: ItemView, duplicationItemView?: ItemView) => {
 
-                var componentType = PageComponentType.byShortName(component.getComponentType().getName());
-                var region: RegionPath = RegionPath.fromString(component.getRegionName());
-                var componentPath: ComponentPath = ComponentPath.fromString(component.getComponentPath());
+                    var componentType = originItemView.getType().toPageComponentType();
+                    var region: RegionPath = originItemView.getParentRegion().getRegionPath();
+                    var componentPath: ComponentPath = originItemView.getComponentPath();
 
-                this.notifyPageComponentDuplicated(placeholder, componentType, region, componentPath);
-            });
+                    this.notifyPageComponentDuplicated(duplicationItemView, componentType, region, componentPath);
+                });
 
-            ImageSetEvent.on((event: ImageSetEvent) => {
+            ImageComponentSetImageEvent.on((event: ImageComponentSetImageEvent) => {
                 if (!event.getErrorMessage()) {
                     this.notifyImageComponentSetImage(event);
                 } else {
@@ -328,10 +324,9 @@ module app.wizard.page {
 
 
             this.liveEditJQuery(this.liveEditWindow).on('pageComponentSetDescriptor.liveEdit',
-                (event, descriptor?: Descriptor, componentPathAsString?: string, componentPlaceholder?) => {
+                (event: JQueryEventObject, descriptor?: Descriptor, componentPath?: ComponentPath, itemView?: ItemView) => {
 
-                    var componentPath = ComponentPath.fromString(componentPathAsString);
-                    this.notifyPageComponentSetDescriptor(componentPath, descriptor, componentPlaceholder);
+                    this.notifyPageComponentSetDescriptor(componentPath, descriptor, itemView);
                 });
         }
 
@@ -487,15 +482,15 @@ module app.wizard.page {
             });
         }
 
-        onImageComponentSetImage(listener: {(event: ImageSetEvent): void;}) {
+        onImageComponentSetImage(listener: {(event: ImageComponentSetImageEvent): void;}) {
             this.imageComponentSetImageListeners.push(listener);
         }
 
-        unImageComponentSetImage(listener: {(event: ImageSetEvent): void;}) {
+        unImageComponentSetImage(listener: {(event: ImageComponentSetImageEvent): void;}) {
             this.imageComponentSetImageListeners = this.imageComponentSetImageListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyImageComponentSetImage(event: ImageSetEvent) {
+        private notifyImageComponentSetImage(event: ImageComponentSetImageEvent) {
             this.imageComponentSetImageListeners.forEach((listener) => listener(event));
         }
 
@@ -509,8 +504,8 @@ module app.wizard.page {
             });
         }
 
-        private notifyPageComponentSetDescriptor(path: ComponentPath, descriptor: Descriptor, componentPlaceholder: api.dom.Element) {
-            var event = new PageComponentSetDescriptorEvent(path, descriptor, componentPlaceholder);
+        private notifyPageComponentSetDescriptor(path: ComponentPath, descriptor: Descriptor, itemView: ItemView) {
+            var event = new PageComponentSetDescriptorEvent(path, descriptor, itemView);
             this.pageComponentSetDescriptorListeners.forEach((listener) => {
                 listener(event);
             });
@@ -560,9 +555,9 @@ module app.wizard.page {
             });
         }
 
-        private notifyPageComponentDuplicated(placeholder: api.dom.Element, type: PageComponentType, region: RegionPath,
+        private notifyPageComponentDuplicated(itemView: ItemView, type: PageComponentType, region: RegionPath,
                                               path: ComponentPath) {
-            var event = new PageComponentDuplicatedEvent(placeholder, type, region, path);
+            var event = new PageComponentDuplicatedEvent(itemView, type, region, path);
             this.pageComponentDuplicatedListeners.forEach((listener) => {
                 listener(event);
             });

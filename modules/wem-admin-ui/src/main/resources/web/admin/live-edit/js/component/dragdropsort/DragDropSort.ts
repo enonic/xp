@@ -82,7 +82,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 //        });
     }
 
-    function updateScrollSensitivity(selector): void{
+    function updateScrollSensitivity(selector): void {
         var scrollSensitivity = calculateScrollSensitivity();
         $(selector).sortable('option', 'scrollSensitivity', scrollSensitivity);
     }
@@ -228,8 +228,9 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             // Remove it now so the auto selection is properly aligned.
             removePaddingFromLayoutComponent();
 
+            var region = emptyComponent.getParentRegion();
             $(window).trigger('componentAdded.liveEdit',
-                [emptyComponent, emptyComponent.getRegionName(), emptyComponent.getPrecedingComponentPath()]);
+                [emptyComponent, region.getRegionName(), emptyComponent.getPrecedingComponentPath()]);
             LiveEdit.component.Selection.handleSelect(emptyComponent.getHTMLElement());
         }
     }

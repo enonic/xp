@@ -2,6 +2,7 @@ module app.wizard.page {
 
     import ComponentPath = api.content.page.ComponentPath;
     import Descriptor = api.content.page.Descriptor;
+    import ItemView = api.liveedit.ItemView;
 
     export class PageComponentSetDescriptorEvent {
 
@@ -9,12 +10,12 @@ module app.wizard.page {
 
         private descriptor: Descriptor;
 
-        private componentView: api.dom.Element;
+        private componentView: ItemView;
 
-        constructor(path: ComponentPath, descriptor: Descriptor, componentView: api.dom.Element) {
+        constructor(path: ComponentPath, descriptor: Descriptor, itemView: ItemView) {
             this.path = path;
             this.descriptor = descriptor;
-            this.componentView = componentView;
+            this.componentView = itemView;
         }
 
         getPath(): ComponentPath {
@@ -25,7 +26,7 @@ module app.wizard.page {
             return this.descriptor;
         }
 
-        getComponentView(): api.dom.Element {
+        getComponentView(): ItemView {
             return this.componentView;
         }
     }

@@ -3,12 +3,13 @@ module app.wizard.page {
     import ContentId = api.content.ContentId;
     import ComponentPath = api.content.page.ComponentPath;
     import PageRegions = api.content.page.PageRegions;
+    import ItemView = api.liveedit.ItemView;
 
     export class ImageComponentSetImageCommand {
 
         private defaultModels: DefaultModels;
 
-        private componentView: any;
+        private itemView: ItemView;
 
         private pageRegions: PageRegions;
 
@@ -23,8 +24,8 @@ module app.wizard.page {
             return this;
         }
 
-        setComponentView(value: any): ImageComponentSetImageCommand {
-            this.componentView = value;
+        setComponentView(value: ItemView): ImageComponentSetImageCommand {
+            this.itemView = value;
             return this;
         }
 
@@ -50,7 +51,7 @@ module app.wizard.page {
 
         execute(): ComponentPath {
             api.util.assertNotNull(this.defaultModels, "defaultModels cannot be null");
-            api.util.assertNotNull(this.componentView, "uiComponent cannot be null");
+            api.util.assertNotNull(this.itemView, "itemView cannot be null");
             api.util.assertNotNull(this.pageRegions, "pageRegions cannot be null");
             api.util.assertNotNull(this.image, "image cannot be null");
             api.util.assertNotNull(this.componentPath, "componentPath cannot be null");
@@ -66,7 +67,7 @@ module app.wizard.page {
                 new PageComponentNameChanger().
                     setPageRegions(this.pageRegions).
                     setComponentPath(this.componentPath).
-                    setComponentView(this.componentView).
+                    setComponentView(this.itemView).
                     changeTo(this.imageName);
 
                 this.componentPath = imageComponent.getPath();
