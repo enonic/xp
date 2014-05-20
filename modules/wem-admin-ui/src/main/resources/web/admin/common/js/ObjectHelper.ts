@@ -10,7 +10,21 @@ module api {
             if (obj instanceof fn) {
                 return true;
             }
-            return obj.constructor.name === (<any>fn).name;
+
+            if (obj.constructor.name === (<any>fn).name) {
+                return true;
+            }
+
+            var prototype = Object.getPrototypeOf(obj);
+            do {
+                prototype = Object.getPrototypeOf(prototype);
+                if (!prototype) {
+                    return false;
+                }
+            }
+            while (prototype.constructor.name !== (<any>fn).name);
+
+            return true;
         }
 
         static equals(a: Equitable, b: Equitable) {
