@@ -22,6 +22,10 @@ module api.liveedit {
                 contextMenuConfig: ['parent', 'opencontent', 'view']
             });
         }
+
+        createView(element: HTMLElement, dummy: boolean = true): ItemView {
+            return new ItemView(this, element, dummy);
+        }
     }
 
     ContentItemType.get();

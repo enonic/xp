@@ -25,6 +25,10 @@ module api.liveedit.text {
             });
         }
 
+        createView(element: HTMLElement, dummy: boolean = true): PageView {
+            return new TextView(element);
+        }
+
         isPageComponentType(): boolean {
             return true
         }

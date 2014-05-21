@@ -1,6 +1,7 @@
 module api.liveedit.layout {
 
     import ItemType = api.liveedit.ItemType;
+    import ItemView = api.liveedit.ItemView;
 
     export class LayoutItemType extends ItemType {
 
@@ -27,6 +28,10 @@ module api.liveedit.layout {
 
         isPageComponentType(): boolean {
             return true
+        }
+
+        createView(element: HTMLElement, dummy: boolean = true): ItemView {
+            return new ItemView(this, element, dummy);
         }
     }
 

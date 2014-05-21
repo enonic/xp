@@ -1,5 +1,7 @@
 module api.liveedit {
 
+    import Content = api.content.Content;
+
     export class PageItemType extends ItemType {
 
         private static INSTANCE = new PageItemType();
@@ -7,6 +9,8 @@ module api.liveedit {
         static get(): PageItemType {
             return PageItemType.INSTANCE;
         }
+
+        private content: Content;
 
         constructor() {
             super("page", <ItemTypeConfigJson>{
@@ -21,6 +25,18 @@ module api.liveedit {
                 },
                 contextMenuConfig: ['reset']
             });
+
+            ContentSetEvent.on((event: ContentSetEvent) => {
+                this.content = event.getContent();
+            });
+        }
+
+        getContent(): Content {
+            return this.content;
+        }
+
+        createView(element: HTMLElement, dummy: boolean = true): PageView {
+            return new PageView(element);
         }
     }
 

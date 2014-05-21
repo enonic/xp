@@ -34,6 +34,10 @@ module api.liveedit {
             return PageComponentType.byShortName(this.shortName);
         }
 
+        createView(element: HTMLElement, dummy: boolean = true): ItemView {
+            throw new Error("Must be implemented by inheritors");
+        }
+
         equals(o: api.Equitable): boolean {
 
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ItemType)) {

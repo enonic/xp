@@ -23,6 +23,10 @@ module api.liveedit {
 
             });
         }
+
+        createView(element: HTMLElement, dummy: boolean = true): RegionView {
+            return new RegionView(element);
+        }
     }
 
     RegionItemType.get();

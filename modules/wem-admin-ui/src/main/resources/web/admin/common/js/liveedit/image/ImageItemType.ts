@@ -1,6 +1,7 @@
 module api.liveedit.image {
 
     import ItemType = api.liveedit.ItemType;
+    import ItemView = api.liveedit.ItemView;
 
     export class ImageItemType extends ItemType {
 
@@ -23,6 +24,10 @@ module api.liveedit.image {
                 },
                 contextMenuConfig: ['parent', 'remove', 'clear', 'duplicate']
             });
+        }
+
+        createView(element: HTMLElement, dummy: boolean = true): ItemView {
+            return new ItemView(this, element, dummy);
         }
 
         isPageComponentType(): boolean {
