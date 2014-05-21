@@ -24,43 +24,6 @@
 
   }
 
-  .form-icon + .wizard-header {
-    margin-left: 116px;
-  }
-
-  .wizard-header {
-    margin: 15px 25px;
-
-    .text-input {
-      border: 1px solid transparent;
-      margin: 0;
-      padding: 0;
-      background-color: transparent;
-      min-height: 0;
-
-      &.large {
-        min-width: 220px;
-        font-size: 32px;
-      }
-      &.middle {
-        min-width: 100px;
-        margin-top: 2px;
-      }
-      .input-glow();
-      .placeholderColor(@admin-medium-gray-border);
-    }
-
-    .path {
-      float: left;
-      height: 28px;
-      line-height: 28px;
-      margin: 0 0 0 4px;
-      font-size: 16px;
-      color: @admin-light-gray-font;
-      .ellipsis();
-    }
-  }
-
   .wizard-step-navigator-and-toolbar {
     background-color: #eeeeee;
     padding-left: 95px;
@@ -110,44 +73,15 @@
     }
   }
 
-  ._720-960 {
-    .wizard-steps-panel {
-      left: 0px;
-      .scroller {
-        padding: 0 0 0 25px;
-      }
-    }
-  }
-
   ._0-240, ._240-360, ._360-540, ._540-720, ._720-960 {
     .wizard-step-navigator-and-toolbar {
       padding-left: 0;
     }
   }
 
-  ._0-240, ._240-360, ._360-540, ._540-720 {
-    .wizard-steps-panel {
-      left: 0px;
-      .scroller {
-        padding: 0 25px;
-      }
-    }
-  }
-
   ._0-240, ._240-360, ._360-540 {
-    .wizard-step-deck-panel {
-      left: 10px;
-      right: 10px;
-      margin-top: 15px;
-    }
-
     .form-icon {
       margin: 5px 10px 0 10px;
-    }
-
-    .form-icon + .wizard-header {
-      margin-left: 86px;
-      margin-right: 10px;
     }
   }
 }
