@@ -5,6 +5,7 @@
 ///<reference path='ItemType.ts' />
 ///<reference path='ItemTypeConfig.ts' />
 ///<reference path='RegionItemType.ts' />
+///<reference path='ContentSetEvent.ts' />
 ///<reference path='PageItemType.ts' />
 ///<reference path='ContentItemType.ts' />
 ///<reference path='ItemView.ts' />
