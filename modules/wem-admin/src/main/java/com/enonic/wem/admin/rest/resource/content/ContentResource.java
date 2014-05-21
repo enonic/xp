@@ -15,8 +15,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.sun.jersey.api.NotFoundException;
-
 import com.enonic.wem.admin.json.content.AbstractContentListJson;
 import com.enonic.wem.admin.json.content.ContentIdJson;
 import com.enonic.wem.admin.json.content.ContentIdListJson;
@@ -53,6 +51,7 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.query.ContentQueryResult;
 import com.enonic.wem.api.data.DataJson;
+import com.enonic.wem.core.web.jaxrs.NotFoundWebException;
 
 import static com.enonic.wem.api.content.Content.editContent;
 
@@ -79,7 +78,7 @@ public class ContentResource
 
         if ( content == null )
         {
-            throw new NotFoundException( String.format( "Content [%s] was not found", idParam ) );
+            throw new NotFoundWebException( String.format( "Content [%s] was not found", idParam ) );
         }
         else if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
         {
@@ -104,7 +103,7 @@ public class ContentResource
 
         if ( content == null )
         {
-            throw new NotFoundException( String.format( "Content [%s] was not found", pathParam ) );
+            throw new NotFoundWebException( String.format( "Content [%s] was not found", pathParam ) );
         }
         else if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
         {

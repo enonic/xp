@@ -14,14 +14,11 @@ import com.sun.jersey.api.core.InjectParam;
 
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleResourceKey;
-import com.enonic.wem.api.rendering.RenderingMode;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsControllerFactory;
-import com.enonic.wem.portal.controller.JsHttpRequest;
+import com.enonic.wem.portal.controller.JsHttpRequestBuilder;
 import com.enonic.wem.portal.script.lib.PortalUrlScriptBean;
-
-import static com.enonic.wem.api.rendering.RenderingMode.LIVE;
 
 @Path("{mode}/{path:.+}/_/service/{module}/{service}")
 public final class ServicesResource
@@ -75,9 +72,11 @@ public final class ServicesResource
         final ModuleKey moduleKey = resolveModule( request.contentPath, request.moduleName );
         final JsContext context = new JsContext();
 
-        final JsHttpRequest jsRequest = new JsHttpRequest( this.httpContext.getRequest() );
-        jsRequest.setMode( RenderingMode.from( request.mode, LIVE ) );
-        context.setRequest( jsRequest );
+        final JsHttpRequestBuilder builder = new JsHttpRequestBuilder();
+        builder.mode( request.mode );
+        builder.method( this.httpContext.getRequest().getMethod() );
+        builder.params( this.httpContext.getUriInfo().getQueryParameters() );
+        context.setRequest( builder.build() );
 
         final PortalUrlScriptBean portalUrlScriptBean = new PortalUrlScriptBean();
         context.setPortalUrlScriptBean( portalUrlScriptBean );
