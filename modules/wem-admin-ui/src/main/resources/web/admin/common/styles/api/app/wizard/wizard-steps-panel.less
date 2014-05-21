@@ -1,0 +1,20 @@
+._720-960 {
+  .wizard-steps-panel-responsive(0px, 25px)
+}
+
+._540-720 {
+  .wizard-steps-panel-responsive(25px, 25px);
+}
+
+._0-240, ._240-360, ._360-540 {
+  .wizard-steps-panel-responsive(10px, 10px);
+}
+
+.wizard-steps-panel-responsive(@padding-right, @padding-left) {
+  .wizard-steps-panel {
+    left: 0px;
+    .scroller {
+      padding: 0 @padding-right 0 @padding-left;
+    }
+  }
+}

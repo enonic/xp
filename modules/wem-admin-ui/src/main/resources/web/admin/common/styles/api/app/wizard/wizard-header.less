@@ -1,0 +1,43 @@
+.wizard-header {
+  margin: 15px 25px;
+
+  .text-input {
+    border: 1px solid transparent;
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+    min-height: 0;
+
+    &.large {
+      min-width: 220px;
+      font-size: 32px;
+    }
+    &.middle {
+      min-width: 100px;
+      margin-top: 2px;
+    }
+    .input-glow();
+    .placeholderColor(@admin-medium-gray-border);
+  }
+
+  .path {
+    float: left;
+    height: 28px;
+    line-height: 28px;
+    margin: 0 0 0 4px;
+    font-size: 16px;
+    color: @admin-light-gray-font;
+    .ellipsis();
+  }
+
+  .form-icon + .wizard-header {
+    margin-left: 116px;
+  }
+}
+
+._0-240, ._240-360, ._360-540 {
+  .form-icon + .wizard-header {
+    margin-left: 86px;
+    margin-right: 10px;
+  }
+}
