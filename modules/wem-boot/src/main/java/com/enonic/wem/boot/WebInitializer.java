@@ -28,6 +28,7 @@ final class WebInitializer
 
         final ServletRegistration.Dynamic mainServlet = context.addServlet( "main", this.mainServlet );
         mainServlet.setLoadOnStartup( 2 );
+        mainServlet.addMapping( "/" );
         mainServlet.addMapping( "/*" );
 
         final ServletRegistration.Dynamic restServlet = context.addServlet( "rest", this.restServlet );
