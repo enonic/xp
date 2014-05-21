@@ -8,7 +8,6 @@
 ///<reference path='shared/PlaceholderCreator.ts' />
 
 ///<reference path='component/Component.ts' />
-///<reference path='component/ComponentType.ts' />
 ///<reference path='component/ComponentPlaceholder.ts' />
 ///<reference path='component/ImagePlaceholder.ts' />
 ///<reference path='component/PartPlaceholder.ts' />
@@ -51,8 +50,6 @@
 ///<reference path='ui/contextmenu/menuitem/DuplicateMenuItem.ts' />
 
 ///<reference path='component/dragdropsort/DragDropSort.ts' />
-
-
 
 
 ///<reference path='main.ts' />

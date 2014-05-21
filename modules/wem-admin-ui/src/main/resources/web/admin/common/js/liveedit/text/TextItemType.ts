@@ -11,7 +11,18 @@ module api.liveedit.text {
         }
 
         constructor() {
-            super("text");
+            super("text", <ItemTypeConfigJson>{
+                cssSelector: '[data-live-edit-type=text]',
+                draggable: true,
+                cursor: 'move',
+                iconCls: 'live-edit-font-icon-text',
+                highlighterStyle: {
+                    stroke: 'rgba(68, 68, 68, 1)',
+                    strokeDasharray: '5 5',
+                    fill: 'rgba(255, 255, 255, 0)'
+                },
+                contextMenuConfig: ['parent', 'edit', 'remove', 'clear', 'duplicate']
+            });
         }
 
         isPageComponentType(): boolean {

@@ -11,7 +11,6 @@ module LiveEdit.component {
         private uploadButton: api.ui.Button;
 
         constructor() {
-            this.setComponentType(new ComponentType(Type.IMAGE));
             super(ImageItemType.get());
 
             $(this.getHTMLElement()).on('click', 'input', (e) => {

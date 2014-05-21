@@ -13,7 +13,7 @@ module api.content.page.layout {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof LayoutRegions)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, LayoutRegions)) {
                 return false;
             }
 

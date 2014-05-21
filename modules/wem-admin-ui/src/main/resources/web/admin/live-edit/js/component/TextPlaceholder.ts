@@ -7,7 +7,6 @@ module LiveEdit.component {
         private clickToEditLink: api.dom.AEl;
 
         constructor() {
-            this.setComponentType(new ComponentType(Type.TEXT));
             super(LayoutItemType.get());
 
             this.getEl().setData('live-edit-type', 'text');

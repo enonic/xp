@@ -9,7 +9,7 @@ module LiveEdit.ui {
 
     export class Highlighter extends LiveEdit.ui.Base {
 
-        private selectedComponent:LiveEdit.component.Component = null;
+        private selectedComponent: LiveEdit.component.Component = null;
 
         constructor() {
             super();
@@ -17,7 +17,7 @@ module LiveEdit.ui {
             this.registerGlobalListeners();
         }
 
-        private registerGlobalListeners():void {
+        private registerGlobalListeners(): void {
             $(window).on('mouseOverComponent.liveEdit', (event, component)  => this.onMouseOverComponent(component));
             $(window).on('selectComponent.liveEdit', (event, component)     => this.onSelectComponent(component));
             PageComponentDeselectEvent.on(() => this.onDeselectComponent());
@@ -36,25 +36,25 @@ module LiveEdit.ui {
             });
         }
 
-        private addView():void {
+        private addView(): void {
             // Needs to be a SVG element as the css has pointer-events:none
             // CSS pointer-events only works for SVG in IE
-            var html:string = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="live-edit-highlight-border" style="top:-5000px;left:-5000px">' +
-                              '    <rect width="150" height="150"/>' +
-                              '</svg>';
+            var html: string = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="live-edit-highlight-border" style="top:-5000px;left:-5000px">' +
+                               '    <rect width="150" height="150"/>' +
+                               '</svg>';
 
             this.createHtmlFromString(html);
             this.appendTo($('body'));
         }
 
-        private onMouseOverComponent(component:LiveEdit.component.Component):void {
+        private onMouseOverComponent(component: LiveEdit.component.Component): void {
             this.show();
             this.resizeToComponent(component);
             this.paintBorder(component);
             this.selectedComponent = component;
         }
 
-        private onSelectComponent(component:LiveEdit.component.Component):void {
+        private onSelectComponent(component: LiveEdit.component.Component): void {
             this.selectedComponent = component;
 
             // Highlighter should not be shown when type page is selected
@@ -68,19 +68,19 @@ module LiveEdit.ui {
             this.show();
         }
 
-        private onDeselectComponent():void {
+        private onDeselectComponent(): void {
             LiveEdit.component.Selection.removeSelectedAttribute();
             this.selectedComponent = null;
         }
 
-        private paintBorder(component:LiveEdit.component.Component):void {
-            var el:JQuery = this.getEl();
-            var style = component.getComponentType().getHighlighterStyle();
+        private paintBorder(component: LiveEdit.component.Component): void {
+            var el: JQuery = this.getEl();
+            var style = component.getType().getConfig().getHighlighterStyle();
 
             el.css(style);
         }
 
-        private resizeToComponent(component:LiveEdit.component.Component):void {
+        private resizeToComponent(component: LiveEdit.component.Component): void {
             var componentBoxModel = component.getElementDimensions();
             var w = Math.round(componentBoxModel.width),
                 h = Math.round(componentBoxModel.height),
@@ -100,15 +100,15 @@ module LiveEdit.ui {
             });
         }
 
-        private show():void {
+        private show(): void {
             this.getEl().show(null);
         }
 
-        private hide():void {
+        private hide(): void {
             this.getEl().hide(null);
         }
 
-        private handleWindowResize():void {
+        private handleWindowResize(): void {
             if (this.selectedComponent) {
                 this.resizeToComponent(this.selectedComponent);
                 this.paintBorder(this.selectedComponent);

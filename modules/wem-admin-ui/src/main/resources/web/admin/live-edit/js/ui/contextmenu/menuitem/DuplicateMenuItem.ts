@@ -11,7 +11,7 @@ module LiveEdit.ui.contextmenu.menuitem {
             super({
                 text: 'Duplicate',
                 name: 'duplicate',
-                handler: (event:Event) => {
+                handler: (event: Event) => {
                     this.onDuplicateComponent();
                     event.preventDefault();
                     event.stopPropagation();
@@ -24,7 +24,7 @@ module LiveEdit.ui.contextmenu.menuitem {
 
         private onDuplicateComponent() {
             var component = this.menu.selectedComponent;
-            var placeholder = LiveEdit.component.ComponentPlaceholder.fromComponent(LiveEdit.component.Type[component.getType().getShortName().toUpperCase()]);
+            var placeholder = LiveEdit.component.ComponentPlaceholder.fromComponent(component.getType());
             placeholder.getEl().insertAfterEl(component);
             placeholder.init();
             placeholder.showLoadingSpinner();

@@ -8,14 +8,22 @@ module api.liveedit {
 
         private shortName: string;
 
-        constructor(shortName: string) {
+        private config: ItemTypeConfig;
+
+        constructor(shortName: string, config: ItemTypeConfigJson) {
             ItemType.shortNameToInstance[shortName] = this;
             this.shortName = shortName;
+            this.config = new ItemTypeConfig(config);
         }
 
         getShortName(): string {
             return this.shortName;
         }
+
+        getConfig(): ItemTypeConfig {
+            return this.config;
+        }
+
 
         isPageComponentType(): boolean {
             return false
@@ -39,6 +47,17 @@ module api.liveedit {
             }
 
             return true;
+        }
+
+        static getDraggables(): ItemType[] {
+            var draggables: ItemType[] = [];
+            for (var shortName in  ItemType.shortNameToInstance) {
+                var itemType = ItemType.shortNameToInstance[shortName];
+                if (itemType.getConfig().isDraggable()) {
+                    draggables.push(itemType);
+                }
+            }
+            return draggables;
         }
 
         static byShortName(shortName: string): ItemType {

@@ -9,7 +9,18 @@ module api.liveedit {
         }
 
         constructor() {
-            super("page");
+            super("page", <ItemTypeConfigJson>{
+                cssSelector: '[data-live-edit-type=page]',
+                draggable: false,
+                cursor: 'pointer',
+                iconCls: 'live-edit-font-icon-page',
+                highlighterStyle: {
+                    stroke: '',
+                    strokeDasharray: '',
+                    fill: ''
+                },
+                contextMenuConfig: ['reset']
+            });
         }
     }
 

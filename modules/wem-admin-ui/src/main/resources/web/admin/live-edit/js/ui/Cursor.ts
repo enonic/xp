@@ -8,9 +8,9 @@ module LiveEdit.ui {
 
     export class Cursor extends LiveEdit.ui.Base {
 
-        bodyElement:JQuery;
+        bodyElement: JQuery;
 
-        defaultBodyCursor:string;
+        defaultBodyCursor: string;
 
         constructor() {
             super();
@@ -25,24 +25,24 @@ module LiveEdit.ui {
             this.registerGlobalListeners();
         }
 
-        private registerGlobalListeners():void {
-            $(window).on('mouseOverComponent.liveEdit', (event:JQueryEventObject, component) => this.update(component));
-            $(window).on('selectComponent.liveEdit', (event:JQueryEventObject, component) => this.update(component));
+        private registerGlobalListeners(): void {
+            $(window).on('mouseOverComponent.liveEdit', (event: JQueryEventObject, component) => this.update(component));
+            $(window).on('selectComponent.liveEdit', (event: JQueryEventObject, component) => this.update(component));
             $(window).on('mouseOutComponent.liveEdit', () => this.reset());
             SortableStartEvent.on(() => this.hide());
             SortableStopEvent.on(() => this.reset());
         }
 
-        private update(component:LiveEdit.component.Component):void {
-            this.bodyElement.css('cursor', component.getComponentType().getCursor());
+        private update(component: LiveEdit.component.Component): void {
+            this.bodyElement.css('cursor', component.getType().getConfig().getCursor());
         }
 
-        private hide():void {
+        private hide(): void {
             this.bodyElement.css('cursor', 'none');
         }
 
-        private reset():void {
-            if(LiveEdit.component.dragdropsort.DragDropSort.isDragging()) {
+        private reset(): void {
+            if (LiveEdit.component.dragdropsort.DragDropSort.isDragging()) {
                 return;
             }
             this.bodyElement.css('cursor', this.defaultBodyCursor || '');

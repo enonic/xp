@@ -1,5 +1,7 @@
 module LiveEdit.component.mouseevent {
 
+    import LayoutItemType = api.liveedit.layout.LayoutItemType;
+
     // Uses
     var $ = $liveEdit;
 
@@ -7,7 +9,7 @@ module LiveEdit.component.mouseevent {
         constructor() {
             super();
 
-            this.componentCssSelectorFilter = LiveEdit.component.TypeConfiguration[LiveEdit.component.Type.LAYOUT].cssSelector;
+            this.componentCssSelectorFilter = LayoutItemType.get().getConfig().getCssSelector();
 
             this.attachMouseOverEvent();
             this.attachMouseOutEvent();

@@ -1,6 +1,10 @@
 module LiveEdit.component {
 
     import ItemType = api.liveedit.ItemType;
+    import ImageItemType = api.liveedit.image.ImageItemType;
+    import PartItemType = api.liveedit.part.PartItemType;
+    import LayoutItemType = api.liveedit.layout.LayoutItemType;
+    import TextItemType = api.liveedit.text.TextItemType;
     import PageComponentSelectEvent = api.liveedit.PageComponentSelectEvent;
 
     export class ComponentPlaceholder extends Component {
@@ -16,22 +20,26 @@ module LiveEdit.component {
             });
         }
 
-        static fromComponent(type: LiveEdit.component.Type): ComponentPlaceholder {
+        static fromComponent(type: ItemType): ComponentPlaceholder {
+
             var placeholder: ComponentPlaceholder;
-            if (type === Type.IMAGE) {
+
+            if (type.equals(ImageItemType.get())) {
                 placeholder = new LiveEdit.component.ImagePlaceholder();
-            } else if (type == Type.PART) {
+            }
+            else if (type.equals(PartItemType.get())) {
                 placeholder = new LiveEdit.component.PartPlaceholder();
-            } else if (type == Type.LAYOUT) {
+            }
+            else if (type.equals(LayoutItemType.get())) {
                 placeholder = new LiveEdit.component.LayoutPlaceholder();
-            } else if (type == Type.TEXT) {
+            }
+            else if (type.equals(TextItemType.get())) {
                 placeholder = new LiveEdit.component.TextPlaceholder();
-            } else {
+            }
+            else {
                 var emptyComponentIcon = new api.dom.DivEl();
                 emptyComponentIcon.addClass('live-edit-empty-component-icon');
-                var typeAsString: string = LiveEdit.component.Type[type];
-                typeAsString = typeAsString.toLowerCase();
-                placeholder = new ComponentPlaceholder(ItemType.byShortName(typeAsString));
+                placeholder = new ComponentPlaceholder(type);
                 placeholder.appendChild(emptyComponentIcon);
             }
             return placeholder;

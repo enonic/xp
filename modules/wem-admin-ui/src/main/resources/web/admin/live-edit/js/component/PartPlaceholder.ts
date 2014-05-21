@@ -9,7 +9,6 @@ module LiveEdit.component {
         private comboBox: api.content.page.part.PartDescriptorComboBox;
 
         constructor() {
-            this.setComponentType(new ComponentType(Type.PART));
             super(PartItemType.get());
 
             $(this.getHTMLElement()).on('click', 'input', (e) => {

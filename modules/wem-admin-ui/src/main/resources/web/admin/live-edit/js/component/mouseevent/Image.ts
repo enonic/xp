@@ -1,13 +1,12 @@
 module LiveEdit.component.mouseevent {
 
-    // Uses
-    var $ = $liveEdit;
+    import ImageItemType = api.liveedit.image.ImageItemType;
 
     export class Image extends LiveEdit.component.mouseevent.Base {
         constructor() {
             super();
 
-            this.componentCssSelectorFilter = LiveEdit.component.TypeConfiguration[LiveEdit.component.Type.IMAGE].cssSelector;
+            this.componentCssSelectorFilter = ImageItemType.get().getConfig().getCssSelector();
 
             this.attachMouseOverEvent();
             this.attachMouseOutEvent();

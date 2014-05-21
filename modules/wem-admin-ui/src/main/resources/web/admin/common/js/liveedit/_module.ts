@@ -3,6 +3,7 @@
 ///<reference path='PageComponentIdMapResolver.ts' />
 
 ///<reference path='ItemType.ts' />
+///<reference path='ItemTypeConfig.ts' />
 ///<reference path='RegionItemType.ts' />
 ///<reference path='PageItemType.ts' />
 ///<reference path='ContentItemType.ts' />

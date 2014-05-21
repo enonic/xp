@@ -8,7 +8,7 @@ module api.content.page {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof PageRegions)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, PageRegions)) {
                 return false;
             }
 

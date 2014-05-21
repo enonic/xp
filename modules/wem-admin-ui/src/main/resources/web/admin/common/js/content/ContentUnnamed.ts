@@ -18,7 +18,7 @@ module api.content {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof ContentUnnamed)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ContentUnnamed)) {
                 return false;
             }
 

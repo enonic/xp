@@ -1,5 +1,6 @@
 module LiveEdit.component.mouseevent {
 
+    import TextItemType = api.liveedit.text.TextItemType;
     import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
 
     // Uses
@@ -20,7 +21,7 @@ module LiveEdit.component.mouseevent {
         constructor() {
             super();
 
-            this.componentCssSelectorFilter = LiveEdit.component.TypeConfiguration[LiveEdit.component.Type.TEXT].cssSelector;
+            this.componentCssSelectorFilter = TextItemType.get().getConfig().getCssSelector();
 
             this.currentMode = TextMode.UNSELECTED;
 

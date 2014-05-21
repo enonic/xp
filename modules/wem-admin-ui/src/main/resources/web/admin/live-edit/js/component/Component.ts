@@ -14,7 +14,6 @@ module LiveEdit.component {
     export class Component extends api.liveedit.ItemView {
 
         element: JQuery;
-        componentType: ComponentType;
         elementDimensions: ElementDimensions;
         selectedAsParent: boolean;
 
@@ -22,9 +21,6 @@ module LiveEdit.component {
             this.selectedAsParent = false;
             super(type, element, dummy);
             this.setElementDimensions(this.getDimensionsFromElement());
-            if (!this.componentType) {
-                this.setComponentType(new LiveEdit.component.ComponentType(this.resolveComponentTypeEnum()));
-            }
         }
 
         public static fromJQuery(element: JQuery, dummy: boolean = true): Component {
@@ -37,10 +33,10 @@ module LiveEdit.component {
         }
 
         getComponentName(): string {
-            if (this.getType() == PageItemType.get()) {
+            if (this.getType().equals(PageItemType.get())) {
                 return content ? content.getDisplayName() : '[No Name]';
             }
-            else if (this.getType() == RegionItemType.get()) {
+            else if (this.getType().equals(RegionItemType.get())) {
                 var regionPath = this.getEl().getData('live-edit-region');
                 return regionPath ? regionPath.substring(regionPath.lastIndexOf('/') + 1) : '[No Name]';
             }
@@ -63,27 +59,8 @@ module LiveEdit.component {
             this.elementDimensions = dimensions;
         }
 
-        setComponentType(componentType: ComponentType): void {
-            this.componentType = componentType;
-        }
-
-        getComponentType(): ComponentType {
-            return this.componentType;
-        }
-
         setSelectedAsParent(value: boolean) {
             this.selectedAsParent = value;
-        }
-
-        private resolveComponentTypeEnum(): LiveEdit.component.Type {
-            var elementComponentTypeName = this.getComponentTypeNameFromElement().toUpperCase();
-            return LiveEdit.component.Type[elementComponentTypeName];
-        }
-
-        private getComponentTypeNameFromElement(): string {
-
-            var type = this.getEl().getData('liveEditType');
-            return type;
         }
 
         private getDimensionsFromElement(): ElementDimensions {

@@ -6,6 +6,10 @@
 
 module LiveEdit.component.dragdropsort.DragDropSort {
 
+    import ItemType = api.liveedit.ItemType;
+    import RegionItemType = api.liveedit.RegionItemType;
+    import TextItemType = api.liveedit.text.TextItemType;
+    import LayoutItemType = api.liveedit.layout.LayoutItemType;
     import DraggableStartEvent = api.liveedit.DraggableStartEvent;
     import DraggableStopEvent = api.liveedit.DraggableStopEvent;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
@@ -21,9 +25,9 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     var CURSOR_AT: any = {left: 24, top: 24};
 
     // Set up selectors for jQuery.sortable configuration.
-    var REGION_SELECTOR: string = LiveEdit.component.TypeConfiguration[LiveEdit.component.Type.REGION].cssSelector;
+    var REGION_SELECTOR: string = RegionItemType.get().getConfig().getCssSelector();
 
-    var LAYOUT_SELECTOR: string = LiveEdit.component.TypeConfiguration[LiveEdit.component.Type.LAYOUT].cssSelector;
+    var LAYOUT_SELECTOR: string = LayoutItemType.get().getConfig().getCssSelector();
 
     var CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR: string = '[data-context-window-draggable="true"]';
 
@@ -152,7 +156,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
         var isDraggingOverLayoutComponent = ui.placeholder.closest(LAYOUT_SELECTOR).length > 0;
 
-        if (component.getType().equals(api.liveedit.layout.LayoutItemType.get()) && isDraggingOverLayoutComponent) {
+        if (component.getType().equals(LayoutItemType.get()) && isDraggingOverLayoutComponent) {
             LiveEdit.component.helper.DragHelper.updateStatusIcon(false);
             ui.placeholder.hide();
         } else {
@@ -196,7 +200,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
         removePaddingFromLayoutComponent();
 
-        var draggedItemIsLayoutComponent = component.getType().equals(api.liveedit.layout.LayoutItemType.get()),
+        var draggedItemIsLayoutComponent = component.getType().equals(LayoutItemType.get()),
             targetComponentIsInLayoutComponent = $(event.target).closest(LAYOUT_SELECTOR).length > 0;
 
         if (draggedItemIsLayoutComponent && targetComponentIsInLayoutComponent) {
@@ -218,8 +222,8 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     function handleReceive(event: JQueryEventObject, ui): void {
         if (isItemDraggedFromContextWindow(ui.item)) {
             var droppedComponent = $(event.target).children(CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR);
-            var type: string = droppedComponent.data('liveEditType').toUpperCase();
-            var emptyComponent = LiveEdit.component.ComponentPlaceholder.fromComponent(Type[type]);
+            var itemType = ItemType.byShortName(droppedComponent.data('live-edit-type'));
+            var emptyComponent = LiveEdit.component.ComponentPlaceholder.fromComponent(itemType);
 
             droppedComponent.replaceWith(emptyComponent.getHTMLElement());
             emptyComponent.init();
@@ -262,7 +266,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         });
 
         $(window).on('selectTextComponent.liveEdit', () => {
-            $(REGION_SELECTOR).sortable('option', 'cancel', LiveEdit.component.TypeConfiguration[LiveEdit.component.Type.TEXT].cssSelector);
+            $(REGION_SELECTOR).sortable('option', 'cancel', TextItemType.get().getConfig().getCssSelector());
         });
 
         $(window).on('leaveTextComponent.liveEdit', () => {
@@ -271,16 +275,13 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     function createSortableItemsSelector(): string {
-        var config: TypeConfiguration[] = LiveEdit.component.TypeConfiguration;
-        var items: string[] = [];
 
-        for (var i = 0; i < config.length; i++) {
-            if (config[i].draggable) {
-                items.push(config[i].cssSelector);
-            }
-        }
+        var sortableItemsSelector: string[] = [];
+        ItemType.getDraggables().forEach((draggableItemType: ItemType) => {
+            sortableItemsSelector.push(draggableItemType.getConfig().getCssSelector());
+        });
 
-        return items.toString();
+        return sortableItemsSelector.toString();
     }
 
 }

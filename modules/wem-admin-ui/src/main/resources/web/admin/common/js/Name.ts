@@ -31,7 +31,7 @@ module api {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof Name)) {
+            if (!(api.ObjectHelper.iFrameSafeInstanceOf(o, Name))) {
                 return false;
             }
 

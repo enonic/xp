@@ -1,5 +1,7 @@
 module LiveEdit {
 
+    import RegionItemType = api.liveedit.RegionItemType;
+
     // Uses
     var $ = $liveEdit;
 
@@ -7,9 +9,9 @@ module LiveEdit {
 
         /** jQuery Sortable placeholder */
 
-        public static createPlaceholderForJQuerySortable(component:LiveEdit.component.Component):string {
+        public static createPlaceholderForJQuerySortable(component: LiveEdit.component.Component): string {
 
-            var html:string;
+            var html: string;
 
             var componentInfoText: string = component.getType().getShortName() + ': ' + component.getComponentName();
 
@@ -21,12 +23,12 @@ module LiveEdit {
 
         /** Region. We should have a dedicated class for this  */
 
-        public static renderEmptyRegionPlaceholders():void {
+        public static renderEmptyRegionPlaceholders(): void {
 
-            var allRegionElements:JQuery = $(LiveEdit.component.TypeConfiguration[LiveEdit.component.Type.REGION].cssSelector);
-            var region:JQuery;
-            var regionComponent:LiveEdit.component.Component;
-            var regionIsEmpty:Boolean;
+            var allRegionElements: JQuery = $(RegionItemType.get().getConfig().getCssSelector());
+            var region: JQuery;
+            var regionComponent: LiveEdit.component.Component;
+            var regionIsEmpty: Boolean;
 
             this.removeAllRegionPlaceholders();
 
@@ -41,9 +43,9 @@ module LiveEdit {
             });
         }
 
-        public static createEmptyRegionPlaceholder (regionComponent:LiveEdit.component.Component):string {
+        public static createEmptyRegionPlaceholder(regionComponent: LiveEdit.component.Component): string {
 
-            var html:string;
+            var html: string;
 
             var componentTypeInfoText: string = regionComponent.getType().getShortName() + ': ' + regionComponent.getComponentName();
 
@@ -55,14 +57,14 @@ module LiveEdit {
             return html;
         }
 
-        private static isRegionEmpty(regionElement:JQuery):Boolean {
+        private static isRegionEmpty(regionElement: JQuery): Boolean {
 
-            var hasNotParts:Boolean = regionElement.children('[data-live-edit-type]' + ':not(:hidden)').length === 0;
-            var hasNotDropTargetPlaceholder:Boolean = regionElement.children('.live-edit-drop-target-placeholder').length === 0;
+            var hasNotParts: Boolean = regionElement.children('[data-live-edit-type]' + ':not(:hidden)').length === 0;
+            var hasNotDropTargetPlaceholder: Boolean = regionElement.children('.live-edit-drop-target-placeholder').length === 0;
             return hasNotParts && hasNotDropTargetPlaceholder;
         }
 
-        private static removeAllRegionPlaceholders():void {
+        private static removeAllRegionPlaceholders(): void {
             $('.live-edit-empty-region-placeholder').remove();
         }
 

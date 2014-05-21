@@ -11,7 +11,18 @@ module api.liveedit.image {
         }
 
         constructor() {
-            super("image");
+            super("image", <ItemTypeConfigJson>{
+                cssSelector: '[data-live-edit-type=image]',
+                draggable: true,
+                cursor: 'move',
+                iconCls: 'live-edit-font-icon-image',
+                highlighterStyle: {
+                    stroke: 'rgba(68, 68, 68, 1)',
+                    strokeDasharray: '5 5',
+                    fill: 'rgba(255, 255, 255, 0)'
+                },
+                contextMenuConfig: ['parent', 'remove', 'clear', 'duplicate']
+            });
         }
 
         isPageComponentType(): boolean {

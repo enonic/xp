@@ -59,21 +59,23 @@ module api.data {
         }
 
         toDataSet(): DataSet {
-            api.util.assert(this instanceof DataSet, "Expected Data to be a DataSet: " + api.util.getClassName(this));
+            api.util.assert(api.ObjectHelper.iFrameSafeInstanceOf(this, DataSet),
+                    "Expected Data to be a DataSet: " + api.util.getClassName(this));
             return <DataSet>this;
         }
 
         toProperty(): Property {
-            api.util.assert(this instanceof Property, "Expected Data to be a Property: " + api.util.getClassName(this));
+            api.util.assert(api.ObjectHelper.iFrameSafeInstanceOf(this, Property),
+                    "Expected Data to be a Property: " + api.util.getClassName(this));
             return <Property>this;
         }
 
         toDataJson(): api.data.json.DataTypeWrapperJson {
 
-            if (this instanceof Property) {
+            if (api.ObjectHelper.iFrameSafeInstanceOf(this, Property)) {
                 return (<Property>this).toPropertyJson();
             }
-            else if (this instanceof DataSet) {
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(this, DataSet)) {
                 return (<DataSet>this).toDataSetJson();
             }
             else {

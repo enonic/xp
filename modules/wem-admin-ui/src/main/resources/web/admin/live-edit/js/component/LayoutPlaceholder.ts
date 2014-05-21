@@ -9,7 +9,6 @@ module LiveEdit.component {
         private comboBox: api.content.page.layout.LayoutDescriptorComboBox;
 
         constructor() {
-            this.setComponentType(new ComponentType(Type.LAYOUT));
             super(LayoutItemType.get());
 
             this.getEl().setData('live-edit-type', "layout");

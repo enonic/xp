@@ -121,7 +121,7 @@ module api.content.page {
             if (component == null) {
                 return null;
             }
-            api.util.assert(component instanceof image.ImageComponent,
+            api.util.assert(api.ObjectHelper.iFrameSafeInstanceOf(component, image.ImageComponent),
                     "PageComponent [" + component.getPath().toString() + "] not an ImageComponent: " + api.util.getClassName(component));
 
             return <image.ImageComponent>component;
@@ -133,7 +133,7 @@ module api.content.page {
             if (component == null) {
                 return null;
             }
-            api.util.assert(component instanceof layout.LayoutComponent,
+            api.util.assert(api.ObjectHelper.iFrameSafeInstanceOf(component, layout.LayoutComponent),
                     "PageComponent [" + component.getPath().toString() + "] not an LayoutComponent: " + api.util.getClassName(component));
 
             return <layout.LayoutComponent>component;
@@ -150,7 +150,7 @@ module api.content.page {
                 return component;
             }
             else {
-                if (!( component instanceof api.content.page.layout.LayoutComponent )) {
+                if (!api.ObjectHelper.iFrameSafeInstanceOf(component, api.content.page.layout.LayoutComponent)) {
                     throw new Error("Expected component to be a LayoutComponent: " + api.util.getClassName(component));
                 }
 
