@@ -13,22 +13,24 @@
     height:auto;
   }
 
-  .deck-panel {
-
-  }
-
-
   &.unpinned {
     opacity: 0.9;
   }
 
+  &.hidden {
+    visibility: hidden;
+  }
+
   .tab-bar {
+    display: table;
+    width: 100%;
     font-size:14px;
     background-color: @admin-white;
     color: @admin-dark-gray-font;
     .tab-bar-item {
+      display: table-cell;
       padding:10px 12px;
-      display: inline-block;
+      text-align: center;
       cursor:pointer;
       &.active {
         background-color: @admin-blue-button2;
