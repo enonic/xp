@@ -17,8 +17,17 @@ module api.liveedit {
             return RegionPath.fromString(asString);
         }
 
+        getComponentName(): string {
+
+            return this.getRegionName().toString();
+        }
+
         static fromHTMLElement(element: HTMLElement): RegionView {
             return new RegionView(element);
+        }
+
+        public static fromJQuery(element: JQuery): RegionView {
+            return new RegionView(<HTMLElement>element.get(0));
         }
     }
 }
