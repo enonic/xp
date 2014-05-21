@@ -167,7 +167,7 @@ module LiveEdit.ui.contextmenu {
                 iconCls:string = component.getComponentType().getIconCls();
 
             iconContainer.children('div').attr('class', iconCls);
-            iconContainer.attr('title', component.getComponentType().getName());
+            iconContainer.attr('title', component.getType().getShortName());
         }
 
         private handleWindowResize():void {
