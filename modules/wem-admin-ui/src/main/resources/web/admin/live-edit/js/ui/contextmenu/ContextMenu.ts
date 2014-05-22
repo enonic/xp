@@ -1,5 +1,6 @@
 module LiveEdit.ui.contextmenu {
 
+    import ItemView = api.liveedit.ItemView;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
@@ -9,7 +10,7 @@ module LiveEdit.ui.contextmenu {
 
     export class ContextMenu extends LiveEdit.ui.Base {
 
-        selectedComponent: LiveEdit.component.Component;
+        selectedComponent: ItemView;
 
         hidden = true;
 
@@ -40,7 +41,7 @@ module LiveEdit.ui.contextmenu {
 
         private registerGlobalListeners(): void {
             $(window).on('selectComponent.liveEdit',
-                (event: JQueryEventObject, component: LiveEdit.component.Component, pagePosition) => this.show(component, pagePosition));
+                (event: JQueryEventObject, component: ItemView, pagePosition) => this.show(component, pagePosition));
             PageComponentDeselectEvent.on(() => this.hide());
             PageComponentRemoveEvent.on(() => this.hide());
             $(window).on('editTextComponent.liveEdit', () => this.hide());
@@ -55,12 +56,12 @@ module LiveEdit.ui.contextmenu {
                 addClasses: false
             });
 
-            this.getCloseButton().click(function () {
-                LiveEdit.component.Selection.deselect();
+            this.getCloseButton().click(() => {
+                this.selectedComponent.deselect();
             });
         }
 
-        private show(component: LiveEdit.component.Component, pageXYPosition: any = null): void {
+        private show(component: ItemView, pageXYPosition: any = null): void {
             this.selectedComponent = component;
 
             this.updateTitleBar(component);
@@ -118,7 +119,7 @@ module LiveEdit.ui.contextmenu {
             }
         }
 
-        private updateMenuItemsForComponent(component: LiveEdit.component.Component): void {
+        private updateMenuItemsForComponent(component: ItemView): void {
 
             var menuItemsForComponent = component.getType().getConfig().getContextMenuConfig();
 
@@ -136,7 +137,7 @@ module LiveEdit.ui.contextmenu {
             }
         }
 
-        private resolvePagePosition(component: LiveEdit.component.Component, pageXYPosition: any): any {
+        private resolvePagePosition(component: ItemView, pageXYPosition: any): any {
             var componentElementDimensions = component.getElementDimensions();
             var pageXPosition, pageYPosition;
             if (pageXYPosition) {
@@ -154,7 +155,7 @@ module LiveEdit.ui.contextmenu {
             }
         }
 
-        private updateTitleBar(component: LiveEdit.component.Component): void {
+        private updateTitleBar(component: ItemView): void {
             this.setIcon(component);
             this.setTitle(component.getComponentName());
         }
@@ -163,7 +164,7 @@ module LiveEdit.ui.contextmenu {
             this.getTitleElement().text(titleText);
         }
 
-        private setIcon(component: LiveEdit.component.Component): void {
+        private setIcon(component: ItemView): void {
             var iconContainer: JQuery = this.getIconContainerElement(),
                 iconCls: string = component.getType().getConfig().getIconCls();
 
@@ -174,7 +175,7 @@ module LiveEdit.ui.contextmenu {
         private handleWindowResize(): void {
             // fixme: improve!
             if (this.selectedComponent) {
-                var dimensions: component.ElementDimensions = this.selectedComponent.getElementDimensions(),
+                var dimensions = this.selectedComponent.getElementDimensions(),
                     x = dimensions.left + dimensions.width / 2 - this.getEl().width() / 2,
                     y = this.getEl().offset().top;
 

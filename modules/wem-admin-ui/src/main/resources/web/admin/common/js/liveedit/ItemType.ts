@@ -1,7 +1,5 @@
 module api.liveedit {
 
-    import PageComponentType = api.content.page.PageComponentType;
-
     export class ItemType {
 
         private static shortNameToInstance: {[shortName: string]: ItemType} = {};
@@ -29,9 +27,9 @@ module api.liveedit {
             return false
         }
 
-        toPageComponentType(): PageComponentType {
+        toPageComponentType(): api.content.page.PageComponentType {
             api.util.assert(this.isPageComponentType(), "Not support when ItemType is not a PageComponentType");
-            return PageComponentType.byShortName(this.shortName);
+            return api.content.page.PageComponentType.byShortName(this.shortName);
         }
 
         createView(element: HTMLElement, dummy: boolean = true): ItemView {

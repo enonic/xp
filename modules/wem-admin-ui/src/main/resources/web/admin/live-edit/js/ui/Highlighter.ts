@@ -1,5 +1,6 @@
 module LiveEdit.ui {
 
+    import ItemView = api.liveedit.ItemView;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
@@ -9,7 +10,7 @@ module LiveEdit.ui {
 
     export class Highlighter extends LiveEdit.ui.Base {
 
-        private selectedComponent: LiveEdit.component.Component = null;
+        private selectedComponent: ItemView = null;
 
         constructor() {
             super();
@@ -18,8 +19,8 @@ module LiveEdit.ui {
         }
 
         private registerGlobalListeners(): void {
-            $(window).on('mouseOverComponent.liveEdit', (event, component)  => this.onMouseOverComponent(component));
-            $(window).on('selectComponent.liveEdit', (event, component)     => this.onSelectComponent(component));
+            $(window).on('mouseOverComponent.liveEdit', (event, component: ItemView)  => this.onMouseOverComponent(component));
+            $(window).on('selectComponent.liveEdit', (event, component: ItemView)     => this.onSelectComponent(component));
             PageComponentDeselectEvent.on(() => this.onDeselectComponent());
             $(window).on('mouseOutComponent.liveEdit', ()                   => this.hide());
             SortableStartEvent.on(() => this.hide());
@@ -30,8 +31,8 @@ module LiveEdit.ui {
             // The component should be re-selected after drag'n drop
             $(window).on('sortstop.liveedit.component', (event, uiEvent, ui, wasSelectedOnDragStart) => {
                 if (wasSelectedOnDragStart) {
-                    var component = LiveEdit.component.Component.fromJQuery(ui.item);
-                    LiveEdit.component.Selection.handleSelect(component.getElement()[0]);
+                    var itemView = ItemView.fromJQuery(ui.item);
+                    LiveEdit.component.Selection.handleSelect(itemView);
                 }
             });
         }
@@ -47,14 +48,14 @@ module LiveEdit.ui {
             this.appendTo($('body'));
         }
 
-        private onMouseOverComponent(component: LiveEdit.component.Component): void {
+        private onMouseOverComponent(component: ItemView): void {
             this.show();
             this.resizeToComponent(component);
             this.paintBorder(component);
             this.selectedComponent = component;
         }
 
-        private onSelectComponent(component: LiveEdit.component.Component): void {
+        private onSelectComponent(component: ItemView): void {
             this.selectedComponent = component;
 
             // Highlighter should not be shown when type page is selected
@@ -69,18 +70,19 @@ module LiveEdit.ui {
         }
 
         private onDeselectComponent(): void {
+            this.hide();
             LiveEdit.component.Selection.removeSelectedAttribute();
             this.selectedComponent = null;
         }
 
-        private paintBorder(component: LiveEdit.component.Component): void {
+        private paintBorder(component: ItemView): void {
             var el: JQuery = this.getEl();
             var style = component.getType().getConfig().getHighlighterStyle();
 
             el.css(style);
         }
 
-        private resizeToComponent(component: LiveEdit.component.Component): void {
+        private resizeToComponent(component: ItemView): void {
             var componentBoxModel = component.getElementDimensions();
             var w = Math.round(componentBoxModel.width),
                 h = Math.round(componentBoxModel.height),

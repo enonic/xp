@@ -63,7 +63,7 @@ final class Runner
         final String docBase = new File( "./modules/wem-webapp/src/main/webapp" ).getAbsolutePath();
         final File webResources = new File( "./modules/wem-admin-ui/src/main/resources/web" );
 
-        this.tomcat.setPort( 8080 );
+        this.tomcat.setPort( 6080 );
         this.tomcat.setHostname( "localhost" );
         this.tomcat.setBaseDir( new File( "./modules/wem-runner/target/tomcat" ).getAbsolutePath() );
 

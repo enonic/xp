@@ -22,6 +22,11 @@ module api.liveedit {
             return this.getRegionName().toString();
         }
 
+        select() {
+            new RegionSelectEvent(this.getRegionPath(), this).fire();
+            super.select();
+        }
+
         static fromHTMLElement(element: HTMLElement): RegionView {
             return new RegionView(element);
         }

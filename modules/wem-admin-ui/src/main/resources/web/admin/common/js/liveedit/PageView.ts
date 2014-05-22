@@ -14,6 +14,10 @@ module api.liveedit {
             return content ? content.getDisplayName() : "[No name]";
         }
 
+        select() {
+            new PageSelectEvent(this).fire();
+            super.select();
+        }
 
         static fromHTMLElement(element: HTMLElement): PageView {
             return new PageView(element);

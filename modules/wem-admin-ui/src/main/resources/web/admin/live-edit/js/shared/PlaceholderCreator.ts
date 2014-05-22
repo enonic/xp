@@ -1,6 +1,8 @@
 module LiveEdit {
 
     import RegionItemType = api.liveedit.RegionItemType;
+    import RegionView = api.liveedit.RegionView;
+    import ItemView = api.liveedit.ItemView;
 
     // Uses
     var $ = $liveEdit;
@@ -9,7 +11,7 @@ module LiveEdit {
 
         /** jQuery Sortable placeholder */
 
-        public static createPlaceholderForJQuerySortable(component: LiveEdit.component.Component): string {
+        public static createPlaceholderForJQuerySortable(component: ItemView): string {
 
             var html: string;
 
@@ -27,7 +29,7 @@ module LiveEdit {
 
             var allRegionElements: JQuery = $(RegionItemType.get().getConfig().getCssSelector());
             var region: JQuery;
-            var regionComponent: LiveEdit.component.Component;
+            var regionComponent: RegionView;
             var regionIsEmpty: Boolean;
 
             this.removeAllRegionPlaceholders();
@@ -36,18 +38,18 @@ module LiveEdit {
                 region = $(allRegionElements[i]);
                 regionIsEmpty = this.isRegionEmpty(region);
                 if (regionIsEmpty) {
-                    regionComponent = LiveEdit.component.Component.fromJQuery(region, false);
+                    regionComponent = RegionView.fromJQuery(region);
 
                     region.append(this.createEmptyRegionPlaceholder(regionComponent));
                 }
             });
         }
 
-        public static createEmptyRegionPlaceholder(regionComponent: LiveEdit.component.Component): string {
+        public static createEmptyRegionPlaceholder(regionView: RegionView): string {
 
             var html: string;
 
-            var componentTypeInfoText: string = regionComponent.getType().getShortName() + ': ' + regionComponent.getComponentName();
+            var componentTypeInfoText: string = regionView.getType().getShortName() + ': ' + regionView.getComponentName();
 
             html = '<div class="live-edit-empty-region-placeholder">' +
                    '    <div>Drag components here</div>' +

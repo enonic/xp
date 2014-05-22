@@ -1,5 +1,6 @@
 module LiveEdit.ui {
 
+    import ItemView = api.liveedit.ItemView;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
@@ -8,7 +9,8 @@ module LiveEdit.ui {
     var $ = $liveEdit;
 
     export class Shader extends LiveEdit.ui.Base {
-        private selectedComponent:LiveEdit.component.Component = null;
+
+        private selectedComponent: ItemView = null;
 
         private CLS_NAME:string = 'live-edit-shader';
 
@@ -28,8 +30,12 @@ module LiveEdit.ui {
         registerGlobalListeners():void {
             $(window).on('selectComponent.liveEdit', (event:JQueryEventObject, component) => this.show(component));
             $(window).on('editTextComponent.liveEdit', (event:JQueryEventObject, component) => this.show(component));
-            PageComponentDeselectEvent.on(() => this.hide());
-            PageComponentRemoveEvent.on(() => this.hide());
+            PageComponentDeselectEvent.on(() => {
+                this.hide();
+            });
+            PageComponentRemoveEvent.on(() => {
+                this.hide();
+            });
             SortableStartEvent.on(() => this.hide());
             $(window).on('resizeBrowserWindow.liveEdit', () => this.onWindowResize());
         }
@@ -54,17 +60,17 @@ module LiveEdit.ui {
         }
 
         private addEvents():void {
-            $('.' + this.CLS_NAME).on('click contextmenu', function (event) {
+            $('.' + this.CLS_NAME).on('click contextmenu', (event) => {
                 event.stopPropagation();
                 event.preventDefault();
 
-                LiveEdit.component.Selection.deselect();
+                this.selectedComponent.deselect();
 
                 $(window).trigger('clickShader.liveEdit');
             });
         }
 
-        private show(component:LiveEdit.component.Component):void {
+        private show(component: ItemView): void {
             this.selectedComponent = component;
             if (component.getType().equals(api.liveedit.PageItemType.get())) {
                 this.showForPage();
@@ -74,7 +80,8 @@ module LiveEdit.ui {
         }
 
         private showForPage():void {
-            this.hide();
+
+            //this.hide();
 
             $('#live-edit-page-shader').css({
                 top: 0,
@@ -84,12 +91,12 @@ module LiveEdit.ui {
             }).show();
         }
 
-        private showForComponent(component:LiveEdit.component.Component):void {
+        private showForComponent(component: ItemView): void {
             var documentSize = LiveEdit.DomHelper.getDocumentSize(),
                 documentWidth = documentSize.width,
                 documentHeight = documentSize.height;
 
-            var dimensions:component.ElementDimensions = component.getElementDimensions(),
+            var dimensions = component.getElementDimensions(),
                 x = dimensions.left,
                 y = dimensions.top,
                 w = dimensions.width,

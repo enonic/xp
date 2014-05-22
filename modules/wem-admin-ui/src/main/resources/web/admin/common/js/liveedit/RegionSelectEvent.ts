@@ -1,10 +1,9 @@
 module api.liveedit {
 
-    import Event2 = api.event.Event2;
     import RegionPath = api.content.page.RegionPath;
     import RegionView = api.liveedit.RegionView;
 
-    export class RegionSelectEvent extends Event2 {
+    export class RegionSelectEvent extends api.event.Event2 {
 
         private regionPath: RegionPath;
 
@@ -25,11 +24,11 @@ module api.liveedit {
         }
 
         static on(handler: (event: RegionSelectEvent) => void, contextWindow: Window = window) {
-            Event2.bind(api.util.getFullName(this), handler, contextWindow);
+            api.event.Event2.bind(api.util.getFullName(this), handler, contextWindow);
         }
 
         static un(handler: (event: RegionSelectEvent) => void, contextWindow: Window = window) {
-            Event2.unbind(api.util.getFullName(this), handler, contextWindow);
+            api.event.Event2.unbind(api.util.getFullName(this), handler, contextWindow);
         }
     }
 }

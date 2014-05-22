@@ -1,5 +1,6 @@
 module LiveEdit.ui {
 
+    import ItemView = api.liveedit.ItemView;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import SortableStopEvent = api.liveedit.SortableStopEvent;
 
@@ -26,14 +27,14 @@ module LiveEdit.ui {
         }
 
         private registerGlobalListeners(): void {
-            $(window).on('mouseOverComponent.liveEdit', (event: JQueryEventObject, component) => this.update(component));
-            $(window).on('selectComponent.liveEdit', (event: JQueryEventObject, component) => this.update(component));
+            $(window).on('mouseOverComponent.liveEdit', (event: JQueryEventObject, component: ItemView) => this.update(component));
+            $(window).on('selectComponent.liveEdit', (event: JQueryEventObject, component: ItemView) => this.update(component));
             $(window).on('mouseOutComponent.liveEdit', () => this.reset());
             SortableStartEvent.on(() => this.hide());
             SortableStopEvent.on(() => this.reset());
         }
 
-        private update(component: LiveEdit.component.Component): void {
+        private update(component: ItemView): void {
             this.bodyElement.css('cursor', component.getType().getConfig().getCursor());
         }
 

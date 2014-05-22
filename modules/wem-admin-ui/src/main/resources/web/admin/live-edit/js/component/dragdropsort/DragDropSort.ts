@@ -7,6 +7,7 @@
 module LiveEdit.component.dragdropsort.DragDropSort {
 
     import ItemType = api.liveedit.ItemType;
+    import ItemView = api.liveedit.ItemView;
     import RegionItemType = api.liveedit.RegionItemType;
     import TextItemType = api.liveedit.text.TextItemType;
     import LayoutItemType = api.liveedit.layout.LayoutItemType;
@@ -48,7 +49,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         $(REGION_SELECTOR).sortable('disable');
     }
 
-    export function createSortableLayout(component: LiveEdit.component.Component) {
+    export function createSortableLayout(component: api.liveedit.ItemView) {
         $(component.getHTMLElement()).find(REGION_SELECTOR).each((index, element) => {
             console.log("Creating jquerysortable for", element);
             createJQueryUiSortable($(element));
@@ -136,7 +137,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         updateScrollSensitivity(event.target);
         _isDragging = true;
 
-        var component = LiveEdit.component.Component.fromJQuery(ui.item);
+        var component = ItemView.fromJQuery(ui.item);
 
         // Temporary store the selection info during the drag drop lifecycle.
         // Data is nullified on drag stop.
@@ -152,7 +153,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     function handleDragOver(event: JQueryEventObject, ui): void {
         event.stopPropagation();
 
-        var component = LiveEdit.component.Component.fromJQuery(ui.item);
+        var component = ItemView.fromJQuery(ui.item);
 
         var isDraggingOverLayoutComponent = ui.placeholder.closest(LAYOUT_SELECTOR).length > 0;
 
@@ -175,7 +176,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     function handleSortChange(event: JQueryEventObject, ui): void {
-        var component = LiveEdit.component.Component.fromJQuery($(event.target));
+        var component = ItemView.fromJQuery($(event.target));
 
         addPaddingToLayoutComponent(component);
         LiveEdit.component.helper.DragHelper.updateStatusIcon(true);
@@ -186,7 +187,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     function handleSortUpdate(event: JQueryEventObject, ui): void {
-        var component = LiveEdit.component.Component.fromJQuery(ui.item);
+        var component = ItemView.fromJQuery(ui.item);
 
         if (component.hasComponentPath()) {
             new SortableUpdateEvent(component).fire();
@@ -196,7 +197,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     function handleSortStop(event: JQueryEventObject, ui): void {
         _isDragging = false;
 
-        var component = LiveEdit.component.Component.fromJQuery(ui.item);
+        var component = ItemView.fromJQuery(ui.item);
 
         removePaddingFromLayoutComponent();
 
@@ -240,7 +241,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
                 setRegion(region.getRegionName()).
                 setPrecedingComponent(emptyComponent.getPrecedingComponentPath()).
                 fire();
-            LiveEdit.component.Selection.handleSelect(emptyComponent.getHTMLElement());
+            LiveEdit.component.Selection.handleSelect(emptyComponent);
         }
     }
 
@@ -249,7 +250,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         return isDraggedFromContextWindow != undefined && isDraggedFromContextWindow == true;
     }
 
-    function addPaddingToLayoutComponent(component: LiveEdit.component.Component): void {
+    function addPaddingToLayoutComponent(component: ItemView): void {
         component.getElement().closest(LAYOUT_SELECTOR).addClass('live-edit-component-padding');
     }
 

@@ -1,6 +1,7 @@
 module LiveEdit.component.mouseevent {
 
     import TextItemType = api.liveedit.text.TextItemType;
+    import TextView = api.liveedit.text.TextView;
     import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
 
     // Uses
@@ -14,7 +15,7 @@ module LiveEdit.component.mouseevent {
 
     export class Text extends LiveEdit.component.mouseevent.Base {
 
-        private selectedText: LiveEdit.component.Component = null;
+        private selectedText: TextView = null;
         private modes: any = {};
         private currentMode: TextMode;
 
@@ -44,12 +45,12 @@ module LiveEdit.component.mouseevent {
         attachClickEvent(): void {
             // Listen for left/right click.
             $(document).on('click contextmenu touchstart', this.componentCssSelectorFilter, (event: JQueryEventObject) => {
-                var textComponent = LiveEdit.component.Component.fromJQuery($(event.currentTarget));
+                var textComponent = TextView.fromJQuery($(event.currentTarget));
                 this.handleClick(event, textComponent);
             });
         }
 
-        handleClick(event: JQueryEventObject, component: LiveEdit.component.Component): void {
+        handleClick(event: JQueryEventObject, component: TextView): void {
             event.stopPropagation();
             event.preventDefault();
 
@@ -88,7 +89,7 @@ module LiveEdit.component.mouseevent {
 
             LiveEdit.component.Selection.removeSelectedAttribute();
 
-            LiveEdit.component.Selection.handleSelect(this.selectedText.getHTMLElement(), event);
+            LiveEdit.component.Selection.handleSelect(this.selectedText, event);
 
             $(window).trigger('selectTextComponent.liveEdit', [this.selectedText]);
         }
@@ -105,7 +106,7 @@ module LiveEdit.component.mouseevent {
             if (this.isSelectedTextEmpty()) {
                 textComponent.appendChild(new api.dom.BrEl());
             }
-            textComponent.getElement().on('keydown keyup', function (event) {
+            textComponent.getElement().on('keydown keyup', (event) => {
                 $(window).trigger('editTextComponent.liveEdit', [textComponent]);
             });
 

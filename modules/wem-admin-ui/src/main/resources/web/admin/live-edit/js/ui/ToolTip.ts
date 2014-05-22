@@ -5,6 +5,8 @@ interface ToolTipPosition {
 
 module LiveEdit.ui {
 
+    import ItemView = api.liveedit.ItemView;
+
     // Uses
     var $ = $liveEdit;
     var domHelper = LiveEdit.DomHelper;
@@ -34,11 +36,11 @@ module LiveEdit.ui {
             this.appendTo($('body'));
         }
 
-        private setText(component: LiveEdit.component.Component): void {
+        private setText(itemView: ItemView): void {
             var tooltip: JQuery = this.getEl();
 
-            tooltip.children('.live-edit-tool-tip-type-text').text(component.getType().getShortName());
-            tooltip.children('.live-edit-tool-tip-name-text').text(component.getComponentName());
+            tooltip.children('.live-edit-tool-tip-type-text').text(itemView.getType().getShortName());
+            tooltip.children('.live-edit-tool-tip-name-text').text(itemView.getComponentName());
         }
 
         private attachEventListeners(): void {
@@ -60,9 +62,9 @@ module LiveEdit.ui {
             });
 
             $(document).on('mouseover', '[data-live-edit-type]', (event) => {
-                var component: LiveEdit.component.Component = LiveEdit.component.Component.fromJQuery($(event.target).closest('[data-live-edit-type]'));
 
-                this.setText(component);
+                var itemView: ItemView = ItemView.fromJQuery($(event.target).closest('[data-live-edit-type]'));
+                this.setText(itemView);
 
                 this.getEl().hide(null).show();
             });
@@ -70,11 +72,6 @@ module LiveEdit.ui {
             $('[data-live-edit-type]').mouseleave(() => {
                 this.getEl().hide(null);
             });
-
-            /*$(document).on('mouseleave', () => {
-             console.log("mouseout", arguments);
-             this.hide()
-             });*/
         }
 
         private getPositionFromEvent(event: JQueryEventObject) {

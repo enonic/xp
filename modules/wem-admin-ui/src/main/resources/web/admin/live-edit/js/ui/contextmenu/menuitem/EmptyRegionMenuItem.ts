@@ -11,7 +11,7 @@ module LiveEdit.ui.contextmenu.menuitem {
             super({
                 text: 'Empty',
                 name: 'clearRegion',
-                handler: (event:Event) => {
+                handler: (event: Event) => {
                     this.onEmptyRegion();
                     event.stopPropagation();
                 }
@@ -21,9 +21,9 @@ module LiveEdit.ui.contextmenu.menuitem {
         }
 
         private onEmptyRegion() {
-            var region:JQuery = this.menu.selectedComponent.getElement();
-
-            LiveEdit.component.Selection.deselect();
+            var region: JQuery = this.menu.selectedComponent.getElement();
+            //LiveEdit.component.Selection.deselect();
+            this.menu.selectedComponent.deselect();
 
             $('[data-live-edit-type]', region).remove();
 

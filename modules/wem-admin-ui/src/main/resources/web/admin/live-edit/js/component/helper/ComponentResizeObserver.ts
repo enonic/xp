@@ -1,19 +1,20 @@
 module LiveEdit.component.helper {
 
     import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
+    import ItemView = api.liveedit.ItemView;
 
     // Uses
     var $ = $liveEdit;
 
     export class ComponentResizeObserver {
 
-        private component:LiveEdit.component.Component;
+        private component: ItemView;
 
         constructor() {
             this.registerGlobalListeners();
         }
 
-        private observe(component:LiveEdit.component.Component):void {
+        private observe(component: ItemView): void {
 
             this.disconnect();
 
@@ -31,7 +32,7 @@ module LiveEdit.component.helper {
 
         }
 
-        private disconnect():void {
+        private disconnect(): void {
             if (this.component != null) {
                 this.component.getElement().off('resize');
             }
@@ -39,11 +40,15 @@ module LiveEdit.component.helper {
 
         }
 
-        private registerGlobalListeners():void {
-            $(window).on('selectComponent.liveEdit', (event:JQueryEventObject, component:LiveEdit.component.Component, pagePosition) => this.observe(component));
+        private registerGlobalListeners(): void {
+            $(window).on('selectComponent.liveEdit', (event: JQueryEventObject, component: ItemView, pagePosition) => {
+                this.observe(component);
+            });
 
             PageComponentDeselectEvent.on(() => this.disconnect());
-            $(window).on('editTextComponent.liveEdit', (event:JQueryEventObject, component:LiveEdit.component.Component) => this.observe(component));
+            $(window).on('editTextComponent.liveEdit', (event: JQueryEventObject, component: ItemView) => {
+                this.observe(component);
+            });
         }
 
     }

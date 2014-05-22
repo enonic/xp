@@ -29,7 +29,7 @@ module LiveEdit.ui.contextmenu.menuitem {
             placeholder.init();
             placeholder.showLoadingSpinner();
             new PageComponentDuplicateEvent(component, placeholder).fire();
-            LiveEdit.component.Selection.handleSelect(placeholder.getHTMLElement());
+            LiveEdit.component.Selection.handleSelect(placeholder);
         }
     }
 }

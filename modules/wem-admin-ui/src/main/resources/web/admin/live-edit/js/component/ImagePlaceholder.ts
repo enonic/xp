@@ -5,6 +5,9 @@ module LiveEdit.component {
     import ImageComponentSetImageEvent = api.liveedit.image.ImageComponentSetImageEvent
     import ImageItemType = api.liveedit.image.ImageItemType;
 
+    // Uses
+    var $ = $liveEdit;
+
     export class ImagePlaceholder extends ComponentPlaceholder {
 
         private comboBox: api.content.ContentComboBox;
@@ -112,15 +115,17 @@ module LiveEdit.component {
                 }).done();
         }
 
-        onSelect() {
-            super.onSelect();
+        select() {
+            super.select();
+
             this.comboBox.show();
             this.uploadButton.show();
             this.comboBox.giveFocus();
         }
 
-        onDeselect() {
-            super.onDeselect();
+        deselect() {
+            super.deselect();
+
             this.uploadButton.hide();
             this.comboBox.hide();
         }

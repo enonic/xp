@@ -1,8 +1,10 @@
 module api.liveedit.text {
 
-    import ItemType = api.liveedit.ItemType;
+    import ItemTypeConfigJson = api.liveedit.ItemTypeConfigJson;
+    import PageComponentView = api.liveedit.PageComponentView;
+    import PageComponentItemType = api.liveedit.PageComponentItemType;
 
-    export class TextItemType extends ItemType {
+    export class TextItemType extends PageComponentItemType {
 
         private static INSTANCE = new TextItemType();
 
@@ -25,7 +27,7 @@ module api.liveedit.text {
             });
         }
 
-        createView(element: HTMLElement, dummy: boolean = true): PageView {
+        createView(element: HTMLElement, dummy: boolean = true): TextView {
             return new TextView(element);
         }
 

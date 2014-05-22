@@ -1,6 +1,7 @@
 module LiveEdit.ui.contextmenu.menuitem {
 
     import ComponentPath = api.content.page.ComponentPath;
+    import ItemView = api.liveedit.ItemView;
     import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
 
     // Uses
@@ -24,9 +25,9 @@ module LiveEdit.ui.contextmenu.menuitem {
         private onEmptyComponent() {
             var selectedComponent = this.menu.selectedComponent;
             var componentEl: JQuery = selectedComponent.getElement();
-            var component = LiveEdit.component.Component.fromJQuery(componentEl, false);
+            var component = ItemView.fromJQuery(componentEl, false);
 
-            LiveEdit.component.Selection.deselect();
+            selectedComponent.deselect();
             new PageComponentResetEvent(selectedComponent.getComponentPath()).fire();
 
             var emptyComponent = LiveEdit.component.ComponentPlaceholder.fromComponent(selectedComponent.getType());
@@ -35,7 +36,7 @@ module LiveEdit.ui.contextmenu.menuitem {
             componentEl.replaceWith(emptyComponent.getHTMLElement());
             emptyComponent.init();
 
-            LiveEdit.component.Selection.handleSelect(emptyComponent.getElement()[0]);
+            LiveEdit.component.Selection.handleSelect(emptyComponent);
         }
     }
 }

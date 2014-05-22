@@ -1,6 +1,8 @@
 module api.liveedit.text {
 
-    export class TextView extends ItemView {
+    import PageComponentView = api.liveedit.PageComponentView;
+
+    export class TextView extends PageComponentView {
 
         constructor(element?: HTMLElement) {
             super(TextItemType.get(), element);

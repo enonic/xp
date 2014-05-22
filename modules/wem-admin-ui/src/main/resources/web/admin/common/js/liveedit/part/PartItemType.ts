@@ -1,9 +1,10 @@
 module api.liveedit.part {
 
     import ItemType = api.liveedit.ItemType;
-    import ItemView = api.liveedit.ItemView;
+    import PageComponentView = api.liveedit.PageComponentView;
+    import PageComponentItemType = api.liveedit.PageComponentItemType;
 
-    export class PartItemType extends ItemType {
+    export class PartItemType extends PageComponentItemType {
 
         private static INSTANCE = new PartItemType();
 
@@ -31,7 +32,7 @@ module api.liveedit.part {
         }
 
         createView(element: HTMLElement, dummy: boolean = true): ItemView {
-            return new ItemView(this, element, dummy);
+            return new PageComponentView(this, element, dummy);
         }
     }
 

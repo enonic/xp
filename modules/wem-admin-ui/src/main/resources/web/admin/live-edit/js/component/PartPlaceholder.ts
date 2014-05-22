@@ -4,6 +4,9 @@ module LiveEdit.component {
     import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
     import PartItemType = api.liveedit.part.PartItemType;
 
+    // Uses
+    var $ = $liveEdit;
+
     export class PartPlaceholder extends ComponentPlaceholder {
 
         private comboBox: api.content.page.part.PartDescriptorComboBox;
@@ -31,14 +34,14 @@ module LiveEdit.component {
 
         }
 
-        onSelect() {
-            super.onSelect();
+        select() {
+            super.select();
             this.comboBox.show();
             this.comboBox.giveFocus();
         }
 
-        onDeselect() {
-            super.onDeselect();
+        deselect() {
+            super.deselect();
             this.comboBox.hide();
         }
     }

@@ -2,11 +2,20 @@ module api.liveedit {
 
     import ComponentPath = api.content.page.ComponentPath;
 
+    export interface ElementDimensions {
+        top: number;
+        left: number;
+        width: number;
+        height: number;
+    }
+
     export class ItemView extends api.dom.Element {
 
         private type: ItemType;
 
         private loadMask: api.ui.LoadMask;
+
+        private elementDimensions: ElementDimensions;
 
         constructor(type: ItemType, element?: HTMLElement, dummy?: boolean) {
             api.util.assertNotNull(type, "type cannot be null");
@@ -26,6 +35,13 @@ module api.liveedit {
                 this.loadMask = new api.ui.LoadMask(this);
                 this.appendChild(this.loadMask);
             }
+
+            this.setElementDimensions(this.getDimensionsFromElement());
+
+        }
+
+        getElement(): JQuery {
+            return $(this.getHTMLElement());
         }
 
         getType(): ItemType {
@@ -40,6 +56,15 @@ module api.liveedit {
             return this.getEl().hasAttribute('data-live-edit-selected');
         }
 
+        select() {
+            this.getEl().setData("live-edit-selected", "true");
+        }
+
+        deselect() {
+            this.getEl().removeAttribute("data-live-edit-selected");
+            new PageComponentDeselectEvent(this).fire();
+        }
+
         setComponentPath(path: ComponentPath) {
             this.getEl().setData('live-edit-component', path.toString());
         }
@@ -51,6 +76,12 @@ module api.liveedit {
         getComponentPath(): ComponentPath {
             var asString = this.getEl().getData('live-edit-component');
             return api.content.page.ComponentPath.fromString(asString);
+        }
+
+        getComponentName(): string {
+
+            var path = this.getComponentPath();
+            return path ? path.getComponentName().toString() : '[No Name]';
         }
 
         getParentRegion(): RegionView {
@@ -88,6 +119,41 @@ module api.liveedit {
 
         hideLoadingSpinner() {
             this.loadMask.hide();
+        }
+
+        setElementDimensions(dimensions: ElementDimensions): void {
+            this.elementDimensions = dimensions;
+        }
+
+        getElementDimensions(): ElementDimensions {
+            // We need to dynamically get the dimension as it can change on eg. browser window resize.
+            return this.getDimensionsFromElement();
+        }
+
+        private getDimensionsFromElement(): ElementDimensions {
+            var cmp: JQuery = this.getElement();
+            var offset = cmp.offset();
+            var top = offset.top;
+            var left = offset.left;
+            var width = cmp.outerWidth();
+            var height = cmp.outerHeight();
+
+            return {
+                top: top,
+                left: left,
+                width: width,
+                height: height
+            };
+        }
+
+        public static fromHTMLElement(element: HTMLElement, dummy: boolean = true): ItemView {
+
+            var type = ItemType.fromHTMLElement(element);
+            return type.createView(element, dummy);
+        }
+
+        public static fromJQuery(element: JQuery, dummy: boolean = true): ItemView {
+            return ItemView.fromHTMLElement(element.get(0), dummy)
         }
     }
 }

@@ -5,43 +5,28 @@ module LiveEdit.component {
     import RegionSelectEvent = api.liveedit.RegionSelectEvent;
     import PageComponentSelectEvent = api.liveedit.PageComponentSelectEvent;
     import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
+    import ItemView = api.liveedit.ItemView;
     import RegionView = api.liveedit.RegionView;
+    import PageView = api.liveedit.PageView;
+    import PageItemType = api.liveedit.PageItemType;
+    import RegionItemType = api.liveedit.RegionItemType;
+    import PageComponentItemType = api.liveedit.PageComponentItemType;
+    import PageComponentView = api.liveedit.PageComponentView;
 
     // Uses
     var $ = $liveEdit;
 
     export var ATTRIBUTE_NAME: string = 'data-live-edit-selected';
 
-
     export class Selection {
-        static COMPONENT_ATTR: string = "data-live-edit-component";
-        static REGION_ATTR: string = "data-live-edit-region";
 
-        public static handleSelect(element: HTMLElement, event?: JQueryEventObject, waitForRender: boolean = false) {
+        public static handleSelect(itemView: ItemView, event?: JQueryEventObject, waitForRender: boolean = false) {
 
-            var component = Component.fromElement(element);
-
-            if (Selection.getType(element) == "page") {
-
-                new PageSelectEvent().fire();
-            }
-            else if (Selection.getType(element) == "region") {
-
-                var regionView = RegionView.fromHTMLElement(element);
-                var regionPath = element.getAttribute(Selection.REGION_ATTR);
-                if (regionPath && regionPath.length > 0) {
-                    new RegionSelectEvent(api.content.page.RegionPath.fromString(regionPath), regionView).fire();
-                }
-            }
-            else if (Selection.getType(element) == "component") {
-                
-                new PageComponentSelectEvent(ComponentPath.fromString(element.getAttribute(Selection.COMPONENT_ATTR)), component).fire();
-            }
-
-            this.setSelectionAttributeOnElement($(element));
+            itemView.select();
+            //this.setSelectionAttributeOnElement($(itemView));
 
             var mouseClickPagePosition: any = null;
-            if (event && !component.isEmpty()) {
+            if (event && !itemView.isEmpty()) {
                 mouseClickPagePosition = {
                     x: event.pageX,
                     y: event.pageY
@@ -52,8 +37,8 @@ module LiveEdit.component {
                 var maxIterations = 10;
                 var iterations = 0;
                 var interval = setInterval(() => {
-                    if (element.offsetHeight > 0) {
-                        $(window).trigger('selectComponent.liveEdit', [Component.fromElement(element), mouseClickPagePosition]);
+                    if (itemView.getHTMLElement().offsetHeight > 0) {
+                        $(window).trigger('selectComponent.liveEdit', [itemView, mouseClickPagePosition]);
                         clearInterval(interval);
                     }
                     iterations++;
@@ -62,32 +47,8 @@ module LiveEdit.component {
                     }
                 }, 300);
             } else {
-                $(window).trigger('selectComponent.liveEdit', [Component.fromElement(element), mouseClickPagePosition]);
+                $(window).trigger('selectComponent.liveEdit', [itemView, mouseClickPagePosition]);
             }
-
-
-        }
-
-        public static getType(element: HTMLElement): string {
-            if (element.hasAttribute(Selection.COMPONENT_ATTR) || element.getAttribute('data-live-edit-empty-component') == "true") {
-                return "component";
-            } else if (element.hasAttribute(Selection.REGION_ATTR)) {
-                return "region";
-            } else if (element.tagName.toLocaleLowerCase() === "body") {
-                return "page";
-            }
-            return null;
-        }
-
-        public static deselect(): void {
-            $(window).trigger('deselectComponent.liveEdit');
-            $(window).trigger('componentDeselect.liveEdit');
-            this.removeSelectedAttribute();
-        }
-
-        public static setSelectionAttributeOnElement(element: JQuery): void {
-            this.removeSelectedAttribute();
-            element.attr(ATTRIBUTE_NAME, 'true');
         }
 
         public static pageHasSelectedElement(): boolean {

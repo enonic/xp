@@ -1,5 +1,9 @@
 module LiveEdit.ui.contextmenu.menuitem {
 
+    import ItemType = api.liveedit.ItemType;
+    import ItemView = api.liveedit.ItemView;
+
+
     // Uses
     var $ = $liveEdit;
 
@@ -9,7 +13,7 @@ module LiveEdit.ui.contextmenu.menuitem {
             super({
                 text: 'Select Parent',
                 name: 'parent',
-                handler: (event:Event) => {
+                handler: (event: Event) => {
                     this.onSelectParent();
                     event.stopPropagation();
                 }
@@ -19,15 +23,15 @@ module LiveEdit.ui.contextmenu.menuitem {
         }
 
         private onSelectParent() {
-            var parentElement:JQuery = this.menu.selectedComponent.getElement().parents('[data-live-edit-type]');
+            var parentElement: JQuery = this.menu.selectedComponent.getElement().parents('[data-live-edit-type]');
 
             if (parentElement && parentElement.length > 0) {
-                var parentComponent = LiveEdit.component.Component.fromJQuery($(parentElement[0]));
-                parentComponent.setSelectedAsParent(true);
-                LiveEdit.component.Selection.deselect();
-                LiveEdit.component.Selection.handleSelect(parentComponent.getElement()[0]);
+                this.menu.selectedComponent.deselect();
+                var parentComponent = ItemView.fromJQuery($(parentElement[0]));
+                LiveEdit.component.Selection.handleSelect(parentComponent);
 
-                var xPos = parentComponent.getElement().offset().left + parentComponent.getElement().width()/2 - (this.menu.getEl().width() / 2);
+                var xPos = parentComponent.getElement().offset().left + parentComponent.getElement().width() / 2 -
+                           (this.menu.getEl().width() / 2);
                 var yPos = parentComponent.getElement().offset().top + 11;
                 this.menu.moveToXY(xPos, yPos);
 
@@ -35,8 +39,8 @@ module LiveEdit.ui.contextmenu.menuitem {
             }
         }
 
-        private scrollComponentIntoView(component:LiveEdit.component.Component):void {
-            var dimensions:component.ElementDimensions = component.getElementDimensions();
+        private scrollComponentIntoView(component: ItemView): void {
+            var dimensions = component.getElementDimensions();
             if (dimensions.top <= window.pageYOffset) {
                 $('html, body').animate({scrollTop: dimensions.top - 10}, 200);
             }

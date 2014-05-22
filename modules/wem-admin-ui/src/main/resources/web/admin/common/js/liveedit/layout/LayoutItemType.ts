@@ -1,9 +1,11 @@
 module api.liveedit.layout {
 
     import ItemType = api.liveedit.ItemType;
-    import ItemView = api.liveedit.ItemView;
+    import ItemTypeConfigJson = api.liveedit.ItemTypeConfigJson;
+    import PageComponentView = api.liveedit.PageComponentView;
+    import PageComponentItemType = api.liveedit.PageComponentItemType;
 
-    export class LayoutItemType extends ItemType {
+    export class LayoutItemType extends PageComponentItemType {
 
         private static INSTANCE = new LayoutItemType();
 
@@ -31,7 +33,7 @@ module api.liveedit.layout {
         }
 
         createView(element: HTMLElement, dummy: boolean = true): ItemView {
-            return new ItemView(this, element, dummy);
+            return new PageComponentView(this, element, dummy);
         }
     }
 

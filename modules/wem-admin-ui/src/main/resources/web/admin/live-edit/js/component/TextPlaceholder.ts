@@ -2,6 +2,10 @@ module LiveEdit.component {
 
     import LayoutItemType = api.liveedit.layout.LayoutItemType;
 
+
+    // Uses
+    var $ = $liveEdit;
+
     export class TextPlaceholder extends ComponentPlaceholder {
 
         private clickToEditLink: api.dom.AEl;
@@ -36,21 +40,21 @@ module LiveEdit.component {
             this.appendChild(this.clickToEditLink);
         }
 
-        onSelect() {
-            super.onSelect();
+        select() {
+            super.select();
 
             if (this.hasClass('live-edit-empty-component') && !this.clickToEditLink) {
                 this.addClickToEdit();
             }
         }
 
-        onDeselect() {
+        deselect() {
             if (this.clickToEditLink) {
                 this.removeChild(this.clickToEditLink);
                 this.clickToEditLink = null;
             }
 
-            super.onDeselect();
+            super.deselect();
         }
     }
 }

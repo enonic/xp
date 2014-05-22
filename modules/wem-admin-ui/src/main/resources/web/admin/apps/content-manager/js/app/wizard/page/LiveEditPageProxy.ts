@@ -184,6 +184,7 @@ module app.wizard.page {
                     this.loadMask.hide();
 
                     liveEditWindow.initializeLiveEdit();
+                    new api.liveedit.ContentSetEvent(content).fire(this.liveEditWindow);
                     this.notifyLoaded();
                 }
 
@@ -208,14 +209,15 @@ module app.wizard.page {
                     $(componentPlaceholder.getHTMLElement()).replaceWith(newElement);
                     componentPlaceholder.remove();
 
-                    this.liveEditWindow.LiveEdit.component.Selection.deselect();
+                    var itemView: ItemView = this.liveEditWindow.getComponentByPath(componentPath);
+                    itemView.deselect();
 
                     this.liveEditWindow.LiveEdit.PlaceholderCreator.renderEmptyRegionPlaceholders();
 
-                    var comp = this.liveEditWindow.getComponentByPath(componentPath);
-                    this.liveEditWindow.LiveEdit.component.Selection.handleSelect(comp.getHTMLElement(), null, true);
 
-                    this.liveEditJQuery(this.liveEditWindow).trigger("componentLoaded.liveEdit", [comp]);
+                    this.liveEditWindow.LiveEdit.component.Selection.handleSelect(<api.liveedit.ItemView>itemView, null, true);
+
+                    this.liveEditJQuery(this.liveEditWindow).trigger("componentLoaded.liveEdit", [itemView]);
                 }
             });
         }

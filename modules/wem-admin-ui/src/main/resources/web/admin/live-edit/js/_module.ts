@@ -7,7 +7,6 @@
 ///<reference path='shared/DomHelper.ts' />
 ///<reference path='shared/PlaceholderCreator.ts' />
 
-///<reference path='component/Component.ts' />
 ///<reference path='component/ComponentPlaceholder.ts' />
 ///<reference path='component/ImagePlaceholder.ts' />
 ///<reference path='component/PartPlaceholder.ts' />

@@ -1,9 +1,11 @@
 module api.liveedit.image {
 
     import ItemType = api.liveedit.ItemType;
-    import ItemView = api.liveedit.ItemView;
+    import ItemTypeConfigJson = api.liveedit.ItemTypeConfigJson;
+    import PageComponentView = api.liveedit.PageComponentView;
+    import PageComponentItemType = api.liveedit.PageComponentItemType;
 
-    export class ImageItemType extends ItemType {
+    export class ImageItemType extends PageComponentItemType {
 
         private static INSTANCE = new ImageItemType();
 
@@ -27,7 +29,7 @@ module api.liveedit.image {
         }
 
         createView(element: HTMLElement, dummy: boolean = true): ItemView {
-            return new ItemView(this, element, dummy);
+            return new PageComponentView(this, element, dummy);
         }
 
         isPageComponentType(): boolean {

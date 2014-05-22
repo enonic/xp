@@ -27,14 +27,16 @@ module LiveEdit.component {
             });
         }
 
-        onSelect() {
-            super.onSelect();
+        select() {
+            super.select();
+
             this.comboBox.show();
             this.comboBox.giveFocus();
         }
 
-        onDeselect() {
-            super.onDeselect();
+        deselect() {
+            super.deselect();
+            
             this.comboBox.hide();
         }
     }
