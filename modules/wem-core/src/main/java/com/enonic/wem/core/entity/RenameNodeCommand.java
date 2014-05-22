@@ -1,6 +1,7 @@
 package com.enonic.wem.core.entity;
 
 import com.enonic.wem.api.account.UserKey;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeName;
@@ -15,14 +16,22 @@ import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 
 final class RenameNodeCommand
+    extends AbstractNodeCommand
 {
-    private RenameNodeParams params;
+    private final RenameNodeParams params;
 
-    private ElasticsearchIndexService indexService;
+    private final ElasticsearchIndexService indexService;
 
-    private NodeDao nodeDao;
+    private final NodeDao nodeDao;
 
-    private Workspace workspace;
+    private RenameNodeCommand( Builder builder )
+    {
+        super( builder );
+
+        this.params = builder.params;
+        this.indexService = builder.indexService;
+        this.nodeDao = builder.nodeDao;
+    }
 
     Node execute()
     {
@@ -42,14 +51,16 @@ final class RenameNodeCommand
         throws Exception
     {
         final EntityId entityId = params.getEntityId();
-        final Node nodeToBeRenamed = nodeDao.getById( entityId, this.workspace );
+        final Workspace workspace = this.context.getWorkspace();
+
+        final Node nodeToBeRenamed = nodeDao.getById( entityId, workspace );
 
         if ( nodeToBeRenamed == null )
         {
             throw new NodeNotFoundException( "Node with id " + entityId + " not found" );
         }
 
-        final Nodes children = nodeDao.getByParent( nodeToBeRenamed.path(), this.workspace );
+        final Nodes children = nodeDao.getByParent( nodeToBeRenamed.path(), workspace );
 
         final NodePath parentPath = nodeToBeRenamed.parent().asAbsolute();
 
@@ -66,7 +77,7 @@ final class RenameNodeCommand
         {
             final Node movedNode = doMoveNode( newParentPath, node.name(), node.id() );
 
-            final Nodes children = nodeDao.getByParent( node.path(), this.workspace );
+            final Nodes children = nodeDao.getByParent( node.path(), this.context.getWorkspace() );
 
             if ( children != null && children.isNotEmpty() )
             {
@@ -84,37 +95,58 @@ final class RenameNodeCommand
             nodeToMove( id ).
             build();
 
-        nodeDao.move( moveChildArgument, this.workspace );
+        final Workspace workspace = this.context.getWorkspace();
 
-        final Node movedNode = nodeDao.getById( id, this.workspace );
+        nodeDao.move( moveChildArgument, workspace );
+
+        final Node movedNode = nodeDao.getById( id, workspace );
 
         indexService.index( movedNode );
 
         return movedNode;
     }
 
-    RenameNodeCommand params( RenameNodeParams params )
+    public static Builder create( final Context context )
     {
-        this.params = params;
-        return this;
+        return new Builder( context );
     }
 
-    RenameNodeCommand indexService( final ElasticsearchIndexService indexService )
+    public static class Builder
+        extends AbstractNodeCommand.Builder<Builder>
     {
-        this.indexService = indexService;
-        return this;
-    }
+        public Builder( final Context context )
+        {
+            super( context );
+        }
 
-    RenameNodeCommand nodeDao( final NodeDao nodeDao )
-    {
-        this.nodeDao = nodeDao;
-        return this;
-    }
+        private RenameNodeParams params;
 
-    RenameNodeCommand workspace( final Workspace workspace )
-    {
-        this.workspace = workspace;
-        return this;
-    }
+        private ElasticsearchIndexService indexService;
 
+        private NodeDao nodeDao;
+
+        public Builder params( RenameNodeParams params )
+        {
+            this.params = params;
+            return this;
+        }
+
+        public Builder indexService( final ElasticsearchIndexService indexService )
+        {
+            this.indexService = indexService;
+            return this;
+        }
+
+        public Builder nodeDao( final NodeDao nodeDao )
+        {
+            this.nodeDao = nodeDao;
+            return this;
+        }
+
+        public RenameNodeCommand build()
+        {
+            return new RenameNodeCommand( this );
+        }
+
+    }
 }

@@ -4,6 +4,7 @@ import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.entity.Nodes;
@@ -17,9 +18,7 @@ final class GetChildContentService
 
     private boolean populateChildIds = false;
 
-    GetChildContentService( final ContentPath contentPath,
-                            final NodeService nodeService,
-                            final ContentTypeService contentTypeService,
+    GetChildContentService( final ContentPath contentPath, final NodeService nodeService, final ContentTypeService contentTypeService,
                             final BlobService blobService )
     {
         this.contentPath = contentPath;
@@ -38,7 +37,7 @@ final class GetChildContentService
     {
         final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( this.contentPath );
 
-        final Nodes nodes = nodeService.getByParent( nodePath, ContentConstants.DEFAULT_WORKSPACE );
+        final Nodes nodes = nodeService.getByParent( nodePath, new Context( ContentConstants.DEFAULT_WORKSPACE ) );
         final Contents contents = getTranslator().fromNodes( removeNonContentNodes( nodes ) );
 
         if ( populateChildIds )

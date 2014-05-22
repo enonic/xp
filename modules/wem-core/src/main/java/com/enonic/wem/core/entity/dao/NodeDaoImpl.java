@@ -3,7 +3,6 @@ package com.enonic.wem.core.entity.dao;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-
 import org.joda.time.Instant;
 
 import com.google.common.base.Preconditions;
@@ -44,7 +43,7 @@ public class NodeDaoImpl
     private WorkspaceStore workspaceStore;
 
     @Override
-    public Node create( final CreateNodeArguments createNodeArguments )
+    public Node create( final CreateNodeArguments createNodeArguments, final Workspace workspace )
     {
         final Node newNode = createNodeFromArguments( createNodeArguments );
 
@@ -52,8 +51,7 @@ public class NodeDaoImpl
 
         final BlobKey storedBlobKey = blob.getKey();
 
-        final WorkspaceDocument workspaceDocument =
-            WorkspaceDocumentFactory.create( storedBlobKey, createNodeArguments.workspace(), newNode );
+        final WorkspaceDocument workspaceDocument = WorkspaceDocumentFactory.create( storedBlobKey, workspace, newNode );
 
         workspaceStore.store( workspaceDocument );
 

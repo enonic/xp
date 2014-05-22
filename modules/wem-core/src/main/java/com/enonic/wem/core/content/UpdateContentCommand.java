@@ -10,13 +10,13 @@ import com.google.common.io.InputSupplier;
 
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.thumb.Thumbnail;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.UpdateNodeParams;
 import com.enonic.wem.api.schema.content.ContentType;
@@ -26,6 +26,7 @@ import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 
 import static com.enonic.wem.api.content.Content.newContent;
+import static com.enonic.wem.api.content.ContentConstants.DEFAULT_WORKSPACE;
 
 final class UpdateContentCommand
     extends AbstractContentCommand<UpdateContentCommand>
@@ -78,9 +79,9 @@ final class UpdateContentCommand
             attachments = attachmentService.getAll( this.params.getContentId() );
         }
 
-        final UpdateNodeParams updateNodeParams = getTranslator().toUpdateNodeCommand( editedContent, ContentConstants.DEFAULT_WORKSPACE, attachments );
+        final UpdateNodeParams updateNodeParams = getTranslator().toUpdateNodeCommand( editedContent, DEFAULT_WORKSPACE, attachments );
 
-        final Node editedNode = this.nodeService.update( updateNodeParams );
+        final Node editedNode = this.nodeService.update( updateNodeParams, new Context( DEFAULT_WORKSPACE ) );
 
         final Content persistedContent = getTranslator().fromNode( editedNode );
 

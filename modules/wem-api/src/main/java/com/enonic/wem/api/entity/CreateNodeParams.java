@@ -16,8 +16,6 @@ public class CreateNodeParams
 
     private EntityIndexConfig entityIndexConfig;
 
-    private Workspace workspace;
-
     private boolean embed;
 
     public CreateNodeParams parent( final NodePath value )
@@ -62,17 +60,6 @@ public class CreateNodeParams
         return this;
     }
 
-    public CreateNodeParams workspace( final Workspace workspace )
-    {
-        this.workspace = workspace;
-        return this;
-    }
-
-    public Workspace getWorkspace()
-    {
-        return workspace;
-    }
-
     public String getName()
     {
         return name;
@@ -103,8 +90,4 @@ public class CreateNodeParams
         return embed;
     }
 
-    public void validate()
-    {
-        Preconditions.checkNotNull( workspace );
-    }
 }

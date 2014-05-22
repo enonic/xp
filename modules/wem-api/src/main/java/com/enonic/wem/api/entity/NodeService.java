@@ -1,24 +1,26 @@
 package com.enonic.wem.api.entity;
 
+import com.enonic.wem.api.context.Context;
+
 public interface NodeService
 {
-    Node create( CreateNodeParams params );
+    Node create( CreateNodeParams params, final Context context );
 
-    Node update( UpdateNodeParams params );
+    Node update( UpdateNodeParams params, final Context context );
 
-    Node rename( RenameNodeParams params );
+    Node rename( RenameNodeParams params, final Context context );
 
-    Node getById( EntityId id, Workspace workspace );
+    Node getById( EntityId id, Context context );
 
-    Nodes getByIds( EntityIds ids, Workspace workspace );
+    Nodes getByIds( EntityIds ids, Context context );
 
-    Node getByPath( NodePath path, Workspace workspace );
+    Node getByPath( NodePath path, Context context );
 
-    Nodes getByPaths( NodePaths paths, Workspace workspace);
+    Nodes getByPaths( NodePaths paths, Context context );
 
-    Nodes getByParent( NodePath parent, Workspace workspace );
+    Nodes getByParent( NodePath parent, Context context );
 
-    Node deleteById( EntityId id, Workspace workspace );
+    Node deleteById( EntityId id, Context context );
 
-    Node deleteByPath( NodePath path, Workspace workspace );
+    Node deleteByPath( NodePath path, Context context );
 }

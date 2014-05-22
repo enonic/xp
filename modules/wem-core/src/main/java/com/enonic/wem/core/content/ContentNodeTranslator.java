@@ -79,7 +79,6 @@ public class ContentNodeTranslator
             parent( resolveParentNodePath( params.getParentContentPath() ) ).
             embed( params.isEmbed() ).
             data( contentAsData ).
-            workspace( params.getWorkspace() ).
             attachments( nodeAttachmentsBuilder.build() ).
 
             entityIndexConfig( entityIndexConfig );
