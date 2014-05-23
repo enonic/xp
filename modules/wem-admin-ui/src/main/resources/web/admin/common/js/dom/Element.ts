@@ -635,6 +635,14 @@ module api.dom {
             this.getEl().removeEventListener("blur", listener);
         }
 
+        onScroll(listener: (event: Event) => void) {
+            this.getEl().addEventListener("scroll", listener);
+        }
+
+        unScroll(listener: (event: Event) => void) {
+            this.getEl().removeEventListener("scroll", listener);
+        }
+
         static fromHtmlElement(element: HTMLElement, loadExistingChildren: boolean = false): Element {
             return new Element(new ElementProperties().
                 setHelper(new ElementHelper(element)).

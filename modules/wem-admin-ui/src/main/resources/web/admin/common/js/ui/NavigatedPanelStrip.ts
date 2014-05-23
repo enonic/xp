@@ -21,7 +21,7 @@ module api.ui {
                 listenToScroll = true;
             });
 
-            jQuery(this.getHTMLElement()).scroll((event: JQueryEventObject) => {
+            this.onScroll((event: MouseEvent) => {
                 if (listenToScroll) {
                     this.updateScrolledNavigationItem();
                 }
