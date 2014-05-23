@@ -78,6 +78,13 @@ module api.content.page {
 
         parent: RegionPath;
 
+        constructor(source?: PageComponent) {
+            if (source) {
+                this.name = source.getName();
+                this.parent = source.getParent();
+            }
+        }
+
         public setName(value: api.content.page.ComponentName): PageComponentBuilder<COMPONENT> {
             this.name = value;
             return this;
