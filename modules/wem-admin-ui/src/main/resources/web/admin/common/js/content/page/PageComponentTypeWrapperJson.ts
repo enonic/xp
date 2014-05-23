@@ -6,6 +6,8 @@ module api.content.page {
 
         PartComponent?:api.content.page.part.PartComponentJson;
 
+        TextComponent?:api.content.page.text.TextComponentJson;
+
         LayoutComponent?:api.content.page.layout.LayoutComponentJson;
     }
 }
