@@ -43,11 +43,15 @@ module api.data {
             this.dataById = newDataById;
         }
 
-        moveData(index: number, destinationIndex: number) {
-
-            api.util.ArrayHelper.moveElement(index, destinationIndex, this.dataArray);
-            this.dataArray.forEach((data: Data, index: number) => {
-                data.setArrayIndex(index);
+        moveDataByName(name: string, index: number, destinationIndex: number) {
+            this.dataArray.forEach((data: Data) => {
+                if (data.getName() == name) {
+                    if (data.getArrayIndex() == index) {
+                        data.setArrayIndex(destinationIndex);
+                    } else if (data.getArrayIndex() == destinationIndex) {
+                        data.setArrayIndex(index);
+                    }
+                }
             });
         }
 
