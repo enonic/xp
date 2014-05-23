@@ -318,11 +318,15 @@ module app.wizard.page {
         /**
          * Called by ContentWizardPanel when content is saved.
          */
-        contentSaved() {
+        contentSaved(): Q.Promise<void> {
 
             if (!this.pageSkipReload) {
                 // Reload page to show changes
-                this.liveEditPage.load(this.content).then(() => this.loadPageDescriptor());
+                return this.liveEditPage.load(this.content).then(() => this.loadPageDescriptor());
+            } else {
+                var deferred = Q.defer<void>();
+                deferred.resolve(null);
+                return deferred.promise;
             }
         }
 

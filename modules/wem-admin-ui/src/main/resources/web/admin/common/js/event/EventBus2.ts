@@ -11,10 +11,10 @@ module api.event {
 
         static onEvent(eventName: string, handler: (apiEventObj: api.event.Event2) => void, contextWindow: Window = window) {
             var customEventHandler = (customEvent: any) => handler(customEvent['apiEventObj']);
-            if (!this.handlersMap[eventName]) {
-                this.handlersMap[eventName] = [];
+            if (!EventBus2.handlersMap[eventName]) {
+                EventBus2.handlersMap[eventName] = [];
             }
-            this.handlersMap[eventName].push({
+            EventBus2.handlersMap[eventName].push({
                 customEventHandler: customEventHandler,
                 apiEventHandler: handler
             });
@@ -24,7 +24,7 @@ module api.event {
         static unEvent2(eventName: string, handler?: (event: api.event.Event2) => void, contextWindow: Window = window) {
             if (handler) {
                 var customEventHandler: (customEvent: any) => void;
-                this.handlersMap[eventName] = this.handlersMap[eventName].filter((entry: HandlersMapEntry) => {
+                EventBus2.handlersMap[eventName] = EventBus2.handlersMap[eventName].filter((entry: HandlersMapEntry) => {
                     if (entry.apiEventHandler === handler) {
                         customEventHandler = entry.customEventHandler;
                     }
@@ -32,10 +32,10 @@ module api.event {
                 });
                 contextWindow.removeEventListener(eventName, customEventHandler);
             } else {
-                (this.handlersMap[eventName] || []).forEach((entry: HandlersMapEntry) => {
+                (EventBus2.handlersMap[eventName] || []).forEach((entry: HandlersMapEntry) => {
                     contextWindow.removeEventListener(eventName, entry.customEventHandler);
                 });
-                this.handlersMap[eventName] = [];
+                EventBus2.handlersMap[eventName] = [];
             }
         }
 
