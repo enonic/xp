@@ -184,8 +184,6 @@ module app.wizard.page {
             if (liveEditWindow && liveEditWindow.$liveEdit && typeof(liveEditWindow.initializeLiveEdit) === "function") {
                 // Give loaded page same CONFIG.baseUri as in admin
                 liveEditWindow.CONFIG = { baseUri: CONFIG.baseUri };
-                liveEditWindow.siteTemplate = this.siteTemplate;
-                liveEditWindow.content = this.contentLoadedOnPage;
 
                 this.liveEditJQuery = <JQueryStatic>liveEditWindow.$liveEdit;
                 if (this.liveEditIFrame != liveEditWindow) {
@@ -197,6 +195,7 @@ module app.wizard.page {
 
                 liveEditWindow.initializeLiveEdit();
                 new api.liveedit.ContentSetEvent(this.contentLoadedOnPage).fire(this.liveEditWindow);
+                new api.liveedit.SiteTemplateSetEvent(this.siteTemplate).fire(this.liveEditWindow);
                 this.notifyLoaded();
             }
 

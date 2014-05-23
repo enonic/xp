@@ -3,6 +3,7 @@ module LiveEdit.component {
     import ComponentPath = api.content.page.ComponentPath;
     import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
     import PartItemType = api.liveedit.part.PartItemType;
+    import PageItemType = api.liveedit.PageItemType;
 
     // Uses
     var $ = $liveEdit;
@@ -19,7 +20,7 @@ module LiveEdit.component {
                 e.stopPropagation();
             });
             this.getEl().setData('live-edit-type', 'part');
-            var request = new api.content.page.part.GetPartDescriptorsByModulesRequest(siteTemplate.getModules());
+            var request = new api.content.page.part.GetPartDescriptorsByModulesRequest(PageItemType.get().getSiteTemplate().getModules());
             var loader = new api.content.page.part.PartDescriptorLoader(request);
             this.comboBox = new api.content.page.part.PartDescriptorComboBox(loader);
             loader.load();

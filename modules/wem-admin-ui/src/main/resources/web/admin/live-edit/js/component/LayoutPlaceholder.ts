@@ -3,6 +3,7 @@ module LiveEdit.component {
     import ComponentPath = api.content.page.ComponentPath;
     import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
     import LayoutItemType = api.liveedit.layout.LayoutItemType;
+    import PageItemType = api.liveedit.PageItemType;
 
     export class LayoutPlaceholder extends ComponentPlaceholder {
 
@@ -13,7 +14,7 @@ module LiveEdit.component {
 
             this.getEl().setData('live-edit-type', "layout");
 
-            var request = new api.content.page.layout.GetLayoutDescriptorsByModulesRequest(siteTemplate.getModules());
+            var request = new api.content.page.layout.GetLayoutDescriptorsByModulesRequest(PageItemType.get().getSiteTemplate().getModules());
             var loader = new api.content.page.layout.LayoutDescriptorLoader(request);
             this.comboBox = new api.content.page.layout.LayoutDescriptorComboBox(loader);
             loader.load();

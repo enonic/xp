@@ -4,9 +4,6 @@ declare var CONFIG;
 
 declare var $liveEdit;
 
-var siteTemplate: api.content.site.template.SiteTemplate;
-var content: api.content.Content;
-
 function initializeLiveEdit() {
     //TODO: Maybe move/make more generic
     $('[data-live-edit-empty-component="true"]').each((index, element) => {

@@ -4,6 +4,7 @@ module LiveEdit.component {
     import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
     import ImageComponentSetImageEvent = api.liveedit.image.ImageComponentSetImageEvent
     import ImageItemType = api.liveedit.image.ImageItemType;
+    import PageItemType = api.liveedit.PageItemType;
 
     // Uses
     var $ = $liveEdit;
@@ -85,7 +86,7 @@ module LiveEdit.component {
 
                     var createContentRequest = new api.content.CreateContentRequest().
                         setDraft(false).
-                        setParent(content.getPath()).
+                        setParent(PageItemType.get().getContent().getPath()).
                         setName(api.content.ContentName.fromString(api.content.ContentName.ensureValidContentName(attachmentName.toString()))).
                         setContentType(contentType.getContentTypeName()).
                         setDisplayName(attachmentName.toString()).
