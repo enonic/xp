@@ -27,8 +27,8 @@ function initializeLiveEdit() {
     new api.liveedit.NewPageComponentIdMapEvent(map).fire();
 }
 
-function getComponentByPath(path: string): api.liveedit.ItemView {
-    return api.liveedit.ItemView.fromJQuery($('[data-live-edit-component="' + path + '"]'), false);
+function getComponentByPath(path: api.content.page.ComponentPath): api.liveedit.ItemView {
+    return api.liveedit.ItemView.fromJQuery($('[data-live-edit-component="' + path.toString() + '"]'), false);
 }
 
 (function ($) {
@@ -59,11 +59,11 @@ function getComponentByPath(path: string): api.liveedit.ItemView {
         $(window).unload(() => console.log('Clean up any css classes etc. that live edit / sortable has added'));
 
         //TODO: move this somewhere logical
-        $(window).on('componentLoaded.liveEdit', (event, component: api.liveedit.ItemView) => {
-            if (component.getType() == api.liveedit.layout.LayoutItemType.get()) {
-                LiveEdit.component.dragdropsort.DragDropSort.createSortableLayout(component);
+        api.liveedit.PageComponentLoadedEvent.on((event: api.liveedit.PageComponentLoadedEvent) => {
+            if (event.getItemView().getType() == api.liveedit.layout.LayoutItemType.get()) {
+                LiveEdit.component.dragdropsort.DragDropSort.createSortableLayout(event.getItemView());
             }
-        })
+        });
     });
 
     $(document).ready(() => {

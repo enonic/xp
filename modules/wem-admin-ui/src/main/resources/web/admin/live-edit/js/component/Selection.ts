@@ -1,17 +1,7 @@
 module LiveEdit.component {
 
-    import ComponentPath = api.content.page.ComponentPath;
-    import PageSelectEvent = api.liveedit.PageSelectEvent;
-    import RegionSelectEvent = api.liveedit.RegionSelectEvent;
-    import PageComponentSelectEvent = api.liveedit.PageComponentSelectEvent;
-    import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
     import ItemView = api.liveedit.ItemView;
-    import RegionView = api.liveedit.RegionView;
-    import PageView = api.liveedit.PageView;
-    import PageItemType = api.liveedit.PageItemType;
-    import RegionItemType = api.liveedit.RegionItemType;
-    import PageComponentItemType = api.liveedit.PageComponentItemType;
-    import PageComponentView = api.liveedit.PageComponentView;
+    import PageComponentSelectComponentEvent = api.liveedit.PageComponentSelectComponentEvent;
 
     // Uses
     var $ = $liveEdit;
@@ -38,7 +28,7 @@ module LiveEdit.component {
                 var iterations = 0;
                 var interval = setInterval(() => {
                     if (itemView.getHTMLElement().offsetHeight > 0) {
-                        $(window).trigger('selectComponent.liveEdit', [itemView, mouseClickPagePosition]);
+                        new PageComponentSelectComponentEvent(itemView, mouseClickPagePosition).fire();
                         clearInterval(interval);
                     }
                     iterations++;
@@ -47,7 +37,7 @@ module LiveEdit.component {
                     }
                 }, 300);
             } else {
-                $(window).trigger('selectComponent.liveEdit', [itemView, mouseClickPagePosition]);
+                new PageComponentSelectComponentEvent(itemView, mouseClickPagePosition).fire();
             }
         }
 
