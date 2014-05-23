@@ -2,33 +2,34 @@ package com.enonic.wem.api.content;
 
 import com.enonic.wem.api.content.query.ContentQuery;
 import com.enonic.wem.api.content.query.ContentQueryResult;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 
 public interface ContentService
 {
-    Content getById( ContentId id );
+    Content getById( ContentId id, final Context context );
 
-    Contents getByIds( GetContentByIdsParams params );
+    Contents getByIds( GetContentByIdsParams params, final Context context );
 
-    Content getByPath( ContentPath path );
+    Content getByPath( ContentPath path, final Context context );
 
-    Contents getByPaths( ContentPaths paths );
+    Contents getByPaths( ContentPaths paths, final Context context );
 
-    Contents getRoots();
+    Contents getRoots( final Context context );
 
-    Contents getChildren( ContentPath parentPath );
+    Contents getChildren( ContentPath parentPath, final Context context );
 
-    Content create( CreateContentParams params );
+    Content create( CreateContentParams params, final Context context );
 
-    Content update( UpdateContentParams params );
+    Content update( UpdateContentParams params, final Context context );
 
-    DeleteContentResult delete( DeleteContentParams params );
+    DeleteContentResult delete( DeleteContentParams params, final Context context );
 
-    DataValidationErrors validate( ValidateContentData data );
+    DataValidationErrors validate( ValidateContentData data, final Context context );
 
-    Content rename( RenameContentParams params );
+    Content rename( RenameContentParams params, final Context context );
 
-    ContentQueryResult find( ContentQuery contentQuery );
+    ContentQueryResult find( ContentQuery contentQuery, final Context context );
 
     String generateContentName( String displayName );
 }

@@ -4,15 +4,20 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.NoNodeAtPathFoundException;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
 
 final class GetContentByPathCommand
-    extends AbstractContentCommand<GetContentByPathCommand>
+    extends AbstractContentCommand
 {
-    private ContentPath contentPath;
+    private final ContentPath contentPath;
+
+    GetContentByPathCommand( final Builder builder )
+    {
+        super( builder );
+        this.contentPath = builder.contentPath;
+    }
 
     Content execute()
     {
@@ -20,7 +25,7 @@ final class GetContentByPathCommand
 
         try
         {
-            final Node node = nodeService.getByPath( nodePath, new Context( ContentConstants.DEFAULT_WORKSPACE ) );
+            final Node node = nodeService.getByPath( nodePath, ContentConstants.DEFAULT_CONTEXT );
             return getTranslator().fromNode( node );
         }
         catch ( NoNodeAtPathFoundException e )
@@ -29,9 +34,27 @@ final class GetContentByPathCommand
         }
     }
 
-    GetContentByPathCommand contentPath( final ContentPath path )
+
+    public static Builder create( final ContentPath contentPath )
     {
-        this.contentPath = path;
-        return this;
+        return new Builder( contentPath );
     }
+
+    public static class Builder
+        extends AbstractContentCommand.Builder<Builder>
+    {
+        private final ContentPath contentPath;
+
+        public Builder( final ContentPath contentPath )
+        {
+            this.contentPath = contentPath;
+        }
+
+        public GetContentByPathCommand build()
+        {
+            return new GetContentByPathCommand( this );
+        }
+
+    }
+
 }

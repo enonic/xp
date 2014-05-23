@@ -7,33 +7,41 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ValidateContentData;
 import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.entity.Nodes;
-import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 
-abstract class AbstractContentCommand<T extends AbstractContentCommand>
+abstract class AbstractContentCommand
 {
     public static final String NON_CONTENT_NODE_PREFIX = "__";
 
-    private ContentNodeTranslator translator;
+    private final ContentNodeTranslator translator;
 
-    NodeService nodeService;
+    final NodeService nodeService;
 
-    ContentTypeService contentTypeService;
+    final ContentTypeService contentTypeService;
 
-    BlobService blobService;
+    final BlobService blobService;
+
+    final Context context;
+
+    protected AbstractContentCommand( final Builder builder )
+    {
+        this.blobService = builder.blobService;
+        this.contentTypeService = builder.contentTypeService;
+        this.nodeService = builder.nodeService;
+        this.context = builder.context;
+
+        this.translator = new ContentNodeTranslator( this.blobService, this.contentTypeService );
+
+    }
 
     ContentNodeTranslator getTranslator()
     {
-        if ( this.translator == null )
-        {
-            this.translator = new ContentNodeTranslator( blobService, contentTypeService );
-        }
-
         return this.translator;
     }
 
@@ -54,11 +62,11 @@ abstract class AbstractContentCommand<T extends AbstractContentCommand>
 
     Content getContent( final ContentId contentId )
     {
-        return new GetContentByIdCommand().
+        return GetContentByIdCommand.create( contentId ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
-            contentId( contentId ).
+            build().
             execute();
     }
 
@@ -69,21 +77,44 @@ abstract class AbstractContentCommand<T extends AbstractContentCommand>
         return new ValidateContentDataCommand().contentTypeService( this.contentTypeService ).data( data ).execute();
     }
 
-    T nodeService( final NodeService nodeService )
+    public static class Builder<B extends Builder>
     {
-        this.nodeService = nodeService;
-        return (T) this;
+        private NodeService nodeService;
+
+        private ContentTypeService contentTypeService;
+
+        private BlobService blobService;
+
+        private Context context;
+
+        @SuppressWarnings("unchecked")
+        public B nodeService( final NodeService nodeService )
+        {
+            this.nodeService = nodeService;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B contentTypeService( final ContentTypeService contentTypeService )
+        {
+            this.contentTypeService = contentTypeService;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B blobService( final BlobService blobService )
+        {
+            this.blobService = blobService;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B context( final Context context )
+        {
+            this.context = context;
+            return (B) this;
+        }
+
     }
 
-    T contentTypeService( final ContentTypeService contentTypeService )
-    {
-        this.contentTypeService = contentTypeService;
-        return (T) this;
-    }
-
-    T blobService( final BlobService blobService )
-    {
-        this.blobService = blobService;
-        return (T) this;
-    }
 }

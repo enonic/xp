@@ -18,6 +18,7 @@ import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
@@ -83,7 +84,7 @@ public class ImageResourceTest
     {
         final ContentPath contentPath = ContentPath.from( "path/to/content" );
         final Content content = createContent( "content-id", contentPath, "image" );
-        when( contentService.getByPath( contentPath ) ).thenReturn( content );
+        when( contentService.getByPath( contentPath, ContentConstants.DEFAULT_CONTEXT) ).thenReturn( content );
 
         final BlobKey blobKey = new BlobKey( "<blobkey-1>" );
         final Attachment attachment = newAttachment().
@@ -110,7 +111,7 @@ public class ImageResourceTest
     public void getImageNotFound()
         throws Exception
     {
-        when( contentService.getByPath( ContentPath.from( "path/to/content" ) ) ).thenReturn( null );
+        when( contentService.getByPath( ContentPath.from( "path/to/content" ), ContentConstants.DEFAULT_CONTEXT) ).thenReturn( null );
 
         // resource.mode = "live";
         // resource.contentPath = "path/to/content";
@@ -127,7 +128,7 @@ public class ImageResourceTest
     {
         final ContentPath contentPath = ContentPath.from( "path/to/content" );
         final Content content = createContent( "content-id", contentPath, "image" );
-        when( contentService.getByPath( contentPath ) ).thenReturn( content );
+        when( contentService.getByPath( contentPath, ContentConstants.DEFAULT_CONTEXT) ).thenReturn( content );
 
         final BlobKey blobKey = new BlobKey( "<blobkey-1>" );
         final Attachment attachment = newAttachment().

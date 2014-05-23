@@ -6,16 +6,21 @@ import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.content.DeleteContentResult;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.NoNodeAtPathFoundException;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
 
 
 final class DeleteContentCommand
-    extends AbstractContentCommand<DeleteContentCommand>
+    extends AbstractContentCommand
 {
-    private DeleteContentParams params;
+    private final DeleteContentParams params;
+
+    private DeleteContentCommand( final Builder builder )
+    {
+        super( builder );
+        this.params = builder.params;
+    }
 
     DeleteContentResult execute()
     {
@@ -30,7 +35,7 @@ final class DeleteContentCommand
 
         try
         {
-            final Node deletedNode = nodeService.deleteByPath( nodePath, new Context( ContentConstants.DEFAULT_WORKSPACE ) );
+            final Node deletedNode = nodeService.deleteByPath( nodePath, ContentConstants.DEFAULT_CONTEXT );
 
             final Content deletedContent = getTranslator().fromNode( deletedNode );
 
@@ -42,9 +47,26 @@ final class DeleteContentCommand
         }
     }
 
-    DeleteContentCommand params( final DeleteContentParams params )
+    public static Builder create()
     {
-        this.params = params;
-        return this;
+        return new Builder();
     }
+
+    public static class Builder
+        extends AbstractContentCommand.Builder<Builder>
+    {
+        private DeleteContentParams params;
+
+        public Builder params( final DeleteContentParams params )
+        {
+            this.params = params;
+            return this;
+        }
+
+        public DeleteContentCommand build()
+        {
+            return new DeleteContentCommand( this );
+        }
+    }
+
 }

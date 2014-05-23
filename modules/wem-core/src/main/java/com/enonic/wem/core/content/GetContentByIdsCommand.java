@@ -11,7 +11,6 @@ import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.GetContentByIdsParams;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
 import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
@@ -19,9 +18,15 @@ import com.enonic.wem.api.entity.Nodes;
 
 
 final class GetContentByIdsCommand
-    extends AbstractContentCommand<GetContentByIdsCommand>
+    extends AbstractContentCommand
 {
-    private GetContentByIdsParams params;
+    private final GetContentByIdsParams params;
+
+    GetContentByIdsCommand( final Builder builder )
+    {
+        super( builder );
+        this.params = builder.params;
+    }
 
     Contents execute()
     {
@@ -37,14 +42,20 @@ final class GetContentByIdsCommand
             throw new ContentNotFoundException( contentId );
         }
 
-        return this.params.doGetChildrenIds() ? new ChildContentIdsResolver( this.nodeService, this.contentTypeService,
-                                                                             this.blobService ).resolve( contents ) : contents;
+        return this.params.doGetChildrenIds() ? ChildContentIdsResolver.
+            create().
+            context( this.context ).
+            nodeService( this.nodeService ).
+            blobService( this.blobService ).
+            contentTypeService( this.contentTypeService ).
+            build().
+            resolve( contents ) : contents;
     }
 
     private Contents doExecute()
     {
         final EntityIds entityIds = getAsEntityIds( this.params.getIds() );
-        final Nodes nodes = nodeService.getByIds( entityIds, new Context( ContentConstants.DEFAULT_WORKSPACE ) );
+        final Nodes nodes = nodeService.getByIds( entityIds, ContentConstants.DEFAULT_CONTEXT );
 
         return getTranslator().fromNodes( nodes );
     }
@@ -63,9 +74,25 @@ final class GetContentByIdsCommand
         return EntityIds.from( entityIds );
     }
 
-    GetContentByIdsCommand params( final GetContentByIdsParams params )
+
+    public static Builder create( final GetContentByIdsParams params )
     {
-        this.params = params;
-        return this;
+        return new Builder( params );
+    }
+
+    public static class Builder
+        extends AbstractContentCommand.Builder<Builder>
+    {
+        private final GetContentByIdsParams params;
+
+        public Builder( final GetContentByIdsParams params )
+        {
+            this.params = params;
+        }
+
+        public GetContentByIdsCommand build()
+        {
+            return new GetContentByIdsCommand( this );
+        }
     }
 }

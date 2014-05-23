@@ -3,6 +3,7 @@ package com.enonic.wem.api.content;
 import java.util.Collection;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -98,5 +99,17 @@ public final class Contents
         {
             return new Contents( builder.build() );
         }
+    }
+
+    @Override
+    public String toString()
+    {
+        final Objects.ToStringHelper s = Objects.toStringHelper( this );
+        for ( final Content content : this )
+        {
+            s.add( "content", content.toString() );
+        }
+
+        return s.toString();
     }
 }

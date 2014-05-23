@@ -16,7 +16,6 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.thumb.Thumbnail;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.UpdateNodeParams;
 import com.enonic.wem.api.schema.content.ContentType;
@@ -26,18 +25,25 @@ import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 
 import static com.enonic.wem.api.content.Content.newContent;
-import static com.enonic.wem.api.content.ContentConstants.DEFAULT_WORKSPACE;
+import static com.enonic.wem.api.content.ContentConstants.DEFAULT_CONTEXT;
 
 final class UpdateContentCommand
-    extends AbstractContentCommand<UpdateContentCommand>
+    extends AbstractContentCommand
 {
     private static final String THUMBNAIL_MIME_TYPE = "image/png";
 
     private final static Logger LOG = LoggerFactory.getLogger( UpdateContentCommand.class );
 
-    private AttachmentService attachmentService;
+    private final AttachmentService attachmentService;
 
-    private UpdateContentParams params;
+    private final UpdateContentParams params;
+
+    private UpdateContentCommand( final Builder builder )
+    {
+        super( builder );
+        this.attachmentService = builder.attachmentService;
+        this.params = builder.params;
+    }
 
     Content execute()
     {
@@ -79,9 +85,9 @@ final class UpdateContentCommand
             attachments = attachmentService.getAll( this.params.getContentId() );
         }
 
-        final UpdateNodeParams updateNodeParams = getTranslator().toUpdateNodeCommand( editedContent, DEFAULT_WORKSPACE, attachments );
+        final UpdateNodeParams updateNodeParams = getTranslator().toUpdateNodeCommand( editedContent, attachments );
 
-        final Node editedNode = this.nodeService.update( updateNodeParams, new Context( DEFAULT_WORKSPACE ) );
+        final Node editedNode = this.nodeService.update( updateNodeParams, DEFAULT_CONTEXT );
 
         final Content persistedContent = getTranslator().fromNode( editedNode );
 
@@ -159,15 +165,34 @@ final class UpdateContentCommand
         return contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) );
     }
 
-    UpdateContentCommand attachmentService( final AttachmentService attachmentService )
+    public static Builder create( final UpdateContentParams params )
     {
-        this.attachmentService = attachmentService;
-        return this;
+        return new Builder( params );
     }
 
-    UpdateContentCommand params( final UpdateContentParams params )
+    public static class Builder
+        extends AbstractContentCommand.Builder<Builder>
     {
-        this.params = params;
-        return this;
+        private AttachmentService attachmentService;
+
+        private final UpdateContentParams params;
+
+        public Builder( final UpdateContentParams params )
+        {
+            this.params = params;
+        }
+
+        public Builder attachmentService( final AttachmentService attachmentService )
+        {
+            this.attachmentService = attachmentService;
+            return this;
+        }
+
+        public UpdateContentCommand build()
+        {
+            return new UpdateContentCommand( this );
+        }
+
     }
+
 }

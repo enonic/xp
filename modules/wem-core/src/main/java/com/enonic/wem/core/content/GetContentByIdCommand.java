@@ -4,7 +4,6 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
 import com.enonic.wem.api.entity.Node;
@@ -12,9 +11,15 @@ import com.enonic.wem.api.util.Exceptions;
 
 
 final class GetContentByIdCommand
-    extends AbstractContentCommand<GetContentByIdCommand>
+    extends AbstractContentCommand
 {
-    private ContentId contentId;
+    private final ContentId contentId;
+
+    GetContentByIdCommand( final Builder builder )
+    {
+        super( builder );
+        this.contentId = builder.contentId;
+    }
 
     Content execute()
     {
@@ -22,7 +27,7 @@ final class GetContentByIdCommand
 
         try
         {
-            final Node node = nodeService.getById( entityId, new Context( ContentConstants.DEFAULT_WORKSPACE ) );
+            final Node node = nodeService.getById( entityId, ContentConstants.DEFAULT_CONTEXT );
             return getTranslator().fromNode( node );
         }
         catch ( NoEntityWithIdFoundException e )
@@ -35,9 +40,25 @@ final class GetContentByIdCommand
         }
     }
 
-    GetContentByIdCommand contentId( final ContentId id )
+    public static Builder create( final ContentId contentId )
     {
-        this.contentId = id;
-        return this;
+        return new Builder( contentId );
+    }
+
+    public static class Builder
+        extends AbstractContentCommand.Builder<Builder>
+    {
+        private ContentId contentId;
+
+        public Builder( final ContentId contentId )
+        {
+            this.contentId = contentId;
+        }
+
+        public GetContentByIdCommand build()
+        {
+            return new GetContentByIdCommand( this );
+        }
     }
 }
+

@@ -19,6 +19,7 @@ import com.enonic.wem.api.content.ValidateContentData;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.query.ContentQuery;
 import com.enonic.wem.api.content.query.ContentQueryResult;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
@@ -43,106 +44,117 @@ public class ContentServiceImpl
     private QueryService queryService;
 
     @Override
-    public Content getById( final ContentId id )
+    public Content getById( final ContentId id, final Context context )
     {
-        return new GetContentByIdCommand().
+        return GetContentByIdCommand.create( id ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
-            contentId( id ).
+            context( context ).
+            build().
             execute();
     }
 
     @Override
-    public Contents getByIds( final GetContentByIdsParams params )
+    public Contents getByIds( final GetContentByIdsParams params, final Context context )
     {
-        return new GetContentByIdsCommand().
+        return GetContentByIdsCommand.create( params ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            blobService( this.blobService ).
+            context( context ).
+            build().
+            execute();
+    }
+
+    @Override
+    public Content getByPath( final ContentPath path, final Context context )
+    {
+        return GetContentByPathCommand.create( path ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            blobService( this.blobService ).
+            context( context ).
+            build().
+            execute();
+    }
+
+    @Override
+    public Contents getByPaths( final ContentPaths paths, final Context context )
+    {
+        return GetContentByPathsCommand.create( paths ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            blobService( this.blobService ).
+            context( context ).
+            build().
+            execute();
+    }
+
+    @Override
+    public Contents getRoots( final Context context )
+    {
+        return GetRootContentCommand.create().
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            blobService( this.blobService ).
+            build().
+            execute();
+    }
+
+    @Override
+    public Contents getChildren( final ContentPath parentPath, final Context context )
+    {
+        return GetChildContentCommand.create( parentPath ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            blobService( this.blobService ).
+            context( context ).
+            build().
+            execute();
+    }
+
+    @Override
+    public Content create( final CreateContentParams params, final Context context )
+    {
+        return CreateContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             params( params ).
+            context( context ).
+            build().
             execute();
     }
 
     @Override
-    public Content getByPath( final ContentPath path )
+    public Content update( final UpdateContentParams params, final Context context )
     {
-        return new GetContentByPathCommand().
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
-            contentPath( path ).
-            execute();
-    }
-
-    @Override
-    public Contents getByPaths( final ContentPaths paths )
-    {
-        return new GetContentByPathsCommand().
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
-            contentPaths( paths ).
-            execute();
-    }
-
-    @Override
-    public Contents getRoots()
-    {
-        return new GetRootContentCommand().
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
-            execute();
-    }
-
-    @Override
-    public Contents getChildren( final ContentPath parentPath )
-    {
-        return new GetChildContentCommand().
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
-            parentPath( parentPath ).
-            execute();
-    }
-
-    @Override
-    public Content create( final CreateContentParams params )
-    {
-        return new CreateContentCommand().
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
-            params( params ).
-            execute();
-    }
-
-    @Override
-    public Content update( final UpdateContentParams params )
-    {
-        return new UpdateContentCommand().
+        return UpdateContentCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             attachmentService( this.attachmentService ).
-            params( params ).
+            context( context ).
+            build().
             execute();
     }
 
     @Override
-    public DeleteContentResult delete( final DeleteContentParams params )
+    public DeleteContentResult delete( final DeleteContentParams params, final Context context )
     {
-        return new DeleteContentCommand().
+        return DeleteContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             params( params ).
+            context( context ).
+            build().
             execute();
     }
 
     @Override
-    public DataValidationErrors validate( final ValidateContentData data )
+    public DataValidationErrors validate( final ValidateContentData data, final Context context )
     {
         return new ValidateContentDataCommand().
             contentTypeService( this.contentTypeService ).
@@ -151,18 +163,19 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Content rename( final RenameContentParams params )
+    public Content rename( final RenameContentParams params, final Context context )
     {
-        return new RenameContentCommand().
+        return RenameContentCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
-            params( params ).
+            context( context ).
+            build().
             execute();
     }
 
     @Override
-    public ContentQueryResult find( final ContentQuery contentQuery )
+    public ContentQueryResult find( final ContentQuery contentQuery, final Context context )
     {
         return new FindContentCommand().
             contentQuery( contentQuery ).

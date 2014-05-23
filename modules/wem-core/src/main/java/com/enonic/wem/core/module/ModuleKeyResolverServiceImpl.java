@@ -4,6 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
@@ -71,7 +72,7 @@ final class ModuleKeyResolverServiceImpl
 
     private Content getContent( final ContentPath contentPath )
     {
-        return contentService.getByPath( contentPath );
+        return contentService.getByPath( contentPath, ContentConstants.DEFAULT_CONTEXT );
     }
 
     private SiteTemplate getSiteTemplate( final SiteTemplateKey siteTemplateKey )

@@ -39,7 +39,7 @@ final class UpdateNodeCommand
     private Node doExecute()
         throws Exception
     {
-        final Node beforeChange = nodeDao.getById( params.getId(), params.getWorkspace() );
+        final Node beforeChange = nodeDao.getById( params.getId(), context.getWorkspace() );
 
         final Node.EditBuilder editBuilder = params.getEditor().edit( beforeChange );
         if ( !editBuilder.isChanges() )
@@ -59,7 +59,7 @@ final class UpdateNodeCommand
             entityIndexConfig( edited.getEntityIndexConfig() ).
             build();
 
-        final Node updatedNode = nodeDao.update( updateNodeArgs, params.getWorkspace() );
+        final Node updatedNode = nodeDao.update( updateNodeArgs, context.getWorkspace() );
 
         indexService.index( updatedNode );
 

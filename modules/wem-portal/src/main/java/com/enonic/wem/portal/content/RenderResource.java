@@ -3,6 +3,7 @@ package com.enonic.wem.portal.content;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
@@ -127,7 +128,7 @@ public abstract class RenderResource
     {
         try
         {
-            return this.contentService.getByPath( contentPath );
+            return this.contentService.getByPath( contentPath, ContentConstants.DEFAULT_CONTEXT );
         }
         catch ( ContentNotFoundException e )
         {
@@ -139,7 +140,7 @@ public abstract class RenderResource
     {
         try
         {
-            return this.contentService.getById( contentId );
+            return this.contentService.getById( contentId, ContentConstants.DEFAULT_CONTEXT );
         }
         catch ( ContentNotFoundException e )
         {

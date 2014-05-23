@@ -35,8 +35,6 @@ public final class CreateContentParams
 
     private boolean embed;
 
-    private Workspace workspace = ContentConstants.DEFAULT_WORKSPACE;
-
     private Map<String, Attachment> attachments = Maps.newHashMap();
 
     public CreateContentParams contentType( final ContentTypeName value )
@@ -179,11 +177,6 @@ public final class CreateContentParams
     public Attachment getAttachment( final String attachmentName )
     {
         return attachments.get( attachmentName );
-    }
-
-    public Workspace getWorkspace()
-    {
-        return workspace;
     }
 
     public void validate()
