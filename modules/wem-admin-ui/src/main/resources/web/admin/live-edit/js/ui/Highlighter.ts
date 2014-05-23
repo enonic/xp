@@ -4,6 +4,7 @@ module LiveEdit.ui {
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
+    import PageComponentSelectComponentEvent = api.liveedit.PageComponentSelectComponentEvent;
 
     // Uses
     var $ = $liveEdit;
@@ -20,7 +21,7 @@ module LiveEdit.ui {
 
         private registerGlobalListeners(): void {
             $(window).on('mouseOverComponent.liveEdit', (event, component: ItemView)  => this.onMouseOverComponent(component));
-            $(window).on('selectComponent.liveEdit', (event, component: ItemView)     => this.onSelectComponent(component));
+            PageComponentSelectComponentEvent.on((event: PageComponentSelectComponentEvent) => this.onSelectComponent(event.getItemView()));
             PageComponentDeselectEvent.on(() => this.onDeselectComponent());
             $(window).on('mouseOutComponent.liveEdit', ()                   => this.hide());
             SortableStartEvent.on(() => this.hide());
