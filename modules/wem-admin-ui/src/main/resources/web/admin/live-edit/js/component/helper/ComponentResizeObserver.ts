@@ -1,6 +1,7 @@
 module LiveEdit.component.helper {
 
     import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
+    import PageComponentSelectComponentEvent = api.liveedit.PageComponentSelectComponentEvent;
     import ItemView = api.liveedit.ItemView;
 
     // Uses
@@ -41,10 +42,7 @@ module LiveEdit.component.helper {
         }
 
         private registerGlobalListeners(): void {
-            $(window).on('selectComponent.liveEdit', (event: JQueryEventObject, component: ItemView, pagePosition) => {
-                this.observe(component);
-            });
-
+            PageComponentSelectComponentEvent.on((event: PageComponentSelectComponentEvent) => this.observe(event.getItemView()));
             PageComponentDeselectEvent.on(() => this.disconnect());
             $(window).on('editTextComponent.liveEdit', (event: JQueryEventObject, component: ItemView) => {
                 this.observe(component);

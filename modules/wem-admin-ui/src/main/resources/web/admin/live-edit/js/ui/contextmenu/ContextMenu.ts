@@ -4,6 +4,7 @@ module LiveEdit.ui.contextmenu {
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
+    import PageComponentSelectComponentEvent = api.liveedit.PageComponentSelectComponentEvent;
 
     // Uses
     var $ = $liveEdit;
@@ -40,8 +41,8 @@ module LiveEdit.ui.contextmenu {
         }
 
         private registerGlobalListeners(): void {
-            $(window).on('selectComponent.liveEdit',
-                (event: JQueryEventObject, component: ItemView, pagePosition) => this.show(component, pagePosition));
+            PageComponentSelectComponentEvent.on((event: PageComponentSelectComponentEvent) =>
+                this.show(event.getItemView(), event.getPosition()));
             PageComponentDeselectEvent.on(() => this.hide());
             PageComponentRemoveEvent.on(() => this.hide());
             $(window).on('editTextComponent.liveEdit', () => this.hide());
@@ -61,7 +62,7 @@ module LiveEdit.ui.contextmenu {
             });
         }
 
-        private show(component: ItemView, pageXYPosition: any = null): void {
+        private show(component: ItemView, pageXYPosition: api.liveedit.Position = null): void {
             this.selectedComponent = component;
 
             this.updateTitleBar(component);
@@ -137,7 +138,7 @@ module LiveEdit.ui.contextmenu {
             }
         }
 
-        private resolvePagePosition(component: ItemView, pageXYPosition: any): any {
+        private resolvePagePosition(component: ItemView, pageXYPosition: api.liveedit.Position): api.liveedit.Position {
             var componentElementDimensions = component.getElementDimensions();
             var pageXPosition, pageYPosition;
             if (pageXYPosition) {
