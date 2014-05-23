@@ -8,7 +8,7 @@ module api.liveedit {
             super(PageItemType.get(), element);
         }
 
-        getComponentName(): string {
+        getName(): string {
 
             var content = PageItemType.get().getContent();
             return content ? content.getDisplayName() : "[No name]";

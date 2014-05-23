@@ -31,3 +31,4 @@
 ///<reference path='PageComponentResetEvent.ts' />
 ///<reference path='PageComponentDuplicateEvent.ts' />
 ///<reference path='PageComponentSetDescriptorEvent.ts' />
+///<reference path='RegionEmptyEvent.ts' />

@@ -157,7 +157,7 @@ module LiveEdit.ui.contextmenu {
 
         private updateTitleBar(component: ItemView): void {
             this.setIcon(component);
-            this.setTitle(component.getComponentName());
+            this.setTitle(component.getName());
         }
 
         private setTitle(titleText: string): void {

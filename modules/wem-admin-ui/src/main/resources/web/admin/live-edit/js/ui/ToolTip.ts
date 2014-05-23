@@ -40,7 +40,7 @@ module LiveEdit.ui {
             var tooltip: JQuery = this.getEl();
 
             tooltip.children('.live-edit-tool-tip-type-text').text(itemView.getType().getShortName());
-            tooltip.children('.live-edit-tool-tip-name-text').text(itemView.getComponentName());
+            tooltip.children('.live-edit-tool-tip-name-text').text(itemView.getName());
         }
 
         private attachEventListeners(): void {

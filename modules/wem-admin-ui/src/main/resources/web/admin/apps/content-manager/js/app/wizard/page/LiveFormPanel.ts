@@ -67,6 +67,7 @@ module app.wizard.page {
     import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
     import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
     import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
+    import RegionEmptyEvent = api.liveedit.RegionEmptyEvent;
 
     export interface LiveFormPanelConfig {
 
@@ -578,6 +579,11 @@ module app.wizard.page {
                     execute();
 
                 this.saveAndReloadOnlyPageComponent(newPageComponent.getPath(), event.getItemView());
+            });
+
+            this.liveEditPage.onRegionEmpty((event: RegionEmptyEvent) => {
+
+                this.pageRegions.emptyRegion(event.getPath());
             });
         }
 

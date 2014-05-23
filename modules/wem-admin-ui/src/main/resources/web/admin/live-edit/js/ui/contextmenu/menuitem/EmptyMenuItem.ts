@@ -2,6 +2,7 @@ module LiveEdit.ui.contextmenu.menuitem {
 
     import ComponentPath = api.content.page.ComponentPath;
     import ItemView = api.liveedit.ItemView;
+    import PageComponentView = api.liveedit.PageComponentView;
     import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
 
     // Uses
@@ -23,20 +24,29 @@ module LiveEdit.ui.contextmenu.menuitem {
         }
 
         private onEmptyComponent() {
-            var selectedComponent = this.menu.selectedComponent;
-            var componentEl: JQuery = selectedComponent.getElement();
-            var component = ItemView.fromJQuery(componentEl, false);
 
-            selectedComponent.deselect();
-            new PageComponentResetEvent(selectedComponent.getComponentPath()).fire();
+            var selectedItem = this.menu.selectedComponent;
+            if (api.ObjectHelper.iFrameSafeInstanceOf(selectedItem, PageComponentView)) {
 
-            var emptyComponent = LiveEdit.component.ComponentPlaceholder.fromComponent(selectedComponent.getType());
-            emptyComponent.setComponentPath(component.getComponentPath());
+                var selectedPageComponent = <PageComponentView> selectedItem;
 
-            componentEl.replaceWith(emptyComponent.getHTMLElement());
-            emptyComponent.init();
+                var componentEl: JQuery = selectedPageComponent.getElement();
+                var component = PageComponentView.fromJQuery(componentEl, false);
 
-            LiveEdit.component.Selection.handleSelect(emptyComponent);
+                selectedPageComponent.deselect();
+                new PageComponentResetEvent(selectedPageComponent.getComponentPath()).fire();
+
+                var emptyComponent = LiveEdit.component.ComponentPlaceholder.fromComponent(selectedPageComponent.getType());
+                emptyComponent.setComponentPath(component.getComponentPath());
+
+                componentEl.replaceWith(emptyComponent.getHTMLElement());
+                emptyComponent.init();
+
+                LiveEdit.component.Selection.handleSelect(emptyComponent);
+            }
+            else {
+                throw new Error("Emptying [" + api.util.getClassName(selectedItem) + "] is not supported");
+            }
         }
     }
 }

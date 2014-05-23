@@ -8,6 +8,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
     import ItemType = api.liveedit.ItemType;
     import ItemView = api.liveedit.ItemView;
+    import PageComponentView = api.liveedit.PageComponentView;
     import RegionItemType = api.liveedit.RegionItemType;
     import TextItemType = api.liveedit.text.TextItemType;
     import LayoutItemType = api.liveedit.layout.LayoutItemType;
@@ -187,7 +188,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     function handleSortUpdate(event: JQueryEventObject, ui): void {
-        var component = ItemView.fromJQuery(ui.item);
+        var component = PageComponentView.fromJQuery(ui.item);
 
         if (component.hasComponentPath()) {
             new SortableUpdateEvent(component).fire();
@@ -197,11 +198,11 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     function handleSortStop(event: JQueryEventObject, ui): void {
         _isDragging = false;
 
-        var component = ItemView.fromJQuery(ui.item);
+        var pageComponentView = PageComponentView.fromJQuery(ui.item);
 
         removePaddingFromLayoutComponent();
 
-        var draggedItemIsLayoutComponent = component.getType().equals(LayoutItemType.get()),
+        var draggedItemIsLayoutComponent = pageComponentView.getType().equals(LayoutItemType.get()),
             targetComponentIsInLayoutComponent = $(event.target).closest(LAYOUT_SELECTOR).length > 0;
 
         if (draggedItemIsLayoutComponent && targetComponentIsInLayoutComponent) {
@@ -212,11 +213,11 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             $(window).trigger('mouseOutComponent.liveEdit');
         }
 
-        var wasSelectedOnDragStart = component.getElement().data('live-edit-selected-on-drag-start');
+        //var wasSelectedOnDragStart = pageComponentView.getElement().data('live-edit-selected-on-drag-start');
 
-        new SortableStopEvent(component).fire();
+        new SortableStopEvent(pageComponentView).fire();
 
-        component.getElement().removeData('live-edit-selected-on-drag-start');
+        pageComponentView.getElement().removeData('live-edit-selected-on-drag-start');
     }
 
     // When sortable receives a new item

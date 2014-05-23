@@ -1,6 +1,7 @@
 module LiveEdit.ui.contextmenu.menuitem {
 
-    import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
+    import EmptyRegionEvent = api.liveedit.RegionEmptyEvent;
+    import RegionView = api.liveedit.RegionView;
 
     // Uses
     var $ = $liveEdit;
@@ -21,13 +22,21 @@ module LiveEdit.ui.contextmenu.menuitem {
         }
 
         private onEmptyRegion() {
-            var region: JQuery = this.menu.selectedComponent.getElement();
-            //LiveEdit.component.Selection.deselect();
-            this.menu.selectedComponent.deselect();
 
-            $('[data-live-edit-type]', region).remove();
+            var selectedItem = this.menu.selectedComponent;
+            if (api.ObjectHelper.iFrameSafeInstanceOf(selectedItem, RegionView)) {
+                var selectedRegion = <RegionView>selectedItem;
 
-            new PageComponentRemoveEvent(this.menu.selectedComponent.getComponentPath()).fire();
+                selectedRegion.deselect();
+
+                var region: JQuery = selectedRegion.getElement();
+                $('[data-live-edit-type]', region).remove();
+
+                new EmptyRegionEvent(selectedRegion.getRegionPath()).fire();
+            }
+            else {
+                throw new Error("Expected region to empty, got [" + api.util.getClassName(selectedItem) + "]");
+            }
         }
     }
 }

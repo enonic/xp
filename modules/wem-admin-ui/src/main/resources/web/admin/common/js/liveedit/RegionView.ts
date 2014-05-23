@@ -17,7 +17,7 @@ module api.liveedit {
             return RegionPath.fromString(asString);
         }
 
-        getComponentName(): string {
+        getName(): string {
 
             return this.getRegionName().toString();
         }

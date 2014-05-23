@@ -29,6 +29,7 @@ module app.wizard.page {
     import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
     import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
     import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
+    import RegionEmptyEvent = api.liveedit.RegionEmptyEvent;
 
     export interface LiveEditPageProxyConfig {
 
@@ -90,6 +91,8 @@ module app.wizard.page {
         private pageComponentResetListeners: {(event: PageComponentResetEvent): void;}[] = [];
 
         private pageComponentDuplicatedListeners: {(event: PageComponentDuplicateEvent): void;}[] = [];
+
+        private regionEmptyListeners: {(event: RegionEmptyEvent): void;}[] = [];
 
         constructor(config: LiveEditPageProxyConfig) {
 
@@ -322,6 +325,10 @@ module app.wizard.page {
             PageComponentSetDescriptorEvent.on((event: PageComponentSetDescriptorEvent) => {
                 this.notifyPageComponentSetDescriptor(event);
             }, this.liveEditWindow);
+
+            RegionEmptyEvent.on((event: RegionEmptyEvent) => {
+                this.notifyRegionEmpty(event);
+            }, this.liveEditWindow);
         }
 
         onLoaded(listener: {(): void;}) {
@@ -520,5 +527,16 @@ module app.wizard.page {
             this.pageComponentDuplicatedListeners.forEach((listener) => listener(event));
         }
 
+        onRegionEmpty(listener: {(event: RegionEmptyEvent): void;}) {
+            this.regionEmptyListeners.push(listener);
+        }
+
+        unRegionEmpty(listener: {(event: RegionEmptyEvent): void;}) {
+            this.regionEmptyListeners = this.regionEmptyListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyRegionEmpty(event: RegionEmptyEvent) {
+            this.regionEmptyListeners.forEach((listener) => listener(event));
+        }
     }
 }

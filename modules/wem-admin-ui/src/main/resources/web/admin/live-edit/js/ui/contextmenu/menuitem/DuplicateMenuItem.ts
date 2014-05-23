@@ -1,6 +1,7 @@
 module LiveEdit.ui.contextmenu.menuitem {
 
     import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
+    import PageComponentView = api.liveedit.PageComponentView;
 
     // Uses
     var $ = $liveEdit;
@@ -23,13 +24,23 @@ module LiveEdit.ui.contextmenu.menuitem {
         }
 
         private onDuplicateComponent() {
-            var component = this.menu.selectedComponent;
-            var placeholder = LiveEdit.component.ComponentPlaceholder.fromComponent(component.getType());
-            placeholder.getEl().insertAfterEl(component);
-            placeholder.init();
-            placeholder.showLoadingSpinner();
-            new PageComponentDuplicateEvent(component, placeholder).fire();
-            LiveEdit.component.Selection.handleSelect(placeholder);
+
+            var selectedItem = this.menu.selectedComponent;
+
+            if (api.ObjectHelper.iFrameSafeInstanceOf(selectedItem, PageComponentView)) {
+
+                var selectedPageComponent = <PageComponentView> selectedItem;
+
+                var placeholder = LiveEdit.component.ComponentPlaceholder.fromComponent(selectedPageComponent.getType());
+                placeholder.getEl().insertAfterEl(selectedPageComponent);
+                placeholder.init();
+                placeholder.showLoadingSpinner();
+                new PageComponentDuplicateEvent(selectedPageComponent, placeholder).fire();
+                LiveEdit.component.Selection.handleSelect(placeholder);
+            }
+            else {
+                throw new Error("Duplicating [" + api.util.getClassName(selectedItem) + "] is not supported");
+            }
         }
     }
 }
