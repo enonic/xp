@@ -2,7 +2,10 @@ module api.ui {
 
     export class NavigatedPanelStrip extends PanelStrip {
 
-        navigator: Navigator;
+        private navigator: Navigator;
+        private scrollIndex: number = -1;
+        private focusIndex: number = -1;
+        private focusVisible: boolean = false;
 
         constructor(navigator: Navigator, className?: string) {
             super(className);
@@ -20,16 +23,43 @@ module api.ui {
 
             jQuery(this.getHTMLElement()).scroll((event: JQueryEventObject) => {
                 if (listenToScroll) {
-                    var index = this.getScrolledPanelIndex((<Element> event.target).scrollTop);
-                    if (index >= 0 && index < this.navigator.getSize()) {
-                        this.navigator.selectNavigationItem(index, true);
-                    }
+                    this.updateScrolledNavigationItem();
                 }
             });
         }
 
+        private updateScrolledNavigationItem() {
+            var scrollTop = this.getHTMLElement().scrollTop;
+
+            var focusVisible = this.isFocusedPanelVisible(scrollTop);
+            var scrollIndex = this.getScrolledPanelIndex(scrollTop);
+
+            if (this.scrollIndex != scrollIndex || this.focusVisible != focusVisible) {
+                if (focusVisible) {
+                    this.navigator.selectNavigationItem(this.focusIndex, true);
+                } else {
+                    this.navigator.selectNavigationItem(scrollIndex, true);
+                }
+                this.focusVisible = focusVisible;
+                this.scrollIndex = scrollIndex;
+            }
+        }
+
+        private isFocusedPanelVisible(scrollTop: number): boolean {
+            if (this.focusIndex < 0) {
+                return false;
+            }
+            var totalHeight = this.getEl().getHeight(),
+                panelEl = this.getPanel(this.focusIndex).getEl(),
+                panelTop = panelEl.getOffsetToParent().top,
+                panelBottom = panelTop + panelEl.getHeight();
+
+            return (panelTop <= 0 && panelBottom > 0) ||
+                   (panelTop <= totalHeight && panelBottom > totalHeight);
+        }
+
         private getScrolledPanelIndex(scrollTop: number): number {
-            var panelEl, panelOffset, panelHeight;
+            var panelEl, panelTop, panelBottom;
             if (scrollTop == 0) {
                 // select first element if we are in the beginning
                 return 0;
@@ -40,9 +70,10 @@ module api.ui {
              }*/
             for (var i = 0; i < this.getSize(); i++) {
                 panelEl = this.getPanel(i).getEl();
-                panelOffset = scrollTop + panelEl.getOffsetToParent().top;
-                panelHeight = panelEl.getHeight();
-                if (scrollTop >= panelOffset && scrollTop < (panelOffset + panelHeight)) {
+                panelTop = scrollTop + panelEl.getOffsetToParent().top;
+                panelBottom = panelTop + panelEl.getHeight();
+
+                if (scrollTop >= panelTop && scrollTop < panelBottom) {
                     return i;
                 }
             }
@@ -59,6 +90,12 @@ module api.ui {
             // select corresponding step on focus
             panel.onFocus((event: FocusEvent) => {
                 this.navigator.selectNavigationItem(item.getIndex(), true);
+                this.focusIndex = item.getIndex();
+            });
+            panel.onBlur((event: FocusEvent) => {
+                this.focusIndex = -1;
+                // Update navigation item according to scroll position
+                this.updateScrolledNavigationItem();
             });
             if (select) {
                 this.selectPanel(item);
