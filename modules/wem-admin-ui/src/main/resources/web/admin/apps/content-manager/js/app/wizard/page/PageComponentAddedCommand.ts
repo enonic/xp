@@ -13,7 +13,7 @@ module app.wizard.page {
 
         private type: PageComponentType;
 
-        private regionPath: RegionPath;
+        private region: RegionPath;
 
         private precedingComponent: ComponentName;
 
@@ -32,7 +32,7 @@ module app.wizard.page {
         }
 
         setRegion(value: RegionPath): PageComponentAddedCommand {
-            this.regionPath = value;
+            this.region = value;
             return this;
         }
 
@@ -47,6 +47,10 @@ module app.wizard.page {
         }
 
         execute(): PageComponent {
+            api.util.assertNotNull(this.pageRegions, "pageRegions cannot be null");
+            api.util.assertNotNull(this.type, "type cannot be null");
+            api.util.assertNotNull(this.region, "region cannot be null");
+            api.util.assertNotNull(this.componentView, "componentView cannot be null");
 
             var component = this.addComponent();
 
@@ -61,15 +65,16 @@ module app.wizard.page {
         private addComponent(): PageComponent {
 
             var wantedName = api.util.capitalize(api.util.removeInvalidChars(this.type.getShortName()));
-            var componentName = this.pageRegions.ensureUniqueComponentName(this.regionPath, new ComponentName(wantedName));
+            var componentName = this.pageRegions.ensureUniqueComponentName(this.region, new ComponentName(wantedName));
 
             var builder = this.type.newComponentBuilder();
             builder.setName(componentName);
+
             if (api.ObjectHelper.iFrameSafeInstanceOf(builder, DescriptorBasedPageComponentBuilder)) {
                 (<DescriptorBasedPageComponentBuilder>builder).setConfig(new RootDataSet());
             }
             var component = builder.build();
-            this.pageRegions.addComponentAfter(component, this.regionPath, this.precedingComponent);
+            this.pageRegions.addComponentAfter(component, this.region, this.precedingComponent);
             return component;
         }
     }
