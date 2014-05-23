@@ -6,7 +6,7 @@ interface ToolTipPosition {
 module LiveEdit.ui {
 
     import ItemView = api.liveedit.ItemView;
-
+    import PageComponentSelectComponentEvent = api.liveedit.PageComponentSelectComponentEvent;
     // Uses
     var $ = $liveEdit;
     var domHelper = LiveEdit.DomHelper;
@@ -23,7 +23,7 @@ module LiveEdit.ui {
         }
 
         private registerGlobalListeners(): void {
-            $(window).on('selectComponent.liveEdit', () => this.hide());
+            PageComponentSelectComponentEvent.on(() => this.hide());
         }
 
         private addView(): void {

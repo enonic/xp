@@ -3,6 +3,7 @@ module LiveEdit.ui {
     import ItemView = api.liveedit.ItemView;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import SortableStopEvent = api.liveedit.SortableStopEvent;
+    import PageComponentSelectComponentEvent = api.liveedit.PageComponentSelectComponentEvent;
 
     // Uses
     var $ = $liveEdit;
@@ -28,7 +29,7 @@ module LiveEdit.ui {
 
         private registerGlobalListeners(): void {
             $(window).on('mouseOverComponent.liveEdit', (event: JQueryEventObject, component: ItemView) => this.update(component));
-            $(window).on('selectComponent.liveEdit', (event: JQueryEventObject, component: ItemView) => this.update(component));
+            PageComponentSelectComponentEvent.on((event: PageComponentSelectComponentEvent) => this.update(event.getItemView()));
             $(window).on('mouseOutComponent.liveEdit', () => this.reset());
             SortableStartEvent.on(() => this.hide());
             SortableStopEvent.on(() => this.reset());

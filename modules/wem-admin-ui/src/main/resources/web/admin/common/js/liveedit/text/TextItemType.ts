@@ -1,7 +1,6 @@
 module api.liveedit.text {
 
     import ItemTypeConfigJson = api.liveedit.ItemTypeConfigJson;
-    import PageComponentView = api.liveedit.PageComponentView;
     import PageComponentItemType = api.liveedit.PageComponentItemType;
 
     export class TextItemType extends PageComponentItemType {

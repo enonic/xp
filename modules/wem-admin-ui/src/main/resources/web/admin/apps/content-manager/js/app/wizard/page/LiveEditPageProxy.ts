@@ -29,6 +29,8 @@ module app.wizard.page {
     import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
     import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
     import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
+    import PageComponentLoadedEvent = api.liveedit.PageComponentLoadedEvent;
+    import PageComponentSelectComponentEvent = api.liveedit.PageComponentSelectComponentEvent;
 
     export interface LiveEditPageProxyConfig {
 
@@ -215,28 +217,27 @@ module app.wizard.page {
                     $(componentPlaceholder.getHTMLElement()).replaceWith(newElement);
                     componentPlaceholder.remove();
 
-                    var itemView: ItemView = this.liveEditWindow.getComponentByPath(componentPath);
+                    var itemView: ItemView = this.getComponentByPath(componentPath);
                     itemView.deselect();
 
                     this.liveEditWindow.LiveEdit.PlaceholderCreator.renderEmptyRegionPlaceholders();
 
+                    this.liveEditWindow.LiveEdit.component.Selection.handleSelect(itemView, null, true);
 
-                    this.liveEditWindow.LiveEdit.component.Selection.handleSelect(<api.liveedit.ItemView>itemView, null, true);
-
-                    this.liveEditJQuery(this.liveEditWindow).trigger("componentLoaded.liveEdit", [itemView]);
+                    new PageComponentLoadedEvent(itemView).fire(this.liveEditWindow);
                 }
             });
         }
 
-        public getComponentByPath(path: api.content.page.ComponentPath): any {
+        public getComponentByPath(path: api.content.page.ComponentPath): ItemView {
 
-            return this.liveEditWindow.getComponentByPath(path.toString());
+            return this.liveEditWindow.getComponentByPath(path);
         }
 
         public selectComponent(path: api.content.page.ComponentPath): void {
             var comp = this.getComponentByPath(path);
             var element: HTMLElement = comp.getHTMLElement();
-            this.liveEditJQuery(element).trigger('selectComponent.liveEdit', [comp, null]);
+            new PageComponentSelectComponentEvent(comp, null).fire(this.liveEditWindow);
         }
 
         public listenToPage() {
@@ -255,21 +256,13 @@ module app.wizard.page {
                 uploadDialog.open();
             }, this.liveEditWindow);
 
-            DraggableStartEvent.on((event: DraggableStartEvent) => {
-                this.notifyDraggableStart(event);
-            }, this.liveEditWindow);
+            DraggableStartEvent.on(this.notifyDraggableStart.bind(this), this.liveEditWindow);
 
-            DraggableStopEvent.on((event: DraggableStopEvent) => {
-                this.notifyDraggableStop(event);
-            }, this.liveEditWindow);
+            DraggableStopEvent.on(this.notifyDraggableStop.bind(this), this.liveEditWindow);
 
-            SortableStartEvent.on((event: SortableStartEvent) => {
-                this.notifySortableStart(event);
-            }, this.liveEditWindow);
+            SortableStartEvent.on(this.notifySortableStart.bind(this), this.liveEditWindow);
 
-            SortableStopEvent.on((event: SortableStopEvent) => {
-                this.notifySortableStop(event);
-            }, this.liveEditWindow);
+            SortableStopEvent.on(this.notifySortableStop.bind(this), this.liveEditWindow);
 
             SortableUpdateEvent.on((event: SortableUpdateEvent) => {
                 if (event.getComponentView()) {
@@ -277,13 +270,9 @@ module app.wizard.page {
                 }
             }, this.liveEditWindow);
 
-            PageSelectEvent.on((event: PageSelectEvent) => {
-                this.notifyPageSelected(event);
-            }, this.liveEditWindow);
+            PageSelectEvent.on(this.notifyPageSelected.bind(this), this.liveEditWindow);
 
-            RegionSelectEvent.on((event: RegionSelectEvent) => {
-                this.notifyRegionSelected(event);
-            }, this.liveEditWindow);
+            RegionSelectEvent.on(this.notifyRegionSelected.bind(this), this.liveEditWindow);
 
             PageComponentSelectEvent.on((event: PageComponentSelectEvent) => {
                 if (event.getPath()) {
@@ -291,25 +280,15 @@ module app.wizard.page {
                 }
             }, this.liveEditWindow);
 
-            PageComponentDeselectEvent.on((event: PageComponentDeselectEvent) => {
-                this.notifyDeselect(event);
-            }, this.liveEditWindow);
+            PageComponentDeselectEvent.on(this.notifyDeselect.bind(this), this.liveEditWindow);
 
-            PageComponentAddedEvent.on((event: PageComponentAddedEvent) => {
-                this.notifyPageComponentAdded(event);
-            }, this.liveEditWindow);
+            PageComponentAddedEvent.on(this.notifyPageComponentAdded.bind(this), this.liveEditWindow);
 
-            PageComponentRemoveEvent.on((event: PageComponentRemoveEvent) => {
-                this.notifyPageComponentRemoved(event);
-            }, this.liveEditWindow);
+            PageComponentRemoveEvent.on(this.notifyPageComponentRemoved.bind(this), this.liveEditWindow);
 
-            PageComponentResetEvent.on((event: PageComponentResetEvent) => {
-                this.notifyPageComponentReset(event);
-            }, this.liveEditWindow);
+            PageComponentResetEvent.on(this.notifyPageComponentReset.bind(this), this.liveEditWindow);
 
-            PageComponentDuplicateEvent.on((event: PageComponentDuplicateEvent) => {
-                this.notifyPageComponentDuplicated(event);
-            }, this.liveEditWindow);
+            PageComponentDuplicateEvent.on(this.notifyPageComponentDuplicated.bind(this), this.liveEditWindow);
 
             ImageComponentSetImageEvent.on((event: ImageComponentSetImageEvent) => {
                 if (!event.getErrorMessage()) {
@@ -319,9 +298,7 @@ module app.wizard.page {
                 }
             }, this.liveEditWindow);
 
-            PageComponentSetDescriptorEvent.on((event: PageComponentSetDescriptorEvent) => {
-                this.notifyPageComponentSetDescriptor(event);
-            }, this.liveEditWindow);
+            PageComponentSetDescriptorEvent.on(this.notifyPageComponentSetDescriptor.bind(this), this.liveEditWindow);
         }
 
         onLoaded(listener: {(): void;}) {
