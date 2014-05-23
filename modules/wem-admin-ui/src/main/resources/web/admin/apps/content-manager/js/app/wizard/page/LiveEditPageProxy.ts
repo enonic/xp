@@ -55,6 +55,10 @@ module app.wizard.page {
 
         private dragMask: api.ui.DragMask;
 
+        private iFrameLoadDeffered: Q.Deferred<void>;
+
+        private contentLoadedOnPage: Content;
+
         private loadedListeners: {(): void;}[] = [];
 
         private draggableStartListeners: {(event: DraggableStartEvent): void;}[] = [];
@@ -94,6 +98,8 @@ module app.wizard.page {
             this.siteTemplate = config.siteTemplate;
 
             this.liveEditIFrame = new api.dom.IFrameEl("live-edit-frame");
+            this.iFrameLoadDeffered = Q.defer<void>();
+            this.liveEditIFrame.onLoaded(() => this.handleIFrameLoadedEvent());
             this.loadMask = new api.ui.LoadMask(this.liveEditIFrame);
             this.dragMask = new api.ui.DragMask(this.liveEditIFrame);
 
@@ -160,38 +166,38 @@ module app.wizard.page {
 
         public load(content: Content): Q.Promise<void> {
 
-            var url = this.baseUrl + content.getContentId().toString();
+            this.iFrameLoadDeffered = Q.defer<void>();
+            this.contentLoadedOnPage = content;
 
             this.loadMask.show();
-            this.liveEditIFrame.setSrc(url);
+            this.liveEditIFrame.setSrc(this.baseUrl + content.getContentId().toString());
 
-            var deferred = Q.defer<void>();
-            this.liveEditIFrame.onLoaded((event: UIEvent) => {
+            return this.iFrameLoadDeffered.promise;
+        }
 
-                var liveEditWindow = this.liveEditIFrame.getHTMLElement()["contentWindow"];
-                if (liveEditWindow && liveEditWindow.$liveEdit && typeof(liveEditWindow.initializeLiveEdit) === "function") {
-                    // Give loaded page same CONFIG.baseUri as in admin
-                    liveEditWindow.CONFIG = { baseUri: CONFIG.baseUri };
-                    liveEditWindow.siteTemplate = this.siteTemplate;
-                    liveEditWindow.content = content;
+        private handleIFrameLoadedEvent() {
 
-                    this.liveEditJQuery = <JQueryStatic>liveEditWindow.$liveEdit;
-                    if (this.liveEditWindow != liveEditWindow) {
-                        this.liveEditWindow = liveEditWindow;
-                        this.listenToPage();
-                    }
+            var liveEditWindow = this.liveEditIFrame.getHTMLElement()["contentWindow"];
+            if (liveEditWindow && liveEditWindow.$liveEdit && typeof(liveEditWindow.initializeLiveEdit) === "function") {
+                // Give loaded page same CONFIG.baseUri as in admin
+                liveEditWindow.CONFIG = { baseUri: CONFIG.baseUri };
+                liveEditWindow.siteTemplate = this.siteTemplate;
+                liveEditWindow.content = this.contentLoadedOnPage;
 
-                    this.loadMask.hide();
-
-                    liveEditWindow.initializeLiveEdit();
-                    new api.liveedit.ContentSetEvent(content).fire(this.liveEditWindow);
-                    this.notifyLoaded();
+                this.liveEditJQuery = <JQueryStatic>liveEditWindow.$liveEdit;
+                if (this.liveEditIFrame != liveEditWindow) {
+                    this.liveEditWindow = liveEditWindow;
+                    this.listenToPage();
                 }
 
-                deferred.resolve(null);
-            });
+                this.loadMask.hide();
 
-            return deferred.promise;
+                liveEditWindow.initializeLiveEdit();
+                new api.liveedit.ContentSetEvent(this.contentLoadedOnPage).fire(this.liveEditWindow);
+                this.notifyLoaded();
+            }
+
+            this.iFrameLoadDeffered.resolve(null);
         }
 
         public loadComponent(componentPath: ComponentPath, componentPlaceholder: ItemView, content: api.content.Content) {
@@ -279,7 +285,6 @@ module app.wizard.page {
                 this.notifyRegionSelected(event);
             }, this.liveEditWindow);
 
-            PageComponentSelectEvent.un(null, this.liveEditWindow);
             PageComponentSelectEvent.on((event: PageComponentSelectEvent) => {
                 if (event.getPath()) {
                     this.notifyPageComponentSelected(event);
@@ -290,7 +295,6 @@ module app.wizard.page {
                 this.notifyDeselect(event);
             }, this.liveEditWindow);
 
-            PageComponentAddedEvent.un(null, this.liveEditWindow);
             PageComponentAddedEvent.on((event: PageComponentAddedEvent) => {
                 this.notifyPageComponentAdded(event);
             }, this.liveEditWindow);
@@ -303,7 +307,6 @@ module app.wizard.page {
                 this.notifyPageComponentReset(event);
             }, this.liveEditWindow);
 
-            PageComponentDuplicateEvent.un(null, this.liveEditWindow);
             PageComponentDuplicateEvent.on((event: PageComponentDuplicateEvent) => {
                 this.notifyPageComponentDuplicated(event);
             }, this.liveEditWindow);
