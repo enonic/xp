@@ -74,7 +74,7 @@ module api.app.wizard {
             this.actions = params.actions;
 
             this.formPanel = new api.ui.Panel("form-panel");
-            $(this.formPanel.getHTMLElement()).scroll(() => this.updateStickyToolbar());
+            wemjq(this.formPanel.getHTMLElement()).scroll(() => this.updateStickyToolbar());
 
             this.appendChild(this.mainToolbar);
             if (params.split && params.livePanel) {
@@ -162,7 +162,7 @@ module api.app.wizard {
         }
 
         updateStickyToolbar() {
-            var scrollTop = $('.form-panel').scrollTop();
+            var scrollTop = wemjq('.form-panel').scrollTop();
             var wizardHeaderHeight = this.header.getEl().getHeightWithMargin() + this.header.getEl().getOffsetTopRelativeToParent();
             if (scrollTop > wizardHeaderHeight) {
                 this.mainToolbar.removeClass("scrolling");
@@ -185,9 +185,9 @@ module api.app.wizard {
         }
 
         startRememberFocus() {
-            jQuery(this.getHTMLElement()).on("focus", "*", (e) => {
+            wemjq(this.getHTMLElement()).on("focus", "*", (e) => {
                 e.stopPropagation();
-                this.lastFocusedElement = jQuery(e.target);
+                this.lastFocusedElement = wemjq(e.target);
             });
         }
 
@@ -378,7 +378,7 @@ module api.app.wizard {
         }
 
         private updateSplitPanel() {
-            if ($(window).width() > this.splitPanelThreshold) {
+            if (wemjq(window).width() > this.splitPanelThreshold) {
                 this.splitPanel.setFirstPanelSize("30%");
             }
             this.splitPanel.distribute();

@@ -3,9 +3,6 @@ module LiveEdit.ui.contextmenu.menuitem {
     import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
     import PageComponentView = api.liveedit.PageComponentView;
 
-    // Uses
-    var $ = $liveEdit;
-
     export class DuplicateMenuItem extends LiveEdit.ui.contextmenu.menuitem.BaseMenuItem {
 
         constructor(menu) {

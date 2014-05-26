@@ -56,7 +56,7 @@ module api.notify {
             this.registry[notificationEl.getEl().getId()] = notificationEl;
             this.setListeners(notificationEl, opts);
 
-            $(notificationEl.getHTMLElement()).animate({
+            wemjq(notificationEl.getHTMLElement()).animate({
                     height: 'toggle'
                 },
                 this.slideDuration,
@@ -96,7 +96,7 @@ module api.notify {
                 return;
             }
 
-            $(el.getHTMLElement()).animate({
+            wemjq(el.getHTMLElement()).animate({
                     height: 'hide'
                 }, this.slideDuration, 'linear',
                 () => {

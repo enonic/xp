@@ -3,9 +3,6 @@ module LiveEdit.ui.contextmenu.menuitem {
     import EmptyRegionEvent = api.liveedit.RegionEmptyEvent;
     import RegionView = api.liveedit.RegionView;
 
-    // Uses
-    var $ = $liveEdit;
-
     export class EmptyRegionMenuItem extends LiveEdit.ui.contextmenu.menuitem.BaseMenuItem {
 
         constructor(menu) {
@@ -30,7 +27,7 @@ module LiveEdit.ui.contextmenu.menuitem {
                 selectedRegion.deselect();
 
                 var region: JQuery = selectedRegion.getElement();
-                $('[data-live-edit-type]', region).remove();
+                wemjq('[data-live-edit-type]', region).remove();
 
                 new EmptyRegionEvent(selectedRegion.getRegionPath()).fire();
             }

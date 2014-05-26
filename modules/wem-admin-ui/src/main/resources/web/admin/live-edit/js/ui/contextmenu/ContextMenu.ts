@@ -6,9 +6,6 @@ module LiveEdit.ui.contextmenu {
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
     import PageComponentSelectComponentEvent = api.liveedit.PageComponentSelectComponentEvent;
 
-    // Uses
-    var $ = $liveEdit;
-
     export class ContextMenu extends LiveEdit.ui.Base {
 
         selectedComponent: ItemView;
@@ -36,7 +33,7 @@ module LiveEdit.ui.contextmenu {
             html += '</div>';
 
             this.createHtmlFromString(html);
-            this.appendTo($('body'));
+            this.appendTo(wemjq('body'));
             this.addMenuItems();
         }
 
@@ -45,9 +42,9 @@ module LiveEdit.ui.contextmenu {
                 this.show(event.getItemView(), event.getPosition()));
             PageComponentDeselectEvent.on(() => this.hide());
             PageComponentRemoveEvent.on(() => this.hide());
-            $(window).on('editTextComponent.liveEdit', () => this.hide());
+            wemjq(window).on('editTextComponent.liveEdit', () => this.hide());
             SortableStartEvent.on(() => this.fadeOutAndHide());
-            $(window).on('resizeBrowserWindow.liveEdit', () => this.handleWindowResize());
+            wemjq(window).on('resizeBrowserWindow.liveEdit', () => this.handleWindowResize());
         }
 
         private registerEventsListeners(): void {
@@ -189,19 +186,19 @@ module LiveEdit.ui.contextmenu {
         }
 
         private getIconContainerElement(): JQuery {
-            return $('.live-edit-context-menu-title-icon-container', this.getEl());
+            return wemjq('.live-edit-context-menu-title-icon-container', this.getEl());
         }
 
         private getTitleElement(): JQuery {
-            return $('.live-edit-context-menu-title-text', this.getEl());
+            return wemjq('.live-edit-context-menu-title-text', this.getEl());
         }
 
         private getCloseButton(): JQuery {
-            return $('.live-edit-context-menu-title-close-button', this.getEl());
+            return wemjq('.live-edit-context-menu-title-close-button', this.getEl());
         }
 
         private getMenuItemsPlaceholderElement(): JQuery {
-            return $('.live-edit-context-menu-items', this.getEl());
+            return wemjq('.live-edit-context-menu-items', this.getEl());
         }
 
     }

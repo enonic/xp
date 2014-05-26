@@ -7,8 +7,7 @@ module LiveEdit.ui {
 
     import ItemView = api.liveedit.ItemView;
     import PageComponentSelectComponentEvent = api.liveedit.PageComponentSelectComponentEvent;
-    // Uses
-    var $ = $liveEdit;
+    
     var domHelper = LiveEdit.DomHelper;
 
     export class ToolTip extends LiveEdit.ui.Base {
@@ -33,7 +32,7 @@ module LiveEdit.ui {
                                '</div>';
 
             this.createHtmlFromString(html);
-            this.appendTo($('body'));
+            this.appendTo(wemjq('body'));
         }
 
         private setText(itemView: ItemView): void {
@@ -44,7 +43,7 @@ module LiveEdit.ui {
         }
 
         private attachEventListeners(): void {
-            $(document).on('mousemove', '[data-live-edit-type]', (event) => {
+            wemjq(document).on('mousemove', '[data-live-edit-type]', (event) => {
 
                 // fixme: Use PubSub instead of calling DragDrop object.
                 if (LiveEdit.component.Selection.pageHasSelectedElement() || LiveEdit.component.dragdropsort.DragDropSort.isDragging()) {
@@ -61,15 +60,15 @@ module LiveEdit.ui {
 
             });
 
-            $(document).on('mouseover', '[data-live-edit-type]', (event) => {
+            wemjq(document).on('mouseover', '[data-live-edit-type]', (event) => {
 
-                var itemView: ItemView = ItemView.fromJQuery($(event.target).closest('[data-live-edit-type]'));
+                var itemView: ItemView = ItemView.fromJQuery(wemjq(event.target).closest('[data-live-edit-type]'));
                 this.setText(itemView);
 
                 this.getEl().hide(null).show();
             });
 
-            $('[data-live-edit-type]').mouseleave(() => {
+            wemjq('[data-live-edit-type]').mouseleave(() => {
                 this.getEl().hide(null);
             });
         }

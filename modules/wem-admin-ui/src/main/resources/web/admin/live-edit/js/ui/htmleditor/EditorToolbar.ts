@@ -4,9 +4,6 @@ module LiveEdit.ui {
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
 
-    // Uses
-    var $ = $liveEdit;
-
     export class EditorToolbar extends LiveEdit.ui.Base {
 
         private selectedText: ItemView = null;
@@ -22,8 +19,8 @@ module LiveEdit.ui {
         }
 
         private registerGlobalListeners(): void {
-            $(window).on('editTextComponent.liveEdit', (event: JQueryEventObject, component) => this.show(component));
-            $(window).on('leaveTextComponent.liveEdit', () => this.hide());
+            wemjq(window).on('editTextComponent.liveEdit', (event: JQueryEventObject, component?) => this.show(component));
+            wemjq(window).on('leaveTextComponent.liveEdit', () => this.hide());
             PageComponentRemoveEvent.on(() => this.hide());
             SortableStartEvent.on(() => this.hide());
         }
@@ -48,7 +45,7 @@ module LiveEdit.ui {
                                '</div>';
 
             this.createHtmlFromString(html);
-            this.appendTo($('body'));
+            this.appendTo(wemjq('body'));
         }
 
         private addEvents(): void {
@@ -60,11 +57,11 @@ module LiveEdit.ui {
                 // Simple editor command implementation ;)
                 var tag = event.target["getAttribute"]('live-edit-data-tag');
                 if (tag) {
-                    $(window).trigger('editorToolbarButtonClick.liveEdit', [tag]);
+                    wemjq(window).trigger('editorToolbarButtonClick.liveEdit', [tag]);
                 }
             });
 
-            $(window).scroll(() => {
+            wemjq(window).scroll(() => {
                 if (this.selectedText) {
                     this.updatePosition();
                 }
@@ -93,7 +90,7 @@ module LiveEdit.ui {
 
             var defaultPosition = this.getPositionRelativeToComponentTop();
 
-            var stick = $(window).scrollTop() >= this.selectedText.getElement().offset().top - 60;
+            var stick = wemjq(window).scrollTop() >= this.selectedText.getElement().offset().top - 60;
 
             var el = this.getEl();
 
@@ -111,7 +108,7 @@ module LiveEdit.ui {
                 });
             }
 
-            var placeArrowOnTop = $(window).scrollTop() >= defaultPosition.bottom - 10;
+            var placeArrowOnTop = wemjq(window).scrollTop() >= defaultPosition.bottom - 10;
 
             this.toggleArrowPosition(placeArrowOnTop);
         }

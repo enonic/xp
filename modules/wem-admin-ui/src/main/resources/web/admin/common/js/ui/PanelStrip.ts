@@ -101,7 +101,7 @@ module api.ui {
                 return;
             }
 
-            $(this.getHTMLElement()).animate({
+            wemjq(this.getHTMLElement()).animate({
                 scrollTop: this.getHTMLElement().scrollTop + panelToShow.getEl().getOffsetToParent().top
             }, {
                 duration: 500,

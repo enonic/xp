@@ -1,0 +1,1 @@
+var wemjq:JQueryStatic = <JQueryStatic> $.noConflict(true);

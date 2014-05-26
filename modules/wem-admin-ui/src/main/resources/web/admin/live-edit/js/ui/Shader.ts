@@ -6,9 +6,6 @@ module LiveEdit.ui {
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
     import PageComponentSelectComponentEvent = api.liveedit.PageComponentSelectComponentEvent;
 
-    // Uses
-    var $ = $liveEdit;
-
     export class Shader extends LiveEdit.ui.Base {
 
         private selectedComponent: ItemView = null;
@@ -30,40 +27,40 @@ module LiveEdit.ui {
 
         registerGlobalListeners():void {
             PageComponentSelectComponentEvent.on((event: PageComponentSelectComponentEvent) => this.show(event.getItemView()));
-            $(window).on('editTextComponent.liveEdit', (event:JQueryEventObject, component) => this.show(component));
+            wemjq(window).on('editTextComponent.liveEdit', (event:JQueryEventObject, component) => this.show(component));
             PageComponentDeselectEvent.on(() => this.hide());
             PageComponentRemoveEvent.on(() => this.hide());
             SortableStartEvent.on(() => this.hide());
-            $(window).on('resizeBrowserWindow.liveEdit', () => this.onWindowResize());
+            wemjq(window).on('resizeBrowserWindow.liveEdit', () => this.onWindowResize());
         }
 
         private addView():void {
-            var body:JQuery = $('body');
+            var body:JQuery = wemjq('body');
             var clsName = this.CLS_NAME;
 
             this.pageShader = body.append('<div id="live-edit-page-shader" class="' + clsName + '"><!-- --></div>');
 
-            this.northShader = $('<div id="live-edit-shader-north" class="' + clsName + '"><!-- --></div>');
+            this.northShader = wemjq('<div id="live-edit-shader-north" class="' + clsName + '"><!-- --></div>');
             body.append(this.northShader);
 
-            this.eastShader = $('<div id="live-edit-shader-east" class="' + clsName + '"><!-- --></div>');
+            this.eastShader = wemjq('<div id="live-edit-shader-east" class="' + clsName + '"><!-- --></div>');
             body.append(this.eastShader);
 
-            this.southShader = $('<div id="live-edit-shader-south" class="' + clsName + '"><!-- --></div>');
+            this.southShader = wemjq('<div id="live-edit-shader-south" class="' + clsName + '"><!-- --></div>');
             body.append(this.southShader);
 
-            this.westShader = $('<div id="live-edit-shader-west" class="' + clsName + '"><!-- --></div>');
+            this.westShader = wemjq('<div id="live-edit-shader-west" class="' + clsName + '"><!-- --></div>');
             body.append(this.westShader);
         }
 
         private addEvents():void {
-            $('.' + this.CLS_NAME).on('click contextmenu', (event) => {
+            wemjq('.' + this.CLS_NAME).on('click contextmenu', (event) => {
                 event.stopPropagation();
                 event.preventDefault();
 
                 this.selectedComponent.deselect();
 
-                $(window).trigger('clickShader.liveEdit');
+                wemjq(window).trigger('clickShader.liveEdit');
             });
         }
 
@@ -80,7 +77,7 @@ module LiveEdit.ui {
 
             //this.hide();
 
-            $('#live-edit-page-shader').css({
+            wemjq('#live-edit-page-shader').css({
                 top: 0,
                 right: 0,
                 bottom: 0,
@@ -130,7 +127,7 @@ module LiveEdit.ui {
 
         private hide():void {
             this.selectedComponent = null;
-            var shaders:JQuery = $('.live-edit-shader');
+            var shaders:JQuery = wemjq('.live-edit-shader');
             shaders.hide(null);
         }
 

@@ -20,9 +20,6 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
     import PageComponentAddedEvent = api.liveedit.PageComponentAddedEvent;
 
-    // Uses
-    var $ = $liveEdit;
-
     // jQuery sortable cursor position form to the drag helper.
     var CURSOR_AT: any = {left: 24, top: 24};
 
@@ -47,19 +44,19 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     function disableDragDrop(): void {
-        $(REGION_SELECTOR).sortable('disable');
+        wemjq(REGION_SELECTOR).sortable('disable');
     }
 
     export function createSortableLayout(component: api.liveedit.ItemView) {
-        $(component.getHTMLElement()).find(REGION_SELECTOR).each((index, element) => {
+        wemjq(component.getHTMLElement()).find(REGION_SELECTOR).each((index, element) => {
             console.log("Creating jquerysortable for", element);
-            createJQueryUiSortable($(element));
+            createJQueryUiSortable(wemjq(element));
         });
     }
 
     function createJQueryUiSortable(selector): void {
         console.log("Creating jQuery sortable on selector: ", selector, this);
-        $(selector).sortable({
+        wemjq(selector).sortable({
             revert: false,
             connectWith: REGION_SELECTOR, //removing this solves the over event not firing bug, not sure what it might break though. it broke dragging out of layouts, now seems to work.
             items: SORTABLE_ITEMS_SELECTOR,
@@ -80,8 +77,8 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             update: (event, ui) => handleSortUpdate(event, ui),
             stop: (event, ui) => handleSortStop(event, ui)
         });
-//        $(selector).on('mouseover', (event) => {
-//            if ($(event.currentTarget).hasClass("ui-sortable")) {
+//        wemjq(selector).on('mouseover', (event) => {
+//            if (wemjq(event.currentTarget).hasClass("ui-sortable")) {
 //                if (draggingUI) {
 //                    this.handleDragOver(event, draggingUI);
 //                }
@@ -92,7 +89,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
     function updateScrollSensitivity(selector): void {
         var scrollSensitivity = calculateScrollSensitivity();
-        $(selector).sortable('option', 'scrollSensitivity', scrollSensitivity);
+        wemjq(selector).sortable('option', 'scrollSensitivity', scrollSensitivity);
     }
 
     function calculateScrollSensitivity(): number {
@@ -127,7 +124,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     function refreshSortable(): void {
-        $(REGION_SELECTOR).sortable('refresh');
+        wemjq(REGION_SELECTOR).sortable('refresh');
     }
 
     function targetIsPlaceholder(target: JQuery): Boolean {
@@ -163,28 +160,28 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             ui.placeholder.hide();
         } else {
             LiveEdit.component.helper.DragHelper.updateStatusIcon(true);
-            $(window).trigger('sortableOver.liveEdit', [event, ui]);
+            wemjq(window).trigger('sortableOver.liveEdit', [event, ui]);
         }
     }
 
     function handleDragOut(event: JQueryEventObject, ui): void {
-        if (targetIsPlaceholder($(event.target))) {
+        if (targetIsPlaceholder(wemjq(event.target))) {
             removePaddingFromLayoutComponent();
         }
         LiveEdit.component.helper.DragHelper.updateStatusIcon(false);
 
-        $(window).trigger('sortableOut.liveEdit', [event, ui]);
+        wemjq(window).trigger('sortableOut.liveEdit', [event, ui]);
     }
 
     function handleSortChange(event: JQueryEventObject, ui): void {
-        var component = ItemView.fromJQuery($(event.target));
+        var component = ItemView.fromJQuery(wemjq(event.target));
 
         addPaddingToLayoutComponent(component);
         LiveEdit.component.helper.DragHelper.updateStatusIcon(true);
 
         ui.placeholder.show(null);
 
-        $(window).trigger('sortableChange.liveEdit', [event, ui]);
+        wemjq(window).trigger('sortableChange.liveEdit', [event, ui]);
     }
 
     function handleSortUpdate(event: JQueryEventObject, ui): void {
@@ -210,7 +207,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         }
 
         if (LiveEdit.DomHelper.supportsTouch()) {
-            $(window).trigger('mouseOutComponent.liveEdit');
+            wemjq(window).trigger('mouseOutComponent.liveEdit');
         }
 
         //var wasSelectedOnDragStart = pageComponentView.getElement().data('live-edit-selected-on-drag-start');
@@ -223,14 +220,14 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     // When sortable receives a new item
     function handleReceive(event: JQueryEventObject, ui): void {
         if (isItemDraggedFromContextWindow(ui.item)) {
-            var droppedComponent = $(event.target).children(CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR);
+            var droppedComponent = wemjq(event.target).children(CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR);
             var itemType = ItemType.byShortName(droppedComponent.data('live-edit-type'));
             var emptyComponent = LiveEdit.component.ComponentPlaceholder.fromComponent(itemType);
 
             droppedComponent.replaceWith(emptyComponent.getHTMLElement());
             emptyComponent.init();
 
-            //$(window).trigger('sortableUpdate.liveEdit');
+            //wemjq(window).trigger('sortableUpdate.liveEdit');
 
             // The layout padding is removed on sortStop, but this is not fired yet at this point
             // Remove it now so the auto selection is properly aligned.
@@ -257,7 +254,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
 
     function removePaddingFromLayoutComponent(): void {
-        $('.live-edit-component-padding').removeClass('live-edit-component-padding');
+        wemjq('.live-edit-component-padding').removeClass('live-edit-component-padding');
     }
 
     function registerGlobalListeners(): void {
@@ -267,12 +264,12 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             }
         });
 
-        $(window).on('selectTextComponent.liveEdit', () => {
-            $(REGION_SELECTOR).sortable('option', 'cancel', TextItemType.get().getConfig().getCssSelector());
+        wemjq(window).on('selectTextComponent.liveEdit', () => {
+            wemjq(REGION_SELECTOR).sortable('option', 'cancel', TextItemType.get().getConfig().getCssSelector());
         });
 
-        $(window).on('leaveTextComponent.liveEdit', () => {
-            $(REGION_SELECTOR).sortable('option', 'cancel', '');
+        wemjq(window).on('leaveTextComponent.liveEdit', () => {
+            wemjq(REGION_SELECTOR).sortable('option', 'cancel', '');
         });
     }
 

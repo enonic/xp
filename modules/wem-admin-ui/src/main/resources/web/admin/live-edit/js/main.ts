@@ -2,13 +2,13 @@ declare var Ext: Ext_Packages;
 declare var Admin;
 declare var CONFIG;
 
-declare var $liveEdit;
+declare var wemjq: JQueryStatic;
 
 function initializeLiveEdit() {
     //TODO: Maybe move/make more generic
-    $('[data-live-edit-empty-component="true"]').each((index, element) => {
-        var type = $(element).data('live-edit-type');
-        var path: string = $(element).data('live-edit-component');
+    wemjq('[data-live-edit-empty-component="true"]').each((index, element) => {
+        var type = wemjq(element).data('live-edit-type');
+        var path: string = wemjq(element).data('live-edit-component');
         console.log("found empty component", type, path);
         var newEl;
         if (type === "image") {
@@ -19,7 +19,7 @@ function initializeLiveEdit() {
             newEl = new LiveEdit.component.LayoutPlaceholder();
         }
         newEl.setComponentPath(api.content.page.ComponentPath.fromString(path));
-        $(element).replaceWith(newEl.getHTMLElement());
+        wemjq(element).replaceWith(newEl.getHTMLElement());
     });
 
     var body = api.dom.Body.getAndLoadExistingChildren();
@@ -28,35 +28,34 @@ function initializeLiveEdit() {
 }
 
 function getComponentByPath(path: api.content.page.ComponentPath): api.liveedit.ItemView {
-    return api.liveedit.ItemView.fromJQuery($('[data-live-edit-component="' + path.toString() + '"]'), false);
+    return api.liveedit.ItemView.fromJQuery(wemjq('[data-live-edit-component="' + path.toString() + '"]'), false);
 }
 
-(function ($) {
-    'use strict';
+console.log("** USING jquery version" + wemjq.fn.jquery);
 
-    $(window).load(() => {
-        new LiveEdit.component.mouseevent.Page();
-        new LiveEdit.component.mouseevent.Region();
-        new LiveEdit.component.mouseevent.Layout();
-        new LiveEdit.component.mouseevent.Part();
-        new LiveEdit.component.mouseevent.Image();
-        new LiveEdit.component.mouseevent.Text();
-        new LiveEdit.component.mouseevent.Content();
+wemjq(window).load(() => {
+    new LiveEdit.component.mouseevent.Page();
+    new LiveEdit.component.mouseevent.Region();
+    new LiveEdit.component.mouseevent.Layout();
+    new LiveEdit.component.mouseevent.Part();
+    new LiveEdit.component.mouseevent.Image();
+    new LiveEdit.component.mouseevent.Text();
+    new LiveEdit.component.mouseevent.Content();
 
-        new LiveEdit.component.helper.ComponentResizeObserver();
+    new LiveEdit.component.helper.ComponentResizeObserver();
 
-        new LiveEdit.ui.Highlighter();
-        new LiveEdit.ui.ToolTip();
-        new LiveEdit.ui.Cursor();
-        new LiveEdit.ui.contextmenu.ContextMenu();
-        new LiveEdit.ui.Shader();
-        new LiveEdit.ui.Editor();
+    new LiveEdit.ui.Highlighter();
+    new LiveEdit.ui.ToolTip();
+    new LiveEdit.ui.Cursor();
+    new LiveEdit.ui.contextmenu.ContextMenu();
+    new LiveEdit.ui.Shader();
+    new LiveEdit.ui.Editor();
 
-        LiveEdit.component.dragdropsort.DragDropSort.init();
+    LiveEdit.component.dragdropsort.DragDropSort.init();
 
-        $(window).resize(() => $(window).trigger('resizeBrowserWindow.liveEdit'));
+    wemjq(window).resize(() => wemjq(window).trigger('resizeBrowserWindow.liveEdit'));
 
-        $(window).unload(() => console.log('Clean up any css classes etc. that live edit / sortable has added'));
+    wemjq(window).unload(() => console.log('Clean up any css classes etc. that live edit / sortable has added'));
 
         //TODO: move this somewhere logical
         api.liveedit.PageComponentLoadedEvent.on((event: api.liveedit.PageComponentLoadedEvent) => {
@@ -66,33 +65,31 @@ function getComponentByPath(path: api.content.page.ComponentPath): api.liveedit.
         });
     });
 
-    $(document).ready(() => {
-        // Prevent the user from clicking on things
-        // This needs more work as we want them to click on Live Edit ui stuff.
-        $(document).on('mousedown', 'btn, button, a, select, input', (event) => {
+    wemjq(document).ready(() => {
+    // Prevent the user from clicking on things
+    // This needs more work as we want them to click on Live Edit ui stuff.
+        wemjq(document).on('mousedown', 'btn, button, a, select, input', (event) => {
             event.preventDefault();
         });
 
+    // Notify parent frame if any modifier except shift is pressed
+    // For the parent shortcuts to work if the inner iframe has focus
+    wemjq(document).on("keypress keydown keyup", (event) => {
 
-        // Notify parent frame if any modifier except shift is pressed
-        // For the parent shortcuts to work if the inner iframe has focus
-        $(document).on("keypress keydown keyup", (event) => {
-
-            if ((event.metaKey || event.ctrlKey || event.altKey) && event.keyCode) {
-                $(parent.document).simulate(event.type, {
-                    bubbles: event.bubbles,
-                    cancelable: event.cancelable,
-                    view: parent,
-                    ctrlKey: event.ctrlKey,
-                    altKey: event.altKey,
-                    shiftKey: event.shiftKey,
-                    metaKey: event.metaKey,
-                    keyCode: event.keyCode,
-                    charCode: event.charCode
-                });
-                return false;
-            }
-        });
+        if ((event.metaKey || event.ctrlKey || event.altKey) && event.keyCode) {
+            wemjq(parent.document).simulate(event.type, {
+                bubbles: event.bubbles,
+                cancelable: event.cancelable,
+                view: parent,
+                ctrlKey: event.ctrlKey,
+                altKey: event.altKey,
+                shiftKey: event.shiftKey,
+                metaKey: event.metaKey,
+                keyCode: event.keyCode,
+                charCode: event.charCode
+            });
+            return false;
+        }
     });
+});
 
-}($liveEdit));

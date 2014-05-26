@@ -4,13 +4,13 @@ module api.util {
 
             var load = true;
             //check all existing script tags in the page for the url
-            jQuery('script[type="text/javascript"]')
+            wemjq('script[type="text/javascript"]')
                 .each(function () {
-                    return load = (url != jQuery(this).attr('data-url'));
+                    return load = (url != wemjq(this).attr('data-url'));
                 });
             if (load) {
                 //didn't find it in the page, so load it
-                jQuery.ajax(url, {
+                wemjq.ajax(url, {
                     type: 'GET',
                     success: (data:any, status:string, xhr:JQueryXHR) => {
                         var node = document.getElementsByTagName("head")[0] || document.body;

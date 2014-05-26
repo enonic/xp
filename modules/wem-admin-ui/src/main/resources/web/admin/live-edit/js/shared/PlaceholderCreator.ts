@@ -4,9 +4,6 @@ module LiveEdit {
     import RegionView = api.liveedit.RegionView;
     import ItemView = api.liveedit.ItemView;
 
-    // Uses
-    var $ = $liveEdit;
-
     export class PlaceholderCreator {
 
         /** jQuery Sortable placeholder */
@@ -27,7 +24,7 @@ module LiveEdit {
 
         public static renderEmptyRegionPlaceholders(): void {
 
-            var allRegionElements: JQuery = $(RegionItemType.get().getConfig().getCssSelector());
+            var allRegionElements: JQuery = wemjq(RegionItemType.get().getConfig().getCssSelector());
             var region: JQuery;
             var regionComponent: RegionView;
             var regionIsEmpty: Boolean;
@@ -35,7 +32,7 @@ module LiveEdit {
             this.removeAllRegionPlaceholders();
 
             allRegionElements.each((i) => {
-                region = $(allRegionElements[i]);
+                region = wemjq(allRegionElements[i]);
                 regionIsEmpty = this.isRegionEmpty(region);
                 if (regionIsEmpty) {
                     regionComponent = RegionView.fromJQuery(region);
@@ -67,7 +64,7 @@ module LiveEdit {
         }
 
         private static removeAllRegionPlaceholders(): void {
-            $('.live-edit-empty-region-placeholder').remove();
+            wemjq('.live-edit-empty-region-placeholder').remove();
         }
 
     }

@@ -224,7 +224,7 @@ interface JQueryParam {
 }
 
 /*
-    Static members of jQuery (those on $ and jQuery themselves)
+    Static members of jQuery (those on wemjq and jQuery themselves)
 */
 interface JQueryStatic {
 
@@ -265,7 +265,7 @@ interface JQueryStatic {
     (array: any[]): JQuery;
     (): JQuery;
 
-    noConflict(removeAll?: boolean): Object;
+    noConflict(removeAll?: boolean): JQueryStatic;
 
 	when<T>(...deferreds: JQueryGenericPromise<T>[]): JQueryPromise<T>;
 	when<T>(...deferreds: T[]): JQueryPromise<T>;
@@ -809,4 +809,4 @@ interface JQuery {
 }
 
 declare var jQuery: JQueryStatic;
-declare var $: JQueryStatic;
+declare var wemjq: JQueryStatic;

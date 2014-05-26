@@ -18,7 +18,7 @@ module LiveEdit.component.mouseevent {
             var parts = this.getAll(),
                 part: JQuery;
             parts.each((i) => {
-                part = $(parts[i]);
+                part = wemjq(parts[i]);
                 if (this.isPartEmpty(part)) {
                     this.appendEmptyPlaceholder(part);
                 }
@@ -26,7 +26,7 @@ module LiveEdit.component.mouseevent {
         }
 
         private appendEmptyPlaceholder(part: JQuery): void {
-            var placeholder: JQuery = $('<div/>', {
+            var placeholder: JQuery = wemjq('<div/>', {
                 'class': 'live-edit-empty-part-placeholder',
                 'html': 'Empty Part'
             });
@@ -34,7 +34,7 @@ module LiveEdit.component.mouseevent {
         }
 
         private isPartEmpty(part: JQuery): Boolean {
-            return $(part).children().length === 0;
+            return wemjq(part).children().length === 0;
         }
 
     }

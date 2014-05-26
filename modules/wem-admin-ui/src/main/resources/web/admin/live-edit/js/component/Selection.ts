@@ -3,9 +3,6 @@ module LiveEdit.component {
     import ItemView = api.liveedit.ItemView;
     import PageComponentSelectComponentEvent = api.liveedit.PageComponentSelectComponentEvent;
 
-    // Uses
-    var $ = $liveEdit;
-
     export var ATTRIBUTE_NAME: string = 'data-live-edit-selected';
 
     export class Selection {
@@ -13,7 +10,7 @@ module LiveEdit.component {
         public static handleSelect(itemView: ItemView, event?: JQueryEventObject, waitForRender: boolean = false) {
 
             itemView.select();
-            //this.setSelectionAttributeOnElement($(itemView));
+            //this.setSelectionAttributeOnElement(wemjq(itemView));
 
             var mouseClickPagePosition: any = null;
             if (event && !itemView.isEmpty()) {
@@ -42,11 +39,11 @@ module LiveEdit.component {
         }
 
         public static pageHasSelectedElement(): boolean {
-            return $('[' + ATTRIBUTE_NAME + ']').length > 0;
+            return wemjq('[' + ATTRIBUTE_NAME + ']').length > 0;
         }
 
         public static removeSelectedAttribute(): void {
-            $('[' + ATTRIBUTE_NAME + ']').removeAttr(ATTRIBUTE_NAME);
+            wemjq('[' + ATTRIBUTE_NAME + ']').removeAttr(ATTRIBUTE_NAME);
         }
 
     }

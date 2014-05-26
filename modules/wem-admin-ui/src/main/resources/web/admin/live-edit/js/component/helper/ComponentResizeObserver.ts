@@ -4,9 +4,6 @@ module LiveEdit.component.helper {
     import PageComponentSelectComponentEvent = api.liveedit.PageComponentSelectComponentEvent;
     import ItemView = api.liveedit.ItemView;
 
-    // Uses
-    var $ = $liveEdit;
-
     export class ComponentResizeObserver {
 
         private component: ItemView;
@@ -27,7 +24,7 @@ module LiveEdit.component.helper {
             this.component.getElement().on('resize', (event) => {
                 if (this.component.isSelected()) {
                     // TODO: This bugged out jQuery, not sure what it was used for.
-                    //$(window).on('selectComponent.liveEdit', [component])
+                    //wemjq(window).on('selectComponent.liveEdit', [component])
                 }
             });
 
@@ -44,7 +41,7 @@ module LiveEdit.component.helper {
         private registerGlobalListeners(): void {
             PageComponentSelectComponentEvent.on((event: PageComponentSelectComponentEvent) => this.observe(event.getItemView()));
             PageComponentDeselectEvent.on(() => this.disconnect());
-            $(window).on('editTextComponent.liveEdit', (event: JQueryEventObject, component: ItemView) => {
+            wemjq(window).on('editTextComponent.liveEdit', (event: JQueryEventObject, component?: ItemView) => {
                 this.observe(component);
             });
         }

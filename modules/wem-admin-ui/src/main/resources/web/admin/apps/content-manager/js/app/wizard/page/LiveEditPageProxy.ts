@@ -183,11 +183,11 @@ module app.wizard.page {
         private handleIFrameLoadedEvent() {
 
             var liveEditWindow = this.liveEditIFrame.getHTMLElement()["contentWindow"];
-            if (liveEditWindow && liveEditWindow.$liveEdit && typeof(liveEditWindow.initializeLiveEdit) === "function") {
+            if (liveEditWindow && liveEditWindow.wemjq && typeof(liveEditWindow.initializeLiveEdit) === "function") {
                 // Give loaded page same CONFIG.baseUri as in admin
                 liveEditWindow.CONFIG = { baseUri: CONFIG.baseUri };
 
-                this.liveEditJQuery = <JQueryStatic>liveEditWindow.$liveEdit;
+                this.liveEditJQuery = <JQueryStatic>liveEditWindow.wemjq;
                 if (this.liveEditIFrame != liveEditWindow) {
                     this.liveEditWindow = liveEditWindow;
                     this.listenToPage();
@@ -210,13 +210,13 @@ module app.wizard.page {
             api.util.assertNotNull(componentPlaceholder, "componentPlaceholder cannot be null");
             api.util.assertNotNull(content, "content cannot be null");
 
-            $.ajax({
+            wemjq.ajax({
                 url: api.rendering.UriHelper.getComponentUri(content.getContentId().toString(), componentPath.toString(),
                     RenderingMode.EDIT),
                 method: 'GET',
                 success: (data) => {
-                    var newElement = $(data);
-                    $(componentPlaceholder.getHTMLElement()).replaceWith(newElement);
+                    var newElement = wemjq(data);
+                    wemjq(componentPlaceholder.getHTMLElement()).replaceWith(newElement);
                     componentPlaceholder.remove();
 
                     var itemView: ItemView = this.getComponentByPath(componentPath);

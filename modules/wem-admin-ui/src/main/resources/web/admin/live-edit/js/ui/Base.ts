@@ -1,8 +1,5 @@
 module LiveEdit.ui {
 
-    // Uses
-    var $ = $liveEdit;
-
     /**
      * Base for all Live Edit UI elements
      */
@@ -22,7 +19,7 @@ module LiveEdit.ui {
         }
 
         public createHtmlFromString(html:string):JQuery {
-            this.rootEl = $(html);
+            this.rootEl = wemjq(html);
             this.rootEl.attr('id', this.id);
 
             return this.rootEl;

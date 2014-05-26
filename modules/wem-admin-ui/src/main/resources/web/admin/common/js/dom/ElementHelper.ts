@@ -62,7 +62,7 @@ module api.dom {
         }
 
         setInnerHtml(value: string): ElementHelper {
-            jQuery(this.el).html(value);
+            wemjq(this.el).html(value);
             return this;
         }
 
@@ -92,12 +92,12 @@ module api.dom {
             api.util.assert(!api.util.isStringEmpty(name), 'Name shouldn\'t be empty');
             api.util.assert(!api.util.isStringEmpty(value), 'Value shouldn\'t be empty');
             this.el.setAttribute('data-' + name, value);
-            jQuery(this.el).data(name, value);
+            wemjq(this.el).data(name, value);
             return this;
         }
 
         getData(name: string): string {
-            return jQuery(this.el).data(name);
+            return wemjq(this.el).data(name);
         }
 
         getValue(): string {
@@ -209,19 +209,19 @@ module api.dom {
         }
 
         getWidth(): number {
-            return $(this.el).innerWidth();
+            return wemjq(this.el).innerWidth();
         }
 
         getWidthWithoutPadding(): number {
-            return $(this.el).width();
+            return wemjq(this.el).width();
         }
 
         getWidthWithBorder(): number {
-            return $(this.el).outerWidth();
+            return wemjq(this.el).outerWidth();
         }
 
         getWidthWithMargin(): number {
-            return $(this.el).outerWidth(true);
+            return wemjq(this.el).outerWidth(true);
         }
 
         getMinWidth(): number {
@@ -239,19 +239,19 @@ module api.dom {
         }
 
         getHeight(): number {
-            return $(this.el).innerHeight();
+            return wemjq(this.el).innerHeight();
         }
 
         getHeightWithoutPadding(): number {
-            return $(this.el).height();
+            return wemjq(this.el).height();
         }
 
         getHeightWithBorder(): number {
-            return $(this.el).outerHeight();
+            return wemjq(this.el).outerHeight();
         }
 
         getHeightWithMargin(): number {
-            return $(this.el).outerHeight(true);
+            return wemjq(this.el).outerHeight(true);
         }
 
         setTop(value: string): ElementHelper {
@@ -361,7 +361,7 @@ module api.dom {
          */
         getOffset(): { top:number; left:number;
         } {
-            return $(this.el).offset();
+            return wemjq(this.el).offset();
         }
 
         /**
@@ -369,7 +369,7 @@ module api.dom {
          * @returns {HTMLElement}
          */
         getOffsetParent(): HTMLElement {
-            return $(this.el).offsetParent()[0];
+            return wemjq(this.el).offsetParent()[0];
         }
 
         /**
@@ -378,7 +378,7 @@ module api.dom {
          */
         getOffsetToParent(): { top:number; left:number;
         } {
-            return $(this.el).position();
+            return wemjq(this.el).position();
         }
 
         getOffsetTop(): number {

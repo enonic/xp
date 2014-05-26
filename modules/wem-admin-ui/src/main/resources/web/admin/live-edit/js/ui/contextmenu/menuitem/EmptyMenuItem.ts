@@ -5,9 +5,6 @@ module LiveEdit.ui.contextmenu.menuitem {
     import PageComponentView = api.liveedit.PageComponentView;
     import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
 
-    // Uses
-    var $ = $liveEdit;
-
     export class EmptyMenuItem extends LiveEdit.ui.contextmenu.menuitem.BaseMenuItem {
 
         constructor(menu: LiveEdit.ui.contextmenu.ContextMenu) {

@@ -12,7 +12,7 @@ module api.i18n {
         if (messages[locale] == undefined) {
             messages[locale] = bundle;
         } else {
-            jQuery.extend(messages[locale], messages[locale], bundle);
+            wemjq.extend(messages[locale], messages[locale], bundle);
         }
     }
 

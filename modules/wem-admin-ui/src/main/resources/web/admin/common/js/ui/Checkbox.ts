@@ -23,7 +23,7 @@ module api.ui {
             this.label = new api.dom.LabelEl(text, this.checkbox);
             this.appendChild(this.label);
 
-            jQuery(this.checkbox.getHTMLElement()).change(() => {
+            wemjq(this.checkbox.getHTMLElement()).change(() => {
                 var newValue = this.isChecked();
                 this.notifyValueChanged(this.oldValue, newValue);
                 this.oldValue = newValue;
