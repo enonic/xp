@@ -326,6 +326,20 @@ module api.dom {
             return parseFloat(this.getComputedProperty('padding-left'));
         }
 
+        setPaddingLeft(value: string): ElementHelper {
+            this.el.style.paddingLeft = value;
+            return this;
+        }
+
+        getPaddingRight(): number {
+            return parseFloat(this.getComputedProperty('padding-right'));
+        }
+
+        setPaddingRight(value: string): ElementHelper {
+            this.el.style.paddingRight = value;
+            return this;
+        }
+
         getBorderTopWidth(): number {
             return parseFloat(this.getComputedProperty('border-top-width'));
         }
@@ -336,6 +350,15 @@ module api.dom {
 
         setZindex(value: number): ElementHelper {
             this.el.style.zIndex = value.toString();
+            return this;
+        }
+
+        getFontSize(): string {
+            return this.getComputedProperty('font-size');
+        }
+
+        setFontSize(value: string): ElementHelper {
+            this.el.style.fontSize = value;
             return this;
         }
 
