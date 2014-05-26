@@ -17,6 +17,8 @@ public final class ContentTypeName
 
     private static final ContentTypeName PAGE = new ContentTypeName( "page" );
 
+    private static final ContentTypeName SITE = new ContentTypeName( "site" );
+
     private static final ContentTypeName SHORTCUT = new ContentTypeName( "shortcut" );
 
     private static final ContentTypeName MEDIA = new ContentTypeName( "media" );
@@ -73,6 +75,11 @@ public final class ContentTypeName
     public boolean isPage()
     {
         return PAGE.equals( this );
+    }
+
+    public boolean isSite()
+    {
+        return SITE.equals( this );
     }
 
     public boolean isShortcut()
@@ -163,6 +170,11 @@ public final class ContentTypeName
     public static ContentTypeName page()
     {
         return PAGE;
+    }
+
+    public static ContentTypeName site()
+    {
+        return SITE;
     }
 
     public static ContentTypeName shortcut()
