@@ -25,7 +25,7 @@ module LiveEdit.ui {
         }
 
         private registerGlobalListeners(): void {
-            wemjq(window).on('mouseOverComponent.liveEdit', (event: JQueryEventObject, component: ItemView) => this.update(component));
+            wemjq(window).on('mouseOverComponent.liveEdit', (event: JQueryEventObject, component?: ItemView) => this.update(component));
             PageComponentSelectComponentEvent.on((event: PageComponentSelectComponentEvent) => this.update(event.getItemView()));
             wemjq(window).on('mouseOutComponent.liveEdit', () => this.reset());
             SortableStartEvent.on(() => this.hide());

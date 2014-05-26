@@ -27,7 +27,7 @@ module LiveEdit.ui {
 
         registerGlobalListeners():void {
             PageComponentSelectComponentEvent.on((event: PageComponentSelectComponentEvent) => this.show(event.getItemView()));
-            wemjq(window).on('editTextComponent.liveEdit', (event:JQueryEventObject, component) => this.show(component));
+            wemjq(window).on('editTextComponent.liveEdit', (event:JQueryEventObject, component?) => this.show(component));
             PageComponentDeselectEvent.on(() => this.hide());
             PageComponentRemoveEvent.on(() => this.hide());
             SortableStartEvent.on(() => this.hide());
