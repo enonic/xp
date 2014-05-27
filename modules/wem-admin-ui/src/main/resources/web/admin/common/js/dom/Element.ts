@@ -250,6 +250,13 @@ module api.dom {
             return this;
         }
 
+        appendChildren<T extends api.dom.Element>(children: T[]): Element {
+            children.forEach((child: T) => {
+                this.appendChild(child);
+            });
+            return this;
+        }
+
         prependChild(child: api.dom.Element) {
             api.util.assertNotNull(child, 'Child shouldn\'t be null');
             this.el.getHTMLElement().insertBefore(child.getHTMLElement(), this.el.getHTMLElement().firstChild);

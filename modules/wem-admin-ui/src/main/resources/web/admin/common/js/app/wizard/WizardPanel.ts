@@ -74,7 +74,7 @@ module api.app.wizard {
             this.actions = params.actions;
 
             this.formPanel = new api.ui.Panel("form-panel");
-            wemjq(this.formPanel.getHTMLElement()).scroll(() => this.updateStickyToolbar());
+            this.formPanel.onScroll(() => this.updateStickyToolbar());
 
             this.appendChild(this.mainToolbar);
             if (params.split && params.livePanel) {
@@ -93,10 +93,7 @@ module api.app.wizard {
 
 
             var aboveStepPanels = new api.dom.DivEl();
-            this.formPanel.appendChild(aboveStepPanels);
-
             aboveStepPanels.appendChild(params.formIcon);
-
             aboveStepPanels.appendChild(this.header);
 
             var container = new api.dom.DivEl("test-container");
@@ -108,8 +105,8 @@ module api.app.wizard {
             this.stepNavigatorAndToolbarContainer.appendChild(this.stepNavigator);
             aboveStepPanels.appendChild(this.stepNavigatorAndToolbarContainer);
 
-            this.stepPanels = new WizardStepsPanel(this.stepNavigator);
-            this.formPanel.appendChild(this.stepPanels);
+            this.stepPanels = new WizardStepsPanel(this.stepNavigator, this.formPanel);
+            this.formPanel.appendChild(aboveStepPanels).appendChild(this.stepPanels);
 
             this.setSteps(params.steps);
 

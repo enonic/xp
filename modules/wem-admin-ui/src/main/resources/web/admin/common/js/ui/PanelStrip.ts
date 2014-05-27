@@ -4,22 +4,25 @@ module api.ui {
 
         private panels: Panel[] = [];
 
-        private scroller: api.dom.DivEl;
+        private scrollable: api.dom.DivEl;
 
         private panelShown: Panel = null;
 
         private panelShownListeners: {(event: PanelShownEvent):void}[] = [];
 
-        constructor(className?: string) {
+        constructor(scrollable?: api.dom.Element, className?: string) {
             super("panel-strip" + (className ? " " + className : ""));
-
-            this.scroller = new api.dom.DivEl("scroller");
-            this.appendChild(this.scroller);
+            if (scrollable) {
+                this.scrollable = scrollable;
+                this.scrollable.addClass('panel-strip-scrollable');
+            } else {
+                this.scrollable = this;
+            }
         }
 
         addPanel(panel: Panel): number {
             panel.setDoOffset(false);
-            this.scroller.appendChild(panel);
+            this.appendChild(panel);
             return this.panels.push(panel) - 1;
         }
 
@@ -27,16 +30,18 @@ module api.ui {
             return this.panels;
         }
 
+        getScrollable(): api.dom.DivEl {
+            return this.scrollable;
+        }
+
+
         removePanel(panelToRemove: Panel, checkCanRemovePanel: boolean = true): number {
 
             var index: number = this.getPanelIndex(panelToRemove);
-
             if (index < 0 || checkCanRemovePanel && !this.canRemovePanel(panelToRemove)) {
                 return -1;
             }
-
-            this.scroller.removeChild(panelToRemove);
-
+            this.removeChild(panelToRemove);
             this.panels.splice(index, 1);
 
             if (this.isEmpty()) {
@@ -101,8 +106,8 @@ module api.ui {
                 return;
             }
 
-            wemjq(this.getHTMLElement()).animate({
-                scrollTop: this.getHTMLElement().scrollTop + panelToShow.getEl().getOffsetToParent().top
+            wemjq(this.scrollable.getHTMLElement()).animate({
+                scrollTop: this.scrollable.getHTMLElement().scrollTop + panelToShow.getEl().getOffsetToParent().top
             }, {
                 duration: 500,
                 complete: () => {
