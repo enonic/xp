@@ -4,6 +4,7 @@ import javax.inject.Singleton;
 
 import com.google.inject.AbstractModule;
 
+import com.enonic.wem.admin.rest.exception.ConflictExceptionMapper;
 import com.enonic.wem.admin.rest.exception.DefaultExceptionMapper;
 import com.enonic.wem.admin.rest.exception.IllegalArgumentExceptionMapper;
 import com.enonic.wem.admin.rest.exception.JsonMappingExceptionMapper;
@@ -76,5 +77,6 @@ public final class AdminModule
         bind( IllegalArgumentExceptionMapper.class ).in( Singleton.class );
         bind( JsonMappingExceptionMapper.class ).in( Singleton.class );
         bind( NotFoundExceptionMapper.class ).in( Singleton.class );
+        bind( ConflictExceptionMapper.class ).in( Singleton.class );
     }
 }

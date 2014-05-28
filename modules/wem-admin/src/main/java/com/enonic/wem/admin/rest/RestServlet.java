@@ -2,6 +2,7 @@ package com.enonic.wem.admin.rest;
 
 import com.google.inject.Singleton;
 
+import com.enonic.wem.admin.rest.exception.ConflictExceptionMapper;
 import com.enonic.wem.admin.rest.exception.DefaultExceptionMapper;
 import com.enonic.wem.admin.rest.exception.IllegalArgumentExceptionMapper;
 import com.enonic.wem.admin.rest.exception.JsonMappingExceptionMapper;
@@ -76,5 +77,6 @@ public final class RestServlet
         addSingleton( IllegalArgumentExceptionMapper.class );
         addSingleton( JsonMappingExceptionMapper.class );
         addSingleton( NotFoundExceptionMapper.class );
+        addSingleton( ConflictExceptionMapper.class );
     }
 }
