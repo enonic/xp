@@ -21,7 +21,7 @@ import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.portal.content.page.PageComponentResolver;
 import com.enonic.wem.portal.content.page.PageRegionsResolver;
 import com.enonic.wem.portal.controller.JsContext;
-import com.enonic.wem.portal.controller.JsHttpRequestBuilder;
+import com.enonic.wem.portal.controller.JsHttpRequest;
 import com.enonic.wem.portal.exception.PortalWebException;
 import com.enonic.wem.portal.rendering.Renderer;
 import com.enonic.wem.portal.rendering.RendererFactory;
@@ -112,11 +112,11 @@ public final class ComponentResource
         context.setSiteContent( siteContent );
         context.setComponent( component );
 
-        final JsHttpRequestBuilder builder = new JsHttpRequestBuilder();
-        builder.mode( request.mode );
-        builder.method( request.httpContext.getRequest().getMethod() );
-        builder.params( request.httpContext.getUriInfo().getQueryParameters() );
-        context.setRequest( builder.build() );
+        final JsHttpRequest jsRequest = new JsHttpRequest();
+        jsRequest.setMode( request.mode );
+        jsRequest.setMethod( request.httpContext.getRequest().getMethod() );
+        jsRequest.addParams( request.httpContext.getUriInfo().getQueryParameters() );
+        context.setRequest( jsRequest );
 
         final PortalUrlScriptBean portalUrlScriptBean = new PortalUrlScriptBean();
         portalUrlScriptBean.setContentPath( content.getPath().toString() );

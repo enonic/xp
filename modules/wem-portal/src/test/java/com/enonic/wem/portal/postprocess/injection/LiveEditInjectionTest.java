@@ -12,7 +12,7 @@ import com.google.common.io.Resources;
 import com.enonic.wem.api.rendering.RenderingMode;
 import com.enonic.wem.core.web.servlet.ServletRequestHolder;
 import com.enonic.wem.portal.controller.JsContext;
-import com.enonic.wem.portal.controller.JsHttpRequestBuilder;
+import com.enonic.wem.portal.controller.JsHttpRequest;
 import com.enonic.wem.portal.script.lib.PortalUrlScriptBean;
 
 import static org.junit.Assert.*;
@@ -23,11 +23,16 @@ public class LiveEditInjectionTest
 
     private LiveEditInjection injection;
 
+    private JsHttpRequest request;
+
     @Before
     public void setup()
     {
         this.context = new JsContext();
         mockCurrentContextHttpRequest();
+
+        this.request = new JsHttpRequest();
+        this.context.setRequest( this.request );
 
         final PortalUrlScriptBean urlBean = new PortalUrlScriptBean();
         this.context.setPortalUrlScriptBean( urlBean );
@@ -38,9 +43,7 @@ public class LiveEditInjectionTest
     @Test
     public void testNoInjection()
     {
-        final JsHttpRequestBuilder builder = new JsHttpRequestBuilder();
-        builder.mode( RenderingMode.EDIT );
-        this.context.setRequest( builder.build() );
+        this.request.setMode( RenderingMode.EDIT );
 
         final String result1 = this.injection.inject( this.context, PostProcessInjection.Tag.HEAD_BEGIN );
         assertNull( result1 );
@@ -48,8 +51,7 @@ public class LiveEditInjectionTest
         final String result2 = this.injection.inject( this.context, PostProcessInjection.Tag.BODY_BEGIN );
         assertNull( result2 );
 
-        builder.mode( RenderingMode.LIVE );
-        this.context.setRequest( builder.build() );
+        this.request.setMode( RenderingMode.LIVE );
 
         final String result3 = this.injection.inject( this.context, PostProcessInjection.Tag.BODY_END );
         assertNull( result3 );
@@ -59,9 +61,7 @@ public class LiveEditInjectionTest
     public void testInjectHeadEnd()
         throws Exception
     {
-        final JsHttpRequestBuilder builder = new JsHttpRequestBuilder();
-        builder.mode( RenderingMode.EDIT );
-        this.context.setRequest( builder.build() );
+        this.request.setMode( RenderingMode.EDIT );
 
         final String result = this.injection.inject( this.context, PostProcessInjection.Tag.HEAD_END );
         assertNotNull( result );
@@ -72,9 +72,7 @@ public class LiveEditInjectionTest
     public void testInjectBodyEnd()
         throws Exception
     {
-        final JsHttpRequestBuilder builder = new JsHttpRequestBuilder();
-        builder.mode( RenderingMode.EDIT );
-        this.context.setRequest( builder.build() );
+        this.request.setMode( RenderingMode.EDIT );
 
         final String result = this.injection.inject( this.context, PostProcessInjection.Tag.BODY_END );
         assertNotNull( result );
