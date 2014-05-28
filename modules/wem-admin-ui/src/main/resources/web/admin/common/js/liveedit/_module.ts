@@ -18,8 +18,6 @@
 ///<reference path='NewPageComponentIdMapEvent.ts' />
 ///<reference path='ImageOpenUploadDialogEvent.ts' />
 ///<reference path='ImageUploadedEvent.ts' />
-///<reference path='DraggableStartEvent.ts' />
-///<reference path='DraggableStopEvent.ts' />
 ///<reference path='SortableStartEvent.ts' />
 ///<reference path='SortableStopEvent.ts' />
 ///<reference path='SortableUpdateEvent.ts' />
