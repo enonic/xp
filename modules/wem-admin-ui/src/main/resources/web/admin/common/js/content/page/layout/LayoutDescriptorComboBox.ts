@@ -67,7 +67,7 @@ module api.content.page.layout {
 
         layout() {
             var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
-            namesAndIconView.setIconUrl(api.util.getAdminUri('common/images/icons/icoMoon/32x32/earth.png'))
+            namesAndIconView.setIconClass("icon-earth icon-medium")
                 .setMainName(this.descriptor.getDisplayName())
                 .setSubName(this.descriptor.getName().toString());
 
