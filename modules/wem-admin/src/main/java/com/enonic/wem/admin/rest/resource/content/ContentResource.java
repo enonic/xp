@@ -15,6 +15,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.sun.jersey.api.ConflictException;
+
 import com.enonic.wem.admin.json.content.AbstractContentListJson;
 import com.enonic.wem.admin.json.content.ContentIdJson;
 import com.enonic.wem.admin.json.content.ContentIdListJson;
@@ -52,8 +54,7 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.query.ContentQueryResult;
 import com.enonic.wem.api.data.DataJson;
-import com.enonic.wem.api.exception.ConflictException;
-import com.enonic.wem.core.web.jaxrs.NotFoundWebException;
+import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 
 import static com.enonic.wem.api.content.Content.editContent;
 
@@ -326,7 +327,6 @@ public class ContentResource
             throw new ConflictException( String.format( "Content with path [%s] already exists", e.getContentPath() ) );
         }
     }
-
 
     private ContentData parseContentData( final List<DataJson> dataJsonList )
     {

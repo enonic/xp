@@ -39,7 +39,7 @@ import com.enonic.wem.api.schema.content.editor.ContentTypeEditor;
 import com.enonic.wem.api.schema.content.validator.ContentTypeValidationResult;
 import com.enonic.wem.api.support.serializer.XmlParsingException;
 import com.enonic.wem.api.xml.XmlSerializers;
-import com.enonic.wem.core.web.jaxrs.NotFoundWebException;
+import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 
 @Path("schema/content")
 @Produces("application/json")

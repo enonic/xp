@@ -23,7 +23,7 @@ import com.enonic.wem.api.relationship.UpdateRelationshipFailureException;
 import com.enonic.wem.api.relationship.UpdateRelationshipParams;
 import com.enonic.wem.api.relationship.editor.RelationshipEditors;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
-import com.enonic.wem.core.web.jaxrs.NotFoundWebException;
+import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 
 @Path("relationship")
 @Produces(MediaType.APPLICATION_JSON)
