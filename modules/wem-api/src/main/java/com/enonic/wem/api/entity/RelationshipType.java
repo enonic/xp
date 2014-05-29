@@ -1,13 +1,13 @@
 package com.enonic.wem.api.entity;
 
 
-import org.joda.time.DateTime;
+import java.time.Instant;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.Name;
+import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 
@@ -18,9 +18,9 @@ public final class RelationshipType
 
     private final String displayName;
 
-    private final DateTime createdTime;
+    private final Instant createdTime;
 
-    private final DateTime modifiedTime;
+    private final Instant modifiedTime;
 
     private final RelationshipTypeName relationshipTypeName;
 
@@ -61,12 +61,12 @@ public final class RelationshipType
         return displayName;
     }
 
-    public DateTime getCreatedTime()
+    public Instant getCreatedTime()
     {
         return createdTime;
     }
 
-    public DateTime getModifiedTime()
+    public Instant getModifiedTime()
     {
         return modifiedTime;
     }
@@ -139,9 +139,9 @@ public final class RelationshipType
 
         private String displayName;
 
-        private DateTime createdTime;
+        private Instant createdTime;
 
-        private DateTime modifiedTime;
+        private Instant modifiedTime;
 
         private String fromSemantic;
 
@@ -177,13 +177,13 @@ public final class RelationshipType
             return this;
         }
 
-        public Builder createdTime( DateTime value )
+        public Builder createdTime( Instant value )
         {
             this.createdTime = value;
             return this;
         }
 
-        public Builder modifiedTime( DateTime value )
+        public Builder modifiedTime( Instant value )
         {
             this.modifiedTime = value;
             return this;

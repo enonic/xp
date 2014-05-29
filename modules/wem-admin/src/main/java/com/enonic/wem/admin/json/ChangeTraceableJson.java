@@ -1,7 +1,7 @@
 package com.enonic.wem.admin.json;
 
 
-import org.joda.time.Instant;
+import java.time.Instant;
 
 public interface ChangeTraceableJson
 {

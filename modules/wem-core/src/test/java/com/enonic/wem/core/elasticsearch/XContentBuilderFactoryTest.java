@@ -1,5 +1,6 @@
 package com.enonic.wem.core.elasticsearch;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -8,7 +9,6 @@ import org.elasticsearch.common.collect.Tuple;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentHelper;
 import org.elasticsearch.common.xcontent.XContentType;
-import org.joda.time.Instant;
 import org.junit.Test;
 
 import com.enonic.wem.api.data.Value;

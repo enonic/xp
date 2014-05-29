@@ -1,9 +1,9 @@
 package com.enonic.wem.core.content.serializer;
 
 
+import java.time.Instant;
 import java.util.Iterator;
 
-import org.joda.time.Instant;
 import org.junit.Before;
 import org.junit.Test;
 

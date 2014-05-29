@@ -1,9 +1,11 @@
 package com.enonic.wem.core.content;
 
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeUtils;
-import org.joda.time.Instant;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+
+import org.elasticsearch.common.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -35,9 +37,9 @@ import static org.mockito.Matchers.isA;
 
 public class UpdateContentCommandTest
 {
-    private static final Instant CREATED_TIME = new DateTime( 2013, 1, 1, 12, 0, 0, 0 ).toInstant();
+    private static final Instant CREATED_TIME = LocalDateTime.of( 2013, 1, 1, 12, 0, 0, 0 ).toInstant( ZoneOffset.UTC );
 
-    private static final Instant UPDATED_TIME = new DateTime( 2013, 1, 1, 13, 0, 0, 0 ).toInstant();
+    private static final Instant UPDATED_TIME = LocalDateTime.of( 2013, 1, 1, 13, 0, 0, 0 ).toInstant( ZoneOffset.UTC );
 
     private UpdateContentCommand command;
 
@@ -70,7 +72,7 @@ public class UpdateContentCommandTest
         throws Exception
     {
         // setup
-        DateTimeUtils.setCurrentMillisFixed( UPDATED_TIME.getMillis() );
+        DateTimeUtils.setCurrentMillisFixed( UPDATED_TIME.toEpochMilli() );
 
         ContentData existingContentData = new ContentData();
         existingContentData.add( Property.newString( "myData", "aaa" ) );
@@ -101,7 +103,7 @@ public class UpdateContentCommandTest
         throws Exception
     {
         // setup
-        DateTimeUtils.setCurrentMillisFixed( UPDATED_TIME.getMillis() );
+        DateTimeUtils.setCurrentMillisFixed( UPDATED_TIME.toEpochMilli() );
 
         ContentData existingContentData = new ContentData();
         existingContentData.add( Property.newString( "myData", "aaa" ) );
@@ -135,7 +137,7 @@ public class UpdateContentCommandTest
         throws Exception
     {
         // setup
-        DateTimeUtils.setCurrentMillisFixed( UPDATED_TIME.getMillis() );
+        DateTimeUtils.setCurrentMillisFixed( UPDATED_TIME.toEpochMilli() );
 
         ContentData existingContentData = new ContentData();
         existingContentData.add( Property.newString( "myData", "aaa" ) );

@@ -1,7 +1,8 @@
 package com.enonic.wem.api.query.aggregation
 
-import org.joda.time.DateTime
 import spock.lang.Specification
+
+import java.time.Instant
 
 class DateRangeTest
     extends Specification
@@ -10,7 +11,7 @@ class DateRangeTest
     def "test builder"()
     {
         given:
-        DateTime now = DateTime.now()
+        Instant now = Instant.now()
 
         when:
         final DateRange fromRange = Range.newDateRange().key( "myKey" ).from( now ).build()

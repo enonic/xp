@@ -1,7 +1,9 @@
 package com.enonic.wem.api.entity;
 
-import org.joda.time.DateTime;
-import org.joda.time.Instant;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+
 import org.junit.Test;
 
 import com.enonic.wem.api.account.UserKey;
@@ -122,16 +124,16 @@ public class NodeBuilderTest
         throws Exception
     {
 
-        DateTime dateTime = new DateTime( 2013, 10, 25, 10, 43 );
+        LocalDateTime localDateTime = LocalDateTime.of( 2013, 10, 25, 10, 43 );
 
         final Node myNode = Node.newNode().
             name( NodeName.from( "my-name" ) ).
             parent( NodePath.ROOT ).
-            modifiedTime( dateTime.toInstant() ).
-            createdTime( dateTime.toInstant() ).
+            modifiedTime( localDateTime.toInstant( ZoneOffset.UTC ) ).
+            createdTime( localDateTime.toInstant( ZoneOffset.UTC ) ).
             creator( UserKey.from( "test:creator" ) ).
             modifier( UserKey.from( "test:modifier" ) ).
-            modifiedTime( dateTime.toInstant() ).
+            modifiedTime( localDateTime.toInstant( ZoneOffset.UTC ) ).
             path( "test" ).
             build();
 

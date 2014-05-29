@@ -1,6 +1,6 @@
 package com.enonic.wem.core.entity.json;
 
-import org.joda.time.Instant;
+import java.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;

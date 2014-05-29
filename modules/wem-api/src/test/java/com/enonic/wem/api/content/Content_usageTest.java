@@ -1,11 +1,13 @@
 package com.enonic.wem.api.content;
 
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.data.ContentData;
@@ -33,7 +35,7 @@ public class Content_usageTest
         // exercise
         dataSet.setProperty( "myText", Value.newString( "abc" ) );
         dataSet.setProperty( "myNum", Value.newLong( 123 ) );
-        dataSet.setProperty( "myDate", Value.newLocalDate( new LocalDate( 2013, 1, 13 ) ) );
+        dataSet.setProperty( "myDate", Value.newLocalDate( LocalDate.of( 2013, 1, 13 ) ) );
         dataSet.setProperty( "myDec", Value.newDouble( 123.123 ) );
         dataSet.setProperty( "myHtml", Value.newHtmlPart( "<p>abc</p>" ) );
 
@@ -67,7 +69,7 @@ public class Content_usageTest
         // exercise
         dataSet.setProperty( "mySet.myText", Value.newString( "abc" ) );
         dataSet.setProperty( "mySet.myNum", Value.newLong( 123 ) );
-        dataSet.setProperty( "mySet.myDate", Value.newLocalDate( new LocalDate( 2013, 1, 13 ) ) );
+        dataSet.setProperty( "mySet.myDate", Value.newLocalDate( LocalDate.of( 2013, 1, 13 ) ) );
         dataSet.setProperty( "mySet.myDec", Value.newDouble( 123.123 ) );
         dataSet.setProperty( "mySet.myHtml", Value.newHtmlPart( "<p>abc</p>" ) );
 
@@ -88,7 +90,7 @@ public class Content_usageTest
         dataSet.add( Property.newString( "myText", "abc" ) );
         dataSet.add( Property.newLong( "myNum", 123L ) );
         dataSet.add( Property.newDouble( "myDec", 123.123 ) );
-        dataSet.add( Property.newLocalDate( "myDate", new LocalDate( 2013, 1, 13 ) ) );
+        dataSet.add( Property.newLocalDate( "myDate", LocalDate.of( 2013, 1, 13 ) ) );
         dataSet.add( Property.newHtmlPart( "myHtml", "<p>abc</p>" ) );
 
         // verify
@@ -108,7 +110,7 @@ public class Content_usageTest
         dataSet.add( Property.newString( "myText", "abc" ) );
         dataSet.add( Property.newLong( "myNum", 123L ) );
         dataSet.add( Property.newDouble( "myDec", 123.123 ) );
-        dataSet.add( Property.newLocalDate( "myDate", new LocalDate( 2013, 1, 13 ) ) );
+        dataSet.add( Property.newLocalDate( "myDate", LocalDate.of( 2013, 1, 13 ) ) );
         dataSet.add( Property.newHtmlPart( "myHtml", "<p>abc</p>" ) );
 
         // verify
@@ -128,7 +130,7 @@ public class Content_usageTest
         dataSet.add( Property.newString( "myText", "abc" ) );
         dataSet.add( Property.newLong( "myNum", 123L ) );
         dataSet.add( Property.newDouble( "myDec", 123.123 ) );
-        dataSet.add( Property.newLocalDate( "myDate", new LocalDate( 2013, 1, 13 ) ) );
+        dataSet.add( Property.newLocalDate( "myDate", LocalDate.of( 2013, 1, 13 ) ) );
         dataSet.add( Property.newHtmlPart( "myHtml", "<p>abc</p>" ) );
 
         // verify
@@ -148,7 +150,7 @@ public class Content_usageTest
         dataSet.addProperty( "myText", Value.newString( "abc" ) );
         dataSet.addProperty( "myNum", Value.newLong( 123 ) );
         dataSet.addProperty( "myDec", Value.newDouble( 123.123 ) );
-        dataSet.addProperty( "myDate", Value.newLocalDate( new LocalDate( 2013, 1, 13 ) ) );
+        dataSet.addProperty( "myDate", Value.newLocalDate( LocalDate.of( 2013, 1, 13 ) ) );
         dataSet.addProperty( "myHtml", Value.newHtmlPart( "<p>abc</p>" ) );
 
         // verify
@@ -168,7 +170,7 @@ public class Content_usageTest
         contentData.addProperty( "mySet.myText", Value.newString( "abc" ) );
         contentData.addProperty( "mySet.myNum", Value.newLong( 123 ) );
         contentData.addProperty( "mySet.myDec", Value.newDouble( 123.123 ) );
-        contentData.addProperty( "mySet.myDate", Value.newLocalDate( new LocalDate( 2013, 1, 13 ) ) );
+        contentData.addProperty( "mySet.myDate", Value.newLocalDate( LocalDate.of( 2013, 1, 13 ) ) );
         contentData.addProperty( "mySet.myHtml", Value.newHtmlPart( "<p>abc</p>" ) );
 
         // verify
@@ -198,14 +200,14 @@ public class Content_usageTest
         dataSet.add( Property.newString( "myText", "abc" ) );
         dataSet.add( Property.newLong( "myNum", 123L ) );
         dataSet.add( Property.newDouble( "myDec", 123.123 ) );
-        dataSet.add( Property.newLocalDate( "myDate", new LocalDate( 2013, 1, 13 ) ) );
+        dataSet.add( Property.newLocalDate( "myDate", LocalDate.of( 2013, 1, 13 ) ) );
         dataSet.add( Property.newHtmlPart( "myHtml", "<p>abc</p>" ) );
 
         // exercise & verify
         assertEquals( "abc", dataSet.getProperty( "myText" ).getString() );
         assertEquals( new Long( 123L ), dataSet.getProperty( "myNum" ).getLong() );
         assertEquals( 123.123, dataSet.getProperty( "myDec" ).getDouble() );
-        assertEquals( new LocalDate( 2013, 1, 13 ), dataSet.getProperty( "myDate" ).getLocalDate() );
+        assertEquals( LocalDate.of( 2013, 1, 13 ), dataSet.getProperty( "myDate" ).getLocalDate() );
         assertEquals( "<p>abc</p>", dataSet.getProperty( "myHtml" ).getString() );
     }
 
@@ -229,13 +231,14 @@ public class Content_usageTest
     public void invoice_newProperty()
     {
         Invoice invoice = new Invoice();
-        invoice.invoiceDate = DateTime.now();
+        invoice.invoiceDate = Instant.now();
         invoice.recipient = "Runar Myklebust";
         invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 4mm", 120.00 ) );
         invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 10mm", 120.00 ) );
 
         ContentData contentData = new ContentData();
-        contentData.add( Property.newLocalDate( "invoiceDate", invoice.invoiceDate.toLocalDate() ) );
+        contentData.add( Property.newLocalDate( "invoiceDate", LocalDateTime.ofInstant( invoice.invoiceDate,
+                                                                                        ZoneOffset.UTC ).toLocalDate() ) );//invoice.invoiceDate.toLocalDate() ) );
         contentData.add( Property.newString( "recipient", invoice.recipient ) );
 
         for ( InvoiceLine line : invoice.lines )
@@ -261,13 +264,14 @@ public class Content_usageTest
     public void invoice_newType()
     {
         Invoice invoice = new Invoice();
-        invoice.invoiceDate = DateTime.now();
+        invoice.invoiceDate = Instant.now();
         invoice.recipient = "Runar Myklebust";
         invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 4mm", 120.00 ) );
         invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 10mm", 120.00 ) );
 
         ContentData contentData = new ContentData();
-        contentData.add( Property.newLocalDate( "invoiceDate", invoice.invoiceDate.toLocalDate() ) );
+        contentData.add(
+            Property.newLocalDate( "invoiceDate", LocalDateTime.ofInstant( invoice.invoiceDate, ZoneOffset.UTC ).toLocalDate() ) );
         contentData.add( Property.newString( "recipient", invoice.recipient ) );
 
         for ( InvoiceLine line : invoice.lines )
@@ -296,13 +300,14 @@ public class Content_usageTest
     public void invoice_new_Type()
     {
         Invoice invoice = new Invoice();
-        invoice.invoiceDate = DateTime.now();
+        invoice.invoiceDate = Instant.now();
         invoice.recipient = "Runar Myklebust";
         invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 4mm", 120.00 ) );
         invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 10mm", 120.00 ) );
 
         ContentData contentData = new ContentData();
-        contentData.add( Property.newLocalDate( "invoiceDate", invoice.invoiceDate.toLocalDate() ) );
+        contentData.add(
+            Property.newLocalDate( "invoiceDate", LocalDateTime.ofInstant( invoice.invoiceDate, ZoneOffset.UTC ).toLocalDate() ) );
         contentData.add( Property.newString( "recipient", invoice.recipient ) );
 
         for ( InvoiceLine line : invoice.lines )
@@ -328,13 +333,14 @@ public class Content_usageTest
     public void invoice_setData_with_Value_Type()
     {
         Invoice invoice = new Invoice();
-        invoice.invoiceDate = DateTime.now();
+        invoice.invoiceDate = Instant.now();
         invoice.recipient = "Runar Myklebust";
         invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 4mm", 120.00 ) );
         invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 10mm", 120.00 ) );
 
         ContentData contentData = new ContentData();
-        contentData.setProperty( "invoiceDate", Value.newLocalDate( invoice.invoiceDate.toLocalDate() ) );
+        contentData.setProperty( "invoiceDate",
+                                 Value.newLocalDate( LocalDateTime.ofInstant( invoice.invoiceDate, ZoneOffset.UTC ).toLocalDate() ) );
         contentData.setProperty( "recipient", Value.newString( invoice.recipient ) );
 
         for ( InvoiceLine line : invoice.lines )
@@ -396,7 +402,7 @@ public class Content_usageTest
     private class Invoice
     {
 
-        private DateTime invoiceDate;
+        private Instant invoiceDate;
 
         private String recipient;
 

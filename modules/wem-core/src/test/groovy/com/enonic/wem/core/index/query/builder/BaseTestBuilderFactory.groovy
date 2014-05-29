@@ -5,24 +5,23 @@ import org.elasticsearch.common.xcontent.ToXContent
 import org.elasticsearch.common.xcontent.XContentBuilder
 import org.elasticsearch.common.xcontent.XContentFactory
 import org.elasticsearch.search.facet.FacetBuilder
-import org.joda.time.DateTimeZone
 import spock.lang.Specification
 
 class BaseTestBuilderFactory
-        extends Specification
+    extends Specification
 {
     private static final String LINE_BREAK = System.getProperty( "line.separator" )
 
-    private static DateTimeZone origDefault = DateTimeZone.getDefault();
+    private static TimeZone origDefault = TimeZone.getDefault();
 
     def setupSpec()
     {
-        DateTimeZone.setDefault( DateTimeZone.UTC );
+        TimeZone.setDefault( TimeZone.getTimeZone( "UTC" ) );
     }
 
     def cleanupSpec()
     {
-        DateTimeZone.setDefault( origDefault );
+        TimeZone.setDefault( origDefault );
     }
 
     def "dummy"()
@@ -44,7 +43,7 @@ class BaseTestBuilderFactory
     }
 
     public String getJson( FacetBuilder facetBuilder )
-            throws Exception
+        throws Exception
     {
         final XContentBuilder builder = XContentFactory.jsonBuilder();
         builder.startObject();

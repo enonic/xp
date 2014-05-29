@@ -1,6 +1,6 @@
 package com.enonic.wem.api.entity;
 
-import org.joda.time.Instant;
+import java.time.Instant;
 
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
@@ -366,7 +366,7 @@ public class Entity
         {
             return false;
         }
-        if ( createdTime != null ? !createdTime.toInstant().equals( entity.createdTime.toInstant() ) : entity.createdTime != null )
+        if ( createdTime != null ? !createdTime.equals( entity.createdTime ) : entity.createdTime != null )
         {
             return false;
         }
@@ -382,7 +382,7 @@ public class Entity
         {
             return false;
         }
-        if ( modifiedTime != null ? !modifiedTime.toInstant().equals( entity.modifiedTime.toInstant() ) : entity.modifiedTime != null )
+        if ( modifiedTime != null ? !modifiedTime.equals( entity.modifiedTime ) : entity.modifiedTime != null )
         {
             return false;
         }

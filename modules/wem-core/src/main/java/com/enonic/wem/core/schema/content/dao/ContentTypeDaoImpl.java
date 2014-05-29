@@ -5,11 +5,11 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.time.Instant;
 
 import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
-import org.joda.time.Instant;
 
 import com.google.common.base.Charsets;
 
@@ -19,9 +19,9 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeXml;
 import com.enonic.wem.api.schema.content.ContentTypes;
+import com.enonic.wem.api.xml.XmlSerializers;
 import com.enonic.wem.core.config.SystemConfig;
 import com.enonic.wem.core.schema.SchemaIconDao;
-import com.enonic.wem.api.xml.XmlSerializers;
 
 import static com.enonic.wem.api.schema.content.ContentTypes.newContentTypes;
 import static java.nio.file.Files.getLastModifiedTime;
@@ -152,12 +152,12 @@ public final class ContentTypeDaoImpl
             final ContentType.Builder builder = ContentType.newContentType().name( contentTypeName );
             XmlSerializers.contentType().parse( serializedContentType ).to( builder );
 
-            // TODO remove conversion to JODA Instant and use Java 8 Instant, call toInstant() instead of toMillis()
-            final Instant modifiedTime = new Instant( getLastModifiedTime( xmlFile ).toMillis() );
+            // XXX remove conversion to JODA Instant and use Java 8 Instant, call toInstant() instead of toMillis()
+            final Instant modifiedTime = Instant.ofEpochMilli( getLastModifiedTime( xmlFile ).toMillis() );
             builder.modifiedTime( modifiedTime );
 
             final BasicFileAttributes basicAttr = readAttributes( xmlFile, BasicFileAttributes.class );
-            final Instant createdTime = new Instant( basicAttr.creationTime().toMillis() );
+            final Instant createdTime = Instant.ofEpochMilli( basicAttr.creationTime().toMillis() );
             builder.createdTime( createdTime );
 
             return builder;

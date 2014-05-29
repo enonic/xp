@@ -1,15 +1,15 @@
 package com.enonic.wem.admin.json.aggregation;
 
-import org.joda.time.DateTime;
+import java.time.Instant;
 
 import com.enonic.wem.api.aggregation.DateRangeBucket;
 
 public class DateRangeBucketJson
     extends BucketJson
 {
-    private DateTime from;
+    private Instant from;
 
-    private DateTime to;
+    private Instant to;
 
     public DateRangeBucketJson( final DateRangeBucket dateRangeBucket )
     {
@@ -18,12 +18,12 @@ public class DateRangeBucketJson
         this.to = dateRangeBucket.getTo();
     }
 
-    public DateTime getFrom()
+    public Instant getFrom()
     {
         return from;
     }
 
-    public DateTime getTo()
+    public Instant getTo()
     {
         return to;
     }
