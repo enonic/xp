@@ -4,8 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.CreateContentParams;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.CreateNodeParams;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
@@ -33,7 +35,7 @@ final class CreateContentCommand
         }
 
         final CreateNodeParams createNodeParams = getTranslator().toCreateNode( this.params );
-        final Node createdNode = nodeService.create( createNodeParams );
+        final Node createdNode = nodeService.create( createNodeParams, new Context( ContentConstants.DEFAULT_WORKSPACE ) );
 
         return getTranslator().fromNode( createdNode );
     }

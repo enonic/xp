@@ -1,35 +1,28 @@
 package com.enonic.wem.core.entity;
 
-
 import com.enonic.wem.api.account.UserKey;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.Attachments;
 import com.enonic.wem.api.entity.CreateNodeParams;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.core.entity.dao.CreateNodeArguments;
-import com.enonic.wem.core.entity.dao.NodeDao;
-import com.enonic.wem.core.index.IndexService;
 
 import static com.enonic.wem.core.entity.dao.CreateNodeArguments.newCreateNodeArgs;
 
 final class CreateNodeCommand
+    extends AbstractNodeCommand
 {
-    private IndexService indexService;
-
     private CreateNodeParams params;
-
-    private NodeDao nodeDao;
 
     private CreateNodeCommand( final Builder builder )
     {
-        this.indexService = builder.indexService;
-        this.nodeDao = builder.nodeDao;
+        super( builder );
+
         this.params = builder.params;
     }
 
     Node execute()
     {
-        this.params.validate();
-
         return doExecute();
     }
 
@@ -43,39 +36,28 @@ final class CreateNodeCommand
             attachments( params.getAttachments() != null ? params.getAttachments() : Attachments.empty() ).
             entityIndexConfig( params.getEntityIndexConfig() ).
             embed( params.isEmbed() ).
-            workspace( params.getWorkspace() ).
             build();
 
-        final Node persistedNode = nodeDao.create( createNodeArguments );
+        final Node persistedNode = nodeDao.create( createNodeArguments, context.getWorkspace() );
 
-        indexService.index( persistedNode );
+        this.indexService.index( persistedNode );
 
         return persistedNode;
     }
 
-    static Builder create()
+    static Builder create( final Context context )
     {
-        return new Builder();
+        return new Builder( context );
     }
 
     static class Builder
+        extends AbstractNodeCommand.Builder<Builder>
     {
-        private IndexService indexService;
-
-        private NodeDao nodeDao;
-
         private CreateNodeParams params;
 
-        Builder indexService( final IndexService indexService )
+        Builder( final Context context )
         {
-            this.indexService = indexService;
-            return this;
-        }
-
-        Builder nodeDao( final NodeDao nodeDao )
-        {
-            this.nodeDao = nodeDao;
-            return this;
+            super( context );
         }
 
         Builder params( final CreateNodeParams params )
@@ -84,7 +66,7 @@ final class CreateNodeCommand
             return this;
         }
 
-        CreateNodeCommand build()
+        public CreateNodeCommand build()
         {
             return new CreateNodeCommand( this );
         }

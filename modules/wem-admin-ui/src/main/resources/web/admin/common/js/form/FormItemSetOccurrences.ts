@@ -140,10 +140,8 @@ module api.form {
         }
 
         moveOccurrence(index: number, destinationIndex: number) {
-
             super.moveOccurrence(index, destinationIndex);
-
-            this.parentDataSet.moveData(index, destinationIndex);
+            this.parentDataSet.moveDataByName(this.getFormItem().getName(), index, destinationIndex);
         }
     }
 }

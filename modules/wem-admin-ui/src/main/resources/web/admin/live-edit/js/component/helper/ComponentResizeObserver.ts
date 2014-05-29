@@ -1,19 +1,18 @@
 module LiveEdit.component.helper {
 
     import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
-
-    // Uses
-    var $ = $liveEdit;
+    import PageComponentSelectComponentEvent = api.liveedit.PageComponentSelectComponentEvent;
+    import ItemView = api.liveedit.ItemView;
 
     export class ComponentResizeObserver {
 
-        private component:LiveEdit.component.Component;
+        private component: ItemView;
 
         constructor() {
             this.registerGlobalListeners();
         }
 
-        private observe(component:LiveEdit.component.Component):void {
+        private observe(component: ItemView): void {
 
             this.disconnect();
 
@@ -25,13 +24,13 @@ module LiveEdit.component.helper {
             this.component.getElement().on('resize', (event) => {
                 if (this.component.isSelected()) {
                     // TODO: This bugged out jQuery, not sure what it was used for.
-                    //$(window).on('selectComponent.liveEdit', [component])
+                    //wemjq(window).on('selectComponent.liveEdit', [component])
                 }
             });
 
         }
 
-        private disconnect():void {
+        private disconnect(): void {
             if (this.component != null) {
                 this.component.getElement().off('resize');
             }
@@ -39,11 +38,12 @@ module LiveEdit.component.helper {
 
         }
 
-        private registerGlobalListeners():void {
-            $(window).on('selectComponent.liveEdit', (event:JQueryEventObject, component:LiveEdit.component.Component, pagePosition) => this.observe(component));
-
+        private registerGlobalListeners(): void {
+            PageComponentSelectComponentEvent.on((event: PageComponentSelectComponentEvent) => this.observe(event.getItemView()));
             PageComponentDeselectEvent.on(() => this.disconnect());
-            $(window).on('editTextComponent.liveEdit', (event:JQueryEventObject, component:LiveEdit.component.Component) => this.observe(component));
+            wemjq(window).on('editTextComponent.liveEdit', (event: JQueryEventObject, component?: ItemView) => {
+                this.observe(component);
+            });
         }
 
     }

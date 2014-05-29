@@ -1,11 +1,10 @@
 module LiveEdit.ui {
 
-    // Uses
-    var $ = $liveEdit;
+    import TextView = api.liveedit.text.TextView;
 
     export class Editor extends LiveEdit.ui.Base {
 
-        toolbar:EditorToolbar;
+        toolbar: EditorToolbar;
 
         constructor() {
             super();
@@ -14,18 +13,19 @@ module LiveEdit.ui {
             this.registerGlobalListeners();
         }
 
-        registerGlobalListeners():void {
-            $(window).on('editTextComponent.liveEdit', (event:JQueryEventObject, textComponent) => this.activate(textComponent));
-            $(window).on('leaveTextComponent.liveEdit', (event:JQueryEventObject, textComponent) => this.deActivate(textComponent));
-            $(window).on('editorToolbarButtonClick.liveEdit', (event:JQueryEventObject, tag:string) => document.execCommand(tag, false, null));
+        registerGlobalListeners(): void {
+            wemjq(window).on('editTextComponent.liveEdit', (event: JQueryEventObject, textComponent?) => this.activate(textComponent));
+            wemjq(window).on('leaveTextComponent.liveEdit', (event: JQueryEventObject, textComponent?) => this.deActivate(textComponent));
+            wemjq(window).on('editorToolbarButtonClick.liveEdit',
+                (event: JQueryEventObject, tag?: string) => document.execCommand(tag, false, null));
         }
 
-        activate(textComponent:LiveEdit.component.Component):void {
+        activate(textComponent: TextView): void {
             textComponent.getElement().attr('contenteditable', true);
             textComponent.getElement().get(0).focus();
         }
 
-        deActivate(textComponent:LiveEdit.component.Component):void {
+        deActivate(textComponent: TextView): void {
             textComponent.getElement().attr('contenteditable', false);
             textComponent.getElement().get(0).blur();
         }

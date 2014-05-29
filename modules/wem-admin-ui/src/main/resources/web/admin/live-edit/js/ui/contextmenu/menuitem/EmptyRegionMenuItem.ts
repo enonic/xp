@@ -1,9 +1,7 @@
 module LiveEdit.ui.contextmenu.menuitem {
 
-    import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
-
-    // Uses
-    var $ = $liveEdit;
+    import EmptyRegionEvent = api.liveedit.RegionEmptyEvent;
+    import RegionView = api.liveedit.RegionView;
 
     export class EmptyRegionMenuItem extends LiveEdit.ui.contextmenu.menuitem.BaseMenuItem {
 
@@ -11,7 +9,7 @@ module LiveEdit.ui.contextmenu.menuitem {
             super({
                 text: 'Empty',
                 name: 'clearRegion',
-                handler: (event:Event) => {
+                handler: (event: Event) => {
                     this.onEmptyRegion();
                     event.stopPropagation();
                 }
@@ -21,13 +19,21 @@ module LiveEdit.ui.contextmenu.menuitem {
         }
 
         private onEmptyRegion() {
-            var region:JQuery = this.menu.selectedComponent.getElement();
 
-            LiveEdit.component.Selection.deselect();
+            var selectedItem = this.menu.selectedComponent;
+            if (api.ObjectHelper.iFrameSafeInstanceOf(selectedItem, RegionView)) {
+                var selectedRegion = <RegionView>selectedItem;
 
-            $('[data-live-edit-type]', region).remove();
+                selectedRegion.deselect();
 
-            new PageComponentRemoveEvent(this.menu.selectedComponent.getComponentPath()).fire();
+                var region: JQuery = selectedRegion.getElement();
+                wemjq('[data-live-edit-type]', region).remove();
+
+                new EmptyRegionEvent(selectedRegion.getRegionPath()).fire();
+            }
+            else {
+                throw new Error("Expected region to empty, got [" + api.util.getClassName(selectedItem) + "]");
+            }
         }
     }
 }

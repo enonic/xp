@@ -15,13 +15,9 @@ module api.liveedit {
 
         private precedingComponent: ComponentPath;
 
-        setComponent(component: api.dom.Element): PageComponentAddedEvent {
+        setComponent(component: ItemView): PageComponentAddedEvent {
             this.component = component;
-            return this;
-        }
-
-        setType(name: string): PageComponentAddedEvent {
-            this.type = PageComponentType.byShortName(name);
+            this.type = component.getType().toPageComponentType();
             return this;
         }
 

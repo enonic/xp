@@ -28,7 +28,7 @@ module api.form.inputtype.support {
             api.util.assertNotNull(config, "config cannt be null");
             this.config = config;
 
-            jQuery(this.getHTMLElement()).sortable({
+            wemjq(this.getHTMLElement()).sortable({
                 axis: "y",
                 containment: 'parent',
                 handle: '.drag-control',
@@ -141,12 +141,12 @@ module api.form.inputtype.support {
 
             this.onAdded((event: api.dom.ElementAddedEvent) => {
                 this.onOccurrenceAdded(() => {
-                    jQuery(this.getHTMLElement()).sortable("refresh");
+                    wemjq(this.getHTMLElement()).sortable("refresh");
                 });
             });
 
             this.inputOccurrences.layout();
-            jQuery(this.getHTMLElement()).sortable("refresh");
+            wemjq(this.getHTMLElement()).sortable("refresh");
         }
 
 

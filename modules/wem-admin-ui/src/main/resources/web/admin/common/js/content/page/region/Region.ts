@@ -172,6 +172,12 @@ module api.content.page.region {
             return found;
         }
 
+        removePageComponents() {
+            while (this.pageComponents.length > 0) {
+                this.pageComponents.pop();
+            }
+        }
+
         toJson(): RegionJson {
 
             var componentJsons: api.content.page.PageComponentTypeWrapperJson[] = [];

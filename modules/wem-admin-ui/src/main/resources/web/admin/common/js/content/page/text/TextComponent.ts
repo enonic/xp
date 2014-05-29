@@ -59,13 +59,10 @@ module api.content.page.text {
 
         constructor(source?: TextComponent) {
 
-            super();
+            super(source);
 
             if (source) {
                 this.text = source.getText();
-
-                this.name = source.getName();
-                this.parent = source.getParent();
             }
         }
 

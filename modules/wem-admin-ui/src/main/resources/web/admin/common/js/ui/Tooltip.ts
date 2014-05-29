@@ -119,7 +119,7 @@ module api.ui {
             var targetEl = this.target.getHTMLElement();
             var targetOffset = this.target.getEl().getOffset();
             var el = this.tooltipEl.getHTMLElement();
-            var $el = jQuery(el);
+            var $el = wemjq(el);
             var elOffset = {
                 left: parseInt($el.css('left')) || 0,
                 top: parseInt($el.css('top')) || 0

@@ -5,6 +5,7 @@ import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.NoNodeAtPathFoundException;
 import com.enonic.wem.api.entity.NodePaths;
 import com.enonic.wem.api.entity.Nodes;
@@ -34,7 +35,7 @@ final class GetContentByPathsCommand
     private Contents doExecute()
     {
         final NodePaths paths = ContentNodeHelper.translateContentPathsToNodePaths( contentPaths );
-        final Nodes nodes = nodeService.getByPaths( paths, ContentConstants.DEFAULT_WORKSPACE );
+        final Nodes nodes = nodeService.getByPaths( paths, new Context( ContentConstants.DEFAULT_WORKSPACE ) );
 
         return getTranslator().fromNodes( nodes );
     }

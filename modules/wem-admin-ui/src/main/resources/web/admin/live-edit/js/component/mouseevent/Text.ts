@@ -1,9 +1,8 @@
 module LiveEdit.component.mouseevent {
 
+    import TextItemType = api.liveedit.text.TextItemType;
+    import TextView = api.liveedit.text.TextView;
     import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
-
-    // Uses
-    var $ = $liveEdit;
 
     enum TextMode {
         UNSELECTED,
@@ -13,14 +12,14 @@ module LiveEdit.component.mouseevent {
 
     export class Text extends LiveEdit.component.mouseevent.Base {
 
-        private selectedText: LiveEdit.component.Component = null;
+        private selectedText: TextView = null;
         private modes: any = {};
         private currentMode: TextMode;
 
         constructor() {
             super();
 
-            this.componentCssSelectorFilter = LiveEdit.component.TypeConfiguration[LiveEdit.component.Type.TEXT].cssSelector;
+            this.componentCssSelectorFilter = TextItemType.get().getConfig().getCssSelector();
 
             this.currentMode = TextMode.UNSELECTED;
 
@@ -34,7 +33,7 @@ module LiveEdit.component.mouseevent {
         }
 
         registerGlobalListeners(): void {
-            $(window).on('clickShader.liveEdit', () => this.leaveEditMode());
+            wemjq(window).on('clickShader.liveEdit', () => this.leaveEditMode());
 
             PageComponentDeselectEvent.on(() => this.leaveEditMode());
         }
@@ -42,13 +41,13 @@ module LiveEdit.component.mouseevent {
         // Override base attachClickEvent
         attachClickEvent(): void {
             // Listen for left/right click.
-            $(document).on('click contextmenu touchstart', this.componentCssSelectorFilter, (event: JQueryEventObject) => {
-                var textComponent = LiveEdit.component.Component.fromJQuery($(event.currentTarget));
+            wemjq(document).on('click contextmenu touchstart', this.componentCssSelectorFilter, (event: JQueryEventObject) => {
+                var textComponent = TextView.fromJQuery(wemjq(event.currentTarget));
                 this.handleClick(event, textComponent);
             });
         }
 
-        handleClick(event: JQueryEventObject, component: LiveEdit.component.Component): void {
+        handleClick(event: JQueryEventObject, component: TextView): void {
             event.stopPropagation();
             event.preventDefault();
 
@@ -87,34 +86,34 @@ module LiveEdit.component.mouseevent {
 
             LiveEdit.component.Selection.removeSelectedAttribute();
 
-            LiveEdit.component.Selection.handleSelect(this.selectedText.getHTMLElement(), event);
+            LiveEdit.component.Selection.handleSelect(this.selectedText, event);
 
-            $(window).trigger('selectTextComponent.liveEdit', [this.selectedText]);
+            wemjq(window).trigger('selectTextComponent.liveEdit', [this.selectedText]);
         }
 
         setEditMode(): void {
 
             var textComponent = this.selectedText;
-            $('.text-link-click-to-edit').remove();
+            wemjq('.text-link-click-to-edit').remove();
 //            textComponent.onResized((event: api.dom.ElementResizedEvent) => {
 //                console.log('resize' , event);
-//                $(window).trigger('editTextComponent.liveEdit', [textComponent]);
+//                wemjq(window).trigger('editTextComponent.liveEdit', [textComponent]);
 //            });
 
             if (this.isSelectedTextEmpty()) {
                 textComponent.appendChild(new api.dom.BrEl());
             }
-            textComponent.getElement().on('keydown keyup', function (event) {
-                $(window).trigger('editTextComponent.liveEdit', [textComponent]);
+            textComponent.getElement().on('keydown keyup', (event) => {
+                wemjq(window).trigger('editTextComponent.liveEdit', [textComponent]);
             });
 
-            $(window).trigger('editTextComponent.liveEdit', [this.selectedText]);
+            wemjq(window).trigger('editTextComponent.liveEdit', [this.selectedText]);
 
             textComponent.getElement().css('cursor', 'text');
             textComponent.getElement().addClass('live-edit-edited-text');
             textComponent.getElement().removeClass('live-edit-empty-component');
 
-            $(window).trigger('editTextComponent.liveEdit', [textComponent]);
+            wemjq(window).trigger('editTextComponent.liveEdit', [textComponent]);
 
             this.currentMode = TextMode.EDIT;
         }
@@ -125,7 +124,7 @@ module LiveEdit.component.mouseevent {
                 return;
             }
 
-            $(window).trigger('leaveTextComponent.liveEdit', [this.selectedText]);
+            wemjq(window).trigger('leaveTextComponent.liveEdit', [this.selectedText]);
 
             textComponent.getElement().css('cursor', '');
             textComponent.getElement().removeClass('live-edit-edited-text');
@@ -143,13 +142,13 @@ module LiveEdit.component.mouseevent {
         }
 
         private isSelectedTextBlankOrEmpty(): boolean {
-            var textContent = $.trim(this.selectedText.getElement().html());
+            var textContent = wemjq.trim(this.selectedText.getElement().html());
             var isBlank = !textContent.length || ('<br>' === textContent);
             return isBlank;
         }
 
         private isSelectedTextEmpty(): boolean {
-            return !$.trim(this.selectedText.getElement().html()).length;
+            return !wemjq.trim(this.selectedText.getElement().html()).length;
         }
 
     }

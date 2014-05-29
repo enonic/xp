@@ -11,7 +11,7 @@ import com.enonic.wem.portal.jaxrs.ExtendedStatus;
 public final class PortalWebException
     extends WebApplicationException
 {
-    private final static String DEFAULT_MESSAGE = "An error occured with status code = {0}.";
+    private final static String DEFAULT_MESSAGE = "An error occurred with status code = {0}.";
 
     private final Response.StatusType status;
 

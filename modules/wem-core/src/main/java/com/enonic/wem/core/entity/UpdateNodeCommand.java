@@ -2,27 +2,23 @@ package com.enonic.wem.core.entity;
 
 
 import com.enonic.wem.api.account.UserKey;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.UpdateNodeParams;
 import com.enonic.wem.api.util.Exceptions;
-import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
-import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.entity.dao.UpdateNodeArgs;
 
 import static com.enonic.wem.core.entity.dao.UpdateNodeArgs.newUpdateItemArgs;
 
 final class UpdateNodeCommand
+    extends AbstractNodeCommand
 {
-    private ElasticsearchIndexService indexService;
-
-    private NodeDao nodeDao;
-
-    private UpdateNodeParams params;
+    private final UpdateNodeParams params;
 
     private UpdateNodeCommand( final Builder builder )
     {
-        this.indexService = builder.indexService;
-        this.nodeDao = builder.nodeDao;
+        super( builder );
+
         this.params = builder.params;
     }
 
@@ -70,29 +66,19 @@ final class UpdateNodeCommand
         return updatedNode;
     }
 
-    static Builder create()
+    static Builder create( final Context context )
     {
-        return new Builder();
+        return new Builder( context );
     }
 
     static class Builder
+        extends AbstractNodeCommand.Builder<Builder>
     {
-        private ElasticsearchIndexService indexService;
-
-        private NodeDao nodeDao;
-
         private UpdateNodeParams params;
 
-        Builder indexService( final ElasticsearchIndexService indexService )
+        Builder( final Context context )
         {
-            this.indexService = indexService;
-            return this;
-        }
-
-        Builder nodeDao( final NodeDao session )
-        {
-            this.nodeDao = session;
-            return this;
+            super( context );
         }
 
         Builder params( final UpdateNodeParams params )

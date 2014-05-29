@@ -59,15 +59,9 @@ module api.content.page.image {
 
         constructor(source?: ImageComponent) {
 
-            super();
-
+            super(source);
             if (source) {
                 this.image = source.getImage();
-
-                this.name = source.getName();
-                this.descriptor = source.getDescriptor();
-                this.parent = source.getParent();
-                this.config = source.getConfig() ? source.getConfig().clone() : null;
             }
         }
 

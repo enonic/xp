@@ -1,7 +1,9 @@
 package com.enonic.wem.core.entity;
 
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.Workspace;
 
 final class DeleteNodeByIdCommand
     extends AbstractDeleteNodeCommand
@@ -16,20 +18,22 @@ final class DeleteNodeByIdCommand
 
     Node execute()
     {
-        final Node nodeToDelete = nodeDao.getById( this.entityId, this.workspace );
+        final Workspace workspace = this.context.getWorkspace();
 
-        doDeleteChildIndexDocuments( nodeToDelete, this.workspace );
+        final Node nodeToDelete = nodeDao.getById( this.entityId, workspace );
 
-        final Node deletedNode = nodeDao.deleteById( entityId, this.workspace );
+        doDeleteChildIndexDocuments( nodeToDelete, workspace );
+
+        final Node deletedNode = nodeDao.deleteById( entityId, workspace );
 
         indexService.delete( entityId );
 
         return deletedNode;
     }
 
-    static Builder create()
+    static Builder create( final Context context )
     {
-        return new Builder();
+        return new Builder( context );
     }
 
     static class Builder
@@ -38,9 +42,9 @@ final class DeleteNodeByIdCommand
 
         private EntityId entityId;
 
-        public DeleteNodeByIdCommand build()
+        Builder( final Context context )
         {
-            return new DeleteNodeByIdCommand( this );
+            super( context );
         }
 
         public Builder entityId( final EntityId entityId )
@@ -48,7 +52,11 @@ final class DeleteNodeByIdCommand
             this.entityId = entityId;
             return this;
         }
-    }
 
+        public DeleteNodeByIdCommand build()
+        {
+            return new DeleteNodeByIdCommand( this );
+        }
+    }
 
 }

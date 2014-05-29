@@ -46,7 +46,7 @@ module app.wizard {
 
         constructor() {
             super("");
-            this.addClass("icon-menu6 icon-large");
+            this.addClass("icon-menu6 icon-large toggler");
             this.setActive(true);
             this.setEnabled(false);
             this.onClicked((event: MouseEvent) => {

@@ -8,9 +8,6 @@ interface ContextMenuItemConfig {
 
 module LiveEdit.ui.contextmenu.menuitem {
 
-    // Uses
-    var $ = $liveEdit;
-
     export class BaseMenuItem extends LiveEdit.ui.Base {
 
         menu: LiveEdit.ui.contextmenu.ContextMenu;

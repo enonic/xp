@@ -50,7 +50,7 @@ module api.form {
 
             this.occurrenceViewsContainer = new api.dom.DivEl("occurrence-views-container");
 
-            jQuery(this.occurrenceViewsContainer.getHTMLElement()).sortable({
+            wemjq(this.occurrenceViewsContainer.getHTMLElement()).sortable({
                 revert: false,
                 containment: this.getHTMLElement(),
                 cursor: 'move',
@@ -81,7 +81,7 @@ module api.form {
             this.validate(true);
             this.formItemSetOccurrences.onOccurrenceAdded((event: OccurrenceAddedEvent) => {
                 this.refresh();
-                jQuery(this.occurrenceViewsContainer.getHTMLElement()).sortable("refresh");
+                wemjq(this.occurrenceViewsContainer.getHTMLElement()).sortable("refresh");
 
                 if (event.getOccurrenceView() instanceof FormItemSetOccurrenceView) {
                     var addedFormItemSetOccurrenceView = <FormItemSetOccurrenceView>event.getOccurrenceView();

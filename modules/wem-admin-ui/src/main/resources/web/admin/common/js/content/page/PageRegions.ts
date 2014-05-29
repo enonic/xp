@@ -6,9 +6,17 @@ module api.content.page {
             super(builder.regions);
         }
 
+        emptyRegion(regionPath: RegionPath) {
+
+            var region = this.getRegionByPath(regionPath);
+            api.util.assertNotNull(region, "region not found: " + regionPath.toString());
+
+            region.removePageComponents();
+        }
+
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof PageRegions)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, PageRegions)) {
                 return false;
             }
 

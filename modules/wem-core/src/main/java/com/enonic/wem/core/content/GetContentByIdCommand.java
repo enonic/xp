@@ -4,6 +4,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
 import com.enonic.wem.api.entity.Node;
@@ -21,7 +22,7 @@ final class GetContentByIdCommand
 
         try
         {
-            final Node node = nodeService.getById( entityId, ContentConstants.DEFAULT_WORKSPACE);
+            final Node node = nodeService.getById( entityId, new Context( ContentConstants.DEFAULT_WORKSPACE ) );
             return getTranslator().fromNode( node );
         }
         catch ( NoEntityWithIdFoundException e )

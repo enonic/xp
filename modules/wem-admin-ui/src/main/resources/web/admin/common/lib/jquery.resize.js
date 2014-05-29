@@ -16,7 +16,7 @@
 	$.fn.resize = function(callback) {
 		return this.each(function() {
 			if(this == window)
-				jQuery_resize.call(jQuery(this), callback);
+				jQuery_resize.call($(this), callback);
 			else
 				addResizeListener(this, callback);
 		});

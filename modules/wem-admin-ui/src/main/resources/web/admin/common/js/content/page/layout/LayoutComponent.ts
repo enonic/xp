@@ -70,15 +70,10 @@ module api.content.page.layout {
 
         constructor(source?: LayoutComponent) {
 
-            super();
+            super(source);
 
             if (source) {
                 this.regions = source.getLayoutRegions().clone();
-
-                this.name = source.getName();
-                this.descriptor = source.getDescriptor();
-                this.parent = source.getParent();
-                this.config = source.getConfig() ? source.getConfig().clone() : null;
             }
         }
 

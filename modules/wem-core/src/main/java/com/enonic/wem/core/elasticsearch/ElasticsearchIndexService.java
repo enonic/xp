@@ -14,6 +14,8 @@ import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
+import org.elasticsearch.action.count.CountRequest;
+import org.elasticsearch.action.count.CountResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
 import org.slf4j.Logger;
@@ -64,6 +66,7 @@ public class ElasticsearchIndexService
     {
         doInitializeStoreIndex();
         doInitializeNoDbIndex();
+        doInitializeWorkspaceIndex();
     }
 
     @Override
@@ -81,6 +84,17 @@ public class ElasticsearchIndexService
         if ( !indexExists( Index.NODB ) )
         {
             createIndex( Index.NODB );
+        }
+    }
+
+    private void doInitializeWorkspaceIndex()
+        throws Exception
+    {
+        getIndexStatus( Index.WORKSPACE, true );
+
+        if ( !indexExists( Index.WORKSPACE ) )
+        {
+            createIndex( Index.WORKSPACE );
         }
     }
 
@@ -252,5 +266,11 @@ public class ElasticsearchIndexService
         this.indexSettingsBuilder = indexSettingsBuilder;
     }
 
-
+    @Override
+    public long countDocuments( final Index index )
+    {
+        final CountRequest request = new CountRequest().indices( index.getName() );
+        final CountResponse response = this.client.count( request ).actionGet();
+        return response.getCount();
+    }
 }

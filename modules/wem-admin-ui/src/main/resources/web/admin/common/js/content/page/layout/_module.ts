@@ -3,6 +3,7 @@
 ///<reference path='LayoutDescriptorsJson.ts' />
 ///<reference path='LayoutDescriptor.ts' />
 ///<reference path='LayoutRegions.ts' />
+///<reference path='LayoutComponentType.ts' />
 ///<reference path='LayoutComponent.ts' />
 ///<reference path='LayoutDescriptorViewer.ts' />
 ///<reference path='LayoutDescriptorComboBox.ts' />

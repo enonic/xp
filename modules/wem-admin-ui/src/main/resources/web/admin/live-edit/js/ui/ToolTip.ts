@@ -5,8 +5,9 @@ interface ToolTipPosition {
 
 module LiveEdit.ui {
 
-    // Uses
-    var $ = $liveEdit;
+    import ItemView = api.liveedit.ItemView;
+    import PageComponentSelectComponentEvent = api.liveedit.PageComponentSelectComponentEvent;
+    
     var domHelper = LiveEdit.DomHelper;
 
     export class ToolTip extends LiveEdit.ui.Base {
@@ -20,29 +21,29 @@ module LiveEdit.ui {
             this.registerGlobalListeners();
         }
 
-        private registerGlobalListeners():void {
-            $(window).on('selectComponent.liveEdit', () => this.hide());
+        private registerGlobalListeners(): void {
+            PageComponentSelectComponentEvent.on(() => this.hide());
         }
 
-        private addView():void {
-            var html:string = '<div class="live-edit-tool-tip" style="top:-5000px; left:-5000px;">' +
-                              '    <span class="live-edit-tool-tip-name-text"></span>' +
-                              '    <span class="live-edit-tool-tip-type-text"></span> ' +
-                              '</div>';
+        private addView(): void {
+            var html: string = '<div class="live-edit-tool-tip" style="top:-5000px; left:-5000px;">' +
+                               '    <span class="live-edit-tool-tip-name-text"></span>' +
+                               '    <span class="live-edit-tool-tip-type-text"></span> ' +
+                               '</div>';
 
             this.createHtmlFromString(html);
-            this.appendTo($('body'));
+            this.appendTo(wemjq('body'));
         }
 
-        private setText(component:LiveEdit.component.Component):void {
-            var tooltip:JQuery = this.getEl();
+        private setText(itemView: ItemView): void {
+            var tooltip: JQuery = this.getEl();
 
-            tooltip.children('.live-edit-tool-tip-type-text').text(component.getComponentType().getName());
-            tooltip.children('.live-edit-tool-tip-name-text').text(component.getComponentName());
+            tooltip.children('.live-edit-tool-tip-type-text').text(itemView.getType().getShortName());
+            tooltip.children('.live-edit-tool-tip-name-text').text(itemView.getName());
         }
 
-        private attachEventListeners():void {
-            $(document).on('mousemove', '[data-live-edit-type]', (event) => {
+        private attachEventListeners(): void {
+            wemjq(document).on('mousemove', '[data-live-edit-type]', (event) => {
 
                 // fixme: Use PubSub instead of calling DragDrop object.
                 if (LiveEdit.component.Selection.pageHasSelectedElement() || LiveEdit.component.dragdropsort.DragDropSort.isDragging()) {
@@ -59,25 +60,20 @@ module LiveEdit.ui {
 
             });
 
-            $(document).on('mouseover', '[data-live-edit-type]', (event) => {
-                var component:LiveEdit.component.Component = LiveEdit.component.Component.fromJQuery($(event.target).closest('[data-live-edit-type]'));
+            wemjq(document).on('mouseover', '[data-live-edit-type]', (event) => {
 
-                this.setText(component);
+                var itemView: ItemView = ItemView.fromJQuery(wemjq(event.target).closest('[data-live-edit-type]'));
+                this.setText(itemView);
 
                 this.getEl().hide(null).show();
             });
 
-            $('[data-live-edit-type]').mouseleave(() => {
+            wemjq('[data-live-edit-type]').mouseleave(() => {
                 this.getEl().hide(null);
             });
-
-            /*$(document).on('mouseleave', () => {
-                console.log("mouseout", arguments);
-                this.hide()
-            });*/
         }
 
-        private getPositionFromEvent(event:JQueryEventObject) {
+        private getPositionFromEvent(event: JQueryEventObject) {
             var pageX = event.pageX,
                 pageY = event.pageY,
                 x = pageX + this.OFFSET_X,
@@ -99,7 +95,7 @@ module LiveEdit.ui {
             };
         }
 
-        private hide():void {
+        private hide(): void {
             this.getEl().css({
                 top: '-5000px',
                 left: '-5000px'

@@ -1,9 +1,7 @@
 module LiveEdit.ui.contextmenu.menuitem {
 
     import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
-
-    // Uses
-    var $ = $liveEdit;
+    import PageComponentView = api.liveedit.PageComponentView;
 
     export class DuplicateMenuItem extends LiveEdit.ui.contextmenu.menuitem.BaseMenuItem {
 
@@ -11,7 +9,7 @@ module LiveEdit.ui.contextmenu.menuitem {
             super({
                 text: 'Duplicate',
                 name: 'duplicate',
-                handler: (event:Event) => {
+                handler: (event: Event) => {
                     this.onDuplicateComponent();
                     event.preventDefault();
                     event.stopPropagation();
@@ -23,13 +21,23 @@ module LiveEdit.ui.contextmenu.menuitem {
         }
 
         private onDuplicateComponent() {
-            var component = this.menu.selectedComponent;
-            var placeholder = LiveEdit.component.ComponentPlaceholder.fromComponent(LiveEdit.component.Type[component.getComponentType().getName().toUpperCase()]);
-            placeholder.getEl().insertAfterEl(component);
-            placeholder.init();
-            placeholder.showLoadingSpinner();
-            new PageComponentDuplicateEvent(component, placeholder).fire();
-            LiveEdit.component.Selection.handleSelect(placeholder.getHTMLElement());
+
+            var selectedItem = this.menu.selectedComponent;
+
+            if (api.ObjectHelper.iFrameSafeInstanceOf(selectedItem, PageComponentView)) {
+
+                var selectedPageComponent = <PageComponentView> selectedItem;
+
+                var placeholder = LiveEdit.component.ComponentPlaceholder.fromComponent(selectedPageComponent.getType());
+                placeholder.getEl().insertAfterEl(selectedPageComponent);
+                placeholder.init();
+                placeholder.showLoadingSpinner();
+                new PageComponentDuplicateEvent(selectedPageComponent, placeholder).fire();
+                LiveEdit.component.Selection.handleSelect(placeholder);
+            }
+            else {
+                throw new Error("Duplicating [" + api.util.getClassName(selectedItem) + "] is not supported");
+            }
         }
     }
 }

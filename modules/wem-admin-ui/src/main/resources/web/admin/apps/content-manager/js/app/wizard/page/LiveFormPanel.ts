@@ -67,6 +67,7 @@ module app.wizard.page {
     import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
     import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
     import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
+    import RegionEmptyEvent = api.liveedit.RegionEmptyEvent;
 
     export interface LiveFormPanelConfig {
 
@@ -318,11 +319,15 @@ module app.wizard.page {
         /**
          * Called by ContentWizardPanel when content is saved.
          */
-        contentSaved() {
+        contentSaved(): Q.Promise<void> {
 
             if (!this.pageSkipReload) {
                 // Reload page to show changes
-                this.liveEditPage.load(this.content).then(() => this.loadPageDescriptor());
+                return this.liveEditPage.load(this.content).then(() => this.loadPageDescriptor());
+            } else {
+                var deferred = Q.defer<void>();
+                deferred.resolve(null);
+                return deferred.promise;
             }
         }
 
@@ -380,10 +385,13 @@ module app.wizard.page {
 
         private saveAndReloadPage() {
             this.pageSkipReload = true;
-            this.contentWizardPanel.saveChanges().done(() => {
-                this.pageSkipReload = false;
-                this.liveEditPage.load(this.content);
-            });
+            this.contentWizardPanel.saveChanges().
+                then(() => {
+                    this.pageSkipReload = false;
+                    this.liveEditPage.load(this.content);
+                }).
+                catch((reason: any) => api.notify.showError(reason.toString())).
+                done();
         }
 
         private saveAndReloadOnlyPageComponent(componentPath: ComponentPath, itemView: ItemView) {
@@ -396,12 +404,14 @@ module app.wizard.page {
 
             this.pageSkipReload = true;
             this.contentWizardPanel.saveChanges().
-                done(() => {
+                then(() => {
                     this.pageSkipReload = false;
                     (<any>itemView).showLoadingSpinner();
 
                     this.liveEditPage.loadComponent(componentPath, itemView, this.content);
-                });
+                }).
+                catch((reason: any) => api.notify.showError(reason.toString())).
+                done();
         }
 
         updateFrameContainerSize(contextWindowPinned: boolean, contextWindowWidth?: number) {
@@ -569,6 +579,11 @@ module app.wizard.page {
                     execute();
 
                 this.saveAndReloadOnlyPageComponent(newPageComponent.getPath(), event.getItemView());
+            });
+
+            this.liveEditPage.onRegionEmpty((event: RegionEmptyEvent) => {
+
+                this.pageRegions.emptyRegion(event.getPath());
             });
         }
 

@@ -32,14 +32,7 @@ module api.content.page.part {
 
         constructor(source?: PartComponent) {
 
-            super();
-
-            if (source) {
-                this.name = source.getName();
-                this.descriptor = source.getDescriptor();
-                this.parent = source.getParent();
-                this.config = source.getConfig() ? source.getConfig().clone() : null;
-            }
+            super(source);
         }
 
         public fromJson(json: PartComponentJson, regionPath: RegionPath): PartComponentBuilder {

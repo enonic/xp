@@ -13,4 +13,5 @@ public interface IndexService
 
     public void delete( final EntityId entityId );
 
+    public long countDocuments( final Index index );
 }

@@ -1,16 +1,15 @@
 module api.liveedit {
 
-    import Event2 = api.event.Event2;
     import ComponentPath = api.content.page.ComponentPath;
-    import ItemView = api.liveedit.ItemView;
+    import PageComponentView = api.liveedit.PageComponentView;
 
-    export class PageComponentSelectEvent extends Event2 {
+    export class PageComponentSelectEvent extends api.event.Event2 {
 
         private path: ComponentPath;
 
-        private pageItemView: ItemView;
+        private pageItemView: PageComponentView;
 
-        constructor(path: ComponentPath, itemView: ItemView) {
+        constructor(path: ComponentPath, itemView: PageComponentView) {
             super();
             this.path = path;
             this.pageItemView = itemView;
@@ -20,7 +19,7 @@ module api.liveedit {
             return this.path;
         }
 
-        getItemView(): ItemView {
+        getItemView(): PageComponentView {
             return this.pageItemView;
         }
 
@@ -29,11 +28,11 @@ module api.liveedit {
         }
 
         static on(handler: (event: PageComponentSelectEvent) => void, contextWindow: Window = window) {
-            Event2.bind(api.util.getFullName(this), handler, contextWindow);
+            api.event.Event2.bind(api.util.getFullName(this), handler, contextWindow);
         }
 
         static un(handler?: (event: PageComponentSelectEvent) => void, contextWindow: Window = window) {
-            Event2.unbind(api.util.getFullName(this), handler, contextWindow);
+            api.event.Event2.unbind(api.util.getFullName(this), handler, contextWindow);
         }
     }
 }

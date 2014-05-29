@@ -6,7 +6,7 @@ module api.liveedit {
 
     export class SortableUpdateEvent extends Event2 {
 
-        private itemView: ItemView;
+        private pageComponentView: PageComponentView;
 
         private componentPath: ComponentPath;
 
@@ -14,12 +14,12 @@ module api.liveedit {
 
         private precedingComponent: ComponentPath;
 
-        constructor(itemView: ItemView) {
+        constructor(itemView: PageComponentView) {
             api.util.assert(itemView.getType().isPageComponentType(), "Expected itemView to be of type PageComponent");
 
             super();
 
-            this.itemView = itemView;
+            this.pageComponentView = itemView;
             this.componentPath = itemView.getComponentPath();
 
             var region = itemView.getParentRegion();
@@ -27,8 +27,8 @@ module api.liveedit {
             this.precedingComponent = itemView.getPrecedingComponentPath();
         }
 
-        getComponentView(): ItemView {
-            return this.itemView;
+        getComponentView(): PageComponentView {
+            return this.pageComponentView;
         }
 
         getComponentPath(): ComponentPath {

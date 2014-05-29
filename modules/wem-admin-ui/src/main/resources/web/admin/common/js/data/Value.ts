@@ -27,7 +27,8 @@ module api.data {
         }
 
         asRootDataSet(): RootDataSet {
-            api.util.assert(this.value instanceof RootDataSet, "Expected value to be a RootDataSet: " + api.util.getClassName(this.value));
+            api.util.assert(api.ObjectHelper.iFrameSafeInstanceOf(this.value, RootDataSet),
+                    "Expected value to be a RootDataSet: " + api.util.getClassName(this.value));
             return <RootDataSet>this.value;
         }
 

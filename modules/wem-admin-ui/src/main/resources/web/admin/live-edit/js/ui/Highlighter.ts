@@ -1,15 +1,14 @@
 module LiveEdit.ui {
 
+    import ItemView = api.liveedit.ItemView;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
-
-    // Uses
-    var $ = $liveEdit;
+    import PageComponentSelectComponentEvent = api.liveedit.PageComponentSelectComponentEvent;
 
     export class Highlighter extends LiveEdit.ui.Base {
 
-        private selectedComponent:LiveEdit.component.Component = null;
+        private selectedComponent: ItemView = null;
 
         constructor() {
             super();
@@ -17,48 +16,48 @@ module LiveEdit.ui {
             this.registerGlobalListeners();
         }
 
-        private registerGlobalListeners():void {
-            $(window).on('mouseOverComponent.liveEdit', (event, component)  => this.onMouseOverComponent(component));
-            $(window).on('selectComponent.liveEdit', (event, component)     => this.onSelectComponent(component));
+        private registerGlobalListeners(): void {
+            wemjq(window).on('mouseOverComponent.liveEdit', (event, component?: ItemView)  => this.onMouseOverComponent(component));
+            PageComponentSelectComponentEvent.on((event: PageComponentSelectComponentEvent) => this.onSelectComponent(event.getItemView()));
             PageComponentDeselectEvent.on(() => this.onDeselectComponent());
-            $(window).on('mouseOutComponent.liveEdit', ()                   => this.hide());
+            wemjq(window).on('mouseOutComponent.liveEdit', ()                   => this.hide());
             SortableStartEvent.on(() => this.hide());
             PageComponentRemoveEvent.on(() => this.hide());
-            $(window).on('editTextComponent.liveEdit', ()                   => this.hide());
-            $(window).on('resizeBrowserWindow.liveEdit', ()                 => this.handleWindowResize());
+            wemjq(window).on('editTextComponent.liveEdit', ()                   => this.hide());
+            wemjq(window).on('resizeBrowserWindow.liveEdit', ()                 => this.handleWindowResize());
 
             // The component should be re-selected after drag'n drop
-            $(window).on('sortstop.liveedit.component', (event, uiEvent, ui, wasSelectedOnDragStart) => {
+            wemjq(window).on('sortstop.liveedit.component', (event, uiEvent?, ui?, wasSelectedOnDragStart?) => {
                 if (wasSelectedOnDragStart) {
-                    var component = LiveEdit.component.Component.fromJQuery(ui.item);
-                    LiveEdit.component.Selection.handleSelect(component.getElement()[0]);
+                    var itemView = ItemView.fromJQuery(ui.item);
+                    LiveEdit.component.Selection.handleSelect(itemView);
                 }
             });
         }
 
-        private addView():void {
+        private addView(): void {
             // Needs to be a SVG element as the css has pointer-events:none
             // CSS pointer-events only works for SVG in IE
-            var html:string = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="live-edit-highlight-border" style="top:-5000px;left:-5000px">' +
-                              '    <rect width="150" height="150"/>' +
-                              '</svg>';
+            var html: string = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="live-edit-highlight-border" style="top:-5000px;left:-5000px">' +
+                               '    <rect width="150" height="150"/>' +
+                               '</svg>';
 
             this.createHtmlFromString(html);
-            this.appendTo($('body'));
+            this.appendTo(wemjq('body'));
         }
 
-        private onMouseOverComponent(component:LiveEdit.component.Component):void {
+        private onMouseOverComponent(component: ItemView): void {
             this.show();
             this.resizeToComponent(component);
             this.paintBorder(component);
             this.selectedComponent = component;
         }
 
-        private onSelectComponent(component:LiveEdit.component.Component):void {
+        private onSelectComponent(component: ItemView): void {
             this.selectedComponent = component;
 
             // Highlighter should not be shown when type page is selected
-            if (component.getComponentType().getType() == LiveEdit.component.Type.PAGE) {
+            if (component.getType().equals(api.liveedit.PageItemType.get())) {
                 this.hide();
                 return;
             }
@@ -68,19 +67,20 @@ module LiveEdit.ui {
             this.show();
         }
 
-        private onDeselectComponent():void {
+        private onDeselectComponent(): void {
+            this.hide();
             LiveEdit.component.Selection.removeSelectedAttribute();
             this.selectedComponent = null;
         }
 
-        private paintBorder(component:LiveEdit.component.Component):void {
-            var el:JQuery = this.getEl();
-            var style = component.getComponentType().getHighlighterStyle();
+        private paintBorder(component: ItemView): void {
+            var el: JQuery = this.getEl();
+            var style = component.getType().getConfig().getHighlighterStyle();
 
             el.css(style);
         }
 
-        private resizeToComponent(component:LiveEdit.component.Component):void {
+        private resizeToComponent(component: ItemView): void {
             var componentBoxModel = component.getElementDimensions();
             var w = Math.round(componentBoxModel.width),
                 h = Math.round(componentBoxModel.height),
@@ -100,15 +100,15 @@ module LiveEdit.ui {
             });
         }
 
-        private show():void {
+        private show(): void {
             this.getEl().show(null);
         }
 
-        private hide():void {
+        private hide(): void {
             this.getEl().hide(null);
         }
 
-        private handleWindowResize():void {
+        private handleWindowResize(): void {
             if (this.selectedComponent) {
                 this.resizeToComponent(this.selectedComponent);
                 this.paintBorder(this.selectedComponent);

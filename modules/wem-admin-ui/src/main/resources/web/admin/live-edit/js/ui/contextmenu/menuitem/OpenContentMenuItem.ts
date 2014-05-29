@@ -1,8 +1,5 @@
 module LiveEdit.ui.contextmenu.menuitem {
 
-    // Uses
-    var $ = $liveEdit;
-
     export class OpenContentMenuItem extends LiveEdit.ui.contextmenu.menuitem.BaseMenuItem {
 
         constructor(menu) {

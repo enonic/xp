@@ -1,15 +1,9 @@
 // require ExtJs as long as it is used for implementation
 ///<reference path='lib/ExtJs.d.ts' />
 
-///<reference path='Equitable.ts' />
-///<reference path='Cloneable.ts' />
-///<reference path='ObjectHelper.ts' />
-
-///<reference path='Name.ts' />
 
 ///<reference path='plugin/_module.ts' />
 ///<reference path='plugin/fileupload/_module.ts' />
-
 
 ///<reference path='lib/Mousetrap.d.ts' />
 ///<reference path='lib/jquery.d.ts' />
@@ -24,6 +18,10 @@
 ///<reference path='lib/crossroads.d.ts' />
 ///<reference path='lib/jquery.slimscroll.d.ts' />
 
+///<reference path='Equitable.ts' />
+///<reference path='Cloneable.ts' />
+///<reference path='ObjectHelper.ts' />
+///<reference path='Name.ts' />
 
 ///<reference path='util/_module.ts' />
 ///<reference path='util/loader/event/_module.ts' />

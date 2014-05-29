@@ -7,17 +7,17 @@ module api.liveedit {
 
     export class PageComponentDuplicateEvent extends Event2 {
 
-        private originItemView: ItemView;
+        private originItemView: PageComponentView;
 
-        private duplicationItemView: ItemView;
+        private duplicationItemView: PageComponentView;
 
-        constructor(originItemView: ItemView, duplicationItemView: ItemView) {
+        constructor(originItemView: PageComponentView, duplicationItemView: PageComponentView) {
             super();
             this.originItemView = originItemView;
             this.duplicationItemView = duplicationItemView;
         }
 
-        getItemView(): ItemView {
+        getItemView(): PageComponentView {
             return this.duplicationItemView;
         }
 

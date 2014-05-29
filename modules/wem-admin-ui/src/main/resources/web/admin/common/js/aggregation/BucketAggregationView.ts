@@ -83,7 +83,7 @@ module api.aggregation {
 
             this.bucketAggregation.getBuckets().forEach((bucket: api.aggregation.Bucket) => {
 
-                var wasSelected: boolean = (jQuery.inArray(bucket.getKey(), selectedBucketNames)) > -1;
+                var wasSelected: boolean = (wemjq.inArray(bucket.getKey(), selectedBucketNames)) > -1;
 
                 var bucketView: api.aggregation.BucketView = new api.aggregation.BucketView(bucket, this, wasSelected,
                     this.getDisplayNameForName(bucket.getKey()));

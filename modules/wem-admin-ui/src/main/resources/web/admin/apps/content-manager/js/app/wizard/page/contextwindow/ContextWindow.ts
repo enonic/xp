@@ -41,11 +41,7 @@ module app.wizard.page.contextwindow {
 
         private liveFormPanel: LiveFormPanel;
 
-        private pinButton: PinButton;
-
         private pinned: boolean;
-
-        private dynamicPinning: boolean;
 
         private splitter: api.dom.DivEl;
 
@@ -63,7 +59,6 @@ module app.wizard.page.contextwindow {
             super();
 
             this.pinned = true;
-            this.dynamicPinning = true;
             this.liveEditPage = config.liveEditPage;
             this.liveFormPanel = config.liveFormPanel;
             this.inspectionPanel = config.inspectionPanel;
@@ -99,9 +94,6 @@ module app.wizard.page.contextwindow {
             this.addItem("Insert", this.insertablesPanel);
             this.addItem("Settings", this.inspectionPanel);
             this.addItem("Emulator", this.emulatorPanel);
-
-            this.pinButton = new PinButton(this);
-            this.appendChild(this.pinButton);
 
             this.onShown(() => {
                 if (this.pinned) {
@@ -170,12 +162,12 @@ module app.wizard.page.contextwindow {
         }
 
         disable() {
-            this.addClass("hidden");
-            this.getEl().setRight("-290px");
+            this.getEl().addClass("hidden");
+            this.getEl().setRight(-this.getEl().getWidthWithBorder() + "px");
         }
 
         enable() {
-            this.removeClass("hidden");
+            this.getEl().removeClass("hidden");
             this.getEl().setRight("0px");
         }
 
@@ -211,10 +203,6 @@ module app.wizard.page.contextwindow {
             return this.pinned;
         }
 
-        setDynamicPinning(value: boolean) {
-            this.dynamicPinning = value;
-        }
-
         private isEnabled() {
             return !this.hasClass("hidden");
 
@@ -222,14 +210,12 @@ module app.wizard.page.contextwindow {
 
         private updateFrameSize() {
             this.liveFormPanel.updateFrameContainerSize((this.pinned && this.isEnabled()), this.actualWidth || this.getEl().getWidth());
-            if (this.dynamicPinning) {
-                var liveFormPanelWidth = this.liveFormPanel.getEl().getWidth();
 
-                var pinningRequired: boolean = liveFormPanelWidth > 1380 && (liveFormPanelWidth - this.actualWidth) > 960;
-                if (pinningRequired != this.isPinned()) {
-                    this.setPinned(pinningRequired);
-                    this.pinButton.setActive(pinningRequired);
-                }
+            var liveFormPanelWidth = this.liveFormPanel.getEl().getWidth(),
+                pinningRequired: boolean = liveFormPanelWidth > 1380 && (liveFormPanelWidth - this.actualWidth) > 960;
+
+            if (pinningRequired != this.isPinned()) {
+                this.setPinned(pinningRequired);
             }
         }
     }

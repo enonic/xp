@@ -1,8 +1,11 @@
 module api.liveedit.layout {
 
     import ItemType = api.liveedit.ItemType;
+    import ItemTypeConfigJson = api.liveedit.ItemTypeConfigJson;
+    import PageComponentView = api.liveedit.PageComponentView;
+    import PageComponentItemType = api.liveedit.PageComponentItemType;
 
-    export class LayoutItemType extends ItemType {
+    export class LayoutItemType extends PageComponentItemType {
 
         private static INSTANCE = new LayoutItemType();
 
@@ -11,11 +14,26 @@ module api.liveedit.layout {
         }
 
         constructor() {
-            super("layout");
+            super("layout", <ItemTypeConfigJson>{
+                cssSelector: '[data-live-edit-type=layout]',
+                draggable: true,
+                cursor: 'move',
+                iconCls: 'live-edit-font-icon-layout',
+                highlighterStyle: {
+                    stroke: 'rgba(255, 165, 0, 1)',
+                    strokeDasharray: '5 5',
+                    fill: 'rgba(100, 12, 36, 0)'
+                },
+                contextMenuConfig: ['parent', 'remove', 'clear', 'duplicate']
+            });
         }
 
         isPageComponentType(): boolean {
             return true
+        }
+
+        createView(element: HTMLElement, dummy: boolean = true): ItemView {
+            return new PageComponentView(this, element, dummy);
         }
     }
 

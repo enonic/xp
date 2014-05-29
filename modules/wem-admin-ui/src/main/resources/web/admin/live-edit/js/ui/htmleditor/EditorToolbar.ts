@@ -1,14 +1,12 @@
 module LiveEdit.ui {
 
+    import ItemView = api.liveedit.ItemView;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
 
-    // Uses
-    var $ = $liveEdit;
-
     export class EditorToolbar extends LiveEdit.ui.Base {
 
-        private selectedText:LiveEdit.component.Component = null;
+        private selectedText: ItemView = null;
 
         constructor() {
             super();
@@ -20,37 +18,37 @@ module LiveEdit.ui {
             this.registerGlobalListeners();
         }
 
-        private registerGlobalListeners():void {
-            $(window).on('editTextComponent.liveEdit', (event:JQueryEventObject, component) => this.show(component));
-            $(window).on('leaveTextComponent.liveEdit', () => this.hide());
+        private registerGlobalListeners(): void {
+            wemjq(window).on('editTextComponent.liveEdit', (event: JQueryEventObject, component?) => this.show(component));
+            wemjq(window).on('leaveTextComponent.liveEdit', () => this.hide());
             PageComponentRemoveEvent.on(() => this.hide());
             SortableStartEvent.on(() => this.hide());
         }
 
-        private addView():void {
-            var html:string = '<div class="live-edit-editor-toolbar live-edit-arrow-bottom" style="display: none">' +
-                '    <button live-edit-data-tag="paste" class="live-edit-editor-button"></button>' +
-                '    <button live-edit-data-tag="insertUnorderedList" class="live-edit-editor-button"></button>' +
-                '    <button live-edit-data-tag="insertOrderedList" class="live-edit-editor-button"></button>' +
-                '    <button live-edit-data-tag="link" class="live-edit-editor-button"></button>' +
-                '    <button live-edit-data-tag="cut" class="live-edit-editor-button"></button>' +
-                '    <button live-edit-data-tag="strikeThrough" class="live-edit-editor-button"></button>' +
-                '    <button live-edit-data-tag="bold" class="live-edit-editor-button"></button>' +
-                '    <button live-edit-data-tag="underline" class="live-edit-editor-button"></button>' +
-                '    <button live-edit-data-tag="italic" class="live-edit-editor-button"></button>' +
-                '    <button live-edit-data-tag="superscript" class="live-edit-editor-button"></button>' +
-                '    <button live-edit-data-tag="subscript" class="live-edit-editor-button"></button>' +
-                '    <button live-edit-data-tag="justifyLeft" class="live-edit-editor-button"></button>' +
-                '    <button live-edit-data-tag="justifyCenter" class="live-edit-editor-button"></button>' +
-                '    <button live-edit-data-tag="justifyRight" class="live-edit-editor-button"></button>' +
-                '    <button live-edit-data-tag="justifyFull" class="live-edit-editor-button"></button>' +
-                '</div>';
+        private addView(): void {
+            var html: string = '<div class="live-edit-editor-toolbar live-edit-arrow-bottom" style="display: none">' +
+                               '    <button live-edit-data-tag="paste" class="live-edit-editor-button"></button>' +
+                               '    <button live-edit-data-tag="insertUnorderedList" class="live-edit-editor-button"></button>' +
+                               '    <button live-edit-data-tag="insertOrderedList" class="live-edit-editor-button"></button>' +
+                               '    <button live-edit-data-tag="link" class="live-edit-editor-button"></button>' +
+                               '    <button live-edit-data-tag="cut" class="live-edit-editor-button"></button>' +
+                               '    <button live-edit-data-tag="strikeThrough" class="live-edit-editor-button"></button>' +
+                               '    <button live-edit-data-tag="bold" class="live-edit-editor-button"></button>' +
+                               '    <button live-edit-data-tag="underline" class="live-edit-editor-button"></button>' +
+                               '    <button live-edit-data-tag="italic" class="live-edit-editor-button"></button>' +
+                               '    <button live-edit-data-tag="superscript" class="live-edit-editor-button"></button>' +
+                               '    <button live-edit-data-tag="subscript" class="live-edit-editor-button"></button>' +
+                               '    <button live-edit-data-tag="justifyLeft" class="live-edit-editor-button"></button>' +
+                               '    <button live-edit-data-tag="justifyCenter" class="live-edit-editor-button"></button>' +
+                               '    <button live-edit-data-tag="justifyRight" class="live-edit-editor-button"></button>' +
+                               '    <button live-edit-data-tag="justifyFull" class="live-edit-editor-button"></button>' +
+                               '</div>';
 
             this.createHtmlFromString(html);
-            this.appendTo($('body'));
+            this.appendTo(wemjq('body'));
         }
 
-        private addEvents():void {
+        private addEvents(): void {
             this.getEl().on('click', (event) => {
 
                 // Make sure component is not deselected when the toolbar is clicked.
@@ -59,18 +57,18 @@ module LiveEdit.ui {
                 // Simple editor command implementation ;)
                 var tag = event.target["getAttribute"]('live-edit-data-tag');
                 if (tag) {
-                    $(window).trigger('editorToolbarButtonClick.liveEdit', [tag]);
+                    wemjq(window).trigger('editorToolbarButtonClick.liveEdit', [tag]);
                 }
             });
 
-            $(window).scroll(() => {
+            wemjq(window).scroll(() => {
                 if (this.selectedText) {
                     this.updatePosition();
                 }
             });
         }
 
-        private show(component:LiveEdit.component.Component):void {
+        private show(component: ItemView): void {
             this.selectedText = component;
 
             // For some reason. JQuery outerWidth returns a very incorrect number after show() is called.
@@ -80,19 +78,19 @@ module LiveEdit.ui {
             this.toggleArrowPosition(false);
         }
 
-        private hide():void {
+        private hide(): void {
             this.selectedText = null;
             this.getEl().hide(null);
         }
 
-        private updatePosition():void {
+        private updatePosition(): void {
             if (!this.selectedText) {
                 return;
             }
 
             var defaultPosition = this.getPositionRelativeToComponentTop();
 
-            var stick = $(window).scrollTop() >= this.selectedText.getElement().offset().top - 60;
+            var stick = wemjq(window).scrollTop() >= this.selectedText.getElement().offset().top - 60;
 
             var el = this.getEl();
 
@@ -110,12 +108,12 @@ module LiveEdit.ui {
                 });
             }
 
-            var placeArrowOnTop = $(window).scrollTop() >= defaultPosition.bottom - 10;
+            var placeArrowOnTop = wemjq(window).scrollTop() >= defaultPosition.bottom - 10;
 
             this.toggleArrowPosition(placeArrowOnTop);
         }
 
-        private toggleArrowPosition(showArrowAtTop:Boolean):void {
+        private toggleArrowPosition(showArrowAtTop: Boolean): void {
             if (showArrowAtTop) {
                 this.getEl().removeClass('live-edit-arrow-bottom').addClass('live-edit-arrow-top');
             } else {
@@ -123,8 +121,8 @@ module LiveEdit.ui {
             }
         }
 
-        private getPositionRelativeToComponentTop():any {
-            var dimensions:component.ElementDimensions = this.selectedText.getElementDimensions(),
+        private getPositionRelativeToComponentTop(): any {
+            var dimensions = this.selectedText.getElementDimensions(),
                 leftPos = dimensions.left + (dimensions.width / 2 - this.getEl().outerWidth() / 2),
                 topPos = dimensions.top - this.getEl().height() - 25;
 

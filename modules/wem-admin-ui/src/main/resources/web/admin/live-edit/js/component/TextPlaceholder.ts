@@ -2,12 +2,12 @@ module LiveEdit.component {
 
     import LayoutItemType = api.liveedit.layout.LayoutItemType;
 
+
     export class TextPlaceholder extends ComponentPlaceholder {
 
         private clickToEditLink: api.dom.AEl;
 
         constructor() {
-            this.setComponentType(new ComponentType(Type.TEXT));
             super(LayoutItemType.get());
 
             this.getEl().setData('live-edit-type', 'text');
@@ -30,28 +30,28 @@ module LiveEdit.component {
                 this.removeChild(this.clickToEditLink);
                 this.clickToEditLink = null;
 
-                $(this.getHTMLElement()).trigger('click');
+                wemjq(this.getHTMLElement()).trigger('click');
 
                 return false;
             });
             this.appendChild(this.clickToEditLink);
         }
 
-        onSelect() {
-            super.onSelect();
+        select() {
+            super.select();
 
             if (this.hasClass('live-edit-empty-component') && !this.clickToEditLink) {
                 this.addClickToEdit();
             }
         }
 
-        onDeselect() {
+        deselect() {
             if (this.clickToEditLink) {
                 this.removeChild(this.clickToEditLink);
                 this.clickToEditLink = null;
             }
 
-            super.onDeselect();
+            super.deselect();
         }
     }
 }

@@ -43,11 +43,15 @@ module api.data {
             this.dataById = newDataById;
         }
 
-        moveData(index: number, destinationIndex: number) {
-
-            api.util.ArrayHelper.moveElement(index, destinationIndex, this.dataArray);
-            this.dataArray.forEach((data: Data, index: number) => {
-                data.setArrayIndex(index);
+        moveDataByName(name: string, index: number, destinationIndex: number) {
+            this.dataArray.forEach((data: Data) => {
+                if (data.getName() == name) {
+                    if (data.getArrayIndex() == index) {
+                        data.setArrayIndex(destinationIndex);
+                    } else if (data.getArrayIndex() == destinationIndex) {
+                        data.setArrayIndex(index);
+                    }
+                }
             });
         }
 
@@ -152,10 +156,10 @@ module api.data {
 
             var matches: Property[] = [];
             this.getDataByName(name).forEach((data: Data) => {
-                if (name === data.getName() && data instanceof Property) {
+                if (name === data.getName() && api.ObjectHelper.iFrameSafeInstanceOf(data, Property)) {
                     matches.push(<Property>data);
                 }
-                else if (name === data.getName() && !(data instanceof Property)) {
+                else if (name === data.getName() && !api.ObjectHelper.iFrameSafeInstanceOf(data, Property)) {
                     throw new Error("Expected data of type Property with name '" + name + "', got: " + data);
                 }
             });
@@ -184,7 +188,7 @@ module api.data {
             var dataSets: DataSet[] = [];
             for (var i in this.dataById) {
                 var data: Data = this.dataById[i];
-                if (data instanceof DataSet) {
+                if (api.ObjectHelper.iFrameSafeInstanceOf(data, DataSet)) {
                     dataSets.push(data.toDataSet());
                 }
             }
@@ -195,10 +199,10 @@ module api.data {
 
             var matches: DataSet[] = [];
             this.getDataByName(name).forEach((data: Data) => {
-                if (name === data.getName() && data instanceof DataSet) {
+                if (name === data.getName() && api.ObjectHelper.iFrameSafeInstanceOf(data, DataSet)) {
                     matches.push(<DataSet>data);
                 }
-                else if (name === data.getName() && !(data instanceof DataSet)) {
+                else if (name === data.getName() && !api.ObjectHelper.iFrameSafeInstanceOf(data, DataSet)) {
                     throw new Error("Expected data of type DataSet with name '" + name + "', got: " + data);
                 }
             });

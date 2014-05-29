@@ -87,6 +87,14 @@ module api.content.page {
 
         config: api.data.RootDataSet;
 
+        constructor(source?: DescriptorBasedPageComponent) {
+            super(source);
+            if( source ) {
+                this.descriptor = source.getDescriptor();
+                this.config = source.getConfig().clone();
+            }
+        }
+
         public setDescriptor(value: DescriptorKey): PageComponentBuilder<DESCRIPTOR_BASED_COMPONENT> {
             this.descriptor = value;
             return this;

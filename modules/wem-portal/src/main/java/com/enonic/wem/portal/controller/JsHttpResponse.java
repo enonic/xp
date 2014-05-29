@@ -2,16 +2,17 @@ package com.enonic.wem.portal.controller;
 
 import java.util.Map;
 
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import com.google.common.collect.Maps;
 
 public final class JsHttpResponse
 {
-    private int status = Response.Status.OK.getStatusCode();
+    public final static int STATUS_OK = 200;
 
-    private String contentType = MediaType.TEXT_PLAIN;
+    public final static int STATUS_METHOD_NOT_ALLOWED = 405;
+
+    private int status = STATUS_OK;
+
+    private String contentType = "text/plain";
 
     private Object body;
 

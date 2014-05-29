@@ -11,22 +11,18 @@ interface ViewPortSize {
 
 module LiveEdit {
 
-    // Uses
-    var $ = $liveEdit;
-
     export class DomHelper {
 
 
         public static getDocumentSize():DocumentSize {
-            var $document = $(document);
             return {
-                width: $document.width(),
-                height: $document.height()
+                width: wemjq(document).width(),
+                height: wemjq(document).height()
             };
         }
 
         public static getViewPortSize():ViewPortSize {
-            var win:JQuery = $(window);
+            var win:JQuery = wemjq(window);
             return {
                 width: win.width(),
                 height: win.height()
@@ -34,7 +30,7 @@ module LiveEdit {
         }
 
         public static getDocumentScrollTop():number {
-            return $(document).scrollTop();
+            return wemjq(document).scrollTop();
         }
 
         public static supportsTouch():Boolean {

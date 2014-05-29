@@ -10,11 +10,6 @@ public abstract class InitializerTask
         this.order = order;
     }
 
-    public final int getOrder()
-    {
-        return this.order;
-    }
-
     public abstract void initialize()
         throws Exception;
 

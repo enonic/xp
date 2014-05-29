@@ -1,16 +1,14 @@
 module LiveEdit.component.mouseevent {
 
+    import RegionItemType = api.liveedit.RegionItemType;
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
     import SortableUpdateEvent = api.liveedit.SortableUpdateEvent;
-
-    // Uses
-    var $ = $liveEdit;
 
     export class Region extends LiveEdit.component.mouseevent.Base {
         constructor() {
             super();
 
-            this.componentCssSelectorFilter = LiveEdit.component.TypeConfiguration[LiveEdit.component.Type.REGION].cssSelector;
+            this.componentCssSelectorFilter = RegionItemType.get().getConfig().getCssSelector();
 
             // fixme: this does not belongs here.
             LiveEdit.PlaceholderCreator.renderEmptyRegionPlaceholders();
@@ -21,10 +19,10 @@ module LiveEdit.component.mouseevent {
             this.registerGlobalListeners();
         }
 
-        private registerGlobalListeners():void {
+        private registerGlobalListeners(): void {
 
             // fixme: this does not belongs here.
-            $(window).on('sortableOver.liveEdit', () => {
+            wemjq(window).on('sortableOver.liveEdit', () => {
                 LiveEdit.PlaceholderCreator.renderEmptyRegionPlaceholders();
             });
 

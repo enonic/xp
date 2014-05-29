@@ -7,7 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
@@ -17,6 +17,7 @@ import org.mockito.Mockito;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.google.inject.util.Providers;
+import com.sun.jersey.api.core.ExtendedUriInfo;
 import com.sun.jersey.api.core.HttpContext;
 import com.sun.jersey.api.core.HttpRequestContext;
 
@@ -47,7 +48,6 @@ import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.xml.XmlSerializers;
 import com.enonic.wem.core.web.servlet.ServletRequestHolder;
 import com.enonic.wem.portal.controller.JsControllerFactoryImpl;
-import com.enonic.wem.portal.controller.JsHttpRequest;
 import com.enonic.wem.portal.postprocess.PostProcessor;
 import com.enonic.wem.portal.script.compiler.ScriptCacheImpl;
 import com.enonic.wem.portal.script.compiler.ScriptCompilerImpl;
@@ -89,6 +89,10 @@ public class ContentResourceTest
         final HttpRequestContext requestContext = mock( HttpRequestContext.class );
         when( requestContext.getMethod() ).thenReturn( "method" );
 
+        final ExtendedUriInfo uriInfo = mock( ExtendedUriInfo.class );
+        final MultivaluedMap<String, String> queryParams = mock( MultivaluedMap.class );
+        when( uriInfo.getQueryParameters() ).thenReturn( queryParams );
+
         final ContentResource contentResource = new ContentResource();
         contentResource.contentService = mock( ContentService.class );
         contentResource.siteService = mock( SiteService.class );
@@ -119,25 +123,6 @@ public class ContentResourceTest
                 scriptRunner.setContextServiceBean( new ContextScriptBean() );
                 scriptRunner.setCompiler( new ScriptCompilerImpl( new ScriptCacheImpl() ) );
 
-                final HttpRequestContext httpRequestContext = mock( HttpRequestContext.class );
-
-                final JsHttpRequest jsHttpRequest = new JsHttpRequest( httpRequestContext )
-                {
-                    @Override
-                    public String getPath()
-                    {
-                        return "/path";
-                    }
-
-                    @Override
-                    public <T> T getEntity( final Class<T> tClass )
-                        throws WebApplicationException
-                    {
-                        throw new WebApplicationException();
-                    }
-                };
-
-                scriptRunner.property( "request", jsHttpRequest );
                 scriptRunner.property( "console", console );
 
                 return scriptRunner;
@@ -165,12 +150,13 @@ public class ContentResourceTest
         final ContentResource.Request req = new ContentResource.Request();
         req.contentSelector = "content";
         req.httpContext = mock( HttpContext.class );
+        when( req.httpContext.getUriInfo() ).thenReturn( uriInfo );
         when( req.httpContext.getRequest() ).thenReturn( requestContext );
 
         final Response response = contentResource.handleGet( req );
         assertEquals( 200, response.getStatus() );
 
-        assertEquals( "/path", console.line );
+        assertEquals( "something", console.line );
     }
 
     private Content createPage( final String id, final String name, final String contentTypeName )

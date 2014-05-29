@@ -15,7 +15,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.sun.jersey.api.NotFoundException;
+import com.sun.jersey.api.ConflictException;
 
 import com.enonic.wem.admin.json.content.AbstractContentListJson;
 import com.enonic.wem.admin.json.content.ContentIdJson;
@@ -35,6 +35,7 @@ import com.enonic.wem.admin.rest.resource.content.json.UpdateAttachmentsJson;
 import com.enonic.wem.admin.rest.resource.content.json.UpdateContentJson;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentNotFoundException;
@@ -53,6 +54,7 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.query.ContentQueryResult;
 import com.enonic.wem.api.data.DataJson;
+import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 
 import static com.enonic.wem.api.content.Content.editContent;
 
@@ -79,7 +81,7 @@ public class ContentResource
 
         if ( content == null )
         {
-            throw new NotFoundException( String.format( "Content [%s] was not found", idParam ) );
+            throw new NotFoundWebException( String.format( "Content [%s] was not found", idParam ) );
         }
         else if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
         {
@@ -104,7 +106,7 @@ public class ContentResource
 
         if ( content == null )
         {
-            throw new NotFoundException( String.format( "Content [%s] was not found", pathParam ) );
+            throw new NotFoundWebException( String.format( "Content [%s] was not found", pathParam ) );
         }
         else if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
         {
@@ -311,14 +313,20 @@ public class ContentResource
             return new ContentJson( updatedContent );
         }
 
-        final RenameContentParams renameParams = new RenameContentParams().
-            contentId( json.getContentId() ).
-            newName( json.getContentName() );
-        final Content renamedContent = contentService.rename( renameParams );
+        try
+        {
+            final RenameContentParams renameParams = new RenameContentParams().
+                contentId( json.getContentId() ).
+                newName( json.getContentName() );
 
-        return new ContentJson( renamedContent );
+            final Content renamedContent = contentService.rename( renameParams );
+            return new ContentJson( renamedContent );
+        }
+        catch ( ContentAlreadyExistException e )
+        {
+            throw new ConflictException( String.format( "Content with path [%s] already exists", e.getContentPath() ) );
+        }
     }
-
 
     private ContentData parseContentData( final List<DataJson> dataJsonList )
     {

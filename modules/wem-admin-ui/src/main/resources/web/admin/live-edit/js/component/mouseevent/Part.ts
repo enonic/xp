@@ -1,13 +1,12 @@
 module LiveEdit.component.mouseevent {
 
-    // Uses
-    var $ = $liveEdit;
+    import PartItemType = api.liveedit.part.PartItemType;
 
     export class Part extends LiveEdit.component.mouseevent.Base {
         constructor() {
             super();
 
-            this.componentCssSelectorFilter = LiveEdit.component.TypeConfiguration[LiveEdit.component.Type.PART].cssSelector;
+            this.componentCssSelectorFilter = PartItemType.get().getConfig().getCssSelector();
 
             this.renderEmptyPlaceholders();
             this.attachMouseOverEvent();
@@ -15,27 +14,27 @@ module LiveEdit.component.mouseevent {
             this.attachClickEvent();
         }
 
-        private renderEmptyPlaceholders():void {
+        private renderEmptyPlaceholders(): void {
             var parts = this.getAll(),
-                part:JQuery;
+                part: JQuery;
             parts.each((i) => {
-                part = $(parts[i]);
+                part = wemjq(parts[i]);
                 if (this.isPartEmpty(part)) {
                     this.appendEmptyPlaceholder(part);
                 }
             });
         }
 
-        private appendEmptyPlaceholder(part:JQuery):void {
-            var placeholder:JQuery = $('<div/>', {
+        private appendEmptyPlaceholder(part: JQuery): void {
+            var placeholder: JQuery = wemjq('<div/>', {
                 'class': 'live-edit-empty-part-placeholder',
                 'html': 'Empty Part'
             });
             part.append(placeholder);
         }
 
-        private isPartEmpty(part:JQuery):Boolean {
-            return $(part).children().length === 0;
+        private isPartEmpty(part: JQuery): Boolean {
+            return wemjq(part).children().length === 0;
         }
 
     }

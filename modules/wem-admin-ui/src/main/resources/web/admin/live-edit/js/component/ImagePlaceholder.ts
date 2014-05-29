@@ -4,6 +4,7 @@ module LiveEdit.component {
     import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
     import ImageComponentSetImageEvent = api.liveedit.image.ImageComponentSetImageEvent
     import ImageItemType = api.liveedit.image.ImageItemType;
+    import PageItemType = api.liveedit.PageItemType;
 
     export class ImagePlaceholder extends ComponentPlaceholder {
 
@@ -11,13 +12,14 @@ module LiveEdit.component {
         private uploadButton: api.ui.Button;
 
         constructor() {
-            this.setComponentType(new ComponentType(Type.IMAGE));
             super(ImageItemType.get());
 
-            $(this.getHTMLElement()).on('click', 'input', (e) => {
-                $(e.currentTarget).focus();
+            wemjq(this.getHTMLElement()).on('click', 'input', (e) => {
+                wemjq(e.currentTarget).focus();
                 e.stopPropagation();
             });
+
+            console.log("** USING jquery version" + wemjq.fn.jquery);
 
             var imageUploadHandler = (event: ImageUploadedEvent) => this.createImageContent(event.getUploadedItem());
             ImageUploadedEvent.on(imageUploadHandler);
@@ -83,7 +85,7 @@ module LiveEdit.component {
 
                     var createContentRequest = new api.content.CreateContentRequest().
                         setDraft(false).
-                        setParent(content.getPath()).
+                        setParent(PageItemType.get().getContent().getPath()).
                         setName(api.content.ContentName.fromString(api.content.ContentName.ensureValidContentName(attachmentName.toString()))).
                         setContentType(contentType.getContentTypeName()).
                         setDisplayName(attachmentName.toString()).
@@ -113,15 +115,17 @@ module LiveEdit.component {
                 }).done();
         }
 
-        onSelect() {
-            super.onSelect();
+        select() {
+            super.select();
+
             this.comboBox.show();
             this.uploadButton.show();
             this.comboBox.giveFocus();
         }
 
-        onDeselect() {
-            super.onDeselect();
+        deselect() {
+            super.deselect();
+
             this.uploadButton.hide();
             this.comboBox.hide();
         }

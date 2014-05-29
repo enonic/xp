@@ -6,26 +6,45 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexService;
+import com.enonic.wem.core.lifecycle.LifecycleBean;
+import com.enonic.wem.core.lifecycle.RunLevel;
 
 final class StartupInitializerImpl
+    extends LifecycleBean
     implements StartupInitializer
 {
-    private final List<InitializerTask> tasks;
-
-    private final IndexService indexService;
+    private final static Logger LOG = LoggerFactory.getLogger( StartupInitializerImpl.class );
 
     @Inject
-    public StartupInitializerImpl( final IndexService indexService, final Set<InitializerTask> tasks )
-    {
-        this.indexService = indexService;
+    protected Set<InitializerTask> tasks;
 
-        final List<InitializerTask> sortedTaskList = Lists.newArrayList( tasks );
-        Collections.sort( sortedTaskList );
-        this.tasks = sortedTaskList;
+    @Inject
+    protected IndexService indexService;
+
+    public StartupInitializerImpl()
+    {
+        super( RunLevel.L5 );
+    }
+
+    @Override
+    protected void doStart()
+        throws Exception
+    {
+        initialize( false );
+    }
+
+    @Override
+    protected void doStop()
+        throws Exception
+    {
+        // Do nothing
     }
 
     public void initialize( final boolean reinit )
@@ -34,21 +53,51 @@ final class StartupInitializerImpl
         if ( reinit )
         {
             cleanupOldData();
+            doInitialize();
         }
-
-        for ( final InitializerTask task : this.tasks )
+        else if ( !isInitialized() )
         {
-            task.initialize();
+            doInitialize();
+        }
+    }
+
+    protected void doInitialize()
+        throws Exception
+    {
+        LOG.info( "Running all initializers..." );
+
+        final List<InitializerTask> sortedTaskList = Lists.newArrayList( this.tasks );
+        Collections.sort( sortedTaskList );
+
+        for ( final InitializerTask task : sortedTaskList )
+        {
+            doInitialize( task );
         }
     }
 
     private void cleanupOldData()
     {
+        LOG.info( "Recreating indexes..." );
         this.indexService.deleteIndex( Index.NODB );
         this.indexService.createIndex( Index.NODB );
         this.indexService.deleteIndex( Index.STORE );
         this.indexService.createIndex( Index.STORE );
         this.indexService.deleteIndex( Index.WORKSPACE );
         this.indexService.createIndex( Index.WORKSPACE );
+    }
+
+    private void doInitialize( final InitializerTask task )
+        throws Exception
+    {
+        long tm = System.currentTimeMillis();
+
+        LOG.info( "Running " + task.getClass().getSimpleName() + " initializer..." );
+        task.initialize();
+        LOG.info( "Executed " + task.getClass().getSimpleName() + " initializer in " + ( System.currentTimeMillis() - tm ) + " ms" );
+    }
+
+    private boolean isInitialized()
+    {
+        return this.indexService.countDocuments( Index.NODB ) > 0;
     }
 }

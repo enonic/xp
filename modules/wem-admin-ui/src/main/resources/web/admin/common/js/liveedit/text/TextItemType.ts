@@ -1,8 +1,9 @@
 module api.liveedit.text {
 
-    import ItemType = api.liveedit.ItemType;
+    import ItemTypeConfigJson = api.liveedit.ItemTypeConfigJson;
+    import PageComponentItemType = api.liveedit.PageComponentItemType;
 
-    export class TextItemType extends ItemType {
+    export class TextItemType extends PageComponentItemType {
 
         private static INSTANCE = new TextItemType();
 
@@ -11,7 +12,22 @@ module api.liveedit.text {
         }
 
         constructor() {
-            super("text");
+            super("text", <ItemTypeConfigJson>{
+                cssSelector: '[data-live-edit-type=text]',
+                draggable: true,
+                cursor: 'move',
+                iconCls: 'live-edit-font-icon-text',
+                highlighterStyle: {
+                    stroke: 'rgba(68, 68, 68, 1)',
+                    strokeDasharray: '5 5',
+                    fill: 'rgba(255, 255, 255, 0)'
+                },
+                contextMenuConfig: ['parent', 'edit', 'remove', 'clear', 'duplicate']
+            });
+        }
+
+        createView(element: HTMLElement, dummy: boolean = true): TextView {
+            return new TextView(element);
         }
 
         isPageComponentType(): boolean {

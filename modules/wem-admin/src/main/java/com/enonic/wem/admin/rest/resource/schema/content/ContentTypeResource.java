@@ -11,8 +11,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
-import com.sun.jersey.api.NotFoundException;
-
 import com.enonic.wem.admin.json.icon.IconJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeConfigJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeJson;
@@ -41,6 +39,7 @@ import com.enonic.wem.api.schema.content.editor.ContentTypeEditor;
 import com.enonic.wem.api.schema.content.validator.ContentTypeValidationResult;
 import com.enonic.wem.api.support.serializer.XmlParsingException;
 import com.enonic.wem.api.xml.XmlSerializers;
+import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 
 @Path("schema/content")
 @Produces("application/json")
@@ -62,7 +61,7 @@ public class ContentTypeResource
         final ContentTypes contentTypes = contentTypeService.getByNames( getContentTypes );
         if ( contentTypes.isEmpty() )
         {
-            throw new NotFoundException( String.format( "ContentTypes [%s] not found", name ) );
+            throw new NotFoundWebException( String.format( "ContentTypes [%s] not found", name ) );
         }
         return new ContentTypeJson( contentTypes.first() );
     }
@@ -80,7 +79,7 @@ public class ContentTypeResource
 
         if ( contentTypes.isEmpty() )
         {
-            throw new NotFoundException( String.format( "ContentTypes [%s] not found", name ) );
+            throw new NotFoundWebException( String.format( "ContentTypes [%s] not found", name ) );
         }
 
         return new ContentTypeConfigJson( contentTypes.first() );

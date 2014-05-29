@@ -1,10 +1,9 @@
 module LiveEdit.ui.contextmenu.menuitem {
 
     import ComponentPath = api.content.page.ComponentPath;
+    import ItemView = api.liveedit.ItemView;
+    import PageComponentView = api.liveedit.PageComponentView;
     import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
-
-    // Uses
-    var $ = $liveEdit;
 
     export class EmptyMenuItem extends LiveEdit.ui.contextmenu.menuitem.BaseMenuItem {
 
@@ -22,21 +21,29 @@ module LiveEdit.ui.contextmenu.menuitem {
         }
 
         private onEmptyComponent() {
-            var selectedComponent = this.menu.selectedComponent;
-            var componentEl: JQuery = selectedComponent.getElement();
-            var component = LiveEdit.component.Component.fromJQuery(componentEl, false);
 
-            LiveEdit.component.Selection.deselect();
-            new PageComponentResetEvent(selectedComponent.getComponentPath()).fire();
+            var selectedItem = this.menu.selectedComponent;
+            if (api.ObjectHelper.iFrameSafeInstanceOf(selectedItem, PageComponentView)) {
 
-            var type = selectedComponent.getComponentType().getType();
-            var emptyComponent = LiveEdit.component.ComponentPlaceholder.fromComponent(type);
-            emptyComponent.setComponentPath(component.getComponentPath());
+                var selectedPageComponent = <PageComponentView> selectedItem;
 
-            componentEl.replaceWith(emptyComponent.getHTMLElement());
-            emptyComponent.init();
+                var componentEl: JQuery = selectedPageComponent.getElement();
+                var component = PageComponentView.fromJQuery(componentEl, false);
 
-            LiveEdit.component.Selection.handleSelect(emptyComponent.getElement()[0]);
+                selectedPageComponent.deselect();
+                new PageComponentResetEvent(selectedPageComponent.getComponentPath()).fire();
+
+                var emptyComponent = LiveEdit.component.ComponentPlaceholder.fromComponent(selectedPageComponent.getType());
+                emptyComponent.setComponentPath(component.getComponentPath());
+
+                componentEl.replaceWith(emptyComponent.getHTMLElement());
+                emptyComponent.init();
+
+                LiveEdit.component.Selection.handleSelect(emptyComponent);
+            }
+            else {
+                throw new Error("Emptying [" + api.util.getClassName(selectedItem) + "] is not supported");
+            }
         }
     }
 }

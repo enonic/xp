@@ -1,49 +1,45 @@
 package com.enonic.wem.portal.controller;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.PathSegment;
-import javax.ws.rs.core.UriBuilder;
-
-import com.sun.jersey.api.core.HttpRequestContext;
-import com.sun.jersey.api.representation.Form;
-import com.sun.jersey.core.header.QualitySourceMediaType;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 import com.enonic.wem.api.rendering.RenderingMode;
 
-public class JsHttpRequest
+public final class JsHttpRequest
 {
-    private final HttpRequestContext raw;
+    private String method;
 
-    private final MultivaluedMap<String, String> queryParameters;
+    private final Multimap<String, String> params;
 
     private RenderingMode mode;
 
-    public JsHttpRequest( final HttpRequestContext raw )
+    public JsHttpRequest()
     {
-        this.raw = raw;
-        this.queryParameters = raw.getQueryParameters();
+        this.mode = RenderingMode.LIVE;
+        this.params = HashMultimap.create();
     }
 
     public String getMethod()
     {
-        return this.raw.getMethod();
+        return this.method;
     }
 
-    public MultivaluedMap<String, String> getParams()
+    public Multimap<String, String> getParams()
     {
-        return queryParameters;
+        return this.params;
     }
 
     public RenderingMode getMode()
     {
-        return mode;
+        return this.mode;
+    }
+
+    public void setMethod( final String method )
+    {
+        this.method = method;
     }
 
     public void setMode( final RenderingMode mode )
@@ -51,102 +47,26 @@ public class JsHttpRequest
         this.mode = mode;
     }
 
-
-    public URI getBaseUri()
+    public void setMode( final String mode )
     {
-        return this.raw.getBaseUri();
+        setMode( RenderingMode.from( mode, RenderingMode.LIVE ) );
     }
 
-    public UriBuilder getBaseUriBuilder()
+    public void addParam( final String name, final String value )
     {
-        return this.raw.getBaseUriBuilder();
+        this.params.put( name, value );
     }
 
-    public URI getRequestUri()
+    public void addParams( final Multimap<String, String> params )
     {
-        return this.raw.getRequestUri();
+        this.params.putAll( params );
     }
 
-    public UriBuilder getRequestUriBuilder()
+    public void addParams( final Map<String, List<String>> params )
     {
-        return this.raw.getRequestUriBuilder();
+        for ( final Map.Entry<String, List<String>> entry : params.entrySet() )
+        {
+            this.params.putAll( entry.getKey(), entry.getValue() );
+        }
     }
-
-    public URI getAbsolutePath()
-    {
-        return this.raw.getAbsolutePath();
-    }
-
-    public UriBuilder getAbsolutePathBuilder()
-    {
-        return this.raw.getAbsolutePathBuilder();
-    }
-
-    public String getPath()
-    {
-        return this.raw.getPath();
-    }
-
-    public String getPath( boolean decode )
-    {
-        return this.raw.getPath( decode );
-    }
-
-    public List<PathSegment> getPathSegments()
-    {
-        return this.raw.getPathSegments();
-    }
-
-    public List<PathSegment> getPathSegments( boolean decode )
-    {
-        return this.raw.getPathSegments( decode );
-    }
-
-    public MultivaluedMap<String, String> getQueryParameters()
-    {
-        return this.raw.getQueryParameters();
-    }
-
-    public MultivaluedMap<String, String> getQueryParameters( boolean decode )
-    {
-        return this.raw.getQueryParameters( decode );
-    }
-
-    public String getHeaderValue( String name )
-    {
-        return this.raw.getHeaderValue( name );
-    }
-
-    public MediaType getAcceptableMediaType( List<MediaType> mediaTypes )
-    {
-        return this.raw.getAcceptableMediaType( mediaTypes );
-    }
-
-    public List<MediaType> getAcceptableMediaTypes( List<QualitySourceMediaType> qualitySourceMediaTypes )
-    {
-        return this.raw.getAcceptableMediaTypes( qualitySourceMediaTypes );
-    }
-
-    public MultivaluedMap<String, String> getCookieNameValueMap()
-    {
-        return this.raw.getCookieNameValueMap();
-    }
-
-    public <T> T getEntity( Class<T> tClass )
-        throws WebApplicationException
-    {
-        return this.raw.getEntity( tClass );
-    }
-
-    public <T> T getEntity( Class<T> tClass, Type type, Annotation[] annotations )
-        throws WebApplicationException
-    {
-        return this.raw.getEntity( tClass, type, annotations );
-    }
-
-    public Form getFormParameters()
-    {
-        return this.raw.getFormParameters();
-    }
-
 }

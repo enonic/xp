@@ -1,13 +1,12 @@
 module LiveEdit.component.mouseevent {
 
-    // Uses
-    var $ = $liveEdit;
+    import LayoutItemType = api.liveedit.layout.LayoutItemType;
 
     export class Layout extends LiveEdit.component.mouseevent.Base {
         constructor() {
             super();
 
-            this.componentCssSelectorFilter = LiveEdit.component.TypeConfiguration[LiveEdit.component.Type.LAYOUT].cssSelector;
+            this.componentCssSelectorFilter = LayoutItemType.get().getConfig().getCssSelector();
 
             this.attachMouseOverEvent();
             this.attachMouseOutEvent();

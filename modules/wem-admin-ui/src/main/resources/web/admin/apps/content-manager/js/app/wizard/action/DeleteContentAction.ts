@@ -3,7 +3,7 @@ module app.wizard.action {
     export class DeleteContentAction extends api.ui.Action {
 
         constructor(wizardPanel: api.app.wizard.WizardPanel<api.content.Content>) {
-            super("Delete", "mod+del");
+            super("Delete", "mod+del", true);
             this.onExecuted(() => {
                 api.ui.dialog.ConfirmationDialog.get()
                     .setQuestion("Are you sure you want to delete this content?")

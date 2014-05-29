@@ -28,17 +28,17 @@ module app.wizard.page.contextwindow {
             this.getData();
 
             // Using jQuery since grid.setOnClick fires event twice, bug in slickgrid
-            jQuery(this.getHTMLElement()).on("click", ".grid-row", (event: JQueryEventObject) => {
+            wemjq(this.getHTMLElement()).on("click", ".grid-row", (event: JQueryEventObject) => {
 
-                var width = jQuery(event.currentTarget).children('div').data("width");
-                var height = jQuery(event.currentTarget).children('div').data("height");
-                var type = jQuery(event.currentTarget).children('div').data("device.type");
+                var width = wemjq(event.currentTarget).children('div').data("width");
+                var height = wemjq(event.currentTarget).children('div').data("height");
+                var type = wemjq(event.currentTarget).children('div').data("device.type");
 
                 this.liveEditPage.setWidth(width);
                 this.liveEditPage.setHeight(height);
             });
 
-            jQuery(this.getHTMLElement()).on("click", ".rotate", (event: JQueryEventObject) => {
+            wemjq(this.getHTMLElement()).on("click", ".rotate", (event: JQueryEventObject) => {
 
                 event.stopPropagation();
 
@@ -48,7 +48,7 @@ module app.wizard.page.contextwindow {
         }
 
         private getData(): void {
-            jQuery.ajax({
+            wemjq.ajax({
                 url: api.util.getAdminUri("apps/content-manager/js/data/context-window/devices.json"),
                 success: (data: any, textStatus: string, jqXHR: JQueryXHR) => {
                     this.dataView.setItems(EmulatorGrid.toSlickData(data));

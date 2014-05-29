@@ -1,28 +1,39 @@
 module api.liveedit {
 
-    import PageComponentType = api.content.page.PageComponentType;
-
     export class ItemType {
 
         private static shortNameToInstance: {[shortName: string]: ItemType} = {};
 
         private shortName: string;
 
-        constructor(shortName: string) {
+        private config: ItemTypeConfig;
+
+        constructor(shortName: string, config: ItemTypeConfigJson) {
             ItemType.shortNameToInstance[shortName] = this;
             this.shortName = shortName;
+            this.config = new ItemTypeConfig(config);
         }
 
         getShortName(): string {
             return this.shortName;
         }
 
+        getConfig(): ItemTypeConfig {
+            return this.config;
+        }
+
+
         isPageComponentType(): boolean {
             return false
         }
 
-        toPageComponentType(): PageComponentType {
-            return PageComponentType.byShortName(this.shortName);
+        toPageComponentType(): api.content.page.PageComponentType {
+            api.util.assert(this.isPageComponentType(), "Not support when ItemType is not a PageComponentType");
+            return api.content.page.PageComponentType.byShortName(this.shortName);
+        }
+
+        createView(element: HTMLElement, dummy: boolean = true): ItemView {
+            throw new Error("Must be implemented by inheritors");
         }
 
         equals(o: api.Equitable): boolean {
@@ -40,8 +51,21 @@ module api.liveedit {
             return true;
         }
 
+        static getDraggables(): ItemType[] {
+            var draggables: ItemType[] = [];
+            for (var shortName in  ItemType.shortNameToInstance) {
+                var itemType = ItemType.shortNameToInstance[shortName];
+                if (itemType.getConfig().isDraggable()) {
+                    draggables.push(itemType);
+                }
+            }
+            return draggables;
+        }
+
         static byShortName(shortName: string): ItemType {
-            return ItemType.shortNameToInstance[shortName];
+            var itemType = ItemType.shortNameToInstance[shortName];
+            api.util.assertNotNull(itemType, "Unknown ItemType: " + shortName);
+            return  itemType;
         }
 
         static fromJQuery(element: JQuery): ItemType {

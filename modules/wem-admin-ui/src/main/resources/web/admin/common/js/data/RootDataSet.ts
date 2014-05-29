@@ -32,7 +32,7 @@ module api.data {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof RootDataSet)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, RootDataSet)) {
                 return false;
             }
 

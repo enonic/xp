@@ -14,13 +14,13 @@ module api.content {
         }
 
         toUnnamed(): ContentUnnamed {
-            api.util.assert(this instanceof ContentUnnamed, "this is not a ContentUnnamed");
+            api.util.assert(api.ObjectHelper.iFrameSafeInstanceOf(this, ContentUnnamed), "this is not a ContentUnnamed");
             return <ContentUnnamed>this;
         }
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof ContentName)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ContentName)) {
                 return false;
             }
 

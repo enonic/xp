@@ -10,7 +10,7 @@ import com.enonic.wem.api.entity.Workspace;
 
 public interface NodeDao
 {
-    public Node create( CreateNodeArguments createNodeArguments );
+    public Node create( CreateNodeArguments createNodeArguments, Workspace workspace );
 
     public Node update( UpdateNodeArgs updateNodeArguments, Workspace workspace );
 

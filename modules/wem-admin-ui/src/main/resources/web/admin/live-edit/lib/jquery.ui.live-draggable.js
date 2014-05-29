@@ -7,4 +7,4 @@
         });
         return this;
     };
-}(jQuery));
+}(wemjq));
