@@ -1,12 +1,11 @@
 package com.enonic.wem.api.data.type;
 
-import org.joda.time.DateTime;
-import org.joda.time.Instant;
-import org.joda.time.LocalDate;
-import org.joda.time.base.BaseDateTime;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.DateTimeFormatterBuilder;
-import org.joda.time.format.ISODateTimeFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.RootDataSet;
@@ -16,13 +15,18 @@ import com.enonic.wem.api.util.GeoPoint;
 
 final class JavaTypeConverters
 {
-    private final static DateTimeFormatter LOCAL_DATE_FORMATTER = new DateTimeFormatterBuilder().
-        appendYear( 4, 4 ).appendLiteral( "-" ).appendMonthOfYear( 2 ).appendLiteral( "-" ).appendDayOfMonth( 2 ).toFormatter();
 
-    private final static DateTimeFormatter DATE_TIME_FORMATTER = new DateTimeFormatterBuilder().
-        appendYear( 4, 4 ).appendLiteral( "-" ).appendMonthOfYear( 2 ).appendLiteral( "-" ).appendDayOfMonth( 2 ).
-        appendLiteral( "T" ).appendHourOfDay( 2 ).appendLiteral( ":" ).appendMinuteOfHour( 2 ).appendLiteral( ":" ).appendSecondOfMinute(
-        2 ).toFormatter();
+    private final static DateTimeFormatter LOCAL_DATE_FORMATTER =
+        new java.time.format.DateTimeFormatterBuilder().appendValue( ChronoField.YEAR, 4 ).appendLiteral( '-' ).appendValue(
+            ChronoField.MONTH_OF_YEAR, 2 ).appendLiteral( '-' ).appendValue( ChronoField.DAY_OF_MONTH, 2 ).toFormatter();
+
+
+    private final static java.time.format.DateTimeFormatter LOCAL_DATE_TIME_FORMATTER =
+        new java.time.format.DateTimeFormatterBuilder().appendValue( ChronoField.YEAR, 4 ).appendLiteral( '-' ).appendValue(
+            ChronoField.MONTH_OF_YEAR, 2 ).appendLiteral( '-' ).appendValue( ChronoField.DAY_OF_MONTH, 2 ).appendLiteral( "T" ).appendValue(
+            ChronoField.CLOCK_HOUR_OF_DAY, 2 ).appendLiteral( ":" ).appendValue( ChronoField.MINUTE_OF_HOUR, 2 ).appendLiteral(
+            ":" ).appendValue( ChronoField.SECOND_OF_MINUTE, 2 ).toFormatter();
+
 
     private final static RootDataSetJsonSerializer DATA_SERIALIZER = new RootDataSetJsonSerializer();
 
@@ -52,13 +56,13 @@ final class JavaTypeConverters
         {
             return (String) value;
         }
-        else if ( value instanceof DateTime )
+        else if ( value instanceof LocalDateTime )
         {
-            return DATE_TIME_FORMATTER.print( (DateTime) value );
+            return ( (LocalDateTime) value ).format( LOCAL_DATE_TIME_FORMATTER );
         }
         else if ( value instanceof LocalDate )
         {
-            return LOCAL_DATE_FORMATTER.print( (LocalDate) value );
+            return ( (LocalDate) value ).format( LOCAL_DATE_FORMATTER );
         }
         else if ( value instanceof RootDataSet )
         {
@@ -166,13 +170,10 @@ final class JavaTypeConverters
 
     private static Instant convertToInstant( final Object value )
     {
-        if ( value instanceof BaseDateTime )
-        {
-            return ( (BaseDateTime) value ).toInstant();
-        }
         if ( value instanceof LocalDate )
         {
-            return ( (LocalDate) value ).toDateTimeAtStartOfDay().toInstant();
+            return ( (LocalDate) value ).atStartOfDay().toInstant( ZoneOffset.UTC );
+
         }
         if ( value instanceof Instant )
         {
@@ -180,7 +181,7 @@ final class JavaTypeConverters
         }
         else if ( value instanceof String )
         {
-            return ISODateTimeFormat.dateTimeParser().withZoneUTC().parseDateTime( (String) value ).toInstant();
+            return Instant.parse( (String) value );
         }
         else
         {
@@ -190,17 +191,23 @@ final class JavaTypeConverters
 
     private static LocalDate convertToLocalDate( final Object value )
     {
+        if ( value instanceof Instant )
+        {
+            return LocalDateTime.ofInstant( (Instant) value, ZoneOffset.UTC ).toLocalDate();
+        }
         if ( value instanceof LocalDate )
         {
             return (LocalDate) value;
         }
-        if ( value instanceof DateTime )
+        if ( value instanceof LocalDateTime )
         {
-            return new LocalDate( value );
+            return LocalDate.of( ( (LocalDateTime) value ).getYear(), ( (LocalDateTime) value ).getMonth(),
+                                 ( (LocalDateTime) value ).getDayOfMonth() );
         }
         else if ( value instanceof String )
         {
-            return LOCAL_DATE_FORMATTER.parseLocalDate( (String) value );
+            return LocalDate.parse( (String) value, LOCAL_DATE_FORMATTER );
+
         }
         else
         {

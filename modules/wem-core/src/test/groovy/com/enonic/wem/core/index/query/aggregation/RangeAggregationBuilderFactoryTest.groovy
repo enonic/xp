@@ -10,15 +10,18 @@ import org.elasticsearch.common.xcontent.XContentFactory
 import org.elasticsearch.search.aggregations.AggregationBuilder
 import org.elasticsearch.search.aggregations.bucket.range.RangeBuilder
 import org.elasticsearch.search.aggregations.bucket.range.date.DateRangeBuilder
-import org.joda.time.DateTime
+
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 class RangeAggregationBuilderFactoryTest
     extends BaseTestBuilderFactory
 {
     def "date range aggregation"()
     {
-        def DateTime past = new DateTime( 1975, 8, 1, 12, 04 )
-        def DateTime future = new DateTime( 2055, 01, 01, 12, 00 )
+        def Instant past = LocalDateTime.of( 1975, 8, 1, 12, 04 ).toInstant( ZoneOffset.UTC )
+        def Instant future = LocalDateTime.of( 2055, 01, 01, 12, 00 ).toInstant( ZoneOffset.UTC )
 
         given:
         def expectedJson = this.getClass().getResource( "aggs_daterange.json" ).text

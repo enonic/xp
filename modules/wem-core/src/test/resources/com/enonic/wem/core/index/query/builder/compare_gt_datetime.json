@@ -1,7 +1,7 @@
 {
     "range": {
         "myfield._datetime": {
-            "from": "2013-11-29T11:00:00.000Z",
+            "from": "2013-11-29T11:00:00Z",
             "to": null,
             "include_lower": false,
             "include_upper": true

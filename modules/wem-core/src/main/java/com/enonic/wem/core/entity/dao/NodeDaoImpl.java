@@ -2,8 +2,7 @@ package com.enonic.wem.core.entity.dao;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-
-import org.joda.time.Instant;
+import java.time.Instant;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteStreams;

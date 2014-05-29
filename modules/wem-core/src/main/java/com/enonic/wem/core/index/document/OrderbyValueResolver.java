@@ -48,7 +48,7 @@ class OrderbyValueResolver
 
     private static String getOrderbyValueForDate( Value value )
     {
-        return IndexFormats.FULL_DATE_FORMAT.print( value.asInstant() );
+        return IndexFormats.FULL_DATE_FORMAT.format( value.asInstant() );
     }
 
     private static String getOrderbyValueForString( String value )

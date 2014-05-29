@@ -1,6 +1,6 @@
 package com.enonic.wem.admin.json.content;
 
-import org.joda.time.Instant;
+import java.time.Instant;
 
 import com.enonic.wem.admin.json.ChangeTraceableJson;
 import com.enonic.wem.admin.json.ItemJson;

@@ -1,6 +1,6 @@
 package com.enonic.wem.core.schema.mixin;
 
-import org.joda.time.Instant;
+import java.time.Instant;
 
 import com.enonic.wem.api.schema.mixin.CreateMixinParams;
 import com.enonic.wem.api.schema.mixin.GetMixinParams;

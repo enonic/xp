@@ -3,9 +3,9 @@ package com.enonic.wem.portal.underscore;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 
 import org.apache.commons.io.FileUtils;
-import org.joda.time.Instant;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

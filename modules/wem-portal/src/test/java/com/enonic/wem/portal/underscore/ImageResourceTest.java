@@ -3,8 +3,8 @@ package com.enonic.wem.portal.underscore;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.time.Instant;
 
-import org.joda.time.Instant;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

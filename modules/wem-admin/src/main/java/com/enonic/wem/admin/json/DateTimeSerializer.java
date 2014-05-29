@@ -1,8 +1,7 @@
 package com.enonic.wem.admin.json;
 
 import java.io.IOException;
-
-import org.joda.time.DateTime;
+import java.time.Instant;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -15,30 +14,30 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 
 public class DateTimeSerializer
-    extends StdSerializer<DateTime>
+    extends StdSerializer<Instant>
 {
 
     public DateTimeSerializer()
     {
-        super( DateTime.class );
+        super( Instant.class );
     }
 
     @Override
-    public void serialize( DateTime value, JsonGenerator jgen, SerializerProvider provider )
+    public void serialize( Instant value, JsonGenerator jgen, SerializerProvider provider )
         throws IOException, JsonGenerationException
     {
         if ( provider.isEnabled( SerializationFeature.WRITE_DATES_AS_TIMESTAMPS ) )
         {
-            jgen.writeNumber( value.getMillis() );
+            jgen.writeNumber( Instant.now().toEpochMilli() );
         }
         else
         {
-            jgen.writeString( DateTimeFormatter.format( value ) );
+            jgen.writeString( value.toString() );
         }
     }
 
     @Override
-    public void serializeWithType( DateTime value, JsonGenerator jgen, SerializerProvider provider, TypeSerializer typeSer )
+    public void serializeWithType( Instant value, JsonGenerator jgen, SerializerProvider provider, TypeSerializer typeSer )
         throws IOException, JsonProcessingException
     {
         typeSer.writeTypePrefixForScalar( value, jgen );

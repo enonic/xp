@@ -53,7 +53,7 @@ class ValueExprTest
 
         expect:
         expr != null
-        expr.toString() == "instant('2013-11-11T22:22:22.000Z')"
+        expr.toString() == "instant('2013-11-11T22:22:22Z')"
         expr.getValue().getType() == ValueTypes.DATE_TIME
     }
 

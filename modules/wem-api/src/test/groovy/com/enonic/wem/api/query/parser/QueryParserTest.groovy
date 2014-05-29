@@ -95,7 +95,7 @@ class QueryParserTest
 
         where:
         query                                     | expected
-        "a = instant('2013-11-11T22:22:22.000Z')" | "a = instant('2013-11-11T22:22:22.000Z')"
+        "a = instant('2013-11-11T22:22:22.000Z')" | "a = instant('2013-11-11T22:22:22Z')"
     }
 
     def "test NOT expression"()

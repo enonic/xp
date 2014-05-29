@@ -1,7 +1,6 @@
 package com.enonic.wem.core;
 
 
-import org.elasticsearch.common.joda.time.DateTimeUtils;
 import org.junit.After;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -20,7 +19,7 @@ public abstract class AbstractSerializerTest
     @After
     public final void afterAbstractSerializerTest()
     {
-        DateTimeUtils.setCurrentMillisSystem();
+        // DateTimeUtils.setCurrentMillisSystem();
     }
 
     protected String jsonToString( final JsonNode node )

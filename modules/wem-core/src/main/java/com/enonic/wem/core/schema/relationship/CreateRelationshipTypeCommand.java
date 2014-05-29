@@ -1,6 +1,6 @@
 package com.enonic.wem.core.schema.relationship;
 
-import org.joda.time.Instant;
+import java.time.Instant;
 
 import com.enonic.wem.api.schema.relationship.CreateRelationshipTypeParams;
 import com.enonic.wem.api.schema.relationship.RelationshipType;

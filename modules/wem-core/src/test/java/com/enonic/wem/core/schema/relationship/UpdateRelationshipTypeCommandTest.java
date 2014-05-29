@@ -1,8 +1,10 @@
 package com.enonic.wem.core.schema.relationship;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeUtils;
-import org.joda.time.Instant;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+
+import org.elasticsearch.common.joda.time.DateTimeUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +31,7 @@ public class UpdateRelationshipTypeCommandTest
     public void before()
         throws Exception
     {
-        DateTimeUtils.setCurrentMillisFixed( new DateTime( 2012, 1, 1, 12, 0, 0 ).getMillis() );
+        DateTimeUtils.setCurrentMillisFixed( LocalDateTime.of( 2012, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ).toEpochMilli() );
 
         relationshipTypeDao = Mockito.mock( RelationshipTypeDao.class );
         command = new UpdateRelationshipTypeCommand();

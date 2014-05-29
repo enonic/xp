@@ -1,10 +1,10 @@
 package com.enonic.wem.core.relationship;
 
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeUtils;
-import org.joda.time.DateTimeZone;
-import org.joda.time.Instant;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,12 +24,13 @@ import static org.junit.Assert.*;
 public class RelationshipJsonSerializerTest
     extends AbstractSerializerTest
 {
-    private static final Instant NOW = new DateTime( 2013, 1, 1, 12, 0, DateTimeZone.UTC ).toInstant();
+    private static final Instant NOW = LocalDateTime.of( 2013, 1, 1, 12, 0 ).toInstant( ZoneOffset.UTC );
 
     @Before
     public void before()
     {
-        DateTimeUtils.setCurrentMillisFixed( NOW.getMillis() );
+
+        //DateTimeUtils.setCurrentMillisFixed( NOW.toEpochMilli() );
     }
 
     @Test
@@ -56,7 +57,7 @@ public class RelationshipJsonSerializerTest
         expectedJson.putNull( "managingData" );
         expectedJson.putNull( "properties" );
         expectedJson.put( "creator", "user:system:admin" );
-        expectedJson.put( "createdTime", "2013-01-01T12:00:00.000Z" );
+        expectedJson.put( "createdTime", "2013-01-01T12:00:00Z" );
 
         assertEquals( "Serialization not as expected", expectedJson, actualJson );
     }
@@ -86,7 +87,7 @@ public class RelationshipJsonSerializerTest
         expectedJson.put( "managingData", "mySet.myData" );
         expectedJson.putNull( "properties" );
         expectedJson.put( "creator", "user:system:admin" );
-        expectedJson.put( "createdTime", "2013-01-01T12:00:00.000Z" );
+        expectedJson.put( "createdTime", "2013-01-01T12:00:00Z" );
 
         assertEquals( "Serialization not as expected", expectedJson, actualJson );
     }
@@ -122,9 +123,9 @@ public class RelationshipJsonSerializerTest
         propertiesNode.put( "stars", "4" );
         propertiesNode.put( "stripes", "3" );
         expectedJson.put( "creator", "user:system:admin" );
-        expectedJson.put( "createdTime", "2013-01-01T12:00:00.000Z" );
+        expectedJson.put( "createdTime", "2013-01-01T12:00:00Z" );
         expectedJson.put( "modifier", "user:system:admin" );
-        expectedJson.put( "modifiedTime", "2013-01-01T12:00:00.000Z" );
+        expectedJson.put( "modifiedTime", "2013-01-01T12:00:00Z" );
 
         assertEquals( "Serialization not as expected", expectedJson, actualJson );
     }
