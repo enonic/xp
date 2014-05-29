@@ -1,7 +1,7 @@
 package com.enonic.wem.api.schema;
 
 
-import org.joda.time.Instant;
+import java.time.Instant;
 
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.support.ChangeTraceable;

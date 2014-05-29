@@ -1,9 +1,9 @@
 package com.enonic.wem.api.data;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.joda.time.LocalDate;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.data.ContentData;

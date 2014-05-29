@@ -1,6 +1,6 @@
 package com.enonic.wem.api.query.aggregation;
 
-import org.joda.time.DateTime;
+import java.time.Instant;
 
 public class DateRange
     extends Range
@@ -33,13 +33,13 @@ public class DateRange
 
         private Object to;
 
-        public Builder from( final DateTime from )
+        public Builder from( final Instant from )
         {
             this.from = from;
             return this;
         }
 
-        public Builder to( final DateTime to )
+        public Builder to( final Instant to )
         {
             this.to = to;
             return this;

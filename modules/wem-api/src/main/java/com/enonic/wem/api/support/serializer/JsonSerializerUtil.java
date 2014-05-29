@@ -1,9 +1,7 @@
 package com.enonic.wem.api.support.serializer;
 
 
-import org.joda.time.Instant;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
+import java.time.Instant;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -13,7 +11,6 @@ import com.enonic.wem.api.account.UserKey;
 
 public class JsonSerializerUtil
 {
-    public static final DateTimeFormatter isoDateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();
 
     public static UserKey getUserKeyValue( final String propertyName, final JsonNode node )
     {
@@ -39,7 +36,7 @@ public class JsonSerializerUtil
         }
         else
         {
-            node.put( fieldName, isoDateTimeFormatter.print( instant ) );
+            node.put( fieldName, instant.toString() );
         }
     }
 
@@ -54,7 +51,8 @@ public class JsonSerializerUtil
         {
             return null;
         }
-        return isoDateTimeFormatter.parseDateTime( subNode.textValue() ).toInstant();
+        return Instant.parse( subNode.textValue() );
+
     }
 
     public static String getStringValue( String fieldName, JsonNode node, String defaultValue )

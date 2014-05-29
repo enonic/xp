@@ -1,8 +1,8 @@
 package com.enonic.wem.core.index.document;
 
+import java.time.LocalDate;
 import java.util.Set;
 
-import org.joda.time.LocalDate;
 import org.junit.Test;
 
 import com.enonic.wem.api.data.Property;

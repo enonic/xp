@@ -1,8 +1,7 @@
 package com.enonic.wem.core.index.document;
 
+import java.time.Instant;
 import java.util.Date;
-
-import org.joda.time.Instant;
 
 import com.enonic.wem.core.index.IndexValueType;
 
@@ -26,6 +25,6 @@ public class IndexDocumentDateItem
     @Override
     public Date getValue()
     {
-        return instant.toDate();
+        return Date.from( instant );
     }
 }

@@ -1,8 +1,7 @@
 package com.enonic.wem.admin.rest.resource.relationship.json;
 
+import java.time.Instant;
 import java.util.Map;
-
-import org.joda.time.Instant;
 
 import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.api.account.UserKey;

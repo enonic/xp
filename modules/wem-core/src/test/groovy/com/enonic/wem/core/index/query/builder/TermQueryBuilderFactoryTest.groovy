@@ -42,7 +42,7 @@ class TermQueryBuilderFactoryTest
 
         when:
         final QueryBuilder query = builder.create(
-            CompareExpr.eq( new FieldExpr( "myField" ), ValueExpr.instant( "2013-11-29T09:42:00.000Z" ) ) );
+            CompareExpr.eq( new FieldExpr( "myField" ), ValueExpr.instant( "2013-11-29T09:42:00Z" ) ) );
 
         then:
         cleanString( expected ) == cleanString( query.toString() )
