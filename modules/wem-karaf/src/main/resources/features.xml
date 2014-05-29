@@ -7,7 +7,6 @@
 
     <bundle>mvn:com.enonic.wem/wem-api/${project.version}</bundle>
     <bundle>mvn:com.enonic.wem/wem-guice/${project.version}</bundle>
-    <bundle>mvn:com.enonic.wem/wem-jaxrs/${project.version}</bundle>
     <bundle>mvn:com.enonic.wem/wem-core/${project.version}</bundle>
     <bundle>mvn:com.enonic.wem/wem-admin-ui/${project.version}</bundle>
     <bundle>mvn:com.enonic.wem/wem-admin/${project.version}</bundle>

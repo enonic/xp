@@ -73,18 +73,14 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
           <instructions>
-            <_exportcontents>
-              com.enonic.wem.admin.*,
-              com.fasterxml.jackson.*,
-              com.sun.jersey.multipart.*
-            </_exportcontents>
             <Import-Package>
               *;resolution:=optional
             </Import-Package>
+            <Export-Package/>
             <Embed-Dependency>
               jackson-jaxrs-*,
-              jersey-multipart,
-              commons-fileupload
+              commons-fileupload,
+              jersey-*;scope=compile
             </Embed-Dependency>
             <Bundle-Activator>
               com.enonic.wem.admin.Activator
