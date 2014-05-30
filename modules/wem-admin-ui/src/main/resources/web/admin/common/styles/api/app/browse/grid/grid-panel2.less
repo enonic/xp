@@ -11,15 +11,23 @@
     }
 
     .slick-cell {
-      .default-slick-cell-styling();
+      .default-slick-cell-styling(4px 8px);
+      cursor: pointer;
+
+      // fixes
+      margin-left: -1px; // invalid 'right' value calc for certain width
+      height: 45px;      // firefox ignores SlickGrid.rowHeight
     }
 
     .slick-row {
-      &.odd {
-        background-color: #fafafa;
+
+
+      &:hover, &.odd:hover {
+        background-color: @admin-light-gray-bg;
       }
-      input[type=checkbox] {
-        margin:10px;
+
+      &.odd {
+        background-color: @admin-almost-white-bg;
       }
 
       .selected h6 {
@@ -30,11 +38,30 @@
         color: white;
       }
 
+      .slick-cell-checkboxsel {
+        label {
+          display: inline-block;
+          width: 100%;
+          height: 100%;
+          vertical-align:middle;
+          background: url("../images/admin-unchecked.gif") center no-repeat;
+        }
+
+        input[type="checkbox"] {
+          display: none;
+        }
+
+        &.selected label {
+          background: url("../images/admin-checked.gif") center no-repeat;
+        }
+
+      }
 
       .toggle {
-        height: 9px;
+        position: absolute;
+        top: 1px;
+        height: 100%;
         width: 9px;
-        display: inline-block;
       }
 
       .toggle.expand {
@@ -43,6 +70,36 @@
 
       .toggle.collapse {
         background: url("../images/collapse.gif") no-repeat center center;
+      }
+
+      .viewer {
+        display: inline-block;
+        width: 100%;
+        height: 100%;
+        .names-and-icon-view {
+          margin-left: 25px;
+          .wrapper {
+            margin-right: 15px;
+            .icon {
+              position: absolute;
+              width: 32px;
+              height: 32px;
+              top: 50%;
+              left: 0;
+              margin-top: -16px;
+            }
+          }
+          .names-view {
+            margin-top: 3px;
+          }
+
+        }
+      }
+
+      .modified {
+        line-height: 37px;
+        text-align: right;
+        padding-right: 25px;
       }
 
     }

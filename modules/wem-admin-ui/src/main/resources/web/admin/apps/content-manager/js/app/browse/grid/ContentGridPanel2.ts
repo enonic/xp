@@ -16,25 +16,18 @@ module app.browse.grid {
             super();
 
             this.nameFormatter = (row: number, cell: number, value: any, columnDef: any, item: api.content.ContentSummary) => {
-                var rowEl = new api.dom.DivEl();
-
+                var format = "";
                 var toggleSpan = new api.dom.SpanEl("toggle");
                 if (item.hasChildren()) {
                     toggleSpan.addClass("expand");
                 }
+                format += toggleSpan.toString();
 
-                rowEl.appendChild(toggleSpan);
+                var contentSummaryViewer = new api.content.ContentSummaryViewer();
+                contentSummaryViewer.setObject(item);
+                format += contentSummaryViewer.toString();
 
-                var namesAndIconView = new api.app.NamesAndIconViewBuilder().
-                    setSize(api.app.NamesAndIconViewSize.small).build();
-
-                namesAndIconView.setMainName(item.getDisplayName());
-                namesAndIconView.setSubName(item.getPath().toString());
-                namesAndIconView.setIconUrl(item.getIconUrl());
-
-                rowEl.appendChild(namesAndIconView);
-
-                return rowEl.toString();
+                return format;
             };
 
             var column1 = <api.ui.grid.GridColumn<any>> {
@@ -47,6 +40,9 @@ module app.browse.grid {
                 name: "ModifiedTime",
                 id: "modifiedTime",
                 field: "modifiedTime",
+                cssClass: "modified",
+                minWidth: 150,
+                maxWidth: 170,
                 formatter:api.app.browse.grid2.DateTimeFormatter.format
             };
             this.columns = [column1, column2];
@@ -55,7 +51,6 @@ module app.browse.grid {
 
             this.gridOptions = <api.ui.grid.GridOptions>{
                 editable: false,
-                enableAddRow: true,
                 enableCellNavigation: true,
                 enableColumnReorder: false,
                 forceFitColumns: true,
@@ -65,8 +60,12 @@ module app.browse.grid {
             };
 
             this.grid = new api.ui.grid.Grid<api.content.ContentSummary>(this.gridData, this.columns, this.gridOptions);
-            var selectionModel = new Slick.RowSelectionModel();
-            this.grid.setSelectionModel( selectionModel );
+
+            // Custom row selection required for valid behaviour
+            this.grid.setSelectionModel(new Slick.RowSelectionModel({selectActiveRow: false}));
+            this.grid.subscribeOnClick((event, data) => {
+                this.grid.setSelectedRows([data.row]);
+            });
 
             this.appendChild(this.grid);
 
@@ -83,14 +82,12 @@ module app.browse.grid {
 
             this.onRendered((event) => {
                 this.grid.resizeCanvas();
-            })
-
+            });
 
         }
 
         private initData(contents:api.content.ContentSummary[]) {
 
-            //console.log("initData", contents);
             this.gridData.setItems(contents, "id");
         }
     }
