@@ -114,9 +114,7 @@ module app.browse.grid {
 
         private expandData(id: string = "") {
             var request = new api.content.ListContentByIdRequest(id);
-            request.send().
-                then((response:api.rest.JsonResponse<api.content.ListContentResult<api.content.json.ContentSummaryJson>>) => {
-                        var contents:api.content.ContentSummary[] = api.content.ContentSummary.fromJsonArray( response.getResult().contents );
+            request.sendAndParse().then((contents:api.content.ContentSummary[]) => {
                         if (id) {
                             var items = this.gridData.getItems();
                             for (var i = 0; i < items.length; i++) {
