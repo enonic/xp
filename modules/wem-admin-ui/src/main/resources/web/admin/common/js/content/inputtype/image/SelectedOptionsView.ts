@@ -4,6 +4,7 @@ module api.content.inputtype.image {
     import ContentSummary = api.content.ContentSummary;
     import Value = api.data.Value;
     import ValueChangedEvent = api.form.inputtype.ValueChangedEvent;
+    import LoadMask = api.ui.LoadMask;
 
     export class SelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<ContentSummary> {
 
@@ -104,6 +105,15 @@ module api.content.inputtype.image {
             this.dialog.remove();
             var optionView: SelectedOptionView = <SelectedOptionView>option.getOptionView();
 
+            var loadMask: LoadMask = new LoadMask(optionView);
+            optionView.appendChild(loadMask);
+            optionView.getCheckbox().hide();
+            optionView.getIcon().getEl().setVisibility('hidden');
+            optionView.onShown(() => {
+                this.updateOptionViewLayout(optionView, this.calculateOptionHeight());
+                loadMask.show();
+            });
+
             optionView.onClicked((event: MouseEvent) => {
                 if (this.dialog.isVisible()) {
                     this.hideImageSelectorDialog();
@@ -168,6 +178,10 @@ module api.content.inputtype.image {
             optionView.getIcon().onLoaded((event: UIEvent) => {
                 this.updateOptionViewLayout(optionView, this.calculateOptionHeight());
                 wemjq(this.getHTMLElement()).sortable("refresh");
+
+                loadMask.remove();
+                optionView.getIcon().getEl().setVisibility('visible');
+                optionView.getCheckbox().show();
             });
 
             optionView.insertBeforeEl(this.toolbar);
