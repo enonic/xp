@@ -67,6 +67,14 @@ module api.ui.grid {
                 this.slickGrid.registerPlugin(checkboxSelectorPlugin);
             }
 
+            ResponsiveManager.onAvailableSizeChanged(this, () => {
+                this.resizeCanvas();
+            });
+
+            this.onRemoved((event) => {
+                ResponsiveManager.unAvailableSizeChanged(this);
+            });
+
             // The only way to dataIdProperty before adding items
             this.dataView.setItems([], options.dataIdProperty);
         }
@@ -133,7 +141,9 @@ module api.ui.grid {
         }
 
         resetActiveCell() {
-            this.slickGrid.resetActiveCell();
+            if (this.slickGrid.getActiveCell()) {
+                this.slickGrid.resetActiveCell();
+            }
         }
 
         navigateUp() {

@@ -66,7 +66,7 @@ module api.app {
 
         setIconClass(value: string): NamesAndIconView {
             this.iconDivEl.setClass("icon " + value);
-            this.iconDivEl.show();
+            this.iconDivEl.getEl().setDisplay('inline-block');
             this.iconImageEl.hide();
             return this;
         }
