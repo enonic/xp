@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.inject.Inject;
+
 @Singleton
 public final class MainServlet
     extends HttpServlet
@@ -16,13 +18,16 @@ public final class MainServlet
 
     private ResourceHandler resourceHandler;
 
+    @Inject
+    protected ResourceLocator resourceLocator;
+
     @Override
     public void init()
         throws ServletException
     {
         super.init();
         this.appHtmlHandler = new AppHtmlHandler();
-        this.resourceHandler = new ResourceHandler( getServletContext() );
+        this.resourceHandler = new ResourceHandler( getServletContext(), this.resourceLocator );
     }
 
     @Override

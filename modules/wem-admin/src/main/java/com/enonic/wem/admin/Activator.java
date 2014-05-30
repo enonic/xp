@@ -1,6 +1,9 @@
 package com.enonic.wem.admin;
 
+import javax.inject.Inject;
+
 import com.enonic.wem.admin.app.MainServlet;
+import com.enonic.wem.admin.app.ResourceLocator;
 import com.enonic.wem.admin.rest.RestServlet;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.ContentService;
@@ -26,6 +29,9 @@ import com.enonic.wem.guice.GuiceActivator;
 public final class Activator
     extends GuiceActivator
 {
+    @Inject
+    protected ResourceLocator resourceLocator;
+
     @Override
     protected void configure()
     {
@@ -55,5 +61,20 @@ public final class Activator
         // Export services
         service( MainServlet.class ).attribute( "alias", "/*" ).export();
         service( RestServlet.class ).attribute( "alias", "/admin/rest/*" ).export();
+    }
+
+    @Override
+    protected void doStart()
+        throws Exception
+    {
+        getContext().addBundleListener( this.resourceLocator );
+        this.resourceLocator.init( getContext() );
+    }
+
+    @Override
+    protected void doStop()
+        throws Exception
+    {
+        getContext().removeBundleListener( this.resourceLocator );
     }
 }

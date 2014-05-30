@@ -2,6 +2,7 @@ package com.enonic.wem.admin.app;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -14,9 +15,12 @@ final class ResourceHandler
 {
     private final ServletContext servletContext;
 
-    public ResourceHandler( final ServletContext servletContext )
+    private final ResourceLocator resourceLocator;
+
+    public ResourceHandler( final ServletContext servletContext, final ResourceLocator resourceLocator )
     {
         this.servletContext = servletContext;
+        this.resourceLocator = resourceLocator;
     }
 
     public void handle( final HttpServletRequest req, final HttpServletResponse res )
@@ -43,6 +47,7 @@ final class ResourceHandler
     }
 
     private InputStream findResource( final String path )
+        throws IOException
     {
         if ( path.endsWith( "/" ) )
         {
@@ -55,7 +60,14 @@ final class ResourceHandler
             return in;
         }
 
-        final String resourcePath = "web" + ( path.startsWith( "/" ) ? path : ( "/" + path ) );
-        return getClass().getClassLoader().getResourceAsStream( resourcePath );
+        final String resourcePath = "/web" + ( path.startsWith( "/" ) ? path : ( "/" + path ) );
+        final URL url = this.resourceLocator.findResource( resourcePath );
+
+        if ( url == null )
+        {
+            return null;
+        }
+
+        return url.openStream();
     }
 }
