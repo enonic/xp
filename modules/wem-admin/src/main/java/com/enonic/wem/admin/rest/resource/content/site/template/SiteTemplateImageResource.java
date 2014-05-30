@@ -12,10 +12,10 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateService;
-import com.enonic.wem.api.schema.SchemaIcon;
 
 @Path("sitetemplate/image")
 @Produces("image/*")
@@ -44,7 +44,7 @@ public final class SiteTemplateImageResource
 
         final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( siteTemplate );
 
-        final SchemaIcon icon = findIcon( siteTemplateKey );
+        final Icon icon = findIcon( siteTemplateKey );
 
         if ( icon != null )
         {
@@ -57,7 +57,7 @@ public final class SiteTemplateImageResource
         }
     }
 
-    private SchemaIcon findIcon( final SiteTemplateKey siteTemplateKey )
+    private Icon findIcon( final SiteTemplateKey siteTemplateKey )
     {
         final SiteTemplate siteTemplate = siteTemplateService.getSiteTemplate( siteTemplateKey );
         return siteTemplate == null ? null : siteTemplate.getIcon();

@@ -6,7 +6,7 @@ import java.io.StringWriter;
 
 import org.apache.commons.io.IOUtils;
 
-import com.enonic.wem.api.schema.SchemaIcon;
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.core.initializer.InitializerTask;
 
 public abstract class BaseInitializer
@@ -37,7 +37,7 @@ public abstract class BaseInitializer
         }
     }
 
-    protected SchemaIcon loadSchemaIcon( final String name )
+    protected Icon loadSchemaIcon( final String name )
     {
         final String filePath = metaInfFolderBasePath + FILE_SEPARATOR + name.toLowerCase() + ".png";
         try
@@ -47,7 +47,7 @@ public abstract class BaseInitializer
             {
                 return null;
             }
-            return SchemaIcon.from( stream, "image/png" );
+            return Icon.from( stream, "image/png" );
         }
         catch ( Exception e )
         {

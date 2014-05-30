@@ -13,7 +13,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 
-import com.enonic.wem.api.schema.SchemaIcon;
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.schema.SchemaKey;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -72,7 +72,7 @@ public final class SchemaImageResource
 
         final SchemaKey schemaKey = SchemaKey.from( schemaKeyAsString );
 
-        final SchemaIcon icon = resolveSchemaIcon( schemaKey );
+        final Icon icon = resolveSchemaIcon( schemaKey );
 
         if ( icon == null && schemaKey.isMixin() )
         {
@@ -94,7 +94,7 @@ public final class SchemaImageResource
         }
     }
 
-    private SchemaIcon resolveSchemaIcon( final SchemaKey schemaKey )
+    private Icon resolveSchemaIcon( final SchemaKey schemaKey )
     {
         if ( schemaKey.isContentType() )
         {
@@ -114,22 +114,22 @@ public final class SchemaImageResource
         }
     }
 
-    private SchemaIcon resolveContentTypeImage( final SchemaKey schemaKey )
+    private Icon resolveContentTypeImage( final SchemaKey schemaKey )
     {
         return findContentTypeIcon( ContentTypeName.from( schemaKey.getLocalName() ) );
     }
 
-    private SchemaIcon resolveMixinImage( final SchemaKey schemaKey )
+    private Icon resolveMixinImage( final SchemaKey schemaKey )
     {
         return findMixinIcon( MixinName.from( schemaKey.getLocalName() ) );
     }
 
-    private SchemaIcon resolveRelationshipTypeImage( final SchemaKey schemaKey )
+    private Icon resolveRelationshipTypeImage( final SchemaKey schemaKey )
     {
         return findRelationshipTypeIcon( RelationshipTypeName.from( schemaKey.getLocalName() ) );
     }
 
-    private SchemaIcon findContentTypeIcon( final ContentTypeName contentTypeName )
+    private Icon findContentTypeIcon( final ContentTypeName contentTypeName )
     {
         ContentType contentType = getContentType( contentTypeName );
         if ( contentType == null )
@@ -153,13 +153,13 @@ public final class SchemaImageResource
         return null;
     }
 
-    private SchemaIcon findMixinIcon( final MixinName mixinName )
+    private Icon findMixinIcon( final MixinName mixinName )
     {
         final Mixin mixin = mixinService.getByName( new GetMixinParams( mixinName ) );
         return mixin == null ? null : mixin.getIcon();
     }
 
-    private SchemaIcon findRelationshipTypeIcon( final RelationshipTypeName relationshipTypeName )
+    private Icon findRelationshipTypeIcon( final RelationshipTypeName relationshipTypeName )
     {
         final GetRelationshipTypeParams params = new GetRelationshipTypeParams().name( relationshipTypeName );
         final RelationshipType relationshipType = relationshipTypeService.getByName( params );

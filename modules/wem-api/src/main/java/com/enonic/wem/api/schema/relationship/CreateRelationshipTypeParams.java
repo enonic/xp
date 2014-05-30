@@ -3,7 +3,7 @@ package com.enonic.wem.api.schema.relationship;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.schema.SchemaIcon;
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 public final class CreateRelationshipTypeParams
@@ -22,7 +22,7 @@ public final class CreateRelationshipTypeParams
 
     private ContentTypeNames allowedToTypes;
 
-    private SchemaIcon schemaIcon;
+    private Icon schemaIcon;
 
     public CreateRelationshipTypeParams name( final String name )
     {
@@ -72,7 +72,7 @@ public final class CreateRelationshipTypeParams
         return this;
     }
 
-    public CreateRelationshipTypeParams schemaIcon( final SchemaIcon schemaIcon )
+    public CreateRelationshipTypeParams schemaIcon( final Icon schemaIcon )
     {
         this.schemaIcon = schemaIcon;
         return this;
@@ -113,7 +113,7 @@ public final class CreateRelationshipTypeParams
         return allowedToTypes;
     }
 
-    public SchemaIcon getSchemaIcon()
+    public Icon getSchemaIcon()
     {
         return schemaIcon;
     }

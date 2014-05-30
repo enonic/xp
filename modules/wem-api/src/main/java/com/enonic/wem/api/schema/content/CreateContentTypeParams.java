@@ -3,8 +3,8 @@ package com.enonic.wem.api.schema.content;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.schema.SchemaIcon;
 
 public final class CreateContentTypeParams
 {
@@ -26,7 +26,7 @@ public final class CreateContentTypeParams
 
     private Form form;
 
-    private SchemaIcon schemaIcon;
+    private Icon schemaIcon;
 
     private String contentDisplayNameScript;
 
@@ -136,12 +136,12 @@ public final class CreateContentTypeParams
         return this;
     }
 
-    public SchemaIcon getSchemaIcon()
+    public Icon getSchemaIcon()
     {
         return schemaIcon;
     }
 
-    public CreateContentTypeParams schemaIcon( final SchemaIcon schemaIcon )
+    public CreateContentTypeParams schemaIcon( final Icon schemaIcon )
     {
         this.schemaIcon = schemaIcon;
         return this;

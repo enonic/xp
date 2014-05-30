@@ -13,6 +13,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter;
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
@@ -24,7 +25,6 @@ import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
@@ -115,7 +115,7 @@ public class ContentImageResource
             }
         }
 
-        final SchemaIcon contentTypeIcon = findRootContentTypeIcon( contentType );
+        final Icon contentTypeIcon = findRootContentTypeIcon( contentType );
         if ( contentTypeIcon == null )
         {
             throw new WebApplicationException( Response.Status.NOT_FOUND );
@@ -135,7 +135,7 @@ public class ContentImageResource
         return imageProperty == null ? content.getName().toString() : imageProperty.getString();
     }
 
-    private SchemaIcon findRootContentTypeIcon( final ContentTypeName contentTypeName )
+    private Icon findRootContentTypeIcon( final ContentTypeName contentTypeName )
     {
         ContentType contentType = getContentType( contentTypeName );
         while ( contentType != null && contentType.getIcon() == null )

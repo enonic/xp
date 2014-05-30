@@ -18,9 +18,9 @@ import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeListJson;
 import com.enonic.wem.admin.rest.resource.schema.json.CreateOrUpdateSchemaJsonResult;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobService;
-import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.relationship.CreateRelationshipTypeParams;
 import com.enonic.wem.api.schema.relationship.GetRelationshipTypeParams;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
@@ -126,7 +126,7 @@ public class RelationshipTypeResource
             XmlSerializers.relationshipType().parse( json.getConfig() ).to( builder );
             final RelationshipType relationshipType = builder.build();
 
-            final SchemaIcon schemaIcon = getSchemaIcon( json.getIconJson() );
+            final Icon schemaIcon = getSchemaIcon( json.getIconJson() );
 
             final CreateRelationshipTypeParams createCommand = new CreateRelationshipTypeParams().
                 name( json.getName() ).
@@ -159,7 +159,7 @@ public class RelationshipTypeResource
             XmlSerializers.relationshipType().parse( json.getConfig() ).to( builder );
             final RelationshipType parsed = builder.build();
 
-            final SchemaIcon schemaIcon = getSchemaIcon( json.getIconJson() );
+            final Icon schemaIcon = getSchemaIcon( json.getIconJson() );
 
             final RelationshipTypeEditor editor = new RelationshipTypeEditor()
             {
@@ -196,12 +196,12 @@ public class RelationshipTypeResource
         }
     }
 
-    private SchemaIcon getSchemaIcon( final IconJson iconJson )
+    private Icon getSchemaIcon( final IconJson iconJson )
     {
         if ( iconJson != null )
         {
             final Blob blob = blobService.get( iconJson.getThumbnail().getBlobKey() );
-            return blob == null ? null : SchemaIcon.from( blob.getStream(), iconJson.getMimeType() );
+            return blob == null ? null : Icon.from( blob.getStream(), iconJson.getMimeType() );
         }
         return null;
     }

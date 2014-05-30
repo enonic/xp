@@ -18,9 +18,9 @@ import com.enonic.wem.admin.json.schema.content.ContentTypeSummaryListJson;
 import com.enonic.wem.admin.rest.resource.schema.json.CreateOrUpdateSchemaJsonResult;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobService;
-import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
@@ -128,7 +128,7 @@ public class ContentTypeResource
         try
         {
             final CreateContentTypeParams createContentType = json.getCreateContentType();
-            final SchemaIcon schemaIcon = getSchemaIcon( json.getIconJson() );
+            final Icon schemaIcon = getSchemaIcon( json.getIconJson() );
             if ( schemaIcon != null )
             {
                 createContentType.schemaIcon( schemaIcon );
@@ -149,7 +149,7 @@ public class ContentTypeResource
     {
         try
         {
-            final SchemaIcon schemaIcon = getSchemaIcon( json.getIconJson() );
+            final Icon schemaIcon = getSchemaIcon( json.getIconJson() );
             final ContentType contentTypeUpdate = json.getContentTypeUpdate();
 
             final ContentTypeEditor editor = new ContentTypeEditor()
@@ -215,12 +215,12 @@ public class ContentTypeResource
     }
 
 
-    private SchemaIcon getSchemaIcon( final IconJson iconJson )
+    private Icon getSchemaIcon( final IconJson iconJson )
     {
         if ( iconJson != null )
         {
             final Blob blob = blobService.get( iconJson.getThumbnail().getBlobKey() );
-            return blob == null ? null : SchemaIcon.from( blob.getStream(), iconJson.getMimeType() );
+            return blob == null ? null : Icon.from( blob.getStream(), iconJson.getMimeType() );
         }
         return null;
     }

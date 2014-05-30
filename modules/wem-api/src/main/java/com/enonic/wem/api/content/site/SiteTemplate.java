@@ -3,13 +3,13 @@ package com.enonic.wem.api.content.site;
 
 import java.util.LinkedHashMap;
 
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.Identity;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateSpec;
 import com.enonic.wem.api.content.page.PageTemplates;
 import com.enonic.wem.api.module.ModuleKeys;
-import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.content.ContentTypeFilter;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
@@ -36,7 +36,7 @@ public final class SiteTemplate
 
     private final PageTemplates pageTemplates;
 
-    private final SchemaIcon icon;
+    private final Icon icon;
 
     private SiteTemplate( final Builder builder )
     {
@@ -117,7 +117,7 @@ public final class SiteTemplate
         return pageTemplates.filter( spec ).first();
     }
 
-    public SchemaIcon getIcon()
+    public Icon getIcon()
     {
         return icon;
     }
@@ -152,7 +152,7 @@ public final class SiteTemplate
 
         private final LinkedHashMap<PageTemplateKey, PageTemplate> pageTemplates;
 
-        private SchemaIcon icon;
+        private Icon icon;
 
         private Builder()
         {
@@ -237,7 +237,7 @@ public final class SiteTemplate
             return this;
         }
 
-        public Builder icon( final SchemaIcon icon )
+        public Builder icon( final Icon icon )
         {
             this.icon = icon;
             return this;

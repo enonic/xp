@@ -13,8 +13,8 @@ import org.mockito.Mockito;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
@@ -66,7 +66,7 @@ public class SchemaImageResourceTest
         throws Exception
     {
         byte[] data = Resources.toByteArray( getClass().getResource( "contenttypeicon.png" ) );
-        SchemaIcon schemaIcon = SchemaIcon.from( data, "image/png" );
+        Icon schemaIcon = Icon.from( data, "image/png" );
 
         final ContentType contentType = ContentType.newContentType().
             name( "my_content_type" ).
@@ -89,7 +89,7 @@ public class SchemaImageResourceTest
         throws Exception
     {
         byte[] data = Resources.toByteArray( getClass().getResource( "contenttypeicon.png" ) );
-        SchemaIcon schemaIcon = SchemaIcon.from( data, "image/png" );
+        Icon schemaIcon = Icon.from( data, "image/png" );
 
         final ContentType systemContentType = ContentType.newContentType().
             name( "unstructured" ).
@@ -138,7 +138,7 @@ public class SchemaImageResourceTest
         throws Exception
     {
         byte[] data = Resources.toByteArray( getClass().getResource( "contenttypeicon.png" ) );
-        final SchemaIcon icon = SchemaIcon.from( data, "image/png" );
+        final Icon icon = Icon.from( data, "image/png" );
 
         Mixin mixin = newMixin().
             name( "postal_code" ).
@@ -180,7 +180,7 @@ public class SchemaImageResourceTest
         throws Exception
     {
         byte[] data = Resources.toByteArray( getClass().getResource( "contenttypeicon.png" ) );
-        final SchemaIcon icon = SchemaIcon.from( data, "image/png" );
+        final Icon icon = Icon.from( data, "image/png" );
 
         RelationshipType relationshipType = newRelationshipType().
             name( "like" ).

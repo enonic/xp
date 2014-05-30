@@ -7,13 +7,13 @@ import java.nio.file.Path;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateName;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateXml;
-import com.enonic.wem.api.schema.SchemaIcon;
-import com.enonic.wem.core.schema.SchemaIconDao;
+import com.enonic.wem.core.support.dao.IconDao;
 import com.enonic.wem.core.support.export.AbstractEntityExporter;
 import com.enonic.wem.core.support.export.EntityExporters;
 import com.enonic.wem.core.support.export.XMLFilename;
@@ -53,7 +53,7 @@ public class SiteTemplateExporter
                 }
             }
         }
-        final SchemaIcon icon = new SchemaIconDao().readSchemaIcon( directoryPath );
+        final Icon icon = new IconDao().readIcon( directoryPath );
         builder.icon( icon );
 
         return builder;
@@ -72,7 +72,7 @@ public class SiteTemplateExporter
             exporter.exportObject( template, createPath( templatePath ), "" );
         }
 
-        new SchemaIconDao().writeSchemaIcon( siteTemplate.getIcon(), rootPath );
+        new IconDao().writeIcon( siteTemplate.getIcon(), rootPath );
     }
 
     private void importPageTemplate( final SiteTemplate.Builder siteTemplate, final Path templateDir )

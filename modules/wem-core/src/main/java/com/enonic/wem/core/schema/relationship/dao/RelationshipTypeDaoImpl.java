@@ -15,15 +15,15 @@ import org.joda.time.Instant;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.exception.SystemException;
-import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeXml;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 import com.enonic.wem.core.config.SystemConfig;
-import com.enonic.wem.core.schema.SchemaIconDao;
+import com.enonic.wem.core.support.dao.IconDao;
 import com.enonic.wem.api.xml.XmlSerializers;
 
 import static java.nio.file.Files.getLastModifiedTime;
@@ -45,7 +45,7 @@ public final class RelationshipTypeDaoImpl
         final Path relationshipPath = pathForRelationshipType( relationshipType.getName() );
 
         writeRelationshipTypeXml( relationshipType, relationshipPath );
-        new SchemaIconDao().writeSchemaIcon( relationshipType.getIcon(), relationshipPath );
+        new IconDao().writeIcon( relationshipType.getIcon(), relationshipPath );
 
         return relationshipType;
     }
@@ -56,7 +56,7 @@ public final class RelationshipTypeDaoImpl
         final Path relationshipPath = pathForRelationshipType( relationshipType.getName() );
 
         writeRelationshipTypeXml( relationshipType, relationshipPath );
-        new SchemaIconDao().writeSchemaIcon( relationshipType.getIcon(), relationshipPath );
+        new IconDao().writeIcon( relationshipType.getIcon(), relationshipPath );
     }
 
     @Override
@@ -142,7 +142,7 @@ public final class RelationshipTypeDaoImpl
         if ( isRelationshipDir )
         {
             final RelationshipType.Builder relationshipType = readRelationshipTypeXml( relationshipPath );
-            final SchemaIcon icon = new SchemaIconDao().readSchemaIcon( relationshipPath );
+            final Icon icon = new IconDao().readIcon( relationshipPath );
             relationshipType.icon( icon );
             return relationshipType;
         }
