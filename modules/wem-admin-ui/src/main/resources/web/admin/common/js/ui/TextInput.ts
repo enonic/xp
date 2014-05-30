@@ -11,9 +11,9 @@ module api.ui {
         private stripCharsRe: RegExp;
         /**
          * Forbidden chars filters out keyCodes for delete, backspace and arrow buttons in Firefox, so we need to
-         * allow these to pass the filter (8=backspace, 46=delete, 39=right arrow, 47=left arrow)
+         * allow these to pass the filter (8=backspace, 9=tab, 46=delete, 39=right arrow, 47=left arrow)
          */
-        private allowedKeyCodes: number[] = [8, 46, 39, 37];
+        private allowedKeyCodes: number[] = [8, 9, 46, 39, 37];
 
         /**
          * Input value before it was changed by last input event.
@@ -43,7 +43,6 @@ module api.ui {
                         event.preventDefault();
                         return false;
                     }
-
                 }
             });
 
