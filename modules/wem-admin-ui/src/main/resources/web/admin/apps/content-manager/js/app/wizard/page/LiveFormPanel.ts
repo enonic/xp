@@ -477,10 +477,13 @@ module app.wizard.page {
 
                 this.contextWindow.show();
 
-                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).done(() => {
-                    this.pageRegions.removeComponent(event.getPath());
-                    this.contextWindow.clearSelection();
-                });
+                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).
+                    then(() => {
+                        this.pageRegions.removeComponent(event.getPath());
+                        this.contextWindow.clearSelection();
+                    }).
+                    catch((reason) => api.notify.showError(reason.toString())).
+                    done();
 
             });
 
@@ -509,7 +512,7 @@ module app.wizard.page {
                         this.liveEditPage.selectComponent(event.getComponentPath());
                     }
                 }
-                else {
+                else if(!event.isEmpty()) {
                     this.contextWindow.show();
                 }
             });
@@ -534,9 +537,10 @@ module app.wizard.page {
                     setPrecedingComponent(event.getPrecedingComponent() ? event.getPrecedingComponent().getComponentName() : null).
                     setComponentView(event.getComponent());
 
-                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).done(() => {
-                    command.execute();
-                });
+                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).
+                    then(() => command.execute()).
+                    catch((reason) => api.notify.showError(reason.toString())).
+                    done();
             });
 
             this.liveEditPage.onImageComponentSetImage((event: ImageComponentSetImageEvent) => {
@@ -549,10 +553,13 @@ module app.wizard.page {
                     setComponentView(event.getComponentView()).
                     setImageName(event.getImageName());
 
-                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).done(() => {
-                    var newComponentPath = command.execute();
-                    this.saveAndReloadOnlyPageComponent(newComponentPath, event.getComponentView());
-                });
+                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).
+                    then(() => {
+                        var newComponentPath = command.execute();
+                        this.saveAndReloadOnlyPageComponent(newComponentPath, event.getComponentView());
+                    }).
+                    catch((reason) => api.notify.showError(reason.toString())).
+                    done();
             });
 
             this.liveEditPage.onPageComponentSetDescriptor((event: PageComponentSetDescriptorEvent) => {
@@ -563,12 +570,15 @@ module app.wizard.page {
                     setComponentPath(event.getPath()).
                     setDescriptor(event.getDescriptor());
 
-                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).done(() => {
-                    var newComponentPath = command.execute();
-                    if (newComponentPath) {
-                        this.saveAndReloadOnlyPageComponent(newComponentPath, event.getItemView());
-                    }
-                });
+                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).
+                    then(() => {
+                        var newComponentPath = command.execute();
+                        if (newComponentPath) {
+                            this.saveAndReloadOnlyPageComponent(newComponentPath, event.getItemView());
+                        }
+                    }).
+                    catch((reason) => api.notify.showError(reason.toString())).
+                    done();
             });
 
             this.liveEditPage.onPageComponentDuplicated((event: PageComponentDuplicateEvent) => {

@@ -12,8 +12,6 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     import RegionItemType = api.liveedit.RegionItemType;
     import TextItemType = api.liveedit.text.TextItemType;
     import LayoutItemType = api.liveedit.layout.LayoutItemType;
-    import DraggableStartEvent = api.liveedit.DraggableStartEvent;
-    import DraggableStopEvent = api.liveedit.DraggableStopEvent;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import SortableStopEvent = api.liveedit.SortableStopEvent;
     import SortableUpdateEvent = api.liveedit.SortableUpdateEvent;
@@ -109,17 +107,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             appendTo: 'body',
             zIndex: 5100000,
             cursorAt: CURSOR_AT,
-            helper: () => {
-                return LiveEdit.component.helper.DragHelper.createDragHelperHtml();
-            },
-            start: (event, ui) => {
-                new DraggableStartEvent().fire();
-                _isDragging = true;
-            },
-            stop: (event, ui) => {
-                new DraggableStopEvent().fire();
-                _isDragging = false;
-            }
+            helper: LiveEdit.component.helper.DragHelper.createDragHelperHtml
         });
     }
 
@@ -209,8 +197,6 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         if (LiveEdit.DomHelper.supportsTouch()) {
             wemjq(window).trigger('mouseOutComponent.liveEdit');
         }
-
-        //var wasSelectedOnDragStart = pageComponentView.getElement().data('live-edit-selected-on-drag-start');
 
         new SortableStopEvent(pageComponentView).fire();
 
