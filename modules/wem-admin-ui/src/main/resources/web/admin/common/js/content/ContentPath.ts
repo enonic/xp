@@ -39,6 +39,10 @@ module api.content {
             return this.elements;
         }
 
+        getLevel(): number {
+            return this.elements.length;
+        }
+
         hasParentContent(): boolean {
             return this.elements.length > 1;
         }
@@ -70,6 +74,21 @@ module api.content {
             }
 
             return true;
+        }
+
+        isDescendantOf(path: ContentPath): boolean {
+            var parentItems = path.getElements();
+
+            if (parentItems.length < this.elements.length) {
+                for (var i = 0; i < parentItems.length; i++) {
+                    if (parentItems[i] !== this.elements[i]) {
+                        return false;
+                    }
+                }
+                return true;
+            } else {
+                return false;
+            }
         }
 
         toString() {
