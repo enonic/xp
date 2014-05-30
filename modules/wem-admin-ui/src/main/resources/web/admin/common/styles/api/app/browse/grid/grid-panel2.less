@@ -1,6 +1,9 @@
 .grid-panel2 {
+  position: static;
+
   .grid {
     width: 100% !important;
+    height: 100% !important;
     .grid-canvas {
       width: 100% !important;
     }
@@ -21,7 +24,6 @@
 
     .slick-row {
 
-
       &:hover, &.odd:hover {
         background-color: @admin-light-gray-bg;
       }
@@ -39,6 +41,8 @@
       }
 
       .slick-cell-checkboxsel {
+        min-width: 45px;
+
         label {
           display: inline-block;
           width: 100%;

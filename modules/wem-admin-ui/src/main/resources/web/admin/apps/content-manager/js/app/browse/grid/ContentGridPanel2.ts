@@ -17,14 +17,26 @@ module app.browse.grid {
 
             this.nameFormatter = (row: number, cell: number, value: any, columnDef: any, item: api.content.ContentSummary) => {
                 var format = "";
+                var level = item.getPath().getLevel() - 1;
+                var nextItem = this.gridData.getItem(row + 1);
+
                 var toggleSpan = new api.dom.SpanEl("toggle");
                 if (item.hasChildren()) {
-                    toggleSpan.addClass("expand");
+                    var toggleClass = (nextItem && (nextItem.getPath().getLevel() - 1) > level) ? "collapse" : "expand";
+                    toggleSpan.addClass(toggleClass);
                 }
+                if (level > 0) {
+                    toggleSpan.getEl().setMarginLeft(16 * level + "px");
+                }
+
                 format += toggleSpan.toString();
+
 
                 var contentSummaryViewer = new api.content.ContentSummaryViewer();
                 contentSummaryViewer.setObject(item);
+                if (level > 0) {
+                    contentSummaryViewer.getEl().setPaddingLeft(16 * level + "px");
+                }
                 format += contentSummaryViewer.toString();
 
                 return format;
@@ -56,7 +68,8 @@ module app.browse.grid {
                 forceFitColumns: true,
                 hideColumnHeaders: true,
                 checkableRows: true,
-                rowHeight: 45
+                rowHeight: 45,
+                autoHeight: true
             };
 
             this.grid = new api.ui.grid.Grid<api.content.ContentSummary>(this.gridData, this.columns, this.gridOptions);
@@ -64,17 +77,25 @@ module app.browse.grid {
             // Custom row selection required for valid behaviour
             this.grid.setSelectionModel(new Slick.RowSelectionModel({selectActiveRow: false}));
             this.grid.subscribeOnClick((event, data) => {
-                this.grid.setSelectedRows([data.row]);
+                // TODO: Replace '$' with 'wemjq'
+                var $elem = $(event.target);
+                if ($elem.hasClass("expand")) {
+                    $elem.removeClass("expand").addClass("collapse");
+                    var item = this.gridData.getItem(data.row);
+                    this.expandData(item.getId());
+                    event.stopImmediatePropagation();
+                } else if ($elem.hasClass("collapse")) {
+                    $elem.removeClass("collapse").addClass("expand");
+                    var item = this.gridData.getItem(data.row);
+                    this.collapseData(item);
+                } else {
+                    this.grid.setSelectedRows([data.row]);
+                }
             });
 
             this.appendChild(this.grid);
 
-            new api.content.ListContentByIdRequest("").send().
-                then( (response:api.rest.JsonResponse<api.content.ListContentResult<api.content.json.ContentSummaryJson>>) => {
-                    var contents:api.content.ContentSummary[] = api.content.ContentSummary.fromJsonArray( response.getResult().contents );
-                    this.initData(contents);
-                }
-            );
+            this.expandData();
 
             this.onShown((event) => {
                 this.grid.resizeCanvas();
@@ -89,6 +110,41 @@ module app.browse.grid {
         private initData(contents:api.content.ContentSummary[]) {
 
             this.gridData.setItems(contents, "id");
+        }
+
+        private expandData(id: string = "") {
+            var request = new api.content.ListContentByIdRequest(id);
+            request.send().
+                then((response:api.rest.JsonResponse<api.content.ListContentResult<api.content.json.ContentSummaryJson>>) => {
+                        var contents:api.content.ContentSummary[] = api.content.ContentSummary.fromJsonArray( response.getResult().contents );
+                        if (id) {
+                            var items = this.gridData.getItems();
+                            for (var i = 0; i < items.length; i++) {
+                                if (items[i].getId() === id) {
+                                    items = items.slice(0, i+1).concat(contents).concat(items.slice(i+1));
+                                    this.initData(items);
+                                    break;
+                                }
+                            }
+                        } else { // root path
+                            this.initData(contents);
+                        }
+                    }
+                ).catch((reason: any) => {
+                    api.notify.showError(reason.toString());
+                }).finally(() => {
+                }).done();
+        }
+
+        private collapseData(item: api.content.ContentSummary) {
+            var oldItems = this.gridData.getItems(),
+                newItems = [];
+            oldItems.forEach((elem, index) => {
+                if (!elem.getPath().isDescendantOf(item.getPath())) {
+                    newItems.push(elem);
+                }
+            });
+            this.initData(newItems);
         }
     }
 }
