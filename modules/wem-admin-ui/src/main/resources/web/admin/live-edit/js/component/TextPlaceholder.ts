@@ -3,9 +3,6 @@ module LiveEdit.component {
     import LayoutItemType = api.liveedit.layout.LayoutItemType;
 
 
-    // Uses
-    var $ = $liveEdit;
-
     export class TextPlaceholder extends ComponentPlaceholder {
 
         private clickToEditLink: api.dom.AEl;
@@ -33,7 +30,7 @@ module LiveEdit.component {
                 this.removeChild(this.clickToEditLink);
                 this.clickToEditLink = null;
 
-                $(this.getHTMLElement()).trigger('click');
+                wemjq(this.getHTMLElement()).trigger('click');
 
                 return false;
             });

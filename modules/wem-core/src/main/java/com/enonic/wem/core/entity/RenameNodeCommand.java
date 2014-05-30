@@ -4,6 +4,7 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodeAlreadyExistException;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
@@ -41,7 +42,11 @@ final class RenameNodeCommand
         {
             return doExecute();
         }
-        catch ( final Exception e )
+        catch ( NodeAlreadyExistException e )
+        {
+            throw e;
+        }
+        catch ( Exception e )
         {
             throw Exceptions.newRutime( "Error renaming node" ).withCause( e );
         }
@@ -60,15 +65,34 @@ final class RenameNodeCommand
             throw new NodeNotFoundException( "Node with id " + entityId + " not found" );
         }
 
-        final Nodes children = nodeDao.getByParent( nodeToBeRenamed.path(), workspace );
-
         final NodePath parentPath = nodeToBeRenamed.parent().asAbsolute();
+        final NodePath targetPath = new NodePath( parentPath, params.getNodeName() );
+        final EntityId existingNodeId = getNodeIdFromPath( targetPath );
+        if ( ( existingNodeId != null ) && !nodeToBeRenamed.id().equals( existingNodeId ) )
+        {
+            throw new NodeAlreadyExistException( targetPath );
+        }
+
+        final Nodes children = nodeDao.getByParent( nodeToBeRenamed.path(), workspace );
 
         final Node renamedNode = doMoveNode( parentPath, params.getNodeName(), params.getEntityId() );
 
         moveNodesToNewParentPath( children, renamedNode.path() );
 
         return renamedNode;
+    }
+
+    private EntityId getNodeIdFromPath( final NodePath path )
+    {
+        try
+        {
+            final Node existingNode = nodeDao.getByPath( path, params.getWorkspace() );
+            return existingNode == null ? null : existingNode.id();
+        }
+        catch ( final NodeNotFoundException e )
+        {
+            return null;
+        }
     }
 
     private void moveNodesToNewParentPath( final Nodes nodes, final NodePath newParentPath )

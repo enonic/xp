@@ -6,7 +6,7 @@ import javax.ws.rs.core.Response;
 
 import com.google.gson.Gson;
 
-final class JsHttpResponseSerializer
+public final class JsHttpResponseSerializer
 {
     private final JsHttpResponse from;
 

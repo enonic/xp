@@ -1,20 +1,7 @@
 module LiveEdit.component {
 
-    import ComponentPath = api.content.page.ComponentPath;
-    import PageSelectEvent = api.liveedit.PageSelectEvent;
-    import RegionSelectEvent = api.liveedit.RegionSelectEvent;
-    import PageComponentSelectEvent = api.liveedit.PageComponentSelectEvent;
-    import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
     import ItemView = api.liveedit.ItemView;
-    import RegionView = api.liveedit.RegionView;
-    import PageView = api.liveedit.PageView;
-    import PageItemType = api.liveedit.PageItemType;
-    import RegionItemType = api.liveedit.RegionItemType;
-    import PageComponentItemType = api.liveedit.PageComponentItemType;
-    import PageComponentView = api.liveedit.PageComponentView;
-
-    // Uses
-    var $ = $liveEdit;
+    import PageComponentSelectComponentEvent = api.liveedit.PageComponentSelectComponentEvent;
 
     export var ATTRIBUTE_NAME: string = 'data-live-edit-selected';
 
@@ -23,7 +10,7 @@ module LiveEdit.component {
         public static handleSelect(itemView: ItemView, event?: JQueryEventObject, waitForRender: boolean = false) {
 
             itemView.select();
-            //this.setSelectionAttributeOnElement($(itemView));
+            //this.setSelectionAttributeOnElement(wemjq(itemView));
 
             var mouseClickPagePosition: any = null;
             if (event && !itemView.isEmpty()) {
@@ -38,7 +25,7 @@ module LiveEdit.component {
                 var iterations = 0;
                 var interval = setInterval(() => {
                     if (itemView.getHTMLElement().offsetHeight > 0) {
-                        $(window).trigger('selectComponent.liveEdit', [itemView, mouseClickPagePosition]);
+                        new PageComponentSelectComponentEvent(itemView, mouseClickPagePosition).fire();
                         clearInterval(interval);
                     }
                     iterations++;
@@ -47,16 +34,16 @@ module LiveEdit.component {
                     }
                 }, 300);
             } else {
-                $(window).trigger('selectComponent.liveEdit', [itemView, mouseClickPagePosition]);
+                new PageComponentSelectComponentEvent(itemView, mouseClickPagePosition).fire();
             }
         }
 
         public static pageHasSelectedElement(): boolean {
-            return $('[' + ATTRIBUTE_NAME + ']').length > 0;
+            return wemjq('[' + ATTRIBUTE_NAME + ']').length > 0;
         }
 
         public static removeSelectedAttribute(): void {
-            $('[' + ATTRIBUTE_NAME + ']').removeAttr(ATTRIBUTE_NAME);
+            wemjq('[' + ATTRIBUTE_NAME + ']').removeAttr(ATTRIBUTE_NAME);
         }
 
     }

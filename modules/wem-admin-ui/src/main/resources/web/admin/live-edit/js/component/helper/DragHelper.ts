@@ -1,8 +1,5 @@
 module LiveEdit.component.helper {
 
-    // Uses
-    var $ = $liveEdit;
-
     export class DragHelper {
 
         public static createDragHelperHtml():string {
@@ -14,7 +11,7 @@ module LiveEdit.component.helper {
         }
 
         public static updateStatusIcon(dropAllowed) {
-            var helper:JQuery = $('#live-edit-drag-helper');
+            var helper:JQuery = wemjq('#live-edit-drag-helper');
             if (dropAllowed) {
                 helper.removeClass("live-edit-font-icon-drop-not-allowed");
                 helper.addClass("live-edit-font-icon-drop-allowed");

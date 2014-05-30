@@ -3,10 +3,6 @@ module LiveEdit.ui.contextmenu.menuitem {
     import ItemType = api.liveedit.ItemType;
     import ItemView = api.liveedit.ItemView;
 
-
-    // Uses
-    var $ = $liveEdit;
-
     export class ParentMenuItem extends LiveEdit.ui.contextmenu.menuitem.BaseMenuItem {
 
         constructor(menu) {
@@ -42,7 +38,7 @@ module LiveEdit.ui.contextmenu.menuitem {
         private scrollComponentIntoView(component: ItemView): void {
             var dimensions = component.getElementDimensions();
             if (dimensions.top <= window.pageYOffset) {
-                $('html, body').animate({scrollTop: dimensions.top - 10}, 200);
+                wemjq('html, body').animate({scrollTop: dimensions.top - 10}, 200);
             }
         }
     }

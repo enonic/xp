@@ -6,7 +6,7 @@ module app.wizard.page.contextwindow.inspect {
             super("inspection-panel");
 
             this.onRendered((event) => {
-                $(this.getHTMLElement()).slimScroll({
+                wemjq(this.getHTMLElement()).slimScroll({
                     height: '100%'
                 });
             })

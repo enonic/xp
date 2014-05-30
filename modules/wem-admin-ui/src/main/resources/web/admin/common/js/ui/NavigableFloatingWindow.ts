@@ -7,7 +7,7 @@ module api.ui {
 
 
         constructor(options: FloatingWindowOptions = {}) {
-            super(jQuery.extend({draggable: true, draggableOptions: { handle: ".tab-menu"} }, options));
+            super(wemjq.extend({draggable: true, draggableOptions: { handle: ".tab-menu"} }, options));
 
             this.navigator = new api.ui.tab.TabBar();
             this.deck = new api.ui.NavigatedDeckPanel(this.navigator);

@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 
 import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
+import org.joda.time.Instant;
 
 import com.google.common.base.Charsets;
 
@@ -21,8 +23,10 @@ import com.enonic.wem.core.schema.SchemaIconDao;
 import com.enonic.wem.core.schema.mixin.MixinXmlSerializer;
 
 import static com.enonic.wem.api.schema.mixin.Mixins.newMixins;
+import static java.nio.file.Files.getLastModifiedTime;
 import static java.nio.file.Files.isDirectory;
 import static java.nio.file.Files.isRegularFile;
+import static java.nio.file.Files.readAttributes;
 
 public final class MixinDaoImpl
     implements MixinDao
@@ -145,7 +149,17 @@ public final class MixinDaoImpl
             final MixinXmlSerializer xmlSerializer = new MixinXmlSerializer().overrideName( mixinName );
             final Mixin mixin = xmlSerializer.toMixin( serializedMixin );
             // TODO make mixin xml parser return Mixin.Builder
-            return Mixin.newMixin( mixin );
+            final Mixin.Builder builder = Mixin.newMixin( mixin );
+
+            // TODO remove conversion to JODA Instant and use Java 8 Instant, call toInstant() instead of toMillis()
+            final Instant modifiedTime = new Instant( getLastModifiedTime( xmlFile ).toMillis() );
+            builder.modifiedTime( modifiedTime );
+
+            final BasicFileAttributes basicAttr = readAttributes( xmlFile, BasicFileAttributes.class );
+            final Instant createdTime = new Instant( basicAttr.creationTime().toMillis() );
+            builder.createdTime( createdTime );
+
+            return builder;
         }
         catch ( IOException e )
         {

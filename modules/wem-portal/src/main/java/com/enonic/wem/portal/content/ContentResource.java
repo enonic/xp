@@ -17,7 +17,8 @@ import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsController;
-import com.enonic.wem.portal.controller.JsHttpRequestBuilder;
+import com.enonic.wem.portal.controller.JsHttpRequest;
+import com.enonic.wem.portal.controller.JsHttpResponseSerializer;
 import com.enonic.wem.portal.exception.PortalWebException;
 import com.enonic.wem.portal.script.lib.PortalUrlScriptBean;
 
@@ -85,11 +86,11 @@ public final class ContentResource
         context.setSiteContent( siteContent );
         context.setPageTemplate( pageTemplate );
 
-        final JsHttpRequestBuilder builder = new JsHttpRequestBuilder();
-        builder.mode( request.mode );
-        builder.method( request.httpContext.getRequest().getMethod() );
-        builder.params( request.httpContext.getUriInfo().getQueryParameters() );
-        context.setRequest( builder.build() );
+        final JsHttpRequest jsRequest = new JsHttpRequest();
+        jsRequest.setMode( request.mode );
+        jsRequest.setMethod( request.httpContext.getRequest().getMethod() );
+        jsRequest.addParams( request.httpContext.getUriInfo().getQueryParameters() );
+        context.setRequest( jsRequest );
 
         final PortalUrlScriptBean portalUrlScriptBean = new PortalUrlScriptBean();
         portalUrlScriptBean.setContentPath( content.getPath().toString() );
@@ -100,6 +101,8 @@ public final class ContentResource
         controller.scriptDir( pageDescriptor.getResourceKey() );
         controller.context( context );
 
-        return controller.execute();
+        controller.execute();
+
+        return new JsHttpResponseSerializer( context.getResponse() ).serialize();
     }
 }

@@ -16,6 +16,7 @@ import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsControllerFactory;
 import com.enonic.wem.portal.controller.JsHttpRequest;
+import com.enonic.wem.portal.controller.JsHttpResponseSerializer;
 import com.enonic.wem.portal.rendering.Renderer;
 
 abstract class DescriptorBasedPageComponentRenderer
@@ -48,7 +49,8 @@ abstract class DescriptorBasedPageComponentRenderer
         try
         {
             context.setComponent( pageComponent );
-            return controller.execute();
+            controller.execute();
+            return new JsHttpResponseSerializer( context.getResponse() ).serialize();
         }
         finally
         {

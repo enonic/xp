@@ -7,8 +7,8 @@ module api.ui {
         private focusIndex: number = -1;
         private focusVisible: boolean = false;
 
-        constructor(navigator: Navigator, className?: string) {
-            super(className);
+        constructor(navigator: Navigator, scrollable?: api.dom.Element, className?: string) {
+            super(scrollable, className);
             this.navigator = navigator;
             var listenToScroll = true;
 
@@ -21,7 +21,7 @@ module api.ui {
                 listenToScroll = true;
             });
 
-            jQuery(this.getHTMLElement()).scroll((event: JQueryEventObject) => {
+            this.getScrollable().onScroll((event: MouseEvent) => {
                 if (listenToScroll) {
                     this.updateScrolledNavigationItem();
                 }
@@ -29,7 +29,7 @@ module api.ui {
         }
 
         private updateScrolledNavigationItem() {
-            var scrollTop = this.getHTMLElement().scrollTop;
+            var scrollTop = this.getScrollable().getHTMLElement().scrollTop;
 
             var focusVisible = this.isFocusedPanelVisible(scrollTop);
             var scrollIndex = this.getScrolledPanelIndex(scrollTop);
@@ -49,7 +49,7 @@ module api.ui {
             if (this.focusIndex < 0) {
                 return false;
             }
-            var totalHeight = this.getEl().getHeight(),
+            var totalHeight = this.getScrollable().getEl().getHeight(),
                 panelEl = this.getPanel(this.focusIndex).getEl(),
                 panelTop = panelEl.getOffsetToParent().top,
                 panelBottom = panelTop + panelEl.getHeight();

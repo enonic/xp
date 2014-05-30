@@ -1543,3 +1543,4 @@ export = $;
 }
 declare var jQuery: JQueryStatic;
 declare var $: JQueryStatic;
+declare var wemjq: JQueryStatic;

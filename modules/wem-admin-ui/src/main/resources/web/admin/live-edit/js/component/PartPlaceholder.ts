@@ -5,9 +5,6 @@ module LiveEdit.component {
     import PartItemType = api.liveedit.part.PartItemType;
     import PageItemType = api.liveedit.PageItemType;
 
-    // Uses
-    var $ = $liveEdit;
-
     export class PartPlaceholder extends ComponentPlaceholder {
 
         private comboBox: api.content.page.part.PartDescriptorComboBox;
@@ -15,8 +12,8 @@ module LiveEdit.component {
         constructor() {
             super(PartItemType.get());
 
-            $(this.getHTMLElement()).on('click', 'input', (e) => {
-                $(e.currentTarget).focus();
+            wemjq(this.getHTMLElement()).on('click', 'input', (e) => {
+                wemjq(e.currentTarget).focus();
                 e.stopPropagation();
             });
             this.getEl().setData('live-edit-type', 'part');

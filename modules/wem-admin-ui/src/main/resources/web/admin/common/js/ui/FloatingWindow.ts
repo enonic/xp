@@ -24,7 +24,7 @@ module api.ui {
         private setDraggable() {
             this.draggable = true;
             if (this.draggable) {
-                jQuery(this.getHTMLElement()).draggable(this.options.draggableOptions);
+                wemjq(this.getHTMLElement()).draggable(this.options.draggableOptions);
             }
         }
     }

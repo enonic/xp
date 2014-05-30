@@ -2,9 +2,6 @@ module LiveEdit.ui {
 
     import TextView = api.liveedit.text.TextView;
 
-    // Uses
-    var $ = $liveEdit;
-
     export class Editor extends LiveEdit.ui.Base {
 
         toolbar: EditorToolbar;
@@ -17,10 +14,10 @@ module LiveEdit.ui {
         }
 
         registerGlobalListeners(): void {
-            $(window).on('editTextComponent.liveEdit', (event: JQueryEventObject, textComponent) => this.activate(textComponent));
-            $(window).on('leaveTextComponent.liveEdit', (event: JQueryEventObject, textComponent) => this.deActivate(textComponent));
-            $(window).on('editorToolbarButtonClick.liveEdit',
-                (event: JQueryEventObject, tag: string) => document.execCommand(tag, false, null));
+            wemjq(window).on('editTextComponent.liveEdit', (event: JQueryEventObject, textComponent?) => this.activate(textComponent));
+            wemjq(window).on('leaveTextComponent.liveEdit', (event: JQueryEventObject, textComponent?) => this.deActivate(textComponent));
+            wemjq(window).on('editorToolbarButtonClick.liveEdit',
+                (event: JQueryEventObject, tag?: string) => document.execCommand(tag, false, null));
         }
 
         activate(textComponent: TextView): void {

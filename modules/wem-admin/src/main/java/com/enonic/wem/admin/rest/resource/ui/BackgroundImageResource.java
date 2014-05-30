@@ -22,7 +22,7 @@ public final class BackgroundImageResource
     public InputStream streamBackgroundImage()
         throws Exception
     {
-        final String backgroundImagePath = configProperties.get( "cms.home" ).toString() + "/custom/background.jpg";
+        final String backgroundImagePath = configProperties.get( "cms.home" ) + "/custom/background.jpg";
 
         final File source = new File( backgroundImagePath );
         if ( source.exists() )

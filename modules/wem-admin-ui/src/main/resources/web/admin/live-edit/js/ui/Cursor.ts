@@ -3,9 +3,7 @@ module LiveEdit.ui {
     import ItemView = api.liveedit.ItemView;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import SortableStopEvent = api.liveedit.SortableStopEvent;
-
-    // Uses
-    var $ = $liveEdit;
+    import PageComponentSelectComponentEvent = api.liveedit.PageComponentSelectComponentEvent;
 
     export class Cursor extends LiveEdit.ui.Base {
 
@@ -16,20 +14,20 @@ module LiveEdit.ui {
         constructor() {
             super();
 
-            this.bodyElement = $('body');
+            this.bodyElement = wemjq('body');
 
             // Cache any user set body@style cursor in order to restore it later.
             // Not 100% as the cursor can change any time during the page's life cycle.
-            // $.css('cursor') should be avoided here used as it uses window.getComputedStyle()
+            // wemjq.css('cursor') should be avoided here used as it uses window.getComputedStyle()
             this.defaultBodyCursor = this.bodyElement[0].style.cursor;
 
             this.registerGlobalListeners();
         }
 
         private registerGlobalListeners(): void {
-            $(window).on('mouseOverComponent.liveEdit', (event: JQueryEventObject, component: ItemView) => this.update(component));
-            $(window).on('selectComponent.liveEdit', (event: JQueryEventObject, component: ItemView) => this.update(component));
-            $(window).on('mouseOutComponent.liveEdit', () => this.reset());
+            wemjq(window).on('mouseOverComponent.liveEdit', (event: JQueryEventObject, component?: ItemView) => this.update(component));
+            PageComponentSelectComponentEvent.on((event: PageComponentSelectComponentEvent) => this.update(event.getItemView()));
+            wemjq(window).on('mouseOutComponent.liveEdit', () => this.reset());
             SortableStartEvent.on(() => this.hide());
             SortableStopEvent.on(() => this.reset());
         }

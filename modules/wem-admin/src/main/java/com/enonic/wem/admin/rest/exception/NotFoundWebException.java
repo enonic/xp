@@ -1,4 +1,4 @@
-package com.enonic.wem.core.web.jaxrs;
+package com.enonic.wem.admin.rest.exception;
 
 import javax.ws.rs.WebApplicationException;
 

@@ -4,9 +4,6 @@ module LiveEdit.component.mouseevent {
     import TextView = api.liveedit.text.TextView;
     import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
 
-    // Uses
-    var $ = $liveEdit;
-
     enum TextMode {
         UNSELECTED,
         SELECTED,
@@ -36,7 +33,7 @@ module LiveEdit.component.mouseevent {
         }
 
         registerGlobalListeners(): void {
-            $(window).on('clickShader.liveEdit', () => this.leaveEditMode());
+            wemjq(window).on('clickShader.liveEdit', () => this.leaveEditMode());
 
             PageComponentDeselectEvent.on(() => this.leaveEditMode());
         }
@@ -44,8 +41,8 @@ module LiveEdit.component.mouseevent {
         // Override base attachClickEvent
         attachClickEvent(): void {
             // Listen for left/right click.
-            $(document).on('click contextmenu touchstart', this.componentCssSelectorFilter, (event: JQueryEventObject) => {
-                var textComponent = TextView.fromJQuery($(event.currentTarget));
+            wemjq(document).on('click contextmenu touchstart', this.componentCssSelectorFilter, (event: JQueryEventObject) => {
+                var textComponent = TextView.fromJQuery(wemjq(event.currentTarget));
                 this.handleClick(event, textComponent);
             });
         }
@@ -91,32 +88,32 @@ module LiveEdit.component.mouseevent {
 
             LiveEdit.component.Selection.handleSelect(this.selectedText, event);
 
-            $(window).trigger('selectTextComponent.liveEdit', [this.selectedText]);
+            wemjq(window).trigger('selectTextComponent.liveEdit', [this.selectedText]);
         }
 
         setEditMode(): void {
 
             var textComponent = this.selectedText;
-            $('.text-link-click-to-edit').remove();
+            wemjq('.text-link-click-to-edit').remove();
 //            textComponent.onResized((event: api.dom.ElementResizedEvent) => {
 //                console.log('resize' , event);
-//                $(window).trigger('editTextComponent.liveEdit', [textComponent]);
+//                wemjq(window).trigger('editTextComponent.liveEdit', [textComponent]);
 //            });
 
             if (this.isSelectedTextEmpty()) {
                 textComponent.appendChild(new api.dom.BrEl());
             }
             textComponent.getElement().on('keydown keyup', (event) => {
-                $(window).trigger('editTextComponent.liveEdit', [textComponent]);
+                wemjq(window).trigger('editTextComponent.liveEdit', [textComponent]);
             });
 
-            $(window).trigger('editTextComponent.liveEdit', [this.selectedText]);
+            wemjq(window).trigger('editTextComponent.liveEdit', [this.selectedText]);
 
             textComponent.getElement().css('cursor', 'text');
             textComponent.getElement().addClass('live-edit-edited-text');
             textComponent.getElement().removeClass('live-edit-empty-component');
 
-            $(window).trigger('editTextComponent.liveEdit', [textComponent]);
+            wemjq(window).trigger('editTextComponent.liveEdit', [textComponent]);
 
             this.currentMode = TextMode.EDIT;
         }
@@ -127,7 +124,7 @@ module LiveEdit.component.mouseevent {
                 return;
             }
 
-            $(window).trigger('leaveTextComponent.liveEdit', [this.selectedText]);
+            wemjq(window).trigger('leaveTextComponent.liveEdit', [this.selectedText]);
 
             textComponent.getElement().css('cursor', '');
             textComponent.getElement().removeClass('live-edit-edited-text');
@@ -145,13 +142,13 @@ module LiveEdit.component.mouseevent {
         }
 
         private isSelectedTextBlankOrEmpty(): boolean {
-            var textContent = $.trim(this.selectedText.getElement().html());
+            var textContent = wemjq.trim(this.selectedText.getElement().html());
             var isBlank = !textContent.length || ('<br>' === textContent);
             return isBlank;
         }
 
         private isSelectedTextEmpty(): boolean {
-            return !$.trim(this.selectedText.getElement().html()).length;
+            return !wemjq.trim(this.selectedText.getElement().html()).length;
         }
 
     }

@@ -142,13 +142,13 @@ module api.dom {
 
         show() {
             // Using jQuery to show, since it seems to contain some smartness
-            jQuery(this.el.getHTMLElement()).show();
+            wemjq(this.el.getHTMLElement()).show();
             this.notifyShown(this);
         }
 
         hide() {
             // Using jQuery to hide, since it seems to contain some smartness
-            jQuery(this.el.getHTMLElement()).hide();
+            wemjq(this.el.getHTMLElement()).hide();
             this.notifyHidden(this);
         }
 
@@ -161,7 +161,7 @@ module api.dom {
         }
 
         isVisible() {
-            return jQuery(this.el.getHTMLElement()).is(':visible');
+            return wemjq(this.el.getHTMLElement()).is(':visible');
         }
 
         setClass(className: string): api.dom.Element {
@@ -247,6 +247,13 @@ module api.dom {
         appendChild<T extends api.dom.Element>(child: T): Element {
             this.el.appendChild(child.getEl().getHTMLElement());
             this.insert(child, this, this.children.length);
+            return this;
+        }
+
+        appendChildren<T extends api.dom.Element>(children: T[]): Element {
+            children.forEach((child: T) => {
+                this.appendChild(child);
+            });
             return this;
         }
 
@@ -380,7 +387,7 @@ module api.dom {
         }
 
         toString(): string {
-            return jQuery('<div>').append(jQuery(this.getHTMLElement()).clone()).html();
+            return wemjq('<div>').append(wemjq(this.getHTMLElement()).clone()).html();
         }
 
         onMouseEnter(handler: (e: MouseEvent)=>any) {
@@ -523,10 +530,10 @@ module api.dom {
                     this.notifyResized();
                 }
                 if (this.isVisible()) {
-                    jQuery(this.getHTMLElement()).resize(handler);
+                    wemjq(this.getHTMLElement()).resize(handler);
                 } else {
                     var firstShowListener = (event: ElementShownEvent) => {
-                        jQuery(this.getHTMLElement()).resize(handler);
+                        wemjq(this.getHTMLElement()).resize(handler);
                         this.unShown(firstShowListener);
                     }
                     this.onShown(firstShowListener);
@@ -540,7 +547,7 @@ module api.dom {
             });
 
             if (this.resizedListeners.length == 0) {
-                jQuery(this.getHTMLElement()).removeResize((event) => {
+                wemjq(this.getHTMLElement()).removeResize((event) => {
                     this.notifyResized();
                 });
             }
@@ -633,6 +640,14 @@ module api.dom {
 
         unBlur(listener: (event: FocusEvent) => void) {
             this.getEl().removeEventListener("blur", listener);
+        }
+
+        onScroll(listener: (event: Event) => void) {
+            this.getEl().addEventListener("scroll", listener);
+        }
+
+        unScroll(listener: (event: Event) => void) {
+            this.getEl().removeEventListener("scroll", listener);
         }
 
         static fromHtmlElement(element: HTMLElement, loadExistingChildren: boolean = false): Element {

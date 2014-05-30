@@ -29,11 +29,8 @@ module api.dom {
         public static unregisterElement(el: api.dom.Element) {
             if (el) {
                 delete ElementRegistry.elements[el.getId()];
-                var fullName = api.util.getFullName(el);
-                var count = --ElementRegistry.counters[fullName];
-                if (count < 0) {
-                    delete ElementRegistry.counters[fullName];
-                }
+                // don't reduce counter because if we deleted 2nd element while having 5,
+                // the counter would had been reduced to 4 resulting in a double 5 elements after another one is created.
             }
         }
 

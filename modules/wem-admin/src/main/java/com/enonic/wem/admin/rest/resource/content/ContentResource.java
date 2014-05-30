@@ -15,6 +15,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.sun.jersey.api.ConflictException;
+
 import com.enonic.wem.admin.json.content.AbstractContentListJson;
 import com.enonic.wem.admin.json.content.ContentIdJson;
 import com.enonic.wem.admin.json.content.ContentIdListJson;
@@ -23,6 +25,7 @@ import com.enonic.wem.admin.json.content.ContentListJson;
 import com.enonic.wem.admin.json.content.ContentSummaryJson;
 import com.enonic.wem.admin.json.content.ContentSummaryListJson;
 import com.enonic.wem.admin.json.content.attachment.AttachmentJson;
+import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 import com.enonic.wem.admin.rest.resource.content.json.AbstractContentQueryResultJson;
 import com.enonic.wem.admin.rest.resource.content.json.ContentNameJson;
 import com.enonic.wem.admin.rest.resource.content.json.ContentQueryJson;
@@ -33,6 +36,7 @@ import com.enonic.wem.admin.rest.resource.content.json.UpdateAttachmentsJson;
 import com.enonic.wem.admin.rest.resource.content.json.UpdateContentJson;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
@@ -52,7 +56,6 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.query.ContentQueryResult;
 import com.enonic.wem.api.data.DataJson;
-import com.enonic.wem.core.web.jaxrs.NotFoundWebException;
 
 import static com.enonic.wem.api.content.Content.editContent;
 
@@ -312,14 +315,20 @@ public class ContentResource
             return new ContentJson( updatedContent );
         }
 
-        final RenameContentParams renameParams = new RenameContentParams().
-            contentId( json.getContentId() ).
-            newName( json.getContentName() );
-        final Content renamedContent = contentService.rename( renameParams, ContentConstants.DEFAULT_CONTEXT );
+        try
+        {
+            final RenameContentParams renameParams = new RenameContentParams().
+                contentId( json.getContentId() ).
+                newName( json.getContentName() );
 
-        return new ContentJson( renamedContent );
+            final Content renamedContent = contentService.rename( renameParams, ContentConstants.DEFAULT_CONTEXT );
+            return new ContentJson( renamedContent );
+        }
+        catch ( ContentAlreadyExistException e )
+        {
+            throw new ConflictException( String.format( "Content with path [%s] already exists", e.getContentPath() ) );
+        }
     }
-
 
     private ContentData parseContentData( final List<DataJson> dataJsonList )
     {

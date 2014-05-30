@@ -22,7 +22,7 @@ module LiveEdit.component.mouseevent {
         private registerGlobalListeners(): void {
 
             // fixme: this does not belongs here.
-            $(window).on('sortableOver.liveEdit', () => {
+            wemjq(window).on('sortableOver.liveEdit', () => {
                 LiveEdit.PlaceholderCreator.renderEmptyRegionPlaceholders();
             });
 

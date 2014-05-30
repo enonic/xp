@@ -35,7 +35,7 @@ module api.content.inputtype.image {
 
             this.dialog = new ImageSelectorDialog();
 
-            jQuery(this.getHTMLElement()).sortable({
+            wemjq(this.getHTMLElement()).sortable({
                 containment: this.getHTMLElement(),
                 cursor: 'move',
                 tolerance: 'pointer',
@@ -161,7 +161,7 @@ module api.content.inputtype.image {
 
             optionView.getIcon().onLoaded((event: UIEvent) => {
                 this.updateOptionViewLayout(optionView, this.calculateOptionHeight());
-                jQuery(this.getHTMLElement()).sortable("refresh");
+                wemjq(this.getHTMLElement()).sortable("refresh");
             });
 
             optionView.insertBeforeEl(this.toolbar);
@@ -204,7 +204,7 @@ module api.content.inputtype.image {
             this.setOutsideClickListener();
             this.updateDialogLayout(this.calculateOptionHeight());
 
-            jQuery(this.getHTMLElement()).sortable("disable");
+            wemjq(this.getHTMLElement()).sortable("disable");
         }
 
         updateLayout() {
@@ -245,7 +245,7 @@ module api.content.inputtype.image {
         private hideImageSelectorDialog() {
             this.dialog.remove();
             this.activeOption.getOptionView().removeClass('editing first-in-row last-in-row');
-            jQuery(this.getHTMLElement()).sortable("enable");
+            wemjq(this.getHTMLElement()).sortable("enable");
 
             api.dom.Body.get().unClicked(this.mouseClickListener);
         }

@@ -6,9 +6,6 @@ module LiveEdit.component {
     import ImageItemType = api.liveedit.image.ImageItemType;
     import PageItemType = api.liveedit.PageItemType;
 
-    // Uses
-    var $ = $liveEdit;
-
     export class ImagePlaceholder extends ComponentPlaceholder {
 
         private comboBox: api.content.ContentComboBox;
@@ -17,10 +14,12 @@ module LiveEdit.component {
         constructor() {
             super(ImageItemType.get());
 
-            $(this.getHTMLElement()).on('click', 'input', (e) => {
-                $(e.currentTarget).focus();
+            wemjq(this.getHTMLElement()).on('click', 'input', (e) => {
+                wemjq(e.currentTarget).focus();
                 e.stopPropagation();
             });
+
+            console.log("** USING jquery version" + wemjq.fn.jquery);
 
             var imageUploadHandler = (event: ImageUploadedEvent) => this.createImageContent(event.getUploadedItem());
             ImageUploadedEvent.on(imageUploadHandler);

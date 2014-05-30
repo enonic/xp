@@ -10,32 +10,32 @@ module LiveEdit.component.mouseevent {
 
         attachMouseOverEvent(): void {
 
-            $(document).on('mouseover', this.componentCssSelectorFilter, (event: JQueryEventObject) => {
+            wemjq(document).on('mouseover', this.componentCssSelectorFilter, (event: JQueryEventObject) => {
                 if (this.cancelMouseOverEvent(event)) {
                     return;
                 }
                 event.stopPropagation();
 
                 LiveEdit.component.Selection.removeSelectedAttribute();
-                var component = ItemView.fromJQuery($(event.currentTarget));
+                var component = ItemView.fromJQuery(wemjq(event.currentTarget));
 
-                $(window).trigger('mouseOverComponent.liveEdit', [ component ]);
+                wemjq(window).trigger('mouseOverComponent.liveEdit', [ component ]);
             });
         }
 
         attachMouseOutEvent(): void {
-            $(document).on('mouseout', () => {
+            wemjq(document).on('mouseout', () => {
                 if (LiveEdit.component.Selection.pageHasSelectedElement()) {
                     return;
                 }
-                $(window).trigger('mouseOutComponent.liveEdit');
+                wemjq(window).trigger('mouseOutComponent.liveEdit');
             });
         }
 
         attachClickEvent(): void {
 
-            $(document).on('click contextmenu touchstart', this.componentCssSelectorFilter, (event: JQueryEventObject) => {
-                if (this.targetIsLiveEditUiComponent($(event.target))) {
+            wemjq(document).on('click contextmenu touchstart', this.componentCssSelectorFilter, (event: JQueryEventObject) => {
+                if (this.targetIsLiveEditUiComponent(wemjq(event.target))) {
                     return;
                 }
 
@@ -45,7 +45,7 @@ module LiveEdit.component.mouseevent {
                 // Needed so the browser's context menu is not shown on contextmenu
                 event.preventDefault();
 
-                var itemView = ItemView.fromJQuery($(event.currentTarget));
+                var itemView = ItemView.fromJQuery(wemjq(event.currentTarget));
 //                var deselectComponent:boolean = component.isSelected() || LiveEdit.component.Selection.pageHasSelectedElement();
 //
 //                // Toggle select/deselect
@@ -59,11 +59,11 @@ module LiveEdit.component.mouseevent {
 
         // fixme: move when empty placeholder stuff is refactored
         getAll(): JQuery {
-            return $(this.componentCssSelectorFilter);
+            return wemjq(this.componentCssSelectorFilter);
         }
 
         cancelMouseOverEvent(event: JQueryEventObject): boolean {
-            return this.targetIsLiveEditUiComponent($(event.target)) || LiveEdit.component.Selection.pageHasSelectedElement() ||
+            return this.targetIsLiveEditUiComponent(wemjq(event.target)) || LiveEdit.component.Selection.pageHasSelectedElement() ||
                    LiveEdit.component.dragdropsort.DragDropSort.isDragging();
         }
 

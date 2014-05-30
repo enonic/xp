@@ -1,5 +1,7 @@
 package com.enonic.wem.core.content;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.entity.NodePath;
@@ -25,6 +27,12 @@ public class ContentNodeHelper
         }
 
         return builder.build();
+    }
+
+    public static ContentPath translateNodePathToContentPath( final NodePath nodePath )
+    {
+        final String contentPath = StringUtils.substringAfter( nodePath.asAbsolute().toString(), CONTENT_ROOT_NODE_NAME + "/" );
+        return ContentPath.from( contentPath );
     }
 
 }

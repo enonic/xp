@@ -41,7 +41,7 @@ module api.liveedit {
         }
 
         getElement(): JQuery {
-            return $(this.getHTMLElement());
+            return wemjq(this.getHTMLElement());
         }
 
         getType(): ItemType {
