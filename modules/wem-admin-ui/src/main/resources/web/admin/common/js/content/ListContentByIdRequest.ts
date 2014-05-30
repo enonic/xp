@@ -26,5 +26,12 @@ module api.content {
         getRequestPath():api.rest.Path {
             return api.rest.Path.fromParent(super.getResourcePath(), "list");
         }
+
+        sendAndParse(): Q.Promise<api.content.ContentSummary[]> {
+
+            return this.send().then((response:api.rest.JsonResponse<api.content.ListContentResult<api.content.json.ContentSummaryJson>>) => {
+                return api.content.ContentSummary.fromJsonArray( response.getResult().contents );
+            });
+        }
     }
 }
