@@ -114,20 +114,26 @@ module api.content.inputtype.image {
                 }
             });
 
-            optionView.getCheckbox().onKeyDown((event: KeyboardEvent) => {
+            optionView.getCheckbox().onKeyPressed((event: KeyboardEvent) => {
+                var checkbox = optionView.getCheckbox();
+
                 switch (event.which) {
                 case 9: // Tab
                     if (this.isFirstInRow(option.getIndex()) || this.isLast(option.getIndex())) {
                         this.hideImageSelectorDialog();
                     }
                     break;
+                case 32: // Spacebar
+                    var isChecked = !checkbox.isChecked();
+                    checkbox.setChecked(isChecked, isChecked);
+                    break;
                 case 8: // Backspace
-                    optionView.getCheckbox().setChecked(false);
+                    checkbox.setChecked(false);
                     this.removeOptionViewAndRefocus(option);
                     event.preventDefault();
                     break;
                 case 46: // Delete
-                    optionView.getCheckbox().setChecked(false);
+                    checkbox.setChecked(false);
                     this.removeOptionViewAndRefocus(option);
                     break;
                 case 13: // Enter
