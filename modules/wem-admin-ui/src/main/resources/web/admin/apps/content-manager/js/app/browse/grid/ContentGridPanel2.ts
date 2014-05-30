@@ -77,15 +77,15 @@ module app.browse.grid {
             // Custom row selection required for valid behaviour
             this.grid.setSelectionModel(new Slick.RowSelectionModel({selectActiveRow: false}));
             this.grid.subscribeOnClick((event, data) => {
-                // TODO: Replace '$' with 'wemjq'
-                var $elem = $(event.target);
-                if ($elem.hasClass("expand")) {
-                    $elem.removeClass("expand").addClass("collapse");
+                var elem = new api.dom.ElementHelper(event.target);
+
+                if (elem.hasClass("expand")) {
+                    elem.removeClass("expand").addClass("collapse");
                     var item = this.gridData.getItem(data.row);
                     this.expandData(item.getId());
                     event.stopImmediatePropagation();
-                } else if ($elem.hasClass("collapse")) {
-                    $elem.removeClass("collapse").addClass("expand");
+                } else if (elem.hasClass("collapse")) {
+                    elem.removeClass("collapse").addClass("expand");
                     var item = this.gridData.getItem(data.row);
                     this.collapseData(item);
                 } else {

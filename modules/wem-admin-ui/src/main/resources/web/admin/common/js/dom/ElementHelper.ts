@@ -358,20 +358,6 @@ module api.dom {
             return this;
         }
 
-        setPaddingLeft(value: string): ElementHelper {
-            this.el.style.paddingLeft = value;
-            return this;
-        }
-
-        getPaddingRight(): number {
-            return parseFloat(this.getComputedProperty('padding-right'));
-        }
-
-        setPaddingRight(value: string): ElementHelper {
-            this.el.style.paddingRight = value;
-            return this;
-        }
-
         getBorderTopWidth(): number {
             return parseFloat(this.getComputedProperty('border-top-width'));
         }
