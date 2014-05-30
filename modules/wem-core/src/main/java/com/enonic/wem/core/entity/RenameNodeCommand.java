@@ -86,7 +86,7 @@ final class RenameNodeCommand
     {
         try
         {
-            final Node existingNode = nodeDao.getByPath( path, params.getWorkspace() );
+            final Node existingNode = nodeDao.getByPath( path, this.context.getWorkspace() );
             return existingNode == null ? null : existingNode.id();
         }
         catch ( final NodeNotFoundException e )

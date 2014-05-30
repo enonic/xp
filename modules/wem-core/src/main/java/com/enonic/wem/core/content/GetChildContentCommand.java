@@ -3,7 +3,6 @@ package com.enonic.wem.core.content;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
 
@@ -11,7 +10,7 @@ import com.enonic.wem.api.entity.Nodes;
 final class GetChildContentCommand
     extends AbstractContentCommand
 {
-    private final ContentPath contentPath;
+    private final ContentPath parentPath;
 
     private final boolean populateChildIds;
 
@@ -19,13 +18,13 @@ final class GetChildContentCommand
     {
         super( builder );
 
-        this.contentPath = builder.contentPath;
+        this.parentPath = builder.parentPath;
         this.populateChildIds = builder.populateChildIds;
     }
 
     Contents execute()
     {
-        final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( this.contentPath );
+        final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( this.parentPath );
 
         final Nodes nodes = nodeService.getByParent( nodePath, ContentConstants.DEFAULT_CONTEXT );
 
@@ -55,18 +54,18 @@ final class GetChildContentCommand
     public static class Builder
         extends AbstractContentCommand.Builder<Builder>
     {
-        private ContentPath contentPath;
+        private ContentPath parentPath;
 
-        private boolean populateChildIds = false;
+        private boolean populateChildIds = true;
 
-        public Builder( final ContentPath contentPath )
+        public Builder( final ContentPath parentPath )
         {
-            this.contentPath = contentPath;
+            this.parentPath = parentPath;
         }
 
-        public Builder contentPath( final ContentPath contentPath )
+        public Builder contentPath( final ContentPath parentPath )
         {
-            this.contentPath = contentPath;
+            this.parentPath = parentPath;
             return this;
         }
 

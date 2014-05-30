@@ -38,17 +38,23 @@ final class ChildContentIdsResolver
 
         if ( children.isNotEmpty() )
         {
-            final Content.Builder builder = Content.newContent( content );
-            for ( Content child : children )
-            {
-                builder.addChildId( child.getId() );
-            }
-            return builder.build();
+            return populateWithChildrenIds( content, children );
         }
         else
         {
             return content;
         }
+    }
+
+    private Content populateWithChildrenIds( final Content content, final Contents children )
+    {
+        final Content.Builder builder = Content.newContent( content );
+        for ( Content child : children )
+        {
+            builder.addChildId( child.getId() );
+        }
+
+        return builder.build();
     }
 
     Contents resolve( final Contents contents )
