@@ -12,6 +12,8 @@ import com.enonic.wem.api.content.page.PageTemplateName;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateXml;
+import com.enonic.wem.api.schema.SchemaIcon;
+import com.enonic.wem.core.schema.SchemaIconDao;
 import com.enonic.wem.core.support.export.AbstractEntityExporter;
 import com.enonic.wem.core.support.export.EntityExporters;
 import com.enonic.wem.core.support.export.XMLFilename;
@@ -51,6 +53,8 @@ public class SiteTemplateExporter
                 }
             }
         }
+        final SchemaIcon icon = new SchemaIconDao().readSchemaIcon( directoryPath );
+        builder.icon( icon );
 
         return builder;
     }
@@ -67,6 +71,8 @@ public class SiteTemplateExporter
             final Path templatePath = rootPath.resolve( template.getName().toString() );
             exporter.exportObject( template, createPath( templatePath ), "" );
         }
+
+        new SchemaIconDao().writeSchemaIcon( siteTemplate.getIcon(), rootPath );
     }
 
     private void importPageTemplate( final SiteTemplate.Builder siteTemplate, final Path templateDir )

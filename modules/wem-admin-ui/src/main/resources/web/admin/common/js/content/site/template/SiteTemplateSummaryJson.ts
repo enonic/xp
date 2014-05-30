@@ -28,5 +28,6 @@ module api.content.site.template {
 
         pageTemplateKeys:string[];
 
+        iconUrl: string;
     }
 }

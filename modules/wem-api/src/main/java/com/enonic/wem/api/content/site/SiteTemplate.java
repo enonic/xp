@@ -9,6 +9,7 @@ import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateSpec;
 import com.enonic.wem.api.content.page.PageTemplates;
 import com.enonic.wem.api.module.ModuleKeys;
+import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.content.ContentTypeFilter;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
@@ -35,6 +36,8 @@ public final class SiteTemplate
 
     private final PageTemplates pageTemplates;
 
+    private final SchemaIcon icon;
+
     private SiteTemplate( final Builder builder )
     {
         this.siteTemplateKey = builder.siteTemplateKey;
@@ -50,6 +53,7 @@ public final class SiteTemplate
         pageTemplatesBuilder.addAll( builder.pageTemplates.values() );
 
         this.pageTemplates = pageTemplatesBuilder.build();
+        this.icon = builder.icon;
     }
 
     public SiteTemplateKey getKey()
@@ -113,6 +117,11 @@ public final class SiteTemplate
         return pageTemplates.filter( spec ).first();
     }
 
+    public SchemaIcon getIcon()
+    {
+        return icon;
+    }
+
     public static Builder newSiteTemplate()
     {
         return new Builder();
@@ -143,6 +152,8 @@ public final class SiteTemplate
 
         private final LinkedHashMap<PageTemplateKey, PageTemplate> pageTemplates;
 
+        private SchemaIcon icon;
+
         private Builder()
         {
             this.pageTemplates = new LinkedHashMap<>();
@@ -163,6 +174,7 @@ public final class SiteTemplate
             this.modules = source.modules;
             this.contentTypeFilter = source.contentTypeFilter;
             this.rootContentType = source.rootContentType;
+            this.icon = source.icon;
         }
 
         public Builder key( final SiteTemplateKey siteTemplateKey )
@@ -222,6 +234,12 @@ public final class SiteTemplate
         public Builder removeTemplate( final PageTemplateKey pageTemplateKey )
         {
             this.pageTemplates.remove( pageTemplateKey );
+            return this;
+        }
+
+        public Builder icon( final SchemaIcon icon )
+        {
+            this.icon = icon;
             return this;
         }
 

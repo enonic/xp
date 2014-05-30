@@ -33,7 +33,7 @@ import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
 @Produces("image/*")
 public final class SchemaImageResource
 {
-    public static final String DEFAULT_MIME_TYPE = "image/png";
+    private static final String DEFAULT_MIME_TYPE = "image/png";
 
     private static final SchemaImageHelper helper = new SchemaImageHelper();
 

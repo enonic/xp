@@ -6,6 +6,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.admin.json.ItemJson;
+import com.enonic.wem.admin.rest.resource.content.site.template.SiteTemplateIconUrlResolver;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.VendorJson;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.SiteTemplate;
@@ -23,7 +24,9 @@ public class SiteTemplateSummaryJson
 
     private final boolean deletable;
 
-    private ContentTypeFilterJson contentTypeFilterJson;
+    private final ContentTypeFilterJson contentTypeFilterJson;
+
+    private final String iconUrl;
 
     public SiteTemplateSummaryJson( final SiteTemplate siteTemplate )
     {
@@ -31,6 +34,7 @@ public class SiteTemplateSummaryJson
         this.editable = true;
         this.deletable = true;
         this.contentTypeFilterJson = new ContentTypeFilterJson( siteTemplate.getContentTypeFilter() );
+        this.iconUrl = SiteTemplateIconUrlResolver.resolve( siteTemplate );
     }
 
     public String getKey()
@@ -106,6 +110,11 @@ public class SiteTemplateSummaryJson
     public List<String> getPageTemplateKeys()
     {
         return templatesAsKeyList( siteTemplate.getPageTemplates().getList() );
+    }
+
+    public String getIconUrl()
+    {
+        return iconUrl;
     }
 
     private List<String> templatesAsKeyList( final List<PageTemplate> templateList )

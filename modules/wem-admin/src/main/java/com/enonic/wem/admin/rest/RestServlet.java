@@ -37,6 +37,7 @@ import com.enonic.wem.admin.rest.resource.content.page.image.ImageDescriptorReso
 import com.enonic.wem.admin.rest.resource.content.page.layout.LayoutDescriptorResource;
 import com.enonic.wem.admin.rest.resource.content.page.part.PartDescriptorResource;
 import com.enonic.wem.admin.rest.resource.content.site.SiteResource;
+import com.enonic.wem.admin.rest.resource.content.site.template.SiteTemplateImageResource;
 import com.enonic.wem.admin.rest.resource.content.site.template.SiteTemplateResource;
 import com.enonic.wem.admin.rest.resource.module.ModuleResource;
 import com.enonic.wem.admin.rest.resource.relationship.RelationshipResource;
@@ -147,6 +148,7 @@ public final class RestServlet
         addSingleton( ModuleResource.class );
 
         addSingleton( SiteTemplateResource.class );
+        addSingleton( SiteTemplateImageResource.class );
         addSingleton( PageTemplateResource.class );
         addSingleton( PageDescriptorResource.class );
         addSingleton( ImageDescriptorResource.class );
