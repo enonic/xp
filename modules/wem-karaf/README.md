@@ -4,7 +4,8 @@
 Every module in WEM is a valid OSGi bundle. To startup the system you will need to first
 install Apache Karaf 3.0.x. Download Apache Karaf here:
 
-* [Apache Karaf 3.0.x](https://karaf.apache.org/index/community/download.html).
+* We need a patched version of 3.0.1 to run on Java 8.
+* [Apache Karaf 3.0.x](http://repo.enonic.com/public/org/apache/karaf/apache-karaf-java8/3.0.1/apache-karaf-java8-3.0.1.zip).
 
 After downloading, unpack onto your system.
 
