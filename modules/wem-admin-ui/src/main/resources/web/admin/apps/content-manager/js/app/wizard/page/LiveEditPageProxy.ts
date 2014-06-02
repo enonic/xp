@@ -183,7 +183,7 @@ module app.wizard.page {
         private handleIFrameLoadedEvent() {
 
             var liveEditWindow = this.liveEditIFrame.getHTMLElement()["contentWindow"];
-            if (liveEditWindow && liveEditWindow.wemjq && typeof(liveEditWindow.initializeLiveEdit) === "function") {
+            if (liveEditWindow && liveEditWindow.wemjq) {
                 // Give loaded page same CONFIG.baseUri as in admin
                 liveEditWindow.CONFIG = { baseUri: CONFIG.baseUri };
 
@@ -195,38 +195,39 @@ module app.wizard.page {
 
                 this.loadMask.hide();
 
-                liveEditWindow.initializeLiveEdit();
-                new api.liveedit.ContentSetEvent(this.contentLoadedOnPage).fire(this.liveEditWindow);
-                new api.liveedit.SiteTemplateSetEvent(this.siteTemplate).fire(this.liveEditWindow);
+                new api.liveedit.InitializeLiveEditEvent(this.contentLoadedOnPage, this.siteTemplate).fire(this.liveEditWindow);
+
                 this.notifyLoaded();
             }
 
             this.iFrameLoadDeffered.resolve(null);
         }
 
-        public loadComponent(componentPath: ComponentPath, componentPlaceholder: ItemView, content: api.content.Content) {
+        public loadComponent(componentPath: ComponentPath, itemView: ItemView, content: api.content.Content) {
 
             api.util.assertNotNull(componentPath, "componentPath cannot be null");
-            api.util.assertNotNull(componentPlaceholder, "componentPlaceholder cannot be null");
+            api.util.assertNotNull(itemView, "itemView cannot be null");
             api.util.assertNotNull(content, "content cannot be null");
+
+            this.liveEditWindow.pageItemViews.removeItemViewById(itemView.getItemId());
 
             wemjq.ajax({
                 url: api.rendering.UriHelper.getComponentUri(content.getContentId().toString(), componentPath.toString(),
                     RenderingMode.EDIT),
                 method: 'GET',
                 success: (data) => {
-                    var newElement = wemjq(data);
-                    wemjq(componentPlaceholder.getHTMLElement()).replaceWith(newElement);
-                    componentPlaceholder.remove();
 
-                    var itemView: ItemView = this.getComponentByPath(componentPath);
-                    itemView.deselect();
+                    var newElement = wemjq(data);
+                    wemjq(itemView.getHTMLElement()).replaceWith(newElement);
+                    itemView.remove();
+                    var newItemView: ItemView = itemView.getType().createView(newElement.get(0));
+
+                    new PageComponentLoadedEvent(newItemView).fire(this.liveEditWindow);
 
                     this.liveEditWindow.LiveEdit.PlaceholderCreator.renderEmptyRegionPlaceholders();
 
-                    this.liveEditWindow.LiveEdit.component.Selection.handleSelect(itemView, null, true);
+                    this.liveEditWindow.LiveEdit.component.Selection.handleSelect(newItemView, null, true);
 
-                    new PageComponentLoadedEvent(itemView).fire(this.liveEditWindow);
                 }
             });
         }

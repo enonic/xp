@@ -486,10 +486,13 @@ module app.wizard.page {
 
             this.liveEditPage.onPageComponentReset((event: PageComponentResetEvent) => {
 
-                var component = this.pageRegions.getComponent(event.getPath());
-                if (component) {
-                    component.reset();
-                }
+                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).done(() => {
+
+                    var component = this.pageRegions.getComponent(event.getPath());
+                    if (component) {
+                        component.reset();
+                    }
+                });
             });
 
             this.liveEditPage.onSortableStart((event: SortableStartEvent) => {
@@ -518,7 +521,7 @@ module app.wizard.page {
 
                 var precedingComponent = event.getPrecedingComponent();
                 var precedingComponentName = precedingComponent ? precedingComponent.getComponentName() : null;
-                var newPath = this.pageRegions.moveComponent(event.getComponentPath(), event.getRegion(), precedingComponentName);
+                var newPath = this.pageRegions.moveComponent(event.getComponentPath(), event.getRegionPath(), precedingComponentName);
 
                 if (newPath) {
                     event.getComponentView().setComponentPath(newPath);

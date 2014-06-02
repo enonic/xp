@@ -1,6 +1,7 @@
 module api.liveedit.text {
 
     import PageComponentView = api.liveedit.PageComponentView;
+    import RegionView = api.liveedit.RegionView;
 
     export class TextView extends PageComponentView {
 
@@ -8,8 +9,11 @@ module api.liveedit.text {
             super(TextItemType.get(), element);
         }
 
-        static fromHTMLElement(element: HTMLElement): TextView {
-            return new TextView(element);
+        duplicate(): TextView {
+
+            var duplicatedView = new TextView();
+            this.getEl().insertAfterThisEl(duplicatedView.getEl());
+            return duplicatedView;
         }
 
         public static fromJQuery(element: JQuery): TextView {

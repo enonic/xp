@@ -25,21 +25,10 @@ module LiveEdit.ui.contextmenu.menuitem {
             var selectedItem = this.menu.selectedComponent;
             if (api.ObjectHelper.iFrameSafeInstanceOf(selectedItem, PageComponentView)) {
 
-                var selectedPageComponent = <PageComponentView> selectedItem;
+                var selectedPageComponentView = <PageComponentView> selectedItem;
+                selectedPageComponentView.empty();
 
-                var componentEl: JQuery = selectedPageComponent.getElement();
-                var component = PageComponentView.fromJQuery(componentEl, false);
-
-                selectedPageComponent.deselect();
-                new PageComponentResetEvent(selectedPageComponent.getComponentPath()).fire();
-
-                var emptyComponent = LiveEdit.component.ComponentPlaceholder.fromComponent(selectedPageComponent.getType());
-                emptyComponent.setComponentPath(component.getComponentPath());
-
-                componentEl.replaceWith(emptyComponent.getHTMLElement());
-                emptyComponent.init();
-
-                LiveEdit.component.Selection.handleSelect(emptyComponent);
+                new PageComponentResetEvent(selectedPageComponentView.getComponentPath()).fire();
             }
             else {
                 throw new Error("Emptying [" + api.util.getClassName(selectedItem) + "] is not supported");

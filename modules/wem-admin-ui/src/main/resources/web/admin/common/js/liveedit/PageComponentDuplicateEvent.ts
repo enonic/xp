@@ -29,10 +29,6 @@ module api.liveedit {
             return this.originItemView.getType().toPageComponentType();
         }
 
-        getRegion(): RegionPath {
-            return this.originItemView.getParentRegion().getRegionPath();
-        }
-
         static on(handler: (event: PageComponentDuplicateEvent) => void, contextWindow: Window = window) {
             Event2.bind(api.util.getFullName(this), handler, contextWindow);
         }

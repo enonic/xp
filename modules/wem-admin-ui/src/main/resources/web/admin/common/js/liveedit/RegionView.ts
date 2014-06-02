@@ -1,8 +1,11 @@
 module api.liveedit {
 
     import RegionPath = api.content.page.RegionPath;
+    import PageComponentView = api.liveedit.PageComponentView;
 
     export class RegionView extends ItemView {
+
+        private pageComponents: PageComponentView[] = [];
 
         constructor(element?: HTMLElement) {
             super(RegionItemType.get(), element);
@@ -27,12 +30,14 @@ module api.liveedit {
             super.select();
         }
 
-        static fromHTMLElement(element: HTMLElement): RegionView {
-            return new RegionView(element);
+        addPageComponent(view: PageComponentView) {
+            this.pageComponents.push(view);
         }
 
-        public static fromJQuery(element: JQuery): RegionView {
-            return new RegionView(<HTMLElement>element.get(0));
+        static isRegionViewFromHTMLElement(htmlElement: HTMLElement) : boolean {
+
+            var path = htmlElement.getAttribute("data-live-edit-region");
+            return !api.util.isStringBlank(path);
         }
     }
 }

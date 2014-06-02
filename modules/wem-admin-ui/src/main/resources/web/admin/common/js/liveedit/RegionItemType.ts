@@ -24,7 +24,7 @@ module api.liveedit {
             });
         }
 
-        createView(element: HTMLElement, dummy: boolean = true): RegionView {
+        createView(element?: HTMLElement, dummy?: boolean): RegionView {
             return new RegionView(element);
         }
     }

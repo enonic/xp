@@ -17,9 +17,10 @@ module LiveEdit.component.mouseevent {
                 event.stopPropagation();
 
                 LiveEdit.component.Selection.removeSelectedAttribute();
-                var component = ItemView.fromJQuery(wemjq(event.currentTarget));
-
-                wemjq(window).trigger('mouseOverComponent.liveEdit', [ component ]);
+                var itemView = pageItemViews.getItemViewByElement(event.currentTarget);
+                if (itemView) {
+                    wemjq(window).trigger('mouseOverComponent.liveEdit', [ itemView ]);
+                }
             });
         }
 
@@ -45,15 +46,8 @@ module LiveEdit.component.mouseevent {
                 // Needed so the browser's context menu is not shown on contextmenu
                 event.preventDefault();
 
-                var itemView = ItemView.fromJQuery(wemjq(event.currentTarget));
-//                var deselectComponent:boolean = component.isSelected() || LiveEdit.component.Selection.pageHasSelectedElement();
-//
-//                // Toggle select/deselect
-//                if (deselectComponent) {
-//                    LiveEdit.component.Selection.deselect();
-//                } else {
+                var itemView = pageItemViews.getItemViewByElement(event.currentTarget);
                 LiveEdit.component.Selection.handleSelect(itemView, event);
-//                }
             });
         }
 

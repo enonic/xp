@@ -5,8 +5,7 @@
 ///<reference path='ItemType.ts' />
 ///<reference path='ItemTypeConfig.ts' />
 ///<reference path='RegionItemType.ts' />
-///<reference path='ContentSetEvent.ts' />
-///<reference path='SiteTemplateSetEvent.ts' />
+///<reference path='InitializeLiveEditEvent.ts' />
 ///<reference path='PageComponentItemType.ts' />
 ///<reference path='PageItemType.ts' />
 ///<reference path='ContentItemType.ts' />
@@ -14,6 +13,7 @@
 ///<reference path='RegionView.ts' />
 ///<reference path='PageComponentView.ts' />
 ///<reference path='PageView.ts' />
+///<reference path='ContentView.ts' />
 
 ///<reference path='NewPageComponentIdMapEvent.ts' />
 ///<reference path='ImageOpenUploadDialogEvent.ts' />
@@ -37,3 +37,7 @@
 ///<reference path='PageComponentSelectComponentEvent.ts' />
 ///<reference path='TextComponentSetTextEvent.ts' />
 ///<reference path='RegionEmptyEvent.ts' />
+
+///<reference path='PageItemViews.ts' />
+///<reference path='PageItemViewsParser.ts' />
+

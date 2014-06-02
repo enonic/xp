@@ -3,6 +3,7 @@ module api.liveedit.part {
     import ItemType = api.liveedit.ItemType;
     import PageComponentView = api.liveedit.PageComponentView;
     import PageComponentItemType = api.liveedit.PageComponentItemType;
+    import RegionView = api.liveedit.RegionView;
 
     export class PartItemType extends PageComponentItemType {
 
@@ -31,8 +32,8 @@ module api.liveedit.part {
             return true
         }
 
-        createView(element: HTMLElement, dummy: boolean = true): ItemView {
-            return new PageComponentView(this, element, dummy);
+        createView(element?: HTMLElement, dummy?: boolean): PartView {
+            return new PartView(element, dummy);
         }
     }
 

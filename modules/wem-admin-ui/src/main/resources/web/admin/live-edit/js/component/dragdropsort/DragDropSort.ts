@@ -9,6 +9,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     import ItemType = api.liveedit.ItemType;
     import ItemView = api.liveedit.ItemView;
     import PageComponentView = api.liveedit.PageComponentView;
+    import PageComponentItemType = api.liveedit.PageComponentItemType;
     import RegionItemType = api.liveedit.RegionItemType;
     import TextItemType = api.liveedit.text.TextItemType;
     import LayoutItemType = api.liveedit.layout.LayoutItemType;
@@ -135,13 +136,12 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         updateScrollSensitivity(event.target);
         _isDragging = true;
 
-        var component = ItemView.fromJQuery(ui.item);
+        var component = pageItemViews.getPageComponentViewByElement(ui.item.get(0));
 
-        // Temporary store the selection info during the drag drop lifecycle.
-        // Data is nullified on drag stop.
-        ui.item.data('live-edit-selected-on-sort-start', component.isSelected());
-
-        ui.placeholder.html(LiveEdit.PlaceholderCreator.createPlaceholderForJQuerySortable(component));
+        if (component) {
+            component.handleDragStart();
+            ui.placeholder.html(LiveEdit.PlaceholderCreator.createPlaceholderForJQuerySortable(component));
+        }
 
         refreshSortable();
 
@@ -151,7 +151,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     function handleDragOver(event: JQueryEventObject, ui): void {
         event.stopPropagation();
 
-        var component = ItemView.fromJQuery(ui.item);
+        var component = pageItemViews.getItemViewByElement(ui.item.get(0));
 
         var isDraggingOverLayoutComponent = ui.placeholder.closest(LAYOUT_SELECTOR).length > 0;
 
@@ -174,7 +174,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     function handleSortChange(event: JQueryEventObject, ui): void {
-        var component = ItemView.fromJQuery(wemjq(event.target));
+        var component = pageItemViews.getItemViewByElement(event.target);
 
         addPaddingToLayoutComponent(component);
         LiveEdit.component.helper.DragHelper.updateStatusIcon(true);
@@ -185,17 +185,21 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     function handleSortUpdate(event: JQueryEventObject, ui): void {
-        var component = PageComponentView.fromJQuery(ui.item);
 
-        if (component.hasComponentPath()) {
-            new SortableUpdateEvent(component).fire();
+        var pageComponentView = pageItemViews.getPageComponentViewByElement(ui.item.get(0));
+        if (pageComponentView) {
+            if (pageComponentView.hasComponentPath()) {
+                var regionHTMLElement = PageComponentView.findParentRegionViewHTMLElement(pageComponentView.getHTMLElement());
+                var regionView = pageItemViews.getRegionViewByElement(regionHTMLElement);
+                new SortableUpdateEvent(pageComponentView, regionView).fire();
+            }
         }
     }
 
     function handleSortStop(event: JQueryEventObject, ui): void {
         _isDragging = false;
 
-        var pageComponentView = PageComponentView.fromJQuery(ui.item);
+        var pageComponentView = pageItemViews.getPageComponentViewByElement(ui.item.get(0));
 
         removePaddingFromLayoutComponent();
 
@@ -210,7 +214,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             wemjq(window).trigger('mouseOutComponent.liveEdit');
         }
 
-        //var wasSelectedOnDragStart = pageComponentView.getElement().data('live-edit-selected-on-drag-start');
+        pageComponentView.handleDragStop();
 
         new SortableStopEvent(pageComponentView).fire();
 
@@ -219,27 +223,29 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
     // When sortable receives a new item
     function handleReceive(event: JQueryEventObject, ui): void {
+
         if (isItemDraggedFromContextWindow(ui.item)) {
-            var droppedComponent = wemjq(event.target).children(CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR);
-            var itemType = ItemType.byShortName(droppedComponent.data('live-edit-type'));
-            var emptyComponent = LiveEdit.component.ComponentPlaceholder.fromComponent(itemType);
+            var droppedElement = wemjq(event.target).children(CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR);
+            var itemType: PageComponentItemType = <PageComponentItemType>ItemType.byShortName(droppedElement.data('live-edit-type'));
+            var newPageComponent = itemType.createView();
+            pageItemViews.addItemView(newPageComponent);
+            droppedElement.attr("data-live-edit-id", "" + newPageComponent.getItemId());
 
-            droppedComponent.replaceWith(emptyComponent.getHTMLElement());
-            emptyComponent.init();
-
-            //wemjq(window).trigger('sortableUpdate.liveEdit');
+            droppedElement.replaceWith(newPageComponent.getHTMLElement());
+            newPageComponent.empty();
+            newPageComponent.init();
 
             // The layout padding is removed on sortStop, but this is not fired yet at this point
             // Remove it now so the auto selection is properly aligned.
             removePaddingFromLayoutComponent();
-
-            var region = emptyComponent.getParentRegion();
+            var regionHTMLElement = PageComponentView.findParentRegionViewHTMLElement(newPageComponent.getHTMLElement());
+            var region = pageItemViews.getRegionViewByElement(regionHTMLElement);
             new PageComponentAddedEvent().
-                setComponent(emptyComponent).
+                setComponent(newPageComponent).
                 setRegion(region.getRegionName()).
-                setPrecedingComponent(emptyComponent.getPrecedingComponentPath()).
+                setPrecedingComponent(newPageComponent.getPrecedingComponentPath()).
                 fire();
-            LiveEdit.component.Selection.handleSelect(emptyComponent);
+            LiveEdit.component.Selection.handleSelect(newPageComponent);
         }
     }
 

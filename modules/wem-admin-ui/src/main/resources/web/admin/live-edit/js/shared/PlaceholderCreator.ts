@@ -35,8 +35,7 @@ module LiveEdit {
                 region = wemjq(allRegionElements[i]);
                 regionIsEmpty = this.isRegionEmpty(region);
                 if (regionIsEmpty) {
-                    regionComponent = RegionView.fromJQuery(region);
-
+                    regionComponent = pageItemViews.getRegionViewByElement(region.get(0));
                     region.append(this.createEmptyRegionPlaceholder(regionComponent));
                 }
             });

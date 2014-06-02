@@ -28,14 +28,14 @@ module api.liveedit {
                 },
                 contextMenuConfig: ['reset']
             });
+        }
 
-            ContentSetEvent.on((event: ContentSetEvent) => {
-                this.content = event.getContent();
-            });
+        setContent(content: Content) {
+            this.content = content;
+        }
 
-            SiteTemplateSetEvent.on((event: SiteTemplateSetEvent) => {
-                this.siteTemplate = event.getSiteTemplate();
-            });
+        setSiteTemplate(siteTemplate: SiteTemplate) {
+            this.siteTemplate = siteTemplate;
         }
 
         getContent(): Content {
@@ -46,7 +46,7 @@ module api.liveedit {
             return this.siteTemplate;
         }
 
-        createView(element: HTMLElement, dummy: boolean = true): PageView {
+        createView(element?: HTMLElement, dummy?: boolean): PageView {
             return new PageView(element);
         }
     }

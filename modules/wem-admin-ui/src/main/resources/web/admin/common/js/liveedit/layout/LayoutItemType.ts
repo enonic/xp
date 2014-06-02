@@ -3,6 +3,7 @@ module api.liveedit.layout {
     import ItemType = api.liveedit.ItemType;
     import ItemTypeConfigJson = api.liveedit.ItemTypeConfigJson;
     import PageComponentView = api.liveedit.PageComponentView;
+    import RegionView = api.liveedit.RegionView;
     import PageComponentItemType = api.liveedit.PageComponentItemType;
 
     export class LayoutItemType extends PageComponentItemType {
@@ -32,8 +33,8 @@ module api.liveedit.layout {
             return true
         }
 
-        createView(element: HTMLElement, dummy: boolean = true): ItemView {
-            return new PageComponentView(this, element, dummy);
+        createView(element?: HTMLElement, dummy?: boolean): LayoutView {
+            return new LayoutView(element, dummy);
         }
     }
 

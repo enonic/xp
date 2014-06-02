@@ -7,7 +7,7 @@ module LiveEdit.ui {
 
     import ItemView = api.liveedit.ItemView;
     import PageComponentSelectComponentEvent = api.liveedit.PageComponentSelectComponentEvent;
-    
+
     var domHelper = LiveEdit.DomHelper;
 
     export class ToolTip extends LiveEdit.ui.Base {
@@ -62,10 +62,16 @@ module LiveEdit.ui {
 
             wemjq(document).on('mouseover', '[data-live-edit-type]', (event) => {
 
-                var itemView: ItemView = ItemView.fromJQuery(wemjq(event.target).closest('[data-live-edit-type]'));
-                this.setText(itemView);
+                var closestItemViewElement = wemjq(event.target).closest('[data-live-edit-type]').get(0);
+                var itemView: ItemView = pageItemViews.getItemViewByElement(closestItemViewElement);
+                if (itemView) {
+                    this.setText(itemView);
+                    this.getEl().hide(null).show();
+                }
+                else {
+                    this.getEl().hide(null);
+                }
 
-                this.getEl().hide(null).show();
             });
 
             wemjq('[data-live-edit-type]').mouseleave(() => {
