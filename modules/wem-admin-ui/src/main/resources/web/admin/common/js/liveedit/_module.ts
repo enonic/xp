@@ -39,5 +39,5 @@
 ///<reference path='RegionEmptyEvent.ts' />
 
 ///<reference path='PageItemViews.ts' />
-///<reference path='PageItemViewsParser2.ts' />
+///<reference path='PageItemViewsParser.ts' />
 
