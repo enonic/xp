@@ -11,6 +11,7 @@ module app.wizard.page {
     import RenderingMode = api.rendering.RenderingMode;
 
     import ItemView = api.liveedit.ItemView;
+    import PageViewItemsParsedEvent = api.liveedit.PageViewItemsParsedEvent;
     import NewPageComponentIdMapEvent = api.liveedit.NewPageComponentIdMapEvent;
     import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
     import ImageUploadedEvent = api.liveedit.ImageUploadedEvent;
@@ -63,6 +64,8 @@ module app.wizard.page {
         private contentLoadedOnPage: Content;
 
         private loadedListeners: {(): void;}[] = [];
+
+        private pageViewItemsParsedListeners: {(event: PageViewItemsParsedEvent): void;}[] = [];
 
         private draggableStartListeners: {(event: DraggableStartEvent): void;}[] = [];
 
@@ -245,6 +248,8 @@ module app.wizard.page {
 
         public listenToPage() {
 
+            PageViewItemsParsedEvent.on(this.notifyPageViewItemsParsed.bind(this), this.liveEditWindow);
+
             NewPageComponentIdMapEvent.on((event: NewPageComponentIdMapEvent) => {
                 console.log('PageComponentIdMap: %o', event.getMap());
             }, this.liveEditWindow);
@@ -320,6 +325,18 @@ module app.wizard.page {
             this.loadedListeners.forEach((listener) => {
                 listener();
             });
+        }
+
+        onPageViewItemsParsed(listener: {(event: PageViewItemsParsedEvent): void;}) {
+            this.pageViewItemsParsedListeners.push(listener);
+        }
+
+        unPageViewItemsParsed(listener: {(event: PageViewItemsParsedEvent): void;}) {
+            this.pageViewItemsParsedListeners = this.pageViewItemsParsedListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyPageViewItemsParsed(event: PageViewItemsParsedEvent) {
+            this.pageViewItemsParsedListeners.forEach((listener) => listener(event));
         }
 
         onDraggableStart(listener: {(event: DraggableStartEvent): void;}) {

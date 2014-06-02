@@ -23,7 +23,7 @@ module api.liveedit {
             this.itemViews.push(pageView);
             this.parsePageRegions(this.body, pageView);
 
-            this.pageItemViews = new PageItemViews(this.itemViews);
+            this.pageItemViews = new PageItemViews(pageView, this.itemViews);
             return this.pageItemViews;
         }
 

@@ -1,5 +1,6 @@
 module api.liveedit.layout {
 
+    import LayoutComponent = api.content.page.layout.LayoutComponent;
     import PageComponentView = api.liveedit.PageComponentView;
     import RegionView = api.liveedit.RegionView;
 
@@ -7,7 +8,7 @@ module api.liveedit.layout {
 
         private placeholder: LayoutPlaceholder;
 
-        private regions: RegionView[] = [];
+        private regionViews: RegionView[] = [];
 
         constructor(element?: HTMLElement, dummy?: boolean) {
             super(LayoutItemType.get(), element, dummy);
@@ -16,19 +17,32 @@ module api.liveedit.layout {
         }
 
         addRegion(view: RegionView) {
-            this.regions.push(view);
+            this.regionViews.push(view);
+        }
+
+        setData(data: LayoutComponent) {
+            super.setData(data);
+            var regions = data.getLayoutRegions().getRegions();
+            this.regionViews.forEach((regionView: RegionView, index: number) => {
+                var region = regions[index];
+                regionView.setData(region);
+            });
+        }
+
+        getRegions(): RegionView[] {
+            return this.regionViews;
         }
 
         select() {
             super.select();
-            if( this.isEmpty() ) {
+            if (this.isEmpty()) {
                 this.placeholder.select();
             }
         }
 
         deselect() {
             super.deselect();
-            if( this.isEmpty() ) {
+            if (this.isEmpty()) {
                 this.placeholder.deselect();
             }
         }

@@ -16,8 +16,12 @@ module api.liveedit.part {
             this.placeholder = new PartPlaceholder(this);
         }
 
-        addContent(view: api.liveedit.ContentView) {
+        addContent(view: ContentView) {
             this.contentViews.push(view);
+        }
+
+        getContents(): ContentView[] {
+            return this.contentViews;
         }
 
         showHighlighter(value: boolean) {
@@ -27,14 +31,14 @@ module api.liveedit.part {
 
         select() {
             super.select();
-            if( this.isEmpty() ) {
+            if (this.isEmpty()) {
                 this.placeholder.select();
             }
         }
 
         deselect() {
             super.deselect();
-            if( this.isEmpty() ) {
+            if (this.isEmpty()) {
                 this.placeholder.deselect();
             }
         }

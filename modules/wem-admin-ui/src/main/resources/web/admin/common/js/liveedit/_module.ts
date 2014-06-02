@@ -40,4 +40,5 @@
 
 ///<reference path='PageItemViews.ts' />
 ///<reference path='PageItemViewsParser.ts' />
+///<reference path='PageViewItemsParsedEvent.ts' />
 

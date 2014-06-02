@@ -174,7 +174,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     function handleSortChange(event: JQueryEventObject, ui): void {
-        var component = pageItemViews.getItemViewByElement(event.target);
+        var component = pageItemViews.getItemViewByElement(<HTMLElement>event.target);
 
         addPaddingToLayoutComponent(component);
         LiveEdit.component.helper.DragHelper.updateStatusIcon(true);

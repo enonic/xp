@@ -17,7 +17,7 @@ module LiveEdit.component.mouseevent {
                 event.stopPropagation();
 
                 LiveEdit.component.Selection.removeSelectedAttribute();
-                var itemView = pageItemViews.getItemViewByElement(event.currentTarget);
+                var itemView = pageItemViews.getItemViewByElement(<HTMLElement>event.currentTarget);
                 if (itemView) {
                     wemjq(window).trigger('mouseOverComponent.liveEdit', [ itemView ]);
                 }
@@ -46,7 +46,7 @@ module LiveEdit.component.mouseevent {
                 // Needed so the browser's context menu is not shown on contextmenu
                 event.preventDefault();
 
-                var itemView = pageItemViews.getItemViewByElement(event.currentTarget);
+                var itemView = pageItemViews.getItemViewByElement(<HTMLElement>event.currentTarget);
                 LiveEdit.component.Selection.handleSelect(itemView, event);
             });
         }

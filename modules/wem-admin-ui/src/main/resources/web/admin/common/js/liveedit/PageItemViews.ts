@@ -4,14 +4,20 @@ module api.liveedit {
 
     export class PageItemViews {
 
+        private pageView: PageView;
         private views: ItemView[];
 
-        constructor(views: ItemView[]) {
+        constructor(pageView: PageView, views: ItemView[]) {
 
+            this.pageView = pageView;
             views.forEach((view: ItemView, index: number) => {
                 view.setItemId(index + 1);
             });
             this.views = views;
+        }
+
+        getPageView(): PageView {
+            return this.pageView;
         }
 
         addItemView(view: ItemView) {
@@ -20,8 +26,8 @@ module api.liveedit {
             view.setItemId(this.views.length);
         }
 
-        removeItemViewById( id: number) {
-            this.views.splice(id-1);
+        removeItemViewById(id: number) {
+            this.views.splice(id - 1);
         }
 
         initializeEmpties() {

@@ -54,6 +54,8 @@ module app.wizard.page {
     import RenderingMode = api.rendering.RenderingMode;
 
     import ItemView = api.liveedit.ItemView;
+    import RegionView = api.liveedit.RegionView;
+    import PageViewItemsParsedEvent = api.liveedit.PageViewItemsParsedEvent;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import SortableStopEvent = api.liveedit.SortableStopEvent;
     import SortableUpdateEvent = api.liveedit.SortableUpdateEvent;
@@ -445,6 +447,15 @@ module app.wizard.page {
         }
 
         private liveEditListen() {
+
+            this.liveEditPage.onPageViewItemsParsed((event: PageViewItemsParsedEvent) => {
+
+                var regions = this.pageRegions.getRegions();
+                event.getPageView().getRegions().forEach((regionView: RegionView, index: number) => {
+                    var region = regions[index];
+                    regionView.setData(region);
+                });
+            });
 
             this.liveEditPage.onPageSelected((event: PageSelectEvent) => {
 
