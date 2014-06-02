@@ -1,6 +1,7 @@
 package com.enonic.wem.admin;
 
 import javax.inject.Inject;
+import javax.servlet.Servlet;
 
 import com.enonic.wem.admin.app.MainServlet;
 import com.enonic.wem.admin.app.ResourceLocator;
@@ -59,8 +60,8 @@ public final class Activator
         service( StartupInitializer.class ).importSingle();
 
         // Export services
-        service( MainServlet.class ).attribute( "alias", "/*" ).export();
-        service( RestServlet.class ).attribute( "alias", "/admin/rest/*" ).export();
+        service( MainServlet.class ).attribute( "alias", "/*" ).exportAs( Servlet.class );
+        service( RestServlet.class ).attribute( "alias", "/admin/rest/*" ).exportAs( Servlet.class );
     }
 
     @Override

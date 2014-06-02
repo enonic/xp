@@ -1,5 +1,7 @@
 package com.enonic.wem.portal;
 
+import javax.servlet.Servlet;
+
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.attachment.AttachmentService;
@@ -39,6 +41,6 @@ public final class Activator
         service( ImageFilterBuilder.class ).importSingle();
         service( ModuleKeyResolverService.class ).importSingle();
 
-        service( PortalServlet.class ).attribute( "alias", "/portal/*" ).export();
+        service( PortalServlet.class ).attribute( "alias", "/portal/*" ).exportAs( Servlet.class );
     }
 }

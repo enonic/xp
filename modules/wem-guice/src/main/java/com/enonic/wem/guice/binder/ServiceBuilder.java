@@ -11,4 +11,6 @@ public interface ServiceBuilder<T>
     public void importMultiple();
 
     public void export();
+
+    public void exportAs( Class<? super T> iface );
 }

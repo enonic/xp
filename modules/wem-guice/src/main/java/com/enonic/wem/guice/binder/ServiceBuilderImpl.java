@@ -10,6 +10,7 @@ import org.ops4j.peaberry.builders.ExportProvider;
 import org.ops4j.peaberry.builders.InjectedServiceBuilder;
 import org.ops4j.peaberry.util.Filters;
 import org.ops4j.peaberry.util.TypeLiterals;
+import org.osgi.framework.Constants;
 
 import com.google.inject.Binder;
 import com.google.inject.TypeLiteral;
@@ -66,6 +67,13 @@ final class ServiceBuilderImpl<T>
         final ExportProvider<? extends T> provider = Peaberry.service( this.type ).attributes( this.attributes ).export();
         final TypeLiteral<Export<? extends T>> exportType = TypeLiterals.export( this.type );
         this.binder.bind( exportType ).annotatedWith( Names.named( this.type.getName() ) ).toProvider( provider );
+    }
+
+    @Override
+    public final void exportAs( final Class<? super T> iface )
+    {
+        attribute( Constants.OBJECTCLASS, iface.getName() );
+        export();
     }
 
     private InjectedServiceBuilder<T> buildInjectedServiceBuilder()
