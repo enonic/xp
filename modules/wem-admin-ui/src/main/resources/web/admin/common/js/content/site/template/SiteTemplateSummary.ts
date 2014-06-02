@@ -26,6 +26,8 @@ module api.content.site.template {
 
         private pageTemplateKeys: PageTemplateKey[];
 
+        private iconUrl: string;
+
         constructor(builder: SiteTemplateSummaryBuilder) {
             super(builder);
 
@@ -40,6 +42,7 @@ module api.content.site.template {
             this.description = builder.description;
             this.contentTypeFilter = builder.contentTypeFilter;
             this.pageTemplateKeys = builder.pageTemplateKeys;
+            this.iconUrl = builder.iconUrl;
         }
 
         getKey(): SiteTemplateKey {
@@ -76,6 +79,10 @@ module api.content.site.template {
 
         getDescription(): string {
             return this.description;
+        }
+
+        getIconUrl(): string {
+            return this.iconUrl;
         }
 
         equals(o: api.Equitable): boolean {
@@ -131,6 +138,10 @@ module api.content.site.template {
             }
 
             if (!api.ObjectHelper.arrayEquals(this.pageTemplateKeys, other.pageTemplateKeys)) {
+                return false;
+            }
+
+            if (!ObjectHelper.stringEquals(this.iconUrl, other.iconUrl)) {
                 return false;
             }
 
@@ -191,6 +202,8 @@ module api.content.site.template {
 
         pageTemplateKeys: PageTemplateKey[];
 
+        iconUrl: string;
+
         fromSiteTemplateSummaryJson(json: api.content.site.template.SiteTemplateSummaryJson): SiteTemplateSummaryBuilder {
 
             super.fromBaseItemJson(json);
@@ -215,6 +228,7 @@ module api.content.site.template {
             json.pageTemplateKeys.forEach((key: string) => {
                 this.pageTemplateKeys.push(PageTemplateKey.fromString(key));
             });
+            this.iconUrl = json.iconUrl;
             return this;
         }
 

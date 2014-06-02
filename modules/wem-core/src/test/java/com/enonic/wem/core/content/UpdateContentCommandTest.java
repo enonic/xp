@@ -12,6 +12,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
@@ -49,11 +50,13 @@ public class UpdateContentCommandTest
         final AttachmentService attachmentService = Mockito.mock( AttachmentService.class );
         final ContentService contentService = Mockito.mock( ContentService.class );
 
-        command = new UpdateContentCommand();
-        command.contentTypeService( contentTypeService );
-        command.attachmentService( attachmentService );
+        command = UpdateContentCommand.create( null ).
+            contentTypeService( contentTypeService ).
+            attachmentService( attachmentService ).
+            build();
 
-        Mockito.when( contentService.validate( isA( ValidateContentData.class ) ) ).thenReturn( DataValidationErrors.empty() );
+        Mockito.when( contentService.validate( isA( ValidateContentData.class ), ContentConstants.DEFAULT_CONTEXT ) ).thenReturn(
+            DataValidationErrors.empty() );
 
         final ContentTypeName myContentTypeName = ContentTypeName.from( "my_content_type" );
         final ContentType myContentType = newContentType().

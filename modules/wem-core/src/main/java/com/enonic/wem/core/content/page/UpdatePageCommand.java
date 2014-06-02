@@ -1,6 +1,7 @@
 package com.enonic.wem.core.content.page;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.UpdateContentParams;
@@ -19,7 +20,7 @@ final class UpdatePageCommand
 
     public Content execute()
     {
-        final Content content = this.contentService.getById( this.params.getContent() );
+        final Content content = this.contentService.getById( this.params.getContent(), ContentConstants.DEFAULT_CONTEXT );
 
         if ( content == null )
         {
@@ -47,10 +48,10 @@ final class UpdatePageCommand
                     }
                 } );
 
-            this.contentService.update( params );
+            this.contentService.update( params, ContentConstants.DEFAULT_CONTEXT );
         }
 
-        return this.contentService.getById( this.params.getContent() );
+        return this.contentService.getById( this.params.getContent(), ContentConstants.DEFAULT_CONTEXT );
     }
 
     public UpdatePageCommand params( final UpdatePageParams params )

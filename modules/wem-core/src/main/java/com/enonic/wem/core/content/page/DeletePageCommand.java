@@ -1,6 +1,7 @@
 package com.enonic.wem.core.content.page;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.UpdateContentParams;
@@ -27,7 +28,7 @@ final class DeletePageCommand
                 }
             } );
 
-        return this.contentService.update( params );
+        return this.contentService.update( params, ContentConstants.DEFAULT_CONTEXT);
     }
 
     public DeletePageCommand contentId( ContentId contentId )

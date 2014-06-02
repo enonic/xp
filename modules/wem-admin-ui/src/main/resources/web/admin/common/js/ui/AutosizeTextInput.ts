@@ -41,12 +41,19 @@ module api.ui {
         }
 
         private updateSize() {
+            var inputEl = this.getEl(),
+                cloneEl = this.clone.getEl();
+
+            cloneEl.setFontSize(inputEl.getFontSize()).
+                setPaddingLeft(inputEl.getPaddingLeft() + 'px').
+                setPaddingRight(inputEl.getPaddingRight() + 'px');
+
             this.attendant.insertAfterEl(this);
 
-            this.clone.getEl().setInnerHtml(this.getValue());
+            cloneEl.setInnerHtml(this.getValue());
             // Set input width to text length from the clone <div>
             // or to maximum possible width corresponding to attendant width.
-            this.getEl().setWidthPx(Math.min(this.clone.getEl().getWidthWithBorder(), this.attendant.getEl().getWidth()));
+            inputEl.setWidthPx(Math.min(cloneEl.getWidthWithBorder(), this.attendant.getEl().getWidth()));
 
             this.attendant.remove();
         }

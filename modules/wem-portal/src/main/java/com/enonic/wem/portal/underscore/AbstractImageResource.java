@@ -14,6 +14,7 @@ import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
@@ -61,7 +62,7 @@ abstract class AbstractImageResource
 
     Content getContent( final ContentPath contentPath )
     {
-        final Content content = contentService.getByPath( contentPath );
+        final Content content = contentService.getByPath( contentPath, ContentConstants.DEFAULT_CONTEXT);
         if ( content != null )
         {
             return content;
@@ -72,7 +73,7 @@ abstract class AbstractImageResource
 
     Content getContent( final ContentId contentId )
     {
-        return contentService.getById( contentId );
+        return contentService.getById( contentId, ContentConstants.DEFAULT_CONTEXT);
     }
 
     Attachment getAttachment( final ContentId contentId, final String attachmentName )

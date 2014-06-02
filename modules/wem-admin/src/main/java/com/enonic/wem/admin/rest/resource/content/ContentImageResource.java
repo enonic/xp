@@ -12,9 +12,12 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter;
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.attachment.Attachment;
@@ -22,13 +25,11 @@ import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypesParams;
-import com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter;
 
 import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleMax;
 import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleSquareFilter;
@@ -57,7 +58,7 @@ public class ContentImageResource
     public Response getContentImage( @PathParam("contentId") final String contentIdAsString,
                                      @QueryParam("size") @DefaultValue("128") final int size,
                                      @QueryParam("thumbnail") @DefaultValue("true") final boolean thumbnail,
-                                     @QueryParam("crop") @DefaultValue("true") final boolean crop)
+                                     @QueryParam("crop") @DefaultValue("true") final boolean crop )
         throws Exception
     {
         if ( contentIdAsString == null )
@@ -66,7 +67,7 @@ public class ContentImageResource
         }
 
         final ContentId contentId = ContentId.from( contentIdAsString );
-        final Content content = contentService.getById( contentId );
+        final Content content = contentService.getById( contentId, ContentConstants.DEFAULT_CONTEXT );
         if ( content == null )
         {
             throw new WebApplicationException( Response.Status.NOT_FOUND );
@@ -114,7 +115,7 @@ public class ContentImageResource
             }
         }
 
-        final SchemaIcon contentTypeIcon = findRootContentTypeIcon( contentType );
+        final Icon contentTypeIcon = findRootContentTypeIcon( contentType );
         if ( contentTypeIcon == null )
         {
             throw new WebApplicationException( Response.Status.NOT_FOUND );
@@ -134,7 +135,7 @@ public class ContentImageResource
         return imageProperty == null ? content.getName().toString() : imageProperty.getString();
     }
 
-    private SchemaIcon findRootContentTypeIcon( final ContentTypeName contentTypeName )
+    private Icon findRootContentTypeIcon( final ContentTypeName contentTypeName )
     {
         ContentType contentType = getContentType( contentTypeName );
         while ( contentType != null && contentType.getIcon() == null )

@@ -11,6 +11,7 @@ import com.google.common.io.ByteStreams;
 
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobService;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.CreateContentParams;
@@ -102,7 +103,7 @@ public class DemoImagesInitializer
             parent( parent ).
             contentData( dataSet ).
             attachments( attachment );
-        contentService.create( params ).getId();
+        contentService.create( params, ContentConstants.DEFAULT_CONTEXT).getId();
     }
 
     private ContentData createContentData( final String attachmentName )

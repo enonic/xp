@@ -4,8 +4,6 @@ package com.enonic.wem.portal.content.page;
 import java.text.MessageFormat;
 
 import javax.inject.Inject;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import com.enonic.wem.api.content.page.AbstractDescriptorBasedPageComponent;
 import com.enonic.wem.api.content.page.Descriptor;
@@ -16,7 +14,8 @@ import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsControllerFactory;
 import com.enonic.wem.portal.controller.JsHttpRequest;
-import com.enonic.wem.portal.controller.JsHttpResponseSerializer;
+import com.enonic.wem.portal.controller.JsHttpResponseSerializer3;
+import com.enonic.wem.portal.rendering.RenderResult;
 import com.enonic.wem.portal.rendering.Renderer;
 
 abstract class DescriptorBasedPageComponentRenderer
@@ -31,7 +30,7 @@ abstract class DescriptorBasedPageComponentRenderer
     @Inject
     protected JsControllerFactory controllerFactory;
 
-    public Response render( final AbstractDescriptorBasedPageComponent pageComponent, final JsContext context )
+    public RenderResult render( final AbstractDescriptorBasedPageComponent pageComponent, final JsContext context )
     {
         final Descriptor descriptor = resolveDescriptor( pageComponent );
         if ( descriptor == null )
@@ -50,7 +49,7 @@ abstract class DescriptorBasedPageComponentRenderer
         {
             context.setComponent( pageComponent );
             controller.execute();
-            return new JsHttpResponseSerializer( context.getResponse() ).serialize();
+            return new JsHttpResponseSerializer3( context.getResponse() ).serialize();
         }
         finally
         {
@@ -58,7 +57,7 @@ abstract class DescriptorBasedPageComponentRenderer
         }
     }
 
-    private Response renderEmptyComponent( final AbstractDescriptorBasedPageComponent pageComponent, final JsContext context )
+    private RenderResult renderEmptyComponent( final AbstractDescriptorBasedPageComponent pageComponent, final JsContext context )
     {
         final RenderingMode renderingMode = getRenderingMode( context );
         switch ( renderingMode )
@@ -77,24 +76,24 @@ abstract class DescriptorBasedPageComponentRenderer
         }
     }
 
-    private Response renderEmptyComponentEditMode( final AbstractDescriptorBasedPageComponent pageComponent )
+    private RenderResult renderEmptyComponentEditMode( final AbstractDescriptorBasedPageComponent pageComponent )
     {
         final String html =
             MessageFormat.format( EMPTY_COMPONENT_EDIT_MODE_HTML, pageComponent.getType().toString(), pageComponent.getPath().toString() );
 
-        return Response.ok().
-            type( MediaType.TEXT_HTML_TYPE ).
+        return RenderResult.newRenderResult().
+            type( "text/html" ).
             entity( html ).
             build();
     }
 
-    private Response renderEmptyComponentPreviewMode( final AbstractDescriptorBasedPageComponent pageComponent )
+    private RenderResult renderEmptyComponentPreviewMode( final AbstractDescriptorBasedPageComponent pageComponent )
     {
         final String html = MessageFormat.format( EMPTY_COMPONENT_PREVIEW_MODE_HTML, pageComponent.getType().toString(),
                                                   pageComponent.getPath().toString() );
 
-        return Response.ok().
-            type( MediaType.TEXT_HTML_TYPE ).
+        return RenderResult.newRenderResult().
+            type( "text/html" ).
             entity( html ).
             build();
     }

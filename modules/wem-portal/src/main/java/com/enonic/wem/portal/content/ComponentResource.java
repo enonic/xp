@@ -101,7 +101,7 @@ public final class ComponentResource
         final Renderer<PageComponent> renderer = rendererFactory.getRenderer( component );
 
         final JsContext context = createContext( request, content, component, siteContent, pageTemplate );
-        return renderer.render( component, context );
+        return toResponse( renderer.render( component, context ) );
     }
 
     private JsContext createContext( final Request request, final Content content, final PageComponent component, final Content siteContent,

@@ -31,7 +31,7 @@ module app.create {
 
             this.name = siteTemplate ? siteTemplate.getName() : contentType.getName();
             this.displayName = siteTemplate ? siteTemplate.getDisplayName() : contentType.getDisplayName();
-            this.iconUrl = contentType.getIconUrl();
+            this.iconUrl = siteTemplate ? siteTemplate.getIconUrl() : contentType.getIconUrl();
         }
 
         getContentType(): ContentTypeSummary {

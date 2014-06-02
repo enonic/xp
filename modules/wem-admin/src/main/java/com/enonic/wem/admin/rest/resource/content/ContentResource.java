@@ -25,6 +25,7 @@ import com.enonic.wem.admin.json.content.ContentListJson;
 import com.enonic.wem.admin.json.content.ContentSummaryJson;
 import com.enonic.wem.admin.json.content.ContentSummaryListJson;
 import com.enonic.wem.admin.json.content.attachment.AttachmentJson;
+import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 import com.enonic.wem.admin.rest.resource.content.json.AbstractContentQueryResultJson;
 import com.enonic.wem.admin.rest.resource.content.json.ContentNameJson;
 import com.enonic.wem.admin.rest.resource.content.json.ContentQueryJson;
@@ -36,6 +37,7 @@ import com.enonic.wem.admin.rest.resource.content.json.UpdateContentJson;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentAlreadyExistException;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentNotFoundException;
@@ -54,7 +56,6 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.query.ContentQueryResult;
 import com.enonic.wem.api.data.DataJson;
-import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 
 import static com.enonic.wem.api.content.Content.editContent;
 
@@ -77,7 +78,7 @@ public class ContentResource
     {
 
         final ContentId id = ContentId.from( idParam );
-        final Content content = contentService.getById( id );
+        final Content content = contentService.getById( id, ContentConstants.DEFAULT_CONTEXT );
 
         if ( content == null )
         {
@@ -102,7 +103,7 @@ public class ContentResource
     public ContentIdJson getByPath( @QueryParam("path") final String pathParam,
                                     @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expandParam )
     {
-        final Content content = contentService.getByPath( ContentPath.from( pathParam ) );
+        final Content content = contentService.getByPath( ContentPath.from( pathParam ), ContentConstants.DEFAULT_CONTEXT );
 
         if ( content == null )
         {
@@ -130,16 +131,16 @@ public class ContentResource
         final Contents contents;
         if ( StringUtils.isEmpty( parentIdParam ) )
         {
-            contents = contentService.getRoots();
+            contents = contentService.getRoots( ContentConstants.DEFAULT_CONTEXT );
         }
         else
         {
             final GetContentByIdsParams params = new GetContentByIdsParams( ContentIds.from( parentIdParam ) );
-            final Contents parentContents = contentService.getByIds( params );
+            final Contents parentContents = contentService.getByIds( params, ContentConstants.DEFAULT_CONTEXT );
 
             if ( parentContents.isNotEmpty() )
             {
-                contents = contentService.getChildren( parentContents.first().getPath() );
+                contents = contentService.getChildren( parentContents.first().getPath(), ContentConstants.DEFAULT_CONTEXT );
             }
             else
             {
@@ -169,11 +170,11 @@ public class ContentResource
         final Contents contents;
         if ( StringUtils.isEmpty( parentPathParam ) )
         {
-            contents = contentService.getRoots();
+            contents = contentService.getRoots( ContentConstants.DEFAULT_CONTEXT );
         }
         else
         {
-            contents = contentService.getChildren( ContentPath.from( parentPathParam ) );
+            contents = contentService.getChildren( ContentPath.from( parentPathParam ), ContentConstants.DEFAULT_CONTEXT );
         }
 
         if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
@@ -195,13 +196,14 @@ public class ContentResource
     @Consumes(MediaType.APPLICATION_JSON)
     public AbstractContentQueryResultJson query( final ContentQueryJson contentQueryJson )
     {
-        final ContentQueryResult contentQueryResult = contentService.find( contentQueryJson.getContentQuery() );
+        final ContentQueryResult contentQueryResult =
+            contentService.find( contentQueryJson.getContentQuery(), ContentConstants.DEFAULT_CONTEXT );
 
         final boolean getChildrenIds = !Expand.NONE.matches( contentQueryJson.getExpand() );
         final GetContentByIdsParams params = new GetContentByIdsParams( ContentIds.from( contentQueryResult.getContentIds() ) ).
             setGetChildrenIds( getChildrenIds );
 
-        final Contents contents = contentService.getByIds( params );
+        final Contents contents = contentService.getByIds( params, ContentConstants.DEFAULT_CONTEXT );
 
         return ContentQueryResultJsonFactory.create( contentQueryResult, contents, contentQueryJson.getExpand() );
     }
@@ -257,7 +259,7 @@ public class ContentResource
 
             try
             {
-                final DeleteContentResult deleteResult = contentService.delete( deleteContent );
+                final DeleteContentResult deleteResult = contentService.delete( deleteContent, ContentConstants.DEFAULT_CONTEXT );
                 jsonResult.addSuccess( contentToDelete );
             }
             catch ( ContentNotFoundException | UnableToDeleteContentException e )
@@ -273,7 +275,7 @@ public class ContentResource
     @Path("create")
     public ContentJson create( final CreateContentJson params )
     {
-        final Content persistedContent = contentService.create( params.getCreateContent() );
+        final Content persistedContent = contentService.create( params.getCreateContent(), ContentConstants.DEFAULT_CONTEXT );
         return new ContentJson( persistedContent );
     }
 
@@ -307,7 +309,7 @@ public class ContentResource
                 }
             } );
 
-        final Content updatedContent = contentService.update( updateParams );
+        final Content updatedContent = contentService.update( updateParams, ContentConstants.DEFAULT_CONTEXT );
         if ( json.getContentName().equals( updatedContent.getName() ) )
         {
             return new ContentJson( updatedContent );
@@ -319,7 +321,7 @@ public class ContentResource
                 contentId( json.getContentId() ).
                 newName( json.getContentName() );
 
-            final Content renamedContent = contentService.rename( renameParams );
+            final Content renamedContent = contentService.rename( renameParams, ContentConstants.DEFAULT_CONTEXT );
             return new ContentJson( renamedContent );
         }
         catch ( ContentAlreadyExistException e )

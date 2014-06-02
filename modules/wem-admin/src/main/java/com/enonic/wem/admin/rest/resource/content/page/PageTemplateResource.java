@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import com.enonic.wem.admin.json.content.page.PageTemplateJson;
 import com.enonic.wem.admin.json.content.page.PageTemplateListJson;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentService;
@@ -94,7 +95,7 @@ public final class PageTemplateResource
         final ContentId contentId = ContentId.from( contentIdAsString );
         try
         {
-            final Content content = contentService.getById( contentId );
+            final Content content = contentService.getById( contentId, ContentConstants.DEFAULT_CONTEXT);
             final Content nearestSite = this.siteService.getNearestSite( contentId );
 
             if ( nearestSite != null )

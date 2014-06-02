@@ -1,5 +1,6 @@
 package com.enonic.wem.core.content.site;
 
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.site.CreateSiteParams;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentService;
@@ -33,7 +34,7 @@ final class CreateSiteCommand
                 }
             } );
 
-        return this.contentService.update( params );
+        return this.contentService.update( params, ContentConstants.DEFAULT_CONTEXT);
     }
 
     public CreateSiteCommand params( final CreateSiteParams params )

@@ -30,20 +30,11 @@ module api.ui {
             });
         }
 
-        setChecked(newValue: boolean, supressEvent?: boolean): Checkbox {
-            var oldValue = this.isChecked();
-
+        setChecked(newValue: boolean, suppressEvent?: boolean): Checkbox {
             this.checkbox.getHTMLElement()["checked"] = newValue;
 
-            if (newValue) {
-                this.checkbox.getEl().setAttribute("checked", "checked");
-            }
-            else {
-                this.checkbox.getEl().removeAttribute("checked");
-            }
-
-            if (!supressEvent) {
-                this.notifyValueChanged(oldValue, newValue);
+            if (!suppressEvent) {
+                this.notifyValueChanged(this.oldValue, newValue);
             }
             // save new value to know which value was before input event.
             this.oldValue = newValue;

@@ -26,7 +26,6 @@ import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.entity.UpdateNodeParams;
-import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -84,10 +83,10 @@ public class ContentNodeTranslator
             entityIndexConfig( entityIndexConfig );
     }
 
-    public UpdateNodeParams toUpdateNodeCommand( final Content content, final Workspace workspace, final Attachments attachments )
+    public UpdateNodeParams toUpdateNodeCommand( final Content content, final Attachments attachments )
     {
         return new UpdateNodeParams().
-            id( EntityId.from( content.getId() ), workspace ).
+            id( EntityId.from( content.getId() ) ).
             editor( toNodeEditor( content, attachments ) );
     }
 

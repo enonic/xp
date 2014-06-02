@@ -3,6 +3,7 @@ package com.enonic.wem.api.content.site;
 
 import java.util.LinkedHashMap;
 
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.Identity;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
@@ -35,6 +36,8 @@ public final class SiteTemplate
 
     private final PageTemplates pageTemplates;
 
+    private final Icon icon;
+
     private SiteTemplate( final Builder builder )
     {
         this.siteTemplateKey = builder.siteTemplateKey;
@@ -50,6 +53,7 @@ public final class SiteTemplate
         pageTemplatesBuilder.addAll( builder.pageTemplates.values() );
 
         this.pageTemplates = pageTemplatesBuilder.build();
+        this.icon = builder.icon;
     }
 
     public SiteTemplateKey getKey()
@@ -113,6 +117,11 @@ public final class SiteTemplate
         return pageTemplates.filter( spec ).first();
     }
 
+    public Icon getIcon()
+    {
+        return icon;
+    }
+
     public static Builder newSiteTemplate()
     {
         return new Builder();
@@ -143,6 +152,8 @@ public final class SiteTemplate
 
         private final LinkedHashMap<PageTemplateKey, PageTemplate> pageTemplates;
 
+        private Icon icon;
+
         private Builder()
         {
             this.pageTemplates = new LinkedHashMap<>();
@@ -163,6 +174,7 @@ public final class SiteTemplate
             this.modules = source.modules;
             this.contentTypeFilter = source.contentTypeFilter;
             this.rootContentType = source.rootContentType;
+            this.icon = source.icon;
         }
 
         public Builder key( final SiteTemplateKey siteTemplateKey )
@@ -222,6 +234,12 @@ public final class SiteTemplate
         public Builder removeTemplate( final PageTemplateKey pageTemplateKey )
         {
             this.pageTemplates.remove( pageTemplateKey );
+            return this;
+        }
+
+        public Builder icon( final Icon icon )
+        {
+            this.icon = icon;
             return this;
         }
 

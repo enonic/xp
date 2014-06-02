@@ -1,13 +1,15 @@
 package com.enonic.wem.core.content.site;
 
-import com.enonic.wem.api.content.site.UpdateSiteParams;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.site.SiteNotFoundException;
+import com.enonic.wem.api.content.site.UpdateSiteParams;
+import com.enonic.wem.api.context.Context;
 
 import static com.enonic.wem.api.content.Content.editContent;
 
@@ -19,7 +21,9 @@ final class UpdateSiteCommand
 
     public Content execute()
     {
-        final Content content = this.contentService.getById( this.params.getContent() );
+        final Context context = ContentConstants.DEFAULT_CONTEXT;
+
+        final Content content = this.contentService.getById( this.params.getContent(), context );
 
         if ( content == null )
         {
@@ -47,10 +51,10 @@ final class UpdateSiteCommand
                     }
                 } );
 
-            this.contentService.update( updateContent );
+            this.contentService.update( updateContent, context );
         }
 
-        return this.contentService.getById( this.params.getContent() );
+        return this.contentService.getById( this.params.getContent(), context );
     }
 
     public UpdateSiteCommand params( final UpdateSiteParams params )

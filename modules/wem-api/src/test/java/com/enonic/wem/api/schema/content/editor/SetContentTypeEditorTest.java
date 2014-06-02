@@ -4,10 +4,10 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
 
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
@@ -43,7 +43,7 @@ public class SetContentTypeEditorTest
             modifiedTime( TIME2.toInstant() ).
             addFormItem( newInput().name( "title" ).inputType( InputTypes.TEXT_LINE ).build() ).
             addFormItem( formItemSet ).
-            icon( SchemaIcon.from( "ABC".getBytes(), "image/png" ) ).
+            icon( Icon.from( "ABC".getBytes(), "image/png" ) ).
             build();
 
         final SetContentTypeEditor.Builder editorBuilder = SetContentTypeEditor.newSetContentTypeEditor();
@@ -51,7 +51,7 @@ public class SetContentTypeEditorTest
         editorBuilder.setAbstract( true );
         editorBuilder.setFinal( false );
         editorBuilder.superType( ContentTypeName.unstructured() );
-        editorBuilder.icon( SchemaIcon.from( "ABC".getBytes(), "image/png" ) );
+        editorBuilder.icon( Icon.from( "ABC".getBytes(), "image/png" ) );
         editorBuilder.contentDisplayNameScript( "myScript()" );
 
         SetContentTypeEditor editor = editorBuilder.build();
@@ -85,7 +85,7 @@ public class SetContentTypeEditorTest
         editorBuilder.setAbstract( false );
         editorBuilder.setFinal( false );
         editorBuilder.superType( ContentTypeName.structured() );
-        editorBuilder.icon( SchemaIcon.from( "ABC".getBytes(), "image/png" ) );
+        editorBuilder.icon( Icon.from( "ABC".getBytes(), "image/png" ) );
         editorBuilder.contentDisplayNameScript( "newScript()" );
         final Form form = Form.newForm().addFormItem( formItemSet ).build();
         editorBuilder.form( form );
@@ -100,7 +100,7 @@ public class SetContentTypeEditorTest
         assertEquals( TIME2, result.getModifiedTime() );
         assertEquals( "newScript()", result.getContentDisplayNameScript() );
         assertEquals( ContentTypeName.structured(), result.getSuperType() );
-        assertEquals( SchemaIcon.from( "ABC".getBytes(), "image/png" ), result.getIcon() );
+        assertEquals( Icon.from( "ABC".getBytes(), "image/png" ), result.getIcon() );
         assertEquals( form.toString(), result.form().toString() );
     }
 

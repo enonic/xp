@@ -4,7 +4,6 @@ import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
 import com.enonic.wem.api.entity.Node;
@@ -27,7 +26,7 @@ final class GetAttachmentCommand
         try
         {
             final EntityId entityId = EntityId.from( this.contentId );
-            final Node node = nodeService.getById( entityId, new Context( ContentConstants.DEFAULT_WORKSPACE ) );
+            final Node node = nodeService.getById( entityId, ContentConstants.DEFAULT_CONTEXT );
 
             final com.enonic.wem.api.entity.Attachment entityAttachment = node.attachments().getAttachment( this.attachmentName );
             if ( entityAttachment != null )

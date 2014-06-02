@@ -1,6 +1,7 @@
 package com.enonic.wem.core.content.site;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
@@ -13,7 +14,7 @@ final class GetNearestSiteCommand
 
     public Content execute()
     {
-        final Content content = contentService.getById( this.contentId );
+        final Content content = contentService.getById( this.contentId, ContentConstants.DEFAULT_CONTEXT);
 
         if ( content.isSite() )
         {
@@ -34,7 +35,7 @@ final class GetNearestSiteCommand
             return null;
         }
 
-        final Content content = this.contentService.getByPath( contentPath );
+        final Content content = this.contentService.getByPath( contentPath, ContentConstants.DEFAULT_CONTEXT);
 
         if ( content.isSite() )
         {

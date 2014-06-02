@@ -1,6 +1,7 @@
 package com.enonic.wem.core.content.site;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.UpdateContentParams;
@@ -27,9 +28,9 @@ final class DeleteSiteCommand
                 }
             } );
 
-        this.contentService.update( params );
+        this.contentService.update( params, ContentConstants.DEFAULT_CONTEXT);
 
-        return this.contentService.getById( this.contentId );
+        return this.contentService.getById( this.contentId, ContentConstants.DEFAULT_CONTEXT);
     }
 
     public DeleteSiteCommand contentId( final ContentId contentId )

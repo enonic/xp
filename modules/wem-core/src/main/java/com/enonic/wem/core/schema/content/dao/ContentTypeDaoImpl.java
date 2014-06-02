@@ -13,14 +13,14 @@ import org.joda.time.Instant;
 
 import com.google.common.base.Charsets;
 
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.exception.SystemException;
-import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeXml;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.core.config.SystemConfig;
-import com.enonic.wem.core.schema.SchemaIconDao;
+import com.enonic.wem.core.support.dao.IconDao;
 import com.enonic.wem.api.xml.XmlSerializers;
 
 import static com.enonic.wem.api.schema.content.ContentTypes.newContentTypes;
@@ -42,7 +42,7 @@ public final class ContentTypeDaoImpl
         final Path contentTypePath = pathForContentType( contentType.getName() );
 
         writeContentTypeXml( contentType, contentTypePath );
-        new SchemaIconDao().writeSchemaIcon( contentType.getIcon(), contentTypePath );
+        new IconDao().writeIcon( contentType.getIcon(), contentTypePath );
 
         return contentType;
     }
@@ -53,7 +53,7 @@ public final class ContentTypeDaoImpl
         final Path contentTypePath = pathForContentType( contentType.getName() );
 
         writeContentTypeXml( contentType, contentTypePath );
-        new SchemaIconDao().writeSchemaIcon( contentType.getIcon(), contentTypePath );
+        new IconDao().writeIcon( contentType.getIcon(), contentTypePath );
     }
 
     @Override
@@ -116,7 +116,7 @@ public final class ContentTypeDaoImpl
         if ( isContentTypeDir )
         {
             final ContentType.Builder contentType = readContentTypeXml( contentTypePath );
-            final SchemaIcon icon = new SchemaIconDao().readSchemaIcon( contentTypePath );
+            final Icon icon = new IconDao().readIcon( contentTypePath );
             contentType.icon( icon );
             return contentType;
         }

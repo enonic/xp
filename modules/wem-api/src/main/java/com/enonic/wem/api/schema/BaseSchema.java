@@ -5,6 +5,7 @@ import org.joda.time.Instant;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.account.UserKey;
 
 public abstract class BaseSchema<T extends SchemaName>
@@ -26,7 +27,7 @@ public abstract class BaseSchema<T extends SchemaName>
 
     final UserKey modifier;
 
-    final SchemaIcon icon;
+    final Icon icon;
 
     protected BaseSchema( final Builder builder )
     {
@@ -81,7 +82,7 @@ public abstract class BaseSchema<T extends SchemaName>
         return modifier;
     }
 
-    public SchemaIcon getIcon()
+    public Icon getIcon()
     {
         return icon;
     }
@@ -104,7 +105,7 @@ public abstract class BaseSchema<T extends SchemaName>
 
         private UserKey modifier;
 
-        private SchemaIcon schemaIcon;
+        private Icon schemaIcon;
 
         public Builder()
         {
@@ -178,7 +179,7 @@ public abstract class BaseSchema<T extends SchemaName>
             return getThis();
         }
 
-        public T icon( SchemaIcon schemaIcon )
+        public T icon( Icon schemaIcon )
         {
             this.schemaIcon = schemaIcon;
             return getThis();

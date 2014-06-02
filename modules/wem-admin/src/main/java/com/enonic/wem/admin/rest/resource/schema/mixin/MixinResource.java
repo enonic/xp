@@ -18,9 +18,9 @@ import com.enonic.wem.admin.json.schema.mixin.MixinListJson;
 import com.enonic.wem.admin.rest.resource.schema.json.CreateOrUpdateSchemaJsonResult;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobService;
-import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.mixin.CreateMixinParams;
 import com.enonic.wem.api.schema.mixin.DeleteMixinParams;
 import com.enonic.wem.api.schema.mixin.GetMixinParams;
@@ -94,7 +94,7 @@ public class MixinResource
         final Mixin mixin = new MixinXmlSerializer().
             overrideName( params.getName().toString() ).
             toMixin( params.getConfig() );
-        final SchemaIcon schemaIcon = getSchemaIcon( params.getIconJson() );
+        final Icon schemaIcon = getSchemaIcon( params.getIconJson() );
 
         final CreateMixinParams createParams = new CreateMixinParams().
             name( params.getName().toString() ).
@@ -125,7 +125,7 @@ public class MixinResource
             final Mixin parsed = new MixinXmlSerializer().
                 overrideName( params.getName().toString() ).
                 toMixin( params.getConfig() );
-            final SchemaIcon schemaIcon = getSchemaIcon( params.getIconJson() );
+            final Icon schemaIcon = getSchemaIcon( params.getIconJson() );
 
             final MixinEditor editor = new MixinEditor()
             {
@@ -190,12 +190,12 @@ public class MixinResource
         return mixinService.getByName( new GetMixinParams( name ) );
     }
 
-    private SchemaIcon getSchemaIcon( final IconJson iconJson )
+    private Icon getSchemaIcon( final IconJson iconJson )
     {
         if ( iconJson != null )
         {
             final Blob blob = blobService.get( iconJson.getThumbnail().getBlobKey() );
-            return blob == null ? null : SchemaIcon.from( blob.getStream(), iconJson.getMimeType() );
+            return blob == null ? null : Icon.from( blob.getStream(), iconJson.getMimeType() );
         }
         return null;
     }

@@ -17,6 +17,7 @@ import com.sun.jersey.api.core.DefaultResourceConfig;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
@@ -83,7 +84,7 @@ public class PublicResourceTest
 
         final ContentPath contentPath = ContentPath.from( "path/to/content" );
         final Content content = createContent( "content-id", contentPath, "content-type" );
-        when( contentService.getByPath( contentPath ) ).thenReturn( content );
+        when( contentService.getByPath( contentPath, ContentConstants.DEFAULT_CONTEXT ) ).thenReturn( content );
 
         // resource.mode = "live";
         // resource.contentPath = "content";
@@ -107,7 +108,7 @@ public class PublicResourceTest
 
         final ContentPath contentPath = ContentPath.from( "path/to/content" );
         final Content content = createContent( "content-id", contentPath, "content-type" );
-        when( contentService.getByPath( contentPath ) ).thenReturn( content );
+        when( contentService.getByPath( contentPath, ContentConstants.DEFAULT_CONTEXT ) ).thenReturn( content );
 
         // resource.mode = "live";
         // resource.contentPath = "content";
@@ -130,7 +131,7 @@ public class PublicResourceTest
 
         final ContentPath contentPath = ContentPath.from( "path/to/content" );
         final Content content = createContent( "content-id", contentPath, "content-type" );
-        when( contentService.getByPath( contentPath ) ).thenReturn( content );
+        when( contentService.getByPath( contentPath, ContentConstants.DEFAULT_CONTEXT ) ).thenReturn( content );
 
         // resource.mode = "live";
         // resource.contentPath = "content";
@@ -151,7 +152,7 @@ public class PublicResourceTest
 
         final ContentPath contentPath = ContentPath.from( "path/to/content" );
         final Content content = createContent( "content-id", contentPath, "content-type" );
-        when( contentService.getByPath( contentPath ) ).thenReturn( content );
+        when( contentService.getByPath( contentPath, ContentConstants.DEFAULT_CONTEXT ) ).thenReturn( content );
 
         // resource.mode = "live";
         // resource.contentPath = "content";
@@ -169,7 +170,7 @@ public class PublicResourceTest
     {
         final Path filePath = tempDir.resolve( "main.css" );
         when( modulePathResolver.resolveResourcePath( isA( ModuleResourceKey.class ) ) ).thenReturn( filePath );
-        when( contentService.getByPath( ContentPath.from( "content" ) ) ).thenReturn( null );
+        when( contentService.getByPath( ContentPath.from( "content" ), ContentConstants.DEFAULT_CONTEXT ) ).thenReturn( null );
 
         // resource.mode = "live";
         // resource.contentPath = "content";

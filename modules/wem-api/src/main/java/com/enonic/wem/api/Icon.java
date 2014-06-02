@@ -1,4 +1,4 @@
-package com.enonic.wem.api.schema;
+package com.enonic.wem.api;
 
 
 import java.io.ByteArrayInputStream;
@@ -10,13 +10,13 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteStreams;
 
-public final class SchemaIcon
+public final class Icon
 {
     private final byte[] iconData;
 
     private final String mimeType;
 
-    private SchemaIcon( final byte[] iconData, final String mimeType )
+    private Icon( final byte[] iconData, final String mimeType )
     {
         Preconditions.checkNotNull( mimeType, "mimeType is mandatory for an icon" );
         Preconditions.checkNotNull( iconData, "iconData is mandatory" );
@@ -53,12 +53,12 @@ public final class SchemaIcon
             return true;
         }
 
-        if ( !( o instanceof SchemaIcon ) )
+        if ( !( o instanceof Icon ) )
         {
             return false;
         }
 
-        final SchemaIcon that = (SchemaIcon) o;
+        final Icon that = (Icon) o;
         return Objects.equal( this.mimeType, that.mimeType ) && Arrays.equals( this.iconData, that.iconData );
     }
 
@@ -78,17 +78,17 @@ public final class SchemaIcon
             toString();
     }
 
-    public static SchemaIcon from( final byte[] iconData, final String mimeType )
+    public static Icon from( final byte[] iconData, final String mimeType )
     {
-        return new SchemaIcon( iconData, mimeType );
+        return new Icon( iconData, mimeType );
     }
 
-    public static SchemaIcon from( final InputStream dataStream, final String mimeType )
+    public static Icon from( final InputStream dataStream, final String mimeType )
     {
         Preconditions.checkNotNull( dataStream, "dataStream is mandatory" );
         try (InputStream is = dataStream)
         {
-            return new SchemaIcon( ByteStreams.toByteArray( is ), mimeType );
+            return new Icon( ByteStreams.toByteArray( is ), mimeType );
         }
         catch ( IOException e )
         {

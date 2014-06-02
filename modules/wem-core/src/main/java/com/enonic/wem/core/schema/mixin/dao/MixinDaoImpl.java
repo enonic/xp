@@ -13,13 +13,13 @@ import org.joda.time.Instant;
 
 import com.google.common.base.Charsets;
 
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.exception.SystemException;
-import com.enonic.wem.api.schema.SchemaIcon;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.core.config.SystemConfig;
-import com.enonic.wem.core.schema.SchemaIconDao;
+import com.enonic.wem.core.support.dao.IconDao;
 import com.enonic.wem.core.schema.mixin.MixinXmlSerializer;
 
 import static com.enonic.wem.api.schema.mixin.Mixins.newMixins;
@@ -41,7 +41,7 @@ public final class MixinDaoImpl
         final Path mixinPath = pathForMixin( mixin.getName() );
 
         writeMixinXml( mixin, mixinPath );
-        new SchemaIconDao().writeSchemaIcon( mixin.getIcon(), mixinPath );
+        new IconDao().writeIcon( mixin.getIcon(), mixinPath );
 
         return mixin;
     }
@@ -52,7 +52,7 @@ public final class MixinDaoImpl
         final Path mixinPath = pathForMixin( mixin.getName() );
 
         writeMixinXml( mixin, mixinPath );
-        new SchemaIconDao().writeSchemaIcon( mixin.getIcon(), mixinPath );
+        new IconDao().writeIcon( mixin.getIcon(), mixinPath );
     }
 
     @Override
@@ -115,7 +115,7 @@ public final class MixinDaoImpl
         if ( isMixinDir )
         {
             final Mixin.Builder mixin = readMixinXml( mixinPath );
-            final SchemaIcon icon = new SchemaIconDao().readSchemaIcon( mixinPath );
+            final Icon icon = new IconDao().readIcon( mixinPath );
             mixin.icon( icon );
             return mixin;
         }

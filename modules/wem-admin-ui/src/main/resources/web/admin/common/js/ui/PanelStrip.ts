@@ -107,7 +107,7 @@ module api.ui {
             }
 
             wemjq(this.scrollable.getHTMLElement()).animate({
-                scrollTop: this.scrollable.getHTMLElement().scrollTop + panelToShow.getEl().getOffsetToParent().top
+                scrollTop: index == 0 ? 0 : this.scrollable.getHTMLElement().scrollTop + panelToShow.getEl().getOffsetToParent().top
             }, {
                 duration: 500,
                 complete: () => {

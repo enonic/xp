@@ -23,6 +23,7 @@ import com.enonic.wem.admin.rest.resource.content.page.image.ImageDescriptorReso
 import com.enonic.wem.admin.rest.resource.content.page.layout.LayoutDescriptorResource;
 import com.enonic.wem.admin.rest.resource.content.page.part.PartDescriptorResource;
 import com.enonic.wem.admin.rest.resource.content.site.SiteResource;
+import com.enonic.wem.admin.rest.resource.content.site.template.SiteTemplateImageResource;
 import com.enonic.wem.admin.rest.resource.content.site.template.SiteTemplateResource;
 import com.enonic.wem.admin.rest.resource.module.ModuleResource;
 import com.enonic.wem.admin.rest.resource.relationship.RelationshipResource;
@@ -67,6 +68,7 @@ public final class AdminModule
         bind( ModuleResource.class ).in( Singleton.class );
 
         bind( SiteTemplateResource.class ).in( Singleton.class );
+        bind( SiteTemplateImageResource.class ).in( Singleton.class );
         bind( PageTemplateResource.class ).in( Singleton.class );
         bind( PageDescriptorResource.class ).in( Singleton.class );
         bind( ImageDescriptorResource.class ).in( Singleton.class );

@@ -14,7 +14,7 @@ module api.module {
             super.setObject(moduleSummary);
             this.namesAndIconView.setMainName(moduleSummary.getDisplayName()).
                 setSubName(moduleSummary.getUrl()).
-                setIconUrl(api.util.getAdminUri("common/images/icons/icoMoon/32x32/puzzle.png"));
+                setIconClass("icon-puzzle icon-large");
         }
 
         getPreferredHeight(): number {

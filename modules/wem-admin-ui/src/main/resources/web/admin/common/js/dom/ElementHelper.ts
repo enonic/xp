@@ -323,7 +323,39 @@ module api.dom {
         }
 
         getPaddingLeft(): number {
-            return parseFloat(this.getComputedProperty('padding-left'));
+            return parseFloat(this.getComputedProperty('padding-left')) || 0;
+        }
+
+        setPaddingLeft(value: string): ElementHelper {
+            this.el.style.paddingLeft = value;
+            return this;
+        }
+
+        getPaddingRight(): number {
+            return parseFloat(this.getComputedProperty('padding-right'));
+        }
+
+        setPaddingRight(value: string): ElementHelper {
+            this.el.style.paddingRight = value;
+            return this;
+        }
+
+        getPaddingTop(): number {
+            return parseFloat(this.getComputedProperty('padding-top'));
+        }
+
+        setPaddingTop(value: string): ElementHelper {
+            this.el.style.paddingTop = value;
+            return this;
+        }
+
+        getPaddingBottom(): number {
+            return parseFloat(this.getComputedProperty('padding-bottom'));
+        }
+
+        setPaddingBottom(value: string): ElementHelper {
+            this.el.style.paddingBottom = value;
+            return this;
         }
 
         getBorderTopWidth(): number {
@@ -336,6 +368,15 @@ module api.dom {
 
         setZindex(value: number): ElementHelper {
             this.el.style.zIndex = value.toString();
+            return this;
+        }
+
+        getFontSize(): string {
+            return this.getComputedProperty('font-size');
+        }
+
+        setFontSize(value: string): ElementHelper {
+            this.el.style.fontSize = value;
             return this;
         }
 

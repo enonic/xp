@@ -7,18 +7,23 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.CreateContentParams;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.CreateNodeParams;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 
 final class CreateContentCommand
-    extends AbstractContentCommand<CreateContentCommand>
+    extends AbstractContentCommand
 {
     private final static Logger LOG = LoggerFactory.getLogger( CreateContentCommand.class );
 
-    private CreateContentParams params;
+    private final CreateContentParams params;
+
+    private CreateContentCommand( final Builder builder )
+    {
+        super( builder );
+        this.params = builder.params;
+    }
 
     Content execute()
     {
@@ -35,7 +40,7 @@ final class CreateContentCommand
         }
 
         final CreateNodeParams createNodeParams = getTranslator().toCreateNode( this.params );
-        final Node createdNode = nodeService.create( createNodeParams, new Context( ContentConstants.DEFAULT_WORKSPACE ) );
+        final Node createdNode = nodeService.create( createNodeParams, ContentConstants.DEFAULT_CONTEXT );
 
         return getTranslator().fromNode( createdNode );
     }
@@ -54,9 +59,32 @@ final class CreateContentCommand
         }
     }
 
-    CreateContentCommand params( final CreateContentParams params )
+    public static Builder create()
     {
-        this.params = params;
-        return this;
+        return new Builder();
     }
+
+    public static class Builder
+        extends AbstractContentCommand.Builder<Builder>
+    {
+        private CreateContentParams params;
+
+        public Builder setParams( final CreateContentParams params )
+        {
+            this.params = params;
+            return this;
+        }
+
+        public Builder params( final CreateContentParams params )
+        {
+            this.params = params;
+            return this;
+        }
+
+        public CreateContentCommand build()
+        {
+            return new CreateContentCommand( this );
+        }
+    }
+
 }

@@ -23,6 +23,7 @@ import com.sun.jersey.api.core.HttpRequestContext;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
@@ -139,7 +140,7 @@ public class ContentResourceTest
 
         when( pageTemplateServiceMock.getByKey( Mockito.eq( PageTemplateKey.from( "mymodule|my-page" ) ),
                                                 Mockito.eq( (SiteTemplateKey) null ) ) ).thenReturn( createPageTemplate() );
-        when( contentResource.contentService.getByPath( ContentPath.from( "content" ) ) ).thenReturn(
+        when( contentResource.contentService.getByPath( ContentPath.from( "content" ), ContentConstants.DEFAULT_CONTEXT) ).thenReturn(
             createPage( "id", "content", "contenttypename" ) );
 
         when( contentResource.siteService.getNearestSite( isA( ContentId.class ) ) ).thenReturn(

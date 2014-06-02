@@ -3,9 +3,9 @@ package com.enonic.wem.api.schema.mixin;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItems;
-import com.enonic.wem.api.schema.SchemaIcon;
 
 public final class CreateMixinParams
 {
@@ -17,7 +17,7 @@ public final class CreateMixinParams
 
     private String description;
 
-    private SchemaIcon schemaIcon;
+    private Icon schemaIcon;
 
 
     public CreateMixinParams name( final MixinName name )
@@ -56,7 +56,7 @@ public final class CreateMixinParams
         return this;
     }
 
-    public CreateMixinParams schemaIcon( final SchemaIcon schemaIcon )
+    public CreateMixinParams schemaIcon( final Icon schemaIcon )
     {
         this.schemaIcon = schemaIcon;
         return this;
@@ -82,7 +82,7 @@ public final class CreateMixinParams
         return description;
     }
 
-    public SchemaIcon getSchemaIcon()
+    public Icon getSchemaIcon()
     {
         return schemaIcon;
     }

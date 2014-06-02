@@ -1,6 +1,7 @@
 package com.enonic.wem.core.content.page;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.editor.ContentEditor;
@@ -35,7 +36,7 @@ final class CreatePageCommand
                 }
             } );
 
-        return this.contentService.update( params );
+        return this.contentService.update( params, ContentConstants.DEFAULT_CONTEXT);
     }
 
     public CreatePageCommand params( final CreatePageParams params )
