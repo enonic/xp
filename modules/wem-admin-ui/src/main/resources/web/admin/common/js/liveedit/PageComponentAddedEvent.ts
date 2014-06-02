@@ -7,7 +7,7 @@ module api.liveedit {
 
     export class PageComponentAddedEvent extends Event2 {
 
-        private component: api.dom.Element;
+        private pageComponentView: PageComponentView;
 
         private type: PageComponentType;
 
@@ -15,9 +15,9 @@ module api.liveedit {
 
         private precedingComponent: ComponentPath;
 
-        setComponent(component: ItemView): PageComponentAddedEvent {
-            this.component = component;
-            this.type = component.getType().toPageComponentType();
+        setPageComponentView(pageComponentView: PageComponentView): PageComponentAddedEvent {
+            this.pageComponentView = pageComponentView;
+            this.type = pageComponentView.getType().toPageComponentType();
             return this;
         }
 
@@ -31,8 +31,8 @@ module api.liveedit {
             return this;
         }
 
-        getComponent(): api.dom.Element {
-            return this.component;
+        getPageComponentView(): PageComponentView {
+            return this.pageComponentView;
         }
 
         getType(): PageComponentType {

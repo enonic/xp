@@ -1,12 +1,19 @@
 module api.liveedit {
 
     import Content = api.content.Content;
+    import PageComponent = api.content.page.PageComponent;
     import ComponentPath = api.content.page.ComponentPath;
 
     export class PageComponentView extends ItemView {
 
+        private data: PageComponent;
+
         constructor(type: ItemType, element?: HTMLElement, dummy?: boolean) {
             super(type, element, dummy);
+        }
+
+        setData(data: PageComponent) {
+            this.data = data;
         }
 
         setComponentPath(path: ComponentPath) {

@@ -535,7 +535,7 @@ module app.wizard.page {
                     setType(event.getType()).
                     setRegion(event.getRegion()).
                     setPrecedingComponent(event.getPrecedingComponent() ? event.getPrecedingComponent().getComponentName() : null).
-                    setComponentView(event.getComponent());
+                    setComponentView(event.getPageComponentView());
 
                 Q(!this.pageTemplate ? this.initializePageFromDefault() : null).done(() => {
                     command.execute();

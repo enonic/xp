@@ -241,7 +241,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             var regionHTMLElement = PageComponentView.findParentRegionViewHTMLElement(newPageComponent.getHTMLElement());
             var region = pageItemViews.getRegionViewByElement(regionHTMLElement);
             new PageComponentAddedEvent().
-                setComponent(newPageComponent).
+                setPageComponentView(newPageComponent).
                 setRegion(region.getRegionName()).
                 setPrecedingComponent(newPageComponent.getPrecedingComponentPath()).
                 fire();
