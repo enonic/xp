@@ -1,6 +1,9 @@
 package com.enonic.wem.portal.content;
 
+import java.util.Map;
+
 import javax.inject.Inject;
+import javax.ws.rs.core.Response;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentConstants;
@@ -22,6 +25,7 @@ import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.portal.controller.JsControllerFactory;
 import com.enonic.wem.portal.exception.PortalWebException;
+import com.enonic.wem.portal.rendering.RenderResult;
 
 
 public abstract class RenderResource
@@ -148,4 +152,17 @@ public abstract class RenderResource
         }
     }
 
+    protected final Response toResponse( final RenderResult result )
+    {
+        final Response.ResponseBuilder builder = Response.status( result.getStatus() ).
+            type( result.getType() ).
+            entity( result.getEntity() );
+
+        for ( final Map.Entry<String, String> header : result.getHeaders().entrySet() )
+        {
+            builder.header( header.getKey(), header.getValue() );
+        }
+
+        return builder.build();
+    }
 }

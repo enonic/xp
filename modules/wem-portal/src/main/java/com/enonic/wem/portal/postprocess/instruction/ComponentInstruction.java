@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.ws.rs.core.Response;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
@@ -20,6 +19,7 @@ import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.rendering.RenderException;
+import com.enonic.wem.portal.rendering.RenderResult;
 import com.enonic.wem.portal.rendering.Renderer;
 import com.enonic.wem.portal.rendering.RendererFactory;
 
@@ -81,15 +81,8 @@ public final class ComponentInstruction
     private String renderPageComponent( final JsContext context, final PageComponent component )
     {
         final Renderer<PageComponent> renderer = this.rendererFactory.getRenderer( component );
-        final Response result = renderer.render( component, context );
-
-        final Object body = result.getEntity();
-        if ( body instanceof String )
-        {
-            return (String) body;
-        }
-
-        return null;
+        final RenderResult result = renderer.render( component, context );
+        return result.getAsString();
     }
 
     private PageComponent resolveComponent( final JsContext context, final ComponentPath path )

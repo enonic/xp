@@ -1,7 +1,5 @@
 package com.enonic.wem.portal.postprocess.instruction;
 
-import javax.ws.rs.core.Response;
-
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -28,6 +26,7 @@ import com.enonic.wem.api.rendering.Renderable;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsHttpResponse;
+import com.enonic.wem.portal.rendering.RenderResult;
 import com.enonic.wem.portal.rendering.Renderer;
 import com.enonic.wem.portal.rendering.RendererFactory;
 
@@ -165,7 +164,7 @@ public class ComponentInstructionTest
     private RendererFactory newRendererFactory( final String renderResult )
     {
         final RendererFactory rendererFactory = mock( RendererFactory.class );
-        final Renderer<Renderable> renderer = ( component, context ) -> Response.ok( renderResult ).build();
+        final Renderer<Renderable> renderer = ( component, context ) -> RenderResult.newRenderResult().entity( renderResult ).build();
         when( rendererFactory.getRenderer( isA( Renderable.class ) ) ).thenReturn( renderer );
         return rendererFactory;
     }
