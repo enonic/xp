@@ -1,10 +1,11 @@
 package com.enonic.wem.admin.rest.resource.schema.content;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -71,7 +72,7 @@ public class ContentTypeResourceTest
         // setup
         final ContentType contentType = newContentType().
             name( MY_CTY_QUALIFIED_NAME ).
-            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ).toInstant() ).
+            createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).
             superType( ContentTypeName.unstructured() ).
             displayName( "My ContentType" ).
             description( "My description" ).
@@ -145,7 +146,7 @@ public class ContentTypeResourceTest
             build();
 
         ContentType contentType = newContentType().
-            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ).toInstant() ).
+            createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).
             name( MY_CTY_QUALIFIED_NAME ).
             superType( ContentTypeName.unstructured() ).
             addFormItem( myTextLine ).
@@ -175,7 +176,7 @@ public class ContentTypeResourceTest
     {
         // setup
         final ContentType contentType = newContentType().
-            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0 ).toInstant() ).
+            createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).
             name( MY_CTY_QUALIFIED_NAME ).
             superType( ContentTypeName.unstructured() ).
             addFormItem( newInput().
@@ -204,7 +205,7 @@ public class ContentTypeResourceTest
     {
         // setup
         final ContentType contentType = newContentType().
-            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ).toInstant() ).
+            createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).
             name( MY_CTY_QUALIFIED_NAME ).
             superType( ContentTypeName.unstructured() ).
             addFormItem( newInput().

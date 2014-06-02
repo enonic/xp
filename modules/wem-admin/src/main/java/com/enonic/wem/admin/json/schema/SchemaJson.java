@@ -1,6 +1,6 @@
 package com.enonic.wem.admin.json.schema;
 
-import org.joda.time.Instant;
+import java.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

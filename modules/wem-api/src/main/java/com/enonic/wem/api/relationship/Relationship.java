@@ -1,9 +1,8 @@
 package com.enonic.wem.api.relationship;
 
 
+import java.time.Instant;
 import java.util.Map;
-
-import org.joda.time.Instant;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;

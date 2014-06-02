@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import org.elasticsearch.search.aggregations.bucket.range.date.DateRange;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
-import org.joda.time.DateTime;
 
 import com.enonic.wem.api.aggregation.Bucket;
 import com.enonic.wem.api.aggregation.Buckets;
@@ -33,8 +32,8 @@ public class BucketsFactory
         for ( final DateRange.Bucket bucket : buckets )
         {
             final DateRangeBucket dateRangeBucket = new DateRangeBucket( bucket.getKey().toString(), bucket.getDocCount() );
-            dateRangeBucket.setFrom( bucket.getFromAsDate() != null ? new DateTime( bucket.getFromAsDate().toDate() ) : null );
-            dateRangeBucket.setTo( bucket.getToAsDate() != null ? new DateTime( bucket.getToAsDate().toDate() ) : null );
+            dateRangeBucket.setFrom( bucket.getFromAsDate() != null ? bucket.getFromAsDate().toDate().toInstant() : null );
+            dateRangeBucket.setTo( bucket.getToAsDate() != null ? bucket.getToAsDate().toDate().toInstant() : null );
             bucketsBuilder.addBucket( dateRangeBucket );
         }
 

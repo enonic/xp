@@ -1,7 +1,9 @@
 package com.enonic.wem.api.schema.content.editor;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+
 import org.junit.Test;
 
 import com.enonic.wem.api.Icon;
@@ -18,9 +20,9 @@ import static org.junit.Assert.*;
 
 public class SetContentTypeEditorTest
 {
-    private static final DateTime TIME1 = new DateTime( 2013, 1, 1, 12, 0, DateTimeZone.UTC );
+    private static final Instant TIME1 = LocalDateTime.of( 2013, 1, 1, 12, 0 ).toInstant( ZoneOffset.UTC );
 
-    private static final DateTime TIME2 = new DateTime( 2013, 1, 1, 12, 5, DateTimeZone.UTC );
+    private static final Instant TIME2 = LocalDateTime.of( 2013, 1, 1, 12, 5 ).toInstant( ZoneOffset.UTC );
 
     @Test
     public void testSetContentTypeEditor_no_changes()
@@ -39,8 +41,8 @@ public class SetContentTypeEditorTest
             superType( ContentTypeName.unstructured() ).
             setAbstract( true ).
             setFinal( false ).
-            createdTime( TIME1.toInstant() ).
-            modifiedTime( TIME2.toInstant() ).
+            createdTime( TIME1 ).
+            modifiedTime( TIME2 ).
             addFormItem( newInput().name( "title" ).inputType( InputTypes.TEXT_LINE ).build() ).
             addFormItem( formItemSet ).
             icon( Icon.from( "ABC".getBytes(), "image/png" ) ).
@@ -75,8 +77,8 @@ public class SetContentTypeEditorTest
             superType( ContentTypeName.unstructured() ).
             setAbstract( true ).
             setFinal( true ).
-            createdTime( TIME1.toInstant() ).
-            modifiedTime( TIME2.toInstant() ).
+            createdTime( TIME1 ).
+            modifiedTime( TIME2 ).
             addFormItem( newInput().name( "title" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
 

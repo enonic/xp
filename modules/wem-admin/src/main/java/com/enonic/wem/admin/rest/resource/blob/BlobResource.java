@@ -1,6 +1,7 @@
 package com.enonic.wem.admin.rest.resource.blob;
 
 import java.io.InputStream;
+import java.time.Instant;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -12,8 +13,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import org.joda.time.DateTime;
 
 import com.google.common.collect.Lists;
 import com.sun.jersey.multipart.FormDataBodyPart;
@@ -78,7 +77,7 @@ public final class BlobResource
             mimeType( mediaType ).
             size( blob.getLength() ).
             name( name ).
-            uploadTime( DateTime.now().getMillis() ).
+            uploadTime( Instant.now().toEpochMilli() ).
             blobKey( blob.getKey() ).
             build();
 

@@ -27,16 +27,6 @@
       <version>16.0.1</version>
     </dependency>
     <dependency>
-      <groupId>joda-time</groupId>
-      <artifactId>joda-time</artifactId>
-      <version>2.3</version>
-    </dependency>
-    <dependency>
-      <groupId>org.joda</groupId>
-      <artifactId>joda-convert</artifactId>
-      <version>1.2</version>
-    </dependency>
-    <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
       <version>2.4</version>
@@ -45,6 +35,11 @@
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
       <version>2.2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+      <version>2.2.3-beta5</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.dataformat</groupId>
@@ -105,8 +100,6 @@
               com.google.common.*,
               org.apache.commons.*,
               com.fasterxml.jackson.*,
-              org.joda.convert.*;version=1.2.0,
-              org.joda.time.*;version=2.3.0
             </_exportcontents>
             <Import-Package>
               !sun.*,
@@ -120,7 +113,7 @@
             <Embed-Dependency>
               jdom2,
               jackson-*,
-              joda-*,
+
               guava,
               jparsec,
               commons-*,
@@ -154,7 +147,6 @@
                 <link>http://docs.oracle.com/javase/7/docs/api/</link>
                 <link>http://www.jdom.org/docs/apidocs/</link>
                 <link>http://docs.oracle.com/javaee/5/api/</link>
-                <link>http://joda-time.sourceforge.net/apidocs/</link>
                 <link>http://docs.guava-libraries.googlecode.com/git/javadoc/</link>
               </links>
               <additionalJOption>-J-Xmx1024m</additionalJOption>

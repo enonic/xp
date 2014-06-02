@@ -1,6 +1,6 @@
 package com.enonic.wem.core.schema.content;
 
-import org.joda.time.Instant;
+import java.time.Instant;
 
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;

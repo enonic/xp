@@ -1,12 +1,12 @@
 package com.enonic.wem.admin.rest.resource.content;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.core.MediaType;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeUtils;
+import org.elasticsearch.common.joda.time.DateTimeUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -127,7 +127,7 @@ public class ContentResourceTest
         final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
 
         final ContentData aContentData = aContent.getContentData();
-        aContentData.setProperty( "myProperty", Value.newInstant( DateTime.parse( this.currentTime ).toInstant() ) );
+        aContentData.setProperty( "myProperty", Value.newInstant( Instant.parse( this.currentTime ) ) );
 
         aContentData.setProperty( "mySet.setProperty1", Value.newLong( 1 ) );
         aContentData.setProperty( "mySet.setProperty2", Value.newLong( 2 ) );
@@ -166,7 +166,7 @@ public class ContentResourceTest
         final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
 
         final ContentData aContentData = aContent.getContentData();
-        aContentData.setProperty( "myProperty", Value.newInstant( DateTime.parse( this.currentTime ).toInstant() ) );
+        aContentData.setProperty( "myProperty", Value.newInstant( Instant.parse( this.currentTime ) ) );
 
         aContentData.setProperty( "mySet.setProperty1", Value.newLong( 1 ) );
         aContentData.setProperty( "mySet.setProperty2", Value.newLong( 2 ) );
@@ -299,7 +299,7 @@ public class ContentResourceTest
         final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
 
         final ContentData aContentData = aContent.getContentData();
-        aContentData.setProperty( "myProperty", Value.newInstant( DateTime.parse( this.currentTime ).toInstant() ) );
+        aContentData.setProperty( "myProperty", Value.newInstant( Instant.parse( this.currentTime ) ) );
 
         aContentData.setProperty( "mySet.setProperty1", Value.newLong( 1 ) );
         aContentData.setProperty( "mySet.setProperty2", Value.newLong( 2 ) );
@@ -708,10 +708,10 @@ public class ContentResourceTest
         return newContent().
             id( ContentId.from( id ) ).
             path( ContentPath.from( name ) ).
-            createdTime( DateTime.parse( this.currentTime ).toInstant() ).
+            createdTime( Instant.parse( this.currentTime ) ).
             owner( UserKey.from( "myStore:me" ) ).
             displayName( "My Content" ).
-            modifiedTime( DateTime.parse( this.currentTime ).toInstant() ).
+            modifiedTime( Instant.parse( this.currentTime ) ).
             modifier( UserKey.superUser() ).
             type( ContentTypeName.from( contentTypeName ) ).
             build();

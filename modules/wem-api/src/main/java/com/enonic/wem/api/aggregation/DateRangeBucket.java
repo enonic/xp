@@ -1,13 +1,13 @@
 package com.enonic.wem.api.aggregation;
 
-import org.joda.time.DateTime;
+import java.time.Instant;
 
 public class DateRangeBucket
     extends Bucket
 {
-    private DateTime from;
+    private Instant from;
 
-    private DateTime to;
+    private Instant to;
 
 
     public DateRangeBucket( final String key, final long docCount )
@@ -15,22 +15,22 @@ public class DateRangeBucket
         super( key, docCount );
     }
 
-    public DateTime getFrom()
+    public Instant getFrom()
     {
         return from;
     }
 
-    public void setFrom( final DateTime from )
+    public void setFrom( final Instant from )
     {
         this.from = from;
     }
 
-    public DateTime getTo()
+    public Instant getTo()
     {
         return to;
     }
 
-    public void setTo( final DateTime to )
+    public void setTo( final Instant to )
     {
         this.to = to;
     }

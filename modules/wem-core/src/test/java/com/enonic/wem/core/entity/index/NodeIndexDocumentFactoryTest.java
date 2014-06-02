@@ -1,11 +1,13 @@
 package com.enonic.wem.core.entity.index;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Set;
 
-import org.joda.time.DateTime;
-import org.joda.time.Instant;
-import org.joda.time.LocalDate;
 import org.junit.Test;
 
 import com.google.common.collect.Sets;
@@ -102,7 +104,7 @@ public class NodeIndexDocumentFactoryTest
     {
         final String myAnalyzerName = "myAnalyzer";
 
-        Instant modifiedDateTime = new DateTime( 2013, 1, 2, 3, 4, 5 ).toInstant();
+        Instant modifiedDateTime = LocalDateTime.of( 2013, 1, 2, 3, 4, 5 ).toInstant( ZoneOffset.UTC );
 
         Node node = Node.newNode().
             id( EntityId.from( "myId" ) ).
@@ -128,7 +130,7 @@ public class NodeIndexDocumentFactoryTest
         final AbstractIndexDocumentItem createdTimeItem =
             getItemWithName( indexDocument, NodeIndexDocumentFactory.CREATED_TIME_PROPERTY, IndexValueType.DATETIME );
 
-        assertEquals( node.getCreatedTime().toDate(), createdTimeItem.getValue() );
+        assertEquals( Date.from( node.getCreatedTime() ), createdTimeItem.getValue() );
 
         final AbstractIndexDocumentItem creator =
             getItemWithName( indexDocument, NodeIndexDocumentFactory.CREATOR_PROPERTY_PATH, IndexValueType.STRING );

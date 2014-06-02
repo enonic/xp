@@ -6,11 +6,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
-
+import java.time.Instant;
 import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
-import org.joda.time.Instant;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
@@ -22,8 +21,7 @@ import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeXml;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
-import com.enonic.wem.core.config.SystemConfig;
-import com.enonic.wem.core.support.dao.IconDao;
+import com.enonic.wem.core.config.SystemConfig;import com.enonic.wem.core.support.dao.IconDao;
 import com.enonic.wem.api.xml.XmlSerializers;
 
 import static java.nio.file.Files.getLastModifiedTime;
@@ -179,12 +177,12 @@ public final class RelationshipTypeDaoImpl
             final RelationshipType.Builder builder = RelationshipType.newRelationshipType().name( relationshipTypeName );
             XmlSerializers.relationshipType().parse( serializedRelationshipType ).to( builder );
 
-            // TODO remove conversion to JODA Instant and use Java 8 Instant, call toInstant() instead of toMillis()
-            final Instant modifiedTime = new Instant( getLastModifiedTime( xmlFile ).toMillis() );
+            // XXX remove conversion to JODA Instant and use Java 8 Instant, call toInstant() instead of toMillis()
+            final Instant modifiedTime = Instant.ofEpochMilli( getLastModifiedTime( xmlFile ).toMillis() );
             builder.modifiedTime( modifiedTime );
 
             final BasicFileAttributes basicAttr = readAttributes( xmlFile, BasicFileAttributes.class );
-            final Instant createdTime = new Instant( basicAttr.creationTime().toMillis() );
+            final Instant createdTime = Instant.ofEpochMilli( basicAttr.creationTime().toMillis() );
             builder.createdTime( createdTime );
 
             return builder;

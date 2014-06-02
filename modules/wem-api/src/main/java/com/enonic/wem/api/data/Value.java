@@ -1,9 +1,8 @@
 package com.enonic.wem.api.data;
 
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Objects;
-
-import org.joda.time.Instant;
-import org.joda.time.LocalDate;
 
 import com.google.common.base.Preconditions;
 
@@ -127,7 +126,7 @@ public final class Value
     }
 
     /**
-     * Attempts to return value as org.joda.time.DateMidnight, using best effort converting if value is not of type org.joda.time.DateMidnight.
+     * Attempts to return value as LocalDate, using best effort converting if value is not of type LocalDate.
      */
     public LocalDate asLocalDate()
     {
@@ -135,7 +134,7 @@ public final class Value
     }
 
     /**
-     * Attempts to return value as org.joda.time.Instant, using best effort converting if value is not of type org.joda.time.Instant.
+     * Attempts to return value as java.time.Instant, using best effort converting if value is not of type java.time.Instant.
      */
     public Instant asInstant()
     {

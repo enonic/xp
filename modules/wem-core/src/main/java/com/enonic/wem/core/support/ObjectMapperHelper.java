@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 
 public class ObjectMapperHelper
 {
@@ -18,7 +19,7 @@ public class ObjectMapperHelper
         mapper.enable( MapperFeature.SORT_PROPERTIES_ALPHABETICALLY );
         mapper.enable( SerializationFeature.WRITE_NULL_MAP_VALUES );
         mapper.setSerializationInclusion( JsonInclude.Include.ALWAYS );
-        mapper.registerModule( new JodaModule() );
+        mapper.registerModule( new JSR310Module() );
         return mapper;
     }
 

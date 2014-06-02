@@ -2,18 +2,10 @@ package com.enonic.wem.api.data;
 
 
 import java.io.IOException;
+import java.time.LocalDate;
 
-import org.joda.time.LocalDate;
 import org.junit.Test;
 
-import com.enonic.wem.api.data.DataJson;
-import com.enonic.wem.api.data.DataSet;
-import com.enonic.wem.api.data.DataSetJson;
-import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.PropertyJson;
-import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.RootDataSetJson;
-import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.support.JsonTestHelper;
 
 import static junit.framework.Assert.assertEquals;
@@ -54,7 +46,7 @@ public class DataJsonTest
         DataSet dataSet = new DataSet( "mySet" );
         dataSet.setProperty( "Long", Value.newLong( 1 ) );
         dataSet.setProperty( "Double", Value.newDouble( 1.1 ) );
-        dataSet.setProperty( "DateMidnight", Value.newLocalDate( new LocalDate( 2012, 12, 12 ) ) );
+        dataSet.setProperty( "DateMidnight", Value.newLocalDate( LocalDate.of( 2012, 12, 12 ) ) );
         dataSet.setProperty( "HtmlPart", Value.newHtmlPart( "<div></div>" ) );
         DataSetJson dataSetJson = new DataSetJson( dataSet );
 
