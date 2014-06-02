@@ -1,7 +1,8 @@
 package com.enonic.wem.api.content;
 
 
-import org.joda.time.LocalDate;
+import java.time.LocalDate;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -470,7 +471,7 @@ public class ContentTest
         // exercise
         try
         {
-            content.getContentData().setProperty( "myData[1]", Value.newLocalDate( new LocalDate( 2000, 1, 1 ) ) );
+            content.getContentData().setProperty( "myData[1]", Value.newLocalDate( LocalDate.of( 2000, 1, 1 ) ) );
             fail( "Expected exception" );
         }
         catch ( Exception e )

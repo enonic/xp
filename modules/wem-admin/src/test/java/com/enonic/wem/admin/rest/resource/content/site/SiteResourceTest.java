@@ -1,9 +1,10 @@
 package com.enonic.wem.admin.rest.resource.content.site;
 
+import java.time.Instant;
+
 import javax.ws.rs.core.MediaType;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeUtils;
+import org.elasticsearch.common.joda.time.DateTimeUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -166,10 +167,10 @@ public class SiteResourceTest
         return Content.newContent().
             id( ContentId.from( id ) ).
             path( ContentPath.from( name ) ).
-            createdTime( DateTime.parse( this.currentTime ).toInstant() ).
+            createdTime( Instant.parse( this.currentTime ) ).
             owner( UserKey.from( "myStore:me" ) ).
             displayName( "My Content" ).
-            modifiedTime( DateTime.parse( this.currentTime ).toInstant() ).
+            modifiedTime( Instant.parse( this.currentTime ) ).
             modifier( UserKey.superUser() ).
             type( ContentTypeName.from( contentTypeName ) ).
             site( site ).
@@ -186,10 +187,10 @@ public class SiteResourceTest
         return Content.newContent().
             id( ContentId.from( id ) ).
             path( ContentPath.from( name ) ).
-            createdTime( DateTime.parse( this.currentTime ).toInstant() ).
+            createdTime( Instant.parse( this.currentTime ) ).
             owner( UserKey.from( "myStore:me" ) ).
             displayName( "My Content" ).
-            modifiedTime( DateTime.parse( this.currentTime ).toInstant() ).
+            modifiedTime( Instant.parse( this.currentTime ) ).
             modifier( UserKey.superUser() ).
             type( ContentTypeName.from( contentTypeName ) ).
             site( null ).

@@ -1,16 +1,19 @@
 package com.enonic.wem.api.query.aggregation
 
 import com.google.common.collect.UnmodifiableIterator
-import org.joda.time.DateTime
 import spock.lang.Specification
+
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 class DateRangeAggregationQueryTest
     extends Specification
 {
     def "test builder"()
     {
-        def DateTime past = new DateTime( 1975, 8, 1, 12, 04 )
-        def DateTime future = new DateTime( 2055, 01, 01, 12, 00 )
+        def Instant past = LocalDateTime.of( 1975, 8, 1, 12, 04 ).toInstant( ZoneOffset.UTC );
+        def Instant future = LocalDateTime.of( 2055, 01, 01, 12, 00 ).toInstant( ZoneOffset.UTC );
 
         when:
         DateRangeAggregationQuery query = RangeAggregationQuery.dateRangeQuery().

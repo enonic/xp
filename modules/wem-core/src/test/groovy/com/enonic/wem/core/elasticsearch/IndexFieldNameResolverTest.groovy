@@ -1,9 +1,10 @@
 package com.enonic.wem.core.elasticsearch
 
 import com.enonic.wem.core.index.document.*
-import org.joda.time.Instant
 import spock.lang.Specification
 import spock.lang.Unroll
+
+import java.time.Instant
 
 class IndexFieldNameResolverTest
     extends Specification
@@ -22,15 +23,14 @@ class IndexFieldNameResolverTest
         new IndexDocumentNGramItem( IndexDocumentItemPath.from( "a.b.c" ), "myString" )    | "a_b_c._ngram"
         new IndexDocumentGeoPointItem( IndexDocumentItemPath.from( "a.b.c" ), "80,80" )    | "a_b_c._geopoint"
         new IndexDocumentOrderbyItem( IndexDocumentItemPath.from( "a.b.c" ), "orderBy" )   | "a_b_c._orderby"
-        new IndexDocumentDateItem( IndexDocumentItemPath.from( "a.b.c" ), Instant.now() ) | "a_b_c._datetime"
+        new IndexDocumentDateItem( IndexDocumentItemPath.from( "a.b.c" ), Instant.now() )  | "a_b_c._datetime"
     }
 
     @Unroll
     def "resolve name from path #pathAsString"()
     {
         expect:
-        resolvedName ==
-            FieldNameResolver.resolve( new IndexDocumentStringItem( IndexDocumentItemPath.from( pathAsString ), "myValue" ) )
+        resolvedName == FieldNameResolver.resolve( new IndexDocumentStringItem( IndexDocumentItemPath.from( pathAsString ), "myValue" ) )
 
         where:
         pathAsString | resolvedName

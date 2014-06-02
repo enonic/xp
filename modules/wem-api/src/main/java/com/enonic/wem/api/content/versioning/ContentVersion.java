@@ -1,6 +1,6 @@
 package com.enonic.wem.api.content.versioning;
 
-import org.joda.time.DateTime;
+import java.time.Instant;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
@@ -12,7 +12,7 @@ public final class ContentVersion
 {
     private final ContentId contentId;
 
-    private final DateTime created;
+    private final Instant created;
 
     private final UserKey creator;
 
@@ -33,7 +33,7 @@ public final class ContentVersion
         return contentId;
     }
 
-    public DateTime getCreated()
+    public Instant getCreated()
     {
         return created;
     }
@@ -97,7 +97,7 @@ public final class ContentVersion
     {
         private ContentId contentId;
 
-        private DateTime created;
+        private Instant created;
 
         private UserKey creator;
 
@@ -125,7 +125,7 @@ public final class ContentVersion
             return this;
         }
 
-        public Builder createdTime( final DateTime created )
+        public Builder createdTime( final Instant created )
         {
             this.created = created;
             return this;

@@ -1,9 +1,8 @@
 package com.enonic.wem.api.data;
 
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Objects;
-
-import org.joda.time.Instant;
-import org.joda.time.LocalDate;
 
 import com.google.common.base.Preconditions;
 

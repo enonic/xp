@@ -1,10 +1,9 @@
 package com.enonic.wem.api.data.type;
 
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.joda.time.Instant;
-import org.joda.time.LocalDate;
 
 import com.google.common.base.Preconditions;
 
@@ -118,11 +117,6 @@ public final class ValueTypes
     {
         return new ValueTypeImpl<>( 5, "LocalDate", JavaTypeConverters.LOCAL_DATE );
     }
-
-//    private static ValueType<DateTime> newDateTime()
-//    {
-//        return new ValueTypeImpl<>( 6, "DateTime", JavaTypeConverters.DATE_TIME );
-//    }
 
     private static ValueType<Instant> newDateTime()
     {

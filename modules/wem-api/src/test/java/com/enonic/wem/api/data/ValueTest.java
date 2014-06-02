@@ -1,8 +1,9 @@
 package com.enonic.wem.api.data;
 
 
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentId;
@@ -67,11 +68,11 @@ public class ValueTest
     @Test
     public void construct_Date()
     {
-        LocalDate value = new LocalDate( 2013, 1, 1 );
+        LocalDate value = LocalDate.of( 2013, 1, 1 );
 
         assertSame( value, Value.newLocalDate( value ).asLocalDate() );
-        assertEquals( value, Value.newLocalDate( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).asLocalDate() );
-        assertEquals( value, Value.newLocalDate( "2013-1-1" ).asLocalDate() );
+        assertEquals( value, Value.newLocalDate( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ) ).asLocalDate() );
+        assertEquals( value, Value.newLocalDate( "2013-01-01" ).asLocalDate() );
     }
 
     @Test

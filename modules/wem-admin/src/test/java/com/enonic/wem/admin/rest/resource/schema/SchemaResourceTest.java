@@ -1,6 +1,7 @@
 package com.enonic.wem.admin.rest.resource.schema;
 
-import org.joda.time.DateTime;
+import java.time.Instant;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -36,21 +37,21 @@ public class SchemaResourceTest
     private Mixin createMixin( String displayName )
     {
         return Mixin.newMixin().name( displayName.toLowerCase() ).displayName( displayName ).description( "M description" ).createdTime(
-            DateTime.parse( currentTime ).toInstant() ).modifiedTime( DateTime.parse( currentTime ).toInstant() ).addFormItem(
+            Instant.parse( currentTime ) ).modifiedTime( Instant.parse( currentTime ) ).addFormItem(
             Input.newInput().name( displayName.toLowerCase() ).inputType( InputTypes.TEXT_AREA ).inputTypeConfig(
                 InputTypes.TEXT_AREA.getDefaultConfig() ).build() ).build();
     }
 
     private ContentType createContentType( String name )
     {
-        return ContentType.newContentType().name( name ).createdTime( DateTime.parse( currentTime ).toInstant() ).modifiedTime(
-            DateTime.parse( currentTime ).toInstant() ).description( "CT description" ).build();
+        return ContentType.newContentType().name( name ).createdTime( Instant.parse( currentTime ) ).modifiedTime(
+            Instant.parse( currentTime ) ).description( "CT description" ).build();
     }
 
     private RelationshipType createRelationshipType( String name )
     {
-        return RelationshipType.newRelationshipType().name( name ).createdTime( DateTime.parse( currentTime ).toInstant() ).modifiedTime(
-            DateTime.parse( currentTime ).toInstant() ).description( "RT description" ).build();
+        return RelationshipType.newRelationshipType().name( name ).createdTime( Instant.parse( currentTime ) ).modifiedTime(
+            Instant.parse( currentTime ) ).description( "RT description" ).build();
     }
 
     private Schemas createSchemaList()

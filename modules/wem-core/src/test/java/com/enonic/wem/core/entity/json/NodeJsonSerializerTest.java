@@ -1,8 +1,11 @@
 package com.enonic.wem.core.entity.json;
 
-import org.joda.time.DateTime;
-import org.joda.time.Instant;
-import org.joda.time.LocalDate;
+
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+
 import org.junit.Test;
 
 import com.enonic.wem.api.account.UserKey;
@@ -27,7 +30,7 @@ public class NodeJsonSerializerTest
     public void serialize_deserialize()
         throws Exception
     {
-        Instant modifiedDateTime = new DateTime( 2013, 1, 2, 3, 4, 5 ).toInstant();
+        Instant modifiedDateTime = LocalDateTime.of( 2013, 1, 2, 3, 4, 5 ).toInstant( ZoneOffset.UTC );
 
         RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.setProperty( DataPath.from( "a.b.c" ), Value.newDouble( 2.0 ) );

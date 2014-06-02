@@ -1,11 +1,11 @@
 package com.enonic.wem.admin.rest.resource.schema.mixin;
 
 import java.io.ByteArrayInputStream;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 import javax.ws.rs.core.MediaType;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -78,7 +78,7 @@ public class MixinResourceTest
         throws Exception
     {
         Mixin mixin = Mixin.newMixin().
-            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ).toInstant() ).
+            createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).
             name( MY_MIXIN_QUALIFIED_NAME_1.toString() ).addFormItem(
             newInput().name( MY_MIXIN_QUALIFIED_NAME_1.toString() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
                 "Help text line 1" ).required( true ).build() ).build();
@@ -94,7 +94,7 @@ public class MixinResourceTest
     public final void test_get_mixin_config()
         throws Exception
     {
-        Mixin mixin = Mixin.newMixin().createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ).toInstant() ).name(
+        Mixin mixin = Mixin.newMixin().createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).name(
             MY_MIXIN_QUALIFIED_NAME_1.toString() ).addFormItem(
             newInput().name( MY_MIXIN_QUALIFIED_NAME_1.toString() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
                 "Help text line 1" ).required( true ).build() ).build();
@@ -146,12 +146,12 @@ public class MixinResourceTest
     public final void test_list_mixins()
         throws Exception
     {
-        Mixin mixin1 = Mixin.newMixin().createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ).toInstant() ).name(
+        Mixin mixin1 = Mixin.newMixin().createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).name(
             MY_MIXIN_QUALIFIED_NAME_1.toString() ).addFormItem(
             newInput().name( MY_MIXIN_QUALIFIED_NAME_1.toString() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
                 "Help text line 1" ).required( true ).build() ).build();
 
-        Mixin mixin2 = Mixin.newMixin().createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ).toInstant() ).name(
+        Mixin mixin2 = Mixin.newMixin().createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).name(
             MY_MIXIN_QUALIFIED_NAME_2.toString() ).addFormItem(
             newInput().name( MY_MIXIN_QUALIFIED_NAME_2.toString() ).inputType( TEXT_AREA ).inputTypeConfig(
                 TEXT_AREA.getDefaultConfig() ).label( "Text Area" ).required( true ).helpText( "Help text area" ).required(
@@ -186,8 +186,9 @@ public class MixinResourceTest
     public void test_create_mixin_already_exists()
         throws Exception
     {
-        Mixin mixin = newMixin().createdTime( new DateTime( 2013, 1, 1, 12, 0, 0 ).toInstant() ).name( "some_input" ).addFormItem(
-            newInput().name( "some_input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
+        Mixin mixin =
+            newMixin().createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).name( "some_input" ).addFormItem(
+                newInput().name( "some_input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
         Mockito.when( mixinService.create( isA( CreateMixinParams.class ) ) ).thenThrow(
             new MixinAlreadyExistException( MixinName.from( "my_set" ) ) );
 

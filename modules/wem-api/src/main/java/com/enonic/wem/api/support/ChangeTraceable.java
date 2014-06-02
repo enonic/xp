@@ -1,7 +1,7 @@
 package com.enonic.wem.api.support;
 
 
-import org.joda.time.Instant;
+import java.time.Instant;
 
 import com.enonic.wem.api.account.UserKey;
 

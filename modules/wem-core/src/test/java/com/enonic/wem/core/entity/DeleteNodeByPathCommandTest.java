@@ -1,6 +1,7 @@
 package com.enonic.wem.core.entity;
 
-import org.joda.time.Instant;
+import java.time.Instant;
+
 import org.junit.Before;
 import org.junit.Test;
 
