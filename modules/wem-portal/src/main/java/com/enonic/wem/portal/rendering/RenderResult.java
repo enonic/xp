@@ -2,15 +2,13 @@ package com.enonic.wem.portal.rendering;
 
 import java.util.Map;
 
-import org.restlet.data.MediaType;
-
 import com.google.common.collect.Maps;
 
 public final class RenderResult
 {
     protected int status = 200;
 
-    protected String type = MediaType.APPLICATION_OCTET_STREAM.toString();
+    protected String type = "text/plain";
 
     protected Object entity;
 
