@@ -14,7 +14,7 @@ module api.ui.selector {
 
         dataIdProperty?:string;
 
-        multipleSelections: boolean;
+        multipleSelections?: boolean;
     }
 
     export class DropdownGrid<OPTION_DISPLAY_VALUE> {

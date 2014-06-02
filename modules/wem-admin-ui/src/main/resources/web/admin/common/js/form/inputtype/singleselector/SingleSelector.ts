@@ -110,7 +110,7 @@ module api.form.inputtype.singleselector {
 
         private createDropdownElement(name: string, property: api.data.Property): api.dom.Element {
 
-            var dropdown = new Dropdown<string>(name, <DropdownConfig>{});
+            var dropdown = new Dropdown<string>(name, <DropdownConfig<string>>{});
 
             var inputEl = new api.ui.Dropdown(name);
 

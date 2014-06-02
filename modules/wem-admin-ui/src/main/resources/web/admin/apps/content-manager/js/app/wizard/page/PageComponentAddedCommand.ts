@@ -8,6 +8,7 @@ module app.wizard.page {
     import RegionPath = api.content.page.RegionPath;
     import PageRegions = api.content.page.PageRegions;
     import DescriptorBasedPageComponentBuilder = api.content.page.DescriptorBasedPageComponentBuilder;
+    import DescriptorBasedPageComponent = api.content.page.DescriptorBasedPageComponent;
 
     export class PageComponentAddedCommand {
 
@@ -71,7 +72,7 @@ module app.wizard.page {
             builder.setName(componentName);
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(builder, DescriptorBasedPageComponentBuilder)) {
-                (<DescriptorBasedPageComponentBuilder>builder).setConfig(new RootDataSet());
+                    (<DescriptorBasedPageComponentBuilder<DescriptorBasedPageComponent>>builder).setConfig(new RootDataSet());
             }
             var component = builder.build();
             this.pageRegions.addComponentAfter(component, this.region, this.precedingComponent);
