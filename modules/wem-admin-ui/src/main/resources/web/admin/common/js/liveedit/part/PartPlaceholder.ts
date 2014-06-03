@@ -1,22 +1,21 @@
-module LiveEdit.component {
+module api.liveedit.part {
 
     import ComponentPath = api.content.page.ComponentPath;
     import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
     import PartItemType = api.liveedit.part.PartItemType;
     import PageItemType = api.liveedit.PageItemType;
 
-    export class PartPlaceholder extends ComponentPlaceholder {
+    export class PartPlaceholder extends api.dom.Element {
 
         private comboBox: api.content.page.part.PartDescriptorComboBox;
 
-        constructor() {
-            super(PartItemType.get());
+        constructor(partView: PartView) {
+            super(new api.dom.ElementProperties().setTagName("div"));
 
             wemjq(this.getHTMLElement()).on('click', 'input', (e) => {
                 wemjq(e.currentTarget).focus();
                 e.stopPropagation();
             });
-            this.getEl().setData('live-edit-type', 'part');
             var request = new api.content.page.part.GetPartDescriptorsByModulesRequest(PageItemType.get().getSiteTemplate().getModules());
             var loader = new api.content.page.part.PartDescriptorLoader(request);
             this.comboBox = new api.content.page.part.PartDescriptorComboBox(loader);
@@ -25,21 +24,19 @@ module LiveEdit.component {
             this.appendChild(this.comboBox);
 
             this.comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.page.part.PartDescriptor>) => {
-                var componentPath = this.getComponentPath();
+                var componentPath = partView.getComponentPath();
                 var descriptor: api.content.page.Descriptor = event.getOption().displayValue;
-                new PageComponentSetDescriptorEvent(componentPath, descriptor, this).fire();
+                new PageComponentSetDescriptorEvent(componentPath, descriptor, partView).fire();
             });
 
         }
 
         select() {
-            super.select();
             this.comboBox.show();
             this.comboBox.giveFocus();
         }
 
         deselect() {
-            super.deselect();
             this.comboBox.hide();
         }
     }

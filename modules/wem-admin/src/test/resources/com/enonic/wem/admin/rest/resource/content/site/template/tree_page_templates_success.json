@@ -5,6 +5,7 @@
             "displayName": "Another page template",
             "editable": false,
             "hasChildren": false,
+            "iconUrl" : "",
             "key": "module|my-other-page",
             "name": "my-other-page",
             "templateType": "PAGE"
@@ -14,6 +15,7 @@
             "displayName": "Main page template",
             "editable": false,
             "hasChildren": false,
+            "iconUrl" : "",
             "key": "module|my-page",
             "name": "my-page",
             "templateType": "PAGE"

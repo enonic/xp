@@ -5,7 +5,7 @@ module api.dom {
         private el: HTMLElement;
 
         static fromName(name: string): ElementHelper {
-            api.util.assert(!api.util.isStringEmpty(name), 'Tag name shouldn\'t be empty');
+            api.util.assert(!api.util.isStringEmpty(name), 'Tag name cannot be empty');
             return new ElementHelper(document.createElement(name));
         }
 
@@ -18,18 +18,24 @@ module api.dom {
         }
 
         insertBefore(newEl: Element, existingEl: Element) {
-            api.util.assertNotNull(newEl, 'New element shouldn\'t be null');
-            api.util.assertNotNull(existingEl, 'Existing element shouldn\'t be null');
+            api.util.assertNotNull(newEl, 'New element cannot be null');
+            api.util.assertNotNull(existingEl, 'Existing element cannot be null');
             this.el.insertBefore(newEl.getHTMLElement(), existingEl ? existingEl.getHTMLElement() : null);
         }
 
-        insertBeforeEl(existingEl: Element) {
-            existingEl.getHTMLElement().parentNode.insertBefore(this.el, existingEl.getHTMLElement());
+        insertBeforeEl(existingEl: ElementHelper) {
+            existingEl.el.parentElement.insertBefore(this.el, existingEl.el);
         }
 
-        insertAfterEl(existingEl: Element) {
-            api.util.assertNotNull(existingEl, 'Existing element shouldn\'t be null');
-            existingEl.getHTMLElement().parentNode.insertBefore(this.el, existingEl.getHTMLElement().nextSibling);
+        insertAfterEl(existingEl: ElementHelper) {
+            api.util.assertNotNull(existingEl, 'Existing element cannot be null');
+            api.util.assertNotNull(existingEl.el.parentElement, 'Existing element\'s parentElement cannot be null');
+            existingEl.el.parentElement.insertBefore(this.el, existingEl.el.nextElementSibling);
+        }
+
+        insertAfterThisEl(toInsert: ElementHelper) {
+            api.util.assertNotNull(toInsert, 'Existing element cannot be null');
+            this.el.parentElement.insertBefore(toInsert.el, this.el.nextElementSibling);
         }
 
         /*
@@ -89,8 +95,8 @@ module api.dom {
         }
 
         setData(name: string, value: string): ElementHelper {
-            api.util.assert(!api.util.isStringEmpty(name), 'Name shouldn\'t be empty');
-            api.util.assert(!api.util.isStringEmpty(value), 'Value shouldn\'t be empty');
+            api.util.assert(!api.util.isStringEmpty(name), 'Name cannot be empty');
+            api.util.assert(!api.util.isStringEmpty(value), 'Value cannot be empty');
             this.el.setAttribute('data-' + name, value);
             wemjq(this.el).data(name, value);
             return this;
@@ -110,7 +116,7 @@ module api.dom {
         }
 
         addClass(clsName: string): ElementHelper {
-            api.util.assert(!api.util.isStringEmpty(clsName), 'Class name shouldn\'t be empty');
+            api.util.assert(!api.util.isStringEmpty(clsName), 'Class name cannot be empty');
             // spaces are not allowed
             var classList: string[] = clsName.split(" ");
             classList.forEach((classItem: string) => {
@@ -127,7 +133,7 @@ module api.dom {
         }
 
         hasClass(clsName: string): boolean {
-            api.util.assert(!api.util.isStringEmpty(clsName), 'Class name shouldn\'t be empty');
+            api.util.assert(!api.util.isStringEmpty(clsName), 'Class name cannot be empty');
             // spaces are not allowed
             var classList: string[] = clsName.split(" ");
             for (var i = 0; i < classList.length; i++) {
@@ -140,7 +146,7 @@ module api.dom {
         }
 
         removeClass(clsName: string): ElementHelper {
-            api.util.assert(!api.util.isStringEmpty(clsName), 'Class name shouldn\'t be empty');
+            api.util.assert(!api.util.isStringEmpty(clsName), 'Class name cannot be empty');
             // spaces are not allowed
             var classList: string[] = clsName.split(" ");
             classList.forEach((classItem: string) => {

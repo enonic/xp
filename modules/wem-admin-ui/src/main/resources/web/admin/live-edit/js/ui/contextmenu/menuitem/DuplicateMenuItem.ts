@@ -28,12 +28,9 @@ module LiveEdit.ui.contextmenu.menuitem {
 
                 var selectedPageComponent = <PageComponentView> selectedItem;
 
-                var placeholder = LiveEdit.component.ComponentPlaceholder.fromComponent(selectedPageComponent.getType());
-                placeholder.getEl().insertAfterEl(selectedPageComponent);
-                placeholder.init();
-                placeholder.showLoadingSpinner();
-                new PageComponentDuplicateEvent(selectedPageComponent, placeholder).fire();
-                LiveEdit.component.Selection.handleSelect(placeholder);
+                var duplicatedView = selectedPageComponent.duplicate();
+                new PageComponentDuplicateEvent(selectedPageComponent, duplicatedView).fire();
+                LiveEdit.component.Selection.handleSelect(duplicatedView);
             }
             else {
                 throw new Error("Duplicating [" + api.util.getClassName(selectedItem) + "] is not supported");

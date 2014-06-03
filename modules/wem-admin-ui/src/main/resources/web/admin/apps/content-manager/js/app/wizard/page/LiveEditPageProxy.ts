@@ -11,12 +11,11 @@ module app.wizard.page {
     import RenderingMode = api.rendering.RenderingMode;
 
     import ItemView = api.liveedit.ItemView;
+    import PageViewItemsParsedEvent = api.liveedit.PageViewItemsParsedEvent;
     import NewPageComponentIdMapEvent = api.liveedit.NewPageComponentIdMapEvent;
     import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
     import ImageUploadedEvent = api.liveedit.ImageUploadedEvent;
     import ImageComponentSetImageEvent = api.liveedit.image.ImageComponentSetImageEvent;
-    import DraggableStartEvent = api.liveedit.DraggableStartEvent;
-    import DraggableStopEvent = api.liveedit.DraggableStopEvent;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import SortableStopEvent = api.liveedit.SortableStopEvent;
     import SortableUpdateEvent = api.liveedit.SortableUpdateEvent;
@@ -64,9 +63,7 @@ module app.wizard.page {
 
         private loadedListeners: {(): void;}[] = [];
 
-        private draggableStartListeners: {(event: DraggableStartEvent): void;}[] = [];
-
-        private draggableStopListeners: {(event: DraggableStopEvent): void;}[] = [];
+        private pageViewItemsParsedListeners: {(event: PageViewItemsParsedEvent): void;}[] = [];
 
         private sortableStartListeners: {(event: SortableStartEvent): void;}[] = [];
 
@@ -183,7 +180,7 @@ module app.wizard.page {
         private handleIFrameLoadedEvent() {
 
             var liveEditWindow = this.liveEditIFrame.getHTMLElement()["contentWindow"];
-            if (liveEditWindow && liveEditWindow.wemjq && typeof(liveEditWindow.initializeLiveEdit) === "function") {
+            if (liveEditWindow && liveEditWindow.wemjq) {
                 // Give loaded page same CONFIG.baseUri as in admin
                 liveEditWindow.CONFIG = { baseUri: CONFIG.baseUri };
 
@@ -195,38 +192,39 @@ module app.wizard.page {
 
                 this.loadMask.hide();
 
-                liveEditWindow.initializeLiveEdit();
-                new api.liveedit.ContentSetEvent(this.contentLoadedOnPage).fire(this.liveEditWindow);
-                new api.liveedit.SiteTemplateSetEvent(this.siteTemplate).fire(this.liveEditWindow);
+                new api.liveedit.InitializeLiveEditEvent(this.contentLoadedOnPage, this.siteTemplate).fire(this.liveEditWindow);
+
                 this.notifyLoaded();
             }
 
             this.iFrameLoadDeffered.resolve(null);
         }
 
-        public loadComponent(componentPath: ComponentPath, componentPlaceholder: ItemView, content: api.content.Content) {
+        public loadComponent(componentPath: ComponentPath, itemView: ItemView, content: api.content.Content) {
 
             api.util.assertNotNull(componentPath, "componentPath cannot be null");
-            api.util.assertNotNull(componentPlaceholder, "componentPlaceholder cannot be null");
+            api.util.assertNotNull(itemView, "itemView cannot be null");
             api.util.assertNotNull(content, "content cannot be null");
+
+            this.liveEditWindow.pageItemViews.removeItemViewById(itemView.getItemId());
 
             wemjq.ajax({
                 url: api.rendering.UriHelper.getComponentUri(content.getContentId().toString(), componentPath.toString(),
                     RenderingMode.EDIT),
                 method: 'GET',
                 success: (data) => {
-                    var newElement = wemjq(data);
-                    wemjq(componentPlaceholder.getHTMLElement()).replaceWith(newElement);
-                    componentPlaceholder.remove();
 
-                    var itemView: ItemView = this.getComponentByPath(componentPath);
-                    itemView.deselect();
+                    var newElement = wemjq(data);
+                    wemjq(itemView.getHTMLElement()).replaceWith(newElement);
+                    itemView.remove();
+                    var newItemView: ItemView = itemView.getType().createView(newElement.get(0));
+
+                    new PageComponentLoadedEvent(newItemView).fire(this.liveEditWindow);
 
                     this.liveEditWindow.LiveEdit.PlaceholderCreator.renderEmptyRegionPlaceholders();
 
-                    this.liveEditWindow.LiveEdit.component.Selection.handleSelect(itemView, null, true);
+                    this.liveEditWindow.LiveEdit.component.Selection.handleSelect(newItemView, null, true);
 
-                    new PageComponentLoadedEvent(itemView).fire(this.liveEditWindow);
                 }
             });
         }
@@ -244,6 +242,8 @@ module app.wizard.page {
 
         public listenToPage() {
 
+            PageViewItemsParsedEvent.on(this.notifyPageViewItemsParsed.bind(this), this.liveEditWindow);
+
             NewPageComponentIdMapEvent.on((event: NewPageComponentIdMapEvent) => {
                 console.log('PageComponentIdMap: %o', event.getMap());
             }, this.liveEditWindow);
@@ -257,10 +257,6 @@ module app.wizard.page {
                 });
                 uploadDialog.open();
             }, this.liveEditWindow);
-
-            DraggableStartEvent.on(this.notifyDraggableStart.bind(this), this.liveEditWindow);
-
-            DraggableStopEvent.on(this.notifyDraggableStop.bind(this), this.liveEditWindow);
 
             SortableStartEvent.on(this.notifySortableStart.bind(this), this.liveEditWindow);
 
@@ -321,28 +317,16 @@ module app.wizard.page {
             });
         }
 
-        onDraggableStart(listener: {(event: DraggableStartEvent): void;}) {
-            this.draggableStartListeners.push(listener);
+        onPageViewItemsParsed(listener: {(event: PageViewItemsParsedEvent): void;}) {
+            this.pageViewItemsParsedListeners.push(listener);
         }
 
-        unDraggableStart(listener: {(event: DraggableStartEvent): void;}) {
-            this.draggableStartListeners = this.draggableStartListeners.filter((curr) => (curr != listener));
+        unPageViewItemsParsed(listener: {(event: PageViewItemsParsedEvent): void;}) {
+            this.pageViewItemsParsedListeners = this.pageViewItemsParsedListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyDraggableStart(event: DraggableStartEvent) {
-            this.draggableStartListeners.forEach((listener) => listener(event));
-        }
-
-        onDraggableStop(listener: {(event: DraggableStopEvent): void;}) {
-            this.draggableStopListeners.push(listener);
-        }
-
-        unDraggableStop(listener: {(event: DraggableStopEvent): void;}) {
-            this.draggableStopListeners = this.draggableStopListeners.filter((curr) => (curr != listener));
-        }
-
-        private notifyDraggableStop(event: DraggableStopEvent) {
-            this.draggableStopListeners.forEach((listener) => listener(event));
+        private notifyPageViewItemsParsed(event: PageViewItemsParsedEvent) {
+            this.pageViewItemsParsedListeners.forEach((listener) => listener(event));
         }
 
         onSortableStart(listener: (event: SortableStartEvent) => void) {

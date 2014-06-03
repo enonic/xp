@@ -15,7 +15,7 @@ module api.util.loader {
 
         private searchString: string;
 
-        private loadedDataListeners: {(event: LoadedDataEvent):void}[] = [];
+        private loadedDataListeners: {(event: LoadedDataEvent<OBJECT>):void}[] = [];
 
         private loadingDataListeners: {(event: LoadingDataEvent):void}[] = [];
 
@@ -71,7 +71,7 @@ module api.util.loader {
         }
 
         notifyLoadedData(results: OBJECT[]) {
-            this.loadedDataListeners.forEach((listener: (event: LoadedDataEvent)=>void)=> {
+            this.loadedDataListeners.forEach((listener: (event: LoadedDataEvent<OBJECT>)=>void)=> {
                 listener.call(this, new LoadedDataEvent<OBJECT>(results));
             });
         }
@@ -91,7 +91,7 @@ module api.util.loader {
         }
 
         unLoadedData(listener: (event: LoadedDataEvent<OBJECT>) => void) {
-            this.loadedDataListeners = this.loadedDataListeners.filter((currentListener: (event: LoadedDataEvent)=>void)=> {
+            this.loadedDataListeners = this.loadedDataListeners.filter((currentListener: (event: LoadedDataEvent<OBJECT>)=>void)=> {
                 return currentListener != listener;
             });
         }

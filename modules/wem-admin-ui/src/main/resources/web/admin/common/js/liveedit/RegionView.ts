@@ -1,11 +1,26 @@
 module api.liveedit {
 
+    import Region = api.content.page.region.Region;
     import RegionPath = api.content.page.RegionPath;
 
     export class RegionView extends ItemView {
 
+        private region: Region;
+
+        private pageComponentViews: PageComponentView[] = [];
+
         constructor(element?: HTMLElement) {
             super(RegionItemType.get(), element);
+        }
+
+        setData(region: Region) {
+            this.region = region;
+
+            var components = region.getComponents();
+            this.getPageComponents().forEach((view: PageComponentView, index: number) => {
+                var pageComponent = components[index];
+                view.setData(pageComponent);
+            });
         }
 
         getRegionName(): string {
@@ -27,12 +42,18 @@ module api.liveedit {
             super.select();
         }
 
-        static fromHTMLElement(element: HTMLElement): RegionView {
-            return new RegionView(element);
+        addPageComponent(view: PageComponentView) {
+            this.pageComponentViews.push(view);
         }
 
-        public static fromJQuery(element: JQuery): RegionView {
-            return new RegionView(<HTMLElement>element.get(0));
+        getPageComponents(): PageComponentView[] {
+            return this.pageComponentViews;
+        }
+
+        static isRegionViewFromHTMLElement(htmlElement: HTMLElement): boolean {
+
+            var path = htmlElement.getAttribute("data-live-edit-region");
+            return !api.util.isStringBlank(path);
         }
     }
 }

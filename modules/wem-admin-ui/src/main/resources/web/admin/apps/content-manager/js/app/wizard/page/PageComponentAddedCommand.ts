@@ -8,6 +8,7 @@ module app.wizard.page {
     import RegionPath = api.content.page.RegionPath;
     import PageRegions = api.content.page.PageRegions;
     import DescriptorBasedPageComponentBuilder = api.content.page.DescriptorBasedPageComponentBuilder;
+    import DescriptorBasedPageComponent = api.content.page.DescriptorBasedPageComponent;
 
     export class PageComponentAddedCommand {
 
@@ -19,7 +20,7 @@ module app.wizard.page {
 
         private pageRegions: PageRegions;
 
-        private componentView: api.dom.Element;
+        private componentView: api.liveedit.PageComponentView;
 
         setPageRegions(value: PageRegions): PageComponentAddedCommand {
             this.pageRegions = value;
@@ -41,7 +42,7 @@ module app.wizard.page {
             return this;
         }
 
-        setComponentView(value: api.dom.Element): PageComponentAddedCommand {
+        setComponentView(value: api.liveedit.PageComponentView): PageComponentAddedCommand {
             this.componentView = value;
             return this;
         }
@@ -52,14 +53,14 @@ module app.wizard.page {
             api.util.assertNotNull(this.region, "region cannot be null");
             api.util.assertNotNull(this.componentView, "componentView cannot be null");
 
-            var component = this.addComponent();
+            var pageComponent = this.addComponent();
 
-            if (component) {
-                this.componentView.getEl().setData("live-edit-component", component.getPath().toString());
+            if (pageComponent) {
+                this.componentView.getEl().setData("live-edit-component", pageComponent.getPath().toString());
             }
             this.componentView.getEl().setData("live-edit-type", this.type.getShortName());
-
-            return component;
+            this.componentView.setData(pageComponent);
+            return pageComponent;
         }
 
         private addComponent(): PageComponent {
@@ -71,7 +72,7 @@ module app.wizard.page {
             builder.setName(componentName);
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(builder, DescriptorBasedPageComponentBuilder)) {
-                (<DescriptorBasedPageComponentBuilder>builder).setConfig(new RootDataSet());
+                    (<DescriptorBasedPageComponentBuilder<DescriptorBasedPageComponent>>builder).setConfig(new RootDataSet());
             }
             var component = builder.build();
             this.pageRegions.addComponentAfter(component, this.region, this.precedingComponent);

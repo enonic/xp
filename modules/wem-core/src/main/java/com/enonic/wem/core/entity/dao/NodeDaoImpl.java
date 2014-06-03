@@ -175,15 +175,10 @@ public class NodeDaoImpl
         final Instant now = Instant.now();
 
         final Node movedNode = Node.newNode( persistedNode ).
-            id( persistedNode.id() ).
             name( moveNodeArguments.name() ).
             parent( moveNodeArguments.parentPath() ).
-            creator( persistedNode.creator() ).
-            createdTime( persistedNode.getCreatedTime() ).
             modifiedTime( now ).
             modifier( moveNodeArguments.updater() ).
-            rootDataSet( persistedNode.data() ).
-            attachments( persistedNode.attachments() ).
             entityIndexConfig( moveNodeArguments.getEntityIndexConfig() != null
                                    ? moveNodeArguments.getEntityIndexConfig()
                                    : persistedNode.getEntityIndexConfig() ).
@@ -207,14 +202,7 @@ public class NodeDaoImpl
 
         final Instant now = Instant.now();
 
-        // TODO: Should'nt new Node(Node) Handle THIS?!
-
         final Node.Builder updateNodeBuilder = Node.newNode( persistedNode ).
-            id( persistedNode.id() ).
-            parent( persistedNode.parent() ).
-            name( persistedNode.name() ).
-            creator( persistedNode.creator() ).
-            createdTime( persistedNode.getCreatedTime() ).
             modifiedTime( now ).
             modifier( updateNodeArguments.updater() ).
             rootDataSet( updateNodeArguments.rootDataSet() ).

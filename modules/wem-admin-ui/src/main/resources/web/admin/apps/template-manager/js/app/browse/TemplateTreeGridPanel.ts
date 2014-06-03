@@ -76,7 +76,13 @@ module app.browse {
             var activeListType = this.getActiveList().getItemId();
 
             var type: TemplateType = TemplateType[<string>record.get('templateType')];
-            var iconUrl = type === TemplateType.PAGE ? this.pageTemplateIconUri : this.siteTemplateIconUri;
+            var templateIconUrl: string = <string>record.get('iconUrl');
+
+            if (type === TemplateType.PAGE) {
+                var iconUrl = this.pageTemplateIconUri;
+            } else {
+                var iconUrl = templateIconUrl || this.siteTemplateIconUri;
+            }
             return Ext.String.format(nameTemplate, activeListType, iconUrl, value, template.name);
         }
     }

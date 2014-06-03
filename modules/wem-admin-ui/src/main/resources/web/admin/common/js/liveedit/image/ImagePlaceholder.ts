@@ -1,25 +1,24 @@
-module LiveEdit.component {
+module api.liveedit.image {
 
     import ImageUploadedEvent = api.liveedit.ImageUploadedEvent;
     import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
-    import ImageComponentSetImageEvent = api.liveedit.image.ImageComponentSetImageEvent
-    import ImageItemType = api.liveedit.image.ImageItemType;
     import PageItemType = api.liveedit.PageItemType;
 
-    export class ImagePlaceholder extends ComponentPlaceholder {
+    export class ImagePlaceholder extends api.dom.Element {
+
+        private imageView: ImageView;
 
         private comboBox: api.content.ContentComboBox;
+
         private uploadButton: api.ui.Button;
 
-        constructor() {
-            super(ImageItemType.get());
-
+        constructor(imageView: ImageView) {
+            super(new api.dom.ElementProperties().setTagName("div"));
+            this.imageView = imageView;
             wemjq(this.getHTMLElement()).on('click', 'input', (e) => {
                 wemjq(e.currentTarget).focus();
                 e.stopPropagation();
             });
-
-            console.log("** USING jquery version" + wemjq.fn.jquery);
 
             var imageUploadHandler = (event: ImageUploadedEvent) => this.createImageContent(event.getUploadedItem());
             ImageUploadedEvent.on(imageUploadHandler);
@@ -30,8 +29,6 @@ module LiveEdit.component {
             this.uploadButton.addClass("upload-button");
             this.uploadButton.onClicked(() => new ImageOpenUploadDialogEvent().fire());
             this.uploadButton.hide();
-
-            this.getEl().setData('live-edit-type', "image");
 
             this.comboBox = new api.content.ContentComboBoxBuilder().
                 setMaximumOccurrences(1).
@@ -48,12 +45,12 @@ module LiveEdit.component {
             this.comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {
 
                 this.uploadButton.hide();
-                this.showLoadingSpinner();
+                this.imageView.showLoadingSpinner();
 
                 new ImageComponentSetImageEvent().
                     setImageId(event.getOption().displayValue.getContentId()).
-                    setComponentPath(this.getComponentPath()).
-                    setComponentView(this).
+                    setComponentPath(imageView.getComponentPath()).
+                    setComponentView(imageView).
                     setName(event.getOption().displayValue.getDisplayName()).
                     fire();
 
@@ -63,7 +60,7 @@ module LiveEdit.component {
 
         private createImageContent(uploadItem: api.ui.UploadItem) {
 
-            this.showLoadingSpinner();
+            this.imageView.showLoadingSpinner();
 
             new api.schema.content.GetContentTypeByNameRequest(new api.schema.content.ContentTypeName("image")).
                 sendAndParse().
@@ -99,8 +96,8 @@ module LiveEdit.component {
 
                     new ImageComponentSetImageEvent().
                         setImageId(createdContent.getContentId()).
-                        setComponentPath(this.getComponentPath()).
-                        setComponentView(this).
+                        setComponentPath(this.imageView.getComponentPath()).
+                        setComponentView(this.imageView).
                         setName(uploadItem.getName()).
                         fire();
 
@@ -110,22 +107,18 @@ module LiveEdit.component {
                         setErrorMessage(reason.message).
                         fire();
 
-                    this.hideLoadingSpinner();
+                    this.imageView.hideLoadingSpinner();
 
                 }).done();
         }
 
         select() {
-            super.select();
-
             this.comboBox.show();
             this.uploadButton.show();
             this.comboBox.giveFocus();
         }
 
         deselect() {
-            super.deselect();
-
             this.uploadButton.hide();
             this.comboBox.hide();
         }

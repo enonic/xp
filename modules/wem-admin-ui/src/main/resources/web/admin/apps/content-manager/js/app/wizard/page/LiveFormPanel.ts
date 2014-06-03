@@ -54,6 +54,8 @@ module app.wizard.page {
     import RenderingMode = api.rendering.RenderingMode;
 
     import ItemView = api.liveedit.ItemView;
+    import RegionView = api.liveedit.RegionView;
+    import PageViewItemsParsedEvent = api.liveedit.PageViewItemsParsedEvent;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import SortableStopEvent = api.liveedit.SortableStopEvent;
     import SortableUpdateEvent = api.liveedit.SortableUpdateEvent;
@@ -446,6 +448,15 @@ module app.wizard.page {
 
         private liveEditListen() {
 
+            this.liveEditPage.onPageViewItemsParsed((event: PageViewItemsParsedEvent) => {
+
+                var regions = this.pageRegions.getRegions();
+                event.getPageView().getRegions().forEach((regionView: RegionView, index: number) => {
+                    var region = regions[index];
+                    regionView.setData(region);
+                });
+            });
+
             this.liveEditPage.onPageSelected((event: PageSelectEvent) => {
 
                 this.inspectPage();
@@ -477,19 +488,25 @@ module app.wizard.page {
 
                 this.contextWindow.show();
 
-                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).done(() => {
-                    this.pageRegions.removeComponent(event.getPath());
-                    this.contextWindow.clearSelection();
-                });
+                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).
+                    then(() => {
+                        this.pageRegions.removeComponent(event.getPath());
+                        this.contextWindow.clearSelection();
+                    }).
+                    catch((reason) => api.notify.showError(reason.toString())).
+                    done();
 
             });
 
             this.liveEditPage.onPageComponentReset((event: PageComponentResetEvent) => {
 
-                var component = this.pageRegions.getComponent(event.getPath());
-                if (component) {
-                    component.reset();
-                }
+                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).done(() => {
+
+                    var component = this.pageRegions.getComponent(event.getPath());
+                    if (component) {
+                        component.reset();
+                    }
+                });
             });
 
             this.liveEditPage.onSortableStart((event: SortableStartEvent) => {
@@ -509,7 +526,7 @@ module app.wizard.page {
                         this.liveEditPage.selectComponent(event.getComponentPath());
                     }
                 }
-                else {
+                else if(!event.isEmpty()) {
                     this.contextWindow.show();
                 }
             });
@@ -518,7 +535,7 @@ module app.wizard.page {
 
                 var precedingComponent = event.getPrecedingComponent();
                 var precedingComponentName = precedingComponent ? precedingComponent.getComponentName() : null;
-                var newPath = this.pageRegions.moveComponent(event.getComponentPath(), event.getRegion(), precedingComponentName);
+                var newPath = this.pageRegions.moveComponent(event.getComponentPath(), event.getRegionPath(), precedingComponentName);
 
                 if (newPath) {
                     event.getComponentView().setComponentPath(newPath);
@@ -532,11 +549,12 @@ module app.wizard.page {
                     setType(event.getType()).
                     setRegion(event.getRegion()).
                     setPrecedingComponent(event.getPrecedingComponent() ? event.getPrecedingComponent().getComponentName() : null).
-                    setComponentView(event.getComponent());
+                    setComponentView(event.getPageComponentView());
 
-                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).done(() => {
-                    command.execute();
-                });
+                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).
+                    then(() => command.execute()).
+                    catch((reason) => api.notify.showError(reason.toString())).
+                    done();
             });
 
             this.liveEditPage.onImageComponentSetImage((event: ImageComponentSetImageEvent) => {
@@ -549,10 +567,13 @@ module app.wizard.page {
                     setComponentView(event.getComponentView()).
                     setImageName(event.getImageName());
 
-                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).done(() => {
-                    var newComponentPath = command.execute();
-                    this.saveAndReloadOnlyPageComponent(newComponentPath, event.getComponentView());
-                });
+                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).
+                    then(() => {
+                        var newComponentPath = command.execute();
+                        this.saveAndReloadOnlyPageComponent(newComponentPath, event.getComponentView());
+                    }).
+                    catch((reason) => api.notify.showError(reason.toString())).
+                    done();
             });
 
             this.liveEditPage.onPageComponentSetDescriptor((event: PageComponentSetDescriptorEvent) => {
@@ -563,12 +584,15 @@ module app.wizard.page {
                     setComponentPath(event.getPath()).
                     setDescriptor(event.getDescriptor());
 
-                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).done(() => {
-                    var newComponentPath = command.execute();
-                    if (newComponentPath) {
-                        this.saveAndReloadOnlyPageComponent(newComponentPath, event.getItemView());
-                    }
-                });
+                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).
+                    then(() => {
+                        var newComponentPath = command.execute();
+                        if (newComponentPath) {
+                            this.saveAndReloadOnlyPageComponent(newComponentPath, event.getItemView());
+                        }
+                    }).
+                    catch((reason) => api.notify.showError(reason.toString())).
+                    done();
             });
 
             this.liveEditPage.onPageComponentDuplicated((event: PageComponentDuplicateEvent) => {

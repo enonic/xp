@@ -1,3 +1,8 @@
+// Type definitions for SlickGrid 2.1.0
+// Project: https://github.com/mleibman/SlickGrid
+// Definitions by: Josh Baldwin <https://github.com/jbaldwin/>
+// Definitions: https://github.com/borisyankov/DefinitelyTyped
+
 /*
  SlickGrid-2.1.d.ts may be freely distributed under the MIT license.
 
@@ -137,7 +142,7 @@ declare module Slick {
          * @param toRow {Integer} Optional. Ending row. Defaults to <code>fromRow</code>.
          * @param toCell {Integer} Optional. Ending cell. Defaults to <code>fromCell</code>.
          **/
-            constructor(fromRow: number, fromCell: number, toRow?: number, toCell?: number);
+        constructor(fromRow: number, fromCell: number, toRow?: number, toCell?: number);
 
         /***
          * @property fromRow
@@ -392,42 +397,42 @@ declare module Slick {
          * @param colDef
          * @return
          **/
-            asyncPostRender?: (cellNode:any, row:any, dataContext:any, colDef:any) => void;
+        asyncPostRender?: (cellNode:any, row:any, dataContext:any, colDef:any) => void;
 
         /**
          * Used by the the slick.rowMoveManager.js plugin for moving rows. Has no effect without the plugin installed.
          **/
-            behavior?: any;
+        behavior?: any;
 
         /**
          * In the "Add New" row, determines whether clicking cells in this column can trigger row addition. If true, clicking on the cell in this column in the "Add New" row will not trigger row addition.
          **/
-            cannotTriggerInsert?: boolean;
+        cannotTriggerInsert?: boolean;
 
         /**
          * Accepts a string as a class name, applies that class to every row cell in the column.
          **/
-            cssClass?: string;
+        cssClass?: string;
 
         /**
          * When set to true, the first user click on the header will do a descending sort. When set to false, the first user click on the header will do an ascending sort.
          **/
-            defaultSortAsc?: boolean;
+        defaultSortAsc?: boolean;
 
         /**
          * The editor for cell edits {TextEditor, IntegerEditor, DateEditor...} See slick.editors.js
          **/
-            editor?: Editors.Editor<T>;
+        editor?: Editors.Editor<T>;
 
         /**
          * The property name in the data object to pull content from. (This is assumed to be on the root of the data object.)
          **/
-            field?: string;
+        field?: string;
 
         /**
          * When set to false, clicking on a cell in this column will not select the row for that cell. The cells in this column will also be skipped during tab navigation.
          **/
-            focusable?: boolean;
+        focusable?: boolean;
 
         /**
          * This accepts a function of the form function(row, cell, value, columnDef, dataContext) and returns a formatted version of the data in each cell of this column. For example, setting formatter to function(r, c, v, cd, dc) { return "Hello!"; } would overwrite every value in the column with "Hello!" See defaultFormatter in slick.grid.js for an example formatter.
@@ -438,62 +443,62 @@ declare module Slick {
          * @param dataContext
          * @return
          **/
-            formatter?: Formatter<T>;
+        formatter?: Formatter<T>;
 
         /**
          * Accepts a string as a class name, applies that class to the cell for the column header.
          **/
-            headerCssClass?: string;
+        headerCssClass?: string;
 
         /**
          * A unique identifier for the column within the grid.
          **/
-            id?: string;
+        id?: string;
 
         /**
          * Set the maximum allowable width of this column, in pixels.
          **/
-            maxWidth?: number;
+        maxWidth?: number;
 
         /**
          *  Set the minimum allowable width of this column, in pixels.
          **/
-            minWidth?: number;
+        minWidth?: number;
 
         /**
          * The text to display on the column heading.
          **/
-            name?: string;
+        name?: string;
 
         /**
          * If set to true, whenever this column is resized, the entire table view will rerender.
          **/
-            rerenderOnReize?: boolean;
+        rerenderOnResize?: boolean;
 
         /**
          * If false, column can no longer be resized.
          **/
-            resizable?: boolean;
+        resizable?: boolean;
 
         /**
          * If false, when a row is selected, the CSS class for selected cells ("selected" by default) is not applied to the cell in this column.
          **/
-            selectable?: boolean;
+        selectable?: boolean;
 
         /**
          * If true, the column will be sortable by clicking on the header.
          **/
-            sortable?: boolean;
+        sortable?: boolean;
 
         /**
          * If set to a non-empty string, a tooltip will appear on hover containing the string.
          **/
-            toolTip?: string;
+        toolTip?: string;
 
         /**
          * Width of the column in pixels. (May often be overridden by things like minWidth, maxWidth, forceFitColumns, etc.)
          **/
-            width?: number;
+        width?: number;
     }
 
     export interface EditorFactory {
@@ -509,177 +514,177 @@ declare module Slick {
         /**
          * Makes cell editors load asynchronously after a small delay. This greatly increases keyboard navigation speed.
          **/
-            asyncEditorLoading?: boolean;
+        asyncEditorLoading?: boolean;
 
         /**
          * Delay after which cell editor is loaded. Ignored unless asyncEditorLoading is true.
          **/
-            asyncEditorLoadDelay?: number;
+        asyncEditorLoadDelay?: number;
 
         /**
          *
          **/
-            asyncPostRenderDelay?: number;
+        asyncPostRenderDelay?: number;
 
         /**
          * Cell will not automatically go into edit mode when selected.
          **/
-            autoEdit?: boolean;
+        autoEdit?: boolean;
 
         /**
          *
          **/
-            autoHeight?: boolean;
+        autoHeight?: boolean;
 
         /**
          * A CSS class to apply to flashing cells via flashCell().
          **/
-            cellFlashingCssClass?: string;
+        cellFlashingCssClass?: string;
 
         /**
          * A CSS class to apply to cells highlighted via setHighlightedCells().
          **/
-            cellHighlightCssClass?: string;
+        cellHighlightCssClass?: string;
 
         /**
          *
          **/
-            dataItemColumnValueExtractor?: any;
+        dataItemColumnValueExtractor?: any;
 
         /**
          *
          **/
-            defaultColumnWidth?: number;
+        defaultColumnWidth?: number;
 
         /**
          *
          **/
-            defaultFormatter?: Formatter<T>;
+        defaultFormatter?: Formatter<T>;
 
         /**
          *
          **/
-            editable?: boolean;
+        editable?: boolean;
 
         /**
          * Not listed as a default under options in slick.grid.js
          **/
-            editCommandHandler?: any; // queueAndExecuteCommand
+        editCommandHandler?: any; // queueAndExecuteCommand
 
         /**
          * A factory object responsible to creating an editor for a given cell. Must implement getEditor(column).
          **/
-            editorFactory?: EditorFactory;
+        editorFactory?: EditorFactory;
 
         /**
          * A Slick.EditorLock instance to use for controlling concurrent data edits.
          **/
-            editorLock?: EditorLock<T>;
+        editorLock?: EditorLock<T>;
 
         /**
          * If true, a blank row will be displayed at the bottom - typing values in that row will add a new one. Must subscribe to onAddNewRow to save values.
          **/
-            enableAddRow?: boolean;
+        enableAddRow?: boolean;
 
         /**
          * If true, async post rendering will occur and asyncPostRender delegates on columns will be called.
          **/
-            enableAsyncPostRender?: boolean;
+        enableAsyncPostRender?: boolean;
 
         /**
          * *WARNING*: Not contained in SlickGrid 2.1, may be deprecated
          **/
-            enableCellRangeSelection?: any;
+        enableCellRangeSelection?: any;
 
         /**
          * Appears to enable cell virtualisation for optimised speed with large datasets
          **/
-            enableCellNavigation?: boolean;
+        enableCellNavigation?: boolean;
 
         /**
          *
          **/
-            enableColumnReorder?: boolean;
+        enableColumnReorder?: boolean;
 
         /**
          * *WARNING*: Not contained in SlickGrid 2.1, may be deprecated
          **/
-            enableRowReordering?: any;
+        enableRowReordering?: any;
 
         /**
          *
          **/
-            enableTextSelectionOnCells?: boolean;
+        enableTextSelectionOnCells?: boolean;
 
         /**
          * @see Example: Explicit Initialization
          **/
-            explicitInitialization?: boolean;
+        explicitInitialization?: boolean;
 
         /**
          * Force column sizes to fit into the container (preventing horizontal scrolling). Effectively sets column width to be 1/Number of Columns which on small containers may not be desirable
          **/
-            forceFitColumns?: boolean;
+        forceFitColumns?: boolean;
 
         /**
          *
          **/
-            forceSyncScrolling?: boolean;
+        forceSyncScrolling?: boolean;
 
         /**
          * A factory object responsible to creating a formatter for a given cell. Must implement getFormatter(column).
          **/
-            formatterFactory?: FormatterFactory<T>;
+        formatterFactory?: FormatterFactory<T>;
 
         /**
          * Will expand the table row divs to the full width of the container, table cell divs will remain aligned to the left
          **/
-            fullWidthRows?: boolean;
+        fullWidthRows?: boolean;
 
         /**
          *
          **/
-            headerRowHeight?: number;
+        headerRowHeight?: number;
 
         /**
          *
          **/
-            leaveSpaceForNewRows?: boolean;
+        leaveSpaceForNewRows?: boolean;
 
         /**
          * @see Example: Multi-Column Sort
          **/
-            multiColumnSort?: boolean;
+        multiColumnSort?: boolean;
 
         /**
          *
          **/
-            multiSelect?: boolean;
+        multiSelect?: boolean;
 
         /**
          *
          **/
-            rowHeight?: number;
+        rowHeight?: number;
 
         /**
          *
          **/
-            selectedCellCssClass?: string;
+        selectedCellCssClass?: string;
 
         /**
          *
          **/
-            showHeaderRow?: boolean;
+        showHeaderRow?: boolean;
 
         /**
          * If true, the column being resized will change its width as the mouse is dragging the resize handle. If false, the column will resize after mouse drag ends.
          **/
-            syncColumnCellResize?: boolean;
+        syncColumnCellResize?: boolean;
 
         /**
          *
          **/
-            topPanelHeight?: number;
+        topPanelHeight?: number;
     }
 
     export interface DataProvider {
@@ -689,6 +694,7 @@ declare module Slick {
 
     export interface SlickData {
         // todo ? might be able to leave as empty
+        test?:any;
     }
 
     /**
@@ -702,12 +708,12 @@ declare module Slick {
         /**
          * An initializer function that will be called with an instance of the grid whenever a selection model is registered with setSelectionModel. The selection model can use this to initialize its state and subscribe to grid events.
          **/
-            init(grid: Grid<T>): void;
+        init(grid: Grid<T>): void;
 
         /**
          * A destructor function that will be called whenever a selection model is unregistered from the grid by a call to setSelectionModel with another selection model or whenever a grid with this selection model is destroyed. The selection model can use this destructor to unsubscribe from grid events and release all resources (remove DOM nodes, event listeners, etc.).
          **/
-            destroy(): void;
+        destroy(): void;
 
         onSelectedRangesChanged: Slick.Event<E>;
     }
@@ -721,7 +727,7 @@ declare module Slick {
          * @param columns An array of column definition objects. See Column Options for a list of options that can be included on each column definition object.
          * @param options Additional options.  See Grid Options for a list of options that can be included.
          **/
-            constructor(
+        constructor(
             container: string,
             data: T[],
             columns: Column<T>[],
@@ -817,7 +823,7 @@ declare module Slick {
          * Unregisters a current selection model and registers a new one. See the definition of SelectionModel for more information.
          * @selectionModel A SelectionModel.
          **/
-        public setSelectionModel(selectionModel: SelectionModel<T, any>): void;                // todo: don't know the type of the event data type
+        public setSelectionModel(selectionModel: SelectionModel<T, any>): void;		// todo: don't know the type of the event data type
 
         // #endregion Core
 
@@ -884,14 +890,14 @@ declare module Slick {
          * @param hash A hash of additional cell CSS classes keyed by row number and then by column id. Multiple CSS classes can be specified and separated by space.
          * @example
          * {
-                *         0:    {
-                *                 "number_column":    "cell-bold",
-                *                 "title_column":     "cell-title cell-highlighted"
-                *         },
-                *         4:    {
-                *                 "percent_column":    "cell-highlighted"
-                *         }
-                * }
+		* 	0:    {
+		* 		"number_column":    "cell-bold",
+		* 		"title_column":     "cell-title cell-highlighted"
+		* 	},
+		* 	4:    {
+		* 		"percent_column":    "cell-highlighted"
+		* 	}
+		* }
          **/
         public addCellCssStyles(key: string, hash: CellCssStylesHash): void;
 
@@ -928,10 +934,10 @@ declare module Slick {
         /**
          * Returns an object representing the coordinates of the currently active cell:
          * @example
-         *         {
-                *           row: activeRow,
-                *           cell: activeCell
-                *         }
+         * 	{
+		* 	  row: activeRow,
+		* 	  cell: activeCell
+		* 	}
          * @return
          **/
         public getActiveCell(): Cell;
@@ -1301,7 +1307,7 @@ declare module Slick {
     }
 
     export interface OnHeaderCellRenderedEventData<T extends SlickData> {
-        node: HTMLElement;        // todo: might be JQuery instance
+        node: HTMLElement;	// todo: might be JQuery instance
         column: Column<T>;
     }
 
@@ -1318,7 +1324,7 @@ declare module Slick {
     }
 
     // todo: merge with existing column definition
-    export interface Column {
+    export interface Column<T extends SlickData> {
         sortCol?: string;
         sortAsc?: boolean;
     }
@@ -1481,10 +1487,10 @@ declare module Slick {
             public getPagingInfo(): PagingOptions;
             public getItems(): T[];
             public setItems(data: T[], objectIdProperty?: string): void;
-            public setFilter(filterFn: (item: T, args:any) => boolean): void;        // todo: typeof(args)
-            public sort(comparer: Function, ascending: boolean): void;                // todo: typeof(comparer), should be the same callback as Array.sort
+            public setFilter(filterFn: (item: T, args:any) => boolean): void;	// todo: typeof(args)
+            public sort(comparer: Function, ascending: boolean): void;		// todo: typeof(comparer), should be the same callback as Array.sort
             public fastSort(field: string, ascending: boolean): void;
-            public fastSort(field: Function, ascending: boolean): void;                // todo: typeof(field), should be the same callback as Array.sort
+            public fastSort(field: Function, ascending: boolean): void;		// todo: typeof(field), should be the same callback as Array.sort
             public reSort(): void;
             public setGrouping(groupingInfo: GroupingOptions<T>): void;
             public getGrouping(): GroupingOptions<T>;
@@ -1541,7 +1547,7 @@ declare module Slick {
             public syncGridCellCssStyles(grid: Grid<T>, key: string): void;
 
             public getLength(): number;
-            public getItem(index: number): SlickData;
+            public getItem(index: number): T;
             public getItemMetadata(): void;
 
             public onRowCountChanged: Slick.Event<OnRowCountChangedEventData>;
@@ -1550,10 +1556,10 @@ declare module Slick {
         }
 
         export interface GroupingOptions<T> {
-            getter: Function;        // todo
+            getter: Function;	// todo
             formatter: Formatter<T>;
-            comparer: (a:any, b:any) => any;        // todo
-            predefinedValues: any[];        // todo
+            comparer: (a:any, b:any) => any;	// todo
+            predefinedValues: any[];	// todo
             aggregators: Aggregators.Aggregator<T>[];
             aggregateEmpty: boolean;
             aggregateCollapsed: boolean;
@@ -1570,11 +1576,11 @@ declare module Slick {
         }
 
         export interface RefreshHints {
-            isFilterNarrowing: boolean;
-            isFilterExpanding: boolean;
-            isFilterUnchanged: boolean;
-            ignoreDiffsBefore: boolean;
-            ignoreDiffsAfter: boolean;
+            isFilterNarrowing?: boolean;
+            isFilterExpanding?: boolean;
+            isFilterUnchanged?: boolean;
+            ignoreDiffsBefore?: boolean;
+            ignoreDiffsAfter?: boolean;
         }
 
         export interface OnRowCountChangedEventData {
@@ -1592,7 +1598,7 @@ declare module Slick {
                 public field: string;
                 public init(): void;
                 public accumulate(item: T): void;
-                public storeResult(groupTotals: GroupTotals<T, any>): void;        // todo "R"
+                public storeResult(groupTotals: GroupTotals<T, any>): void;	// todo "R"
             }
 
             export class Avg<T> extends Aggregator<T> {
@@ -1667,17 +1673,17 @@ declare module Slick {
         }
 
         //export class RemoteModel {
-        //        public data: any;
+        //	public data: any;
 
-        //        public clear(): any;
-        //        public isDataLoaded(): any;
-        //        public ensureData(): any;
-        //        public reloadData(): any;
-        //        public setSort(): any;
-        //        public setSearch(): any;
+        //	public clear(): any;
+        //	public isDataLoaded(): any;
+        //	public ensureData(): any;
+        //	public reloadData(): any;
+        //	public setSort(): any;
+        //	public setSearch(): any;
 
-        //        public onDataLoading: Slick.Event<OnDataLoadingEventData>;
-        //        public onDataLoaded: Slick.Event<OnDataLoadedEventData>;
+        //	public onDataLoading: Slick.Event<OnDataLoadingEventData>;
+        //	public onDataLoaded: Slick.Event<OnDataLoadedEventData>;
 
         //}
 

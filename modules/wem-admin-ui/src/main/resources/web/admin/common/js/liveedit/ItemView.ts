@@ -40,6 +40,23 @@ module api.liveedit {
 
         }
 
+        setItemId(value: number) {
+            this.getEl().setAttribute("data-live-edit-id", "" + value);
+        }
+
+        getItemId() : number {
+            return +this.getEl().getAttribute("data-live-edit-id");
+        }
+
+        static parseItemId(element: HTMLElement) : number {
+            var attribute = element.getAttribute("data-live-edit-id");
+            if( api.util.isStringEmpty(attribute) )
+            {
+                return -1;
+            }
+            return +element.getAttribute("data-live-edit-id");
+        }
+
         getElement(): JQuery {
             return wemjq(this.getHTMLElement());
         }
@@ -102,14 +119,16 @@ module api.liveedit {
             };
         }
 
-        public static fromHTMLElement(element: HTMLElement, dummy: boolean = true): ItemView {
+        static findParentItemViewAsHTMLElement(htmlElement: HTMLElement) : HTMLElement {
 
-            var type = ItemType.fromHTMLElement(element);
-            return type.createView(element, dummy);
-        }
+            var parentHTMLElement = htmlElement.parentElement;
+            var parseItemId = ItemView.parseItemId(parentHTMLElement);
+            while( parseItemId == -1 ) {
+                parentHTMLElement = parentHTMLElement.parentElement;
+                parseItemId = ItemView.parseItemId(parentHTMLElement);
+            }
 
-        public static fromJQuery(element: JQuery, dummy: boolean = true): ItemView {
-            return ItemView.fromHTMLElement(element.get(0), dummy)
+            return parentHTMLElement;
         }
     }
 }

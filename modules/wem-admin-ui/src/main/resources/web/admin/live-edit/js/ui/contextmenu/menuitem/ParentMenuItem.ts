@@ -23,7 +23,7 @@ module LiveEdit.ui.contextmenu.menuitem {
 
             if (parentElement && parentElement.length > 0) {
                 this.menu.selectedComponent.deselect();
-                var parentComponent = ItemView.fromJQuery($(parentElement[0]));
+                var parentComponent = pageItemViews.getItemViewByElement($(parentElement[0]).get(0));
                 LiveEdit.component.Selection.handleSelect(parentComponent);
 
                 var xPos = parentComponent.getElement().offset().left + parentComponent.getElement().width() / 2 -

@@ -1,12 +1,19 @@
 module api.liveedit {
 
     import Content = api.content.Content;
+    import PageComponent = api.content.page.PageComponent;
     import ComponentPath = api.content.page.ComponentPath;
 
     export class PageComponentView extends ItemView {
 
+        private data: PageComponent;
+
         constructor(type: ItemType, element?: HTMLElement, dummy?: boolean) {
             super(type, element, dummy);
+        }
+
+        setData(data: PageComponent) {
+            this.data = data;
         }
 
         setComponentPath(path: ComponentPath) {
@@ -28,22 +35,6 @@ module api.liveedit {
             return path ? path.getComponentName().toString() : '[No Name]';
         }
 
-        getParentRegion(): RegionView {
-            api.util.assert(this.getType().isPageComponentType(),
-                    "Expected to only be called when this is a PageComponent: " + api.util.getClassName(this));
-
-            var parentElement = this.getHTMLElement().parentElement;
-            if (!parentElement) {
-                return null;
-            }
-            var type = ItemType.fromHTMLElement(parentElement);
-            if (!type || !type.equals(RegionItemType.get())) {
-                return null;
-            }
-
-            return RegionView.fromHTMLElement(parentElement);
-        }
-
         getPrecedingComponentPath(): ComponentPath {
             api.util.assert(this.getType().isPageComponentType(),
                     "Expected to only be called when this is a PageComponent: " + api.util.getClassName(this));
@@ -58,20 +49,37 @@ module api.liveedit {
         }
 
         select() {
-            new PageComponentSelectEvent(this.getComponentPath(), this).fire();
             super.select();
+            new PageComponentSelectEvent(this.getComponentPath(), this).fire();
         }
 
-        public static fromHTMLElement(element: HTMLElement, dummy: boolean = true): PageComponentView {
-
-            var type = ItemType.fromHTMLElement(element);
-            api.util.assert(type.isPageComponentType(), "Expected ItemType to be PageComponent");
-
-            return <PageComponentView>type.createView(element, dummy);
+        handleDragStart() {
+            if (this.isSelected()) {
+                this.getEl().setData("live-edit-selected-on-sort-start", "true");
+            }
         }
 
-        public static fromJQuery(element: JQuery, dummy: boolean = true): PageComponentView {
-            return PageComponentView.fromHTMLElement(element.get(0), dummy)
+        handleDragStop() {
+
+        }
+
+        empty() {
+
+            this.getEl().setData('live-edit-empty-component', 'true');
+            this.addClass("live-edit-empty-component");
+        }
+
+        duplicate(): PageComponentView {
+            throw new Error("Must be implemented by inheritors");
+        }
+
+        static findParentRegionViewHTMLElement(htmlElement: HTMLElement): HTMLElement {
+
+            var parentItemView = ItemView.findParentItemViewAsHTMLElement(htmlElement);
+            while (!RegionView.isRegionViewFromHTMLElement(parentItemView)) {
+                parentItemView = ItemView.findParentItemViewAsHTMLElement(parentItemView);
+            }
+            return parentItemView;
         }
     }
 }

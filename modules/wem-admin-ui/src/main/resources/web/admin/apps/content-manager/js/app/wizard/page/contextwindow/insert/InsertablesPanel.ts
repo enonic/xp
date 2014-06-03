@@ -73,9 +73,6 @@ module app.wizard.page.contextwindow.insert {
             this.liveEditPage.onSortableUpdate(() => {
                 this.simulateMouseUpForDraggable();
             });
-            this.liveEditPage.onDraggableStop(() => {
-                this.simulateMouseUpForDraggable();
-            });
         }
 
         private simulateMouseUpForDraggable() {

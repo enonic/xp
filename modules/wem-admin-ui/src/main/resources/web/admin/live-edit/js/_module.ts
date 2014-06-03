@@ -7,11 +7,6 @@
 ///<reference path='shared/DomHelper.ts' />
 ///<reference path='shared/PlaceholderCreator.ts' />
 
-///<reference path='component/ComponentPlaceholder.ts' />
-///<reference path='component/ImagePlaceholder.ts' />
-///<reference path='component/PartPlaceholder.ts' />
-///<reference path='component/LayoutPlaceholder.ts' />
-///<reference path='component/TextPlaceholder.ts' />
 ///<reference path='component/helper/DragHelper.ts' />
 ///<reference path='component/helper/ComponentResizeObserver.ts' />
 ///<reference path='component/Selection.ts' />

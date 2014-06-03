@@ -17,5 +17,7 @@ module api.content.site.template {
         version:string;
 
         templateType: string;
+
+        iconUrl: string;
     }
 }

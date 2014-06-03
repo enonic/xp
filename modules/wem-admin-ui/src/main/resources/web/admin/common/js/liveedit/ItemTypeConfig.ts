@@ -7,7 +7,7 @@ module api.liveedit {
     }
 
     export interface ItemTypeConfigJson {
-        typeName:string;
+        typeName?:string;
         cssSelector:string;
         draggable:boolean;
         cursor:string;

@@ -23,8 +23,8 @@ module api.liveedit {
             });
         }
 
-        createView(element: HTMLElement, dummy: boolean = true): ItemView {
-            return new ItemView(this, element, dummy);
+        createView(element?: HTMLElement, dummy?: boolean): ContentView {
+            return new ContentView(element);
         }
     }
 

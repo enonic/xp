@@ -8,35 +8,38 @@ module api.liveedit {
 
         private pageComponentView: PageComponentView;
 
-        private componentPath: ComponentPath;
+        private regionView: RegionView;
 
-        private region: RegionPath;
+        private componentPath: ComponentPath;
 
         private precedingComponent: ComponentPath;
 
-        constructor(itemView: PageComponentView) {
-            api.util.assert(itemView.getType().isPageComponentType(), "Expected itemView to be of type PageComponent");
+        constructor(pageComponentView: PageComponentView, regionView: RegionView) {
+            api.util.assert(pageComponentView.getType().isPageComponentType(), "Expected itemView to be of type PageComponent");
 
             super();
 
-            this.pageComponentView = itemView;
-            this.componentPath = itemView.getComponentPath();
+            this.pageComponentView = pageComponentView;
+            this.regionView = regionView;
+            this.componentPath = pageComponentView.getComponentPath();
 
-            var region = itemView.getParentRegion();
-            this.region = region.getRegionPath();
-            this.precedingComponent = itemView.getPrecedingComponentPath();
+            this.precedingComponent = pageComponentView.getPrecedingComponentPath();
         }
 
         getComponentView(): PageComponentView {
             return this.pageComponentView;
         }
 
+        getRegionView(): RegionView {
+            return this.regionView;
+        }
+
         getComponentPath(): ComponentPath {
             return this.componentPath;
         }
 
-        getRegion(): RegionPath {
-            return this.region;
+        getRegionPath(): RegionPath {
+            return this.regionView.getRegionPath();
         }
 
         getPrecedingComponent(): ComponentPath {

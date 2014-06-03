@@ -32,7 +32,7 @@ module api.liveedit {
             return api.content.page.PageComponentType.byShortName(this.shortName);
         }
 
-        createView(element: HTMLElement, dummy: boolean = true): ItemView {
+        createView(element?: HTMLElement, dummy?: boolean): ItemView {
             throw new Error("Must be implemented by inheritors");
         }
 

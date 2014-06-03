@@ -4,6 +4,8 @@ module api.liveedit {
 
     export class PageView extends ItemView {
 
+        private regionViews: RegionView[] = [];
+
         constructor(element?: HTMLElement) {
             super(PageItemType.get(), element);
         }
@@ -19,12 +21,12 @@ module api.liveedit {
             super.select();
         }
 
-        static fromHTMLElement(element: HTMLElement): PageView {
-            return new PageView(element);
+        addRegion(view: RegionView) {
+            this.regionViews.push(view);
         }
 
-        public static fromJQuery(element: JQuery): PageView {
-            return new PageView(<HTMLElement>element.get(0));
+        getRegions(): RegionView[] {
+            return this.regionViews;
         }
     }
 }

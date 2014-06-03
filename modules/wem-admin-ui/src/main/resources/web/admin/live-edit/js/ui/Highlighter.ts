@@ -29,7 +29,7 @@ module LiveEdit.ui {
             // The component should be re-selected after drag'n drop
             wemjq(window).on('sortstop.liveedit.component', (event, uiEvent?, ui?, wasSelectedOnDragStart?) => {
                 if (wasSelectedOnDragStart) {
-                    var itemView = ItemView.fromJQuery(ui.item);
+                    var itemView = pageItemViews.getItemViewByElement(ui.item.get(0));
                     LiveEdit.component.Selection.handleSelect(itemView);
                 }
             });

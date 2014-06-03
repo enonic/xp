@@ -231,6 +231,10 @@ public final class Node
         public Builder( final Node node )
         {
             super( node );
+            this.name = node.name;
+            this.parent = node.parent;
+            this.modifier = node.modifier;
+            this.creator = node.creator;
         }
 
         public Builder( final EntityId id, final NodeName name )
