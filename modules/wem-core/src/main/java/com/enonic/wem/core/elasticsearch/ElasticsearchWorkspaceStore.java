@@ -327,7 +327,8 @@ public class ElasticsearchWorkspaceStore
         {
             throw new NodeNotFoundException(
                 "Expected " + expectedHits + " nodes in result, found " + hits.length + " in workspace " + workspaceName +
-                    ". Query: " + entityIdsAsStrings );
+                    ". Query: " + entityIdsAsStrings
+            );
         }
 
         final Set<Object> fieldValues = SearchResponseAccessor.getFieldValues( hits, BLOBKEY_FIELD_NAME );
@@ -417,7 +418,6 @@ public class ElasticsearchWorkspaceStore
         return fieldValuesToBlobKeys( fieldValues );
     }
 
-    @Override
     public EntityIds getDiff( final WorkspaceDiffQuery query )
     {
         BoolQueryBuilder diffQuery = new BoolQueryBuilder();
