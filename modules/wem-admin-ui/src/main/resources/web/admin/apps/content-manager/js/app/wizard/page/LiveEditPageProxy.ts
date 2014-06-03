@@ -16,8 +16,6 @@ module app.wizard.page {
     import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
     import ImageUploadedEvent = api.liveedit.ImageUploadedEvent;
     import ImageComponentSetImageEvent = api.liveedit.image.ImageComponentSetImageEvent;
-    import DraggableStartEvent = api.liveedit.DraggableStartEvent;
-    import DraggableStopEvent = api.liveedit.DraggableStopEvent;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import SortableStopEvent = api.liveedit.SortableStopEvent;
     import SortableUpdateEvent = api.liveedit.SortableUpdateEvent;
@@ -66,10 +64,6 @@ module app.wizard.page {
         private loadedListeners: {(): void;}[] = [];
 
         private pageViewItemsParsedListeners: {(event: PageViewItemsParsedEvent): void;}[] = [];
-
-        private draggableStartListeners: {(event: DraggableStartEvent): void;}[] = [];
-
-        private draggableStopListeners: {(event: DraggableStopEvent): void;}[] = [];
 
         private sortableStartListeners: {(event: SortableStartEvent): void;}[] = [];
 
@@ -264,10 +258,6 @@ module app.wizard.page {
                 uploadDialog.open();
             }, this.liveEditWindow);
 
-            DraggableStartEvent.on(this.notifyDraggableStart.bind(this), this.liveEditWindow);
-
-            DraggableStopEvent.on(this.notifyDraggableStop.bind(this), this.liveEditWindow);
-
             SortableStartEvent.on(this.notifySortableStart.bind(this), this.liveEditWindow);
 
             SortableStopEvent.on(this.notifySortableStop.bind(this), this.liveEditWindow);
@@ -337,30 +327,6 @@ module app.wizard.page {
 
         private notifyPageViewItemsParsed(event: PageViewItemsParsedEvent) {
             this.pageViewItemsParsedListeners.forEach((listener) => listener(event));
-        }
-
-        onDraggableStart(listener: {(event: DraggableStartEvent): void;}) {
-            this.draggableStartListeners.push(listener);
-        }
-
-        unDraggableStart(listener: {(event: DraggableStartEvent): void;}) {
-            this.draggableStartListeners = this.draggableStartListeners.filter((curr) => (curr != listener));
-        }
-
-        private notifyDraggableStart(event: DraggableStartEvent) {
-            this.draggableStartListeners.forEach((listener) => listener(event));
-        }
-
-        onDraggableStop(listener: {(event: DraggableStopEvent): void;}) {
-            this.draggableStopListeners.push(listener);
-        }
-
-        unDraggableStop(listener: {(event: DraggableStopEvent): void;}) {
-            this.draggableStopListeners = this.draggableStopListeners.filter((curr) => (curr != listener));
-        }
-
-        private notifyDraggableStop(event: DraggableStopEvent) {
-            this.draggableStopListeners.forEach((listener) => listener(event));
         }
 
         onSortableStart(listener: (event: SortableStartEvent) => void) {
