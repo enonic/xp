@@ -128,11 +128,6 @@ module api.content.inputtype.image {
                 var checkbox = optionView.getCheckbox();
 
                 switch (event.which) {
-                case 9: // Tab
-                    if (this.isFirstInRow(option.getIndex()) || this.isLast(option.getIndex())) {
-                        this.hideImageSelectorDialog();
-                    }
-                    break;
                 case 32: // Spacebar
                     var isChecked = !checkbox.isChecked();
                     checkbox.setChecked(isChecked, isChecked);
@@ -155,6 +150,10 @@ module api.content.inputtype.image {
 
             optionView.getCheckbox().onFocus((event: FocusEvent) => {
                 this.showImageSelectorDialog(option);
+            });
+
+            optionView.getCheckbox().onBlur((event: FocusEvent) => {
+                this.hideImageSelectorDialog();
             });
 
             optionView.getCheckbox().onClicked((event: MouseEvent) => {
