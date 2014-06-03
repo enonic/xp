@@ -3,8 +3,9 @@ module api.liveedit.image {
     import PageComponentView = api.liveedit.PageComponentView;
     import ContentView = api.liveedit.ContentView;
     import RegionView = api.liveedit.RegionView;
+    import ImageComponent = api.content.page.image.ImageComponent;
 
-    export class ImageView extends PageComponentView {
+    export class ImageView extends PageComponentView<ImageComponent> {
 
         private placeholder : ImagePlaceholder;
 

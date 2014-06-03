@@ -4,7 +4,7 @@ module api.liveedit.layout {
     import PageComponentView = api.liveedit.PageComponentView;
     import RegionView = api.liveedit.RegionView;
 
-    export class LayoutView extends PageComponentView {
+    export class LayoutView extends PageComponentView<LayoutComponent> {
 
         private placeholder: LayoutPlaceholder;
 
@@ -20,8 +20,8 @@ module api.liveedit.layout {
             this.regionViews.push(view);
         }
 
-        setData(data: LayoutComponent) {
-            super.setData(data);
+        setPageComponent(data: LayoutComponent) {
+            super.setPageComponent(data);
             var regions = data.getLayoutRegions().getRegions();
             this.regionViews.forEach((regionView: RegionView, index: number) => {
                 var region = regions[index];

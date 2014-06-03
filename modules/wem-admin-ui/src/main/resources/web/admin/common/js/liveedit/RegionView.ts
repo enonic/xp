@@ -2,12 +2,13 @@ module api.liveedit {
 
     import Region = api.content.page.region.Region;
     import RegionPath = api.content.page.RegionPath;
+    import PageComponent = api.content.page.PageComponent;
 
     export class RegionView extends ItemView {
 
         private region: Region;
 
-        private pageComponentViews: PageComponentView[] = [];
+        private pageComponentViews: PageComponentView<PageComponent>[] = [];
 
         constructor(element?: HTMLElement) {
             super(RegionItemType.get(), element);
@@ -17,9 +18,9 @@ module api.liveedit {
             this.region = region;
 
             var components = region.getComponents();
-            this.getPageComponents().forEach((view: PageComponentView, index: number) => {
+            this.getPageComponents().forEach((view: PageComponentView<PageComponent>, index: number) => {
                 var pageComponent = components[index];
-                view.setData(pageComponent);
+                view.setPageComponent(pageComponent);
             });
         }
 
@@ -42,11 +43,11 @@ module api.liveedit {
             super.select();
         }
 
-        addPageComponent(view: PageComponentView) {
+        addPageComponent(view: PageComponentView<PageComponent>) {
             this.pageComponentViews.push(view);
         }
 
-        getPageComponents(): PageComponentView[] {
+        getPageComponents(): PageComponentView<PageComponent>[] {
             return this.pageComponentViews;
         }
 

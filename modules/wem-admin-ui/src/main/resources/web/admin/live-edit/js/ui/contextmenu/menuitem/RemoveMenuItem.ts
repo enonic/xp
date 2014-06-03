@@ -1,6 +1,7 @@
 module LiveEdit.ui.contextmenu.menuitem {
 
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
+    import PageComponent = api.content.page.PageComponent;
     import PageComponentView = api.liveedit.PageComponentView;
 
     export class RemoveMenuItem extends LiveEdit.ui.contextmenu.menuitem.BaseMenuItem {
@@ -24,7 +25,7 @@ module LiveEdit.ui.contextmenu.menuitem {
             var selectedItem = this.menu.selectedComponent;
             if (api.ObjectHelper.iFrameSafeInstanceOf(selectedItem, PageComponentView)) {
 
-                var selectedPageComponent = <PageComponentView> selectedItem;
+                var selectedPageComponent = <PageComponentView<PageComponent>> selectedItem;
                 selectedPageComponent.getElement().remove();
                 new PageComponentRemoveEvent(selectedPageComponent.getComponentPath()).fire();
             }

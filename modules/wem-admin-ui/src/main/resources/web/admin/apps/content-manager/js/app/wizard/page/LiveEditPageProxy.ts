@@ -5,12 +5,14 @@ module app.wizard.page {
     import ContentId = api.content.ContentId;
     import Descriptor = api.content.page.Descriptor;
     import RegionPath = api.content.page.RegionPath;
+    import PageComponent = api.content.page.PageComponent;
     import PageComponentType = api.content.page.PageComponentType;
     import ComponentPath = api.content.page.ComponentPath;
     import UploadDialog = api.content.inputtype.image.UploadDialog;
     import RenderingMode = api.rendering.RenderingMode;
 
     import ItemView = api.liveedit.ItemView;
+    import PageComponentView = api.liveedit.PageComponentView;
     import PageViewItemsParsedEvent = api.liveedit.PageViewItemsParsedEvent;
     import NewPageComponentIdMapEvent = api.liveedit.NewPageComponentIdMapEvent;
     import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
@@ -229,7 +231,7 @@ module app.wizard.page {
             });
         }
 
-        public getComponentByPath(path: api.content.page.ComponentPath): ItemView {
+        public getComponentByPath(path: api.content.page.ComponentPath): PageComponentView<PageComponent> {
 
             return this.liveEditWindow.getComponentByPath(path);
         }

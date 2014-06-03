@@ -6,6 +6,8 @@ interface ToolTipPosition {
 module LiveEdit.ui {
 
     import ItemView = api.liveedit.ItemView;
+    import PageComponentView = api.liveedit.PageComponentView;
+    import PageComponent = api.content.page.PageComponent;
     import PageComponentSelectComponentEvent = api.liveedit.PageComponentSelectComponentEvent;
 
     var domHelper = LiveEdit.DomHelper;
@@ -38,8 +40,16 @@ module LiveEdit.ui {
         private setText(itemView: ItemView): void {
             var tooltip: JQuery = this.getEl();
 
-            tooltip.children('.live-edit-tool-tip-type-text').text(itemView.getType().getShortName());
-            tooltip.children('.live-edit-tool-tip-name-text').text(itemView.getName());
+            if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, PageComponentView)) {
+                var pageComponentView = <PageComponentView<PageComponent>>itemView;
+                var pageComponent = pageComponentView.getPageComponent();
+                tooltip.children('.live-edit-tool-tip-type-text').text(itemView.getType().getShortName());
+                tooltip.children('.live-edit-tool-tip-name-text').text(pageComponent.getPath().toString());
+            }
+            else {
+                tooltip.children('.live-edit-tool-tip-type-text').text(itemView.getType().getShortName());
+                tooltip.children('.live-edit-tool-tip-name-text').text(itemView.getName());
+            }
         }
 
         private attachEventListeners(): void {

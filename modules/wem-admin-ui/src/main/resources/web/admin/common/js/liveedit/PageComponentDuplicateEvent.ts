@@ -4,20 +4,21 @@ module api.liveedit {
     import RegionPath = api.content.page.RegionPath;
     import ComponentPath = api.content.page.ComponentPath;
     import PageComponentType = api.content.page.PageComponentType;
+    import PageComponent = api.content.page.PageComponent;
 
     export class PageComponentDuplicateEvent extends Event2 {
 
-        private originItemView: PageComponentView;
+        private originItemView: PageComponentView<PageComponent>;
 
-        private duplicationItemView: PageComponentView;
+        private duplicationItemView: PageComponentView<PageComponent>;
 
-        constructor(originItemView: PageComponentView, duplicationItemView: PageComponentView) {
+        constructor(originItemView: PageComponentView<PageComponent>, duplicationItemView: PageComponentView<PageComponent>) {
             super();
             this.originItemView = originItemView;
             this.duplicationItemView = duplicationItemView;
         }
 
-        getItemView(): PageComponentView {
+        getItemView(): PageComponentView<PageComponent> {
             return this.duplicationItemView;
         }
 

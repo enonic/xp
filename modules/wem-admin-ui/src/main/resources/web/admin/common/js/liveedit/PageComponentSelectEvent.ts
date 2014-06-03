@@ -2,14 +2,15 @@ module api.liveedit {
 
     import ComponentPath = api.content.page.ComponentPath;
     import PageComponentView = api.liveedit.PageComponentView;
+    import PageComponent = api.content.page.PageComponent;
 
     export class PageComponentSelectEvent extends api.event.Event2 {
 
         private path: ComponentPath;
 
-        private pageItemView: PageComponentView;
+        private pageItemView: PageComponentView<PageComponent>;
 
-        constructor(path: ComponentPath, itemView: PageComponentView) {
+        constructor(path: ComponentPath, itemView: PageComponentView<PageComponent>) {
             super();
             this.path = path;
             this.pageItemView = itemView;
@@ -19,7 +20,7 @@ module api.liveedit {
             return this.path;
         }
 
-        getItemView(): PageComponentView {
+        getItemView(): PageComponentView<PageComponent> {
             return this.pageItemView;
         }
 

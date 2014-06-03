@@ -4,16 +4,20 @@ module api.liveedit {
     import PageComponent = api.content.page.PageComponent;
     import ComponentPath = api.content.page.ComponentPath;
 
-    export class PageComponentView extends ItemView {
+    export class PageComponentView<PAGE_COMPONENT extends PageComponent> extends ItemView {
 
-        private data: PageComponent;
+        private pageComponent: PAGE_COMPONENT;
 
         constructor(type: ItemType, element?: HTMLElement, dummy?: boolean) {
             super(type, element, dummy);
         }
 
-        setData(data: PageComponent) {
-            this.data = data;
+        setPageComponent(data: PAGE_COMPONENT) {
+            this.pageComponent = data;
+        }
+
+        getPageComponent(): PAGE_COMPONENT {
+            return this.pageComponent;
         }
 
         setComponentPath(path: ComponentPath) {
@@ -69,7 +73,7 @@ module api.liveedit {
             this.addClass("live-edit-empty-component");
         }
 
-        duplicate(): PageComponentView {
+        duplicate(): PageComponentView<PAGE_COMPONENT> {
             throw new Error("Must be implemented by inheritors");
         }
 

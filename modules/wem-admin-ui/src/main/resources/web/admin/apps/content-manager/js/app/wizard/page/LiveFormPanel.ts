@@ -55,6 +55,8 @@ module app.wizard.page {
 
     import ItemView = api.liveedit.ItemView;
     import RegionView = api.liveedit.RegionView;
+    import PageComponentView = api.liveedit.PageComponentView;
+    import ImageView = api.liveedit.image.ImageView;
     import PageViewItemsParsedEvent = api.liveedit.PageViewItemsParsedEvent;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import SortableStopEvent = api.liveedit.SortableStopEvent;
@@ -145,14 +147,13 @@ module app.wizard.page {
 
             this.imageInspectionPanel.onImageDescriptorChanged((event: ImageDescriptorChangedEvent) => {
 
-                var uiComponent = this.liveEditPage.getComponentByPath(event.getComponentPath());
+                var imageView:ImageView = <ImageView>this.liveEditPage.getComponentByPath(event.getComponentPath());
                 var command = new PageComponentSetDescriptorCommand().
-                    setItemView(uiComponent).
+                    setPageComponentView(imageView).
                     setPageRegions(this.pageRegions).
-                    setComponentPath(event.getComponentPath()).
                     setDescriptor(event.getDescriptor());
                 var newComponentPath = command.execute();
-                this.saveAndReloadOnlyPageComponent(newComponentPath, uiComponent);
+                this.saveAndReloadOnlyPageComponent(newComponentPath, imageView);
             });
 
             this.partInspectionPanel = new PartInspectionPanel(<PartInspectionPanelConfig>{
@@ -165,14 +166,13 @@ module app.wizard.page {
 
             this.layoutInspectionPanel.onLayoutDescriptorChanged((event: LayoutDescriptorChangedEvent) => {
 
-                var uiComponent = this.liveEditPage.getComponentByPath(event.getComponentPath());
+                var pageComponentView = <PageComponentView<DescriptorBasedPageComponent>>this.liveEditPage.getComponentByPath(event.getComponentPath());
                 var command = new PageComponentSetDescriptorCommand().
-                    setItemView(uiComponent).
+                    setPageComponentView(pageComponentView).
                     setPageRegions(this.pageRegions).
-                    setComponentPath(event.getComponentPath()).
                     setDescriptor(event.getDescriptor());
                 var newComponentPath = command.execute();
-                this.saveAndReloadOnlyPageComponent(newComponentPath, uiComponent);
+                this.saveAndReloadOnlyPageComponent(newComponentPath, pageComponentView);
             });
 
             this.inspectionPanel = new InspectionPanel(<InspectionPanelConfig>{
@@ -396,21 +396,21 @@ module app.wizard.page {
                 done();
         }
 
-        private saveAndReloadOnlyPageComponent(componentPath: ComponentPath, itemView: ItemView) {
+        private saveAndReloadOnlyPageComponent(componentPath: ComponentPath, pageComponentView: PageComponentView<PageComponent>) {
 
             if (!componentPath) {
                 console.log("adsfasf");
             }
             api.util.assertNotNull(componentPath, "componentPath cannot be null");
-            api.util.assertNotNull(itemView, "componentPath cannot be null");
+            api.util.assertNotNull(pageComponentView, "componentPath cannot be null");
 
             this.pageSkipReload = true;
             this.contentWizardPanel.saveChanges().
                 then(() => {
                     this.pageSkipReload = false;
-                    (<any>itemView).showLoadingSpinner();
+                    pageComponentView.showLoadingSpinner();
 
-                    this.liveEditPage.loadComponent(componentPath, itemView, this.content);
+                    this.liveEditPage.loadComponent(componentPath, pageComponentView, this.content);
                 }).
                 catch((reason: any) => api.notify.showError(reason.toString())).
                 done();
@@ -562,9 +562,8 @@ module app.wizard.page {
                 var command = new ImageComponentSetImageCommand().
                     setDefaultModels(this.defaultModels).
                     setPageRegions(this.pageRegions).
-                    setComponentPath(event.getComponentPath()).
                     setImage(event.getImageId()).
-                    setComponentView(event.getComponentView()).
+                    setPageComponentView(event.getImageView()).
                     setImageName(event.getImageName());
 
                 Q(!this.pageTemplate ? this.initializePageFromDefault() : null).
@@ -579,9 +578,8 @@ module app.wizard.page {
             this.liveEditPage.onPageComponentSetDescriptor((event: PageComponentSetDescriptorEvent) => {
 
                 var command = new PageComponentSetDescriptorCommand().
-                    setItemView(event.getItemView()).
+                    setPageComponentView(event.getPageComponentView()).
                     setPageRegions(this.pageRegions).
-                    setComponentPath(event.getPath()).
                     setDescriptor(event.getDescriptor());
 
                 Q(!this.pageTemplate ? this.initializePageFromDefault() : null).

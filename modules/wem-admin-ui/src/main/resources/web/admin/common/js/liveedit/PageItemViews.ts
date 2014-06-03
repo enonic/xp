@@ -1,6 +1,7 @@
 module api.liveedit {
 
     import Content = api.content.Content;
+    import PageComponent = api.content.page.PageComponent;
 
     export class PageItemViews {
 
@@ -32,8 +33,8 @@ module api.liveedit {
 
         initializeEmpties() {
             this.views.forEach((view: ItemView) => {
-                if (api.ObjectHelper.iFrameSafeInstanceOf(view, api.liveedit.PageComponentView)) {
-                    var pageComponentView = <PageComponentView>view;
+                if (api.ObjectHelper.iFrameSafeInstanceOf(view, PageComponentView)) {
+                    var pageComponentView = <PageComponentView<PageComponent>>view;
                     if (pageComponentView.isEmpty()) {
                         pageComponentView.empty();
                     }
@@ -65,14 +66,14 @@ module api.liveedit {
             return null;
         }
 
-        getPageComponentViewByElement(element: HTMLElement): PageComponentView {
+        getPageComponentViewByElement(element: HTMLElement): PageComponentView<PageComponent> {
             api.util.assertNotNull(element, "element cannot be null");
 
             var itemId = ItemView.parseItemId(element);
             console.log("PageItemViews.getPageComponentViewByElement itemId: " + itemId);
             var view = this.getByItemId(itemId);
             if (api.ObjectHelper.iFrameSafeInstanceOf(view, PageComponentView)) {
-                return <PageComponentView>view;
+                return <PageComponentView<PageComponent>>view;
             }
             return null;
         }

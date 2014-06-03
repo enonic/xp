@@ -2,16 +2,17 @@ module api.liveedit {
 
     import Event2 = api.event.Event2;
     import ComponentPath = api.content.page.ComponentPath;
+    import PageComponent = api.content.page.PageComponent;
 
     export class SortableStopEvent extends Event2 {
 
-        private pageComponentView: PageComponentView;
+        private pageComponentView: PageComponentView<PageComponent>;
 
         private componentPath: ComponentPath;
 
         private empty: boolean;
 
-        constructor(pageComponentView: PageComponentView) {
+        constructor(pageComponentView: PageComponentView<PageComponent>) {
             super();
             this.pageComponentView = pageComponentView;
             this.componentPath = pageComponentView ? pageComponentView.getComponentPath() : null;
@@ -26,7 +27,7 @@ module api.liveedit {
             return this.empty;
         }
 
-        getItemView(): PageComponentView {
+        getItemView(): PageComponentView<PageComponent> {
             return this.pageComponentView;
         }
 

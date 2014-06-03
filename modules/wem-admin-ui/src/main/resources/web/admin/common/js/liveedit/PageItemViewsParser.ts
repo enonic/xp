@@ -4,6 +4,7 @@ module api.liveedit {
     import PageComponentType = api.content.page.PageComponentType;
     import ComponentPath2 = api.content.page.ComponentPath2;
     import RegionPath2 = api.content.page.RegionPath2;
+    import PageComponent = api.content.page.PageComponent;
 
     export class PageItemViewsParser {
 
@@ -55,7 +56,7 @@ module api.liveedit {
                         "Expected item beneath a Region to be a PageComponent: " + itemType.getShortName());
 
 
-                var pageComponentView = <PageComponentView>itemType.createView(element.getHTMLElement());
+                var pageComponentView = <PageComponentView<PageComponent>>itemType.createView(element.getHTMLElement());
                 this.itemViews.push(pageComponentView);
                 regionView.addPageComponent(pageComponentView);
 

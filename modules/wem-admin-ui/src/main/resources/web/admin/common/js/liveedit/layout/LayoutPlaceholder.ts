@@ -20,9 +20,8 @@ module api.liveedit.layout {
             this.appendChild(this.comboBox);
 
             this.comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.page.layout.LayoutDescriptor>) => {
-                var componentPath = layoutView.getComponentPath();
                 var descriptor: api.content.page.Descriptor = event.getOption().displayValue;
-                new PageComponentSetDescriptorEvent(componentPath, descriptor, layoutView).fire();
+                new PageComponentSetDescriptorEvent(descriptor, layoutView).fire();
             });
         }
 

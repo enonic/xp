@@ -20,7 +20,7 @@ module app.wizard.page {
 
         private pageRegions: PageRegions;
 
-        private componentView: api.liveedit.PageComponentView;
+        private componentView: api.liveedit.PageComponentView<PageComponent>;
 
         setPageRegions(value: PageRegions): PageComponentAddedCommand {
             this.pageRegions = value;
@@ -42,7 +42,7 @@ module app.wizard.page {
             return this;
         }
 
-        setComponentView(value: api.liveedit.PageComponentView): PageComponentAddedCommand {
+        setComponentView(value: api.liveedit.PageComponentView<PageComponent>): PageComponentAddedCommand {
             this.componentView = value;
             return this;
         }
@@ -59,7 +59,7 @@ module app.wizard.page {
                 this.componentView.getEl().setData("live-edit-component", pageComponent.getPath().toString());
             }
             this.componentView.getEl().setData("live-edit-type", this.type.getShortName());
-            this.componentView.setData(pageComponent);
+            this.componentView.setPageComponent(pageComponent);
             return pageComponent;
         }
 

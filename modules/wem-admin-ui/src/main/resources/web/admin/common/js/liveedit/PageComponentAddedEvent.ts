@@ -4,10 +4,11 @@ module api.liveedit {
     import ComponentPath = api.content.page.ComponentPath;
     import PageComponentType = api.content.page.PageComponentType;
     import RegionPath = api.content.page.RegionPath;
+    import PageComponent = api.content.page.PageComponent;
 
     export class PageComponentAddedEvent extends Event2 {
 
-        private pageComponentView: PageComponentView;
+        private pageComponentView: PageComponentView<PageComponent>;
 
         private type: PageComponentType;
 
@@ -15,7 +16,7 @@ module api.liveedit {
 
         private precedingComponent: ComponentPath;
 
-        setPageComponentView(pageComponentView: PageComponentView): PageComponentAddedEvent {
+        setPageComponentView(pageComponentView: PageComponentView<PageComponent>): PageComponentAddedEvent {
             this.pageComponentView = pageComponentView;
             this.type = pageComponentView.getType().toPageComponentType();
             return this;
@@ -31,7 +32,7 @@ module api.liveedit {
             return this;
         }
 
-        getPageComponentView(): PageComponentView {
+        getPageComponentView(): PageComponentView<PageComponent> {
             return this.pageComponentView;
         }
 

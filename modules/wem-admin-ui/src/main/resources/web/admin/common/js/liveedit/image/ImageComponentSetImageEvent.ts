@@ -8,9 +8,7 @@ module api.liveedit.image {
 
         private id: ContentId;
 
-        private path: ComponentPath;
-
-        private componentView: any;
+        private imageView: ImageView;
 
         private imageName: string;
 
@@ -21,13 +19,8 @@ module api.liveedit.image {
             return this;
         }
 
-        setComponentPath(path: ComponentPath): ImageComponentSetImageEvent {
-            this.path = path;
-            return this;
-        }
-
-        setComponentView(placeholder: any): ImageComponentSetImageEvent {
-            this.componentView = placeholder;
+        setImageView(value: ImageView): ImageComponentSetImageEvent {
+            this.imageView = value;
             return this;
         }
 
@@ -45,12 +38,8 @@ module api.liveedit.image {
             return this.id;
         }
 
-        getComponentPath(): ComponentPath {
-            return this.path;
-        }
-
-        getComponentView(): any {
-            return this.componentView;
+        getImageView(): ImageView {
+            return this.imageView;
         }
 
         getImageName(): string {

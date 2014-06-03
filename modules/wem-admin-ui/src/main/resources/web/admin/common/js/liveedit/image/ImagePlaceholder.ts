@@ -49,8 +49,7 @@ module api.liveedit.image {
 
                 new ImageComponentSetImageEvent().
                     setImageId(event.getOption().displayValue.getContentId()).
-                    setComponentPath(imageView.getComponentPath()).
-                    setComponentView(imageView).
+                    setImageView(imageView).
                     setName(event.getOption().displayValue.getDisplayName()).
                     fire();
 
@@ -96,8 +95,7 @@ module api.liveedit.image {
 
                     new ImageComponentSetImageEvent().
                         setImageId(createdContent.getContentId()).
-                        setComponentPath(this.imageView.getComponentPath()).
-                        setComponentView(this.imageView).
+                        setImageView(this.imageView).
                         setName(uploadItem.getName()).
                         fire();
 
