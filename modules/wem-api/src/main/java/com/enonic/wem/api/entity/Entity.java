@@ -244,9 +244,12 @@ public class Entity
 
         public Builder( final Entity entity )
         {
+            this.id = entity.id;
             this.createdTime = entity.createdTime;
             this.modifiedTime = entity.modifiedTime;
             this.data = entity.data;
+            this.entityIndexConfig = entity.entityIndexConfig;
+            this.attachments = entity.attachments;
         }
 
         public Builder( final EntityId id )
