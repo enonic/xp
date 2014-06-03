@@ -37,9 +37,9 @@ module api.ui {
                 maskEl = this.getEl(),
                 maskedOffset: {top:number; left: number},
                 isMaskedPositioned = maskedEl.getPosition() != 'static',
-                maskedDimensions: {width: number; height: number} = {
-                    width: maskedEl.getWidthWithBorder(),
-                    height: maskedEl.getHeightWithBorder()
+                maskedDimensions: {width: string; height: string} = {
+                    width: maskedEl.getWidthWithBorder() + "px",
+                    height: maskedEl.getHeightWithBorder() + "px"
                 };
 
             if (masked.contains(this) && isMaskedPositioned) {
@@ -48,6 +48,13 @@ module api.ui {
                     top: 0,
                     left: 0
                 };
+
+                if (maskedEl.getPosition() == 'absolute') {
+                    maskedDimensions = {
+                        width: '100%',
+                        height: '100%'
+                    };
+                }
             } else {
                 // mask is outside masked element
                 var maskedParent = maskedEl.getOffsetParent(),
@@ -72,10 +79,10 @@ module api.ui {
             }
 
             this.getEl().
-                setTop(maskedOffset.top + "px").
-                setLeft(maskedOffset.left + "px").
-                setWidth(maskedDimensions.width + "px").
-                setHeight(maskedDimensions.height + "px");
+                setTopPx(maskedOffset.top).
+                setLeftPx(maskedOffset.left).
+                setWidth(maskedDimensions.width).
+                setHeight(maskedDimensions.height);
         }
 
         getMasked(): api.dom.Element {

@@ -65,6 +65,7 @@ module app.browse.filter {
             var displayNameMap: string[] = [];
 
             var mask: api.ui.LoadMask = new api.ui.LoadMask(this);
+            this.appendChild(mask);
             aggregationGroupView.onRendered((event: api.dom.ElementRenderedEvent) => {
                 mask.show();
             });
@@ -81,7 +82,7 @@ module app.browse.filter {
                         aggregationView.setDisplayNamesMap(displayNameMap);
                     }
                 });
-                mask.hide();
+                mask.remove();
             });
         }
 
