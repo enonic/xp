@@ -271,12 +271,23 @@ module api.dom {
             this.insert(this, parent, index);
         }
 
+        insertAfterThisEl(existingEl: Element) {
+
+            api.util.assertNotNull(existingEl, 'Existing element cannot be null');
+            this.el.insertAfterThisEl(existingEl.getEl());
+        }
+
         insertBeforeEl(existingEl: Element) {
             api.util.assertNotNull(existingEl, 'Existing element cannot be null');
             this.el.insertBeforeEl(existingEl.getEl());
             var parent = existingEl.getParentElement();
             var index = parent.getChildren().indexOf(existingEl);
             this.insert(this, parent, index);
+        }
+
+        replaceWith(other: Element) {
+            this.insertAfterThisEl(other);
+            this.remove();
         }
 
         wrapWithElement(wrapperElement: Element) {
@@ -654,6 +665,14 @@ module api.dom {
             return new Element(new ElementProperties().
                 setHelper(new ElementHelper(element)).
                 setLoadExistingChildren(loadExistingChildren));
+        }
+
+        static fromString(s: string): Element {
+            var elementAsJQ = wemjq(s);
+            var elementASHtmlElement = elementAsJQ.get(0);
+            return new Element(new ElementProperties().
+                setHelper(new ElementHelper(elementASHtmlElement)).
+                setLoadExistingChildren(true));
         }
     }
 }

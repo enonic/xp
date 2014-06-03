@@ -147,13 +147,13 @@ module app.wizard.page {
 
             this.imageInspectionPanel.onImageDescriptorChanged((event: ImageDescriptorChangedEvent) => {
 
-                var imageView:ImageView = <ImageView>this.liveEditPage.getComponentByPath(event.getComponentPath());
+                var imageView: ImageView = <ImageView>this.liveEditPage.getComponentByPath(event.getComponentPath());
                 var command = new PageComponentSetDescriptorCommand().
                     setPageComponentView(imageView).
                     setPageRegions(this.pageRegions).
                     setDescriptor(event.getDescriptor());
-                var newComponentPath = command.execute();
-                this.saveAndReloadOnlyPageComponent(newComponentPath, imageView);
+                command.execute();
+                this.saveAndReloadOnlyPageComponent(imageView);
             });
 
             this.partInspectionPanel = new PartInspectionPanel(<PartInspectionPanelConfig>{
@@ -171,8 +171,8 @@ module app.wizard.page {
                     setPageComponentView(pageComponentView).
                     setPageRegions(this.pageRegions).
                     setDescriptor(event.getDescriptor());
-                var newComponentPath = command.execute();
-                this.saveAndReloadOnlyPageComponent(newComponentPath, pageComponentView);
+                command.execute();
+                this.saveAndReloadOnlyPageComponent(pageComponentView);
             });
 
             this.inspectionPanel = new InspectionPanel(<InspectionPanelConfig>{
@@ -396,12 +396,8 @@ module app.wizard.page {
                 done();
         }
 
-        private saveAndReloadOnlyPageComponent(componentPath: ComponentPath, pageComponentView: PageComponentView<PageComponent>) {
+        private saveAndReloadOnlyPageComponent(pageComponentView: PageComponentView<PageComponent>) {
 
-            if (!componentPath) {
-                console.log("adsfasf");
-            }
-            api.util.assertNotNull(componentPath, "componentPath cannot be null");
             api.util.assertNotNull(pageComponentView, "componentPath cannot be null");
 
             this.pageSkipReload = true;
@@ -410,7 +406,7 @@ module app.wizard.page {
                     this.pageSkipReload = false;
                     pageComponentView.showLoadingSpinner();
 
-                    this.liveEditPage.loadComponent(componentPath, pageComponentView, this.content);
+                    this.liveEditPage.loadComponent(pageComponentView, this.content);
                 }).
                 catch((reason: any) => api.notify.showError(reason.toString())).
                 done();
@@ -526,7 +522,7 @@ module app.wizard.page {
                         this.liveEditPage.selectComponent(event.getComponentPath());
                     }
                 }
-                else if(!event.isEmpty()) {
+                else if (!event.isEmpty()) {
                     this.contextWindow.show();
                 }
             });
@@ -568,8 +564,8 @@ module app.wizard.page {
 
                 Q(!this.pageTemplate ? this.initializePageFromDefault() : null).
                     then(() => {
-                        var newComponentPath = command.execute();
-                        this.saveAndReloadOnlyPageComponent(newComponentPath, event.getImageView());
+                        command.execute();
+                        this.saveAndReloadOnlyPageComponent(event.getImageView());
                     }).
                     catch((reason) => api.notify.showError(reason.toString())).
                     done();
@@ -584,10 +580,8 @@ module app.wizard.page {
 
                 Q(!this.pageTemplate ? this.initializePageFromDefault() : null).
                     then(() => {
-                        var newComponentPath = command.execute();
-                        if (newComponentPath) {
-                            this.saveAndReloadOnlyPageComponent(newComponentPath, event.getPageComponentView());
-                        }
+                        command.execute();
+                        this.saveAndReloadOnlyPageComponent(event.getPageComponentView());
                     }).
                     catch((reason) => api.notify.showError(reason.toString())).
                     done();
@@ -595,12 +589,12 @@ module app.wizard.page {
 
             this.liveEditPage.onPageComponentDuplicated((event: PageComponentDuplicateEvent) => {
 
-                var newPageComponent = new PageComponentDuplicateCommand().
+                new PageComponentDuplicateCommand().
                     setPageRegions(this.pageRegions).
                     setPathToSource(event.getPath()).
                     execute();
 
-                this.saveAndReloadOnlyPageComponent(newPageComponent.getPath(), event.getItemView());
+                this.saveAndReloadOnlyPageComponent(event.getItemView());
             });
 
             this.liveEditPage.onRegionEmpty((event: RegionEmptyEvent) => {

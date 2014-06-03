@@ -11,7 +11,6 @@ module app.wizard.page {
     import UploadDialog = api.content.inputtype.image.UploadDialog;
     import RenderingMode = api.rendering.RenderingMode;
 
-    import ItemView = api.liveedit.ItemView;
     import PageComponentView = api.liveedit.PageComponentView;
     import PageViewItemsParsedEvent = api.liveedit.PageViewItemsParsedEvent;
     import NewPageComponentIdMapEvent = api.liveedit.NewPageComponentIdMapEvent;
@@ -202,31 +201,29 @@ module app.wizard.page {
             this.iFrameLoadDeffered.resolve(null);
         }
 
-        public loadComponent(componentPath: ComponentPath, itemView: ItemView, content: api.content.Content) {
+        public loadComponent(pageComponentView: PageComponentView<PageComponent>, content: api.content.Content) {
 
-            api.util.assertNotNull(componentPath, "componentPath cannot be null");
-            api.util.assertNotNull(itemView, "itemView cannot be null");
+            api.util.assertNotNull(pageComponentView, "pageComponentView cannot be null");
             api.util.assertNotNull(content, "content cannot be null");
 
-            this.liveEditWindow.pageItemViews.removeItemViewById(itemView.getItemId());
+            this.liveEditWindow.pageItemViews.removeItemViewById(pageComponentView.getItemId());
 
             wemjq.ajax({
-                url: api.rendering.UriHelper.getComponentUri(content.getContentId().toString(), componentPath.toString(),
+                url: api.rendering.UriHelper.getComponentUri(content.getContentId().toString(),
+                    pageComponentView.getComponentPath().toString(),
                     RenderingMode.EDIT),
                 method: 'GET',
-                success: (data) => {
+                success: (htmlAsString: string) => {
 
-                    var newElement = wemjq(data);
-                    wemjq(itemView.getHTMLElement()).replaceWith(newElement);
-                    itemView.remove();
-                    var newItemView: ItemView = itemView.getType().createView(newElement.get(0));
+                    var newElement = api.dom.Element.fromString(htmlAsString);
+                    var newPageComponentView: PageComponentView<PageComponent> = pageComponentView.getType().createView(newElement.getHTMLElement());
+                    newPageComponentView.setPageComponent(pageComponentView.getPageComponent());
+                    pageComponentView.replaceWith(newPageComponentView);
 
-                    new PageComponentLoadedEvent(newItemView).fire(this.liveEditWindow);
+                    new PageComponentLoadedEvent(newPageComponentView).fire(this.liveEditWindow);
 
                     this.liveEditWindow.LiveEdit.PlaceholderCreator.renderEmptyRegionPlaceholders();
-
-                    this.liveEditWindow.LiveEdit.component.Selection.handleSelect(newItemView, null, true);
-
+                    this.liveEditWindow.LiveEdit.component.Selection.handleSelect(newPageComponentView, null, true);
                 }
             });
         }

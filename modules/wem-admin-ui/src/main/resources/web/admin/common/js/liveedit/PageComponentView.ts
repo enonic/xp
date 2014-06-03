@@ -12,6 +12,10 @@ module api.liveedit {
             super(type, element, dummy);
         }
 
+        getType(): PageComponentItemType {
+            return <PageComponentItemType>super.getType();
+        }
+
         setPageComponent(data: PAGE_COMPONENT) {
             this.pageComponent = data;
         }
