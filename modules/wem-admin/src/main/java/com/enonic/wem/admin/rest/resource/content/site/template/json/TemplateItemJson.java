@@ -1,6 +1,7 @@
 package com.enonic.wem.admin.rest.resource.content.site.template.json;
 
 import com.enonic.wem.admin.json.ItemJson;
+import com.enonic.wem.admin.rest.resource.content.site.template.SiteTemplateIconUrlResolver;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.SiteTemplate;
 
@@ -23,6 +24,8 @@ public final class TemplateItemJson
 
     private final boolean isSiteTemplate;
 
+    private final String iconUrl;
+
     public TemplateItemJson( final SiteTemplate siteTemplate )
     {
         this.editable = true;
@@ -32,6 +35,7 @@ public final class TemplateItemJson
         this.key = siteTemplate.getKey().toString();
         this.hasChildren = siteTemplate.getPageTemplates().isNotEmpty();
         this.isSiteTemplate = true;
+        this.iconUrl = SiteTemplateIconUrlResolver.resolve( siteTemplate );
     }
 
     public TemplateItemJson( final PageTemplate pageTemplate )
@@ -43,6 +47,7 @@ public final class TemplateItemJson
         this.key = pageTemplate.getKey().toString();
         this.hasChildren = false;
         this.isSiteTemplate = false;
+        this.iconUrl = "";
     }
 
     public String getKey()
@@ -68,6 +73,11 @@ public final class TemplateItemJson
     public String getTemplateType()
     {
         return this.isSiteTemplate ? "SITE" : "PAGE";
+    }
+
+    public String getIconUrl()
+    {
+        return iconUrl;
     }
 
     @Override

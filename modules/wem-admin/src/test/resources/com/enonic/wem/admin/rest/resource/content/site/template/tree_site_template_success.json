@@ -5,6 +5,7 @@
             "displayName": "displayName",
             "editable": true,
             "hasChildren": false,
+            "iconUrl" : "http://localhost/admin/rest/sitetemplate/image/name-1.0.0",
             "key": "name-1.0.0",
             "name": "name",
             "templateType": "SITE"

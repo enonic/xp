@@ -19,6 +19,8 @@ module app.browse {
 
         private siteTemplateKey: api.content.site.template.SiteTemplateKey;
 
+        private iconUrl: string;
+
         constructor(builder: TemplateSummaryBuilder) {
             super(builder);
             this.name = builder.name;
@@ -26,6 +28,7 @@ module app.browse {
             this.key = builder.key;
             this.type = builder.type;
             this.siteTemplateKey = builder.siteTemplateKey;
+            this.iconUrl = builder.iconUrl;
         }
 
         getKey(): string {
@@ -50,6 +53,10 @@ module app.browse {
 
         isSiteTemplate(): boolean {
             return this.type === TemplateType.SITE;
+        }
+
+        getIconUrl(): string {
+            return this.iconUrl;
         }
 
         static fromJson(json: api.content.site.template.TemplateSummaryJson): TemplateSummary {
@@ -81,6 +88,8 @@ module app.browse {
 
         siteTemplateKey: api.content.site.template.SiteTemplateKey;
 
+        iconUrl: string;
+
         fromTemplateSummaryJson(json: api.content.site.template.TemplateSummaryJson): TemplateSummaryBuilder {
             super.fromBaseItemJson(json, "key");
             this.name = json.name;
@@ -90,6 +99,7 @@ module app.browse {
             if (this.type === TemplateType.SITE) {
                 this.siteTemplateKey = api.content.site.template.SiteTemplateKey.fromString(this.key);
             }
+            this.iconUrl = json.iconUrl;
             return this;
         }
 

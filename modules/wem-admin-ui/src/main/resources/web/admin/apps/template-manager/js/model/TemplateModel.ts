@@ -7,6 +7,7 @@ Ext.define('Admin.model.templateManager.TemplateModel', {
         'name',
         'templateType',
         'contentFilter',
+        'iconUrl',
         'deletable',
         'editable',
         { name: 'hasChildren', type: 'boolean', defaultValue: false },
