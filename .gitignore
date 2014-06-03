@@ -11,3 +11,4 @@ target/
 .idea
 .sass-cache
 npm-debug.log
+.tscache
