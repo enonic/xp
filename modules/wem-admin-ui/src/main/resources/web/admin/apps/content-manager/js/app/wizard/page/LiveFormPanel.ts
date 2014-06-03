@@ -569,7 +569,7 @@ module app.wizard.page {
                 Q(!this.pageTemplate ? this.initializePageFromDefault() : null).
                     then(() => {
                         var newComponentPath = command.execute();
-                        this.saveAndReloadOnlyPageComponent(newComponentPath, event.getComponentView());
+                        this.saveAndReloadOnlyPageComponent(newComponentPath, event.getImageView());
                     }).
                     catch((reason) => api.notify.showError(reason.toString())).
                     done();
@@ -586,7 +586,7 @@ module app.wizard.page {
                     then(() => {
                         var newComponentPath = command.execute();
                         if (newComponentPath) {
-                            this.saveAndReloadOnlyPageComponent(newComponentPath, event.getItemView());
+                            this.saveAndReloadOnlyPageComponent(newComponentPath, event.getPageComponentView());
                         }
                     }).
                     catch((reason) => api.notify.showError(reason.toString())).
