@@ -20,7 +20,7 @@ public class IndexDocument
 
     private final ImmutableSet<AbstractIndexDocumentItem> indexDocumentItems;
 
-    private boolean refreshOnStore = false;
+    private final boolean refreshOnStore;
 
     private final String analyzer;
 
@@ -34,6 +34,7 @@ public class IndexDocument
         this.indexDocumentItems = ImmutableSet.copyOf( builder.indexDocumentEntries );
         this.analyzer = builder.analyzer;
         this.collection = builder.collection;
+        this.refreshOnStore = builder.refreshOnStore;
     }
 
     public static Builder newIndexDocument()
@@ -88,6 +89,8 @@ public class IndexDocument
 
         private String collection;
 
+        private boolean refreshOnStore = true;
+
         private Set<AbstractIndexDocumentItem> indexDocumentEntries;
 
         public Builder()
@@ -98,6 +101,12 @@ public class IndexDocument
         public Builder id( final EntityId id )
         {
             this.id = id;
+            return this;
+        }
+
+        public Builder refreshOnStore( final boolean refreshOnStore )
+        {
+            this.refreshOnStore = refreshOnStore;
             return this;
         }
 

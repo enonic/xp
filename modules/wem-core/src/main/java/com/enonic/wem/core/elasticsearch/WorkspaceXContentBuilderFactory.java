@@ -3,6 +3,7 @@ package com.enonic.wem.core.elasticsearch;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 
 import com.enonic.wem.core.index.IndexException;
+import com.enonic.wem.core.workspace.UpdateWorkspaceReferenceDocument;
 import com.enonic.wem.core.workspace.WorkspaceDocument;
 
 class WorkspaceXContentBuilderFactory
@@ -25,10 +26,28 @@ class WorkspaceXContentBuilderFactory
             final XContentBuilder builder = startBuilder();
 
             addField( builder, BLOBKEY_FIELD_NAME, workspaceDocument.getBlobKey().toString() );
-            addField( builder, WORKSPACE_FIELD_NAME, workspaceDocument.getWorkspaceName() );
-            addField( builder, ENTITY_ID_FIELD_NAME, workspaceDocument.getEntityId() );
+            addField( builder, WORKSPACE_FIELD_NAME, workspaceDocument.getWorkspace().toString() );
+            addField( builder, ENTITY_ID_FIELD_NAME, workspaceDocument.getEntityId().toString() );
             addField( builder, PATH_FIELD_NAME, workspaceDocument.getPath() );
             addField( builder, PARENT_PATH_FIELD_NAME, workspaceDocument.getParentPath() );
+
+            endBuilder( builder );
+            return builder;
+        }
+        catch ( Exception e )
+        {
+            throw new IndexException( "Failed to build xContent for WorkspaceDocument", e );
+        }
+
+    }
+
+    static XContentBuilder create( final UpdateWorkspaceReferenceDocument updateWorkspaceReferenceDocument )
+    {
+        try
+        {
+            final XContentBuilder builder = startBuilder();
+
+            addField( builder, WORKSPACE_FIELD_NAME, updateWorkspaceReferenceDocument.workspaceNames() );
 
             endBuilder( builder );
             return builder;

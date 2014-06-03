@@ -23,7 +23,6 @@ import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.entity.json.NodeJsonSerializer;
 import com.enonic.wem.core.workspace.WorkspaceDocument;
-import com.enonic.wem.core.workspace.WorkspaceDocumentFactory;
 import com.enonic.wem.core.workspace.WorkspaceStore;
 import com.enonic.wem.core.workspace.query.WorkspaceDeleteQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
@@ -48,9 +47,11 @@ public class NodeDaoImpl
 
         final Blob blob = doStoreNodeAsBlob( newNode );
 
-        final BlobKey storedBlobKey = blob.getKey();
-
-        final WorkspaceDocument workspaceDocument = WorkspaceDocumentFactory.create( storedBlobKey, workspace, newNode );
+        final WorkspaceDocument workspaceDocument = WorkspaceDocument.create().
+            node( newNode ).
+            blobKey( blob.getKey() ).
+            workspace( workspace ).
+            build();
 
         workspaceStore.store( workspaceDocument );
 
@@ -186,7 +187,11 @@ public class NodeDaoImpl
 
         final Blob blob = doStoreNodeAsBlob( movedNode );
 
-        final WorkspaceDocument workspaceDocument = WorkspaceDocumentFactory.create( blob.getKey(), workspace, movedNode );
+        final WorkspaceDocument workspaceDocument = WorkspaceDocument.create().
+            node( movedNode ).
+            workspace( workspace ).
+            blobKey( blob.getKey() ).
+            build();
 
         workspaceStore.store( workspaceDocument );
 
@@ -215,7 +220,11 @@ public class NodeDaoImpl
 
         final Blob blob = doStoreNodeAsBlob( updatedNode );
 
-        final WorkspaceDocument workspaceDocument = WorkspaceDocumentFactory.create( blob.getKey(), workspace, updatedNode );
+        final WorkspaceDocument workspaceDocument = WorkspaceDocument.create().
+            node( updatedNode ).
+            blobKey( blob.getKey() ).
+            workspace( workspace ).
+            build();
 
         workspaceStore.store( workspaceDocument );
 

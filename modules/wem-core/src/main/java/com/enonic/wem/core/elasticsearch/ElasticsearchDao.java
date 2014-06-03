@@ -13,6 +13,7 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.update.UpdateRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.common.xcontent.XContentBuilder;
@@ -30,6 +31,17 @@ public class ElasticsearchDao
     private static final boolean DEFAULT_REFRESH = true;
 
     private Client client;
+
+    public void update( final IndexRequest indexRequest )
+    {
+        UpdateRequestBuilder updateRequestBuilder = new UpdateRequestBuilder( this.client ).
+            setIndex( indexRequest.index() ).
+            setType( indexRequest.type() ).
+            setId( indexRequest.id() ).
+            setDoc( indexRequest );
+
+        this.client.update( updateRequestBuilder.request() ).actionGet();
+    }
 
     public void store( final IndexRequest indexRequest )
     {

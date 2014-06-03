@@ -107,6 +107,13 @@ public class QueryMetaData
             return this;
         }
 
+        public Builder addFields( final Set<String> fields )
+        {
+            this.fields.addAll( fields );
+            return this;
+        }
+
+
         public QueryMetaData build()
         {
             return new QueryMetaData( this );

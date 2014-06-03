@@ -1,5 +1,6 @@
 package com.enonic.wem.core.elasticsearch;
 
+import java.util.List;
 import java.util.Set;
 
 import org.elasticsearch.action.search.SearchResponse;
@@ -31,11 +32,27 @@ public class SearchResponseAccessor
         return doGetFieldValue( searchHit, fieldName );
     }
 
+    public static List<Object> getMultipleValues( final SearchHit searchHit, final String fieldName )
+    {
+        return doGetMultipleValues( searchHit, fieldName );
+    }
+
+
     private static Object doGetFieldValue( final SearchHit searchHit, final String fieldName )
     {
         if ( searchHit.getFields().containsKey( fieldName ) )
         {
             return searchHit.getFields().get( fieldName ).getValue();
+        }
+
+        return null;
+    }
+
+    private static List<Object> doGetMultipleValues( final SearchHit searchHit, final String fieldName )
+    {
+        if ( searchHit.getFields().containsKey( fieldName ) )
+        {
+            return searchHit.getFields().get( fieldName ).getValues();
         }
 
         return null;

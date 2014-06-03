@@ -42,6 +42,12 @@ public class Workspace
     {
         return name.hashCode();
     }
+
+    @Override
+    public String toString()
+    {
+        return name;
+    }
 }
 
 

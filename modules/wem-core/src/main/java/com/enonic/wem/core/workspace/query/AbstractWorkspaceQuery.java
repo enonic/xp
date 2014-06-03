@@ -11,8 +11,8 @@ public abstract class AbstractWorkspaceQuery
         this.workspace = workspace;
     }
 
-    public String getWorkspaceName()
+    public Workspace getWorkspace()
     {
-        return workspace.getName();
+        return workspace;
     }
 }

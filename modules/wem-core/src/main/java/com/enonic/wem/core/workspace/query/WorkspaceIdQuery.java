@@ -14,9 +14,9 @@ public class WorkspaceIdQuery
         this.entityId = entityId;
     }
 
-    public String getEntityIdAsString()
+    public EntityId getEntityId()
     {
-        return entityId.toString();
+        return entityId;
     }
 
 }
