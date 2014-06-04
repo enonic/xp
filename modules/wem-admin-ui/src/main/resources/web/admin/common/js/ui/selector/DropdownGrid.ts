@@ -43,7 +43,8 @@ module api.ui.selector {
             this.rowSelectionListeners = [];
             this.multipleSelectionListeners = [];
             this.maxHeight = config.maxHeight || 200;
-            this.optionDisplayValueViewer = config.optionDisplayValueViewer || new DefaultOptionDisplayValueViewer();
+            this.optionDisplayValueViewer = config.optionDisplayValueViewer ?
+                new (<any>config.optionDisplayValueViewer['constructor'])() : new DefaultOptionDisplayValueViewer();
             this.filter = config.filter;
             this.dataIdProperty = config.dataIdProperty || "value";
             this.maxHeight = config.maxHeight;
