@@ -54,9 +54,13 @@ module app.wizard.page {
     import RenderingMode = api.rendering.RenderingMode;
 
     import ItemView = api.liveedit.ItemView;
+    import PageView = api.liveedit.PageView;
     import RegionView = api.liveedit.RegionView;
     import PageComponentView = api.liveedit.PageComponentView;
     import ImageView = api.liveedit.image.ImageView;
+    import PartView = api.liveedit.part.PartView;
+    import LayoutView = api.liveedit.layout.LayoutView;
+    import TextView = api.liveedit.text.TextView;
     import PageViewItemsParsedEvent = api.liveedit.PageViewItemsParsedEvent;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import SortableStopEvent = api.liveedit.SortableStopEvent;
@@ -147,7 +151,7 @@ module app.wizard.page {
 
             this.imageInspectionPanel.onImageDescriptorChanged((event: ImageDescriptorChangedEvent) => {
 
-                var imageView: ImageView = <ImageView>this.liveEditPage.getComponentByPath(event.getComponentPath());
+                var imageView: ImageView = event.getImageView();
                 var command = new PageComponentSetDescriptorCommand().
                     setPageComponentView(imageView).
                     setPageRegions(this.pageRegions).
@@ -166,13 +170,13 @@ module app.wizard.page {
 
             this.layoutInspectionPanel.onLayoutDescriptorChanged((event: LayoutDescriptorChangedEvent) => {
 
-                var pageComponentView = <PageComponentView<DescriptorBasedPageComponent>>this.liveEditPage.getComponentByPath(event.getComponentPath());
+                var layoutView = event.getLayoutView();
                 var command = new PageComponentSetDescriptorCommand().
-                    setPageComponentView(pageComponentView).
+                    setPageComponentView(layoutView).
                     setPageRegions(this.pageRegions).
                     setDescriptor(event.getDescriptor());
                 command.execute();
-                this.saveAndReloadOnlyPageComponent(pageComponentView);
+                this.saveAndReloadOnlyPageComponent(layoutView);
             });
 
             this.inspectionPanel = new InspectionPanel(<InspectionPanelConfig>{
@@ -455,7 +459,7 @@ module app.wizard.page {
 
             this.liveEditPage.onPageSelected((event: PageSelectEvent) => {
 
-                this.inspectPage();
+                this.inspectPage(event.getPageView());
             });
 
             this.liveEditPage.onRegionSelected((event: RegionSelectEvent) => {
@@ -465,13 +469,13 @@ module app.wizard.page {
 
             this.liveEditPage.onPageComponentSelected((event: PageComponentSelectEvent) => {
 
-                if (event.isComponentEmpty()) {
+                if (event.getPageComponentView().isEmpty()) {
                     this.contextWindow.hide();
                 }
                 else {
                     this.contextWindow.show();
                 }
-                this.inspectComponent(event.getPath());
+                this.inspectPageComponent(event.getPageComponentView());
             });
 
             this.liveEditPage.onDeselect((event: PageComponentDeselectEvent) => {
@@ -512,18 +516,12 @@ module app.wizard.page {
 
             this.liveEditPage.onSortableStop((event: SortableStopEvent) => {
 
-                if (event.getComponentPath()) {
+                var pageComponentView = event.getPageComponentView();
 
-                    if (!event.isEmpty()) {
-                        this.contextWindow.show();
-                    }
-
-                    if (event.getItemView().isSelected()) {
-                        this.liveEditPage.selectComponent(event.getComponentPath());
-                    }
-                }
-                else if (!event.isEmpty()) {
+                if (!pageComponentView.isEmpty()) {
                     this.contextWindow.show();
+                    pageComponentView.select();
+                    this.inspectPageComponent(pageComponentView);
                 }
             });
 
@@ -607,7 +605,7 @@ module app.wizard.page {
             this.contextWindow.showInspectionPanel(this.contentInspectionPanel);
         }
 
-        private inspectPage() {
+        private inspectPage(pageView: PageView) {
 
             this.pageInspectionPanel.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
             this.contextWindow.showInspectionPanel(this.pageInspectionPanel);
@@ -621,29 +619,26 @@ module app.wizard.page {
             this.contextWindow.showInspectionPanel(this.regionInspectionPanel);
         }
 
-        private inspectComponent(componentPath: ComponentPath) {
-            api.util.assertNotNull(componentPath, "componentPath cannot be null");
+        private inspectPageComponent(pageComponentView: PageComponentView<PageComponent>) {
+            api.util.assertNotNull(pageComponentView, "pageComponentView cannot be null");
 
-            var component = this.pageRegions.getComponent(componentPath);
-            api.util.assertNotNull(component, "Could not find component: " + componentPath.toString());
-
-            if (api.ObjectHelper.iFrameSafeInstanceOf(component, ImageComponent)) {
-                this.imageInspectionPanel.setImageComponent(<ImageComponent>component);
+            if (api.ObjectHelper.iFrameSafeInstanceOf(pageComponentView, ImageView)) {
+                this.imageInspectionPanel.setImageComponent(<ImageView>pageComponentView);
                 this.contextWindow.showInspectionPanel(this.imageInspectionPanel);
             }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(component, PartComponent)) {
-                this.partInspectionPanel.setPartComponent(<PartComponent>component);
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(pageComponentView, PartView)) {
+                this.partInspectionPanel.setPartComponent(<PartView>pageComponentView);
                 this.contextWindow.showInspectionPanel(this.partInspectionPanel);
             }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(component, LayoutComponent)) {
-                this.layoutInspectionPanel.setLayoutComponent(<LayoutComponent>component);
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(pageComponentView, LayoutView)) {
+                this.layoutInspectionPanel.setLayoutComponent(<LayoutView>pageComponentView);
                 this.contextWindow.showInspectionPanel(this.layoutInspectionPanel);
             }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(component, TextComponent)) {
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(pageComponentView, TextView)) {
 
             }
             else {
-                throw new Error("PageComponent cannot be selected: " + api.util.getClassName(component));
+                throw new Error("PageComponentView cannot be selected: " + api.util.getClassName(pageComponentView));
             }
         }
     }

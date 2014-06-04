@@ -9,6 +9,7 @@
 ///<reference path='PageComponentItemType.ts' />
 ///<reference path='PageItemType.ts' />
 ///<reference path='ContentItemType.ts' />
+///<reference path='ItemViewId.ts' />
 ///<reference path='ItemView.ts' />
 ///<reference path='RegionView.ts' />
 ///<reference path='PageComponentView.ts' />

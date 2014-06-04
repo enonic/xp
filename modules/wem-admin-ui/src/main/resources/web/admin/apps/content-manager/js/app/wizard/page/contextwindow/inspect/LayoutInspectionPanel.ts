@@ -11,6 +11,7 @@ module app.wizard.page.contextwindow.inspect {
     import LayoutDescriptorDropdownConfig = api.content.page.layout.LayoutDescriptorDropdownConfig;
     import Option = api.ui.selector.Option;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
+    import LayoutView = api.liveedit.layout.LayoutView;
 
     export interface LayoutInspectionPanelConfig {
 
@@ -19,6 +20,8 @@ module app.wizard.page.contextwindow.inspect {
     }
 
     export class LayoutInspectionPanel extends DescriptorBasedPageComponentInspectionPanel<LayoutComponent, LayoutDescriptor> {
+
+        private layoutView: LayoutView;
 
         private layoutComponent: LayoutComponent;
 
@@ -73,9 +76,8 @@ module app.wizard.page.contextwindow.inspect {
                     var hasDescriptorChanged = this.descriptorSelected && !this.descriptorSelected.equals(selectedDescriptorKey);
                     this.descriptorSelected = selectedDescriptorKey;
                     if (hasDescriptorChanged) {
-                        var componentPath = this.layoutComponent.getPath();
                         var selectedDescriptor: LayoutDescriptor = option.displayValue;
-                        this.notifyLayoutDescriptorChanged(componentPath, selectedDescriptor);
+                        this.notifyLayoutDescriptorChanged(this.layoutView, selectedDescriptor);
                     }
                 }
             });
@@ -92,8 +94,8 @@ module app.wizard.page.contextwindow.inspect {
             });
         }
 
-        private notifyLayoutDescriptorChanged(componentPath: api.content.page.ComponentPath, descriptor: LayoutDescriptor) {
-            var event = new LayoutDescriptorChangedEvent(componentPath, descriptor);
+        private notifyLayoutDescriptorChanged(layoutView: LayoutView, descriptor: LayoutDescriptor) {
+            var event = new LayoutDescriptorChangedEvent(layoutView, descriptor);
             this.layoutDescriptorChangedListeners.forEach((listener) => {
                 listener(event);
             });
@@ -106,16 +108,17 @@ module app.wizard.page.contextwindow.inspect {
             return this.layoutDescriptors[this.getComponent().getDescriptor().toString()];
         }
 
-        setLayoutComponent(component: LayoutComponent) {
-            this.setComponent(component);
-            this.layoutComponent = component;
+        setLayoutComponent(layoutView: LayoutView) {
+
+            this.layoutView = layoutView;
+            this.setComponent(layoutView.getPageComponent());
+            this.layoutComponent = layoutView.getPageComponent();
 
             var layoutDescriptor = this.getDescriptor();
             if (layoutDescriptor) {
                 this.descriptorSelector.setDescriptor(layoutDescriptor.getKey());
-                this.setupComponentForm(component, layoutDescriptor);
+                this.setupComponentForm(layoutView.getPageComponent(), layoutDescriptor);
             }
         }
-
     }
 }

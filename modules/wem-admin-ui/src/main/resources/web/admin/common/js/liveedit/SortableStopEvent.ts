@@ -19,15 +19,7 @@ module api.liveedit {
             this.empty = pageComponentView ? pageComponentView.isEmpty() : false;
         }
 
-        getComponentPath(): ComponentPath {
-            return this.componentPath;
-        }
-
-        isEmpty(): boolean {
-            return this.empty;
-        }
-
-        getItemView(): PageComponentView<PageComponent> {
+        getPageComponentView(): PageComponentView<PageComponent> {
             return this.pageComponentView;
         }
 

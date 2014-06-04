@@ -12,7 +12,7 @@ module api.liveedit {
 
             this.pageView = pageView;
             views.forEach((view: ItemView, index: number) => {
-                view.setItemId(index + 1);
+                view.setItemId(new ItemViewId(index + 1));
             });
             this.views = views;
         }
@@ -24,11 +24,12 @@ module api.liveedit {
         addItemView(view: ItemView) {
             this.views.push(view);
             console.log("PageItemView.addItemView view with id: " + this.views.length);
-            view.setItemId(this.views.length);
+            view.setItemId(new ItemViewId(this.views.length));
         }
 
-        removeItemViewById(id: number) {
-            this.views.splice(id - 1);
+        removeItemViewById(id: ItemViewId) {
+            api.util.assertNotNull(id, "id cannot be null");
+            this.views.splice(id.toNumber() - 1);
         }
 
         initializeEmpties() {
@@ -42,14 +43,19 @@ module api.liveedit {
             });
         }
 
-        getByItemId(value: number): ItemView {
-            return this.views[value - 1];
+        getByItemId(id: ItemViewId): ItemView {
+            api.util.assertNotNull(id, "value cannot be null");
+            return this.views[id.toNumber() - 1];
         }
 
         getItemViewByElement(element: HTMLElement): ItemView {
             api.util.assertNotNull(element, "element cannot be null");
 
             var itemId = ItemView.parseItemId(element);
+            if (!itemId) {
+                return null;
+            }
+
             console.log("PageItemViews.getItemViewByElement itemId: " + itemId);
             return this.getByItemId(itemId);
         }
@@ -58,6 +64,10 @@ module api.liveedit {
             api.util.assertNotNull(element, "element cannot be null");
 
             var itemId = ItemView.parseItemId(element);
+            if (!itemId) {
+                return null;
+            }
+
             console.log("PageItemViews.getRegionViewByElement itemId: " + itemId);
             var view = this.getByItemId(itemId);
             if (api.ObjectHelper.iFrameSafeInstanceOf(view, RegionView)) {
@@ -70,6 +80,10 @@ module api.liveedit {
             api.util.assertNotNull(element, "element cannot be null");
 
             var itemId = ItemView.parseItemId(element);
+            if (!itemId) {
+                return null;
+            }
+
             console.log("PageItemViews.getPageComponentViewByElement itemId: " + itemId);
             var view = this.getByItemId(itemId);
             if (api.ObjectHelper.iFrameSafeInstanceOf(view, PageComponentView)) {
@@ -77,7 +91,5 @@ module api.liveedit {
             }
             return null;
         }
-
-
     }
 }

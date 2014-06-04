@@ -31,10 +31,6 @@ api.liveedit.InitializeLiveEditEvent.on((event: api.liveedit.InitializeLiveEditE
     new api.liveedit.PageViewItemsParsedEvent(pageView).fire();
 });
 
-function getComponentByPath(path: api.content.page.ComponentPath): api.liveedit.ItemView {
-    return pageItemViews.getItemViewByElement(wemjq('[data-live-edit-component="' + path.toString() + '"]').get(0));
-}
-
 wemjq(window).load(() => {
     new LiveEdit.component.mouseevent.Page();
     new LiveEdit.component.mouseevent.Region();

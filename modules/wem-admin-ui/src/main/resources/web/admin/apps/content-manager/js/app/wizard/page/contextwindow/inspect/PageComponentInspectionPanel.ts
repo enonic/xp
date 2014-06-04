@@ -3,6 +3,7 @@ module app.wizard.page.contextwindow.inspect {
     import RootDataSet = api.data.RootDataSet;
     import FormView = api.form.FormView;
     import PageComponent = api.content.page.PageComponent;
+    import PageComponentView = api.liveedit.PageComponentView;
 
     export interface PageComponentInspectionPanelConfig {
 
@@ -32,6 +33,10 @@ module app.wizard.page.contextwindow.inspect {
 
             this.namesAndIcon.setMainName(component.getName().toString());
             this.namesAndIcon.setSubName(component.getPath().toString());
+        }
+
+        getPageComponentView(): PageComponentView<PageComponent> {
+            throw new Error("Must be implemented by inheritors");
         }
 
         setMainName(value: string) {

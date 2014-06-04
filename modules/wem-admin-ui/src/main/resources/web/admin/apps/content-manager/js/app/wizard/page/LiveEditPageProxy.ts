@@ -228,17 +228,6 @@ module app.wizard.page {
             });
         }
 
-        public getComponentByPath(path: api.content.page.ComponentPath): PageComponentView<PageComponent> {
-
-            return this.liveEditWindow.getComponentByPath(path);
-        }
-
-        public selectComponent(path: api.content.page.ComponentPath): void {
-            var comp = this.getComponentByPath(path);
-            var element: HTMLElement = comp.getHTMLElement();
-            new PageComponentSelectComponentEvent(comp, null).fire(this.liveEditWindow);
-        }
-
         public listenToPage() {
 
             PageViewItemsParsedEvent.on(this.notifyPageViewItemsParsed.bind(this), this.liveEditWindow);
@@ -272,9 +261,7 @@ module app.wizard.page {
             RegionSelectEvent.on(this.notifyRegionSelected.bind(this), this.liveEditWindow);
 
             PageComponentSelectEvent.on((event: PageComponentSelectEvent) => {
-                if (event.getPath()) {
-                    this.notifyPageComponentSelected(event);
-                }
+                this.notifyPageComponentSelected(event);
             }, this.liveEditWindow);
 
             PageComponentDeselectEvent.on(this.notifyDeselect.bind(this), this.liveEditWindow);

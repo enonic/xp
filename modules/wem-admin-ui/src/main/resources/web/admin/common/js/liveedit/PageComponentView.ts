@@ -58,7 +58,7 @@ module api.liveedit {
 
         select() {
             super.select();
-            new PageComponentSelectEvent(this.getComponentPath(), this).fire();
+            new PageComponentSelectEvent(this).fire();
         }
 
         handleDragStart() {

@@ -40,21 +40,20 @@ module api.liveedit {
 
         }
 
-        setItemId(value: number) {
-            this.getEl().setAttribute("data-live-edit-id", "" + value);
+        setItemId(value: ItemViewId) {
+            this.getEl().setAttribute("data-live-edit-id", value.toString());
         }
 
-        getItemId() : number {
-            return +this.getEl().getAttribute("data-live-edit-id");
+        getItemId(): ItemViewId {
+            return ItemViewId.fromString(this.getEl().getAttribute("data-live-edit-id"));
         }
 
-        static parseItemId(element: HTMLElement) : number {
+        static parseItemId(element: HTMLElement): ItemViewId {
             var attribute = element.getAttribute("data-live-edit-id");
-            if( api.util.isStringEmpty(attribute) )
-            {
-                return -1;
+            if (api.util.isStringEmpty(attribute)) {
+                return null;
             }
-            return +element.getAttribute("data-live-edit-id");
+            return ItemViewId.fromString(element.getAttribute("data-live-edit-id"));
         }
 
         getElement(): JQuery {
@@ -119,11 +118,11 @@ module api.liveedit {
             };
         }
 
-        static findParentItemViewAsHTMLElement(htmlElement: HTMLElement) : HTMLElement {
+        static findParentItemViewAsHTMLElement(htmlElement: HTMLElement): HTMLElement {
 
             var parentHTMLElement = htmlElement.parentElement;
             var parseItemId = ItemView.parseItemId(parentHTMLElement);
-            while( parseItemId == -1 ) {
+            while (parseItemId == null) {
                 parentHTMLElement = parentHTMLElement.parentElement;
                 parseItemId = ItemView.parseItemId(parentHTMLElement);
             }
