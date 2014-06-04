@@ -2,6 +2,10 @@ package com.enonic.wem.api.data;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import com.google.common.base.Preconditions;
@@ -28,15 +32,74 @@ public final class Property
         this.value = value;
     }
 
+    public static Property newProperty( final String name, final Value value )
+    {
+        return new Property( name, value );
+    }
+
+    public static Property newGeoPoint( final String name, final Object value )
+    {
+        return newProperty( name, Value.newGeoPoint( value ) );
+    }
+
+    public static Property newInstant( final String name, final Object value )
+    {
+        return newProperty( name, Value.newInstant( value ) );
+    }
+
+    public static Property newLocalDate( final String name, final Object value )
+    {
+        return newProperty( name, Value.newLocalDate( value ) );
+    }
+
+    public static Property newContentId( final String name, final Object value )
+    {
+        return newProperty( name, Value.newContentId( value ) );
+    }
+
+    public static Property newEntityId( final String name, final Object value )
+    {
+        return newProperty( name, Value.newEntityId( value ) );
+    }
+
+    public static Property newHtmlPart( final String name, final Object value )
+    {
+        return newProperty( name, Value.newHtmlPart( value ) );
+    }
+
+    public static Property newDouble( final String name, final Object value )
+    {
+        return newProperty( name, Value.newDouble( value ) );
+    }
+
+    public static Property newBoolean( final String name, final Object value )
+    {
+        return newProperty( name, Value.newBoolean( value ) );
+    }
+
+    public static Property newString( final String name, final Object value )
+    {
+        return newProperty( name, Value.newString( value ) );
+    }
+
+    public static Property newXml( final String name, final Object value )
+    {
+        return newProperty( name, Value.newXml( value ) );
+    }
+
+    public static Property newLong( final String name, final Object value )
+    {
+        return newProperty( name, Value.newLong( value ) );
+    }
+
+    public static Property newData( final String name, final Object value )
+    {
+        return newProperty( name, Value.newData( value ) );
+    }
+
     public ValueType getValueType()
     {
         return value.getType();
-    }
-
-    public void setValue( final Value value )
-    {
-        Preconditions.checkNotNull( value, "A Property cannot have a null value" );
-        this.value = value;
     }
 
     @Override
@@ -45,9 +108,26 @@ public final class Property
         return (PropertyArray) super.getArray();
     }
 
+    public List<Value> getValuesAsList()
+    {
+        final PropertyArray propertyArray = getArray();
+        final List<Value> values = new ArrayList<>( propertyArray.size() );
+        for ( Property property : propertyArray )
+        {
+            values.add( property.getValue() );
+        }
+        return values;
+    }
+
     public Value getValue()
     {
         return value;
+    }
+
+    public void setValue( final Value value )
+    {
+        Preconditions.checkNotNull( value, "A Property cannot have a null value" );
+        this.value = value;
     }
 
     public Value getValue( final int arrayIndex )
@@ -211,70 +291,5 @@ public final class Property
         s.add( "type", getValueType() );
         s.add( "value", value.getObject() );
         return s.toString();
-    }
-
-    public static Property newProperty( final String name, final Value value )
-    {
-        return new Property( name, value );
-    }
-
-    public static Property newGeoPoint( final String name, final Object value )
-    {
-        return newProperty( name, Value.newGeoPoint( value ) );
-    }
-
-    public static Property newInstant( final String name, final Object value )
-    {
-        return newProperty( name, Value.newInstant( value ) );
-    }
-
-    public static Property newLocalDate( final String name, final Object value )
-    {
-        return newProperty( name, Value.newLocalDate( value ) );
-    }
-
-    public static Property newContentId( final String name, final Object value )
-    {
-        return newProperty( name, Value.newContentId( value ) );
-    }
-
-    public static Property newEntityId( final String name, final Object value )
-    {
-        return newProperty( name, Value.newEntityId( value ) );
-    }
-
-    public static Property newHtmlPart( final String name, final Object value )
-    {
-        return newProperty( name, Value.newHtmlPart( value ) );
-    }
-
-    public static Property newDouble( final String name, final Object value )
-    {
-        return newProperty( name, Value.newDouble( value ) );
-    }
-
-    public static Property newBoolean( final String name, final Object value )
-    {
-        return newProperty( name, Value.newBoolean( value ) );
-    }
-
-    public static Property newString( final String name, final Object value )
-    {
-        return newProperty( name, Value.newString( value ) );
-    }
-
-    public static Property newXml( final String name, final Object value )
-    {
-        return newProperty( name, Value.newXml( value ) );
-    }
-
-    public static Property newLong( final String name, final Object value )
-    {
-        return newProperty( name, Value.newLong( value ) );
-    }
-
-    public static Property newData( final String name, final Object value )
-    {
-        return newProperty( name, Value.newData( value ) );
     }
 }
