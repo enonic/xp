@@ -7,9 +7,6 @@ module app.create {
 
     export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
-        private static CONTENT = 'content';
-        private static SITES = 'sites';
-
         private parentContent: api.content.Content;
 
         private contentDialogTitle: NewContentDialogTitle;
@@ -194,9 +191,9 @@ module app.create {
                 items.push(NewContentDialogListItem.fromContentType(contentType))
             });
 
+            var siteContentType = contentTypesByName['site'];
             siteTemplates.forEach((siteTemplate: SiteTemplateSummary) => {
-                var rootContentType = contentTypesByName[siteTemplate.getRootContentType().toString()];
-                items.push(NewContentDialogListItem.fromSiteTemplate(siteTemplate, rootContentType));
+                items.push(NewContentDialogListItem.fromSiteTemplate(siteTemplate, siteContentType));
             });
 
             items.sort(this.compareListItems);

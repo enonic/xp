@@ -4,13 +4,11 @@ module app.wizard {
 
         private descriptionField: api.ui.TextInput;
         private moduleComboBox: api.module.ModuleComboBox;
-        private rootContentTypeComboBox: api.schema.content.ContentTypeComboBox;
 
         constructor() {
             super();
             this.descriptionField = api.ui.TextInput.middle().setName("description");
             this.moduleComboBox = new api.module.ModuleComboBox();
-            this.rootContentTypeComboBox = new api.schema.content.ContentTypeComboBox(1);
         }
 
         renderNew() {
@@ -19,9 +17,6 @@ module app.wizard {
                 setLabel("Description"));
             descriptionField.getInput().wrapWithElement(new api.dom.DivEl("input-wrapper"));
             fieldSet.add(descriptionField);
-            fieldSet.add(new api.ui.form.FormItem(new api.ui.form.FormItemBuilder(this.rootContentTypeComboBox).
-                setLabel("Root Content Type").
-                setValidator(api.ui.form.Validators.notEmpty)));
             fieldSet.add(new api.ui.form.FormItem(new api.ui.form.FormItemBuilder(this.moduleComboBox).
                 setLabel("Modules").
                 setValidator(api.ui.form.Validators.notEmpty)));
@@ -33,21 +28,7 @@ module app.wizard {
 
             this.renderNew();
 
-            console.log("Rendering existing template", siteTemplate);
             this.descriptionField.setValue(siteTemplate.getDescription());
-
-            var setRootContentTypesListener = (contentTypes: api.schema.content.ContentTypeSummary[]) => {
-                var contentType: api.schema.content.ContentTypeSummary;
-                for (var i = 0; i < contentTypes.length; i++) {
-                    contentType = contentTypes[i];
-                    if (siteTemplate.getRootContentType().equals(contentType.getContentTypeName())) {
-                        this.rootContentTypeComboBox.select(contentType);
-                        break;
-                    }
-                }
-                this.rootContentTypeComboBox.unLoaded(setRootContentTypesListener);
-            };
-            this.rootContentTypeComboBox.onLoaded(setRootContentTypesListener);
 
             var setModulesListener = (modules: api.module.ModuleSummary[]) => {
                 siteTemplate.getModules().forEach((moduleKey: api.module.ModuleKey) => {

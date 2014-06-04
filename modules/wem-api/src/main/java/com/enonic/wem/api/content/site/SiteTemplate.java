@@ -32,8 +32,6 @@ public final class SiteTemplate
 
     private final ContentTypeFilter contentTypeFilter;
 
-    private final ContentTypeName rootContentType;
-
     private final PageTemplates pageTemplates;
 
     private final Icon icon;
@@ -47,7 +45,6 @@ public final class SiteTemplate
         this.vendor = builder.vendor;
         this.modules = builder.modules;
         this.contentTypeFilter = builder.contentTypeFilter;
-        this.rootContentType = builder.rootContentType;
 
         final PageTemplates.Builder pageTemplatesBuilder = PageTemplates.newPageTemplates();
         pageTemplatesBuilder.addAll( builder.pageTemplates.values() );
@@ -101,11 +98,6 @@ public final class SiteTemplate
         return contentTypeFilter;
     }
 
-    public ContentTypeName getRootContentType()
-    {
-        return rootContentType;
-    }
-
     public PageTemplates getPageTemplates()
     {
         return pageTemplates;
@@ -148,8 +140,6 @@ public final class SiteTemplate
 
         private ContentTypeFilter contentTypeFilter;
 
-        private ContentTypeName rootContentType;
-
         private final LinkedHashMap<PageTemplateKey, PageTemplate> pageTemplates;
 
         private Icon icon;
@@ -173,7 +163,6 @@ public final class SiteTemplate
             this.vendor = source.vendor;
             this.modules = source.modules;
             this.contentTypeFilter = source.contentTypeFilter;
-            this.rootContentType = source.rootContentType;
             this.icon = source.icon;
         }
 
@@ -216,12 +205,6 @@ public final class SiteTemplate
         public Builder contentTypeFilter( final ContentTypeFilter contentTypeFilter )
         {
             this.contentTypeFilter = contentTypeFilter;
-            return this;
-        }
-
-        public Builder rootContentType( final ContentTypeName rootContentType )
-        {
-            this.rootContentType = rootContentType;
             return this;
         }
 

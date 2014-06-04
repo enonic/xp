@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.schema.content.ContentTypeFilter;
-import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.xml.BaseXmlSerializerTest;
 import com.enonic.wem.api.xml.XmlSerializers;
@@ -32,7 +31,6 @@ public class SiteTemplateXmlTest
             modules( ModuleKeys.from( "com.enonic.intranet-1.0.0", "com.company.sampleModule-1.1.0", "com.company.theme.someTheme-1.4.1",
                                       "com.enonic.resolvers-1.0.0" ) ).
             contentTypeFilter( contentTypeFilter ).
-            rootContentType( ContentTypeName.from( "com.enonic.intranet" ) ).
             build();
 
         final SiteTemplateXml siteTemplateXml = new SiteTemplateXml();
@@ -58,7 +56,6 @@ public class SiteTemplateXmlTest
         assertEquals( "http://www.enonic.com/intranet", siteTemplate.getUrl() );
         assertEquals( "Enonic", siteTemplate.getVendor().getName() );
         assertEquals( "https://www.enonic.com", siteTemplate.getVendor().getUrl() );
-        assertEquals( ContentTypeName.from( "com.enonic.intranet" ), siteTemplate.getRootContentType() );
         assertEquals( ModuleKeys.from( "com.enonic.intranet-1.0.0", "com.company.sampleModule-1.1.0", "com.company.theme.someTheme-1.4.1",
                                        "com.enonic.resolvers-1.0.0" ), siteTemplate.getModules() );
 

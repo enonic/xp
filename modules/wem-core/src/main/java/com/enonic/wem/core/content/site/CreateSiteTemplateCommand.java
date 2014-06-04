@@ -8,8 +8,8 @@ import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.CreateSiteTemplateParams;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
-import com.enonic.wem.core.config.SystemConfig;
 import com.enonic.wem.api.util.Exceptions;
+import com.enonic.wem.core.config.SystemConfig;
 
 final class CreateSiteTemplateCommand
 {
@@ -44,7 +44,6 @@ final class CreateSiteTemplateCommand
             key( siteTemplatekey ).
             modules( this.param.getModules() ).
             description( this.param.getDescription() ).
-            rootContentType( this.param.getRootContentType() ).
             contentTypeFilter( this.param.getContentTypeFilter() );
 
         for ( PageTemplate template : param.getTemplates() )

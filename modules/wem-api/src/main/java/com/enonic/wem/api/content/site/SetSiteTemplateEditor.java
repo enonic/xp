@@ -11,7 +11,6 @@ import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplates;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.schema.content.ContentTypeFilter;
-import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public final class SetSiteTemplateEditor
     implements SiteTemplateEditor
@@ -28,8 +27,6 @@ public final class SetSiteTemplateEditor
 
     private final ContentTypeFilter contentTypeFilter;
 
-    private final ContentTypeName rootContentType;
-
     private final ImmutableMap<PageTemplateKey, PageTemplate> templatesAdded;
 
     private final ImmutableSet<PageTemplateKey> templatesRemoved;
@@ -42,7 +39,6 @@ public final class SetSiteTemplateEditor
         this.vendor = builder.vendor;
         this.modules = builder.modules;
         this.contentTypeFilter = builder.contentTypeFilter;
-        this.rootContentType = builder.rootContentType;
         this.templatesAdded = ImmutableMap.copyOf( builder.templatesAdded );
         this.templatesRemoved = ImmutableSet.copyOf( builder.templatesRemoved );
     }
@@ -65,8 +61,6 @@ public final class SetSiteTemplateEditor
         private ModuleKeys modules;
 
         private ContentTypeFilter contentTypeFilter;
-
-        private ContentTypeName rootContentType;
 
         private final LinkedHashMap<PageTemplateKey, PageTemplate> templatesAdded;
 
@@ -111,12 +105,6 @@ public final class SetSiteTemplateEditor
         public Builder contentTypeFilter( final ContentTypeFilter contentTypeFilter )
         {
             this.contentTypeFilter = contentTypeFilter;
-            return this;
-        }
-
-        public Builder rootContentType( final ContentTypeName rootContentType )
-        {
-            this.rootContentType = rootContentType;
             return this;
         }
 
@@ -171,11 +159,6 @@ public final class SetSiteTemplateEditor
         if ( this.contentTypeFilter != null && !this.contentTypeFilter.equals( source.getContentTypeFilter() ) )
         {
             edited.contentTypeFilter( this.contentTypeFilter );
-            isUpdated = true;
-        }
-        if ( this.rootContentType != null && !this.rootContentType.equals( source.getRootContentType() ) )
-        {
-            edited.rootContentType( this.rootContentType );
             isUpdated = true;
         }
 

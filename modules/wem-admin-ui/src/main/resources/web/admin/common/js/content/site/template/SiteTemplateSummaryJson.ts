@@ -14,8 +14,6 @@ module api.content.site.template {
 
         modules:string[];
 
-        rootContentType:string;
-
         editable:boolean;
 
         deletable:boolean;

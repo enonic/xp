@@ -9,7 +9,6 @@ module api.content.site.template {
         private vendor: api.content.site.Vendor;
         private moduleKeys: api.module.ModuleKey[];
         private contentTypeFilter: api.schema.content.ContentTypeFilter;
-        private rootContentType: api.schema.content.ContentTypeName;
 
         constructor() {
             super();
@@ -51,11 +50,6 @@ module api.content.site.template {
             return this;
         }
 
-        setRootContentType(rootContentType: api.schema.content.ContentTypeName): UpdateSiteTemplateRequest {
-            this.rootContentType = rootContentType;
-            return this;
-        }
-
         getParams(): Object {
             return {
                 siteTemplateKey: this.siteTemplateKey.toString(),
@@ -64,8 +58,7 @@ module api.content.site.template {
                 url: this.url,
                 vendor: this.vendor.toJson(),
                 moduleKeys: api.module.ModuleKey.toStringArray(this.moduleKeys),
-                contentTypeFilter: this.contentTypeFilter.toJson(),
-                rootContentType: this.rootContentType.toString()
+                contentTypeFilter: this.contentTypeFilter.toJson()
             };
         }
 

@@ -7,10 +7,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Iterables;
 
-import com.enonic.wem.api.schema.content.ContentTypeFilterJson;
 import com.enonic.wem.api.content.site.CreateSiteTemplateParams;
 import com.enonic.wem.api.module.ModuleKeys;
-import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeFilterJson;
 
 public class CreateSiteTemplateJson
 {
@@ -20,8 +19,7 @@ public class CreateSiteTemplateJson
     CreateSiteTemplateJson( @JsonProperty("displayName") final String displayName, @JsonProperty("description") final String description,
                             @JsonProperty("url") final String url, @JsonProperty("vendor") final VendorJson vendorJson,
                             @JsonProperty("moduleKeys") List<String> moduleKeys,
-                            @JsonProperty("contentTypeFilter") final ContentTypeFilterJson filterJson,
-                            @JsonProperty("rootContentType") final String rootContentType )
+                            @JsonProperty("contentTypeFilter") final ContentTypeFilterJson filterJson )
     {
         this.createSiteTemplate = new CreateSiteTemplateParams().
             displayName( displayName ).
@@ -29,8 +27,7 @@ public class CreateSiteTemplateJson
             url( url ).
             vendor( vendorJson.toVendor() ).
             modules( ModuleKeys.from( Iterables.toArray( moduleKeys, String.class ) ) ).
-            contentTypeFilter( filterJson.toContentTypeFilter() ).
-            rootContentType( ContentTypeName.from( rootContentType ) );
+            contentTypeFilter( filterJson.toContentTypeFilter() );
     }
 
     @JsonIgnore

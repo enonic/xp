@@ -124,11 +124,12 @@ module app.wizard {
             this.siteTemplate = params.siteTemplate;
             if (this.createSite || params.persistedContent != null && params.persistedContent.isSite()) {
                 this.siteWizardStepForm = new app.wizard.site.SiteWizardStepForm(this.siteTemplate, this.contentType);
+                this.contentWizardStepForm = null;
             }
             else {
                 this.siteWizardStepForm = null;
+                this.contentWizardStepForm = new ContentWizardStepForm(this.publishAction);
             }
-            this.contentWizardStepForm = new ContentWizardStepForm(this.publishAction);
 
             if (this.siteContent || this.createSite) {
 
@@ -197,10 +198,9 @@ module app.wizard {
             var displayNameEmpty = api.util.isStringEmpty(this.getPersistedItem().getDisplayName());
             var editWithEmptyDisplayName = !this.isRenderingNew() && displayNameEmpty && !this.contentType.hasContentDisplayNameScript();
 
-            if (newWithoutDisplayCameScript || editWithEmptyDisplayName) {
+            if (newWithoutDisplayCameScript || editWithEmptyDisplayName || !this.contentWizardStepForm ) {
                 this.contentWizardHeader.giveFocus();
-            }
-            else {
+            } else {
                 if (!this.contentWizardStepForm.giveFocus()) {
                     this.contentWizardHeader.giveFocus();
                 }
@@ -213,7 +213,9 @@ module app.wizard {
 
             var steps: WizardStep[] = [];
 
-            steps.push(new WizardStep(this.contentType.getDisplayName(), this.contentWizardStepForm));
+            if (this.contentWizardStepForm != null) {
+                steps.push(new WizardStep(this.contentType.getDisplayName(), this.contentWizardStepForm));
+            }
 
             if (this.siteWizardStepForm != null) {
                 steps.push(new WizardStep("Site", this.siteWizardStepForm));
@@ -244,7 +246,9 @@ module app.wizard {
         postRenderNew(): Q.Promise<void> {
             var deferred = Q.defer<void>();
 
-            this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
+            if (this.contentWizardStepForm) {
+                this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
+            }
             this.contentWizardHeader.initNames(this.getPersistedItem().getDisplayName(), this.getPersistedItem().getName().toString(),
                 true);
 
@@ -324,9 +328,12 @@ module app.wizard {
                         setShowEmptyFormItemSetOccurrences(this.isPersisted()).
                         build();
 
-                    this.contentWizardStepForm.renderExisting(formContext, contentData, content.getForm());
-                    // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
-                    this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
+                    if (this.contentWizardStepForm) {
+                        this.contentWizardStepForm.renderExisting(formContext, contentData, content.getForm());
+
+                        // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
+                        this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
+                    }
 
                     return this.doRenderExistingSite(content, formContext)
                         .then(() => {
@@ -345,7 +352,9 @@ module app.wizard {
 
             this.contentWizardHeader.initNames(existing.getDisplayName(), existing.getName().toString(),
                 false);
-            this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
+            if (this.contentWizardStepForm) {
+                this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
+            }
 
             deferred.resolve(null);
             return deferred.promise;
@@ -475,9 +484,11 @@ module app.wizard {
                 setDisplayName(viewedContent.getDisplayName()).
                 setContentData(viewedContent.getContentData());
 
-            var updateAttachments = UpdateAttachments.create(persistedContent.getContentId(),
-                this.contentWizardStepForm.getFormView().getAttachments());
-            updateContentRequest.setUpdateAttachments(updateAttachments);
+            if (this.contentWizardStepForm) {
+                var updateAttachments = UpdateAttachments.create(persistedContent.getContentId(),
+                    this.contentWizardStepForm.getFormView().getAttachments());
+                updateContentRequest.setUpdateAttachments(updateAttachments);
+            }
 
             if (this.iconUploadItem) {
                 var thumbnail = new ThumbnailBuilder().
@@ -519,8 +530,10 @@ module app.wizard {
 
             viewedContentBuilder.setName(this.resolveContentNameForUpdateReuest());
             viewedContentBuilder.setDisplayName(this.contentWizardHeader.getDisplayName());
-            viewedContentBuilder.setData(this.contentWizardStepForm.getContentData());
-            viewedContentBuilder.setForm(this.contentWizardStepForm.getForm());
+            if (this.contentWizardStepForm) {
+                viewedContentBuilder.setData(this.contentWizardStepForm.getContentData());
+                viewedContentBuilder.setForm(this.contentWizardStepForm.getForm());
+            }
             viewedContentBuilder.setSite(this.assembleViewedSite());
             viewedContentBuilder.setPage(this.assembleViewedPage());
             return viewedContentBuilder;
