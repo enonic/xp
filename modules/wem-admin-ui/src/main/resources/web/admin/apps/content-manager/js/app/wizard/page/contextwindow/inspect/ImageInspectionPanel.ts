@@ -3,6 +3,7 @@ module app.wizard.page.contextwindow.inspect {
     import DefaultModels = app.wizard.page.DefaultModels;
     import LiveFormPanel = app.wizard.page.LiveFormPanel;
     import SiteTemplate = api.content.site.template.SiteTemplate;
+    import ImageView = api.liveedit.image.ImageView;
     import ImageComponent = api.content.page.image.ImageComponent;
     import ImageDescriptor = api.content.page.image.ImageDescriptor;
     import GetImageDescriptorsByModulesRequest = api.content.page.image.GetImageDescriptorsByModulesRequest;
@@ -24,7 +25,7 @@ module app.wizard.page.contextwindow.inspect {
 
     export class ImageInspectionPanel extends DescriptorBasedPageComponentInspectionPanel<ImageComponent, ImageDescriptor> {
 
-        private imageComponent: ImageComponent;
+        private imageView: ImageView;
 
         private descriptorSelected: DescriptorKey;
 
@@ -76,14 +77,13 @@ module app.wizard.page.contextwindow.inspect {
 
                 if (this.getComponent()) {
                     var selectedDescriptorKey: DescriptorKey = option.displayValue.getKey();
-                    this.imageComponent.setDescriptor(selectedDescriptorKey);
+                    this.getComponent().setDescriptor(selectedDescriptorKey);
 
                     var hasDescriptorChanged = this.descriptorSelected && !this.descriptorSelected.equals(selectedDescriptorKey);
                     this.descriptorSelected = selectedDescriptorKey;
                     if (hasDescriptorChanged) {
-                        var componentPath = this.imageComponent.getPath();
                         var selectedDescriptor: ImageDescriptor = option.displayValue;
-                        this.notifyImageDescriptorChanged(componentPath, selectedDescriptor);
+                        this.notifyImageDescriptorChanged(this.imageView, selectedDescriptor);
                     }
                 }
             });
@@ -100,11 +100,9 @@ module app.wizard.page.contextwindow.inspect {
             });
         }
 
-        private notifyImageDescriptorChanged(componentPath: api.content.page.ComponentPath, descriptor: ImageDescriptor) {
-            var event = new ImageDescriptorChangedEvent(componentPath, descriptor);
-            this.imageDescriptorChangedListeners.forEach((listener) => {
-                listener(event);
-            });
+        private notifyImageDescriptorChanged(imageView: ImageView, descriptor: ImageDescriptor) {
+            var event = new ImageDescriptorChangedEvent(imageView, descriptor);
+            this.imageDescriptorChangedListeners.forEach((listener) => listener(event));
         }
 
         getDescriptor(): ImageDescriptor {
@@ -114,15 +112,15 @@ module app.wizard.page.contextwindow.inspect {
             return this.imageDescriptors[this.getComponent().getDescriptor().toString()];
         }
 
-        setImageComponent(component: ImageComponent) {
-            this.setComponent(component);
-            this.imageComponent = component;
+        setImageView(view: ImageView) {
+            this.setComponent(view.getPageComponent());
+            this.imageView = view;
 
             var descriptor = this.getDescriptor();
             if (descriptor) {
 
                 this.descriptorSelector.setDescriptor(descriptor.getKey());
-                this.setupComponentForm(component, descriptor);
+                this.setupComponentForm(view.getPageComponent(), descriptor);
             }
         }
 

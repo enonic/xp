@@ -4,7 +4,7 @@ module api.dom {
 
         private static counters: { [index: string]: number; } = {};
 
-        private static elements: { [index: string]: api.dom.Element; } = {};
+        private static   : { [index: string]: api.dom.Element; } = {};
 
         public static registerElement(el: api.dom.Element): string {
             var fullName,

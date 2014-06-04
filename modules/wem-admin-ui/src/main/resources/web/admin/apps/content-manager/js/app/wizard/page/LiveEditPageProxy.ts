@@ -236,10 +236,8 @@ module app.wizard.page {
             return this.liveEditWindow.getComponentByPath(path);
         }
 
-        public selectComponent(path: api.content.page.ComponentPath): void {
-            var comp = this.getComponentByPath(path);
-            var element: HTMLElement = comp.getHTMLElement();
-            new PageComponentSelectComponentEvent(comp, null).fire(this.liveEditWindow);
+        public selectComponent(itemView: PageComponentView<PageComponent>): void {
+            new PageComponentSelectComponentEvent(itemView, null).fire(this.liveEditWindow);
         }
 
         public listenToPage() {

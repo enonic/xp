@@ -6,26 +6,15 @@ module api.liveedit {
 
     export class PageComponentSelectEvent extends api.event.Event2 {
 
-        private path: ComponentPath;
-
         private pageItemView: PageComponentView<PageComponent>;
 
-        constructor(path: ComponentPath, itemView: PageComponentView<PageComponent>) {
+        constructor(itemView: PageComponentView<PageComponent>) {
             super();
-            this.path = path;
             this.pageItemView = itemView;
-        }
-
-        getPath(): ComponentPath {
-            return this.path;
         }
 
         getItemView(): PageComponentView<PageComponent> {
             return this.pageItemView;
-        }
-
-        isComponentEmpty(): boolean {
-            return this.pageItemView.isEmpty();
         }
 
         static on(handler: (event: PageComponentSelectEvent) => void, contextWindow: Window = window) {

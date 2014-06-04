@@ -57,6 +57,7 @@ module app.wizard.page {
     import RegionView = api.liveedit.RegionView;
     import PageComponentView = api.liveedit.PageComponentView;
     import ImageView = api.liveedit.image.ImageView;
+    import LayoutView = api.liveedit.layout.LayoutView;
     import PageViewItemsParsedEvent = api.liveedit.PageViewItemsParsedEvent;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import SortableStopEvent = api.liveedit.SortableStopEvent;
@@ -147,7 +148,7 @@ module app.wizard.page {
 
             this.imageInspectionPanel.onImageDescriptorChanged((event: ImageDescriptorChangedEvent) => {
 
-                var imageView:ImageView = <ImageView>this.liveEditPage.getComponentByPath(event.getComponentPath());
+                var imageView:ImageView = event.getImageView();
                 var command = new PageComponentSetDescriptorCommand().
                     setPageComponentView(imageView).
                     setPageRegions(this.pageRegions).
@@ -166,7 +167,7 @@ module app.wizard.page {
 
             this.layoutInspectionPanel.onLayoutDescriptorChanged((event: LayoutDescriptorChangedEvent) => {
 
-                var pageComponentView = <PageComponentView<DescriptorBasedPageComponent>>this.liveEditPage.getComponentByPath(event.getComponentPath());
+                var pageComponentView = <LayoutView>event.getLayoutView();
                 var command = new PageComponentSetDescriptorCommand().
                     setPageComponentView(pageComponentView).
                     setPageRegions(this.pageRegions).
@@ -469,13 +470,15 @@ module app.wizard.page {
 
             this.liveEditPage.onPageComponentSelected((event: PageComponentSelectEvent) => {
 
-                if (event.isComponentEmpty()) {
+                var itemView = event.getItemView();
+
+                if (itemView.isEmpty()) {
                     this.contextWindow.hide();
                 }
                 else {
                     this.contextWindow.show();
                 }
-                this.inspectComponent(event.getPath());
+                this.inspectComponent(itemView);
             });
 
             this.liveEditPage.onDeselect((event: PageComponentDeselectEvent) => {
@@ -516,18 +519,14 @@ module app.wizard.page {
 
             this.liveEditPage.onSortableStop((event: SortableStopEvent) => {
 
-                if (event.getComponentPath()) {
+                var itemView = event.getItemView();
 
-                    if (!event.isEmpty()) {
-                        this.contextWindow.show();
-                    }
-
-                    if (event.getItemView().isSelected()) {
-                        this.liveEditPage.selectComponent(event.getComponentPath());
-                    }
-                }
-                else if(!event.isEmpty()) {
+                if (!itemView.isEmpty()) {
                     this.contextWindow.show();
+                }
+
+                if (itemView.isSelected()) {
+                    this.liveEditPage.selectComponent(itemView);
                 }
             });
 
@@ -627,22 +626,22 @@ module app.wizard.page {
             this.contextWindow.showInspectionPanel(this.regionInspectionPanel);
         }
 
-        private inspectComponent(componentPath: ComponentPath) {
-            api.util.assertNotNull(componentPath, "componentPath cannot be null");
+        private inspectComponent(itemView: PageComponentView<PageComponent>) {
+            api.util.assertNotNull(itemView, "itemView cannot be null");
 
-            var component = this.pageRegions.getComponent(componentPath);
-            api.util.assertNotNull(component, "Could not find component: " + componentPath.toString());
+            var component = itemView.getPageComponent();
+            api.util.assertNotNull(component, "Component doesn't exist: " + itemView.getComponentPath().toString());
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(component, ImageComponent)) {
-                this.imageInspectionPanel.setImageComponent(<ImageComponent>component);
+                this.imageInspectionPanel.setImageView(<ImageView>itemView);
                 this.contextWindow.showInspectionPanel(this.imageInspectionPanel);
             }
             else if (api.ObjectHelper.iFrameSafeInstanceOf(component, PartComponent)) {
-                this.partInspectionPanel.setPartComponent(<PartComponent>component);
+                this.partInspectionPanel.setPartView(itemView);
                 this.contextWindow.showInspectionPanel(this.partInspectionPanel);
             }
             else if (api.ObjectHelper.iFrameSafeInstanceOf(component, LayoutComponent)) {
-                this.layoutInspectionPanel.setLayoutComponent(<LayoutComponent>component);
+                this.layoutInspectionPanel.setLayoutComponent(itemView);
                 this.contextWindow.showInspectionPanel(this.layoutInspectionPanel);
             }
             else if (api.ObjectHelper.iFrameSafeInstanceOf(component, TextComponent)) {

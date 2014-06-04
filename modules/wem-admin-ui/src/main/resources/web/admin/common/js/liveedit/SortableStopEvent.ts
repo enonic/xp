@@ -8,23 +8,9 @@ module api.liveedit {
 
         private pageComponentView: PageComponentView<PageComponent>;
 
-        private componentPath: ComponentPath;
-
-        private empty: boolean;
-
         constructor(pageComponentView: PageComponentView<PageComponent>) {
             super();
             this.pageComponentView = pageComponentView;
-            this.componentPath = pageComponentView ? pageComponentView.getComponentPath() : null;
-            this.empty = pageComponentView ? pageComponentView.isEmpty() : false;
-        }
-
-        getComponentPath(): ComponentPath {
-            return this.componentPath;
-        }
-
-        isEmpty(): boolean {
-            return this.empty;
         }
 
         getItemView(): PageComponentView<PageComponent> {
