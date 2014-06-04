@@ -131,7 +131,7 @@ module app.wizard {
                 this.contentWizardStepForm = new ContentWizardStepForm(this.publishAction);
             }
 
-            if (this.siteContent || this.createSite) {
+            if ((this.siteContent || this.createSite) && params.defaultModels.hasPageTemplate()) {
 
                 this.liveFormPanel = new page.LiveFormPanel(<page.LiveFormPanelConfig> {
                     contentWizardPanel: this,
