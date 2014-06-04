@@ -62,44 +62,39 @@ public class ElasticsearchWorkspaceStore
     @Override
     public void store( final WorkspaceDocument workspaceDocument )
     {
-        final String workspaceDocumentId = generateWorkspaceDocumentId( workspaceDocument );
+        final WorkspaceDocumentId workspaceDocumentId =
+            new WorkspaceDocumentId( workspaceDocument.getEntityId(), workspaceDocument.getWorkspace() );
 
-        //if ( unchanged( workspaceDocument, workspaceDocumentId ) )
-        // {
-        //     return;
-        // }
+        if ( unchanged( workspaceDocument, workspaceDocumentId ) )
+        {
+            return;
+        }
 
         final IndexRequest indexRequest = Requests.indexRequest().
             index( WORKSPACE_INDEX.getName() ).
             type( IndexType.NODE.getName() ).
             source( WorkspaceXContentBuilderFactory.create( workspaceDocument ) ).
-            id( workspaceDocumentId ).
+            id( workspaceDocumentId.toString() ).
             refresh( DEFAULT_REFRESH );
 
         elasticsearchDao.store( indexRequest );
     }
 
-    private boolean unchanged( final WorkspaceDocument workspaceDocument, final String workspaceDocumentId )
+    private boolean unchanged( final WorkspaceDocument workspaceDocument, final WorkspaceDocumentId workspaceDocumentId )
     {
         final SearchResult searchResult = elasticsearchDao.get( QueryMetaData.
             create( WORKSPACE_INDEX ).
             indexType( IndexType.NODE ).
             addField( BLOBKEY_FIELD_NAME ).
-            addField( PARENT_PATH_FIELD_NAME ).
-            addField( PATH_FIELD_NAME ).
-            build(), workspaceDocumentId );
+            build(), workspaceDocumentId.toString() );
 
         if ( searchResult.getResults().getSize() > 0 )
         {
             final SearchResultEntry hit = searchResult.getResults().getFirstHit();
 
             final String currentBlobKey = hit.getField( BLOBKEY_FIELD_NAME, true ).getValue().toString();
-            final String currentParentPath = hit.getField( PARENT_PATH_FIELD_NAME, true ).getValue().toString();
-            final String currentPath = hit.getField( PATH_FIELD_NAME, true ).getValue().toString();
 
-            if ( currentBlobKey.equals( workspaceDocument.getBlobKey().toString() ) &&
-                currentParentPath.equals( workspaceDocument.getParentPath().toString() ) &&
-                currentPath.equals( workspaceDocument.getPath().toString() ) )
+            if ( currentBlobKey.equals( workspaceDocument.getBlobKey().toString() ) )
             {
                 return true;
             }
@@ -107,23 +102,12 @@ public class ElasticsearchWorkspaceStore
         return false;
     }
 
-
-    private String generateWorkspaceDocumentId( final WorkspaceDocument workspaceDocument )
-    {
-        return generateWorkspaceDocumentId( workspaceDocument.getEntityId().toString(), workspaceDocument.getWorkspace().getName() );
-    }
-
-    private String generateWorkspaceDocumentId( final String entityId, final String workspaceName )
-    {
-        return entityId + "-" + workspaceName;
-    }
-
     @Override
     public void delete( final WorkspaceDeleteQuery query )
     {
         DeleteRequest deleteRequest = new DeleteRequest( WORKSPACE_INDEX.getName() ).
             type( IndexType.NODE.getName() ).
-            id( generateWorkspaceDocumentId( query.getEntityId().toString(), query.getWorkspace().getName() ) ).
+            id( new WorkspaceDocumentId( query.getEntityId(), query.getWorkspace() ).toString() ).
             refresh( DEFAULT_REFRESH );
 
         elasticsearchDao.delete( deleteRequest );
@@ -198,11 +182,18 @@ public class ElasticsearchWorkspaceStore
 
         final SearchResultEntries results = searchResult.getResults();
 
-        if ( results.getSize() < expectedHits )
+        final long resultSize = results.getSize();
+
+        if ( resultSize < expectedHits )
         {
             throw new NodeNotFoundException(
-                "Expected " + expectedHits + " nodes in result, found " + results.getSize() + " in workspace " + workspaceName +
+                "Expected " + expectedHits + " nodes in result, found " + resultSize + " in workspace " + workspaceName +
                     ". Query: " + entityIdsAsStrings );
+        }
+
+        if ( resultSize > expectedHits )
+        {
+            throw new RuntimeException( "Found " + resultSize + " results in workspace " + workspace + ", expecting " + expectedHits );
         }
 
         final Set<SearchResultField> fieldValues = results.getFields( BLOBKEY_FIELD_NAME );

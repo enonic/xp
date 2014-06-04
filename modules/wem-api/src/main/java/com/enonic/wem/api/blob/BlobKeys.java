@@ -41,7 +41,7 @@ public class BlobKeys
 
     public static class Builder
     {
-        private Set<BlobKey> blobKeys = Sets.newHashSet();
+        private Set<BlobKey> blobKeys = Sets.newLinkedHashSet();
 
         public Builder add( final BlobKey blobKey )
         {
