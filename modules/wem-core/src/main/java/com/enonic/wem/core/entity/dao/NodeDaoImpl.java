@@ -132,6 +132,7 @@ public class NodeDaoImpl
     private Node doGetById( final EntityId entityId, final Workspace workspace )
     {
         final BlobKey blobKey = workspaceStore.getById( new WorkspaceIdQuery( workspace, entityId ) );
+
         return getNodeFromBlob( blobService.get( blobKey ) );
     }
 
@@ -252,6 +253,12 @@ public class NodeDaoImpl
         for ( final BlobKey blobKey : blobKeys )
         {
             final Blob blob = blobService.get( blobKey );
+
+            if ( blob == null )
+            {
+                throw new NodeNotFoundException( "Blob for node with blobkey " + blobKey + " not found" );
+            }
+
             nodesBuilder.add( getNodeFromBlob( blob ) );
         }
 
@@ -260,6 +267,11 @@ public class NodeDaoImpl
 
     private Node getNodeFromBlob( final Blob blob )
     {
+        if ( blob == null )
+        {
+            throw new IllegalArgumentException( "Trying to load blob when blob is null" );
+        }
+
         try
         {
             final byte[] bytes = ByteStreams.toByteArray( blob.getStream() );

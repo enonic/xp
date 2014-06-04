@@ -6,6 +6,7 @@ import org.elasticsearch.action.search.SearchResponse;
 
 import com.enonic.wem.api.entity.query.EntityQuery;
 import com.enonic.wem.api.entity.query.NodeQuery;
+import com.enonic.wem.core.elasticsearch.result.SearchResult;
 import com.enonic.wem.core.index.query.EntityQueryTranslator;
 import com.enonic.wem.core.index.query.QueryResult;
 import com.enonic.wem.core.index.query.QueryResultFactory;
@@ -34,14 +35,14 @@ public class ElasticsearchQueryService
 
     private QueryResult doFind( final ElasticsearchQuery query )
     {
-        final SearchResponse searchResponse = elasticsearchDao.search( query );
+        final SearchResult searchResult = elasticsearchDao.search( query );
 
-        return translateResult( searchResponse );
+        return translateResult( searchResult );
     }
 
-    private QueryResult translateResult( final SearchResponse searchResponse )
+    private QueryResult translateResult( final SearchResult searchResult )
     {
-        return queryResultFactory.create( searchResponse );
+        return queryResultFactory.create( searchResult );
     }
 
     @Inject

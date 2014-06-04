@@ -11,6 +11,11 @@ public class Aggregations
     extends AbstractImmutableEntitySet<Aggregation>
 {
 
+    public Aggregation get( final String name )
+    {
+        return this.get( name );
+    }
+
     public static Aggregations empty()
     {
         final ImmutableSet<Aggregation> empty = ImmutableSet.of();
@@ -20,6 +25,12 @@ public class Aggregations
     public Aggregations( final ImmutableSet<Aggregation> set )
     {
         super( set );
+    }
+
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     public static class Builder

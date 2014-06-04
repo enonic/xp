@@ -26,7 +26,9 @@ final class DeleteNodeByPathCommand
 
         this.nodeDao.deleteById( nodeToDelete.id(), workspace );
 
+
         this.indexService.delete( nodeToDelete.id() );
+
 
         return nodeToDelete;
     }

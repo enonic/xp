@@ -2,7 +2,9 @@ package com.enonic.wem.core.workspace;
 
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobKeys;
+import com.enonic.wem.api.entity.EntityIds;
 import com.enonic.wem.core.workspace.query.WorkspaceDeleteQuery;
+import com.enonic.wem.core.workspace.query.WorkspaceDiffQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceIdsQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceParentQuery;
@@ -24,5 +26,7 @@ public interface WorkspaceStore
     public BlobKeys getByPaths( final WorkspacePathsQuery query );
 
     public BlobKeys getByParent( final WorkspaceParentQuery query );
+
+    public EntityIds getDiff( final WorkspaceDiffQuery query );
 
 }

@@ -1,32 +1,37 @@
 package com.enonic.wem.core.elasticsearch;
 
-import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.index.query.TermsQueryBuilder;
-import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.api.aggregation.Aggregation;
+import com.enonic.wem.api.aggregation.BucketAggregation;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobKeys;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
 import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.core.elasticsearch.result.SearchResult;
+import com.enonic.wem.core.elasticsearch.result.SearchResultEntries;
+import com.enonic.wem.core.elasticsearch.result.SearchResultEntry;
+import com.enonic.wem.core.elasticsearch.result.SearchResultField;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
-import com.enonic.wem.core.workspace.UpdateWorkspaceReferenceDocument;
 import com.enonic.wem.core.workspace.WorkspaceDocument;
 import com.enonic.wem.core.workspace.WorkspaceStore;
 import com.enonic.wem.core.workspace.query.WorkspaceDeleteQuery;
@@ -60,10 +65,10 @@ public class ElasticsearchWorkspaceStore
     {
         final String workspaceDocumentId = generateWorkspaceDocumentId( workspaceDocument );
 
-        if ( unchanged( workspaceDocument, workspaceDocumentId ) )
-        {
-            return;
-        }
+        //if ( unchanged( workspaceDocument, workspaceDocumentId ) )
+        // {
+        //     return;
+        // }
 
         final IndexRequest indexRequest = Requests.indexRequest().
             index( WORKSPACE_INDEX.getName() ).
@@ -77,7 +82,7 @@ public class ElasticsearchWorkspaceStore
 
     private boolean unchanged( final WorkspaceDocument workspaceDocument, final String workspaceDocumentId )
     {
-        final GetResponse result = elasticsearchDao.get( QueryMetaData.
+        final SearchResult searchResult = elasticsearchDao.get( QueryMetaData.
             create( WORKSPACE_INDEX ).
             indexType( IndexType.NODE ).
             addField( BLOBKEY_FIELD_NAME ).
@@ -85,11 +90,13 @@ public class ElasticsearchWorkspaceStore
             addField( PATH_FIELD_NAME ).
             build(), workspaceDocumentId );
 
-        if ( result.isExists() )
+        if ( searchResult.getResults().getSize() > 0 )
         {
-            final String currentBlobKey = result.getField( BLOBKEY_FIELD_NAME ).getValue().toString();
-            final String currentParentPath = result.getField( PARENT_PATH_FIELD_NAME ).getValue().toString();
-            final String currentPath = result.getField( PATH_FIELD_NAME ).getValue().toString();
+            final SearchResultEntry hit = searchResult.getResults().getFirstHit();
+
+            final String currentBlobKey = hit.getField( BLOBKEY_FIELD_NAME, true ).getValue().toString();
+            final String currentParentPath = hit.getField( PARENT_PATH_FIELD_NAME, true ).getValue().toString();
+            final String currentPath = hit.getField( PATH_FIELD_NAME, true ).getValue().toString();
 
             if ( currentBlobKey.equals( workspaceDocument.getBlobKey().toString() ) &&
                 currentParentPath.equals( workspaceDocument.getParentPath().toString() ) &&
@@ -101,115 +108,10 @@ public class ElasticsearchWorkspaceStore
         return false;
     }
 
-    //  @Override
-    public void newStore( final WorkspaceDocument workspaceDocument )
-    {
-        final String workspaceDocumentId = newGenerateWorkspaceDocumentId( workspaceDocument );
-
-        final GetResponse existingDocument = getByWorkspaceDocumentId( workspaceDocumentId );
-
-        if ( existingDocument.isExists() )
-        {
-            final List<Object> existingWorkspaceRefs = existingDocument.getField( WORKSPACE_FIELD_NAME ).getValues();
-
-            final boolean alreadyReferredFromWorkspace = existingWorkspaceRefs.contains( workspaceDocument.getWorkspace().toString() );
-            if ( alreadyReferredFromWorkspace )
-            {
-                return;
-            }
-            else // Remove old reference and update document with new workspace
-            {
-                removeOldReferenceIfExists( workspaceDocument.getEntityId(), workspaceDocument.getWorkspace() );
-                updateWithNewWorkspaceRef( workspaceDocumentId, workspaceDocument.getWorkspace().toString(), existingWorkspaceRefs );
-            }
-        }
-        else
-        {
-            removeOldReferenceIfExists( workspaceDocument.getEntityId(), workspaceDocument.getWorkspace() );
-            storeNewDocument( workspaceDocument );
-        }
-    }
-
-    private void removeOldReferenceIfExists( final EntityId entityId, final Workspace workspace )
-    {
-        final SearchHit documentWithReference = doGetById( entityId, workspace, WORKSPACE_FIELD_NAME );
-
-        if ( documentWithReference == null )
-        {
-            return;
-        }
-
-        final String id = documentWithReference.getId();
-        final List<Object> existingWorkspaceRefs = SearchResponseAccessor.getMultipleValues( documentWithReference, WORKSPACE_FIELD_NAME );
-
-        if ( existingWorkspaceRefs.contains( workspace.getName() ) )
-        {
-            removeWorkspaceRef( id, workspace.getName(), existingWorkspaceRefs );
-        }
-    }
-
-
-    private void updateWithNewWorkspaceRef( final String documentId, final String newWorkspaceRef,
-                                            final List<Object> existingWorkspaceRefs )
-    {
-        final UpdateWorkspaceReferenceDocument updateDocument = UpdateWorkspaceReferenceDocument.
-            create().
-            addAll( existingWorkspaceRefs ).
-            add( newWorkspaceRef ).
-            build();
-
-        updateWorkspaceRef( documentId, updateDocument );
-    }
-
-    private void removeWorkspaceRef( final String documentId, final String toBeRemovedRefs, final List<Object> existingWorkspaceRefs )
-    {
-        final UpdateWorkspaceReferenceDocument updateDocument = UpdateWorkspaceReferenceDocument.
-            create().
-            addAll( existingWorkspaceRefs ).
-            remove( toBeRemovedRefs ).
-            build();
-
-        updateWorkspaceRef( documentId, updateDocument );
-    }
-
-    private void updateWorkspaceRef( final String documentId, final UpdateWorkspaceReferenceDocument updateDocument )
-    {
-        final IndexRequest indexRequest = Requests.indexRequest().
-            index( WORKSPACE_INDEX.getName() ).
-            type( IndexType.NODE.getName() ).
-            source( WorkspaceXContentBuilderFactory.create( updateDocument ) ).
-            id( documentId ).
-            refresh( DEFAULT_REFRESH );
-
-        elasticsearchDao.update( indexRequest );
-    }
-
-    private GetResponse getByWorkspaceDocumentId( final String workspaceDocumentId )
-    {
-        return elasticsearchDao.get( QueryMetaData.
-            create( WORKSPACE_INDEX ).
-            indexType( IndexType.NODE ).
-            addField( WORKSPACE_FIELD_NAME ).
-            build(), workspaceDocumentId );
-    }
-
-    private void storeNewDocument( final WorkspaceDocument workspaceDocument )
-    {
-        final String workspaceDocumentId = newGenerateWorkspaceDocumentId( workspaceDocument );
-
-        final IndexRequest indexRequest = Requests.indexRequest().
-            index( WORKSPACE_INDEX.getName() ).
-            type( IndexType.NODE.getName() ).
-            source( WorkspaceXContentBuilderFactory.create( workspaceDocument ) ).
-            id( workspaceDocumentId ).
-            refresh( DEFAULT_REFRESH );
-
-        elasticsearchDao.store( indexRequest );
-    }
 
     private String generateWorkspaceDocumentId( final WorkspaceDocument workspaceDocument )
     {
-        return newGenerateWorkspaceDocumentId( workspaceDocument.getEntityId().toString(), workspaceDocument.getWorkspace().getName() );
+        return generateWorkspaceDocumentId( workspaceDocument.getEntityId().toString(), workspaceDocument.getWorkspace().getName() );
     }
 
     private String generateWorkspaceDocumentId( final String entityId, final String workspaceName )
@@ -217,38 +119,12 @@ public class ElasticsearchWorkspaceStore
         return entityId + "-" + workspaceName;
     }
 
-    private String newGenerateWorkspaceDocumentId( final WorkspaceDocument workspaceDocument )
-    {
-        return newGenerateWorkspaceDocumentId( workspaceDocument.getEntityId().toString(), workspaceDocument.getBlobKey().toString() );
-    }
-
-    private String newGenerateWorkspaceDocumentId( final String entityId, final String blobKey )
-    {
-        return entityId + "-" + blobKey;
-    }
-
-    // @Override
-    public void newDelete( final WorkspaceDeleteQuery query )
-    {
-        removeOldReferenceIfExists( query.getEntityId(), query.getWorkspace() );
-
-        // TODO: Should old docs be deleted? Maybe moved into versions-index?
-       /* DeleteRequest deleteRequest = new DeleteRequest( WORKSPACE_INDEX.getName() ).
-            type( IndexType.NODE.getName() ).
-            id( generateWorkspaceDocumentId( query.getEntityId().toString(), query.getWorkspace().getName() ) ).
-            refresh( DEFAULT_REFRESH );
-
-        elasticsearchDao.delete( deleteRequest );
-        */
-    }
-
-
     @Override
     public void delete( final WorkspaceDeleteQuery query )
     {
         DeleteRequest deleteRequest = new DeleteRequest( WORKSPACE_INDEX.getName() ).
             type( IndexType.NODE.getName() ).
-            id( newGenerateWorkspaceDocumentId( query.getEntityId().toString(), query.getWorkspace().getName() ) ).
+            id( generateWorkspaceDocumentId( query.getEntityId().toString(), query.getWorkspace().getName() ) ).
             refresh( DEFAULT_REFRESH );
 
         elasticsearchDao.delete( deleteRequest );
@@ -259,31 +135,31 @@ public class ElasticsearchWorkspaceStore
     {
         final EntityId entityId = query.getEntityId();
 
-        final SearchHit hit = doGetById( entityId, query.getWorkspace(), BLOBKEY_FIELD_NAME );
+        final SearchResultEntry searchResultEntry = doGetById( entityId, query.getWorkspace(), BLOBKEY_FIELD_NAME );
 
-        if ( hit == null )
+        if ( searchResultEntry == null )
         {
             throw new NodeNotFoundException( "Node with id: " + entityId + " not found in workspace " + query.getWorkspace().getName() );
         }
 
-        final Object value = SearchResponseAccessor.getFieldValue( hit, WorkspaceXContentBuilderFactory.BLOBKEY_FIELD_NAME );
+        final SearchResultField field = searchResultEntry.getField( WorkspaceXContentBuilderFactory.BLOBKEY_FIELD_NAME, true );
 
-        if ( value == null )
+        if ( field == null || field.getValue() == null )
         {
             throw new RuntimeException( "Field " + BLOBKEY_FIELD_NAME + " not found on node with id " +
                                             entityId +
                                             " in workspace " + query.getWorkspace().getName() );
         }
 
-        return new BlobKey( value.toString() );
+        return new BlobKey( field.getValue().toString() );
     }
 
-    private SearchHit doGetById( final EntityId entityId, final Workspace workspace, final String field )
+    private SearchResultEntry doGetById( final EntityId entityId, final Workspace workspace, final String field )
     {
         return doGetById( entityId, workspace, Sets.newHashSet( field ) );
     }
 
-    private SearchHit doGetById( final EntityId entityId, final Workspace workspace, final Set<String> fields )
+    private SearchResultEntry doGetById( final EntityId entityId, final Workspace workspace, final Set<String> fields )
     {
         final TermQueryBuilder idQuery = new TermQueryBuilder( WorkspaceXContentBuilderFactory.ENTITY_ID_FIELD_NAME, entityId.toString() );
 
@@ -296,9 +172,9 @@ public class ElasticsearchWorkspaceStore
             addFields( fields ).
             build();
 
-        final SearchResponse searchResponse = elasticsearchDao.get( queryMetaData, boolQueryBuilder );
+        final SearchResult searchResult = elasticsearchDao.get( queryMetaData, boolQueryBuilder );
 
-        return SearchResponseAccessor.getSingleHit( searchResponse );
+        return searchResult.getResults().getFirstHit();
     }
 
     @Override
@@ -319,19 +195,18 @@ public class ElasticsearchWorkspaceStore
 
         final QueryMetaData queryMetaData = createGetBlobkeyQueryMetaData( entityIdsAsStrings.size() );
 
-        final SearchResponse searchResponse = elasticsearchDao.get( queryMetaData, boolQueryBuilder );
+        final SearchResult searchResult = elasticsearchDao.get( queryMetaData, boolQueryBuilder );
 
-        final SearchHit[] hits = searchResponse.getHits().hits();
+        final SearchResultEntries results = searchResult.getResults();
 
-        if ( hits.length < expectedHits )
+        if ( results.getSize() < expectedHits )
         {
             throw new NodeNotFoundException(
-                "Expected " + expectedHits + " nodes in result, found " + hits.length + " in workspace " + workspaceName +
-                    ". Query: " + entityIdsAsStrings
-            );
+                "Expected " + expectedHits + " nodes in result, found " + results.getSize() + " in workspace " + workspaceName +
+                    ". Query: " + entityIdsAsStrings );
         }
 
-        final Set<Object> fieldValues = SearchResponseAccessor.getFieldValues( hits, BLOBKEY_FIELD_NAME );
+        final Set<SearchResultField> fieldValues = results.getFields( BLOBKEY_FIELD_NAME );
 
         if ( fieldValues.size() < expectedHits )
         {
@@ -351,17 +226,17 @@ public class ElasticsearchWorkspaceStore
 
         final QueryMetaData queryMetaData = createGetBlobkeyQueryMetaData( 1 );
 
-        final SearchResponse searchResponse = elasticsearchDao.get( queryMetaData, workspacedByPathQuery );
+        final SearchResult searchResult = elasticsearchDao.get( queryMetaData, workspacedByPathQuery );
 
-        final SearchHit hit = SearchResponseAccessor.getSingleHit( searchResponse );
-
-        if ( hit == null )
+        if ( searchResult.getResults().getSize() != 1 )
         {
             throw new NodeNotFoundException( "Node with path: " + query.getNodePathAsString() + " not found in workspace " +
                                                  query.getWorkspace() );
         }
 
-        final Object value = SearchResponseAccessor.getFieldValue( hit, BLOBKEY_FIELD_NAME );
+        final SearchResultEntry firstHit = searchResult.getResults().getFirstHit();
+
+        final Object value = firstHit.getField( BLOBKEY_FIELD_NAME ).getValue();
 
         if ( value == null )
         {
@@ -381,9 +256,9 @@ public class ElasticsearchWorkspaceStore
 
         final QueryMetaData queryMetaData = createGetBlobkeyQueryMetaData( query.getNodePathsAsStrings().size() );
 
-        final SearchResponse searchResponse = elasticsearchDao.get( queryMetaData, workspacedByPathsQuery );
+        final SearchResult searchResult = elasticsearchDao.get( queryMetaData, workspacedByPathsQuery );
 
-        final long totalHits = searchResponse.getHits().getTotalHits();
+        final long totalHits = searchResult.getResults().getSize();
 
         if ( totalHits != query.getNodePathsAsStrings().size() )
         {
@@ -391,8 +266,7 @@ public class ElasticsearchWorkspaceStore
                                             query.getNodePathsAsStrings() );
         }
 
-        final Set<Object> fieldValues =
-            SearchResponseAccessor.getFieldValues( searchResponse.getHits().hits(), WorkspaceXContentBuilderFactory.BLOBKEY_FIELD_NAME );
+        final Set<SearchResultField> fieldValues = searchResult.getResults().getFields( BLOBKEY_FIELD_NAME );
 
         return fieldValuesToBlobKeys( fieldValues );
     }
@@ -405,44 +279,65 @@ public class ElasticsearchWorkspaceStore
 
         final QueryMetaData queryMetaData = createGetBlobkeyQueryMetaData( DEFAULT_UNKNOWN_SIZE );
 
-        final SearchResponse searchResponse = elasticsearchDao.get( queryMetaData, workspacedByParentQuery );
+        final SearchResult searchResult = elasticsearchDao.get( queryMetaData, workspacedByParentQuery );
 
-        if ( searchResponse.getHits().getTotalHits() == 0 )
+        if ( searchResult.getResults().getSize() == 0 )
         {
             return BlobKeys.empty();
         }
 
-        final Set<Object> fieldValues =
-            SearchResponseAccessor.getFieldValues( searchResponse.getHits().getHits(), WorkspaceXContentBuilderFactory.BLOBKEY_FIELD_NAME );
+        final Set<SearchResultField> fieldValues = searchResult.getResults().getFields( BLOBKEY_FIELD_NAME );
 
         return fieldValuesToBlobKeys( fieldValues );
     }
 
-    public EntityIds getDiff( final WorkspaceDiffQuery query )
+    @Override
+    public EntityIds getDiff( final WorkspaceDiffQuery workspaceDiffQuery )
     {
-        BoolQueryBuilder diffQuery = new BoolQueryBuilder();
+        final BoolQueryBuilder inOnOfTheWorkspaces = new BoolQueryBuilder();
 
-        BoolQueryBuilder inAtLeastOne = new BoolQueryBuilder();
-        TermQueryBuilder inSource = new TermQueryBuilder( WORKSPACE_FIELD_NAME, query.getSource().getName() );
-        TermQueryBuilder inTarget = new TermQueryBuilder( WORKSPACE_FIELD_NAME, query.getTarget().getName() );
-        inAtLeastOne.should( inSource ).should( inTarget ).minimumNumberShouldMatch( 1 );
+        final TermQueryBuilder inSource = new TermQueryBuilder( WORKSPACE_FIELD_NAME, workspaceDiffQuery.getSource().getName() );
+        final TermQueryBuilder inTarget = new TermQueryBuilder( WORKSPACE_FIELD_NAME, workspaceDiffQuery.getTarget().getName() );
 
-        BoolQueryBuilder inBoth = new BoolQueryBuilder();
-        inBoth.must( inSource ).must( inTarget );
+        final long inSourceCount = elasticsearchDao.count( createGetBlobkeyQueryMetaData( 0 ), inSource );
+        final long inTargetCount = elasticsearchDao.count( createGetBlobkeyQueryMetaData( 0 ), inTarget );
 
-        diffQuery.must( inAtLeastOne ).mustNot( inBoth );
+        final long totalCount = inSourceCount + inTargetCount;
 
-        final SearchResponse searchResponse = elasticsearchDao.get( createGetBlobkeyQueryMetaData( DEFAULT_UNKNOWN_SIZE ), diffQuery );
+        inOnOfTheWorkspaces.should( inSource ).should( inTarget ).minimumNumberShouldMatch( 1 );
 
-        return null;
+        final String changedAggregationName = "changed";
+
+        final TermsBuilder changedAggregationQuery = AggregationBuilders.terms( changedAggregationName ).
+            size( (int) (long) totalCount ).
+            order( Terms.Order.count( true ) );
+
+        final ElasticsearchQuery query = ElasticsearchQuery.newQuery().
+            query( inOnOfTheWorkspaces ).
+            setAggregations( Sets.newHashSet( changedAggregationQuery ) ).
+            size( 0 ).
+            from( 0 ).
+            index( WORKSPACE_INDEX ).
+            indexType( IndexType.NODE ).
+            build();
+
+        final SearchResult searchResult = elasticsearchDao.search( query );
+
+        final Aggregation changedAggregation = searchResult.getAggregations().get( changedAggregationName );
+
+        Preconditions.checkArgument( changedAggregation instanceof BucketAggregation,
+                                     "Aggregation of wrong type, should be BucketAggregation, was " +
+                                         changedAggregation.getClass().getName() );
+
+        return ChangedIdsResolver.resolve( (BucketAggregation) changedAggregation );
     }
 
-    private BlobKeys fieldValuesToBlobKeys( final Set<Object> fieldValues )
+    private BlobKeys fieldValuesToBlobKeys( final Set<SearchResultField> fieldValues )
     {
         final BlobKeys.Builder blobKeysBuilder = BlobKeys.create();
-        for ( final Object value : fieldValues )
+        for ( final SearchResultField searchResultField : fieldValues )
         {
-            blobKeysBuilder.add( new BlobKey( value.toString() ) );
+            blobKeysBuilder.add( new BlobKey( searchResultField.getValue().toString() ) );
         }
         return blobKeysBuilder.build();
     }

@@ -5,6 +5,8 @@ import java.util.Collection;
 import javax.inject.Inject;
 
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.action.count.CountRequestBuilder;
+import org.elasticsearch.action.count.CountResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
@@ -20,6 +22,8 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
+import com.enonic.wem.core.elasticsearch.result.SearchResult;
+import com.enonic.wem.core.elasticsearch.result.SearchResultFactory;
 import com.enonic.wem.core.index.DeleteDocument;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexException;
@@ -95,8 +99,7 @@ public class ElasticsearchDao
         }
     }
 
-
-    public SearchResponse search( final ElasticsearchQuery elasticsearchQuery )
+    public SearchResult search( final ElasticsearchQuery elasticsearchQuery )
     {
         final SearchSourceBuilder searchSource = elasticsearchQuery.toSearchSourceBuilder();
 
@@ -110,12 +113,14 @@ public class ElasticsearchDao
         return doSearchRequest( searchRequest );
     }
 
-    private SearchResponse doSearchRequest( SearchRequest searchRequest )
+    private SearchResult doSearchRequest( SearchRequest searchRequest )
     {
-        return this.client.search( searchRequest ).actionGet();
+        final SearchResponse searchResponse = this.client.search( searchRequest ).actionGet();
+
+        return SearchResultFactory.create( searchResponse );
     }
 
-    public SearchResponse get( final QueryMetaData queryMetaData, final QueryBuilder queryBuilder )
+    public SearchResult get( final QueryMetaData queryMetaData, final QueryBuilder queryBuilder )
     {
         final SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch( queryMetaData.getIndex() ).
             setTypes( queryMetaData.getIndexType() ).
@@ -131,9 +136,8 @@ public class ElasticsearchDao
         return doSearchRequest( searchRequestBuilder );
     }
 
-    public GetResponse get( final QueryMetaData queryMetaData, final String id )
+    public SearchResult get( final QueryMetaData queryMetaData, final String id )
     {
-
         final GetRequest getRequest = new GetRequest( queryMetaData.getIndex() ).
             type( queryMetaData.getIndexType() ).
             id( id );
@@ -143,15 +147,29 @@ public class ElasticsearchDao
             getRequest.fields( queryMetaData.getFields() );
         }
 
-        return client.get( getRequest ).actionGet();
+        final GetResponse getResponse = client.get( getRequest ).actionGet();
+
+        return SearchResultFactory.create( getResponse );
     }
 
-
-    private SearchResponse doSearchRequest( final SearchRequestBuilder searchRequestBuilder )
+    public long count( final QueryMetaData queryMetaData, final QueryBuilder query )
     {
-        return searchRequestBuilder.
+        CountRequestBuilder countRequestBuilder = new CountRequestBuilder( this.client ).
+            setIndices( queryMetaData.getIndex() ).
+            setTypes( queryMetaData.getIndexType() ).
+            setQuery( query );
+
+        final CountResponse response = this.client.count( countRequestBuilder.request() ).actionGet();
+        return response.getCount();
+    }
+
+    private SearchResult doSearchRequest( final SearchRequestBuilder searchRequestBuilder )
+    {
+        final SearchResponse searchResponse = searchRequestBuilder.
             execute().
             actionGet();
+
+        return SearchResultFactory.create( searchResponse );
     }
 
     @Inject

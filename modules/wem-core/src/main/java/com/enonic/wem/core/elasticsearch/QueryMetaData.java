@@ -10,7 +10,6 @@ import com.enonic.wem.core.index.IndexType;
 
 public class QueryMetaData
 {
-
     private final Index index;
 
     private final IndexType indexType;
