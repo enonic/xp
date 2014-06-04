@@ -14,6 +14,8 @@ module api.app {
 
         private userInfoPopup: UserInfoPopup;
 
+        private showAppLauncherAction: ShowAppLauncherAction;
+
         constructor(application: Application) {
             super("appbar");
 
@@ -23,7 +25,9 @@ module api.app {
             this.tabMenu.onNavigationItemDeselected(() => this.layoutChildren());
             this.tabMenu.onButtonLabelChanged(() => this.layoutChildren());
 
-            this.launcherButton = new LauncherButton(AppBarActions.SHOW_APP_LAUNCHER);
+            this.showAppLauncherAction = new ShowAppLauncherAction(this.application);
+
+            this.launcherButton = new LauncherButton(this.showAppLauncherAction);
             this.appendChild(this.launcherButton);
 
             var separator = new Separator();

@@ -41,7 +41,7 @@ module app.home {
                 }
             })
 
-            this.appSelector.onAppSelected((event) => {
+            api.app.ShowAppLauncherEvent.on((event) => {
                 this.setBackgroundImgUrl("");
             });
         }

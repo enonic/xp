@@ -11,7 +11,7 @@ module app.home {
 
         setInstallation(installation:string):void {
             this.installation = installation;
-            var text = installation ? ' | ' + installation : '';
+            var text = installation ? installation : '';
             this.getEl().setInnerHtml(text);
         }
 

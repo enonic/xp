@@ -42,9 +42,25 @@ module app.launcher {
                 console.log("LostConnectionDetector disabled when client runs against localhost");
             }
             api.dom.Body.get().appendChild(this.adminApplicationFrames);
+
+            api.app.ShowAppLauncherEvent.on((event) => {
+                Applications.getAllApps().forEach((app: api.app.Application) => {
+                    console.log(app, event.getApplication());
+                    if (app != event.getApplication()) {
+                        app.hide();
+                    }
+                });
+            });
         }
 
         loadApplication(application: api.app.Application) {
+
+            Applications.getAllApps().forEach((app: api.app.Application) => {
+                if (app != application) {
+                    app.hide();
+                }
+            });
+
             if (!application.getAppUrl()) {
                 console.warn('Missing URL for app "' + application.getName() + '". Cannot be opened.');
                 return;
@@ -67,9 +83,6 @@ module app.launcher {
         }
 
         showLauncherScreen() {
-            Applications.getAllApps().forEach((app: api.app.Application) => {
-                app.hide();
-            });
             if (this.loadMask.isVisible()) {
                 this.loadMask.hide();
             }

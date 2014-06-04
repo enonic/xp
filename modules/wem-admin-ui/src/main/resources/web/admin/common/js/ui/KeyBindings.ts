@@ -12,7 +12,7 @@ module api.ui {
 
         private shelves: {[s:string] : KeyBinding;}[] = [];
 
-        private debug: boolean = true;
+        private debug: boolean = false;
 
         public static get(): KeyBindings {
             return KeyBindings.INSTANCE;

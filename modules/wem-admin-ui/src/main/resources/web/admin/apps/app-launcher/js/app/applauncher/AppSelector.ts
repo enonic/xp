@@ -47,19 +47,21 @@ module app.launcher {
                 }
                 return false;
             }, 'tab', 'right'));
+
             this.keyBindings = this.keyBindings.concat(api.ui.KeyBinding.bindMultiple((e: ExtendedKeyboardEvent, combo: string)=> {
                 if (this.isVisible()) {
                     this.highlightPreviousAppTile();
                 }
                 return false;
             }, 'shift+tab', 'left'));
-            this.keyBindings.push(new api.ui.KeyBinding('return', (e: ExtendedKeyboardEvent, combo: string)=> {
+
+            this.keyBindings = this.keyBindings.concat(api.ui.KeyBinding.bindMultiple((e: ExtendedKeyboardEvent, combo: string)=> {
                 if (this.selectedAppIndex >= 0) {
                     var application: api.app.Application = this.apps[this.selectedAppIndex];
                     this.notifyAppSelected(application);
                 }
                 return false;
-            }));
+            }, 'return', 'space'));
 
             this.onRendered((event) => {
 
