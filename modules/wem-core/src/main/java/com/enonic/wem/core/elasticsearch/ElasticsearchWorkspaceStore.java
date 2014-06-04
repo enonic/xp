@@ -57,7 +57,6 @@ public class ElasticsearchWorkspaceStore
 
     private static final int DEFAULT_UNKNOWN_SIZE = 1000;
 
-    @Inject
     private ElasticsearchDao elasticsearchDao;
 
     @Override
@@ -137,18 +136,13 @@ public class ElasticsearchWorkspaceStore
 
         final SearchResultEntry searchResultEntry = doGetById( entityId, query.getWorkspace(), BLOBKEY_FIELD_NAME );
 
-        if ( searchResultEntry == null )
-        {
-            throw new NodeNotFoundException( "Node with id: " + entityId + " not found in workspace " + query.getWorkspace().getName() );
-        }
-
         final SearchResultField field = searchResultEntry.getField( WorkspaceXContentBuilderFactory.BLOBKEY_FIELD_NAME, true );
 
         if ( field == null || field.getValue() == null )
         {
-            throw new RuntimeException( "Field " + BLOBKEY_FIELD_NAME + " not found on node with id " +
-                                            entityId +
-                                            " in workspace " + query.getWorkspace().getName() );
+            throw new WorkspaceStoreException( "Field " + BLOBKEY_FIELD_NAME + " not found on node with id " +
+                                                   entityId +
+                                                   " in workspace " + query.getWorkspace().getName() );
         }
 
         return new BlobKey( field.getValue().toString() );
@@ -173,6 +167,11 @@ public class ElasticsearchWorkspaceStore
             build();
 
         final SearchResult searchResult = elasticsearchDao.get( queryMetaData, boolQueryBuilder );
+
+        if ( searchResult.getResults().getSize() == 0 )
+        {
+            throw new NodeNotFoundException( "Entity with id: " + entityId + " not found in workspace " + workspace.getName() );
+        }
 
         return searchResult.getResults().getFirstHit();
     }
@@ -362,4 +361,10 @@ public class ElasticsearchWorkspaceStore
         return boolQueryBuilder;
     }
 
+    @Inject
+    public void setElasticsearchDao( final ElasticsearchDao elasticsearchDao )
+    {
+        this.elasticsearchDao = elasticsearchDao;
+    }
 }
+

@@ -18,7 +18,7 @@ public class SearchResultEntriesFactory
                 id( hit.id() ).
                 score( hit.score() ).
                 version( hit.version() ).
-                fields( SearchResultFieldsFactory.create( hit ) ).
+                setFields( SearchResultFieldsFactory.create( hit ) ).
                 build();
 
             builder.add( resultEntry );
@@ -31,7 +31,7 @@ public class SearchResultEntriesFactory
     {
         final SearchResultEntry searchResultEntry = SearchResultEntry.create().
             id( getResponse.getId() ).
-            fields( SearchResultFieldsFactory.create( getResponse ) ).
+            setFields( SearchResultFieldsFactory.create( getResponse ) ).
             build();
 
         return SearchResultEntries.create().add( searchResultEntry ).build();

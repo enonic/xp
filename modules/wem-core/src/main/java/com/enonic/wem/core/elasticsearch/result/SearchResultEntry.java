@@ -100,9 +100,15 @@ public class SearchResultEntry
             return this;
         }
 
-        public Builder fields( final Map<String, SearchResultField> fields )
+        public Builder setFields( final Map<String, SearchResultField> fields )
         {
             this.fields = fields;
+            return this;
+        }
+
+        public Builder addField( final String fieldName, final SearchResultField searchResultField )
+        {
+            this.fields.put( fieldName, searchResultField );
             return this;
         }
 
