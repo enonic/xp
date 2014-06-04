@@ -136,7 +136,7 @@ public class ElasticsearchWorkspaceStore
 
         final SearchResultEntry searchResultEntry = doGetById( entityId, query.getWorkspace(), BLOBKEY_FIELD_NAME );
 
-        final SearchResultField field = searchResultEntry.getField( WorkspaceXContentBuilderFactory.BLOBKEY_FIELD_NAME, true );
+        final SearchResultField field = searchResultEntry.getField( WorkspaceXContentBuilderFactory.BLOBKEY_FIELD_NAME );
 
         if ( field == null || field.getValue() == null )
         {
