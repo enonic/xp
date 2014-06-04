@@ -29,8 +29,7 @@ class SiteTemplateServiceImpl_createSiteTemplateTest
             url( "http://www.enonic.com" ).
             modules( moduleKeys ).
             description( "description" ).
-            contentTypeFilter( filter ).
-            rootContentType( ContentTypeName.from( "document" ) );
+            contentTypeFilter( filter );
 
         when:
         def result = this.service.createSiteTemplate( createSiteTemplateParam );
@@ -45,7 +44,6 @@ class SiteTemplateServiceImpl_createSiteTemplateTest
         result.getModules() == moduleKeys;
         result.getDescription() == "description";
         result.getContentTypeFilter() == filter;
-        result.getRootContentType() == ContentTypeName.from( "document" );
     }
 
     def "create site template with page template"()
@@ -68,7 +66,6 @@ class SiteTemplateServiceImpl_createSiteTemplateTest
             modules( moduleKeys ).
             description( "description" ).
             contentTypeFilter( filter ).
-            rootContentType( ContentTypeName.from( "document" ) ).
             addPageTemplate( pageTemplate );
 
         when:
@@ -84,7 +81,6 @@ class SiteTemplateServiceImpl_createSiteTemplateTest
         result.getModules() == moduleKeys;
         result.getDescription() == "description";
         result.getContentTypeFilter() == filter;
-        result.getRootContentType() == ContentTypeName.from( "document" );
         result.getPageTemplates().getSize() == 1;
         result.getPageTemplates().first().getDisplayName() == "My page template";
     }

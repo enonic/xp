@@ -10,6 +10,5 @@
     "contentTypeFilter": {
         "allow": [ "image" ],
         "deny": [ "com.enonic.tweet", "system.folder", "com.enonic.article", "com.enonic.employee" ]
-    },
-    "rootContentType": "page"
+    }
 }

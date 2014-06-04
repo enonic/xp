@@ -26,8 +26,7 @@ class SiteTemplateServiceImpl_getSiteTemplateTest
                 url( "http://www.enonic.com" ).
                 modules( moduleKeys ).
                 description( "description" ).
-                contentTypeFilter( filter ).
-                rootContentType( ContentTypeName.from( "document" ) );
+                contentTypeFilter( filter );
 
         this.service.siteTemplateExporter = new SiteTemplateExporter();
         def existingSiteTemplate = this.service.createSiteTemplate( createSiteTemplateParam );
@@ -45,7 +44,6 @@ class SiteTemplateServiceImpl_getSiteTemplateTest
         result.getModules() == existingSiteTemplate.getModules(  );
         result.getDescription() == existingSiteTemplate.getDescription(  );
         result.getContentTypeFilter() == existingSiteTemplate.getContentTypeFilter(  );
-        result.getRootContentType() == existingSiteTemplate.getRootContentType(  );
     }
 
 }
