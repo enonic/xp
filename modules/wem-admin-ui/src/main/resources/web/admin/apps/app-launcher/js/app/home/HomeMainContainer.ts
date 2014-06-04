@@ -8,8 +8,6 @@ module app.home {
 
         private loginForm: app.login.LoginForm;
 
-        private appInfo: app.launcher.AppInfo;
-
         private linksContainer: LinksContainer;
 
         private centerPanel: CenterPanel;
@@ -21,24 +19,31 @@ module app.home {
 
             this.appSelector = builder.appSelector;
             this.loginForm = builder.loginForm;
-            this.appInfo = builder.appInfo;
             this.linksContainer = builder.linksContainer;
             this.backgroundImgUrl = builder.backgroundImgUrl;
 
-            var style = this.getHTMLElement().style;
-            style.left = '0px';
-            style.top = '0px';
             this.setBackgroundImgUrl(this.backgroundImgUrl);
 
             this.brandingPanel = new Branding();
 
             this.centerPanel = new CenterPanel();
-            this.centerPanel.appendLeftColumn(this.appSelector);
-            this.centerPanel.appendRightColumn(this.loginForm);
-            this.centerPanel.appendRightColumn(this.appInfo);
-            this.centerPanel.appendRightColumn(this.linksContainer);
-            this.appendChild(this.brandingPanel);
+            this.centerPanel.appendChild(this.brandingPanel);
+            this.centerPanel.appendChild(this.appSelector);
+            this.centerPanel.appendChild(this.loginForm);
+            this.centerPanel.appendChild(this.linksContainer);
             this.appendChild(this.centerPanel);
+
+            this.onScrolled((event) => {
+                if (event.deltaY > 0) {
+                    this.appSelector.highlightNextAppTile();
+                } else if (event.deltaY < 0) {
+                    this.appSelector.highlightPreviousAppTile();
+                }
+            })
+
+            this.appSelector.onAppSelected((event) => {
+                this.setBackgroundImgUrl("");
+            });
         }
 
         giveFocus(): boolean {
@@ -47,7 +52,13 @@ module app.home {
 
         show() {
             this.appSelector.showAppsCount();
+            api.ui.KeyBindings.get().bindKeys(this.appSelector.getKeyBindings());
             super.show();
+        }
+
+        hide() {
+            api.ui.KeyBindings.get().unbindKeys(this.appSelector.getKeyBindings());
+            super.hide();
         }
     }
 
@@ -58,8 +69,6 @@ module app.home {
         appSelector: app.launcher.AppSelector;
 
         loginForm: app.login.LoginForm;
-
-        appInfo: app.launcher.AppInfo;
 
         linksContainer: app.home.LinksContainer;
 
@@ -75,11 +84,6 @@ module app.home {
 
         setLoginForm(value: app.login.LoginForm): HomeMainContainerBuilder {
             this.loginForm = value;
-            return this;
-        }
-
-        setAppInfo(value: app.launcher.AppInfo): HomeMainContainerBuilder {
-            this.appInfo = value;
             return this;
         }
 

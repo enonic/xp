@@ -8,7 +8,7 @@ html, body {
   top: 0;
   right: 0;
   bottom: 0;
-  background-color: #141414;
+  background-color: rgba(0,0,0,0.4);
   background-repeat: no-repeat;
   background-position: center center;
 
@@ -48,9 +48,8 @@ html, body {
   /** Branding */
 
   .branding {
-    position: absolute;
-    top: 30px;
-    left: 35px;
+    margin:40px auto 0 auto;
+    width:340px;
     background: transparent url(../images/wem-enonic-logo.png) 0 0 no-repeat;
     height: 24px;
   }
@@ -67,36 +66,12 @@ html, body {
   /** Center */
 
   .center-panel {
-    @center-width: 775px;
-    width: @center-width;
+    width: 100%;
     position: absolute;
-    left: 50%;
-    margin-left: -(@center-width / 2);
-    background-color: transparent;
+    background-color: rgba(0,0,0,0.4);
     top: 0;
     bottom: 0;
 
-    /** Left column */
-    .left-column {
-      position: absolute;
-      width: 480px;
-      background: transparent;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      color: @admin-white !important;
-    }
-
-    /** Right column */
-    .right-column {
-      position: absolute;
-      width: 295px;
-      background: rgba(0, 0, 0, 0.2);
-      top: 0;
-      right: 0;
-      bottom: 0;
-      color: @admin-white !important;
-    }
   }
 
   .login-licensed-to {
@@ -126,6 +101,13 @@ html, body {
   }
 
   /** App selector */
+
+  .app-selector-container {
+    position: absolute;
+    width: 9999px;
+    top: 30%;
+    left: calc(~"50% - 55px");
+  }
 
   .app-selector {
     color: @admin-white;
@@ -171,29 +153,32 @@ html, body {
   }
 
   .app-tiles-placeholder {
-    width: 480px;
+    width: 100%;
     .noSelect();
 
     .app-tile {
       cursor: pointer;
       position: relative;
-      background-color: #1c59af;
       float: left;
-      width: 110px;
+      width: 100px;
       height: 100px;
       margin: 0 10px 10px 0;
 
       a {
-        > .img-container {
+        > .icon-container {
           position: absolute;
           width: 100%;
           margin-top: 16px;
           text-align: center;
-        }
+          & > img {
+            width: 40px;
+            height: 40px;
+          }
 
-        > .img-container > img {
-          width: 40px;
-          height: 40px;
+          & > i {
+            font-size:40px;
+            color: white;
+          }
         }
 
         > .name-container {
@@ -216,7 +201,8 @@ html, body {
         }
       }
       &.app-tile-over {
-        background-color: #012056;
+        border-bottom:2px solid red;
+        //background-color: #012056;
         &.fullsize {
           > .img-container {
 
@@ -225,26 +211,15 @@ html, body {
       }
       &.fullsize {
         a {
-          > .img-container {
-            &:hover {
-              &:before {
-                display: block;
-                content: '';
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0,0,0,0.4);
-              }
-            }
+          > .icon-container {
             margin-top: 0px;
-          }
-          > .img-container > img {
-            width: 110px;
-            height: 100px;
-            display:block;
-          }
-          > .name-container {
-            display: none;
+            & > img {
+              width: 55px;
+              height: 55px;
+              margin: 10px auto;
+              display:block;
+              border-radius:50%;
+            }
           }
         }
       }

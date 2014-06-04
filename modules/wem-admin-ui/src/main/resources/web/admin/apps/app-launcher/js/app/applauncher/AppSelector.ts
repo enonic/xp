@@ -2,34 +2,33 @@ module app.launcher {
 
     export class AppSelector extends api.dom.DivEl {
         private selectedAppIndex: number;
+
         private apps: api.app.Application[];
+
         private appTiles: {[name: string]: AppTile;};
+
         private appHighlightedListeners: {(event: AppHighlightedEvent):void}[] = [];
+
         private appUnhighlightedListeners: {(event: AppUnhighlightedEvent):void}[] = [];
+
         private appSelectedListeners: {(event: AppSelectedEvent):void}[] = [];
-        private applicationSearchInput: api.ui.TextInput;
+
         private emptyMessagePlaceholder: api.dom.DivEl;
+
         private homeAppSelector: api.dom.DivEl;
 
         private keyBindings: api.ui.KeyBinding[] = [];
 
+        private appTileSize:number = 110;
+
+
         constructor(applications: api.app.Application[]) {
-            super();
+            super("app-selector-container");
             this.apps = applications;
             this.appTiles = {};
             this.selectedAppIndex = -1;
 
             this.homeAppSelector = new api.dom.DivEl('app-selector');
-
-            var searchInputContainer = new api.dom.DivEl('search-input-container');
-            this.applicationSearchInput = new api.ui.TextInput();
-            this.applicationSearchInput.setPlaceholder('Application Filter');
-            this.applicationSearchInput.onValueChanged((event: api.ui.ValueChangedEvent) => {
-                this.filterTiles(event.getNewValue());
-            });
-            searchInputContainer.appendChild(this.applicationSearchInput);
-
-            this.homeAppSelector.appendChild(searchInputContainer);
 
             var tilesPlaceholder = new api.dom.DivEl('app-tiles-placeholder');
             this.emptyMessagePlaceholder = new api.dom.DivEl();
@@ -42,18 +41,18 @@ module app.launcher {
 
             this.appendChild(this.homeAppSelector);
 
-            this.keyBindings.push(new api.ui.KeyBinding('tab', (e: ExtendedKeyboardEvent, combo: string)=> {
+            this.keyBindings = this.keyBindings.concat(api.ui.KeyBinding.bindMultiple((e: ExtendedKeyboardEvent, combo: string)=> {
                 if (this.isVisible()) {
                     this.highlightNextAppTile();
                 }
                 return false;
-            }));
-            this.keyBindings.push(new api.ui.KeyBinding('shift+tab', (e: ExtendedKeyboardEvent, combo: string)=> {
+            }, 'tab', 'right'));
+            this.keyBindings = this.keyBindings.concat(api.ui.KeyBinding.bindMultiple((e: ExtendedKeyboardEvent, combo: string)=> {
                 if (this.isVisible()) {
                     this.highlightPreviousAppTile();
                 }
                 return false;
-            }));
+            }, 'shift+tab', 'left'));
             this.keyBindings.push(new api.ui.KeyBinding('return', (e: ExtendedKeyboardEvent, combo: string)=> {
                 if (this.selectedAppIndex >= 0) {
                     var application: api.app.Application = this.apps[this.selectedAppIndex];
@@ -63,35 +62,33 @@ module app.launcher {
             }));
 
             this.onRendered((event) => {
-                this.activateKeyBindings();
 
                 setTimeout(() => {
                     this.homeAppSelector.addClass('fade-in-and-scale-up');
                 }, 200);
-            })
+
+            });
+
         }
+
+
 
         show() {
             this.showAppsCount();
             super.show();
-            this.activateKeyBindings();
         }
 
         hide() {
             super.hide();
-            this.deactivateKeyBindings();
         }
 
-        activateKeyBindings() {
-            api.ui.KeyBindings.get().bindKeys(this.keyBindings);
-        }
-
-        deactivateKeyBindings() {
-            api.ui.KeyBindings.get().unbindKeys(this.keyBindings);
+        getKeyBindings():api.ui.KeyBinding[] {
+            return this.keyBindings;
         }
 
         giveFocus(): boolean {
-            return this.applicationSearchInput.giveFocus();
+            this.highlightAppTile(this.apps[0], 0);
+            return true;
         }
 
         showAppsCount() {
@@ -101,7 +98,7 @@ module app.launcher {
             });
         }
 
-        private highlightNextAppTile() {
+        highlightNextAppTile() {
             var n = this.apps.length, i = 0, idx;
             do {
                 i++;
@@ -112,7 +109,7 @@ module app.launcher {
             this.highlightAppTile(this.apps[idx], idx);
         }
 
-        private highlightPreviousAppTile() {
+        highlightPreviousAppTile() {
             var n = this.apps.length, i = 0, idx;
             do {
                 i++;
@@ -127,12 +124,6 @@ module app.launcher {
             applications.forEach((application: api.app.Application, idx: number) => {
                 var appTile = new AppTile(application);
 
-                appTile.onMouseEnter((event: MouseEvent) => {
-                    this.highlightAppTile(application, idx, appTile);
-                });
-                appTile.onMouseLeave((event: MouseEvent) => {
-                    this.unhighlightAppTile(application, idx, appTile);
-                });
                 appTile.onClicked((event: MouseEvent) => {
                     this.notifyAppSelected(application);
                 });
@@ -154,6 +145,9 @@ module app.launcher {
             appTile.addClass('app-tile-over');
             this.selectedAppIndex = index;
             this.notifyAppHighlighted(application);
+
+            var offset = (this.appTileSize/2) + (this.appTileSize * index);
+            this.getEl().setLeft("calc(50% - " + offset + "px");
         }
 
         private unhighlightAppTile(application: api.app.Application, index: number, appTile?: AppTile) {

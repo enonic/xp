@@ -13,13 +13,13 @@ module api.app {
 
         private loadedListeners: {(): void}[] = [];
 
-        constructor(id: string, name: string, shortName: string, iconUrl: string, description?: string, appFrame: api.dom.IFrameEl = null,
-                    fullSizeIcon: boolean = false) {
+        constructor(id: string, name: string, shortName: string, icon: string, description?: string, appFrame: api.dom.IFrameEl = null,
+                    iconImage: boolean = false) {
             this.id = id;
             this.name = name;
             this.shortName = shortName;
-            this.iconUrl = iconUrl;
-            this.fullSizeIcon = fullSizeIcon;
+            this.iconUrl = icon;
+            this.fullSizeIcon = iconImage;
             this.description = description;
             this.openTabs = 0;
         }

@@ -17,16 +17,16 @@ function isUserLoggedIn(): boolean {
 function startApplication() {
     var userLoggedIn = isUserLoggedIn();
 
-    var appInfoPanel = new app.launcher.AppInfo();
+    //var appInfoPanel = new app.launcher.AppInfo();
 
     var applications:api.app.Application[] = app.launcher.Applications.getAllApps();
     var appSelector = new app.launcher.AppSelector(applications);
-    appSelector.onAppHighlighted((event: app.launcher.AppHighlightedEvent) => {
-        appInfoPanel.showAppInfo(event.getApplication());
-    });
-    appSelector.onAppUnhighlighted(() => {
-        appInfoPanel.hideAppInfo();
-    });
+//    appSelector.onAppHighlighted((event: app.launcher.AppHighlightedEvent) => {
+//        appInfoPanel.showAppInfo(event.getApplication());
+//    });
+//    appSelector.onAppUnhighlighted(() => {
+//        appInfoPanel.hideAppInfo();
+//    });
     appSelector.onAppSelected((event: app.launcher.AppSelectedEvent) => {
         appLauncher.loadApplication(event.getApplication());
     });
@@ -49,7 +49,7 @@ function startApplication() {
     var homeMainContainer = new app.home.HomeMainContainerBuilder().
         setBackgroundImgUrl(api.util.getRestUri('ui/background.jpg')).
         setAppSelector(appSelector).
-        setAppInfo(appInfoPanel).
+        //setAppInfo(appInfoPanel).
         setLinksContainer(linksContainer).
         setLoginForm(loginForm).
         build();
