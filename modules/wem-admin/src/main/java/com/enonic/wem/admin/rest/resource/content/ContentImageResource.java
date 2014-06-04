@@ -23,6 +23,9 @@ import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.site.SiteTemplate;
+import com.enonic.wem.api.content.site.SiteTemplateKey;
+import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.schema.content.ContentType;
@@ -52,6 +55,9 @@ public class ContentImageResource
 
     @Inject
     private ContentService contentService;
+
+    @Inject
+    private SiteTemplateService siteTemplateService;
 
     @GET
     @Path("{contentId}")
@@ -112,6 +118,19 @@ public class ContentImageResource
                     mimeType = attachment.getMimeType();
                     return Response.ok( contentImage, mimeType ).build();
                 }
+            }
+        }
+
+        if ( contentType.isSite() && content.getSite() != null )
+        {
+            final SiteTemplateKey siteTemplateKey = content.getSite().getTemplate();
+            final SiteTemplate siteTemplate = siteTemplateService.getSiteTemplate( siteTemplateKey );
+            final Icon siteTemplateIcon = siteTemplate != null ? siteTemplate.getIcon() : null;
+            if ( siteTemplateIcon != null )
+            {
+                contentImage = helper.resizeImage( siteTemplateIcon.asInputStream(), size );
+                mimeType = siteTemplateIcon.getMimeType();
+                return Response.ok( contentImage, mimeType ).build();
             }
         }
 
