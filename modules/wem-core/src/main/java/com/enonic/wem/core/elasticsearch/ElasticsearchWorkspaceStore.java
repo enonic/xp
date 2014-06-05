@@ -252,8 +252,9 @@ public class ElasticsearchWorkspaceStore
 
         if ( totalHits != query.getNodePathsAsStrings().size() )
         {
-            throw new RuntimeException( "Expected " + query.getNodePathsAsStrings().size() + " results, got " + totalHits + " for paths " +
-                                            query.getNodePathsAsStrings() );
+            throw new NodeNotFoundException(
+                "Expected " + query.getNodePathsAsStrings().size() + " results, got " + totalHits + " for paths " +
+                    query.getNodePathsAsStrings() );
         }
 
         final Set<SearchResultField> fieldValues = searchResult.getResults().getFields( BLOBKEY_FIELD_NAME );
@@ -284,7 +285,6 @@ public class ElasticsearchWorkspaceStore
     @Override
     public EntityIds getDiff( final WorkspaceDiffQuery workspaceDiffQuery )
     {
-        final BoolQueryBuilder inOnOfTheWorkspaces = new BoolQueryBuilder();
 
         final TermQueryBuilder inSource = new TermQueryBuilder( WORKSPACE_FIELD_NAME, workspaceDiffQuery.getSource().getName() );
         final TermQueryBuilder inTarget = new TermQueryBuilder( WORKSPACE_FIELD_NAME, workspaceDiffQuery.getTarget().getName() );
@@ -294,11 +294,15 @@ public class ElasticsearchWorkspaceStore
 
         final long totalCount = inSourceCount + inTargetCount;
 
-        inOnOfTheWorkspaces.should( inSource ).should( inTarget ).minimumNumberShouldMatch( 1 );
+        final BoolQueryBuilder inOnOfTheWorkspaces = new BoolQueryBuilder().
+            should( inSource ).
+            should( inTarget ).
+            minimumNumberShouldMatch( 1 );
 
         final String changedAggregationName = "changed";
 
-        final TermsBuilder changedAggregationQuery = AggregationBuilders.terms( changedAggregationName ).
+        final TermsBuilder changedAggregationQuery = AggregationBuilders.
+            terms( changedAggregationName ).
             size( (int) (long) totalCount ).
             order( Terms.Order.count( true ) );
 
