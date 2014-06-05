@@ -5,12 +5,12 @@ module api.liveedit.layout {
     import LayoutItemType = api.liveedit.layout.LayoutItemType;
     import PageItemType = api.liveedit.PageItemType;
 
-    export class LayoutPlaceholder extends api.dom.Element {
+    export class LayoutPlaceholder extends api.dom.DivEl {
 
         private comboBox: api.content.page.layout.LayoutDescriptorComboBox;
 
         constructor(layoutView: LayoutView) {
-            super(new api.dom.ElementProperties().setTagName("div"));
+            super();
 
             var request = new api.content.page.layout.GetLayoutDescriptorsByModulesRequest(PageItemType.get().getSiteTemplate().getModules());
             var loader = new api.content.page.layout.LayoutDescriptorLoader(request);

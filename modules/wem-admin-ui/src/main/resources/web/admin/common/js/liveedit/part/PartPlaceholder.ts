@@ -11,12 +11,12 @@ module api.liveedit.part {
     import PageItemType = api.liveedit.PageItemType;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
 
-    export class PartPlaceholder extends api.dom.Element {
+    export class PartPlaceholder extends api.dom.DivEl {
 
         private comboBox: PartDescriptorComboBox;
 
         constructor(partView: PartView) {
-            super(new api.dom.ElementProperties().setTagName("div"));
+            super();
 
             wemjq(this.getHTMLElement()).on('click', 'input', (e) => {
                 wemjq(e.currentTarget).focus();

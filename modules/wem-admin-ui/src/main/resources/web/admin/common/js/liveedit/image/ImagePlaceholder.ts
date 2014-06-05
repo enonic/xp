@@ -4,7 +4,7 @@ module api.liveedit.image {
     import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
     import PageItemType = api.liveedit.PageItemType;
 
-    export class ImagePlaceholder extends api.dom.Element {
+    export class ImagePlaceholder extends api.dom.DivEl {
 
         private imageView: ImageView;
 
@@ -13,7 +13,7 @@ module api.liveedit.image {
         private uploadButton: api.ui.Button;
 
         constructor(imageView: ImageView) {
-            super(new api.dom.ElementProperties().setTagName("div"));
+            super();
             this.imageView = imageView;
             wemjq(this.getHTMLElement()).on('click', 'input', (e) => {
                 wemjq(e.currentTarget).focus();
