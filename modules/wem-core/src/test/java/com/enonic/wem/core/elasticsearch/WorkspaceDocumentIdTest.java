@@ -10,8 +10,8 @@ public class WorkspaceDocumentIdTest
     public void from()
         throws Exception
     {
-        final WorkspaceDocumentId id = WorkspaceDocumentId.from( "myBlobKey-myWorkspace" );
-        assertEquals( "myBlobKey-myWorkspace", id.getValue() );
+        final WorkspaceDocumentId id = WorkspaceDocumentId.from( "myBlobKey_myWorkspace" );
+        assertEquals( "myBlobKey_myWorkspace", id.getValue() );
         assertEquals( "myBlobKey", id.getEntityIdAsString() );
         assertEquals( "myWorkspace", id.getWorkspaceName() );
     }
@@ -20,14 +20,14 @@ public class WorkspaceDocumentIdTest
     public void from_missing_ws()
         throws Exception
     {
-        final WorkspaceDocumentId id = WorkspaceDocumentId.from( "myBlobKey-" );
+        final WorkspaceDocumentId id = WorkspaceDocumentId.from( "myBlobKey_" );
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void from_missing_entityId()
         throws Exception
     {
-        final WorkspaceDocumentId id = WorkspaceDocumentId.from( "-myWorkspace" );
+        final WorkspaceDocumentId id = WorkspaceDocumentId.from( "_myWorkspace" );
     }
 
 

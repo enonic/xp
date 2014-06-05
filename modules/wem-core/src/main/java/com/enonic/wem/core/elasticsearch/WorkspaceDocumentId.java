@@ -10,6 +10,9 @@ import com.enonic.wem.api.entity.Workspace;
 
 public class WorkspaceDocumentId
 {
+
+    public static final String SEPARATOR = "_";
+
     private final String value;
 
     private final String entityIdAsString;
@@ -21,7 +24,7 @@ public class WorkspaceDocumentId
         Preconditions.checkNotNull( entityId );
         Preconditions.checkNotNull( workspace );
 
-        this.value = entityId + "-" + workspace.getName();
+        this.value = entityId + SEPARATOR + workspace.getName();
         this.entityIdAsString = entityId.toString();
         this.workspaceName = workspace.getName();
     }
@@ -35,12 +38,12 @@ public class WorkspaceDocumentId
 
     public static WorkspaceDocumentId from( final String value )
     {
-        if ( !value.contains( "-" ) )
+        if ( !value.contains( SEPARATOR ) )
         {
             throw new IllegalArgumentException( "Invalid format of workspace-key: " + value );
         }
 
-        final Iterable<String> split = Splitter.on( "-" ).
+        final Iterable<String> split = Splitter.on( SEPARATOR ).
             split( value );
 
         final String entityIdAsString = Iterators.get( split.iterator(), 0 );

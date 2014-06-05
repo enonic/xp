@@ -65,10 +65,10 @@ public class ElasticsearchWorkspaceStore
         final WorkspaceDocumentId workspaceDocumentId =
             new WorkspaceDocumentId( workspaceDocument.getEntityId(), workspaceDocument.getWorkspace() );
 
-        if ( unchanged( workspaceDocument, workspaceDocumentId ) )
-        {
-            return;
-        }
+     //   if ( unchanged( workspaceDocument, workspaceDocumentId ) )
+     //   {
+     //       return;
+     //   }
 
         final IndexRequest indexRequest = Requests.indexRequest().
             index( WORKSPACE_INDEX.getName() ).

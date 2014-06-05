@@ -480,11 +480,11 @@ public class ElasticsearchWorkspaceStoreTest
             aggregations( Aggregations.create().
                 add( Aggregation.bucketAggregation( "changed" ).
                     buckets( Buckets.create().
-                        addBucket( new Bucket( "1-source", 1L ) ).
-                        addBucket( new Bucket( "2-source", 1L ) ).
-                        addBucket( new Bucket( "2-target", 1L ) ).
-                        addBucket( new Bucket( "3-target", 2L ) ).
-                        addBucket( new Bucket( "4-source", 2L ) ).
+                        addBucket( new Bucket( "1_source", 1L ) ).
+                        addBucket( new Bucket( "2_source", 1L ) ).
+                        addBucket( new Bucket( "2_target", 1L ) ).
+                        addBucket( new Bucket( "3_target", 2L ) ).
+                        addBucket( new Bucket( "4_source", 2L ) ).
                         build() ).
                     build() ).
                 build() ).
