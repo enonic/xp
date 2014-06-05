@@ -33,14 +33,14 @@ public class PartDescriptorXmlTest
         partDescriptorXml.from( partDescriptor );
         final String result = XmlSerializers.partDescriptor().serialize( partDescriptorXml );
 
-        assertXml( "part-component.xml", result );
+        assertXml( "part-descriptor.xml", result );
     }
 
     @Test
     public void testTo()
         throws Exception
     {
-        final String xml = readFromFile( "part-component.xml" );
+        final String xml = readFromFile( "part-descriptor.xml" );
         final PartDescriptor.Builder builder = PartDescriptor.newPartDescriptor();
         builder.key( PartDescriptorKey.from( "module-1.0.0:mypart" ) );
 

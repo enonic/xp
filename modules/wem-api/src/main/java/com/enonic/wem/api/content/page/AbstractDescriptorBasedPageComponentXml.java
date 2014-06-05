@@ -1,12 +1,12 @@
 package com.enonic.wem.api.content.page;
 
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.enonic.wem.api.data.DataSetXml2;
+import com.enonic.wem.api.data.DataSetXml;
 import com.enonic.wem.api.data.DataSetXmlAdapter;
 import com.enonic.wem.api.data.RootDataSet;
 
@@ -19,7 +19,7 @@ public abstract class AbstractDescriptorBasedPageComponentXml
 
     @XmlElement(name = "config", required = true)
     @XmlJavaTypeAdapter(DataSetXmlAdapter.class)
-    private DataSetXml2 config = new DataSetXml2();
+    private DataSetXml config = new DataSetXml();
 
     public void from( final DescriptorBasedPageComponent component )
     {
@@ -28,7 +28,7 @@ public abstract class AbstractDescriptorBasedPageComponentXml
         {
             this.descriptor = component.getDescriptor().toString();
         }
-        this.config = new DataSetXml2();
+        this.config = new DataSetXml();
         this.config.from( component.getConfig() );
     }
 

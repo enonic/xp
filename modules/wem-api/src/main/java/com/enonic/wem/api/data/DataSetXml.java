@@ -1,68 +1,44 @@
 package com.enonic.wem.api.data;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.enonic.wem.api.xml.XmlObject;
 
-@XmlRootElement(name = "data-set")
+@XmlRootElement
 public class DataSetXml
-    implements XmlObject<DataSet, DataSet>, DataXml
+    implements XmlObject<DataSet, DataSet>
 {
+    private DataSet dataSet;
 
-    @XmlAttribute(name = "name", required = true)
-    String name;
-
-    @XmlElements({@XmlElement(name = "data-set", type = DataSetXml.class), @XmlElement(name = "property", type = PropertyXml.class)})
-    private List<DataXml> dataItems = new ArrayList<>();
-
-    @Override
-    public String getName()
+    public DataSetXml()
     {
-        return this.name;
+        this.dataSet = null;
+    }
+
+    DataSetXml( final DataSet dataSet )
+    {
+        this.dataSet = dataSet;
+    }
+
+    DataSet getDataSet()
+    {
+        return dataSet;
     }
 
     @Override
     public void from( final DataSet dataSet )
     {
-        for ( Data data : dataSet )
-        {
-            if ( data.isProperty() )
-            {
-                final PropertyXml propertyXml = new PropertyXml();
-                propertyXml.from( data.toProperty() );
-                this.dataItems.add( propertyXml );
-            }
-            else if ( data.isDataSet() )
-            {
-                final DataSetXml dataSetXml = new DataSetXml();
-                dataSetXml.name = data.getName();
-                dataSetXml.from( data.toDataSet() );
-                this.dataItems.add( dataSetXml );
-            }
-        }
+        this.dataSet = dataSet;
     }
 
     @Override
     public void to( final DataSet output )
     {
-        for ( DataXml dataXml : this.dataItems )
+        if ( this.dataSet != null )
         {
-            if ( dataXml instanceof PropertyXml )
+            for ( Data data : this.dataSet )
             {
-                ( (PropertyXml) dataXml ).to( output );
-            }
-            else if ( dataXml instanceof DataSetXml )
-            {
-                final DataSet dataSet = new DataSet( dataXml.getName() );
-                final DataSetXml dataSetXml = (DataSetXml) dataXml;
-                dataSetXml.to( dataSet );
-                output.add( dataSet );
+                output.add( data.copy() );
             }
         }
     }

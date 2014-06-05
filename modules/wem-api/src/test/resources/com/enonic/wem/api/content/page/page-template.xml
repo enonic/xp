@@ -3,11 +3,11 @@
   <display-name>Main page template</display-name>
   <descriptor>mainmodule-1.0.0:landing-page</descriptor>
   <config>
-    <property name="pause" type="Long">10000</property>
-    <data-set name="thing">
-      <property name="first" type="String">one</property>
-      <property name="second" type="String">two</property>
-    </data-set>
+    <pause type="Long">10000</pause>
+    <thing type="DataSet">
+      <first type="String">one</first>
+      <second type="String">two</second>
+    </thing>
   </config>
   <can-render>
     <content-type>com.enonic.sometype</content-type>
@@ -17,8 +17,8 @@
     <region name="my-region">
       <part-component descriptor="demo-1.0.0:my-part-template" name="PartInHeader">
       <config>
-          <property name="width" type="Long">500</property>
-          <property name="caption" type="String">So sweet!</property>
+          <width type="Long">500</width>
+          <caption type="String">So sweet!</caption>
         </config>
       </part-component>
     </region>

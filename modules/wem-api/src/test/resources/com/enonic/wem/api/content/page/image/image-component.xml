@@ -1,12 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<image-component>
-  <display-name>An Image</display-name>
+<?xml version="1.0" encoding="UTF-8"?>
+<image-component descriptor="mainmodule-1.0.0:imageName" name="my-component">
   <config>
-    <input name="width" type="DecimalNumber">
-      <label>Column width</label>
-      <immutable>false</immutable>
-      <indexed>false</indexed>
-      <occurrences minimum="0" maximum="1"/>
-    </input>
+    <my-prop type="String">value</my-prop>
+    <things type="String">a</things>
+    <things type="String">b</things>
+    <things type="String">c</things>
   </config>
 </image-component>
