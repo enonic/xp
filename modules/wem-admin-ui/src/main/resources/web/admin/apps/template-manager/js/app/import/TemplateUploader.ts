@@ -1,6 +1,6 @@
 module app.imp {
 
-    export class TemplateUploader extends api.dom.Element
+    export class TemplateUploader extends api.dom.DivEl
         implements api.ui.dialog.UploadDialogUploaderEl
     {
         private uploader:api.content.site.template.InstallSiteTemplateRequest;
@@ -9,7 +9,7 @@ module app.imp {
         private progress:api.ui.ProgressBar;
 
         constructor() {
-            super(new api.dom.ElementProperties().setTagName("div").setClassName("image-uploader"));
+            super("image-uploader");
 
             this.dropzone = new api.dom.DivEl("dropzone");
             // id needed for plupload to init, adding timestamp in case of multiple occurences on page
