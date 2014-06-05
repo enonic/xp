@@ -17,12 +17,13 @@ api.liveedit.InitializeLiveEditEvent.on((event: api.liveedit.InitializeLiveEditE
 
     pageItemViews = new api.liveedit.PageItemViewsParser(body).parse();
     pageItemViews.initializeEmpties();
-    console.log("pageItemViews", pageItemViews);
     var pageView = pageItemViews.getPageView();
 
 
     api.liveedit.PageComponentLoadedEvent.on((event: api.liveedit.PageComponentLoadedEvent) => {
+
         pageItemViews.addItemView(event.getItemView());
+
         if (event.getItemView().getType() == api.liveedit.layout.LayoutItemType.get()) {
             LiveEdit.component.dragdropsort.DragDropSort.createSortableLayout(event.getItemView());
         }
