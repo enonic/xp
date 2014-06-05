@@ -2,7 +2,6 @@ module app.login {
 
     export class LoginForm extends api.dom.DivEl {
 
-        private licensedTo: api.dom.DivEl;
         private userStoresDropdown: api.ui.Dropdown;
         private userIdInput: api.ui.TextInput;
         private passwordInput: api.ui.PasswordInput;
@@ -19,8 +18,6 @@ module app.login {
             this.onUserAuthenticatedHandler = null;
 
             var formContainer = new api.dom.DivEl();
-            var title = new api.dom.H3El();
-            title.setText(_i18n('Login'));
             this.userStoresDropdown = new api.ui.Dropdown('userstore');
             this.userStoresDropdown.addClass('form-item');
             this.userIdInput = new api.ui.TextInput('form-item');
@@ -40,19 +37,11 @@ module app.login {
                 this.loginButtonClick();
             });
 
-            formContainer.appendChild(title);
             formContainer.appendChild(this.userStoresDropdown);
             formContainer.appendChild(this.userIdInput);
             formContainer.appendChild(this.passwordInput);
             formContainer.appendChild(this.loginButton);
             this.appendChild(formContainer);
-
-            this.licensedTo = new api.dom.DivEl('login-licensed-to');
-            this.appendChild(this.licensedTo);
-        }
-
-        setLicensedTo(value: string) {
-            this.licensedTo.getEl().setInnerHtml(value);
         }
 
         setUserStores(userStores: UserStore[], defaultUserStore?: UserStore) {

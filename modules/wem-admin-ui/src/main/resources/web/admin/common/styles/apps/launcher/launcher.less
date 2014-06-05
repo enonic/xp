@@ -48,7 +48,9 @@ html, body {
   /** Branding */
 
   .branding {
-    margin-top:40px;
+    top:10%;
+    left:calc(~"50% - 92.5px");
+    position: absolute;
     height: 24px;
     text-align: center;
 
@@ -87,16 +89,16 @@ html, body {
     position: absolute;
     width: 100%;
     text-align: center;
-    bottom: 30px;
+    bottom: 2%;
   }
 
   /** Common */
 
   .login-form,
-  .app-selector,
+  .app-selector-container,
   .app-info {
     position: absolute;
-    top: 24%;
+    top: 30%;
   }
 
   .login-form,
@@ -104,12 +106,16 @@ html, body {
     padding: 0 45px;
   }
 
+  /** Login Form **/
+  .login-form {
+    width: 280px;
+    left: calc(~"50% - 140px");
+  }
+
   /** App selector */
 
   .app-selector-container {
-    position: absolute;
     width: 9999px;
-    top: 30%;
     left: calc(~"50% - 55px");
   }
 
@@ -241,36 +247,37 @@ html, body {
 
     padding: 4px 9px;
     background: none @admin-white !important;
-    width: 200px;
+    width: 100%;
+  }
+
+  select.form-item {
+    -webkit-border-radius:0px;
+    -moz-border-radius:0px;
+    border-radius:0px;
+    background-color: transparent !important;
   }
 
   .login-button {
     font-family: @admin-font-family;
     padding: 5px 20px 5px 20px;
-    background-color: @admin-blue-button;
-
+    background-color: transparent;
     font-size: 12px;
     border-width: 1px 1px 1px 1px;
     border-style: solid;
-    border-color: @admin-blue-button;
-    color: white;
-
+    border-color: transparent;
+    color:@admin-white;
     display: inline-block;
-    float: right;
-    margin-right: 9px;
-    margin-top: 1px;
+    width: 100%;
 
     &:hover,
     &:focus {
       cursor: pointer;
-      border-color: #5a94ee;
-      background-color: #5a94ee;
+      background-color: transparent;
+      color: rgba(255,255,255,0.35);
     }
 
     &.disabled {
       cursor: default;
-      border-color: #88b2f3;
-      background-color: #5a94ee;
     }
   }
 

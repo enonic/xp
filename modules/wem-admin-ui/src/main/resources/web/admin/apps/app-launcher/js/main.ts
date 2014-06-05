@@ -37,7 +37,6 @@ function startApplication() {
         addLink('About', 'https://enonic.com/en/home/enonic-cms');
 
     var loginForm = new app.login.LoginForm(new app.login.AuthenticatorImpl());
-    loginForm.setLicensedTo('Licensed to Enonic');
     loginForm.setUserStores(USERSTORES, USERSTORES[1]);
     loginForm.onUserAuthenticated((userName: string, userStore: app.login.UserStore) => {
         console.log('User logged in', userName, userStore);
