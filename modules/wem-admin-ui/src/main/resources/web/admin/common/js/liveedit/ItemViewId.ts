@@ -1,7 +1,7 @@
 module api.liveedit {
 
 
-    export class ItemViewId {
+    export class ItemViewId implements api.Equitable {
 
         private value: number;
 
@@ -11,6 +11,21 @@ module api.liveedit {
             api.util.assert(value >= 1, "An ItemViewId must be 1 or larger");
             this.value = value;
             this.refString = "" + value;
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ItemViewId)) {
+                return false;
+            }
+
+            var other = <ItemViewId>o;
+
+            if (!api.ObjectHelper.numberEquals(this.value, other.value)) {
+                return false;
+            }
+
+            return true;
         }
 
         toNumber(): number {
