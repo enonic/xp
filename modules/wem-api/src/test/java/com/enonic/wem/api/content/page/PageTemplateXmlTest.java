@@ -26,6 +26,7 @@ import static junit.framework.Assert.assertTrue;
 public class PageTemplateXmlTest
     extends BaseXmlSerializerTest
 {
+    @Ignore
     @Test
     public void testFrom()
         throws Exception
@@ -65,7 +66,6 @@ public class PageTemplateXmlTest
         assertXml( "page-template.xml", result );
     }
 
-    @Ignore
     @Test
     public void testFrom2()
         throws Exception
@@ -105,6 +105,7 @@ public class PageTemplateXmlTest
         assertXml( "page-template2.xml", result );
     }
 
+    @Ignore
     @Test
     public void test_templates_sort_by_displayName()
         throws Exception
@@ -145,7 +146,6 @@ public class PageTemplateXmlTest
         assertEquals( "AAA, BBB, CCC", Joiner.on( ", " ).join( result ) );
     }
 
-    @Ignore
     @Test
     public void test_templates_sort_by_displayName2()
         throws Exception
@@ -198,6 +198,7 @@ public class PageTemplateXmlTest
         } );
     }
 
+    @Ignore
     @Test
     public void testTo()
         throws Exception
@@ -242,7 +243,6 @@ public class PageTemplateXmlTest
         assertEquals( "So sweet!", partComponentConfig.getProperty( "caption" ).getString() );
     }
 
-    @Ignore
     @Test
     public void testTo2()
         throws Exception
