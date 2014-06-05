@@ -53,6 +53,8 @@ module app.wizard.page {
             api.util.assertNotNull(this.region, "region cannot be null");
             api.util.assertNotNull(this.componentView, "componentView cannot be null");
 
+            console.debug("PageComponentAddedCommand.execute()");
+
             var pageComponent = this.addComponent();
 
             if (pageComponent) {

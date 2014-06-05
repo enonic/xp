@@ -10,7 +10,7 @@ module LiveEdit.ui.contextmenu.menuitem {
             super({
                 text: 'Remove',
                 name: 'remove',
-                handler: (event:Event) => {
+                handler: (event: Event) => {
                     // For demo purposes
                     this.onRemoveComponent();
                     event.stopPropagation();
@@ -26,11 +26,8 @@ module LiveEdit.ui.contextmenu.menuitem {
             if (api.ObjectHelper.iFrameSafeInstanceOf(selectedItem, PageComponentView)) {
 
                 var selectedPageComponent = <PageComponentView<PageComponent>> selectedItem;
-                var itemViewIdToRemove = selectedPageComponent.getItemId();
                 selectedPageComponent.getElement().remove();
-                pageItemViews.removeItemViewById(itemViewIdToRemove);
-
-                new PageComponentRemoveEvent(selectedPageComponent.getComponentPath()).fire();
+                pageItemViews.removePageComponentView(selectedPageComponent);
             }
             else {
                 throw new Error("Removing [" + api.util.getClassName(selectedItem) + "] is not supported");

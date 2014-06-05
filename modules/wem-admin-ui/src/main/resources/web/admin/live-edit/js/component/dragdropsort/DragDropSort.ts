@@ -140,15 +140,16 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         event.stopPropagation();
 
         var component = pageItemViews.getItemViewByElement(ui.item.get(0));
+        if (component) {
+            var isDraggingOverLayoutComponent = ui.placeholder.closest(LAYOUT_SELECTOR).length > 0;
 
-        var isDraggingOverLayoutComponent = ui.placeholder.closest(LAYOUT_SELECTOR).length > 0;
-
-        if (component.getType().equals(LayoutItemType.get()) && isDraggingOverLayoutComponent) {
-            LiveEdit.component.helper.DragHelper.updateStatusIcon(false);
-            ui.placeholder.hide();
-        } else {
-            LiveEdit.component.helper.DragHelper.updateStatusIcon(true);
-            wemjq(window).trigger('sortableOver.liveEdit', [event, ui]);
+            if (component.getType().equals(LayoutItemType.get()) && isDraggingOverLayoutComponent) {
+                LiveEdit.component.helper.DragHelper.updateStatusIcon(false);
+                ui.placeholder.hide();
+            } else {
+                LiveEdit.component.helper.DragHelper.updateStatusIcon(true);
+                wemjq(window).trigger('sortableOver.liveEdit', [event, ui]);
+            }
         }
     }
 
@@ -192,7 +193,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         removePaddingFromLayoutComponent();
 
         var draggedItemIsLayoutComponent = pageComponentView.getType().equals(LayoutItemType.get()),
-            targetComponentIsInLayoutComponent = $(event.target).closest(LAYOUT_SELECTOR).length > 0;
+            targetComponentIsInLayoutComponent = wemjq(event.target).closest(LAYOUT_SELECTOR).length > 0;
 
         if (draggedItemIsLayoutComponent && targetComponentIsInLayoutComponent) {
             ui.item.remove()
@@ -230,10 +231,10 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             var region = pageItemViews.getRegionViewByElement(regionHTMLElement);
             new PageComponentAddedEvent().
                 setPageComponentView(newPageComponent).
-                setRegion(region.getRegionName()).
+                setRegion(region.getRegionPath()).
                 setPrecedingComponent(newPageComponent.getPrecedingComponentPath()).
                 fire();
-            LiveEdit.component.Selection.handleSelect(newPageComponent);
+            //LiveEdit.component.Selection.handleSelect(newPageComponent);
         }
     }
 

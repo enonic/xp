@@ -45,7 +45,11 @@ module api.liveedit {
         }
 
         getItemId(): ItemViewId {
-            return ItemViewId.fromString(this.getEl().getAttribute("data-live-edit-id"));
+            var asString = this.getEl().getAttribute("data-live-edit-id");
+            if (!asString) {
+                return null;
+            }
+            return ItemViewId.fromString(asString);
         }
 
         static parseItemId(element: HTMLElement): ItemViewId {

@@ -22,8 +22,8 @@ module api.liveedit {
             return this;
         }
 
-        setRegion(region: string): PageComponentAddedEvent {
-            this.region = RegionPath.fromString(region);
+        setRegion(region: RegionPath): PageComponentAddedEvent {
+            this.region = region;
             return this;
         }
 

@@ -206,8 +206,6 @@ module app.wizard.page {
             api.util.assertNotNull(pageComponentView, "pageComponentView cannot be null");
             api.util.assertNotNull(content, "content cannot be null");
 
-            this.liveEditWindow.pageItemViews.removeItemViewById(pageComponentView.getItemId());
-
             wemjq.ajax({
                 url: api.rendering.UriHelper.getComponentUri(content.getContentId().toString(),
                     pageComponentView.getComponentPath().toString(),
@@ -217,12 +215,14 @@ module app.wizard.page {
 
                     var newElement = api.dom.Element.fromString(htmlAsString);
                     var newPageComponentView: PageComponentView<PageComponent> = pageComponentView.getType().createView(newElement.getHTMLElement());
+
+                    // pass on the same ItemViewId and PageComponent to the new PageComponentView
+                    newPageComponentView.setItemId(pageComponentView.getItemId());
                     newPageComponentView.setPageComponent(pageComponentView.getPageComponent());
                     pageComponentView.replaceWith(newPageComponentView);
 
                     new PageComponentLoadedEvent(newPageComponentView).fire(this.liveEditWindow);
 
-                    this.liveEditWindow.LiveEdit.PlaceholderCreator.renderEmptyRegionPlaceholders();
                     this.liveEditWindow.LiveEdit.component.Selection.handleSelect(newPageComponentView, null, true);
                 }
             });

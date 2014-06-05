@@ -5,47 +5,93 @@ module api.liveedit {
 
     export class PageItemViews {
 
+        private itemViewCounter: number = 0;
+
         private pageView: PageView;
-        private views: ItemView[];
+
+        private viewsById: {[s:number] : ItemView;} = {};
 
         constructor(pageView: PageView, views: ItemView[]) {
 
             this.pageView = pageView;
-            views.forEach((view: ItemView, index: number) => {
-                view.setItemId(new ItemViewId(index + 1));
+            views.forEach((view: ItemView) => {
+                var newItemId = this.nextItemViewId();
+                view.setItemId(newItemId);
+                this.viewsById[newItemId.toNumber()] = view;
+
+                // logging...
+                var extra = "";
+                if (api.ObjectHelper.iFrameSafeInstanceOf(view, PageComponentView)) {
+                    var pageComponentView = <PageComponentView<PageComponent>>view;
+                    extra = pageComponentView.getComponentPath().toString();
+                }
+                else if (api.ObjectHelper.iFrameSafeInstanceOf(view, RegionView)) {
+                    var regionView = <RegionView>view;
+                    extra = regionView.getRegionPath().toString();
+                }
+                console.debug("PageItemViews: " + view.getItemId().toString() + " : " + view.getType().getShortName() + " : " + extra);
             });
-            this.views = views;
+        }
+
+        private nextItemViewId(): ItemViewId {
+            return new ItemViewId(++this.itemViewCounter)
         }
 
         getPageView(): PageView {
             return this.pageView;
         }
 
-        addItemView(view: ItemView) {
-            this.views.push(view);
-            console.log("PageItemView.addItemView view with id: " + this.views.length);
-            view.setItemId(new ItemViewId(this.views.length));
+        addItemView(itemView: ItemView) {
+
+            var existingItemViewId = itemView.getItemId();
+
+            if (existingItemViewId) {
+
+                console.debug("PageItemView.addItemView replaced view with id: " + existingItemViewId);
+            }
+            else {
+                itemView.setItemId(this.nextItemViewId());
+                console.debug("PageItemView.addItemView added view with id: " + itemView.getItemId());
+            }
+            this.viewsById[itemView.getItemId().toNumber()] = itemView;
         }
 
-        removeItemViewById(id: ItemViewId) {
-            api.util.assertNotNull(id, "id cannot be null");
-            this.views.splice(id.toNumber() - 1);
+        removePageComponentView(pageComponentView: PageComponentView<PageComponent>) {
+            this.removeItemViewById(pageComponentView.getItemId());
+            new PageComponentRemoveEvent(pageComponentView).fire();
+        }
+
+        removeItemViewById(idToRemove: ItemViewId) {
+            api.util.assertNotNull(idToRemove, "id cannot be null");
+            console.debug("PageItemViews.removeItemViewById(" + idToRemove.toString() + ")");
+
+            delete this.viewsById[idToRemove.toNumber()];
         }
 
         initializeEmpties() {
-            this.views.forEach((view: ItemView) => {
-                if (api.ObjectHelper.iFrameSafeInstanceOf(view, PageComponentView)) {
-                    var pageComponentView = <PageComponentView<PageComponent>>view;
-                    if (pageComponentView.isEmpty()) {
-                        pageComponentView.empty();
+
+            for (var key in this.viewsById) {
+                if (this.viewsById.hasOwnProperty(key)) {
+                    var itemView = this.viewsById[key];
+                    if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, PageComponentView)) {
+                        var pageComponentView = <PageComponentView<PageComponent>>itemView;
+                        if (pageComponentView.isEmpty()) {
+                            pageComponentView.empty();
+                        }
+                    }
+                    else if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, RegionView)) {
+                        var regionView = <RegionView>itemView;
+                        if (regionView.isRegionEmpty()) {
+                            regionView.empty();
+                        }
                     }
                 }
-            });
+            }
         }
 
         getByItemId(id: ItemViewId): ItemView {
             api.util.assertNotNull(id, "value cannot be null");
-            return this.views[id.toNumber() - 1];
+            return this.viewsById[id.toNumber()];
         }
 
         getItemViewByElement(element: HTMLElement): ItemView {
@@ -56,8 +102,12 @@ module api.liveedit {
                 return null;
             }
 
-            console.log("PageItemViews.getItemViewByElement itemId: " + itemId);
-            return this.getByItemId(itemId);
+            var itemView = this.getByItemId(itemId);
+            api.util.assertNotNull(itemView, "ItemView not found: " + itemId.toString());
+
+            console.debug("PageItemViews.getItemViewByElement itemId: " + itemId.toString() + ", type: " +
+                          itemView.getType().getShortName());
+            return  itemView;
         }
 
         getRegionViewByElement(element: HTMLElement): RegionView {
@@ -67,11 +117,13 @@ module api.liveedit {
             if (!itemId) {
                 return null;
             }
+            console.debug("PageItemViews.getRegionViewByElement itemId: " + itemId);
 
-            console.log("PageItemViews.getRegionViewByElement itemId: " + itemId);
-            var view = this.getByItemId(itemId);
-            if (api.ObjectHelper.iFrameSafeInstanceOf(view, RegionView)) {
-                return <RegionView>view;
+            var itemView = this.getByItemId(itemId);
+            api.util.assertNotNull(itemView, "ItemView not found: " + itemId.toString());
+
+            if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, RegionView)) {
+                return <RegionView>itemView;
             }
             return null;
         }
@@ -83,11 +135,12 @@ module api.liveedit {
             if (!itemId) {
                 return null;
             }
+            console.debug("PageItemViews.getPageComponentViewByElement itemId: " + itemId);
 
-            console.log("PageItemViews.getPageComponentViewByElement itemId: " + itemId);
-            var view = this.getByItemId(itemId);
-            if (api.ObjectHelper.iFrameSafeInstanceOf(view, PageComponentView)) {
-                return <PageComponentView<PageComponent>>view;
+            var itemView = this.getByItemId(itemId);
+            api.util.assertNotNull(itemView, "ItemView not found: " + itemId.toString());
+            if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, PageComponentView)) {
+                return <PageComponentView<PageComponent>>itemView;
             }
             return null;
         }
