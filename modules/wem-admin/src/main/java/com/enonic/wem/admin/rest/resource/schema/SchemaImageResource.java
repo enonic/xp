@@ -114,7 +114,7 @@ public final class SchemaImageResource
         }
     }
 
-    private Icon resolveContentTypeImage( final SchemaKey schemaKey )
+    public Icon resolveContentTypeImage( final SchemaKey schemaKey )
     {
         return findContentTypeIcon( ContentTypeName.from( schemaKey.getLocalName() ) );
     }
