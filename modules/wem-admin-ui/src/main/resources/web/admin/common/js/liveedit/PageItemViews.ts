@@ -37,10 +37,6 @@ module api.liveedit {
             return new ItemViewId(++this.itemViewCounter)
         }
 
-        getPageView(): PageView {
-            return this.pageView;
-        }
-
         addItemView(itemView: ItemView) {
 
             var existingItemViewId = itemView.getItemId();

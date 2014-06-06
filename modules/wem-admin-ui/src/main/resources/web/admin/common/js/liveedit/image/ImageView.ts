@@ -41,9 +41,9 @@ module api.liveedit.image {
 
         }
 
-        duplicate(): ImageView {
+        duplicate(duplicate: ImageComponent): ImageView {
 
-            var duplicatedView = new ImageView(this.getParentRegionView(), null);
+            var duplicatedView = new ImageView(this.getParentRegionView(), duplicate);
             this.getEl().insertAfterThisEl(duplicatedView.getEl());
             return duplicatedView;
         }

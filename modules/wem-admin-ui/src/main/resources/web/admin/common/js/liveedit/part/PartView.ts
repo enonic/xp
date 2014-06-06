@@ -52,9 +52,9 @@ module api.liveedit.part {
 
         }
 
-        duplicate(): PartView {
+        duplicate(duplicate: PartComponent): PartView {
 
-            var duplicatedView = new PartView(this.getParentRegionView(), null);
+            var duplicatedView = new PartView(this.getParentRegionView(), duplicate);
             this.getEl().insertAfterThisEl(duplicatedView.getEl());
             return duplicatedView;
         }

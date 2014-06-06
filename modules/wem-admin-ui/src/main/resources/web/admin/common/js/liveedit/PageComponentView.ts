@@ -76,7 +76,7 @@ module api.liveedit {
             this.addClass("live-edit-empty-component");
         }
 
-        duplicate(): PageComponentView<PAGE_COMPONENT> {
+        duplicate(duplicate: PAGE_COMPONENT): PageComponentView<PAGE_COMPONENT> {
             throw new Error("Must be implemented by inheritors");
         }
 

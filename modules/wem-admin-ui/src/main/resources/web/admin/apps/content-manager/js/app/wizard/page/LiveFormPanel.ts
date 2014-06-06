@@ -523,7 +523,8 @@ module app.wizard.page {
 
                 var precedingComponentView = event.getPrecedingComponentView();
                 var precedingComponentName = precedingComponentView ? precedingComponentView.getComponentPath().getComponentName() : null;
-                var newPath = this.pageRegions.moveComponent(event.getComponentView().getComponentPath(), event.getRegionPath(), precedingComponentName);
+                var newPath = this.pageRegions.moveComponent(event.getComponentView().getComponentPath(), event.getRegionPath(),
+                    precedingComponentName);
 
                 if (newPath) {
                     event.getComponentView().setComponentPath(newPath);
@@ -575,12 +576,7 @@ module app.wizard.page {
 
             this.liveEditPage.onPageComponentDuplicated((event: PageComponentDuplicateEvent) => {
 
-                new PageComponentDuplicateCommand().
-                    setPageRegions(this.pageRegions).
-                    setPathToSource(event.getPath()).
-                    execute();
-
-                this.saveAndReloadOnlyPageComponent(event.getItemView());
+                this.saveAndReloadOnlyPageComponent(event.getDuplicatedPageComponentView());
             });
 
             this.liveEditPage.onRegionEmpty((event: RegionEmptyEvent) => {

@@ -10,9 +10,9 @@ module api.liveedit.text {
             super(TextItemType.get(), parentRegionView, textComponent, element);
         }
 
-        duplicate(): TextView {
+        duplicate(duplicate: TextComponent): TextView {
 
-            var duplicatedView = new TextView(this.getParentRegionView(), null);
+            var duplicatedView = new TextView(this.getParentRegionView(), duplicate);
             this.getEl().insertAfterThisEl(duplicatedView.getEl());
             return duplicatedView;
         }

@@ -13,6 +13,7 @@ module LiveEdit {
     import ItemView = api.liveedit.ItemView;
     import RegionView = api.liveedit.RegionView;
     import ItemViewId = api.liveedit.ItemViewId;
+    import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
 
     export class LiveEditPage {
 
@@ -73,6 +74,16 @@ module LiveEdit {
 
         addItemView(itemView: ItemView) {
             this.pageItemViews.addItemView(itemView);
+        }
+
+        duplicatePageComponent(pageComponentView: PageComponentView<PageComponent>) {
+
+            var origin = pageComponentView.getPageComponent();
+            var duplicatedPageComponent = this.pageRegions.duplicateComponent(origin.getPath());
+            var duplicatedView = pageComponentView.duplicate(duplicatedPageComponent);
+            this.pageItemViews.addItemView(duplicatedView);
+            new PageComponentDuplicateEvent(pageComponentView, duplicatedView).fire();
+            LiveEdit.component.Selection.handleSelect(duplicatedView);
         }
 
         removePageComponentView(pageComponentView: PageComponentView<PageComponent>) {
