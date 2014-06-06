@@ -37,11 +37,18 @@ module app.login {
                 this.loginButtonClick();
             });
 
-            formContainer.appendChild(this.userStoresDropdown);
+            var selectContainer = new api.dom.DivEl("select-container");
+            selectContainer.appendChild(this.userStoresDropdown);
+
+            formContainer.appendChild(selectContainer);
             formContainer.appendChild(this.userIdInput);
             formContainer.appendChild(this.passwordInput);
             formContainer.appendChild(this.loginButton);
             this.appendChild(formContainer);
+
+            this.onShown((event) => {
+                this.userIdInput.giveFocus();
+            })
         }
 
         setUserStores(userStores: UserStore[], defaultUserStore?: UserStore) {
@@ -56,6 +63,10 @@ module app.login {
 
         onUserAuthenticated(handler: (userName: string, userStore: UserStore) => void) {
             this.onUserAuthenticatedHandler = handler;
+        }
+
+        hide() {
+            super.hide();
         }
 
         private loginButtonClick() {

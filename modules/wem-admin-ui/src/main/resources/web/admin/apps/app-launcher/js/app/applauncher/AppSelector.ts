@@ -71,6 +71,10 @@ module app.launcher {
 
             });
 
+            this.onShown((event) => {
+                api.ui.KeyBindings.get().bindKeys(this.getKeyBindings());
+            });
+
         }
 
 

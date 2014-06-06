@@ -103,7 +103,6 @@ html, body {
 
   .login-form,
   .app-info {
-    padding: 0 45px;
   }
 
   /** Login Form **/
@@ -212,7 +211,6 @@ html, body {
       }
       &.app-tile-over {
         border-bottom:2px solid red;
-        //background-color: #012056;
         &.fullsize {
           > .img-container {
 
@@ -241,20 +239,36 @@ html, body {
     font-family: @admin-font-family;
     font-size: 12px;
     box-sizing: border-box;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     border: 1px solid @admin-light-gray-bg;
     vertical-align: top;
-
     padding: 4px 9px;
     background: none @admin-white !important;
     width: 100%;
   }
 
+  .select-container {
+    border: 1px solid @admin-white;
+    margin-bottom: 10px;
+    .icon-arrow-down2();
+    &:before {
+      color:white;
+      position: absolute;
+      right: 5px;
+      font-size: 27px;
+      top: 2px;
+      pointer-events:none;
+    }
+  }
+
   select.form-item {
-    -webkit-border-radius:0px;
-    -moz-border-radius:0px;
-    border-radius:0px;
-    background-color: transparent !important;
+    margin-bottom:0;
+    color:white;
+    border: none;
+    box-shadow: none;
+    background: transparent !important;
+    background-image: none;
+    -webkit-appearance: none;
   }
 
   .login-button {
@@ -278,6 +292,7 @@ html, body {
 
     &.disabled {
       cursor: default;
+      opacity: 0.5;
     }
   }
 

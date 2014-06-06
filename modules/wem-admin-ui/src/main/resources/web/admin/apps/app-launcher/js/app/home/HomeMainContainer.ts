@@ -52,7 +52,6 @@ module app.home {
 
         show() {
             this.appSelector.showAppsCount();
-            api.ui.KeyBindings.get().bindKeys(this.appSelector.getKeyBindings());
             super.show();
         }
 
