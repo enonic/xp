@@ -142,7 +142,7 @@ module api.liveedit {
 
             var element = new api.dom.ElementHelper(htmlElement);
             var previous = element.getPrevious();
-            while (previous != null && previous.hasAttribute("data-" + ItemType.DATA_ATTRIBUTE)) {
+            while (previous != null && !previous.hasAttribute("data-" + ItemType.DATA_ATTRIBUTE)) {
                 previous = previous.getPrevious();
             }
             return previous;

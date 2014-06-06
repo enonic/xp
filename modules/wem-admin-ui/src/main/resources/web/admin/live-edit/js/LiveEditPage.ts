@@ -74,6 +74,16 @@ module LiveEdit {
             this.pageItemViews.addItemView(itemView);
         }
 
+        movePageComponent(pageComponent: PageComponentView<PageComponent>, regionView: RegionView,
+                          precedingComponentView: PageComponentView<PageComponent>) {
+
+            var precedingComponent: PageComponent = null;
+            if (precedingComponentView) {
+                precedingComponent = precedingComponentView.getPageComponent();
+            }
+            this.pageRegions.moveComponent(pageComponent.getPageComponent(), regionView.getRegion(), precedingComponent);
+        }
+
         duplicatePageComponent(pageComponentView: PageComponentView<PageComponent>) {
 
             var origin = pageComponentView.getPageComponent();
@@ -88,8 +98,7 @@ module LiveEdit {
             this.pageItemViews.removePageComponentView(pageComponentView);
         }
 
-        createComponent(region: Region, type: PageComponentType, precedingComponent: ComponentName): PageComponent {
-
+        createComponent(region: Region, type: PageComponentType, precedingComponentView: PageComponentView<PageComponent>): PageComponent {
 
             var wantedName = api.util.capitalize(api.util.removeInvalidChars(type.getShortName()));
             var componentName = this.pageRegions.ensureUniqueComponentName(region.getPath(), new ComponentName(wantedName));
@@ -101,7 +110,7 @@ module LiveEdit {
                 (<DescriptorBasedPageComponentBuilder<DescriptorBasedPageComponent>>builder).setConfig(new RootDataSet());
             }
             var component = builder.build();
-            this.pageRegions.addComponentAfter(component, region.getPath(), precedingComponent);
+            this.pageRegions.addComponentAfter(component, region, precedingComponentView.getPageComponent());
             return component;
         }
 

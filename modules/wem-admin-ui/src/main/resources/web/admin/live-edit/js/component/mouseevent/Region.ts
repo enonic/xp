@@ -2,7 +2,6 @@ module LiveEdit.component.mouseevent {
 
     import RegionItemType = api.liveedit.RegionItemType;
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
-    import SortableUpdateEvent = api.liveedit.SortableUpdateEvent;
 
     export class Region extends LiveEdit.component.mouseevent.Base {
         constructor() {
@@ -26,9 +25,6 @@ module LiveEdit.component.mouseevent {
             //});
 
             //PageComponentRemoveEvent.on(() => LiveEdit.PlaceholderCreator.renderEmptyRegionPlaceholders());
-
-            //SortableUpdateEvent.on(() => LiveEdit.PlaceholderCreator.renderEmptyRegionPlaceholders());
         }
-
     }
 }

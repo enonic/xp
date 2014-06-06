@@ -18,7 +18,6 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     import LayoutItemType = api.liveedit.layout.LayoutItemType;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import SortableStopEvent = api.liveedit.SortableStopEvent;
-    import SortableUpdateEvent = api.liveedit.SortableUpdateEvent;
     import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
     import PageComponentAddedEvent = api.liveedit.PageComponentAddedEvent;
 
@@ -178,18 +177,17 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
     function handleSortUpdate(event: JQueryEventObject, ui): void {
 
-        var pageComponentView = LiveEdit.LiveEditPage.get().getPageComponentViewByElement(ui.item.get(0));
+        var liveEditPage = LiveEdit.LiveEditPage.get();
+        var pageComponentView = liveEditPage.getPageComponentViewByElement(ui.item.get(0));
         if (pageComponentView) {
             if (pageComponentView.hasComponentPath()) {
-                var preceodingComponentView: PageComponentView<PageComponent> = null;
-                var precedingComponentViewId = PageComponentView.findPrecedingComponentItemViewId(pageComponentView.getHTMLElement());
-                if (precedingComponentViewId) {
-                    preceodingComponentView =
-                    <PageComponentView<PageComponent>>LiveEdit.LiveEditPage.get().getByItemId(precedingComponentViewId);
-                }
+                var precedingComponentView = resolvePrecedingComponentView(pageComponentView.getHTMLElement());
                 var regionHTMLElement = PageComponentView.findParentRegionViewHTMLElement(pageComponentView.getHTMLElement());
-                var regionView = LiveEdit.LiveEditPage.get().getRegionViewByElement(regionHTMLElement);
-                new SortableUpdateEvent(pageComponentView, regionView, preceodingComponentView).fire();
+
+                var regionView = liveEditPage.getRegionViewByElement(regionHTMLElement);
+
+                liveEditPage.movePageComponent(pageComponentView, regionView, precedingComponentView);
+                simulateMouseUpForDraggable();
             }
         }
     }
@@ -230,15 +228,9 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             var itemType: PageComponentItemType = <PageComponentItemType>ItemType.byShortName(droppedElement.data('live-edit-type'));
 
             var liveEditPage = LiveEdit.LiveEditPage.get();
-            var precedingComponentId = PageComponentView.findPrecedingComponentItemViewId(droppedElement.get(0));
-            var precedingComponentName: ComponentName = null;
-            if (precedingComponentId) {
-                var precedingComponentView = <PageComponentView<PageComponent>>liveEditPage.getByItemId(precedingComponentId);
-                precedingComponentName = precedingComponentView.getComponentPath() ?
-                                         precedingComponentView.getComponentPath().getComponentName() : null;
-            }
+            var precedingComponentView = resolvePrecedingComponentView(droppedElement.get(0));
             var newPageComponent = liveEditPage.createComponent(regionView.getRegion(), itemType.toPageComponentType(),
-                precedingComponentName);
+                precedingComponentView);
             var newPageComponentView = itemType.createView(regionView, newPageComponent);
             liveEditPage.addItemView(newPageComponentView);
             droppedElement.attr("data-" + ItemViewId.DATA_ATTRIBUTE, "" + newPageComponentView.getItemId());
@@ -254,6 +246,10 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             new PageComponentAddedEvent().setPageComponentView(newPageComponentView).fire();
             //LiveEdit.component.Selection.handleSelect(newPageComponent);
         }
+    }
+
+    function simulateMouseUpForDraggable() {
+        wemjq('[data-context-window-draggable="true"]').simulate('mouseup');
     }
 
     function isItemDraggedFromContextWindow(item: JQuery): boolean {
@@ -294,6 +290,17 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         });
 
         return sortableItemsSelector.toString();
+    }
+
+    function resolvePrecedingComponentView(pageComponentViewAsHTMLElement: HTMLElement): PageComponentView<PageComponent> {
+
+        var preceodingComponentView: PageComponentView<PageComponent> = null;
+        var precedingComponentViewId = PageComponentView.findPrecedingComponentItemViewId(pageComponentViewAsHTMLElement);
+        if (precedingComponentViewId) {
+            preceodingComponentView =
+            <PageComponentView<PageComponent>>LiveEdit.LiveEditPage.get().getByItemId(precedingComponentViewId);
+        }
+        return preceodingComponentView;
     }
 
 }

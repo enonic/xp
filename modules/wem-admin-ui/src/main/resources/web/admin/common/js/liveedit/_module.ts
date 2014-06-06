@@ -18,7 +18,6 @@
 ///<reference path='ImageUploadedEvent.ts' />
 ///<reference path='SortableStartEvent.ts' />
 ///<reference path='SortableStopEvent.ts' />
-///<reference path='SortableUpdateEvent.ts' />
 ///<reference path='PageSelectEvent.ts' />
 ///<reference path='RegionSelectEvent.ts' />
 ///<reference path='PageComponentSelectEvent.ts' />

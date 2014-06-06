@@ -17,7 +17,6 @@ module app.wizard.page {
     import ImageComponentSetImageEvent = api.liveedit.image.ImageComponentSetImageEvent;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import SortableStopEvent = api.liveedit.SortableStopEvent;
-    import SortableUpdateEvent = api.liveedit.SortableUpdateEvent;
     import PageSelectEvent = api.liveedit.PageSelectEvent;
     import RegionSelectEvent = api.liveedit.RegionSelectEvent;
     import PageComponentSelectEvent = api.liveedit.PageComponentSelectEvent;
@@ -65,8 +64,6 @@ module app.wizard.page {
         private loadedListeners: {(): void;}[] = [];
 
         private sortableStartListeners: {(event: SortableStartEvent): void;}[] = [];
-
-        private sortableUpdateListeners: {(event: SortableUpdateEvent): void;}[] = [];
 
         private sortableStopListeners: {(event: SortableStopEvent): void;}[] = [];
 
@@ -248,12 +245,6 @@ module app.wizard.page {
 
             SortableStopEvent.on(this.notifySortableStop.bind(this), this.liveEditWindow);
 
-            SortableUpdateEvent.on((event: SortableUpdateEvent) => {
-                if (event.getComponentView()) {
-                    this.notifySortableUpdate(event);
-                }
-            }, this.liveEditWindow);
-
             PageSelectEvent.on(this.notifyPageSelected.bind(this), this.liveEditWindow);
 
             RegionSelectEvent.on(this.notifyRegionSelected.bind(this), this.liveEditWindow);
@@ -311,18 +302,6 @@ module app.wizard.page {
 
         private notifySortableStart(event: SortableStartEvent) {
             this.sortableStartListeners.forEach((listener) => listener(event));
-        }
-
-        onSortableUpdate(listener: {(event: SortableUpdateEvent): void;}) {
-            this.sortableUpdateListeners.push(listener);
-        }
-
-        unSortableUpdate(listener: {(event: SortableUpdateEvent): void;}) {
-            this.sortableUpdateListeners = this.sortableUpdateListeners.filter((curr) => (curr != listener));
-        }
-
-        private notifySortableUpdate(event: SortableUpdateEvent) {
-            this.sortableUpdateListeners.forEach((listener) => listener(event));
         }
 
         onSortableStop(listener: {(event: SortableStopEvent): void;}) {

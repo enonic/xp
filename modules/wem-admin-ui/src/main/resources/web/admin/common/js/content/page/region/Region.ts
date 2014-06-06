@@ -71,7 +71,7 @@ module api.content.page.region {
 
             var duplicatedComponent = existing.clone();
             duplicatedComponent.setName(duplicateName);
-            this.addComponentAfter(duplicatedComponent, existing.getName());
+            this.addComponentAfter(duplicatedComponent, existing);
 
             return duplicatedComponent;
         }
@@ -100,7 +100,7 @@ module api.content.page.region {
          *  Add component after target component. Component will only be added if target component is found.
          *  Returns the index of the added component, -1 if target component was not found.
          */
-        addComponentAfter(component: api.content.page.PageComponent, precedingComponent: ComponentName): number {
+        addComponentAfter(component: api.content.page.PageComponent, precedingComponent: PageComponent): number {
 
             api.util.assert(!this.hasComponentWithName(component.getName()),
                     "Component already added to region [" + this.name + "]: " + component.getName().toString());
@@ -116,15 +116,14 @@ module api.content.page.region {
 
             component.setParent(this.getPath());
 
-            if (precedingIndex == -1) {
-                this.pageComponents.splice(0, 0, component);
-                return 0;
+            var index = 0;
+            if (precedingIndex > -1) {
+                index = precedingIndex + 1;
             }
-            else {
-                var index = precedingIndex + 1;
-                this.pageComponents.splice(index, 0, component);
-                return index;
-            }
+            this.pageComponents.splice(index, 0, component);
+            console.debug("Region[" + this.getPath().toString() + "].addComponentAfter() addded [" + component.getPath().toString() +
+                          "] to index: " + index);
+            return index;
         }
 
         removeComponent(component: api.content.page.PageComponent): api.content.page.PageComponent {
@@ -132,16 +131,18 @@ module api.content.page.region {
                 return null;
             }
 
-            this.pageComponents.splice(this.getComponentIndex(component.getName()), 1);
-
+            var componentIndex = this.getComponentIndex(component);
+            this.pageComponents.splice(componentIndex, 1);
+            console.debug("Region[" + this.getPath().toString() + "].removeComponent() removed [" + component.getPath().toString() +
+                          "] from index: " + componentIndex);
             return component;
         }
 
-        getComponentIndex(componentName: ComponentName): number {
+        getComponentIndex(component: PageComponent): number {
 
             for (var i = 0; i < this.pageComponents.length; i++) {
                 var currComponent = this.pageComponents[i];
-                if (currComponent.getName().equals(componentName)) {
+                if (currComponent.getName().equals(component.getName())) {
                     return i;
                 }
             }

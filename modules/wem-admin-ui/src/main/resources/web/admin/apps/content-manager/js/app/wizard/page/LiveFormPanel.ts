@@ -62,7 +62,6 @@ module app.wizard.page {
     import TextView = api.liveedit.text.TextView;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import SortableStopEvent = api.liveedit.SortableStopEvent;
-    import SortableUpdateEvent = api.liveedit.SortableUpdateEvent;
     import PageSelectEvent = api.liveedit.PageSelectEvent;
     import RegionSelectEvent = api.liveedit.RegionSelectEvent;
     import ImageComponentSetImageEvent = api.liveedit.image.ImageComponentSetImageEvent;
@@ -484,7 +483,7 @@ module app.wizard.page {
 
                 Q(!this.pageTemplate ? this.initializePageFromDefault() : null).
                     then(() => {
-                        this.pageRegions.removeComponent(event.getPageComponentView().getComponentPath());
+                        this.pageRegions.removeComponent(event.getPageComponentView().getPageComponent());
                         this.contextWindow.clearSelection();
                     }).
                     catch((reason) => api.notify.showError(reason.toString())).
@@ -516,18 +515,6 @@ module app.wizard.page {
                     this.contextWindow.show();
                     pageComponentView.select();
                     this.inspectPageComponent(pageComponentView);
-                }
-            });
-
-            this.liveEditPage.onSortableUpdate((event: SortableUpdateEvent) => {
-
-                var precedingComponentView = event.getPrecedingComponentView();
-                var precedingComponentName = precedingComponentView ? precedingComponentView.getComponentPath().getComponentName() : null;
-                var newPath = this.pageRegions.moveComponent(event.getComponentView().getComponentPath(), event.getRegionPath(),
-                    precedingComponentName);
-
-                if (newPath) {
-                    event.getComponentView().setComponentPath(newPath);
                 }
             });
 

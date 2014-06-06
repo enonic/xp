@@ -32,10 +32,6 @@ module api.liveedit {
             return this.pageComponent;
         }
 
-        setComponentPath(path: ComponentPath) {
-            this.getEl().setData('live-edit-component', path.toString());
-        }
-
         hasComponentPath(): boolean {
             return !this.pageComponent ? false : true;
         }
