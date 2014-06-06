@@ -12,7 +12,6 @@ module app.wizard.page {
     import RenderingMode = api.rendering.RenderingMode;
 
     import PageComponentView = api.liveedit.PageComponentView;
-    import NewPageComponentIdMapEvent = api.liveedit.NewPageComponentIdMapEvent;
     import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
     import ImageUploadedEvent = api.liveedit.ImageUploadedEvent;
     import ImageComponentSetImageEvent = api.liveedit.image.ImageComponentSetImageEvent;
@@ -234,10 +233,6 @@ module app.wizard.page {
         }
 
         public listenToPage() {
-
-            NewPageComponentIdMapEvent.on((event: NewPageComponentIdMapEvent) => {
-                console.log('PageComponentIdMap: %o', event.getMap());
-            }, this.liveEditWindow);
 
             ImageOpenUploadDialogEvent.on(() => {
                 var uploadDialog = new UploadDialog();

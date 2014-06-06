@@ -35,8 +35,6 @@ module LiveEdit {
                 api.liveedit.PageItemType.get().setSiteTemplate(event.getSiteTemplate());
 
                 var body = api.dom.Body.getAndLoadExistingChildren();
-                var map = new api.liveedit.PageComponentIdMapResolver(body).resolve();
-                new api.liveedit.NewPageComponentIdMapEvent(map).fire();
 
                 this.pageRegions = event.getPageRegions();
                 this.pageItemViews = new api.liveedit.PageItemViewsParser(body, event.getContent(), event.getPageRegions()).parse();

@@ -1,7 +1,3 @@
-///<reference path='PageComponentId.ts' />
-///<reference path='PageComponentIdMap.ts' />
-///<reference path='PageComponentIdMapResolver.ts' />
-
 ///<reference path='ItemType.ts' />
 ///<reference path='ItemTypeConfig.ts' />
 ///<reference path='RegionItemType.ts' />
@@ -18,7 +14,6 @@
 ///<reference path='PageView.ts' />
 ///<reference path='ContentView.ts' />
 
-///<reference path='NewPageComponentIdMapEvent.ts' />
 ///<reference path='ImageOpenUploadDialogEvent.ts' />
 ///<reference path='ImageUploadedEvent.ts' />
 ///<reference path='SortableStartEvent.ts' />

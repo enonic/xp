@@ -2,18 +2,11 @@ module api.liveedit {
 
     export class TextComponentSetTextEvent extends api.event.Event2 {
 
-        private pageComponentId: PageComponentId;
-
         private text: string;
 
-        constructor(pageComponent: PageComponentId, text: string) {
+        constructor(text: string) {
             super();
-            this.pageComponentId = pageComponent;
             this.text = text;
-        }
-
-        getPageComponentId(): PageComponentId {
-            return this.pageComponentId;
         }
 
         getText(): string {
