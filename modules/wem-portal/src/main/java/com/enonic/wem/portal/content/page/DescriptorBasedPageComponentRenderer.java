@@ -23,7 +23,7 @@ abstract class DescriptorBasedPageComponentRenderer
 {
 
     private static final String EMPTY_COMPONENT_EDIT_MODE_HTML =
-        "<div data-live-edit-type=\"{0}\" data-live-edit-component=\"{1}\" data-live-edit-empty-component=\"true\" class=\"live-edit-empty-component\"></div>";
+        "<div data-live-edit-type=\"{0}\" data-live-edit-empty-component=\"true\" class=\"live-edit-empty-component\"></div>";
 
     private static final String EMPTY_COMPONENT_PREVIEW_MODE_HTML = "<div></div>";
 
@@ -66,7 +66,7 @@ abstract class DescriptorBasedPageComponentRenderer
                 return renderEmptyComponentEditMode( pageComponent );
 
             case PREVIEW:
-                return renderEmptyComponentPreviewMode( pageComponent );
+                return renderEmptyComponentPreviewMode();
 
             case LIVE:
                 throw new DescriptorNotFoundException( pageComponent.getDescriptor() );
@@ -78,8 +78,7 @@ abstract class DescriptorBasedPageComponentRenderer
 
     private RenderResult renderEmptyComponentEditMode( final AbstractDescriptorBasedPageComponent pageComponent )
     {
-        final String html =
-            MessageFormat.format( EMPTY_COMPONENT_EDIT_MODE_HTML, pageComponent.getType().toString(), pageComponent.getPath().toString() );
+        final String html = MessageFormat.format( EMPTY_COMPONENT_EDIT_MODE_HTML, pageComponent.getType().toString() );
 
         return RenderResult.newRenderResult().
             type( "text/html" ).
@@ -87,10 +86,9 @@ abstract class DescriptorBasedPageComponentRenderer
             build();
     }
 
-    private RenderResult renderEmptyComponentPreviewMode( final AbstractDescriptorBasedPageComponent pageComponent )
+    private RenderResult renderEmptyComponentPreviewMode()
     {
-        final String html = MessageFormat.format( EMPTY_COMPONENT_PREVIEW_MODE_HTML, pageComponent.getType().toString(),
-                                                  pageComponent.getPath().toString() );
+        final String html = EMPTY_COMPONENT_PREVIEW_MODE_HTML;
 
         return RenderResult.newRenderResult().
             type( "text/html" ).

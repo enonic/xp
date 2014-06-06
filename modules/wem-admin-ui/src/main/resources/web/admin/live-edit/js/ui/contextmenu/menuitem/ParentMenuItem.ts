@@ -1,7 +1,12 @@
 module LiveEdit.ui.contextmenu.menuitem {
 
+    import PageComponent = api.content.page.PageComponent;
     import ItemType = api.liveedit.ItemType;
     import ItemView = api.liveedit.ItemView;
+    import PageView = api.liveedit.PageView;
+    import RegionView = api.liveedit.RegionView;
+    import PageComponentView = api.liveedit.PageComponentView;
+    import ContentView = api.liveedit.ContentView;
 
     export class ParentMenuItem extends LiveEdit.ui.contextmenu.menuitem.BaseMenuItem {
 
@@ -19,19 +24,18 @@ module LiveEdit.ui.contextmenu.menuitem {
         }
 
         private onSelectParent() {
-            var parentElement: JQuery = this.menu.selectedComponent.getElement().parents('[data-live-edit-type]');
 
-            if (parentElement && parentElement.length > 0) {
+            var parentView: ItemView = this.menu.selectedComponent.getParentItemView();
+            if (parentView) {
                 this.menu.selectedComponent.deselect();
-                var parentComponent = pageItemViews.getItemViewByElement($(parentElement[0]).get(0));
-                LiveEdit.component.Selection.handleSelect(parentComponent);
+                LiveEdit.component.Selection.handleSelect(parentView);
 
-                var xPos = parentComponent.getElement().offset().left + parentComponent.getElement().width() / 2 -
+                var xPos = parentView.getElement().offset().left + parentView.getElement().width() / 2 -
                            (this.menu.getEl().width() / 2);
-                var yPos = parentComponent.getElement().offset().top + 11;
+                var yPos = parentView.getElement().offset().top + 11;
                 this.menu.moveToXY(xPos, yPos);
 
-                this.scrollComponentIntoView(parentComponent);
+                this.scrollComponentIntoView(parentView);
             }
         }
 

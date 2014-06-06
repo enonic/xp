@@ -11,6 +11,8 @@ module api.liveedit {
 
     export class ItemView extends api.dom.Element {
 
+        static TYPE_DATA_ATTRIBUTE = "live-edit-type";
+
         private type: ItemType;
 
         private loadMask: api.ui.LoadMask;
@@ -30,7 +32,9 @@ module api.liveedit {
                 props.setTagName("div");
             }
             super(props);
-
+            if (!element) {
+                this.getEl().setData(ItemView.TYPE_DATA_ATTRIBUTE, type.getShortName());
+            }
             if (!dummy) {
                 this.loadMask = new api.ui.LoadMask(this);
                 this.appendChild(this.loadMask);
@@ -66,6 +70,10 @@ module api.liveedit {
 
         getType(): ItemType {
             return this.type;
+        }
+
+        getParentItemView(): ItemView {
+            throw new Error("Must be implemented by inheritors");
         }
 
         isEmpty(): boolean {
@@ -132,6 +140,16 @@ module api.liveedit {
             }
 
             return parentHTMLElement;
+        }
+
+        static findPreviousItemView(htmlElement: HTMLElement): api.dom.ElementHelper {
+
+            var element = new api.dom.ElementHelper(htmlElement);
+            var previous = element.getPrevious();
+            while (previous != null && previous.hasAttribute("data-" + ItemView.TYPE_DATA_ATTRIBUTE)) {
+                previous = previous.getPrevious();
+            }
+            return previous;
         }
     }
 }

@@ -46,7 +46,7 @@ module api.liveedit {
             return this.siteTemplate;
         }
 
-        createView(element?: HTMLElement, dummy?: boolean): PageView {
+        createView(parent: any, data: any, element?: HTMLElement, dummy?: boolean): PageView {
             return new PageView(element);
         }
     }

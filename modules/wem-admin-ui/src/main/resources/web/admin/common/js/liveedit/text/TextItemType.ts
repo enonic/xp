@@ -3,6 +3,7 @@ module api.liveedit.text {
     import ItemTypeConfigJson = api.liveedit.ItemTypeConfigJson;
     import PageComponentItemType = api.liveedit.PageComponentItemType;
     import RegionView = api.liveedit.RegionView;
+    import TextComponent = api.content.page.text.TextComponent;
 
     export class TextItemType extends PageComponentItemType {
 
@@ -27,8 +28,8 @@ module api.liveedit.text {
             });
         }
 
-        createView(element?: HTMLElement, dummy?: boolean): TextView {
-            return new TextView(element);
+        createView(parentRegionView: RegionView, textComponent: TextComponent, element?: HTMLElement, dummy?: boolean): TextView {
+            return new TextView(parentRegionView, textComponent, element);
         }
 
         isPageComponentType(): boolean {

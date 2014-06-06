@@ -61,7 +61,6 @@ module app.wizard.page {
     import PartView = api.liveedit.part.PartView;
     import LayoutView = api.liveedit.layout.LayoutView;
     import TextView = api.liveedit.text.TextView;
-    import PageViewItemsParsedEvent = api.liveedit.PageViewItemsParsedEvent;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import SortableStopEvent = api.liveedit.SortableStopEvent;
     import SortableUpdateEvent = api.liveedit.SortableUpdateEvent;
@@ -226,7 +225,7 @@ module app.wizard.page {
 
                             this.pageTemplate = pageTemplate;
 
-                            this.pageRegions = this.resolvePageRegions(this.content, this.pageTemplate);
+                            this.setPageRegions(this.resolvePageRegions(this.content, this.pageTemplate));
                             this.pageConfig = this.resolvePageConfig(this.content, this.pageTemplate);
 
                             return new GetPageDescriptorByKeyRequest(pageTemplate.getDescriptorKey()).sendAndParse();
@@ -242,7 +241,7 @@ module app.wizard.page {
                 else {
                     this.pageTemplate = null;
                     this.pageDescriptor = null;
-                    this.pageRegions = this.defaultModels.getPageTemplate().getRegions();
+                    this.setPageRegions(this.defaultModels.getPageTemplate().getRegions());
                     this.pageConfig = this.defaultModels.getPageTemplate().getConfig();
                     this.pageInspectionPanel.setPage(this.content, null, null, this.pageConfig);
 
@@ -251,6 +250,11 @@ module app.wizard.page {
             });
 
             this.liveEditListen();
+        }
+
+        private setPageRegions(pageRegions: PageRegions) {
+            this.pageRegions = pageRegions;
+            this.liveEditPage.setPageRegions(pageRegions);
         }
 
         remove() {
@@ -296,12 +300,12 @@ module app.wizard.page {
             if (!this.pageSkipReload) {
 
                 if (!this.pageRegions && !this.content.isPage()) {
-                    this.pageRegions = this.defaultModels.getPageTemplate().getRegions();
+                    this.setPageRegions(this.defaultModels.getPageTemplate().getRegions());
                     this.pageConfig = this.defaultModels.getPageTemplate().getConfig();
                 }
                 else if (!this.pageRegions && this.content.isPage()) {
 
-                    this.pageRegions = content.getPage().getRegions();
+                    this.setPageRegions(content.getPage().getRegions());
                     this.pageConfig = content.getPage().getConfig();
                 }
             }
@@ -381,7 +385,7 @@ module app.wizard.page {
 
                     this.pageTemplate = defaultPageTemplate;
                     this.pageConfig = defaultPageTemplate.getConfig();
-                    this.pageRegions = defaultPageTemplate.getRegions();
+                    this.setPageRegions(defaultPageTemplate.getRegions());
                     this.pageDescriptor = pageDescriptor;
 
                     this.pageInspectionPanel.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
@@ -447,15 +451,6 @@ module app.wizard.page {
         }
 
         private liveEditListen() {
-
-            this.liveEditPage.onPageViewItemsParsed((event: PageViewItemsParsedEvent) => {
-
-                var regions = this.pageRegions.getRegions();
-                event.getPageView().getRegions().forEach((regionView: RegionView, index: number) => {
-                    var region = regions[index];
-                    regionView.setData(region);
-                });
-            });
 
             this.liveEditPage.onPageSelected((event: PageSelectEvent) => {
 
@@ -527,8 +522,8 @@ module app.wizard.page {
 
             this.liveEditPage.onSortableUpdate((event: SortableUpdateEvent) => {
 
-                var precedingComponent = event.getPrecedingComponent();
-                var precedingComponentName = precedingComponent ? precedingComponent.getComponentName() : null;
+                var precedingComponentView = event.getPrecedingComponentView();
+                var precedingComponentName = precedingComponentView ? precedingComponentView.getComponentPath().getComponentName() : null;
                 var newPath = this.pageRegions.moveComponent(event.getComponentPath(), event.getRegionPath(), precedingComponentName);
 
                 if (newPath) {
@@ -538,17 +533,11 @@ module app.wizard.page {
 
             this.liveEditPage.onPageComponentAdded((event: PageComponentAddedEvent) => {
 
-                var command = new PageComponentAddedCommand().
-                    setPageRegions(this.pageRegions).
-                    setType(event.getType()).
-                    setRegion(event.getRegion()).
-                    setPrecedingComponent(event.getPrecedingComponent() ? event.getPrecedingComponent().getComponentName() : null).
-                    setComponentView(event.getPageComponentView());
-
-                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).
-                    then(() => command.execute()).
-                    catch((reason) => api.notify.showError(reason.toString())).
-                    done();
+                if (!this.pageTemplate) {
+                    this.initializePageFromDefault().
+                        catch((reason) => api.notify.showError(reason.toString())).
+                        done();
+                }
             });
 
             this.liveEditPage.onImageComponentSetImage((event: ImageComponentSetImageEvent) => {

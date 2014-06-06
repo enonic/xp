@@ -1,6 +1,7 @@
 module api.liveedit {
 
     import Content = api.content.Content;
+    import PageRegions = api.content.page.PageRegions;
     import SiteTemplate = api.content.site.template.SiteTemplate;
 
     export class InitializeLiveEditEvent extends api.event.Event2 {
@@ -9,10 +10,13 @@ module api.liveedit {
 
         private siteTemplate: SiteTemplate;
 
-        constructor(content: Content, siteTemplate: SiteTemplate) {
+        private pageRegions: PageRegions;
+
+        constructor(content: Content, siteTemplate: SiteTemplate, pageRegions: PageRegions) {
             super();
             this.content = content;
             this.siteTemplate = siteTemplate;
+            this.pageRegions = pageRegions;
         }
 
         getContent(): Content {
@@ -21,6 +25,10 @@ module api.liveedit {
 
         getSiteTemplate(): SiteTemplate {
             return this.siteTemplate;
+        }
+
+        getPageRegions(): PageRegions {
+            return this.pageRegions;
         }
 
         static on(handler: (event: InitializeLiveEditEvent) => void, contextWindow: Window = window) {

@@ -2,7 +2,7 @@ module api.liveedit {
 
     import Content = api.content.Content;
 
-    export class PageView extends ItemView {
+    export class PageView extends ItemView implements RegionContainingView {
 
         private regionViews: RegionView[] = [];
 
@@ -14,6 +14,10 @@ module api.liveedit {
 
             var content = PageItemType.get().getContent();
             return content ? content.getDisplayName() : "[No name]";
+        }
+
+        getParentItemView(): ItemView {
+            return null;
         }
 
         select() {

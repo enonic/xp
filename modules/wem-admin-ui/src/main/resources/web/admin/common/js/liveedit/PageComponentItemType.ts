@@ -8,7 +8,8 @@ module api.liveedit {
             super(shortName, config);
         }
 
-        createView(element?: HTMLElement, dummy?: boolean): PageComponentView<PageComponent> {
+        createView(parentRegion: RegionView, pageComponent: PageComponent, element?: HTMLElement,
+                   dummy?: boolean): PageComponentView<PageComponent> {
             throw new Error("Must be implemented by inheritors");
         }
     }

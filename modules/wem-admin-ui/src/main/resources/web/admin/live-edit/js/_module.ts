@@ -44,6 +44,7 @@
 ///<reference path='ui/contextmenu/menuitem/DuplicateMenuItem.ts' />
 
 ///<reference path='component/dragdropsort/DragDropSort.ts' />
+///<reference path='LiveEditPage.ts' />
 
 
 ///<reference path='main.ts' />

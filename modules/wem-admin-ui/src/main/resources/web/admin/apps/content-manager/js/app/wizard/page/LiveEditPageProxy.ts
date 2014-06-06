@@ -4,6 +4,7 @@ module app.wizard.page {
     import Content = api.content.Content;
     import ContentId = api.content.ContentId;
     import Descriptor = api.content.page.Descriptor;
+    import PageRegions = api.content.page.PageRegions;
     import RegionPath = api.content.page.RegionPath;
     import PageComponent = api.content.page.PageComponent;
     import PageComponentType = api.content.page.PageComponentType;
@@ -12,7 +13,6 @@ module app.wizard.page {
     import RenderingMode = api.rendering.RenderingMode;
 
     import PageComponentView = api.liveedit.PageComponentView;
-    import PageViewItemsParsedEvent = api.liveedit.PageViewItemsParsedEvent;
     import NewPageComponentIdMapEvent = api.liveedit.NewPageComponentIdMapEvent;
     import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
     import ImageUploadedEvent = api.liveedit.ImageUploadedEvent;
@@ -44,6 +44,8 @@ module app.wizard.page {
 
         private baseUrl: string;
 
+        private pageRegions: PageRegions;
+
         private liveFormPanel: LiveFormPanel;
 
         private siteTemplate: SiteTemplate;
@@ -63,8 +65,6 @@ module app.wizard.page {
         private contentLoadedOnPage: Content;
 
         private loadedListeners: {(): void;}[] = [];
-
-        private pageViewItemsParsedListeners: {(event: PageViewItemsParsedEvent): void;}[] = [];
 
         private sortableStartListeners: {(event: SortableStartEvent): void;}[] = [];
 
@@ -111,6 +111,10 @@ module app.wizard.page {
                     this.loadMask.hide();
                 }
             });
+        }
+
+        public setPageRegions(pageRegions: PageRegions) {
+            this.pageRegions = pageRegions;
         }
 
         public setWidth(value: string) {
@@ -193,7 +197,8 @@ module app.wizard.page {
 
                 this.loadMask.hide();
 
-                new api.liveedit.InitializeLiveEditEvent(this.contentLoadedOnPage, this.siteTemplate).fire(this.liveEditWindow);
+                new api.liveedit.InitializeLiveEditEvent(this.contentLoadedOnPage, this.siteTemplate,
+                    this.pageRegions).fire(this.liveEditWindow);
 
                 this.notifyLoaded();
             }
@@ -214,11 +219,12 @@ module app.wizard.page {
                 success: (htmlAsString: string) => {
 
                     var newElement = api.dom.Element.fromString(htmlAsString);
-                    var newPageComponentView: PageComponentView<PageComponent> = pageComponentView.getType().createView(newElement.getHTMLElement());
+                    var newPageComponentView: PageComponentView<PageComponent> = pageComponentView.getType().
+                        createView(pageComponentView.getParentRegionView(), pageComponentView.getPageComponent(),
+                        newElement.getHTMLElement());
 
                     // pass on the same ItemViewId and PageComponent to the new PageComponentView
                     newPageComponentView.setItemId(pageComponentView.getItemId());
-                    newPageComponentView.setPageComponent(pageComponentView.getPageComponent());
                     pageComponentView.replaceWith(newPageComponentView);
 
                     new PageComponentLoadedEvent(newPageComponentView).fire(this.liveEditWindow);
@@ -229,8 +235,6 @@ module app.wizard.page {
         }
 
         public listenToPage() {
-
-            PageViewItemsParsedEvent.on(this.notifyPageViewItemsParsed.bind(this), this.liveEditWindow);
 
             NewPageComponentIdMapEvent.on((event: NewPageComponentIdMapEvent) => {
                 console.log('PageComponentIdMap: %o', event.getMap());
@@ -301,18 +305,6 @@ module app.wizard.page {
             this.loadedListeners.forEach((listener) => {
                 listener();
             });
-        }
-
-        onPageViewItemsParsed(listener: {(event: PageViewItemsParsedEvent): void;}) {
-            this.pageViewItemsParsedListeners.push(listener);
-        }
-
-        unPageViewItemsParsed(listener: {(event: PageViewItemsParsedEvent): void;}) {
-            this.pageViewItemsParsedListeners = this.pageViewItemsParsedListeners.filter((curr) => (curr != listener));
-        }
-
-        private notifyPageViewItemsParsed(event: PageViewItemsParsedEvent) {
-            this.pageViewItemsParsedListeners.forEach((listener) => listener(event));
         }
 
         onSortableStart(listener: (event: SortableStartEvent) => void) {

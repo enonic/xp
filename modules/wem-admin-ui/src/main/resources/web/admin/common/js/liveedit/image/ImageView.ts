@@ -7,10 +7,10 @@ module api.liveedit.image {
 
     export class ImageView extends PageComponentView<ImageComponent> {
 
-        private placeholder : ImagePlaceholder;
+        private placeholder: ImagePlaceholder;
 
-        constructor(element?: HTMLElement, dummy?: boolean) {
-            super(ImageItemType.get(), element, dummy);
+        constructor(parentRegionView: RegionView, imageComponent: ImageComponent, element?: HTMLElement, dummy?: boolean) {
+            super(ImageItemType.get(), parentRegionView, imageComponent, element, dummy);
 
             this.placeholder = new ImagePlaceholder(this);
         }
@@ -21,14 +21,14 @@ module api.liveedit.image {
 
         select() {
             super.select();
-            if( this.isEmpty() ) {
+            if (this.isEmpty()) {
                 this.placeholder.select();
             }
         }
 
         deselect() {
             super.deselect();
-            if( this.isEmpty() ) {
+            if (this.isEmpty()) {
                 this.placeholder.deselect();
             }
         }
@@ -43,7 +43,7 @@ module api.liveedit.image {
 
         duplicate(): ImageView {
 
-            var duplicatedView = new ImageView();
+            var duplicatedView = new ImageView(this.getParentRegionView(), null);
             this.getEl().insertAfterThisEl(duplicatedView.getEl());
             return duplicatedView;
         }

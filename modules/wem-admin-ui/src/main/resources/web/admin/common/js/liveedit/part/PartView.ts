@@ -11,8 +11,8 @@ module api.liveedit.part {
 
         private placeholder: PartPlaceholder;
 
-        constructor(element?: HTMLElement, dummy?: boolean) {
-            super(PartItemType.get(), element, dummy);
+        constructor(parentRegionView: RegionView, partComponent: PartComponent, element?: HTMLElement, dummy?: boolean) {
+            super(PartItemType.get(), parentRegionView, partComponent, element, dummy);
 
             this.placeholder = new PartPlaceholder(this);
         }
@@ -54,7 +54,7 @@ module api.liveedit.part {
 
         duplicate(): PartView {
 
-            var duplicatedView = new PartView();
+            var duplicatedView = new PartView(this.getParentRegionView(), null);
             this.getEl().insertAfterThisEl(duplicatedView.getEl());
             return duplicatedView;
         }

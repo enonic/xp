@@ -6,6 +6,9 @@
 
 module LiveEdit.component.dragdropsort.DragDropSort {
 
+    import PageComponent = api.content.page.PageComponent;
+    import ComponentPath = api.content.page.ComponentPath;
+    import ItemViewId = api.liveedit.ItemViewId;
     import ItemType = api.liveedit.ItemType;
     import ItemView = api.liveedit.ItemView;
     import PageComponentView = api.liveedit.PageComponentView;
@@ -178,15 +181,22 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         var pageComponentView = pageItemViews.getPageComponentViewByElement(ui.item.get(0));
         if (pageComponentView) {
             if (pageComponentView.hasComponentPath()) {
+                var preceodingComponentView: PageComponentView<PageComponent> = null;
+                var precedingComponentViewId = PageComponentView.findPrecedingComponentItemViewId(pageComponentView.getHTMLElement());
+                if (precedingComponentViewId) {
+                    preceodingComponentView = <PageComponentView<PageComponent>>pageItemViews.getByItemId(precedingComponentViewId);
+                }
                 var regionHTMLElement = PageComponentView.findParentRegionViewHTMLElement(pageComponentView.getHTMLElement());
                 var regionView = pageItemViews.getRegionViewByElement(regionHTMLElement);
-                new SortableUpdateEvent(pageComponentView, regionView).fire();
+                new SortableUpdateEvent(pageComponentView, regionView, preceodingComponentView).fire();
             }
         }
     }
 
     function handleSortStop(event: JQueryEventObject, ui): void {
         _isDragging = false;
+
+        console.debug("DragDropSort.handleSortStop");
 
         var pageComponentView = pageItemViews.getPageComponentViewByElement(ui.item.get(0));
 
@@ -213,27 +223,36 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     // When sortable receives a new item
     function handleReceive(event: JQueryEventObject, ui): void {
 
+        console.debug("DragDropSort.handleReceive");
         if (isItemDraggedFromContextWindow(ui.item)) {
             var droppedElement = wemjq(event.target).children(CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR);
-            var itemType: PageComponentItemType = <PageComponentItemType>ItemType.byShortName(droppedElement.data('live-edit-type'));
-            var newPageComponent = itemType.createView();
-            pageItemViews.addItemView(newPageComponent);
-            droppedElement.attr("data-live-edit-id", "" + newPageComponent.getItemId());
+            var regionHTMLElement = PageComponentView.findParentRegionViewHTMLElement(droppedElement.get(0));
+            var regionView = pageItemViews.getRegionViewByElement(regionHTMLElement);
 
-            droppedElement.replaceWith(newPageComponent.getHTMLElement());
-            newPageComponent.empty();
-            newPageComponent.init();
+            var itemType: PageComponentItemType = <PageComponentItemType>ItemType.byShortName(droppedElement.data('live-edit-type'));
+
+            var liveEditPage = LiveEdit.LiveEditPage.get();
+            var precedingComponentId = PageComponentView.findPrecedingComponentItemViewId(droppedElement.get(0));
+            var precedingComponentPath: ComponentPath = null;
+            if (precedingComponentId) {
+                var precedingComponentView = <PageComponentView<PageComponent>>pageItemViews.getByItemId(precedingComponentId);
+                precedingComponentPath = precedingComponentView.getComponentPath();
+            }
+            var newPageComponent = liveEditPage.createComponent(regionView.getRegion(), itemType.toPageComponentType(),
+                precedingComponentPath);
+            var newPageComponentView = itemType.createView(regionView, newPageComponent);
+            pageItemViews.addItemView(newPageComponentView);
+            droppedElement.attr("data-live-edit-id", "" + newPageComponentView.getItemId());
+
+            droppedElement.replaceWith(newPageComponentView.getHTMLElement());
+            newPageComponentView.empty();
+            newPageComponentView.init();
 
             // The layout padding is removed on sortStop, but this is not fired yet at this point
             // Remove it now so the auto selection is properly aligned.
             removePaddingFromLayoutComponent();
-            var regionHTMLElement = PageComponentView.findParentRegionViewHTMLElement(newPageComponent.getHTMLElement());
-            var region = pageItemViews.getRegionViewByElement(regionHTMLElement);
-            new PageComponentAddedEvent().
-                setPageComponentView(newPageComponent).
-                setRegion(region.getRegionPath()).
-                setPrecedingComponent(newPageComponent.getPrecedingComponentPath()).
-                fire();
+
+            new PageComponentAddedEvent().setPageComponentView(newPageComponentView).fire();
             //LiveEdit.component.Selection.handleSelect(newPageComponent);
         }
     }

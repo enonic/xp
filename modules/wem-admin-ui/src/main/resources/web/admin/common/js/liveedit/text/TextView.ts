@@ -6,19 +6,19 @@ module api.liveedit.text {
 
     export class TextView extends PageComponentView<TextComponent> {
 
-        constructor(element?: HTMLElement) {
-            super(TextItemType.get(), element);
+        constructor(parentRegionView: RegionView, textComponent: TextComponent, element?: HTMLElement) {
+            super(TextItemType.get(), parentRegionView, textComponent, element);
         }
 
         duplicate(): TextView {
 
-            var duplicatedView = new TextView();
+            var duplicatedView = new TextView(this.getParentRegionView(), null);
             this.getEl().insertAfterThisEl(duplicatedView.getEl());
             return duplicatedView;
         }
 
         public static fromJQuery(element: JQuery): TextView {
-            return new TextView(<HTMLElement>element.get(0));
+            return new TextView(null, null, <HTMLElement>element.get(0));
         }
     }
 }

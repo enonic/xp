@@ -10,42 +10,13 @@ module api.liveedit {
 
         private pageComponentView: PageComponentView<PageComponent>;
 
-        private type: PageComponentType;
-
-        private region: RegionPath;
-
-        private precedingComponent: ComponentPath;
-
         setPageComponentView(pageComponentView: PageComponentView<PageComponent>): PageComponentAddedEvent {
             this.pageComponentView = pageComponentView;
-            this.type = pageComponentView.getType().toPageComponentType();
-            return this;
-        }
-
-        setRegion(region: RegionPath): PageComponentAddedEvent {
-            this.region = region;
-            return this;
-        }
-
-        setPrecedingComponent(precedingComponent: ComponentPath): PageComponentAddedEvent {
-            this.precedingComponent = precedingComponent;
             return this;
         }
 
         getPageComponentView(): PageComponentView<PageComponent> {
             return this.pageComponentView;
-        }
-
-        getType(): PageComponentType {
-            return this.type;
-        }
-
-        getRegion(): RegionPath {
-            return this.region;
-        }
-
-        getPrecedingComponent(): ComponentPath {
-            return this.precedingComponent;
         }
 
         static on(handler: (event: PageComponentAddedEvent) => void, contextWindow: Window = window) {

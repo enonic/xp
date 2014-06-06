@@ -6,31 +6,8 @@ declare var wemjq: JQueryStatic;
 
 declare var pageItemViews: api.liveedit.PageItemViews;
 
-api.liveedit.InitializeLiveEditEvent.on((event: api.liveedit.InitializeLiveEditEvent) => {
 
-    api.liveedit.PageItemType.get().setContent(event.getContent());
-    api.liveedit.PageItemType.get().setSiteTemplate(event.getSiteTemplate());
-
-    var body = api.dom.Body.getAndLoadExistingChildren();
-    var map = new api.liveedit.PageComponentIdMapResolver(body).resolve();
-    new api.liveedit.NewPageComponentIdMapEvent(map).fire();
-
-    pageItemViews = new api.liveedit.PageItemViewsParser(body).parse();
-    pageItemViews.initializeEmpties();
-    var pageView = pageItemViews.getPageView();
-
-
-    api.liveedit.PageComponentLoadedEvent.on((event: api.liveedit.PageComponentLoadedEvent) => {
-
-        pageItemViews.addItemView(event.getItemView());
-
-        if (event.getItemView().getType() == api.liveedit.layout.LayoutItemType.get()) {
-            LiveEdit.component.dragdropsort.DragDropSort.createSortableLayout(event.getItemView());
-        }
-    });
-
-    new api.liveedit.PageViewItemsParsedEvent(pageView).fire();
-});
+new LiveEdit.LiveEditPage();
 
 wemjq(window).load(() => {
     new LiveEdit.component.mouseevent.Page();

@@ -1,5 +1,6 @@
 module api.liveedit.layout {
 
+    import LayoutComponent = api.content.page.layout.LayoutComponent;
     import ItemType = api.liveedit.ItemType;
     import ItemTypeConfigJson = api.liveedit.ItemTypeConfigJson;
     import PageComponentView = api.liveedit.PageComponentView;
@@ -33,8 +34,8 @@ module api.liveedit.layout {
             return true
         }
 
-        createView(element?: HTMLElement, dummy?: boolean): LayoutView {
-            return new LayoutView(element, dummy);
+        createView(parentRegionView: RegionView, layoutComponent: LayoutComponent, element?: HTMLElement, dummy?: boolean): LayoutView {
+            return new LayoutView(parentRegionView, layoutComponent, element, dummy);
         }
     }
 

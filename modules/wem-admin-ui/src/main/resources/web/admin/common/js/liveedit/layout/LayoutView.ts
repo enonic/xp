@@ -3,15 +3,16 @@ module api.liveedit.layout {
     import LayoutComponent = api.content.page.layout.LayoutComponent;
     import PageComponentView = api.liveedit.PageComponentView;
     import RegionView = api.liveedit.RegionView;
+    import RegionContainingView = api.liveedit.RegionContainingView;
 
-    export class LayoutView extends PageComponentView<LayoutComponent> {
+    export class LayoutView extends PageComponentView<LayoutComponent> implements RegionContainingView {
 
         private placeholder: LayoutPlaceholder;
 
         private regionViews: RegionView[] = [];
 
-        constructor(element?: HTMLElement, dummy?: boolean) {
-            super(LayoutItemType.get(), element, dummy);
+        constructor(parentRegionView: RegionView, layoutComponent: LayoutComponent, element?: HTMLElement, dummy?: boolean) {
+            super(LayoutItemType.get(), parentRegionView, layoutComponent, element, dummy);
 
             this.placeholder = new LayoutPlaceholder(this);
         }
@@ -57,7 +58,7 @@ module api.liveedit.layout {
 
         duplicate(): LayoutView {
 
-            var duplicatedView = new LayoutView();
+            var duplicatedView = new LayoutView(this.getParentRegionView(), null);
             this.getEl().insertAfterThisEl(duplicatedView.getEl());
             return duplicatedView;
         }

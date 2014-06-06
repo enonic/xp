@@ -6,14 +6,22 @@ module api.liveedit {
 
     export class PageComponentView<PAGE_COMPONENT extends PageComponent> extends ItemView {
 
+        private parentRegionView: RegionView;
+
         private pageComponent: PAGE_COMPONENT;
 
-        constructor(type: ItemType, element?: HTMLElement, dummy?: boolean) {
+        constructor(type: ItemType, parentRegionView: RegionView, pageComponent: PAGE_COMPONENT, element?: HTMLElement, dummy?: boolean) {
             super(type, element, dummy);
+            this.parentRegionView = parentRegionView;
+            this.pageComponent = pageComponent;
         }
 
         getType(): PageComponentItemType {
             return <PageComponentItemType>super.getType();
+        }
+
+        getParentRegionView(): RegionView {
+            return this.parentRegionView;
         }
 
         setPageComponent(data: PAGE_COMPONENT) {
@@ -29,12 +37,12 @@ module api.liveedit {
         }
 
         hasComponentPath(): boolean {
-            return this.getEl().hasAttribute('data-live-edit-component');
+            return !this.pageComponent ? false : true;
         }
 
         getComponentPath(): ComponentPath {
-            var asString = this.getEl().getData('live-edit-component');
-            return api.content.page.ComponentPath.fromString(asString);
+
+            return this.pageComponent.getPath();
         }
 
         getName(): string {
@@ -43,17 +51,8 @@ module api.liveedit {
             return path ? path.getComponentName().toString() : '[No Name]';
         }
 
-        getPrecedingComponentPath(): ComponentPath {
-            api.util.assert(this.getType().isPageComponentType(),
-                    "Expected to only be called when this is a PageComponent: " + api.util.getClassName(this));
-
-            var previousElement = this.getPreviousElement();
-            if (!previousElement) {
-                return null;
-            }
-
-            var asString = previousElement.getEl().getData('live-edit-component');
-            return api.content.page.ComponentPath.fromString(asString);
+        getParentItemView(): RegionView {
+            return this.parentRegionView;
         }
 
         select() {
@@ -88,6 +87,20 @@ module api.liveedit {
                 parentItemView = ItemView.findParentItemViewAsHTMLElement(parentItemView);
             }
             return parentItemView;
+        }
+
+        static findPrecedingComponentItemViewId(htmlElement: HTMLElement): ItemViewId {
+
+            var previousItemView = ItemView.findPreviousItemView(htmlElement);
+            if (!previousItemView) {
+                return null;
+            }
+
+            var asString = previousItemView.getData("live-edit-id");
+            if (api.util.isStringEmpty(asString)) {
+                return null;
+            }
+            return ItemViewId.fromString(asString);
         }
     }
 }

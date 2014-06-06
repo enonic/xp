@@ -1,5 +1,7 @@
 module api.liveedit {
 
+    import Region = api.content.page.region.Region;
+
     export class RegionItemType extends ItemType {
 
         private static INSTANCE = new RegionItemType();
@@ -24,8 +26,8 @@ module api.liveedit {
             });
         }
 
-        createView(element?: HTMLElement, dummy?: boolean): RegionView {
-            return new RegionView(element);
+        createView(parent: RegionContainingView, region: Region, element?: HTMLElement, dummy?: boolean): RegionView {
+            return new RegionView(parent, region, element);
         }
     }
 
