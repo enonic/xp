@@ -107,7 +107,7 @@ module api.liveedit {
 
         static isRegionViewFromHTMLElement(htmlElement: HTMLElement): boolean {
 
-            var type = htmlElement.getAttribute("data-" + ItemView.TYPE_DATA_ATTRIBUTE);
+            var type = htmlElement.getAttribute("data-" + ItemType.DATA_ATTRIBUTE);
             if (api.util.isStringBlank(type)) {
                 return false;
             }

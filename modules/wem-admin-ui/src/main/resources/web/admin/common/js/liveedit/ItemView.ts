@@ -9,8 +9,6 @@ module api.liveedit {
 
     export class ItemView extends api.dom.Element {
 
-        static TYPE_DATA_ATTRIBUTE = "live-edit-type";
-
         private type: ItemType;
 
         private loadMask: api.ui.LoadMask;
@@ -31,7 +29,7 @@ module api.liveedit {
             }
             super(props);
             if (!element) {
-                this.getEl().setData(ItemView.TYPE_DATA_ATTRIBUTE, type.getShortName());
+                this.getEl().setData(ItemType.DATA_ATTRIBUTE, type.getShortName());
             }
             if (!dummy) {
                 this.loadMask = new api.ui.LoadMask(this);
@@ -144,7 +142,7 @@ module api.liveedit {
 
             var element = new api.dom.ElementHelper(htmlElement);
             var previous = element.getPrevious();
-            while (previous != null && previous.hasAttribute("data-" + ItemView.TYPE_DATA_ATTRIBUTE)) {
+            while (previous != null && previous.hasAttribute("data-" + ItemType.DATA_ATTRIBUTE)) {
                 previous = previous.getPrevious();
             }
             return previous;

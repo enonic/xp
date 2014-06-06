@@ -38,7 +38,7 @@ module LiveEdit {
                 new api.liveedit.NewPageComponentIdMapEvent(map).fire();
 
                 this.pageRegions = event.getPageRegions();
-                this.pageItemViews = new api.liveedit.PageItemViewsParser(body, this.pageRegions).parse();
+                this.pageItemViews = new api.liveedit.PageItemViewsParser(body, event.getContent(), event.getPageRegions()).parse();
                 this.pageItemViews.initializeEmpties();
 
                 api.liveedit.PageComponentLoadedEvent.on((event: api.liveedit.PageComponentLoadedEvent) => {

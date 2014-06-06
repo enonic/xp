@@ -4,16 +4,18 @@ module api.liveedit {
 
     export class PageView extends ItemView implements RegionContainingView {
 
+        private content: Content;
+
         private regionViews: RegionView[] = [];
 
-        constructor(element?: HTMLElement) {
+        constructor(content: Content, element?: HTMLElement) {
             super(PageItemType.get(), element);
+            this.content = content;
         }
 
         getName(): string {
 
-            var content = PageItemType.get().getContent();
-            return content ? content.getDisplayName() : "[No name]";
+            return this.content.getDisplayName();
         }
 
         getParentItemView(): ItemView {

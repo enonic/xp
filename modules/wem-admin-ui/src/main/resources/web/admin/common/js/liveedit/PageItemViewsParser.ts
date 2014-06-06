@@ -3,6 +3,7 @@ module api.liveedit {
     import Body = api.dom.Body;
     import PageComponentType = api.content.page.PageComponentType;
     import Region = api.content.page.region.Region;
+    import Content = api.content.Content;
     import ComponentPath2 = api.content.page.ComponentPath2;
     import RegionPath2 = api.content.page.RegionPath2;
     import PageComponent = api.content.page.PageComponent;
@@ -13,20 +14,23 @@ module api.liveedit {
 
         private body: Body;
 
+        private content: Content;
+
         private pageRegions: PageRegions;
 
         private itemViews: ItemView[] = [];
 
         private pageItemViews: PageItemViews;
 
-        constructor(body: Body, pageRegions: PageRegions) {
+        constructor(body: Body, content: Content, pageRegions: PageRegions) {
             this.body = body;
+            this.content = content;
             this.pageRegions = pageRegions;
         }
 
         parse(): PageItemViews {
 
-            var pageView = new PageView(this.body.getHTMLElement());
+            var pageView = new PageView(this.content, this.body.getHTMLElement());
             this.itemViews.push(pageView);
             this.parsePageRegions(this.body, pageView);
 
@@ -40,8 +44,8 @@ module api.liveedit {
             var children = parent.getChildren();
             var regionIndex = 0;
             children.forEach((element: api.dom.Element) => {
-                var type = element.getEl().getData("live-edit-type");
-                if (type == "region") {
+                var type = ItemType.fromElement(element);
+                if (RegionItemType.get().equals(type)) {
                     var region = regions[regionIndex++];
                     var regionView = new RegionView(pageView, region, element.getHTMLElement());
                     this.itemViews.push(regionView);
@@ -60,7 +64,7 @@ module api.liveedit {
             var children = parent.getChildren();
             var pageComponentCount = 0;
             children.forEach((element: api.dom.Element) => {
-                var itemType = ItemType.byShortName(element.getEl().getData("live-edit-type"));
+                var itemType = ItemType.fromElement(element);
                 api.util.assert(itemType.isPageComponentType(),
                         "Expected item beneath a Region to be a PageComponent: " + itemType.getShortName());
 
@@ -87,8 +91,8 @@ module api.liveedit {
             var children = parent.getChildren();
             var regionIndex = 0;
             children.forEach((element: api.dom.Element) => {
-                var type = element.getEl().getData("live-edit-type");
-                if (type == "region") {
+                var type = ItemType.fromElement(element);
+                if (RegionItemType.get().equals(type)) {
                     var region = regions[regionIndex++];
                     var regionView = new RegionView(layoutView, region, element.getHTMLElement());
                     this.itemViews.push(regionView);
@@ -106,8 +110,8 @@ module api.liveedit {
 
             var children = parent.getChildren();
             children.forEach((element: api.dom.Element) => {
-                var type = element.getEl().getData("live-edit-type");
-                if (type == "content") {
+                var type = ItemType.fromElement(element);
+                if (ContentItemType.get().equals(type)) {
 
                     var contentView = new ContentView(partView, element.getHTMLElement());
                     this.itemViews.push(contentView);
