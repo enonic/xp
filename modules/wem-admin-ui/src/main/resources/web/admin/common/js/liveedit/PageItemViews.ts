@@ -23,7 +23,9 @@ module api.liveedit {
                 var extra = "";
                 if (api.ObjectHelper.iFrameSafeInstanceOf(view, PageComponentView)) {
                     var pageComponentView = <PageComponentView<PageComponent>>view;
-                    extra = pageComponentView.getComponentPath().toString();
+                    if (pageComponentView.hasComponentPath()) {
+                        extra = pageComponentView.getComponentPath().toString();
+                    }
                 }
                 else if (api.ObjectHelper.iFrameSafeInstanceOf(view, RegionView)) {
                     var regionView = <RegionView>view;

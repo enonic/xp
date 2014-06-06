@@ -42,6 +42,9 @@ module api.liveedit {
 
         getComponentPath(): ComponentPath {
 
+            if (!this.pageComponent) {
+                return null;
+            }
             return this.pageComponent.getPath();
         }
 

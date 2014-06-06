@@ -42,9 +42,12 @@ module LiveEdit.ui {
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, PageComponentView)) {
                 var pageComponentView = <PageComponentView<PageComponent>>itemView;
-                var pageComponent = pageComponentView.getPageComponent();
+                var name = "";
+                if (pageComponentView.hasComponentPath()) {
+                    name = pageComponentView.getComponentPath().toString();
+                }
                 tooltip.children('.live-edit-tool-tip-type-text').text(itemView.getType().getShortName());
-                tooltip.children('.live-edit-tool-tip-name-text').text(pageComponent.getPath().toString());
+                tooltip.children('.live-edit-tool-tip-name-text').text(name);
             }
             else {
                 tooltip.children('.live-edit-tool-tip-type-text').text(itemView.getType().getShortName());
