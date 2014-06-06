@@ -6,7 +6,6 @@ module LiveEdit {
     import Region = api.content.page.region.Region;
     import PageComponentType = api.content.page.PageComponentType;
     import ComponentName = api.content.page.ComponentName;
-    import ComponentPath = api.content.page.ComponentPath;
     import DescriptorBasedPageComponentBuilder = api.content.page.DescriptorBasedPageComponentBuilder;
     import DescriptorBasedPageComponent = api.content.page.DescriptorBasedPageComponent;
     import PageItemViews = api.liveedit.PageItemViews;
@@ -80,7 +79,7 @@ module LiveEdit {
             this.pageItemViews.removePageComponentView(pageComponentView);
         }
 
-        createComponent(region: Region, type: PageComponentType, precedingComponent: ComponentPath): PageComponent {
+        createComponent(region: Region, type: PageComponentType, precedingComponent: ComponentName): PageComponent {
 
 
             var wantedName = api.util.capitalize(api.util.removeInvalidChars(type.getShortName()));
@@ -93,8 +92,7 @@ module LiveEdit {
                 (<DescriptorBasedPageComponentBuilder<DescriptorBasedPageComponent>>builder).setConfig(new RootDataSet());
             }
             var component = builder.build();
-            this.pageRegions.addComponentAfter(component, region.getPath(),
-                precedingComponent ? precedingComponent.getComponentName() : null);
+            this.pageRegions.addComponentAfter(component, region.getPath(), precedingComponent);
             return component;
         }
 

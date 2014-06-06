@@ -5,7 +5,6 @@ module app.wizard.page {
     import LayoutComponent = api.content.page.layout.LayoutComponent;
     import LayoutRegions = api.content.page.layout.LayoutRegions;
     import LayoutDescriptor = api.content.page.layout.LayoutDescriptor;
-    import ComponentPath = api.content.page.ComponentPath;
     import ComponentPathRegionAndComponent = api.content.page.ComponentPathRegionAndComponent;
     import ComponentName = api.content.page.ComponentName;
     import PageRegions = api.content.page.PageRegions;
@@ -34,14 +33,14 @@ module app.wizard.page {
             return this;
         }
 
-        execute(): ComponentPath {
+        execute(): void {
             api.util.assertNotNull(this.pageComponentView, "itemView cannot be null");
             api.util.assertNotNull(this.pageRegions, "pageRegions cannot be null");
             api.util.assertNotNull(this.descriptor, "descriptor cannot be null");
 
             var pageComponent = this.pageComponentView.getPageComponent();
             if (!pageComponent || !this.descriptor) {
-                return null;
+                return;
             }
 
             new PageComponentNameChanger().
@@ -61,8 +60,6 @@ module app.wizard.page {
                 var layoutComponent = <LayoutComponent>pageComponent;
                 this.addLayoutRegions(layoutComponent, layoutDescriptor);
             }
-
-            return newPath;
         }
 
         private addLayoutRegions(layoutComponent: LayoutComponent, layoutDescriptor: LayoutDescriptor) {

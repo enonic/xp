@@ -1,7 +1,6 @@
 module api.liveedit {
 
     import Event2 = api.event.Event2;
-    import ComponentPath = api.content.page.ComponentPath;
     import RegionPath = api.content.page.RegionPath;
     import PageComponent = api.content.page.PageComponent;
 
@@ -10,8 +9,6 @@ module api.liveedit {
         private pageComponentView: PageComponentView<PageComponent>;
 
         private regionView: RegionView;
-
-        private componentPath: ComponentPath;
 
         private precedingComponentView: PageComponentView<PageComponent>;
 
@@ -23,7 +20,6 @@ module api.liveedit {
 
             this.pageComponentView = pageComponentView;
             this.regionView = regionView;
-            this.componentPath = pageComponentView.getComponentPath();
 
             this.precedingComponentView = preceodingComponentView;
         }
@@ -34,10 +30,6 @@ module api.liveedit {
 
         getRegionView(): RegionView {
             return this.regionView;
-        }
-
-        getComponentPath(): ComponentPath {
-            return this.componentPath;
         }
 
         getRegionPath(): RegionPath {

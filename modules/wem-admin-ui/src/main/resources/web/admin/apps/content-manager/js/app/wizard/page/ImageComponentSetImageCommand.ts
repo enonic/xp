@@ -1,7 +1,6 @@
 module app.wizard.page {
 
     import ContentId = api.content.ContentId;
-    import ComponentPath = api.content.page.ComponentPath;
     import PageRegions = api.content.page.PageRegions;
     import ImageView = api.liveedit.image.ImageView;
 
@@ -42,7 +41,7 @@ module app.wizard.page {
             return this;
         }
 
-        execute(): ComponentPath {
+        execute(): void {
             api.util.assertNotNull(this.defaultModels, "defaultModels cannot be null");
             api.util.assertNotNull(this.imageView, "itemView cannot be null");
             api.util.assertNotNull(this.pageRegions, "pageRegions cannot be null");
@@ -58,8 +57,6 @@ module app.wizard.page {
                 setPageRegions(this.pageRegions).
                 setComponentView(this.imageView).
                 changeTo(this.imageName);
-
-            return imageComponent.getPath();
         }
     }
 }

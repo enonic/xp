@@ -7,7 +7,7 @@
 module LiveEdit.component.dragdropsort.DragDropSort {
 
     import PageComponent = api.content.page.PageComponent;
-    import ComponentPath = api.content.page.ComponentPath;
+    import ComponentName = api.content.page.ComponentName;
     import ItemViewId = api.liveedit.ItemViewId;
     import ItemType = api.liveedit.ItemType;
     import ItemView = api.liveedit.ItemView;
@@ -234,13 +234,14 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
             var liveEditPage = LiveEdit.LiveEditPage.get();
             var precedingComponentId = PageComponentView.findPrecedingComponentItemViewId(droppedElement.get(0));
-            var precedingComponentPath: ComponentPath = null;
+            var precedingComponentName: ComponentName = null;
             if (precedingComponentId) {
                 var precedingComponentView = <PageComponentView<PageComponent>>LiveEdit.LiveEditPage.get().getByItemId(precedingComponentId);
-                precedingComponentPath = precedingComponentView.getComponentPath();
+                precedingComponentName = precedingComponentView.getComponentPath() ?
+                                         precedingComponentView.getComponentPath().getComponentName() : null;
             }
             var newPageComponent = liveEditPage.createComponent(regionView.getRegion(), itemType.toPageComponentType(),
-                precedingComponentPath);
+                precedingComponentName);
             var newPageComponentView = itemType.createView(regionView, newPageComponent);
             LiveEdit.LiveEditPage.get().addItemView(newPageComponentView);
             droppedElement.attr("data-live-edit-id", "" + newPageComponentView.getItemId());

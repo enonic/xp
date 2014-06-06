@@ -523,7 +523,7 @@ module app.wizard.page {
 
                 var precedingComponentView = event.getPrecedingComponentView();
                 var precedingComponentName = precedingComponentView ? precedingComponentView.getComponentPath().getComponentName() : null;
-                var newPath = this.pageRegions.moveComponent(event.getComponentPath(), event.getRegionPath(), precedingComponentName);
+                var newPath = this.pageRegions.moveComponent(event.getComponentView().getComponentPath(), event.getRegionPath(), precedingComponentName);
 
                 if (newPath) {
                     event.getComponentView().setComponentPath(newPath);

@@ -20,11 +20,11 @@ module app.wizard.page {
             return this;
         }
 
-        execute(): PageComponent {
+        execute(): void {
             api.util.assertNotNull(this.pageRegions, "pageRegions cannot be null");
             api.util.assertNotNull(this.pathToSource, "pathToSource cannot be null");
 
-            return this.pageRegions.duplicateComponent(this.pathToSource);
+            this.pageRegions.duplicateComponent(this.pathToSource);
         }
     }
 }
