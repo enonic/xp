@@ -17,6 +17,8 @@ module app.wizard.page.contextwindow.inspect {
 
         private component: COMPONENT;
 
+        private nameInput: api.ui.TextInput;
+
         constructor(config: PageComponentInspectionPanelConfig) {
             super();
 
@@ -25,6 +27,15 @@ module app.wizard.page.contextwindow.inspect {
                 setIconClass(config.iconClass);
 
             this.appendChild(this.namesAndIcon);
+
+            var nameHeader = new api.dom.H6El();
+            nameHeader.setText("Name:");
+            nameHeader.addClass("component-name-header");
+            this.appendChild(nameHeader);
+
+            this.nameInput = new api.ui.TextInput('component-name').setValue('');
+
+            this.appendChild(this.nameInput);
         }
 
         setComponent(component: COMPONENT) {
@@ -33,6 +44,8 @@ module app.wizard.page.contextwindow.inspect {
 
             this.namesAndIcon.setMainName(component.getName().toString());
             this.namesAndIcon.setSubName(component.getPath().toString());
+
+            this.nameInput.setValue(component.getName().toString());
         }
 
         getPageComponentView(): PageComponentView<PageComponent> {
