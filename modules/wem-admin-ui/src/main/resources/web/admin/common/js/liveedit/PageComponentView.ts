@@ -96,7 +96,7 @@ module api.liveedit {
                 return null;
             }
 
-            var asString = previousItemView.getData("live-edit-id");
+            var asString = previousItemView.getData(ItemViewId.DATA_ATTRIBUTE);
             if (api.util.isStringEmpty(asString)) {
                 return null;
             }

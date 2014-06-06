@@ -41,11 +41,11 @@ module api.liveedit {
         }
 
         setItemId(value: ItemViewId) {
-            this.getEl().setAttribute("data-live-edit-id", value.toString());
+            this.getEl().setAttribute("data-" + ItemViewId.DATA_ATTRIBUTE, value.toString());
         }
 
         getItemId(): ItemViewId {
-            var asString = this.getEl().getAttribute("data-live-edit-id");
+            var asString = this.getEl().getAttribute("data-" + ItemViewId.DATA_ATTRIBUTE);
             if (!asString) {
                 return null;
             }
@@ -53,11 +53,11 @@ module api.liveedit {
         }
 
         static parseItemId(element: HTMLElement): ItemViewId {
-            var attribute = element.getAttribute("data-live-edit-id");
+            var attribute = element.getAttribute("data-" + ItemViewId.DATA_ATTRIBUTE);
             if (api.util.isStringEmpty(attribute)) {
                 return null;
             }
-            return ItemViewId.fromString(element.getAttribute("data-live-edit-id"));
+            return ItemViewId.fromString(element.getAttribute("data-" + ItemViewId.DATA_ATTRIBUTE));
         }
 
         getElement(): JQuery {

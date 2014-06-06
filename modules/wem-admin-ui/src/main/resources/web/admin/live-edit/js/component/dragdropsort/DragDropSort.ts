@@ -197,8 +197,6 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     function handleSortStop(event: JQueryEventObject, ui): void {
         _isDragging = false;
 
-        console.debug("DragDropSort.handleSortStop");
-
         var pageComponentView = LiveEdit.LiveEditPage.get().getPageComponentViewByElement(ui.item.get(0));
 
         removePaddingFromLayoutComponent();
@@ -224,7 +222,6 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     // When sortable receives a new item
     function handleReceive(event: JQueryEventObject, ui): void {
 
-        console.debug("DragDropSort.handleReceive");
         if (isItemDraggedFromContextWindow(ui.item)) {
             var droppedElement = wemjq(event.target).children(CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR);
             var regionHTMLElement = PageComponentView.findParentRegionViewHTMLElement(droppedElement.get(0));
@@ -236,15 +233,15 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             var precedingComponentId = PageComponentView.findPrecedingComponentItemViewId(droppedElement.get(0));
             var precedingComponentName: ComponentName = null;
             if (precedingComponentId) {
-                var precedingComponentView = <PageComponentView<PageComponent>>LiveEdit.LiveEditPage.get().getByItemId(precedingComponentId);
+                var precedingComponentView = <PageComponentView<PageComponent>>liveEditPage.getByItemId(precedingComponentId);
                 precedingComponentName = precedingComponentView.getComponentPath() ?
                                          precedingComponentView.getComponentPath().getComponentName() : null;
             }
             var newPageComponent = liveEditPage.createComponent(regionView.getRegion(), itemType.toPageComponentType(),
                 precedingComponentName);
             var newPageComponentView = itemType.createView(regionView, newPageComponent);
-            LiveEdit.LiveEditPage.get().addItemView(newPageComponentView);
-            droppedElement.attr("data-live-edit-id", "" + newPageComponentView.getItemId());
+            liveEditPage.addItemView(newPageComponentView);
+            droppedElement.attr("data-" + ItemViewId.DATA_ATTRIBUTE, "" + newPageComponentView.getItemId());
 
             droppedElement.replaceWith(newPageComponentView.getHTMLElement());
             newPageComponentView.empty();

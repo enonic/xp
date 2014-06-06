@@ -3,6 +3,8 @@ module api.liveedit {
 
     export class ItemViewId implements api.Equitable {
 
+        static DATA_ATTRIBUTE = "live-edit-id";
+
         private value: number;
 
         private refString: string;
