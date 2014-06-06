@@ -496,7 +496,7 @@ module app.wizard.page {
 
                 Q(!this.pageTemplate ? this.initializePageFromDefault() : null).done(() => {
 
-                    var component = this.pageRegions.getComponent(event.getPath());
+                    var component: PageComponent = event.getComponentView().getPageComponent();
                     if (component) {
                         component.reset();
                     }

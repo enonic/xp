@@ -28,7 +28,7 @@ module LiveEdit.ui.contextmenu.menuitem {
                 var selectedPageComponentView = <PageComponentView<PageComponent>> selectedItem;
                 selectedPageComponentView.empty();
 
-                new PageComponentResetEvent(selectedPageComponentView.getComponentPath()).fire();
+                new PageComponentResetEvent(selectedPageComponentView).fire();
             }
             else {
                 throw new Error("Emptying [" + api.util.getClassName(selectedItem) + "] is not supported");

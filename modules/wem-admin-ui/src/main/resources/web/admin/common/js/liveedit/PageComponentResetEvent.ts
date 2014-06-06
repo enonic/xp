@@ -1,19 +1,20 @@
 module api.liveedit {
 
     import Event2 = api.event.Event2;
-    import ComponentPath = api.content.page.ComponentPath;
+    import PageComponentView = api.liveedit.PageComponentView;
+    import PageComponent = api.content.page.PageComponent;
 
     export class PageComponentResetEvent extends Event2 {
 
-        private path: ComponentPath;
+        private pageComponentView: PageComponentView<PageComponent>;
 
-        constructor(path: ComponentPath) {
+        constructor(pageComponentView: PageComponentView<PageComponent>) {
             super();
-            this.path = path;
+            this.pageComponentView = pageComponentView;
         }
 
-        getPath(): ComponentPath {
-            return this.path;
+        getComponentView(): PageComponentView<PageComponent> {
+            return this.pageComponentView;
         }
 
         static on(handler: (event: PageComponentResetEvent) => void, contextWindow: Window = window) {
