@@ -1,7 +1,6 @@
 module api.liveedit {
 
     import Event2 = api.event.Event2;
-    import ComponentPath = api.content.page.ComponentPath;
     import Descriptor = api.content.page.Descriptor;
     import ItemView = api.liveedit.ItemView;
     import DescriptorBasedPageComponent = api.content.page.DescriptorBasedPageComponent;

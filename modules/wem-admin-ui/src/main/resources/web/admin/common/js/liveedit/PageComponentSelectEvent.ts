@@ -1,6 +1,5 @@
 module api.liveedit {
 
-    import ComponentPath = api.content.page.ComponentPath;
     import PageComponentView = api.liveedit.PageComponentView;
     import PageComponent = api.content.page.PageComponent;
 

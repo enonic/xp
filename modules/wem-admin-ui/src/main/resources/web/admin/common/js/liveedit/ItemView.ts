@@ -1,7 +1,5 @@
 module api.liveedit {
 
-    import ComponentPath = api.content.page.ComponentPath;
-
     export interface ElementDimensions {
         top: number;
         left: number;

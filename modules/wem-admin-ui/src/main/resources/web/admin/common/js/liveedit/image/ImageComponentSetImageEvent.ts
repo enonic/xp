@@ -2,7 +2,6 @@ module api.liveedit.image {
 
     import Event2 = api.event.Event2;
     import ContentId = api.content.ContentId;
-    import ComponentPath = api.content.page.ComponentPath;
 
     export class ImageComponentSetImageEvent extends Event2 {
 

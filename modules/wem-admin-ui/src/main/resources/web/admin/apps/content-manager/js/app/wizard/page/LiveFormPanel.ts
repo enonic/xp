@@ -6,7 +6,6 @@ module app.wizard.page {
     import Content = api.content.Content;
     import ContentId = api.content.ContentId;
     import ContentTypeName = api.schema.content.ContentTypeName;
-    import ComponentPath = api.content.page.ComponentPath;
     import ComponentPathRegionAndComponent = api.content.page.ComponentPathRegionAndComponent;
     import PageRegions = api.content.page.PageRegions;
     import RegionPath = api.content.page.RegionPath;
@@ -406,7 +405,7 @@ module app.wizard.page {
 
         private saveAndReloadOnlyPageComponent(pageComponentView: PageComponentView<PageComponent>) {
 
-            api.util.assertNotNull(pageComponentView, "componentPath cannot be null");
+            api.util.assertNotNull(pageComponentView, "pageComponentView cannot be null");
 
             this.pageSkipReload = true;
             this.contentWizardPanel.saveChanges().

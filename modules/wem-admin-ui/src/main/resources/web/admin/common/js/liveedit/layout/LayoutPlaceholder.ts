@@ -1,6 +1,5 @@
 module api.liveedit.layout {
 
-    import ComponentPath = api.content.page.ComponentPath;
     import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
     import LayoutItemType = api.liveedit.layout.LayoutItemType;
     import PageItemType = api.liveedit.PageItemType;

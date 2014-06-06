@@ -2,7 +2,6 @@ module app.wizard.page.contextwindow {
 
     import RootDataSet = api.data.RootDataSet;
     import LiveFormPanel = app.wizard.page.LiveFormPanel;
-    import ComponentPath = api.content.page.ComponentPath;
     import Content = api.content.Content;
     import PageTemplateKey = api.content.page.PageTemplateKey;
     import PageTemplate = api.content.page.PageTemplate;

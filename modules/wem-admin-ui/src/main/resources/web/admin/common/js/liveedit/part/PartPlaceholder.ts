@@ -1,6 +1,5 @@
 module api.liveedit.part {
 
-    import ComponentPath = api.content.page.ComponentPath;
     import Descriptor = api.content.page.Descriptor;
     import PartDescriptor = api.content.page.part.PartDescriptor;
     import PartDescriptorLoader = api.content.page.part.PartDescriptorLoader;

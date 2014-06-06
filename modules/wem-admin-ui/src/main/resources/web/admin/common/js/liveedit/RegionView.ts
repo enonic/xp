@@ -3,7 +3,6 @@ module api.liveedit {
     import Region = api.content.page.region.Region;
     import RegionPath = api.content.page.RegionPath;
     import PageComponent = api.content.page.PageComponent;
-    import ComponentPath = api.content.page.ComponentPath;
 
     export class RegionView extends ItemView {
 

@@ -1,6 +1,5 @@
 module api.liveedit {
 
-    import ComponentPath = api.content.page.ComponentPath;
     import PageComponentView = api.liveedit.ItemView;
 
     export class PageComponentSelectComponentEvent extends api.event.Event2 {

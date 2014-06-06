@@ -1,6 +1,5 @@
 module LiveEdit.ui.contextmenu.menuitem {
 
-    import ComponentPath = api.content.page.ComponentPath;
     import ItemView = api.liveedit.ItemView;
     import PageComponent = api.content.page.PageComponent;
     import PageComponentView = api.liveedit.PageComponentView;
