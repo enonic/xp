@@ -10,10 +10,19 @@ module api.liveedit {
 
         private pageComponent: PAGE_COMPONENT;
 
+        private tooltip: api.ui.Tooltip;
+
+        private viewer: api.ui.Viewer<PAGE_COMPONENT>;
+
         constructor(type: ItemType, parentRegionView: RegionView, pageComponent: PAGE_COMPONENT, element?: HTMLElement, dummy?: boolean) {
-            super(type, element, dummy);
+            super(type, element, dummy, parentRegionView.getHTMLElement());
             this.parentRegionView = parentRegionView;
             this.pageComponent = pageComponent;
+            this.viewer = this.getTooltipViewer();
+            this.tooltip = new api.ui.Tooltip(this).
+                setHideTimeout(0).
+                setSide(api.ui.Tooltip.SIDE_TOP).
+                setContent(this.viewer);
         }
 
         getType(): PageComponentItemType {
@@ -26,6 +35,11 @@ module api.liveedit {
 
         setPageComponent(data: PAGE_COMPONENT) {
             this.pageComponent = data;
+            this.viewer.setObject(data);
+        }
+
+        getTooltipViewer(): api.ui.Viewer<PAGE_COMPONENT> {
+            throw new Error('Should be implemented by inheritors');
         }
 
         getPageComponent(): PAGE_COMPONENT {

@@ -62,5 +62,9 @@ module api.liveedit.layout {
             this.getEl().insertAfterThisEl(duplicatedView.getEl());
             return duplicatedView;
         }
+
+        getTooltipViewer(): LayoutComponentViewer {
+            return new LayoutComponentViewer();
+        }
     }
 }

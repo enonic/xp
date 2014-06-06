@@ -15,7 +15,7 @@ module api.liveedit {
 
         private elementDimensions: ElementDimensions;
 
-        constructor(type: ItemType, element?: HTMLElement, dummy?: boolean) {
+        constructor(type: ItemType, element?: HTMLElement, dummy?: boolean, parentElement?: HTMLElement) {
             api.util.assertNotNull(type, "type cannot be null");
             this.type = type;
 
@@ -27,7 +27,12 @@ module api.liveedit {
             else {
                 props.setTagName("div");
             }
+            if (parentElement) {
+                props.setParentElement(parentElement);
+            }
+
             super(props);
+
             if (!element) {
                 this.getEl().setData(ItemType.DATA_ATTRIBUTE, type.getShortName());
             }
@@ -57,7 +62,7 @@ module api.liveedit {
             if (api.util.isStringEmpty(attribute)) {
                 return null;
             }
-            return ItemViewId.fromString(element.getAttribute("data-" + ItemViewId.DATA_ATTRIBUTE));
+            return ItemViewId.fromString(attribute);
         }
 
         getElement(): JQuery {

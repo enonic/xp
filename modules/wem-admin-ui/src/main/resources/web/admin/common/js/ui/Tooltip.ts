@@ -10,15 +10,16 @@ module api.ui {
         static TRIGGER_MOUSE = "mouse";
         static TRIGGER_FOCUS = "focus";
 
-        private tooltipEl:api.dom.DivEl;
-        private timeoutTimer:number;
+        private tooltipEl: api.dom.DivEl;
+        private timeoutTimer: number;
 
-        private target:api.dom.Element;
-        private text:string;
-        private showDelay:number;
-        private hideTimeout:number;
-        private trigger:string;
-        private side:string;
+        private target: api.dom.Element;
+        private text: string;
+        private contentEl: api.dom.Element;
+        private showDelay: number;
+        private hideTimeout: number;
+        private trigger: string;
+        private side: string;
 
         /*
          * Widget to show floating tooltips
@@ -31,8 +32,8 @@ module api.ui {
          * @param trigger Event type to hook on (mouse,focus)
          * @param side Side of the target where tooltip should be shown (top,left,right,bottom)
          */
-        constructor(target:api.dom.Element, text:string, showDelay:number = 0, hideTimeout:number = 1000,
-                    trigger:string = Tooltip.TRIGGER_MOUSE, side:string = Tooltip.SIDE_BOTTOM) {
+        constructor(target: api.dom.Element, text?: string, showDelay: number = 0, hideTimeout: number = 1000,
+                    trigger: string = Tooltip.TRIGGER_MOUSE, side: string = Tooltip.SIDE_BOTTOM) {
 
             this.target = target;
             this.text = text;
@@ -42,10 +43,10 @@ module api.ui {
             this.side = side;
 
             var targetEl = target.getEl();
-            targetEl.addEventListener(this.getEventName(true), (event:Event) => {
+            targetEl.addEventListener(this.getEventName(true), (event: Event) => {
                 this.startShowDelay();
             });
-            targetEl.addEventListener(this.getEventName(false), (event:Event) => {
+            targetEl.addEventListener(this.getEventName(false), (event: Event) => {
                 this.startHideTimeout();
             });
         }
@@ -53,7 +54,11 @@ module api.ui {
         show() {
             if (!this.tooltipEl) {
                 this.tooltipEl = new api.dom.DivEl("tooltip " + this.side);
-                this.tooltipEl.getEl().setInnerHtml(this.text);
+                if (this.contentEl) {
+                    this.tooltipEl.appendChild(this.contentEl);
+                } else {
+                    this.tooltipEl.getEl().setInnerHtml(this.text);
+                }
                 this.target.getParentElement().appendChild(this.tooltipEl);
                 this.tooltipEl.show();
                 this.positionByTarget();
@@ -67,50 +72,70 @@ module api.ui {
             }
         }
 
-        showAfter(ms:number):Tooltip {
+        showAfter(ms: number): Tooltip {
             this.startShowDelay(ms);
             return this;
         }
 
-        showFor(ms:number):Tooltip {
+        showFor(ms: number): Tooltip {
             this.show();
             this.startHideTimeout(ms);
             return this;
         }
 
-        setHideTimeout(timeout:number):Tooltip {
+        setText(text: string): Tooltip {
+            this.text = text;
+            this.contentEl = undefined;
+            return this;
+        }
+
+        getText(): string {
+            return this.text;
+        }
+
+        setContent(content: api.dom.Element): Tooltip {
+            this.contentEl = content;
+            this.text = undefined;
+            return this;
+        }
+
+        getContent(): api.dom.Element {
+            return this.contentEl;
+        }
+
+        setHideTimeout(timeout: number): Tooltip {
             this.hideTimeout = timeout;
             return this;
         }
 
-        getHideTimeout():number {
+        getHideTimeout(): number {
             return this.hideTimeout;
         }
 
-        setShowDelay(delay:number):Tooltip {
+        setShowDelay(delay: number): Tooltip {
             this.showDelay = delay;
             return this;
         }
 
-        getShowDelay():number {
+        getShowDelay(): number {
             return this.showDelay;
         }
 
-        setTrigger(trigger:string):Tooltip {
+        setTrigger(trigger: string): Tooltip {
             this.trigger = trigger;
             return this;
         }
 
-        getTrigger():string {
+        getTrigger(): string {
             return this.trigger;
         }
 
-        setSide(side:string):Tooltip {
+        setSide(side: string): Tooltip {
             this.side = side;
             return this;
         }
 
-        getSide():string {
+        getSide(): string {
             return this.side;
         }
 
@@ -163,7 +188,7 @@ module api.ui {
             });
         }
 
-        private startHideTimeout(ms?:number) {
+        private startHideTimeout(ms?: number) {
             this.stopTimeout();
             var t = ms || this.hideTimeout;
             if (t > 0) {
@@ -175,11 +200,11 @@ module api.ui {
             }
         }
 
-        private startShowDelay(ms?:number) {
+        private startShowDelay(ms?: number) {
             this.stopTimeout();
             var t = ms || this.showDelay;
-            if(t > 0) {
-                if (this.trigger == Tooltip.TRIGGER_MOUSE ) {
+            if (t > 0) {
+                if (this.trigger == Tooltip.TRIGGER_MOUSE) {
                     // if tooltip target element becomes disabled it doesn't generate mouse leave event
                     // so we need to check whether mouse has moved from tooltip target or not
                     this.hideOnMouseOut();
@@ -210,13 +235,13 @@ module api.ui {
                 }
 
                 tooltip.startHideTimeout();
-                api.dom.Body.get().getEl().removeEventListener('mousemove', mouseMoveListener);
+                api.dom.Body.get().unMouseMove(mouseMoveListener);
             };
 
-            api.dom.Body.get().getEl().addEventListener('mousemove', mouseMoveListener);
+            api.dom.Body.get().onMouseMove(mouseMoveListener);
         }
 
-        private getEventName(enter:boolean) {
+        private getEventName(enter: boolean) {
             switch (this.trigger) {
             case Tooltip.TRIGGER_FOCUS:
                 return enter ? "focus" : "blur";

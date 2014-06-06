@@ -195,6 +195,8 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     function handleSortStop(event: JQueryEventObject, ui): void {
         _isDragging = false;
 
+        console.debug("DragDropSort.handleSortStop");
+
         var pageComponentView = LiveEdit.LiveEditPage.get().getPageComponentViewByElement(ui.item.get(0));
 
         removePaddingFromLayoutComponent();
@@ -220,7 +222,9 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     // When sortable receives a new item
     function handleReceive(event: JQueryEventObject, ui): void {
 
+        console.debug("DragDropSort.handleReceive");
         if (isItemDraggedFromContextWindow(ui.item)) {
+
             var droppedElement = wemjq(event.target).children(CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR);
             var regionHTMLElement = PageComponentView.findParentRegionViewHTMLElement(droppedElement.get(0));
             var regionView = LiveEdit.LiveEditPage.get().getRegionViewByElement(regionHTMLElement);
@@ -233,11 +237,10 @@ module LiveEdit.component.dragdropsort.DragDropSort {
                 precedingComponentView);
             var newPageComponentView = itemType.createView(regionView, newPageComponent);
             liveEditPage.addItemView(newPageComponentView);
-            droppedElement.attr("data-" + ItemViewId.DATA_ATTRIBUTE, "" + newPageComponentView.getItemId());
 
-            droppedElement.replaceWith(newPageComponentView.getHTMLElement());
+            regionView.insertChild(newPageComponentView, droppedElement.index());
+            droppedElement.remove();
             newPageComponentView.empty();
-            newPageComponentView.init();
 
             // The layout padding is removed on sortStop, but this is not fired yet at this point
             // Remove it now so the auto selection is properly aligned.

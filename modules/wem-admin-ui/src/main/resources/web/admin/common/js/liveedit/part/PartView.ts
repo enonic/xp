@@ -58,5 +58,9 @@ module api.liveedit.part {
             this.getEl().insertAfterThisEl(duplicatedView.getEl());
             return duplicatedView;
         }
+
+        getTooltipViewer(): PartComponentViewer {
+            return new PartComponentViewer();
+        }
     }
 }

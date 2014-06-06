@@ -8,8 +8,8 @@ module api.liveedit {
 
         private regionViews: RegionView[] = [];
 
-        constructor(content: Content, element?: HTMLElement) {
-            super(PageItemType.get(), element);
+        constructor(content: Content, element?: HTMLElement, parent?: HTMLElement) {
+            super(PageItemType.get(), element, false, parent);
             this.content = content;
         }
 

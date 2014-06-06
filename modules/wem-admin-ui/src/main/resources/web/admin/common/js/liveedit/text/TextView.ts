@@ -20,5 +20,9 @@ module api.liveedit.text {
         public static fromJQuery(element: JQuery): TextView {
             return new TextView(null, null, <HTMLElement>element.get(0));
         }
+
+        getTooltipViewer(): TextComponentViewer {
+            return new TextComponentViewer();
+        }
     }
 }

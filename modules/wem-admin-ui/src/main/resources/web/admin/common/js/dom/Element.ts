@@ -7,6 +7,7 @@ module api.dom {
         private className: string;
         private helper: ElementHelper;
         private loadExistingChildren: boolean;
+        private parentElement: HTMLElement;
 
         constructor() {
         }
@@ -56,6 +57,14 @@ module api.dom {
         getHelper(): ElementHelper {
             return this.helper;
         }
+
+        setParentElement(element: HTMLElement) {
+            this.parentElement = element;
+        }
+
+        getParentElement(): HTMLElement {
+            return this.parentElement;
+        }
     }
 
     export class Element {
@@ -87,6 +96,10 @@ module api.dom {
                 this.el = ElementHelper.fromName(properties.getTagName());
             } else {
                 throw new Error("Either tag name or helper should be present");
+            }
+            if (properties.getParentElement()) {
+                this.parentElement = api.dom.Element.fromHtmlElement(properties.getParentElement());
+                this.notifyAdded();
             }
 
             var moduleName = api.util.getModuleName(this);
@@ -244,10 +257,15 @@ module api.dom {
             return this.el.getHTMLElement();
         }
 
-        appendChild<T extends api.dom.Element>(child: T): Element {
-            this.el.appendChild(child.getEl().getHTMLElement());
-            this.insert(child, this, this.children.length);
+        insertChild<T extends api.dom.Element>(child: T, index: number): Element {
+            api.util.assertNotNull(child, 'Child cannot be null');
+            this.el.insertChild(child.getEl().getHTMLElement(), index);
+            this.insert(child, this, index);
             return this;
+        }
+
+        appendChild<T extends api.dom.Element>(child: T): Element {
+            return this.insertChild(child, this.children.length);
         }
 
         appendChildren<T extends api.dom.Element>(children: T[]): Element {
@@ -257,10 +275,8 @@ module api.dom {
             return this;
         }
 
-        prependChild(child: api.dom.Element) {
-            api.util.assertNotNull(child, 'Child cannot be null');
-            this.el.getHTMLElement().insertBefore(child.getHTMLElement(), this.el.getHTMLElement().firstChild);
-            this.insert(child, this, 0);
+        prependChild(child: api.dom.Element): Element {
+            return this.insertChild(child, 0);
         }
 
         insertAfterEl(existingEl: Element) {
@@ -269,12 +285,6 @@ module api.dom {
             var parent = existingEl.getParentElement();
             var index = parent.getChildren().indexOf(existingEl) + 1;
             this.insert(this, parent, index);
-        }
-
-        insertAfterThisEl(existingEl: Element) {
-
-            api.util.assertNotNull(existingEl, 'Existing element cannot be null');
-            this.el.insertAfterThisEl(existingEl.getEl());
         }
 
         insertBeforeEl(existingEl: Element) {
@@ -286,7 +296,8 @@ module api.dom {
         }
 
         replaceWith(other: Element) {
-            this.insertAfterThisEl(other);
+            api.util.assertNotNull(other, 'Replacing element cannot be null');
+            other.insertAfterEl(this);
             this.remove();
         }
 
@@ -573,7 +584,7 @@ module api.dom {
             });
         }
 
-        onScrolled(listener: (event: WheelEvent) => void ) {
+        onScrolled(listener: (event: WheelEvent) => void) {
             // IE9, Chrome, Safari, Opera
             this.getEl().addEventListener("mousewheel", listener);
             // Firefox

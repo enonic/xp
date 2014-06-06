@@ -166,14 +166,22 @@ module api.dom {
         }
 
         appendChild(child: Node): ElementHelper {
-            this.el.appendChild(child);
-            return this;
+            return this.insertChild(child, this.el.children.length);
         }
 
         appendChildren(children: Node[]): ElementHelper {
             children.forEach((child: Node) => {
                 this.el.appendChild(child);
             });
+            return this;
+        }
+
+        insertChild(child: Node, index: number): ElementHelper {
+            if (index == this.el.children.length - 1) {
+                this.el.appendChild(child);
+            } else {
+                this.el.insertBefore(child, this.el.children.item(index));
+            }
             return this;
         }
 

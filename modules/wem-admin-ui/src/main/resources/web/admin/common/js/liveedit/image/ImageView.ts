@@ -47,5 +47,9 @@ module api.liveedit.image {
             this.getEl().insertAfterThisEl(duplicatedView.getEl());
             return duplicatedView;
         }
+
+        getTooltipViewer(): ImageComponentViewer {
+            return new ImageComponentViewer();
+        }
     }
 }

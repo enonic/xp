@@ -2,3 +2,4 @@
 ///<reference path='ImageItemType.ts' />
 ///<reference path='ImageView.ts' />
 ///<reference path='ImagePlaceholder.ts' />
+///<reference path='ImageComponentViewer.ts' />
