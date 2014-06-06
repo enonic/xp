@@ -27,7 +27,7 @@ module LiveEdit.ui.contextmenu.menuitem {
 
                 var selectedPageComponent = <PageComponentView<PageComponent>> selectedItem;
                 selectedPageComponent.getElement().remove();
-                pageItemViews.removePageComponentView(selectedPageComponent);
+                LiveEdit.LiveEditPage.get().removePageComponentView(selectedPageComponent);
             }
             else {
                 throw new Error("Removing [" + api.util.getClassName(selectedItem) + "] is not supported");

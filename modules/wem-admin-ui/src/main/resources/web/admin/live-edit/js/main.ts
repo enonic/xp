@@ -4,8 +4,6 @@ declare var CONFIG;
 
 declare var wemjq: JQueryStatic;
 
-declare var pageItemViews: api.liveedit.PageItemViews;
-
 
 new LiveEdit.LiveEditPage();
 

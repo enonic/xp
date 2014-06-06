@@ -127,7 +127,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         updateScrollSensitivity(event.target);
         _isDragging = true;
 
-        var component = pageItemViews.getPageComponentViewByElement(ui.item.get(0));
+        var component = LiveEdit.LiveEditPage.get().getPageComponentViewByElement(ui.item.get(0));
 
         if (component) {
             component.handleDragStart();
@@ -142,7 +142,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     function handleDragOver(event: JQueryEventObject, ui): void {
         event.stopPropagation();
 
-        var component = pageItemViews.getItemViewByElement(ui.item.get(0));
+        var component = LiveEdit.LiveEditPage.get().getPageComponentViewByElement(ui.item.get(0));
         if (component) {
             var isDraggingOverLayoutComponent = ui.placeholder.closest(LAYOUT_SELECTOR).length > 0;
 
@@ -166,7 +166,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     function handleSortChange(event: JQueryEventObject, ui): void {
-        var component = pageItemViews.getItemViewByElement(<HTMLElement>event.target);
+        var component = LiveEdit.LiveEditPage.get().getItemViewByHTMLElement(<HTMLElement>event.target);
 
         addPaddingToLayoutComponent(component);
         LiveEdit.component.helper.DragHelper.updateStatusIcon(true);
@@ -178,16 +178,17 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
     function handleSortUpdate(event: JQueryEventObject, ui): void {
 
-        var pageComponentView = pageItemViews.getPageComponentViewByElement(ui.item.get(0));
+        var pageComponentView = LiveEdit.LiveEditPage.get().getPageComponentViewByElement(ui.item.get(0));
         if (pageComponentView) {
             if (pageComponentView.hasComponentPath()) {
                 var preceodingComponentView: PageComponentView<PageComponent> = null;
                 var precedingComponentViewId = PageComponentView.findPrecedingComponentItemViewId(pageComponentView.getHTMLElement());
                 if (precedingComponentViewId) {
-                    preceodingComponentView = <PageComponentView<PageComponent>>pageItemViews.getByItemId(precedingComponentViewId);
+                    preceodingComponentView =
+                    <PageComponentView<PageComponent>>LiveEdit.LiveEditPage.get().getByItemId(precedingComponentViewId);
                 }
                 var regionHTMLElement = PageComponentView.findParentRegionViewHTMLElement(pageComponentView.getHTMLElement());
-                var regionView = pageItemViews.getRegionViewByElement(regionHTMLElement);
+                var regionView = LiveEdit.LiveEditPage.get().getRegionViewByElement(regionHTMLElement);
                 new SortableUpdateEvent(pageComponentView, regionView, preceodingComponentView).fire();
             }
         }
@@ -198,7 +199,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
         console.debug("DragDropSort.handleSortStop");
 
-        var pageComponentView = pageItemViews.getPageComponentViewByElement(ui.item.get(0));
+        var pageComponentView = LiveEdit.LiveEditPage.get().getPageComponentViewByElement(ui.item.get(0));
 
         removePaddingFromLayoutComponent();
 
@@ -227,7 +228,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         if (isItemDraggedFromContextWindow(ui.item)) {
             var droppedElement = wemjq(event.target).children(CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR);
             var regionHTMLElement = PageComponentView.findParentRegionViewHTMLElement(droppedElement.get(0));
-            var regionView = pageItemViews.getRegionViewByElement(regionHTMLElement);
+            var regionView = LiveEdit.LiveEditPage.get().getRegionViewByElement(regionHTMLElement);
 
             var itemType: PageComponentItemType = <PageComponentItemType>ItemType.byShortName(droppedElement.data('live-edit-type'));
 
@@ -235,13 +236,13 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             var precedingComponentId = PageComponentView.findPrecedingComponentItemViewId(droppedElement.get(0));
             var precedingComponentPath: ComponentPath = null;
             if (precedingComponentId) {
-                var precedingComponentView = <PageComponentView<PageComponent>>pageItemViews.getByItemId(precedingComponentId);
+                var precedingComponentView = <PageComponentView<PageComponent>>LiveEdit.LiveEditPage.get().getByItemId(precedingComponentId);
                 precedingComponentPath = precedingComponentView.getComponentPath();
             }
             var newPageComponent = liveEditPage.createComponent(regionView.getRegion(), itemType.toPageComponentType(),
                 precedingComponentPath);
             var newPageComponentView = itemType.createView(regionView, newPageComponent);
-            pageItemViews.addItemView(newPageComponentView);
+            LiveEdit.LiveEditPage.get().addItemView(newPageComponentView);
             droppedElement.attr("data-live-edit-id", "" + newPageComponentView.getItemId());
 
             droppedElement.replaceWith(newPageComponentView.getHTMLElement());

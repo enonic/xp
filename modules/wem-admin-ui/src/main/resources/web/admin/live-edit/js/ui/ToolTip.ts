@@ -73,7 +73,7 @@ module LiveEdit.ui {
             wemjq(document).on('mouseover', '[data-live-edit-type]', (event) => {
 
                 var closestItemViewElement = wemjq(event.target).closest('[data-live-edit-type]').get(0);
-                var itemView: ItemView = pageItemViews.getItemViewByElement(closestItemViewElement);
+                var itemView: ItemView = LiveEdit.LiveEditPage.get().getItemViewByHTMLElement(closestItemViewElement);
                 if (itemView) {
                     this.setText(itemView);
                     this.getEl().hide(null).show();
