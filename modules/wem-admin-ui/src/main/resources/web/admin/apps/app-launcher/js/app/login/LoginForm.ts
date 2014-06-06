@@ -31,7 +31,7 @@ module app.login {
                 this.onInputTyped(event);
             });
 
-            this.loginButton = new api.ui.Button(_i18n('Log in'));
+            this.loginButton = new api.ui.Button(_i18n('Sign in'));
             this.loginButton.addClass('login-button').addClass('disabled');
             this.loginButton.onClicked((event: MouseEvent) => {
                 this.loginButtonClick();
