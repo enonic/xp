@@ -18,8 +18,10 @@ module app.create {
         private recentListMask: api.ui.LoadMask;
 
         private input: api.ui.TextInput;
+        private facetContainer: api.dom.DivEl;
         private contentFacet: api.dom.SpanEl;
         private sitesFacet: api.dom.SpanEl;
+        private allFacet: api.dom.SpanEl;
 
         private listItems: NewContentDialogListItem[];
 
@@ -38,12 +40,15 @@ module app.create {
             this.input = api.ui.TextInput.large("list-filter").setPlaceholder("Search");
             leftColumn.appendChild(this.input);
 
-            var facets = new api.dom.DivEl('content-type-facet');
+            this.facetContainer = new api.dom.DivEl('content-type-facet');
+            this.allFacet = new api.dom.SpanEl('all-facet').setHtml("All (0)");
             this.contentFacet = new api.dom.SpanEl('content-facet').setHtml("Content (0)");
             this.sitesFacet = new api.dom.SpanEl('sites-facet').setHtml("Sites (0)");
-            facets.appendChild(this.contentFacet);
-            facets.appendChild(this.sitesFacet);
-            leftColumn.appendChild(facets);
+
+            this.facetContainer.appendChild(this.allFacet);
+            this.facetContainer.appendChild(this.contentFacet);
+            this.facetContainer.appendChild(this.sitesFacet);
+            leftColumn.appendChild(this.facetContainer);
 
             this.contentList = new app.create.NewContentDialogList();
             leftColumn.appendChild(this.contentList);
@@ -75,15 +80,27 @@ module app.create {
                 }
             });
 
+            this.allFacet.onClicked((event: MouseEvent) => {
+                this.facetContainer.getChildren().forEach((child:api.dom.Element) => {
+                    child.removeClass('active');
+                });
+                this.allFacet.addClass('active');
+                this.filterList();
+            });
+
             this.contentFacet.onClicked((event: MouseEvent) => {
-                this.contentFacet.hasClass('active') ? this.contentFacet.removeClass('active') : this.contentFacet.setClass('active');
-                this.sitesFacet.removeClass('active');
+                this.facetContainer.getChildren().forEach((child:api.dom.Element) => {
+                    child.removeClass('active');
+                });
+                this.contentFacet.addClass('active');
                 this.filterList();
             });
 
             this.sitesFacet.onClicked((event: MouseEvent) => {
-                this.sitesFacet.hasClass('active') ? this.sitesFacet.removeClass('active') : this.sitesFacet.setClass('active');
-                this.contentFacet.removeClass('active');
+                this.facetContainer.getChildren().forEach((child:api.dom.Element) => {
+                    child.removeClass('active');
+                });
+                this.sitesFacet.addClass('active');
                 this.filterList();
             });
 
@@ -107,16 +124,17 @@ module app.create {
             var inputValue = this.input.getValue();
             var contentOnly = this.contentFacet.hasClass('active');
             var sitesOnly = this.sitesFacet.hasClass('active');
+            var all = this.allFacet.hasClass('active');
 
             var filteredItems = this.listItems.filter((item: NewContentDialogListItem) => {
                 return (!inputValue || (item.getDisplayName().indexOf(inputValue) != -1) || (item.getName().indexOf(inputValue) != -1))
-                    && ((!contentOnly && !sitesOnly) || (contentOnly && !item.isSiteTemplate()) || (sitesOnly && item.isSiteTemplate()));
+                    && ((!contentOnly && !sitesOnly) || (contentOnly && !item.isSiteTemplate()) || (sitesOnly && item.isSiteTemplate()) || all);
             });
 
             this.contentList.setItems(filteredItems);
 
-            var contentTypesCount = 0;
-            var siteTemplatesCount = 0;
+            var contentTypesCount:number = 0;
+            var siteTemplatesCount:number = 0;
             this.listItems.forEach((item: NewContentDialogListItem) => {
                 if (!inputValue || (item.getDisplayName().indexOf(inputValue) != -1) || (item.getName().indexOf(inputValue) != -1)) {
                     item.isSiteTemplate() ? siteTemplatesCount++ : contentTypesCount++;
@@ -124,6 +142,7 @@ module app.create {
             });
             this.contentFacet.setHtml("Content (" + contentTypesCount + ")");
             this.sitesFacet.setHtml("Sites (" + siteTemplatesCount + ")");
+            this.allFacet.setHtml("All (" + (siteTemplatesCount + contentTypesCount) + ")");
         }
 
         setParentContent(value: api.content.Content) {
@@ -158,11 +177,14 @@ module app.create {
             Q.all([contentTypesRequest.sendAndParse(), siteTemplatesRequest.sendAndParse()])
                 .spread((contentTypes: ContentTypeSummary[], siteTemplates: SiteTemplateSummary[]) => {
 
+                    this.allFacet.setHtml("All (" + (siteTemplates.length + + contentTypes.length) + ")");
                     this.contentFacet.setHtml("Content (" + contentTypes.length + ")");
                     this.sitesFacet.setHtml("Sites (" + siteTemplates.length + ")");
                     this.listItems = this.createListItems(contentTypes, siteTemplates);
                     this.contentList.setItems(this.listItems);
                     this.recentList.setItems(this.listItems);
+
+                    this.allFacet.addClass('active');
 
                     if (this.input.getValue()) {
                         this.filterList();
