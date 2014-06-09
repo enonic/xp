@@ -20,6 +20,14 @@ module api.ui.grid {
             this.slickDataView.setFilterArgs(args);
         }
 
+        beginUpdate() {
+            this.slickDataView.beginUpdate();
+        }
+
+        endUpdate() {
+            this.slickDataView.endUpdate();
+        }
+
         refresh() {
             this.slickDataView.refresh();
         }
@@ -30,6 +38,14 @@ module api.ui.grid {
 
         addItem(item:T) {
             this.slickDataView.addItem(item);
+        }
+
+        insertItem(insertBefore: number, item: T) {
+            this.slickDataView.insertItem(insertBefore, item);
+        }
+
+        updateItem(id: string, item: T) {
+            this.updateItem(id, item);
         }
 
         getItem(index: number):T {

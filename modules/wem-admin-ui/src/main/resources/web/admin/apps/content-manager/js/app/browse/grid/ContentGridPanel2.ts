@@ -1,28 +1,45 @@
 module app.browse.grid {
+    
+    import Element = api.dom.Element;
+    import ElementHelper = api.dom.ElementHelper;
+
+    import Grid = api.ui.grid.Grid;
+    import GridOptions = api.ui.grid.GridOptions;
+    import GridColumn = api.ui.grid.GridColumn;
+    import DataView = api.ui.grid.DataView;
+
+    import ContentSummary = api.content.ContentSummary;
+    import ContentSummaryViewer = api.content.ContentSummaryViewer;
+
 
     export class ContentGridPanel2 extends api.app.browse.grid2.GridPanel2 {
 
-        private columns:api.ui.grid.GridColumn<api.content.ContentSummary>[] = [];
+        private columns:GridColumn<ContentSummary>[] = [];
 
-        private gridOptions:api.ui.grid.GridOptions;
+        private gridOptions:GridOptions;
 
-        private grid:api.ui.grid.Grid<api.content.ContentSummary>;
+        private grid:Grid<ContentSummary>;
 
-        private gridData:api.ui.grid.DataView<api.content.ContentSummary>;
+        private gridData:DataView<ContentSummary>;
 
         private nameFormatter: (row: number, cell: number, value: any, columnDef: any, dataContext: Slick.SlickData) => string;
+        
+        private canvasElement:api.dom.DivEl;
+
+        private cache:ContentGridCache2;
 
         constructor() {
             super();
 
-            this.nameFormatter = (row: number, cell: number, value: any, columnDef: any, item: api.content.ContentSummary) => {
+            this.addClass("active");
+
+            this.nameFormatter = (row: number, cell: number, value: any, columnDef: any, item: ContentSummary) => {
                 var format = "";
                 var level = item.getPath().getLevel() - 1;
-                var nextItem = this.gridData.getItem(row + 1);
 
-                var toggleSpan = new api.dom.SpanEl("toggle");
+                var toggleSpan = new api.dom.SpanEl("toggle icon icon-xsmall");
                 if (item.hasChildren()) {
-                    var toggleClass = (nextItem && (nextItem.getPath().getLevel() - 1) > level) ? "collapse" : "expand";
+                    var toggleClass = this.cache.isExpanded(item) ? "collapse" : "expand";
                     toggleSpan.addClass(toggleClass);
                 }
                 if (level > 0) {
@@ -32,7 +49,7 @@ module app.browse.grid {
                 format += toggleSpan.toString();
 
 
-                var contentSummaryViewer = new api.content.ContentSummaryViewer();
+                var contentSummaryViewer = new ContentSummaryViewer();
                 contentSummaryViewer.setObject(item);
                 if (level > 0) {
                     contentSummaryViewer.getEl().setPaddingLeft(16 * level + "px");
@@ -42,13 +59,13 @@ module app.browse.grid {
                 return format;
             };
 
-            var column1 = <api.ui.grid.GridColumn<any>> {
+            var column1 = <GridColumn<any>> {
                 name: "Name",
                 id: "displayName",
                 field: "displayName",
                 formatter: this.nameFormatter
             };
-            var column2 = <api.ui.grid.GridColumn<any>> {
+            var column2 = <GridColumn<any>> {
                 name: "ModifiedTime",
                 id: "modifiedTime",
                 field: "modifiedTime",
@@ -59,10 +76,14 @@ module app.browse.grid {
             };
             this.columns = [column1, column2];
 
-            this.gridData = new api.ui.grid.DataView<api.content.ContentSummary>();
+            this.gridData = new DataView<ContentSummary>();
+            this.gridData.setFilter((item) => {
+                return item.isDisplayed();
+            });
 
-            this.gridOptions = <api.ui.grid.GridOptions>{
+            this.gridOptions = <GridOptions>{
                 editable: false,
+                enableAsyncPostRender: true,
                 enableCellNavigation: true,
                 enableColumnReorder: false,
                 forceFitColumns: true,
@@ -72,28 +93,45 @@ module app.browse.grid {
                 autoHeight: true
             };
 
-            this.grid = new api.ui.grid.Grid<api.content.ContentSummary>(this.gridData, this.columns, this.gridOptions);
+            this.grid = new Grid<ContentSummary>(this.gridData, this.columns, this.gridOptions);
 
             // Custom row selection required for valid behaviour
             this.grid.setSelectionModel(new Slick.RowSelectionModel({selectActiveRow: false}));
             this.grid.subscribeOnClick((event, data) => {
-                var elem = new api.dom.ElementHelper(event.target);
-
-                if (elem.hasClass("expand")) {
-                    elem.removeClass("expand").addClass("collapse");
-                    var item = this.gridData.getItem(data.row);
-                    this.expandData(item.getId());
-                    event.stopImmediatePropagation();
-                } else if (elem.hasClass("collapse")) {
-                    elem.removeClass("collapse").addClass("expand");
-                    var item = this.gridData.getItem(data.row);
-                    this.collapseData(item);
-                } else {
-                    this.grid.setSelectedRows([data.row]);
+                if (this.hasClass("active")) {
+                    var elem = new ElementHelper(event.target);
+                    if (elem.hasClass("expand")) {
+                        this.removeClass("active");
+                        elem.removeClass("expand").addClass("collapse");
+                        var item = this.gridData.getItem(data.row);
+                        this.expandData(item);
+                    } else if (elem.hasClass("collapse")) {
+                        this.removeClass("active");
+                        elem.removeClass("collapse").addClass("expand");
+                        var item = this.gridData.getItem(data.row);
+                        this.collapseData(item);
+                    } else {
+                        this.grid.setSelectedRows([data.row]);
+                    }
                 }
+                event.stopImmediatePropagation();
             });
 
+            this.cache = new ContentGridCache2(this.grid);
+
             this.appendChild(this.grid);
+
+            // Canvas element retrieving without jQuery
+            this.canvasElement = Element.fromHtmlElement(this.grid.getHTMLElement(), true);
+            for (var i = 0, gridChildren = this.canvasElement.getChildren(); i < gridChildren.length; i++) {
+                if (gridChildren[i].hasClass('slick-viewport')) {
+                    for (var j = 0, children = gridChildren[i].getChildren(); j < children.length; j++) {
+                        if (children[j].hasClass('grid-canvas')) {
+                            this.canvasElement = children[j];
+                        }
+                    }
+                }
+            }
 
             this.expandData();
 
@@ -107,42 +145,191 @@ module app.browse.grid {
 
         }
 
-        private initData(contents:api.content.ContentSummary[]) {
+        private initData(contents:ContentSummary[]) {
 
             this.gridData.setItems(contents, "id");
         }
 
-        private expandData(id: string = "") {
-            var request = new api.content.ListContentByIdRequest(id);
-            request.sendAndParse().then((contents:api.content.ContentSummary[]) => {
-                        if (id) {
-                            var items = this.gridData.getItems();
-                            for (var i = 0; i < items.length; i++) {
-                                if (items[i].getId() === id) {
-                                    items = items.slice(0, i+1).concat(contents).concat(items.slice(i+1));
-                                    this.initData(items);
-                                    break;
-                                }
-                            }
-                        } else { // root path
-                            this.initData(contents);
-                        }
-                    }
-                ).catch((reason: any) => {
-                    api.notify.showError(reason.toString());
-                }).finally(() => {
-                }).done();
-        }
+        private expandData(item?: ContentSummary) {
+            var deferred = Q.defer<ContentSummary[]>(),
+                promises = [], // list of parallel requests
+                tree:ContentGridCacheItem2[] = this.cache.expand(item);
 
-        private collapseData(item: api.content.ContentSummary) {
-            var oldItems = this.gridData.getItems(),
-                newItems = [];
-            oldItems.forEach((elem, index) => {
-                if (!elem.getPath().isDescendantOf(item.getPath())) {
-                    newItems.push(elem);
+            this.cache.saveSelected();
+
+            tree[0].setExpanded(true); // at least one item exists
+
+            // Create parallel call for each branch
+            tree.forEach((elem) => {
+                if (elem.isUpdated()) {
+                    if (elem.isExpanded()) {
+                        this.gridData.getItems().forEach((item) => {
+                            if (item.getPath().isChildOf(elem.getPath())) {
+                                item.setDisplayed(true);
+                            }
+                        });
+                    }
+                    promises.push([]);
+                } else {
+                    var id = elem.getId();
+                    elem.setUpdated(true);
+                    promises.push(new api.content.ListContentByIdRequest(id).sendAndParse());
                 }
             });
-            this.initData(newItems);
+
+            // init data, when everything is retrieved
+            Q.all(promises).then((results) => {
+                var contentSummary:ContentSummary[] = this.gridData.getItems(),
+                    expanded = [],
+                    animated = [],
+                    itemIndex = Infinity;
+
+                results.forEach((result:ContentSummary[], index:number) => {
+                    if (contentSummary.length) {
+                        for (var i = 0; i < contentSummary.length; i++) {
+                            if (contentSummary[i].getId() === tree[index].getId()) {
+                                contentSummary = contentSummary.slice(0, i + 1).concat(result).concat(contentSummary.slice(i + 1));
+                            }
+                        }
+                    } else {
+                        contentSummary = result;
+                    }
+                });
+
+                this.initData(contentSummary);
+
+                if (item) {
+                    this.gridData.getItems().forEach((elem, index) => {
+                        var row = this.gridData.getRowById(elem.getId());
+                        if (row && elem.getPath().isDescendantOf(item.getPath())) {
+                            expanded.push(row);
+                        } else if (row && index > itemIndex) {
+                            animated.push(row);
+                        } else if (elem.getId() === item.getId()) {
+                            itemIndex = index;
+                        }
+                    });
+
+                    this.animateExpand(expanded, animated);
+
+                    setTimeout(() => {
+                        this.resetIndexes(expanded);
+                        // Grid is again clickable
+                        this.addClass("active");
+                    }, 310);
+                }
+
+                this.cache.loadSelected();
+
+            }).catch((reason) => {
+                api.notify.showError(reason.toString());
+            }).finally(() => {
+            }).done();
+
+            deferred.resolve(null);
+        }
+
+        private collapseData(item: ContentSummary) {
+            var oldItems = this.gridData.getItems(),
+                animated = [],
+                collapsed = [],
+                itemIndex = Infinity;
+
+            this.cache.saveSelected();
+
+            oldItems.forEach((elem, index) => {
+                var row = this.gridData.getRowById(elem.getId());
+                if (row && elem.getPath().isDescendantOf(item.getPath())) {
+                    elem.setDisplayed(false);
+                    collapsed.push(row);
+                } else if (row && index > itemIndex) {
+                    animated.push(row);
+                } else if (elem.getId() === item.getId()) {
+                    itemIndex = index;
+                }
+            });
+
+            // Rows can have diffrent order in HTML and Items array
+            this.animateCollapse(collapsed, animated);
+
+            // Update data after animation
+            setTimeout(() => {
+                this.cache.collapse(item);
+                this.gridData.refresh();
+                this.cache.loadSelected();
+                // Grid is again clickable
+                this.addClass("active");
+            }, 310);
+        }
+
+        animateCollapse(collapsed:number[], animated:number[]) {
+            // update canvas content
+            this.canvasElement = Element.fromHtmlElement(this.canvasElement.getHTMLElement(), true);
+
+            // Sort needed: rows may not match actual dom structure.
+            var children = this.canvasElement.getChildren().sort((a, b) => {
+                var left = a.getEl().getOffsetTop(),
+                    right = b.getEl().getOffsetTop();
+                return left > right ? 1 : (left < right) ? -1 : 0;
+            });
+
+            collapsed.forEach((row) => {
+                var elem = children[row].getEl();
+                elem.setZindex(-1);
+                elem.setMarginTop(-45 * collapsed.length + "px");
+            });
+
+            animated.forEach((row) => {
+                var elem = children[row].getEl();
+                elem.setMarginTop(-45 * collapsed.length + "px");
+            });
+        }
+
+        animateExpand(expanded:number[], animated:number[]) {
+            // update canvas content
+            this.canvasElement = Element.fromHtmlElement(this.canvasElement.getHTMLElement(), true);
+
+            var children = this.canvasElement.getChildren().sort((a, b) => {
+                var left = a.getEl().getOffsetTop(),
+                    right = b.getEl().getOffsetTop();
+                return left > right ? 1 : (left < right) ? -1 : 0;
+            });
+
+            this.getEl().addClass("quick");
+
+            expanded.forEach((row) => {
+                var elem = children[row].getEl();
+                elem.setZindex(-1);
+                elem.setMarginTop(-45 * expanded.length + "px");
+            });
+
+            animated.forEach((row) => {
+                var elem = children[row].getEl();
+                elem.setMarginTop(-45 * expanded.length + "px");
+            });
+
+            setTimeout(() => {
+                this.getEl().removeClass("quick");
+
+                expanded.forEach((row) => {
+                    var elem = children[row].getEl();
+                    elem.setZindex(-1);
+                    elem.setMarginTop(0 + "px");
+                });
+
+                animated.forEach((row) => {
+                    var elem = children[row].getEl();
+                    elem.setMarginTop(0 + "px");
+                });
+            }, 10);
+        }
+
+        resetIndexes(elements:number[]) {
+            this.canvasElement = Element.fromHtmlElement(this.canvasElement.getHTMLElement(), true);
+            elements.forEach((row) => {
+                var elem = this.canvasElement.getChildren()[row].getEl();
+                elem.setZindex(1);
+            });
         }
     }
 }

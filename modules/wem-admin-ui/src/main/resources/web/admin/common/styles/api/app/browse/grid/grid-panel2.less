@@ -1,6 +1,16 @@
 .grid-panel2 {
   position: static;
 
+  &.quick {
+    .slick-row {
+      transition: none 3.3s;
+    }
+  }
+
+  .slick-row {
+    transition: margin 0.3s;
+  }
+
   .grid {
     width: 100% !important;
     height: 100% !important;
@@ -24,6 +34,9 @@
 
     .slick-row {
 
+      background-color: @admin-white;
+      z-index: 1;
+
       &:hover, &.odd:hover {
         background-color: @admin-light-gray-bg;
       }
@@ -32,12 +45,10 @@
         background-color: @admin-almost-white-bg;
       }
 
-      .selected h6 {
-        color: white;
-      }
-
-      .selected p {
-        color: white;
+      .selected {
+        h6, p {
+          color: white;
+        }
       }
 
       .slick-cell-checkboxsel {
@@ -62,18 +73,32 @@
       }
 
       .toggle {
+        &:active {
+          color: @admin-blue-button2;
+        }
+
         position: absolute;
         top: 1px;
         height: 100%;
-        width: 9px;
+        width: 10px;
+      }
+
+      .toggle.expand, .toggle.collapse {
+        &:before {
+          position: relative;
+          display: block;
+          top: 50%;
+          margin: -5px 0 0;
+        }
       }
 
       .toggle.expand {
-        background: url("../images/expand.gif") no-repeat center center;
+        .icon-arrow-right2;
       }
 
       .toggle.collapse {
-        background: url("../images/collapse.gif") no-repeat center center;
+        .icon-arrow-down;
+
       }
 
       .viewer {
