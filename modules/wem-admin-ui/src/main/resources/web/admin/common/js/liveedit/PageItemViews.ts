@@ -142,5 +142,25 @@ module api.liveedit {
             }
             return null;
         }
+
+        hasSelectedView(): boolean {
+            return !!this.getSelectedView();
+        }
+
+        getSelectedView(): ItemView {
+            for (var id in this.viewsById) {
+                if (this.viewsById.hasOwnProperty(id) && this.viewsById[id].isSelected()) {
+                    return this.viewsById[id];
+                }
+            }
+            return null;
+        }
+
+        deselectSelectedView() {
+            var selectedView = this.getSelectedView();
+            if (selectedView) {
+                this.getSelectedView().deselect();
+            }
+        }
     }
 }
