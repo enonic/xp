@@ -171,16 +171,19 @@ module api.ui {
             }
 
             // check screen edges
+            // disabled end screen checks because of possible scroll
             if (offsetLeft < 0) {
                 offsetLeft = 0;
-            } else if (offsetLeft + el.offsetWidth > window.innerWidth) {
-                offsetLeft = window.innerWidth - el.offsetWidth;
             }
+            /* else if (offsetLeft + el.offsetWidth > window.innerWidth) {
+             offsetLeft = window.innerWidth - el.offsetWidth;
+             }*/
             if (offsetTop < 0) {
                 offsetTop = 0;
-            } else if (offsetTop + el.offsetHeight > window.innerHeight) {
-                offsetTop = window.innerHeight - el.offsetHeight;
             }
+            /* else if (offsetTop + el.offsetHeight > window.innerHeight) {
+             offsetTop = window.innerHeight - el.offsetHeight;
+             }*/
 
             $el.offset({
                 left: offsetLeft,

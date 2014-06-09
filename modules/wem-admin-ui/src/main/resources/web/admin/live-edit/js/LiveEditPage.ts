@@ -110,7 +110,8 @@ module LiveEdit {
                 (<DescriptorBasedPageComponentBuilder<DescriptorBasedPageComponent>>builder).setConfig(new RootDataSet());
             }
             var component = builder.build();
-            this.pageRegions.addComponentAfter(component, region, precedingComponentView.getPageComponent());
+            this.pageRegions.addComponentAfter(component, region,
+                precedingComponentView ? precedingComponentView.getPageComponent() : null);
             return component;
         }
 

@@ -12,17 +12,18 @@ module api.liveedit {
 
         private tooltip: api.ui.Tooltip;
 
-        private viewer: api.ui.Viewer<PAGE_COMPONENT>;
+        private tooltipViewer: api.ui.Viewer<PAGE_COMPONENT>;
 
         constructor(type: ItemType, parentRegionView: RegionView, pageComponent: PAGE_COMPONENT, element?: HTMLElement, dummy?: boolean) {
             super(type, element, dummy, parentRegionView.getHTMLElement());
             this.parentRegionView = parentRegionView;
-            this.pageComponent = pageComponent;
-            this.viewer = this.getTooltipViewer();
+            this.tooltipViewer = this.getTooltipViewer();
             this.tooltip = new api.ui.Tooltip(this).
                 setHideTimeout(0).
                 setSide(api.ui.Tooltip.SIDE_TOP).
-                setContent(this.viewer);
+                setContent(this.tooltipViewer);
+
+            this.setPageComponent(pageComponent);
         }
 
         getType(): PageComponentItemType {
@@ -33,9 +34,11 @@ module api.liveedit {
             return this.parentRegionView;
         }
 
-        setPageComponent(data: PAGE_COMPONENT) {
-            this.pageComponent = data;
-            this.viewer.setObject(data);
+        setPageComponent(pageComponent: PAGE_COMPONENT) {
+            this.pageComponent = pageComponent;
+            if (pageComponent) {
+                this.tooltipViewer.setObject(pageComponent);
+            }
         }
 
         getTooltipViewer(): api.ui.Viewer<PAGE_COMPONENT> {

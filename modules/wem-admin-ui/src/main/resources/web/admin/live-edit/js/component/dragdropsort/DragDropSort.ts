@@ -238,6 +238,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             var newPageComponentView = itemType.createView(regionView, newPageComponent);
             liveEditPage.addItemView(newPageComponentView);
 
+            droppedElement.attr("data-" + ItemViewId.DATA_ATTRIBUTE, "" + newPageComponentView.getItemId());
             regionView.insertChild(newPageComponentView, droppedElement.index());
             droppedElement.remove();
             newPageComponentView.empty();
