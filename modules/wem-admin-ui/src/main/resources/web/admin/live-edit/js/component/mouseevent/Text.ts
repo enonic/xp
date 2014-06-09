@@ -84,9 +84,9 @@ module LiveEdit.component.mouseevent {
                 window.getSelection().removeAllRanges();
             }
 
-            LiveEdit.component.Selection.removeSelectedAttribute();
+            LiveEdit.LiveEditPage.get().deselectSelectedViews();
 
-            LiveEdit.component.Selection.handleSelect(this.selectedText, event);
+            this.selectedText.select(event);
 
             wemjq(window).trigger('selectTextComponent.liveEdit', [this.selectedText]);
         }
@@ -133,12 +133,10 @@ module LiveEdit.component.mouseevent {
                 textComponent.getElement().addClass('live-edit-empty-component');
             }
 
+            this.selectedText.deselect();
             this.selectedText = null;
 
             this.currentMode = TextMode.UNSELECTED;
-
-            LiveEdit.component.Selection.removeSelectedAttribute();
-
         }
 
         private isSelectedTextBlankOrEmpty(): boolean {

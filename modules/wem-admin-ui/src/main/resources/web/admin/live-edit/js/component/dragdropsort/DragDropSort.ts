@@ -244,7 +244,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             removePaddingFromLayoutComponent();
 
             new PageComponentAddedEvent().setPageComponentView(newPageComponentView).fire();
-            //LiveEdit.component.Selection.handleSelect(newPageComponent);
+            //newPageComponent.select();
         }
     }
 

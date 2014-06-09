@@ -177,6 +177,10 @@ module api.dom {
             return this;
         }
 
+        getTagName(): string {
+            return this.el.tagName;
+        }
+
         getDisplay(): string {
             return this.el.style.display;
         }
@@ -389,6 +393,15 @@ module api.dom {
         setBackgroundImage(value: string): ElementHelper {
             this.el.style.backgroundImage = value;
             return this;
+        }
+
+        setCursor(value: string): ElementHelper {
+            this.el.style.cursor = value;
+            return this;
+        }
+
+        getCursor(): string {
+            return this.el.style.cursor;
         }
 
         remove() {

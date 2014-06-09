@@ -16,7 +16,7 @@ module LiveEdit.component.mouseevent {
                 }
                 event.stopPropagation();
 
-                LiveEdit.component.Selection.removeSelectedAttribute();
+                LiveEdit.LiveEditPage.get().deselectSelectedViews();
                 var itemView = LiveEdit.LiveEditPage.get().getItemViewByHTMLElement(<HTMLElement>event.currentTarget);
                 if (itemView) {
                     wemjq(window).trigger('mouseOverComponent.liveEdit', [ itemView ]);
@@ -26,7 +26,7 @@ module LiveEdit.component.mouseevent {
 
         attachMouseOutEvent(): void {
             wemjq(document).on('mouseout', () => {
-                if (LiveEdit.component.Selection.pageHasSelectedElement()) {
+                if (LiveEdit.LiveEditPage.get().hasSelectedView()) {
                     return;
                 }
                 wemjq(window).trigger('mouseOutComponent.liveEdit');
@@ -47,7 +47,7 @@ module LiveEdit.component.mouseevent {
                 event.preventDefault();
 
                 var itemView = LiveEdit.LiveEditPage.get().getItemViewByHTMLElement(<HTMLElement>event.currentTarget);
-                LiveEdit.component.Selection.handleSelect(itemView, event);
+                itemView.select(event);
             });
         }
 
@@ -57,7 +57,7 @@ module LiveEdit.component.mouseevent {
         }
 
         cancelMouseOverEvent(event: JQueryEventObject): boolean {
-            return this.targetIsLiveEditUiComponent(wemjq(event.target)) || LiveEdit.component.Selection.pageHasSelectedElement() ||
+            return this.targetIsLiveEditUiComponent(wemjq(event.target)) || LiveEdit.LiveEditPage.get().hasSelectedView() ||
                    LiveEdit.component.dragdropsort.DragDropSort.isDragging();
         }
 

@@ -5,6 +5,7 @@ module LiveEdit.ui {
     import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
     import PageComponentSelectComponentEvent = api.liveedit.PageComponentSelectComponentEvent;
+    import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
 
     export class Highlighter extends LiveEdit.ui.Base {
 
@@ -20,6 +21,7 @@ module LiveEdit.ui {
             wemjq(window).on('mouseOverComponent.liveEdit', (event, component?: ItemView)  => this.onMouseOverComponent(component));
             PageComponentSelectComponentEvent.on((event: PageComponentSelectComponentEvent) => this.onSelectComponent(event.getItemView()));
             PageComponentDeselectEvent.on(() => this.onDeselectComponent());
+            PageComponentResetEvent.on(() => this.onResetComponent());
             wemjq(window).on('mouseOutComponent.liveEdit', ()                   => this.hide());
             SortableStartEvent.on(() => this.hide());
             PageComponentRemoveEvent.on(() => this.hide());
@@ -30,7 +32,7 @@ module LiveEdit.ui {
             wemjq(window).on('sortstop.liveedit.component', (event, uiEvent?, ui?, wasSelectedOnDragStart?) => {
                 if (wasSelectedOnDragStart) {
                     var itemView = LiveEdit.LiveEditPage.get().getItemViewByHTMLElement(ui.item.get(0));
-                    LiveEdit.component.Selection.handleSelect(itemView);
+                    itemView.select();
                 }
             });
         }
@@ -60,6 +62,15 @@ module LiveEdit.ui {
             if (component.getType().equals(api.liveedit.PageItemType.get())) {
                 this.hide();
                 return;
+            } else if (component.getType().equals(api.liveedit.image.ImageItemType.get())) {
+                var image = (<api.liveedit.image.ImageView>component).getImage();
+                if (image) {
+                    image.getEl().addEventListener("load", () => {
+                        this.resizeToComponent(component);
+                        this.paintBorder(component);
+                        this.show();
+                    });
+                }
             }
 
             this.resizeToComponent(component);
@@ -69,8 +80,13 @@ module LiveEdit.ui {
 
         private onDeselectComponent(): void {
             this.hide();
-            LiveEdit.component.Selection.removeSelectedAttribute();
+            LiveEdit.LiveEditPage.get().deselectSelectedViews();
             this.selectedComponent = null;
+        }
+
+        private onResetComponent() {
+            this.resizeToComponent(this.selectedComponent);
+            this.paintBorder(this.selectedComponent);
         }
 
         private paintBorder(component: ItemView): void {

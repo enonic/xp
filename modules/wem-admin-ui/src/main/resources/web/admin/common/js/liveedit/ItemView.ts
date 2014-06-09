@@ -22,7 +22,7 @@ module api.liveedit {
             var props = new api.dom.ElementProperties();
             props.setGenerateId(false);
             if (element) {
-                props.setHelper(new api.dom.ElementHelper(element));
+                props.setHelper(new api.dom.ElementHelper(element)).setLoadExistingChildren(true);
             }
             else {
                 props.setTagName("div");
@@ -80,8 +80,11 @@ module api.liveedit {
             return this.getEl().hasAttribute('data-live-edit-selected');
         }
 
-        select() {
+        select(event?: JQueryEventObject) {
             this.getEl().setData("live-edit-selected", "true");
+
+            var clickPosition: Position = (event && !this.isEmpty()) ? { x: event.pageX, y: event.pageY } : null;
+            new PageComponentSelectComponentEvent(this, clickPosition).fire();
         }
 
         deselect() {
