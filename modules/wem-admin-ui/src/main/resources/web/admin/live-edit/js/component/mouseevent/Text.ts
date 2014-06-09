@@ -84,7 +84,7 @@ module LiveEdit.component.mouseevent {
                 window.getSelection().removeAllRanges();
             }
 
-            LiveEdit.LiveEditPage.get().deselectSelectedViews();
+            LiveEdit.LiveEditPage.get().deselectSelectedView();
 
             this.selectedText.select(event);
 
