@@ -9,8 +9,6 @@
 
 ///<reference path='component/helper/DragHelper.ts' />
 ///<reference path='component/helper/ComponentResizeObserver.ts' />
-///<reference path='component/Selection.ts' />
-
 
 ///<reference path='component/mouseevent/Base.ts' />
 ///<reference path='component/mouseevent/Page.ts' />

@@ -28,11 +28,11 @@ module LiveEdit.ui.contextmenu.menuitem {
             var parentView: ItemView = this.menu.selectedComponent.getParentItemView();
             if (parentView) {
                 this.menu.selectedComponent.deselect();
-                LiveEdit.component.Selection.handleSelect(parentView);
+                parentView.select();
 
-                var xPos = parentView.getElement().offset().left + parentView.getElement().width() / 2 -
-                           (this.menu.getEl().width() / 2);
-                var yPos = parentView.getElement().offset().top + 11;
+                var parentEl = parentView.getElement();
+                var xPos = parentEl.offset().left + parentEl.width() / 2 - (this.menu.getEl().width() / 2);
+                var yPos = parentEl.offset().top + 11;
                 this.menu.moveToXY(xPos, yPos);
 
                 this.scrollComponentIntoView(parentView);

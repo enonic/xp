@@ -15,8 +15,8 @@ module api.liveedit.image {
             this.placeholder = new ImagePlaceholder(this);
         }
 
-        showHighlighter(value: boolean) {
-
+        getImage(): api.dom.ImgEl {
+            return <api.dom.ImgEl>this.getChildren().filter((child: api.dom.Element) => (child.getEl().getTagName() == 'IMG'))[0];
         }
 
         select() {

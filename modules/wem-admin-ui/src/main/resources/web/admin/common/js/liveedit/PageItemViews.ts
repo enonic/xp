@@ -142,5 +142,22 @@ module api.liveedit {
             }
             return null;
         }
+
+        hasSelectedView(): boolean {
+            for (var id in this.viewsById) {
+                if (this.viewsById.hasOwnProperty(id) && this.viewsById[id].isSelected()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        deselectSelectedViews() {
+            for (var id in this.viewsById) {
+                if (this.viewsById.hasOwnProperty(id) && this.viewsById[id].isSelected()) {
+                    this.viewsById[id].deselect();
+                }
+            }
+        }
     }
 }

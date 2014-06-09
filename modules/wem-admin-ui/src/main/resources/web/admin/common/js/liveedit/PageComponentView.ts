@@ -71,8 +71,8 @@ module api.liveedit {
             return this.parentRegionView;
         }
 
-        select() {
-            super.select();
+        select(event?: JQueryEventObject) {
+            super.select(event);
             new PageComponentSelectEvent(this).fire();
         }
 

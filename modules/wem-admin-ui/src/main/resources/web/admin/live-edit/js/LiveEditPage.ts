@@ -91,11 +91,19 @@ module LiveEdit {
             var duplicatedView = pageComponentView.duplicate(duplicatedPageComponent);
             this.pageItemViews.addItemView(duplicatedView);
             new PageComponentDuplicateEvent(pageComponentView, duplicatedView).fire();
-            LiveEdit.component.Selection.handleSelect(duplicatedView);
+            duplicatedView.select();
         }
 
         removePageComponentView(pageComponentView: PageComponentView<PageComponent>) {
             this.pageItemViews.removePageComponentView(pageComponentView);
+        }
+
+        hasSelectedView(): boolean {
+            return this.pageItemViews.hasSelectedView();
+        }
+
+        deselectSelectedViews() {
+            this.pageItemViews.deselectSelectedViews();
         }
 
         createComponent(region: Region, type: PageComponentType, precedingComponentView: PageComponentView<PageComponent>): PageComponent {

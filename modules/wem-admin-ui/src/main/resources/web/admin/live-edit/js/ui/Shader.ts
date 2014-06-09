@@ -5,6 +5,7 @@ module LiveEdit.ui {
     import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
     import PageComponentSelectComponentEvent = api.liveedit.PageComponentSelectComponentEvent;
+    import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
 
     export class Shader extends LiveEdit.ui.Base {
 
@@ -30,6 +31,8 @@ module LiveEdit.ui {
             wemjq(window).on('editTextComponent.liveEdit', (event:JQueryEventObject, component?) => this.show(component));
             PageComponentDeselectEvent.on(() => this.hide());
             PageComponentRemoveEvent.on(() => this.hide());
+            PageComponentResetEvent.on((event: PageComponentResetEvent) => this.show(event.getComponentView()));
+
             SortableStartEvent.on(() => this.hide());
             wemjq(window).on('resizeBrowserWindow.liveEdit', () => this.onWindowResize());
         }
@@ -68,6 +71,14 @@ module LiveEdit.ui {
             this.selectedComponent = component;
             if (component.getType().equals(api.liveedit.PageItemType.get())) {
                 this.showForPage();
+            } else if (component.getType().equals(api.liveedit.image.ImageItemType.get())) {
+                var image = (<api.liveedit.image.ImageView>component).getImage();
+                if (image) {
+                    image.getEl().addEventListener("load", () => {
+                        this.showForComponent(component);
+                    });
+                }
+                this.showForComponent(component);
             } else {
                 this.showForComponent(component);
             }
