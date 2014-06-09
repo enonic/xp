@@ -144,19 +144,22 @@ module api.liveedit {
         }
 
         hasSelectedView(): boolean {
-            for (var id in this.viewsById) {
-                if (this.viewsById.hasOwnProperty(id) && this.viewsById[id].isSelected()) {
-                    return true;
-                }
-            }
-            return false;
+            return !!this.getSelectedView();
         }
 
-        deselectSelectedViews() {
+        getSelectedView(): ItemView {
             for (var id in this.viewsById) {
                 if (this.viewsById.hasOwnProperty(id) && this.viewsById[id].isSelected()) {
-                    this.viewsById[id].deselect();
+                    return this.viewsById[id];
                 }
+            }
+            return null;
+        }
+
+        deselectSelectedView() {
+            var selectedView = this.getSelectedView();
+            if (selectedView) {
+                this.getSelectedView().deselect();
             }
         }
     }

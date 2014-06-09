@@ -5,22 +5,16 @@ module LiveEdit.ui {
      */
     export class Base {
 
-        ID_PREFIX:string = 'live-edit-ui-cmp-';
-
-        static constructedCount:number = 0;
+        static LIVE_EDIT_UI_COMPONENT:string = 'live-edit-ui-cmp';
 
         private rootEl:JQuery;
 
-        private id:string;
-
         constructor() {
-            // Create dom id attribute value
-            this.id = this.ID_PREFIX + Base.constructedCount++;
         }
 
         public createHtmlFromString(html:string):JQuery {
             this.rootEl = wemjq(html);
-            this.rootEl.attr('id', this.id);
+            this.rootEl.addClass(Base.LIVE_EDIT_UI_COMPONENT);
 
             return this.rootEl;
         }

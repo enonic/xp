@@ -16,7 +16,7 @@ module LiveEdit.component.mouseevent {
                 }
                 event.stopPropagation();
 
-                LiveEdit.LiveEditPage.get().deselectSelectedViews();
+                LiveEdit.LiveEditPage.get().deselectSelectedView();
                 var itemView = LiveEdit.LiveEditPage.get().getItemViewByHTMLElement(<HTMLElement>event.currentTarget);
                 if (itemView) {
                     wemjq(window).trigger('mouseOverComponent.liveEdit', [ itemView ]);
@@ -62,7 +62,8 @@ module LiveEdit.component.mouseevent {
         }
 
         private targetIsLiveEditUiComponent(target: JQuery): boolean {
-            return target.is('[id*=live-edit-ui-cmp]') || target.parents('[id*=live-edit-ui-cmp]').length > 0;
+            var uiComponentSelector = '.' + LiveEdit.ui.Base.LIVE_EDIT_UI_COMPONENT;
+            return target.is(uiComponentSelector) || target.closest(uiComponentSelector).length > 0;
         }
 
     }
