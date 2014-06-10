@@ -12,12 +12,12 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 
 
-final class NodeSettingsBuilder
+public final class NodeSettingsBuilder
     extends AbstractSettingsBuilder
 {
     private final static Logger LOG = LoggerFactory.getLogger( NodeSettingsBuilder.class );
 
-    Settings buildNodeSettings()
+    public Settings buildNodeSettings()
     {
         final ImmutableSettings.Builder settings = ImmutableSettings.settingsBuilder();
 

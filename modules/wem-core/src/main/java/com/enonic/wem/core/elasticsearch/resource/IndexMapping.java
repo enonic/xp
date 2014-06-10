@@ -10,24 +10,24 @@ public class IndexMapping
 
     private final String source;
 
-    IndexMapping( final Index index, final String indexType, final String source )
+    public IndexMapping( final Index index, final String indexType, final String source )
     {
         this.index = index;
         this.indexType = indexType;
         this.source = source;
     }
 
-    Index getIndex()
+    public Index getIndex()
     {
         return index;
     }
 
-    String getIndexType()
+    public String getIndexType()
     {
         return indexType;
     }
 
-    String getSource()
+    public String getSource()
     {
         return source;
     }

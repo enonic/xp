@@ -80,7 +80,7 @@ public class ElasticsearchIndexService
     protected void doStart()
         throws Exception
     {
-        applyIndexTemplates();
+        applyIndexTemplates( Index.SEARCH );
 
         doInitializeWorkspaceIndex();
         doInitializeVersionIndex();
@@ -94,7 +94,7 @@ public class ElasticsearchIndexService
     }
 
 
-    private void applyIndexTemplates()
+    private void applyIndexTemplates( final Index index )
     {
         final List<IndexMapping> mappingsForIndex = indexMappingProvider.getTemplatesForIndex( Index.SEARCH );
 
@@ -107,7 +107,7 @@ public class ElasticsearchIndexService
             request.addMapping( indexMapping.getIndexType(), indexMapping.getSource() );
         }
 
-        request.setSettings( indexSettingsBuilder.buildIndexSettings() );
+        request.setSettings( indexSettingsBuilder.buildIndexSettings( index ) );
 
         final PutIndexTemplateResponse response = client.admin().indices().putTemplate( request.request() ).actionGet();
 
@@ -187,7 +187,7 @@ public class ElasticsearchIndexService
         LOG.debug( "creating index: " + index.getName() );
 
         CreateIndexRequest createIndexRequest = new CreateIndexRequest( index.getName() );
-        createIndexRequest.settings( indexSettingsBuilder.buildIndexSettings() );
+        createIndexRequest.settings( indexSettingsBuilder.buildIndexSettings( index ) );
 
         try
         {

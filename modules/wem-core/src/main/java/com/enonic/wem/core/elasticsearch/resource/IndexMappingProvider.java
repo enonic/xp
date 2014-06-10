@@ -25,7 +25,7 @@ public class IndexMappingProvider
     private final static String[] TEMPLATE_FILES = { //
         PREFIX + "search-node-template.json"};
 
-    List<IndexMapping> getMappingsForIndex( final Index index )
+    public List<IndexMapping> getMappingsForIndex( final Index index )
     {
         final List<IndexMapping> indexMappings = Lists.newArrayList();
         for ( final String mappingFile : MAPPING_FILES )
@@ -35,7 +35,7 @@ public class IndexMappingProvider
         return indexMappings;
     }
 
-    List<IndexMapping> getTemplatesForIndex( final Index index )
+    public List<IndexMapping> getTemplatesForIndex( final Index index )
     {
         final List<IndexMapping> indexMappings = Lists.newArrayList();
         for ( final String mappingFile : TEMPLATE_FILES )
