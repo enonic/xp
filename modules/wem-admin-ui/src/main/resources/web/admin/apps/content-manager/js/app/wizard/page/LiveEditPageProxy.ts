@@ -27,7 +27,6 @@ module app.wizard.page {
     import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
     import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
     import PageComponentLoadedEvent = api.liveedit.PageComponentLoadedEvent;
-    import PageComponentSelectComponentEvent = api.liveedit.PageComponentSelectComponentEvent;
     import RegionEmptyEvent = api.liveedit.RegionEmptyEvent;
 
     export interface LiveEditPageProxyConfig {
@@ -224,7 +223,7 @@ module app.wizard.page {
 
                     new PageComponentLoadedEvent(newPageComponentView).fire(this.liveEditWindow);
 
-                    this.liveEditWindow.LiveEdit.component.Selection.handleSelect(newPageComponentView, null, true);
+                    newPageComponentView.select();
                 }
             });
         }

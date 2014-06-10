@@ -9,8 +9,6 @@
 
 ///<reference path='component/helper/DragHelper.ts' />
 ///<reference path='component/helper/ComponentResizeObserver.ts' />
-///<reference path='component/Selection.ts' />
-
 
 ///<reference path='component/mouseevent/Base.ts' />
 ///<reference path='component/mouseevent/Page.ts' />
@@ -22,6 +20,7 @@
 ///<reference path='component/mouseevent/Text.ts' />
 
 ///<reference path='ui/Base.ts' />
+///<reference path='ui/BaseComponent.ts' />
 ///<reference path='ui/htmleditor/Editor.ts' />
 ///<reference path='ui/htmleditor/EditorToolbar.ts' />
 ///<reference path='ui/Shader.ts' />
