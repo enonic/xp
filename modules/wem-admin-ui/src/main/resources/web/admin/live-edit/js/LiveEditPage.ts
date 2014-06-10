@@ -109,11 +109,13 @@ module LiveEdit {
             if (api.ObjectHelper.iFrameSafeInstanceOf(builder, DescriptorBasedPageComponentBuilder)) {
                 (<DescriptorBasedPageComponentBuilder<DescriptorBasedPageComponent>>builder).setConfig(new RootDataSet());
             }
+            var precedingPageComponent: PageComponent = null;
+            if (precedingComponentView) {
+                precedingPageComponent = precedingComponentView.getPageComponent();
+            }
             var component = builder.build();
-            this.pageRegions.addComponentAfter(component, region,
-                precedingComponentView ? precedingComponentView.getPageComponent() : null);
+            this.pageRegions.addComponentAfter(component, region, precedingPageComponent);
             return component;
         }
-
     }
 }
