@@ -19,10 +19,8 @@ module api.liveedit {
             this.region = region;
             this.parentView = parentView;
             this.placeholder = new RegionPlaceholder(this);
-
-            PageComponentRemoveEvent.on((event: PageComponentRemoveEvent) => {
-                this.removePageComponentView(event.getPageComponentView());
-            });
+            this.placeholder.hide();
+            this.appendChild(this.placeholder);
         }
 
         getParentItemView(): ItemView {
@@ -62,8 +60,15 @@ module api.liveedit {
             super.select();
         }
 
-        addPageComponent(view: PageComponentView<PageComponent>) {
+        registerPageComponentView(view: PageComponentView<PageComponent>) {
             this.pageComponentViews.push(view);
+            this.placeholder.hide();
+        }
+
+        addPageComponentView(view: PageComponentView<PageComponent>, index: number) {
+            this.pageComponentViews.splice(index, 0, view);
+            this.insertChild(view, index);
+            this.placeholder.hide();
         }
 
         getPageComponentViews(): PageComponentView<PageComponent>[] {
@@ -71,6 +76,9 @@ module api.liveedit {
         }
 
         removePageComponentView(pageComponentView: PageComponentView<PageComponent>) {
+
+            pageComponentView.getElement().remove();
+
             var indexToRemove = -1;
             this.pageComponentViews.forEach((curr: PageComponentView<PageComponent>, index: number) => {
                 if (curr.getItemId().equals(pageComponentView.getItemId())) {
@@ -85,14 +93,18 @@ module api.liveedit {
                 if (this.pageComponentViews.length == 0) {
                     console.log("RegionView[" + this.getItemId().toNumber() +
                                 "].removePageComponentView: region is now empty, showing placeholder");
-                    this.empty();
+                    this.placeholder.show();
                 }
             }
         }
 
-        empty() {
-
-            this.appendChild(this.placeholder);
+        refreshPlaceholder() {
+            if (this.pageComponentViews.length == 0) {
+                this.placeholder.show();
+            }
+            else {
+                this.placeholder.hide();
+            }
         }
 
         isRegionEmpty(): boolean {

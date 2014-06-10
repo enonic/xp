@@ -79,9 +79,7 @@ module api.liveedit {
                     }
                     else if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, RegionView)) {
                         var regionView = <RegionView>itemView;
-                        if (regionView.isRegionEmpty()) {
-                            regionView.empty();
-                        }
+                        regionView.refreshPlaceholder();
                     }
                 }
             }

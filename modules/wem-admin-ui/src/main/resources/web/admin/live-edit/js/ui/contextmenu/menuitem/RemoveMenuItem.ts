@@ -26,7 +26,6 @@ module LiveEdit.ui.contextmenu.menuitem {
             if (api.ObjectHelper.iFrameSafeInstanceOf(selectedItem, PageComponentView)) {
 
                 var selectedPageComponent = <PageComponentView<PageComponent>> selectedItem;
-                selectedPageComponent.getElement().remove();
                 LiveEdit.LiveEditPage.get().removePageComponentView(selectedPageComponent);
             }
             else {

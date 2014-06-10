@@ -73,7 +73,7 @@ module api.liveedit {
                     element.getHTMLElement());
                 pageComponentView.setPageComponent(pageComponent);
                 this.itemViews.push(pageComponentView);
-                regionView.addPageComponent(pageComponentView);
+                regionView.registerPageComponentView(pageComponentView);
 
                 if (itemType.equals(api.liveedit.layout.LayoutItemType.get())) {
                     var layoutComponent = <LayoutComponent> pageComponent;

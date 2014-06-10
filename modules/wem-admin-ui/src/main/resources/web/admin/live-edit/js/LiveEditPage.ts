@@ -149,6 +149,9 @@ module LiveEdit {
         }
 
         removePageComponentView(pageComponentView: PageComponentView<PageComponent>) {
+
+            var regionView = pageComponentView.getParentItemView();
+            regionView.removePageComponentView(pageComponentView);
             this.pageItemViews.removePageComponentView(pageComponentView);
         }
 
