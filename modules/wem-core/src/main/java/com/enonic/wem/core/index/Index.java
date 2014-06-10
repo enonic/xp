@@ -4,7 +4,8 @@ public enum Index
 {
     NODB( "nodb" ),
     STORE( "store" ),
-    WORKSPACE( "workspace" );
+    WORKSPACE( "workspace" ),
+    VERSION( "version" );
 
     private final String name;
 

@@ -52,6 +52,14 @@ public class ElasticsearchDao
         this.client.index( indexRequest ).actionGet();
     }
 
+    public void storeAll( final Collection<IndexRequest> indexRequests )
+    {
+        for ( final IndexRequest indexRequest : indexRequests )
+        {
+            this.client.index( indexRequest ).actionGet();
+        }
+    }
+
     public void store( Collection<IndexDocument> indexDocuments )
     {
         for ( IndexDocument indexDocument : indexDocuments )

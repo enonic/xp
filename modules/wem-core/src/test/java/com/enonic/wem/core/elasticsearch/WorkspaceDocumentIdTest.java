@@ -12,8 +12,8 @@ public class WorkspaceDocumentIdTest
     {
         final WorkspaceDocumentId id = WorkspaceDocumentId.from( "myBlobKey_myWorkspace" );
         assertEquals( "myBlobKey_myWorkspace", id.getValue() );
-        assertEquals( "myBlobKey", id.getEntityIdAsString() );
-        assertEquals( "myWorkspace", id.getWorkspaceName() );
+        assertEquals( "myBlobKey", id.getEntityId().toString() );
+        assertEquals( "myWorkspace", id.getWorkspace().getName() );
     }
 
     @Test(expected = IllegalArgumentException.class)

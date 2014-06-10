@@ -21,7 +21,7 @@ public class ChangedIdsResolver
             if ( bucket.getDocCount() == 1 )
             {
                 final WorkspaceDocumentId workspaceDocumentId = WorkspaceDocumentId.from( bucket.getKey() );
-                entityIds.add( EntityId.from( workspaceDocumentId.getEntityIdAsString() ) );
+                entityIds.add( workspaceDocumentId.getEntityId() );
             }
             else
             {

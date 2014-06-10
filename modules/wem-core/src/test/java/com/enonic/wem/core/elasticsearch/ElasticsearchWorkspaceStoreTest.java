@@ -1,6 +1,7 @@
 package com.enonic.wem.core.elasticsearch;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 
 import org.elasticsearch.action.index.IndexRequest;
@@ -78,7 +79,7 @@ public class ElasticsearchWorkspaceStoreTest
 
         wsStore.store( workspaceDocument );
 
-        Mockito.verify( elasticsearchDao, Mockito.times( 1 ) ).store( Mockito.isA( IndexRequest.class ) );
+        Mockito.verify( elasticsearchDao, Mockito.times( 1 ) ).storeAll( Mockito.anyCollectionOf( IndexRequest.class ) );
     }
 
     @Test
@@ -138,7 +139,7 @@ public class ElasticsearchWorkspaceStoreTest
 
         wsStore.store( workspaceDocument );
 
-        Mockito.verify( elasticsearchDao, Mockito.times( 1 ) ).store( Mockito.isA( IndexRequest.class ) );
+        Mockito.verify( elasticsearchDao, Mockito.times( 1 ) ).storeAll( Mockito.anyCollectionOf( IndexRequest.class ) );
     }
 
     @Test

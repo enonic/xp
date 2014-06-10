@@ -67,6 +67,7 @@ public class ElasticsearchIndexService
         doInitializeStoreIndex();
         doInitializeNoDbIndex();
         doInitializeWorkspaceIndex();
+        doInitializeVersionIndex();
     }
 
     @Override
@@ -86,6 +87,18 @@ public class ElasticsearchIndexService
             createIndex( Index.NODB );
         }
     }
+
+    private void doInitializeVersionIndex()
+        throws Exception
+    {
+        getIndexStatus( Index.VERSION, true );
+
+        if ( !indexExists( Index.VERSION ) )
+        {
+            createIndex( Index.VERSION );
+        }
+    }
+
 
     private void doInitializeWorkspaceIndex()
         throws Exception

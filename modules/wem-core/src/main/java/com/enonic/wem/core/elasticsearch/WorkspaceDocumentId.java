@@ -15,9 +15,9 @@ public class WorkspaceDocumentId
 
     private final String value;
 
-    private final String entityIdAsString;
+    private final EntityId entityId;
 
-    private final String workspaceName;
+    private final Workspace workspace;
 
     public WorkspaceDocumentId( final EntityId entityId, final Workspace workspace )
     {
@@ -25,15 +25,15 @@ public class WorkspaceDocumentId
         Preconditions.checkNotNull( workspace );
 
         this.value = entityId + SEPARATOR + workspace.getName();
-        this.entityIdAsString = entityId.toString();
-        this.workspaceName = workspace.getName();
+        this.entityId = entityId;
+        this.workspace = workspace;
     }
 
     private WorkspaceDocumentId( final String value, final String entityIdAsString, final String workspaceName )
     {
         this.value = value;
-        this.workspaceName = workspaceName;
-        this.entityIdAsString = entityIdAsString;
+        this.entityId = EntityId.from( entityIdAsString );
+        this.workspace = new Workspace( workspaceName );
     }
 
     public static WorkspaceDocumentId from( final String value )
@@ -60,14 +60,14 @@ public class WorkspaceDocumentId
         return value;
     }
 
-    public String getEntityIdAsString()
+    public EntityId getEntityId()
     {
-        return entityIdAsString;
+        return entityId;
     }
 
-    public String getWorkspaceName()
+    public Workspace getWorkspace()
     {
-        return workspaceName;
+        return workspace;
     }
 
     @Override

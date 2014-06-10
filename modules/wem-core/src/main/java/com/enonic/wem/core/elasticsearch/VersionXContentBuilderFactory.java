@@ -1,22 +1,21 @@
 package com.enonic.wem.core.elasticsearch;
 
+import java.time.Instant;
+
 import org.elasticsearch.common.xcontent.XContentBuilder;
 
 import com.enonic.wem.core.index.IndexException;
 import com.enonic.wem.core.workspace.WorkspaceDocument;
 
-class WorkspaceXContentBuilderFactory
+public class VersionXContentBuilderFactory
     extends AbstractXContentBuilderFactor
 {
-    public static final String BLOBKEY_FIELD_NAME = "blobKey";
 
-    public static final String WORKSPACE_FIELD_NAME = "workspace";
+    public static final String BLOBKEY_FIELD_NAME = "blobKey";
 
     public static final String ENTITY_ID_FIELD_NAME = "entityId";
 
-    public static final String PATH_FIELD_NAME = "path";
-
-    public static final String PARENT_PATH_FIELD_NAME = "parentPath";
+    public static final String TIMESTAMP_ID_FIELD_NAME = "timestamp";
 
     static XContentBuilder create( final WorkspaceDocument workspaceDocument )
     {
@@ -25,10 +24,8 @@ class WorkspaceXContentBuilderFactory
             final XContentBuilder builder = startBuilder();
 
             addField( builder, BLOBKEY_FIELD_NAME, workspaceDocument.getBlobKey().toString() );
-            addField( builder, WORKSPACE_FIELD_NAME, workspaceDocument.getWorkspace().toString() );
             addField( builder, ENTITY_ID_FIELD_NAME, workspaceDocument.getEntityId().toString() );
-            addField( builder, PATH_FIELD_NAME, workspaceDocument.getPath() );
-            addField( builder, PARENT_PATH_FIELD_NAME, workspaceDocument.getParentPath() );
+            addField( builder, TIMESTAMP_ID_FIELD_NAME, Instant.now() );
 
             endBuilder( builder );
             return builder;

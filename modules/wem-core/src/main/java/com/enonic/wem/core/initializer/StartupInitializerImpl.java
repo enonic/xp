@@ -84,6 +84,8 @@ final class StartupInitializerImpl
         this.indexService.createIndex( Index.STORE );
         this.indexService.deleteIndex( Index.WORKSPACE );
         this.indexService.createIndex( Index.WORKSPACE );
+        this.indexService.deleteIndex( Index.VERSION );
+        this.indexService.createIndex( Index.VERSION );
     }
 
     private void doInitialize( final InitializerTask task )

@@ -1,5 +1,6 @@
 package com.enonic.wem.core.elasticsearch;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -53,6 +54,8 @@ public class ElasticsearchWorkspaceStore
 {
     private final static Index WORKSPACE_INDEX = Index.WORKSPACE;
 
+    private final static Index VERSION_INDEX = Index.VERSION;
+
     private static final boolean DEFAULT_REFRESH = true;
 
     private static final int DEFAULT_UNKNOWN_SIZE = 1000;
@@ -65,19 +68,29 @@ public class ElasticsearchWorkspaceStore
         final WorkspaceDocumentId workspaceDocumentId =
             new WorkspaceDocumentId( workspaceDocument.getEntityId(), workspaceDocument.getWorkspace() );
 
-     //   if ( unchanged( workspaceDocument, workspaceDocumentId ) )
-     //   {
-     //       return;
-     //   }
+        //   if ( unchanged( workspaceDocument, workspaceDocumentId ) )
+        //   {
+        //       return;
+        //   }
 
-        final IndexRequest indexRequest = Requests.indexRequest().
+        final IndexRequest publish = Requests.indexRequest().
             index( WORKSPACE_INDEX.getName() ).
             type( IndexType.NODE.getName() ).
             source( WorkspaceXContentBuilderFactory.create( workspaceDocument ) ).
             id( workspaceDocumentId.toString() ).
             refresh( DEFAULT_REFRESH );
 
-        elasticsearchDao.store( indexRequest );
+        final VersionDocumentId versionDocumentId =
+            new VersionDocumentId( workspaceDocument.getEntityId(), workspaceDocument.getBlobKey() );
+
+        final IndexRequest versioning = Requests.indexRequest().
+            index( VERSION_INDEX.getName() ).
+            type( IndexType.NODE.getName() ).
+            source( VersionXContentBuilderFactory.create( workspaceDocument ) ).
+            id( versionDocumentId.toString() ).
+            refresh( DEFAULT_REFRESH );
+
+        elasticsearchDao.storeAll( Arrays.asList( publish, versioning ) );
     }
 
     private boolean unchanged( final WorkspaceDocument workspaceDocument, final WorkspaceDocumentId workspaceDocumentId )
