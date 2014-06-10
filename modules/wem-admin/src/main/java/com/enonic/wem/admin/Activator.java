@@ -36,6 +36,7 @@ public final class Activator
     @Override
     protected void configure()
     {
+        configPid( "com.enonic.wem.admin" );
         install( new AdminModule() );
 
         // Import services
@@ -68,14 +69,13 @@ public final class Activator
     protected void doStart()
         throws Exception
     {
-        getContext().addBundleListener( this.resourceLocator );
-        this.resourceLocator.init( getContext() );
+        this.resourceLocator.start();
     }
 
     @Override
     protected void doStop()
         throws Exception
     {
-        getContext().removeBundleListener( this.resourceLocator );
+        this.resourceLocator.stop();
     }
 }

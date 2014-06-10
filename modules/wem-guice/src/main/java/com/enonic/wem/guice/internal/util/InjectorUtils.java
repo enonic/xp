@@ -1,4 +1,4 @@
-package com.enonic.wem.guice.util;
+package com.enonic.wem.guice.internal.util;
 
 import java.util.List;
 import java.util.stream.Collectors;

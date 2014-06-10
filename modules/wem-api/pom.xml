@@ -113,7 +113,6 @@
             <Embed-Dependency>
               jdom2,
               jackson-*,
-
               guava,
               jparsec,
               commons-*,

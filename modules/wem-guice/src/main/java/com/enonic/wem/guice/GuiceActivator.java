@@ -1,28 +1,26 @@
 package com.enonic.wem.guice;
 
-import java.util.ArrayList;
-
-import org.ops4j.peaberry.Peaberry;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Module;
-
-import com.enonic.wem.guice.binder.OsgiModule;
-import com.enonic.wem.guice.binder.ServiceManager;
-import com.enonic.wem.guice.listener.ListenerManager;
+import com.enonic.wem.guice.internal.GuiceManager;
 
 public abstract class GuiceActivator
     extends OsgiModule
     implements BundleActivator
 {
+    protected final Logger logger;
+
+    private GuiceManager manager;
+
     private BundleContext context;
 
-    private Injector injector;
-
-    private ServiceManager serviceManager;
+    public GuiceActivator()
+    {
+        this.logger = LoggerFactory.getLogger( getClass() );
+    }
 
     protected final BundleContext getContext()
     {
@@ -34,8 +32,7 @@ public abstract class GuiceActivator
         throws Exception
     {
         this.context = context;
-        startModule();
-        doStart();
+        activate();
     }
 
     @Override
@@ -44,48 +41,39 @@ public abstract class GuiceActivator
     {
         try
         {
-            stopModule();
-            doStop();
+            deactivate();
         }
         finally
         {
-            this.injector = null;
+            this.manager = null;
         }
     }
 
-    private void startModule()
+    private void activate()
+        throws Exception
     {
-        this.injector = Guice.createInjector( createModules( this.context ) );
-        this.injector.injectMembers( this );
+        this.manager = new GuiceManager().
+            context( this.context ).
+            module( this );
 
-        this.serviceManager = new ServiceManager( this.injector );
-        this.serviceManager.exportAll();
-
-        new ListenerManager( this.injector ).bindAll();
+        this.manager.activate();
+        doStart();
     }
 
-    private Iterable<Module> createModules( final BundleContext context )
+    private void deactivate()
+        throws Exception
     {
-        final ArrayList<Module> modules = new ArrayList<>();
-        modules.add( Peaberry.osgiModule( context ) );
-        modules.add( this );
-        return modules;
-    }
-
-    private void stopModule()
-    {
-        this.serviceManager.unexportAll();
+        this.manager.deactivate();
+        doStop();
     }
 
     protected void doStart()
         throws Exception
     {
-        // Do nothing. Override to implement custom logic.
     }
 
     protected void doStop()
         throws Exception
     {
-        // Do nothing. Override to implement custom logic.
     }
 }

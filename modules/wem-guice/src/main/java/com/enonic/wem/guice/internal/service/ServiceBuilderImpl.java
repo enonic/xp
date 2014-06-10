@@ -1,4 +1,4 @@
-package com.enonic.wem.guice.binder;
+package com.enonic.wem.guice.internal.service;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +15,8 @@ import org.osgi.framework.Constants;
 import com.google.inject.Binder;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
+
+import com.enonic.wem.guice.ServiceBuilder;
 
 final class ServiceBuilderImpl<T>
     implements ServiceBuilder<T>

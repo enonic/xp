@@ -4,6 +4,8 @@ import javax.inject.Singleton;
 
 import com.google.inject.AbstractModule;
 
+import com.enonic.wem.admin.config.AdminConfig;
+import com.enonic.wem.admin.config.AdminConfigImpl;
 import com.enonic.wem.admin.rest.exception.ConflictExceptionMapper;
 import com.enonic.wem.admin.rest.exception.DefaultExceptionMapper;
 import com.enonic.wem.admin.rest.exception.IllegalArgumentExceptionMapper;
@@ -42,6 +44,8 @@ public final class AdminModule
     @Override
     protected void configure()
     {
+        bind( AdminConfig.class ).to( AdminConfigImpl.class );
+
         bind( JsonObjectProvider.class ).in( Singleton.class );
         bind( JsonSerializableProvider.class ).in( Singleton.class );
 

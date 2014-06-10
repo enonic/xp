@@ -1,8 +1,11 @@
 package com.enonic.wem.admin.app;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.osgi.framework.Bundle;
@@ -14,6 +17,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.admin.config.AdminConfig;
+
 @Singleton
 public final class ResourceLocator
     implements BundleListener
@@ -22,17 +27,30 @@ public final class ResourceLocator
 
     private final List<Bundle> bundles;
 
-    public ResourceLocator()
+    private final BundleContext context;
+
+    private final File resourcesDevDir;
+
+    @Inject
+    public ResourceLocator( final BundleContext context, final AdminConfig config )
     {
         this.bundles = Lists.newCopyOnWriteArrayList();
+        this.context = context;
+        this.resourcesDevDir = config.getResourcesDevDir();
     }
 
-    public void init( final BundleContext context )
+    public void start()
     {
-        for ( final Bundle bundle : context.getBundles() )
+        this.context.addBundleListener( this );
+        for ( final Bundle bundle : this.context.getBundles() )
         {
             addBundle( bundle );
         }
+    }
+
+    public void stop()
+    {
+        this.context.removeBundleListener( this );
     }
 
     @Override
@@ -74,7 +92,17 @@ public final class ResourceLocator
     }
 
     public URL findResource( final String name )
+        throws IOException
     {
+        if ( this.resourcesDevDir != null )
+        {
+            final File file = new File( this.resourcesDevDir, name );
+            if ( file.isFile() )
+            {
+                return file.toURI().toURL();
+            }
+        }
+
         for ( final Bundle bundle : this.bundles )
         {
             final URL url = bundle.getResource( name );

@@ -70,7 +70,6 @@
             <_exportcontents>
               com.enonic.wem.core.*,
               com.samskivert.*;version=1.9.0,
-              com.fasterxml.jackson.*,
               org.elasticsearch.*;version=1.0.1,
               org.apache.lucene.*;version=4.6.1,
               org.apache.commons.*,

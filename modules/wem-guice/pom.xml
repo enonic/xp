@@ -40,6 +40,11 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.utils</artifactId>
+      <version>1.6.0</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -53,6 +58,7 @@
               org.ops4j.peaberry.osgi.Activator
             </Bundle-Activator>
             <_exportcontents>
+              !*.internal.*,
               com.enonic.wem.guice.*,
               javax.inject.*;version=1.0.0,
               org.aopalliance.*;version=1.0.0,
@@ -68,7 +74,8 @@
               guice-*,
               peaberry,
               javax.inject,
-              aopalliance
+              aopalliance,
+              org.apache.felix.utils
             </Embed-Dependency>
           </instructions>
         </configuration>

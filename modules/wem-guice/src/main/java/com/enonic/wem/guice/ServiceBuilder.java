@@ -1,4 +1,4 @@
-package com.enonic.wem.guice.binder;
+package com.enonic.wem.guice;
 
 public interface ServiceBuilder<T>
 {

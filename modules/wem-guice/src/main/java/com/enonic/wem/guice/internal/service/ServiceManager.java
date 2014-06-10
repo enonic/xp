@@ -1,4 +1,4 @@
-package com.enonic.wem.guice.binder;
+package com.enonic.wem.guice.internal.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import org.ops4j.peaberry.Import;
 import com.google.inject.Binding;
 import com.google.inject.Injector;
 
-import com.enonic.wem.guice.util.InjectorUtils;
+import com.enonic.wem.guice.internal.util.InjectorUtils;
 
 public final class ServiceManager
 {
