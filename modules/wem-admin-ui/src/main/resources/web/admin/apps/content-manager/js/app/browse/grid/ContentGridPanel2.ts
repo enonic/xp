@@ -23,6 +23,8 @@ module app.browse.grid {
         private gridData:DataView<ContentSummary>;
 
         private nameFormatter: (row: number, cell: number, value: any, columnDef: any, dataContext: Slick.SlickData) => string;
+
+        private toolbar:GridToolbar;
         
         private canvasElement:api.dom.DivEl;
 
@@ -117,7 +119,11 @@ module app.browse.grid {
                 event.stopImmediatePropagation();
             });
 
+            this.toolbar = new GridToolbar(this.grid);
+
             this.cache = new ContentGridCache2(this.grid);
+
+            this.appendChild(this.toolbar);
 
             this.appendChild(this.grid);
 

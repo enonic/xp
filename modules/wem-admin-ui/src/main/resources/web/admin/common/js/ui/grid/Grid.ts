@@ -140,6 +140,22 @@ module api.ui.grid {
             this.slickGrid.setSelectedRows(rows);
         }
 
+        selectAll() {
+            var rows = [];
+            for (var i = 0; i < this.slickGrid.getDataLength(); i++) {
+                rows.push(i);
+            }
+            this.setSelectedRows(rows);
+        }
+
+        clearSelection() {
+            this.setSelectedRows([]);
+        }
+
+        isAllSelected(): boolean {
+            return this.slickGrid.getDataLength() === this.getSelectedRows().length;
+        }
+
         resetActiveCell() {
             if (this.slickGrid.getActiveCell()) {
                 this.slickGrid.resetActiveCell();
