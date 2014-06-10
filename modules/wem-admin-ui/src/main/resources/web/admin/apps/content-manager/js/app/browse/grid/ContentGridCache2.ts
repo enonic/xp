@@ -1,5 +1,7 @@
 module app.browse.grid {
 
+    import Item = api.item.Item;
+    import ContentPath = api.content.ContentPath;
     import ContentSummary = api.content.ContentSummary;
     import DataView = api.ui.grid.DataView;
     import Grid = api.ui.grid.Grid;
@@ -12,18 +14,16 @@ module app.browse.grid {
 
         private selected:string[];
 
-        constructor(contentGrid) {
+        constructor(contentGrid: Grid<ContentSummary>) {
             this.expanded = [];
             this.grid = contentGrid;
         }
 
         /*
-         Create a tree of expanded elements with `path` as root path.
-         If `path` is not defined, the `path` becomes original root path '/'
+         * Create a tree of expanded elements with `path` as root path.
          */
-        getExpandedTree(path?:api.content.ContentPath):ContentGridCacheItem2[] {
+        getExpandedTree(path: ContentPath): ContentGridCacheItem2[] {
             var tree:ContentGridCacheItem2[] = [];
-            path = path || new api.content.ContentPath([]);
 
             this.expanded.forEach((elem:ContentGridCacheItem2) => {
                 if (elem.getPath().isChildOf(path) || elem.getPath().toString() === path.toString()) {
@@ -43,10 +43,10 @@ module app.browse.grid {
 
         expand(item?:ContentSummary):ContentGridCacheItem2[] {
             this.addExpanded(item);
-            return this.getExpandedTree(item ? item.getPath() : new api.content.ContentPath([]));
+            return this.getExpandedTree(item ? item.getPath() : ContentPath.ROOT);
         }
 
-        collapse(item:ContentSummary) {
+        collapse(item: Item) {
             for (var i = 0; i < this.expanded.length; i++) {
                 if (this.expanded[i].getId() === item.getId()) {
                     this.expanded[i].setExpanded(false);
@@ -66,7 +66,7 @@ module app.browse.grid {
                 itemPath = item.getPath();
             } else {
                 itemId = "";
-                itemPath = new api.content.ContentPath([]);
+                itemPath = new ContentPath([]);
             }
             this.expanded.push(new ContentGridCacheItem2(itemId, itemPath));
 
@@ -89,7 +89,7 @@ module app.browse.grid {
         /*
          Removes specific element
          */
-        removeExpanded(item:ContentSummary) {
+        removeExpanded(item: Item) {
             for (var i = 0; i < this.expanded.length; i++) {
                 if (item.getId() === this.expanded[i].getId()) {
                     this.expanded = this.expanded.slice(0, i).concat(this.expanded.slice(i+1));
@@ -98,10 +98,7 @@ module app.browse.grid {
             }
         }
 
-        /*
-         Checks, if element was expanded
-         */
-        isExpanded(item:ContentSummary): boolean {
+        isExpanded(item: Item): boolean {
             for (var i = 0; i < this.expanded.length; i++) {
                 if (this.expanded[i].getId() === item.getId()) {
                     return this.expanded[i].isExpanded();
