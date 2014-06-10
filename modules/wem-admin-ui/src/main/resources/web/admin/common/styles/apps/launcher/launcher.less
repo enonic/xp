@@ -65,7 +65,7 @@ html, body {
       color: white;
       font-size: 24px;
       span:not(.version-info) {
-        color:red;
+        color:@admin-red;
         margin-right: 8px;
       }
     }
@@ -249,7 +249,7 @@ html, body {
         }
       }
       &.app-tile-over {
-        border-bottom:2px solid red;
+        border-bottom:2px solid @admin-red;
         &.fullsize {
           > .img-container {
 
@@ -345,7 +345,7 @@ html, body {
     position: absolute;
     bottom: 10%;
     left: calc(~"50% - 140px");
-    background-color: red;
+    background-color: @admin-red;
     @media only screen and (max-width : @mobile-threshold) {
       width: 100%;
       bottom:0;
