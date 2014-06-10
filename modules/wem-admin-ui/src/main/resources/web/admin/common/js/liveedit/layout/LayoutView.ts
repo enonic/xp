@@ -9,9 +9,10 @@ module api.liveedit.layout {
 
         private placeholder: LayoutPlaceholder;
 
-        private regionViews: RegionView[] = [];
+        private regionViews: RegionView[];
 
         constructor(parentRegionView: RegionView, layoutComponent: LayoutComponent, element?: HTMLElement, dummy?: boolean) {
+            this.regionViews = [];
             super(LayoutItemType.get(), parentRegionView, layoutComponent, element, dummy);
 
             this.placeholder = new LayoutPlaceholder(this);
