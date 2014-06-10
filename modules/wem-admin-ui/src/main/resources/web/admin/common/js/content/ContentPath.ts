@@ -77,18 +77,11 @@ module api.content {
         }
 
         isDescendantOf(path: ContentPath): boolean {
-            var parentItems = path.getElements();
+            return (this.refString.indexOf(path.toString()) === 0) && (this.getLevel() > path.getLevel());
+        }
 
-            if (parentItems.length < this.elements.length) {
-                for (var i = 0; i < parentItems.length; i++) {
-                    if (parentItems[i] !== this.elements[i]) {
-                        return false;
-                    }
-                }
-                return true;
-            } else {
-                return false;
-            }
+        isChildOf(path: ContentPath): boolean {
+            return (this.refString.indexOf(path.toString()) === 0) && (this.getLevel() === path.getLevel() + 1);
         }
 
         toString() {
