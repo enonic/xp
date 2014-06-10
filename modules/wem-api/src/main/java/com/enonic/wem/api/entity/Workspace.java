@@ -2,6 +2,11 @@ package com.enonic.wem.api.entity;
 
 public class Workspace
 {
+
+    public static final String SEPARATOR = "-";
+
+    public static final String PREFIX = "workspace";
+
     private final String name;
 
     public Workspace( final String name )
@@ -14,6 +19,10 @@ public class Workspace
         return name;
     }
 
+    public String getSearchIndexName()
+    {
+        return PREFIX + SEPARATOR + name;
+    }
 
     @Override
     public boolean equals( final Object o )

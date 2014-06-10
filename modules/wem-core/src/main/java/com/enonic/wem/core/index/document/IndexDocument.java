@@ -14,9 +14,9 @@ public class IndexDocument
 {
     private final EntityId id;
 
-    private final IndexType indexType;
+    private final String indexTypeName;
 
-    private final Index index;
+    private final String indexName;
 
     private final ImmutableSet<AbstractIndexDocumentItem> indexDocumentItems;
 
@@ -29,8 +29,8 @@ public class IndexDocument
     private IndexDocument( final Builder builder )
     {
         this.id = builder.id;
-        this.indexType = builder.indexType;
-        this.index = builder.index;
+        this.indexTypeName = builder.indexTypeName;
+        this.indexName = builder.indexName;
         this.indexDocumentItems = ImmutableSet.copyOf( builder.indexDocumentEntries );
         this.analyzer = builder.analyzer;
         this.collection = builder.collection;
@@ -47,14 +47,14 @@ public class IndexDocument
         return id.toString();
     }
 
-    public IndexType getIndexType()
+    public String getIndexTypeName()
     {
-        return indexType;
+        return indexTypeName;
     }
 
-    public Index getIndex()
+    public String getIndexName()
     {
-        return index;
+        return indexName;
     }
 
     public Set<AbstractIndexDocumentItem> getIndexDocumentItems()
@@ -81,9 +81,9 @@ public class IndexDocument
     {
         private EntityId id;
 
-        private IndexType indexType;
+        private String indexTypeName;
 
-        private Index index;
+        private String indexName;
 
         private String analyzer;
 
@@ -112,15 +112,28 @@ public class IndexDocument
 
         public Builder indexType( final IndexType indexType )
         {
-            this.indexType = indexType;
+            this.indexTypeName = indexType.getName();
+            return this;
+        }
+
+        public Builder indexType( final String indexTypeName )
+        {
+            this.indexTypeName = indexTypeName;
             return this;
         }
 
         public Builder index( final Index index )
         {
-            this.index = index;
+            this.indexName = index.getName();
             return this;
         }
+
+        public Builder index( final String indexName )
+        {
+            this.indexName = indexName;
+            return this;
+        }
+
 
         public Builder analyzer( final String analyzer )
         {

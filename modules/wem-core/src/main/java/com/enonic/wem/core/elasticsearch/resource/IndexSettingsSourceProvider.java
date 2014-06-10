@@ -1,4 +1,4 @@
-package com.enonic.wem.core.elasticsearch;
+package com.enonic.wem.core.elasticsearch.resource;
 
 import java.io.IOException;
 import java.net.URL;
@@ -9,6 +9,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
+import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexException;
 
 
@@ -17,10 +18,10 @@ public class IndexSettingsSourceProvider
     private final static String PREFIX = "/META-INF/index/settings/";
 
     private final static String[] SETTING_FILES = { //
-        PREFIX + "nodb-analyzer-settings.json" //
+        PREFIX + "search-analyzer-settings.json" //
     };
 
-    List<String> getSources()
+    List<String> getSources( final Index index )
     {
         final List<String> settings = Lists.newArrayList();
         for ( final String settingFile : SETTING_FILES )

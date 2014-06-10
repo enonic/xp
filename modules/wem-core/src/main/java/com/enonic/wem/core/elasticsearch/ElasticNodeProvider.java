@@ -11,6 +11,7 @@ import org.elasticsearch.node.NodeBuilder;
 
 import com.google.inject.Provider;
 
+import com.enonic.wem.core.elasticsearch.resource.NodeSettingsBuilder;
 import com.enonic.wem.core.lifecycle.LifecycleBean;
 import com.enonic.wem.core.lifecycle.RunLevel;
 

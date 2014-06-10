@@ -78,13 +78,16 @@ final class StartupInitializerImpl
     private void cleanupOldData()
     {
         LOG.info( "Recreating indexes..." );
-        this.indexService.deleteIndex( Index.NODB );
-        this.indexService.createIndex( Index.NODB );
-        this.indexService.deleteIndex( Index.STORE );
-        this.indexService.createIndex( Index.STORE );
-        this.indexService.deleteIndex( Index.WORKSPACE );
+
+        final Set<String> indicesNames = indexService.getAllIndicesNames();
+
+        for ( final String indexName : indicesNames )
+        {
+            LOG.info( "Deleting index: " + indexName );
+            this.indexService.deleteIndex( indexName );
+        }
+
         this.indexService.createIndex( Index.WORKSPACE );
-        this.indexService.deleteIndex( Index.VERSION );
         this.indexService.createIndex( Index.VERSION );
     }
 
@@ -100,6 +103,6 @@ final class StartupInitializerImpl
 
     private boolean isInitialized()
     {
-        return this.indexService.countDocuments( Index.NODB ) > 0;
+        return this.indexService.countDocuments( Index.WORKSPACE ) > 0;
     }
 }

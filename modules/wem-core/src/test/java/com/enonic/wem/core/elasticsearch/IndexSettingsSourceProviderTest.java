@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.enonic.wem.core.elasticsearch.resource.IndexSettingsSourceProvider;
+
 import static junit.framework.Assert.assertEquals;
 
 

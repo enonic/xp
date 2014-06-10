@@ -1,4 +1,4 @@
-package com.enonic.wem.core.elasticsearch;
+package com.enonic.wem.core.elasticsearch.resource;
 
 import com.enonic.wem.core.index.Index;
 

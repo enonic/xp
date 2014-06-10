@@ -8,6 +8,8 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.core.config.ConfigProperties;
 import com.enonic.wem.core.config.ConfigPropertiesImpl;
+import com.enonic.wem.core.elasticsearch.resource.IndexSettingsBuilder;
+import com.enonic.wem.core.elasticsearch.resource.IndexSettingsSourceProvider;
 
 import static org.junit.Assert.*;
 

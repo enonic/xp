@@ -26,7 +26,7 @@ final class DeleteNodeByIdCommand
 
         final Node deletedNode = nodeDao.deleteById( entityId, workspace );
 
-        indexService.delete( entityId );
+        indexService.delete( entityId, workspace );
 
         return deletedNode;
     }

@@ -61,7 +61,7 @@ final class UpdateNodeCommand
 
         final Node updatedNode = nodeDao.update( updateNodeArgs, context.getWorkspace() );
 
-        indexService.index( updatedNode );
+        indexService.index( updatedNode, context.getWorkspace() );
 
         return updatedNode;
     }

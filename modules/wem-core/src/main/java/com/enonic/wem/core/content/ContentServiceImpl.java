@@ -180,6 +180,7 @@ public class ContentServiceImpl
         return new FindContentCommand().
             contentQuery( contentQuery ).
             queryService( this.queryService ).
+            context( context ).
             execute();
     }
 

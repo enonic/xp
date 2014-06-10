@@ -2,8 +2,7 @@ package com.enonic.wem.core.elasticsearch;
 
 import javax.inject.Inject;
 
-import org.elasticsearch.action.search.SearchResponse;
-
+import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.entity.query.EntityQuery;
 import com.enonic.wem.api.entity.query.NodeQuery;
 import com.enonic.wem.core.elasticsearch.result.SearchResult;
@@ -22,15 +21,15 @@ public class ElasticsearchQueryService
     private EntityQueryTranslator translator = new EntityQueryTranslator();
 
     @Override
-    public QueryResult find( final NodeQuery query )
+    public QueryResult find( final NodeQuery query, final Workspace workspace )
     {
-        return doFind( translator.translate( query ) );
+        return doFind( translator.translate( query, workspace ) );
     }
 
     @Override
-    public QueryResult find( final EntityQuery query )
+    public QueryResult find( final EntityQuery query, final Workspace workspace )
     {
-        return doFind( translator.translate( query ) );
+        return doFind( translator.translate( query, workspace ) );
     }
 
     private QueryResult doFind( final ElasticsearchQuery query )

@@ -1,4 +1,4 @@
-package com.enonic.wem.core.elasticsearch;
+package com.enonic.wem.core.elasticsearch.resource;
 
 import java.util.List;
 import java.util.Map;
@@ -11,13 +11,15 @@ import org.elasticsearch.common.settings.Settings;
 
 import com.google.common.base.Predicate;
 
+import com.enonic.wem.core.index.Index;
+
 
 public class IndexSettingsBuilder
     extends AbstractSettingsBuilder
 {
     private IndexSettingsSourceProvider indexSettingsSourceProvider;
 
-    Settings buildIndexSettings()
+    Settings buildIndexSettings( final Index index )
     {
         final ImmutableSettings.Builder settings = ImmutableSettings.settingsBuilder();
 

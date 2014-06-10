@@ -33,7 +33,7 @@ public class XContentBuilderFactoryTest
         throws Exception
     {
         IndexDocument indexDocument = IndexDocument.newIndexDocument().
-            index( Index.NODB ).
+            index( Index.SEARCH ).
             indexType( IndexType.NODE ).
             analyzer( "myAnalyzer" ).
             build();
@@ -53,7 +53,7 @@ public class XContentBuilderFactoryTest
     public void multiple_orderby_entries_gives_one()
     {
         IndexDocument indexDocument = IndexDocument.newIndexDocument().
-            index( Index.NODB ).
+            index( Index.SEARCH ).
             indexType( IndexType.NODE ).
             addEntry( new IndexDocumentStringItem( IndexDocumentItemPath.from( "myField" ), "myValue1" ) ).
             addEntry( new IndexDocumentStringItem( IndexDocumentItemPath.from( "myField" ), "myValue2" ) ).
@@ -78,7 +78,7 @@ public class XContentBuilderFactoryTest
     {
 
         IndexDocument indexDocument = IndexDocument.newIndexDocument().
-            index( Index.NODB ).
+            index( Index.SEARCH ).
             indexType( IndexType.NODE ).
             addEntry( new IndexDocumentStringItem( IndexDocumentItemPath.from( "myField" ), "myValue1" ) ).
             addEntry( new IndexDocumentStringItem( IndexDocumentItemPath.from( "myField" ), "myValue2" ) ).

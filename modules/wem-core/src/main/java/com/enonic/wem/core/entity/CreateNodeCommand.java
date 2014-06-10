@@ -40,7 +40,7 @@ final class CreateNodeCommand
 
         final Node persistedNode = nodeDao.create( createNodeArguments, context.getWorkspace() );
 
-        this.indexService.index( persistedNode );
+        this.indexService.index( persistedNode, context.getWorkspace() );
 
         return persistedNode;
     }

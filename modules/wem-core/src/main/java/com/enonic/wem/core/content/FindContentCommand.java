@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.query.ContentQuery;
 import com.enonic.wem.api.content.query.ContentQueryResult;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.query.NodeQuery;
 import com.enonic.wem.core.index.query.QueryResult;
 import com.enonic.wem.core.index.query.QueryResultEntry;
@@ -18,11 +19,13 @@ final class FindContentCommand
 
     private ContentQuery contentQuery;
 
+    private Context context;
+
     ContentQueryResult execute()
     {
         final NodeQuery entityQuery = translator.translate( this.contentQuery );
 
-        final QueryResult queryResult = queryService.find( entityQuery );
+        final QueryResult queryResult = queryService.find( entityQuery, context.getWorkspace() );
 
         return translateToContentIndexQueryResult( queryResult );
     }
@@ -53,4 +56,13 @@ final class FindContentCommand
         this.contentQuery = contentQuery;
         return this;
     }
+
+
+    FindContentCommand context( final Context context )
+    {
+        this.context = context;
+        return this;
+    }
+
+
 }
