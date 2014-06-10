@@ -59,7 +59,7 @@ module api.liveedit.layout {
 
         duplicate(duplicate: LayoutComponent): LayoutView {
 
-            var duplicatedView = new LayoutView(this.getParentRegionView(), duplicate);
+            var duplicatedView = new LayoutView(this.getParentItemView(), duplicate);
             this.getEl().insertAfterThisEl(duplicatedView.getEl());
             return duplicatedView;
         }

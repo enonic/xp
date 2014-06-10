@@ -12,7 +12,7 @@ module api.liveedit.text {
 
         duplicate(duplicate: TextComponent): TextView {
 
-            var duplicatedView = new TextView(this.getParentRegionView(), duplicate);
+            var duplicatedView = new TextView(this.getParentItemView(), duplicate);
             this.getEl().insertAfterThisEl(duplicatedView.getEl());
             return duplicatedView;
         }

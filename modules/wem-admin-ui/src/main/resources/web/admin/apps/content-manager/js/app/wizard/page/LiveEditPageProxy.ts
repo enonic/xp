@@ -214,7 +214,7 @@ module app.wizard.page {
 
                     var newElement = api.dom.Element.fromString(htmlAsString);
                     var newPageComponentView: PageComponentView<PageComponent> = pageComponentView.getType().
-                        createView(pageComponentView.getParentRegionView(), pageComponentView.getPageComponent(),
+                        createView(pageComponentView.getParentItemView(), pageComponentView.getPageComponent(),
                         newElement.getHTMLElement());
 
                     // pass on the same ItemViewId and PageComponent to the new PageComponentView

@@ -30,10 +30,6 @@ module api.liveedit {
             return <PageComponentItemType>super.getType();
         }
 
-        getParentRegionView(): RegionView {
-            return this.parentRegionView;
-        }
-
         setPageComponent(pageComponent: PAGE_COMPONENT) {
             this.pageComponent = pageComponent;
             if (pageComponent) {
