@@ -1,5 +1,43 @@
 .grid-panel2 {
   position: static;
+  height: 100%;
+  padding-top: 30px;
+
+  .toolbar {
+    position: absolute;
+    width: 100%;
+    height: 30px;
+    margin-top: -30px;
+    background-color: @admin-almost-white-bg;
+
+    .button {
+      padding: 3px 7px;
+      border: none;
+
+      &:first-child {
+        margin-left: 10px;
+      }
+
+      &:not(:first-child) {
+        margin-left: 4px;
+        &:before {
+          position: relative;
+          left: -11px;
+          content: "|";
+          color: @admin-medium-gray-font;
+        }
+      }
+
+      &:focus {
+        box-shadow: none;
+        border: none;
+      }
+
+      &:active {
+        background-color: @admin-light-gray-bg;
+      }
+    }
+  }
 
   &.quick {
     .slick-row {
@@ -14,6 +52,8 @@
   .grid {
     width: 100% !important;
     height: 100% !important;
+    overflow-y: auto !important;
+
     .grid-canvas {
       width: 100% !important;
     }
@@ -93,11 +133,11 @@
       }
 
       .toggle.expand {
-        .icon-arrow-right2;
+        .icon-arrow-right2();
       }
 
       .toggle.collapse {
-        .icon-arrow-down;
+        .icon-arrow-down();
 
       }
 
