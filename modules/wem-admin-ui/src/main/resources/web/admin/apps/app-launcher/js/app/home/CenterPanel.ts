@@ -8,10 +8,28 @@ module app.home {
         constructor() {
             super('center-panel');
 
-            this.loginPanel = new api.dom.DivEl('left-column');
-            this.appSelectorPanel = new api.dom.DivEl('right-column');
-            //this.appendChild(this.leftColumn);
-            //this.appendChild(this.rightColumn);
+            this.loginPanel = new api.dom.DivEl('login-panel');
+            this.appSelectorPanel = new api.dom.DivEl('app-selector-panel');
+            this.appendChild(this.loginPanel);
+            this.appendChild(this.appSelectorPanel);
+        }
+
+        addToLoginPanel(el: api.dom.Element) {
+            this.loginPanel.appendChild(el);
+        }
+
+        addToAppSelectorPanel(el: api.dom.Element) {
+            this.appSelectorPanel.appendChild(el);
+        }
+
+        showLoginPanel() {
+            this.appSelectorPanel.hide();
+            this.loginPanel.show();
+        }
+
+        showAppSelectorPanel() {
+            this.loginPanel.hide();
+            this.appSelectorPanel.show();
         }
     }
 

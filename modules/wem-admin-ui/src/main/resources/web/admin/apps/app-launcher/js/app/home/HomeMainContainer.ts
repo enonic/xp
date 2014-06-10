@@ -14,6 +14,8 @@ module app.home {
 
         private backgroundImgUrl: string;
 
+        private logoutButton:api.ui.Button;
+
         constructor(builder: HomeMainContainerBuilder) {
             super('home-main-container');
 
@@ -21,25 +23,28 @@ module app.home {
             this.loginForm = builder.loginForm;
             this.linksContainer = builder.linksContainer;
             this.backgroundImgUrl = builder.backgroundImgUrl;
+            this.logoutButton = new api.ui.Button(_i18n('Sign out'));
+            this.logoutButton.setClass("button logout-button");
+
+            this.logoutButton.onClicked((event) => {
+                api.util.CookieHelper.removeCookie('dummy.userIsLoggedIn');
+                this.centerPanel.showLoginPanel();
+            });
 
             this.setBackgroundImgUrl(this.backgroundImgUrl);
 
             this.brandingPanel = new Branding();
 
             this.centerPanel = new CenterPanel();
-            this.centerPanel.appendChild(this.brandingPanel);
-            this.centerPanel.appendChild(this.appSelector);
-            this.centerPanel.appendChild(this.loginForm);
-            this.centerPanel.appendChild(this.linksContainer);
-            this.appendChild(this.centerPanel);
+            this.centerPanel.prependChild(this.brandingPanel);
 
-            this.onScrolled((event) => {
-                if (event.deltaY > 0) {
-                    this.appSelector.highlightNextAppTile();
-                } else if (event.deltaY < 0) {
-                    this.appSelector.highlightPreviousAppTile();
-                }
-            })
+            this.centerPanel.addToAppSelectorPanel(this.appSelector);
+            this.centerPanel.addToAppSelectorPanel(this.logoutButton);
+
+            this.centerPanel.addToLoginPanel(this.loginForm);
+            this.centerPanel.addToLoginPanel(this.linksContainer);
+
+            this.appendChild(this.centerPanel);
 
             api.app.ShowAppLauncherEvent.on((event) => {
                 this.setBackgroundImgUrl("");
@@ -48,6 +53,14 @@ module app.home {
 
         giveFocus(): boolean {
             return this.appSelector.giveFocus();
+        }
+
+        showLogin() {
+            this.centerPanel.showLoginPanel();
+        }
+
+        showAppSelector() {
+            this.centerPanel.showAppSelectorPanel();
         }
 
         show() {

@@ -45,7 +45,6 @@ module app.launcher {
 
             api.app.ShowAppLauncherEvent.on((event) => {
                 Applications.getAllApps().forEach((app: api.app.Application) => {
-                    console.log(app, event.getApplication());
                     if (app != event.getApplication()) {
                         app.hide();
                     }

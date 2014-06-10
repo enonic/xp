@@ -19,6 +19,8 @@ module app.launcher {
 
         private keyBindings: api.ui.KeyBinding[] = [];
 
+        private tilesPlaceholder:api.dom.DivEl;
+
         private appTileSize:number = 110;
 
 
@@ -30,32 +32,30 @@ module app.launcher {
 
             this.homeAppSelector = new api.dom.DivEl('app-selector');
 
-            var tilesPlaceholder = new api.dom.DivEl('app-tiles-placeholder');
+            this.tilesPlaceholder = new api.dom.DivEl('app-tiles-placeholder');
             this.emptyMessagePlaceholder = new api.dom.DivEl();
             this.emptyMessagePlaceholder.getEl().setInnerHtml('No applications found');
-            this.emptyMessagePlaceholder.hide();
-            tilesPlaceholder.appendChild(this.emptyMessagePlaceholder);
 
-            this.addAppTiles(applications, tilesPlaceholder);
-            this.homeAppSelector.appendChild(tilesPlaceholder);
+            this.addAppTiles(applications, this.tilesPlaceholder);
+            this.homeAppSelector.appendChild(this.tilesPlaceholder);
 
             this.appendChild(this.homeAppSelector);
 
-            this.keyBindings = this.keyBindings.concat(api.ui.KeyBinding.bindMultiple((e: ExtendedKeyboardEvent, combo: string)=> {
+            this.keyBindings = this.keyBindings.concat(api.ui.KeyBinding.createMultiple((e: ExtendedKeyboardEvent, combo: string)=> {
                 if (this.isVisible()) {
                     this.highlightNextAppTile();
                 }
                 return false;
             }, 'tab', 'right'));
 
-            this.keyBindings = this.keyBindings.concat(api.ui.KeyBinding.bindMultiple((e: ExtendedKeyboardEvent, combo: string)=> {
+            this.keyBindings = this.keyBindings.concat(api.ui.KeyBinding.createMultiple((e: ExtendedKeyboardEvent, combo: string)=> {
                 if (this.isVisible()) {
                     this.highlightPreviousAppTile();
                 }
                 return false;
             }, 'shift+tab', 'left'));
 
-            this.keyBindings = this.keyBindings.concat(api.ui.KeyBinding.bindMultiple((e: ExtendedKeyboardEvent, combo: string)=> {
+            this.keyBindings = this.keyBindings.concat(api.ui.KeyBinding.createMultiple((e: ExtendedKeyboardEvent, combo: string)=> {
                 if (this.selectedAppIndex >= 0) {
                     var application: api.app.Application = this.apps[this.selectedAppIndex];
                     this.notifyAppSelected(application);
@@ -134,6 +134,13 @@ module app.launcher {
                     this.notifyAppSelected(application);
                 });
 
+                appTile.onMouseEnter((event: MouseEvent) => {
+                    this.highlightAppTile(application, idx, appTile);
+                });
+                appTile.onMouseLeave((event: MouseEvent) => {
+                    this.unhighlightAppTile(application, idx, appTile);
+                });
+
                 tilesPlaceholder.appendChild(appTile);
                 this.appTiles[application.getName()] = appTile;
             });
@@ -153,7 +160,7 @@ module app.launcher {
             this.notifyAppHighlighted(application);
 
             var offset = (this.appTileSize/2) + (this.appTileSize * index);
-            this.getEl().setLeft("calc(50% - " + offset + "px");
+            //this.getEl().setLeft("calc(50% - " + offset + "px");
         }
 
         private unhighlightAppTile(application: api.app.Application, index: number, appTile?: AppTile) {
@@ -181,9 +188,9 @@ module app.launcher {
             });
 
             if (anyMatch) {
-                this.emptyMessagePlaceholder.hide();
+                this.tilesPlaceholder.removeChild(this.emptyMessagePlaceholder);
             } else {
-                this.emptyMessagePlaceholder.show();
+                this.tilesPlaceholder.appendChild(this.emptyMessagePlaceholder);
             }
         }
 

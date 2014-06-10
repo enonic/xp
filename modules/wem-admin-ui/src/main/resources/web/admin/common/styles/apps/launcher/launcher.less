@@ -1,3 +1,5 @@
+@mobile-threshold:400px;
+
 html, body {
   height: 100%
 }
@@ -51,8 +53,13 @@ html, body {
     top:10%;
     left:calc(~"50% - 92.5px");
     position: absolute;
-    height: 24px;
+    //height: 24px;
     text-align: center;
+    @media only screen and (max-width : @mobile-threshold) {
+      position: relative;
+      padding-top:20px;
+      left:inherit;
+    }
 
     h1 {
       color: white;
@@ -90,6 +97,12 @@ html, body {
     width: 100%;
     text-align: center;
     bottom: 2%;
+    @media only screen and (max-width : @mobile-threshold) {
+      bottom: 0;
+      background-color: black;
+      padding:5px;
+    }
+
   }
 
   /** Common */
@@ -98,7 +111,12 @@ html, body {
   .app-selector-container,
   .app-info {
     position: absolute;
-    top: 40%;
+    top: 30%;
+    @media only screen and (max-width : @mobile-threshold) {
+      position: relative;
+      top:inherit;
+      margin-top:30px;
+    }
   }
 
   .login-form,
@@ -114,8 +132,7 @@ html, body {
   /** App selector */
 
   .app-selector-container {
-    width: 9999px;
-    left: calc(~"50% - 55px");
+    width:100%;
   }
 
   .app-selector {
@@ -162,7 +179,19 @@ html, body {
   }
 
   .app-tiles-placeholder {
-    width: 100%;
+    width: (110*3)-10px;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-flex-flow: row wrap;
+    flex-flow: row wrap;
+    -webkit-align-content: center;
+    align-content: center;
+    margin:0 auto;
+    @media only screen and (max-width : @mobile-threshold) {
+      width:(90*3)+20px;
+    }
     .noSelect();
 
     .app-tile {
@@ -172,6 +201,13 @@ html, body {
       width: 100px;
       height: 100px;
       margin: 0 10px 10px 0;
+      &:nth-child(3n+3) {
+        margin:0 0 10px 0;
+      }
+      @media only screen and (max-width : @mobile-threshold) {
+        width:90px;
+        height:90px;
+      }
 
       a {
         > .icon-container {
@@ -187,6 +223,9 @@ html, body {
           & > i {
             font-size:40px;
             color: white;
+            @media only screen and (max-width : @mobile-threshold) {
+              font-size:30px;
+            }
           }
         }
 
@@ -227,6 +266,10 @@ html, body {
               margin: 10px auto;
               display:block;
               border-radius:50%;
+              @media only screen and (max-width : @mobile-threshold) {
+                width:40px;
+                height:40px;
+              }
             }
           }
         }
@@ -273,14 +316,14 @@ html, body {
     -moz-appearance:window;
   }
 
-  .login-button {
+  .login-button, .logout-button {
     font-family: @admin-font-family;
     padding: 5px 20px 5px 20px;
-    background-color: transparent;
     font-size: 12px;
     border-width: 1px 1px 1px 1px;
     border-style: solid;
     border-color: transparent;
+    background-color: transparent;
     color:@admin-white;
     display: inline-block;
     width: 100%;
@@ -288,13 +331,26 @@ html, body {
     &:hover,
     &:focus {
       cursor: pointer;
-      background-color: transparent;
       color: rgba(255,255,255,0.35);
     }
 
     &.disabled {
       cursor: default;
       opacity: 0.5;
+    }
+  }
+
+  .logout-button {
+    width: 280px;
+    position: absolute;
+    bottom: 10%;
+    left: calc(~"50% - 140px");
+    background-color: red;
+    @media only screen and (max-width : @mobile-threshold) {
+      width: 100%;
+      bottom:0;
+      left:inherit;
+      box-shadow: 0px 10px 5px #000, 0px -10px 28px #000;
     }
   }
 
