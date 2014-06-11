@@ -8,6 +8,7 @@ import java.time.Instant;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -33,6 +34,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.when;
 
+@Ignore
 public class OldPublicResourceTest
     extends OldAbstractResourceTest
 {

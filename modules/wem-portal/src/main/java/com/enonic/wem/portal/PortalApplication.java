@@ -14,13 +14,22 @@ import org.restlet.routing.TemplateRoute;
 import org.restlet.routing.Variable;
 
 import com.enonic.wem.portal.restlet.FinderFactory;
+import com.enonic.wem.portal.underscore.ImageByIdResource;
+import com.enonic.wem.portal.underscore.ImageByNameResource;
+import com.enonic.wem.portal.underscore.PublicResource;
+import com.enonic.wem.portal.underscore.ServiceResource;
 
 @Singleton
 public final class PortalApplication
     extends Application
 {
-    @Inject
     protected FinderFactory finderFactory;
+
+    @Inject
+    public void setFinderFactory( final FinderFactory finderFactory )
+    {
+        this.finderFactory = finderFactory;
+    }
 
     @Override
     public Restlet createInboundRoot()
@@ -28,10 +37,10 @@ public final class PortalApplication
         final Router underscoreRouter = new Router( getContext() );
         underscoreRouter.setDefaultMatchingMode( Router.MODE_FIRST_MATCH );
 
-        // attach( underscoreRouter, "/service/{module}/{service}", ServiceResource.class );
-        // attach( underscoreRouter, "/public/{module}/{resource}", PublicResource.class, "resource" );
-        // attach( underscoreRouter, "/image/id/{id}", ImageByIdResource.class, "id" );
-        // attach( underscoreRouter, "/image/{fileName}", ImageByNameResource.class, "fileName" );
+        attach( underscoreRouter, "/service/{module}/{service}", ServiceResource.class );
+        attach( underscoreRouter, "/public/{module}/{resource}", PublicResource.class, "resource" );
+        attach( underscoreRouter, "/image/id/{id}", ImageByIdResource.class, "id" );
+        attach( underscoreRouter, "/image/{fileName}", ImageByNameResource.class, "fileName" );
         // attach( underscoreRouter, "/component/{component}", ComponentResource.class, "component" );
 
         final Router contentRouter = new Router( getContext() );

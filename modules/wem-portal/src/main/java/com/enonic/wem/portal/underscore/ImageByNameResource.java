@@ -28,7 +28,7 @@ public final class ImageByNameResource
         final Blob blob = getBlob( attachment.getBlobKey() );
         if ( blob == null )
         {
-            throw new RuntimeException( "Blob not found: " + attachment.getBlobKey() );
+            throw notFound( "Blob [%s] not found", attachment.getBlobKey() );
         }
 
         final BufferedImage contentImage = toBufferedImage( blob.getStream() );
