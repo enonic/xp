@@ -13,6 +13,8 @@ import org.restlet.routing.Router;
 import org.restlet.routing.TemplateRoute;
 import org.restlet.routing.Variable;
 
+import com.enonic.wem.portal.content.ComponentResource;
+import com.enonic.wem.portal.content.ContentResource;
 import com.enonic.wem.portal.restlet.FinderFactory;
 import com.enonic.wem.portal.underscore.ImageByIdResource;
 import com.enonic.wem.portal.underscore.ImageByNameResource;
@@ -41,12 +43,12 @@ public final class PortalApplication
         attach( underscoreRouter, "/public/{module}/{resource}", PublicResource.class, "resource" );
         attach( underscoreRouter, "/image/id/{id}", ImageByIdResource.class, "id" );
         attach( underscoreRouter, "/image/{fileName}", ImageByNameResource.class, "fileName" );
-        // attach( underscoreRouter, "/component/{component}", ComponentResource.class, "component" );
+        attach( underscoreRouter, "/component/{component}", ComponentResource.class, "component" );
 
         final Router contentRouter = new Router( getContext() );
         contentRouter.setDefaultMatchingMode( Router.MODE_FIRST_MATCH );
         attach( contentRouter, "/{path}/_", underscoreRouter, "path" );
-        // attach( contentRouter, "/{path}", ContentResource.class, "path" );
+        attach( contentRouter, "/{path}", ContentResource.class, "path" );
 
         final Router router = new Router( getContext() );
         attach( router, "/{mode}", contentRouter );

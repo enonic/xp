@@ -11,7 +11,8 @@ import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsControllerFactory;
 import com.enonic.wem.portal.controller.JsHttpRequest;
-import com.enonic.wem.portal.controller.JsHttpResponseSerializer2;
+import com.enonic.wem.portal.controller.JsHttpResponseSerializer3;
+import com.enonic.wem.portal.rendering.RenderResult;
 import com.enonic.wem.portal.script.lib.PortalUrlScriptBean;
 
 public final class ServiceResource
@@ -43,7 +44,7 @@ public final class ServiceResource
         controller.context( context );
         controller.execute();
 
-        new JsHttpResponseSerializer2( context.getResponse() ).serializeTo( getResponse() );
-        return getResponse().getEntity();
+        final RenderResult result = new JsHttpResponseSerializer3( context.getResponse() ).serialize();
+        return toRepresentation( result );
     }
 }
