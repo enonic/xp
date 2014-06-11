@@ -8,6 +8,7 @@
 ///<reference path='ItemViewId.ts' />
 ///<reference path='ItemView.ts' />
 ///<reference path='RegionView.ts' />
+///<reference path='RegionComponentViewer.ts' />
 ///<reference path='RegionPlaceholder.ts' />
 ///<reference path='PageComponentView.ts' />
 ///<reference path='PageView.ts' />

@@ -23,6 +23,8 @@ wemjq(window).load(() => {
     new LiveEdit.ui.Shader();
     new LiveEdit.ui.Editor();
 
+    api.ui.Tooltip.allowMultipleInstances(false);
+
     LiveEdit.component.dragdropsort.DragDropSort.init();
 
     wemjq(window).resize(() => wemjq(window).trigger('resizeBrowserWindow.liveEdit'));
