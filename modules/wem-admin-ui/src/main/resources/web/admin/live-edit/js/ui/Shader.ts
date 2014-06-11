@@ -4,7 +4,7 @@ module LiveEdit.ui {
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
-    import PageComponentSelectComponentEvent = api.liveedit.PageComponentSelectComponentEvent;
+    import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
     import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
 
     export class Shader extends LiveEdit.ui.Base {
@@ -27,7 +27,7 @@ module LiveEdit.ui {
         }
 
         registerGlobalListeners():void {
-            PageComponentSelectComponentEvent.on((event: PageComponentSelectComponentEvent) => this.show(event.getItemView()));
+            ItemViewSelectedEvent.on((event: ItemViewSelectedEvent) => this.show(event.getItemView()));
             wemjq(window).on('editTextComponent.liveEdit', (event:JQueryEventObject, component?) => this.show(component));
             PageComponentDeselectEvent.on(() => this.hide());
             PageComponentRemoveEvent.on(() => this.hide());

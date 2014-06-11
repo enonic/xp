@@ -1,7 +1,7 @@
 module LiveEdit.component.helper {
 
     import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
-    import PageComponentSelectComponentEvent = api.liveedit.PageComponentSelectComponentEvent;
+    import PageComponentSelectComponentEvent = api.liveedit.ItemViewSelectedEvent;
     import ItemView = api.liveedit.ItemView;
 
     export class ComponentResizeObserver {

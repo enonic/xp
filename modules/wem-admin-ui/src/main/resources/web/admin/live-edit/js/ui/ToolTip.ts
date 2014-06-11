@@ -8,7 +8,7 @@ module LiveEdit.ui {
     import ItemView = api.liveedit.ItemView;
     import PageComponentView = api.liveedit.PageComponentView;
     import PageComponent = api.content.page.PageComponent;
-    import PageComponentSelectComponentEvent = api.liveedit.PageComponentSelectComponentEvent;
+    import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
 
     var domHelper = LiveEdit.DomHelper;
 
@@ -24,7 +24,7 @@ module LiveEdit.ui {
         }
 
         private registerGlobalListeners(): void {
-            PageComponentSelectComponentEvent.on(() => this.hide());
+            ItemViewSelectedEvent.on(() => this.hide());
         }
 
         private addView(): void {

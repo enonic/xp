@@ -4,7 +4,7 @@ module LiveEdit.ui.contextmenu {
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
-    import PageComponentSelectComponentEvent = api.liveedit.PageComponentSelectComponentEvent;
+    import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
 
     export class ContextMenu extends LiveEdit.ui.Base {
 
@@ -38,7 +38,7 @@ module LiveEdit.ui.contextmenu {
         }
 
         private registerGlobalListeners(): void {
-            PageComponentSelectComponentEvent.on((event: PageComponentSelectComponentEvent) =>
+            ItemViewSelectedEvent.on((event: ItemViewSelectedEvent) =>
                 this.show(event.getItemView(), event.getPosition()));
             PageComponentDeselectEvent.on(() => this.hide());
             PageComponentRemoveEvent.on(() => this.hide());

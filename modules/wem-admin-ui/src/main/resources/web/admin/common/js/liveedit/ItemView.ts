@@ -89,7 +89,7 @@ module api.liveedit {
             this.getEl().setData("live-edit-selected", "true");
 
             var clickPosition: Position = (event && !this.isEmpty()) ? { x: event.pageX, y: event.pageY } : null;
-            new PageComponentSelectComponentEvent(this, clickPosition).fire();
+            new ItemViewSelectedEvent(this, clickPosition).fire();
         }
 
         deselect() {

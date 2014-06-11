@@ -19,7 +19,7 @@ module LiveEdit {
     import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
     import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
-    import PageComponentSelectComponentEvent = api.liveedit.PageComponentSelectComponentEvent;
+    import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
     import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
 
     export class LiveEditPage {
@@ -74,7 +74,7 @@ module LiveEdit {
             wemjq(window).on('mouseOutComponent.liveEdit', () => {
                 this.highlighter.hide();
             });
-            PageComponentSelectComponentEvent.on((event: PageComponentSelectComponentEvent) => {
+            ItemViewSelectedEvent.on((event: ItemViewSelectedEvent) => {
                 var component = event.getItemView();
 
                 // Highlighter should not be shown when type page is selected

@@ -1,8 +1,6 @@
 module api.liveedit {
 
-    import PageComponentView = api.liveedit.ItemView;
-
-    export class PageComponentSelectComponentEvent extends api.event.Event2 {
+    export class ItemViewSelectedEvent extends api.event.Event2 {
 
         private pageItemView: ItemView;
 
@@ -22,11 +20,11 @@ module api.liveedit {
             return this.position;
         }
 
-        static on(handler: (event: PageComponentSelectComponentEvent) => void, contextWindow: Window = window) {
+        static on(handler: (event: ItemViewSelectedEvent) => void, contextWindow: Window = window) {
             api.event.Event2.bind(api.util.getFullName(this), handler, contextWindow);
         }
 
-        static un(handler?: (event: PageComponentSelectComponentEvent) => void, contextWindow: Window = window) {
+        static un(handler?: (event: ItemViewSelectedEvent) => void, contextWindow: Window = window) {
             api.event.Event2.unbind(api.util.getFullName(this), handler, contextWindow);
         }
     }

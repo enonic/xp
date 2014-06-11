@@ -28,7 +28,7 @@
 ///<reference path='PageComponentSetDescriptorEvent.ts' />
 ///<reference path='PageComponentLoadedEvent.ts' />
 ///<reference path='Position.ts' />
-///<reference path='PageComponentSelectComponentEvent.ts' />
+///<reference path='ItemViewSelectedEvent.ts' />
 ///<reference path='TextComponentSetTextEvent.ts' />
 ///<reference path='RegionEmptyEvent.ts' />
 
