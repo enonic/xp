@@ -39,7 +39,7 @@ public class IndexSettingsSourceProvider
 
     private String createIndexSettingsFileName( final Index index )
     {
-        return ( PREFIX + index.getName() + INDEX_SETTINGS_FILE_PATTERN ).toLowerCase();
+        return ( PREFIX + index.getName() + INDEX_SETTINGS_FILE_PATTERN );
     }
 
 }

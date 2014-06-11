@@ -15,6 +15,10 @@ module api.liveedit {
 
         private elementDimensions: ElementDimensions;
 
+        private tooltip: api.ui.Tooltip;
+
+        private tooltipViewer: api.ui.Viewer<any>;
+
         constructor(type: ItemType, element?: HTMLElement, dummy?: boolean, parentElement?: HTMLElement) {
             api.util.assertNotNull(type, "type cannot be null");
             this.type = type;
@@ -39,10 +43,29 @@ module api.liveedit {
             if (!dummy) {
                 this.loadMask = new api.ui.LoadMask(this);
                 this.appendChild(this.loadMask);
+
+                this.tooltipViewer = this.getTooltipViewer();
+                if (this.tooltipViewer) {
+                    this.tooltip = new api.ui.Tooltip(this).
+                        setHideTimeout(0).
+                        setSide(api.ui.Tooltip.SIDE_TOP).
+                        setContent(this.tooltipViewer);
+
+                }
             }
 
             this.setElementDimensions(this.getDimensionsFromElement());
+        }
 
+        getTooltipViewer(): api.ui.Viewer<any> {
+            // override to render tooltip
+            return undefined;
+        }
+
+        setTooltipObject(object: any) {
+            if (this.tooltipViewer) {
+                this.tooltipViewer.setObject(object);
+            }
         }
 
         setItemId(value: ItemViewId) {
@@ -85,10 +108,9 @@ module api.liveedit {
             return this.getEl().hasAttribute('data-live-edit-selected');
         }
 
-        select(event?: JQueryEventObject) {
+        select(clickPosition?: Position) {
             this.getEl().setData("live-edit-selected", "true");
 
-            var clickPosition: Position = (event && !this.isEmpty()) ? { x: event.pageX, y: event.pageY } : null;
             new ItemViewSelectedEvent(this, clickPosition).fire();
         }
 

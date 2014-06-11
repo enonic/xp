@@ -16,7 +16,9 @@ module api.liveedit {
 
         constructor(parentView: ItemView, region: Region, element?: HTMLElement) {
             super(RegionItemType.get(), element);
-            this.region = region;
+
+            this.setRegion(region);
+
             this.parentView = parentView;
             this.placeholder = new RegionPlaceholder(this);
             this.placeholder.hide();
@@ -27,14 +29,17 @@ module api.liveedit {
             return this.parentView;
         }
 
-        setData(region: Region) {
+        setRegion(region: Region) {
             this.region = region;
+            if (region) {
+                this.setTooltipObject(region);
 
-            var components = region.getComponents();
-            this.getPageComponentViews().forEach((view: PageComponentView<PageComponent>, index: number) => {
-                var pageComponent = components[index];
-                view.setPageComponent(pageComponent);
-            });
+                var components = region.getComponents();
+                this.getPageComponentViews().forEach((view: PageComponentView<PageComponent>, index: number) => {
+                    var pageComponent = components[index];
+                    view.setPageComponent(pageComponent);
+                });
+            }
         }
 
         getRegion(): Region {
@@ -58,6 +63,10 @@ module api.liveedit {
         select() {
             new RegionSelectEvent(this.getRegionPath(), this).fire();
             super.select();
+        }
+
+        getTooltipViewer(): api.ui.Viewer<Region> {
+            return new RegionComponentViewer();
         }
 
         registerPageComponentView(view: PageComponentView<PageComponent>) {

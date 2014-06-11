@@ -7,8 +7,11 @@ module api.ui {
         static SIDE_BOTTOM = "bottom";
         static SIDE_LEFT = "left";
 
-        static TRIGGER_MOUSE = "mouse";
+        static TRIGGER_HOVER = "hover";
         static TRIGGER_FOCUS = "focus";
+
+        private static multipleAllowed: boolean = true;
+        private static instances: Tooltip[] = [];
 
         private tooltipEl: api.dom.DivEl;
         private timeoutTimer: number;
@@ -33,7 +36,7 @@ module api.ui {
          * @param side Side of the target where tooltip should be shown (top,left,right,bottom)
          */
         constructor(target: api.dom.Element, text?: string, showDelay: number = 0, hideTimeout: number = 1000,
-                    trigger: string = Tooltip.TRIGGER_MOUSE, side: string = Tooltip.SIDE_BOTTOM) {
+                    trigger: string = Tooltip.TRIGGER_HOVER, side: string = Tooltip.SIDE_BOTTOM) {
 
             this.target = target;
             this.text = text;
@@ -49,9 +52,11 @@ module api.ui {
             targetEl.addEventListener(this.getEventName(false), (event: Event) => {
                 this.startHideTimeout();
             });
+            Tooltip.instances.push(this);
         }
 
         show() {
+            this.stopTimeout();
             if (!this.tooltipEl) {
                 this.tooltipEl = new api.dom.DivEl("tooltip " + this.side);
                 if (this.contentEl) {
@@ -59,17 +64,28 @@ module api.ui {
                 } else {
                     this.tooltipEl.getEl().setInnerHtml(this.text);
                 }
-                this.target.getParentElement().appendChild(this.tooltipEl);
+                // append it to target itself in case target has no parent
+                var appendTo = this.target.getParentElement() || this.target;
+                appendTo.appendChild(this.tooltipEl);
+
+                if (!Tooltip.multipleAllowed) {
+                    this.hideOtherInstances();
+                }
                 this.tooltipEl.show();
                 this.positionByTarget();
             }
         }
 
         hide() {
+            this.stopTimeout();
             if (this.tooltipEl) {
                 this.tooltipEl.remove();
                 this.tooltipEl = null;
             }
+        }
+
+        isVisible(): boolean {
+            return this.tooltipEl && this.tooltipEl.isVisible();
         }
 
         showAfter(ms: number): Tooltip {
@@ -146,8 +162,8 @@ module api.ui {
             var el = this.tooltipEl.getHTMLElement();
             var $el = wemjq(el);
             var elOffset = {
-                left: parseInt($el.css('left')) || 0,
-                top: parseInt($el.css('top')) || 0
+                left: parseInt($el.css('margin-left')) || 0,
+                top: parseInt($el.css('margin-top')) || 0
             };
 
             var offsetLeft, offsetTop;
@@ -207,7 +223,7 @@ module api.ui {
             this.stopTimeout();
             var t = ms || this.showDelay;
             if (t > 0) {
-                if (this.trigger == Tooltip.TRIGGER_MOUSE) {
+                if (this.trigger == Tooltip.TRIGGER_HOVER) {
                     // if tooltip target element becomes disabled it doesn't generate mouse leave event
                     // so we need to check whether mouse has moved from tooltip target or not
                     this.hideOnMouseOut();
@@ -248,11 +264,27 @@ module api.ui {
             switch (this.trigger) {
             case Tooltip.TRIGGER_FOCUS:
                 return enter ? "focus" : "blur";
-            case Tooltip.TRIGGER_MOUSE:
+            case Tooltip.TRIGGER_HOVER:
             default:
                 return enter ? "mouseenter" : "mouseleave";
                 break;
             }
+        }
+
+        private hideOtherInstances() {
+            Tooltip.instances.forEach((tooltip: Tooltip) => {
+                if (tooltip != this && tooltip.isVisible()) {
+                    tooltip.hide();
+                }
+            })
+        }
+
+        static allowMultipleInstances(allow: boolean) {
+            Tooltip.multipleAllowed = allow;
+        }
+
+        static isMultipleInstancesAllowed(): boolean {
+            return Tooltip.multipleAllowed;
         }
 
     }

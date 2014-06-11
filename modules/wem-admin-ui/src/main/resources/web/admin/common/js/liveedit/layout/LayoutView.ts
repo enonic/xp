@@ -23,12 +23,12 @@ module api.liveedit.layout {
             this.regionViews.push(view);
         }
 
-        setPageComponent(data: LayoutComponent) {
-            super.setPageComponent(data);
-            var regions = data.getLayoutRegions().getRegions();
+        setPageComponent(layoutComponent: LayoutComponent) {
+            super.setPageComponent(layoutComponent);
+            var regions = layoutComponent.getLayoutRegions().getRegions();
             this.regionViews.forEach((regionView: RegionView, index: number) => {
                 var region = regions[index];
-                regionView.setData(region);
+                regionView.setRegion(region);
             });
         }
 

@@ -88,6 +88,8 @@ module app.wizard.page {
 
         private regionEmptyListeners: {(event: RegionEmptyEvent): void;}[] = [];
 
+        private LIVE_EDIT_ERROR_PAGE_BODY_ID = "wem-error-page";
+
         constructor(config: LiveEditPageProxyConfig) {
 
             this.baseUrl = api.util.getUri("portal/edit/");
@@ -177,7 +179,6 @@ module app.wizard.page {
         }
 
         private handleIFrameLoadedEvent() {
-
             var liveEditWindow = this.liveEditIFrame.getHTMLElement()["contentWindow"];
             if (liveEditWindow && liveEditWindow.wemjq) {
                 // Give loaded page same CONFIG.baseUri as in admin
@@ -195,6 +196,9 @@ module app.wizard.page {
                     this.pageRegions).fire(this.liveEditWindow);
 
                 this.notifyLoaded();
+            } else if (liveEditWindow.document.body.id == this.LIVE_EDIT_ERROR_PAGE_BODY_ID) {
+                this.loadMask.hide();
+                new ToggleContextWindowEvent().fire();
             }
 
             this.iFrameLoadDeffered.resolve(null);
@@ -209,7 +213,7 @@ module app.wizard.page {
                 url: api.rendering.UriHelper.getComponentUri(content.getContentId().toString(),
                     pageComponentView.getComponentPath().toString(),
                     RenderingMode.EDIT),
-                method: 'GET',
+                type: 'GET',
                 success: (htmlAsString: string) => {
 
                     var newElement = api.dom.Element.fromString(htmlAsString);
