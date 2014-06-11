@@ -2,7 +2,7 @@ module api.liveedit {
 
     import Content = api.content.Content;
 
-    export class PageView extends ItemView implements RegionContainingView {
+    export class PageView extends ItemView {
 
         private content: Content;
 

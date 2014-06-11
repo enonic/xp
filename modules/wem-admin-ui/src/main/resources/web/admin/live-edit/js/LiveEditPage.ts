@@ -13,7 +13,9 @@ module LiveEdit {
     import ItemView = api.liveedit.ItemView;
     import RegionView = api.liveedit.RegionView;
     import ItemViewId = api.liveedit.ItemViewId;
+    import LayoutView = api.liveedit.layout.LayoutView;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
+    import PageComponentAddedEvent = api.liveedit.PageComponentAddedEvent;
     import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
     import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
@@ -126,6 +128,23 @@ module LiveEdit {
 
         addItemView(itemView: ItemView) {
             this.pageItemViews.addItemView(itemView);
+        }
+
+        addPageComponentView(pageComponentView: PageComponentView<PageComponent>, toRegion: RegionView, atIndex: number) {
+
+            this.addItemView(pageComponentView);
+
+            toRegion.addPageComponentView(pageComponentView, atIndex);
+
+            pageComponentView.empty();
+
+            var closestParentLayoutView = LayoutView.getClosestParentLayoutView(pageComponentView);
+            if (closestParentLayoutView) {
+                closestParentLayoutView.addPadding();
+            }
+
+            new PageComponentAddedEvent().setPageComponentView(pageComponentView).fire();
+            pageComponentView.select();
         }
 
         movePageComponent(pageComponent: PageComponentView<PageComponent>, regionView: RegionView,

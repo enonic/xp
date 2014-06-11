@@ -6,7 +6,7 @@ module api.liveedit {
 
     export class RegionView extends ItemView {
 
-        private parentView: RegionContainingView;
+        private parentView: ItemView;
 
         private region: Region;
 
@@ -14,7 +14,7 @@ module api.liveedit {
 
         private placeholder: RegionPlaceholder;
 
-        constructor(parentView: RegionContainingView, region: Region, element?: HTMLElement) {
+        constructor(parentView: ItemView, region: Region, element?: HTMLElement) {
             super(RegionItemType.get(), element);
             this.region = region;
             this.parentView = parentView;
@@ -24,7 +24,8 @@ module api.liveedit {
         }
 
         getParentItemView(): ItemView {
-            return <ItemView>this.parentView;
+            // TODO: <any> Is a hack, so that we are able to cast the RegionContainingView to an ItemView
+            return <ItemView><any>this.parentView;
         }
 
         setData(region: Region) {
@@ -65,9 +66,9 @@ module api.liveedit {
             this.placeholder.hide();
         }
 
-        addPageComponentView(view: PageComponentView<PageComponent>, index: number) {
-            this.pageComponentViews.splice(index, 0, view);
-            this.insertChild(view, index);
+        addPageComponentView(pageComponentView: PageComponentView<PageComponent>, index: number) {
+            this.pageComponentViews.splice(index, 0, pageComponentView);
+            this.insertChild(pageComponentView, index);
             this.placeholder.hide();
         }
 

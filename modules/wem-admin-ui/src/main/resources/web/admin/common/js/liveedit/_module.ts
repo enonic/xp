@@ -10,7 +10,6 @@
 ///<reference path='RegionView.ts' />
 ///<reference path='RegionPlaceholder.ts' />
 ///<reference path='PageComponentView.ts' />
-///<reference path='RegionContainingView.ts' />
 ///<reference path='PageView.ts' />
 ///<reference path='ContentView.ts' />
 

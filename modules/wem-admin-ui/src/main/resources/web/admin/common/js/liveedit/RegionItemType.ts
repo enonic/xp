@@ -26,7 +26,7 @@ module api.liveedit {
             });
         }
 
-        createView(parent: RegionContainingView, region: Region, element?: HTMLElement, dummy?: boolean): RegionView {
+        createView(parent: ItemView, region: Region, element?: HTMLElement, dummy?: boolean): RegionView {
             return new RegionView(parent, region, element);
         }
     }

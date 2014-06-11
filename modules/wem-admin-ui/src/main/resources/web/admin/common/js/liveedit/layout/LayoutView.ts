@@ -1,11 +1,12 @@
 module api.liveedit.layout {
 
+    import PageComponent = api.content.page.PageComponent;
     import LayoutComponent = api.content.page.layout.LayoutComponent;
     import PageComponentView = api.liveedit.PageComponentView;
     import RegionView = api.liveedit.RegionView;
-    import RegionContainingView = api.liveedit.RegionContainingView;
+    import ItemView = api.liveedit.ItemView;
 
-    export class LayoutView extends PageComponentView<LayoutComponent> implements RegionContainingView {
+    export class LayoutView extends PageComponentView<LayoutComponent> {
 
         private placeholder: LayoutPlaceholder;
 
@@ -66,6 +67,37 @@ module api.liveedit.layout {
 
         getTooltipViewer(): LayoutComponentViewer {
             return new LayoutComponentViewer();
+        }
+
+        static getClosestParentLayoutView(itemView: ItemView): LayoutView {
+
+            var parent = itemView.getParentItemView();
+            while (!api.ObjectHelper.iFrameSafeInstanceOf(parent, LayoutView)) {
+                parent = parent.getParentItemView();
+                if (parent == null) {
+                    break;
+                }
+            }
+            if (!parent) {
+                return null;
+            }
+            return <LayoutView>parent;
+        }
+
+        static getParentLayoutView(pageComponentView: PageComponentView<PageComponent>): LayoutView {
+
+            var parentRegion = pageComponentView.getParentItemView();
+            var potentialLayoutView = parentRegion.getParentItemView()
+            if (api.ObjectHelper.iFrameSafeInstanceOf(potentialLayoutView, LayoutView)) {
+                return <LayoutView> potentialLayoutView;
+            }
+            else {
+                return null;
+            }
+        }
+
+        static hasParentLayoutView(pageComponentView: PageComponentView<PageComponent>): boolean {
+            return !LayoutView.getParentLayoutView(pageComponentView) ? false : true;
         }
     }
 }

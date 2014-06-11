@@ -78,10 +78,6 @@ module api.liveedit {
             }
         }
 
-        handleDragStop() {
-
-        }
-
         empty() {
 
             this.getEl().setData('live-edit-empty-component', 'true');
@@ -90,6 +86,14 @@ module api.liveedit {
 
         duplicate(duplicate: PAGE_COMPONENT): PageComponentView<PAGE_COMPONENT> {
             throw new Error("Must be implemented by inheritors");
+        }
+
+        addPadding() {
+            this.addClass("live-edit-component-padding");
+        }
+
+        removePadding() {
+            this.removeClass("live-edit-component-padding");
         }
 
         static findParentRegionViewHTMLElement(htmlElement: HTMLElement): HTMLElement {
