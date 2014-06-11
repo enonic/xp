@@ -29,7 +29,7 @@ import com.enonic.wem.core.blobstore.memory.MemoryBlobRecord;
 import com.enonic.wem.core.image.filter.BuilderContext;
 import com.enonic.wem.core.image.filter.ImageFilter;
 import com.enonic.wem.core.image.filter.ImageFilterBuilder;
-import com.enonic.wem.portal.AbstractResourceTest;
+import com.enonic.wem.portal.OldAbstractResourceTest;
 
 import static com.enonic.wem.api.content.attachment.Attachment.newAttachment;
 import static org.junit.Assert.*;
@@ -37,8 +37,8 @@ import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ImageResourceTest
-    extends AbstractResourceTest
+public class OldImageResourceTest
+    extends OldAbstractResourceTest
 {
     private OldImageResource resource;
 

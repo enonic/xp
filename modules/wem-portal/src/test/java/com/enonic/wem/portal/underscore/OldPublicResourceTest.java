@@ -27,14 +27,14 @@ import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.module.ModuleKeyResolverService;
 import com.enonic.wem.core.module.ModuleResourcePathResolver;
-import com.enonic.wem.portal.AbstractResourceTest;
+import com.enonic.wem.portal.OldAbstractResourceTest;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.when;
 
-public class PublicResourceTest
-    extends AbstractResourceTest
+public class OldPublicResourceTest
+    extends OldAbstractResourceTest
 {
     private OldPublicResource resource;
 

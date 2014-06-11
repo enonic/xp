@@ -65,7 +65,7 @@ import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ContentResourceTest
+public class OldContentResourceTest
 {
     public static class Console
     {

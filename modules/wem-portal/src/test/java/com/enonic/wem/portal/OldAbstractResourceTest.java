@@ -12,10 +12,10 @@ import com.sun.jersey.test.framework.spi.container.inmemory.InMemoryTestContaine
 
 import com.enonic.wem.core.web.servlet.ServletRequestHolder;
 
-public abstract class AbstractResourceTest
+public abstract class OldAbstractResourceTest
     extends JerseyTest
 {
-    public AbstractResourceTest()
+    public OldAbstractResourceTest()
     {
         super( new InMemoryTestContainerFactory() );
     }
