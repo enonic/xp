@@ -1,4 +1,5 @@
-@mobile-threshold:400px;
+@mobile-threshold:540px;
+@tablet-threshold:1380px;
 
 html, body {
   height: 100%
@@ -53,7 +54,6 @@ html, body {
     top:10%;
     left:calc(~"50% - 92.5px");
     position: absolute;
-    //height: 24px;
     text-align: center;
     @media only screen and (max-width : @mobile-threshold) {
       position: relative;
@@ -179,7 +179,7 @@ html, body {
   }
 
   .app-tiles-placeholder {
-    width: (110*3)-10px;
+    width: (125*3)-10px;
     display: -webkit-flex;
     display: flex;
     -webkit-align-items: center;
@@ -192,14 +192,17 @@ html, body {
     @media only screen and (max-width : @mobile-threshold) {
       width:(90*3)+20px;
     }
+    @media only screen and (max-width : @tablet-threshold) {
+      width: (110*3)-10px;
+    }
     .noSelect();
 
     .app-tile {
       cursor: pointer;
       position: relative;
       float: left;
-      width: 100px;
-      height: 100px;
+      width: 115px;
+      height: 115px;
       margin: 0 10px 10px 0;
       &:nth-child(3n+3) {
         margin:0 0 10px 0;
@@ -208,6 +211,11 @@ html, body {
         width:90px;
         height:90px;
       }
+      @media only screen and (max-width: @tablet-threshold) {
+        width: 100px;
+        height: 100px;
+      }
+
 
       a {
         > .icon-container {
@@ -221,10 +229,13 @@ html, body {
           }
 
           & > i {
-            font-size:40px;
+            font-size:55px;
             color: white;
             @media only screen and (max-width : @mobile-threshold) {
               font-size:30px;
+            }
+            @media only screen and (max-width : @tablet-threshold) {
+              font-size:40px;
             }
           }
         }
@@ -261,14 +272,18 @@ html, body {
           > .icon-container {
             margin-top: 0px;
             & > img {
-              width: 55px;
-              height: 55px;
+              width: 65px;
+              height: 65px;
               margin: 10px auto;
               display:block;
               border-radius:50%;
               @media only screen and (max-width : @mobile-threshold) {
                 width:40px;
                 height:40px;
+              }
+              @media only screen and (max-width : @tablet-threshold) {
+                width: 55px;
+                height: 55px;
               }
             }
           }

@@ -1,6 +1,7 @@
 module app.launcher {
 
     export class AppSelector extends api.dom.DivEl {
+
         private selectedAppIndex: number;
 
         private apps: api.app.Application[];
@@ -75,6 +76,10 @@ module app.launcher {
                 api.ui.KeyBindings.get().bindKeys(this.getKeyBindings());
             });
 
+            api.app.ShowAppLauncherEvent.on((event) => {
+                this.highlightAppTile(event.getApplication());
+            });
+
         }
 
 
@@ -93,7 +98,7 @@ module app.launcher {
         }
 
         giveFocus(): boolean {
-            this.highlightAppTile(this.apps[0], 0);
+            //this.highlightAppTile(this.apps[0], 0);
             return true;
         }
 
@@ -146,7 +151,11 @@ module app.launcher {
             });
         }
 
-        private highlightAppTile(application: api.app.Application, index: number, appTile?: AppTile) {
+        private highlightAppTile(application: api.app.Application, index?: number, appTile?: AppTile) {
+            console.log("highlighting", arguments);
+            if (!index) {
+                index = this.getAppTileIndex(application);
+            }
             if (!appTile) {
                 appTile = this.appTiles[application.getName()];
             }
@@ -158,9 +167,6 @@ module app.launcher {
             appTile.addClass('app-tile-over');
             this.selectedAppIndex = index;
             this.notifyAppHighlighted(application);
-
-            var offset = (this.appTileSize/2) + (this.appTileSize * index);
-            //this.getEl().setLeft("calc(50% - " + offset + "px");
         }
 
         private unhighlightAppTile(application: api.app.Application, index: number, appTile?: AppTile) {
@@ -192,6 +198,16 @@ module app.launcher {
             } else {
                 this.tilesPlaceholder.appendChild(this.emptyMessagePlaceholder);
             }
+        }
+
+        private getAppTileIndex(application: api.app.Application):number {
+            var apps = app.launcher.Applications.getAllApps();
+            for (var i = 0; i < apps.length; i++) {
+                if (apps[i] == application) {
+                    return i;
+                }
+            }
+            return -1;
         }
 
         private showAppTile(appName: string) {
