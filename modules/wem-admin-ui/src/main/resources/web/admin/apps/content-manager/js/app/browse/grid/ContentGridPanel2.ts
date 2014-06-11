@@ -119,7 +119,10 @@ module app.browse.grid {
                 event.stopImmediatePropagation();
             });
 
-            this.toolbar = new GridToolbar(this.grid);
+            var actions = GridActions.init(this.grid);
+            // set actions for content menu here
+
+            this.toolbar = new GridToolbar(actions);
 
             this.cache = new ContentGridCache2(this.grid);
 
@@ -216,16 +219,19 @@ module app.browse.grid {
                         }
                     });
 
-                    this.animateExpand(expanded, animated);
 
-                    setTimeout(() => {
-                        this.resetIndexes(expanded);
-                        // Grid is again clickable
-                        this.addClass("active");
-                    }, 310);
                 }
 
                 this.cache.loadSelected();
+
+                this.animateExpand(expanded, animated);
+
+                setTimeout(() => {
+                    this.resetIndexes(expanded);
+//                    this.cache.loadSelected();
+                    // Grid is again clickable
+                    this.addClass("active");
+                }, 310);
 
             }).catch((reason) => {
                 api.notify.showError(reason.toString());

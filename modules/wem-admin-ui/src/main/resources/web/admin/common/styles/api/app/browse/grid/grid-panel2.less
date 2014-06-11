@@ -39,6 +39,10 @@
     }
   }
 
+  .slick-viewport {
+    overflow-x: hidden !important;
+  }
+
   &.quick {
     .slick-row {
       transition: none 3.3s;
@@ -68,7 +72,9 @@
       cursor: pointer;
 
       // fixes
-      margin-left: -1px; // invalid 'right' value calc for certain width
+      &:last-child {
+        margin-left: -18px; // invalid 'right' value calc for certain width
+      }
       height: 45px;      // firefox ignores SlickGrid.rowHeight
     }
 
