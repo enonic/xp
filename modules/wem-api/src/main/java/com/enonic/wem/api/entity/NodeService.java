@@ -12,6 +12,8 @@ public interface NodeService
 
     Node getById( EntityId id, Context context );
 
+    void push( EntityId id, Workspace to, Context context );
+
     Nodes getByIds( EntityIds ids, Context context );
 
     Node getByPath( NodePath path, Context context );

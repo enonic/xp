@@ -13,6 +13,7 @@ import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.entity.RenameNodeParams;
 import com.enonic.wem.api.entity.UpdateNodeParams;
+import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.core.entity.dao.NodeDao;
 
@@ -109,5 +110,17 @@ public class NodeServiceImpl
             build().
             execute();
 
+    }
+
+    @Override
+    public void push( final EntityId id, final Workspace to, final Context context )
+    {
+        PushNodeCommand.create( context ).
+            indexService( this.indexService ).
+            nodeDao( this.nodeDao ).
+            id( id ).
+            to( to ).
+            build().
+            execute();
     }
 }

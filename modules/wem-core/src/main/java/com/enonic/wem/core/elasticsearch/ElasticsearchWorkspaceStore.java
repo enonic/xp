@@ -65,9 +65,15 @@ public class ElasticsearchWorkspaceStore
     @Override
     public void store( final WorkspaceDocument workspaceDocument )
     {
+        doStore( workspaceDocument );
+    }
+
+    private void doStore( final WorkspaceDocument workspaceDocument )
+    {
         final WorkspaceDocumentId workspaceDocumentId =
             new WorkspaceDocumentId( workspaceDocument.getEntityId(), workspaceDocument.getWorkspace() );
 
+        // TODO: Check this
         //   if ( unchanged( workspaceDocument, workspaceDocumentId ) )
         //   {
         //       return;

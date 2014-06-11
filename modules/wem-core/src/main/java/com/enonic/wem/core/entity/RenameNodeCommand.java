@@ -138,7 +138,7 @@ final class RenameNodeCommand
     public static class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
-        public Builder( final Context context )
+        Builder( final Context context )
         {
             super( context );
         }

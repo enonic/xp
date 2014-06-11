@@ -1,7 +1,6 @@
 package com.enonic.wem.core.elasticsearch;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 
 import org.elasticsearch.action.index.IndexRequest;
@@ -69,7 +68,9 @@ public class ElasticsearchWorkspaceStoreTest
         final WorkspaceDocument workspaceDocument = WorkspaceDocument.create().
             blobKey( new BlobKey( "a" ) ).
             workspace( new Workspace( "test" ) ).
-            node( node ).
+            parentPath( node.parent() ).
+            path( node.path() ).
+            id( node.id() ).
             build();
 
         final SearchResult notExisting = SearchResult.create().results( SearchResultEntries.create().build() ).build();
@@ -93,7 +94,9 @@ public class ElasticsearchWorkspaceStoreTest
         final WorkspaceDocument workspaceDocument = WorkspaceDocument.create().
             blobKey( new BlobKey( "a" ) ).
             workspace( new Workspace( "test" ) ).
-            node( node ).
+            parentPath( node.parent() ).
+            path( node.path() ).
+            id( node.id() ).
             build();
 
         final SearchResult noChanges = SearchResult.create().
@@ -123,7 +126,9 @@ public class ElasticsearchWorkspaceStoreTest
         final WorkspaceDocument workspaceDocument = WorkspaceDocument.create().
             blobKey( new BlobKey( "b" ) ).
             workspace( new Workspace( "test" ) ).
-            node( node ).
+            parentPath( node.parent() ).
+            path( node.path() ).
+            id( node.id() ).
             build();
 
         final SearchResult noChanges = SearchResult.create().

@@ -48,7 +48,9 @@ public class NodeDaoImpl
         final Blob blob = doStoreNodeAsBlob( newNode );
 
         final WorkspaceDocument workspaceDocument = WorkspaceDocument.create().
-            node( newNode ).
+            id( newNode.id() ).
+            parentPath( newNode.parent() ).
+            path( newNode.path() ).
             blobKey( blob.getKey() ).
             workspace( workspace ).
             build();
@@ -57,6 +59,95 @@ public class NodeDaoImpl
 
         return newNode;
     }
+
+    @Override
+    public Node update( final UpdateNodeArgs updateNodeArguments, final Workspace workspace )
+    {
+        Preconditions.checkNotNull( updateNodeArguments.nodeToUpdate(), "nodeToUpdate must be specified" );
+
+        final Node persistedNode = this.getById( updateNodeArguments.nodeToUpdate(), workspace );
+
+        final Instant now = Instant.now();
+
+        final Node.Builder updateNodeBuilder = Node.newNode( persistedNode ).
+            modifiedTime( now ).
+            modifier( updateNodeArguments.updater() ).
+            rootDataSet( updateNodeArguments.rootDataSet() ).
+            attachments( syncronizeAttachments( updateNodeArguments, persistedNode ) ).
+            entityIndexConfig( updateNodeArguments.entityIndexConfig() != null
+                                   ? updateNodeArguments.entityIndexConfig()
+                                   : persistedNode.getEntityIndexConfig() );
+
+        final Node updatedNode = updateNodeBuilder.build();
+
+        final Blob blob = doStoreNodeAsBlob( updatedNode );
+
+        final WorkspaceDocument workspaceDocument = WorkspaceDocument.create().
+            path( updatedNode.path() ).
+            parentPath( updatedNode.parent() ).
+            id( updatedNode.id() ).
+            blobKey( blob.getKey() ).
+            workspace( workspace ).
+            build();
+
+        workspaceStore.store( workspaceDocument );
+
+        return updatedNode;
+    }
+
+    @Override
+    public void push( final PushNodeArguments pushNodeArguments, final Workspace workspace )
+    {
+        final Node persistedNode = getById( pushNodeArguments.getId(), workspace );
+
+        final BlobKey existingBlob = workspaceStore.getById( new WorkspaceIdQuery( workspace, pushNodeArguments.getId() ) );
+
+        this.workspaceStore.store( WorkspaceDocument.create().
+            blobKey( existingBlob ).
+            workspace( pushNodeArguments.getTo() ).
+            id( persistedNode.id() ).
+            path( persistedNode.path() ).
+            parentPath( persistedNode.parent() ).
+            build() );
+    }
+
+    @Override
+    public boolean move( final MoveNodeArguments moveNodeArguments, final Workspace workspace )
+    {
+        final Node persistedNode = getById( moveNodeArguments.nodeToMove(), workspace );
+
+        if ( persistedNode.path().equals( new NodePath( moveNodeArguments.parentPath(), moveNodeArguments.name() ) ) )
+        {
+            return false;
+        }
+
+        final Instant now = Instant.now();
+
+        final Node movedNode = Node.newNode( persistedNode ).
+            name( moveNodeArguments.name() ).
+            parent( moveNodeArguments.parentPath() ).
+            modifiedTime( now ).
+            modifier( moveNodeArguments.updater() ).
+            entityIndexConfig( moveNodeArguments.getEntityIndexConfig() != null
+                                   ? moveNodeArguments.getEntityIndexConfig()
+                                   : persistedNode.getEntityIndexConfig() ).
+            build();
+
+        final Blob blob = doStoreNodeAsBlob( movedNode );
+
+        final WorkspaceDocument workspaceDocument = WorkspaceDocument.create().
+            id( movedNode.id() ).
+            parentPath( movedNode.parent() ).
+            path( movedNode.path() ).
+            workspace( workspace ).
+            blobKey( blob.getKey() ).
+            build();
+
+        workspaceStore.store( workspaceDocument );
+
+        return true;
+    }
+
 
     private Blob doStoreNodeAsBlob( final Node newNode )
     {
@@ -163,74 +254,6 @@ public class NodeDaoImpl
         workspaceStore.delete( new WorkspaceDeleteQuery( workspace, nodeToDelete.id() ) );
     }
 
-
-    @Override
-    public boolean move( final MoveNodeArguments moveNodeArguments, final Workspace workspace )
-    {
-        final Node persistedNode = getById( moveNodeArguments.nodeToMove(), workspace );
-
-        if ( persistedNode.path().equals( new NodePath( moveNodeArguments.parentPath(), moveNodeArguments.name() ) ) )
-        {
-            return false;
-        }
-
-        final Instant now = Instant.now();
-
-        final Node movedNode = Node.newNode( persistedNode ).
-            name( moveNodeArguments.name() ).
-            parent( moveNodeArguments.parentPath() ).
-            modifiedTime( now ).
-            modifier( moveNodeArguments.updater() ).
-            entityIndexConfig( moveNodeArguments.getEntityIndexConfig() != null
-                                   ? moveNodeArguments.getEntityIndexConfig()
-                                   : persistedNode.getEntityIndexConfig() ).
-            build();
-
-        final Blob blob = doStoreNodeAsBlob( movedNode );
-
-        final WorkspaceDocument workspaceDocument = WorkspaceDocument.create().
-            node( movedNode ).
-            workspace( workspace ).
-            blobKey( blob.getKey() ).
-            build();
-
-        workspaceStore.store( workspaceDocument );
-
-        return true;
-    }
-
-    @Override
-    public Node update( final UpdateNodeArgs updateNodeArguments, final Workspace workspace )
-    {
-        Preconditions.checkNotNull( updateNodeArguments.nodeToUpdate(), "nodeToUpdate must be specified" );
-
-        final Node persistedNode = this.getById( updateNodeArguments.nodeToUpdate(), workspace );
-
-        final Instant now = Instant.now();
-
-        final Node.Builder updateNodeBuilder = Node.newNode( persistedNode ).
-            modifiedTime( now ).
-            modifier( updateNodeArguments.updater() ).
-            rootDataSet( updateNodeArguments.rootDataSet() ).
-            attachments( syncronizeAttachments( updateNodeArguments, persistedNode ) ).
-            entityIndexConfig( updateNodeArguments.entityIndexConfig() != null
-                                   ? updateNodeArguments.entityIndexConfig()
-                                   : persistedNode.getEntityIndexConfig() );
-
-        final Node updatedNode = updateNodeBuilder.build();
-
-        final Blob blob = doStoreNodeAsBlob( updatedNode );
-
-        final WorkspaceDocument workspaceDocument = WorkspaceDocument.create().
-            node( updatedNode ).
-            blobKey( blob.getKey() ).
-            workspace( workspace ).
-            build();
-
-        workspaceStore.store( workspaceDocument );
-
-        return updatedNode;
-    }
 
     private Attachments syncronizeAttachments( final UpdateNodeArgs updateNodeArgs, final Node persistedNode )
     {
