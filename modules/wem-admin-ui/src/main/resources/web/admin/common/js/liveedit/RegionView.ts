@@ -24,8 +24,7 @@ module api.liveedit {
         }
 
         getParentItemView(): ItemView {
-            // TODO: <any> Is a hack, so that we are able to cast the RegionContainingView to an ItemView
-            return <ItemView><any>this.parentView;
+            return this.parentView;
         }
 
         setData(region: Region) {
