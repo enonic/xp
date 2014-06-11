@@ -1,9 +1,6 @@
 // Globals
 ///<reference path='../../common/js/_all.d.ts' />
 
-///<reference path='event/ComponentSelectedEvent.ts' />
-///<reference path='event/ComponentDeselectedEvent.ts' />
-
 ///<reference path='shared/DomHelper.ts' />
 ///<reference path='shared/PlaceholderCreator.ts' />
 
