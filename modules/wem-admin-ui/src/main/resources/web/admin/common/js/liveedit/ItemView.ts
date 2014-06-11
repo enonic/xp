@@ -108,10 +108,9 @@ module api.liveedit {
             return this.getEl().hasAttribute('data-live-edit-selected');
         }
 
-        select(event?: JQueryEventObject) {
+        select(clickPosition?: Position) {
             this.getEl().setData("live-edit-selected", "true");
 
-            var clickPosition: Position = (event && !this.isEmpty()) ? { x: event.pageX, y: event.pageY } : null;
             new ItemViewSelectedEvent(this, clickPosition).fire();
         }
 

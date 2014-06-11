@@ -47,7 +47,7 @@ module LiveEdit.component.mouseevent {
                 event.preventDefault();
 
                 var itemView = LiveEdit.LiveEditPage.get().getItemViewByHTMLElement(<HTMLElement>event.currentTarget);
-                itemView.select(event);
+                itemView.select((event && !itemView.isEmpty()) ? { x: event.pageX, y: event.pageY } : null);
             });
         }
 

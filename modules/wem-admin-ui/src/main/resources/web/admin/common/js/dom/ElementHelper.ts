@@ -340,6 +340,33 @@ module api.dom {
             return this;
         }
 
+        setStroke(value: string): ElementHelper {
+            this.el.style.stroke = value;
+            return this;
+        }
+
+        getStroke(): string {
+            return this.getComputedProperty('stroke');
+        }
+
+        setStrokeDasharray(value: string): ElementHelper {
+            this.el.style.strokeDasharray = value;
+            return this;
+        }
+
+        getStrokeDasharray(): string {
+            return this.getComputedProperty('stroke-dasharray');
+        }
+
+        setFill(value: string): ElementHelper {
+            this.el.style.fill = value;
+            return this;
+        }
+
+        getFill(): string {
+            return this.getComputedProperty('fill');
+        }
+
         getPaddingLeft(): number {
             return parseFloat(this.getComputedProperty('padding-left')) || 0;
         }
