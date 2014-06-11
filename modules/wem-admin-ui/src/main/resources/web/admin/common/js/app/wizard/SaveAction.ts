@@ -10,6 +10,7 @@ module api.app.wizard {
                 this.setEnabled(false);
 
                 wizardPanel.saveChanges().
+                    catch((reason: any) => api.notify.DefaultErrorHandler.handle(reason)).
                     finally(() => this.setEnabled(true)).
                     done();
             });

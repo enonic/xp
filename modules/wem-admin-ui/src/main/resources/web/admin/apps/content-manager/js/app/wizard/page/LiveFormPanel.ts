@@ -398,7 +398,7 @@ module app.wizard.page {
                     this.pageSkipReload = false;
                     this.liveEditPage.load(this.content);
                 }).
-                catch((reason: any) => api.notify.showError(reason.toString())).
+                catch((reason: any) => api.notify.DefaultErrorHandler.handle(reason)).
                 done();
         }
 
@@ -414,7 +414,7 @@ module app.wizard.page {
 
                     this.liveEditPage.loadComponent(pageComponentView, this.content);
                 }).
-                catch((reason: any) => api.notify.showError(reason.toString())).
+                catch((reason: any) => api.notify.DefaultErrorHandler.handle(reason)).
                 done();
         }
 
@@ -486,20 +486,22 @@ module app.wizard.page {
                         this.pageRegions.removeComponent(event.getPageComponentView().getPageComponent());
                         this.contextWindow.clearSelection();
                     }).
-                    catch((reason) => api.notify.showError(reason.toString())).
+                    catch((reason: any) => api.notify.DefaultErrorHandler.handle(reason)).
                     done();
 
             });
 
             this.liveEditPage.onPageComponentReset((event: PageComponentResetEvent) => {
 
-                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).done(() => {
-
-                    var component: PageComponent = event.getComponentView().getPageComponent();
-                    if (component) {
-                        component.reset();
-                    }
-                });
+                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).
+                    then(() => {
+                        var component: PageComponent = event.getComponentView().getPageComponent();
+                        if (component) {
+                            component.reset();
+                        }
+                    }).
+                    catch((reason: any) => api.notify.DefaultErrorHandler.handle(reason)).
+                    done();
             });
 
             this.liveEditPage.onSortableStart((event: SortableStartEvent) => {
@@ -522,7 +524,7 @@ module app.wizard.page {
 
                 if (!this.pageTemplate) {
                     this.initializePageFromDefault().
-                        catch((reason) => api.notify.showError(reason.toString())).
+                        catch((reason: any) => api.notify.DefaultErrorHandler.handle(reason)).
                         done();
                 }
             });
@@ -541,7 +543,7 @@ module app.wizard.page {
                         command.execute();
                         this.saveAndReloadOnlyPageComponent(event.getImageView());
                     }).
-                    catch((reason) => api.notify.showError(reason.toString())).
+                    catch((reason: any) => api.notify.DefaultErrorHandler.handle(reason)).
                     done();
             });
 
@@ -557,7 +559,7 @@ module app.wizard.page {
                         command.execute();
                         this.saveAndReloadOnlyPageComponent(event.getPageComponentView());
                     }).
-                    catch((reason) => api.notify.showError(reason.toString())).
+                    catch((reason: any) => api.notify.DefaultErrorHandler.handle(reason)).
                     done();
             });
 

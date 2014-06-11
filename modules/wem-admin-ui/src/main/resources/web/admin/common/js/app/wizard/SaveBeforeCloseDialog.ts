@@ -55,7 +55,7 @@ module api.app.wizard {
             this.close();
             this.wizardPanel.saveChanges().
                 then(() => this.wizardPanel.close(true)).
-                catch((reason: any) => api.notify.showError(reason.toString())).
+                catch((reason: any) => api.notify.DefaultErrorHandler.handle(reason)).
                 done();
         }
 
