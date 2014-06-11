@@ -14,7 +14,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.core.entity.index.NodeIndexDocumentFactory;
-import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 
 public class ElasticsearchQuery
@@ -30,7 +29,7 @@ public class ElasticsearchQuery
 
     private final IndexType indexType;
 
-    private final Index index;
+    private final String indexName;
 
     private final ImmutableSet<SortBuilder> sortBuilders;
 
@@ -48,7 +47,7 @@ public class ElasticsearchQuery
         this.filter = builder.filter;
         this.facetBuilders = ImmutableSet.copyOf( builder.facetBuilders );
         this.indexType = builder.indexType;
-        this.index = builder.index;
+        this.indexName = builder.indexName;
         this.sortBuilders = ImmutableSet.copyOf( builder.sortBuilders );
         this.size = builder.size;
         this.from = builder.from;
@@ -76,9 +75,9 @@ public class ElasticsearchQuery
         return indexType;
     }
 
-    public Index getIndex()
+    public String getIndexName()
     {
-        return index;
+        return this.indexName;
     }
 
     public static Builder newQuery()
@@ -160,7 +159,7 @@ public class ElasticsearchQuery
             ", filter=" + filter +
             ", facet=" + facetBuilders +
             ", indexType=" + indexType +
-            ", index=" + index +
+            ", index=" + indexName +
             ", sortBuilders=" + sortBuildersAsString +
             '}';
     }
@@ -175,7 +174,7 @@ public class ElasticsearchQuery
 
         private IndexType indexType;
 
-        private Index index;
+        private String indexName;
 
         private Set<SortBuilder> sortBuilders = Sets.newHashSet();
 
@@ -205,9 +204,9 @@ public class ElasticsearchQuery
             return this;
         }
 
-        public Builder index( final Index index )
+        public Builder index( final String indexName )
         {
-            this.index = index;
+            this.indexName = indexName;
             return this;
         }
 

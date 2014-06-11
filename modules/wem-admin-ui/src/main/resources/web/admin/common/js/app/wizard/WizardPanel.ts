@@ -115,6 +115,8 @@ module api.app.wizard {
                 this.setPersistedItem(this.persistedItem).
                     then(() => {
                         return this.postRenderExisting(this.persistedItem);
+                    }).catch((reason: any) => {
+                        api.notify.DefaultErrorHandler.handle(reason);
                     }).finally(() => {
                         callback();
                     }).done();
@@ -125,6 +127,8 @@ module api.app.wizard {
                         return this.renderNew();
                     }).then(() => {
                         return this.postRenderNew();
+                    }).catch((reason: any) => {
+                        api.notify.DefaultErrorHandler.handle(reason);
                     }).finally(()=> {
                         callback();
                     }).done();

@@ -192,7 +192,7 @@ module app.create {
 
                 }).catch((reason: any) => {
 
-                    api.notify.showError(reason.toString());
+                    api.notify.DefaultErrorHandler.handle(reason);
 
                 }).finally(() => {
 

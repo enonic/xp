@@ -1,15 +1,11 @@
-package com.enonic.wem.core.elasticsearch;
-
-import java.util.List;
-import java.util.Map;
+package com.enonic.wem.core.elasticsearch.resource;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 
-import com.google.common.base.Predicate;
+import com.enonic.wem.core.index.Index;
 
 
 public class IndexSettingsBuilder
@@ -17,27 +13,27 @@ public class IndexSettingsBuilder
 {
     private IndexSettingsSourceProvider indexSettingsSourceProvider;
 
-    Settings buildIndexSettings()
+    public Settings buildIndexSettings( final Index index )
     {
         final ImmutableSettings.Builder settings = ImmutableSettings.settingsBuilder();
 
-        applySettingsFromFiles( settings );
+        applySettingsFromFile( settings, index );
 
-        applyConfigSettings( settings );
+        //applyConfigSettings( settings );
 
         return settings.build();
     }
 
-    private void applySettingsFromFiles( final ImmutableSettings.Builder settings )
+    private void applySettingsFromFile( final ImmutableSettings.Builder settings, final Index index )
     {
-        final List<String> sources = indexSettingsSourceProvider.getSources();
+        final String settingsSource = indexSettingsSourceProvider.getSource( index );
 
-        for ( String source : sources )
-        {
-            settings.loadFromSource( source );
-        }
+        LOG.info( "---> Loaded settings for index " + index );
+
+        settings.loadFromSource( settingsSource );
     }
 
+    /*
     private void applyConfigSettings( final ImmutableSettings.Builder settings )
     {
         final Map<String, String> indexConfigPropertiesMap = getIndexConfigPropertiesMap();
@@ -56,6 +52,7 @@ public class IndexSettingsBuilder
             }
         } );
     }
+    */
 
     @Inject
     public void setIndexSettingsSourceProvider( final IndexSettingsSourceProvider indexSettingsSourceProvider )

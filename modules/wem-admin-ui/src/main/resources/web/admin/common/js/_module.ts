@@ -33,11 +33,11 @@
 
 ///<reference path='event/_module.ts' />
 
-///<reference path='rest/_module.ts' />
-
 ///<reference path='dom/_module.ts' />
 
 ///<reference path='notify/_module.ts' />
+
+///<reference path='rest/_module.ts' />
 
 ///<reference path='ui/_module.ts' />
 ///<reference path='ui/dialog/_module.ts' />

@@ -1,8 +1,7 @@
 package com.enonic.wem.portal.rendering;
 
 import java.util.Map;
-
-import com.google.common.collect.Maps;
+import java.util.TreeMap;
 
 public final class RenderResult
 {
@@ -16,7 +15,7 @@ public final class RenderResult
 
     private RenderResult()
     {
-        this.headers = Maps.newHashMap();
+        this.headers = new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
     }
 
     public int getStatus()

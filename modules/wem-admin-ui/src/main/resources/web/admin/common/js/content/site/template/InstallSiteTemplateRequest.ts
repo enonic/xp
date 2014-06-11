@@ -103,7 +103,7 @@ module api.content.site.template {
                 if (response && response.status === 200) {
                     results.push(new api.rest.JsonResponse<api.content.site.template.SiteTemplateSummaryJson>(response.response));
                 } else if (this.deferred) {
-                    this.deferred.reject(new api.rest.RequestError(response.status, response.statusText, response.responseText, null));
+                    this.deferred.reject(new api.rest.RequestError(response.status, response.statusText, response.responseText));
                     this.deferred = undefined;
                 }
 
@@ -118,7 +118,7 @@ module api.content.site.template {
 
             this.uploader.bind('Error', (up, files) => {
                 if (this.deferred) {
-                    this.deferred.reject(new api.rest.RequestError(null, files.code, files.message, null));
+                    this.deferred.reject(new api.rest.RequestError(null, files.code, files.message));
                     this.deferred = undefined;
                 }
             });

@@ -146,6 +146,8 @@ module api.content.inputtype.image {
                         });
                     });
 
+                }).catch((reason: any) => {
+                    api.notify.DefaultErrorHandler.handle(reason);
                 }).finally(()=> {
                     this.layoutInProgress = false;
                 }).done();
@@ -401,9 +403,9 @@ module api.content.inputtype.image {
                         displayValue: createdContent
                     });
 
-                }).catch((reason) => {
+                }).catch((reason: any) => {
 
-                    api.notify.showError(reason.toString());
+                    api.notify.DefaultErrorHandler.handle(reason);
 
                 }).done();
         }

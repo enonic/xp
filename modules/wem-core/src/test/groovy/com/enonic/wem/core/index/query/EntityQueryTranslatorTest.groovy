@@ -1,6 +1,7 @@
 package com.enonic.wem.core.index.query
 
 import com.enonic.wem.api.data.Value
+import com.enonic.wem.api.entity.Workspace
 import com.enonic.wem.api.entity.query.EntityQuery
 import com.enonic.wem.api.query.filter.Filter
 import com.enonic.wem.api.query.parser.QueryParser
@@ -16,6 +17,8 @@ import org.elasticsearch.search.sort.GeoDistanceSortBuilder
 class EntityQueryTranslatorTest
     extends BaseTestBuilderFactory
 {
+    def Workspace TEST_WORKSPACE = new Workspace( "test" );
+
     def "query values populated"()
     {
         given:
@@ -23,12 +26,12 @@ class EntityQueryTranslatorTest
         EntityQuery entityQuery = EntityQuery.newEntityQuery().query( QueryParser.parse( "myField >= 1" ) ).build()
 
         when:
-        def translatedQuery = entityQueryTranslator.translate( entityQuery )
+        def translatedQuery = entityQueryTranslator.translate( entityQuery, TEST_WORKSPACE )
 
         then:
         translatedQuery.getQuery() != null
         translatedQuery.getQuery() instanceof RangeQueryBuilder
-        translatedQuery.getIndex() != null && translatedQuery.getIndex().equals( Index.NODB )
+        translatedQuery.getIndexName() != null && translatedQuery.getIndexName().equals( TEST_WORKSPACE.getSearchIndexName() )
         translatedQuery.getIndexType() != null && translatedQuery.getIndexType().equals( IndexType.NODE )
         translatedQuery.getFilter() == null
         translatedQuery.getFacetBuilders().isEmpty()
@@ -48,11 +51,11 @@ class EntityQueryTranslatorTest
         EntityQuery entityQuery = EntityQuery.newEntityQuery().addFilter( queryFilter ).build();
 
         when:
-        def translatedQuery = entityQueryTranslator.translate( entityQuery )
+        def translatedQuery = entityQueryTranslator.translate( entityQuery, TEST_WORKSPACE )
 
         then:
         translatedQuery.getQuery() instanceof MatchAllQueryBuilder
-        translatedQuery.getIndex() != null && translatedQuery.getIndex().equals( Index.NODB )
+        translatedQuery.getIndexName() != null && translatedQuery.getIndexName().equals( TEST_WORKSPACE.getSearchIndexName() )
         translatedQuery.getIndexType() != null && translatedQuery.getIndexType().equals( IndexType.NODE )
         translatedQuery.getFilter() != null
         translatedQuery.getFilter() instanceof TermsFilterBuilder
@@ -66,10 +69,10 @@ class EntityQueryTranslatorTest
         EntityQuery entityQuery = EntityQuery.newEntityQuery().query( QueryParser.parse( "myField >= 1 ORDER BY myField DESC" ) ).build();
 
         when:
-        def translatedQuery = entityQueryTranslator.translate( entityQuery )
+        def translatedQuery = entityQueryTranslator.translate( entityQuery, TEST_WORKSPACE )
 
         then:
-        translatedQuery.getIndex() != null && translatedQuery.getIndex().equals( Index.NODB );
+        translatedQuery.getIndexName() != null && translatedQuery.getIndexName().equals( TEST_WORKSPACE.getSearchIndexName() )
         translatedQuery.getIndexType() != null && translatedQuery.getIndexType().equals( IndexType.NODE );
         translatedQuery.getSortBuilders() != null;
         translatedQuery.getSortBuilders().size() == 1;
@@ -85,10 +88,10 @@ class EntityQueryTranslatorTest
             QueryParser.parse( "myField >= 1 ORDER BY geoDistance('myField', '-70,-50') ASC" ) ).build();
 
         when:
-        def translatedQuery = entityQueryTranslator.translate( entityQuery )
+        def translatedQuery = entityQueryTranslator.translate( entityQuery, TEST_WORKSPACE )
 
         then:
-        translatedQuery.getIndex() != null && translatedQuery.getIndex().equals( Index.NODB );
+        translatedQuery.getIndexName() != null && translatedQuery.getIndexName().equals( TEST_WORKSPACE.getSearchIndexName() )
         translatedQuery.getIndexType() != null && translatedQuery.getIndexType().equals( IndexType.NODE );
         translatedQuery.getSortBuilders() != null;
         translatedQuery.getSortBuilders().size() == 1;

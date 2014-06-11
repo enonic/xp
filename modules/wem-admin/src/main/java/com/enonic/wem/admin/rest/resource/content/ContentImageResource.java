@@ -69,7 +69,7 @@ public class ContentImageResource
         throws Exception
     {
         CacheControl cc = new CacheControl();
-        cc.setMaxAge( 86400 );
+        cc.setMaxAge( 180 );
 
         if ( contentIdAsString == null )
         {

@@ -1,4 +1,4 @@
-package com.enonic.wem.core.elasticsearch;
+package com.enonic.wem.core.elasticsearch.resource;
 
 import java.util.Map;
 
@@ -21,7 +21,7 @@ public class AbstractSettingsBuilder
 
     ConfigProperties configProperties;
 
-    private final Logger LOG = LoggerFactory.getLogger( AbstractSettingsBuilder.class );
+    protected final Logger LOG = LoggerFactory.getLogger( AbstractSettingsBuilder.class );
 
     String subtractPrefixFromProperty( final String property, final String propertyPrefix )
     {

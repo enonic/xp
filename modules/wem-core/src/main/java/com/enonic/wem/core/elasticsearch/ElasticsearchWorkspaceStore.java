@@ -324,7 +324,7 @@ public class ElasticsearchWorkspaceStore
             setAggregations( Sets.newHashSet( changedAggregationQuery ) ).
             size( 0 ).
             from( 0 ).
-            index( WORKSPACE_INDEX ).
+            index( WORKSPACE_INDEX.getName() ).
             indexType( IndexType.NODE ).
             build();
 

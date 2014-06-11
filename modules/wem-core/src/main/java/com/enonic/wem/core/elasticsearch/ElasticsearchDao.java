@@ -25,9 +25,7 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import com.enonic.wem.core.elasticsearch.result.SearchResult;
 import com.enonic.wem.core.elasticsearch.result.SearchResultFactory;
 import com.enonic.wem.core.index.DeleteDocument;
-import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexException;
-import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.document.IndexDocument;
 
 public class ElasticsearchDao
@@ -65,15 +63,13 @@ public class ElasticsearchDao
         for ( IndexDocument indexDocument : indexDocuments )
         {
             final String id = indexDocument.getId();
-            final IndexType indexType = indexDocument.getIndexType();
-            final Index index = indexDocument.getIndex();
 
             final XContentBuilder xContentBuilder = XContentBuilderFactory.create( indexDocument );
 
             final IndexRequest req = Requests.indexRequest().
                 id( id ).
-                index( index.getName() ).
-                type( indexType.getName() ).
+                index( indexDocument.getIndexName() ).
+                type( indexDocument.getIndexTypeName() ).
                 source( xContentBuilder ).
                 refresh( indexDocument.doRefreshOnStore() );
 
@@ -114,7 +110,7 @@ public class ElasticsearchDao
         // System.out.println( searchSource.toString() );
 
         final SearchRequest searchRequest = Requests.
-            searchRequest( elasticsearchQuery.getIndex().getName() ).
+            searchRequest( elasticsearchQuery.getIndexName() ).
             types( elasticsearchQuery.getIndexType().getName() ).
             source( searchSource );
 

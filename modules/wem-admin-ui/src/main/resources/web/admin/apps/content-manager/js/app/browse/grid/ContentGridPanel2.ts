@@ -219,23 +219,20 @@ module app.browse.grid {
                         }
                     });
 
-
-                }
+                    }
 
                 this.cache.loadSelected();
 
                 this.animateExpand(expanded, animated);
 
                 setTimeout(() => {
-                    this.resetIndexes(expanded);
-//                    this.cache.loadSelected();
+                    this.resetZIndexes();
                     // Grid is again clickable
                     this.addClass("active");
                 }, 310);
 
-            }).catch((reason) => {
-                api.notify.showError(reason.toString());
-            }).finally(() => {
+            }).catch((reason: any) => {
+                api.notify.DefaultErrorHandler.handle(reason);
             }).done();
 
             deferred.resolve(null);
@@ -336,11 +333,10 @@ module app.browse.grid {
             }, 10);
         }
 
-        resetIndexes(elements:number[]) {
+        resetZIndexes() {
             this.canvasElement = Element.fromHtmlElement(this.canvasElement.getHTMLElement(), true);
-            elements.forEach((row) => {
-                var elem = this.canvasElement.getChildren()[row].getEl();
-                elem.setZindex(1);
+            this.canvasElement.getChildren().forEach((child) => {
+                child.getEl().setZindex(1);
             });
         }
     }

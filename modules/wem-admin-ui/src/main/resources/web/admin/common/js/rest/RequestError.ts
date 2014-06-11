@@ -1,37 +1,15 @@
 module api.rest {
 
-    export class RequestError extends Response {
+    import Type = api.notify.Type;
 
-        private statusCode:number;
+    export class RequestError extends api.notify.Exception {
 
-        private statusText:string;
+        constructor(statusCode:number, statusText:string, errorMsg:string) {
+            var notifyMsg = (statusCode > 0) ?
+                                "HTTP Status " + statusCode + " - " + statusText + ": " + errorMsg : "Unable to connect to server";
+            var type = (statusCode >= 400 && statusCode < 500) ? Type.WARNING : Type.ERROR;
 
-        private responseText:string;
-
-        private message:string;
-
-        constructor(statusCode:number, statusText:string, responseText:string, message:string) {
-            super();
-            this.statusCode = statusCode;
-            this.statusText = statusText;
-            this.responseText = responseText;
-            this.message = message;
-        }
-
-        getStatusCode() {
-            return this.statusText;
-        }
-
-        getStatusText() {
-            return this.statusText;
-        }
-
-        getResponseText() {
-            return this.responseText;
-        }
-
-        getMessage() {
-            return this.message;
+            super(notifyMsg, type);
         }
     }
 }

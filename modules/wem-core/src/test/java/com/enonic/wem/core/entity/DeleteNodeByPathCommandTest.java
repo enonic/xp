@@ -69,8 +69,8 @@ public class DeleteNodeByPathCommandTest
         deleteNode.execute();
 
         verify( nodeDao ).deleteById( nodeToDelete.id(), TEST_WORKSPACE );
-        verify( indexService ).delete( nodeToDelete.id() );
-        verify( indexService ).delete( childNode.id() );
+        verify( indexService ).delete( nodeToDelete.id(), TEST_WORKSPACE );
+        verify( indexService ).delete( childNode.id(), TEST_WORKSPACE);
     }
 
     private void setupMocks( final Node nodeToDelete, final Node childNode )

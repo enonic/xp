@@ -12,8 +12,4 @@ module api.notify {
         return NotifyManager.get().showWarning(message);
     }
 
-    export function updateAppTabCount(appId, tabCount: Number): void {
-        // TODO: This needs to be reworked
-    }
-
 }
