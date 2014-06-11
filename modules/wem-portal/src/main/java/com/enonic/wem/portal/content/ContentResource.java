@@ -20,6 +20,7 @@ import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsHttpRequest;
 import com.enonic.wem.portal.controller.JsHttpResponseSerializer;
 import com.enonic.wem.portal.exception.PortalWebException;
+import com.enonic.wem.portal.rendering.RenderResult;
 import com.enonic.wem.portal.script.lib.PortalUrlScriptBean;
 
 @Path("{mode}/{content:.+}")
@@ -42,24 +43,24 @@ public final class ContentResource
     public Response handleGet( @InjectParam final Request request )
         throws Exception
     {
-        return doHandle( request );
+        return toResponse( doHandle( request ) );
     }
 
     @POST
     public Response handlePost( @InjectParam final Request request )
         throws Exception
     {
-        return doHandle( request );
+        return toResponse( doHandle( request ) );
     }
 
     @OPTIONS
     public Response handleOptions( @InjectParam final Request request )
         throws Exception
     {
-        return doHandle( request );
+        return toResponse( doHandle( request ) );
     }
 
-    private Response doHandle( final Request request )
+    private RenderResult doHandle( final Request request )
         throws Exception
     {
         final Content content = getContent( request.contentSelector, request.mode );

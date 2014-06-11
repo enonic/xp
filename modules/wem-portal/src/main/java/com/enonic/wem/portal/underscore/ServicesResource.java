@@ -19,6 +19,7 @@ import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsControllerFactory;
 import com.enonic.wem.portal.controller.JsHttpRequest;
 import com.enonic.wem.portal.controller.JsHttpResponseSerializer;
+import com.enonic.wem.portal.rendering.RenderResult;
 import com.enonic.wem.portal.script.lib.PortalUrlScriptBean;
 
 @Path("{mode}/{path:.+}/_/service/{module}/{service}")
@@ -50,24 +51,24 @@ public final class ServicesResource
     public Response handleGet( @InjectParam Request request )
         throws Exception
     {
-        return doHandle( request );
+        return toResponse( doHandle( request ) );
     }
 
     @POST
     public Response handlePost( @InjectParam Request request )
         throws Exception
     {
-        return doHandle( request );
+        return toResponse( doHandle( request ) );
     }
 
     @OPTIONS
     public Response handleOptions( @InjectParam Request request )
         throws Exception
     {
-        return doHandle( request );
+        return toResponse( doHandle( request ) );
     }
 
-    private Response doHandle( final Request request )
+    private RenderResult doHandle( final Request request )
         throws Exception
     {
         final ModuleKey moduleKey = resolveModule( request.contentPath, request.moduleName );

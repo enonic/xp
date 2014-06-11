@@ -2,46 +2,41 @@ package com.enonic.wem.portal.controller;
 
 import java.util.Map;
 
-import javax.ws.rs.core.Response;
-
+import com.google.common.net.HttpHeaders;
 import com.google.gson.Gson;
+
+import com.enonic.wem.portal.rendering.RenderResult;
 
 public final class JsHttpResponseSerializer
 {
     private final JsHttpResponse from;
-
-    private Response.ResponseBuilder builder;
 
     public JsHttpResponseSerializer( final JsHttpResponse from )
     {
         this.from = from;
     }
 
-    public Response serialize()
+    public RenderResult serialize()
     {
-        this.builder = Response.status( this.from.getStatus() );
-        this.builder.type( this.from.getContentType() );
-
-        serializeBody();
-        serializeHeaders();
-
-        return this.builder.build();
+        return RenderResult.newRenderResult().
+            status( this.from.getStatus() ).
+            type( this.from.getContentType() ).
+            headers( this.from.getHeaders() ).
+            header( HttpHeaders.CONTENT_TYPE, this.from.getContentType() ).
+            entity( serializeBody() ).
+            build();
     }
 
-    private void serializeBody()
+    private Object serializeBody()
     {
         final Object body = this.from.getBody();
         if ( body != null )
         {
-            this.builder.entity( convert( body ) );
+            return convert( body );
         }
-    }
-
-    private void serializeHeaders()
-    {
-        for ( final Map.Entry<String, String> header : this.from.getHeaders().entrySet() )
+        else
         {
-            this.builder.header( header.getKey(), header.getValue() );
+            return null;
         }
     }
 
