@@ -1,6 +1,5 @@
 package com.enonic.wem.portal.content;
 
-import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
@@ -13,37 +12,30 @@ import com.sun.jersey.api.core.HttpContext;
 import com.sun.jersey.api.core.InjectParam;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.page.ComponentPath;
 import com.enonic.wem.api.content.page.Page;
-import com.enonic.wem.api.content.page.PageComponent;
-import com.enonic.wem.api.content.page.PageRegions;
+import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageTemplate;
-import com.enonic.wem.portal.content.page.PageComponentResolver;
-import com.enonic.wem.portal.content.page.PageRegionsResolver;
 import com.enonic.wem.portal.controller.JsContext;
+import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsHttpRequest;
+import com.enonic.wem.portal.controller.JsHttpResponseSerializer;
 import com.enonic.wem.portal.exception.PortalWebException;
-import com.enonic.wem.portal.rendering.Renderer;
-import com.enonic.wem.portal.rendering.RendererFactory;
 import com.enonic.wem.portal.script.lib.PortalUrlScriptBean;
 
-@Path("{mode}/{path:.+}/_/component/{component:.+}")
-public final class ComponentResource
-    extends RenderResource
+@Path("{mode}/{content:.+}")
+public final class OldContentResource
+    extends OldRenderResource
 {
-    public final class Request
+    public final static class Request
     {
         @PathParam("mode")
-        protected String mode;
+        public String mode;
 
-        @PathParam("path")
-        protected String contentPath;
-
-        @PathParam("component")
-        protected String componentSelector;
+        @PathParam("content")
+        public String contentSelector;
 
         @Context
-        protected HttpContext httpContext;
+        public HttpContext httpContext;
     }
 
     @GET
@@ -67,19 +59,13 @@ public final class ComponentResource
         return doHandle( request );
     }
 
-    @Inject
-    protected RendererFactory rendererFactory;
-
     private Response doHandle( final Request request )
         throws Exception
     {
-        final ComponentPath componentPath = ComponentPath.from( request.componentSelector );
-
-        final Content content = getContent( request.contentPath, request.mode );
-
+        final Content content = getContent( request.contentSelector, request.mode );
         final Content siteContent = getSite( content );
+
         final PageTemplate pageTemplate;
-        final PageRegions pageRegions;
         if ( !content.isPage() )
         {
             pageTemplate = getDefaultPageTemplate( content.getType(), siteContent.getSite() );
@@ -87,30 +73,18 @@ public final class ComponentResource
             {
                 throw PortalWebException.notFound().message( "Page not found." ).build();
             }
-            pageRegions = pageTemplate.getRegions();
         }
         else
         {
             final Page page = getPage( content );
             pageTemplate = getPageTemplate( page, siteContent.getSite() );
-            pageRegions = PageRegionsResolver.resolve( page, pageTemplate );
         }
+        final PageDescriptor pageDescriptor = getPageDescriptor( pageTemplate );
 
-        final PageComponent component = PageComponentResolver.resolve( componentPath, pageRegions );
-
-        final Renderer<PageComponent> renderer = rendererFactory.getRenderer( component );
-
-        final JsContext context = createContext( request, content, component, siteContent, pageTemplate );
-        return toResponse( renderer.render( component, context ) );
-    }
-
-    private JsContext createContext( final Request request, final Content content, final PageComponent component, final Content siteContent,
-                                     final PageTemplate pageTemplate )
-    {
         final JsContext context = new JsContext();
         context.setContent( content );
         context.setSiteContent( siteContent );
-        context.setComponent( component );
+        context.setPageTemplate( pageTemplate );
 
         final JsHttpRequest jsRequest = new JsHttpRequest();
         jsRequest.setMode( request.mode );
@@ -123,6 +97,12 @@ public final class ComponentResource
         portalUrlScriptBean.setModule( pageTemplate.getKey().getModuleName().toString() );
         context.setPortalUrlScriptBean( portalUrlScriptBean );
 
-        return context;
+        final JsController controller = this.controllerFactory.newController();
+        controller.scriptDir( pageDescriptor.getResourceKey() );
+        controller.context( context );
+
+        controller.execute();
+
+        return new JsHttpResponseSerializer( context.getResponse() ).serialize();
     }
 }

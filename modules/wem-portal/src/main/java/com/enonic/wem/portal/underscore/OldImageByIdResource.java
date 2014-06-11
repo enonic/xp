@@ -24,8 +24,8 @@ import com.enonic.wem.core.image.filter.ImageFilterBuilder;
 import static org.apache.commons.lang.StringUtils.substringAfterLast;
 
 @Path("{mode}/{contextualContent:.+}/_/image/id/{id:.+}")
-public final class ImageByIdResource
-    extends AbstractImageResource
+public final class OldImageByIdResource
+    extends OldAbstractImageResource
 {
     public final class Request
         implements Params

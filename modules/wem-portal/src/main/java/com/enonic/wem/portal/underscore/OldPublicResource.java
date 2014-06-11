@@ -16,8 +16,8 @@ import com.enonic.wem.api.util.MediaTypes;
 import com.enonic.wem.portal.exception.PortalWebException;
 
 @Path("{mode}/{path:.+}/_/public/{module}/{resource:.+}")
-public final class PublicResource
-    extends UnderscoreResource
+public final class OldPublicResource
+    extends OldUnderscoreResource
 {
     public final class Request
     {

@@ -22,8 +22,8 @@ import com.enonic.wem.portal.controller.JsHttpResponseSerializer;
 import com.enonic.wem.portal.script.lib.PortalUrlScriptBean;
 
 @Path("{mode}/{path:.+}/_/service/{module}/{service}")
-public final class ServicesResource
-    extends UnderscoreResource
+public final class OldServicesResource
+    extends OldUnderscoreResource
 {
     public final class Request
     {

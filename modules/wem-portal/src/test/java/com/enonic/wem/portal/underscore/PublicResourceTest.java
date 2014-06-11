@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
 public class PublicResourceTest
     extends AbstractResourceTest
 {
-    private PublicResource resource;
+    private OldPublicResource resource;
 
     private ModuleResourcePathResolver modulePathResolver;
 
@@ -52,7 +52,7 @@ public class PublicResourceTest
         final ModuleKeyResolver moduleKeyResolver = ModuleKeyResolver.from( ModuleKey.from( "demo-1.0.0" ) );
         contentService = Mockito.mock( ContentService.class );
         when( moduleKeyResolverService.forContent( isA( ContentPath.class ) ) ).thenReturn( moduleKeyResolver );
-        resource = new PublicResource();
+        resource = new OldPublicResource();
         resource.modulePathResolver = modulePathResolver;
         resource.moduleKeyResolverService = moduleKeyResolverService;
 

@@ -20,8 +20,8 @@ import com.enonic.wem.core.image.ImageHelper;
 import com.enonic.wem.core.image.filter.ImageFilterBuilder;
 
 @Path("{mode}/{path:.+}/_/image/{fileName:.+}")
-public final class ImageResource
-    extends AbstractImageResource
+public final class OldImageResource
+    extends OldAbstractImageResource
 {
     public final class Request
         implements Params

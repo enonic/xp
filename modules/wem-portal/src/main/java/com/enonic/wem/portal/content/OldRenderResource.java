@@ -28,7 +28,7 @@ import com.enonic.wem.portal.exception.PortalWebException;
 import com.enonic.wem.portal.rendering.RenderResult;
 
 
-public abstract class RenderResource
+public abstract class OldRenderResource
 {
     private static final String EDIT_MODE = "edit";
 

@@ -19,16 +19,16 @@ import com.sun.jersey.spi.container.servlet.ServletContainer;
 import com.sun.jersey.spi.container.servlet.WebConfig;
 
 import com.enonic.wem.core.web.servlet.ServletRequestHolder;
-import com.enonic.wem.portal.content.ComponentResource;
-import com.enonic.wem.portal.content.ContentResource;
+import com.enonic.wem.portal.content.OldComponentResource;
+import com.enonic.wem.portal.content.OldContentResource;
 import com.enonic.wem.portal.exception.mapper.DefaultExceptionMapper;
 import com.enonic.wem.portal.exception.mapper.PortalWebExceptionMapper;
 import com.enonic.wem.portal.exception.mapper.SourceExceptionMapper;
 import com.enonic.wem.portal.exception.mapper.WebApplicationExceptionMapper;
-import com.enonic.wem.portal.underscore.ImageByIdResource;
-import com.enonic.wem.portal.underscore.ImageResource;
-import com.enonic.wem.portal.underscore.PublicResource;
-import com.enonic.wem.portal.underscore.ServicesResource;
+import com.enonic.wem.portal.underscore.OldImageByIdResource;
+import com.enonic.wem.portal.underscore.OldImageResource;
+import com.enonic.wem.portal.underscore.OldPublicResource;
+import com.enonic.wem.portal.underscore.OldServicesResource;
 
 @Singleton
 public final class PortalServlet
@@ -101,12 +101,12 @@ public final class PortalServlet
 
     private void configure()
     {
-        addSingleton( ImageResource.class );
-        addSingleton( ImageByIdResource.class );
-        addSingleton( PublicResource.class );
-        addSingleton( ContentResource.class );
-        addSingleton( ComponentResource.class );
-        addSingleton( ServicesResource.class );
+        addSingleton( OldImageResource.class );
+        addSingleton( OldImageByIdResource.class );
+        addSingleton( OldPublicResource.class );
+        addSingleton( OldContentResource.class );
+        addSingleton( OldComponentResource.class );
+        addSingleton( OldServicesResource.class );
         addSingleton( SourceExceptionMapper.class );
         addSingleton( PortalWebExceptionMapper.class );
         addSingleton( DefaultExceptionMapper.class );

@@ -40,7 +40,7 @@ import static org.mockito.Mockito.when;
 public class ImageResourceTest
     extends AbstractResourceTest
 {
-    private ImageResource resource;
+    private OldImageResource resource;
 
     private ImageFilterBuilder imageFilterBuilder;
 
@@ -53,7 +53,7 @@ public class ImageResourceTest
     @Override
     protected void configure( final DefaultResourceConfig config )
     {
-        resource = new ImageResource();
+        resource = new OldImageResource();
 
         imageFilterBuilder = mock( ImageFilterBuilder.class );
         resource.imageFilterBuilder = imageFilterBuilder;

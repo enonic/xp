@@ -94,7 +94,7 @@ public class ContentResourceTest
         final MultivaluedMap<String, String> queryParams = mock( MultivaluedMap.class );
         when( uriInfo.getQueryParameters() ).thenReturn( queryParams );
 
-        final ContentResource contentResource = new ContentResource();
+        final OldContentResource contentResource = new OldContentResource();
         contentResource.contentService = mock( ContentService.class );
         contentResource.siteService = mock( SiteService.class );
 
@@ -148,7 +148,7 @@ public class ContentResourceTest
 
         when( pageDescriptorServiceMock.getByKey( isA( PageDescriptorKey.class ) ) ).thenReturn( createDescriptor() );
 
-        final ContentResource.Request req = new ContentResource.Request();
+        final OldContentResource.Request req = new OldContentResource.Request();
         req.contentSelector = "content";
         req.httpContext = mock( HttpContext.class );
         when( req.httpContext.getUriInfo() ).thenReturn( uriInfo );

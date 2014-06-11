@@ -11,7 +11,7 @@ import com.enonic.wem.core.module.ModuleKeyResolverService;
 import com.enonic.wem.core.module.ModuleResourcePathResolver;
 import com.enonic.wem.portal.exception.PortalWebException;
 
-public abstract class UnderscoreResource
+public abstract class OldUnderscoreResource
 {
     @Inject
     protected ModuleResourcePathResolver modulePathResolver;

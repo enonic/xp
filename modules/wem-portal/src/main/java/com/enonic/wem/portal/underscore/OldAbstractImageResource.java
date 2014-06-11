@@ -32,8 +32,8 @@ import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.substringAfterLast;
 
 
-abstract class AbstractImageResource
-    extends UnderscoreResource
+abstract class OldAbstractImageResource
+    extends OldUnderscoreResource
 {
     private final static int DEFAULT_BACKGROUND = 0x00FFFFFF;
 
