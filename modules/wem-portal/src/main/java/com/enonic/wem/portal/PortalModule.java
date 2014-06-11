@@ -12,6 +12,7 @@ import com.enonic.wem.portal.exception.mapper.SourceExceptionMapper;
 import com.enonic.wem.portal.exception.mapper.WebApplicationExceptionMapper;
 import com.enonic.wem.portal.postprocess.PostProcessModule;
 import com.enonic.wem.portal.rendering.RenderingModule;
+import com.enonic.wem.portal.restlet.RestletModule;
 import com.enonic.wem.portal.script.ScriptModule;
 import com.enonic.wem.portal.underscore.ImageByIdResource;
 import com.enonic.wem.portal.underscore.ImageResource;
@@ -31,6 +32,7 @@ public final class PortalModule
         install( new RenderingModule() );
         install( new SaxonXsltModule() );
         install( new ViewModule() );
+        install( new RestletModule() );
 
         bind( ImageResource.class ).in( Singleton.class );
         bind( ImageByIdResource.class ).in( Singleton.class );
