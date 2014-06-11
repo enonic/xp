@@ -4,9 +4,9 @@ module api.notify {
 
         static handle(error: any) {
 
-            if (error instanceof Error) {
+            if (api.ObjectHelper.iFrameSafeInstanceOf(error, Error)) {
                 console.error(error);
-            } else if (error instanceof Exception) {
+            } else if (api.ObjectHelper.iFrameSafeInstanceOf(error, Exception)) {
                 var message = error.getMessage();
 
                 switch (error.getType()){
