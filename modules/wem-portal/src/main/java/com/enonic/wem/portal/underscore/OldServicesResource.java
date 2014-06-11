@@ -51,21 +51,21 @@ public final class OldServicesResource
     public Response handleGet( @InjectParam Request request )
         throws Exception
     {
-        return toResponse( doHandle( request ) );
+        return null;
     }
 
     @POST
     public Response handlePost( @InjectParam Request request )
         throws Exception
     {
-        return toResponse( doHandle( request ) );
+        return null;
     }
 
     @OPTIONS
     public Response handleOptions( @InjectParam Request request )
         throws Exception
     {
-        return toResponse( doHandle( request ) );
+        return null;
     }
 
     private RenderResult doHandle( final Request request )

@@ -18,7 +18,6 @@ import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsHttpRequest;
-import com.enonic.wem.portal.controller.JsHttpResponseSerializer;
 import com.enonic.wem.portal.exception.PortalWebException;
 import com.enonic.wem.portal.script.lib.PortalUrlScriptBean;
 
@@ -103,6 +102,6 @@ public final class OldContentResource
 
         controller.execute();
 
-        return new JsHttpResponseSerializer( context.getResponse() ).serialize();
+        return null; //return new JsHttpResponseSerializer( context.getResponse() ).serialize();
     }
 }

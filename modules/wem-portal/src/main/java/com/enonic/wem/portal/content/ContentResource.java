@@ -10,7 +10,7 @@ import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsHttpRequest;
-import com.enonic.wem.portal.controller.JsHttpResponseSerializer3;
+import com.enonic.wem.portal.controller.JsHttpResponseSerializer;
 import com.enonic.wem.portal.rendering.RenderResult;
 import com.enonic.wem.portal.script.lib.PortalUrlScriptBean;
 
@@ -62,7 +62,7 @@ public final class ContentResource
         controller.context( context );
         controller.execute();
 
-        final RenderResult result = new JsHttpResponseSerializer3( context.getResponse() ).serialize();
+        final RenderResult result = new JsHttpResponseSerializer( context.getResponse() ).serialize();
         return toRepresentation( result );
     }
 }
