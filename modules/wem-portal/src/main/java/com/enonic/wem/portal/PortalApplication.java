@@ -15,6 +15,7 @@ import org.restlet.routing.Variable;
 
 import com.enonic.wem.portal.content.ComponentResource;
 import com.enonic.wem.portal.content.ContentResource;
+import com.enonic.wem.portal.exception.PortalStatusService;
 import com.enonic.wem.portal.restlet.FinderFactory;
 import com.enonic.wem.portal.underscore.ImageByIdResource;
 import com.enonic.wem.portal.underscore.ImageByNameResource;
@@ -31,6 +32,12 @@ public final class PortalApplication
     public void setFinderFactory( final FinderFactory finderFactory )
     {
         this.finderFactory = finderFactory;
+    }
+
+    @Inject
+    public void setStatusService( final PortalStatusService statusService )
+    {
+        super.setStatusService( statusService );
     }
 
     @Override
