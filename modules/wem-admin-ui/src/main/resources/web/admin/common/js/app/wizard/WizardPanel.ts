@@ -380,7 +380,7 @@ module api.app.wizard {
 
         private updateSplitPanel() {
             if (wemjq(window).width() > this.splitPanelThreshold) {
-                this.splitPanel.setFirstPanelSize("30%");
+                this.splitPanel.setFirstPanelSize("39%");
             }
             this.splitPanel.distribute();
         }
