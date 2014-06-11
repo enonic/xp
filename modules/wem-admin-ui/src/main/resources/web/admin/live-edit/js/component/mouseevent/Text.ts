@@ -86,7 +86,7 @@ module LiveEdit.component.mouseevent {
 
             LiveEdit.LiveEditPage.get().deselectSelectedView();
 
-            this.selectedText.select(event);
+            this.selectedText.select((event && !this.selectedText.isEmpty()) ? { x: event.pageX, y: event.pageY } : null);
 
             wemjq(window).trigger('selectTextComponent.liveEdit', [this.selectedText]);
         }

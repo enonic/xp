@@ -13,7 +13,7 @@ module LiveEdit.ui {
                        '    <rect width="150" height="150"/>' +
                        '</svg>';
             super(new api.dom.ElementProperties().
-                setHelper(new api.dom.ElementHelper(wemjq(html).get(0))).
+                setHelper(api.dom.Element.fromString(html).getEl()).
                 setLoadExistingChildren(true));
 
             this.rectangle = this.getChildren()[0];
@@ -48,7 +48,7 @@ module LiveEdit.ui {
 
             // paint border
             var style = itemView.getType().getConfig().getHighlighterStyle();
-            wemjq(this.getHTMLElement()).css(style);
+            this.getEl().setStroke(style.stroke).setStrokeDasharray(style.strokeDasharray).setFill(style.fill);
         }
 
     }
