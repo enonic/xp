@@ -20,6 +20,7 @@ import com.google.common.collect.Multimap;
 
 import com.enonic.wem.api.rendering.RenderingMode;
 import com.enonic.wem.portal.rendering.RenderResult;
+import com.enonic.wem.portal.restlet.RestletUtils;
 
 public abstract class BaseResource
     extends ServerResource
@@ -66,7 +67,7 @@ public abstract class BaseResource
     {
         getResponse().setStatus( Status.valueOf( result.getStatus() ) );
 
-        final Series<Header> headers = getResponse().getHeaders();
+        final Series<Header> headers = RestletUtils.getHeaders( getResponse(), true );
         for ( final Map.Entry<String, String> header : result.getHeaders().entrySet() )
         {
             headers.set( header.getKey(), header.getValue() );

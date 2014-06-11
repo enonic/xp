@@ -50,7 +50,7 @@ public final class PortalStatusService
         return new ExceptionRenderer().
             sourceError( cause.getInnerSourceError() ).
             exception( cause ).
-            description( cause.getMessage() ).
+            description( getDescription( status, cause ) ).
             status( status.getCode() ).
             title( "Script evaluation error" ).
             render();
@@ -60,7 +60,7 @@ public final class PortalStatusService
     {
         return new ExceptionRenderer().
             exception( cause ).
-            description( cause.getMessage() ).
+            description( getDescription( status, cause ) ).
             status( status.getCode() ).
             title( status.getReasonPhrase() ).
             render();
@@ -70,9 +70,31 @@ public final class PortalStatusService
     {
         return new ExceptionRenderer().
             exception( cause ).
-            description( status.getDescription() ).
+            description( getDescription( status, cause ) ).
             status( status.getCode() ).
             title( status.getReasonPhrase() ).
             render();
+    }
+
+    private String getDescription( final Status status, final Throwable cause )
+    {
+        String str = null;
+
+        if ( cause != null )
+        {
+            str = cause.getMessage();
+        }
+
+        if ( str == null )
+        {
+            str = status.getDescription();
+        }
+
+        if ( str == null )
+        {
+            str = status.getReasonPhrase();
+        }
+
+        return str;
     }
 }
