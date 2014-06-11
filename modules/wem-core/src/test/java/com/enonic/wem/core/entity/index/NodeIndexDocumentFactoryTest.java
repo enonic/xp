@@ -22,7 +22,6 @@ import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Workspace;
-import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.IndexValueType;
 import com.enonic.wem.core.index.document.AbstractIndexDocumentItem;
@@ -127,8 +126,8 @@ public class NodeIndexDocumentFactoryTest
         final IndexDocument indexDocument = getIndexDocumentOfType( indexDocuments, IndexType.NODE );
 
         assertEquals( myAnalyzerName, indexDocument.getAnalyzer() );
-        assertEquals( Index.SEARCH, indexDocument.getIndexName() );
-        assertEquals( IndexType.NODE, indexDocument.getIndexTypeName() );
+        assertEquals( TEST_WORKSPACE.getSearchIndexName(), indexDocument.getIndexName() );
+        assertEquals( IndexType.NODE.getName(), indexDocument.getIndexTypeName() );
 
         final AbstractIndexDocumentItem createdTimeItem =
             getItemWithName( indexDocument, NodeIndexDocumentFactory.CREATED_TIME_PROPERTY, IndexValueType.DATETIME );
@@ -196,7 +195,7 @@ public class NodeIndexDocumentFactoryTest
     {
         for ( IndexDocument indexDocument : indexDocuments )
         {
-            if ( indexType.equals( indexDocument.getIndexTypeName() ) )
+            if ( indexType.getName().equals( indexDocument.getIndexTypeName() ) )
             {
                 return indexDocument;
             }
