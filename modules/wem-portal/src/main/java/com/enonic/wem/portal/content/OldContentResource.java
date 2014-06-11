@@ -5,6 +5,7 @@ import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
@@ -18,7 +19,6 @@ import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsHttpRequest;
-import com.enonic.wem.portal.exception.PortalWebException;
 import com.enonic.wem.portal.script.lib.PortalUrlScriptBean;
 
 @Path("{mode}/{content:.+}")
@@ -70,7 +70,7 @@ public final class OldContentResource
             pageTemplate = getDefaultPageTemplate( content.getType(), siteContent.getSite() );
             if ( pageTemplate == null )
             {
-                throw PortalWebException.notFound().message( "Page not found." ).build();
+                throw new WebApplicationException( Response.Status.NOT_FOUND );
             }
         }
         else

@@ -3,6 +3,7 @@ package com.enonic.wem.portal.content;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import com.enonic.wem.api.content.Content;
@@ -24,7 +25,6 @@ import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
 import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.portal.controller.JsControllerFactory;
-import com.enonic.wem.portal.exception.PortalWebException;
 import com.enonic.wem.portal.rendering.RenderResult;
 
 
@@ -55,7 +55,7 @@ public abstract class OldRenderResource
         final Content siteContent = this.siteService.getNearestSite( content.getId() );
         if ( siteContent == null )
         {
-            throw new SiteNotFoundException( content.getPath() );
+            throw new RuntimeException( content.getPath().toString() );
         }
         return siteContent;
     }
@@ -71,7 +71,7 @@ public abstract class OldRenderResource
             {
                 return contentById;
             }
-            throw PortalWebException.notFound().message( "Page [{0}] not found.", contentId ).build();
+            throw new WebApplicationException( Response.Status.NOT_FOUND );
         }
         else
         {
@@ -81,7 +81,7 @@ public abstract class OldRenderResource
             {
                 return content;
             }
-            throw PortalWebException.notFound().message( "Page [{0}] not found.", contentPath ).build();
+            throw new WebApplicationException( Response.Status.NOT_FOUND );
         }
     }
 
@@ -89,7 +89,7 @@ public abstract class OldRenderResource
     {
         if ( !content.isPage() )
         {
-            throw PortalWebException.notFound().message( "Page not found." ).build();
+            throw new WebApplicationException( Response.Status.NOT_FOUND );
         }
         return content.getPage();
     }
@@ -100,7 +100,7 @@ public abstract class OldRenderResource
         final PageDescriptor pageDescriptor = pageDescriptorService.getByKey( descriptorKey );
         if ( pageDescriptor == null )
         {
-            throw PortalWebException.notFound().message( "Page descriptor for template [{0}] not found.", pageTemplate.getName() ).build();
+            throw new WebApplicationException( Response.Status.NOT_FOUND );
         }
         return pageDescriptor;
     }
@@ -110,7 +110,7 @@ public abstract class OldRenderResource
         final PageTemplate pageTemplate = pageTemplateService.getByKey( page.getTemplate(), site.getTemplate() );
         if ( pageTemplate == null )
         {
-            throw PortalWebException.notFound().message( "Page template [{0}] not found.", page.getTemplate() ).build();
+            throw new WebApplicationException( Response.Status.NOT_FOUND );
         }
         return pageTemplate;
     }

@@ -6,6 +6,7 @@ import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
@@ -22,7 +23,6 @@ import com.enonic.wem.portal.content.page.PageComponentResolver;
 import com.enonic.wem.portal.content.page.PageRegionsResolver;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsHttpRequest;
-import com.enonic.wem.portal.exception.PortalWebException;
 import com.enonic.wem.portal.rendering.Renderer;
 import com.enonic.wem.portal.rendering.RendererFactory;
 import com.enonic.wem.portal.script.lib.PortalUrlScriptBean;
@@ -85,7 +85,7 @@ public final class OldComponentResource
             pageTemplate = getDefaultPageTemplate( content.getType(), siteContent.getSite() );
             if ( pageTemplate == null )
             {
-                throw PortalWebException.notFound().message( "Page not found." ).build();
+                throw new WebApplicationException( Response.Status.NOT_FOUND );
             }
             pageRegions = pageTemplate.getRegions();
         }
