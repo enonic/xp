@@ -309,8 +309,8 @@ module app.wizard {
                     this.previewAction.setVisible(renderable);
                     this.contextWindowToggler.setVisible(renderable);
 
-                }).catch((reason) => {
-                    api.notify.showWarning(reason.toString());
+                }).catch((reason: any) => {
+                    api.notify.DefaultErrorHandler.handle(reason);
                 }).done();
 
             return new api.content.attachment.GetAttachmentsRequest(content.getContentId()).
@@ -335,16 +335,15 @@ module app.wizard {
                         this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
                     }
 
-                    return this.doRenderExistingSite(content, formContext)
-                        .then(() => {
+                    return this.doRenderExistingSite(content, formContext);
 
-                            if (this.liveFormPanel) {
-                                return this.doRenderExistingPage(content);
-                            }
+                }).then(() => {
 
-                        });
+                    if (this.liveFormPanel) {
+                        return this.doRenderExistingPage(content);
+                    }
 
-                });
+                });;
         }
 
         postRenderExisting(existing: Content): Q.Promise<void> {

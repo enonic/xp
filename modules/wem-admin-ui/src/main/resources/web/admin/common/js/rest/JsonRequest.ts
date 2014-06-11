@@ -34,23 +34,17 @@ module api.rest {
             request.onreadystatechange = () => {
 
                 if (request.readyState == 4) {
+
                     if (request.status >= 200 && request.status < 300) {
                         deferred.resolve(new JsonResponse(request.response));
                     } else {
-                        var errorJson: any = request.response ? JSON.parse(request.response) : null;
-                        var errorMsg = errorJson ? errorJson.message : "";
-                        var notifyMessage: string = "HTTP Status " + request.status + " - " + request.statusText + ": " + errorMsg;
-
-                        if (request.status <= 0) {
-                            api.notify.showError("Unable to connect to server");
-                        } else if (request.status >= 400 && request.status < 500) {
-                            api.notify.showWarning(notifyMessage);
-                        } else {
-                            api.notify.showError(notifyMessage);
+                        try {
+                            var errorJson: any = request.response ? JSON.parse(request.response) : null;
+                        } catch (error) {
+                            deferred.reject(error);
                         }
 
-
-                        deferred.reject(new RequestError(request.status, request.statusText, request.responseText, errorMsg));
+                        deferred.reject(new RequestError(request.status, request.statusText, errorJson ? errorJson.message : ""));
                     }
                 }
             };

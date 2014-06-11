@@ -219,8 +219,7 @@ module app.browse.grid {
                         }
                     });
 
-
-                }
+                    }
 
                 this.cache.loadSelected();
 
@@ -232,9 +231,8 @@ module app.browse.grid {
                     this.addClass("active");
                 }, 310);
 
-            }).catch((reason) => {
-                api.notify.showError(reason.toString());
-            }).finally(() => {
+            }).catch((reason: any) => {
+                api.notify.DefaultErrorHandler.handle(reason);
             }).done();
 
             deferred.resolve(null);
