@@ -1,16 +1,16 @@
-module app.browse.grid {
+module api.app.browse.treegrid {
 
     import Action = api.ui.Action;
     import Grid = api.ui.grid.Grid;
 
-    export class BaseContentGridAction extends Action {
+    export class BaseTreeGridAction extends Action {
 
         constructor(label: string, shortcut?: string) {
             super(label, shortcut);
         }
     }
 
-    export class SelectAllAction extends BaseContentGridAction {
+    export class SelectAllAction extends BaseTreeGridAction {
 
         constructor(grid: Grid<Slick.SlickData>) {
             super("Select All");
@@ -21,7 +21,7 @@ module app.browse.grid {
         }
     }
 
-    export class ClearSelectionAction extends BaseContentGridAction {
+    export class ClearSelectionAction extends BaseTreeGridAction {
 
         constructor(grid: Grid<Slick.SlickData>) {
             super("Clear Selection");
@@ -32,32 +32,30 @@ module app.browse.grid {
         }
     }
 
-    export class GridActions {
+    export class TreeGridActions {
 
         public SELECT_ALL: api.ui.Action;
         public CLEAR_SELECTION: api.ui.Action;
 
         private allActions: api.ui.Action[] = [];
 
-        private static INSTANCE: GridActions;
+        private static INSTANCE: TreeGridActions;
 
-        static init(grid: Grid<Slick.SlickData>): GridActions {
-            new GridActions(grid);
-            return GridActions.INSTANCE;
+        static init(grid: Grid<Slick.SlickData>): TreeGridActions {
+            new TreeGridActions(grid);
+            return TreeGridActions.INSTANCE;
         }
 
-        static get(): GridActions {
-            return GridActions.INSTANCE;
+        static get(): TreeGridActions {
+            return TreeGridActions.INSTANCE;
         }
 
         constructor(grid: Grid<Slick.SlickData>) {
-
             this.SELECT_ALL = new SelectAllAction(grid);
             this.CLEAR_SELECTION = new ClearSelectionAction(grid);
-
             this.allActions.push(this.SELECT_ALL, this.CLEAR_SELECTION);
 
-            GridActions.INSTANCE = this;
+            TreeGridActions.INSTANCE = this;
         }
 
         getAllActions(): api.ui.Action[] {
