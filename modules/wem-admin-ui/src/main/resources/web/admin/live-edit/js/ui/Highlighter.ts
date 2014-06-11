@@ -20,33 +20,34 @@ module LiveEdit.ui {
             this.appendChild(this.rectangle);
         }
 
-        showOnComponent(component: ItemView): void {
-            if (!component) {
+        highlightItemView(itemView: ItemView): void {
+
+            if (!itemView) {
                 if (this.isVisible()) {
                     this.hide();
                 }
                 return;
             }
 
-            this.resizeToComponent(component);
+            this.resizeToComponent(itemView);
 
             if (!this.isVisible()) {
                 this.show();
             }
         }
 
-        private resizeToComponent(component: ItemView): void {
-            var componentBoxModel = component.getElementDimensions();
-            var w = Math.round(componentBoxModel.width),
-                h = Math.round(componentBoxModel.height),
-                top = Math.round(componentBoxModel.top),
-                left = Math.round(componentBoxModel.left);
+        private resizeToComponent(itemView: ItemView): void {
+            var itemDimensions = itemView.getElementDimensions();
+            var w = Math.round(itemDimensions.width),
+                h = Math.round(itemDimensions.height),
+                top = Math.round(itemDimensions.top),
+                left = Math.round(itemDimensions.left);
 
             this.getEl().setWidthPx(w).setHeightPx(h).setTopPx(top).setLeftPx(left);
             this.rectangle.getEl().setAttribute('width', w + '').setAttribute('height', h + '');
 
             // paint border
-            var style = component.getType().getConfig().getHighlighterStyle();
+            var style = itemView.getType().getConfig().getHighlighterStyle();
             wemjq(this.getHTMLElement()).css(style);
         }
 

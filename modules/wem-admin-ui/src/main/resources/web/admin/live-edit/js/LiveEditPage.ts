@@ -69,7 +69,7 @@ module LiveEdit {
 
         private registerGlobalListeners(): void {
             wemjq(window).on('mouseOverComponent.liveEdit', (event, component?: ItemView) => {
-                this.highlighter.showOnComponent(component);
+                this.highlighter.highlightItemView(component);
             });
             wemjq(window).on('mouseOutComponent.liveEdit', () => {
                 this.highlighter.hide();
@@ -84,17 +84,17 @@ module LiveEdit {
                 } else if (component.getType().equals(api.liveedit.image.ImageItemType.get())) {
                     var image = (<api.liveedit.image.ImageView>component).getImage();
                     if (image) {
-                        image.getEl().addEventListener("load", () => this.highlighter.showOnComponent(component));
+                        image.getEl().addEventListener("load", () => this.highlighter.highlightItemView(component));
                     }
                 }
 
-                this.highlighter.showOnComponent(component);
+                this.highlighter.highlightItemView(component);
             });
             PageComponentDeselectEvent.on(() => {
                 this.highlighter.hide();
             });
             PageComponentResetEvent.on((event: PageComponentResetEvent) => {
-                this.highlighter.showOnComponent(event.getComponentView());
+                this.highlighter.highlightItemView(event.getComponentView());
             });
             SortableStartEvent.on(() => {
                 this.highlighter.hide();
@@ -106,7 +106,7 @@ module LiveEdit {
                 this.highlighter.hide();
             });
             wemjq(window).on('resizeBrowserWindow.liveEdit', () => {
-                this.highlighter.showOnComponent(this.pageItemViews.getSelectedView());
+                this.highlighter.highlightItemView(this.pageItemViews.getSelectedView());
             });
         }
 
