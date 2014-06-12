@@ -15,7 +15,7 @@ module app.remove {
                         api.notify.showFeedback('Module \'' + module.getDisplayName() + '\' was deleted');
                         new api.module.ModuleDeletedEvent(module.getModuleKey()).fire();
                     }).catch((reason: any) => {
-                        api.notify.DefaultErrorHandler.handle('Error while deleting module.');
+                        api.DefaultErrorHandler.handle('Error while deleting module.');
                     }).finally(() => {
                         this.close();
                     }).done();

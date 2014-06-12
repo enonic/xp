@@ -310,7 +310,7 @@ module app.wizard {
                     this.contextWindowToggler.setVisible(renderable);
 
                 }).catch((reason: any) => {
-                    api.notify.DefaultErrorHandler.handle(reason);
+                    api.DefaultErrorHandler.handle(reason);
                 }).done();
 
             return new api.content.attachment.GetAttachmentsRequest(content.getContentId()).

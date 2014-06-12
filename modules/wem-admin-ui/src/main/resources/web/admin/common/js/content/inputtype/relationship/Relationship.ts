@@ -100,7 +100,7 @@ module api.content.inputtype.relationship {
 
                         }).catch((reason: any) => {
 
-                            api.notify.DefaultErrorHandler.handle(reason);
+                            api.DefaultErrorHandler.handle(reason);
 
                         }).finally(()=> {
 

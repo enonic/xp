@@ -243,7 +243,7 @@ module app.browse.grid {
                 }, 310);
 
             }).catch((reason: any) => {
-                api.notify.DefaultErrorHandler.handle(reason);
+                api.DefaultErrorHandler.handle(reason);
             }).done();
 
             deferred.resolve(null);
