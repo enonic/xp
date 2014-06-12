@@ -1,5 +1,7 @@
 module LiveEdit.ui {
 
+    import Element = api.dom.Element;
+    import DivEl = api.dom.DivEl;
     import ItemView = api.liveedit.ItemView;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
@@ -7,146 +9,103 @@ module LiveEdit.ui {
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
     import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
 
-    export class Shader extends LiveEdit.ui.Base {
+    export class Shader {
 
-        private selectedComponent: ItemView = null;
+        private static CLS_NAME:string = 'live-edit-shader';
 
-        private CLS_NAME:string = 'live-edit-shader';
+        private pageShader: Element;
+        private northShader: Element;
+        private eastShader: Element;
+        private southShader: Element;
+        private westShader: Element;
 
-        private pageShader:JQuery;
-        private northShader:JQuery;
-        private eastShader:JQuery;
-        private southShader:JQuery;
-        private westShader:JQuery;
+        private shaders: Element[];
 
         constructor() {
-            super();
-            this.addView();
-            this.addEvents();
-            this.registerGlobalListeners();
-        }
+            this.pageShader = new DivEl(Shader.CLS_NAME + " page");
+            this.northShader = new DivEl(Shader.CLS_NAME + " north");
+            this.eastShader = new DivEl(Shader.CLS_NAME + " east");
+            this.southShader = new DivEl(Shader.CLS_NAME + " south");
+            this.westShader = new DivEl(Shader.CLS_NAME + " west");
 
-        registerGlobalListeners():void {
-            ItemViewSelectedEvent.on((event: ItemViewSelectedEvent) => this.show(event.getItemView()));
-            wemjq(window).on('editTextComponent.liveEdit', (event:JQueryEventObject, component?) => this.show(component));
-            PageComponentDeselectEvent.on(() => this.hide());
-            PageComponentRemoveEvent.on(() => this.hide());
-            PageComponentResetEvent.on((event: PageComponentResetEvent) => this.show(event.getComponentView()));
+            this.shaders = [this.pageShader, this.northShader, this.eastShader, this.southShader, this.westShader];
 
-            SortableStartEvent.on(() => this.hide());
-            wemjq(window).on('resizeBrowserWindow.liveEdit', () => this.onWindowResize());
-        }
+            api.dom.Body.get().appendChildren(this.shaders);
 
-        private addView():void {
-            var body:JQuery = wemjq('body');
-            var clsName = this.CLS_NAME;
-
-            this.pageShader = body.append('<div id="live-edit-page-shader" class="' + clsName + '"><!-- --></div>');
-
-            this.northShader = wemjq('<div id="live-edit-shader-north" class="' + clsName + '"><!-- --></div>');
-            body.append(this.northShader);
-
-            this.eastShader = wemjq('<div id="live-edit-shader-east" class="' + clsName + '"><!-- --></div>');
-            body.append(this.eastShader);
-
-            this.southShader = wemjq('<div id="live-edit-shader-south" class="' + clsName + '"><!-- --></div>');
-            body.append(this.southShader);
-
-            this.westShader = wemjq('<div id="live-edit-shader-west" class="' + clsName + '"><!-- --></div>');
-            body.append(this.westShader);
-        }
-
-        private addEvents():void {
-            wemjq('.' + this.CLS_NAME).on('click contextmenu', (event) => {
-                event.stopPropagation();
-                event.preventDefault();
-
-                this.selectedComponent.deselect();
-
-                wemjq(window).trigger('clickShader.liveEdit');
+            this.shaders.forEach((shader: Element) => {
+                shader.onClicked((event: MouseEvent) => this.handleClick(event));
+                shader.onContextMenu((event: MouseEvent) => this.handleClick(event));
             });
         }
 
-        private show(component: ItemView): void {
-            this.selectedComponent = component;
-            if (component.getType().equals(api.liveedit.PageItemType.get())) {
-                this.showForPage();
-            } else if (component.getType().equals(api.liveedit.image.ImageItemType.get())) {
-                var image = (<api.liveedit.image.ImageView>component).getImage();
-                if (image) {
-                    image.getEl().addEventListener("load", () => {
-                        this.showForComponent(component);
-                    });
-                }
-                this.showForComponent(component);
+        shadeItemView(itemView: ItemView): void {
+
+            if (!itemView) {
+                this.hide();
+                return;
+            }
+
+            if (itemView.getType().equals(api.liveedit.PageItemType.get())) {
+                this.resizeToPage();
             } else {
-                this.showForComponent(component);
+                this.resizeToItemView(itemView);
             }
         }
 
-        private showForPage():void {
+        private handleClick(event: MouseEvent) {
+            event.stopPropagation();
+            event.preventDefault();
 
-            //this.hide();
-
-            wemjq('#live-edit-page-shader').css({
-                top: 0,
-                right: 0,
-                bottom: 0,
-                left: 0
-            }).show();
+            new ShaderClickedEvent().fire();
         }
 
-        private showForComponent(component: ItemView): void {
+        private resizeToPage():void {
+            this.pageShader.getEl().setTopPx(0).setRightPx(0).setBottomPx(0).setLeftPx(0);
+            this.pageShader.show();
+        }
+
+        private resizeToItemView(itemView: ItemView): void {
             var documentSize = LiveEdit.DomHelper.getDocumentSize(),
                 documentWidth = documentSize.width,
                 documentHeight = documentSize.height;
 
-            var dimensions = component.getElementDimensions(),
+            var dimensions = itemView.getElementDimensions(),
                 x = dimensions.left,
                 y = dimensions.top,
                 w = dimensions.width,
                 h = dimensions.height;
 
-            this.northShader.css({
-                top: 0,
-                left: 0,
-                width: documentWidth,
-                height: y
-            }).show();
+            this.northShader.getEl().
+                setTopPx(0).
+                setLeftPx(0).
+                setWidthPx(documentWidth).
+                setHeightPx(y);
+            this.northShader.show();
 
-            this.eastShader.css({
-                top: y,
-                left: x + w,
-                width: documentWidth - (x + w),
-                height: h
-            }).show();
+            this.eastShader.getEl().
+                setTopPx(y).
+                setLeftPx(x+w).
+                setWidthPx(documentWidth - (x + w)).
+                setHeightPx(h);
+            this.eastShader.show();
 
-            this.southShader.css({
-                top: y + h,
-                left: 0,
-                width: documentWidth,
-                height: documentHeight - (y + h)
-            }).show();
+            this.southShader.getEl().
+                setTopPx(y + h).
+                setLeftPx(0).
+                setWidthPx(documentWidth).
+                setHeightPx(documentHeight - (y + h));
+            this.southShader.show();
 
-            this.westShader.css({
-                top: y,
-                left: 0,
-                width: x,
-                height: h
-            }).show();
+            this.westShader.getEl().
+                setTopPx(y).
+                setLeftPx(0).
+                setWidthPx(x).
+                setHeightPx(h);
+            this.westShader.show();
         }
 
-        private hide():void {
-            this.selectedComponent = null;
-            var shaders:JQuery = wemjq('.live-edit-shader');
-            shaders.hide(null);
+        hide():void {
+            this.shaders.forEach((shader: Element) => shader.hide());
         }
-
-        private onWindowResize():void {
-            if (this.selectedComponent) {
-                this.show(this.selectedComponent)
-            }
-        }
-
     }
 }
