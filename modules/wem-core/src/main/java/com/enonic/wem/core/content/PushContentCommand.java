@@ -1,12 +1,11 @@
 package com.enonic.wem.core.content;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.Workspace;
 
 public class PushContentCommand
@@ -24,11 +23,13 @@ public class PushContentCommand
         this.to = builder.to;
     }
 
-    void execute()
+    Content execute()
     {
         final EntityId entityId = EntityId.from( contentId.toString() );
 
-        nodeService.push( entityId, this.to, this.context );
+        final Node pushedNode = nodeService.push( entityId, this.to, this.context );
+
+        return getTranslator().fromNode( pushedNode );
     }
 
     public static Builder create()

@@ -16,7 +16,7 @@ public interface NodeDao
 
     public boolean move( MoveNodeArguments moveNodeArguments, Workspace workspace );
 
-    public void push( PushNodeArguments pushNodeArguments, Workspace workspace );
+    public Node push( PushNodeArguments pushNodeArguments, Workspace workspace );
 
     public Node getById( EntityId entityId, Workspace workspace );
 

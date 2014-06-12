@@ -113,9 +113,9 @@ public class NodeServiceImpl
     }
 
     @Override
-    public void push( final EntityId id, final Workspace to, final Context context )
+    public Node push( final EntityId id, final Workspace to, final Context context )
     {
-        PushNodeCommand.create( context ).
+        return PushNodeCommand.create( context ).
             indexService( this.indexService ).
             nodeDao( this.nodeDao ).
             id( id ).

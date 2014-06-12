@@ -4,26 +4,27 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.entity.dao.PushNodeArguments;
 
 public class PushNodeCommand
     extends AbstractNodeCommand
 {
-    private final Workspace to;
+    private final Workspace target;
 
     private final EntityId id;
 
     private PushNodeCommand( final Builder builder )
     {
         super( builder );
-        this.to = builder.to;
+        this.target = builder.target;
         this.id = builder.id;
     }
 
-    public Workspace getTo()
+    public Workspace getTarget()
     {
-        return to;
+        return target;
     }
 
     public EntityId getId()
@@ -36,15 +37,15 @@ public class PushNodeCommand
         return new Builder( context );
     }
 
-    void execute()
+    Node execute()
     {
-        nodeDao.push( new PushNodeArguments( this.to, this.id ), this.context.getWorkspace() );
+        return nodeDao.push( new PushNodeArguments( this.target, this.id ), this.context.getWorkspace() );
     }
 
     public static class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
-        private Workspace to;
+        private Workspace target;
 
         private EntityId id;
 
@@ -53,9 +54,9 @@ public class PushNodeCommand
             super( context );
         }
 
-        public Builder to( final Workspace toWorkspace )
+        public Builder to( final Workspace target )
         {
-            this.to = toWorkspace;
+            this.target = target;
             return this;
         }
 
@@ -73,7 +74,7 @@ public class PushNodeCommand
 
         private void validate()
         {
-            Preconditions.checkNotNull( to );
+            Preconditions.checkNotNull( target );
             Preconditions.checkNotNull( id );
         }
     }

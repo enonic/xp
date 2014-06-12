@@ -34,10 +34,9 @@ import com.enonic.wem.core.workspace.query.WorkspacePathsQuery;
 public class NodeDaoImpl
     implements NodeDao
 {
-    @Inject
+
     private BlobService blobService;
 
-    @Inject
     private WorkspaceStore workspaceStore;
 
     @Override
@@ -96,7 +95,7 @@ public class NodeDaoImpl
     }
 
     @Override
-    public void push( final PushNodeArguments pushNodeArguments, final Workspace workspace )
+    public Node push( final PushNodeArguments pushNodeArguments, final Workspace workspace )
     {
         final Node persistedNode = getById( pushNodeArguments.getId(), workspace );
 
@@ -109,6 +108,10 @@ public class NodeDaoImpl
             path( persistedNode.path() ).
             parentPath( persistedNode.parent() ).
             build() );
+
+        final BlobKey pushed = workspaceStore.getById( new WorkspaceIdQuery( pushNodeArguments.getTo(), pushNodeArguments.getId() ) );
+
+        return getNodeFromBlob( blobService.get( pushed ) );
     }
 
     @Override
@@ -308,4 +311,15 @@ public class NodeDaoImpl
     }
 
 
+    @Inject
+    public void setBlobService( final BlobService blobService )
+    {
+        this.blobService = blobService;
+    }
+
+    @Inject
+    public void setWorkspaceStore( final WorkspaceStore workspaceStore )
+    {
+        this.workspaceStore = workspaceStore;
+    }
 }

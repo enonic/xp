@@ -155,15 +155,15 @@ public class ContentServiceImpl
     }
 
     @Override
-    public void push( final PushContentParams params, final Context context )
+    public Content push( final PushContentParams params, final Context context )
     {
         params.getContentId();
 
-        PushContentCommand.create().contentId( params.getContentId() ).
-            to( params.getTo() ).
+        return PushContentCommand.create().
+            contentId( params.getContentId() ).
+            to( params.getTarget() ).
             build().
             execute();
-
     }
 
     @Override

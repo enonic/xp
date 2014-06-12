@@ -1,0 +1,60 @@
+{
+    "createdTime": "2013-08-23T12:55:09.162Z",
+    "creator": "user:system:admin",
+    "data": [
+        {
+            "Property": {
+                "name": "myArray",
+                "type": "String",
+                "value": "arrayValue1"
+            }
+        },
+        {
+            "Property": {
+                "name": "myArray",
+                "type": "String",
+                "value": "arrayValue2"
+            }
+        },
+        {
+            "DataSet": {
+                "name": "mySetWithArray",
+                "set": [
+                    {
+                        "Property": {
+                            "name": "myArray",
+                            "type": "Double",
+                            "value": "3.14159"
+                        }
+                    },
+                    {
+                        "Property": {
+                            "name": "myArray",
+                            "type": "Double",
+                            "value": "1.333"
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "deletable": true,
+    "displayName": "My Content",
+    "editable": true,
+    "form": null,
+    "hasChildren": false,
+    "iconUrl": "http://localhost/admin/rest/content/image/1",
+    "id": "1",
+    "isDraft": false,
+    "isPage": false,
+    "isRoot": true,
+    "isSite": false,
+    "modifiedTime": "2013-08-23T12:55:09.162Z",
+    "modifier": "user:system:admin",
+    "name": "my_a_content",
+    "owner": "user:myStore:me",
+    "page": null,
+    "path": "/my_a_content",
+    "site": null,
+    "type": "my_type"
+}

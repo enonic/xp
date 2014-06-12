@@ -25,6 +25,12 @@ public class Workspace
     }
 
     @Override
+    public String toString()
+    {
+        return name;
+    }
+
+    @Override
     public boolean equals( final Object o )
     {
         if ( this == o )
@@ -38,7 +44,7 @@ public class Workspace
 
         final Workspace workspace = (Workspace) o;
 
-        if ( !name.equals( workspace.name ) )
+        if ( name != null ? !name.equals( workspace.name ) : workspace.name != null )
         {
             return false;
         }
@@ -49,13 +55,7 @@ public class Workspace
     @Override
     public int hashCode()
     {
-        return name.hashCode();
-    }
-
-    @Override
-    public String toString()
-    {
-        return name;
+        return name != null ? name.hashCode() : 0;
     }
 }
 

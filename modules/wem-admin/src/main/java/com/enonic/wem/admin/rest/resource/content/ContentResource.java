@@ -31,7 +31,6 @@ import com.enonic.wem.admin.rest.resource.content.json.CreateContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentResultJson;
 import com.enonic.wem.admin.rest.resource.content.json.PublishContentJson;
-import com.enonic.wem.admin.rest.resource.content.json.UpdateAttachmentsJson;
 import com.enonic.wem.admin.rest.resource.content.json.UpdateContentJson;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.Content;
@@ -79,9 +78,9 @@ public class ContentResource
 
     public static final Workspace PROD_WORKSPACE = new Workspace( "prod" );
 
-    private static final Context STAGE_CONTEXT = new Context( STAGE_WORKSPACE );
+    static final Context STAGE_CONTEXT = new Context( STAGE_WORKSPACE );
 
-    private static final Context PROD_CONTEXT = new Context( PROD_WORKSPACE );
+    static final Context PROD_CONTEXT = new Context( PROD_WORKSPACE );
 
     @GET
     public ContentIdJson getById( @QueryParam("id") final String idParam,
@@ -282,16 +281,15 @@ public class ContentResource
         return jsonResult;
     }
 
-
     @POST
     @Path("publish")
     public ContentJson publish( final PublishContentJson params )
     {
-        contentService.push( new PushContentParams( PROD_WORKSPACE, params.getContentId() ), STAGE_CONTEXT );
+        final Content publishedContent =
+            contentService.push( new PushContentParams( PROD_WORKSPACE, params.getContentId() ), STAGE_CONTEXT );
 
-        return new ContentJson( contentService.getById( params.getContentId(), PROD_CONTEXT ) );
+        return new ContentJson( publishedContent );
     }
-
 
     @POST
     @Path("create")
