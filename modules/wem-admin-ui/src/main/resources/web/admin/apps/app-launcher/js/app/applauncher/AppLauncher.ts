@@ -14,16 +14,14 @@ module app.launcher {
 
         private loadMask: api.ui.LoadMask;
 
-        private currentApplication:api.app.Application;
+        private currentApplication: api.app.Application;
 
-        private currentApplicationHash:string;
+        private currentApplicationHash: string;
 
         constructor(mainContainer: app.home.HomeMainContainer) {
             this.homeMainContainer = mainContainer;
 
-            this.adminApplicationFrames = new api.dom.DivEl();
-            this.adminApplicationFrames.getEl().setAttribute("style", "overflow-y: hidden;");
-            this.adminApplicationFrames.getEl().setHeight('100%').setWidth('100%');
+            this.adminApplicationFrames = new api.dom.DivEl("applications-frame");
 
             this.loadMask = new api.ui.LoadMask(this.adminApplicationFrames);
 
@@ -38,7 +36,8 @@ module app.launcher {
 
             this.appManager.onConnectionRestored(() => {
                 api.notify.NotifyManager.get().hide(messageId);
-            })
+            });
+
             this.lostConnectionDetector = new app.launcher.LostConnectionDetector();
             if (CONFIG.baseUri.search('localhost') == -1) {
                 this.lostConnectionDetector.startPolling();

@@ -5,6 +5,12 @@ html, body {
   height: 100%
 }
 
+.applications-frame {
+  overflow-y:hidden;
+  height:100%;
+  width:100%;
+}
+
 .home-main-container {
   position: fixed;
   left: 0;
@@ -112,6 +118,12 @@ html, body {
     width: 24px;
     padding: 10px;
     cursor:pointer;
+    position: absolute;
+    top:0;
+    left:0;
+    &:hover {
+      color: rgba(255,255,255,0.5);
+    }
     .icon-undo2();
   }
 
