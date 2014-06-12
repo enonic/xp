@@ -1,14 +1,16 @@
 package com.enonic.wem.portal.controller;
 
-import javax.ws.rs.core.MediaType;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.net.MediaType;
 
 import com.enonic.wem.portal.rendering.RenderResult;
 
+import static com.google.common.net.MediaType.JSON_UTF_8;
+import static com.google.common.net.MediaType.OCTET_STREAM;
+import static com.google.common.net.MediaType.PLAIN_TEXT_UTF_8;
 import static org.junit.Assert.*;
 
 public class JsHttpResponseSerializerTest
@@ -44,7 +46,7 @@ public class JsHttpResponseSerializerTest
 
         assertNotNull( result );
         assertEquals( JsHttpResponse.STATUS_OK, result.getStatus() );
-        assertEquals( MediaType.APPLICATION_JSON_TYPE.toString(), result.getHeaders().get( "content-type" ) );
+        assertTrue( JSON_UTF_8.withoutParameters().equals( MediaType.parse( result.getHeaders().get( "content-type" ) ) ) );
         assertEquals( "{\"key\":\"value\"}", result.getEntity() );
     }
 
@@ -57,7 +59,7 @@ public class JsHttpResponseSerializerTest
 
         assertNotNull( result );
         assertEquals( JsHttpResponse.STATUS_OK, result.getStatus() );
-        assertEquals( MediaType.TEXT_PLAIN_TYPE.toString(), result.getHeaders().get( "Content-Type" ) );
+        assertTrue( PLAIN_TEXT_UTF_8.withoutParameters().equals( MediaType.parse( result.getHeaders().get( "Content-Type" ) ) ) );
         assertEquals( "Hello world!", result.getEntity() );
     }
 
@@ -71,7 +73,7 @@ public class JsHttpResponseSerializerTest
 
         assertNotNull( result );
         assertEquals( JsHttpResponse.STATUS_OK, result.getStatus() );
-        assertEquals( MediaType.APPLICATION_OCTET_STREAM_TYPE.toString(), result.getHeaders().get( "Content-Type" ) );
+        assertTrue( OCTET_STREAM.equals( MediaType.parse( result.getHeaders().get( "Content-Type" ) ) ) );
         assertSame( bytes, result.getEntity() );
     }
 
@@ -84,7 +86,7 @@ public class JsHttpResponseSerializerTest
 
         assertNotNull( result );
         assertEquals( JsHttpResponse.STATUS_OK, result.getStatus() );
-        assertEquals( MediaType.TEXT_PLAIN_TYPE.toString(), result.getHeaders().get( "Content-Type" ) );
+        assertTrue( PLAIN_TEXT_UTF_8.withoutParameters().equals( MediaType.parse( result.getHeaders().get( "Content-Type" ) ) ) );
         assertEquals( "11", result.getEntity() );
     }
 
@@ -98,7 +100,7 @@ public class JsHttpResponseSerializerTest
 
         assertNotNull( result );
         assertEquals( JsHttpResponse.STATUS_OK, result.getStatus() );
-        assertEquals( MediaType.TEXT_PLAIN_TYPE.toString(), result.getHeaders().get( "Content-Type" ) );
+        assertTrue( PLAIN_TEXT_UTF_8.withoutParameters().equals( MediaType.parse( result.getHeaders().get( "Content-Type" ) ) ) );
         assertEquals( "Value", result.getHeaders().get( "X-MyHeader" ) );
         assertEquals( "With headers", result.getEntity() );
     }
