@@ -3,8 +3,6 @@ package com.enonic.wem.portal.underscore;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
@@ -16,7 +14,6 @@ import com.enonic.wem.api.module.ModuleKeyResolver;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.core.module.ModuleKeyResolverService;
 import com.enonic.wem.core.module.ModuleResourcePathResolver;
-import com.enonic.wem.core.web.servlet.ServletRequestHolder;
 import com.enonic.wem.portal.base.BaseResourceTest;
 
 public abstract class UnderscoreResourceTest<T extends UnderscoreResource>
@@ -54,14 +51,5 @@ public abstract class UnderscoreResourceTest<T extends UnderscoreResource>
 
         final ModuleResourceKey moduleResourceKey = ModuleResourceKey.from( key );
         Mockito.when( this.modulePathResolver.resolveResourcePath( moduleResourceKey ) ).thenReturn( filePath );
-    }
-
-    protected void mockCurrentContextHttpRequest()
-    {
-        final HttpServletRequest req = Mockito.mock( HttpServletRequest.class );
-        Mockito.when( req.getScheme() ).thenReturn( "http" );
-        Mockito.when( req.getServerName() ).thenReturn( "localhost" );
-        Mockito.when( req.getLocalPort() ).thenReturn( 80 );
-        ServletRequestHolder.setRequest( req );
     }
 }

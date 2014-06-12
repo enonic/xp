@@ -1,10 +1,14 @@
 package com.enonic.wem.portal.base;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.junit.Before;
+import org.mockito.Mockito;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.resource.Finder;
 
+import com.enonic.wem.core.web.servlet.ServletRequestHolder;
 import com.enonic.wem.portal.PortalApplication;
 
 public abstract class BaseResourceTest<T extends BaseResource>
@@ -40,5 +44,14 @@ public abstract class BaseResourceTest<T extends BaseResource>
     protected final Response executeRequest( final Request request )
     {
         return this.app.handle( request );
+    }
+
+    protected void mockCurrentContextHttpRequest()
+    {
+        final HttpServletRequest req = Mockito.mock( HttpServletRequest.class );
+        Mockito.when( req.getScheme() ).thenReturn( "http" );
+        Mockito.when( req.getServerName() ).thenReturn( "localhost" );
+        Mockito.when( req.getLocalPort() ).thenReturn( 80 );
+        ServletRequestHolder.setRequest( req );
     }
 }
