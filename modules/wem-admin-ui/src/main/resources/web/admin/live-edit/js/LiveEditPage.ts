@@ -137,6 +137,7 @@ module LiveEdit {
                 var selectedView = this.pageItemViews.getSelectedView();
                 if (selectedView) {
                     selectedView.deselect();
+                    selectedView.hideTooltip();
                 }
             });
         }
