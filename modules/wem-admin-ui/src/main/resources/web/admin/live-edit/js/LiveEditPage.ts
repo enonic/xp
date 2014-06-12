@@ -71,12 +71,10 @@ module LiveEdit {
 
         private registerGlobalListeners(): void {
             wemjq(window).on('mouseOverComponent.liveEdit', (event, component?: ItemView) => {
-                console.log("Over " + component.getType().getShortName() + "[ " + component.getItemId() + " ]");
                 this.highlighter.highlightItemView(component);
                 component.showTooltip();
             });
             wemjq(window).on('mouseOutComponent.liveEdit', (event, component?: ItemView) => {
-                console.log("Out " + component.getType().getShortName() + "[ " + component.getItemId() + " ]");
                 this.highlighter.hide();
                 component.hideTooltip();
             });
