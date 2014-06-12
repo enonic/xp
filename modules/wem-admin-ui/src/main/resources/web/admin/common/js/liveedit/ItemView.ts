@@ -47,6 +47,7 @@ module api.liveedit {
                 this.tooltipViewer = this.getTooltipViewer();
                 if (this.tooltipViewer) {
                     this.tooltip = new api.ui.Tooltip(this).
+                        setTrigger(api.ui.Tooltip.TRIGGER_NONE).
                         setHideTimeout(0).
                         setSide(api.ui.Tooltip.SIDE_TOP).
                         setContent(this.tooltipViewer);
@@ -66,6 +67,14 @@ module api.liveedit {
             if (this.tooltipViewer) {
                 this.tooltipViewer.setObject(object);
             }
+        }
+
+        showTooltip() {
+            this.tooltip.show();
+        }
+
+        hideTooltip() {
+            this.tooltip.hide();
         }
 
         setItemId(value: ItemViewId) {

@@ -61,6 +61,8 @@ module LiveEdit {
                 this.highlighter = new LiveEdit.ui.Highlighter();
                 api.dom.Body.get().appendChild(this.highlighter);
 
+                api.ui.Tooltip.allowMultipleInstances(false);
+
                 this.registerGlobalListeners();
             });
 
@@ -69,10 +71,14 @@ module LiveEdit {
 
         private registerGlobalListeners(): void {
             wemjq(window).on('mouseOverComponent.liveEdit', (event, component?: ItemView) => {
+                console.log("Over " + component.getType().getShortName() + "[ " + component.getItemId() + " ]");
                 this.highlighter.highlightItemView(component);
+                component.showTooltip();
             });
-            wemjq(window).on('mouseOutComponent.liveEdit', () => {
+            wemjq(window).on('mouseOutComponent.liveEdit', (event, component?: ItemView) => {
+                console.log("Out " + component.getType().getShortName() + "[ " + component.getItemId() + " ]");
                 this.highlighter.hide();
+                component.hideTooltip();
             });
             ItemViewSelectedEvent.on((event: ItemViewSelectedEvent) => {
                 var component = event.getItemView();

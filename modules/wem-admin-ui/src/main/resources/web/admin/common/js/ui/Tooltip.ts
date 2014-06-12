@@ -9,12 +9,16 @@ module api.ui {
 
         static TRIGGER_HOVER = "hover";
         static TRIGGER_FOCUS = "focus";
+        static TRIGGER_NONE = "none";
 
         private static multipleAllowed: boolean = true;
         private static instances: Tooltip[] = [];
 
         private tooltipEl: api.dom.DivEl;
         private timeoutTimer: number;
+
+        private overListener: (event: Event) => any;
+        private outListener: (event: Event) => any;
 
         private target: api.dom.Element;
         private text: string;
@@ -42,16 +46,21 @@ module api.ui {
             this.text = text;
             this.showDelay = showDelay;
             this.hideTimeout = hideTimeout;
-            this.trigger = trigger;
             this.side = side;
 
-            var targetEl = target.getEl();
-            targetEl.addEventListener(this.getEventName(true), (event: Event) => {
+            this.overListener = (event: Event) => {
                 this.startShowDelay();
-            });
-            targetEl.addEventListener(this.getEventName(false), (event: Event) => {
+                event.stopPropagation();
+                event.preventDefault();
+            };
+            this.outListener = (event: Event) => {
                 this.startHideTimeout();
-            });
+                event.stopPropagation();
+                event.preventDefault();
+            };
+
+            this.setTrigger(trigger);
+
             Tooltip.instances.push(this);
         }
 
@@ -138,7 +147,23 @@ module api.ui {
         }
 
         setTrigger(trigger: string): Tooltip {
+            if (trigger == this.trigger) {
+                return this;
+            }
+
+            // remove old listeners
+            this.target.getEl().
+                removeEventListener(this.getEventName(true), this.overListener).
+                removeEventListener(this.getEventName(false), this.outListener);
+
             this.trigger = trigger;
+
+            // add new listeners
+            if (trigger != Tooltip.TRIGGER_NONE) {
+                this.target.getEl().
+                    addEventListener(this.getEventName(true), this.overListener).
+                    addEventListener(this.getEventName(false), this.outListener);
+            }
             return this;
         }
 
@@ -226,7 +251,7 @@ module api.ui {
                 if (this.trigger == Tooltip.TRIGGER_HOVER) {
                     // if tooltip target element becomes disabled it doesn't generate mouse leave event
                     // so we need to check whether mouse has moved from tooltip target or not
-                    this.hideOnMouseOut();
+                    //this.hideOnMouseOut();
                 }
                 this.timeoutTimer = setTimeout(() => {
                     this.show();
@@ -274,6 +299,7 @@ module api.ui {
         private hideOtherInstances() {
             Tooltip.instances.forEach((tooltip: Tooltip) => {
                 if (tooltip != this && tooltip.isVisible()) {
+                    console.log("Hiding tooltip because multiple instances are not allowed", tooltip);
                     tooltip.hide();
                 }
             })
