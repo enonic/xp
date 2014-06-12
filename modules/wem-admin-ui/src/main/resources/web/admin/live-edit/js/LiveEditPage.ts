@@ -14,6 +14,7 @@ module LiveEdit {
     import RegionView = api.liveedit.RegionView;
     import ItemViewId = api.liveedit.ItemViewId;
     import LayoutView = api.liveedit.layout.LayoutView;
+    import TextView = api.liveedit.text.TextView;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import PageComponentAddedEvent = api.liveedit.PageComponentAddedEvent;
     import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
@@ -31,6 +32,8 @@ module LiveEdit {
         private pageRegions: PageRegions;
 
         private highlighter: LiveEdit.ui.Highlighter;
+
+        private shader: LiveEdit.ui.Shader;
 
         static get(): LiveEditPage {
             return LiveEditPage.INSTANCE;
@@ -63,6 +66,8 @@ module LiveEdit {
 
                 api.ui.Tooltip.allowMultipleInstances(false);
 
+                this.shader = new LiveEdit.ui.Shader();
+
                 this.registerGlobalListeners();
             });
 
@@ -84,33 +89,51 @@ module LiveEdit {
                 // Highlighter should not be shown when type page is selected
                 if (component.getType().equals(api.liveedit.PageItemType.get())) {
                     this.highlighter.hide();
+                    this.shader.shadeItemView(component);
                     return;
                 } else if (component.getType().equals(api.liveedit.image.ImageItemType.get())) {
                     var image = (<api.liveedit.image.ImageView>component).getImage();
                     if (image) {
-                        image.getEl().addEventListener("load", () => this.highlighter.highlightItemView(component));
+                        image.getEl().addEventListener("load", () => {
+                            this.highlighter.highlightItemView(component);
+                            this.shader.shadeItemView(component);
+                        });
                     }
                 }
 
                 this.highlighter.highlightItemView(component);
+                this.shader.shadeItemView(component);
             });
             PageComponentDeselectEvent.on(() => {
                 this.highlighter.hide();
+                this.shader.hide();
             });
             PageComponentResetEvent.on((event: PageComponentResetEvent) => {
                 this.highlighter.highlightItemView(event.getComponentView());
+                this.shader.shadeItemView(event.getComponentView());
             });
             SortableStartEvent.on(() => {
                 this.highlighter.hide();
+                this.shader.hide();
             });
             PageComponentRemoveEvent.on(() => {
                 this.highlighter.hide();
+                this.shader.hide();
             });
-            wemjq(window).on('editTextComponent.liveEdit', () => {
+            wemjq(window).on('editTextComponent.liveEdit', (event:JQueryEventObject, component: TextView) => {
                 this.highlighter.hide();
+                this.shader.shadeItemView(component);
             });
             wemjq(window).on('resizeBrowserWindow.liveEdit', () => {
-                this.highlighter.highlightItemView(this.pageItemViews.getSelectedView());
+                var selectedView = this.pageItemViews.getSelectedView();
+                this.highlighter.highlightItemView(selectedView);
+                this.shader.shadeItemView(selectedView);
+            });
+            LiveEdit.ui.ShaderClickedEvent.on(() => {
+                var selectedView = this.pageItemViews.getSelectedView();
+                if (selectedView) {
+                    selectedView.deselect();
+                }
             });
         }
 
