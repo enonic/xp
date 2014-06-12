@@ -1,14 +1,18 @@
-module api.notify {
+module api {
 
-    import Type = api.notify.Type;
+    export enum ExceptionType {
+        INFO,
+        ERROR,
+        WARNING
+    }
 
     export class Exception {
 
         private message: string;
 
-        private type: Type;
+        private type: ExceptionType;
 
-        constructor(message: string, type: Type = Type.ERROR) {
+        constructor(message: string, type: ExceptionType = ExceptionType.ERROR) {
             this.message = message;
             this.type = type;
         }
@@ -17,7 +21,7 @@ module api.notify {
             return this.message;
         }
 
-        getType(): Type {
+        getType(): ExceptionType {
             return this.type;
         }
 

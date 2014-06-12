@@ -22,6 +22,8 @@
 ///<reference path='Cloneable.ts' />
 ///<reference path='ObjectHelper.ts' />
 ///<reference path='Name.ts' />
+///<reference path='Exception.ts' />
+///<reference path='DefaultErrorHandler.ts' />
 
 ///<reference path='util/_module.ts' />
 ///<reference path='util/loader/event/_module.ts' />

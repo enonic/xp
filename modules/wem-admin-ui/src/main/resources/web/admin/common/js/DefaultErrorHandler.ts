@@ -1,4 +1,4 @@
-module api.notify {
+module api {
 
     export class DefaultErrorHandler {
 
@@ -10,22 +10,22 @@ module api.notify {
                 var message = error.getMessage();
 
                 switch (error.getType()){
-                case Type.ERROR:
+                case ExceptionType.ERROR:
                     console.error(message);
-                    showError(message);
+                    api.notify.showError(message);
                     break;
-                case Type.WARNING:
+                case ExceptionType.WARNING:
                     console.warn(message);
-                    showWarning(message);
+                    api.notify.showWarning(message);
                     break;
-                case Type.INFO:
+                case ExceptionType.INFO:
                     console.info(message);
-                    showFeedback(message);
+                    api.notify.showFeedback(message);
                     break;
                 }
             } else {
                 console.error(error);
-                showError(error.toString());
+                api.notify.showError(error.toString());
             }
 
         }

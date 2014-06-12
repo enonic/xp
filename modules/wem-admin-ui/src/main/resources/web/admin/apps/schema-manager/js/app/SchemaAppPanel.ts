@@ -138,7 +138,7 @@ module app {
                                         self.removePanelByIndex(viewTabMenuItem.getIndex());
                                     }
                                 }).
-                                catch((reason: any) => api.notify.DefaultErrorHandler.handle(reason)).
+                                catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
                                 done();
                         }
                     }
