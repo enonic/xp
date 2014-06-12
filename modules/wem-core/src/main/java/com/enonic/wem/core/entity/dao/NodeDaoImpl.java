@@ -23,7 +23,7 @@ import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.entity.json.NodeJsonSerializer;
 import com.enonic.wem.core.workspace.WorkspaceDocument;
-import com.enonic.wem.core.workspace.WorkspaceStore;
+import com.enonic.wem.core.workspace.WorkspaceService;
 import com.enonic.wem.core.workspace.query.WorkspaceDeleteQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceIdsQuery;
@@ -34,10 +34,9 @@ import com.enonic.wem.core.workspace.query.WorkspacePathsQuery;
 public class NodeDaoImpl
     implements NodeDao
 {
-
     private BlobService blobService;
 
-    private WorkspaceStore workspaceStore;
+    private WorkspaceService workspaceService;
 
     @Override
     public Node create( final CreateNodeArguments createNodeArguments, final Workspace workspace )
@@ -54,7 +53,7 @@ public class NodeDaoImpl
             workspace( workspace ).
             build();
 
-        workspaceStore.store( workspaceDocument );
+        workspaceService.store( workspaceDocument );
 
         return newNode;
     }
@@ -89,7 +88,7 @@ public class NodeDaoImpl
             workspace( workspace ).
             build();
 
-        workspaceStore.store( workspaceDocument );
+        workspaceService.store( workspaceDocument );
 
         return updatedNode;
     }
@@ -99,9 +98,9 @@ public class NodeDaoImpl
     {
         final Node persistedNode = getById( pushNodeArguments.getId(), workspace );
 
-        final BlobKey existingBlob = workspaceStore.getById( new WorkspaceIdQuery( workspace, pushNodeArguments.getId() ) );
+        final BlobKey existingBlob = workspaceService.getById( new WorkspaceIdQuery( workspace, pushNodeArguments.getId() ) );
 
-        this.workspaceStore.store( WorkspaceDocument.create().
+        this.workspaceService.store( WorkspaceDocument.create().
             blobKey( existingBlob ).
             workspace( pushNodeArguments.getTo() ).
             id( persistedNode.id() ).
@@ -109,7 +108,7 @@ public class NodeDaoImpl
             parentPath( persistedNode.parent() ).
             build() );
 
-        final BlobKey pushed = workspaceStore.getById( new WorkspaceIdQuery( pushNodeArguments.getTo(), pushNodeArguments.getId() ) );
+        final BlobKey pushed = workspaceService.getById( new WorkspaceIdQuery( pushNodeArguments.getTo(), pushNodeArguments.getId() ) );
 
         return getNodeFromBlob( blobService.get( pushed ) );
     }
@@ -146,7 +145,7 @@ public class NodeDaoImpl
             blobKey( blob.getKey() ).
             build();
 
-        workspaceStore.store( workspaceDocument );
+        workspaceService.store( workspaceDocument );
 
         return true;
     }
@@ -186,7 +185,7 @@ public class NodeDaoImpl
     @Override
     public Nodes getByParent( final NodePath parent, final Workspace workspace )
     {
-        final BlobKeys blobKeys = workspaceStore.getByParent( new WorkspaceParentQuery( workspace, parent ) );
+        final BlobKeys blobKeys = workspaceService.getByParent( new WorkspaceParentQuery( workspace, parent ) );
         return getNodesFromBlobKeys( blobKeys );
     }
 
@@ -194,7 +193,7 @@ public class NodeDaoImpl
     @Override
     public Nodes getByPaths( final NodePaths paths, final Workspace workspace )
     {
-        final BlobKeys blobKeys = workspaceStore.getByPaths( new WorkspacePathsQuery( workspace, paths ) );
+        final BlobKeys blobKeys = workspaceService.getByPaths( new WorkspacePathsQuery( workspace, paths ) );
         return getNodesFromBlobKeys( blobKeys );
     }
 
@@ -206,14 +205,14 @@ public class NodeDaoImpl
 
     private Node doGetByPath( final NodePath path, final Workspace workspace )
     {
-        final BlobKey blobKey = workspaceStore.getByPath( new WorkspacePathQuery( workspace, path ) );
+        final BlobKey blobKey = workspaceService.getByPath( new WorkspacePathQuery( workspace, path ) );
         return getNodeFromBlob( blobService.get( blobKey ) );
     }
 
     @Override
     public Nodes getByIds( final EntityIds entityIds, final Workspace workspace )
     {
-        final BlobKeys blobKeys = workspaceStore.getByIds( new WorkspaceIdsQuery( workspace, entityIds ) );
+        final BlobKeys blobKeys = workspaceService.getByIds( new WorkspaceIdsQuery( workspace, entityIds ) );
         return getNodesFromBlobKeys( blobKeys );
     }
 
@@ -225,7 +224,7 @@ public class NodeDaoImpl
 
     private Node doGetById( final EntityId entityId, final Workspace workspace )
     {
-        final BlobKey blobKey = workspaceStore.getById( new WorkspaceIdQuery( workspace, entityId ) );
+        final BlobKey blobKey = workspaceService.getById( new WorkspaceIdQuery( workspace, entityId ) );
 
         return getNodeFromBlob( blobService.get( blobKey ) );
     }
@@ -254,7 +253,7 @@ public class NodeDaoImpl
             doDeleteNodeWithChildren( child, workspace );
         }
 
-        workspaceStore.delete( new WorkspaceDeleteQuery( workspace, nodeToDelete.id() ) );
+        workspaceService.delete( new WorkspaceDeleteQuery( workspace, nodeToDelete.id() ) );
     }
 
 
@@ -318,8 +317,8 @@ public class NodeDaoImpl
     }
 
     @Inject
-    public void setWorkspaceStore( final WorkspaceStore workspaceStore )
+    public void setWorkspaceService( final WorkspaceService workspaceService )
     {
-        this.workspaceStore = workspaceStore;
+        this.workspaceService = workspaceService;
     }
 }

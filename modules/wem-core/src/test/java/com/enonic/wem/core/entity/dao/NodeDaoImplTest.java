@@ -14,14 +14,14 @@ import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.blobstore.memory.MemoryBlobRecord;
-import com.enonic.wem.core.workspace.WorkspaceStore;
+import com.enonic.wem.core.workspace.WorkspaceService;
 import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
 
 public class NodeDaoImplTest
 {
     private final NodeDaoImpl nodeDao = new NodeDaoImpl();
 
-    private final WorkspaceStore workspaceStore = Mockito.mock( WorkspaceStore.class );
+    private final WorkspaceService workspaceService = Mockito.mock( WorkspaceService.class );
 
     private final BlobService blobService = Mockito.mock( BlobService.class );
 
@@ -32,7 +32,7 @@ public class NodeDaoImplTest
         throws Exception
     {
         nodeDao.setBlobService( blobService );
-        nodeDao.setWorkspaceStore( workspaceStore );
+        nodeDao.setWorkspaceService( workspaceService );
     }
 
     @Test
@@ -40,7 +40,7 @@ public class NodeDaoImplTest
         throws Exception
     {
         final BlobKey blobKey = new BlobKey( "a" );
-        Mockito.when( workspaceStore.getById( Mockito.isA( WorkspaceIdQuery.class ) ) ).
+        Mockito.when( workspaceService.getById( Mockito.isA( WorkspaceIdQuery.class ) ) ).
             thenReturn( blobKey );
 
         final String serializedNode = readFromFile( "serialized-node.json" );

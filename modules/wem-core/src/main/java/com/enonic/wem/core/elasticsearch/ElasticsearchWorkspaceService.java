@@ -34,7 +34,7 @@ import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.workspace.WorkspaceDocument;
-import com.enonic.wem.core.workspace.WorkspaceStore;
+import com.enonic.wem.core.workspace.WorkspaceService;
 import com.enonic.wem.core.workspace.query.WorkspaceDeleteQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceDiffQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
@@ -49,8 +49,8 @@ import static com.enonic.wem.core.elasticsearch.WorkspaceXContentBuilderFactory.
 import static com.enonic.wem.core.elasticsearch.WorkspaceXContentBuilderFactory.PATH_FIELD_NAME;
 import static com.enonic.wem.core.elasticsearch.WorkspaceXContentBuilderFactory.WORKSPACE_FIELD_NAME;
 
-public class ElasticsearchWorkspaceStore
-    implements WorkspaceStore
+public class ElasticsearchWorkspaceService
+    implements WorkspaceService
 {
     private final static Index WORKSPACE_INDEX = Index.WORKSPACE;
 

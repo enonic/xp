@@ -11,7 +11,7 @@ import com.enonic.wem.core.workspace.query.WorkspaceParentQuery;
 import com.enonic.wem.core.workspace.query.WorkspacePathQuery;
 import com.enonic.wem.core.workspace.query.WorkspacePathsQuery;
 
-public interface WorkspaceStore
+public interface WorkspaceService
 {
     public void store( final WorkspaceDocument workspaceDocument );
 

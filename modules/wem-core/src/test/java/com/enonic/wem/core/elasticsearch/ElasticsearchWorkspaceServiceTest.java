@@ -42,18 +42,18 @@ import com.enonic.wem.core.workspace.query.WorkspacePathsQuery;
 import static com.enonic.wem.core.elasticsearch.WorkspaceXContentBuilderFactory.BLOBKEY_FIELD_NAME;
 import static org.junit.Assert.*;
 
-public class ElasticsearchWorkspaceStoreTest
+public class ElasticsearchWorkspaceServiceTest
 {
     private ElasticsearchDao elasticsearchDao;
 
-    private ElasticsearchWorkspaceStore wsStore;
+    private ElasticsearchWorkspaceService wsStore;
 
     @Before
     public void setUp()
         throws Exception
     {
         elasticsearchDao = Mockito.mock( ElasticsearchDao.class );
-        this.wsStore = new ElasticsearchWorkspaceStore();
+        this.wsStore = new ElasticsearchWorkspaceService();
         this.wsStore.setElasticsearchDao( elasticsearchDao );
     }
 

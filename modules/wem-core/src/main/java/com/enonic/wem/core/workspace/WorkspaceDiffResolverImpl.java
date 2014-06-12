@@ -9,7 +9,7 @@ public class WorkspaceDiffResolverImpl
 {
 
     @Inject
-    private WorkspaceStore workspaceStore;
+    private WorkspaceService workspaceService;
 
 
     @Override
