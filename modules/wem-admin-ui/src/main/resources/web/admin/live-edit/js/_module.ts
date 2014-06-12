@@ -24,6 +24,7 @@
 ///<reference path='ui/Cursor.ts' />
 ///<reference path='ui/Highlighter.ts' />
 ///<reference path='ui/ToolTip.ts' />
+///<reference path='ui/ShaderClickedEvent.ts' />
 
 ///<reference path='ui/contextmenu/ContextMenu.ts' />
 ///<reference path='ui/contextmenu/menuitem/BaseMenuItem.ts' />

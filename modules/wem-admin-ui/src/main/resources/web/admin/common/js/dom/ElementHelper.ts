@@ -304,6 +304,10 @@ module api.dom {
             return this;
         }
 
+        setRightPx(value: number): ElementHelper {
+            return this.setRight(value + "px");
+        }
+
         getMarginLeft(): number {
             return parseFloat(this.getComputedProperty('margin-left')) || 0;
         }

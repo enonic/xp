@@ -599,6 +599,14 @@ module api.dom {
             this.getEl().removeEventListener("click", listener);
         }
 
+        onContextMenu(listener: (event: MouseEvent) => void) {
+            this.getEl().addEventListener("contextmenu", listener);
+        }
+
+        unContextMenu(listener: (event: MouseEvent) => void) {
+            this.getEl().removeEventListener("contextmenu", listener);
+        }
+
         onDblClicked(listener: (event: MouseEvent) => void) {
             this.getEl().addEventListener("dblclick", listener);
         }

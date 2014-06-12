@@ -2,6 +2,7 @@ module LiveEdit.component.mouseevent {
 
     import TextItemType = api.liveedit.text.TextItemType;
     import TextView = api.liveedit.text.TextView;
+    import ShaderClickedEvent = LiveEdit.ui.ShaderClickedEvent;
     import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
 
     enum TextMode {
@@ -33,8 +34,7 @@ module LiveEdit.component.mouseevent {
         }
 
         registerGlobalListeners(): void {
-            wemjq(window).on('clickShader.liveEdit', () => this.leaveEditMode());
-
+            ShaderClickedEvent.on(() => this.leaveEditMode());
             PageComponentDeselectEvent.on(() => this.leaveEditMode());
         }
 

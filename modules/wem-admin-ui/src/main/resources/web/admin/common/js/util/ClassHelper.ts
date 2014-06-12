@@ -1,7 +1,7 @@
 module api.util {
 
     var MAX_NEST_LEVEL = 7;
-    var ALLOWED_PACKAGES = ['api', 'app'];
+    var ALLOWED_PACKAGES = ['api', 'app', 'LiveEdit'];
 
     export function getFunctionName(func): string {
         if (func.name) {
@@ -50,7 +50,6 @@ module api.util {
                     if (funcName == node) {
                         return funcName;
                     }
-
                 }
             }
         }
