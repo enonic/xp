@@ -34,8 +34,8 @@ module api.liveedit.layout {
             return true
         }
 
-        createView(config: CreateItemViewConfig<RegionView,LayoutComponent>): LayoutView {
-            return new LayoutView(new LayoutViewBuilder().
+        createView(config: CreateItemViewConfig<RegionView,LayoutComponent>): LayoutComponentView {
+            return new LayoutComponentView(new LayoutComponentViewBuilder().
                 setItemViewProducer(config.itemViewProducer).
                 setParentRegionView(config.parentView).
                 setPageComponent(config.data).

@@ -1,6 +1,6 @@
 module LiveEdit.ui {
 
-    import TextView = api.liveedit.text.TextView;
+    import TextComponentView = api.liveedit.text.TextComponentView;
 
     export class Editor extends LiveEdit.ui.Base {
 
@@ -20,12 +20,12 @@ module LiveEdit.ui {
                 (event: JQueryEventObject, tag?: string) => document.execCommand(tag, false, null));
         }
 
-        activate(textComponent: TextView): void {
+        activate(textComponent: TextComponentView): void {
             textComponent.getElement().attr('contenteditable', true);
             textComponent.getElement().get(0).focus();
         }
 
-        deActivate(textComponent: TextView): void {
+        deActivate(textComponent: TextComponentView): void {
             textComponent.getElement().attr('contenteditable', false);
             textComponent.getElement().get(0).blur();
         }

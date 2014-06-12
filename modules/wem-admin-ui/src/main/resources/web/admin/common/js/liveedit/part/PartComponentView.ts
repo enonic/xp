@@ -5,7 +5,7 @@ module api.liveedit.part {
     import RegionView = api.liveedit.RegionView;
     import PartComponent = api.content.page.part.PartComponent;
 
-    export class PartViewBuilder extends PageComponentViewBuilder<PartComponent> {
+    export class PartComponentViewBuilder extends PageComponentViewBuilder<PartComponent> {
 
         constructor() {
             super();
@@ -13,13 +13,13 @@ module api.liveedit.part {
         }
     }
 
-    export class PartView extends PageComponentView<PartComponent> {
+    export class PartComponentView extends PageComponentView<PartComponent> {
 
         private contentViews: ContentView[] = [];
 
         private placeholder: PartPlaceholder;
 
-        constructor(builder: PartViewBuilder) {
+        constructor(builder: PartComponentViewBuilder) {
             super(builder);
             this.placeholder = new PartPlaceholder(this);
 
@@ -61,9 +61,9 @@ module api.liveedit.part {
 
         }
 
-        duplicate(duplicate: PartComponent): PartView {
+        duplicate(duplicate: PartComponent): PartComponentView {
 
-            var duplicatedView = new PartView(new PartViewBuilder().
+            var duplicatedView = new PartComponentView(new PartComponentViewBuilder().
                 setParentRegionView(this.getParentItemView()).
                 setPageComponent(duplicate));
             this.getEl().insertAfterThisEl(duplicatedView.getEl());

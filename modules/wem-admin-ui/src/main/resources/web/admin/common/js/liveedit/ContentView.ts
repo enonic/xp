@@ -1,22 +1,22 @@
 module api.liveedit {
 
     import Content = api.content.Content;
-    import PartView = api.liveedit.part.PartView;
+    import PartComponentView = api.liveedit.part.PartComponentView;
 
     export class ContentView extends ItemView {
 
-        private parentPartView: PartView;
+        private parentPartComponentView: PartComponentView;
 
-        constructor(parentPartView: PartView, element?: HTMLElement) {
+        constructor(parentPartComponentView: PartComponentView, element?: HTMLElement) {
             super(new ItemViewBuilder().
-                setItemViewIdProducer(parentPartView.getItemViewIdProducer()).
+                setItemViewIdProducer(parentPartComponentView.getItemViewIdProducer()).
                 setType(ContentItemType.get()).
                 setElement(element));
-            this.parentPartView = parentPartView;
+            this.parentPartComponentView = parentPartComponentView;
         }
 
-        getParentPartView(): PartView {
-            return this.parentPartView;
+        getParentPartComponentView(): PartComponentView {
+            return this.parentPartComponentView;
         }
 
         getName(): string {
@@ -24,8 +24,8 @@ module api.liveedit {
             return "[No name]";
         }
 
-        getParentItemView(): PartView {
-            return this.parentPartView;
+        getParentItemView(): PartComponentView {
+            return this.parentPartComponentView;
         }
 
         select() {

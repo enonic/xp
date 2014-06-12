@@ -9,7 +9,7 @@ module api.liveedit {
     import PageComponent = api.content.page.PageComponent;
     import LayoutComponent = api.content.page.layout.LayoutComponent;
     import PageRegions = api.content.page.PageRegions;
-    import PartView = api.liveedit.part.PartView;
+    import PartComponentView = api.liveedit.part.PartComponentView;
 
     export class PageItemViewsParser {
 

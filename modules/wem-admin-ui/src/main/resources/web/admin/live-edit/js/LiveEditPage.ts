@@ -13,8 +13,8 @@ module LiveEdit {
     import ItemView = api.liveedit.ItemView;
     import RegionView = api.liveedit.RegionView;
     import ItemViewId = api.liveedit.ItemViewId;
-    import LayoutView = api.liveedit.layout.LayoutView;
-    import TextView = api.liveedit.text.TextView;
+    import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
+    import TextComponentView = api.liveedit.text.TextComponentView;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import PageComponentAddedEvent = api.liveedit.PageComponentAddedEvent;
     import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
@@ -96,7 +96,7 @@ module LiveEdit {
                     this.shader.shadeItemView(component);
                     return;
                 } else if (component.getType().equals(api.liveedit.image.ImageItemType.get())) {
-                    var image = (<api.liveedit.image.ImageView>component).getImage();
+                    var image = (<api.liveedit.image.ImageComponentView>component).getImage();
                     if (image) {
                         image.getEl().addEventListener("load", () => {
                             this.highlighter.highlightItemView(component);
@@ -124,7 +124,7 @@ module LiveEdit {
                 this.highlighter.hide();
                 this.shader.hide();
             });
-            wemjq(window).on('editTextComponent.liveEdit', (event: JQueryEventObject, component: TextView) => {
+            wemjq(window).on('editTextComponent.liveEdit', (event: JQueryEventObject, component: TextComponentView) => {
                 this.highlighter.hide();
                 this.shader.shadeItemView(component);
             });
@@ -168,9 +168,9 @@ module LiveEdit {
 
             pageComponentView.empty();
 
-            var closestParentLayoutView = LayoutView.getClosestParentLayoutView(pageComponentView);
-            if (closestParentLayoutView) {
-                closestParentLayoutView.addPadding();
+            var closestParentLayoutComponentView = LayoutComponentView.getClosestParentLayoutComponentView(pageComponentView);
+            if (closestParentLayoutComponentView) {
+                closestParentLayoutComponentView.addPadding();
             }
 
             new PageComponentAddedEvent().setPageComponentView(pageComponentView).fire();

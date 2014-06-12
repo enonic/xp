@@ -4,7 +4,7 @@ module api.liveedit.text {
     import RegionView = api.liveedit.RegionView;
     import TextComponent = api.content.page.text.TextComponent;
 
-    export class TextViewBuilder extends PageComponentViewBuilder<TextComponent> {
+    export class TextComponentViewBuilder extends PageComponentViewBuilder<TextComponent> {
 
         constructor() {
             super();
@@ -12,23 +12,23 @@ module api.liveedit.text {
         }
     }
 
-    export class TextView extends PageComponentView<TextComponent> {
+    export class TextComponentView extends PageComponentView<TextComponent> {
 
-        constructor(builder: TextViewBuilder) {
+        constructor(builder: TextComponentViewBuilder) {
             super(builder);
         }
 
-        duplicate(duplicate: TextComponent): TextView {
+        duplicate(duplicate: TextComponent): TextComponentView {
 
-            var duplicatedView = new TextView(new TextViewBuilder().
+            var duplicatedView = new TextComponentView(new TextComponentViewBuilder().
                 setParentRegionView(this.getParentItemView()).
                 setPageComponent(duplicate));
             this.getEl().insertAfterThisEl(duplicatedView.getEl());
             return duplicatedView;
         }
 
-        public static fromJQuery(element: JQuery): TextView {
-            return new TextView(new TextViewBuilder().setElement(<HTMLElement>element.get(0)));
+        public static fromJQuery(element: JQuery): TextComponentView {
+            return new TextComponentView(new TextComponentViewBuilder().setElement(<HTMLElement>element.get(0)));
         }
 
         getTooltipViewer(): TextComponentViewer {

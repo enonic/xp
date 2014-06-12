@@ -7,7 +7,7 @@ module api.liveedit.image {
 
         private id: ContentId;
 
-        private imageView: ImageView;
+        private imageView: ImageComponentView;
 
         private imageName: string;
 
@@ -18,7 +18,7 @@ module api.liveedit.image {
             return this;
         }
 
-        setImageView(value: ImageView): ImageComponentSetImageEvent {
+        setImageComponentView(value: ImageComponentView): ImageComponentSetImageEvent {
             this.imageView = value;
             return this;
         }
@@ -37,7 +37,7 @@ module api.liveedit.image {
             return this.id;
         }
 
-        getImageView(): ImageView {
+        getImageComponentView(): ImageComponentView {
             return this.imageView;
         }
 

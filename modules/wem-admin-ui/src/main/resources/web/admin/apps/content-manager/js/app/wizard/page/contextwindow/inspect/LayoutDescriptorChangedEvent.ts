@@ -1,19 +1,19 @@
 module app.wizard.page.contextwindow.inspect {
 
-    import LayoutView = api.liveedit.layout.LayoutView;
+    import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
 
     export class LayoutDescriptorChangedEvent {
 
-        private layoutView: LayoutView;
+        private layoutView: LayoutComponentView;
 
         private descriptor: api.content.page.layout.LayoutDescriptor;
 
-        constructor(layoutView: LayoutView, descriptor: api.content.page.layout.LayoutDescriptor) {
+        constructor(layoutView: LayoutComponentView, descriptor: api.content.page.layout.LayoutDescriptor) {
             this.layoutView = layoutView;
             this.descriptor = descriptor;
         }
 
-        getLayoutView(): LayoutView {
+        getLayoutComponentView(): LayoutComponentView {
             return this.layoutView;
         }
 

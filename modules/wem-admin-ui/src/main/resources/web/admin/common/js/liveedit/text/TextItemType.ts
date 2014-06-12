@@ -28,8 +28,8 @@ module api.liveedit.text {
             });
         }
 
-        createView(config: CreateItemViewConfig<RegionView,TextComponent>): TextView {
-            return new TextView(new TextViewBuilder().
+        createView(config: CreateItemViewConfig<RegionView,TextComponent>): TextComponentView {
+            return new TextComponentView(new TextComponentViewBuilder().
                 setItemViewProducer(config.itemViewProducer).
                 setParentRegionView(config.parentView).
                 setPageComponent(config.data).

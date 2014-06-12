@@ -7,7 +7,7 @@ module api.liveedit.layout {
     import RegionView = api.liveedit.RegionView;
     import ItemView = api.liveedit.ItemView;
 
-    export class LayoutViewBuilder extends PageComponentViewBuilder<LayoutComponent> {
+    export class LayoutComponentViewBuilder extends PageComponentViewBuilder<LayoutComponent> {
 
         constructor() {
             super();
@@ -15,13 +15,13 @@ module api.liveedit.layout {
         }
     }
 
-    export class LayoutView extends PageComponentView<LayoutComponent> {
+    export class LayoutComponentView extends PageComponentView<LayoutComponent> {
 
         private placeholder: LayoutPlaceholder;
 
         private regionViews: RegionView[];
 
-        constructor(builder: LayoutViewBuilder) {
+        constructor(builder: LayoutComponentViewBuilder) {
             this.regionViews = [];
             super(builder);
             this.placeholder = new LayoutPlaceholder(this);
@@ -67,9 +67,9 @@ module api.liveedit.layout {
 
         }
 
-        duplicate(duplicate: LayoutComponent): LayoutView {
+        duplicate(duplicate: LayoutComponent): LayoutComponentView {
 
-            var duplicatedView = new LayoutView(new LayoutViewBuilder().
+            var duplicatedView = new LayoutComponentView(new LayoutComponentViewBuilder().
                 setParentRegionView(this.getParentItemView()).
                 setPageComponent(duplicate));
             this.getEl().insertAfterThisEl(duplicatedView.getEl());
@@ -90,10 +90,10 @@ module api.liveedit.layout {
             return array;
         }
 
-        static getClosestParentLayoutView(itemView: ItemView): LayoutView {
+        static getClosestParentLayoutComponentView(itemView: ItemView): LayoutComponentView {
 
             var parent = itemView.getParentItemView();
-            while (!api.ObjectHelper.iFrameSafeInstanceOf(parent, LayoutView)) {
+            while (!api.ObjectHelper.iFrameSafeInstanceOf(parent, LayoutComponentView)) {
                 parent = parent.getParentItemView();
                 if (parent == null) {
                     break;
@@ -102,23 +102,23 @@ module api.liveedit.layout {
             if (!parent) {
                 return null;
             }
-            return <LayoutView>parent;
+            return <LayoutComponentView>parent;
         }
 
-        static getParentLayoutView(pageComponentView: PageComponentView<PageComponent>): LayoutView {
+        static getParentLayoutComponentView(pageComponentView: PageComponentView<PageComponent>): LayoutComponentView {
 
             var parentRegion = pageComponentView.getParentItemView();
-            var potentialLayoutView = parentRegion.getParentItemView()
-            if (api.ObjectHelper.iFrameSafeInstanceOf(potentialLayoutView, LayoutView)) {
-                return <LayoutView> potentialLayoutView;
+            var potentialLayoutComponentView = parentRegion.getParentItemView()
+            if (api.ObjectHelper.iFrameSafeInstanceOf(potentialLayoutComponentView, LayoutComponentView)) {
+                return <LayoutComponentView> potentialLayoutComponentView;
             }
             else {
                 return null;
             }
         }
 
-        static hasParentLayoutView(pageComponentView: PageComponentView<PageComponent>): boolean {
-            return !LayoutView.getParentLayoutView(pageComponentView) ? false : true;
+        static hasParentLayoutComponentView(pageComponentView: PageComponentView<PageComponent>): boolean {
+            return !LayoutComponentView.getParentLayoutComponentView(pageComponentView) ? false : true;
         }
 
         private parseRegions() {

@@ -13,7 +13,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     import ItemView = api.liveedit.ItemView;
     import RegionView = api.liveedit.RegionView;
     import PageComponentView = api.liveedit.PageComponentView;
-    import LayoutView = api.liveedit.layout.LayoutView;
+    import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
     import PageComponentItemType = api.liveedit.PageComponentItemType;
     import RegionItemType = api.liveedit.RegionItemType;
     import TextItemType = api.liveedit.text.TextItemType;
@@ -205,7 +205,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             removePaddingFromParentLayout(pageComponentView);
 
             var draggedItemIsLayoutComponent = pageComponentView.getType().equals(LayoutItemType.get()),
-                targetComponentIsInLayoutComponent = LayoutView.hasParentLayoutView(pageComponentView);
+                targetComponentIsInLayoutComponent = LayoutComponentView.hasParentLayoutComponentView(pageComponentView);
 
             if (draggedItemIsLayoutComponent && targetComponentIsInLayoutComponent) {
                 ui.item.remove()
@@ -293,16 +293,16 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     function addPaddingToParentLayout(itemView: ItemView) {
-        var closestParentLayoutView = LayoutView.getClosestParentLayoutView(itemView);
-        if (closestParentLayoutView) {
-            closestParentLayoutView.addPadding();
+        var closestParentLayoutComponentView = LayoutComponentView.getClosestParentLayoutComponentView(itemView);
+        if (closestParentLayoutComponentView) {
+            closestParentLayoutComponentView.addPadding();
         }
     }
 
     function removePaddingFromParentLayout(itemView: ItemView) {
-        var closestParentLayoutView = LayoutView.getClosestParentLayoutView(itemView);
-        if (closestParentLayoutView) {
-            closestParentLayoutView.removePadding();
+        var closestParentLayoutComponentView = LayoutComponentView.getClosestParentLayoutComponentView(itemView);
+        if (closestParentLayoutComponentView) {
+            closestParentLayoutComponentView.removePadding();
         }
     }
 

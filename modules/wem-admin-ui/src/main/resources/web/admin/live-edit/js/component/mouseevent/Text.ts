@@ -1,7 +1,7 @@
 module LiveEdit.component.mouseevent {
 
     import TextItemType = api.liveedit.text.TextItemType;
-    import TextView = api.liveedit.text.TextView;
+    import TextComponentView = api.liveedit.text.TextComponentView;
     import ShaderClickedEvent = LiveEdit.ui.ShaderClickedEvent;
     import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
 
@@ -13,7 +13,7 @@ module LiveEdit.component.mouseevent {
 
     export class Text extends LiveEdit.component.mouseevent.Base {
 
-        private selectedText: TextView = null;
+        private selectedText: TextComponentView = null;
         private modes: any = {};
         private currentMode: TextMode;
 
@@ -42,12 +42,12 @@ module LiveEdit.component.mouseevent {
         attachClickEvent(): void {
             // Listen for left/right click.
             wemjq(document).on('click contextmenu touchstart', this.componentCssSelectorFilter, (event: JQueryEventObject) => {
-                var textComponent = TextView.fromJQuery(wemjq(event.currentTarget));
+                var textComponent = TextComponentView.fromJQuery(wemjq(event.currentTarget));
                 this.handleClick(event, textComponent);
             });
         }
 
-        handleClick(event: JQueryEventObject, component: TextView): void {
+        handleClick(event: JQueryEventObject, component: TextComponentView): void {
             event.stopPropagation();
             event.preventDefault();
 

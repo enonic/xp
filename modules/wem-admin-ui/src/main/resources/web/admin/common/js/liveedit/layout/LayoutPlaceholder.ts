@@ -8,7 +8,7 @@ module api.liveedit.layout {
 
         private comboBox: api.content.page.layout.LayoutDescriptorComboBox;
 
-        constructor(layoutView: LayoutView) {
+        constructor(layoutView: LayoutComponentView) {
             super();
 
             var request = new api.content.page.layout.GetLayoutDescriptorsByModulesRequest(PageItemType.get().getSiteTemplate().getModules());

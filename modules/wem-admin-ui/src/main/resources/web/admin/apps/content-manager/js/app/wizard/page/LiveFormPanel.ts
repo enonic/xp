@@ -56,10 +56,10 @@ module app.wizard.page {
     import PageView = api.liveedit.PageView;
     import RegionView = api.liveedit.RegionView;
     import PageComponentView = api.liveedit.PageComponentView;
-    import ImageView = api.liveedit.image.ImageView;
-    import PartView = api.liveedit.part.PartView;
-    import LayoutView = api.liveedit.layout.LayoutView;
-    import TextView = api.liveedit.text.TextView;
+    import ImageComponentView = api.liveedit.image.ImageComponentView;
+    import PartComponentView = api.liveedit.part.PartComponentView;
+    import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
+    import TextComponentView = api.liveedit.text.TextComponentView;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import SortableStopEvent = api.liveedit.SortableStopEvent;
     import PageSelectEvent = api.liveedit.PageSelectEvent;
@@ -148,7 +148,7 @@ module app.wizard.page {
 
             this.imageInspectionPanel.onImageDescriptorChanged((event: ImageDescriptorChangedEvent) => {
 
-                var imageView: ImageView = event.getImageView();
+                var imageView: ImageComponentView = event.getImageComponentView();
                 var command = new PageComponentSetDescriptorCommand().
                     setPageComponentView(imageView).
                     setPageRegions(this.pageRegions).
@@ -167,7 +167,7 @@ module app.wizard.page {
 
             this.layoutInspectionPanel.onLayoutDescriptorChanged((event: LayoutDescriptorChangedEvent) => {
 
-                var layoutView = event.getLayoutView();
+                var layoutView = event.getLayoutComponentView();
                 var command = new PageComponentSetDescriptorCommand().
                     setPageComponentView(layoutView).
                     setPageRegions(this.pageRegions).
@@ -535,13 +535,13 @@ module app.wizard.page {
                     setDefaultModels(this.defaultModels).
                     setPageRegions(this.pageRegions).
                     setImage(event.getImageId()).
-                    setPageComponentView(event.getImageView()).
+                    setPageComponentView(event.getImageComponentView()).
                     setImageName(event.getImageName());
 
                 Q(!this.pageTemplate ? this.initializePageFromDefault() : null).
                     then(() => {
                         command.execute();
-                        this.saveAndReloadOnlyPageComponent(event.getImageView());
+                        this.saveAndReloadOnlyPageComponent(event.getImageComponentView());
                     }).
                     catch((reason: any) => api.notify.DefaultErrorHandler.handle(reason)).
                     done();
@@ -595,19 +595,19 @@ module app.wizard.page {
         private inspectPageComponent(pageComponentView: PageComponentView<PageComponent>) {
             api.util.assertNotNull(pageComponentView, "pageComponentView cannot be null");
 
-            if (api.ObjectHelper.iFrameSafeInstanceOf(pageComponentView, ImageView)) {
-                this.imageInspectionPanel.setImageComponent(<ImageView>pageComponentView);
+            if (api.ObjectHelper.iFrameSafeInstanceOf(pageComponentView, ImageComponentView)) {
+                this.imageInspectionPanel.setImageComponent(<ImageComponentView>pageComponentView);
                 this.contextWindow.showInspectionPanel(this.imageInspectionPanel);
             }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(pageComponentView, PartView)) {
-                this.partInspectionPanel.setPartComponent(<PartView>pageComponentView);
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(pageComponentView, PartComponentView)) {
+                this.partInspectionPanel.setPartComponent(<PartComponentView>pageComponentView);
                 this.contextWindow.showInspectionPanel(this.partInspectionPanel);
             }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(pageComponentView, LayoutView)) {
-                this.layoutInspectionPanel.setLayoutComponent(<LayoutView>pageComponentView);
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(pageComponentView, LayoutComponentView)) {
+                this.layoutInspectionPanel.setLayoutComponent(<LayoutComponentView>pageComponentView);
                 this.contextWindow.showInspectionPanel(this.layoutInspectionPanel);
             }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(pageComponentView, TextView)) {
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(pageComponentView, TextComponentView)) {
 
             }
             else {
