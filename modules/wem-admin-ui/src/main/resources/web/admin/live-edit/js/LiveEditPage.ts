@@ -16,6 +16,7 @@ module LiveEdit {
     import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
     import TextComponentView = api.liveedit.text.TextComponentView;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
+    import SortableStopEvent = api.liveedit.SortableStopEvent;
     import PageComponentAddedEvent = api.liveedit.PageComponentAddedEvent;
     import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
     import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
@@ -35,6 +36,8 @@ module LiveEdit {
         private highlighter: LiveEdit.ui.Highlighter;
 
         private shader: LiveEdit.ui.Shader;
+
+        private cursor: LiveEdit.ui.Cursor;
 
         static get(): LiveEditPage {
             return LiveEditPage.INSTANCE;
@@ -72,6 +75,8 @@ module LiveEdit {
 
                 this.shader = new LiveEdit.ui.Shader();
 
+                this.cursor = new LiveEdit.ui.Cursor();
+
                 this.registerGlobalListeners();
             });
 
@@ -81,10 +86,12 @@ module LiveEdit {
         private registerGlobalListeners(): void {
             wemjq(window).on('mouseOverComponent.liveEdit', (event, component?: ItemView) => {
                 this.highlighter.highlightItemView(component);
+                this.cursor.displayItemViewCursor(component);
                 component.showTooltip();
             });
             wemjq(window).on('mouseOutComponent.liveEdit', (event, component?: ItemView) => {
                 this.highlighter.hide();
+                this.cursor.reset();
                 component.hideTooltip();
             });
             ItemViewSelectedEvent.on((event: ItemViewSelectedEvent) => {
@@ -107,6 +114,7 @@ module LiveEdit {
 
                 this.highlighter.highlightItemView(component);
                 this.shader.shadeItemView(component);
+                this.cursor.displayItemViewCursor(component);
             });
             PageComponentDeselectEvent.on(() => {
                 this.highlighter.hide();
@@ -119,6 +127,10 @@ module LiveEdit {
             SortableStartEvent.on(() => {
                 this.highlighter.hide();
                 this.shader.hide();
+                this.cursor.hide();
+            });
+            SortableStopEvent.on(() => {
+                this.cursor.reset();
             });
             PageComponentRemoveEvent.on(() => {
                 this.highlighter.hide();

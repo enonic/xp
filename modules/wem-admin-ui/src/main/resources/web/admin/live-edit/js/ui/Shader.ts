@@ -3,11 +3,6 @@ module LiveEdit.ui {
     import Element = api.dom.Element;
     import DivEl = api.dom.DivEl;
     import ItemView = api.liveedit.ItemView;
-    import SortableStartEvent = api.liveedit.SortableStartEvent;
-    import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
-    import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
-    import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
-    import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
 
     export class Shader {
 

@@ -18,7 +18,6 @@ wemjq(window).load(() => {
 
     new LiveEdit.component.helper.ComponentResizeObserver();
 
-    new LiveEdit.ui.Cursor();
     new LiveEdit.ui.contextmenu.ContextMenu();
     new LiveEdit.ui.Shader();
     new LiveEdit.ui.Editor();
