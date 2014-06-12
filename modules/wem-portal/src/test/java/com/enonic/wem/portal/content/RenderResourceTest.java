@@ -9,10 +9,12 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
+import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageDescriptorService;
+import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateName;
@@ -20,6 +22,8 @@ import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.site.SiteService;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
+import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
+import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
@@ -31,6 +35,10 @@ import com.enonic.wem.portal.base.BaseResourceTest;
 import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsControllerFactory;
 
+import static com.enonic.wem.api.content.page.PageRegions.newPageRegions;
+import static com.enonic.wem.api.content.page.part.PartComponent.newPartComponent;
+import static com.enonic.wem.api.content.page.region.Region.newRegion;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.when;
 
@@ -41,6 +49,8 @@ public class RenderResourceTest<T extends RenderResource>
     protected ContentService contentService;
 
     protected SiteService siteService;
+
+    protected SiteTemplateService siteTemplateService;
 
     protected PageTemplateService pageTemplateService;
 
@@ -56,6 +66,8 @@ public class RenderResourceTest<T extends RenderResource>
         this.contentService = Mockito.mock( ContentService.class );
         this.siteService = Mockito.mock( SiteService.class );
         this.pageTemplateService = Mockito.mock( PageTemplateService.class );
+        this.siteTemplateService = Mockito.mock( SiteTemplateService.class );
+        when( siteTemplateService.getSiteTemplate( any() ) ).thenThrow( new SiteTemplateNotFoundException( null ) );
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
         final JsControllerFactory jsControllerFactory = Mockito.mock( JsControllerFactory.class );
 
@@ -65,6 +77,7 @@ public class RenderResourceTest<T extends RenderResource>
         this.resource.contentService = this.contentService;
         this.resource.siteService = this.siteService;
         this.resource.pageTemplateService = this.pageTemplateService;
+        this.resource.siteTemplateService = this.siteTemplateService;
         this.resource.pageDescriptorService = this.pageDescriptorService;
         this.resource.controllerFactory = jsControllerFactory;
     }
@@ -73,7 +86,16 @@ public class RenderResourceTest<T extends RenderResource>
         throws Exception
     {
         when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ), ContentConstants.DEFAULT_CONTEXT ) ).
-            thenReturn( createPage( "id", "site/somepath/content", "ctype" ) );
+            thenReturn( createPage( "id", "site/somepath/content", "ctype", true ) );
+
+        when( this.siteService.getNearestSite( isA( ContentId.class ) ) ).thenReturn( createSite( "id", "site", "contenttypename" ) );
+    }
+
+    protected final void setupNonPageContent()
+        throws Exception
+    {
+        when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ), ContentConstants.DEFAULT_CONTEXT ) ).
+            thenReturn( createPage( "id", "site/somepath/content", "ctype", false ) );
 
         when( this.siteService.getNearestSite( isA( ContentId.class ) ) ).thenReturn( createSite( "id", "site", "contenttypename" ) );
     }
@@ -87,7 +109,7 @@ public class RenderResourceTest<T extends RenderResource>
         when( this.pageDescriptorService.getByKey( isA( PageDescriptorKey.class ) ) ).thenReturn( createDescriptor() );
     }
 
-    private Content createPage( final String id, final String path, final String contentTypeName )
+    private Content createPage( final String id, final String path, final String contentTypeName, final boolean withPage )
     {
         RootDataSet rootDataSet = new RootDataSet();
 
@@ -99,15 +121,18 @@ public class RenderResourceTest<T extends RenderResource>
             config( rootDataSet ).
             build();
 
-        return Content.newContent().
+        final Content.Builder content = Content.newContent().
             id( ContentId.from( id ) ).
             path( ContentPath.from( path ) ).
             owner( UserKey.from( "myStore:me" ) ).
             displayName( "My Content" ).
             modifier( UserKey.superUser() ).
-            type( ContentTypeName.from( contentTypeName ) ).
-            page( page ).
-            build();
+            type( ContentTypeName.from( contentTypeName ) );
+        if ( withPage )
+        {
+            content.page( page );
+        }
+        return content.build();
     }
 
     private Content createSite( final String id, final String path, final String contentTypeName )
@@ -143,12 +168,20 @@ public class RenderResourceTest<T extends RenderResource>
         final RootDataSet pageTemplateConfig = new RootDataSet();
         pageTemplateConfig.addProperty( "pause", Value.newLong( 10000 ) );
 
+        PageRegions pageRegions = newPageRegions().
+            add( newRegion().name( "main-region" ).
+                add( newPartComponent().name( ComponentName.from( "mypart" ) ).
+                    build() ).
+                build() ).
+            build();
+
         return PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( module.getName(), new PageTemplateName( "my-page" ) ) ).
             displayName( "Main page emplate" ).
             config( pageTemplateConfig ).
             canRender( ContentTypeNames.from( "article", "banner" ) ).
             descriptor( PageDescriptorKey.from( "mainmodule-1.0.0:landing-page" ) ).
+            regions( pageRegions ).
             build();
     }
 
