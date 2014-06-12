@@ -26,7 +26,7 @@ module api.ui.toolbar {
         }
 
         addActions(actions: api.ui.Action[]) {
-            this.actions.concat(actions);
+            this.actions = this.actions.concat(actions);
             actions.forEach((action) => {
                 this.addElement(new api.ui.ActionButton(action));
             });
