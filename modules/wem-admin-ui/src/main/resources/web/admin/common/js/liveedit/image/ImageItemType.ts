@@ -30,8 +30,12 @@ module api.liveedit.image {
             });
         }
 
-        createView(parentRegion: RegionView, imageComponent: ImageComponent, element?: HTMLElement, dummy?: boolean): ImageView {
-            return new ImageView(parentRegion, imageComponent, element, dummy);
+        createView(config: CreateItemViewConfig<RegionView,ImageComponent>): ImageView {
+            return new ImageView(new ImageViewBuilder().
+                setItemViewProducer(config.itemViewProducer).
+                setParentRegionView(config.parentView).
+                setPageComponent(config.data).
+                setElement(config.element));
         }
 
         isPageComponentType(): boolean {

@@ -7,7 +7,41 @@ module api.liveedit {
         height: number;
     }
 
+    export class ItemViewBuilder {
+
+        itemViewIdProducer: ItemViewIdProducer;
+
+        type: ItemType;
+
+        element: HTMLElement;
+
+        parentElement: HTMLElement;
+
+        setItemViewIdProducer(value: ItemViewIdProducer): ItemViewBuilder {
+            this.itemViewIdProducer = value;
+            return this;
+        }
+
+        setType(value: ItemType): ItemViewBuilder {
+            this.type = value;
+            return this;
+        }
+
+        setElement(value: HTMLElement): ItemViewBuilder {
+            this.element = value;
+            return this;
+        }
+
+        setParentElement(value: HTMLElement): ItemViewBuilder {
+            this.parentElement = value;
+            return this;
+        }
+
+    }
+
     export class ItemView extends api.dom.Element {
+
+        private itemViewIdProducer: ItemViewIdProducer;
 
         private type: ItemType;
 
@@ -19,43 +53,48 @@ module api.liveedit {
 
         private tooltipViewer: api.ui.Viewer<any>;
 
-        constructor(type: ItemType, element?: HTMLElement, dummy?: boolean, parentElement?: HTMLElement) {
-            api.util.assertNotNull(type, "type cannot be null");
-            this.type = type;
+        constructor(builder: ItemViewBuilder) {
+            api.util.assertNotNull(builder.type, "type cannot be null");
+            this.type = builder.type;
+            this.itemViewIdProducer = builder.itemViewIdProducer;
 
             var props = new api.dom.ElementProperties();
             props.setGenerateId(false);
-            if (element) {
-                props.setHelper(new api.dom.ElementHelper(element)).setLoadExistingChildren(true);
+            if (builder.element) {
+                props.setHelper(new api.dom.ElementHelper(builder.element)).setLoadExistingChildren(true);
             }
             else {
                 props.setTagName("div");
             }
-            if (parentElement) {
-                props.setParentElement(parentElement);
+            if (builder.parentElement) {
+                props.setParentElement(builder.parentElement);
             }
 
             super(props);
+            this.setItemId(builder.itemViewIdProducer.next());
 
-            if (!element) {
-                this.getEl().setData(ItemType.DATA_ATTRIBUTE, type.getShortName());
+            if (!builder.element) {
+                this.getEl().setData(ItemType.DATA_ATTRIBUTE, builder.type.getShortName());
             }
-            if (!dummy) {
-                this.loadMask = new api.ui.LoadMask(this);
-                this.appendChild(this.loadMask);
 
-                this.tooltipViewer = this.getTooltipViewer();
-                if (this.tooltipViewer) {
-                    this.tooltip = new api.ui.Tooltip(this).
-                        setTrigger(api.ui.Tooltip.TRIGGER_NONE).
-                        setHideTimeout(0).
-                        setSide(api.ui.Tooltip.SIDE_TOP).
-                        setContent(this.tooltipViewer);
+            this.loadMask = new api.ui.LoadMask(this);
+            this.appendChild(this.loadMask);
 
-                }
+            this.tooltipViewer = this.getTooltipViewer();
+            if (this.tooltipViewer) {
+                this.tooltip = new api.ui.Tooltip(this).
+                    setTrigger(api.ui.Tooltip.TRIGGER_NONE).
+                    setHideTimeout(0).
+                    setSide(api.ui.Tooltip.SIDE_TOP).
+                    setContent(this.tooltipViewer);
+
             }
 
             this.setElementDimensions(this.getDimensionsFromElement());
+        }
+
+        getItemViewIdProducer(): ItemViewIdProducer {
+            return this.itemViewIdProducer;
         }
 
         getTooltipViewer(): api.ui.Viewer<any> {
@@ -77,7 +116,7 @@ module api.liveedit {
             this.tooltip.hide();
         }
 
-        setItemId(value: ItemViewId) {
+        private setItemId(value: ItemViewId) {
             this.getEl().setAttribute("data-" + ItemViewId.DATA_ATTRIBUTE, value.toString());
         }
 
@@ -147,6 +186,11 @@ module api.liveedit {
         getElementDimensions(): ElementDimensions {
             // We need to dynamically get the dimension as it can change on eg. browser window resize.
             return this.getDimensionsFromElement();
+        }
+
+        toItemViewArray(): ItemView[] {
+
+            return [this];
         }
 
         private getDimensionsFromElement(): ElementDimensions {

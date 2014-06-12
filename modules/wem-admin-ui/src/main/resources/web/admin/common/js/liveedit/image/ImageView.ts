@@ -5,13 +5,20 @@ module api.liveedit.image {
     import RegionView = api.liveedit.RegionView;
     import ImageComponent = api.content.page.image.ImageComponent;
 
+    export class ImageViewBuilder extends PageComponentViewBuilder<ImageComponent> {
+
+        constructor() {
+            super();
+            this.setType(ImageItemType.get());
+        }
+    }
+
     export class ImageView extends PageComponentView<ImageComponent> {
 
         private placeholder: ImagePlaceholder;
 
-        constructor(parentRegionView: RegionView, imageComponent: ImageComponent, element?: HTMLElement, dummy?: boolean) {
-            super(ImageItemType.get(), parentRegionView, imageComponent, element, dummy);
-
+        constructor(builder: ImageViewBuilder) {
+            super(builder);
             this.placeholder = new ImagePlaceholder(this);
         }
 
@@ -43,7 +50,9 @@ module api.liveedit.image {
 
         duplicate(duplicate: ImageComponent): ImageView {
 
-            var duplicatedView = new ImageView(this.getParentItemView(), duplicate);
+            var duplicatedView = new ImageView(new ImageViewBuilder().
+                setParentRegionView(this.getParentItemView()).
+                setPageComponent(duplicate));
             this.getEl().insertAfterThisEl(duplicatedView.getEl());
             return duplicatedView;
         }

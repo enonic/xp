@@ -11,6 +11,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     import ItemViewId = api.liveedit.ItemViewId;
     import ItemType = api.liveedit.ItemType;
     import ItemView = api.liveedit.ItemView;
+    import RegionView = api.liveedit.RegionView;
     import PageComponentView = api.liveedit.PageComponentView;
     import LayoutView = api.liveedit.layout.LayoutView;
     import PageComponentItemType = api.liveedit.PageComponentItemType;
@@ -20,7 +21,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import SortableStopEvent = api.liveedit.SortableStopEvent;
     import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
-    import PageComponentAddedEvent = api.liveedit.PageComponentAddedEvent;
+    import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
 
     // jQuery sortable cursor position form to the drag helper.
     var CURSOR_AT: any = {left: 24, top: 24};
@@ -234,7 +235,9 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             var precedingComponentView = resolvePrecedingComponentView(droppedElement.get(0));
             var newPageComponent = liveEditPage.createComponent(regionView.getRegion(), itemType.toPageComponentType(),
                 precedingComponentView);
-            var newPageComponentView = itemType.createView(regionView, newPageComponent);
+            var newPageComponentView = itemType.createView(new CreateItemViewConfig<RegionView,PageComponent>().
+                setParent(regionView).
+                setData(newPageComponent));
 
             var pageComponentIndex = droppedElement.index();
             droppedElement.remove();

@@ -1,4 +1,5 @@
 ///<reference path='ItemType.ts' />
+///<reference path='CreateItemViewConfig.ts' />
 ///<reference path='ItemTypeConfig.ts' />
 ///<reference path='RegionItemType.ts' />
 ///<reference path='InitializeLiveEditEvent.ts' />
@@ -6,6 +7,8 @@
 ///<reference path='PageItemType.ts' />
 ///<reference path='ContentItemType.ts' />
 ///<reference path='ItemViewId.ts' />
+///<reference path='ItemViewIdProducer.ts' />
+///<reference path='RepeatNextItemViewIdProducer.ts' />
 ///<reference path='ItemView.ts' />
 ///<reference path='RegionView.ts' />
 ///<reference path='RegionComponentViewer.ts' />

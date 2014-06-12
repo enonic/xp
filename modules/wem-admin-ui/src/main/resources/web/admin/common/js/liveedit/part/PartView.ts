@@ -5,16 +5,25 @@ module api.liveedit.part {
     import RegionView = api.liveedit.RegionView;
     import PartComponent = api.content.page.part.PartComponent;
 
+    export class PartViewBuilder extends PageComponentViewBuilder<PartComponent> {
+
+        constructor() {
+            super();
+            this.setType(PartItemType.get());
+        }
+    }
+
     export class PartView extends PageComponentView<PartComponent> {
 
         private contentViews: ContentView[] = [];
 
         private placeholder: PartPlaceholder;
 
-        constructor(parentRegionView: RegionView, partComponent: PartComponent, element?: HTMLElement, dummy?: boolean) {
-            super(PartItemType.get(), parentRegionView, partComponent, element, dummy);
-
+        constructor(builder: PartViewBuilder) {
+            super(builder);
             this.placeholder = new PartPlaceholder(this);
+
+            this.parseContentViews(this);
         }
 
         addContent(view: ContentView) {
@@ -54,13 +63,43 @@ module api.liveedit.part {
 
         duplicate(duplicate: PartComponent): PartView {
 
-            var duplicatedView = new PartView(this.getParentItemView(), duplicate);
+            var duplicatedView = new PartView(new PartViewBuilder().
+                setParentRegionView(this.getParentItemView()).
+                setPageComponent(duplicate));
             this.getEl().insertAfterThisEl(duplicatedView.getEl());
             return duplicatedView;
         }
 
         getTooltipViewer(): PartComponentViewer {
             return new PartComponentViewer();
+        }
+
+        toItemViewArray(): ItemView[] {
+
+            var array: ItemView[] = [];
+            array.push(this);
+            this.contentViews.forEach((contentView: ContentView) => {
+                array = array.concat(contentView.toItemViewArray());
+            });
+            return array;
+        }
+
+        private parseContentViews(parentElement?: api.dom.Element) {
+
+            var children = parentElement ? parentElement.getChildren() : this.getChildren();
+
+            children.forEach((childElement: api.dom.Element) => {
+                var itemType = ItemType.fromElement(childElement);
+                if (itemType) {
+                    if (ContentItemType.get().equals(itemType)) {
+                        var contentView = new ContentView(this, childElement.getHTMLElement());
+                        this.addContent(contentView);
+                    }
+                    else {
+                        this.parseContentViews(childElement);
+                    }
+                }
+            });
         }
     }
 }

@@ -28,6 +28,10 @@ module app.wizard.page {
     import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
     import PageComponentLoadedEvent = api.liveedit.PageComponentLoadedEvent;
     import RegionEmptyEvent = api.liveedit.RegionEmptyEvent;
+    import RepeatNextItemViewIdProducer = api.liveedit.RepeatNextItemViewIdProducer;
+    import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
+    import RegionView = api.liveedit.RegionView;
+    import ItemView = api.liveedit.ItemView;
 
     export interface LiveEditPageProxyConfig {
 
@@ -217,12 +221,17 @@ module app.wizard.page {
                 success: (htmlAsString: string) => {
 
                     var newElement = api.dom.Element.fromString(htmlAsString);
-                    var newPageComponentView: PageComponentView<PageComponent> = pageComponentView.getType().
-                        createView(pageComponentView.getParentItemView(), pageComponentView.getPageComponent(),
-                        newElement.getHTMLElement());
+                    var repeatNextItemViewIdProducer = new RepeatNextItemViewIdProducer(pageComponentView.getItemId(),
+                        pageComponentView.getItemViewIdProducer());
 
-                    // pass on the same ItemViewId and PageComponent to the new PageComponentView
-                    newPageComponentView.setItemId(pageComponentView.getItemId());
+                    var createViewConfig = new CreateItemViewConfig<RegionView,PageComponent>().
+                        setItemViewProducer(repeatNextItemViewIdProducer).
+                        setParent(pageComponentView.getParentItemView()).
+                        setData(pageComponentView.getPageComponent()).
+                        setElement(newElement.getHTMLElement());
+                    var newPageComponentView: PageComponentView<PageComponent> = pageComponentView.getType().
+                        createView(createViewConfig);
+
                     pageComponentView.replaceWith(newPageComponentView);
 
                     new PageComponentLoadedEvent(newPageComponentView).fire(this.liveEditWindow);

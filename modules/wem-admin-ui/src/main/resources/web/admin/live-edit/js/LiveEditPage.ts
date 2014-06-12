@@ -22,6 +22,7 @@ module LiveEdit {
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
     import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
+    import ItemViewIdProducer = api.liveedit.ItemViewIdProducer;
 
     export class LiveEditPage {
 
@@ -49,7 +50,9 @@ module LiveEdit {
                 var body = api.dom.Body.getAndLoadExistingChildren();
 
                 this.pageRegions = event.getPageRegions();
-                this.pageItemViews = new api.liveedit.PageItemViewsParser(body, event.getContent(), event.getPageRegions()).parse();
+                var itemViewIdProducer = new ItemViewIdProducer();
+                this.pageItemViews =
+                new api.liveedit.PageItemViewsParser(body, itemViewIdProducer, event.getContent(), event.getPageRegions()).parse();
                 this.pageItemViews.initializeEmpties();
 
                 api.liveedit.PageComponentLoadedEvent.on((event: api.liveedit.PageComponentLoadedEvent) => {
@@ -57,6 +60,7 @@ module LiveEdit {
                     this.pageItemViews.addItemView(event.getItemView());
 
                     if (event.getItemView().getType() == api.liveedit.layout.LayoutItemType.get()) {
+
                         LiveEdit.component.dragdropsort.DragDropSort.createSortableLayout(event.getItemView());
                     }
                 });
@@ -120,7 +124,7 @@ module LiveEdit {
                 this.highlighter.hide();
                 this.shader.hide();
             });
-            wemjq(window).on('editTextComponent.liveEdit', (event:JQueryEventObject, component: TextView) => {
+            wemjq(window).on('editTextComponent.liveEdit', (event: JQueryEventObject, component: TextView) => {
                 this.highlighter.hide();
                 this.shader.shadeItemView(component);
             });
@@ -159,9 +163,8 @@ module LiveEdit {
 
         addPageComponentView(pageComponentView: PageComponentView<PageComponent>, toRegion: RegionView, atIndex: number) {
 
-            this.addItemView(pageComponentView);
-
             toRegion.addPageComponentView(pageComponentView, atIndex);
+            this.addItemView(pageComponentView);
 
             pageComponentView.empty();
 

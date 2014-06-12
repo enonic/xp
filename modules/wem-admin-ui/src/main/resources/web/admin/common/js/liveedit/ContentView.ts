@@ -8,7 +8,10 @@ module api.liveedit {
         private parentPartView: PartView;
 
         constructor(parentPartView: PartView, element?: HTMLElement) {
-            super(ContentItemType.get(), element);
+            super(new ItemViewBuilder().
+                setItemViewIdProducer(parentPartView.getItemViewIdProducer()).
+                setType(ContentItemType.get()).
+                setElement(element));
             this.parentPartView = parentPartView;
         }
 

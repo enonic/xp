@@ -28,8 +28,12 @@ module api.liveedit.text {
             });
         }
 
-        createView(parentRegionView: RegionView, textComponent: TextComponent, element?: HTMLElement, dummy?: boolean): TextView {
-            return new TextView(parentRegionView, textComponent, element);
+        createView(config: CreateItemViewConfig<RegionView,TextComponent>): TextView {
+            return new TextView(new TextViewBuilder().
+                setItemViewProducer(config.itemViewProducer).
+                setParentRegionView(config.parentView).
+                setPageComponent(config.data).
+                setElement(config.element));
         }
 
         isPageComponentType(): boolean {

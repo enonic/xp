@@ -25,8 +25,8 @@ module api.liveedit {
             });
         }
 
-        createView(parentPartView: PartView, data: any, element?: HTMLElement, dummy?: boolean): ContentView {
-            return new ContentView(parentPartView, element);
+        createView(config: CreateItemViewConfig<PartView,any>): ContentView {
+            return new ContentView(config.parentView, config.element);
         }
     }
 

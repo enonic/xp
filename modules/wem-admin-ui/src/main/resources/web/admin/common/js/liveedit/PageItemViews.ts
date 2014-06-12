@@ -5,19 +5,15 @@ module api.liveedit {
 
     export class PageItemViews {
 
-        private itemViewCounter: number = 0;
-
         private pageView: PageView;
 
         private viewsById: {[s:number] : ItemView;} = {};
 
-        constructor(pageView: PageView, views: ItemView[]) {
+        constructor(pageView: PageView) {
 
             this.pageView = pageView;
-            views.forEach((view: ItemView) => {
-                var newItemId = this.nextItemViewId();
-                view.setItemId(newItemId);
-                this.viewsById[newItemId.toNumber()] = view;
+            this.pageView.toItemViewArray().forEach((view: ItemView) => {
+                this.viewsById[view.getItemId().toNumber()] = view;
 
                 // logging...
                 var extra = "";
@@ -35,10 +31,6 @@ module api.liveedit {
             });
         }
 
-        private nextItemViewId(): ItemViewId {
-            return new ItemViewId(++this.itemViewCounter)
-        }
-
         addItemView(itemView: ItemView) {
 
             var existingItemViewId = itemView.getItemId();
@@ -48,7 +40,6 @@ module api.liveedit {
                 console.debug("PageItemView.addItemView replaced view with id: " + existingItemViewId);
             }
             else {
-                itemView.setItemId(this.nextItemViewId());
                 console.debug("PageItemView.addItemView added view with id: " + itemView.getItemId());
             }
             this.viewsById[itemView.getItemId().toNumber()] = itemView;
