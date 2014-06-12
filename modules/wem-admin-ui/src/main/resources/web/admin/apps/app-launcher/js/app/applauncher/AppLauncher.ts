@@ -14,6 +14,10 @@ module app.launcher {
 
         private loadMask: api.ui.LoadMask;
 
+        private currentApplication:api.app.Application;
+
+        private currentApplicationHash:string;
+
         constructor(mainContainer: app.home.HomeMainContainer) {
             this.homeMainContainer = mainContainer;
 
@@ -44,11 +48,20 @@ module app.launcher {
             api.dom.Body.get().appendChild(this.adminApplicationFrames);
 
             api.app.ShowAppLauncherEvent.on((event) => {
+                this.currentApplication = event.getApplication();
+                this.currentApplicationHash = hasher.getHash();
                 Applications.getAllApps().forEach((app: api.app.Application) => {
                     if (app != event.getApplication()) {
                         app.hide();
                     }
                 });
+                this.homeMainContainer.setBackgroundImgUrl("");
+                this.homeMainContainer.enableReturnButton();
+            });
+
+            app.home.ReturnToAppEvent.on(() => {
+                this.homeMainContainer.hide();
+                hasher.setHash(this.currentApplicationHash);
             });
         }
 

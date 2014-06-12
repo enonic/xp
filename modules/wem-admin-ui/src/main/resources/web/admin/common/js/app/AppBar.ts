@@ -30,9 +30,6 @@ module api.app {
             this.launcherButton = new LauncherButton(this.showAppLauncherAction);
             this.appendChild(this.launcherButton);
 
-            var separator = new Separator();
-            this.appendChild(separator);
-
             this.homeButton = new HomeButton(this.application.getName(), AppBarActions.SHOW_APP_BROWSE_PANEL);
             this.appendChild(this.homeButton);
 
@@ -113,14 +110,6 @@ module api.app {
             this.onClicked((event: MouseEvent) => {
                 action.execute();
             });
-        }
-
-    }
-
-    export class Separator extends api.dom.SpanEl {
-
-        constructor() {
-            super('appbar-separator');
         }
 
     }

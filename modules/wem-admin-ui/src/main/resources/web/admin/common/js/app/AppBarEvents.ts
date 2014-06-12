@@ -9,7 +9,7 @@ module api.app {
             this.application = application;
         }
 
-        getApplication() {
+        getApplication():api.app.Application {
             return this.application;
         }
 
