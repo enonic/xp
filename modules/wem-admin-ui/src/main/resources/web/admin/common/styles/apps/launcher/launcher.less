@@ -114,8 +114,9 @@ html, body {
   .return-button {
     color: white;
     font-size:24px;
-    height: 24px;
-    width: 24px;
+    height: 44px;
+    width: 44px;
+    background-color:@admin-red;
     padding: 10px;
     cursor:pointer;
     position: absolute;
@@ -124,7 +125,7 @@ html, body {
     &:hover {
       color: rgba(255,255,255,0.5);
     }
-    .icon-undo2();
+    .icon-close2();
   }
 
   /** Common */
@@ -282,7 +283,7 @@ html, body {
         }
       }
       &.app-tile-over {
-        border-bottom:2px solid @admin-red;
+        border-bottom:4px solid @admin-red;
         &.fullsize {
           > .img-container {
 
