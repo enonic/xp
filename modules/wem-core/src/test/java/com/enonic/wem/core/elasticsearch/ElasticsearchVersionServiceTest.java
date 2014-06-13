@@ -1,7 +1,6 @@
 package com.enonic.wem.core.elasticsearch;
 
 import java.util.Iterator;
-import java.util.Set;
 
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.index.query.TermQueryBuilder;
@@ -16,6 +15,7 @@ import com.enonic.wem.core.elasticsearch.result.SearchResult;
 import com.enonic.wem.core.elasticsearch.result.SearchResultEntries;
 import com.enonic.wem.core.elasticsearch.result.SearchResultEntry;
 import com.enonic.wem.core.elasticsearch.result.SearchResultField;
+import com.enonic.wem.core.version.VersionBranch;
 import com.enonic.wem.core.version.VersionBranchQuery;
 import com.enonic.wem.core.version.VersionDocument;
 import com.enonic.wem.core.version.VersionEntry;
@@ -25,9 +25,9 @@ import static com.enonic.wem.core.elasticsearch.VersionXContentBuilderFactory.PA
 
 public class ElasticsearchVersionServiceTest
 {
-    private ElasticsearchDao elasticsearchDao = Mockito.mock( ElasticsearchDao.class );
+    private final ElasticsearchDao elasticsearchDao = Mockito.mock( ElasticsearchDao.class );
 
-    private ElasticsearchVersionService versionService = new ElasticsearchVersionService();
+    private final ElasticsearchVersionService versionService = new ElasticsearchVersionService();
 
     @Before
     public void setUp()
@@ -50,7 +50,7 @@ public class ElasticsearchVersionServiceTest
                     build() ).
                 build() );
 
-        final Set<VersionEntry> branch = versionService.getBranch( versionBranchQuery );
+        final VersionBranch branch = versionService.getBranch( versionBranchQuery );
 
         Assert.assertEquals( 1, branch.size() );
 
@@ -80,7 +80,7 @@ public class ElasticsearchVersionServiceTest
                     build() ).
                 build() );
 
-        final Set<VersionEntry> branch = versionService.getBranch( versionBranchQuery );
+        final VersionBranch branch = versionService.getBranch( versionBranchQuery );
 
         Assert.assertEquals( 2, branch.size() );
 
@@ -126,7 +126,7 @@ public class ElasticsearchVersionServiceTest
                     build() ).
                 build() );
 
-        final Set<VersionEntry> branch = versionService.getBranch( versionBranchQuery );
+        final VersionBranch branch = versionService.getBranch( versionBranchQuery );
 
         Assert.assertEquals( 4, branch.size() );
 

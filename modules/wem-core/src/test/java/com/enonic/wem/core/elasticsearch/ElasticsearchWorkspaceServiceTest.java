@@ -12,10 +12,6 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Iterators;
 
-import com.enonic.wem.api.aggregation.Aggregation;
-import com.enonic.wem.api.aggregation.Aggregations;
-import com.enonic.wem.api.aggregation.Bucket;
-import com.enonic.wem.api.aggregation.Buckets;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobKeys;
 import com.enonic.wem.api.entity.EntityId;
@@ -29,10 +25,8 @@ import com.enonic.wem.core.elasticsearch.result.SearchResult;
 import com.enonic.wem.core.elasticsearch.result.SearchResultEntries;
 import com.enonic.wem.core.elasticsearch.result.SearchResultEntry;
 import com.enonic.wem.core.elasticsearch.result.SearchResultField;
-import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 import com.enonic.wem.core.workspace.WorkspaceDocument;
 import com.enonic.wem.core.workspace.query.WorkspaceDeleteQuery;
-import com.enonic.wem.core.workspace.diff.WorkspaceDiffQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceIdsQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceParentQuery;
@@ -80,7 +74,7 @@ public class ElasticsearchWorkspaceServiceTest
 
         wsStore.store( workspaceDocument );
 
-        Mockito.verify( elasticsearchDao, Mockito.times( 1 ) ).storeAll( Mockito.anyCollectionOf( IndexRequest.class ) );
+        Mockito.verify( elasticsearchDao, Mockito.times( 1 ) ).store( Mockito.isA( IndexRequest.class ) );
     }
 
     @Test
@@ -144,7 +138,7 @@ public class ElasticsearchWorkspaceServiceTest
 
         wsStore.store( workspaceDocument );
 
-        Mockito.verify( elasticsearchDao, Mockito.times( 1 ) ).storeAll( Mockito.anyCollectionOf( IndexRequest.class ) );
+        Mockito.verify( elasticsearchDao, Mockito.times( 1 ) ).store( Mockito.isA( IndexRequest.class ) );
     }
 
     @Test
@@ -178,7 +172,7 @@ public class ElasticsearchWorkspaceServiceTest
     }
 
 
-    @Test(expected = NodeNotFoundException.class)
+    @Test
     public void getById_no_hits()
         throws Exception
     {
@@ -192,7 +186,9 @@ public class ElasticsearchWorkspaceServiceTest
 
         final WorkspaceIdQuery idQuery = new WorkspaceIdQuery( new Workspace( "test" ), EntityId.from( "1" ) );
 
-        wsStore.getById( idQuery );
+        final BlobKey byId = wsStore.getById( idQuery );
+
+        assertTrue( byId == null );
     }
 
     @Test(expected = WorkspaceStoreException.class)
@@ -254,7 +250,7 @@ public class ElasticsearchWorkspaceServiceTest
         assertEquals( next, new BlobKey( "c" ) );
     }
 
-    @Test(expected = NodeNotFoundException.class)
+    @Test
     public void getByIds_missing_entry()
         throws Exception
     {
@@ -276,31 +272,17 @@ public class ElasticsearchWorkspaceServiceTest
 
         final WorkspaceIdsQuery idQuery = new WorkspaceIdsQuery( new Workspace( "test" ), EntityIds.from( "1", "2", "3" ) );
 
-        wsStore.getByIds( idQuery );
+        final BlobKeys byIds = wsStore.getByIds( idQuery );
+
+        assertEquals( 2, byIds.size() );
     }
 
-    @Test(expected = RuntimeException.class)
-    public void getByIds_too_many_entries()
+    @Test
+    public void getByIds_no_entries()
         throws Exception
     {
         final SearchResult searchResult = SearchResult.create().
             results( SearchResultEntries.create().
-                add( SearchResultEntry.create().
-                    id( "1" ).
-                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "b" ) ) ).
-                    build() ).
-                add( SearchResultEntry.create().
-                    id( "2" ).
-                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "a" ) ) ).
-                    build() ).
-                add( SearchResultEntry.create().
-                    id( "3" ).
-                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "c" ) ) ).
-                    build() ).
-                add( SearchResultEntry.create().
-                    id( "4" ).
-                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "d" ) ) ).
-                    build() ).
                 build() ).
             build();
 
@@ -309,7 +291,9 @@ public class ElasticsearchWorkspaceServiceTest
 
         final WorkspaceIdsQuery idQuery = new WorkspaceIdsQuery( new Workspace( "test" ), EntityIds.from( "1", "2", "3" ) );
 
-        wsStore.getByIds( idQuery );
+        final BlobKeys result = wsStore.getByIds( idQuery );
+
+        assertEquals( 0, result.size() );
     }
 
     @Test
@@ -335,7 +319,7 @@ public class ElasticsearchWorkspaceServiceTest
         Assert.assertEquals( new BlobKey( "myBlobKey" ), blobKey );
     }
 
-    @Test(expected = NodeNotFoundException.class)
+    @Test
     public void getByPath_no_hits()
         throws Exception
     {
@@ -349,7 +333,9 @@ public class ElasticsearchWorkspaceServiceTest
 
         final WorkspacePathQuery pathQuery = new WorkspacePathQuery( new Workspace( "test" ), NodePath.newPath( "/test" ).build() );
 
-        wsStore.getByPath( pathQuery );
+        final BlobKey result = wsStore.getByPath( pathQuery );
+
+        assertTrue( result == null );
     }
 
     @Test
@@ -393,7 +379,7 @@ public class ElasticsearchWorkspaceServiceTest
         assertEquals( next, new BlobKey( "c" ) );
     }
 
-    @Test(expected = NodeNotFoundException.class)
+    @Test
     public void getByPaths_missing()
         throws Exception
     {
@@ -418,7 +404,9 @@ public class ElasticsearchWorkspaceServiceTest
                                                                                         NodePath.newPath( "/test2" ).build(),
                                                                                         NodePath.newPath( "/test3" ).build() ) );
 
-        wsStore.getByPaths( pathsQuery );
+        final BlobKeys result = wsStore.getByPaths( pathsQuery );
+
+        assertEquals( 2, result.size() );
     }
 
     @Test
@@ -478,38 +466,4 @@ public class ElasticsearchWorkspaceServiceTest
 
         assertEquals( 0, Iterators.size( blobKeys.iterator() ) );
     }
-
-    @Test
-    public void getDiff()
-    {
-        final SearchResult searchResult = SearchResult.create().
-            aggregations( Aggregations.create().
-                add( Aggregation.bucketAggregation( "changed" ).
-                    buckets( Buckets.create().
-                        addBucket( new Bucket( "1_source", 1L ) ).
-                        addBucket( new Bucket( "2_source", 1L ) ).
-                        addBucket( new Bucket( "2_target", 1L ) ).
-                        addBucket( new Bucket( "3_target", 2L ) ).
-                        addBucket( new Bucket( "4_source", 2L ) ).
-                        build() ).
-                    build() ).
-                build() ).
-            build();
-
-        Mockito.when( elasticsearchDao.search( Mockito.isA( ElasticsearchQuery.class ) ) ).
-            thenReturn( searchResult );
-
-        final WorkspaceDiffQuery workspaceDiffQuery = new WorkspaceDiffQuery( new Workspace( "source" ), new Workspace( "target" ) );
-
-        final EntityIds entitiesWithDiff = wsStore.getDiff( workspaceDiffQuery );
-
-        assertEquals( 2, Iterators.size( entitiesWithDiff.iterator() ) );
-        final Iterator<EntityId> iterator = entitiesWithDiff.iterator();
-        EntityId next = iterator.next();
-        assertEquals( EntityId.from( "1" ), next );
-        next = iterator.next();
-        assertEquals( EntityId.from( "2" ), next );
-    }
-
-
 }

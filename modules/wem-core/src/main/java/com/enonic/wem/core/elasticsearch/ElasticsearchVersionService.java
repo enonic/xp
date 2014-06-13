@@ -16,6 +16,7 @@ import com.enonic.wem.core.elasticsearch.result.SearchResultEntry;
 import com.enonic.wem.core.elasticsearch.result.SearchResultField;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
+import com.enonic.wem.core.version.VersionBranch;
 import com.enonic.wem.core.version.VersionBranchQuery;
 import com.enonic.wem.core.version.VersionDocument;
 import com.enonic.wem.core.version.VersionEntry;
@@ -28,7 +29,7 @@ import static com.enonic.wem.core.elasticsearch.VersionXContentBuilderFactory.PA
 public class ElasticsearchVersionService
     implements VersionService
 {
-    final static Index VERSION_INDEX = Index.VERSION;
+    private final static Index VERSION_INDEX = Index.VERSION;
 
     private static final boolean DEFAULT_REFRESH = true;
 
@@ -48,9 +49,9 @@ public class ElasticsearchVersionService
     }
 
     @Override
-    public Set<VersionEntry> getBranch( final VersionBranchQuery query )
+    public VersionBranch getBranch( final VersionBranchQuery query )
     {
-        return doGetEntries( query.getBlobKey() );
+        return VersionBranch.create().set( doGetEntries( query.getBlobKey() ) ).build();
     }
 
     private Set<VersionEntry> doGetEntries( final BlobKey blobKey )

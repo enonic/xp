@@ -29,13 +29,12 @@ import com.enonic.wem.core.elasticsearch.result.SearchResult;
 import com.enonic.wem.core.elasticsearch.result.SearchResultEntries;
 import com.enonic.wem.core.elasticsearch.result.SearchResultEntry;
 import com.enonic.wem.core.elasticsearch.result.SearchResultField;
-import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.workspace.WorkspaceDocument;
 import com.enonic.wem.core.workspace.WorkspaceService;
+import com.enonic.wem.core.workspace.diff.query.WorkspacesDiffQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceDeleteQuery;
-import com.enonic.wem.core.workspace.diff.WorkspaceDiffQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceIdsQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceParentQuery;
@@ -126,6 +125,11 @@ public class ElasticsearchWorkspaceService
 
         final SearchResultEntry searchResultEntry = doGetById( entityId, query.getWorkspace(), BLOBKEY_FIELD_NAME );
 
+        if ( searchResultEntry == null )
+        {
+            return null;
+        }
+
         final SearchResultField field = searchResultEntry.getField( WorkspaceXContentBuilderFactory.BLOBKEY_FIELD_NAME );
 
         if ( field == null || field.getValue() == null )
@@ -158,9 +162,9 @@ public class ElasticsearchWorkspaceService
 
         final SearchResult searchResult = elasticsearchDao.get( queryMetaData, boolQueryBuilder );
 
-        if ( searchResult.getResults().getSize() == 0 )
+        if ( searchResult.isEmpty() )
         {
-            throw new NodeNotFoundException( "Entity with id: " + entityId + " not found in workspace " + workspace.getName() );
+            return null;
         }
 
         return searchResult.getResults().getFirstHit();
@@ -170,46 +174,29 @@ public class ElasticsearchWorkspaceService
     public BlobKeys getByIds( final WorkspaceIdsQuery query )
     {
         final Set<String> entityIdsAsStrings = query.getEntityIdsAsStrings();
-        final int expectedHits = entityIdsAsStrings.size();
 
-        return doGetByIds( query.getWorkspace(), entityIdsAsStrings, expectedHits );
+        return doGetByIds( query.getWorkspace(), entityIdsAsStrings );
     }
 
-    private BlobKeys doGetByIds( final Workspace workspace, final Set<String> entityIdsAsStrings, final int expectedHits )
+    private BlobKeys doGetByIds( final Workspace workspace, final Set<String> entityIdsAsStrings )
     {
         final String workspaceName = workspace.getName();
 
         final TermsQueryBuilder idsQuery = new TermsQueryBuilder( ENTITY_ID_FIELD_NAME, entityIdsAsStrings );
         final BoolQueryBuilder boolQueryBuilder = joinWithWorkspaceQuery( workspaceName, idsQuery );
 
-        final QueryMetaData queryMetaData = createGetBlobkeyQueryMetaData( entityIdsAsStrings.size() );
+        final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( entityIdsAsStrings.size() );
 
         final SearchResult searchResult = elasticsearchDao.get( queryMetaData, boolQueryBuilder );
 
+        if ( searchResult.isEmpty() )
+        {
+            return BlobKeys.empty();
+        }
+
         final SearchResultEntries results = searchResult.getResults();
 
-        final long resultSize = results.getSize();
-
-        if ( resultSize < expectedHits )
-        {
-            throw new NodeNotFoundException(
-                "Expected " + expectedHits + " nodes in result, found " + resultSize + " in workspace " + workspaceName +
-                    ". Query: " + entityIdsAsStrings );
-        }
-
-        if ( resultSize > expectedHits )
-        {
-            throw new RuntimeException( "Found " + resultSize + " results in workspace " + workspace + ", expecting " + expectedHits );
-        }
-
         final Set<SearchResultField> fieldValues = results.getFields( BLOBKEY_FIELD_NAME );
-
-        if ( fieldValues.size() < expectedHits )
-        {
-            throw new RuntimeException( "Field " + BLOBKEY_FIELD_NAME + " not found on one or more nodes with ids " +
-                                            entityIdsAsStrings +
-                                            " in workspace " + workspaceName );
-        }
 
         return fieldValuesToBlobKeys( fieldValues );
     }
@@ -220,14 +207,13 @@ public class ElasticsearchWorkspaceService
         final TermQueryBuilder parentQuery = new TermQueryBuilder( PATH_FIELD_NAME, query.getNodePathAsString() );
         final BoolQueryBuilder workspacedByPathQuery = joinWithWorkspaceQuery( query.getWorkspace().getName(), parentQuery );
 
-        final QueryMetaData queryMetaData = createGetBlobkeyQueryMetaData( 1 );
+        final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( 1 );
 
         final SearchResult searchResult = elasticsearchDao.get( queryMetaData, workspacedByPathQuery );
 
-        if ( searchResult.getResults().getSize() != 1 )
+        if ( searchResult.isEmpty() )
         {
-            throw new NodeNotFoundException( "Node with path: " + query.getNodePathAsString() + " not found in workspace " +
-                                                 query.getWorkspace() );
+            return null;
         }
 
         final SearchResultEntry firstHit = searchResult.getResults().getFirstHit();
@@ -250,18 +236,9 @@ public class ElasticsearchWorkspaceService
         final TermsQueryBuilder parentQuery = new TermsQueryBuilder( PATH_FIELD_NAME, query.getNodePathsAsStrings() );
         final BoolQueryBuilder workspacedByPathsQuery = joinWithWorkspaceQuery( query.getWorkspace().getName(), parentQuery );
 
-        final QueryMetaData queryMetaData = createGetBlobkeyQueryMetaData( query.getNodePathsAsStrings().size() );
+        final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( query.getNodePathsAsStrings().size() );
 
         final SearchResult searchResult = elasticsearchDao.get( queryMetaData, workspacedByPathsQuery );
-
-        final long totalHits = searchResult.getResults().getSize();
-
-        if ( totalHits != query.getNodePathsAsStrings().size() )
-        {
-            throw new NodeNotFoundException(
-                "Expected " + query.getNodePathsAsStrings().size() + " results, got " + totalHits + " for paths " +
-                    query.getNodePathsAsStrings() );
-        }
 
         final Set<SearchResultField> fieldValues = searchResult.getResults().getFields( BLOBKEY_FIELD_NAME );
 
@@ -274,7 +251,7 @@ public class ElasticsearchWorkspaceService
         final TermQueryBuilder parentQuery = new TermQueryBuilder( PARENT_PATH_FIELD_NAME, query.getParentPath() );
         final BoolQueryBuilder workspacedByParentQuery = joinWithWorkspaceQuery( query.getWorkspace().getName(), parentQuery );
 
-        final QueryMetaData queryMetaData = createGetBlobkeyQueryMetaData( DEFAULT_UNKNOWN_SIZE );
+        final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( DEFAULT_UNKNOWN_SIZE );
 
         final SearchResult searchResult = elasticsearchDao.get( queryMetaData, workspacedByParentQuery );
 
@@ -289,14 +266,13 @@ public class ElasticsearchWorkspaceService
     }
 
     @Override
-    public EntityIds getDiff( final WorkspaceDiffQuery workspaceDiffQuery )
+    public EntityIds getEntriesWithDiff( final WorkspacesDiffQuery workspaceDiffQuery )
     {
-
         final TermQueryBuilder inSource = new TermQueryBuilder( WORKSPACE_FIELD_NAME, workspaceDiffQuery.getSource().getName() );
         final TermQueryBuilder inTarget = new TermQueryBuilder( WORKSPACE_FIELD_NAME, workspaceDiffQuery.getTarget().getName() );
 
-        final long inSourceCount = elasticsearchDao.count( createGetBlobkeyQueryMetaData( 0 ), inSource );
-        final long inTargetCount = elasticsearchDao.count( createGetBlobkeyQueryMetaData( 0 ), inTarget );
+        final long inSourceCount = elasticsearchDao.count( createGetBlobKeyQueryMetaData( 0 ), inSource );
+        final long inTargetCount = elasticsearchDao.count( createGetBlobKeyQueryMetaData( 0 ), inTarget );
 
         final long totalCount = inSourceCount + inTargetCount;
 
@@ -342,7 +318,7 @@ public class ElasticsearchWorkspaceService
         return blobKeysBuilder.build();
     }
 
-    private QueryMetaData createGetBlobkeyQueryMetaData( final int numberOfHits )
+    private QueryMetaData createGetBlobKeyQueryMetaData( final int numberOfHits )
     {
         return QueryMetaData.create( WORKSPACE_INDEX ).
             indexType( IndexType.NODE ).

@@ -73,6 +73,12 @@ public class NodeDaoImpl
 
         final BlobKey currentBlobKey = workspaceService.getById( new WorkspaceIdQuery( workspace, updateNodeArguments.nodeToUpdate() ) );
 
+        if ( currentBlobKey == null )
+        {
+            throw new NodeNotFoundException(
+                "Node with id " + updateNodeArguments.nodeToUpdate() + " not found in workspace " + workspace );
+        }
+
         final Node persistedNode = getNodeFromBlob( blobService.get( currentBlobKey ) );
 
         final Instant now = Instant.now();
@@ -111,6 +117,11 @@ public class NodeDaoImpl
     public Node push( final PushNodeArguments pushNodeArguments, final Workspace workspace )
     {
         final Node persistedNode = getById( pushNodeArguments.getId(), workspace );
+
+        if ( persistedNode == null )
+        {
+            throw new NodeNotFoundException( "Node with id " + pushNodeArguments.getId() + " not found in workspace " + workspace );
+        }
 
         final BlobKey existingBlob = workspaceService.getById( new WorkspaceIdQuery( workspace, pushNodeArguments.getId() ) );
 
@@ -225,6 +236,12 @@ public class NodeDaoImpl
     private Node doGetByPath( final NodePath path, final Workspace workspace )
     {
         final BlobKey blobKey = workspaceService.getByPath( new WorkspacePathQuery( workspace, path ) );
+
+        if ( blobKey == null )
+        {
+            throw new NodeNotFoundException( "Node with path " + path + " not found in workspace " + workspace );
+        }
+
         return getNodeFromBlob( blobService.get( blobKey ) );
     }
 
@@ -244,6 +261,11 @@ public class NodeDaoImpl
     private Node doGetById( final EntityId entityId, final Workspace workspace )
     {
         final BlobKey blobKey = workspaceService.getById( new WorkspaceIdQuery( workspace, entityId ) );
+
+        if ( blobKey == null )
+        {
+            throw new NodeNotFoundException( "Node with id " + entityId + " not found in workspace " + workspace );
+        }
 
         return getNodeFromBlob( blobService.get( blobKey ) );
     }
@@ -300,7 +322,7 @@ public class NodeDaoImpl
 
             if ( blob == null )
             {
-                throw new NodeNotFoundException( "Blob for node with blobkey " + blobKey + " not found" );
+                throw new NodeNotFoundException( "Blob for node with BlobKey " + blobKey + " not found" );
             }
 
             nodesBuilder.add( getNodeFromBlob( blob ) );
@@ -327,8 +349,6 @@ public class NodeDaoImpl
             throw new RuntimeException( "Failed to load blob with key" + blob.getKey() );
         }
     }
-
-
 
 
     @Inject

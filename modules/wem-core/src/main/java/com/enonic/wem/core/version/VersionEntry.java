@@ -4,9 +4,9 @@ import com.enonic.wem.api.blob.BlobKey;
 
 public class VersionEntry
 {
-    private BlobKey blobKey;
+    private final BlobKey blobKey;
 
-    private BlobKey parent;
+    private final BlobKey parent;
 
     public VersionEntry( final BlobKey blobKey, final BlobKey parent )
     {
@@ -19,8 +19,37 @@ public class VersionEntry
         return blobKey;
     }
 
-    public BlobKey getParent()
+    @Override
+    public boolean equals( final Object o )
     {
-        return parent;
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final VersionEntry that = (VersionEntry) o;
+
+        if ( blobKey != null ? !blobKey.equals( that.blobKey ) : that.blobKey != null )
+        {
+            return false;
+        }
+        if ( parent != null ? !parent.equals( that.parent ) : that.parent != null )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = blobKey != null ? blobKey.hashCode() : 0;
+        result = 31 * result + ( parent != null ? parent.hashCode() : 0 );
+        return result;
     }
 }

@@ -53,7 +53,6 @@ final class RenameNodeCommand
     }
 
     private Node doExecute()
-        throws Exception
     {
         final EntityId entityId = params.getEntityId();
         final Workspace workspace = this.context.getWorkspace();
@@ -68,6 +67,7 @@ final class RenameNodeCommand
         final NodePath parentPath = nodeToBeRenamed.parent().asAbsolute();
         final NodePath targetPath = new NodePath( parentPath, params.getNodeName() );
         final EntityId existingNodeId = getNodeIdFromPath( targetPath );
+
         if ( ( existingNodeId != null ) && !nodeToBeRenamed.id().equals( existingNodeId ) )
         {
             throw new NodeAlreadyExistException( targetPath );

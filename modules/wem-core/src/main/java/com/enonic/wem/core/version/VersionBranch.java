@@ -10,19 +10,37 @@ import com.google.common.collect.UnmodifiableIterator;
 import com.enonic.wem.api.blob.BlobKey;
 
 public class VersionBranch
-    implements Iterable<VersionBranch.Entry>
+    implements Iterable<VersionEntry>
 {
+    private final ImmutableSet<VersionEntry> entries;
 
-    private final ImmutableSet<Entry> entries;
-
-
-    public VersionBranch( final Builder builder )
+    private VersionBranch( final Builder builder )
     {
         this.entries = ImmutableSet.copyOf( builder.entries );
     }
 
+    public int size()
+    {
+        return entries.size();
+    }
+
+    public boolean isEmpty()
+    {
+        return entries.isEmpty();
+    }
+
+    public VersionEntry getFirst()
+    {
+        return entries.iterator().next();
+    }
+
+    public boolean has( final VersionEntry version )
+    {
+        return entries.contains( version );
+    }
+
     @Override
-    public UnmodifiableIterator<Entry> iterator()
+    public UnmodifiableIterator<VersionEntry> iterator()
     {
         return entries.iterator();
     }
@@ -34,16 +52,21 @@ public class VersionBranch
 
     public static class Builder
     {
-        private Set<Entry> entries = Sets.newLinkedHashSet();
+        private Set<VersionEntry> entries = Sets.newLinkedHashSet();
 
         private Builder()
         {
+        }
 
+        public Builder set( final Set<VersionEntry> versionEntries )
+        {
+            this.entries = versionEntries;
+            return this;
         }
 
         public Builder add( final String blobKey, final String parent )
         {
-            this.entries.add( new Entry( new BlobKey( blobKey ), Strings.isNullOrEmpty( parent ) ? null : new BlobKey( parent ) ) );
+            this.entries.add( new VersionEntry( new BlobKey( blobKey ), Strings.isNullOrEmpty( parent ) ? null : new BlobKey( parent ) ) );
             return this;
         }
 
@@ -52,19 +75,6 @@ public class VersionBranch
             return new VersionBranch( this );
         }
 
-    }
-
-    public static class Entry
-    {
-        private BlobKey blobKey;
-
-        private BlobKey parent;
-
-        public Entry( final BlobKey blobKey, final BlobKey parent )
-        {
-            this.blobKey = blobKey;
-            this.parent = parent;
-        }
     }
 
 
