@@ -24,11 +24,6 @@ public class SearchResult
         return aggregations;
     }
 
-    public boolean hasHits()
-    {
-        return results.getTotalHits() > 0;
-    }
-
     public static Builder create()
     {
         return new Builder();

@@ -1,6 +1,5 @@
 package com.enonic.wem.core.elasticsearch;
 
-import java.util.Arrays;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -36,7 +35,7 @@ import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.workspace.WorkspaceDocument;
 import com.enonic.wem.core.workspace.WorkspaceService;
 import com.enonic.wem.core.workspace.query.WorkspaceDeleteQuery;
-import com.enonic.wem.core.workspace.query.WorkspaceDiffQuery;
+import com.enonic.wem.core.workspace.diff.WorkspaceDiffQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceIdsQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceParentQuery;
@@ -53,8 +52,6 @@ public class ElasticsearchWorkspaceService
     implements WorkspaceService
 {
     private final static Index WORKSPACE_INDEX = Index.WORKSPACE;
-
-    private final static Index VERSION_INDEX = Index.VERSION;
 
     private static final boolean DEFAULT_REFRESH = true;
 
@@ -86,17 +83,7 @@ public class ElasticsearchWorkspaceService
             id( workspaceDocumentId.toString() ).
             refresh( DEFAULT_REFRESH );
 
-        final VersionDocumentId versionDocumentId =
-            new VersionDocumentId( workspaceDocument.getEntityId(), workspaceDocument.getBlobKey() );
-
-        final IndexRequest versioning = Requests.indexRequest().
-            index( VERSION_INDEX.getName() ).
-            type( IndexType.NODE.getName() ).
-            source( VersionXContentBuilderFactory.create( workspaceDocument ) ).
-            id( versionDocumentId.toString() ).
-            refresh( DEFAULT_REFRESH );
-
-        elasticsearchDao.storeAll( Arrays.asList( publish, versioning ) );
+        elasticsearchDao.store( publish );
     }
 
     private boolean unchanged( final WorkspaceDocument workspaceDocument, final WorkspaceDocumentId workspaceDocumentId )

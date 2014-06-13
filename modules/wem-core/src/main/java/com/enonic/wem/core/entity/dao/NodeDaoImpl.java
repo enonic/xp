@@ -22,6 +22,8 @@ import com.enonic.wem.api.entity.NodePaths;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.entity.json.NodeJsonSerializer;
+import com.enonic.wem.core.version.VersionDocument;
+import com.enonic.wem.core.version.VersionService;
 import com.enonic.wem.core.workspace.WorkspaceDocument;
 import com.enonic.wem.core.workspace.WorkspaceService;
 import com.enonic.wem.core.workspace.query.WorkspaceDeleteQuery;
@@ -38,6 +40,8 @@ public class NodeDaoImpl
 
     private WorkspaceService workspaceService;
 
+    private VersionService versionService;
+
     @Override
     public Node create( final CreateNodeArguments createNodeArguments, final Workspace workspace )
     {
@@ -45,15 +49,19 @@ public class NodeDaoImpl
 
         final Blob blob = doStoreNodeAsBlob( newNode );
 
-        final WorkspaceDocument workspaceDocument = WorkspaceDocument.create().
+        workspaceService.store( WorkspaceDocument.create().
             id( newNode.id() ).
             parentPath( newNode.parent() ).
             path( newNode.path() ).
             blobKey( blob.getKey() ).
             workspace( workspace ).
-            build();
+            build() );
 
-        workspaceService.store( workspaceDocument );
+        versionService.store( VersionDocument.create().
+            entityId( newNode.id() ).
+            blobKey( blob.getKey() ).
+            parent( null ).
+            build() );
 
         return newNode;
     }
@@ -63,7 +71,9 @@ public class NodeDaoImpl
     {
         Preconditions.checkNotNull( updateNodeArguments.nodeToUpdate(), "nodeToUpdate must be specified" );
 
-        final Node persistedNode = this.getById( updateNodeArguments.nodeToUpdate(), workspace );
+        final BlobKey currentBlobKey = workspaceService.getById( new WorkspaceIdQuery( workspace, updateNodeArguments.nodeToUpdate() ) );
+
+        final Node persistedNode = getNodeFromBlob( blobService.get( currentBlobKey ) );
 
         final Instant now = Instant.now();
 
@@ -78,17 +88,21 @@ public class NodeDaoImpl
 
         final Node updatedNode = updateNodeBuilder.build();
 
-        final Blob blob = doStoreNodeAsBlob( updatedNode );
+        final Blob newBlob = doStoreNodeAsBlob( updatedNode );
 
-        final WorkspaceDocument workspaceDocument = WorkspaceDocument.create().
+        workspaceService.store( WorkspaceDocument.create().
             path( updatedNode.path() ).
             parentPath( updatedNode.parent() ).
             id( updatedNode.id() ).
-            blobKey( blob.getKey() ).
+            blobKey( newBlob.getKey() ).
             workspace( workspace ).
-            build();
+            build() );
 
-        workspaceService.store( workspaceDocument );
+        versionService.store( VersionDocument.create().
+            entityId( updatedNode.id() ).
+            blobKey( newBlob.getKey() ).
+            parent( currentBlobKey ).
+            build() );
 
         return updatedNode;
     }
@@ -116,7 +130,9 @@ public class NodeDaoImpl
     @Override
     public boolean move( final MoveNodeArguments moveNodeArguments, final Workspace workspace )
     {
-        final Node persistedNode = getById( moveNodeArguments.nodeToMove(), workspace );
+        final BlobKey currentBlobKey = workspaceService.getById( new WorkspaceIdQuery( workspace, moveNodeArguments.nodeToMove() ) );
+
+        final Node persistedNode = getNodeFromBlob( blobService.get( currentBlobKey ) );
 
         if ( persistedNode.path().equals( new NodePath( moveNodeArguments.parentPath(), moveNodeArguments.name() ) ) )
         {
@@ -135,21 +151,24 @@ public class NodeDaoImpl
                                    : persistedNode.getEntityIndexConfig() ).
             build();
 
-        final Blob blob = doStoreNodeAsBlob( movedNode );
+        final Blob newBlob = doStoreNodeAsBlob( movedNode );
 
-        final WorkspaceDocument workspaceDocument = WorkspaceDocument.create().
+        workspaceService.store( WorkspaceDocument.create().
             id( movedNode.id() ).
             parentPath( movedNode.parent() ).
             path( movedNode.path() ).
             workspace( workspace ).
-            blobKey( blob.getKey() ).
-            build();
+            blobKey( newBlob.getKey() ).
+            build() );
 
-        workspaceService.store( workspaceDocument );
+        versionService.store( VersionDocument.create().
+            entityId( movedNode.id() ).
+            blobKey( newBlob.getKey() ).
+            parent( currentBlobKey ).
+            build() );
 
         return true;
     }
-
 
     private Blob doStoreNodeAsBlob( final Node newNode )
     {
@@ -310,6 +329,8 @@ public class NodeDaoImpl
     }
 
 
+
+
     @Inject
     public void setBlobService( final BlobService blobService )
     {
@@ -320,5 +341,11 @@ public class NodeDaoImpl
     public void setWorkspaceService( final WorkspaceService workspaceService )
     {
         this.workspaceService = workspaceService;
+    }
+
+    @Inject
+    public void setVersionService( final VersionService versionService )
+    {
+        this.versionService = versionService;
     }
 }
