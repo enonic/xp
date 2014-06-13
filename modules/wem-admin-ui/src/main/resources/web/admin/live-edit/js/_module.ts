@@ -5,7 +5,6 @@
 ///<reference path='shared/PlaceholderCreator.ts' />
 
 ///<reference path='component/helper/DragHelper.ts' />
-///<reference path='component/helper/ComponentResizeObserver.ts' />
 
 ///<reference path='ui/Base.ts' />
 ///<reference path='ui/BaseComponent.ts' />
