@@ -144,7 +144,7 @@ module LiveEdit.ui.contextmenu {
             } else {
                 // component element - center
                 pageXPosition = componentElementDimensions.left + (componentElementDimensions.width / 2) - this.getEl().width() / 2;
-                pageYPosition = componentElementDimensions.top + 10 + (!component.isEmpty() ? 0 : componentElementDimensions.height);
+                pageYPosition = componentElementDimensions.top + 10 + (!itemView.isEmpty() ? 0 : componentElementDimensions.height);
             }
 
             return {
