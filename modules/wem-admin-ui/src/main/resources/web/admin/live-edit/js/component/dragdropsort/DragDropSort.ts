@@ -52,13 +52,13 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
     export function createSortableLayout(component: api.liveedit.ItemView) {
         wemjq(component.getHTMLElement()).find(REGION_SELECTOR).each((index, element) => {
-            console.log("Creating jquerysortable for", element);
+            //console.log("Creating jquerysortable for", element);
             createJQueryUiSortable(wemjq(element));
         });
     }
 
     function createJQueryUiSortable(selector): void {
-        console.log("Creating jQuery sortable on selector: ", selector, this);
+        //console.log("Creating jQuery sortable on selector: ", selector, this);
         wemjq(selector).sortable({
             revert: false,
             connectWith: REGION_SELECTOR, //removing this solves the over event not firing bug, not sure what it might break though. it broke dragging out of layouts, now seems to work.
