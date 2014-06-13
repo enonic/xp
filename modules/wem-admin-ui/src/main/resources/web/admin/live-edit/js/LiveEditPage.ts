@@ -8,8 +8,9 @@ module LiveEdit {
     import ComponentName = api.content.page.ComponentName;
     import DescriptorBasedPageComponentBuilder = api.content.page.DescriptorBasedPageComponentBuilder;
     import DescriptorBasedPageComponent = api.content.page.DescriptorBasedPageComponent;
-    import PageItemViews = api.liveedit.PageItemViews;
     import PageComponentView = api.liveedit.PageComponentView;
+    import PageView = api.liveedit.PageView;
+    import PageViewBuilder = api.liveedit.PageViewBuilder;
     import ItemView = api.liveedit.ItemView;
     import RegionView = api.liveedit.RegionView;
     import ItemViewId = api.liveedit.ItemViewId;
@@ -19,7 +20,7 @@ module LiveEdit {
     import SortableStopEvent = api.liveedit.SortableStopEvent;
     import PageComponentAddedEvent = api.liveedit.PageComponentAddedEvent;
     import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
-    import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
+    import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
     import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
@@ -29,7 +30,7 @@ module LiveEdit {
 
         private static INSTANCE: LiveEditPage;
 
-        private pageItemViews: PageItemViews;
+        private pageView: PageView;
 
         private pageRegions: PageRegions;
 
@@ -53,14 +54,13 @@ module LiveEdit {
                 var body = api.dom.Body.getAndLoadExistingChildren();
 
                 this.pageRegions = event.getPageRegions();
-                var itemViewIdProducer = new ItemViewIdProducer();
-                this.pageItemViews =
-                new api.liveedit.PageItemViewsParser(body, itemViewIdProducer, event.getContent(), event.getPageRegions()).parse();
-                this.pageItemViews.initializeEmpties();
+                this.pageView = new PageView(new PageViewBuilder().
+                    setItemViewProducer(new ItemViewIdProducer()).
+                    setPageRegions(event.getPageRegions()).
+                    setContent(event.getContent()).
+                    setElement(body.getHTMLElement()));
 
                 api.liveedit.PageComponentLoadedEvent.on((event: api.liveedit.PageComponentLoadedEvent) => {
-
-                    this.pageItemViews.addItemView(event.getItemView());
 
                     if (event.getItemView().getType() == api.liveedit.layout.LayoutItemType.get()) {
 
@@ -116,7 +116,7 @@ module LiveEdit {
                 this.shader.shadeItemView(component);
                 this.cursor.displayItemViewCursor(component);
             });
-            PageComponentDeselectEvent.on(() => {
+            ItemViewDeselectEvent.on(() => {
                 this.highlighter.hide();
                 this.shader.hide();
             });
@@ -141,12 +141,12 @@ module LiveEdit {
                 this.shader.shadeItemView(component);
             });
             wemjq(window).on('resizeBrowserWindow.liveEdit', () => {
-                var selectedView = this.pageItemViews.getSelectedView();
+                var selectedView = this.pageView.getSelectedView();
                 this.highlighter.highlightItemView(selectedView);
                 this.shader.shadeItemView(selectedView);
             });
             LiveEdit.ui.ShaderClickedEvent.on(() => {
-                var selectedView = this.pageItemViews.getSelectedView();
+                var selectedView = this.pageView.getSelectedView();
                 if (selectedView) {
                     selectedView.deselect();
                     selectedView.hideTooltip();
@@ -155,31 +155,24 @@ module LiveEdit {
         }
 
         getByItemId(id: ItemViewId) {
-            return this.pageItemViews.getByItemId(id);
+            return this.pageView.getItemViewById(id);
         }
 
         getItemViewByHTMLElement(htmlElement: HTMLElement) {
-            return this.pageItemViews.getItemViewByElement(htmlElement);
+            return this.pageView.getItemViewByElement(htmlElement);
         }
 
         getPageComponentViewByElement(htmlElement: HTMLElement): PageComponentView<PageComponent> {
-            return this.pageItemViews.getPageComponentViewByElement(htmlElement);
+            return this.pageView.getPageComponentViewByElement(htmlElement);
         }
 
         getRegionViewByElement(htmlElement: HTMLElement): RegionView {
-            return this.pageItemViews.getRegionViewByElement(htmlElement);
-        }
-
-        addItemView(itemView: ItemView) {
-            this.pageItemViews.addItemView(itemView);
+            return this.pageView.getRegionViewByElement(htmlElement);
         }
 
         addPageComponentView(pageComponentView: PageComponentView<PageComponent>, toRegion: RegionView, atIndex: number) {
 
             toRegion.addPageComponentView(pageComponentView, atIndex);
-            this.addItemView(pageComponentView);
-
-            pageComponentView.empty();
 
             var closestParentLayoutComponentView = LayoutComponentView.getClosestParentLayoutComponentView(pageComponentView);
             if (closestParentLayoutComponentView) {
@@ -205,7 +198,6 @@ module LiveEdit {
             var origin = pageComponentView.getPageComponent();
             var duplicatedPageComponent = this.pageRegions.duplicateComponent(origin.getPath());
             var duplicatedView = pageComponentView.duplicate(duplicatedPageComponent);
-            this.pageItemViews.addItemView(duplicatedView);
             new PageComponentDuplicateEvent(pageComponentView, duplicatedView).fire();
             duplicatedView.select();
         }
@@ -214,15 +206,15 @@ module LiveEdit {
 
             var regionView = pageComponentView.getParentItemView();
             regionView.removePageComponentView(pageComponentView);
-            this.pageItemViews.removePageComponentView(pageComponentView);
+            new PageComponentRemoveEvent(pageComponentView).fire();
         }
 
         hasSelectedView(): boolean {
-            return this.pageItemViews.hasSelectedView();
+            return this.pageView.hasSelectedView();
         }
 
         deselectSelectedView() {
-            this.pageItemViews.deselectSelectedView();
+            this.pageView.deselectSelectedView();
         }
 
         createComponent(region: Region, type: PageComponentType, precedingComponentView: PageComponentView<PageComponent>): PageComponent {

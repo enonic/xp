@@ -39,7 +39,8 @@ module api.liveedit.layout {
                 setItemViewProducer(config.itemViewProducer).
                 setParentRegionView(config.parentView).
                 setPageComponent(config.data).
-                setElement(config.element));
+                setElement(config.element).
+                setPositionIndex(config.positionIndex));
         }
     }
 

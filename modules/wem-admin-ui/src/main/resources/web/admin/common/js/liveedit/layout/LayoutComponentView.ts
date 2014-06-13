@@ -17,19 +17,29 @@ module api.liveedit.layout {
 
     export class LayoutComponentView extends PageComponentView<LayoutComponent> {
 
+        private layoutComponent: LayoutComponent;
+
         private placeholder: LayoutPlaceholder;
 
         private regionViews: RegionView[];
 
+        private itemViewAddedListeners: {(event: ItemViewAddedEvent) : void}[];
+
+        private itemViewRemovedListeners: {(event: ItemViewRemovedEvent) : void}[];
+
         constructor(builder: LayoutComponentViewBuilder) {
             this.regionViews = [];
+            this.itemViewAddedListeners = [];
+            this.itemViewRemovedListeners = [];
             super(builder);
-            this.placeholder = new LayoutPlaceholder(this);
-            this.parseRegions();
-        }
+            this.layoutComponent = builder.pageComponent;
 
-        addRegion(view: RegionView) {
-            this.regionViews.push(view);
+            this.placeholder = new LayoutPlaceholder(this);
+            if (this.conditionedForEmpty()) {
+                this.displayPlaceholder();
+            }
+
+            this.parseRegions();
         }
 
         setPageComponent(layoutComponent: LayoutComponent) {
@@ -59,12 +69,18 @@ module api.liveedit.layout {
             }
         }
 
-        empty() {
-            super.empty();
+        private conditionedForEmpty(): boolean {
+            if (!this.layoutComponent) {
+                return super.isEmpty();
+            }
+            return this.isEmpty() || !this.layoutComponent.getDescriptor();
+        }
+
+        displayPlaceholder() {
+            super.markAsEmpty();
 
             this.removeChildren();
             this.appendChild(this.placeholder);
-
         }
 
         duplicate(duplicate: LayoutComponent): LayoutComponentView {
@@ -85,9 +101,30 @@ module api.liveedit.layout {
             var array: ItemView[] = [];
             array.push(this);
             this.regionViews.forEach((regionView: RegionView) => {
-                array = array.concat(regionView.toItemViewArray());
+                var itemsInRegion = regionView.toItemViewArray();
+                array = array.concat(itemsInRegion);
             });
             return array;
+        }
+
+        onItemViewAdded(listener: (event: ItemViewAddedEvent) => void) {
+            this.itemViewAddedListeners.push(listener);
+        }
+
+        private notifyItemViewAdded(event: ItemViewAddedEvent) {
+            this.itemViewAddedListeners.forEach((listener) => {
+                listener(event);
+            });
+        }
+
+        onItemViewRemoved(listener: (event: ItemViewRemovedEvent) => void) {
+            this.itemViewRemovedListeners.push(listener);
+        }
+
+        private notifyItemViewRemoved(event: ItemViewRemovedEvent) {
+            this.itemViewRemovedListeners.forEach((listener) => {
+                listener(event);
+            });
         }
 
         static getClosestParentLayoutComponentView(itemView: ItemView): LayoutComponentView {
@@ -147,6 +184,17 @@ module api.liveedit.layout {
                         this.doParseRegions(childElement);
                     }
                 }
+            });
+        }
+
+        private addRegion(regionView: RegionView) {
+            this.regionViews.push(regionView);
+            this.notifyItemViewAdded(new ItemViewAddedEvent(regionView));
+            regionView.onItemViewAdded((event: ItemViewAddedEvent) => {
+                this.notifyItemViewAdded(event);
+            });
+            regionView.onItemViewRemoved((event: ItemViewRemovedEvent) => {
+                this.notifyItemViewRemoved(event);
             });
         }
     }

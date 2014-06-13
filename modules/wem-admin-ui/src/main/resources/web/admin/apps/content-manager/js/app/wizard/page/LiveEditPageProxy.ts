@@ -20,7 +20,7 @@ module app.wizard.page {
     import PageSelectEvent = api.liveedit.PageSelectEvent;
     import RegionSelectEvent = api.liveedit.RegionSelectEvent;
     import PageComponentSelectEvent = api.liveedit.PageComponentSelectEvent;
-    import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
+    import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
     import PageComponentAddedEvent = api.liveedit.PageComponentAddedEvent;
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
     import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
@@ -76,7 +76,7 @@ module app.wizard.page {
 
         private pageComponentSelectedListeners: {(event: PageComponentSelectEvent): void;}[] = [];
 
-        private deselectListeners: {(event: PageComponentDeselectEvent): void;}[] = [];
+        private deselectListeners: {(event: ItemViewDeselectEvent): void;}[] = [];
 
         private pageComponentAddedListeners: {(event: PageComponentAddedEvent): void;}[] = [];
 
@@ -265,7 +265,7 @@ module app.wizard.page {
                 this.notifyPageComponentSelected(event);
             }, this.liveEditWindow);
 
-            PageComponentDeselectEvent.on(this.notifyDeselect.bind(this), this.liveEditWindow);
+            ItemViewDeselectEvent.on(this.notifyDeselect.bind(this), this.liveEditWindow);
 
             PageComponentAddedEvent.on(this.notifyPageComponentAdded.bind(this), this.liveEditWindow);
 
@@ -364,15 +364,15 @@ module app.wizard.page {
             this.pageComponentSelectedListeners.forEach((listener) => listener(event));
         }
 
-        onDeselect(listener: {(event: PageComponentDeselectEvent): void;}) {
+        onDeselect(listener: {(event: ItemViewDeselectEvent): void;}) {
             this.deselectListeners.push(listener);
         }
 
-        unDeselect(listener: {(event: PageComponentDeselectEvent): void;}) {
+        unDeselect(listener: {(event: ItemViewDeselectEvent): void;}) {
             this.deselectListeners = this.deselectListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyDeselect(event: PageComponentDeselectEvent) {
+        private notifyDeselect(event: ItemViewDeselectEvent) {
             this.deselectListeners.forEach((listener) => listener(event));
         }
 

@@ -17,9 +17,15 @@ module api.liveedit.image {
 
         private placeholder: ImagePlaceholder;
 
+        private imageComponent: ImageComponent;
+
         constructor(builder: ImageComponentViewBuilder) {
             super(builder);
             this.placeholder = new ImagePlaceholder(this);
+            this.imageComponent = builder.pageComponent;
+            if (this.conditionedForEmpty()) {
+                this.displayPlaceholder();
+            }
         }
 
         getImage(): api.dom.ImgEl {
@@ -40,12 +46,18 @@ module api.liveedit.image {
             }
         }
 
-        empty() {
-            super.empty();
+        conditionedForEmpty(): boolean {
+            if (!this.imageComponent) {
+                return this.isEmpty();
+            }
+            return this.isEmpty() || !this.imageComponent.getDescriptor();
+        }
+
+        displayPlaceholder() {
+            super.markAsEmpty();
 
             this.removeChildren();
             this.appendChild(this.placeholder);
-
         }
 
         duplicate(duplicate: ImageComponent): ImageComponentView {

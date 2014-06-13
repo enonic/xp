@@ -10,6 +10,8 @@ module api.liveedit {
 
         element: HTMLElement;
 
+        positionIndex: number;
+
         /**
          * Optional. The ItemViewIdProducer of parentRegionView will be used if not set.
          */
@@ -30,6 +32,14 @@ module api.liveedit {
 
         setElement(value: HTMLElement): CreateItemViewConfig<PARENT,DATA> {
             this.element = value;
+            return this;
+        }
+
+        /**
+         * Optional. If not set then ItemView should be added as last child.
+         */
+        setPositionIndex(value: number): CreateItemViewConfig<PARENT,DATA> {
+            this.positionIndex = value;
             return this;
         }
     }

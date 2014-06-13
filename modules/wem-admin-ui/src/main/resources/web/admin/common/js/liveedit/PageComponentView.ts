@@ -16,6 +16,8 @@ module api.liveedit {
 
         element: HTMLElement;
 
+        positionIndex: number;
+
         /**
          * Optional. The ItemViewIdProducer of parentRegionView will be used if not set.
          */
@@ -43,6 +45,11 @@ module api.liveedit {
             this.element = value;
             return this;
         }
+
+        setPositionIndex(value: number): PageComponentViewBuilder<PAGE_COMPONENT> {
+            this.positionIndex = value;
+            return this;
+        }
     }
 
     export class PageComponentView<PAGE_COMPONENT extends PageComponent> extends ItemView {
@@ -59,9 +66,10 @@ module api.liveedit {
                 setType(builder.type).
                 setElement(builder.element).
                 setParentElement(builder.parentRegionView.getHTMLElement()));
-            this.parentRegionView = builder.parentRegionView;
 
+            this.parentRegionView = builder.parentRegionView;
             this.setPageComponent(builder.pageComponent);
+            this.parentRegionView.registerPageComponentView(this, builder.positionIndex);
         }
 
         getType(): PageComponentItemType {
@@ -112,10 +120,8 @@ module api.liveedit {
             }
         }
 
-        empty() {
+        displayPlaceholder() {
 
-            this.getEl().setData('live-edit-empty-component', 'true');
-            this.addClass("live-edit-empty-component");
         }
 
         duplicate(duplicate: PAGE_COMPONENT): PageComponentView<PAGE_COMPONENT> {
@@ -128,6 +134,14 @@ module api.liveedit {
 
         removePadding() {
             this.removeClass("live-edit-component-padding");
+        }
+
+        onItemViewAdded(listener: (event: ItemViewAddedEvent) => void) {
+            // To be overridden by those that can contain other ItemView-s
+        }
+
+        onItemViewRemoved(listener: (event: ItemViewRemovedEvent) => void) {
+            // To be overridden by those that can contain other ItemView-s
         }
 
         static findParentRegionViewHTMLElement(htmlElement: HTMLElement): HTMLElement {

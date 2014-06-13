@@ -148,6 +148,12 @@ module api.liveedit {
             throw new Error("Must be implemented by inheritors");
         }
 
+        markAsEmpty() {
+
+            this.getEl().setData('live-edit-empty-component', 'true');
+            this.addClass("live-edit-empty-component");
+        }
+
         isEmpty(): boolean {
             return this.getEl().hasAttribute('data-live-edit-empty-component');
         }
@@ -164,7 +170,7 @@ module api.liveedit {
 
         deselect() {
             this.getEl().removeAttribute("data-live-edit-selected");
-            new PageComponentDeselectEvent(this).fire();
+            new ItemViewDeselectEvent(this).fire();
         }
 
         getName(): string {

@@ -26,7 +26,7 @@ module LiveEdit.ui.contextmenu.menuitem {
             if (api.ObjectHelper.iFrameSafeInstanceOf(selectedItem, PageComponentView)) {
 
                 var selectedPageComponentView = <PageComponentView<PageComponent>> selectedItem;
-                selectedPageComponentView.empty();
+                selectedPageComponentView.displayPlaceholder();
 
                 new PageComponentResetEvent(selectedPageComponentView).fire();
             }

@@ -26,7 +26,6 @@ module api.liveedit {
             this.element = value;
             return this;
         }
-
     }
 
     export class RegionView extends ItemView {
@@ -38,6 +37,10 @@ module api.liveedit {
         private pageComponentViews: PageComponentView<PageComponent>[] = [];
 
         private placeholder: RegionPlaceholder;
+
+        private itemViewAddedListeners: {(event: ItemViewAddedEvent) : void}[] = [];
+
+        private itemViewRemovedListeners: {(event: ItemViewRemovedEvent) : void}[] = [];
 
         constructor(builder: RegionViewBuilder) {
             super(new ItemViewBuilder().
@@ -52,6 +55,8 @@ module api.liveedit {
             this.appendChild(this.placeholder);
 
             this.parsePageComponentViews(this);
+
+            this.refreshEmpty();
         }
 
         getParentItemView(): ItemView {
@@ -98,15 +103,31 @@ module api.liveedit {
             return new RegionComponentViewer();
         }
 
-        registerPageComponentView(view: PageComponentView<PageComponent>) {
-            this.pageComponentViews.push(view);
-            this.placeholder.hide();
+        registerPageComponentView(pageComponentView: PageComponentView<PageComponent>, positionIndex: number) {
+            if (positionIndex) {
+                this.pageComponentViews.splice(positionIndex, 0, pageComponentView);
+            }
+            else {
+                this.pageComponentViews.push(pageComponentView);
+            }
+
+            pageComponentView.onItemViewAdded((event: ItemViewAddedEvent) => {
+                this.notifyItemViewAdded(event);
+            });
+            pageComponentView.onItemViewRemoved((event: ItemViewRemovedEvent) => {
+                this.notifyItemViewRemoved(event);
+            });
         }
 
-        addPageComponentView(pageComponentView: PageComponentView<PageComponent>, index: number) {
-            this.pageComponentViews.splice(index, 0, pageComponentView);
-            this.insertChild(pageComponentView, index);
+        addPageComponentView(pageComponentView: PageComponentView<PageComponent>, positionIndex: number) {
+
             this.placeholder.hide();
+
+            pageComponentView.toItemViewArray().forEach((itemView: ItemView) => {
+                this.notifyItemViewAdded(new ItemViewAddedEvent(itemView));
+            });
+
+            this.insertChild(pageComponentView, positionIndex);
         }
 
         getPageComponentViews(): PageComponentView<PageComponent>[] {
@@ -133,10 +154,14 @@ module api.liveedit {
                                 "].removePageComponentView: region is now empty, showing placeholder");
                     this.placeholder.show();
                 }
+                this.notifyItemViewRemovedForAll(pageComponentView.toItemViewArray());
+            }
+            else {
+                throw new Error("Did not find PageComponentView to remove: " + pageComponentView.getItemId().toString());
             }
         }
 
-        refreshPlaceholder() {
+        refreshEmpty() {
             if (this.pageComponentViews.length == 0) {
                 this.placeholder.show();
             }
@@ -145,24 +170,41 @@ module api.liveedit {
             }
         }
 
-        isRegionEmpty(): boolean {
-
-            var hasNotDropTargetPlaceholder: boolean = wemjq(this.getHTMLElement()).children('.live-edit-drop-target-placeholder').length ===
-                                                       0;
-            return this.pageComponentViews.length == 0 && hasNotDropTargetPlaceholder;
-            //var hasNotParts: Boolean = regionElement.children('[data-live-edit-type]' + ':not(:hidden)').length === 0;
-            //var hasNotDropTargetPlaceholder: Boolean = regionElement.children('.live-edit-drop-target-placeholder').length === 0;
-            //return hasNotParts && hasNotDropTargetPlaceholder;
-        }
-
         toItemViewArray(): ItemView[] {
 
             var array: ItemView[] = [];
             array.push(this);
             this.pageComponentViews.forEach((pageComponentView: PageComponentView<PageComponent>) => {
-                array = array.concat(pageComponentView.toItemViewArray());
+                var itemViews = pageComponentView.toItemViewArray();
+                array = array.concat(itemViews);
             });
             return array;
+        }
+
+        onItemViewAdded(listener: (event: ItemViewAddedEvent) => void) {
+            this.itemViewAddedListeners.push(listener);
+        }
+
+        private notifyItemViewAdded(event: ItemViewAddedEvent) {
+            this.itemViewAddedListeners.forEach((listener) => {
+                listener(event);
+            });
+        }
+
+        onItemViewRemoved(listener: (event: ItemViewRemovedEvent) => void) {
+            this.itemViewRemovedListeners.push(listener);
+        }
+
+        private notifyItemViewRemovedForAll(itemViews: ItemView[]) {
+            itemViews.forEach((curr: ItemView) => {
+                this.notifyItemViewRemoved(new ItemViewRemovedEvent(curr));
+            });
+        }
+
+        private notifyItemViewRemoved(event: ItemViewRemovedEvent) {
+            this.itemViewRemovedListeners.forEach((listener) => {
+                listener(event);
+            });
         }
 
         static isRegionViewFromHTMLElement(htmlElement: HTMLElement): boolean {
@@ -186,12 +228,10 @@ module api.liveedit {
                             "Expected ItemView beneath a Region to be a PageComponent: " + itemType.getShortName());
 
                     var pageComponent = region.getComponentByIndex(pageComponentCount++);
-                    var pageComponentView = <PageComponentView<PageComponent>>itemType.createView(
-                        new CreateItemViewConfig().
-                            setParent(regionView).
-                            setData(pageComponent).
-                            setElement(childElement.getHTMLElement()));
-                    regionView.registerPageComponentView(pageComponentView);
+                    itemType.createView(new CreateItemViewConfig().
+                        setParent(regionView).
+                        setData(pageComponent).
+                        setElement(childElement.getHTMLElement()));
                 }
             });
         }

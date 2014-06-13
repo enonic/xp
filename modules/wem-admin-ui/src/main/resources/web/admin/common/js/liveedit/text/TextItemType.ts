@@ -33,7 +33,8 @@ module api.liveedit.text {
                 setItemViewProducer(config.itemViewProducer).
                 setParentRegionView(config.parentView).
                 setPageComponent(config.data).
-                setElement(config.element));
+                setElement(config.element).
+                setPositionIndex(config.positionIndex));
         }
 
         isPageComponentType(): boolean {

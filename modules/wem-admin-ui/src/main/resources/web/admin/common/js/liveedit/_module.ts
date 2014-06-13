@@ -10,6 +10,8 @@
 ///<reference path='ItemViewIdProducer.ts' />
 ///<reference path='RepeatNextItemViewIdProducer.ts' />
 ///<reference path='ItemView.ts' />
+///<reference path='ItemViewAddedEvent.ts' />
+///<reference path='ItemViewRemovedEvent.ts' />
 ///<reference path='RegionView.ts' />
 ///<reference path='RegionComponentViewer.ts' />
 ///<reference path='RegionPlaceholder.ts' />
@@ -24,7 +26,7 @@
 ///<reference path='PageSelectEvent.ts' />
 ///<reference path='RegionSelectEvent.ts' />
 ///<reference path='PageComponentSelectEvent.ts' />
-///<reference path='PageComponentDeselectEvent.ts' />
+///<reference path='ItemViewDeselectEvent.ts' />
 ///<reference path='PageComponentAddedEvent.ts' />
 ///<reference path='PageComponentRemoveEvent.ts' />
 ///<reference path='PageComponentResetEvent.ts' />
@@ -35,7 +37,3 @@
 ///<reference path='ItemViewSelectedEvent.ts' />
 ///<reference path='TextComponentSetTextEvent.ts' />
 ///<reference path='RegionEmptyEvent.ts' />
-
-///<reference path='PageItemViews.ts' />
-///<reference path='PageItemViewsParser.ts' />
-

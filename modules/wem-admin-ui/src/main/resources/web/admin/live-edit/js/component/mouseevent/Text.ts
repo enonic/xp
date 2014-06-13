@@ -3,7 +3,7 @@ module LiveEdit.component.mouseevent {
     import TextItemType = api.liveedit.text.TextItemType;
     import TextComponentView = api.liveedit.text.TextComponentView;
     import ShaderClickedEvent = LiveEdit.ui.ShaderClickedEvent;
-    import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
+    import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
 
     enum TextMode {
         UNSELECTED,
@@ -35,7 +35,7 @@ module LiveEdit.component.mouseevent {
 
         registerGlobalListeners(): void {
             ShaderClickedEvent.on(() => this.leaveEditMode());
-            PageComponentDeselectEvent.on(() => this.leaveEditMode());
+            ItemViewDeselectEvent.on(() => this.leaveEditMode());
         }
 
         // Override base attachClickEvent

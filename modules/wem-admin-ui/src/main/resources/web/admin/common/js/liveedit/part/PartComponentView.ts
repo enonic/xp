@@ -19,10 +19,15 @@ module api.liveedit.part {
 
         private placeholder: PartPlaceholder;
 
+        private partComponent: PartComponent;
+
         constructor(builder: PartComponentViewBuilder) {
             super(builder);
+            this.partComponent = builder.pageComponent;
             this.placeholder = new PartPlaceholder(this);
-
+            if (this.conditionedForEmpty()) {
+                this.displayPlaceholder();
+            }
             this.parseContentViews(this);
         }
 
@@ -30,13 +35,8 @@ module api.liveedit.part {
             this.contentViews.push(view);
         }
 
-        getContents(): ContentView[] {
+        getContentViews(): ContentView[] {
             return this.contentViews;
-        }
-
-        showHighlighter(value: boolean) {
-
-
         }
 
         select() {
@@ -53,12 +53,18 @@ module api.liveedit.part {
             }
         }
 
-        empty() {
-            super.empty();
+        conditionedForEmpty(): boolean {
+            if (!this.partComponent) {
+                return super.isEmpty();
+            }
+            return this.isEmpty() || !this.partComponent.getDescriptor();
+        }
+
+        displayPlaceholder() {
+            super.markAsEmpty();
 
             this.removeChildren();
             this.appendChild(this.placeholder);
-
         }
 
         duplicate(duplicate: PartComponent): PartComponentView {

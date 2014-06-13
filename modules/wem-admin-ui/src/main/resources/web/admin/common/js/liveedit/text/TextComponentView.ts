@@ -14,8 +14,11 @@ module api.liveedit.text {
 
     export class TextComponentView extends PageComponentView<TextComponent> {
 
+        private textComponent: TextComponent;
+
         constructor(builder: TextComponentViewBuilder) {
             super(builder);
+            this.textComponent = builder.pageComponent;
         }
 
         duplicate(duplicate: TextComponent): TextComponentView {
