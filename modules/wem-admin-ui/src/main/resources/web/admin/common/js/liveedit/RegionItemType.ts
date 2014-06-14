@@ -29,6 +29,7 @@ module api.liveedit {
         createView(config: CreateItemViewConfig<ItemView,Region>): RegionView {
             return new RegionView(new RegionViewBuilder().
                 setParentView(config.parentView).
+                setParentElement(config.parentElement).
                 setRegion(config.data).
                 setElement(config.element));
         }

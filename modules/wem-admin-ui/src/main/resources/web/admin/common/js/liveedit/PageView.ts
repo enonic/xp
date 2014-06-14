@@ -13,7 +13,7 @@ module api.liveedit {
 
         content: Content;
 
-        element: HTMLElement;
+        element: api.dom.Body;
 
         setItemViewProducer(value: ItemViewIdProducer): PageViewBuilder {
             this.itemViewProducer = value;
@@ -30,7 +30,7 @@ module api.liveedit {
             return this;
         }
 
-        setElement(value: HTMLElement): PageViewBuilder {
+        setElement(value: api.dom.Body): PageViewBuilder {
             this.element = value;
             return this;
         }
@@ -50,7 +50,8 @@ module api.liveedit {
             super(new ItemViewBuilder().
                 setItemViewIdProducer(builder.itemViewProducer).
                 setType(PageItemType.get()).
-                setElement(builder.element));
+                setElement(builder.element).
+                setParentElement(builder.element.getParentElement()));
             this.setContent(builder.content);
             this.pageRegions = builder.pageRegions;
             this.parseItemViews();
@@ -229,7 +230,7 @@ module api.liveedit {
                         var regionView = new RegionView(new RegionViewBuilder().
                             setParentView(this).
                             setRegion(region).
-                            setElement(element.getHTMLElement()));
+                            setElement(element));
                         this.addRegion(regionView);
                     }
                     else {

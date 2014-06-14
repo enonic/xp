@@ -31,7 +31,7 @@ module api.liveedit.text {
         }
 
         public static fromJQuery(element: JQuery): TextComponentView {
-            return new TextComponentView(new TextComponentViewBuilder().setElement(<HTMLElement>element.get(0)));
+            return new TextComponentView(new TextComponentViewBuilder().setElement(api.dom.Element.fromHtmlElement(<HTMLElement>element.get(0))));
         }
 
         getTooltipViewer(): TextComponentViewer {

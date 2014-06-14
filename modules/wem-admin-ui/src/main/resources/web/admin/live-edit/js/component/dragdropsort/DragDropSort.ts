@@ -237,7 +237,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
                 precedingComponentView);
             var pageComponentIndex = droppedElement.index();
             var newPageComponentView = itemType.createView(new CreateItemViewConfig<RegionView,PageComponent>().
-                setParent(regionView).
+                setParentView(regionView).
                 setData(newPageComponent).
                 setPositionIndex(pageComponentIndex));
 

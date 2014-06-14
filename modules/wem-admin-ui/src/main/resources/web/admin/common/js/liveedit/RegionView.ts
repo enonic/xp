@@ -6,11 +6,18 @@ module api.liveedit {
 
     export class RegionViewBuilder {
 
+        parentElement: api.dom.Element;
+
         parentView: ItemView;
 
         region: Region;
 
-        element: HTMLElement;
+        element: api.dom.Element;
+
+        setParentElement(value: api.dom.Element): RegionViewBuilder {
+            this.parentElement = value;
+            return this;
+        }
 
         setParentView(value: ItemView): RegionViewBuilder {
             this.parentView = value;
@@ -22,7 +29,7 @@ module api.liveedit {
             return this;
         }
 
-        setElement(value: HTMLElement): RegionViewBuilder {
+        setElement(value: api.dom.Element): RegionViewBuilder {
             this.element = value;
             return this;
         }
@@ -46,7 +53,9 @@ module api.liveedit {
             super(new ItemViewBuilder().
                 setItemViewIdProducer(builder.parentView.getItemViewIdProducer()).
                 setType(RegionItemType.get()).
-                setElement(builder.element));
+                setElement(builder.element).
+                setParentElement(builder.parentElement).
+                setParentView(builder.parentView));
             this.setRegion(builder.region);
 
             this.parentView = builder.parentView;
@@ -54,7 +63,7 @@ module api.liveedit {
             this.placeholder.hide();
             this.appendChild(this.placeholder);
 
-            this.parsePageComponentViews(this);
+            this.parsePageComponentViews();
 
             this.refreshEmpty();
         }
@@ -216,10 +225,15 @@ module api.liveedit {
             return type == "region";
         }
 
-        private parsePageComponentViews(regionView: RegionView) {
+        private parsePageComponentViews() {
 
-            var children = regionView.getChildren();
-            var region = regionView.getRegion();
+            this.doParsePageComponentViews();
+        }
+
+        private doParsePageComponentViews(parentElement?: api.dom.Element) {
+
+            var children = parentElement ? parentElement.getChildren() : this.getChildren();
+            var region = this.getRegion();
             var pageComponentCount = 0;
             children.forEach((childElement: api.dom.Element) => {
                 var itemType = ItemType.fromElement(childElement);
@@ -229,9 +243,13 @@ module api.liveedit {
 
                     var pageComponent = region.getComponentByIndex(pageComponentCount++);
                     itemType.createView(new CreateItemViewConfig().
-                        setParent(regionView).
+                        setParentView(this).
                         setData(pageComponent).
-                        setElement(childElement.getHTMLElement()));
+                        setElement(childElement).
+                        setParentElement(parentElement ? parentElement : this));
+                }
+                else {
+                    this.doParsePageComponentViews(childElement)
                 }
             });
         }

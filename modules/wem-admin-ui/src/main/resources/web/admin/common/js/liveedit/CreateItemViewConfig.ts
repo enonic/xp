@@ -6,9 +6,11 @@ module api.liveedit {
 
         parentView: PARENT;
 
+        parentElement: api.dom.Element;
+
         data: DATA;
 
-        element: HTMLElement;
+        element: api.dom.Element;
 
         positionIndex: number;
 
@@ -20,8 +22,13 @@ module api.liveedit {
             return this;
         }
 
-        setParent(value: PARENT): CreateItemViewConfig<PARENT,DATA> {
+        setParentView(value: PARENT): CreateItemViewConfig<PARENT,DATA> {
             this.parentView = value;
+            return this;
+        }
+
+        setParentElement(value: api.dom.Element): CreateItemViewConfig<PARENT,DATA> {
+            this.parentElement = value;
             return this;
         }
 
@@ -30,7 +37,7 @@ module api.liveedit {
             return this;
         }
 
-        setElement(value: HTMLElement): CreateItemViewConfig<PARENT,DATA> {
+        setElement(value: api.dom.Element): CreateItemViewConfig<PARENT,DATA> {
             this.element = value;
             return this;
         }

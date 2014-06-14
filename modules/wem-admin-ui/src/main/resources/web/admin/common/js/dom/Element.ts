@@ -1,69 +1,72 @@
 module api.dom {
 
-    export class ElementProperties {
+    export class ElementBuilder {
 
-        private tagName: string;
-        private generateId: boolean;
-        private className: string;
-        private helper: ElementHelper;
-        private loadExistingChildren: boolean;
-        private parentElement: HTMLElement;
+        generateId: boolean;
 
-        constructor() {
+        className: string;
+
+        parentElement: Element;
+
+        setGenerateId(value: boolean): ElementBuilder {
+            this.generateId = value;
+            return this;
         }
 
-        setTagName(name: string): ElementProperties {
+        setClassName(name: string): ElementBuilder {
+            this.className = name;
+            return this;
+        }
+
+        setParentElement(element: Element): ElementBuilder {
+            this.parentElement = element;
+            return this;
+        }
+
+    }
+
+    export class ElementFromElementBuilder extends ElementBuilder {
+
+        element: Element;
+
+        setElement(element: Element): ElementFromElementBuilder {
+            this.element = element;
+            return this;
+        }
+    }
+
+    export class ElementFromHelperBuilder extends ElementBuilder {
+
+        helper: ElementHelper;
+
+        loadExistingChildren: boolean;
+
+        setHelper(helper: ElementHelper): ElementFromHelperBuilder {
+            this.helper = helper;
+            return this;
+        }
+
+        setLoadExistingChildren(value: boolean): ElementFromHelperBuilder {
+            this.loadExistingChildren = value;
+            return this;
+        }
+    }
+
+    export class NewElementBuilder extends ElementBuilder {
+
+        tagName: string;
+
+        helper: ElementHelper;
+
+        setTagName(name: string): NewElementBuilder {
             api.util.assert(!api.util.isStringEmpty(name), 'Tag name cannot be empty');
             this.tagName = name;
             return this;
         }
 
-        setGenerateId(flag: boolean): ElementProperties {
-            this.generateId = flag;
-            return this;
-        }
-
-        setClassName(name: string): ElementProperties {
-            this.className = name;
-            return this;
-        }
-
-        setHelper(helper: ElementHelper): ElementProperties {
+        setHelper(helper: ElementHelper): NewElementBuilder {
             this.helper = helper;
             return this;
-        }
-
-        setLoadExistingChildren(value: boolean): ElementProperties {
-            this.loadExistingChildren = value;
-            return this;
-        }
-
-        isLoadExistingChildren(): boolean {
-            return this.loadExistingChildren;
-        }
-
-        getTagName(): string {
-            return this.tagName;
-        }
-
-        isGenerateId(): boolean {
-            return this.generateId;
-        }
-
-        getClassName(): string {
-            return this.className;
-        }
-
-        getHelper(): ElementHelper {
-            return this.helper;
-        }
-
-        setParentElement(element: HTMLElement) {
-            this.parentElement = element;
-        }
-
-        getParentElement(): HTMLElement {
-            return this.parentElement;
         }
     }
 
@@ -84,31 +87,66 @@ module api.dom {
         private hiddenListeners: {(event: ElementHiddenEvent) : void}[] = [];
         private resizedListeners: {(event: ElementResizedEvent) : void}[] = [];
 
-        constructor(properties: ElementProperties) {
+        constructor(builder: ElementBuilder) {
             this.children = [];
             this.rendered = false;
-            if (properties.getHelper()) {
-                this.el = properties.getHelper();
-                if (properties.isLoadExistingChildren()) {
+
+            if (api.ObjectHelper.iFrameSafeInstanceOf(builder, ElementFromElementBuilder)) {
+                var fromElementBuilder = <ElementFromElementBuilder>builder;
+                var sourceElement = fromElementBuilder.element;
+                if (sourceElement) {
+                    this.parentElement = fromElementBuilder.parentElement ? fromElementBuilder.parentElement : sourceElement.parentElement;
+                    if (this.parentElement) {
+                        this.parentElement.replaceChildElement(this, sourceElement);
+                    }
+                    this.children = sourceElement.children;
+                    this.el = sourceElement.el;
+                }
+            }
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(builder, ElementFromHelperBuilder)) {
+                var fromHelperBuilder = <ElementFromHelperBuilder>builder;
+
+                this.el = fromHelperBuilder.helper;
+                if (fromHelperBuilder.loadExistingChildren) {
                     this.loadExistingChildren();
                 }
-            } else if (properties.getTagName()) {
-                this.el = ElementHelper.fromName(properties.getTagName());
-            } else {
-                throw new Error("Either tag name or helper should be present");
+                if (fromHelperBuilder.parentElement) {
+                    this.parentElement = fromHelperBuilder.parentElement;
+                }
             }
-            if (properties.getParentElement()) {
-                this.parentElement = api.dom.Element.fromHtmlElement(properties.getParentElement());
-                this.notifyAdded();
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(builder, NewElementBuilder)) {
+                var newElementBuilder = <NewElementBuilder>builder;
+                if (!newElementBuilder.tagName) {
+                    throw new Error("tagName cannot be null");
+                }
+                if (newElementBuilder.helper) {
+                    this.el = newElementBuilder.helper;
+                }
+                else {
+                    this.el = ElementHelper.fromName(newElementBuilder.tagName);
+                }
+
+                if (newElementBuilder.parentElement) {
+                    this.parentElement = newElementBuilder.parentElement;
+                }
+            }
+            else {
+                throw new Error("Unsupported builder: " + api.util.getClassName(builder));
+            }
+
+            if (this.parentElement && this.el.getHTMLElement().parentElement) {
+                if (!(this.parentElement.getHTMLElement() === this.el.getHTMLElement().parentElement )) {
+                    throw new Error("Illegal state: HTMLElement in parent Element is not the as the HTMLElement parent to this HTMLElement");
+                }
             }
 
             var moduleName = api.util.getModuleName(this);
-            if (properties.isGenerateId() || (properties.isGenerateId() == undefined && moduleName != "api.dom")) {
+            if (builder.generateId || (builder.generateId == undefined && moduleName != "api.dom")) {
                 var id = ElementRegistry.registerElement(this);
                 this.setId(id);
             }
-            if (properties.getClassName()) {
-                this.setClass(properties.getClassName());
+            if (builder.className) {
+                this.setClass(builder.className);
             }
             this.onRemoved((event: ElementRemovedEvent) => {
                 if (this.getId()) {
@@ -117,12 +155,17 @@ module api.dom {
             });
         }
 
+        private replaceChildElement(replacementChild: Element, existingChild: Element) {
+            var index = this.children.indexOf(existingChild);
+            this.children[index] = replacementChild;
+        }
+
         private loadExistingChildren() {
 
             var children = this.getHTMLElement().children;
             for (var i = 0; i < children.length; i++) {
                 var child = children[i];
-                var childAsElement = api.dom.Element.fromHtmlElement(<HTMLElement>child, true);
+                var childAsElement = Element.fromHtmlElement(<HTMLElement>child, true, this);
                 this.children.push(childAsElement);
             }
         }
@@ -177,19 +220,19 @@ module api.dom {
             return wemjq(this.el.getHTMLElement()).is(':visible');
         }
 
-        setClass(className: string): api.dom.Element {
+        setClass(className: string): Element {
             api.util.assert(!api.util.isStringEmpty(className), 'Class name cannot be empty');
             this.el.setClass(className);
             return this;
         }
 
-        addClass(className: string): api.dom.Element {
+        addClass(className: string): Element {
             api.util.assert(!api.util.isStringEmpty(className), 'Class name cannot be empty');
             this.el.addClass(className);
             return this;
         }
 
-        toggleClass(className: string): api.dom.Element {
+        toggleClass(className: string): Element {
             if (this.hasClass(className)) {
                 this.removeClass(className);
             } else {
@@ -202,7 +245,7 @@ module api.dom {
             return this.el.hasClass(className);
         }
 
-        removeClass(className: string): api.dom.Element {
+        removeClass(className: string): Element {
             api.util.assert(!api.util.isStringEmpty(className), 'Class name cannot be empty');
             this.el.removeClass(className);
             return this;
@@ -212,7 +255,7 @@ module api.dom {
             return this.el.getId();
         }
 
-        setId(value: string): api.dom.Element {
+        setId(value: string): Element {
             this.el.setId(value);
             return this;
         }
@@ -257,53 +300,71 @@ module api.dom {
             return this.el.getHTMLElement();
         }
 
-        insertChild<T extends api.dom.Element>(child: T, index: number): Element {
+        insertChild<T extends Element>(child: T, index: number): Element {
             api.util.assertNotNull(child, 'Child cannot be null');
             this.el.insertChild(child.getEl().getHTMLElement(), index);
             this.insert(child, this, index);
             return this;
         }
 
-        appendChild<T extends api.dom.Element>(child: T): Element {
+        appendChild<T extends Element>(child: T): Element {
             return this.insertChild(child, this.children.length);
         }
 
-        appendChildren<T extends api.dom.Element>(children: T[]): Element {
+        appendChildren<T extends Element>(children: T[]): Element {
             children.forEach((child: T) => {
                 this.appendChild(child);
             });
             return this;
         }
 
-        prependChild(child: api.dom.Element): Element {
+        prependChild(child: Element): Element {
             return this.insertChild(child, 0);
         }
 
         insertAfterEl(existingEl: Element) {
             api.util.assertNotNull(existingEl, 'Existing element cannot be null');
-            this.el.insertAfterEl(existingEl.getEl());
-            var parent = existingEl.getParentElement();
+            this.el.insertAfterEl(existingEl.el);
+            var parent = existingEl.parentElement;
             var index = parent.getChildren().indexOf(existingEl) + 1;
             this.insert(this, parent, index);
         }
 
         insertBeforeEl(existingEl: Element) {
             api.util.assertNotNull(existingEl, 'Existing element cannot be null');
-            this.el.insertBeforeEl(existingEl.getEl());
+            this.el.insertBeforeEl(existingEl.el);
             var parent = existingEl.getParentElement();
             var index = parent.getChildren().indexOf(existingEl);
             this.insert(this, parent, index);
         }
 
-        replaceWith(other: Element) {
-            api.util.assertNotNull(other, 'Replacing element cannot be null');
-            other.insertAfterEl(this);
+        replaceWith(replacement: Element) {
+            api.util.assertNotNull(replacement, 'replacement element cannot be null');
+
+            // Do the actual DOM replacement
+            replacement.el.insertAfterEl(this.el);
+
+            // Replace replacement's parent Element of this' parent Element
+            replacement.parentElement = this.parentElement;
+
+            // Replace this with replacement in the parent Element's children array
+            var index = this.getSiblingIndex();
+            this.parentElement.children.splice(index, 0, replacement);
+
+            // Run init of replacement if parentElement is rendered
+            if (this.parentElement.isRendered()) {
+                replacement.init();
+            }
+
+            // Remove this from parent (removes also from DOM)
             this.remove();
+
+            replacement.notifyAdded();
         }
 
         wrapWithElement(wrapperElement: Element) {
-            api.util.assertNotNull(wrapperElement, 'Wrapper element cannot be null');
-            var parent = this.getParentElement();
+            api.util.assertNotNull(wrapperElement, 'wrapperElement cannot be null');
+            var parent = this.parentElement;
             if (!parent) {
                 return;
             }
@@ -327,13 +388,20 @@ module api.dom {
             child.notifyAdded();
         }
 
-        removeChild(child: api.dom.Element) {
+        hasChild(child: Element) {
+            return this.children.indexOf(child) > -1;
+        }
+
+        removeChild(child: Element) {
             var index = this.children.indexOf(child);
             if (index > -1) {
                 this.children.splice(index, 1);
                 child.getEl().remove();
                 child.setParentElement(null);
                 child.notifyRemoved();
+            }
+            else {
+                throw new Error("Child element to remove not found: " + child);
             }
         }
 
@@ -350,9 +418,8 @@ module api.dom {
         }
 
         remove() {
-            var parent = this.getParentElement();
-            if (parent) {
-                parent.removeChild(this);
+            if (this.parentElement) {
+                this.parentElement.removeChild(this);
             } else {
                 this.getEl().remove();
                 this.notifyRemoved();
@@ -402,7 +469,7 @@ module api.dom {
 
             var i = 0;
             var prev: HTMLElement = this.getHTMLElement();
-            while ((prev = <HTMLElement>prev.previousSibling) != null) {
+            while ((prev = <HTMLElement>prev.previousElementSibling) != null) {
                 i++;
             }
             return i;
@@ -442,7 +509,7 @@ module api.dom {
             return mouseEventHandler;
         }
 
-        contains(element: api.dom.Element) {
+        contains(element: Element) {
             return this.getEl().contains(element.getHTMLElement());
         }
 
@@ -687,16 +754,17 @@ module api.dom {
             this.getEl().removeEventListener("scroll", listener);
         }
 
-        static fromHtmlElement(element: HTMLElement, loadExistingChildren: boolean = false): Element {
-            return new Element(new ElementProperties().
+        static fromHtmlElement(element: HTMLElement, loadExistingChildren: boolean = false, parent?: Element): Element {
+            return new Element(new ElementFromHelperBuilder().
                 setHelper(new ElementHelper(element)).
-                setLoadExistingChildren(loadExistingChildren));
+                setLoadExistingChildren(loadExistingChildren).
+                setParentElement(parent));
         }
 
         static fromString(s: string): Element {
             var elementAsJQ = wemjq(s);
             var elementASHtmlElement = elementAsJQ.get(0);
-            return new Element(new ElementProperties().
+            return new Element(new ElementFromHelperBuilder().
                 setHelper(new ElementHelper(elementASHtmlElement)).
                 setLoadExistingChildren(true));
         }

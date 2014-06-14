@@ -98,7 +98,10 @@ module api.liveedit.part {
                 var itemType = ItemType.fromElement(childElement);
                 if (itemType) {
                     if (ContentItemType.get().equals(itemType)) {
-                        var contentView = new ContentView(this, childElement.getHTMLElement());
+                        var contentView = new ContentView(new ContentViewBuilder().
+                            setParentPartComponentView(this).
+                            setParentElement(parentElement ? parentElement : this).
+                            setElement(childElement));
                         this.addContent(contentView);
                     }
                     else {

@@ -34,8 +34,9 @@ module api.liveedit.image {
             return new ImageComponentView(new ImageComponentViewBuilder().
                 setItemViewProducer(config.itemViewProducer).
                 setParentRegionView(config.parentView).
-                setPageComponent(config.data).
+                setParentElement(config.parentElement).
                 setElement(config.element).
+                setPageComponent(config.data).
                 setPositionIndex(config.positionIndex));
         }
 

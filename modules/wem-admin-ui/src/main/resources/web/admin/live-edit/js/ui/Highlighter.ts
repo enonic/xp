@@ -12,7 +12,7 @@ module LiveEdit.ui {
             var html = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="live-edit-highlight-border" style="top:-5000px;left:-5000px">' +
                        '    <rect width="150" height="150"/>' +
                        '</svg>';
-            super(new api.dom.ElementProperties().
+            super(new api.dom.ElementFromHelperBuilder().
                 setHelper(api.dom.Element.fromString(html).getEl()).
                 setLoadExistingChildren(true));
 

@@ -6,7 +6,10 @@ module api.dom {
         static PLACEHOLDER = "data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
 
         constructor(src?: string, className?: string) {
-            super(new ElementProperties().setTagName("img").setClassName(className).setHelper(ImgHelper.create()));
+            super(new NewElementBuilder().
+                setTagName("img").
+                setHelper(ImgHelper.create()).
+                setClassName(className));
             this.getEl().setSrc(src ? src : ImgEl.PLACEHOLDER);
         }
 

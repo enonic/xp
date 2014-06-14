@@ -13,9 +13,11 @@ module api.liveedit {
 
         type: ItemType;
 
-        element: HTMLElement;
+        element: api.dom.Element;
 
-        parentElement: HTMLElement;
+        parentElement: api.dom.Element;
+
+        parentView: ItemView;
 
         setItemViewIdProducer(value: ItemViewIdProducer): ItemViewBuilder {
             this.itemViewIdProducer = value;
@@ -27,16 +29,20 @@ module api.liveedit {
             return this;
         }
 
-        setElement(value: HTMLElement): ItemViewBuilder {
+        setElement(value: api.dom.Element): ItemViewBuilder {
             this.element = value;
             return this;
         }
 
-        setParentElement(value: HTMLElement): ItemViewBuilder {
-            this.parentElement = value;
+        setParentView(value: ItemView): ItemViewBuilder {
+            this.parentView = value;
             return this;
         }
 
+        setParentElement(value: api.dom.Element): ItemViewBuilder {
+            this.parentElement = value;
+            return this;
+        }
     }
 
     export class ItemView extends api.dom.Element {
@@ -44,6 +50,8 @@ module api.liveedit {
         private itemViewIdProducer: ItemViewIdProducer;
 
         private type: ItemType;
+
+        private parentItemView: ItemView;
 
         private loadMask: api.ui.LoadMask;
 
@@ -55,22 +63,28 @@ module api.liveedit {
 
         constructor(builder: ItemViewBuilder) {
             api.util.assertNotNull(builder.type, "type cannot be null");
+
             this.type = builder.type;
+            this.parentItemView = builder.parentView;
             this.itemViewIdProducer = builder.itemViewIdProducer;
 
-            var props = new api.dom.ElementProperties();
-            props.setGenerateId(false);
+            var props: api.dom.ElementBuilder = null;
             if (builder.element) {
-                props.setHelper(new api.dom.ElementHelper(builder.element)).setLoadExistingChildren(true);
+                var elementFromElementBuilder = new api.dom.ElementFromElementBuilder();
+                elementFromElementBuilder.setElement(builder.element);
+                elementFromElementBuilder.setParentElement(builder.parentElement);
+                elementFromElementBuilder.setGenerateId(false);
+                props = elementFromElementBuilder;
             }
             else {
-                props.setTagName("div");
+                var newElementBuilder = new api.dom.NewElementBuilder();
+                newElementBuilder.setTagName("div");
+                newElementBuilder.setParentElement(builder.parentElement);
+                newElementBuilder.setGenerateId(false);
+                props = newElementBuilder;
             }
-            if (builder.parentElement) {
-                props.setParentElement(builder.parentElement);
-            }
-
             super(props);
+
             this.setItemId(builder.itemViewIdProducer.next());
 
             if (!builder.element) {

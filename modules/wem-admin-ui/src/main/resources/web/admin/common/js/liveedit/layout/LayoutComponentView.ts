@@ -176,13 +176,17 @@ module api.liveedit.layout {
                         var region = regions[regionIndex++];
                         var regionView = new RegionView(new RegionViewBuilder().
                             setParentView(this).
+                            setParentElement(parentElement ? parentElement : this).
                             setRegion(region).
-                            setElement(childElement.getHTMLElement()));
+                            setElement(childElement));
                         this.addRegion(regionView);
                     }
                     else {
                         this.doParseRegions(childElement);
                     }
+                }
+                else {
+                    this.doParseRegions(childElement);
                 }
             });
         }

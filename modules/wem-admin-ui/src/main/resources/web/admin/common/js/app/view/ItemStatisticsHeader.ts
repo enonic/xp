@@ -20,7 +20,9 @@ module api.app.view {
                 this.removeChild(this.iconEl);
             }
             var icon:HTMLImageElement = api.util.loader.ImageLoader.get(this.browseItem.getIconUrl() + "?size=64", 64, 64);
-            this.iconEl = <api.dom.ImgEl> new api.dom.Element(new api.dom.ElementProperties().setTagName("img").setHelper(new api.dom.ImgHelper(icon)));
+            this.iconEl = <api.dom.ImgEl> new api.dom.Element(new api.dom.NewElementBuilder().
+                setTagName("img").
+                setHelper(new api.dom.ImgHelper(icon)));
             this.prependChild(this.iconEl);
 
             this.headerTextEl.getEl().setInnerHtml(this.browseItem.getDisplayName()).setAttribute('title', this.browseItem.getDisplayName());

@@ -26,7 +26,10 @@ module api.liveedit {
         }
 
         createView(config: CreateItemViewConfig<PartComponentView,any>): ContentView {
-            return new ContentView(config.parentView, config.element);
+            return new ContentView(new ContentViewBuilder().
+                setParentPartComponentView(config.parentView).
+                setParentElement(config.parentElement).
+                setElement(config.element));
         }
     }
 

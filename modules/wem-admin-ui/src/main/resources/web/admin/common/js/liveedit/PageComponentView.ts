@@ -12,9 +12,11 @@ module api.liveedit {
 
         parentRegionView: RegionView;
 
+        parentElement: api.dom.Element;
+
         pageComponent: PAGE_COMPONENT;
 
-        element: HTMLElement;
+        element: api.dom.Element;
 
         positionIndex: number;
 
@@ -36,12 +38,17 @@ module api.liveedit {
             return this;
         }
 
+        setParentElement(value: api.dom.Element): PageComponentViewBuilder<PAGE_COMPONENT> {
+            this.parentElement = value;
+            return this;
+        }
+
         setPageComponent(value: PAGE_COMPONENT): PageComponentViewBuilder<PAGE_COMPONENT> {
             this.pageComponent = value;
             return this;
         }
 
-        setElement(value: HTMLElement): PageComponentViewBuilder<PAGE_COMPONENT> {
+        setElement(value: api.dom.Element): PageComponentViewBuilder<PAGE_COMPONENT> {
             this.element = value;
             return this;
         }
@@ -65,7 +72,8 @@ module api.liveedit {
                     : builder.parentRegionView.getItemViewIdProducer()).
                 setType(builder.type).
                 setElement(builder.element).
-                setParentElement(builder.parentRegionView.getHTMLElement()));
+                setParentView(builder.parentRegionView).
+                setParentElement(builder.parentElement));
 
             this.parentRegionView = builder.parentRegionView;
             this.setPageComponent(builder.pageComponent);

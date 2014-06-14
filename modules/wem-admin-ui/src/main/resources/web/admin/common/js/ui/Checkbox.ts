@@ -16,7 +16,9 @@ module api.ui {
         constructor(text?: string) {
             super("div", "checkbox");
             // we need an id for the label to interact nicely
-            this.checkbox = <api.dom.InputEl> new api.dom.Element(new api.dom.ElementProperties().setTagName('input').setGenerateId(true));
+            this.checkbox = <api.dom.InputEl> new api.dom.Element(new api.dom.NewElementBuilder().
+                setTagName('input').
+                setGenerateId(true));
             this.checkbox.getEl().setAttribute('type', 'checkbox');
             this.appendChild(this.checkbox);
 

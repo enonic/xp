@@ -58,7 +58,7 @@ module LiveEdit {
                     setItemViewProducer(new ItemViewIdProducer()).
                     setPageRegions(event.getPageRegions()).
                     setContent(event.getContent()).
-                    setElement(body.getHTMLElement()));
+                    setElement(body));
 
                 api.liveedit.PageComponentLoadedEvent.on((event: api.liveedit.PageComponentLoadedEvent) => {
 

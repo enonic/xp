@@ -21,13 +21,12 @@ module api.dom {
         }
 
         constructor(loadExistingChildren: boolean = false) {
-            super(new ElementProperties().
+            super(new ElementFromHelperBuilder().
                 setHelper(new ElementHelper(document.body)).
-                setLoadExistingChildren(loadExistingChildren));
+                setLoadExistingChildren(loadExistingChildren).
+                setParentElement(Element.fromHtmlElement(document.body.parentElement)));
 
             this.init();
         }
-
     }
-
 }
