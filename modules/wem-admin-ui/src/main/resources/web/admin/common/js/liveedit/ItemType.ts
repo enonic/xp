@@ -34,7 +34,7 @@ module api.liveedit {
             return api.content.page.PageComponentType.byShortName(this.shortName);
         }
 
-        createView(parent: any, data: any, element?: HTMLElement, dummy?: boolean): ItemView {
+        createView(config: CreateItemViewConfig<ItemView,any>): ItemView {
             throw new Error("Must be implemented by inheritors");
         }
 

@@ -4,8 +4,10 @@ module api.dom {
 
         private loaded: boolean = false;
 
-        constructor(className?: string, elHelper?: ElementHelper) {
-            super(new ElementProperties().setTagName("iframe").setClassName(className).setHelper(elHelper));
+        constructor(className?: string) {
+            super(new NewElementBuilder().
+                setTagName("iframe").
+                setClassName(className));
             this.onLoaded((event: UIEvent) => {
                 this.loaded = true;
             });

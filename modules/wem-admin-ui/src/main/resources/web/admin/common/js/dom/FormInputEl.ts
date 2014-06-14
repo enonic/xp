@@ -1,8 +1,10 @@
 module api.dom {
     export class FormInputEl extends Element {
 
-        constructor(tagName: string, className?: string, elHelper?: ElementHelper) {
-            super(new ElementProperties().setTagName(tagName).setClassName(className).setHelper(elHelper));
+        constructor(tagName: string, className?: string) {
+            super(new NewElementBuilder().
+                setTagName(tagName).
+                setClassName(className));
             this.addClass('form-input');
         }
 
@@ -26,11 +28,11 @@ module api.dom {
             this.getEl().removeEventListener("change", listener);
         }
 
-        onInput(listener: (event:Event) => void) {
+        onInput(listener: (event: Event) => void) {
             this.getEl().addEventListener("input", listener);
         }
 
-        unInput(listener: (event:Event) => void) {
+        unInput(listener: (event: Event) => void) {
             this.getEl().removeEventListener("input", listener);
         }
     }

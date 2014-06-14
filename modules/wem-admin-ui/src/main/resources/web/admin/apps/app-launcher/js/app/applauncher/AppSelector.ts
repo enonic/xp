@@ -152,7 +152,6 @@ module app.launcher {
         }
 
         private highlightAppTile(application: api.app.Application, index?: number, appTile?: AppTile) {
-            console.log("highlighting", arguments);
             if (!index) {
                 index = this.getAppTileIndex(application);
             }

@@ -2,9 +2,13 @@ package com.enonic.wem.core.index;
 
 public enum Index
 {
-    SEARCH( "search" ),
+
     WORKSPACE( "workspace" ),
-    VERSION( "version" );
+    VERSION( "version" ),
+
+    // The search index is just a placeholder to indicate that the index is a search index.
+    // The actual name of the index will be workspace-<workspace-name> and will be created when needed
+    SEARCH( "search" );
 
     private final String name;
 

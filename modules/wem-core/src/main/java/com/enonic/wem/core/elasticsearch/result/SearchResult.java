@@ -4,14 +4,19 @@ import com.enonic.wem.api.aggregation.Aggregations;
 
 public class SearchResult
 {
-    public SearchResultEntries results;
+    private final SearchResultEntries results;
 
-    public final Aggregations aggregations;
+    private final Aggregations aggregations;
 
     private SearchResult( final Builder builder )
     {
         this.results = builder.results;
         this.aggregations = builder.aggregations;
+    }
+
+    public boolean isEmpty()
+    {
+        return results.getSize() == 0;
     }
 
     public SearchResultEntries getResults()
@@ -22,11 +27,6 @@ public class SearchResult
     public Aggregations getAggregations()
     {
         return aggregations;
-    }
-
-    public boolean hasHits()
-    {
-        return results.getTotalHits() > 0;
     }
 
     public static Builder create()

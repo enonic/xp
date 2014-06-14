@@ -2,6 +2,8 @@ package com.enonic.wem.core.elasticsearch.result;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 public class SearchResultField
 {
     private final String name;
@@ -28,5 +30,11 @@ public class SearchResultField
     {
         this.name = name;
         this.values = values;
+    }
+
+    public SearchResultField( final String name, final Object value )
+    {
+        this.name = name;
+        this.values = Lists.newArrayList( value );
     }
 }

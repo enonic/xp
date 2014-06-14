@@ -14,7 +14,7 @@ module api.liveedit.part {
 
         private comboBox: PartDescriptorComboBox;
 
-        constructor(partView: PartView) {
+        constructor(partView: PartComponentView) {
             super();
 
             wemjq(this.getHTMLElement()).on('click', 'input', (e) => {

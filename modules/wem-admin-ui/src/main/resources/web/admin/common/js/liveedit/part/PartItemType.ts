@@ -33,8 +33,14 @@ module api.liveedit.part {
             return true
         }
 
-        createView(parentRegionView: RegionView, partComponent: PartComponent, element?: HTMLElement, dummy?: boolean): PartView {
-            return new PartView(parentRegionView, partComponent, element, dummy);
+        createView(config: CreateItemViewConfig<RegionView,PartComponent>): PartComponentView {
+            return new PartComponentView(new PartComponentViewBuilder().
+                setItemViewProducer(config.itemViewProducer).
+                setParentRegionView(config.parentView).
+                setParentElement(config.parentElement).
+                setPageComponent(config.data).
+                setElement(config.element).
+                setPositionIndex(config.positionIndex));
         }
     }
 

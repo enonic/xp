@@ -25,11 +25,14 @@ module LiveEdit.component.mouseevent {
         }
 
         attachMouseOutEvent(): void {
-            wemjq(document).on('mouseout', () => {
+            wemjq(document).on('mouseout', this.componentCssSelectorFilter, (event: JQueryEventObject) => {
                 if (LiveEdit.LiveEditPage.get().hasSelectedView()) {
                     return;
                 }
-                wemjq(window).trigger('mouseOutComponent.liveEdit');
+
+                LiveEdit.LiveEditPage.get().deselectSelectedView();
+                var itemView = LiveEdit.LiveEditPage.get().getItemViewByHTMLElement(<HTMLElement>event.currentTarget);
+                wemjq(window).trigger('mouseOutComponent.liveEdit', [itemView]);
             });
         }
 

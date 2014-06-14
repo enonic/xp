@@ -11,7 +11,7 @@ module app.wizard.page.contextwindow.inspect {
     import LayoutDescriptorDropdownConfig = api.content.page.layout.LayoutDescriptorDropdownConfig;
     import Option = api.ui.selector.Option;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
-    import LayoutView = api.liveedit.layout.LayoutView;
+    import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
 
     export interface LayoutInspectionPanelConfig {
 
@@ -21,7 +21,7 @@ module app.wizard.page.contextwindow.inspect {
 
     export class LayoutInspectionPanel extends DescriptorBasedPageComponentInspectionPanel<LayoutComponent, LayoutDescriptor> {
 
-        private layoutView: LayoutView;
+        private layoutView: LayoutComponentView;
 
         private layoutComponent: LayoutComponent;
 
@@ -94,7 +94,7 @@ module app.wizard.page.contextwindow.inspect {
             });
         }
 
-        private notifyLayoutDescriptorChanged(layoutView: LayoutView, descriptor: LayoutDescriptor) {
+        private notifyLayoutDescriptorChanged(layoutView: LayoutComponentView, descriptor: LayoutDescriptor) {
             var event = new LayoutDescriptorChangedEvent(layoutView, descriptor);
             this.layoutDescriptorChangedListeners.forEach((listener) => {
                 listener(event);
@@ -108,7 +108,7 @@ module app.wizard.page.contextwindow.inspect {
             return this.layoutDescriptors[this.getComponent().getDescriptor().toString()];
         }
 
-        setLayoutComponent(layoutView: LayoutView) {
+        setLayoutComponent(layoutView: LayoutComponentView) {
 
             this.layoutView = layoutView;
             this.setComponent(layoutView.getPageComponent());

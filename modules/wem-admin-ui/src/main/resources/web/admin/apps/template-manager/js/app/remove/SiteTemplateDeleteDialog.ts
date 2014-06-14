@@ -18,7 +18,7 @@ module app.remove {
                     new api.content.site.template.SiteTemplateDeletedEvent(api.content.site.template.SiteTemplateKey.fromString(respJson.result)).fire();
                     this.close();
                 }).catch((reason: any) => {
-                    api.notify.DefaultErrorHandler.handle(reason);
+                    api.DefaultErrorHandler.handle(reason);
                 }).finally(() => {
                     this.close();
                 }).done();

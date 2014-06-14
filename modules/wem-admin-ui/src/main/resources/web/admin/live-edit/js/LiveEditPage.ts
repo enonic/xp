@@ -8,29 +8,37 @@ module LiveEdit {
     import ComponentName = api.content.page.ComponentName;
     import DescriptorBasedPageComponentBuilder = api.content.page.DescriptorBasedPageComponentBuilder;
     import DescriptorBasedPageComponent = api.content.page.DescriptorBasedPageComponent;
-    import PageItemViews = api.liveedit.PageItemViews;
     import PageComponentView = api.liveedit.PageComponentView;
+    import PageView = api.liveedit.PageView;
+    import PageViewBuilder = api.liveedit.PageViewBuilder;
     import ItemView = api.liveedit.ItemView;
     import RegionView = api.liveedit.RegionView;
     import ItemViewId = api.liveedit.ItemViewId;
-    import LayoutView = api.liveedit.layout.LayoutView;
+    import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
+    import TextComponentView = api.liveedit.text.TextComponentView;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
+    import SortableStopEvent = api.liveedit.SortableStopEvent;
     import PageComponentAddedEvent = api.liveedit.PageComponentAddedEvent;
     import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
-    import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
+    import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
     import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
+    import ItemViewIdProducer = api.liveedit.ItemViewIdProducer;
 
     export class LiveEditPage {
 
         private static INSTANCE: LiveEditPage;
 
-        private pageItemViews: PageItemViews;
+        private pageView: PageView;
 
         private pageRegions: PageRegions;
 
         private highlighter: LiveEdit.ui.Highlighter;
+
+        private shader: LiveEdit.ui.Shader;
+
+        private cursor: LiveEdit.ui.Cursor;
 
         static get(): LiveEditPage {
             return LiveEditPage.INSTANCE;
@@ -46,20 +54,28 @@ module LiveEdit {
                 var body = api.dom.Body.getAndLoadExistingChildren();
 
                 this.pageRegions = event.getPageRegions();
-                this.pageItemViews = new api.liveedit.PageItemViewsParser(body, event.getContent(), event.getPageRegions()).parse();
-                this.pageItemViews.initializeEmpties();
+                this.pageView = new PageView(new PageViewBuilder().
+                    setItemViewProducer(new ItemViewIdProducer()).
+                    setPageRegions(event.getPageRegions()).
+                    setContent(event.getContent()).
+                    setElement(body));
 
                 api.liveedit.PageComponentLoadedEvent.on((event: api.liveedit.PageComponentLoadedEvent) => {
 
-                    this.pageItemViews.addItemView(event.getItemView());
-
                     if (event.getItemView().getType() == api.liveedit.layout.LayoutItemType.get()) {
+
                         LiveEdit.component.dragdropsort.DragDropSort.createSortableLayout(event.getItemView());
                     }
                 });
 
                 this.highlighter = new LiveEdit.ui.Highlighter();
                 api.dom.Body.get().appendChild(this.highlighter);
+
+                api.ui.Tooltip.allowMultipleInstances(false);
+
+                this.shader = new LiveEdit.ui.Shader();
+
+                this.cursor = new LiveEdit.ui.Cursor();
 
                 this.registerGlobalListeners();
             });
@@ -70,9 +86,13 @@ module LiveEdit {
         private registerGlobalListeners(): void {
             wemjq(window).on('mouseOverComponent.liveEdit', (event, component?: ItemView) => {
                 this.highlighter.highlightItemView(component);
+                this.cursor.displayItemViewCursor(component);
+                component.showTooltip();
             });
-            wemjq(window).on('mouseOutComponent.liveEdit', () => {
+            wemjq(window).on('mouseOutComponent.liveEdit', (event, component?: ItemView) => {
                 this.highlighter.hide();
+                this.cursor.reset();
+                component.hideTooltip();
             });
             ItemViewSelectedEvent.on((event: ItemViewSelectedEvent) => {
                 var component = event.getItemView();
@@ -80,67 +100,83 @@ module LiveEdit {
                 // Highlighter should not be shown when type page is selected
                 if (component.getType().equals(api.liveedit.PageItemType.get())) {
                     this.highlighter.hide();
+                    this.shader.shadeItemView(component);
                     return;
                 } else if (component.getType().equals(api.liveedit.image.ImageItemType.get())) {
-                    var image = (<api.liveedit.image.ImageView>component).getImage();
+                    var image = (<api.liveedit.image.ImageComponentView>component).getImage();
                     if (image) {
-                        image.getEl().addEventListener("load", () => this.highlighter.highlightItemView(component));
+                        image.getEl().addEventListener("load", () => {
+                            this.highlighter.highlightItemView(component);
+                            this.shader.shadeItemView(component);
+                        });
                     }
                 }
 
                 this.highlighter.highlightItemView(component);
+                this.shader.shadeItemView(component);
+                this.cursor.displayItemViewCursor(component);
             });
-            PageComponentDeselectEvent.on(() => {
+            ItemViewDeselectEvent.on(() => {
                 this.highlighter.hide();
+                this.shader.hide();
             });
             PageComponentResetEvent.on((event: PageComponentResetEvent) => {
                 this.highlighter.highlightItemView(event.getComponentView());
+                this.shader.shadeItemView(event.getComponentView());
             });
             SortableStartEvent.on(() => {
                 this.highlighter.hide();
+                this.shader.hide();
+                this.cursor.hide();
+            });
+            SortableStopEvent.on(() => {
+                this.cursor.reset();
             });
             PageComponentRemoveEvent.on(() => {
                 this.highlighter.hide();
+                this.shader.hide();
             });
-            wemjq(window).on('editTextComponent.liveEdit', () => {
+            wemjq(window).on('editTextComponent.liveEdit', (event: JQueryEventObject, component: TextComponentView) => {
                 this.highlighter.hide();
+                this.shader.shadeItemView(component);
             });
             wemjq(window).on('resizeBrowserWindow.liveEdit', () => {
-                this.highlighter.highlightItemView(this.pageItemViews.getSelectedView());
+                var selectedView = this.pageView.getSelectedView();
+                this.highlighter.highlightItemView(selectedView);
+                this.shader.shadeItemView(selectedView);
+            });
+            LiveEdit.ui.ShaderClickedEvent.on(() => {
+                var selectedView = this.pageView.getSelectedView();
+                if (selectedView) {
+                    selectedView.deselect();
+                    selectedView.hideTooltip();
+                }
             });
         }
 
         getByItemId(id: ItemViewId) {
-            return this.pageItemViews.getByItemId(id);
+            return this.pageView.getItemViewById(id);
         }
 
         getItemViewByHTMLElement(htmlElement: HTMLElement) {
-            return this.pageItemViews.getItemViewByElement(htmlElement);
+            return this.pageView.getItemViewByElement(htmlElement);
         }
 
         getPageComponentViewByElement(htmlElement: HTMLElement): PageComponentView<PageComponent> {
-            return this.pageItemViews.getPageComponentViewByElement(htmlElement);
+            return this.pageView.getPageComponentViewByElement(htmlElement);
         }
 
         getRegionViewByElement(htmlElement: HTMLElement): RegionView {
-            return this.pageItemViews.getRegionViewByElement(htmlElement);
-        }
-
-        addItemView(itemView: ItemView) {
-            this.pageItemViews.addItemView(itemView);
+            return this.pageView.getRegionViewByElement(htmlElement);
         }
 
         addPageComponentView(pageComponentView: PageComponentView<PageComponent>, toRegion: RegionView, atIndex: number) {
 
-            this.addItemView(pageComponentView);
-
             toRegion.addPageComponentView(pageComponentView, atIndex);
 
-            pageComponentView.empty();
-
-            var closestParentLayoutView = LayoutView.getClosestParentLayoutView(pageComponentView);
-            if (closestParentLayoutView) {
-                closestParentLayoutView.addPadding();
+            var closestParentLayoutComponentView = LayoutComponentView.getClosestParentLayoutComponentView(pageComponentView);
+            if (closestParentLayoutComponentView) {
+                closestParentLayoutComponentView.addPadding();
             }
 
             new PageComponentAddedEvent().setPageComponentView(pageComponentView).fire();
@@ -162,7 +198,6 @@ module LiveEdit {
             var origin = pageComponentView.getPageComponent();
             var duplicatedPageComponent = this.pageRegions.duplicateComponent(origin.getPath());
             var duplicatedView = pageComponentView.duplicate(duplicatedPageComponent);
-            this.pageItemViews.addItemView(duplicatedView);
             new PageComponentDuplicateEvent(pageComponentView, duplicatedView).fire();
             duplicatedView.select();
         }
@@ -171,15 +206,15 @@ module LiveEdit {
 
             var regionView = pageComponentView.getParentItemView();
             regionView.removePageComponentView(pageComponentView);
-            this.pageItemViews.removePageComponentView(pageComponentView);
+            new PageComponentRemoveEvent(pageComponentView).fire();
         }
 
         hasSelectedView(): boolean {
-            return this.pageItemViews.hasSelectedView();
+            return this.pageView.hasSelectedView();
         }
 
         deselectSelectedView() {
-            this.pageItemViews.deselectSelectedView();
+            this.pageView.deselectSelectedView();
         }
 
         createComponent(region: Region, type: PageComponentType, precedingComponentView: PageComponentView<PageComponent>): PageComponent {

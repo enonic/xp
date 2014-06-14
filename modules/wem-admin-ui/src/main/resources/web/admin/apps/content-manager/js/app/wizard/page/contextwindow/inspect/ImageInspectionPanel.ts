@@ -5,7 +5,7 @@ module app.wizard.page.contextwindow.inspect {
     import SiteTemplate = api.content.site.template.SiteTemplate;
     import ImageComponent = api.content.page.image.ImageComponent;
     import PageComponentView = api.liveedit.PageComponentView;
-    import ImageView = api.liveedit.image.ImageView;
+    import ImageComponentView = api.liveedit.image.ImageComponentView;
     import ImageDescriptor = api.content.page.image.ImageDescriptor;
     import GetImageDescriptorsByModulesRequest = api.content.page.image.GetImageDescriptorsByModulesRequest;
     import ImageDescriptorLoader = api.content.page.image.ImageDescriptorLoader;
@@ -28,7 +28,7 @@ module app.wizard.page.contextwindow.inspect {
 
         private imageComponent: ImageComponent;
 
-        private imageView: ImageView;
+        private imageView: ImageComponentView;
 
         private descriptorSelected: DescriptorKey;
 
@@ -103,7 +103,7 @@ module app.wizard.page.contextwindow.inspect {
             });
         }
 
-        private notifyImageDescriptorChanged(imageView: ImageView, descriptor: ImageDescriptor) {
+        private notifyImageDescriptorChanged(imageView: ImageComponentView, descriptor: ImageDescriptor) {
             var event = new ImageDescriptorChangedEvent(imageView, descriptor);
             this.imageDescriptorChangedListeners.forEach((listener) => {
                 listener(event);
@@ -117,7 +117,7 @@ module app.wizard.page.contextwindow.inspect {
             return this.imageDescriptors[this.getComponent().getDescriptor().toString()];
         }
 
-        setImageComponent(imageView: ImageView) {
+        setImageComponent(imageView: ImageComponentView) {
             this.setComponent(imageView.getPageComponent());
             this.imageView = imageView;
             this.imageComponent = imageView.getPageComponent();
@@ -130,7 +130,7 @@ module app.wizard.page.contextwindow.inspect {
             }
         }
 
-        getPageComponentView(): ImageView {
+        getPageComponentView(): ImageComponentView {
             return this.imageView;
         }
 

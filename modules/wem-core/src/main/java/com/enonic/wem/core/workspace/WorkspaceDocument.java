@@ -71,12 +71,21 @@ public class WorkspaceDocument
         private Workspace workspace;
 
 
-        public Builder node( final Node node )
+        public Builder path( final NodePath path )
         {
-            this.path = node.path();
-            this.parentPath = node.parent();
-            this.entityId = node.id();
+            this.path = path;
+            return this;
+        }
 
+        public Builder parentPath( final NodePath parentPath )
+        {
+            this.parentPath = parentPath;
+            return this;
+        }
+
+        public Builder id( final EntityId id )
+        {
+            this.entityId = id;
             return this;
         }
 

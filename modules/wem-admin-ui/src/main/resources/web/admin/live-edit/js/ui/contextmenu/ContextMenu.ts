@@ -2,7 +2,7 @@ module LiveEdit.ui.contextmenu {
 
     import ItemView = api.liveedit.ItemView;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
-    import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
+    import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
 
@@ -40,7 +40,7 @@ module LiveEdit.ui.contextmenu {
         private registerGlobalListeners(): void {
             ItemViewSelectedEvent.on((event: ItemViewSelectedEvent) =>
                 this.show(event.getItemView(), event.getPosition()));
-            PageComponentDeselectEvent.on(() => this.hide());
+            ItemViewDeselectEvent.on(() => this.hide());
             PageComponentRemoveEvent.on(() => this.hide());
             wemjq(window).on('editTextComponent.liveEdit', () => this.hide());
             SortableStartEvent.on(() => this.fadeOutAndHide());
@@ -135,8 +135,8 @@ module LiveEdit.ui.contextmenu {
             }
         }
 
-        private resolvePagePosition(component: ItemView, pageXYPosition: api.liveedit.Position): api.liveedit.Position {
-            var componentElementDimensions = component.getElementDimensions();
+        private resolvePagePosition(itemView: ItemView, pageXYPosition: api.liveedit.Position): api.liveedit.Position {
+            var componentElementDimensions = itemView.getElementDimensions();
             var pageXPosition, pageYPosition;
             if (pageXYPosition) {
                 pageXPosition = pageXYPosition.x - this.getEl().width() / 2;
@@ -144,7 +144,7 @@ module LiveEdit.ui.contextmenu {
             } else {
                 // component element - center
                 pageXPosition = componentElementDimensions.left + (componentElementDimensions.width / 2) - this.getEl().width() / 2;
-                pageYPosition = componentElementDimensions.top + 10 + (!component.isEmpty() ? 0 : componentElementDimensions.height);
+                pageYPosition = componentElementDimensions.top + 10 + (!itemView.isEmpty() ? 0 : componentElementDimensions.height);
             }
 
             return {

@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, user-scalable=no">
     <title>Enonic WEM Admin</title>
 
     <!-- Styles -->
@@ -28,12 +29,7 @@
 <!-- Start the app -->
 <script type="text/javascript">
     window.onload = function () {
-        try {
-            startApplication();
-            console.info("'{{app}}' application started.");
-        } catch (e) {
-            console.error("Could not start the '{{app}}' application", e);
-        }
+        startApplication();
     }
 </script>
 

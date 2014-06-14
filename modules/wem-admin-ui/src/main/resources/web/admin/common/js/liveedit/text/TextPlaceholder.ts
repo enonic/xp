@@ -5,11 +5,11 @@ module api.liveedit.text {
 
     export class TextPlaceholder extends api.dom.DivEl {
 
-        private textView: TextView;
+        private textView: TextComponentView;
 
         private clickToEditLink: api.dom.AEl;
 
-        constructor(textView: TextView) {
+        constructor(textView: TextComponentView) {
             super();
             this.textView = textView;
             this.clickToEditLink = null;

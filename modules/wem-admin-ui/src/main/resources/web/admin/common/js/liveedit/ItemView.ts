@@ -7,9 +7,51 @@ module api.liveedit {
         height: number;
     }
 
+    export class ItemViewBuilder {
+
+        itemViewIdProducer: ItemViewIdProducer;
+
+        type: ItemType;
+
+        element: api.dom.Element;
+
+        parentElement: api.dom.Element;
+
+        parentView: ItemView;
+
+        setItemViewIdProducer(value: ItemViewIdProducer): ItemViewBuilder {
+            this.itemViewIdProducer = value;
+            return this;
+        }
+
+        setType(value: ItemType): ItemViewBuilder {
+            this.type = value;
+            return this;
+        }
+
+        setElement(value: api.dom.Element): ItemViewBuilder {
+            this.element = value;
+            return this;
+        }
+
+        setParentView(value: ItemView): ItemViewBuilder {
+            this.parentView = value;
+            return this;
+        }
+
+        setParentElement(value: api.dom.Element): ItemViewBuilder {
+            this.parentElement = value;
+            return this;
+        }
+    }
+
     export class ItemView extends api.dom.Element {
 
+        private itemViewIdProducer: ItemViewIdProducer;
+
         private type: ItemType;
+
+        private parentItemView: ItemView;
 
         private loadMask: api.ui.LoadMask;
 
@@ -19,42 +61,54 @@ module api.liveedit {
 
         private tooltipViewer: api.ui.Viewer<any>;
 
-        constructor(type: ItemType, element?: HTMLElement, dummy?: boolean, parentElement?: HTMLElement) {
-            api.util.assertNotNull(type, "type cannot be null");
-            this.type = type;
+        constructor(builder: ItemViewBuilder) {
+            api.util.assertNotNull(builder.type, "type cannot be null");
 
-            var props = new api.dom.ElementProperties();
-            props.setGenerateId(false);
-            if (element) {
-                props.setHelper(new api.dom.ElementHelper(element)).setLoadExistingChildren(true);
+            this.type = builder.type;
+            this.parentItemView = builder.parentView;
+            this.itemViewIdProducer = builder.itemViewIdProducer;
+
+            var props: api.dom.ElementBuilder = null;
+            if (builder.element) {
+                var elementFromElementBuilder = new api.dom.ElementFromElementBuilder();
+                elementFromElementBuilder.setElement(builder.element);
+                elementFromElementBuilder.setParentElement(builder.parentElement);
+                elementFromElementBuilder.setGenerateId(false);
+                props = elementFromElementBuilder;
             }
             else {
-                props.setTagName("div");
+                var newElementBuilder = new api.dom.NewElementBuilder();
+                newElementBuilder.setTagName("div");
+                newElementBuilder.setParentElement(builder.parentElement);
+                newElementBuilder.setGenerateId(false);
+                props = newElementBuilder;
             }
-            if (parentElement) {
-                props.setParentElement(parentElement);
-            }
-
             super(props);
 
-            if (!element) {
-                this.getEl().setData(ItemType.DATA_ATTRIBUTE, type.getShortName());
+            this.setItemId(builder.itemViewIdProducer.next());
+
+            if (!builder.element) {
+                this.getEl().setData(ItemType.DATA_ATTRIBUTE, builder.type.getShortName());
             }
-            if (!dummy) {
-                this.loadMask = new api.ui.LoadMask(this);
-                this.appendChild(this.loadMask);
 
-                this.tooltipViewer = this.getTooltipViewer();
-                if (this.tooltipViewer) {
-                    this.tooltip = new api.ui.Tooltip(this).
-                        setHideTimeout(0).
-                        setSide(api.ui.Tooltip.SIDE_TOP).
-                        setContent(this.tooltipViewer);
+            this.loadMask = new api.ui.LoadMask(this);
+            this.appendChild(this.loadMask);
 
-                }
+            this.tooltipViewer = this.getTooltipViewer();
+            if (this.tooltipViewer) {
+                this.tooltip = new api.ui.Tooltip(this).
+                    setTrigger(api.ui.Tooltip.TRIGGER_NONE).
+                    setHideTimeout(0).
+                    setSide(api.ui.Tooltip.SIDE_TOP).
+                    setContent(this.tooltipViewer);
+
             }
 
             this.setElementDimensions(this.getDimensionsFromElement());
+        }
+
+        getItemViewIdProducer(): ItemViewIdProducer {
+            return this.itemViewIdProducer;
         }
 
         getTooltipViewer(): api.ui.Viewer<any> {
@@ -68,7 +122,15 @@ module api.liveedit {
             }
         }
 
-        setItemId(value: ItemViewId) {
+        showTooltip() {
+            this.tooltip.show();
+        }
+
+        hideTooltip() {
+            this.tooltip.hide();
+        }
+
+        private setItemId(value: ItemViewId) {
             this.getEl().setAttribute("data-" + ItemViewId.DATA_ATTRIBUTE, value.toString());
         }
 
@@ -100,6 +162,12 @@ module api.liveedit {
             throw new Error("Must be implemented by inheritors");
         }
 
+        markAsEmpty() {
+
+            this.getEl().setData('live-edit-empty-component', 'true');
+            this.addClass("live-edit-empty-component");
+        }
+
         isEmpty(): boolean {
             return this.getEl().hasAttribute('data-live-edit-empty-component');
         }
@@ -116,7 +184,7 @@ module api.liveedit {
 
         deselect() {
             this.getEl().removeAttribute("data-live-edit-selected");
-            new PageComponentDeselectEvent(this).fire();
+            new ItemViewDeselectEvent(this).fire();
         }
 
         getName(): string {
@@ -138,6 +206,11 @@ module api.liveedit {
         getElementDimensions(): ElementDimensions {
             // We need to dynamically get the dimension as it can change on eg. browser window resize.
             return this.getDimensionsFromElement();
+        }
+
+        toItemViewArray(): ItemView[] {
+
+            return [this];
         }
 
         private getDimensionsFromElement(): ElementDimensions {

@@ -33,6 +33,11 @@ public class BlobKeys
         return new Builder();
     }
 
+    public int size()
+    {
+        return blobKeys.size();
+    }
+
     @Override
     public Iterator<BlobKey> iterator()
     {
@@ -41,7 +46,7 @@ public class BlobKeys
 
     public static class Builder
     {
-        private Set<BlobKey> blobKeys = Sets.newLinkedHashSet();
+        private final Set<BlobKey> blobKeys = Sets.newLinkedHashSet();
 
         public Builder add( final BlobKey blobKey )
         {

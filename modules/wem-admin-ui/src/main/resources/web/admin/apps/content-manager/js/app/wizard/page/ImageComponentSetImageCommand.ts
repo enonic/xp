@@ -2,13 +2,13 @@ module app.wizard.page {
 
     import ContentId = api.content.ContentId;
     import PageRegions = api.content.page.PageRegions;
-    import ImageView = api.liveedit.image.ImageView;
+    import ImageComponentView = api.liveedit.image.ImageComponentView;
 
     export class ImageComponentSetImageCommand {
 
         private defaultModels: DefaultModels;
 
-        private imageView: ImageView;
+        private imageView: ImageComponentView;
 
         private pageRegions: PageRegions;
 
@@ -21,7 +21,7 @@ module app.wizard.page {
             return this;
         }
 
-        setPageComponentView(value: ImageView): ImageComponentSetImageCommand {
+        setPageComponentView(value: ImageComponentView): ImageComponentSetImageCommand {
             this.imageView = value;
             return this;
         }

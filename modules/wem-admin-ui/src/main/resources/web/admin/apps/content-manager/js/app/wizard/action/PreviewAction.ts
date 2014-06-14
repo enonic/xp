@@ -13,7 +13,7 @@ module app.wizard.action {
                         wizard.setPersistAsDraft(false);
                         wizard.updatePersistedItem().
                             then(this.showPreviewDialog).
-                            catch((reason: any) => api.notify.DefaultErrorHandler.handle(reason)).
+                            catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
                             done();
                     } else {
                         this.showPreviewDialog(wizard.getPersistedItem());

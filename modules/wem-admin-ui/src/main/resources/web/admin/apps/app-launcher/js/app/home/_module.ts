@@ -4,3 +4,4 @@
 ///<reference path='LinksContainer.ts' />
 ///<reference path='InstallationInfo.ts' />
 ///<reference path='ProductHeader.ts' />
+///<reference path='HomeEvents.ts' />

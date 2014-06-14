@@ -16,6 +16,8 @@ module app.home {
 
         private logoutButton:api.ui.Button;
 
+        private returnButton:api.dom.DivEl;
+
         constructor(builder: HomeMainContainerBuilder) {
             super('home-main-container');
 
@@ -35,7 +37,14 @@ module app.home {
 
             this.brandingPanel = new Branding();
 
+            this.returnButton = new api.dom.DivEl('return-button');
+            this.returnButton.hide();
+            this.returnButton.onClicked(() => {
+                new ReturnToAppEvent().fire();
+            });
+
             this.centerPanel = new CenterPanel();
+            this.centerPanel.prependChild(this.returnButton);
             this.centerPanel.prependChild(this.brandingPanel);
 
             this.centerPanel.addToAppSelectorPanel(this.appSelector);
@@ -46,9 +55,6 @@ module app.home {
 
             this.appendChild(this.centerPanel);
 
-            api.app.ShowAppLauncherEvent.on((event) => {
-                this.setBackgroundImgUrl("");
-            });
         }
 
         giveFocus(): boolean {
@@ -71,6 +77,10 @@ module app.home {
         hide() {
             api.ui.KeyBindings.get().unbindKeys(this.appSelector.getKeyBindings());
             super.hide();
+        }
+
+        enableReturnButton() {
+            this.returnButton.show();
         }
     }
 

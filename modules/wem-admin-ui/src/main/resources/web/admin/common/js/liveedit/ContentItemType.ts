@@ -1,6 +1,6 @@
 module api.liveedit {
 
-    import PartView = api.liveedit.part.PartView;
+    import PartComponentView = api.liveedit.part.PartComponentView;
 
     export class ContentItemType extends ItemType {
 
@@ -25,8 +25,11 @@ module api.liveedit {
             });
         }
 
-        createView(parentPartView: PartView, data: any, element?: HTMLElement, dummy?: boolean): ContentView {
-            return new ContentView(parentPartView, element);
+        createView(config: CreateItemViewConfig<PartComponentView,any>): ContentView {
+            return new ContentView(new ContentViewBuilder().
+                setParentPartComponentView(config.parentView).
+                setParentElement(config.parentElement).
+                setElement(config.element));
         }
     }
 

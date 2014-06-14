@@ -3,7 +3,7 @@ module api.dom {
     export class FormEl extends Element {
 
         constructor(className?: string) {
-            super(new ElementProperties().setTagName("form").setClassName(className));
+            super(new NewElementBuilder().setTagName("form").setClassName(className));
         }
 
         preventSubmit() {
@@ -20,8 +20,8 @@ module api.dom {
             this.getEl().removeEventListener("submit", listener);
         }
 
-        static moveFocusToNextFocusable(input:InputEl) {
-            var focusableElements:NodeList = document.querySelectorAll("input, button, select");
+        static moveFocusToNextFocusable(input: InputEl) {
+            var focusableElements: NodeList = document.querySelectorAll("input, button, select");
 
             // find index of current input
             var index = -1;

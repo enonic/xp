@@ -8,11 +8,14 @@ module app.browse.grid {
     import GridColumn = api.ui.grid.GridColumn;
     import DataView = api.ui.grid.DataView;
 
+    import TreeGridToolbar = api.app.browse.treegrid.TreeGridToolbar;
+    import TreeGridActions = api.app.browse.treegrid.TreeGridActions;
+
     import ContentSummary = api.content.ContentSummary;
     import ContentSummaryViewer = api.content.ContentSummaryViewer;
 
 
-    export class ContentGridPanel2 extends api.app.browse.grid2.GridPanel2 {
+    export class ContentGridPanel2 extends api.app.browse.treegrid.TreeGrid {
 
         private columns:GridColumn<ContentSummary>[] = [];
 
@@ -24,8 +27,8 @@ module app.browse.grid {
 
         private nameFormatter: (row: number, cell: number, value: any, columnDef: any, dataContext: Slick.SlickData) => string;
 
-        private toolbar:GridToolbar;
-        
+        private toolbar:TreeGridToolbar;
+
         private canvasElement:api.dom.DivEl;
 
         private cache:ContentGridCache2;
@@ -99,6 +102,8 @@ module app.browse.grid {
 
             // Custom row selection required for valid behaviour
             this.grid.setSelectionModel(new Slick.RowSelectionModel({selectActiveRow: false}));
+
+
             this.grid.subscribeOnClick((event, data) => {
                 if (this.hasClass("active")) {
                     var elem = new ElementHelper(event.target);
@@ -113,16 +118,21 @@ module app.browse.grid {
                         var item = this.gridData.getItem(data.row);
                         this.collapseData(item);
                     } else {
-                        this.grid.setSelectedRows([data.row]);
+                        this.grid.selectRow(data.row);
                     }
                 }
-                event.stopImmediatePropagation();
             });
 
-            var actions = GridActions.init(this.grid);
+            this.grid.subscribeOnDblClick((event, data) => {
+                if (this.hasClass("active")) {
+                    new EditContentEvent([this.grid.getDataView().getItem(data.row)]).fire();
+                }
+            });
+
+            var actions = TreeGridActions.init(this.grid);
             // set actions for content menu here
 
-            this.toolbar = new GridToolbar(actions);
+            this.toolbar = new TreeGridToolbar(actions);
 
             this.cache = new ContentGridCache2(this.grid);
 
@@ -142,6 +152,8 @@ module app.browse.grid {
                 }
             }
 
+//            new ViewContentEvent(grid.getDataView()this.extModelsToContentSummaries(treeGridPanel.getSelection())).fire();
+
             this.expandData();
 
             this.onShown((event) => {
@@ -155,7 +167,6 @@ module app.browse.grid {
         }
 
         private initData(contents:ContentSummary[]) {
-
             this.gridData.setItems(contents, "id");
         }
 
@@ -232,7 +243,7 @@ module app.browse.grid {
                 }, 310);
 
             }).catch((reason: any) => {
-                api.notify.DefaultErrorHandler.handle(reason);
+                api.DefaultErrorHandler.handle(reason);
             }).done();
 
             deferred.resolve(null);

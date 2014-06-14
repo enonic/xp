@@ -20,5 +20,6 @@ public final class ContentId
     {
         return new ContentId( entityId.toString() );
     }
+
 }
 

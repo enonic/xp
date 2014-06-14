@@ -11,16 +11,17 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     import ItemViewId = api.liveedit.ItemViewId;
     import ItemType = api.liveedit.ItemType;
     import ItemView = api.liveedit.ItemView;
+    import RegionView = api.liveedit.RegionView;
     import PageComponentView = api.liveedit.PageComponentView;
-    import LayoutView = api.liveedit.layout.LayoutView;
+    import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
     import PageComponentItemType = api.liveedit.PageComponentItemType;
     import RegionItemType = api.liveedit.RegionItemType;
     import TextItemType = api.liveedit.text.TextItemType;
     import LayoutItemType = api.liveedit.layout.LayoutItemType;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import SortableStopEvent = api.liveedit.SortableStopEvent;
-    import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
-    import PageComponentAddedEvent = api.liveedit.PageComponentAddedEvent;
+    import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
+    import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
 
     // jQuery sortable cursor position form to the drag helper.
     var CURSOR_AT: any = {left: 24, top: 24};
@@ -51,13 +52,13 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
     export function createSortableLayout(component: api.liveedit.ItemView) {
         wemjq(component.getHTMLElement()).find(REGION_SELECTOR).each((index, element) => {
-            console.log("Creating jquerysortable for", element);
+            //console.log("Creating jquerysortable for", element);
             createJQueryUiSortable(wemjq(element));
         });
     }
 
     function createJQueryUiSortable(selector): void {
-        console.log("Creating jQuery sortable on selector: ", selector, this);
+        //console.log("Creating jQuery sortable on selector: ", selector, this);
         wemjq(selector).sortable({
             revert: false,
             connectWith: REGION_SELECTOR, //removing this solves the over event not firing bug, not sure what it might break though. it broke dragging out of layouts, now seems to work.
@@ -204,7 +205,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             removePaddingFromParentLayout(pageComponentView);
 
             var draggedItemIsLayoutComponent = pageComponentView.getType().equals(LayoutItemType.get()),
-                targetComponentIsInLayoutComponent = LayoutView.hasParentLayoutView(pageComponentView);
+                targetComponentIsInLayoutComponent = LayoutComponentView.hasParentLayoutComponentView(pageComponentView);
 
             if (draggedItemIsLayoutComponent && targetComponentIsInLayoutComponent) {
                 ui.item.remove()
@@ -234,9 +235,12 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             var precedingComponentView = resolvePrecedingComponentView(droppedElement.get(0));
             var newPageComponent = liveEditPage.createComponent(regionView.getRegion(), itemType.toPageComponentType(),
                 precedingComponentView);
-            var newPageComponentView = itemType.createView(regionView, newPageComponent);
-
             var pageComponentIndex = droppedElement.index();
+            var newPageComponentView = itemType.createView(new CreateItemViewConfig<RegionView,PageComponent>().
+                setParentView(regionView).
+                setData(newPageComponent).
+                setPositionIndex(pageComponentIndex));
+
             droppedElement.remove();
 
             liveEditPage.addPageComponentView(newPageComponentView, regionView, pageComponentIndex);
@@ -253,7 +257,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     function registerGlobalListeners(): void {
-        PageComponentDeselectEvent.on(() => {
+        ItemViewDeselectEvent.on(() => {
             if (LiveEdit.DomHelper.supportsTouch() && !_isDragging) {
                 disableDragDrop();
             }
@@ -290,16 +294,16 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     function addPaddingToParentLayout(itemView: ItemView) {
-        var closestParentLayoutView = LayoutView.getClosestParentLayoutView(itemView);
-        if (closestParentLayoutView) {
-            closestParentLayoutView.addPadding();
+        var closestParentLayoutComponentView = LayoutComponentView.getClosestParentLayoutComponentView(itemView);
+        if (closestParentLayoutComponentView) {
+            closestParentLayoutComponentView.addPadding();
         }
     }
 
     function removePaddingFromParentLayout(itemView: ItemView) {
-        var closestParentLayoutView = LayoutView.getClosestParentLayoutView(itemView);
-        if (closestParentLayoutView) {
-            closestParentLayoutView.removePadding();
+        var closestParentLayoutComponentView = LayoutComponentView.getClosestParentLayoutComponentView(itemView);
+        if (closestParentLayoutComponentView) {
+            closestParentLayoutComponentView.removePadding();
         }
     }
 

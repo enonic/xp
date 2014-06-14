@@ -121,8 +121,8 @@ module api.content.page.region {
                 index = precedingIndex + 1;
             }
             this.pageComponents.splice(index, 0, component);
-            console.debug("Region[" + this.getPath().toString() + "].addComponentAfter() addded [" + component.getPath().toString() +
-                          "] to index: " + index);
+            //console.debug("Region[" + this.getPath().toString() + "].addComponentAfter() addded [" + component.getPath().toString() +
+            //              "] to index: " + index);
             return index;
         }
 
@@ -133,8 +133,8 @@ module api.content.page.region {
 
             var componentIndex = this.getComponentIndex(component);
             this.pageComponents.splice(componentIndex, 1);
-            console.debug("Region[" + this.getPath().toString() + "].removeComponent() removed [" + component.getPath().toString() +
-                          "] from index: " + componentIndex);
+            //console.debug("Region[" + this.getPath().toString() + "].removeComponent() removed [" + component.getPath().toString() +
+            //              "] from index: " + componentIndex);
             return component;
         }
 

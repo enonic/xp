@@ -19,5 +19,39 @@ public class WorkspaceIdQuery
         return entityId;
     }
 
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof WorkspaceIdQuery ) )
+        {
+            return false;
+        }
+        if ( !super.equals( o ) )
+        {
+            return false;
+        }
+
+        final WorkspaceIdQuery idQuery = (WorkspaceIdQuery) o;
+
+        if ( entityId != null ? !entityId.equals( idQuery.entityId ) : idQuery.entityId != null )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = super.hashCode();
+        result = 31 * result + ( entityId != null ? entityId.hashCode() : 0 );
+        return result;
+    }
 }
 
