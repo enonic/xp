@@ -15,6 +15,11 @@ public final class RestletUtils
             return headers;
         }
 
+        if ( !createIfNeeded )
+        {
+            return null;
+        }
+
         final Series<Header> newHeaders = new Series<>( Header.class );
         message.getAttributes().put( HeaderConstants.ATTRIBUTE_HEADERS, newHeaders );
         return newHeaders;
