@@ -68,6 +68,7 @@ abstract class AbstractContentCommand
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
+            context( this.context ).
             build().
             execute();
     }
