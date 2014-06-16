@@ -13,7 +13,7 @@
 
   <artifactId>wem-karaf</artifactId>
   <packaging>jar</packaging>
-  <name>Enonic WEM Karaf Platform</name>
+  <name>Enonic WEM Karaf Feature</name>
 
   <build>
     <resources>

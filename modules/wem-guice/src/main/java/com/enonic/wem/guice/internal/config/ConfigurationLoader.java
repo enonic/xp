@@ -85,6 +85,11 @@ final class ConfigurationLoader
     private Map<String, String> toMap( final Dictionary props )
     {
         final Map<String, String> map = new HashMap<>();
+        if ( props == null )
+        {
+            return map;
+        }
+
         final Enumeration e = props.keys();
         while ( e.hasMoreElements() )
         {
