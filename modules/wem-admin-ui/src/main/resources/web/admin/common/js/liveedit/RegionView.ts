@@ -124,6 +124,16 @@ module api.liveedit {
                 this.notifyItemViewAdded(event);
             });
             pageComponentView.onItemViewRemoved((event: ItemViewRemovedEvent) => {
+
+                // Check if removed ItemView is a child, and remove it if so
+                if (api.ObjectHelper.iFrameSafeInstanceOf(event.getView(), PageComponentView)) {
+
+                    var removedPageComponentView: PageComponentView<PageComponent> = <PageComponentView<PageComponent>>event.getView();
+                    var childIndex = this.pageComponentViews.indexOf(removedPageComponentView);
+                    if (childIndex > -1) {
+                        this.pageComponentViews.splice(childIndex, 1);
+                    }
+                }
                 this.notifyItemViewRemoved(event);
             });
         }
@@ -145,17 +155,9 @@ module api.liveedit {
 
         removePageComponentView(pageComponentView: PageComponentView<PageComponent>) {
 
-            pageComponentView.getElement().remove();
+            pageComponentView.remove();
 
-            var indexToRemove = -1;
-            this.pageComponentViews.forEach((curr: PageComponentView<PageComponent>, index: number) => {
-                if (curr.getItemId().equals(pageComponentView.getItemId())) {
-                    console.log("RegionView[" + this.getItemId().toNumber() + "].removePageComponentView: removing PageComponentView: " +
-                                curr.getItemId().toString());
-                    indexToRemove = index;
-                }
-            });
-
+            var indexToRemove = this.pageComponentViews.indexOf(pageComponentView);
             if (indexToRemove >= 0) {
                 this.pageComponentViews.splice(indexToRemove, 1);
                 if (this.pageComponentViews.length == 0) {
