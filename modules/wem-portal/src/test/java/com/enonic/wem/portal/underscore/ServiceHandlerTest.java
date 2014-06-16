@@ -1,15 +1,16 @@
 package com.enonic.wem.portal.underscore;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.restlet.Request;
-import org.restlet.Response;
-import org.restlet.data.Method;
 
 import com.google.common.collect.Multimap;
+import com.sun.jersey.api.client.ClientResponse;
 
+import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.api.rendering.RenderingMode;
+import com.enonic.wem.portal.base.ModuleBaseHandlerTest;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsControllerFactory;
@@ -17,17 +18,22 @@ import com.enonic.wem.portal.controller.JsHttpRequest;
 
 import static org.junit.Assert.*;
 
-public class ServiceResourceTest
-    extends UnderscoreResourceTest<ServiceResource>
+public class ServiceHandlerTest
+    extends ModuleBaseHandlerTest<ServiceHandler>
 {
     private JsController jsController;
 
     @Override
-    protected void configure()
+    protected ServiceHandler createResource()
+    {
+        return new ServiceHandler();
+    }
+
+    @Before
+    public void setup()
         throws Exception
     {
-        this.resource = new ServiceResource();
-        super.configure();
+        super.setup();
 
         this.jsController = Mockito.mock( JsController.class );
         this.resource.controllerFactory = Mockito.mock( JsControllerFactory.class );
@@ -40,8 +46,8 @@ public class ServiceResourceTest
     public void executeScript()
         throws Exception
     {
-        final Request request = new Request( Method.GET, "/live/path/to/content/_/service/demo-1.0.0/test?a=b" );
-        executeRequest( request );
+        final ClientResponse response = executeGet( "/live/path/to/content/_/service/demo-1.0.0/test?a=b" );
+        assertEquals( 200, response.getStatus() );
 
         final ArgumentCaptor<JsContext> jsContext = ArgumentCaptor.forClass( JsContext.class );
         Mockito.verify( this.jsController ).context( jsContext.capture() );
@@ -57,14 +63,10 @@ public class ServiceResourceTest
         assertEquals( "b", params.get( "a" ).iterator().next() );
     }
 
-    @Test
+    @Test(expected = ModuleNotFoundException.class)
     public void executeScript_moduleNotFound()
         throws Exception
     {
-        final Request request = new Request( Method.GET, "/live/path/to/content/_/service/demo/test" );
-        final Response response = executeRequest( request );
-
-        assertEquals( 404, response.getStatus().getCode() );
-        assertEquals( "Module [demo] not found", response.getStatus().getDescription() );
+        executeGet( "/live/path/to/content/_/service/demo/test" );
     }
 }

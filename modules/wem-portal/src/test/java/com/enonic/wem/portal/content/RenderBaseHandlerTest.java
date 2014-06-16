@@ -31,7 +31,7 @@ import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.xml.XmlSerializers;
-import com.enonic.wem.portal.base.BaseResourceTest;
+import com.enonic.wem.portal.base.BaseHandlerTest;
 import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsControllerFactory;
 
@@ -42,10 +42,9 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.when;
 
-public class RenderResourceTest<T extends RenderResource>
-    extends BaseResourceTest<T>
+public abstract class RenderBaseHandlerTest<T extends RenderBaseHandler>
+    extends BaseHandlerTest<T>
 {
-
     protected ContentService contentService;
 
     protected SiteService siteService;
@@ -58,9 +57,7 @@ public class RenderResourceTest<T extends RenderResource>
 
     protected JsController jsController;
 
-
-    @Override
-    protected void configure()
+    protected void setup()
         throws Exception
     {
         this.contentService = Mockito.mock( ContentService.class );
@@ -208,3 +205,4 @@ public class RenderResourceTest<T extends RenderResource>
             build();
     }
 }
+

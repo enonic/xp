@@ -1,9 +1,5 @@
 package com.enonic.wem.portal.exception.renderer;
 
-import org.restlet.data.MediaType;
-import org.restlet.representation.Representation;
-import org.restlet.representation.StringRepresentation;
-
 import com.enonic.wem.portal.script.SourceException;
 
 public final class ExceptionRenderer
@@ -52,9 +48,8 @@ public final class ExceptionRenderer
         return this;
     }
 
-    public Representation render()
+    public String render()
     {
-        final String str = TEMPLATE.render( this.info );
-        return new StringRepresentation( str, MediaType.TEXT_HTML );
+        return TEMPLATE.render( this.info );
     }
 }

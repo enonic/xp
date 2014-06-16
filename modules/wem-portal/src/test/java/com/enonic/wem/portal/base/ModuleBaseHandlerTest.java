@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.underscore;
+package com.enonic.wem.portal.base;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,10 +14,9 @@ import com.enonic.wem.api.module.ModuleKeyResolver;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.core.module.ModuleKeyResolverService;
 import com.enonic.wem.core.module.ModuleResourcePathResolver;
-import com.enonic.wem.portal.base.BaseResourceTest;
 
-public abstract class UnderscoreResourceTest<T extends UnderscoreResource>
-    extends BaseResourceTest<T>
+public abstract class ModuleBaseHandlerTest<T extends ModuleBaseHandler>
+    extends BaseHandlerTest<T>
 {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
@@ -26,8 +25,7 @@ public abstract class UnderscoreResourceTest<T extends UnderscoreResource>
 
     protected ModuleResourcePathResolver modulePathResolver;
 
-    @Override
-    protected void configure()
+    protected void setup()
         throws Exception
     {
         this.tmpDir = this.temporaryFolder.getRoot().toPath();
