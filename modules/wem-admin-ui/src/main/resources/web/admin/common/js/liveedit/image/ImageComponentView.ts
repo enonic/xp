@@ -64,8 +64,9 @@ module api.liveedit.image {
 
             var duplicatedView = new ImageComponentView(new ImageComponentViewBuilder().
                 setParentRegionView(this.getParentItemView()).
+                setParentElement(this.getParentElement()).
                 setPageComponent(duplicate));
-            this.getEl().insertAfterThisEl(duplicatedView.getEl());
+            duplicatedView.insertAfterEl(this);
             return duplicatedView;
         }
 
