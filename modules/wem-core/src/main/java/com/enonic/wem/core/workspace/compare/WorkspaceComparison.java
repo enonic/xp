@@ -5,6 +5,8 @@ import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.api.entity.EntityComparison;
+
 public class WorkspaceComparison
 {
     private final ImmutableSet<EntityComparison> diffEntries;

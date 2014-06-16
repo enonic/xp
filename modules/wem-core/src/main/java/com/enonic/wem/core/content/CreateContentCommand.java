@@ -81,8 +81,14 @@ final class CreateContentCommand
             return this;
         }
 
+        void validate()
+        {
+            super.validate();
+        }
+
         public CreateContentCommand build()
         {
+            validate();
             return new CreateContentCommand( this );
         }
     }

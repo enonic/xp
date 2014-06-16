@@ -12,7 +12,7 @@ public interface NodeService
 
     Node getById( EntityId id, Context context );
 
-    Node push( EntityId id, Workspace to, Context context );
+    Node push( EntityId id, Workspace target, Context context );
 
     Nodes getByIds( EntityIds ids, Context context );
 
@@ -25,4 +25,6 @@ public interface NodeService
     Node deleteById( EntityId id, Context context );
 
     Node deleteByPath( NodePath path, Context context );
+
+    EntityComparison compare(EntityId id, Workspace target, Context context);
 }

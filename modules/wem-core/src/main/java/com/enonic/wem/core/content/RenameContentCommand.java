@@ -18,6 +18,12 @@ final class RenameContentCommand
 {
     private final RenameContentParams params;
 
+    private RenameContentCommand( final Builder builder )
+    {
+        super( builder );
+        this.params = builder.params;
+    }
+
     Content execute()
     {
         params.validate();
@@ -31,12 +37,6 @@ final class RenameContentCommand
             final ContentPath path = translateNodePathToContentPath( e.getNode() );
             throw new ContentAlreadyExistException( path );
         }
-    }
-
-    private RenameContentCommand( final Builder builder )
-    {
-        super( builder );
-        this.params = builder.params;
     }
 
     private Content doExecute()
@@ -56,15 +56,21 @@ final class RenameContentCommand
     public static class Builder
         extends AbstractContentCommand.Builder<Builder>
     {
-        private RenameContentParams params;
+        private final RenameContentParams params;
 
         public Builder( final RenameContentParams params )
         {
             this.params = params;
         }
 
+        void validate()
+        {
+            super.validate();
+        }
+
         public RenameContentCommand build()
         {
+            validate();
             return new RenameContentCommand( this );
         }
 

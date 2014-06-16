@@ -2,6 +2,7 @@ package com.enonic.wem.core.workspace.compare;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.entity.CompareState;
 import com.enonic.wem.core.version.VersionBranch;
 
 import static org.junit.Assert.*;
@@ -24,9 +25,9 @@ public class DiffStatusResolverTest
         final VersionBranch target = VersionBranch.create().
             build();
 
-        final DiffStatus diffStatus = DiffStatusResolver.resolve( new DiffStatusParams( source, target ) );
+        final CompareState compareState = DiffStatusResolver.resolve( new DiffStatusParams( source, target ) );
 
-        assertEquals( DiffStatus.State.NEW, diffStatus.getState() );
+        assertEquals( CompareState.State.NEW, compareState.getState() );
     }
 
     @Test
@@ -44,9 +45,9 @@ public class DiffStatusResolverTest
             add( "1", null ).
             build();
 
-        final DiffStatus diffStatus = DiffStatusResolver.resolve( new DiffStatusParams( source, target ) );
+        final CompareState compareState = DiffStatusResolver.resolve( new DiffStatusParams( source, target ) );
 
-        assertEquals( DiffStatus.State.DELETED, diffStatus.getState() );
+        assertEquals( CompareState.State.DELETED, compareState.getState() );
     }
 
     @Test
@@ -69,9 +70,9 @@ public class DiffStatusResolverTest
             add( "1", null ).
             build();
 
-        final DiffStatus diffStatus = DiffStatusResolver.resolve( new DiffStatusParams( source, target ) );
+        final CompareState compareState = DiffStatusResolver.resolve( new DiffStatusParams( source, target ) );
 
-        assertEquals( DiffStatus.State.EQUAL, diffStatus.getState() );
+        assertEquals( CompareState.State.EQUAL, compareState.getState() );
     }
 
 
@@ -93,9 +94,9 @@ public class DiffStatusResolverTest
             add( "1", null ).
             build();
 
-        final DiffStatus diffStatus = DiffStatusResolver.resolve( new DiffStatusParams( source, target ) );
+        final CompareState compareState = DiffStatusResolver.resolve( new DiffStatusParams( source, target ) );
 
-        assertEquals( DiffStatus.State.CONFLICT, diffStatus.getState() );
+        assertEquals( CompareState.State.CONFLICT, compareState.getState() );
     }
 
     @Test
@@ -116,9 +117,9 @@ public class DiffStatusResolverTest
             add( "1", null ).
             build();
 
-        final DiffStatus diffStatus = DiffStatusResolver.resolve( new DiffStatusParams( source, target ) );
+        final CompareState compareState = DiffStatusResolver.resolve( new DiffStatusParams( source, target ) );
 
-        assertEquals( DiffStatus.State.NEWER, diffStatus.getState() );
+        assertEquals( CompareState.State.NEWER, compareState.getState() );
     }
 
 
@@ -140,9 +141,9 @@ public class DiffStatusResolverTest
             add( "1", null ).
             build();
 
-        final DiffStatus diffStatus = DiffStatusResolver.resolve( new DiffStatusParams( source, target ) );
+        final CompareState compareState = DiffStatusResolver.resolve( new DiffStatusParams( source, target ) );
 
-        assertEquals( DiffStatus.State.OLDER, diffStatus.getState() );
+        assertEquals( CompareState.State.OLDER, compareState.getState() );
     }
 
 }

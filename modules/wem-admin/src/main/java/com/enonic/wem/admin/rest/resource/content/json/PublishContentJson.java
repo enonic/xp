@@ -7,7 +7,7 @@ import com.enonic.wem.api.content.ContentId;
 
 public class PublishContentJson
 {
-    private ContentId contentId;
+    private final ContentId contentId;
 
     @JsonCreator
     PublishContentJson( @JsonProperty("contentId") final String contentIdString )
@@ -15,8 +15,10 @@ public class PublishContentJson
         this.contentId = ContentId.from( contentIdString );
     }
 
+    @SuppressWarnings( "UnusedDeclaration" )
     public ContentId getContentId()
     {
         return contentId;
     }
+
 }

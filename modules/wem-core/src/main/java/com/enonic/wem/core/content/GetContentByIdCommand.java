@@ -15,7 +15,7 @@ final class GetContentByIdCommand
 {
     private final ContentId contentId;
 
-    GetContentByIdCommand( final Builder builder )
+    private GetContentByIdCommand( final Builder builder )
     {
         super( builder );
         this.contentId = builder.contentId;
@@ -48,15 +48,21 @@ final class GetContentByIdCommand
     public static class Builder
         extends AbstractContentCommand.Builder<Builder>
     {
-        private ContentId contentId;
+        private final ContentId contentId;
 
         public Builder( final ContentId contentId )
         {
             this.contentId = contentId;
         }
 
+        void validate()
+        {
+            super.validate();
+        }
+
         public GetContentByIdCommand build()
         {
+            validate();
             return new GetContentByIdCommand( this );
         }
     }

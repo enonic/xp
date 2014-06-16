@@ -1,17 +1,15 @@
-package com.enonic.wem.core.workspace.compare;
+package com.enonic.wem.api.entity;
 
-import com.enonic.wem.api.entity.EntityId;
-
-class EntityComparison
+public class EntityComparison
 {
     private final EntityId entityId;
 
-    private final DiffStatus diffStatus;
+    private final CompareState compareState;
 
-    public EntityComparison( final EntityId entityId, final DiffStatus diffStatus )
+    public EntityComparison( final EntityId entityId, final CompareState compareState )
     {
         this.entityId = entityId;
-        this.diffStatus = diffStatus;
+        this.compareState = compareState;
     }
 
     public EntityId getEntityId()
@@ -19,9 +17,9 @@ class EntityComparison
         return entityId;
     }
 
-    public DiffStatus getDiffStatus()
+    public CompareState getCompareState()
     {
-        return diffStatus;
+        return compareState;
     }
 
     @Override
@@ -38,7 +36,7 @@ class EntityComparison
 
         final EntityComparison that = (EntityComparison) o;
 
-        if ( diffStatus != null ? !diffStatus.equals( that.diffStatus ) : that.diffStatus != null )
+        if ( compareState != null ? !compareState.equals( that.compareState ) : that.compareState != null )
         {
             return false;
         }
@@ -54,7 +52,7 @@ class EntityComparison
     public int hashCode()
     {
         int result = entityId != null ? entityId.hashCode() : 0;
-        result = 31 * result + ( diffStatus != null ? diffStatus.hashCode() : 0 );
+        result = 31 * result + ( compareState != null ? compareState.hashCode() : 0 );
         return result;
     }
 }

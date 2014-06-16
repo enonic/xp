@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.admin.json.content.AbstractContentListJson;
+import com.enonic.wem.admin.json.content.ContentComparisonJson;
 import com.enonic.wem.admin.json.content.ContentIdJson;
 import com.enonic.wem.admin.json.content.ContentIdListJson;
 import com.enonic.wem.admin.json.content.ContentJson;
@@ -33,8 +34,10 @@ import com.enonic.wem.admin.rest.resource.content.json.DeleteContentResultJson;
 import com.enonic.wem.admin.rest.resource.content.json.PublishContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.UpdateContentJson;
 import com.enonic.wem.api.account.AccountKey;
+import com.enonic.wem.api.content.CompareContentParams;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentAlreadyExistException;
+import com.enonic.wem.api.content.ContentCompareResult;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
@@ -44,7 +47,6 @@ import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.DeleteContentParams;
-import com.enonic.wem.api.content.DeleteContentResult;
 import com.enonic.wem.api.content.GetContentByIdsParams;
 import com.enonic.wem.api.content.PushContentParams;
 import com.enonic.wem.api.content.RenameContentParams;
@@ -269,7 +271,7 @@ public class ContentResource
 
             try
             {
-                final DeleteContentResult deleteResult = contentService.delete( deleteContent, ContentConstants.DEFAULT_CONTEXT );
+                contentService.delete( deleteContent, ContentConstants.DEFAULT_CONTEXT );
                 jsonResult.addSuccess( contentToDelete );
             }
             catch ( ContentNotFoundException | UnableToDeleteContentException e )
@@ -279,6 +281,16 @@ public class ContentResource
         }
 
         return jsonResult;
+    }
+
+    @GET
+    @Path("compare")
+    public ContentComparisonJson compare( @QueryParam("id") final String idParam )
+    {
+        final ContentCompareResult compareResult =
+            contentService.compare( new CompareContentParams( ContentId.from( idParam ), PROD_WORKSPACE ), STAGE_CONTEXT );
+
+        return new ContentComparisonJson( compareResult );
     }
 
     @POST

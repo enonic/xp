@@ -7,6 +7,8 @@ import org.mockito.Mockito;
 import com.google.common.collect.UnmodifiableIterator;
 
 import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.wem.api.entity.CompareState;
+import com.enonic.wem.api.entity.EntityComparison;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
 import com.enonic.wem.api.entity.Workspace;
@@ -92,9 +94,9 @@ public class WorkspaceDiffServiceImplTest
 
         final UnmodifiableIterator<EntityComparison> iterator = workspaceComparison.getDiffEntries().iterator();
 
-        assertEquals( DiffStatus.State.CONFLICT, iterator.next().getDiffStatus().getState() );
-        assertEquals( DiffStatus.State.NEW, iterator.next().getDiffStatus().getState() );
-        assertEquals( DiffStatus.State.NEWER, iterator.next().getDiffStatus().getState() );
+        assertEquals( CompareState.State.CONFLICT, iterator.next().getCompareState().getState() );
+        assertEquals( CompareState.State.NEW, iterator.next().getCompareState().getState() );
+        assertEquals( CompareState.State.NEWER, iterator.next().getCompareState().getState() );
     }
 
 
@@ -121,7 +123,7 @@ public class WorkspaceDiffServiceImplTest
 
         final EntityComparison comparison = diffService.compare( compareEntityQuery );
 
-        assertEquals( DiffStatus.State.CONFLICT, comparison.getDiffStatus().getState() );
+        assertEquals( CompareState.State.CONFLICT, comparison.getCompareState().getState() );
     }
 
     /*

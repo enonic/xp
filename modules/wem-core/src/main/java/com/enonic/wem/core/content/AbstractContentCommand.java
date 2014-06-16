@@ -2,6 +2,8 @@ package com.enonic.wem.core.content;
 
 import org.elasticsearch.common.Strings;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -17,7 +19,7 @@ import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 
 abstract class AbstractContentCommand
 {
-    public static final String NON_CONTENT_NODE_PREFIX = "__";
+    private static final String NON_CONTENT_NODE_PREFIX = "__";
 
     private final ContentNodeTranslator translator;
 
@@ -29,7 +31,7 @@ abstract class AbstractContentCommand
 
     final Context context;
 
-    protected AbstractContentCommand( final Builder builder )
+    AbstractContentCommand( final Builder builder )
     {
         this.blobService = builder.blobService;
         this.contentTypeService = builder.contentTypeService;
@@ -115,6 +117,13 @@ abstract class AbstractContentCommand
             return (B) this;
         }
 
+        void validate()
+        {
+            Preconditions.checkNotNull( nodeService );
+            Preconditions.checkNotNull( contentTypeService );
+            Preconditions.checkNotNull( blobService );
+            Preconditions.checkNotNull( context );
+        }
     }
 
 }

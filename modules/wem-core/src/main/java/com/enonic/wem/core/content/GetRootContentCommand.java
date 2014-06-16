@@ -8,7 +8,7 @@ import com.enonic.wem.api.entity.Nodes;
 final class GetRootContentCommand
     extends AbstractContentCommand
 {
-    GetRootContentCommand( final AbstractContentCommand.Builder builder )
+    private GetRootContentCommand( final Builder builder )
     {
         super( builder );
     }
@@ -36,8 +36,15 @@ final class GetRootContentCommand
     public static class Builder
         extends AbstractContentCommand.Builder<Builder>
     {
+
+        void validate()
+        {
+            super.validate();
+        }
+
         public GetRootContentCommand build()
         {
+            validate();
             return new GetRootContentCommand( this );
         }
     }

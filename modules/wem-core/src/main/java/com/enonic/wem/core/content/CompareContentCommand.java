@@ -1,39 +1,38 @@
 package com.enonic.wem.core.content;
 
-import com.google.common.base.Preconditions;
-
-import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentCompareResult;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.entity.EntityComparison;
 import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.Workspace;
 
-public class PushContentCommand
+public class CompareContentCommand
     extends AbstractContentCommand
 {
     private final ContentId contentId;
 
     private final Workspace target;
 
-    private PushContentCommand( final Builder builder )
+    private CompareContentCommand( final Builder builder )
     {
         super( builder );
+
         this.contentId = builder.contentId;
         this.target = builder.target;
-    }
-
-    Content execute()
-    {
-        final EntityId entityId = EntityId.from( contentId.toString() );
-
-        final Node pushedNode = nodeService.push( entityId, this.target, this.context );
-
-        return getTranslator().fromNode( pushedNode );
     }
 
     public static Builder create()
     {
         return new Builder();
+    }
+
+    public ContentCompareResult execute()
+    {
+        final EntityId entityId = EntityId.from( contentId.toString() );
+
+        final EntityComparison compareResult = this.nodeService.compare( entityId, this.target, this.context );
+
+        return CompareResultTranslator.translate( compareResult );
     }
 
     public static class Builder
@@ -42,6 +41,7 @@ public class PushContentCommand
         private ContentId contentId;
 
         private Workspace target;
+
 
         public Builder contentId( final ContentId contentId )
         {
@@ -55,19 +55,10 @@ public class PushContentCommand
             return this;
         }
 
-        void validate()
+        public CompareContentCommand build()
         {
-            super.validate();
-            Preconditions.checkNotNull( target );
-            Preconditions.checkNotNull( contentId );
+            return new CompareContentCommand( this );
         }
-
-        public PushContentCommand build()
-        {
-            validate();
-            return new PushContentCommand( this );
-        }
-
     }
 
 }

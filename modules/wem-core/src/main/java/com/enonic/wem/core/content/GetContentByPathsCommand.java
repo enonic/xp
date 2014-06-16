@@ -1,5 +1,7 @@
 package com.enonic.wem.core.content;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
@@ -60,8 +62,15 @@ final class GetContentByPathsCommand
             this.contentPaths = contentPaths;
         }
 
+        void validate()
+        {
+            super.validate();
+            Preconditions.checkNotNull( contentPaths );
+        }
+
         public GetContentByPathsCommand build()
         {
+            validate();
             return new GetContentByPathsCommand( this );
         }
     }

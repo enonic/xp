@@ -6,6 +6,7 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
 import com.google.common.io.InputSupplier;
 
 import com.enonic.wem.api.blob.Blob;
@@ -89,9 +90,7 @@ final class UpdateContentCommand
 
         final Node editedNode = this.nodeService.update( updateNodeParams, DEFAULT_CONTEXT );
 
-        final Content persistedContent = getTranslator().fromNode( editedNode );
-
-        return persistedContent;
+        return getTranslator().fromNode( editedNode );
     }
 
     private void validateEditedContent( final Content persistedContent, final Content edited )
@@ -188,8 +187,15 @@ final class UpdateContentCommand
             return this;
         }
 
+        void validate()
+        {
+            Preconditions.checkNotNull( attachmentService );
+            Preconditions.checkNotNull( params );
+        }
+
         public UpdateContentCommand build()
         {
+            validate();
             return new UpdateContentCommand( this );
         }
 
