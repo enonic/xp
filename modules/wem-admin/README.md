@@ -5,4 +5,4 @@ Administration console module has the following properties that can be configure
 
 Property | Default | Description
 --- | --- | ---
-resourcesDevDir | <none> | Sets the resources dir root for admin resources. Could be set to {{<PROJECT_HOME>/modules/wem-admin-ui/src/main/resources}} for development.
+resourcesDevDir | <none> | Sets the resources dir root for admin resources. Could be set to {<PROJECT_HOME>/modules/wem-admin-ui/src/main/resources} for development.
