@@ -1,4 +1,4 @@
-package com.enonic.wem.core.workspace.diff;
+package com.enonic.wem.core.workspace.compare;
 
 public class DiffStatus
 {

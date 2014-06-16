@@ -33,7 +33,7 @@ import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.workspace.WorkspaceDocument;
 import com.enonic.wem.core.workspace.WorkspaceService;
-import com.enonic.wem.core.workspace.diff.query.WorkspacesDiffQuery;
+import com.enonic.wem.core.workspace.compare.query.CompareWorkspacesQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceDeleteQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceIdsQuery;
@@ -266,7 +266,7 @@ public class ElasticsearchWorkspaceService
     }
 
     @Override
-    public EntityIds getEntriesWithDiff( final WorkspacesDiffQuery workspaceDiffQuery )
+    public EntityIds getEntriesWithDiff( final CompareWorkspacesQuery workspaceDiffQuery )
     {
         final TermQueryBuilder inSource = new TermQueryBuilder( WORKSPACE_FIELD_NAME, workspaceDiffQuery.getSource().getName() );
         final TermQueryBuilder inTarget = new TermQueryBuilder( WORKSPACE_FIELD_NAME, workspaceDiffQuery.getTarget().getName() );
