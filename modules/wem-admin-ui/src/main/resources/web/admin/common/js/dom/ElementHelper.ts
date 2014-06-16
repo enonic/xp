@@ -463,6 +463,11 @@ module api.dom {
             return wemjq(this.el).offset();
         }
 
+        setOffset(offset: { top:number; left:number; }): ElementHelper {
+            wemjq(this.el).offset(offset);
+            return this;
+        }
+
         /**
          * Goes up the hierarchy and returns first non-statically positioned parent
          * @returns {HTMLElement}
