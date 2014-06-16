@@ -13,7 +13,7 @@ public class AggregationsFactory
 {
     private final static Logger LOG = LoggerFactory.getLogger( AggregationsFactory.class );
 
-    public Aggregations create( final org.elasticsearch.search.aggregations.Aggregations aggregations )
+    public static Aggregations create( final org.elasticsearch.search.aggregations.Aggregations aggregations )
     {
         if ( aggregations == null )
         {
@@ -41,14 +41,14 @@ public class AggregationsFactory
         return aggregationsBuilder.build();
     }
 
-    private BucketAggregation createTermsAggregation( final Terms termsAggregation )
+    private static BucketAggregation createTermsAggregation( final Terms termsAggregation )
     {
         return BucketAggregation.bucketAggregation( termsAggregation.getName() ).
             buckets( BucketsFactory.createFromTerms( termsAggregation.getBuckets() ) ).
             build();
     }
 
-    private BucketAggregation createDateRangeFacet( final DateRange dateRangeAggregation )
+    private static BucketAggregation createDateRangeFacet( final DateRange dateRangeAggregation )
     {
         return BucketAggregation.bucketAggregation( dateRangeAggregation.getName() ).
             buckets( BucketsFactory.createFromDateRange( dateRangeAggregation.getBuckets() ) ).

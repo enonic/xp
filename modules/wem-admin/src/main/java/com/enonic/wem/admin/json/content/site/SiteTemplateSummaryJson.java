@@ -62,11 +62,6 @@ public class SiteTemplateSummaryJson
         return siteTemplate.getUrl();
     }
 
-    public String getRootContentType()
-    {
-        return siteTemplate.getRootContentType().getContentTypeName();
-    }
-
     public VendorJson getVendor()
     {
         return new VendorJson( siteTemplate.getVendor() );

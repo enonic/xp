@@ -7,18 +7,26 @@ module api.ui {
         static SIDE_BOTTOM = "bottom";
         static SIDE_LEFT = "left";
 
-        static TRIGGER_MOUSE = "mouse";
+        static TRIGGER_HOVER = "hover";
         static TRIGGER_FOCUS = "focus";
+        static TRIGGER_NONE = "none";
 
-        private tooltipEl:api.dom.DivEl;
-        private timeoutTimer:number;
+        private static multipleAllowed: boolean = true;
+        private static instances: Tooltip[] = [];
 
-        private target:api.dom.Element;
-        private text:string;
-        private showDelay:number;
-        private hideTimeout:number;
-        private trigger:string;
-        private side:string;
+        private tooltipEl: api.dom.DivEl;
+        private timeoutTimer: number;
+
+        private overListener: (event: Event) => any;
+        private outListener: (event: Event) => any;
+
+        private target: api.dom.Element;
+        private text: string;
+        private contentEl: api.dom.Element;
+        private showDelay: number;
+        private hideTimeout: number;
+        private trigger: string;
+        private side: string;
 
         /*
          * Widget to show floating tooltips
@@ -31,86 +39,144 @@ module api.ui {
          * @param trigger Event type to hook on (mouse,focus)
          * @param side Side of the target where tooltip should be shown (top,left,right,bottom)
          */
-        constructor(target:api.dom.Element, text:string, showDelay:number = 0, hideTimeout:number = 1000,
-                    trigger:string = Tooltip.TRIGGER_MOUSE, side:string = Tooltip.SIDE_BOTTOM) {
+        constructor(target: api.dom.Element, text?: string, showDelay: number = 0, hideTimeout: number = 1000,
+                    trigger: string = Tooltip.TRIGGER_HOVER, side: string = Tooltip.SIDE_BOTTOM) {
 
             this.target = target;
             this.text = text;
             this.showDelay = showDelay;
             this.hideTimeout = hideTimeout;
-            this.trigger = trigger;
             this.side = side;
 
-            var targetEl = target.getEl();
-            targetEl.addEventListener(this.getEventName(true), (event:Event) => {
+            this.overListener = (event: Event) => {
                 this.startShowDelay();
-            });
-            targetEl.addEventListener(this.getEventName(false), (event:Event) => {
+                event.stopPropagation();
+                event.preventDefault();
+            };
+            this.outListener = (event: Event) => {
                 this.startHideTimeout();
-            });
+                event.stopPropagation();
+                event.preventDefault();
+            };
+
+            this.setTrigger(trigger);
+
+            Tooltip.instances.push(this);
         }
 
         show() {
+            this.stopTimeout();
             if (!this.tooltipEl) {
                 this.tooltipEl = new api.dom.DivEl("tooltip " + this.side);
-                this.tooltipEl.getEl().setInnerHtml(this.text);
-                this.target.getParentElement().appendChild(this.tooltipEl);
+                if (this.contentEl) {
+                    this.tooltipEl.appendChild(this.contentEl);
+                } else {
+                    this.tooltipEl.getEl().setInnerHtml(this.text);
+                }
+                // append it to target itself in case target has no parent
+                var appendTo = this.target.getParentElement() || this.target;
+                appendTo.appendChild(this.tooltipEl);
+
+                if (!Tooltip.multipleAllowed) {
+                    this.hideOtherInstances();
+                }
                 this.tooltipEl.show();
                 this.positionByTarget();
             }
         }
 
         hide() {
+            this.stopTimeout();
             if (this.tooltipEl) {
                 this.tooltipEl.remove();
                 this.tooltipEl = null;
             }
         }
 
-        showAfter(ms:number):Tooltip {
+        isVisible(): boolean {
+            return this.tooltipEl && this.tooltipEl.isVisible();
+        }
+
+        showAfter(ms: number): Tooltip {
             this.startShowDelay(ms);
             return this;
         }
 
-        showFor(ms:number):Tooltip {
+        showFor(ms: number): Tooltip {
             this.show();
             this.startHideTimeout(ms);
             return this;
         }
 
-        setHideTimeout(timeout:number):Tooltip {
+        setText(text: string): Tooltip {
+            this.text = text;
+            this.contentEl = undefined;
+            return this;
+        }
+
+        getText(): string {
+            return this.text;
+        }
+
+        setContent(content: api.dom.Element): Tooltip {
+            this.contentEl = content;
+            this.text = undefined;
+            return this;
+        }
+
+        getContent(): api.dom.Element {
+            return this.contentEl;
+        }
+
+        setHideTimeout(timeout: number): Tooltip {
             this.hideTimeout = timeout;
             return this;
         }
 
-        getHideTimeout():number {
+        getHideTimeout(): number {
             return this.hideTimeout;
         }
 
-        setShowDelay(delay:number):Tooltip {
+        setShowDelay(delay: number): Tooltip {
             this.showDelay = delay;
             return this;
         }
 
-        getShowDelay():number {
+        getShowDelay(): number {
             return this.showDelay;
         }
 
-        setTrigger(trigger:string):Tooltip {
+        setTrigger(trigger: string): Tooltip {
+            if (trigger == this.trigger) {
+                return this;
+            }
+
+            // remove old listeners
+            this.target.getEl().
+                removeEventListener(this.getEventName(true), this.overListener).
+                removeEventListener(this.getEventName(false), this.outListener);
+
             this.trigger = trigger;
+
+            // add new listeners
+            if (trigger != Tooltip.TRIGGER_NONE) {
+                this.target.getEl().
+                    addEventListener(this.getEventName(true), this.overListener).
+                    addEventListener(this.getEventName(false), this.outListener);
+            }
             return this;
         }
 
-        getTrigger():string {
+        getTrigger(): string {
             return this.trigger;
         }
 
-        setSide(side:string):Tooltip {
+        setSide(side: string): Tooltip {
             this.side = side;
             return this;
         }
 
-        getSide():string {
+        getSide(): string {
             return this.side;
         }
 
@@ -121,8 +187,8 @@ module api.ui {
             var el = this.tooltipEl.getHTMLElement();
             var $el = wemjq(el);
             var elOffset = {
-                left: parseInt($el.css('left')) || 0,
-                top: parseInt($el.css('top')) || 0
+                left: parseInt($el.css('margin-left')) || 0,
+                top: parseInt($el.css('margin-top')) || 0
             };
 
             var offsetLeft, offsetTop;
@@ -146,16 +212,19 @@ module api.ui {
             }
 
             // check screen edges
+            // disabled end screen checks because of possible scroll
             if (offsetLeft < 0) {
                 offsetLeft = 0;
-            } else if (offsetLeft + el.offsetWidth > window.innerWidth) {
-                offsetLeft = window.innerWidth - el.offsetWidth;
             }
+            /* else if (offsetLeft + el.offsetWidth > window.innerWidth) {
+             offsetLeft = window.innerWidth - el.offsetWidth;
+             }*/
             if (offsetTop < 0) {
                 offsetTop = 0;
-            } else if (offsetTop + el.offsetHeight > window.innerHeight) {
-                offsetTop = window.innerHeight - el.offsetHeight;
             }
+            /* else if (offsetTop + el.offsetHeight > window.innerHeight) {
+             offsetTop = window.innerHeight - el.offsetHeight;
+             }*/
 
             $el.offset({
                 left: offsetLeft,
@@ -163,7 +232,7 @@ module api.ui {
             });
         }
 
-        private startHideTimeout(ms?:number) {
+        private startHideTimeout(ms?: number) {
             this.stopTimeout();
             var t = ms || this.hideTimeout;
             if (t > 0) {
@@ -175,14 +244,14 @@ module api.ui {
             }
         }
 
-        private startShowDelay(ms?:number) {
+        private startShowDelay(ms?: number) {
             this.stopTimeout();
             var t = ms || this.showDelay;
-            if(t > 0) {
-                if (this.trigger == Tooltip.TRIGGER_MOUSE ) {
+            if (t > 0) {
+                if (this.trigger == Tooltip.TRIGGER_HOVER) {
                     // if tooltip target element becomes disabled it doesn't generate mouse leave event
                     // so we need to check whether mouse has moved from tooltip target or not
-                    this.hideOnMouseOut();
+                    //this.hideOnMouseOut();
                 }
                 this.timeoutTimer = setTimeout(() => {
                     this.show();
@@ -210,21 +279,38 @@ module api.ui {
                 }
 
                 tooltip.startHideTimeout();
-                api.dom.Body.get().getEl().removeEventListener('mousemove', mouseMoveListener);
+                api.dom.Body.get().unMouseMove(mouseMoveListener);
             };
 
-            api.dom.Body.get().getEl().addEventListener('mousemove', mouseMoveListener);
+            api.dom.Body.get().onMouseMove(mouseMoveListener);
         }
 
-        private getEventName(enter:boolean) {
+        private getEventName(enter: boolean) {
             switch (this.trigger) {
             case Tooltip.TRIGGER_FOCUS:
                 return enter ? "focus" : "blur";
-            case Tooltip.TRIGGER_MOUSE:
+            case Tooltip.TRIGGER_HOVER:
             default:
                 return enter ? "mouseenter" : "mouseleave";
                 break;
             }
+        }
+
+        private hideOtherInstances() {
+            Tooltip.instances.forEach((tooltip: Tooltip) => {
+                if (tooltip != this && tooltip.isVisible()) {
+                    console.log("Hiding tooltip because multiple instances are not allowed", tooltip);
+                    tooltip.hide();
+                }
+            })
+        }
+
+        static allowMultipleInstances(allow: boolean) {
+            Tooltip.multipleAllowed = allow;
+        }
+
+        static isMultipleInstancesAllowed(): boolean {
+            return Tooltip.multipleAllowed;
         }
 
     }

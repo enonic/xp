@@ -13,6 +13,7 @@ import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.content.DeleteContentResult;
 import com.enonic.wem.api.content.GetContentByIdsParams;
+import com.enonic.wem.api.content.PushContentParams;
 import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.ValidateContentData;
@@ -154,6 +155,18 @@ public class ContentServiceImpl
     }
 
     @Override
+    public Content push( final PushContentParams params, final Context context )
+    {
+        params.getContentId();
+
+        return PushContentCommand.create().
+            contentId( params.getContentId() ).
+            to( params.getTarget() ).
+            build().
+            execute();
+    }
+
+    @Override
     public DataValidationErrors validate( final ValidateContentData data, final Context context )
     {
         return new ValidateContentDataCommand().
@@ -180,6 +193,7 @@ public class ContentServiceImpl
         return new FindContentCommand().
             contentQuery( contentQuery ).
             queryService( this.queryService ).
+            context( context ).
             execute();
     }
 

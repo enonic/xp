@@ -1,5 +1,6 @@
 module api.liveedit.image {
 
+    import ImageComponent = api.content.page.image.ImageComponent;
     import ItemType = api.liveedit.ItemType;
     import ItemTypeConfigJson = api.liveedit.ItemTypeConfigJson;
     import PageComponentView = api.liveedit.PageComponentView;
@@ -29,8 +30,14 @@ module api.liveedit.image {
             });
         }
 
-        createView(element?: HTMLElement,  dummy?: boolean): ImageView {
-            return new ImageView(element, dummy);
+        createView(config: CreateItemViewConfig<RegionView,ImageComponent>): ImageComponentView {
+            return new ImageComponentView(new ImageComponentViewBuilder().
+                setItemViewProducer(config.itemViewProducer).
+                setParentRegionView(config.parentView).
+                setParentElement(config.parentElement).
+                setElement(config.element).
+                setPageComponent(config.data).
+                setPositionIndex(config.positionIndex));
         }
 
         isPageComponentType(): boolean {

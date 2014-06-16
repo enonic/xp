@@ -2,11 +2,12 @@ module api.app {
 
     export class ShowAppLauncherAction extends api.ui.Action {
 
-        constructor() {
+        constructor(application: api.app.Application) {
             super('Start');
 
             this.onExecuted(() => {
-                new ShowAppLauncherEvent().fire();
+                new ShowAppLauncherEvent(application).fire(window.parent);
+                new ShowAppLauncherEvent(application).fire();
             });
         }
     }
@@ -23,8 +24,6 @@ module api.app {
     }
 
     export class AppBarActions {
-
-        public static SHOW_APP_LAUNCHER: api.ui.Action = new ShowAppLauncherAction();
 
         public static SHOW_APP_BROWSE_PANEL: api.ui.Action = new ShowAppBrowsePanelAction();
     }

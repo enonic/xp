@@ -33,6 +33,10 @@ module app.wizard.page {
             this.layoutDescriptor = config.layoutDescriptor;
         }
 
+        hasPageTemplate(): boolean {
+            return !this.pageTemplate ? false : true;
+        }
+
         getPageTemplate(): PageTemplate {
             return this.pageTemplate;
         }

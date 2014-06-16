@@ -14,6 +14,8 @@ module api.app {
 
         private userInfoPopup: UserInfoPopup;
 
+        private showAppLauncherAction: ShowAppLauncherAction;
+
         constructor(application: Application) {
             super("appbar");
 
@@ -23,11 +25,10 @@ module api.app {
             this.tabMenu.onNavigationItemDeselected(() => this.layoutChildren());
             this.tabMenu.onButtonLabelChanged(() => this.layoutChildren());
 
-            this.launcherButton = new LauncherButton(AppBarActions.SHOW_APP_LAUNCHER);
-            this.appendChild(this.launcherButton);
+            this.showAppLauncherAction = new ShowAppLauncherAction(this.application);
 
-            var separator = new Separator();
-            this.appendChild(separator);
+            this.launcherButton = new LauncherButton(this.showAppLauncherAction);
+            this.appendChild(this.launcherButton);
 
             this.homeButton = new HomeButton(this.application.getName(), AppBarActions.SHOW_APP_BROWSE_PANEL);
             this.appendChild(this.homeButton);
@@ -109,14 +110,6 @@ module api.app {
             this.onClicked((event: MouseEvent) => {
                 action.execute();
             });
-        }
-
-    }
-
-    export class Separator extends api.dom.SpanEl {
-
-        constructor() {
-            super('appbar-separator');
         }
 
     }

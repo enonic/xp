@@ -6,10 +6,12 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.page.region.RegionXml;
 import com.enonic.wem.api.data.DataSetXml;
+import com.enonic.wem.api.data.DataSetXmlAdapter;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
@@ -28,6 +30,7 @@ public final class PageTemplateXml
     private String descriptor;
 
     @XmlElement(name = "config", required = false)
+    @XmlJavaTypeAdapter(DataSetXmlAdapter.class)
     private DataSetXml config = new DataSetXml();
 
     @XmlElement(name = "content-type", required = false)

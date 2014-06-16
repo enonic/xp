@@ -1,19 +1,16 @@
 module app.wizard.page {
 
     import ContentId = api.content.ContentId;
-    import ComponentPath = api.content.page.ComponentPath;
     import PageRegions = api.content.page.PageRegions;
-    import ItemView = api.liveedit.ItemView;
+    import ImageComponentView = api.liveedit.image.ImageComponentView;
 
     export class ImageComponentSetImageCommand {
 
         private defaultModels: DefaultModels;
 
-        private itemView: ItemView;
+        private imageView: ImageComponentView;
 
         private pageRegions: PageRegions;
-
-        private componentPath: ComponentPath;
 
         private image: ContentId;
 
@@ -24,18 +21,13 @@ module app.wizard.page {
             return this;
         }
 
-        setComponentView(value: ItemView): ImageComponentSetImageCommand {
-            this.itemView = value;
+        setPageComponentView(value: ImageComponentView): ImageComponentSetImageCommand {
+            this.imageView = value;
             return this;
         }
 
         setPageRegions(value: PageRegions): ImageComponentSetImageCommand {
             this.pageRegions = value;
-            return this;
-        }
-
-        setComponentPath(value: ComponentPath): ImageComponentSetImageCommand {
-            this.componentPath = value;
             return this;
         }
 
@@ -49,35 +41,22 @@ module app.wizard.page {
             return this;
         }
 
-        execute(): ComponentPath {
+        execute(): void {
             api.util.assertNotNull(this.defaultModels, "defaultModels cannot be null");
-            api.util.assertNotNull(this.itemView, "itemView cannot be null");
+            api.util.assertNotNull(this.imageView, "itemView cannot be null");
             api.util.assertNotNull(this.pageRegions, "pageRegions cannot be null");
             api.util.assertNotNull(this.image, "image cannot be null");
-            api.util.assertNotNull(this.componentPath, "componentPath cannot be null");
 
-
-            var imageComponent = this.pageRegions.getImageComponent(this.componentPath);
-            if (imageComponent != null) {
-                imageComponent.setImage(this.image);
-                if (this.defaultModels.hasImageDescriptor()) {
-                    imageComponent.setDescriptor(this.defaultModels.getImageDescriptor().getKey());
-                }
-
-                new PageComponentNameChanger().
-                    setPageRegions(this.pageRegions).
-                    setComponentPath(this.componentPath).
-                    setComponentView(this.itemView).
-                    changeTo(this.imageName);
-
-                this.componentPath = imageComponent.getPath();
-
-                return this.componentPath;
-            }
-            else {
-                api.notify.showWarning("ImageComponent to set image on not found: " + this.componentPath);
+            var imageComponent = this.imageView.getPageComponent();
+            imageComponent.setImage(this.image);
+            if (this.defaultModels.hasImageDescriptor()) {
+                imageComponent.setDescriptor(this.defaultModels.getImageDescriptor().getKey());
             }
 
+            new PageComponentNameChanger().
+                setPageRegions(this.pageRegions).
+                setComponentView(this.imageView).
+                changeTo(this.imageName);
         }
     }
 }

@@ -12,8 +12,6 @@ module api.content.site.template {
 
         private modules: api.module.ModuleKey[] = [];
 
-        private rootContentType: api.schema.content.ContentTypeName;
-
         private version: string;
 
         private url: string;
@@ -35,7 +33,6 @@ module api.content.site.template {
             this.displayName = builder.name;
             this.vendor = builder.vendor;
             this.modules = builder.modules;
-            this.rootContentType = builder.rootContentType;
             this.version = builder.version;
             this.url = builder.url;
             this.key = builder.key;
@@ -63,10 +60,6 @@ module api.content.site.template {
 
         getModules(): api.module.ModuleKey[] {
             return this.modules;
-        }
-
-        getRootContentType(): api.schema.content.ContentTypeName {
-            return this.rootContentType;
         }
 
         getVersion(): string {
@@ -106,10 +99,6 @@ module api.content.site.template {
             }
 
             if (!api.ObjectHelper.equals(this.vendor, other.vendor)) {
-                return false;
-            }
-
-            if (!api.ObjectHelper.equals(this.rootContentType, other.rootContentType)) {
                 return false;
             }
 
@@ -188,8 +177,6 @@ module api.content.site.template {
 
         modules: api.module.ModuleKey[] = [];
 
-        rootContentType: api.schema.content.ContentTypeName;
-
         version: string;
 
         url: string;
@@ -214,7 +201,6 @@ module api.content.site.template {
             for (var i = 0; i < json.modules.length; i++) {
                 this.modules.push(api.module.ModuleKey.fromString(json.modules[i]));
             }
-            this.rootContentType = new api.schema.content.ContentTypeName(json.rootContentType);
             this.version = json.version;
             this.url = json.url;
             this.key = SiteTemplateKey.fromString(json.key);

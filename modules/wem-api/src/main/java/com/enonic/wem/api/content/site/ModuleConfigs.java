@@ -2,16 +2,33 @@ package com.enonic.wem.api.content.site;
 
 import java.util.Collection;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.support.AbstractImmutableEntityList;
 
 public class ModuleConfigs
     extends AbstractImmutableEntityList<ModuleConfig>
 {
+    private final ImmutableMap<ModuleKey, ModuleConfig> modulesByName;
+
     private ModuleConfigs( final ImmutableList<ModuleConfig> list )
     {
         super( list );
+        this.modulesByName = Maps.uniqueIndex( list, new ToNameFunction() );
+    }
+
+    public ModuleConfig get( final ModuleKey moduleKey )
+    {
+        return this.modulesByName.get( moduleKey );
+    }
+
+    public ModuleConfig get( final String moduleKey )
+    {
+        return get( ModuleKey.from( moduleKey ) );
     }
 
     public static ModuleConfigs empty()
@@ -53,6 +70,16 @@ public class ModuleConfigs
         public ModuleConfigs build()
         {
             return new ModuleConfigs( builder.build() );
+        }
+    }
+
+    private final static class ToNameFunction
+        implements Function<ModuleConfig, ModuleKey>
+    {
+        @Override
+        public ModuleKey apply( final ModuleConfig value )
+        {
+            return value.getModule();
         }
     }
 }

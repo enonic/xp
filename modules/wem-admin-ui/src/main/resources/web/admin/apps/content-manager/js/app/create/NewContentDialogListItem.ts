@@ -24,11 +24,6 @@ module app.create {
             this.contentType = contentType;
             this.siteTemplate = siteTemplate;
 
-            if (siteTemplate) {
-                api.util.assert(siteTemplate.getRootContentType().equals(contentType.getContentTypeName()),
-                    "Content type " + contentType.getName() + " must be equal to site template root content type " + siteTemplate.getRootContentType().toString());
-            }
-
             this.name = siteTemplate ? siteTemplate.getName() : contentType.getName();
             this.displayName = siteTemplate ? siteTemplate.getDisplayName() : contentType.getDisplayName();
             this.iconUrl = siteTemplate ? siteTemplate.getIconUrl() : contentType.getIconUrl();

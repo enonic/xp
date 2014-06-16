@@ -30,7 +30,7 @@ import com.enonic.wem.admin.rest.resource.content.json.ContentQueryJson;
 import com.enonic.wem.admin.rest.resource.content.json.CreateContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentResultJson;
-import com.enonic.wem.admin.rest.resource.content.json.UpdateAttachmentsJson;
+import com.enonic.wem.admin.rest.resource.content.json.PublishContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.UpdateContentJson;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.Content;
@@ -46,6 +46,7 @@ import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.content.DeleteContentResult;
 import com.enonic.wem.api.content.GetContentByIdsParams;
+import com.enonic.wem.api.content.PushContentParams;
 import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.api.content.UpdateContentParams;
@@ -53,7 +54,9 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.query.ContentQueryResult;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.DataJson;
+import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.exception.ConflictException;
 
 import static com.enonic.wem.api.content.Content.editContent;
@@ -70,6 +73,14 @@ public class ContentResource
     private final String EXPAND_NONE = "none";
 
     private ContentService contentService;
+
+    public static final Workspace STAGE_WORKSPACE = new Workspace( "stage" );
+
+    public static final Workspace PROD_WORKSPACE = new Workspace( "prod" );
+
+    static final Context STAGE_CONTEXT = new Context( STAGE_WORKSPACE );
+
+    static final Context PROD_CONTEXT = new Context( PROD_WORKSPACE );
 
     @GET
     public ContentIdJson getById( @QueryParam("id") final String idParam,
@@ -271,6 +282,16 @@ public class ContentResource
     }
 
     @POST
+    @Path("publish")
+    public ContentJson publish( final PublishContentJson params )
+    {
+        final Content publishedContent =
+            contentService.push( new PushContentParams( PROD_WORKSPACE, params.getContentId() ), STAGE_CONTEXT );
+
+        return new ContentJson( publishedContent );
+    }
+
+    @POST
     @Path("create")
     public ContentJson create( final CreateContentJson params )
     {
@@ -283,8 +304,6 @@ public class ContentResource
     public ContentJson update( final UpdateContentJson json )
     {
         final ContentData contentData = parseContentData( json.getContentData() );
-
-        final UpdateAttachmentsJson updateAttachments = json.getUpdateAttachments();
 
         final UpdateContentParams updateParams = new UpdateContentParams().
             contentId( json.getContentId() ).

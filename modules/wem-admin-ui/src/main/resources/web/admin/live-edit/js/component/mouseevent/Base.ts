@@ -16,8 +16,8 @@ module LiveEdit.component.mouseevent {
                 }
                 event.stopPropagation();
 
-                LiveEdit.component.Selection.removeSelectedAttribute();
-                var itemView = pageItemViews.getItemViewByElement(<HTMLElement>event.currentTarget);
+                LiveEdit.LiveEditPage.get().deselectSelectedView();
+                var itemView = LiveEdit.LiveEditPage.get().getItemViewByHTMLElement(<HTMLElement>event.currentTarget);
                 if (itemView) {
                     wemjq(window).trigger('mouseOverComponent.liveEdit', [ itemView ]);
                 }
@@ -25,11 +25,14 @@ module LiveEdit.component.mouseevent {
         }
 
         attachMouseOutEvent(): void {
-            wemjq(document).on('mouseout', () => {
-                if (LiveEdit.component.Selection.pageHasSelectedElement()) {
+            wemjq(document).on('mouseout', this.componentCssSelectorFilter, (event: JQueryEventObject) => {
+                if (LiveEdit.LiveEditPage.get().hasSelectedView()) {
                     return;
                 }
-                wemjq(window).trigger('mouseOutComponent.liveEdit');
+
+                LiveEdit.LiveEditPage.get().deselectSelectedView();
+                var itemView = LiveEdit.LiveEditPage.get().getItemViewByHTMLElement(<HTMLElement>event.currentTarget);
+                wemjq(window).trigger('mouseOutComponent.liveEdit', [itemView]);
             });
         }
 
@@ -46,8 +49,8 @@ module LiveEdit.component.mouseevent {
                 // Needed so the browser's context menu is not shown on contextmenu
                 event.preventDefault();
 
-                var itemView = pageItemViews.getItemViewByElement(<HTMLElement>event.currentTarget);
-                LiveEdit.component.Selection.handleSelect(itemView, event);
+                var itemView = LiveEdit.LiveEditPage.get().getItemViewByHTMLElement(<HTMLElement>event.currentTarget);
+                itemView.select((event && !itemView.isEmpty()) ? { x: event.pageX, y: event.pageY } : null);
             });
         }
 
@@ -57,12 +60,13 @@ module LiveEdit.component.mouseevent {
         }
 
         cancelMouseOverEvent(event: JQueryEventObject): boolean {
-            return this.targetIsLiveEditUiComponent(wemjq(event.target)) || LiveEdit.component.Selection.pageHasSelectedElement() ||
+            return this.targetIsLiveEditUiComponent(wemjq(event.target)) || LiveEdit.LiveEditPage.get().hasSelectedView() ||
                    LiveEdit.component.dragdropsort.DragDropSort.isDragging();
         }
 
         private targetIsLiveEditUiComponent(target: JQuery): boolean {
-            return target.is('[id*=live-edit-ui-cmp]') || target.parents('[id*=live-edit-ui-cmp]').length > 0;
+            var uiComponentSelector = '.' + LiveEdit.ui.Base.LIVE_EDIT_UI_COMPONENT;
+            return target.is(uiComponentSelector) || target.closest(uiComponentSelector).length > 0;
         }
 
     }

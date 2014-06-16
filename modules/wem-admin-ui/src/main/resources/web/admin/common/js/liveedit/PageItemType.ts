@@ -46,8 +46,8 @@ module api.liveedit {
             return this.siteTemplate;
         }
 
-        createView(element?: HTMLElement, dummy?: boolean): PageView {
-            return new PageView(element);
+        createView(config: CreateItemViewConfig<any,any>): PageView {
+            throw new Error("Not supported");
         }
     }
 

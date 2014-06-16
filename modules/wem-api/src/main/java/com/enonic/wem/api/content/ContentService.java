@@ -23,6 +23,8 @@ public interface ContentService
 
     Content update( UpdateContentParams params, final Context context );
 
+    Content push( final PushContentParams params, final Context context );
+
     DeleteContentResult delete( DeleteContentParams params, final Context context );
 
     DataValidationErrors validate( ValidateContentData data, final Context context );

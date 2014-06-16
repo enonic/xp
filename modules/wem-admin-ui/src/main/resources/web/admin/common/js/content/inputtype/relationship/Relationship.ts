@@ -98,9 +98,11 @@ module api.content.inputtype.relationship {
                                 this.contentComboBox.select(content);
                             });
 
-                            this.layoutInProgress = false;
+                        }).catch((reason: any) => {
 
-                        }).fail(()=> {
+                            api.DefaultErrorHandler.handle(reason);
+
+                        }).finally(()=> {
 
                             this.layoutInProgress = false;
 

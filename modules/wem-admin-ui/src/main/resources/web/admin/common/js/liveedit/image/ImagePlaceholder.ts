@@ -4,17 +4,17 @@ module api.liveedit.image {
     import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
     import PageItemType = api.liveedit.PageItemType;
 
-    export class ImagePlaceholder extends api.dom.Element {
+    export class ImagePlaceholder extends api.dom.DivEl {
 
-        private imageView: ImageView;
+        private imageComponentView: ImageComponentView;
 
         private comboBox: api.content.ContentComboBox;
 
         private uploadButton: api.ui.Button;
 
-        constructor(imageView: ImageView) {
-            super(new api.dom.ElementProperties().setTagName("div"));
-            this.imageView = imageView;
+        constructor(imageComponentView: ImageComponentView) {
+            super();
+            this.imageComponentView = imageComponentView;
             wemjq(this.getHTMLElement()).on('click', 'input', (e) => {
                 wemjq(e.currentTarget).focus();
                 e.stopPropagation();
@@ -45,12 +45,11 @@ module api.liveedit.image {
             this.comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {
 
                 this.uploadButton.hide();
-                this.imageView.showLoadingSpinner();
+                this.imageComponentView.showLoadingSpinner();
 
                 new ImageComponentSetImageEvent().
                     setImageId(event.getOption().displayValue.getContentId()).
-                    setComponentPath(imageView.getComponentPath()).
-                    setComponentView(imageView).
+                    setImageComponentView(imageComponentView).
                     setName(event.getOption().displayValue.getDisplayName()).
                     fire();
 
@@ -60,7 +59,7 @@ module api.liveedit.image {
 
         private createImageContent(uploadItem: api.ui.UploadItem) {
 
-            this.imageView.showLoadingSpinner();
+            this.imageComponentView.showLoadingSpinner();
 
             new api.schema.content.GetContentTypeByNameRequest(new api.schema.content.ContentTypeName("image")).
                 sendAndParse().
@@ -96,8 +95,7 @@ module api.liveedit.image {
 
                     new ImageComponentSetImageEvent().
                         setImageId(createdContent.getContentId()).
-                        setComponentPath(this.imageView.getComponentPath()).
-                        setComponentView(this.imageView).
+                        setImageComponentView(this.imageComponentView).
                         setName(uploadItem.getName()).
                         fire();
 
@@ -107,7 +105,7 @@ module api.liveedit.image {
                         setErrorMessage(reason.message).
                         fire();
 
-                    this.imageView.hideLoadingSpinner();
+                    this.imageComponentView.hideLoadingSpinner();
 
                 }).done();
         }

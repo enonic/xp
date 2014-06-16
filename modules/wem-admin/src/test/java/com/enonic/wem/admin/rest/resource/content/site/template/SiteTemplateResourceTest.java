@@ -178,7 +178,6 @@ public class SiteTemplateResourceTest
             description( "Demo site template" ).
             url( "http://enonic.net" ).
             contentTypeFilter( filter ).
-            rootContentType( ContentTypeName.page() ).
             addPageTemplate( pageTemplate ).
             build();
 
@@ -243,7 +242,6 @@ public class SiteTemplateResourceTest
             description( "Demo site template" ).
             url( "http://enonic.net" ).
             contentTypeFilter( filter ).
-            rootContentType( ContentTypeName.page() ).
             addPageTemplate( pageTemplate ).
             build();
 
@@ -269,9 +267,6 @@ public class SiteTemplateResourceTest
                 final ContentTypeFilter filter = command.getContentTypeFilter();
                 assertListEquals( new String[]{"image", "com.enonic.tweet", "system.folder", "com.enonic.article", "com.enonic.employee"},
                                   parseContentTypeNames( filter.iterator() ) );
-
-                // RootContentType
-                assertEquals( ContentTypeName.from( "page" ), command.getRootContentType() );
 
                 return siteTemplate;
             }
@@ -310,7 +305,6 @@ public class SiteTemplateResourceTest
             description( "Demo site template" ).
             url( "http://enonic.net" ).
             contentTypeFilter( filter ).
-            rootContentType( ContentTypeName.page() ).
             addPageTemplate( pageTemplate ).
             build();
 
@@ -401,7 +395,6 @@ public class SiteTemplateResourceTest
                 allowContentType( ContentTypeName.imageMedia() ).
                 denyContentType( ContentTypeName.shortcut() ).
                 build() ).
-            rootContentType( ContentTypeName.folder() ).
             build();
     }
 
@@ -433,7 +426,6 @@ public class SiteTemplateResourceTest
                 allowContentType( ContentTypeName.imageMedia() ).
                 denyContentType( ContentTypeName.shortcut() ).
                 build() ).
-            rootContentType( ContentTypeName.folder() ).
             addPageTemplate( pageTemplate1 ).
             addPageTemplate( pageTemplate2 ).
             build();

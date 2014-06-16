@@ -22,49 +22,49 @@ module LiveEdit {
 
         /** Region. We should have a dedicated class for this  */
 
-        public static renderEmptyRegionPlaceholders(): void {
+        /*public static renderEmptyRegionPlaceholders(): void {
 
-            var allRegionElements: JQuery = wemjq(RegionItemType.get().getConfig().getCssSelector());
-            var region: JQuery;
-            var regionComponent: RegionView;
-            var regionIsEmpty: Boolean;
+         var allRegionElements: JQuery = wemjq(RegionItemType.get().getConfig().getCssSelector());
+         var region: JQuery;
+         var regionComponent: RegionView;
+         var regionIsEmpty: Boolean;
+         var piv = pageItemViews;
+         this.removeAllRegionPlaceholders();
 
-            this.removeAllRegionPlaceholders();
+         allRegionElements.each((i) => {
+         region = wemjq(allRegionElements[i]);
+         regionIsEmpty = this.isRegionEmpty(region);
+         if (regionIsEmpty) {
+         regionComponent = piv.getRegionViewByElement(region.get(0));
+         region.append(this.createEmptyRegionPlaceholder(regionComponent));
+         }
+         });
+         }*/
 
-            allRegionElements.each((i) => {
-                region = wemjq(allRegionElements[i]);
-                regionIsEmpty = this.isRegionEmpty(region);
-                if (regionIsEmpty) {
-                    regionComponent = pageItemViews.getRegionViewByElement(region.get(0));
-                    region.append(this.createEmptyRegionPlaceholder(regionComponent));
-                }
-            });
-        }
+        /*public static createEmptyRegionPlaceholder(regionView: RegionView): string {
 
-        public static createEmptyRegionPlaceholder(regionView: RegionView): string {
+         var html: string;
 
-            var html: string;
+         var componentTypeInfoText: string = regionView.getType().getShortName() + ': ' + regionView.getName();
 
-            var componentTypeInfoText: string = regionView.getType().getShortName() + ': ' + regionView.getName();
+         html = '<div class="live-edit-empty-region-placeholder">' +
+         '    <div>Drag components here</div>' +
+         '    <div style="font-size: 11px;">' + componentTypeInfoText + '</div>' +
+         '</div>';
 
-            html = '<div class="live-edit-empty-region-placeholder">' +
-                   '    <div>Drag components here</div>' +
-                   '    <div style="font-size: 11px;">' + componentTypeInfoText + '</div>' +
-                   '</div>';
+         return html;
+         }*/
 
-            return html;
-        }
+        /*private static isRegionEmpty(regionElement: JQuery): Boolean {
 
-        private static isRegionEmpty(regionElement: JQuery): Boolean {
+         var hasNotParts: Boolean = regionElement.children('[data-live-edit-type]' + ':not(:hidden)').length === 0;
+         var hasNotDropTargetPlaceholder: Boolean = regionElement.children('.live-edit-drop-target-placeholder').length === 0;
+         return hasNotParts && hasNotDropTargetPlaceholder;
+         }*/
 
-            var hasNotParts: Boolean = regionElement.children('[data-live-edit-type]' + ':not(:hidden)').length === 0;
-            var hasNotDropTargetPlaceholder: Boolean = regionElement.children('.live-edit-drop-target-placeholder').length === 0;
-            return hasNotParts && hasNotDropTargetPlaceholder;
-        }
-
-        private static removeAllRegionPlaceholders(): void {
-            wemjq('.live-edit-empty-region-placeholder').remove();
-        }
+        /*private static removeAllRegionPlaceholders(): void {
+         wemjq('.live-edit-empty-region-placeholder').remove();
+         }*/
 
     }
 }

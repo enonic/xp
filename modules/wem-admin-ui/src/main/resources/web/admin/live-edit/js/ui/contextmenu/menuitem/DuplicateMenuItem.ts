@@ -1,6 +1,6 @@
 module LiveEdit.ui.contextmenu.menuitem {
 
-    import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
+    import PageComponent = api.content.page.PageComponent;
     import PageComponentView = api.liveedit.PageComponentView;
 
     export class DuplicateMenuItem extends LiveEdit.ui.contextmenu.menuitem.BaseMenuItem {
@@ -26,11 +26,9 @@ module LiveEdit.ui.contextmenu.menuitem {
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(selectedItem, PageComponentView)) {
 
-                var selectedPageComponent = <PageComponentView> selectedItem;
+                var selectedPageComponentView = <PageComponentView<PageComponent>> selectedItem;
 
-                var duplicatedView = selectedPageComponent.duplicate();
-                new PageComponentDuplicateEvent(selectedPageComponent, duplicatedView).fire();
-                LiveEdit.component.Selection.handleSelect(duplicatedView);
+                LiveEdit.LiveEditPage.get().duplicatePageComponent(selectedPageComponentView);
             }
             else {
                 throw new Error("Duplicating [" + api.util.getClassName(selectedItem) + "] is not supported");

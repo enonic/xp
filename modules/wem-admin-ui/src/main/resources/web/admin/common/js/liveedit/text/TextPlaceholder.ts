@@ -3,14 +3,14 @@ module api.liveedit.text {
     import LayoutItemType = api.liveedit.layout.LayoutItemType;
 
 
-    export class TextPlaceholder extends api.dom.Element {
+    export class TextPlaceholder extends api.dom.DivEl {
 
-        private textView: TextView;
+        private textView: TextComponentView;
 
         private clickToEditLink: api.dom.AEl;
 
-        constructor(textView: TextView) {
-            super(new api.dom.ElementProperties().setTagName("div"));
+        constructor(textView: TextComponentView) {
+            super();
             this.textView = textView;
             this.clickToEditLink = null;
 

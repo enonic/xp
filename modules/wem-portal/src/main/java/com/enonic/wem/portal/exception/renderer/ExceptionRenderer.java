@@ -1,15 +1,10 @@
 package com.enonic.wem.portal.exception.renderer;
 
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import com.enonic.wem.portal.script.SourceException;
 
 public final class ExceptionRenderer
 {
     private final static ExceptionTemplate TEMPLATE = new ExceptionTemplate();
-
-    private Response.StatusType status;
 
     private final StatusErrorInfo info;
 
@@ -18,10 +13,9 @@ public final class ExceptionRenderer
         this.info = new StatusErrorInfo();
     }
 
-    public ExceptionRenderer status( final Response.StatusType status )
+    public ExceptionRenderer status( final int status )
     {
-        this.status = status;
-        this.info.statusCode( this.status.getStatusCode() );
+        this.info.statusCode( status );
         return this;
     }
 
@@ -39,7 +33,11 @@ public final class ExceptionRenderer
 
     public ExceptionRenderer exception( final Throwable e )
     {
-        this.info.cause( new CauseInfo( e ) );
+        if ( e != null )
+        {
+            this.info.cause( new CauseInfo( e ) );
+        }
+
         return this;
     }
 
@@ -50,9 +48,8 @@ public final class ExceptionRenderer
         return this;
     }
 
-    public Response render()
+    public String render()
     {
-        final String str = TEMPLATE.render( this.info );
-        return Response.status( this.status ).entity( str ).type( MediaType.TEXT_HTML_TYPE ).build();
+        return TEMPLATE.render( this.info );
     }
 }

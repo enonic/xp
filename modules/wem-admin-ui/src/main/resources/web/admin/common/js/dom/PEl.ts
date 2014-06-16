@@ -2,8 +2,8 @@ module api.dom {
 
     export class PEl extends Element {
 
-        constructor(className?:string) {
-            super(new ElementProperties().setTagName("p").setClassName(className));
+        constructor(className?: string) {
+            super(new NewElementBuilder().setTagName("p").setClassName(className));
         }
 
         setText(value: string) {

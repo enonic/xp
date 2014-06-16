@@ -9,7 +9,6 @@ import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplates;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.schema.content.ContentTypeFilter;
-import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public final class CreateSiteTemplateParams
 {
@@ -29,8 +28,6 @@ public final class CreateSiteTemplateParams
 
     private ContentTypeFilter contentTypeFilter;
 
-    private ContentTypeName rootContentType;
-
     private List<PageTemplate> templates = Lists.newArrayList();
 
     public static CreateSiteTemplateParams fromSiteTemplate( final SiteTemplate siteTemplate )
@@ -43,8 +40,7 @@ public final class CreateSiteTemplateParams
             url( siteTemplate.getUrl() ).
             vendor( siteTemplate.getVendor() ).
             modules( siteTemplate.getModules() ).
-            contentTypeFilter( siteTemplate.getContentTypeFilter() ).
-            rootContentType( siteTemplate.getRootContentType() );
+            contentTypeFilter( siteTemplate.getContentTypeFilter() );
         for ( PageTemplate template : siteTemplate.getPageTemplates() )
         {
             createSiteTemplate.addPageTemplate( template );
@@ -112,12 +108,6 @@ public final class CreateSiteTemplateParams
         return this;
     }
 
-    public CreateSiteTemplateParams rootContentType( final ContentTypeName rootContentType )
-    {
-        this.rootContentType = rootContentType;
-        return this;
-    }
-
     public CreateSiteTemplateParams addPageTemplate( final PageTemplate template )
     {
         this.templates.add( template );
@@ -168,11 +158,6 @@ public final class CreateSiteTemplateParams
     public ContentTypeFilter getContentTypeFilter()
     {
         return contentTypeFilter;
-    }
-
-    public ContentTypeName getRootContentType()
-    {
-        return rootContentType;
     }
 
     public List<PageTemplate> getTemplates()

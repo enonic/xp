@@ -8,46 +8,79 @@ module app.home {
 
         private loginForm: app.login.LoginForm;
 
-        private appInfo: app.launcher.AppInfo;
-
         private linksContainer: LinksContainer;
 
         private centerPanel: CenterPanel;
 
         private backgroundImgUrl: string;
 
+        private logoutButton:api.ui.Button;
+
+        private returnButton:api.dom.DivEl;
+
         constructor(builder: HomeMainContainerBuilder) {
             super('home-main-container');
 
             this.appSelector = builder.appSelector;
             this.loginForm = builder.loginForm;
-            this.appInfo = builder.appInfo;
             this.linksContainer = builder.linksContainer;
             this.backgroundImgUrl = builder.backgroundImgUrl;
+            this.logoutButton = new api.ui.Button(_i18n('Sign out'));
+            this.logoutButton.setClass("button logout-button");
 
-            var style = this.getHTMLElement().style;
-            style.left = '0px';
-            style.top = '0px';
+            this.logoutButton.onClicked((event) => {
+                api.util.CookieHelper.removeCookie('dummy.userIsLoggedIn');
+                this.centerPanel.showLoginPanel();
+            });
+
             this.setBackgroundImgUrl(this.backgroundImgUrl);
 
             this.brandingPanel = new Branding();
 
+            this.returnButton = new api.dom.DivEl('return-button');
+            this.returnButton.hide();
+            this.returnButton.onClicked(() => {
+                new ReturnToAppEvent().fire();
+            });
+
             this.centerPanel = new CenterPanel();
-            this.centerPanel.appendLeftColumn(this.appSelector);
-            this.centerPanel.appendRightColumn(this.loginForm);
-            this.centerPanel.appendRightColumn(this.appInfo);
-            this.centerPanel.appendRightColumn(this.linksContainer);
-            this.appendChild(this.brandingPanel);
+            this.centerPanel.prependChild(this.returnButton);
+            this.centerPanel.prependChild(this.brandingPanel);
+
+            this.centerPanel.addToAppSelectorPanel(this.appSelector);
+            this.centerPanel.addToAppSelectorPanel(this.logoutButton);
+
+            this.centerPanel.addToLoginPanel(this.loginForm);
+            this.centerPanel.addToLoginPanel(this.linksContainer);
+
             this.appendChild(this.centerPanel);
+
         }
 
         giveFocus(): boolean {
             return this.appSelector.giveFocus();
         }
 
+        showLogin() {
+            this.centerPanel.showLoginPanel();
+        }
+
+        showAppSelector() {
+            this.centerPanel.showAppSelectorPanel();
+        }
+
         show() {
             this.appSelector.showAppsCount();
             super.show();
+        }
+
+        hide() {
+            api.ui.KeyBindings.get().unbindKeys(this.appSelector.getKeyBindings());
+            super.hide();
+        }
+
+        enableReturnButton() {
+            this.returnButton.show();
         }
     }
 
@@ -58,8 +91,6 @@ module app.home {
         appSelector: app.launcher.AppSelector;
 
         loginForm: app.login.LoginForm;
-
-        appInfo: app.launcher.AppInfo;
 
         linksContainer: app.home.LinksContainer;
 
@@ -75,11 +106,6 @@ module app.home {
 
         setLoginForm(value: app.login.LoginForm): HomeMainContainerBuilder {
             this.loginForm = value;
-            return this;
-        }
-
-        setAppInfo(value: app.launcher.AppInfo): HomeMainContainerBuilder {
-            this.appInfo = value;
             return this;
         }
 

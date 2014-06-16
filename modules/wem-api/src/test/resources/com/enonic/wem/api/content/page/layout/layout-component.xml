@@ -1,16 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<layout-component>
-  <display-name>A Layout</display-name>
+<?xml version="1.0" encoding="UTF-8"?>
+<layout-component descriptor="mainmodule-1.0.0:layoutName" name="my-component">
   <config>
-    <input name="width" type="DecimalNumber">
-      <label>Column width</label>
-      <immutable>false</immutable>
-      <indexed>false</indexed>
-      <occurrences minimum="0" maximum="1"/>
-    </input>
+    <my-prop type="String">value</my-prop>
+    <things type="String">a</things>
+    <things type="String">b</things>
+    <things type="String">c</things>
   </config>
-  <regions>
-    <region name="left"/>
-    <region name="right"/>
-  </regions>
+  <regions />
 </layout-component>

@@ -166,8 +166,7 @@ module api.dom {
         }
 
         appendChild(child: Node): ElementHelper {
-            this.el.appendChild(child);
-            return this;
+            return this.insertChild(child, this.el.children.length);
         }
 
         appendChildren(children: Node[]): ElementHelper {
@@ -175,6 +174,19 @@ module api.dom {
                 this.el.appendChild(child);
             });
             return this;
+        }
+
+        insertChild(child: Node, index: number): ElementHelper {
+            if (index == this.el.children.length - 1) {
+                this.el.appendChild(child);
+            } else {
+                this.el.insertBefore(child, this.el.children.item(index));
+            }
+            return this;
+        }
+
+        getTagName(): string {
+            return this.el.tagName;
         }
 
         getDisplay(): string {
@@ -292,6 +304,10 @@ module api.dom {
             return this;
         }
 
+        setRightPx(value: number): ElementHelper {
+            return this.setRight(value + "px");
+        }
+
         getMarginLeft(): number {
             return parseFloat(this.getComputedProperty('margin-left')) || 0;
         }
@@ -326,6 +342,33 @@ module api.dom {
         setMarginBottom(value: string): ElementHelper {
             this.el.style.marginBottom = value;
             return this;
+        }
+
+        setStroke(value: string): ElementHelper {
+            this.el.style.stroke = value;
+            return this;
+        }
+
+        getStroke(): string {
+            return this.getComputedProperty('stroke');
+        }
+
+        setStrokeDasharray(value: string): ElementHelper {
+            this.el.style.strokeDasharray = value;
+            return this;
+        }
+
+        getStrokeDasharray(): string {
+            return this.getComputedProperty('stroke-dasharray');
+        }
+
+        setFill(value: string): ElementHelper {
+            this.el.style.fill = value;
+            return this;
+        }
+
+        getFill(): string {
+            return this.getComputedProperty('fill');
         }
 
         getPaddingLeft(): number {
@@ -389,6 +432,15 @@ module api.dom {
         setBackgroundImage(value: string): ElementHelper {
             this.el.style.backgroundImage = value;
             return this;
+        }
+
+        setCursor(value: string): ElementHelper {
+            this.el.style.cursor = value;
+            return this;
+        }
+
+        getCursor(): string {
+            return this.el.style.cursor;
         }
 
         remove() {

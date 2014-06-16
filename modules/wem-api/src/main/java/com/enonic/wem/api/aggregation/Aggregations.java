@@ -1,5 +1,6 @@
 package com.enonic.wem.api.aggregation;
 
+import java.util.Iterator;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
@@ -11,6 +12,23 @@ public class Aggregations
     extends AbstractImmutableEntitySet<Aggregation>
 {
 
+    public Aggregation get( final String name )
+    {
+        final Iterator<Aggregation> aggregations = this.iterator();
+
+        while ( aggregations.hasNext() )
+        {
+            final Aggregation next = aggregations.next();
+
+            if ( name.equals( next.getName() ) )
+            {
+                return next;
+            }
+        }
+
+        return null;
+    }
+
     public static Aggregations empty()
     {
         final ImmutableSet<Aggregation> empty = ImmutableSet.of();
@@ -20,6 +38,12 @@ public class Aggregations
     public Aggregations( final ImmutableSet<Aggregation> set )
     {
         super( set );
+    }
+
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     public static class Builder

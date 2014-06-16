@@ -14,10 +14,16 @@ module app.launcher {
             var link = new api.dom.AEl();
             link.setUrl('#/' + application.getId());
 
-            var imgContainer = new api.dom.DivEl('img-container');
+            var imgContainer = new api.dom.DivEl('icon-container');
 
-            var img = new api.dom.ImgEl(application.getIconUrl());
-            imgContainer.appendChild(img);
+            if (this.app.useFullSizeIcon()) {
+                var img = new api.dom.ImgEl(application.getIconUrl());
+                imgContainer.appendChild(img);
+            } else {
+                var icon = new api.dom.IEl("icon-" + application.getIconUrl());
+                imgContainer.appendChild(icon);
+            }
+
 
             var nameContainer = new api.dom.DivEl('name-container');
             nameContainer.getEl().setInnerHtml(application.getName());

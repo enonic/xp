@@ -2,24 +2,34 @@ module app.home {
 
     export class CenterPanel extends api.dom.DivEl {
 
-        private leftColumn:api.dom.DivEl;
-        private rightColumn:api.dom.DivEl;
+        private loginPanel:api.dom.DivEl;
+        private appSelectorPanel:api.dom.DivEl;
 
         constructor() {
             super('center-panel');
 
-            this.leftColumn = new api.dom.DivEl('left-column');
-            this.rightColumn = new api.dom.DivEl('right-column');
-            this.appendChild(this.leftColumn);
-            this.appendChild(this.rightColumn);
+            this.loginPanel = new api.dom.DivEl('login-panel');
+            this.appSelectorPanel = new api.dom.DivEl('app-selector-panel');
+            this.appendChild(this.loginPanel);
+            this.appendChild(this.appSelectorPanel);
         }
 
-        appendLeftColumn(component:api.dom.Element) {
-            this.leftColumn.appendChild(component);
+        addToLoginPanel(el: api.dom.Element) {
+            this.loginPanel.appendChild(el);
         }
 
-        appendRightColumn(component:api.dom.Element) {
-            this.rightColumn.appendChild(component);
+        addToAppSelectorPanel(el: api.dom.Element) {
+            this.appSelectorPanel.appendChild(el);
+        }
+
+        showLoginPanel() {
+            this.appSelectorPanel.hide();
+            this.loginPanel.show();
+        }
+
+        showAppSelectorPanel() {
+            this.loginPanel.hide();
+            this.appSelectorPanel.show();
         }
     }
 

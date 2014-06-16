@@ -33,14 +33,14 @@ public class ImageDescriptorXmlTest
         imageDescriptorXml.from( imageDescriptor );
         final String result = XmlSerializers.imageDescriptor().serialize( imageDescriptorXml );
 
-        assertXml( "image-component.xml", result );
+        assertXml( "image-descriptor.xml", result );
     }
 
     @Test
     public void testTo()
         throws Exception
     {
-        final String xml = readFromFile( "image-component.xml" );
+        final String xml = readFromFile( "image-descriptor.xml" );
         final ImageDescriptor.Builder builder = ImageDescriptor.newImageDescriptor();
         builder.key( ImageDescriptorKey.from( "module-1.0.0:myimage" ) );
 

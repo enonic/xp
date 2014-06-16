@@ -4,33 +4,34 @@ module app.wizard.page {
     import Content = api.content.Content;
     import ContentId = api.content.ContentId;
     import Descriptor = api.content.page.Descriptor;
+    import PageRegions = api.content.page.PageRegions;
     import RegionPath = api.content.page.RegionPath;
+    import PageComponent = api.content.page.PageComponent;
     import PageComponentType = api.content.page.PageComponentType;
-    import ComponentPath = api.content.page.ComponentPath;
     import UploadDialog = api.content.inputtype.image.UploadDialog;
     import RenderingMode = api.rendering.RenderingMode;
 
-    import ItemView = api.liveedit.ItemView;
-    import PageViewItemsParsedEvent = api.liveedit.PageViewItemsParsedEvent;
-    import NewPageComponentIdMapEvent = api.liveedit.NewPageComponentIdMapEvent;
+    import PageComponentView = api.liveedit.PageComponentView;
     import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
     import ImageUploadedEvent = api.liveedit.ImageUploadedEvent;
     import ImageComponentSetImageEvent = api.liveedit.image.ImageComponentSetImageEvent;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import SortableStopEvent = api.liveedit.SortableStopEvent;
-    import SortableUpdateEvent = api.liveedit.SortableUpdateEvent;
     import PageSelectEvent = api.liveedit.PageSelectEvent;
     import RegionSelectEvent = api.liveedit.RegionSelectEvent;
     import PageComponentSelectEvent = api.liveedit.PageComponentSelectEvent;
-    import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
+    import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
     import PageComponentAddedEvent = api.liveedit.PageComponentAddedEvent;
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
     import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
     import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
     import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
     import PageComponentLoadedEvent = api.liveedit.PageComponentLoadedEvent;
-    import PageComponentSelectComponentEvent = api.liveedit.PageComponentSelectComponentEvent;
     import RegionEmptyEvent = api.liveedit.RegionEmptyEvent;
+    import RepeatNextItemViewIdProducer = api.liveedit.RepeatNextItemViewIdProducer;
+    import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
+    import RegionView = api.liveedit.RegionView;
+    import ItemView = api.liveedit.ItemView;
 
     export interface LiveEditPageProxyConfig {
 
@@ -42,6 +43,8 @@ module app.wizard.page {
     export class LiveEditPageProxy {
 
         private baseUrl: string;
+
+        private pageRegions: PageRegions;
 
         private liveFormPanel: LiveFormPanel;
 
@@ -63,11 +66,7 @@ module app.wizard.page {
 
         private loadedListeners: {(): void;}[] = [];
 
-        private pageViewItemsParsedListeners: {(event: PageViewItemsParsedEvent): void;}[] = [];
-
         private sortableStartListeners: {(event: SortableStartEvent): void;}[] = [];
-
-        private sortableUpdateListeners: {(event: SortableUpdateEvent): void;}[] = [];
 
         private sortableStopListeners: {(event: SortableStopEvent): void;}[] = [];
 
@@ -77,7 +76,7 @@ module app.wizard.page {
 
         private pageComponentSelectedListeners: {(event: PageComponentSelectEvent): void;}[] = [];
 
-        private deselectListeners: {(event: PageComponentDeselectEvent): void;}[] = [];
+        private deselectListeners: {(event: ItemViewDeselectEvent): void;}[] = [];
 
         private pageComponentAddedListeners: {(event: PageComponentAddedEvent): void;}[] = [];
 
@@ -92,6 +91,8 @@ module app.wizard.page {
         private pageComponentDuplicatedListeners: {(event: PageComponentDuplicateEvent): void;}[] = [];
 
         private regionEmptyListeners: {(event: RegionEmptyEvent): void;}[] = [];
+
+        private LIVE_EDIT_ERROR_PAGE_BODY_ID = "wem-error-page";
 
         constructor(config: LiveEditPageProxyConfig) {
 
@@ -110,6 +111,10 @@ module app.wizard.page {
                     this.loadMask.hide();
                 }
             });
+        }
+
+        public setPageRegions(pageRegions: PageRegions) {
+            this.pageRegions = pageRegions;
         }
 
         public setWidth(value: string) {
@@ -178,7 +183,6 @@ module app.wizard.page {
         }
 
         private handleIFrameLoadedEvent() {
-
             var liveEditWindow = this.liveEditIFrame.getHTMLElement()["contentWindow"];
             if (liveEditWindow && liveEditWindow.wemjq) {
                 // Give loaded page same CONFIG.baseUri as in admin
@@ -192,61 +196,52 @@ module app.wizard.page {
 
                 this.loadMask.hide();
 
-                new api.liveedit.InitializeLiveEditEvent(this.contentLoadedOnPage, this.siteTemplate).fire(this.liveEditWindow);
+                new api.liveedit.InitializeLiveEditEvent(this.contentLoadedOnPage, this.siteTemplate,
+                    this.pageRegions).fire(this.liveEditWindow);
 
                 this.notifyLoaded();
+            } else if (liveEditWindow.document.body.id == this.LIVE_EDIT_ERROR_PAGE_BODY_ID) {
+                this.loadMask.hide();
+                new ToggleContextWindowEvent().fire();
             }
 
             this.iFrameLoadDeffered.resolve(null);
         }
 
-        public loadComponent(componentPath: ComponentPath, itemView: ItemView, content: api.content.Content) {
+        public loadComponent(pageComponentView: PageComponentView<PageComponent>, content: api.content.Content) {
 
-            api.util.assertNotNull(componentPath, "componentPath cannot be null");
-            api.util.assertNotNull(itemView, "itemView cannot be null");
+            api.util.assertNotNull(pageComponentView, "pageComponentView cannot be null");
             api.util.assertNotNull(content, "content cannot be null");
 
-            this.liveEditWindow.pageItemViews.removeItemViewById(itemView.getItemId());
-
             wemjq.ajax({
-                url: api.rendering.UriHelper.getComponentUri(content.getContentId().toString(), componentPath.toString(),
+                url: api.rendering.UriHelper.getComponentUri(content.getContentId().toString(),
+                    pageComponentView.getComponentPath().toString(),
                     RenderingMode.EDIT),
-                method: 'GET',
-                success: (data) => {
+                type: 'GET',
+                success: (htmlAsString: string) => {
 
-                    var newElement = wemjq(data);
-                    wemjq(itemView.getHTMLElement()).replaceWith(newElement);
-                    itemView.remove();
-                    var newItemView: ItemView = itemView.getType().createView(newElement.get(0));
+                    var newElement = api.dom.Element.fromString(htmlAsString);
+                    var repeatNextItemViewIdProducer = new RepeatNextItemViewIdProducer(pageComponentView.getItemId(),
+                        pageComponentView.getItemViewIdProducer());
 
-                    new PageComponentLoadedEvent(newItemView).fire(this.liveEditWindow);
+                    var createViewConfig = new CreateItemViewConfig<RegionView,PageComponent>().
+                        setItemViewProducer(repeatNextItemViewIdProducer).
+                        setParentView(pageComponentView.getParentItemView()).
+                        setData(pageComponentView.getPageComponent()).
+                        setElement(newElement);
+                    var newPageComponentView: PageComponentView<PageComponent> = pageComponentView.getType().
+                        createView(createViewConfig);
 
-                    this.liveEditWindow.LiveEdit.PlaceholderCreator.renderEmptyRegionPlaceholders();
+                    pageComponentView.replaceWith(newPageComponentView);
 
-                    this.liveEditWindow.LiveEdit.component.Selection.handleSelect(newItemView, null, true);
+                    new PageComponentLoadedEvent(newPageComponentView).fire(this.liveEditWindow);
 
+                    newPageComponentView.select();
                 }
             });
         }
 
-        public getComponentByPath(path: api.content.page.ComponentPath): ItemView {
-
-            return this.liveEditWindow.getComponentByPath(path);
-        }
-
-        public selectComponent(path: api.content.page.ComponentPath): void {
-            var comp = this.getComponentByPath(path);
-            var element: HTMLElement = comp.getHTMLElement();
-            new PageComponentSelectComponentEvent(comp, null).fire(this.liveEditWindow);
-        }
-
         public listenToPage() {
-
-            PageViewItemsParsedEvent.on(this.notifyPageViewItemsParsed.bind(this), this.liveEditWindow);
-
-            NewPageComponentIdMapEvent.on((event: NewPageComponentIdMapEvent) => {
-                console.log('PageComponentIdMap: %o', event.getMap());
-            }, this.liveEditWindow);
 
             ImageOpenUploadDialogEvent.on(() => {
                 var uploadDialog = new UploadDialog();
@@ -262,23 +257,15 @@ module app.wizard.page {
 
             SortableStopEvent.on(this.notifySortableStop.bind(this), this.liveEditWindow);
 
-            SortableUpdateEvent.on((event: SortableUpdateEvent) => {
-                if (event.getComponentView()) {
-                    this.notifySortableUpdate(event);
-                }
-            }, this.liveEditWindow);
-
             PageSelectEvent.on(this.notifyPageSelected.bind(this), this.liveEditWindow);
 
             RegionSelectEvent.on(this.notifyRegionSelected.bind(this), this.liveEditWindow);
 
             PageComponentSelectEvent.on((event: PageComponentSelectEvent) => {
-                if (event.getPath()) {
-                    this.notifyPageComponentSelected(event);
-                }
+                this.notifyPageComponentSelected(event);
             }, this.liveEditWindow);
 
-            PageComponentDeselectEvent.on(this.notifyDeselect.bind(this), this.liveEditWindow);
+            ItemViewDeselectEvent.on(this.notifyDeselect.bind(this), this.liveEditWindow);
 
             PageComponentAddedEvent.on(this.notifyPageComponentAdded.bind(this), this.liveEditWindow);
 
@@ -317,18 +304,6 @@ module app.wizard.page {
             });
         }
 
-        onPageViewItemsParsed(listener: {(event: PageViewItemsParsedEvent): void;}) {
-            this.pageViewItemsParsedListeners.push(listener);
-        }
-
-        unPageViewItemsParsed(listener: {(event: PageViewItemsParsedEvent): void;}) {
-            this.pageViewItemsParsedListeners = this.pageViewItemsParsedListeners.filter((curr) => (curr != listener));
-        }
-
-        private notifyPageViewItemsParsed(event: PageViewItemsParsedEvent) {
-            this.pageViewItemsParsedListeners.forEach((listener) => listener(event));
-        }
-
         onSortableStart(listener: (event: SortableStartEvent) => void) {
             this.sortableStartListeners.push(listener);
         }
@@ -339,18 +314,6 @@ module app.wizard.page {
 
         private notifySortableStart(event: SortableStartEvent) {
             this.sortableStartListeners.forEach((listener) => listener(event));
-        }
-
-        onSortableUpdate(listener: {(event: SortableUpdateEvent): void;}) {
-            this.sortableUpdateListeners.push(listener);
-        }
-
-        unSortableUpdate(listener: {(event: SortableUpdateEvent): void;}) {
-            this.sortableUpdateListeners = this.sortableUpdateListeners.filter((curr) => (curr != listener));
-        }
-
-        private notifySortableUpdate(event: SortableUpdateEvent) {
-            this.sortableUpdateListeners.forEach((listener) => listener(event));
         }
 
         onSortableStop(listener: {(event: SortableStopEvent): void;}) {
@@ -401,15 +364,15 @@ module app.wizard.page {
             this.pageComponentSelectedListeners.forEach((listener) => listener(event));
         }
 
-        onDeselect(listener: {(event: PageComponentDeselectEvent): void;}) {
+        onDeselect(listener: {(event: ItemViewDeselectEvent): void;}) {
             this.deselectListeners.push(listener);
         }
 
-        unDeselect(listener: {(event: PageComponentDeselectEvent): void;}) {
+        unDeselect(listener: {(event: ItemViewDeselectEvent): void;}) {
             this.deselectListeners = this.deselectListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyDeselect(event: PageComponentDeselectEvent) {
+        private notifyDeselect(event: ItemViewDeselectEvent) {
             this.deselectListeners.forEach((listener) => listener(event));
         }
 

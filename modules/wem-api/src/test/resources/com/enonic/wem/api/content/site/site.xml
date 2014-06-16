@@ -18,5 +18,4 @@
     <allow>com.enonic.tweet</allow>
     <allow>system.folder</allow>
   </content-filter>
-  <root-content-type>com.enonic.intranet</root-content-type>
 </site-template>

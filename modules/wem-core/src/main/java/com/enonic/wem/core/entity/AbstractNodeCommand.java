@@ -4,14 +4,13 @@ import com.enonic.wem.api.context.Context;
 import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.index.IndexService;
 
-public class AbstractNodeCommand
+public abstract class AbstractNodeCommand
 {
     protected final Context context;
 
     protected final IndexService indexService;
 
     protected final NodeDao nodeDao;
-
 
     public AbstractNodeCommand( final Builder builder )
     {

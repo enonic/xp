@@ -2,6 +2,8 @@ module api.liveedit {
 
     export class ItemType {
 
+        static DATA_ATTRIBUTE = "live-edit-type";
+
         private static shortNameToInstance: {[shortName: string]: ItemType} = {};
 
         private shortName: string;
@@ -32,7 +34,7 @@ module api.liveedit {
             return api.content.page.PageComponentType.byShortName(this.shortName);
         }
 
-        createView(element?: HTMLElement, dummy?: boolean): ItemView {
+        createView(config: CreateItemViewConfig<ItemView,any>): ItemView {
             throw new Error("Must be implemented by inheritors");
         }
 
@@ -63,22 +65,16 @@ module api.liveedit {
         }
 
         static byShortName(shortName: string): ItemType {
-            var itemType = ItemType.shortNameToInstance[shortName];
-            api.util.assertNotNull(itemType, "Unknown ItemType: " + shortName);
-            return  itemType;
-        }
-
-        static fromJQuery(element: JQuery): ItemType {
-            return ItemType.fromHTMLElement(element.get(0));
+            return ItemType.shortNameToInstance[shortName];
         }
 
         static fromHTMLElement(element: HTMLElement): ItemType {
-            var typeAsString = element.getAttribute("data-live-edit-type");
+            var typeAsString = element.getAttribute("data-" + ItemType.DATA_ATTRIBUTE);
             return ItemType.byShortName(typeAsString);
         }
 
         static fromElement(element: api.dom.Element): ItemType {
-            var typeAsString = element.getEl().getAttribute("data-live-edit-type");
+            var typeAsString = element.getEl().getAttribute("data-" + ItemType.DATA_ATTRIBUTE);
             return ItemType.byShortName(typeAsString);
         }
     }

@@ -1,5 +1,6 @@
 package com.enonic.wem.core.elasticsearch;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
@@ -10,7 +11,6 @@ import com.enonic.wem.core.index.IndexType;
 
 public class QueryMetaData
 {
-
     private final Index index;
 
     private final IndexType indexType;
@@ -106,6 +106,19 @@ public class QueryMetaData
             this.fields.add( fieldName );
             return this;
         }
+
+        public Builder addFields( final Set<String> fields )
+        {
+            this.fields.addAll( fields );
+            return this;
+        }
+
+        public Builder addFields( final String... fields )
+        {
+            this.fields.addAll( Arrays.asList( fields ) );
+            return this;
+        }
+
 
         public QueryMetaData build()
         {

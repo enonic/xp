@@ -5,6 +5,8 @@ import java.util.Collection;
 import javax.inject.Inject;
 
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.action.count.CountRequestBuilder;
+import org.elasticsearch.action.count.CountResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
@@ -13,16 +15,17 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.update.UpdateRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
+import com.enonic.wem.core.elasticsearch.result.SearchResult;
+import com.enonic.wem.core.elasticsearch.result.SearchResultFactory;
 import com.enonic.wem.core.index.DeleteDocument;
-import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexException;
-import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.document.IndexDocument;
 
 public class ElasticsearchDao
@@ -31,9 +34,28 @@ public class ElasticsearchDao
 
     private Client client;
 
+    public void update( final IndexRequest indexRequest )
+    {
+        UpdateRequestBuilder updateRequestBuilder = new UpdateRequestBuilder( this.client ).
+            setIndex( indexRequest.index() ).
+            setType( indexRequest.type() ).
+            setId( indexRequest.id() ).
+            setDoc( indexRequest );
+
+        this.client.update( updateRequestBuilder.request() ).actionGet();
+    }
+
     public void store( final IndexRequest indexRequest )
     {
         this.client.index( indexRequest ).actionGet();
+    }
+
+    public void storeAll( final Collection<IndexRequest> indexRequests )
+    {
+        for ( final IndexRequest indexRequest : indexRequests )
+        {
+            this.client.index( indexRequest ).actionGet();
+        }
     }
 
     public void store( Collection<IndexDocument> indexDocuments )
@@ -41,15 +63,13 @@ public class ElasticsearchDao
         for ( IndexDocument indexDocument : indexDocuments )
         {
             final String id = indexDocument.getId();
-            final IndexType indexType = indexDocument.getIndexType();
-            final Index index = indexDocument.getIndex();
 
             final XContentBuilder xContentBuilder = XContentBuilderFactory.create( indexDocument );
 
             final IndexRequest req = Requests.indexRequest().
                 id( id ).
-                index( index.getName() ).
-                type( indexType.getName() ).
+                index( indexDocument.getIndexName() ).
+                type( indexDocument.getIndexTypeName() ).
                 source( xContentBuilder ).
                 refresh( indexDocument.doRefreshOnStore() );
 
@@ -83,27 +103,28 @@ public class ElasticsearchDao
         }
     }
 
-
-    public SearchResponse search( final ElasticsearchQuery elasticsearchQuery )
+    public SearchResult search( final ElasticsearchQuery elasticsearchQuery )
     {
         final SearchSourceBuilder searchSource = elasticsearchQuery.toSearchSourceBuilder();
 
         // System.out.println( searchSource.toString() );
 
         final SearchRequest searchRequest = Requests.
-            searchRequest( elasticsearchQuery.getIndex().getName() ).
+            searchRequest( elasticsearchQuery.getIndexName() ).
             types( elasticsearchQuery.getIndexType().getName() ).
             source( searchSource );
 
         return doSearchRequest( searchRequest );
     }
 
-    private SearchResponse doSearchRequest( SearchRequest searchRequest )
+    private SearchResult doSearchRequest( SearchRequest searchRequest )
     {
-        return this.client.search( searchRequest ).actionGet();
+        final SearchResponse searchResponse = this.client.search( searchRequest ).actionGet();
+
+        return SearchResultFactory.create( searchResponse );
     }
 
-    public SearchResponse get( final QueryMetaData queryMetaData, final QueryBuilder queryBuilder )
+    public SearchResult get( final QueryMetaData queryMetaData, final QueryBuilder queryBuilder )
     {
         final SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch( queryMetaData.getIndex() ).
             setTypes( queryMetaData.getIndexType() ).
@@ -119,9 +140,8 @@ public class ElasticsearchDao
         return doSearchRequest( searchRequestBuilder );
     }
 
-    public GetResponse get( final QueryMetaData queryMetaData, final String id )
+    public SearchResult get( final QueryMetaData queryMetaData, final String id )
     {
-
         final GetRequest getRequest = new GetRequest( queryMetaData.getIndex() ).
             type( queryMetaData.getIndexType() ).
             id( id );
@@ -131,15 +151,29 @@ public class ElasticsearchDao
             getRequest.fields( queryMetaData.getFields() );
         }
 
-        return client.get( getRequest ).actionGet();
+        final GetResponse getResponse = client.get( getRequest ).actionGet();
+
+        return SearchResultFactory.create( getResponse );
     }
 
-
-    private SearchResponse doSearchRequest( final SearchRequestBuilder searchRequestBuilder )
+    public long count( final QueryMetaData queryMetaData, final QueryBuilder query )
     {
-        return searchRequestBuilder.
+        CountRequestBuilder countRequestBuilder = new CountRequestBuilder( this.client ).
+            setIndices( queryMetaData.getIndex() ).
+            setTypes( queryMetaData.getIndexType() ).
+            setQuery( query );
+
+        final CountResponse response = this.client.count( countRequestBuilder.request() ).actionGet();
+        return response.getCount();
+    }
+
+    private SearchResult doSearchRequest( final SearchRequestBuilder searchRequestBuilder )
+    {
+        final SearchResponse searchResponse = searchRequestBuilder.
             execute().
             actionGet();
+
+        return SearchResultFactory.create( searchResponse );
     }
 
     @Inject

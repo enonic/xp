@@ -45,6 +45,23 @@ public class DataSet
         }
     }
 
+    public static Builder newDataSet()
+    {
+        return new Builder();
+    }
+
+    public static Builder newDataSet( final DataSet dataSet )
+    {
+        return new Builder( dataSet );
+    }
+
+    public static Builder newDataSet( final String name )
+    {
+        final Builder builder = new Builder();
+        builder.name( name );
+        return builder;
+    }
+
     public boolean isRoot()
     {
         return false;
@@ -179,8 +196,7 @@ public class DataSet
             {
                 throw new IllegalArgumentException(
                     "Property [" + dataId + "] expected to be given a successive index [" + expectedIndex + "]: " +
-                        dataId.getIndex()
-                );
+                        dataId.getIndex() );
             }
 
             final Property newProperty = Property.newProperty( dataId.getName(), value );
@@ -581,6 +597,30 @@ public class DataSet
         return true;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
+    public Map<String, Object> toMap()
+    {
+        final LinkedHashMap<String, Object> map = new LinkedHashMap<>( this.dataById.size() );
+        for ( Map.Entry<DataId, Data> entry : this.dataById.entrySet() )
+        {
+            final DataId id = entry.getKey();
+            final Data data = entry.getValue();
+            if ( data instanceof Property )
+            {
+                final Property property = (Property) data;
+                final List<Value> valuesAsList = property.getValuesAsList();
+                map.put( id.toString(), valuesAsList );
+            }
+            else if ( data instanceof DataSet )
+            {
+                final DataSet dataSet = (DataSet) data;
+                map.put( id.toString(), dataSet.toMap() );
+            }
+        }
+
+        return map;
+    }
+
     @Override
     public String toString()
     {
@@ -611,23 +651,6 @@ public class DataSet
         }
         s.append( " }" );
         return s.toString();
-    }
-
-    public static Builder newDataSet()
-    {
-        return new Builder();
-    }
-
-    public static Builder newDataSet( final DataSet dataSet )
-    {
-        return new Builder( dataSet );
-    }
-
-    public static Builder newDataSet( final String name )
-    {
-        final Builder builder = new Builder();
-        builder.name( name );
-        return builder;
     }
 
     public static class Builder

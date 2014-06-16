@@ -23,3 +23,186 @@
   }
 
 }
+
+.tree-grid {
+  position: static;
+  height: 100%;
+  padding-top: 30px;
+
+  .toolbar {
+    position: absolute;
+    width: 100%;
+    height: 30px;
+    margin-top: -30px;
+    background-color: @admin-almost-white-bg;
+
+    .button {
+      padding: 3px 7px;
+      border: none;
+
+      &:first-child {
+        margin-left: 10px;
+      }
+
+      &:not(:first-child) {
+        margin-left: 4px;
+        &:before {
+          position: relative;
+          left: -9px;
+          content: "|";
+          color: @admin-medium-gray-font;
+        }
+      }
+
+      &:focus {
+        box-shadow: none;
+        border: none;
+      }
+
+      &:active {
+        background-color: @admin-light-gray-bg;
+      }
+    }
+  }
+
+  .slick-viewport {
+    overflow-x: hidden !important;
+  }
+
+  &.quick {
+    .slick-row {
+      transition: none 4s;
+    }
+  }
+
+  .slick-row {
+    transition: margin 0.3s;
+  }
+
+  .grid {
+    width: 100% !important;
+    height: 100% !important;
+    overflow-y: auto !important;
+
+    .grid-canvas {
+      width: 100% !important;
+    }
+
+    .selected {
+      background-color: @admin-blue;
+      color: white;
+    }
+
+    .slick-cell {
+      .default-slick-cell-styling(4px 8px);
+      cursor: pointer;
+
+      // fixes
+      &:last-child {
+        margin-left: -18px; // invalid 'right' value calc for certain width
+      }
+      height: 45px;      // firefox ignores SlickGrid.rowHeight
+    }
+
+    .slick-row {
+
+      background-color: @admin-white;
+      z-index: 1;
+
+      &:hover, &.odd:hover {
+        background-color: @admin-light-gray-bg;
+      }
+
+      &.odd {
+        background-color: @admin-almost-white-bg;
+      }
+
+      .selected {
+        h6, p {
+          color: white;
+        }
+      }
+
+      .slick-cell-checkboxsel {
+        min-width: 45px;
+
+        label {
+          display: inline-block;
+          width: 100%;
+          height: 100%;
+          vertical-align:middle;
+          background: url("../images/admin-unchecked.gif") center no-repeat;
+        }
+
+        input[type="checkbox"] {
+          display: none;
+        }
+
+        &.selected label {
+          background: url("../images/admin-checked.gif") center no-repeat;
+        }
+
+      }
+
+      .toggle {
+        &:active {
+          color: @admin-blue-button2;
+        }
+
+        position: absolute;
+        top: 1px;
+        height: 100%;
+        width: 10px;
+      }
+
+      .toggle.expand, .toggle.collapse {
+        &:before {
+          position: relative;
+          display: block;
+          top: 50%;
+          margin: -5px 0 0;
+        }
+      }
+
+      .toggle.expand {
+        .icon-arrow-right2();
+      }
+
+      .toggle.collapse {
+        .icon-arrow-down();
+
+      }
+
+      .viewer {
+        display: inline-block;
+        width: 100%;
+        height: 100%;
+        .names-and-icon-view {
+          margin-left: 25px;
+          .wrapper {
+            margin-right: 15px;
+            .icon {
+              position: absolute;
+              width: 32px;
+              height: 32px;
+              top: 50%;
+              left: 0;
+              margin-top: -16px;
+            }
+          }
+          .names-view {
+            margin-top: 3px;
+          }
+
+        }
+      }
+
+      .modified {
+        line-height: 37px;
+        text-align: right;
+        padding-right: 25px;
+      }
+
+    }
+  }
+}

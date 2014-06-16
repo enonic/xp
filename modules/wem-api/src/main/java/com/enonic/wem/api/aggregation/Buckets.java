@@ -16,6 +16,11 @@ public class Buckets
         super( buckets );
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
     public static class Builder
     {
         private Set<Bucket> buckets = Sets.newLinkedHashSet();

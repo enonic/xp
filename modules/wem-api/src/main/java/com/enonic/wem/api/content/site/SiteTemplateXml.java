@@ -12,7 +12,6 @@ import com.google.common.collect.Iterables;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.schema.content.ContentTypeFilter;
-import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.xml.XmlObject;
 import com.enonic.wem.api.xml.template.ContentFilterXml;
 
@@ -40,9 +39,6 @@ public final class SiteTemplateXml
     @XmlElement(name = "content-filter", required = false)
     private ContentFilterXml contentFilter = new ContentFilterXml();
 
-    @XmlElement(name = "root-content-type", required = true)
-    private String siteContent;
-
     @Override
     public void from( final SiteTemplate template )
     {
@@ -66,8 +62,6 @@ public final class SiteTemplateXml
         {
             this.contentFilter.from( filter );
         }
-
-        this.siteContent = template.getRootContentType().getContentTypeName();
     }
 
     @Override
@@ -76,8 +70,7 @@ public final class SiteTemplateXml
         builder.
             displayName( this.displayName ).
             description( this.description ).
-            url( this.url ).
-            rootContentType( ContentTypeName.from( this.siteContent ) );
+            url( this.url );
 
         final Vendor.Builder vendorBuilder = Vendor.newVendor();
         this.vendor.to( vendorBuilder );

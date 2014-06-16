@@ -39,8 +39,7 @@ class SiteTemplateServiceImpl_getSiteTemplatesTest
             url( "http://www.enonic.com" ).
             modules( moduleKeys ).
             description( "description" ).
-            contentTypeFilter( filter ).
-            rootContentType( ContentTypeName.from( "document" ) );
+            contentTypeFilter( filter );
 
         this.service.siteTemplateExporter = new SiteTemplateExporter();
         this.service.createSiteTemplate( createSiteTemplateParam );

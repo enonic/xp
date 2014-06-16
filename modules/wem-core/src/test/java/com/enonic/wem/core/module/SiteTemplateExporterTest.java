@@ -20,7 +20,6 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.schema.content.ContentTypeFilter;
-import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.core.content.site.SiteTemplateExporter;
 
@@ -132,7 +131,6 @@ public class SiteTemplateExporterTest
             modules( ModuleKeys.from( "com.enonic.intranet-1.0.0", "com.company.sampleModule-1.1.0", "com.company.theme.someTheme-1.4.1",
                                       "com.enonic.resolvers-1.0.0", "mymodule-1.0.0" ) ).
             contentTypeFilter( contentTypeFilter ).
-            rootContentType( ContentTypeName.from( "com.enonic.intranet" ) ).
             addPageTemplate( pageTemplate ).
             build();
     }

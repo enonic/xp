@@ -1,0 +1,33 @@
+{
+    "version": {
+        "_all": {
+            "enabled": false
+        },
+        "_source": {
+            "enabled": true
+        },
+        "_timestamp": {
+            "enabled": true
+        },
+        "date_detection": false,
+        "numeric_detection": false,
+        "properties": {
+            "entityId": {
+                "type": "string",
+                "store": "true",
+                "index": "not_analyzed"
+            },
+            "blobKey": {
+                "type": "string",
+                "store": "true",
+                "index": "not_analyzed"
+            },
+            "timstamp": {
+                "type": "date",
+                "store": "true",
+                "index": "not_analyzed"
+            }
+
+        }
+    }
+}

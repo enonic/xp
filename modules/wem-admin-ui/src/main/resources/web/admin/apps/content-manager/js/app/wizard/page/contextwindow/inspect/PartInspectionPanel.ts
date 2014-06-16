@@ -5,6 +5,7 @@ module app.wizard.page.contextwindow.inspect {
     import GetPartDescriptorsByModulesRequest = api.content.page.part.GetPartDescriptorsByModulesRequest;
     import PartComponent = api.content.page.part.PartComponent;
     import DescriptorKey = api.content.page.DescriptorKey;
+    import PartComponentView = api.liveedit.part.PartComponentView;
 
     export interface PartInspectionPanelConfig {
 
@@ -39,11 +40,11 @@ module app.wizard.page.contextwindow.inspect {
             return this.partDescriptors[this.getComponent().getDescriptor().toString()];
         }
 
-        setPartComponent(component: PartComponent) {
-            this.setComponent(component);
+        setPartComponent(partView: PartComponentView) {
+            this.setComponent(partView.getPageComponent());
 
             var partDescriptor = this.getDescriptor();
-            this.setupComponentForm(component, partDescriptor);
+            this.setupComponentForm(partView.getPageComponent(), partDescriptor);
         }
     }
 }

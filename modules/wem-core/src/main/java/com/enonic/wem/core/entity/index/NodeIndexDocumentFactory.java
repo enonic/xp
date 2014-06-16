@@ -12,7 +12,7 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.EntityIndexConfig;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.PropertyIndexConfig;
-import com.enonic.wem.core.index.Index;
+import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.index.document.IndexDocumentItemFactory;
@@ -60,24 +60,24 @@ public class NodeIndexDocumentFactory
         fulltextEnabled( false ).
         build();
 
-    public static Collection<IndexDocument> create( final Node node )
+    public static Collection<IndexDocument> create( final Node node, final Workspace workspace )
     {
         node.validateForIndexing();
 
         Set<IndexDocument> indexDocuments = Sets.newHashSet();
 
-        indexDocuments.add( createDataDocument( node ) );
+        indexDocuments.add( createDataDocument( node, workspace ) );
 
         return indexDocuments;
     }
 
-    private static IndexDocument createDataDocument( final Node node )
+    private static IndexDocument createDataDocument( final Node node, final Workspace workspace )
     {
         final EntityIndexConfig entityIndexConfig = node.getEntityIndexConfig();
 
         final IndexDocument.Builder builder = IndexDocument.newIndexDocument().
             id( node.id() ).
-            index( Index.NODB ).
+            index( workspace.getSearchIndexName() ).
             indexType( IndexType.NODE ).
             analyzer( entityIndexConfig.getAnalyzer() ).
             collection( entityIndexConfig.getCollection() );

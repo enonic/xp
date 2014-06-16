@@ -21,6 +21,12 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-xsmall {
+  &:before {
+    font-size: 10px;
+  }
+}
+
 .icon-small {
   &:before {
     font-size: 14px;
@@ -51,7 +57,25 @@
   }
 }
 
-.icon-close:extend(.icon) {
+.icon-checkbox-partial:extend(.icon) {
+  &:before {
+    content: "\e431";
+  }
+}
+
+.icon-checkbox-checked:extend(.icon) {
+  &:before {
+    content: "\e42e";
+  }
+}
+.icon-checkbox-unchecked:extend(.icon) {
+  &:before {
+    content: "\e42f";
+  }
+}
+
+.icon-close {
+  &:extend(.icon);
   &:before {
     content: "\e36b";
   }
@@ -63,9 +87,22 @@
   }
 }
 
+.icon-arrow-right2:extend(.icon) {
+  &:before {
+    content: "\e3b1";
+  }
+}
+
 .icon-grid:extend(.icon) {
   &:before {
     content: "\e2a0";
+  }
+}
+
+.icon-grid4 {
+  &:extend(.icon);
+  &:before {
+    content: "\e2a3";
   }
 }
 
@@ -135,7 +172,8 @@
   }
 }
 
-.icon-close2:extend(.icon) {
+.icon-close2 {
+  &:extend(.icon);
   &:before {
     content: "\e36c";
   }
@@ -174,5 +212,82 @@
 .icon-wand:extend(.icon) {
   &:before {
     content: "\e1ec";
+  }
+}
+
+.icon-database {
+  &:extend(.icon);
+  &:before {
+    content: "\e138";
+  }
+}
+
+.icon-share2 {
+  &:extend(.icon);
+  &:before {
+    content: "\e48c";
+  }
+}
+
+.icon-signup {
+  &:extend(.icon);
+  &:before {
+    content: "\e296";
+  }
+}
+
+.icon-cart {
+  &:extend(.icon);
+  &:before {
+    content: "\e0c1";
+  }
+}
+
+.icon-pie2 {
+  &:extend(.icon);
+  &:before {
+    content: "\e1f8";
+  }
+}
+
+.icon-target3 {
+  &:extend(.icon);
+  &:before {
+    content: "\e27b";
+  }
+}
+
+.icon-stats {
+  &:extend(.icon);
+  &:before {
+    content: "\e1fe";
+  }
+}
+
+.icon-users {
+  &:extend(.icon);
+  &:before {
+    content: "\e186";
+  }
+}
+
+.icon-aid {
+  &:extend(.icon);
+  &:before {
+    content: "\e1ef";
+  }
+}
+
+.icon-arrow-down2 {
+  &:extend(.icon);
+  &:before {
+    content: "\e3b6";
+  }
+}
+
+.icon-undo2 {
+  &:extend(.icon);
+  &:before {
+    content: "\e14b";
   }
 }

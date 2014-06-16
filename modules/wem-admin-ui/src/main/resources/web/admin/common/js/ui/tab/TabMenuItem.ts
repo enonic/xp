@@ -2,7 +2,6 @@ module api.ui.tab {
 
     export interface TabMenuItemOptions {
         removable?:boolean;
-        removeText?:string;
     }
 
     export class TabMenuItem extends api.dom.LiEl implements api.ui.NavigationItem {
@@ -41,7 +40,6 @@ module api.ui.tab {
             this.removable = options.removable;
             if (options.removable) {
                 var removeButton = new api.dom.ButtonEl();
-                removeButton.getEl().setInnerHtml(options.removeText ? options.removeText : "&times;");
                 this.prependChild(removeButton);
                 removeButton.onClicked((event: MouseEvent) => {
                     if (this.removable) {

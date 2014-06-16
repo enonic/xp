@@ -21,7 +21,7 @@ import com.enonic.wem.api.entity.EntityPropertyIndexConfig;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.core.index.Index;
+import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.IndexValueType;
 import com.enonic.wem.core.index.document.AbstractIndexDocumentItem;
@@ -32,6 +32,8 @@ import static org.junit.Assert.*;
 
 public class NodeIndexDocumentFactoryTest
 {
+    public static final Workspace TEST_WORKSPACE = new Workspace( "Test" );
+
     @Test
     public void validate_given_no_id_then_exception()
         throws Exception
@@ -41,7 +43,7 @@ public class NodeIndexDocumentFactoryTest
 
         try
         {
-            NodeIndexDocumentFactory.create( node );
+            NodeIndexDocumentFactory.create( node, new Workspace( "Test" ) );
         }
         catch ( NullPointerException e )
         {
@@ -59,7 +61,7 @@ public class NodeIndexDocumentFactoryTest
             id( EntityId.from( "abc" ) ).
             build();
 
-        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node );
+        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE );
 
         assertNotNull( indexDocuments );
     }
@@ -72,7 +74,7 @@ public class NodeIndexDocumentFactoryTest
             id( EntityId.from( "abc" ) ).
             build();
 
-        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node );
+        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE );
 
         assertNotNull( indexDocuments );
         assertNotNull( getIndexDocumentOfType( indexDocuments, IndexType.NODE ) );
@@ -91,7 +93,7 @@ public class NodeIndexDocumentFactoryTest
                 build() ).
             build();
 
-        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node );
+        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE );
 
         final IndexDocument indexDocument = getIndexDocumentOfType( indexDocuments, IndexType.NODE );
 
@@ -119,13 +121,13 @@ public class NodeIndexDocumentFactoryTest
                 build() ).
             build();
 
-        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node );
+        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE );
 
         final IndexDocument indexDocument = getIndexDocumentOfType( indexDocuments, IndexType.NODE );
 
         assertEquals( myAnalyzerName, indexDocument.getAnalyzer() );
-        assertEquals( Index.NODB, indexDocument.getIndex() );
-        assertEquals( IndexType.NODE, indexDocument.getIndexType() );
+        assertEquals( TEST_WORKSPACE.getSearchIndexName(), indexDocument.getIndexName() );
+        assertEquals( IndexType.NODE.getName(), indexDocument.getIndexTypeName() );
 
         final AbstractIndexDocumentItem createdTimeItem =
             getItemWithName( indexDocument, NodeIndexDocumentFactory.CREATED_TIME_PROPERTY, IndexValueType.DATETIME );
@@ -156,7 +158,7 @@ public class NodeIndexDocumentFactoryTest
             rootDataSet( rootDataSet ).
             build();
 
-        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node );
+        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE );
 
         final IndexDocument indexDocument = getIndexDocumentOfType( indexDocuments, IndexType.NODE );
 
@@ -177,7 +179,7 @@ public class NodeIndexDocumentFactoryTest
             rootDataSet( rootDataSet ).
             build();
 
-        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node );
+        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE );
 
         assertTrue( indexDocuments.iterator().hasNext() );
         final IndexDocument next = indexDocuments.iterator().next();
@@ -193,7 +195,7 @@ public class NodeIndexDocumentFactoryTest
     {
         for ( IndexDocument indexDocument : indexDocuments )
         {
-            if ( indexType.equals( indexDocument.getIndexType() ) )
+            if ( indexType.getName().equals( indexDocument.getIndexTypeName() ) )
             {
                 return indexDocument;
             }

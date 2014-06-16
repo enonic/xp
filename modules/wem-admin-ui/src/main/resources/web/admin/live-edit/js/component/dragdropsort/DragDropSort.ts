@@ -6,18 +6,22 @@
 
 module LiveEdit.component.dragdropsort.DragDropSort {
 
+    import PageComponent = api.content.page.PageComponent;
+    import ComponentName = api.content.page.ComponentName;
+    import ItemViewId = api.liveedit.ItemViewId;
     import ItemType = api.liveedit.ItemType;
     import ItemView = api.liveedit.ItemView;
+    import RegionView = api.liveedit.RegionView;
     import PageComponentView = api.liveedit.PageComponentView;
+    import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
     import PageComponentItemType = api.liveedit.PageComponentItemType;
     import RegionItemType = api.liveedit.RegionItemType;
     import TextItemType = api.liveedit.text.TextItemType;
     import LayoutItemType = api.liveedit.layout.LayoutItemType;
     import SortableStartEvent = api.liveedit.SortableStartEvent;
     import SortableStopEvent = api.liveedit.SortableStopEvent;
-    import SortableUpdateEvent = api.liveedit.SortableUpdateEvent;
-    import PageComponentDeselectEvent = api.liveedit.PageComponentDeselectEvent;
-    import PageComponentAddedEvent = api.liveedit.PageComponentAddedEvent;
+    import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
+    import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
 
     // jQuery sortable cursor position form to the drag helper.
     var CURSOR_AT: any = {left: 24, top: 24};
@@ -48,13 +52,13 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
     export function createSortableLayout(component: api.liveedit.ItemView) {
         wemjq(component.getHTMLElement()).find(REGION_SELECTOR).each((index, element) => {
-            console.log("Creating jquerysortable for", element);
+            //console.log("Creating jquerysortable for", element);
             createJQueryUiSortable(wemjq(element));
         });
     }
 
     function createJQueryUiSortable(selector): void {
-        console.log("Creating jQuery sortable on selector: ", selector, this);
+        //console.log("Creating jQuery sortable on selector: ", selector, this);
         wemjq(selector).sortable({
             revert: false,
             connectWith: REGION_SELECTOR, //removing this solves the over event not firing bug, not sure what it might break though. it broke dragging out of layouts, now seems to work.
@@ -124,7 +128,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         updateScrollSensitivity(event.target);
         _isDragging = true;
 
-        var component = pageItemViews.getPageComponentViewByElement(ui.item.get(0));
+        var component = LiveEdit.LiveEditPage.get().getPageComponentViewByElement(ui.item.get(0));
 
         if (component) {
             component.handleDragStart();
@@ -139,22 +143,26 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     function handleDragOver(event: JQueryEventObject, ui): void {
         event.stopPropagation();
 
-        var component = pageItemViews.getItemViewByElement(ui.item.get(0));
+        var component = LiveEdit.LiveEditPage.get().getPageComponentViewByElement(ui.item.get(0));
+        if (component) {
+            var isDraggingOverLayoutComponent = ui.placeholder.closest(LAYOUT_SELECTOR).length > 0;
 
-        var isDraggingOverLayoutComponent = ui.placeholder.closest(LAYOUT_SELECTOR).length > 0;
-
-        if (component.getType().equals(LayoutItemType.get()) && isDraggingOverLayoutComponent) {
-            LiveEdit.component.helper.DragHelper.updateStatusIcon(false);
-            ui.placeholder.hide();
-        } else {
-            LiveEdit.component.helper.DragHelper.updateStatusIcon(true);
-            wemjq(window).trigger('sortableOver.liveEdit', [event, ui]);
+            if (component.getType().equals(LayoutItemType.get()) && isDraggingOverLayoutComponent) {
+                LiveEdit.component.helper.DragHelper.updateStatusIcon(false);
+                ui.placeholder.hide();
+            } else {
+                LiveEdit.component.helper.DragHelper.updateStatusIcon(true);
+                wemjq(window).trigger('sortableOver.liveEdit', [event, ui]);
+            }
         }
     }
 
     function handleDragOut(event: JQueryEventObject, ui): void {
+
         if (targetIsPlaceholder(wemjq(event.target))) {
-            removePaddingFromLayoutComponent();
+
+            var itemView = LiveEdit.LiveEditPage.get().getByItemId(ui.item.get(0));
+            removePaddingFromParentLayout(itemView);
         }
         LiveEdit.component.helper.DragHelper.updateStatusIcon(false);
 
@@ -162,9 +170,9 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     function handleSortChange(event: JQueryEventObject, ui): void {
-        var component = pageItemViews.getItemViewByElement(<HTMLElement>event.target);
 
-        addPaddingToLayoutComponent(component);
+        var itemView = LiveEdit.LiveEditPage.get().getItemViewByHTMLElement(<HTMLElement>event.target);
+        addPaddingToParentLayout(itemView);
         LiveEdit.component.helper.DragHelper.updateStatusIcon(true);
 
         ui.placeholder.show(null);
@@ -174,12 +182,17 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
     function handleSortUpdate(event: JQueryEventObject, ui): void {
 
-        var pageComponentView = pageItemViews.getPageComponentViewByElement(ui.item.get(0));
+        var liveEditPage = LiveEdit.LiveEditPage.get();
+        var pageComponentView = liveEditPage.getPageComponentViewByElement(ui.item.get(0));
         if (pageComponentView) {
             if (pageComponentView.hasComponentPath()) {
+                var precedingComponentView = resolvePrecedingComponentView(pageComponentView.getHTMLElement());
                 var regionHTMLElement = PageComponentView.findParentRegionViewHTMLElement(pageComponentView.getHTMLElement());
-                var regionView = pageItemViews.getRegionViewByElement(regionHTMLElement);
-                new SortableUpdateEvent(pageComponentView, regionView).fire();
+
+                var regionView = liveEditPage.getRegionViewByElement(regionHTMLElement);
+
+                liveEditPage.movePageComponent(pageComponentView, regionView, precedingComponentView);
+                simulateMouseUpForDraggable();
             }
         }
     }
@@ -187,54 +200,55 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     function handleSortStop(event: JQueryEventObject, ui): void {
         _isDragging = false;
 
-        var pageComponentView = pageItemViews.getPageComponentViewByElement(ui.item.get(0));
+        var pageComponentView = LiveEdit.LiveEditPage.get().getPageComponentViewByElement(ui.item.get(0));
+        if (pageComponentView) {
+            removePaddingFromParentLayout(pageComponentView);
 
-        removePaddingFromLayoutComponent();
+            var draggedItemIsLayoutComponent = pageComponentView.getType().equals(LayoutItemType.get()),
+                targetComponentIsInLayoutComponent = LayoutComponentView.hasParentLayoutComponentView(pageComponentView);
 
-        var draggedItemIsLayoutComponent = pageComponentView.getType().equals(LayoutItemType.get()),
-            targetComponentIsInLayoutComponent = $(event.target).closest(LAYOUT_SELECTOR).length > 0;
+            if (draggedItemIsLayoutComponent && targetComponentIsInLayoutComponent) {
+                ui.item.remove()
+            }
 
-        if (draggedItemIsLayoutComponent && targetComponentIsInLayoutComponent) {
-            ui.item.remove()
+            if (LiveEdit.DomHelper.supportsTouch()) {
+                wemjq(window).trigger('mouseOutComponent.liveEdit');
+            }
+
+            new SortableStopEvent(pageComponentView).fire();
+
+            pageComponentView.getElement().removeData('live-edit-selected-on-drag-start');
         }
-
-        if (LiveEdit.DomHelper.supportsTouch()) {
-            wemjq(window).trigger('mouseOutComponent.liveEdit');
-        }
-
-        pageComponentView.handleDragStop();
-
-        new SortableStopEvent(pageComponentView).fire();
-
-        pageComponentView.getElement().removeData('live-edit-selected-on-drag-start');
     }
 
     // When sortable receives a new item
     function handleReceive(event: JQueryEventObject, ui): void {
 
         if (isItemDraggedFromContextWindow(ui.item)) {
+            var liveEditPage = LiveEdit.LiveEditPage.get();
+
             var droppedElement = wemjq(event.target).children(CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR);
+            var regionHTMLElement = PageComponentView.findParentRegionViewHTMLElement(droppedElement.get(0));
+            var regionView = liveEditPage.getRegionViewByElement(regionHTMLElement);
+
             var itemType: PageComponentItemType = <PageComponentItemType>ItemType.byShortName(droppedElement.data('live-edit-type'));
-            var newPageComponent = itemType.createView();
-            pageItemViews.addItemView(newPageComponent);
-            droppedElement.attr("data-live-edit-id", "" + newPageComponent.getItemId());
+            var precedingComponentView = resolvePrecedingComponentView(droppedElement.get(0));
+            var newPageComponent = liveEditPage.createComponent(regionView.getRegion(), itemType.toPageComponentType(),
+                precedingComponentView);
+            var pageComponentIndex = droppedElement.index();
+            var newPageComponentView = itemType.createView(new CreateItemViewConfig<RegionView,PageComponent>().
+                setParentView(regionView).
+                setData(newPageComponent).
+                setPositionIndex(pageComponentIndex));
 
-            droppedElement.replaceWith(newPageComponent.getHTMLElement());
-            newPageComponent.empty();
-            newPageComponent.init();
+            droppedElement.remove();
 
-            // The layout padding is removed on sortStop, but this is not fired yet at this point
-            // Remove it now so the auto selection is properly aligned.
-            removePaddingFromLayoutComponent();
-            var regionHTMLElement = PageComponentView.findParentRegionViewHTMLElement(newPageComponent.getHTMLElement());
-            var region = pageItemViews.getRegionViewByElement(regionHTMLElement);
-            new PageComponentAddedEvent().
-                setPageComponentView(newPageComponent).
-                setRegion(region.getRegionName()).
-                setPrecedingComponent(newPageComponent.getPrecedingComponentPath()).
-                fire();
-            LiveEdit.component.Selection.handleSelect(newPageComponent);
+            liveEditPage.addPageComponentView(newPageComponentView, regionView, pageComponentIndex);
         }
+    }
+
+    function simulateMouseUpForDraggable() {
+        wemjq('[data-context-window-draggable="true"]').simulate('mouseup');
     }
 
     function isItemDraggedFromContextWindow(item: JQuery): boolean {
@@ -242,17 +256,8 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         return isDraggedFromContextWindow != undefined && isDraggedFromContextWindow == true;
     }
 
-    function addPaddingToLayoutComponent(component: ItemView): void {
-        component.getElement().closest(LAYOUT_SELECTOR).addClass('live-edit-component-padding');
-    }
-
-
-    function removePaddingFromLayoutComponent(): void {
-        wemjq('.live-edit-component-padding').removeClass('live-edit-component-padding');
-    }
-
     function registerGlobalListeners(): void {
-        PageComponentDeselectEvent.on(() => {
+        ItemViewDeselectEvent.on(() => {
             if (LiveEdit.DomHelper.supportsTouch() && !_isDragging) {
                 disableDragDrop();
             }
@@ -275,6 +280,31 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         });
 
         return sortableItemsSelector.toString();
+    }
+
+    function resolvePrecedingComponentView(pageComponentViewAsHTMLElement: HTMLElement): PageComponentView<PageComponent> {
+
+        var preceodingComponentView: PageComponentView<PageComponent> = null;
+        var precedingComponentViewId = PageComponentView.findPrecedingComponentItemViewId(pageComponentViewAsHTMLElement);
+        if (precedingComponentViewId) {
+            preceodingComponentView =
+            <PageComponentView<PageComponent>>LiveEdit.LiveEditPage.get().getByItemId(precedingComponentViewId);
+        }
+        return preceodingComponentView;
+    }
+
+    function addPaddingToParentLayout(itemView: ItemView) {
+        var closestParentLayoutComponentView = LayoutComponentView.getClosestParentLayoutComponentView(itemView);
+        if (closestParentLayoutComponentView) {
+            closestParentLayoutComponentView.addPadding();
+        }
+    }
+
+    function removePaddingFromParentLayout(itemView: ItemView) {
+        var closestParentLayoutComponentView = LayoutComponentView.getClosestParentLayoutComponentView(itemView);
+        if (closestParentLayoutComponentView) {
+            closestParentLayoutComponentView.removePadding();
+        }
     }
 
 }

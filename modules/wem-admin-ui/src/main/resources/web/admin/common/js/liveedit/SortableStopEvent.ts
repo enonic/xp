@@ -1,32 +1,21 @@
 module api.liveedit {
 
     import Event2 = api.event.Event2;
-    import ComponentPath = api.content.page.ComponentPath;
+    import PageComponent = api.content.page.PageComponent;
 
     export class SortableStopEvent extends Event2 {
 
-        private pageComponentView: PageComponentView;
-
-        private componentPath: ComponentPath;
+        private pageComponentView: PageComponentView<PageComponent>;
 
         private empty: boolean;
 
-        constructor(pageComponentView: PageComponentView) {
+        constructor(pageComponentView: PageComponentView<PageComponent>) {
             super();
             this.pageComponentView = pageComponentView;
-            this.componentPath = pageComponentView ? pageComponentView.getComponentPath() : null;
             this.empty = pageComponentView ? pageComponentView.isEmpty() : false;
         }
 
-        getComponentPath(): ComponentPath {
-            return this.componentPath;
-        }
-
-        isEmpty(): boolean {
-            return this.empty;
-        }
-
-        getItemView(): PageComponentView {
+        getPageComponentView(): PageComponentView<PageComponent> {
             return this.pageComponentView;
         }
 

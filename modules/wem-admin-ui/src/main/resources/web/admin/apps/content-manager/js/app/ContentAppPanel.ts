@@ -73,6 +73,8 @@ module app {
 
                 contentWizardPanelFactory.createForNew().then((wizard: app.wizard.ContentWizardPanel) => {
                     this.addWizardPanel(tabMenuItem, wizard);
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
                 }).finally(() => {
                     this.mask.hide();
                 }).done();
@@ -136,6 +138,8 @@ module app {
                             if (viewTabMenuItem != null) {
                                 this.removePanelByIndex(viewTabMenuItem.getIndex());
                             }
+                        }).catch((reason: any) => {
+                            api.DefaultErrorHandler.handle(reason);
                         }).finally(() => {
                             this.mask.hide();
                         }).done();

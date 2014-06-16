@@ -12,7 +12,6 @@
     "modules": [ "module1-1.0.0" ],
     "name": "name",
     "pageTemplateKeys": [ ],
-    "rootContentType": "folder",
     "url": "url",
     "vendor": {
         "name": "vendorName",

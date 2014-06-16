@@ -81,21 +81,15 @@ module app {
 
                     var self = this;
 
-                    function removeViewTabMenuItem() {
-                        var viewTabId = api.app.AppBarTabId.forView(schema.getId());
-                        var viewTabMenuItem = self.getAppBarTabMenu().getNavigationItemById(viewTabId);
-                        if (viewTabMenuItem != null) {
-                            self.removePanelByIndex(viewTabMenuItem.getIndex());
-                        }
-                    }
-
                     if (tabMenuItem != null) {
                         this.selectPanel(tabMenuItem);
 
                     } else {
+                        var promiseCreateWizardPanel = null;
+
                         if (schema.getSchemaKind() == api.schema.SchemaKind.CONTENT_TYPE) {
                             var contentType = <api.schema.content.ContentType>schema;
-                            new api.schema.content.GetContentTypeByNameRequest(contentType.getContentTypeName()).
+                            promiseCreateWizardPanel = new api.schema.content.GetContentTypeByNameRequest(contentType.getContentTypeName()).
                                 sendAndParse().then((contentType: api.schema.content.ContentType) => {
 
                                     tabMenuItem = new api.app.AppBarTabMenuItem(contentType.getName(), tabId, true);
@@ -104,10 +98,11 @@ module app {
                                         (wizard: app.wizard.ContentTypeWizardPanel) => {
                                             this.addWizardPanel(tabMenuItem, wizard);
                                         });
-                                }).then(removeViewTabMenuItem).done();
+                                });
                         }
                         else if (schema.getSchemaKind() == api.schema.SchemaKind.RELATIONSHIP_TYPE) {
                             var relationhipType = <api.schema.relationshiptype.RelationshipType>schema;
+                            promiseCreateWizardPanel =
                             new api.schema.relationshiptype.GetRelationshipTypeByNameRequest(relationhipType.getRelationshiptypeName()).
                                 sendAndParse().then((relationshipType: api.schema.relationshiptype.RelationshipType) => {
 
@@ -117,11 +112,11 @@ module app {
                                         (wizard: app.wizard.RelationshipTypeWizardPanel) => {
                                             this.addWizardPanel(tabMenuItem, wizard);
                                         });
-                                }).then(removeViewTabMenuItem).done();
+                                });
                         }
                         else if (schema.getSchemaKind() == api.schema.SchemaKind.MIXIN) {
                             var mixin = <api.schema.mixin.Mixin>schema;
-                            new api.schema.mixin.GetMixinByQualifiedNameRequest(mixin.getMixinName()).
+                            promiseCreateWizardPanel = new api.schema.mixin.GetMixinByQualifiedNameRequest(mixin.getMixinName()).
                                 sendAndParse().then((mixin: api.schema.mixin.Mixin)=> {
 
                                     tabMenuItem = new api.app.AppBarTabMenuItem(mixin.getDisplayName(), tabId, true);
@@ -129,10 +124,22 @@ module app {
                                     new app.wizard.MixinWizardPanel(tabId, mixin, (wizard: app.wizard.MixinWizardPanel) => {
                                         this.addWizardPanel(tabMenuItem, wizard);
                                     });
-                                }).then(removeViewTabMenuItem).done();
+                                });
                         }
                         else {
                             throw new Error("Unknown SchemaKind: " + schema.getSchemaKind())
+                        }
+
+                        if (promiseCreateWizardPanel) {
+                            promiseCreateWizardPanel.then(() => {
+                                    var viewTabId = api.app.AppBarTabId.forView(schema.getId());
+                                    var viewTabMenuItem = self.getAppBarTabMenu().getNavigationItemById(viewTabId);
+                                    if (viewTabMenuItem != null) {
+                                        self.removePanelByIndex(viewTabMenuItem.getIndex());
+                                    }
+                                }).
+                                catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
+                                done();
                         }
                     }
                 });

@@ -2,22 +2,21 @@ module api.content {
 
     export class ContentComboBox extends api.ui.selector.combobox.RichComboBox<api.content.ContentSummary> {
 
-        constructor(contentComboBoxBuilder: ContentComboBoxBuilder) {
-            var builder: api.ui.selector.combobox.RichComboBoxBuilder<api.content.ContentSummary> = new api.ui.selector.combobox.RichComboBoxBuilder<api.content.ContentSummary>();
-            builder
-                .setComboBoxName(contentComboBoxBuilder.name ? contentComboBoxBuilder.name : 'contentSelector')
-                .setLoader(contentComboBoxBuilder.loader ? contentComboBoxBuilder.loader : new ContentSummaryLoader())
+        constructor(builder: ContentComboBoxBuilder) {
+
+            var loader = builder.loader ? builder.loader : new ContentSummaryLoader();
+            loader.setAllowedContentTypes(builder.allowedContentTypes);
+
+            var richComboBoxBuilder: api.ui.selector.combobox.RichComboBoxBuilder<api.content.ContentSummary> = new api.ui.selector.combobox.RichComboBoxBuilder<api.content.ContentSummary>();
+            richComboBoxBuilder
+                .setComboBoxName(builder.name ? builder.name : 'contentSelector')
+                .setLoader(loader)
                 .setSelectedOptionsView(new ContentSelectedOptionsView())
-                .setMaximumOccurrences(contentComboBoxBuilder.maximumOccurrences)
+                .setMaximumOccurrences(builder.maximumOccurrences)
                 .setOptionDisplayValueViewer(new api.content.ContentSummaryViewer())
                 .setDelayedInputValueChangedHandling(500);
 
-            super(builder);
-
-            if (contentComboBoxBuilder.allowedContentTypes) {
-                var loader = <ContentSummaryLoader>this.getLoader();
-                loader.setAllowedContentTypes(contentComboBoxBuilder.allowedContentTypes);
-            }
+            super(richComboBoxBuilder);
         }
     }
 
@@ -57,7 +56,7 @@ module api.content {
 
         maximumOccurrences: number = 0;
 
-        loader: api.util.loader.BaseLoader<api.schema.SchemaJson, api.content.ContentSummary>;
+        loader: ContentSummaryLoader;
 
         allowedContentTypes: string[];
 
@@ -71,7 +70,7 @@ module api.content {
             return this;
         }
 
-        setLoader(loader: api.util.loader.BaseLoader<api.schema.SchemaJson, api.content.ContentSummary>): ContentComboBoxBuilder {
+        setLoader(loader: ContentSummaryLoader): ContentComboBoxBuilder {
             this.loader = loader;
             return this;
         }

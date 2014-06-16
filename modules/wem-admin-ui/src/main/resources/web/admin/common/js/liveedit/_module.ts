@@ -1,30 +1,32 @@
-///<reference path='PageComponentId.ts' />
-///<reference path='PageComponentIdMap.ts' />
-///<reference path='PageComponentIdMapResolver.ts' />
-
 ///<reference path='ItemType.ts' />
+///<reference path='CreateItemViewConfig.ts' />
 ///<reference path='ItemTypeConfig.ts' />
 ///<reference path='RegionItemType.ts' />
 ///<reference path='InitializeLiveEditEvent.ts' />
 ///<reference path='PageComponentItemType.ts' />
 ///<reference path='PageItemType.ts' />
 ///<reference path='ContentItemType.ts' />
+///<reference path='ItemViewId.ts' />
+///<reference path='ItemViewIdProducer.ts' />
+///<reference path='RepeatNextItemViewIdProducer.ts' />
 ///<reference path='ItemView.ts' />
+///<reference path='ItemViewAddedEvent.ts' />
+///<reference path='ItemViewRemovedEvent.ts' />
 ///<reference path='RegionView.ts' />
+///<reference path='RegionComponentViewer.ts' />
+///<reference path='RegionPlaceholder.ts' />
 ///<reference path='PageComponentView.ts' />
 ///<reference path='PageView.ts' />
 ///<reference path='ContentView.ts' />
 
-///<reference path='NewPageComponentIdMapEvent.ts' />
 ///<reference path='ImageOpenUploadDialogEvent.ts' />
 ///<reference path='ImageUploadedEvent.ts' />
 ///<reference path='SortableStartEvent.ts' />
 ///<reference path='SortableStopEvent.ts' />
-///<reference path='SortableUpdateEvent.ts' />
 ///<reference path='PageSelectEvent.ts' />
 ///<reference path='RegionSelectEvent.ts' />
 ///<reference path='PageComponentSelectEvent.ts' />
-///<reference path='PageComponentDeselectEvent.ts' />
+///<reference path='ItemViewDeselectEvent.ts' />
 ///<reference path='PageComponentAddedEvent.ts' />
 ///<reference path='PageComponentRemoveEvent.ts' />
 ///<reference path='PageComponentResetEvent.ts' />
@@ -32,11 +34,6 @@
 ///<reference path='PageComponentSetDescriptorEvent.ts' />
 ///<reference path='PageComponentLoadedEvent.ts' />
 ///<reference path='Position.ts' />
-///<reference path='PageComponentSelectComponentEvent.ts' />
+///<reference path='ItemViewSelectedEvent.ts' />
 ///<reference path='TextComponentSetTextEvent.ts' />
 ///<reference path='RegionEmptyEvent.ts' />
-
-///<reference path='PageItemViews.ts' />
-///<reference path='PageItemViewsParser.ts' />
-///<reference path='PageViewItemsParsedEvent.ts' />
-

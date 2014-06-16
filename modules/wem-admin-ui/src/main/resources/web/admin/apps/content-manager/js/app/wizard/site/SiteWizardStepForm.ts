@@ -3,6 +3,7 @@ module app.wizard.site {
     import SiteTemplate = api.content.site.template.SiteTemplate;
     import ContentType = api.schema.content.ContentType;
     import Site = api.content.site.Site;
+    import Module = api.module.Module;
 
     export class SiteWizardStepForm extends api.app.wizard.WizardStepForm {
 
@@ -41,7 +42,7 @@ module app.wizard.site {
             this.siteTemplateView.setValue(this.siteTemplate);
 
             return this.loadModules(site).
-                then((modules: api.module.Module[]): void => {
+                then((modules: Module[]): void => {
 
                     this.layoutModules(modules);
                 });
@@ -60,29 +61,24 @@ module app.wizard.site {
             return moduleConfigs;
         }
 
-        private loadModules(site: Site): Q.Promise<api.module.Module[]> {
+        private loadModules(site: Site): Q.Promise<Module[]> {
 
             var moduleRequestPromises = site.getModuleConfigs().map((moduleConfig: api.content.site.ModuleConfig) => {
                 return new api.module.GetModuleRequest(moduleConfig.getModuleKey()).sendAndParse();
             });
 
-            return Q.allSettled(moduleRequestPromises).then((results: Q.PromiseState<api.module.Module>[])=> {
-                var modules: api.module.Module[] = [];
-                results.forEach((result: Q.PromiseState<api.module.Module>)=> {
-                    if (result.state == "fulfilled") {
-                        modules.push(result.value);
-                    }
-                });
-                return modules;
+            return Q.allSettled(moduleRequestPromises).then((results: Q.PromiseState<Module>[])=> {
+                return results.filter((result: Q.PromiseState<Module>) => (result.state == "fulfilled")).
+                    map((result:Q.PromiseState<Module>) => result.value);
             });
         }
 
-        private layoutModules(modules: api.module.Module[]) {
+        private layoutModules(modules: Module[]) {
 
             this.removeExistingModuleViews();
             this.moduleViewsContainer.removeChildren();
 
-            modules.forEach((theModule: api.module.Module) => {
+            modules.forEach((theModule: Module) => {
                 if (theModule.getForm().getFormItems().length == 0) {
                     return;
                 }

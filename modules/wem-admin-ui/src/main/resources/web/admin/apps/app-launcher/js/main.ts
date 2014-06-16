@@ -17,16 +17,8 @@ function isUserLoggedIn(): boolean {
 function startApplication() {
     var userLoggedIn = isUserLoggedIn();
 
-    var appInfoPanel = new app.launcher.AppInfo();
-
     var applications:api.app.Application[] = app.launcher.Applications.getAllApps();
     var appSelector = new app.launcher.AppSelector(applications);
-    appSelector.onAppHighlighted((event: app.launcher.AppHighlightedEvent) => {
-        appInfoPanel.showAppInfo(event.getApplication());
-    });
-    appSelector.onAppUnhighlighted(() => {
-        appInfoPanel.hideAppInfo();
-    });
     appSelector.onAppSelected((event: app.launcher.AppSelectedEvent) => {
         appLauncher.loadApplication(event.getApplication());
     });
@@ -37,28 +29,25 @@ function startApplication() {
         addLink('About', 'https://enonic.com/en/home/enonic-cms');
 
     var loginForm = new app.login.LoginForm(new app.login.AuthenticatorImpl());
-    loginForm.setLicensedTo('Licensed to Enonic');
     loginForm.setUserStores(USERSTORES, USERSTORES[1]);
     loginForm.onUserAuthenticated((userName: string, userStore: app.login.UserStore) => {
         console.log('User logged in', userName, userStore);
         api.util.CookieHelper.setCookie('dummy.userIsLoggedIn', 'true');
-        loginForm.hide();
-        appSelector.show();
+        homeMainContainer.showAppSelector();
     });
 
     var homeMainContainer = new app.home.HomeMainContainerBuilder().
         setBackgroundImgUrl(api.util.getRestUri('ui/background.jpg')).
         setAppSelector(appSelector).
-        setAppInfo(appInfoPanel).
         setLinksContainer(linksContainer).
         setLoginForm(loginForm).
         build();
 
 
     if (userLoggedIn) {
-        loginForm.hide();
+        homeMainContainer.showAppSelector();
     } else {
-        appSelector.hide();
+        homeMainContainer.showLogin();
     }
 
     var appLauncher = new app.launcher.AppLauncher(homeMainContainer);

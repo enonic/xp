@@ -1,30 +1,19 @@
 module api.liveedit {
 
-    import ComponentPath = api.content.page.ComponentPath;
     import PageComponentView = api.liveedit.PageComponentView;
+    import PageComponent = api.content.page.PageComponent;
 
     export class PageComponentSelectEvent extends api.event.Event2 {
 
-        private path: ComponentPath;
+        private pageComponentView: PageComponentView<PageComponent>;
 
-        private pageItemView: PageComponentView;
-
-        constructor(path: ComponentPath, itemView: PageComponentView) {
+        constructor(pageComponentView: PageComponentView<PageComponent>) {
             super();
-            this.path = path;
-            this.pageItemView = itemView;
+            this.pageComponentView = pageComponentView;
         }
 
-        getPath(): ComponentPath {
-            return this.path;
-        }
-
-        getItemView(): PageComponentView {
-            return this.pageItemView;
-        }
-
-        isComponentEmpty(): boolean {
-            return this.pageItemView.isEmpty();
+        getPageComponentView(): PageComponentView<PageComponent> {
+            return this.pageComponentView;
         }
 
         static on(handler: (event: PageComponentSelectEvent) => void, contextWindow: Window = window) {

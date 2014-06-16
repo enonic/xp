@@ -9,7 +9,6 @@ import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.schema.content.ContentTypeFilter;
-import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 import static com.enonic.wem.api.content.site.Vendor.newVendor;
@@ -32,7 +31,6 @@ public class SiteTemplateTest
             modules( ModuleKeys.from( "com.enonic.intranet-1.0.0", "com.company.sampleModule-1.1.0", "com.company.theme.someTheme-1.4.1",
                                       "com.enonic.resolvers-1.0.0" ) ).
             contentTypeFilter( contentTypeFilter ).
-            rootContentType( ContentTypeName.from( "com.enonic.intranet" ) ).
             build();
 
         assertEquals( SiteTemplateKey.from( "Intranet-1.0.0" ), siteTemplate.getKey() );
@@ -43,7 +41,6 @@ public class SiteTemplateTest
         assertEquals( ModuleKeys.from( "com.enonic.intranet-1.0.0", "com.company.sampleModule-1.1.0", "com.company.theme.someTheme-1.4.1",
                                        "com.enonic.resolvers-1.0.0" ), siteTemplate.getModules() );
         assertEquals( contentTypeFilter, siteTemplate.getContentTypeFilter() );
-        assertEquals( ContentTypeName.from( "com.enonic.intranet" ), siteTemplate.getRootContentType() );
         assertEquals( "Enonic", siteTemplate.getVendor().getName() );
         assertEquals( "https://www.enonic.com", siteTemplate.getVendor().getUrl() );
     }

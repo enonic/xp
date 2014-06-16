@@ -1,16 +1,15 @@
 module api.liveedit.layout {
 
-    import ComponentPath = api.content.page.ComponentPath;
     import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
     import LayoutItemType = api.liveedit.layout.LayoutItemType;
     import PageItemType = api.liveedit.PageItemType;
 
-    export class LayoutPlaceholder extends api.dom.Element {
+    export class LayoutPlaceholder extends api.dom.DivEl {
 
         private comboBox: api.content.page.layout.LayoutDescriptorComboBox;
 
-        constructor(layoutView: LayoutView) {
-            super(new api.dom.ElementProperties().setTagName("div"));
+        constructor(layoutView: LayoutComponentView) {
+            super();
 
             var request = new api.content.page.layout.GetLayoutDescriptorsByModulesRequest(PageItemType.get().getSiteTemplate().getModules());
             var loader = new api.content.page.layout.LayoutDescriptorLoader(request);
@@ -20,9 +19,8 @@ module api.liveedit.layout {
             this.appendChild(this.comboBox);
 
             this.comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.page.layout.LayoutDescriptor>) => {
-                var componentPath = layoutView.getComponentPath();
                 var descriptor: api.content.page.Descriptor = event.getOption().displayValue;
-                new PageComponentSetDescriptorEvent(componentPath, descriptor, layoutView).fire();
+                new PageComponentSetDescriptorEvent(descriptor, layoutView).fire();
             });
         }
 

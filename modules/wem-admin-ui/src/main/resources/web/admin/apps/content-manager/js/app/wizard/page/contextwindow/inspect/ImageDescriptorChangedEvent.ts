@@ -1,17 +1,20 @@
 module app.wizard.page.contextwindow.inspect {
 
+    import ImageComponentView = api.liveedit.image.ImageComponentView;
+
     export class ImageDescriptorChangedEvent {
 
-        private componentPath: api.content.page.ComponentPath;
+        private imageView: ImageComponentView;
+
         private descriptor: api.content.page.image.ImageDescriptor;
 
-        constructor(componentPath: api.content.page.ComponentPath, descriptor: api.content.page.image.ImageDescriptor) {
-            this.componentPath = componentPath;
+        constructor(imageView: ImageComponentView, descriptor: api.content.page.image.ImageDescriptor) {
+            this.imageView = imageView;
             this.descriptor = descriptor;
         }
 
-        getComponentPath(): api.content.page.ComponentPath {
-            return this.componentPath;
+        getImageComponentView(): ImageComponentView {
+            return this.imageView;
         }
 
         getDescriptor(): api.content.page.image.ImageDescriptor {

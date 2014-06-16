@@ -1,5 +1,7 @@
 module api.content.page {
 
+    import Region = api.content.page.region.Region;
+
     export class AbstractRegions implements api.Equitable {
 
         private regionByName: {[s:string] : region.Region;} = {};
@@ -36,12 +38,7 @@ module api.content.page {
          *  Add component after precedingComponent in given region. Returns null if region was not found.
          *  Adds component first in region if preceding component is null.
          */
-        addComponentAfter(component: PageComponent, regionPath: RegionPath, precedingComponent: ComponentName): ComponentPath {
-
-            var region = this.getRegionByPath(regionPath);
-            if (region == null) {
-                return null;
-            }
+        addComponentAfter(component: PageComponent, region: Region, precedingComponent: PageComponent): ComponentPath {
 
             if (precedingComponent == null) {
                 region.addComponentAfter(component, null);
@@ -56,7 +53,7 @@ module api.content.page {
             return component.getPath();
         }
 
-        moveComponent(componentToMove: ComponentPath, toRegion: RegionPath, precedingComponent: ComponentName): ComponentPath {
+        moveComponent(componentToMove: PageComponent, toRegion: Region, precedingComponent: PageComponent): ComponentPath {
 
             var component = this.removeComponent(componentToMove);
             if (component) {
@@ -64,29 +61,11 @@ module api.content.page {
             } else {
                 return null;
             }
-
         }
 
-        removeComponent(componentPath: ComponentPath) {
-            var componentToBeRemoved = this.getComponent(componentPath);
-            var region = this.getRegionForComponent(componentPath);
-            return region.removeComponent(componentToBeRemoved);
-        }
-
-        hasComponent(name: ComponentName): boolean {
-
-            for (var key in this.regionByName) {
-                var region = this.regionByName[key];
-                if (region.hasComponentWithName(name)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        getRegionForComponent(path: ComponentPath): region.Region {
-
-            return this.getRegionByPath(path.getRegionPath());
+        removeComponent(pageComponent: PageComponent) {
+            var region = this.getRegionByPath(pageComponent.getParent());
+            return region.removeComponent(pageComponent);
         }
 
         getRegions(): region.Region[] {

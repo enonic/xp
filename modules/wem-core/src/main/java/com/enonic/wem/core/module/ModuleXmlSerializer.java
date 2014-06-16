@@ -7,9 +7,9 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.support.serializer.XmlParsingException;
+import com.enonic.wem.api.xml.XmlSerializers;
 import com.enonic.wem.core.schema.content.serializer.FormItemsXmlSerializer;
 import com.enonic.wem.core.support.util.JdomHelper;
 
@@ -80,14 +80,15 @@ public final class ModuleXmlSerializer
             vendorName( moduleEl.getChild( "vendor" ).getChildText( "name" ) ).
             vendorUrl( moduleEl.getChild( "vendor" ).getChildText( "url" ) );
 
-        Iterable<FormItem> formItems = new FormItemsXmlSerializer().parse( moduleEl.getChild( "form" ) );
-
+        // TODO temporary fix, see CMS-3614
+//        Iterable<FormItem> formItems = new FormItemsXmlSerializer().parse( moduleEl.getChild( "form" ) );
         Form.Builder form = Form.newForm();
+        XmlSerializers.form().parse( new JdomHelper().serialize( moduleEl.getChild( "form" ), true ) ).to( form );
 
-        for ( FormItem formItem : formItems )
-        {
-            form.addFormItem( formItem );
-        }
+//        for ( FormItem formItem : formItems )
+//        {
+//            form.addFormItem( formItem );
+//        }
 
         moduleBuilder.config( form.build() );
     }

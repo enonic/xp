@@ -28,7 +28,6 @@ public class NodeQuery
 
         private NodePath path;
 
-
         public Builder parent( final NodePath parent )
         {
             this.parent = parent;

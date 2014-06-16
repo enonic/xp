@@ -4,36 +4,8 @@ declare var CONFIG;
 
 declare var wemjq: JQueryStatic;
 
-declare var pageItemViews: api.liveedit.PageItemViews;
 
-api.liveedit.InitializeLiveEditEvent.on((event: api.liveedit.InitializeLiveEditEvent) => {
-
-    api.liveedit.PageItemType.get().setContent(event.getContent());
-    api.liveedit.PageItemType.get().setSiteTemplate(event.getSiteTemplate());
-
-    var body = api.dom.Body.getAndLoadExistingChildren();
-    var map = new api.liveedit.PageComponentIdMapResolver(body).resolve();
-    new api.liveedit.NewPageComponentIdMapEvent(map).fire();
-
-    pageItemViews = new api.liveedit.PageItemViewsParser(body).parse();
-    pageItemViews.initializeEmpties();
-    console.log("pageItemViews", pageItemViews);
-    var pageView = pageItemViews.getPageView();
-
-
-    api.liveedit.PageComponentLoadedEvent.on((event: api.liveedit.PageComponentLoadedEvent) => {
-        pageItemViews.addItemView(event.getItemView());
-        if (event.getItemView().getType() == api.liveedit.layout.LayoutItemType.get()) {
-            LiveEdit.component.dragdropsort.DragDropSort.createSortableLayout(event.getItemView());
-        }
-    });
-
-    new api.liveedit.PageViewItemsParsedEvent(pageView).fire();
-});
-
-function getComponentByPath(path: api.content.page.ComponentPath): api.liveedit.ItemView {
-    return pageItemViews.getItemViewByElement(wemjq('[data-live-edit-component="' + path.toString() + '"]').get(0));
-}
+new LiveEdit.LiveEditPage();
 
 wemjq(window).load(() => {
     new LiveEdit.component.mouseevent.Page();
@@ -44,11 +16,6 @@ wemjq(window).load(() => {
     new LiveEdit.component.mouseevent.Text();
     new LiveEdit.component.mouseevent.Content();
 
-    new LiveEdit.component.helper.ComponentResizeObserver();
-
-    new LiveEdit.ui.Highlighter();
-    new LiveEdit.ui.ToolTip();
-    new LiveEdit.ui.Cursor();
     new LiveEdit.ui.contextmenu.ContextMenu();
     new LiveEdit.ui.Shader();
     new LiveEdit.ui.Editor();

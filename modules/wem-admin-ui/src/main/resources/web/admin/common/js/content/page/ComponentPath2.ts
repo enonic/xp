@@ -114,7 +114,8 @@ module api.content.page {
         }
 
         public static fromRegionPathAndComponentIndex(regionPath: RegionPath2, componentIndex: number): ComponentPath2 {
-
+            api.util.assertNotNull(regionPath, "regionPath cannot be null");
+            api.util.assert(componentIndex >= 0, "componentIndex must be zero or more");
             var componentPathAsString = regionPath.toString() + "/" + ComponentPath2.COMPONENT_INDEX + "[" + componentIndex + "]";
             return ComponentPath2.fromString(componentPathAsString);
         }

@@ -115,6 +115,8 @@ module api.app.wizard {
                 this.setPersistedItem(this.persistedItem).
                     then(() => {
                         return this.postRenderExisting(this.persistedItem);
+                    }).catch((reason: any) => {
+                        api.DefaultErrorHandler.handle(reason);
                     }).finally(() => {
                         callback();
                     }).done();
@@ -125,6 +127,8 @@ module api.app.wizard {
                         return this.renderNew();
                     }).then(() => {
                         return this.postRenderNew();
+                    }).catch((reason: any) => {
+                        api.DefaultErrorHandler.handle(reason);
                     }).finally(()=> {
                         callback();
                     }).done();
@@ -376,7 +380,7 @@ module api.app.wizard {
 
         private updateSplitPanel() {
             if (wemjq(window).width() > this.splitPanelThreshold) {
-                this.splitPanel.setFirstPanelSize("30%");
+                this.splitPanel.setFirstPanelSize("39%");
             }
             this.splitPanel.distribute();
         }

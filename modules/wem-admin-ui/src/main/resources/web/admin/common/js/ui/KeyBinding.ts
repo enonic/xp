@@ -52,6 +52,16 @@ module api.ui {
         static newKeyBinding(combination: string): KeyBinding {
             return new KeyBinding(combination);
         }
+
+        static createMultiple(callback: (e: ExtendedKeyboardEvent, combo: string) => any, ...combinations:string[]) {
+            var bindings:KeyBinding[] = [];
+
+            combinations.forEach((combination:string) => {
+                bindings.push(new KeyBinding(combination, callback))
+            });
+
+            return bindings;
+        }
     }
 
 

@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 
 import com.enonic.wem.admin.rest.resource.BaseImageHelper;
 
-final class SchemaImageHelper
+public final class SchemaImageHelper
     extends BaseImageHelper
 {
     private final BufferedImage defaultMixinImage;

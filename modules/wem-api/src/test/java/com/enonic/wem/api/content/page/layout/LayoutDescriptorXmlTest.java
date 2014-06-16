@@ -39,14 +39,14 @@ public class LayoutDescriptorXmlTest
         layoutDescriptorXml.from( layoutDescriptor );
         final String result = XmlSerializers.layoutDescriptor().serialize( layoutDescriptorXml );
 
-        assertXml( "layout-component.xml", result );
+        assertXml( "layout-descriptor.xml", result );
     }
 
     @Test
     public void testTo()
         throws Exception
     {
-        final String xml = readFromFile( "layout-component.xml" );
+        final String xml = readFromFile( "layout-descriptor.xml" );
         final LayoutDescriptor.Builder builder = LayoutDescriptor.newLayoutDescriptor();
         builder.key( LayoutDescriptorKey.from( "module-1.0.0:mylayout" ) );
 

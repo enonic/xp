@@ -3,7 +3,6 @@ package com.enonic.wem.portal;
 import java.io.IOException;
 import java.util.Map;
 
-import javax.inject.Singleton;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Singleton;
 import com.sun.jersey.api.core.DefaultResourceConfig;
 import com.sun.jersey.api.core.ResourceConfig;
 import com.sun.jersey.spi.container.WebApplication;
@@ -19,16 +19,13 @@ import com.sun.jersey.spi.container.servlet.ServletContainer;
 import com.sun.jersey.spi.container.servlet.WebConfig;
 
 import com.enonic.wem.core.web.servlet.ServletRequestHolder;
-import com.enonic.wem.portal.content.ComponentResource;
-import com.enonic.wem.portal.content.ContentResource;
-import com.enonic.wem.portal.exception.mapper.DefaultExceptionMapper;
-import com.enonic.wem.portal.exception.mapper.PortalWebExceptionMapper;
-import com.enonic.wem.portal.exception.mapper.SourceExceptionMapper;
-import com.enonic.wem.portal.exception.mapper.WebApplicationExceptionMapper;
-import com.enonic.wem.portal.underscore.ImageByIdResource;
-import com.enonic.wem.portal.underscore.ImageResource;
-import com.enonic.wem.portal.underscore.PublicResource;
-import com.enonic.wem.portal.underscore.ServicesResource;
+import com.enonic.wem.portal.content.ComponentHandler;
+import com.enonic.wem.portal.content.ContentHandler;
+import com.enonic.wem.portal.exception.DefaultExceptionMapper;
+import com.enonic.wem.portal.underscore.ImageByIdHandler;
+import com.enonic.wem.portal.underscore.ImageByNameHandler;
+import com.enonic.wem.portal.underscore.PublicHandler;
+import com.enonic.wem.portal.underscore.ServiceHandler;
 
 @Singleton
 public final class PortalServlet
@@ -101,15 +98,12 @@ public final class PortalServlet
 
     private void configure()
     {
-        addSingleton( ImageResource.class );
-        addSingleton( ImageByIdResource.class );
-        addSingleton( PublicResource.class );
-        addSingleton( ContentResource.class );
-        addSingleton( ComponentResource.class );
-        addSingleton( ServicesResource.class );
-        addSingleton( SourceExceptionMapper.class );
-        addSingleton( PortalWebExceptionMapper.class );
+        addSingleton( ImageByIdHandler.class );
+        addSingleton( ImageByNameHandler.class );
+        addSingleton( PublicHandler.class );
+        addSingleton( ServiceHandler.class );
+        addSingleton( ContentHandler.class );
+        addSingleton( ComponentHandler.class );
         addSingleton( DefaultExceptionMapper.class );
-        addSingleton( WebApplicationExceptionMapper.class );
     }
 }

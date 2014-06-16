@@ -140,6 +140,30 @@ module api.ui.grid {
             this.slickGrid.setSelectedRows(rows);
         }
 
+        selectRow(row) {
+            // Prevent unnecessary render on the same row
+            if (this.getSelectedRows().length > 1
+                || (this.getSelectedRows().length < 2 && this.getSelectedRows().indexOf(row) < 0)) {
+                this.slickGrid.setSelectedRows([row]);
+            }
+        }
+
+        selectAll() {
+            var rows = [];
+            for (var i = 0; i < this.slickGrid.getDataLength(); i++) {
+                rows.push(i);
+            }
+            this.setSelectedRows(rows);
+        }
+
+        clearSelection() {
+            this.setSelectedRows([]);
+        }
+
+        isAllSelected(): boolean {
+            return this.slickGrid.getDataLength() === this.getSelectedRows().length;
+        }
+
         resetActiveCell() {
             if (this.slickGrid.getActiveCell()) {
                 this.slickGrid.resetActiveCell();
@@ -176,6 +200,10 @@ module api.ui.grid {
 
         subscribeOnClick(callback:(e, args) => void) {
             this.slickGrid.onClick.subscribe(callback);
+        }
+
+        subscribeOnDblClick(callback:(e, args) => void) {
+            this.slickGrid.onDblClick.subscribe(callback);
         }
     }
 }

@@ -2,7 +2,6 @@ module app.login {
 
     export class LoginForm extends api.dom.DivEl {
 
-        private licensedTo: api.dom.DivEl;
         private userStoresDropdown: api.ui.Dropdown;
         private userIdInput: api.ui.TextInput;
         private passwordInput: api.ui.PasswordInput;
@@ -19,8 +18,6 @@ module app.login {
             this.onUserAuthenticatedHandler = null;
 
             var formContainer = new api.dom.DivEl();
-            var title = new api.dom.H3El();
-            title.setText(_i18n('Login'));
             this.userStoresDropdown = new api.ui.Dropdown('userstore');
             this.userStoresDropdown.addClass('form-item');
             this.userIdInput = new api.ui.TextInput('form-item');
@@ -34,25 +31,24 @@ module app.login {
                 this.onInputTyped(event);
             });
 
-            this.loginButton = new api.ui.Button(_i18n('Log in'));
+            this.loginButton = new api.ui.Button(_i18n('Sign in'));
             this.loginButton.addClass('login-button').addClass('disabled');
             this.loginButton.onClicked((event: MouseEvent) => {
                 this.loginButtonClick();
             });
 
-            formContainer.appendChild(title);
-            formContainer.appendChild(this.userStoresDropdown);
+            var selectContainer = new api.dom.DivEl("select-container");
+            selectContainer.appendChild(this.userStoresDropdown);
+
+            formContainer.appendChild(selectContainer);
             formContainer.appendChild(this.userIdInput);
             formContainer.appendChild(this.passwordInput);
             formContainer.appendChild(this.loginButton);
             this.appendChild(formContainer);
 
-            this.licensedTo = new api.dom.DivEl('login-licensed-to');
-            this.appendChild(this.licensedTo);
-        }
-
-        setLicensedTo(value: string) {
-            this.licensedTo.getEl().setInnerHtml(value);
+            this.onShown((event) => {
+                this.userIdInput.giveFocus();
+            })
         }
 
         setUserStores(userStores: UserStore[], defaultUserStore?: UserStore) {
@@ -67,6 +63,10 @@ module app.login {
 
         onUserAuthenticated(handler: (userName: string, userStore: UserStore) => void) {
             this.onUserAuthenticatedHandler = handler;
+        }
+
+        hide() {
+            super.hide();
         }
 
         private loginButtonClick() {

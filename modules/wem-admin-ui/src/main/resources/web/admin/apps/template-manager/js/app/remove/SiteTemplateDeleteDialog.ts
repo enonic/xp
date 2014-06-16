@@ -17,7 +17,9 @@ module app.remove {
                     api.notify.showFeedback('Site Template \'' + respJson.result + '\' was deleted');
                     new api.content.site.template.SiteTemplateDeletedEvent(api.content.site.template.SiteTemplateKey.fromString(respJson.result)).fire();
                     this.close();
-                }).catch(() => {
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).finally(() => {
                     this.close();
                 }).done();
             });

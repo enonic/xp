@@ -49,7 +49,7 @@
       display: block;
       height: 20px;
       max-width: 300px;
-      margin-right: 30px;
+      float:left;
       .ellipsis();
     }
 
@@ -107,17 +107,26 @@
         max-width: 290px;
         margin: 0 20px 0 26px;
         vertical-align: middle;
+        float: left;
         .ellipsis();
       }
 
       button {
         float:right;
-        margin: 0 0 0 5px;
+        margin: -5px -5px -5px 5px;
         padding:0 5px;
         border:0;
         cursor:pointer;
         background-color: transparent;
-        font-size:16px;
+        font-size:20px;
+        height:30px;
+        width:30px;
+        .icon-close2();
+
+        &:hover {
+          background-color: @admin-red;
+        }
+
       }
 
       &.active {
@@ -126,7 +135,13 @@
 
       &:hover {
         background-color: @admin-blue;
-        color: white;
+        color: @admin-white;
+
+        button {
+          &:before {
+            color: @admin-white;
+          }
+        }
 
         img {
           background: transparent url("../images/pencil-FFFFFF.svg") 0 0 no-repeat;

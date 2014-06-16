@@ -5,24 +5,21 @@ module app.wizard.page {
     import LayoutComponent = api.content.page.layout.LayoutComponent;
     import LayoutRegions = api.content.page.layout.LayoutRegions;
     import LayoutDescriptor = api.content.page.layout.LayoutDescriptor;
-    import ComponentPath = api.content.page.ComponentPath;
     import ComponentPathRegionAndComponent = api.content.page.ComponentPathRegionAndComponent;
     import ComponentName = api.content.page.ComponentName;
     import PageRegions = api.content.page.PageRegions;
-    import ItemView = api.liveedit.ItemView;
+    import PageComponentView = api.liveedit.PageComponentView;
 
     export class PageComponentSetDescriptorCommand {
 
-        private itemView: ItemView;
+        private pageComponentView: PageComponentView<DescriptorBasedPageComponent>;
 
         private pageRegions: PageRegions;
 
         private descriptor: Descriptor;
 
-        private componentPath: ComponentPath;
-
-        setItemView(value: ItemView): PageComponentSetDescriptorCommand {
-            this.itemView = value;
+        setPageComponentView(value: PageComponentView<DescriptorBasedPageComponent>): PageComponentSetDescriptorCommand {
+            this.pageComponentView = value;
             return this;
         }
 
@@ -36,42 +33,33 @@ module app.wizard.page {
             return this;
         }
 
-        setComponentPath(value: ComponentPath): PageComponentSetDescriptorCommand {
-            this.componentPath = value;
-            return this;
-        }
-
-        execute(): ComponentPath {
-            api.util.assertNotNull(this.itemView, "itemView cannot be null");
+        execute(): void {
+            api.util.assertNotNull(this.pageComponentView, "itemView cannot be null");
             api.util.assertNotNull(this.pageRegions, "pageRegions cannot be null");
             api.util.assertNotNull(this.descriptor, "descriptor cannot be null");
-            api.util.assertNotNull(this.componentPath, "componentPath cannot be null");
 
-            var component: DescriptorBasedPageComponent = <DescriptorBasedPageComponent>this.pageRegions.getComponent(this.componentPath);
-            if (!component || !this.descriptor) {
-                return null;
+            var pageComponent = this.pageComponentView.getPageComponent();
+            if (!pageComponent || !this.descriptor) {
+                return;
             }
 
             new PageComponentNameChanger().
                 setPageRegions(this.pageRegions).
-                setComponentPath(this.componentPath).
-                setComponentView(this.itemView).
+                setComponentView(this.pageComponentView).
                 changeTo(this.descriptor.getName().toString());
 
-            var newPath = component.getPath();
+            var newPath = pageComponent.getPath();
             api.util.assertNotNull(newPath, "Did not expect new path for PageComponent to be null");
 
-            component.setDescriptor(this.descriptor.getKey());
+            pageComponent.setDescriptor(this.descriptor.getKey());
 
             var isLayoutDescriptor = api.ObjectHelper.iFrameSafeInstanceOf(this.descriptor, LayoutDescriptor);
 
             if (isLayoutDescriptor) {
                 var layoutDescriptor = <LayoutDescriptor> this.descriptor;
-                var layoutComponent = <LayoutComponent>component;
+                var layoutComponent = <LayoutComponent>pageComponent;
                 this.addLayoutRegions(layoutComponent, layoutDescriptor);
             }
-
-            return newPath;
         }
 
         private addLayoutRegions(layoutComponent: LayoutComponent, layoutDescriptor: LayoutDescriptor) {

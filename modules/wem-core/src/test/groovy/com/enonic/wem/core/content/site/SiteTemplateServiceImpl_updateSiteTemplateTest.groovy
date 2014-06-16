@@ -47,7 +47,6 @@ class SiteTemplateServiceImpl_updateSiteTemplateTest
             modules( moduleKeys ).
             description( "description" ).
             contentTypeFilter( filter ).
-            rootContentType( ContentTypeName.from( "document" ) ).
             addPageTemplate( pageTemplate );
         createSiteTemplate( siteTemplate );
         return siteTemplate;

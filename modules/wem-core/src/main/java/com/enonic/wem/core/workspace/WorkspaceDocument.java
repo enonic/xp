@@ -2,29 +2,34 @@ package com.enonic.wem.core.workspace;
 
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Workspace;
 
 public class WorkspaceDocument
 {
-    private EntityId entityId;
+    private final EntityId entityId;
 
-    private BlobKey blobKey;
+    private final BlobKey blobKey;
 
-    private NodePath path;
+    private final NodePath path;
 
-    private NodePath parentPath;
+    private final NodePath parentPath;
 
-    private Workspace workspace;
+    private final Workspace workspace;
+
+    private WorkspaceDocument( final Builder builder )
+    {
+        this.entityId = builder.entityId;
+        this.blobKey = builder.blobKey;
+        this.parentPath = builder.parentPath;
+        this.path = builder.path;
+        this.workspace = builder.workspace;
+    }
 
     public EntityId getEntityId()
     {
         return entityId;
-    }
-
-    public void setEntityId( final EntityId entityId )
-    {
-        this.entityId = entityId;
     }
 
     public BlobKey getBlobKey()
@@ -32,19 +37,9 @@ public class WorkspaceDocument
         return blobKey;
     }
 
-    public void setBlobKey( final BlobKey blobKey )
-    {
-        this.blobKey = blobKey;
-    }
-
     public NodePath getPath()
     {
         return path;
-    }
-
-    public void setPath( final NodePath path )
-    {
-        this.path = path;
     }
 
     public NodePath getParentPath()
@@ -52,18 +47,67 @@ public class WorkspaceDocument
         return parentPath;
     }
 
-    public void setParentPath( final NodePath parentPath )
+    public Workspace getWorkspace()
     {
-        this.parentPath = parentPath;
+        return workspace;
     }
 
-    public String getWorkspaceName()
+    public static Builder create()
     {
-        return workspace.getName();
+        return new Builder();
     }
 
-    public void setWorkspace( final Workspace workspace )
+
+    public static class Builder
     {
-        this.workspace = workspace;
+        private EntityId entityId;
+
+        private BlobKey blobKey;
+
+        private NodePath path;
+
+        private NodePath parentPath;
+
+        private Workspace workspace;
+
+
+        public Builder path( final NodePath path )
+        {
+            this.path = path;
+            return this;
+        }
+
+        public Builder parentPath( final NodePath parentPath )
+        {
+            this.parentPath = parentPath;
+            return this;
+        }
+
+        public Builder id( final EntityId id )
+        {
+            this.entityId = id;
+            return this;
+        }
+
+        public Builder workspace( final Workspace workspace )
+        {
+            this.workspace = workspace;
+            return this;
+        }
+
+        public Builder blobKey( final BlobKey blobKey )
+        {
+            this.blobKey = blobKey;
+            return this;
+        }
+
+
+        public WorkspaceDocument build()
+        {
+            return new WorkspaceDocument( this );
+        }
+
+
     }
+
 }

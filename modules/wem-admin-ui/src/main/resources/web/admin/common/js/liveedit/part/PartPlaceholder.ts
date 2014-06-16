@@ -1,32 +1,36 @@
 module api.liveedit.part {
 
-    import ComponentPath = api.content.page.ComponentPath;
+    import Descriptor = api.content.page.Descriptor;
+    import PartDescriptor = api.content.page.part.PartDescriptor;
+    import PartDescriptorLoader = api.content.page.part.PartDescriptorLoader;
+    import PartDescriptorComboBox = api.content.page.part.PartDescriptorComboBox;
+    import GetPartDescriptorsByModulesRequest = api.content.page.part.GetPartDescriptorsByModulesRequest;
     import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
     import PartItemType = api.liveedit.part.PartItemType;
     import PageItemType = api.liveedit.PageItemType;
+    import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
 
-    export class PartPlaceholder extends api.dom.Element {
+    export class PartPlaceholder extends api.dom.DivEl {
 
-        private comboBox: api.content.page.part.PartDescriptorComboBox;
+        private comboBox: PartDescriptorComboBox;
 
-        constructor(partView: PartView) {
-            super(new api.dom.ElementProperties().setTagName("div"));
+        constructor(partView: PartComponentView) {
+            super();
 
             wemjq(this.getHTMLElement()).on('click', 'input', (e) => {
                 wemjq(e.currentTarget).focus();
                 e.stopPropagation();
             });
-            var request = new api.content.page.part.GetPartDescriptorsByModulesRequest(PageItemType.get().getSiteTemplate().getModules());
-            var loader = new api.content.page.part.PartDescriptorLoader(request);
-            this.comboBox = new api.content.page.part.PartDescriptorComboBox(loader);
+            var request = new GetPartDescriptorsByModulesRequest(PageItemType.get().getSiteTemplate().getModules());
+            var loader = new PartDescriptorLoader(request);
+            this.comboBox = new PartDescriptorComboBox(loader);
             loader.load();
             this.comboBox.hide();
             this.appendChild(this.comboBox);
 
-            this.comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.page.part.PartDescriptor>) => {
-                var componentPath = partView.getComponentPath();
-                var descriptor: api.content.page.Descriptor = event.getOption().displayValue;
-                new PageComponentSetDescriptorEvent(componentPath, descriptor, partView).fire();
+            this.comboBox.onOptionSelected((event: OptionSelectedEvent<PartDescriptor>) => {
+                var descriptor: Descriptor = event.getOption().displayValue;
+                new PageComponentSetDescriptorEvent(descriptor, partView).fire();
             });
 
         }

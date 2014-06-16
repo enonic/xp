@@ -3,12 +3,14 @@
   height: 44px;
   padding: 6px;
   background-color:rgba(0,0,0,0.8);
+  background-position: top center;
   overflow: hidden;
+  background-size: cover;
   .box-sizing(border-box);
 
   .launcher-button {
     &:extend(.icon);
-    .icon-grid;
+    .icon-grid4;
 
     float: left;
     width: 24px;
@@ -20,14 +22,9 @@
     color: white;
     font-size:24px;
     cursor: pointer;
-  }
-
-  .appbar-separator {
-    float: left;
-    height: 32px;
-    width: 2px;
-    margin-left: 8px;
-    background-color: @admin-dark-gray;
+    &:hover {
+      color: rgba(255,255,255,0.5);
+    }
   }
 
   .home-button {
@@ -43,7 +40,7 @@
     cursor: pointer;
 
     &:hover {
-      background-color: #444;
+      color: rgba(255,255,255,0.5);
     }
   }
 

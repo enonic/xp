@@ -79,7 +79,7 @@ module api.content {
                 form: this.form.toJson(),
                 contentData: this.contentData.toJson(),
                 displayName: this.displayName,
-                updateAttachments: this.updateAttachments.toJson(),
+                updateAttachments: this.updateAttachments ? this.updateAttachments.toJson() : null,
                 thumbnail: this.thumbnail? this.thumbnail.toJson() : undefined
             };
         }

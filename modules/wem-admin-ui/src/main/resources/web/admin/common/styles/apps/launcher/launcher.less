@@ -1,5 +1,14 @@
+@mobile-threshold:540px;
+@tablet-threshold:1380px;
+
 html, body {
   height: 100%
+}
+
+.applications-frame {
+  overflow-y:hidden;
+  height:100%;
+  width:100%;
 }
 
 .home-main-container {
@@ -8,7 +17,7 @@ html, body {
   top: 0;
   right: 0;
   bottom: 0;
-  background-color: #141414;
+  background-color: rgba(0,0,0,0.35);
   background-repeat: no-repeat;
   background-position: center center;
 
@@ -48,55 +57,40 @@ html, body {
   /** Branding */
 
   .branding {
+    top:10%;
+    left:calc(~"50% - 92.5px");
     position: absolute;
-    top: 30px;
-    left: 35px;
-    background: transparent url(../images/wem-enonic-logo.png) 0 0 no-repeat;
-    height: 24px;
+    text-align: center;
+    @media only screen and (max-width : @mobile-threshold) {
+      position: relative;
+      padding-top:20px;
+      left:inherit;
+    }
+
+    h1 {
+      color: white;
+      font-size: 24px;
+      span:not(.version-info) {
+        color:@admin-red;
+        margin-right: 8px;
+      }
+    }
   }
 
   .installation-info {
-    margin-top: -6px;
-    padding: 0 0 0 181px;
-  }
-
-  .version-info {
-    color: #d2d6d6;
+    text-transform: uppercase;
+    font-size:14px;
   }
 
   /** Center */
 
   .center-panel {
-    @center-width: 775px;
-    width: @center-width;
+    width: 100%;
     position: absolute;
-    left: 50%;
-    margin-left: -(@center-width / 2);
-    background-color: transparent;
+    background-color: rgba(0,0,0,0.35);
     top: 0;
     bottom: 0;
 
-    /** Left column */
-    .left-column {
-      position: absolute;
-      width: 480px;
-      background: transparent;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      color: @admin-white !important;
-    }
-
-    /** Right column */
-    .right-column {
-      position: absolute;
-      width: 295px;
-      background: rgba(0, 0, 0, 0.2);
-      top: 0;
-      right: 0;
-      bottom: 0;
-      color: @admin-white !important;
-    }
   }
 
   .login-licensed-to {
@@ -108,24 +102,61 @@ html, body {
     position: absolute;
     width: 100%;
     text-align: center;
-    bottom: 30px;
+    bottom: 2%;
+    @media only screen and (max-width : @mobile-threshold) {
+      bottom: 0;
+      background-color: black;
+      padding:5px;
+    }
+
+  }
+
+  .return-button {
+    color: white;
+    font-size:24px;
+    height: 44px;
+    width: 44px;
+    background-color:@admin-red;
+    padding: 10px;
+    cursor:pointer;
+    position: absolute;
+    top:0;
+    left:0;
+    &:hover {
+      color: rgba(255,255,255,0.5);
+    }
+    .icon-close2();
   }
 
   /** Common */
 
   .login-form,
-  .app-selector,
+  .app-selector-container,
   .app-info {
     position: absolute;
-    top: 24%;
+    top: 30%;
+    @media only screen and (max-width : @mobile-threshold) {
+      position: relative;
+      top:inherit;
+      margin-top:30px;
+    }
   }
 
   .login-form,
   .app-info {
-    padding: 0 45px;
+  }
+
+  /** Login Form **/
+  .login-form {
+    width: 280px;
+    left: calc(~"50% - 140px");
   }
 
   /** App selector */
+
+  .app-selector-container {
+    width:100%;
+  }
 
   .app-selector {
     color: @admin-white;
@@ -171,29 +202,65 @@ html, body {
   }
 
   .app-tiles-placeholder {
-    width: 480px;
+    width: (125*3)-10px;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-flex-flow: row wrap;
+    flex-flow: row wrap;
+    -webkit-align-content: center;
+    align-content: center;
+    margin:0 auto;
+    @media only screen and (max-width : @mobile-threshold) {
+      width:(90*3)+20px;
+    }
+    @media only screen and (max-width : @tablet-threshold) {
+      width: (110*3)-10px;
+    }
     .noSelect();
 
     .app-tile {
       cursor: pointer;
       position: relative;
-      background-color: #1c59af;
       float: left;
-      width: 110px;
-      height: 100px;
+      width: 115px;
+      height: 115px;
       margin: 0 10px 10px 0;
+      &:nth-child(3n+3) {
+        margin:0 0 10px 0;
+      }
+      @media only screen and (max-width : @mobile-threshold) {
+        width:90px;
+        height:90px;
+      }
+      @media only screen and (max-width: @tablet-threshold) {
+        width: 100px;
+        height: 100px;
+      }
+
 
       a {
-        > .img-container {
+        > .icon-container {
           position: absolute;
           width: 100%;
           margin-top: 16px;
           text-align: center;
-        }
+          & > img {
+            width: 40px;
+            height: 40px;
+          }
 
-        > .img-container > img {
-          width: 40px;
-          height: 40px;
+          & > i {
+            font-size:55px;
+            color: white;
+            @media only screen and (max-width : @mobile-threshold) {
+              font-size:30px;
+            }
+            @media only screen and (max-width : @tablet-threshold) {
+              font-size:40px;
+            }
+          }
         }
 
         > .name-container {
@@ -216,7 +283,7 @@ html, body {
         }
       }
       &.app-tile-over {
-        background-color: #012056;
+        border-bottom:4px solid @admin-red;
         &.fullsize {
           > .img-container {
 
@@ -225,26 +292,23 @@ html, body {
       }
       &.fullsize {
         a {
-          > .img-container {
-            &:hover {
-              &:before {
-                display: block;
-                content: '';
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0,0,0,0.4);
+          > .icon-container {
+            margin-top: 0px;
+            & > img {
+              width: 65px;
+              height: 65px;
+              margin: 10px auto;
+              display:block;
+              border-radius:50%;
+              @media only screen and (max-width : @mobile-threshold) {
+                width:40px;
+                height:40px;
+              }
+              @media only screen and (max-width : @tablet-threshold) {
+                width: 55px;
+                height: 55px;
               }
             }
-            margin-top: 0px;
-          }
-          > .img-container > img {
-            width: 110px;
-            height: 100px;
-            display:block;
-          }
-          > .name-container {
-            display: none;
           }
         }
       }
@@ -256,42 +320,75 @@ html, body {
     font-family: @admin-font-family;
     font-size: 12px;
     box-sizing: border-box;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     border: 1px solid @admin-light-gray-bg;
     vertical-align: top;
-
     padding: 4px 9px;
     background: none @admin-white !important;
-    width: 200px;
+    width: 100%;
   }
 
-  .login-button {
+  .select-container {
+    border: 1px solid @admin-white;
+    margin-bottom: 10px;
+    .icon-arrow-down2();
+    &:before {
+      color:white;
+      position: absolute;
+      right: 5px;
+      font-size: 27px;
+      top: 2px;
+      pointer-events:none;
+    }
+  }
+
+  select.form-item {
+    margin-bottom:0;
+    color:rgba(0,0,0,0);
+    text-shadow: 0 0 0 white;
+    border: none;
+    box-shadow: none;
+    background: transparent !important;
+    background-image: none;
+    -webkit-appearance: none;
+    -moz-appearance:window;
+  }
+
+  .login-button, .logout-button {
     font-family: @admin-font-family;
     padding: 5px 20px 5px 20px;
-    background-color: @admin-blue-button;
-
     font-size: 12px;
     border-width: 1px 1px 1px 1px;
     border-style: solid;
-    border-color: @admin-blue-button;
-    color: white;
-
+    border-color: transparent;
+    background-color: transparent;
+    color:@admin-white;
     display: inline-block;
-    float: right;
-    margin-right: 9px;
-    margin-top: 1px;
+    width: 100%;
 
     &:hover,
     &:focus {
       cursor: pointer;
-      border-color: #5a94ee;
-      background-color: #5a94ee;
+      color: rgba(255,255,255,0.35);
     }
 
     &.disabled {
       cursor: default;
-      border-color: #88b2f3;
-      background-color: #5a94ee;
+      opacity: 0.5;
+    }
+  }
+
+  .logout-button {
+    width: 280px;
+    position: absolute;
+    bottom: 10%;
+    left: calc(~"50% - 140px");
+    background-color: @admin-red;
+    @media only screen and (max-width : @mobile-threshold) {
+      width: 100%;
+      bottom:0;
+      left:inherit;
+      box-shadow: 0px 10px 5px #000, 0px -10px 28px #000;
     }
   }
 

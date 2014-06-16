@@ -21,7 +21,7 @@
             },
             "workspace": {
                 "type": "string",
-                "store": "false",
+                "store": "true",
                 "index": "not_analyzed"
             },
             "path": {

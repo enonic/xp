@@ -10,6 +10,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 
 import com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter;
@@ -23,6 +24,9 @@ import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.site.SiteTemplate;
+import com.enonic.wem.api.content.site.SiteTemplateKey;
+import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.schema.content.ContentType;
@@ -53,6 +57,9 @@ public class ContentImageResource
     @Inject
     private ContentService contentService;
 
+    @Inject
+    private SiteTemplateService siteTemplateService;
+
     @GET
     @Path("{contentId}")
     public Response getContentImage( @PathParam("contentId") final String contentIdAsString,
@@ -61,6 +68,9 @@ public class ContentImageResource
                                      @QueryParam("crop") @DefaultValue("true") final boolean crop )
         throws Exception
     {
+        CacheControl cc = new CacheControl();
+        cc.setMaxAge( 180 );
+
         if ( contentIdAsString == null )
         {
             throw new WebApplicationException( Response.Status.BAD_REQUEST );
@@ -84,7 +94,7 @@ public class ContentImageResource
                 {
                     ImageFilter filter = crop ? ScaleSquareFilter : ScaleMax;
                     final BufferedImage thumbnailImage = helper.getImageFromBlob( blob, size, filter );
-                    return Response.ok( thumbnailImage, contentThumbnail.getMimeType() ).build();
+                    return Response.ok( thumbnailImage, contentThumbnail.getMimeType() ).cacheControl( cc ).build();
                 }
             }
         }
@@ -110,8 +120,21 @@ public class ContentImageResource
                         contentImage = helper.getImageFromBlob( blob, size, ScaleMax );
                     }
                     mimeType = attachment.getMimeType();
-                    return Response.ok( contentImage, mimeType ).build();
+                    return Response.ok( contentImage, mimeType ).cacheControl( cc ).build();
                 }
+            }
+        }
+
+        if ( contentType.isSite() && content.getSite() != null )
+        {
+            final SiteTemplateKey siteTemplateKey = content.getSite().getTemplate();
+            final SiteTemplate siteTemplate = siteTemplateService.getSiteTemplate( siteTemplateKey );
+            final Icon siteTemplateIcon = siteTemplate != null ? siteTemplate.getIcon() : null;
+            if ( siteTemplateIcon != null )
+            {
+                contentImage = helper.resizeImage( siteTemplateIcon.asInputStream(), size );
+                mimeType = siteTemplateIcon.getMimeType();
+                return Response.ok( contentImage, mimeType ).cacheControl( cc ).build();
             }
         }
 
@@ -124,7 +147,7 @@ public class ContentImageResource
         contentImage = helper.resizeImage( contentTypeIcon.asInputStream(), size );
         mimeType = contentTypeIcon.getMimeType();
 
-        return Response.ok( contentImage, mimeType ).build();
+        return Response.ok( contentImage, mimeType ).cacheControl( cc ).build();
     }
 
     private String getImageAttachmentName( final Content content )

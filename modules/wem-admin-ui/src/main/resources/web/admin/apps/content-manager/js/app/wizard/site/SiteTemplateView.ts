@@ -20,7 +20,7 @@ module app.wizard.site {
 
             this.setMainName(siteTemplate.getDisplayName()).
                 setSubName(siteTemplate.getDescription()).
-                setIconUrl(this.contentType.getIconUrl());
+                setIconUrl(this.siteTemplate.getIconUrl());
         }
     }
 

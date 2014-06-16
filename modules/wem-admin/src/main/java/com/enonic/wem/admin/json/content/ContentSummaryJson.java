@@ -30,7 +30,7 @@ public class ContentSummaryJson
         this.iconUrl = ContentImageIconUrlResolver.resolve( content );
         this.isSite = content.isSite();
         this.isPage = content.isPage();
-        this.deletable = true;
+        this.deletable = !content.hasChildren();
     }
 
     public String getIconUrl()

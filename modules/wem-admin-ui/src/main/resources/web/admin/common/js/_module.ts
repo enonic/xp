@@ -22,6 +22,8 @@
 ///<reference path='Cloneable.ts' />
 ///<reference path='ObjectHelper.ts' />
 ///<reference path='Name.ts' />
+///<reference path='Exception.ts' />
+///<reference path='DefaultErrorHandler.ts' />
 
 ///<reference path='util/_module.ts' />
 ///<reference path='util/loader/event/_module.ts' />
@@ -33,11 +35,11 @@
 
 ///<reference path='event/_module.ts' />
 
-///<reference path='rest/_module.ts' />
-
 ///<reference path='dom/_module.ts' />
 
 ///<reference path='notify/_module.ts' />
+
+///<reference path='rest/_module.ts' />
 
 ///<reference path='ui/_module.ts' />
 ///<reference path='ui/dialog/_module.ts' />
@@ -115,7 +117,7 @@
 ///<reference path='app/browse/_module.ts' />
 ///<reference path='app/browse/filter/_module.ts' />
 ///<reference path='app/browse/grid/_module.ts' />
-///<reference path='app/browse/grid2/_module.ts' />
+///<reference path='app/browse/treegrid/_module.ts' />
 ///<reference path='app/delete/_module.ts' />
 ///<reference path='app/view/_module.ts' />
 ///<reference path='app/wizard/_module.ts' />
