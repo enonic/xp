@@ -65,7 +65,15 @@ module api.liveedit {
 
         private pageComponent: PAGE_COMPONENT;
 
+        private itemViewAddedListeners: {(event: ItemViewAddedEvent) : void}[];
+
+        private itemViewRemovedListeners: {(event: ItemViewRemovedEvent) : void}[];
+
         constructor(builder: PageComponentViewBuilder<PAGE_COMPONENT>) {
+
+            this.itemViewAddedListeners = [];
+            this.itemViewRemovedListeners = [];
+
             super(new ItemViewBuilder().
                 setItemViewIdProducer(builder.itemViewProducer
                     ? builder.itemViewProducer
@@ -136,6 +144,12 @@ module api.liveedit {
             throw new Error("Must be implemented by inheritors");
         }
 
+        replaceWith(replacement: PageComponentView<PageComponent>) {
+            super.replaceWith(replacement);
+            this.notifyItemViewRemoved(new ItemViewRemovedEvent(this));
+            this.notifyItemViewAdded(new ItemViewAddedEvent(replacement));
+        }
+
         addPadding() {
             this.addClass("live-edit-component-padding");
         }
@@ -145,11 +159,23 @@ module api.liveedit {
         }
 
         onItemViewAdded(listener: (event: ItemViewAddedEvent) => void) {
-            // To be overridden by those that can contain other ItemView-s
+            this.itemViewAddedListeners.push(listener);
+        }
+
+        notifyItemViewAdded(event: ItemViewAddedEvent) {
+            this.itemViewAddedListeners.forEach((listener) => {
+                listener(event);
+            });
         }
 
         onItemViewRemoved(listener: (event: ItemViewRemovedEvent) => void) {
-            // To be overridden by those that can contain other ItemView-s
+            this.itemViewRemovedListeners.push(listener);
+        }
+
+        notifyItemViewRemoved(event: ItemViewRemovedEvent) {
+            this.itemViewRemovedListeners.forEach((listener) => {
+                listener(event);
+            });
         }
 
         static findParentRegionViewHTMLElement(htmlElement: HTMLElement): HTMLElement {

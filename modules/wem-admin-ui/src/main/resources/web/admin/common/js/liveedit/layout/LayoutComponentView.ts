@@ -23,14 +23,8 @@ module api.liveedit.layout {
 
         private regionViews: RegionView[];
 
-        private itemViewAddedListeners: {(event: ItemViewAddedEvent) : void}[];
-
-        private itemViewRemovedListeners: {(event: ItemViewRemovedEvent) : void}[];
-
         constructor(builder: LayoutComponentViewBuilder) {
             this.regionViews = [];
-            this.itemViewAddedListeners = [];
-            this.itemViewRemovedListeners = [];
             super(builder);
             this.layoutComponent = builder.pageComponent;
 
@@ -105,26 +99,6 @@ module api.liveedit.layout {
                 array = array.concat(itemsInRegion);
             });
             return array;
-        }
-
-        onItemViewAdded(listener: (event: ItemViewAddedEvent) => void) {
-            this.itemViewAddedListeners.push(listener);
-        }
-
-        private notifyItemViewAdded(event: ItemViewAddedEvent) {
-            this.itemViewAddedListeners.forEach((listener) => {
-                listener(event);
-            });
-        }
-
-        onItemViewRemoved(listener: (event: ItemViewRemovedEvent) => void) {
-            this.itemViewRemovedListeners.push(listener);
-        }
-
-        private notifyItemViewRemoved(event: ItemViewRemovedEvent) {
-            this.itemViewRemovedListeners.forEach((listener) => {
-                listener(event);
-            });
         }
 
         static getClosestParentLayoutComponentView(itemView: ItemView): LayoutComponentView {
