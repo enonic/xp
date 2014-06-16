@@ -163,11 +163,11 @@ public class ContentServiceImpl
         params.getContentId();
 
         return PushContentCommand.create().
-            contentId( params.getContentId() ).
-            target( params.getTarget() ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
+            contentId( params.getContentId() ).
+            target( params.getTarget() ).
             context( context ).
             build().
             execute();
@@ -208,12 +208,10 @@ public class ContentServiceImpl
     public ContentCompareResult compare( final CompareContentParams params, final Context context )
     {
         return CompareContentCommand.create().
+            nodeService( this.nodeService ).
             context( context ).
             contentId( params.getContentId() ).
             target( params.getTarget() ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
             build().
             execute();
     }
