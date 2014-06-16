@@ -2,7 +2,6 @@ module api.liveedit {
 
     import Event2 = api.event.Event2;
     import RegionPath = api.content.page.RegionPath;
-    import ComponentPath = api.content.page.ComponentPath;
     import PageComponentType = api.content.page.PageComponentType;
     import PageComponent = api.content.page.PageComponent;
 
