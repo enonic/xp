@@ -6,7 +6,7 @@ module api.content.page.region {
 
         private pageComponents: api.content.page.PageComponent[] = [];
 
-        private parent: api.content.page.ComponentPath;
+        private parent: api.content.page.layout.LayoutComponent;
 
         constructor(builder: RegionBuilder) {
             this.name = builder.name;
@@ -18,19 +18,16 @@ module api.content.page.region {
             return this.name;
         }
 
-        setParent(path: api.content.page.ComponentPath) {
-            this.parent = path;
-            this.pageComponents.forEach((component: api.content.page.PageComponent) => {
-                component.setParent(this.getPath());
-            });
-        }
-
-        getParent(): api.content.page.ComponentPath {
+        getParent(): api.content.page.layout.LayoutComponent {
             return this.parent;
         }
 
         getPath(): api.content.page.RegionPath {
-            return new api.content.page.RegionPath(this.parent, this.name);
+            var parentPath = null;
+            if (this.parent) {
+                parentPath = this.parent.getPath();
+            }
+            return new api.content.page.RegionPath(parentPath, this.name);
         }
 
         ensureUniqueComponentName(wantedName: ComponentName): ComponentName {
@@ -60,18 +57,13 @@ module api.content.page.region {
             return count;
         }
 
-        duplicateComponent(name: ComponentName): PageComponent {
+        duplicateComponent(source: PageComponent): PageComponent {
 
-            var existing = this.getComponentByName(name);
-            if (!existing) {
-                return null;
-            }
+            var duplicateName = this.resolveNameOfDuplicatedComponent(source.getName());
 
-            var duplicateName = this.resolveNameOfDuplicatedComponent(existing.getName());
-
-            var duplicatedComponent = existing.clone();
+            var duplicatedComponent = source.clone();
             duplicatedComponent.setName(duplicateName);
-            this.addComponentAfter(duplicatedComponent, existing);
+            this.addComponentAfter(duplicatedComponent, source);
 
             return duplicatedComponent;
         }
@@ -96,11 +88,15 @@ module api.content.page.region {
             return possibleNewName;
         }
 
+        addComponent(pageComponent: PageComponent) {
+            this.pageComponents.push(pageComponent);
+            pageComponent.setParent(this);
+        }
+
         /*
          *  Add component after target component. Component will only be added if target component is found.
-         *  Returns the index of the added component, -1 if target component was not found.
          */
-        addComponentAfter(component: api.content.page.PageComponent, precedingComponent: PageComponent): number {
+        addComponentAfter(component: api.content.page.PageComponent, precedingComponent: PageComponent) {
 
             api.util.assert(!this.hasComponentWithName(component.getName()),
                     "Component already added to region [" + this.name + "]: " + component.getName().toString());
@@ -114,16 +110,13 @@ module api.content.page.region {
                 }
             }
 
-            component.setParent(this.getPath());
+            component.setParent(this);
 
             var index = 0;
             if (precedingIndex > -1) {
                 index = precedingIndex + 1;
             }
             this.pageComponents.splice(index, 0, component);
-            //console.debug("Region[" + this.getPath().toString() + "].addComponentAfter() addded [" + component.getPath().toString() +
-            //              "] to index: " + index);
-            return index;
         }
 
         removeComponent(component: api.content.page.PageComponent): api.content.page.PageComponent {
@@ -132,9 +125,11 @@ module api.content.page.region {
             }
 
             var componentIndex = this.getComponentIndex(component);
+            if (componentIndex == -1) {
+                throw new Error("PageComponent [" + component.getPath().toString() + "] to remove does not exist in region: " +
+                                this.getPath().toString());
+            }
             this.pageComponents.splice(componentIndex, 1);
-            //console.debug("Region[" + this.getPath().toString() + "].removeComponent() removed [" + component.getPath().toString() +
-            //              "] from index: " + componentIndex);
             return component;
         }
 
@@ -205,10 +200,6 @@ module api.content.page.region {
                 return false;
             }
 
-            if (!api.ObjectHelper.equals(this.parent, other.parent)) {
-                return false;
-            }
-
             if (!api.ObjectHelper.arrayEquals(this.pageComponents, other.pageComponents)) {
                 return false;
             }
@@ -227,7 +218,7 @@ module api.content.page.region {
 
         pageComponents: api.content.page.PageComponent[] = [];
 
-        parent: api.content.page.ComponentPath;
+        parent: api.content.page.layout.LayoutComponent;
 
         constructor(source?: Region) {
             if (source) {
@@ -244,7 +235,7 @@ module api.content.page.region {
             return this;
         }
 
-        public setParent(value: api.content.page.ComponentPath): RegionBuilder {
+        public setParent(value: api.content.page.layout.LayoutComponent): RegionBuilder {
             this.parent = value;
             return this;
         }

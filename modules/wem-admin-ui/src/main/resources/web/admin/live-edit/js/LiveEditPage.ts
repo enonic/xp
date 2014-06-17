@@ -182,20 +182,20 @@ module LiveEdit {
             pageComponentView.select();
         }
 
-        movePageComponent(pageComponent: PageComponentView<PageComponent>, regionView: RegionView,
+        movePageComponent(pageComponentView: PageComponentView<PageComponent>, regionView: RegionView,
                           precedingComponentView: PageComponentView<PageComponent>) {
 
             var precedingComponent: PageComponent = null;
             if (precedingComponentView) {
                 precedingComponent = precedingComponentView.getPageComponent();
             }
-            this.pageRegions.moveComponent(pageComponent.getPageComponent(), regionView.getRegion(), precedingComponent);
+            pageComponentView.getPageComponent().moveToRegion(regionView.getRegion(), precedingComponent);
         }
 
         duplicatePageComponent(pageComponentView: PageComponentView<PageComponent>) {
 
             var origin = pageComponentView.getPageComponent();
-            var duplicatedPageComponent = this.pageRegions.duplicateComponent(origin.getPath());
+            var duplicatedPageComponent = origin.duplicateComponent();
             var duplicatedView = pageComponentView.duplicate(duplicatedPageComponent);
             new PageComponentDuplicateEvent(pageComponentView, duplicatedView).fire();
             duplicatedView.select();
@@ -219,7 +219,7 @@ module LiveEdit {
         createComponent(region: Region, type: PageComponentType, precedingComponentView: PageComponentView<PageComponent>): PageComponent {
 
             var wantedName = api.util.capitalize(api.util.removeInvalidChars(type.getShortName()));
-            var componentName = this.pageRegions.ensureUniqueComponentName(region.getPath(), new ComponentName(wantedName));
+            var componentName = region.ensureUniqueComponentName(new ComponentName(wantedName));
 
             var builder = type.newComponentBuilder();
             builder.setName(componentName);
@@ -232,7 +232,7 @@ module LiveEdit {
                 precedingPageComponent = precedingComponentView.getPageComponent();
             }
             var component = builder.build();
-            this.pageRegions.addComponentAfter(component, region, precedingPageComponent);
+            region.addComponentAfter(component, precedingPageComponent);
             return component;
         }
     }

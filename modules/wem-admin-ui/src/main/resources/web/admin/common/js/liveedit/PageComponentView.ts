@@ -3,6 +3,7 @@ module api.liveedit {
     import Content = api.content.Content;
     import PageComponent = api.content.page.PageComponent;
     import ComponentPath = api.content.page.ComponentPath;
+    import ComponentName = api.content.page.ComponentName;
 
     export class PageComponentViewBuilder<PAGE_COMPONENT extends PageComponent> {
 
@@ -117,8 +118,7 @@ module api.liveedit {
 
         getName(): string {
 
-            var path = this.getComponentPath();
-            return path ? path.getComponentName().toString() : '[No Name]';
+            return this.pageComponent.getName() ? this.pageComponent.getName().toString() : null;
         }
 
         getParentItemView(): RegionView {

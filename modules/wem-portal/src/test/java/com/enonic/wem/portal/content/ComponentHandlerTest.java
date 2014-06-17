@@ -58,7 +58,7 @@ public class ComponentHandlerTest
             build();
         when( this.renderer.render( any(), any() ) ).thenReturn( result );
 
-        final ClientResponse response = executeGet( "/live/site/somepath/content/_/component/main-region/mypart" );
+        final ClientResponse response = executeGet( "/live/site/somepath/content/_/component/main-region/0" );
 
         final ArgumentCaptor<JsContext> jsContext = ArgumentCaptor.forClass( JsContext.class );
         final ArgumentCaptor<Renderable> renderable = ArgumentCaptor.forClass( Renderable.class );
@@ -75,7 +75,7 @@ public class ComponentHandlerTest
     {
         setupNonPageContent();
 
-        executeGet( "/live/site/somepath/content/_/component/main-region/mypart" );
+        executeGet( "/live/site/somepath/content/_/component/main-region/0" );
     }
 
     @Test
@@ -85,7 +85,7 @@ public class ComponentHandlerTest
         setupContentAndSite();
         setupTemplates();
 
-        final ClientResponse response = executeGet( "/live/site/somepath/content/_/component/main-region/missingcomponent" );
+        final ClientResponse response = executeGet( "/live/site/somepath/content/_/component/main-region/666" );
         assertEquals( 404, response.getStatus() );
     }
 }

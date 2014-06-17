@@ -1,10 +1,12 @@
 module api.content.page {
 
+    import Region = api.content.page.region.Region;
+
     export class PageComponent implements api.Equitable, api.Cloneable {
 
         private name: ComponentName;
 
-        private parent: RegionPath;
+        private parent: Region;
 
         constructor(builder?: PageComponentBuilder<any>) {
             if (builder != undefined) {
@@ -13,19 +15,19 @@ module api.content.page {
             }
         }
 
-        setParent(path: RegionPath) {
-            this.parent = path;
+        setParent(parent: Region) {
+            this.parent = parent;
         }
 
         getPath(): ComponentPath {
-            return ComponentPath.fromRegionPathAndComponentName(this.parent, this.name);
+            return ComponentPath.fromRegionPathAndComponentIndex(this.parent.getPath(), this.parent.getComponentIndex(this));
         }
 
-        getName(): api.content.page.ComponentName {
+        getName(): ComponentName {
             return this.name;
         }
 
-        setName(name: api.content.page.ComponentName) {
+        setName(name: ComponentName) {
             this.name = name;
         }
 
@@ -33,8 +35,28 @@ module api.content.page {
 
         }
 
-        getParent(): RegionPath {
+        getParent(): Region {
             return this.parent;
+        }
+
+        duplicateComponent(): PageComponent {
+
+            var region = this.getParent();
+            return region.duplicateComponent(this);
+        }
+
+        moveToRegion(otherRegion: Region, precedingComponent: PageComponent) {
+
+            this.removeFromParent();
+            otherRegion.addComponentAfter(this, precedingComponent);
+        }
+
+        removeFromParent() {
+            this.parent.removeComponent(this);
+        }
+
+        ensureUniqueComponentName(wantedName: ComponentName): ComponentName {
+            return this.parent.ensureUniqueComponentName(wantedName);
         }
 
         toJson(): api.content.page.PageComponentTypeWrapperJson {
@@ -60,10 +82,6 @@ module api.content.page {
                 return false;
             }
 
-            if (!api.ObjectHelper.equals(this.parent, other.parent)) {
-                return false;
-            }
-
             return true;
         }
 
@@ -74,9 +92,9 @@ module api.content.page {
 
     export class PageComponentBuilder<COMPONENT extends PageComponent> {
 
-        name: api.content.page.ComponentName;
+        name: ComponentName;
 
-        parent: RegionPath;
+        parent: Region;
 
         constructor(source?: PageComponent) {
             if (source) {
@@ -85,12 +103,12 @@ module api.content.page {
             }
         }
 
-        public setName(value: api.content.page.ComponentName): PageComponentBuilder<COMPONENT> {
+        public setName(value: ComponentName): PageComponentBuilder<COMPONENT> {
             this.name = value;
             return this;
         }
 
-        public setParent(value: api.content.page.RegionPath): PageComponentBuilder<COMPONENT> {
+        public setParent(value: Region): PageComponentBuilder<COMPONENT> {
             this.parent = value;
             return this;
         }

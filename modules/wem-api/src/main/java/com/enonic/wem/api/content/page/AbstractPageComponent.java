@@ -3,6 +3,7 @@ package com.enonic.wem.api.content.page;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.rendering.Component;
 
 public abstract class AbstractPageComponent
@@ -10,7 +11,7 @@ public abstract class AbstractPageComponent
 {
     private ComponentName name;
 
-    private ComponentPath path;
+    private Region parent = null;
 
     protected AbstractPageComponent( final Builder properties )
     {
@@ -28,12 +29,13 @@ public abstract class AbstractPageComponent
 
     public ComponentPath getPath()
     {
-        return path;
+        return ComponentPath.from( parent.getRegionPath(), parent.getIndex( this ) );
     }
 
-    public void setPath( final ComponentPath path )
+    @Override
+    public void setParent( final Region region )
     {
-        this.path = path;
+        this.parent = region;
     }
 
     public static class Builder

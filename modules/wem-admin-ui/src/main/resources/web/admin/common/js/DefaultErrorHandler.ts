@@ -11,7 +11,7 @@ module api {
             else if (api.ObjectHelper.iFrameSafeInstanceOf(error, Exception)) {
                 var message = error.getMessage();
 
-                switch (error.getType()){
+                switch (error.getType()) {
                 case ExceptionType.ERROR:
                     console.error(message);
                     api.notify.showError(message);
@@ -28,6 +28,7 @@ module api {
             } else {
                 console.error(error);
                 api.notify.showError(error.toString());
+                throw error;
             }
 
         }

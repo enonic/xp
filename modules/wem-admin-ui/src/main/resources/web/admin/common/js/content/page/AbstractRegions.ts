@@ -17,57 +17,6 @@ module api.content.page {
             });
         }
 
-        setParent(path: ComponentPath) {
-
-            this.getRegions().forEach((region: api.content.page.region.Region) => {
-                region.setParent(path);
-            });
-        }
-
-        duplicateComponent(path: ComponentPath): PageComponent {
-
-            var region = this.getRegionByPath(path.getRegionPath());
-            if (!region) {
-                return null;
-            }
-
-            return region.duplicateComponent(path.getComponentName());
-        }
-
-        /*
-         *  Add component after precedingComponent in given region. Returns null if region was not found.
-         *  Adds component first in region if preceding component is null.
-         */
-        addComponentAfter(component: PageComponent, region: Region, precedingComponent: PageComponent): ComponentPath {
-
-            if (precedingComponent == null) {
-                region.addComponentAfter(component, null);
-            }
-            else {
-                var index = region.addComponentAfter(component, precedingComponent);
-                if (index == -1) {
-                    return null;
-                }
-            }
-
-            return component.getPath();
-        }
-
-        moveComponent(componentToMove: PageComponent, toRegion: Region, precedingComponent: PageComponent): ComponentPath {
-
-            var component = this.removeComponent(componentToMove);
-            if (component) {
-                return this.addComponentAfter(component, toRegion, precedingComponent);
-            } else {
-                return null;
-            }
-        }
-
-        removeComponent(pageComponent: PageComponent) {
-            var region = this.getRegionByPath(pageComponent.getParent());
-            return region.removeComponent(pageComponent);
-        }
-
         getRegions(): region.Region[] {
             var regions = [];
             for (var i in this.regionByName) {
@@ -123,7 +72,7 @@ module api.content.page {
 
             var first: ComponentPathRegionAndComponent = path.getFirstLevel();
             var region = this.getRegionByName(first.getRegionName());
-            var component = region.getComponentByName(first.getComponentName());
+            var component = region.getComponentByIndex(first.getComponentIndex());
 
             if (path.numberOfLevels() == 1) {
                 return component;
@@ -136,12 +85,6 @@ module api.content.page {
                 var layoutComponent = <api.content.page.layout.LayoutComponent> component;
                 return layoutComponent.getComponent(path.removeFirstLevel());
             }
-        }
-
-        ensureUniqueComponentName(inRegion: RegionPath, wantedName: ComponentName): ComponentName {
-
-            var region = this.getRegionByPath(inRegion);
-            return region.ensureUniqueComponentName(wantedName);
         }
 
         public toJson(): region.RegionJson[] {

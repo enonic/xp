@@ -33,11 +33,9 @@ module app.wizard.page {
 
             var pageComponent = this.pageComponentView.getPageComponent();
 
-            var newComponentName = this.pageRegions.ensureUniqueComponentName(pageComponent.getPath().getRegionPath(),
-                new ComponentName(api.util.removeInvalidChars(api.util.capitalizeAll(name))));
-
+            var componentName = new ComponentName(api.util.removeInvalidChars(api.util.capitalizeAll(name)));
+            var newComponentName = pageComponent.ensureUniqueComponentName(componentName);
             pageComponent.setName(newComponentName);
-            this.pageComponentView.getEl().setData("live-edit-component", pageComponent.getPath().toString());
         }
     }
 }

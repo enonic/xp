@@ -1,5 +1,6 @@
 package com.enonic.wem.api.content.page;
 
+import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.rendering.Renderable;
 
 public interface PageComponent
@@ -11,5 +12,5 @@ public interface PageComponent
 
     ComponentPath getPath();
 
-    void setPath( ComponentPath componentPath );
+    void setParent( Region region );
 }

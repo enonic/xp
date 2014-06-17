@@ -1,5 +1,7 @@
 module api.content.page.layout {
 
+    import Region = api.content.page.region.Region;
+
     export class LayoutComponent extends api.content.page.DescriptorBasedPageComponent implements api.Equitable, api.Cloneable {
 
         private regions: LayoutRegions;
@@ -23,12 +25,6 @@ module api.content.page.layout {
 
         public setLayoutRegions(value: LayoutRegions) {
             this.regions = value;
-        }
-
-        setName(name: api.content.page.ComponentName) {
-            super.setName(name);
-
-            this.regions.setParent(this.getPath());
         }
 
         public toJson(): api.content.page.PageComponentTypeWrapperJson {
@@ -77,7 +73,7 @@ module api.content.page.layout {
             }
         }
 
-        public fromJson(json: LayoutComponentJson, regionPath: RegionPath): LayoutComponentBuilder {
+        public fromJson(json: LayoutComponentJson, region: Region): LayoutComponent {
 
             if (json.descriptor) {
                 this.setDescriptor(api.content.page.DescriptorKey.fromString(json.descriptor));
@@ -85,12 +81,12 @@ module api.content.page.layout {
             var componentName = new api.content.page.ComponentName(json.name);
             this.setName(componentName);
             this.setConfig(api.data.DataFactory.createRootDataSet(json.config));
-            this.setParent(regionPath);
+            this.setParent(region);
 
-            var componentPath = ComponentPath.fromRegionPathAndComponentName(regionPath, componentName);
-
-            this.setRegions(json.regions != null ? new LayoutRegionsBuilder().fromJson(json.regions, componentPath).build() : null);
-            return this;
+            var layoutComponent = this.build();
+            var layoutRegions = new layout.LayoutRegionsBuilder().fromJson(json.regions, layoutComponent).build();
+            layoutComponent.setLayoutRegions(layoutRegions);
+            return layoutComponent;
         }
 
         public setRegions(value: LayoutRegions): LayoutComponentBuilder {
