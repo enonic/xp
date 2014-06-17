@@ -1,14 +1,14 @@
 module app.wizard.action {
 
-    export class ShowLiveEditAction extends api.ui.Action {
+    export class ShowSplitEditAction extends api.ui.Action {
 
         constructor(wizard: app.wizard.ContentWizardPanel) {
-            super("Live");
+            super("Split");
 
             this.setEnabled(false);
             this.onExecuted(() => {
-                new ShowLiveEditEvent().fire();
-                wizard.showLiveEdit();
+                new ShowSplitEditEvent().fire();
+                wizard.showSplitEdit();
 
             });
         }

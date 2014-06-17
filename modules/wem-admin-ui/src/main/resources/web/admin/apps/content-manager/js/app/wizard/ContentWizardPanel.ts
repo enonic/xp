@@ -56,6 +56,8 @@ module app.wizard {
 
         private showLiveEditAction: api.ui.Action;
 
+        private showSplitEditAction: api.ui.Action;
+
         private persistAsDraft: boolean;
 
         private createSite: boolean;
@@ -107,11 +109,13 @@ module app.wizard {
                 publishAction: actions.getPublishAction(),
                 previewAction: actions.getPreviewAction(),
                 showLiveEditAction: actions.getShowLiveEditAction(),
-                showFormAction: actions.getShowFormAction()
+                showFormAction: actions.getShowFormAction(),
+                showSplitEditAction: actions.getShowSplitEditAction()
             });
 
             this.contextWindowToggler = mainToolbar.getContextWindowToggler();
             this.showLiveEditAction = actions.getShowLiveEditAction();
+            this.showSplitEditAction = actions.getShowSplitEditAction();
             this.showLiveEditAction.setEnabled(false);
 
             if (this.parentContent) {
@@ -190,6 +194,10 @@ module app.wizard {
                 this.constructing = false;
 
                 callback(this);
+            });
+
+            ResponsiveManager.onAvailableSizeChanged(this, () => {
+               console.log("size changed", arguments);
             });
         }
 
@@ -303,9 +311,9 @@ module app.wizard {
 
             new IsRenderableRequest(content.getContentId()).sendAndParse().
                 then((renderable: boolean): void => {
-
                     this.showLiveEditAction.setVisible(renderable);
                     this.showLiveEditAction.setEnabled(renderable);
+                    this.showSplitEditAction.setEnabled(renderable);
                     this.previewAction.setVisible(renderable);
                     this.contextWindowToggler.setVisible(renderable);
 
@@ -582,13 +590,19 @@ module app.wizard {
 
         showLiveEdit() {
             this.getSplitPanel().addClass("toggle-live");
-            this.getSplitPanel().removeClass("toggle-form prerendered");
+            this.getSplitPanel().removeClass("toggle-form toggle-split prerendered");
+            ResponsiveManager.fireResizeEvent();
+        }
+
+        showSplitEdit() {
+            this.getSplitPanel().addClass("toggle-split");
+            this.getSplitPanel().removeClass("toggle-live toggle-form prerendered");
             ResponsiveManager.fireResizeEvent();
         }
 
         showWizard() {
             this.getSplitPanel().addClass("toggle-form");
-            this.getSplitPanel().removeClass("toggle-live prerendered");
+            this.getSplitPanel().removeClass("toggle-live toggle-split prerendered");
             ResponsiveManager.fireResizeEvent();
         }
     }
