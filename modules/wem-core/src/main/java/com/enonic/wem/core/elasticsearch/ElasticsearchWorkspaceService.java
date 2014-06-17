@@ -15,7 +15,6 @@ import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.aggregation.Aggregation;
@@ -69,12 +68,6 @@ public class ElasticsearchWorkspaceService
         final WorkspaceDocumentId workspaceDocumentId =
             new WorkspaceDocumentId( workspaceDocument.getEntityId(), workspaceDocument.getWorkspace() );
 
-        // TODO: Check this
-        //   if ( unchanged( workspaceDocument, workspaceDocumentId ) )
-        //   {
-        //       return;
-        //   }
-
         final IndexRequest publish = Requests.indexRequest().
             index( WORKSPACE_INDEX.getName() ).
             type( IndexType.NODE.getName() ).
@@ -83,28 +76,6 @@ public class ElasticsearchWorkspaceService
             refresh( DEFAULT_REFRESH );
 
         elasticsearchDao.store( publish );
-    }
-
-    private boolean unchanged( final WorkspaceDocument workspaceDocument, final WorkspaceDocumentId workspaceDocumentId )
-    {
-        final SearchResult searchResult = elasticsearchDao.get( QueryMetaData.
-            create( WORKSPACE_INDEX ).
-            indexType( IndexType.NODE ).
-            addField( BLOBKEY_FIELD_NAME ).
-            build(), workspaceDocumentId.toString() );
-
-        if ( searchResult.getResults().getSize() > 0 )
-        {
-            final SearchResultEntry hit = searchResult.getResults().getFirstHit();
-
-            final String currentBlobKey = hit.getField( BLOBKEY_FIELD_NAME, true ).getValue().toString();
-
-            if ( currentBlobKey.equals( workspaceDocument.getBlobKey().toString() ) )
-            {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override
@@ -134,7 +105,7 @@ public class ElasticsearchWorkspaceService
 
         if ( field == null || field.getValue() == null )
         {
-            throw new WorkspaceStoreException( "Field " + BLOBKEY_FIELD_NAME + " not found on node with id " +
+            throw new ElasticsearchDataException( "Field " + BLOBKEY_FIELD_NAME + " not found on node with id " +
                                                    entityId +
                                                    " in workspace " + query.getWorkspace().getName() );
         }
@@ -222,7 +193,7 @@ public class ElasticsearchWorkspaceService
 
         if ( value == null )
         {
-            throw new RuntimeException( "Field " + BLOBKEY_FIELD_NAME + " not found on node with path " +
+            throw new ElasticsearchDataException( "Field " + BLOBKEY_FIELD_NAME + " not found on node with path " +
                                             query.getNodePathAsString() +
                                             " in workspace " + query.getWorkspace() );
         }
@@ -301,11 +272,15 @@ public class ElasticsearchWorkspaceService
 
         final Aggregation changedAggregation = searchResult.getAggregations().get( changedAggregationName );
 
-        Preconditions.checkArgument( changedAggregation instanceof BucketAggregation,
-                                     "Aggregation of wrong type, should be BucketAggregation, was " +
-                                         changedAggregation.getClass().getName() );
-
-        return ChangedIdsResolver.resolve( (BucketAggregation) changedAggregation );
+        if ( changedAggregation instanceof BucketAggregation )
+        {
+            return ChangedIdsResolver.resolve( (BucketAggregation) changedAggregation );
+        }
+        else
+        {
+            throw new ClassCastException(
+                "Aggregation of unexpected type, should be BucketAggregation, was " + changedAggregation.getClass().getName() );
+        }
     }
 
     private BlobKeys fieldValuesToBlobKeys( final Set<SearchResultField> fieldValues )
