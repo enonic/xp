@@ -76,7 +76,7 @@
   }
 
   .slick-row {
-    transition: margin 0.3s;
+    transition: margin ease-in 0.3s;
   }
 
   .grid {
@@ -149,10 +149,13 @@
           color: @admin-blue-button2;
         }
 
-        position: absolute;
-        top: 1px;
+        display: inline-block;
+        position: relative;
+        float: left;
         height: 100%;
-        width: 10px;
+        width: 20px;
+        text-align: center;
+        margin-right: 10px;
       }
 
       .toggle.expand, .toggle.collapse {
@@ -174,11 +177,9 @@
       }
 
       .viewer {
-        display: inline-block;
-        width: 100%;
+        display: block;
         height: 100%;
         .names-and-icon-view {
-          margin-left: 25px;
           .wrapper {
             margin-right: 15px;
             .icon {

@@ -36,8 +36,6 @@ module api.content {
 
         private editable: boolean;
 
-        private displayed: boolean;
-
         constructor(builder: ContentSummaryBuilder) {
             super(builder);
             this.name = builder.name;
@@ -58,8 +56,6 @@ module api.content {
             this.modifiedTime = builder.modifiedTime;
             this.deletable = builder.deletable;
             this.editable = builder.editable;
-
-            this.displayed = builder.displayed;
         }
 
         getName(): ContentName {
@@ -132,14 +128,6 @@ module api.content {
 
         isEditable(): boolean {
             return this.editable;
-        }
-
-        isDisplayed(): boolean {
-            return this.displayed;
-        }
-
-        setDisplayed(status:boolean = true) {
-            this.displayed = status;
         }
 
         equals(o: api.Equitable): boolean {
@@ -257,8 +245,6 @@ module api.content {
 
         editable: boolean;
 
-        displayed: boolean;
-
         constructor(source?: ContentSummary) {
             super(source);
             if (source) {
@@ -279,7 +265,6 @@ module api.content {
                 this.modifiedTime = source.getModifiedTime();
                 this.deletable = source.isDeletable();
                 this.editable = source.isEditable();
-                this.displayed = source.isDisplayed();
             }
         }
 
@@ -306,8 +291,6 @@ module api.content {
 
             this.deletable = json.deletable;
             this.editable = json.editable;
-
-            this.displayed = true;
 
             return this;
         }
