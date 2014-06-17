@@ -22,9 +22,9 @@ module api.liveedit {
                 cursor: 'pointer',
                 iconCls: 'live-edit-font-icon-page',
                 highlighterStyle: {
-                    stroke: '',
+                    stroke: 'rgba(20, 20, 20, 1)',
                     strokeDasharray: '',
-                    fill: ''
+                    fill: 'rgba(255, 255, 255, 0)'
                 },
                 contextMenuConfig: ['reset']
             });
