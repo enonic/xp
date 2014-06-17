@@ -3,6 +3,7 @@ module app.wizard.page.contextwindow.inspect {
     import RootDataSet = api.data.RootDataSet;
     import FormView = api.form.FormView;
     import PageComponent = api.content.page.PageComponent;
+    import ComponentName = api.content.page.ComponentName;
     import PageComponentView = api.liveedit.PageComponentView;
 
     export interface PageComponentInspectionPanelConfig {
@@ -36,6 +37,10 @@ module app.wizard.page.contextwindow.inspect {
             this.nameInput = new api.ui.TextInput('component-name').setValue('');
 
             this.appendChild(this.nameInput);
+
+            this.nameInput.onValueChanged((event: api.ui.ValueChangedEvent) => {
+                this.component.setName(new ComponentName(event.getNewValue()));
+            });
         }
 
         setComponent(component: COMPONENT) {

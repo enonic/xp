@@ -1,5 +1,7 @@
 module api.content.page.image {
 
+    import Region = api.content.page.region.Region;
+
     export class ImageComponent extends api.content.page.DescriptorBasedPageComponent implements api.Equitable, api.Cloneable {
 
         private image: api.content.ContentId;
@@ -65,7 +67,7 @@ module api.content.page.image {
             }
         }
 
-        public fromJson(json: ImageComponentJson, regionPath: RegionPath): ImageComponentBuilder {
+        public fromJson(json: ImageComponentJson, region: Region): ImageComponentBuilder {
 
             if (json.image) {
                 this.setImage(new api.content.ContentId(json.image));
@@ -78,7 +80,7 @@ module api.content.page.image {
             }
 
             this.setConfig(api.data.DataFactory.createRootDataSet(json.config));
-            this.setParent(regionPath);
+            this.setParent(region);
 
             return this;
         }

@@ -37,8 +37,8 @@ module api.content.page {
             return this.regionAndComponentList;
         }
 
-        getComponentName(): ComponentName {
-            return this.getLastLevel().getComponentName();
+        getComponentIndex(): number {
+            return this.getLastLevel().getComponentIndex();
         }
 
         getRegionPath(): RegionPath {
@@ -53,7 +53,6 @@ module api.content.page {
                     regionPathAsString += regionAndComponent.toString();
                     regionPathAsString += "/";
                 }
-
 
             });
 
@@ -103,18 +102,26 @@ module api.content.page {
             var regionAndComponentList: ComponentPathRegionAndComponent[] = [];
             for (var i = 0; i < elements.length - 1; i += 2) {
                 var regionName = elements[i];
-                var componentName = new ComponentName(elements[i + 1]);
-                var regionAndComponent = new ComponentPathRegionAndComponent(regionName, componentName);
+                var componentIndexAsString = elements[i + 1];
+                var regionAndComponent = new ComponentPathRegionAndComponent(regionName, parseInt(componentIndexAsString));
                 regionAndComponentList.push(regionAndComponent);
             }
 
             return new ComponentPath(regionAndComponentList);
         }
 
-        public static fromRegionPathAndComponentName(regionPath: RegionPath, componentName: ComponentName): ComponentPath {
+        public static fromRegionPathAndComponentIndex(regionPath: RegionPath, componentIndex: number): ComponentPath {
+            api.util.assertNotNull(regionPath, "regionPath cannot be null");
+            api.util.assert(componentIndex >= 0, "componentIndex must be zero or more");
 
-            var componentPathAsString = regionPath.toString() + "/" + componentName.toString();
-            return ComponentPath.fromString(componentPathAsString);
+            var regionAndComponentList: ComponentPathRegionAndComponent[] = [];
+            if (regionPath.getParentComponentPath()) {
+                regionPath.getParentComponentPath().regionAndComponentList.forEach((regionAndComponent: ComponentPathRegionAndComponent)=> {
+                    regionAndComponentList.push(regionAndComponent);
+                });
+            }
+            regionAndComponentList.push(new ComponentPathRegionAndComponent(regionPath.getRegionName(), componentIndex));
+            return new ComponentPath(regionAndComponentList);
         }
     }
 
@@ -124,22 +131,22 @@ module api.content.page {
 
         private regionName: string;
 
-        private componentName: ComponentName;
+        private componentIndex: number;
 
         private refString: string;
 
-        constructor(regionName: string, componentName: ComponentName) {
+        constructor(regionName: string, componentIndex: number) {
             this.regionName = regionName;
-            this.componentName = componentName;
-            this.refString = regionName + ComponentPathRegionAndComponent.DIVIDER + this.componentName.toString();
+            this.componentIndex = componentIndex;
+            this.refString = regionName + ComponentPathRegionAndComponent.DIVIDER + this.componentIndex;
         }
 
         getRegionName(): string {
             return this.regionName;
         }
 
-        getComponentName(): ComponentName {
-            return this.componentName;
+        getComponentIndex(): number {
+            return this.componentIndex;
         }
 
         toString(): string {

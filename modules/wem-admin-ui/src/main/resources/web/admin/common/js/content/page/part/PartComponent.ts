@@ -1,5 +1,7 @@
 module api.content.page.part {
 
+    import Region = api.content.page.region.Region;
+
     export class PartComponent extends api.content.page.DescriptorBasedPageComponent implements api.Equitable, api.Cloneable {
 
         constructor(builder: PartComponentBuilder) {
@@ -35,14 +37,14 @@ module api.content.page.part {
             super(source);
         }
 
-        public fromJson(json: PartComponentJson, regionPath: RegionPath): PartComponentBuilder {
+        public fromJson(json: PartComponentJson, region: Region): PartComponentBuilder {
 
             if (json.descriptor) {
                 this.setDescriptor(api.content.page.DescriptorKey.fromString(json.descriptor));
             }
             this.setName(new api.content.page.ComponentName(json.name));
             this.setConfig(api.data.DataFactory.createRootDataSet(json.config));
-            this.setParent(regionPath);
+            this.setParent(region);
             return this;
         }
 

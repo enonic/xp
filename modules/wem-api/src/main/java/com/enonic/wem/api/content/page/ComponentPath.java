@@ -9,15 +9,8 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-/**
- * {@code
- * _/component/<region-name>/<component-name>
- * }
- * <p/>
- * {@code
- * _/component/<region-name>/<layout-component-name>/<region-name>/<component-name>
- * }
- */
+import com.enonic.wem.api.content.page.region.RegionPath;
+
 public final class ComponentPath
     implements Iterable<ComponentPath.RegionAndComponent>
 {
@@ -27,24 +20,23 @@ public final class ComponentPath
 
     private final String refString;
 
-    public static ComponentPath from( final RegionAndComponent... regionAndComponents )
+    public ComponentPath( final ImmutableList<RegionAndComponent> regionAndComponentList )
     {
-        final ImmutableList.Builder<RegionAndComponent> builder = new ImmutableList.Builder<>();
-        for ( final RegionAndComponent regionAndComponent : regionAndComponents )
-        {
-            builder.add( regionAndComponent );
-        }
-        return new ComponentPath( builder.build() );
+        this.regionAndComponentList = regionAndComponentList;
+        this.refString = toString( this );
     }
 
-    public static ComponentPath from( final ComponentPath parentPath, final RegionAndComponent child )
+    public static ComponentPath from( final RegionPath parentPath, final int pageComponentIndex )
     {
         final ImmutableList.Builder<RegionAndComponent> builder = new ImmutableList.Builder<>();
-        for ( final RegionAndComponent parent : parentPath )
+        if ( parentPath.getParentComponentPath() != null )
         {
-            builder.add( parent );
+            for ( final RegionAndComponent regionAndComponent : parentPath.getParentComponentPath() )
+            {
+                builder.add( regionAndComponent );
+            }
         }
-        builder.add( child );
+        builder.add( RegionAndComponent.from( parentPath.getRegionName(), pageComponentIndex ) );
         return new ComponentPath( builder.build() );
     }
 
@@ -58,41 +50,35 @@ public final class ComponentPath
         final ImmutableList.Builder<RegionAndComponent> builder = new ImmutableList.Builder<>();
         for ( int i = 0; i < valueList.size() - 1; i += 2 )
         {
-            final String regionName = valueList.get( i );
-            final ComponentName componentName = new ComponentName( valueList.get( i + 1 ) );
-            builder.add( new RegionAndComponent( regionName, componentName ) );
+            final RegionName regionName = RegionName.fromString( valueList.get( i ) );
+            final PageComponentIndex pageComponentIndex = PageComponentIndex.fromString( valueList.get( i + 1 ) );
+            builder.add( new RegionAndComponent( regionName, pageComponentIndex ) );
 
         }
         return new ComponentPath( builder.build() );
     }
 
-    public ComponentPath( final ImmutableList<RegionAndComponent> regionAndComponentList )
+    public int getComponentIndex()
     {
-        this.regionAndComponentList = regionAndComponentList;
-        this.refString = toString( this );
+        return getLastLevel().getPageComponentIndex();
     }
 
-    public ComponentName getComponentName()
-    {
-        return getLastLevel().getComponentName();
-    }
-
-    public int numberOfLevels()
+    int numberOfLevels()
     {
         return this.regionAndComponentList.size();
     }
 
-    public RegionAndComponent getFirstLevel()
+    RegionAndComponent getFirstLevel()
     {
         return this.regionAndComponentList.get( 0 );
     }
 
-    public RegionAndComponent getLastLevel()
+    RegionAndComponent getLastLevel()
     {
         return this.regionAndComponentList.get( regionAndComponentList.size() - 1 );
     }
 
-    public ComponentPath removeFirstLevel()
+    ComponentPath removeFirstLevel()
     {
         if ( this.numberOfLevels() <= 1 )
         {
@@ -127,46 +113,89 @@ public final class ComponentPath
     {
         private static final String DIVIDER = "/";
 
-        private final String regionName;
+        private final RegionName regionName;
 
-        private final ComponentName componentName;
+        private final PageComponentIndex pageComponentIndex;
 
         private final String refString;
 
-        public static RegionAndComponent from( final String regionName, final ComponentName componentName )
+        public RegionAndComponent( final RegionName regionName, final PageComponentIndex pageComponentIndex )
         {
-            return new RegionAndComponent( regionName, componentName );
+            this.regionName = regionName;
+            this.pageComponentIndex = pageComponentIndex;
+            this.refString = toString( this );
+        }
+
+        public static RegionAndComponent from( final String regionName, final int pageComponentIndex )
+        {
+            return new RegionAndComponent( new RegionName( regionName ), new PageComponentIndex( pageComponentIndex ) );
         }
 
         public static RegionAndComponent from( final String str )
         {
             final Iterable<String> values = Splitter.on( DIVIDER ).omitEmptyStrings().split( str );
             final Iterator<String> iterator = values.iterator();
-            final String regionName = iterator.next();
-            final ComponentName componentName = new ComponentName( iterator.next() );
-            return new RegionAndComponent( regionName, componentName );
-        }
-
-        public RegionAndComponent( final String regionName, final ComponentName componentName )
-        {
-            this.regionName = regionName;
-            this.componentName = componentName;
-            this.refString = toString( this );
+            final RegionName regionName = RegionName.fromString( iterator.next() );
+            final PageComponentIndex pageComponentIndex = PageComponentIndex.fromString( iterator.next() );
+            return new RegionAndComponent( regionName, pageComponentIndex );
         }
 
         public String getRegionName()
         {
-            return regionName;
+            return regionName.name;
         }
 
-        public ComponentName getComponentName()
+        public int getPageComponentIndex()
         {
-            return componentName;
+            return pageComponentIndex.index;
         }
 
         private String toString( final RegionAndComponent regionAndComponent )
         {
-            return regionAndComponent.regionName + DIVIDER + regionAndComponent.componentName;
+            return regionAndComponent.regionName + DIVIDER + regionAndComponent.pageComponentIndex;
+        }
+
+        public String toString()
+        {
+            return this.refString;
+        }
+    }
+
+    public static class RegionName
+    {
+        private final String name;
+
+        public RegionName( final String name )
+        {
+            this.name = name;
+        }
+
+        public static RegionName fromString( final String str )
+        {
+            return new RegionName( str );
+        }
+
+        public String toString()
+        {
+            return this.name;
+        }
+    }
+
+    public static class PageComponentIndex
+    {
+        private final int index;
+
+        private final String refString;
+
+        public PageComponentIndex( final int index )
+        {
+            this.index = index;
+            this.refString = String.valueOf( this.index );
+        }
+
+        public static PageComponentIndex fromString( final String str )
+        {
+            return new PageComponentIndex( Integer.valueOf( str ) );
         }
 
         public String toString()

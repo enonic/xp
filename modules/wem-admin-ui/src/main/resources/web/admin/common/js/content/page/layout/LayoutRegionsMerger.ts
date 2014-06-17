@@ -22,10 +22,10 @@ module api.content.page.layout {
          *
          */
         merge(layoutRegions: LayoutRegions, layoutDescriptorRegions: api.content.page.region.RegionDescriptor[],
-              parentComponentPath: ComponentPath): LayoutRegions {
+              parent: LayoutComponent): LayoutRegions {
 
             this.layoutComponentRegions = layoutRegions.getRegions();
-            this.initLookupTables(layoutDescriptorRegions, parentComponentPath);
+            this.initLookupTables(layoutDescriptorRegions, parent);
 
             this.mergeExistingRegions();
 
@@ -74,8 +74,7 @@ module api.content.page.layout {
             });
         }
 
-        private initLookupTables(layoutDescriptorRegions: api.content.page.region.RegionDescriptor[],
-                                 parentComponentPath: ComponentPath): void {
+        private initLookupTables(layoutDescriptorRegions: api.content.page.region.RegionDescriptor[], parent: LayoutComponent): void {
             this.targetRegionsByName = {};
             this.targetRegionsNameByPosition = {};
             this.sourceRegionsPositionByName = {};
@@ -84,7 +83,7 @@ module api.content.page.layout {
                 var regionName = regionDescriptor.getName();
                 var layoutRegion = new api.content.page.region.RegionBuilder().
                     setName(regionName).
-                    setParent(parentComponentPath).
+                    setParent(parent).
                     build();
                 this.targetRegionsByName[regionName] = layoutRegion;
                 this.targetRegionsNameByPosition[idx] = regionName;

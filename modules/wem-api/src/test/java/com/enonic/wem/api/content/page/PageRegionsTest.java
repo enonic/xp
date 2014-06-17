@@ -81,13 +81,13 @@ public class PageRegionsTest
         // verify: components in a-region
         Region nextRegion = iterator.next();
         UnmodifiableIterator<PageComponent> components = nextRegion.getComponents().iterator();
-        assertEquals( "a-region/part-a-in-a", components.next().getPath().toString() );
+        assertEquals( "a-region/0", components.next().getPath().toString() );
 
         // verify: components in b-region
         nextRegion = iterator.next();
         components = nextRegion.getComponents().iterator();
-        assertEquals( "b-region/part-a-in-b", components.next().getPath().toString() );
-        assertEquals( "b-region/part-b-in-b", components.next().getPath().toString() );
+        assertEquals( "b-region/0", components.next().getPath().toString() );
+        assertEquals( "b-region/1", components.next().getPath().toString() );
     }
 
     @Test
@@ -109,12 +109,12 @@ public class PageRegionsTest
         Region regionLevel1 = pageRegions.iterator().next();
         UnmodifiableIterator<PageComponent> componentsLevel1 = regionLevel1.getComponents().iterator();
         LayoutComponent layoutLevel1 = (LayoutComponent) componentsLevel1.next();
-        assertEquals( "region-level-1/layout-level-1", layoutLevel1.getPath().toString() );
+        assertEquals( "region-level-1/0", layoutLevel1.getPath().toString() );
 
         LayoutRegions layoutRegions = layoutLevel1.getRegions();
         Region regionLevel2 = layoutRegions.iterator().next();
         UnmodifiableIterator<PageComponent> componentsLevel2 = regionLevel2.getComponents().iterator();
-        assertEquals( "region-level-1/layout-level-1/region-level-2/part-level-2", componentsLevel2.next().getPath().toString() );
+        assertEquals( "region-level-1/0/region-level-2/0", componentsLevel2.next().getPath().toString() );
     }
 
     @Test
@@ -131,10 +131,8 @@ public class PageRegionsTest
                 build() ).
             build();
 
-        assertEquals( "part-1-in-region-a",
-                      regions.getComponent( ComponentPath.from( "a-region/part-1-in-region-a" ) ).getName().toString() );
-        assertEquals( "part-1-in-region-b",
-                      regions.getComponent( ComponentPath.from( "b-region/part-1-in-region-b" ) ).getName().toString() );
-        assertNull( regions.getComponent( ComponentPath.from( "a-region/no-part" ) ) );
+        assertEquals( "part-1-in-region-a", regions.getComponent( ComponentPath.from( "a-region/0" ) ).getName().toString() );
+        assertEquals( "part-1-in-region-b", regions.getComponent( ComponentPath.from( "b-region/0" ) ).getName().toString() );
+        assertNull( regions.getComponent( ComponentPath.from( "a-region/1" ) ) );
     }
 }

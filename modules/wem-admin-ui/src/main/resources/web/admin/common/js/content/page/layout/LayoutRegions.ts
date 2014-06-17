@@ -7,8 +7,8 @@ module api.content.page.layout {
             super(builder.regions);
         }
 
-        mergeRegions(descriptorRegions: api.content.page.region.RegionDescriptor[], parentComponentPath: ComponentPath): LayoutRegions {
-            return new LayoutRegionsMerger().merge(this, descriptorRegions, parentComponentPath);
+        mergeRegions(descriptorRegions: api.content.page.region.RegionDescriptor[], parent: LayoutComponent): LayoutRegions {
+            return new LayoutRegionsMerger().merge(this, descriptorRegions, parent);
         }
 
         equals(o: api.Equitable): boolean {
@@ -37,23 +37,21 @@ module api.content.page.layout {
             }
         }
 
-        fromJson(regionsJson: api.content.page.region.RegionJson[], layoutComponent: ComponentPath): LayoutRegionsBuilder {
+        fromJson(regionsJson: api.content.page.region.RegionJson[], layoutComponent: LayoutComponent): LayoutRegionsBuilder {
 
             regionsJson.forEach((regionJson: api.content.page.region.RegionJson) => {
 
-                var regionBuilder = new api.content.page.region.RegionBuilder().
+                var region = new api.content.page.region.RegionBuilder().
                     setName(regionJson.name).
-                    setParent(layoutComponent);
-
-                var regionPath = new RegionPath(layoutComponent, regionJson.name);
+                    setParent(layoutComponent).
+                    build();
 
                 regionJson.components.forEach((componentJson: api.content.page.PageComponentTypeWrapperJson) => {
-                    var pageComponent = api.content.page.PageComponentFactory.createFromJson(componentJson, regionPath);
-                    regionBuilder.addComponent(pageComponent);
+                    var pageComponent = api.content.page.PageComponentFactory.createFromJson(componentJson, region);
+                    region.addComponent(pageComponent);
                 });
 
-
-                this.addRegion(regionBuilder.build());
+                this.addRegion(region);
             });
             return this;
         }

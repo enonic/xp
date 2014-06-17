@@ -483,7 +483,7 @@ module app.wizard.page {
 
                 Q(!this.pageTemplate ? this.initializePageFromDefault() : null).
                     then(() => {
-                        this.pageRegions.removeComponent(event.getPageComponentView().getPageComponent());
+                        event.getPageComponentView().getPageComponent().removeFromParent();
                         this.contextWindow.clearSelection();
                     }).
                     catch((reason: any) => api.DefaultErrorHandler.handle(reason)).

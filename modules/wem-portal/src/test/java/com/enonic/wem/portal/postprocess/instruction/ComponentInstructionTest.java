@@ -58,7 +58,7 @@ public class ComponentInstructionTest
         Content siteContent = createSite( "site-id", "site-name", "content-type" );
         context.setSiteContent( siteContent );
 
-        final String outputHtml = instruction.evaluate( context, "COMPONENT myRegion/myPartComponent" );
+        final String outputHtml = instruction.evaluate( context, "COMPONENT myRegion/page-component[0]" );
         assertEquals( "<b>part content</b>", outputHtml );
     }
 

@@ -5,6 +5,7 @@ import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.ComponentPath;
 import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.PageComponentType;
+import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.RootDataSet;
 
@@ -19,7 +20,19 @@ public final class LayoutComponent
     public LayoutComponent( final Builder builder )
     {
         super( builder );
-        this.regions = builder.regions;
+        if ( builder.regions == null )
+        {
+            this.regions = LayoutRegions.newLayoutRegions().build();
+        }
+        else
+        {
+            this.regions = builder.regions;
+        }
+
+        for ( final Region region : this.regions )
+        {
+            region.setParent( this );
+        }
     }
 
     public static Builder newLayoutComponent()
@@ -31,13 +44,6 @@ public final class LayoutComponent
     public PageComponentType getType()
     {
         return LayoutComponent.type;
-    }
-
-    @Override
-    public void setPath( final ComponentPath path )
-    {
-        super.setPath( path );
-        regions.applyComponentPaths( path );
     }
 
     public boolean hasRegions()
@@ -94,7 +100,6 @@ public final class LayoutComponent
             this.regions = value;
             return this;
         }
-
 
         public LayoutComponent build()
         {

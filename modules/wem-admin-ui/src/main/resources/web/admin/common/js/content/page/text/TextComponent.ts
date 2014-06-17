@@ -1,5 +1,7 @@
 module api.content.page.text {
 
+    import Region = api.content.page.region.Region;
+
     export class TextComponent extends api.content.page.PageComponent implements api.Equitable, api.Cloneable {
 
         private text: string;
@@ -66,14 +68,14 @@ module api.content.page.text {
             }
         }
 
-        public fromJson(json: TextComponentJson, regionPath: RegionPath): TextComponentBuilder {
+        public fromJson(json: TextComponentJson, region: Region): TextComponentBuilder {
 
             if (json.text) {
                 this.setText(json.text);
             }
 
             this.setName(new api.content.page.ComponentName(json.name));
-            this.setParent(regionPath);
+            this.setParent(region);
 
             return this;
         }

@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.region.Region;
@@ -14,16 +14,23 @@ import com.enonic.wem.api.content.page.region.Region;
 public abstract class AbstractRegions
     implements Iterable<Region>
 {
-    private final ImmutableMap<String, Region> regionByName;
+    private final ImmutableList<Region> regions;
 
     protected AbstractRegions( final Builder builder )
     {
-        this.regionByName = builder.regionMapBuilder.build();
+        this.regions = ImmutableList.copyOf( builder.regions );
     }
 
     public Region getRegion( final String name )
     {
-        return this.regionByName.get( name );
+        for ( final Region region : this.regions )
+        {
+            if ( region.getName().equals( name ) )
+            {
+                return region;
+            }
+        }
+        return null;
     }
 
     public PageComponent getComponent( final ComponentPath path )
@@ -33,7 +40,7 @@ public abstract class AbstractRegions
 
         final ComponentPath.RegionAndComponent first = path.getFirstLevel();
         final Region region = getRegion( first.getRegionName() );
-        final PageComponent component = region.getComponent( first.getComponentName() );
+        final PageComponent component = region.getComponent( first.getPageComponentIndex() );
 
         if ( path.numberOfLevels() == 1 )
         {
@@ -54,14 +61,12 @@ public abstract class AbstractRegions
     @Override
     public Iterator<Region> iterator()
     {
-        return this.regionByName.values().iterator();
+        return this.regions.iterator();
     }
 
     public static class Builder<BUILDER extends Builder>
     {
         private final List<Region> regions = new ArrayList<>();
-
-        private ImmutableMap.Builder<String, Region> regionMapBuilder = new ImmutableMap.Builder<>();
 
         @SuppressWarnings("unchecked")
         private BUILDER getThis()
@@ -72,7 +77,6 @@ public abstract class AbstractRegions
         public BUILDER add( final Region region )
         {
             regions.add( region );
-            regionMapBuilder.put( region.getName(), region );
             return getThis();
         }
 

@@ -64,7 +64,7 @@ module app.wizard.page {
 
         private addLayoutRegions(layoutComponent: LayoutComponent, layoutDescriptor: LayoutDescriptor) {
             var sourceRegions: LayoutRegions = layoutComponent.getLayoutRegions();
-            var mergedRegions: LayoutRegions = sourceRegions.mergeRegions(layoutDescriptor.getRegions(), layoutComponent.getPath());
+            var mergedRegions: LayoutRegions = sourceRegions.mergeRegions(layoutDescriptor.getRegions(), layoutComponent);
             layoutComponent.setLayoutRegions(mergedRegions);
         }
     }

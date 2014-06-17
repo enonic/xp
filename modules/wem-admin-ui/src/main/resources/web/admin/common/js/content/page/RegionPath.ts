@@ -64,8 +64,8 @@ module api.content.page {
             var regionNameStart = lastDivider + 1;
 
             var regionName = str.substring(regionNameStart, str.length);
-            var coponentPathAsString = str.substring(0, regionNameStart);
-            var parentPath = ComponentPath.fromString(coponentPathAsString);
+            var componentPathAsString = str.substring(0, regionNameStart);
+            var parentPath = ComponentPath.fromString(componentPathAsString);
             return new RegionPath(parentPath, regionName);
         }
     }
