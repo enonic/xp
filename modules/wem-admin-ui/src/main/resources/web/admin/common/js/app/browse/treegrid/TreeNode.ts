@@ -68,6 +68,10 @@ module api.app.browse.treegrid {
             });
         }
 
+        hasChildren():boolean {
+            return this.children.length > 0;
+        }
+
         setChildrenFromItems(children:T[]) {
             this.children = [];
 
