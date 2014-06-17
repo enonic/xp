@@ -70,6 +70,10 @@ module api.app.browse.treegrid {
             // Custom row selection required for valid behaviour
             this.grid.setSelectionModel(new Slick.RowSelectionModel({selectActiveRow: false}));
 
+           this.onClicked(() => {
+               this.grid.focus();
+           });
+
             this.grid.subscribeOnClick((event, data) => {
                 if (this.active) {
                     this.active = false;
@@ -86,6 +90,51 @@ module api.app.browse.treegrid {
                     } else {
                         this.active = true;
                         this.grid.selectRow(data.row);
+                    }
+                }
+                event.stopPropagation();
+            });
+
+            this.grid.setOnKeyDown((event: KeyboardEvent) => {
+                if (this.active) {
+                    var selected = this.grid.getSelectedRows();
+                    switch (event.keyCode) {
+                    case 38: // up
+                        this.grid.moveSelectedUp();
+                        break;
+                    case 40: // down
+                        this.grid.moveSelectedDown();
+                        break;
+                    case 37: // left - collapse
+                        if (selected.length === 1) {
+                            var item = this.gridData.getItem(selected[0]);
+                            var node = item ? this.root.findNode(item) : undefined;
+                            if (node && this.active) {
+                                if (node.isExpanded()) {
+                                    this.active = false;
+                                    this.collapseData(item);
+                                } else if (node.getParent() !== this.root) {
+                                    this.active = false;
+                                    item = node.getParent().getItem();
+                                    var row = this.gridData.getRowById(item.getId());
+                                    this.grid.selectRow(row);
+                                    this.collapseData(item);
+                                }
+                            }
+                        }
+                        break;
+                    case 39: // right - expand
+                        if (selected.length === 1) {
+                            var item = this.gridData.getItem(selected[0]);
+                            var node = item ? this.root.findNode(item) : undefined;
+                            if (node && this.hasChildren(item)
+                                && !node.isExpanded() &&  this.active) {
+
+                                this.active = false;
+                                this.expandData(item);
+                            }
+                        }
+                        break;
                     }
                 }
             });
@@ -188,7 +237,7 @@ module api.app.browse.treegrid {
             if (node) {
                 node.setExpanded(true);
 
-                if (node.getChildren().length > 0) {
+                if (node.hasChildren()) {
                     nodeItemList = node.treeToItemList();
                     rootItemList = this.root.treeToItemList();
                     this.initData(rootItemList);

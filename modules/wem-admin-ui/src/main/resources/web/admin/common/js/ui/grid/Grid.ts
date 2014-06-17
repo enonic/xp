@@ -102,7 +102,7 @@ module api.ui.grid {
             return this.dataView;
         }
 
-        public setColumns(columns:GridColumn<T>[]) {
+        setColumns(columns:GridColumn<T>[]) {
             if (this.checkboxSelectorPlugin) {
                 columns.unshift(this.checkboxSelectorPlugin.getColumnDefinition());
             }
@@ -138,10 +138,21 @@ module api.ui.grid {
             this.dataView.syncGridSelection(this.slickGrid, preserveHidden);
         }
 
+        focus() {
+            this.slickGrid.focus();
+        }
+
         setOnClick(callback:(event, data:GridOnClickData) => void) {
             this.slickGrid.onClick.subscribe((event, data) => {
                 event.stopPropagation();
                 callback(event, data);
+            });
+        }
+
+        setOnKeyDown(callback:(event) => void) {
+            this.slickGrid.onKeyDown.subscribe((event) => {
+                event.stopPropagation();
+                callback(event);
             });
         }
 
@@ -183,10 +194,43 @@ module api.ui.grid {
             }
         }
 
+        moveSelectedUp() {
+            if (this.slickGrid.getDataLength() > 0) {
+                var selected:number[] = this.getSelectedRows().sort();
+                var row = selected.length >= 1
+                    ? selected[0] - 1
+                    : -1;
+
+                if (selected.length === 1) {
+                    if (row >= 0) {
+                        this.selectRow(row);
+                    } else {
+                        this.clearSelection();
+                    }
+                } else if (selected.length > 1) {
+                    row = Math.max(row, 0);
+                    this.selectRow(row);
+                }
+            }
+        }
+
+        moveSelectedDown() {
+            if (this.slickGrid.getDataLength() > 0) {
+                var selected:number[] = this.getSelectedRows().sort();
+                var row = selected.length >= 1
+                    ? Math.min(selected[selected.length - 1] + 1, this.slickGrid.getDataLength() - 1)
+                    : 0;
+
+                this.selectRow(row);
+            }
+        }
+
+        // Operate with cells
         navigateUp() {
             this.slickGrid.navigateUp();
         }
 
+        // Operate with cells
         navigateDown() {
             this.slickGrid.navigateDown();
         }
