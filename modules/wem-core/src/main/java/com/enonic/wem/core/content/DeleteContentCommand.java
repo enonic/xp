@@ -1,6 +1,8 @@
 package com.enonic.wem.core.content;
 
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentNotFoundException;
@@ -63,8 +65,14 @@ final class DeleteContentCommand
             return this;
         }
 
+        void validate()
+        {
+            Preconditions.checkNotNull( params );
+        }
+
         public DeleteContentCommand build()
         {
+            validate();
             return new DeleteContentCommand( this );
         }
     }

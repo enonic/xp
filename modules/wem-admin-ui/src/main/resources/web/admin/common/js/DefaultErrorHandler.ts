@@ -5,8 +5,10 @@ module api {
         static handle(error: any) {
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(error, Error)) {
-                console.error(error);
-            } else if (api.ObjectHelper.iFrameSafeInstanceOf(error, Exception)) {
+                // Rethrowing Error so that we will get a nice stack trace in the console.
+                throw error;
+            }
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(error, Exception)) {
                 var message = error.getMessage();
 
                 switch (error.getType()){

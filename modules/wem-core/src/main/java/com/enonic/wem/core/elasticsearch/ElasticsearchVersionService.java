@@ -56,8 +56,6 @@ public class ElasticsearchVersionService
 
     private Set<VersionEntry> doGetEntries( final BlobKey blobKey )
     {
-        final Set<VersionEntry> versionEntries = Sets.newLinkedHashSet();
-
         final TermQueryBuilder blobKeyQuery = new TermQueryBuilder( BLOBKEY_FIELD_NAME, blobKey.toString() );
 
         final QueryMetaData queryMetaData = QueryMetaData.create( VERSION_INDEX ).
@@ -73,6 +71,14 @@ public class ElasticsearchVersionService
         {
             throw new VersionNotFoundException( "Could not find version with blobKey: " + blobKey );
         }
+
+        return createVersionEntriesFromSearchResult( blobKey, searchResult );
+    }
+
+    private Set<VersionEntry> createVersionEntriesFromSearchResult( final BlobKey blobKey, final SearchResult searchResult )
+    {
+        final Set<VersionEntry> versionEntries = Sets.newLinkedHashSet();
+
         final SearchResultEntry hit = searchResult.getResults().getFirstHit();
 
         final String parentKey = getStringValue( hit, PARENT_ID_FIELD_NAME, false );

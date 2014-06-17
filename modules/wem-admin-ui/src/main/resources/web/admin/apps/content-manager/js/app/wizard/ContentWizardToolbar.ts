@@ -9,6 +9,7 @@ module app.wizard {
         previewAction:api.ui.Action;
         showLiveEditAction:api.ui.Action;
         showFormAction:api.ui.Action;
+        showSplitEditAction:api.ui.Action;
     }
 
     export class ContentWizardToolbar extends api.ui.toolbar.Toolbar {
@@ -25,12 +26,9 @@ module app.wizard {
             super.addAction(params.closeAction);
             super.addGreedySpacer();
 
-            var liveEditFormToggler = new api.ui.ToggleSlide({
-                turnOnAction: params.showLiveEditAction,
-                turnOffAction: params.showFormAction
-            });
+            var cycleViewModeButton = new api.ui.CycleButton(params.showSplitEditAction, params.showFormAction, params.showLiveEditAction);
 
-            super.addElement(liveEditFormToggler);
+            super.addElement(cycleViewModeButton);
             this.contextWindowToggler = new ContextWindowToggler();
             super.addElement(this.contextWindowToggler);
 

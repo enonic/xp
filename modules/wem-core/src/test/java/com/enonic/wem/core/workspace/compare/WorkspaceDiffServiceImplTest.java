@@ -1,4 +1,4 @@
-package com.enonic.wem.core.workspace.diff;
+package com.enonic.wem.core.workspace.compare;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -7,6 +7,8 @@ import org.mockito.Mockito;
 import com.google.common.collect.UnmodifiableIterator;
 
 import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.wem.api.entity.CompareState;
+import com.enonic.wem.api.entity.EntityComparison;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
 import com.enonic.wem.api.entity.Workspace;
@@ -14,7 +16,8 @@ import com.enonic.wem.core.version.VersionBranch;
 import com.enonic.wem.core.version.VersionBranchQuery;
 import com.enonic.wem.core.version.VersionService;
 import com.enonic.wem.core.workspace.WorkspaceService;
-import com.enonic.wem.core.workspace.diff.query.WorkspacesDiffQuery;
+import com.enonic.wem.core.workspace.compare.query.CompareEntityQuery;
+import com.enonic.wem.core.workspace.compare.query.CompareWorkspacesQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
 
 import static org.junit.Assert.*;
@@ -25,7 +28,7 @@ public class WorkspaceDiffServiceImplTest
 
     private final VersionService versionService = Mockito.mock( VersionService.class );
 
-    private final WorkspaceDiffServiceImpl diffService = new WorkspaceDiffServiceImpl();
+    private final WorkspaceCompareServiceImpl diffService = new WorkspaceCompareServiceImpl();
 
     private final Workspace SOURCE = new Workspace( "source" );
 
@@ -43,7 +46,7 @@ public class WorkspaceDiffServiceImplTest
     public void workspaceDifferences()
         throws Exception
     {
-        final WorkspacesDiffQuery sourceTargetQuery = new WorkspacesDiffQuery( SOURCE, TARGET );
+        final CompareWorkspacesQuery sourceTargetQuery = new CompareWorkspacesQuery( SOURCE, TARGET );
 
         final EntityId ID_1 = EntityId.from( "1" );
         final EntityId ID_2 = EntityId.from( "2" );
@@ -85,21 +88,49 @@ public class WorkspaceDiffServiceImplTest
         Mockito.when( versionService.getBranch( new VersionBranchQuery( BK_TARGET_3 ) ) ).
             thenReturn( createBranchForKey( BK_TARGET_3 ) );
 
-        final WorkspacesDifferences workspacesDifferences = diffService.getWorkspacesDifferences( sourceTargetQuery );
+        final WorkspaceComparison workspaceComparison = diffService.compareWorkspaces( sourceTargetQuery );
 
-        assertTrue( workspacesDifferences.getDiffEntries().size() == 3 );
+        assertTrue( workspaceComparison.getDiffEntries().size() == 3 );
 
-        final UnmodifiableIterator<WorkspaceDiffEntry> iterator = workspacesDifferences.getDiffEntries().iterator();
+        final UnmodifiableIterator<EntityComparison> iterator = workspaceComparison.getDiffEntries().iterator();
 
-        assertEquals( DiffStatus.State.CONFLICT, iterator.next().getDiffStatus().getState() );
-        assertEquals( DiffStatus.State.NEW, iterator.next().getDiffStatus().getState() );
-        assertEquals( DiffStatus.State.NEWER, iterator.next().getDiffStatus().getState() );
+        assertEquals( CompareState.State.CONFLICT, iterator.next().getCompareState().getState() );
+        assertEquals( CompareState.State.NEW, iterator.next().getCompareState().getState() );
+        assertEquals( CompareState.State.NEWER, iterator.next().getCompareState().getState() );
+    }
+
+
+    @Test
+    public void compare()
+        throws Exception
+    {
+        final EntityId ID_1 = EntityId.from( "1" );
+        final CompareEntityQuery compareEntityQuery = new CompareEntityQuery( ID_1, SOURCE, TARGET );
+
+        // Different branch in source and target
+        final BlobKey BK_SOURCE_1 = new BlobKey( "1.1.4" );
+        final BlobKey BK_TARGET_1 = new BlobKey( "1.2.2" );
+
+        Mockito.when( workspaceService.getById( new WorkspaceIdQuery( SOURCE, ID_1 ) ) ).
+            thenReturn( BK_SOURCE_1 );
+        Mockito.when( workspaceService.getById( new WorkspaceIdQuery( TARGET, ID_1 ) ) ).
+            thenReturn( BK_TARGET_1 );
+
+        Mockito.when( versionService.getBranch( new VersionBranchQuery( BK_SOURCE_1 ) ) ).
+            thenReturn( createBranchForKey( BK_SOURCE_1 ) );
+        Mockito.when( versionService.getBranch( new VersionBranchQuery( BK_TARGET_1 ) ) ).
+            thenReturn( createBranchForKey( BK_TARGET_1 ) );
+
+        final EntityComparison comparison = diffService.compare( compareEntityQuery );
+
+        assertEquals( CompareState.State.CONFLICT, comparison.getCompareState().getState() );
     }
 
     /*
-        Create VersionEntries with branchEntries. Each level indicated by '.'
-        E.g: 1.2.3.4 -> 4 entries; 1.2.3.4, 1.2.3, 1.2 & 1
-    */
+            Create VersionEntries with branchEntries. Each level indicated by '.'
+            E.g: 1.2.3.4 -> 4 entries; 1.2.3.4, 1.2.3, 1.2 & 1
+        */
+
     private VersionBranch createBranchForKey( final BlobKey key )
     {
         final VersionBranch.Builder builder = VersionBranch.create();

@@ -191,7 +191,7 @@ public class ElasticsearchWorkspaceServiceTest
         assertTrue( byId == null );
     }
 
-    @Test(expected = WorkspaceStoreException.class)
+    @Test(expected = ElasticsearchDataException.class)
     public void getById_missing_field()
         throws Exception
     {

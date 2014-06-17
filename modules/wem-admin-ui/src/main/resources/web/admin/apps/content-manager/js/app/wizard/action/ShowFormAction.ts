@@ -3,7 +3,7 @@ module app.wizard.action {
     export class ShowFormAction extends api.ui.Action {
 
         constructor(wizard: app.wizard.ContentWizardPanel) {
-            super("FORM");
+            super("Form");
 
             this.setEnabled(true);
             this.onExecuted(() => {

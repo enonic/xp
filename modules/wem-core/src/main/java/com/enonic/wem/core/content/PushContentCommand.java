@@ -11,23 +11,22 @@ import com.enonic.wem.api.entity.Workspace;
 public class PushContentCommand
     extends AbstractContentCommand
 {
-
     private final ContentId contentId;
 
-    private final Workspace to;
+    private final Workspace target;
 
     private PushContentCommand( final Builder builder )
     {
         super( builder );
         this.contentId = builder.contentId;
-        this.to = builder.to;
+        this.target = builder.target;
     }
 
     Content execute()
     {
         final EntityId entityId = EntityId.from( contentId.toString() );
 
-        final Node pushedNode = nodeService.push( entityId, this.to, this.context );
+        final Node pushedNode = nodeService.push( entityId, this.target, this.context );
 
         return getTranslator().fromNode( pushedNode );
     }
@@ -42,7 +41,7 @@ public class PushContentCommand
     {
         private ContentId contentId;
 
-        private Workspace to;
+        private Workspace target;
 
         public Builder contentId( final ContentId contentId )
         {
@@ -50,10 +49,17 @@ public class PushContentCommand
             return this;
         }
 
-        public Builder to( final Workspace to )
+        public Builder target( final Workspace target )
         {
-            this.to = to;
+            this.target = target;
             return this;
+        }
+
+        void validate()
+        {
+            super.validate();
+            Preconditions.checkNotNull( target );
+            Preconditions.checkNotNull( contentId );
         }
 
         public PushContentCommand build()
@@ -62,11 +68,6 @@ public class PushContentCommand
             return new PushContentCommand( this );
         }
 
-        private void validate()
-        {
-            Preconditions.checkNotNull( to );
-            Preconditions.checkNotNull( contentId );
-        }
     }
 
 }

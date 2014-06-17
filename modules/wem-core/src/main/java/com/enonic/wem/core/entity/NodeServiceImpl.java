@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.CreateNodeParams;
+import com.enonic.wem.api.entity.EntityComparison;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
 import com.enonic.wem.api.entity.Node;
@@ -16,6 +17,7 @@ import com.enonic.wem.api.entity.UpdateNodeParams;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.core.entity.dao.NodeDao;
+import com.enonic.wem.core.workspace.compare.WorkspaceCompareService;
 
 public class NodeServiceImpl
     implements NodeService
@@ -25,6 +27,9 @@ public class NodeServiceImpl
 
     @Inject
     private NodeDao nodeDao;
+
+    @Inject
+    private WorkspaceCompareService workspaceCompareService;
 
     @Override
     public Node getById( final EntityId id, final Context context )
@@ -113,15 +118,26 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node push( final EntityId id, final Workspace to, final Context context )
+    public Node push( final EntityId id, final Workspace target, final Context context )
     {
         return PushNodeCommand.create( context ).
             indexService( this.indexService ).
             nodeDao( this.nodeDao ).
             id( id ).
-            to( to ).
+            target( target ).
             build().
             execute();
     }
 
+
+    @Override
+    public EntityComparison compare( final EntityId id, final Workspace target, final Context context )
+    {
+        return CompareNodeCommand.create( context ).
+            id( id ).
+            target( target ).
+            compareService( workspaceCompareService ).
+            build().
+            execute();
+    }
 }

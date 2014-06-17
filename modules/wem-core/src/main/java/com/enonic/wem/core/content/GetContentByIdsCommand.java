@@ -3,6 +3,7 @@ package com.enonic.wem.core.content;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.content.ContentConstants;
@@ -14,6 +15,7 @@ import com.enonic.wem.api.content.GetContentByIdsParams;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
 import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
+import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.entity.Nodes;
 
 
@@ -22,10 +24,13 @@ final class GetContentByIdsCommand
 {
     private final GetContentByIdsParams params;
 
-    GetContentByIdsCommand( final Builder builder )
+    private final NodeService nodeService;
+
+    private GetContentByIdsCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
+        this.nodeService = builder.nodeService;
     }
 
     Contents execute()
@@ -85,9 +90,24 @@ final class GetContentByIdsCommand
     {
         private final GetContentByIdsParams params;
 
+        private NodeService nodeService;
+
         public Builder( final GetContentByIdsParams params )
         {
             this.params = params;
+        }
+
+        public Builder nodeService( final NodeService nodeService )
+        {
+            this.nodeService = nodeService;
+            return this;
+        }
+
+        void validate()
+        {
+            super.validate();
+            Preconditions.checkNotNull( params );
+            Preconditions.checkNotNull( nodeService );
         }
 
         public GetContentByIdsCommand build()

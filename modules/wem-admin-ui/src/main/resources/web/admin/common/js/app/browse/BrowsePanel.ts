@@ -6,7 +6,7 @@ module api.app.browse {
 
         treeGridPanel:api.app.browse.grid.TreeGridPanel;
 
-        treeGridPanel2?:api.app.browse.treegrid.TreeGrid;
+        treeGridPanel2?:api.app.browse.treegrid.TreeGrid<api.item.Item>;
 
         browseItemPanel:BrowseItemPanel<M>;
 
@@ -21,7 +21,7 @@ module api.app.browse {
 
         private treeGridPanel: api.app.browse.grid.TreeGridPanel;
 
-        private treeGrid: api.app.browse.treegrid.TreeGrid;
+        private treeGrid: api.app.browse.treegrid.TreeGrid<api.item.Item>;
 
         private treeSwapperDeckPanel: api.ui.DeckPanel;
 

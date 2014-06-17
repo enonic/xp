@@ -175,7 +175,7 @@ public class ContentResourceTest
         aContentData.setProperty( "mySet.setProperty2", Value.newLong( 2 ) );
 
         Mockito.when( contentService.getByPath( Mockito.eq( ContentPath.from( "/my_a_content" ) ),
-                                                Mockito.eq( ContentConstants.DEFAULT_CONTEXT ) ) ).thenReturn( aContent );
+                                                Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn( aContent );
 
         String jsonString = resource().
             path( "content/bypath" ).
@@ -191,7 +191,7 @@ public class ContentResourceTest
         throws Exception
     {
         Mockito.when( contentService.getByPath( Mockito.eq( ContentPath.from( "/my_a_content" ) ),
-                                                Mockito.eq( ContentConstants.DEFAULT_CONTEXT ) ) ).thenReturn( null );
+                                                Mockito.eq(  ContentResource.STAGE_CONTEXT  ) ) ).thenReturn( null );
 
         try
         {
@@ -218,7 +218,7 @@ public class ContentResourceTest
         aContentData.setProperty( "mySetWithArray.myArray[0]", Value.newDouble( 3.14159 ) );
         aContentData.setProperty( "mySetWithArray.myArray[1]", Value.newDouble( 1.333 ) );
 
-        Mockito.when( contentService.getById( ContentId.from( "aaa" ), ContentConstants.DEFAULT_CONTEXT ) ).thenReturn( aContent );
+        Mockito.when( contentService.getById( ContentId.from( "aaa" ),  ContentResource.STAGE_CONTEXT  ) ).thenReturn( aContent );
 
         String jsonString = resource().path( "content" ).queryParam( "id", "aaa" ).get( String.class );
 
@@ -245,7 +245,7 @@ public class ContentResourceTest
         ContentData contentData = content.getContentData();
         contentData.setProperty( "myProperty", Value.newString( "myValue" ) );
 
-        Mockito.when( contentService.getById( ContentId.from( "aaa" ), ContentConstants.DEFAULT_CONTEXT ) ).thenReturn( content );
+        Mockito.when( contentService.getById( ContentId.from( "aaa" ),  ContentResource.STAGE_CONTEXT  ) ).thenReturn( content );
 
         String jsonString = resource().path( "content" ).queryParam( "id", "aaa" ).get( String.class );
 
@@ -288,7 +288,7 @@ public class ContentResourceTest
         ContentData contentData = content.getContentData();
         contentData.setProperty( "myProperty", Value.newString( "myValue" ) );
 
-        Mockito.when( contentService.getById( ContentId.from( "aaa" ), ContentConstants.DEFAULT_CONTEXT ) ).thenReturn( content );
+        Mockito.when( contentService.getById( ContentId.from( "aaa" ),  ContentResource.STAGE_CONTEXT  ) ).thenReturn( content );
 
         String jsonString = resource().path( "content" ).queryParam( "id", "aaa" ).get( String.class );
 
@@ -307,7 +307,7 @@ public class ContentResourceTest
         aContentData.setProperty( "mySet.setProperty1", Value.newLong( 1 ) );
         aContentData.setProperty( "mySet.setProperty2", Value.newLong( 2 ) );
 
-        Mockito.when( contentService.getById( ContentId.from( "aaa" ), ContentConstants.DEFAULT_CONTEXT ) ).thenReturn( aContent );
+        Mockito.when( contentService.getById( ContentId.from( "aaa" ),  ContentResource.STAGE_CONTEXT  ) ).thenReturn( aContent );
 
         String jsonString = resource().path( "content" ).queryParam( "id", "aaa" ).
             queryParam( "expand", "summary" ).get( String.class );
@@ -320,7 +320,7 @@ public class ContentResourceTest
         throws Exception
     {
         Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ),
-                                               Mockito.eq( ContentConstants.DEFAULT_CONTEXT ) ) ).thenReturn( Contents.empty() );
+                                               Mockito.eq(  ContentResource.STAGE_CONTEXT  ) ) ).thenReturn( Contents.empty() );
 
         try
         {
@@ -348,7 +348,7 @@ public class ContentResourceTest
         aContentData.setProperty( "mySetWithArray.myArray[1]", Value.newDouble( 1.333 ) );
 
         Mockito.when(
-            contentService.getById( Mockito.eq( ContentId.from( "aaa" ) ), Mockito.eq( ContentConstants.DEFAULT_CONTEXT ) ) ).thenReturn(
+            contentService.getById( Mockito.eq( ContentId.from( "aaa" ) ), Mockito.eq(  ContentResource.STAGE_CONTEXT  ) ) ).thenReturn(
             aContent );
 
         String jsonString = resource().path( "content" ).queryParam( "id", "aaa" ).queryParam( "expand", "none" ).get( String.class );
@@ -361,7 +361,7 @@ public class ContentResourceTest
         throws Exception
     {
         Mockito.when(
-            contentService.getById( Mockito.eq( ContentId.from( "aaa" ) ), Mockito.eq( ContentConstants.DEFAULT_CONTEXT ) ) ).thenReturn(
+            contentService.getById( Mockito.eq( ContentId.from( "aaa" ) ), Mockito.eq(  ContentResource.STAGE_CONTEXT  ) ) ).thenReturn(
             null );
 
         try
@@ -382,7 +382,7 @@ public class ContentResourceTest
         final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
         final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
         Mockito.when(
-            contentService.getChildren( Mockito.isA( ContentPath.class ), Mockito.eq( ContentConstants.DEFAULT_CONTEXT ) ) ).thenReturn(
+            contentService.getChildren( Mockito.isA( ContentPath.class ), Mockito.eq(  ContentResource.STAGE_CONTEXT  ) ) ).thenReturn(
             Contents.from( aContent, bContent ) );
 
         String jsonString = resource().path( "content/list/bypath" ).queryParam( "parentPath", "/" ).get( String.class );
@@ -397,7 +397,7 @@ public class ContentResourceTest
         final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
         final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
         Mockito.when(
-            contentService.getChildren( Mockito.isA( ContentPath.class ), Mockito.eq( ContentConstants.DEFAULT_CONTEXT ) ) ).thenReturn(
+            contentService.getChildren( Mockito.isA( ContentPath.class ), Mockito.eq(  ContentResource.STAGE_CONTEXT  ) ) ).thenReturn(
             Contents.from( aContent, bContent ) );
 
         String jsonString = resource().path( "content/list/bypath" ).queryParam( "parentPath", "/" ).
@@ -411,7 +411,7 @@ public class ContentResourceTest
         throws Exception
     {
         Mockito.when(
-            contentService.getChildren( Mockito.isA( ContentPath.class ), Mockito.eq( ContentConstants.DEFAULT_CONTEXT ) ) ).thenReturn(
+            contentService.getChildren( Mockito.isA( ContentPath.class ), Mockito.eq(  ContentResource.STAGE_CONTEXT  ) ) ).thenReturn(
             Contents.empty() );
 
         String jsonString = resource().path( "content/list/bypath" ).queryParam( "parentPath", "/" ).get( String.class );
@@ -425,7 +425,7 @@ public class ContentResourceTest
     {
         final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
         final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
-        Mockito.when( contentService.getRoots( ContentConstants.DEFAULT_CONTEXT ) ).thenReturn( Contents.from( aContent, bContent ) );
+        Mockito.when( contentService.getRoots(  ContentResource.STAGE_CONTEXT  ) ).thenReturn( Contents.from( aContent, bContent ) );
 
         String jsonString = resource().path( "content/list/bypath" ).queryParam( "expand", "none" ).get( String.class );
 
@@ -438,12 +438,12 @@ public class ContentResourceTest
     {
         final Content cContent = createContent( "ccc", "my_c_content", "my_type" );
         Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ),
-                                               Mockito.eq( ContentConstants.DEFAULT_CONTEXT ) ) ).thenReturn( Contents.from( cContent ) );
+                                               Mockito.eq(  ContentResource.STAGE_CONTEXT  ) ) ).thenReturn( Contents.from( cContent ) );
 
         final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
         final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
         Mockito.when(
-            contentService.getChildren( Mockito.isA( ContentPath.class ), Mockito.eq( ContentConstants.DEFAULT_CONTEXT ) ) ).thenReturn(
+            contentService.getChildren( Mockito.isA( ContentPath.class ), Mockito.eq(  ContentResource.STAGE_CONTEXT  ) ) ).thenReturn(
             Contents.from( aContent, bContent ) );
 
         String jsonString = resource().path( "content/list" ).queryParam( "parentId", "ccc" ).get( String.class );
@@ -457,12 +457,12 @@ public class ContentResourceTest
     {
         final Content cContent = createContent( "ccc", "my_c_content", "my_type" );
         Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ),
-                                               Mockito.eq( ContentConstants.DEFAULT_CONTEXT ) ) ).thenReturn( Contents.from( cContent ) );
+                                               Mockito.eq(  ContentResource.STAGE_CONTEXT  ) ) ).thenReturn( Contents.from( cContent ) );
 
         final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
         final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
         Mockito.when(
-            contentService.getChildren( Mockito.isA( ContentPath.class ), Mockito.eq( ContentConstants.DEFAULT_CONTEXT ) ) ).thenReturn(
+            contentService.getChildren( Mockito.isA( ContentPath.class ), Mockito.eq(  ContentResource.STAGE_CONTEXT  ) ) ).thenReturn(
             Contents.from( aContent, bContent ) );
 
         String jsonString = resource().path( "content/list" ).queryParam( "parentId", "ccc" ).
@@ -476,7 +476,7 @@ public class ContentResourceTest
         throws Exception
     {
         Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ),
-                                               Mockito.eq( ContentConstants.DEFAULT_CONTEXT ) ) ).thenReturn( Contents.empty() );
+                                               Mockito.eq(  ContentResource.STAGE_CONTEXT  ) ) ).thenReturn( Contents.empty() );
 
         String jsonString = resource().path( "content/list" ).queryParam( "parentId", "ccc" ).get( String.class );
 
@@ -489,7 +489,7 @@ public class ContentResourceTest
     {
         final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
         final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
-        Mockito.when( contentService.getRoots( ContentConstants.DEFAULT_CONTEXT ) ).thenReturn( Contents.from( aContent, bContent ) );
+        Mockito.when( contentService.getRoots(  ContentResource.STAGE_CONTEXT  ) ).thenReturn( Contents.from( aContent, bContent ) );
 
         String jsonString = resource().path( "content/list" ).queryParam( "expand", "none" ).get( String.class );
 
@@ -568,11 +568,11 @@ public class ContentResourceTest
         throws Exception
     {
         Mockito.when( contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "/one" ) ) ),
-                                             Mockito.eq( ContentConstants.DEFAULT_CONTEXT ) ) ).thenThrow(
+                                             Mockito.eq(  ContentResource.STAGE_CONTEXT  ) ) ).thenThrow(
             new ContentNotFoundException( ContentPath.from( "one" ) ) );
 
         Mockito.when( contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "/two" ) ) ),
-                                             Mockito.eq( ContentConstants.DEFAULT_CONTEXT ) ) ).thenThrow(
+                                             Mockito.eq(  ContentResource.STAGE_CONTEXT  ) ) ).thenThrow(
             new UnableToDeleteContentException( ContentPath.from( "two" ), "Some reason" ) );
 
         String jsonString = resource().path( "content/delete" ).
@@ -587,11 +587,11 @@ public class ContentResourceTest
         throws Exception
     {
         Mockito.when( contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "one" ) ) ),
-                                             Mockito.eq( ContentConstants.DEFAULT_CONTEXT ) ) ).thenReturn(
+                                             Mockito.eq(  ContentResource.STAGE_CONTEXT  ) ) ).thenReturn(
             new DeleteContentResult( newContent().parentPath( ContentPath.ROOT ).name( "one" ).build() ) );
 
         Mockito.when( contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "two" ) ) ),
-                                             Mockito.eq( ContentConstants.DEFAULT_CONTEXT ) ) ).thenThrow(
+                                             Mockito.eq(  ContentResource.STAGE_CONTEXT  ) ) ).thenThrow(
             new UnableToDeleteContentException( ContentPath.from( "two" ), "Some reason" ) );
 
         String jsonString = resource().path( "content/delete" ).

@@ -3,7 +3,9 @@ package com.enonic.wem.core.content;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.blob.BlobService;
+import com.enonic.wem.api.content.CompareContentParams;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentCompareResult;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
@@ -99,6 +101,7 @@ public class ContentServiceImpl
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
+            context( context ).
             build().
             execute();
     }
@@ -160,8 +163,12 @@ public class ContentServiceImpl
         params.getContentId();
 
         return PushContentCommand.create().
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            blobService( this.blobService ).
             contentId( params.getContentId() ).
-            to( params.getTarget() ).
+            target( params.getTarget() ).
+            context( context ).
             build().
             execute();
     }
@@ -194,6 +201,18 @@ public class ContentServiceImpl
             contentQuery( contentQuery ).
             queryService( this.queryService ).
             context( context ).
+            execute();
+    }
+
+    @Override
+    public ContentCompareResult compare( final CompareContentParams params, final Context context )
+    {
+        return CompareContentCommand.create().
+            nodeService( this.nodeService ).
+            context( context ).
+            contentId( params.getContentId() ).
+            target( params.getTarget() ).
+            build().
             execute();
     }
 

@@ -1,6 +1,6 @@
-package com.enonic.wem.core.workspace.diff;
+package com.enonic.wem.api.entity;
 
-public class DiffStatus
+public class CompareState
 {
     public enum State
     {
@@ -14,7 +14,7 @@ public class DiffStatus
 
     private final State state;
 
-    public DiffStatus( final State state )
+    public CompareState( final State state )
     {
         this.state = state;
     }
@@ -31,12 +31,12 @@ public class DiffStatus
         {
             return true;
         }
-        if ( !( o instanceof DiffStatus ) )
+        if ( !( o instanceof CompareState ) )
         {
             return false;
         }
 
-        final DiffStatus that = (DiffStatus) o;
+        final CompareState that = (CompareState) o;
 
         if ( state != that.state )
         {

@@ -1,5 +1,7 @@
 package com.enonic.wem.core.content;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
@@ -75,8 +77,14 @@ final class GetChildContentCommand
             return this;
         }
 
+        void validate()
+        {
+            Preconditions.checkNotNull( parentPath );
+        }
+
         public GetChildContentCommand build()
         {
+            validate();
             return new GetChildContentCommand( this );
         }
     }

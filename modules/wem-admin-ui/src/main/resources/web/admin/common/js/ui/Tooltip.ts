@@ -11,22 +11,27 @@ module api.ui {
         static TRIGGER_FOCUS = "focus";
         static TRIGGER_NONE = "none";
 
+        static MODE_STATIC = "static";
+        static MODE_FOLLOW = "follow";
+
         private static multipleAllowed: boolean = true;
         private static instances: Tooltip[] = [];
 
         private tooltipEl: api.dom.DivEl;
         private timeoutTimer: number;
 
-        private overListener: (event: Event) => any;
-        private outListener: (event: Event) => any;
+        private overListener: (event: MouseEvent) => any;
+        private outListener: (event: MouseEvent) => any;
+        private moveListener: (event: MouseEvent) => any;
 
-        private target: api.dom.Element;
+        private targetEl: api.dom.Element;
         private text: string;
         private contentEl: api.dom.Element;
         private showDelay: number;
         private hideTimeout: number;
         private trigger: string;
         private side: string;
+        private mode: string;
 
         /*
          * Widget to show floating tooltips
@@ -39,27 +44,28 @@ module api.ui {
          * @param trigger Event type to hook on (mouse,focus)
          * @param side Side of the target where tooltip should be shown (top,left,right,bottom)
          */
-        constructor(target: api.dom.Element, text?: string, showDelay: number = 0, hideTimeout: number = 1000,
-                    trigger: string = Tooltip.TRIGGER_HOVER, side: string = Tooltip.SIDE_BOTTOM) {
+        constructor(target: api.dom.Element, text?: string, showDelay: number = 0, hideTimeout: number = 1000) {
 
-            this.target = target;
+            this.targetEl = target;
             this.text = text;
             this.showDelay = showDelay;
             this.hideTimeout = hideTimeout;
-            this.side = side;
+            this.side = Tooltip.SIDE_BOTTOM;
 
-            this.overListener = (event: Event) => {
+            this.overListener = (event: MouseEvent) => {
                 this.startShowDelay();
-                event.stopPropagation();
-                event.preventDefault();
             };
-            this.outListener = (event: Event) => {
+            this.outListener = (event: MouseEvent) => {
                 this.startHideTimeout();
-                event.stopPropagation();
-                event.preventDefault();
+            };
+            this.moveListener = (event: MouseEvent) => {
+                if (this.tooltipEl && this.tooltipEl.isVisible()) {
+                    this.positionAtMouse(event);
+                }
             };
 
-            this.setTrigger(trigger);
+            this.setTrigger(Tooltip.TRIGGER_HOVER);
+            this.setMode(Tooltip.MODE_STATIC);
 
             Tooltip.instances.push(this);
         }
@@ -73,15 +79,23 @@ module api.ui {
                 } else {
                     this.tooltipEl.getEl().setInnerHtml(this.text);
                 }
-                // append it to target itself in case target has no parent
-                var appendTo = this.target.getParentElement() || this.target;
+
+                var appendTo;
+                if (this.mode == Tooltip.MODE_STATIC) {
+                    appendTo = this.targetEl.getParentElement() || this.targetEl;
+                } else {
+                    appendTo = api.dom.Body.get();
+                }
                 appendTo.appendChild(this.tooltipEl);
 
                 if (!Tooltip.multipleAllowed) {
                     this.hideOtherInstances();
                 }
                 this.tooltipEl.show();
-                this.positionByTarget();
+
+                if (this.mode == Tooltip.MODE_STATIC) {
+                    this.positionByTarget();
+                }
             }
         }
 
@@ -152,7 +166,7 @@ module api.ui {
             }
 
             // remove old listeners
-            this.target.getEl().
+            this.targetEl.getEl().
                 removeEventListener(this.getEventName(true), this.overListener).
                 removeEventListener(this.getEventName(false), this.outListener);
 
@@ -160,7 +174,7 @@ module api.ui {
 
             // add new listeners
             if (trigger != Tooltip.TRIGGER_NONE) {
-                this.target.getEl().
+                this.targetEl.getEl().
                     addEventListener(this.getEventName(true), this.overListener).
                     addEventListener(this.getEventName(false), this.outListener);
             }
@@ -180,34 +194,86 @@ module api.ui {
             return this.side;
         }
 
+        setMode(mode: string): Tooltip {
+            if (mode == this.mode) {
+                return this;
+            } else if (mode == Tooltip.MODE_STATIC) {
+                api.dom.Body.get().unMouseMove(this.moveListener);
+            } else if (mode == Tooltip.MODE_FOLLOW) {
+                api.dom.Body.get().onMouseMove(this.moveListener);
+            }
+            this.mode = mode;
+            return this;
+        }
+
+        getMode(): string {
+            return this.mode;
+        }
+
+        private positionAtMouse(event: MouseEvent) {
+            var x, y,
+                el = this.tooltipEl.getEl(),
+                bodyEl = api.dom.Body.get().getHTMLElement(),
+                elProps = {
+                    left: el.getMarginLeft() || 0,
+                    top: el.getMarginTop() || 0,
+                    height: el.getHeight(),
+                    width: el.getWidth(),
+                    // if mode == follow, tooltip is appended to body, so body scroll can affect tooltip
+                    scrollLeft: this.mode == Tooltip.MODE_FOLLOW ? bodyEl.scrollLeft : 0,
+                    scrollTop: this.mode == Tooltip.MODE_FOLLOW ? bodyEl.scrollTop : 0
+                };
+            switch (this.side) {
+            case Tooltip.SIDE_TOP:
+                x = event.x - elProps.width / 2 + elProps.left + elProps.scrollLeft;
+                y = event.y - elProps.height + elProps.top + elProps.scrollTop;
+                break;
+            case Tooltip.SIDE_BOTTOM:
+                x = event.x - elProps.width / 2 + elProps.left + elProps.scrollLeft;
+                y = event.y + elProps.top + elProps.scrollTop;
+                break;
+            case Tooltip.SIDE_LEFT:
+                x = event.x - elProps.width + elProps.left + elProps.scrollLeft;
+                y = event.y - elProps.height / 2 + elProps.top + elProps.scrollTop;
+                break;
+            case Tooltip.SIDE_RIGHT:
+                x = event.x + elProps.left + elProps.scrollLeft;
+                y = event.y - elProps.height / 2 + elProps.top + elProps.scrollTop;
+                break;
+            }
+            this.tooltipEl.getEl().setLeftPx(x);
+            this.tooltipEl.getEl().setTopPx(y);
+        }
+
         private positionByTarget() {
 
-            var targetEl = this.target.getHTMLElement();
-            var targetOffset = this.target.getEl().getOffset();
-            var el = this.tooltipEl.getHTMLElement();
-            var $el = wemjq(el);
-            var elOffset = {
-                left: parseInt($el.css('margin-left')) || 0,
-                top: parseInt($el.css('margin-top')) || 0
-            };
+            var targetEl = this.targetEl.getHTMLElement(),
+                targetOffset = this.targetEl.getEl().getOffset(),
+                el = this.tooltipEl.getEl(),
+                elProps = {
+                    left: el.getMarginLeft() || 0,
+                    top: el.getMarginTop() || 0,
+                    height: el.getHeight(),
+                    width: el.getWidth()
+                };
 
             var offsetLeft, offsetTop;
             switch (this.side) {
             case Tooltip.SIDE_TOP:
-                offsetLeft = targetOffset.left + (targetEl.offsetWidth - el.offsetWidth) / 2 + elOffset.left;
-                offsetTop = targetOffset.top - el.offsetHeight + elOffset.top;
+                offsetLeft = targetOffset.left + (targetEl.offsetWidth - elProps.width) / 2 + elProps.left;
+                offsetTop = targetOffset.top - elProps.height + elProps.top;
                 break;
             case Tooltip.SIDE_BOTTOM:
-                offsetLeft = targetOffset.left + (targetEl.offsetWidth - el.offsetWidth) / 2 + elOffset.left;
-                offsetTop = targetOffset.top + targetEl.offsetHeight + elOffset.top;
+                offsetLeft = targetOffset.left + (targetEl.offsetWidth - elProps.width) / 2 + elProps.left;
+                offsetTop = targetOffset.top + targetEl.offsetHeight + elProps.top;
                 break;
             case Tooltip.SIDE_LEFT:
-                offsetLeft = targetOffset.left - el.offsetWidth + elOffset.left;
-                offsetTop = targetOffset.top + (targetEl.offsetHeight - el.offsetHeight) / 2 + elOffset.top;
+                offsetLeft = targetOffset.left - elProps.width + elProps.left;
+                offsetTop = targetOffset.top + (targetEl.offsetHeight - elProps.height) / 2 + elProps.top;
                 break;
             case Tooltip.SIDE_RIGHT:
-                offsetLeft = targetOffset.left + targetEl.offsetWidth + elOffset.left;
-                offsetTop = targetOffset.top + (targetEl.offsetHeight - el.offsetHeight) / 2 + elOffset.top;
+                offsetLeft = targetOffset.left + targetEl.offsetWidth + elProps.left;
+                offsetTop = targetOffset.top + (targetEl.offsetHeight - elProps.height) / 2 + elProps.top;
                 break;
             }
 
@@ -226,7 +292,7 @@ module api.ui {
              offsetTop = window.innerHeight - el.offsetHeight;
              }*/
 
-            $el.offset({
+            el.setOffset({
                 left: offsetLeft,
                 top: offsetTop
             });
@@ -271,7 +337,7 @@ module api.ui {
         private hideOnMouseOut() {
             var tooltip = this;
             var mouseMoveListener = (event: MouseEvent) => {
-                var tooltipTargetHtmlElement = tooltip.target.getHTMLElement();
+                var tooltipTargetHtmlElement = tooltip.targetEl.getHTMLElement();
                 for (var element = event.target; element; element = (<any>element).parentNode) {
                     if (element == tooltipTargetHtmlElement) {
                         return;

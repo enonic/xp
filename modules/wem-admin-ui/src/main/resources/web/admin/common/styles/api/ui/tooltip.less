@@ -1,10 +1,10 @@
 .tooltip {
   position: absolute;
-  background: @admin-dark-gray;
+  background: @admin-tooltip-bg;
   padding: 5px;
   z-index: 2147483647; // max positive int
   font-size: 11px;
-  color: @admin-almost-white;
+  color: @admin-dark-gray;
   .opacity(1);
 
   &:before {
@@ -17,16 +17,18 @@
 
     .wrapper {
       .icon {
-        color: @admin-almost-white;
+        color: @admin-dark-gray;
       }
     }
 
     .names-view {
       .main-name {
-        color: @admin-almost-white;
+        color: @admin-dark-gray;
+        font-family: @admin-font-family;
       }
       .sub-name {
-        color: @admin-almost-white;
+        color: @admin-dark-gray;
+        font-family: @admin-font-family;
       }
     }
   }
@@ -38,7 +40,7 @@
     &:before {
       border-left: 7px solid transparent;
       border-right: 7px solid transparent;
-      border-bottom: 7px solid @admin-dark-gray;
+      border-bottom: 7px solid @admin-tooltip-bg;
       top: -7px;
       left: 50%;
       margin-left: -7px;
@@ -52,7 +54,7 @@
     &:before {
       border-top: 7px solid transparent;
       border-bottom: 7px solid transparent;
-      border-left: 7px solid @admin-dark-gray;
+      border-left: 7px solid @admin-tooltip-bg;
       right: -7px;
       top: 50%;
       margin-top: -7px;
@@ -66,7 +68,7 @@
     &:before {
       border-left: 7px solid transparent;
       border-right: 7px solid transparent;
-      border-top: 7px solid @admin-dark-gray;
+      border-top: 7px solid @admin-tooltip-bg;
       bottom: -7px;
       left: 50%;
       margin-left: -7px;
@@ -80,7 +82,7 @@
     &:before {
       border-top: 7px solid transparent;
       border-bottom: 7px solid transparent;
-      border-right: 7px solid @admin-dark-gray;
+      border-right: 7px solid @admin-tooltip-bg;
       left: -7px;
       top: 50%;
       margin-top: -7px;

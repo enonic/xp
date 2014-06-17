@@ -49,6 +49,14 @@ module api.dom {
             return previous ? new ElementHelper(<HTMLElement> previous) : null;
         }
 
+        getNext(): ElementHelper {
+            var next = this.el.nextSibling;
+            while (next && next.nodeType != Node.ELEMENT_NODE) {
+                next = next.nextSibling;
+            }
+            return next ? new ElementHelper(<HTMLElement> next) : null;
+        }
+
         setDisabled(value: boolean): ElementHelper {
             this.el.disabled = value;
             return this;
@@ -461,6 +469,11 @@ module api.dom {
         getOffset(): { top:number; left:number;
         } {
             return wemjq(this.el).offset();
+        }
+
+        setOffset(offset: { top:number; left:number; }): ElementHelper {
+            wemjq(this.el).offset(offset);
+            return this;
         }
 
         /**

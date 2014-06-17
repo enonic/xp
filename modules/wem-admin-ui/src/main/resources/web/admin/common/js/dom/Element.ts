@@ -393,6 +393,8 @@ module api.dom {
         }
 
         removeChild(child: Element) {
+            api.util.assertNotNull(child, "child cannot be null");
+
             var index = this.children.indexOf(child);
             if (index > -1) {
                 this.children.splice(index, 1);
@@ -401,7 +403,7 @@ module api.dom {
                 child.notifyRemoved();
             }
             else {
-                throw new Error("Child element to remove not found: " + child);
+                throw new Error("Child element to remove not found");
             }
         }
 

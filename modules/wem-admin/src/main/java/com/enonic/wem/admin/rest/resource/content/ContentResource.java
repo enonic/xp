@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.admin.json.content.AbstractContentListJson;
+import com.enonic.wem.admin.json.content.ContentComparisonJson;
 import com.enonic.wem.admin.json.content.ContentIdJson;
 import com.enonic.wem.admin.json.content.ContentIdListJson;
 import com.enonic.wem.admin.json.content.ContentJson;
@@ -33,9 +34,10 @@ import com.enonic.wem.admin.rest.resource.content.json.DeleteContentResultJson;
 import com.enonic.wem.admin.rest.resource.content.json.PublishContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.UpdateContentJson;
 import com.enonic.wem.api.account.AccountKey;
+import com.enonic.wem.api.content.CompareContentParams;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentAlreadyExistException;
-import com.enonic.wem.api.content.ContentConstants;
+import com.enonic.wem.api.content.ContentCompareResult;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentNotFoundException;
@@ -44,7 +46,6 @@ import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.DeleteContentParams;
-import com.enonic.wem.api.content.DeleteContentResult;
 import com.enonic.wem.api.content.GetContentByIdsParams;
 import com.enonic.wem.api.content.PushContentParams;
 import com.enonic.wem.api.content.RenameContentParams;
@@ -80,15 +81,13 @@ public class ContentResource
 
     static final Context STAGE_CONTEXT = new Context( STAGE_WORKSPACE );
 
-    static final Context PROD_CONTEXT = new Context( PROD_WORKSPACE );
-
     @GET
     public ContentIdJson getById( @QueryParam("id") final String idParam,
                                   @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expandParam )
     {
 
         final ContentId id = ContentId.from( idParam );
-        final Content content = contentService.getById( id, ContentConstants.DEFAULT_CONTEXT );
+        final Content content = contentService.getById( id, STAGE_CONTEXT );
 
         if ( content == null )
         {
@@ -113,7 +112,7 @@ public class ContentResource
     public ContentIdJson getByPath( @QueryParam("path") final String pathParam,
                                     @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expandParam )
     {
-        final Content content = contentService.getByPath( ContentPath.from( pathParam ), ContentConstants.DEFAULT_CONTEXT );
+        final Content content = contentService.getByPath( ContentPath.from( pathParam ), STAGE_CONTEXT );
 
         if ( content == null )
         {
@@ -141,16 +140,16 @@ public class ContentResource
         final Contents contents;
         if ( StringUtils.isEmpty( parentIdParam ) )
         {
-            contents = contentService.getRoots( ContentConstants.DEFAULT_CONTEXT );
+            contents = contentService.getRoots( STAGE_CONTEXT );
         }
         else
         {
             final GetContentByIdsParams params = new GetContentByIdsParams( ContentIds.from( parentIdParam ) );
-            final Contents parentContents = contentService.getByIds( params, ContentConstants.DEFAULT_CONTEXT );
+            final Contents parentContents = contentService.getByIds( params, STAGE_CONTEXT );
 
             if ( parentContents.isNotEmpty() )
             {
-                contents = contentService.getChildren( parentContents.first().getPath(), ContentConstants.DEFAULT_CONTEXT );
+                contents = contentService.getChildren( parentContents.first().getPath(), STAGE_CONTEXT );
             }
             else
             {
@@ -180,11 +179,11 @@ public class ContentResource
         final Contents contents;
         if ( StringUtils.isEmpty( parentPathParam ) )
         {
-            contents = contentService.getRoots( ContentConstants.DEFAULT_CONTEXT );
+            contents = contentService.getRoots( STAGE_CONTEXT );
         }
         else
         {
-            contents = contentService.getChildren( ContentPath.from( parentPathParam ), ContentConstants.DEFAULT_CONTEXT );
+            contents = contentService.getChildren( ContentPath.from( parentPathParam ), STAGE_CONTEXT );
         }
 
         if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
@@ -206,14 +205,13 @@ public class ContentResource
     @Consumes(MediaType.APPLICATION_JSON)
     public AbstractContentQueryResultJson query( final ContentQueryJson contentQueryJson )
     {
-        final ContentQueryResult contentQueryResult =
-            contentService.find( contentQueryJson.getContentQuery(), ContentConstants.DEFAULT_CONTEXT );
+        final ContentQueryResult contentQueryResult = contentService.find( contentQueryJson.getContentQuery(), STAGE_CONTEXT );
 
         final boolean getChildrenIds = !Expand.NONE.matches( contentQueryJson.getExpand() );
         final GetContentByIdsParams params = new GetContentByIdsParams( ContentIds.from( contentQueryResult.getContentIds() ) ).
             setGetChildrenIds( getChildrenIds );
 
-        final Contents contents = contentService.getByIds( params, ContentConstants.DEFAULT_CONTEXT );
+        final Contents contents = contentService.getByIds( params, STAGE_CONTEXT );
 
         return ContentQueryResultJsonFactory.create( contentQueryResult, contents, contentQueryJson.getExpand() );
     }
@@ -269,7 +267,7 @@ public class ContentResource
 
             try
             {
-                final DeleteContentResult deleteResult = contentService.delete( deleteContent, ContentConstants.DEFAULT_CONTEXT );
+                contentService.delete( deleteContent, STAGE_CONTEXT );
                 jsonResult.addSuccess( contentToDelete );
             }
             catch ( ContentNotFoundException | UnableToDeleteContentException e )
@@ -279,6 +277,16 @@ public class ContentResource
         }
 
         return jsonResult;
+    }
+
+    @GET
+    @Path("compare")
+    public ContentComparisonJson compare( @QueryParam("id") final String idParam )
+    {
+        final ContentCompareResult compareResult =
+            contentService.compare( new CompareContentParams( ContentId.from( idParam ), PROD_WORKSPACE ), STAGE_CONTEXT );
+
+        return new ContentComparisonJson( compareResult );
     }
 
     @POST
@@ -295,7 +303,7 @@ public class ContentResource
     @Path("create")
     public ContentJson create( final CreateContentJson params )
     {
-        final Content persistedContent = contentService.create( params.getCreateContent(), ContentConstants.DEFAULT_CONTEXT );
+        final Content persistedContent = contentService.create( params.getCreateContent(), STAGE_CONTEXT );
         return new ContentJson( persistedContent );
     }
 
@@ -327,7 +335,7 @@ public class ContentResource
                 }
             } );
 
-        final Content updatedContent = contentService.update( updateParams, ContentConstants.DEFAULT_CONTEXT );
+        final Content updatedContent = contentService.update( updateParams, STAGE_CONTEXT );
         if ( json.getContentName().equals( updatedContent.getName() ) )
         {
             return new ContentJson( updatedContent );
@@ -339,7 +347,7 @@ public class ContentResource
                 contentId( json.getContentId() ).
                 newName( json.getContentName() );
 
-            final Content renamedContent = contentService.rename( renameParams, ContentConstants.DEFAULT_CONTEXT );
+            final Content renamedContent = contentService.rename( renameParams, STAGE_CONTEXT );
             return new ContentJson( renamedContent );
         }
         catch ( ContentAlreadyExistException e )

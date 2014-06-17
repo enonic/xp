@@ -62,8 +62,7 @@ module LiveEdit {
 
                 api.liveedit.PageComponentLoadedEvent.on((event: api.liveedit.PageComponentLoadedEvent) => {
 
-                    if (event.getItemView().getType() == api.liveedit.layout.LayoutItemType.get()) {
-
+                    if (api.liveedit.layout.LayoutItemType.get().equals(event.getItemView().getType())) {
                         LiveEdit.component.dragdropsort.DragDropSort.createSortableLayout(event.getItemView());
                     }
                 });

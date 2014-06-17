@@ -18,6 +18,8 @@ module app.wizard.action {
 
         private showFormAction:api.ui.Action;
 
+        private showSplitEditAction:api.ui.Action;
+
         constructor(wizardPanel: app.wizard.ContentWizardPanel) {
             this.save = new api.app.wizard.SaveAction(wizardPanel);
             this.duplicate = new DuplicateContentAction();
@@ -27,6 +29,7 @@ module app.wizard.action {
             this.preview = new PreviewAction(wizardPanel);
             this.showLiveEditAction = new ShowLiveEditAction(wizardPanel);
             this.showFormAction = new ShowFormAction(wizardPanel);
+            this.showSplitEditAction = new ShowSplitEditAction(wizardPanel);
         }
 
         enableActionsForNew() {
@@ -71,6 +74,10 @@ module app.wizard.action {
 
         getShowFormAction(): api.ui.Action {
             return this.showFormAction;
+        }
+
+        getShowSplitEditAction(): api.ui.Action {
+            return this.showSplitEditAction;
         }
 
     }

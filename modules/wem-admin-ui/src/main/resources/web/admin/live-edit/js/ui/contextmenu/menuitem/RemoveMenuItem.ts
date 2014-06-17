@@ -1,6 +1,5 @@
 module LiveEdit.ui.contextmenu.menuitem {
 
-    import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
     import PageComponent = api.content.page.PageComponent;
     import PageComponentView = api.liveedit.PageComponentView;
 

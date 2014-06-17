@@ -41,6 +41,7 @@
 ///<reference path='TextInput.ts' />
 ///<reference path='AutosizeTextInput.ts' />
 ///<reference path='Checkbox.ts' />
+///<reference path='CycleButton.ts' />
 
 ///<reference path='PasswordInput.ts' />
 ///<reference path='TextArea.ts' />

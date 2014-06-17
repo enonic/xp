@@ -22,16 +22,6 @@ public class PushNodeCommand
         this.id = builder.id;
     }
 
-    public Workspace getTarget()
-    {
-        return target;
-    }
-
-    public EntityId getId()
-    {
-        return id;
-    }
-
     public static Builder create( final Context context )
     {
         return new Builder( context );
@@ -54,7 +44,7 @@ public class PushNodeCommand
             super( context );
         }
 
-        public Builder to( final Workspace target )
+        public Builder target( final Workspace target )
         {
             this.target = target;
             return this;

@@ -1,9 +1,9 @@
-package com.enonic.wem.core.workspace.diff.query;
+package com.enonic.wem.core.workspace.compare.query;
 
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Workspace;
 
-public class EntityDiffQuery
+public class CompareEntityQuery
 {
 
     private final EntityId entityId;
@@ -13,7 +13,7 @@ public class EntityDiffQuery
     private final Workspace target;
 
 
-    public EntityDiffQuery( final EntityId entityId, final Workspace source, final Workspace target )
+    public CompareEntityQuery( final EntityId entityId, final Workspace source, final Workspace target )
     {
         this.entityId = entityId;
         this.source = source;

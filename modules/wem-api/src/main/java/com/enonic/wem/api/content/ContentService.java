@@ -33,5 +33,7 @@ public interface ContentService
 
     ContentQueryResult find( ContentQuery contentQuery, final Context context );
 
+    ContentCompareResult compare( final CompareContentParams params, final Context context );
+
     String generateContentName( String displayName );
 }

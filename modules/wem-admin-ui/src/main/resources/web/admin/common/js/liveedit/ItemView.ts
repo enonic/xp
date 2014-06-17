@@ -97,6 +97,7 @@ module api.liveedit {
             this.tooltipViewer = this.getTooltipViewer();
             if (this.tooltipViewer) {
                 this.tooltip = new api.ui.Tooltip(this).
+                    setMode(api.ui.Tooltip.MODE_FOLLOW).
                     setTrigger(api.ui.Tooltip.TRIGGER_NONE).
                     setHideTimeout(0).
                     setSide(api.ui.Tooltip.SIDE_TOP).
