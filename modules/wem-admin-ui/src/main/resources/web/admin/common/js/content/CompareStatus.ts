@@ -19,7 +19,7 @@ module api.content {
 
         static fromJson(json: CompareStatusJson): CompareStatus {
 
-            var status: Status = <Status>CompareStatus[json.status];
+            var status: Status = <Status>Status[json.status];
 
             return new CompareStatus(status);
         }
