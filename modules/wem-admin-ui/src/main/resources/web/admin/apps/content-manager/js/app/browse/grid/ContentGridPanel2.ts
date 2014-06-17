@@ -36,7 +36,7 @@ module app.browse.grid {
             this.setColumns([column1, column2]);
 
             this.getGrid().subscribeOnDblClick((event, data) => {
-                if (this.hasClass("active")) {
+                if (this.isActive()) {
                     new EditContentEvent([this.getGrid().getDataView().getItem(data.row)]).fire();
                 }
             });
