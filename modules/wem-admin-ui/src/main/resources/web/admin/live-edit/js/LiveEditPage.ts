@@ -96,6 +96,7 @@ module LiveEdit {
             ItemViewSelectedEvent.on((event: ItemViewSelectedEvent) => {
                 var component = event.getItemView();
 
+                component.hideTooltip();
                 // Highlighter should not be shown when type page is selected
                 if (component.getType().equals(api.liveedit.PageItemType.get())) {
                     this.highlighter.hide();
@@ -148,7 +149,6 @@ module LiveEdit {
                 var selectedView = this.pageView.getSelectedView();
                 if (selectedView) {
                     selectedView.deselect();
-                    selectedView.hideTooltip();
                 }
             });
         }
