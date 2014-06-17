@@ -4,12 +4,12 @@ public class EntityComparison
 {
     private final EntityId entityId;
 
-    private final CompareState compareState;
+    private final CompareStatus compareStatus;
 
-    public EntityComparison( final EntityId entityId, final CompareState compareState )
+    public EntityComparison( final EntityId entityId, final CompareStatus compareStatus )
     {
         this.entityId = entityId;
-        this.compareState = compareState;
+        this.compareStatus = compareStatus;
     }
 
     public EntityId getEntityId()
@@ -17,9 +17,9 @@ public class EntityComparison
         return entityId;
     }
 
-    public CompareState getCompareState()
+    public CompareStatus getCompareStatus()
     {
-        return compareState;
+        return compareStatus;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class EntityComparison
 
         final EntityComparison that = (EntityComparison) o;
 
-        if ( compareState != null ? !compareState.equals( that.compareState ) : that.compareState != null )
+        if ( compareStatus != null ? !compareStatus.equals( that.compareStatus ) : that.compareStatus != null )
         {
             return false;
         }
@@ -52,7 +52,7 @@ public class EntityComparison
     public int hashCode()
     {
         int result = entityId != null ? entityId.hashCode() : 0;
-        result = 31 * result + ( compareState != null ? compareState.hashCode() : 0 );
+        result = 31 * result + ( compareStatus != null ? compareStatus.hashCode() : 0 );
         return result;
     }
 }

@@ -2,22 +2,22 @@ package com.enonic.wem.admin.json.content;
 
 import com.enonic.wem.api.content.ContentCompareResult;
 
-public class ContentComparisonJson
+public class ContentCompareResultJson
 {
-    private final String compareState;
+    private final String compareStatus;
 
     private final String id;
 
-    public ContentComparisonJson( final ContentCompareResult contentCompareResult )
+    public ContentCompareResultJson( final ContentCompareResult contentCompareResult )
     {
-        this.compareState = contentCompareResult.getCompareState().getState().name();
+        this.compareStatus = contentCompareResult.getCompareStatus().getState().name();
         this.id = contentCompareResult.getContentId().toString();
     }
 
     @SuppressWarnings( "UnusedDeclaration" )
-    public String getCompareState()
+    public String getCompareStatus()
     {
-        return compareState;
+        return compareStatus;
     }
 
     @SuppressWarnings( "UnusedDeclaration" )

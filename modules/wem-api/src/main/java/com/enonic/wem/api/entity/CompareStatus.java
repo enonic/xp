@@ -1,6 +1,6 @@
 package com.enonic.wem.api.entity;
 
-public class CompareState
+public class CompareStatus
 {
     public enum State
     {
@@ -14,7 +14,7 @@ public class CompareState
 
     private final State state;
 
-    public CompareState( final State state )
+    public CompareStatus( final State state )
     {
         this.state = state;
     }
@@ -31,12 +31,12 @@ public class CompareState
         {
             return true;
         }
-        if ( !( o instanceof CompareState ) )
+        if ( !( o instanceof CompareStatus ) )
         {
             return false;
         }
 
-        final CompareState that = (CompareState) o;
+        final CompareStatus that = (CompareStatus) o;
 
         if ( state != that.state )
         {

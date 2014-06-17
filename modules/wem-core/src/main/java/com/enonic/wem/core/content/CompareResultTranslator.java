@@ -9,7 +9,7 @@ class CompareResultTranslator
 
     public static ContentCompareResult translate( final EntityComparison entityComparison )
     {
-        return new ContentCompareResult( entityComparison.getCompareState(), ContentId.from( entityComparison.getEntityId() ) );
+        return new ContentCompareResult( entityComparison.getCompareStatus(), ContentId.from( entityComparison.getEntityId() ) );
     }
 
 }

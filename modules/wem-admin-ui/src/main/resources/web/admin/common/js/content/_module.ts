@@ -31,4 +31,13 @@
 ///<reference path='ContentQueryRequest.ts' />
 ///<reference path='ContentQueryResult.ts' />
 ///<reference path='UpdateContentRequest.ts' />
+///<reference path='PublishContentRequest.ts' />
+///<reference path='CompareContentRequest.ts' />
+///<reference path='CompareContentResultJson.ts' />
+///<reference path='CompareContentResult.ts' />
+///<reference path='CompareContentResultJson.ts' />
+///<reference path='CompareStatus.ts' />
+///<reference path='CompareStatusJson.ts' />
+
+
 
