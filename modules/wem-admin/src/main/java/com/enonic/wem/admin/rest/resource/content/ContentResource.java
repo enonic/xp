@@ -16,7 +16,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.admin.json.content.AbstractContentListJson;
-import com.enonic.wem.admin.json.content.ContentComparisonJson;
+import com.enonic.wem.admin.json.content.ContentCompareResultJson;
 import com.enonic.wem.admin.json.content.ContentIdJson;
 import com.enonic.wem.admin.json.content.ContentIdListJson;
 import com.enonic.wem.admin.json.content.ContentJson;
@@ -281,12 +281,12 @@ public class ContentResource
 
     @GET
     @Path("compare")
-    public ContentComparisonJson compare( @QueryParam("id") final String idParam )
+    public ContentCompareResultJson compare( @QueryParam("id") final String idParam )
     {
         final ContentCompareResult compareResult =
             contentService.compare( new CompareContentParams( ContentId.from( idParam ), PROD_WORKSPACE ), STAGE_CONTEXT );
 
-        return new ContentComparisonJson( compareResult );
+        return new ContentCompareResultJson( compareResult );
     }
 
     @POST

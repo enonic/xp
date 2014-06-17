@@ -3,7 +3,7 @@ package com.enonic.wem.core.workspace.compare;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.api.entity.CompareState;
+import com.enonic.wem.api.entity.CompareStatus;
 import com.enonic.wem.api.entity.EntityComparison;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
@@ -57,9 +57,9 @@ public class WorkspaceCompareServiceImpl
         final VersionBranch sourceBranch = getBranch( sourceVersion );
         final VersionBranch targetBranch = getBranch( targetVersion );
 
-        final CompareState compareState = DiffStatusResolver.resolve( new DiffStatusParams( sourceBranch, targetBranch ) );
+        final CompareStatus compareStatus = DiffStatusResolver.resolve( new DiffStatusParams( sourceBranch, targetBranch ) );
 
-        return new EntityComparison( entityId, compareState );
+        return new EntityComparison( entityId, compareStatus );
     }
 
     private VersionBranch getBranch( final BlobKey version )
