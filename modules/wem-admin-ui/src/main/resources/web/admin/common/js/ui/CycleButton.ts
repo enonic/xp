@@ -10,7 +10,6 @@ module api.ui {
             this.actionList = actions;
 
             this.actionList.forEach((action:Action, i:number) => {
-                var nextAction = this.actionList.length > i+1 ? this.actionList[i+1] : this.actionList[0];
                 var el = this.addAction(action, i);
                 if (i == 0) {
                     this.setActive(el);

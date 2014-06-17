@@ -4,6 +4,7 @@
   top: 0;
   z-index: 10000;
   min-width: 80px;
+  color:@admin-light-gray-font;
   .noSelect();
 
   &.expanded {
@@ -15,6 +16,9 @@
   }
   .action {
     display:none;
+    &:hover {
+      color:@admin-dark-gray-font;
+    }
     &.active {
       display: block;
     }
@@ -27,6 +31,16 @@
     right:10px;
     top:10px;
     margin-left:10px;
+    &:before {
+      color:@admin-light-gray-font;
+      &:hover {
+        color:@admin-dark-gray-font;
+      }
+    }
+
+    &:hover {
+      .icon-arrow-down();
+    }
     .icon-loop3();
   }
 
