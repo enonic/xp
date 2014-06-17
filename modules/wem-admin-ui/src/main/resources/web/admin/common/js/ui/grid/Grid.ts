@@ -39,6 +39,8 @@ module api.ui.grid {
 
         private dataView:DataView<T>;
 
+        private checkboxSelectorPlugin;
+
         constructor(dataView:DataView<T>, columns:GridColumn<T>[], options:GridOptions = {}) {
             super("grid");
 
@@ -46,14 +48,14 @@ module api.ui.grid {
                 this.addClass("no-header");
             }
 
-            var checkboxSelectorPlugin = null;
+            this.checkboxSelectorPlugin = null;
             this.checkableRows = options.checkableRows || false;
             if (this.checkableRows) {
-                checkboxSelectorPlugin = new Slick.CheckboxSelectColumn({
+                this.checkboxSelectorPlugin = new Slick.CheckboxSelectColumn({
                     cssClass: "slick-cell-checkboxsel",
                     width: 40
                 });
-                columns.unshift(checkboxSelectorPlugin.getColumnDefinition());
+                columns.unshift(this.checkboxSelectorPlugin.getColumnDefinition());
             }
 
             this.getEl().setHeight((options.height || this.defaultHeight) + "px");
@@ -63,8 +65,8 @@ module api.ui.grid {
             if (options.autoRenderGridOnDataChanges || this.defaultAutoRenderGridOnDataChanges) {
                 this.autoRenderGridOnDataChanges(this.dataView);
             }
-            if (checkboxSelectorPlugin != null) {
-                this.slickGrid.registerPlugin(checkboxSelectorPlugin);
+            if (this.checkboxSelectorPlugin != null) {
+                this.slickGrid.registerPlugin(this.checkboxSelectorPlugin);
             }
 
             ResponsiveManager.onAvailableSizeChanged(this, () => {
@@ -100,6 +102,13 @@ module api.ui.grid {
             return this.dataView;
         }
 
+        public setColumns(columns:GridColumn<T>[]) {
+            if (this.checkboxSelectorPlugin) {
+                columns.unshift(this.checkboxSelectorPlugin.getColumnDefinition());
+            }
+            this.slickGrid.setColumns(columns);
+        }
+
         setFilter(f:(item:any, args:any) => boolean) {
             this.dataView.setFilter(f);
         }
@@ -123,6 +132,10 @@ module api.ui.grid {
 
         invalidateRows(rows:number[]) {
             this.slickGrid.invalidateRows(rows);
+        }
+
+        syncGridSelection(preserveHidden: boolean) {
+            this.dataView.syncGridSelection(this.slickGrid, preserveHidden);
         }
 
         setOnClick(callback:(event, data:GridOnClickData) => void) {
