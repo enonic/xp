@@ -24,7 +24,7 @@ module api.ui {
             return this.rangeClass;
         }
 
-        isFitt(size:number): boolean {
+        isFit(size:number): boolean {
             return (this.minRange <= size) && (size <= this.maxRange);
         }
     }
