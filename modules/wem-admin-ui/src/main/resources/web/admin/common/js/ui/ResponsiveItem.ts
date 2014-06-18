@@ -33,7 +33,7 @@ module api.ui {
 
         private fitToRange() {
             for (var i = 0; i < ResponsiveItem.sizeRanges.length; i++) {
-                if (ResponsiveItem.sizeRanges[i].isFitt(this.rangeValue)) {
+                if (ResponsiveItem.sizeRanges[i].isFit(this.rangeValue)) {
                     this.rangeSize = ResponsiveItem.sizeRanges[i];
                     break;
                 }
@@ -58,6 +58,18 @@ module api.ui {
                 this.element.getEl().addClass(this.rangeSize.getRangeClass());
             }
             this.handle();         // Additional handler
+        }
+
+        setHandler(handler: Function = (() => {})) {
+            this.handle = handler;
+        }
+
+        getRangeValue():number {
+            return this.rangeValue;
+        }
+
+        getRangeSize():ResponsiveRange {
+            return this.rangeSize;
         }
     }
 }

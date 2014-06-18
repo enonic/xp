@@ -7,7 +7,7 @@ module api.ui {
         private static responsiveListeners: ResponsiveListener[] = [];
 
         // Custom handler will be executed in addition on element update
-        static onAvailableSizeChanged(el: api.dom.Element, handler:Function = () => {}) {
+        static onAvailableSizeChanged(el: api.dom.Element, handler:Function = () => {}):ResponsiveItem {
             var responsiveItem:ResponsiveItem = new ResponsiveItem(el, handler),
                 listener = () => { responsiveItem.update(); },
                 responsiveListener = new ResponsiveListener(responsiveItem, listener);
@@ -16,6 +16,8 @@ module api.ui {
 
             ResponsiveManager.window.getHTMLElement().addEventListener('availablesizechange', listener);
             ResponsiveManager.window.onResized(listener);
+
+            return responsiveItem;
         }
 
         static unAvailableSizeChanged(el: api.dom.Element) {
