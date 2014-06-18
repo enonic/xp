@@ -42,7 +42,7 @@ final class GetContentByPathsCommand
     private Contents doExecute()
     {
         final NodePaths paths = ContentNodeHelper.translateContentPathsToNodePaths( contentPaths );
-        final Nodes nodes = nodeService.getByPaths( paths, ContentConstants.DEFAULT_CONTEXT );
+        final Nodes nodes = nodeService.getByPaths( paths, this.context );
 
         return getTranslator().fromNodes( nodes );
     }

@@ -43,7 +43,7 @@ final class RenameContentCommand
     {
         final EntityId entityId = EntityId.from( params.getContentId() );
         final NodeName nodeName = NodeName.from( params.getNewName().toString() );
-        nodeService.rename( new RenameNodeParams().entityId( entityId ).nodeName( nodeName ), ContentConstants.DEFAULT_CONTEXT );
+        nodeService.rename( new RenameNodeParams().entityId( entityId ).nodeName( nodeName ), this.context);
 
         return getContent( params.getContentId() );
     }

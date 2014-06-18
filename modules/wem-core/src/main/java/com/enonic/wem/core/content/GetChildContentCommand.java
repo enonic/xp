@@ -28,7 +28,7 @@ final class GetChildContentCommand
     {
         final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( this.parentPath );
 
-        final Nodes nodes = nodeService.getByParent( nodePath, ContentConstants.DEFAULT_CONTEXT );
+        final Nodes nodes = nodeService.getByParent( nodePath, this.context );
 
         final Contents contents = getTranslator().fromNodes( removeNonContentNodes( nodes ) );
 

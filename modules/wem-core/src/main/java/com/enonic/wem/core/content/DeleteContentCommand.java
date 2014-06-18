@@ -37,7 +37,7 @@ final class DeleteContentCommand
 
         try
         {
-            final Node deletedNode = nodeService.deleteByPath( nodePath, ContentConstants.DEFAULT_CONTEXT );
+            final Node deletedNode = nodeService.deleteByPath( nodePath, context );
 
             final Content deletedContent = getTranslator().fromNode( deletedNode );
 

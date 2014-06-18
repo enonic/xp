@@ -27,7 +27,7 @@ final class GetContentByPathCommand
 
         try
         {
-            final Node node = nodeService.getByPath( nodePath, ContentConstants.DEFAULT_CONTEXT );
+            final Node node = nodeService.getByPath( nodePath, this.context );
             return getTranslator().fromNode( node );
         }
         catch ( NoNodeAtPathFoundException e )
