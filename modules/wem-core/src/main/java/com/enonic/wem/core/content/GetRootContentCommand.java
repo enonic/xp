@@ -21,13 +21,14 @@ final class GetRootContentCommand
     {
         final NodePath nodePath = ContentNodeHelper.CONTENT_ROOT_NODE.asAbsolute();
         final Nodes rootNodes = nodeService.getByParent( nodePath, this.context );
-        final Contents contents = getTranslator().fromNodes( removeNonContentNodes( rootNodes ) );
+        final Contents contents = translator.fromNodes( removeNonContentNodes( rootNodes ) );
 
         return ChildContentIdsResolver.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             context( this.context ).
+            translator( this.translator ).
             build().
             resolve( contents );
     }

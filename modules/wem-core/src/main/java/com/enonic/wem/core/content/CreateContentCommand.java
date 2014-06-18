@@ -39,10 +39,10 @@ final class CreateContentCommand
             validateContentData( this.params );
         }
 
-        final CreateNodeParams createNodeParams = getTranslator().toCreateNode( this.params );
+        final CreateNodeParams createNodeParams = translator.toCreateNode( this.params );
         final Node createdNode = nodeService.create( createNodeParams, this.context );
 
-        return getTranslator().fromNode( createdNode );
+        return translator.fromNode( createdNode );
     }
 
     private void validateContentData( final CreateContentParams contentParams )

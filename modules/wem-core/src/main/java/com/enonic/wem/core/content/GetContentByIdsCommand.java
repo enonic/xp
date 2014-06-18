@@ -44,7 +44,7 @@ final class GetContentByIdsCommand
         catch ( NoEntityWithIdFoundException ex )
         {
             final ContentId contentId = ContentId.from( ex.getId().toString() );
-            throw new ContentNotFoundException( contentId );
+            throw new ContentNotFoundException( contentId, this.context.getWorkspace() );
         }
 
         return this.params.doGetChildrenIds() ? ChildContentIdsResolver.
@@ -53,6 +53,7 @@ final class GetContentByIdsCommand
             nodeService( this.nodeService ).
             blobService( this.blobService ).
             contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
             build().
             resolve( contents ) : contents;
     }
@@ -62,7 +63,7 @@ final class GetContentByIdsCommand
         final EntityIds entityIds = getAsEntityIds( this.params.getIds() );
         final Nodes nodes = nodeService.getByIds( entityIds, this.context);
 
-        return getTranslator().fromNodes( nodes );
+        return translator.fromNodes( nodes );
     }
 
     private EntityIds getAsEntityIds( final ContentIds contentIds )

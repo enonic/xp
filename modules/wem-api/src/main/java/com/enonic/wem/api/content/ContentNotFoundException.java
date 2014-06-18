@@ -4,28 +4,31 @@ import java.text.MessageFormat;
 
 import com.google.common.base.Joiner;
 
+import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.exception.NotFoundException;
 
 public final class ContentNotFoundException
     extends NotFoundException
 {
-    public ContentNotFoundException( final ContentPath path )
+    public ContentNotFoundException( final ContentPath path, final Workspace workspace )
     {
-        super( MessageFormat.format( "Content with path [{0}] was not found", path.toString() ) );
+        super( MessageFormat.format( "Content with path [{0}] was not found in workspace [{1}]", path.toString(), workspace ) );
     }
 
-    public ContentNotFoundException( final ContentPaths contentPaths )
+    public ContentNotFoundException( final ContentPaths contentPaths, final Workspace workspace )
     {
-        super( MessageFormat.format( "Contents with paths [{0}] were not found", Joiner.on( ", " ).join( contentPaths ) ) );
+        super( MessageFormat.format( "Contents with paths [{0}] were not found in workspace [{1}]", Joiner.on( ", " ).join( contentPaths ),
+                                     workspace ) );
     }
 
-    public ContentNotFoundException( final ContentId contentId )
+    public ContentNotFoundException( final ContentId contentId, final Workspace workspace )
     {
-        super( MessageFormat.format( "Content with id [{0}] was not found", contentId.toString() ) );
+        super( MessageFormat.format( "Content with id [{0}] was not found  in workspace [{1}]", contentId.toString(), workspace ) );
     }
 
-    public ContentNotFoundException( final ContentIds contentIds )
+    public ContentNotFoundException( final ContentIds contentIds, final Workspace workspace )
     {
-        super( MessageFormat.format( "Contents with ids [{0}] were not found", Joiner.on( ", " ).join( contentIds ) ) );
+        super( MessageFormat.format( "Contents with ids [{0}] were not found in workspace [{1}]", Joiner.on( ", " ).join( contentIds ),
+                                     workspace ) );
     }
 }

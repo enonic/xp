@@ -3,7 +3,6 @@ package com.enonic.wem.core.content;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.entity.NoNodeAtPathFoundException;
@@ -28,11 +27,11 @@ final class GetContentByPathCommand
         try
         {
             final Node node = nodeService.getByPath( nodePath, this.context );
-            return getTranslator().fromNode( node );
+            return translator.fromNode( node );
         }
         catch ( NoNodeAtPathFoundException e )
         {
-            throw new ContentNotFoundException( contentPath );
+            throw new ContentNotFoundException( contentPath, this.context.getWorkspace() );
         }
     }
 

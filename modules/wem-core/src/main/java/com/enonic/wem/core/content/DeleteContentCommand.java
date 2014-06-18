@@ -39,13 +39,13 @@ final class DeleteContentCommand
         {
             final Node deletedNode = nodeService.deleteByPath( nodePath, context );
 
-            final Content deletedContent = getTranslator().fromNode( deletedNode );
+            final Content deletedContent = translator.fromNode( deletedNode );
 
             return new DeleteContentResult( deletedContent );
         }
         catch ( NoNodeAtPathFoundException e )
         {
-            throw new ContentNotFoundException( this.params.getContentPath() );
+            throw new ContentNotFoundException( this.params.getContentPath(), this.context.getWorkspace() );
         }
     }
 
