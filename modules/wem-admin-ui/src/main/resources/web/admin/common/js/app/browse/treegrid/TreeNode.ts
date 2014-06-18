@@ -1,66 +1,62 @@
 module api.app.browse.treegrid {
 
-    import Item = api.item.Item;
+    export class TreeNode<NODE extends api.node.Node> {
 
-    export class TreeNode<T extends Item> {
+        private data: NODE;
 
-        private item:T;
+        private expanded: boolean;
 
-        private expanded:boolean;
+        private selected: boolean;
 
-        private selected:boolean;
+        private parent: TreeNode<NODE>;
 
-        private parent:TreeNode<T>;
+        private children: TreeNode<NODE>[];
 
-        private children:TreeNode<T>[];
-
-        constructor(item?:T, parent?:TreeNode<T>,
-                    expanded:boolean = false,
-                    selected:boolean = false) {
-            this.item = item;
+        constructor(data?: NODE, parent?: TreeNode<NODE>, expanded: boolean = false, selected: boolean = false) {
+            this.data = data;
             this.parent = parent;
             this.children = [];
             this.expanded = expanded;
             this.selected = selected;
         }
 
-        isExpanded():boolean {
+        isExpanded(): boolean {
             return this.expanded;
         }
 
-        setExpanded(expanded:boolean = true) {
+        setExpanded(expanded: boolean = true) {
             this.expanded = expanded;
         }
 
-        isSelected():boolean {
+        isSelected(): boolean {
             return this.selected;
         }
 
-        setSelected(selected:boolean = true) {
+        setSelected(selected: boolean = true) {
             this.selected = selected;
         }
 
-        getItem():T {
-            return this.item;
+        getData(): NODE {
+            return this.data;
         }
 
-        setItem(item:T) {
-            this.item = item;
+        setData(node: NODE) {
+            this.data = node;
         }
 
-        getParent():TreeNode<T> {
+        getParent(): TreeNode<NODE> {
             return this.parent;
         }
 
-        setParent(parent:TreeNode<T>) {
+        setParent(parent: TreeNode<NODE>) {
             this.parent = parent;
         }
 
-        getChildren():TreeNode<T>[] {
+        getChildren(): TreeNode<NODE>[] {
             return this.children;
         }
 
-        setChildren(children:TreeNode<T>[]) {
+        setChildren(children: TreeNode<NODE>[]) {
             this.children = children;
 
             this.children.forEach((child) => {
@@ -68,22 +64,22 @@ module api.app.browse.treegrid {
             });
         }
 
-        hasChildren():boolean {
+        hasChildren(): boolean {
             return this.children.length > 0;
         }
 
-        setChildrenFromItems(children:T[]) {
+        setChildrenFromItems(children: NODE[]) {
             this.children = [];
 
             children.forEach((child) => {
-                this.children.push(new TreeNode<T>(child, this));
+                this.children.push(new TreeNode<NODE>(child, this));
             });
         }
 
         /*
          Element is visible, if all parents are expanded
          */
-        isVisible():boolean {
+        isVisible(): boolean {
             var visible = true;
             var parent = this.parent;
             while (parent && visible) {
@@ -95,11 +91,11 @@ module api.app.browse.treegrid {
 
         /*
          Transforms tree into the list of nodes with current node as root.
-            @expanded - determines to display only reachable nodes.
-            @selected - determines to display only seleted nodes.
+         @expanded - determines to display only reachable nodes.
+         @selected - determines to display only seleted nodes.
          */
-        treeToList(expanded:boolean = true, selected: boolean = false):TreeNode<T>[] {
-            var list:TreeNode<T>[] = [];
+        treeToList(expanded: boolean = true, selected: boolean = false): TreeNode<NODE>[] {
+            var list: TreeNode<NODE>[] = [];
 
             if (this.selected === true || selected === false) {
                 list.push(this);
@@ -117,31 +113,35 @@ module api.app.browse.treegrid {
         /*
          Maps Node's list to Item's list.
          */
-        treeToItemList(expanded:boolean = true, selected: boolean = false):T[] {
-            var list:T[] = this.treeToList(expanded, selected)
-                .map((node) => { return node.getItem(); })
-                .filter((item) => { return item != null; });
+        treeToItemList(expanded: boolean = true, selected: boolean = false): NODE[] {
+            var list: NODE[] = this.treeToList(expanded, selected)
+                .map((node) => {
+                    return node.getData();
+                })
+                .filter((item) => {
+                    return item != null;
+                });
 
             return list;
         }
 
-        findNode(item:T):TreeNode<T> {
+        findNode(data: NODE): TreeNode<NODE> {
 
-            if (this.item && this.item.getId() === item.getId()) {
+            if (this.data && this.data.getId() === data.getId()) {
                 return this;
             }
 
             for (var i = 0; i < this.children.length; i++) {
-                var node:TreeNode<T> = this.children[i].findNode(item);
-                if (node) {
-                    return node;
+                var child: TreeNode<NODE> = this.children[i].findNode(data);
+                if (child) {
+                    return child;
                 }
             }
 
             return null;
         }
 
-        calcLevel():number {
+        calcLevel(): number {
             var parent = this.parent,
                 lvl = 0;
             while (parent) {

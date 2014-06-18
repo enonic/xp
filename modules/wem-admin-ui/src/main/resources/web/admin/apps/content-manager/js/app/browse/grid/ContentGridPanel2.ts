@@ -42,8 +42,8 @@ module app.browse.grid {
             });
         }
 
-        hasChildren(item:ContentSummary):boolean {
-            return item.hasChildren();
+        hasChildren(data: ContentSummary): boolean {
+            return data.hasChildren();
         }
 
         listRequest(item?:ContentSummary):Q.Promise<ContentSummary[]> {

@@ -15,17 +15,17 @@ module api.app.browse.treegrid {
     import ContentSummary = api.content.ContentSummary;
     import ContentSummaryViewer = api.content.ContentSummaryViewer;
 
-    export class TreeGrid<T extends Item> extends api.ui.Panel {
+    export class TreeGrid<NODE extends api.node.Node> extends api.ui.Panel {
 
-        private columns:GridColumn<T>[] = [];
+        private columns: GridColumn<NODE>[] = [];
 
         private gridOptions:GridOptions;
 
-        private grid:Grid<T>;
+        private grid: Grid<NODE>;
 
-        private gridData:DataView<T>;
+        private gridData: DataView<NODE>;
 
-        private root:TreeNode<T>;
+        private root: TreeNode<NODE>;
 
         private toolbar:TreeGridToolbar;
 
@@ -38,11 +38,11 @@ module api.app.browse.treegrid {
             super("tree-grid " + classes.trim());
 
             // root node with undefined item
-            this.root = new TreeNode<T>();
+            this.root = new TreeNode<NODE>();
             this.root.setExpanded(true);
 
-            this.gridData = new DataView<T>();
-            this.gridData.setFilter((item:T, root:TreeNode<T>) => {
+            this.gridData = new DataView<NODE>();
+            this.gridData.setFilter((item: NODE, root: TreeNode<NODE>) => {
                 var node = root.findNode(item);
 
                 return node ? node.isVisible() : false;
@@ -67,7 +67,7 @@ module api.app.browse.treegrid {
                 autoHeight: true
             };
 
-            this.grid = new Grid<T>(this.gridData, this.columns, this.gridOptions);
+            this.grid = new Grid<NODE>(this.gridData, this.columns, this.gridOptions);
 
             // Custom row selection required for valid behaviour
             this.grid.setSelectionModel(new Slick.RowSelectionModel({selectActiveRow: false}));
@@ -119,7 +119,7 @@ module api.app.browse.treegrid {
                                 this.collapseData(item);
                             } else if (node.getParent() !== this.root) {
                                 this.active = false;
-                                item = node.getParent().getItem();
+                                item = node.getParent().getData();
                                 var row = this.gridData.getRowById(item.getId());
                                 this.grid.selectRow(row);
                                 this.collapseData(item);
@@ -177,7 +177,7 @@ module api.app.browse.treegrid {
             });
         }
 
-        getGrid():Grid<T> {
+        getGrid(): Grid<NODE> {
             return this.grid;
         }
 
@@ -193,7 +193,7 @@ module api.app.browse.treegrid {
         Must be overridden in most cases.
         Various items may have different determination of 'child'
          */
-        hasChildren(item:T):boolean {
+        hasChildren(data: NODE): boolean {
             return false;
         }
 
@@ -201,17 +201,17 @@ module api.app.browse.treegrid {
          Must be overridden in most cases.
          Various items may have different requests
          */
-        listRequest(item?:T):Q.Promise<T[]> {
-            var deferred = Q.defer<T[]>();
+        listRequest(data?: NODE): Q.Promise<NODE[]> {
+            var deferred = Q.defer<NODE[]>();
             // Empty logic
             deferred.resolve(null);
             return deferred.promise;
         }
 
-        setColumns(columns:GridColumn<T>[]) {
+        setColumns(columns: GridColumn<NODE>[]) {
             if (columns.length > 0) {
                 var formatter = columns[0].formatter;
-                var toggleFormatter = (row:number, cell:number, value:any, columnDef:any, item:T) => {
+                var toggleFormatter = (row: number, cell: number, value: any, columnDef: any, item: NODE) => {
                     var node = this.root.findNode(item);
 
                     var toggleSpan = new api.dom.SpanEl("toggle icon icon-xsmall");
@@ -233,14 +233,14 @@ module api.app.browse.treegrid {
             this.grid.setColumns(this.columns);
         }
 
-        private initData(contents:T[]) {
-            this.gridData.setItems(contents, "id");
+        private initData(nodeDatas: NODE[]) {
+            this.gridData.setItems(nodeDatas, "id");
         }
 
-        private expandData(item?: T) {
-            var node:TreeNode<T> = item? this.root.findNode(item) : this.root,
-                rootItemList:T[],
-                nodeItemList:T[];
+        private expandData(nodeData?: NODE) {
+            var node: TreeNode<NODE> = nodeData ? this.root.findNode(nodeData) : this.root,
+                rootItemList: NODE[],
+                nodeItemList: NODE[];
 
             if (node) {
                 node.setExpanded(true);
@@ -251,8 +251,8 @@ module api.app.browse.treegrid {
                     this.initData(rootItemList);
                     this.updateExpanded(node, nodeItemList, rootItemList);
                 } else {
-                    this.listRequest(item)
-                        .then((items:T[]) => {
+                    this.listRequest(nodeData)
+                        .then((items: NODE[]) => {
                             node.setChildrenFromItems(items);
                             nodeItemList = node.treeToItemList();
                             rootItemList = this.root.treeToItemList();
@@ -266,8 +266,8 @@ module api.app.browse.treegrid {
             }
         }
 
-        private updateExpanded(node:TreeNode<T>, nodeItemList:T[], rootItemList:T[]) {
-            var nodeRow = node.getItem() ? this.gridData.getRowById(node.getItem().getId()) : -1,
+        private updateExpanded(node: TreeNode<NODE>, nodeItemList: NODE[], rootItemList: NODE[]) {
+            var nodeRow = node.getData() ? this.gridData.getRowById(node.getData().getId()) : -1,
                 expanded = [],
                 animated = [];
 
@@ -293,12 +293,12 @@ module api.app.browse.treegrid {
             }, 350);
         }
 
-        private collapseData(item: T) {
-            var node = this.root.findNode(item),
+        private collapseData(nodeData: NODE) {
+            var node = this.root.findNode(nodeData),
                 animated = [],
                 collapsed = [];
 
-            var nodeRow = this.gridData.getRowById(node.getItem().getId());
+            var nodeRow = this.gridData.getRowById(node.getData().getId());
 
             node.treeToItemList().forEach((elem, index) => {
                 if (index > 0) {
