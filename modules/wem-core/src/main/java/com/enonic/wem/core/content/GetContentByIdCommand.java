@@ -27,7 +27,7 @@ final class GetContentByIdCommand
 
         try
         {
-            final Node node = nodeService.getById( entityId, ContentConstants.DEFAULT_CONTEXT );
+            final Node node = nodeService.getById( entityId, this.context );
             return getTranslator().fromNode( node );
         }
         catch ( NoEntityWithIdFoundException e )

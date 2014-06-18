@@ -60,7 +60,7 @@ final class GetContentByIdsCommand
     private Contents doExecute()
     {
         final EntityIds entityIds = getAsEntityIds( this.params.getIds() );
-        final Nodes nodes = nodeService.getByIds( entityIds, ContentConstants.DEFAULT_CONTEXT );
+        final Nodes nodes = nodeService.getByIds( entityIds, this.context);
 
         return getTranslator().fromNodes( nodes );
     }

@@ -44,6 +44,7 @@ public class UpdateContentCommandTest
 
     private UpdateContentCommand command;
 
+
     @Before
     public void before()
         throws Exception
@@ -52,7 +53,7 @@ public class UpdateContentCommandTest
         final AttachmentService attachmentService = Mockito.mock( AttachmentService.class );
         final ContentService contentService = Mockito.mock( ContentService.class );
 
-        command = UpdateContentCommand.create( null ).
+        command = UpdateContentCommand.create( new UpdateContentParams().contentId( ContentId.from( "1" ) ) ).
             contentTypeService( contentTypeService ).
             attachmentService( attachmentService ).
             build();
