@@ -28,13 +28,15 @@ module api.ui {
         }
 
         disableAction(action:Action) {
-            action.setEnabled(false);
-            this.getElementFromIndex(this.getIndexFromAction(action)).hide();
+            if (action.isEnabled()) {
+                action.setEnabled(false);
+                this.getElementFromIndex(this.getIndexFromAction(action)).addClass("hidden");
+            }
         }
 
         enableAction(action:Action) {
             action.setEnabled(true);
-            this.getElementFromIndex(this.getIndexFromAction(action)).show();
+            this.getElementFromIndex(this.getIndexFromAction(action)).removeClass("hidden");
         }
 
         setCurrentAction(action:Action) {

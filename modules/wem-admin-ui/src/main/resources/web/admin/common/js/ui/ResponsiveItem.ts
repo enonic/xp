@@ -4,18 +4,17 @@ module api.ui {
 
         // Global responsive item properties
         private static sizeRanges = [
-            new ResponsiveRange(   0,  240),    // none (necessary for valid check)
-            new ResponsiveRange( 240,  360),    // mobile vertical
-            new ResponsiveRange( 360,  540),    // mobile horizontal
-            new ResponsiveRange( 540,  720),    // Phablet
-            new ResponsiveRange( 720,  960),    // Tablet vertical
-            new ResponsiveRange( 960, 1200),    // Tablet horizontal
-            new ResponsiveRange(1200, 1380),    // 13"
-            new ResponsiveRange(1380, 1620),    // 15"
-            new ResponsiveRange(1620, 1920),    // TV
-            new ResponsiveRange(1920, Infinity) // Monitor
+            ResponsiveRanges._0_240,    // none (necessary for valid check)
+            ResponsiveRanges._240_360,     // mobile vertical
+            ResponsiveRanges._360_540,    // mobile horizontal
+            ResponsiveRanges._540_720,    // Phablet
+            ResponsiveRanges._720_960,    // Tablet vertical
+            ResponsiveRanges._960_1200,    // Tablet horizontal
+            ResponsiveRanges._1200_1380,    // 13"
+            ResponsiveRanges._1380_1620,    // 15"
+            ResponsiveRanges._1620_1920,    // TV
+            ResponsiveRanges._1920_UP // Monitor
         ];
-
 
         private element: api.dom.Element;
 
