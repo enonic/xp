@@ -24,6 +24,7 @@ module app.wizard {
 
     import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
     import ResponsiveManager = api.ui.ResponsiveManager;
+    import ResponsiveRanges = api.ui.ResponsiveRanges;
     import FormIcon = api.app.wizard.FormIcon;
     import WizardHeaderWithDisplayNameAndName = api.app.wizard.WizardHeaderWithDisplayNameAndName;
     import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
@@ -70,6 +71,10 @@ module app.wizard {
 
         private contextWindowToggler: ContextWindowToggler;
 
+        private cycleViewModeButton: api.ui.CycleButton;
+
+        private contentWizardActions:app.wizard.action.ContentWizardActions;
+
         /**
          * Whether constructor is being currently executed or not.
          */
@@ -97,25 +102,26 @@ module app.wizard {
                 this.formIcon.setSrc(api.util.getRestUri('blob/' + this.iconUploadItem.getBlobKey()));
             });
 
-            var actions = new app.wizard.action.ContentWizardActions(this);
-            this.previewAction = actions.getPreviewAction();
-            this.publishAction = actions.getPublishAction();
+            this.contentWizardActions = new app.wizard.action.ContentWizardActions(this);
+            this.previewAction = this.contentWizardActions.getPreviewAction();
+            this.publishAction = this.contentWizardActions.getPublishAction();
 
             var mainToolbar = new ContentWizardToolbar({
-                saveAction: actions.getSaveAction(),
-                duplicateAction: actions.getDuplicateAction(),
-                deleteAction: actions.getDeleteAction(),
-                closeAction: actions.getCloseAction(),
-                publishAction: actions.getPublishAction(),
-                previewAction: actions.getPreviewAction(),
-                showLiveEditAction: actions.getShowLiveEditAction(),
-                showFormAction: actions.getShowFormAction(),
-                showSplitEditAction: actions.getShowSplitEditAction()
+                saveAction: this.contentWizardActions.getSaveAction(),
+                duplicateAction: this.contentWizardActions.getDuplicateAction(),
+                deleteAction: this.contentWizardActions.getDeleteAction(),
+                closeAction: this.contentWizardActions.getCloseAction(),
+                publishAction: this.contentWizardActions.getPublishAction(),
+                previewAction: this.contentWizardActions.getPreviewAction(),
+                showLiveEditAction: this.contentWizardActions.getShowLiveEditAction(),
+                showFormAction: this.contentWizardActions.getShowFormAction(),
+                showSplitEditAction: this.contentWizardActions.getShowSplitEditAction()
             });
 
             this.contextWindowToggler = mainToolbar.getContextWindowToggler();
-            this.showLiveEditAction = actions.getShowLiveEditAction();
-            this.showSplitEditAction = actions.getShowSplitEditAction();
+            this.cycleViewModeButton = mainToolbar.getCycleViewModeButton();
+            this.showLiveEditAction = this.contentWizardActions.getShowLiveEditAction();
+            this.showSplitEditAction = this.contentWizardActions.getShowSplitEditAction();
             this.showLiveEditAction.setEnabled(false);
 
             if (this.parentContent) {
@@ -161,7 +167,7 @@ module app.wizard {
                 formIcon: this.formIcon,
                 mainToolbar: mainToolbar,
                 header: this.contentWizardHeader,
-                actions: actions,
+                actions: this.contentWizardActions,
                 livePanel: this.liveFormPanel,
                 steps: this.createSteps(),
                 split: true
@@ -184,7 +190,16 @@ module app.wizard {
                 });
 
                 ResponsiveManager.onAvailableSizeChanged(this, () => {
-                    this.updateStickyToolbar()
+                    this.updateStickyToolbar();
+                    if (this.getEl().getWidth() <= ResponsiveRanges._720_960.getMaximumRange()) {
+                        this.cycleViewModeButton.disableAction(this.contentWizardActions.getShowSplitEditAction());
+                        if (this.isSplitView()) {
+                            this.cycleViewModeButton.setCurrentAction(this.contentWizardActions.getShowFormAction());
+                        }
+                    }
+                    if (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange()) {
+                        this.cycleViewModeButton.enableAction(this.contentWizardActions.getShowSplitEditAction());
+                    }
                 });
 
                 this.onRemoved((event) => {
@@ -194,10 +209,6 @@ module app.wizard {
                 this.constructing = false;
 
                 callback(this);
-            });
-
-            ResponsiveManager.onAvailableSizeChanged(this, () => {
-               console.log("size changed", arguments);
             });
         }
 
@@ -308,6 +319,7 @@ module app.wizard {
             this.showLiveEditAction.setEnabled(false);
             this.previewAction.setVisible(false);
             this.contextWindowToggler.setVisible(false);
+            this.cycleViewModeButton.setVisible(false);
 
             new IsRenderableRequest(content.getContentId()).sendAndParse().
                 then((renderable: boolean): void => {
@@ -316,6 +328,11 @@ module app.wizard {
                     this.showSplitEditAction.setEnabled(renderable);
                     this.previewAction.setVisible(renderable);
                     this.contextWindowToggler.setVisible(renderable);
+                    this.cycleViewModeButton.setVisible(renderable);
+
+                    if (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange()) {
+                        this.cycleViewModeButton.setCurrentAction(this.contentWizardActions.getShowSplitEditAction());
+                    }
 
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
@@ -600,10 +617,14 @@ module app.wizard {
             ResponsiveManager.fireResizeEvent();
         }
 
-        showWizard() {
+        showForm() {
             this.getSplitPanel().addClass("toggle-form");
             this.getSplitPanel().removeClass("toggle-live toggle-split prerendered");
             ResponsiveManager.fireResizeEvent();
+        }
+
+        private isSplitView():boolean {
+            return this.getSplitPanel().hasClass("toggle-split");
         }
     }
 
