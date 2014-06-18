@@ -9,6 +9,8 @@ module api.app.browse.treegrid {
     import GridOptions = api.ui.grid.GridOptions;
     import GridColumn = api.ui.grid.GridColumn;
     import DataView = api.ui.grid.DataView;
+    import KeyBinding = api.ui.KeyBinding;
+    import KeyBindings = api.ui.KeyBindings;
 
     import ContentSummary = api.content.ContentSummary;
     import ContentSummaryViewer = api.content.ContentSummaryViewer;
@@ -95,49 +97,51 @@ module api.app.browse.treegrid {
                 event.stopPropagation();
             });
 
-            this.grid.setOnKeyDown((event: KeyboardEvent) => {
-                if (this.active) {
-                    var selected = this.grid.getSelectedRows();
-                    switch (event.keyCode) {
-                    case 38: // up
+            var keyBindings = [
+                new KeyBinding('up', () => {
+                    if (this.active) {
                         this.grid.moveSelectedUp();
-                        break;
-                    case 40: // down
-                        this.grid.moveSelectedDown();
-                        break;
-                    case 37: // left - collapse
-                        if (selected.length === 1) {
-                            var item = this.gridData.getItem(selected[0]);
-                            var node = item ? this.root.findNode(item) : undefined;
-                            if (node && this.active) {
-                                if (node.isExpanded()) {
-                                    this.active = false;
-                                    this.collapseData(item);
-                                } else if (node.getParent() !== this.root) {
-                                    this.active = false;
-                                    item = node.getParent().getItem();
-                                    var row = this.gridData.getRowById(item.getId());
-                                    this.grid.selectRow(row);
-                                    this.collapseData(item);
-                                }
-                            }
-                        }
-                        break;
-                    case 39: // right - expand
-                        if (selected.length === 1) {
-                            var item = this.gridData.getItem(selected[0]);
-                            var node = item ? this.root.findNode(item) : undefined;
-                            if (node && this.hasChildren(item)
-                                && !node.isExpanded() &&  this.active) {
-
-                                this.active = false;
-                                this.expandData(item);
-                            }
-                        }
-                        break;
                     }
-                }
-            });
+                }),
+                new KeyBinding('down', () => {
+                    if (this.active) {
+                        this.grid.moveSelectedDown();
+                    }
+                }),
+                new KeyBinding('left', () => {
+                    var selected = this.grid.getSelectedRows();
+                    if (selected.length === 1) {
+                        var item = this.gridData.getItem(selected[0]);
+                        var node = item ? this.root.findNode(item) : undefined;
+                        if (node && this.active) {
+                            if (node.isExpanded()) {
+                                this.active = false;
+                                this.collapseData(item);
+                            } else if (node.getParent() !== this.root) {
+                                this.active = false;
+                                item = node.getParent().getItem();
+                                var row = this.gridData.getRowById(item.getId());
+                                this.grid.selectRow(row);
+                                this.collapseData(item);
+                            }
+                        }
+                    }
+                }),
+                new KeyBinding('right', () => {
+                    var selected = this.grid.getSelectedRows();
+                    if (selected.length === 1) {
+                        var item = this.gridData.getItem(selected[0]);
+                        var node = item ? this.root.findNode(item) : undefined;
+                        if (node && this.hasChildren(item)
+                            && !node.isExpanded() &&  this.active) {
+
+                            this.active = false;
+                            this.expandData(item);
+                        }
+                    }
+                })
+            ];
+            KeyBindings.get().bindKeys(keyBindings);
 
             this.canvasElement = Element.fromHtmlElement(this.grid.getHTMLElement(), true);
             for (var i = 0, gridChildren = this.canvasElement.getChildren(); i < gridChildren.length; i++) {
@@ -166,6 +170,10 @@ module api.app.browse.treegrid {
 
             this.onRendered(() => {
                 this.grid.resizeCanvas();
+            });
+
+            this.onRemoved(() => {
+                KeyBindings.get().unbindKeys(keyBindings);
             });
         }
 

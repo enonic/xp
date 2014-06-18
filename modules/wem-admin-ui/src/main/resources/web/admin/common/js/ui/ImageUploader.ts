@@ -101,7 +101,7 @@ module api.ui {
                         return false;
                     }
                 })
-            ])
+            ]);
             this.imageBox.appendChild(this.closeBtn);
 
             //Image toolbar stub buttons
