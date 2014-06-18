@@ -46,6 +46,9 @@ public class ContentServiceImpl
     @Inject
     private QueryService queryService;
 
+    @Inject
+    private ContentNodeTranslator contentNodeTranslator;
+
     @Override
     public Content getById( final ContentId id, final Context context )
     {
@@ -53,6 +56,7 @@ public class ContentServiceImpl
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
+            translator( this.contentNodeTranslator ).
             context( context ).
             build().
             execute();
@@ -65,6 +69,7 @@ public class ContentServiceImpl
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
+            translator( this.contentNodeTranslator ).
             context( context ).
             build().
             execute();
@@ -77,6 +82,7 @@ public class ContentServiceImpl
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
+            translator( this.contentNodeTranslator ).
             context( context ).
             build().
             execute();
@@ -89,6 +95,7 @@ public class ContentServiceImpl
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
+            translator( this.contentNodeTranslator ).
             context( context ).
             build().
             execute();
@@ -101,6 +108,7 @@ public class ContentServiceImpl
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
+            translator( this.contentNodeTranslator ).
             context( context ).
             build().
             execute();
@@ -113,6 +121,7 @@ public class ContentServiceImpl
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
+            translator( this.contentNodeTranslator ).
             context( context ).
             build().
             execute();
@@ -125,6 +134,7 @@ public class ContentServiceImpl
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
+            translator( this.contentNodeTranslator ).
             params( params ).
             context( context ).
             build().
@@ -139,6 +149,7 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             attachmentService( this.attachmentService ).
+            translator( this.contentNodeTranslator ).
             context( context ).
             build().
             execute();
@@ -151,6 +162,7 @@ public class ContentServiceImpl
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
+            translator( this.contentNodeTranslator ).
             params( params ).
             context( context ).
             build().
@@ -166,6 +178,7 @@ public class ContentServiceImpl
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
+            translator( this.contentNodeTranslator ).
             contentId( params.getContentId() ).
             target( params.getTarget() ).
             context( context ).
@@ -189,6 +202,7 @@ public class ContentServiceImpl
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
+            translator( this.contentNodeTranslator ).
             context( context ).
             build().
             execute();

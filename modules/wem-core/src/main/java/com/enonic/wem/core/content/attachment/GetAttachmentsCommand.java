@@ -45,7 +45,7 @@ final class GetAttachmentsCommand
         }
         catch ( NoEntityWithIdFoundException e )
         {
-            throw new ContentNotFoundException( this.contentId );
+            throw new ContentNotFoundException( this.contentId, ContentConstants.DEFAULT_CONTEXT.getWorkspace() );
         }
     }
 

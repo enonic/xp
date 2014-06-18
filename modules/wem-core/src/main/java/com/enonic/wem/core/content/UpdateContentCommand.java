@@ -86,11 +86,11 @@ final class UpdateContentCommand
             attachments = attachmentService.getAll( this.params.getContentId() );
         }
 
-        final UpdateNodeParams updateNodeParams = getTranslator().toUpdateNodeCommand( editedContent, attachments );
+        final UpdateNodeParams updateNodeParams = translator.toUpdateNodeCommand( editedContent, attachments );
 
         final Node editedNode = this.nodeService.update( updateNodeParams, DEFAULT_CONTEXT );
 
-        return getTranslator().fromNode( editedNode );
+        return translator.fromNode( editedNode );
     }
 
     private void validateEditedContent( final Content persistedContent, final Content edited )

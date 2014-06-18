@@ -28,7 +28,7 @@ public class PushContentCommand
 
         final Node pushedNode = nodeService.push( entityId, this.target, this.context );
 
-        return getTranslator().fromNode( pushedNode );
+        return translator.fromNode( pushedNode );
     }
 
     public static Builder create()

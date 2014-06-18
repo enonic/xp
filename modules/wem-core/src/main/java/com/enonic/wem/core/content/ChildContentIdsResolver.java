@@ -1,5 +1,7 @@
 package com.enonic.wem.core.content;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Contents;
@@ -17,12 +19,15 @@ final class ChildContentIdsResolver
 
     private final Context context;
 
+    private final ContentNodeTranslator translator;
+
     private ChildContentIdsResolver( final Builder builder )
     {
         this.nodeService = builder.nodeService;
         this.contentTypeService = builder.contentTypeService;
         this.blobService = builder.blobService;
         this.context = builder.context;
+        this.translator = builder.translator;
     }
 
     Content resolve( final Content content )
@@ -32,6 +37,7 @@ final class ChildContentIdsResolver
             contentTypeService( this.contentTypeService ).
             context( this.context ).
             blobService( this.blobService ).
+            translator( this.translator ).
             populateChildIds( true ).
             build().
             execute();
@@ -84,6 +90,8 @@ final class ChildContentIdsResolver
 
         private Context context;
 
+        private ContentNodeTranslator translator;
+
         public Builder nodeService( final NodeService nodeService )
         {
             this.nodeService = nodeService;
@@ -102,14 +110,29 @@ final class ChildContentIdsResolver
             return this;
         }
 
+        public Builder translator( final ContentNodeTranslator translator )
+        {
+            this.translator = translator;
+            return this;
+        }
+
         public Builder context( final Context context )
         {
             this.context = context;
             return this;
         }
 
+        private void validate()
+        {
+            Preconditions.checkNotNull( translator );
+            Preconditions.checkNotNull( blobService );
+            Preconditions.checkNotNull( contentTypeService );
+            Preconditions.checkNotNull( nodeService );
+        }
+
         public ChildContentIdsResolver build()
         {
+            validate();
             return new ChildContentIdsResolver( this );
         }
     }

@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
+import com.enonic.wem.admin.rest.resource.content.ContentResource;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -68,7 +69,7 @@ public class PageResourceTest
         Content content = createPage( "content-id", "content-name", "content-type" );
 
         Mockito.when( this.pageService.update( Mockito.isA( UpdatePageParams.class ) ) ).thenThrow(
-            new ContentNotFoundException( content.getId() ) );
+            new ContentNotFoundException( content.getId(), ContentResource.STAGE_WORKSPACE ) );
 
         String jsonString = resource().path( "content/page/update" ).
             entity( readFromFile( "update_page_params.json" ), MediaType.APPLICATION_JSON_TYPE ).

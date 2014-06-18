@@ -27,7 +27,7 @@ final class UpdateSiteCommand
 
         if ( content == null )
         {
-            throw new ContentNotFoundException( this.params.getContent() );
+            throw new ContentNotFoundException( this.params.getContent(), ContentConstants.DEFAULT_CONTEXT.getWorkspace() );
         }
         if ( content.getSite() == null )
         {

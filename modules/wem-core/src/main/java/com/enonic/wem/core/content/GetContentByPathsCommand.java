@@ -2,7 +2,6 @@ package com.enonic.wem.core.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
@@ -33,7 +32,7 @@ final class GetContentByPathsCommand
         }
         catch ( NoNodeAtPathFoundException ex )
         {
-            throw new ContentNotFoundException( ContentPath.from( ex.getPath().toString() ) );
+            throw new ContentNotFoundException( ContentPath.from( ex.getPath().toString() ), this.context.getWorkspace() );
         }
 
         return contents;
@@ -44,7 +43,7 @@ final class GetContentByPathsCommand
         final NodePaths paths = ContentNodeHelper.translateContentPathsToNodePaths( contentPaths );
         final Nodes nodes = nodeService.getByPaths( paths, this.context );
 
-        return getTranslator().fromNodes( nodes );
+        return translator.fromNodes( nodes );
     }
 
     public static Builder create( final ContentPaths contentPaths )

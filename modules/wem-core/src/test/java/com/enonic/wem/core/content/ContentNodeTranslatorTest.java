@@ -56,7 +56,9 @@ public class ContentNodeTranslatorTest
         final ContentType contentType = ContentType.newContentType().name( "my-content-type" ).build();
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
-        translator = new ContentNodeTranslator( blobService, contentTypeService );
+        translator = new ContentNodeTranslator();
+        translator.setBlobService( blobService );
+        translator.setContentTypeService( contentTypeService );
     }
 
     @Test

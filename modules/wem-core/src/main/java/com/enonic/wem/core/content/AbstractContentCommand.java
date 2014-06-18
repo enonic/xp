@@ -21,7 +21,7 @@ abstract class AbstractContentCommand
 {
     private static final String NON_CONTENT_NODE_PREFIX = "__";
 
-    private final ContentNodeTranslator translator;
+    final ContentNodeTranslator translator;
 
     final NodeService nodeService;
 
@@ -37,14 +37,7 @@ abstract class AbstractContentCommand
         this.contentTypeService = builder.contentTypeService;
         this.nodeService = builder.nodeService;
         this.context = builder.context;
-
-        this.translator = new ContentNodeTranslator( this.blobService, this.contentTypeService );
-
-    }
-
-    ContentNodeTranslator getTranslator()
-    {
-        return this.translator;
+        this.translator = builder.translator;
     }
 
     Nodes removeNonContentNodes( final Nodes nodes )
@@ -69,6 +62,7 @@ abstract class AbstractContentCommand
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             context( this.context ).
+            translator( this.translator ).
             build().
             execute();
     }
@@ -90,10 +84,19 @@ abstract class AbstractContentCommand
 
         private Context context;
 
+        private ContentNodeTranslator translator;
+
         @SuppressWarnings("unchecked")
         public B nodeService( final NodeService nodeService )
         {
             this.nodeService = nodeService;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B translator( final ContentNodeTranslator translator )
+        {
+            this.translator = translator;
             return (B) this;
         }
 
@@ -124,6 +127,7 @@ abstract class AbstractContentCommand
             Preconditions.checkNotNull( contentTypeService );
             Preconditions.checkNotNull( blobService );
             Preconditions.checkNotNull( context );
+            Preconditions.checkNotNull( translator );
         }
     }
 

@@ -30,7 +30,7 @@ final class GetChildContentCommand
 
         final Nodes nodes = nodeService.getByParent( nodePath, this.context );
 
-        final Contents contents = getTranslator().fromNodes( removeNonContentNodes( nodes ) );
+        final Contents contents = translator.fromNodes( removeNonContentNodes( nodes ) );
 
         if ( populateChildIds && contents.isNotEmpty() )
         {
@@ -39,6 +39,7 @@ final class GetChildContentCommand
                 nodeService( this.nodeService ).
                 blobService( this.blobService ).
                 contentTypeService( this.contentTypeService ).
+                translator( this.translator ).
                 build().
                 resolve( contents );
         }
