@@ -43,11 +43,7 @@ module app.browse {
                 filterPanel: this.contentFilterPanel});
 
             api.content.ContentDeletedEvent.on((event) => {
-                var contents: api.content.ContentSummary[] = event.getContents();
-                for (var i = 0; i < contents.length; i++) {
-                    this.contentTreeGridPanel.removeItem(contents[i].getPath().toString());
-                }
-
+                this.contentFilterPanel.search();
                 this.contentTreeGridPanel.deselectAll();
             });
 
