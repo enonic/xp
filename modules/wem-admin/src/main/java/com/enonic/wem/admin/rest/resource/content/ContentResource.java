@@ -1,8 +1,8 @@
+
 package com.enonic.wem.admin.rest.resource.content;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;

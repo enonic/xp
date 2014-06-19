@@ -94,9 +94,9 @@ public class WorkspaceDiffServiceImplTest
 
         final UnmodifiableIterator<EntityComparison> iterator = workspaceComparison.getDiffEntries().iterator();
 
-        assertEquals( CompareStatus.State.CONFLICT, iterator.next().getCompareStatus().getState() );
-        assertEquals( CompareStatus.State.NEW, iterator.next().getCompareStatus().getState() );
-        assertEquals( CompareStatus.State.NEWER, iterator.next().getCompareStatus().getState() );
+        assertEquals( CompareStatus.Status.CONFLICT, iterator.next().getCompareStatus().getStatus() );
+        assertEquals( CompareStatus.Status.NEW, iterator.next().getCompareStatus().getStatus() );
+        assertEquals( CompareStatus.Status.NEWER, iterator.next().getCompareStatus().getStatus() );
     }
 
 
@@ -123,7 +123,7 @@ public class WorkspaceDiffServiceImplTest
 
         final EntityComparison comparison = diffService.compare( compareEntityQuery );
 
-        assertEquals( CompareStatus.State.CONFLICT, comparison.getCompareStatus().getState() );
+        assertEquals( CompareStatus.Status.CONFLICT, comparison.getCompareStatus().getStatus() );
     }
 
     /*

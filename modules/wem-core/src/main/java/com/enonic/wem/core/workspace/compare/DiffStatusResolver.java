@@ -13,12 +13,12 @@ class DiffStatusResolver
 
         if ( targetBranch.isEmpty() )
         {
-            return new CompareStatus( CompareStatus.State.NEW );
+            return new CompareStatus( CompareStatus.Status.NEW );
         }
 
         if ( sourceBranch.isEmpty() )
         {
-            return new CompareStatus( CompareStatus.State.DELETED );
+            return new CompareStatus( CompareStatus.Status.DELETED );
         }
 
         final VersionEntry currentInSource = sourceBranch.getFirst();
@@ -26,20 +26,20 @@ class DiffStatusResolver
 
         if ( currentInSource.equals( currentInTarget ) )
         {
-            return new CompareStatus( CompareStatus.State.EQUAL );
+            return new CompareStatus( CompareStatus.Status.EQUAL );
         }
 
         if ( sourceBranch.has( currentInTarget ) )
         {
-            return new CompareStatus( CompareStatus.State.NEWER );
+            return new CompareStatus( CompareStatus.Status.NEWER );
         }
 
         if ( targetBranch.has( currentInSource ) )
         {
-            return new CompareStatus( CompareStatus.State.OLDER );
+            return new CompareStatus( CompareStatus.Status.OLDER );
         }
 
-        return new CompareStatus( CompareStatus.State.CONFLICT );
+        return new CompareStatus( CompareStatus.Status.CONFLICT );
     }
 
 }

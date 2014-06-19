@@ -43,6 +43,8 @@ function startApplication() {
             newContentDialog.open();
         }
     });
+
+    var publishDialog = new app.wizard.PublishContentDialog();
     application.setLoaded(true);
 
     window.onmessage = (e: MessageEvent) => {

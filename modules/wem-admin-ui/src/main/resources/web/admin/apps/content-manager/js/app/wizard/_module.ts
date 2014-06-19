@@ -7,3 +7,4 @@
 ///<reference path='ContentWizardPanelFactory.ts' />
 ///<reference path='ContentWizardPanelParams.ts' />
 ///<reference path='ContentWizardEvents.ts' />
+///<reference path='PublishContentDialog.ts' />

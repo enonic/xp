@@ -2,7 +2,7 @@ package com.enonic.wem.api.entity;
 
 public class CompareStatus
 {
-    public enum State
+    public enum Status
     {
         NEW,
         NEWER,
@@ -12,16 +12,16 @@ public class CompareStatus
         EQUAL
     }
 
-    private final State state;
+    private final Status status;
 
-    public CompareStatus( final State state )
+    public CompareStatus( final Status status )
     {
-        this.state = state;
+        this.status = status;
     }
 
-    public State getState()
+    public Status getStatus()
     {
-        return state;
+        return status;
     }
 
     @Override
@@ -38,7 +38,7 @@ public class CompareStatus
 
         final CompareStatus that = (CompareStatus) o;
 
-        if ( state != that.state )
+        if ( status != that.status )
         {
             return false;
         }
@@ -49,6 +49,6 @@ public class CompareStatus
     @Override
     public int hashCode()
     {
-        return state != null ? state.hashCode() : 0;
+        return status != null ? status.hashCode() : 0;
     }
 }
