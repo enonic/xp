@@ -125,12 +125,13 @@ public final class ModuleLoader
         final Dictionary<String, String> headers = bundle.getHeaders();
         final String bundleDisplayName = headers.get( Constants.BUNDLE_NAME );
         final String name = bundle.getSymbolicName();
-        final String displayName=bundleDisplayName != null ? bundleDisplayName : name ;
+        final String displayName = bundleDisplayName != null ? bundleDisplayName : name;
         final Version bundleVersion = bundle.getVersion();
         final ModuleVersion version = ModuleVersion.from( bundleVersion.getMajor(), bundleVersion.getMinor(), bundleVersion.getMicro() );
 
         moduleBuilder.moduleKey( ModuleKey.from( ModuleName.from( name ), version ) );
-        moduleBuilder.displayName( displayName);
+        moduleBuilder.displayName( displayName );
+        moduleBuilder.bundle( bundle );
 
         this.moduleService.installModule( moduleBuilder.build() );
     }

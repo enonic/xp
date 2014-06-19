@@ -1,5 +1,8 @@
 package com.enonic.wem.core.content.page.image
 
+import spock.lang.Ignore
+
+@Ignore
 class ImageDescriptorServiceImpl_getImageDescriptorTest
     extends AbstractImageDescriptorServiceTest
 {

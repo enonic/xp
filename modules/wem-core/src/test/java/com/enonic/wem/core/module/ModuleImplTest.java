@@ -1,14 +1,17 @@
 package com.enonic.wem.core.module;
 
-import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.Set;
 
+import org.elasticsearch.common.collect.Lists;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
-import com.google.common.io.Files;
+import org.mockito.Mockito;
+import org.osgi.framework.Bundle;
 
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
@@ -20,29 +23,17 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
+import static org.mockito.Matchers.isA;
 
 public class ModuleImplTest
 {
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
-
-    private File moduleDir;
+    private Bundle bundle;
 
     @Before
     public void setup()
         throws Exception
     {
-        this.moduleDir = this.folder.newFolder( "mymodule-1.0.0" );
-        createFile( new File( this.moduleDir, "module.xml" ) );
-        createFile( new File( this.moduleDir, "component/mypart/part.xml" ) );
-        createFile( new File( this.moduleDir, "component/mypage/page.xml" ) );
-    }
-
-    private void createFile( final File file )
-        throws Exception
-    {
-        file.getParentFile().mkdirs();
-        Files.touch( file );
+        this.bundle = mockBundle( "module.xml", "component/mypart/part.xml", "component/mypage/page.xml" );
     }
 
     @Test
@@ -74,7 +65,7 @@ public class ModuleImplTest
     {
         final Module module = new ModuleBuilder().
             moduleKey( ModuleKey.from( "mymodule-1.0.0" ) ).
-            moduleDir( this.moduleDir ).
+            bundle( bundle ).
             build();
 
         assertNotNull( module.getResource( "module.xml" ) );
@@ -88,12 +79,34 @@ public class ModuleImplTest
     {
         final Module module = new ModuleBuilder().
             moduleKey( ModuleKey.from( "mymodule-1.0.0" ) ).
-            moduleDir( this.moduleDir ).
+            bundle( bundle ).
             build();
 
         final Set<String> set = module.getResourcePaths();
         assertNotNull( set );
         assertEquals( 3, set.size() );
         assertTrue( set.contains( "component/mypart/part.xml" ) );
+    }
+
+    private Bundle mockBundle( final String... resourcePaths )
+    {
+        final Bundle bundle = Mockito.mock( Bundle.class );
+        final List<URL> urlList = Lists.newArrayList();
+        for ( String resourcePath : resourcePaths )
+        {
+            try
+            {
+                final URL url = new URL( "http://109.0:1/" + resourcePath );
+                urlList.add( url );
+                Mockito.when( bundle.getResource( resourcePath ) ).thenReturn( url );
+            }
+            catch ( MalformedURLException e )
+            {
+                throw new RuntimeException( e );
+            }
+        }
+        final Enumeration<URL> bundleEntries = Collections.enumeration( urlList );
+        Mockito.when( bundle.findEntries( isA( String.class ), isA( String.class ), isA( Boolean.class ) ) ).thenReturn( bundleEntries );
+        return bundle;
     }
 }

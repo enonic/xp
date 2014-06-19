@@ -13,6 +13,7 @@ import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;
 import com.enonic.wem.api.content.page.part.PartDescriptorService;
 import com.enonic.wem.api.content.site.SiteService;
 import com.enonic.wem.api.content.site.SiteTemplateService;
+import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.core.image.filter.ImageFilterBuilder;
 import com.enonic.wem.core.module.ModuleKeyResolverService;
 import com.enonic.wem.core.module.ModuleResourcePathResolver;
@@ -40,6 +41,7 @@ public final class Activator
         service( BlobService.class ).importSingle();
         service( ImageFilterBuilder.class ).importSingle();
         service( ModuleKeyResolverService.class ).importSingle();
+        service( ModuleService.class ).importSingle();
 
         service( PortalServlet.class ).attribute( "alias", "/portal/*" ).exportAs( Servlet.class );
     }

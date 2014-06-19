@@ -3,7 +3,9 @@ package com.enonic.wem.core.content.page.layout
 import com.enonic.wem.api.module.ModuleKey
 import com.enonic.wem.api.module.ModuleKeys
 import com.enonic.wem.api.module.Modules
+import spock.lang.Ignore
 
+@Ignore
 class LayoutDescriptorServiceImpl_getByModulesTest
     extends AbstractLayoutDescriptorServiceTest
 {

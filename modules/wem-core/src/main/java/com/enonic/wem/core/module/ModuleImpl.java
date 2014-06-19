@@ -2,10 +2,12 @@ package com.enonic.wem.core.module;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.Set;
 
+import org.osgi.framework.Bundle;
+
 import com.google.common.base.Objects;
-import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.form.Form;
@@ -30,6 +32,8 @@ final class ModuleImpl
     protected Form config;
 
     protected File moduleDir;
+
+    protected Bundle bundle;
 
     public ModuleKey getKey()
     {
@@ -74,55 +78,29 @@ final class ModuleImpl
     @Override
     public URL getResource( final String path )
     {
-        final File file = new File( this.moduleDir, path );
-        if ( !file.isFile() )
-        {
-            return null;
-        }
-
-        try
-        {
-            return file.toURI().toURL();
-        }
-        catch ( final Exception e )
-        {
-            throw Throwables.propagate( e );
-        }
+        return this.bundle.getResource( path );
     }
 
     @Override
     public Set<String> getResourcePaths()
     {
         final Set<String> set = Sets.newHashSet();
-        findResourcePaths( set, this.moduleDir );
+        findResourcePaths( set, this.bundle, "/" );
         return set;
     }
 
-    private void findResourcePaths( final Set<String> set, final File file )
+    private void findResourcePaths( final Set<String> set, final Bundle bundle, final String parentPath )
     {
-        if ( file.isFile() )
-        {
-            set.add( normalizedRelativePath( file ) );
-        }
-
-        final File[] children = file.listFiles();
-        if ( children == null )
+        final Enumeration<URL> paths = bundle.findEntries( parentPath, "*", true );
+        if ( paths == null )
         {
             return;
         }
-
-        for ( final File child : children )
+        while ( paths.hasMoreElements() )
         {
-            findResourcePaths( set, child );
+            final URL path = paths.nextElement();
+            set.add( path.getPath().replaceFirst( "^/", "" ) );
         }
-    }
-
-    private String normalizedRelativePath( final File file )
-    {
-        final String fileStr = file.toString();
-        final String moduleDirStr = this.moduleDir.toString();
-        final String relative = fileStr.substring( moduleDirStr.length() + 1 );
-        return relative.replace( File.separatorChar, '/' );
     }
 
     @Override

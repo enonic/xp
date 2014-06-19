@@ -2,6 +2,8 @@ package com.enonic.wem.core.module;
 
 import java.io.File;
 
+import org.osgi.framework.Bundle;
+
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
@@ -54,6 +56,12 @@ public final class ModuleBuilder
     public ModuleBuilder moduleDir( final File moduleDir )
     {
         this.module.moduleDir = moduleDir;
+        return this;
+    }
+
+    public ModuleBuilder bundle( final Bundle bundle )
+    {
+        this.module.bundle = bundle;
         return this;
     }
 

@@ -1,5 +1,8 @@
 package com.enonic.wem.core.content.page.layout
 
+import spock.lang.Ignore
+
+@Ignore
 class LayoutDescriptorServiceImpl_getByKeyTest
     extends AbstractLayoutDescriptorServiceTest
 {

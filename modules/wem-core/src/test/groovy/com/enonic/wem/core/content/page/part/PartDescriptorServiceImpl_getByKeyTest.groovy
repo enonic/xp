@@ -1,5 +1,8 @@
 package com.enonic.wem.core.content.page.part
 
+import spock.lang.Ignore
+
+@Ignore
 class PartDescriptorServiceImpl_getByKeyTest
     extends AbstractPartDescriptorServiceTest
 {
