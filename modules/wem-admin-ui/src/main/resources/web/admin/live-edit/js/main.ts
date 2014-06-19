@@ -17,7 +17,6 @@ wemjq(window).load(() => {
     new LiveEdit.component.mouseevent.Content();
 
     new LiveEdit.ui.contextmenu.ContextMenu();
-    new LiveEdit.ui.Shader();
     new LiveEdit.ui.Editor();
 
     LiveEdit.component.dragdropsort.DragDropSort.init();

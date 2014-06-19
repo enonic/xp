@@ -61,6 +61,10 @@ module api.liveedit {
 
         private tooltipViewer: api.ui.Viewer<any>;
 
+        private mouseOverViewListeners: {(): void} [];
+
+        private mouseOutViewListeners: {(): void} [];
+
         constructor(builder: ItemViewBuilder) {
             api.util.assertNotNull(builder.type, "type cannot be null");
 
@@ -84,6 +88,8 @@ module api.liveedit {
                 props = newElementBuilder;
             }
             super(props);
+            this.mouseOverViewListeners = [];
+            this.mouseOutViewListeners = [];
 
             this.setItemId(builder.itemViewIdProducer.next());
 
@@ -106,6 +112,27 @@ module api.liveedit {
             }
 
             this.setElementDimensions(this.getDimensionsFromElement());
+
+            this.onMouseOver((event: MouseEvent) => {
+
+                var targetView:HTMLElement = this.getClosestView(<HTMLElement>event.target);
+                var fromView:HTMLElement = this.getClosestView(<HTMLElement>event.relatedTarget || <HTMLElement>event.fromElement);
+
+                if (targetView == this.getHTMLElement() && fromView != this.getHTMLElement()) {
+                    this.notifyMouseOverView();
+                }
+            });
+
+            this.onMouseOut((event: MouseEvent) => {
+
+                var targetView:HTMLElement = this.getClosestView(<HTMLElement>event.target);
+                var toView:HTMLElement = this.getClosestView(<HTMLElement>event.relatedTarget || <HTMLElement>event.toElement);
+
+                if (targetView == this.getHTMLElement() && toView != this.getHTMLElement()) {
+                    this.notifyMouseOutView();
+                }
+            });
+
         }
 
         getItemViewIdProducer(): ItemViewIdProducer {
@@ -250,6 +277,39 @@ module api.liveedit {
                 previous = previous.getPrevious();
             }
             return previous;
+        }
+
+        private getClosestView(el: HTMLElement): HTMLElement {
+            for (; el; el = <HTMLElement>(<any>el).parentNode) {
+                if (el.hasAttribute && el.hasAttribute('data-' + ItemViewId.DATA_ATTRIBUTE)) {
+                    return el;
+                }
+            }
+            return null;
+        }
+
+        onMouseOverView(listener: () => void) {
+            this.mouseOverViewListeners.push(listener);
+        }
+
+        unMouseOverView(listener: () => void) {
+            this.mouseOverViewListeners = this.mouseOverViewListeners.filter((current) => (current != listener));
+        }
+
+        private notifyMouseOverView() {
+            this.mouseOverViewListeners.forEach((listener: () => void) => listener());
+        }
+
+        onMouseOutView(listener: () => void) {
+            this.mouseOutViewListeners.push(listener);
+        }
+
+        unMouseOutView(listener: () => void) {
+            this.mouseOutViewListeners = this.mouseOutViewListeners.filter((current) => (current != listener));
+        }
+
+        private notifyMouseOutView() {
+            this.mouseOutViewListeners.forEach((listener: () => void) => listener());
         }
     }
 }

@@ -8,8 +8,6 @@ module LiveEdit.component.mouseevent {
 
             this.componentCssSelectorFilter = RegionItemType.get().getConfig().getCssSelector();
 
-            this.attachMouseOverEvent();
-            this.attachMouseOutEvent();
             this.attachClickEvent();
         }
     }

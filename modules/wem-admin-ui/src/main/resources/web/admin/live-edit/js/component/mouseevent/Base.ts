@@ -8,34 +8,6 @@ module LiveEdit.component.mouseevent {
         constructor() {
         }
 
-        attachMouseOverEvent(): void {
-
-            wemjq(document).on('mouseover', this.componentCssSelectorFilter, (event: JQueryEventObject) => {
-                if (this.cancelMouseOverEvent(event)) {
-                    return;
-                }
-                event.stopPropagation();
-
-                LiveEdit.LiveEditPage.get().deselectSelectedView();
-                var itemView = LiveEdit.LiveEditPage.get().getItemViewByHTMLElement(<HTMLElement>event.currentTarget);
-                if (itemView) {
-                    wemjq(window).trigger('mouseOverComponent.liveEdit', [ itemView ]);
-                }
-            });
-        }
-
-        attachMouseOutEvent(): void {
-            wemjq(document).on('mouseout', this.componentCssSelectorFilter, (event: JQueryEventObject) => {
-                if (LiveEdit.LiveEditPage.get().hasSelectedView()) {
-                    return;
-                }
-
-                LiveEdit.LiveEditPage.get().deselectSelectedView();
-                var itemView = LiveEdit.LiveEditPage.get().getItemViewByHTMLElement(<HTMLElement>event.currentTarget);
-                wemjq(window).trigger('mouseOutComponent.liveEdit', [itemView]);
-            });
-        }
-
         attachClickEvent(): void {
 
             wemjq(document).on('click contextmenu touchstart', this.componentCssSelectorFilter, (event: JQueryEventObject) => {
@@ -57,11 +29,6 @@ module LiveEdit.component.mouseevent {
         // fixme: move when empty placeholder stuff is refactored
         getAll(): JQuery {
             return wemjq(this.componentCssSelectorFilter);
-        }
-
-        cancelMouseOverEvent(event: JQueryEventObject): boolean {
-            return this.targetIsLiveEditUiComponent(wemjq(event.target)) || LiveEdit.LiveEditPage.get().hasSelectedView() ||
-                   LiveEdit.component.dragdropsort.DragDropSort.isDragging();
         }
 
         private targetIsLiveEditUiComponent(target: JQuery): boolean {
