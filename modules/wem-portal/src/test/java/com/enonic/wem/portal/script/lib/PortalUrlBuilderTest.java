@@ -36,7 +36,7 @@ public class PortalUrlBuilderTest
     {
         final PortalUrlBuilder urlBuilder = PortalUrlBuilder.createUrl( baseUrl ).resourcePath( "some/path" );
 
-        assertEquals( "http://localhost:8080/portal/live/some/path", urlBuilder.toString() );
+        assertEquals( "/portal/live/some/path", urlBuilder.toString() );
     }
 
     @Test
