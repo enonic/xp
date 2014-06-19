@@ -8,7 +8,7 @@ public final class ContentImageIconUrlResolver
     public static String resolve( final Content content )
     {
         final String contentId = content.getId().toString();
-        return ServletRequestUrlHelper.createUrl( "/admin/rest/content/image/" + contentId );
+        return ServletRequestUrlHelper.createUri( "/admin/rest/content/image/" + contentId );
     }
 
 }

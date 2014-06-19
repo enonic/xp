@@ -6,7 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-
 import static org.junit.Assert.*;
 
 public class ServletRequestUrlHelperTest
@@ -21,61 +20,43 @@ public class ServletRequestUrlHelperTest
     }
 
     @Test
-    public void createUrl_http_port80()
+    public void createUri()
     {
-        setupRequest( "http", "localhost", 80, null );
+        setupRequest( null );
 
-        final String url1 = ServletRequestUrlHelper.createUrl( null );
-        assertEquals( "http://localhost", url1 );
+        final String uri1 = ServletRequestUrlHelper.createUri( null );
+        assertEquals( "", uri1 );
 
-        final String url2 = ServletRequestUrlHelper.createUrl( "a/b" );
-        assertEquals( "http://localhost/a/b", url2 );
+        final String uri2 = ServletRequestUrlHelper.createUri( "" );
+        assertEquals( "", uri2 );
 
-        final String url3 = ServletRequestUrlHelper.createUrl( "/a/b" );
-        assertEquals( "http://localhost/a/b", url3 );
+        final String uri3 = ServletRequestUrlHelper.createUri( "a/b" );
+        assertEquals( "/a/b", uri3 );
+
+        final String uri4 = ServletRequestUrlHelper.createUri( "/a/b" );
+        assertEquals( "/a/b", uri4 );
     }
 
     @Test
-    public void createUrl_https_port443()
+    public void createUri_withContextPath()
     {
-        setupRequest( "https", "localhost", 443, null );
+        setupRequest( "/context/path" );
 
-        final String url = ServletRequestUrlHelper.createUrl( "/a/b" );
-        assertEquals( "https://localhost/a/b", url );
+        final String uri1 = ServletRequestUrlHelper.createUri( null );
+        assertEquals( "/context/path", uri1 );
+
+        final String uri2 = ServletRequestUrlHelper.createUri( "" );
+        assertEquals( "/context/path", uri2 );
+
+        final String uri3 = ServletRequestUrlHelper.createUri( "a/b" );
+        assertEquals( "/context/path/a/b", uri3 );
+
+        final String uri4 = ServletRequestUrlHelper.createUri( "/a/b" );
+        assertEquals( "/context/path/a/b", uri4 );
     }
 
-    @Test
-    public void createUrl_http_port8080()
+    private void setupRequest( final String contextPath )
     {
-        setupRequest( "http", "localhost", 8080, null );
-
-        final String url = ServletRequestUrlHelper.createUrl( "/a/b" );
-        assertEquals( "http://localhost:8080/a/b", url );
-    }
-
-    @Test
-    public void createUrl_https_port8888()
-    {
-        setupRequest( "https", "localhost", 8888, null );
-
-        final String url = ServletRequestUrlHelper.createUrl( "/a/b" );
-        assertEquals( "https://localhost:8888/a/b", url );
-    }
-
-    @Test
-    public void createUrl_with_contextPath()
-    {
-        setupRequest( "http", "localhost", 80, "/context/path" );
-
-        final String url = ServletRequestUrlHelper.createUrl( "/a/b" );
-        assertEquals( "http://localhost/context/path/a/b", url );
-    }
-
-    private void setupRequest( final String scheme, final String host, final int port, final String contextPath )
-    {
-        Mockito.when( this.request.getScheme() ).thenReturn( scheme );
-        Mockito.when( this.request.getServerName() ).thenReturn( host );
-        Mockito.when( this.request.getLocalPort() ).thenReturn( port );
         Mockito.when( this.request.getContextPath() ).thenReturn( contextPath );
     }
 }

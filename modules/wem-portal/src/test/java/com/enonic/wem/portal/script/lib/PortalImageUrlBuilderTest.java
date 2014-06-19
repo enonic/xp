@@ -26,7 +26,7 @@ public class PortalImageUrlBuilderTest
         this.request = Mockito.mock( HttpServletRequest.class );
         ServletRequestHolder.setRequest( this.request );
         setupRequest( "http", "localhost", 8080, null );
-        this.baseUrl = ServletRequestUrlHelper.createUrl( "" );
+        this.baseUrl = ServletRequestUrlHelper.createUri( "" );
     }
 
     @Test
@@ -36,8 +36,7 @@ public class PortalImageUrlBuilderTest
             contentPath( "bildearkiv/trampoliner/jumping-jack-pop/pop_08.jpg" ).
             resourcePath( "pop_08.jpg" );
 
-        assertEquals( "http://localhost:8080/portal/live/bildearkiv/trampoliner/jumping-jack-pop/pop_08.jpg/_/image/pop_08.jpg",
-                      urlBuilder.toString() );
+        assertEquals( "/portal/live/bildearkiv/trampoliner/jumping-jack-pop/pop_08.jpg/_/image/pop_08.jpg", urlBuilder.toString() );
     }
 
     @Test
@@ -52,7 +51,7 @@ public class PortalImageUrlBuilderTest
             background( "00ff00" ).
             quality( 33 );
 
-        assertEquals( "http://localhost:8080/portal/live/bildearkiv/trampoliner/jumping-jack-pop/pop_08.jpg/_/image/pop_08.jpg" +
+        assertEquals( "/portal/live/bildearkiv/trampoliner/jumping-jack-pop/pop_08.jpg/_/image/pop_08.jpg" +
                           "?filter=scalemax%28120%29%3Brounded%2840%29%3Bblock%283%2C3%29%3Bsepia%28%29&background=00ff00&quality=33",
                       urlBuilder.toString() );
     }

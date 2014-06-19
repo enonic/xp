@@ -36,11 +36,11 @@ final class AppHtmlHandler
     private void render( final String app, final HttpServletRequest req, final HttpServletResponse resp )
         throws IOException
     {
-        final String baseUrl = ServletRequestUrlHelper.createUrl( req, "" );
+        final String baseUri = ServletRequestUrlHelper.createUri( req, "" );
 
         final Map<String, Object> model = Maps.newHashMap();
         model.put( "app", app != null ? app : DEFAULT_APP_NAME );
-        model.put( "baseUrl", baseUrl );
+        model.put( "baseUri", baseUri );
 
         resp.setContentType( "text/html" );
         resp.setCharacterEncoding( "UTF-8" );

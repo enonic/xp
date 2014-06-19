@@ -19,6 +19,6 @@ public final class SiteTemplateIconUrlResolver
             str.append( "?hash=" ).append( Hashing.md5().hashBytes( icon.toByteArray() ).toString() );
         }
 
-        return ServletRequestUrlHelper.createUrl( str.toString() );
+        return ServletRequestUrlHelper.createUri( str.toString() );
     }
 }
