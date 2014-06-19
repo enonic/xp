@@ -5,7 +5,7 @@
     "displayName": "My Content",
     "editable": true,
     "hasChildren": false,
-    "iconUrl": "http://localhost/admin/rest/content/image/aaa",
+    "iconUrl": "/admin/rest/content/image/aaa",
     "id": "aaa",
     "isDraft": false,
     "isPage": false,

@@ -15,7 +15,7 @@
     "editable": true,
     "form": null,
     "hasChildren": false,
-    "iconUrl": "http://localhost/admin/rest/content/image/aaa",
+    "iconUrl": "/admin/rest/content/image/aaa",
     "id": "aaa",
     "isDraft": false,
     "isPage": true,

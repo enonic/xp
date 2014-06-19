@@ -9,7 +9,7 @@
     "displayName" : null,
     "editable" : true,
     "hasChildren" : false,
-    "iconUrl" : "http://localhost/admin/rest/schema/image/Mixin:my_set",
+    "iconUrl" : "/admin/rest/schema/image/Mixin:my_set",
     "items" : [ ],
     "key" : "Mixin:my_set",
     "modifiedTime" : null,

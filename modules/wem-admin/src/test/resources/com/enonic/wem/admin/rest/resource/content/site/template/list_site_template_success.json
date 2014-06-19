@@ -9,7 +9,7 @@
             "description": "info",
             "displayName": "displayName",
             "editable": true,
-            "iconUrl" : "http://localhost/admin/rest/sitetemplate/image/name-1.0.0",
+            "iconUrl" : "/admin/rest/sitetemplate/image/name-1.0.0",
             "key": "name-1.0.0",
             "modules": [ "module1-1.0.0" ],
             "name": "name",
