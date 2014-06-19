@@ -82,10 +82,10 @@ module app.wizard.page.contextwindow {
                 this.updateFrameSize();
             });
 
-            ResponsiveManager.onAvailableSizeChanged(this, () => {
+            ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.ResponsiveItem) => {
                 this.updateFrameSize();
             });
-            ResponsiveManager.onAvailableSizeChanged(this.liveFormPanel, () => {
+            ResponsiveManager.onAvailableSizeChanged(this.liveFormPanel, (item: api.ui.ResponsiveItem) => {
                 this.updateFrameSize();
             });
 

@@ -79,7 +79,7 @@ module api.content.inputtype.image {
                 this.createImageContent(event.getUploadedItem());
             });
 
-            ResponsiveManager.onAvailableSizeChanged(this, () => {
+            ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.ResponsiveItem) => {
                 this.availableSizeChanged();
             });
 

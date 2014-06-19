@@ -189,15 +189,14 @@ module app.wizard {
                     }
                 });
 
-                ResponsiveManager.onAvailableSizeChanged(this, () => {
+                ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.ResponsiveItem) => {
                     this.updateStickyToolbar();
-                    if (this.getEl().getWidth() <= ResponsiveRanges._720_960.getMaximumRange()) {
+                    if (item.isInRangeOrSmaller(ResponsiveRanges._720_960)) {
                         this.cycleViewModeButton.disableAction(this.contentWizardActions.getShowSplitEditAction());
                         if (this.isSplitView()) {
                             this.cycleViewModeButton.setCurrentAction(this.contentWizardActions.getShowFormAction());
                         }
-                    }
-                    if (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange()) {
+                    } else if (item.isInRangeOrBigger(ResponsiveRanges._960_1200)) {
                         this.cycleViewModeButton.enableAction(this.contentWizardActions.getShowSplitEditAction());
                     }
                 });
