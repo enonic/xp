@@ -11,17 +11,13 @@ module LiveEdit.component.mouseevent {
         EDIT
     }
 
-    export class Text extends LiveEdit.component.mouseevent.Base {
+    export class Text {
 
         private selectedText: TextComponentView = null;
         private modes: any = {};
         private currentMode: TextMode;
 
         constructor() {
-            super();
-
-            this.componentCssSelectorFilter = TextItemType.get().getConfig().getCssSelector();
-
             this.currentMode = TextMode.UNSELECTED;
 
             this.attachClickEvent();
@@ -37,7 +33,7 @@ module LiveEdit.component.mouseevent {
         // Override base attachClickEvent
         attachClickEvent(): void {
             // Listen for left/right click.
-            wemjq(document).on('click contextmenu touchstart', this.componentCssSelectorFilter, (event: JQueryEventObject) => {
+            wemjq(document).on('click contextmenu touchstart', TextItemType.get().getConfig().getCssSelector(), (event: JQueryEventObject) => {
                 var textComponent = TextComponentView.fromJQuery(wemjq(event.currentTarget));
                 this.handleClick(event, textComponent);
             });

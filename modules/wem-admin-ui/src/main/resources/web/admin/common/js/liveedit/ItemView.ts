@@ -113,26 +113,31 @@ module api.liveedit {
 
             this.setElementDimensions(this.getDimensionsFromElement());
 
-            this.onMouseOver((event: MouseEvent) => {
+            this.onMouseEnter((event: MouseEvent) => {
+                if (this.parentItemView) {
+                    this.parentItemView.notifyMouseOutView();
+                }
+                this.notifyMouseOverView();
+            });
 
-                var targetView:HTMLElement = this.getClosestView(<HTMLElement>event.target);
-                var fromView:HTMLElement = this.getClosestView(<HTMLElement>event.relatedTarget || <HTMLElement>event.fromElement);
-
-                if (targetView == this.getHTMLElement() && fromView != this.getHTMLElement()) {
-                    this.notifyMouseOverView();
+            this.onMouseLeave((event: MouseEvent) => {
+                this.notifyMouseOutView();
+                if (this.parentItemView) {
+                    this.parentItemView.notifyMouseOverView();
                 }
             });
 
-            this.onMouseOut((event: MouseEvent) => {
+            this.onClicked(this.handleClickEvent.bind(this));
+            this.onContextMenu(this.handleClickEvent.bind(this));
+            this.onTouchStart(this.handleClickEvent.bind(this));
 
-                var targetView:HTMLElement = this.getClosestView(<HTMLElement>event.target);
-                var toView:HTMLElement = this.getClosestView(<HTMLElement>event.relatedTarget || <HTMLElement>event.toElement);
+        }
 
-                if (targetView == this.getHTMLElement() && toView != this.getHTMLElement()) {
-                    this.notifyMouseOutView();
-                }
-            });
+        private handleClickEvent(event: MouseEvent) {
+            event.stopPropagation();
+            event.preventDefault();
 
+            this.select(!this.isEmpty() ? { x: event.pageX, y: event.pageY } : null);
         }
 
         getItemViewIdProducer(): ItemViewIdProducer {
@@ -279,15 +284,6 @@ module api.liveedit {
             return previous;
         }
 
-        private getClosestView(el: HTMLElement): HTMLElement {
-            for (; el; el = <HTMLElement>(<any>el).parentNode) {
-                if (el.hasAttribute && el.hasAttribute('data-' + ItemViewId.DATA_ATTRIBUTE)) {
-                    return el;
-                }
-            }
-            return null;
-        }
-
         onMouseOverView(listener: () => void) {
             this.mouseOverViewListeners.push(listener);
         }
@@ -297,6 +293,7 @@ module api.liveedit {
         }
 
         private notifyMouseOverView() {
+            console.log('mouseenter ', this.getItemId().toNumber());
             this.mouseOverViewListeners.forEach((listener: () => void) => listener());
         }
 
@@ -309,6 +306,7 @@ module api.liveedit {
         }
 
         private notifyMouseOutView() {
+            console.log('mouseleave ', this.getItemId().toNumber());
             this.mouseOutViewListeners.forEach((listener: () => void) => listener());
         }
     }

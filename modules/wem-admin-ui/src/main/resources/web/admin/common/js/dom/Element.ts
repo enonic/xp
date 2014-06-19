@@ -482,11 +482,29 @@ module api.dom {
         }
 
         onMouseEnter(handler: (e: MouseEvent)=>any) {
-            this.mouseEnterLeave('mouseenter', handler);
+            if (typeof this.getHTMLElement().onmouseenter != "undefined") {
+                this.getEl().addEventListener('mouseenter', handler);
+            } else {
+                this.getEl().addEventListener('mouseover', (e: MouseEvent) => {
+                    // execute handler only if mouse came from outside
+                    if (!this.getEl().contains(<HTMLElement> (e.relatedTarget || e.fromElement))) {
+                        handler(e);
+                    }
+                });
+            }
         }
 
         onMouseLeave(handler: (e: MouseEvent)=>any) {
-            this.mouseEnterLeave('mouseleave', handler);
+            if (typeof this.getHTMLElement().onmouseleave != "undefined") {
+                this.getEl().addEventListener('mouseleave', handler);
+            } else {
+                this.getEl().addEventListener('mouseout', (e: MouseEvent) => {
+                    // execute handler only if mouse moves outside
+                    if (!this.getEl().contains(<HTMLElement> (e.relatedTarget || e.toElement))) {
+                        handler(e);
+                    }
+                });
+            }
         }
 
         onMouseOver(listener: (e: MouseEvent)=>any) {
@@ -507,24 +525,6 @@ module api.dom {
 
         setBackgroundImgUrl(backgroundImgUrl: string) {
             this.getHTMLElement().style.backgroundImage = "url('" + backgroundImgUrl + "')";
-        }
-
-        private mouseEnterLeave(type: string, handler: (e: MouseEvent)=>any) {
-            var mouseEnter = type === 'mouseenter',
-                containerEl = this.getEl(),
-                ie = mouseEnter ? 'fromElement' : 'toElement',
-                mouseEventHandler = (e: any) => { //Had use any since window.event isn't of type MouseEvent and caused compiler to bug
-                    e = e || window.event;
-                    var target: HTMLElement = <HTMLElement> (e.target || e.srcElement),
-                        related: HTMLElement = <HTMLElement> (e.relatedTarget || e[ie]);
-                    if ((this.getHTMLElement() === target || containerEl.contains(target)) && !containerEl.contains(related)) {
-                        handler(e);
-                    }
-                };
-            type = mouseEnter ? 'mouseover' : 'mouseout';
-
-            containerEl.addEventListener(type, mouseEventHandler);
-            return mouseEventHandler;
         }
 
         contains(element: Element) {
@@ -722,6 +722,14 @@ module api.dom {
 
         unMouseMove(listener: (event: MouseEvent) => void) {
             this.getEl().removeEventListener("mousemove", listener);
+        }
+
+        onTouchStart(listener: (event: MouseEvent) => void) {
+            this.getEl().addEventListener("touchstart", listener);
+        }
+
+        unTouchStart(listener: (event: MouseEvent) => void) {
+            this.getEl().removeEventListener("touchstart", listener);
         }
 
         onKeyUp(listener: (event: KeyboardEvent) => void) {
