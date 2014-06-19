@@ -24,10 +24,6 @@ module LiveEdit.component.mouseevent {
 
             this.currentMode = TextMode.UNSELECTED;
 
-            this.attachMouseOverEvent();
-
-            this.attachMouseOutEvent();
-
             this.attachClickEvent();
 
             this.registerGlobalListeners();

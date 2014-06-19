@@ -489,6 +489,22 @@ module api.dom {
             this.mouseEnterLeave('mouseleave', handler);
         }
 
+        onMouseOver(listener: (e: MouseEvent)=>any) {
+            this.getEl().addEventListener('mouseover', listener);
+        }
+
+        unMouseOver(listener: (event: MouseEvent) => void) {
+            this.getEl().removeEventListener("mouseover", listener);
+        }
+
+        onMouseOut(listener: (e: MouseEvent)=>any) {
+            this.getEl().addEventListener('mouseout', listener);
+        }
+
+        unMouseOut(listener: (event: MouseEvent) => void) {
+            this.getEl().removeEventListener("mouseout", listener);
+        }
+
         setBackgroundImgUrl(backgroundImgUrl: string) {
             this.getHTMLElement().style.backgroundImage = "url('" + backgroundImgUrl + "')";
         }

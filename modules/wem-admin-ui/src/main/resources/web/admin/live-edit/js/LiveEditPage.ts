@@ -83,16 +83,27 @@ module LiveEdit {
         }
 
         private registerGlobalListeners(): void {
-            wemjq(window).on('mouseOverComponent.liveEdit', (event, component?: ItemView) => {
-                this.highlighter.highlightItemView(component);
-                this.cursor.displayItemViewCursor(component);
-                component.showTooltip();
+
+            this.pageView.onMouseEnterView((view: ItemView) => {
+                if (this.hasSelectedView() || LiveEdit.component.dragdropsort.DragDropSort.isDragging()) {
+                    return;
+                }
+
+                this.highlighter.highlightItemView(view);
+                this.cursor.displayItemViewCursor(view);
+                view.showTooltip();
             });
-            wemjq(window).on('mouseOutComponent.liveEdit', (event, component?: ItemView) => {
+
+            this.pageView.onMouseLeaveView((view: ItemView) => {
+                if (this.hasSelectedView() || LiveEdit.component.dragdropsort.DragDropSort.isDragging()) {
+                    return;
+                }
+
                 this.highlighter.hide();
                 this.cursor.reset();
-                component.hideTooltip();
+                view.hideTooltip();
             });
+
             ItemViewSelectedEvent.on((event: ItemViewSelectedEvent) => {
                 var component = event.getItemView();
 

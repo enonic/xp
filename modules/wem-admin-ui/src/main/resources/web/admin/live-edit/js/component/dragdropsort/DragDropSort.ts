@@ -211,10 +211,6 @@ module LiveEdit.component.dragdropsort.DragDropSort {
                 ui.item.remove()
             }
 
-            if (LiveEdit.DomHelper.supportsTouch()) {
-                wemjq(window).trigger('mouseOutComponent.liveEdit');
-            }
-
             new SortableStopEvent(pageComponentView).fire();
 
             pageComponentView.getElement().removeData('live-edit-selected-on-drag-start');
