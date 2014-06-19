@@ -8,7 +8,4 @@ public interface ModuleService
     Modules getModules( ModuleKeys keys );
 
     Modules getAllModules();
-
-    Module deleteModule( ModuleKey key )
-        throws ModuleNotFoundException;
 }

@@ -29,6 +29,7 @@ import com.enonic.wem.core.image.filter.ImageFilterBuilder;
 import com.enonic.wem.core.initializer.StartupInitializer;
 import com.enonic.wem.core.lifecycle.LifecycleService;
 import com.enonic.wem.core.module.ModuleKeyResolverService;
+import com.enonic.wem.core.module.ModuleLoader;
 import com.enonic.wem.core.module.ModuleResourcePathResolver;
 import com.enonic.wem.guice.GuiceActivator;
 
@@ -37,6 +38,9 @@ public final class Activator
 {
     @Inject
     protected LifecycleService lifecycleService;
+
+    @Inject
+    protected ModuleLoader moduleLoader;
 
     @Override
     protected void configure()
@@ -78,6 +82,7 @@ public final class Activator
     protected void doStart()
         throws Exception
     {
+        this.moduleLoader.start();
         this.lifecycleService.startAll();
     }
 
@@ -86,5 +91,6 @@ public final class Activator
         throws Exception
     {
         this.lifecycleService.stopAll();
+        this.moduleLoader.stop();
     }
 }
