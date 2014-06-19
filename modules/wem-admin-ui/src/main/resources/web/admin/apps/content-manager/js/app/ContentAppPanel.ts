@@ -40,9 +40,9 @@ module app {
         addWizardPanel(tabMenuItem: api.app.AppBarTabMenuItem, wizardPanel: api.app.wizard.WizardPanel<api.content.Content>) {
             super.addWizardPanel(tabMenuItem, wizardPanel);
 
-            wizardPanel.getHeader().onPropertyChanged((event: api.app.wizard.PropertyChangedEvent) => {
-                if (event.getProperty() == "displayName") {
-                    tabMenuItem.setLabel(event.getNewValue());
+            wizardPanel.getHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
+                if (event.getPropertyName() == "displayName") {
+                    tabMenuItem.setLabel(<string>event.getNewValue());
                 }
             });
         }

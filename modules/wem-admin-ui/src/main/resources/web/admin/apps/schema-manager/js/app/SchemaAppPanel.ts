@@ -16,9 +16,9 @@ module app {
         addWizardPanel(tabMenuItem: api.app.AppBarTabMenuItem, wizardPanel: api.app.wizard.WizardPanel<any>) {
             super.addWizardPanel(tabMenuItem, wizardPanel);
 
-            wizardPanel.getHeader().onPropertyChanged((event: api.app.wizard.PropertyChangedEvent) => {
-                if (event.getProperty() == "name") {
-                    tabMenuItem.setLabel(event.getNewValue());
+            wizardPanel.getHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
+                if (event.getPropertyName() == "name") {
+                    tabMenuItem.setLabel(<string>event.getNewValue());
                 }
             });
         }
@@ -132,12 +132,12 @@ module app {
 
                         if (promiseCreateWizardPanel) {
                             promiseCreateWizardPanel.then(() => {
-                                    var viewTabId = api.app.AppBarTabId.forView(schema.getId());
-                                    var viewTabMenuItem = self.getAppBarTabMenu().getNavigationItemById(viewTabId);
-                                    if (viewTabMenuItem != null) {
-                                        self.removePanelByIndex(viewTabMenuItem.getIndex());
-                                    }
-                                }).
+                                var viewTabId = api.app.AppBarTabId.forView(schema.getId());
+                                var viewTabMenuItem = self.getAppBarTabMenu().getNavigationItemById(viewTabId);
+                                if (viewTabMenuItem != null) {
+                                    self.removePanelByIndex(viewTabMenuItem.getIndex());
+                                }
+                            }).
                                 catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
                                 done();
                         }
