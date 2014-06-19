@@ -12,7 +12,7 @@
         "editable": true,
         "final": false,
         "hasChildren": false,
-        "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:contenttype",
+        "iconUrl": "/admin/rest/schema/image/ContentType:contenttype",
         "key": "ContentType:contenttype",
         "modifiedTime": "2013-08-23T12:55:09.162Z",
         "modifier": null,
@@ -30,7 +30,7 @@
         "editable": true,
         "fromSemantic": null,
         "hasChildren": false,
-        "iconUrl": "http://localhost/admin/rest/schema/image/RelationshipType:relationship",
+        "iconUrl": "/admin/rest/schema/image/RelationshipType:relationship",
         "key": "RelationshipType:relationship",
         "modifiedTime": "2013-08-23T12:55:09.162Z",
         "name": "relationship",
@@ -45,7 +45,7 @@
         "displayName": "mixin",
         "editable": true,
         "hasChildren": false,
-        "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:mixin",
+        "iconUrl": "/admin/rest/schema/image/Mixin:mixin",
         "items": [
             {
                 "Input": {

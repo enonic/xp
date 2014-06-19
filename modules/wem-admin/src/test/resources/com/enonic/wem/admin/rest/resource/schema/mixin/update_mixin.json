@@ -9,7 +9,7 @@
         "displayName": null,
         "editable": true,
         "hasChildren": false,
-        "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:some_input",
+        "iconUrl": "/admin/rest/schema/image/Mixin:some_input",
         "items": [
             {
                 "Input": {

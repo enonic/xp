@@ -9,7 +9,7 @@
     "editable": true,
     "fromSemantic": null,
     "hasChildren": false,
-    "iconUrl": "http://localhost/admin/rest/schema/image/RelationshipType:the_relationship_type",
+    "iconUrl": "/admin/rest/schema/image/RelationshipType:the_relationship_type",
     "key": "RelationshipType:the_relationship_type",
     "modifiedTime": null,
     "name": "the_relationship_type",

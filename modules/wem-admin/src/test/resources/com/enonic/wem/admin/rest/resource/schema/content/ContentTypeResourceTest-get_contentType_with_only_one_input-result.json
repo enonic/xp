@@ -34,7 +34,7 @@
         ]
     },
     "hasChildren": false,
-    "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:my_cty",
+    "iconUrl": "/admin/rest/schema/image/ContentType:my_cty",
     "key": "ContentType:my_cty",
     "modifiedTime": null,
     "modifier": null,

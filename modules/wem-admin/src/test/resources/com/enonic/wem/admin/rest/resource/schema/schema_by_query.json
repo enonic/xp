@@ -8,7 +8,7 @@
         "displayName": "mixin",
         "editable": true,
         "hasChildren": false,
-        "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:mixin",
+        "iconUrl": "/admin/rest/schema/image/Mixin:mixin",
         "items": [
             {
                 "Input": {

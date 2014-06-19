@@ -7,7 +7,7 @@
     "editable": true,
     "form": null,
     "hasChildren": false,
-    "iconUrl": "http://localhost/admin/rest/content/image/content-id",
+    "iconUrl": "/admin/rest/content/image/content-id",
     "id": "content-id",
     "isDraft": false,
     "isPage": true,

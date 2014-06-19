@@ -16,7 +16,7 @@
             "formItems": [ ]
         },
         "hasChildren": false,
-        "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:htmlarea",
+        "iconUrl": "/admin/rest/schema/image/ContentType:htmlarea",
         "key": "ContentType:htmlarea",
         "modifiedTime": null,
         "modifier": null,
