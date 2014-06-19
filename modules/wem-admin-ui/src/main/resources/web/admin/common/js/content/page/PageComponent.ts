@@ -8,6 +8,8 @@ module api.content.page {
 
         private parent: Region;
 
+        private propertyChangedListeners: {(event: api.PropertyChangedEvent):void}[] = [];
+
         constructor(builder?: PageComponentBuilder<any>) {
             if (builder != undefined) {
                 this.name = builder.name;
@@ -27,8 +29,10 @@ module api.content.page {
             return this.name;
         }
 
-        setName(name: ComponentName) {
-            this.name = name;
+        setName(newValue: ComponentName) {
+            var oldValue = this.name;
+            this.name = newValue;
+            this.notifyPropertyChanged("name", oldValue, newValue)
         }
 
         reset() {
@@ -57,6 +61,24 @@ module api.content.page {
 
         ensureUniqueComponentName(wantedName: ComponentName): ComponentName {
             return this.parent.ensureUniqueComponentName(wantedName);
+        }
+
+        onPropertyChanged(listener: (event: api.PropertyChangedEvent)=>void) {
+            this.propertyChangedListeners.push(listener);
+        }
+
+        unPropertyChanged(listener: (event: api.PropertyChangedEvent)=>void) {
+            this.propertyChangedListeners =
+            this.propertyChangedListeners.filter((curr: (event: api.PropertyChangedEvent)=>void) => {
+                return listener != curr;
+            });
+        }
+
+        private notifyPropertyChanged(property: string, oldValue: ComponentName, newValue: ComponentName) {
+            var event = new api.PropertyChangedEvent(property, oldValue, newValue);
+            this.propertyChangedListeners.forEach((listener: (event: api.PropertyChangedEvent)=>void) => {
+                listener(event);
+            })
         }
 
         toJson(): api.content.page.PageComponentTypeWrapperJson {
