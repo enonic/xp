@@ -27,5 +27,13 @@ module api.ui {
         isFit(size:number): boolean {
             return (this.minRange <= size) && (size <= this.maxRange);
         }
+
+        isFitOrSmaller(size:number): boolean {
+            return size <= this.maxRange;
+        }
+
+        isFitOrBigger(size:number): boolean {
+            return size > this.minRange;
+        }
     }
 }

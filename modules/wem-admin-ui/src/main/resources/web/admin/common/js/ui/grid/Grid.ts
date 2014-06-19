@@ -69,7 +69,7 @@ module api.ui.grid {
                 this.slickGrid.registerPlugin(this.checkboxSelectorPlugin);
             }
 
-            ResponsiveManager.onAvailableSizeChanged(this, () => {
+            ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.ResponsiveItem) => {
                 this.resizeCanvas();
             });
 
