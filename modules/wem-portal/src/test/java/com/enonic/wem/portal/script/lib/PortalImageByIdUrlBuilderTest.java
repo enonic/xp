@@ -25,7 +25,7 @@ public class PortalImageByIdUrlBuilderTest
         this.request = Mockito.mock( HttpServletRequest.class );
         ServletRequestHolder.setRequest( this.request );
         setupRequest( "http", "localhost", 8080, null );
-        this.baseUrl = ServletRequestUrlHelper.createUrl( "" );
+        this.baseUrl = ServletRequestUrlHelper.createUri( "" );
     }
 
     @Test
@@ -36,7 +36,7 @@ public class PortalImageByIdUrlBuilderTest
             imageContent( ContentId.from( "abc" ) ).
             resourcePath( "pop_08.jpg" );
 
-        assertEquals( "http://localhost:8080/portal/live/mypage/_/image/id/abc",
+        assertEquals( "/portal/live/mypage/_/image/id/abc",
                       urlBuilder.toString() );
     }
 

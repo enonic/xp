@@ -28,7 +28,7 @@ public class PortalUrlBuilderTest
         this.request = Mockito.mock( HttpServletRequest.class );
         ServletRequestHolder.setRequest( this.request );
         setupRequest( "http", "localhost", 8080, null );
-        this.baseUrl = ServletRequestUrlHelper.createUrl( "" );
+        this.baseUrl = ServletRequestUrlHelper.createUri( "" );
     }
 
     @Test
@@ -48,20 +48,20 @@ public class PortalUrlBuilderTest
         params.put( "c", null );
 
         final PortalUrlBuilder urlBuilder = PortalUrlBuilder.createUrl( baseUrl ).resourcePath( "some/path" );
-        assertEquals( "http://localhost:8080/portal/live/some/path", urlBuilder.toString() );
+        assertEquals( "/portal/live/some/path", urlBuilder.toString() );
 
         urlBuilder.params( params ).param( "d", true );
-        assertEquals( "http://localhost:8080/portal/live/some/path?a=some+thing&b=2&c=&d=true", urlBuilder.toString() );
+        assertEquals( "/portal/live/some/path?a=some+thing&b=2&c=&d=true", urlBuilder.toString() );
     }
 
     @Test
     public void createUrlWithMode()
     {
         final PortalUrlBuilder urlBuilder = PortalUrlBuilder.createUrl( baseUrl ).contentPath( "some/path" );
-        assertEquals( "http://localhost:8080/portal/live/some/path", urlBuilder.toString() );
+        assertEquals( "/portal/live/some/path", urlBuilder.toString() );
 
         urlBuilder.mode( "edit" );
-        assertEquals( "http://localhost:8080/portal/edit/some/path", urlBuilder.toString() );
+        assertEquals( "/portal/edit/some/path", urlBuilder.toString() );
     }
 
     @Test
@@ -70,7 +70,7 @@ public class PortalUrlBuilderTest
         final PortalUrlBuilder urlBuilder =
             PortalUrlBuilder.createUrl( baseUrl ).contentPath( "some/content/path" ).resourceType( "public" ).resourcePath(
                 "resource/path" );
-        assertEquals( "http://localhost:8080/portal/live/some/content/path/_/public/resource/path", urlBuilder.toString() );
+        assertEquals( "/portal/live/some/content/path/_/public/resource/path", urlBuilder.toString() );
     }
 
     @Test
@@ -86,7 +86,7 @@ public class PortalUrlBuilderTest
             resourcePath( "resource/path" ).
             param( "one", 1 ).
             params( params );
-        assertEquals( "http://localhost:8080/portal/edit/some/content/path/_/public/resource/path?one=1&two=2&three=3",
+        assertEquals( "/portal/edit/some/content/path/_/public/resource/path?one=1&two=2&three=3",
                       urlBuilder.toString() );
     }
 

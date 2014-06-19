@@ -10,22 +10,14 @@ public final class ServletRequestUrlHelper
     {
     }
 
-    public static String createUrl( final String path )
+    public static String createUri( final String path )
     {
-        return createUrl( ServletRequestHolder.getRequest(), path );
+        return createUri( ServletRequestHolder.getRequest(), path );
     }
 
-    public static String createUrl( final HttpServletRequest req, final String path )
+    public static String createUri( final HttpServletRequest req, final String path )
     {
         final StringBuilder str = new StringBuilder();
-
-        str.append( req.getScheme() ).append( "://" );
-        str.append( req.getServerName() );
-
-        if ( includePortNumber( req ) )
-        {
-            str.append( ":" ).append( req.getLocalPort() );
-        }
 
         final String contextPath = req.getContextPath();
         if ( !Strings.isNullOrEmpty( contextPath ) )
@@ -44,22 +36,5 @@ public final class ServletRequestUrlHelper
         }
 
         return str.toString();
-    }
-
-    private static boolean includePortNumber( final HttpServletRequest req )
-    {
-        final String scheme = req.getScheme();
-        final int port = req.getLocalPort();
-
-        if ( scheme.equals( "http" ) && ( port == 80 ) )
-        {
-            return false;
-        }
-        else if ( scheme.equals( "https" ) && ( port == 443 ) )
-        {
-            return false;
-        }
-
-        return true;
     }
 }

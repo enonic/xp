@@ -6,11 +6,11 @@
     <title>Enonic WEM Admin</title>
 
     <!-- Styles -->
-    <link rel="stylesheet" type="text/css" href="{{baseUrl}}/admin/common/styles/_all.css">
+    <link rel="stylesheet" type="text/css" href="{{baseUri}}/admin/common/styles/_all.css">
 
     <!-- Libraries -->
-    <script type="text/javascript" src="{{baseUrl}}/admin/common/lib/_all.js"></script>
-    <script type="text/javascript" src="{{baseUrl}}/admin/common/lib/jquery.noconflict.js"></script>
+    <script type="text/javascript" src="{{baseUri}}/admin/common/lib/_all.js"></script>
+    <script type="text/javascript" src="{{baseUri}}/admin/common/lib/jquery.noconflict.js"></script>
 
 </head>
 <body>
@@ -18,13 +18,13 @@
 <!-- Configuration -->
 <script type="text/javascript">
     var CONFIG = {
-        baseUri: '{{baseUrl}}'
+        baseUri: '{{baseUri}}'
     };
 </script>
 
 <!-- App javascript -->
-<script type="text/javascript" src="{{baseUrl}}/admin/common/js/_all.js"></script>
-<script type="text/javascript" src="{{baseUrl}}/admin/apps/{{app}}/js/_all.js"></script>
+<script type="text/javascript" src="{{baseUri}}/admin/common/js/_all.js"></script>
+<script type="text/javascript" src="{{baseUri}}/admin/apps/{{app}}/js/_all.js"></script>
 
 <!-- Start the app -->
 <script type="text/javascript">

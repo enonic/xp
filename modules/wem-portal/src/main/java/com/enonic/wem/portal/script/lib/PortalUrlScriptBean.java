@@ -19,7 +19,7 @@ public final class PortalUrlScriptBean
 
     public PortalUrlScriptBean()
     {
-        this.baseUrl = ServletRequestUrlHelper.createUrl( "" );
+        this.baseUrl = ServletRequestUrlHelper.createUri( "" );
     }
 
     // TODO: Hack!
