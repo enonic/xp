@@ -49,6 +49,7 @@ module api.ui {
             cycleActionEl.getEl().setData("action", index+"");
 
             cycleActionEl.onClicked(() => {
+                this.removeClass("expanded");
                 if (cycleActionEl.hasClass("active")) {
                     this.doAction(this.nextActionIndex(index));
                 } else {
