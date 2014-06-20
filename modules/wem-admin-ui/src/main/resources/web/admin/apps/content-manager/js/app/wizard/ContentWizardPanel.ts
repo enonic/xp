@@ -329,7 +329,7 @@ module app.wizard {
                     this.contextWindowToggler.setVisible(renderable);
                     this.cycleViewModeButton.setVisible(renderable);
 
-                    if (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange()) {
+                    if (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange() && renderable) {
                         this.cycleViewModeButton.setCurrentAction(this.contentWizardActions.getShowSplitEditAction());
                     }
 
