@@ -1,0 +1,9 @@
+dependencies {
+    compile 'org.jdom:jdom2:2.0.5'
+    compile 'com.google.guava:guava:16.0.1'
+    compile 'commons-lang:commons-lang:2.4'
+    compile 'org.jparsec:jparsec:2.1'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.2.1'
+    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-smile:2.2.1'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.2.3-beta5'
+}

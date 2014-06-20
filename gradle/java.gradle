@@ -1,0 +1,22 @@
+apply plugin: 'java'
+apply plugin: 'groovy'
+
+sourceCompatibility = '1.8'
+targetCompatibility = sourceCompatibility
+compileJava.options.encoding = 'UTF-8'
+
+test {
+    systemProperty 'java.awt.headless', 'true'
+    maxHeapSize = '2048m'
+}
+
+dependencies {
+    compile 'org.slf4j:slf4j-api:1.7.2'
+    testCompile 'junit:junit:4.10'
+    testCompile 'org.mockito:mockito-all:1.8.5'
+    testCompile 'xmlunit:xmlunit:1.4'
+    testCompile 'org.easytesting:fest-assert:1.4'
+    testCompile 'org.codehaus.groovy:groovy-all:2.1.8'
+    testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
+    testCompile 'org.slf4j:slf4j-simple:1.7.2'
+}

@@ -1,0 +1,17 @@
+task npmInstall( type: Exec ) {
+    inputs.file file( 'package.json' )
+    outputs.dir file( 'node_modules' )
+
+    executable = 'npm'
+    args = ['install']
+}
+
+task gruntAll( type: Exec, dependsOn: 'npmInstall' ) {
+    inputs.dir file( 'src/main/resources' )
+    outputs.dir file( 'build/resources/main' )
+
+    executable = 'node'
+    args = ['node_modules/grunt-cli/bin/grunt', 'all']
+}
+
+jar.dependsOn += 'gruntAll'

@@ -1,0 +1,11 @@
+dependencies {
+    compile project( ':wem-api' )
+    compile project( ':wem-guice' )
+    compile 'commons-io:commons-io:2.4'
+    compile 'com.samskivert:jmustache:1.9'
+    compile 'org.elasticsearch:elasticsearch:1.0.1'
+    compile 'com.jhlabs:filters:2.0.235-1'
+    compile 'org.mozilla:rhino:1.7R4'
+    compile 'javax.servlet:javax.servlet-api:3.0.1'
+    testCompile project( ':wem-api' ).sourceSets.test.output
+}

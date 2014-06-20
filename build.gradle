@@ -1,0 +1,24 @@
+allprojects {
+
+    apply plugin: 'base'
+
+    version = '5.0.0-SNAPSHOT'
+    group = 'com.enonic.wem'
+
+    repositories {
+        mavenCentral()
+    }
+
+}
+
+ext {
+    javaProjects = subprojects
+}
+
+subprojects {
+    if ( project in javaProjects )
+    {
+        apply from: "$rootDir/gradle/java.gradle"
+        apply from: "$rootDir/gradle/maven.gradle"
+    }
+}
