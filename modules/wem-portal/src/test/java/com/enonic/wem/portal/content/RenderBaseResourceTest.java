@@ -86,7 +86,8 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResource>
         when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ), context ) ).
             thenReturn( createPage( "id", "site/somepath/content", "ctype", true ) );
 
-        when( this.siteService.getNearestSite( isA( ContentId.class ) ) ).thenReturn( createSite( "id", "site", "contenttypename" ) );
+        when( this.siteService.getNearestSite( isA( ContentId.class ), isA( Context.class ) ) ).
+            thenReturn( createSite( "id", "site", "contenttypename" ) );
     }
 
     protected final void setupNonPageContent( final Context context )
@@ -95,7 +96,8 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResource>
         when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ), context ) ).
             thenReturn( createPage( "id", "site/somepath/content", "ctype", false ) );
 
-        when( this.siteService.getNearestSite( isA( ContentId.class ) ) ).thenReturn( createSite( "id", "site", "contenttypename" ) );
+        when( this.siteService.getNearestSite( isA( ContentId.class ), isA( Context.class ) ) ).
+            thenReturn( createSite( "id", "site", "contenttypename" ) );
     }
 
     protected final void setupTemplates()

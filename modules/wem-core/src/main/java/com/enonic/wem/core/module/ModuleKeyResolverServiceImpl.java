@@ -4,7 +4,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
@@ -13,6 +12,7 @@ import com.enonic.wem.api.content.site.SiteService;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateService;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.module.ModuleKeyResolver;
 import com.enonic.wem.api.module.ModuleKeys;
 
@@ -30,9 +30,9 @@ final class ModuleKeyResolverServiceImpl
     protected SiteTemplateService siteTemplateService;
 
     @Override
-    public ModuleKeyResolver forContent( final Content content )
+    public ModuleKeyResolver forContent( final Content content, final Context context )
     {
-        final SiteTemplate siteTemplate = findSiteTemplate( content );
+        final SiteTemplate siteTemplate = findSiteTemplate( content, context );
         if ( siteTemplate == null )
         {
             return ModuleKeyResolver.empty();
@@ -43,20 +43,20 @@ final class ModuleKeyResolverServiceImpl
     }
 
     @Override
-    public ModuleKeyResolver forContent( final ContentPath contentPath )
+    public ModuleKeyResolver forContent( final ContentPath contentPath, final Context context )
     {
-        final Content content = getContent( contentPath );
+        final Content content = getContent( contentPath, context );
         if ( content == null )
         {
             return ModuleKeyResolver.empty();
         }
 
-        return forContent( content );
+        return forContent( content, context );
     }
 
-    private SiteTemplate findSiteTemplate( final Content content )
+    private SiteTemplate findSiteTemplate( final Content content, final Context context )
     {
-        final Site site = resolveSite( content.getId() );
+        final Site site = resolveSite( content.getId(), context );
         if ( site == null )
         {
             return null;
@@ -64,15 +64,15 @@ final class ModuleKeyResolverServiceImpl
         return getSiteTemplate( site.getTemplate() );
     }
 
-    private Site resolveSite( final ContentId contentId )
+    private Site resolveSite( final ContentId contentId, final Context context )
     {
-        final Content siteContent = this.siteService.getNearestSite( contentId );
+        final Content siteContent = this.siteService.getNearestSite( contentId, context );
         return siteContent != null ? siteContent.getSite() : null;
     }
 
-    private Content getContent( final ContentPath contentPath )
+    private Content getContent( final ContentPath contentPath, final Context context )
     {
-        return contentService.getByPath( contentPath, ContentConstants.DEFAULT_CONTEXT );
+        return contentService.getByPath( contentPath, context );
     }
 
     private SiteTemplate getSiteTemplate( final SiteTemplateKey siteTemplateKey )
