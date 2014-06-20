@@ -61,6 +61,8 @@ module api.liveedit {
 
         private tooltipViewer: api.ui.Viewer<any>;
 
+        private mouseOver: boolean;
+
         private mouseOverViewListeners: {(): void} [];
 
         private mouseOutViewListeners: {(): void} [];
@@ -88,6 +90,8 @@ module api.liveedit {
                 props = newElementBuilder;
             }
             super(props);
+
+            this.mouseOver = false;
             this.mouseOverViewListeners = [];
             this.mouseOutViewListeners = [];
 
@@ -113,26 +117,52 @@ module api.liveedit {
 
             this.setElementDimensions(this.getDimensionsFromElement());
 
-            this.onMouseOver((event: MouseEvent) => {
+            this.onMouseEnter((event: MouseEvent) => {
+                if (this.mouseOver) {
+                    return;
+                }
+                this.mouseOver = true;
 
-                var targetView:HTMLElement = this.getClosestView(<HTMLElement>event.target);
-                var fromView:HTMLElement = this.getClosestView(<HTMLElement>event.relatedTarget || <HTMLElement>event.fromElement);
+                var parentsStack = [];
+                for (var parent = this.parentItemView; parent; parent = parent.parentItemView) {
+                    parentsStack.push(parent);
+                    if (parent.mouseOver) {
+                        break;
+                    }
+                }
 
-                if (targetView == this.getHTMLElement() && fromView != this.getHTMLElement()) {
-                    this.notifyMouseOverView();
+                parentsStack.reverse().forEach((view: ItemView) => {
+                    if (view.mouseOver) {
+                        view.notifyMouseOutView();
+                    } else {
+                        view.mouseOver = true;
+                        view.notifyMouseOverView();
+                        view.notifyMouseOutView();
+                    }
+                });
+
+                this.notifyMouseOverView();
+            });
+
+            this.onMouseLeave((event: MouseEvent) => {
+                this.mouseOver = false;
+                this.notifyMouseOutView();
+                if (this.parentItemView) {
+                    this.parentItemView.notifyMouseOverView();
                 }
             });
 
-            this.onMouseOut((event: MouseEvent) => {
+            this.onClicked(this.handleClickEvent.bind(this));
+            this.onContextMenu(this.handleClickEvent.bind(this));
+            this.onTouchStart(this.handleClickEvent.bind(this));
 
-                var targetView:HTMLElement = this.getClosestView(<HTMLElement>event.target);
-                var toView:HTMLElement = this.getClosestView(<HTMLElement>event.relatedTarget || <HTMLElement>event.toElement);
+        }
 
-                if (targetView == this.getHTMLElement() && toView != this.getHTMLElement()) {
-                    this.notifyMouseOutView();
-                }
-            });
+        private handleClickEvent(event: MouseEvent) {
+            event.stopPropagation();
+            event.preventDefault();
 
+            this.select(!this.isEmpty() ? { x: event.pageX, y: event.pageY } : null);
         }
 
         getItemViewIdProducer(): ItemViewIdProducer {
@@ -277,15 +307,6 @@ module api.liveedit {
                 previous = previous.getPrevious();
             }
             return previous;
-        }
-
-        private getClosestView(el: HTMLElement): HTMLElement {
-            for (; el; el = <HTMLElement>(<any>el).parentNode) {
-                if (el.hasAttribute && el.hasAttribute('data-' + ItemViewId.DATA_ATTRIBUTE)) {
-                    return el;
-                }
-            }
-            return null;
         }
 
         onMouseOverView(listener: () => void) {

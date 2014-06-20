@@ -15,13 +15,6 @@
 ///<reference path='ui/Highlighter.ts' />
 ///<reference path='ui/ShaderClickedEvent.ts' />
 
-///<reference path='component/mouseevent/Base.ts' />
-///<reference path='component/mouseevent/Page.ts' />
-///<reference path='component/mouseevent/Region.ts' />
-///<reference path='component/mouseevent/Layout.ts' />
-///<reference path='component/mouseevent/Image.ts' />
-///<reference path='component/mouseevent/Part.ts' />
-///<reference path='component/mouseevent/Content.ts' />
 ///<reference path='component/mouseevent/Text.ts' />
 
 ///<reference path='ui/contextmenu/ContextMenu.ts' />
