@@ -31,6 +31,7 @@ import com.enonic.wem.core.lifecycle.LifecycleService;
 import com.enonic.wem.core.module.ModuleKeyResolverService;
 import com.enonic.wem.core.module.ModuleLoader;
 import com.enonic.wem.core.module.ModuleResourcePathResolver;
+import com.enonic.wem.core.module.ModuleURLStreamHandler;
 import com.enonic.wem.guice.GuiceActivator;
 
 public final class Activator
@@ -76,6 +77,7 @@ public final class Activator
         service( SchemaService.class ).export();
         service( ModuleService.class ).export();
         service( StartupInitializer.class ).export();
+        service( ModuleURLStreamHandler.class ).attribute( "url.handler.protocol", "module" ).export();
     }
 
     @Override
