@@ -1,0 +1,10 @@
+apply plugin: 'groovy'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile gradleApi()
+    compile 'org.dm.gradle:bundle:0.2'
+}
