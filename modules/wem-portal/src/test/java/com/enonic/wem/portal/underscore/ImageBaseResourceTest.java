@@ -17,6 +17,8 @@ import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.Attachments;
+import com.enonic.wem.api.content.attachment.GetAttachmentParameters;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.blobstore.memory.MemoryBlobRecord;
 import com.enonic.wem.core.image.filter.BuilderContext;
@@ -59,8 +61,10 @@ public abstract class ImageBaseResourceTest<T extends ImageBaseResource>
     {
         final ContentPath contentPath = ContentPath.from( "path/to/content" );
         final Content content = createContent( "content-id", contentPath, "image" );
-        Mockito.when( this.contentService.getById( Mockito.eq( content.getId() ), Mockito.anyObject() ) ).thenReturn( content );
-        Mockito.when( this.contentService.getByPath( Mockito.eq( content.getPath() ), Mockito.anyObject() ) ).thenReturn( content );
+        Mockito.when( this.contentService.getById( Mockito.eq( content.getId() ), Mockito.anyObject() ) ).
+            thenReturn( content );
+        Mockito.when( this.contentService.getByPath( Mockito.eq( content.getPath() ), Mockito.anyObject() ) ).
+            thenReturn( content );
 
         final BlobKey blobKey = new BlobKey( "<blobkey-1>" );
         final Attachment attachment = Attachment.newAttachment().
@@ -71,13 +75,16 @@ public abstract class ImageBaseResourceTest<T extends ImageBaseResource>
             build();
 
         final byte[] imageData = ByteStreams.toByteArray( getClass().getResourceAsStream( "enonic-logo.png" ) );
-        Mockito.when( this.attachmentService.get( Mockito.isA( ContentId.class ), Mockito.isA( String.class ) ) ).thenReturn( attachment );
-        Mockito.when( this.attachmentService.getAll( Mockito.isA( ContentId.class ) ) ).thenReturn( Attachments.from( attachment ) );
+        Mockito.when( this.attachmentService.get( Mockito.isA( GetAttachmentParameters.class ) ) ).
+            thenReturn( attachment );
+        Mockito.when( this.attachmentService.getAll( Mockito.isA( ContentId.class ), Mockito.isA( Context.class ) ) ).
+            thenReturn( Attachments.from( attachment ) );
 
         final Blob blob = new MemoryBlobRecord( blobKey, imageData );
-        Mockito.when( this.blobService.get( Mockito.isA( BlobKey.class ) ) ).thenReturn( blob );
-        Mockito.when( this.imageFilterBuilder.build( Mockito.isA( BuilderContext.class ), Mockito.isA( String.class ) ) ).thenReturn(
-            getImageFilterBuilder() );
+        Mockito.when( this.blobService.get( Mockito.isA( BlobKey.class ) ) ).
+            thenReturn( blob );
+        Mockito.when( this.imageFilterBuilder.build( Mockito.isA( BuilderContext.class ), Mockito.isA( String.class ) ) ).
+            thenReturn( getImageFilterBuilder() );
     }
 
     private ImageFilter getImageFilterBuilder()

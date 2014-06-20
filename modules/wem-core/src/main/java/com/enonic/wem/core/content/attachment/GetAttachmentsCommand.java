@@ -1,10 +1,10 @@
 package com.enonic.wem.core.content.attachment;
 
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
 import com.enonic.wem.api.entity.Node;
@@ -17,16 +17,30 @@ final class GetAttachmentsCommand
 {
     private static final ContentAttachmentNodeTranslator CONTENT_ATTACHMENT_NODE_TRANSLATOR = new ContentAttachmentNodeTranslator();
 
-    private NodeService nodeService;
+    private final NodeService nodeService;
 
-    private ContentId contentId;
+    private final ContentId contentId;
+
+    private final Context context;
+
+    private GetAttachmentsCommand( Builder builder )
+    {
+        nodeService = builder.nodeService;
+        contentId = builder.contentId;
+        context = builder.context;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
 
     Attachments execute()
     {
         try
         {
             final EntityId entityId = EntityId.from( this.contentId );
-            final Node node = nodeService.getById( entityId, ContentConstants.DEFAULT_CONTEXT );
+            final Node node = nodeService.getById( entityId, this.context );
             final Attachments.Builder attachmentsBuilder = Attachments.builder();
 
             for ( com.enonic.wem.api.entity.Attachment entityAttachment : node.attachments() )
@@ -45,19 +59,44 @@ final class GetAttachmentsCommand
         }
         catch ( NoEntityWithIdFoundException e )
         {
-            throw new ContentNotFoundException( this.contentId, ContentConstants.DEFAULT_CONTEXT.getWorkspace() );
+            throw new ContentNotFoundException( this.contentId, this.context.getWorkspace() );
         }
     }
 
-    GetAttachmentsCommand nodeService( final NodeService nodeService )
-    {
-        this.nodeService = nodeService;
-        return this;
-    }
 
-    GetAttachmentsCommand contentId( final ContentId contentId )
+    public static final class Builder
     {
-        this.contentId = contentId;
-        return this;
+        private NodeService nodeService;
+
+        private ContentId contentId;
+
+        private Context context;
+
+        private Builder()
+        {
+        }
+
+        public Builder nodeService( NodeService nodeService )
+        {
+            this.nodeService = nodeService;
+            return this;
+        }
+
+        public Builder contentId( ContentId contentId )
+        {
+            this.contentId = contentId;
+            return this;
+        }
+
+        public Builder context( Context context )
+        {
+            this.context = context;
+            return this;
+        }
+
+        public GetAttachmentsCommand build()
+        {
+            return new GetAttachmentsCommand( this );
+        }
     }
 }

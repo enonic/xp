@@ -83,7 +83,7 @@ final class UpdateContentCommand
         }
         else
         {
-            attachments = attachmentService.getAll( this.params.getContentId() );
+            attachments = attachmentService.getAll( this.params.getContentId(), this.context );
         }
 
         final UpdateNodeParams updateNodeParams = translator.toUpdateNodeCommand( editedContent, attachments );
